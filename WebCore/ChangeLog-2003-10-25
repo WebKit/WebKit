@@ -1,3 +1,16 @@
+2002-06-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Implement KHTMLPart::findFrame() to fix the following Radar bugs:
+        
+        Radar 2943177 - infinite JavaScript loop sfcu.org online bill paying
+        Radar 2950580 - Unknown JavaScript properties on the Window object return self instead of Undefined
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::findFrame):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPartImpl::findFrame):
+        * kwq/KWQKHTMLPartImpl.h:
+
 2002-06-26  Darin Adler  <darin@apple.com>
 
 	- fixed 2969378 -- "A with hat" characters (Unicode 00C2) showing up at Zingermans.com

@@ -3263,8 +3263,7 @@ khtml::ChildFrame *KHTMLPart::frame( const QObject *obj )
 KHTMLPart *KHTMLPart::findFrame( const QString &f )
 {
 #ifdef APPLE_CHANGES
-  // FIXME: Get rid of this method altogether rather than returning a bogus value?
-  return this;
+    return impl->findFrame(f);
 #else
 #if 0
   kdDebug() << "KHTMLPart::findFrame '" << f << "'" << endl;

@@ -590,6 +590,11 @@ bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
     return [bridge childFrameNamed:frameName.getNSString()];
 }
 
+KHTMLPart *KWQKHTMLPartImpl::findFrame(const QString &frameName)
+{
+    return [[[bridge childFrameNamed:frameName.getNSString()] bridge] part];
+}
+
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
 {
     QPtrList<KParts::ReadOnlyPart> parts;
