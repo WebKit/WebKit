@@ -1,5 +1,23 @@
 2002-11-19  Darin Adler  <darin@apple.com>
 
+	- another step towards atomic identifiers; storing hash in the string rep. gives about
+	a 1.5% speedup in the JavaScript iBench
+
+        * kjs/ustring.h: Add a hash field to UString::Rep.
+        * kjs/ustring.cpp:
+        (UString::Rep::create): Set hash to uninitialized value.
+        (UString::Rep::destroy): Do the deleting in her, and call Identifier if needed.
+        (UString::Rep::computeHash): Added.
+        (UString::append): Set hash to 0 when modifying the string in place.
+        (UString::operator=): Ditto.
+
+        * kjs/property_map.cpp: Use the hash from UString.
+
+        * kjs/identifier.h: Added aboutToDestroyUStringRep.
+        * kjs/identifier.cpp: (Identifier::aboutToDestroyUStringRep): Added.
+
+2002-11-19  Darin Adler  <darin@apple.com>
+
 	- next step towards atomic identifiers; Identifier is no longer derived from UString
 
         * kjs/identifier.h: Remove base class and add _ustring member.

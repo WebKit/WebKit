@@ -199,30 +199,37 @@ namespace KJS {
   class UString {
     friend bool operator==(const UString&, const UString&);
     friend class UCharReference;
+    friend class Identifier;
     friend class PropertyMap;
     friend class PropertyMapHashTableEntry;
+
     /**
      * @internal
      */
     struct Rep {
       friend class UString;
       friend bool operator==(const UString&, const UString&);
+      
       static Rep *create(UChar *d, int l);
-      inline UChar *data() const { return dat; }
-      inline int size() const { return len; }
+      void destroy();
+      
+      UChar *data() const { return dat; }
+      int size() const { return len; }
+      
+      int hash() const { if (_hash == 0) computeHash(); return _hash; }
+      void computeHash() const;
 
-      inline void ref() { rc++; }
-      inline void deref() {
-        if (--rc == 0) {
-          delete [] dat;
-          delete this;
-        }
-      }
+      void ref() { ++rc; }
+      void deref() { if (--rc == 0) destroy(); }
 
       UChar *dat;
       int len;
       int capacity;
       int rc;
+      mutable int _hash;
+      
+      enum { capacityForIdentifier = 0x10000000 };
+      
       static Rep null;
       static Rep empty;
     };

@@ -30,4 +30,8 @@ bool operator==(const Identifier &a, const char *b)
     return a._ustring == b;
 }
 
+void Identifier::aboutToDestroyUStringRep(UString::Rep *)
+{
+}
+
 } // namespace KJS

@@ -57,6 +57,8 @@ namespace KJS {
 
         friend bool operator==(const Identifier &, const char *);
     
+        static void aboutToDestroyUStringRep(UString::Rep *);
+
     private:
         UString _ustring;
     };

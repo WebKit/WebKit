@@ -64,17 +64,9 @@ void PropertyMap::clear()
     _keyCount = 0;
 }
 
-int PropertyMap::hash(const UString::Rep *s) const
+inline int PropertyMap::hash(const UString::Rep *s) const
 {
-    int h = 0;
-    int length = s->len;
-    int prefixLength = length < 8 ? length : 8;
-    for (int i = 0; i < prefixLength; i++)
-        h = (127 * h + s->dat[i].unicode()) & _tableSizeHashMask;
-    int suffixPosition = length < 16 ? 8 : length - 8;
-    for (int i = suffixPosition; i < length; i++)
-        h = (127 * h + s->dat[i].unicode()) & _tableSizeHashMask;
-    return h;
+    return s->hash() & _tableSizeHashMask;
 }
 
 bool PropertyMap::keysMatch(const UString::Rep *a, const UString::Rep *b)
