@@ -36,8 +36,12 @@
 
 class QRegion {
 public:
+    // NOTE: alphabetical order
+    enum RegionType { Ellipse, Rectangle };
+
     QRegion();
-    QRegion(int, int, int, int);
+    QRegion(int, int, int, int, RegionType = Rectangle);
+    QRegion(const QPointArray &);
     bool contains(const QPoint &) const;
 };
 
