@@ -1,6 +1,6 @@
 SUBDIRS = khtml kwq
 
-all-am: previous-clean-timestamp previous-js-clean-timestamp
+all-am: previous-clean-timestamp previous-js-clean-timestamp config-timestamp
 	pbxbuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
 clean-am:
 	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
@@ -11,13 +11,13 @@ clean-am:
 WebCore-combined.exp: WebCore.exp WebCore-tests.exp previous-clean-timestamp
 	cat $^ > $@
 
-config.h: ../config.h previous-clean-timestamp
-	grep -v NO_LICENSE ../config.h > new-config.h
-	if cmp -s config.h new-config.h; then \
-		rm -f new-config.h; \
-	else \
-		mv new-config.h config.h; \
+config.h: config-timestamp
+
+config-timestamp: ../config.h previous-clean-timestamp
+	if ! cmp -s config.h ../config.h; then \
+	    cat ../config.h > config.h; \
 	fi
+	touch $@
 
 noinst_DATA = WebCore-combined.exp
 noinst_HEADERS = config.h

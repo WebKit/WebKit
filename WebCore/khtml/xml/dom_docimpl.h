@@ -263,7 +263,6 @@ public:
     void setBaseTarget(const QString& baseTarget) { m_baseTarget = baseTarget; }
 
 #if APPLE_CHANGES
-    void setDecoder(khtml::Decoder *d) { m_decoder = d; d->ref();}
     QString completeURL(const QString &);
 #else
     QString completeURL(const QString& url) { return KURL(baseURL(),url).url(); };
@@ -544,6 +543,9 @@ public:
     void setShouldCreateRenderers(bool f);
     bool shouldCreateRenderers();
     
+    void setDecoder(khtml::Decoder *);
+    khtml::Decoder *decoder() const { return m_decoder; }
+
 private:
     bool m_inPageCache;
     int m_passwordFields;

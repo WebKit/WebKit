@@ -309,7 +309,9 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (NSString *)selectedString
 {
-    return [[_part->selectedText().getNSString() copy] autorelease];
+    QString text = _part->selectedText();
+    text.replace('\\', _part->backslashAsCurrencySymbol());
+    return [[text.getNSString() copy] autorelease];
 }
 
 - (void)selectAll
@@ -657,7 +659,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         
         DOMString title = e->getAttribute(ATTR_TITLE);
         if (!title.isEmpty()) {
-            [element setObject:title.string().getNSString() forKey:WebCoreElementLinkTitleKey];
+            QString titleText = title.string();
+            titleText.replace('\\', _part->backslashAsCurrencySymbol());
+            [element setObject:titleText.getNSString() forKey:WebCoreElementLinkTitleKey];
         }
         
         DOMString link = e->getAttribute(ATTR_HREF);
@@ -704,7 +708,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         
         DOMString alt = i->getAttribute(ATTR_ALT);
         if (!alt.isNull()) {
-            [element setObject:alt.string().getNSString() forKey:WebCoreElementImageAltStringKey];
+            QString altText = alt.string();
+            altText.replace('\\', _part->backslashAsCurrencySymbol());
+            [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
         }
         
         RenderImage *r = (RenderImage *)node->renderer();

@@ -650,12 +650,16 @@ KHTMLView *KWQKHTMLPart::view() const
 
 void KWQKHTMLPart::setTitle(const DOMString &title)
 {
-    [_bridge setTitle:title.string().getNSString()];
+    QString text = title.string();
+    text.replace('\\', backslashAsCurrencySymbol());
+    [_bridge setTitle:text.getNSString()];
 }
 
 void KWQKHTMLPart::setStatusBarText(const QString &status)
 {
-    [_bridge setStatusText:status.getNSString()];
+    QString text = status;
+    text.replace('\\', backslashAsCurrencySymbol());
+    [_bridge setStatusText:text.getNSString()];
 }
 
 void KWQKHTMLPart::scheduleClose()
@@ -1168,21 +1172,33 @@ void KWQKHTMLPart::sendResizeEvent()
 
 void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
 {
-    [_bridge runJavaScriptAlertPanelWithMessage:message.getNSString()];
+    QString text = message;
+    text.replace('\\', backslashAsCurrencySymbol());
+    [_bridge runJavaScriptAlertPanelWithMessage:text.getNSString()];
 }
 
 bool KWQKHTMLPart::runJavaScriptConfirm(const QString &message)
 {
-    return [_bridge runJavaScriptConfirmPanelWithMessage:message.getNSString()];
+    QString text = message;
+    text.replace('\\', backslashAsCurrencySymbol());
+    return [_bridge runJavaScriptConfirmPanelWithMessage:text.getNSString()];
 }
 
 bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &defaultValue, QString &result)
 {
+    QString promptText = prompt;
+    promptText.replace('\\', backslashAsCurrencySymbol());
+    QString defaultValueText = defaultValue;
+    defaultValueText.replace('\\', backslashAsCurrencySymbol());
+
     NSString *returnedText;
     bool ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
         defaultText:defaultValue.getNSString() returningText:&returnedText];
-    if (ok)
+    if (ok) {
         result = QString::fromNSString(returnedText);
+        result.replace(backslashAsCurrencySymbol(), '\\');
+    }
+
     return ok;
 }
 
@@ -1752,6 +1768,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                     text = str;
     
                 text = text.stripWhiteSpace();
+                text.replace('\\', renderer->backslashAsCurrencySymbol());
                 if (text.length() > 1)
                     text += ' ';
     
@@ -1931,4 +1948,21 @@ void KWQKHTMLPart::setMediaType(const QString &type)
     if (d->m_view) {
         d->m_view->setMediaType(type);
     }
+}
+
+QChar KWQKHTMLPart::backslashAsCurrencySymbol() const
+{
+    DocumentImpl *doc = xmlDocImpl();
+    if (!doc) {
+        return '\\';
+    }
+    Decoder *decoder = doc->decoder();
+    if (!decoder) {
+        return '\\';
+    }
+    const QTextCodec *codec = decoder->codec();
+    if (!codec) {
+        return '\\';
+    }
+    return codec->backslashAsCurrencySymbol();
 }

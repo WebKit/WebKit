@@ -1591,3 +1591,24 @@ void RenderObject::getTextDecorationColors(int decorations, QColor& underline, Q
             linethrough = curr->style()->color();
     }        
 }
+
+QChar RenderObject::backslashAsCurrencySymbol() const
+{
+#if !APPLE_CHANGES
+    return '\\';
+#else
+    NodeImpl *node = element();
+    if (!node)
+        return '\\';
+    DocumentImpl *document = node->getDocument();
+    if (!document)
+        return '\\';
+    Decoder *decoder = document->decoder();
+    if (!decoder)
+        return '\\';
+    const QTextCodec *codec = decoder->codec();
+    if (!codec)
+        return '\\';
+    return codec->backslashAsCurrencySymbol();
+#endif
+}

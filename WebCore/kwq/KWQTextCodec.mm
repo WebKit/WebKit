@@ -30,6 +30,17 @@
 
 const UniChar BOM = 0xFEFF;
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
+
+struct TECObjectPeek {
+    UInt32 skip1;
+    UInt32 skip2;
+    UInt32 skip3;
+    OptionBits optionsControlFlags;
+};
+
+#endif
+
 class KWQTextDecoder : public QTextDecoder {
 public:
     KWQTextDecoder(CFStringEncoding, KWQEncodingFlags);
@@ -129,41 +140,20 @@ inline CFStringEncoding effectiveEncoding(CFStringEncoding e)
 
 QCString QTextCodec::fromUnicode(const QString &qcs) const
 {
-    // FIXME: Should really use the same API in both directions, not CF one way and TEC the other.
+    // FIXME: We should really use the same API in both directions.
+    // Currently we use TEC to decode and CFString to encode; it would be better to encode with TEC too.
     
     CFStringEncoding encoding = effectiveEncoding(_encoding);
 
+    // FIXME: Since there's no "force ASCII range" mode in CFString, we change the backslash into a yen sign.
+    // Encoding will change the yen sign back into a backslash.
     QString copy;
     bool usingCopy = false;
-    bool doingTildeWorkaround = false;
-
-    // This is a hack to work around bug 3254512 -- tilde does not make the round trip when encoding/decoding Shift-JIS.
-    // We change decoded tilde characters into U+0001 because that will survive the decoding process (turn into ASCII 0x01)
-    // and we don't care about preserving U+0001 characters; they should never occur.
-
-    // The other hack is to make \ character turn into 5C instead of 815F when converting to Shift-JIS.
-    // Although 815F is correct, strictly speaking, if we end up with a 5C, we almost always want to send
-    // it back as a 5C; there's no way to type a \ on a Japanese keyboard.
-
-    switch (encoding) {
-        case kCFStringEncodingShiftJIS_X0213_00:
-        case kCFStringEncodingEUC_JP: {
-            const QChar decodedTilde(0x203E);
-            if (qcs.find(decodedTilde) != -1) {
-                doingTildeWorkaround = true;
-                usingCopy = true;
-                copy = qcs;
-                copy.replace(decodedTilde, 0x0001);
-            }
-            if (qcs.find('\\') != -1) {
-                if (!usingCopy) {
-                    usingCopy = true;
-                    copy = qcs;
-                }
-                const QChar decodedBackslash(0x00A5);
-                copy.replace('\\', decodedBackslash);
-            }
-        }
+    QChar currencySymbol = backslashAsCurrencySymbol();
+    if (currencySymbol != '\\' && qcs.find('\\') != -1) {
+	usingCopy = true;
+        copy = qcs;
+	copy.replace('\\', currencySymbol);
     }
 
     CFStringRef cfs = usingCopy ? copy.getCFString() : qcs.getCFString();
@@ -174,12 +164,6 @@ QCString QTextCodec::fromUnicode(const QString &qcs) const
     QCString result(bufferLength + 1);
     CFStringGetBytes(cfs, range, encoding, '?', FALSE, reinterpret_cast<UInt8 *>(result.data()), bufferLength, &bufferLength);
     result[bufferLength] = 0;
-
-    // Change the decoded U+0001 characters (now 0x01) into tilde.
-    if (doingTildeWorkaround) {
-        result.replace(0x01, '~');
-    }
-
     return result;
 }
 
@@ -191,6 +175,18 @@ QString QTextCodec::toUnicode(const char *chs, int len) const
 QString QTextCodec::toUnicode(const QByteArray &qba, int len) const
 {
     return KWQTextDecoder(_encoding, _flags).toUnicode(qba, len, true);
+}
+
+QChar QTextCodec::backslashAsCurrencySymbol() const
+{
+    // FIXME: We should put this information into KWQCharsetData instead of having a switch here.
+    switch (_encoding) {
+        case kCFStringEncodingShiftJIS_X0213_00:
+        case kCFStringEncodingEUC_JP:
+            return 0x00A5; // yen sign
+        default:
+            return '\\';
+    }
 }
 
 bool operator==(const QTextCodec &a, const QTextCodec &b)
@@ -326,6 +322,13 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
                 ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
                 return QString();
             }
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
+            // Workaround for missing TECSetBasicOptions call.
+            reinterpret_cast<TECObjectPeek **>(_converter)[0]->optionsControlFlags = kUnicodeForceASCIIRangeMask;
+#else
+            TECSetBasicOptions(_converter, kUnicodeForceASCIIRangeMask);
+#endif
         }
     }
     

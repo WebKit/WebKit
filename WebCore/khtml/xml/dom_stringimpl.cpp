@@ -281,7 +281,7 @@ DOMStringImpl *DOMStringImpl::upper() const
     return c;
 }
 
-DOMStringImpl *DOMStringImpl::capitalize()
+DOMStringImpl *DOMStringImpl::capitalize() const
 {
     DOMStringImpl *c = new DOMStringImpl;
     if(!l) return c;
@@ -322,6 +322,32 @@ int DOMStringImpl::toInt(bool *ok) const
     }
     
     return QConstString(s, i).string().toInt(ok);
+}
+
+DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
+{
+    if (oldC == newC)
+        return this;
+    unsigned i;
+    for (i = 0; i != l; ++i)
+	if (s[i] == oldC)
+            break;
+    if (i == l)
+        return this;
+
+    DOMStringImpl *c = new DOMStringImpl;
+
+    c->s = QT_ALLOC_QCHAR_VEC(l);
+    c->l = l;
+
+    for (i = 0; i != l; ++i) {
+        QChar ch = s[i];
+	if (ch == oldC)
+            ch = newC;
+        c->s[i] = ch;
+    }
+
+    return c;
 }
 
 } // namespace DOM

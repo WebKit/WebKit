@@ -2326,7 +2326,7 @@ QString &QString::replace(const QRegExp &qre, const QString &str)
 
 QString &QString::replace(QChar oldChar, QChar newChar)
 {
-    if (find(oldChar) != -1) {
+    if (oldChar != newChar && find(oldChar) != -1) {
         unsigned length = dataHandle[0]->_length;
         
         detach();

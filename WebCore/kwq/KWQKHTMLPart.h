@@ -205,6 +205,9 @@ public:
     void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }
     bool usesInactiveTextBackgroundColor() const { return _usesInactiveTextBackgroundColor; }
 
+    // Convenience, to avoid repeating the code to dig down to get this.
+    QChar backslashAsCurrencySymbol() const;
+
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);

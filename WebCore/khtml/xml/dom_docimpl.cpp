@@ -2288,6 +2288,15 @@ void DocumentImpl::removeCheckedRadioButton(HTMLInputElementImpl *b)
 
 #if APPLE_CHANGES
 
+void DocumentImpl::setDecoder(Decoder *decoder)
+{
+    decoder->ref();
+    if (m_decoder) {
+        m_decoder->deref();
+    }
+    m_decoder = decoder;
+}
+
 QString DocumentImpl::completeURL(const QString &URL)
 {
     return KURL(baseURL(), URL, m_decoder ? m_decoder->codec() : 0).url();
@@ -2335,7 +2344,6 @@ bool DocumentImpl::hasSecureForm() const
     return m_secureForms > 0;
 }
 
-#if APPLE_CHANGES
 void DocumentImpl::setShouldCreateRenderers(bool f)
 {
     m_createRenderers = f;
@@ -2345,8 +2353,6 @@ bool DocumentImpl::shouldCreateRenderers()
 {
     return m_createRenderers;
 }
-#endif
-    
 
 #endif // APPLE_CHANGES
 

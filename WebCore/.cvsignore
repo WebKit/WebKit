@@ -1,4 +1,5 @@
 Makefile
 Makefile.in
+config-timestamp
 previous-clean-timestamp
 previous-js-clean-timestamp

@@ -1,6 +1,97 @@
+2003-06-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3277733 -- REGRESSION: \ in JavaScript mishandled when encoding is Japanese (istweb.apple.com)
+        
+        This is the third time I've fixed handling of backslash and yen sign. Each time I fixed part
+        of the problem but either didn't fix the whole thing or caused a regression. This time I did
+        more experiments with other browsers, and I came to the conclusion that all other browsers keep
+        the backslash character internally unchanged, and only change to the yen sign when displaying
+        rather than decoding to the Unicode "yen sign" character. This makes the backslash character
+        different from any other, and requires special code, but it's the only way to match the other
+        browsers' behavior. This seems to work great; I retested all the backslash/yen bugs from the
+        past to make sure I didn't cause new regressions. The only loose end is the DOM API. It's not
+        clear whether the DOM API should return the strings with backslashes or with yen signs, but
+        we can probably ship 1.0 without getting that 100% right.
+
+        * kwq/KWQTextCodec.h: Added backslashAsCurrencySymbol() member function.
+        * kwq/KWQTextCodec.mm:
+        (QTextCodec::fromUnicode): Removed the old workaround for tilde problems, which is not needed
+        now that we are back to using "force ASCII" mode, so tildes are always tildes. Updated the comment
+        about the backslash hack to better reflect the new situation and change it to use the new
+        backslashAsCurrencySymbol() member function.
+        (QTextCodec::backslashAsCurrencySymbol): Added. Returns the yen sign for the encodings where
+        it's appropriate. Later might do the same thing with the won sign for Korean, depending on what
+        we discover as we research bug 3221037 (Korean currency symbol should replace backslash).
+        (KWQTextDecoder::convertUsingTEC): Add back the call to TECSetBasicOptions since we once-again
+        want to use force-ASCII mode; we turn backslashes into yen signs at a higher level now; internally
+        they are kept as backslashes.
+
+        * khtml/xml/dom_docimpl.h: Made setDecoder no longer be inline, and added a decoder member
+        function so callers could get the decoder (they need it to figure out what to do with
+        backslashes).
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setDecoder): Made this no longer be an inline. Also made sure it derefs the
+        existing decoder. This probably does not happen in practice, but the old version would leak
+        if it was ever called twice on the same document.
+
+        * kwq/KWQString.mm: (QString::replace): Made sure that the case of replacing a character
+        with the same character has an early out, since that's now the common case with this
+        "map backslash to currency character if needed" feature.
+
+        * khtml/xml/dom_stringimpl.h: Made capitalize() const and added a new replace() member function.
+        * khtml/xml/dom_stringimpl.cpp: (DOMStringImpl::replace): Implemented this new function
+        that replaces one character with another. Returns the existing string if there is no replacing
+        to do, otherwise makes a new one.
+
+        * khtml/rendering/render_object.h: Added backslashAsCurrencySymbol() member function.
+        * khtml/rendering/render_object.cpp: (RenderObject::backslashAsCurrencySymbol): Added.
+        Helper function so render objects have an easier time digging for the "do I need to turn
+        the backslashes into currency symbols" flag.
+
+        * kwq/KWQKHTMLPart.h: Added backslashAsCurrencySymbol() member function.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setTitle): Convert title to use yen sign.
+        (KWQKHTMLPart::setStatusBarText): Convert status bar text to use yen sign.
+        (KWQKHTMLPart::runJavaScriptAlert): Convert message text to use yen sign.
+        (KWQKHTMLPart::runJavaScriptConfirm): Convert message text to use yen sign.
+        (KWQKHTMLPart::runJavaScriptPrompt): Convert message text and default value to use yen sign,
+        convert result back from yen sign to backslash.
+        (KWQKHTMLPart::attributedString): Convert pieces of text to use yen sign when building up
+        the attributed text.
+        (KWQKHTMLPart::backslashAsCurrencySymbol): Added.
+        Helper function so render objects have an easier time digging for the "do I need to turn
+        the backslashes into currency symbols" flag.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectedString]): Convert text to use yen sign before returning to WebKit.
+        (-[WebCoreBridge elementAtPoint:]): Convert title and alt strings to use yen sign before
+        returning them to WebKit.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderSubmitButton::rawText): Convert button label to use yen sign.
+        (RenderLineEdit::updateFromElement): Convert text for line edit to use yen sign.
+        (RenderLineEdit::slotTextChanged): Convert yen sign to backslash on the way in from line edit.
+        (RenderSelect::updateFromElement): Convert text for select items to use yen sign.
+        (RenderTextArea::updateFromElement): Convert text for text areas to use yen sign.
+        (RenderTextArea::text): Convert yen sign to backslash on the way in from text area.
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paintObject): Convert alt text to use yen sign before drawing it.
+        * khtml/rendering/render_text.cpp:
+        (RenderText::RenderText): Convert text to use yen sign before drawing it.
+        (RenderText::setText): Ditto.
+
+        - fix a problem that was bugging the shit out of me where we kept rebuilding config.h
+
+        * Makefile.am: Use the config-timestamp file to decide when to remake config.h so
+        we don't end up making it over and over again. Also don't bother to grep out NO_LICENSE
+        any more since that's long gone.
+        * .cvsignore: Ignore the config-timestamp file.
+
 === Safari-83 ===
 
-2003-06-07  Darin Adler  <darin@apple.com>
+2003-06-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
 
@@ -2479,8 +2570,6 @@
         (-[WebCoreSettings defaultTextEncoding]): Added.
 
 === Safari-75 ===
-
-=== Safari-74 ===
 
 2003-04-24  John Sullivan  <sullivan@apple.com>
 

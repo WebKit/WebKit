@@ -86,7 +86,10 @@ public:
     bool isLower() const;
     DOMStringImpl *lower() const;
     DOMStringImpl *upper() const;
-    DOMStringImpl *capitalize();
+    DOMStringImpl *capitalize() const;
+
+    // This modifies the string in place if there is only one ref, makes a new string otherwise.
+    DOMStringImpl *replace(QChar, QChar);
 
     unsigned int l;
     QChar *s;

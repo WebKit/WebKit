@@ -322,6 +322,7 @@ QString RenderSubmitButton::rawText()
 {
     QString value = element()->value().isEmpty() ? defaultLabel() : element()->value().string();
     value = value.stripWhiteSpace();
+    value.replace('\\', backslashAsCurrencySymbol());
 #if APPLE_CHANGES
     return value;
 #else
@@ -546,12 +547,15 @@ void RenderLineEdit::updateFromElement()
     if ( w->maxLength() != ml )
         w->setMaxLength( ml );
 
-    if (element()->value().string() != w->text()) {
+    QString newText = element()->value().string();
+    newText.replace('\\', backslashAsCurrencySymbol());
+
+    if (newText != w->text()) {
         w->blockSignals(true);
         int pos = w->cursorPosition();
 
         m_updating = true;
-        w->setText(element()->value().string());
+        w->setText(newText);
         m_updating = false;
         
         w->setEdited( false );
@@ -571,7 +575,9 @@ void RenderLineEdit::slotTextChanged(const QString &string)
     // don't use setValue here!
     if (m_updating) // Don't alter m_value if we are in the middle of initing the control, since
         return;     // we may have gotten our initial value from the attribute.
-    element()->m_value = string;
+    QString newText = string;
+    newText.replace(backslashAsCurrencySymbol(), '\\');
+    element()->m_value = newText;
 }
 
 void RenderLineEdit::select()
@@ -963,21 +969,21 @@ void RenderSelect::updateFromElement()
                 DOMString text = listItems[listIndex]->getAttribute(ATTR_LABEL);
                 if (text.isNull())
                     text = "";
+                QString label = QString(text.implementation()->s, text.implementation()->l);
+                label.replace('\\', backslashAsCurrencySymbol());
 
                 if(m_useListBox) {
 #if APPLE_CHANGES
-                    static_cast<KListBox*>(m_widget)
-                        ->insertGroupLabel(QString(text.implementation()->s, text.implementation()->l), listIndex);
+                    static_cast<KListBox*>(m_widget)->insertGroupLabel(label, listIndex);
 #else
-                    QListBoxText *item = new QListBoxText(QString(text.implementation()->s, text.implementation()->l));
+                    QListBoxText *item = new QListBoxText(label);
                     static_cast<KListBox*>(m_widget)
                         ->insertItem(item, listIndex);
                     item->setSelectable(false);
 #endif
                 }
                 else
-                    static_cast<KComboBox*>(m_widget)
-                        ->insertItem(QString(text.implementation()->s, text.implementation()->l), listIndex);
+                    static_cast<KComboBox*>(m_widget)->insertItem(label, listIndex);
             }
             else if (listItems[listIndex]->id() == ID_OPTION) {
                 DOMString text = static_cast<HTMLOptionElementImpl*>(listItems[listIndex])->text();
@@ -985,13 +991,13 @@ void RenderSelect::updateFromElement()
                     text = "";
                 if (listItems[listIndex]->parentNode()->id() == ID_OPTGROUP)
                     text = DOMString("    ")+text;
+                QString itemText = QString(text.implementation()->s, text.implementation()->l);
+                itemText.replace('\\', backslashAsCurrencySymbol());
 
                 if(m_useListBox)
-                    static_cast<KListBox*>(m_widget)
-                        ->insertItem(QString(text.implementation()->s, text.implementation()->l), listIndex);
+                    static_cast<KListBox*>(m_widget)->insertItem(itemText, listIndex);
                 else
-                    static_cast<KComboBox*>(m_widget)
-                        ->insertItem(QString(text.implementation()->s, text.implementation()->l), listIndex);
+                    static_cast<KComboBox*>(m_widget)->insertItem(itemText, listIndex);
             }
             else
                 KHTMLAssert(false);
@@ -1342,6 +1348,7 @@ void RenderTextArea::updateFromElement()
     w->setReadOnly(element()->readOnly());
     w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
     QString text = element()->value().string();
+    text.replace('\\', backslashAsCurrencySymbol());
     if (w->text() != text) {
         w->blockSignals(true);
         int line, col;
@@ -1392,6 +1399,7 @@ QString RenderTextArea::text()
     else
         txt = w->text();
 
+    txt.replace(backslashAsCurrencySymbol(), '\\');
     return txt;
 }
 
