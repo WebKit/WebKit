@@ -21,13 +21,12 @@
 {
     BOOL scrollsVertically;
     BOOL scrollsHorizontally;
-    BOOL scrollersChanged;    
 
     if (!allowsScrolling) {
         scrollsVertically = NO;
         scrollsHorizontally = NO;
     } else {
-        NSSize documentSize = [[self documentView] bounds].size;
+        NSSize documentSize = [[self documentView] frame].size;
         NSSize frameSize = [self frame].size;
         
         scrollsVertically = documentSize.height > frameSize.height;
@@ -40,29 +39,26 @@
         }
     }
 
-    scrollersChanged = NO;
-        
-    if ([self hasVerticalScroller] != scrollsVertically) {
-        [self setHasVerticalScroller:scrollsVertically];
-        scrollersChanged = YES;
-    }
-        
-    if ([self hasHorizontalScroller] != scrollsHorizontally) {
-        [self setHasHorizontalScroller:scrollsHorizontally];
-        scrollersChanged = YES;
-    }
-    
-    if (scrollersChanged) {
-        [self tile];
-        [self setNeedsDisplay:YES];
-    }
+    [self setHasVerticalScroller:scrollsVertically];
+    [self setHasHorizontalScroller:scrollsHorizontally];
 }
 
 // Make the horizontal and vertical scroll bars come and go as needed.
 - (void)reflectScrolledClipView:(NSClipView *)clipView
 {
     if (clipView == [self contentView]) {
-        [self updateScrollers];
+        // FIXME: This hack here prevents infinite recursion that takes place when we
+        // gyrate between having a vertical scroller and not having one. A reproducible
+        // case is clicking on the "the Policy Routing text" link at
+        // http://www.linuxpowered.com/archive/howto/Net-HOWTO-8.html.
+        // The underlying cause is some problem in the NSText machinery, but I was not
+        // able to pin it down.
+        static BOOL inUpdateScrollers;
+        if (!inUpdateScrollers) {
+            inUpdateScrollers = YES;
+            [self updateScrollers];
+            inUpdateScrollers = NO;
+        }
     }
     [super reflectScrolledClipView:clipView];
 }

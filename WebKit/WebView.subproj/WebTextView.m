@@ -3,14 +3,14 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFTextView.h"
+#import <WebKit/IFTextView.h>
+
 #import <WebKit/IFWebDataSource.h>
 
 @implementation IFTextView
 
-
-- (id)initWithFrame:(NSRect)frame {
-    
+- (id)initWithFrame:(NSRect)frame
+{
     self = [super initWithFrame:frame];
     if (self) {
         canDragFrom = YES;
@@ -24,33 +24,29 @@
 
 - (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
 {
-    if([[dataSource contentType] isEqualToString:@"text/rtf"])
-        isRTF = YES;
-    else
-        isRTF = NO;
 }
 
 - (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource
 {
-
 }
 
 - (void)dataSourceUpdated:(IFWebDataSource *)dataSource
 {
-    NSString *theString;
+    NSString *string;
     
-    //FIXME: This needs to be more efficient
+    // FIXME: This needs to be more efficient for progressively loading documents.
     
-    if(isRTF){
+    if ([[dataSource contentType] isEqualToString:@"text/rtf"]) {
         [self setRichText:YES];
         [self replaceCharactersInRange:NSMakeRange(0,0) withRTF:[dataSource data]];
-    }else{
+    } else {
         [self setRichText:NO];
         
-        // set correct encoding
-        theString = [[NSString alloc] initWithData:[dataSource data] encoding:NSASCIIStringEncoding];
-        [self setString:theString];
-        [theString release];
+        // FIXME: This needs to use the correct encoding, but the list of names of encodings
+        // is currently inside WebCore where we can't share it.
+        string = [[NSString alloc] initWithData:[dataSource data] encoding:NSASCIIStringEncoding];
+        [self setString:string];
+        [string release];
     }
 }
 
@@ -84,7 +80,6 @@
 
 - (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
 {
-
 }
 
 @end

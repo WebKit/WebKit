@@ -1,3 +1,18 @@
+2002-07-01  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/IFDynamicScrollBarsView.m:
+        (-[IFDynamicScrollBarsView updateScrollers]): After a closer reading of
+	the NSScrollView source code, I see that we don't need to explicitly do
+	tile or setNeedsDisplay: because the setters take care of that, so I made
+	this simpler.
+        (-[IFDynamicScrollBarsView reflectScrolledClipView:]): Replace the anti-
+	recursion hack that I erroneously removed earlier.
+
+        * WebView.subproj/IFTextView.h: Removed the isRTF flag.
+        * WebView.subproj/IFTextView.m:
+        (-[IFTextView provisionalDataSourceChanged:]): Do nothing here.
+        (-[IFTextView dataSourceUpdated:]): Check the MIME type here.
+
 2002-07-01  Richard Williamson  <rjw@apple.com>
 
         Fixed 2976913.
