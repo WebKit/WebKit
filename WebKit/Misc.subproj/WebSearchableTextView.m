@@ -48,7 +48,7 @@
         [super copy:sender];
     }else{
         //Convert CRLF to LF to workaround: 3105538 - Carbon doesn't convert text with CRLF to LF
-        NSMutableString *string = [[self string] mutableCopy];
+        NSMutableString *string = [[[self string] substringWithRange:[self selectedRange]] mutableCopy];
         [string replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
 
         NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];

@@ -1,5 +1,12 @@
 2002-11-19  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3106061 - REGRESSION: Copy in text view copies all text not just selection
+
+        * Misc.subproj/WebSearchableTextView.m:
+        (-[WebSearchableTextView copy:]):
+
+2002-11-19  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3092588 - redraw errors in QT controller if window is in background
 
 	We need to send update events after we activate/deactivate after all.
