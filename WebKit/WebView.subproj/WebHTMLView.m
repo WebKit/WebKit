@@ -1,4 +1,4 @@
-/*	
+/*
     WebHTMLView.m
     Copyright 2002, Apple, Inc. All rights reserved.
 */
@@ -50,9 +50,9 @@
 // needs to be enough space to cancel the link press without starting a link drag,
 // and because dragging links is rare.
 #define LinkDragHysteresis              40.0
-#define ImageDragHysteresis  		5.0
-#define TextDragHysteresis  		3.0
-#define TextDragDelay			0.15
+#define ImageDragHysteresis             5.0
+#define TextDragHysteresis              3.0
+#define TextDragDelay                   0.15
 
 // By imaging to a width a little wider than the available pixels,
 // thin pages will be scaled down a little, matching the way they
@@ -69,12 +69,12 @@
 
 #define AUTOSCROLL_INTERVAL             0.1
 
-#define DRAG_LABEL_BORDER_X		4.0
-#define DRAG_LABEL_BORDER_Y		2.0
-#define DRAG_LABEL_RADIUS		5.0
+#define DRAG_LABEL_BORDER_X             4.0
+#define DRAG_LABEL_BORDER_Y             2.0
+#define DRAG_LABEL_RADIUS               5.0
 #define DRAG_LABEL_BORDER_Y_OFFSET              2.0
 
-#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
+#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP        120.0
 #define MAX_DRAG_LABEL_WIDTH                    320.0
 
 #define DRAG_LINK_LABEL_FONT_SIZE   11.0
@@ -385,7 +385,7 @@ static WebHTMLView *lastHitView = nil;
 - (void)_clearLastHitViewIfSelf
 {
     if (lastHitView == self) {
-	lastHitView = nil;
+        lastHitView = nil;
     }
 }
 
@@ -484,21 +484,21 @@ static WebHTMLView *lastHitView = nil;
     }
 
     if (lastHitView != view && lastHitView != nil) {
-	// If we are moving out of a view (or frame), let's pretend the mouse moved
-	// all the way out of that view. But we have to account for scrolling, because
-	// khtml doesn't understand our clipping.
-	NSRect visibleRect = [[[[lastHitView _frame] frameView] _scrollView] documentVisibleRect];
-	float yScroll = visibleRect.origin.y;
-	float xScroll = visibleRect.origin.x;
+        // If we are moving out of a view (or frame), let's pretend the mouse moved
+        // all the way out of that view. But we have to account for scrolling, because
+        // khtml doesn't understand our clipping.
+        NSRect visibleRect = [[[[lastHitView _frame] frameView] _scrollView] documentVisibleRect];
+        float yScroll = visibleRect.origin.y;
+        float xScroll = visibleRect.origin.x;
 
-	event = [NSEvent mouseEventWithType:NSMouseMoved
-			 location:NSMakePoint(-1 - xScroll, -1 - yScroll )
-			 modifierFlags:[[NSApp currentEvent] modifierFlags]
-			 timestamp:[NSDate timeIntervalSinceReferenceDate]
-			 windowNumber:[[self window] windowNumber]
-			 context:[[NSApp currentEvent] context]
-			 eventNumber:0 clickCount:0 pressure:0];
-	[[lastHitView _bridge] mouseMoved:event];
+        event = [NSEvent mouseEventWithType:NSMouseMoved
+                         location:NSMakePoint(-1 - xScroll, -1 - yScroll )
+                         modifierFlags:[[NSApp currentEvent] modifierFlags]
+                         timestamp:[NSDate timeIntervalSinceReferenceDate]
+                         windowNumber:[[self window] windowNumber]
+                         context:[[NSApp currentEvent] context]
+                         eventNumber:0 clickCount:0 pressure:0];
+        [[lastHitView _bridge] mouseMoved:event];
     }
 
     lastHitView = view;
@@ -582,7 +582,7 @@ static WebHTMLView *lastHitView = nil;
 {
     NSArray *types = [pasteboard types];
     NSString *markupString = nil;
-	
+
     if ([types containsObject:WebArchivePboardType]) {
         WebArchive *webArchive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
         WebResource *mainResource = [webArchive mainResource];
@@ -615,8 +615,8 @@ static WebHTMLView *lastHitView = nil;
     NSString *urlString = [linkURL _web_userVisibleString];
     
     if (!label) {
-	drawURLString = NO;
-	label = urlString;
+        drawURLString = NO;
+        label = urlString;
     }
     
     NSFont *labelFont = [[NSFontManager sharedFontManager] convertFont:[NSFont systemFontOfSize:DRAG_LINK_LABEL_FONT_SIZE]
@@ -634,15 +634,15 @@ static WebHTMLView *lastHitView = nil;
     imageSize.width += labelSize.width + DRAG_LABEL_BORDER_X * 2;
     imageSize.height += labelSize.height + DRAG_LABEL_BORDER_Y * 2;
     if (drawURLString) {
-	urlStringSize.width = [urlString _web_widthWithFont: urlFont];
+        urlStringSize.width = [urlString _web_widthWithFont: urlFont];
         urlStringSize.height = [urlFont ascender] - [urlFont descender];
-	imageSize.height += urlStringSize.height;
-	if (urlStringSize.width > MAX_DRAG_LABEL_WIDTH) {
-	    imageSize.width = MAX(MAX_DRAG_LABEL_WIDTH + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
-	    clipURLString = YES;
-	} else {
-	    imageSize.width = MAX(labelSize.width + DRAG_LABEL_BORDER_X * 2, urlStringSize.width + DRAG_LABEL_BORDER_X * 2);
-	}
+        imageSize.height += urlStringSize.height;
+        if (urlStringSize.width > MAX_DRAG_LABEL_WIDTH) {
+            imageSize.width = MAX(MAX_DRAG_LABEL_WIDTH + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
+            clipURLString = YES;
+        } else {
+            imageSize.width = MAX(labelSize.width + DRAG_LABEL_BORDER_X * 2, urlStringSize.width + DRAG_LABEL_BORDER_X * 2);
+        }
     }
     NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
     [dragImage lockFocus];
@@ -664,15 +664,15 @@ static WebHTMLView *lastHitView = nil;
     NSColor *topColor = [NSColor colorWithCalibratedWhite:0.0 alpha:0.75];
     NSColor *bottomColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.5];
     if (drawURLString) {
-	if (clipURLString)
-	    urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:urlFont];
+        if (clipURLString)
+            urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:urlFont];
 
         [urlString _web_drawDoubledAtPoint:NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y - [urlFont descender]) 
              withTopColor:topColor bottomColor:bottomColor font:urlFont];
     }
 
     if (clipLabelString)
-	    label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:labelFont];
+        label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:labelFont];
     [label _web_drawDoubledAtPoint:NSMakePoint (DRAG_LABEL_BORDER_X, imageSize.height - DRAG_LABEL_BORDER_Y_OFFSET - [labelFont pointSize])
              withTopColor:topColor bottomColor:bottomColor font:labelFont];
     
@@ -952,7 +952,7 @@ static WebHTMLView *lastHitView = nil;
 
     _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
     _private->needsLayout = YES;
-	
+
     [self registerForDraggedTypes:[NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSStringPboardType, nil]];
 
     return self;
@@ -985,13 +985,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)cut:(id)sender
 {   
-	[self copy:sender];
-	[[self _bridge] deleteSelection];
+    [self copy:sender];
+    [[self _bridge] deleteSelection];
 }
 
 - (void)delete:(id)sender
 {
-	[[self _bridge] deleteSelection];
+    [[self _bridge] deleteSelection];
 }
 
 - (void)paste:(id)sender
@@ -1019,7 +1019,7 @@ static WebHTMLView *lastHitView = nil;
 {
     SEL action = [item action];
     
-	if (action == @selector(cut:)) {
+    if (action == @selector(cut:)) {
         return [self _canDelete];
     } else if (action == @selector(copy:)) {
         return [self _haveSelection];
@@ -1027,11 +1027,11 @@ static WebHTMLView *lastHitView = nil;
         return [self _canDelete];
     } else if (action == @selector(paste:)) {
         return [self _canPaste];
-    }else if (action == @selector(takeFindStringFromSelection:)) {
+    } else if (action == @selector(takeFindStringFromSelection:)) {
         return [self _haveSelection];
-    }else if (action == @selector(jumpToSelection:)) {
+    } else if (action == @selector(jumpToSelection:)) {
         return [self _haveSelection];
-	}
+    }
     
     return YES;
 }
@@ -1281,15 +1281,15 @@ static WebHTMLView *lastHitView = nil;
     _private->needsLayout = NO;
     
     if (!_private->printing) {
-	// get size of the containing dynamic scrollview, so
-	// appearance and disappearance of scrollbars will not show up
-	// as a size change
-	NSSize newLayoutFrameSize = [[[self superview] superview] frame].size;
-	if (_private->laidOutAtLeastOnce && !NSEqualSizes(_private->lastLayoutFrameSize, newLayoutFrameSize)) {
-	    [[self _bridge] sendResizeEvent];
-	}
-	_private->laidOutAtLeastOnce = YES;
-	_private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
+        // get size of the containing dynamic scrollview, so
+        // appearance and disappearance of scrollbars will not show up
+        // as a size change
+        NSSize newLayoutFrameSize = [[[self superview] superview] frame].size;
+        if (_private->laidOutAtLeastOnce && !NSEqualSizes(_private->lastLayoutFrameSize, newLayoutFrameSize)) {
+            [[self _bridge] sendResizeEvent];
+        }
+        _private->laidOutAtLeastOnce = YES;
+        _private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
         _private->lastLayoutFrameSize = newLayoutFrameSize;
     }
 
@@ -1592,7 +1592,7 @@ static WebHTMLView *lastHitView = nil;
                                         windowNumber:[[self window] windowNumber]
                                              context:[[NSApp currentEvent] context]
                                          eventNumber:0 clickCount:0 pressure:0];
-    [self mouseUp:fakeEvent];	    // This will also update the mouseover state.
+    [self mouseUp:fakeEvent]; // This will also update the mouseover state.
 
     // Reregister for drag types because they were unregistered before the drag.
     [[self _webView] _registerDraggedTypes];
@@ -1720,16 +1720,16 @@ static WebHTMLView *lastHitView = nil;
 {
     NSView *view = nil;
     if (![[self _webView] _isPerformingProgrammaticFocus]) {
-	switch ([[self window] keyViewSelectionDirection]) {
-	case NSDirectSelection:
-	    break;
-	case NSSelectingNext:
-	    view = [[self _bridge] nextKeyViewInsideWebFrameViews];
-	    break;
-	case NSSelectingPrevious:
-	    view = [[self _bridge] previousKeyViewInsideWebFrameViews];
-	    break;
-	}
+        switch ([[self window] keyViewSelectionDirection]) {
+        case NSDirectSelection:
+            break;
+        case NSSelectingNext:
+            view = [[self _bridge] nextKeyViewInsideWebFrameViews];
+            break;
+        case NSSelectingPrevious:
+            view = [[self _bridge] previousKeyViewInsideWebFrameViews];
+            break;
+        }
     }
     if (view) {
         [[self window] makeFirstResponder:view];
@@ -1828,7 +1828,7 @@ static WebHTMLView *lastHitView = nil;
         ERROR("%@ has no width when printing", self);
         return 1.0;
     }
-	
+
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     float maxShrinkToFitScaleFactor = 1/PrintingMaximumShrinkFactor;
     float shrinkToFitScaleFactor = [self _availablePaperWidthForPrintOperation:printOperation]/viewWidth;
@@ -1859,7 +1859,7 @@ static WebHTMLView *lastHitView = nil;
         minLayoutWidth = paperWidth*PrintingMinimumShrinkFactor;
         maxLayoutWidth = paperWidth*PrintingMaximumShrinkFactor;
     }
-    [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES];	// will relayout
+    [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES]; // will relayout
     
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
     // if something caused setNeedsDisplay after this point. If so, it's not a big tragedy, because
@@ -1938,14 +1938,14 @@ static WebHTMLView *lastHitView = nil;
 {
     BOOL intercepted = [[self _bridge] interceptKeyEvent:event toView:self];
     if (!intercepted || [event _web_isTabKeyEvent]) {
-	[super keyDown:event];
+        [super keyDown:event];
     }
 }
 
 - (void)keyUp:(NSEvent *)event
 {
     if (![[self _bridge] interceptKeyEvent:event toView:self]) {
-	[super keyUp:event];
+        [super keyUp:event];
     }
 }
 
