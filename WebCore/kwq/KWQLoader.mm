@@ -25,15 +25,12 @@
 
 #import "KWQLoader.h"
 
-#import "KWQKJobClasses.h"
-#import "loader.h"
-
 #import "khtml_part.h"
-
-#import "WebCoreBridge.h"
-#import "WebCoreResourceLoader.h"
-
+#import "KWQKJobClasses.h"
 #import "KWQLogging.h"
+#import "KWQResourceLoader.h"
+#import "loader.h"
+#import "WebCoreBridge.h"
 
 using khtml::CachedObject;
 using khtml::CachedImage;
@@ -41,60 +38,6 @@ using khtml::DocLoader;
 using khtml::Loader;
 using khtml::Request;
 using KIO::TransferJob;
-
-@interface WebCoreResourceLoader : NSObject <WebCoreResourceLoader>
-{
-    Loader *loader;
-    TransferJob *job;
-}
-
--(id)initWithLoader:(Loader *)loader job:(TransferJob *)job;
-
-@end
-
-@implementation WebCoreResourceLoader
-
--(id)initWithLoader:(Loader *)l job:(TransferJob *)j;
-{
-    [super init];
-    
-    loader = l;
-    job = j;
-    
-    return self;
-}
-
-- (void)dealloc
-{
-    delete job;
-    [super dealloc];
-}
-
-- (void)receivedResponse:(id)response
-{
-    ASSERT(response);
-    loader->receivedResponse(job, response);
-}
-
-- (void)addData:(NSData *)data
-{
-    loader->slotData(job, (const char *)[data bytes], [data length]);
-}
-
-- (void)cancel
-{
-    job->setError(1);
-    job->setHandle(0);
-    job = 0;
-}
-
-- (void)finish
-{
-    loader->slotFinished(job);
-    job->setHandle(0);
-}
-
-@end
 
 bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 {
@@ -111,17 +54,12 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
         return false;
     }
     
-    WebCoreResourceLoader *resourceLoader = [[WebCoreResourceLoader alloc] initWithLoader:loader job:job];
+    KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithLoader:loader job:job];
     id <WebCoreResourceHandle> handle = [bridge startLoadingResource:resourceLoader withURL:URL];
+    [resourceLoader setHandle:handle];
     [resourceLoader release];
 
-    if (handle == nil) {
-        delete job;
-        return false;
-    }
-    
-    job->setHandle(handle);
-    return true;
+    return handle != nil;
 }
 
 bool KWQCheckIfReloading(DocLoader *loader)

@@ -1,5 +1,25 @@
 2002-10-30  Darin Adler  <darin@apple.com>
 
+	- fixed 3083982 -- Logging into AOL gives null view, crash
+
+	I fixed the crash part. Not the "gives null view" part.
+	The key was to disentangle the references and lifetimes of the transfer job class,
+	and the resource loader object that KWQ uses to connect it with WebKit.
+
+        * kwq/KWQKJobClasses.h: Change the job to keep a loader reference, not a
+	handle reference. The job needs to inform the loader when it's being deallocated.
+        * kwq/KWQKJobClasses.mm: Use jobWillBeDeallocated instead of cancel when the
+	job is deallocated.
+
+        * kwq/KWQLoader.mm: (KWQServeRequest): Use KWQResourceLoader, now with a home in
+	a separate file.
+
+        * kwq/KWQResourceLoader.h: Added.
+        * kwq/KWQResourceLoader.mm: Added.
+        * WebCore.pbproj/project.pbxproj: Added KWQResourceLoader files.
+
+2002-10-30  Darin Adler  <darin@apple.com>
+
 	- fixed 3086564 -- REGRESSION: meta-refresh to the same page doesn't refresh
 
 	The key is to get args.reload passed through to the bridge.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JOBCLASSES_H_
-#define JOBCLASSES_H_
+#import "WebCoreResourceLoader.h"
 
-#include "KWQMap.h"
-#include "KWQObject.h"
-#include "KWQString.h"
-
-#include "KWQKURL.h"
-
-#ifdef __OBJC__
-@class KWQResourceLoader;
-#else
-class KWQResourceLoader;
-#endif
+namespace khtml {
+    class Loader;
+}
 
 namespace KIO {
+    class TransferJob;
+}
 
-class TransferJobPrivate;
+@interface KWQResourceLoader : NSObject <WebCoreResourceLoader>
+{
+    khtml::Loader *_loader;
+    KIO::TransferJob *_job;
+    id <WebCoreResourceHandle> _handle;
+}
 
-class Job : public QObject {
-public:
-    virtual int error() const = 0;
-    virtual QString errorText() const = 0;
-    virtual void kill() = 0;
-};
+- (id)initWithLoader:(khtml::Loader *)loader job:(KIO::TransferJob *)job;
+- (void)setHandle:(id <WebCoreResourceHandle>)handle;
+- (void)jobWillBeDeallocated;
 
-class TransferJob : public Job {
-public:
-    TransferJob(const KURL &, bool reload = false, bool showProgressInfo = true);
-    TransferJob(const KURL &, const QByteArray &postData, bool showProgressInfo = true);
-    ~TransferJob();
-
-    int error() const;
-    void setError(int);
-    QString errorText() const;
-    bool isErrorPage() const;
-    QString queryMetaData(const QString &key) const;
-    void addMetaData(const QString &key, const QString &value);
-    void addMetaData(const QMap<QString, QString> &value);
-    void kill();
-
-    void setLoader(KWQResourceLoader *);
-    
-    KURL url() const;
-
-private:
-    TransferJobPrivate *d;
-};
-
-} // namespace KIO
-
-#endif
+@end

@@ -25,12 +25,9 @@
 
 #import "KWQLogging.h"
 
+#import "KWQResourceLoader.h"
 #import "KWQString.h"
 #import "KWQKJobClasses.h"
-
-#import <Foundation/Foundation.h>
-
-#import "WebCoreResourceLoader.h"
 
 namespace KIO {
 
@@ -41,20 +38,20 @@ public:
         : status(0)
         , metaData([[NSMutableDictionary alloc] initWithCapacity:17])
         , URL(kurl)
-        , handle(nil)
+        , loader(nil)
     {
     }
 
     ~TransferJobPrivate()
     {
         [metaData release];
-        [handle release];
+        [loader release];
     }
 
     int status;
     NSMutableDictionary *metaData;
     KURL URL;
-    id <WebCoreResourceHandle> handle;
+    KWQResourceLoader *loader;
 };
 
 TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
@@ -69,7 +66,7 @@ TransferJob::TransferJob(const KURL &url, const QByteArray &postData, bool showP
 
 TransferJob::~TransferJob()
 {
-    [d->handle cancel];
+    [d->loader jobWillBeDeallocated];
     delete d;
 }
 
@@ -99,7 +96,7 @@ QString TransferJob::queryMetaData(const QString &key) const
     NSString *value = [d->metaData objectForKey:key.getNSString()]; 
     return value ? QString::fromNSString(value) : QString::null;
 }
- 
+
 void TransferJob::addMetaData(const QString &key, const QString &value)
 {
     [d->metaData setObject:value.getNSString() forKey:key.getNSString()];
@@ -120,16 +117,11 @@ void TransferJob::kill()
     delete this;
 }
 
-void TransferJob::setHandle(id <WebCoreResourceHandle> handle)
+void TransferJob::setLoader(KWQResourceLoader *loader)
 {
-    [handle retain];
-    [d->handle release];
-    d->handle = handle;
-}
-
-id <WebCoreResourceHandle> TransferJob::handle() const
-{
-    return d->handle;
+    [loader retain];
+    [d->loader release];
+    d->loader = loader;
 }
 
 KURL TransferJob::url() const
