@@ -99,7 +99,6 @@ using namespace DOM;
 #endif
 
 using khtml::Decoder;
-using khtml::DeleteKeyCommand;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
 using khtml::InlineTextBox;
@@ -2472,6 +2471,7 @@ const KHTMLSelection &KHTMLPart::selection() const
 void KHTMLPart::setSelection(const KHTMLSelection &s)
 {
     if (d->m_selection != s) {
+        clearCaretRectIfNeeded(); 
         d->m_selection = s;
         notifySelectionChanged();
     }
@@ -2486,6 +2486,7 @@ void KHTMLPart::takeSelectionFrom(const EditCommand &cmd, bool useEndingSelectio
         s = cmd.startingSelection();
     
     if (d->m_selection != s) {
+        clearCaretRectIfNeeded();        
         d->m_selection = s;
         notifySelectionChanged(false);
     }
@@ -2493,6 +2494,7 @@ void KHTMLPart::takeSelectionFrom(const EditCommand &cmd, bool useEndingSelectio
 
 void KHTMLPart::clearSelection()
 {
+    clearCaretRectIfNeeded();
     d->m_selection = KHTMLSelection();
     notifySelectionChanged();
 }
@@ -2505,6 +2507,7 @@ void KHTMLPart::deleteSelection()
 
 void KHTMLPart::invalidateSelection()
 {
+    clearCaretRectIfNeeded();
     d->m_selection.setNeedsLayout();
     notifySelectionChanged(false);
 }
@@ -2513,17 +2516,27 @@ void KHTMLPart::setSelectionVisible(bool flag)
 {
     if (d->m_caretVisible == flag)
         return;
-        
+
+    clearCaretRectIfNeeded();
     d->m_caretVisible = flag;
     notifySelectionChanged();
 }
 
 void KHTMLPart::slotClearSelection()
 {
+    clearCaretRectIfNeeded();
     bool hadSelection = hasSelection();
     d->m_selection.clear();
     if (hadSelection)
         notifySelectionChanged();
+}
+
+void KHTMLPart::clearCaretRectIfNeeded()
+{
+    if (d->m_caretPaint) {
+        d->m_caretPaint = false;
+        d->m_selection.needsCaretRepaint();
+    }        
 }
 
 void KHTMLPart::notifySelectionChanged(bool endTyping)
@@ -2539,10 +2552,6 @@ void KHTMLPart::notifySelectionChanged(bool endTyping)
         d->m_selection.state() == KHTMLSelection::CARET && d->m_selection.startNode()->isContentEditable()) {
         d->m_caretBlinkTimer = startTimer(CARET_BLINK_FREQUENCY);
         d->m_caretPaint = true;
-        d->m_selection.needsCaretRepaint();
-    }
-    else if (d->m_caretPaint) {
-        d->m_caretPaint = false;
         d->m_selection.needsCaretRepaint();
     }
 
@@ -5101,10 +5110,12 @@ void KHTMLPart::appliedEditing(EditCommand &cmd)
 
 void KHTMLPart::unappliedEditing(EditCommand &cmd)
 {
+    TypingCommand::closeTyping(lastEditCommand());
+
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForRedo(cmd);
 #endif
-    d->m_lastEditCommand = EditCommand();
+    d->m_lastEditCommand = EditCommand::emptyCommand();
 }
 
 void KHTMLPart::reappliedEditing(EditCommand &cmd)
@@ -5112,7 +5123,7 @@ void KHTMLPart::reappliedEditing(EditCommand &cmd)
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd);
 #endif
-    d->m_lastEditCommand = EditCommand();
+    d->m_lastEditCommand = EditCommand::emptyCommand();
 }
 
 void KHTMLPart::pasteHTMLString(const QString &HTMLString)

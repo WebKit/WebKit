@@ -125,6 +125,7 @@ public:
     virtual bool isTextNode() const { return false; }
     virtual bool isDocumentNode() const { return false; }
     virtual bool isXMLElementNode() const { return false; }
+    bool isBlockFlow() const;
     
     // Used by <form> elements to indicate a malformed state of some kind, typically
     // used to keep from applying the bottom margin of the form.
@@ -158,6 +159,13 @@ public:
      * @return previous leaf node or 0 if there are no more.
      */
     NodeImpl *previousLeafNode() const;
+
+    bool isEditableBlock() const;
+    NodeImpl *containingEditableBlock() const;
+    NodeImpl *rootEditableBlock() const;
+    
+    bool inSameRootEditableBlock(NodeImpl *);
+    bool inSameContainingEditableBlock(NodeImpl *);
 
     // used by the parser. Doesn't do as many error checkings as
     // appendChild(), and returns the node into which will be parsed next.
@@ -314,6 +322,10 @@ public:
 
     DocumentPtr *docPtr() const { return document; }
 
+    NodeImpl *previousEditable() const;
+    NodeImpl *nextEditable() const;
+    //bool isEditable() const;
+
     khtml::RenderObject *renderer() const { return m_render; }
     khtml::RenderObject *nextRenderer();
     khtml::RenderObject *previousRenderer();
@@ -324,8 +336,10 @@ public:
     bool isAncestor( NodeImpl *other );
     virtual bool childAllowed( NodeImpl *newChild );
 
+    virtual long maxOffset() const;
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
+    virtual unsigned long caretMaxRenderedOffset() const;
 
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;

@@ -100,7 +100,8 @@ void KWQLog(const char *file, int line, const char *function, KWQLogChannel *cha
         return;
     }
     
-    fprintf(stderr, "- %s:%d %s - ", file, line, function);
+    if (channel->mask != 0x100) // kocienda does not want this output when logging editing
+        fprintf(stderr, "- %s:%d %s - ", file, line, function);
     va_list args;
     va_start(args, format);
     vprintf_stderr_objc(format, args);

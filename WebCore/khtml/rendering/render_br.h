@@ -61,6 +61,7 @@ public:
 
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
+    virtual unsigned long caretMaxRenderedOffset() const;
     
     virtual void caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h);
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "dom_position.h"
-#include "xml/dom_nodeimpl.h"
+#include "dom_edititerator.h"
 
-using DOM::DOMPosition;
+#include "dom_nodeimpl.h"
 
-DOMPosition::DOMPosition(NodeImpl *node, long offset) 
-    : m_node(0), m_offset(offset) 
-{ 
-    if (node) {
-        m_node = node;
-        m_node->ref();
-    }
-};
+namespace DOM {
 
-DOMPosition::DOMPosition(const DOMPosition &o)
-    : m_node(0), m_offset(o.offset()) 
+DOMPosition EditIterator::peekPrevious() const
 {
-    if (o.node()) {
-        m_node = o.node();
-        m_node->ref();
-    }
-}
-
-DOMPosition::~DOMPosition() {
-    if (m_node) {
-        m_node->deref();
-    }
-}
-
-DOMPosition &DOMPosition::operator=(const DOMPosition &o)
-{
-    if (m_node) {
-        m_node->deref();
-    }
-    m_node = o.node();
-    if (m_node) {
-        m_node->ref();
-    }
-
-    m_offset = o.offset();
+    DOMPosition pos = m_current;
     
-    return *this;
+    if (pos.isEmpty())
+        return pos;
+    
+    if (pos.offset() <= 0) {
+        NodeImpl *prevNode = pos.node()->previousEditable();
+        if (prevNode)
+            pos = DOMPosition(prevNode, prevNode->maxOffset());
+    }
+    else {
+        pos = DOMPosition(pos.node(), pos.offset() - 1);
+    }
+    
+    return pos;
 }
+
+DOMPosition EditIterator::peekNext() const
+{
+    DOMPosition pos = m_current;
+    
+    if (pos.isEmpty())
+        return pos;
+    
+    if (pos.offset() >= pos.node()->maxOffset()) {
+        NodeImpl *nextNode = pos.node()->nextEditable();
+        if (nextNode)
+            pos = DOMPosition(nextNode, 0);
+    }
+    else {
+        pos = DOMPosition(pos.node(), pos.offset() + 1);
+    }
+    
+    return pos;
+}
+
+bool EditIterator::atStart() const
+{
+    if (m_current.isEmpty())
+        return true;
+
+    return m_current.offset() == 0 && 
+        m_current.node()->previousEditable() == 0;
+}
+
+bool EditIterator::atEnd() const
+{
+    if (m_current.isEmpty())
+        return true;
+
+    return m_current.offset() == m_current.node()->maxOffset() && 
+        m_current.node()->nextEditable() == 0;
+}
+
+} // namespace DOM

@@ -37,12 +37,14 @@
 #include <kglobal.h>
 #include <kdebug.h>
 
+#include "rendering/render_object.h"
 #include "rendering/render_text.h"
 
 #include "ecma/kjs_binding.h"
 #include "ecma/kjs_proxy.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
+#include "khtml_selection.h"
 
 #include "html/dtd.h"
 
@@ -1148,6 +1150,32 @@ bool NodeImpl::isReadOnly()
     return false;
 }
 
+NodeImpl *NodeImpl::previousEditable() const
+{
+    NodeImpl *node = traversePreviousNode();
+    while (node) {
+        if (!node->isContentEditable())
+            return 0;
+        if (node->hasChildNodes() == 0)
+            return node;
+        node = node->traversePreviousNode();
+    }
+    return 0;
+}
+
+NodeImpl *NodeImpl::nextEditable() const
+{
+    NodeImpl *node = traverseNextNode();
+    while (node) {
+        if (!node->isContentEditable())
+            return 0;
+        if (node->hasChildNodes() == 0)
+            return node;
+        node = node->traverseNextNode();
+    }
+    return 0;
+}
+
 RenderObject * NodeImpl::previousRenderer()
 {
     for (NodeImpl *n = previousSibling(); n; n = n->previousSibling()) {
@@ -1294,6 +1322,11 @@ RenderObject *NodeImpl::createRenderer(RenderArena *arena, RenderStyle *style)
     return 0;
 }
 
+long NodeImpl::maxOffset() const
+{
+    return 1;
+}
+
 long NodeImpl::caretMinOffset() const
 {
     return renderer() ? renderer()->caretMinOffset() : 0;
@@ -1302,6 +1335,71 @@ long NodeImpl::caretMinOffset() const
 long NodeImpl::caretMaxOffset() const
 {
     return renderer() ? renderer()->caretMaxOffset() : 1;
+}
+
+unsigned long NodeImpl::caretMaxRenderedOffset() const
+{
+    return renderer() ? renderer()->caretMaxRenderedOffset() : 1;
+}
+
+bool NodeImpl::isBlockFlow() const
+{
+    return renderer() && renderer()->isBlockFlow();
+}
+
+bool NodeImpl::isEditableBlock() const
+{
+    return isContentEditable() && isBlockFlow();
+}
+
+NodeImpl *NodeImpl::containingEditableBlock() const
+{
+    if (!isContentEditable())
+        return 0;
+
+    NodeImpl *n = const_cast<NodeImpl *>(this);
+    if (isEditableBlock())
+        return n;
+
+    while (1) {
+        n = n->parentNode();
+        if (!n || !n->isContentEditable())
+            break;
+        if (n->isBlockFlow() || n->id() == ID_BODY)
+            return n;
+    }
+    return 0;
+}
+
+NodeImpl *NodeImpl::rootEditableBlock() const
+{
+    if (!isContentEditable())
+        return 0;
+
+    NodeImpl *n = const_cast<NodeImpl *>(this);
+    NodeImpl *result = n->isEditableBlock() ? n : 0;
+    while (1) {
+        n = n->parentNode();
+        if (!n || !n->isContentEditable())
+            break;
+        if (n->id() == ID_BODY) {
+            result = n;
+            break;
+        }
+        if (n->isBlockFlow())
+            result = n;
+    }
+    return result;
+}
+
+bool NodeImpl::inSameRootEditableBlock(NodeImpl *n)
+{
+    return n ? rootEditableBlock() == n->rootEditableBlock() : false;
+}
+
+bool NodeImpl::inSameContainingEditableBlock(NodeImpl *n)
+{
+    return n ? containingEditableBlock() == n->containingEditableBlock() : false;
 }
 
 //-------------------------------------------------------------------------
@@ -1937,6 +2035,12 @@ void NodeBaseImpl::setFocus(bool received)
     if (m_focused == received) return;
 
     NodeImpl::setFocus(received);
+
+    if (received && isEditableBlock() && !hasChildNodes()) {
+        KHTMLPart *part = getDocument()->part();
+        part->setSelection(KHTMLSelection(this, 0));
+        fprintf(stderr, "place caret in me\n");
+    }
 
     // note that we need to recalc the style
     setChanged();

@@ -1096,6 +1096,11 @@ private:
   /**
    * @internal
    */
+  void clearCaretRectIfNeeded();
+
+  /**
+   * @internal
+   */
   void notifySelectionChanged(bool endTyping=true);
 
   /**

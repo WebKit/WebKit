@@ -121,6 +121,11 @@ long RenderReplaced::caretMaxOffset() const
     return 1; 
 }
 
+unsigned long RenderReplaced::caretMaxRenderedOffset() const
+{
+    return 1; 
+}
+
 // -----------------------------------------------------------------------------
 
 RenderWidget::RenderWidget(DOM::NodeImpl* node)

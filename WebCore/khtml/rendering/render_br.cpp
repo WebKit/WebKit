@@ -107,11 +107,16 @@ long RenderBR::caretMaxOffset() const
     return 1; 
 }
 
+unsigned long RenderBR::caretMaxRenderedOffset() const
+{
+    return 1;
+}
+
 void RenderBR::caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h)
 {
     // EDIT FIXME: This does not work yet. Some other changes are need before
     // an accurate position can be determined.
-    _h = height();
+    _h = lineHeight(false);
     _x = xPos();
     _y = yPos();
 

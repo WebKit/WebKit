@@ -48,8 +48,8 @@ using khtml::AppendNodeCommand;
 using khtml::AppendNodeCommandImpl;
 using khtml::CompositeEditCommand;
 using khtml::CompositeEditCommandImpl;
-using khtml::DeleteKeyCommand;
-using khtml::DeleteKeyCommandImpl;
+using khtml::DeleteCollapsibleWhitespaceCommand;
+using khtml::DeleteCollapsibleWhitespaceCommandImpl;
 using khtml::DeleteSelectionCommand;
 using khtml::DeleteSelectionCommandImpl;
 using khtml::DeleteTextCommand;
@@ -66,10 +66,10 @@ using khtml::InsertTextCommand;
 using khtml::InsertTextCommandImpl;
 using khtml::JoinTextNodesCommand;
 using khtml::JoinTextNodesCommandImpl;
-using khtml::ModifyTextNodeCommand;
-using khtml::ModifyTextNodeCommandImpl;
 using khtml::RemoveNodeCommand;
 using khtml::RemoveNodeCommandImpl;
+using khtml::RemoveNodeAndPruneCommand;
+using khtml::RemoveNodeAndPruneCommandImpl;
 using khtml::PasteHTMLCommand;
 using khtml::PasteHTMLCommandImpl;
 using khtml::PasteImageCommand;
@@ -88,11 +88,11 @@ using khtml::TypingCommandImpl;
 #endif
 
 #define IF_IMPL_NULL_RETURN_ARG(arg) do { \
-        if (isNull()) { LOG(Editing, "impl is null"); return arg; } \
+        if (isNull()) { return arg; } \
     } while (0)
         
 #define IF_IMPL_NULL_RETURN do { \
-        if (isNull()) { LOG(Editing, "impl is null"); return; } \
+        if (isNull()) { return; } \
     } while (0)
         
 //------------------------------------------------------------------------------------------
@@ -126,10 +126,14 @@ bool EditCommand::isCompositeStep() const
     return get()->isCompositeStep();
 }
 
-void EditCommand::setIsCompositeStep(bool flag)
+bool EditCommand::isNull() const
 {
-    IF_IMPL_NULL_RETURN;
-    get()->setIsCompositeStep(flag);
+    return get() == 0;
+}
+
+bool EditCommand::notNull() const
+{
+    return !isNull();
 }
 
 void EditCommand::apply()
@@ -198,9 +202,27 @@ void EditCommand::moveToEndingSelection()
     get()->moveToEndingSelection();
 }
 
+EditCommand EditCommand::parent() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return get()->parent();
+}
+
+void EditCommand::setParent(const EditCommand &cmd)
+{
+    IF_IMPL_NULL_RETURN;
+    get()->setParent(cmd);
+}
+
 EditCommandImpl *EditCommand::handle() const
 {
     return static_cast<EditCommandImpl *>(get());
+}
+
+EditCommand &EditCommand::emptyCommand()
+{
+    static EditCommand m_emptyCommand;
+    return m_emptyCommand;
 }
 
 //------------------------------------------------------------------------------------------
@@ -228,24 +250,13 @@ CompositeEditCommandImpl *CompositeEditCommand::impl() const
     return static_cast<CompositeEditCommandImpl *>(get());
 }
 
-//------------------------------------------------------------------------------------------
-// ModifyTextNodeCommand
-
-ModifyTextNodeCommand::ModifyTextNodeCommand(ModifyTextNodeCommandImpl *impl) : EditCommand(impl) 
-{
-}
-
-ModifyTextNodeCommand::~ModifyTextNodeCommand()
-{
-}
-
 //==========================================================================================
 // Concrete commands
 //------------------------------------------------------------------------------------------
 // AppendNodeCommand
 
-AppendNodeCommand::AppendNodeCommand(DocumentImpl *document, NodeImpl *parent, NodeImpl *appendChild)
-    : EditCommand(new AppendNodeCommandImpl(document, parent, appendChild))
+AppendNodeCommand::AppendNodeCommand(DocumentImpl *document, NodeImpl *parentNode, NodeImpl *appendChild)
+    : EditCommand(new AppendNodeCommandImpl(document, parentNode, appendChild))
 {
 }
 
@@ -258,10 +269,10 @@ AppendNodeCommandImpl *AppendNodeCommand::impl() const
     return static_cast<AppendNodeCommandImpl *>(get());
 }
 
-NodeImpl *AppendNodeCommand::parent() const
+NodeImpl *AppendNodeCommand::parentNode() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
-    return impl()->parent();
+    return impl()->parentNode();
 }
 
 NodeImpl *AppendNodeCommand::appendChild() const
@@ -271,27 +282,37 @@ NodeImpl *AppendNodeCommand::appendChild() const
 }
 
 //------------------------------------------------------------------------------------------
-// DeleteKeyCommand
+// DeleteCollapsibleWhitespaceCommand
 
-DeleteKeyCommand::DeleteKeyCommand(DocumentImpl *document) 
-    : CompositeEditCommand(new DeleteKeyCommandImpl(document))
+DeleteCollapsibleWhitespaceCommand::DeleteCollapsibleWhitespaceCommand(DocumentImpl *document)
+    : CompositeEditCommand(new DeleteCollapsibleWhitespaceCommandImpl(document))
 {
 }
 
-DeleteKeyCommand::~DeleteKeyCommand() 
+DeleteCollapsibleWhitespaceCommand::DeleteCollapsibleWhitespaceCommand(DocumentImpl *document, const KHTMLSelection &selection)
+    : CompositeEditCommand(new DeleteCollapsibleWhitespaceCommandImpl(document, selection))
 {
 }
 
-DeleteKeyCommandImpl *DeleteKeyCommand::impl() const
+DeleteCollapsibleWhitespaceCommand::~DeleteCollapsibleWhitespaceCommand()
 {
-    return static_cast<DeleteKeyCommandImpl *>(get());
+}
+	
+DeleteCollapsibleWhitespaceCommandImpl *DeleteCollapsibleWhitespaceCommand::impl() const
+{
+    return static_cast<DeleteCollapsibleWhitespaceCommandImpl *>(get());
 }
 
 //------------------------------------------------------------------------------------------
 // DeleteSelectionCommand
 
-DeleteSelectionCommand::DeleteSelectionCommand(DOM::DocumentImpl *document)
+DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document)
     : CompositeEditCommand(new DeleteSelectionCommandImpl(document))
+{
+}
+
+DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const KHTMLSelection &selection)
+    : CompositeEditCommand(new DeleteSelectionCommandImpl(document, selection))
 {
 }
 
@@ -309,6 +330,11 @@ DeleteSelectionCommandImpl *DeleteSelectionCommand::impl() const
 
 DeleteTextCommand::DeleteTextCommand(DocumentImpl *document, TextImpl *node, long offset, long count)
     : EditCommand(new DeleteTextCommandImpl(document, node, offset, count))
+{
+}
+
+DeleteTextCommand::DeleteTextCommand(const DeleteTextCommand &o)
+    : EditCommand(o.impl())
 {
 }
 
@@ -359,8 +385,8 @@ InputNewlineCommandImpl *InputNewlineCommand::impl() const
 //------------------------------------------------------------------------------------------
 // InputTextCommand
 
-InputTextCommand::InputTextCommand(DocumentImpl *document, const DOMString &text) 
-    : CompositeEditCommand(new InputTextCommandImpl(document, text))
+InputTextCommand::InputTextCommand(DocumentImpl *document) 
+    : CompositeEditCommand(new InputTextCommandImpl(document))
 {
 }
 
@@ -373,22 +399,22 @@ InputTextCommandImpl *InputTextCommand::impl() const
     return static_cast<InputTextCommandImpl *>(get());
 }
 
-DOMString InputTextCommand::text() const
-{
-    IF_IMPL_NULL_RETURN_ARG(DOMString());
-    return impl()->text();
-}
-
 void InputTextCommand::deleteCharacter()
 {
     IF_IMPL_NULL_RETURN;
     impl()->deleteCharacter();
 }
 
-void InputTextCommand::coalesce(const DOM::DOMString &text)
+void InputTextCommand::input(const DOM::DOMString &text)
 {
     IF_IMPL_NULL_RETURN;
-    impl()->coalesce(text);
+    impl()->input(text);
+}
+
+unsigned long InputTextCommand::charactersAdded() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->charactersAdded();
 }
 
 //------------------------------------------------------------------------------------------
@@ -468,7 +494,7 @@ DOMString InsertTextCommand::text() const
 // JoinTextNodesCommand
 
 JoinTextNodesCommand::JoinTextNodesCommand(DocumentImpl *document, TextImpl *text1, TextImpl *text2)
-    : ModifyTextNodeCommand(new JoinTextNodesCommandImpl(document, text1, text2))
+    : EditCommand(new JoinTextNodesCommandImpl(document, text1, text2))
 {
 }
 
@@ -557,10 +583,33 @@ NodeImpl *RemoveNodeCommand::node() const
 }
 
 //------------------------------------------------------------------------------------------
+// RemoveNodeAndPruneCommand
+
+RemoveNodeAndPruneCommand::RemoveNodeAndPruneCommand(DocumentImpl *document, NodeImpl *node)
+    : CompositeEditCommand(new RemoveNodeAndPruneCommandImpl(document, node))
+{
+}
+
+RemoveNodeAndPruneCommand::~RemoveNodeAndPruneCommand()
+{
+}
+
+RemoveNodeAndPruneCommandImpl *RemoveNodeAndPruneCommand::impl() const
+{
+    return static_cast<RemoveNodeAndPruneCommandImpl *>(get());
+}
+
+NodeImpl *RemoveNodeAndPruneCommand::node() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->node();
+}
+
+//------------------------------------------------------------------------------------------
 // SplitTextNodeCommand
 
 SplitTextNodeCommand::SplitTextNodeCommand(DocumentImpl *document, TextImpl *text, long offset)
-    : ModifyTextNodeCommand(new SplitTextNodeCommandImpl(document, text, offset))
+    : EditCommand(new SplitTextNodeCommandImpl(document, text, offset))
 {
 }
 

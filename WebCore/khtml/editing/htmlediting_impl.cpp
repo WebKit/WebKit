@@ -29,12 +29,16 @@
 #include "html/html_elementimpl.h"
 #include "html/html_imageimpl.h"
 #include "htmlattrs.h"
+#include "htmltags.h"
 #include "khtml_part.h"
 #include "khtml_selection.h"
 #include "khtmlview.h"
 #include "rendering/render_object.h"
+#include "rendering/render_style.h"
+#include "rendering/render_text.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
+#include "xml/dom_edititerator.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_textimpl.h"
@@ -50,6 +54,7 @@ using DOM::DocumentImpl;
 using DOM::DOMPosition;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
+using DOM::EditIterator;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
@@ -64,14 +69,15 @@ using khtml::AppendNodeCommand;
 using khtml::AppendNodeCommandImpl;
 using khtml::CompositeEditCommand;
 using khtml::CompositeEditCommandImpl;
-using khtml::DeleteKeyCommand;
-using khtml::DeleteKeyCommandImpl;
+using khtml::DeleteCollapsibleWhitespaceCommand;
+using khtml::DeleteCollapsibleWhitespaceCommandImpl;
 using khtml::DeleteSelectionCommand;
 using khtml::DeleteSelectionCommandImpl;
 using khtml::DeleteTextCommand;
 using khtml::DeleteTextCommandImpl;
 using khtml::EditCommand;
 using khtml::EditCommandImpl;
+using khtml::InlineTextBox;
 using khtml::InputNewlineCommand;
 using khtml::InputNewlineCommandImpl;
 using khtml::InputTextCommand;
@@ -82,10 +88,13 @@ using khtml::InsertTextCommand;
 using khtml::InsertTextCommandImpl;
 using khtml::JoinTextNodesCommand;
 using khtml::JoinTextNodesCommandImpl;
-using khtml::ModifyTextNodeCommand;
-using khtml::ModifyTextNodeCommandImpl;
 using khtml::RemoveNodeCommand;
 using khtml::RemoveNodeCommandImpl;
+using khtml::RemoveNodeAndPruneCommand;
+using khtml::RemoveNodeAndPruneCommandImpl;
+using khtml::RenderObject;
+using khtml::RenderStyle;
+using khtml::RenderText;
 using khtml::PasteHTMLCommand;
 using khtml::PasteHTMLCommandImpl;
 using khtml::PasteImageCommand;
@@ -101,13 +110,133 @@ using khtml::TypingCommandImpl;
 #define ASSERT_NOT_REACHED() ((void)0)
 #define LOG(channel, formatAndArgs...) ((void)0)
 #define ERROR(formatAndArgs...) ((void)0)
+#if LOG_DISABLED
+#define debugPosition(a,b) ((void)0)
 #endif
+#endif
+
+static inline bool isNBSP(const QChar &c)
+{
+    return c == QChar(0xa0);
+}
+
+static inline bool isWS(const QChar &c)
+{
+    return c.isSpace() && c != QChar(0xa0);
+}
+
+static inline bool isWS(const DOMString &text)
+{
+    if (text.length() != 1)
+        return false;
+    
+    return isWS(text[0]);
+}
+
+static inline bool isWS(const DOMPosition &pos)
+{
+    if (!pos.node())
+        return false;
+        
+    if (!pos.node()->isTextNode())
+        return false;
+
+    const DOMString &string = static_cast<TextImpl *>(pos.node())->data();
+    return isWS(string[pos.offset()]);
+}
+
+static bool shouldPruneNode(NodeImpl *node)
+{
+    if (!node)
+        return false;
+
+    RenderObject *renderer = node->renderer();
+    if (!renderer)
+        return true;
+
+    if (node->hasChildNodes())
+        return false;
+        
+    if (renderer->isBR() || renderer->isBlockFlow() || renderer->isReplaced())
+        return false;
+        
+    if (node->isTextNode()) {
+        TextImpl *text = static_cast<TextImpl *>(node);
+        if (text->length() == 0)
+            return true;
+        return false;
+    }
+    
+    if (!node->isHTMLElement() && !node->isXMLElementNode())
+        return false;
+    
+    if (node->id() == ID_BODY)
+        return false;
+            
+    if (!node->isContentEditable())
+        return false;
+            
+    return true;
+}
+
+static DOMPosition leadingWhitespacePosition(const DOMPosition &pos)
+{
+    ASSERT(pos.notEmpty());
+
+    KHTMLSelection selection(pos);
+    DOMPosition prev = pos.previousCharacterPosition();
+    if (prev != pos && prev.node()->inSameContainingEditableBlock(pos.node()) && prev.node()->isTextNode()) {
+        DOMString string = static_cast<TextImpl *>(prev.node())->data();
+        if (isWS(string[prev.offset()]))
+            return prev;
+    }
+
+    return DOMPosition();
+}
+
+static DOMPosition trailingWhitespacePosition(const DOMPosition &pos)
+{
+    ASSERT(pos.notEmpty());
+
+    if (pos.node()->isTextNode()) {
+        TextImpl *textNode = static_cast<TextImpl *>(pos.node());
+        if (pos.offset() >= (long)textNode->length()) {
+            DOMPosition next = pos.nextCharacterPosition();
+            if (next != pos && next.node()->inSameContainingEditableBlock(pos.node()) && next.node()->isTextNode()) {
+                DOMString string = static_cast<TextImpl *>(next.node())->data();
+                if (isWS(string[0]))
+                    return next;
+            }
+        }
+        else {
+            DOMString string = static_cast<TextImpl *>(pos.node())->data();
+            if (isWS(string[pos.offset()]))
+                return pos;
+        }
+    }
+
+    return DOMPosition();
+}
+
+static bool textNodesAreJoinable(TextImpl *text1, TextImpl *text2)
+{
+    ASSERT(text1);
+    ASSERT(text2);
+    
+    return (text1->nextSibling() == text2);
+}
+
+static DOMString &nonBreakingSpaceString()
+{
+    static DOMString nonBreakingSpaceString = QString(QChar(0xa0));
+    return nonBreakingSpaceString;
+}
 
 //------------------------------------------------------------------------------------------
 // EditCommandImpl
 
 EditCommandImpl::EditCommandImpl(DocumentImpl *document) 
-    : SharedCommandImpl(), m_document(document), m_state(NotApplied), m_isCompositeStep(false)
+    : SharedCommandImpl(), m_document(document), m_state(NotApplied), m_parent(0)
 {
     ASSERT(m_document);
     ASSERT(m_document->part());
@@ -190,12 +319,22 @@ KHTMLSelection EditCommandImpl::currentSelection() const
 void EditCommandImpl::setStartingSelection(const KHTMLSelection &s)
 {
     m_startingSelection = s;
+    EditCommand cmd = parent();
+    while (cmd.notNull()) {
+        cmd.setStartingSelection(s);
+        cmd = cmd.parent();
+    }
     moveToStartingSelection();
 }
 
 void EditCommandImpl::setEndingSelection(const KHTMLSelection &s)
 {
     m_endingSelection = s;
+    EditCommand cmd = parent();
+    while (cmd.notNull()) {
+        cmd.setEndingSelection(s);
+        cmd = cmd.parent();
+    }
     moveToEndingSelection();
 }
 
@@ -211,6 +350,16 @@ void EditCommandImpl::moveToEndingSelection()
     ASSERT(m_document);
     ASSERT(m_document->part());
     m_document->part()->takeSelectionFrom(this, true);
+}
+
+EditCommand EditCommandImpl::parent() const
+{
+    return m_parent;
+}
+
+void EditCommandImpl::setParent(const EditCommand &cmd)
+{
+    m_parent = cmd;
 }
 
 //------------------------------------------------------------------------------------------
@@ -233,7 +382,6 @@ int CompositeEditCommandImpl::commandID() const
 void CompositeEditCommandImpl::doUnapply()
 {
     if (m_cmds.count() == 0) {
-        ERROR("Unapplying composite command containing zero steps");
         return;
     }
     
@@ -247,7 +395,6 @@ void CompositeEditCommandImpl::doUnapply()
 void CompositeEditCommandImpl::doReapply()
 {
     if (m_cmds.count() == 0) {
-        ERROR("Reapplying composite command containing zero steps");
         return;
     }
 
@@ -263,9 +410,8 @@ void CompositeEditCommandImpl::doReapply()
 //
 void CompositeEditCommandImpl::applyCommandToComposite(EditCommand &cmd)
 {
-    cmd.setIsCompositeStep();
+    cmd.setParent(this);
     cmd.apply();
-    setEndingSelection(cmd.endingSelection());
     m_cmds.append(cmd);
 }
 
@@ -312,6 +458,12 @@ void CompositeEditCommandImpl::removeNode(DOM::NodeImpl *removeChild)
     applyCommandToComposite(cmd);
 }
 
+void CompositeEditCommandImpl::removeNodeAndPrune(DOM::NodeImpl *removeChild)
+{
+    RemoveNodeAndPruneCommand cmd(document(), removeChild);
+    applyCommandToComposite(cmd);
+}
+
 void CompositeEditCommandImpl::splitTextNode(DOM::TextImpl *text, long offset)
 {
     SplitTextNodeCommand cmd(document(), text, offset);
@@ -336,6 +488,14 @@ void CompositeEditCommandImpl::deleteText(DOM::TextImpl *node, long offset, long
     applyCommandToComposite(cmd);
 }
 
+void CompositeEditCommandImpl::replaceText(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText)
+{
+    DeleteTextCommand deleteCommand(document(), node, offset, count);
+    applyCommandToComposite(deleteCommand);
+    InsertTextCommand insertCommand(document(), node, offset, replacementText);
+    applyCommandToComposite(insertCommand);
+}
+
 void CompositeEditCommandImpl::deleteSelection()
 {
     if (currentSelection().state() == KHTMLSelection::RANGE) {
@@ -344,88 +504,24 @@ void CompositeEditCommandImpl::deleteSelection()
     }
 }
 
-//------------------------------------------------------------------------------------------
-// ModifyTextNodeCommandImpl
-
-ModifyTextNodeCommandImpl::ModifyTextNodeCommandImpl(DocumentImpl *document, TextImpl *text, long offset)
-    : EditCommandImpl(document), m_text1(0), m_text2(text), m_offset(offset)
+void CompositeEditCommandImpl::deleteSelection(const KHTMLSelection &selection)
 {
-    ASSERT(m_text2);
-    ASSERT(m_text2->length() > 0);
-    ASSERT(m_offset >= 0);
-
-    m_text2->ref();
+    if (selection.state() == KHTMLSelection::RANGE) {
+        DeleteSelectionCommand cmd(document(), selection);
+        applyCommandToComposite(cmd);
+    }
 }
 
-ModifyTextNodeCommandImpl::ModifyTextNodeCommandImpl(DocumentImpl *document, TextImpl *text1, TextImpl *text2)
-    : EditCommandImpl(document), m_text1(text1), m_text2(text2), m_offset(0)
+void CompositeEditCommandImpl::deleteCollapsibleWhitespace()
 {
-    ASSERT(m_text1);
-    ASSERT(m_text2);
-    ASSERT(m_text1->nextSibling() == m_text2);
-    ASSERT(m_text1->length() > 0);
-    ASSERT(m_text2->length() > 0);
-
-    m_text1->ref();
-    m_text2->ref();
+    DeleteCollapsibleWhitespaceCommand cmd(document());
+    applyCommandToComposite(cmd);
 }
 
-ModifyTextNodeCommandImpl::~ModifyTextNodeCommandImpl()
+void CompositeEditCommandImpl::deleteCollapsibleWhitespace(const KHTMLSelection &selection)
 {
-    if (m_text2)
-        m_text2->deref();
-    if (m_text1)
-        m_text1->deref();
-}
-
-int ModifyTextNodeCommandImpl::commandID() const
-{
-    return ModifyTextNodeCommandID;
-}
-
-void ModifyTextNodeCommandImpl::splitTextNode()
-{
-    ASSERT(m_text2);
-    ASSERT(m_text1 == 0);
-    ASSERT(m_offset > 0);
-    ASSERT(state() == splitState());
-
-    ASSERT(m_offset >= m_text2->caretMinOffset() && m_offset <= m_text2->caretMaxOffset());
-
-    int exceptionCode = 0;
-    m_text1 = document()->createTextNode(m_text2->substringData(0, m_offset, exceptionCode));
-    ASSERT(exceptionCode == 0);
-    ASSERT(m_text1);
-    m_text1->ref();
-
-    m_text2->deleteData(0, m_offset, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    m_text2->parentNode()->insertBefore(m_text1, m_text2, exceptionCode);
-    ASSERT(exceptionCode == 0);
-        
-    ASSERT(m_text2->previousSibling()->isTextNode());
-    m_text1 = static_cast<TextImpl *>(m_text2->previousSibling());
-}
-
-void ModifyTextNodeCommandImpl::joinTextNodes()
-{
-    ASSERT(m_text1);
-    ASSERT(m_text2);
-    ASSERT(state() == joinState());
-    
-    ASSERT(m_text1->nextSibling() == m_text2);
-
-    int exceptionCode = 0;
-    m_text2->insertData(0, m_text1->data(), exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    m_text2->parent()->removeChild(m_text1, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    m_offset = m_text1->length();
-    m_text1->deref();
-    m_text1 = 0;
+    DeleteCollapsibleWhitespaceCommand cmd(document(), selection);
+    applyCommandToComposite(cmd);
 }
 
 //==========================================================================================
@@ -433,11 +529,11 @@ void ModifyTextNodeCommandImpl::joinTextNodes()
 //------------------------------------------------------------------------------------------
 // AppendNodeCommandImpl
 
-AppendNodeCommandImpl::AppendNodeCommandImpl(DocumentImpl *document, NodeImpl *parent, NodeImpl *appendChild)
-    : EditCommandImpl(document), m_parent(parent), m_appendChild(appendChild)
+AppendNodeCommandImpl::AppendNodeCommandImpl(DocumentImpl *document, NodeImpl *parentNode, NodeImpl *appendChild)
+    : EditCommandImpl(document), m_parentNode(parentNode), m_appendChild(appendChild)
 {
-    ASSERT(m_parent);
-    m_parent->ref();
+    ASSERT(m_parentNode);
+    m_parentNode->ref();
 
     ASSERT(m_appendChild);
     m_appendChild->ref();
@@ -445,8 +541,8 @@ AppendNodeCommandImpl::AppendNodeCommandImpl(DocumentImpl *document, NodeImpl *p
 
 AppendNodeCommandImpl::~AppendNodeCommandImpl()
 {
-    if (m_parent)
-        m_parent->deref();
+    if (m_parentNode)
+        m_parentNode->deref();
     if (m_appendChild)
         m_appendChild->deref();
 }
@@ -458,87 +554,175 @@ int AppendNodeCommandImpl::commandID() const
 
 void AppendNodeCommandImpl::doApply()
 {
-    ASSERT(m_parent);
+    ASSERT(m_parentNode);
     ASSERT(m_appendChild);
 
     int exceptionCode = 0;
-    m_parent->appendChild(m_appendChild, exceptionCode);
+    m_parentNode->appendChild(m_appendChild, exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
 void AppendNodeCommandImpl::doUnapply()
 {
-    ASSERT(m_parent);
+    ASSERT(m_parentNode);
     ASSERT(m_appendChild);
     ASSERT(state() == Applied);
 
     int exceptionCode = 0;
-    m_parent->removeChild(m_appendChild, exceptionCode);
+    m_parentNode->removeChild(m_appendChild, exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
 //------------------------------------------------------------------------------------------
-// DeleteKeyCommandImpl
+// DeleteCollapsibleWhitespaceCommandImpl
 
-DeleteKeyCommandImpl::DeleteKeyCommandImpl(DocumentImpl *document) 
-    : CompositeEditCommandImpl(document)
+DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl(DocumentImpl *document)
+    : CompositeEditCommandImpl(document), m_selectionToCollapse(currentSelection()), m_charactersDeleted(0)
 {
 }
 
-DeleteKeyCommandImpl::~DeleteKeyCommandImpl() 
+DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl(DocumentImpl *document, const KHTMLSelection &selection)
+    : CompositeEditCommandImpl(document), m_selectionToCollapse(selection), m_charactersDeleted(0)
 {
 }
 
-int DeleteKeyCommandImpl::commandID() const
+DeleteCollapsibleWhitespaceCommandImpl::~DeleteCollapsibleWhitespaceCommandImpl()
 {
-    return DeleteKeyCommandID;
 }
 
-void DeleteKeyCommandImpl::doApply()
+int DeleteCollapsibleWhitespaceCommandImpl::commandID() const
 {
-    KHTMLPart *part = document()->part();
-    ASSERT(part);
+    return DeleteCollapsibleWhitespaceCommandID;
+}
 
-    KHTMLSelection selection = part->selection();
-    ASSERT(!selection.isEmpty());
+static bool shouldDeleteUpstreamPosition(const DOMPosition &pos)
+{
+    if (!pos.node()->isTextNode())
+        return false;
+        
+    RenderObject *renderer = pos.node()->renderer();
+    if (!renderer)
+        return true;
+        
+    TextImpl *textNode = static_cast<TextImpl *>(pos.node());
+    if (pos.offset() >= (long)textNode->length())
+        return false;
 
-    // Delete the current selection
-    if (selection.state() == KHTMLSelection::RANGE) {
-        deleteSelection();
-        setEndingSelection(currentSelection());
-        return;
+    if (pos.isLastRenderedPositionInEditableBlock())
+        return false;
+
+    if (pos.isFirstRenderedPositionOnLine())
+        return false;
+
+    RenderText *textRenderer = static_cast<RenderText *>(renderer);
+
+    for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+        if (pos.offset() < box->m_start) {
+            return true;
+        }
+        if (pos.offset() >= box->m_start && pos.offset() < box->m_start + box->m_len)
+            return false;
+    }
+    
+    return true;
+}
+
+DOMPosition DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const DOMPosition &pos)
+{
+    DOMPosition upstream = pos.equivalentUpstreamPosition();
+    DOMPosition downstream = pos.equivalentDownstreamPosition();
+    
+    bool del = shouldDeleteUpstreamPosition(upstream);
+
+    LOG(Editing, "pos:        %s [%p:%d]\n", getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
+    if (upstream == downstream) {
+        LOG(Editing, "same:       %s [%p:%d]\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
+    }
+    else {
+        LOG(Editing, "upstream:   %s %s [%p:%d]\n", del ? "DELETE" : "SKIP", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
+        EditIterator it(upstream);
+        for (it.next(); it.current() != downstream; it.next()) {
+            if (it.current().node()->isTextNode() && (long)static_cast<TextImpl *>(it.current().node())->length() == it.current().offset())
+                LOG(Editing, "   node:    AT END %s [%p:%d]\n", getTagName(it.current().node()->id()).string().latin1(), it.current().node(), it.current().offset());
+            else
+                LOG(Editing, "   node:    DELETE %s [%p:%d]\n", getTagName(it.current().node()->id()).string().latin1(), it.current().node(), it.current().offset());
+        }
+        LOG(Editing, "downstream: %s [%p:%d]\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
     }
 
-    NodeImpl *caretNode = selection.startNode();
+    if (upstream == downstream)
+        return upstream;
+        
+    EditIterator it(upstream);
+    DOMPosition deleteStart = upstream;
+    if (!del) {
+        deleteStart = it.peekNext();
+        if (deleteStart == downstream)
+            return upstream;
+    }
+    
+    DOMPosition endingPosition = upstream;
+    
+    while (it.current() != downstream) {
 
-    if (caretNode->isTextNode()) {
-        // Check if we can delete character at cursor
-        int offset = selection.startOffset() - 1;
-        if (offset >= caretNode->caretMinOffset()) {
-            TextImpl *textNode = static_cast<TextImpl *>(caretNode);
-            deleteText(textNode, offset, 1);
-            selection = KHTMLSelection(textNode, offset);
-            setEndingSelection(selection);
-            return;
+        DOMPosition next = it.peekNext();
+        if (next.node() != deleteStart.node()) {
+            ASSERT(deleteStart.node()->isTextNode());
+            TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
+            unsigned long count = it.current().offset() - deleteStart.offset();
+            if (count == textNode->length()) {
+                LOG(Editing, "   removeNodeAndPrune 1: [%p]\n", textNode);
+                removeNodeAndPrune(textNode);
+            }
+            else {
+                LOG(Editing, "   deleteText 1: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), it.current().offset() - deleteStart.offset());
+                deleteText(textNode, deleteStart.offset(), count);
+            }
+            deleteStart = next;
+        }
+        else if (next == downstream) {
+            ASSERT(deleteStart.node() == downstream.node());
+            ASSERT(downstream.node()->isTextNode());
+            TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
+            unsigned long count = downstream.offset() - deleteStart.offset();
+            ASSERT(count <= textNode->length());
+            if (count == textNode->length()) {
+                LOG(Editing, "   removeNodeAndPrune 2: [%p]\n", textNode);
+                removeNodeAndPrune(textNode);
+            }
+            else {
+                LOG(Editing, "   deleteText 2: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), count);
+                deleteText(textNode, deleteStart.offset(), count);
+                m_charactersDeleted = count;
+                endingPosition = DOMPosition(downstream.node(), downstream.offset() - m_charactersDeleted);
+            }
         }
         
-        // Check if previous sibling is a BR element
-        NodeImpl *previousSibling = caretNode->previousSibling();
-        if (previousSibling && previousSibling->renderer() && previousSibling->renderer()->isBR()) {
-            removeNode(previousSibling);
-            return;
+        it.setPosition(next);
+    }
+    
+    return endingPosition;
+}
+
+void DeleteCollapsibleWhitespaceCommandImpl::doApply()
+{
+    int state = m_selectionToCollapse.state();
+    if (state == KHTMLSelection::CARET) {
+        DOMPosition endPosition = deleteWhitespace(m_selectionToCollapse.startPosition());
+        setEndingSelection(endPosition);
+        LOG(Editing, "-----------------------------------------------------\n");
+    }
+    else if (state == KHTMLSelection::RANGE) {
+        DOMPosition startPosition = deleteWhitespace(m_selectionToCollapse.startPosition());
+        LOG(Editing, "-----------------------------------------------------\n");
+        DOMPosition endPosition = m_selectionToCollapse.endPosition();
+        if (m_charactersDeleted > 0 && startPosition.node() == endPosition.node()) {
+            LOG(Editing, "adjust end position by %d\n", m_charactersDeleted);
+            endPosition = DOMPosition(endPosition.node(), endPosition.offset() - m_charactersDeleted);
         }
-        
-        // Check if previous leaf node is a text node
-        NodeImpl *previousLeafNode = caretNode->previousLeafNode();
-        if (previousLeafNode && previousLeafNode->isTextNode()) {
-            TextImpl *textNode = static_cast<TextImpl *>(previousLeafNode);
-            offset = previousLeafNode->caretMaxOffset() - 1;
-            deleteText(textNode, offset, 1);
-            selection = KHTMLSelection(textNode, offset);
-            setEndingSelection(selection);
-            return;
-        }
+        endPosition = deleteWhitespace(endPosition);
+        setEndingSelection(KHTMLSelection(startPosition, endPosition));
+        LOG(Editing, "=====================================================\n");
     }
 }
 
@@ -548,6 +732,13 @@ void DeleteKeyCommandImpl::doApply()
 DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *document)
     : CompositeEditCommandImpl(document)
 {
+    m_selectionToDelete = startingSelection();
+}
+
+DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const KHTMLSelection &selection)
+    : CompositeEditCommandImpl(document)
+{
+    m_selectionToDelete = selection;
 }
 
 DeleteSelectionCommandImpl::~DeleteSelectionCommandImpl()
@@ -559,124 +750,211 @@ int DeleteSelectionCommandImpl::commandID() const
     return DeleteSelectionCommandID;
 }
 
+void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
+{
+    KHTMLSelection selection = currentSelection();
+
+    if (selection.state() != KHTMLSelection::CARET)
+        return;
+
+    DOMPosition pos = selection.startPosition();
+    
+    if (!pos.node()->isTextNode())
+        return;
+
+    TextImpl *textNode = static_cast<TextImpl *>(pos.node());
+    
+    if (pos.offset() == 0) {
+        EditIterator it(pos);
+        DOMPosition prev = it.previous();
+        if (prev == pos)
+            return;
+        if (prev.node()->isTextNode()) {
+            TextImpl *prevTextNode = static_cast<TextImpl *>(prev.node());
+            if (textNodesAreJoinable(prevTextNode, textNode)) {
+                joinTextNodes(prevTextNode, textNode);
+                setEndingSelection(DOMPosition(textNode, prevTextNode->length()));
+                LOG(Editing, "joinTextNodesWithSameStyle [1]\n");
+            }
+        }
+    }
+    else if (pos.offset() == (long)textNode->length()) {
+        EditIterator it(pos);
+        DOMPosition next = it.next();
+        if (next == pos)
+            return;
+        if (next.node()->isTextNode()) {
+            TextImpl *nextTextNode = static_cast<TextImpl *>(next.node());
+            if (textNodesAreJoinable(textNode, nextTextNode)) {
+                joinTextNodes(textNode, nextTextNode);
+                setEndingSelection(DOMPosition(nextTextNode, pos.offset()));
+                LOG(Editing, "joinTextNodesWithSameStyle [2]\n");
+            }
+        }
+    }
+}
+
+static void debugPosition(const char *prefix, const DOMPosition &pos)
+{
+    LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
+}
+
+enum { NoPositionModification, MoveDownstreamPositionModification, MoveToNextCharacterModification };
+
 void DeleteSelectionCommandImpl::doApply()
 {
-    if (startingSelection().isEmpty()) {
+    if (m_selectionToDelete.state() != KHTMLSelection::RANGE)
         return;
-    }
 
-    KHTMLSelection selection = startingSelection();
-
-    //
-    // Figure out where to place the caret after doing the delete:
-    //
-    // 1. If the start node is not completely selected, use the start 
-    //    node and start offset for the new position; else
-    // 2. If the start and end nodes are completely selected:
-    //       a. If there is an editable node following the end node, 
-    //          place the caret in the min caret offset of that node; else
-    //       b. If there is an editable node before the start node, 
-    //          place the caret in the max caret offset of that node; else
-    //       c. There is no more editable content in the document.
-    //          EDIT FIXME: We do not handle this case now
-    // 3. If the start node is completely selected and the end node is 
-    //    different than the start node and it is not completely selected,
-    //    use the end node and the end node min caret for the new position; else
-    //
-
-    DOMPosition deleteStart = DOMPosition(selection.startNode(), selection.startOffset());
-    DOMPosition deleteEnd = DOMPosition(selection.endNode(), selection.endOffset());
-
-    bool startIsCompletelySelected = 
-        deleteStart.offset() == deleteStart.node()->caretMinOffset() &&
-        ((deleteStart.node() != deleteEnd.node()) ||
-         (deleteEnd.offset() == deleteEnd.node()->caretMaxOffset()));
-
-    bool endIsCompletelySelected = 
-        deleteEnd.offset() == deleteEnd.node()->caretMaxOffset() &&
-        ((deleteStart.node() != deleteEnd.node()) ||
-         (deleteStart.offset() == deleteStart.node()->caretMinOffset()));
+    KHTMLSelection selection = m_selectionToDelete;
 
     DOMPosition endingPosition;
+    bool adjustEndingPositionDownstream = false;
 
-    if (!startIsCompletelySelected) {
-        // Case 1
-        endingPosition = DOMPosition(deleteStart.node(), deleteStart.offset());
-    }
-    else if (endIsCompletelySelected) {
-        DOMPosition pos = selection.nextCharacterPosition(deleteEnd);
-        if (pos != deleteEnd) {
-            // Case 2a
-            endingPosition = DOMPosition(pos.node(), pos.node()->caretMinOffset());
-        }
-        else {
-            pos = selection.previousCharacterPosition(deleteStart);
-            if (pos != deleteStart) {
-                // Case 2b
-                endingPosition = DOMPosition(pos.node(), pos.node()->caretMaxOffset());
-            }
-            else {
-                // Case 2c
-                // EDIT FIXME
-                endingPosition = DOMPosition();
-            }
-        }
-    }
-    else {
-        // Case 3
-        endingPosition = DOMPosition(deleteEnd.node(), deleteEnd.node()->caretMinOffset());
-    }
+    DOMPosition upstreamStart = selection.startPosition().equivalentUpstreamPosition();
+    DOMPosition downstreamStart = selection.startPosition().equivalentDownstreamPosition();
+    DOMPosition upstreamEnd = selection.endPosition().equivalentUpstreamPosition();
+    DOMPosition downstreamEnd = selection.endPosition().equivalentDownstreamPosition();
 
+    bool startCompletelySelected = 
+        downstreamStart.offset() <= downstreamStart.node()->caretMinOffset() &&
+        ((downstreamStart.node() != upstreamEnd.node()) ||
+         (upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset()));
+
+    bool endCompletelySelected = 
+        upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset() &&
+        ((downstreamStart.node() != upstreamEnd.node()) ||
+         (downstreamStart.offset() <= downstreamStart.node()->caretMinOffset()));
+
+    unsigned long startRenderedOffset = downstreamStart.renderedOffset();
+    //unsigned long endRenderedOffset = upstreamEnd.renderedOffset();
+    
+    bool startAtStartOfRootEditableBlock = startRenderedOffset == 0 && downstreamStart.inFirstEditableInRootEditableBlock();
+    bool startAtStartOfBlock = startAtStartOfRootEditableBlock || 
+        (startRenderedOffset == 0 && downstreamStart.inFirstEditableInContainingEditableBlock());
+    bool endAtEndOfBlock = downstreamEnd.isLastRenderedPositionInEditableBlock();
+
+    debugPosition("upstreamStart:       ", upstreamStart);
+    debugPosition("downstreamStart:     ", downstreamStart);
+    debugPosition("upstreamEnd:         ", upstreamEnd);
+    debugPosition("downstreamEnd:       ", downstreamEnd);
+    LOG(Editing,  "start selected:      %s", startCompletelySelected ? "YES" : "NO");
+    LOG(Editing,  "at start block:      %s", startAtStartOfBlock ? "YES" : "NO");
+    LOG(Editing,  "at start root block: %s", startAtStartOfRootEditableBlock ? "YES" : "NO");
+    LOG(Editing,  "at end block:        %s", endAtEndOfBlock ? "YES" : "NO");
+
+    // Start is not completely selected
+    if (startAtStartOfBlock) {
+        LOG(Editing,  "ending position case 1");
+        endingPosition = DOMPosition(downstreamStart.node()->containingEditableBlock(), 1);
+        adjustEndingPositionDownstream = true;
+    }
+    else if (!startCompletelySelected) {
+        LOG(Editing,  "ending position case 2");
+        endingPosition = upstreamStart;
+        if (upstreamStart.node()->id() == ID_BR && upstreamStart.offset() == 1)
+            adjustEndingPositionDownstream = true;
+    }
+    else if (upstreamStart != downstreamStart) {
+        LOG(Editing,  "ending position case 3");
+        endingPosition = upstreamStart;
+        if (downstreamStart.node()->id() == ID_BR && downstreamStart.offset() == 0)
+            adjustEndingPositionDownstream = true;
+    }
+   
+    //
+    // Figure out the whitespace conversions to do
+    //
+    if (startAtStartOfBlock && !endAtEndOfBlock) {
+        // convert trailing whitespace
+        DOMPosition trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
+        if (trailing.notEmpty()) {
+            debugPosition("convertTrailingWhitespace: ", trailing);
+            DOMPosition collapse = trailing.nextCharacterPosition();
+            if (collapse != trailing)
+                deleteCollapsibleWhitespace(collapse);
+            TextImpl *textNode = static_cast<TextImpl *>(trailing.node());
+            replaceText(textNode, trailing.offset(), 1, nonBreakingSpaceString());
+        }
+    }
+    else if (!startAtStartOfBlock && endAtEndOfBlock) {
+        // convert leading whitespace
+        DOMPosition leading = leadingWhitespacePosition(upstreamStart.equivalentUpstreamPosition());
+        if (leading.notEmpty()) {
+            debugPosition("convertLeadingWhitespace:  ", leading);
+            TextImpl *textNode = static_cast<TextImpl *>(leading.node());
+            replaceText(textNode, leading.offset(), 1, nonBreakingSpaceString());
+        }
+    }
+    else if (!startAtStartOfBlock && !endAtEndOfBlock) {
+        // convert contiguous whitespace
+        DOMPosition leading = leadingWhitespacePosition(upstreamStart.equivalentUpstreamPosition());
+        DOMPosition trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
+        if (leading.notEmpty() && trailing.notEmpty()) {
+            debugPosition("convertLeadingWhitespace [contiguous]:  ", leading);
+            TextImpl *textNode = static_cast<TextImpl *>(leading.node());
+            replaceText(textNode, leading.offset(), 1, nonBreakingSpaceString());
+        }
+    }
+        
     //
     // Do the delete
     //
-    NodeImpl *n = deleteStart.node()->nextLeafNode();
+    NodeImpl *n = downstreamStart.node()->traverseNextNode();
 
     // work on start node
-    if (startIsCompletelySelected) {
-        removeNode(deleteStart.node());
+    if (startCompletelySelected) {
+        removeNodeAndPrune(downstreamStart.node());
     }
-    else if (deleteStart.node()->isTextNode()) {
-        TextImpl *text = static_cast<TextImpl *>(deleteStart.node());
-        int endOffset = text == deleteEnd.node() ? deleteEnd.offset() : text->length();
-        if (endOffset > deleteStart.offset()) {
-            deleteText(text, deleteStart.offset(), endOffset - deleteStart.offset());
+    else if (downstreamStart.node()->isTextNode()) {
+        TextImpl *text = static_cast<TextImpl *>(downstreamStart.node());
+        int endOffset = text == upstreamEnd.node() ? upstreamEnd.offset() : text->length();
+        if (endOffset > downstreamStart.offset()) {
+            deleteText(text, downstreamStart.offset(), endOffset - downstreamStart.offset());
         }
     }
     else {
-        ASSERT_NOT_REACHED();
+        // we have clipped the end of a non-text element
+        // the offset must be 1 here. if it is, do nothing and move on.
+        ASSERT(downstreamStart.offset() == 1);
     }
 
-    if (deleteStart.node() != deleteEnd.node()) {
+    if (downstreamStart.node() != upstreamEnd.node()) {
         // work on intermediate nodes
-        while (n != deleteEnd.node()) {
+        while (n != upstreamEnd.node()) {
             NodeImpl *d = n;
-            n = n->nextLeafNode();
-            removeNode(d);
+            n = n->traverseNextNode();
+            if (d->renderer() && d->renderer()->isEditable())
+                removeNodeAndPrune(d);
         }
         
         // work on end node
-        ASSERT(n == deleteEnd.node());
-        if (endIsCompletelySelected) {
-            removeNode(deleteEnd.node());
+        ASSERT(n == upstreamEnd.node());
+        if (endCompletelySelected) {
+            removeNodeAndPrune(upstreamEnd.node());
         }
-        else if (deleteEnd.node()->isTextNode()) {
-            if (deleteEnd.offset() > 0) {
-                TextImpl *text = static_cast<TextImpl *>(deleteEnd.node());
-                deleteText(text, 0, deleteEnd.offset());
+        else if (upstreamEnd.node()->isTextNode()) {
+            if (upstreamEnd.offset() > 0) {
+                TextImpl *text = static_cast<TextImpl *>(upstreamEnd.node());
+                deleteText(text, 0, upstreamEnd.offset());
             }
         }
         else {
-            ASSERT_NOT_REACHED();
+            // we have clipped the beginning of a non-text element
+            // the offset must be 0 here. if it is, do nothing and move on.
+            ASSERT(downstreamStart.offset() == 0);
         }
     }
 
-    //
-    // set the ending selection
-    //
-    selection.moveTo(endingPosition);
-    selection.moveToRenderedContent();
-    setEndingSelection(selection);
+    if (adjustEndingPositionDownstream) {
+        LOG(Editing,  "adjust ending position downstream");
+        endingPosition = endingPosition.equivalentDownstreamPosition();
+    }
+
+    debugPosition("ending position:     ", endingPosition);
+    setEndingSelection(endingPosition);
+
+    LOG(Editing, "-----------------------------------------------------\n");
 }
 
 //------------------------------------------------------------------------------------------
@@ -752,8 +1030,12 @@ void InputNewlineCommandImpl::doApply()
     // Delete the current selection
     deleteSelection();
     
+    // reset the current selection since it may have changed due to the delete
+    selection = currentSelection();
+
     int exceptionCode = 0;
     ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
+    ASSERT(exceptionCode == 0);
 
     TextImpl *textNode = static_cast<TextImpl *>(selection.startNode());
     bool atStart = selection.startOffset() == textNode->renderer()->caretMinOffset();
@@ -767,8 +1049,8 @@ void InputNewlineCommandImpl::doApply()
     else if (atEnd) {
         insertNodeAfter(breakNode, textNode);
         // Set the cursor at the beginning of the the BR.
-        selection = selection.nextCharacterPosition();
-        setEndingSelection(selection);
+        DOMPosition pos(breakNode, 0);
+        setEndingSelection(pos);
     }
     else {
         TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.startOffset(), exceptionCode));
@@ -787,16 +1069,15 @@ void InputNewlineCommandImpl::doApply()
 //------------------------------------------------------------------------------------------
 // InputTextCommandImpl
 
-InputTextCommandImpl::InputTextCommandImpl(DocumentImpl *document, const DOMString &text) 
-    : CompositeEditCommandImpl(document)
+InputTextCommandImpl::InputTextCommandImpl(DocumentImpl *document) 
+    : CompositeEditCommandImpl(document), m_insertedTextNode(0), m_charactersAdded(0)
 {
-    ASSERT(!text.isEmpty());
-    m_text = text; 
-    nbsp = DOMString(QChar(0xa0));
 }
 
 InputTextCommandImpl::~InputTextCommandImpl() 
 {
+    if (m_insertedTextNode)
+        m_insertedTextNode->deref();
 }
 
 int InputTextCommandImpl::commandID() const
@@ -806,20 +1087,16 @@ int InputTextCommandImpl::commandID() const
 
 void InputTextCommandImpl::doApply()
 {
-    execute(m_text);
 }
 
-void InputTextCommandImpl::coalesce(const DOMString &text)
+void InputTextCommandImpl::input(const DOMString &text)
 {
-    ASSERT(state() == Applied);
     execute(text);
-    m_text += text;
 }
 
 void InputTextCommandImpl::deleteCharacter()
 {
     ASSERT(state() == Applied);
-    ASSERT(m_text.length() > 0);
 
     KHTMLSelection selection = currentSelection();
 
@@ -834,24 +1111,111 @@ void InputTextCommandImpl::deleteCharacter()
         ASSERT(exceptionCode == 0);
         selection = KHTMLSelection(textNode, offset);
         setEndingSelection(selection);
-        m_text = m_text.string().left(m_text.length() - 1);
+        m_charactersAdded--;
     }
+}
+
+DOMPosition InputTextCommandImpl::prepareForTextInsertion()
+{
+    // Prepare for text input by looking at the current position.
+    // It may be necessary to insert a text node to receive characters.
+    KHTMLSelection selection = currentSelection();
+    ASSERT(selection.state() == KHTMLSelection::CARET);
+    
+    DOMPosition pos = selection.startPosition().equivalentUpstreamPosition();
+    if (!pos.node()->inSameContainingEditableBlock(selection.startNode()))
+        pos = selection.startPosition();
+    
+    if (!pos.node()->isTextNode()) {
+        if (!m_insertedTextNode) {
+            m_insertedTextNode = document()->createTextNode("");
+            m_insertedTextNode->setRendererIsNeeded();
+            m_insertedTextNode->ref();
+        }
+        
+        if (pos.node()->isEditableBlock())
+            appendNode(pos.node(), m_insertedTextNode);
+        else if (pos.node()->id() == ID_BR || pos.offset() == 1)
+            insertNodeAfter(m_insertedTextNode, pos.node());
+        else {
+            ASSERT(pos.offset() == 0);
+            insertNodeBefore(m_insertedTextNode, pos.node());
+        }
+        
+        pos = DOMPosition(m_insertedTextNode, 0);
+    }
+    
+    return pos;
 }
 
 void InputTextCommandImpl::execute(const DOMString &text)
 {
     KHTMLSelection selection = currentSelection();
 
-    if (!selection.startNode()->isTextNode())
-        return;
-
     // Delete the current selection
     deleteSelection();
     
-    TextImpl *textNode = static_cast<TextImpl *>(selection.startNode());
-    insertText(textNode, selection.startOffset(), text);
-    selection = KHTMLSelection(selection.startNode(), selection.startOffset() + text.length());
+    // Make sure the document is set up to receive text
+    DOMPosition pos = prepareForTextInsertion();
+    
+    TextImpl *textNode = static_cast<TextImpl *>(pos.node());
+    long offset = pos.offset();
+    
+    // This is a temporary implementation for inserting adjoining spaces
+    // into a document. We are working on a CSS-related whitespace solution
+    // that will replace this some day.
+    if (isWS(text))
+        insertSpace(textNode, offset);
+    else
+        insertText(textNode, offset, text);
+    selection = KHTMLSelection(textNode, offset + text.length());
     setEndingSelection(selection);
+    m_charactersAdded += text.length();
+}
+
+void InputTextCommandImpl::insertSpace(TextImpl *textNode, unsigned long offset)
+{
+    ASSERT(textNode);
+
+    DOMString text(textNode->data());
+
+    // count up all spaces and newlines in front of the caret
+    // delete all collapsed ones
+    // this will work out OK since the offset we have been passed has been upstream-ized 
+    int count = 0;
+    for (unsigned int i = offset; i < text.length(); i++) {
+        if (isWS(text[i]))
+            count++;
+        else 
+            break;
+    }
+    if (count > 0) {
+        // By checking the character at the downstream position, we can
+        // check if there is a rendered WS at the caret
+        DOMPosition pos(textNode, offset);
+        DOMPosition downstream = pos.equivalentDownstreamPosition();
+        if (downstream.offset() < (long)text.length() && isWS(text[downstream.offset()]))
+            count--; // leave this WS in
+        if (count > 0)
+            deleteText(textNode, offset, count);
+    }
+
+    if (offset > 0 && offset <= text.length() - 1 && !isWS(text[offset]) && !isWS(text[offset - 1])) {
+        // insert a "regular" space
+        insertText(textNode, offset, " ");
+        return;
+    }
+
+    if (text.length() >= 2 && offset >= 2 && isNBSP(text[offset - 2]) && isNBSP(text[offset - 1])) {
+        // DOM looks like this:
+        // nbsp nbsp caret
+        // insert a space between the two nbsps
+        insertText(textNode, offset - 1, " ");
+        return;
+    }
+
+    // insert an nbsp
+    insertText(textNode, offset, nonBreakingSpaceString());
 }
 
 //------------------------------------------------------------------------------------------
@@ -951,12 +1315,24 @@ void InsertTextCommandImpl::doUnapply()
 // JoinTextNodesCommandImpl
 
 JoinTextNodesCommandImpl::JoinTextNodesCommandImpl(DocumentImpl *document, TextImpl *text1, TextImpl *text2)
-    : ModifyTextNodeCommandImpl(document, text1, text2)
+    : EditCommandImpl(document), m_text1(text1), m_text2(text2)
 {
+    ASSERT(m_text1);
+    ASSERT(m_text2);
+    ASSERT(m_text1->nextSibling() == m_text2);
+    ASSERT(m_text1->length() > 0);
+    ASSERT(m_text2->length() > 0);
+
+    m_text1->ref();
+    m_text2->ref();
 }
 
 JoinTextNodesCommandImpl::~JoinTextNodesCommandImpl()
 {
+    if (m_text1)
+        m_text1->deref();
+    if (m_text2)
+        m_text2->deref();
 }
 
 int JoinTextNodesCommandImpl::commandID() const
@@ -966,12 +1342,35 @@ int JoinTextNodesCommandImpl::commandID() const
 
 void JoinTextNodesCommandImpl::doApply()
 {
-    joinTextNodes();
+    ASSERT(m_text1);
+    ASSERT(m_text2);
+    ASSERT(m_text1->nextSibling() == m_text2);
+
+    int exceptionCode = 0;
+    m_text2->insertData(0, m_text1->data(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    m_text2->parent()->removeChild(m_text1, exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    m_offset = m_text1->length();
 }
 
 void JoinTextNodesCommandImpl::doUnapply()
 {
-    splitTextNode();
+    ASSERT(m_text2);
+    ASSERT(m_offset > 0);
+
+    int exceptionCode = 0;
+
+    m_text2->deleteData(0, m_offset, exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    m_text2->parentNode()->insertBefore(m_text1, m_text2, exceptionCode);
+    ASSERT(exceptionCode == 0);
+        
+    ASSERT(m_text2->previousSibling()->isTextNode());
+    ASSERT(m_text2->previousSibling() == m_text1);
 }
 
 //------------------------------------------------------------------------------------------
@@ -1152,15 +1551,55 @@ void RemoveNodeCommandImpl::doUnapply()
 }
 
 //------------------------------------------------------------------------------------------
+// RemoveNodeAndPruneCommandImpl
+
+RemoveNodeAndPruneCommandImpl::RemoveNodeAndPruneCommandImpl(DocumentImpl *document, NodeImpl *removeChild)
+    : CompositeEditCommandImpl(document), m_removeChild(removeChild)
+{
+    ASSERT(m_removeChild);
+    m_removeChild->ref();
+}
+
+RemoveNodeAndPruneCommandImpl::~RemoveNodeAndPruneCommandImpl()
+{
+    if (m_removeChild)
+        m_removeChild->deref();
+}
+
+int RemoveNodeAndPruneCommandImpl::commandID() const
+{
+    return RemoveNodeAndPruneCommandID;
+}
+
+void RemoveNodeAndPruneCommandImpl::doApply()
+{
+    NodeImpl *editableBlock = m_removeChild->containingEditableBlock();
+    NodeImpl *pruneNode = m_removeChild;
+    NodeImpl *node = pruneNode->traversePreviousNode();
+    removeNode(pruneNode);
+    while (1) {
+        if (editableBlock != node->containingEditableBlock() || !shouldPruneNode(node))
+            break;
+        pruneNode = node;
+        node = node->traversePreviousNode();
+        removeNode(pruneNode);
+    }
+}
+
+//------------------------------------------------------------------------------------------
 // SplitTextNodeCommandImpl
 
 SplitTextNodeCommandImpl::SplitTextNodeCommandImpl(DocumentImpl *document, TextImpl *text, long offset)
-    : ModifyTextNodeCommandImpl(document, text, offset)
+    : EditCommandImpl(document), m_text2(text), m_offset(offset)
 {
 }
 
 SplitTextNodeCommandImpl::~SplitTextNodeCommandImpl()
 {
+    if (m_text1)
+        m_text1->deref();
+    if (m_text2)
+        m_text2->deref();
 }
 
 int SplitTextNodeCommandImpl::commandID() const
@@ -1170,19 +1609,56 @@ int SplitTextNodeCommandImpl::commandID() const
 
 void SplitTextNodeCommandImpl::doApply()
 {
-    splitTextNode();
+    ASSERT(m_text2);
+    ASSERT(m_offset > 0);
+
+    int exceptionCode = 0;
+
+    // EDIT FIXME: This should use better smarts for figuring out which portion
+    // of the split to copy (based on their comparitive sizes). We should also
+    // just use the DOM's splitText function.
+    
+    if (!m_text1) {
+        // create only if needed.
+        // if reapplying, this object will already exist.
+        m_text1 = document()->createTextNode(m_text2->substringData(0, m_offset, exceptionCode));
+        ASSERT(exceptionCode == 0);
+        ASSERT(m_text1);
+        m_text1->ref();
+    }
+
+    m_text2->deleteData(0, m_offset, exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    m_text2->parentNode()->insertBefore(m_text1, m_text2, exceptionCode);
+    ASSERT(exceptionCode == 0);
+        
+    ASSERT(m_text2->previousSibling()->isTextNode());
+    ASSERT(m_text2->previousSibling() == m_text1);
 }
 
 void SplitTextNodeCommandImpl::doUnapply()
 {
-    joinTextNodes();
+    ASSERT(m_text1);
+    ASSERT(m_text2);
+    
+    ASSERT(m_text1->nextSibling() == m_text2);
+
+    int exceptionCode = 0;
+    m_text2->insertData(0, m_text1->data(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    m_text2->parent()->removeChild(m_text1, exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    m_offset = m_text1->length();
 }
 
 //------------------------------------------------------------------------------------------
 // TypingCommandImpl
 
 TypingCommandImpl::TypingCommandImpl(DocumentImpl *document)
-    : CompositeEditCommandImpl(document)
+    : CompositeEditCommandImpl(document), m_openForMoreTyping(true)
 {
 }
 
@@ -1202,18 +1678,22 @@ void TypingCommandImpl::doApply()
 void TypingCommandImpl::insertText(const DOM::DOMString &text)
 {
     if (m_cmds.count() == 0) {
-        InputTextCommand cmd(document(), text);
+        InputTextCommand cmd(document());
         applyCommandToComposite(cmd);
+        cmd.input(text);
+        setEndingSelection(cmd.endingSelection());
     }
     else {
         EditCommand lastCommand = m_cmds.last();
         if (lastCommand.commandID() == InputTextCommandID) {
-            static_cast<InputTextCommand &>(lastCommand).coalesce(text);
+            static_cast<InputTextCommand &>(lastCommand).input(text);
             setEndingSelection(lastCommand.endingSelection());
         }
         else {
-            InputTextCommand cmd(document(), text);
+            InputTextCommand cmd(document());
             applyCommandToComposite(cmd);
+            cmd.input(text);
+            setEndingSelection(cmd.endingSelection());
         }
     }
 }
@@ -1224,29 +1704,47 @@ void TypingCommandImpl::insertNewline()
     applyCommandToComposite(cmd);
 }
 
+void TypingCommandImpl::issueCommandForDeleteKey()
+{
+    KHTMLSelection selection = currentSelection();
+    ASSERT(selection.state() != KHTMLSelection::NONE);
+    
+    if (selection.state() == KHTMLSelection::CARET) {
+        KHTMLSelection selectionToDelete(selection.startPosition().previousCharacterPosition(), selection.startPosition());
+        setEndingSelection(selectionToDelete);
+        deleteCollapsibleWhitespace();
+        selection = currentSelection();
+        deleteSelection(selection);
+    }
+    else { // selection.state() == KHTMLSelection::RANGE
+        deleteCollapsibleWhitespace();
+        deleteSelection();
+    }
+}
+
 void TypingCommandImpl::deleteKeyPressed()
 {
     if (m_cmds.count() == 0) {
-        DeleteKeyCommand cmd(document());
-        applyCommandToComposite(cmd);
+        issueCommandForDeleteKey();
     }
     else {
         EditCommand lastCommand = m_cmds.last();
         if (lastCommand.commandID() == InputTextCommandID) {
             InputTextCommand cmd = static_cast<InputTextCommand &>(lastCommand);
             cmd.deleteCharacter();
-            if (cmd.text().length() == 0)
+            if (cmd.charactersAdded() == 0) {
                 removeCommand(cmd);
-            else
+            }
+            else {
                 setEndingSelection(cmd.endingSelection());
+            }
         }
         else if (lastCommand.commandID() == InputNewlineCommandID) {
             lastCommand.unapply();
             removeCommand(lastCommand);
         }
         else {
-            DeleteKeyCommand cmd(document());
-            applyCommandToComposite(cmd);
+            issueCommandForDeleteKey();
         }
     }
 }

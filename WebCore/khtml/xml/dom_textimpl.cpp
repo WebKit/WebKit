@@ -180,6 +180,13 @@ DOMString CharacterDataImpl::nodeValue() const
     return str;
 }
 
+bool CharacterDataImpl::containsOnlyWhitespace(unsigned int from, unsigned int len) const
+{
+    if (str)
+        return str->containsOnlyWhitespace(from, len);
+    return true;
+}
+
 bool CharacterDataImpl::containsOnlyWhitespace() const
 {
     if (str)
@@ -227,6 +234,11 @@ void CharacterDataImpl::checkCharDataOperation( const unsigned long offset, int 
     }
 }
 
+long CharacterDataImpl::maxOffset() const 
+{
+    return (long)length();
+}
+
 long CharacterDataImpl::caretMinOffset() const 
 {
     RenderText *r = static_cast<RenderText *>(renderer());
@@ -237,6 +249,12 @@ long CharacterDataImpl::caretMaxOffset() const
 {
     RenderText *r = static_cast<RenderText *>(renderer());
     return r && r->isText() ? r->caretMaxOffset() : (long)length();
+}
+
+unsigned long CharacterDataImpl::caretMaxRenderedOffset() const 
+{
+    RenderText *r = static_cast<RenderText *>(renderer());
+    return r ? r->caretMaxRenderedOffset() : length();
 }
 
 #ifndef NDEBUG
@@ -301,12 +319,12 @@ DOMString CommentImpl::toString() const
 // ### allow having children in text nodes for entities, comments etc.
 
 TextImpl::TextImpl(DocumentPtr *doc, const DOMString &_text)
-    : CharacterDataImpl(doc, _text)
+    : CharacterDataImpl(doc, _text), m_rendererIsNeeded(false)
 {
 }
 
 TextImpl::TextImpl(DocumentPtr *doc)
-    : CharacterDataImpl(doc)
+    : CharacterDataImpl(doc), m_rendererIsNeeded(false)
 {
 }
 
@@ -371,6 +389,11 @@ NodeImpl *TextImpl::cloneNode(bool /*deep*/)
 
 bool TextImpl::rendererIsNeeded(RenderStyle *style)
 {
+    if (m_rendererIsNeeded) {
+        m_rendererIsNeeded = false;
+        return true;
+    }
+
     if (!CharacterDataImpl::rendererIsNeeded(style)) {
         return false;
     }
@@ -378,7 +401,7 @@ bool TextImpl::rendererIsNeeded(RenderStyle *style)
     if (!onlyWS) {
         return true;
     }
-    
+
     RenderObject *par = parentNode()->renderer();
     
     if (par->isTable() || par->isTableRow() || par->isTableSection()) {

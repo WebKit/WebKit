@@ -476,7 +476,7 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
 
 void RenderFlow::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)
 {
-    if (firstChild() || style()->display() == INLINE) { 
+    if (firstChild() || style()->display() == INLINE) {
         // Do the normal calculation
         RenderBox::caretPos(offset, override, _x, _y, width, height);
         return;
@@ -492,7 +492,8 @@ void RenderFlow::caretPos(int offset, bool override, int &_x, int &_y, int &widt
     // the caret size of an empty :first-line'd block is wrong, but I think we
     // can live with that.
     RenderStyle *currentStyle = style(true);
-    height = currentStyle->fontMetrics().height();
+    //height = currentStyle->fontMetrics().height();
+    height = lineHeight(true);
     width = 1;
 
     // EDIT FIXME: This needs to account for text direction
@@ -518,6 +519,6 @@ void RenderFlow::caretPos(int offset, bool override, int &_x, int &_y, int &widt
     
     int absx, absy;
     absolutePosition(absx, absy, false);
-    _x += absx;
-    _y += absy;
+    _x += absx + paddingLeft() + borderLeft();
+    _y += absy + paddingTop() + borderTop();
 }

@@ -119,6 +119,7 @@ public:
 
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
+    virtual unsigned long caretMaxRenderedOffset() const;
     
     bool isDirty() const { return m_dirty; }
     void markDirty(bool dirty=true) { m_dirty = dirty; }

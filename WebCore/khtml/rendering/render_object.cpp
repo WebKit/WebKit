@@ -217,34 +217,6 @@ void RenderObject::insertChildNode(RenderObject*, RenderObject*)
     KHTMLAssert(0);
 }
 
-bool RenderObject::precedesLineBreak() const
-{
-    RenderObject *r = nextRenderer();
-    while (r) {
-        if (r->isBR() || r->isRenderBlock())
-            return true;
-        if (r->isText() || r->isReplaced())
-            return false;
-        r = r->nextRenderer();
-    }
-    
-    return false;
-}
-
-bool RenderObject::followsLineBreak() const
-{
-    RenderObject *r = previousRenderer();
-    while (r) {
-        if (r->isBR() || r->isRenderBlock())
-            return true;
-        if (r->isText() || r->isReplaced())
-            return false;
-        r = r->previousRenderer();
-    }
-    
-    return false;
-}
-
 RenderObject *RenderObject::nextRenderer() const
 {
     if (firstChild())
@@ -286,7 +258,10 @@ bool RenderObject::isEditable() const
 
     return style()->visibility() == VISIBLE && 
         element() && element()->isContentEditable() &&
-        (isReplaced() || isBR() || (textRenderer && textRenderer->firstTextBox()));
+        ((isBlockFlow() && !firstChild()) || 
+        isReplaced() || 
+        isBR() || 
+        (textRenderer && textRenderer->firstTextBox()));
 }
 
 RenderObject *RenderObject::nextEditable() const
@@ -2179,4 +2154,19 @@ int RenderObject::maximalOutlineSize(PaintAction p) const
     if (p != PaintActionOutline)
         return 0;
     return static_cast<RenderCanvas*>(document()->renderer())->maximalOutlineSize();
+}
+
+long RenderObject::caretMinOffset() const
+{
+    return 0;
+}
+
+long RenderObject::caretMaxOffset() const
+{
+    return 0;
+}
+
+unsigned long RenderObject::caretMaxRenderedOffset() const
+{
+    return 0;
 }

@@ -1542,6 +1542,10 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     
     setLinesAppended(false);
     
+    if (!firstLineBox() && element() && element()->containingEditableBlock() == element()) {
+        m_height += lineHeight(true);
+    }
+    
     return repaintRect;
 
 #if BIDI_DEBUG > 1

@@ -1,3 +1,161 @@
+2004-03-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave.
+        
+        Many, many editing improvements, with a concentration on getting
+        caret navigation and deleting selections working correctly.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/dom/dom_position.cpp: Removed.
+        * khtml/dom/dom_position.h: Removed.
+        * khtml/editing/htmlediting.cpp:
+        (EditCommand::isNull): Inlined.
+        (EditCommand::notNull): New function.
+        (EditCommand::parent): Commands now have parents. Allows for walking the tree of composite commands.
+        (EditCommand::setParent): Ditto.
+        (EditCommand::emptyCommand): Returns a static empty command.
+        (AppendNodeCommand::AppendNodeCommand): 
+        (AppendNodeCommand::parentNode): Member variable name change only. parent -> parentNode.
+        (DeleteCollapsibleWhitespaceCommand::DeleteCollapsibleWhitespaceCommand): New command.
+        (InputTextCommand::InputTextCommand):
+        (InputTextCommand::input):
+        (InputTextCommand::charactersAdded):
+        (JoinTextNodesCommand::JoinTextNodesCommand): Now derives directly from EditCommand.
+        (RemoveNodeAndPruneCommand::RemoveNodeAndPruneCommand): New command.
+        (SplitTextNodeCommand::SplitTextNodeCommand): Now derives directly from EditCommand.
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/htmlediting_impl.cpp:
+        (isNBSP): New helper.
+        (isWS): New helper.
+        (shouldPruneNode): New helper.
+        (leadingWhitespacePosition): New helper.
+        (trailingWhitespacePosition): New helper.
+        (textNodesAreJoinable): New helper.
+        (nonBreakingSpaceString): Returns a static DOMString containing a non-breaking space.
+        (EditCommandImpl::EditCommandImpl):
+        (EditCommandImpl::setStartingSelection): Now recursively sets starting selection on parents.
+        (EditCommandImpl::setEndingSelection): As above, for ending selection.
+        (EditCommandImpl::parent): New accessor.
+        (EditCommandImpl::setParent): New accessor.
+        (CompositeEditCommandImpl::doUnapply): Removed some logging.
+        (CompositeEditCommandImpl::doReapply): Removed some logging.
+        (CompositeEditCommandImpl::applyCommandToComposite): Sets parent.
+        (CompositeEditCommandImpl::removeNodeAndPrune): New comvenience.
+        (CompositeEditCommandImpl::replaceText): New comvenience.
+        (CompositeEditCommandImpl::deleteSelection): New comvenience.
+        (CompositeEditCommandImpl::deleteCollapsibleWhitespace): New comvenience.
+        (AppendNodeCommandImpl::AppendNodeCommandImpl): Member variable name change only. parent -> parentNode.
+        (AppendNodeCommandImpl::~AppendNodeCommandImpl): Ditto.
+        (AppendNodeCommandImpl::doApply): Ditto.
+        (AppendNodeCommandImpl::doUnapply): Ditto.
+        (DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl): New command
+        (debugPosition): New debugging aid.
+        (DeleteSelectionCommandImpl::doApply): Major reworking to handle more cases correctly.
+        (InputNewlineCommandImpl::doApply): Position and selection tweaks.
+        (InputTextCommandImpl::InputTextCommandImpl): Handles more cases now, like typing after an image.
+        (JoinTextNodesCommandImpl::JoinTextNodesCommandImpl): Now derives directly from EditCommand.
+        Implements the guts of the command itself now, rather than replying on its former base class.
+        (RemoveNodeAndPruneCommandImpl::RemoveNodeAndPruneCommandImpl): New command.
+        (SplitTextNodeCommandImpl::SplitTextNodeCommandImpl): Now derives directly from EditCommand.
+        Implements the guts of the command itself now, rather than replying on its former base class.
+        (TypingCommandImpl::TypingCommandImpl): Major rework to handle more cases correctly.
+        * khtml/editing/htmlediting_impl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isContentEditable): More efficient use of the style system to answer the question.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): Fixes an issue where the caret would not repaint after being moved when undoing.
+        (KHTMLPart::takeSelectionFrom): Ditto.
+        (KHTMLPart::clearSelection): Ditto.
+        (KHTMLPart::invalidateSelection): Ditto.
+        (KHTMLPart::setSelectionVisible): Ditto.
+        (KHTMLPart::slotClearSelection): Ditto.
+        (KHTMLPart::clearCaretRectIfNeeded):  Ditto.
+        (KHTMLPart::notifySelectionChanged): Ditto.
+        (KHTMLPart::unappliedEditing): Now uses EditCommand::emptyCommand().
+        (KHTMLPart::reappliedEditing): Ditto.
+        * khtml/khtml_part.h:
+        * khtml/khtml_selection.cpp:
+        (KHTMLSelection::KHTMLSelection):
+        (KHTMLSelection::modify): Updated to work with new DOMPosition API.
+        (KHTMLSelection::paintCaret): Ditto.
+        (KHTMLSelection::moveToRenderedContent): Ditto.
+        (KHTMLSelection::basePosition): New convenience.
+        (KHTMLSelection::extentPosition): New convenience.
+        (KHTMLSelection::startPosition): New convenience.
+        (KHTMLSelection::endPosition): New convenience.
+        (KHTMLSelection::debugPosition): Modified debug output.
+        * khtml/khtml_selection.h:
+        (KHTMLSelection::isEmpty):
+        (KHTMLSelection::notEmpty):
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren): Fixed a crasher that happened when deleting content at the start of a line.
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::caretMaxRenderedOffset): New function.
+        (RenderBR::caretPos): Now draws the caret in the right place when a block is empty.
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::caretPos): Now draws the caret in the right place when a flow is empty.
+        * khtml/rendering/render_line.cpp:
+        (InlineBox::caretMaxRenderedOffset): New function.
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::isEditable):
+        (RenderObject::caretMaxRenderedOffset): New function.
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::caretMaxRenderedOffset): New function.
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::caretMaxRenderedOffset): New function.
+        (RenderText::detach):
+        (RenderText::caretMaxOffset):
+        (RenderText::caretMaxRenderedOffset): New function.
+        * khtml/rendering/render_text.h:
+        (khtml::InlineTextBox::len):
+        * khtml/xml/dom_edititerator.cpp: Added.
+        * khtml/xml/dom_edititerator.h: Added.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::previousEditable): Improved the correctness of this function.
+        (NodeImpl::nextEditable): Ditto.
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_position.cpp: Added.
+        (DOMPosition::renderedOffset): New function.
+        (DOMPosition::previousCharacterPosition): New function.
+        (DOMPosition::nextCharacterPosition): New function.
+        (DOMPosition::equivalentUpstreamPosition): New function.
+        (DOMPosition::equivalentDownstreamPosition): New function.
+        (DOMPosition::validUpstreamDownstreamPosition): New function.
+        (DOMPosition::inRenderedContent): New function.
+        (inlineBoxForRenderer): New function.
+        (renderersOnDifferentLine): New function.
+        (nextRenderedEditable): New function.
+        (previousRenderedEditable): New function.
+        (DOMPosition::inRenderedText): New function.
+        (DOMPosition::rendersOnSameLine): New function.
+        (DOMPosition::rendersInDifferentPosition): New function.
+        (DOMPosition::isFirstRenderedPositionOnLine): New function.
+        (DOMPosition::isLastRenderedPositionOnLine): New function.
+        (DOMPosition::isLastRenderedPositionInEditableBlock): New function.
+        (DOMPosition::inFirstEditableInRootEditableBlock): New function.
+        (DOMPosition::inLastEditableInRootEditableBlock): New function.
+        (DOMPosition::inFirstEditableInContainingEditableBlock): New function.
+        (DOMPosition::inLastEditableInContainingEditableBlock): New function.
+        * khtml/xml/dom_position.h: Added.
+        (DOM::DOMPosition::notEmpty): New function.
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::containsOnlyWhitespace): Added a version which takes an offset and length.
+        * khtml/xml/dom_stringimpl.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::containsOnlyWhitespace): As above
+        (CharacterDataImpl::maxOffset): New function.
+        (CharacterDataImpl::caretMaxRenderedOffset): New function.
+        (TextImpl::TextImpl):
+        (TextImpl::rendererIsNeeded): A new bit. When set, makes a text renderer unconditionally.
+        * khtml/xml/dom_textimpl.h:
+        (DOM::TextImpl::setRendererIsNeeded): Sets the bit.
+        * kwq/KWQAssertions.m:
+        (KWQLog): Change to decrease the amount of output for the Editing log level. (my preference)
+
 2004-03-31  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3601834, make sure that textareas do a layout when their rows/cols/wrap attributes are dynamically

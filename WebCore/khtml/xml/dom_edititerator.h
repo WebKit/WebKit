@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef _DOM_Position_h_
-#define _DOM_Position_h_
+#ifndef _EditIterator_h_
+#define _EditIterator_h_
+
+#include "dom_position.h"
 
 namespace DOM {
 
+class DOMPosition;
 class NodeImpl;
 
-class DOMPosition
+class EditIterator
 {
 public:
-    DOMPosition() : m_node(0), m_offset(0) {};
-    DOMPosition(NodeImpl *node, long offset);
-    DOMPosition(const DOMPosition &);
-    ~DOMPosition();
+    EditIterator() : m_current() {}
+    EditIterator(NodeImpl *node, long offset) : m_current(node, offset) {}
+    EditIterator(const DOMPosition &o) : m_current(o) {}
 
-    NodeImpl *node() const { return m_node; }
-    long offset() const { return m_offset; }
+    DOMPosition current() const { return m_current; }
+    DOMPosition previous() { return m_current = peekPrevious(); }
+    DOMPosition next() { return m_current = peekNext(); }
+    DOMPosition peekPrevious() const;
+    DOMPosition peekNext() const;
 
-    bool isEmpty() const { return m_node == 0; }
+    void setPosition(const DOMPosition &pos) { m_current = pos; }
 
-    DOMPosition &operator=(const DOMPosition &o);
-    
-    friend bool operator==(const DOMPosition &a, const DOMPosition &b);
-    friend bool operator!=(const DOMPosition &a, const DOMPosition &b);
-    
+    bool atStart() const;
+    bool atEnd() const;
+    bool isEmpty() const { return m_current.isEmpty(); }
+
 private:
-    NodeImpl *m_node;
-    long m_offset;
+    DOMPosition m_current;
 };
 
-inline bool operator==(const DOMPosition &a, const DOMPosition &b)
-{
-    return a.node() == b.node() && a.offset() == b.offset();
-}
+} // namespace DOM
 
-inline bool operator!=(const DOMPosition &a, const DOMPosition &b)
-{
-    return !(a == b);
-}
-
-}; // namespace DOM
-
-#endif // _DOM_Position_h_
+#endif // _EditIterator_h_

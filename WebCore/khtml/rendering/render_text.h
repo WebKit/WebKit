@@ -61,6 +61,7 @@ public:
     
     uint start() const { return m_start; }
     uint end() const { return m_len ? m_start+m_len-1 : m_start; }
+    uint len() const { return m_len; }
 
     void offsetRun(int d) { m_start += d; }
 
@@ -92,6 +93,7 @@ public:
 
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
+    virtual unsigned long caretMaxRenderedOffset() const;
     
     // Return before, after (offset set to max), or inside the text, at @p offset
     FindSelectionResult checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineheight);
@@ -224,6 +226,7 @@ public:
 
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
+    virtual unsigned long caretMaxRenderedOffset() const;
     
 #if APPLE_CHANGES
 public:

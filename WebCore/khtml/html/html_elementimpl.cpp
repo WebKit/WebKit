@@ -819,8 +819,16 @@ bool HTMLElementImpl::isFocusable() const
     return isContentEditable() && !parent()->isContentEditable();
 }
 
-bool HTMLElementImpl::isContentEditable() const {
-    return contentEditable() == "true";
+bool HTMLElementImpl::isContentEditable() const 
+{
+    if (!renderer()) {
+        if (parentNode())
+            return parentNode()->isContentEditable();
+        else
+            return false;
+    }
+    
+    return renderer()->style()->userModify() == READ_WRITE;
 }
 
 DOMString HTMLElementImpl::contentEditable() const {

@@ -191,10 +191,15 @@ DOMStringImpl *DOMStringImpl::split(uint pos)
 
 bool DOMStringImpl::containsOnlyWhitespace() const
 {
+    return containsOnlyWhitespace(0, l);
+}
+
+bool DOMStringImpl::containsOnlyWhitespace(unsigned int from, unsigned int len) const
+{
     if (!s)
         return true;
     
-    for (uint i = 0; i < l; i++) {
+    for (uint i = from; i < len; i++) {
         QChar c = s[i];
         if (c.unicode() <= 0x7F) {
             if (!isspace(c.unicode()))
