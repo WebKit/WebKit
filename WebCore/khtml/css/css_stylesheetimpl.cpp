@@ -37,6 +37,8 @@
 #include "html/html_documentimpl.h"
 #include "misc/loader.h"
 
+#include "xml_namespace_table.h"
+
 #include <kdebug.h>
 
 using namespace DOM;
@@ -104,6 +106,7 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOMString h
     m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_doc = 0;
     m_implicit = false;
+    m_namespaces = 0;
 }
 
 CSSStyleSheetImpl::CSSStyleSheetImpl(DOM::NodeImpl *parentNode, DOMString href, bool _implicit)
@@ -111,7 +114,8 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(DOM::NodeImpl *parentNode, DOMString href, 
 {
     m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_doc = parentNode->getDocument();
-    m_implicit = _implicit;
+    m_implicit = _implicit; 
+    m_namespaces = 0;
 }
 
 CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOMString href)
@@ -120,6 +124,7 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOMString href)
     m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_doc = 0;
     m_implicit = false;
+    m_namespaces = 0;
 }
 
 CSSStyleSheetImpl::CSSStyleSheetImpl(DOM::NodeImpl *parentNode, CSSStyleSheetImpl *orig)
@@ -134,6 +139,7 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(DOM::NodeImpl *parentNode, CSSStyleSheetImp
     }
     m_doc = parentNode->getDocument();
     m_implicit = false;
+    m_namespaces = 0;
 }
 
 CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *orig)
@@ -149,6 +155,7 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *
     }
     m_doc  = 0;
     m_implicit = false;
+    m_namespaces = 0;
 }
 
 CSSRuleImpl *CSSStyleSheetImpl::ownerRule() const
@@ -195,14 +202,36 @@ void CSSStyleSheetImpl::deleteRule( unsigned long index, int &exceptioncode )
     b->deref();
 }
 
-void CSSStyleSheetImpl::addNamespace(const DOM::DOMString& prefix, const DOM::DOMString& uri)
+void CSSStyleSheetImpl::addNamespace(CSSParser* p, const DOM::DOMString& prefix, const DOM::DOMString& uri)
 {
-    printf("Adding namespace.\n");
+    if (uri.isEmpty())
+        return;
+
+    m_namespaces = new CSSNamespace(prefix, uri, m_namespaces);
+    
+    if (prefix.isEmpty())
+        // Set the default namespace on the parser so that selectors that omit namespace info will
+        // be able to pick it up easily.
+        p->defaultNamespace = XmlNamespaceTable::getNamespaceID(uri, false);
 }
 
-void CSSStyleSheetImpl::determineNamespace(CSSSelector* selector, const DOM::DOMString& prefix)
+void CSSStyleSheetImpl::determineNamespace(Q_UINT32& id, const DOM::DOMString& prefix)
 {
-    printf("Determining namespace.\n");
+    // If the stylesheet has no namespaces we can just return.  There won't be any need to ever check
+    // namespace values in selectors.
+    if (!m_namespaces)
+        return;
+    
+    if (prefix.isEmpty())
+        id = makeId(noNamespace, localNamePart(id)); // No namespace. If an element/attribute has a namespace, we won't match it.
+    else if (prefix == "*")
+        id = makeId(anyNamespace, localNamePart(id)); // We'll match any namespace.
+    else {
+        CSSNamespace* ns = m_namespaces->namespaceForPrefix(prefix);
+        if (ns)
+            // Look up the id for this namespace URI.
+            id = makeId(XmlNamespaceTable::getNamespaceID(ns->uri(), false), localNamePart(id));
+    }
 }
 
 bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)

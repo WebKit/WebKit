@@ -850,10 +850,15 @@ unsigned long NamedAttrMapImpl::length(  ) const
 
 AttributeImpl* NamedAttrMapImpl::getAttributeItem(NodeImpl::Id id) const
 {
-    for (unsigned long i = 0; i < len; ++i)
-        if (attrs[i]->id() == id)
+    bool matchAnyNamespace = (namespacePart(id) == anyNamespace);
+    for (unsigned long i = 0; i < len; ++i) {
+        if (matchAnyNamespace) {
+            if (localNamePart(attrs[i]->id()) == localNamePart(id))
+                return attrs[i];
+        }
+        else if (attrs[i]->id() == id)
             return attrs[i];
-
+    }
     return 0;
 }
 

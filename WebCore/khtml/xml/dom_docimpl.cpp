@@ -31,6 +31,8 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/xml_tokenizer.h"
 
+#include "xml_namespace_table.h"
+
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
@@ -292,12 +294,6 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_attrNames = 0;
     m_attrNameAlloc = 0;
     m_attrNameCount = 0;
-    m_namespaceURIAlloc = 4;
-    m_namespaceURICount = 1;
-    QString xhtml(XHTML_NAMESPACE);
-    m_namespaceURIs = new DOMStringImpl* [m_namespaceURIAlloc];
-    m_namespaceURIs[0] = new DOMStringImpl(xhtml.unicode(), xhtml.length());
-    m_namespaceURIs[0]->ref();
     m_focusNode = 0;
     m_hoverNode = 0;
     m_defaultView = new AbstractViewImpl(this);
@@ -357,9 +353,6 @@ DocumentImpl::~DocumentImpl()
             m_attrNames[id]->deref();
         delete [] m_attrNames;
     }
-    for (unsigned short id = 0; id < m_namespaceURICount; ++id)
-        m_namespaceURIs[id]->deref();
-    delete [] m_namespaceURIs;
     m_defaultView->deref();
     m_styleSheets->deref();
 
@@ -1839,33 +1832,14 @@ NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_
     }
 
     // now lets find out the namespace
+    Q_UINT16 ns = noNamespace;
     if (_namespaceURI) {
         DOMString nsU(_namespaceURI);
-        bool found = false;
-        // ### yeah, this is lame. use a dictionary / map instead
-        for (unsigned short ns = 0; ns < m_namespaceURICount; ++ns)
-            if (nsU == DOMString(m_namespaceURIs[ns])) {
-                id |= ns << 16;
-                found = true;
-                break;
-            }
-
-        if (!found && !readonly) {
-            // something new, add it
-            if (m_namespaceURICount >= m_namespaceURIAlloc) {
-                m_namespaceURIAlloc += 32;
-                DOMStringImpl **newURIs = new DOMStringImpl* [m_namespaceURIAlloc];
-                for (unsigned short i = 0; i < m_namespaceURICount; i++)
-                    newURIs[i] = m_namespaceURIs[i];
-                delete [] m_namespaceURIs;
-                m_namespaceURIs = newURIs;
-            }
-            m_namespaceURIs[m_namespaceURICount++] = _namespaceURI;
-            _namespaceURI->ref();
-            id |= m_namespaceURICount << 16;
-        }
+        int nsID = XmlNamespaceTable::getNamespaceID(nsU, readonly);
+        if (nsID != -1)
+            ns = (Q_UINT16)nsID;
     }
-
+    
     // Look in the m_attrNames array for the name
     // ### yeah, this is lame. use a dictionary / map instead
     DOMString nme(n.string());
@@ -1873,7 +1847,7 @@ NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_
     if (htmlMode() != XHtml) nme = nme.upper();
     for (id = 0; id < m_attrNameCount; id++)
         if (DOMString(m_attrNames[id]) == nme)
-            return ATTR_LAST_ATTR+id;
+            return makeId(ns, ATTR_LAST_ATTR+id);
 
     // unknown
     if (readonly) return 0;
@@ -1896,14 +1870,14 @@ NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_
     m_attrNames[id] = nme.implementation();
     m_attrNames[id]->ref();
 
-    return ATTR_LAST_ATTR+id;
+    return makeId(ns, ATTR_LAST_ATTR+id);
 }
 
 DOMString DocumentImpl::attrName(NodeImpl::Id _id) const
 {
     DOMString result;
-    if (_id >= ATTR_LAST_ATTR)
-        result = m_attrNames[_id-ATTR_LAST_ATTR];
+    if (localNamePart(_id) >= ATTR_LAST_ATTR)
+        result = m_attrNames[localNamePart(_id)-ATTR_LAST_ATTR];
     else
         result = getAttrName(_id);
 
@@ -1938,31 +1912,12 @@ NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_n
     }
 
     // now lets find out the namespace
+    Q_UINT16 ns = noNamespace;
     if (_namespaceURI) {
         DOMString nsU(_namespaceURI);
-        bool found = false;
-        // ### yeah, this is lame. use a dictionary / map instead
-        for (unsigned short ns = 0; ns < m_namespaceURICount; ++ns)
-            if (nsU == DOMString(m_namespaceURIs[ns])) {
-                id |= ns << 16;
-                found = true;
-                break;
-            }
-
-        if (!found && !readonly) {
-            // something new, add it
-            if (m_namespaceURICount >= m_namespaceURIAlloc) {
-                m_namespaceURIAlloc += 32;
-                DOMStringImpl **newURIs = new DOMStringImpl* [m_namespaceURIAlloc];
-                for (unsigned short i = 0; i < m_namespaceURICount; i++)
-                    newURIs[i] = m_namespaceURIs[i];
-                delete [] m_namespaceURIs;
-                m_namespaceURIs = newURIs;
-            }
-            m_namespaceURIs[m_namespaceURICount++] = _namespaceURI;
-            _namespaceURI->ref();
-            id |= m_namespaceURICount << 16;
-        }
+        int nsID = XmlNamespaceTable::getNamespaceID(nsU, readonly);
+        if (nsID != -1)
+            ns = (Q_UINT16)nsID;
     }
 
     // Look in the m_elementNames array for the name
@@ -1972,7 +1927,7 @@ NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_n
     if (htmlMode() != XHtml) nme = nme.upper();
     for (id = 0; id < m_elementNameCount; id++)
         if (DOMString(m_elementNames[id]) == nme)
-            return ID_LAST_TAG+id;
+            return makeId(ns, ID_LAST_TAG+id);
 
     // unknown
     if (readonly) return 0;
@@ -1995,13 +1950,13 @@ NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_n
     m_elementNames[id] = nme.implementation();
     m_elementNames[id]->ref();
 
-    return ID_LAST_TAG+id;
+    return makeId(ns, ID_LAST_TAG+id);
 }
 
 DOMString DocumentImpl::tagName(NodeImpl::Id _id) const
 {
-    if (_id >= ID_LAST_TAG)
-        return m_elementNames[_id-ID_LAST_TAG];
+    if (localNamePart(_id) >= ID_LAST_TAG)
+        return m_elementNames[localNamePart(_id)-ID_LAST_TAG];
     else {
         // ### put them in a cache
         if (getDocument()->htmlMode() == DocumentImpl::XHtml)
@@ -2015,13 +1970,13 @@ DOMString DocumentImpl::tagName(NodeImpl::Id _id) const
 DOMStringImpl* DocumentImpl::namespaceURI(NodeImpl::Id _id) const
 {
     if (_id < ID_LAST_TAG)
-        return htmlMode() == XHtml ? m_namespaceURIs[0] : 0;
+        return htmlMode() == XHtml ? XmlNamespaceTable::getNamespaceURI(xhtmlNamespace).implementation() : 0;
 
     unsigned short ns = _id >> 16;
 
     if (!ns) return 0;
 
-    return m_namespaceURIs[ns-1];
+    return XmlNamespaceTable::getNamespaceURI(ns).implementation();
 }
 
 StyleSheetListImpl* DocumentImpl::styleSheets()

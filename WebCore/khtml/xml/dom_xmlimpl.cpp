@@ -401,7 +401,7 @@ void ProcessingInstructionImpl::checkStyleSheet()
         QXmlAttributes attrs = attrReader.readAttrs(attrsOk);
         if (!attrsOk)
             return;
-        if (attrs.value("type") != "text/css")
+        if (attrs.value("type") != "text/css" && !attrs.value("type").isEmpty())
             return;
 
         DOMString href = attrs.value("href");

@@ -135,7 +135,7 @@ unsigned int CSSSelector::specificity()
     if ( nonCSSHint )
         return 0;
 
-    int s = ((tag == -1) ? 0 : 1);
+    int s = ((localNamePart(tag) == anyLocalName) ? 0 : 1);
     switch(match)
     {
     case Id:
@@ -256,26 +256,29 @@ bool CSSSelector::operator == ( const CSSSelector &other )
 
 DOMString CSSSelector::selectorText() const
 {
+    // FIXME: Support namespaces when dumping the selector text.  This requires preserving
+    // the original namespace prefix used. Ugh. -dwh
     DOMString str;
     const CSSSelector* cs = this;
-    if ( cs->tag == -1 && cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
+    Q_UINT16 tag = localNamePart(cs->tag);
+    if ( tag == anyLocalName && cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
     {
         str = "#";
         str += cs->value;
     }
-    else if ( cs->tag == -1 && cs->attr == ATTR_CLASS && cs->match == CSSSelector::List )
+    else if ( tag == anyLocalName && cs->attr == ATTR_CLASS && cs->match == CSSSelector::List )
     {
         str = ".";
         str += cs->value;
     }
-    else if ( cs->tag == -1 && cs->match == CSSSelector::Pseudo )
+    else if ( tag == anyLocalName && cs->match == CSSSelector::Pseudo )
     {
         str = ":";
         str += cs->value;
     }
     else
     {
-        if ( cs->tag == -1 )
+        if ( tag == anyLocalName )
             str = "*";
         else
             str = getTagName( cs->tag );

@@ -7,6 +7,8 @@
  * what you are doing.
  */
 
+@namespace "http://www.w3.org/1999/xhtml";
+
 html {
 	display: block;
 } 
@@ -424,7 +426,7 @@ acronym {
 	font-style: italic;
 }
 
-:focus          { outline: auto 3px #1f5ccf }
+*|:focus          { outline: auto 3px #1f5ccf }
 a:link          { color: #0000EE; text-decoration: underline; }
 a:link:active          { color: red }
 a:visited              { color: #551A8B; text-decoration: underline; }

@@ -350,14 +350,13 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     unsigned int numPropsToApply = 0;
     
     // try to sort out most style rules as early as possible.
-    // ### implement CSS3 namespace support
-    int cssTagId = (e->id() & NodeImpl::IdLocalMask);
+    Q_UINT16 cssTagId = localNamePart(e->id());
     int smatch = 0;
     int schecked = 0;
 
     for ( unsigned int i = 0; i < selectors_size; i++ ) {
-	int tag = selectors[i]->tag;
-	if ( cssTagId == tag || tag == -1 ) {
+	Q_UINT16 tag = localNamePart(selectors[i]->tag);
+	if ( cssTagId == tag || tag == anyLocalName ) {
 	    ++schecked;
 
 	    checkSelector( i, e );
@@ -447,13 +446,12 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     unsigned int numPseudoProps = 0;
     
     // try to sort out most style rules as early as possible.
-    // ### implement CSS3 namespace support
-    int cssTagId = (e->id() & NodeImpl::IdLocalMask);
+    Q_UINT16 cssTagId = localNamePart(e->id());
     int schecked = 0;
     
     for ( unsigned int i = 0; i < selectors_size; i++ ) {
-        int tag = selectors[i]->tag;
-        if ( cssTagId == tag || tag == -1 ) {
+        Q_UINT16 tag = localNamePart(selectors[i]->tag);
+        if ( cssTagId == tag || tag == anyLocalName ) {
             ++schecked;
             
             checkSelector( i, e, pseudoStyle );
@@ -747,7 +745,7 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e, RenderSt
     // We track whether or not the rule contains only :hover and :active in a simple selector. If
     // so, we can't allow that to apply to every element on the page.  We assume the author intended
     // to apply the rules only to links.
-    bool onlyHoverActive = (sel->tag == -1 &&
+    bool onlyHoverActive = (sel->tag == anyQName &&
                             (sel->match == CSSSelector::Pseudo &&
                               (sel->pseudoType() == CSSSelector::PseudoHover ||
                                sel->pseudoType() == CSSSelector::PseudoActive)));
@@ -856,7 +854,20 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
     if(!e)
         return false;
 
-    if((e->id() & NodeImpl::IdLocalMask) != uint(sel->tag) && sel->tag != -1) return false;
+    if (sel->tag != anyQName) {
+        int eltID = e->id();
+        Q_UINT16 localName = localNamePart(eltID);
+        Q_UINT16 ns = namespacePart(eltID);
+        Q_UINT16 selLocalName = localNamePart(sel->tag);
+        Q_UINT16 selNS = namespacePart(sel->tag);
+        
+        if (selNS == xhtmlNamespace && localName < ID_LAST_TAG)
+            selNS = anyNamespace; // Always match HTML elements even when in HTML docs.
+        
+        if ((selLocalName != anyLocalName && localName != selLocalName) ||
+            (selNS != anyNamespace && ns != selNS))
+            return false;
+    }
 
     if(sel->attr)
     {
@@ -1205,37 +1216,6 @@ void CSSStyleSelector::buildLists()
         }
     }
     delete [] offsets;
-
-
-#if 0
-    // and now the same for the selector map
-    for ( unsigned int sel = 0; sel < selectors_size; ++sel ) {
-        kdDebug( 6080 ) << "trying for sel: " << sel << endl;
-        int len = 0;
-        int offset = 0;
-        bool matches = false;
-        for ( unsigned int i = 0; i < selectors_size; i++ ) {
-            int tag = selectors[i]->tag;
-            if ( sel != tag && tag != -1 )
-                selectorCache[i].state = Invalid;
-            else
-                selectorCache[i].state = Unknown;
-
-            if ( matches != ( selectorCache[i].state == Unknown ) ) {
-                if ( matches ) {
-                    kdDebug( 6080 ) << "new: offs: " << offset << " len: " << len << endl;
-                    matches = false;
-                }
-                else {
-                    matches = true;
-//                    offset = p-selectors;
-                    len = 0;
-                }
-            }
-            ++len;
-        }
-    }
-#endif
 }
 
 

@@ -35,6 +35,8 @@
 #include <misc/htmlhashes.h>
 #include "cssparser.h"
 
+#include "xml_namespace_table.h"
+    
 #include <assert.h>
 #include <kdebug.h>
 // #define CSS_DEBUG
@@ -134,7 +136,6 @@ static int cssyylex( YYSTYPE *yylval ) {
 %token <string> IDENT
 
 %token <string> HASH
-%token <string> '*'
 %token ':'
 %token '.'
 %token '['
@@ -366,7 +367,7 @@ NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
 #endif
     CSSParser *p = static_cast<CSSParser *>(parser);
     if (p->styleElement && p->styleElement->isCSSStyleSheet())
-        static_cast<CSSStyleSheetImpl*>(p->styleElement)->addNamespace(domString($3), domString($4));
+        static_cast<CSSStyleSheetImpl*>(p->styleElement)->addNamespace(p, domString($3), domString($4));
 }
 | NAMESPACE_SYM error invalid_block
 | NAMESPACE_SYM error ';'
@@ -574,7 +575,7 @@ selector:
 
 namespace_selector:
     /* empty */ { $$.string = 0; $$.length = 0; }
-    | '*' { $$ = $1; }
+    | '*' { static unsigned short star = '*'; $$.string = &star; $$.length = 1; }
     | IDENT { $$ = $1; }
 ;
 
@@ -590,15 +591,15 @@ simple_selector:
     }
     | specifier_list maybe_space {
 	$$ = $1;
-	if ( $$ )
-            $$->tag = 0xffffffff;
+        if ($$)
+            $$->tag = makeId(static_cast<CSSParser*>(parser)->defaultNamespace, anyLocalName);;
     }
     | namespace_selector '|' element_name maybe_space {
         $$ = new CSSSelector();
         $$->tag = $3;
         CSSParser *p = static_cast<CSSParser *>(parser);
         if (p->styleElement && p->styleElement->isCSSStyleSheet())
-            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$, domString($1));
+            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->tag, domString($1));
     }
     | namespace_selector '|' element_name specifier_list maybe_space {
         $$ = $4;
@@ -606,16 +607,16 @@ simple_selector:
             $$->tag = $3;
             CSSParser *p = static_cast<CSSParser *>(parser);
             if (p->styleElement && p->styleElement->isCSSStyleSheet())
-                static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$, domString($1));
+                static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->tag, domString($1));
         }
     }
     | namespace_selector '|' specifier_list maybe_space {
         $$ = $3;
         if ($$) {
-            $$->tag = 0xffffffff;
+            $$->tag = makeId(anyNamespace, anyLocalName);
             CSSParser *p = static_cast<CSSParser *>(parser);
             if (p->styleElement && p->styleElement->isCSSStyleSheet())
-                static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$, domString($1));
+                static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->tag, domString($1));
         }
     }
   ;
@@ -629,20 +630,16 @@ element_name:
 	    if (doc->isHTMLDocument())
 		tag = tag.lower();
 	    const DOMString dtag(tag);
-#if APPLE_CHANGES
-            $$ = doc->tagId(0, dtag.implementation(), false);
-#else
-	    $$ = doc->elementNames()->getId(dtag.implementation(), false);
-#endif
+            $$ = makeId(p->defaultNamespace, doc->tagId(0, dtag.implementation(), false));
 	} else {
-	    $$ = khtml::getTagID(tag.lower().ascii(), tag.length());
+	    $$ = makeId(p->defaultNamespace, khtml::getTagID(tag.lower().ascii(), tag.length()));
 	    // this case should never happen - only when loading
 	    // the default stylesheet - which must not contain unknown tags
 // 	    assert($$ != 0);
 	}
     }
     | '*' {
-	$$ = -1;
+	$$ = makeId(static_cast<CSSParser*>(parser)->defaultNamespace, anyLocalName);
     }
   ;
 
@@ -698,17 +695,13 @@ attrib_id:
 	    if (doc->isHTMLDocument())
 		attr = attr.lower();
 	    const DOMString dattr(attr);
-#if APPLE_CHANGES
             $$ = doc->attrId(0, dattr.implementation(), false);
-#else
-	    $$ = doc->attrNames()->getId(dattr.implementation(), false);
-#endif
 	} else {
 	    $$ = khtml::getAttrID(attr.lower().ascii(), attr.length());
 	    // this case should never happen - only when loading
 	    // the default stylesheet - which must not contain unknown attributes
 	    assert($$ != 0);
-	    }
+        }
     }
     ;
 
@@ -730,7 +723,7 @@ attrib:
         $$->match = CSSSelector::Set;
         CSSParser *p = static_cast<CSSParser *>(parser);
         if (p->styleElement && p->styleElement->isCSSStyleSheet())
-            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$, domString($3));
+            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->attr, domString($3));
     }
     | '[' maybe_space namespace_selector '|' attrib_id match maybe_space ident_or_string maybe_space ']' {
         $$ = new CSSSelector();
@@ -739,7 +732,7 @@ attrib:
         $$->value = domString($8);
         CSSParser *p = static_cast<CSSParser *>(parser);
         if (p->styleElement && p->styleElement->isCSSStyleSheet())
-            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$, domString($3));
+            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->attr, domString($3));
     }
   ;
 

@@ -50,9 +50,6 @@
 using namespace DOM;
 using namespace khtml;
 
-const Q_UINT32 NodeImpl::IdNSMask    = 0xffff0000;
-const Q_UINT32 NodeImpl::IdLocalMask = 0x0000ffff;
-
 NodeImpl::NodeImpl(DocumentPtr *doc)
     : document(doc),
       m_previous(0),
@@ -997,7 +994,7 @@ void NodeImpl::checkSetPrefix(const DOMString &_prefix, int &exceptioncode)
     // - if this node is an attribute and the specified prefix is "xmlns" and
     //   the namespaceURI of this node is different from "http://www.w3.org/2000/xmlns/",
     // - or if this node is an attribute and the qualifiedName of this node is "xmlns" [Namespaces].
-    if (Element::khtmlMalformedPrefix(_prefix) || (!(id() & IdNSMask) && id() > ID_LAST_TAG) ||
+    if (Element::khtmlMalformedPrefix(_prefix) || (namespacePart(id()) == noNamespace && id() > ID_LAST_TAG) ||
         (_prefix == "xml" && DOMString(getDocument()->namespaceURI(id())) != "http://www.w3.org/XML/1998/namespace")) {
         exceptioncode = DOMException::NAMESPACE_ERR;
         return;
@@ -1862,14 +1859,14 @@ NodeListImpl* NodeBaseImpl::getElementsByTagNameNS ( DOMStringImpl* namespaceURI
 {
     if (!localName) return 0;
 
-    NodeImpl::Id idMask = NodeImpl::IdNSMask | NodeImpl::IdLocalMask;
+    NodeImpl::Id idMask = namespaceMask | localNameMask;
     if (localName->l && localName->s[0] == '*')
-        idMask &= ~NodeImpl::IdLocalMask;
+        idMask &= ~localNameMask;
     if (namespaceURI && namespaceURI->l && namespaceURI->s[0] == '*')
-        idMask &= ~NodeImpl::IdNSMask;
+        idMask &= ~namespaceMask;
 
     Id id = 0; // 0 means "all items"
-    if ( (idMask & NodeImpl::IdLocalMask) || namespaceURI ) // not getElementsByTagName("*")
+    if ( (idMask & localNameMask) || namespaceURI ) // not getElementsByTagName("*")
     {
         id = getDocument()->tagId( namespaceURI, localName, true);
         if ( !id ) // not found -> we want to return an empty list, not "all items"

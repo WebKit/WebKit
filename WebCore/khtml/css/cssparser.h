@@ -143,6 +143,8 @@ namespace DOM {
 	int maxParsedProperties;
 	bool inParseShortHand;
 
+        Q_UINT16 defaultNamespace;
+        
 	static CSSParser *currentParser;
 
 	// tokenizer methods and data

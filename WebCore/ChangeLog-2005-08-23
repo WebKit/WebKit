@@ -1,3 +1,65 @@
+2004-01-26  David Hyatt  <hyatt@apple.com>
+
+	Add CSS3 @namespace support.  The whole way namespaces, element, and attribute names are being handled
+	right now is temporary.  This code gives us a baseline of functionality (for regression testing) that we
+	can use when we implement namespaces "the right way."
+	
+        Reviewed by darin
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/css_base.cpp:
+        (CSSSelector::specificity):
+        (CSSSelector::selectorText):
+        * khtml/css/css_base.h:
+        (DOM::CSSNamespace::m_parent):
+        (DOM::CSSNamespace::~CSSNamespace):
+        (DOM::CSSNamespace::uri):
+        (DOM::CSSNamespace::prefix):
+        (DOM::CSSNamespace::namespaceForPrefix):
+        (DOM::CSSSelector::CSSSelector):
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::CSSStyleSheetImpl):
+        (CSSStyleSheetImpl::addNamespace):
+        (CSSStyleSheetImpl::determineNamespace):
+        * khtml/css/css_stylesheetimpl.h:
+        (DOM::CSSStyleSheetImpl::~CSSStyleSheetImpl):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::CSSParser):
+        (CSSParser::parseSheet):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::pseudoStyleForElement):
+        (khtml::CSSStyleSelector::checkSelector):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSStyleSelector::buildLists):
+        * khtml/css/html4.css:
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::attrId):
+        (DocumentImpl::attrName):
+        (DocumentImpl::tagId):
+        (DocumentImpl::tagName):
+        (DocumentImpl::namespaceURI):
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::getAttributeItem):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::checkSetPrefix):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::namespacePart):
+        (DOM::localNamePart):
+        (DOM::makeId):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (ProcessingInstructionImpl::checkStyleSheet):
+        * khtml/xml/xml_namespace_table.cpp: Added.
+        (DOM::XmlNamespaceTable::getNamespaceID):
+        (DOM::XmlNamespaceTable::getNamespaceURI):
+        * khtml/xml/xml_namespace_table.h: Added.
+        (DOM::XmlNamespaceEntry::m_uri):
+
 2004-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

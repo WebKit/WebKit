@@ -37,6 +37,7 @@ namespace khtml {
 
 namespace DOM {
 
+class CSSParser;
 class StyleSheet;
 class CSSStyleSheet;
 class MediaListImpl;
@@ -87,7 +88,9 @@ public:
     // clone from a cached version of the sheet
     CSSStyleSheetImpl(DOM::NodeImpl *parentNode, CSSStyleSheetImpl *orig);
     CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *orig);
-
+    
+    ~CSSStyleSheetImpl() { delete m_namespaces; }
+    
     virtual bool isCSSStyleSheet() const { return true; }
 
     virtual DOM::DOMString type() const { return "text/css"; }
@@ -97,8 +100,8 @@ public:
     unsigned long insertRule ( const DOM::DOMString &rule, unsigned long index, int &exceptioncode );
     void deleteRule ( unsigned long index, int &exceptioncode );
 
-    void addNamespace(const DOM::DOMString& prefix, const DOM::DOMString& uri);
-    void determineNamespace(CSSSelector* selector, const DOM::DOMString& prefix);
+    void addNamespace(CSSParser* p, const DOM::DOMString& prefix, const DOM::DOMString& uri);
+    void determineNamespace(Q_UINT32& id, const DOM::DOMString& prefix);
     
     virtual bool parseString( const DOMString &string, bool strict = true );
 
@@ -112,6 +115,7 @@ public:
 protected:
     DocumentImpl *m_doc;
     bool m_implicit;
+    CSSNamespace* m_namespaces;
 };
 
 // ----------------------------------------------------------------------------

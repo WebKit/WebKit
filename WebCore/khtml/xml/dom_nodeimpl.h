@@ -31,9 +31,6 @@
 #include "misc/helper.h"
 #include "misc/shared.h"
 
-// The namespace used for XHTML elements
-#define XHTML_NAMESPACE "http://www.w3.org/1999/xhtml"
-
 class QPainter;
 template <class type> class QPtrList;
 class KHTMLView;
@@ -58,6 +55,23 @@ class CSSStyleDeclarationImpl;
 class Range;
 class RegisteredEventListener;
 class EventImpl;
+
+// The namespace used for XHTML elements
+#define XHTML_NAMESPACE "http://www.w3.org/1999/xhtml"
+
+const Q_UINT16 noNamespace = 0;
+const Q_UINT16 anyNamespace = 1;
+const Q_UINT16 xhtmlNamespace = 2;
+const Q_UINT16 anyLocalName = 0;
+
+const Q_UINT32 namespaceMask = 0xFFFF0000U;
+const Q_UINT32 localNameMask = 0x0000FFFFU;
+
+inline Q_UINT16 namespacePart(Q_UINT32 i) { return i >> 16; }
+inline Q_UINT16 localNamePart(Q_UINT32 i) { return i; }
+inline Q_UINT32 makeId(Q_UINT16 n, Q_UINT16 l) { return (n << 16) | l; }
+
+const Q_UINT32 anyQName = makeId(anyNamespace, anyLocalName);
 
 class DocumentPtr : public khtml::Shared<DocumentPtr>
 {
@@ -148,8 +162,6 @@ public:
     virtual NodeImpl *addChild(NodeImpl *newChild);
 
     typedef Q_UINT32 Id;
-    static const Q_UINT32 IdNSMask;
-    static const Q_UINT32 IdLocalMask;
     // id() is used to easily and exactly identify a node. It
     // is optimized for quick comparison and low memory consumption.
     // its value depends on the owner document of the node and is
