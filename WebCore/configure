@@ -1041,7 +1041,7 @@ if test -z "$ac_cv_prog_CXX"; then
 	$CONFIG_ERR c++
 	exit 1
 fi
-CFLAGS="-DHAVE_CONFIG_H"
+CFLAGS="-fno-coalesce-static-vtables -DHAVE_CONFIG_H"
  
 CXXFLAGS=$CFLAGS
  
