@@ -69,6 +69,17 @@ using namespace DOM;
 static bool cacheDisabled;
 #endif
 
+// Call this "walker" instead of iterator so people won't expect Qt or STL-style iterator interface.
+// Just keep calling next() on this. It's safe from deletions of the current item
+class CachedObjectClientWalker {
+public:
+    CachedObjectClientWalker(const QPtrList<CachedObjectClient> &clients) : _current(0), _iterator(clients) { }
+    CachedObjectClient *next();
+private:
+    CachedObjectClient *_current;
+    QPtrListIterator<CachedObjectClient> _iterator;
+};
+
 CachedObject::~CachedObject()
 {
     if(m_deleted) abort();
@@ -237,10 +248,9 @@ void CachedCSSStyleSheet::checkNotify()
     kdDebug( 6060 ) << "CachedCSSStyleSheet:: finishedLoading " << m_url.string() << endl;
 #endif
 
-    QPtrList<CachedObjectClient> clients(m_clients);
-    CachedObjectClient *c;
-    for ( c = clients.first(); c != 0; c = clients.next() )
-        c->setStyleSheet( m_url, m_sheet );
+    CachedObjectClientWalker w(m_clients);
+    while (CachedObjectClient *c = w.next())
+        c->setStyleSheet(m_url, m_sheet);
 }
 
 
@@ -312,9 +322,8 @@ void CachedScript::checkNotify()
 {
     if(m_loading) return;
 
-    QPtrList<CachedObjectClient> clients(m_clients);
-    CachedObjectClient *c;
-    for ( c = clients.first(); c != 0; c = clients.next() )
+    CachedObjectClientWalker w(m_clients);
+    while (CachedObjectClient *c = w.next())
         c->notifyFinished(this);
 }
 
@@ -695,10 +704,9 @@ QRect CachedImage::valid_rect() const
 
 void CachedImage::do_notify(const QPixmap& p, const QRect& r)
 {
-    QPtrList<CachedObjectClient> clients(m_clients);
-    CachedObjectClient *c;
-    for ( c = clients.first(); c != 0; c = clients.next() )
-        c->setPixmap( p, r, this);
+    CachedObjectClientWalker w(m_clients);
+    while (CachedObjectClient *c = w.next())
+        c->setPixmap(p, r, this);
 }
 
 #if !APPLE_CHANGES
@@ -779,9 +787,8 @@ void CachedImage::movieStatus(int status)
             }
         }
 
-        QPtrList<CachedObjectClient> clients(m_clients);
-	CachedObjectClient *c;
-        for ( c = clients.first(); c != 0; c = clients.next() )
+        CachedObjectClientWalker w(m_clients);
+        while (CachedObjectClient *c = w.next())
             c->notifyFinished(this);
     }
 
@@ -965,12 +972,10 @@ void CachedImage::checkNotify()
 {
     if(m_loading) return;
 
-    QPtrList<CachedObjectClient> clients(m_clients);
-    CachedObjectClient *c;
-    for ( c = clients.first(); c != 0; c = clients.next() )
+    CachedObjectClientWalker w(m_clients);
+    while (CachedObjectClient *c = w.next())
         c->notifyFinished(this);
 }
-
 
 // ------------------------------------------------------------------------------------------
 
@@ -1944,10 +1949,22 @@ bool Cache::adjustSize(CachedObject *object, int delta)
 
 // --------------------------------------
 
+CachedObjectClient *CachedObjectClientWalker::next()
+{
+    // Only advance if we already returned this item.
+    // This handles cases where the current item is removed, and prevents us from skipping the next item.
+    // The iterator automatically gets advanced to the next item, and we make sure we return it.
+    if (_current == _iterator.current())
+        ++_iterator;
+    _current = _iterator.current();
+    return _current;
+}
+
+// --------------------------------------
+
 void CachedObjectClient::setPixmap(const QPixmap &, const QRect&, CachedImage *) {}
 void CachedObjectClient::setStyleSheet(const DOM::DOMString &/*url*/, const DOM::DOMString &/*sheet*/) {}
 void CachedObjectClient::notifyFinished(CachedObject * /*finishedObj*/) {}
-
 
 #include "loader.moc"
 

@@ -1,3 +1,25 @@
+2002-12-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3132382 -- crash in khtml::CachedImage
+
+	The source of this bug was my long-ago fix to bug 3079499.
+	I changed the code to copy the clients list. But this doesn't work if
+	one of the clients is removed while iterating because it's deleted.
+	So I made a new class, CachedObjectClientWalker, that does the iterating safely.
+	Now both this new bug and the original are fixed.
+
+        * khtml/misc/loader.cpp:
+        (CachedCSSStyleSheet::checkNotify): Use CachedObjectClientWalker to walk the list.
+        (CachedScript::checkNotify): Ditto.
+        (CachedImage::do_notify): Ditto.
+        (CachedImage::movieStatus): Ditto.
+        (CachedImage::checkNotify): Ditto.
+        (CachedObjectClientWalker::next): Walk the list using a list iterator, which is
+	safe against the current item being removed. But go that safety one better by making
+	sure you don't miss the item after one that's removed.
+
 2002-12-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
