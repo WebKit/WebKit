@@ -3,7 +3,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import <WebCoreImageRenderer.h>
+#import <WebCore/WebCoreImageRenderer.h>
 
 @interface IFImageRenderer : NSImage <WebCoreImageRenderer>
 {

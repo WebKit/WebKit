@@ -5,7 +5,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class IFWebDataSource;
 @class IFImageRepresentation;
 @protocol IFDocumentLoading;
 @protocol IFDocumentDragSettings;

@@ -10,10 +10,15 @@
 
 #import <WebKit/IFWebView.h>
 #import <WebKit/IFHTMLViewPrivate.h>
+
+#ifndef WEBKIT_INDEPENDENT_OF_WEBCORE
+
 #import <khtmlview.h>
 #import <khtml_part.h>
 #import <xml/dom_docimpl.h>
 #import <rendering/render_frames.h>
+
+#endif
 
 @implementation IFRenderNode
 
@@ -55,7 +60,7 @@
 
 - initWithWebView:(IFWebView *)view
 {
-    return [self initWithRenderObject:[[view documentView] _widget]->part()->xmlDocImpl()->renderer()];
+    return [self initWithRenderObject:[(IFHTMLView *)[view documentView] _widget]->part()->xmlDocImpl()->renderer()];
 }
 
 - (void)dealloc

@@ -37,7 +37,7 @@
 
 - (IFHTMLView *)HTMLView
 {
-    return [[self view] documentView];
+    return (IFHTMLView *)[[self view] documentView];
 }
 
 - (WebCoreBridge *)bridge
@@ -47,7 +47,6 @@
 
 - (KHTMLView *)widget
 {
-    WEBKIT_ASSERT([self HTMLView]);
     KHTMLView *widget = [[self HTMLView] _provisionalWidget];
     if (widget) {
         return widget;
@@ -59,8 +58,9 @@
 {
     IFWebDataSource *newDataSource = [[IFWebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
     [newDataSource _setParent:parent];
-    if([frame setProvisionalDataSource:newDataSource])
+    if ([frame setProvisionalDataSource:newDataSource]) {
         [frame startLoading];
+    }
     [newDataSource release];
 }
 

@@ -5,7 +5,7 @@
         Public header file.
 */
 
-#include <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 
 /*
    ============================================================================= 

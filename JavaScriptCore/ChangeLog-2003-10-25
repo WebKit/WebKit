@@ -1,3 +1,8 @@
+2002-07-12  Darin Adler  <darin@apple.com>
+
+        * kjs/ustring.h: Since <sys/types.h> includes ushort and uint now, had
+	to change the includes here to be compatible with that.
+
 2002-07-11  Darin Adler  <darin@apple.com>
 
         * JavaScriptCore.pbproj/project.pbxproj: To make the build of

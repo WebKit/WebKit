@@ -47,9 +47,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @class IFError;
 @class IFURLHandle;
 
-@class WebCoreBridge;
+@class WebCoreFrame;
 
-@protocol WebCoreFrame;
 @protocol WebCoreResourceLoader;
 
 // WebCoreBridge objects are used by WebCore to abstract away operations that need
@@ -86,6 +85,10 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSString *)selectedText;
 - (void)selectAll;
 
+- (void)reapplyStyles;
+- (void)forceLayout;
+- (void)drawRect:(NSRect)rect;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.
@@ -94,13 +97,13 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (WebCoreBridge *)parent;
 
-- (id <WebCoreFrame>)frame;
+- (WebCoreFrame *)frame;
 - (NSArray *)childFrames; // WebCoreFrame objects
-- (id <WebCoreFrame>)childFrameNamed:(NSString *)name;
-- (id <WebCoreFrame>)descendantFrameNamed:(NSString *)name;
+- (WebCoreFrame *)childFrameNamed:(NSString *)name;
+- (WebCoreFrame *)descendantFrameNamed:(NSString *)name;
 
-- (id <WebCoreFrame>)mainFrame;
-- (id <WebCoreFrame>)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
+- (WebCoreFrame *)mainFrame;
+- (WebCoreFrame *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
 
 - (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;

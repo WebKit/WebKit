@@ -1,8 +1,12 @@
 /*	
     IFWebFramePrivate.mm
 	    
-    Copyright 2001, Apple, Inc. All rights reserved.
+    Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
+
+#import <WebKit/IFWebFramePrivate.h>
+
+#import <WebKit/IFDocument.h>
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFHTMLView.h>
 #import <WebKit/IFHTMLViewPrivate.h>
@@ -14,16 +18,11 @@
 #import <WebKit/IFWebCoreFrame.h>
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebKitErrors.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
-
-// includes from kde
-#import <khtmlview.h>
-#import <rendering/render_frames.h>
 
 static const char * const stateNames[6] = {
     "zero state",
@@ -48,8 +47,6 @@ static const char * const stateNames[6] = {
     [webView autorelease];
     [dataSource autorelease];
     [provisionalDataSource autorelease];
-    if (renderFramePart)
-        renderFramePart->deref();
     [bridgeFrame release];
     
     [super dealloc];
@@ -95,16 +92,6 @@ static const char * const stateNames[6] = {
     }
 }
 
-- (khtml::RenderPart *)renderFramePart { return renderFramePart; }
-- (void)setRenderFramePart: (khtml::RenderPart *)p 
-{
-    if (p)
-        p->ref();
-    if (renderFramePart)
-        renderFramePart->deref();
-    renderFramePart = p;
-}
-
 @end
 
 @implementation IFWebFrame (IFPrivate)
@@ -119,16 +106,6 @@ static const char * const stateNames[6] = {
 - (void)_setController: (IFWebController *)controller
 {
     [_private setController: controller];
-}
-
-- (void)_setRenderFramePart: (khtml::RenderPart *)p
-{
-    [_private setRenderFramePart:p];
-}
-
-- (khtml::RenderPart *)_renderFramePart
-{
-    return [_private renderFramePart];
 }
 
 - (void)_setDataSource: (IFWebDataSource *)ds
@@ -151,17 +128,17 @@ static const char * const stateNames[6] = {
     
     _private->scheduledLayoutPending = NO;
     if (_private->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE) {
-        id documentView = [[self webView] documentView];
+        NSView <IFDocumentView> *documentView = [[self webView] documentView];
         
         if ([self controller])
             WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
             
-        if([[self webView] isDocumentHTML]){
-            NSView *view = (NSView *)documentView;
+        if ([[self webView] isDocumentHTML]) {
+            IFHTMLView *htmlView = (IFHTMLView *)documentView;
             
-            [documentView setNeedsLayout: YES];
+            [htmlView setNeedsLayout: YES];
             
-            NSRect frame = [view frame];
+            NSRect frame = [htmlView frame];
             
             if (frame.size.width == 0 || frame.size.height == 0){
                 // We must do the layout now, rather than depend on
@@ -173,7 +150,7 @@ static const char * const stateNames[6] = {
                 // check to see if any CSS is pending and delay
                 // the layout further to avoid the flash of unstyled
                 // content.                    
-                [documentView layout];
+                [htmlView layout];
             }
         }
             
@@ -238,8 +215,7 @@ static const char * const stateNames[6] = {
 - (void)_transitionProvisionalToCommitted
 {
     WEBKIT_ASSERT ([self controller] != nil);
-    id documentView = [[self webView] documentView];
-    BOOL isDocumentHTML = [[self webView] isDocumentHTML];
+    NSView <IFDocumentView> *documentView = [[self webView] documentView];
     
     switch ([self _state]) {
     	case IFWEBFRAMESTATE_PROVISIONAL:
@@ -253,15 +229,6 @@ static const char * const stateNames[6] = {
             // display the new new datasource.
             [documentView provisionalDataSourceCommitted: _private->provisionalDataSource];
  
-            // If we're a frame (not the main frame) hookup the kde internals.  This introduces a nasty dependency 
-            // in kde on the view.
-            khtml::RenderPart *renderPartFrame = [self _renderFramePart];
-            if (renderPartFrame && isDocumentHTML) {
-                // Setting the widget will delete the previous KHTMLView associated with the frame.
-                [documentView _takeOwnershipOfWidget];
-                renderPartFrame->setWidget([documentView _widget]);
-            }
-           
             // Now that the provisional data source is committed, release it.
             [_private setProvisionalDataSource: nil];
         
@@ -367,10 +334,10 @@ static const char * const stateNames[6] = {
             //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
             if (![ds isLoading]) {
                 id mainView = [[[self controller] mainFrame] webView];
-                id mainDocumentView = [mainView documentView];
+                NSView <IFDocumentView> *mainDocumentView = [mainView documentView];
 #if 0
                 id thisView = [self webView];
-                id thisDocumentView = [thisView documentView];
+                NSView <IFDocumentView> *thisDocumentView = [thisView documentView];
 #endif
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
@@ -380,8 +347,8 @@ static const char * const stateNames[6] = {
                 // it may change the size of frames.
                 // FIXME:  Why is this necessary? and recurse.
                 {
-                    if ([mainView isDocumentHTML]){
-                        [mainDocumentView setNeedsLayout: YES];
+                    if ([mainView isDocumentHTML]) {
+                        [(IFHTMLView *)mainDocumentView setNeedsLayout: YES];
                     }
                     [mainDocumentView layout];
                     

@@ -1,5 +1,34 @@
 2002-07-12  Darin Adler  <darin@apple.com>
 
+        * WebCore.pbproj/project.pbxproj: Add WebCoreFrame.mm, also export all
+	the WebCore headers as Private so WebKit can see them.
+
+        * khtml/khtmlview.cpp: (KHTMLView::drawContents): Remove APPLE_CHANGES
+	since we don't use this function any more.
+
+        * kwq/KWQDef.h: Since <sys/types.h> now includes ushort and uint, update
+	code here to take that into account.
+
+        * kwq/KWQKHTMLPartImpl.h: Added getView().
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::getView): Added. Used by bridge.
+
+        * kwq/qt/qpainter.h:
+        * kwq/KWQPainter.mm: Simplify a bit, and remove some unused stuff.
+
+        * kwq/WebCoreBridge.h: Add reapplyStyles, forceLayout, drawRect:.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge reapplyStyles]): Added.
+        (-[WebCoreBridge forceLayout]): Added.
+        (-[WebCoreBridge drawRect:]): Added.
+
+        * kwq/WebCoreFrame.h: Make this a class as well as an interface.
+        * kwq/WebCoreFrame.mm: Added.
+
+        * WebCore.exp: Since WebCoreFrame is now a class as well as a protocol,
+	export it so we can subclass.
+
+2002-07-12  Darin Adler  <darin@apple.com>
+
 	Build WebCore with Project Builder instead of make.
 	Also wean WebCore from peeking inside the WebKit bundle.
 

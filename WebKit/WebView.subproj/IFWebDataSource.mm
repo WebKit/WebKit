@@ -18,8 +18,6 @@
 #import <WebFoundation/IFFileTypeMappings.h>
 #import <WebFoundation/IFNSDictionaryExtensions.h>
 
-#import <xml/dom_docimpl.h>
-
 @implementation IFWebDataSource
 
 -(id)initWithURL:(NSURL *)theURL

@@ -60,8 +60,7 @@ public:
     typedef enum { RTL, LTR } TextDirection;
 
     QPainter();
-    // We may be able to remove this constructor and remove QPaintDevice.
-    QPainter(const QPaintDevice *);
+    QPainter(QPixmap *);
     QPainter(QWidget *);
     ~QPainter();
     
@@ -98,7 +97,7 @@ public:
         QRect *br=0, char **internal=0);
     void drawText(int, int, const QString &, int, TextDirection);
     void drawText(int, int, const QString &, int, int, TextDirection);
-    void QPainter::drawText (int x, int y, const QString &qstring, int from, int to, QColor backgroundColor);
+    void drawText(int, int, const QString &, int, int, const QColor& backgroundColor);
 
     void fillRect(int, int, int, int, const QBrush &);
     void drawConvexPolygon(const QPointArray &);
@@ -115,10 +114,9 @@ public:
     void translate(double dx, double dy);
     void scale(double dx, double dy);
 
-    bool begin(const QPaintDevice *);
-    bool end();
-
-    QPaintDevice *device() const;
+    void begin(QPixmap *) { }
+    void end() { }
+    QPaintDevice *device() const { return 0; }
 
     void drawUnderlineForText(int x, int y, const QString &, int len=-1);
 
@@ -136,8 +134,7 @@ private:
     void _setColorFromBrush();
     void _setColorFromPen();
 
-    void _initialize(QWidget *widget);
-    void _drawPoints (const QPointArray &_points, bool winding, int index, int _npoints, bool fill);
+    void _drawPoints(const QPointArray &_points, bool winding, int index, int _npoints, bool fill);
 
     QPainterPrivate *data;
 };

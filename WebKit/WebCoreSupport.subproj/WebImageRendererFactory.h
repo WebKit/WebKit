@@ -5,7 +5,7 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebCoreImageRendererFactory.h>
+#import <WebCore/WebCoreImageRendererFactory.h>
 
 @class IFImageRenderer;
 

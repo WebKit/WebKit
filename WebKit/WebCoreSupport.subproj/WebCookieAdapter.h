@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <WebCoreCookieAdapter.h>
+#import <WebCore/WebCoreCookieAdapter.h>
 
 @interface IFCookieAdapter : WebCoreCookieAdapter
 {

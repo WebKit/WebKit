@@ -8,8 +8,10 @@
 
 #import "IFCache.h"
 
+#ifndef WEBKIT_INDEPENDENT_OF_WEBCORE
 #import "misc/loader.h"
 #import "kjs/collector.h"
+#endif
 
 @implementation IFCache
 

@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebCoreFrameView.h>
+#import <WebCore/WebCoreFrameView.h>
 
 // FIXME 2980779: This has grown to be more than just a dynamic scroll bar view,
 // and it no longer works outside of WebKit.

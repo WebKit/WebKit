@@ -6,7 +6,7 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebCoreViewFactory.h>
+#import <WebCore/WebCoreViewFactory.h>
 
 @interface IFWebCoreViewFactory : WebCoreViewFactory
 {

@@ -10,9 +10,12 @@
 
 #import <WebKit/IFWebView.h>
 #import <WebKit/IFHTMLViewPrivate.h>
+
+#ifndef WEBKIT_INDEPENDENT_OF_WEBCORE
 #import <khtmlview.h>
 #import <khtml_part.h>
 #import <xml/dom_docimpl.h>
+#endif
 
 @implementation IFDOMNode
 
@@ -38,7 +41,7 @@
 
 - initWithWebView:(IFWebView *)view
 {
-    return [self initWithDOMNode:[[view documentView] _widget]->part()->xmlDocImpl()];
+    return [self initWithDOMNode:[(IFHTMLView *)[view documentView] _widget]->part()->xmlDocImpl()];
 }
 
 - (void)dealloc

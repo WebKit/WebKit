@@ -37,9 +37,10 @@
 #import <WebCoreImageRenderer.h>
 
 struct QPState {				// painter state
-    QFont	font;
-    QPen	pen;
-    QBrush	brush;
+    QPState() : compositingOperation(NSCompositeCopy) { }
+    QFont font;
+    QPen pen;
+    QBrush brush;
     NSCompositingOperation compositingOperation;
 };
 
@@ -47,42 +48,19 @@ typedef QPtrStack<QPState> QPStateStack;
 
 
 struct QPainterPrivate {
-friend class QPainter;
-public:
-    
-    QPainterPrivate(QWidget *widget) : 
-        widget(widget), 
-        qfont(), 
-        qbrush(),
-        qpen(), 
-        isFocusLocked(0), 
-        ps_stack(0),
-        compositingOperation(NSCompositeCopy), 
-        bufferDevice(0)
-    {
-    }
-    
-    ~QPainterPrivate() {}
-    
-private:
-    QWidget *widget;	// Has a reference to a KWQView.
-    QFont qfont;
-    QBrush qbrush;
-    QPen qpen;
-    uint isFocusLocked:1;
+    QPainterPrivate(QWidget *widget = 0) : ps_stack(0) { }
+    QPState state;
     QPStateStack *ps_stack;
-    NSCompositingOperation compositingOperation;
-    const QPaintDevice *bufferDevice;
 };
 
 
 QPainter::QPainter()
+    : data(new QPainterPrivate)
 {
-    _initialize(0);
 }
 
 
-QPainter::QPainter(const QPaintDevice *pdev)
+QPainter::QPainter(QPixmap *)
 {
     _logNeverImplemented();
 }
@@ -90,15 +68,9 @@ QPainter::QPainter(const QPaintDevice *pdev)
 
 //  How do we handle ownership of widget?
 QPainter::QPainter(QWidget *widget)
+    : data(new QPainterPrivate(widget))
 {
-    _initialize (widget);
 }
-
-void QPainter::_initialize(QWidget *widget)
-{
-    data = new QPainterPrivate(widget);
-}
-
 
 QPainter::~QPainter()
 {
@@ -107,55 +79,55 @@ QPainter::~QPainter()
     
 const QFont &QPainter::font() const
 {
-    return data->qfont;
+    return data->state.font;
 }
 
 
 void QPainter::setFont(const QFont &aFont)
 {
-    data->qfont = aFont;
+    data->state.font = aFont;
 }
 
 
 QFontMetrics QPainter::fontMetrics() const
 {
-    return QFontMetrics( data->qfont );
+    return QFontMetrics( data->state.font );
 }
 
 const QPen &QPainter::pen() const
 {
-    return data->qpen;
+    return data->state.pen;
 }
 
 
 void QPainter::setPen(const QPen &pen)
 {
-    data->qpen = pen;
+    data->state.pen = pen;
 }
 
 
 void QPainter::setPen(PenStyle style)
 {
-    data->qpen.setStyle(style);
-    data->qpen.setColor(Qt::black);
-    data->qpen.setWidth(0);
+    data->state.pen.setStyle(style);
+    data->state.pen.setColor(Qt::black);
+    data->state.pen.setWidth(0);
 }
 
 
 void QPainter::setBrush(const QBrush &brush)
 {
-    data->qbrush = brush;
+    data->state.brush = brush;
 }
 
 void QPainter::setBrush(BrushStyle style)
 {
-    data->qbrush.setStyle(style);
-    data->qbrush.setColor(Qt::black);
+    data->state.brush.setStyle(style);
+    data->state.brush.setColor(Qt::black);
 }
 
 const QBrush &QPainter::brush() const
 {
-    return data->qbrush;
+    return data->state.brush;
 }
 
 QRect QPainter::xForm(const QRect &) const
@@ -175,10 +147,7 @@ void QPainter::save()
     
     QPState *ps = new QPState;
 
-    ps->font  = data->qfont;
-    ps->pen   = data->qpen;
-    ps->brush = data->qbrush;
-    ps->compositingOperation = data->compositingOperation;
+    *ps = data->state;
     pss->push( ps );
 }
 
@@ -192,13 +161,13 @@ void QPainter::restore()
     }
     QPState *ps = pss->pop();
 
-    if ( ps->font != data->qfont )
+    if ( ps->font != data->state.font )
 	setFont( ps->font );
-    if ( ps->pen != data->qpen )
+    if ( ps->pen != data->state.pen )
 	setPen( ps->pen );
-    if ( ps->brush != data->qbrush )
+    if ( ps->brush != data->state.brush )
 	setBrush( ps->brush );
-    ps->compositingOperation = data->compositingOperation;
+    ps->compositingOperation = data->state.compositingOperation;
 
     delete ps;
 }
@@ -208,11 +177,11 @@ void QPainter::restore()
 void QPainter::drawRect(int x, int y, int w, int h)
 {
     _lockFocus();
-    if (data->qbrush.style() != NoBrush) {
+    if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
         [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
-    if (data->qpen.style() != NoPen) {
+    if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
         [NSBezierPath strokeRect:NSMakeRect(x, y, w, h)];
     }
@@ -222,23 +191,23 @@ void QPainter::drawRect(int x, int y, int w, int h)
 
 void QPainter::_setColorFromBrush()
 {
-    [data->qbrush.color().getNSColor() set];
+    [data->state.brush.color().getNSColor() set];
 }
 
 
 void QPainter::_setColorFromPen()
 {
-    [data->qpen.color().getNSColor() set];
+    [data->state.pen.color().getNSColor() set];
 }
 
 
 // This is only used to draw borders around text, and lines over text.
 void QPainter::drawLine(int x1, int y1, int x2, int y2)
 {
-    PenStyle penStyle = data->qpen.style();
+    PenStyle penStyle = data->state.pen.style();
     if (penStyle == NoPen)
         return;
-    float width = data->qpen.width();
+    float width = data->state.pen.width();
     if (width < 1)
         width = 1;
     
@@ -292,11 +261,11 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
     path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect (x, y, w, h)];
     
     _lockFocus();
-    if (data->qbrush.style() != NoBrush) {
+    if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
         [path fill];
     }
-    if (data->qpen.style() != NoPen) {
+    if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
         [path stroke];
     }
@@ -307,7 +276,7 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
 // Only supports arc on circles.  That's all khtml needs.
 void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
 {
-    if (data->qpen.style() != NoPen){
+    if (data->state.pen.style() != NoPen){
 
         NSBezierPath *path;
         float fa, falen;
@@ -376,7 +345,7 @@ void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index,
     
     _lockFocus();
 
-    if (fill == TRUE && data->qbrush.style() != NoBrush){
+    if (fill == TRUE && data->state.brush.style() != NoBrush){
         if (winding == TRUE)
             [path setWindingRule: NSNonZeroWindingRule];
         else
@@ -385,7 +354,7 @@ void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index,
         [path fill];
     }
 
-    if (data->qpen.style() != NoPen){
+    if (data->state.pen.style() != NoPen){
         _setColorFromPen();
         [path stroke];
     }
@@ -441,25 +410,26 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 }
 
 
-void QPainter::drawText (int x, int y, const QString &qstring, int len, TextDirection dir)
+void QPainter::drawText(int x, int y, const QString &qstring, int len, TextDirection dir)
 {
     drawText(x, y, qstring, 0, len, dir);
 }
 
-void QPainter::drawText (int x, int y, const QString &qstring, int from, int to, QColor backgroundColor)
+void QPainter::drawText(int x, int y, const QString &qstring, int from, int to, const QColor &backgroundColor)
 {
     _lockFocus();
 
-    id <WebCoreTextRenderer>renderer = [[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()];
-        
-    [renderer drawCharacters:(const UniChar *)qstring.unicode() stringLength: qstring.length() fromCharacterPosition: from toCharacterPosition: to atPoint:NSMakePoint(x,y) withTextColor:data->qpen.color().getNSColor() backgroundColor: backgroundColor.isValid() ? backgroundColor.getNSColor() : nil];
+    [[[WebCoreTextRendererFactory sharedFactory]
+        rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
+    	drawCharacters:(const UniChar *)qstring.unicode() stringLength:qstring.length()
+        fromCharacterPosition:from toCharacterPosition:to atPoint:NSMakePoint(x, y)
+        withTextColor:data->state.pen.color().getNSColor() backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil];
 
     _unlockFocus();
 }
 
 
-void QPainter::drawText (int x, int y, const QString &qstring, int pos, int len, TextDirection dir)
+void QPainter::drawText(int x, int y, const QString &qstring, int pos, int len, TextDirection dir)
 {
     if (dir == RTL) {
         _logPartiallyImplemented();
@@ -484,8 +454,8 @@ void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int le
         string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
 
     [[[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
-        drawUnderlineForString:string atPoint:NSMakePoint(x,y) withColor:data->qpen.color().getNSColor()];
+        rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
+        drawUnderlineForString:string atPoint:NSMakePoint(x,y) withColor:data->state.pen.color().getNSColor()];
 
     _unlockFocus();
 }
@@ -520,8 +490,8 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString &qs
     }
     
     [[[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
-        drawString:string inRect:NSMakeRect(x, y, w, h) withColor:data->qpen.color().getNSColor() paragraphStyle:style];
+        rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
+        drawString:string inRect:NSMakeRect(x, y, w, h) withColor:data->state.pen.color().getNSColor() paragraphStyle:style];
 
     _unlockFocus();
 }
@@ -585,9 +555,9 @@ void QPainter::setClipRect(int,int,int,int)
 Qt::RasterOp QPainter::rasterOp() const
 {
 #ifdef _SUPPORT_RASTER_OP
-    if (data->compositingOperation == NSCompositeSourceOver)
+    if (data->state.compositingOperation == NSCompositeSourceOver)
         rerturn OrROP;
-    else if (data->compositingOperation == NSCompositeXOR)
+    else if (data->state.compositingOperation == NSCompositeXOR)
         return XorROP;
     return CopyROP;
 #else
@@ -601,11 +571,11 @@ void QPainter::setRasterOp(RasterOp op)
 {
 #ifdef _SUPPORT_RASTER_OP
     if (op == OrROP)
-        data->compositingOperation = NSCompositeSourceOver;
+        data->state.compositingOperation = NSCompositeSourceOver;
     else if (op == XorROP)
-        data->compositingOperation = NSCompositeXOR;
+        data->state.compositingOperation = NSCompositeXOR;
     else
-        data->compositingOperation = NSCompositeCopy;
+        data->state.compositingOperation = NSCompositeCopy;
 #else
      _logNotYetImplemented();
 #endif
@@ -622,28 +592,6 @@ void QPainter::scale(double dx, double dy)
     _logNeverImplemented();
 }
 
-
-bool QPainter::begin(const QPaintDevice *bd)
-{
-    _logNeverImplemented();
-    data->bufferDevice = bd;
-    return true;
-}
-
-
-bool QPainter::end()
-{
-    _logNeverImplemented();
-    data->bufferDevice = 0L;
-    return true;
-}
-
-
-QPaintDevice *QPainter::device() const
-{
-    _logPartiallyImplemented();
-    return (QPaintDevice *)data->bufferDevice;
-}
 
 void QPainter::_lockFocus()
 {

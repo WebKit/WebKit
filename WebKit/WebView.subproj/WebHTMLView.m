@@ -10,6 +10,7 @@
 #import <WebKit/IFNSViewExtras.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreBridge.h>
+#import <WebKit/IFWebCoreFrame.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebViewPrivate.h>
@@ -18,14 +19,10 @@
 // Needed for the mouse move notification.
 #import <AppKit/NSResponder_Private.h>
 
-// KDE related includes
+#ifndef WEBKIT_INDEPENDENT_OF_WEBCORE
 #import <khtmlview.h>
-#import <qpainter.h>
-#import <qevent.h>
-#import <html/html_documentimpl.h>
-#import <rendering/render_object.h>
-
-#import <KWQKHTMLPartImpl.h>
+#import <rendering/render_frames.h>
+#endif
 
 @implementation IFHTMLView
 
@@ -128,57 +125,55 @@
 // the data source is changed.
 - (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource 
 {
-    IFWebCoreBridge *bridge = [dataSource _bridge];
-
-    IFHTMLView *provisionalView = [[[dataSource webFrame] webView] documentView];
-    
-    NSRect r = [self frame];
-    
-    _private->provisionalWidget = [bridge createKHTMLViewWithNSView:provisionalView
-	width:(int)r.size.width height:(int)r.size.height
+    _private->provisionalWidget = [[dataSource _bridge]
+        createKHTMLViewWithNSView:[[[dataSource webFrame] webView] documentView]
+	width:(int)[self frame].size.width height:(int)[self frame].size.height
         marginWidth:[[[dataSource webFrame] webView] _marginWidth]
         marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
 }
 
-- (void)provisionalDataSourceCommitted: (IFWebDataSource *)dataSource 
+- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource 
 {
-    IFHTMLViewPrivate *data = _private;
-    IFWebView *webView = [self _IF_parentWebView];
-    id frameScrollView = [webView frameScrollView];
-    
-    data->provisionalWidget->setView (frameScrollView);
+    if (_private->widgetOwned) {
+        delete _private->widget;
+    }
 
-    if (data->widgetOwned)
-        delete data->widget;
+    _private->widget = _private->provisionalWidget;
+    _private->widgetOwned = YES;
+    _private->provisionalWidget = 0;
 
-    data->widget = data->provisionalWidget;
-    data->widgetOwned = YES;
-    data->provisionalWidget = 0;
+    _private->widget->setView([[self _IF_parentWebView] frameScrollView]);
+
+    KHTMLRenderPart *renderPart = [[[self _bridge] frame] renderPart];
+    if (renderPart) {
+        // Setting the widget will delete the previous KHTMLView associated with the frame.
+        _private->widgetOwned = NO;
+        renderPart->setWidget(_private->widget);
+    }
 }
 
-- (void)dataSourceUpdated: (IFWebDataSource *)dataSource
+- (void)dataSourceUpdated:(IFWebDataSource *)dataSource
 {
 }
 
 - (void)reapplyStyles
 {
-    KHTMLView *widget = _private->widget;
-
-    if (widget && widget->part()->xmlDocImpl() && 
-        widget->part()->xmlDocImpl()->renderer()) {
-        if (_private->needsToApplyStyles){
+    if (!_private->needsToApplyStyles) {
+        return;
+    }
+    
 #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
 #endif
-            widget->part()->xmlDocImpl()->updateStyleSelector();
-            _private->needsToApplyStyles = NO;
+
+    [[self _bridge] reapplyStyles];
+    
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s apply style seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_TIMING, "%s apply style seconds = %f\n", [self URL], thisTime);
 #endif
-        }
-    }
 
+    _private->needsToApplyStyles = NO;
 }
 
 
@@ -186,32 +181,26 @@
 // understood how IFWebView will be subclassed.
 - (void)layout
 {
-    KHTMLView *widget = _private->widget;
-
     // Ensure that we will receive mouse move events.  Is this the best place to put this?
     [[self window] setAcceptsMouseMovedEvents: YES];
     [[self window] _setShouldPostEventNotifications: YES];
 
-    if (widget && widget->part()->xmlDocImpl() && 
-        widget->part()->xmlDocImpl()->renderer() &&
-        _private->needsLayout){
- #ifdef _KWQ_TIMING        
+    if (!_private->needsLayout) {
+        return;
+    }
+
+#ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
- #endif
+#endif
 
-        widget->part()->xmlDocImpl()->renderer()->setLayouted(false);
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s doing layout\n", DEBUG_OBJECT(self));
-        widget->layout();
-        _private->needsLayout = NO;
- #ifdef _KWQ_TIMING        
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_VIEW, "%s doing layout\n", DEBUG_OBJECT(self));
+    [[self _bridge] forceLayout];
+    _private->needsLayout = NO;
+
+#ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
- #endif
-    }
-    else {
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s NOT doing layout\n", DEBUG_OBJECT(self));
-    }
-
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", [self URL], thisTime);
+#endif
 }
 
 
@@ -317,21 +306,8 @@
 
 
 // This should eventually be removed.
-- (void)drawRect:(NSRect)rect {
-    KHTMLView *widget = _private->widget;
-    //IFWebViewPrivate *data = _private;
-
-    //if (data->provisionalWidget != 0){
-    //    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not drawing, frame in provisional state.\n");
-    //    return;
-    //}
-    
-    if (widget == 0) {
-        // This used to fill with white, but the window-with-no-content case is now handled
-        // by IFHTMLView.
-        return;
-    }
-
+- (void)drawRect:(NSRect)rect
+{
     WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s drawing\n", DEBUG_OBJECT(self));
 
     [self reapplyStyles];
@@ -341,15 +317,11 @@
 #ifdef _KWQ_TIMING
     double start = CFAbsoluteTimeGetCurrent();
 #endif
-    QPainter p(widget);
 
     [self lockFocus];
-
+    
     //double start = CFAbsoluteTimeGetCurrent();
-    widget->drawContents( &p, (int)rect.origin.x,
-                              (int)rect.origin.y,
-                              (int)rect.size.width,
-                               (int)rect.size.height );
+    [[self _bridge] drawRect:rect];
     //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
 
 #ifdef DEBUG_LAYOUT

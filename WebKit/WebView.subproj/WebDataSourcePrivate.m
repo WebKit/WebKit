@@ -26,8 +26,6 @@
 #import <WebFoundation/IFNSURLExtensions.h>
 #import <WebFoundation/IFURLHandle.h>
 
-#import <kurl.h>
-
 @implementation IFWebDataSourcePrivate 
 
 - init

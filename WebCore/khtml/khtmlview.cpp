@@ -336,24 +336,6 @@ void KHTMLView::drawContents( QPainter*)
 {
 }
 
-#ifdef APPLE_RENDER_TREE_DEBUG
-static void printLevel(int level){
-    while (level--)
-        printf ("    ");
-}
-
-static void printRenderTree(RenderObject *node, int level)
-{
-    printLevel (level);
-    printf ("node %s(%d) (%d,%d) w %d, h %d\n", node->renderName(), level, node->xPos(), node->yPos(), node->width(), node->height());
-    RenderObject *child = node->firstChild();
-    while(child != 0) {
-        printRenderTree(child, level+1);
-        child = child->nextSibling();
-    }
-}
-
-#endif /* APPLE_RENDER_TREE_DEBUG */
 void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
 {
     //kdDebug( 6000 ) << "drawContents x=" << ex << ",y=" << ey << ",w=" << ew << ",h=" << eh << endl;
@@ -361,22 +343,6 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
         p->fillRect(ex, ey, ew, eh, palette().normal().brush(QColorGroup::Base));
         return;
     }
-#ifdef APPLE_CHANGES
-    // FIXME!
-    RenderObject *ro;
-    DOM::DocumentImpl *doc;
-    
-    doc = m_part->xmlDocImpl();
-    if (doc){
-        ro = doc->renderer();
-        if (ro){
-#ifdef APPLE_RENDER_TREE_DEBUG
-                printRenderTree (ro, 0);
-#endif /* APPLE_RENDER_TREE_DEBUG */
-            ro->print(p, ex, ey, ew, eh, 0, 0);
-        }
-    }
-#else /* APPLE_CHANGES not defined */
     if ( d->paintBuffer->width() < visibleWidth() )
         d->paintBuffer->resize(visibleWidth(),PAINT_BUFFER_HEIGHT);
 
@@ -399,7 +365,6 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
         p->drawPixmap(ex, ey+py, *d->paintBuffer, 0, 0, ew, ph);
         py += PAINT_BUFFER_HEIGHT;
     }
-#endif /* APPLE_CHANGES not defined */
 
     khtml::DrawContentsEvent event( p, ex, ey, ew, eh );
     QApplication::sendEvent( m_part, &event );

@@ -18,9 +18,6 @@
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
 #import <WebFoundation/IFURLHandle.h>
 
-#import <rendering/render_frames.h>
-
-
 @implementation IFWebControllerPrivate
 
 - init 

@@ -1,3 +1,69 @@
+2002-07-12  Darin Adler  <darin@apple.com>
+
+	About 1/3 of the remaining work to wean WebKit from its special relationship with WebCore
+	onto explicit interfaces.
+
+        * Misc.subproj/IFCache.mm:
+        * WebView.subproj/IFDOMNode.mm:
+        * WebView.subproj/IFRenderNode.mm:
+	Mark imports from inside WebCore with #ifndef WEBKIT_INDEPENDENT_OF_WEBCORE.
+	Once these are all gone, the task is done.
+
+        * Plugins.subproj/IFPlugin.h:
+        * WebCoreSupport.subproj/IFCookieAdapter.h:
+        * WebCoreSupport.subproj/IFImageRenderer.h:
+        * WebCoreSupport.subproj/IFImageRendererFactory.h:
+        * WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+        * WebCoreSupport.subproj/IFTextRenderer.h:
+        * WebCoreSupport.subproj/IFTextRendererFactory.h:
+        * WebCoreSupport.subproj/IFWebCoreBridge.h:
+        * WebCoreSupport.subproj/IFWebCoreViewFactory.h:
+	Use #import <WebCore/> for getting at WebCore headers so we don't need to use -I.
+
+        * WebCoreSupport.subproj/IFWebCoreBridge.mm:
+        (-[IFWebCoreBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Call setRenderPart on the WebCoreFrame rather than on the IFWebFrame.
+
+        * WebCoreSupport.subproj/IFWebCoreFrame.h: Subclass from the WebCoreFrame class.
+        * WebCoreSupport.subproj/IFWebCoreFrame.m:
+        (-[IFWebCoreFrame HTMLView]): Add a cast.
+        (-[IFWebCoreFrame widget]): Remove overzealous assert.
+
+        * WebKit.pbproj/project.pbxproj: Rearranged things a bit. Removed unneeded build phase.
+
+        * WebView.subproj/IFDocument.h:
+        * WebView.subproj/IFDynamicScrollBarsView.h:
+        * WebView.subproj/IFWebController.h:
+        * WebView.subproj/IFWebControllerPolicyHandler.h:
+	Changed a few stray #include statements to #import statements.
+
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView provisionalDataSourceCommitted:]): Move the logic for setting up the
+	renderPart in here from IFWebView.
+        (-[IFHTMLView reapplyStyles]): Use the bridge.
+        (-[IFHTMLView layout]): Use the bridge.
+        (-[IFHTMLView drawRect:]): Use the bridge.
+
+        * WebView.subproj/IFHTMLViewPrivate.h: Remove _takeOwnershipOfWidget which is no longer needed.
+        * WebView.subproj/IFHTMLViewPrivate.mm:
+        (-[NSView _IF_stopIfPluginView]): Added. Use to clean up _reset a bit.
+        (-[IFHTMLView _reset]): Use makeObjectsPerformSelector: for simplicity.
+
+        * WebView.subproj/IFImageView.h: Remove unneeded IFWebDataSource declaration.
+        * WebView.subproj/IFImageView.m: Just formatting tweaks.
+
+        * WebView.subproj/IFWebControllerPrivate.mm: Removed unneeded import.
+        * WebView.subproj/IFWebDataSource.mm: Removed unneeded import.
+        * WebView.subproj/IFWebDataSourcePrivate.mm: Removed unneeded import.
+        * WebView.subproj/IFWebFrame.mm: Removed unneeded import.
+
+        * WebView.subproj/IFWebFramePrivate.h: Remove renderPart field and related declarations.
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFramePrivate dealloc]): No need to let go of renderPart any more.
+        (-[IFWebFrame _transitionProvisionalToCommitted]): Move logic into IFHTMLView.
+
+        * WebView.subproj/IFWebView.h: Be a bit more specific about the type of documentView.
+
 2002-07-12  Chris Blumenberg  <cblu@apple.com>
 
 	Only accept drags of 1 file.

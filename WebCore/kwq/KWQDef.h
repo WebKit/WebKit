@@ -26,11 +26,10 @@
 #ifndef KWQDEF_H_
 #define KWQDEF_H_
 
+#include <sys/types.h>
 #ifndef KWQ_UNSIGNED_TYPES_DEFINED
 #define KWQ_UNSIGNED_TYPES_DEFINED
 typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned uint;
 typedef unsigned long ulong;
 #endif
 

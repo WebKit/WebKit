@@ -30,48 +30,38 @@
     [super dealloc];
 }
 
-
 - (BOOL)isFlipped 
 {
     return YES;
 }
-
 
 - (void)drawRect:(NSRect)rect
 {
     [[representation image] beginAnimationInRect:[self frame] fromRect:[self frame]];
 }
 
-
 - (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
 {
-
 }
-
 
 - (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource
 {
     representation = [[dataSource representation] retain];
 }
 
-
 - (void)dataSourceUpdated:(IFWebDataSource *)dataSource
 {
-
 }
-
 
 - (void)layout
 {
     IFImageRenderer *image = [representation image];
-    
-    if(image){
+    if (image) {
         [self setFrameSize:[image size]];
         [image setFlipped:YES];
     }
 
 }
-
 
 - (void)setCanDragFrom: (BOOL)flag
 {
@@ -83,18 +73,15 @@
     return canDragFrom;
 }
 
-
 - (void)setCanDragTo: (BOOL)flag
 {
     canDragTo = flag;
 }
 
-
 - (BOOL)canDragTo
 {
     return canDragTo;
 }
-
 
 - (void)viewDidMoveToWindow
 {
@@ -102,6 +89,5 @@
         [[representation image] stopAnimation];
     [super viewDidMoveToWindow];
 }
-
 
 @end

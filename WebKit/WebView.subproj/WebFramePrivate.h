@@ -12,10 +12,6 @@
 @class IFWebView;
 @protocol IFDocumentLoading;
 
-namespace khtml {
-    class RenderPart;
-}
-
 typedef enum {
     IFWEBFRAMESTATE_UNINITIALIZED = 1,
     IFWEBFRAMESTATE_PROVISIONAL = 2,
@@ -43,7 +39,6 @@ typedef enum {
     IFWebView *webView;
     IFWebDataSource *dataSource;
     IFWebDataSource *provisionalDataSource;
-    khtml::RenderPart *renderFramePart;
     IFWebController *controller;
     IFWebFrameState state;
     BOOL scheduledLayoutPending;
@@ -60,16 +55,12 @@ typedef enum {
 - (IFWebDataSource *)dataSource;
 - (void)setProvisionalDataSource: (IFWebDataSource *)d;
 - (IFWebDataSource *)provisionalDataSource;
-- (void)setRenderFramePart: (khtml::RenderPart *)p;
-- (khtml::RenderPart *)renderFramePart;
 
 @end
 
 @interface IFWebFrame (IFPrivate)
 - (void)_parentDataSourceWillBeDeallocated;
 - (void)_setController: (IFWebController *)controller;
-- (void)_setRenderFramePart: (khtml::RenderPart *)p;
-- (khtml::RenderPart *)_renderFramePart;
 - (void)_setDataSource: (IFWebDataSource *)d;
 - (void)_transitionProvisionalToCommitted;
 - (void)_transitionProvisionalToLayoutAcceptable;

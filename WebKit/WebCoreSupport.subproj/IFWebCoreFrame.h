@@ -6,12 +6,12 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebCoreFrame.h>
+#import <WebCore/WebCoreFrame.h>
 
 @class IFWebDataSource;
 @class IFWebFrame;
 
-@interface IFWebCoreFrame : NSObject <WebCoreFrame>
+@interface IFWebCoreFrame : WebCoreFrame <WebCoreFrame>
 {
     IFWebFrame *frame;
 }

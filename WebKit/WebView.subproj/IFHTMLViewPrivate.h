@@ -40,6 +40,5 @@ class KHTMLView;
 
 - (KHTMLView *)_widget;
 - (KHTMLView *)_provisionalWidget;
-- (void)_takeOwnershipOfWidget;
 - (IFWebCoreBridge *)_bridge;
 @end

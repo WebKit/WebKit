@@ -706,6 +706,7 @@
 				F523D31D02DE4476018635CA,
 				F523D31F02DE4476018635CA,
 				F523D32102DE4476018635CA,
+				F52CA71002DFACBD018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -925,12 +926,12 @@
 				F523D29C02DE43D9018635CA,
 				F523D2F302DE443B018635CA,
 				F523D32402DE4478018635CA,
-				F523D15102DE42AD018635CA,
 				F523D15202DE42AD018635CA,
-				F523D15302DE42AD018635CA,
+				F523D15102DE42AD018635CA,
 				F523D15402DE42AD018635CA,
-				F523D15502DE42AD018635CA,
 				F523D15602DE42AD018635CA,
+				F523D15302DE42AD018635CA,
+				F523D15502DE42AD018635CA,
 				F523D15702DE42AD018635CA,
 				F523D15802DE42AD018635CA,
 				F523D15902DE42AD018635CA,
@@ -3745,6 +3746,18 @@
 			name = xml;
 			refType = 4;
 		};
+		F52CA70F02DFACBD018635CA = {
+			isa = PBXFileReference;
+			name = WebCoreFrame.mm;
+			path = kwq/WebCoreFrame.mm;
+			refType = 4;
+		};
+		F52CA71002DFACBD018635CA = {
+			fileRef = F52CA70F02DFACBD018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F58784C402DE375801EA4122 = {
 			isa = PBXFileReference;
 			name = KWQApplication.mm;
@@ -5375,6 +5388,9 @@
 			fileRef = F587854702DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785DA02DE375901EA4122 = {
@@ -5387,6 +5403,9 @@
 			fileRef = F587854902DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785DC02DE375901EA4122 = {
@@ -5399,24 +5418,36 @@
 			fileRef = F587854B02DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785DE02DE375901EA4122 = {
 			fileRef = F587854C02DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785DF02DE375901EA4122 = {
 			fileRef = F587854D02DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785E002DE375901EA4122 = {
 			fileRef = F587854E02DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785E102DE375901EA4122 = {
@@ -5429,18 +5460,27 @@
 			fileRef = F587855002DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785E302DE375901EA4122 = {
 			fileRef = F587855102DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785E402DE375901EA4122 = {
 			fileRef = F587855202DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785E502DE375901EA4122 = {
@@ -5453,6 +5493,9 @@
 			fileRef = F587855402DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F58785E702DE375901EA4122 = {
@@ -5484,6 +5527,7 @@
 				F587854902DE375901EA4122,
 				F587854A02DE375901EA4122,
 				F587854B02DE375901EA4122,
+				F52CA70F02DFACBD018635CA,
 				F587854C02DE375901EA4122,
 				F587854D02DE375901EA4122,
 				F587854E02DE375901EA4122,
@@ -5494,6 +5538,8 @@
 				F587855302DE375901EA4122,
 				F587855402DE375901EA4122,
 				F587855502DE375901EA4122,
+				F58EF58E02DFDFB7018635CA,
+				F58EF58D02DFDFB7018635CA,
 			);
 			isa = PBXGroup;
 			name = "WebCore SPI";
@@ -7595,6 +7641,16 @@
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;
+		};
+		F58EF58D02DFDFB7018635CA = {
+			isa = PBXFileReference;
+			path = "WebCore-tests.exp";
+			refType = 4;
+		};
+		F58EF58E02DFDFB7018635CA = {
+			isa = PBXFileReference;
+			path = WebCore.exp;
+			refType = 4;
 		};
 		F5A1B04902DE8ABA018635CA = {
 			isa = PBXFileReference;

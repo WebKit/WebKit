@@ -6,7 +6,7 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebCoreTextRenderer.h>
+#import <WebCore/WebCoreTextRenderer.h>
 
 typedef struct WidthMap WidthMap;
 typedef struct GlyphMap GlyphMap;

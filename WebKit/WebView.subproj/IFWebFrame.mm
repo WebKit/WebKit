@@ -21,8 +21,6 @@
 
 #import <WebKit/WebKitDebug.h>
 
-#import <rendering/render_frames.h>
-
 @implementation IFWebFrame
 
 - init
@@ -208,7 +206,7 @@
 {
     [_private setDataSource: nil];
     if ([[self webView] isDocumentHTML])
-        [[[self webView] documentView] _reset];
+        [(IFHTMLView *)[[self webView] documentView] _reset];
     [_private setWebView: nil];
 }
 

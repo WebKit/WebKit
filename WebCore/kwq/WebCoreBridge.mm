@@ -28,6 +28,7 @@
 #import <KWQKHTMLPartImpl.h>
 #import <khtmlview.h>
 #import <xml/dom_docimpl.h>
+#import <render_object.h>
 
 @implementation WebCoreBridge
 
@@ -99,11 +100,9 @@
 - (NSString *)documentTextFromDOM
 {
     NSString *string = nil;
-    if (part) {
-        DOM::DocumentImpl *doc = part->xmlDocImpl();
-        if (doc) {
-            string = [[doc->recursive_toHTML(1).getNSString() copy] autorelease];
-        }
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (doc) {
+        string = [[doc->recursive_toHTML(1).getNSString() copy] autorelease];
     }
     if (string == nil) {
         string = @"";
@@ -125,6 +124,42 @@
 - (void)selectAll
 {
     part->selectAll();
+}
+
+- (void)reapplyStyles
+{
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (doc && doc->renderer()) {
+        return;
+    }
+    doc->updateStyleSelector();
+}
+
+- (void)forceLayout
+{
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (doc) {
+        khtml::RenderObject *renderer = doc->renderer();
+        if (renderer) {
+            renderer->setLayouted(false);
+        }
+    }
+    KHTMLView *view = part->impl->getView();
+    if (view) {
+        view->layout();
+    }
+}
+
+- (void)drawRect:(NSRect)rect
+{
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (doc) {
+        khtml::RenderObject *renderer = doc->renderer();
+        if (renderer) {
+            QPainter p;
+            renderer->print(&p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
+        }
+    }
 }
 
 @end

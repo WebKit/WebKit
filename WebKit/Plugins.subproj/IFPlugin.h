@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import "npapi.h"
-#import <WebCoreViewFactory.h>
+#import <WebCore/WebCoreViewFactory.h>
 
 @interface IFPlugin : NSObject <WebCorePluginInfo>
 {

@@ -11,7 +11,7 @@
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFURLHandle.h>
 
-#import <WebCoreResourceLoader.h>
+#import <WebCore/WebCoreResourceLoader.h>
 
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFWebControllerPrivate.h>

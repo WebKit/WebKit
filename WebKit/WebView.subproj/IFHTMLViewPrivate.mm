@@ -16,8 +16,22 @@
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 
-// Includes from KDE
+#ifndef WEBKIT_INDEPENDENT_OF_WEBCORE
 #import <khtmlview.h>
+#endif
+
+@interface NSView (IFHTMLViewPrivate)
+- (void)_IF_stopIfPluginView;
+@end
+
+@implementation NSView (IFHTMLViewPrivate)
+- (void)_IF_stopIfPluginView
+{
+    if ([self isKindOfClass:[IFPluginView class]]) {
+        [(IFPluginView *)self stop];
+    }
+}
+@end
 
 @implementation IFHTMLViewPrivate
 
@@ -35,19 +49,11 @@
 - (void)_reset
 {
     NSArray *subviews = [[self subviews] copy];
+    [subviews makeObjectsPerformSelector:@selector(_IF_stopIfPluginView)];
+    [subviews release];
 
     [IFImageRenderer stopAnimationsInView: self];
     
-    int count = [subviews count];
-    while (count--) {
-        id view = [subviews objectAtIndex:count];
-        if ([view isKindOfClass:[IFPluginView class]]) {
-            IFPluginView *pluginView = (IFPluginView *)view;
-            [pluginView stop];
-        }
-    }
-    [subviews release];
-
     delete _private->provisionalWidget;
     _private->provisionalWidget = 0;
     if (_private->widgetOwned)
@@ -70,11 +76,6 @@
 - (KHTMLView *)_provisionalWidget
 {
     return _private->provisionalWidget;    
-}
-
-- (void)_takeOwnershipOfWidget
-{
-    _private->widgetOwned = NO;
 }
 
 // Required so view can access the part's selection.

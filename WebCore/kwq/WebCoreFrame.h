@@ -23,21 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Foundation/Foundation.h>
-
-@class WebCoreBridge;
-
-#ifdef __cplusplus
-class KHTMLView;
-#else
-@class KHTMLView;
-#endif
+#import <WebCore/WebCoreBridge.h>
 
 // The main difference between a WebCoreFrame and a WebCoreBridge
 // is that there's no guarantee a WebCoreFrame will have any HTML in
 // it, thus no guarantee that it will have a KHTMLPart.
 
-@protocol WebCoreFrame <NSObject>
+// The WebCoreFrame interface contains methods for use by the non-WebCore side of the bridge.
+
+@interface WebCoreFrame : NSObject
+{
+    KHTMLRenderPart *renderPart;
+}
+
+- (void)setRenderPart:(KHTMLRenderPart *)renderPart;
+- (KHTMLRenderPart *)renderPart;
+
+@end
+
+// The WebCoreFrame protocol contains methods for use by the WebCore side of the bridge.
+
+@protocol WebCoreFrame
 
 - (void)loadURL:(NSURL *)URL;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data;
@@ -46,4 +52,11 @@ class KHTMLView;
 
 - (WebCoreBridge *)bridge; // always returns committed bridge, not provisional (avoid calling this for that reason)
 
+@end
+
+// This interface definition allows those who hold a WebCoreFrame * to call all the methods
+// in the WebCoreBridge protocol without requiring the base implementation to supply the methods.
+// This idiom is appropriate because WebCoreFrame is an abstract class.
+
+@interface WebCoreFrame (SubclassResponsibility) <WebCoreFrame>
 @end

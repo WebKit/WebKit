@@ -158,7 +158,7 @@
 
 // FIXME:  Should this method be private?
 // Called when a data source needs to create a frame.  This method encapsulates the
-// specifics of creating and initializaing a view of the appropriate class.
+// specifics of creating and initializing a view of the appropriate class.
 - (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)child inParent: (IFWebDataSource *)parent allowsScrolling: (BOOL)allowsScrolling;
 
 // Look for a frame named name, recursively.

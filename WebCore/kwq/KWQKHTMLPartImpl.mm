@@ -67,7 +67,7 @@ KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 
 bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
 {
-    id <WebCoreFrame> frame;
+    WebCoreFrame *frame;
 
     if (!urlArgs.frameName.isEmpty()) {
         frame = [bridge frameNamed:urlArgs.frameName.getNSString()];
@@ -380,7 +380,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
 {
     KURL clickedURL(part->completeURL( url));
     KURL refLess(clickedURL);
-    id <WebCoreFrame> frame;
+    WebCoreFrame *frame;
 	
     if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
     {
@@ -427,12 +427,12 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     NSString *name = frameName.getNSString();
 
     KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", DEBUG_OBJECT(name));
-    id <WebCoreFrame> wcFrame = [bridge childFrameNamed:name];
+    WebCoreFrame *wcFrame = [bridge childFrameNamed:name];
     if (wcFrame) {
         KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "found %s\n", DEBUG_OBJECT(name));
         frame->setWidget([wcFrame widget]);
     }
-    else {        
+    else {
         KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "creating %s\n", DEBUG_OBJECT(name));
         
         NSURL *childURL = part->completeURL(url).getNSURL();
@@ -599,7 +599,7 @@ QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
 {
     QPtrList<KParts::ReadOnlyPart> parts;
     NSEnumerator *e = [[bridge childFrames] objectEnumerator];
-    id <WebCoreFrame> childFrame;
+    WebCoreFrame *childFrame;
     while ((childFrame = [e nextObject])) {
         KHTMLPart *childPart = [[childFrame bridge] part];
         if (childPart)
@@ -629,6 +629,11 @@ void KWQKHTMLPartImpl::setView(KHTMLView *view)
 {
     d->m_view = view;
     part->setWidget(view);
+}
+
+KHTMLView *KWQKHTMLPartImpl::getView() const
+{
+    return d->m_view;
 }
 
 void KWQKHTMLPartImpl::setTitle(const DOMString &title)

@@ -34,7 +34,7 @@
 
 @implementation IFWebCoreBridge
 
-- (id <WebCoreFrame>)frame
+- (WebCoreFrame *)frame
 {
     return [[dataSource webFrame] _bridgeFrame];
 }
@@ -60,18 +60,18 @@
     return bridgeFrames;
 }
 
-- (id <WebCoreFrame>)childFrameNamed:(NSString *)name
+- (WebCoreFrame *)childFrameNamed:(NSString *)name
 {
     return [[dataSource frameNamed:name] _bridgeFrame];
 }
 
-- (id <WebCoreFrame>)descendantFrameNamed:(NSString *)name
+- (WebCoreFrame *)descendantFrameNamed:(NSString *)name
 {
     return [[[dataSource webFrame] frameNamed:name] _bridgeFrame];
 }
 
 - (BOOL)createChildFrameNamed:(NSString *)frameName
-    withURL:(NSURL *)URL renderPart:(khtml::RenderPart *)renderPart
+    withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
     WEBKIT_ASSERT(dataSource);
@@ -81,7 +81,7 @@
         return NO;
     }
     
-    [frame _setRenderFramePart:renderPart];
+    [[frame _bridgeFrame] setRenderPart:renderPart];
     
     [[frame webView] _setMarginWidth:width];
     [[frame webView] _setMarginHeight:height];
@@ -156,12 +156,12 @@
     [[[dataSource controller] windowContext] setStatusText:status];
 }
 
-- (id <WebCoreFrame>)mainFrame
+- (WebCoreFrame *)mainFrame
 {
     return [[[dataSource controller] mainFrame] _bridgeFrame];
 }
 
-- (id <WebCoreFrame>)frameNamed:(NSString *)name
+- (WebCoreFrame *)frameNamed:(NSString *)name
 {
     return [[[dataSource controller] frameNamed:name] _bridgeFrame];
 }
