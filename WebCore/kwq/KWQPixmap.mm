@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpixmap.h>
-#include <kwqdebug.h>
-#include <qbitmap.h>
+#import <qpixmap.h>
+#import <kwqdebug.h>
+#import <qbitmap.h>
 
 #import <WebCoreImageRenderer.h>
 #import <WebCoreImageRendererFactory.h>

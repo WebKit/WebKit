@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kprinter.h>
-#include <kwqdebug.h>
+#import <kprinter.h>
+#import <kwqdebug.h>
 
 KPrinter::KPrinter(QPrinter::PrinterMode)
 {

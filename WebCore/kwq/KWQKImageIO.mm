@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kimageio.h>
-#include <kwqdebug.h>
+#import <kimageio.h>
+#import <kwqdebug.h>
 
 QStringList KImageIO::mimeTypes(Mode)
 {

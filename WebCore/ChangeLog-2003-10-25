@@ -1,5 +1,17 @@
 2002-06-15  Darin Adler  <darin@apple.com>
 
+	* kwq/kio/jobclasses.h: Removed import of WebFoundation.h.
+	* kwq/KWQKjobclasses.mm: Added import of IFURLHandle.h.
+	* kwq/KWQKloader.mm: Added import of IFError.h and IFURLHandle.h.
+
+	* kwq/WCLoadProgress.h: Removed.
+	* kwq/WCWebDataSource.h: Removed.
+	* kwq/KWQKHTMLPart.mm: Removed import of WCWebDataSource.h.
+
+	* *.mm: Changed all includes to imports using a perl script.
+
+2002-06-15  Darin Adler  <darin@apple.com>
+
 	- fixed 2942808 -- remove all calls to WebKit from WebCore
 
 	More work on the bridge. Now we don't call anything in WebKit explicitly,

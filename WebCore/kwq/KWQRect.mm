@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qrect.h>
+#import <qrect.h>
 
-#include <algorithm>
+#import <algorithm>
 
 using std::max;
 using std::min;

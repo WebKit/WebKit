@@ -31,11 +31,11 @@
     the string.
 */
 
-#include <Foundation/Foundation.h>
-#include <kwqdebug.h>
-#include <qstring.h>
-#include <qregexp.h>
-#include <stdio.h>
+#import <Foundation/Foundation.h>
+#import <kwqdebug.h>
+#import <qstring.h>
+#import <qregexp.h>
+#import <stdio.h>
 
 
 #ifndef USING_BORROWED_QSTRING

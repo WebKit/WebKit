@@ -22,11 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <qlineedit.h>
+#import <qlineedit.h>
 
-#include <KWQNSTextField.h>
+#import <KWQNSTextField.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 QLineEdit::QLineEdit(QWidget *parent, const char *name)
 {

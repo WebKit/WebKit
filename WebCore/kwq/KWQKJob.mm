@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <job.h>
-#include <kwqdebug.h>
+#import <job.h>
+#import <kwqdebug.h>
 
 namespace KIO {
 

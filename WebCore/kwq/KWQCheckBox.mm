@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qcheckbox.h>
+#import <qcheckbox.h>
 
-#include <KWQView.h>
+#import <KWQView.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 QCheckBox::QCheckBox(QWidget *w) : QButton (w)
 {

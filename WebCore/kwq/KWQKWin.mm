@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwin.h>
+#import <kwin.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 KWin::Info KWin::info(int win)
 {

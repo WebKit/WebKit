@@ -26,7 +26,7 @@
 #import <qfont.h>
 #import <qstring.h>
 
-#include <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 
 QFont::QFont()
     : _family([@"" retain])

@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <khtml_factory.h>
+#import <khtml_factory.h>
 
-#include <kinstance.h>
-#include <khtml_settings.h>
+#import <kinstance.h>
+#import <khtml_settings.h>
 
 KInstance *KHTMLFactory::instance()
 {

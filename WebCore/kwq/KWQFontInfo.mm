@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qfontinfo.h>
-#include <kwqdebug.h>
+#import <qfontinfo.h>
+#import <kwqdebug.h>
 
 QFontInfo::QFontInfo(const QFont &f)
     : font(f)

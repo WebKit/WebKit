@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kcursor.h>
+#import <kcursor.h>
 
 
 @interface NSCursor (_WebCoreCursorAdditions)

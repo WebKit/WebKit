@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
-#include <Foundation/Foundation.h>
-#include <qstring.h>
+#import <kwqdebug.h>
+#import <Foundation/Foundation.h>
+#import <qstring.h>
 
 #ifndef USING_BORROWED_QSTRING
 

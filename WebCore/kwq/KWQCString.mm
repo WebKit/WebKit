@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qcstring.h>
+#import <qcstring.h>
 
-#include <ctype.h>
+#import <ctype.h>
 
 QCString::QCString() : QByteArray(0)
 {

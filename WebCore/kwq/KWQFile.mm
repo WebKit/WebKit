@@ -23,20 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qfile.h>
+#import <qfile.h>
 
 #ifndef USING_BORROWED_QFILE
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 #import <Foundation/Foundation.h>
-#include <sys/param.h>
-#include <qstring.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#import <sys/param.h>
+#import <qstring.h>
+#import <unistd.h>
+#import <sys/types.h>
+#import <sys/stat.h>
+#import <fcntl.h>
 
-#include <qiodevice.h>
+#import <qiodevice.h>
 
 class QFile::KWQFilePrivate
 {

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qtimer.h>
+#import <qtimer.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 void QTimer::singleShot(int, QObject *, const char *)
 {

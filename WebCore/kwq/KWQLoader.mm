@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQLoaderImpl.h>
+#import <KWQLoaderImpl.h>
 
 #import <kio/jobclasses.h>
 #import <misc/loader.h>
+
+#import <WebFoundation/IFError.h>
+#import <WebFoundation/IFURLHandle.h>
+
 #import <KWQKHTMLPartImpl.h>
 #import <WebCoreBridge.h>
 #import <kwqdebug.h>

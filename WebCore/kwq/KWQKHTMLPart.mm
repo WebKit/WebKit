@@ -37,7 +37,6 @@
 
 #import <WebCoreViewFactory.h>
 #import <WebCoreBridge.h>
-#import <WCWebDataSource.h>
 
 #import <kwqdebug.h>
 

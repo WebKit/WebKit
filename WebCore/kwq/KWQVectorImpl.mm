@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQVectorImpl.h>
+#import <KWQVectorImpl.h>
 
 #ifndef USING_BORROWED_QVECTOR
 
-#include <CoreFoundation/CFArray.h>
+#import <CoreFoundation/CFArray.h>
 
-#include <new>
-#include <stdlib.h>
+#import <new>
+#import <stdlib.h>
 
 #import <Foundation/NSData.h>
 

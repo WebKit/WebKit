@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpainter.h>
-#include <qwidget.h>
-#include <qfontmetrics.h>
-#include <qpixmap.h>
-#include <qstack.h>
-#include <qpoint.h>
+#import <qpainter.h>
+#import <qwidget.h>
+#import <qfontmetrics.h>
+#import <qpixmap.h>
+#import <qstack.h>
+#import <qpoint.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 #import <WebCoreTextRendererFactory.h>
 #import <WebCoreTextRenderer.h>

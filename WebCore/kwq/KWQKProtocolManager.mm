@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kprotocolmanager.h>
+#import <kprotocolmanager.h>
 
-#include <qstring.h>
+#import <qstring.h>
 
 QString KProtocolManager::userAgentForHost( const QString& )
 {

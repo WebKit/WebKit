@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kurl.h>
-#include <kwqdebug.h>
+#import <kurl.h>
+#import <kwqdebug.h>
 
 #import <Foundation/NSURLPathUtilities.h>
 

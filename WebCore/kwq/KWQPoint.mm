@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpoint.h>
+#import <qpoint.h>
 
 QPoint::QPoint() : xCoord(0), yCoord(0)
 {

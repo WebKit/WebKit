@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kdebug.h>
+#import <kdebug.h>
 
     
 kdbgstream::kdbgstream(unsigned int area, unsigned int level, bool print)

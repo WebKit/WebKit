@@ -22,10 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
-#include <kcombobox.h>
+#import <kwqdebug.h>
+#import <kcombobox.h>
 
-#include <KWQView.h>
+#import <KWQView.h>
 
 KComboBox::KComboBox(QWidget *parent, const char *name)
 {

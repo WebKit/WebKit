@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#include <khtmlview.h>
-#include <misc/loader.h>
+#import <khtmlview.h>
+#import <misc/loader.h>
 
 void KHTMLView::cleared()
 {

@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
-#include <qstring.h>
-#include <jobclasses.h>
+#import <qstring.h>
+#import <jobclasses.h>
 
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
-#include <WebFoundation/IFURLHandleClient.h>
+#import <WebFoundation/IFURLHandle.h>
+#import <WebFoundation/IFURLHandleClient.h>
 
 namespace KIO {
 

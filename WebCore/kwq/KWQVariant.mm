@@ -22,10 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
-#include <qvariant.h>
-#include <qstring.h>
+#import <qvariant.h>
+#import <qstring.h>
 
 class QVariant::QVariantPrivate {
 public:

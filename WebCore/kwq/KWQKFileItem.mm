@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kfileitem.h>
+#import <kfileitem.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 KFileItem::KFileItem(const KIO::UDSEntry &, const KURL &, bool, bool)
 {

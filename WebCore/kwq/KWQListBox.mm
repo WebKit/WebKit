@@ -22,10 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
-#include <KWQView.h>
-#include <KWQListBox.h>
+#import <KWQView.h>
+#import <KWQListBox.h>
 
 
 @interface KWQBrowserDelegate : NSObject

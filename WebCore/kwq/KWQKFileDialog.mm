@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kfiledialog.h>
-#include <kwqdebug.h>
+#import <kfiledialog.h>
+#import <kwqdebug.h>
 
 QString KFileDialog::getOpenFileName(const QString &startDir, 
     const QString &filter, QWidget *parent, const QString &caption)

@@ -22,9 +22,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
-#include <qstring.h>
-#include <klocale.h>
+#import <kwqdebug.h>
+#import <qstring.h>
+#import <klocale.h>
 
 QString i18n(const char* text)
 {

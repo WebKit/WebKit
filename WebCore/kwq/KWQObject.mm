@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qobject.h>
-#include <qvariant.h>
-#include <qguardedptr.h>
+#import <qobject.h>
+#import <qvariant.h>
+#import <qguardedptr.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 bool QObject::connect(const QObject *sender, const char *signal, const QObject *dest, const char *slot)
 {

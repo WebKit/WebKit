@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <Foundation/Foundation.h>
-#include <qdatetime.h>
-#include <time.h>
+#import <Foundation/Foundation.h>
+#import <qdatetime.h>
+#import <time.h>
 
 // QTime class ===============================================================
 

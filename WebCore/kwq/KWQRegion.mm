@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qregion.h>
+#import <qregion.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 QRegion::QRegion()
     : path(nil)

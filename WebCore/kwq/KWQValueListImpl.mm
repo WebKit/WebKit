@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQValueListImpl.h>
+#import <KWQValueListImpl.h>
 
 #ifndef USING_BORROWED_QVALUELIST
 
-#include <stdlib.h>
+#import <stdlib.h>
 
 KWQValueListNodeImpl::KWQValueListNodeImpl() : 
     prev(NULL), 

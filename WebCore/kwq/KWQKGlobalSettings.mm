@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qfont.h>
+#import <qfont.h>
 
-#include <kglobalsettings.h>
+#import <kglobalsettings.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 QFont KGlobalSettings::generalFont()
 {

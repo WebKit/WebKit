@@ -25,9 +25,9 @@
 
 // FIXME: obviously many functions here can be made inline
 
-#include <qtextcodec.h>
-#include <kwqdebug.h>
-#include <KWQCharsets.h>
+#import <qtextcodec.h>
+#import <kwqdebug.h>
+#import <KWQCharsets.h>
 
 // USING_BORROWED_QSTRING ======================================================
 #ifndef USING_BORROWED_QSTRING

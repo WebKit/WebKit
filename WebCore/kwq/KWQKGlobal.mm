@@ -22,16 +22,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
-#include <kglobal.h>
-#include <kconfig.h>
-#include <kcharsets.h>
-#include <klocale.h>
+#import <kglobal.h>
+#import <kconfig.h>
+#import <kcharsets.h>
+#import <klocale.h>
 
-#include <qdict.h>
+#import <qdict.h>
 
-#include <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 
 KWQStaticStringDict *KGlobal::_stringDict = 0;
 KInstance *KGlobal::_instance = 0;

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qinputdialog.h>
-#include <kwqdebug.h>
+#import <qinputdialog.h>
+#import <kwqdebug.h>
 
 QString QInputDialog::getText(const QString &, const QString &, QLineEdit::EchoMode, const QString &, bool *)
 {

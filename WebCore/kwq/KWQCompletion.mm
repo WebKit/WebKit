@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQCompletion.h>
-#include <kwqdebug.h>
+#import <KWQCompletion.h>
+#import <kwqdebug.h>
 
 void KCompletion::setItems(const QStringList &)
 {

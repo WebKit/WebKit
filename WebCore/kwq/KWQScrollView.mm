@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qscrollview.h>
+#import <qscrollview.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.

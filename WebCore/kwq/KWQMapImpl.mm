@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQMapImpl.h>
+#import <KWQMapImpl.h>
 
 #ifndef USING_BORROWED_QMAP
 

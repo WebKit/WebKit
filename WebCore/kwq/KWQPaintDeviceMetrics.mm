@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpaintdevicemetrics.h>
+#import <qpaintdevicemetrics.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 #import <ApplicationServices/ApplicationServices.h>
 

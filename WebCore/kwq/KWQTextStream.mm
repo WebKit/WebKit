@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
-#include <qtextstream.h>
+#import <qtextstream.h>
 
 // class QTextStream ===========================================================
 

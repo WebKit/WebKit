@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwinmodule.h>
-#include <kwqdebug.h>
+#import <kwinmodule.h>
+#import <kwqdebug.h>
 
 QRect KWinModule::workArea() const
 {

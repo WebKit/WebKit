@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <klineedit.h>
+#import <klineedit.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 KLineEdit::KLineEdit(QWidget *parent)
     : QLineEdit(parent)

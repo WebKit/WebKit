@@ -25,9 +25,9 @@
 
 // FIXME: obviously many functions here can be made inline
 
-#include <kcharsets.h>
-#include <qtextcodec.h>
-#include <kwqdebug.h>
+#import <kcharsets.h>
+#import <qtextcodec.h>
+#import <kwqdebug.h>
 
 // constructors, copy constructors, and destructors ----------------------------
 

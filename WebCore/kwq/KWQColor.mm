@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qcolor.h>
+#import <qcolor.h>
 
-#include <qnamespace.h>
-#include <qstring.h>
-#include <kwqdebug.h>
+#import <qnamespace.h>
+#import <qstring.h>
+#import <kwqdebug.h>
 
 static void createStaticConstructorAutoreleasePool()
 {

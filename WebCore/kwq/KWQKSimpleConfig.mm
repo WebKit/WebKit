@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
-#include <ksimpleconfig.h>
+#import <kwqdebug.h>
+#import <ksimpleconfig.h>
 
 
 KSimpleConfig::KSimpleConfig(const QString &s, bool bReadOnly) : KConfig (s, bReadOnly)

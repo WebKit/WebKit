@@ -31,7 +31,12 @@
 #include <qstring.h>
 
 #ifdef __OBJC__
-#import <WebFoundation/WebFoundation.h>
+@protocol IFURLHandleClient;
+@class IFURLHandle;
+typedef id <IFURLHandleClient> IFURLHandleClientPtr;
+#else
+typedef struct IFURLHandleClient IFURLHandleClientPtr;
+class IFURLHandle;
 #endif
 
 namespace KIO {
@@ -58,12 +63,10 @@ public:
     void addMetaData(const QString &key, const QString &value);
     void kill();
 
-#ifdef __OBJC__
-    void begin(id <IFURLHandleClient> client, void *userData);
+    void begin(IFURLHandleClientPtr, void *userData);
     IFURLHandle *handle() const;
     
     NSURL *url() const;
-#endif
 
 private:
     TransferJobPrivate *d;

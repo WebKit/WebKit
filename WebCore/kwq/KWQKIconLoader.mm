@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
-#include <kiconloader.h>
+#import <kwqdebug.h>
+#import <kiconloader.h>
 
 QPixmap KIconLoader::loadIcon(const QString &name, int group, int size, int state) const
 {

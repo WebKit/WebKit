@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQArrayImpl.h>
+#import <KWQArrayImpl.h>
 
-#include <new>
-#include <string.h>
+#import <new>
+#import <string.h>
 
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 

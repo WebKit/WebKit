@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qradiobutton.h>
+#import <qradiobutton.h>
 
-#include <KWQView.h>
+#import <KWQView.h>
 
 QRadioButton::QRadioButton(QWidget *w) : QButton(w)
 {

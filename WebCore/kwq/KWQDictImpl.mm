@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQDictImpl.h>
-#include <CoreFoundation/CoreFoundation.h>
+#import <KWQDictImpl.h>
+#import <CoreFoundation/CoreFoundation.h>
 
 KWQDictImpl::KWQDictImpl(int size, bool caseSensitive, void (*deleteFunc)(void *)) :
     KWQPtrDictImpl(size, deleteFunc, &kCFCopyStringDictionaryKeyCallBacks)

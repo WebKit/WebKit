@@ -22,11 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <qpushbutton.h>
+#import <qpushbutton.h>
 
-#include <KWQView.h>
+#import <KWQView.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 // Should require no additional code over KWQButton
 

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kstandarddirs.h>
+#import <kstandarddirs.h>
 
 QString locate(const char *type, const QString& filename, const KInstance* instance)
 {

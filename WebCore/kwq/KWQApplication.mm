@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qapplication.h>
-#include <kwqdebug.h>
+#import <qapplication.h>
+#import <kwqdebug.h>
 
 QPalette QApplication::palette(const QWidget *p)
 {

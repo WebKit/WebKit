@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qhbox.h>
+#import <qhbox.h>
 
-#include <kwqdebug.h>
-#include <KWQView.h>
+#import <kwqdebug.h>
+#import <KWQView.h>
 
 // This class is ONLY used by FORM <input type=file> elements.  It's used
 // to stretch a LineEditWidget. We probably don't need it at all.

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qframe.h>
+#import <qframe.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 QFrame::QFrame(QWidget *parent)
     : QWidget(parent)

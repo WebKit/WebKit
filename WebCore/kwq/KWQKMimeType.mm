@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kmimetype.h>
-#include <kwqdebug.h>
+#import <kmimetype.h>
+#import <kwqdebug.h>
 
 KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t, bool, bool)
 {

@@ -25,7 +25,7 @@
 
 #import <qfontmetrics.h>
 
-#include <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 
 #import <qfont.h>
 #import <WebCoreTextRendererFactory.h>

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qstylesheet.h>
-#include <qstring.h>
+#import <qstylesheet.h>
+#import <qstring.h>
 
 QString QStyleSheet::convertFromPlainText(const QString &str)
 {

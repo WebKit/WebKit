@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qlabel.h>
+#import <qlabel.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 QLabel::QLabel(const QString &, QWidget *parent)
     : QFrame(parent)

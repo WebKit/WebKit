@@ -26,12 +26,12 @@
 
 #import "kwqdebug.h"
 
-#include <khtmlview.h>
-#include <khtml_part.h>
-#include <qwidget.h>
-#include <qpainter.h>
-#include <qevent.h>
-#include <html/html_documentimpl.h>
+#import <khtmlview.h>
+#import <khtml_part.h>
+#import <qwidget.h>
+#import <qpainter.h>
+#import <qevent.h>
+#import <html/html_documentimpl.h>
 
 
 

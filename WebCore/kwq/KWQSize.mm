@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qsize.h>
+#import <qsize.h>
 
 QSize::QSize() : w(-1), h(-1)
 {

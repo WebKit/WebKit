@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qguardedptr.h>
+#import <qguardedptr.h>
 
 KWQGuardedPtrBase::KWQGuardedPtrBase(QObject *o)
 {

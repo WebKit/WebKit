@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQPtrDictImpl.h>
+#import <KWQPtrDictImpl.h>
 
-#include <new>
+#import <new>
 
 typedef void (* DeleteFunction) (void *);
 

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
-#include <KWQStyle.h>
+#import <kwqdebug.h>
+#import <KWQStyle.h>
 
 QStyle::QStyle()
 {

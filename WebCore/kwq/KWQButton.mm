@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qbutton.h>
+#import <qbutton.h>
 
-#include <KWQView.h>
-#include <kwqdebug.h>
+#import <KWQView.h>
+#import <kwqdebug.h>
 
 QButton::QButton(QWidget *parent)
 {

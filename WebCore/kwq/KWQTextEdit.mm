@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qtextedit.h>
+#import <qtextedit.h>
 
 #import <KWQTextArea.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 QTextEdit::QTextEdit(QWidget *parent)
 {

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "qpoint.h"
-#include <stdarg.h>
+#import "qpoint.h"
+#import <stdarg.h>
 
 QPointArray::QPointArray(int nPoints, const int *points)
 {

@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qxml.h>
+#import <qxml.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
-#include <qstring.h>
+#import <qstring.h>
 
 QString QXmlAttributes::value(const QString &) const
 {

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
-#include <qpainter.h>
+#import <kwqdebug.h>
+#import <qpainter.h>
 
 
 // Simple implementation.  Only allows for scaling, and scaling once! 
