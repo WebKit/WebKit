@@ -50,4 +50,8 @@ static WebCoreTextRendererFactory *sharedFactory;
     return nil;
 }
 
+- (NSFont *)fontWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
+{
+    return nil;
+}
 @end

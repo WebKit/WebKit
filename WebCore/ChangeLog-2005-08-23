@@ -1,3 +1,43 @@
+2002-08-02  David Hyatt  <hyatt@apple.com>
+
+	Lots of form control changes.
+	- Inputs and textareas now respond to setFont and can have their font set by the Web page
+	explicitly.  These fields emulate the WinIE behavior of defaulting to the UI system font
+	and only picking up new fonts if they are explicitly specified on the element itself.
+	- Buttons and selects use the small versions now.
+	- Stopped trying to align controls along baselines of their interior text.  Konqueror is
+	the only browser that does this, and it looks bad on many pages.  With this patch controls
+	align along their bottom borders (which extend slightly below the baseline of surrounding
+	text).  This matches Gecko, MacIE, and WinIE behavior.
+	- Stopped using monospace for textareas and inputs.
+	- Fixed a bug with inputs not calling setScrollable on their cells.
+	
+        * khtml/css/html4.css:
+        * khtml/rendering/render_form.cpp:
+        (RenderSubmitButton::calcMinMaxWidth):
+        (RenderSubmitButton::baselinePosition):
+        (RenderLineEdit::baselinePosition):
+        (RenderSelect::baselinePosition):
+        * khtml/rendering/render_form.h:
+        * kwq/KWQButton.mm:
+        (QButton::QButton):
+        (QButton::sizeHint):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::init):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::cursorPosition):
+        (QLineEdit::setFont):
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextField initWithFrame:widget:]):
+        * kwq/KWQView.mm:
+        (-[KWQNSButtonCell cellSizeForBounds:]):
+        (+[KWQNSButton initialize]):
+        * kwq/WebCoreTextRendererFactory.h:
+        * kwq/WebCoreTextRendererFactory.m:
+        (-[WebCoreTextRendererFactory fontWithFamily:traits:size:]):
+        * kwq/qt/qbutton.h:
+        * kwq/qt/qlineedit.h:
+
 2002-08-01  Darin Adler  <darin@apple.com>
 
         - fixed 2841277 -- support for charset=gb2312

@@ -48,7 +48,40 @@
 
 @end
 
+@interface  NSButtonCell (Whacky)
+- (NSRect)_insetRect:(NSRect)theRect;
+- (NSSize)_titleSizeWithSize:(NSSize)maxSize;
+@end
+
+@interface KWQNSButtonCell : NSButtonCell
+@end
+
+@implementation KWQNSButtonCell
+
+// cellSizeForBounds is a sizeToFit !
+- (NSSize)cellSizeForBounds:(NSRect)theRect
+{
+// XXX Find a way to get these from the system? -dwh
+#define	kPushButtonBorderSize			 4
+#define kThemePushButtonTextOffset		 4
+#define kPushButtonInset			 1
+
+    // XXX This is going to get way more complex before I'm done here. :(
+    // -dwh
+    NSSize theSize = [super cellSizeForBounds:theRect];
+    theSize.height -= (kPushButtonBorderSize)*2.0;
+    return theSize;
+}
+
+@end
+
 @implementation KWQNSButton
+
++ (void)initialize {
+    if (self == [KWQNSButton class]) {
+        [self setCellClass:[KWQNSButtonCell class]];
+    }
+}
 
 - initWithFrame:(NSRect)r widget:(QWidget *)w 
 {

@@ -32,6 +32,19 @@ QButton::QButton(QWidget *parent)
     KWQNSButton *button = [[KWQNSButton alloc] initWithFrame:NSMakeRect (0,0,0,0) widget:this];
     setView(button);
     [button release];
+    
+     // Use the small system font.
+    [button setFont: [NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+}
+
+QSize QButton::sizeHint() const 
+{
+    KWQNSButton *button = (KWQNSButton *)getView();
+    
+    [button sizeToFit];
+    
+    NSRect vFrame = [button frame];
+    return QSize((int)vFrame.size.width,(int)vFrame.size.height);
 }
 
 void QButton::setText(const QString &s)

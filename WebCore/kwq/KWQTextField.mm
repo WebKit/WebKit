@@ -41,6 +41,8 @@
 
     [self setDelegate: self];
 
+    [[self cell] setScrollable: YES];
+    
     return self;
 }
 

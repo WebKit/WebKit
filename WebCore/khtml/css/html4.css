@@ -384,12 +384,12 @@ BUTTON:active {
         border-style: inset;
 }
 
-/* we want a fixed font for form elements (input & textarea) */
-      
-INPUT[type="text"],
-INPUT[type="password"],
-TEXTAREA { 
-	font-family: monospace;
+/* XXX Need to implement support for CSS2 system fonts, so that I don't have to hard code this.
+   -dwh */
+INPUT, TEXTAREA {
+        font-size: 13px;
+        font-face: Lucida Grande;
+        font-family: sans serif;
 }
 
 INPUT[type="hidden"] {
@@ -399,7 +399,7 @@ INPUT[type="hidden"] {
 INPUT[type="radio"], INPUT[type="checkbox"] {
         margin: 0 0.5ex;
 }
-      
+
 OPTION, 
 OPTGROUP, 
 AREA,

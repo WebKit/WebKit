@@ -27,6 +27,7 @@
 
 #import <KWQNSTextField.h>
 #import <kwqdebug.h>
+#import <WebCoreTextRendererFactory.h>
 
 QLineEdit::QLineEdit(QWidget *parent)
 {
@@ -50,6 +51,16 @@ int QLineEdit::cursorPosition() const
 {
     // Not needed.  We ignore setCursorPosition().
     return 0;
+}
+
+void QLineEdit::setFont(const QFont &font)
+{
+    QWidget::setFont(font);
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    [textField setFont: [[WebCoreTextRendererFactory sharedFactory] 
+            fontWithFamily: font.getNSFamily()
+            traits: font.getNSTraits() 
+            size: font.getNSSize()]];
 }
 
 void QLineEdit::setText(const QString &s)

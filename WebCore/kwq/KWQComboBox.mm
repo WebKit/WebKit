@@ -52,6 +52,9 @@ void QComboBox::init(bool isEditable)
     [comboBox release];
     
     items = [[NSMutableArray alloc] init];
+
+    // Use the small system font.
+    [comboBox setFont: [NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
 }
 
 

@@ -341,6 +341,9 @@ void RenderSubmitButton::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
 
+#ifndef APPLE_CHANGES
+    // Don't use the CSS font metrics.  Don't rely on the button sizing quirks that they
+    // have to use because of scalable button fonts. -dwh
     QString raw = rawText();
     QPushButton* pb = static_cast<QPushButton*>(m_widget);
     pb->setText(raw);
@@ -357,6 +360,13 @@ void RenderSubmitButton::calcMinMaxWidth()
     
     setIntrinsicWidth( s.width() - margin / 2 );
     setIntrinsicHeight( s.height() - margin / 2);
+#else
+    // Instead treat a button as fully replaced.  Let it use its own system UI font
+    // and tell us exactly how big it wants to be.
+    QSize s(m_widget->sizeHint());
+    setIntrinsicWidth( s.width() );
+    setIntrinsicHeight( s.height() );
+#endif
 
     RenderButton::calcMinMaxWidth();
 }
@@ -380,9 +390,7 @@ QString RenderSubmitButton::defaultLabel() {
 short RenderSubmitButton::baselinePosition( bool f ) const
 {
 #ifdef APPLE_CHANGES
-    // FIXED: [rjw] Where does this magic number '8' come from?  It's also used above in
-    // RenderSubmitButton::calcMinMaxWidth().
-    return RenderWidget::baselinePosition( f ) - 8 - QFontMetrics( style()->font() ).descent();
+    return RenderWidget::baselinePosition( f ) - 7;
 #else
     return RenderFormElement::baselinePosition( f );
 #endif
@@ -492,6 +500,15 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
     edit->setTarget (this);
 #endif
 }
+
+#ifdef APPLE_CHANGES
+// We override the baseline position to get the textfield border and padding (before  we hit
+// the font descent) taken into account.
+short RenderLineEdit::baselinePosition( bool f ) const
+{
+    return RenderWidget::baselinePosition( f ) - 4;
+}
+#endif
 
 void RenderLineEdit::slotReturnPressed()
 {
@@ -877,6 +894,14 @@ void RenderSelect::updateFromElement()
 
     RenderFormElement::updateFromElement();
 }
+
+#ifdef APPLE_CHANGES
+// Override to deal with our widget.
+short RenderSelect::baselinePosition( bool f ) const
+{
+    return RenderWidget::baselinePosition( f ) - 7;
+}
+#endif
 
 void RenderSelect::calcMinMaxWidth()
 {
