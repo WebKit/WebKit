@@ -234,7 +234,6 @@ JObjectWrapper::JObjectWrapper(jobject instance)
     _env = getJNIEnv();
         
     _instance = _env->NewGlobalRef (instance);
-    _env->DeleteLocalRef (instance);
     
 	JS_LOG ("new global ref %p for %p\n", _instance, instance);
 	

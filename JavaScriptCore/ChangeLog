@@ -1,3 +1,13 @@
+2004-01-14  Richard Williamson   <rjw@apple.com>
+	
+	Fixed 3529466.  With recent changes to Java plugin we must no
+	longer call DeleteLocalRef().  Not a problem, it was an optimization anyway.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_instance.cpp:
+        (JObjectWrapper::JObjectWrapper):
+
 === Safari-122 ===
 
 2004-01-14  Richard Williamson   <rjw@apple.com>
