@@ -83,9 +83,10 @@ KJS::Value JavaInstance::stringValue() const
 {
     jstring stringValue = (jstring)callJNIObjectMethod (_instance->_instance, "toString", "()Ljava/lang/String;");
     JNIEnv *env = getJNIEnv();
-    const char *c = getCharactersFromJStringInEnv (env, stringValue);
-    KJS::String v(c);
-    releaseCharactersForJStringInEnv (env, stringValue, c);
+    const UChar *c = (const UChar *)getUCharactersFromJStringInEnv (env, stringValue);
+    UString u(c, (int)env->GetStringLength(stringValue));
+    String v(u);
+    releaseUCharactersForJStringInEnv (env, stringValue, (const jchar *)c);
     return v;
 }
 

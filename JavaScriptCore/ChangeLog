@@ -1,3 +1,12 @@
+2004-01-30  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3542044.  Create KJS::String using UString constructor instead of passing UTF8 string to char* constructor.
+
+        Reviewed by Darin.
+
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::stringValue):
+
 2004-01-26  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Switch from pbxbuild to xcodebuild.
