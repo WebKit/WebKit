@@ -1,3 +1,20 @@
+2003-02-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed 3183575 -- <https://sbcreg.sbcglobal.net> casuses infinite refresh & crash
+        
+        The page had history.forward(1) which was causing us to reload.
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge goBackOrForward:]):
+        Handle edge cases by checking backListCount and forwardListCount at this level.
+        Be sure to do nothing when we are already on the right page.
+
+        * History.subproj/WebBackForwardList.h: Added forwardListCount, updated comment for entryAtIndex.
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList forwardListCount]): Added.
+        (-[WebBackForwardList entryAtIndex:]): Return nil for out of range indices.
+        
 2003-02-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

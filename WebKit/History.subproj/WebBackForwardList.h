@@ -155,10 +155,17 @@
 - (int)backListCount;
 
 /*!
+    @method forwardListCount
+    @abstract Returns the forward list's current count.
+    @result The number of items in the list.
+*/
+- (int)forwardListCount;
+
+/*!
     @method entryAtIndex:
     @abstract Returns an entry the given distance from the current entry.
     @param index Index of the desired list item relative to the current item; 0 is current item, -1 is back item, 1 is forward item, etc.
-    @result The entry the given distance from the current entry. If index exceeds the limits of the list, the entry furthest in that direction is returned.
+    @result The entry the given distance from the current entry. If index exceeds the limits of the list, nil is returned.
 */
 - (WebHistoryItem *)entryAtIndex:(int)index;
 

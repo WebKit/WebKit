@@ -254,14 +254,19 @@ static BOOL usesPageCache = YES;
     return _current;
 }
 
+- (int)forwardListCount
+{
+    return (int)[_entries count] - (_current + 1);
+}
+
 - (WebHistoryItem *)entryAtIndex:(int)index
 {
     // Do range checks without doing math on index to avoid overflow.
     if (index < -_current) {
-        return [_entries objectAtIndex:0];
+        return nil;
     }
-    if (index >= (int)[_entries count] - _current) {
-        return [_entries lastObject];
+    if (index > [self forwardListCount]) {
+        return nil;
     }
     return [_entries objectAtIndex:index + _current];
 }

@@ -627,8 +627,25 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)goBackOrForward:(int)distance
 {
+    if (distance == 0) {
+        return;
+    }
     WebController *controller = [frame controller];
-    WebHistoryItem *item = [[controller backForwardList] entryAtIndex:distance];
+    WebBackForwardList *list = [controller backForwardList];
+    WebHistoryItem *item = [list entryAtIndex:distance];
+    if (!item) {
+        if (distance > 0) {
+            int forwardListCount = [list forwardListCount];
+            if (forwardListCount > 0) {
+                item = [list entryAtIndex:forwardListCount];
+            }
+        } else {
+            int backListCount = [list forwardListCount];
+            if (backListCount > 0) {
+                item = [list entryAtIndex:-backListCount];
+            }
+        }
+    }
     if (item) {
         [controller goBackOrForwardToItem:item];
     }
