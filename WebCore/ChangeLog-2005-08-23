@@ -1,3 +1,15 @@
+2004-12-14  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3833123, setting a cell's colspan does not update rendering like it should.
+	
+        Reviewed by rjw
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableCellElementImpl::parseHTMLAttribute):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::RenderTableCell):
+        (RenderTableCell::updateFromElement):
+
 2004-12-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3864536> crash copying text from other apps and pasting in a sticky in dashboard

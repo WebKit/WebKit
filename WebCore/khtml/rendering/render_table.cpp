@@ -1578,6 +1578,7 @@ RenderTableCell::RenderTableCell(DOM::NodeImpl* _node)
 {
   _col = -1;
   _row = -1;
+  cSpan = rSpan = 1;
   updateFromElement();
   setShouldPaintBackgroundOrBorder(true);
   _topExtra = 0;
@@ -1595,14 +1596,16 @@ void RenderTableCell::detach()
 
 void RenderTableCell::updateFromElement()
 {
-  DOM::NodeImpl *node = element();
-  if ( node && (node->id() == ID_TD || node->id() == ID_TH) ) {
-      DOM::HTMLTableCellElementImpl *tc = static_cast<DOM::HTMLTableCellElementImpl *>(node);
-      cSpan = tc->colSpan();
-      rSpan = tc->rowSpan();
-  } else {
-      cSpan = rSpan = 1;
-  }
+    int oldRSpan = rSpan;
+    int oldCSpan = cSpan;
+    DOM::NodeImpl* node = element();
+    if (node && (node->id() == ID_TD || node->id() == ID_TH)) {
+        DOM::HTMLTableCellElementImpl *tc = static_cast<DOM::HTMLTableCellElementImpl *>(node);
+        cSpan = tc->colSpan();
+        rSpan = tc->rowSpan();
+    }
+    if (parent() && oldRSpan != rSpan || oldCSpan != cSpan)
+        setNeedsLayoutAndMinMaxRecalc();
 }
     
 void RenderTableCell::calcMinMaxWidth()
