@@ -358,12 +358,22 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     NSDictionary *fileAsDictionary = [NSDictionary dictionaryWithContentsOfURL: [self URL]];
     if (fileAsDictionary == nil) {
+        // Couldn't read a dictionary; let's see if we can read an old-style array instead
+        NSArray *fileAsArray = [NSArray arrayWithContentsOfURL:[self URL]];
+        if (fileAsArray == nil) {
 #if !ERROR_DISABLED
-        if ([[self URL] isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [[self URL] path]]) {
-            ERROR("unable to read history from file %@; perhaps contents are corrupted", [[self URL] path]);
-        }
+            if ([[self URL] isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [[self URL] path]]) {
+                ERROR("unable to read history from file %@; perhaps contents are corrupted", [[self URL] path]);
+            }
 #endif
-        return NO;
+            return NO;
+        } else {
+            // Convert old-style array into new-style dictionary
+            fileAsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                fileAsArray, DatesArrayKey,
+                [NSNumber numberWithInt:1], FileVersionKey,
+                nil];
+        }
     }
 
     NSNumber *fileVersionObject = [fileAsDictionary objectForKey:FileVersionKey];

@@ -1,3 +1,13 @@
+2003-04-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate _loadHistoryGuts:]):
+	if we can't load the file as a dictionary, try loading it
+	the old-fashioned array way. This makes the history file
+	format change forward-compatible.
+
 2003-04-17  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3160751 - Can't use non-'.txt' file extension for text files?
