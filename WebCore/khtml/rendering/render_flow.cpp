@@ -384,8 +384,10 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
             }
         }
 
-        yPos = _ty + curr->root()->selectionTop() - maximalOutlineSize(i.phase);
-        h = curr->root()->selectionHeight() + 2 * maximalOutlineSize(i.phase);
+        int top = kMin(curr->root()->topOverflow(), curr->root()->selectionTop()) - maximalOutlineSize(i.phase);
+        int bottom = kMax(curr->root()->selectionTop() + curr->root()->selectionHeight(), curr->root()->bottomOverflow()) + maximalOutlineSize(i.phase);
+        h = bottom - top;
+        yPos = _ty + top;
         if ((yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
             curr->paint(i, _tx, _ty);
     }

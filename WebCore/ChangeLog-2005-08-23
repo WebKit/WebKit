@@ -1,3 +1,13 @@
+2005-01-18  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3948123, rolling over link erases nearby text.  The repaint rect check for lines was wrong whenever
+	two lines overlapped.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLines):
+
 2005-01-18  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
