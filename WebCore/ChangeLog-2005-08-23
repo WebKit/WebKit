@@ -1,3 +1,44 @@
+2004-02-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/xml/dom2_rangeimpl.h: Now includes createInstance glue function as do the other
+        khtml DOM objects that we reflect into ObjC.
+        * kwq/DOM-compat.h: Added. Compatibility declarations for DOM SPI. Note that this file 
+        is copied into WebKit by the build system as needed.
+        * kwq/DOM.h: Added. New home for DOM SPI. Note that this file is copied into WebKit by the build 
+        system as needed.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::recordFormValue): Updated usage to new DOM SPI.
+        * kwq/WebCoreBridge.h: Updated usage to new DOM SPI.
+        * kwq/WebCoreBridge.mm: Updated usage to new DOM SPI. Needed to add DOM range impl include since
+        includes jiggered around and this needed header was no longer included indirectly.
+        (-[WebCoreBridge elementForView:]): Ditto.
+        (inputElementFromDOMElement): Ditto.
+        (formElementFromDOMElement): Ditto.
+        (-[WebCoreBridge elementWithName:inForm:]): Ditto.
+        (-[WebCoreBridge elementDoesAutoComplete:]): Ditto.
+        (-[WebCoreBridge elementIsPassword:]): Ditto.
+        (-[WebCoreBridge currentForm]): Ditto.
+        (-[WebCoreBridge controlsInForm:]): Ditto.
+        (-[WebCoreBridge searchForLabels:beforeElement:]): Ditto.
+        (-[WebCoreBridge matchLabels:againstElement:]): Ditto.
+        (-[WebCoreBridge elementAtPoint:]): Ditto.
+        (-[WebCoreBridge DOMDocument]): Ditto.
+        (-[WebCoreBridge setSelectionFrom:startOffset:to:endOffset:]): Ditto.
+        (-[WebCoreBridge attributedStringFrom:startOffset:to:endOffset:]): Ditto.
+        (-[WebCoreBridge selectionStart]): Ditto.
+        (-[WebCoreBridge selectionEnd]): Ditto.
+        * kwq/WebCoreDOM.h: New home for all private declarations needed for reflecting DOM into ObjC.
+        * kwq/WebCoreDOM.mm: Added. New home for all implementations needed for reflecting DOM into ObjC.
+        * kwq/WebCoreDOMDocument.mm: Removed. All ObjC DOM implementation now in WebCoreDOM.mm.
+        * kwq/WebCoreDOMNode.mm: Removed. All ObjC DOM implementation now in WebCoreDOM.mm.
+        * kwq/WebCoreDOMPrivate.h: Removed.
+        * kwq/WebDOMDocument.h: Removed.
+        * kwq/WebDOMElement.h: Removed.
+        * kwq/WebDOMNode.h: Removed.
+
 2004-02-25  John Sullivan  <sullivan@apple.com>
 
         WebCore part of fix for <rdar://problem/3546370>: add a way to tab to menus, 

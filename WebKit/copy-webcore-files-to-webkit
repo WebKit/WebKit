@@ -1,0 +1,89 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Cwd;
+use File::Basename;
+
+my $ProgramName = 'copy-webcore-files-to-webkit';
+
+my %Files = (
+    'kwq/DOM.h' =>           # WebCore path
+    'DOM.subproj/DOM.h',     # WebKit path
+    'kwq/DOM-compat.h' =>           # WebCore path
+    'DOM.subproj/DOM-compat.h',     # WebKit path
+);
+
+my $WebCorePath = '';
+my $WebKitPath = '';
+
+AssertInWebKit();
+AssertWebCoreFound();
+CopyFilesIfNeeded();
+
+#=======================================================================================
+# subroutines
+
+sub Fail {
+    my ($say) = @_;
+    Say("*** $ProgramName: $say");
+    exit(-1);
+}
+
+sub Say {
+    my ($say) = @_;
+    print STDERR $say, "\n";
+}
+
+sub AssertInWebKit {
+	if (cwd() =~ /WebKit$/) {
+		# ok...we're in WebCore
+		$WebKitPath = cwd();
+	}
+	else {
+		Fail("not being run from WebKit directory. exiting...");
+	}
+}
+
+sub AssertWebCoreFound {
+	my $path = cwd();
+	$path = dirname($path) . '/WebCore';
+	if (-d $path) {
+		# ok...WebCore is where we expect it
+		$WebCorePath = $path;
+	}
+	else {
+		Fail("WebCore is not a sibling directory to WebKit. exiting...");
+	}
+}
+
+sub CopyFilesIfNeeded {
+	# Only copy files if the dest file does not exist
+	# or the source file is different than the dest file
+	my $blab = 0;
+	
+	for my $file (keys(%Files)) {
+		my $source = "$WebCorePath/$file";
+		my $dest = "$WebKitPath/$Files{$file}";
+		if (! -f $source) {
+			Fail("$source is not a plain file");	
+		}
+		if (-e $dest && ! -f $dest) {
+			Fail("$dest is not a plain file");	
+		}
+		if (! -e $dest || system("cmp $source $dest > /dev/null 2>&1")) {
+			Say("$ProgramName: copying files...") if $blab == 0;
+			$blab = 1;
+			ExecuteCommand("cp -f $source $dest");
+		}
+	}
+}
+
+sub ExecuteCommand {
+    my ($cmd) = @_;
+    Say($cmd);
+    my $result = system($cmd);
+    if ($result != 0) {
+        Fail("error: $result");
+        exit($result);
+    }
+}

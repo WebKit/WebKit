@@ -5,12 +5,12 @@
 
 #import <WebKit/WebHTMLRepresentation.h>
 
+#import <WebKit/DOM.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDOMElement.h>
 #import <Foundation/NSURLResponse.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
@@ -91,12 +91,12 @@
     return [_private->dataSource _title];
 }
 
-- (id<WebDOMDocument>)DOMDocument
+- (id<DOMDocument>)DOMDocument
 {
     return [_private->bridge DOMDocument];
 }
 
-- (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset
+- (void)setSelectionFrom:(id<DOMNode>)start startOffset:(int)startOffset to:(id<DOMNode>)end endOffset:(int) endOffset
 {
 }
 
@@ -112,52 +112,52 @@
     return nil;
 }
 
-- (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset
+- (NSAttributedString *)attributedStringFrom: (id<DOMNode>)startNode startOffset: (int)startOffset to: (id<DOMNode>)endNode endOffset: (int)endOffset
 {
     return [_private->bridge attributedStringFrom: startNode startOffset: startOffset to: endNode endOffset: endOffset];
 }
 
-- (id <WebDOMElement>)elementWithName:(NSString *)name inForm:(id <WebDOMElement>)form
+- (id <DOMElement>)elementWithName:(NSString *)name inForm:(id <DOMElement>)form
 {
     return [_private->bridge elementWithName:name inForm:form];
 }
 
-- (id <WebDOMElement>)elementForView:(NSView *)view
+- (id <DOMElement>)elementForView:(NSView *)view
 {
     return [_private->bridge elementForView:view];
 }
 
-- (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element
+- (BOOL)elementDoesAutoComplete:(id <DOMElement>)element
 {
     return [_private->bridge elementDoesAutoComplete:element];
 }
 
-- (BOOL)elementIsPassword:(id <WebDOMElement>)element
+- (BOOL)elementIsPassword:(id <DOMElement>)element
 {
     return [_private->bridge elementIsPassword:element];
 }
 
-- (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element
+- (id <DOMElement>)formForElement:(id <DOMElement>)element
 {
     return [_private->bridge formForElement:element];
 }
 
-- (id <WebDOMElement>)currentForm;
+- (id <DOMElement>)currentForm;
 {
     return [_private->bridge currentForm];
 }
 
-- (NSArray *)controlsInForm:(id <WebDOMElement>)form
+- (NSArray *)controlsInForm:(id <DOMElement>)form
 {
     return [_private->bridge controlsInForm:form];
 }
 
-- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <WebDOMElement>)element
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <DOMElement>)element
 {
     return [_private->bridge searchForLabels:labels beforeElement:element];
 }
 
-- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <WebDOMElement>)element
+- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <DOMElement>)element
 {
     return [_private->bridge matchLabels:labels againstElement:element];
 }

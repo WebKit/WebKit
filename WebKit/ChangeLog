@@ -1,3 +1,60 @@
+2004-02-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Updated usage of DOM SPI to use new names and conventions. 
+
+        Unless indicated otherwise, the changes were to update protocol names for, which
+        changed from using a "WebDOM" prefix to a "DOM" prefix, and changing now need 
+        only include the DOM.h header from WebKit to get everything.
+
+        * DOM.subproj/DOM-compat.h: Added. This header contains some compatibility declarations
+        to work with older clients of our DOM SPI. Though this file is checked into WebKit, 
+        it really lives and should be updated in WebCore. It is copied into WebKit by the build 
+        system as needed.
+        * DOM.subproj/DOM.h: Added. This file includes the new "guts" of the DOM SPI. As above,
+        this file is checked into WebKit, it really lives and should be updated in WebCore.
+        It is copied into WebKit by the build system as needed.
+        * DOM.subproj/WebDOMDocument.h: Removed declarations. Now just includes DOM.h and DOM-compat.h
+        * DOM.subproj/WebDOMDocument.m: Removed.
+        * DOM.subproj/WebDOMElement.h: Removed declarations. Now just includes DOM.h and DOM-compat.h
+        * DOM.subproj/WebDOMElement.m: Removed.
+        * DOM.subproj/WebDOMNode.h: Removed declarations. Now just includes DOM.h and DOM-compat.h
+        * DOM.subproj/WebDOMNode.m: Removed.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:referrer:reload:onLoadEvent:target:triggeringEvent:form:formValues:])
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:])
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate frame:sourceFrame:willSubmitForm:withValues:submissionListener:])
+        * WebView.subproj/WebFrame.h: Unrelated change. Removed -undoManager accessor from public header. Moved to private header.
+        * WebView.subproj/WebFrame.m: 
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:])
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:])
+        (-[WebFrame undoManager]): Moved -undoManager accessor to private category implementation.
+        (-[WebFormState initWithForm:values:sourceFrame:])
+        (-[WebFormState form])
+        (-[WebFrame childFrames])
+        * WebView.subproj/WebFramePrivate.h: Moved in -undoManager accessor.
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation DOMDocument])
+        (-[WebHTMLRepresentation setSelectionFrom:startOffset:to:endOffset:])
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:])
+        (-[WebHTMLRepresentation elementWithName:inForm:])
+        (-[WebHTMLRepresentation elementForView:])
+        (-[WebHTMLRepresentation elementDoesAutoComplete:])
+        (-[WebHTMLRepresentation elementIsPassword:])
+        (-[WebHTMLRepresentation formForElement:])
+        (-[WebHTMLRepresentation controlsInForm:])
+        (-[WebHTMLRepresentation searchForLabels:beforeElement:])
+        (-[WebHTMLRepresentation matchLabels:againstElement:])
+        * WebView.subproj/WebHTMLView.m:
+        * copy-webcore-files-to-webkit: Added. Copies DOM.h and DOM-compat.h from WebCore when they
+        have been updated there.
+
 2004-02-25  John Sullivan  <sullivan@apple.com>
 
         WebKit part of fix for <rdar://problem/3546370>: add a way to tab to menus, 

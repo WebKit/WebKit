@@ -111,12 +111,12 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 // layers while doing a load.
 @interface WebFormState : NSObject
 {
-    NSObject <WebDOMElement> *_form;
+    NSObject <DOMElement> *_form;
     NSDictionary *_values;
     WebFrame *_sourceFrame;
 }
-- (id)initWithForm:(NSObject <WebDOMElement> *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame;
-- (id <WebDOMElement>)form;
+- (id)initWithForm:(NSObject <DOMElement> *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame;
+- (id <DOMElement>)form;
 - (NSDictionary *)values;
 - (WebFrame *)sourceFrame;
 @end
@@ -1733,7 +1733,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <DOMElement> *)form formValues:(NSDictionary *)values
 {
     BOOL isFormSubmission = (values != nil);
 
@@ -1870,7 +1870,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [childFrame _loadURL:URL referrer:[[self _bridge] referrer] loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
 }
 
-- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
+- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <DOMElement> *)form formValues:(NSDictionary *)values
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
@@ -2388,11 +2388,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 }
 
+- (NSUndoManager *)undoManager
+{
+    if (!_private->undoManager) {
+        _private->undoManager = [[NSUndoManager alloc] init];
+    }
+    return _private->undoManager;
+}
+
 @end
 
 @implementation WebFormState : NSObject
 
-- (id)initWithForm:(NSObject <WebDOMElement> *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame
+- (id)initWithForm:(NSObject <DOMElement> *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame
 {
     [super init];
     _form = [form retain];
@@ -2409,7 +2417,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [super dealloc];
 }
 
-- (id <WebDOMElement>)form
+- (id <DOMElement>)form
 {
     return _form;
 }
@@ -2607,14 +2615,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (NSArray *)childFrames
 {
     return [[_private->children copy] autorelease];
-}
-
-- (NSUndoManager *)undoManager
-{
-    if (!_private->undoManager) {
-        _private->undoManager = [[NSUndoManager alloc] init];
-    }
-    return _private->undoManager;
 }
 
 @end

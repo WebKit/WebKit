@@ -2,11 +2,11 @@
       WebDefaultContextMenuDelegate.m
       Copyright 2002, Apple, Inc. All rights reserved.
 */
+#import <WebKit/DOM.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebDOMNode.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSPasteboardExtras.h>

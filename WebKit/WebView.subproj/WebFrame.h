@@ -131,6 +131,4 @@
 */
 - (NSArray *)childFrames;
 
-- (NSUndoManager *)undoManager;
-
 @end

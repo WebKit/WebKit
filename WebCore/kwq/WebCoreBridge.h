@@ -59,9 +59,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebCoreResourceLoader;
 @protocol WebCoreFileButton;
 @protocol WebCoreFileButtonDelegate;
-@protocol WebDOMDocument;
-@protocol WebDOMNode;
-@protocol WebDOMElement;
+@protocol DOMDocument;
+@protocol DOMNode;
+@protocol DOMElement;
 
 extern NSString *WebCoreElementDOMNodeKey;
 extern NSString *WebCoreElementFrameKey;
@@ -179,15 +179,15 @@ typedef enum {
 - (NSString *)renderTreeAsExternalRepresentation;
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
-- (id <WebDOMElement>)elementWithName:(NSString *)name inForm:(id <WebDOMElement>)form;
-- (id <WebDOMElement>)elementForView:(NSView *)view;
-- (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element;
-- (BOOL)elementIsPassword:(id <WebDOMElement>)element;
-- (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element;
-- (id <WebDOMElement>)currentForm;
-- (NSArray *)controlsInForm:(id <WebDOMElement>)form;
-- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <WebDOMElement>)element;
-- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <WebDOMElement>)element;
+- (id <DOMElement>)elementWithName:(NSString *)name inForm:(id <DOMElement>)form;
+- (id <DOMElement>)elementForView:(NSView *)view;
+- (BOOL)elementDoesAutoComplete:(id <DOMElement>)element;
+- (BOOL)elementIsPassword:(id <DOMElement>)element;
+- (id <DOMElement>)formForElement:(id <DOMElement>)element;
+- (id <DOMElement>)currentForm;
+- (NSArray *)controlsInForm:(id <DOMElement>)form;
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <DOMElement>)element;
+- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <DOMElement>)element;
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
 - (void)jumpToSelection;
@@ -198,9 +198,9 @@ typedef enum {
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string;
 
-- (id <WebDOMDocument>)DOMDocument;
+- (id <DOMDocument>)DOMDocument;
 
-- (void)setSelectionFrom:(id <WebDOMNode>)start startOffset:(int)startOffset to:(id <WebDOMNode>)end endOffset:(int) endOffset;
+- (void)setSelectionFrom:(id <DOMNode>)start startOffset:(int)startOffset to:(id <DOMNode>)end endOffset:(int) endOffset;
 
 - (BOOL)isSelectionEditable;
 - (BOOL)moveCaretToPoint:(NSPoint)point;
@@ -225,12 +225,12 @@ typedef enum {
 - (NSRect)visibleSelectionRect;
 - (NSImage *)selectionImage;
 
-- (id <WebDOMNode>)selectionStart;
+- (id <DOMNode>)selectionStart;
 - (int)selectionStartOffset;
-- (id <WebDOMNode>)selectionEnd;
+- (id <DOMNode>)selectionEnd;
 - (int)selectionEndOffset;
 
-- (NSAttributedString *)attributedStringFrom:(id <WebDOMNode>)startNode startOffset:(int)startOffset to:(id <WebDOMNode>)endNode endOffset:(int)endOffset;
+- (NSAttributedString *)attributedStringFrom:(id <DOMNode>)startNode startOffset:(int)startOffset to:(id <DOMNode>)endNode endOffset:(int)endOffset;
 
 + (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding;
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
@@ -267,8 +267,8 @@ typedef enum {
 - (void)frameDetached;
 - (NSView *)documentView;
 
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload onLoadEvent:(BOOL)onLoad target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload onLoadEvent:(BOOL)onLoad target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <DOMElement> *)form formValues:(NSDictionary *)values;
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <DOMElement> *)form formValues:(NSDictionary *)values;
 
 - (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
 - (void)showWindow;

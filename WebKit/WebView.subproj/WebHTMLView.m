@@ -5,11 +5,11 @@
 
 #import <WebKit/WebHTMLView.h>
 
+#import <WebKit/DOM.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
-#import <WebKit/WebDOMDocument.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>

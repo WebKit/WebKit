@@ -19,7 +19,7 @@
 @class WebPolicyDecisionListener;
 @class WebView;
 
-@protocol WebDOMElement;
+@protocol DOMElement;
 
 typedef enum {
     WebFrameStateProvisional,
@@ -149,9 +149,9 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
 
 - (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <DOMElement> *)form formValues:(NSDictionary *)values;
 - (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;
-- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
+- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <DOMElement> *)form formValues:(NSDictionary *)values;
 
 - (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
 
@@ -205,5 +205,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (NSColor *)_bodyBackgroundColor;
 
 - (void)_reloadForPluginChanges;
+
+- (NSUndoManager *)undoManager;
 
 @end

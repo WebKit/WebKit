@@ -137,6 +137,7 @@
 		};
 		0867D69CFE84028FC02AAC07 = {
 			buildPhases = (
+				BE91866405EE61A10081354D,
 				84AF355005C724FA00C5ACD9,
 				0867D69DFE84028FC02AAC07,
 				0867D69EFE84028FC02AAC07,
@@ -330,6 +331,8 @@
 				EDD1A5C805C83987008E3150,
 				84311A1405EAAAF00088EDA4,
 				84311AF205EAB12B0088EDA4,
+				BE91866005EE618F0081354D,
+				BE91866105EE618F0081354D,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -351,9 +354,6 @@
 		0867D69FFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
 			files = (
-				F57D1954034E734901A80180,
-				F57D1956034E734901A80180,
-				F57D195A034E734901A80180,
 				394460A8020F50ED0ECA1767,
 				394460A9020F50ED0ECA1767,
 				F5E0A77102B8FEE401C1A525,
@@ -3010,6 +3010,55 @@
 			settings = {
 			};
 		};
+		BE91865E05EE618F0081354D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOM.h;
+			path = DOM.subproj/DOM.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE91865F05EE618F0081354D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = "DOM-compat.h";
+			path = "DOM.subproj/DOM-compat.h";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE91866005EE618F0081354D = {
+			fileRef = BE91865E05EE618F0081354D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		BE91866105EE618F0081354D = {
+			fileRef = BE91865F05EE618F0081354D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		BE91866405EE61A10081354D = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ./copy-webcore-files-to-webkit ]; then ./copy-webcore-files-to-webkit; fi";
+		};
 		BECD14290565830A005BB09C = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -3498,12 +3547,11 @@
 		};
 		F57D194A034E732C01A80180 = {
 			children = (
+				BE91865E05EE618F0081354D,
+				BE91865F05EE618F0081354D,
 				F57D194B034E734901A80180,
-				F57D194C034E734901A80180,
 				F57D194D034E734901A80180,
-				F57D194E034E734901A80180,
 				F57D1951034E734901A80180,
-				F57D1952034E734901A80180,
 			);
 			isa = PBXGroup;
 			name = DOM;
@@ -3519,30 +3567,12 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F57D194C034E734901A80180 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			name = WebDOMDocument.m;
-			path = DOM.subproj/WebDOMDocument.m;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		F57D194D034E734901A80180 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = WebDOMElement.h;
 			path = DOM.subproj/WebDOMElement.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F57D194E034E734901A80180 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			name = WebDOMElement.m;
-			path = DOM.subproj/WebDOMElement.m;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -3554,33 +3584,6 @@
 			path = DOM.subproj/WebDOMNode.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
-		};
-		F57D1952034E734901A80180 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			name = WebDOMNode.m;
-			path = DOM.subproj/WebDOMNode.m;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F57D1954034E734901A80180 = {
-			fileRef = F57D194C034E734901A80180;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F57D1956034E734901A80180 = {
-			fileRef = F57D194E034E734901A80180;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F57D195A034E734901A80180 = {
-			fileRef = F57D1952034E734901A80180;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F57FB8C4034E180101A80180 = {
 			fileEncoding = 4;

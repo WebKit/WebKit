@@ -10,9 +10,9 @@
 
 @protocol WebDocumentRepresentation;
 @protocol WebDocumentSourceRepresentation;
-@protocol WebDOMDocument;
-@protocol WebDOMNode;
-@protocol WebDOMElement;
+@protocol DOMDocument;
+@protocol DOMNode;
+@protocol DOMElement;
 
 /*!
     @class WebHTMLRepresentation
@@ -26,7 +26,7 @@
     @method DOMDocument
     @abstract return the DOM document for this data source.
 */
-- (id<WebDOMDocument>)DOMDocument;
+- (id<DOMDocument>)DOMDocument;
 
 /*!
     @method setSelectionFrom:startOffset:to:endOffset
@@ -36,7 +36,7 @@
     @param end The node that includes the ending selection point.
     @param endOffset The character offset into the text of the ending node.
 */
-- (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int)endOffset;
+- (void)setSelectionFrom:(id<DOMNode>)start startOffset:(int)startOffset to:(id<DOMNode>)end endOffset:(int)endOffset;
 
 //- (NSAttributedString *)selectedAttributedString;
 
@@ -47,17 +47,17 @@
 - (NSString *)reconstructedDocumentSource;
 
 
-- (NSAttributedString *)attributedStringFrom:(id<WebDOMNode>)startNode startOffset:(int)startOffset to:(id<WebDOMNode>)endNode endOffset:(int)endOffset;
+- (NSAttributedString *)attributedStringFrom:(id<DOMNode>)startNode startOffset:(int)startOffset to:(id<DOMNode>)endNode endOffset:(int)endOffset;
 
-- (id <WebDOMElement>)elementWithName:(NSString *)name inForm:(id <WebDOMElement>)form;
-- (id <WebDOMElement>)elementForView:(NSView *)view;
-- (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element;
-- (BOOL)elementIsPassword:(id <WebDOMElement>)element;
-- (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element;
-- (id <WebDOMElement>)currentForm;
-- (NSArray *)controlsInForm:(id <WebDOMElement>)form;
-- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <WebDOMElement>)element;
-- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <WebDOMElement>)element;
+- (id <DOMElement>)elementWithName:(NSString *)name inForm:(id <DOMElement>)form;
+- (id <DOMElement>)elementForView:(NSView *)view;
+- (BOOL)elementDoesAutoComplete:(id <DOMElement>)element;
+- (BOOL)elementIsPassword:(id <DOMElement>)element;
+- (id <DOMElement>)formForElement:(id <DOMElement>)element;
+- (id <DOMElement>)currentForm;
+- (NSArray *)controlsInForm:(id <DOMElement>)form;
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <DOMElement>)element;
+- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <DOMElement>)element;
 
 - (NSString *)HTMLString;
 

@@ -23,86 +23,290 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Foundation/Foundation.h>
+#import "DOM.h"
 
 namespace DOM {
+    class AttrImpl;
+    class CDATASectionImpl;
+    class CharacterDataImpl;
+    class CommentImpl;
+    class DocumentFragmentImpl;
+    class DocumentTypeImpl;
+    class DocumentImpl;
     class DOMImplementationImpl;
+    class ElementImpl;
+    class EntityImpl;
+    class EntityReferenceImpl;
+    class NamedNodeMapImpl;
     class NodeImpl;
     class NodeListImpl;
-    class NamedNodeMapImpl;
+    class NotationImpl;
+    class ProcessingInstructionImpl;
+    class RangeImpl;
+    class TextImpl;
 }
 
-@protocol WebDOMAttr;
-@protocol WebDOMCharacterData;
-@protocol WebDOMComment;
-@protocol WebDOMCDATASection;
-@protocol WebDOMDocument;
-@protocol WebDOMDocumentFragment;
-@protocol WebDOMDocumentType;
-@protocol WebDOMElement;
-@protocol WebDOMEntityReference;
-@protocol WebDOMImplementation;
-@protocol WebDOMNamedNodeMap;
-@protocol WebDOMNode;
-@protocol WebDOMNodeList;
-@protocol WebDOMProcessingInstruction;
-@protocol WebDOMText;
+@class NSObject;
 
-@interface WebCoreDOMNode : NSObject <WebDOMNode>
+@interface WebCoreDOMObject : NSObject
 {
-    DOM::NodeImpl *impl;
+    void *details;
 }
+- (id)initWithDetails:(void *)d;
 @end
 
-@interface WebCoreDOMNamedNodeMap : NSObject <WebDOMNamedNodeMap>
+@protocol WebCoreNodeImplWrapper
+- (DOM::NodeImpl *)impl;
+@end
+
+@protocol WebCoreNamedNodeMapImplWrapper
+- (DOM::NamedNodeMapImpl *)impl;
+@end
+
+@protocol WebCoreNodeListImplWrapper
+- (DOM::NodeListImpl *)impl;
+@end
+
+@protocol WebCoreDOMImplementationImplWrapper
+- (DOM::DOMImplementationImpl *)impl;
+@end
+
+@protocol WebCoreDocumentFragmentImplWrapper
+- (DOM::DocumentFragmentImpl *)impl;
+@end
+
+@protocol WebCoreDocumentImplWrapper
+- (DOM::DocumentImpl *)impl;
+@end
+
+@protocol WebCoreCharacterDataImplWrapper
+- (DOM::CharacterDataImpl *)impl;
+@end
+
+@protocol WebCoreAttrImplWrapper
+- (DOM::AttrImpl *)impl;
+@end
+
+@protocol WebCoreElementImplWrapper
+- (DOM::ElementImpl *)impl;
+@end
+
+@protocol WebCoreTextImplWrapper
+- (DOM::TextImpl *)impl;
+@end
+
+@protocol WebCoreCommentImplWrapper
+- (DOM::CommentImpl *)impl;
+@end
+
+@protocol WebCoreCDATASectionImplWrapper
+- (DOM::CDATASectionImpl *)impl;
+@end
+
+@protocol WebCoreDocumentTypeImplWrapper
+- (DOM::DocumentTypeImpl *)impl;
+@end
+
+@protocol WebCoreNotationImplWrapper
+- (DOM::NotationImpl *)impl;
+@end
+
+@protocol WebCoreEntityImplWrapper
+- (DOM::EntityImpl *)impl;
+@end
+
+@protocol WebCoreEntityReferenceImplWrapper
+- (DOM::EntityReferenceImpl *)impl;
+@end
+
+@protocol WebCoreProcessingInstructionImplWrapper
+- (DOM::ProcessingInstructionImpl *)impl;
+@end
+
+@protocol WebCoreRangeImplWrapper
+- (DOM::RangeImpl *)impl;
+@end
+
+@interface WebCoreDOMNode : WebCoreDOMObject <DOMNode, WebCoreNodeImplWrapper>
++ (WebCoreDOMNode *)objectWithImpl:(DOM::NodeImpl *)impl;
+- (id)initWithNodeImpl:(DOM::NodeImpl *)impl;
+@end
+
+@interface WebCoreDOMNamedNodeMap : WebCoreDOMObject <DOMNamedNodeMap, WebCoreNamedNodeMapImplWrapper>
++ (WebCoreDOMNamedNodeMap *)objectWithImpl:(DOM::NamedNodeMapImpl *)impl;
+- (id)initWithNamedNodeMapImpl:(DOM::NamedNodeMapImpl *)impl;
+@end
+
+@interface WebCoreDOMNodeList : WebCoreDOMObject <DOMNodeList, WebCoreNodeListImplWrapper>
++ (WebCoreDOMNodeList *)objectWithImpl:(DOM::NodeListImpl *)impl;
+- (id)initWithNodeListImpl:(DOM::NodeListImpl *)impl;
+@end
+
+@interface WebCoreDOMImplementation : WebCoreDOMObject <DOMImplementation, WebCoreDOMImplementationImplWrapper>
++ (WebCoreDOMImplementation *)objectWithImpl:(DOM::DOMImplementationImpl *)impl;
+- (id)initWithDOMImplementationImpl:(DOM::DOMImplementationImpl *)impl;
+@end
+
+@interface WebCoreDOMDocumentFragment : WebCoreDOMNode <DOMDocumentFragment, WebCoreDocumentFragmentImplWrapper>
++ (WebCoreDOMDocumentFragment *)objectWithImpl:(DOM::DocumentFragmentImpl *)impl;
+- (id)initWithDocumentFragmentImpl:(DOM::DocumentFragmentImpl *)impl;
+@end
+
+@interface WebCoreDOMDocument : WebCoreDOMNode <DOMDocument, WebCoreDocumentImplWrapper>
++ (WebCoreDOMDocument *)objectWithImpl:(DOM::DocumentImpl *)impl;
+- (id)initWithDocumentImpl:(DOM::DocumentImpl *)impl;
+@end
+
+@interface WebCoreDOMCharacterData : WebCoreDOMNode <DOMCharacterData, WebCoreCharacterDataImplWrapper>
++ (WebCoreDOMCharacterData *)objectWithImpl:(DOM::CharacterDataImpl *)impl;
+- (id)initWithCharacterDataImpl:(DOM::CharacterDataImpl *)impl;
+@end
+
+@interface WebCoreDOMAttr : WebCoreDOMNode <DOMAttr, WebCoreAttrImplWrapper>
++ (WebCoreDOMAttr *)objectWithImpl:(DOM::AttrImpl *)impl;
+- (id)initWithAttrImpl:(DOM::AttrImpl *)impl;
+@end
+
+@interface WebCoreDOMElement : WebCoreDOMNode <DOMElement, WebCoreElementImplWrapper>
++ (WebCoreDOMElement *)objectWithImpl:(DOM::ElementImpl *)impl;
+- (id)initWithElementImpl:(DOM::ElementImpl *)impl;
+@end
+
+@interface WebCoreDOMText : WebCoreDOMCharacterData <DOMText, WebCoreTextImplWrapper>
++ (WebCoreDOMText *)objectWithImpl:(DOM::TextImpl *)impl;
+- (id)initWithTextImpl:(DOM::TextImpl *)impl;
+@end
+
+@interface WebCoreDOMComment : WebCoreDOMCharacterData <WebCoreCommentImplWrapper>
++ (WebCoreDOMComment *)objectWithImpl:(DOM::CommentImpl *)impl;
+- (id)initWithCommentImpl:(DOM::CommentImpl *)impl;
+@end
+
+@interface WebCoreDOMCDATASection : WebCoreDOMText <DOMCDATASection, WebCoreCDATASectionImplWrapper>
++ (WebCoreDOMCDATASection *)objectWithImpl:(DOM::CDATASectionImpl *)impl;
+- (id)initWithCDATASectionImpl:(DOM::CDATASectionImpl *)impl;
+@end
+
+@interface WebCoreDOMDocumentType : WebCoreDOMNode <DOMDocumentType, WebCoreDocumentTypeImplWrapper>
++ (WebCoreDOMDocumentType *)objectWithImpl:(DOM::DocumentTypeImpl *)impl;
+- (id)initWithDocumentTypeImpl:(DOM::DocumentTypeImpl *)impl;
+@end
+
+@interface WebCoreDOMNotation : WebCoreDOMNode <DOMNotation, WebCoreNotationImplWrapper>
++ (WebCoreDOMNotation *)objectWithImpl:(DOM::NotationImpl *)impl;
+- (id)initWithNotationImpl:(DOM::NotationImpl *)impl;
+@end
+
+@interface WebCoreDOMEntity : WebCoreDOMNode <DOMEntity, WebCoreEntityImplWrapper>
++ (WebCoreDOMEntity *)objectWithImpl:(DOM::EntityImpl *)impl;
+- (id)initWithEntityImpl:(DOM::EntityImpl *)impl;
+@end
+
+@interface WebCoreDOMEntityReference : WebCoreDOMNode <DOMEntityReference, WebCoreEntityReferenceImplWrapper>
++ (WebCoreDOMEntityReference *)objectWithImpl:(DOM::EntityReferenceImpl *)impl;
+- (id)initWithEntityReferenceImpl:(DOM::EntityReferenceImpl *)impl;
+@end
+
+@interface WebCoreDOMProcessingInstruction : WebCoreDOMNode <DOMProcessingInstruction, WebCoreProcessingInstructionImplWrapper>
++ (WebCoreDOMProcessingInstruction *)objectWithImpl:(DOM::ProcessingInstructionImpl *)impl;
+- (id)initWithProcessingInstructionImpl:(DOM::ProcessingInstructionImpl *)impl;
+@end
+
+@interface WebCoreDOMRange : WebCoreDOMObject <DOMRange, WebCoreRangeImplWrapper>
++ (WebCoreDOMRange *)objectWithImpl:(DOM::RangeImpl *)impl;
+- (id)initWithRangeImpl:(DOM::RangeImpl *)impl;
+@end
+
+
+//------------------------------------------------------------------------------------------
+// Impl accessor conveniences
+
+inline DOM::NodeImpl *nodeImpl(id <DOMNode> instance)
 {
-    DOM::NamedNodeMapImpl *impl;
+    return [(id <WebCoreNodeImplWrapper>)instance impl];
 }
-@end
 
-@interface WebCoreDOMNodeList : NSObject <WebDOMNodeList>
+inline DOM::NamedNodeMapImpl *namedNodeMapImpl(id <DOMNamedNodeMap> instance)
 {
-    DOM::NodeListImpl *impl;
+    return [(id <WebCoreNamedNodeMapImplWrapper>)instance impl];
 }
-@end
 
-@interface WebCoreDOMImplementation : NSObject <WebDOMImplementation>
+inline DOM::NodeListImpl *nodeListImpl(id <DOMNodeList> instance)
 {
-    DOM::DOMImplementationImpl *impl;
+    return [(id <WebCoreNodeListImplWrapper>)instance impl];
 }
-@end
 
-@interface WebCoreDOMDocumentType : WebCoreDOMNode <WebDOMDocumentType>
-@end
+inline DOM::DOMImplementationImpl *domImplementationImpl(id <DOMImplementation> instance)
+{
+    return [(id <WebCoreDOMImplementationImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMDocument : WebCoreDOMNode <WebDOMDocument>
-@end
+inline DOM::DocumentFragmentImpl *documentFragmentImpl(id <DOMDocumentFragment> instance)
+{
+    return [(id <WebCoreDocumentFragmentImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMEntityReference : WebCoreDOMNode <WebDOMEntityReference>
-@end
+inline DOM::DocumentImpl *documentImpl(id <DOMDocument> instance)
+{
+    return [(id <WebCoreDocumentImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMElement : WebCoreDOMNode <WebDOMElement>
-@end
+inline DOM::CharacterDataImpl *characterDataImpl(id <DOMCharacterData> instance)
+{
+    return [(id <WebCoreCharacterDataImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMAttr : WebCoreDOMNode <WebDOMAttr> 
-@end
+inline DOM::AttrImpl *attrImpl(id <DOMAttr> instance)
+{
+    return [(id <WebCoreAttrImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMDocumentFragment : WebCoreDOMNode <WebDOMDocumentFragment>
-@end
+inline DOM::ElementImpl *elementImpl(id <DOMElement> instance)
+{
+    return [(id <WebCoreElementImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMCharacterData : WebCoreDOMNode <WebDOMCharacterData>
-@end
+inline DOM::TextImpl *textImpl(id <DOMText> instance)
+{
+    return [(id <WebCoreTextImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMText : WebCoreDOMCharacterData <WebDOMText>
-@end
+inline DOM::CommentImpl *commentImpl(id <DOMComment> instance)
+{
+    return [(id <WebCoreCommentImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMComment : WebCoreDOMCharacterData <WebDOMComment>
-@end
+inline DOM::CDATASectionImpl *cdataSectionImpl(id <DOMCDATASection> instance)
+{
+    return [(id <WebCoreCDATASectionImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMCDATASection : WebCoreDOMText <WebDOMCDATASection>
-@end
+inline DOM::DocumentTypeImpl *documentTypeImpl(id <DOMDocumentType> instance)
+{
+    return [(id <WebCoreDocumentTypeImplWrapper>)instance impl];
+}
 
-@interface WebCoreDOMProcessingInstruction : WebCoreDOMNode <WebDOMProcessingInstruction>
-@end
+inline DOM::NotationImpl *notationImpl(id <DOMNotation> instance)
+{
+    return [(id <WebCoreNotationImplWrapper>)instance impl];
+}
 
+inline DOM::EntityImpl *entityImpl(id <DOMEntity> instance)
+{
+    return [(id <WebCoreEntityImplWrapper>)instance impl];
+}
 
+inline DOM::EntityReferenceImpl *entityReferenceImpl(id <DOMEntityReference> instance)
+{
+    return [(id <WebCoreEntityReferenceImplWrapper>)instance impl];
+}
+
+inline DOM::ProcessingInstructionImpl *processingInstructionImpl(id <DOMProcessingInstruction> instance)
+{
+    return [(id <WebCoreProcessingInstructionImplWrapper>)instance impl];
+}
+
+inline DOM::RangeImpl *rangeImpl(id <DOMRange> instance)
+{
+    return [(id <WebCoreRangeImplWrapper>)instance impl];
+}
