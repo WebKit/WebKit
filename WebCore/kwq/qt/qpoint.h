@@ -48,6 +48,7 @@ class QPointArray {
 public:
     QPointArray(int);
     void setPoint(uint, int, int);
+    bool setPoints(int nPoints, int firstx, int firsty, ... );
 };
 
 #endif

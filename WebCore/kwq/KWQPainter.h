@@ -32,9 +32,10 @@
 #include "qbrush.h"
 #include "qpen.h"
 #include "qregion.h"
+#include "qpoint.h"
+#include "qfontmetrics.h"
 
 class QFont;
-class QFontMetrics;
 class QPixmap;
 
 class QWMatrix {
@@ -51,6 +52,7 @@ public:
     QFontMetrics fontMetrics() const;
     const QPen &pen() const;
     void setPen(const QPen &);
+    void setPen(PenStyle);
     void setBrush(const QBrush &);
     void setBrush(BrushStyle);
 
@@ -58,18 +60,20 @@ public:
 
     void drawRect(int, int, int, int);
     void fillRect(int, int, int, int, const QBrush &);
+    void drawLine(int, int, int, int);
     void drawEllipse(int, int, int, int);
     void drawArc(int, int, int, int, int, int);
+    void drawPolygon(const QPointArray &, bool winding=FALSE, int index=0, int npoints=-1);
     void drawPixmap(const QPoint &, const QPixmap &);
     void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
-    void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx = 0, int
-            sy = 0);
+    void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx = 0, int sy = 0);
     void drawText(int, int, int, int, AlignmentFlags, const QString &);
     void setClipping(bool);
     void setClipRegion(const QRegion &);
     const QRegion &clipRegion() const;
     bool hasClipping() const;
-
+    RasterOp rasterOp() const;
+    void setRasterOp(RasterOp);
 };
 
 #endif
