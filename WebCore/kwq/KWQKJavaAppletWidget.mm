@@ -26,11 +26,14 @@
 #import "KWQKJavaAppletWidget.h"
 
 #import "KHTMLView.h"
+#import "KWQExceptions.h"
+#import "KWQKHTMLPart.h"
 #import "KWQKJavaAppletContext.h"
 #import "KWQKURL.h"
-#import "KWQKHTMLPart.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
+
+// No need to block exceptions for the NSDictionary / NSString calls
 
 KJavaAppletWidget::KJavaAppletWidget(KJavaAppletContext *c, QWidget *)
     : _applet(*this)
@@ -57,6 +60,7 @@ void KJavaAppletWidget::showApplet()
 {
     // If the view is a KWQView, we haven't replaced it with the Java view yet.
     // Only set the Java view once.
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([getView() isKindOfClass:[KWQView class]]) {
         setView([KWQ(_context->part())->bridge()
             viewForJavaAppletWithFrame:NSMakeRect(x(), y(), width(), height())
@@ -65,4 +69,5 @@ void KJavaAppletWidget::showApplet()
         // Add the view to the main view now so the applet starts immediately rather than until the first paint.
         _context->part()->view()->addChild(this, x(), y());
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }

@@ -25,6 +25,10 @@
 
 #import "KWQRegion.h"
 
+// None of the NSBezierPath calls here can possibly throw an NSException.
+// Some path calls do this when the path is empty, but we always make
+// those when the path is guaranteed non-empty.
+
 QRegion::QRegion(const QRect &rect)
     : path([[NSBezierPath bezierPathWithRect:rect] retain])
 {
@@ -43,6 +47,8 @@ QRegion::QRegion(const QPointArray &arr)
 {
     path = [[NSBezierPath alloc] init];
     [path moveToPoint:arr[0]];
+    // the moveToPoint: guarantees the path is not empty, which means lineToPoint:
+    // can't throw.
     for (uint i = 1; i < arr.count(); ++i) {
         [path lineToPoint:arr[i]];
     }

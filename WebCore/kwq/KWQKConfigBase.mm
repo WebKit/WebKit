@@ -25,9 +25,10 @@
 
 #import "KWQKConfigBase.h"
 
-#import "KWQLogging.h"
 #import "KWQColor.h"
+#import "KWQExceptions.h"
 #import "KWQKHTMLSettings.h"
+#import "KWQLogging.h"
 #import "KWQStringList.h"
 #import "WebCoreSettings.h"
 #import "WebCoreViewFactory.h"
@@ -69,13 +70,17 @@ void KConfig::writeEntry(const QString &pKey, const QStringList &rValue,
 QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 {
     if (impl->isPluginInfo) {
+	volatile NSString * volatile result = @"";
+
+	KWQ_BLOCK_NS_EXCEPTIONS;
+
         id <WebCorePluginInfo> plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:impl->pluginIndex];
         if (strcmp(pKey, "name") == 0) {
-            return QString::fromNSString([plugin name]);
+            result =[plugin name];
         } else if (strcmp(pKey, "file") == 0) {
-            return QString::fromNSString([plugin filename]);
+            result = [plugin filename];
         } else if (strcmp(pKey, "description") == 0) {
-            return QString::fromNSString([plugin pluginDescription]);
+            result = [plugin pluginDescription];
         } else if (strcmp(pKey, "mime") == 0) {
             NSEnumerator *MIMETypeEnumerator = [plugin MIMETypeEnumerator], *extensionEnumerator;
             NSMutableString *MIMEString = [NSMutableString string];
@@ -96,8 +101,12 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
                 [MIMEString appendFormat:@":%@;", [plugin descriptionForMIMEType:MIME]];
             }
 
-            return QString::fromNSString(MIMEString);
+            result = MIMEString;
         }
+
+	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	
+	return QString::fromNSString((NSString *)result);
     }
     
     ERROR("not yet implemented");
@@ -107,7 +116,12 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 int KConfig::readNumEntry(const char *pKey, int nDefault) const
 {
     if (impl->isPluginInfo && strcmp(pKey, "number") == 0) {
-        return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
+        volatile int count = 0;
+	KWQ_BLOCK_NS_EXCEPTIONS;
+	count = [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
+	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	return count;
+
     }
     ERROR("not yet implemented");
     return nDefault;
@@ -145,6 +159,8 @@ QStringList KConfig::readListEntry(const QString &pKey, char sep) const
 
 void RefreshPlugins(bool reload)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [[WebCoreViewFactory sharedFactory] refreshPlugins:reload];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 

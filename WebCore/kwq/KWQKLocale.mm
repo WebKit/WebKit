@@ -25,31 +25,61 @@
 
 #import "KWQKLocale.h"
 
+#import "KWQExceptions.h"
 #import "KWQLogging.h"
 #import "KWQString.h"
 #import "WebCoreViewFactory.h"
 
 QString inputElementAltText()
 {
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] inputElementAltText]);
+    volatile NSString * volatile altText = @"";
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    altText = [[WebCoreViewFactory sharedFactory] inputElementAltText];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return QString::fromNSString((NSString *)altText);
 }
 
 QString resetButtonDefaultLabel()
 {
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel]);
+    volatile NSString * volatile defaultLabel = @"";
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    defaultLabel = [[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return QString::fromNSString((NSString *)defaultLabel);
 }
 
 QString searchableIndexIntroduction()
 {
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] searchableIndexIntroduction]);
+    volatile NSString * volatile introduction = @"";
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    introduction = [[WebCoreViewFactory sharedFactory] searchableIndexIntroduction];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return QString::fromNSString((NSString *)introduction);
 }
 
 QString submitButtonDefaultLabel()
 {
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel]);
+    volatile NSString * volatile defaultLabel = @"";
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    defaultLabel = [[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return QString::fromNSString((NSString *)defaultLabel);
 }
 
 QString KLocale::language()
 {
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] defaultLanguageCode]);
+    volatile NSString * volatile code = @"";
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    code = [[WebCoreViewFactory sharedFactory] defaultLanguageCode];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return QString::fromNSString((NSString *)code);
 }

@@ -1,3 +1,26 @@
+2003-10-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	More objc-exception-blocking excitement.
+
+        * kwq/KWQKConfigBase.mm:
+        (KConfig::readEntry):
+        (KConfig::readNumEntry):
+        (RefreshPlugins):
+        * kwq/KWQKCursor.mm:
+        (+[NSCursor _WebCore_cursorWithName:hotSpot:]):
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::showApplet):
+        * kwq/KWQKLocale.mm:
+        (inputElementAltText):
+        (resetButtonDefaultLabel):
+        (searchableIndexIntroduction):
+        (submitButtonDefaultLabel):
+        (KLocale::language):
+        * kwq/KWQRegion.mm:
+        (QRegion::QRegion):
+
 2003-10-14  David Hyatt  <hyatt@apple.com>
 
 	Fix an obvious little typo with smallCaps inheritance.  Richard reviewed.

@@ -25,6 +25,11 @@
 
 #import "KWQKCursor.h"
 
+#import "KWQExceptions.h"
+
+// Simple NSDictionary and NSCursor calls shouldn't need protection,
+// but creating a cursor with a bad image might throw...
+
 @interface KWQKCursorBundleDummy : NSObject { }
 @end
 @implementation KWQKCursorBundleDummy
@@ -43,20 +48,22 @@
         nameToCursor = [[NSMutableDictionary alloc] init];
     }
     
-    NSCursor *cursor = [nameToCursor objectForKey:name];
-    if (!cursor) {
-        NSImage *cursorImage = [[NSImage alloc] initWithContentsOfFile:
+    volatile NSCursor * volatile cursor = [nameToCursor objectForKey:name];
+    if (!cursor) { 
+	KWQ_BLOCK_NS_EXCEPTIONS;
+	NSImage *cursorImage = [[NSImage alloc] initWithContentsOfFile:
             [[NSBundle bundleForClass:[KWQKCursorBundleDummy class]]
             pathForResource:name ofType:@"tiff"]];
         if (cursorImage) {
             cursor = [[NSCursor alloc] initWithImage:cursorImage hotSpot:hotSpot];
             [cursorImage release];
-            [nameToCursor setObject:cursor forKey:name];
-            [cursor release];
+            [nameToCursor setObject:(NSCursor *)cursor forKey:name];
+            [(NSCursor *)cursor release];
         }
+	KWQ_UNBLOCK_NS_EXCEPTIONS;
     }
 
-    return cursor;
+    return (NSCursor *)cursor;
 }
 
 @end
