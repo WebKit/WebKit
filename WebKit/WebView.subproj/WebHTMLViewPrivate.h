@@ -52,7 +52,6 @@
 - (WebView *)_webView;
 - (WebFrame *)_frame;
 - (WebBridge *)_bridge;
-- (void)_adjustFrames;
 
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;

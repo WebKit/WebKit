@@ -133,7 +133,6 @@
 - (void)__setRequest:(NSURLRequest *)request;
 - (void)_setRequest:(NSURLRequest *)request;
 - (void)_setResponse:(NSURLResponse *)response;
-- (void)_layoutChildren;
 - (void)_clearErrors;
 - (void)_setMainDocumentError:(NSError *)error;
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;

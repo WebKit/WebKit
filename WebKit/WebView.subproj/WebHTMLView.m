@@ -108,15 +108,6 @@ static BOOL forceRealHitTest = NO;
 
 @implementation WebHTMLView (WebPrivate)
 
-- (void)_adjustFrames
-{
-    // Ick!  khtml set the frame size during layout and
-    // the frame origins during drawing!  So we have to 
-    // layout and do a draw with rendering disabled to
-    // correclty adjust the frames.
-    [[self _bridge] adjustFrames:[self frame]];
-}
-
 - (void)_reset
 {
     [WebImageRenderer stopAnimationsInView:self];

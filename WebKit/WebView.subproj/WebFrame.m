@@ -974,16 +974,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // Maybe there are bugs because of that, or extra work we can skip because
                 // the new page is ready.
 
-                // Unfortunately we have to get our parent to adjust the frames in this
-                // frameset so this frame's geometry is set correctly.  This should
-                // be a reasonably inexpensive operation.
-                WebDataSource *parentDS = [[self parentFrame] dataSource];
-                if ([[parentDS _bridge] isFrameSet]){
-                    WebFrameView *parentWebFrameView = [[self parentFrame] frameView];
-                    if ([parentDS _isDocumentHTML])
-                        [(WebHTMLView *)[parentWebFrameView documentView] _adjustFrames];
-                }
-
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
                 if (!([[self dataSource] _isDocumentHTML])) {

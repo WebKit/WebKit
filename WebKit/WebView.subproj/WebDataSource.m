@@ -438,25 +438,6 @@
     _private->mainDocumentError = nil;
 }
 
-
-- (void)_layoutChildren
-{
-    NSArray *subFrames = [[self webFrame] childFrames];
-    if ([subFrames count]) {
-        WebFrame *subFrame;
-        unsigned int i;
-        id dview;
-        for (i = 0; i < [subFrames count]; i++){
-            subFrame = [subFrames objectAtIndex: i];
-            dview = [[subFrame frameView] documentView];
-            if ([[subFrame dataSource] _isDocumentHTML])
-                [dview _adjustFrames];
-            [dview setNeedsDisplay: YES];
-            [[subFrame dataSource] _layoutChildren];
-        }
-    }
-}
-
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
     static NSMutableDictionary *repTypes = nil;

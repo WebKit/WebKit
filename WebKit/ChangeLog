@@ -1,3 +1,16 @@
+2003-10-10  David Hyatt  <hyatt@apple.com>
+
+	Patch to move widgets during layout instead of waiting until paint time.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _isLoadComplete]):
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2003-10-09  Richard Williamson   <rjw@apple.com>
 
 	Ensure that the autoscroll timer is always stopped if a mouse up event is lost.
