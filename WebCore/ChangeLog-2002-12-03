@@ -1,3 +1,21 @@
+2002-04-16  Kenneth Kocienda  <kocienda@apple.com>
+
+        Moved IFError class from WebKit to WebFoundation.
+        Updated URL handle client interface to pass an IFError in
+        an error callback rather than a plain int. These files were
+        modified due to this change.
+
+	* src/kwq/KWQKHTMLPart.mm: (WCSetIFWebDataSourceMakeFunc):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+
+        Removed now unneeded file and function pointer symbol entry
+        since WebCore code never needs to create an IFError now that 
+        those objects are created at a lower level (in WebFoundation).
+        
+	* src/kwq/WCError.h: Removed.
+	* src/libwebcore.exp:
+
 2002-04-15  Darin Adler  <darin@apple.com>
 
 	* src/kdelibs/khtml/rendering/render_text.cpp: (TextSlave::printDecoration):

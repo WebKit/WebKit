@@ -14,7 +14,7 @@
 #import <WebFoundation/IFURLHandle.h>
 #import <IFPluginStream.h>
 #import <IFWebDataSource.h>
-#import <IFError.h>
+#import <WebFoundation/IFError.h>
 #import <WebKitDebug.h>
 
 extern "C" {

@@ -87,26 +87,17 @@
 
 #import <KWQView.h>
 
-#include <WCError.h>
 #include <WCWebDataSource.h>
 
 #include <loader.h>
 
 #include <external.h>
 
-
-
 WCIFWebDataSourceMakeFunc WCIFWebDataSourceMake;
 void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func)
 {
     WCIFWebDataSourceMake = func;
 }
-WCIFErrorMakeFunc WCIFErrorMake;
-void WCSetIFErrorMakeFunc(WCIFErrorMakeFunc func)
-{
-    WCIFErrorMake = func;
-}
-
 
 static bool cache_init = false;
 

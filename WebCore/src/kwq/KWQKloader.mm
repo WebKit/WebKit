@@ -31,8 +31,8 @@
 #include "loader.h"
 #ifdef APPLE_CHANGES
 #include <kwqdebug.h>
+#import <WebFoundation/WebFoundation.h>
 #include <WCLoadProgress.h>
-#include <WCError.h>
 #include <external.h>
 #endif /* APPLE_CHANGES */
 
@@ -1101,18 +1101,17 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
 {
     void *userData;
     
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p, result = %d, URL = %s\n", m_dataSource, result, job->url().url().latin1());
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p, result = %s, URL = %s\n", m_dataSource, [[result errorDescription] lossyCString], job->url().url().latin1());
 
     [m_dataSource _removeURLHandle: job->handle()];
 
-    IFError *error = WCIFErrorMake(result);
     id <IFLoadHandler> controller = [m_dataSource controller];
     
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
@@ -1121,7 +1120,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     m_loader->slotFinished(job);
 
-    [controller _receivedError: error forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
+    [controller _receivedError: result forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
 
     delete job;
 }

@@ -1,3 +1,20 @@
+2002-04-16  Kenneth Kocienda  <kocienda@apple.com>
+
+        Moved IFError class from WebKit to WebFoundation.
+        Updated includes due to this change.
+        Updated URL handle client interface to pass an IFError in
+        an error callback rather than a plain int. The URL client was
+        modified due to this change.
+
+	* Misc.subproj/IFError.h: Removed.
+	* Misc.subproj/IFError.m: Removed.
+	* Plugins.subproj/IFPluginView.mm:
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+	* WebView.subproj/IFWebFramePrivate.mm:
+
 2002-04-15  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFPreferences.h:

@@ -7,8 +7,8 @@
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFPreferencesPrivate.h>
-#import <WebKit/IFError.h>
 
+#import <WebFoundation/IFError.h>
 #include <KWQKHTMLPart.h>
 #include <rendering/render_frames.h>
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 36;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -206,7 +206,6 @@
 				F5EBC45802134BC301CA1520,
 				9CF0E24B021361B10ECA16EA,
 				F5B92B840223191D01C1A525,
-				F5DE3CB4023575AA01A80181,
 				F5D538EA02441F2601A80181,
 				F5F084BB024BDC8E01CA1520,
 				F5F084BF024BDCA701CA1520,
@@ -229,7 +228,6 @@
 				089C1668FE841158C02AAC07,
 				35F3577501986B740ACA1520,
 				35F357800198AAB80ACA1520,
-				F515C2B90238249C01C1A525,
 				F5B67131023EDF8901C1A525,
 				25B2A7C5025D0A880ECA149E,
 				F5883BDF025E5C6A01000102,
@@ -258,7 +256,6 @@
 				F5143A380221DCCE01A80181,
 				F520FB1C0221DEFD01C1A525,
 				F5B92B850223191D01C1A525,
-				F5DE3CB5023575AA01A80181,
 				F5D538ED02441FDD01A80181,
 				F5AEBB3E024A527601C1A526,
 				F5F084BC024BDC8E01CA1520,
@@ -394,9 +391,6 @@
 				25C29825016E29620ECA149E,
 				25A5593101A5996D0ECA149E,
 				25A5593201A5996D0ECA149E,
-				F5DE3CB2023575AA01A80181,
-				F5DE3CB3023575AA01A80181,
-				F515C2B70238249C01C1A525,
 				F59EAE410253C8DE018635CA,
 				F59EAE3E0253C7EE018635CA,
 			);
@@ -1088,27 +1082,6 @@
 			settings = {
 			};
 		};
-		F515C2B70238249C01C1A525 = {
-			children = (
-				F515C2B80238249C01C1A525,
-			);
-			isa = PBXVariantGroup;
-			name = IFError.strings;
-			path = "";
-			refType = 4;
-		};
-		F515C2B80238249C01C1A525 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/IFError.strings;
-			refType = 4;
-		};
-		F515C2B90238249C01C1A525 = {
-			fileRef = F515C2B70238249C01C1A525;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F520FB190221DEFD01C1A525 = {
 			isa = PBXFileReference;
 			path = IFWebHistory.h;
@@ -1419,33 +1392,6 @@
 		};
 		F5D538ED02441FDD01A80181 = {
 			fileRef = F5D538EC02441FDD01A80181;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5DE3CB2023575AA01A80181 = {
-			isa = PBXFileReference;
-			name = IFError.h;
-			path = Misc.subproj/IFError.h;
-			refType = 4;
-		};
-		F5DE3CB3023575AA01A80181 = {
-			isa = PBXFileReference;
-			name = IFError.m;
-			path = Misc.subproj/IFError.m;
-			refType = 4;
-		};
-		F5DE3CB4023575AA01A80181 = {
-			fileRef = F5DE3CB2023575AA01A80181;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		F5DE3CB5023575AA01A80181 = {
-			fileRef = F5DE3CB3023575AA01A80181;
 			isa = PBXBuildFile;
 			settings = {
 			};

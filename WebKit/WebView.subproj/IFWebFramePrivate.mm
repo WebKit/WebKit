@@ -7,10 +7,11 @@
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFError.h>
 #import <WebKit/IFPreferencesPrivate.h>
 
 #import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/IFError.h>
 
 // includes from kde
 #include <khtmlview.h>

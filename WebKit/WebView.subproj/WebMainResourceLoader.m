@@ -5,13 +5,14 @@
 */
 #include <pthread.h>
 
-#import <WebKit/IFError.h>
 #import <WebKit/IFBaseWebControllerPrivate.h>
 #import <WebKit/IFMainURLHandleClient.h>
 #import <WebKit/IFMIMEDatabase.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/IFContentHandler.h>
 #import <WebKit/IFDownloadHandlerPrivate.h>
+
+#import <WebFoundation/IFError.h>
 
 #include <khtmlview.h>
 
@@ -158,23 +159,21 @@
     [loadProgress release];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s, result = %d\n", [[[sender url] absoluteString] cString], result);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s, result = %s\n", [[[sender url] absoluteString] cString], [[result errorDescription] lossyCString]);
 
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
 
-    IFError *error = [[IFError alloc] initWithErrorCode: result failingURL: [sender url]];
     if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
-        [[dataSource controller] receivedError: error forDownloadHandler:downloadHandler 
+        [[dataSource controller] receivedError: result forDownloadHandler:downloadHandler 
             partialProgress: loadProgress];
     }else{
-        [[dataSource controller] _mainReceivedError: error forResource: [[sender url] absoluteString] 
+        [[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 
             partialProgress: loadProgress fromDataSource: dataSource];
     }
-    [error release];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
