@@ -1,3 +1,113 @@
+2003-01-22  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3152427 -- Need unique IDs for bookmarks, for 
+	synching's sake
+
+	Bookmarks now have a UUID string so that each can maintain its identity
+	even in the face of multi-machine synching. One known loose end is written 
+	up in 3153832 (unique IDs in bookmarks aren't preserved correctly after copy/paste).
+	This should be good enough now for the iSynch folks to start implementing
+	the bookmarks-synching conduit.
+
+	I also did some cleanup in this area to share more code and handle
+	init methods more cleanly, inspired by earlier feedback from Trey and Darin.
+
+        Reviewed by Trey and Darin
+
+        * Bookmarks.subproj/WebBookmark.h:
+	new _UUID ivar, UUID declaration
+        * Bookmarks.subproj/WebBookmarkPrivate.h:
+	new _setUUID and _hasUUID declarations
+
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark dealloc]):
+	assert that group is nil here; release _UUID
+        (-[WebBookmark copyWithZone:]):
+	implement the code shared by each subclass; formerly had no implementation.
+        (-[WebBookmark _setUUID:]):
+	private method to set the UUID
+        (-[WebBookmark UUID]):
+	public method to get the UUID; this lazily creates the UUID.
+        (-[WebBookmark _hasUUID]):
+	private method to check whether there's a UUID without creating
+	one by side effect (as calling -[WebBookmark UUID] would)
+        (-[WebBookmark initFromDictionaryRepresentation:withGroup:]):
+	implement the code shared by each subclass; formerly had no implementation.
+        (-[WebBookmark dictionaryRepresentation]):
+	implement the code shared by each subclass; formerly had no implementation.
+
+        * Bookmarks.subproj/WebBookmarkGroup.h:
+	new _bookmarksByUUID ivar
+        * Bookmarks.subproj/WebBookmarkGroupPrivate.h:
+	declarations for new methods _addBookmark: and _removeBookmark:
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup init]):
+	new method, just complains that you should have called initWithFile: instead.
+        (-[WebBookmarkGroup initWithFile:]):
+	create _bookmarksByUUID
+        (-[WebBookmarkGroup dealloc]):
+	release _bookmarksByUUID
+        (-[WebBookmarkGroup _addBookmark:]):
+	new method, if bookmark has UUID, adds it to table, and recursively
+	processes children the same way
+        (-[WebBookmarkGroup _removeBookmark:]):
+	new method, if bookmark has UUID, removes it from table, and recursively
+	processes children the same way
+        (-[WebBookmarkGroup _setTopBookmark:]):
+	replace [bookmark setGroup:group] with [group _addBookmark:bookmark]
+	so it runs through the UUID code
+        (-[WebBookmarkGroup _bookmarkChildren:wereRemovedFromParent:]):
+	retitled this from "wereRemovedToParent"
+
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        (-[WebBookmarkLeaf init]):
+	now calls initWithURLString:title:group with nil parameters so that
+	there's a designated initializer
+        (-[WebBookmarkLeaf initFromDictionaryRepresentation:withGroup:]):
+	rewritten to do only the subclasses' part now
+        (-[WebBookmarkLeaf dictionaryRepresentation]):
+	rewritten to do only the subclasses' part now
+        (-[WebBookmarkLeaf copyWithZone:]):
+	rewritten to do only the subclasses' part now
+
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList init]):
+	now calls initWithTitle:group with nil parameters so that
+	there's a designated initializer
+        (-[WebBookmarkList initWithTitle:group:]):
+	replace [bookmark setGroup:group] with [group _addBookmark:bookmark]
+	so it runs through the UUID code
+        (-[WebBookmarkList initFromDictionaryRepresentation:withGroup:]):
+	rewritten to do only the subclasses' part now
+        (-[WebBookmarkList dictionaryRepresentation]):
+	rewritten to do only the subclasses' part now
+        (-[WebBookmarkList copyWithZone:]):
+	rewritten to do only the subclasses' part now
+        (-[WebBookmarkList _setGroup:]):
+	removed this override, which used to do the recursion to set the group
+	of children; this recursion is now done by -[WebBookmarkGroup _addBookmark:]
+	and _removeBookmark:
+        (-[WebBookmarkList removeChild:]):
+	wereRemovedToParent -> wereRemovedFromParent
+        (-[WebBookmarkList insertChild:atIndex:]):
+	replace [bookmark setGroup:group] with [group _addBookmark:bookmark]
+	so it runs through the UUID code
+
+        * Bookmarks.subproj/WebBookmarkProxy.m:
+        (-[WebBookmarkProxy init]):
+	now calls initWithTitle:group with nil parameters so that
+	there's a designated initializer
+        (-[WebBookmarkProxy initWithTitle:group:]):
+	replace [bookmark setGroup:group] with [group _addBookmark:bookmark]
+	so it runs through the UUID code
+        (-[WebBookmarkProxy initFromDictionaryRepresentation:withGroup:]):
+	rewritten to do only the subclasses' part now
+        (-[WebBookmarkProxy dictionaryRepresentation]):
+	rewritten to do only the subclasses' part now
+        (-[WebBookmarkProxy copyWithZone:]):
+	rewritten to do only the subclasses' part now
+
 2003-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

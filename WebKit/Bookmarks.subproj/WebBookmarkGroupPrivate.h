@@ -14,7 +14,10 @@
 - (void)_bookmarkWillChange:(WebBookmark *)bookmark;
 - (void)_bookmarkDidChange:(WebBookmark *)bookmark;
 - (void)_bookmarkChildren:(NSArray *)kids wereAddedToParent:(WebBookmark *)bookmark;
-- (void)_bookmarkChildren:(NSArray *)kids wereRemovedToParent:(WebBookmark *)bookmark;
+- (void)_bookmarkChildren:(NSArray *)kids wereRemovedFromParent:(WebBookmark *)bookmark;
+
+- (void)_addBookmark:(WebBookmark *)bookmark;
+- (void)_removeBookmark:(WebBookmark *)bookmark;
 
 @end
 

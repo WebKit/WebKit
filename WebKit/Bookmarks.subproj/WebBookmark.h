@@ -20,12 +20,14 @@ typedef enum {
     WebBookmark *_parent;
     WebBookmarkGroup *_group;
     NSString *_identifier;
+    NSString *_UUID;
 }
 
 + (WebBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group;
 + (WebBookmark *)bookmarkOfType:(WebBookmarkType)type;
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group;
+// Note: this returns an NSMutableDictionary for subclasses' sake; other callers should treat it as non-mutable
 - (NSDictionary *)dictionaryRepresentation;
 
 - (NSString *)title;
@@ -50,6 +52,9 @@ typedef enum {
 // Sets a string that can be retrieved later with -identifier. Not used internally
 // in any way; clients can use it as they see fit.
 - (void)setIdentifier:(NSString *)identifier;
+
+// Globally unique ID for this bookmark.
+- (NSString *)UUID;
 
 // Array of child WebBookmarks. Returns nil if bookmarkType is not WebBookmarkTypeList.
 // This creates a copy of the internal data structure, and thus is safe to (for example),

@@ -33,6 +33,13 @@ NSString *TagKey = @"WebBookmarkGroupTag";
     return [[[WebBookmarkGroup alloc] initWithFile:file] autorelease];
 }
 
+- (id)init
+{
+    ERROR("[WebBookmarkGroup init] not supported, use initWithFile: instead");
+    [self release];
+    return nil;
+}
+
 - (id)initWithFile: (NSString *)file
 {
     if (![super init]) {
@@ -41,6 +48,7 @@ NSString *TagKey = @"WebBookmarkGroupTag";
 
     _file = [file copy];
     [self _setTopBookmark:nil];
+    _bookmarksByUUID = [[NSMutableDictionary alloc] init];
 
     // read history from disk
     [self loadBookmarkGroup];
@@ -50,10 +58,58 @@ NSString *TagKey = @"WebBookmarkGroupTag";
 
 - (void)dealloc
 {
+    [_bookmarksByUUID release];
     [_file release];
     [_tag release];
     [_topBookmark release];
     [super dealloc];
+}
+
+- (void)_addBookmark:(WebBookmark *)bookmark
+{
+    if ([bookmark group] == self) {
+        return;
+    }
+    
+    ASSERT([bookmark group] == nil);
+
+    if ([bookmark _hasUUID]) {
+        NSString *UUID = [bookmark UUID];
+        // Clear UUID on former owner of this UUID (if any) -- new copy gets to keep it
+        // FIXME 3153832: this means copy/paste transfers the UUID to the new bookmark.
+        [[_bookmarksByUUID objectForKey:UUID] _setUUID:nil];
+        [_bookmarksByUUID setObject:bookmark forKey:UUID];
+    }
+
+    [bookmark _setGroup:self];
+
+    // Recurse with bookmark's children
+    NSArray *rawChildren = [bookmark rawChildren];
+    unsigned count = [rawChildren count];
+    unsigned childIndex;
+    for (childIndex = 0; childIndex < count; ++childIndex) {
+        [self _addBookmark:[rawChildren objectAtIndex:childIndex]];
+    }
+}
+
+- (void)_removeBookmark:(WebBookmark *)bookmark
+{
+    ASSERT([bookmark group] == self);
+
+    if ([bookmark _hasUUID]) {
+        ASSERT([_bookmarksByUUID objectForKey:[bookmark UUID]] == bookmark);
+        [_bookmarksByUUID removeObjectForKey:[bookmark UUID]];
+    }
+
+    [bookmark _setGroup:nil];
+
+    // Recurse with bookmark's children
+    NSArray *rawChildren = [bookmark rawChildren];
+    unsigned count = [rawChildren count];
+    unsigned childIndex;
+    for (childIndex = 0; childIndex < count; ++childIndex) {
+        [self _removeBookmark:[rawChildren objectAtIndex:childIndex]];
+    }
 }
 
 - (NSString *)tag
@@ -90,8 +146,10 @@ NSString *TagKey = @"WebBookmarkGroupTag";
                              [newTopBookmark bookmarkType] == WebBookmarkTypeList);
     
     [newTopBookmark retain];
-    
-    [_topBookmark _setGroup:nil];
+
+    if (_topBookmark != nil) {
+        [self _removeBookmark:_topBookmark];
+    }
     [_topBookmark release];
 
     if (newTopBookmark) {
@@ -117,7 +175,7 @@ NSString *TagKey = @"WebBookmarkGroupTag";
     [self _sendNotification:WebBookmarksWereAddedNotification forBookmark:bookmark children:kids];
 }
 
-- (void)_bookmarkChildren:(NSArray *)kids wereRemovedToParent:(WebBookmark *)bookmark
+- (void)_bookmarkChildren:(NSArray *)kids wereRemovedFromParent:(WebBookmark *)bookmark
 {
     ASSERT_ARG(bookmark, [bookmark bookmarkType] == WebBookmarkTypeList);
     [self _sendNotification:WebBookmarksWereRemovedNotification forBookmark:bookmark children:kids];

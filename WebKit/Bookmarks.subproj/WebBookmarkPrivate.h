@@ -15,11 +15,20 @@
 #define WebBookmarkTypeProxyValue	@"WebBookmarkTypeProxy"
 
 #define WebBookmarkIdentifierKey	@"WebBookmarkIdentifier"
+#define WebBookmarkUUIDKey		@"WebBookmarkUUID"
 
 @interface WebBookmark(WebPrivate)
 
 - (void)_setParent:(WebBookmark *)parent;
 - (void)_setGroup:(WebBookmarkGroup *)group;
+
+// Set the globally unique id for this bookmark to the specified value.
+- (void)_setUUID:(NSString *)UUID;
+
+// Returns YES if UUID is non-nil; can't simply use -[WebBookmark UUID] because
+// it will generate a UUID if there isn't one already.
+- (BOOL)_hasUUID;
+
 
 - (unsigned)_numberOfDescendants;
 

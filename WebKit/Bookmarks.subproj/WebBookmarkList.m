@@ -19,11 +19,7 @@
 
 - (id)init
 {
-    [super init];
-
-    _list = [[NSMutableArray alloc] init];
-    
-    return self;
+    return [self initWithTitle:nil group:nil];
 }
 
 - (id)initWithTitle:(NSString *)title
@@ -31,9 +27,9 @@
 {
     [super init];
 
-    _title = [title copy];
     _list = [[NSMutableArray alloc] init];
-    [self _setGroup:group];
+    _title = [title copy];
+    [group _addBookmark:self];
     
     return self;
 }
@@ -42,24 +38,24 @@
 {
     ASSERT_ARG(dict, dict != nil);
 
+    self = [super initFromDictionaryRepresentation:dict withGroup:group];
+
     if (![[dict objectForKey:WebBookmarkTypeKey] isKindOfClass:[NSString class]]
         || ([dict objectForKey:TitleKey] && ![[dict objectForKey:TitleKey] isKindOfClass:[NSString class]])
         || ([dict objectForKey:ChildrenKey] && ![[dict objectForKey:ChildrenKey] isKindOfClass:[NSArray class]])) {
         ERROR("bad dictionary");
+        [self release];
         return nil;
     }
 
     if (![[dict objectForKey:WebBookmarkTypeKey] isEqualToString:WebBookmarkTypeListValue]) {
         ERROR("Can't initialize Bookmark list from non-list type");
+        [self release];
         return nil;
     }
-    
-    [super init];
 
-    [self _setGroup:group];
-
-    _title = [[dict objectForKey:TitleKey] copy];
     _list = [[NSMutableArray alloc] init];
+    _title = [[dict objectForKey:TitleKey] copy];
 
     NSArray *storedChildren = [dict objectForKey:ChildrenKey];
     unsigned count = [storedChildren count];
@@ -72,18 +68,13 @@
             [self insertChild:child atIndex:indexWritten++];
         }
     }
-    [self setIdentifier:[dict objectForKey:WebBookmarkIdentifierKey]];
 
     return self;
 }
 
 - (NSDictionary *)dictionaryRepresentation
 {
-    NSMutableDictionary *dict;
-    NSMutableArray *childrenAsDictionaries;
-    unsigned index, childCount;
-
-    dict = [NSMutableDictionary dictionaryWithCapacity: 3];
+    NSMutableDictionary *dict = (NSMutableDictionary *)[super dictionaryRepresentation];
 
     if (_title != nil) {
         [dict setObject:_title forKey:TitleKey];
@@ -91,10 +82,11 @@
 
     [dict setObject:WebBookmarkTypeListValue forKey:WebBookmarkTypeKey];
 
-    childCount = [self numberOfChildren];
+    unsigned childCount = [self numberOfChildren];
     if (childCount > 0) {
-        childrenAsDictionaries = [NSMutableArray arrayWithCapacity:childCount];
+        NSMutableArray *childrenAsDictionaries = [NSMutableArray arrayWithCapacity:childCount];
 
+        unsigned index;
         for (index = 0; index < childCount; ++index) {
             WebBookmark *child;
 
@@ -103,10 +95,6 @@
         }
 
         [dict setObject:childrenAsDictionaries forKey:ChildrenKey];
-    }
-
-    if ([self identifier] != nil) {
-        [dict setObject:[self identifier] forKey:WebBookmarkIdentifierKey];
     }
 
     return dict;
@@ -121,14 +109,12 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WebBookmarkList *copy;
-    unsigned index, count;
+    WebBookmarkList *copy = [super copyWithZone:zone];
+    copy->_title = [_title copy];
+    copy->_list = [[NSMutableArray alloc] init];
     
-    copy = [[WebBookmarkList alloc] initWithTitle:[self title]
-                                            group:[self group]];
-    [copy setIdentifier:[self identifier]];
-
-    count = [self numberOfChildren];
+    unsigned index;
+    unsigned count = [self numberOfChildren];
     for (index = 0; index < count; ++index) {
         WebBookmark *childCopy = [[_list objectAtIndex:index] copyWithZone:zone];
         [copy insertChild:childCopy atIndex:index];
@@ -207,9 +193,10 @@
     [bookmark retain];
     [_list removeObjectIdenticalTo:bookmark];
     [bookmark _setParent:nil];
+    [[bookmark group] _removeBookmark:bookmark];
     [bookmark release];
 
-    [[self group] _bookmarkChildren:[NSArray arrayWithObject:bookmark] wereRemovedToParent:self]; 
+    [[self group] _bookmarkChildren:[NSArray arrayWithObject:bookmark] wereRemovedFromParent:self]; 
 }
 
 
@@ -220,19 +207,9 @@
 
     [_list insertObject:bookmark atIndex:index];
     [bookmark _setParent:self];
-    [bookmark _setGroup:[self group]];
+    [[self group] _addBookmark:self];
 
     [[self group] _bookmarkChildren:[NSArray arrayWithObject:bookmark] wereAddedToParent:self]; 
-}
-
-- (void)_setGroup:(WebBookmarkGroup *)group
-{
-    if (group == [self group]) {
-        return;
-    }
-
-    [super _setGroup:group];
-    [_list makeObjectsPerformSelector:@selector(_setGroup:) withObject:group];
 }
 
 @end

@@ -21,17 +21,37 @@
 @implementation WebBookmark
 
 - (void)dealloc
-{    
-    [_group release];
+{
+    // a bookmark must be removed from its group before this,
+    // so the UUID table removes its (optional) entry for the bookmark.
+    ASSERT (_group == nil);
+    
     [_identifier release];
+    [_UUID release];
     
     [super dealloc];
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
-    return nil;
+    WebBookmark *copy = NSCopyObject(self, 0, zone);
+    copy->_group = nil;
+    copy->_parent = nil;
+    copy->_identifier = nil;
+    copy->_UUID = nil;
+
+    [copy setIdentifier:[self identifier]];
+
+    // UUID starts the same as the original, which is OK
+    // since the copy isn't in a group yet. When it's added
+    // to a group, the UUID will be uniqued if necessary at that time.
+    if ([self _hasUUID]) {
+        [copy _setUUID:[self UUID]];
+    }
+    
+    // parent and group are left nil for fresh copies
+
+    return copy;
 }
 
 - (NSString *)title
@@ -124,6 +144,31 @@
     _parent = parent;
 }
 
+- (void)_setUUID:(NSString *)UUID
+{
+    ASSERT(_UUID == nil || UUID == nil);
+
+    [_UUID release];
+    _UUID = [UUID copy];
+}
+
+- (NSString *)UUID
+{
+    // lazily generate
+    if (_UUID == nil) {
+        CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+        _UUID = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+        CFRelease(UUIDRef);
+    }
+    
+    return _UUID;
+}
+
+- (BOOL)_hasUUID
+{
+    return _UUID != nil;
+}
+
 - (WebBookmarkGroup *)group
 {
     return _group;
@@ -182,15 +227,26 @@
 }
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
-{    
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
-    return nil;
+{
+    [self init];
+
+    [self setIdentifier:[dict objectForKey:WebBookmarkIdentifierKey]];
+    [self _setUUID:[dict objectForKey:WebBookmarkUUIDKey]];
+    [group _addBookmark:self];
+
+    return self;
 }
 
 - (NSDictionary *)dictionaryRepresentation
 {
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
-    return nil;
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    if ([self identifier] != nil) {
+        [dict setObject:[self identifier] forKey:WebBookmarkIdentifierKey];
+    }
+    // UUID is generated lazily; guaranteed to be non-nil
+    [dict setObject:[self UUID] forKey:WebBookmarkUUIDKey];
+
+    return dict;
 }
 
 - (BOOL)contentMatches:(WebBookmark *)otherBookmark

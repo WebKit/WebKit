@@ -16,10 +16,15 @@
 
 @implementation WebBookmarkProxy
 
+- (id)init
+{
+    return [self initWithTitle:nil group:nil];
+}
+
 - (id)initWithTitle:(NSString *)title group:(WebBookmarkGroup *)group;
 {
     [super init];
-    [self _setGroup:group];
+    [group _addBookmark:self];
     _title = [title copy];	// to avoid sending notifications, don't call setTitle
 
     return self;    
@@ -27,18 +32,22 @@
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
+    self = [super initFromDictionaryRepresentation:dict withGroup:group];
+    
     if (![[dict objectForKey:WebBookmarkTypeKey] isKindOfClass:[NSString class]]) {
         ERROR("bad dictionary");
+        [self release];
         return nil;
     }
     if (![[dict objectForKey:WebBookmarkTypeKey] isEqualToString:WebBookmarkTypeProxyValue]) {
         ERROR("Can't initialize Bookmark proxy from non-proxy type");
+        [self release];
         return nil;
     }
 
-    WebBookmark *result = [self initWithTitle:[dict objectForKey:TitleKey] group:group];
-    [result setIdentifier:[dict objectForKey:WebBookmarkIdentifierKey]];
-    return result;
+    _title = [[dict objectForKey:TitleKey] copy];
+
+    return self;
 }
 
 - (void)dealloc
@@ -49,13 +58,10 @@
 
 - (NSDictionary *)dictionaryRepresentation
 {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:2];
+    NSMutableDictionary *dict = (NSMutableDictionary *)[super dictionaryRepresentation];
     [dict setObject:WebBookmarkTypeProxyValue forKey:WebBookmarkTypeKey];
     if (_title != nil) {
         [dict setObject:_title forKey:TitleKey];
-    }
-    if ([self identifier] != nil) {
-        [dict setObject:[self identifier] forKey:WebBookmarkIdentifierKey];
     }
 
     return dict;
@@ -68,8 +74,8 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    id copy = [[WebBookmarkProxy alloc] initWithTitle:_title group:[self group]];
-    [copy setIdentifier:[self identifier]];
+    WebBookmarkProxy *copy = [super copyWithZone:zone];
+    copy->_title = [_title copy];
     return copy;
 }
 

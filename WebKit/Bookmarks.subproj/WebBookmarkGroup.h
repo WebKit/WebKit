@@ -28,6 +28,7 @@ extern NSString *WebBookmarkChildrenKey;
     NSString *_tag;
     NSString *_file;
     WebBookmark *_topBookmark;
+    NSMutableDictionary *_bookmarksByUUID;
     BOOL _loading;
 }
 

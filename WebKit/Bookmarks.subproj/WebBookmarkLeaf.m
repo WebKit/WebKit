@@ -22,24 +22,23 @@
 
 - (id)init
 {
-    [super init];
-    _entry = [[WebHistoryItem alloc] init];
-    return self;
+    return [self initWithURLString:nil title:nil group:nil];
 }
 
 - (id)initWithURLString:(NSString *)URLString
                   title:(NSString *)title
                   group:(WebBookmarkGroup *)group;
 {
-    [self init];
+    [super init];
 
     // Since our URLString may not be valid for creating an NSURL object,
     // just hang onto the string separately and don't bother creating
     // an NSURL object for the WebHistoryItem.
+    _entry = [[WebHistoryItem alloc] init];
     [_entry setTitle:title];	// to avoid sending notifications, don't call setTitle or setURL
     _URLString = [URLString copy];
     [_entry setURL:[NSURL _web_URLWithString:_URLString]];
-    [self _setGroup:group];
+    [group _addBookmark:self];
 
     return self;
 }
@@ -48,37 +47,30 @@
 {
     ASSERT_ARG(dict, dict != nil);
 
+    self = [super initFromDictionaryRepresentation:dict withGroup:group];
+
     if (![[dict objectForKey:URIDictionaryKey] isKindOfClass:[NSDictionary class]]
         || ![[dict objectForKey:URLStringKey] isKindOfClass:[NSString class]]) {
         ERROR("bad dictionary");
+        [self release];
         return nil;
     }
 
-    [super init];
-
-    [self _setGroup:group];
-    
     _entry = [[WebHistoryItem alloc] initFromDictionaryRepresentation:
         [dict objectForKey:URIDictionaryKey]];
     _URLString = [[dict objectForKey:URLStringKey] copy];
-    [self setIdentifier:[dict objectForKey:WebBookmarkIdentifierKey]];
 
     return self;
 }
 
 - (NSDictionary *)dictionaryRepresentation
 {
-    NSMutableDictionary *dict;
-
-    dict = [NSMutableDictionary dictionaryWithCapacity:3];
+    NSMutableDictionary *dict = (NSMutableDictionary *)[super dictionaryRepresentation];
 
     [dict setObject:WebBookmarkTypeLeafValue forKey:WebBookmarkTypeKey];
     [dict setObject:[_entry dictionaryRepresentation] forKey:URIDictionaryKey];
     if (_URLString != nil) {
         [dict setObject:_URLString forKey:URLStringKey];
-    }
-    if ([self identifier] != nil) {
-        [dict setObject:[self identifier] forKey:WebBookmarkIdentifierKey];
     }
     
     return dict;
@@ -93,10 +85,13 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    id copy = [[WebBookmarkLeaf allocWithZone:zone] initWithURLString:_URLString
-                                                                title:[self title]
-                                                                group:[self group]];
-    [copy setIdentifier:[self identifier]];
+    WebBookmarkLeaf *copy = [super copyWithZone:zone];
+
+    copy->_entry = [[WebHistoryItem alloc] init];
+    [copy->_entry setTitle:[self title]];
+    copy->_URLString = [[self URLString] copy];
+    [copy->_entry setURL:[NSURL _web_URLWithString:_URLString]];
+    
     return copy;
 }
 
