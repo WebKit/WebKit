@@ -1287,6 +1287,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->url().getNSURL();
 }
 
+- (NSURL *)baseURL
+{
+    return _part->completeURL(_part->xmlDocImpl()->baseURL()).getNSURL();
+}
+
 - (NSString *)referrer
 {
     return _part->referrer().getNSString();

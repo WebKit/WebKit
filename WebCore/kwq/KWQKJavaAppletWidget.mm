@@ -25,6 +25,7 @@
 
 #import "KWQKJavaAppletWidget.h"
 
+#import "dom_docimpl.h"
 #import "KHTMLView.h"
 #import "KWQExceptions.h"
 #import "KWQKJavaAppletContext.h"
@@ -48,7 +49,10 @@ KJavaAppletWidget::KJavaAppletWidget(const QSize &size, KJavaAppletContext *c, c
         ++it;
     }
     
-    KWQKHTMLPart *part = KWQ(c->part());    
+    KWQKHTMLPart *part = KWQ(c->part());
+    if (baseURLString.isEmpty()) {
+        baseURLString = part->xmlDocImpl()->baseURL();
+    }
     setView([part->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                                         attributeNames:attributeNames
                                        attributeValues:attributeValues

@@ -866,7 +866,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         }
     }
 
-    NSURL *baseURL = [[[_frame dataSource] response] URL];
+    NSURL *baseURL = [self baseURL];
     if (pluginPackage) {
         if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
             view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage

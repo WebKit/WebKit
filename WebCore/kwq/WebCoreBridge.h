@@ -216,6 +216,7 @@ typedef enum {
 - (void)stop;
 
 - (NSURL *)URL;
+- (NSURL *)baseURL;
 - (NSString *)referrer;
 - (NSString *)domain;
 - (WebCoreBridge *)opener;
