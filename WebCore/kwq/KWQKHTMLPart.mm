@@ -136,6 +136,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _mouseDownMayStartSelect(false)
     , _formValuesAboutToBeSubmitted(nil)
     , _formAboutToBeSubmitted(nil)
+    , _windowWidget(NULL)
 {
     // Must init the cache before connecting to any signals
     Cache::init();

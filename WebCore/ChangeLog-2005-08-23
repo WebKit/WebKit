@@ -1,3 +1,12 @@
+2003-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris.
+
+	- fix unitialized access.
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):
+
 1969-12-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
