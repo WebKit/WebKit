@@ -1,3 +1,16 @@
+2004-07-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3691569> REGRESSION (142): cmd-shift-clicking on a link 
+        now also extends selection (even if there wasn't one before)
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventSingleClick):
+        Uh, duh. Got a ! wrong last time somehow, so it did even more the wrong thing
+        than ever. I did test this before, so my best guess is an accidental undo or
+        something before committing.
+
 2004-07-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3735084 and 3737209, when you can find no line boxes in your previous sibling, the line box to dirty
