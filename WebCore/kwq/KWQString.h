@@ -149,7 +149,7 @@ public:
     // static member functions -------------------------------------------------
 
     static QString number(int /* NOTE: base NOT used */ );
-    static QString fromLatin1(const char *, int len=-1);
+    static QString fromLatin1(const char * /* NOTE: len NOT used */ );
 #ifdef USING_BORROWED_KURL
     static QString fromLocal8Bit(const char *, int len=-1);
 #endif
