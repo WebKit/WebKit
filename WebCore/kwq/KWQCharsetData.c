@@ -233,6 +233,7 @@ static const CharsetEntry table[] = {
     { "Shift_JIS", kCFStringEncodingShiftJIS_X0213_00, IsJapanese },
     { "csshiftjis", kCFStringEncodingShiftJIS_X0213_00, IsJapanese },
     { "mskanji", kCFStringEncodingShiftJIS_X0213_00, IsJapanese },
+    { "sjis", kCFStringEncodingShiftJIS_X0213_00, IsJapanese },
     { "xsjis", kCFStringEncodingShiftJIS_X0213_00, IsJapanese },
     { "GB18030", kCFStringEncodingGB_18030_2000, NoEncodingFlags },
     { "chinese", kCFStringEncodingGB_18030_2000, NoEncodingFlags },

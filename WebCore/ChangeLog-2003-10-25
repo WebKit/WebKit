@@ -1,3 +1,14 @@
+2003-05-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - added "sjis" as a synonym for "Shift_JIS"; this might fix 3235161,
+        HOMEPAGE: Publishing page with Japanese characters w/ Safari generates an error,
+        but I am currently unable to test the fix.
+
+        * kwq/mac-encodings.txt: Added sjis to the Shift_JIS line.
+        * kwq/KWQCharsetData.c: Regenerated.
+
 2003-05-29  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3263156, stack overflow at www.liceo.edu.mx.  This
