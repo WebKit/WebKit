@@ -1,3 +1,13 @@
+2002-08-06  Maciej Stachowiak  <mjs@apple.com>
+
+	Removed some APPLE_CHANGES no longer needed after the part change.
+
+        * WebCoreSupport.subproj/WebBridge.m: Remove setOpenedByScript: and
+	openedByScript methods now that they are not needed.
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m: Remove setOpenedByScript: and
+	openedByScript methods now that they are not needed.
+
 2002-08-06  Darin Adler  <darin@apple.com>
 
 	- fixed 3017761 -- dataSource != nil assertion navigating at yahoo.com

@@ -22,7 +22,6 @@
     id<WebLocationChangeHandler> locationChangeHandler;
     WebBackForwardList *backForwardList;
     float textSizeMultiplier;
-    BOOL openedByScript;
     BOOL useBackForwardList;
 }
 @end
@@ -36,7 +35,5 @@
 - (void)_didStartLoading: (NSURL *)URL;
 - (void)_didStopLoading: (NSURL *)URL;
 + (NSString *)_MIMETypeForFile: (NSString *)path;
-- (BOOL)_openedByScript;
-- (void)_setOpenedByScript:(BOOL)openedByScript;
 - (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path;
 @end

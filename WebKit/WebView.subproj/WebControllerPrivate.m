@@ -170,16 +170,6 @@
     return [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
 }
 
-- (BOOL)_openedByScript
-{
-    return _private->openedByScript;
-}
-
-- (void)_setOpenedByScript:(BOOL)openedByScript
-{
-    _private->openedByScript = openedByScript;
-}
-
 - (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path
 {
     WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];

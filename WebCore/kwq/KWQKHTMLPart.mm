@@ -382,16 +382,6 @@ void KWQKHTMLPartImpl::setStatusBarText(const QString &status)
     [bridge setStatusText:status.getNSString()];
 }
 
-bool KWQKHTMLPartImpl::openedByJS()
-{
-    return [bridge openedByScript];
-}
-
-void KWQKHTMLPartImpl::setOpenedByJS(bool _openedByJS)
-{
-    [bridge setOpenedByScript:_openedByJS];
-}
-
 void KWQKHTMLPartImpl::scheduleClose()
 {
     [[bridge window] performSelector:@selector(close) withObject:nil afterDelay:0.0];

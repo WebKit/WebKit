@@ -84,9 +84,6 @@ public:
 
     void submitForm(const char *action, const QString &url, const QByteArray &formData, const QString &_target, const QString& contentType, const QString& boundary);
 
-    bool openedByJS();
-    void setOpenedByJS(bool _openedByJS);
-
     void scheduleClose();
 
     void unfocusWindow();

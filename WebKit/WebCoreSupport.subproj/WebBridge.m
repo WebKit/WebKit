@@ -230,18 +230,6 @@
     return dataSource;
 }
 
-- (BOOL)openedByScript
-{
-    WEBKIT_ASSERT(frame != nil);
-    return [[frame controller] _openedByScript];
-}
-
-- (void)setOpenedByScript:(BOOL)openedByScript
-{
-    WEBKIT_ASSERT(frame != nil);
-    [[frame controller] _setOpenedByScript:openedByScript];
-}
-
 - (void)unfocusWindow
 {
     if ([[self window] isKeyWindow] || [[[self window] attachedSheet] isKeyWindow]) {

@@ -1,3 +1,15 @@
+2002-08-06  Maciej Stachowiak  <mjs@apple.com>
+
+	Removed some APPLE_CHANGES no longer needed after the part change.
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::openedByJS): Don't call impl version.
+        (KHTMLPart::setOpenedByJS): Don't call impl version.
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm: Removed openedByJS and setOpenedByJS.
+        * kwq/WebCoreBridge.h: Don't prototype setOpenedByScript: and
+	openedByScript methods now that they are not needed.
+
 2002-08-06  David Hyatt  <hyatt@apple.com>
 
 	Make checkboxes and radio buttons use the small control
