@@ -1,3 +1,15 @@
+2002-05-14  Chris Blumenberg  <cblu@apple.com>
+
+	Removed retain of the URL handle. This was causing everything to leak.
+
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient initWithDataSource:part:]):
+	(-[IFMainURLHandleClient dealloc]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFMainURLHandleClient IFURLHandle:didRedirectToURL:]):
+	(-[IFMainURLHandleClient processData:isComplete:]):
+
 2002-05-14  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFWebView.mm: (-[IFWebView initWithFrame:]):

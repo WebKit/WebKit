@@ -1,3 +1,12 @@
+2002-05-14  Chris Blumenberg  <cblu@apple.com>
+
+	Changed slotData to slotData(NSString *encoding, const char *bytes, int length)
+
+	* khtml/khtml_part.h:
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::slotData):
+	* libwebcore.exp:
+
 2002-05-14  Darin Adler  <darin@apple.com>
 
 	Fixed 2925291 -- CSS2 test page causes infinite recursion, crash

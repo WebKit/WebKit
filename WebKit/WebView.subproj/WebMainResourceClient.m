@@ -35,8 +35,8 @@
         part = p;
         part->ref();
         sentFakeDocForNonHTMLContentType = NO;
+        examinedInitialData = NO;
         downloadStarted = NO;
-        checkedMIMEType = NO;
         loadFinished    = NO;
         sentInitialData = NO;
         contentPolicy = IFContentPolicyNone;
@@ -52,7 +52,8 @@
     [dataSource release];
     [mimeHandler release];
     [resourceData release];
-    [urlHandle release];
+    [encoding release];
+    [url release];
     [super dealloc];
 }
 
@@ -115,17 +116,18 @@
     
     // Check the mime type and ask the client for the content policy.
     // This only happens once.
-    if(!checkedMIMEType){
+    if(!examinedInitialData){
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", [[sender contentType] cString]);
         [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:[sender contentType]];
         
         // FIXME: Remove/replace IFMIMEHandler stuff
         mimeHandler = [[[IFMIMEDatabase sharedMIMEDatabase] MIMEHandlerForMIMEType:[sender contentType]] retain];
         handlerType = [mimeHandler handlerType];
-        checkedMIMEType = YES;
+        
+        encoding = [[sender characterSet] retain];
+        url = [[sender url] retain];
+        examinedInitialData = YES;
     }
-    
-    urlHandle = [sender retain];
     
     if(contentPolicy != IFContentPolicyNone && contentPolicy != IFContentPolicyIgnore){
         if(!sentInitialData){
@@ -143,6 +145,8 @@
     if(contentPolicy == IFContentPolicyIgnore){
         [sender cancelLoadInBackground];
     }
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [sender contentLengthReceived], [sender contentLength]);
     
     // update progress
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
@@ -166,14 +170,14 @@
 }
 
 
-- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
+- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)URL
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_REDIRECT, "url = %s\n", [[url absoluteString] cString]);
-    part->setBaseURL([[url absoluteString] cString]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_REDIRECT, "url = %s\n", [[URL absoluteString] cString]);
+    part->setBaseURL([[URL absoluteString] cString]);
     
-    [dataSource _setFinalURL: url];
+    [dataSource _setFinalURL: URL];
     
-    [[dataSource _locationChangeHandler] serverRedirectTo: url forDataSource: dataSource];
+    [[dataSource _locationChangeHandler] serverRedirectTo: URL forDataSource: dataSource];
 }
 
 
@@ -188,7 +192,7 @@
         
         if(handlerType == IFMIMEHANDLERTYPE_NIL || handlerType == IFMIMEHANDLERTYPE_HTML) {
             // If data is html, send it to the part.
-            part->slotData(urlHandle, (const char *)[data bytes], [data length]);
+            part->slotData(encoding, (const char *)[data bytes], [data length]);
         }
         
         else if(handlerType == IFMIMEHANDLERTYPE_IMAGE  || 
@@ -197,17 +201,17 @@
                 
             // For a non-html document, create html doc that embeds it.
             if (!sentFakeDocForNonHTMLContentType) {
-                contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:[urlHandle url]];
+                contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:url];
                 fakeHTMLDocument = [contentHandler HTMLDocument];
                 fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
-                part->slotData(urlHandle, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
+                part->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
                 [contentHandler release];
                 sentFakeDocForNonHTMLContentType = YES;
             }
             
             // For text documents, the incoming data is part of the main page.
             if(handlerType == IFMIMEHANDLERTYPE_TEXT){
-                part->slotData(urlHandle, (const char *)[data bytes], [data length]);
+                part->slotData(encoding, (const char *)[data bytes], [data length]);
             }
         }
     }
@@ -225,7 +229,6 @@
                 [[dataSource _locationChangeHandler] locationChangeDone:nil];
                 downloadStarted = YES;
             }
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [urlHandle contentLengthReceived], [urlHandle contentLength]);
     }
     
     if(complete)
@@ -240,10 +243,10 @@
     
     if(contentPolicy == IFContentPolicyShow){
         if(handlerType == IFMIMEHANDLERTYPE_TEXT) {
-            contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:[urlHandle url]];
+            contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:url];
             fakeHTMLDocument = [contentHandler textHTMLDocumentBottom];
             fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
-            part->slotData(urlHandle, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
+            part->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
             [contentHandler release];
         }
     }

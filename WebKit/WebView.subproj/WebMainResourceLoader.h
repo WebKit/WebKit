@@ -20,13 +20,14 @@ class KHTMLPart;
 {
     id dataSource;
     KHTMLPart *part;
-    BOOL sentFakeDocForNonHTMLContentType, checkedMIMEType, downloadStarted, loadFinished, sentInitialData;
+    BOOL sentFakeDocForNonHTMLContentType, examinedInitialData, downloadStarted, loadFinished, sentInitialData;
     IFMIMEHandler *mimeHandler;
     IFMIMEHandlerType handlerType;
     IFDownloadHandler *downloadHandler;
     IFContentPolicy contentPolicy;
     NSData *resourceData;
-    IFURLHandle *urlHandle;
+    NSString *encoding;
+    NSURL *url;
 }
 - initWithDataSource: (IFWebDataSource *)ds part: (KHTMLPart *)p;
 - (void)setContentPolicy:(IFContentPolicy)theContentPolicy;

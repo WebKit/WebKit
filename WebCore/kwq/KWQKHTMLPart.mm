@@ -423,10 +423,9 @@ DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
     return 0;
 }
 
-void KHTMLPart::slotData(IFURLHandle *handle, const char *bytes, int length)
+void KHTMLPart::slotData(NSString *encoding, const char *bytes, int length)
 {
 // NOTE: This code emulates the interface used by the original khtml part  
-    NSString *encoding;
     QString enc;
 
     if (!d->m_workingURL.isEmpty()) {
@@ -437,7 +436,6 @@ void KHTMLPart::slotData(IFURLHandle *handle, const char *bytes, int length)
         d->m_workingURL = KURL();
     }
 
-    encoding = [handle characterSet];
     if (encoding != NULL) {
       enc = QString::fromCFString((CFStringRef) encoding);
       setEncoding(enc, true);
