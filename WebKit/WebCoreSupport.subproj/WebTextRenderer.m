@@ -297,7 +297,6 @@ static BOOL bufferTextDrawing = NO;
 
 + (void)initialize
 {
-    WebKitInitializeUnicode();
     nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
     bufferTextDrawing = [[[NSUserDefaults standardUserDefaults] stringForKey:@"BufferTextDrawing"] isEqual: @"YES"];
 }

@@ -23,6 +23,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
@@ -52,6 +53,7 @@
     [representation release];
     [request release];
     [originalRequest release];
+    [originalRequestCopy release];
     [mainClient release];
     [subresourceClients release];
     [pageTitle release];
@@ -168,8 +170,11 @@
         [self _commitIfReady: pageCache];
     } else if (!_private->mainClient) {
         _private->loadingFromPageCache = NO;
-        [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
+        id identifier;
+        identifier = [[_private->controller resourceLoadDelegate] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+        [_private->mainClient setIdentifier: identifier];
+        [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         if (![_private->mainClient loadWithRequest:_private->request]) {
             ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level",
                 [_private->request URL]);
@@ -605,7 +610,7 @@
 
 - (WebResourceRequest *)_originalRequest
 {
-    return _private->originalRequest;
+    return _private->originalRequestCopy;
 }
 
 - (void)_setTriggeringAction:(NSDictionary *)action

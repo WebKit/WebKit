@@ -27,8 +27,21 @@
     
     WebController *controller;
     
+    // A reference to actual request used to create the data source.
+    // This should only be used by the resourceLoadDelegate's
+    // identifierForInitialRequest:fromDatasource: method.  It is
+    // not guaranteed to remain unchanged, as requests are mutable.
     WebResourceRequest *originalRequest;
+    
+    // A copy of the original request used to create the data source.
+    // We have to copy the request because requests are mutable.
+    WebResourceRequest *originalRequestCopy;
+    
+    // The 'working' request for this datasource.  It may be mutated
+    // several times from the original request to include additional
+    // headers, cookie information, canonicalization and redirects.
     WebResourceRequest *request;
+    
     WebResourceResponse *response;
 
     // Client for main resource.

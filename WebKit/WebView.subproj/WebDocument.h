@@ -181,4 +181,17 @@
     @param dataSource The datasource that has finished loading.
 */
 - (void)finishedLoadingWithDataSource: (WebDataSource *)dataSource;
+
+/*!
+    @method canProvideDocumentSource
+    @return Returns true if the representation can provide document source.
+*/
+- (BOOL)canProvideDocumentSource;
+
+/*!
+    @method documentSource
+    @return Returns the textual source representation of the document.  For HTML documents
+    this is the original HTML source.
+*/
+- (NSString *)documentSource;
 @end

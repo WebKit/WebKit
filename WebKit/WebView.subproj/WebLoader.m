@@ -283,4 +283,12 @@
                            fromDataSource:dataSource];
 }
 
+- (void)setIdentifier: ident
+{
+    if (identifier != ident){
+        [identifier release];
+        identifier = [ident retain];
+    }
+}
+
 @end

@@ -9,6 +9,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebDocument.h>
 #import <WebFoundation/WebResourceResponse.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
@@ -72,6 +73,11 @@
     // received, even for the case of a document with no data (like about:blank).
     if ([dataSource webFrame])
         [_private->bridge receivedData:nil withDataSource:dataSource];
+}
+
+- (BOOL)canProvideDocumentSource
+{
+    return YES;
 }
 
 - (NSString *)documentSource

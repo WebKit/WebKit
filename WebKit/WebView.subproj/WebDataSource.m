@@ -48,7 +48,8 @@
     }
     
     _private = [[WebDataSourcePrivate alloc] init];
-    _private->originalRequest = [request copy];
+    _private->originalRequest = [request retain];
+    _private->originalRequestCopy = [request copy];
     _private->request = [_private->originalRequest retain];
 
     ++WebDataSourceCount;
@@ -97,6 +98,11 @@
     // A single document may have many data sources corresponding to
     // frames or iframes.
     return _private->controller;
+}
+
+-(WebResourceRequest *)initialRequest
+{
+    return _private->originalRequest;
 }
 
 -(WebResourceRequest *)request

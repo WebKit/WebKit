@@ -1,3 +1,50 @@
+2003-02-03  Richard Williamson   <rjw@apple.com>
+
+        Support for new canProvideDocumentSource and documentSource API.
+        Updated all the representations.  Added support to show for RTF source.  
+        Moved WebKitInitializeUnicode to to early class.  This was necessary
+        because WebCore may use the unicode property functions before WebTextRenderer
+        gets initialized.
+        Ensured guarantee that identifierForInitialRequest:fromDataSource: is called with
+        the first initial request.
+        
+        Reviewed by maciej.
+
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation canProvideDocumentSource]):
+        (-[WebNetscapePluginRepresentation documentSource]):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate setIdentifier:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource controller]):
+        (-[WebDataSource initialRequest]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _originalRequest]):
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+        (-[WebHTMLRepresentation canProvideDocumentSource]):
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView initialize]):
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation canProvideDocumentSource]):
+        (-[WebImageRepresentation documentSource]):
+        * WebView.subproj/WebTextRepresentation.h:
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation dealloc]):
+        (-[WebTextRepresentation setDataSource:]):
+        (-[WebTextRepresentation finishedLoadingWithDataSource:]):
+        (-[WebTextRepresentation canProvideDocumentSource]):
+        (-[WebTextRepresentation documentSource]):
+
 2003-02-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3163073 - SECURITY: Need to check if filename in encoded download is safe

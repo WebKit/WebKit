@@ -45,4 +45,14 @@
     [self finishedLoadingWithData:[ds data]];
 }
 
+- (BOOL)canProvideDocumentSource
+{
+    return NO;
+}
+
+- (NSString *)documentSource
+{
+    return nil;
+}
+
 @end

@@ -79,8 +79,17 @@
 - (WebController *)controller;
     
 /*!
+    @method initialRequest
+    @result Returns a reference to the original request that created the
+    datasource.  This request will be unmodified by WebKit. 
+*/
+- (WebResourceRequest *)initialRequest;
+
+/*!
     @method request
-    @result Returns the request that was used to create this datasource.
+    @result Returns the request that is used for this datasource.  This
+    request may have changed from the original request because of canonicalization
+    of the URL, addition of headers, and/or redirects.
 */
 -(WebResourceRequest *)request;
 

@@ -27,6 +27,7 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebUnicode.h>
 
 #import <AppKit/NSResponder_Private.h>
 #import <CoreGraphics/CGContextGState.h>
@@ -35,6 +36,7 @@
 
 +(void)initialize
 {
+    WebKitInitializeUnicode();
     [NSApp registerServicesMenuSendTypes:[[self class] _pasteboardTypes] returnTypes:nil];
 }
 

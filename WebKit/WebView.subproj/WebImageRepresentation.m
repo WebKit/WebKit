@@ -61,4 +61,15 @@
                 length:[resourceData length]] retain];
 }
 
+- (BOOL)canProvideDocumentSource
+{
+    return NO;
+}
+
+- (NSString *)documentSource
+{
+    return nil;
+}
+
+
 @end
