@@ -53,7 +53,13 @@ NSString *WebDataProtocolScheme = @"applewebdata";
     return fakeURL;
 }
 
-- (WebDataRequestParameters *)_webDataRequestParameters
+- (WebDataRequestParameters *)_webDataRequestParametersForReading
+{
+    Class theClass = [WebDataRequestParameters class];
+    return [WebProtocol partOfRequest:self withClass:theClass createIfDoesNotExist:NO];
+}
+
+- (WebDataRequestParameters *)_webDataRequestParametersForWriting
 {
     Class theClass = [WebDataRequestParameters class];
     return [WebProtocol partOfRequest:self withClass:theClass createIfDoesNotExist:YES];
@@ -61,46 +67,46 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 
 - (NSData *)_webDataRequestData
 {
-    WebDataRequestParameters *parameters = [self _webDataRequestParameters];
-    return parameters->data;
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->data : nil;
 }
 
 - (void)_webDataRequestSetData: (NSData *)data
 {
-    WebDataRequestParameters *parameters = [self _webDataRequestParameters];
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForWriting];
     [parameters->data release];
     parameters->data = [data retain];
 }
 
 - (NSString *)_webDataRequestEncoding
 {
-    WebDataRequestParameters *parameters = [self _webDataRequestParameters];
-    return parameters->encoding;
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->encoding: nil;
 }
 
 - (void)_webDataRequestSetEncoding:(NSString *)encoding
 {
-    WebDataRequestParameters *parameters = [self _webDataRequestParameters];
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForWriting];
     [parameters->encoding release];
     parameters->encoding = [encoding retain];
 }
 
 - (NSURL *)_webDataRequestBaseURL
 {
-    WebDataRequestParameters *parameters = [self _webDataRequestParameters];
-    return parameters->baseURL;
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->baseURL : nil;
 }
 
 - (void)_webDataRequestSetBaseURL:(NSURL *)baseURL
 {
-    WebDataRequestParameters *parameters = [self _webDataRequestParameters];
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForWriting];
     [parameters->baseURL release];
     parameters->baseURL = [baseURL retain];
 }
 
 - (NSMutableURLRequest *)_webDataRequestExternalRequest
 {
-    WebDataRequestParameters *parameters = [WebProtocol partOfRequest:self withClass:[WebDataRequestParameters class] createIfDoesNotExist:NO];
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
     NSMutableURLRequest *newRequest = nil;
     
     if (parameters){
