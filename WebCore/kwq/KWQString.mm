@@ -2701,6 +2701,43 @@ struct HandleNode {
 static HandlePageNode *usedNodeAllocationPages = 0;
 static HandlePageNode *freeNodeAllocationPages = 0;
 
+#if 1 // change to 0 to do the page lists checks
+
+#define CHECK_PAGE_LISTS() ((void)0)
+
+#else
+
+static void CHECK_PAGE_LISTS()
+{
+    {
+        int loopCount = 0;
+        HandlePageNode *next = 0;
+        for (HandlePageNode *page = freeNodeAllocationPages; page; page = page->previous) {
+            ASSERT(page->next == next);
+            ASSERT(((HandleNode *)page->nodes)[0].type.freeNodes);
+            if (++loopCount > 100) {
+                FATAL("free node page loop");
+            }
+            next = page;
+        }
+    }
+    
+    {
+        int loopCount = 0;
+        HandlePageNode *next = 0;
+        for (HandlePageNode *page = usedNodeAllocationPages; page; page = page->previous) {
+            ASSERT(page->next == next);
+            ASSERT(((HandleNode *)page->nodes)[0].type.freeNodes == 0);
+            if (++loopCount > 100) {
+                FATAL("used node page loop");
+            }
+            next = page;
+        }
+    }
+}
+
+#endif
+
 static HandleNode *_initializeHandleNodeBlock(HandlePageNode *pageNode)
 {
     uint i;
@@ -2739,11 +2776,13 @@ HandlePageNode *_allocatePageNode()
 void _initializeHandleNodes()
 {
     if (freeNodeAllocationPages == 0)
-        freeNodeAllocationPages = _allocatePageNode();    
+        freeNodeAllocationPages = _allocatePageNode();
 }
 
 HandleNode *_allocateNode(HandlePageNode *pageNode)
 {
+    CHECK_PAGE_LISTS();
+
     HandleNode *block = (HandleNode *)pageNode->nodes;
     HandleNode *freeNodes = block[0].type.freeNodes;
     HandleNode *allocated;
@@ -2759,20 +2798,26 @@ HandleNode *_allocateNode(HandlePageNode *pageNode)
     if (allocated->type.internalNode.previous >= 2) {
         block[0].type.freeNodes = TO_NODE_ADDRESS(allocated->type.internalNode.previous, block);
         block[0].type.freeNodes->type.internalNode.next = 0;
+
+        CHECK_PAGE_LISTS();
     }
     else {
         // Used last node on this page.
         block[0].type.freeNodes = 0;
         
         freeNodeAllocationPages = freeNodeAllocationPages->previous;
+        if (freeNodeAllocationPages)
+            freeNodeAllocationPages->next = 0;
 
         pageNode->previous = usedNodeAllocationPages;
         pageNode->next = 0;
         if (usedNodeAllocationPages)
             usedNodeAllocationPages->next = pageNode;
         usedNodeAllocationPages = pageNode;        
+    
+        CHECK_PAGE_LISTS();
     }
-        
+
     return allocated;
 }
 
@@ -2800,6 +2845,8 @@ void freeHandle(void *_free)
     return;
 #endif
 
+    CHECK_PAGE_LISTS();
+
     HandleNode *free = (HandleNode *)_free;
     HandleNode *base = (HandleNode *)trunc_page((uint)free);
     HandleNode *freeNodes = base[0].type.freeNodes;
@@ -2817,13 +2864,13 @@ void freeHandle(void *_free)
     base[0].type.freeNodes = free;
     
     // Remove page from used/free list and place on free list
-    if (usedNodeAllocationPages == pageNode)
-        usedNodeAllocationPages = usedNodeAllocationPages->previous;
-    else if (freeNodeAllocationPages != pageNode){
+    if (freeNodeAllocationPages != pageNode) {
         if (pageNode->previous)
             pageNode->previous->next = pageNode->next;
         if (pageNode->next)
             pageNode->next->previous = pageNode->previous;
+        if (usedNodeAllocationPages == pageNode)
+            usedNodeAllocationPages = pageNode->previous;
     
         pageNode->previous = freeNodeAllocationPages;
         pageNode->next = 0;
@@ -2832,6 +2879,8 @@ void freeHandle(void *_free)
         freeNodeAllocationPages = pageNode;
     }
     
+    CHECK_PAGE_LISTS();
+
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     handleInstances--;
 #endif

@@ -1,5 +1,18 @@
 2002-10-09  Darin Adler  <darin@apple.com>
 
+	- fixed 3069749 -- crash in QString during third run of cvs-base
+
+        * kwq/KWQString.mm:
+        (checkNodeAllocationPages): Added function to use for debugging.
+        (_allocateNode): Clear the next pointer after removing a page from the free
+	node list so that the free node list doesn't point at part of the used node list.
+        (freeHandle): Change the code around so that the code to add the node to the
+	free list works even in the case where this was the top from the used list.
+	The old code would half-remove the node from the used list and not add it to
+	the free list at all.
+
+2002-10-09  Darin Adler  <darin@apple.com>
+
         * WebCore.pbproj/project.pbxproj: Project Builder wanted to set encodings
 	for new files. Maybe Richard is not using the new Project Builder on all
 	his machines?
