@@ -112,7 +112,6 @@ __ZN4KURLC1ERKS_RK7QString
 __ZN4KURLC1Ev
 __ZN4KURLD1Ev
 __ZN5QDateC1Eiii
-__ZN5QDateC1Ev
 __ZN5QFile4openEi
 __ZN5QFile5closeEv
 __ZN5QFile6existsERK7QString
@@ -123,7 +122,6 @@ __ZN5QRectC1Eiiii
 __ZN5QRectC1Ev
 __ZN5QSizeC1Eii
 __ZN5QSizeC1Ev
-__ZN5QTime5startEv
 __ZN5QTime7elapsedEv
 __ZN5QTime7restartEv
 __ZN5QTimeC1Eii
@@ -170,7 +168,6 @@ __ZN8QCStringC1Ev
 __ZN8QCStringpLEPKc
 __ZN8QCStringpLEc
 __ZN9QDateTimeC1ERK5QDateRK5QTime
-__ZN9QDateTimeC1Ev
 __ZNK10KWQMapImpl11endInternalEv
 __ZNK10KWQMapImpl12findInternalEP14KWQMapNodeImpl
 __ZNK10KWQMapImpl13beginInternalEv
@@ -219,10 +216,6 @@ __ZNK5QChar5upperEv
 __ZNK5QChar7isDigitEv
 __ZNK5QChar7isPunctEv
 __ZNK5QChar7isSpaceEv
-__ZNK5QDate3dayEv
-__ZNK5QDate4yearEv
-__ZNK5QDate5monthEv
-__ZNK5QDate6daysToERKS_
 __ZNK5QFile4sizeEv
 __ZNK5QFile6existsEv
 __ZNK5QRect4sizeEv
@@ -233,12 +226,7 @@ __ZNK5QRect7isValidEv
 __ZNK5QRect9intersectERKS_
 __ZNK5QSize10expandedToERKS_
 __ZNK5QSize7isValidEv
-__ZNK5QTime4hourEv
 __ZNK5QTime4msecEv
-__ZNK5QTime6isNullEv
-__ZNK5QTime6minuteEv
-__ZNK5QTime6secondEv
-__ZNK5QTime6secsToERKS_
 __ZNK6QPoint15manhattanLengthEv
 __ZNK7QRegExp5matchERK7QStringiPib
 __ZNK7QRegExp7patternEv
@@ -276,7 +264,6 @@ __ZNK8QCString5lowerEv
 __ZNK8QCString6lengthEv
 __ZNK8QCString7isEmptyEv
 __ZNK8QCString8containsEcb
-__ZNK9QDateTime4timeEv
 __ZNK9QDateTime6secsToERKS_
 __ZTV14QPtrCollection
 __ZeqRK5QRectS1_

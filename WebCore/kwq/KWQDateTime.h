@@ -27,6 +27,7 @@
 #define QDATETIME_H_
 
 #include <KWQDef.h>
+#include <CoreFoundation/CFDate.h>
 
 #ifdef _KWQ_IOSTREAM_
 #include <iosfwd>
@@ -34,53 +35,32 @@
 
 class QTime {
 public:
-    QTime();
-    QTime(int, int);
+    QTime() : timeInSeconds(0) { }
+    explicit QTime(CFAbsoluteTime t) : timeInSeconds(t) { }
+    QTime(int hours, int minutes);
 
-    bool isNull() const;
-    int hour() const;
-    int minute() const;
-    int second() const;
     int msec() const;
-    void start();
+    void start() { timeInSeconds = CFAbsoluteTimeGetCurrent(); }
     int elapsed();
     int restart();
-    int secsTo( const QTime & ) const;
     
 private:
-    uint getCurrentTime();
-    void setCurrentTime();
-    
-    uint timeMS;  // time is stored in milliseconds 
+    CFAbsoluteTime timeInSeconds; 
     
     friend class QDateTime;
 #ifdef _KWQ_IOSTREAM_
     friend std::ostream &operator<<( std::ostream &, const QTime & );
 #endif
-    
 };
 
 class QDate {
 public:
-
-    QDate();
-    QDate(int, int, int);
+    QDate(int year, int month, int day);
         
-    int	   year() const;
-    int	   month() const;
-    int	   day() const;	
-    
-    int daysTo( const QDate & ) const;
-    
-protected:
-    uint greg2jul( int, int, int ) const;
-    void jul2greg( uint jd, int &y, int &m, int &d ) const;
-
 private:
-
-    int dateDays; //date is stored in days
-    
-    void setCurrentDate();
+    int year;
+    int month;
+    int day;
     
     friend class QDateTime;
 #ifdef _KWQ_IOSTREAM_
@@ -91,19 +71,17 @@ private:
 
 class QDateTime {
 public:
-
-    static QDateTime currentDateTime();
-
-    QDateTime();
+    QDateTime() : dateInSeconds(0) { }
+    explicit QDateTime(CFAbsoluteTime d) : dateInSeconds(d) { }
     QDateTime(const QDate &, const QTime &);
     
+    QTime time() { return QTime(dateInSeconds); }
     int secsTo(const QDateTime &) const;
-    QTime time() const;
-    void   setTime_t( uint );
     
+    static QDateTime currentDateTime() { return QDateTime(CFAbsoluteTimeGetCurrent()); }
+
 private:
-    QTime timeDT;
-    QDate dateDT;
+    CFAbsoluteTime dateInSeconds;
 
 #ifdef _KWQ_IOSTREAM_
     friend std::ostream &operator<<( std::ostream &, const QDateTime & );

@@ -1,3 +1,17 @@
+2002-09-24  Darin Adler  <darin@apple.com>
+
+	- fixed 3057928 -- lstat private/etc/localtime repeatedly reported
+	by fs_usage when mouse is moved
+
+        * WebCore-tests.exp: Remove now-unneeded external entry points
+	for QTime, QDate, QDateTime.
+
+        * kwq/qt/qdatetime.h:
+        * kwq/KWQDateTime.mm:
+	Redid QDateTime using CoreFoundation instead of time/localtime.
+	This avoids constantly hitting the disk when getting the current
+	time to stuff into an event.
+
 2002-09-24  David Hyatt  <hyatt@apple.com>
 
 	Make sure we dispatch both a capturing and a bubbling event
