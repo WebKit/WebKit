@@ -7,6 +7,11 @@
  * what you are doing.
  */
 
+/* The root element establishes its own stacking context. */
+:root {
+    z-index: 0
+}
+
 html {
 	display: block;
 } 

@@ -173,10 +173,16 @@ static void write(QTextStream &ts, const RenderLayerElement &e, int indent = 0)
     if (r != r.intersect(e.clipRect)) {
         ts << " clip " << e.clipRect;
     }
+
+    if (e.layerElementType == RenderLayerElement::Background)
+        ts << " layerType: background only";
+    else if (e.layerElementType == RenderLayerElement::Foreground)
+        ts << " layerType: foreground only";
     
     ts << "\n";
 
-    write(ts, *l.renderer(), indent + 1);
+    if (e.layerElementType != RenderLayerElement::Background)
+        write(ts, *l.renderer(), indent + 1);
 }
 
 static void writeLayers(QTextStream &ts, const RenderObject &o, int indent)

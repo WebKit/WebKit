@@ -62,7 +62,9 @@ class RenderArena;
  */
 
 typedef enum {
-    PaintActionBackground = 0,
+    PaintActionElementBackground = 0,
+    PaintActionChildBackground,
+    PaintActionChildBackgrounds,
     PaintActionFloat,
     PaintActionForeground,
     PaintActionSelection
@@ -348,6 +350,7 @@ public:
     // if readonly == false, it will recalc hover styles accordingly
     class NodeInfo
     {
+        friend class RenderLayer;
         friend class RenderImage;
         friend class RenderText;
         friend class RenderInline;

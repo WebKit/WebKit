@@ -1073,9 +1073,19 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
     bool inlineFlow = isInlineFlow();
     
     // 1. paint background, borders etc
-    if (!inlineFlow && paintAction == PaintActionBackground &&
-        shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE )
+    if (!inlineFlow &&
+        (paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground) &&
+        shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE) {
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+    }
+
+    // We're done.  We don't bother painting any children.
+    if (paintAction == PaintActionElementBackground)
+        return;
+    // We don't paint our own background, but we do let the kids paint their backgrounds.
+    if (paintAction == PaintActionChildBackgrounds)
+        paintAction = PaintActionChildBackground;
+    
     paintLineBoxBackgroundBorder(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 
     // 2. paint contents
@@ -1097,7 +1107,7 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
         paintFloats(p, _x, _y, _w, _h, scrolledX, scrolledY, paintAction == PaintActionSelection);
 
     // 4. paint outline.
-    if (!inlineFlow && paintAction == PaintActionBackground &&
+    if (!inlineFlow && paintAction == PaintActionForeground &&
         !childrenInline() && style()->outlineWidth())
         paintOutline(p, _tx, _ty, width(), height(), style());
 
@@ -1134,7 +1144,11 @@ void RenderBlock::paintFloats(QPainter *p, int _x, int _y,
                 r->node->paint(p, _x, _y, _w, _h,
                                _tx + r->left - r->node->xPos() + r->node->marginLeft(),
                                _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                               PaintActionBackground);
+                               PaintActionElementBackground);
+                r->node->paint(p, _x, _y, _w, _h,
+                               _tx + r->left - r->node->xPos() + r->node->marginLeft(),
+                               _ty + r->startY - r->node->yPos() + r->node->marginTop(),
+                               PaintActionChildBackgrounds);
                 r->node->paint(p, _x, _y, _w, _h,
                                _tx + r->left - r->node->xPos() + r->node->marginLeft(),
                                _ty + r->startY - r->node->yPos() + r->node->marginTop(),

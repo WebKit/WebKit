@@ -259,6 +259,13 @@ void RenderInline::paintObject(QPainter *p, int _x, int _y,
     //    kdDebug( 6040 ) << renderName() << "(RenderInline) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
 
+    // We're done.  We don't bother painting any children.
+    if (paintAction == PaintActionElementBackground)
+        return;
+    // We don't paint our own background, but we do let the kids paint their backgrounds.
+    if (paintAction == PaintActionChildBackgrounds)
+        paintAction = PaintActionChildBackground;
+    
     paintLineBoxBackgroundBorder(p, _x, _y, _w, _h, _tx, _ty, paintAction);
     
     RenderObject *child = firstChild();

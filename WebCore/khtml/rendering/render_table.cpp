@@ -401,9 +401,18 @@ void RenderTable::paint( QPainter *p, int _x, int _y,
     kdDebug( 6040 ) << "RenderTable::paint(2) " << _tx << "/" << _ty << " (" << _y << "/" << _h << ")" << endl;
 #endif
 
-    if(paintAction == PaintActionBackground && style()->visibility() == VISIBLE)
+    if ((paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground)
+        && style()->visibility() == VISIBLE) {
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+    }
 
+    // We're done.  We don't bother painting any children.
+    if (paintAction == PaintActionElementBackground)
+        return;
+    // We don't paint our own background, but we do let the kids paint their backgrounds.
+    if (paintAction == PaintActionChildBackgrounds)
+        paintAction = PaintActionChildBackground;
+    
     RenderObject *child = firstChild();
     while( child ) {
 	if ( child->isTableSection() || child == tCaption )

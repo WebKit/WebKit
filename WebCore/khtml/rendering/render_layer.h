@@ -195,6 +195,8 @@ public:
     // (more on this below).
     // 
     struct RenderLayerElement {
+      enum LayerElementType { Normal, Background, Foreground };
+        
       RenderLayer* layer;
       QRect absBounds; // Our bounds in absolute coordinates relative to the root.
       QRect backgroundClipRect; // Clip rect used for our background/borders. 
@@ -205,12 +207,17 @@ public:
       int x; // The coords relative to the layer that will be using this list
              // to paint.
       int y;
-
+      LayerElementType layerElementType; // For negative z-indices, we have to split a single layer into two
+                           // RenderLayerElements, one that sits beneath the negative content, and
+                           // another that sits above (denoted with values of Background and Foreground,
+                           // respectively).  A normal layer that fully paints is denoted with the value Normal.
+      
       RenderLayerElement(RenderLayer* l, const QRect& rect, const QRect& bgclip, 
-                         const QRect& clip, bool clipOrig, int xpos, int ypos)
+                         const QRect& clip, bool clipOrig, int xpos, int ypos,
+                         LayerElementType lType = Normal)
           :layer(l), absBounds(rect), backgroundClipRect(bgclip), clipRect(clip), 
            zindex(l->zIndex()), zauto(l->hasAutoZIndex()), clipOriginator(clipOrig),
-           x(xpos), y(ypos) {}
+           x(xpos), y(ypos), layerElementType(lType) {}
           
       void detach(RenderArena* renderArena);
     

@@ -603,32 +603,45 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
             continue;
         
         if (selectionOnly) {
-            elt->layer->renderer()->paint(p, x, y, w, h,
-                                          elt->absBounds.x() - elt->layer->renderer()->xPos(),
-                                          elt->absBounds.y() - elt->layer->renderer()->yPos(),
-                                          PaintActionSelection);
+            if (elt->layerElementType == RenderLayerElement::Normal ||
+                elt->layerElementType == RenderLayerElement::Foreground)
+                elt->layer->renderer()->paint(p, x, y, w, h,
+                                            elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                            elt->absBounds.y() - elt->layer->renderer()->yPos(),
+                                            PaintActionSelection);
         } else {
-            elt->layer->renderer()->paint(p, x, y, w, h,
-                                        elt->absBounds.x() - elt->layer->renderer()->xPos(),
-                                        elt->absBounds.y() - elt->layer->renderer()->yPos(),
-                                        PaintActionBackground);
-            elt->layer->renderer()->paint(p, x, y, w, h,
-                                        elt->absBounds.x() - elt->layer->renderer()->xPos(),
-                                        elt->absBounds.y() - elt->layer->renderer()->yPos(),
-                                        PaintActionFloat);
-            elt->layer->renderer()->paint(p, x, y, w, h,
-                                        elt->absBounds.x() - elt->layer->renderer()->xPos(),
-                                        elt->absBounds.y() - elt->layer->renderer()->yPos(),
-                                        PaintActionForeground);
+            if (elt->layerElementType == RenderLayerElement::Normal ||
+                elt->layerElementType == RenderLayerElement::Background)
+                elt->layer->renderer()->paint(p, x, y, w, h,
+                                            elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                            elt->absBounds.y() - elt->layer->renderer()->yPos(),
+                                            PaintActionElementBackground);
 
-            // Position our scrollbars.
-            elt->layer->positionScrollbars(elt->absBounds);
+            if (elt->layerElementType == RenderLayerElement::Normal ||
+                elt->layerElementType == RenderLayerElement::Foreground) {
+                elt->layer->renderer()->paint(p, x, y, w, h,
+                                              elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                              elt->absBounds.y() - elt->layer->renderer()->yPos(),
+                                              PaintActionChildBackgrounds);
+                elt->layer->renderer()->paint(p, x, y, w, h,
+                                            elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                            elt->absBounds.y() - elt->layer->renderer()->yPos(),
+                                            PaintActionFloat);
+                elt->layer->renderer()->paint(p, x, y, w, h,
+                                            elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                            elt->absBounds.y() - elt->layer->renderer()->yPos(),
+                                            PaintActionForeground);
 
+                
+                // Position our scrollbars.
+                elt->layer->positionScrollbars(elt->absBounds);
+    
 #if APPLE_CHANGES
-            // Our widgets paint exactly when we tell them to, so that they work properly with
-            // z-index.
-            elt->layer->paintScrollbars(p, x, y, w, h);
+                // Our widgets paint exactly when we tell them to, so that they work properly with
+                // z-index.
+                elt->layer->paintScrollbars(p, x, y, w, h);
 #endif
+            }
         }
     }
     
@@ -692,7 +705,7 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
     uint count = layerList.count();
     for (int i = count-1; i >= 0; i--) {
         RenderLayerElement* elt = layerList.at(i);
-
+        
         // Elements add in their own positions as a translation factor.  This forces
         // us to subtract that out, so that when it's added back in, we get the right
         // bounds.  This is really disgusting (that paint only sets up the right paint
@@ -703,6 +716,18 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
                                       elt->absBounds.x() - elt->layer->renderer()->xPos(),
                                       elt->absBounds.y() - elt->layer->renderer()->yPos());
         if (inside) {
+            // For foreground layer elements where the layer has been split into two, we
+            // are only considered to be inside the foreground layer if we hit content other
+            // than ourselves.
+            if (elt->layerElementType == RenderLayerElement::Foreground &&
+                info.innerNode() == elt->layer->renderer()->element()) {
+                inside = false;
+                info.setInnerNode(0);
+                info.setInnerNonSharedNode(0);
+                info.setURLElement(0);
+                continue;
+            }
+            // Otherwise the mouse is inside this layer, and we can stop looking.
             insideLayer = elt->layer;
             break;
         }
@@ -969,16 +994,51 @@ void RenderLayer::RenderZTreeNode::constructLayerList(QPtrVector<RenderLayerElem
         current->constructLayerList(mergeTmpBuffer, buffer);
     uint endIndex = buffer->count();
 
-    if (autoZIndex)
+    if (autoZIndex || !(endIndex-startIndex))
         return; // We just had to collect the kids.  We don't apply a sort to them, since
                 // they will actually be layered in some ancestor layer's stacking context.
     
     sortByZOrder(buffer, mergeTmpBuffer, startIndex, endIndex);
 
+    // Find out if we have any elements with negative z-indices in this stacking context.
+    // If so, then we need to split our layer in two (a background layer and a foreground
+    // layer).  We then put the background layer before the negative z-index objects, and
+    // leave the foreground layer in the position previously occupied by the unsplit original.
+    RenderLayerElement* elt = buffer->at(startIndex);
+    if (elt->zindex < 0) {
+        // Locate our layer in the layer list.
+        for (uint i = startIndex; i < endIndex; i++) {
+            elt = buffer->at(i);
+            if (elt->layer == layer) {
+                // Clone the layer element.
+                RenderLayerElement* bgLayer =
+                  new (layer->renderer()->renderArena()) RenderLayerElement(*elt);
+
+                // Set the layer types (foreground and background) on the two layer elements.
+                elt->layerElementType = RenderLayerElement::Foreground;
+                bgLayer->layerElementType = RenderLayerElement::Background;
+
+                // Ensure our buffer is big enough to hold a new layer element.
+                if (buffer->count() == buffer->size())
+                    // Resize by a power of 2.
+                    buffer->resize(2*(buffer->size()+1));
+
+                // Insert the background layer element at the front of our sorted list.
+                for (uint j = buffer->count(); j > startIndex; j--)
+                    buffer->insert(j, buffer->at(j-1));
+                buffer->insert(startIndex, bgLayer);
+
+                // Augment endIndex since we added a layer element.
+                endIndex++;
+                break;
+            }
+        }
+    }
+    
     // Now set all of the elements' z-indices to match the parent's explicit z-index, so that
     // they will be layered properly in the ancestor layer's stacking context.
     for (uint i = startIndex; i < endIndex; i++) {
-        RenderLayerElement* elt = buffer->at(i);
+        elt = buffer->at(i);
         elt->zindex = explicitZIndex;
     }
 }
