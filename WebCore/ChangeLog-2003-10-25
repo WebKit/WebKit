@@ -1,3 +1,7 @@
+2002-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        * force-js-clean-timestamp: Touch so other people's builds work.
+
 2002-11-21  David Hyatt  <hyatt@apple.com>
 
 	Nested <a>s are never allowed.  Make sure to always pop the
