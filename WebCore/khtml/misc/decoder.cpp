@@ -364,6 +364,47 @@ static void skipComment(const char *&ptr, const char *pEnd)
     ptr = p;
 }
 
+// Returns the position of the encoding string.
+static int findXMLEncoding(const QCString &str, int &encodingLength)
+{
+    int len = str.length();
+
+    int pos = str.find("encoding");
+    if (pos == -1)
+        return -1;
+    pos += 8;
+    
+    // Skip spaces and stray control characters.
+    while (str[pos] <= ' ' && pos != len)
+        ++pos;
+
+    // Skip equals sign.
+    if (str[pos] != '=')
+        return -1;
+    ++pos;
+
+    // Skip spaces and stray control characters.
+    while (str[pos] <= ' ' && pos != len)
+        ++pos;
+
+    // Skip quotation mark.
+    char quoteMark = str[pos];
+    if (quoteMark != '"' && quoteMark != '\'')
+        return -1;
+    ++pos;
+
+    // Find the trailing quotation mark.
+    int end = pos;
+    while (str[end] != quoteMark)
+        ++end;
+
+    if (end == len)
+        return -1;
+    
+    encodingLength = end - pos;
+    return pos;
+}
+
 QString Decoder::decode(const char *data, int len)
 {
     // Check for UTF-16 or UTF-8 BOM mark at the beginning, which is a sure sign of a Unicode encoding.
@@ -445,11 +486,30 @@ QString Decoder::decode(const char *data, int len)
                 if(*ptr == '<') {
                     bool end = false;
                     ptr++;
+
+                    // Handle comments.
                     if (ptr[0] == '!' && ptr[1] == '-' && ptr[2] == '-') {
                         ptr += 3;
                         skipComment(ptr, pEnd);
                         continue;
                     }
+                    
+                    // Handle XML header, which can have encoding in it.
+                    if (ptr[0] == '?' && ptr[1] == 'x' && ptr[2] == 'm' && ptr[3] == 'l') {
+                        const char *end = ptr;
+                        while (*end != '>' && *end != '\0') end++;
+                        if (*end == '\0')
+                            break;
+                        QCString str(ptr, end - ptr);
+                        int len;
+                        int pos = findXMLEncoding(str, len);
+                        if (pos != -1) {
+                            setEncoding(str.mid(pos, len), EncodingFromXMLHeader);
+                            if (m_type == EncodingFromXMLHeader)
+                                goto found;
+                        }
+                    }
+
                     if(*ptr == '/') ptr++, end=true;
                     char tmp[20];
                     int len = 0;
@@ -498,11 +558,10 @@ QString Decoder::decode(const char *data, int len)
                                    (str[endpos] != ' ' && str[endpos] != '"' && str[endpos] != '\''
                                     && str[endpos] != ';' && str[endpos] != '>') )
 				endpos++;
-			    enc = str.mid(pos, endpos-pos);
 #ifdef DECODE_DEBUG
-			    kdDebug( 6005 ) << "Decoder: found charset: " << enc.data() << endl;
+			    kdDebug( 6005 ) << "Decoder: found charset: " << str.mid(pos, endpos-pos) << endl;
 #endif
-			    setEncoding(enc, EncodingFromMetaTag);
+			    setEncoding(str.mid(pos, endpos-pos), EncodingFromMetaTag);
 			    if( m_type == EncodingFromMetaTag ) goto found;
 
                             if ( endpos >= str.length() || str[endpos] == '/' || str[endpos] == '>' ) break;

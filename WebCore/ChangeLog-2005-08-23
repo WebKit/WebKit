@@ -1,3 +1,14 @@
+2003-05-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3191943 -- XML parsing error occurs when loading shift-JIS Japanese XML file
+
+        * khtml/misc/decoder.h: Add a new type of encoding, EncodingFromXMLHeader.
+        * khtml/misc/decoder.cpp:
+        (findXMLEncoding): Added.
+        (Decoder::decode): Call findXMLEncoding to extract the encoding from the XML header.
+
 2003-05-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John and Ken.
