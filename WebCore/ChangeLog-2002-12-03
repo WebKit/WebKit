@@ -1,5 +1,18 @@
 2002-04-03  Maciej Stachowiak  <mjs@apple.com>
 
+	Fixed Radar 2893361 (Two frames with same name cause memory
+	trasher (likely double-free)) by implementing the mechanism KDE
+	uses to guarantee unique frame names.
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::frameExists): Actually
+	implement this, so that the khtml code can guarantee unique frame
+	names on each page.
+
+	* src/kwq/external.h: Prototype IFWebDataSource's frameExists:
+	method here.
+
+2002-04-03  Maciej Stachowiak  <mjs@apple.com>
+
 	Fixed Radar 2893298 (KURL rejects spaces and other illegal but
 	unambiguous characters, leading to load failures).
 

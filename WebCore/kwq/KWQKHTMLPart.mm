@@ -1079,8 +1079,7 @@ KHTMLPart *KHTMLPart::findFrame( const QString &f )
 
 bool KHTMLPart::frameExists( const QString &frameName )
 {
-    _logNeverImplemented();
-    return FALSE;
+    return [getDataSource() frameExists: (NSString *)frameName.getCFMutableString()];
 }
 
 KHTMLPart *KHTMLPart::parentPart()

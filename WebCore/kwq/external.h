@@ -52,6 +52,7 @@
 - (IFWebFrame *)frame;
 - (id <IFWebController>)controller;
 - frameNamed: (NSString *)f;
+- (BOOL)frameExists: (NSString *)f;
 - (void)_setParent: (IFWebDataSource *)p;
 - (IFWebDataSource *)parent;
 - (void)_addURLHandle: (IFURLHandle *)handle;
