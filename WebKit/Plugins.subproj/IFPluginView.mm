@@ -560,6 +560,7 @@ static char *newCString(NSString *string)
     NSURL *requestedURL;
     IFPluginStream *stream;
     IFWebDataSource *dataSource;
+    IFWebFrame *frame;
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s\n", url, target);
  
@@ -577,15 +578,16 @@ static char *newCString(NSString *string)
         }
     
     }else{
-        if(webController){
-            // FIXME: Need to send to proper target
-            dataSource = [[[IFWebDataSource alloc] initWithURL:requestedURL] autorelease];
-            [[webController mainFrame] setProvisionalDataSource:dataSource];
-            [[webController mainFrame] startLoading];
-            // FIXME: Need to send NPP_URLNotify
+        dataSource = [[[IFWebDataSource alloc] initWithURL:requestedURL] autorelease];
+        frame = [webFrame frameNamed:[NSString stringWithCString:target]];
+        if(frame){
+            [frame setProvisionalDataSource:dataSource];
+            [frame startLoading];
+        }else{
+            //FIXME: Create new window here (2931449)
         }
+        // FIXME: Need to send NPP_URLNotify
     }
-        
     return NPERR_NO_ERROR;
 }
 
@@ -602,7 +604,8 @@ static char *newCString(NSString *string)
     NSData *postData;
     IFWebDataSource *dataSource;
     IFPluginStream *stream;
-        
+    IFWebFrame *frame;
+            
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "postURLNotify: %s\n", url);
  
     requestedURL = [self URLForString:[NSString stringWithCString:url]];
@@ -612,7 +615,6 @@ static char *newCString(NSString *string)
     
     if(file){
         // FIXME: Need function to convert from carbon path to posix
-        // FIXME: security issues here?
         postData = [NSData dataWithContentsOfFile:nil];
     }else{
         postData = [NSData dataWithBytes:buf length:len];
@@ -630,15 +632,16 @@ static char *newCString(NSString *string)
             [stream release];
         }  
     }else{
-        if(webController){
-            // FIXME: Need to send to proper target
-            dataSource = [[[IFWebDataSource alloc] initWithURL:requestedURL attributes:attributes] autorelease];
-            [[webController mainFrame] setProvisionalDataSource:dataSource];
-            [[webController mainFrame] startLoading];
-            // FIXME: Need to send NPP_URLNotify
+        dataSource = [[[IFWebDataSource alloc] initWithURL:requestedURL attributes:attributes] autorelease];
+        frame = [webFrame frameNamed:[NSString stringWithCString:target]];
+        if(frame){
+            [frame setProvisionalDataSource:dataSource];
+            [frame startLoading];
+        }else{
+            //FIXME: Create new window here (2931449)
         }
+        // FIXME: Need to send NPP_URLNotify
     }
-        
     return NPERR_NO_ERROR;
 }
 

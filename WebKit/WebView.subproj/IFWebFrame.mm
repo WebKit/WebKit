@@ -197,4 +197,23 @@
     [_private setView: nil];
 }
 
+- (IFWebFrame *)frameNamed:(NSString *)name
+{
+    if([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"])
+        return self;
+    
+    else if([name isEqualToString:@"_top"])
+        return [[self controller] mainFrame];
+        
+    else if([name isEqualToString:@"_parent"]){
+        if([[self dataSource] parent]){
+            return [[[self dataSource] parent] webFrame];
+        }else{
+            return self;
+        }
+    }else{
+        return [[self controller] frameNamed:name];
+    }
+}
+
 @end

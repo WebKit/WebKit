@@ -81,4 +81,12 @@
 */
 - (void)reset;
 
+/*
+    This method returns a frame with the given name. frameNamed returns self 
+    for _self and _current, the parent frame for _parent and the main frame for _top. 
+    frameNamed returns self for _parent and _top if the receiver it is the mainFrame. 
+    nil is returned if a frame with the given name is not found.
+*/
+- (IFWebFrame *)frameNamed:(NSString *)name;
+
 @end

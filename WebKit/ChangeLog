@@ -1,3 +1,16 @@
+2002-05-20  Chris Blumenberg  <cblu@apple.com>
+
+	Added support for plug-ins to send URL requests to certain targets.
+
+	Added frameNamed to IFWebFrame.
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView getURLNotify:target:notifyData:]):
+	(-[IFPluginView postURLNotify:target:len:buf:file:notifyData:]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame frameNamed:]):
+
 2002-05-20  Kenneth Kocienda  <kocienda@apple.com>
 
 	* Misc.subproj/WebKitDebug.h: Now includes <sys/time.h> to prevent possible
