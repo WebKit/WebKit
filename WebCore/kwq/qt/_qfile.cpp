@@ -37,6 +37,8 @@
 
 #include "qfile.h"
 
+#ifdef _KWQ_COMPLETE_
+
 extern bool qt_file_access( const QString& fn, int t );
 
 QFile::QFile()
@@ -695,3 +697,5 @@ void QFile::close()
 
     return;
 }
+
+#endif
