@@ -179,7 +179,7 @@
     
     [self _setLoading:YES];
 
-    [_private->webView _progressStarted];
+    [_private->webView _progressStarted:[self webFrame]];
     
     [_private->webView _didStartProvisionalLoadForFrame:[self webFrame]];
     [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView

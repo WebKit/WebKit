@@ -83,6 +83,8 @@ extern NSString *_WebMainFrameURLKey;
     double lastNotifiedProgressTime;
     double progressNotificationInterval;
     double progressNotificationTimeInterval;
+    BOOL finalProgressChangedSent;
+    WebFrame *orginatingProgressFrame;
     
     int numProgressTrackedFrames;
     NSMutableDictionary *progressItems;
@@ -235,8 +237,8 @@ Could be worth adding to the API.
 - (BOOL)_isPerformingProgrammaticFocus;
 
 // Methods dealing with the estimated progress completion.
-- (void)_progressStarted;
-- (void)_progressCompleted;
+- (void)_progressStarted:(WebFrame *)frame;
+- (void)_progressCompleted:(WebFrame *)frame;
 - (void)_incrementProgressForConnection:(NSURLConnection *)con response:(NSURLResponse *)response;
 - (void)_incrementProgressForConnection:(NSURLConnection *)con data:(NSData *)dataSource;
 - (void)_completeProgressForConnection:(NSURLConnection *)con;

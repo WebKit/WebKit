@@ -1,3 +1,22 @@
+2003-10-16  Richard Williamson   <rjw@apple.com>
+
+	Tweaked the progress behavior and factored cleanup of progress
+	related ivars.
+
+        Reviewed by Hyatt.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _startLoading:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _isLoadComplete]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _resetProgress]):
+        (-[WebView _progressStarted:]):
+        (-[WebView _finalProgressComplete]):
+        (-[WebView _progressCompleted:]):
+        (-[WebView _incrementProgressForConnection:data:]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2003-10-14  Richard Williamson   <rjw@apple.com>
 
         Added logging for estimated progress.

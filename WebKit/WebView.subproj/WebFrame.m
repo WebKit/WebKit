@@ -1008,7 +1008,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     }
                 }
 
-                [[self webView] _progressCompleted];
+                [[self webView] _progressCompleted: self];
                 
                 if ([ds _mainDocumentError]) {
                     [[self webView] _didFailLoadWithError:[ds _mainDocumentError] forFrame:self];

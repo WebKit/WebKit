@@ -713,35 +713,60 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 // starts.
 #define INITIAL_PROGRESS_VALUE 0.1
 
-- (void)_progressStarted
+- (void)_resetProgress
 {
+    [_private->progressItems release];
+    _private->progressItems = nil;
+    _private->totalPageAndResourceBytesToLoad = 0;
+    _private->totalBytesReceived = 0;
+    _private->progressValue = INITIAL_PROGRESS_VALUE;
+    _private->lastNotifiedProgressValue = 0;
+    _private->lastNotifiedProgressTime = 0;
+    _private->finalProgressChangedSent = NO;
+    _private->numProgressTrackedFrames = 0;
+    [_private->orginatingProgressFrame release];
+    _private->orginatingProgressFrame = nil;
+}
+- (void)_progressStarted:(WebFrame *)frame
+{
+    LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->orginatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->orginatingProgressFrame);
     [self _willChangeValueForKey: @"estimatedProgress"];
-    if (_private->numProgressTrackedFrames == 0){
-        _private->totalPageAndResourceBytesToLoad = 0;
-        _private->totalBytesReceived = 0;
-        _private->progressValue = INITIAL_PROGRESS_VALUE;
-        _private->lastNotifiedProgressValue = 0;
-        _private->lastNotifiedProgressTime = 0;
-        LOG (Progress, "");
+    if (_private->numProgressTrackedFrames == 0 || _private->orginatingProgressFrame == frame){
+        [self _resetProgress];
+        _private->orginatingProgressFrame = [frame retain];
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
     }
     _private->numProgressTrackedFrames++;
     [self _didChangeValueForKey: @"estimatedProgress"];
 }
 
-- (void)_progressCompleted
+- (void)_finalProgressComplete
+{
+    LOG (Progress, "");
+
+    // Before resetting progress value be sure to send client a least one notification
+    // with final progress value.
+    if (!_private->finalProgressChangedSent) {
+        _private->progressValue = 1;
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
+    }
+    
+    [self _resetProgress];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:self];
+}
+
+- (void)_progressCompleted:(WebFrame *)frame
 {
     ASSERT (_private->numProgressTrackedFrames > 0);
     
+    LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->orginatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->orginatingProgressFrame);
     [self _willChangeValueForKey: @"estimatedProgress"];
 
     _private->numProgressTrackedFrames--;
-    if (_private->numProgressTrackedFrames == 0){
-        [_private->progressItems release];
-        _private->progressItems = nil;
-        _private->progressValue = 1;
-        LOG (Progress, "");
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:self];
+    if (_private->numProgressTrackedFrames == 0 ||
+        (frame == _private->orginatingProgressFrame && _private->numProgressTrackedFrames != 0)){
+        [self _finalProgressComplete];
     }
     [self _didChangeValueForKey: @"estimatedProgress"];
 }
@@ -812,14 +837,17 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     double notifiedProgressTimeDelta = CFAbsoluteTimeGetCurrent() - _private->lastNotifiedProgressTime;
     _private->lastNotifiedProgressTime = now;
     
+    LOG (Progress, "_private->progressValue %g, _private->numProgressTrackedFrames %d", _private->progressValue, _private->numProgressTrackedFrames);
     double notificationProgressDelta = _private->progressValue - _private->lastNotifiedProgressValue;
     if ((notificationProgressDelta >= _private->progressNotificationInterval ||
-        notifiedProgressTimeDelta >= _private->progressNotificationTimeInterval) &&
-        _private->numProgressTrackedFrames > 0){
-
-        LOG (Progress, "_private->progressValue %g", _private->progressValue);
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
-        _private->lastNotifiedProgressValue = _private->progressValue;
+            notifiedProgressTimeDelta >= _private->progressNotificationTimeInterval) &&
+            _private->numProgressTrackedFrames > 0) {
+        if (!_private->finalProgressChangedSent) {
+            if (_private->progressValue == 1)
+                _private->finalProgressChangedSent = YES;
+            [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
+            _private->lastNotifiedProgressValue = _private->progressValue;
+        }
     }
 
     [self _didChangeValueForKey: @"estimatedProgress"];
