@@ -113,27 +113,26 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     }
     
     if (winArgs.xSet || winArgs.ySet || winArgs.widthSet || winArgs.heightSet) {
-	NSRect frame = [[bridge window] frame];
-	
+	NSRect frame = [bridge windowFrame];
+	NSRect contentRect = [bridge windowContentRect];
+
 	if (winArgs.xSet) {
 	    frame.origin.x = winArgs.x;
 	}
 	
 	if (winArgs.ySet) {
 	    float heightForFlip = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
-            if (winArgs.heightSet) {
-		frame.origin.y = heightForFlip - winArgs.y + frame.size.height - winArgs.height;
-	    } else {
-		frame.origin.y = heightForFlip - winArgs.y;
-	    }
+	    frame.origin.y = heightForFlip - winArgs.y;
 	}
 	
 	if (winArgs.widthSet) {
-	    frame.size.width = winArgs.width;
+	    frame.size.width += winArgs.width - contentRect.size.width;
 	}
 	
 	if (winArgs.heightSet) {
-	    frame.size.height = winArgs.height;
+	    float heightDelta = winArgs.height - contentRect.size.height;
+	    frame.size.height += heightDelta;
+	    frame.origin.y -= heightDelta;
 	}
 	
 	[bridge setWindowFrame:frame];

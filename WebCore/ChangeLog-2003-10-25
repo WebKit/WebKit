@@ -1,3 +1,16 @@
+2003-03-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3083339 - significant top and side margin appended to new windows
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Account for distinction between
+	frame and content rect.
+	* kwq/KWQStyle.h: Return 0 for the appropriate style to avoid
+	adding extra padding when making a new window from JavaScript.
+        * kwq/WebCoreBridge.h: Prototype new methods.
+
 2003-03-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for crash on www.lnt.com.  3199929 is the bug number.  

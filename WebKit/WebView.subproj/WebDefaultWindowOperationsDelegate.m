@@ -105,11 +105,22 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 
 - (void)webView: (WebView *)wv setFrame:(NSRect)frame;
 {
+    [[wv window] setFrame:frame display:NO];
 }
 
 - (NSRect)webViewFrame: (WebView *)wv;
 {
-    return NSMakeRect (0,0,0,0);
+    return [[wv window] frame];
+}
+
+- (void)webView:(WebView *)webView setContentRect:(NSRect)contentRect
+{
+    [[webView window] setFrame:[NSWindow frameRectForContentRect:contentRect styleMask:[[webView window] styleMask]] display:NO];
+}
+
+- (NSRect)webViewContentRect:(WebView *)webView
+{
+    return [NSWindow contentRectForFrameRect:[[webView window] frame] styleMask:[[webView window] styleMask]];
 }
 
 - (void)webView: (WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message;

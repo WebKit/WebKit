@@ -210,6 +210,24 @@
 - (NSRect)webViewFrame: (WebView *)webView;
 
 /*!
+    @method webView:setContentRect:
+    @abstract Set the window's content rect
+    @param frame The new window content rect
+    @discussion Even though a caller could set the content rect
+    directly using the NSWindow, this method is provided so
+    implementors of this protocol can do special things on
+    programmatic move/resize, like avoiding autosaving of the size.
+*/
+- (void)webView:(WebView *)webView setContentRect:(NSRect)contentRect;
+
+/*!
+    @method webViewContentRect:
+    @abstract Return the window's content rect
+    @discussion 
+*/
+- (NSRect)webViewContentRect:(WebView *)webView;
+
+/*!
     @method runJavaScriptAlertPanelWithMessage:
     @abstract Display a JavaScript alert panel
     @param message The message to display

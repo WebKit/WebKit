@@ -52,8 +52,8 @@ public:
 	case PM_IndicatorHeight:
 	case PM_ExclusiveIndicatorWidth:
 	case PM_ExclusiveIndicatorHeight:
-        case PM_DefaultFrameWidth:
             return 22; // FIXME! Shouldn't be hardcoded. Perhaps shouldn't all be same.
+        case PM_DefaultFrameWidth:
         case PM_ButtonMargin:
             return 0;
         }

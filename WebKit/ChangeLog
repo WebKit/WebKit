@@ -1,3 +1,21 @@
+2003-03-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3083339 - significant top and side margin appended to new windows
+
+	Part of the fix involves adding new window operation delegate methods.
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setWindowFrame:]): Tweaked code a bit.
+        (-[WebBridge windowFrame]): Added. 
+        (-[WebBridge setWindowContentRect:]): Added.
+        (-[WebBridge windowContentRect]): Added.
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m:
+        (-[WebDefaultWindowOperationsDelegate webView:setContentRect:]): Implemented.
+        (-[WebDefaultWindowOperationsDelegate webViewContentRect:]): Likewise.
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2003-03-24  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3155489 - Seed: PostScript files display instead of downloading, often as a blank page

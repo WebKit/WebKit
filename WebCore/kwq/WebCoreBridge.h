@@ -241,6 +241,9 @@ enum FrameBorderStyle {
 - (void)setScrollbarsVisible:(BOOL)visible;
 - (NSWindow *)window;
 - (void)setWindowFrame:(NSRect)frame;
+- (NSRect)windowFrame;
+- (void)setWindowContentRect:(NSRect)frame;
+- (NSRect)windowContentRect;
 
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message;
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;

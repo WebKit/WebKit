@@ -180,8 +180,29 @@
 - (void)setWindowFrame:(NSRect)frameRect
 {
     ASSERT(frame != nil);
-    WebView *c = [frame webView];
-    [[c _windowOperationsDelegateForwarder] webView:c setFrame:frameRect];
+    WebView *webView = [frame webView];
+    [[webView _windowOperationsDelegateForwarder] webView:webView setFrame:frameRect];
+}
+
+- (NSRect)windowFrame
+{
+    ASSERT(frame != nil);
+    WebView *webView = [frame webView];
+    return [[webView _windowOperationsDelegateForwarder] webViewFrame:webView];
+}
+
+- (void)setWindowContentRect:(NSRect)contentRect
+{
+    ASSERT(frame != nil);
+    WebView *webView = [frame webView];
+    [[webView _windowOperationsDelegateForwarder] webView:webView setFrame:contentRect];
+}
+
+- (NSRect)windowContentRect
+{
+    ASSERT(frame != nil);
+    WebView *webView = [frame webView];
+    return [[webView _windowOperationsDelegateForwarder] webViewContentRect:webView];
 }
 
 - (NSWindow *)window
