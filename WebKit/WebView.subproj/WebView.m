@@ -2766,7 +2766,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if ([self isContinuousSpellCheckingEnabled]) {
         [self _preflightSpellChecker];
     } else {
-        // FIXME: Put code here to remove underlines for misspelled words.
+        [[self mainFrame] _unmarkAllMisspellings];
     }
 }
 

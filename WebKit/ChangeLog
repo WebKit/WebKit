@@ -1,3 +1,16 @@
+2005-03-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
+        - fixed <rdar://problem/4049776> Seed: Mail: Disable spellcheck leaves red artifacts
+
+        * WebView.subproj/WebFrameInternal.h: Added _unmarkAllMisspellings.
+        * WebView.subproj/WebFrame.m: (-[WebFrame _unmarkAllMisspellings]): Added.
+        Calls unmarkAllMisspellings on the bridge and self and all subframes.
+
+        * WebView.subproj/WebView.m: (-[WebView setContinuousSpellCheckingEnabled:]):
+        Call _unmarkAllMisspellings on the main frame when turning continuous spell checking off.
+
 2005-03-14  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4027928> Tiger_8A394:Acrobat crashes while tried to remove the subscription errors by clicking on "Would you like to remove the subscription" from Tracker details view pane
@@ -485,7 +498,6 @@
 
 === Safari-401 ===
 
->>>>>>> 1.3057
 2005-03-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

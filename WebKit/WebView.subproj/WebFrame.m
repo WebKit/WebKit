@@ -2587,6 +2587,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [request release];
 }
 
+- (void)_unmarkAllMisspellings
+{
+    [[self _bridge] unmarkAllMisspellings];
+    [_private->children makeObjectsPerformSelector:@selector(_unmarkAllMisspellings)];
+}
+
 @end
 
 @implementation WebFormState : NSObject

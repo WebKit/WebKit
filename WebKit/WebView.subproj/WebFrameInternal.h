@@ -8,6 +8,7 @@
 - (void)_setInternalLoadDelegate:(id)internalLoadDelegate;
 - (id)_internalLoadDelegate;
 - (void)_sendResourceLoadDelegateMessagesForURL:(NSURL *)URL response:(NSURLResponse *)response length:(unsigned)length;
+- (void)_unmarkAllMisspellings;
 
 @end
 
