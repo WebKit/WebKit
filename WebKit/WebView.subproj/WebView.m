@@ -531,11 +531,7 @@ NS_ENDHANDLER
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    if([[sender draggingPasteboard] _web_bestURL]){
-        return NSDragOperationCopy;
-    }
-
-    return NSDragOperationNone;
+    return [self _web_dragOperationForDraggingInfo:sender];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender

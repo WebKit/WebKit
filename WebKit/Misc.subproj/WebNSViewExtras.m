@@ -133,7 +133,7 @@
 
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
-    if([sender draggingSource] != self && [[sender draggingPasteboard] _web_bestURL]) {
+    if ([sender draggingSource] != self && ![NSApp modalWindow] && [[sender draggingPasteboard] _web_bestURL]) {
         return NSDragOperationCopy;
     } else {
         return NSDragOperationNone;

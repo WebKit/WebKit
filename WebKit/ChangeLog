@@ -1,5 +1,16 @@
 2003-05-29  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3151216 - Safari crashes on Drag&Drop if plugin dialog is open
+	
+        Reviewed by rjw.
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragOperationForDraggingInfo:]): return NSDragOperationNone is the app has a modal window so the current page can't be changed with a drag
+        * WebView.subproj/WebView.m:
+        (-[WebView draggingEntered:]): return _web_dragOperationForDraggingInfo
+
+2003-05-29  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3273109 - leak from functionPointerForTVector in -[WebNetscapePluginPackage load]
 
         * Plugins.subproj/WebNetscapePluginPackage.m:
