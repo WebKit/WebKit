@@ -1,3 +1,5 @@
+=== Safari-135 ===
+
 2004-04-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3609493.  Don't remove the plugin's view until after
