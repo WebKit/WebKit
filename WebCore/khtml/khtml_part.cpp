@@ -3126,7 +3126,7 @@ bool KHTMLPart::requestObject( khtml::ChildFrame *child, const KURL &url, const 
   if ( child->m_bPreloaded )
   {
     // kdDebug(6005) << "KHTMLPart::requestObject preload" << endl;
-    if ( child->m_frame && child->m_part )
+    if ( child->m_frame && child->m_part && child->m_part->widget() )
       child->m_frame->setWidget( child->m_part->widget() );
 
     child->m_bPreloaded = false;
@@ -3234,7 +3234,7 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
     }
 
     child->m_serviceType = mimetype;
-    if ( child->m_frame )
+    if ( child->m_frame && part->widget() )
       child->m_frame->setWidget( part->widget() );
 
 #if !APPLE_CHANGES

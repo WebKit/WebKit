@@ -1,3 +1,13 @@
+2004-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3606146>: repro nil-deref in QWidget::move (www.stoltoffshore.com)
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::requestObject): Add check for NULL widget.
+        (KHTMLPart::processObjectRequest): Add check for NULL widget.
+
 2004-03-29  David Hyatt  <hyatt@apple.com>
 
 	Make sure "auto" is allowed as a valid value when parsing rect shapes (e.g., for the clip property).
