@@ -1,3 +1,13 @@
+2003-12-03  John Sullivan  <sullivan@apple.com>
+
+        - fixed these two design issues after Dave and I talked to HI:
+        <rdar://problem/3497072>: There shouldn't be a focus ring around clicked regions
+        <rdar://problem/3499315>: Focus ring should use aqua color always
+
+        Reviewed by Dave.
+
+        * khtml/css/html4.css:
+
 2003-12-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
