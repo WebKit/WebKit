@@ -76,7 +76,7 @@ KWQPtrDictPrivate::KWQPtrDictPrivate(const KWQPtrDictPrivate &dp) :
 
 KWQPtrDictPrivate::~KWQPtrDictPrivate()
 {
-    for (KWQPtrDictIteratorPrivate *it = d->iterators; it; it = it->next) {
+    for (KWQPtrDictIteratorPrivate *it = iterators; it; it = it->next) {
         it->dictDestroyed();
     }
     CFRelease(cfdict);
