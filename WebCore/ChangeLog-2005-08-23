@@ -2,7 +2,7 @@
 
         Reviewed by Dave.
 
-        - fixed <rdar://problem/3538433>: HomePage: table background URL with a single quote in it does not work
+        - fixed <rdar://problem/3477707>: background image with apostrophe in name missing at http://www.nbc.com
 
         * khtml/html/html_baseimpl.cpp: (HTMLBodyElementImpl::parseAttribute): Use addCSSImageProperty
         instead of addCSSProperty, obviating the need for the "url()" syntax (and fixing quoting issues).
