@@ -2,6 +2,14 @@
 
         Reviewed by Dave.
 
+        - fixed 3429384 -- REGRESSION (89-90): nil-deref in KHTMLPart::write() (cheshiremotorcyclesalvage.com)
+
+        * khtml/khtml_part.cpp: (KHTMLPart::write): Add a nil check.
+
+2003-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
         - more fixes for the W3C DOM tests
 
         * khtml/dom/dom_doc.cpp: (Document::createAttributeNS): Check that the attribute name
