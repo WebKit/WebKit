@@ -1,3 +1,13 @@
+2003-03-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3178361, <th> don't draw borders.   Boneheaded mistake
+	on my part.  Just forgot to include it along with <td> in the
+	CSS hack for sharing cell rules.
+	
+        Reviewed by rjw
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-03-03  Richard Williamson   <rjw@apple.com>
 
         Fix build oops from last checkin to khtml/html/html_formimpl.cpp.

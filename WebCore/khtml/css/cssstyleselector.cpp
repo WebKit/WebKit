@@ -489,8 +489,8 @@ unsigned int CSSStyleSelector::addInlineDeclarations(DOM::ElementImpl* e,
                                                      unsigned int numProps)
 {
     CSSStyleDeclarationImpl* addDecls = 0;
-    if (e->id() == ID_TD) // For now only TD Implements the virtual function for shared cell rules.
-        addDecls = e->getAdditionalStyleDecls();
+    if (e->id() == ID_TD || e->id() == ID_TH)     // For now only TableCellElement implements the
+        addDecls = e->getAdditionalStyleDecls();  // virtual function for shared cell rules.
 
     if (!decl && !addDecls)
         return numProps;
