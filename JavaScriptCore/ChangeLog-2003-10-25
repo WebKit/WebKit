@@ -1,3 +1,11 @@
+2002-11-22  Maciej Stachowiak  <mjs@apple.com>
+
+	- reduce cell size to 56 bytes from 64, now that nearly all
+	objects fit in that size. .5% speed gain and probably some
+	footprint gain.
+	
+        * kjs/collector.cpp: Change CELL_SIZE from 64 to 56.
+
 2002-11-22  Darin Adler  <darin@apple.com>
 
 	- change ScopeChain to be a singly linked list shares tails, gives 11% gain on iBench
@@ -20,7 +28,7 @@
 
 2002-11-22  Maciej Stachowiak  <mjs@apple.com>
 
-	- a simple change for .5% gain on ibench - instead of unmarking
+	- a simple change for .4% gain on ibench - instead of unmarking
 	all objects at the start of collection, instead unmark as part of
 	the sweep phase
 	

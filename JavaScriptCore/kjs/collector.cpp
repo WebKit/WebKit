@@ -33,7 +33,7 @@
 using namespace KJS;
 
 // tunable parameters
-static const int CELL_SIZE = 64;
+static const int CELL_SIZE = 56;
 static const int BLOCK_SIZE = (4 * 4096);
 static const int SPARE_EMPTY_BLOCKS = 1;
 static const int MIN_ARRAY_SIZE = 14;
