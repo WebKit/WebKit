@@ -1144,7 +1144,7 @@ void RenderBlock::paintFloats(QPainter *p, int _x, int _y,
     QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
-        if (r->node->isFloating() && !r->noPaint) {
+        if (r->node->isFloating() && !r->noPaint && !r->node->layer()) {
             if (paintSelection) {
                 r->node->paint(p, _x, _y, _w, _h,
                                _tx + r->left - r->node->xPos() + r->node->marginLeft(),
@@ -1812,7 +1812,7 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, 
         FloatingObject* o;
         QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for (it.toLast(); (o = it.current()); --it)
-            if (!o->noPaint)
+            if (!o->noPaint && !o->node->layer())
                 inBox |= o->node->nodeAtPoint(info, _x, _y,
                                               stx+o->left + o->node->marginLeft() - o->node->xPos(),
                                               sty+o->startY + o->node->marginTop() - o->node->yPos());
