@@ -148,6 +148,8 @@ public:
     void setCurrentEvent(NSEvent *event);
     
     void addMetaData(const QString &key, const QString &value);
+
+    bool KWQKHTMLPart::keyEvent(NSEvent *event);
     
 private:
     void setPolicyBaseURL(const DOM::DOMString &);

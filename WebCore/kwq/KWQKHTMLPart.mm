@@ -34,6 +34,7 @@
 #import "khtmlview.h"
 
 #import "WebCoreBridge.h"
+#import "WebCoreBridgePrivate.h"
 #import "WebCoreViewFactory.h"
 
 #import "KWQDummyView.h"
@@ -571,4 +572,45 @@ void KWQKHTMLPart::setCurrentEvent(NSEvent *event)
 void KWQKHTMLPart::addMetaData(const QString &key, const QString &value)
 {
     d->m_job->addMetaData(key, value);
+}
+
+
+bool KWQKHTMLPart::keyEvent(NSEvent *event)
+{
+    ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
+
+    const char *characters = [[event characters] lossyCString];
+    int ascii = (characters != nil && strlen(characters) == 1) ? characters[0] : 0;
+
+
+    QKeyEvent qEvent([event type] == NSKeyDown ? QEvent::KeyPress : QEvent::KeyRelease,
+		     [event keyCode],
+		     ascii,
+		     [_bridge stateForEvent:event],
+		     QString::fromNSString([event characters]),
+		     [event isARepeat]);
+
+    ASSERT(part->xmlDocImpl());
+
+    if (!part->xmlDocImpl()->focusNode()) {
+	// Too early for events - possible unmatched key up from
+	// pressing return in the location bar.
+	return false;
+    }
+
+    bool result = part->xmlDocImpl()->focusNode()->dispatchKeyEvent(&qEvent);
+
+    // We want to send both a down and a press for the initial key event
+    if (![event isARepeat]) {
+	QKeyEvent qEvent([event type] == NSKeyDown ? QEvent::KeyPress : QEvent::KeyRelease,
+			 [event keyCode],
+			 ascii,
+			 [_bridge stateForEvent:event],
+			 QString::fromNSString([event characters]),
+			 true);
+	
+	result = result && part->xmlDocImpl()->focusNode()->dispatchKeyEvent(&qEvent);
+    }
+
+    return result;
 }

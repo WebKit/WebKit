@@ -1,3 +1,16 @@
+2002-11-17  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 2949193 - implement onKeyDown, onKeyPress, and onKeyUp event handlers
+	
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (+[WebHTMLView load]): Pose as NSWindow too now.
+        (-[WebHTMLView _interceptKeyEvent:toView:]): Pass event to WebCore and
+	see if WebCore wants to block it.
+        (-[WebNSWindow sendEvent:]): For all key events that would go to a
+	subview of a WebHTMLView, let the WebHTMLView take a first crack
+	at it.
+
 2002-11-15  Darin Adler  <darin@apple.com>
 
 	- fixed 3079214 -- text/plain page shows up slowly, a few pages at a time

@@ -1,3 +1,32 @@
+2002-11-17  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 2949193 - implement onKeyDown, onKeyPress, and onKeyUp event handlers
+	
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::defaultEventHandler):
+        * kwq/KWQEvent.h:
+        * kwq/KWQEvent.mm:
+        (QKeyEvent::QKeyEvent): Implemented.
+        (QKeyEvent::key): Likewise.
+        (QKeyEvent::state): Likewise.
+        (QKeyEvent::accept): Likewise.
+        (QKeyEvent::ignore): Likewise.
+        (QKeyEvent::isAutoRepeat): Likewise.
+        (QKeyEvent::text): Likewise.
+        (QKeyEvent::ascii): Likewise.
+        (QKeyEvent::count): Likewise.
+        (QKeyEvent::isAccepted): Likewise.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::keyEvent): Translate the event to a QEvent and send
+	it through the DOM event mechanism.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge interceptKeyEvent:toView:]): Pass event to the
+	KWQ part.
+	* kwq/WebCoreBridgePrivate.h: Added.
+        * WebCore.pbproj/project.pbxproj: Added new file.
+
 2002-11-17  David Hyatt  <hyatt@apple.com>
 
 	Don't discard linefeeds after elements with no close tag

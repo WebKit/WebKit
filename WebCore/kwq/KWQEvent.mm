@@ -59,60 +59,59 @@ QTimerEvent::QTimerEvent(int t)
 }
 
 
-QKeyEvent::QKeyEvent(Type t, int, int, int, const QString &, bool, ushort)
-    : QEvent(t)
+QKeyEvent::QKeyEvent(Type t, int key, int ascii, int buttonState, const QString &text, bool autoRepeat, ushort count)
+    : QEvent(t),
+      _key(key),
+      _ascii(ascii),
+      _state((ButtonState)buttonState),
+      _text(text),
+      _autoRepeat(autoRepeat),
+      _count(count),
+      _isAccepted(false)
 {
-    ERROR("not yet implemented");
 }
 
 int QKeyEvent::key() const
 {
-    ERROR("not yet implemented");
-    return 0;
+    return _key;
 }
 
 Qt::ButtonState QKeyEvent::state() const
 {
-    ERROR("not yet implemented");
-    return Qt::NoButton;
+    return _state;
 }
 
 void QKeyEvent::accept()
 {
-    ERROR("not yet implemented");
+    _isAccepted = true;
 }
 
 void QKeyEvent::ignore()
 {
-    ERROR("not yet implemented");
+    _isAccepted = false;
 }
 
 bool QKeyEvent::isAutoRepeat() const
 {
-    ERROR("not yet implemented");
-    return false;
+    return _autoRepeat;
 }
 
 QString QKeyEvent::text(void) const
 {
-    ERROR("not yet implemented");
-    return QString();
+    return _text;
 }
 
 int QKeyEvent::ascii(void) const
 {
-    ERROR("not yet implemented");
-    return 0;
+    return _ascii;
 }
 
 int QKeyEvent::count(void) const
 {
-    ERROR("not yet implemented");
-    return 0;
+    return _count;
 }
 
 bool QKeyEvent::isAccepted(void) const
 {
-    ERROR("not yet implemented");
-    return false;
+    return _isAccepted;
 }

@@ -45,6 +45,11 @@
 }
 @end
 
+@interface WebNSWindow : NSWindow
+{
+}
+@end
+
 @interface NSMutableDictionary (WebHTMLViewExtras)
 - (void)_web_setObjectIfNotNil:(id)object forKey:(id)key;
 @end
@@ -64,12 +69,14 @@
 @implementation WebHTMLView (WebPrivate)
 
 // Danger Will Robinson. We have to poseAsClass: as early as possible
-// so that any NSViews will be created with the appropriate poser.
+// so that any NSViews and NSWindows will be created with the
+// appropriate poser.
 + (void)load
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [[WebNSView class] poseAsClass:[NSView class]];
     [[WebNSTextView class] poseAsClass:[NSTextView class]];
+    [[WebNSWindow class] poseAsClass:[NSWindow class]];
     [pool release];
 }
 
@@ -274,6 +281,12 @@
     }
 }
 
+- (BOOL)_interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
+{
+    return [[self _bridge] interceptKeyEvent:event toView:view];
+}
+
+
 + (NSArray *)_pasteboardTypes
 {
     return [NSArray arrayWithObjects:NSStringPboardType,
@@ -409,6 +422,37 @@ static BOOL inNSTextViewDrawRect;
         }
     }
     return opaqueAncestor;
+}
+
+@end
+
+@implementation WebNSWindow
+
+- (void)sendEvent:(NSEvent *)event
+{
+    if ([event type] == NSKeyDown || [event type] == NSKeyUp) {
+	NSResponder *responder = [self firstResponder];
+
+	NSView *view;
+	while (responder != nil && ![responder isKindOfClass:[WebNSView class]]) {
+	    responder = [responder nextResponder];
+	}
+
+	view = (NSView *)responder;
+
+	NSView *ancestorHTMLView = view;
+	while (ancestorHTMLView != nil && ![ancestorHTMLView isKindOfClass:[WebHTMLView class]]) {
+	    ancestorHTMLView = [ancestorHTMLView superview];
+	}
+	    
+	if (ancestorHTMLView != nil) {
+	    if ([(WebHTMLView *)ancestorHTMLView _interceptKeyEvent:event toView:view]) {
+
+	    }
+	}
+    }
+
+    [super sendEvent:event];
 }
 
 @end

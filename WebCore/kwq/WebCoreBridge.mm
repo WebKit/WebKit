@@ -818,4 +818,9 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     return renderer ? !renderer->layouted() : false;
 }
 
+- (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
+{
+    return  _part->kwq->keyEvent(event);
+}
+
 @end

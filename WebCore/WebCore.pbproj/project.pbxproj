@@ -475,6 +475,7 @@
 				931C8A180380288B008635CE,
 				BC7294FA03804B3C00A80166,
 				BC7294FE03804B5600A80166,
+				656ACA640387B476001C1259,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -855,6 +856,28 @@
 //512
 //513
 //514
+//650
+//651
+//652
+//653
+//654
+		656ACA630387B475001C1259 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreBridgePrivate.h;
+			refType = 4;
+		};
+		656ACA640387B476001C1259 = {
+			fileRef = 656ACA630387B475001C1259;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//650
+//651
+//652
+//653
+//654
 //930
 //931
 //932
@@ -5877,6 +5900,7 @@
 			children = (
 				F587854702DE375901EA4122,
 				F587854802DE375901EA4122,
+				656ACA630387B475001C1259,
 				F5B2A4FC02E2220F018635CB,
 				F5B2A4FD02E2220F018635CB,
 				F587854902DE375901EA4122,
