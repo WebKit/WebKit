@@ -253,6 +253,8 @@ public:
     bool isSelectionBorder() const { return m_isSelectionBorder; }
     bool recalcMinMax() const { return m_recalcMinMax; }
 
+    RenderStyle* getPseudoStyle(RenderStyle::PseudoId pseudo, RenderStyle* parentStyle = 0) const;
+    
     RenderCanvas* canvas() const;
 
     // don't even think about making this method virtual!
@@ -558,15 +560,7 @@ public:
     virtual short maxWidth() const { return 0; }
 
     RenderStyle* style() const { return m_style; }
-    RenderStyle* style( bool firstLine ) const {
-	RenderStyle *s = m_style;
-	if( firstLine && hasFirstLine() ) {
-	    RenderStyle *pseudoStyle  = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
-	    if ( pseudoStyle )
-		s = pseudoStyle;
-	}
-	return s;
-    }
+    RenderStyle* style( bool firstLine ) const;
 
     void getTextDecorationColors(int decorations, QColor& underline, QColor& overline,
                                  QColor& linethrough, bool quirksMode=false);

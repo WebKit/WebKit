@@ -332,36 +332,59 @@ bool RenderStyle::isStyleAvailable() const
     return this != CSSStyleSelector::styleNotYetAvailable;
 }
 
+enum EPseudoBit { NO_BIT = 0x0, BEFORE_BIT = 0x1, AFTER_BIT = 0x2, FIRST_LINE_BIT = 0x4,
+                  FIRST_LETTER_BIT = 0x8, SELECTION_BIT = 0x10 };
+
+static int pseudoBit(RenderStyle::PseudoId pseudo)
+{
+    switch (pseudo) {
+        case RenderStyle::BEFORE:
+            return BEFORE_BIT;
+        case RenderStyle::AFTER:
+            return AFTER_BIT;
+        case RenderStyle::FIRST_LINE:
+            return FIRST_LINE_BIT;
+        case RenderStyle::FIRST_LETTER:
+            return FIRST_LETTER_BIT;
+        case RenderStyle::SELECTION:
+            return SELECTION_BIT;
+        default:
+            return NO_BIT;
+    }
+}
+
+bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const
+{
+    return (pseudoBit(pseudo) & noninherited_flags._pseudoBits) != 0;
+}
+
+void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
+{
+    noninherited_flags._pseudoBits |= pseudoBit(pseudo);
+}
+
 RenderStyle* RenderStyle::getPseudoStyle(PseudoId pid)
 {
     RenderStyle *ps = 0;
     if (noninherited_flags._styleType==NOPSEUDO) {
 	ps = pseudoStyle;
-    while (ps) {
-        if (ps->noninherited_flags._styleType==pid)
-		break;
-
-        ps = ps->pseudoStyle;
-    }
+        while (ps) {
+            if (ps->noninherited_flags._styleType==pid)
+                    break;
+    
+            ps = ps->pseudoStyle;
+        }
     }
     return ps;
 }
 
-RenderStyle* RenderStyle::addPseudoStyle(PseudoId pid)
+void RenderStyle::addPseudoStyle(RenderStyle* pseudo)
 {
-    RenderStyle *ps = getPseudoStyle(pid);
-
-    if (!ps)
-    {
-        ps = new RenderStyle(); // So that noninherited flags are reset.
-        ps->ref();
-        ps->noninherited_flags._styleType = pid;
-        ps->pseudoStyle = pseudoStyle;
-
-        pseudoStyle = ps;
-    }
-
-    return ps;
+    if (!pseudo) return;
+    
+    pseudo->ref();
+    pseudo->pseudoStyle = pseudoStyle;
+    pseudoStyle = pseudo;
 }
 
 void RenderStyle::removePseudoStyle(PseudoId pid)

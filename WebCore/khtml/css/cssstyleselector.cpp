@@ -308,7 +308,28 @@ static inline void bubbleSort( CSSOrderedProperty **b, CSSOrderedProperty **e )
     }
 }
 
-RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
+void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultParent)
+{
+    // set some variables we will need
+    ::encodedurl = &encodedurl;
+    pseudoState = PseudoUnknown;
+    
+    element = e;
+    parentNode = e->parentNode();
+    if (defaultParent)
+        parentStyle = defaultParent;
+    else
+        parentStyle = (parentNode && parentNode->renderer()) ? parentNode->renderer()->style() : 0;
+    view = element->getDocument()->view();
+    isXMLDoc = !element->getDocument()->isHTMLDocument();
+    part = view->part();
+    settings = part->settings();
+    paintDeviceMetrics = element->getDocument()->paintDeviceMetrics();
+    
+    style = 0;
+}
+
+RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defaultParent)
 {
     if (!e->getDocument()->haveStylesheetsLoaded()) {
         if (!styleNotYetAvailable) {
@@ -318,19 +339,8 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
         }
         return styleNotYetAvailable;
     }
-  
-    // set some variables we will need
-    ::encodedurl = &encodedurl;
-    pseudoState = PseudoUnknown;
-
-    element = e;
-    parentNode = e->parentNode();
-    parentStyle = ( parentNode && parentNode->renderer()) ? parentNode->renderer()->style() : 0;
-    view = element->getDocument()->view();
-    isXMLDoc = !element->getDocument()->isHTMLDocument();
-    part = view->part();
-    settings = part->settings();
-    paintDeviceMetrics = element->getDocument()->paintDeviceMetrics();
+    
+    initForStyleResolve(e, defaultParent);
 
     style = new RenderStyle();
     if( parentStyle )
@@ -339,8 +349,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
         parentStyle = style;
     
     unsigned int numPropsToApply = 0;
-    unsigned int numPseudoProps = 0;
-
+    
     // try to sort out most style rules as early as possible.
     // ### implement CSS3 namespace support
     int cssTagId = (e->id() & NodeImpl::IdLocalMask);
@@ -366,17 +375,9 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 			}
 			propsToApply[numPropsToApply++] = properties[selectorCache[i].props[p]+j];
 		    }
-	    } else if ( selectorCache[i].state == AppliesPseudo ) {
-		for ( unsigned int p = 0; p < selectorCache[i].props_size; p += 2 )
-		    for ( unsigned int j = 0; j < (unsigned int) selectorCache[i].props[p+1]; ++j ) {
-                        if (numPseudoProps >= pseudoPropsSize ) {
-                            pseudoPropsSize *= 2;
-			    pseudoProps = (CSSOrderedProperty **)realloc( pseudoProps, pseudoPropsSize*sizeof( CSSOrderedProperty * ) );
-			}
-			pseudoProps[numPseudoProps++] = properties[selectorCache[i].props[p]+j];
-			properties[selectorCache[i].props[p]+j]->pseudoId = (RenderStyle::PseudoId) selectors[i]->pseudoId;
-		    }
 	    }
+            else if (selectorCache[i].state == AppliesPseudo)
+                style->setHasPseudoStyle((RenderStyle::PseudoId)selectors[i]->pseudoId);
 	}
 	else
 	    selectorCache[i].state = Invalid;
@@ -392,8 +393,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     numPropsToApply = addInlineDeclarations( e, e->m_styleDecls, numPropsToApply );
             
     bubbleSort( propsToApply, propsToApply+numPropsToApply-1 );
-    bubbleSort( pseudoProps, pseudoProps+numPseudoProps-1 );
-
+    
     //qDebug("applying properties, count=%d", propsToApply->count() );
 
     // we can't apply style rules without a view() and a part. This
@@ -422,63 +422,100 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 
         // Clean up our style object's display and text decorations (among other fixups).
         adjustRenderStyle(style, e);
+    }
+
+    // Now return the style.
+    return style;
+}
+
+RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseudoStyle, 
+                                                     ElementImpl* e, RenderStyle* parentStyle)
+{
+    if (!e)
+        return 0;
+    
+    if (!e->getDocument()->haveStylesheetsLoaded()) {
+        if (!styleNotYetAvailable) {
+            styleNotYetAvailable = new RenderStyle();
+            styleNotYetAvailable->setDisplay(NONE);
+            styleNotYetAvailable->ref();
+        }
+        return styleNotYetAvailable;
+    }
+    
+    initForStyleResolve(e, parentStyle);
+    
+    unsigned int numPseudoProps = 0;
+    
+    // try to sort out most style rules as early as possible.
+    // ### implement CSS3 namespace support
+    int cssTagId = (e->id() & NodeImpl::IdLocalMask);
+    int schecked = 0;
+    
+    for ( unsigned int i = 0; i < selectors_size; i++ ) {
+        int tag = selectors[i]->tag;
+        if ( cssTagId == tag || tag == -1 ) {
+            ++schecked;
+            
+            checkSelector( i, e, pseudoStyle );
+            
+            if ( selectorCache[i].state == AppliesPseudo ) {
+                for ( unsigned int p = 0; p < selectorCache[i].props_size; p += 2 )
+                    for ( unsigned int j = 0; j < (unsigned int) selectorCache[i].props[p+1]; ++j ) {
+                        if (numPseudoProps >= pseudoPropsSize ) {
+                            pseudoPropsSize *= 2;
+                            pseudoProps = (CSSOrderedProperty **)realloc( pseudoProps, pseudoPropsSize*sizeof( CSSOrderedProperty * ) );
+                        }
+                        pseudoProps[numPseudoProps++] = properties[selectorCache[i].props[p]+j];
+                        properties[selectorCache[i].props[p]+j]->pseudoId = (RenderStyle::PseudoId) selectors[i]->pseudoId;
+                    }
+            }
+        }
+        else
+            selectorCache[i].state = Invalid;
+    }
+    
+    if (numPseudoProps == 0)
+        return 0;
+    
+    style = new RenderStyle();
+    if( parentStyle )
+        style->inheritFrom( parentStyle );
+    else
+        parentStyle = style;
+    style->noninherited_flags._styleType = pseudoStyle;
         
+    bubbleSort( pseudoProps, pseudoProps+numPseudoProps-1 );
+        
+    // we can't apply style rules without a view() and a part. This
+    // tends to happen on delayed destruction of widget Renderobjects
+    if ( part ) {
+        fontDirty = false;
         if ( numPseudoProps ) {
-	    fontDirty = false;
+            fontDirty = false;
             //qDebug("%d applying %d pseudo props", e->cssTagId(), pseudoProps->count() );
             for (unsigned int i = 0; i < numPseudoProps; ++i) {
-		if ( fontDirty && pseudoProps[i]->priority >= (1 << 30) ) {
-		    // we are past the font properties, time to update to the
-		    // correct font
-		    //We have to do this for all pseudo styles
-		    RenderStyle *pseudoStyle = style->pseudoStyle;
-		    while ( pseudoStyle ) {
-                        checkForGenericFamilyChange(pseudoStyle, style);
-			pseudoStyle->htmlFont().update( paintDeviceMetrics );
-			pseudoStyle = pseudoStyle->pseudoStyle;
-		    }
-		    fontDirty = false;
-		}
-
-                RenderStyle *pseudoStyle;
-                pseudoStyle = style->getPseudoStyle(pseudoProps[i]->pseudoId);
-                if (!pseudoStyle)
-                {
-                    pseudoStyle = style->addPseudoStyle(pseudoProps[i]->pseudoId);
-                    if (pseudoStyle)
-                        pseudoStyle->inheritFrom( style );
+                if ( fontDirty && pseudoProps[i]->priority >= (1 << 30) ) {
+                    // we are past the font properties, time to update to the
+                    // correct font
+                    style->htmlFont().update( paintDeviceMetrics );
+                    fontDirty = false;
                 }
-
-                RenderStyle* oldStyle = style;
-                RenderStyle* oldParentStyle = parentStyle;
-                parentStyle = style;
-                style = pseudoStyle;
-                if ( pseudoStyle ) {
-                    DOM::CSSProperty *prop = pseudoProps[i]->prop;
-                    applyRule( prop->m_id, prop->value() );
-                }
-                style = oldStyle;
-                parentStyle = oldParentStyle;
+                
+               DOM::CSSProperty *prop = pseudoProps[i]->prop;
+               applyRule( prop->m_id, prop->value() );
             }
-
-	    if ( fontDirty ) {
-		RenderStyle *pseudoStyle = style->pseudoStyle;
-		while ( pseudoStyle ) {
-                    checkForGenericFamilyChange(pseudoStyle, style);
-		    pseudoStyle->htmlFont().update( paintDeviceMetrics );
-		    pseudoStyle = pseudoStyle->pseudoStyle;
-		}
-	    }
+            
+            if ( fontDirty ) {
+                checkForGenericFamilyChange(style, parentStyle);
+                style->htmlFont().update( paintDeviceMetrics );
+            }
         }
     }
-
-    // Now adjust all our pseudo-styles.
-    RenderStyle *pseudoStyle = style->pseudoStyle;
-    while (pseudoStyle) {
-        adjustRenderStyle(pseudoStyle, 0);
-        pseudoStyle = pseudoStyle->pseudoStyle;
-    }
-
+    
+    // Do the post-resolve fixups on the style.
+    adjustRenderStyle(style, 0);
+        
     // Now return the style.
     return style;
 }
@@ -685,7 +722,7 @@ static void checkPseudoState( DOM::ElementImpl *e )
     pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
 }
 
-void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
+void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e, RenderStyle::PseudoId pseudo)
 {
     dynamicPseudo = RenderStyle::NOPSEUDO;
     
@@ -704,8 +741,9 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
                             (sel->match == CSSSelector::Pseudo &&
                               (sel->pseudoType() == CSSSelector::PseudoHover ||
                                sel->pseudoType() == CSSSelector::PseudoActive)));
-    bool affectedByHover = style->affectedByHoverRules();
-    bool affectedByActive = style->affectedByActiveRules();
+    bool affectedByHover = style ? style->affectedByHoverRules() : false;
+    bool affectedByActive = style ? style->affectedByActiveRules() : false;
+    bool havePseudo = pseudo != RenderStyle::NOPSEUDO;
     
     // first selector has to match
     if(!checkOneSelector(sel, e)) return;
@@ -715,6 +753,12 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
     while((sel = sel->tagHistory))
     {
         if (!n->isElementNode()) return;
+        if (relation != CSSSelector::SubSelector) {
+            subject = false;
+            if (havePseudo && dynamicPseudo != pseudo)
+                return;
+        }
+        
         switch(relation)
         {
         case CSSSelector::Descendant:
@@ -722,8 +766,7 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
             bool found = false;
             while(!found)
             {
-		subject = false;
-                n = n->parentNode();
+		n = n->parentNode();
                 if(!n || !n->isElementNode()) return;
                 ElementImpl *elem = static_cast<ElementImpl *>(n);
                 if(checkOneSelector(sel, elem)) found = true;
@@ -732,7 +775,6 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
         }
         case CSSSelector::Child:
         {
-            subject = false;
             n = n->parentNode();
             if (!strictParsing)
                 while (n && n->implicitNode()) n = n->parentNode();
@@ -743,7 +785,6 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
         }
         case CSSSelector::Sibling:
         {
-            subject = false;
             n = n->previousSibling();
 	    while( n && !n->isElementNode() )
 		n = n->previousSibling();
@@ -773,6 +814,9 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
         relation = sel->relation;
     }
 
+    if (subject && havePseudo && dynamicPseudo != pseudo)
+        return;
+    
     // disallow *:hover, *:active, and *:hover:active except for links
     if (onlyHoverActive && subject) {
         if (pseudoState == PseudoUnknown)
@@ -799,7 +843,6 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
 
 bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl *e)
 {
-
     if(!e)
         return false;
 
@@ -985,7 +1028,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 // If we're in quirks mode, then hover should never match anchors with no
                 // href.  This is important for sites like wsj.com.
                 if (strictParsing || e->id() != ID_A || e->hasAnchor()) {
-                    if (element == e)
+                    if (element == e && style)
                         style->setAffectedByHoverRules(true);
                     if (e->renderer()) {
                         if (element != e)
@@ -1005,7 +1048,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 // If we're in quirks mode, then :active should never match anchors with no
                 // href. 
                 if (strictParsing || e->id() != ID_A || e->hasAnchor()) {
-                    if (element == e)
+                    if (element == e && style)
                         style->setAffectedByActiveRules(true);
                     else if (e->renderer())
                         e->renderer()->style()->setAffectedByActiveRules(true);

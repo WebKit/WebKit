@@ -1,3 +1,41 @@
+2003-10-21  David Hyatt  <hyatt@apple.com>
+
+	Change pseudo-element style resolution to be lazy and to not occur until the style is actually asked
+	for by the front end render objects.  Also fix first-letter to inherit properly from first-line styles.
+	
+        Reviewed by mjs
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::pseudoStyleForElement):
+        (khtml::CSSStyleSelector::checkSelector):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/css/cssstyleselector.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::addChildToFlow):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        (RenderObject::createInlineBox):
+        (RenderObject::style):
+        (RenderObject::getPseudoStyle):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.cpp:
+        (pseudoBit):
+        (RenderStyle::hasPseudoStyle):
+        (RenderStyle::setHasPseudoStyle):
+        (RenderStyle::getPseudoStyle):
+        (RenderStyle::addPseudoStyle):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::NonInheritedFlags::operator==):
+        (khtml::RenderStyle::setBitDefaults):
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintSelection):
+        (RenderText::paintObject):
+        (RenderText::htmlFont):
+
 2003-10-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

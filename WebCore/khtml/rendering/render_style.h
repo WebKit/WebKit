@@ -685,6 +685,7 @@ protected:
             (_styleType == other._styleType) &&
             (_affectedByHover == other._affectedByHover) &&
             (_affectedByActive == other._affectedByActive) &&
+            (_pseudoBits == other._pseudoBits) &&
             (_unicodeBidi == other._unicodeBidi);
 	}
 
@@ -707,6 +708,7 @@ protected:
         PseudoId _styleType : 3;
         bool _affectedByHover : 1;
         bool _affectedByActive : 1;
+        int _pseudoBits : 5;
         EUnicodeBidi _unicodeBidi : 2;
     } noninherited_flags;
 
@@ -723,7 +725,7 @@ protected:
     
 // list of associated pseudo styles
     RenderStyle* pseudoStyle;
-
+    
     // added this here, so we can get rid of the vptr in this class.
     // makes up for the same size.
     ContentData *content;
@@ -766,6 +768,7 @@ protected:
 	noninherited_flags._styleType = NOPSEUDO;
         noninherited_flags._affectedByHover = false;
         noninherited_flags._affectedByActive = false;
+        noninherited_flags._pseudoBits = 0;
 	noninherited_flags._unicodeBidi = UBNormal;
     }
 
@@ -783,8 +786,7 @@ public:
     PseudoId styleType() { return  noninherited_flags._styleType; }
 
     RenderStyle* getPseudoStyle(PseudoId pi);
-    RenderStyle* addPseudoStyle(PseudoId pi);
-    bool hasPseudoStyle() const { return pseudoStyle; }
+    void addPseudoStyle(RenderStyle* pseudo);
     void removePseudoStyle(PseudoId pi);
 
     bool affectedByHoverRules() const { return  noninherited_flags._affectedByHover; }
@@ -803,6 +805,9 @@ public:
     void setVisuallyOrdered(bool b) {  inherited_flags._visuallyOrdered = b; }
 
     bool isStyleAvailable() const;
+    
+    bool hasPseudoStyle(PseudoId pseudo) const;
+    void setHasPseudoStyle(PseudoId pseudo);
     
 // attribute getter methods
 

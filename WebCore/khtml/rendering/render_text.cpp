@@ -86,7 +86,7 @@ void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p,
     if (textColor == c)
         c = QColor(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
-    RenderStyle* pseudoStyle = object()->style()->getPseudoStyle(RenderStyle::SELECTION);
+    RenderStyle* pseudoStyle = object()->getPseudoStyle(RenderStyle::SELECTION);
     if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
         c = pseudoStyle->backgroundColor();
     p->setPen(c); // Don't draw text at all!
@@ -577,7 +577,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
                              int tx, int ty, PaintAction paintAction)
 {
     int ow = style()->outlineWidth();
-    RenderStyle* pseudoStyle = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
+    RenderStyle* pseudoStyle = hasFirstLine() ? getPseudoStyle(RenderStyle::FIRST_LINE) : 0;
     int d = style()->textDecorationsInEffect();
     InlineTextBox f(0, y-ty);
     int si = m_lines.findFirstMatching(&f);
@@ -701,7 +701,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
                 QColor selectionColor = p->pen().color();
                 ShadowData* selectionTextShadow = 0;
                 if (haveSelection) {
-                    RenderStyle* pseudoStyle = style()->getPseudoStyle(RenderStyle::SELECTION);
+                    RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SELECTION);
                     if (pseudoStyle) {
                         if (pseudoStyle->color() != selectionColor || pseudoStyle->textShadow()) {
                             if (!paintSelectedTextOnly)
@@ -1338,7 +1338,7 @@ const Font *RenderText::htmlFont(bool firstLine) const
 {
     const Font *f = 0;
     if( firstLine && hasFirstLine() ) {
-	RenderStyle *pseudoStyle  = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
+        RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::FIRST_LINE);
 	if ( pseudoStyle )
 	    f = &pseudoStyle->htmlFont();
     } else {

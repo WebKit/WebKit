@@ -103,8 +103,8 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
 
     RenderStyle* pseudoStyle=0;
     if ((!firstChild() || firstChild() == beforeChild) &&
-         (newChild->isInline() || newChild->isText()) &&
-         (pseudoStyle=style()->getPseudoStyle(RenderStyle::FIRST_LETTER)))
+         (newChild->isInline() || (newChild->isText() && !newChild->isBR())) &&
+         (pseudoStyle=getPseudoStyle(RenderStyle::FIRST_LETTER, style(true))))
     {
         // Drill into inlines looking for our first text child.
         RenderObject* textChild = newChild;

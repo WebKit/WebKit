@@ -29,6 +29,7 @@
 #include "rendering/render_canvas.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_docimpl.h"
+#include "css/cssstyleselector.h"
 #include "misc/htmlhashes.h"
 #include <kdebug.h>
 #include <qpainter.h>
@@ -1209,7 +1210,7 @@ void RenderObject::setStyle(RenderStyle *style)
 
     setShouldPaintBackgroundOrBorder(m_style->backgroundColor().isValid() || 
                                      m_style->hasBorder() || nb );
-    m_hasFirstLine = (style->getPseudoStyle(RenderStyle::FIRST_LINE) != 0);
+    m_hasFirstLine = getPseudoStyle(RenderStyle::FIRST_LINE);
 
     if (affectsParentBlock)
         handleDynamicFloatPositionChange();
@@ -1744,6 +1745,32 @@ InlineBox* RenderObject::createInlineBox(bool,bool isRootLineBox)
 {
     KHTMLAssert(!isRootLineBox);
     return new (renderArena()) InlineBox(this);
+}
+
+RenderStyle* RenderObject::style(bool firstLine) const {
+    RenderStyle *s = m_style;
+    if (firstLine && hasFirstLine()) {
+        RenderStyle *pseudoStyle  = getPseudoStyle(RenderStyle::FIRST_LINE);
+        if (pseudoStyle)
+            s = pseudoStyle;
+    }
+    return s;
+}
+
+RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderStyle* parentStyle) const
+{
+    if (!style()->hasPseudoStyle(pseudo))
+        return 0;
+    
+    DOM::NodeImpl* node = element();
+    if (isText())
+        node = element()->parentNode();
+    if (!node) return 0;
+    
+    if (!parentStyle)
+        parentStyle = style();
+    
+    return document()->styleSelector()->pseudoStyleForElement(pseudo, static_cast<DOM::ElementImpl*>(node), parentStyle);
 }
 
 void RenderObject::getTextDecorationColors(int decorations, QColor& underline, QColor& overline,

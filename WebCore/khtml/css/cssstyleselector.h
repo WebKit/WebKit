@@ -125,8 +125,11 @@ namespace khtml
 	static void loadDefaultStyle(const KHTMLSettings *s = 0);
 	static void clear();
 
-	RenderStyle *styleForElement(DOM::ElementImpl *e);
-
+        void initForStyleResolve(DOM::ElementImpl* e, RenderStyle* parentStyle);
+	RenderStyle *styleForElement(DOM::ElementImpl* e, RenderStyle* parentStyle=0);
+        RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId pseudoStyle, 
+                                           DOM::ElementImpl* e, RenderStyle* parentStyle=0);
+        
         QValueList<int> fontSizes() const { return m_fontSizes; }
 	
 	bool strictParsing;
@@ -144,7 +147,8 @@ namespace khtml
 
 	/* checks if the complete selector (which can be build up from a few CSSSelector's
 	    with given relationships matches the given Element */
-	void checkSelector(int selector, DOM::ElementImpl *e);
+        void checkSelector(int selector, DOM::ElementImpl *e, 
+                           RenderStyle::PseudoId pseudo = RenderStyle::NOPSEUDO);
 	/* checks if the selector matches the given Element */
 	bool checkOneSelector(DOM::CSSSelector *selector, DOM::ElementImpl *e);
 
