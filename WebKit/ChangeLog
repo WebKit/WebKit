@@ -1,3 +1,15 @@
+2004-06-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3640423>: (REGRESSION: can't paste text copied from web page into Excel (due to HTML on the pasteboard?))
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView _selectionPasteboardTypes]): don't include NSHTMLPboardType
+        (-[WebHTMLView _selectedArchive]): removed markup string parameter
+        (_selectionPasteboardTypes::if): don't put NSHTMLPboardType on the pasteboard
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2004-06-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

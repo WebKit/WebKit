@@ -36,7 +36,7 @@
 + (NSArray *)_insertablePasteboardTypes;
 + (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
-- (WebArchive *)_selectedArchive:(NSString **)markupString;
+- (WebArchive *)_selectedArchive;
 - (NSData *)_selectedRTFData;
 - (BOOL)_canDelete;
 - (BOOL)_canPaste;

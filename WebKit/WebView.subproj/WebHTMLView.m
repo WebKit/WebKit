@@ -658,14 +658,15 @@ static WebHTMLView *lastHitView = nil;
 
 + (NSArray *)_selectionPasteboardTypes
 {
-    return [NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
+    // FIXME: We should put data for NSHTMLPboardType on the pasteboard but Microsoft Excel doesn't like our format of HTML (3640423).
+    return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
 }
 
-- (WebArchive *)_selectedArchive:(NSString **)markupString
+- (WebArchive *)_selectedArchive
 {
     NSArray *nodes;
-    *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedDOMRange] nodes:&nodes];
-    return [[self _dataSource] _archiveWithMarkupString:*markupString nodes:nodes];
+    NSString *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedDOMRange] nodes:&nodes];
+    return [[self _dataSource] _archiveWithMarkupString:markupString nodes:nodes];
 }
 
 - (NSData *)_selectedRTFData
@@ -1112,16 +1113,8 @@ static WebHTMLView *lastHitView = nil;
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     // Put HTML on the pasteboard.
-    NSString *markupString = nil;
-    WebArchive *archive = nil;
-    if ([types containsObject:NSHTMLPboardType]) {
-        archive = [self _selectedArchive:&markupString];
-        [pasteboard setString:markupString forType:NSHTMLPboardType];
-    }
     if ([types containsObject:WebArchivePboardType]) {
-        if (!archive) {
-            archive = [self _selectedArchive:&markupString];
-        }
+        WebArchive *archive = [self _selectedArchive];
         [pasteboard setData:[archive data] forType:WebArchivePboardType];
     }
     
