@@ -1,3 +1,31 @@
+2002-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed ==/= typo in QFontMetrics that caused a part of my recent speedup to not take effect
+	- fixed 3128582 -- REGRESSION: Crash on planetquake.com
+
+        * kwq/KWQFontMetrics.mm:
+	(QFontMetricsPrivate::setFont): Fix a horrifying "== instead of =" mistake.
+        (QFontMetrics::ascent): Give an ERROR message, don't crash, when this is called on a
+	font metrics object that hasn't been updated to work for a particular font.
+        (QFontMetrics::descent): Ditto.
+        (QFontMetrics::lineSpacing): Ditto.
+        (QFontMetrics::xHeight): Ditto.
+        (QFontMetrics::width): Ditto.
+        (QFontMetrics::floatWidth): Ditto.
+        (QFontMetrics::floatCharacterWidths): Ditto.
+
+        * khtml/html/html_inlineimpl.cpp: (HTMLBRElementImpl::attach):
+	Eliminated what was causing us to hit the above. BR elements need to respect display() == NONE.
+
+	- fixed the fix for operator==; needs to work even if the pseudo type was
+	  extracted already for one of the two, and not the other
+
+        * khtml/css/cssparser.cpp:
+        (CSSSelector::extractPseudoType): Only do work when the selector is Pseudo.
+        (CSSSelector::operator==): Call pseudoType() instead of going right at _pseudoType.
+
 2002-12-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3128402, missing content on voodooextreme.  Don't allow

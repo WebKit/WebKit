@@ -28,9 +28,10 @@
 #import <Cocoa/Cocoa.h>
 
 #import "KWQFont.h"
-#import "WebCoreTextRendererFactory.h"
-#import "WebCoreTextRenderer.h"
 #import "KWQLogging.h"
+
+#import "WebCoreTextRenderer.h"
+#import "WebCoreTextRendererFactory.h"
 
 struct QFontMetricsPrivate
 {
@@ -56,7 +57,7 @@ struct QFontMetricsPrivate
         if (_font == font) {
             return;
         }
-        _font == font;
+        _font = font;
         [_renderer release];
         _renderer = nil;
     }
@@ -106,11 +107,21 @@ void QFontMetrics::setFont(const QFont &font)
 
 int QFontMetrics::ascent() const
 {
+    if (data.isNull()) {
+        ERROR("called ascent on an empty QFontMetrics");
+        return 0;
+    }
+    
     return [data->getRenderer() ascent];
 }
 
 int QFontMetrics::descent() const
 {
+    if (data.isNull()) {
+        ERROR("called descent on an empty QFontMetrics");
+        return 0;
+    }
+    
     return [data->getRenderer() descent];
 }
 
@@ -123,16 +134,29 @@ int QFontMetrics::height() const
 
 int QFontMetrics::lineSpacing() const
 {
+    if (data.isNull()) {
+        ERROR("called lineSpacing on an empty QFontMetrics");
+        return 0;
+    }
     return [data->getRenderer() lineSpacing];
 }
 
 float QFontMetrics::xHeight() const
 {
+    if (data.isNull()) {
+        ERROR("called xHeight on an empty QFontMetrics");
+        return 0;
+    }
     return [data->getRenderer() xHeight];
 }
 
 int QFontMetrics::width(QChar qc) const
 {
+    if (data.isNull()) {
+        ERROR("called width on an empty QFontMetrics");
+        return 0;
+    }
+    
     UniChar c = qc.unicode();
 
     CREATE_FAMILY_ARRAY(data->font(), families);
@@ -147,6 +171,11 @@ int QFontMetrics::charWidth(const QString &s, int pos) const
 
 int QFontMetrics::width(char c) const
 {
+    if (data.isNull()) {
+        ERROR("called width on an empty QFontMetrics");
+        return 0;
+    }
+    
     UniChar ch = (uchar) c;
 
     CREATE_FAMILY_ARRAY(data->font(), families);
@@ -156,6 +185,11 @@ int QFontMetrics::width(char c) const
 
 int QFontMetrics::width(const QString &qstring, int len) const
 {
+    if (data.isNull()) {
+        ERROR("called width on an empty QFontMetrics");
+        return 0;
+    }
+    
     CREATE_FAMILY_ARRAY(data->font(), families);
 
     return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)qstring.unicode() stringLength:len fromCharacterPosition:0 numberOfCharacters:len withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing:0 wordSpacing:0 fontFamilies: families]);
@@ -163,6 +197,11 @@ int QFontMetrics::width(const QString &qstring, int len) const
 
 int QFontMetrics::width(const QChar *uchars, int len) const
 {
+    if (data.isNull()) {
+        ERROR("called width on an empty QFontMetrics");
+        return 0;
+    }
+    
     CREATE_FAMILY_ARRAY(data->font(), families);
 
     return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:len fromCharacterPosition:0 numberOfCharacters:len withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing:0 wordSpacing:0 fontFamilies: families]);
@@ -170,6 +209,11 @@ int QFontMetrics::width(const QChar *uchars, int len) const
 
 float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, int letterSpacing, int wordSpacing) const
 {
+    if (data.isNull()) {
+        ERROR("called floatWidth on an empty QFontMetrics");
+        return 0;
+    }
+    
     CREATE_FAMILY_ARRAY(data->font(), families);
 
     return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: 0 letterSpacing:letterSpacing wordSpacing:wordSpacing fontFamilies: families];
@@ -177,6 +221,11 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, 
 
 float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos, int len, int toAdd, float *buffer, int letterSpacing, int wordSpacing) const
 {
+    if (data.isNull()) {
+        ERROR("called floatCharacterWidths on an empty QFontMetrics");
+        return 0;
+    }
+    
     CREATE_FAMILY_ARRAY(data->font(), families);
     
     return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len withPadding: toAdd applyRounding: YES attemptFontSubstitution: YES widths: (float *)buffer letterSpacing:letterSpacing wordSpacing: wordSpacing fontFamilies: families];
