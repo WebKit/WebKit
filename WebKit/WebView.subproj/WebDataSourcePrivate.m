@@ -57,17 +57,22 @@ static NSMutableDictionary *_repTypes=nil;
     for (i = 0; i < count; i++) {
         [(IFWebFrame *)[childFrames objectAtIndex: i] _setController: nil];
     }
-    [frames release];
+    
+    [resourceData release];
+    [representation release];
     [inputURL release];
     [finalURL release];
-    [urlHandles release];
+    [frames release];
     [mainHandle release];
     [mainURLHandleClient release];
+    [urlHandles release];
     [pageTitle autorelease];
-    [locationChangeHandler release];
- 
+    [downloadPath autorelease];
+    [encoding autorelease];
+    [contentType autorelease];
     [errors release];
     [mainDocumentError release];
+    [locationChangeHandler release];
 
     [super dealloc];
 }
@@ -284,7 +289,7 @@ static NSMutableDictionary *_repTypes=nil;
     _private->locationChangeHandler = l;
 }
 
-- (void) _setDownloadPath:(NSString *)path
+- (void)_setDownloadPath:(NSString *)path
 {
     [_private->downloadPath release];
     _private->downloadPath = [path retain];

@@ -12,14 +12,13 @@
 
 // Includes from KDE
 #import <khtmlview.h>
-#import <html/html_documentimpl.h>
-#import "IFWebController.h"
 
 @implementation IFHTMLViewPrivate
 
 - (void)dealloc
 {
-    [controller release];
+    // FIXME: Do we leak the provisional widget in the non-main frame cases?
+    
     [cursor release];
 
     [super dealloc];
@@ -31,6 +30,8 @@
 
 - (void)_resetWidget
 {
+    delete _private->provisionalWidget;
+    _private->provisionalWidget = 0;
     delete _private->widget;
     _private->widget = 0;
 }

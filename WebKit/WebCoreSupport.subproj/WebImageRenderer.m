@@ -1,4 +1,4 @@
-/*	IFAnimatedImage.m
+/*	IFImageRenderer.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
@@ -114,7 +114,7 @@
     
     [self setCurrentFrame: currentFrame];
     
-    if ([frameView canDraw]){
+    if ([frameView canDraw]) {
         [frameView lockFocus];
         [self drawInRect:targetRect
                 fromRect:imageRect
@@ -148,9 +148,9 @@
     }
 
     [self drawInRect: ir 
-                    fromRect: fr
-                    operation: NSCompositeSourceOver	// Renders transparency correctly
-                    fraction: 1.0];
+            fromRect: fr
+           operation: NSCompositeSourceOver	// Renders transparency correctly
+            fraction: 1.0];
 }
 
 - (void)stopAnimation

@@ -43,7 +43,7 @@
     [self setController: c];
 
     if (d == nil) {
-	// set a dummy data source so that the main from for a
+	// Set a dummy data source so that the main frame for a
 	// newly-created empty window has a KHTMLPart. JavaScript
 	// always creates new windows initially empty, and then wants
 	// to use the main frame's part to make the new window load
@@ -54,6 +54,7 @@
 	IFWebDataSource *dummyDataSource = [[IFWebDataSource alloc] initWithURL:nil];
         [dummyDataSource _setController: [self controller]];
         [_private setProvisionalDataSource: dummyDataSource];
+        [dummyDataSource release];
 
     // Allow controller to override?
     } else if ([self setProvisionalDataSource: d] == NO){

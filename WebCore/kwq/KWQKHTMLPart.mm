@@ -62,6 +62,7 @@ KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
 
 KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 {
+    NSLog(@"deallocating KWQKHTMLPartImpl");
     killTimer(m_redirectionTimer);
 }
 

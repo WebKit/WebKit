@@ -43,7 +43,7 @@
     _private->canDragTo = YES;
     _private->canDragFrom = YES;
 
-    // We added add/remove this view as a mouse moved observer when it's window becomes/resigns main.
+    // We added add/remove this view as a mouse moved observer when its window becomes/resigns main.
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidBecomeMain:) name: NSWindowDidBecomeMainNotification object: nil];
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidResignMain:) name: NSWindowDidResignMainNotification object: nil];
 
@@ -120,7 +120,7 @@
 
     // Only delete the widget if we're the top level widget.  In other
     // cases the widget is associated with a RenderFrame which will
-    // delete it's widget.
+    // delete its widget.
     if ([dataSource isMainDocument] && data->widget)
         delete data->widget;
 

@@ -54,6 +54,7 @@
     [mainFrame reset];
     [mainFrame autorelease];
     [resourceProgressHandler autorelease];
+    [policyHandler autorelease];
 
     [super dealloc];
 }

@@ -1,3 +1,39 @@
+2002-06-17  Darin Adler  <darin@apple.com>
+
+	Fixed many of the reasons that we were leaking the world. But we still leak
+	KHTMLPart objects, so there must be more problems.
+
+	* WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+	(+[IFResourceURLHandleClient startLoadingResource:withURL:dataSource:]):
+	Add missing autorelease. Without this, we leak the world.
+	(-[IFResourceURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	Weaken assert. It was firing before.
+
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebCoreBridge receivedData:withDataSource:]): Don't retain the
+	dataSource any more. Without this, we leak the world.
+
+	* WebView.subproj/IFWebControllerPrivate.mm:
+	(-[IFWebControllerPrivate dealloc]): Release the policy handler too.
+	Without this, we leak the world.
+
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSourcePrivate dealloc]): Release resourceData, representation,
+	downloadPath, encoding, and contentType. Without this, we leak the world.
+
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame initWithName:webView:provisionalDataSource:controller:]):
+	Release the dummy data source after setting it up so it doesn't leak.
+
+	* WebView.subproj/IFHTMLViewPrivate.mm:
+	(-[IFHTMLViewPrivate dealloc]): Don't release the controller, we didn't retain it.
+	(-[IFHTMLView _resetWidget]): Delete the provisional widget too.
+
+	* WebView.subproj/IFWebDataSourcePrivate.h: Remove unused "children" array.
+
+	* WebCoreSupport.subproj/IFImageRenderer.m: Fix comment.
+	* WebView.subproj/IFHTMLView.mm: Fix comments.
+
 2002-06-17  Richard Williamson  <rjw@apple.com>
 
     Fixed call to renamed progress method.
@@ -11,7 +47,6 @@
 	(-[IFWebDataSource contentType]): no changes
 	(-[IFWebDataSource fileType]): added. Returns extension based on MIME.
 
->>>>>>> 1.387
 2002-06-17  Richard Williamson  <rjw@apple.com>
 
     Added explicit complete check for resources, rather

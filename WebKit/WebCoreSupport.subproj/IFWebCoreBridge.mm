@@ -26,13 +26,6 @@
 
 @implementation IFWebCoreBridge
 
-- (void)dealloc
-{
-    [dataSource release];
-    
-    [super dealloc];
-}
-
 - (id <WebCoreFrame>)frame
 {
     return [[dataSource webFrame] _bridgeFrame];
@@ -114,7 +107,7 @@
 - (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)withDataSource
 {
     if (dataSource == nil) {
-        dataSource = [withDataSource retain];
+        dataSource = withDataSource; // FIXME: non-retained because data source owns representation owns bridge
         [self openURL:[dataSource inputURL]];
     } else {
         WEBKIT_ASSERT(dataSource == withDataSource);

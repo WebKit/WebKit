@@ -51,7 +51,7 @@
     IFURLHandle *handle;
     IFResourceURLHandleClient *client;
     
-    handle = [[IFURLHandle alloc] initWithURL:URL attributes:nil flags:0];
+    handle = [[[IFURLHandle alloc] initWithURL:URL attributes:nil flags:0] autorelease];
     if (handle == nil) {
         [rLoader cancel];
 
@@ -145,7 +145,11 @@
 
 - (void)IFURLHandle:(IFURLHandle *)handle resourceDidFailLoadingWithResult:(IFError *)error
 {
+#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+#else
+    WEBKIT_ASSERT(currentURL == nil || [currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+#endif    
 
     [dataSource _removeURLHandle:handle];
     
