@@ -453,6 +453,22 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     }
 }
 
+- (BOOL)_isDescendantOfFrame:(WebFrame *)frame
+{
+    if (self == frame)
+        return YES;
+    
+    NSArray *children = [frame _internalChildFrames];
+    unsigned i;
+    for (i = 0; i < [children count]; i++) {
+        WebFrame *child = [children objectAtIndex:i];
+        if (self == child || [self _isDescendantOfFrame:child]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (WebFrame *)_descendantFrameNamed:(NSString *)name
 {
     if ([[self name] isEqualToString: name]){

@@ -1,3 +1,13 @@
+2004-06-25  Trey Matteson  <trey@apple.com>
+
+	Added new utility method.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _isDescendantOfFrame:]):   New code.
+        * WebView.subproj/WebFramePrivate.h:
+
 2004-06-24  Richard Williamson   <rjw@apple.com>
 
 		Fixed <rdar://problem/3710313>: CGContext not zeroed when WebImageRenderer is copied
