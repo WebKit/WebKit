@@ -1,3 +1,13 @@
+2002-10-20  Chris Blumenberg  <cblu@apple.com>
+
+	Partial fix for:
+	3023814 - contexual menus and dragging doesn't work for some images
+
+	The image map case is still broken because I need to find a way to get the RenderImage for an AREA node. Anyone know how?
+
+        * kwq/KWQDOMNode.cpp:
+        (isImage): Also return true if the node is an INPUT tag with TYPE set to "image"
+
 2002-10-20  Darin Adler  <darin@apple.com>
 
 	- fixed 3076390 -- crash in DOM::DocumentImpl::setParsing loading thread detail page

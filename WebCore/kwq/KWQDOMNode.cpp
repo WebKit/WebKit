@@ -25,10 +25,23 @@
 
 #include "KWQDOMNode.h"
 
-#include <htmltags.h>
+#include <dom_elementimpl.h>
 #include <dom_nodeimpl.h>
+#include <htmlattrs.h>
+#include <htmltags.h>
 
 bool isImage(DOM::NodeImpl *node)
 {
-    return node->id() == ID_IMG;
+    int id = node->id();
+    
+    if(node->id() == ID_IMG){
+        return true;
+    }else if(node->id() == ID_INPUT){
+        ElementImpl* i =  static_cast<ElementImpl*>(node);
+        if(i->getAttribute(ATTR_TYPE) == "image"){
+            return true;
+        }
+    }
+
+    return false;
 }
