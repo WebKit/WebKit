@@ -41,7 +41,6 @@ public:
     KWQListNode *prev;
 };
 
-
 KWQListNode::~KWQListNode()
 {
     delete next;
@@ -82,7 +81,6 @@ KWQListNode *KWQListImpl::KWQListPrivate::copyList(KWQListNode *l, KWQListNode *
 	}
 
 	copy->prev = last;
-	copy->next = NULL;
 	
 	last = copy;
 	node = node->next;
@@ -114,7 +112,9 @@ KWQListImpl::KWQListPrivate::KWQListPrivate(KWQListPrivate &vp) :
 KWQListImpl::KWQListPrivate::~KWQListPrivate()
 {
     delete head;
+    delete iterators;
 }
+
 
 // KWQListIteratorImpl::KWQListIteratorPrivate
 
@@ -122,7 +122,7 @@ class KWQListIteratorImpl::KWQListIteratorPrivate
 {
 public:
     KWQListIteratorPrivate();
-    KWQListIteratorPrivate(const KWQListImpl &list, KWQListNode *n);
+    KWQListIteratorPrivate(const KWQListImpl *list, KWQListNode *n);
 
     const KWQListImpl *list;
     KWQListNode *node;
@@ -134,8 +134,8 @@ KWQListIteratorImpl::KWQListIteratorPrivate::KWQListIteratorPrivate() :
 {
 }
 
-KWQListIteratorImpl::KWQListIteratorPrivate::KWQListIteratorPrivate(const KWQListImpl &l, KWQListNode *n) :
-    list(&l),
+KWQListIteratorImpl::KWQListIteratorPrivate::KWQListIteratorPrivate(const KWQListImpl *l, KWQListNode *n) :
+    list(l),
     node(n)
 {
 }
@@ -156,10 +156,10 @@ KWQListImpl::KWQListImpl(const KWQListImpl &impl) :
 
 KWQListImpl::~KWQListImpl()
 {
-    for (KWQListNode *iterator = d->iterators; iterator != NULL; iterator = iterator->next) {
-	KWQListIteratorImpl::KWQListIteratorPrivate *p = ((KWQListIteratorImpl *)iterator->data)->d;
-        p->node = 0;
-	p->list = 0;
+    for (KWQListNode *node = d->iterators; node != NULL; node = node->next) {
+	KWQListIteratorImpl::KWQListIteratorPrivate *p = ((KWQListIteratorImpl *)node->data)->d;
+	p->list = NULL;
+        p->node = NULL;
     }
     delete d;
 }
@@ -466,7 +466,6 @@ void *KWQListImpl::last()
     return current();
 }
 
-
 void *KWQListImpl::next()
 {
     if (d->current != NULL) {
@@ -533,9 +532,12 @@ KWQListImpl &KWQListImpl::assign(const KWQListImpl &impl, bool deleteItems)
 
 void KWQListImpl::addIterator(KWQListIteratorImpl *iter) const
 {
-    KWQListNode *node = new KWQListNode();
+    KWQListNode *node = new KWQListNode;
     node->data = iter;
     node->next = d->iterators;
+    if (node->next != NULL) {
+        node->next->prev = node;
+    }
     d->iterators = node;
 }
 
@@ -565,7 +567,6 @@ void KWQListImpl::removeIterator(KWQListIteratorImpl *iter) const
 
 
 
-
 // KWQListIteratorImpl
 
 KWQListIteratorImpl::KWQListIteratorImpl() :
@@ -574,9 +575,9 @@ KWQListIteratorImpl::KWQListIteratorImpl() :
 }
 
 KWQListIteratorImpl::KWQListIteratorImpl(const KWQListImpl &impl)  :
-    d(new KWQListIteratorImpl::KWQListIteratorPrivate(impl, impl.d->head))
+    d(new KWQListIteratorImpl::KWQListIteratorPrivate(&impl, impl.d->head))
 {
-    d->list->addIterator(this);
+    impl.addIterator(this);
 }
 
 KWQListIteratorImpl::~KWQListIteratorImpl()
@@ -588,9 +589,9 @@ KWQListIteratorImpl::~KWQListIteratorImpl()
 }
 
 KWQListIteratorImpl::KWQListIteratorImpl(const KWQListIteratorImpl &impl) :
-    d(new KWQListIteratorImpl::KWQListIteratorPrivate(*impl.d->list, impl.d->node))
+    d(new KWQListIteratorImpl::KWQListIteratorPrivate(impl.d->list, impl.d->node))
 {
-    if (d->list) {
+    if (d->list != NULL) {
         d->list->addIterator(this);
     }
 }
@@ -643,22 +644,13 @@ void *KWQListIteratorImpl::operator++()
 
 KWQListIteratorImpl &KWQListIteratorImpl::operator=(const KWQListIteratorImpl &impl)
 {
-    KWQListIteratorImpl tmp(impl);
-    KWQListIteratorImpl::KWQListIteratorPrivate *tmpD = tmp.d;
-
     if (d->list != NULL) {
 	d->list->removeIterator(this);
     }
-    if (tmp.d->list != NULL) {
-	tmp.d->list->removeIterator(&tmp);
-    }
-
-    tmp.d = d;
-    d = tmpD;
-
-    if (tmp.d->list != NULL) {
-	tmp.d->list->addIterator(&tmp);
-    }
+    
+    d->list = impl.d->list;
+    d->node = impl.d->node;
+    
     if (d->list != NULL) {
 	d->list->addIterator(this);
     }

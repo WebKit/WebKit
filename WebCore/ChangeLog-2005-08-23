@@ -1,3 +1,16 @@
+2002-05-15  Darin Adler  <darin@apple.com>
+
+	* kwq/KWQListImpl.mm:
+	(KWQListImpl::KWQListPrivate::copyList): Take out unnecessary line of code.
+	(KWQListImpl::KWQListPrivate::~KWQListPrivate): Delete the iterator nodes
+	also, not just the item nodes. Fixes a storage leak.
+	(KWQListIteratorImpl::KWQListIteratorPrivate::KWQListIteratorPrivate):
+	Change interface to take a list pointer so we don't rely on the undefined
+	behavior of &* on a null pointer.
+	(KWQListImpl::addIterator): Set up the prev pointer of the old head of
+	the list. This was causing the crash I was debugging.
+	(KWQListIteratorImpl::operator=): Simpler implementation.
+
 2002-05-14  Richard J. Williamson  <rjw@apple.com>
 
     Added another symbol for stack based event constructor.
