@@ -179,7 +179,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				089C1668FE841158C02AAC07,
-				35F3576E01985F660ACA1520,
+				35F3577501986B740ACA1520,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -223,7 +223,7 @@
 		089C1665FE841158C02AAC07 = {
 			children = (
 				089C1666FE841158C02AAC07,
-				35F3576D01985F660ACA1520,
+				35F3577401986B740ACA1520,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -520,14 +520,14 @@
 //352
 //353
 //354
-		35F3576D01985F660ACA1520 = {
+		35F3577401986B740ACA1520 = {
 			isa = PBXFileReference;
 			name = html4.css;
-			path = /L/Labyrinth/WebCore/src/kdelibs/khtml/css/html4.css;
-			refType = 0;
+			path = ../WebCore/src/kdelibs/khtml/css/html4.css;
+			refType = 4;
 		};
-		35F3576E01985F660ACA1520 = {
-			fileRef = 35F3576D01985F660ACA1520;
+		35F3577501986B740ACA1520 = {
+			fileRef = 35F3577401986B740ACA1520;
 			isa = PBXBuildFile;
 			settings = {
 			};
