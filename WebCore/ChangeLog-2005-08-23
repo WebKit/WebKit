@@ -1,5 +1,23 @@
 2003-05-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Richard.
+
+        - fixed 3240925 -- can't select or copy text from readonly INPUT elements
+
+        An AppKit peculiarity. Calling setEditable:NO will have a side effect of
+        doing setSelectable:NO unless you explicitly did setSelectable:YES.
+
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::QLineEdit): Call setSelectable:YES.
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField setPasswordMode:]): When creating the password field, keep
+        the setSelectable state synchronized.
+        (-[KWQTextField setSelectable:]): If we already have a password field, be
+        sure to keep its selectable state the same as the main field.
+
+2003-05-12  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
 	- fixed 3255281 -- REGRESSION: objc_error in key loop code, closing tab containing aintitcool.com page

@@ -37,7 +37,8 @@ QLineEdit::QLineEdit()
     , m_textChanged(this, SIGNAL(textChanged(const QString &)))
     , m_clicked(this, SIGNAL(clicked()))
 {
-    NSView *view = [[KWQTextField alloc] initWithQLineEdit:this];
+    KWQTextField *view = [[KWQTextField alloc] initWithQLineEdit:this];
+    [view setSelectable:YES]; // must do this explicitly so setEditable:NO does not make it NO
     setView(view);
     [view release];
 }
@@ -96,7 +97,7 @@ bool QLineEdit::isReadOnly() const
 void QLineEdit::setReadOnly(bool flag)
 {
     KWQTextField *textField = (KWQTextField *)getView();
-    return [textField setEditable:!flag];
+    [textField setEditable:!flag];
 }
 
 int QLineEdit::maxLength() const

@@ -147,6 +147,7 @@
             [secureField setFormatter:formatter];
             [secureField setFont:[self font]];
             [secureField setEditable:[self isEditable]];
+            [secureField setSelectable:[self isSelectable]];
             [self setUpTextField:secureField];
             [self updateSecureFieldFrame];
         }
@@ -159,6 +160,12 @@
 {
     [secureField setEditable:flag];
     [super setEditable:flag];
+}
+
+- (void)setSelectable:(BOOL)flag
+{
+    [secureField setSelectable:flag];
+    [super setSelectable:flag];
 }
 
 - (void)selectText:(id)sender
