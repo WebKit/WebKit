@@ -1,3 +1,13 @@
+2004-06-02  Richard Williamson   <rjw@apple.com>
+
+	Correctly size the <CANVAS> if margins, borders, or
+	padding is added.
+
+        Reviewed by Trey.
+
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::createDrawingContext):
+
 2004-06-01  Trey Matteson  <trey@apple.com>
 
 	First cut at the source side of DHTML dragging.  Following IE, new events are added:

@@ -91,10 +91,13 @@ void RenderCanvasImage::createDrawingContext()
     }
     free (_drawingContextData);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+
+    int cWidth = contentWidth();
+    int cHeight = contentHeight();
     size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
-    size_t bytesPerRow = BYTES_PER_ROW(width(),BITS_PER_COMPONENT,(numComponents+1)); // + 1 for alpha
+    size_t bytesPerRow = BYTES_PER_ROW(cWidth,BITS_PER_COMPONENT,(numComponents+1)); // + 1 for alpha
     _drawingContextData = malloc(height() * bytesPerRow);
-    _drawingContext = CGBitmapContextCreate(_drawingContextData, width(), height(), BITS_PER_COMPONENT, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
+    _drawingContext = CGBitmapContextCreate(_drawingContextData, cWidth, cHeight, BITS_PER_COMPONENT, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
     
 #ifdef DEBUG_CANVAS_BACKGROUND
     CGContextSetRGBFillColor(_drawingContext, 1.0, 0., 0., 1.);
