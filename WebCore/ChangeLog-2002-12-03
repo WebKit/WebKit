@@ -1,3 +1,13 @@
+2002-07-23  Chris Blumenberg  <cblu@apple.com>
+
+More plumbing for contextual menu support.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge completeURLForDOMString:]): renamed
+        (-[WebCoreBridge elementInfoAtPoint:]): renamed
+        * kwq/qt/qpixmap.h: added an accessor to the WebCoreImageRenderer
+
 2002-07-23  Darin Adler  <darin@apple.com>
 
         * WebCore.pbproj/project.pbxproj: Fix file reference types to be more consistent.

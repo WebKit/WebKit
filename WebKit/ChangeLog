@@ -1,3 +1,15 @@
+2002-07-23  Chris Blumenberg  <cblu@apple.com>
+
+	More plumbing for contextual menu support.
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementInfoAtPoint:]): added
+
 2002-07-23  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Fix file reference types to be more consistent.

@@ -28,6 +28,7 @@
 #import <khtml_part.h>
 #import <khtmlview.h>
 #import <dom_docimpl.h>
+#import <render_image.h>
 #import <render_object.h>
 #import <render_root.h>
 #import <render_frames.h>
@@ -38,6 +39,7 @@
 #include <htmltags.h>
 #include <csshelper.h>
 #include <KWQDOMNode.h>
+#include <WebCoreImageRenderer.h>
 
 #include <WebFoundation/WebNSURLExtras.h>
 
@@ -392,25 +394,21 @@ using namespace khtml;
     }
 }
 
-- (NSURL *)_URLForDOMString:(DOMString &)s
+- (NSURL *)completeURLForDOMString:(DOMString &)s
 {
     NSString *URLString = part->xmlDocImpl()->completeURL(s.string()).getNSString();
     return [NSURL _web_URLWithString:URLString];
 }
 
-- (NSDictionary *)_elementInfoForMouseEvent:(NSEvent *)event
+- (NSDictionary *)elementInfoAtPoint:(NSPoint)point
 {
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
     RenderObject::NodeInfo nodeInfo(true, true);
     NodeImpl *node, *URLNode;
-    NSPoint pointInWindow;
     DOMString domURL;
     NSURL *URL;
-    int x, y;
 
-    pointInWindow = [event locationInWindow];
-    part->impl->getView()->viewportToContents((int)pointInWindow.x, (int)pointInWindow.y, x, y);
-    part->xmlDocImpl()->renderer()->nodeAtPoint(nodeInfo, x, y, 0, 0);
+    part->xmlDocImpl()->renderer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y, 0, 0);
     
     node = nodeInfo.innerNode();
     URLNode = nodeInfo.URLElement();
@@ -418,7 +416,7 @@ using namespace khtml;
     if(URLNode){
         ElementImpl* e =  static_cast<ElementImpl*>(URLNode);
         domURL = khtml::parseURL(e->getAttribute(ATTR_HREF));
-        URL = [self _URLForDOMString:domURL];
+        URL = [self completeURLForDOMString:domURL];
         if(URL){
             [elementInfo setObject: URL forKey: WebCoreContextLinkURL];
         }
@@ -427,15 +425,20 @@ using namespace khtml;
     if(isImage(node)){
         ElementImpl* i =  static_cast<ElementImpl*>(node);
         domURL = khtml::parseURL(i->getAttribute(ATTR_SRC));
-        URL = [self _URLForDOMString:domURL];
+        URL = [self completeURLForDOMString:domURL];
         if(URL){
             [elementInfo setObject: URL forKey: WebCoreContextImageURL];
+            RenderImage *r = (RenderImage *)node->renderer();
+            id <WebCoreImageRenderer> image = r->pixmap().image();
+            if(image){
+                [elementInfo setObject: image forKey: WebCoreContextImage];
+            }
         }
     }
 
-    //FIXME: THIS IS STILL A WORK IN PROGRESS
-    
-    //NSLog([elementInfo description]);
+    if(part->hasSelection()){
+        [elementInfo setObject: [self selectedText] forKey: WebCoreContextString];
+    }
     
     return elementInfo;
 }

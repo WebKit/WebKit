@@ -220,11 +220,20 @@
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
-    //FIXME: THIS IS STILL A WORK IN PROGRESS
-    [[self _bridge] elementInfoForMouseEvent:theEvent];
+    NSDictionary *elementInfo;
+    NSPoint point;
+
+    point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    elementInfo = [self _elementInfoAtPoint:point];
+
+    /*
+    NSLog([elementInfo description]);
     NSMenu *menu = [[NSMenu alloc] init];
     [menu addItemWithTitle:@"Copy" action:@selector(copy:) keyEquivalent:@""];
     return menu;
+    */
+
+    return nil;
     
 }
 

@@ -34,4 +34,5 @@
 + (void)_setModifierTrackingEnabled:(BOOL)enabled;
 + (BOOL)_modifierTrackingEnabled;
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
+- (NSDictionary *)_elementInfoAtPoint:(NSPoint)point;
 @end

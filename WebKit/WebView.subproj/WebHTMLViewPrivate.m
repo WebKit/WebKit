@@ -99,4 +99,26 @@ BOOL _modifierTrackingEnabled = FALSE;
     [[NSNotificationCenter defaultCenter] postNotificationName:NSMouseMovedNotification object:self userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
 }
 
+- (NSDictionary *)_elementInfoAtPoint:(NSPoint)point
+{
+    NSDictionary *elementInfoWC = [[self _bridge] elementInfoAtPoint:point];
+    NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
+
+    NSURL *linkURL =   [elementInfoWC objectForKey:WebCoreContextLinkURL];
+    NSURL *imageURL =  [elementInfoWC objectForKey:WebCoreContextImageURL];
+    NSString *string = [elementInfoWC objectForKey:WebCoreContextString];
+    NSImage *image =   [elementInfoWC objectForKey:WebCoreContextImage];
+
+    if(linkURL)  [elementInfo setObject:linkURL  forKey:WebContextLinkURL];
+    if(imageURL) [elementInfo setObject:imageURL forKey:WebContextImageURL];
+    if(string)   [elementInfo setObject:string   forKey:WebContextString];
+    if(image)    [elementInfo setObject:image    forKey:WebContextImage];
+
+    WebView *webView = [self _web_parentWebView];
+    WebFrame *webFrame = [[webView _controller] frameForView:webView];
+    [elementInfo setObject:webFrame forKey:WebContextFrame];
+       
+    return elementInfo;
+}
+
 @end

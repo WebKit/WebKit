@@ -46,6 +46,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 #endif
 
 @class WebError;
+@class WebFrame;
 @class WebResourceHandle;
 
 @protocol WebCoreDOMTreeCopier;
@@ -56,7 +57,6 @@ typedef khtml::RenderPart KHTMLRenderPart;
 #define WebCoreContextImageURL @"WebCoreContextImageURL"
 #define WebCoreContextString   @"WebCoreContextString"
 #define WebCoreContextImage    @"WebCoreContextImage"
-#define WebCoreContextFrame    @"WebCoreContextFrame"
 
 // WebCoreBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also
@@ -115,7 +115,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier;
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
 
-- (NSDictionary *)_elementInfoForMouseEvent:(NSEvent *)event;
+- (NSDictionary *)elementInfoAtPoint:(NSPoint)point;
 
 @end
 
