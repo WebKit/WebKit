@@ -321,6 +321,7 @@ NodeImpl::Id HTMLScriptElementImpl::id() const
 HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
 {
     m_sheet = 0;
+    m_loading = false;
 }
 
 HTMLStyleElementImpl::~HTMLStyleElementImpl()
@@ -379,12 +380,15 @@ void HTMLStyleElementImpl::childrenChanged()
         m_sheet = 0;
     }
     
+    m_loading = false;
     if ((m_type.isEmpty() || m_type == "text/css") // Type must be empty or CSS
          && (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print"))) {
         getDocument()->addPendingSheet();
+        m_loading = true;
         m_sheet = new CSSStyleSheetImpl(this);
         m_sheet->ref();
         m_sheet->parseString( text, (getDocument()->parseMode() == DocumentImpl::Strict) );
+        m_loading = false;
     }
 
     if (!isLoading() && m_sheet)
@@ -393,6 +397,7 @@ void HTMLStyleElementImpl::childrenChanged()
 
 bool HTMLStyleElementImpl::isLoading() const
 {
+    if (m_loading) return true;
     if(!m_sheet) return false;
     return static_cast<CSSStyleSheetImpl *>(m_sheet)->isLoading();
 }

@@ -1,3 +1,13 @@
+2002-09-16  David Hyatt  <hyatt@apple.com>
+
+	Fix the stylesheet loading regression on rubyfruit.
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLStyleElementImpl::HTMLStyleElementImpl):
+        (HTMLStyleElementImpl::childrenChanged):
+        (HTMLStyleElementImpl::isLoading):
+        * khtml/html/html_headimpl.h:
+
 2002-09-13  David Hyatt  <hyatt@apple.com>
 
 	Landing code that makes textfields, buttons, checkboxes, radio
