@@ -278,6 +278,25 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     return [fragment firstChild] != nil ? fragment : nil;
 }
 
++ (NSArray *)_excludedElementsForAttributedStringConversion
+{
+    static NSArray *elements = nil;
+    if (elements == nil) {
+        elements = [[NSArray alloc] initWithObjects:
+            // Omit style since we want style to be inline so the fragment can be easily inserted.
+            @"style",
+            // Omit xml so the result is not XHTML.
+            @"xml", 
+            // Omit tags that will get stripped when converted to a fragment anyway.
+            @"doctype", @"html", @"head", @"body",
+            // Omit deprecated tags.
+            @"applet", @"basefont", @"center", @"dir", @"font", @"isindex", @"menu", @"s", @"strike", @"u",
+            // Omit object so no file attachments are part of the fragment.
+            @"object", nil];
+    }
+    return elements;
+}
+
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {
     NSArray *types = [pasteboard types];
@@ -325,13 +344,9 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         string = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
     }
     if (string != nil) {
-        NSArray *elements = [[NSArray alloc] initWithObjects:
-            // Omit style since we want style to be inline so the fragment can be easily inserted.
-            @"style", nil];
         NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-            elements, NSExcludedElementsDocumentAttribute,
+            [[self class] _excludedElementsForAttributedStringConversion], NSExcludedElementsDocumentAttribute,
             self, @"WebResourceHandler", nil];
-        [elements release];
         NSArray *subresources;
         DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
                                                           document:[[self _bridge] DOMDocument] 
