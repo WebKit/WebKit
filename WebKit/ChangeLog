@@ -1,3 +1,24 @@
+2005-03-14  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4027928> Tiger_8A394:Acrobat crashes while tried to remove the subscription errors by clicking on "Would you like to remove the subscription" from Tracker details view pane
+
+	The Acrobat application triggers loads of new documents in it's policy delegate.  This
+	ultimately causes the WebHTMLView to be released before their event handlers have
+	returned.  To bullet proof against this case we retain/release self before passing
+	the event on for further handling.
+	
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[WebHTMLView scrollWheel:]):
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView mouseDragged:]):
+        (-[WebHTMLView mouseUp:]):
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView keyUp:]):
+        (-[WebHTMLView performKeyEquivalent:]):
+
 2005-03-14  Vicki Murley  <vicki@apple.com>
 
 	- roll out the fix for 4040321, since it is still pending CCC review.

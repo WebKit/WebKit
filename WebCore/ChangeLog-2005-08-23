@@ -1,3 +1,14 @@
+2005-03-14  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4027928> Tiger_8A394:Acrobat crashes while tried to remove the subscription errors by clicking on "Would you like to remove the subscription" from Tracker details view pane
+
+	A document may be deleted as a consequence of handling an event,
+	as was the case with Acrobat.app.  Ensure that the document is still valid
+	before passing the event on for further handling.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchUIEvent):
+
 2005-03-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

@@ -969,6 +969,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
+    [self retain];
+    
     WebHTMLView *view = nil;
     if ([event window] == [self window]) {
         NSView *hitView = [self _hitViewForEvent:event];
@@ -1023,6 +1025,8 @@ static WebHTMLView *lastHitView = nil;
         newToolTip = [element objectForKey:WebCoreElementTitleKey];
     }
     [self _setToolTip:newToolTip];
+    
+    [self release];
 }
 
 + (NSArray *)_insertablePasteboardTypes
@@ -2542,9 +2546,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)scrollWheel:(NSEvent *)event
 {
+    [self retain];
+    
     if (![[self _bridge] scrollOverflowWithScrollWheelEvent:event]) {
         [[self nextResponder] scrollWheel:event];
     }    
+    
+    [self release];
 }
 
 - (BOOL)_isSelectionEvent:(NSEvent *)event
@@ -2600,6 +2608,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseDown:(NSEvent *)event
 {
+    [self retain];
+
     _private->handlingMouseDownEvent = YES;
 
     // Record the mouse down position so we can determine drag hysteresis.
@@ -2630,6 +2640,8 @@ static WebHTMLView *lastHitView = nil;
     _private->firstResponderAtMouseDownTime = nil;
 
     _private->handlingMouseDownEvent = NO;
+    
+    [self release];
 }
 
 - (void)dragImage:(NSImage *)dragImage
@@ -2653,6 +2665,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseDragged:(NSEvent *)event
 {
+    [self retain];
+    
     // TEXTINPUT: if there is marked text and the current input
     // manager wants to handle mouse events, we need to make sure to
     // pass it to them.
@@ -2660,6 +2674,8 @@ static WebHTMLView *lastHitView = nil;
     if (!_private->ignoringMouseDraggedEvents) {
         [[self _bridge] mouseDragged:event];
     }
+    
+    [self release];
 }
 
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
@@ -2878,9 +2894,13 @@ static WebHTMLView *lastHitView = nil;
     // manager wants to handle mouse events, we need to make sure to
     // pass it to them.
 
+    [self retain];
+    
     [self _stopAutoscrollTimer];
     [[self _bridge] mouseUp:event];
     [self _updateMouseoverWithFakeEvent];
+
+    [self release];
 }
 
 - (void)mouseMovedNotification:(NSNotification *)notification
@@ -3184,6 +3204,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)keyDown:(NSEvent *)event
 {
+    [self retain];
+
     BOOL callSuper = NO;
 
     _private->keyDownEvent = event;
@@ -3210,13 +3232,19 @@ static WebHTMLView *lastHitView = nil;
     }
 
     _private->keyDownEvent = nil;
+    
+    [self release];
 }
 
 - (void)keyUp:(NSEvent *)event
 {
+    [self retain];
+    
     if (![[self _bridge] interceptKeyEvent:event toView:self]) {
         [super keyUp:event];
     }
+    
+    [self release];
 }
 
 - (id)accessibilityAttributeValue:(NSString*)attributeName
@@ -3763,15 +3791,25 @@ static WebHTMLView *lastHitView = nil;
         return YES;
     }
     
+    BOOL ret;
+    
+    [self retain];
+    
     // Pass command-key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting command-modified keypresses.
     // But don't do it if we have already handled the event.
     if (event != _private->keyDownEvent
             && [self _web_firstResponderIsSelfOrDescendantView]
             && [[self _bridge] interceptKeyEvent:event toView:self]) {
-        return YES;
+        
+        ret = YES;
     }
-    return [super performKeyEquivalent:event];
+    else
+        ret = [super performKeyEquivalent:event];
+    
+    [self release];
+    
+    return ret;
 }
 
 - (void)copyFont:(id)sender

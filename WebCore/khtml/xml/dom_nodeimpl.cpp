@@ -791,9 +791,12 @@ bool NodeImpl::dispatchUIEvent(int _id, int detail)
         cancelable = true;
 
     int exceptioncode = 0;
-    UIEventImpl *evt = new UIEventImpl(static_cast<EventImpl::EventId>(_id),true,
-                                       cancelable,getDocument()->defaultView(),detail);
-    return dispatchEvent(evt,exceptioncode,true);
+    if (getDocument()) {
+        UIEventImpl *evt = new UIEventImpl(static_cast<EventImpl::EventId>(_id),true,
+                                           cancelable,getDocument()->defaultView(),detail);
+        return dispatchEvent(evt,exceptioncode,true);
+    }
+    return false;
 }
 
 void NodeImpl::registerNodeList(NodeListImpl *list)
