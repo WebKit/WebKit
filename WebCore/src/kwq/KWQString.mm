@@ -758,48 +758,12 @@ QString QString::arg(int replacement, int padding) const
 
 QString QString::left(uint width) const
 {
-    QString qs;
-    if (s) {
-        CFIndex len = CFStringGetLength(s);
-        if (len && width) {
-            if (len > width) {
-                CFStringRef tmp = CFStringCreateWithSubstring(
-                        kCFAllocatorDefault, s, CFRangeMake(0, width));
-                if (tmp) {
-                    qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
-                            tmp);
-                    CFRelease(tmp);
-                }
-            } else {
-                CFRetain(s);
-                qs.s = s;
-            }
-        }
-    }
-    return qs;
+    return leftRight(width, TRUE);
 }
 
 QString QString::right(uint width) const
 {
-    QString qs;
-    if (s) {
-        CFIndex len = CFStringGetLength(s);
-        if (len && width) {
-            if (len > width) {
-                CFStringRef tmp = CFStringCreateWithSubstring(
-                        kCFAllocatorDefault, s, CFRangeMake(len - width, len));
-                if (tmp) {
-                    qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
-                            tmp);
-                    CFRelease(tmp);
-                }
-            } else {
-                CFRetain(s);
-                qs.s = s;
-            }
-        }
-    }
-    return qs;
+    return leftRight(width, FALSE);
 }
 
 QString QString::mid(int index, int width) const
@@ -850,11 +814,25 @@ QString QString::lower() const
 QString QString::stripWhiteSpace() const
 {
     QString qs;
-    if (s && CFStringGetLength(s)) {
-        qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
-    }
-    if (qs.s) {
-	CFStringTrimWhitespace(qs.s);
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len) {
+            CFCharacterSetRef wscs = CFCharacterSetGetPredefined(
+                    kCFCharacterSetWhitespaceAndNewline);
+            if (CFCharacterSetIsCharacterMember(wscs,
+                    CFStringGetCharacterAtIndex(s, 0))
+                    || CFCharacterSetIsCharacterMember(wscs,
+                    CFStringGetCharacterAtIndex(s, len - 1))) {
+                qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
+                if (qs.s) {
+                    CFStringTrimWhitespace(qs.s);
+                }
+            }
+            if (!qs.s) {
+                CFRetain(s);
+                qs.s = s;
+            }
+        }
     }
     return qs;
 }
@@ -862,30 +840,56 @@ QString QString::stripWhiteSpace() const
 QString QString::simplifyWhiteSpace() const
 {
     QString qs;
-    if (s && CFStringGetLength(s)) {
-        qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
-    }
-    if (qs.s) {
-	CFStringTrimWhitespace(qs.s);
-        CFCharacterSetRef wscs = CFCharacterSetGetPredefined(
-                kCFCharacterSetWhitespaceAndNewline);
-        CFIndex pos = 0;
-        CFIndex len = CFStringGetLength(qs.s);
-        while (pos < len) {
-            if (CFCharacterSetIsCharacterMember(wscs,
-                    CFStringGetCharacterAtIndex(s, pos))) {
-                CFIndex pos2;
-                for (pos2 = pos + 1; pos2 < len; pos2++) {
-                    if (!CFCharacterSetIsCharacterMember(wscs,
-                            CFStringGetCharacterAtIndex(s, pos2))) {
-                        break;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len) {
+            qs.s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+            if (qs.s) {
+                CFCharacterSetRef wscs = CFCharacterSetGetPredefined(
+                        kCFCharacterSetWhitespaceAndNewline);
+                const UniChar *ucs = CFStringGetCharactersPtr(s);
+                const int capacity = 64;
+                UniChar buf[capacity];
+                int fill = 0;
+                bool chars = FALSE;
+                bool space = FALSE;
+                for (CFIndex i = 0; i < len; i++) {
+                    UniChar uc;
+                    if (ucs) {
+                        uc = ucs[i];
+                    } else {
+                        uc = CFStringGetCharacterAtIndex(s, i);
+                    }
+                    if (CFCharacterSetIsCharacterMember(wscs, uc)) {
+                        if (!chars) {
+                            continue;
+                        }
+                        space = TRUE;
+                    } else {
+                        if (space) {
+                            buf[fill] = ' ';
+                            fill++;
+                            if (fill == capacity) {
+                                CFStringAppendCharacters(qs.s, buf, fill);
+                                fill = 0;
+                            }
+                            space = FALSE;
+                        }
+                        buf[fill] = uc;
+                        fill++;
+                        if (fill == capacity) {
+                            CFStringAppendCharacters(qs.s, buf, fill);
+                            fill = 0;
+                        }
+                        chars = true;
                     }
                 }
-                CFStringReplace(qs.s, CFRangeMake(pos, pos2 - pos), CFSTR(" "));
-                pos = pos2;
-                len = CFStringGetLength(qs.s);
+                if (fill) {
+                    CFStringAppendCharacters(qs.s, buf, fill);
+                }
             } else {
-                pos++;
+                CFRetain(s);
+                qs.s = s;
             }
         }
     }
@@ -1085,6 +1089,15 @@ QString &QString::operator+=(char)
 
 // private member functions ----------------------------------------------------
 
+void QString::flushCache() const
+{
+    if (cache) {
+        CFAllocatorDeallocate(kCFAllocatorDefault, cache);
+        cache = NULL;
+        cacheType = CacheInvalid;
+    }
+}
+
 QCString QString::convertToQCString(CFStringEncoding enc) const
 {
     uint len = length();
@@ -1106,13 +1119,28 @@ QCString QString::convertToQCString(CFStringEncoding enc) const
     return QCString();
 }
 
-void QString::flushCache() const
+QString QString::leftRight(uint width, bool left) const
 {
-    if (cache) {
-        CFAllocatorDeallocate(kCFAllocatorDefault, cache);
-        cache = NULL;
-        cacheType = CacheInvalid;
+    QString qs;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len && width) {
+            if (len > width) {
+                CFStringRef tmp = CFStringCreateWithSubstring(
+                        kCFAllocatorDefault, s, left ? CFRangeMake(0, width)
+                        : CFRangeMake(len - width, len));
+                if (tmp) {
+                    qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
+                            tmp);
+                    CFRelease(tmp);
+                }
+            } else {
+                CFRetain(s);
+                qs.s = s;
+            }
+        }
     }
+    return qs;
 }
 
 
