@@ -1139,6 +1139,17 @@ void removeWrapperForRGB(QRgb value)
 
 @end
 
+@implementation DOMRGBColor (WebPrivate)
+
+- (NSColor *)_color
+{
+    QRgb rgb = reinterpret_cast<QRgb>(_internal);
+    return QColor(rgb).getNSColor();
+}
+
+@end
+
+
 //------------------------------------------------------------------------------------------
 // DOMRect
 
