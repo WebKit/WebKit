@@ -106,6 +106,11 @@
     myInt = anInt;
 }
 
+- (NSString *)getString
+{
+	return @"This is a string from ObjC";
+}
+
 - (MySecondInterface *)getMySecondInterface 
 {
     LOG ("\n");

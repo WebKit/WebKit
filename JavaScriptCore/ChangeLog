@@ -1,3 +1,17 @@
+2004-02-17  Richard Williamson   <rjw@apple.com>
+
+	Added String <-> NSString conversion.
+	Added tests of String <-> NSString conversion to test program.
+
+        Reviewed by Chris.
+
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/test.js:
+        * bindings/testbindings.mm:
+        (-[MyFirstInterface getString]):
+
 2004-02-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -4,6 +4,7 @@ myInterface.logMessage ("myInterface.getInt() = " + myInterface.getInt());
 
 myInterface.logMessage ("myInterface.setInt_(666) = " + myInterface.setInt_(666));
 myInterface.logMessage ("myInterface.getInt() = " + myInterface.getInt());
+myInterface.logMessage ("myInterface.getString() = " + myInterface.getString());
 myInterface.logMessage ("myInterface.myInt = " + myInterface.myInt);
 myInterface.logMessage ("setting myInterface.myInt = 777");
 myInterface.myInt = 777;

@@ -22,9 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <Foundation/Foundation.h>
+
+#include <JavascriptCore/internal.h>
+
 #include <runtime_object.h>
 #include <objc_instance.h>
 #include <objc_utility.h>
+
 
 using namespace KJS;
 using namespace KJS::Bindings;
@@ -105,7 +110,14 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, KJS::Val
                 }
             }
             
-            // FIXME:  Deal with String to NSString conversion.
+            // Convert JavaScript String value to NSString?
+            else if (value.type() == KJS::StringType) {
+                KJS::StringImp *s = static_cast<KJS::StringImp*>(value.imp());
+                UString u = s->value();
+                
+                NSString *string = [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
+                result.objectValue = string;
+            }
             
             // FIXME:  Deal with other Object types by creating a JavaScriptObjects
         }
@@ -182,11 +194,23 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
         case ObjcObjectType:
             {
                 ObjectStructPtr *obj = (ObjectStructPtr *)buffer;
-                aValue = Object(new RuntimeObjectImp(new ObjcInstance (*obj)));
                 
-                // FIXME:  Deal with NSString to String conversions.
-                
-                // FIXME:  Deal with NSArray to Array conversions.
+                if ([*obj isKindOfClass:[NSString class]]){
+                    NSString *string = (NSString *)*obj;
+                    unichar *chars;
+                    unsigned int length = [string length];
+                    chars = (unichar *)malloc(sizeof(unichar)*length);
+                    [string getCharacters:chars];
+                    UString u((const KJS::UChar*)chars, length);
+                    aValue = String (u);
+                    free((void *)chars);
+                }
+                else if ([*obj isKindOfClass:[NSArray class]]) {
+                    // FIXME:  Deal with NSArray to Array conversions.
+                }
+                else {
+                    aValue = Object(new RuntimeObjectImp(new ObjcInstance (*obj)));
+                }
             }
             break;
         case ObjcCharType:
