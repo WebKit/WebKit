@@ -1,3 +1,12 @@
+2003-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3189441 -- REGRESSION: layout tests crash building generated frame name
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _addFramePathToString:]):
+        Handle a frame name of nil here, since we don't force the name "_top" any more.
+
 2003-03-04  Trey Matteson  <trey@apple.com>
 
 	Support for autofill.  These are just two new glue routines

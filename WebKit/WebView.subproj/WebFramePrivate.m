@@ -1665,7 +1665,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [_private->parent _addFramePathToString:path];
         }
         [path appendString:@"/"];
-        [path appendString:_private->name];
+        if (_private->name) {
+            [path appendString:_private->name];
+        }
     }
 }
 
