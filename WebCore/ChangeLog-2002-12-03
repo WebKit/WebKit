@@ -1,3 +1,7 @@
+2002-05-10  Darin Adler  <darin@apple.com>
+
+	* kwq/WebCoreTextRenderer.h:
+
 2002-05-09  Richard J. Williamson  <rjw@apple.com>
 
     Added new method to avoid creation of NSString.
