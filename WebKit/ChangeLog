@@ -1,3 +1,15 @@
+2003-01-24  Richard Williamson   <rjw@apple.com>
+
+        Cleaned up some stray comments.
+        
+        Reviewed by kocienda.
+
+        * Misc.subproj/WebUnicode.m:
+        (getShape):
+        (nextChar):
+        (glyphVariantLogical):
+        (shapedString):
+
 2003-01-24  Trey Matteson  <trey@apple.com>
 
 	Chris pointed out a FIXME that led to a more contained way to make sure the cursor

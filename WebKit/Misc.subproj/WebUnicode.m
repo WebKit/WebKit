@@ -418,7 +418,6 @@ static const ushort arabicUnicodeLamAlefMapping[6][4] = {
 
 static inline int getShape( UniChar cell, int shape)
 {
-    // the arabicUnicodeMapping does not work for U+0649 ALEF MAKSURA, handle this here
     uint ch = ( cell != 0x49 ) ? arabicUnicodeMapping[cell][0] + shape
 	    		       : alefMaksura[shape] ;
     return ch;
@@ -452,10 +451,8 @@ static inline UniChar *nextChar( UniChar *str, int stringLength, int pos)
     int len = stringLength;
     UniChar *ch = str + pos;
     while( pos < len ) {
-	//qDebug("rightChar: %d isLetter=%d, joining=%d", pos, ch.isLetter(), ch.joining());
 	if( !_unicodeIsMark(*ch) )
 	    return ch;
-	// assume it's a transparent char, this might not be 100% correct
 	pos++;
 	ch++;
     }
@@ -475,20 +472,16 @@ static inline bool nextLogicalCharJoins( UniChar *str, int stringLength, int pos
 
 static int glyphVariantLogical( UniChar *str, int stringLength, int pos)
 {
-    // ignores L1 - L3, ligatures are job of the codec
     int joining = _unicodeJoining(str[pos]);
     switch ( joining ) {
 	case JoiningOther:
 	case JoiningCausing:
-	    // these don't change shape
 	    return XIsolated;
 	case JoiningRight:
-	    // only rule R2 applies
 	    return ( nextLogicalCharJoins( str, stringLength, pos ) ) ? XFinal : XIsolated;
 	case JoiningDual: {
 	    bool right = nextLogicalCharJoins( str, stringLength, pos );
 	    bool left = prevLogicalCharJoins( str, stringLength, pos );
-	    //qDebug("dual: right=%d, left=%d", right, left);
 	    return ( right ) ? ( left ? XMedial : XFinal ) : ( left ? XInitial : XIsolated );
         }
     }
@@ -510,7 +503,6 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	return 0;
     }
 
-    // Early out.
     int i;
     for (i = from; i < from+len; i++){
         if (uc[i] > 0x7f)
@@ -519,7 +511,6 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
     if (i == from+len)
         return 0;
     
-    // we have to ignore NSMs at the beginning and add at the end.
     int num = stringLength - from - len;
     UniChar *ch = uc + from + len;
     while ( num > 0 && _unicodeCombiningClass(*ch) != 0 ) {
@@ -554,10 +545,9 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	UniChar c = WK_CELL(*ch);
 	if ( r != 0x06 ) {
 	    if ( r == 0x20 ) {
-	        // remove ZWJ and ZWNJ
 		switch ( c ) {
-		    case 0x0C: // ZERO WIDTH NONJOINER
-		    case 0x0D: // ZERO WIDTH JOINER
+		    case 0x0C:
+		    case 0x0D:
 			goto skip;
 		    default:
 			break;
@@ -574,11 +564,9 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	    if ( dir == RTL )
 		pos = from + len - 1 - i;
 	    int shape = glyphVariantLogical( uc, stringLength, pos );
-            //printf("mapping U+%04x to shape %d glyph=0x%04x\n", *ch, shape, getShape( c, shape ));
-	    // take care of lam-alef ligatures (lam right of alef)
 	    ushort map;
 	    switch ( c ) {
-		case 0x44: { // lam
+		case 0x44: {
 		    UniChar *pch = nextChar( uc, stringLength, pos );
 		    if ( WK_ROW(*pch) == 0x06 ) {
 			switch ( WK_CELL(*pch) ) {
@@ -586,7 +574,6 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 			    case 0x23:
 			    case 0x25:
 			    case 0x27:
-				//printf("lam of lam-alef ligature");
 				map = arabicUnicodeLamAlefMapping[WK_CELL(*pch) - 0x22][shape];
 				goto next;
 			    default:
@@ -595,13 +582,11 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 		    }
 		    break;
 		}
-		case 0x22: // alef with madda
-		case 0x23: // alef with hamza above
-		case 0x25: // alef with hamza below
-		case 0x27: // alef
+		case 0x22: 
+		case 0x23: 
+		case 0x25: 
+		case 0x27: 
 		    if ( *prevChar( uc, stringLength, pos ) == 0x0644 ) {
-			// have a lam alef ligature
-			//qDebug(" alef of lam-alef ligature");
 			goto skip;
 		    }
 		default:
@@ -620,16 +605,11 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	    ch++;
     }
 
-//    if ( dir == QPainter::Auto && !uc.simpleText() ) {
-//	return bidiReorderString( QConstString( shapeBuffer, lenOut ).string() );
-//    }
     if ( dir == RTL ) {
-	// reverses the non spacing marks to be again after the base char
 	UniChar *s = shapeBuffer;
 	int i = 0;
 	while ( i < lenOut ) {
 	    if ( _unicodeCombiningClass(*s) != 0 ) {
-		// non spacing marks
 		int clen = 1;
 		UniChar *ch = s;
 		do {
@@ -656,7 +636,6 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	}
     }
 
-//    return QConstString( shapeBuffer, lenOut ).string();
     *lengthOut = lenOut;
     return shapeBuffer;
 }
