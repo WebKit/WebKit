@@ -1,5 +1,12 @@
 2004-09-20  Darin Adler  <darin@apple.com>
 
+        Reviewed by Chris.
+
+        * WebView.subproj/WebFramePrivate.h: Added back.
+        * WebView.subproj/WebFrameViewPrivate.h: Removed.
+
+2004-09-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed <rdar://problem/3655360> REGRESSION (Mail): Ctrl-V emacs key binding, -pageDown: method, unimplemented (and pageUp, and selection-modifying versions)
