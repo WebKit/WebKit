@@ -73,27 +73,35 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
  * Assertion macros
  */
 
+#import <signal.h>
+#import <sys/types.h>
+#import <sys/resource.h>
+
+#define WEBKIT_ASSERTION_FAILURE \
+    do { \
+        struct rlimit _rlimit = {RLIM_INFINITY, RLIM_INFINITY}; \
+        setrlimit(RLIMIT_CORE, &_rlimit); \
+        raise(SIGQUIT); \
+    } while (0)
+
 #define WEBKIT_ASSERT(expr) \
     do { \
         if (!(expr)) { \
-            NSString *reason = [NSString stringWithFormat:@"assertion failed(%s:%d %s): '%s'", __FILE__, __LINE__, __FUNCTION__, #expr]; \
-            [[NSException exceptionWithName:NSGenericException reason:reason userInfo: nil] raise]; \
+            WEBKIT_ASSERTION_FAILURE; \
         } \
     } while (0)
 
 #define WEBKIT_ASSERT_VALID_ARG(arg,expr) \
     do { \
         if (!(expr)) { \
-            NSString *reason = [NSString stringWithFormat:@"(%s:%d %s): '%s' fails check: '%s'", __FILE__, __LINE__, __FUNCTION__, #arg, #expr]; \
-            [[NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo: nil] raise]; \
+            WEBKIT_ASSERTION_FAILURE; \
         } \
     } while (0)
     
 #define WEBKIT_ASSERT_NOT_NIL(arg) \
     do { \
         if ((arg) == nil) { \
-            NSString *reason = [NSString stringWithFormat:@"(%s:%d %s): '%s' is nil", __FILE__, __LINE__, __FUNCTION__, #arg]; \
-            [[NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo: nil] raise]; \
+            WEBKIT_ASSERTION_FAILURE; \
         } \
     } while (0)
 
