@@ -188,9 +188,6 @@
 
 - (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame
 {    
-    if ([frame errors]){
-        NSLog (@"received the following errors loading frame %@:\n%@\n", [frame name], [frame errors]);
-    }
 }
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource

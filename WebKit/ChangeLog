@@ -1,3 +1,9 @@
+2002-03-28  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFBaseWebController.mm:
+        (-[IFBaseWebController locationChangeDone:forFrame:]): Remove log of errors
+        loading now that we have the activity viewer.
+
 2002-03-28  Richard Williamson  <rjw@apple.com>
 
         Modified the initial layout policy.  We now try to layout as close
