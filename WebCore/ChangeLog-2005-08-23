@@ -1,3 +1,7 @@
+2004-02-07  Darin Adler  <darin@apple.com>
+
+        * kwq/can-convert.mm: Added test program to see which conversions are actually supported by TEC.
+
 2004-02-06  David Hyatt  <hyatt@apple.com>
 
         Implemented a TokenizerString that can walk a list of substrings, so that data can be enqueued
