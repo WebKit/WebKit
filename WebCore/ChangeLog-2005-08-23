@@ -1,3 +1,17 @@
+2004-02-26  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3528839, wide table cut off because of shorts being used instead of ints.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+        (RenderTableCell::setWidth):
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::calcWidthArray):
+        (FixedTableLayout::calcMinMaxWidth):
+        (AutoTableLayout::calcMinMaxWidth):
+
 2004-02-26  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed a few problems I found with reconstructed source while on my way to implementing "Mail Page".

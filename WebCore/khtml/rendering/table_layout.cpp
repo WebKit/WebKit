@@ -117,10 +117,9 @@ int FixedTableLayout::calcWidthArray( int tableWidth )
 		if ( w.isVariable() )
 		    w = grpWidth;
 		int effWidth = 0;
-		if ( w.type == Fixed && w.value > 0 ) {
+		if ( w.type == Fixed && w.value > 0 )
                     effWidth = w.value;
-		    effWidth = QMIN( effWidth, 32760 );
-		}
+		
 #ifdef DEBUG_LAYOUT
 		qDebug("    col element: effCol=%d, span=%d: %d w=%d type=%d",
 		       cCol, span, effWidth,  w.value, w.type);
@@ -184,10 +183,9 @@ int FixedTableLayout::calcWidthArray( int tableWidth )
 		Length w = cell->style()->width();
 		int span = cell->colSpan();
 		int effWidth = 0;
-		if ( (w.type == Fixed || w.type == Percent) && w.value > 0 ) {
+		if ( (w.type == Fixed || w.type == Percent) && w.value > 0 )
                     effWidth = w.value;
-		    effWidth = QMIN( effWidth, 32760 );
-		}
+                
 #ifdef DEBUG_LAYOUT
 		qDebug("    table cell: effCol=%d, span=%d: %d",  cCol, span, effWidth);
 #endif
@@ -242,7 +240,7 @@ void FixedTableLayout::calcMinMaxWidth()
     int tableWidth = table->style()->width().type == Fixed ? table->style()->width().value - bs : 0;
     int mw = calcWidthArray( tableWidth ) + bs;
 
-    table->m_minWidth = kMin(kMax( mw, tableWidth ), 0x7fff);
+    table->m_minWidth = kMax( mw, tableWidth );
     table->m_maxWidth = table->m_minWidth;
     
     if ( !tableWidth ) {
@@ -254,7 +252,7 @@ void FixedTableLayout::calcMinMaxWidth()
 	    }
 	}
 	if ( haveNonFixed )
-	    table->m_maxWidth = 0x7fff;
+	    table->m_maxWidth = INT_MAX;
     }
 #ifdef DEBUG_LAYOUT
     qDebug("FixedTableLayout::calcMinMaxWidth: minWidth=%d, maxWidth=%d", table->m_minWidth, table->m_maxWidth );
@@ -615,8 +613,8 @@ void AutoTableLayout::calcMinMaxWidth()
 	maxWidth = minWidth;
     }
 
-    table->m_maxWidth = kMin(maxWidth, 0x7fff);
-    table->m_minWidth = kMin(minWidth, 0x7fff);
+    table->m_maxWidth = maxWidth;
+    table->m_minWidth = minWidth;
 #ifdef DEBUG_LAYOUT
     qDebug("    minWidth=%d, maxWidth=%d", table->m_minWidth, table->m_maxWidth );
 #endif

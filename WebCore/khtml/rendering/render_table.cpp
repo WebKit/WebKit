@@ -1227,7 +1227,7 @@ int RenderTableSection::layoutRows( int toAdd )
 	    int rh = rowPos[1]-rowPos[0];
 	    for ( int r = 0; r < totalRows; r++ ) {
 		if ( totalPercent > 0 && grid[r].height.type == Percent ) {
-		    int toAdd = QMIN(dh, (totalHeight * grid[r].height.value / 100)-rh);
+		    int toAdd = kMin(dh, (totalHeight * grid[r].height.value / 100)-rh);
                     // If toAdd is negative, then we don't want to shrink the row (this bug
                     // affected Outlook Web Access).
                     toAdd = QMAX(0, toAdd);
@@ -1672,7 +1672,6 @@ void RenderTableCell::calcWidth()
 
 void RenderTableCell::setWidth( int width )
 {
-    assert(width <= SHRT_MAX);
     if ( width != m_width ) {
 	m_width = width;
 	m_widthChanged = true;
