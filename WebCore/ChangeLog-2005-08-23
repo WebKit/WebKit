@@ -1,3 +1,10 @@
+2004-01-24  David Hyatt  <hyatt@apple.com>
+
+	Polish the error message from the xml tokenizer.
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLTokenizer::finish):
+
 2004-01-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

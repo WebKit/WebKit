@@ -429,12 +429,19 @@ void XMLTokenizer::finish()
         }
 
         ElementImpl* reportDiv = doc->createElementNS(XHTML_NAMESPACE, "div", exceptioncode);
-        reportDiv->setAttribute(ATTR_STYLE, "white-space: pre; border: 2px solid #c77; padding: 0 1em 1em 1em; margin: 1em; background-color: #fdd; color: black");
-        NodeImpl* h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
+        reportDiv->setAttribute(ATTR_STYLE, "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
+        ElementImpl* h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
         h3->appendChild(doc->createTextNode("This page contains the following errors:"), exceptioncode);
         reportDiv->appendChild(h3, exceptioncode);
+        ElementImpl* fixed = doc->createElementNS(XHTML_NAMESPACE, "div", exceptioncode);
+        fixed->setAttribute(ATTR_STYLE, "font-family:monospace;font-size:12px");
         NodeImpl* textNode = doc->createTextNode(handler->errorProtocol());
-        reportDiv->appendChild(textNode, exceptioncode);
+        fixed->appendChild(textNode, exceptioncode);
+        reportDiv->appendChild(fixed, exceptioncode);
+        h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
+        h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), exceptioncode);
+        reportDiv->appendChild(h3, exceptioncode);
+        
         root->insertBefore(reportDiv, root->firstChild(), exceptioncode);
 
         m_doc->document()->recalcStyle( NodeImpl::Inherit );
