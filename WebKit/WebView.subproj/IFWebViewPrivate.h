@@ -36,6 +36,17 @@ class QWidget;
 - (int)_marginHeight;
 - (void)_setMarginWidth:(int)w;
 - (void)_setMarginHeight:(int)h;
+- (NSClipView *)_contentView;
+- (void)_scrollLineVertically: (BOOL)up;
+- (void)_scrollLineHorizontally: (BOOL)left;
+- (void)_pageDown;
+- (void)_pageUp;
+- (void)_scrollToTopLeft;
+- (void)_scrollToBottomLeft;
+- (void)_lineDown;
+- (void)_lineUp;
+- (void)_lineLeft;
+- (void)_lineRight;
 + (NSMutableDictionary *)_viewTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 @end

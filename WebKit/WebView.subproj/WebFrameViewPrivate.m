@@ -75,6 +75,108 @@ static NSMutableDictionary *_viewTypes=nil;
     return _private->controller;
 }
 
+- (NSClipView *)_contentView
+{
+    return [[self frameScrollView] contentView];
+}
+
+- (void)_scrollVerticallyBy: (float)delta
+{
+    NSPoint point;
+
+    point = [[self _contentView] bounds].origin;
+    point.y += delta;
+    [[self _contentView] scrollPoint: point];
+}
+
+- (void)_scrollHorizontallyBy: (float)delta
+{
+    NSPoint point;
+
+    point = [[self _contentView] bounds].origin;
+    point.x += delta;
+    [[self _contentView] scrollPoint: point];
+}
+
+- (void)_pageVertically: (BOOL)up
+{
+    float pageOverlap = [[self frameScrollView] verticalPageScroll];
+    float delta = [[self _contentView] bounds].size.height;
+    
+    delta = (delta < pageOverlap) ? delta / 2.0 : delta - pageOverlap;
+
+    if (up) {
+        delta = -delta;
+    }
+
+    [self _scrollVerticallyBy: delta];
+}
+
+- (void)_scrollLineVertically: (BOOL)up
+{
+    // verticalLineScroll is quite small, to make scrolling from the scroll bar
+    // arrows relatively smooth. But this seemed too small for scrolling with
+    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
+    float delta = [[self frameScrollView] verticalLineScroll] * 4;
+
+    if (up) {
+        delta = -delta;
+    }
+
+    [self _scrollVerticallyBy: delta];
+}
+
+- (void)_scrollLineHorizontally: (BOOL)left
+{
+    float delta = [[self frameScrollView] horizontalLineScroll] * 4;
+
+    if (left) {
+        delta = -delta;
+    }
+
+    [self _scrollHorizontallyBy: delta];
+}
+
+- (void)_pageDown
+{
+    [self _pageVertically: NO];
+}
+
+- (void)_pageUp
+{
+    [self _pageVertically: YES];
+}
+
+- (void)_scrollToTopLeft
+{
+    [[self _contentView] scrollPoint: NSMakePoint(0, 0)];
+}
+
+- (void)_scrollToBottomLeft
+{
+    [[self _contentView] scrollPoint: NSMakePoint(0, [[self _contentView] bounds].size.height)];
+}
+
+- (void)_lineDown
+{
+    [self _scrollLineVertically: NO];
+}
+
+- (void)_lineUp
+{
+    [self _scrollLineVertically: YES];
+}
+
+- (void)_lineLeft
+{
+    [self _scrollLineHorizontally: YES];
+}
+
+- (void)_lineRight
+{
+    [self _scrollLineHorizontally: NO];
+}
+
 + (NSMutableDictionary *)_viewTypes
 {
     if(!_viewTypes){

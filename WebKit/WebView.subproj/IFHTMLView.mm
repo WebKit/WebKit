@@ -6,6 +6,7 @@
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/IFNSEventExtras.h>
 #import <WebKit/IFNSViewExtras.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreBridge.h>
@@ -521,6 +522,12 @@
     WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyDown: %s\n", DEBUG_OBJECT(event));
     int state = 0;
     
+    // If this is a scroll event, pass it to the IFWebView to cause a scroll
+    if([event _IF_isScrollEvent]){
+        [[self nextResponder] keyDown:event];
+        return;
+    }
+    
     [self _addModifiers:[event modifierFlags] toState:&state];
     QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
     
@@ -534,6 +541,12 @@
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyUp: %s\n", DEBUG_OBJECT(event));
     int state = 0;
+    
+    // If this is a scroll event, pass it to the IFWebView to cause a scroll
+    if([event _IF_isScrollEvent]){
+        [[self nextResponder] keyUp:event];
+        return;
+    }
     
     [self _addModifiers:[event modifierFlags] toState:&state];
     QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);

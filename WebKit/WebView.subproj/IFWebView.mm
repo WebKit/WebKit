@@ -82,12 +82,10 @@
     return [[self frameScrollView] allowsScrolling];
 }
 
-
 - frameScrollView
 {
     return _private->frameScrollView;
 }   
-
 
 - documentView
 {
@@ -201,6 +199,11 @@
     return nil;
 }
 
+-(BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
 - (BOOL)isOpaque
 {
     return YES;
@@ -224,6 +227,45 @@
     }
 
     return window;
+}
+
+- (void)keyDown: (NSEvent *)event
+{
+    if ([event type] == NSKeyDown) {
+        NSString *characters = [event characters];
+        int index, count;
+
+        count = [characters length];
+        for (index = 0; index < count; ++index) {
+            switch ([characters characterAtIndex:index]) {
+                case NSPageUpFunctionKey:
+                    [self _pageUp];
+                    break;
+                case NSPageDownFunctionKey:
+                    [self _pageDown];
+                    break;
+                case NSHomeFunctionKey:
+                    [self _scrollToTopLeft];
+                    break;
+                case NSEndFunctionKey:
+                    [self _scrollToBottomLeft];
+                    break;
+                case NSUpArrowFunctionKey:
+                    [self _lineUp];
+                    break;
+                case NSDownArrowFunctionKey:
+                    [self _lineDown];
+                    break;
+                case NSLeftArrowFunctionKey:
+                    [self _lineLeft];
+                    break;
+                case NSRightArrowFunctionKey:
+                    [self _lineRight];
+                    break;
+                default: break;
+            }
+        }
+    }
 }
 
 @end
