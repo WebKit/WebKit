@@ -1,2 +1,5 @@
 Makefile
 Makefile.in
+*.dep
+*.moc
+*.kde
