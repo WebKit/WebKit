@@ -1,5 +1,25 @@
 2003-09-04  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3286922>: Shockwave: Using HTTP to stream .mp3 or .swa files fails at ~50%
+
+        Reviewed by mjs.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h: new deliveryData and reason ivars
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream dealloc]): release deliveryData ivar
+        (-[WebBaseNetscapePluginStream startStreamWithURL:expectedContentLength:lastModifiedDate:MIMEType:]): set new reason ivar
+        (-[WebBaseNetscapePluginStream destroyStream]): new, calls NPP_StreamAsFile, NPP_DestroyStream and NPP_URLNotify
+        (-[WebBaseNetscapePluginStream destroyStreamWithReason:]): set the reason, call destroyStream
+        (-[WebBaseNetscapePluginStream receivedError:]): set deliveryData length to 0 so no more data is streamed, call destroyStreamWithReason
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): don't call NPP_StreamAsFile because this has to be called right before NPP_DestroyStream in destroyStream
+        (-[WebBaseNetscapePluginStream deliverData]): new, call NPP_WriteReady and NPP_Write and properly obey their returned values
+        (-[WebBaseNetscapePluginStream receivedData:]): call deliverData
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream stop]): call receivedError here
+        (-[WebNetscapePluginConnectionDelegate connection:didFailWithError:]): don't call receivedError here because after the load is complete, stream is set to nil and receivedError can be called after the completed load
+
+2003-09-04  Chris Blumenberg  <cblu@apple.com>
+
         * Plugins.subproj/WebBaseNetscapePluginView.m:
         (-[WebBaseNetscapePluginView postURL:target:len:buf:file:]): Fixed typo in newly added comment.
 

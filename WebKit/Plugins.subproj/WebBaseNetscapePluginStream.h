@@ -13,6 +13,7 @@
 
 @interface WebBaseNetscapePluginStream : NSObject
 {
+    NSMutableData *deliveryData;
     NSURL *URL;
     NPP instance;
     uint16 transferMode;
@@ -21,6 +22,7 @@
     char *path;
     void *notifyData;
     WebNetscapePluginPackage *plugin;
+    NPReason reason;
         
     NPP_NewStreamProcPtr NPP_NewStream;
     NPP_DestroyStreamProcPtr NPP_DestroyStream;

@@ -31,6 +31,7 @@
     free((void *)stream.URL);
     free(path);
     [plugin release];
+    [deliveryData release];
     
     [super dealloc];
 }
@@ -82,6 +83,7 @@
     
     transferMode = NP_NORMAL;
     offset = 0;
+    reason = -1;
 
     // FIXME: Need a way to check if stream is seekable
 
@@ -121,29 +123,17 @@
                     MIMEType:[r MIMEType]];
 }
 
-- (void)receivedData:(NSData *)data
+- (void)destroyStream
 {
-    if (![plugin isLoaded] || !stream.ndata || [data length] == 0) {
+    if (![plugin isLoaded] || !stream.ndata || [deliveryData length] > 0 || reason == -1) {
         return;
     }
     
-    if (transferMode != NP_ASFILEONLY) {
-        int32 numBytes;
-        
-        numBytes = NPP_WriteReady(instance, &stream);
-        LOG(Plugins, "NPP_WriteReady bytes=%lu", numBytes);
-        
-        numBytes = NPP_Write(instance, &stream, offset, [data length], (void *)[data bytes]);
-        LOG(Plugins, "NPP_Write bytes=%lu", numBytes);
-        
-        offset += [data length];
-    }
-}
-
-- (void)destroyStreamWithReason:(NPReason)reason
-{
-    if (![plugin isLoaded] || !stream.ndata) {
-        return;
+    if (reason == NPRES_DONE && (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)) {
+        ASSERT(path != NULL);
+        NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithCString:path]];
+        NPP_StreamAsFile(instance, &stream, [carbonPath cString]);
+        LOG(Plugins, "NPP_StreamAsFile: %@", carbonPath);
     }
     
     NPError npErr;
@@ -158,9 +148,17 @@
     }
 }
 
-- (void)receivedError:(NPError)reason
+- (void)destroyStreamWithReason:(NPReason)theReason
 {
-    [self destroyStreamWithReason:reason];
+    reason = theReason;
+    [self destroyStream];
+}
+
+- (void)receivedError:(NPError)error
+{
+    // Stop any pending data from being streamed.
+    [deliveryData setLength:0];
+    [self destroyStreamWithReason:error];
 }
 
 - (void)finishedLoadingWithData:(NSData *)data
@@ -177,7 +175,7 @@
                 // This should almost never happen.
                 ERROR("can't make temporary file, almost certainly a problem with /tmp");
                 // This is not a network error, but the only error codes are "network error" and "user break".
-                [self destroyStreamWithReason:NPRES_NETWORK_ERR];
+                [self receivedError:NPRES_NETWORK_ERR];
                 free(path);
                 path = NULL;
                 return;
@@ -189,20 +187,70 @@
                 ERROR("error writing to temporary file, errno %d", errno);
                 close(fd);
                 // This is not a network error, but the only error codes are "network error" and "user break".
-                [self destroyStreamWithReason:NPRES_NETWORK_ERR];
+                [self receivedError:NPRES_NETWORK_ERR];
                 free(path);
                 path = NULL;
                 return;
             }
             close(fd);
         }
-        
-        NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithCString:path]];
-        NPP_StreamAsFile(instance, &stream, [carbonPath cString]);
-        LOG(Plugins, "NPP_StreamAsFile: %@", carbonPath);
     }
 
     [self destroyStreamWithReason:NPRES_DONE];
+}
+
+- (void)deliverData
+{
+    if (![plugin isLoaded] || !stream.ndata || [deliveryData length] == 0) {
+        return;
+    }
+    
+    int32 totalBytes = [deliveryData length];
+    int32 totalBytesDelivered = 0;
+    
+    while (totalBytesDelivered < totalBytes) {
+        int32 deliveryBytes = NPP_WriteReady(instance, &stream);
+        LOG(Plugins, "NPP_WriteReady bytes=%d", deliveryBytes);
+        
+        if (deliveryBytes <= 0) {
+            // Plug-in can't receive anymore data right now. Send it later.
+            [self performSelector:@selector(deliverData) withObject:nil afterDelay:0];
+            break;
+        } else {
+            deliveryBytes = MIN(deliveryBytes, totalBytes - totalBytesDelivered);
+            NSData *subdata = [deliveryData subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
+            deliveryBytes = NPP_Write(instance, &stream, offset, [subdata length], (void *)[subdata bytes]);
+            deliveryBytes = MIN((unsigned)deliveryBytes, [subdata length]);
+            LOG(Plugins, "NPP_Write bytes=%d", deliveryBytes);
+            offset += deliveryBytes;
+            totalBytesDelivered += deliveryBytes;
+        }
+    }
+    
+    if (totalBytesDelivered > 0) {
+        if (totalBytesDelivered < totalBytes) {
+            NSMutableData *newDeliveryData = [[NSMutableData alloc] initWithCapacity:totalBytes - totalBytesDelivered];
+            [newDeliveryData appendBytes:(char *)[deliveryData bytes] + totalBytesDelivered length:totalBytes - totalBytesDelivered];
+            [deliveryData release];
+            deliveryData = newDeliveryData;
+        } else {
+            [deliveryData setLength:0];
+            [self destroyStream];
+        }
+    }
+}
+
+- (void)receivedData:(NSData *)data
+{
+    ASSERT([data length] > 0);
+    
+    if (transferMode != NP_ASFILEONLY) {
+        if (!deliveryData) {
+            deliveryData = [[NSMutableData alloc] initWithCapacity:[data length]];
+        }
+        [deliveryData appendData:data];
+        [self deliverData];
+    }
 }
 
 @end

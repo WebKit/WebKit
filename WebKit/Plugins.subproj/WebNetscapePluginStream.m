@@ -68,6 +68,11 @@
 - (void)stop
 {
     [_loader cancel];
+    // Since the plug-in is notified of the stream when the response is received,
+    // only report an error if the response has been received.
+    if ([_loader response]) {
+        [self receivedError:NPRES_USER_BREAK];
+    }
 }
 
 @end
@@ -142,17 +147,6 @@
     [stream receivedError:NPRES_NETWORK_ERR];
     [super connection:con didFailWithError:result];
     [self release];
-}
-
-- (void)cancel
-{
-    // Since the plug-in is notified of the stream when the response is received,
-    // only report an error if the response has been received.
-    if ([self response]) {
-        [stream receivedError:NPRES_USER_BREAK];
-    }
-
-    [super cancel];
 }
 
 @end
