@@ -1,3 +1,16 @@
+2002-12-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3123727 - SJ: Viewmaster arm sometimes doesn't animate on
+	http://www.pixar.com/howwedoit/
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::KHTMLPart): Don't call KHTMLPart::init at all...
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): Call it here instead so that signal
+	connections happen properly.
+
 2002-12-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3116996.  My hack to make selects ignore fixed CSS

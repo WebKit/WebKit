@@ -138,10 +138,7 @@ KHTMLPart::KHTMLPart( QWidget *parentWidget, const char *widgetname, QObject *pa
     d = 0;
     KHTMLFactory::registerPart( this );
     setInstance( KHTMLFactory::instance(), prof == BrowserViewGUI && !parentPart() );
-#if APPLE_CHANGES
-    // The widget is made outside this class in our case.
-    init( 0, prof );
-#else
+#if !APPLE_CHANGES
     init( new KHTMLView( this, parentWidget, widgetname ), prof );
 #endif
 }

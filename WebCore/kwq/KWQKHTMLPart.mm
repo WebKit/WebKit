@@ -120,6 +120,9 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _ownsView(false)
     , _mouseDownView(nil)
 {
+    // The widget is made outside this class in our case.
+    KHTMLPart::init( 0, DefaultGUI );
+
     Cache::init();
     mutableInstances().prepend(this);
     d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
