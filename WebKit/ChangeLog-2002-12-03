@@ -1,3 +1,12 @@
+2002-07-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Fixed Radar 2957209 - Change "JavaScript can open new windows
+	automatically" preference to off by default
+
+        * WebView.subproj/IFPreferences.mm:
+        (+[IFPreferences load]): Switch default for "Allow JavaScript to
+	open new windows automatically to FALSE.
+
 2002-07-15  Darin Adler  <darin@apple.com>
 
 	More weaning from C++.
