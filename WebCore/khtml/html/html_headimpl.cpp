@@ -416,10 +416,12 @@ void HTMLStyleElementImpl::childrenChanged()
     }
 
     if (m_sheet) {
+        if (static_cast<CSSStyleSheetImpl *>(m_sheet)->isLoading())
+            getDocument()->stylesheetLoaded(); // Remove ourselves from the sheet list.
         m_sheet->deref();
         m_sheet = 0;
     }
-    
+
     m_loading = false;
     if ((m_type.isEmpty() || m_type == "text/css") // Type must be empty or CSS
          && (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print"))) {

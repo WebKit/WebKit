@@ -1,3 +1,16 @@
+2003-05-09  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3253695, XML pages with <style>@import...</style> don't
+	render.  The XML tokenizer is getting text in small chunks, and
+	so it tries to load the sheet multiple times.  This fix patches
+	the stylesheet code to properly decrement the loading sheet
+	count when you abort a still-loading @import.
+	
+        Reviewed by darin
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLStyleElementImpl::childrenChanged):
+
 2003-05-09  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
