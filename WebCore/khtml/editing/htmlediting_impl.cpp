@@ -893,8 +893,6 @@ void DeleteSelectionCommandImpl::doApply()
     else if (upstreamStart != downstreamStart) {
         LOG(Editing,  "ending position case 3");
         endingPosition = upstreamStart;
-        if (downstreamStart.node()->id() == ID_BR && downstreamStart.offset() == 0)
-            adjustEndingPositionDownstream = true;
         if (upstreamStart.node()->id() == ID_BR && upstreamStart.offset() == 1)
             adjustEndingPositionDownstream = true;
     }
@@ -951,10 +949,12 @@ void DeleteSelectionCommandImpl::doApply()
         LOG(Editing,  "start node delete case 2");
         ASSERT(upstreamStart.node()->isTextNode());
         TextImpl *text = static_cast<TextImpl *>(upstreamStart.node());
-        int length = downstreamStart.node() == upstreamStart.node() ? 
-            kMax(downstreamStart.offset() - upstreamStart.offset(), 1L) : 
-            text->length() - upstreamStart.offset();
-        deleteText(text, upstreamStart.offset(), length);
+        int offset = upstreamStart.offset();
+        // EDIT FIXME: Signed/unsigned mismatch
+        int length = text->length();
+        if (length == upstreamStart.offset())
+            offset--;
+        deleteText(text, offset, 1);
     }
     else if (downstreamStart.node()->isTextNode()) {
         LOG(Editing,  "start node delete case 3");
@@ -1754,8 +1754,14 @@ void TypingCommandImpl::issueCommandForDeleteKey()
     Selection selectionToDelete = endingSelection();
     ASSERT(selectionToDelete.state() != Selection::NONE);
     
-    if (selectionToDelete.state() == Selection::CARET)
-        selectionToDelete = Selection(selectionToDelete.start().previousCharacterPosition(), selectionToDelete.start());
+    if (selectionToDelete.state() == Selection::CARET) {
+        Position pos(selectionToDelete.start());
+        if (pos.inFirstEditableInRootEditableBlock() && pos.offset() <= pos.node()->caretMinOffset()) {
+            // we're at the start of a root editable block...do nothing
+            return;
+        }
+        selectionToDelete = Selection(pos.previousCharacterPosition(), pos);
+    }
     deleteSelection(selectionToDelete);
 }
 

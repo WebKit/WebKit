@@ -188,14 +188,17 @@ long Position::renderedOffset() const
 
 Position Position::equivalentLeafPosition() const
 {
-    if (node()->hasChildNodes() == false)
+    if (isEmpty())
+        return Position();
+
+    if (!node()->renderer() || !node()->renderer()->firstChild())
         return *this;
     
     NodeImpl *n = node();
     int count = 0;
     while (1) {
         n = n->nextLeafNode();
-        if (!n)
+        if (!n || !n->inSameContainingEditableBlock(node()))
             return *this;
         if (count + n->maxOffset() >= offset()) {
             count = offset() - count;

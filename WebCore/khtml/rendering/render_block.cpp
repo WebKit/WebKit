@@ -2037,7 +2037,7 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
 Position RenderBlock::positionForRenderer(RenderObject *renderer, bool start) const
 {
     if (!renderer)
-        return Position();
+        return Position(element(), 0);
 
     NodeImpl *node = renderer->element() ? renderer->element() : element();
     long offset = start ? node->caretMinOffset() : node->caretMaxOffset();

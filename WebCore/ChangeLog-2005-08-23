@@ -1,6 +1,33 @@
 2004-04-21  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
+        
+        A small collection of fixups.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (DeleteSelectionCommandImpl::doApply): Do not shift ending selection downstream
+        when at position zero of a BR. That's just wrong. Simplify code that does
+        "onlyWhitespace" delete. No need to handle multiple characters here; we can
+        only ever have one thanks to the delete-collapsible-whitespace code.
+        (TypingCommandImpl::issueCommandForDeleteKey): Don't do anything if at the
+        start of a root editable block. This is a no-op....not an opportunity to crash.
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForRenderer): Return this renderer's element position
+        if the passed-in renderer is nil. This helps to make clicking in empty blocks work.
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::positionForCoordinates): Fixed typo in comment.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::equivalentLeafPosition): Do not attempt to find a leaf if the
+        position's node does not have a renderer, if the renderer has no kids.
+        * layout-tests/editing/deleting/delete-br-001-expected.txt: Update expected results for BR fix.
+        * layout-tests/editing/deleting/delete-br-003-expected.txt: Ditto.
+        * layout-tests/editing/deleting/delete-br-006-expected.txt: Ditto.
+        * layout-tests/editing/deleting/delete-br-007.html: Added. New BR test.
+        * layout-tests/editing/deleting/delete-br-007-expected.txt: Added.
+
+2004-04-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
 
         * khtml/css/css_computedstyle.cpp:
         (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Added implementations for
