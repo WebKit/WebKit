@@ -268,12 +268,11 @@
 
 - (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource
 {
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    WKWebView *view;
     
-    // FIXME:  Should be smart about only laying out necessary views.  This is
-    // important for frames and iframes.
-    [data->mainView setNeedsLayout: YES];
-    [data->mainView setNeedsDisplay: YES];
+    view = [self viewForDataSource: dataSource];
+    [view setNeedsLayout: YES];
+    [view setNeedsDisplay: YES];
 }
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (WKWebDataSource *)dataSource
