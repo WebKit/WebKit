@@ -183,7 +183,8 @@ void HTMLLinkElementImpl::process()
 #endif
 
     // Stylesheet
-    if(type.contains("text/css") || rel == "stylesheet" || rel.contains("alternate")) {
+    // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning.
+    if(type.contains("text/css") || rel == "stylesheet" || (rel.contains("alternate") && rel.contains("stylesheet"))) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
         if( m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print") ) {

@@ -1,3 +1,29 @@
+2002-07-21  David Hyatt  <hyatt@apple.com>
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::process):
+	Fix incorrect handling of alternate stylesheets that could
+	cause KHTML to incorrectly interpret alternate representation
+	links (e.g., <link rel=alternate> to a PDF representation)) as 
+	alternate stylesheets instead.
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::processHttpEquiv):
+	Add support for the selection of alternate stylesheets and
+	preferred stylesheet sets as specified in section 14.3.2 of
+	the HTML 4.0 spec.  If you want to hook up a UI to expose
+	alternate stylesheets, the back end code is ready to rock. :)
+	
+        (DocumentImpl::recalcStyleSelector):
+	Fixed a bug in recalcStyleSelector that could lead it to
+	pick an alternate stylesheet as a preferred set incorrectly
+	(thus loading alternate stylesheets when it shouldn't).  This
+	is probably the cause of bungled display on some pages with
+	alternate stylesheets (e.g., Eric Meyer's pages).
+
+	On Ian Hickson's simple import test suite, we now pass tests 35 and
+	36 (where before both were failed).
+	
 2002-07-21  Maciej Stachowiak  <mjs@apple.com>
 
         * Makefile.am: Remove products from symroots on `make clean'.

@@ -1323,7 +1323,17 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
 
     KHTMLView *v = getDocument()->view();
 
-    if(strcasecmp(equiv, "refresh") == 0 && v->part()->metaRefreshEnabled())
+    if (strcasecmp(equiv, "default-style") == 0) {
+        // The preferred style set has been overridden as per section 
+        // 14.3.2 of the HTML4.0 specification.  We need to update the
+        // sheet used variable and then update our style selector. 
+        // For more info, see the test at:
+        // http://www.hixie.ch/tests/evil/css/import/main/preferred.html
+        // -dwh
+        v->part()->d->m_sheetUsed = content.string();
+        updateStyleSelector();
+    }
+    else if(strcasecmp(equiv, "refresh") == 0 && v->part()->metaRefreshEnabled())
     {
         // get delay and url
         QString str = content.string().stripWhiteSpace();
@@ -1752,12 +1762,28 @@ void DocumentImpl::recalcStyleSelector()
                 if (!l->sheet() || l->isLoading())
                     title = QString::null;
             }
+
+	    // Get the current preferred styleset.  This is the
+	    // set of sheets that will be enabled.
             QString sheetUsed = view()->part()->d->m_sheetUsed;
+
+	    // Check to see if this sheet belongs to a styleset
+	    // (thus making it PREFERRED or ALTERNATE rather than
+	    // PERSISTENT).
             if ( !title.isEmpty() ) {
-                if ( sheetUsed.isEmpty() )
-                    sheetUsed = view()->part()->d->m_sheetUsed = title;
-                if ( !m_availableSheets.contains( title ) )
-                    m_availableSheets.append( title );
+	        // Yes, we have a title.
+	        if ( sheetUsed.isEmpty() ) {
+		  // No preferred set has been established.  If
+		  // we are NOT an alternate sheet, then establish
+		  // us as the preferred set.  Otherwise, just ignore
+		  // this sheet.
+		  QString rel = e->getAttribute( ATTR_REL ).string();
+		  if (!rel.contains("alternate")) {
+                      sheetUsed = view()->part()->d->m_sheetUsed = title;
+                      if ( !m_availableSheets.contains( title ) )
+                          m_availableSheets.append( title );
+		  }
+		}
             }
             if ( n->id() == ID_LINK ) {
                 if (title.isEmpty() || title == sheetUsed)
@@ -1765,7 +1791,7 @@ void DocumentImpl::recalcStyleSelector()
             }
             else
                 // <STYLE> element
-                sheet = static_cast<HTMLStyleElementImpl*>(n)->sheet();
+	        sheet = static_cast<HTMLStyleElementImpl*>(n)->sheet();
 	}
 	else if (n->id() == ID_BODY) {
             // <BODY> element (doesn't contain styles as such but vlink="..." and friends
