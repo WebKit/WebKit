@@ -57,6 +57,7 @@
 #include "misc/htmlhashes.h"
 #include "misc/loader.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/dom2_rangeimpl.h"
 #include "xml/xml_tokenizer.h"
 
 using namespace DOM;
@@ -4514,7 +4515,18 @@ void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
             sel = selection();
             if (extendSelection && sel.isCaretOrRange()) {
                 sel.clearModifyBias();
-                sel.setExtent(pos);
+                
+                // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection 
+                // was created right-to-left
+                Position start = sel.start();
+                short before = RangeImpl::compareBoundaryPoints(pos.node(), pos.offset(), start.node(), start.offset());
+                if (before <= 0) {
+                    sel.setBaseAndExtent(pos, sel.end());
+                }
+                else {
+                    sel.setBaseAndExtent(start, pos);
+                }
+
                 if (d->m_selectionGranularity != CHARACTER) {
                     sel.expandUsingGranularity(d->m_selectionGranularity);
                 }
