@@ -1,3 +1,19 @@
+2002-10-24  Darin Adler  <darin@apple.com>
+
+	- fixed a crash I ran into in the new delegate code
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate _releaseResources]): Retain self across this
+	deallocation to avoid reentering and being deallocated midstream. This happens
+	because the handle holds the only reference to us, and we may be releasing the
+	last reference to it.
+        (-[WebBaseResourceHandleDelegate dealloc]): Add call to [super dealloc].
+
+        * Plugins.subproj/WebBasePluginPackage.m: (-[WebBasePluginPackage dealloc]):
+	Add call to [super dealloc].
+
+        * WebView.subproj/WebMainResourceClient.m: Tweak.
+
 2002-10-23  Darin Adler  <darin@apple.com>
 
 	- fixed 3083013 -- REGRESSION: Cookie refused at http://directory/ even on reload

@@ -3,6 +3,8 @@
     Copyright (c) 2002, Apple Computer, Inc. All rights reserved.
 */
 
+#import <WebKit/WebBaseResourceHandleDelegate.h>
+
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
@@ -10,12 +12,10 @@
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
-#import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
-
 
 @implementation WebBaseResourceHandleDelegate
 
@@ -30,6 +30,13 @@
 
 - (void)_releaseResources
 {
+    // It's possible that when we release the handle, it will be
+    // deallocated and release the last reference to this object.
+    // We need to retain to avoid accessing the object after it
+    // has been deallocated and also to avoid reentering this method.
+    
+    [self retain];
+    
     [identifier release];
     identifier = nil;
 
@@ -46,6 +53,8 @@
     downloadDelegate = nil;
     
     reachedTerminalState = YES;
+    
+    [self release];
 }
 
 - (void)dealloc
@@ -54,6 +63,7 @@
     [request release];
     [response release];
     [currentURL release];
+    [super dealloc];
 }
 
 - (void)setDataSource: (WebDataSource *)d

@@ -3,6 +3,17 @@
     Copyright (c) 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 
+#import <WebKit/WebMainResourceClient.h>
+
+#import <WebFoundation/WebCookieConstants.h>
+#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
+#import <WebFoundation/WebResourceResponse.h>
+
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
@@ -15,19 +26,9 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
-#import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebView.h>
-
-#import <WebFoundation/WebError.h>
-#import <WebFoundation/WebFileTypeMappings.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
-#import <WebFoundation/WebResourceResponse.h>
-#import <WebFoundation/WebCookieConstants.h>
 
 // FIXME: This is quite similar to WebSubresourceClient; they should share code.
 

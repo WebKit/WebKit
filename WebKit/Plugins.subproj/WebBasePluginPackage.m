@@ -48,8 +48,9 @@
 
     [MIMEToDescription release];
     [MIMEToExtensions release];
-    [extensionToMIME removeAllObjects];
     [extensionToMIME release];
+    
+    [super dealloc];
 }
 
 
