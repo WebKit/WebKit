@@ -1,3 +1,17 @@
+2003-08-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	In KWQKURL.mm, we copy the contents of a URL path from a source buffer
+	to a destination buffer. In the loop, we often access dst[-1]. It was
+	not entirely clear that this did not underrun the buffer. Upon further
+	inspection, it seems clear that it does not, but this small change
+	makes this more clear, and adds an assertion that all is well with
+	regard to indexing into the dst buffer.
+
+        * kwq/KWQKURL.mm:
+        (copyPathRemovingDots)
+
 2003-08-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3095376.  Implemented correct selection behavior for rtl scripts.
