@@ -26,6 +26,10 @@
 #ifndef KPROTOCOLMANAGER_H_
 #define KPROTOCOLMANAGER_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 class QString;
 
 // class KProtocolManager ======================================================
@@ -46,9 +50,15 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
-    KProtocolManager();
-    
-    ~KProtocolManager();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    KProtocolManager() {}
+#endif
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~KProtocolManager() {}
+#endif
     
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -57,9 +67,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     KProtocolManager(const KProtocolManager &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     KProtocolManager &operator=(const KProtocolManager &);
+#endif
 
 }; // class KProtocolManager ===================================================
 

@@ -26,6 +26,10 @@
 #ifndef KWQSTRLIST_H_
 #define KWQSTRLIST_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qstring.h>
 #include <qlist.h>
 
@@ -43,19 +47,17 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QStrList();
-    
+    QStrList(const QStrList &);
     ~QStrList();
     
     // member functions --------------------------------------------------------
+
     // operators ---------------------------------------------------------------
+
+    QStrList &operator=(const QStrList &);
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    QStrList(const QStrList &);
-    QStrList &operator=(const QStrList &);
 
 }; // class QStrList ===========================================================
 

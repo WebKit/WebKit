@@ -26,6 +26,10 @@
 #ifndef QVARIANT_H_
 #define QVARIANT_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 typedef unsigned int uint;
 
 class QString;
@@ -53,7 +57,6 @@ public:
     QVariant(double);
     QVariant(const QString &);
     QVariant(const QVariant &);
-
     ~QVariant();
     
     // member functions --------------------------------------------------------

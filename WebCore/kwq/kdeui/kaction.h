@@ -26,6 +26,10 @@
 #ifndef KACTION_H_
 #define KACTION_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qpopupmenu.h>
 
 // class KAction ===============================================================

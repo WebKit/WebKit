@@ -26,6 +26,10 @@
 #ifndef KSTRINGHANDLER_H_
 #define KSTRINGHANDLER_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qstring.h>
 
 // class KStringHandler ========================================================
@@ -44,7 +48,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-// add no-op constructor
+// add no-arg constructor
 #ifdef _KWQ_PEDANTIC_
     KStringHandler() {}
 #endif

@@ -26,6 +26,10 @@
 #ifndef QPALETTE_H_
 #define QPALETTE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 class QColor;
 
 // class QColorGroup ===========================================================
@@ -56,7 +60,6 @@ public:
 
     QColorGroup();
     QColorGroup(const QColorGroup &);
-    
     ~QColorGroup();
 
     // member functions --------------------------------------------------------
@@ -103,7 +106,6 @@ public:
 
     QPalette();
     QPalette(const QPalette &);
-
     ~QPalette();
 
     // member functions --------------------------------------------------------

@@ -26,6 +26,10 @@
 #ifndef QTEXTSTREAM_H_
 #define QTEXTSTREAM_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qstring.h"
 
 // class QTextStream ===========================================================
@@ -42,7 +46,6 @@ public:
 
     QTextStream();
     QTextStream(QByteArray, int);
-
     virtual ~QTextStream();       
 
     // member functions --------------------------------------------------------
@@ -58,6 +61,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QTextStream(const QTextStream &);
     QTextStream &operator=(const QTextStream &);
 
@@ -78,7 +82,11 @@ public:
 
     QTextIStream(QString *);
 
-    virtual ~QTextIStream();       
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QTextIStream() {}      
+#endif
 
     // member functions --------------------------------------------------------
 
@@ -90,9 +98,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QTextIStream(const QTextIStream &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QTextIStream &operator=(const QTextIStream &);
+#endif
 
 }; // class QTextIStream =======================================================
 
@@ -112,7 +129,10 @@ public:
     QTextOStream(QString *);
     QTextOStream(QByteArray);
 
-    virtual ~QTextOStream();       
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QTextOStream() {}      
+#endif
 
     // member functions --------------------------------------------------------
 
@@ -124,9 +144,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QTextOStream(const QTextOStream &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QTextOStream &operator=(const QTextOStream &);
+#endif
 
 }; // class QTextOStream =======================================================
 

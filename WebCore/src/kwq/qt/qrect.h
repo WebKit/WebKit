@@ -26,6 +26,10 @@
 #ifndef QRECT_H_
 #define QRECT_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qsize.h"
 
 // class QRect =================================================================
@@ -44,7 +48,10 @@ public:
     QRect(int l, int t, int w, int h);
     QRect(const QRect &);
     
-    ~QRect();
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QRect() {}
+#endif
 
     // member functions --------------------------------------------------------
 

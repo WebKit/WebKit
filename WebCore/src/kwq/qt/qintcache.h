@@ -26,4 +26,8 @@
 #ifndef QINTCACHE_H_
 #define QINTCACHE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #endif

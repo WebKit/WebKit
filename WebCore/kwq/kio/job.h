@@ -26,6 +26,10 @@
 #ifndef JOB_H_
 #define JOB_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <kurl.h>
 #include "jobclasses.h"
 

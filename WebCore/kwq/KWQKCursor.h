@@ -26,6 +26,10 @@
 #ifndef KCURSOR_H_
 #define KCURSOR_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qwidget.h>
 
 // class KCursor ===============================================================

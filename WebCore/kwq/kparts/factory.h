@@ -26,6 +26,10 @@
 #ifndef FACTORY_H_
 #define FACTORY_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "part.h"
 
 namespace KParts {
@@ -44,8 +48,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     Factory();
-    
-    ~Factory();
+    virtual ~Factory();
     
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -54,9 +57,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     Factory(const Factory &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     Factory &operator=(const Factory &);
+#endif
 
 }; // class Factory ============================================================
 

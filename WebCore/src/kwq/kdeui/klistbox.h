@@ -26,6 +26,10 @@
 #ifndef KLISTBOX_H_
 #define KLISTBOX_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQListBox.h>
 #include <qwidget.h>
 

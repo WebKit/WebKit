@@ -26,6 +26,10 @@
 #ifndef QFONT_H_
 #define QFONT_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 class QString;
 
 // class QFont =================================================================
@@ -46,9 +50,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QFont();
-
     QFont(const QFont &);
-
     ~QFont();
 
     // member functions --------------------------------------------------------

@@ -26,6 +26,10 @@
 #ifndef QSCROLLVIEW_H_
 #define QSCROLLVIEW_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQScrollBar.h>
 #include <KWQFrame.h>
 #include "qwidget.h"
@@ -48,8 +52,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QScrollView();
-
-    virtual ~QScrollView();
+    ~QScrollView();
 
     // member functions --------------------------------------------------------
 
@@ -83,6 +86,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QScrollView(const QScrollView &);
     QScrollView &operator=(const QScrollView &);
 

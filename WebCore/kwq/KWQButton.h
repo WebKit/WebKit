@@ -26,6 +26,10 @@
 #ifndef QBUTTON_H_
 #define QBUTTON_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qwidget.h"
 #include "qstring.h"
     
@@ -41,10 +45,8 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    QButton();
-    QButton(QWidget *);
-    
-    virtual ~QButton();
+    QButton(QWidget *parent=0);
+    ~QButton();
 
     // member functions --------------------------------------------------------
 
@@ -58,6 +60,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QButton(const QButton &);
     QButton &operator=(const QButton &);
 

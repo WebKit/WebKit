@@ -26,6 +26,10 @@
 #ifndef KGLOBAL_H_
 #define KGLOBAL_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qstring.h>
 #include <kinstance.h>
 
@@ -59,14 +63,14 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-// add no-op constructor
+// add no-arg constructor
 #ifdef _KWQ_PEDANTIC_
-    KGlobal();
+    KGlobal() {}
 #endif
 
 // add no-op destructor
 #ifdef _KWQ_PEDANTIC_
-    ~KGlobal();
+    ~KGlobal() {}
 #endif
         
     // member functions --------------------------------------------------------

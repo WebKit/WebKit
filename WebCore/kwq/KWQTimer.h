@@ -26,6 +26,10 @@
 #ifndef QTIMER_H_
 #define QTIMER_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qobject.h"
 
 // class QTimer ================================================================
@@ -44,7 +48,6 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QTimer();
-
     ~QTimer();
      
     // member functions --------------------------------------------------------
@@ -55,6 +58,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QTimer(const QTimer &);
     QTimer &operator=(const QTimer &);
 

@@ -26,12 +26,16 @@
 #ifndef KWQCOMPLETION_H_
 #define KWQCOMPLETION_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qobject.h>
 #include <qstringlist.h>
 
-// class QCompletion ===========================================================
+// class KCompletion ===========================================================
 
-class QCompletion : public QObject {
+class KCompletion : public QObject {
 public:
 
     // structs -----------------------------------------------------------------
@@ -42,9 +46,8 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
     
-    QCompletion();
-
-    ~QCompletion();
+    KCompletion();
+    virtual ~KCompletion();
 
     // member functions --------------------------------------------------------
 
@@ -56,16 +59,25 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
-    QCompletion(const QCompletion &);
-    QCompletion &operator=(const QCompletion &);
 
-}; // class QCompletion ========================================================
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
+    KCompletion(const KCompletion &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
+    KCompletion &operator=(const KCompletion &);
+#endif
+
+}; // class KCompletion ========================================================
 
 
-// class QCompletionBase =======================================================
+// class KCompletionBase =======================================================
 
-class QCompletionBase {
+class KCompletionBase {
 public:
 
     // structs -----------------------------------------------------------------
@@ -76,13 +88,12 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QCompletionBase();
-        
-    ~QCompletionBase();
+    KCompletionBase();
+    virtual ~KCompletionBase();
 
     // member functions --------------------------------------------------------
 
-    QCompletion *completionObject(bool hsig = true);
+    KCompletion *completionObject(bool hsig = true);
 
     // operators ---------------------------------------------------------------
 
@@ -90,11 +101,20 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
-    QCompletionBase(const QCompletionBase &);
-    QCompletionBase &operator=(const QCompletionBase &);
 
-}; // class QCompletionBase ====================================================
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
+    KCompletionBase(const KCompletionBase &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
+    KCompletionBase &operator=(const KCompletionBase &);
+#endif
+
+}; // class KCompletionBase ====================================================
 
 
 #endif

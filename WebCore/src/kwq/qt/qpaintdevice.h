@@ -26,6 +26,10 @@
 #ifndef QPAINTDEVICE_H_
 #define QPAINTDEVICE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // class QPaintDevice ==========================================================
 
 class QPaintDevice {
@@ -36,7 +40,16 @@ public:
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
+    
     // constructors, copy constructors, and destructors ------------------------
+
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QPaintDevice() {}    
+#endif
+    
+    virtual ~QPaintDevice();
+    
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
 
@@ -45,6 +58,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QPaintDevice(const QPaintDevice &);
     QPaintDevice &operator=(const QPaintDevice &);
 

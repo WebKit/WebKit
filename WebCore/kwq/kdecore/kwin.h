@@ -26,6 +26,10 @@
 #ifndef KWIN_H_
 #define KWIN_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qobject.h>
 #include <qrect.h>
 #include <qstring.h>
@@ -53,7 +57,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-// add no-op constructor
+// add no-arg constructor
 #ifdef _KWQ_PEDANTIC_
     KWin() {}
 #endif

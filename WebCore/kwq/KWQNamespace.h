@@ -26,6 +26,10 @@
 #ifndef QNAMESPACE_H_
 #define QNAMESPACE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 class QColor;
 class QCursor;
 
@@ -116,8 +120,15 @@ public:
     // static member functions -------------------------------------------------
     // constructors, copy constructors, and destructors ------------------------
     
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
     Qt() {}
+#endif
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
     ~Qt() {}
+#endif
     
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -126,9 +137,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     Qt(const Qt &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     Qt &operator=(const Qt &);
+#endif
 
 }; // class Qt =================================================================
 

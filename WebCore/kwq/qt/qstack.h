@@ -26,6 +26,10 @@
 #ifndef QSTACK_H_
 #define QSTACK_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // class QStack ================================================================
 
 template<class T> class QStack {
@@ -39,7 +43,6 @@ public:
 
     QStack();
     QStack(const QStack<T> &);
-    
     ~QStack();
 
     // member functions --------------------------------------------------------

@@ -26,6 +26,10 @@
 #ifndef PART_H_
 #define PART_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <kurl.h>
 #include <qobject.h>
 #include <qvariant.h>
@@ -58,8 +62,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     Part();
-    
-    ~Part();
+    virtual ~Part();
 
     // member functions --------------------------------------------------------
 
@@ -72,9 +75,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     Part(const Part &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     Part &operator=(const Part &);
+#endif
 
 }; // class Part ===============================================================
 
@@ -93,8 +105,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     ReadOnlyPart();
-    
-    ~ReadOnlyPart();
+    virtual ~ReadOnlyPart();
 
     // member functions --------------------------------------------------------
 
@@ -106,9 +117,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     ReadOnlyPart(const ReadOnlyPart &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     ReadOnlyPart &operator=(const ReadOnlyPart &);
+#endif
 
 }; // class ReadOnlyPart =======================================================
 
@@ -126,10 +146,16 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
     
-    GUIActivateEvent();
-    
-    ~GUIActivateEvent();
-    
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    GUIActivateEvent() {}
+#endif
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~GUIActivateEvent() {}
+#endif
+        
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
 
@@ -137,9 +163,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     GUIActivateEvent(const GUIActivateEvent &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     GUIActivateEvent &operator=(const GUIActivateEvent &);
+#endif
 
 }; // class GUIActivateEvent ===================================================
 

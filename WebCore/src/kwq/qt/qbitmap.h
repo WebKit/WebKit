@@ -26,6 +26,10 @@
 #ifndef QBITMAP_H_
 #define QBITMAP_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qpixmap.h"
 #include "qimage.h"
 
@@ -44,7 +48,10 @@ public:
     QBitmap(int,int);
     QBitmap(const QBitmap &);
 
-    ~QBitmap();
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QBitmap() {}
+#endif
 
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------

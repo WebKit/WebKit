@@ -26,6 +26,10 @@
 #ifndef QBRUSH_H_
 #define QBRUSH_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qcolor.h"
 #include "qnamespace.h"
 
@@ -45,9 +49,7 @@ public:
     QBrush();
     QBrush(const QColor &);
     QBrush(const QBrush &);
-
     QBrush &operator=(const QBrush &);
-
     ~QBrush();
  
     // member functions --------------------------------------------------------

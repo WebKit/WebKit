@@ -26,6 +26,10 @@
 #ifndef QSTRING_H_
 #define QSTRING_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #define Fixed MacFixed
 #define Rect MacRect
 #define Boolean MacBoolean
@@ -267,8 +271,12 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no assignment
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QConstString &operator=(const QConstString &);
+#endif
 
 }; // class QConstString =======================================================
 

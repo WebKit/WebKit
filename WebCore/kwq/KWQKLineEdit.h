@@ -26,6 +26,10 @@
 #ifndef KLINEEDIT_H_
 #define KLINEEDIT_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qlineedit.h>
 
 #include <KWQCompletion.h>
@@ -34,7 +38,7 @@
 
 // class __class_name__ ========================================================
 
-class KLineEdit : public QLineEdit, public QCompletionBase {
+class KLineEdit : public QLineEdit, public KCompletionBase {
 public:
 
     // structs -----------------------------------------------------------------

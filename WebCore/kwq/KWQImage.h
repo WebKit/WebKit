@@ -26,6 +26,10 @@
 #ifndef QIMAGE_H_
 #define QIMAGE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qnamespace.h"
 #include "qcolor.h"
 
@@ -43,7 +47,6 @@ public:
 
     QImage();
     QImage(const QImage &);
-
     ~QImage();
 
     // member functions --------------------------------------------------------

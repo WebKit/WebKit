@@ -26,6 +26,10 @@
 #ifndef QCSTRING_H_
 #define QCSTRING_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // FIXME: does our implementation of QCString really need to inherit from
 // QByteArray and QArray?
 

@@ -26,6 +26,10 @@
 #ifndef KICONLOADER_H_
 #define KICONLOADER_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qpixmap.h>
 #include <qstring.h>
 #include <kinstance.h>

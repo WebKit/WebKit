@@ -26,6 +26,10 @@
 #ifndef KPROCESS_H_
 #define KPROCESS_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <signal.h>
 
 #include <qobject.h>

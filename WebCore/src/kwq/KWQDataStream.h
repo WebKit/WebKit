@@ -26,6 +26,10 @@
 #ifndef KWQDATASTREAM_H_
 #define KWQDATASTREAM_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qarray.h"
 #include "qstring.h"
 #include "qcstring.h"
@@ -51,6 +55,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
+    QDataStream();
     QDataStream(QByteArray, int);
     virtual ~QDataStream();
 
@@ -69,6 +74,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QDataStream(const QDataStream &);
     QDataStream &operator=(const QDataStream &);
 

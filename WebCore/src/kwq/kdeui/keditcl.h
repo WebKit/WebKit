@@ -26,6 +26,10 @@
 #ifndef KEDITCL_H_
 #define KEDITCL_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qwidget.h>
 #include <KWQFrame.h>
 #include <KWQScrollBar.h>

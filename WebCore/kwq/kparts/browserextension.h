@@ -26,6 +26,10 @@
 #ifndef BROWSEREXTENSION_H_
 #define BROWSEREXTENSION_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qpoint.h>
 #include <qevent.h>
 #include <KWQDataStream.h>
@@ -49,7 +53,6 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     KXMLGUIClient();
-    
     ~KXMLGUIClient();
     
     // member functions --------------------------------------------------------
@@ -59,21 +62,43 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     KXMLGUIClient(const KXMLGUIClient &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     KXMLGUIClient &operator=(const KXMLGUIClient &);
+#endif
 
 }; // class KXMLGUIClient ======================================================
 
 
 namespace KParts {
 
+// struct URLArgs ==============================================================
+
 struct URLArgs {
+
     QString frameName;
     QString serviceType;
-};
+    
+    URLArgs();
+    URLArgs( const URLArgs &);
+    URLArgs &operator=(const URLArgs &);    
+    virtual ~URLArgs();
+
+}; // struct URLArgs ===========================================================
+
+
+// struct WindowArgs ===========================================================
 
 struct WindowArgs {
+
     int x;
     int y;
     int width;
@@ -83,11 +108,17 @@ struct WindowArgs {
     bool toolBarsVisible;
     bool resizable;
     bool fullscreen;
-};
+
+    WindowArgs();
+    WindowArgs(const WindowArgs &);
+    WindowArgs &operator=(const WindowArgs &);
+
+}; // struct WindowArgs ========================================================
+
 
 // class BrowserExtension ======================================================
 
-class BrowserExtension {
+class BrowserExtension : public QObject {
 public:
 
     // structs -----------------------------------------------------------------
@@ -98,9 +129,12 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
     
-    BrowserExtension();
-    
-    ~BrowserExtension();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    BrowserExtension() {}
+#endif
+
+    virtual ~BrowserExtension();
     
     // member functions --------------------------------------------------------
 
@@ -120,16 +154,25 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     BrowserExtension(const BrowserExtension &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     BrowserExtension &operator=(const BrowserExtension &);
+#endif
 
 }; // class BrowserExtension ===================================================
 
 
 // class BrowserHostExtension ==================================================
 
-class BrowserHostExtension {
+class BrowserHostExtension : public QObject {
 public:
 
     // structs -----------------------------------------------------------------
@@ -141,7 +184,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     BrowserHostExtension();
-    ~BrowserHostExtension();
+    virtual ~BrowserHostExtension();
     
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -150,9 +193,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     BrowserHostExtension(const BrowserHostExtension &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     BrowserHostExtension &operator=(const BrowserHostExtension &);
+#endif
 
 }; // class BrowserHostExtension ===============================================
 

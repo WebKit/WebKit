@@ -26,6 +26,10 @@
 #ifndef QPAINTDEVICEMETRICS_H_
 #define QPAINTDEVICEMETRICS_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 class QPaintDevice;
 
 // class QPaintDeviceMetrics ===================================================
@@ -40,7 +44,16 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+#endif
+
     QPaintDeviceMetrics(const QPaintDevice *);
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QPaintDeviceMetrics() {}
+#endif
 
     // member functions --------------------------------------------------------
 
@@ -53,9 +66,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QPaintDeviceMetrics(const QPaintDeviceMetrics &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QPaintDeviceMetrics &operator=(const QPaintDeviceMetrics &);
+#endif
 
 }; // class QPaintDeviceMetrics ================================================
 

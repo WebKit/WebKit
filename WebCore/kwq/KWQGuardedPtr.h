@@ -26,6 +26,10 @@
 #ifndef QGUARDEDPTR_H_
 #define QGUARDEDPTR_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qobject.h"
 
 // class QGuardedPtr ===========================================================
@@ -52,14 +56,12 @@ public:
 
     // operators ---------------------------------------------------------------
 
+    QGuardedPtr &operator=(const QGuardedPtr &);
     operator T *() const;
     T *operator->() const;
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
-
-private:
-    QGuardedPtr &operator=(const QGuardedPtr &);
 
 }; // class QGuardedPtr ========================================================
 

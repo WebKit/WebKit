@@ -26,6 +26,10 @@
 #ifndef KCOMPLETIONBOX_H_
 #define KCOMPLETIONBOX_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "klistbox.h"
 
 // class KCompletionBox ========================================================

@@ -26,6 +26,10 @@
 #ifndef QLIST_H_
 #define QLIST_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQDef.h>
 #include <KWQCollection.h>
 
@@ -42,8 +46,7 @@ public:
     
     QList();
     QList(const QList<T> &);
-
-    virtual ~QList(); 
+    ~QList(); 
      
     // member functions --------------------------------------------------------
 
@@ -98,8 +101,12 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    QListIterator(const QList<T> &);
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QListIterator() {}
+#endif
 
+    QListIterator(const QList<T> &);
     ~QListIterator();
 
     // member functions --------------------------------------------------------
@@ -120,8 +127,12 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QListIterator<T>(const QListIterator<T> &);
+#endif
 
 }; // class QListIterator ======================================================
 

@@ -26,6 +26,10 @@
 #ifndef QPIXMAP_H_
 #define QPIXMAP_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qpaintdevice.h"
 #include "qcolor.h"
 #include "qstring.h"
@@ -54,7 +58,6 @@ public:
     QPixmap(const QByteArray&);
     QPixmap(int,int);
     QPixmap(const QPixmap &);
-    
     ~QPixmap();
 
     // member functions --------------------------------------------------------

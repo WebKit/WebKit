@@ -26,6 +26,10 @@
 #ifndef QBUFFER_H_
 #define QBUFFER_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQDef.h>
 
 #include "qarray.h"
@@ -44,7 +48,6 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QBuffer();
-
     ~QBuffer();
 
     // member functions --------------------------------------------------------
@@ -63,6 +66,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QBuffer(const QBuffer &);
     QBuffer &operator=(const QBuffer &);
 

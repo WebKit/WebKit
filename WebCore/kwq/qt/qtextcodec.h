@@ -26,6 +26,10 @@
 #ifndef QTEXTCODEC_H_
 #define QTEXTCODEC_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qstring.h"
 #include "qcstring.h"
 
@@ -41,8 +45,11 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
     
-    QTextDecoder();
-    
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QTextDecoder() {}
+#endif
+
     virtual ~QTextDecoder();
     
     // member functions --------------------------------------------------------
@@ -55,9 +62,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QTextDecoder(const QTextDecoder &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QTextDecoder &operator=(const QTextDecoder &);
+#endif
 
 }; // class QTextDecoder =======================================================
 
@@ -79,8 +95,11 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QTextCodec();
-    
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QTextCodec() {}
+#endif
+
     virtual ~QTextCodec();
 
     // member functions --------------------------------------------------------
@@ -100,9 +119,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QTextCodec(const QTextCodec &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QTextCodec &operator=(const QTextCodec &);
+#endif
 
 }; // class QTextCodec =========================================================
 

@@ -26,6 +26,10 @@
 #ifndef KGLOBALSETTINGS_H_
 #define KGLOBALSETTINGS_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 class QFont;
 
 // class KGlobalSettings =======================================================
@@ -48,7 +52,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
-// add no-op constructor
+// add no-arg constructor
 #ifdef _KWQ_PEDANTIC_
     KGlobalSettings() {}
 #endif

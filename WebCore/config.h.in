@@ -1,3 +1,6 @@
+#ifndef CONFIG_H_
+#define CONFIG_H_
+
 /* Define for compiling in KWQ land */
 #undef _KWQ_
 
@@ -847,3 +850,4 @@ int openpty(int *, int *, char *, struct termios *, struct winsize *);
 __END_DECLS
 #endif
 
+#endif 

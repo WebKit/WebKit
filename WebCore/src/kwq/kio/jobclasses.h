@@ -26,6 +26,10 @@
 #ifndef JOBCLASSES_H_
 #define JOBCLASSES_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qobject.h>
 #include <qstring.h>
 
@@ -43,8 +47,11 @@ public:
     // static member functions -------------------------------------------------
     // constructors, copy constructors, and destructors ------------------------
 
-    Job();
-    
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    Job() {}
+#endif
+
     virtual ~Job();
 
     // member functions --------------------------------------------------------
@@ -60,9 +67,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     Job(const Job &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     Job &operator=(const Job &);
+#endif
 
 }; // class Job ================================================================
 
@@ -80,9 +96,12 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    SimpleJob();
-    
-    virtual ~SimpleJob();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    SimpleJob() {}
+#endif
+
+    ~SimpleJob();
 
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -91,9 +110,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     SimpleJob(const SimpleJob &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     SimpleJob &operator=(const SimpleJob &);
+#endif
 
 }; // class SimpleJob ==========================================================
 
@@ -111,9 +139,15 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    TransferJob();
-    
-    virtual ~TransferJob();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    TransferJob() {}
+#endif
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~TransferJob() {}
+#endif
 
     // member functions --------------------------------------------------------
 
@@ -126,9 +160,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     TransferJob(const TransferJob &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     TransferJob &operator=(const TransferJob &);
+#endif
 
 }; // class TransferJob ========================================================
 

@@ -26,6 +26,10 @@
 #ifndef KSTATICDELETER_H_
 #define KSTATICDELETER_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // class KStaticDeleter ========================================================
 
 template <class T> class KStaticDeleter {

@@ -26,6 +26,10 @@
 #ifndef KWINMODULE_H_
 #define KWINMODULE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qobject.h>
 
 class QRect;

@@ -26,4 +26,8 @@
 #ifndef QLAYOUT_H_
 #define QLAYOUT_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #endif

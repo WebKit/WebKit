@@ -26,6 +26,10 @@
 #ifndef KLOCALE_H_
 #define KLOCALE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 class QString;
 
 QString i18n(const char* text);

@@ -26,6 +26,10 @@
 #ifndef QCHECKBOX_H_
 #define QCHECKBOX_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQButton.h>
 
 // class QCheckBox =============================================================
@@ -40,8 +44,17 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QCheckBox();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QCheckBox() {}
+#endif
+
     QCheckBox(QWidget *);
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QCheckBox() {}
+#endif
 
     // member functions --------------------------------------------------------
 
@@ -54,8 +67,10 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-     QCheckBox(const QCheckBox &);
-     QCheckBox &operator=(const QCheckBox &);
+    // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
+    QCheckBox(const QCheckBox &);
+    QCheckBox &operator=(const QCheckBox &);
      
 }; // class QCheckBox ==========================================================
 

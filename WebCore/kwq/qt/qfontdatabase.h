@@ -26,6 +26,10 @@
 #ifndef QFONTDATABASE_H_
 #define QFONTDATABASE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qvaluelist.h"
 #include "qfont.h"
 #include "qstring.h"
@@ -44,7 +48,10 @@ public:
     
     QFontDatabase();
 
-    ~QFontDatabase();
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QFontDatabase() {}
+#endif
     
     // member functions --------------------------------------------------------
 
@@ -63,9 +70,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QFontDatabase(const QFontDatabase &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QFontDatabase &operator=(const QFontDatabase &);
+#endif
 
 }; // class QFontDatabase ======================================================
 

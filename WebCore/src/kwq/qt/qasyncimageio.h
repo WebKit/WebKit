@@ -26,6 +26,10 @@
 #ifndef QASYNCIMAGEIO_H_
 #define QASYNCIMAGEIO_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // for memset
 #include <string.h> 
 
@@ -51,9 +55,15 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
-    QImageConsumer();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QImageConsumer() {}
+#endif
 
-    ~QImageConsumer();
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QImageConsumer() {}
+#endif
     
     // member functions --------------------------------------------------------
 
@@ -67,9 +77,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QImageConsumer(const QImageConsumer &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QImageConsumer &operator=(const QImageConsumer &);
+#endif
 
 }; // end class QImageConsumer
 
@@ -91,8 +110,12 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
-    QImageDecoder();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QImageDecoder() {}
+#endif
 
+    QImageDecoder(QImageConsumer *);
     ~QImageDecoder();
     
     // member functions --------------------------------------------------------
@@ -102,9 +125,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QImageDecoder(const QImageDecoder &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QImageDecoder &operator=(const QImageDecoder &);
+#endif
 
 }; // end class QImageDecoder
 
@@ -123,7 +155,11 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
-    QImageFormat();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QImageFormat() {}
+#endif
+
     virtual ~QImageFormat();
     
     // member functions --------------------------------------------------------
@@ -136,9 +172,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QImageFormat(const QImageFormat &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QImageFormat &operator=(const QImageFormat &);
+#endif
 
 }; // end class QImageFormat
 
@@ -157,7 +202,11 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
-    QImageFormatType();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QImageFormatType() {}
+#endif
+
     virtual ~QImageFormatType();
     
     // member functions --------------------------------------------------------
@@ -170,9 +219,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QImageFormatType(const QImageFormatType &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QImageFormatType &operator=(const QImageFormatType &);
+#endif
 
 }; // end class QImageFormatType
 

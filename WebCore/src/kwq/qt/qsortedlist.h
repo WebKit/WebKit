@@ -26,6 +26,10 @@
 #ifndef QSORTEDLIST_H_
 #define QSORTEDLIST_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qlist.h"
 
 // class QSortedList ===========================================================
@@ -42,7 +46,6 @@ public:
     
     QSortedList();
     QSortedList(const QSortedList<T> &);
-    
     ~QSortedList();
     
     // member functions --------------------------------------------------------

@@ -26,6 +26,10 @@
 #ifndef DCOPCLIENT_H_
 #define DCOPCLIENT_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qobject.h>
 #include <qcstring.h>
 

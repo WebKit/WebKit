@@ -26,6 +26,10 @@
 #ifndef KFILEITEM_H_
 #define KFILEITEM_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <netaccess.h>
 
 // class KFileItem =============================================================
@@ -44,6 +48,8 @@ public:
     KFileItem(const KIO::UDSEntry &, const KURL &, bool foo=false, 
         bool bar=false);
 
+    virtual ~KFileItem();
+
     // member functions --------------------------------------------------------
 
     bool isDir() const;
@@ -54,9 +60,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     KFileItem(const KFileItem &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     KFileItem &operator=(const KFileItem &);
+#endif
 
 }; // class KFileItem ==========================================================
 

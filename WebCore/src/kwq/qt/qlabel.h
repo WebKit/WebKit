@@ -26,6 +26,10 @@
 #ifndef QLABEL_H_
 #define QLABEL_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQFrame.h>
 #include "qwidget.h"
 #include "qstring.h"
@@ -42,10 +46,14 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QLabel() {}
+#endif
+
     QLabel(QWidget *parent);
     QLabel(const QString &, QWidget *);
-    
-    virtual ~QLabel();
+    ~QLabel();
 
     // member functions --------------------------------------------------------
 
@@ -59,6 +67,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QLabel(const QLabel &);
     QLabel &operator=(const QLabel &);
 

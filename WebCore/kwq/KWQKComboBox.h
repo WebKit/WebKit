@@ -26,13 +26,17 @@
 #ifndef KCOMBOBOX_H_
 #define KCOMBOBOX_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qcombobox.h>
 
 #include <KWQCompletion.h>
 
 // class KComboBox =============================================================
 
-class KComboBox : public QComboBox, public QCompletionBase {
+class KComboBox : public QComboBox, public KCompletionBase {
 public:
 
     // structs -----------------------------------------------------------------

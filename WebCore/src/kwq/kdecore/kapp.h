@@ -26,6 +26,10 @@
 #ifndef KAPP_H_
 #define KAPP_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <dcopclient.h>

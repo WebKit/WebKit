@@ -26,4 +26,8 @@
 #ifndef KCMDLINEARGS_H_
 #define KCMDLINEARGS_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #endif

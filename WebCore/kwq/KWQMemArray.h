@@ -26,6 +26,10 @@
 #ifndef QARRAY_H_
 #define QARRAY_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQDef.h>
 
 // class QArray ================================================================
@@ -40,13 +44,10 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    QArray();
+    QArray() {}
     QArray(int);
     QArray(const QArray<T> &);
-    
-    QArray<T> &operator=(const QArray<T> &);    
-    
-    ~QArray();
+    ~QArray() {}
     
     // member functions --------------------------------------------------------
 
@@ -60,6 +61,7 @@ public:
 
     // operators ---------------------------------------------------------------
 
+    QArray<T> &operator=(const QArray<T> &);    
     T &operator[](int) const;
     bool operator==(const QArray<T> &);    
     bool operator!=(const QArray<T> &);    

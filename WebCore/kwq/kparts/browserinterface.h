@@ -26,6 +26,10 @@
 #ifndef BROWSERINTERFACE_H_
 #define BROWSERINTERFACE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qobject.h>
 #include <qvariant.h>
 
@@ -44,9 +48,8 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    BrowserInterface(QObject *parent, const char *name = 0);
-
-    ~BrowserInterface();
+    BrowserInterface(QObject *parent, const char *name=0);
+    virtual ~BrowserInterface();
 
     // member functions --------------------------------------------------------
 
@@ -58,9 +61,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     BrowserInterface(const BrowserInterface &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     BrowserInterface &operator=(const BrowserInterface &);
+#endif
 
 }; // class BrowserInterface ===================================================
 

@@ -26,6 +26,10 @@
 #ifndef KCHARSETS_H_
 #define KCHARSETS_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qfont.h>
 
 class QString;

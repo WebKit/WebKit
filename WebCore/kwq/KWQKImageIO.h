@@ -26,6 +26,10 @@
 #ifndef KIMAGEIO_H_
 #define KIMAGEIO_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qstringlist.h>
 
 // class KImageIO ==============================================================
@@ -48,10 +52,16 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
-    KImageIO();
-    
-    ~KImageIO();
-    
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    KImageIO() {}
+#endif
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~KImageIO() {}
+#endif
+        
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
 
@@ -59,9 +69,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     KImageIO(const KImageIO &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     KImageIO &operator=(const KImageIO &);
+#endif
 
 }; // class KImageIO ===========================================================
 

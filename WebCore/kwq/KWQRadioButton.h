@@ -26,6 +26,10 @@
 #ifndef QRADIOBUTTON_H_
 #define QRADIOBUTTON_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQButton.h>
 
 #include "qwidget.h"
@@ -42,10 +46,17 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QRadioButton();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QRadioButton() {}
+#endif
+
     QRadioButton(QWidget *);
     
-    ~QRadioButton();
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QRadioButton() {}
+#endif
 
     // member functions --------------------------------------------------------
 
@@ -58,6 +69,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QRadioButton(const QRadioButton &);
     QRadioButton &operator=(const QRadioButton &);
 

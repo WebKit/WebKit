@@ -26,6 +26,10 @@
 #ifndef QFONTMETRICS_H_
 #define QFONTMETRICS_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qrect.h"
 #include "qsize.h"
 #include "qstring.h"
@@ -46,7 +50,6 @@ public:
     QFontMetrics();
     QFontMetrics(const QFont &);
     QFontMetrics(const QFontMetrics &);
-    
     ~QFontMetrics();
 
     // member functions --------------------------------------------------------

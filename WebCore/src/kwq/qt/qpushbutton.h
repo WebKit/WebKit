@@ -26,6 +26,10 @@
 #ifndef QPUSHBUTTON_H_
 #define QPUSHBUTTON_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQButton.h>
 
 #include "qwidget.h"
@@ -43,10 +47,13 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QPushButton();
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QPushButton() {}
+#endif
+
     QPushButton(QWidget *);
     QPushButton(const QString &text, QWidget *parent, const char* name=0);
-
     ~QPushButton();
 
     // member functions --------------------------------------------------------
@@ -57,6 +64,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QPushButton(const QPushButton &);
     QPushButton &operator=(const QPushButton &);
 

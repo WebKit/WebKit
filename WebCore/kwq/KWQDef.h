@@ -26,6 +26,10 @@
 #ifndef KWQDEF_H_
 #define KWQDEF_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned uint;

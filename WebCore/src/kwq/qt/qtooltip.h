@@ -26,6 +26,10 @@
 #ifndef QTOOLTIP_H_
 #define QTOOLTIP_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qnamespace.h"
 #include "qpalette.h"
 #include "qwidget.h"
@@ -47,7 +51,10 @@ public:
     
     QToolTip(QWidget *);
     
-    ~QToolTip();
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QToolTip() {}
+#endif
 
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -56,9 +63,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QToolTip(const QToolTip &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QToolTip &operator=(const QToolTip &);
+#endif
 
 }; // class QToolTip ===========================================================
 

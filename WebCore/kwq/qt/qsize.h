@@ -26,6 +26,10 @@
 #ifndef QSIZE_H_
 #define QSIZE_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // class QSize =================================================================
 
 class QSize {
@@ -42,7 +46,10 @@ public:
     QSize(int,int);
     QSize(const QSize &);
 
-    ~QSize();
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QSize() {}
+#endif
 
     // member functions --------------------------------------------------------
 

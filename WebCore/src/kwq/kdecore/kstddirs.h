@@ -26,6 +26,10 @@
 #ifndef KSTDDIRS_H_
 #define KSTDDIRS_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qstring.h>
 #include "kglobal.h"
 

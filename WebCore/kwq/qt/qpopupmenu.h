@@ -26,6 +26,10 @@
 #ifndef QPOPUPMENU_H_
 #define QPOPUPMENU_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // class QPopupMenu ============================================================
 
 class QPopupMenu {
@@ -39,7 +43,6 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QPopupMenu();
-    
     ~QPopupMenu();
     
     // member functions --------------------------------------------------------
@@ -50,6 +53,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QPopupMenu(const QPopupMenu &);
     QPopupMenu &operator=(const QPopupMenu &);
 

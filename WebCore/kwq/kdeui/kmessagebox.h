@@ -26,6 +26,10 @@
 #ifndef KMESSAGEBOX_H_
 #define KMESSAGEBOX_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qwidget.h>
 #include <qstring.h>
 
@@ -64,7 +68,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
-// add no-op constructor
+// add no-arg constructor
 #ifdef _KWQ_PEDANTIC_
     KMessageBox() {}
 #endif

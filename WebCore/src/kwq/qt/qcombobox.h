@@ -26,6 +26,10 @@
 #ifndef QCOMBOBOX_H_
 #define QCOMBOBOX_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <KWQListBox.h>
 #include "qwidget.h"
 
@@ -43,7 +47,6 @@ public:
 
     QComboBox(QWidget *parent=0, const char *name=0);
     QComboBox(bool rw, QWidget *parent=0, const char *name=0);
-    
     ~QComboBox();
      
     // member functions --------------------------------------------------------
@@ -64,6 +67,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QComboBox(const QComboBox &);
     QComboBox &operator=(const QComboBox &);
 

@@ -26,6 +26,10 @@
 #ifndef KFILEDIALOG_H_
 #define KFILEDIALOG_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qstring.h>
 #include <qwidget.h>
 

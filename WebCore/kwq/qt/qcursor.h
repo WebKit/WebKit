@@ -26,6 +26,10 @@
 #ifndef QCURSOR_H
 #define QCURSOR_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // class QCursor ===============================================================
 
 class QCursor {
@@ -39,9 +43,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
      QCursor();
-     
      QCursor(const QCursor &);
-     
      ~QCursor();
       
     // member functions --------------------------------------------------------

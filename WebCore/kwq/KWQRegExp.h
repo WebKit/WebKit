@@ -26,6 +26,10 @@
 #ifndef QREGEXP_H_
 #define QREGEXP_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "qstring.h"
 
 // class QRegExp ===============================================================
@@ -43,7 +47,6 @@ public:
     QRegExp();
     QRegExp(const QString &);
     QRegExp(const QRegExp &);    
-
     ~QRegExp();
 
     // member functions --------------------------------------------------------

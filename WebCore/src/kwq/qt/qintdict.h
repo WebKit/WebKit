@@ -26,4 +26,8 @@
 #ifndef QINTDICT_H_
 #define QINTDICT_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #endif

@@ -26,6 +26,10 @@
 #ifndef KWQSCROLLVIEW_H_
 #define KWQSCROLLVIEW_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qwidget.h>
 #include <qpalette.h>
 
@@ -42,9 +46,12 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    QScrollBar();
+    QScrollBar(QWidget *);
     
-    ~QScrollBar();
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QScrollBar() {}
+#endif
 
     // member functions --------------------------------------------------------
 
@@ -56,7 +63,7 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QScrollBar(const QScrollBar &);
     QScrollBar &operator=(const QScrollBar &);
 
