@@ -184,6 +184,7 @@
 </dict>
 </plist>
 ";
+			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -2135,6 +2136,9 @@
 			fileRef = 84CA5F7E042685E800CA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		84D4BFF70348EF7600CA2ACA = {

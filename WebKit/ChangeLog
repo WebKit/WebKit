@@ -1,3 +1,11 @@
+2003-04-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris.
+
+	- fixed 3224690 - REGRESSION: Download related errors aren't preserved across launches
+
+        * WebKit.pbproj/project.pbxproj: Install WebKitErrorsPrivate.h as SPI.
+
 2003-04-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
