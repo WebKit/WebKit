@@ -1,5 +1,10 @@
 2002-07-15  Darin Adler  <darin@apple.com>
 
+        * WebCore.pbproj/project.pbxproj: Removed KWQKPrinter.mm.
+        * kwq/KWQKPrinter.mm: Removed.
+
+2002-07-15  Darin Adler  <darin@apple.com>
+
         * WebCore.pbproj/project.pbxproj: Removed unused qpopupmenu.h.
         * kwq/kdecore/ksimpleconfig.h: Removed unnecessary include of <config.h>.
         * kwq/kio/global.h: Removed unnecessary include of <config.h>.
