@@ -1,3 +1,15 @@
+2002-11-24  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3081946 - bookmarklet reports the wrong "windowfull" size
+
+	This isn't really beta 1 material but the fix was so tirivial I
+	couldn't resist.
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet): Use contentWidth and contentHeight
+	for document.width and document.height instead of visibleWidth for
+	both.
+
 2002-11-22  Darin Adler  <darin@apple.com>
 
         * khtml/ecma/kjs_window.cpp: Remove _COLLECTOR hack.

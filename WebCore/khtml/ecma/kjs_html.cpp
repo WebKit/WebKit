@@ -245,9 +245,9 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
     case LastModified:
       return String(doc.lastModified());
     case Height:
-      return Number(view ? view->visibleWidth() : 0);
+      return Number(view ? view->contentsHeight() : 0);
     case Width:
-      return Number(view ? view->visibleWidth() : 0);
+      return Number(view ? view->contentsWidth() : 0);
     case Dir:
       return String(body.dir());
     }
