@@ -112,8 +112,6 @@
 
 -(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
 {
-    newRequest = [super handle:h willSendRequest:newRequest];
-    
     ASSERT(newRequest != nil);
 
     NSURL *URL = [newRequest URL];
@@ -125,7 +123,10 @@
     if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
         [newRequest setCookiePolicyBaseURL:URL];
     }
-    
+
+    // note super will make a copy for us, so reassigning newRequest is important
+    newRequest = [super handle:h willSendRequest:newRequest];
+
     // Don't set this on the first request.  It is set
     // when the main load was started.
     [dataSource _setRequest:newRequest];

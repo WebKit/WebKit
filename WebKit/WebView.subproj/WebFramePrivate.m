@@ -38,6 +38,7 @@ static const char * const stateNames[] = {
     "WebFrameStateProvisional",
     "WebFrameStateCommittedPage",
     "WebFrameStateLayoutAcceptable",
+    "WebFrameStateCompleting",
     "WebFrameStateComplete"
 };
 
@@ -388,6 +389,7 @@ static const char * const stateNames[] = {
 
         case WebFrameStateProvisional:
         case WebFrameStateComplete:
+        case WebFrameStateCompleting:
         case WebFrameStateLayoutAcceptable:
         {
             break;
@@ -506,6 +508,7 @@ static const char * const stateNames[] = {
         
         case WebFrameStateCommittedPage:
         case WebFrameStateLayoutAcceptable:
+        case WebFrameStateCompleting:
         case WebFrameStateComplete:
         default:
         {
@@ -601,6 +604,7 @@ static const char * const stateNames[] = {
                 // Should instead make sure the bridge/part is in the proper state even for
                 // non-HTML content, or make a call to the document and let it deal with the bridge.
 
+                [self _setState:WebFrameStateCompleting];
                 if ([ds isDocumentHTML]) {
                     [_private->bridge end];
                 }
@@ -608,8 +612,8 @@ static const char * const stateNames[] = {
                 // Important to flip the state after we end the load, because client redirects will
                 // come out of those, and we want to treat them as part of the same op from the
                 //user's point of view. But it's possible we that inside the call to
-                // end we may navigate, so we have to check for that.
-                if ([self _state] != WebFrameStateProvisional) {
+                // end we may navigate, so we have to check for a state change since calling end.
+                if ([self _state] == WebFrameStateCompleting) {
                     [self _setState:WebFrameStateComplete];
                 }
                 
@@ -680,6 +684,9 @@ static const char * const stateNames[] = {
             return;
         }
         
+        case WebFrameStateCompleting:
+            return;
+
         case WebFrameStateComplete:
         {
             LOG(Loading, "%@:  checking complete, current state WebFrameStateComplete", [self name]);
@@ -778,7 +785,16 @@ static const char * const stateNames[] = {
         [[itemURL _web_URLByRemovingFragment] isEqual: [currentURL _web_URLByRemovingFragment]] &&
         (!_private->children || ![_private->children count]))
     {
+        // must do this maintenance here, since we don't go through a real page reload
+        [self _saveScrollPositionToItem:[_private currentItem]];
+        // FIXME: form state might want to be saved here too
+
         [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
+    
+        // must do this maintenance here, since we don't go through a real page reload
+        [_private setCurrentItem:item];
+        [self _restoreScrollPosition];
+
         [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:_private->dataSource];
     } else {
         request = [[WebResourceRequest alloc] initWithURL:itemURL];
@@ -1044,21 +1060,25 @@ static const char * const stateNames[] = {
     NSURL *URL = [request URL];
     WebDataSource *dataSrc = [self dataSource];
 
-    // save scroll position before we open URL, which will jump to anchor
-    [self _saveScrollPositionToItem:[_private currentItem]];
-    
-    // ???Might need to save scroll-state, form-state for all other frames
-    
-    ASSERT(![_private previousItem]);
-    // will save form state to current item, since prevItem not set
-    [_private->bridge openURL:[URL absoluteString] reload:NO headers:nil];
+    BOOL isRedirect = _private->instantRedirectComing;
+    _private->instantRedirectComing = NO;
+
     [dataSrc _setURL:URL];
-    // NB: must happen after _setURL, since we add based on the current request
-    [self _addBackForwardItemClippedAtTarget:NO];
-    // This will clear previousItem from the rest of the frame tree tree that didn't
-    // doing any loading.  We need to make a pass on this now, since for anchor nav
-    // we'll not go through a real load and reach Completed state
-    [self _checkLoadComplete];
+    if (!isRedirect) {
+        ASSERT(![_private previousItem]);
+        // NB: must happen after _setURL, since we add based on the current request.
+        // Must also happen before we openURL and displace the scroll position, since
+        // adding the BF item will save away scroll state.
+        [self _addBackForwardItemClippedAtTarget:NO];
+    }
+    [_private->bridge openURL:[URL absoluteString] reload:NO headers:nil];
+    if (!isRedirect) {
+        // This will clear previousItem from the rest of the frame tree tree that didn't
+        // doing any loading.  We need to make a pass on this now, since for anchor nav
+        // we'll not go through a real load and reach Completed state
+        [self _checkLoadComplete];
+    }
+
     [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSrc];
 }
 

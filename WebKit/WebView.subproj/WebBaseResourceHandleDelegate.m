@@ -142,10 +142,10 @@
         [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
     }    
     [currentURL release];
-    currentURL = [[newRequest URL] retain];
+    currentURL = [[request URL] retain];
     [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:[dataSource controller]];
 
-    return newRequest;
+    return request;
 }
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
