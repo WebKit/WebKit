@@ -1,3 +1,13 @@
+2002-10-28  Don Melton  <gramps@apple.com>
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::write):
+
+	Backed our Dave's whitespace hack because it was adding newlines, i.e.
+	vertical margins, to web pages all over.
+
 2002-10-28  Darin Adler  <darin@apple.com>
 
 	- fixed 3015800 -- bad URL error - unescaped # in URL
