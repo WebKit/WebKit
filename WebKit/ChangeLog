@@ -1,3 +1,5 @@
+=== Safari-169 ===
+
 2004-10-29  Chris Blumenberg  <cblu@apple.com>
 
         * WebKit.exp: added _WebPlugInModeKey, forgot to add it earlier
