@@ -217,7 +217,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 
 	// Turn on local font cache, in addition to the system cache.
 	// See 3835148
-	//CGFontSetShouldUseMulticache(true);
+	CGFontSetShouldUseMulticache(true);
 	
         CGFontCache *fontCache;
         fontCache = CGFontCacheGetLocalCache();

@@ -1,5 +1,17 @@
 2004-12-20  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3884448> WebKit should turn on CG local font cache
+
+	Enable mutli-tier font caching.  We should see a performance boost with this
+	change.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (+[WebTextRendererFactory createSharedFactory]):
+
+2004-12-20  Richard Williamson   <rjw@apple.com>
+
 	Fix image decoding to separately decode image meta data from actual image bits.  I
 	incorrectly consolidated decode of meta data and image bits resulting in a huge
 	performance regression.
