@@ -43,6 +43,7 @@ public:
     };
 
     virtual bool isRenderInline() const { return true; }
+    virtual bool childrenInline() const { return true; }
     
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
     void splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock, RenderFlow* middleBlock,

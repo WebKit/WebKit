@@ -1,5 +1,17 @@
 2003-01-31  David Hyatt  <hyatt@apple.com>
 
+	Fix regression that broke John's site.  RenderInline needs
+	to implement childrenInline() so that it can return true.
+	I pulled this method out of RenderFlow and into RenderBlock,
+	which caused RenderInline to use RenderObject's method (and
+	that one returns false).
+	
+        Reviewed by rjw
+
+        * khtml/rendering/render_inline.h:
+
+2003-01-31  David Hyatt  <hyatt@apple.com>
+
 	Fix for crash on espn.com.  Revert my change to make 
 	containingBlock() return 0 for the root.  Put it back to the
 	old behavior, where the root returns itself when you ask for
