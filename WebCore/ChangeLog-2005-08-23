@@ -1,3 +1,11 @@
+2005-02-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4005435> Safari hung while pasting text into a <textarea> (Panther-only)
+
+        * kwq/KWQTextEdit.mm: (QTextEdit::setScrollBarModes): Don't setAutohidesScrollers:YES on Panther.
+
 2005-02-21  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
