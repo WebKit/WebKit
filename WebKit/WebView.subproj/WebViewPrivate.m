@@ -10,6 +10,7 @@
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
+#import <WebKit/WebDownload.h>
 #import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
@@ -18,7 +19,6 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
@@ -229,9 +229,9 @@
     ASSERT(URL);
     
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    [NSURLDownload _downloadWithSource:request
-                              delegate:_private->downloadDelegate
-                             directory:[directory isAbsolutePath] ? directory : nil];
+    [WebDownload _downloadWithSource:request
+                            delegate:_private->downloadDelegate
+                           directory:[directory isAbsolutePath] ? directory : nil];
     [request release];
 }
 
@@ -465,6 +465,12 @@
 
 - (void)_cacheResourceLoadDelegateImplementations
 {
+    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didCancelAuthenticationChallenge:fromDataSource:)])
+        _private->resourceLoadDelegateImplementations.delegateImplementsDidCancelAuthenticationChallenge = YES;
+
+    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:)])
+        _private->resourceLoadDelegateImplementations.delegateImplementsDidReceiveAuthenticationChallenge = YES;
+
     if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didFinishLoadingFromDataSource:)])
         _private->resourceLoadDelegateImplementations.delegateImplementsDidFinishLoadingFromDataSource = YES;
     if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didReceiveContentLength:fromDataSource:)])

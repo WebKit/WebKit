@@ -3,13 +3,16 @@
      Copyright 2003, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebDefaultResourceLoadDelegate.h>
+
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLConnection.h>
+#import <WebFoundation/NSURLConnectionAuthenticationChallenge.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
 #import <WebKit/WebDataSource.h>
-#import <WebKit/WebDefaultResourceLoadDelegate.h>
+#import <WebKit/WebPanelAuthenticationHandler.h>
 #import <WebKit/WebView.h>
 
 
@@ -36,6 +39,18 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
 {
     return newRequest;
 }
+
+- (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
+{
+    NSWindow *window = [wv hostWindow] ? [wv hostWindow] : [wv window];
+    [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
+}
+
+- (void)webView:(WebView *)wv resource:(id)identifier didCancelAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
+{
+    [(WebPanelAuthenticationHandler *)[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
+}
+
 
 -(void)webView: (WebView *)wv resource:identifier didReceiveResponse: (NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource
 {

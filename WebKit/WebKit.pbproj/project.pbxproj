@@ -215,8 +215,6 @@
 				517FA6AC03709FCE00CA2D3A,
 				F8CA15B9029A39D901000122,
 				93154EF303A41270008635CE,
-				F8CA15BB029A39D901000122,
-				F8CA15C2029A3E0D01000122,
 				F5A672BD0263866E01000102,
 				F5EBC45802134BC301CA1520,
 				931A72D303265920008635CE,
@@ -293,6 +291,8 @@
 				70ECD6CE043B727400A80181,
 				515E27CD0458C86500CA2D3A,
 				515E27D10458CA4B00CA2D3A,
+				65840820045E752600000128,
+				6578F5E0045F817400000128,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -340,7 +340,6 @@
 				517FA6AE03709FCE00CA2D3A,
 				F8CA15BA029A39D901000122,
 				93154EF403A41270008635CE,
-				F8CA15BC029A39D901000122,
 				F5A672BE0263866E01000102,
 				F5EBC45A02134BC301CA1520,
 				83E4AF49036652150000E506,
@@ -404,6 +403,7 @@
 				51443F9E0429392B00CA2D3A,
 				70ECD6CF043B727400A80181,
 				515E27D20458CA4B00CA2D3A,
+				6578F5E1045F817400000128,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -501,6 +501,8 @@
 				517FA6A903709FCE00CA2D3A,
 				517FA6AA03709FCE00CA2D3A,
 				517FA6AB03709FCE00CA2D3A,
+				6578F5DE045F817400000128,
+				6578F5DF045F817400000128,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -1496,6 +1498,33 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework/Versions/A/WebKit\" \"${SYMROOT}/WebKit.framework/Versions/A/WebKit\" ;\n    ditto \"${SYMROOT}/WebKit.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework/Versions/A/WebKit\";\nelse\n    ditto \"${SYMROOT}/WebKit.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/WebKit.framework\"\n    strip -S \"${DSTROOT}/AppleInternal/Library/Frameworks/WebKit.framework/Versions/A/WebKit\"\nfi";
 		};
+		6578F5DE045F817400000128 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebDownload.h;
+			refType = 4;
+		};
+		6578F5DF045F817400000128 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebDownload.m;
+			refType = 4;
+		};
+		6578F5E0045F817400000128 = {
+			fileRef = 6578F5DE045F817400000128;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		6578F5E1045F817400000128 = {
+			fileRef = 6578F5DF045F817400000128;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		657D8FA10366687600FA1ED0 = {
 			fileRef = 513D422E034CF55A00CA2ACD;
 			isa = PBXBuildFile;
@@ -1558,6 +1587,18 @@
 		};
 		657D8FA903666B0400FA1ED0 = {
 			fileRef = 8398847A03426FB000BC5F5E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6584081F045E752600000128 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebAuthenticationChallenge.h;
+			refType = 4;
+		};
+		65840820045E752600000128 = {
+			fileRef = 6584081F045E752600000128;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2233,6 +2274,7 @@
 				51A8B57A042834F700CA2D3A,
 				51A8B57D0428353A00CA2D3A,
 				51A8B57E0428353A00CA2D3A,
+				6584081F045E752600000128,
 			);
 			isa = PBXGroup;
 			name = WebView;
@@ -3654,10 +3696,6 @@
 				F8CA15B6029A39D901000122,
 				93154EF103A41270008635CE,
 				93154EF203A41270008635CE,
-				F8CA15B7029A39D901000122,
-				F8CA15B8029A39D901000122,
-				F8CA15C1029A3E0D01000122,
-				F8CA15C1029A3E0D01000122,
 				9345D17B0365BF35008635CE,
 			);
 			isa = PBXGroup;
@@ -3677,18 +3715,6 @@
 			path = WebAuthenticationPanel.m;
 			refType = 4;
 		};
-		F8CA15B7029A39D901000122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = WebStandardPanels.h;
-			refType = 4;
-		};
-		F8CA15B8029A39D901000122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = WebStandardPanels.m;
-			refType = 4;
-		};
 		F8CA15B9029A39D901000122 = {
 			fileRef = F8CA15B5029A39D901000122;
 			isa = PBXBuildFile;
@@ -3697,33 +3723,6 @@
 		};
 		F8CA15BA029A39D901000122 = {
 			fileRef = F8CA15B6029A39D901000122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F8CA15BB029A39D901000122 = {
-			fileRef = F8CA15B7029A39D901000122;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		F8CA15BC029A39D901000122 = {
-			fileRef = F8CA15B8029A39D901000122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F8CA15C1029A3E0D01000122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = WebStandardPanelsPrivate.h;
-			refType = 4;
-		};
-		F8CA15C2029A3E0D01000122 = {
-			fileRef = F8CA15C1029A3E0D01000122;
 			isa = PBXBuildFile;
 			settings = {
 			};

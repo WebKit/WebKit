@@ -12,7 +12,6 @@
 #import <WebFoundation/WebNSURLExtras.h>
 
 #import <WebKit/WebNSControlExtras.h>
-#import <WebKit/WebStandardPanelsPrivate.h>
 
 #define WebAuthenticationPanelNibName @"WebAuthenticationPanel"
 

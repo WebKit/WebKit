@@ -19,6 +19,8 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 #define NUM_LOCATION_CHANGE_DELEGATE_SELECTORS	10
 
 typedef struct _WebResourceDelegateImplementationCache {
+    uint delegateImplementsDidCancelAuthenticationChallenge:1;
+    uint delegateImplementsDidReceiveAuthenticationChallenge:1;
     uint delegateImplementsDidReceiveResponse:1;
     uint delegateImplementsDidReceiveContentLength:1;
     uint delegateImplementsDidFinishLoadingFromDataSource:1;

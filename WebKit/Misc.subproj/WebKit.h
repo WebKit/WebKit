@@ -8,6 +8,7 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
+#import <WebKit/WebDownload.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>
@@ -17,6 +18,5 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebStandardPanels.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebUIDelegate.h>

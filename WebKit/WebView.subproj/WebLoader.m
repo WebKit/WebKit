@@ -19,7 +19,6 @@
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
 @implementation WebBaseResourceHandleDelegate
@@ -61,7 +60,6 @@
     [self _releaseResources];
     [request release];
     [response release];
-    [currentURL release];
     [super dealloc];
 }
 
@@ -169,24 +167,37 @@
     // Store a copy of the request.
     [request autorelease];
 
-    if (currentURL) {
-        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
-        [currentURL release];
-        currentURL = nil;
-    }
-    
     // Client may return a nil request, indicating that the request should be aborted.
     if (newRequest){
         request = [newRequest copy];
-        currentURL = [[request URL] retain];
-        if (currentURL)
-            [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:controller];
     }
     else {
         request = nil;
     }
     
     return request;
+}
+
+- (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge
+{
+    ASSERT(con == connection);
+    ASSERT(!reachedTerminalState);
+
+    if (implementations.delegateImplementsDidReceiveAuthenticationChallenge)
+        [resourceLoadDelegate webView:controller resource:identifier didReceiveAuthenticationChallenge:challenge fromDataSource:dataSource];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didReceiveAuthenticationChallenge:challenge fromDataSource:dataSource];
+}
+
+-(void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge
+{
+    ASSERT(con == connection);
+    ASSERT(!reachedTerminalState);
+
+    if (implementations.delegateImplementsDidCancelAuthenticationChallenge)
+        [resourceLoadDelegate webView:controller resource:identifier didCancelAuthenticationChallenge:challenge fromDataSource:dataSource];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didCancelAuthenticationChallenge:challenge fromDataSource:dataSource];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
@@ -237,9 +248,6 @@
     else
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
 
-    ASSERT(currentURL);
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
-
     [self _releaseResources];
 }
 
@@ -250,10 +258,6 @@
     
     [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
-    // currentURL may be nil if the request was aborted
-    if (currentURL)
-        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
-
     [self _releaseResources];
 }
 
@@ -263,10 +267,6 @@
 
     [connection cancel];
     
-    // currentURL may be nil if the request was aborted
-    if (currentURL)
-        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
-
     if (error) {
         [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }

@@ -1,3 +1,67 @@
+2003-04-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- Adjusted for authentication API change - now we expect
+	authentication via the connection delegate, not a separate global
+	authentication handler
+
+        * Misc.subproj/WebKit.h: Include WebDownload.h
+        * Misc.subproj/WebDownload.h: Added.
+        * Misc.subproj/WebDownload.m: Added - this new class is just like NSURLDownload
+	but if the standard auth delegate methods are not implemented, it prompts using
+	the standard AppKit sheet.
+        * Panels.subproj/WebPanelAuthenticationHandler.h:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        (+[WebPanelAuthenticationHandler sharedHandler]): New method to get a shared
+	handler, since we no logner register an instance with WebFoundation.
+        (-[WebPanelAuthenticationHandler startAuthentication:window:]): Do things
+	using the new API.
+        (-[WebPanelAuthenticationHandler _authenticationDoneWithChallenge:result:]):
+	Likewise.
+        * WebKit.exp: Export WebDownload.
+        * WebKit.pbproj/project.pbxproj: Add new files to  build.
+
+	- Removed WebStandardPanels - this is removed from the API.
+        
+	* Panels.subproj/WebStandardPanels.h: Removed.
+        * Panels.subproj/WebStandardPanels.m: Removed.
+        * Panels.subproj/WebStandardPanelsPrivate.h: Removed.
+        * Panels.subproj/WebAuthenticationPanel.m: Remove WebStandardPanels.h import.
+
+	- Added new resource load delegate auth methods:
+	
+	* WebView.subproj/WebResourceLoadDelegate.h:
+
+	- Use WebDownload where appropriate, and remove use of WebStandardPanels:
+	
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didReceiveAuthenticationChallenge:]):
+	Pass to resource load delegate.
+	(-[WebBaseResourceHandleDelegate connection:didCancelAuthenticationChallenge:]):
+	Likewise.
+        (-[WebBaseResourceHandleDelegate dealloc]): Don't track currentURL any more.
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]): Likewise.
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]): Likewise.
+        (-[WebBaseResourceHandleDelegate connection:didFailLoadingWithError:]): Likewise.
+        (-[WebBaseResourceHandleDelegate cancelWithError:]): Likewise.
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:resource:didReceiveAuthenticationChallenge:fromDataSource:]): 
+	Prompt using the standard panel.
+
+        (-[WebDefaultResourceLoadDelegate webView:resource:didCancelAuthenticationChallenge:fromDataSource:]):
+	Cancel prompting using the standard panel.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): Use WebDownload instead
+	of NSURLDownload.
+	* WebView.subproj/WebView.h: Remove unneeded @class directives,
+	and mention WebDownload instead of NSURLDownload.
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _downloadURL:toDirectory:]): Use WebDownload instead of NSURLDownload.
+        (-[WebView _cacheResourceLoadDelegateImplementations]): Track auth methods too.
+
 2003-04-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

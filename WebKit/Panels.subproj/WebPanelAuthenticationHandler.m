@@ -7,12 +7,23 @@
 
 #import <WebKit/WebPanelAuthenticationHandler.h>
 #import <WebKit/WebAuthenticationPanel.h>
-#import <WebKit/WebStandardPanels.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/NSURLConnectionAuthenticationChallenge.h>
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
 @implementation WebPanelAuthenticationHandler
+
+WebPanelAuthenticationHandler *sharedHandler;
+
++ (id)sharedHandler
+{
+    if (sharedHandler == nil) {
+	sharedHandler = [[self alloc] init];
+    }
+
+    return sharedHandler;
+}
 
 -(id)init
 {
@@ -31,28 +42,16 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
     [super dealloc];
 }
 
-// WebAuthenticationHandler methods
--(BOOL)isReadyToStartAuthentication:(NSURLAuthenticationChallenge *)challenge
+-(void)startAuthentication:(NSURLConnectionAuthenticationChallenge *)challenge window:(NSWindow *)w
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[[challenge protectionSpace] URL]];
-
-    if (window == nil) {
-        window = WebModalDialogPretendWindow;
+    if ([w attachedSheet] != nil) {
+	w = nil;
     }
 
-    return [windowToPanel objectForKey:window] == nil;
-}
-
--(void)startAuthentication:(NSURLAuthenticationChallenge *)challenge
-{
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[[challenge protectionSpace] URL]];
-
-    if (window == nil) {
-        window = WebModalDialogPretendWindow;
-    }
+    id window = w ? (id)w : (id)WebModalDialogPretendWindow;
 
     if ([windowToPanel objectForKey:window] != nil) {
-        [challenge cancel];
+        [[challenge connection] cancel];
         return;
     }
 
@@ -77,7 +76,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
     }
 }
 
--(void)_authenticationDoneWithChallenge:(NSURLAuthenticationChallenge *)challenge result:(NSURLCredential *)credential
+-(void)_authenticationDoneWithChallenge:(NSURLConnectionAuthenticationChallenge *)challenge result:(NSURLCredential *)credential
 {
     id window = [challengeToWindow objectForKey:challenge];
     if (window != nil) {
@@ -85,7 +84,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
         [challengeToWindow removeObjectForKey:challenge];
     }
 
-    [challenge useCredential:credential];
+    [[challenge connection] useCredential:credential forAuthenticationChallenge:challenge];
 }
 
 @end

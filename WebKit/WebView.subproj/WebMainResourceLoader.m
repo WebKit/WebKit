@@ -21,6 +21,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
+#import <WebKit/WebDownload.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebFramePrivate.h>
@@ -28,7 +29,6 @@
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
-#import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
 // FIXME: More that is in common with WebSubresourceClient should move up into WebBaseResourceHandleDelegate.
@@ -170,11 +170,11 @@
 
     case WebPolicyDownload:
         [proxy setDelegate:nil];
-        [NSURLDownload _downloadWithLoadingConnection:connection
-                                              request:request
-                                             response:r
-                                             delegate:[self downloadDelegate]
-                                                proxy:proxy];
+        [WebDownload _downloadWithLoadingConnection:connection
+                                            request:request
+                                           response:r
+                                           delegate:[self downloadDelegate]
+                                              proxy:proxy];
         [proxy release];
         proxy = nil;
         [self receivedError:[self interruptForPolicyChangeError]];
