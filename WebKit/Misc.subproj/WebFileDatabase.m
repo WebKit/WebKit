@@ -12,7 +12,6 @@
 
 #import "WebFileDatabase.h"
 #import "WebNSFileManagerExtras.h"
-#import "WebCacheLoaderConstantsPrivate.h"
 #import "WebFoundationLogging.h"
 
 #define SIZE_FILE_NAME @".size"
