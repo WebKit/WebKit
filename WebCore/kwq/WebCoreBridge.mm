@@ -1487,6 +1487,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self ensureCaretVisible];
 }
 
+- (void)setCaretVisible:(BOOL)flag
+{
+    if (!_part)
+        return;
+        
+    _part->setCaretVisible(flag);
+}
+
 - (void)setSelectionToDragCaret
 {
     _part->setSelection(_part->dragCaret());

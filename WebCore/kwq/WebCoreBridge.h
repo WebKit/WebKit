@@ -305,6 +305,8 @@ typedef enum {
 - (void)insertText:(NSString *)text;
 - (void)insertNewline;
 
+- (void)setCaretVisible:(BOOL)flag;
+
 - (void)setSelectionToDragCaret;
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment;
 - (void)moveDragCaretToPoint:(NSPoint)point;

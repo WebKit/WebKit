@@ -1,3 +1,24 @@
+2004-07-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3707505> HTMLCompose: blinking cursor in both an address text field and the message body
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setCaretVisible): This method renamed from setSelectionVisible. Since it really only operates
+        on the caret, this seems like a better name.
+        * khtml/khtml_part.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::focusInEvent): Call setCaretVisible(true)
+        (KHTMLView::focusOutEvent): Call setCaretVisible(false)
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setShowsFirstResponder): Name change: setSelectionVisible becomes setCaretVisible.
+        * kwq/WebCoreBridge.h: Expose setCaretVisible as a bridge method.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setCaretVisible:]): Ditto.
+
 2004-07-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

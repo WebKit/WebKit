@@ -3277,7 +3277,7 @@ void KWQKHTMLPart::setShowsFirstResponder(bool flag)
             if (node && node->renderer())
                 node->renderer()->repaint();
         }
-        setSelectionVisible(flag);
+        setCaretVisible(flag);
     }
 }
 

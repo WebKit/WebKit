@@ -1,3 +1,20 @@
+2004-07-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3707505> HTMLCompose: blinking cursor in both an address text field and the message body
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView setCaretVisible:]): New helper. Calls over bridge to do the work.
+        (-[WebHTMLView windowDidBecomeKey:]): This function cannot just assume that self is first responder
+        (and do things like adjusting text background color and restoring focus rings). 
+        First-responder-ness needs to be checked first. Now it is.
+        (-[WebHTMLView windowDidResignKey:]): Ditto.
+        (-[WebHTMLView becomeFirstResponder]): Call new helper to make caret visible.
+        (-[WebHTMLView resignFirstResponder]): Call new helper to make caret invisible.
+
 2004-07-12  Richard Williamson   <rjw@apple.com>
 
         Fixed 3721917.  The RealPlayer plugin doesn't support the new 

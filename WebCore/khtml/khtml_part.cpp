@@ -2315,7 +2315,7 @@ void KHTMLPart::invalidateSelection()
     selectionLayoutChanged();
 }
 
-void KHTMLPart::setSelectionVisible(bool flag)
+void KHTMLPart::setCaretVisible(bool flag)
 {
     if (d->m_caretVisible == flag)
         return;

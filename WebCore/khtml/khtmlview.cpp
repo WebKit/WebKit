@@ -1937,14 +1937,14 @@ void KHTMLView::dropEvent( QDropEvent *ev )
 
 void KHTMLView::focusInEvent( QFocusEvent *e )
 {
-    m_part->setSelectionVisible();
+    m_part->setCaretVisible();
     QScrollView::focusInEvent( e );
 }
 
 void KHTMLView::focusOutEvent( QFocusEvent *e )
 {
     m_part->stopAutoScroll();
-    m_part->setSelectionVisible(false);
+    m_part->setCaretVisible(false);
     QScrollView::focusOutEvent( e );
 }
 

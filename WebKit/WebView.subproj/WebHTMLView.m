@@ -1258,6 +1258,11 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+- (void)setCaretVisible:(BOOL)flag
+{
+    [[self _bridge] setCaretVisible:flag];
+}
+
 - (BOOL)maintainsInactiveSelection
 {
     // This method helps to determing whether the view should maintain
@@ -1705,16 +1710,20 @@ static WebHTMLView *lastHitView = nil;
 {
     ASSERT([notification object] == [self window]);
     [self addMouseMovedObserver];
-    [self updateTextBackgroundColor];
-    [self updateShowsFirstResponder];
+    if ([self firstResponderIsSelfOrDescendantView]) {
+        [self updateTextBackgroundColor];
+        [self updateShowsFirstResponder];
+    }
 }
 
 - (void)windowDidResignKey: (NSNotification *)notification
 {
     ASSERT([notification object] == [self window]);
     [self removeMouseMovedObserver];
-    [self updateTextBackgroundColor];
-    [self updateShowsFirstResponder];
+    if ([self firstResponderIsSelfOrDescendantView]) {
+        [self updateTextBackgroundColor];
+        [self updateShowsFirstResponder];
+    }
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -2054,6 +2063,7 @@ static WebHTMLView *lastHitView = nil;
     if (view) {
         [[self window] makeFirstResponder:view];
     }
+    [self setCaretVisible:YES];
     [self updateTextBackgroundColor];
     return YES;
 }
@@ -2073,6 +2083,7 @@ static WebHTMLView *lastHitView = nil;
                 [self deselectAll];
             }
         }
+        [self setCaretVisible:NO];
         [self updateTextBackgroundColor];
         _private->resigningFirstResponder = NO;
     }
