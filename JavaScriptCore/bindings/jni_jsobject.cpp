@@ -153,6 +153,8 @@ static const Bindings::RootObject *rootForImp (ObjectImp *imp)
 
 static void addJavaReference (const Bindings::RootObject *root, ObjectImp *imp)
 {
+    JS_LOG ("root = %p, imp %p\n", root, imp);
+
     CFMutableDictionaryRef referencesDictionary = getReferencesDictionary (root);
     
     unsigned int numReferences = (unsigned int)CFDictionaryGetValue (referencesDictionary, imp);
@@ -167,6 +169,7 @@ static void addJavaReference (const Bindings::RootObject *root, ObjectImp *imp)
 
 static void removeJavaReference (ObjectImp *imp)
 {
+    JS_LOG ("imp %p\n", imp);
     CFMutableDictionaryRef referencesDictionary = findReferenceDictionary (imp);
     
     unsigned int numReferences = (unsigned int)CFDictionaryGetValue (referencesDictionary, imp);
@@ -306,6 +309,7 @@ void RootObject::setFindRootObjectForNativeHandleFunction(FindRootObjectForNativ
 // Must be called when the applet is shutdown.
 void RootObject::removeAllJavaReferencesForRoot (Bindings::RootObject *root)
 {
+    JS_LOG ("_root == %p\n", root);
     CFMutableDictionaryRef referencesDictionary = getReferencesDictionary (root);
     
     if (referencesDictionary) {
@@ -392,7 +396,15 @@ jvalue JSObject::invoke (JSObjectCallContext *context)
             }
 
             case Finalize: {
-                JSObject(nativeHandle).finalize();
+                ObjectImp *imp = jlong_to_impptr(nativeHandle);
+                if (findReferenceDictionary(imp) == 0) {
+                    // We may have received a finalize method call from the VM 
+                    // AFTER removing our last reference to the Java instance.
+                    JS_LOG ("finalize called on instance we have already removed.\n");
+                }
+                else {
+                    JSObject(nativeHandle).finalize();
+                }
                 break;
             }
             

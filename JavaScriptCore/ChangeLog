@@ -1,3 +1,17 @@
+2004-01-14  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3529010.
+
+	Finalize may be called on an JSObject after we've already remove all our references.  The assert in this case is firing because we've received a finalize call from Java for an instance that we no longer know about.  The fix is to check in finalize that we're getting a call on an instance that we still care about.
+
+        Reviewed by John.
+
+        * bindings/jni_jsobject.cpp:
+        (addJavaReference):
+        (removeJavaReference):
+        (RootObject::removeAllJavaReferencesForRoot):
+        (JSObject::invoke):
+
 2004-01-13  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3528324. 
