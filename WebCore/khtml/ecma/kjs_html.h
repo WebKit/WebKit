@@ -72,7 +72,7 @@ namespace KJS {
       button_info, label_info, fieldSet_info, legend_info, ul_info, ol_info,
       dl_info, dir_info, menu_info, li_info, div_info, p_info, heading_info,
       blockQuote_info, q_info, pre_info, br_info, baseFont_info, font_info,
-      hr_info, mod_info, a_info, img_info, object_info, param_info,
+      hr_info, mod_info, a_info, canvas_info, img_info, object_info, param_info,
       applet_info, map_info, area_info, script_info, table_info,
       caption_info, col_info, tablesection_info, tr_info,
       tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
@@ -146,6 +146,7 @@ namespace KJS {
            IFrameFrameBorder, IFrameSrc, IFrameName, IFrameHeight,
            IFrameMarginHeight, IFrameMarginWidth, IFrameScrolling, IFrameWidth, IFrameContentDocument,
            MarqueeStart, MarqueeStop,
+           GetContext,
            ElementInnerHTML, ElementTitle, ElementId, ElementDir, ElementLang,
            ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText};

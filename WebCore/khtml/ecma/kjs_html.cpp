@@ -471,6 +471,7 @@ const ClassInfo KJS::HTMLElement::font_info = { "HTMLFontElement", &KJS::HTMLEle
 const ClassInfo KJS::HTMLElement::hr_info = { "HTMLHRElement", &KJS::HTMLElement::info, &HTMLHRElementTable, 0 };
 const ClassInfo KJS::HTMLElement::mod_info = { "HTMLModElement", &KJS::HTMLElement::info, &HTMLModElementTable, 0 };
 const ClassInfo KJS::HTMLElement::a_info = { "HTMLAnchorElement", &KJS::HTMLElement::info, &HTMLAnchorElementTable, 0 };
+const ClassInfo KJS::HTMLElement::canvas_info = { "HTMLCanvasElement", &KJS::HTMLElement::info, &HTMLCanvasElementTable, 0 };
 const ClassInfo KJS::HTMLElement::img_info = { "HTMLImageElement", &KJS::HTMLElement::info, &HTMLImageElementTable, 0 };
 const ClassInfo KJS::HTMLElement::object_info = { "HTMLObjectElement", &KJS::HTMLElement::info, &HTMLObjectElementTable, 0 };
 const ClassInfo KJS::HTMLElement::param_info = { "HTMLParamElement", &KJS::HTMLElement::info, &HTMLParamElementTable, 0 };
@@ -573,6 +574,8 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
     return &mod_info;
   case ID_A:
     return &a_info;
+  case ID_CANVAS:
+    return &canvas_info;
   case ID_IMG:
     return &img_info;
   case ID_OBJECT:
@@ -1076,6 +1079,10 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
 @begin HTMLMarqueeElementTable 2
   start           KJS::HTMLElement::MarqueeStart		DontDelete|Function 0
   stop            KJS::HTMLElement::MarqueeStop                 DontDelete|Function 0
+@end
+
+@begin HTMLCanvasElementTable 1
+  getContext      KJS::HTMLElement::GetContext                  DontDelete|Function 0
 @end
 */
 
@@ -2127,7 +2134,16 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
         }
         break;
     }
-        
+    case ID_CANVAS: {
+        if (id == KJS::HTMLElement::GetContext) {
+            if (args.size() == 0 || (args.size() == 1 && args[0].toString(exec).qstring().lower() == "2d-context")) {
+                // FIXME:  Implement canvas.
+                printf ("%s:%d: %s  create 2D context\n", __FILE__, __LINE__, __FUNCTION__);
+            }
+            return Undefined();
+        }
+    }
+    
     break;
   }
 

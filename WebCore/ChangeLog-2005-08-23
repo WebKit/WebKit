@@ -1,3 +1,49 @@
+2004-05-25  Richard Williamson   <rjw@apple.com>
+
+	Part 1 of the new <CANVAS> tag implementation.  This patch
+	adds the boiler plate for the new element.
+
+        Reviewed by Dave.
+
+        * ForwardingHeaders/html/html_canvasimpl.h: Added.
+        * ForwardingHeaders/rendering/render_canvasimage.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::classInfo):
+        (KJS::HTMLElementFunction::tryCall):
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLElement::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/html_canvasimpl.cpp: Added.
+        (HTMLCanvasElementImpl::HTMLCanvasElementImpl):
+        (HTMLCanvasElementImpl::~HTMLCanvasElementImpl):
+        (HTMLCanvasElementImpl::id):
+        (HTMLCanvasElementImpl::mapToEntry):
+        (HTMLCanvasElementImpl::parseHTMLAttribute):
+        (HTMLCanvasElementImpl::createRenderer):
+        (HTMLCanvasElementImpl::attach):
+        (HTMLCanvasElementImpl::detach):
+        (HTMLCanvasElementImpl::isURLAttribute):
+        * khtml/html/html_canvasimpl.h: Added.
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::getElement):
+        * khtml/misc/htmltags.c:
+        (hash_tag):
+        (findTag):
+        * khtml/misc/htmltags.h:
+        * khtml/misc/htmltags.in:
+        * khtml/rendering/render_canvasimage.cpp: Added.
+        (RenderCanvasImage::RenderCanvasImage):
+        (RenderCanvasImage::~RenderCanvasImage):
+        (RenderCanvasImage::paint):
+        (RenderCanvasImage::layout):
+        * khtml/rendering/render_canvasimage.h: Added.
+        (khtml::RenderCanvasImage::renderName):
+        (khtml::RenderCanvasImage::element):
+
 2004-05-25  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3546418>: (when dragging text within an editable HTML doc, the selection should be moved not copied)

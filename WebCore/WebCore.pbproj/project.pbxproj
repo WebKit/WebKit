@@ -531,6 +531,8 @@
 				931D712C065FB91800C966E1,
 				931D7225065FC25900C966E1,
 				93859E33065FCAD300CF54EE,
+				51F6A3D80663BF04004D2919,
+				51F6A3E00663C2EC004D2919,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -811,6 +813,8 @@
 				842F72DD06405FDF00CC271B,
 				9342E3EA0646C8FF00004B05,
 				931D722B065FC40800C966E1,
+				51F6A3D70663BF04004D2919,
+				51F6A3DF0663C2EC004D2919,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -935,6 +939,62 @@
 		};
 		517FA6B70370C7ED00CA2D3A = {
 			fileRef = 517FA6B60370C7ED00CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F6A3D50663BF04004D2919 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = html_canvasimpl.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F6A3D60663BF04004D2919 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = html_canvasimpl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F6A3D70663BF04004D2919 = {
+			fileRef = 51F6A3D50663BF04004D2919;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F6A3D80663BF04004D2919 = {
+			fileRef = 51F6A3D60663BF04004D2919;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F6A3DD0663C2EC004D2919 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = render_canvasimage.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F6A3DE0663C2EC004D2919 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = render_canvasimage.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F6A3DF0663C2EC004D2919 = {
+			fileRef = 51F6A3DD0663C2EC004D2919;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F6A3E00663C2EC004D2919 = {
+			fileRef = 51F6A3DE0663C2EC004D2919;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5358,6 +5418,8 @@
 				F523D23802DE4396018635CA,
 				F523D23902DE4396018635CA,
 				F523D23A02DE4396018635CA,
+				51F6A3D50663BF04004D2919,
+				51F6A3D60663BF04004D2919,
 				F523D23B02DE4396018635CA,
 				F523D23C02DE4396018635CA,
 				F523D23E02DE4396018635CA,
@@ -6121,6 +6183,8 @@
 				F523D2A902DE4438018635CA,
 				BC80A6930468B78100DBCC9C,
 				BC80A6940468B78100DBCC9C,
+				51F6A3DD0663C2EC004D2919,
+				51F6A3DE0663C2EC004D2919,
 				F523D2AC02DE4438018635CA,
 				F523D2AB02DE4438018635CA,
 				F523D2AE02DE4438018635CA,

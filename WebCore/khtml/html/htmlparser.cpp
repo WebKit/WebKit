@@ -33,6 +33,7 @@
 
 #include "html/html_baseimpl.h"
 #include "html/html_blockimpl.h"
+#include "html/html_canvasimpl.h"
 #include "html/html_documentimpl.h"
 #include "html/html_elementimpl.h"
 #include "html/html_formimpl.h"
@@ -947,6 +948,13 @@ NodeImpl *KHTMLParser::getElement(Token* t)
 
         n = new HTMLAnchorElementImpl(document);
         break;
+
+#if APPLE_CHANGES
+// canvas
+    case ID_CANVAS:
+        n = new HTMLCanvasElementImpl(document);
+        break;
+#endif
 
 // images
     case ID_IMG:
