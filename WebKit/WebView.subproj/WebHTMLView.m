@@ -548,7 +548,14 @@ static WebHTMLView *lastHitView = nil;
     [pasteboard setData:attributedData forType:NSRTFDPboardType];
     
     // Put plain string on the pasteboard.
-    [pasteboard setString:[self selectedString] forType:NSStringPboardType];
+    // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
+    // and because HTML forces you to do this any time you want two spaces in a row.
+    NSMutableString *s = [[self selectedString] mutableCopy];
+    const unichar NonBreakingSpaceCharacter = 0xA0;
+    NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&NonBreakingSpaceCharacter length:1];
+    [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
+    [pasteboard setString:s forType:NSStringPboardType];
+    [s release];
 }
 
 - (BOOL)_haveSelection

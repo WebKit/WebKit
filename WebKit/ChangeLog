@@ -1,3 +1,12 @@
+2004-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3433887>: copied &nbsp; characters remain non-breaking spaces; other browsers give normal spaces
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _writeSelectionToPasteboard:]):
+        Convert non-breaking spaces to the normal kind in the plain text part of the pasteboard.
+
 2004-03-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
