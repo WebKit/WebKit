@@ -389,7 +389,7 @@ static WebHTMLView *lastHitView = nil;
 #if SUPPORT_HTML_PBOARD
         NSHTMLPboardType,
 #endif
-        NSRTFPboardType, NSStringPboardType, nil];
+        NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
@@ -403,9 +403,13 @@ static WebHTMLView *lastHitView = nil;
 
     // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];
-    NSData *attributedData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+    NSRange range = NSMakeRange(0, [attributedString length]);
+    NSData *attributedData = [attributedString RTFFromRange:range documentAttributes:nil];
     [pasteboard setData:attributedData forType:NSRTFPboardType];
 
+    attributedData = [attributedString RTFDFromRange:range documentAttributes:nil];
+    [pasteboard setData:attributedData forType:NSRTFDPboardType];
+    
     // Put plain string on the pasteboard.
     [pasteboard setString:[self selectedString] forType:NSStringPboardType];
 }

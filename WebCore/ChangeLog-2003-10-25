@@ -1,3 +1,18 @@
+2003-07-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3315951:  Add support for <OL>, <UL> in attributed string conversion.
+	Fixed 3315952:  Add support for <IMG> in attributed string conversion.
+	Fixed 3315953:  Added support for <A> in attributed string conversion.	
+
+        Reviewed by John (and earlier by Darin).
+
+        * khtml/rendering/render_list.h:
+        * kwq/KWQKHTMLPart.mm:
+        (fileWrapperForElement):
+        (listParent):
+        (inList):
+        (KWQKHTMLPart::attributedString):
+
 2003-07-14  Dave Hyatt  <hyatt@apple.com>
 
 	Fix a problem where ems used for non-font values like width

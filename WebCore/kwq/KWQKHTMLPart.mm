@@ -29,12 +29,15 @@
 #import "html_documentimpl.h"
 #import "render_canvas.h"
 #import "render_frames.h"
+#import "render_image.h"
+#import "render_list.h"
 #import "render_table.h"
 #import "render_text.h"
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
 #import "kjs_window.h"
 #import "misc/htmlattrs.h"
+#import "csshelper.h"
 
 #import "WebCoreBridge.h"
 #import "WebCoreViewFactory.h"
@@ -1771,23 +1774,77 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     _currentEvent = oldCurrentEvent;
 }
 
+struct ListItemInfo {
+    unsigned start;
+    unsigned end;
+};
+
+static NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *e)
+{
+    khtml::RenderImage *renderer = static_cast<khtml::RenderImage *>(e->renderer());
+    NSImage *image = renderer->pixmap().image();
+    NSData *tiffData = [image TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
+
+    NSFileWrapper *wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:tiffData];
+    [wrapper setPreferredFilename:@"image.tiff"];
+
+    return [wrapper autorelease];
+}
+
+static DOM::ElementImpl *listParent(DOM::ElementImpl *item)
+{
+    // Ick!  Avoid use of item->id() which confuses ObjC++.
+    unsigned short _id = Node(item).elementId();
+    
+    while (_id != ID_UL && _id != ID_OL) {
+        item = static_cast<DOM::ElementImpl *>(item->parentNode());
+        _id = Node(item).elementId();
+    }
+    return item;
+}
+
+static DOM::NodeImpl * inList(DOM::NodeImpl *e)
+{
+    while (e){
+        if (Node(e).elementId() == ID_LI)
+            return e;
+        e = e->parentNode();
+    }
+    return 0;
+}
+
+#define BULLET_CHAR 0x2022
+
 NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int startOffset, NodeImpl *endNode, int endOffset)
 {
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
 
     bool hasNewLine = true;
     bool hasParagraphBreak = true;
-
+    const DOM::ElementImpl *linkStartNode = 0;
+    unsigned linkStartLocation;
+    QPtrList<DOM::ElementImpl> listItems;
+    QValueList<ListItemInfo> listItemLocations;
+    float maxMarkerWidth = 0;
+    
     Node n = _startNode;
+    
+    // If the first item is the entire text of a list item, use the list item node as the start of the 
+    // selection, not the text node.  The user's intent was probably to select the list.
+    if (n.nodeType() == Node::TEXT_NODE && startOffset == 0){
+        DOM::NodeImpl *startListNode = inList(_startNode);
+        if (startListNode){
+            _startNode = startListNode;
+            n = _startNode;
+        }
+    }
+    
     while (!n.isNull()) {
         RenderObject *renderer = n.handle()->renderer();
         if (renderer) {
+            RenderStyle *style = renderer->style();
+            NSFont *font = style->font().getNSFont();
             if (n.nodeType() == Node::TEXT_NODE) {
-                NSFont *font = nil;
-                RenderStyle *style = renderer->style();
-                if (style) {
-                    font = style->font().getNSFont();
-                }
     
                 QString str = n.nodeValue().string();
     
@@ -1809,15 +1866,15 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                 if (text.length() > 0) {
                     hasNewLine = false;
                     hasParagraphBreak = false;
-                    NSMutableDictionary *attrs = nil;
-                    if (font) {
-                        attrs = [[NSMutableDictionary alloc] init];
-                        [attrs setObject:font forKey:NSFontAttributeName];
-                        if (style && style->color().isValid())
-                            [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
-                        if (style && style->backgroundColor().isValid())
-                            [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
-                    }
+                    NSMutableDictionary *attrs;
+
+                    attrs = [[NSMutableDictionary alloc] init];
+                    [attrs setObject:font forKey:NSFontAttributeName];
+                    if (style && style->color().isValid())
+                        [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+                    if (style && style->backgroundColor().isValid())
+                        [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+
                     NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString() attributes:attrs];
                     [attrs release];
                     [result appendAttributedString: partialString];                
@@ -1828,17 +1885,81 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                 QString text;
                 unsigned short _id = n.elementId();
                 switch(_id) {
+                    case ID_A:
+                        // Note the start of the <a> element.  We will add the NSLinkAttributeName
+                        // attribute to the attributed string when navigating to the next sibling 
+                        // of this node.
+                        linkStartLocation = [result length];
+                        linkStartNode = static_cast<ElementImpl*>(n.handle());
+                        break;
+
                     case ID_BR:
                         text += "\n";
                         hasNewLine = true;
                         break;
     
+                    case ID_LI:
+                        {
+                            QString listText;
+                            DOM::ElementImpl *itemParent = listParent(static_cast<DOM::ElementImpl *>(n.handle()));
+                            
+                            if (!hasNewLine)
+                                listText += '\n';
+                            hasNewLine = true;
+    
+                            listItems.append(static_cast<ElementImpl*>(n.handle()));
+                            ListItemInfo info;
+                            info.start = [result length];
+                            info.end = 0;
+                            listItemLocations.append (info);
+                            
+                            listText += '\t';
+                            // Ick!  Avoid use of itemParent->id() which confuses ObjC++.
+                            if (Node(itemParent).elementId() == ID_UL) {
+                                // Always use bullets.  Perhaps we could use other characters
+                                // for square and disc type lists.
+                                listText += ((QChar)BULLET_CHAR);
+                                if ([font pointSize] > maxMarkerWidth)
+                                    maxMarkerWidth = [font pointSize];
+                            }
+                            else {
+                                khtml::RenderListItem *listRenderer = static_cast<khtml::RenderListItem*>(renderer);
+                                QString marker = listRenderer->markerStringValue();
+                                listText += marker;
+                                // Use AppKit metrics.  Will be rendered by AppKit.
+                                float markerWidth = [font widthOfString: marker.getNSString()];
+                                if (markerWidth > maxMarkerWidth)
+                                    maxMarkerWidth = markerWidth;
+                            }
+                            listText += ' ';
+                            listText += '\t';
+    
+                            NSMutableDictionary *attrs;
+        
+                            attrs = [[NSMutableDictionary alloc] init];
+                            [attrs setObject:font forKey:NSFontAttributeName];
+                            if (style && style->color().isValid())
+                                [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+                            if (style && style->backgroundColor().isValid())
+                                [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+        
+                            NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:listText.getNSString() attributes:attrs];
+                            [attrs release];
+                            [result appendAttributedString: partialString];                
+                            [partialString release];
+                        }
+                        break;
+
+                    case ID_OL:
+                    case ID_UL:
+                        if (!hasNewLine)
+                            text += "\n";
+                        hasNewLine = true;
+                        break;
+
                     case ID_TD:
                     case ID_TH:
                     case ID_HR:
-                    case ID_OL:
-                    case ID_UL:
-                    case ID_LI:
                     case ID_DD:
                     case ID_DL:
                     case ID_DT:
@@ -1846,7 +1967,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                     case ID_BLOCKQUOTE:
                     case ID_DIV:
                         if (!hasNewLine)
-                            text += "\n";
+                            text += '\n';
                         hasNewLine = true;
                         break;
                     case ID_P:
@@ -1858,11 +1979,19 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                     case ID_H5:
                     case ID_H6:
                         if (!hasNewLine)
-                            text += "\n";
+                            text += '\n';
                         if (!hasParagraphBreak)
-                            text += "\n";
+                            text += '\n';
                             hasParagraphBreak = true;
                         hasNewLine = true;
+                        break;
+                        
+                    case ID_IMG:
+                        NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<DOM::ElementImpl *>(n.handle()));
+                        NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
+                        NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
+                        [result appendAttributedString: iString];
+                        [attachment release];
                         break;
                 }
                 NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString()];
@@ -1875,8 +2004,9 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
             break;
 
         Node next = n.firstChild();
-        if (next.isNull())
+        if (next.isNull()){
             next = n.nextSibling();
+        }
 
         while (next.isNull() && !n.parentNode().isNull()) {
             QString text;
@@ -1885,12 +2015,47 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
 
             unsigned short _id = n.elementId();
             switch(_id) {
+                case ID_A:
+                    // End of a <a> element.  Create an attributed string NSLinkAttributeName attribute
+                    // for the range of the link.  Note that we create the attributed string from the DOM, which
+                    // will have corrected any illegally nested <a> elements.
+                    if (linkStartNode && n.handle() == linkStartNode){
+                        DOMString href = khtml::parseURL(linkStartNode->getAttribute(ATTR_HREF));
+                        KURL kURL = KWQ(linkStartNode->getDocument()->view()->part())->completeURL(href.string());
+                        NSString *URLString = kURL.url().getNSString();
+                        
+                        // FIXME:  create URL using new CFURL API when ready.  see Ken.
+                        NSURL *URL = [NSURL URLWithString:URLString];
+                        [result addAttribute:NSLinkAttributeName value:URL range:NSMakeRange(linkStartLocation, [result length]-linkStartLocation)];
+                        linkStartNode = 0;
+                    }
+                    break;
+                
+                case ID_OL:
+                case ID_UL:
+                    if (!hasNewLine)
+                        text += '\n';
+                    hasNewLine = true;
+                    break;
+
+                case ID_LI:
+                    {
+                        int i, count = listItems.count();
+                        for (i = 0; i < count; i++){
+                            if (listItems.at(i) == n.handle()){
+                                listItemLocations[i].end = [result length];
+                                break;
+                            }
+                        }
+                    }
+                    if (!hasNewLine)
+                        text += '\n';
+                    hasNewLine = true;
+                    break;
+
                 case ID_TD:
                 case ID_TH:
                 case ID_HR:
-                case ID_OL:
-                case ID_UL:
-                case ID_LI:
                 case ID_DD:
                 case ID_DL:
                 case ID_DT:
@@ -1898,7 +2063,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                 case ID_BLOCKQUOTE:
                 case ID_DIV:
                     if (!hasNewLine)
-                        text += "\n";
+                        text += '\n';
                     hasNewLine = true;
                     break;
                 case ID_P:
@@ -1910,7 +2075,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                 case ID_H5:
                 case ID_H6:
                     if (!hasNewLine)
-                        text += "\n";
+                        text += '\n';
                     // An extra newline is needed at the start, not the end, of these types of tags,
                     // so don't add another here.
                     hasNewLine = true;
@@ -1924,7 +2089,65 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
 
         n = next;
     }
+    
+    // Apply paragraph styles from outside in.  This ensures that nested lists correctly
+    // override their parent's paragraph style.
+    {
+        unsigned i, count = listItems.count();
+        DOM::ElementImpl *e;
+        ListItemInfo info;
+        int containingBlockX, containingBlockY;
+        NodeImpl *containingBlock;
 
+        // Determine the position of the outermost containing block.  All paragraph
+        // styles and tabs should be relative to this position.  So, the horizontal position of 
+        // each item in the list (in the resulting attributed string) will be relative to position 
+        // of the outermost containing block.
+        if (count > 0){
+            containingBlock = _startNode;
+            while (containingBlock->renderer()->isInline()){
+                containingBlock = containingBlock->parentNode();
+            }
+            containingBlock->renderer()->absolutePosition(containingBlockX, containingBlockY);
+        }
+        
+        for (i = 0; i < count; i++){
+            e = listItems.at(i);
+            info = listItemLocations[i];
+            
+            if (info.end < info.start)
+                info.end = [result length];
+                
+            RenderObject *r = e->renderer();
+            RenderStyle *style = r->style();
+            int rx, ry;
+            r->absolutePosition(rx, ry);
+            rx -= containingBlockX;
+            
+            NSFont *font = style->font().getNSFont();
+            float pointSize = [font pointSize];
+
+            // Ensure that the text is indented at least enough to allow for the markers.
+            rx = MAX(rx, (int)maxMarkerWidth);
+
+            // The bullet text will be right aligned at the first tab marker, followed
+            // by a space, followed by the list item text.  The space is arbitrarily
+            // picked as pointSize*2/3.  The space on the first line of the text item
+            // is established by a left aligned tab, on subsequent lines it's established
+            // by the head indent.
+            NSMutableParagraphStyle *mps = [[NSMutableParagraphStyle alloc] init];
+            [mps setFirstLineHeadIndent: 0];
+            [mps setHeadIndent: rx];
+            [mps setTabStops:[NSArray arrayWithObjects:
+                        [[[NSTextTab alloc] initWithType:NSRightTabStopType location:rx-(pointSize*2/3)] autorelease],
+                        [[[NSTextTab alloc] initWithType:NSLeftTabStopType location:rx] autorelease],
+                        nil]];
+            [result addAttribute:NSParagraphStyleAttributeName value:mps range:NSMakeRange(info.start, info.end-info.start)];
+            [mps release];
+        }
+    }
+
+    //NSLog (@"%@", result);
     return result;
 }
 

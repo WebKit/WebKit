@@ -109,6 +109,10 @@ public:
     void setNotInList(bool notInList) { _notInList = notInList; }
     bool notInList() const { return _notInList; }
 
+#if APPLE_CHANGES
+    QString markerStringValue() { if (m_marker) return m_marker->m_item; return ""; }
+#endif
+
 protected:
     long int predefVal;
     RenderListMarker *m_marker;

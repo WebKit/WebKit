@@ -1,3 +1,15 @@
+2003-07-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3315952:  Add support for <IMG> in attributed string conversion.
+	
+	Added RTFD pasteboard type.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (+[WebHTMLView _pasteboardTypes]):
+        (-[WebHTMLView _writeSelectionToPasteboard:]):
+
 2003-07-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
