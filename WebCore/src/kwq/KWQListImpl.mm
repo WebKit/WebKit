@@ -441,12 +441,12 @@ bool KWQListImpl::removeRef(const void *item, bool deleteItem)
 
 void *KWQListImpl::getFirst() const
 {
-    return d->head->data;
+    return d->head ? d->head->data : 0;
 }
 
 void *KWQListImpl::getLast() const
 {
-    return d->tail->data;
+    return d->tail ? d->tail->data : 0;
 }
 
 void *KWQListImpl::current() const

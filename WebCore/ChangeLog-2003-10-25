@@ -1,5 +1,11 @@
 2002-03-24  Darin Adler  <darin@apple.com>
 
+	* src/kwq/KWQListImpl.mm: (KWQListImpl::getFirst), (KWQListImpl::getLast):
+        Apparently getLast needs to handle cases where the list is empty. Since
+        getFirst didn't handle it either, I added a check in both cases.
+
+2002-03-24  Darin Adler  <darin@apple.com>
+
         Add tail pointer to KWQListImpl, since that shows up on so many profiles.
 
 	* src/kwq/KWQListImpl.mm: (KWQListImpl::KWQListPrivate::copyList): Return
