@@ -1,3 +1,17 @@
+2004-05-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3672129>: (selection deselects when clicking editable WebView in background window)
+	
+	Fixed this problem by using NSTextView's approach of only allowing dragging on first mouse down.
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView acceptsFirstMouse:]): store the first mouse down
+        (-[WebHTMLView mouseDown:]): Don't tell WebCore about the first mouse down event since only dragging can occur on the first mouse down.
+        (-[WebHTMLView mouseDragged:]): Don't tell WebCore about the drags that occur after the first mouse down since only dragging can occur after the first mouse down.
+        * WebView.subproj/WebHTMLViewInternal.h:
+
 2004-05-28  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebView.m: At Ken's suggestion, for better efficiency and safety,

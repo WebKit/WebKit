@@ -19,6 +19,7 @@
     BOOL subviewsSetAside;
 
     NSEvent *mouseDownEvent;
+    NSEvent *firstMouseDownEvent;
 
     NSURL *draggingImageURL;
     

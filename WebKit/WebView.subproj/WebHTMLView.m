@@ -1593,6 +1593,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
+    // We don't retain this because we never dispatch to it; we only check its value.
+    _private->firstMouseDownEvent = event;
     return [self _isSelectionEvent:event];
 }
 
@@ -1602,7 +1604,7 @@ static WebHTMLView *lastHitView = nil;
 }
 
 - (void)mouseDown:(NSEvent *)event
-{
+{    
     // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
     // We don't want to pass them along to KHTML a second time.
     if ([event modifierFlags] & NSControlKeyMask) {
@@ -1618,9 +1620,12 @@ static WebHTMLView *lastHitView = nil;
     // Don't do any mouseover while the mouse is down.
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 
-    // Let KHTML get a chance to deal with the event. This will call back to us
-    // to start the autoscroll timer if appropriate.
-    [[self _bridge] mouseDown:event];
+    // Don't tell WebCore about the first mouse down event since only dragging can occur on the first mouse down.
+    if (_private->firstMouseDownEvent != event) {
+        // Let KHTML get a chance to deal with the event. This will call back to us
+        // to start the autoscroll timer if appropriate.
+        [[self _bridge] mouseDown:event];
+    }
 }
 
 - (void)dragImage:(NSImage *)dragImage
@@ -1644,7 +1649,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    if (!_private->ignoringMouseDraggedEvents) {
+    // If this drag started from a mouse down in an inactive window, we only allow it to drag out an existing selection, so don't tell WebCore about it.
+    if (_private->mouseDownEvent == _private->firstMouseDownEvent) {
+        // Handle the drag directly instead of getting callbacks from WebCore.
+        if ([self _mayStartDragWithMouseDragged:event]) {
+            [self _handleMouseDragged:event];
+        }
+    } else if (!_private->ignoringMouseDraggedEvents) {
         [[self _bridge] mouseDragged:event];
     }
 }
