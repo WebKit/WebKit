@@ -1,8 +1,14 @@
+2004-09-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed previous "Reviewed by" line.
+
+        * ChangeLog:
+
 2004-09-09  Chris Blumenberg  <cblu@apple.com>
 
 	Support for: <rdar://problem/3795485> debug menu item to enable RSS animation on first layout
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by rjw.
 
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge didFirstLayout]): new
