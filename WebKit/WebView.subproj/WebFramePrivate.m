@@ -568,7 +568,7 @@ static const char * const stateNames[] = {
 
         case WebURLPolicyOpenExternally:
             if(![[NSWorkspace sharedWorkspace] openURL:URL]){
-                [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCouldNotFindApplicationForURL forURL:URL];
+                [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCannotNotFindApplicationForURL forURL:URL];
             }
             return NO;
 
@@ -593,12 +593,12 @@ static const char * const stateNames[] = {
                     return NO;
 
                 if(!fileExists){
-                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFileDoesNotExist forURL:URL];
+                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotFindFile forURL:URL];
                     return NO;
                 }
 
                 if(![fileManager isReadableFileAtPath:path]){
-                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFileNotReadable forURL:URL];
+                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotReadFile forURL:URL];
                     return NO;
                 }
 
@@ -615,13 +615,13 @@ static const char * const stateNames[] = {
                         
                     case WebFileURLPolicyOpenExternally:
                         if(![[NSWorkspace sharedWorkspace] openFile:path]){
-                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCouldNotFindApplicationForFile forURL:URL];
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotFindApplicationForFile forURL:URL];
                         }
                         return NO;
 
                     case WebFileURLPolicyRevealInFinder:
                         if(![[NSWorkspace sharedWorkspace] selectFile:path inFileViewerRootedAtPath:@""]){
-                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFinderCouldNotOpenDirectory forURL:URL];
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFinderCannotOpenDirectory forURL:URL];
                         }
                         return NO;
 

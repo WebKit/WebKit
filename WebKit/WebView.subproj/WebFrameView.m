@@ -35,15 +35,18 @@ enum {
 + (void)initialize
 {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-    
-    WebErrorDescriptionCannotShowMIMEType, [NSNumber numberWithInt: WebErrorCannotShowMIMEType],
-    WebErrorDescriptionCouldNotFindApplicationForFile, [NSNumber numberWithInt: WebErrorCouldNotFindApplicationForFile],
-    WebErrorDescriptionCouldNotFindApplicationForURL, [NSNumber numberWithInt: WebErrorCouldNotFindApplicationForURL],
-    WebErrorDescriptionFileDoesNotExist, [NSNumber numberWithInt: WebErrorFileDoesNotExist],
-    WebErrorDescriptionFileNotReadable, [NSNumber numberWithInt: WebErrorFileNotReadable],
-    WebErrorDescriptionFinderCouldNotOpenDirectory, [NSNumber numberWithInt: WebErrorFinderCouldNotOpenDirectory],
-    WebErrorDescriptionCannotShowDirectory, [NSNumber numberWithInt: WebErrorCannotShowDirectory],
-    WebErrorDescriptionCannotShowURL, [NSNumber numberWithInt: WebErrorCannotShowURL],
+    WebErrorDescriptionCannotFindFile, 			[NSNumber numberWithInt: WebErrorCannotFindFile],
+    WebErrorDescriptionCannotCreateFile, 		[NSNumber numberWithInt: WebErrorCannotCreateFile],
+    WebErrorDescriptionCannotOpenFile, 			[NSNumber numberWithInt: WebErrorCannotOpenFile],
+    WebErrorDescriptionCannotReadFile, 			[NSNumber numberWithInt: WebErrorCannotReadFile],
+    WebErrorDescriptionCannotWriteToFile, 		[NSNumber numberWithInt: WebErrorCannotWriteToFile],
+    WebErrorDescriptionCannotRemoveFile, 		[NSNumber numberWithInt: WebErrorCannotRemoveFile],
+    WebErrorDescriptionCannotFindApplicationForFile, 	[NSNumber numberWithInt: WebErrorCannotFindApplicationForFile],
+    WebErrorDescriptionFinderCannotOpenDirectory, 	[NSNumber numberWithInt: WebErrorFinderCannotOpenDirectory],
+    WebErrorDescriptionCannotShowDirectory, 		[NSNumber numberWithInt: WebErrorCannotShowDirectory],
+    WebErrorDescriptionCannotShowMIMEType, 		[NSNumber numberWithInt: WebErrorCannotShowMIMEType],
+    WebErrorDescriptionCannotShowURL, 			[NSNumber numberWithInt: WebErrorCannotShowURL],
+    WebErrorDescriptionCannotFindApplicationForURL, 	[NSNumber numberWithInt: WebErrorCannotNotFindApplicationForURL],
     nil];
 
     [WebError addErrorsFromDictionary:dict];

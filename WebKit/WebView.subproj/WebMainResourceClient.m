@@ -96,6 +96,10 @@
 
 - (void)receivedError:(WebError *)error forHandle:(WebResourceHandle *)handle
 {
+    if(suppressErrors){
+        return;
+    }
+    
     WebLoadProgress *progress = [WebLoadProgress progressWithResourceHandle:handle];
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
@@ -126,15 +130,22 @@
     [self retain];
     
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
-    WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
+    WebError *error = [WebError errorWithCode:WebResultCancelled
+                                     inDomain:WebErrorDomainWebFoundation
+                                   failingURL:[[dataSource originalURL] absoluteString]];
+    
     [self receivedError:error forHandle:handle];
     [error release];
-    
-    [downloadHandler cancel];
-    [downloadHandler release];
-    downloadHandler = nil;
 
+    if(downloadHandler){
+        WebError *downloadError = [downloadHandler cancel];
+        if(downloadError){
+            [self receivedError:downloadError forHandle:handle];
+        }
+        [downloadHandler release];
+        downloadHandler = nil;
+    }
+    
     [self didStopLoading];
     
     [self release];
@@ -168,10 +179,15 @@
     } else {
         [self receivedProgressWithHandle:handle complete:YES];
     }
-    
-    [downloadHandler finishedLoading];
-    [downloadHandler release];
-    downloadHandler = nil;
+
+    if(downloadHandler){
+        WebError *downloadError = [downloadHandler finishedLoading];
+        if(downloadError){
+            [self receivedError:downloadError forHandle:handle];
+        }
+        [downloadHandler release];
+        downloadHandler = nil;
+    }
     
     [self didStopLoading];
     
@@ -183,6 +199,7 @@
     WebController *controller = [dataSource controller];
     NSString *contentType = [[handle response] contentType];
     WebFrame *frame = [dataSource webFrame];
+    WebError *downloadError = nil;
     
     LOG(Loading, "URL = %@, data = %p, length %d", [handle URL], data, [data length]);
     
@@ -205,7 +222,7 @@
 
         WebContentPolicy *contentPolicy = [dataSource contentPolicy];
         if(contentPolicy == nil){
-            contentPolicy = [[controller policyHandler] contentPolicyForMIMEType: contentType URL:currentURL inFrame:frame];
+            contentPolicy = [[controller policyHandler] contentPolicyForMIMEType:contentType URL:currentURL inFrame:frame];
             [dataSource _setContentPolicy:contentPolicy];
         }
         policyAction = [contentPolicy policyAction];
@@ -226,7 +243,7 @@
 	    [[[dataSource controller] locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
             downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
         }
-        [downloadHandler receivedData:data];
+        downloadError = [downloadHandler receivedData:data];
         break;
     case WebContentPolicyIgnore:
         [handle cancelLoadInBackground];
@@ -239,6 +256,15 @@
     }
 
     [self receivedProgressWithHandle:handle complete:NO];
+
+    if(downloadError){
+        [self receivedError:downloadError forHandle:handle];
+
+        // Supress errors because we don't want to confuse the client with
+        // the cancel error that will follow after cancelLoadInBackground.
+        suppressErrors = YES;
+        [handle cancelLoadInBackground];
+    }
     
     LOG(Download, "%d of %d", [[handle response] contentLengthReceived], [[handle response] contentLength]);
     isFirstChunk = NO;
@@ -254,10 +280,15 @@
     [self retain];
 
     [self receivedError:result forHandle:handle];
-    
-    [downloadHandler cancel];
-    [downloadHandler release];
-    downloadHandler = nil;
+
+    if(downloadHandler){
+        WebError *downloadError = [downloadHandler cancel];
+        if(downloadError){
+            [self receivedError:downloadError forHandle:handle];
+        }
+        [downloadHandler release];
+        downloadHandler = nil;
+    }
 
     [self didStopLoading];
     

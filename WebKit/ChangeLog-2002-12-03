@@ -1,3 +1,28 @@
+2002-09-10  Chris Blumenberg  <cblu@apple.com>
+
+	Report download handler errors
+	Renamed error constants
+	Added new errors
+
+        * Misc.subproj/WebDownloadHandler.h:
+        * Misc.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler errorWithCode:]): added
+        (-[WebDownloadHandler receivedData:]): return an error
+        (-[WebDownloadHandler finishedLoading]): return an error
+        (-[WebDownloadHandler cancel]): return an error
+        * Misc.subproj/WebKitErrors.h: added new errors
+        * WebView.subproj/WebFramePrivate.m: 
+        (-[WebFrame _shouldShowURL:]): use renamed error constants
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:forHandle:]): don't send an error when errors are suppressed
+        (-[WebMainResourceClient didCancelWithHandle:]): report download handler errors
+        (-[WebMainResourceClient handleDidFinishLoading:]): report download handler errors
+        (-[WebMainResourceClient handleDidReceiveData:data:]): report download handler errors
+        (-[WebMainResourceClient handleDidFailLoading:withError:]): report download handler errors
+        * WebView.subproj/WebView.m:
+        (+[WebView initialize]): add new errors to WebError
+
 2002-09-10  John Sullivan  <sullivan@apple.com>
 
         * History.subproj/WebHistoryPrivate.m:

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class WebDataSource;
+@class WebError;
 
 @interface WebDownloadHandler : NSObject
 {
@@ -17,7 +18,7 @@
 }
 
 - initWithDataSource:(WebDataSource *)dSource;
-- (void)receivedData:(NSData *)data;
-- (void)finishedLoading;
-- (void)cancel;
+- (WebError *)receivedData:(NSData *)data;
+- (WebError *)finishedLoading;
+- (WebError *)cancel;
 @end

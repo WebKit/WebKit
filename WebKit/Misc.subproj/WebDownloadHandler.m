@@ -6,11 +6,13 @@
 //  Copyright (c) 2002 Apple Computer, Inc.
 //
 
-#import <WebKit/WebDownloadHandler.h>
-
 #import <WebKit/WebControllerPolicyHandlerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDownloadHandler.h>
+#import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
+
+#import <WebFoundation/WebFoundation.h>
 
 @implementation WebDownloadHandler
 
@@ -31,7 +33,12 @@
     [super dealloc];
 }
 
-- (void)receivedData:(NSData *)data
+- (WebError *)errorWithCode:(int)code
+{
+    return [WebError errorWithCode:code inDomain:WebErrorDomainWebKit failingURL:[[dataSource URL] absoluteString]];
+}
+
+- (WebError *)receivedData:(NSData *)data
 {
     NSString *path = [[dataSource contentPolicy] path];
     NSString *pathWithoutExtension, *newPathWithoutExtension, *extension;
@@ -57,42 +64,52 @@
         }
         
         if(![fileManager createFileAtPath:path contents:nil attributes:nil]){
-            [dataSource stopLoading];
-            // FIXME: send error
-            return;
+            return [self errorWithCode:WebErrorCannotCreateFile];
         }
         
         fileHandle = [[NSFileHandle fileHandleForWritingAtPath:path] retain];
+        if(!fileHandle){
+            return [self errorWithCode:WebErrorCannotOpenFile];
+        }
         
         workspace = [NSWorkspace sharedWorkspace];
         [workspace noteFileSystemChanged:path];
     }
     
     [fileHandle writeData:data];
+
+    return nil;
 }
 
-- (void)finishedLoading
+- (WebError *)finishedLoading
 {
     NSString *path = [[dataSource contentPolicy] path];
-    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
     
     [fileHandle closeFile];
+
     LOG(Download, "Download complete. Saved to: %s", [path cString]);
     
     if([[dataSource contentPolicy] policyAction] == WebContentPolicySaveAndOpenExternally){
-        [workspace openFile:path];
+        if(![[NSWorkspace sharedWorkspace] openFile:path]){
+            return [self errorWithCode:WebErrorCannotFindApplicationForFile];
+        }
     }
+
+    return nil;
 }
 
-- (void)cancel
+- (WebError *)cancel
 {
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
     NSString *path = [[dataSource contentPolicy] path];
     
     [fileHandle closeFile];
-    [fileManager removeFileAtPath:path handler:nil];
-    [workspace noteFileSystemChanged:path];
+    if(![[NSFileManager defaultManager] removeFileAtPath:path handler:nil]){
+        return [self errorWithCode:WebErrorCannotRemoveFile];
+    }else{
+        [[NSWorkspace sharedWorkspace] noteFileSystemChanged:path];
+    }
+
+    return nil;
 }
 
 
