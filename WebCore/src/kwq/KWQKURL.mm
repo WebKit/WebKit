@@ -301,9 +301,7 @@ KURL::KURL(const KURL &base, const QString &relative)
     } else {
 	CFURLRef relativeURL = CFURLCreateWithString(NULL, relative.getCFMutableString(), base.d->urlRef);
 	if (relativeURL == NULL) {
-	    d = base.d;
-	    copyOnWrite();
-	    setPath(d->sPath + relative);
+	    d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(relative));
 	} else {
 	    CFURLRef absoluteURL = CFURLCopyAbsoluteURL(relativeURL);
 	

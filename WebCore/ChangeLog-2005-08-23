@@ -1,3 +1,10 @@
+2002-03-06  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kwq/KWQKURL.mm: (KURL::KURL): If resolving a relative URL
+	fails, assume it's absolute and possibly malformed, rather than
+	appending it to the path of the previous URL. This fixes a
+	CPU-spinning hang that John and Richard found.
+
 2002-03-05  Richard Williamson  <rjw@apple.com>
 
         Pass errors correctly to browser.
