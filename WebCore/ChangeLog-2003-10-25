@@ -1,3 +1,8 @@
+2003-02-28  Darin Adler  <darin@apple.com>
+
+        * khtml/css/parser.y: Fixed bad check-in that broke the build in a subtle way.
+        * khtml/css/parser.cpp: Regenerated.
+
 2003-02-28  Trey Matteson  <trey@apple.com>
 
 	More support for autofill, autocomplete.

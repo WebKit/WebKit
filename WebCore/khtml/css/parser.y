@@ -349,7 +349,7 @@ string_or_uri:
   | URI
     ;
 
-maybe_media_list
+maybe_media_list:
      /* empty */ {
         $$ = 0;
      }
