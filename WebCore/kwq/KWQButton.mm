@@ -42,7 +42,6 @@
 
 @implementation KWQButton
 
-
 - (id)initWithQButton:(QButton *)b
 {
     button = b;
@@ -58,7 +57,9 @@
 {
     if (needToSendConsumedMouseUp) {
 	needToSendConsumedMouseUp = NO;
-	button->sendConsumedMouseUp();
+	if ([self target]) {
+            button->sendConsumedMouseUp();
+        }
     } 
 }
 
@@ -68,7 +69,6 @@
     [super mouseDown:event];
     [self sendConsumedMouseUpIfNeeded];
 }
-
 
 @end
 

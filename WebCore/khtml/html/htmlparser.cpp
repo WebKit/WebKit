@@ -1370,18 +1370,15 @@ void KHTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 
 void KHTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, bool inMalformedTable)
 {
-    // Nothing required.
-    if (!elem)
-        return;
-
-    // We have some tags that need to be reopened.
-    int exceptionCode = 0;
+    // Loop for each tag that needs to be reopened.
     while (elem) {
         // Create a shallow clone of the DOM node for this element.
         NodeImpl* newNode = elem->node->cloneNode(false); 
 
         // Append the new node.
+        int exceptionCode = 0;
         current->appendChild(newNode, exceptionCode);
+        // FIXME: Is it really OK to ignore the exception here?
 
         // Now push a new stack element for this node we just created.
         pushBlock(elem->id, elem->level);
@@ -1549,7 +1546,6 @@ void KHTMLParser::freeBlock()
 {
     while (blockStack)
         popOneBlock();
-    blockStack = 0;
 }
 
 void KHTMLParser::createHead()

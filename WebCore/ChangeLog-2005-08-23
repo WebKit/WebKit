@@ -1,3 +1,28 @@
+2003-07-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3244447 -- add KOI8-U charset support
+        - fixed 3327152 -- unicodeFFFE and unicodeFEFF are handled backwards by WebCore
+        - fixed 3327157 -- x-mac-ukrainian should be mapped to MacCyrillic
+        - fixed 3327160 -- shift-jis, shift_jis, x-sjis should be mapped to the DOS variant of Shift JIS
+        - fixed 3327162 -- most Simplified Chinese encoding choices should be mapped to the DOS variant of EUC-CN
+        - fixed 3327166 -- use DOS variant of EUC_KR
+
+        * kwq/KWQCharsets.mm: Added some defines so we could use encodings that don't
+        have any kCFStringEncoding constant in a header file.
+        * kwq/mac-encodings.txt: Change table entries in accordance with the above bug reports.
+        * kwq/KWQCharsetData.c: Regenerated.
+
+        - other changes, inspired by investigation of various bugs
+
+        * kwq/KWQButton.mm: (-[KWQButton sendConsumedMouseUpIfNeeded]): Make robust against cases where
+        sending the consumed mouse up event destroys the QButton.
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::reopenResidualStyleTags): Rearrange code slightly for clarity, added comment.
+        (KHTMLParser::freeBlock): Removed unnecessary line of code.
+
 2003-07-14  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for 3294626, no scrollbar on ESPN.  Fix lowestPosition to
