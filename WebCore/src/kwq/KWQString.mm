@@ -83,19 +83,33 @@ QString QString::fromLatin1(const char *chs)
 #ifdef USING_BORROWED_KURL
 QString QString::fromLocal8Bit(const char *chs, int len)
 {
+    // FIXME: is MacRoman the correct encoding?
+    return fromStringWithEncoding(chs, len, kCFStringEncodingMacRoman);
+}
+#endif // USING_BORROWED_KURL
+
+QString QString::fromStringWithEncoding(const char *chs, int len,
+        CFStringEncoding encoding)
+{
     QString qs;
     if (chs && *chs) {
         qs.s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         if (qs.s) {
             if (len < 0) {
                 // append null-terminated string
-                // FIXME: is MacRoman the correct encoding?
-                CFStringAppendCString(qs.s, chs, kCFStringEncodingMacRoman);
+                CFStringAppendCString(qs.s, chs, encoding);
             } else {
                 // append length-specified string
-                // FIXME: this uses code similar to that in the
-                // "QString(const QByteArray &)" constructor and could possibly
-                // be refactored
+                // FIXME: can we find some way of not using this temporary?
+#if 1
+                char *buf = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
+                if (buf) {
+                    strncpy(buf, chs, len);
+                    *(buf + len) = '\0';
+                    CFStringAppendCString(qs.s, buf, encoding);
+                    CFAllocatorDeallocate(kCFAllocatorDefault, buf);
+                }
+#else
                 const int capacity = 64;
                 UniChar buf[capacity];
                 int fill = 0;
@@ -111,12 +125,12 @@ QString QString::fromLocal8Bit(const char *chs, int len)
                 if (fill) {
                     CFStringAppendCharacters(qs.s, buf, fill);
                 }
+#endif
             }
         }
     }
     return qs;
 }
-#endif // USING_BORROWED_KURL
 
 QString QString::fromCFMutableString(CFMutableStringRef cfs)
 {
@@ -155,8 +169,6 @@ QString::QString(const QByteArray &qba)
     if (qba.size() && *qba.data()) {
         s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         if (s) {
-            // FIXME: this uses code similar to that in the "fromLocal8Bit"
-            // function and could possibly be refactored
             const int capacity = 64;
             UniChar buf[capacity];
             int fill = 0;

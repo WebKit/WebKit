@@ -193,6 +193,7 @@ public:
 #ifdef USING_BORROWED_KURL
     static QString fromLocal8Bit(const char *, int len=-1);
 #endif
+    static QString fromStringWithEncoding(const char *, int, CFStringEncoding);
     static QString fromCFMutableString(CFMutableStringRef);
 
     // constructors, copy constructors, and destructors ------------------------
