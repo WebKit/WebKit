@@ -1,5 +1,18 @@
 2003-08-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed 3321247 -- window size box disappears from Help window (caused by WebKit NSView hackery)
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]),
+        (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+        Don't propagate dirty rects at all. This was causing problems because now the AppKit uses
+        dirty regions, not dirty rects. In AppKit-722 and newer, _setDrawsDescendants: takes care of this
+        for us so we don't have to do anything at all.
+
+2003-08-26  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed 3392650 -- REGRESSION?: assertion fails trying Apple-hosted page load test while not on Apple network

@@ -197,7 +197,11 @@ static BOOL forceRealHitTest = NO;
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
 {
-    [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
+    // The _setDrawsDescendants: mechanism now takes care of this for us.
+    // But only in AppKit-722 and newer.
+    if (NSAppKitVersionNumber < 722) {
+        [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
+    }
     [self _setAsideSubviews];
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect
         rectIsVisibleRectForView:visibleView topView:topView];
@@ -210,7 +214,11 @@ static BOOL forceRealHitTest = NO;
     BOOL needToSetAsideSubviews = !_private->subviewsSetAside;
     
     if (needToSetAsideSubviews) {
-        [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
+        // The _setDrawsDescendants: mechanism now takes care of this for us.
+        // But only in AppKit-722 and newer.
+        if (NSAppKitVersionNumber < 722) {
+            [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
+        }
         [self _setAsideSubviews];
     }
     
