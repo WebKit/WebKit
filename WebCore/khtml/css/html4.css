@@ -103,26 +103,14 @@ Q:after  {
 IFRAME {
 	display: block;
 }
-
       
 OBJECT { 
 	display: block;
 } 
 
-/* Dave: Please add support for ~ so we can match on "image/" instead specific image mime types. */ 
-
-OBJECT[type="image/png"] {
+OBJECT[type^="image/"] {
 	display: inline;
 }
-
-OBJECT[type="image/gif"] {
-	display: inline;
-}
-
-OBJECT[type="image/jpeg"] {
-	display: inline;
-}
-
 
 APPLET { 
 	display: block;

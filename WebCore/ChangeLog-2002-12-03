@@ -1,5 +1,11 @@
 2002-11-25  Chris Blumenberg  <cblu@apple.com>
 
+	Use ^= to refer to OBJECTs with TYPEs that start with "image/". This is better than hard-coding image mime types.
+
+        * khtml/css/html4.css:
+
+2002-11-25  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 2987001 - spurious mime-type errors from <object> images
 
 	KHTML didn't seem to have any clean support for OBJECT tags that are images. Added support for that.
