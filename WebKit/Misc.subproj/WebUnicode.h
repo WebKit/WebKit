@@ -22,7 +22,7 @@ extern int symmetricPairsSize;
 extern const unsigned short * const case_info[];
 extern const unsigned short * const ligature_info[];
 extern const unsigned short ligature_map[];
-extern UniChar *shapedString(const WebCoreTextRun *run, int dir, int *lengthOut);
+extern UniChar *shapedString(const WebCoreTextRun *run, int *lengthOut);
 
 #ifdef __cplusplus
 }

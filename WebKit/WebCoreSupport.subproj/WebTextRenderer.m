@@ -1290,7 +1290,7 @@ static const char *joiningNames[] = {
         int lengthOut;
 
         // FIXME:  Change to use the new CharacterShapeIterator internal API.
-        shaped = shapedString (run, 0, &lengthOut);        
+        shaped = shapedString (run, &lengthOut);        
         if (shaped){
              if (run->length < LOCAL_BUFFER_SIZE)
                  munged = &_localMunged[0];

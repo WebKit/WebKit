@@ -1,3 +1,16 @@
+2003-08-18  Richard Williamson  <rjw@apple.com>
+
+	Fixed 3140065.  Bidi neutrals in RTL runs are now handled correctly.  Still have
+	problem with bidi neutrals at directional boundaries 3382926.
+
+        Reviewed by Maciej.
+
+        * Misc.subproj/WebUnicode.h:
+        * Misc.subproj/WebUnicode.m:
+        (shapedString):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+
 2003-08-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -621,7 +621,7 @@ bool initializeCharacterShapeIterator (CharacterShapeIterator *iterator, const W
     return true;
 }
 
-UniChar *shapedString(const WebCoreTextRun *run, int dir, int *lengthOut)
+UniChar *shapedString(const WebCoreTextRun *run, int *lengthOut)
 {
     int len = run->to - run->from;
     int from = run->from;
@@ -634,9 +634,11 @@ UniChar *shapedString(const WebCoreTextRun *run, int dir, int *lengthOut)
 	return 0;
     }
 
+    // Early out.  Only shape hebrew and arabic.  Hebrew is included
+    // for shaping mirror characters.
     int i;
     for (i = from; i < from+len; i++){
-        if (uc[i] >= 0x600 && uc[i] <= 0x700)
+        if (uc[i] >= 0x591 && uc[i] <= 0x700)
             break;
     }
     if (i == from+len)
@@ -668,8 +670,6 @@ UniChar *shapedString(const WebCoreTextRun *run, int dir, int *lengthOut)
 
     int lenOut = 0;
     UniChar *data = shapeBuffer;
-    if ( dir == RTL )
-	ch += len - 1;
 
     for (i = 0; i < len; i++ ) {
 	UniChar r = WK_ROW(*ch);
@@ -684,7 +684,7 @@ UniChar *shapedString(const WebCoreTextRun *run, int dir, int *lengthOut)
 			break;
 		}
 	    }
-	    if ( dir == RTL && _unicodeMirrored(*ch) )
+	    if ( _unicodeMirrored(*ch) )
 		*data = _unicodeMirroredChar(*ch);
 	    else
 		*data = *ch;
@@ -692,8 +692,6 @@ UniChar *shapedString(const WebCoreTextRun *run, int dir, int *lengthOut)
 	    lenOut++;
 	} else {
 	    int pos = i + from;
-	    if ( dir == RTL )
-		pos = from + len - 1 - i;
 	    int shape = glyphVariantLogical( uc, stringLength, pos );
 	    ushort map;
 	    switch ( c ) {
@@ -730,41 +728,7 @@ UniChar *shapedString(const WebCoreTextRun *run, int dir, int *lengthOut)
 	    lenOut++;
 	}
     skip:
-	if ( dir == RTL )
-	    ch--;
-	else
-	    ch++;
-    }
-
-    if ( dir == RTL ) {
-	UniChar *s = shapeBuffer;
-	int i = 0;
-	while ( i < lenOut ) {
-	    if ( _unicodeCombiningClass(*s) != 0 ) {
-		int clen = 1;
-		UniChar *ch = s;
-		do {
-		    ch++;
-		    clen++;
-		} while ( _unicodeCombiningClass(*ch) != 0 );
-
-		int j = 0;
-		UniChar *cp = s;
-		while ( j < clen/2 ) {
-		    UniChar tmp = *cp;
-		    *cp = *ch;
-		    *ch = tmp;
-		    cp++;
-		    ch--;
-		    j++;
-		}
-		s += clen;
-		i += clen;
-	    } else {
-		s++;
-		i++;
-	    }
-	}
+        ch++;
     }
 
     *lengthOut = lenOut;
