@@ -87,6 +87,9 @@ public:
         return *this;
     };
 
+    virtual void begin();
+    virtual void end();
+    
     virtual KJS::Value valueOf() const;
     virtual KJS::Value defaultValue (KJS::Type hint) const;
 

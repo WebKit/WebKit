@@ -1,3 +1,37 @@
+2004-01-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3530401.  JNI doesn't cleanup local refs created on the
+	main thread.   IMO this is a bad bug in our JMI implementation.
+
+	To work-around the problem I explicitly delete all local refs.
+	Further, I've added Push/PopLocalFrame calls to catch any refs
+	that I may have missed.  This will guarantee that we don't leak
+	any Java references.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::_commonInit):
+        (JavaClass::JavaClass):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::begin):
+        (JavaInstance::end):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaConstructor::JavaConstructor):
+        (JavaMethod::JavaMethod):
+        * bindings/jni_jsobject.cpp:
+        (JSObject::listFromJArray):
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::begin):
+        (KJS::Bindings::Instance::end):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+        (RuntimeObjectImp::hasProperty):
+        (RuntimeObjectImp::defaultValue):
+
 2004-01-15  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Darin.

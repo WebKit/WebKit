@@ -60,6 +60,18 @@ JavaInstance::JavaInstance (const JavaInstance &other) : Instance()
     _class = other._class;
 };
 
+#define NUM_LOCAL_REFS 64
+
+void JavaInstance::begin()
+{
+    getJNIEnv()->PushLocalFrame (NUM_LOCAL_REFS);
+}
+
+void JavaInstance::end()
+{
+    getJNIEnv()->PopLocalFrame (NULL);
+}
+
 Class *JavaInstance::getClass() const 
 {
     if (_class == 0)

@@ -691,6 +691,7 @@ KJS::List JSObject::listFromJArray(jobjectArray jArray) const
     for (i = 0; i < numObjects; i++) {
         jobject anObject = env->GetObjectArrayElement ((jobjectArray)jArray, i);
         aList.append (convertJObjectToValue(anObject));
+        env->DeleteLocalRef (anObject);
     }
     return aList;
 }
