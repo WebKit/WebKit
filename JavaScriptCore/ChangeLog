@@ -1,3 +1,11 @@
+2004-08-13  Darin Adler  <darin@apple.com>
+
+        - fix build so we can compile again
+
+        * bindings/npapi.h: Added. Richard forgot to check this in. The one I'm checking in here
+        is good enough so that we can compile, but it's only a stopgap measure, because I think
+        Richard has a newer one he wants to check in.
+
 2004-08-12  Richard Williamson   <rjw@apple.com>
 
 	Bring npruntime.h and friends closer to compliance with
