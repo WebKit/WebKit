@@ -370,6 +370,17 @@ using DOM::NodeImpl;
     [self _HTMLElementImpl]->setInnerText(innerText);
 }
 
+
+- (NSString *)outerText
+{
+    return [self _HTMLElementImpl]->outerText();
+}
+
+- (void)setOuterText:(NSString *)outerText
+{
+    [self _HTMLElementImpl]->setOuterText(outerText);
+}
+
 - (DOMHTMLCollection *)children
 {
     HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLElementImpl], HTMLCollectionImpl::NODE_CHILDREN);

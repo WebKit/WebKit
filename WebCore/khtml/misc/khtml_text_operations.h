@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __khtml_text_iterator_h__
-#define __khtml_text_iterator_h__
+#ifndef __khtml_text_operations_h__
+#define __khtml_text_operations_h__
 
 #include <dom/dom2_range.h>
 

@@ -34,6 +34,7 @@
 #include "html/htmltokenizer.h"
 
 #include "misc/htmlhashes.h"
+#include "misc/khtml_text_operations.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -646,36 +647,28 @@ DOMString HTMLElementImpl::outerHTML() const
 
 DOMString HTMLElementImpl::innerText() const
 {
-    DOMString text;
+    Node startContainer(const_cast<HTMLElementImpl *>(this));
+    long startOffset = 0;
+    Node endContainer(const_cast<HTMLElementImpl *>(this));
 
-    const NodeImpl *n = firstChild();
-    // find the next text/image after the anchor, to get a position
-    while(n) {
-        if(n->isTextNode() ) {
-            text += static_cast<const TextImpl *>(n)->data();
-        }
-        if(n->firstChild())
-            n = n->firstChild();
-        else if(n->nextSibling())
-            n = n->nextSibling();
-        else {
-            NodeImpl *next = 0;
-            while(!next) {
-                n = n->parentNode();
-                if(!n || n == (NodeImpl *)this ) goto end;
-                next = n->nextSibling();
-            }
-            n = next;
-        }
+    long endOffset = 0;
+
+    for (NodeImpl *child = firstChild(); child; child = child->nextSibling()) {
+	endOffset++;
     }
- end:
-    return text;
+
+    Range innerRange(startContainer, startOffset, endContainer, endOffset);
+
+    return plainText(innerRange);
 }
 
 DOMString HTMLElementImpl::outerText() const
 {
-    // getting outerText is the same as getting innerText, only
-    // setting is different.
+    // Getting outerText is the same as getting innerText, only
+    // setting is different. You would think this should get the plain
+    // text for the outer range, but this is wrong, <br> for instance
+    // would return different values for inner and outer text by such
+    // a rule, but it doesn't.
     return innerText();
 }
 

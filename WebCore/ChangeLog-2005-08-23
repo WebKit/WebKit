@@ -1,3 +1,20 @@
+2004-05-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed <rdar://problem/3657363>: (Editing: export innerText, innerHTML, outerText, outerHTML and setters to Objective-C)
+	- partial fix for <rdar://problem/3656706>: (Fix innerText and setInnerText DOM extensions)
+	
+        * khtml/html/html_elementimpl.cpp:
+	(HTMLElementImpl::innerText): Use plainText() to make the text, to
+	match other browsers.
+        (HTMLElementImpl::outerText): Extended comment.
+        * khtml/misc/khtml_text_operations.h:
+        * kwq/DOMExtensions.h:
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLElement outerText]): Added new ObjC wrapper for this.
+        (-[DOMHTMLElement setOuterText:]): Ditto.
+
 2004-05-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
