@@ -180,7 +180,8 @@ DOMString::DOMString(NSString *str)
     // Get (or create) a cached JS object for the DOM node.
     KJS::ObjectImp *scriptImp = static_cast<KJS::ObjectImp *>(KJS::getDOMNode (exec, DOM::Node (nodeImpl)).imp());
 
-    [self _initializeWithObjectImp:scriptImp root:KWQ(part)->bindingRootObject()];
+    const KJS::Bindings::RootObject *executionContext = KWQ(part)->bindingRootObject();
+    [self _initializeWithObjectImp:scriptImp originExecutionContext:executionContext executionContext:executionContext];
 }
 
 @end

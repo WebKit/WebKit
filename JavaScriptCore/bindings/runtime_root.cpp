@@ -352,3 +352,9 @@ void RootObject::removeAllNativeReferences ()
     }
 }
 
+void RootObject::setInterpreter (KJS::Interpreter *i)
+{
+    _interpreter = i;
+}
+
+

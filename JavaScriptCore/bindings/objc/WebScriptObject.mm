@@ -65,15 +65,16 @@ static void _didExecute(WebScriptObject *obj)
         func (exec, static_cast<KJS::ObjectImp*>([obj _executionContext]->rootObjectImp()));
 }
 
-- (void)_initializeWithObjectImp:(KJS::ObjectImp *)imp root:(const Bindings::RootObject *)root
+- (void)_initializeWithObjectImp:(KJS::ObjectImp *)imp originExecutionContext:(const Bindings::RootObject *)originExecutionContext executionContext:(const Bindings::RootObject *)executionContext
 {
     _private->imp = imp;
-    _private->root = root;    
+    _private->executionContext = executionContext;    
+    _private->originExecutionContext = originExecutionContext;    
 
-    addNativeReference (root, imp);
+    addNativeReference (executionContext, imp);
 }
 
-- _initWithObjectImp:(KJS::ObjectImp *)imp root:(const Bindings::RootObject *)root
+- _initWithObjectImp:(KJS::ObjectImp *)imp originExecutionContext:(const Bindings::RootObject *)originExecutionContext executionContext:(const Bindings::RootObject *)executionContext
 {
     assert (imp != 0);
     //assert (root != 0);
@@ -82,7 +83,7 @@ static void _didExecute(WebScriptObject *obj)
 
     _private = [[WebScriptObjectPrivate alloc] init];
 
-    [self _initializeWithObjectImp:imp root:root];
+    [self _initializeWithObjectImp:imp originExecutionContext:originExecutionContext executionContext:executionContext];
     
     return self;
 }
@@ -99,7 +100,28 @@ static void _didExecute(WebScriptObject *obj)
 
 - (const KJS::Bindings::RootObject *)_executionContext
 {
-    return _private->root;
+    return _private->executionContext;
+}
+
+- (const KJS::Bindings::RootObject *)_originExecutionContext
+{
+    return _private->originExecutionContext;
+}
+
+- (void)_setOriginExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext
+{
+    _private->originExecutionContext = originExecutionContext;
+}
+
+- (BOOL)_isSafeScript
+{
+    if ([self _originExecutionContext]) {
+	Interpreter *originInterpreter = [self _originExecutionContext]->interpreter();
+	if (originInterpreter) {
+	    return originInterpreter->isSafeScript ([self _executionContext]->interpreter());
+	}
+    }
+    return true;
 }
 
 - (void)dealloc
@@ -157,8 +179,12 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     if (![self _executionContext])
         return nil;
 
+    if (![self _isSafeScript])
+	return nil;
+
     // Lookup the function object.
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+
     Interpreter::lock();
     
     Value v = convertObjcValueToValue(exec, &name, ObjcObjectType);
@@ -184,7 +210,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     }
 
     // Convert and return the result of the function call.
-    id resultObj = [WebScriptObject _convertValueToObjcValue:result root:[self _executionContext]];
+    id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
 
     _didExecute(self);
         
@@ -196,7 +222,11 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     if (![self _executionContext])
         return nil;
 
+    if (![self _isSafeScript])
+	return nil;
+
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+
     Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));
     Value result;
     
@@ -222,7 +252,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         result = Undefined();
     }
 
-    id resultObj = [WebScriptObject _convertValueToObjcValue:result root:[self _executionContext]];
+    id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
 
     _didExecute(self);
     
@@ -234,7 +264,11 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     if (![self _executionContext])
         return;
 
+    if (![self _isSafeScript])
+	return;
+
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+
     Interpreter::lock();
     Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
     [self _imp]->put (exec, Identifier (v.toString(exec)), (convertObjcValueToValue(exec, &value, ObjcObjectType)));
@@ -252,7 +286,11 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     if (![self _executionContext])
         return nil;
         
+    if (![self _isSafeScript])
+	return nil;
+
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+
     Interpreter::lock();
     Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
     Value result = [self _imp]->get (exec, Identifier (v.toString(exec)));
@@ -263,7 +301,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         result = Undefined();
     }
 
-    id resultObj = [WebScriptObject _convertValueToObjcValue:result root:[self _executionContext]];
+    id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
 
     _didExecute(self);
     
@@ -275,7 +313,11 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     if (![self _executionContext])
         return;
         
+    if (![self _isSafeScript])
+	return;
+
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+
     Interpreter::lock();
     Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
     [self _imp]->deleteProperty (exec, Identifier (v.toString(exec)));
@@ -290,6 +332,9 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (NSString *)stringRepresentation
 {
+    if (![self _isSafeScript])
+	return @"Undefined";
+
     Interpreter::lock();
     Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
@@ -310,6 +355,9 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     if (![self _executionContext])
         return nil;
 
+    if (![self _isSafeScript])
+	return nil;
+
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     Interpreter::lock();
     Value result = [self _imp]->get (exec, (unsigned)index);
@@ -320,7 +368,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         result = Undefined();
     }
 
-    id resultObj = [WebScriptObject _convertValueToObjcValue:result root:[self _executionContext]];
+    id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
 
     _didExecute(self);
 
@@ -331,6 +379,9 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 {
     if (![self _executionContext])
         return;
+
+    if (![self _isSafeScript])
+	return;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
     Interpreter::lock();
@@ -354,7 +405,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     exec->setException (err);
 }
 
-+ (id)_convertValueToObjcValue:(KJS::Value)value root:(const Bindings::RootObject *)root
++ (id)_convertValueToObjcValue:(KJS::Value)value originExecutionContext:(const Bindings::RootObject *)originExecutionContext executionContext:(const Bindings::RootObject *)root
 {
     id result = 0;
 
@@ -369,7 +420,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         }
         // Convert to a WebScriptObject
         else {
-            result = [[[WebScriptObject alloc] _initWithObjectImp:objectImp root:root] autorelease];
+            result = [[[WebScriptObject alloc] _initWithObjectImp:objectImp originExecutionContext:originExecutionContext executionContext:root] autorelease];
         }
     }
     

@@ -319,6 +319,11 @@ Window::~Window()
   delete winq;
 }
 
+KJS::Interpreter *Window::interpreter() const
+{
+    return KJSProxy::proxy( m_part )->interpreter();
+}
+
 Window *Window::retrieveWindow(KHTMLPart *p)
 {
   Object obj = Object::dynamicCast( retrieve( p ) );
@@ -1089,6 +1094,63 @@ static bool shouldLoadAsEmptyDocument(const KURL &url)
   return url.protocol().lower() == "about" || url.isEmpty();
 }
 
+bool Window::isSafeScript (const KJS::ScriptInterpreter *origin, const KJS::ScriptInterpreter *target)
+{
+    if (origin == target)
+	return true;
+	
+    KHTMLPart *originPart = origin->part();
+    KHTMLPart *targetPart = target->part();
+
+    // JS may be attempting to access the "window" object, which should be valid,
+    // even if the document hasn't been constructed yet.  If the document doesn't
+    // exist yet allow JS to access the window object.
+    if (!targetPart->xmlDocImpl())
+	return true;
+
+    DOM::DocumentImpl *originDocument = originPart->xmlDocImpl();
+    DOM::DocumentImpl *targetDocument = targetPart->xmlDocImpl();
+
+    if (!targetDocument) {
+	return false;
+    }
+
+    DOM::DOMString targetDomain = targetDocument->domain();
+
+    // Always allow local pages to execute any JS.
+    if (targetDomain.isNull())
+	return true;
+
+    DOM::DOMString originDomain = originDocument->domain();
+
+    // if this document is being initially loaded as empty by its parent
+    // or opener, allow access from any document in the same domain as
+    // the parent or opener.
+    if (shouldLoadAsEmptyDocument(targetPart->url())) {
+	KHTMLPart *ancestorPart = targetPart->opener() ? targetPart->opener() : targetPart->parentPart();
+	while (ancestorPart && shouldLoadAsEmptyDocument(ancestorPart->url())) {
+	    ancestorPart = ancestorPart->parentPart();
+	}
+
+	if (ancestorPart)
+	    originDomain = ancestorPart->xmlDocImpl()->domain();
+    }
+
+    if ( targetDomain == originDomain )
+	return true;
+
+    if (Interpreter::shouldPrintExceptions()) {
+	printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+	     targetDocument->URL().latin1(), originDocument->URL().latin1());
+	QString message;
+	message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+		      targetDocument->URL().latin1(), originDocument->URL().latin1());
+	KWQ(targetPart)->addMessageToConsole(message, 1, QString()); //fixme: provide a real line number and sourceurl
+    }
+
+    return false;
+}
+
 bool Window::isSafeScript(ExecState *exec) const
 {
   if (m_part.isNull()) { // part deleted ? can't grant access
@@ -1769,6 +1831,7 @@ ScheduledAction::ScheduledAction(const QString &_code, bool _singleShot)
   isFunction = false;
   singleShot = _singleShot;
 }
+
 
 void ScheduledAction::execute(Window *window)
 {

@@ -361,6 +361,34 @@ namespace KJS {
 
     void saveBuiltins (SavedBuiltins &) const;
     void restoreBuiltins (const SavedBuiltins &);
+
+#if APPLE_CHANGES
+    /**
+     * Determine if the value is a global object (for any interpreter).  This may
+     * be difficult to determine for multiple uses of JSC in a process that are
+     * logically independent of each other.  In the case of WebCore, this method
+     * is used to determine if an object is the Window object so we can perform
+     * security checks.
+     */
+    virtual bool isGlobalObject(const Value &v) { return false; }
+    
+    /** 
+     * Find the interpreter for a particular global object.  This should really
+     * be a static method, but we can't do that is C++.  Again, as with isGlobalObject()
+     * implementation really need to know about all instances of Interpreter
+     * created in an application to correctly implement this method.  The only
+     * override of this method is currently in WebCore.
+     */
+    virtual Interpreter *interpreterForGlobalObject (const ValueImp *imp) { return 0; }
+    
+    /**
+     * Determine if the it is 'safe' to execute code in the target interpreter from an
+     * object that originated in this interpreter.  This check is used to enforce WebCore
+     * cross frame security rules.  In particular, attempts to access 'bound' objects are
+     * not allowed unless isSafeScript returns true.
+     */
+    virtual bool isSafeScript (const Interpreter *target) { return true; }
+#endif
     
   private:
     InterpreterImp *rep;

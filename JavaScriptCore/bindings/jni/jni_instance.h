@@ -96,9 +96,6 @@ public:
     virtual Value invokeMethod (ExecState *exec, const MethodList &method, const List &args);
     virtual Value invokeDefaultMethod (ExecState *exec, const List &args);
 
-    virtual void setExecutionContext (RootObject *r);
-    virtual const RootObject *executionContext() const;
-
     jobject javaInstance() const { return _instance->_instance; }
     
     Value stringValue() const;
@@ -108,7 +105,6 @@ public:
 private:
     JObjectWrapper *_instance;
     mutable JavaClass *_class;
-    const RootObject *_root;
 };
 
 } // namespace Bindings

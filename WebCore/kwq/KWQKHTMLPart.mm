@@ -1391,7 +1391,7 @@ WebScriptObject *KWQKHTMLPart::windowScriptObject()
 {
     if (!_windowScriptObject) {
         KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
-        _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithObjectImp:win root:bindingRootObject()]);
+        _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithObjectImp:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
     }
 
     return _windowScriptObject;
@@ -1401,7 +1401,7 @@ NPObject *KWQKHTMLPart::windowScriptNPObject()
 {
     if (!_windowScriptNPObject) {
         KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
-        _windowScriptNPObject = _NPN_CreateScriptObject (0, win, bindingRootObject());
+        _windowScriptNPObject = _NPN_CreateScriptObject (0, win, bindingRootObject(), bindingRootObject());
     }
 
     return _windowScriptNPObject;

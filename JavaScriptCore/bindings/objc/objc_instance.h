@@ -71,15 +71,11 @@ public:
     Value numberValue() const;
     Value booleanValue() const;
     
-    void setExecutionContext (RootObject *r) { _root = r; }
-    const RootObject *executionContext() const { return _root; }
-
 private:
     ObjectStructPtr _instance;
     mutable ObjcClass *_class;
     ObjectStructPtr _pool;
     long _beginCount;
-    RootObject *_root;
 };
 
 } // namespace Bindings

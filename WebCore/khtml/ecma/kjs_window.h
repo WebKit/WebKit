@@ -98,8 +98,13 @@ namespace KJS {
     bool hasTimeouts();
     QMap<int, ScheduledAction*> *pauseTimeouts(const void *key);
     void resumeTimeouts(QMap<int, ScheduledAction*>*sa, const void *key);
+    
+    KJS::Interpreter *interpreter() const;
+
+    static bool isSafeScript (const KJS::ScriptInterpreter *origin, const KJS::ScriptInterpreter *target);
 #endif
     void scheduleClose();
+        
     bool isSafeScript(ExecState *exec) const;
     Location *location() const;
     Selection *selection() const;

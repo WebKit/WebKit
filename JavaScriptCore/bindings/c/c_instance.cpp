@@ -46,6 +46,7 @@ CInstance::CInstance (NPObject *o)
 {
     _object = _NPN_RetainObject (o);
     _class = 0;
+    setExecutionContext (0);
 };
 
 CInstance::~CInstance () 
@@ -59,6 +60,7 @@ CInstance::CInstance (const CInstance &other) : Instance()
 {
     _object = _NPN_RetainObject (other._object);
     _class = 0;
+    setExecutionContext (other.executionContext());
 };
 
 CInstance &CInstance::operator=(const CInstance &other){
@@ -203,8 +205,9 @@ KJS::Value CInstance::defaultValue (KJS::Type hint) const
 
 KJS::Value CInstance::stringValue() const
 {
-    // FIXME:  Implement something sensible, like calling toString...
-    KJS::String v("");
+    char buf[1024];
+    snprintf (buf, 1024, "NPObject %p, NPClass %p", _object, _object->_class);
+    KJS::String v(buf);
     return v;
 }
 

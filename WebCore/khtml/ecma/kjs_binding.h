@@ -131,7 +131,13 @@ namespace KJS {
     virtual void mark();
     
     DOM::Event *getCurrentEvent() const { return m_evt; }
-    
+
+#if APPLE_CHANGES
+    virtual bool isGlobalObject(const Value &v);
+    virtual Interpreter *interpreterForGlobalObject (const ValueImp *imp);
+    virtual bool isSafeScript (const Interpreter *target);
+#endif
+
   private:
     KHTMLPart* m_part;
 

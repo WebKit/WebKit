@@ -21,6 +21,7 @@
 
 #include "kjs_binding.h"
 #include "kjs_dom.h"
+#include "kjs_window.h"
 #include <kjs/internal.h> // for InterpreterImp
 
 #include "dom/dom_exception.h"
@@ -272,6 +273,34 @@ bool ScriptInterpreter::wasRunByUserGesture() const
   }
   return false;
 }
+
+#if APPLE_CHANGES
+bool ScriptInterpreter::isGlobalObject(const Value &v)
+{
+    if (v.type() == ObjectType) {
+	Object o = v.toObject (globalExec());
+	if (o.classInfo() == &Window::info)
+	    return true;
+    }
+    return false;
+}
+
+bool ScriptInterpreter::isSafeScript (const Interpreter *_target)
+{
+    const KJS::ScriptInterpreter *target = static_cast<const ScriptInterpreter *>(_target);
+
+    return KJS::Window::isSafeScript (this, target);
+}
+
+Interpreter *ScriptInterpreter::interpreterForGlobalObject (const ValueImp *imp)
+{
+    if (!isGlobalObject(imp))
+	return 0;
+	
+    const KJS::Window *win = static_cast<const KJS::Window *>(imp);
+    return win->interpreter();
+}
+#endif
 
 //////
 

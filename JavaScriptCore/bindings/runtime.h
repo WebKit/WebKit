@@ -140,6 +140,12 @@ public:
 
     static Object createRuntimeObject (BindingLanguage language, void *myInterface);
 
+    Instance () : _executionContext(0) {};
+    
+    Instance (const Instance &other);
+
+    Instance &operator=(const Instance &other);
+
     // These functions are called before and after the main entry points into
     // the native implementations.  They can be used to establish and cleanup
     // any needed state.
@@ -160,12 +166,13 @@ public:
     
     virtual Value valueOf() const { return String(getClass()->name()); };
     
-    virtual void setExecutionContext (RootObject *r) = 0;
-    virtual const RootObject *executionContext () const = 0;
+    void setExecutionContext (const RootObject *r) { _executionContext = r; }
+    const RootObject *executionContext() const { return _executionContext; }
     
     virtual ~Instance() {};
     
-private:
+protected:
+    const RootObject *_executionContext;
 };
 
 class Array

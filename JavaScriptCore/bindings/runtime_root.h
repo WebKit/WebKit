@@ -70,7 +70,7 @@ public:
     
     KJS::ObjectImp *rootObjectImp() const { return _imp; }
     
-    void setInterpreter (KJS::Interpreter *i) { _interpreter = i; }
+    void setInterpreter (KJS::Interpreter *i);
     KJS::Interpreter *interpreter() const { return _interpreter; }
 
     void removeAllNativeReferences ();
@@ -88,7 +88,7 @@ public:
     static void dispatchToJavaScriptThread(JSObjectCallContext *context);
     
     const void *nativeHandle() const { return _nativeHandle; }
-    
+
 private:
     const void *_nativeHandle;
     KJS::ObjectImp *_imp;

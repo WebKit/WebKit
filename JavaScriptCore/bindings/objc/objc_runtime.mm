@@ -136,7 +136,7 @@ static id convertValueToObjcObject (KJS::ExecState *exec, const KJS::Value &valu
         newRoot->setInterpreter (exec->interpreter());
         root = newRoot;
     }
-    return [WebScriptObject _convertValueToObjcValue:value root:root];
+    return [WebScriptObject _convertValueToObjcValue:value originExecutionContext:root executionContext:root ];
 }
 
 

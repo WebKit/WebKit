@@ -25,6 +25,7 @@
 #include <c_instance.h> 
 #include <c_utility.h> 
 #include <internal.h>
+#include <npruntime_impl.h>
 #include <npruntime_priv.h>
 #include <runtime.h>
 #include <runtime_object.h>
@@ -99,6 +100,30 @@ void convertValueToNPVariant (KJS::ExecState *exec, const KJS::Value &value, NPV
             CInstance *instance = static_cast<CInstance*>(imp->getInternalInstance());
             NPN_InitializeVariantWithObject (result, instance->getObject());
         }
+	else {
+
+	    KJS::Interpreter *originInterpreter = exec->interpreter();
+            const Bindings::RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
+
+	    KJS::Interpreter *interpreter = 0;
+	    if (originInterpreter->isGlobalObject(value)) {
+		interpreter = originInterpreter->interpreterForGlobalObject (value.imp());
+	    }
+
+	    if (!interpreter)
+		interpreter = originInterpreter;
+		
+            const Bindings::RootObject *executionContext = rootForInterpreter(interpreter);
+            if (!executionContext) {
+                Bindings::RootObject *newExecutionContext = new KJS::Bindings::RootObject(0);
+                newExecutionContext->setInterpreter (interpreter);
+                executionContext = newExecutionContext;
+            }
+    
+	    NPObject *obj = _NPN_CreateScriptObject (0, objectImp, originExecutionContext, executionContext);
+	    NPN_InitializeVariantWithObject (result, obj);
+	    _NPN_ReleaseObject (obj);
+	}
     }
     else
         NPN_InitializeVariantAsUndefined(result);

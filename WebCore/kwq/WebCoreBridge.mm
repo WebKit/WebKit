@@ -161,11 +161,12 @@ static RootObject *rootForView(void *v)
 {
     NSView *aView = (NSView *)v;
     WebCoreBridge *aBridge = [[WebCoreViewFactory sharedFactory] bridgeForView:aView];
+    RootObject *root = 0;
 
     if (aBridge)
-        return [aBridge executionContextForView:aView];
+        root = [aBridge executionContextForView:aView];
 
-    return 0;
+    return root;
 }
 
 static pthread_t mainThread = 0;
@@ -214,7 +215,7 @@ static bool initializedKJS = FALSE;
         mainThread = pthread_self();
         
         RootObject::setFindRootObjectForNativeHandleFunction (rootForView);
-        
+
         KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
         
         initializedKJS = TRUE;

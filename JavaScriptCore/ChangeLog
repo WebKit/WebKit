@@ -1,3 +1,71 @@
+2005-01-17  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3753030> Need to ensure same origin for plugin binding invocations (origin security rules)
+
+	Keep track of originating execution context and target execution
+	context for native JS object wrappers, and perform appropriate
+	security checks.
+
+        Reviewed by David Harrison.
+
+        * bindings/NP_jsobject.cpp:
+        (_isSafeScript):
+        (_NPN_CreateScriptObject):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_SetException):
+        * bindings/NP_jsobject.h:
+        * bindings/c/c_instance.cpp:
+        (CInstance::CInstance):
+        (CInstance::stringValue):
+        * bindings/c/c_instance.h:
+        * bindings/c/c_utility.cpp:
+        (convertValueToNPVariant):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::JavaInstance):
+        (JavaInstance::valueOf):
+        * bindings/jni/jni_instance.h:
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _initializeWithObjectImp:KJS::originExecutionContext:Bindings::executionContext:Bindings::]):
+        (-[WebScriptObject _initWithObjectImp:KJS::originExecutionContext:Bindings::executionContext:Bindings::]):
+        (-[WebScriptObject KJS::Bindings::]):
+        (-[WebScriptObject _setOriginExecutionContext:KJS::Bindings::]):
+        (-[WebScriptObject _isSafeScript]):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+        (+[WebScriptObject _convertValueToObjcValue:KJS::originExecutionContext:Bindings::executionContext:Bindings::]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_runtime.mm:
+        (convertValueToObjcObject):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        * bindings/runtime.cpp:
+        (Instance::Instance):
+        (Instance::operator=):
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::Instance):
+        (KJS::Bindings::Instance::setExecutionContext):
+        (KJS::Bindings::Instance::executionContext):
+        * bindings/runtime_root.cpp:
+        (RootObject::setInterpreter):
+        * bindings/runtime_root.h:
+        * kjs/interpreter.h:
+        (KJS::Interpreter::isGlobalObject):
+        (KJS::Interpreter::interpreterForGlobalObject):
+        (KJS::Interpreter::isSafeScript):
+
 === Safari-179 ===
 
 2005-01-13  Vicki Murley <vicki@apple.com>

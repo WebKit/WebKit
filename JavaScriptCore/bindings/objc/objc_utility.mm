@@ -92,16 +92,29 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJ
     ObjcValue result;
     double d = 0;
    
-    d = value.toNumber(exec);
+    if (!ObjcObjectType)
+	d = value.toNumber(exec);
+	
     switch (type){
         case ObjcObjectType: {
-            const Bindings::RootObject *root = rootForInterpreter(exec->interpreter());
-            if (!root) {
-                Bindings::RootObject *newRoot = new KJS::Bindings::RootObject(0);
-                newRoot->setInterpreter (exec->interpreter());
-                root = newRoot;
+	    KJS::Interpreter *originInterpreter = exec->interpreter();
+            const Bindings::RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
+
+	    KJS::Interpreter *interpreter = 0;
+	    if (originInterpreter->isGlobalObject(value)) {
+		interpreter = originInterpreter->interpreterForGlobalObject (value.imp());
+	    }
+
+	    if (!interpreter)
+		interpreter = originInterpreter;
+		
+            const Bindings::RootObject *executionContext = rootForInterpreter(interpreter);
+            if (!executionContext) {
+                Bindings::RootObject *newExecutionContext = new KJS::Bindings::RootObject(0);
+                newExecutionContext->setInterpreter (interpreter);
+                executionContext = newExecutionContext;
             }
-            result.objectValue = [WebScriptObject _convertValueToObjcValue:value root:root];
+            result.objectValue = [WebScriptObject _convertValueToObjcValue:value originExecutionContext:originExecutionContext executionContext:executionContext ];
         }
         break;
         
@@ -134,8 +147,6 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJ
         case ObjcDoubleType: {
             result.doubleValue = (double)d;
         }
-        break;
-            
         break;
 
         case ObjcVoidType: {
