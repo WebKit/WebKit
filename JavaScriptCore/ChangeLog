@@ -1,3 +1,22 @@
+2003-12-05  Richard Williamson   <rjw@apple.com>
+
+	LiveConnect:  Part 1 of supporting JS bindings to
+	native language arrays.
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::JavaField):
+        (convertJObjectToArray):
+        (JavaField::valueFromInstance):
+        (JavaField::setValueToInstance):
+        * bindings/jni/jni_runtime.h:
+        * bindings/runtime.cpp:
+        (Instance::setValueOfField):
+        * bindings/runtime.h:
+        (Bindings::Array::~Array):
+
 2003-12-04  Richard Williamson   <rjw@apple.com>
 
 	LiveConnect:  Moved defaultValue into concrete implementation because

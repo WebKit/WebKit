@@ -52,8 +52,68 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
     // Get field name
     jstring fieldName = (jstring)callJNIObjectMethod (aField, "getName", "()Ljava/lang/String;");
     _name = JavaString(env, fieldName);
-    
+
+    printf ("%s: %s (%d)\n", _name.characters(), _type.characters(), _JNIType);
+
     _field = new JavaInstance(aField);
+}
+
+KJS::Value convertJObjectToArray (KJS::ExecState *exec, jobject anObject, const char *type)
+{
+#if 0
+    if (type[0] != '[')
+        return Undefined();
+    
+    JNIType arrayType = JNITypeFromClassName(type+1);
+    switch (arrayType) {
+        case object_type: {
+            jobjectArray objectArray = (jObjectArray)anObject;
+            break;
+        }
+            
+        case boolean_type: {
+            jbooleanArray boolArray = (jbooleanArray)anObject;
+            break;
+        }
+            
+        case byte_type: {
+            jbyteArray byteArray = (jbyteArray)anObject;
+            break;
+        }
+            
+        case char_type: {
+            jcharArray charArray = (jcharArray)anObject;
+            break;
+        }
+            
+        case short_type: {
+            jshortArray shortArray = (jshortArray)anObject;
+            break;
+        }
+            
+        case int_type: {
+            jintArray intArray = (jintArray)anObject;
+            break;
+        }
+            
+        case long_type: {
+            jlongArray longArray = (jlongArray)anObject;
+            break;
+        }
+            
+        case float_type: {
+            jfloatArray floatArray = (jfloatArray)anObject;
+            break;
+        }
+            
+        case double_type: {
+            jdoubleArray doubleArray = (jdoubleArray)anObject;
+            break;
+        }
+        default:
+    }
+#endif
+    return Undefined();
 }
 
 KJS::Value JavaField::valueFromInstance(const Instance *i) const 
@@ -65,7 +125,14 @@ KJS::Value JavaField::valueFromInstance(const Instance *i) const
     switch (_JNIType) {
         case object_type: {
             jobject anObject = callJNIObjectMethod(_field->javaInstance(), "get", "(Ljava/lang/Object;)Ljava/lang/Object;", jinstance);
-            return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject)));
+
+            const char *arrayType = type();
+            if (arrayType[0] == '[') {
+                return convertJObjectToArray (0, anObject, arrayType);
+            }
+            else {
+                return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject)));
+            }
         }
         break;
             
@@ -98,7 +165,7 @@ KJS::Value JavaField::valueFromInstance(const Instance *i) const
     return Undefined();
 }
 
-void JavaField::setValueToInstance(KJS::ExecState *exec, const Instance *i, KJS::Value aValue) const
+void JavaField::setValueToInstance(KJS::ExecState *exec, const Instance *i, const KJS::Value &aValue) const
 {
     const JavaInstance *instance = static_cast<const JavaInstance *>(i);
     jobject jinstance = instance->javaInstance();

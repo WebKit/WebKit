@@ -186,7 +186,7 @@ public:
     }
     
     virtual KJS::Value valueFromInstance(const Instance *instance) const;
-    virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, KJS::Value aValue) const;
+    virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const;
     
     virtual const char *name() const { return _name.characters(); }
     virtual RuntimeType type() const { return _type.characters(); }
