@@ -727,8 +727,10 @@ void Selection::validate(ETextGranularity granularity)
             break;
         case WORD:
             if (m_baseIsStart) {
-                m_start = startOfWord(m_base).deepEquivalent();
                 m_end = endOfWord(m_extent).deepEquivalent();
+                // If at the end of the document, expand to the left.
+                EWordSide side = (m_end == m_extent) ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
+                m_start = startOfWord(m_base, side).deepEquivalent();
             } else {
                 m_start = startOfWord(m_extent).deepEquivalent();
                 m_end = endOfWord(m_base).deepEquivalent();

@@ -1,3 +1,12 @@
+2004-09-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3811187> REGRESSION (Mail): Control-click past end of document does not spell check last word
+
+        Reviewed by kocienda.
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::validate): if at the end of the document, expand to the left.
+
 2004-09-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken and John.
