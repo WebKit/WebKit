@@ -212,8 +212,14 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
     return String("KDE");
 #endif
   case Language:
+#if APPLE_CHANGES
+    // We don't have an implementation of KGlobal::locale().  We do however
+    // have a static method on KLocale to access the current language.
+    return String(KLocale::language());
+#else
     return String(KGlobal::locale()->language() == "C" ?
                   QString::fromLatin1("en") : KGlobal::locale()->language());
+#endif
   case UserAgent:
     return String(userAgent);
   case Platform:
