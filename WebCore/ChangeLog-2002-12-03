@@ -1,3 +1,9 @@
+2002-01-16  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kwq/qt/_qpoint.h, src/kwq/qt/_qrect.h, src/kwq/qt/_qsize.h,
+	src/kwq/qt/qpoint.h, src/kwq/qt/qrect.h, src/kwq/qt/qsize.h: Make
+	QPoint, QRect and QSize easily turn-off-able again.
+
 2002-01-15  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kdelibs/kjs/Makefile.am: Add missing files to BUILT_SOURCES

@@ -23,18 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QPOINT_H_
-#define QPOINT_H_
+#ifndef _QPOINT_H_
+#define _QPOINT_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
-#ifdef USING_BORROWED_QPOINT
-
-#include <_qpoint.h>
-
-#else /* !USING_BORROWED_QPOINT */
 
 #include <iostream>
 
@@ -56,9 +50,7 @@ public:
 
     QPoint();
     QPoint(int, int);
-
-    // QPoint(const QPoint &);
-    // default copy constructor is fine
+    QPoint(const QPoint &);
 
 // add no-op destructor
 #ifdef _KWQ_PEDANTIC_
@@ -72,6 +64,10 @@ public:
 
     int manhattanLength() const;
 
+    bool isNull() const;
+    void setX(int);
+    void setY(int);
+
     // operators ---------------------------------------------------------------
 
     /* Note: Trolltech seems to want operator= to be a bitwise copy
@@ -81,13 +77,29 @@ public:
     friend QPoint operator+(const QPoint &, const QPoint &);
     friend QPoint operator-(const QPoint &, const QPoint &);
 
+    QPoint &operator+=(const QPoint &);
+    QPoint &operator-=(const QPoint &);
+    QPoint &operator*=(int);
+    QPoint &operator*=(double);
+    QPoint &operator/=(int);
+    QPoint &operator/=(double);
+
+    friend bool operator==(const QPoint &, const QPoint &);
+    friend bool operator!=(const QPoint &, const QPoint &);
+    friend QPoint operator*(const QPoint &, int);
+    friend QPoint operator*(int, const QPoint &);
+    friend QPoint operator*(const QPoint &, double);
+    friend QPoint operator*(double, const QPoint &);
+    friend QPoint operator-(const QPoint &);
+    friend QPoint operator/(const QPoint &, int);
+    friend QPoint operator/(const QPoint &, double);
+
 // protected -------------------------------------------------------------------
 
 // private ---------------------------------------------------------------------
-private:
 
-    QCOORD xCoord;
-    QCOORD yCoord;
+    QCOORD xx;
+    QCOORD yy;
 
 }; // class QPoint =============================================================
 
@@ -132,5 +144,3 @@ public:
 }; // class QPointArray ========================================================
 
 #endif
-
-#endif /* USING_BORROWED_QPOINT */

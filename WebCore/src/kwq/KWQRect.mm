@@ -25,6 +25,8 @@
 
 #include <qrect.h>
 
+#ifndef USING_BORROWED_QRECT
+
 #define MAX(a,b) ((a) >= (b) ? (a) : (b))
 
 
@@ -159,4 +161,4 @@ ostream &operator<<(ostream &o, const QRect &r)
 }
 #endif
 
-
+#endif

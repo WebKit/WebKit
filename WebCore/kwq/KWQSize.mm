@@ -25,6 +25,8 @@
 
 #include <qsize.h>
 
+#ifndef USING_BORROWED_QSIZE
+
 QSize::QSize() : w(-1), h(-1)
 {
 }
@@ -83,3 +85,4 @@ ostream &operator<<(ostream &o, const QSize &s)
 }
 #endif
 
+#endif

@@ -26,6 +26,12 @@
 #ifndef QRECT_H_
 #define QRECT_H_
 
+#ifdef USING_BORROWED_QRECT
+
+#include <_qrect.h>
+
+#else
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -112,5 +118,7 @@ private:
 
 bool operator==(const QRect &, const QRect &);
 bool operator!=(const QRect &, const QRect &);
+
+#endif
 
 #endif

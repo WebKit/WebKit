@@ -30,6 +30,12 @@
 #include <config.h>
 #endif
 
+#ifdef USING_BORROWED_QPOINT
+
+#include <_qpoint.h>
+
+#else /* !USING_BORROWED_QPOINT */
+
 #include <iostream>
 
 #include <KWQDef.h>
@@ -126,3 +132,5 @@ public:
 }; // class QPointArray ========================================================
 
 #endif
+
+#endif /* USING_BORROWED_QPOINT */

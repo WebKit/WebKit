@@ -25,6 +25,8 @@
 
 #include <qpoint.h>
 
+#ifndef USING_BORROWED_QPOINT
+
 QPoint::QPoint() : xCoord(0), yCoord(0)
 {
 }
@@ -65,4 +67,6 @@ ostream &operator<<(ostream &o, const QPoint &p)
 {
 	return o << "QPoint: [x: " << p.x() << "; h: " << p.y() << "]";
 }
+#endif
+
 #endif
