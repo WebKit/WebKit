@@ -1,6 +1,19 @@
+2004-11-20  Maciej Stachowiak  <mjs@apple.com>
+ 
+        Reviewed by John.
+ 
+ 	<rdar://problem/3710101> _web_userVisibleString makes URL autocomplete roughly 2x slower
+         
+ 	* Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSString _web_isUserVisibleURL]): New SPI to check if a URL
+ 	string is already in user-visible form (i.e. converting it to an
+ 	NSURL and then back via _web_userVisibleString would not change
+ 	anything).
+ 
 2004-11-19  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by John.
 
 	<rdar://problem/3190977> closing window with many tabs in it can be quite slow
         

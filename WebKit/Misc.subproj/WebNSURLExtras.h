@@ -45,6 +45,8 @@
 
 @interface NSString (WebNSURLExtras)
 
+- (BOOL)_web_isUserVisibleURL;
+
 - (BOOL)_web_hostNameNeedsDecodingWithRange:(NSRange)range; // returns NO if decodeHostNameWithRange: would return nil, but more efficient
 - (BOOL)_web_hostNameNeedsEncodingWithRange:(NSRange)range; // returns NO if encodeHostNameWithRange: would return nil, but more efficient
 

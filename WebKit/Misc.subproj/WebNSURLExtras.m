@@ -693,6 +693,51 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 
 @implementation NSString (WebNSURLExtras)
 
+- (BOOL)_web_isUserVisibleURL
+{
+    BOOL valid = YES;
+    // get buffer
+
+    char static_buffer[1024];
+    const char *p;
+    BOOL success = CFStringGetCString((CFStringRef)self, static_buffer, 1023, kCFStringEncodingUTF8);
+    if (success) {
+        p = static_buffer;
+    } else {
+        p = [self UTF8String];
+    }
+
+    int length = strlen(p);
+
+    // check for characters <= 0x20 or >=0x7f, %-escape sequences of %7f, and xn--, these
+    // are the things that will lead _web_userVisisbleString to actually change things.
+    int i;
+    for (i = 0; i < length; i++) {
+        unsigned char c = p[i];
+        // escape control characters, space, and delete
+        if (c <= 0x20 || c == 0x7f) {
+            valid = NO;
+            break;
+        } else if (c == '%' && (i + 1 < length && isHexDigit(p[i + 1])) && i + 2 < length && isHexDigit(p[i + 2])) {
+            unsigned char u = (hexDigitValue(p[i + 1]) << 4) | hexDigitValue(p[i + 2]);
+            if (u > 0x7f) {
+                valid = NO;
+                break;
+            }
+            i += 2;
+        } else {
+            // Check for "xn--" in an efficient, non-case-sensitive, way.
+            if (c == '-' && i >= 3 && (p[-3] | 0x20) == 'x' && (p[-2] | 0x20) == 'n' && p[-1] == '-') {
+                valid = NO;
+                break;
+            }
+        }
+    }
+
+    return valid;
+}
+
+
 - (BOOL)_webkit_isJavaScriptURL
 {
     return [self _web_hasCaseInsensitivePrefix:@"javascript:"];
