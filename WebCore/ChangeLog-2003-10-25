@@ -1,3 +1,15 @@
+2003-04-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3191892 - Popup blocking prevents window.open with '_self' as target (superbitdvd.com)
+
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Don't apply popup blocking if the call
+	would open something in an existing frame (inlcuding the special
+	_self, _top and _parent frames.
+
 2003-04-18  David Hyatt  <hyatt@apple.com>
 
 	Make sure display:table is not accidentally mutated to

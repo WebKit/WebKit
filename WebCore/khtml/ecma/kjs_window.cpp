@@ -1120,7 +1120,12 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       }
 #endif
     }
-    if ( policy != 0 ) {
+
+    QString frameName = !args[1].isNull() && args[1].type() != UndefinedType ?
+                        args[1].toString(exec).qstring()
+                        : QString("_blank");
+
+    if ( policy != 0 && !(part->findFrame(frameName) || frameName == "_top" || frameName == "_parent" || frameName == "_self")) {
       return Undefined();
     } else {
       KParts::WindowArgs winargs;
@@ -1225,9 +1230,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       }
 
       KParts::URLArgs uargs;
-      uargs.frameName = !args[1].isNull() && args[1].type() != UndefinedType ?
-                        args[1].toString(exec).qstring()
-                        : QString("_blank");
+      uargs.frameName = frameName;
       if ( uargs.frameName == "_top" )
       {
 	  // FIXME: referrer?
