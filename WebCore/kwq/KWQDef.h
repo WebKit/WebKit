@@ -72,10 +72,6 @@ typedef int WId;
 void qDebug(const char *msg, ...);
 void qWarning(const char *msg, ...);
 
-#ifdef NEED_BOGUS_X_DEFINES
-typedef int XEvent;
-#endif
-
 /* FIXME: Let's not worrying about malloc/new failing for now.... */
 #define CHECK_PTR(p)
 

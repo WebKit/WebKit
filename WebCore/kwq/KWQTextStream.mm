@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#define NEED_BOGUS_TEXTSTREAMS 1
-
 #include <kwqdebug.h>
 
 #include <qtextstream.h>

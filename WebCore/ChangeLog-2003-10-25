@@ -1,3 +1,22 @@
+2002-04-24  Darin Adler  <darin@apple.com>
+
+	Get rid of all NEED_BOGUS_XXX.
+
+	* khtml/java/Makefile.am: Remove -DNEED_BOGUS_TEXTSTREAMS and
+	-DNEED_BOGUS_X_DEFINES.
+	* khtml/rendering/Makefile.am: Remove -DNEED_BOGUS_X_DEFINES.
+	* khtml/xml/Makefile.am: Remove -DNEED_BOGUS_TEXTSTREAMS.
+	* kwq/Makefile.am: Remove -DNEED_BOGUS_X_DEFINES and KWQKJavaEmbed.mm.
+	* kwq/KWQKJavaEmbed.mm: Removed.
+
+	* kwq/KWQDef.h: Remove XEvent define (inside NEED_BOGUS_X_DEFINES).
+
+	* kwq/qt/qtextstream.h: Don't look at NEED_BOGUS_TEXTSTREAMS.
+	* kwq/KWQtextstream.mm: Don't look at NEED_BOGUS_TEXTSTREAMS.
+
+	* khtml/java/javaembed.h: Made this just a QWidget typedef for now.
+	* khtml/java/kjavaappletwidget.cpp: ifdef out the unused setWindow function.
+
 2002-04-23  Darin Adler  <darin@apple.com>
 
 	* khtml/css/css_valueimpl.cpp:

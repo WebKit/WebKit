@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,47 +26,20 @@
 #ifndef QTEXTSTREAM_H_
 #define QTEXTSTREAM_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QTEXTSTREAM ==================================================
-
-// FIXME: Need a hack here to give the xml tokenizer text stream
-// defines from Qt. The NEED_BOGUS_TEXTSTREAMS symbol
-// can be removed when we have Qt text streams implemented
-
-#if defined USING_BORROWED_QTEXTSTREAM && ! defined NEED_BOGUS_TEXTSTREAMS
-#include <_qtextstream.h>
-#else
-
 #include "qstring.h"
-
-// class QTextStream ===========================================================
 
 class QTextStream;
 
-typedef QTextStream& (*QTextStreamManipulator)(QTextStream &);
+typedef QTextStream &(*QTextStreamManipulator)(QTextStream &);
 
 QTextStream &endl(QTextStream& stream);
 
 class QTextStream {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QTextStream();
     QTextStream(QByteArray, int);
     QTextStream(QString *, int);
     virtual ~QTextStream();       
-
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
 
      QTextStream &operator<<(char);
      QTextStream &operator<<(const char *);
@@ -75,112 +48,29 @@ public:
      QTextStream &operator<<(const QTextStreamManipulator &);
      QTextStream &operator<<(const void *);
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
     QTextStream(const QTextStream &);
     QTextStream &operator=(const QTextStream &);
 
-}; // class QTextStream ========================================================
-
-
-// class QTextIStream ==========================================================
+};
 
 class QTextIStream : public QTextStream {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QTextIStream(QString *);
-
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QTextIStream() {}      
-#endif
-
-    // member functions --------------------------------------------------------
 
     QString readLine();
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QTextIStream(const QTextIStream &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    QTextIStream &operator=(const QTextIStream &);
-#endif
-
-}; // class QTextIStream =======================================================
-
-
-// class QTextOStream ==========================================================
+};
 
 class QTextOStream : public QTextStream {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QTextOStream(QString *);
     QTextOStream(QByteArray);
 
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QTextOStream() {}      
-#endif
-
-    // member functions --------------------------------------------------------
-
     QString readLine();
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QTextOStream(const QTextOStream &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    QTextOStream &operator=(const QTextOStream &);
-#endif
-
-}; // class QTextOStream =======================================================
-
-
-#endif // USING_BORROWED_QTEXTSTREAM
+};
 
 #endif
-
-

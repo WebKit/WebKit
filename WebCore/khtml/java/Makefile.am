@@ -20,13 +20,7 @@ libkhtmljava_o_SOURCES = \
 	$(NULL)
 
 
-# FIXME: Need a hack here to give the xml tokenizer text stream
-# defines from Qt. The NEED_BOGUS_TEXTSTREAMS symbol
-# can be removed when we have Qt text streams implemented
-
 INCLUDES = \
-	-DNEED_BOGUS_TEXTSTREAMS \
-	-DNEED_BOGUS_X_DEFINES \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(NULL)

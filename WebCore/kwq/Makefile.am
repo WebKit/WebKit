@@ -64,7 +64,6 @@ libkwq_o_SOURCES = \
 	KWQKIconLoader.mm \
 	KWQKImageIO.mm \
 	KWQKInstance.mm \
-	KWQKJavaEmbed.mm \
 	KWQKJob.mm \
 	KWQKLineEdit.mm \
 	KWQKListBox.mm \
@@ -139,7 +138,6 @@ libkwq_o_SOURCES = \
 	$(NULL)
 
 INCLUDES = \
-	-DNEED_BOGUS_X_DEFINES \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(WEBCORE_INCLUDES) \

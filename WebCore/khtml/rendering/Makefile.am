@@ -9,8 +9,8 @@ libkhtmlrendering_o_SOURCES = \
 	bidi.h \
 	break_lines.cpp \
 	break_lines.h \
-        font.cpp \
-        font.h \
+	font.cpp \
+	font.h \
 	render_applet.cpp \
 	render_applet.h \
 	render_body.cpp \
@@ -49,7 +49,6 @@ libkhtmlrendering_o_SOURCES = \
 
 
 INCLUDES = \
-	-DNEED_BOGUS_X_DEFINES \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(NULL)
