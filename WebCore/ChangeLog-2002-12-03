@@ -1,3 +1,9 @@
+2002-03-07  Don Melton  <gramps@apple.com>
+
+	Removed unused file in kdelibs that I missed in previous commit.
+
+	* src/kdelibs/khtml/test/layout.html:
+
 2002-03-06  Don Melton  <gramps@apple.com>
 
 	Removed unused files in kdelibs.
