@@ -77,9 +77,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     }
 
     NSURL *cocoaURL = url.isEmpty() ? nil : url.getNSURL();
-    bridge = [m_part->impl->bridge() createWindowWithURL:cocoaURL
-         referrer:KWQKHTMLPartImpl::referrer(urlArgs)
-         frameName:frameName];
+    bridge = [m_part->impl->bridge() createWindowWithURL:cocoaURL frameName:frameName];
     
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];

@@ -1,5 +1,32 @@
 2002-10-15  Darin Adler  <darin@apple.com>
 
+	- fixed 3062393 -- need to send proper referrer for "open in new window" menu items and keyboard shortcuts
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]): Don't take a referrer parameter any more.
+	Get the referrer by calling to the other side of the bridge, instead.
+        (-[WebBridge startLoadingResource:withURL:]): Ditto.
+        (-[WebBridge loadURL:]): Ditto.
+        (-[WebBridge postWithURL:data:contentType:]): Ditto.
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Ditto.
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:]): Don't take a referrer parameter,
+	which was always nil anyway. Instead, get the referrer from the bridge.
+        (-[WebDefaultContextMenuDelegate openLinkInNewWindow:]): Don't pass nil for referrer.
+        (-[WebDefaultContextMenuDelegate openImageInNewWindow:]): Ditto.
+        (-[WebDefaultContextMenuDelegate openFrameInNewWindow:]): Ditto.
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _continueAfterClickPolicyForEvent:]): Pass a referrer from the bridge, rather
+	than nil, for both WebClickPolicyOpenNewWindow and WebClickPolicyOpenNewWindowBehind.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): Add a FIXME.
+
+2002-10-15  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebDataSourcePrivate.h: Remove unused stuff.
         * WebView.subproj/WebDataSourcePrivate.m: Ditto.
 

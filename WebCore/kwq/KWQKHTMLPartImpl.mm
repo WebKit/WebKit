@@ -118,17 +118,12 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
 	    frame = [_bridge frameNamed:frameName.getNSString()];
 	}
         if (frame == nil) {
-	    frame = [_bridge createWindowWithURL:nil referrer:nil frameName:frameName.getNSString()];
+	    frame = [_bridge createWindowWithURL:nil frameName:frameName.getNSString()];
             [frame showWindow];
         }
     }
     
     return frame;
-}
-
-NSString *KWQKHTMLPartImpl::referrer(const URLArgs &args)
-{
-    return args.metaData()["referrer"].getNSString();
 }
 
 void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
@@ -139,7 +134,7 @@ void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
         return;
     }
 
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL referrer:referrer(args)];
+    [bridgeForFrameName(args.frameName) loadURL:cocoaURL];
 }
 
 void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
@@ -168,7 +163,7 @@ void KWQKHTMLPartImpl::urlSelected(const KURL &url, int button, int state, const
         return;
     }
     
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL referrer:referrer(args)];
+    [bridgeForFrameName(args.frameName) loadURL:cocoaURL];
 }
 
 class KWQPluginPart : public ReadOnlyPart
@@ -201,8 +196,7 @@ ReadOnlyPart *KWQKHTMLPartImpl::createPart(const ChildFrame &child, const KURL &
     } else {
         LOG(Frames, "name %s", child.m_name.ascii());
         HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(child.m_frame->element());
-        WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
-            withURL:childURL referrer:referrer(child.m_args)
+        WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString() withURL:childURL
             renderPart:child.m_frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
             marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()];
         return [childBridge part];
@@ -212,11 +206,11 @@ ReadOnlyPart *KWQKHTMLPartImpl::createPart(const ChildFrame &child, const KURL &
 void KWQKHTMLPartImpl::submitForm(const KURL &u, const URLArgs &args)
 {
     if (!args.doPost()) {
-	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL() referrer:referrer(args)];
+	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL()];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
-	[bridgeForFrameName(args.frameName) postWithURL:u.getNSURL() referrer:referrer(args)
+	[bridgeForFrameName(args.frameName) postWithURL:u.getNSURL()
                    data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
             contentType:contentType.mid(14).getNSString()];
     }
@@ -485,4 +479,9 @@ void KWQKHTMLPartImpl::forceLayout()
         v->layout();
         v->unscheduleRelayout();
     }
+}
+
+QString KWQKHTMLPartImpl::referrer() const
+{
+    return d->m_referrer;
 }

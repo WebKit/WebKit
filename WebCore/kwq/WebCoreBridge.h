@@ -98,6 +98,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)end;
 
 - (NSURL *)URL;
+- (NSString *)referrer;
 
 - (void)installInFrame:(NSView *)view;
 - (void)removeFromFrame;
@@ -164,10 +165,10 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (WebCoreBridge *)mainFrame;
 - (WebCoreBridge *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
 
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer;
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType;
+- (void)loadURL:(NSURL *)URL;
+- (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType;
 
-- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer frameName:(NSString *)name;
+- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
 - (void)showWindow;
 
 - (NSString *)userAgentForURL:(NSURL *)URL;
@@ -178,8 +179,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)setIconURL:(NSURL *)URL;
 - (void)setIconURL:(NSURL *)URL withType:(NSString *)string;
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName
-    withURL:(NSURL *)URL referrer:(NSString *)referrer
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
     renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
@@ -192,7 +192,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSWindow *)window;
 - (void)setWindowFrame:(NSRect)frame;
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL referrer:(NSString *)referrer;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
 - (void)reportBadURL:(NSString *)badURL;
 - (void)objectLoadedFromCache:(NSURL *)URL response:(id)response size:(unsigned)bytes;
 - (BOOL)isReloading;

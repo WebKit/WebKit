@@ -68,11 +68,11 @@
     return [[frame frameNamed:name] _bridge];
 }
 
-- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer frameName:(NSString *)name
+- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name
 {
     ASSERT(frame != nil);
 
-    WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithURL:URL referrer:referrer];
+    WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithURL:URL referrer:[self referrer]];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
 }
@@ -166,11 +166,11 @@
     }
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL referrer:(NSString *)referrer
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
 {
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:URL
-                                             referrer:referrer
+                                             referrer:[self referrer]
                                         forDataSource:[self dataSource]];
 }
 
@@ -265,7 +265,7 @@
     [newDataSource release];
 }
 
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer
+- (void)loadURL:(NSURL *)URL
 {
     // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
     // this will screw up in some cases involving framesets.
@@ -287,12 +287,12 @@
     }
     
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    [request setReferrer:referrer];
+    [request setReferrer:[self referrer]];
     [self loadRequest:request];
     [request release];
 }
 
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType
+- (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType
 {
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag. 
     // This prevents a potential bug which may cause a page
@@ -303,13 +303,12 @@
     [request setMethod:@"POST"];
     [request setData:data];
     [request setContentType:contentType];
-    [request setReferrer:referrer];
+    [request setReferrer:[self referrer]];
     [self loadRequest:request];
     [request release];
 }
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName
-    withURL:(NSURL *)URL referrer:(NSString *)referrer
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
     renderPart:(KHTMLRenderPart *)childRenderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
@@ -324,7 +323,10 @@
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
     
-    [[newFrame _bridge] loadURL:URL referrer:referrer];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    [request setReferrer:[self referrer]];
+    [[newFrame _bridge] loadRequest:request];
+    [request release];
     
     // Set the load type so this load doesn't end up in the back/forward list.
     [newFrame _setLoadType:WebFrameLoadTypeInternal];

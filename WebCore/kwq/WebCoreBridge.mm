@@ -765,4 +765,9 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     return part->url().getNSURL();
 }
 
+- (NSString *)referrer
+{
+    return part->impl->referrer().getNSString();
+}
+
 @end

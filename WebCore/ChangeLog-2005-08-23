@@ -1,5 +1,32 @@
 2002-10-15  Darin Adler  <darin@apple.com>
 
+	WebCore support for using referrer even in loads that are not initiated
+	by WebCore itself.
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Don't pass a referrer.
+	We get the referrer from the part.
+
+        * kwq/KWQKHTMLPartImpl.h: Add a new referrer method that works on the
+	part, and remove the old one that got it from the URL arguments.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::bridgeForFrameName): Don't pass a referrer when
+	creating a new window.
+        (KWQKHTMLPartImpl::openURLRequest): Don't pass a referrer when doing a load.
+        (KWQKHTMLPartImpl::urlSelected): Don't pass a referrer when doing a load.
+        (KWQKHTMLPartImpl::createPart): Don't pass a referrer when creating a child
+	frame for this window.
+        (KWQKHTMLPartImpl::submitForm): Don't pass a referrer when doing a load.
+        (KWQKHTMLPartImpl::referrer): Added.
+
+        * kwq/KWQLoaderImpl.mm: (KWQServeRequest): Don't pass a referrer when starting
+	a load.
+        * kwq/WebCoreBridge.h: Add referrer method. Remove referrer parameter from
+	many other methods.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge referrer]): Added.
+
+2002-10-15  Darin Adler  <darin@apple.com>
+
 	- fixed 3021713 -- text selection background obliterates descenders
 	(in www.theregister.co.uk articles)
 	- fixed 3038207 -- Selected link text doesn't draw its link underline

@@ -110,8 +110,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     }
     
     WebCoreResourceLoader *resourceLoader = [[WebCoreResourceLoader alloc] initWithLoader:loader job:job];
-    id <WebCoreResourceHandle> handle = [bridge startLoadingResource:resourceLoader
-        withURL:URL referrer:job->queryMetaData("referrer").getNSString()];
+    id <WebCoreResourceHandle> handle = [bridge startLoadingResource:resourceLoader withURL:URL];
     [resourceLoader release];
 
     if (handle == nil) {

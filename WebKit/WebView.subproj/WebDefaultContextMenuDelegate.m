@@ -4,13 +4,11 @@
 */
 
 #import <WebKit/WebContextMenuDelegate.h>
-#import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
-#import <WebKit/WebFrame.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
@@ -96,11 +94,11 @@
     return menuItems;
 }
 
-- (void)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer
+- (void)openNewWindowWithURL:(NSURL *)URL
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebController *controller = [webFrame controller];
-    [controller _openNewWindowWithURL:URL referrer:referrer behind:NO];
+    [controller _openNewWindowWithURL:URL referrer:[[webFrame _bridge] referrer] behind:NO];
 }
 
 - (void)downloadURL:(NSURL *)URL
@@ -112,7 +110,7 @@
 
 - (void)openLinkInNewWindow:(id)sender
 {
-    [self openNewWindowWithURL:[element objectForKey:WebElementLinkURLKey] referrer:nil];
+    [self openNewWindowWithURL:[element objectForKey:WebElementLinkURLKey]];
 }
 
 - (void)downloadLinkToDisk:(id)sender
@@ -130,7 +128,7 @@
 
 - (void)openImageInNewWindow:(id)sender
 {
-    [self openNewWindowWithURL:[element objectForKey:WebElementImageURLKey] referrer:nil];
+    [self openNewWindowWithURL:[element objectForKey:WebElementImageURLKey]];
 }
 
 - (void)downloadImageToDisk:(id)sender
@@ -152,7 +150,7 @@
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebDataSource *dataSource = [webFrame dataSource];
     NSURL *URL = [dataSource URL];
-    [self openNewWindowWithURL:URL referrer:nil];
+    [self openNewWindowWithURL:URL];
 }
 
 
