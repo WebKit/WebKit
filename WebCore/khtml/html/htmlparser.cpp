@@ -537,9 +537,9 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
         case ID_TBODY:
         case ID_TFOOT:
         case ID_COLGROUP: {
-            if (current->id() == ID_THEAD || current->id() == ID_TBODY || current->id() == ID_TFOOT ||
-                current->id() == ID_COLGROUP) {
-                popOneBlock();
+            if (isTableRelatedTag(current->id())) {
+                while (current->id() != ID_TABLE && isTableRelatedTag(current->id()))
+                    popOneBlock();
                 return insertNode(n);
             }
         }
