@@ -1,3 +1,10 @@
+2002-03-08  John Sullivan  <sullivan@apple.com>
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::openURL), (KHTMLPart::end):
+	Changed openURL() and end() messages to use debug levels. You
+	can see these by setting your WebKitLogLevel mask to include 
+	0x00000008
+
 2002-03-07  John Sullivan  <sullivan@apple.com>
 
 	* src/kwq/kwqdebug.h: New debug level constants, kept in

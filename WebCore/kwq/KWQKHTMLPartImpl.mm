@@ -376,7 +376,7 @@ void KHTMLPart::slotData(id handle, const char *bytes, int length)
 
 bool KHTMLPart::openURL( const KURL &url )
 {
-    fprintf (stdout, "0x%08x openURL(): for url %s\n", (unsigned int)this, url.url().latin1());
+    KWQDEBUG2 ("0x%08x openURL(): for url %s\n", (unsigned int)this, url.url().latin1());
 
     // Close the previous URL.
     closeURL();
@@ -767,7 +767,7 @@ void KHTMLPart::write( const QString &str )
 
 void KHTMLPart::end()
 {
-    fprintf (stdout, "0x%08x end(): for url %s\n", (unsigned int)this, d->m_url.url().latin1());
+    KWQDEBUG2 ("0x%08x end(): for url %s\n", (unsigned int)this, d->m_url.url().latin1());
     // make sure nothing's left in there...
     //if(d->m_decoder)
     //    write(d->m_decoder->flush());
