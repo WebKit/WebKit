@@ -1,3 +1,25 @@
+2004-06-15  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3695724> WebKit plug-ins should only have to implement plugInViewWithArguments:
+
+        Reviewed by rjw.
+
+        * ChangeLog:
+        * Plugins.subproj/WebPluginViewFactory.h: mention that plugInViewWithArguments is required
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _reloadForPluginChanges]): check for plugInViewWithArguments: not webPlugInInitialize
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]): ditto
+
+2004-06-15  Chris Blumenberg  <cblu@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _reloadForPluginChanges]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]):
+
 2004-06-15  Trey Matteson  <trey@apple.com>
 
 	3695240 - pasting plain text with newlines in it turns them into spaces
