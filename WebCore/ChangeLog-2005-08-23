@@ -1,3 +1,34 @@
+2003-11-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3491907>: When viewing applet, view hierarchy was an empty KWQView
+
+        Reviewed by rjw.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/html/html_objectimpl.cpp: removed setupApplet because that work is done when the applet widget is created
+        (HTMLAppletElementImpl::createRenderer): pass the PARAM args to the render object
+        (HTMLAppletElementImpl::getAppletInstance): don't call setupApplet
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::RenderApplet): store args and context, don't call setQWidget here 
+        (RenderApplet::setStyle): call setQWidget here
+        (RenderApplet::layout): don't parse args here, that is done in HTMLAppletElementImpl::createRenderer
+        * khtml/rendering/render_applet.h:
+        * kwq/KWQKJavaAppletWidget.h:
+        (KJavaApplet::KJavaApplet): turned into a stub, this work is no longer needed
+        (KJavaApplet::setAppletClass): ditto
+        (KJavaApplet::setAppletName): ditto
+        (KJavaApplet::setArchives): ditto
+        (KJavaApplet::setBaseURL): ditto
+        (KJavaApplet::setCodeBase): ditto
+        (KJavaApplet::setParameter): ditto
+        (KJavaAppletWidget::~KJavaAppletWidget): ditto
+        (KJavaAppletWidget::applet): ditto
+        (KJavaAppletWidget::setBaseURL): ditto
+        (KJavaAppletWidget::setParameter): ditto
+        (KJavaAppletWidget::showApplet): ditto 
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget): create the java here instead of doing it later
+
 2003-11-21  John Sullivan  <sullivan@apple.com>
 
         - WebCore part of fix for <rdar://problem/3333744>: Safari prints page with 

@@ -124,6 +124,16 @@ RenderObject *HTMLAppletElementImpl::createRenderer(RenderArena *arena, RenderSt
 	    args.insert( "archive", archive.string() );
 
 	args.insert( "baseURL", getDocument()->baseURL() );
+#if APPLE_CHANGES
+        NodeImpl *child = firstChild();
+        while (child) {
+            if (child->id() == ID_PARAM) {
+                HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
+                args.insert(p->name(), p->value());
+            }
+            child = child->nextSibling();
+        }
+#endif
         return new (getDocument()->renderArena()) RenderApplet(this, args);
     }
 
@@ -166,31 +176,6 @@ bool HTMLAppletElementImpl::callMember(const QString & name, const QStringList &
 }
 
 #if APPLE_CHANGES
-void HTMLAppletElementImpl::setupApplet() const
-{
-    RenderApplet *r = static_cast<RenderApplet*>(m_render);
-    if (r && r->widget()){
-        KJavaAppletWidget *javaWidget = static_cast<KJavaAppletWidget*>(static_cast<RenderApplet*>(m_render)->widget());
-        
-        // Make sure all the parameters are set.
-        NodeImpl *child = firstChild();
-        while(child) {
-    
-            if(child->id() == ID_PARAM) {
-                HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
-                if(javaWidget->applet())
-                    javaWidget->applet()->setParameter( p->name(), p->value());
-            }
-            child = child->nextSibling();
-        }
-        
-        // Create the plugin view for the applet.
-        // FIXME?  What about percent and variable widths/heights?
-        // FIXME?  What about padding and margins?
-        javaWidget->showApplet(r->style()->width().value, r->style()->height().value);
-    }
-}
-
 Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
 {
     if (appletInstance)
@@ -198,10 +183,6 @@ Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
     
     RenderApplet *r = static_cast<RenderApplet*>(m_render);
     if (r && r->widget()){
-        // Make sure we've setup the applet.  This ensure that the applet
-        // will be returned from getAppletInstanceForView() below.
-        setupApplet();
-        
         // Call into the part (and over the bridge) to pull the Bindings::Instance
         // from the guts of the Java VM.
         void *_view = r->widget()->getView();

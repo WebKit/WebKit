@@ -55,15 +55,29 @@ RenderApplet::RenderApplet(HTMLElementImpl *applet, const QMap<QString, QString>
         context = part->createJavaContext();
     }
 
+#if APPLE_CHANGES
+    m_context = context;
+    m_args = args;
+#else
     if ( context ) {
         //kdDebug(6100) << "RenderApplet::RenderApplet, setting QWidget" << endl;
         setQWidget( new KJavaAppletWidget(context, _view->viewport()) );
         processArguments(args);
     }
+#endif
 }
 
 RenderApplet::~RenderApplet()
 {
+}
+
+void RenderApplet::setStyle(RenderStyle *_style)
+{   
+    RenderWidget::setStyle(_style);
+    // FIXME?  What about percent and variable widths/heights?
+    // FIXME?  What about padding and margins?
+    QSize size = QSize(style()->width().value, style()->height().value);        
+    setQWidget(new KJavaAppletWidget(size, m_context, m_args));
 }
 
 short RenderApplet::intrinsicWidth() const
@@ -98,6 +112,11 @@ void RenderApplet::layout()
 
     KJavaAppletWidget *tmp = static_cast<KJavaAppletWidget*>(m_widget);
     if ( tmp ) {
+#if APPLE_CHANGES
+        m_widget->setFrameGeometry(QRect(xPos(), yPos(),
+                                   m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
+                                   m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom()));
+#else 
         NodeImpl *child = element()->firstChild();
 
         while(child) {
@@ -112,20 +131,13 @@ void RenderApplet::layout()
         //kdDebug(6100) << "setting applet widget to size: " << m_width << ", " << m_height << endl;
         m_widget->resize(m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
                          m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom());
-#if APPLE_CHANGES
-        // showApplet creates the java view if it hasn't already been created.
-        // When doing this, it replaces the widget's view with the newly created java view.
-        // Since this replacement doesn't actually occur until the widget gets its first paint,
-        // showApplet adds itself to the main view so that applets start even when not visible.
-        // We have to do this move so the widget knows where to place itself when adding itself.
-        m_widget->move(xPos(), yPos());
-#endif
         tmp->showApplet();
+#endif
     }
-
     setNeedsLayout(false);
 }
 
+#if !APPLE_CHANGES
 void RenderApplet::processArguments(const QMap<QString, QString> &args)
 {
     KJavaAppletWidget *w = static_cast<KJavaAppletWidget*>(m_widget);
@@ -150,6 +162,7 @@ void RenderApplet::processArguments(const QMap<QString, QString> &args)
             applet->setArchives( args[QString::fromLatin1("archive") ] );
     }
 }
+#endif
 
 RenderEmptyApplet::RenderEmptyApplet(DOM::NodeImpl* node)
   : RenderWidget(node)

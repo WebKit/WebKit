@@ -41,7 +41,9 @@ class RenderApplet : public RenderWidget
 public:
     RenderApplet(DOM::HTMLElementImpl* node, const QMap<QString, QString> &args);
     virtual ~RenderApplet();
-
+#if APPLE_CHANGES
+    virtual void setStyle(RenderStyle *style);
+#endif
     virtual const char *renderName() const { return "RenderApplet"; }
 
     virtual void layout();
@@ -53,7 +55,12 @@ public:
     { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }
 
 private:
+#if APPLE_CHANGES
+    KJavaAppletContext *m_context;
+    QMap<QString, QString> m_args;
+#else
     void processArguments( const QMap<QString, QString> &args );
+#endif
 };
 
 class RenderEmptyApplet : public RenderWidget
