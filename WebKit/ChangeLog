@@ -1,3 +1,12 @@
+2003-08-15  Richard Williamson  <rjw@apple.com>
+
+	Fixed 3379439.  Remove checks for CG symbols.  No longer needed.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (+[WebTextRendererFactory createSharedFactory]):
+
 === Safari-93 ===
 
 2003-08-14  Vicki Murley  <vicki@apple.com>

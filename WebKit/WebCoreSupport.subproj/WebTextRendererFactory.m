@@ -180,35 +180,20 @@ static int getLCDScaleParameters(void)
     if (![self sharedFactory]) {
         [[[self alloc] init] release];
 
-        // Turn off auto expiration of glyphs in CG's cache
-        // and increase the cache size.
-        NSSymbol symbol1 = NULL, symbol2 = NULL;
-        if (NSIsSymbolNameDefined ("_CGFontCacheSetShouldAutoExpire")){
-            symbol1 = NSLookupAndBindSymbol("_CGFontCacheSetShouldAutoExpire");
-            symbol2 = NSLookupAndBindSymbol("_CGFontCacheSetMaxSize");
-            if (symbol1 != NULL && symbol2 != NULL) {
-                void (*functionPtr1)(CGFontCache *,bool) = NSAddressOfSymbol(symbol1);
-                void (*functionPtr2)(CGFontCache *,size_t) = NSAddressOfSymbol(symbol2);
-        
-                CGFontCache *fontCache;
-                fontCache = CGFontCacheCreate();
-                functionPtr1 (fontCache, false);
+        CGFontCache *fontCache;
+        fontCache = CGFontCacheCreate();
+        CGFontCacheSetShouldAutoExpire (fontCache, false);
 
-                size_t s;
-                if (WebSystemMainMemory() > 128 * 1024 * 1024)
-                    s = MINIMUM_GLYPH_CACHE_SIZE*getLCDScaleParameters();
-                else
-                    s = MINIMUM_GLYPH_CACHE_SIZE;
+        size_t s;
+        if (WebSystemMainMemory() > 128 * 1024 * 1024)
+            s = MINIMUM_GLYPH_CACHE_SIZE*getLCDScaleParameters();
+        else
+            s = MINIMUM_GLYPH_CACHE_SIZE;
 #ifndef NDEBUG
-                LOG (CacheSizes, "Glyph cache size set to %d bytes.", s);
+        LOG (CacheSizes, "Glyph cache size set to %d bytes.", s);
 #endif
-                functionPtr2 (fontCache, s);
-                CGFontCacheRelease(fontCache);
-            }
-        }
-
-        if (symbol1 == NULL || symbol2 == NULL)
-            NSLog(@"CoreGraphics is missing call to disable glyph auto expiration. Pages will load more slowly.");
+        CGFontCacheSetMaxSize (fontCache, s);
+        CGFontCacheRelease(fontCache);
     }
     ASSERT([[self sharedFactory] isKindOfClass:self]);
 }
