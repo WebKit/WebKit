@@ -9,7 +9,7 @@ kjs_testkjs_DEPENDENCIES = JavaScriptCore-stamp
 kjs_testkjs_LDFLAGS = -F$(SYMROOTS) -framework JavaScriptCore
 
 all-am: JavaScriptCore-stamp
-JavaScriptCore-stamp: kjs/*.cpp kjs/*.h pcre/*.c pcre/*.h bindings/jni/*.cpp bindings/jni/*.h
+JavaScriptCore-stamp: kjs/*.cpp kjs/*.h pcre/*.c pcre/*.h bindings/*.h bindings/jni/*.cpp bindings/jni/*.h
 	pbxbuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) && touch $@
 clean-am:
 	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS)

@@ -1,3 +1,91 @@
+2003-11-13  Richard Williamson   <rjw@apple.com>
+
+	More LiveConnect stuff.  This checkin adds abstract classes to model
+	language runtimes and a JNI based set of concrete implementations for
+	Java.
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * Makefile.am:
+        * bindings/Makefile.am: Removed.
+        * bindings/jni/Makefile.am: Removed.
+        * bindings/jni/jni_runtime.cpp: Added.
+        (JavaField::JavaField):
+        (JavaConstructor::JavaConstructor):
+        (JavaMethod::JavaMethod):
+        (JavaClass::JavaClass):
+        * bindings/jni/jni_runtime.h: Added.
+        (Bindings::JavaString::JavaString):
+        (Bindings::JavaString::~JavaString):
+        (Bindings::JavaString::operator=):
+        (Bindings::JavaString::characters):
+        (Bindings::JavaParameter::JavaParameter):
+        (Bindings::JavaParameter::~JavaParameter):
+        (Bindings::JavaParameter::operator=):
+        (Bindings::JavaParameter::type):
+        (Bindings::JavaConstructor::JavaConstructor):
+        (Bindings::JavaConstructor::~JavaConstructor):
+        (Bindings::JavaConstructor::operator=):
+        (Bindings::JavaConstructor::parameterAt):
+        (Bindings::JavaConstructor::numParameters):
+        (Bindings::JavaField::JavaField):
+        (Bindings::JavaField::~JavaField):
+        (Bindings::JavaField::operator=):
+        (Bindings::JavaField::name):
+        (Bindings::JavaField::type):
+        (Bindings::JavaMethod::JavaMethod):
+        (Bindings::JavaMethod::_commonDelete):
+        (Bindings::JavaMethod::~JavaMethod):
+        (Bindings::JavaMethod::_commonCopy):
+        (Bindings::JavaMethod::operator=):
+        (Bindings::JavaMethod::name):
+        (Bindings::JavaMethod::returnType):
+        (Bindings::JavaMethod::parameterAt):
+        (Bindings::JavaMethod::numParameters):
+        (Bindings::JavaClass::_commonDelete):
+        (Bindings::JavaClass::~JavaClass):
+        (Bindings::JavaClass::_commonCopy):
+        (Bindings::JavaClass::JavaClass):
+        (Bindings::JavaClass::operator=):
+        (Bindings::JavaClass::name):
+        (Bindings::JavaClass::methodAt):
+        (Bindings::JavaClass::numMethods):
+        (Bindings::JavaClass::constructorAt):
+        (Bindings::JavaClass::numConstructors):
+        (Bindings::JavaClass::fieldAt):
+        (Bindings::JavaClass::numFields):
+        * bindings/jni/jni_utility.cpp:
+        (callJNIMethod):
+        (callJNIMethodA):
+        (callJNIObjectMethod):
+        (callJNIByteMethod):
+        (callJNICharMethod):
+        (callJNIShortMethod):
+        (callJNIIntMethod):
+        (callJNILongMethod):
+        (callJNIFloatMethod):
+        (callJNIDoubleMethod):
+        (callJNIVoidMethodA):
+        (callJNIObjectMethodA):
+        (callJNIByteMethodA):
+        (callJNICharMethodA):
+        (callJNIShortMethodA):
+        (callJNIIntMethodA):
+        (callJNILongMethodA):
+        (callJNIFloatMethodA):
+        (callJNIDoubleMethodA):
+        (getCharactersFromJString):
+        (releaseCharactersForJString):
+        * bindings/jni/jni_utility.h:
+        * bindings/objc/Makefile.am: Removed.
+        * bindings/runtime.h: Added.
+        (Bindings::Parameter::~Parameter):
+        (Bindings::Constructor::~Constructor):
+        (Bindings::Field::~Field):
+        (Bindings::Method::~Method):
+        (Bindings::Class::~Class):
+
 2003-11-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

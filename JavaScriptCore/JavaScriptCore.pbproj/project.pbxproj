@@ -235,6 +235,8 @@
 				65417219039E0B390058BFEB,
 				937F4F25048E5B9900CA2AC4,
 				51856D920562EE95008B9D83,
+				511B0871056468730080E486,
+				511B0878056468BB0080E486,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -288,6 +290,7 @@
 				6541720D039E02E70058BFEB,
 				9364B274045B7D6C00A9CAC1,
 				51856D910562EE95008B9D83,
+				511B0879056468BB0080E486,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -422,6 +425,51 @@
 //512
 //513
 //514
+		511B0870056468730080E486 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = runtime.h;
+			path = bindings/runtime.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		511B0871056468730080E486 = {
+			fileRef = 511B0870056468730080E486;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		511B0876056468BB0080E486 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = jni_runtime.h;
+			path = bindings/jni/jni_runtime.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		511B0877056468BB0080E486 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = jni_runtime.cpp;
+			path = bindings/jni/jni_runtime.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		511B0878056468BB0080E486 = {
+			fileRef = 511B0876056468BB0080E486;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		511B0879056468BB0080E486 = {
+			fileRef = 511B0877056468BB0080E486;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		51856D8F0562EE95008B9D83 = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -454,6 +502,9 @@
 		};
 		51856D950562EE9C008B9D83 = {
 			children = (
+				511B0870056468730080E486,
+				511B0877056468BB0080E486,
+				511B0876056468BB0080E486,
 				51856D8F0562EE95008B9D83,
 				51856D900562EE95008B9D83,
 			);
