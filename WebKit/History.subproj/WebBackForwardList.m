@@ -197,6 +197,9 @@
         [_private->entries removeObjectsInRange: forwardRange];
         currSize -= forwardRange.length;
     }
+    if (_private->current > (int)([_private->entries count] - 1))
+        _private->current = [_private->entries count] - 1;
+        
     _private->maximumSize = size;
 }
 

@@ -1,3 +1,14 @@
+2003-10-16  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3453991.  We weren't setting the array cursor correctly after changing
+	capacity.
+
+        Reviewed by John.
+
+        * ChangeLog:
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList setCapacity:]):
+
 === Safari-110 ===
 
 2003-10-16  Richard Williamson   <rjw@apple.com>
