@@ -29,7 +29,13 @@ NSString *WebURLNamePboardType = nil;
 
 + (NSArray *)_web_dragTypesForURL
 {
-    return [NSArray arrayWithObjects:NSURLPboardType, NSStringPboardType, NSFilenamesPboardType, nil];
+    return [NSArray arrayWithObjects:
+        WebURLsWithTitlesPboardType,
+        NSURLPboardType,
+        WebURLPboardType,
+        WebURLNamePboardType,
+        NSStringPboardType,
+        nil];
 }
 
 -(NSURL *)_web_bestURL
@@ -67,51 +73,30 @@ NSString *WebURLNamePboardType = nil;
     return nil;
 }
 
-- (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner
+- (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner types:(NSArray *)types
 {
     ASSERT(URL);
-
-    NSArray *types;
-
-    if(title){
-        types = [NSArray arrayWithObjects:
-            WebURLsWithTitlesPboardType,
-            NSURLPboardType,
-            WebURLPboardType,
-            NSStringPboardType,
-            nil];
-    }else{
-        types = [NSArray arrayWithObjects:
-            WebURLsWithTitlesPboardType,
-            NSURLPboardType,
-            WebURLPboardType,
-            WebURLNamePboardType,
-            NSStringPboardType,
-            nil];
-    }
-    
-    NSArray *originalTypes = [self types];
-    
-    if([originalTypes count] > 0){
-        NSMutableArray *newTypes;
-        newTypes = [originalTypes mutableCopy];
-        [newTypes addObjectsFromArray:types];
-        types = newTypes;
-    }
+    ASSERT(types);
     
     [self declareTypes:types owner:owner];
 
-    [URL writeToPasteboard:self];
-    [self setString:[URL absoluteString] forType:NSStringPboardType];
-
-    NSArray *titles = nil;
-    if(title && ![title isEqualToString:@""]){
-        titles = [NSArray arrayWithObject:title];
-        [self setString:title forType:WebURLNamePboardType];
+    if(!title || [title isEqualToString:@""]){
+        title = [[URL path] lastPathComponent];
+        if(!title || [title isEqualToString:@""]){
+            title = [URL absoluteString];
+        }
     }
     
-    [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:titles toPasteboard:self];
+    [URL writeToPasteboard:self];
+    [self setString:title forType:WebURLNamePboardType];
     [self setString:[URL absoluteString] forType:WebURLPboardType];
+    [self setString:[URL absoluteString] forType:NSStringPboardType];
+    [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
+}
+
+- (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner
+{
+    [self _web_writeURL:URL andTitle:title withOwner:owner types:[NSPasteboard _web_dragTypesForURL]];
 }
 
 @end

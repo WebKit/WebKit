@@ -22,6 +22,11 @@
 @end
 #endif
 
+@interface NSFilePromiseDragSource : NSObject
+- initWithSource:(id)draggingSource;
+- (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pboard;
+@end
+
 @implementation NSView (WebExtras)
 
 - (NSView *)_web_superviewOfClass:(Class)class
@@ -186,8 +191,9 @@
     NSArray *filesTypes = [NSArray arrayWithObject:fileType];
     
     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    [pboard declareTypes:[NSArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil] owner:self];
-    [pboard _web_writeURL:URL andTitle:title withOwner:self];
+    NSMutableArray *types = [NSMutableArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil];
+    [types addObjectsFromArray:[NSPasteboard _web_dragTypesForURL]];
+    [pboard _web_writeURL:URL andTitle:title withOwner:self types:types];
     [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
     

@@ -1,3 +1,21 @@
+2002-12-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3118430 - crash / loop trying to copy url of link to clipboard
+	Fixed: 3122585 - REGRESSION: dragging links to the desktop or a Finder window does not do anything
+
+        Reviewed by john.
+
+	We were reusing the drag types from the previous drag pasteboard. For example, we would declare image types when dragging URLs. This would confuse the Finder, so location files weren't being created. This would occasional cause us to crash because we weren't providing the declared data. 
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard _web_dragTypesForURL]): Added more types that we handle
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:declareTypes:]): declares the provided types, writes URL and title
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:]): call _web_writeURL:andTitle:withOwner:types: with _web_dragTypesForURL
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragPromisedImage:origin:URL:fileType:title:event:]): call _web_writeURL:andTitle:withOwner: types: plus images types
+
 2002-12-10  Trey Matteson  <trey@apple.com>
 
 	3092966 - going back goes to different page (can't go back to a POST page)

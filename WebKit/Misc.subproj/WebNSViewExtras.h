@@ -44,8 +44,3 @@
                          event:(NSEvent *)event;
 
 @end
-
-@interface NSFilePromiseDragSource : NSObject
-- initWithSource:(id)draggingSource;
-- (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pboard;
-@end
