@@ -25,17 +25,11 @@
 
 #import "KWQLogging.h"
 
-#import "KWQExceptions.h"
-#import "KWQKJobClasses.h"
 #import "KWQResourceLoader.h"
 #import "KWQString.h"
+#import "KWQKJobClasses.h"
 
 namespace KIO {
-
-    // The allocations and releases in TransferJobPrivate are
-    // definitely Cocoa-exception-free (either simple Foundation
-    // classes or our own KWQResourceLoader which avoides doing work
-    // in dealloc
 
 class TransferJobPrivate
 {
@@ -72,10 +66,7 @@ TransferJob::TransferJob(const KURL &url, const QByteArray &postData, bool showP
 
 TransferJob::~TransferJob()
 {
-    // This will cancel the handle, and who knows what that could do
-    KWQ_BLOCK_NS_EXCEPTIONS;
     [d->loader jobWillBeDeallocated];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
     delete d;
 }
 
