@@ -2,6 +2,15 @@
 
         Reviewed by John.
 
+        - fixed 3485925: Safari does not correctly parse eight-digit hex character entities
+
+        * khtml/html/htmltokenizer.cpp: (HTMLTokenizer::parseEntity): Replaced puzzling variable limit
+        on number of hexadecimal characters to parse with an 8-character limit.
+
+2003-11-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed 3485572 -- secure form check in KHTML uses case-sensitive comparison with "https"
 
         * khtml/html/html_formimpl.h:

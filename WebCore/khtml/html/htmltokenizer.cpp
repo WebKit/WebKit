@@ -731,20 +731,19 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
 
         case Hexadecimal:
         {
-            int ll = kMin(src.length(), 9-cBufferPos);
+            int ll = kMin(src.length(), 8);
             while(ll--) {
                 QChar csrc(src->lower());
                 cc = csrc.cell();
 
                 if(csrc.row() || !((cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f'))) {
-                    Entity = SearchSemicolon;
                     break;
                 }
                 EntityUnicodeValue = EntityUnicodeValue*16 + (cc - ( cc < 'a' ? '0' : 'a' - 10));
                 cBuffer[cBufferPos++] = cc;
                 ++src;
             }
-            if(cBufferPos == 9) Entity = SearchSemicolon;
+            Entity = SearchSemicolon;
             break;
         }
         case Decimal:
