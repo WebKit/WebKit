@@ -1670,23 +1670,25 @@ bool KWQKHTMLPart::closeURL()
 
 void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
 {
+    bool singleClick = [_currentEvent clickCount] <= 1;
+
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection.
     _mouseDownMayStartSelect = true;
-
-    bool oneClick = [_currentEvent clickCount] <= 1 ? true : false;
-    _mouseDownMayStartDrag = oneClick;
+    _mouseDownMayStartDrag = singleClick;
 
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
         // because we don't want to do it until we know we didn't hit a widget.
         NSView *view = d->m_view->getDocumentView();
 
-	KWQ_BLOCK_EXCEPTIONS;
-        if (oneClick && [_bridge firstResponder] != view) {
-            [_bridge makeFirstResponder:view];
+        if (singleClick) {
+            KWQ_BLOCK_EXCEPTIONS;
+            if ([_bridge firstResponder] != view) {
+                [_bridge makeFirstResponder:view];
+            }
+            KWQ_UNBLOCK_EXCEPTIONS;
         }
-	KWQ_UNBLOCK_EXCEPTIONS;
 
         KHTMLPart::khtmlMousePressEvent(event);
     }

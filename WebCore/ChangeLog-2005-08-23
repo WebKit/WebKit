@@ -1,3 +1,10 @@
+2004-05-26  Darin Adler  <darin@apple.com>
+
+        - fixed warning that prevents Deployment build from compiling
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::khtmlMousePressEvent):
+        Moved use of single-click boolean outside the scope of the "block exceptions" macros.
+
 2004-05-25  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed a regression where selections that were created via double or triple were not draggable.
