@@ -299,10 +299,11 @@ input, textarea {
     text-align: -khtml-auto
 }
 
-/* FIXME: Need to implement support for CSS2 system fonts, so that I don't have to hard code Lucida Grande. */
+/* If we support for CSS2 system fonts, then we won't have to hard code Lucida Grande here. */
 input, textarea, select, button {
     margin: 0__qem;
-    font: 11px 'Lucida Grande'
+    font: 11px 'Lucida Grande';
+    color: initial
 }
 
 input[type="hidden"] {

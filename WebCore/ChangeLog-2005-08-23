@@ -1,3 +1,11 @@
+2004-11-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/3859381> REGRESSION (167-168): text in form fields should not use body's text color
+
+        * khtml/css/html4.css: Use color: initial for textarea and related ones.
+
 2004-11-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
