@@ -422,6 +422,7 @@ acronym {
 }
 
 :focus          { outline: auto 3px #1f5ccf }
+html:focus,body:focus  { outline: none }
 a:-khtml-any-link { color: -khtml-link; text-decoration: underline; }
 a:-khtml-any-link:active { color: -khtml-activelink; }
 
