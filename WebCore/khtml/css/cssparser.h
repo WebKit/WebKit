@@ -47,12 +47,8 @@ namespace DOM {
 
     struct Value;
     class ValueList;
-
-    struct Function {
-	ParseString name;
-	ValueList *args;
-    };
-
+    struct Function;
+    
     struct Value {
 	int id;
 	union {
@@ -88,6 +84,13 @@ namespace DOM {
 	int numValues;
 	int maxValues;
 	int currentValue;
+    };
+
+    struct Function {
+        ParseString name;
+        ValueList *args;
+
+        ~Function() { delete args; }
     };
 
     class CSSParser
