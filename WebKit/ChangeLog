@@ -1,3 +1,19 @@
+2002-12-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej and Richard.
+
+        - fixed reentrancy crash I ran into while debugging infinite recursion bugs
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _updateMouseoverWithFakeEvent]): Added. Does part of what _frameOrBoundsChanged did.
+        (-[WebHTMLView _frameOrBoundsChanged]): Schedule the mouseover update to happen soon, rather than
+        doing it right away. If we do it right away, we might reenter because sending a mouse moved event
+        can result in another layout since mouse moved events are the same as mouse dragged events in KHTML.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView viewWillMoveToWindow:]): Cancel the scheduled mouseover update.
+
+        * WebKit.pbproj/project.pbxproj: Electron uber alles.
+
 2002-12-12  Richard Williamson   <rjw@apple.com>
 
         Fixed 3125585.  One click crasher option clicking on

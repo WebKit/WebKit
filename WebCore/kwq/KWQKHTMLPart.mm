@@ -35,7 +35,6 @@
 #import "kjs_window.h"
 
 #import "WebCoreBridge.h"
-#import "WebCoreBridgePrivate.h"
 #import "WebCoreViewFactory.h"
 
 #import "KWQDummyView.h"
@@ -120,7 +119,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _completedWithBool(this, SIGNAL(completed(bool)))
     , _ownsView(false)
     , _mouseDownView(nil)
-    , _mouseDownWasInSubframe(false)
+    , _sendingEventToSubview(false)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -666,6 +665,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 	return false;
     }
     
+    NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = event;
 
     const char *characters = [[event characters] lossyCString];
@@ -674,7 +674,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     QKeyEvent qEvent([event type] == NSKeyDown ? QEvent::KeyPress : QEvent::KeyRelease,
 		     [event keyCode],
 		     ascii,
-		     [_bridge stateForEvent:event],
+		     stateForCurrentEvent(),
 		     QString::fromNSString([event characters]),
 		     [event isARepeat]);
 
@@ -685,14 +685,14 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 	QKeyEvent qEvent([event type] == NSKeyDown ? QEvent::KeyPress : QEvent::KeyRelease,
 			 [event keyCode],
 			 ascii,
-			 [_bridge stateForEvent:event],
+			 stateForCurrentEvent(),
 			 QString::fromNSString([event characters]),
 			 true);
 	
 	result = result && node->dispatchKeyEvent(&qEvent);
     }
 
-    _currentEvent = nil;
+    _currentEvent = oldCurrentEvent;
 
     return result;
 }
@@ -721,19 +721,19 @@ bool KWQKHTMLPart::closeURL()
 
 void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
 {
-    if (!handleMouseDownEventForWidget(event)) {
+    if (!passWidgetMouseDownEventToWidget(event)) {
         KHTMLPart::khtmlMousePressEvent(event);
     }
 }
 
 void KWQKHTMLPart::khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event)
 {
-    if (!handleMouseDownEventForWidget(event)) {
+    if (!passWidgetMouseDownEventToWidget(event)) {
         KHTMLPart::khtmlMouseDoubleClickEvent(event);
     }
 }
 
-bool KWQKHTMLPart::handleMouseDownEventForWidget(khtml::MouseEvent *event)
+bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
 {
     _mouseDownView = nil;
     
@@ -742,10 +742,10 @@ bool KWQKHTMLPart::handleMouseDownEventForWidget(khtml::MouseEvent *event)
     if (!target || !target->isWidget()) {
         return false;
     }
-    return handleMouseDownEventForWidget(static_cast<RenderWidget *>(target));
+    return passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(target));
 }
 
-bool KWQKHTMLPart::handleMouseDownEventForWidget(RenderWidget *renderWidget)
+bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
 {
     _mouseDownView = nil;
     
@@ -763,7 +763,10 @@ bool KWQKHTMLPart::handleMouseDownEventForWidget(RenderWidget *renderWidget)
         return false;
     }
     
+    ASSERT(!_sendingEventToSubview);
+    _sendingEventToSubview = true;
     [view mouseDown:_currentEvent];
+    _sendingEventToSubview = false;
     
     // Remember which view we sent the event to, so we can direct the release event properly.
     _mouseDownView = view;
@@ -779,7 +782,9 @@ void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
         return;
     }
     
+    _sendingEventToSubview = true;
     [_mouseDownView mouseUp:_currentEvent];
+    _sendingEventToSubview = false;
     _mouseDownView = nil;
 }
 
@@ -816,7 +821,7 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(DOM::NodeImpl::MouseEvent &event)
             if (!renderPart) {
                 return false;
             }
-            if (!handleMouseDownEventForWidget(renderPart)) {
+            if (!passWidgetMouseDownEventToWidget(renderPart)) {
                 return false;
             }
             _mouseDownWasInSubframe = true;
@@ -826,16 +831,131 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(DOM::NodeImpl::MouseEvent &event)
             if (!(_mouseDownView && _mouseDownWasInSubframe)) {
                 return false;
             }
+            ASSERT(!_sendingEventToSubview);
+            _sendingEventToSubview = true;
             [_mouseDownView mouseUp:_currentEvent];
+            _sendingEventToSubview = false;
             _mouseDownView = nil;
             return true;
         case NSLeftMouseDragged:
             if (!(_mouseDownView && _mouseDownWasInSubframe)) {
                 return false;
             }
+            ASSERT(!_sendingEventToSubview);
+            _sendingEventToSubview = true;
             [_mouseDownView mouseDragged:_currentEvent];
+            _sendingEventToSubview = false;
             return true;
         default:
             return false;
     }
+}
+
+int KWQKHTMLPart::buttonForCurrentEvent()
+{
+    switch ([_currentEvent type]) {
+    case NSLeftMouseDown:
+    case NSLeftMouseUp:
+        return Qt::LeftButton;
+    case NSRightMouseDown:
+    case NSRightMouseUp:
+        return Qt::RightButton;
+    case NSOtherMouseDown:
+    case NSOtherMouseUp:
+        return Qt::MidButton;
+    default:
+        return 0;
+    }
+}
+
+int KWQKHTMLPart::stateForCurrentEvent()
+{
+    int state = buttonForCurrentEvent();
+    
+    unsigned modifiers = [_currentEvent modifierFlags];
+
+    if (modifiers & NSControlKeyMask)
+        state |= Qt::ControlButton;
+    if (modifiers & NSShiftKeyMask)
+        state |= Qt::ShiftButton;
+    if (modifiers & NSAlternateKeyMask)
+        state |= Qt::AltButton;
+    if (modifiers & NSCommandKeyMask)
+        state |= Qt::MetaButton;
+    
+    return state;
+}
+
+void KWQKHTMLPart::mouseDown(NSEvent *event)
+{
+    if (!d->m_view || _sendingEventToSubview) {
+        return;
+    }
+
+    NSEvent *oldCurrentEvent = _currentEvent;
+    _currentEvent = event;
+
+    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
+        buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
+    d->m_view->viewportMousePressEvent(&kEvent);
+    
+    _currentEvent = oldCurrentEvent;
+}
+
+void KWQKHTMLPart::mouseDragged(NSEvent *event)
+{
+    if (!d->m_view || _sendingEventToSubview) {
+        return;
+    }
+
+    NSEvent *oldCurrentEvent = _currentEvent;
+    _currentEvent = event;
+
+    QMouseEvent kEvent(QEvent::MouseMove, QPoint([event locationInWindow]), Qt::LeftButton, Qt::LeftButton);
+    d->m_view->viewportMouseMoveEvent(&kEvent);
+    
+    _currentEvent = oldCurrentEvent;
+}
+
+void KWQKHTMLPart::mouseUp(NSEvent *event)
+{
+    if (!d->m_view || _sendingEventToSubview) {
+        return;
+    }
+    
+    NSEvent *oldCurrentEvent = _currentEvent;
+    _currentEvent = event;
+
+    // Our behavior here is a little different that Qt. Qt always sends
+    // a mouse release event, even for a double click. To correct problems
+    // in khtml's DOM click event handling we do not send a release here
+    // for a double click. Instead we send that event from KHTMLView's
+    // viewportMouseDoubleClickEvent.
+    int clickCount = [event clickCount];
+    if (clickCount > 0 && clickCount % 2 == 0) {
+        QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint([event locationInWindow]),
+            buttonForCurrentEvent(), stateForCurrentEvent(), clickCount);
+        d->m_view->viewportMouseDoubleClickEvent(&doubleClickEvent);
+    } else {
+        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint([event locationInWindow]),
+            buttonForCurrentEvent(), stateForCurrentEvent(), clickCount);
+        d->m_view->viewportMouseReleaseEvent(&releaseEvent);
+    }
+    
+    _currentEvent = oldCurrentEvent;
+}
+
+void KWQKHTMLPart::mouseMoved(NSEvent *event)
+{
+    if (!d->m_view) {
+        return;
+    }
+    
+    NSEvent *oldCurrentEvent = _currentEvent;
+    _currentEvent = event;
+    
+    QMouseEvent kEvent(QEvent::MouseMove, QPoint([event locationInWindow]), 0, stateForCurrentEvent());
+    d->m_view->viewportMouseMoveEvent(&kEvent);
+    
+    _currentEvent = oldCurrentEvent;
 }

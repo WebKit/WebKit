@@ -136,13 +136,8 @@ static BOOL doRealHitTest = NO;
         userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
 }
 
-- (void)_frameOrBoundsChanged
+- (void)_updateMouseoverWithFakeEvent
 {
-    if (!NSEqualSizes(_private->lastLayoutSize, [(NSClipView *)[self superview] documentVisibleRect].size)) {
-        [self setNeedsLayout:YES];
-        [self setNeedsDisplay:YES];
-    }
-    
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
         location:[[self window] convertScreenToBase:[NSEvent mouseLocation]]
         modifierFlags:[[NSApp currentEvent] modifierFlags]
@@ -152,6 +147,17 @@ static BOOL doRealHitTest = NO;
         eventNumber:0 clickCount:0 pressure:0];
     
     [self _updateMouseoverWithEvent:fakeEvent];
+}
+
+- (void)_frameOrBoundsChanged
+{
+    if (!NSEqualSizes(_private->lastLayoutSize, [(NSClipView *)[self superview] documentVisibleRect].size)) {
+        [self setNeedsLayout:YES];
+        [self setNeedsDisplay:YES];
+    }
+    
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
+    [self performSelector:@selector(_updateMouseoverWithFakeEvent) withObject:nil afterDelay:0];
 }
 
 - (NSDictionary *)_elementAtPoint:(NSPoint)point

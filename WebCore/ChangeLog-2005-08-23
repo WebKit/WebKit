@@ -1,3 +1,46 @@
+2002-12-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej and Richard.
+
+	- fixed 3125497 -- REGRESSION: Infinite recursion with mouseUp: events
+
+	The problem was that events could end up back at the same part due to the responder chain.
+
+        * kwq/KWQKHTMLPart.h: Added mouseDown, mouseDragged, mouseUp, mouseMoved, buttonForCurrentEvent,
+	and stateForCurrentEvent. Remove setCurrentEvent and currentEvent. Renamed handleMouseDownEventForWidget
+	to passWidgetMouseDownEventToWidget. John and I had agreed to this name change before the last commit,
+	but I forgot.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): Initialize _sendingEventToSubview to false. No need to initialize
+	_mouseDownWasInSubframe at all since it's only looked at when _mouseDownView is non-nil.
+        (KWQKHTMLPart::keyEvent): Save and restore _currentEvent instead of setting to nil.
+	Use stateForCurrentEvent instead of stateForEvent:.
+        (KWQKHTMLPart::khtmlMousePressEvent): Name change.
+        (KWQKHTMLPart::khtmlMouseDoubleClickEvent): Name change.
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Name change. Set _sendingEventToSubview when
+        sending event to subview.
+        (KWQKHTMLPart::khtmlMouseReleaseEvent): Name change. Set _sendingEventToSubview when sending
+	event to subview.
+        (KWQKHTMLPart::passSubframeEventToSubframe): Name change. Set _sendingEventToSubview when
+	sending event to subview.
+        (KWQKHTMLPart::buttonForCurrentEvent): Added. Similar to code I moved here from WebCoreBridge.
+        (KWQKHTMLPart::stateForCurrentEvent): Added. Similar to code I moved here from WebCoreBridge.
+        (KWQKHTMLPart::mouseDown): Added. Similar to code I moved here from WebCoreBridge, except returns
+	and does nothing if _sendingEventToSubview is set.
+        (KWQKHTMLPart::mouseDragged): Ditto.
+        (KWQKHTMLPart::mouseUp): Ditto.
+        (KWQKHTMLPart::mouseMoved): Added. Similar to code I moved here from WebCoreBridge.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge mouseDown:]): Just call _part->mouseDown().
+        (-[WebCoreBridge mouseDragged:]): Just call _part->mouseDragged().
+        (-[WebCoreBridge mouseUp:]): Just call _part->mouseUp().
+        (-[WebCoreBridge mouseMoved:]): Just call _part->mouseMoved().
+
+        * kwq/WebCoreBridgePrivate.h: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed WebCoreBridgePrivate.h.
+
 2002-12-12  Richard Williamson   <rjw@apple.com>
 
         Fixed 3125583.  Don't redraw view under resize bar

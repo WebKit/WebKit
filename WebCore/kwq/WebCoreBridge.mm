@@ -418,133 +418,24 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     }
 }
 
-- (int)stateForEvent:(NSEvent *)event
-{
-    unsigned modifiers = [event modifierFlags];
-    int state = 0;
-    
-    if (modifiers & NSControlKeyMask)
-        state |= Qt::ControlButton;
-    if (modifiers & NSShiftKeyMask)
-        state |= Qt::ShiftButton;
-    if (modifiers & NSAlternateKeyMask)
-        state |= Qt::AltButton;
-    
-    // Mapping command to meta is slightly questionable, but it works for now.
-    if (modifiers & NSCommandKeyMask)
-        state |= Qt::MetaButton;
-    
-    return state;
-}
-
-- (void)mouseUp:(NSEvent *)event
-{
-    if (!_part->view()) {
-        return;
-    }
-    
-    KWQKHTMLPart::setCurrentEvent(event);
-
-    NSPoint p = [event locationInWindow];
-
-    int button, state;
-    switch ([event type]) {
-    case NSRightMouseUp:
-        button = Qt::RightButton;
-        state = Qt::RightButton;
-        break;
-    case NSOtherMouseUp:
-        button = Qt::MidButton;
-        state = Qt::MidButton;
-        break;
-    default:
-        button = Qt::LeftButton;
-        state = Qt::LeftButton;
-        break;
-    }
-    state |= [self stateForEvent:event];
-    
-    int clickCount = [event clickCount];
-
-    // Our behavior here is a little different that Qt.  Qt always sends
-    // a mouse release event, even for a double click.  To correct problems
-    // in khtml's DOM click event handling we do not send a release here
-    // for a double click.  Instead we send that event from khtmlview's
-    // viewportMouseDoubleClickEvent.
-    if (clickCount > 0 && clickCount % 2 == 0) {
-        QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
-        _part->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
-    } else {
-        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
-        _part->view()->viewportMouseReleaseEvent(&releaseEvent);
-    }
-    
-    KWQKHTMLPart::setCurrentEvent(nil);
-}
-
 - (void)mouseDown:(NSEvent *)event
 {
-    if (!_part->view()) {
-        return;
-    }
-    
-    KWQKHTMLPart::setCurrentEvent(event);
-
-    NSPoint p = [event locationInWindow];
-    
-    int button, state;     
-    switch ([event type]) {
-    case NSRightMouseDown:
-        button = Qt::RightButton;
-        state = Qt::RightButton;
-        break;
-    case NSOtherMouseDown:
-        button = Qt::MidButton;
-        state = Qt::MidButton;
-        break;
-    default:
-        button = Qt::LeftButton;
-        state = Qt::LeftButton;
-        break;
-    }
-    state |= [self stateForEvent:event];
-    
-    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint(p), button, state, [event clickCount]);
-    _part->view()->viewportMousePressEvent(&kEvent);
-    
-    KWQKHTMLPart::setCurrentEvent(nil);
-}
-
-- (void)mouseMoved:(NSEvent *)event
-{
-    if (!_part->view()) {
-        return;
-    }
-    
-    KWQKHTMLPart::setCurrentEvent(event);
-    
-    NSPoint p = [event locationInWindow];
-    
-    QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), 0, [self stateForEvent:event]);
-    _part->view()->viewportMouseMoveEvent(&kEvent);
-    
-    KWQKHTMLPart::setCurrentEvent(nil);
+    _part->mouseDown(event);
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    if (!_part->view()) {
-        return;
-    }
-    
-    KWQKHTMLPart::setCurrentEvent(event);
+    _part->mouseDragged(event);
+}
 
-    NSPoint p = [event locationInWindow];
-    
-    QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), Qt::LeftButton, Qt::LeftButton);
-    _part->view()->viewportMouseMoveEvent(&kEvent);
-    
-    KWQKHTMLPart::setCurrentEvent(nil);
+- (void)mouseUp:(NSEvent *)event
+{
+    _part->mouseUp(event);
+}
+
+- (void)mouseMoved:(NSEvent *)event
+{
+    _part->mouseMoved(event);
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

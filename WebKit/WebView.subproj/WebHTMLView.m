@@ -231,6 +231,7 @@
     [self removeMouseMovedObserver];
     [self removeWindowObservers];
     [self removeSuperviewObservers];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 }
 
 - (void)viewDidMoveToWindow
