@@ -25,8 +25,6 @@
 
 #import "KWQPaintDeviceMetrics.h"
 
-#import "KWQAssertions.h"
-
 QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 {
 }
@@ -39,16 +37,4 @@ int QPaintDeviceMetrics::logicalDpiY() const
 int QPaintDeviceMetrics::depth() const
 {
     return CGDisplayBitsPerPixel(kCGDirectMainDisplay);
-}
-
-int QPaintDeviceMetrics::width() const
-{
-    ERROR("returning 800 for paint device width");
-    return 800;
-}
-
-int QPaintDeviceMetrics::height() const
-{
-    ERROR("returning 800 for paint device height");
-    return 800;
 }

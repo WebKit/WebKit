@@ -1,3 +1,18 @@
+2003-04-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3217687 -- REGRESSION: printing uses widths from screen fonts, messing up layout
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m: Removed now-unused rendererWithFont:
+        which called, the now-removed usingPrinterFonts method. WebCore now calls the one with
+        the usingPrinterFont parameter.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]): Remove setUsingPrinterFonts: calls. This is now handled by the
+        document on the WebCore side. 
+        (-[WebHTMLView _setPrinting:]): Ditto.
+
 2003-04-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

@@ -914,15 +914,18 @@ void DocumentImpl::recalcStyle( StyleChange change )
 	fontDef.family = *(f.firstFamily());
 	fontDef.italic = f.italic();
 	fontDef.weight = f.weight();
-    if (m_view) {
-        const KHTMLSettings *settings = m_view->part()->settings();
-        QString stdfont = settings->stdFontName();
-        if ( !stdfont.isEmpty() ) {
-            fontDef.family.setFamily(stdfont);
-            fontDef.family.appendFamily(0);
+#if APPLE_CHANGES
+        fontDef.usePrinterFont = m_paintDevice->devType() == QInternal::Printer;
+#endif
+        if (m_view) {
+            const KHTMLSettings *settings = m_view->part()->settings();
+            QString stdfont = settings->stdFontName();
+            if ( !stdfont.isEmpty() ) {
+                fontDef.family.setFamily(stdfont);
+                fontDef.family.appendFamily(0);
+            }
+            fontDef.size = m_styleSelector->fontSizes()[3];
         }
-        fontDef.size = m_styleSelector->fontSizes()[3];
-    }
 
         //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
         _style->setFontDef(fontDef);

@@ -33,14 +33,8 @@
 
 + (WebCoreTextRendererFactory *)sharedFactory;
 
-// Implemented on the WebCore side, not to be overriden by subclasses.
-// This affects only the renderer return from rendererWithFont:, not the font returned from fontWithFamilies:.
-- (void)setUsingPrinterFonts:(BOOL)usingPrinterFonts;
-- (BOOL)usingPrinterFonts;
-
-// Subclass responsibility.
 - (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size;
 - (BOOL)isFontFixedPitch:(NSFont *)font;
-- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font;
+- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont;
 
 @end

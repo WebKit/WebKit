@@ -35,8 +35,7 @@ class QPrinter : public QPaintDevice {
 	ScreenResolution
     } PrinterMode;
 
-    virtual QInternal::DeviceType devType() { return QInternal::Printer; }
+    QPrinter() : QPaintDevice(QInternal::Printer) { }
 };
 
 #endif /* KWQPRINTER_H_ */
-

@@ -1,3 +1,56 @@
+2003-04-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3217687 -- REGRESSION: printing uses widths from screen fonts, messing up layout
+
+        To get the style machinery working for me instead of against me, I had to introduce both
+        FontDef and QFont to the screen/printer font dichotomy. Just following that through took
+        care of the bugs we were seeing.
+
+        * khtml/rendering/font.h: Add a usePrinterFont field to FontDef (in APPLE_CHANGES).
+        * khtml/rendering/font.cpp: (Font::update): Set the new "printer font" field on the QFont
+        (in APPLE_CHANGES).
+        
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::recalcStyle): Set usePrinterFont field on the
+        document's fontDef (in APPLE_CHANGES).
+        
+        * kwq/KWQFont.h: Add isPrinterFont, setter, getter.
+        * kwq/KWQFont.mm:
+        (QFont::QFont): Default isPrinterFont to false, copy when copying.
+        (QFont::operator=): Copy isPrinterFont.
+        (QFont::setPrinterFont): Added.
+        (QFont::operator==): Compare isPrinterFont.
+        
+        * kwq/KWQFontMetrics.mm: Remove the _rendererUsesPrinterFont field and associated code.
+        This was only needed when the same QFont could be both printer and screen font, but now
+        the QFont itself is different.
+        * kwq/KWQPainter.mm: (QPainter::_updateRenderer): Remove textRendererUsesPrinterFont field
+        and associated code, for same reason as above.
+        
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge reapplyStylesForDeviceType:]): Set the document's
+        paint device.
+        
+        * kwq/WebCoreTextRendererFactory.h: Remove global setUsingPrinterFonts: and
+        usingPrinterFonts methods. We now handle this at the document level. Add a usingPrinterFont:
+        parameter to rendererWithFont:, which is now how KHTML tells the text rendering code which
+        kind to use.
+        * kwq/WebCoreTextRendererFactory.m: Removed KWQTextRendererFactoryUsingPrinterFonts.
+        (-[WebCoreTextRendererFactory rendererWithFont:usingPrinterFont:]): Added parameter.
+
+        - other changes
+        
+        * kwq/KWQPaintDevice.h: Store the device type instead of using a virtual function.
+        * kwq/KWQPrinter.h: Set device type in constructor instead of overriding devType function.
+        * kwq/KWQPixmap.h: Changed destructor back to non-virtual (and entire class back to
+        non-polymorphic), now that QPaintDevice doesn't use virtual functions any more.
+
+        * kwq/KWQPaintDeviceMetrics.h: Remove unused width() and height().
+        * kwq/KWQPaintDeviceMetrics.mm: Ditto.
+        
+        * WebCore.pbproj/project.pbxproj: Removed KWQTextRendererFactory.h.
+        * kwq/KWQTextRendererFactory.h: Removed.
+
 2003-04-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

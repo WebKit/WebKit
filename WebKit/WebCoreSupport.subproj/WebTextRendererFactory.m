@@ -293,11 +293,6 @@ static int getLCDScaleParameters(void)
     [super dealloc];
 }
 
-- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font
-{
-    return [self rendererWithFont:font usingPrinterFont:[self usingPrinterFonts]];
-}
-
 - (WebTextRenderer *)rendererWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont
 {
     NSMutableDictionary *cache = usingPrinterFont ? cacheForPrinter : cacheForScreen;

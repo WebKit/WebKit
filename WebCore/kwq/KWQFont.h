@@ -63,6 +63,9 @@ public:
 
     bool isFixedPitch() const;
     
+    void setPrinterFont(bool);
+    bool isPrinterFont() const { return _isPrinterFont; }
+    
     bool operator==(const QFont &x) const;
     bool operator!=(const QFont &x) const { return !(*this == x); }
     
@@ -76,6 +79,7 @@ private:
     KWQFontFamily _family;
     int _trait;
     float _size;
+    bool _isPrinterFont;
     mutable NSFont *_NSFont;
 };
 

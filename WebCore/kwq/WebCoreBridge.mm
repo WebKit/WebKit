@@ -317,6 +317,12 @@ static bool initializedObjectCacheSize = FALSE;
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
 {
     _part->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (doc) {
+        static QPaintDevice screen;
+        static QPrinter printer;
+    	doc->setPaintDevice(deviceType == WebCoreDeviceScreen ? &screen : &printer);
+    }
     return _part->reparseConfiguration();
 }
 

@@ -31,6 +31,7 @@
 QFont::QFont()
     : _trait(0)
     , _size(12.0)
+    , _isPrinterFont(false)
     , _NSFont(0)
 {
 }
@@ -44,6 +45,7 @@ QFont::QFont(const QFont &other)
     : _family(other._family)
     , _trait(other._trait)
     , _size(other._size)
+    , _isPrinterFont(other._isPrinterFont)
     , _NSFont([other._NSFont retain])
 {
 }
@@ -53,6 +55,7 @@ QFont &QFont::operator=(const QFont &other)
     _family = other._family;
     _trait = other._trait;
     _size = other._size;
+    _isPrinterFont = other._isPrinterFont;
     [other._NSFont retain];
     [_NSFont release];
     _NSFont = other._NSFont;
@@ -104,6 +107,11 @@ void QFont::setWeight(int weight)
     }
 }
 
+void QFont::setPrinterFont(bool isPrinterFont)
+{
+    _isPrinterFont = isPrinterFont;
+}
+
 int QFont::weight() const
 {
     return bold() ? Bold : Normal;
@@ -146,7 +154,8 @@ bool QFont::operator==(const QFont &compareFont) const
 {
     return _family == compareFont._family
         && _trait == compareFont._trait
-        && _size == compareFont._size;
+        && _size == compareFont._size
+        && _isPrinterFont == compareFont._isPrinterFont;
 }
 
 NSFont *QFont::getNSFont() const

@@ -34,8 +34,6 @@ public:
 
     int logicalDpiY() const;
     int depth() const;
-    int width() const;
-    int height() const;
 };
 
 #endif

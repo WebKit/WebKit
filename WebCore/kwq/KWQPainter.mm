@@ -33,7 +33,6 @@
 #import "KWQPrinter.h"
 
 #import "KWQAssertions.h"
-#import "KWQTextRendererFactory.h"
 
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRenderer.h"
@@ -54,7 +53,6 @@ struct QPainterPrivate {
     QPState state;
     QPtrStack<QPState> stack;
     id <WebCoreTextRenderer> textRenderer;
-    bool textRendererUsesPrinterFont;
     QFont textRendererFont;
 };
 
@@ -74,13 +72,9 @@ QPainter::~QPainter()
 
 QPaintDevice *QPainter::device() const
 {
-    if (_isForPrinting) {
-        static QPrinter thePrinter;
-        return &thePrinter;
-    } else {
-        static QPaintDevice theScreen;
-        return &theScreen;
-    }
+    static QPrinter printer;
+    static QPaintDevice screen;
+    return _isForPrinting ? &printer : &screen;
 }
 
 const QFont &QPainter::font() const
@@ -443,14 +437,12 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
 
 void QPainter::_updateRenderer(NSString **families)
 {
-    if (data->textRenderer == 0
-            || data->textRendererUsesPrinterFont != KWQTextRendererFactoryUsingPrinterFonts
-            || data->state.font != data->textRendererFont) {
+    if (data->textRenderer == 0 || data->state.font != data->textRendererFont) {
         data->textRendererFont = data->state.font;
         id <WebCoreTextRenderer> oldRenderer = data->textRenderer;
         data->textRenderer = [[[WebCoreTextRendererFactory sharedFactory]
-            rendererWithFont:data->textRendererFont.getNSFont()] retain];
-        data->textRendererUsesPrinterFont = KWQTextRendererFactoryUsingPrinterFonts;
+            rendererWithFont:data->textRendererFont.getNSFont()
+            usingPrinterFont:data->textRendererFont.isPrinterFont()] retain];
         [oldRenderer release];
     }
 }

@@ -43,7 +43,11 @@ class FontDef
 public:
     FontDef()
         : size( 0 ), italic( false ), smallCaps( false ), sizeSpecified(false), weight( 50 ), 
-          genericFamily(0), hasNbsp( true ) {}
+          genericFamily(0), hasNbsp( true )
+#if APPLE_CHANGES
+          , usePrinterFont( false )
+#endif
+          {}
     
     bool operator == ( const FontDef &other ) const {
         return ( family == other.family &&
@@ -51,7 +55,11 @@ public:
                  italic == other.italic &&
                  smallCaps == other.smallCaps &&
                  weight == other.weight &&
-                 sizeSpecified == other.sizeSpecified);
+                 sizeSpecified == other.sizeSpecified
+#if APPLE_CHANGES
+                 && usePrinterFont == other.usePrinterFont
+#endif
+                 );
     }
 
     enum GenericFamilyType { eNone, eStandard, eSerif, eSansSerif, eMonospace, eCursive, eFantasy };
@@ -64,11 +72,14 @@ public:
     short int size;
     bool italic 		: 1;
     bool smallCaps 		: 1;
-    bool sizeSpecified          : 1;  // Whether or not CSS specified the size or if we're using the
+    bool sizeSpecified		: 1;  // Whether or not CSS specified the size or if we're using the
                                       // default font size that the user specified via preferences.
-    unsigned int weight 		: 8;
-    unsigned int genericFamily  : 3;
-    mutable bool hasNbsp : 1;
+    unsigned int weight 	: 8;
+    unsigned int genericFamily	: 3;
+    mutable bool hasNbsp	: 1;
+#if APPLE_CHANGES
+    bool usePrinterFont		: 1;
+#endif
 };
 
 

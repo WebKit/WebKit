@@ -466,9 +466,6 @@
     
     WebTextRendererFactory *textRendererFactory = [WebTextRendererFactory sharedFactory];
     
-    BOOL wasUsingPrinterFonts = [textRendererFactory usingPrinterFonts];
-    [textRendererFactory setUsingPrinterFonts:_private->printing];
-
     BOOL subviewsWereSetAside = _private->subviewsSetAside;
     if (subviewsWereSetAside) {
         [self _restoreSubviews];
@@ -552,8 +549,6 @@
     if (subviewsWereSetAside) {
         [self _setAsideSubviews];
     }
-
-    [textRendererFactory setUsingPrinterFonts:wasUsingPrinterFonts];
 }
 
 // Turn off the additional clip while computing our visibleRect.
@@ -776,17 +771,10 @@
     if (printing != _private->printing) {
         _private->printing = printing;
         
-        // For now, the text renderer factory is never in printer font mode
-        // except when you are actually inside [WebHTMLView drawRect:].
-        ASSERT(![[WebTextRendererFactory sharedFactory] usingPrinterFonts]);
-        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:printing];
-        
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
         [self layout];
         [self setNeedsDisplay:NO];
-        
-        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:NO];
     }
 }
 

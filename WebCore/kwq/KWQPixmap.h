@@ -52,7 +52,7 @@ public:
     QPixmap(const QByteArray&);
     QPixmap(int, int);
     QPixmap(const QPixmap &);
-    virtual ~QPixmap();
+    ~QPixmap();
 
     bool isNull() const;
 
