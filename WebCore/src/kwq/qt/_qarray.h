@@ -115,5 +115,25 @@ public:
     ConstIterator end() const { return data() + size(); }
 };
 
+#ifdef _KWQ_IOSTREAM_
+template<class T>
+inline ostream &operator<<(ostream &o, const QArray<T>&p)
+{
+    o <<
+        "QArray: [size: " <<
+         (Q_UINT32)p.count() <<
+         "; items: ";
+        const T* it = p.begin();
+        while (it != p.end()) {
+            o << *it;
+                if (++it != p.end()) {
+                    o << ", ";
+                }
+            }
+        o << "]";
+
+    return o;
+}
+#endif
 
 #endif // QARRAY_H

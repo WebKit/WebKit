@@ -45,6 +45,7 @@
 #endif
 
 #include <KWQDef.h>
+#include <iostream>
 
 // -------------------------------------------------------------------------
 
@@ -85,6 +86,7 @@ public:
 		       bool indexIsStart = TRUE ) const;
     int		find( const QString& str, int index )
 					{ return match( str, index ); }
+
 
 protected:
     void	compile();

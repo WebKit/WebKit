@@ -1934,3 +1934,11 @@ QDataStream &operator>>( QDataStream &s, QCString &str )
   \relates QCString
   Returns the concatenated string of c and s.
 */
+
+#ifdef _KWQ_IOSTREAM_
+ostream &operator<<(ostream &o, const QCString &s)
+{
+    return o << (const char *)s.data();
+}
+#endif
+

@@ -1097,3 +1097,5 @@ void QRegExp::compile()
     //dump( rxdata );	// uncomment this line for debugging
 #endif
 }
+
+
