@@ -985,7 +985,13 @@ CachedImage *DocLoader::requestImage( const DOM::DOMString &url)
 
     bool reload = needReload(fullURL);
 
+#if APPLE_CHANGES
+    CachedImage *cachedObject = Cache::requestImage(this, url, reload, m_expireDate);
+    KWQCheckCacheObjectStatus(this, cachedObject);
+    return cachedObject;
+#else
     return Cache::requestImage(this, url, reload, m_expireDate);
+#endif
 }
 
 CachedCSSStyleSheet *DocLoader::requestStyleSheet( const DOM::DOMString &url, const QString& charset)
@@ -995,7 +1001,13 @@ CachedCSSStyleSheet *DocLoader::requestStyleSheet( const DOM::DOMString &url, co
 
     bool reload = needReload(fullURL);
 
+#if APPLE_CHANGES
+    CachedCSSStyleSheet *cachedObject = Cache::requestStyleSheet(this, url, reload, m_expireDate, charset);
+    KWQCheckCacheObjectStatus(this, cachedObject);
+    return cachedObject;
+#else
     return Cache::requestStyleSheet(this, url, reload, m_expireDate, charset);
+#endif
 }
 
 CachedScript *DocLoader::requestScript( const DOM::DOMString &url, const QString& charset)
@@ -1005,7 +1017,13 @@ CachedScript *DocLoader::requestScript( const DOM::DOMString &url, const QString
 
     bool reload = needReload(fullURL);
 
+#if APPLE_CHANGES
+    CachedScript *cachedObject = Cache::requestScript(this, url, reload, m_expireDate, charset);
+    KWQCheckCacheObjectStatus(this, cachedObject);
+    return cachedObject;
+#else
     return Cache::requestScript(this, url, reload, m_expireDate, charset);
+#endif
 }
 
 void DocLoader::setAutoloadImages( bool enable )

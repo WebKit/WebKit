@@ -35,6 +35,8 @@
 
 #import <kwqdebug.h>
 
+using khtml::CachedObject;
+using khtml::DocLoader;
 using khtml::Loader;
 using khtml::Request;
 using KIO::TransferJob;
@@ -98,4 +100,16 @@ void KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     job->setHandle([bridge startLoadingResource:resourceLoader withURL:job->url()]);
     
     [resourceLoader release];
+}
+
+void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
+{
+    CachedObject::Status status = cachedObject->status();
+    if (status == CachedObject::Persistent || status == CachedObject::Cached || status == CachedObject::Uncacheable) {
+        WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->impl->getBridge();
+        NSURL *nsURL = [[NSURL alloc] initWithString:QSTRING_TO_NSSTRING(cachedObject->url().string())];
+        unsigned size = abs(cachedObject->size());
+        [bridge objectLoadedFromCache:nsURL size:size];
+        [nsURL release];
+    }
 }

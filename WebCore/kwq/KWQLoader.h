@@ -24,6 +24,8 @@
  */
 
 namespace khtml {
+    class CachedObject;
+    class DocLoader;
     class Loader;
     class Request;
 }
@@ -33,3 +35,4 @@ namespace KIO {
 }
 
 void KWQServeRequest(khtml::Loader *, khtml::Request *, KIO::TransferJob *);
+void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);

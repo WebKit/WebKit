@@ -12,8 +12,11 @@
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/IFLoadProgress.h>
 
 #import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/IFURLHandle.h>
 
 @implementation IFWebDataSource (IFWebCoreBridge)
 
@@ -127,6 +130,18 @@
 - (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
 {
     return [IFResourceURLHandleClient startLoadingResource:resourceLoader withURL:URL dataSource:dataSource];
+}
+
+- (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes
+{
+    IFURLHandle *handle;
+    IFLoadProgress *loadProgress;
+    
+    handle = [[IFURLHandle alloc] initWithURL:URL];
+    loadProgress = [[IFLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
+    [[dataSource controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource: dataSource complete:YES];
+    [loadProgress release];
+    [handle release];
 }
 
 - (void)setDataSource: (IFWebDataSource *)ds

@@ -109,6 +109,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
 
+- (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

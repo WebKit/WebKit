@@ -1,3 +1,20 @@
+2002-06-18  Kenneth Kocienda  <kocienda@apple.com>
+
+        Fix for this bug:
+
+        Radar 2928483 (activity viewer does not show all the pieces of a web page when the page is cached)
+
+	* khtml/misc/loader.cpp:
+	(DocLoader::requestImage): Added APPLE_CHANGES call to the KWQCheckCacheObjectStatus function 
+                                   described below 
+	(DocLoader::requestStyleSheet): ditto
+	(DocLoader::requestScript): ditto
+	* kwq/KWQKloader.mm:
+	(KWQCheckCacheObjectStatus): New function that informs WebKit of the
+                                     fact that a URL was loaded from the WebCore/khtml cache.
+	* kwq/KWQLoaderImpl.h: Added prototype for KWQCheckCacheObjectStatus
+	* kwq/WebCoreBridge.h: Added KWQCheckCacheObjectStatus to WebCoreBridge protocol
+
 2002-06-18  Darin Adler  <darin@apple.com>
 
 	* kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::~KWQKHTMLPartImpl):
