@@ -1193,11 +1193,12 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboa
     DOM::Node newTarget = mev.innerNode;
     
     if (d->dragTarget != newTarget) {
-        if (!d->dragTarget.isNull()) {
-            dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.handle(), loc, clipboard);
-        }
+        // note this ordering is explicitly chosen to match WinIE
         if (!newTarget.isNull()) {
             accept = dispatchDragEvent(EventImpl::DRAGENTER_EVENT, newTarget.handle(), loc, clipboard);
+        }
+        if (!d->dragTarget.isNull()) {
+            dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.handle(), loc, clipboard);
         }
     } else if (!newTarget.isNull()) {
         accept = dispatchDragEvent(EventImpl::DRAGOVER_EVENT, newTarget.handle(), loc, clipboard);

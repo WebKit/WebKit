@@ -1,3 +1,16 @@
+2004-05-27  Trey Matteson  <trey@apple.com>
+
+	Two dragging tweaks:  ondragleave events are sent before ondragenter events when
+	going across element boundaries, to match WinIE.
+	For compatibility with WinIE, we honor MIME types of "Text" and "URL".
+
+        Reviewed by rjw.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::updateDragAndDrop):
+        * kwq/KWQClipboard.mm:
+        (cocoaTypeFromMIMEType):
+
 === Safari-142 ===
 
 2004-05-27  Vicki Murley <vicki@apple.com>

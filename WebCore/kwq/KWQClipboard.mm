@@ -66,6 +66,13 @@ void KWQClipboard::setDropAllowed(const DOM::DOMString &s)
 static NSString *cocoaTypeFromMIMEType(const DOMString &type) {
     QString qType = type.string();
 
+    // two special cases for IE compatibility
+    if (qType == "Text") {
+        return NSStringPboardType;
+    } else if (qType == "URL") {
+        return NSURLPboardType;
+    } 
+    
     // Cut off any trailing charset - JS String are Unicode, which encapsulates this issue
     int semicolon = qType.find(';');
     if (semicolon >= 0) {
