@@ -427,6 +427,12 @@ int QFontMetrics::width(const QString &qstring, int len) const
     return stringWidth;
 }
 
+int QFontMetrics::_width(CFStringRef string) const
+{
+    int stringWidth = ROUND_TO_INT([data->info rectForString: (NSString *)string].size.width);
+    return stringWidth;
+}
+
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
 {

@@ -56,6 +56,7 @@
         fragmentCache = [[NSMutableDictionary alloc] init];
     
     [self setString: measureString];
+    
     glyphRange = [_layoutManager glyphRangeForCharacterRange:range actualCharacterRange:nil];
     boundingRect = [_layoutManager boundingRectForGlyphRange: glyphRange inTextContainer: [KWQTextContainer sharedInstance]];
     
@@ -77,7 +78,7 @@
     [fragment setGlyphRange: glyphRange];
     [fragment setBoundingRect: boundingRect];
 
-    [fragmentCache setObject: fragment forKey: measureString];
+    [fragmentCache setObject: fragment forKey: [self string]];
     [fragment release];
 
     return fragment;
@@ -227,7 +228,10 @@ static int trailingSpace = 0;
         int newLength = [newString length];
         
         [string release];
-        string = [newString retain];
+        
+        // Make an immutable copy.
+        string = [[NSString stringWithString: newString] retain];
+        
         [_layoutManager textStorage: self 
                 edited: NSTextStorageEditedCharacters
                 range: NSMakeRange (0, newLength)

@@ -534,6 +534,8 @@ static int findExpensiveCount = 0;
 static int findCheapCount = 0;
 #endif
 
+static int caseDelta = ('a' - 'A');
+
 int QString::find(const char *chs, int index, bool caseSensitive) const
 {
     int pos = -1;
@@ -574,42 +576,41 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
                 fprintf (stdout, "findCount = %d, expensive = %d, cheap = %d\n", findCount, findExpensiveCount, findCheapCount);
 #endif
             if (len && (index >= 0) && (index < len)) {
-                UniChar firstC, c1, c2, otherCase_c2;
+                UniChar firstC, c1, c2;
                 const char *_chs;
                 int remaining = len - index, found = -1;
                 int compareToLength = strlen(chs);
                 
                 internalBuffer = &internalBuffer[index];
                 
-                _chs = chs;
-                firstC = (UniChar)(*_chs);
+                _chs = chs + 1;
+                firstC = (UniChar)(*chs);
                 while (remaining >= compareToLength){
                     if (*internalBuffer++ == firstC){
                         const UniChar *compareTo = internalBuffer;
-                        int caseDelta = ('a' - 'A');
                         
                         found = len - remaining;
-                        _chs++;
-                        while (*compareTo && *_chs){
+                        while ( (c2 = (UniChar)(*_chs++)) ){
                             c1 = (UniChar)(*compareTo++);
-                            c2 = (UniChar)(*_chs);
                             if (!caseSensitive){
-                                if (c2 >= 'a' && c2 <= 'z')
-                                    otherCase_c2 = c2 - caseDelta;
-                                else if (c2 >= 'A' && c2 <= 'Z')
-                                    otherCase_c2 = c2 + caseDelta;
-                                else
-                                    otherCase_c2 = c2;
-                                if (c1 != c2 && c1 != otherCase_c2)
-                                    break;
+                                if (c2 >= 'a' && c2 <= 'z'){
+                                    if (c1 == c2 || c1 == c2 - caseDelta)
+                                        continue;
+                                }
+                                else if (c2 >= 'A' && c2 <= 'Z'){
+                                    if (c1 == c2 || c1 == c2 + caseDelta)
+                                        continue;
+                                }
+                                else if (c1 == c2)
+                                    continue;
                             }
-                            else if (c1 != c2)
-                                break;
-                            _chs++;
+                            else if (c1 == c2)
+                                continue;
+                            break;
                         }
-                        if (!*_chs)
+                        if (c2 == 0)
                             return found;
-                        _chs = chs;
+                        _chs = chs + 1;
                     }
                     remaining--;
                 }

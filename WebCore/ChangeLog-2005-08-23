@@ -1,5 +1,17 @@
 2002-03-14  Richard Williamson  <rjw@apple.com>
 
+        Fixed another problem in QString::find().
+        Added dangerous but fast string allocation optimization to render_text.cpp.
+        
+	* src/kdelibs/khtml/rendering/render_text.cpp: (RenderText::calcMinMaxWidth):
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::_width):
+	* src/kwq/KWQString.mm: (QString::find):
+	* src/kwq/KWQTextStorage.mm: (-[KWQTextStorage _buildFragmentForString:]),
+	(-[KWQTextStorage setString:]):
+	* src/kwq/qt/qfontmetrics.h:
+
+2002-03-14  Richard Williamson  <rjw@apple.com>
+
         Fixed optimized find() implementation.  I had the sense of caseSensitive inverted.
         
 	* src/kwq/KWQString.mm: (QString::find):

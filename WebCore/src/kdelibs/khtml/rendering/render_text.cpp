@@ -659,6 +659,13 @@ void RenderText::print( QPainter *p, int x, int y, int w, int h,
     printObject(p, x, y, w, h, tx, ty);
 }
 
+#ifdef APPLE_CHANGES
+#define OPTIMIZE_STRING_USAGE
+#ifdef OPTIMIZE_STRING_USAGE
+static CFMutableStringRef reuseableString = 0;
+#endif
+#endif
+
 void RenderText::calcMinMaxWidth()
 {
     //kdDebug( 6040 ) << "Text::calcMinMaxWidth(): known=" << minMaxKnown() << endl;
@@ -686,7 +693,15 @@ void RenderText::calcMinMaxWidth()
         } while( i+wordlen < len && !(isBreakable( str->s, i+wordlen, str->l )) );
         if (wordlen)
         {
+#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
+            if (reuseableString == 0)
+                reuseableString = CFStringCreateMutableWithExternalCharactersNoCopy (kCFAllocatorDefault, (UniChar *)(str->s+i), wordlen, wordlen, kCFAllocatorDefault);
+            else
+                CFStringSetExternalCharactersNoCopy (reuseableString, (UniChar *)(str->s+i), wordlen, wordlen);
+            int w = _fm._width(reuseableString);
+#else
             int w = _fm.width(QConstString(str->s+i, wordlen).string());
+#endif
             currMinWidth += w;
             currMaxWidth += w;
         }
@@ -705,7 +720,15 @@ void RenderText::calcMinMaxWidth()
             {
                 if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
                 currMinWidth = 0;
+#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
+                if (reuseableString == 0)
+                    reuseableString = CFStringCreateMutableWithExternalCharactersNoCopy (kCFAllocatorDefault, (UniChar *)(str->s+i+wordlen), wordlen, wordlen, kCFAllocatorDefault);
+                else
+                    CFStringSetExternalCharactersNoCopy (reuseableString, (UniChar *)(str->s+i+wordlen), 1, 1);
+                currMaxWidth += _fm._width(reuseableString);
+#else
                 currMaxWidth += _fm.width( *(str->s+i+wordlen) );
+#endif
             }
             /* else if( c == '-')
             {

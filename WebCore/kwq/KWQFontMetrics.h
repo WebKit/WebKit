@@ -66,6 +66,10 @@ public:
     int width(QChar) const;
     int width(char) const;
     int width(const QString &, int len=-1) const;
+#if (defined(__APPLE__))
+    int _width (CFStringRef string) const;
+#endif
+
     int descent() const;
     QRect boundingRect(const QString &, int len=-1) const;
     QRect boundingRect(QChar) const;
