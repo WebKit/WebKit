@@ -72,6 +72,7 @@
 #include <rendering/render_image.h>
 #include <loader.h>
 #include <kjs/interpreter.h>
+#include <kjs/collector.h>
 #include <kjs_dom.h>
 #include <dom_doc.h>
 #include <qcursor.h>
@@ -208,6 +209,10 @@ public:
         delete m_settings;
         if (m_decoder)
             delete m_decoder;
+	if (m_jscript != 0) {
+	    delete m_jscript;
+	    KJS::Collector::collect();
+	}
     }
 
 };

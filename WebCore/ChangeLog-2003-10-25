@@ -1,3 +1,11 @@
+2002-04-01  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kwq/KWQKHTMLPart.mm (KHTMLPartPrivate::~KHTMLPartPrivate):
+	Delete the jScript interpreter if it exists, to avoid leaking
+	it. Also, garbage collect in this case because when we destroy the
+	interpreter a lot of objects will become garbage and this seems
+	like a good time to clean it all up.
+
 2002-04-01  Richard Williamson  <rjw@apple.com>
 
         Added log to catch more problems with NS/CFURL.
