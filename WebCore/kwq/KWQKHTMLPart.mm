@@ -3524,7 +3524,7 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
             node->renderer()->repaint();
     }
     
-    if (doc) {
+    if (doc && doc->body()) {
         if (flag) {
             // Send onfocus event.
             doc->body()->dispatchWindowEvent(EventImpl::FOCUS_EVENT, false, false);

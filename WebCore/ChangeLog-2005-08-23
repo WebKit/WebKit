@@ -1,3 +1,12 @@
+2004-09-30  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3822330> REGRESSION: crash on launch when homepage is set to about:blank
+	
+	Added nil check.
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes):
+
 2004-09-30  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: <rdar://problem/3792822> Safari is calling the Cocoa QuickTime plugin twice for the OBJECT and EMBED tags
