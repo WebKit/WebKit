@@ -74,7 +74,7 @@ void HTMLCollectionImpl::resetCollectionInfo() const
         current = 0;
         position = 0;
         length = 0;
-        hasLength = false;
+        haslength = false;
         info->version = docversion;
     }
 }
