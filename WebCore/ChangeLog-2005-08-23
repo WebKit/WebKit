@@ -1,3 +1,10 @@
+2002-03-29  Richard Williamson  <rjw@apple.com>
+
+        More fixes for cancelling.  Fixed some code that appears to have been
+        mis-merged after the KDE 3 beta 2 landing.
+        
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient initWithLoader:dataSource:])
+
 2002-03-29  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQKloader.mm: (Cache::getStatistics), (Cache::flushAll):

@@ -1006,11 +1006,17 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 {
     if ((self = [super init])) {
         m_loader = loader;
-        m_dataSource = dataSource;
+        m_dataSource = [dataSource retain];
         return self;
     }
     
     return nil;
+}
+
+- (void)dealloc
+{
+    [m_dataSource autorelease];
+    [super dealloc];
 }
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
@@ -1176,39 +1182,22 @@ Loader::~Loader()
 #endif
 }
 
-#if APPLE_CHANGES
-// FIXME!  Clients need to be released when document is completely loaded.
-static NSMutableDictionary *clientForDocument = 0;
-#endif
 
 void Loader::load(DocLoader* dl, CachedObject *object, bool incremental = true)
 {
     Request *req = new Request(dl, object, incremental);
 
 #if APPLE_CHANGES
-    // All loads associated with a particular baseURL should share the same
-    // URLHandleClient.
     id client;
     
-    if (clientForDocument == 0)
-        clientForDocument = [[NSMutableDictionary alloc] init];
-    
-    // FIXME!  We need to remove cached clients when data source goes away.
     id dataSource = ((KHTMLPart *)(((DocLoader *)(object->loader()))->part()))->getDataSource();
-    NSNumber *key = [NSNumber numberWithUnsignedInt: (unsigned int)dataSource];
-    client = [clientForDocument objectForKey: key];
-    if (client == nil){
-        KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "Creating client for dataSource 0x%08x, url %s\n", dataSource, object->url().string().latin1());
-        client = [[[URLLoadClient alloc] initWithLoader:this dataSource: dataSource] autorelease];
-        [clientForDocument setObject: client forKey: key];
-    }
+    client = [[[URLLoadClient alloc] initWithLoader:this dataSource: dataSource] autorelease];
     req->client = client;
 #endif
 
     m_requestsPending.append(req);
     
-#if APPLE_CHANGES
-#else
+#ifndef APPLE_CHANGES
     emit requestStarted( req->m_docLoader, req->object );
 #endif
 

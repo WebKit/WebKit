@@ -118,6 +118,10 @@
     // KDE drop we should fix this dependency.
     WEBKIT_ASSERT ([self view] != nil);
 
+    if ([self _state] != IFWEBFRAMESTATE_COMPLETE){
+        [self stopLoading];
+    }
+    
     if (newDataSource != nil){
         if (![[self controller] locationWillChangeTo: [newDataSource inputURL] forFrame: self])
             return NO;

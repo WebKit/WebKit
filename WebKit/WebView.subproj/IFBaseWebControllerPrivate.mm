@@ -7,6 +7,7 @@
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFPreferencesPrivate.h>
+#import <WebKit/IFError.h>
 
 #include <KWQKHTMLPart.h>
 #include <rendering/render_frames.h>
@@ -39,14 +40,21 @@
     IFWebFrame *frame = [dataSource frame];
     
     WEBKIT_ASSERT (dataSource != nil);
-    WEBKIT_ASSERT (frame != nil);
 
     [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
-
+    
+    if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
+	WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
+        if (frame != nil)
+            [frame _checkLoadCompleteResource: resourceDescription error: [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled] autorelease] isMainDocument: NO];
+        return;
+    }
     // This resouce has completed, so check if the load is complete for all frames.
-    if (progress->bytesSoFar == progress->totalToLoad){
-        [frame _transitionProvisionalToLayoutAcceptable];
-        [frame _checkLoadCompleteResource: resourceDescription error: nil isMainDocument: NO];
+    else if (progress->bytesSoFar == progress->totalToLoad){
+        if (frame != nil){
+            [frame _transitionProvisionalToLayoutAcceptable];
+            [frame _checkLoadCompleteResource: resourceDescription error: nil isMainDocument: NO];
+        }
     }
 }
 
@@ -55,14 +63,20 @@
     IFWebFrame *frame = [dataSource frame];
     
     WEBKIT_ASSERT (dataSource != nil);
-    WEBKIT_ASSERT (frame != nil);
 
     [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
 
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
+        [dataSource _setPrimaryLoadComplete: YES];
+        if (frame != nil);
+            [frame _checkLoadCompleteResource: resourceDescription error: [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled] autorelease] isMainDocument: YES];
+        return;
     }
 
+    if (frame == nil)
+        return;
+        
     // Check to see if this is these are the first bits of a provisional data source,
     // if so we need to transition the data source from provisional to committed.
     if([frame provisionalDataSource] == dataSource){
@@ -91,10 +105,13 @@
 {
     IFWebFrame *frame = [dataSource frame];
 
+    [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
+
+    if ([dataSource _isStopping])
+        return;
+    
     WEBKIT_ASSERT (frame != nil);
 
-    [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
-    
     [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: NO];
 }
 
@@ -103,10 +120,13 @@
 {
     IFWebFrame *frame = [dataSource frame];
 
-    WEBKIT_ASSERT (frame != nil);
-
     [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
     
+    if ([dataSource _isStopping])
+        return;
+    
+    WEBKIT_ASSERT (frame != nil);
+
     [dataSource _setPrimaryLoadComplete: YES];
 
     [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: YES];

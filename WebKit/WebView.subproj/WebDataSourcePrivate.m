@@ -85,8 +85,7 @@
     NSURL *theURL;
     KURL url = [[[self inputURL] absoluteString] cString];
 
-    // Stop loading any previous loads that may be currently active.
-    [self stopLoading];
+    WEBKIT_ASSERT ([self _isStopping] == NO);
     
     [self _setPrimaryLoadComplete: NO];
     
@@ -138,12 +137,20 @@
     [data->urlHandles removeObject: handle];
 }
 
+- (BOOL)_isStopping
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    return data->stopping;
+}
+
 - (void)_stopLoading
 {
     IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     int i, count;
     IFURLHandle *handle;
 
+    data->stopping = YES;
+    
     [data->mainHandle cancelLoadInBackground];
     
     // Tell all handles to stop loading.
