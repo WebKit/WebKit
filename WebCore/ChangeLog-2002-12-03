@@ -1,3 +1,12 @@
+2001-12-11  Chris Blumenberg  <cblu@apple.com>
+
+	* ChangeLog:
+	* src/kwq/KWQKHTMLPart.mm:
+
+2001-12-11  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+
+	* src/kwq/KWQKHTMLPart.mm:
+
 2001-12-10  Kenneth Kocienda  <kocienda@apple.com>
 
         Went back and did a better job of cleaning up the warnings

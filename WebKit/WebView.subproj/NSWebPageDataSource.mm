@@ -10,6 +10,7 @@
     NSAutoreleasePool *localPool;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSArray *fontSizeArray = [NSArray arrayWithObjects:@"7", @"8", @"9", @"10", @"12", @"13", @"14", @"16", nil];
+    NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
     
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
 //        @"0xffffffff", 		@"WebKitLogLevel",
@@ -22,6 +23,7 @@
         @"Times-Roman", 	@"WebKitFantasyFont",
         @"6", 			@"WebKitMinimumFontSize",
         fontSizeArray,		@"WebKitFontSizes",
+        pluginsEnabled,		@"WebKitPluginsEnabled",
         nil];
 
     [defaults registerDefaults:dict];

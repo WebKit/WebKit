@@ -1,3 +1,12 @@
+2001-12-11  Chris Blumenberg  <cblu@apple.com>
+
+	* ChangeLog:
+	* WebView.subproj/NSWebPageDataSource.mm: (+[NSWebPageDataSource initialize]):
+
+2001-12-11  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+
+	* WebView.subproj/NSWebPageDataSource.mm: (+[NSWebPageDataSource initialize]):
+
 2001-12-10  John Sullivan  <sullivan@apple.com>
 
 	* WebView.subproj/WKWebController.h:

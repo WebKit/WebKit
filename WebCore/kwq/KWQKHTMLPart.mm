@@ -396,8 +396,7 @@ void KHTMLPart::setPluginsEnabled( bool enable )
 
 bool KHTMLPart::pluginsEnabled() const
 {
-    _logNeverImplemented();
-    return FALSE;
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];
 }
 
 
