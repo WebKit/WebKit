@@ -4,6 +4,20 @@
 
         Fix for this bug:
         
+        <rdar://problem/3775214> BR elements cause unnecessary spans to be added when applying style
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ApplyStyleCommandImpl::doApply): BR elements can be grouped more liberally with other nodes
+        now in the iteration when attempting to find nodes that can be styled together with one span.
+        * layout-tests/editing/style/style-3690704-fix-expected.txt: Updated with new results after
+        bug fix.
+
+2004-08-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
         <rdar://problem/3775172> Blot crashes after typing one character then deleting it
 
         * khtml/css/css_computedstyle.cpp:
