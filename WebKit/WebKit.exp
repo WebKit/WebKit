@@ -43,3 +43,7 @@ _WebIconNotificationUserInfoSiteURLKey
 _WebIconSmallSize
 _WebURLNamePboardType
 _WebURLPboardType
+_WebActionNavigationTypeKey
+_WebActionElementKey
+_WebActionButtonKey
+_WebActionModifierFlagsKey

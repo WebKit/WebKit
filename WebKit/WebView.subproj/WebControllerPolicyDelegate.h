@@ -13,6 +13,28 @@
 @class WebResourceResponse;
 @class WebResourceRequest;
 
+
+/*!
+  @enum WebNavigationType
+  @abstract The type of action that triggered a possible navigation.
+  @constant WebActionTypeLinkClicked A link with an href was clicked.
+  @constant WebActionTypeFormSubmitted A form was submitted.
+  @constant WebNavigationTypeOther Navigation is taking place for some other reason.
+*/
+
+typedef enum {
+    WebNavigationTypeLinkClicked,
+    WebNavigationTypeFormSubmitted,
+    WebNavigationTypeOther
+} WebNavigationType;
+
+
+extern NSString *WebActionNavigationTypeKey; // NSNumber (WebActionType)
+extern NSString *WebActionElementKey; // NSDictionary of element info
+extern NSString *WebActionButtonKey;  // NSEventType
+extern NSString *WebActionModifierFlagsKey; // NSNumber (unsigned)
+
+
 /*!
     @enum WebPolicyAction
     @constant WebPolicyNone Unitialized state.
@@ -48,6 +70,7 @@ typedef enum {
  */
 typedef enum {
     WebClickPolicyShow = WebPolicyUse,
+    WebClickPolicyOpenExternally = WebPolicyOpenURL,
     WebClickPolicyOpenNewWindow = WebPolicyOpenNewWindow,
     WebClickPolicyOpenNewWindowBehind = WebPolicyOpenNewWindowBehind,
     WebClickPolicySave = WebPolicySave,
@@ -211,7 +234,9 @@ typedef enum {
      @param modifierFlags The modifier flags as described in NSEvent.h.
      @result The WebClickPolicy for WebKit to implement
 */
-- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierFlags: (unsigned int)modifierFlags request:(WebResourceRequest *)request inFrame:(WebFrame *)frame;
+- (WebClickPolicy *)clickPolicyForAction:(NSDictionary *)actionInformation
+                              andRequest:(WebResourceRequest *)request
+                                 inFrame:(WebFrame *)frame;
 
 /*!
     @method URLPolicyForURL:inFrame:

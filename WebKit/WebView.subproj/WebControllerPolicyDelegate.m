@@ -5,6 +5,12 @@
 
 #import <WebKit/WebControllerPolicyDelegate.h>
 
+NSString *WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";
+NSString *WebActionElementKey = @"WebActionNavigationTypeKey";
+NSString *WebActionButtonKey = @"WebActionButtonKey"; 
+NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
+
+
 @interface WebPolicyPrivate : NSObject
 {
 @public

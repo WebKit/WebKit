@@ -781,40 +781,72 @@ static const char * const stateNames[] = {
     [newDataSource release];
 }
 
+-(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event
+{
+
+    switch (navigationType) {
+    case WebNavigationTypeLinkClicked:
+    case WebNavigationTypeFormSubmitted:
+	;
+	NSPoint point = [[[self webView] documentView] convertPoint:[event locationInWindow] fromView:nil];
+	NSDictionary *elementInfo = [(WebHTMLView *)[[self webView] documentView] _elementAtPoint:point];
+	
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+			     [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+			     elementInfo, WebActionElementKey,
+			     [NSNumber numberWithInt:[event type]], WebActionButtonKey,
+			     [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+			     nil];
+
+
+	break;
+    case WebNavigationTypeOther:
+	return [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:navigationType]
+			     forKey:WebActionNavigationTypeKey];
+
+	break;
+    default:
+	ASSERT_NOT_REACHED();
+	return nil;
+    }
+}
+
 -(BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event request:(WebResourceRequest *)request
 {
-    NSPoint point = [[[self webView] documentView] convertPoint:[event locationInWindow] fromView:nil];
     WebController *controller = [self controller];
     WebClickPolicy *clickPolicy;
 
-    clickPolicy = [[controller policyDelegate] clickPolicyForElement:[(WebHTMLView *)[[self webView] documentView] _elementAtPoint:point]
-                                                              button:[event type]
-                                                       modifierFlags:[event modifierFlags]
- 					                     request:request
-						             inFrame:self];
+    clickPolicy = [[controller policyDelegate] clickPolicyForAction:[self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event]
+					       andRequest:request
+					       inFrame:self];
 
     WebPolicyAction clickAction = [clickPolicy policyAction];
     NSURL *URL = [clickPolicy URL];
 
     switch (clickAction) {
-        case WebClickPolicyShow:
-            return YES;
-        case WebClickPolicyOpenNewWindow:
-            [controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:NO];
-            break;
-        case WebClickPolicyOpenNewWindowBehind:
-            [controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:YES];
-            break;
-        case WebClickPolicySave:
-        case WebClickPolicySaveAndOpenExternally:
-            [controller _downloadURL:URL
-                   withContentPolicy:[WebContentPolicy webPolicyWithContentAction:clickAction andPath:nil]];
-            break;
-        case WebClickPolicyIgnore:
-            break;
-        default:
-            [NSException raise:NSInvalidArgumentException
-                        format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
+    case WebClickPolicyShow:
+	return YES;
+    case WebClickPolicyOpenExternally:
+	if(![[NSWorkspace sharedWorkspace] openURL:[request URL]]){
+	    [self handleUnimplementablePolicy:clickPolicy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[request URL]];
+	}
+	break;
+    case WebClickPolicyOpenNewWindow:
+	[controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:NO];
+	break;
+    case WebClickPolicyOpenNewWindowBehind:
+	[controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:YES];
+	break;
+    case WebClickPolicySave:
+    case WebClickPolicySaveAndOpenExternally:
+	[controller _downloadURL:URL
+		    withContentPolicy:[WebContentPolicy webPolicyWithContentAction:clickAction andPath:nil]];
+	break;
+    case WebClickPolicyIgnore:
+	break;
+    default:
+	[NSException raise:NSInvalidArgumentException
+		     format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
     }
     return NO;
 }
