@@ -136,12 +136,15 @@ NodeImpl *RangeImpl::commonAncestorContainer(NodeImpl *containerA, NodeImpl *con
 
     for (parentStart = containerA; parentStart; parentStart = parentStart->parentNode()) {
         NodeImpl *parentEnd = containerB;
-        while( parentEnd && (parentStart != parentEnd) )
+        while (parentEnd && (parentStart != parentEnd))
             parentEnd = parentEnd->parentNode();
-
-        if(parentStart == parentEnd)  break;
+        if (parentStart == parentEnd)
+            break;
     }
 
+    if (!parentStart && containerA->getDocument())
+        return containerA->getDocument()->documentElement();
+        
     return parentStart;
 }
 
@@ -355,17 +358,21 @@ short RangeImpl::compareBoundaryPoints( NodeImpl *containerA, long offsetA, Node
     // ### we need to do a traversal here instead
     NodeImpl *cmnRoot = commonAncestorContainer(containerA,containerB);
     NodeImpl *childA = containerA;
-    while (childA->parentNode() != cmnRoot)
+    while (childA && childA->parentNode() != cmnRoot)
         childA = childA->parentNode();
+    if (!childA)
+        childA = cmnRoot;
     NodeImpl *childB = containerB;
-    while (childB->parentNode() != cmnRoot)
+    while (childB && childB->parentNode() != cmnRoot)
         childB = childB->parentNode();
+    if (!childB)
+        childB = cmnRoot;
 
     NodeImpl *n = cmnRoot->firstChild();
     int i = 0;
     int childAOffset = -1;
     int childBOffset = -1;
-    while (childAOffset < 0 || childBOffset < 0) {
+    while (n && (childAOffset < 0 || childBOffset < 0)) {
         if (n == childA)
             childAOffset = i;
         if (n == childB)

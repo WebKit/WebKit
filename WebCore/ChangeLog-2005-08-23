@@ -1,5 +1,19 @@
 2004-12-02  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Richard
+
+        Fix for this bug:
+        
+        <rdar://problem/3857775> 8A293: Mail.app crashes converting copy-pasted text into plain text
+
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::commonAncestorContainer): Return the document element if no common ancestor container
+        was found. This can happen in cases where the DOM was built from malformed markup (as in the case
+        of this bug where there is content after the body tag). Did a little code clean up as well.
+        (DOM::RangeImpl::compareBoundaryPoints): Made code more robust by adding some null checks.
+
+2004-12-02  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Chris
 
         Fix for this bug:
