@@ -1,5 +1,12 @@
 2002-02-18  Richard Williamson  <rjw@apple.com>
 
+        Fixed the prefences won't stay in front problem after John found 
+        and correctly diagnosed the problem.
+        
+	* src/kwq/KWQWidget.mm: (QWidget::show), (QWidget::hide):
+
+2002-02-18  Richard Williamson  <rjw@apple.com>
+
         Performance measurement.
         
 	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::begin), (KHTMLPart::write):

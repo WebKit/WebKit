@@ -383,13 +383,13 @@ bool QWidget::hasMouseTracking() const
 
 void QWidget::show()
 {
-    [[data->view window] deminiaturize: data->view];
+    _logNeverImplemented();
 }
 
 
 void QWidget::hide()
 {
-    [[data->view window] miniaturize: data->view];
+    _logNeverImplemented();
 }
 
 
