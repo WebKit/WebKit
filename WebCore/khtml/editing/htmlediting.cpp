@@ -1940,6 +1940,14 @@ void DeleteSelectionCommand::doApply()
     rebalanceWhitespace();
 }
 
+HTMLEditAction DeleteSelectionCommand::editingAction() const
+{
+    // Note that DeleteSelectionCommand is also used when the user presses the Delete key,
+    // but in that case there's a TypingCommand that supplies the editingAction(), so
+    // the Undo menu correctly shows "Undo Typing"
+    return HTMLEditActionCut;
+}
+
 bool DeleteSelectionCommand::preservesTypingStyle() const
 {
     return true;
@@ -2784,6 +2792,11 @@ void MoveSelectionCommand::doApply()
     setEndingSelection(pos);
     EditCommandPtr cmd(new ReplaceSelectionCommand(document(), m_fragment, true, m_smartMove));
     applyCommandToComposite(cmd);
+}
+
+HTMLEditAction MoveSelectionCommand::editingAction() const
+{
+    return HTMLEditActionDrag;
 }
 
 //------------------------------------------------------------------------------------------
@@ -3948,6 +3961,11 @@ void TypingCommand::removeCommand(const EditCommandPtr &cmd)
         setEndingSelection(startingSelection());
     else
         setEndingSelection(m_cmds.last().endingSelection());
+}
+
+HTMLEditAction ReplaceSelectionCommand::editingAction() const
+{
+    return HTMLEditActionPaste;
 }
 
 bool TypingCommand::preservesTypingStyle() const

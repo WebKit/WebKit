@@ -346,6 +346,7 @@ public:
     DeleteSelectionCommand(DOM::DocumentImpl *document, const khtml::Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
 	
     virtual void doApply();
+    virtual HTMLEditAction editingAction() const;
     
 private:
     virtual bool preservesTypingStyle() const;
@@ -530,6 +531,7 @@ public:
     virtual ~MoveSelectionCommand();
     
     virtual void doApply();
+    virtual HTMLEditAction editingAction() const;
     
 private:
     DOM::DocumentFragmentImpl *m_fragment;
@@ -700,6 +702,7 @@ public:
     virtual ~ReplaceSelectionCommand();
     
     virtual void doApply();
+    virtual HTMLEditAction editingAction() const;
 
 private:
     void completeHTMLReplacement(const DOM::Position &, const DOM::Position &);

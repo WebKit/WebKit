@@ -2,6 +2,21 @@
 
         Reviewed by Ken.
         
+        - added Undo action names for Cut, Paste, and Drag
+
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::editingAction):
+        overridden to return HTMLEditActionCut
+        (khtml::MoveSelectionCommand::editingAction):
+        overridden to return HTMLEditActionDrag
+        (khtml::ReplaceSelectionCommand::editingAction):
+        overridden to return HTMLEditActionPaste
+
+2004-12-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
         - architecture for WebCore part of fix for <rdar://problem/3790011> undoable operations all say "Undo" in the menu, 
         no specific action names
           
