@@ -1,5 +1,11 @@
 2003-04-23  Chris Blumenberg  <cblu@apple.com>
 
+        Reviewed by darin.
+
+        * English.lproj/StringsNotToBeLocalized.txt: updated
+
+2003-04-23  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3161374 - safari windows don't allow text/URL dragging on the first click
 
         Reviewed by john.

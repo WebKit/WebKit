@@ -102,6 +102,7 @@
 "WebBackForwardList:\n"
 "WebCorePageState"
 "WebCurrentFrameState"
+"WebDataRequest"
 "WebElementFrame"
 "WebElementImage"
 "WebElementImageAltString"
