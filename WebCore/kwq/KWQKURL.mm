@@ -373,7 +373,6 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
         }
         if (*p == ':') {
             absolute = true;
-            break;
         }
     }
         
