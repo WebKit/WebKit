@@ -64,6 +64,22 @@
             this point.
                     
     ============================================================================= 
+    
+    Changes:
+    
+    2001-12-14
+        
+        Added the following methods:
+            - (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)case
+            - deselectText;
+            - (NSAttributedString *)selectedText;
+       
+        
+        Remove explicit API to get/set the selection range.  This will be postponed until we
+        have a DOM API that allows us to express selection ranges correctly.  Instead we have API
+        that should support searching and getting a NSAttributedString that corresponds to
+        the selected text.
+        
 */
 @interface WKWebView : NSView
 {
@@ -121,18 +137,17 @@
 - (BOOL)contextMenusEnabled;
 
 
-// Most folks want selection API on the view.  Don suggested we mirror the
-// NSText API.  NSText represents selection as a range.  What does this mean
-// in the context of an HTML page?  What is the selection range in a table?
-// What can you do with the selection range?  I'm not sure if can get away
-// with this simplistic API.  We may have to use something similar to the
-// DOM selection API.  I'm also still uncomfortable putting this API on the
-// view.
-- (void)setSelectedRange:(NSRange)aRange;
-- (NSRange)selectedRange;
+// Remove the selection.
+- deselectText;
 
 
-// Maciej thinks we need high level find API on view.
+// Search from the end of the currently selected location, or from the beginning of the document if nothing
+// is selected.
+- (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)case
+
+
+// Get an attributed string that represents the current selection.
+- (NSAttributedString *)selectedText;
 
 @end
 
