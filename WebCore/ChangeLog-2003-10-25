@@ -1,3 +1,11 @@
+2003-08-20  Richard Williamson   <rjw@apple.com>
+
+	UCFindTextBreak will report false if we have a sequence of 0xa0 0x20 (nbsp, sp), so we explicity check for that case.  Filed 3386852 to track this problem, meanwhile added a work-around.  This problem was revealed after adding the fix for 3242508.
+
+        Reviewed by Dave.
+
+        * khtml/rendering/break_lines.cpp:
+
 2003-08-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

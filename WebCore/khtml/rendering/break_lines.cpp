@@ -89,8 +89,11 @@ bool isBreakable( const QChar *s, int pos, int len)
     }
 
     // If current character, or the previous character aren't simple latin1 then
-    // use the UC line break locator.
-    if (ch > 0x7f || (pos > 0 && (s+pos-1)->unicode() > 0x7f)){
+    // use the UC line break locator.  UCFindTextBreak will report false if we
+    // have a sequence of 0xa0 0x20 (nbsp, sp), so we explicity check for that
+    // case.
+    unsigned short lastCh = pos > 0 ? (s+pos-1)->unicode() : 0;
+    if (ch > 0x7f || (lastCh > 0x7f && lastCh != 0xa0)){
         status = UCCreateTextBreakLocator (NULL, 0, kUCTextBreakLineMask, &breakLocator);
         if (status == 0){
             findStatus = UCFindTextBreak (breakLocator, kUCTextBreakLineMask, NULL, (const UniChar *)s, len, pos, &end);
