@@ -120,7 +120,7 @@
 - (Class)_representationClass;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
 - (void)_setWebView:(WebView *)webView;
-- (void)_startLoading: (NSDictionary *)pageCache;
+- (void)_startLoading:(NSDictionary *)pageCache;
 - (void)_stopLoadingInternal;
 - (BOOL)_isStopping;
 - (void)_recursiveStopLoading;
@@ -154,7 +154,7 @@
 - (WebBridge *)_bridge;
 
 - (BOOL)_isCommitted;
-- (void)_commitIfReady: (NSDictionary *)pageCache;
+- (void)_commitIfReady:(NSDictionary *)pageCache;
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
 - (void)_finishedLoading;
@@ -171,7 +171,7 @@
 - (BOOL)_storedInPageCache;
 - (BOOL)_loadingFromPageCache;
 
-- (void)_addResponse: (NSURLResponse *)r;
+- (void)_addResponse:(NSURLResponse *)r;
 - (NSArray *)_responses;
 
 - (void)_stopLoadingWithError:(NSError *)error;

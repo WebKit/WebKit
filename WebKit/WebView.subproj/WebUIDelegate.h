@@ -9,11 +9,11 @@
 #import <WebFoundation/NSURLRequest.h>
 
 /*!
-@enum WebMenuItemTag
- @discussion Each menu item in the default menu items array passed in
- contextMenuItemsForElement:defaultMenuItems: has its tag set to one of the WebMenuItemTags.
- When iterating through the default menu items array, use the tag to differentiate between them.
- */
+    @enum WebMenuItemTag
+    @discussion Each menu item in the default menu items array passed in
+    contextMenuItemsForElement:defaultMenuItems: has its tag set to one of the WebMenuItemTags.
+    When iterating through the default menu items array, use the tag to differentiate between them.
+*/
 
 enum {
     WebMenuItemTagOpenLinkInNewWindow=1,
@@ -132,8 +132,7 @@ enum {
     hierarchy, it may be desirable to save the first responder
     elsewhere, or possibly ignore this call.
 */
-- (void)webView: (WebView *)sender makeFirstResponder:(NSResponder *)responder;
-
+- (void)webView:(WebView *)sender makeFirstResponder:(NSResponder *)responder;
 
 /*!
     @method webView:setStatusText:
@@ -141,10 +140,10 @@ enum {
     @param sender The WebView sending the delegate method.
     @param text The status text to set
 */
-- (void)webView: (WebView *)sender setStatusText:(NSString *)text;
+- (void)webView:(WebView *)sender setStatusText:(NSString *)text;
 
 /*!
-    @method statusText
+    @method webViewStatusText
     @abstract Get the currently displayed status text.
     @param sender The WebView sending the delegate method.
     @result The status text
@@ -162,7 +161,7 @@ enum {
     this method if at least one is on.
     @result YES if at least one toolbar is visible, otherwise NO.
 */
-- (BOOL)webViewAreToolbarsVisible: (WebView *)sender;
+- (BOOL)webViewAreToolbarsVisible:(WebView *)sender;
 
 /*!
     @method webView:setToolbarsVisible:
@@ -226,7 +225,7 @@ enum {
 - (void)webView:(WebView *)sender setFrame:(NSRect)frame;
 
 /*!
-    @method webViewFrame
+    @method webViewFrame:
     @param sender The WebView sending the delegate method.
     @abstract REturn the window's frame rect
     @discussion 
@@ -316,6 +315,5 @@ enum {
     @result An array of NSMenuItems to include in the contextual menu.
 */
 - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
-
 
 @end

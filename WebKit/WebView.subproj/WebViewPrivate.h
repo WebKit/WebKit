@@ -144,21 +144,21 @@ Could be worth adding to the API.
 */
 - (void)_loadBackForwardListFromOtherView:(WebView *)otherView;
 
-- (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type;
+- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
 
 // May well become public
-- (void)_setFormDelegate: (id<WebFormDelegate>)delegate;
+- (void)_setFormDelegate:(id<WebFormDelegate>)delegate;
 - (id<WebFormDelegate>)_formDelegate;
 
 - (WebCoreSettings *)_settings;
-- (void)_updateWebCoreSettingsFromPreferences: (WebPreferences *)prefs;
+- (void)_updateWebCoreSettingsFromPreferences:(WebPreferences *)prefs;
 
-- _frameLoadDelegateForwarder;
-- _resourceLoadDelegateForwarder;
+- (id)_frameLoadDelegateForwarder;
+- (id)_resourceLoadDelegateForwarder;
 - (void)_cacheResourceLoadDelegateImplementations;
 - (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations;
-- _policyDelegateForwarder;
-- _UIDelegateForwarder;
+- (id)_policyDelegateForwarder;
+- (id)_UIDelegateForwarder;
 
 - (void)_closeWindow;
 
@@ -173,7 +173,7 @@ Could be worth adding to the API.
     id defaultTarget;
     Class templateClass;
 }
-- initWithTarget: t defaultTarget: dt templateClass: (Class)aClass;
-+ safeForwarderWithTarget: t defaultTarget: dt templateClass: (Class)aClass;
+- (id)initWithTarget:(id)t defaultTarget:(id)dt templateClass:(Class)aClass;
++ (id)safeForwarderWithTarget:(id)t defaultTarget:(id)dt templateClass:(Class)aClass;
 @end
 

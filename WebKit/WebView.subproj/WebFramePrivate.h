@@ -94,7 +94,7 @@ typedef enum {
 - (WebFrameLoadType)loadType;
 - (void)setLoadType:(WebFrameLoadType)loadType;
 
-- (void)setProvisionalItem: (WebHistoryItem *)item;
+- (void)setProvisionalItem:(WebHistoryItem *)item;
 - (WebHistoryItem *)provisionalItem;
 - (void)setPreviousItem:(WebHistoryItem *)item;
 - (WebHistoryItem *)previousItem;
@@ -104,26 +104,26 @@ typedef enum {
 @end
 
 @interface WebFrame (WebPrivate)
-- (void)_setWebView: (WebView *)webView;
+- (void)_setWebView:(WebView *)webView;
 - (void)_setName:(NSString *)name;
 - (WebFrame *)_descendantFrameNamed:(NSString *)name;
 - (void)_detachFromParent;
 - (void)_closeOldDataSources;
-- (void)_setDataSource: (WebDataSource *)d;
-- (void)_transitionToCommitted: (NSDictionary *)pageCache;
+- (void)_setDataSource:(WebDataSource *)d;
+- (void)_transitionToCommitted:(NSDictionary *)pageCache;
 - (void)_transitionToLayoutAcceptable;
 - (WebFrameState)_state;
-- (void)_setState: (WebFrameState)newState;
-+ (void)_recursiveCheckCompleteFromFrame: (WebFrame *)fromFrame;
+- (void)_setState:(WebFrameState)newState;
++ (void)_recursiveCheckCompleteFromFrame:(WebFrame *)fromFrame;
 - (void)_isLoadComplete;
 - (void)_checkLoadComplete;
-- (void)_timedLayout: userInfo;
+- (void)_timedLayout:userInfo;
 - (WebBridge *)_bridge;
 - (void)_clearProvisionalDataSource;
-- (void)_setLoadType: (WebFrameLoadType)loadType;
+- (void)_setLoadType:(WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
 
-- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request alwaysFromRequest: (BOOL)f;
+- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request alwaysFromRequest:(BOOL)f;
 
 - (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
 
@@ -131,7 +131,7 @@ typedef enum {
 
 - (void)_invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
 
-- (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type;
+- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values;
 - (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;
 - (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values;
@@ -167,7 +167,7 @@ typedef enum {
 
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
 
-- (void)_setProvisionalDataSource: (WebDataSource *)d;
+- (void)_setProvisionalDataSource:(WebDataSource *)d;
 
 + (CFAbsoluteTime)_timeOfLastCompletedLoad;
 - (BOOL)_canCachePage;

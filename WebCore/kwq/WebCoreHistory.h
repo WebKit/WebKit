@@ -26,14 +26,14 @@
 #import <Foundation/Foundation.h>
 
 @protocol WebCoreHistoryProvider <NSObject>
-- (BOOL)containsItemForURLString: (NSString *)urlString;
+- (BOOL)containsItemForURLString:(NSString *)urlString;
 @end
 
 @interface WebCoreHistory : NSObject
 {
 }
 
-+ (void)setHistoryProvider: (id<WebCoreHistoryProvider>)h;
++ (void)setHistoryProvider:(id<WebCoreHistoryProvider>)h;
 + (id<WebCoreHistoryProvider>)historyProvider;
 
 @end

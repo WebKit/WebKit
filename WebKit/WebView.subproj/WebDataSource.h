@@ -73,7 +73,7 @@
     @method request
     @result Returns the request that was used to create this datasource.
 */
--(NSMutableURLRequest *)request;
+- (NSMutableURLRequest *)request;
 
 /*!
     @method response

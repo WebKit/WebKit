@@ -9,7 +9,7 @@
 
 @interface NSString (WebKitExtras)
 
-- (void)_web_drawAtPoint:(NSPoint)point font: (NSFont *)font textColor:(NSColor *)textColor;
+- (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;
 
 - (float)_web_widthWithFont:(NSFont *)font;
 

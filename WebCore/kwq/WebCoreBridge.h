@@ -99,7 +99,7 @@ enum FrameBorderStyle {
     BOOL _drawSelectionOnly;
 }
 
-- (void)initializeSettings: (WebCoreSettings *)settings;
+- (void)initializeSettings:(WebCoreSettings *)settings;
 
 - (void)setRenderPart:(KHTMLRenderPart *)renderPart;
 - (KHTMLRenderPart *)renderPart;
@@ -303,7 +303,7 @@ enum FrameBorderStyle {
 
 - (int)getObjectCacheSize;
 
-- (BOOL)frameRequiredForMIMEType: (NSString*)mimeType;
+- (BOOL)frameRequiredForMIMEType:(NSString*)mimeType;
 
 - (void)loadEmptyDocumentSynchronously;
 

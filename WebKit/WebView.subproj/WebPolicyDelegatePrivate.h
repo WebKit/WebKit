@@ -22,8 +22,8 @@ typedef enum {
     WebPolicyDecisionListenerPrivate *_private;
 }
 
--(id)_initWithTarget:(id)target action:(SEL)action;
+- (id)_initWithTarget:(id)target action:(SEL)action;
 
--(void)_invalidate;
+- (void)_invalidate;
 
 @end

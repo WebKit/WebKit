@@ -1,5 +1,55 @@
 2003-05-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Richard.
+
+	- reformatted method prototypes to match AppKit style
+	- remove "Public header file" from headers that are not public
+	- fix header doc @method names to match actual method names
+
+        * Carbon.subproj/CarbonWindowAdapter.h:
+        * Carbon.subproj/HIViewAdapter.h:
+        * DOM.subproj/WebDOMDocument.h:
+        * DOM.subproj/WebDOMNode.h:
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebHistoryItemPrivate.h:
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebURLsWithTitles.h:
+        * Misc.subproj/WebIconDatabase.h:
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebUnicode.h:
+        * Panels.subproj/WebPanelAuthenticationHandler.h:
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNullPluginView.h:
+        * Plugins.subproj/WebPluginViewFactory.h:
+        * WebCoreSupport.subproj/WebGlyphBuffer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRendererFactory.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebControllerSets.h:
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDebugDOMNode.h:
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFrameView.h:
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebPolicyDelegate.h:
+        * WebView.subproj/WebPolicyDelegatePrivate.h:
+        * WebView.subproj/WebPreferencesPrivate.h:
+        * WebView.subproj/WebRenderNode.h:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebUIDelegate.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebViewPrivate.h:
+
+2003-05-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	- fixed 2936175 - MALLORY: please implement onResize
@@ -245,6 +295,17 @@
         (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
         * WebView.subproj/WebMainResourceClient.m:
         (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+
+2003-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	Minor header tweaks.
+
+        * Misc.subproj/WebDownload.h: Fix copyright notice.
+        * Panels.subproj/WebAuthenticationPanel.h: Added 2003 to copyright.
+        * WebView.subproj/WebAuthenticationChallenge.h: Fix copyright notice, add docs.
+        * WebView.subproj/WebAuthenticationChallengeInternal.h: Fix copyright notice.
 
 2003-04-30  Maciej Stachowiak  <mjs@apple.com>
 

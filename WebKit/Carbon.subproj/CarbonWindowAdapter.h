@@ -11,22 +11,21 @@
 #import <HIToolbox/CarbonEvents.h>
 #import <HIToolbox/MacWindows.h>
 
-@interface CarbonWindowAdapter : NSWindow {
-
-    @private
+@interface CarbonWindowAdapter : NSWindow 
+{
+@private
 
     // The Carbon window that's being encapsulated, and whether or not this object owns (has responsibility for disposing) it.
     WindowRef _windowRef;
     BOOL _windowRefIsOwned;
-	BOOL _carbon;
-
+    BOOL _carbon;
+	
     // The UPP for the event handler that we use to deal with various Carbon events, and the event handler itself.
     EventHandlerUPP _handleEventUPP;
     EventHandlerRef _eventHandler;
     
     // Yes if this object should let Carbon handle kEventWindowActivated and kEventWindowDeactivated events.  No otherwise.
     BOOL _passingCarbonWindowActivationEvents;
-
 }
 
 // Initializers.

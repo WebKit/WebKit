@@ -99,14 +99,14 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @param groupName The name of the webView set to which this webView will be added.  May be nil.
     @result Returns an initialized WebView.
 */
-- initWithFrame: (NSRect)frame frameName: (NSString *)frameName groupName: (NSString *)groupName;
+- (id)initWithFrame:(NSRect)frame frameName:(NSString *)frameName groupName:(NSString *)groupName;
 
 /*!
     @method setUIDelegate:
     @abstract Set the WebView's WebUIDelegate.
     @param delegate The WebUIDelegate to set as the delegate.
 */    
-- (void)setUIDelegate: (id)delegate;
+- (void)setUIDelegate:(id)delegate;
 
 /*!
     @method UIDelegate
@@ -120,7 +120,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @abstract Set the WebView's WebResourceLoadDelegate load delegate.
     @param delegate The WebResourceLoadDelegate to set as the load delegate.
 */
-- (void)setResourceLoadDelegate: (id)delegate;
+- (void)setResourceLoadDelegate:(id)delegate;
 
 /*!
     @method resourceLoadDelegate
@@ -134,7 +134,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @discussion The download delegate is retained by WebDownload when any downloads are in progress.
     @param delegate The WebDownloadDelegate to set as the download delegate.
 */    
-- (void)setDownloadDelegate: (id)delegate;
+- (void)setDownloadDelegate:(id)delegate;
 
 /*!
     @method downloadDelegate
@@ -148,7 +148,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @abstract Set the WebView's WebFrameLoadDelegate delegate.
     @param delegate The WebFrameLoadDelegate to set as the delegate.
 */    
-- (void)setFrameLoadDelegate: (id)delegate;
+- (void)setFrameLoadDelegate:(id)delegate;
 
 /*!
     @method frameLoadDelegate
@@ -162,7 +162,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @abstract Set the WebView's WebPolicyDelegate delegate.
     @param delegate The WebPolicyDelegate to set as the delegate.
 */    
-- (void)setPolicyDelegate: (id)delegate;
+- (void)setPolicyDelegate:(id)delegate;
 
 /*!
     @method policyDelegate
@@ -187,11 +187,11 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 - (WebBackForwardList *)backForwardList;
 
 /*!
-    @method setUseBackForwardList:
+    @method setMaintainsBackForwardList:
     @abstract Enable or disable the use of a backforward list for this webView.
     @param flag Turns use of the back forward list on or off
 */    
-- (void)setMaintainsBackForwardList: (BOOL)flag;
+- (void)setMaintainsBackForwardList:(BOOL)flag;
 
 /*!
     @method goBack
@@ -353,7 +353,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @param representationClass The WebDocumentRepresentation class to use to represent data of the given MIME type.
     @param MIMEType The MIME type to represent with an object of the given class.
 */
-+ (void)registerViewClass:(Class)viewClass representationClass: (Class)representationClass forMIMEType:(NSString *)MIMEType;
++ (void)registerViewClass:(Class)viewClass representationClass:(Class)representationClass forMIMEType:(NSString *)MIMEType;
 
 
 @end

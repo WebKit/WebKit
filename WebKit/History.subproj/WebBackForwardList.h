@@ -134,18 +134,18 @@
 */
 - (WebHistoryItem *)itemAtIndex:(int)index;
 
-    /*!
-       @method setPageCacheSize:
-     @abstract Sets the size of the page cache.
-     @param size The number of pages to allow in the page cache.
-     */
-- (void)setPageCacheSize: (unsigned)size;
+/*!
+    @method setPageCacheSize:
+    @abstract Sets the size of the page cache.
+    @param size The number of pages to allow in the page cache.
+*/
+- (void)setPageCacheSize:(unsigned)size;
 
-    /*!
+/*!
     @method pageCacheSize
-     @abstract Returns the number of pages that may be cached.
-     @result The number of pages that may be cached.
-     */
+    @abstract Returns the number of pages that may be cached.
+    @result The number of pages that may be cached.
+*/
 - (unsigned)pageCacheSize;
 
 @end

@@ -17,9 +17,9 @@
     CGSize *bufferedAdvances;
     CGGlyph *bufferedGlyphs;
 }
-- initWithFont: (NSFont *)font color: (NSColor *)color;
-- (void)addGlyphs: (CGGlyph *)newGlyphs advances: (CGSize *)newAdvances count: (int)count at: (float)startX : (float)startY;
-- (void)drawInView: (NSView *)targetView;
+- (id)initWithFont:(NSFont *)font color:(NSColor *)color;
+- (void)addGlyphs:(CGGlyph *)newGlyphs advances:(CGSize *)newAdvances count:(int)count at:(float)startX :(float)startY;
+- (void)drawInView:(NSView *)targetView;
 - (void)reset;
 - (NSFont *)font;
 - (NSColor *)color;

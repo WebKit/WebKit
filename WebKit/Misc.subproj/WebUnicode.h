@@ -1,8 +1,8 @@
 /*	
-        WebUnicode.h
-	Copyright 2001, 2002, Apple Computer, Inc.
+    WebUnicode.h
+    Copyright 2001, 2002, Apple Computer, Inc.
 
-        Private header file.
+    Private header file.
 */
 #ifdef __cplusplus
 extern "C" {

@@ -20,9 +20,9 @@
     NSURLRequest *_startingRequest;
 }
 
-- initWithRequest:(NSURLRequest *)theRequest
-    pluginPointer:(NPP)thePluginPointer
-       notifyData:(void *)theNotifyData;
+- (id)initWithRequest:(NSURLRequest *)theRequest
+        pluginPointer:(NPP)thePluginPointer
+           notifyData:(void *)theNotifyData;
 
 - (void)start;
 

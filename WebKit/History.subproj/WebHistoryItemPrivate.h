@@ -11,7 +11,7 @@
 - (void)_retainIconInDatabase:(BOOL)retain;
 + (void)_releaseAllPendingPageCaches;
 - (BOOL)hasPageCache;
-- (void)setHasPageCache: (BOOL)f;
+- (void)setHasPageCache:(BOOL)f;
 - (NSMutableDictionary *)pageCache;
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL;
@@ -53,7 +53,7 @@
 - (WebHistoryItem *)childItemWithName:(NSString *)name;
 - (WebHistoryItem *)targetItem;
 
-- (void)setAlwaysAttemptToUsePageCache: (BOOL)flag;
+- (void)setAlwaysAttemptToUsePageCache:(BOOL)flag;
 - (BOOL)alwaysAttemptToUsePageCache;
 
 - (NSCalendarDate *)_lastVisitedDate;
@@ -63,7 +63,7 @@
 
 @interface WebBackForwardList (WebPrivate)
 - (void)_clearPageCache;
-- (void)_setUsesPageCache: (BOOL)f;
+- (void)_setUsesPageCache:(BOOL)f;
 - (BOOL)_usesPageCache;
 @end
 

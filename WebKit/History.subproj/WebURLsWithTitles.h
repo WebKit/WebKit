@@ -19,16 +19,16 @@
 // length than URLs, empty strings will be used for all titles. If URLs is nil, this method
 // returns without doing anything. You must declare an WebURLsWithTitlesPboardType data type
 // for pasteboard before invoking this method, or it will return without doing anything.
-+(void)writeURLs:(NSArray *)URLs andTitles:(NSArray *)titles toPasteboard:(NSPasteboard *)pasteboard;
++ (void)writeURLs:(NSArray *)URLs andTitles:(NSArray *)titles toPasteboard:(NSPasteboard *)pasteboard;
 
 // Reads an array of NSURLs off the pasteboard. Returns nil if pasteboard does not contain
 // data of type WebURLsWithTitlesPboardType. This array consists of the URLs that correspond to
 // the titles returned from titlesFromPasteboard.
-+(NSArray *)URLsFromPasteboard:(NSPasteboard *)pasteboard;
++ (NSArray *)URLsFromPasteboard:(NSPasteboard *)pasteboard;
 
 // Reads an array of NSStrings off the pasteboard. Returns nil if pasteboard does not contain
 // data of type WebURLsWithTitlesPboardType. This array consists of the titles that correspond to
 // the URLs returned from URLsFromPasteboard.
-+(NSArray *)titlesFromPasteboard:(NSPasteboard *)pasteboard;
++ (NSArray *)titlesFromPasteboard:(NSPasteboard *)pasteboard;
 
 @end

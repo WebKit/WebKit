@@ -37,8 +37,8 @@ typedef struct UnicodeGlyphMap UnicodeGlyphMap;
 
 + (BOOL)shouldBufferTextDrawing;
 
-- initWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont;
+- (id)initWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont;
 
-- (float)_floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer numGlyphs: (int *)_numGlyphs letterSpacing: (int)ls wordSpacing: (int)ws fontFamilies: (NSString **)families;
+- (float)_floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition:(int)pos numberOfCharacters:(int)len withPadding:(int)padding applyRounding:(BOOL)applyRounding attemptFontSubstitution:(BOOL)attemptSubstitution widths:(float *)widthBuffer fonts:(NSFont **)fontBuffer glyphs:(CGGlyph *)glyphBuffer numGlyphs:(int *)_numGlyphs letterSpacing:(int)ls wordSpacing:(int)ws fontFamilies:(NSString **)families;
 
 @end

@@ -1,5 +1,20 @@
 2003-05-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Richard.
+
+	- reformatted method prototypes to match AppKit style
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreDOMPrivate.h:
+        * kwq/WebCoreHistory.h:
+        * kwq/WebCoreResourceLoader.h:
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/WebDOMDocument.h:
+        * kwq/WebDOMElement.h:
+        * kwq/WebDOMNode.h:
+
+2003-05-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	- fixed 2936175 - MALLORY: please implement onResize

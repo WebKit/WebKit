@@ -49,11 +49,11 @@
 
 - (NSString *)data;
 
-- (void)setData: (NSString *)data;
+- (void)setData:(NSString *)data;
 
 - (unsigned long)length;
 
-- (NSString *)substringData: (unsigned long)offset :(unsigned long)count;
+- (NSString *)substringData:(unsigned long)offset :(unsigned long)count;
 
 - (void)appendData:(NSString *)arg;
 
@@ -72,7 +72,7 @@
 
 @protocol WebDOMText <WebDOMCharacterData>
 
-- (id<WebDOMText>)splitText: (unsigned long)offset;
+- (id<WebDOMText>)splitText:(unsigned long)offset;
 
 @end
 
@@ -102,7 +102,7 @@
 
 - (NSString *)tagName;
 
-- (NSString *)getAttribute: (NSString *)name;
+- (NSString *)getAttribute:(NSString *)name;
 
 - (void)setAttribute:(NSString *)name :(NSString *)value;
 
@@ -128,7 +128,7 @@
 
 - (id<WebDOMAttr>)setAttributeNodeNS:(id<WebDOMAttr>)newAttr;
 
-- (BOOL)hasAttribute: (NSString *)name;
+- (BOOL)hasAttribute:(NSString *)name;
 
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
 

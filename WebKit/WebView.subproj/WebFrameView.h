@@ -41,7 +41,7 @@
     @abstract Sets whether the WebFrameView allows its document to be scrolled
     @param flag YES to allow the document to be scrolled, NO to disallow scrolling
 */
-- (void)setAllowsScrolling: (BOOL)flag;
+- (void)setAllowsScrolling:(BOOL)flag;
 
 /*!
     @method allowsScrolling

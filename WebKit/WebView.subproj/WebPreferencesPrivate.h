@@ -1,8 +1,6 @@
 /*	
-        WebPreferences.h
+        WebPreferencesPrivate.h
 	Copyright 2001, Apple, Inc. All rights reserved.
-
-        Public header file.
 */
 
 #import <WebKit/WebPreferences.h>

@@ -69,7 +69,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     result of frame targetting, then it will be created once you call
     this method.
 */
--(void)use;
+- (void)use;
 /*!
     @method download
     @abstract Download the resource instead of displaying it.
@@ -78,7 +78,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     based on content type, without having to stop and restart the
     load.
 */
--(void)download;
+- (void)download;
 
 /*!
     @method ignore
@@ -89,7 +89,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     opening a new window behind the current one, opening the URL in an
     external app, revealing the location in Finder if a file URL, etc.
 */
--(void)ignore;
+- (void)ignore;
 
 @end
 
@@ -118,7 +118,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
 @interface NSObject (WebPolicyDelegate)
 
 /*!
-   @method decidePolicyForNavigationAction:request:frame:decisionListener:
+   @method webView:decidePolicyForNavigationAction:request:frame:decisionListener:
    @abstract This method is called to decide what to do with a proposed navigation.
    @param actionInformation Dictionary that describes the action that triggered this navigation.
    @param request The request for the proposed navigation
@@ -133,7 +133,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
                                                   decisionListener:(id<WebPolicyDecisionListener>)listener;
 
 /*!
-     @method decidePolicyForNewWindowAction:request:newFrameName:decisionListener:
+     @method webView:decidePolicyForNewWindowAction:request:newFrameName:decisionListener:
      @discussion This method is called to decide what to do with an targetted nagivation that would open a new window.
      @param actionInformation Dictionary that describes the action that triggered this navigation.
      @param request The request for the proposed navigation
@@ -154,7 +154,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
                                                  decisionListener:(id<WebPolicyDecisionListener>)listener;
 
 /*!
-    @method decidePolicyForMIMEType:request:frame:
+    @method webView:decidePolicyForMIMEType:request:frame:
     @discussion Returns the policy for content which has been partially loaded.
     Sent after webView:didStartProvisionalLoadForFrame: is sent on the WebFrameLoadDelegate.
     @param type MIME type for the resource.
@@ -168,7 +168,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
                                           decisionListener:(id<WebPolicyDecisionListener>)listener;
 
 /*!
-    @method unableToImplementPolicy:error:forURL:inFrame:
+    @method webView:unableToImplementPolicy:error:forURL:inFrame:
     @discussion Called when a WebPolicy could not be implemented. It is up to the client to display appropriate feedback.
     @param policy The policy that could not be implemented.
     @param error The error that caused the policy to not be implemented.

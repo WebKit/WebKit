@@ -14,11 +14,11 @@
 @interface WebDataProtocol : NSURLProtocol
 {
 }
-+(BOOL)_webIsDataProtocolURL:(NSURL *)URL;
++ (BOOL)_webIsDataProtocolURL:(NSURL *)URL;
 @end
 
 @interface NSURLRequest (WebDataRequest)
-+ (NSURL *)_webDataRequestURLForData: (NSData *)data;
++ (NSURL *)_webDataRequestURLForData:(NSData *)data;
 - (NSData *)_webDataRequestData;
 - (void)_webDataRequestSetData:(NSData *)data;
 - (NSString *)_webDataRequestEncoding;

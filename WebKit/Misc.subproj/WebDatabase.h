@@ -15,33 +15,33 @@
     unsigned usage;
 }
 
--(void)setObject:(id)object forKey:(id)key;
--(void)removeObjectForKey:(id)key;
--(void)removeAllObjects;
--(id)objectForKey:(id)key;
+- (void)setObject:(id)object forKey:(id)key;
+- (void)removeObjectForKey:(id)key;
+- (void)removeAllObjects;
+- (id)objectForKey:(id)key;
 
 @end
 
 
 @interface WebDatabase (WebDatabaseCreation)
 
--(id)initWithPath:(NSString *)thePath;
+- (id)initWithPath:(NSString *)thePath;
 
 @end
 
 
 @interface WebDatabase (WebDatabaseManagement)
 
--(void)open;
--(void)close;
--(void)sync;
+- (void)open;
+- (void)close;
+- (void)sync;
 
--(NSString *)path;
--(BOOL)isOpen;
+- (NSString *)path;
+- (BOOL)isOpen;
 
--(unsigned)count;
--(unsigned)sizeLimit;
--(void)setSizeLimit:(unsigned)limit;
--(unsigned)usage;
+- (unsigned)count;
+- (unsigned)sizeLimit;
+- (void)setSizeLimit:(unsigned)limit;
+- (unsigned)usage;
 
 @end

@@ -1,8 +1,6 @@
 /*	
         WebHTMLView.h
 	Copyright 2002, Apple, Inc. All rights reserved.
-        
-        Public header file.
 */
 
 #import <Cocoa/Cocoa.h>
@@ -27,7 +25,7 @@
     @abstract Sets flag to cause reapplication of style information.
     @param flag YES to apply style information, NO to not apply style information.
 */
-- (void)setNeedsToApplyStyles: (BOOL)flag;
+- (void)setNeedsToApplyStyles:(BOOL)flag;
 
 /*!
     @method reapplyStyles

@@ -1,8 +1,6 @@
 /*	
    	WebHTMLRepresentation.h
 	Copyright 2002, Apple, Inc. All rights reserved.
-
-        Public header file.
 */
 
 #import <Foundation/Foundation.h>
@@ -38,7 +36,7 @@
     @param end The node that includes the ending selection point.
     @param endOffset The character offset into the text of the ending node.
 */
-- (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset;
+- (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int)endOffset;
 
 //- (NSAttributedString *)selectedAttributedString;
 
@@ -49,7 +47,7 @@
 - (NSString *)reconstructedDocumentSource;
 
 
-- (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset;
+- (NSAttributedString *)attributedStringFrom:(id<WebDOMNode>)startNode startOffset:(int)startOffset to:(id<WebDOMNode>)endNode endOffset:(int)endOffset;
 
 - (id <WebDOMElement>)elementWithName:(NSString *)name inForm:(id <WebDOMElement>)form;
 - (id <WebDOMElement>)elementForView:(NSView *)view;

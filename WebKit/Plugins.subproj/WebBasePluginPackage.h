@@ -33,7 +33,7 @@
 }
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath;
-- initWithPath:(NSString *)pluginPath;
+- (id)initWithPath:(NSString *)pluginPath;
 
 - (BOOL)getPluginInfoFromBundleAndMIMEDictionary:(NSDictionary *)MIMETypes;
 

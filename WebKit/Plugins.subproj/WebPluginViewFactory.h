@@ -57,7 +57,7 @@
     @abstract Returns an NSView object that conforms to the WebPlugin protocol.
     @param arguments The arguments dictionary with the mentioned keys and objects.
 */
-+ (NSView<WebPlugin> *) pluginViewWithArguments:(NSDictionary *)arguments;
++ (NSView<WebPlugin> *)pluginViewWithArguments:(NSDictionary *)arguments;
 
 @end
 

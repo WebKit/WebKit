@@ -23,6 +23,6 @@
     NSURLConnectionDelegateProxy *proxy;
 }
 
-- initWithDataSource:(WebDataSource *)dataSource;
+- (id)initWithDataSource:(WebDataSource *)dataSource;
 
 @end

@@ -48,7 +48,7 @@ enum WebNodeType {
 
 - (NSString *)nodeName;
 - (NSString *)nodeValue;
-- (void)setNodeValue: (NSString *)string; 
+- (void)setNodeValue:(NSString *)string; 
 - (unsigned short)nodeType;
 - (id<WebDOMNode>)parentNode;
 - (id<WebDOMNodeList>)childNodes;
@@ -63,12 +63,12 @@ enum WebNodeType {
 - (id<WebDOMNode>)removeChild:(id<WebDOMNode>)oldChild;
 - (id<WebDOMNode>)appendChild:(id<WebDOMNode>)newChild;
 - (BOOL)hasChildNodes;
-- (id<WebDOMNode>)cloneNode: (BOOL) deep;
+- (id<WebDOMNode>)cloneNode:(BOOL) deep;
 - (void)normalize;
-- (BOOL)isSupported:(NSString *)feature : (NSString *)version;
+- (BOOL)isSupported:(NSString *)feature :(NSString *)version;
 - (NSString *)namespaceURI;
 - (NSString *)prefix;
-- (void)setPrefix: (NSString *)prefix;
+- (void)setPrefix:(NSString *)prefix;
 - (NSString *)localName;
 - (BOOL)hasAttributes;
 
@@ -92,7 +92,7 @@ enum WebNodeType {
 @protocol WebDOMNodeList <NSObject>
 
 - (unsigned long)length;
-- (id<WebDOMNode>)item: (unsigned long)index;
+- (id<WebDOMNode>)item:(unsigned long)index;
 
 @end
 

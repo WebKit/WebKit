@@ -1,8 +1,6 @@
 /*
      WebIconLoader.h
      Copyright 2002, Apple, Inc. All rights reserved.
-
-     Public header file.
 */
 
 #import <Cocoa/Cocoa.h>
@@ -21,13 +19,13 @@
     @method iconLoaderWithURL:
     @param URL
 */
-+ iconLoaderWithURL:(NSURL *)URL;
++ (id)iconLoaderWithURL:(NSURL *)URL;
 
 /*!
     @method initWithURL:
     @param URL
 */
-- initWithURL:(NSURL *)URL;
+- (id)initWithURL:(NSURL *)URL;
 
 /*!
     @method URL

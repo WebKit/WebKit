@@ -34,7 +34,7 @@
     @param webView The WebView that manages the frame.
     @result Returns an initialized WebFrame.
 */
-- (id)initWithName: (NSString *)name webFrameView: (WebFrameView *)view webView: (WebView *)webView;
+- (id)initWithName:(NSString *)name webFrameView:(WebFrameView *)view webView:(WebView *)webView;
 
 /*!
     @method name
@@ -67,7 +67,7 @@
     @param encodingName The encoding of the data.
     @param URL The base URL to apply to relative URLs within the document.
 */
-- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
+- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL;
 
 /*!
     @method loadHTMLString:baseURL:

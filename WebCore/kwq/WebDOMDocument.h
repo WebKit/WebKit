@@ -62,16 +62,16 @@
 
 @protocol WebDOMImplementation
 
-- (BOOL)hasFeature: (NSString *)feature : (NSString *)version;
+- (BOOL)hasFeature:(NSString *)feature :(NSString *)version;
 
-- (id<WebDOMDocumentType>)createDocumentType: (NSString *)qualifiedName
+- (id<WebDOMDocumentType>)createDocumentType:(NSString *)qualifiedName
                                       :(NSString *)publicId
                                       :(NSString *)systemId
                                       :(int *)exceptionCode;
 
-- (id<WebDOMDocument>)createDocument: (NSString *)namespaceURI
-                              : (NSString *)qualifiedName
-                              : (id<WebDOMDocumentType>)doctype;
+- (id<WebDOMDocument>)createDocument:(NSString *)namespaceURI
+                              :(NSString *)qualifiedName
+                              :(id<WebDOMDocumentType>)doctype;
 
 @end
 

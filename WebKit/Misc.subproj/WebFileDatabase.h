@@ -18,7 +18,7 @@
     NSRecursiveLock *mutex;
 }
 
--(void)performSetObject:(id)object forKey:(id)key;
--(void)performRemoveObjectForKey:(id)key;
+- (void)performSetObject:(id)object forKey:(id)key;
+- (void)performRemoveObjectForKey:(id)key;
 
 @end

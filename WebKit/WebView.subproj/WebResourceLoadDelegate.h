@@ -24,7 +24,7 @@
 @interface NSObject (WebResourceLoadDelegate)
 
 /*!
-    @method identifierForInitialRequest:fromDataSource:
+    @method webView:identifierForInitialRequest:fromDataSource:
     @param webView The WebView sending the message.
     @param request The request about to be sent.
     @param dataSource The datasource that initiated the load.
@@ -36,7 +36,7 @@
     @result An identifier that will be passed back to the implementor for each callback.
     The identifier will be retained.
 */
-- webView:(WebView *)sender identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource;
+- (id)webView:(WebView *)sender identifierForInitialRequest:(NSURLRequest *)request fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:willSendRequest:redirectResponse:fromDataSource:
@@ -52,7 +52,7 @@
     @result Returns the request, which may be mutated by the implementor, although typically
     will be request.
 */
--(NSURLRequest *)webView:(WebView *)sender resource:identifier willSendRequest: (NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource;
+- (NSURLRequest *)webView:(WebView *)sender resource:identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method webView:resource:didReceiveAuthenticationChallenge:fromDataSource:
@@ -73,7 +73,7 @@
 - (void)webView:(WebView *)sender resource:(id)identifier didCancelAuthenticationChallenge:(WebAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 
 /*!
-    @method resource:didReceiveResponse:fromDataSource:
+    @method webView:resource:didReceiveResponse:fromDataSource:
     @abstract This message is sent after a response has been received for this load.
     @param webView The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
@@ -85,10 +85,10 @@
     should assume that each new response resets progress so far for the resource back to 0,
     and should check the new response for the expected content length.
 */
--(void)webView:(WebView *)sender resource:identifier didReceiveResponse: (NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender resource:(id)identifier didReceiveResponse:(NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
 
 /*!
-    @method resource:didReceiveContentLength:fromDataSource:
+    @method webView:resource:didReceiveContentLength:fromDataSource:
     @discussion Multiple of these messages may be sent as data arrives.
     @param webView The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
@@ -96,20 +96,20 @@
     @param length The amount of new data received.  This is not the total amount, just the new amount received.
     @param dataSource The dataSource that initiated the load.
 */
--(void)webView:(WebView *)sender resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender resource:(id)identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource;
 
 /*!
-    @method resource:didFinishLoadingFromDataSource:
+    @method webView:resource:didFinishLoadingFromDataSource:
     @discussion This message is sent after a load has successfully completed.
     @param webView The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param dataSource The dataSource that initiated the load.
 */
--(void)webView:(WebView *)sender resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender resource:(id)identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource;
 
 /*!
-    @method resource:didFailLoadingWithError:fromDataSource:
+    @method webView:resource:didFailLoadingWithError:fromDataSource:
     @discussion This message is sent after a load has failed to load due to an error.
     @param webView The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
@@ -117,10 +117,10 @@
     @param error The error associated with this load.
     @param dataSource The dataSource that initiated the load.
 */
--(void)webView:(WebView *)sender resource:identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender resource:(id)identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource;
 
 /*!
-     @method pluginFailedWithError:dataSource:
+     @method webView:plugInFailedWithError:dataSource:
      @discussion Called when a plug-in is not found, fails to load or is not available for some reason.
      @param webView The WebView sending the message.
      @param error The plug-in error. In the userInfo dictionary of the error, the object for the

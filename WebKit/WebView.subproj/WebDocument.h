@@ -21,14 +21,14 @@
     @abstract Called when the corresponding data source has been created.
     @param dataSource The corresponding data source.
 */
-- (void)setDataSource: (WebDataSource *)dataSource;
+- (void)setDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method dataSourceUpdated:
     @abstract Called when the corresponding data source has received data.
     @param dataSource The corresponding data source.
 */
-- (void)dataSourceUpdated: (WebDataSource *)dataSource;
+- (void)dataSourceUpdated:(WebDataSource *)dataSource;
 
 /*!
     @method setNeedsLayout:
@@ -36,7 +36,7 @@
     This method should simply set a flag and call layout from drawRect if the flag is YES.
     @param flag YES to cause a layout, no to not cause a layout.
 */
-- (void)setNeedsLayout: (BOOL)flag;
+- (void)setNeedsLayout:(BOOL)flag;
 
 /*!
     @method layout
@@ -67,14 +67,15 @@
 */
 @protocol WebDocumentSearching <NSObject>
 /*!
-    @method searchFor:direction:caseSensitive:
+    @method searchFor:direction:caseSensitive:wrap:
     @abstract Searches a document view for a string and highlights the string if it is found.
     @param string The string to search for.
     @param forward YES to search forward, NO to seach backwards.
     @param caseFlag YES to for case-sensitive search, NO for case-insensitive search.
+    @param wrapFlag YES to wrap around, NO to avoid wrapping.
     @result YES if found, NO if not found.
 */
-- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag wrap: (BOOL)wrapFlag;
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
 @end
 
 
@@ -140,7 +141,7 @@
     @abstract Called soon after the document representation is created.
     @param dataSource The data source that is set.
 */
-- (void)setDataSource: (WebDataSource *)dataSource;
+- (void)setDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method receivedData:withDataSource:
@@ -148,7 +149,7 @@
     @param data The data that the data source has received.
     @param dataSource The data source that has received data.
 */
-- (void)receivedData: (NSData *)data withDataSource: (WebDataSource *)dataSource;
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method receivedError:withDataSource:
@@ -156,14 +157,14 @@
     @param error The error that the data source has received.
     @param dataSource The data source that has received the error.
 */
-- (void)receivedError: (NSError *)error withDataSource: (WebDataSource *)dataSource;
+- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method finishedLoadingWithDataSource:
     @abstract Called when the data source has finished loading.
     @param dataSource The datasource that has finished loading.
 */
-- (void)finishedLoadingWithDataSource: (WebDataSource *)dataSource;
+- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method canProvideDocumentSource
