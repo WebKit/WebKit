@@ -27,7 +27,7 @@ layer at (0,0) size 820x900
             text run at (0,586) width 571: "dedicated to the proposition that all men are created equal."
 selection is RANGE:
 start:      position 0 of child 1 {TEXT} of child 2 {DIV} of root {DIV}
-upstream:   position 0 of child 1 {TEXT} of child 2 {DIV} of root {DIV}
+upstream:   position 0 of child 2 {DIV} of root {DIV}
 downstream: position 0 of child 1 {TEXT} of child 2 {DIV} of root {DIV}
 end:        position 180 of child 7 {TEXT} of child 2 {DIV} of root {DIV}
 upstream:   position 180 of child 7 {TEXT} of child 2 {DIV} of root {DIV}

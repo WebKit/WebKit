@@ -3336,6 +3336,13 @@ NSFont *KWQKHTMLPart::fontForCurrentPosition() const
     Position pos(range.startContainer().handle(), range.startOffset());
     ASSERT(pos.notEmpty());
     ElementImpl *elem = pos.element();
+    if (!elem)
+        return nil;
+    
+    pos = Position(elem, elem->caretMinOffset());
+    if (!pos.inRenderedContent())
+        return nil;
+    
     if (d->m_typingStyle) {
         if (!xmlDocImpl())
             return nil;

@@ -7,4 +7,4 @@ layer at (0,0) size 800x600
 selection is CARET:
 start:      position 0 of  of root {DIV}
 upstream:   position 0 of  of root {DIV}
-downstream: position 0 of  of root {DIV}
+downstream: position 1 of  of root {DIV}

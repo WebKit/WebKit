@@ -99,6 +99,22 @@ function boldCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execItalicCommand() {
+    document.execCommand("Italic");
+}
+function italicCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execItalicCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execItalicCommand();
+    }
+}
+
+
+//-------------------------------------------------------------------------------------------------------
+
 function execInsertNewlineCommand() {
     document.execCommand("InsertNewline");
 }

@@ -1,3 +1,56 @@
+2004-08-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for these bugs:
+
+        <rdar://problem/3777629> REGRESSION (Mail): can't delete blank lines in quoted text in HTML mail replies
+        <rdar://problem/3780309> REGRESSION (Mail): can't delete past an empty span in a particular test case
+        <rdar://problem/3780315> REGRESSION (Mail): right arrow works incorrectly in a particular test case with an empty span
+        <rdar://problem/3780320> REGRESSION (Mail): left arrow works incorrectly in a particular test case with an empty span
+        <rdar://problem/3780336> REGRESSION (Mail): down arrow fails in a reduction of a Mail reply test case (seems to be inside a span)
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream): If this position's node is a block, use it for the StayInBlock case, not the block's
+        enclosing block.
+        (DOM::Position::downstream): Ditto.
+        (DOM::Position::inRenderedContent): Refine the case for non-text nodes. This was erroneously returning true
+        for any empty element (like <span></span>).
+        * khtml/xml/dom_positioniterator.cpp: Change the following four functions to consider all nodes, not just
+        leaves of the DOM tree. This is a step towards making this iteration less cranky and unpredictable, and
+        was necessary to do now to keep the inRenderedContent() change above from breaking editign layout tests.
+        (DOM::PositionIterator::peekPrevious)
+        (DOM::PositionIterator::peekNext)
+        (DOM::PositionIterator::atStart)
+        (DOM::PositionIterator::atEnd)
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fontForCurrentPosition): Check that the position being checked is an element and that the
+        element is in rendered content. I ran across some null-check failures while I was coding this fix, and
+        the additions seem prudent.
+        
+        Updated these layout tests with new results.
+        
+        * layout-tests/editing/deleting/delete-3608430-fix-expected.txt:
+        * layout-tests/editing/deleting/delete-3775172-fix-expected.txt:
+        * layout-tests/editing/deleting/delete-block-contents-001-expected.txt:
+        * layout-tests/editing/deleting/delete-block-contents-002-expected.txt:
+        * layout-tests/editing/deleting/delete-block-contents-003-expected.txt:
+        * layout-tests/editing/deleting/delete-image-004-expected.txt:
+        * layout-tests/editing/deleting/delete-trailing-ws-001-expected.txt:
+        * layout-tests/editing/editing.js:
+        * layout-tests/editing/execCommand/boldSelection-expected.txt:
+        * layout-tests/editing/execCommand/italicizeByCharacter-expected.txt:
+        * layout-tests/editing/execCommand/modifyForeColorByCharacter-expected.txt:
+        * layout-tests/editing/execCommand/print-expected.txt:
+        * layout-tests/editing/execCommand/selectAll-expected.txt:
+        * layout-tests/editing/selection/extend-by-character-002-expected.txt:
+        * layout-tests/editing/selection/extend-by-character-004-expected.txt:
+        * layout-tests/editing/selection/extend-by-character-005-expected.txt:
+        * layout-tests/editing/selection/extend-by-character-006-expected.txt:
+        * layout-tests/editing/selection/select-all-001-expected.txt:
+        * layout-tests/editing/selection/select-all-002-expected.txt:
+        * layout-tests/editing/selection/select-all-003-expected.txt:
+
 2004-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -37,7 +37,7 @@ Position PositionIterator::peekPrevious() const
         return pos;
     
     if (pos.offset() <= 0) {
-        NodeImpl *prevNode = pos.node()->previousLeafNode();
+        NodeImpl *prevNode = pos.node()->traversePreviousNode();
         if (prevNode)
             pos = Position(prevNode, prevNode->maxOffset());
     }
@@ -56,7 +56,7 @@ Position PositionIterator::peekNext() const
         return pos;
     
     if (pos.offset() >= pos.node()->maxOffset()) {
-        NodeImpl *nextNode = pos.node()->nextLeafNode();
+        NodeImpl *nextNode = pos.node()->traverseNextNode();
         if (nextNode)
             pos = Position(nextNode, 0);
     }
@@ -73,7 +73,7 @@ bool PositionIterator::atStart() const
         return true;
 
     return m_current.offset() == 0 && 
-        m_current.node()->previousLeafNode() == 0;
+        m_current.node()->traversePreviousNode() == 0;
 }
 
 bool PositionIterator::atEnd() const
@@ -82,7 +82,7 @@ bool PositionIterator::atEnd() const
         return true;
 
     return m_current.offset() >= m_current.node()->maxOffset() && 
-        m_current.node()->nextLeafNode() == 0;
+        m_current.node()->traverseNextNode() == 0;
 }
 
 } // namespace DOM

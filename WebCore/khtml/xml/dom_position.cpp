@@ -620,12 +620,12 @@ Position Position::upstream(bool stayInBlock) const
     if (!node())
         return Position();
 
-    NodeImpl *block = node()->enclosingBlockFlowElement();
+    NodeImpl *block = node()->isBlockFlow() ? node() : node()->enclosingBlockFlowElement();
     
     PositionIterator it(*this);            
     for (; !it.atStart(); it.previous()) {
         if (stayInBlock) {
-            NodeImpl *currentBlock = it.current().node()->enclosingBlockFlowElement();
+            NodeImpl *currentBlock = it.current().node()->isBlockFlow() ? it.current().node() : it.current().node()->enclosingBlockFlowElement();
             if (block != currentBlock)
                 return it.next();
         }
@@ -637,7 +637,7 @@ Position Position::upstream(bool stayInBlock) const
         if (renderer->style()->visibility() != khtml::VISIBLE)
             continue;
 
-        if (renderer->isBlockFlow() || renderer->isReplaced() || renderer->isBR()) {
+        if ((it.current().node() != node() && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() >= renderer->caretMaxOffset())
                 return Position(it.current().node(), renderer->caretMaxOffset());
             else
@@ -672,12 +672,12 @@ Position Position::downstream(bool stayInBlock) const
     if (!node())
         return Position();
 
-    NodeImpl *block = node()->enclosingBlockFlowElement();
+    NodeImpl *block = node()->isBlockFlow() ? node() : node()->enclosingBlockFlowElement();
     
     PositionIterator it(*this);            
     for (; !it.atEnd(); it.next()) {   
         if (stayInBlock) {
-            NodeImpl *currentBlock = it.current().node()->enclosingBlockFlowElement();
+            NodeImpl *currentBlock = it.current().node()->isBlockFlow() ? it.current().node() : it.current().node()->enclosingBlockFlowElement();
             if (block != currentBlock)
                 return it.previous();
         }
@@ -689,7 +689,7 @@ Position Position::downstream(bool stayInBlock) const
         if (renderer->style()->visibility() != khtml::VISIBLE)
             continue;
 
-        if (renderer->isBlockFlow() || renderer->isReplaced() || renderer->isBR()) {
+        if ((it.current().node() != node() && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() <= renderer->caretMinOffset())
                 return Position(it.current().node(), renderer->caretMinOffset());
             else
@@ -869,10 +869,9 @@ bool Position::inRenderedContent() const
         }
     }
     else if (offset() >= renderer->caretMinOffset() && offset() <= renderer->caretMaxOffset()) {
-        // don't return containing editable blocks unless they are empty
-        if (node()->enclosingBlockFlowElement() == node() && node()->firstChild())
-            return false;
-        return true;
+        // return true for blocks if they are empty
+        if (renderer->inlineBox() || (node()->isBlockFlow() && !node()->firstChild()))
+            return true;
     }
     
     return false;
