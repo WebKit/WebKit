@@ -1,3 +1,13 @@
+2004-11-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed leak (3879883) that John found.  Early return leaked
+	allocated instance.
+
+        Reviewed by John.
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+
 2004-11-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
