@@ -1,5 +1,12 @@
 2001-12-18  Kenneth Kocienda  <kocienda@apple.com>
 
+        Updated based on comments from John and Richard
+        
+	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
+	* Documentation/WebKit-White-Paper/images/webkit-cache-loader.jpg:
+
+2001-12-18  Kenneth Kocienda  <kocienda@apple.com>
+
         Updated the white paper text and graphics.
         
 	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
