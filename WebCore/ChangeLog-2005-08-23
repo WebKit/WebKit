@@ -1,5 +1,13 @@
 2004-04-07  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Chris
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _stringWithDocumentTypeStringAndMarkupString:]): Do not add a newline in between
+        the doctype and the content. The newline was showing up when the content was pasted.
+
+2004-04-07  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Removed concept of currentSelection from EditCommands and refined concept of

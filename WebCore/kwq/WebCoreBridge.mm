@@ -453,7 +453,7 @@ static bool initializedKJS = FALSE;
 {
     NSString *documentTypeString = [self _documentTypeString];
     if (documentTypeString && markupString) {
-        return [NSString stringWithFormat:@"%@\n%@", documentTypeString, markupString];
+        return [NSString stringWithFormat:@"%@%@", documentTypeString, markupString];
     } else if (documentTypeString) {
         return documentTypeString;
     } else if (markupString) {
