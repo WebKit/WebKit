@@ -15,7 +15,7 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageView.h>
-#import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -35,6 +35,11 @@ enum {
 };
 
 @implementation WebFrameView
+
++ (void)initialize
+{
+    [WebError _registerWebKitErrors];
+}
 
 - initWithFrame: (NSRect) frame
 {

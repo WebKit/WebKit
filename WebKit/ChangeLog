@@ -1,3 +1,20 @@
+2003-03-17  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3200647 - File I/O related download errors just says "error"
+	
+        Reviewed by darin.
+
+        * Downloads.subproj/WebDownload.m:
+        (+[WebDownloadPrivate initialize]): call _registerWebKitErrors
+        * English.lproj/Localizable.strings:
+        * Misc.subproj/WebKitErrors.h: cleaned-up, removed unused errors
+        * Misc.subproj/WebKitErrors.m:
+        (+[WebError _registerWebKitErrors]):
+        (registerErrors):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebView.m:
+        (+[WebFrameView initialize]): call _registerWebKitErrors
+
 2003-03-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris and Richard.

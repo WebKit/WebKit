@@ -11,7 +11,7 @@
 #import <WebKit/WebBinHexDecoder.h>
 #import <WebKit/WebDownloadDecoder.h>
 #import <WebKit/WebGZipDecoder.h>
-#import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebMacBinaryDecoder.h>
 #import <WebKit/WebMainResourceClient.h>
@@ -122,19 +122,15 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 @implementation WebDownloadPrivate
 
-- init
++ (void)initialize
 {
-    [super init];
-
-    if (!decoderClasses) {
-        decoderClasses = [[NSArray arrayWithObjects:
-            [WebBinHexDecoder class],
-            [WebMacBinaryDecoder class],
-            [WebGZipDecoder class],
-            nil] retain];
-    }
+    [WebError _registerWebKitErrors];
     
-    return self;
+    decoderClasses = [[NSArray arrayWithObjects:
+        [WebBinHexDecoder class],
+        [WebMacBinaryDecoder class],
+        [WebGZipDecoder class],
+        nil] retain];
 }
 
 - (void)dealloc
