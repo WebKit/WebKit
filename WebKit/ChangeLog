@@ -1,3 +1,17 @@
+2004-08-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - change name of WebMakeCollectable to WebNSRetainCFRelease so it fits into the
+          "NS and CF retain counts are separate" mental model, rather than the "think about
+          how garbage collection works" one
+
+        * Misc.subproj/WebKitNSStringExtras.m: (+[NSString _web_encodingForResource:]): Rename.
+        * Misc.subproj/WebNSObjectExtras.h: (WebNSRetainCFRelease): Ditto.
+        * Misc.subproj/WebNSURLExtras.m:
+        (+[NSURL _web_URLWithData:relativeToURL:]): Ditto.
+        (-[NSURL _web_URLWithLowercasedScheme]): Ditto.
+
 2004-08-09  Trey Matteson  <trey@apple.com>
 
 	3756599 - REGRESSION: hit assertion in KWQPageState invalidate

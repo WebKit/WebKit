@@ -161,7 +161,7 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     }
     
     NSString *directoryName = [[path stringByDeletingPathExtension] lastPathComponent];
-    NSString *locale = WebMakeCollectable(CFLocaleCreateCanonicalLocaleIdentifierFromString(NULL, (CFStringRef)directoryName));
+    NSString *locale = WebNSRetainCFRelease(CFLocaleCreateCanonicalLocaleIdentifierFromString(NULL, (CFStringRef)directoryName));
     if (locale == nil) {
         return NSMacOSRomanStringEncoding;
     }

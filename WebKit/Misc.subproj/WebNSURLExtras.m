@@ -333,9 +333,9 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
         // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
         // onto using ISO Latin 1 in those cases.
-        result = WebMakeCollectable(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES));
+        result = WebNSRetainCFRelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES));
         if (!result) {
-            result = WebMakeCollectable(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES));
+            result = WebNSRetainCFRelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES));
         }
         [result autorelease];
     }
@@ -561,7 +561,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     }
     
     NSURL *result = changed
-        ? [WebMakeCollectable(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES)) autorelease]
+        ? [WebNSRetainCFRelease(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES)) autorelease]
         : self;
 
     if (buffer != static_buffer) {

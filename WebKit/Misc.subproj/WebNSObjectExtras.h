@@ -5,7 +5,7 @@
 
 #import <Foundation/Foundation.h>
 
-static inline id WebMakeCollectable(CFTypeRef obj)
+static inline id WebNSRetainCFRelease(CFTypeRef obj)
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
     return (id)obj;
