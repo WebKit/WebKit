@@ -39,6 +39,36 @@ function extendSelectionForwardByCharacterCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execMoveSelectionForwardByWordCommand() {
+    selection.modify("move", "forward", "word");
+}
+function moveSelectionForwardByWordCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionForwardByWordCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionForwardByWordCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionForwardByWordCommand() {
+    selection.modify("extend", "forward", "word");
+}
+function extendSelectionForwardByWordCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionForwardByWordCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionForwardByWordCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execMoveSelectionForwardByLineCommand() {
     selection.modify("move", "forward", "line");
 }
@@ -94,6 +124,36 @@ function extendSelectionBackwardByCharacterCommand() {
     }
     else {
         execExtendSelectionBackwardByCharacterCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execMoveSelectionBackwardByWordCommand() {
+    selection.modify("move", "backward", "word");
+}
+function moveSelectionBackwardByWordCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionBackwardByWordCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionBackwardByWordCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionBackwardByWordCommand() {
+    selection.modify("extend", "backward", "word");
+}
+function extendSelectionBackwardByWordCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionBackwardByWordCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionBackwardByWordCommand();
     }
 }
 

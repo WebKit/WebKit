@@ -1,5 +1,17 @@
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Added a couple new layout tests to cover recent changes.
+
+        * layout-tests/editing/editing.js: Added some new functions to do by-word selection movement.
+        * layout-tests/editing/selection/move-backwords-by-word-001-expected.txt: Added.
+        * layout-tests/editing/selection/move-backwords-by-word-001.html: Added.
+        * layout-tests/editing/selection/selection-3748164-fix-expected.txt: Added.
+        * layout-tests/editing/selection/selection-3748164-fix.html: Added.
+
+2004-09-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
