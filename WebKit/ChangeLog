@@ -1,3 +1,9 @@
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * copy-webcore-files-to-webkit: Made this file buildit-compliant
+
 2004-03-01  Chris Blumenberg  <cblu@apple.com>
 
 	Found a bug in my last check-in. If a load that originates from a WebResource is cancelled before the data from the WebResource is delivered, callbacks are sent anyway. 

@@ -46,10 +46,15 @@ sub AssertInWebKit {
 
 sub AssertWebCoreFound {
 	my $path = cwd();
-	$path = dirname($path) . '/WebCore';
-	if (-d $path) {
+	my $localpath = dirname($path) . '/WebCore';
+	my $builditpath = dirname(dirname($path)) . '/WebCore.roots/WebCore';
+	if (-d $localpath) {
 		# ok...WebCore is where we expect it
-		$WebCorePath = $path;
+		$WebCorePath = $localpath;
+	}
+	if (-d $builditpath) {
+		# ok...WebCore is where we expect it
+		$WebCorePath = $builditpath;
 	}
 	else {
 		Fail("WebCore is not a sibling directory to WebKit. exiting...");
