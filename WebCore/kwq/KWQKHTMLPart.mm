@@ -1033,6 +1033,20 @@ void KWQKHTMLPart::forceLayout()
     }
 }
 
+void KWQKHTMLPart::forceLayoutForPageWidth(float pageWidth)
+{
+    // Dumping externalRepresentation(_part->renderer()).ascii() is a good trick to see
+    // the state of things before and after the layout
+    RenderRoot *root = static_cast<khtml::RenderRoot *>(xmlDocImpl()->renderer());
+    if (root) {
+        // This magic is basically copied from khtmlview::print
+        root->setWidth((int)ceil(pageWidth));
+        root->setLayouted(false);
+        root->setMinMaxKnown(false);
+        forceLayout();
+    }
+}
+
 void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
 {
     [_bridge runJavaScriptAlertPanelWithMessage:message.getNSString()];

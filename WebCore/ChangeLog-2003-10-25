@@ -1,3 +1,35 @@
+2003-04-11  Trey Matteson  <trey@apple.com>
+
+	3148002 - printing shouldn't depend on the size of the window
+
+	The basic strategy is copied from khtmlview's print method:  We reset the width
+	of the document to the paper width minus margins, and relayout before paginating
+	and printing.
+
+        Reviewed by Richard.
+
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::layout):  Always resize our view, even when doing a layout when in
+	printing mode.  It's necessary to change the view size because we rely on the AppKit
+	built-in pagination, which operates using the view geometry.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::forceLayoutForPageWidth):  New method to do a layout given a
+	specific width.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _setPrintingMode:]):  Helper routine to take the RenderRoot in
+	and out of printing mode.
+        (-[WebCoreBridge forceLayout]):  Turn printing mode on/off.
+        (-[WebCoreBridge forceLayoutForPageWidth:]):  Turn printing mode on/off.
+	New glue routine to call part.
+        (-[WebCoreBridge drawRect:withPainter:]):  Turn printing mode on/off.
+        (-[WebCoreBridge drawRect:]):  Test paintDevice type instead of graphics context
+	to determine printing mode.  The latter is still on when we are wrapping up the
+	job and want to be setting things back to normal.
+        (-[WebCoreBridge adjustFrames:]):  Ditto.
+        (-[WebCoreBridge adjustPageHeightNew:top:bottom:limit:]):  Turn printing mode on/off.
+
 2003-04-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

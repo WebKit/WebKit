@@ -1,3 +1,30 @@
+2003-04-11  Trey Matteson  <trey@apple.com>
+
+	3148002 - printing shouldn't depend on the size of the window
+
+	The basic strategy is copied from khtmlview's print method:  We reset the width
+	of the document to the paper width minus margins, and relayout before paginating
+	and printing.
+
+        Reviewed by Richard.
+
+        * WebKit.pbproj/project.pbxproj:  Someone is using an old version...
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):  Don't do the dynamic
+	scrollbar update magic when printing.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView layoutToPageWidth:]):  New routine, basically the old layout
+	method with a new parameter.  If we're given an width, we call a different
+	bridge method.
+        (-[WebHTMLView layout]):  Just call above method with width==0
+        (-[WebHTMLView drawRect:]):  Protect setting/resetting of graphics context and
+	additional clip with a DURING/HANDLER.  I saw an assertion failure that could
+	be explained by this, so this is mostly a beartrap for that problem.
+        (-[WebHTMLView _setPrinting:pageWidth:]):  Pass page width through to others.
+        (-[WebHTMLView beginDocument]):  If we are not in a frame set, do a layout
+	using the page width.
+        (-[WebHTMLView endDocument]):  Pass 0 to new pageWidth: arg.
+
 2003-04-08  Trey Matteson  <trey@apple.com>
 
 	3220349 - assertion failure in [WebFrame _recursiveGoToItem:...] hitting Back while loading movie

@@ -72,6 +72,7 @@ using khtml::RenderImage;
 using khtml::RenderObject;
 using khtml::RenderPart;
 using khtml::RenderStyle;
+using khtml::RenderRoot;
 
 using KJS::SavedProperties;
 
@@ -326,23 +327,51 @@ static bool initializedObjectCacheSize = FALSE;
     return _part->reparseConfiguration();
 }
 
+static BOOL nowPrinting(WebCoreBridge *self)
+{
+    DocumentImpl *doc = self->_part->xmlDocImpl();
+    return doc && doc->paintDevice()->devType() == QInternal::Printer;
+}
+
+// Set or unset the printing mode in the view.  We only toy with this if we're printing.
+- (void)_setupRootForPrinting:(BOOL)onOrOff
+{
+    if (nowPrinting(self)) {
+        RenderRoot *root = static_cast<khtml::RenderRoot *>(_part->xmlDocImpl()->renderer());
+        if (root) {
+            root->setPrintingMode(onOrOff);
+        }
+    }
+}
+
 - (void)forceLayout
 {
+    [self _setupRootForPrinting:YES];
     _part->forceLayout();
+    [self _setupRootForPrinting:NO];
+}
+
+- (void)forceLayoutForPageWidth:(float)pageWidth
+{
+    [self _setupRootForPrinting:YES];
+    _part->forceLayoutForPageWidth(pageWidth);
+    [self _setupRootForPrinting:NO];
 }
 
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
+    [self _setupRootForPrinting:YES];
     if (_drawSelectionOnly) {
         _part->paintSelectionOnly(p, QRect(rect));
     } else {
         _part->paint(p, QRect(rect));
     }
+    [self _setupRootForPrinting:NO];
 }
 
 - (void)drawRect:(NSRect)rect
 {
-    QPainter painter(![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    QPainter painter(nowPrinting(self));
     [self drawRect:rect withPainter:&painter];
 }
 
@@ -353,7 +382,7 @@ static bool initializedObjectCacheSize = FALSE;
     // layout and do a draw with rendering disabled to
     // correctly adjust the frames.
     [self forceLayout];
-    QPainter painter(![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    QPainter painter(nowPrinting(self));
     painter.setPaintingDisabled(YES);
     [self drawRect:rect withPainter:&painter];
 }
@@ -361,7 +390,9 @@ static bool initializedObjectCacheSize = FALSE;
 // Vertical pagination hook from AppKit
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
 {
+    [self _setupRootForPrinting:YES];
     _part->adjustPageHeight(newBottom, oldTop, oldBottom, bottomLimit);
+    [self _setupRootForPrinting:NO];
 }
 
 - (NSObject *)copyDOMNode:(NodeImpl *)node copier:(id <WebCoreDOMTreeCopier>)copier

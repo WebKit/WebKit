@@ -290,8 +290,9 @@
     _private->needsToApplyStyles = NO;
 }
 
-
-- (void)layout
+// Do a layout, but set up a new fixed width for the purposes of doing printing layout.
+// pageWidth==0 implies a non-printing layout
+- (void)layoutToPageWidth:(float)pageWidth
 {
     [self reapplyStyles];
     
@@ -308,7 +309,11 @@
 #endif
 
     LOG(View, "%@ doing layout", self);
-    [[self _bridge] forceLayout];
+    if (pageWidth > 0.0) {
+        [[self _bridge] forceLayoutForPageWidth:pageWidth];
+    } else {
+        [[self _bridge] forceLayout];
+    }
     _private->needsLayout = NO;
     
     _private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
@@ -321,6 +326,10 @@
 #endif
 }
 
+- (void)layout
+{
+    [self layoutToPageWidth:0.0];
+}
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {    
@@ -330,8 +339,8 @@
     return [[self _controller] _menuForElement:element];
 }
 
-// Search from the end of the currently selected location, or from the beginning of the document if nothing
-// is selected.
+// Search from the end of the currently selected location, or from the beginning of the
+// document if nothing is selected.
 - (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
 {
     return [[self _bridge] searchFor: string direction: forward caseSensitive: caseFlag];
@@ -505,23 +514,30 @@
     
     ASSERT([[self superview] isKindOfClass:[WebClipView class]]);
     [(WebClipView *)[self superview] setAdditionalClip:rect];
-    
-    NSView *focusView = [NSView focusView];
-    if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
-        [textRendererFactory startCoalesceTextDrawing];
 
-    //double start = CFAbsoluteTimeGetCurrent();
-    [[self _bridge] drawRect:rect];
-    //LOG(Timing, "draw time %e", CFAbsoluteTimeGetCurrent() - start);
+    NS_DURING {
+        NSView *focusView = [NSView focusView];
+        if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
+            [textRendererFactory startCoalesceTextDrawing];
 
-    if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
-        [textRendererFactory endCoalesceTextDrawing];
+        //double start = CFAbsoluteTimeGetCurrent();
+        [[self _bridge] drawRect:rect];
+        //LOG(Timing, "draw time %e", CFAbsoluteTimeGetCurrent() - start);
 
-    [(WebClipView *)[self superview] resetAdditionalClip];
-    
-    [self _drawBorder: [[self _bridge] frameBorderStyle]];
+        if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
+            [textRendererFactory endCoalesceTextDrawing];
 
-    [NSGraphicsContext restoreGraphicsState];
+        [(WebClipView *)[self superview] resetAdditionalClip];
+
+        [self _drawBorder: [[self _bridge] frameBorderStyle]];
+
+        [NSGraphicsContext restoreGraphicsState];
+    } NS_HANDLER {
+        [(WebClipView *)[self superview] resetAdditionalClip];
+        [NSGraphicsContext restoreGraphicsState];
+        ERROR("Exception caught while drawing: %@", localException);
+        [localException raise];
+    } NS_ENDHANDLER
 
 #ifdef DEBUG_LAYOUT
     NSRect vframe = [self frame];
@@ -754,7 +770,8 @@
 }
 
 // Does setNeedsDisplay:NO as a side effect. Useful for begin/endDocument.
-- (void)_setPrinting:(BOOL)printing
+// pageWidth != 0 implies we will relayout to a new width
+- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth
 {
     WebFrame *frame = [self _frame];
     NSArray *subframes = [frame children];
@@ -764,16 +781,15 @@
         WebFrame *subframe = [subframes objectAtIndex:i];
         WebFrameView *frameView = [subframe frameView];
         if ([frameView isDocumentHTML]) {
-            [(WebHTMLView *)[frameView documentView] _setPrinting:printing];
+            [(WebHTMLView *)[frameView documentView] _setPrinting:printing pageWidth:0];
         }
     }
 
     if (printing != _private->printing) {
         _private->printing = printing;
-        
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
-        [self layout];
+        [self layoutToPageWidth:pageWidth];
         [self setNeedsDisplay:NO];
     }
 }
@@ -789,7 +805,16 @@
     // sheet was up, using printer fonts (and looking different).
     [self displayIfNeeded];
     [[self window] setAutodisplay:NO];
-    [self _setPrinting:YES];
+
+    // If we are a frameset just print with the layout we have onscreen, otherwise relayout
+    // according to the paper size
+    float pageWidth = 0.0;
+    if (![[self _bridge] isFrameSet]) {
+        NSPrintInfo *printInfo = [[NSPrintOperation currentOperation] printInfo];
+        pageWidth = [printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin];
+    }
+    [self _setPrinting:YES pageWidth:pageWidth];	// will relayout
+
     [super beginDocument];
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
     // if something caused setNeedsDisplay after this point. If so, it's not a big tragedy, because
@@ -799,7 +824,8 @@
 - (void)endDocument
 {
     [super endDocument];
-    [self _setPrinting:NO];
+    // Note sadly at this point [NSGraphicsContext currentContextDrawingToScreen] is still NO 
+    [self _setPrinting:NO pageWidth:0.0];
     [[self window] setAutodisplay:YES];
 }
 
