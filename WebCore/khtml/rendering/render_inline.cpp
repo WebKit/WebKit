@@ -348,11 +348,11 @@ void RenderInline::paintOutlines(QPainter *p, int _tx, int _ty)
     QPtrList <QRect> rects;
     rects.setAutoDelete(true);
 
-    rects.append(new QRect());
+    rects.append(new QRect(0,0,0,0));
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         rects.append(new QRect(curr->xPos(), curr->yPos(), curr->width(), curr->height()));
     }
-    rects.append(new QRect());
+    rects.append(new QRect(0,0,0,0));
 
     for (unsigned int i = 1; i < rects.count() - 1; i++)
         paintOutline(p, _tx, _ty, *rects.at(i-1), *rects.at(i), *rects.at(i+1));

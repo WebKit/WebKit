@@ -1,3 +1,21 @@
+2003-10-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by David
+
+	Fix for this bug:
+
+	<rdar://problem/3470233>: solid outlines drawing incorrectly
+
+	The problem was that when I collected the array of line boxes for
+	render inlines, I put a QRect() at the start and the end of the list.
+	However, the border calculation code expected "invalid" rectangles
+	(rects with 0 for all four dimentions) in the first and last
+	positions, and the default constructor for QRect makes rects with 1,1
+	for width/height.
+
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paintOutlines)
+
 2003-10-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
