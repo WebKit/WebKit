@@ -590,7 +590,9 @@ KWQListIteratorImpl::~KWQListIteratorImpl()
 KWQListIteratorImpl::KWQListIteratorImpl(const KWQListIteratorImpl &impl) :
     d(new KWQListIteratorImpl::KWQListIteratorPrivate(*impl.d->list, impl.d->node))
 {
-    d->list->addIterator(this);
+    if (d->list) {
+        d->list->addIterator(this);
+    }
 }
 
 uint KWQListIteratorImpl::count() const

@@ -29,6 +29,5 @@ KWQGuardedPtrBase::KWQGuardedPtrBase(QObject *o)
 {
     if (o) {
         iterator = QPtrListIterator<QObject>(o->guardedPtrDummyList);
-        iterator.toFirst();
     }
 }
