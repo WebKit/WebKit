@@ -941,6 +941,22 @@ void RenderBox::calcHeight()
         m_layer->marquee()->setEnd(m_height);
         m_height = kMin(m_height, m_layer->marquee()->unfurlPos());
     }
+    
+    // WinIE quirk: The <html> block always fills the entire canvas in quirks mode.  The <body> always fills the
+    // <html> block in quirks mode.  Only apply this quirk if the block is normal flow and no height
+    // is specified.
+    if (style()->htmlHacks() && style()->height().isVariable() &&
+        !isFloatingOrPositioned() && (isRoot() || isBody())) {
+        int margins = collapsedMarginTop() + collapsedMarginBottom();
+        int visHeight = canvas()->view()->visibleHeight();
+        if (isRoot())
+            m_height = kMax(m_height, visHeight - margins);
+        else
+            m_height = kMax(m_height, visHeight - 
+                            (margins + parent()->marginTop() + parent()->marginBottom() + 
+                             parent()->borderTop() + parent()->borderBottom() +
+                             parent()->paddingTop() + parent()->paddingBottom()));
+    }
 }
 
 int RenderBox::calcHeightUsing(const Length& h)
