@@ -93,7 +93,8 @@ int RenderApplet::intrinsicHeight() const
 void RenderApplet::createWidgetIfNecessary()
 {
     if (!m_widget) {
-        QSize size = QSize(style()->width().value, style()->height().value);        
+        QSize size = QSize(m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight(),
+                           m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom());        
     
         NodeImpl *child = element()->firstChild();
         while (child) {
@@ -120,15 +121,9 @@ void RenderApplet::layout()
 
     KJavaAppletWidget *tmp = static_cast<KJavaAppletWidget*>(m_widget);
 #if APPLE_CHANGES
-    // Applet QWidget get creates lazily upon first layout.
-    if (!tmp) {
+    // The applet's QWidget gets created lazily upon first layout.
+    if (!tmp)
         createWidgetIfNecessary();
-    }
-    else {
-        m_widget->setFrameGeometry(QRect(xPos(), yPos(),
-                                   m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
-                                   m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom()));
-    }
 #else 
     if ( tmp ) {
         NodeImpl *child = element()->firstChild();
@@ -143,8 +138,8 @@ void RenderApplet::layout()
             child = child->nextSibling();
         }
         //kdDebug(6100) << "setting applet widget to size: " << m_width << ", " << m_height << endl;
-        m_widget->resize(m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
-                         m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom());
+        m_widget->resize(m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight(),
+                         m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom());
         tmp->showApplet();
     }
 #endif
@@ -211,13 +206,16 @@ void RenderEmptyApplet::layout()
     calcWidth();
     calcHeight();
 
+    // updateWidgetPositions will size the widget, so we don't need to do that here.
+#if !APPLE_CHANGES
     if(m_widget)
     {
         //kdDebug(6100) << "RenderEmptyApplet::layout, m_width = " << m_width << ", m_height = " << m_height << endl;
-        m_widget->resize(m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
-                         m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom());
+        m_widget->resize(m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
+                         m_height-borderTop()-borderBottom()-paddingTop()-paddingBottom());
     }
-
+#endif
+    
     setNeedsLayout(false);
 }
 #endif

@@ -1,3 +1,15 @@
+2004-01-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3526710, applets need to have the correct initial size after a layout has been done, since our
+	Java applets can't yet resize.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+        (RenderApplet::layout):
+        (RenderEmptyApplet::layout):
+
 === Safari-121 ===
 
 2004-01-11  Darin Adler  <darin@apple.com>
