@@ -1,3 +1,15 @@
+2003-07-31  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3358870.  Fall back on 'user defaults' values when a value
+	in a custom instance of WebPreferences hasn't been overriden.
+
+        Reviewed by Eric Seymour.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _stringValueForKey:]):
+        (-[WebPreferences _integerValueForKey:]):
+        (-[WebPreferences _boolValueForKey:]):
+
 2003-07-30  Richard Williamson   <rjw@apple.com>
 
 	Preparation for 3095376.

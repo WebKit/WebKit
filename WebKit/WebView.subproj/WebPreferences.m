@@ -233,7 +233,10 @@ NS_ENDHANDLER
     NSString *s = [_private->values objectForKey:_key];
     if (s)
         return s;
-    return [[NSUserDefaults standardUserDefaults] stringForKey:_key];
+    s = [[NSUserDefaults standardUserDefaults] stringForKey:_key];
+    if (!s)
+        s = [[NSUserDefaults standardUserDefaults] stringForKey:key];
+    return s;
 }
 
 - (void)_setStringValue: (NSString *)value forKey: (NSString *)key
@@ -253,7 +256,10 @@ NS_ENDHANDLER
     NSNumber *n = [_private->values objectForKey:_key];
     if (n)
         return [n intValue];
-    return [[NSUserDefaults standardUserDefaults] integerForKey:_key];
+    n = [[NSUserDefaults standardUserDefaults] objectForKey:_key];
+    if (!n)
+        n = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    return [n intValue];
 }
 
 - (void)_setIntegerValue: (int)value forKey: (NSString *)key
@@ -273,7 +279,10 @@ NS_ENDHANDLER
     NSNumber *n = [_private->values objectForKey:_key];
     if (n)
         return [n boolValue];
-    return [[NSUserDefaults standardUserDefaults] integerForKey:_key];
+    n = [[NSUserDefaults standardUserDefaults] objectForKey:_key];
+    if (!n)
+        n = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    return [n intValue] != 0 ? YES : NO;
 }
 
 - (void)_setBoolValue: (BOOL)value forKey: (NSString *)key
