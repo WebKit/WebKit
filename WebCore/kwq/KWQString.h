@@ -37,7 +37,8 @@ public:
     QChar(const QChar &);
     QChar lower() const;
     char latin1() const;
-    bool isDigit();
+    bool isDigit() const;
+    bool isSpace() const;
     friend inline int operator==(QChar, QChar);
     friend inline int operator!=(QChar, QChar);
 };
@@ -45,12 +46,17 @@ public:
 class QString {
 public:
     QString();
+    QString(const QChar *, uint);
     int toInt() const;
     int toInt(bool *) const;
     bool isNull() const;
     const QChar *unicode() const;
     uint length() const;
     QString &sprintf(const char *format, ...);
+    QString lower() const;
+    QString stripWhiteSpace() const;
+    bool isEmpty() const;
+    int contains(const char *) const;
 
     static const QString null;
 
