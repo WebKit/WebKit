@@ -194,8 +194,11 @@
 
     LOG(Redirect, "URL = %@", URL);
 
-    // FIXME: need to update main document URL here, or cookies set
-    // via redirects might not work in main document mode
+    // Update cookie policy base URL as URL changes, except for subframes, which use the
+    // URL of the main frame which doesn't change when we redirect.
+    if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
+        [newRequest setCookiePolicyBaseURL:URL];
+    }
 
     WebResourceRequest *copy = [newRequest copy];
 

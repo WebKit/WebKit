@@ -1,5 +1,16 @@
 2002-10-17  Darin Adler  <darin@apple.com>
 
+	- fixed 3062613 -- too many redirects at nytimes.com and apple
+
+	Our cookie policy was rejecting the cookies from nytimes.com -- the policy base
+	URL was still the news.com URL from before the redirect.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]):
+	Update the cookie policy URL when a redirect changes the data source's URL.
+
+2002-10-17  Darin Adler  <darin@apple.com>
+
 	- fixed 3077910 -- REGRESSION: download window open at startup time -> no scrollbars
 
         * WebView.subproj/WebDynamicScrollBarsView.m:
