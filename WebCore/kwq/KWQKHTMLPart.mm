@@ -100,7 +100,7 @@ bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &u
     return true;
 }
 
-void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int length, bool complete)
+void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
 {
 // NOTE: This code emulates the interface used by the original khtml part  
     QString enc;
@@ -112,7 +112,9 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int lengt
 
     if (encoding != NULL) {
         enc = QString::fromCFString((CFStringRef) encoding);
-        part->setEncoding(enc, true);
+        part->setEncoding(enc, forceEncoding);
+    } else {
+        part->setEncoding(QString::null, false);
     }
     
     KWQ_ASSERT(d->m_doc != NULL);
@@ -517,3 +519,4 @@ RenderObject *KWQKHTMLPartImpl::getRenderer()
     DocumentImpl *doc = part->xmlDocImpl();
     return doc ? doc->renderer() : 0;
 }
+

@@ -27,7 +27,9 @@
     
     // The original URL as requested during initialization.
     NSURL *inputURL;
-    
+    NSDictionary *attributes;
+    unsigned flags;
+
     // The original URL we may have been redirected to.
     NSURL *finalURL;
     
@@ -55,6 +57,7 @@
     NSString *pageTitle;
     
     NSString *encoding;
+    CFStringEncoding overrideEncoding;
 
     NSString *contentType;
 
@@ -106,6 +109,8 @@
 - (void)_setIconURL:(NSURL *)URL;
 - (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
 - (WebResourceHandle*)_mainHandle;
+- (void)_setOverrideEncoding:(CFStringEncoding)overrideEncoding;
+- (CFStringEncoding)_overrideEncoding;
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.
@@ -115,5 +120,8 @@
 - (void)_commitIfReady;
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
+
+- (int)_flags;
+- (NSDictionary *)_attributes;
 
 @end

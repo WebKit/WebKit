@@ -518,5 +518,32 @@
     return [NSArray arrayWithObject:filename];
 }
 
+- (CFStringEncoding)textEncoding
+{
+    return [[self _bridge] textEncoding];
+}
+
+- (void)setTextEncoding:(CFStringEncoding)encoding
+{
+    WebView *webView = [self _web_parentWebView];
+    WebFrame *webFrame = [[webView _controller] frameForView:webView];
+    [webFrame reload:NO];
+    [[webFrame provisionalDataSource] _setOverrideEncoding:encoding];
+}
+
+- (void)setDefaultTextEncoding
+{
+    WebView *webView = [self _web_parentWebView];
+    WebFrame *webFrame = [[webView _controller] frameForView:webView];
+    [webFrame reload:NO];
+    [[webFrame provisionalDataSource] _setOverrideEncoding:kCFStringEncodingInvalidId];
+}
+
+- (BOOL)usingDefaultTextEncoding
+{
+    WebView *webView = [self _web_parentWebView];
+    WebFrame *webFrame = [[webView _controller] frameForView:webView];
+    return [[webFrame dataSource] _overrideEncoding] == kCFStringEncodingInvalidId;
+}
 
 @end

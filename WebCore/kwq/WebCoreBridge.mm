@@ -41,6 +41,7 @@
 #import <KWQDOMNode.h>
 #import <WebCoreImageRenderer.h>
 #import <WebFoundation/WebNSURLExtras.h>
+#import <KWQCharsets.h>
 
 using khtml::parseURL;
 using khtml::RenderImage;
@@ -102,7 +103,14 @@ using khtml::RenderPart;
 
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding
 {
-    part->impl->slotData(encoding, (const char *)[data bytes], [data length], NO);
+    part->impl->slotData(encoding, NO, (const char *)[data bytes], [data length], NO);
+}
+
+- (void)addData:(NSData *)data withOverrideEncoding:(CFStringEncoding)overrideEncoding
+{
+    NSString *encoding = (NSString *)KWQCFStringEncodingToIANACharsetName(overrideEncoding);
+
+    part->impl->slotData(encoding, YES, (const char *)[data bytes], [data length], NO);
 }
 
 - (void)closeURL
@@ -435,6 +443,11 @@ using khtml::RenderPart;
 - (void)setTextSizeMultiplier:(float)multiplier
 {
     part->setZoomFactor((int)rint(multiplier * 100));
+}
+
+- (CFStringEncoding)textEncoding
+{
+    return KWQCFStringEncodingFromIANACharsetName(part->encoding().getCFMutableString());
 }
 
 @end

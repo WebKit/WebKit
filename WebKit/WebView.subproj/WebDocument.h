@@ -15,15 +15,22 @@
 - (void)layout;
 @end
 
-@protocol WebDocumentDragSettings
+@protocol WebDocumentDragSettings <NSObject>
 - (void)setCanDragFrom: (BOOL)flag;
 - (BOOL)canDragFrom;
 - (void)setCanDragTo: (BOOL)flag;
 - (BOOL)canDragTo;
 @end
 
-@protocol WebDocumentSearching
+@protocol WebDocumentSearching <NSObject>
 - (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
+@end
+
+@protocol WebDocumentTextEncoding <NSObject>
+- (CFStringEncoding)textEncoding;
+- (void)setTextEncoding:(CFStringEncoding)encoding;
+- (void)setDefaultTextEncoding;
+- (BOOL)usingDefaultTextEncoding;
 @end
 
 @protocol WebDocumentRepresentation <NSObject>

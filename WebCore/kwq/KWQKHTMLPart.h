@@ -69,7 +69,7 @@ public:
 
     bool openURLInFrame(const KURL &, const KParts::URLArgs &);
     
-    void slotData(NSString *, const char *bytes, int length, bool complete = false);
+    void slotData(NSString *, bool forceEncoding, const char *bytes, int length, bool complete = false);
 
     void setTitle(const DOM::DOMString &);
     void setStatusBarText(const QString &status);

@@ -170,7 +170,11 @@
 {
     WEBKIT_ASSERT([self dataSource] == withDataSource);
 
-    [self addData:data withEncoding:[withDataSource encoding]];
+    if ([withDataSource _overrideEncoding] != kCFStringEncodingInvalidId) {
+	[self addData:data withOverrideEncoding:[withDataSource _overrideEncoding]];
+    } else {
+	[self addData:data withEncoding:[withDataSource encoding]];
+    }
 }
 
 - (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL

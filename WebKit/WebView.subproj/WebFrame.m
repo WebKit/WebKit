@@ -180,10 +180,7 @@
     if (self == [[self controller] mainFrame])
         WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "loading %s", [[[[self provisionalDataSource] originalURL] absoluteString] cString]);
 
-    // Force refresh is irrelevant, as this will always be the first load.
-    // The controller will transition the provisional data source to the
-    // committed data source.
-    [_private->provisionalDataSource startLoading: NO];
+    [_private->provisionalDataSource startLoading:[self _loadType] == WebFrameLoadTypeRefresh];
 }
 
 
@@ -196,9 +193,19 @@
 
 - (void)reload: (BOOL)forceRefresh
 {
-    [_private->dataSource _clearErrors];
+    WebDataSource *dataSource = [self dataSource];
 
-    [_private->dataSource startLoading: forceRefresh];
+    if (dataSource == nil) {
+	return;
+    }
+
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource originalURL] attributes:[dataSource _attributes] flags:[dataSource _flags]];
+    [newDataSource _setParent:[dataSource parent]];
+    if ([self setProvisionalDataSource:newDataSource]) {
+	[self _setLoadType:WebFrameLoadTypeRefresh];
+        [self startLoading];
+    }
+    [newDataSource release];
 }
 
 

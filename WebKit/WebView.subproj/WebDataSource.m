@@ -32,7 +32,7 @@
     return [self initWithURL:URL attributes:theAttributes flags:0];
 }
 
--(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
+-(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags
 {
     self = [super init];
     if (!self) {
@@ -41,6 +41,8 @@
     
     _private = [[WebDataSourcePrivate alloc] init];
     _private->inputURL = [URL retain];
+    _private->flags = theFlags;
+    _private->attributes = [theAttributes retain];
     _private->mainHandle = [[WebResourceHandle alloc] initWithURL: _private->inputURL attributes:theAttributes flags:theFlags];
     
     ++WebDataSourceCount;
@@ -258,7 +260,6 @@
     [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::baseTarget is not implemented"];
     return nil;
 }
-
 
 - (NSString *)encoding
 {

@@ -44,6 +44,8 @@
     
     contentPolicy = WebContentPolicyNone;
     
+    overrideEncoding = kCFStringEncodingInvalidId;
+
     return self;
 }
 
@@ -62,6 +64,7 @@
     [resourceData release];
     [representation release];
     [inputURL release];
+    [attributes release];
     [finalURL release];
     [frames release];
     [mainHandle release];
@@ -297,6 +300,16 @@
     _private->encoding = [encoding retain];
 }
 
+- (void)_setOverrideEncoding:(CFStringEncoding)overrideEncoding
+{
+    _private->overrideEncoding = overrideEncoding;
+}
+
+- (CFStringEncoding)_overrideEncoding
+{
+    return _private->overrideEncoding;
+}
+
 - (void)_setMainDocumentError: (WebError *)error
 {
     [error retain];
@@ -477,5 +490,16 @@
 {
     return _private->mainHandle;
 }
+
+- (int)_flags
+{
+    return _private->flags;
+}
+
+- (NSDictionary *)_attributes
+{
+    return _private->attributes;
+}
+
 
 @end
