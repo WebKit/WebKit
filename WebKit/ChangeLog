@@ -1,3 +1,10 @@
+2004-03-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * DOM.subproj/DOM.h: Checked in header copied over
+        from WebCore.
+
 2004-03-02  Richard Williamson   <rjw@apple.com>
 
 	Added WebJavaScriptObject API.  The location of this file may

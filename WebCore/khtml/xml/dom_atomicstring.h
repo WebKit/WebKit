@@ -34,8 +34,8 @@ public:
     AtomicString(const char *s) : m_string(add(s)) { }
     AtomicString(const QChar *s, int length) : m_string(add(s, length)) { }
     AtomicString(const unsigned short* s, int length) : m_string(add((QChar*)s, length)) { }
-    AtomicString(const QString& s) :m_string(add(s.unicode(), s.length())) { }
-    AtomicString(DOMStringImpl* imp) :m_string(add(imp)) { }
+    AtomicString(const QString& s) : m_string(add(s.unicode(), s.length())) { }
+    AtomicString(DOMStringImpl* imp) : m_string(add(imp)) { }
     explicit AtomicString(const DOMString &s) : m_string(add(s.implementation())) { }
     
     operator const DOMString&() const { return m_string; }
@@ -65,6 +65,11 @@ public:
     
     static void remove(DOMStringImpl *);
     
+#ifdef __OBJC__
+    AtomicString(NSString *);
+    operator NSString *() const { return m_string; }
+#endif
+
 private:
     DOMString m_string;
     

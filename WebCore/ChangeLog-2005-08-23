@@ -1,3 +1,31 @@
+2004-03-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin and me. Coding by Darin and me.
+        
+        1) Fix some places that were calling [self class], in at
+        least one case calling a method not defined on the class
+        (not gonna work).
+        2) Add underscore prefix for all non-API method names.
+        3) Make DOMObject refuse to init, which might prevent
+        problems where people get confused and think they can
+        subclass or instantiate it or its subclasses.
+        4) Use some C++ mojo to replace NSStringToDOMString and
+        DOMStringToNSString with type conversions built into the
+        DOMString class.
+        5) Removed NSError out parameters from the API. Methods
+        now throw NSExceptions.
+        6) Exception code local variables now initialized before
+        passing to khtml DOM impl calls.
+        7) Various other cleanups and tweaks.
+
+        * khtml/dom/dom_string.h
+        * khtml/xml/dom_atomicstring.h
+        * kwq/DOM.h
+        * kwq/DOM.mm
+        * kwq/DOMInternal.h
+        * kwq/KWQKHTMLPart.mm
+        * kwq/WebCoreBridge.mm
+
 2004-03-02  Richard Williamson   <rjw@apple.com>
 
 	Added NP_SAP API.  This API includes the new entry points
