@@ -76,6 +76,11 @@ QPoint QRect::topLeft() const
     return QPoint(xp,yp);
 }
 
+QPoint QRect::bottomRight() const
+{
+    return QPoint(right(),bottom());
+}
+
 QSize QRect::size() const
 {
     return QSize(w,h);

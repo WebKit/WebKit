@@ -52,6 +52,7 @@ public:
     int height() const { return h; }
 
     QPoint topLeft() const;
+    QPoint bottomRight() const;
     QSize size() const;
     void setX(int x) { xp = x; }
     void setY(int y) { yp = y; }

@@ -1,3 +1,11 @@
+2003-12-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        * kwq/KWQRect.h:
+        * kwq/KWQRect.mm:
+        (QRect::bottomRight): Added helper.
+
 2003-12-02  Maciej Stachowiak  <mjs@apple.com>
 
 	Merged the following patch from David Faure to fix:
