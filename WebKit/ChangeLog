@@ -1,5 +1,22 @@
 2005-02-17  Richard Williamson   <rjw@apple.com>
 
+        Fixed <rdar://problem/3999467> when Osaka-Mono is specified as fixed width font, Osaka used instead
+
+	Fixed w/o introducing a performance regression.
+
+        Reviewed by Vicki (and earlier by Dave Harrison).
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _computeWidthForSpace]):
+        (widthForNextCharacter):
+        * WebCoreSupport.subproj/WebTextRendererFactory.h:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[NSFont _web_isFakeFixedPitch]):
+        (-[WebTextRendererFactory isFontFixedPitch:]):
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+
+2005-02-17  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/3959304> PDF in img tag is not rendered correctly anymore
 
 	We were incorrectly adding image position when flipping coordinates.

@@ -29,3 +29,8 @@
 - (WebGlyphBuffer *)glyphBufferForFont:(NSFont *)font andColor:(NSColor *)color;
 
 @end
+
+@interface NSFont (WebPrivateExtensions)
+- (BOOL)_web_isFakeFixedPitch;
+@end
+

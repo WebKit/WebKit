@@ -1,3 +1,15 @@
+2005-02-17  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3999467> when Osaka-Mono is specified as fixed width font, Osaka used instead
+
+	Fixed w/o introducing a performance regression.  Add early
+	check for Osaka-Mono to avoid expensive call into WebKit.
+
+        Reviewed by Vicki.
+
+        * kwq/KWQFont.mm:
+        (QFont::isFixedPitch):
+
 2005-02-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin.

@@ -148,6 +148,12 @@ bool QFont::bold() const
 
 bool QFont::isFixedPitch() const
 {
+    // Special case Osaka-Mono.  Do it here rather than in WebKit
+    // for performance reaason. See <rdar://problem/3999467> for
+    // more details.
+    if (family() == "Osaka-Mono")
+	return true;
+	
     KWQ_BLOCK_EXCEPTIONS;
     return [[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch: getNSFont()];
     KWQ_UNBLOCK_EXCEPTIONS;
