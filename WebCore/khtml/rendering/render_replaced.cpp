@@ -151,6 +151,11 @@ void RenderWidget::detach()
     }
 
     RenderArena* arena = renderArena();
+    if (m_inlineBoxWrapper) {
+        if (!documentBeingDestroyed())
+            m_inlineBoxWrapper->remove();
+        m_inlineBoxWrapper->detach(arena);
+    }
     setNode(0);
     deref(arena);
 }

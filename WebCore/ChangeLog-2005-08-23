@@ -1,5 +1,13 @@
 2004-02-11  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3550005, 936 leaks when loading checkbox page of pain.  Make sure to nuke the inline box
+	wrapper when detaching the RenderWidget.
+
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::detach):
+
+2004-02-11  David Hyatt  <hyatt@apple.com>
+
 	Add some more polish to ensure the ypos estimate is right.  Correct the clearing of images so that
 	their top margins do not get added in when they clear the float because of having a large width.
 	
