@@ -1607,11 +1607,15 @@ void ScheduledAction::execute(Window *window)
         ExecState *exec = interpreter->globalExec();
         Q_ASSERT( window == interpreter->globalObject().imp() );
         Object obj( window );
+	Interpreter::lock();
         func.call(exec,obj,args); // note that call() creates its own execution state for the func call
+	Interpreter::unlock();
 	if ( exec->hadException() ) {
 #if APPLE_CHANGES
 	  if (Interpreter::shouldPrintExceptions()) {
+	    Interpreter::lock();
 	    char *message = exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii();
+	    Interpreter::unlock();
 	    printf("(timer):%s\n", message);
 	  }
 #endif
