@@ -142,13 +142,14 @@ void RenderListItem::setStyle(RenderStyle *_style)
     } else if ( m_marker && style()->listStyleType() == LNONE) {
         m_marker->detach();
         m_marker = 0;
-#ifdef APPLE_CHANGES
-        delete newStyle;
-#endif
     }
     else if ( m_marker ) {
         m_marker->setStyle(newStyle);
     }
+
+#ifdef APPLE_CHANGES
+    newStyle->deref();
+#endif
 }
 
 RenderListItem::~RenderListItem()

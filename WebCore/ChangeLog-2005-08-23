@@ -1,3 +1,9 @@
+prim2002-05-17  Darin Adler  <darin@apple.com>
+
+	* khtml/rendering/render_list.cpp: (RenderListItem::setStyle):
+	Remove an old incorrect fix for a style leak in here and put in
+	a new correct fix.
+
 2002-05-16  Richard J. Williamson  <rjw@apple.com>
 
 	Fixed 2896350.  Ignore DPI in images and render directly at pixel size.
