@@ -267,7 +267,7 @@ void QWidget::setCursor(const QCursor &cur)
 {
     data->cursor = cur;
     
-    NSView *view = data->view;
+    id view = data->view;
     while (view) {
         if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) { 
             [view setCursor:data->cursor.handle()];
