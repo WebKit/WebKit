@@ -1,5 +1,14 @@
 2004-04-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3608305>: DEMO: menu in search field has one disabled item: localized string not found
+
+        * khtml/html/html_formimpl.cpp: (HTMLInputElementImpl::HTMLInputElementImpl):
+        Initialize m_maxResults to 0.
+
+2004-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - cleaned up image map code and made it work with XML documents
