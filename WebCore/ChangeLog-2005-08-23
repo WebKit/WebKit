@@ -1,3 +1,15 @@
+2002-12-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- slightly improved situation with 3124933 (abcnews.com leads to
+	empty window with sheet complaining about javascript: URL); the
+	popup window still comes up empty but it doesn't put up a sheet.
+	
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::openURLRequest): Handled "javascript:"
+	URLs here.
+
 2002-12-14  David Hyatt  <hyatt@apple.com>
 
 	Fix insidemacgames.com.  Reinstate rules I removed

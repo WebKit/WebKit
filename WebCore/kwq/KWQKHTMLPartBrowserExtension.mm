@@ -35,7 +35,13 @@ KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(KHTMLPart *part)
 void KHTMLPartBrowserExtension::openURLRequest(const KURL &url, 
 					       const KParts::URLArgs &args)
 {
-    KWQ(m_part)->openURLRequest(url, args);
+    if (url.protocol().lower() == "javascript") {
+	QString string = url.url();
+	KWQ(m_part)->createDummyDocument();
+	KWQ(m_part)->executeScript(string.mid(strlen("javascript:")));
+     } else {
+	KWQ(m_part)->openURLRequest(url, args);
+    }
 }
 
 void KHTMLPartBrowserExtension::openURLNotify()
