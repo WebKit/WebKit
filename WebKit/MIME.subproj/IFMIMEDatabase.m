@@ -9,8 +9,8 @@
 #import "IFMIMEDatabase.h"
 
 #import "IFMIMEHandler.h"
-#import <WCPluginDatabase.h>
-#import <WCPlugin.h>
+#import <IFPluginDatabase.h>
+#import <IFPlugin.h>
 
 NSMutableDictionary *setMimeHandlers(void);
 
@@ -32,8 +32,8 @@ static IFMIMEDatabase *sharedMIMEDatabase = nil;
 - (IFMIMEHandler *)MIMEHandlerForMIMEType:(NSString *)mimeType
 {
     IFMIMEHandler *tempHandler;
-    WCPluginDatabase *pluginDatabase;
-    WCPlugin *plugin;
+    IFPluginDatabase *pluginDatabase;
+    IFPlugin *plugin;
     
     if(!mimeType)
         return [[[IFMIMEHandler alloc] initWithMIMEType:mimeType handlerType:IFMIMEHANDLERTYPE_NIL handlerName:nil] autorelease];
@@ -42,7 +42,7 @@ static IFMIMEDatabase *sharedMIMEDatabase = nil;
     if(tempHandler){
         return tempHandler;
     }else{
-        pluginDatabase = [WCPluginDatabase installedPlugins];
+        pluginDatabase = [IFPluginDatabase installedPlugins];
         plugin = [pluginDatabase getPluginForMimeType:mimeType];
         if(plugin){
             return [[[IFMIMEHandler alloc] initWithMIMEType:mimeType handlerType:IFMIMEHANDLERTYPE_PLUGIN handlerName:[plugin name]] autorelease];

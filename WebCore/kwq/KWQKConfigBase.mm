@@ -28,8 +28,7 @@
 #import <kwqdebug.h>
 #import <qcolor.h>
 #import <qstringlist.h>
-#import <WCPlugin.h>
-#import <WCPluginDatabase.h>
+#import <WebCoreViewFactory.h>
 
 class KWQKConfigImpl
 {
@@ -67,12 +66,12 @@ void KConfig::writeEntry(const QString &pKey, const QStringList &rValue,
 QString KConfig::readEntry(const char *pKey, const QString& aDefault=QString::null) const
 {
     if (impl->isPluginInfo) {
-        WCPlugin *plugin;
+        id <WebCorePluginInfo> plugin;
         NSArray *mimeTypes;
         NSMutableString *bigMimeString;
         uint i;
         
-        plugin = [[[WCPluginDatabase installedPlugins] plugins] objectAtIndex:impl->pluginIndex];
+        plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:impl->pluginIndex];
         if (strcmp(pKey, "name") == 0) {
             return NSSTRING_TO_QSTRING([plugin name]);
         } else if (strcmp(pKey, "file") == 0) {
@@ -101,7 +100,7 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault=QString::nu
 int KConfig::readNumEntry(const char *pKey, int nDefault) const
 {
     if (impl->isPluginInfo) {
-        return [[[WCPluginDatabase installedPlugins] plugins] count];
+        return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
     }
     _logNotYetImplemented();
     return nDefault;

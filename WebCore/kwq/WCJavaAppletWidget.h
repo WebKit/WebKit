@@ -31,17 +31,6 @@
 
 class QWidget;
 
-#ifdef __OBJC__
-@class NSDictionary;
-@class NSView;
-#else
-typedef void NSDictionary;
-typedef void NSView;
-#endif
-
 QWidget *IFJavaAppletWidgetCreate(const QMap<QString, QString> &args);    
-
-typedef NSView *(*IFJavaAppletViewCreationFunction)(NSDictionary *arguments);
-void IFSetJavaAppletViewCreationFunction(IFJavaAppletViewCreationFunction);
 
 #endif

@@ -30,13 +30,6 @@ class QString;
 class QStringList;
 class QWidget;
 
-@class NSArray;
-@class NSString;
-@class NSView;
-
 QWidget *IFPluginWidgetCreate(const QString &url, const QString &serviceType, const QStringList &args, const QString &baseURL);    
-
-typedef NSView *(*IFPluginViewCreationFunction)(NSString *url, NSString *serviceType, NSArray *arguments, NSString *baseURL);
-void IFSetPluginViewCreationFunction(IFPluginViewCreationFunction);
 
 #endif

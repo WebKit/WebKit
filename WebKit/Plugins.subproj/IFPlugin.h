@@ -24,9 +24,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#include "npapi.h"
+#import "npapi.h"
+#import <WebCoreViewFactory.h>
 
-@interface WCPlugin : NSObject {
+@interface IFPlugin : NSObject <WebCorePluginInfo>
+{
     NSMutableArray *mimeTypes;
     NSString *name, *path, *filename, *pluginDescription;
     BOOL isLoaded, isBundle, isCFM;
@@ -58,13 +60,9 @@
 - (void)load;
 - (void)unload;
 - (NSString *)mimeTypeForURL:(NSString *)URL;
-- (NSArray *)mimeTypes;
-- (NSString *)name;
-- (NSString *)filename;
 - (NSString *)path;
 - (BOOL)isLoaded;
 - (NSString *)description;
-- (NSString *)pluginDescription;
 
 - (NPP_NewProcPtr)NPP_New;
 - (NPP_DestroyProcPtr)NPP_Destroy;

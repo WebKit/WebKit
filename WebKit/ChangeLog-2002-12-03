@@ -1,5 +1,43 @@
 2002-05-07  Darin Adler  <darin@apple.com>
 
+	Move more plugin code here from WebCore.
+
+	* IFWebCoreViewFactory.h: Added.
+	* IFWebCoreViewFactory.m: Added.
+
+	* Plugins.subproj/IFPlugin.h: Moved from WebCore.
+	* Plugins.subproj/IFPlugin.m: Moved from WebCore.
+	* Plugins.subproj/IFPluginDatabase.h: Moved from WebCore.
+	* Plugins.subproj/IFPluginDatabase.m: Moved from WebCore.
+	* Plugins.subproj/npapi.h: Moved from WebCore.
+	* Plugins.subproj/npapi.m: Moved from WebCore.
+
+	* WebKit.pbproj/project.pbxproj: Source file names changed
+
+	* MIME.subproj/IFMIMEDatabase.m:
+	* MIME.subproj/IFMIMEHandler.m:
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm:
+	Updated for WC -> IF name change.
+
+	* WebCoreSupport.subproj/IFCachedTextRenderer.h: Renamed to IFTextRenderer.
+	* WebCoreSupport.subproj/IFCachedTextRenderer.m: Renamed to IFTextRenderer.
+	* WebCoreSupport.subproj/IFCachedTextRendererFactory.h: Renamed to IFTextRendererFactory.
+	* WebCoreSupport.subproj/IFCachedTextRendererFactory.m: Renamed to IFTextRendererFactory.
+	* WebCoreSupport.subproj/IFTextRenderer.h: Renamed from IFCachedTextRenderer.
+	* WebCoreSupport.subproj/IFTextRenderer.m: Renamed from IFCachedTextRenderer.
+	* WebCoreSupport.subproj/IFTextRendererFactory.h: Renamed from IFCachedTextRendererFactory.
+	* WebCoreSupport.subproj/IFTextRendererFactory.m: Renamed from IFCachedTextRendererFactory.
+	Renamed to take "Cached" out of the name now that the simpler name is
+	available.
+
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView initWithFrame:]): Create shared IFWebCoreViewFactory.
+	(-[IFWebView delayLayout:]): Use WEBKITDEBUG, not KWQDEBUG.
+	(-[IFWebView notificationReceived:]): Use WEBKITDEBUG, not KWQDEBUG.
+
+2002-05-07  Darin Adler  <darin@apple.com>
+
 	Use isEqualToString: instead of isEqual: more consistently. But only for strings.
 
 	* WebCoreSupport.subproj/IFCachedTextRendererFactory.m:

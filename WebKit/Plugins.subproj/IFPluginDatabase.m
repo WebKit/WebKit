@@ -23,27 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "WCPluginDatabase.h"
-#include "kwqdebug.h"
+#import "IFPluginDatabase.h"
+#import "WebKitDebug.h"
 
-@implementation WCPluginDatabase
-static WCPluginDatabase *__WCPluginDatabase = nil;
+@implementation IFPluginDatabase
+static IFPluginDatabase *__IFPluginDatabase = nil;
 
 
-+ (WCPluginDatabase *)installedPlugins 
++ (IFPluginDatabase *)installedPlugins 
 {
-    if(!__WCPluginDatabase){
-        __WCPluginDatabase  = [WCPluginDatabase alloc];
-        __WCPluginDatabase->plugins = findPlugins();
+    if(!__IFPluginDatabase){
+        __IFPluginDatabase  = [IFPluginDatabase alloc];
+        __IFPluginDatabase->plugins = findPlugins();
     }
-    return __WCPluginDatabase;
+    return __IFPluginDatabase;
 }
 
 // The first plugin with the specified mime type is returned. We may want to tie this to the defaults so that this is configurable.
-- (WCPlugin *)getPluginForMimeType:(NSString *)mimeType
+- (IFPlugin *)getPluginForMimeType:(NSString *)mimeType
 {
     uint i, n;
-    WCPlugin *plugin;
+    IFPlugin *plugin;
     NSArray *mimeArray;
     
     for(i=0; i<[plugins count]; i++){      
@@ -58,10 +58,10 @@ static WCPluginDatabase *__WCPluginDatabase = nil;
     return nil;
 }
 
-- (WCPlugin *)getPluginForExtension:(NSString *)extension
+- (IFPlugin *)getPluginForExtension:(NSString *)extension
 {
     uint i, n;
-    WCPlugin *plugin;
+    IFPlugin *plugin;
     NSArray *mimeArray;
     NSRange hasExtension;
 
@@ -78,10 +78,10 @@ static WCPluginDatabase *__WCPluginDatabase = nil;
     return nil;
 }
 
-- (WCPlugin *)getPluginForFilename:(NSString *)filename
+- (IFPlugin *)getPluginForFilename:(NSString *)filename
 {
     uint i;
-    WCPlugin *plugin;
+    IFPlugin *plugin;
     
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
@@ -100,7 +100,7 @@ static WCPluginDatabase *__WCPluginDatabase = nil;
 - (NSArray *) allHandledMIMETypes
 {
     NSMutableArray *allHandledMIMETypes;
-    WCPlugin *plugin;
+    IFPlugin *plugin;
     NSArray *mimeArray;
     uint i, n;
         
@@ -144,7 +144,7 @@ NSArray *findPlugins(void)
     NSArray *pluginDirectories, *files;
     NSString *file;
     NSMutableArray *pluginPaths, *pluginArray, *filenames;
-    WCPlugin *plugin;
+    IFPlugin *plugin;
     uint i, n;
     
     pluginDirectories = pluginLocations();    
@@ -166,12 +166,12 @@ NSArray *findPlugins(void)
     pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
     
     for(i=0; i<[pluginPaths count]; i++){
-        plugin = [WCPlugin alloc];
+        plugin = [IFPlugin alloc];
         if([plugin initializeWithPath:[pluginPaths objectAtIndex:i]]){
             [plugin retain];
             [pluginArray addObject:plugin];
-            KWQDEBUG("Found plugin: %s\n", [[plugin name] lossyCString]);
-            KWQDEBUG("%s", [[plugin description] lossyCString]);
+            WEBKITDEBUG("Found plugin: %s\n", [[plugin name] lossyCString]);
+            WEBKITDEBUG("%s", [[plugin description] lossyCString]);
         }
     }
     return [pluginArray retain];

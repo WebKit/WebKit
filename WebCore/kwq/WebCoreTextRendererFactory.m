@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,22 +22,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#import "WCPluginWidget.h"
-#import <qwidget.h>
-#import <WebCoreViewFactory.h>
 
-QWidget *IFPluginWidgetCreate(const QString &url, const QString &serviceType, const QStringList &args, const QString &baseURL)
+#import "WebCoreTextRendererFactory.h"
+#import <kwqdebug.h>
+
+@implementation WebCoreTextRendererFactory
+
+static WebCoreTextRendererFactory *sharedFactory;
+
++ (WebCoreTextRendererFactory *)sharedFactory
 {
-    NSMutableArray *argsArray = [NSMutableArray arrayWithCapacity:args.count()];
-    for (uint i = 0; i < args.count(); i++) {
-        [argsArray addObject:args[i].getNSString()];
-    }
-    QWidget *widget = new QWidget();
-    widget->setView([[WebCoreViewFactory sharedFactory]
-        viewForPluginWithURL:url.getNSString()
-                    serviceType:serviceType.getNSString()
-                    arguments:argsArray
-                        baseURL:baseURL.getNSString()]);
-    return widget;
+    return sharedFactory;
 }
+
+- init
+{
+    [super init];
+    
+    KWQ_ASSERT(!sharedFactory);
+    sharedFactory = [self retain];
+    
+    return self;
+}
+
+- (id <WebCoreTextRenderer>)rendererWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
+{
+    return nil;
+}
+
+@end

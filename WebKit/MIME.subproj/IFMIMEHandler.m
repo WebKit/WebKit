@@ -8,7 +8,7 @@
 
 #import <WebKit/IFMIMEHandler.h>
 #import <WebKit/WebKitDebug.h>
-#import <WCPluginDatabase.h>
+#import <IFPluginDatabase.h>
 
 static NSArray *MIMETypes = nil;
 
@@ -34,7 +34,7 @@ static NSArray *MIMETypes = nil;
         @"image/png",
         @"image/gif",
         @"image/jpg",
-        @"image/jpeg", nil] arrayByAddingObjectsFromArray:[[WCPluginDatabase installedPlugins] allHandledMIMETypes]];
+        @"image/jpeg", nil] arrayByAddingObjectsFromArray:[[IFPluginDatabase installedPlugins] allHandledMIMETypes]];
         [MIMETypes retain];
     }
     return MIMETypes;

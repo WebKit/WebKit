@@ -1,12 +1,12 @@
 //
-//  IFCachedTextRenderer.m
+//  IFTextRenderer.m
 //  WebKit
 //
 //  Created by Darin Adler on Thu May 02 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFCachedTextRenderer.h"
+#import "IFTextRenderer.h"
 
 #import <Cocoa/Cocoa.h>
 
@@ -145,7 +145,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     }
 }
 
-@implementation IFCachedTextRenderer
+@implementation IFTextRenderer
 
 - (void)initializeCaches
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "IFTextRendererFactory.h"
-#import <kwqdebug.h>
+#import <Foundation/Foundation.h>
+#import <IFPlugin.h>
 
-@implementation IFTextRendererFactory
-
-static IFTextRendererFactory *sharedFactory;
-
-+ (IFTextRendererFactory *)sharedFactory
-{
-    return sharedFactory;
+@interface IFPluginDatabase : NSObject {
+    NSArray *plugins;
 }
 
-- init
-{
-    [super init];
-    
-    KWQ_ASSERT(!sharedFactory);
-    sharedFactory = [self retain];
-    
-    return self;
-}
-
-- (id <IFTextRenderer>)rendererWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
-{
-    return nil;
-}
++ (IFPluginDatabase *)installedPlugins;
+- (IFPlugin *)getPluginForMimeType:(NSString *)mimeType;
+- (IFPlugin *)getPluginForExtension:(NSString *)extension;
+- (IFPlugin *)getPluginForFilename:(NSString *)filename;
+- (NSArray *) allHandledMIMETypes;
+- (NSArray *) plugins;
 
 @end
+
+NSArray *pluginLocations(void);
+NSArray *findPlugins(void);

@@ -25,14 +25,32 @@
 
 #import <Cocoa/Cocoa.h>
 
-@protocol IFTextRenderer;
+@class NSArray;
+@class NSString;
+@class NSView;
 
-@interface IFTextRendererFactory : NSObject
+typedef NSView *(*IFPluginViewCreationFunction)();
+void IFSetPluginViewCreationFunction(IFPluginViewCreationFunction);
+
+@interface WebCoreViewFactory : NSObject
 {
 }
 
-+ (IFTextRendererFactory *)sharedFactory;
++ (WebCoreViewFactory *)sharedFactory;
 - init;
-- (id <IFTextRenderer>)rendererWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size;
+
+- (NSView *)viewForPluginWithURL:(NSString *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSString *)baseURL;
+- (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
+
+- (NSView *)viewForJavaAppletWithArguments:(NSDictionary *)arguments;
+
+@end
+
+@protocol WebCorePluginInfo <NSObject>
+
+- (NSString *)name;
+- (NSString *)filename;
+- (NSString *)pluginDescription;
+- (NSArray *)mimeTypes; // array of NSArrays with 3 parts of MIME type in each
 
 @end

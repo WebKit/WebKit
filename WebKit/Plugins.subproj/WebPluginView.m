@@ -14,16 +14,14 @@
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
 
-#import <WCPluginWidget.h>
-#import <WCJavaAppletWidget.h>
-#import <WCPluginDatabase.h>
+#import <IFPluginDatabase.h>
 #import <WebFoundation/IFURLHandle.h>
 #import <IFPluginStream.h>
 #import <IFWebDataSource.h>
 #import <WebFoundation/IFError.h>
 #import <WebKitDebug.h>
 
-#import <WCPlugin.h>
+#import <IFPlugin.h>
 #import <qwidget.h>
 #import <IFWebView.h>
 #import <IFBaseWebController.h>
@@ -52,7 +50,7 @@ newCString(NSString *string)
     return cString;
 }
 
-- initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
+- initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
 {
     NSString *baseURLString;
 
@@ -741,72 +739,6 @@ newCString(NSString *string)
 -(void)forceRedraw
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "forceRedraw\n");
-}
-
-#pragma mark PREBINDING
-
-static NSView *IFPluginViewCreate(NSString *pluginURL, NSString *serviceType, NSArray *args, NSString *baseURL)
-{
-    NSMutableDictionary *arguments;
-    NSString *mimeType;
-    NSRange r1, r2, r3;
-    WCPlugin *plugin;
-    uint i;
-    
-    arguments = [NSMutableDictionary dictionary];
-    for (i = 0; i < [args count]; i++){
-        NSString *arg = [args objectAtIndex:i];
-        if ([arg rangeOfString:@"__KHTML__"].length == 0) {
-            r1 = [arg rangeOfString:@"="]; // parse out attributes and values
-            r2 = [arg rangeOfString:@"\""];
-            r3.location = r2.location + 1;
-            r3.length = [arg length] - r2.location - 2; // don't include quotes
-            [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
-        }
-    }
-    
-    if ([baseURL length]) {
-        [arguments setObject:baseURL forKey:@"WebKitBaseURL"];
-    }
-        
-    if ([serviceType length]) {
-        mimeType = serviceType;
-        plugin = [[WCPluginDatabase installedPlugins] getPluginForMimeType:mimeType];
-    } else {
-        plugin = [[WCPluginDatabase installedPlugins] getPluginForExtension:[pluginURL pathExtension]];
-        mimeType = [plugin mimeTypeForURL:pluginURL];
-    }
-    
-    if (plugin == nil) {
-        return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
-    }
-    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:pluginURL mime:mimeType arguments:arguments mode:NP_EMBED] autorelease];
-}
-
-static NSView *IFJavaAppletViewCreate(NSDictionary *arguments)
-{
-    WCPlugin *plugin;
-    NSMutableDictionary *argsCopy;
-    
-    plugin = [[WCPluginDatabase installedPlugins] getPluginForFilename:@"Java.plugin"];
-    if (plugin == nil) {
-        return nil;
-    }
-    
-    argsCopy = [NSMutableDictionary dictionaryWithDictionary:arguments];
-    [argsCopy setObject:[argsCopy objectForKey:@"baseURL"] forKey:@"DOCBASE"];
-    [argsCopy removeObjectForKey:@"baseURL"];
-
-    if (plugin == nil) {
-        return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:@"application/x-java-applet" arguments:argsCopy] autorelease];
-    }
-    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:nil mime:@"application/x-java-applet" arguments:argsCopy mode:NP_EMBED] autorelease];
-}
-
-+(void) load
-{
-    IFSetPluginViewCreationFunction(IFPluginViewCreate);
-    IFSetJavaAppletViewCreationFunction(IFJavaAppletViewCreate);
 }
 
 @end

@@ -32,8 +32,8 @@
 
 #include <kwqdebug.h>
 
-#import <IFTextRendererFactory.h>
-#import <IFTextRenderer.h>
+#import <WebCoreTextRendererFactory.h>
+#import <WebCoreTextRenderer.h>
 
 
 struct QPainterPrivate {
@@ -486,7 +486,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     else
         string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
 
-    [[[IFTextRendererFactory sharedFactory]
+    [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
         drawString:string atPoint:NSMakePoint(x,y) withColor:data->qpen.color().color];
 
@@ -521,7 +521,7 @@ void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int le
     else
         string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
 
-    [[[IFTextRendererFactory sharedFactory]
+    [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
         drawUnderlineForString:string atPoint:NSMakePoint(x,y) withColor:data->qpen.color().color];
 
@@ -557,7 +557,7 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString &qs
         [style setAlignment: NSLeftTextAlignment];
     }
     
-    [[[IFTextRendererFactory sharedFactory]
+    [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
         drawString:string inRect:NSMakeRect(x, y, w, h) withColor:data->qpen.color().color paragraphStyle:style];
 

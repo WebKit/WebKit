@@ -5,7 +5,6 @@ libkwq_o_ldflags = -Wl,-r -nostdlib
 libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkwq_o_ldflags) -o
 
 libkwq_o_SOURCES = \
-	IFTextRendererFactory.m \
 	KWQApplication.mm \
 	KWQArrayImpl.mm \
 	KWQBitmap.mm \
@@ -129,11 +128,10 @@ libkwq_o_SOURCES = \
 	KWQtextstream.mm \
 	KWQxml.mm \
 	kwqdebug.mm \
-	WCPlugin.mm \
-	WCPluginDatabase.mm \
 	WCPluginWidget.mm \
         WCJavaAppletWidget.mm \
-	npapi.mm \
+	WebCoreTextRendererFactory.m \
+	WebCoreViewFactory.m \
 	$(NULL)
 
 INCLUDES = \

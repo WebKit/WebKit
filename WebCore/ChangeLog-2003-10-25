@@ -1,3 +1,44 @@
+2002-05-07  Darin Adler  <darin@apple.com>
+
+	Move more plugin code into WebKit.
+
+	Stop using IF for anything in WebCore to help make it clear what's part of
+	the BSD licensed stuff and what's part of our proprietary stuff.
+
+	* libwebcore.exp: Names of what exported changed.
+	* kwq/Makefile.am: Source file names changed.
+
+	* kwq/IFTextRenderer.h: Renamed to WebCoreTextRenderer.
+	* kwq/IFTextRendererFactory.h: Renamed to WebCoreTextRendererFactory.
+	* kwq/IFTextRendererFactory.m: Renamed to WebCoreTextRendererFactory.
+	* kwq/WebCoreTextRenderer.h: Renamed from IFTextRenderer.
+	* kwq/WebCoreTextRendererFactory.h: Renamed from IFTextRendererFactory.
+	* kwq/WebCoreTextRendererFactory.m: Renamed from IFTextRendererFactory.
+
+	* kwq/KWQFontMetrics.mm:
+	* kwq/KWQPainter.mm:
+	Updated for IF -> WebCore name change.
+
+	* kwq/WebCoreViewFactory.h: Added.
+	* kwq/WebCoreViewFactory.m: Added.
+
+	* kwq/KWQKConfigBase.mm: (KConfig::readEntry): (KConfig::readNumEntry):
+	Use the new [WebCoreViewFactory pluginsInfo] so we don't have to have
+	the plugin database in WebCore any more.
+
+	* kwq/WCJavaAppletWidget.h:
+	* kwq/WCJavaAppletWidget.mm: (IFJavaAppletWidgetCreate):
+	* kwq/WCPluginWidget.h:
+	* kwq/WCPluginWidget.mm: (IFPluginWidgetCreate):
+	Remove creation function machinery, and use the WebCoreViewFactory instead.
+
+	* kwq/WCPlugin.h: Moved to WebKit.
+	* kwq/WCPlugin.mm: Moved to WebKit.
+	* kwq/WCPluginDatabase.h: Moved to WebKit.
+	* kwq/WCPluginDatabase.mm: Moved to WebKit.
+	* kwq/npapi.h: Moved to WebKit.
+	* kwq/npapi.mm: Moved to WebKit.
+
 2002-05-06  Darin Adler  <darin@apple.com>
 
 	* WebCorePrefix.h: Added.

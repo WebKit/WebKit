@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "npapi.h"
-#include "kwqdebug.h"
+#import "npapi.h"
+#import "WebKitDebug.h"
 
 @interface IFPluginView : NSObject
 -(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData;
@@ -47,33 +47,33 @@
 
 const char* NPN_UserAgent(NPP instance)
 {
-    KWQDEBUG("NPN_UserAgent\n");
+    WEBKITDEBUG("NPN_UserAgent\n");
     return "IE";
 }
 
 void* NPN_MemAlloc(UInt32 size)
 {
-    //KWQDEBUG("NPN_MemAlloc\n");
+    //WEBKITDEBUG("NPN_MemAlloc\n");
     return malloc(size);
 
 }
 
 void NPN_MemFree(void* ptr)
 {
-    //KWQDEBUG("NPN_MemFree\n");
+    //WEBKITDEBUG("NPN_MemFree\n");
     free(ptr);
 
 }
 
 UInt32 NPN_MemFlush(UInt32 size)
 {
-    KWQDEBUG("NPN_MemFlush\n");
+    WEBKITDEBUG("NPN_MemFlush\n");
     return 0;
 }
 
 void NPN_ReloadPlugins(NPBool reloadPages)
 {
-    KWQDEBUG("NPN_ReloadPlugins\n");
+    WEBKITDEBUG("NPN_ReloadPlugins\n");
 
 }
 

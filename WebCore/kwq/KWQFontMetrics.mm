@@ -28,21 +28,21 @@
 #include <Cocoa/Cocoa.h>
 
 #import <qfont.h>
-#import <IFTextRendererFactory.h>
-#import <IFTextRenderer.h>
+#import <WebCoreTextRendererFactory.h>
+#import <WebCoreTextRenderer.h>
 #import <kwqdebug.h>
 
 struct QFontMetricsPrivate
 {
     QFontMetricsPrivate(const QFont &font)
     {
-        renderer = [[[IFTextRendererFactory sharedFactory] rendererWithFamily:font.getNSFamily() traits:font.getNSTraits() size:font.getNSSize()] retain];
+        renderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFamily:font.getNSFamily() traits:font.getNSTraits() size:font.getNSSize()] retain];
     }
     ~QFontMetricsPrivate()
     {
         [renderer release];
     }
-    id <IFTextRenderer> getRenderer()
+    id <WebCoreTextRenderer> getRenderer()
     {
         return renderer;
     }
@@ -50,7 +50,7 @@ struct QFontMetricsPrivate
     int refCount;
     
 private:
-    id <IFTextRenderer> renderer;
+    id <WebCoreTextRenderer> renderer;
 };
 
 QFontMetrics::QFontMetrics()

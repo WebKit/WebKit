@@ -8,12 +8,12 @@
 
 @class IFPluginNullEventSender;
 @class IFWebDataSource;
-@class WCPlugin;
+@class IFPlugin;
 @protocol IFWebController;
 
 @interface IFPluginView : NSView
 {
-    WCPlugin *plugin;
+    IFPlugin *plugin;
     IFPluginNullEventSender *eventSender;
     unsigned argsCount;
     char **cAttributes, **cValues;
@@ -48,7 +48,7 @@
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
+- initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
 -(void)drawRect:(NSRect)rect;
 -(void)setWindow;
 -(void)viewHasMoved:(NSNotification *)notification;

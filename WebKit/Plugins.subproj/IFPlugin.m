@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "WCPlugin.h"
-#include "kwqdebug.h"
+#import "IFPlugin.h"
+#import "WebKitDebug.h"
 
 
-@implementation WCPlugin
+@implementation IFPlugin
 
 - (BOOL)initializeWithPath:(NSString *)pluginPath
 {
@@ -45,12 +45,12 @@
         if([[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == 1112690764){ // 1112690764 = 'BRPL'
             err = FSPathMakeRef((UInt8 *)[pluginPath cString], &fref, NULL);
             if(err != noErr){
-                KWQDEBUG("WCPlugin: FSPathMakeRef failed. Error=%d\n", err);
+                WEBKITDEBUG("IFPlugin: FSPathMakeRef failed. Error=%d\n", err);
                 return FALSE;
             }
             resRef = FSOpenResFile(&fref, fsRdPerm);
             if(resRef <= noErr){
-                KWQDEBUG("WCPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
+                WEBKITDEBUG("IFPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
                 return FALSE;
             }
             [self getPluginInfoForResourceFile:resRef];
@@ -174,17 +174,17 @@
     }else{ // single CFM file
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
         if(err != noErr){
-            KWQDEBUG("WCPlugin: load: FSPathMakeRef failed. Error=%d\n", err);
+            WEBKITDEBUG("IFPlugin: load: FSPathMakeRef failed. Error=%d\n", err);
             return;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
         if(err != noErr){
-            KWQDEBUG("WCPlugin: load: FSGetCatalogInfo failed. Error=%d\n", err);
+            WEBKITDEBUG("IFPlugin: load: FSGetCatalogInfo failed. Error=%d\n", err);
             return;
         }
         err = GetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if(err != noErr){
-            KWQDEBUG("WCPlugin: load: GetDiskFragment failed. Error=%d\n", err);
+            WEBKITDEBUG("IFPlugin: load: GetDiskFragment failed. Error=%d\n", err);
             return;
         }
         pluginMainFunc = (mainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
@@ -219,7 +219,7 @@
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
-        KWQDEBUG("pluginMainFunc: %d, size=%d, version=%d\n", npErr, pluginSize, pluginVersion);
+        WEBKITDEBUG("pluginMainFunc: %d, size=%d, version=%d\n", npErr, pluginSize, pluginVersion);
         
         NPP_New = (NPP_NewProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.newp);
         NPP_Destroy = (NPP_DestroyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.destroy);
@@ -279,7 +279,7 @@
         NPP_GetValue = pluginFuncs.getvalue;
         NPP_SetValue = pluginFuncs.setvalue;
     }
-    KWQDEBUG("Plugin Loaded\n");
+    WEBKITDEBUG("Plugin Loaded\n");
     isLoaded = TRUE;
 }
 
@@ -292,7 +292,7 @@
     }else{
         CloseConnection(&connID);
     }
-    KWQDEBUG("Plugin Unloaded\n");
+    WEBKITDEBUG("Plugin Unloaded\n");
     isLoaded = FALSE;
 }
 

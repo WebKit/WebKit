@@ -25,7 +25,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@protocol IFTextRenderer <NSObject>
+@protocol WebCoreTextRenderer <NSObject>
 
 - (int)widthForString:(NSString *)string;
 - (int)ascent;

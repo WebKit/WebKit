@@ -25,13 +25,7 @@
  
 #import "WCJavaAppletWidget.h"
 #import <qwidget.h>
-
-static IFJavaAppletViewCreationFunction creationFunction = NULL;
-
-void IFSetJavaAppletViewCreationFunction(IFJavaAppletViewCreationFunction f)
-{
-    creationFunction = f;
-}
+#import <WebCoreViewFactory.h>
 
 QWidget *IFJavaAppletWidgetCreate(const QMap<QString, QString> &args)
 {
@@ -40,8 +34,6 @@ QWidget *IFJavaAppletWidgetCreate(const QMap<QString, QString> &args)
         [argsDictionary setObject:it.data().getNSString() forKey:it.key().getNSString()];
     }
     QWidget *widget = new QWidget();
-    if (creationFunction) {
-        widget->setView(creationFunction(argsDictionary));
-    }
+    widget->setView([[WebCoreViewFactory sharedFactory] viewForJavaAppletWithArguments:argsDictionary]);
     return widget;
 }

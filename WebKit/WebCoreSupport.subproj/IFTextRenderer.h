@@ -1,17 +1,17 @@
 //
-//  IFCachedTextRenderer.h
+//  IFTextRenderer.h
 //  WebKit
 //
 //  Created by Darin Adler on Thu May 02 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <IFTextRenderer.h>
+#import <WebCoreTextRenderer.h>
 #import <QD/ATSUnicodePriv.h>
 
 typedef float IFGlyphWidth;
 
-@interface IFCachedTextRenderer : NSObject <IFTextRenderer>
+@interface IFTextRenderer : NSObject <WebCoreTextRenderer>
 {
     NSFont *font;
     int ascent;

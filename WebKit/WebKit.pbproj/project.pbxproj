@@ -227,9 +227,13 @@
 				F5065226027F557E01C1A526,
 				F5065228027F557E01C1A526,
 				F5B36B430281DF55018635CB,
-				F5B36B470281DF9C018635CB,
 				F50AD3880282028B01C1A526,
 				F5C283740284676D018635CA,
+				F5F717240288493C018635CA,
+				F5F717260288493C018635CA,
+				F5F717280288493C018635CA,
+				F5F71748028855C5018635CA,
+				F5F7174E02885C5B018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -284,6 +288,10 @@
 				F5065229027F557E01C1A526,
 				F5B36B440281DF55018635CB,
 				F5B36B480281DF9C018635CB,
+				F5F717250288493C018635CA,
+				F5F717270288493C018635CA,
+				F5F717290288493C018635CA,
+				F5F7174F02885C5B018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -1459,6 +1467,8 @@
 				F5B36B460281DF9C018635CB,
 				F5B36B410281DF55018635CB,
 				F5B36B420281DF55018635CB,
+				F5F7174C02885C5B018635CA,
+				F5F7174D02885C5B018635CA,
 			);
 			isa = PBXGroup;
 			name = "WebCore Support";
@@ -1466,14 +1476,14 @@
 		};
 		F5B36B410281DF55018635CB = {
 			isa = PBXFileReference;
-			name = IFCachedTextRenderer.h;
-			path = WebCoreSupport.subproj/IFCachedTextRenderer.h;
+			name = IFTextRenderer.h;
+			path = WebCoreSupport.subproj/IFTextRenderer.h;
 			refType = 4;
 		};
 		F5B36B420281DF55018635CB = {
 			isa = PBXFileReference;
-			name = IFCachedTextRenderer.m;
-			path = WebCoreSupport.subproj/IFCachedTextRenderer.m;
+			name = IFTextRenderer.m;
+			path = WebCoreSupport.subproj/IFTextRenderer.m;
 			refType = 4;
 		};
 		F5B36B430281DF55018635CB = {
@@ -1490,21 +1500,15 @@
 		};
 		F5B36B450281DF9C018635CB = {
 			isa = PBXFileReference;
-			name = IFCachedTextRendererFactory.h;
-			path = WebCoreSupport.subproj/IFCachedTextRendererFactory.h;
+			name = IFTextRendererFactory.h;
+			path = WebCoreSupport.subproj/IFTextRendererFactory.h;
 			refType = 4;
 		};
 		F5B36B460281DF9C018635CB = {
 			isa = PBXFileReference;
-			name = IFCachedTextRendererFactory.m;
-			path = WebCoreSupport.subproj/IFCachedTextRendererFactory.m;
+			name = IFTextRendererFactory.m;
+			path = WebCoreSupport.subproj/IFTextRendererFactory.m;
 			refType = 4;
-		};
-		F5B36B470281DF9C018635CB = {
-			fileRef = F5B36B450281DF9C018635CB;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F5B36B480281DF9C018635CB = {
 			fileRef = F5B36B460281DF9C018635CB;
@@ -1651,6 +1655,12 @@
 				F5A672B80263866E01000102,
 				F5A672B90263866E01000102,
 				F5A672BA0263866E01000102,
+				F5F7171E0288493C018635CA,
+				F5F7171F0288493C018635CA,
+				F5F717200288493C018635CA,
+				F5F717210288493C018635CA,
+				F5F717220288493C018635CA,
+				F5F717230288493C018635CA,
 			);
 			isa = PBXGroup;
 			name = Plugins;
@@ -1743,6 +1753,106 @@
 		};
 		F5F084C0024BDCA701CA1520 = {
 			fileRef = F5F084BE024BDCA701CA1520;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F7171E0288493C018635CA = {
+			isa = PBXFileReference;
+			name = IFPlugin.h;
+			path = Plugins.subproj/IFPlugin.h;
+			refType = 4;
+		};
+		F5F7171F0288493C018635CA = {
+			isa = PBXFileReference;
+			name = IFPlugin.m;
+			path = Plugins.subproj/IFPlugin.m;
+			refType = 4;
+		};
+		F5F717200288493C018635CA = {
+			isa = PBXFileReference;
+			name = IFPluginDatabase.h;
+			path = Plugins.subproj/IFPluginDatabase.h;
+			refType = 4;
+		};
+		F5F717210288493C018635CA = {
+			isa = PBXFileReference;
+			name = IFPluginDatabase.m;
+			path = Plugins.subproj/IFPluginDatabase.m;
+			refType = 4;
+		};
+		F5F717220288493C018635CA = {
+			isa = PBXFileReference;
+			name = npapi.h;
+			path = Plugins.subproj/npapi.h;
+			refType = 4;
+		};
+		F5F717230288493C018635CA = {
+			isa = PBXFileReference;
+			name = npapi.m;
+			path = Plugins.subproj/npapi.m;
+			refType = 4;
+		};
+		F5F717240288493C018635CA = {
+			fileRef = F5F7171E0288493C018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F717250288493C018635CA = {
+			fileRef = F5F7171F0288493C018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F717260288493C018635CA = {
+			fileRef = F5F717200288493C018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F717270288493C018635CA = {
+			fileRef = F5F717210288493C018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F717280288493C018635CA = {
+			fileRef = F5F717220288493C018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F717290288493C018635CA = {
+			fileRef = F5F717230288493C018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F71748028855C5018635CA = {
+			fileRef = F5B36B450281DF9C018635CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F7174C02885C5B018635CA = {
+			isa = PBXFileReference;
+			path = IFWebCoreViewFactory.h;
+			refType = 4;
+		};
+		F5F7174D02885C5B018635CA = {
+			isa = PBXFileReference;
+			path = IFWebCoreViewFactory.m;
+			refType = 4;
+		};
+		F5F7174E02885C5B018635CA = {
+			fileRef = F5F7174C02885C5B018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F7174F02885C5B018635CA = {
+			fileRef = F5F7174D02885C5B018635CA;
 			isa = PBXBuildFile;
 			settings = {
 			};

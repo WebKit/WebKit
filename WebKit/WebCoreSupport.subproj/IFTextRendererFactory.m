@@ -1,13 +1,13 @@
 //
-//  IFCachedTextRendererFactory.m
+//  IFTextRendererFactory.m
 //  WebKit
 //
 //  Created by Darin Adler on Thu May 02 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFCachedTextRendererFactory.h>
-#import <WebKit/IFCachedTextRenderer.h>
+#import <WebKit/IFTextRendererFactory.h>
+#import <WebKit/IFTextRenderer.h>
 #import <WebKit/WebKitDebug.h>
 
 @interface IFFontCacheKey : NSObject
@@ -59,14 +59,14 @@
 
 @end
 
-@implementation IFCachedTextRendererFactory
+@implementation IFTextRendererFactory
 
 + (void)createSharedFactory;
 {
-    if (![IFTextRendererFactory sharedFactory]) {
-        [[[IFCachedTextRendererFactory alloc] init] release];
+    if (![self sharedFactory]) {
+        [[[self alloc] init] release];
     }
-    WEBKIT_ASSERT([[IFTextRendererFactory sharedFactory] isMemberOfClass:[IFCachedTextRendererFactory class]]);
+    WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
 }
 
 - init
@@ -85,11 +85,11 @@
     [super dealloc];
 }
 
-- (id <IFTextRenderer>)rendererWithFont:(NSFont *)font
+- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font
 {
-    IFCachedTextRenderer *renderer = [cache objectForKey:font];
+    IFTextRenderer *renderer = [cache objectForKey:font];
     if (renderer == nil) {
-        renderer = [[IFCachedTextRenderer alloc] initWithFont:font];
+        renderer = [[IFTextRenderer alloc] initWithFont:font];
         [cache setObject:renderer forKey:font];
         [renderer release];
     }
@@ -151,7 +151,7 @@
     return font;
 }
 
-- (id <IFTextRenderer>)rendererWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
+- (id <WebCoreTextRenderer>)rendererWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
 {
     return [self rendererWithFont:[self cachedFontWithFamily:family traits:traits size:size]];
 }

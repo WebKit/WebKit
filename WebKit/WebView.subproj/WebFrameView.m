@@ -8,7 +8,8 @@
 #import <WebKit/IFBaseWebController.h>
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
-#import <WebKit/IFCachedTextRendererFactory.h>
+#import <WebKit/IFWebCoreViewFactory.h>
+#import <WebKit/IFTextRendererFactory.h>
 #import <WebKit/WebKitDebug.h>
 
 // KDE related includes
@@ -25,7 +26,8 @@
 {
     [super initWithFrame: frame];
 
-    [IFCachedTextRendererFactory createSharedFactory];
+    [IFWebCoreViewFactory createSharedFactory];
+    [IFTextRendererFactory createSharedFactory];
     
     _private = [[IFWebViewPrivate alloc] init];
 
@@ -265,7 +267,7 @@
 - delayLayout: sender
 {
     [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(delayLayout:) object: self];
-    KWQDEBUG("KWQHTMLView:  delayLayout called\n");
+    WEBKITDEBUG("KWQHTMLView:  delayLayout called\n");
     [self setNeedsLayout: YES];
     [self setNeedsDisplay: YES];
 }
@@ -273,7 +275,7 @@
 -(void)notificationReceived:(NSNotification *)notification
 {
     if ([[notification name] rangeOfString: @"uri-fin-"].location == 0){
-        KWQDEBUG1("KWQHTMLView: Received notification, %s\n", DEBUG_OBJECT([notification name]));
+        WEBKITDEBUG1("KWQHTMLView: Received notification, %s\n", DEBUG_OBJECT([notification name]));
         [self performSelector:@selector(delayLayout:) withObject:self afterDelay:(NSTimeInterval)0.5];
     }
 }

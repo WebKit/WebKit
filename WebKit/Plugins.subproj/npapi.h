@@ -26,8 +26,8 @@
 #ifndef _NPAPI_H_
 #define _NPAPI_H_
 
-#include <CoreServices/CoreServices.h>
-#include <Foundation/Foundation.h>
+#import <CoreServices/CoreServices.h>
+#import <Foundation/Foundation.h>
 /*
  * Values for mode passed to NPP_New:
  */

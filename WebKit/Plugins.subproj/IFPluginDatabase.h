@@ -24,16 +24,16 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WCPlugin.h>
+#import <IFPlugin.h>
 
-@interface WCPluginDatabase : NSObject {
+@interface IFPluginDatabase : NSObject {
     NSArray *plugins;
 }
 
-+ (WCPluginDatabase *)installedPlugins;
-- (WCPlugin *)getPluginForMimeType:(NSString *)mimeType;
-- (WCPlugin *)getPluginForExtension:(NSString *)extension;
-- (WCPlugin *)getPluginForFilename:(NSString *)filename;
++ (IFPluginDatabase *)installedPlugins;
+- (IFPlugin *)getPluginForMimeType:(NSString *)mimeType;
+- (IFPlugin *)getPluginForExtension:(NSString *)extension;
+- (IFPlugin *)getPluginForFilename:(NSString *)filename;
 - (NSArray *) allHandledMIMETypes;
 - (NSArray *) plugins;
 

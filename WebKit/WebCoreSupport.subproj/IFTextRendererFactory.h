@@ -1,14 +1,14 @@
 //
-//  IFCachedTextRendererFactory.h
+//  IFTextRendererFactory.h
 //  WebKit
 //
 //  Created by Darin Adler on Thu May 02 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <IFTextRendererFactory.h>
+#import <WebCoreTextRendererFactory.h>
 
-@interface IFCachedTextRendererFactory : IFTextRendererFactory
+@interface IFTextRendererFactory : WebCoreTextRendererFactory
 {
     NSMutableDictionary *cache;
 }
