@@ -1,3 +1,12 @@
+2005-01-08  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Ken.
+
+	Fixed: <rdar://problem/3924219> Calling setOuterHTML: on a DOMHTMLHtmlElement can crash a program
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setOuterHTML): Added a nil check for fragments who don't have parents.
+
 2005-01-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -823,7 +823,11 @@ bool HTMLElementImpl::setOuterHTML( const DOMString &html )
     }
     
     int ec = 0;
-    parentNode()->replaceChild(fragment, this, ec);
+    
+    if (parentNode()) {
+        parentNode()->replaceChild(fragment, this, ec);
+    }
+    
     return !ec;
 }
 
