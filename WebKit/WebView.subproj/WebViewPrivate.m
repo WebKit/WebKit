@@ -604,6 +604,21 @@ static NSMutableSet *schemesWithRepresentationsSet;
     return [WebCoreEncodings decodeData:data];
 }
 
+- (void)_pushPerformingProgrammaticFocus
+{
+    _private->programmaticFocusCount++;
+}
+
+- (void)_popPerformingProgrammaticFocus
+{
+    _private->programmaticFocusCount--;
+}
+
+- (BOOL)_isPerformingProgrammaticFocus
+{
+    return _private->programmaticFocusCount != 0;
+}
+
 @end
 
 

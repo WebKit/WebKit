@@ -1,3 +1,20 @@
+2003-05-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Don.
+
+	- fixed 3257307 - REGRESSION: crash using onFocus="this.blur()"
+	
+        * kwq/KWQTextField.mm:
+
+        (-[KWQTextField setHasFocus:]): Don't call
+	KWQKHTMLPart::setDocumentFocus(widget) to start with, it might
+	invoke a handler which could call blur(), and we don't want to do
+	the selection handling after that; futhermore, it will get called
+	anyway when we deliver the FocusIn event to the event
+	filter. Also, sometimes unfocusing in the middle of a focus can
+	leave us and AppKit in an inconsistent state; correct this. A
+	comment explains the details.
+
 2003-05-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

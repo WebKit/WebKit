@@ -783,15 +783,17 @@
 - (BOOL)becomeFirstResponder
 {
     NSView *view = nil;
-    switch ([[self window] keyViewSelectionDirection]) {
-    case NSDirectSelection:
-        break;
-    case NSSelectingNext:
-        view = [[self _bridge] nextKeyViewInsideWebFrameViews];
-        break;
-    case NSSelectingPrevious:
-        view = [[self _bridge] previousKeyViewInsideWebFrameViews];
-        break;
+    if (![[self _webView] _isPerformingProgrammaticFocus]) {
+	switch ([[self window] keyViewSelectionDirection]) {
+	case NSDirectSelection:
+	    break;
+	case NSSelectingNext:
+	    view = [[self _bridge] nextKeyViewInsideWebFrameViews];
+	    break;
+	case NSSelectingPrevious:
+	    view = [[self _bridge] previousKeyViewInsideWebFrameViews];
+	    break;
+	}
     }
     if (view) {
         [[self window] makeFirstResponder:view];

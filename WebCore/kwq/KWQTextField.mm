@@ -410,8 +410,6 @@
     _hasFocus = hasFocus;
 
     if (hasFocus) {
-        KWQKHTMLPart::setDocumentFocus(widget);
-
         // Select all the text if we are tabbing in, but otherwise preserve/remember
         // the selection from last time we had focus (to match WinIE).
         if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
@@ -425,6 +423,19 @@
 
         QFocusEvent event(QEvent::FocusIn);
         const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+
+	// Sending the onFocus event above, may have resulted in a blur() - if this
+	// happens when tabbing from another text field, then endEditing: and
+	// controlTextDidEndEditing: will never be called. The bad side effects of this 
+	// include the fact that our idea of the focus state will be wrong;
+	// and the text field will think it's still editing, so it will continue to draw
+	// the focus ring. So we call endEditing: manually if we detect this inconsistency,
+	// and the correct our internal impression of the focus state.
+
+	if ([self currentEditorForEitherField] == nil && [self currentEditor] != nil) {
+	    [[self cell] endEditing:[self currentEditor]];
+	    [self setHasFocus:NO];
+	}
     } else {
         lastSelectedRange = [self selectedRange];
 

@@ -63,6 +63,8 @@ typedef struct _WebResourceDelegateImplementationCache {
     BOOL lastElementWasNonNil;
 
     NSWindow *hostWindow;
+
+    int programmaticFocusCount;
     
     WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
 }
@@ -194,6 +196,10 @@ Could be worth adding to the API.
 + (BOOL)_canHandleRequest:(NSURLRequest *)request;
 
 + (NSString *)_decodeData:(NSData *)data;
+
+- (void)_pushPerformingProgrammaticFocus;
+- (void)_popPerformingProgrammaticFocus;
+- (BOOL)_isPerformingProgrammaticFocus;
 
 @end
 

@@ -1,3 +1,25 @@
+2003-05-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Don.
+
+	- fixed 3257307 - REGRESSION: crash using onFocus="this.blur()"
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge makeFirstResponder:]): Let the WebView know that
+	this is a programmatic focus.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView becomeFirstResponder]): Check if this is a programmatic
+	focus from WebCore - if so, treat it like a direct focus, even if there
+	is a selection direction set.
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _pushPerformingProgrammaticFocus]): New method to indicate
+	upcoming programmatic focus.
+        (-[WebView _popPerformingProgrammaticFocus]): New method to indicate
+	end of programmatic focus. Needs to nest with the previous.
+        (-[WebView _isPerformingProgrammaticFocus]): Check if we are handling
+	a programmatic focus from WebCore. 
+
 2003-05-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

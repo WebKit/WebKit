@@ -242,7 +242,9 @@
 {
     ASSERT(_frame != nil);
     WebView *webView = [_frame webView];
+    [webView _pushPerformingProgrammaticFocus];
     [[webView _UIDelegateForwarder] webView:webView makeFirstResponder:view];
+    [webView _popPerformingProgrammaticFocus];
 }
 
 - (void)closeWindowSoon
