@@ -1,3 +1,18 @@
+2002-12-15  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3109226, epinions page is mostly blank.  Add a hack
+	to disallow > but only inside attribute values for which there
+	is no corresponding attribute name.
+
+	Also fix attribute values with no name so that the value is
+	used as the name so that e.g., <option "selected"> works.
+	
+        Reviewed by darin
+
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::HTMLTokenizer):
+        * khtml/html/htmltokenizer.h:
+
 2002-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -289,7 +289,10 @@ protected:
 
     // name of an unknown attribute
     QString attrName;
-
+    // whether or not the attrname is present (either we found a known HTML attr or we found an unknown
+    // nonempty attrName).
+    bool attrNamePresent;
+    
     // Used to store the code of a srcipting sequence
     QChar *scriptCode;
     // Size of the script sequenze stored in @ref #scriptCode
