@@ -1,5 +1,16 @@
 2002-06-19  Richard Williamson (local)  <rjw@apple.com>
 
+	* kwq/KWQScrollView.mm:
+	(QScrollView::addChild):
+	    Fixed regression from fix to 2956444.  Wrong view was being checked
+	    for conformance to WebCoreFrameView.
+	* kwq/KWQWidget.mm:
+	(QWidget::internalSetGeometry):
+	    Fixed regression from fix to 2956444.  Wrong view was being checked
+	    for conformance to WebCoreFrameView.
+
+2002-06-19  Richard Williamson (local)  <rjw@apple.com>
+
 	* khtml/khtmlview.cpp: (KHTMLView::~KHTMLView): 
 	    Tweak
 	* khtml/rendering/render_image.cpp:

@@ -314,10 +314,12 @@ void QWidget::internalSetGeometry(int x, int y, int w, int h)
 {
     NSView *view = getView();
     
-    // It's a bit of a hack, but when we resize the widget for the top level of
-    // a frame, we need to resize the containing frame widget also. See also
-    // the similar code in QScrollView::addChild.
-    if ([[view superview] conformsToProtocol:@protocol(WebCoreFrameView)]) {
+    // A QScrollView is a widget only used to represent a frame.  If
+    // has an WebCoreFrameView as it's view. When
+    // we resize it we actually want to resize it's containing view,
+    // an IFWebView.  The scrollview contained by the IFWebView
+    // will be autosized.
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
     }
     

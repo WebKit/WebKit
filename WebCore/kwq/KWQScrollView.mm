@@ -201,7 +201,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     // It's a bit of a hack, but when we are asked to add the widget for the top level of
     // a frame, we need to instead add the containing frame widget. See also the similar
     // code in QWidget::internalSetGeometry.
-    if ([[subview superview] conformsToProtocol:@protocol(WebCoreFrameView)]) {
+    if ([subview conformsToProtocol:@protocol(WebCoreFrameView)]) {
         subview = [subview superview];
     }
     
