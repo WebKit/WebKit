@@ -289,7 +289,8 @@ static bool initializedObjectCacheSize = FALSE;
     [self removeFromFrame];
 
     KHTMLView *kview = new KHTMLView(_part, 0);
-    _part->setView(kview, true);
+    _part->setView(kview);
+    kview->deref();
 
     kview->setView(view);
     if (mw >= 0)
@@ -470,7 +471,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
 
 - (void)removeFromFrame
 {
-    _part->setView(0, false);
+    _part->setView(0);
 }
 
 - (void)installInFrame:(NSView *)view
@@ -483,7 +484,6 @@ static BOOL nowPrinting(WebCoreBridge *self)
     if (_renderPart) {
         _renderPart->setWidget(_part->view());
         // Now the render part owns the view, so we don't any more.
-        _part->setOwnsView(false);
     }
 }
 

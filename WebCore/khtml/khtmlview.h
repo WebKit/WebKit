@@ -189,6 +189,9 @@ public:
     QWidget *topLevelWidget() const;
     QPoint mapToGlobal(const QPoint &) const;
 #endif
+
+    void ref() { ++_refCount; }
+    void deref() { if (!--_refCount) delete this; }
     
 protected slots:
     void slotPaletteChanged();
@@ -255,6 +258,8 @@ private:
 
     // ------------------------------------- member variables ------------------------------------
  private:
+    unsigned _refCount;
+
     int _width;
     int _height;
 

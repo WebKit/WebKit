@@ -559,17 +559,36 @@ RenderPart::RenderPart(DOM::HTMLElementImpl* node)
     setInline(false);
 }
 
+RenderPart::~RenderPart()
+{
+    if(m_widget->inherits("KHTMLView")) {
+	static_cast<KHTMLView *>(m_widget)->deref();
+    }
+}
+
 void RenderPart::setWidget( QWidget *widget )
 {
 #ifdef DEBUG_LAYOUT
     kdDebug(6031) << "RenderPart::setWidget()" << endl;
 #endif
-    setQWidget( widget );
-    if(widget->inherits("KHTMLView"))
-        connect( widget, SIGNAL( cleared() ), this, SLOT( slotViewCleared() ) );
+    
+    if (widget == m_widget) {
+	return;
+    }
 
+    if(m_widget->inherits("KHTMLView")) {
+	static_cast<KHTMLView *>(m_widget)->deref();
+    }
+    
+    if(widget->inherits("KHTMLView")) {	
+	static_cast<KHTMLView *>(widget)->ref();
+	setQWidget( widget, false );
+	connect( widget, SIGNAL( cleared() ), this, SLOT( slotViewCleared() ) );
+    } else {
+	setQWidget( widget );
+    }
     setNeedsLayoutAndMinMaxRecalc();
-
+    
     // make sure the scrollbars are set correctly for restore
     // ### find better fix
     slotViewCleared();

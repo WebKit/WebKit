@@ -133,7 +133,6 @@ KWQKHTMLPart::KWQKHTMLPart()
     : _started(this, SIGNAL(started(KIO::Job *)))
     , _completed(this, SIGNAL(completed()))
     , _completedWithBool(this, SIGNAL(completed(bool)))
-    , _ownsView(false)
     , _mouseDownView(nil)
     , _sendingEventToSubview(false)
     , _mouseDownMayStartDrag(false)
@@ -156,8 +155,8 @@ KWQKHTMLPart::KWQKHTMLPart()
 KWQKHTMLPart::~KWQKHTMLPart()
 {
     mutableInstances().remove(this);
-    if (_ownsView) {
-        delete d->m_view;
+    if (d->m_view) {
+	d->m_view->deref();
     }
     [_formValuesAboutToBeSubmitted release];
     [_formAboutToBeSubmitted release];
@@ -618,7 +617,7 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
     }
 }
     
-void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
+void KWQKHTMLPart::setView(KHTMLView *view)
 {
     // Detach the document now, so any onUnload handlers get run - if
     // we wait until the view is destroyed, then things won't be
@@ -627,13 +626,14 @@ void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
 	d->m_doc->detach();
     }
 
-    if (_ownsView) {
-        if (!(d->m_doc && d->m_doc->inPageCache()))
-            delete d->m_view;
+    if (d->m_view) {
+	d->m_view->deref();
     }
     d->m_view = view;
+    if (d->m_view) {
+	d->m_view->ref();
+    }
     setWidget(view);
-    _ownsView = weOwnIt;
     
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
@@ -1011,10 +1011,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     d->m_bLoadEventEmitted = false;
     d->m_referrer = m_url.url();
     
-    // We have to change the view back before setting the document,
-    // so that we test whether the *previous* document is in the page
-    // cache when deciding whether to delete the previous view.
-    setView (doc->view(), true);
+    setView(doc->view());
     
     d->m_doc = doc;
     d->m_doc->ref();

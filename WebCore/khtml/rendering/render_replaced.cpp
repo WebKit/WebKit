@@ -116,7 +116,8 @@ bool RenderReplaced::canHaveChildren() const
 // -----------------------------------------------------------------------------
 
 RenderWidget::RenderWidget(DOM::NodeImpl* node)
-        : RenderReplaced(node)
+      : RenderReplaced(node),
+	m_deleteWidget(false)
 {
     m_widget = 0;
     // a replaced element doesn't support being anonymous
@@ -148,7 +149,9 @@ RenderWidget::~RenderWidget()
 {
     KHTMLAssert( refCount() <= 0 );
 
-    delete m_widget;
+    if (m_deleteWidget) {
+	delete m_widget;
+    }
 }
 
 void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
@@ -168,14 +171,16 @@ void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
     }
 }
 
-void RenderWidget::setQWidget(QWidget *widget)
+void RenderWidget::setQWidget(QWidget *widget, bool deleteWidget)
 {
     if (widget != m_widget)
     {
         if (m_widget) {
             m_widget->removeEventFilter(this);
             disconnect( m_widget, SIGNAL( destroyed()), this, SLOT( slotWidgetDestructed()));
-            delete m_widget;
+	    if (m_deleteWidget) {
+		delete m_widget;
+	    }
             m_widget = 0;
         }
         m_widget = widget;
@@ -194,6 +199,7 @@ void RenderWidget::setQWidget(QWidget *widget)
         }
 	m_view->addChild( m_widget, -500000, 0 );
     }
+    m_deleteWidget = deleteWidget;
 }
 
 void RenderWidget::layout( )

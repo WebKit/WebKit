@@ -1,5 +1,53 @@
 2003-05-16  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Richard.
+
+	- fixed 3260940 - REGRESSION: reproducible crash freeing page cache item
+	- fixed 3241041 - REGRESSION: repro world leak of 1 JavaScript interpreter
+
+	The fix for these problems and probably other page cache wackiness
+	was to use a refcounting scheme for KHTMLView instead of counting
+	on the previous tricky ownership rules.
+	
+        * khtml/khtmlview.cpp:
+        (KHTMLView::KHTMLView): Initialize _refCount to 1.
+        (KHTMLView::~KHTMLView): Assert that _refCount is 0, to make sure no one is deleting
+	views explicitly.
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderPart::~RenderPart): If our view is a KHTMLView, deref it.
+        (RenderPart::setWidget): If the view is a KHTMLView, tell the superclass not to
+	delete it and ref it.
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::RenderWidget): Initizlize m_deleteWidget to false.
+        (RenderWidget::~RenderWidget): Only delete widget if we're supposed to.
+        (RenderWidget::setQWidget): Add extra delegeWidget argument that says whether
+	to delete this widget when done - defaults to true.
+        * khtml/rendering/render_replaced.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): Removed _ownsView boolean -- we'll always hang on
+	to a ref to it now.
+        (KWQKHTMLPart::~KWQKHTMLPart): Deref the view always instead of deleting it sometimes.
+        (KWQKHTMLPart::setView): deref the old view if not null. ref the new view if not null.
+	Drop tricky ownership rules.
+        (KWQKHTMLPart::openURLFromPageCache): Remove no longer applicable comment about the
+	importance of when setView is called.
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState initWithDocument:URL:windowProperties:locationProperties:]): ref the
+	document's view.
+        (-[KWQPageState invalidate]): deref the document's view.
+        (-[KWQPageState dealloc]): deref the document's view instead of deleting it.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge createKHTMLViewWithNSView:marginWidth:marginHeight:]): No more need
+	to pass weOwnIt argument to setView. Also, deref the view after passing it to the
+	KWQKHTMLView -- we own the initial ref since we allocated it.
+        (-[WebCoreBridge removeFromFrame]): No more need to pass weOwnIt argument to setView.
+        (-[WebCoreBridge installInFrame:]): Ditto.
+
+2003-05-16  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Ken.
 
 	- fixed 3256997 - reproducible world leak (of 1 JavaScript interpreter) using google images 

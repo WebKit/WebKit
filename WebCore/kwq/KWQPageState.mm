@@ -49,6 +49,7 @@ using KJS::SavedProperties;
     document = doc;
     docRenderer = doc->renderer();
     document->setInPageCache(YES);
+    document->view()->ref();
     URL = new KURL(u);
     windowProperties = wp;
     locationProperties = lp;
@@ -88,13 +89,14 @@ using KJS::SavedProperties;
     ASSERT(document);
     
     document->setInPageCache(NO);
-    
+
     // Do NOT detach the renderer here.  The ownership of the renderer
     // has been handed off to core.  The renderer is being used in an
     // active page.  It will be either cleaned up with the document or
     // re-added to another page cache.
     docRenderer = 0;
-    
+
+    document->view()->deref();
     document->deref();
     document = 0;
 
@@ -123,7 +125,7 @@ using KJS::SavedProperties;
         
         if (view) {
             view->clearPart();
-            delete view;
+	    view->deref();
         }
     }
     
