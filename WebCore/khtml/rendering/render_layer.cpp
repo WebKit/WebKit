@@ -674,15 +674,14 @@ void RenderLayer::RenderZTreeNode::detach(RenderArena* renderArena)
     renderArena->free(*(size_t *)this, this);
 }
 
-QPtrVector<RenderLayer::RenderLayerElement> RenderLayer::elementList()
+QPtrVector<RenderLayer::RenderLayerElement> RenderLayer::elementList(RenderZTreeNode *&node)
 {
     QPtrVector<RenderLayerElement> list;
     
     QRect damageRect(m_x, m_y, m_width, m_height);
-    RenderZTreeNode *node = constructZTree(damageRect, damageRect, this);
+    node = constructZTree(damageRect, damageRect, this);
     if (node) {
         constructLayerList(node, &list);
-        node->detach(renderer()->renderArena());
     }
     
     return list;

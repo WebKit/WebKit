@@ -41,6 +41,7 @@ using khtml::RenderTableCell;
 using khtml::RenderWidget;
 
 typedef khtml::RenderLayer::RenderLayerElement RenderLayerElement;
+typedef khtml::RenderLayer::RenderZTreeNode RenderZTreeNode;
 
 static void writeLayers(QTextStream &ts, const RenderObject &o, int indent = 0);
 
@@ -132,9 +133,13 @@ static void write(QTextStream &ts, const RenderLayerElement &e, int indent = 0)
 
 static void writeLayers(QTextStream &ts, const RenderObject &o, int indent)
 {
-    QPtrVector<RenderLayerElement> list = o.layer()->elementList();
+    RenderZTreeNode *node;
+    QPtrVector<RenderLayerElement> list = o.layer()->elementList(node);
     for (unsigned i = 0; i != list.count(); ++i) {
         write(ts, *list[i], indent);
+    }
+    if (node) {
+        node->detach(o.renderArena());
     }
 }
 

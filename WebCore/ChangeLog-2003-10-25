@@ -1,3 +1,19 @@
+2003-01-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed the crashing so the layout tests work
+
+        * khtml/rendering/render_layer.h: Add a node pointer result.
+        * khtml/rendering/render_layer.cpp: (RenderLayer::elementList):
+	Return the node pointer so we can destroy it when done with it.
+
+        * khtml/rendering/render_object.h: Make renderArena() const.
+        * khtml/rendering/render_object.cpp: (RenderObject::renderArena): Make it const.
+
+        * kwq/KWQRenderTreeDebug.cpp: (writeLayers): Free the Z layer list when done.
+	Without this things just crashed.
+
 2003-01-17  Richard Williamson   <rjw@apple.com>
 
         Fixed 3126141. Allow pages with plugins to be cached.  This is safe
@@ -9,7 +25,6 @@
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::canCachePage):
 
-=======
 2003-01-17  David Hyatt  <hyatt@apple.com>
 
 	The new table code from Lars.  Also includes bug fixes for

@@ -233,7 +233,7 @@ public:
     };
     
     // For debugging.
-    QPtrVector<RenderLayerElement> elementList();
+    QPtrVector<RenderLayerElement> elementList(RenderZTreeNode *&node);
       
 private:
     // The constructZTree function creates a z-tree for a given layer hierarchy
