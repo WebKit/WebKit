@@ -13,7 +13,7 @@
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
-#import <WebKit/WebDOMOperations.h>
+#import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
@@ -139,6 +139,11 @@ static BOOL forceRealHitTest = NO;
 + (WebElementOrTextFilter *)filter;
 @end
 
+@interface NSAttributedString(AppKitOnlyOnTiger)
+- (id)_initWithDOMRange:(DOMRange *)domRange;
+- (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
+@end
+
 static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 
 // Handles the complete: text command
@@ -249,7 +254,9 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
     
     if ([types containsObject:NSHTMLPboardType]) {
         return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSHTMLPboardType] baseURLString:nil];
-    } else if ([types containsObject:NSTIFFPboardType]) {
+    }
+    
+    if ([types containsObject:NSTIFFPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
                                                               URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
                                                          MIMEType:@"image/tiff" 
@@ -258,7 +265,9 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
         DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
         [resource release];
         return fragment;
-    } else if ([types containsObject:NSPICTPboardType]) {
+    }
+    
+    if ([types containsObject:NSPICTPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
                                                               URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
                                                          MIMEType:@"image/pict" 
@@ -267,7 +276,9 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
         DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
         [resource release];
         return fragment;
-    } else if ((URL = [pasteboard _web_bestURL])) {
+    }
+    
+    if ((URL = [pasteboard _web_bestURL])) {
         NSString *URLString = [URL _web_originalDataAsString];
         NSString *linkLabel = [pasteboard stringForType:WebURLNamePboardType];
         linkLabel = [linkLabel length] > 0 ? linkLabel : URLString;
@@ -279,15 +290,38 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
         [fragment appendChild:anchorElement];
         [anchorElement appendChild:[document createTextNode:linkLabel]];
         return fragment;
-    } else if ([types containsObject:NSRTFDPboardType]) {
-        // FIXME: Support RTFD to HTML (or DOM) conversion.
-        ERROR("RTFD to HTML conversion not yet supported.");
-        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
-    } else if ([types containsObject:NSRTFPboardType]) {
-        // FIXME: Support RTF to HTML (or DOM) conversion.
-        ERROR("RTF to HTML conversion not yet supported.");
-        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
-    } else if (allowPlainText && [types containsObject:NSStringPboardType]) {
+    }
+    
+    NSAttributedString *string = nil;
+    if ([NSAttributedString instancesRespondToSelector:@selector(_documentFromRange:document:documentAttributes:subresources:)]) {
+        if ([types containsObject:NSRTFDPboardType]) {
+            string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
+        }
+        if (string == nil && [types containsObject:NSRTFPboardType]) {
+            string = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
+        }
+        if (string != nil) {
+            NSArray *elements = [[NSArray alloc] initWithObjects:@"style", nil];
+            NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:elements, NSExcludedElementsDocumentAttribute, nil];
+            [elements release];
+            NSRange range = NSMakeRange(0, [string length]);
+            NSArray *subresources;
+            DOMDocumentFragment *fragment = [string _documentFromRange:range 
+                                                              document:[[self _bridge] DOMDocument] 
+                                                    documentAttributes:documentAttributes
+                                                          subresources:&subresources];
+            [documentAttributes release];
+            [string release];
+            if (fragment) {
+                if ([subresources count] != 0) {
+                    [[self _dataSource] _addSubresources:subresources];
+                }
+                return fragment;
+            }
+        }
+    }
+    
+    if (allowPlainText && [types containsObject:NSStringPboardType]) {
         return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
     }
     
@@ -1619,16 +1653,28 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSString *)string
 {
+    // FIXME: We should be using WebCore logic for converting the document into a string and not creating an attributed string to do this.
     return [[self attributedString] string];
+}
+
+- (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
+{
+    NSAttributedString *attributedString = nil;
+    if ([NSAttributedString instancesRespondToSelector:@selector(_initWithDOMRange:)]) {
+        attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];
+    }
+    return attributedString;
 }
 
 - (NSAttributedString *)attributedString
 {
-    WebBridge *b = [self _bridge];
-    return [b attributedStringFrom:[b DOMDocument]
-                       startOffset:0
-                                to:nil
-                         endOffset:0];
+    WebBridge *bridge = [self _bridge];
+    DOMDocument *document = [bridge DOMDocument];
+    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
+    if (attributedString == nil) {
+        attributedString = [bridge attributedStringFrom:document startOffset:0 to:nil endOffset:0];
+    }
+    return attributedString;
 }
 
 - (NSString *)selectedString
@@ -1636,10 +1682,14 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] selectedString];
 }
 
-// Get an attributed string that represents the current selection.
 - (NSAttributedString *)selectedAttributedString
 {
-    return [[self _bridge] selectedAttributedString];
+    WebBridge *bridge = [self _bridge];
+    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[bridge selectedDOMRange]];
+    if (attributedString == nil) {
+        attributedString = [bridge selectedAttributedString];
+    }
+    return attributedString;
 }
 
 - (void)selectAll

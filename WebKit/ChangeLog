@@ -1,5 +1,23 @@
 2004-08-26  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 
+	<rdar://problem/3546412> support for pasting and drag and dropping of RTF and RTFD to editable WebViews
+	<rdar://problem/3745345> use AppKit for converting from DOM to RTF
+
+        Reviewed by rjw.
+
+        * DOM.subproj/WebDOMOperations.m:
+        (-[DOMDocument _documentRange]): new
+        * DOM.subproj/WebDOMOperationsPrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]): call AppKit SPI to get a document fragment from an attributed string
+        (-[WebHTMLView string]): added a FIXME
+        (-[WebHTMLView _attributeStringFromDOMRange:]): new, calls AppKit SPI that creates an attributed string from a DOM Range
+        (-[WebHTMLView attributedString]): call _attributeStringFromDOMRange:, fallback to old code if it returns nil
+        (-[WebHTMLView selectedAttributedString]): ditto
+
+2004-08-26  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3774178> Plugin hooks for selected state aren't being called
 
         Reviewed by darin.

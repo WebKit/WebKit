@@ -75,6 +75,19 @@
 
 @end
 
+@implementation DOMDocument (WebDOMDocumentOperationsPrivate)
+
+- (DOMRange *)_documentRange
+{
+    DOMRange *range = [self createRange];
+    DOMElement *documentElement = [self documentElement];
+    [range setStartBefore:documentElement];
+    [range setStartAfter:documentElement];
+    return range;
+}
+
+@end
+
 @implementation DOMRange (WebDOMRangeOperations)
 
 - (WebBridge *)_bridge

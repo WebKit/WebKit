@@ -19,3 +19,7 @@
 - (WebBridge *)_bridge;
 @end
 
+@interface DOMDocument (WebDOMDocumentOperationsPrivate)
+- (DOMRange *)_documentRange;
+@end
+
