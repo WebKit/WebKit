@@ -4,6 +4,26 @@
 
         Fix for this bug:
         
+        <rdar://problem/4039676> REGRESSION (Mail): in reply, <cr> on pasted text (without trailing newline) is eaten when pasted above date
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Code to "eat" a <br> element, that was creating an otherwise empty line, was running
+        when it should not. If the content being pasted in does not end in a "logical" newline itself, then the <br> already
+        in the content needs to be preserved. A simple one-line change now sees to this.
+        
+        * layout-tests/editing/pasteboard/paste-text-010-expected.txt: This test now has an extra, but harmless,
+        <br> at the end of a paragraph. This makes sense given the code change.
+
+        New test:
+        * layout-tests/editing/pasteboard/paste-text-018-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-018.html: Added.
+
+2005-03-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
         <rdar://problem/4035648> REGRESSION (Mail): line feed in source HTML file causes bad copy/paste behavior
 
         The createMarkup() function in markup.cpp iterates over the nodes in a range,

@@ -4584,6 +4584,7 @@ void ReplaceSelectionCommand::doApply()
     if (!linePlaceholder) {
         Position downstream = startPos.downstream(StayInBlock);
         if (downstream.node()->id() == ID_BR && downstream.offset() == 0 && 
+            m_fragment.hasInterchangeNewline() &&
             isFirstVisiblePositionOnLine(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
             linePlaceholder = downstream.node();
     }
