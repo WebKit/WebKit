@@ -1910,6 +1910,20 @@ static WebHTMLView *lastHitView = nil;
     [[self _bridge] setTextSizeMultiplier:[[self _webView] textSizeMultiplier]];    
 }
 
+- (BOOL)performKeyEquivalent:(NSEvent *)event
+{
+    // Pass command-key combos through WebCore so Command-return on an active link is treated
+    // as a modified activation rather than ignored. Note that this means web pages have a crack 
+    // at intercepting command-modified keypresses now. If this turns out to cause havoc we
+    // can restrict this to only send the event through WebCore if it contains the Return or
+    // Enter key.
+    if ([[self _bridge] interceptKeyEvent:event toView:self]) {
+        return YES;
+    }
+
+    return [super performKeyEquivalent:event];
+}
+
 - (void)keyDown:(NSEvent *)event
 {
     BOOL intercepted = [[self _bridge] interceptKeyEvent:event toView:self];

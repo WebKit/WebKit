@@ -1,3 +1,23 @@
+2004-03-26  John Sullivan  <sullivan@apple.com>
+
+        - fixed the following bugs:
+        
+        <rdar://problem/3601630>: command-modified keypresses that would activate links are ignored by WebKit
+        <rdar://problem/3601604>: WebActionModifierFlagsKey not set correctly for modified keypresses that activate links
+        <rdar://problem/3544946>: cmd-return should open a link in a new tab
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _actionInformationForNavigationType:event:originalURL:]):
+        Pass modifier flags always, not just for mouse events. This fixes 3601604.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView performKeyEquivalent:]):
+        Give the bridge a chance to intercept command-modified keypresses. This fixes 3601630.
+        
+        Together these two changes fix 3544946.
+
 2004-03-25  David Hyatt  <hyatt@apple.com>
 
 	Implement the rest of the search field.

@@ -1516,12 +1516,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     nil];
             }
         }
-        
+            
         // fall through
         
         default:
             return [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+                [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
                 URL, WebActionOriginalURLKey,
                 nil];
     }
