@@ -1,3 +1,18 @@
+2003-11-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - first half of fix for 3457162 -- selecting text during a page load that blows the text field
+          away causes a crash
+
+        The WebCore part of this fix is to generalize the "defers loading" feature to all mouse clicks,
+        rather than just doing it for mouse clicks on the combo box.
+
+        * kwq/KWQComboBox.mm: (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]):
+        Remove code to defer loading.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Put the code here
+        instead.
+
 2003-11-14  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3483585>: Option-tab in a text field inputs 

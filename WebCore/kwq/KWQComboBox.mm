@@ -334,30 +334,10 @@ void QComboBox::setWritingDirection(QPainter::TextDirection direction)
 
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)rect ofView:(NSView *)view untilMouseUp:(BOOL)flag
 {
-    // We need to "defer loading" and defer timers while we are tracking the menu.
-    // That's because we don't want the new page to load while the user is holding the mouse down.
-    // Normally, this is not a problem because we use a different run loop mode, but pop-up menus
-    // use a Carbon implementation, and it uses the default run loop mode.
-    // See bugs 3021018 and 3242460 for some more information.
-    
     WebCoreBridge *bridge = [KWQKHTMLPart::bridgeForWidget(widget) retain];
-    BOOL wasDeferringLoading = [bridge defersLoading];
-    if (!wasDeferringLoading) {
-        [bridge setDefersLoading:YES];
-    }
-    BOOL wasDeferringTimers = QObject::defersTimers();
-    if (!wasDeferringTimers) {
-        QObject::setDefersTimers(true);
-    }
     BOOL result = [super trackMouse:event inRect:rect ofView:view untilMouseUp:flag];
-    if (!wasDeferringTimers) {
-        QObject::setDefersTimers(false);
-    }
-    if (!wasDeferringLoading) {
-        [bridge setDefersLoading:NO];
-    }
     if (result) {
-        // Give khtml a chance to fix up its event state, since the popup eats all the
+        // Give KHTML a chance to fix up its event state, since the popup eats all the
         // events during tracking.  [NSApp currentEvent] is still the original mouseDown
         // at this point!
         [bridge part]->sendFakeEventsAfterWidgetTracking(event);

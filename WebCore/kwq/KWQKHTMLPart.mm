@@ -1668,11 +1668,30 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
         }
     }
 
+    // We need to "defer loading" and defer timers while we are tracking the mouse.
+    // That's because we don't want the new page to load while the user is holding the mouse down.
+    
+    BOOL wasDeferringLoading = [_bridge defersLoading];
+    if (!wasDeferringLoading) {
+        [_bridge setDefersLoading:YES];
+    }
+    BOOL wasDeferringTimers = QObject::defersTimers();
+    if (!wasDeferringTimers) {
+        QObject::setDefersTimers(true);
+    }
+
     ASSERT(!_sendingEventToSubview);
     _sendingEventToSubview = true;
     [view mouseDown:_currentEvent];
     _sendingEventToSubview = false;
     
+    if (!wasDeferringTimers) {
+        QObject::setDefersTimers(false);
+    }
+    if (!wasDeferringLoading) {
+        [_bridge setDefersLoading:NO];
+    }
+
     // Remember which view we sent the event to, so we can direct the release event properly.
     _mouseDownView = view;
     _mouseDownWasInSubframe = false;
