@@ -504,6 +504,8 @@
 {
     NSPoint p = [event locationInWindow];
     
+    [self autoscroll: event];
+    
     QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), Qt::LeftButton, Qt::LeftButton);
     KHTMLView *widget = _private->widget;
     if (widget) {

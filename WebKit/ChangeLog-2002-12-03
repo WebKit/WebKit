@@ -1,5 +1,12 @@
 2002-06-27  Richard Williamson  <rjw@apple.com>
 
+        Implemented auto scrolling.
+        
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView mouseDragged:]):
+
+2002-06-27  Richard Williamson  <rjw@apple.com>
+
         Implement selectAll.
         
         * WebView.subproj/IFHTMLView.mm:
