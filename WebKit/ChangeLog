@@ -1,3 +1,73 @@
+2004-09-09  Richard Williamson   <rjw@apple.com>
+
+        Alternate implementation of image rendering.  Use CGImageRefs instead
+        of NSImages.
+        
+        Mostly works, but currently disabled because of issues w/ CG.
+        
+        Reviewed by Chris.
+
+        * ChangeLog:
+        * WebCoreSupport.subproj/WebImageData.h: Added.
+        * WebCoreSupport.subproj/WebImageData.m: Added.
+        (-[WebImageData _commonTermination]):
+        (-[WebImageData dealloc]):
+        (-[WebImageData finalize]):
+        (-[WebImageData copyWithZone:]):
+        (-[WebImageData numberOfImages]):
+        (-[WebImageData currentFrame]):
+        (-[WebImageData _invalidateImages]):
+        (-[WebImageData imageAtIndex:]):
+        (-[WebImageData incrementalLoadWithBytes:length:complete:]):
+        (drawPattern):
+        (-[WebImageData tileInRect:fromPoint:context:]):
+        (-[WebImageData isNull]):
+        (-[WebImageData size]):
+        (-[WebImageData _frameDuration]):
+        (-[WebImageData _repetitionCount]):
+        (-[WebImageData isAnimationFinished]):
+        (+[WebImageData stopAnimationsInView:]):
+        (-[WebImageData addAnimatingRenderer:inView:]):
+        (-[WebImageData removeAnimatingRenderer:]):
+        (-[WebImageData _stopAnimation]):
+        (-[WebImageData _nextFrame:]):
+        (-[WebImageData animate]):
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer initWithMIMEType:]):
+        (-[WebImageRenderer initWithData:MIMEType:]):
+        (-[WebImageRenderer initWithContentsOfFile:]):
+        (-[WebImageRenderer dealloc]):
+        (-[WebImageRenderer copyWithZone:]):
+        (-[WebImageRenderer retainOrCopyIfNeeded]):
+        (-[WebImageRenderer resize:]):
+        (-[WebImageRenderer size]):
+        (-[WebImageRenderer MIMEType]):
+        (-[WebImageRenderer frameCount]):
+        (-[WebImageRenderer isNull]):
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageRenderer drawImageInRect:fromRect:]):
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]):
+        (-[WebImageRenderer tileInRect:fromPoint:context:]):
+        (-[WebImageRenderer _startOrContinueAnimationIfNecessary]):
+        (+[WebImageRenderer stopAnimationsInView:]):
+        (-[WebImageRenderer stopAnimation]):
+        (-[WebImageRenderer targetAnimationRect]):
+        (-[WebImageRenderer increaseUseCount]):
+        (-[WebImageRenderer decreaseUseCount]):
+        (-[WebImageRenderer flushRasterCache]):
+        (-[WebImageRenderer imageRef]):
+        (-[WebImageRenderer TIFFRepresentation]):
+        (-[WebImageRenderer image]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithMIMEType:]):
+        (-[WebImageRendererFactory imageRendererWithData:MIMEType:]):
+        (-[WebImageRendererFactory imageRendererWithSize:]):
+        (-[WebImageRendererFactory imageRendererWithName:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView image]):
+
 === Safari-163 ===
 
 2004-09-09  Maciej Stachowiak  <mjs@apple.com>

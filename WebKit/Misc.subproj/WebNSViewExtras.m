@@ -174,7 +174,7 @@
 }
 #endif
 
-- (void)_web_dragImage:(WebImageRenderer *)image
+- (void)_web_dragImage:(WebImageRenderer *)wir
                   rect:(NSRect)rect
                  event:(NSEvent *)event
             pasteboard:(NSPasteboard *)pasteboard 
@@ -184,7 +184,13 @@
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSImage *dragImage;
     NSPoint origin;
+    NSImage *image;
     
+#ifdef USE_CGIMAGEREF
+    image = [wir image];
+#else
+    image = wir;
+#endif
     if ([image size].height * [image size].width <= WebMaxOriginalImageArea) {
         NSSize originalSize = rect.size;
         origin = rect.origin;
@@ -203,7 +209,7 @@
         origin.y = origin.y + originalSize.height;
         origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
     } else {
-        NSString *extension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[image MIMEType]];
+        NSString *extension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[wir MIMEType]];
         if (extension == nil) {
             extension = @"";
         }

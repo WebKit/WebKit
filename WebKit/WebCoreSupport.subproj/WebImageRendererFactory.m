@@ -50,6 +50,7 @@
 {
     NSImage *imageRenderer = [[WebImageRenderer alloc] initWithMIMEType:MIMEType];
 
+#ifndef USE_CGIMAGEREF
     if (![MIMEType isEqual:@"application/pdf"]) {
         NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
         [imageRenderer addRepresentation:rep];
@@ -65,6 +66,7 @@
     [imageRenderer setCacheMode: NSImageCacheNever];
 
     [imageRenderer setScalesWhenResized:NO];
+#endif
         
     return [imageRenderer autorelease];
 }
@@ -78,6 +80,7 @@
 {
     WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData:data MIMEType:MIMEType];
 
+#ifndef USE_CGIMAGEREF
     NSArray *reps = [imageRenderer representations];
     if ([reps count] == 0){
         [imageRenderer release];
@@ -94,6 +97,7 @@
     }
     
     [imageRenderer setFlipped:YES];
+#endif
 
     return [imageRenderer autorelease];
 }
@@ -114,15 +118,19 @@
 - (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)s
 {
     WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithSize:s] autorelease];
+#ifndef USE_CGIMAGEREF
     [imageRenderer setScalesWhenResized:NO];
+#endif
     return imageRenderer;
 }
 
 - (id <WebCoreImageRenderer>)imageRendererWithName:(NSString *)name
 {
     WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithContentsOfFile:name] autorelease];
+#ifndef USE_CGIMAGEREF
     [imageRenderer setScalesWhenResized:NO];
     [imageRenderer setFlipped:YES];
+#endif
     return imageRenderer;
 }
 

@@ -287,7 +287,11 @@
 
 - (NSImage *)image
 {
+#ifdef USE_CGIMAGEREF
+    return [[rep image] image];
+#else
     return [rep image];
+#endif
 }
 
 #pragma mark PRINTING

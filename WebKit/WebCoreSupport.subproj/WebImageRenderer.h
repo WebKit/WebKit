@@ -4,7 +4,46 @@
 
 #import <Cocoa/Cocoa.h>
 
+// Needed for CGCompositeOperation
+#import <CoreGraphics/CGContextPrivate.h>
+
 @protocol WebCoreImageRenderer;
+
+//#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+//#define USE_CGIMAGEREF YES
+//#endif
+
+#ifdef USE_CGIMAGEREF
+@class WebImageData;
+
+@interface WebImageRenderer : NSObject <WebCoreImageRenderer>
+{
+    NSString *MIMEType;
+
+    WebImageData *imageData;
+
+    NSRect targetAnimationRect;
+    
+    NSSize adjustedSize;
+    BOOL isSizeAdjusted;
+}
+
+- (id)initWithMIMEType:(NSString *)MIME;
+- (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME;
+- (id)initWithContentsOfFile:(NSString *)filename;
+- (NSString *)MIMEType;
++ (void)stopAnimationsInView:(NSView *)aView;
+- (int)frameCount;
+- (NSRect)targetAnimationRect;
+- (void)resize:(NSSize)s;
+- (NSSize)size;
+- (NSData *)TIFFRepresentation;
+- (NSImage *)image;
+
+@end
+
+#else
+
 
 @interface WebImageRenderer : NSImage <WebCoreImageRenderer>
 {
@@ -38,6 +77,7 @@
     CGImageRef cachedImageRef;
     
     id _PDFDoc;
+        
 @public    
     NSData *originalData;
 }
@@ -50,3 +90,5 @@
 - (NSString *)MIMEType;
 
 @end
+
+#endif

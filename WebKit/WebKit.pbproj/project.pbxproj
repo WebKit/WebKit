@@ -359,6 +359,7 @@
 				83634A7406DA5ECD0026E290,
 				93B641FC06E292BC0055F610,
 				EDE850CE06ECC79E005FAB05,
+				51C6513806EFCD9300969825,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -482,6 +483,7 @@
 				51E94C6B06C0347500A9B09E,
 				83634A7306DA5ECD0026E290,
 				93B641FB06E292BC0055F610,
+				51C6513906EFCD9300969825,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1581,6 +1583,34 @@
 				ATTRIBUTES = (
 					Public,
 				);
+			};
+		};
+		51C6513606EFCD9300969825 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebImageData.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51C6513706EFCD9300969825 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebImageData.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51C6513806EFCD9300969825 = {
+			fileRef = 51C6513606EFCD9300969825;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51C6513906EFCD9300969825 = {
+			fileRef = 51C6513706EFCD9300969825;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 		51E94C0706C02CA300A9B09E = {
@@ -4506,6 +4536,8 @@
 				F5E7B24603025CE801A80180,
 				BE26F18D05517E0800BFA0C3,
 				BE26F18E05517E0800BFA0C3,
+				51C6513606EFCD9300969825,
+				51C6513706EFCD9300969825,
 				9CE1F8A002A5C6F30ECA2ACD,
 				9CE1F8A102A5C6F30ECA2ACD,
 				9CE1F8A202A5C6F30ECA2ACD,

@@ -2,7 +2,6 @@
         WebImageRenderer.m
 	Copyright (c) 2002, 2003, Apple, Inc. All rights reserved.
 */
-
 #import <WebKit/WebImageRenderer.h>
 
 #import <WebKit/WebAssertions.h>
@@ -12,7 +11,226 @@
 
 #import <WebCore/WebCoreImageRenderer.h>
 
+#import <CoreGraphics/CGContextPrivate.h>
 #import <CoreGraphics/CGContextGState.h>
+
+
+#ifdef USE_CGIMAGEREF
+
+#import <WebKit/WebImageData.h>
+
+// Forward declarations of internal methods.
+@interface WebImageRenderer (WebInternal)
+- (void)_startOrContinueAnimationIfNecessary;
+@end
+
+@implementation WebImageRenderer
+
+- (id)initWithMIMEType:(NSString *)MIME
+{
+    self = [super init];
+    if (self != nil) {
+        MIMEType = [MIME copy];
+    }
+    return self;
+}
+
+- (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME
+{
+    self = [super init];
+    if (self != nil) {
+        MIMEType = [MIME copy];
+        imageData = [[WebImageData alloc] init];
+        [imageData incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES];
+    }
+    return self;
+}
+
+- (id)initWithContentsOfFile:(NSString *)filename
+{
+    self = [super init];
+
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
+
+    imageData = [[WebImageData alloc] init];
+    NSData *data = [NSData dataWithContentsOfFile:imagePath];
+    [imageData incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES];
+        
+
+    return self;
+}
+
+- (void)dealloc
+{
+    [MIMEType release];
+    [imageData release];
+}
+
+- copyWithZone:(NSZone *)zone
+{
+    WebImageRenderer *copy;
+
+    copy = [[WebImageRenderer alloc] init];
+    copy->MIMEType = [MIMEType copy];
+    copy->adjustedSize = adjustedSize;
+    copy->isSizeAdjusted = isSizeAdjusted;
+    copy->imageData = [imageData retain];
+        
+    return copy;
+}
+
+- (id <WebCoreImageRenderer>)retainOrCopyIfNeeded
+{
+    return [self copyWithZone:0];
+}
+
+- (void)resize:(NSSize)s
+{
+    isSizeAdjusted = YES;
+    adjustedSize = s;
+}
+
+- (NSSize)size
+{
+    if (isSizeAdjusted)
+        return adjustedSize;
+        
+    CGSize sz = [imageData size];
+    return NSMakeSize(sz.width, sz.height);
+}
+
+- (NSString *)MIMEType
+{
+    return MIMEType;
+}
+
+- (int)frameCount
+{
+    return [imageData numberOfImages];
+}
+
+
+- (BOOL)isNull
+{
+    return [imageData isNull];
+}
+
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
+{
+    if (!imageData)
+        imageData = [[WebImageData alloc] init];
+    return [imageData incrementalLoadWithBytes:bytes length:length complete:isComplete];
+}
+
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr
+{
+    CGContextRef aContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGCompositeOperation op = kCGCompositeSover;
+
+    [self drawImageInRect:ir fromRect:fr compositeOperator:op context:aContext];
+}
+
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)operator context:(CGContextRef)aContext
+{
+    if (aContext == 0)
+        aContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    
+    CGCompositeOperation op = (CGCompositeOperation)operator;
+    if (op == kCGCompositeUnknown)
+        op = kCGCompositeSover;
+        
+    [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
+                    fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
+                    compositeOperation:op context:aContext];
+
+    targetAnimationRect = ir;
+    [self _startOrContinueAnimationIfNecessary];
+}
+
+- (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point context:(CGContextRef)aContext
+{
+    if (aContext == 0)
+        aContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+
+    [imageData tileInRect:CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)
+            fromPoint:CGPointMake(point.x, point.y) context:aContext];
+            
+    targetAnimationRect = rect;
+    [self _startOrContinueAnimationIfNecessary];
+}
+
+- (void)_startOrContinueAnimationIfNecessary
+{
+    if ([imageData numberOfImages] > 1 && ![imageData isAnimationFinished]) {
+        [imageData addAnimatingRenderer:self inView:[NSView focusView]];
+        [imageData animate];
+    }
+}
+
++ (void)stopAnimationsInView:(NSView *)aView
+{
+    [WebImageData stopAnimationsInView:aView];
+}
+
+
+- (void)stopAnimation
+{
+    [imageData removeAnimatingRenderer:self];
+}
+
+- (NSRect)targetAnimationRect
+{
+    return targetAnimationRect;
+}
+
+- (void)increaseUseCount
+{
+}
+
+- (void)decreaseUseCount
+{
+}
+
+- (void)flushRasterCache
+{
+}
+
+- (CGImageRef)imageRef
+{
+    return [imageData imageAtIndex:0];
+}
+
+- (NSData *)TIFFRepresentation
+{
+    CGImageRef image = [imageData imageAtIndex:0];
+    if (!image)
+        return 0;
+        
+    CFMutableDataRef data = 0;
+    CGImageDestinationRef destination = 0;
+    
+    data = CFDataCreateMutable(NULL, 0);
+    // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
+    destination = CGImageDestinationCreateWithData (data, CFSTR("public.tiff"), 1, NULL);
+    if (destination) {
+        CGImageDestinationAddImage (destination, image, NULL);
+        CGImageDestinationFinalize (destination);
+        CFRelease (destination);
+    }
+
+    return [(NSData *)data autorelease];
+}
+
+- (NSImage *)image
+{
+    // FIXME:  Implement
+    return nil;
+}
+
+@end
+
+#else
 
 extern NSString *NSImageLoopCount;
 
@@ -155,6 +373,7 @@ static CGImageRef _createImageRef(NSBitmapImageRep *rep);
 - (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(NSCompositingOperation)op alpha:(float)alpha flipped:(BOOL)flipped;
 @end
 
+
 @implementation WebImageRenderer
 
 static NSMutableSet *activeImageRenderers;
@@ -294,7 +513,7 @@ static NSMutableSet *activeImageRenderers;
     copy->patternColor = nil;
     copy->compositeOperator = compositeOperator;
     copy->context = 0;
-        
+
     return copy;
 }
 
@@ -856,7 +1075,6 @@ static NSMutableSet *activeImageRenderers;
     return ref;
 }
 
-
 @end
 
 
@@ -1014,3 +1232,4 @@ static CGImageRef _createImageRef(NSBitmapImageRep *rep) {
 
     return image;
 }
+#endif
