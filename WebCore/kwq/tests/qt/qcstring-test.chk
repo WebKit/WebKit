@@ -1,12 +1,36 @@
-this is a string
-this is another string
-jazz hype loves two mugs for dire quixotic knobs
-(null)
-this is a string
-upper case: THIS IS A STRING
-lower case: this is a string
-left four chars: jazz
-right five chars: knobs
-jazz hype loves
-jazz hype loves two mugs for dire quixotic knobs
-should be non-zero: 1
+s0: 
+s1: 
+s2: this is a string
+s3: this is anothe
+s4: jazz hype loves two mugs for dire quixotic knobs
+s5: 
+s6: 
+s6 isEmpty: 1
+s4 isEmpty: 0
+s4 isNull: 0
+s0 isNull: 1
+s6 isNull: 0
+s7 lower: this was a sentence in all uppercase
+s8: I'm going to do a find on this sentence
+s8 find "this": 26
+s8 contains "o": 4
+s9: I'm going to get the length of this string
+s9 length: 42
+s10: I'm going to truncate this string to 15 characters
+s10 truncate 15: I'm going to tr
+s11: I'm going get 15 characters out of this string starting at position 10
+s11 mid 10-25: to tr
+s12: Have a good 
+s12 +=: Have a good night
+s12 +=: Have a good night!
+s13: This is a sentence
+ch1: This is a sentence
+ch2: This is another sentence
+ch1 == s13: 1
+s13 == ch1: 1
+ch2 == s13: 0
+s13 == ch2: 0
+ch1 != s13: 0
+s13 != ch1: 0
+ch2 != s13: 1
+s13 != ch2: 1
