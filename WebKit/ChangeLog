@@ -1,6 +1,6 @@
 2004-08-20  Trey Matteson  <trey@apple.com>
 
-	3655407 - Editing: -complete: method unimplemented (WebKit editing API)
+	3655407 - Editing: -complete: method unimplemented (WebKit editing API)
 
 	This feature is mostly implemented.  The only loose ends I know of are:
 
