@@ -1,5 +1,12 @@
 2004-02-10  David Hyatt  <hyatt@apple.com>
 
+	Fix crash on abcnews.com by adding isEmpty checks before dereferencing.
+	
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag):
+
+2004-02-10  David Hyatt  <hyatt@apple.com>
+
 	Improve attribute parsing of mapped attributes (that map to CSS properties) so that they can pull the
 	style declarations from a global cache.
 
