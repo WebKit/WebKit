@@ -53,7 +53,6 @@ using KJS::SavedProperties;
     URL = new KURL(u);
     windowProperties = wp;
     locationProperties = lp;
-    
     return self;
 }
 

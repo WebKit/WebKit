@@ -1,3 +1,20 @@
+2003-06-03  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3275565.  Ref count the decoder.
+
+        Reviewed by Ken.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::clear):
+        * khtml/misc/decoder.cpp:
+        (Decoder::Decoder):
+        (Decoder::~Decoder):
+        * khtml/misc/decoder.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::~DocumentImpl):
+        * khtml/xml/dom_docimpl.h:
+	
+
 2003-06-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3276099.  value() was wrong for radio buttons.  Needed

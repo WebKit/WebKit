@@ -343,6 +343,11 @@ DocumentImpl::~DocumentImpl()
         delete m_renderArena;
         m_renderArena = 0;
     }
+    
+    if (m_decoder){
+        m_decoder->deref();
+        m_decoder = 0;
+    }
 }
 
 

@@ -958,7 +958,8 @@ void KHTMLPart::clear()
     d->m_doc->deref();
   d->m_doc = 0;
 
-  delete d->m_decoder;
+  if (d->m_decoder)
+    d->m_decoder->deref();
   d->m_decoder = 0;
 
 #if !APPLE_CHANGES
