@@ -403,23 +403,29 @@ int QString::find(const QString &qs, int index) const
 
 int QString::find(const char *chs, int index, bool cs) const
 {
+    int pos = -1;
     if (s && chs) {
         CFIndex len = CFStringGetLength(s);
         if (index < 0) {
             index += len;
         }
         if (len && (index >= 0) && (index < len)) {
-            CFRange r;
-            // NOTE: use private "__CFStringMakeConstantString" function instead
-            // of creating temporary string with "CFStringCreateWithCString"
-            if (CFStringFindWithOptions(s, __CFStringMakeConstantString(chs),
-                    CFRangeMake(index, len - index),
-                    cs ? 0 : kCFCompareCaseInsensitive, &r)) {
-                return r.location;
+            // FIXME: is ISO Latin-1 the correct encoding?
+            CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+                    kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
+                    kCFAllocatorDefault);
+            if (tmp) {
+                CFRange r;
+                if (CFStringFindWithOptions(s, tmp,
+                        CFRangeMake(index, len - index),
+                        cs ? 0 : kCFCompareCaseInsensitive, &r)) {
+                    pos = r.location;
+                }
+                CFRelease(tmp);
             }
         }
     }
-    return -1;
+    return pos;
 }
 
 int QString::find(const QRegExp &qre, int index) const
@@ -458,24 +464,30 @@ int QString::findRev(char ch, int index) const
 
 int QString::findRev(const char *chs, int index) const
 {
+    int pos = -1;
     if (s && chs) {
         CFIndex len = CFStringGetLength(s);
         if (index < 0) {
             index += len;
         }
         if (len && (index >= 0) && (index < len)) {
-            CFRange r;
-            // NOTE: use private "__CFStringMakeConstantString" function instead
-            // of creating temporary string with "CFStringCreateWithCString"
-            if (CFStringFindWithOptions(s, __CFStringMakeConstantString(chs),
-                    // FIXME: is this the right way to specifiy a range for a
-                    // reversed search?
-                    CFRangeMake(0, index + 1), kCFCompareBackwards, &r)) {
-                return r.location;
+            // FIXME: is ISO Latin-1 the correct encoding?
+            CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+                    kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
+                    kCFAllocatorDefault);
+            if (tmp) {
+                CFRange r;
+                // FIXME: is this the right way to specifiy a range for a
+                // reversed search?
+                if (CFStringFindWithOptions(s, tmp, CFRangeMake(0, index + 1),
+                        kCFCompareBackwards, &r)) {
+                    pos = r.location;
+                }
+                CFRelease(tmp);
             }
         }
     }
-    return -1;
+    return pos;
 }
 
 int QString::contains(char ch) const
@@ -500,20 +512,25 @@ int QString::contains(const char *chs, bool cs) const
 {
     int c = 0;
     if (s && chs) {
-        CFIndex pos = 0;
-        CFIndex len = CFStringGetLength(s);
-        while (pos < len) {
-            CFRange r;
-            // NOTE: use private "__CFStringMakeConstantString" function instead
-            // of creating temporary string with "CFStringCreateWithCString"
-            if (!CFStringFindWithOptions(s, __CFStringMakeConstantString(chs),
-                    CFRangeMake(pos, len - pos),
-                    cs ? 0 : kCFCompareCaseInsensitive, &r)) {
-                break;
+        // FIXME: is ISO Latin-1 the correct encoding?
+        CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+                kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
+                kCFAllocatorDefault);
+        if (tmp) {
+            CFIndex pos = 0;
+            CFIndex len = CFStringGetLength(s);
+            while (pos < len) {
+                CFRange r;
+                if (!CFStringFindWithOptions(s, tmp,
+                        CFRangeMake(pos, len - pos),
+                        cs ? 0 : kCFCompareCaseInsensitive, &r)) {
+                    break;
+                }
+                c++;
+                // move to next possible overlapping match
+                pos += r.location + 1;
             }
-            c++;
-            // move to next possible overlapping match
-            pos += r.location + 1;
+            CFRelease(tmp);
         }
     }
     return c;
@@ -815,10 +832,14 @@ QString &QString::setNum(int n)
         const int capacity = 64;
         char buf[capacity];
         buf[snprintf(buf, capacity - 1, "%d", n)] = '\0';
-        // NOTE: use private "__CFStringMakeConstantString" function instead of
-        // creating temporary string with "CFStringCreateWithCString"
-        CFStringReplace(s, CFRangeMake(0, CFStringGetLength(s)),
-                __CFStringMakeConstantString(buf));
+        // FIXME: is ISO Latin-1 the correct encoding?
+        CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+                kCFAllocatorDefault, buf, kCFStringEncodingISOLatin1,
+                kCFAllocatorDefault);
+        if (tmp) {
+            CFStringReplace(s, CFRangeMake(0, CFStringGetLength(s)), tmp);
+            CFRelease(tmp);
+        }
     }
     return *this;
 }
@@ -1033,13 +1054,18 @@ bool operator==(const QString &qs1, const QString &qs2)
 
 bool operator==(const QString &qs, const char *chs)
 {
+    bool result = FALSE;
     if (qs.s && chs) {
-        // NOTE: use private "__CFStringMakeConstantString" function instead of
-        // creating temporary string with "CFStringCreateWithCString"
-        return CFStringCompare(qs.s, __CFStringMakeConstantString(chs), 0)
-                == kCFCompareEqualTo;
+        // FIXME: is ISO Latin-1 the correct encoding?
+        CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+                kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
+                kCFAllocatorDefault);
+        if (tmp) {
+            result = CFStringCompare(qs.s, tmp, 0) == kCFCompareEqualTo;
+            CFRelease(tmp);
+        }
     }
-    return FALSE;
+    return result;
 }
 
 bool operator==(const char *chs, const QString &qs)
