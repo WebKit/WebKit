@@ -1,3 +1,17 @@
+2004-07-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Trey.
+        
+        WebKit part of fix for <rdar://problem/3622268> Reload failed pages when a 
+        network problem is corrected, inc. using Network Diagnostics
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame reload]):
+        This method did not handle unreachableURLs at all. The reason Safari's Reload
+        did work with unreachableURLs was that Safari does "reloadObeyingLocationField"
+        which never actually calls -[WebFrame reload]. Fixed by creating a fresh
+        request for the previously-unreachable URL.
+
 2004-07-26  Richard Williamson   <rjw@apple.com>
 
         Fixed 3739737.  When setting the focus to a NSView, set the focus

@@ -2667,9 +2667,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
 
+    NSMutableURLRequest *initialRequest = [dataSource request];
+
+    // Replace error-page URL with the URL we were trying to reach.
+    NSURL *unreachableURL = [initialRequest _webDataRequestUnreachableURL];
+    if (unreachableURL != nil) {
+        initialRequest = [NSURLRequest requestWithURL:unreachableURL];
+    }
+    
     // initWithRequest copies the request
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:[dataSource request]];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:initialRequest];
     NSMutableURLRequest *request = [newDataSource request];
+
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to rePOST, set up action so the app can warn the user
