@@ -1,5 +1,16 @@
 2003-10-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Chris.
+
+        - fixed some exceptions I was seeing with my recent text change
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::text): Return an empty string for a null range rather than raising an exception.
+        (KHTMLPart::selection): Return a null range rather than raising an exception if there is
+        no selection.
+
+2003-10-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - removed code that mutates \n into a space so we can pass more W3C DOM Level 1 Core tests
