@@ -79,163 +79,6 @@ short TraversalImpl::acceptNode(NodeImpl *node) const
     return NodeFilter::FILTER_SKIP;
 }
 
-NodeImpl *TraversalImpl::findParentNode(NodeImpl *node, short accept) const
-{
-    if (!node || node == root())
-        return 0;
-    NodeImpl *n = node->parentNode();
-    while (n) {
-        if (acceptNode(n) & accept)
-            return n;
-        if (n == root())
-            return 0;
-        n = n->parentNode();
-    }
-    return 0;
-}
-
-NodeImpl *TraversalImpl::findFirstChild(NodeImpl *node) const
-{
-    if (!node || acceptNode(node) == NodeFilter::FILTER_REJECT)
-        return 0;
-    NodeImpl *n = node->firstChild();
-    while (n) {
-        if (acceptNode(n) == NodeFilter::FILTER_ACCEPT)
-            return n;
-        n = n->nextSibling();
-    }
-    return 0;
-}
-
-NodeImpl *TraversalImpl::findLastChild(NodeImpl *node) const
-{
-    if (!node || acceptNode(node) == NodeFilter::FILTER_REJECT)
-        return 0;
-    NodeImpl *n = node->lastChild();
-    while (n) {
-        if (acceptNode(n) == NodeFilter::FILTER_ACCEPT)
-            return n;
-        n = n->previousSibling();
-    }
-    return 0;
-}
-
-NodeImpl *TraversalImpl::findPreviousSibling(NodeImpl *node) const
-{
-    if (!node)
-        return 0;
-    NodeImpl *n = node->previousSibling();
-    while (n) {
-        if (acceptNode(n) == NodeFilter::FILTER_ACCEPT)
-            return n;
-        n = n->previousSibling();
-    }
-    return 0;
-}
-
-NodeImpl *TraversalImpl::findNextSibling(NodeImpl *node) const
-{
-    if (!node)
-        return 0;
-    NodeImpl *n = node->nextSibling();
-    while (n) {
-        if (acceptNode(n) == NodeFilter::FILTER_ACCEPT)
-            return n;
-        n = n->nextSibling();
-    }
-    return 0;
-}
-
-NodeImpl *TraversalImpl::findLastDescendant(NodeImpl *node) const
-{
-    NodeImpl *n = node;
-    NodeImpl *r = node;
-    while (n) {
-        short accepted = acceptNode(n);
-        if (accepted != NodeFilter::FILTER_REJECT) {
-            if (accepted == NodeFilter::FILTER_ACCEPT)
-                r = n;
-            if (n->lastChild())
-                n = n->lastChild();
-            else if (n != node && n->previousSibling())
-                n = n->previousSibling();
-            else
-                break;
-        }
-        else
-            break;
-    }
-    return r;
-}
-
-NodeImpl *TraversalImpl::findPreviousNode(NodeImpl *node) const
-{
-    NodeImpl *n = node->previousSibling();
-    while (n) {
-        short accepted = acceptNode(n);
-        if (accepted != NodeFilter::FILTER_REJECT) {
-            NodeImpl *d = findLastDescendant(n);
-            if (acceptNode(d) == NodeFilter::FILTER_ACCEPT)
-                return d;
-            // else FILTER_SKIP
-        }
-        n = n->previousSibling();
-    }
-    return findParentNode(node);
-}
-
-NodeImpl *TraversalImpl::findNextNode(NodeImpl *node) const
-{
-    NodeImpl *n = node->firstChild();
-    while (n) {
-        switch (acceptNode(n)) {
-            case NodeFilter::FILTER_ACCEPT:
-                return n;
-            case NodeFilter::FILTER_SKIP:
-                if (n->firstChild())
-                    n = n->firstChild();
-                else
-                    n = n->nextSibling();
-                break;
-            case NodeFilter::FILTER_REJECT:
-                n = n->nextSibling();
-                break;
-        }
-    }
-
-    n = node->nextSibling();
-    while (n) {
-        switch (acceptNode(n)) {
-            case NodeFilter::FILTER_ACCEPT:
-                return n;
-            case NodeFilter::FILTER_SKIP:
-                return findNextNode(n);
-            case NodeFilter::FILTER_REJECT:
-                n = n->nextSibling();
-                break;
-        }
-    }
-
-    NodeImpl *parent = findParentNode(node, NodeFilter::FILTER_ACCEPT | NodeFilter::FILTER_SKIP);
-    while (parent) { 
-        n = parent->nextSibling();
-        while (n) {
-            switch (acceptNode(n)) {
-                case NodeFilter::FILTER_ACCEPT:
-                    return n;
-                case NodeFilter::FILTER_SKIP:
-                    return findNextNode(n);
-                case NodeFilter::FILTER_REJECT:
-                    n = n->nextSibling();
-                    break;
-            }
-        }
-        parent = findParentNode(parent, NodeFilter::FILTER_ACCEPT | NodeFilter::FILTER_SKIP);
-    }
-
-    return 0;
-}
-
 // --------------------------------------------------------------
 
 NodeIteratorImpl::NodeIteratorImpl(NodeImpl *rootNode, long whatToShow, NodeFilterImpl *filter, bool expandEntityReferences)
@@ -260,6 +103,18 @@ NodeIteratorImpl::~NodeIteratorImpl()
     }
 }
 
+NodeImpl *NodeIteratorImpl::findNextNode(NodeImpl *node) const
+{
+    while ((node = node->traverseNextNode())) {
+        // NodeIterators treat the DOM tree as a flat list of nodes.
+        // In other words, FILTER_REJECT does not pass over descendants
+        // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT)
+            break;
+    }
+    return node;
+}
+
 NodeImpl *NodeIteratorImpl::nextNode(int &exceptioncode)
 {
     if (detached()) {
@@ -267,41 +122,36 @@ NodeImpl *NodeIteratorImpl::nextNode(int &exceptioncode)
         return 0;
     }
 
-    NodeImpl *result = 0;
-    NodeImpl *refNode = referenceNode() ? referenceNode() : root();
-
-    if (pointerBeforeReferenceNode() && acceptNode(refNode) == NodeFilter::FILTER_ACCEPT)
-        result = refNode;
-    else
-        result = findNextNode(refNode);
-
-    if (result)
-        setReferenceNode(result);
+    NodeImpl *node = referenceNode() ? referenceNode() : root();
+    if (!pointerBeforeReferenceNode() || acceptNode(node) != NodeFilter::FILTER_ACCEPT)
+        node = findNextNode(node);
+    if (node)
+        setReferenceNode(node);
     setPointerBeforeReferenceNode(false);
+    return node;
+}
 
-    return result;
+NodeImpl *NodeIteratorImpl::findPreviousNode(NodeImpl *node) const
+{
+    while ((node = node->traversePreviousNode())) {
+        // NodeIterators treat the DOM tree as a flat list of nodes.
+        // In other words, FILTER_REJECT does not pass over descendants
+        // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT)
+            break;
+    }
+    return node;
 }
 
 NodeImpl *NodeIteratorImpl::previousNode(int &exceptioncode)
 {
-    if (detached()) {
-        exceptioncode = DOMException::INVALID_STATE_ERR;
-        return 0;
-    }
-
-    NodeImpl *result = 0;
-    NodeImpl *refNode = referenceNode() ? referenceNode() : root();
-
-    if (!pointerBeforeReferenceNode() && acceptNode(refNode) == NodeFilter::FILTER_ACCEPT)
-        result = refNode;
-    else
-        result = findPreviousNode(refNode);
-
-    if (result)
-        setReferenceNode(result);
+    NodeImpl *node = referenceNode() ? referenceNode() : root();
+    if (pointerBeforeReferenceNode() || acceptNode(node) != NodeFilter::FILTER_ACCEPT)
+        node = findPreviousNode(node);
+    if (node)
+        setReferenceNode(node);
     setPointerBeforeReferenceNode();
-
-    return result;
+    return node;
 }
 
 void NodeIteratorImpl::detach(int &/*exceptioncode*/)
@@ -447,58 +297,101 @@ void TreeWalkerImpl::setCurrentNode(NodeImpl *node)
 
 NodeImpl *TreeWalkerImpl::parentNode()
 {
-    NodeImpl *node = findParentNode(currentNode());
-    if (node)
-        setCurrentNode(node);
-    return node;
+    NodeImpl *result = 0;
+    for (NodeImpl *node = currentNode()->parentNode(); node && node != root(); node = node->parentNode()) {
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT) {
+            setCurrentNode(node);
+            result = node;
+            break;
+        }
+    }
+    return result;
 }
 
 NodeImpl *TreeWalkerImpl::firstChild()
 {
-    NodeImpl *node = findFirstChild(currentNode());
-    if (node)
-        setCurrentNode(node);
-    return node;
+    NodeImpl *result = 0;
+    for (NodeImpl *node = currentNode()->firstChild(); node; node = node->nextSibling()) {
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT) {
+            setCurrentNode(node);
+            result = node;
+            break;
+        }
+    }
+    return result;
 }
 
 NodeImpl *TreeWalkerImpl::lastChild()
 {
-    NodeImpl *node = findLastChild(currentNode());
-    if (node)
-        setCurrentNode(node);
-    return node;
+    NodeImpl *result = 0;
+    for (NodeImpl *node = currentNode()->lastChild(); node; node = node->previousSibling()) {
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT) {
+            setCurrentNode(node);
+            result = node;
+            break;
+        }
+    }
+    return result;
 }
 
 NodeImpl *TreeWalkerImpl::previousSibling()
 {
-    NodeImpl *node = findPreviousSibling(currentNode());
-    if (node)
-        setCurrentNode(node);
-    return node;
+    NodeImpl *result = 0;
+    for (NodeImpl *node = currentNode()->previousSibling(); node; node = node->previousSibling()) {
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT) {
+            setCurrentNode(node);
+            result = node;
+            break;
+        }
+    }
+    return result;
 }
 
 NodeImpl *TreeWalkerImpl::nextSibling()
 {
-    NodeImpl *node = findNextSibling(currentNode());
-    if (node)
-        setCurrentNode(node);
-    return node;
+    NodeImpl *result = 0;
+    for (NodeImpl *node = currentNode()->nextSibling(); node; node = node->nextSibling()) {
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT) {
+            setCurrentNode(node);
+            result = node;
+            break;
+        }
+    }
+    return result;
 }
 
 NodeImpl *TreeWalkerImpl::previousNode()
 {
-    NodeImpl *node = findPreviousNode(currentNode());
-    if (node)
-        setCurrentNode(node);
-    return node;
+    NodeImpl *result = 0;
+    for (NodeImpl *node = currentNode()->traversePreviousNode(); node; node = node->traversePreviousNode()) {
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT && !ancestorRejected(node)) {
+            setCurrentNode(node);
+            result = node;
+            break;
+        }
+    }
+    return result;
 }
 
 NodeImpl *TreeWalkerImpl::nextNode()
 {
-    NodeImpl *node = findNextNode(currentNode());
-    if (node)
-        setCurrentNode(node);
-    return node;
+    NodeImpl *result = 0;
+    for (NodeImpl *node = currentNode()->traverseNextNode(); node; node = node->traverseNextNode()) {
+        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT && !ancestorRejected(node)) {
+            setCurrentNode(node);
+            result = node;
+            break;
+        }
+    }
+    return result;
+}
+
+bool TreeWalkerImpl::ancestorRejected(const NodeImpl *node) const
+{
+    for (NodeImpl *a = node->parentNode(); a && a != root(); a = a->parentNode())
+        if (acceptNode(a) == NodeFilter::FILTER_REJECT)
+            return true;
+    return false;
 }
 
 } // namespace DOM

@@ -1,3 +1,33 @@
+2004-07-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Trey
+
+        Fixed several problems with traversal classes. For one, NodeIterators treat
+        FILTER_REJECT and FILTER_SKIP the same, since it treats the DOM tree as a
+        flat collection of nodes free of hierarchy. The code before this change did
+        not do this correctly. It sure pays to go back and read the specs. :)
+        
+        Also, the code to traverse from node to node when filters were applied was
+        not working correctly. My first attemmpt to implement this was just plain
+        buggy, as I discovered when I tried to write tests for my WWDC talk. I have
+        settled on an implementation which is much simpler and worked for all the
+        tests I threw at it. 
+
+        * khtml/xml/dom2_traversalimpl.cpp:
+        (DOM::NodeIteratorImpl::findNextNode):
+        (DOM::NodeIteratorImpl::nextNode):
+        (DOM::NodeIteratorImpl::findPreviousNode):
+        (DOM::NodeIteratorImpl::previousNode):
+        (DOM::TreeWalkerImpl::parentNode):
+        (DOM::TreeWalkerImpl::firstChild):
+        (DOM::TreeWalkerImpl::lastChild):
+        (DOM::TreeWalkerImpl::previousSibling):
+        (DOM::TreeWalkerImpl::nextSibling):
+        (DOM::TreeWalkerImpl::previousNode):
+        (DOM::TreeWalkerImpl::nextNode):
+        (DOM::TreeWalkerImpl::ancestorRejected):
+        * khtml/xml/dom2_traversalimpl.h:
+
 2004-07-06  Vicki Murley  <vicki@apple.com>
 
         Reviewed by kocienda.

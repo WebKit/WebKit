@@ -62,14 +62,6 @@ public:
     NodeFilterImpl *filter() const { return m_filter; }
     bool expandEntityReferences() const { return m_expandEntityReferences; }
 
-    NodeImpl *findParentNode(NodeImpl *, short accept=NodeFilter::FILTER_ACCEPT) const;
-    NodeImpl *findFirstChild(NodeImpl *) const;
-    NodeImpl *findLastChild(NodeImpl *) const;
-    NodeImpl *findNextSibling(NodeImpl *) const;
-    NodeImpl *findPreviousSibling(NodeImpl *) const;
-    NodeImpl *findNextNode(NodeImpl *) const;
-    NodeImpl *findLastDescendant(NodeImpl *node) const;
-    NodeImpl *findPreviousNode(NodeImpl *) const;
     short acceptNode(NodeImpl *) const;
 
 private:
@@ -112,6 +104,8 @@ private:
     void setDetached(bool flag=true) { m_detached = flag; }
     DocumentImpl * document() const { return m_doc; }
     void setDocument(DocumentImpl *);
+    NodeImpl *findNextNode(NodeImpl *) const;
+    NodeImpl *findPreviousNode(NodeImpl *) const;
 
     NodeImpl *m_referenceNode;
     bool m_beforeReferenceNode;
@@ -142,6 +136,8 @@ private:
 
     // convenience for when it is known there will be no exception
     void setCurrentNode(NodeImpl *);
+    
+    bool ancestorRejected(const NodeImpl *) const;
     
     NodeImpl *m_current;
 };
