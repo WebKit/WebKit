@@ -38,6 +38,7 @@
 #include "operations.h"
 #include "identifier.h"
 #include <math.h>
+#include "dtoa.h"
 
 namespace KJS {
   extern const double NaN;
@@ -332,26 +333,32 @@ UString UString::from(long l)
 
 UString UString::from(double d)
 {
-  char buf[40];
+  char buf[80];
+  int decimalPoint;
+  int sign;
 
-  if (d == -0)
-    strcpy(buf,"0");
-  else if (KJS::isNaN(d))
-    strcpy(buf,"NaN");
-  else if (KJS::isPosInf(d))
-    strcpy(buf,"Infinity");
-  else if (KJS::isNegInf(d))
-    strcpy(buf,"-Infinity");
-  else
-    sprintf(buf, "%.16g", d);	// does the right thing
-
-  // ECMA 3rd ed. 9.8.1 9 e: "with no leading zeros"
-  int buflen = strlen(buf);
-  if (buflen >= 4 && buf[buflen-4] == 'e' && buf[buflen-2] == '0') {
-    buf[buflen-2] = buf[buflen-1];
-    buf[buflen-1] = 0;
+  char *result = kjs_dtoa(d, 5, 16, &decimalPoint, &sign, NULL);
+  int length = strlen(result);
+  
+  int i = 0;
+  if (sign) {
+    buf[i++] = '-';
   }
-
+  
+  if (decimalPoint <= 0) {
+    buf[i++] = 0;
+    buf[i++] = '.';
+    strcpy(buf + i, result);
+  } else if (decimalPoint >= length) {
+    strcpy(buf + i, result);
+  } else {
+    strncpy(buf + i, result, decimalPoint);
+    i += decimalPoint;
+    buf[i++] = '.';
+    strcpy(buf + i, result + decimalPoint);
+  }
+  kjs_freedtoa(result);
+  
   return UString(buf);
 }
 
@@ -506,7 +513,7 @@ double UString::toDouble( bool tolerant ) const
   } else {
     // regular number ?
     char *end;
-    d = strtod(c, &end);
+    d = kjs_strtod(c, &end);
     if ((d != 0.0 || end != c) && d != HUGE_VAL && d != -HUGE_VAL) {
       c = end;
     } else {

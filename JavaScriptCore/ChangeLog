@@ -1,3 +1,19 @@
+2002-12-03  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3114790 - Gamespot reviews pages badly mis-rendering
+	because floating point numbers format wide
+
+	Reviewed by: David Hyatt
+	
+	* kjs/dtoa.cpp: Imported float <--> string conversion routines
+	from David M. Gay. I changed this to fix warnings and avoid
+	colliding with names of standard library functions.
+        * kjs/dtoa.h: Added a header I made up for dtoa.cpp
+        * kjs/ustring.cpp:
+        (UString::from): Use new double to string routine (kjs_strtod).
+        (UString::toDouble): Use new string to double routine (kjs_dtoa).
+        * JavaScriptCore.pbproj/project.pbxproj: Added new files
+
 2002-11-27  John Sullivan  <sullivan@apple.com>
 
         * kjs/collector.cpp:

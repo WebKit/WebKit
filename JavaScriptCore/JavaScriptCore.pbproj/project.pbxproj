@@ -227,6 +227,7 @@
 				9374D3A9038D9D74008635CE,
 				9373524F038DA8C2008635CE,
 				931C6CF1038EE8DE008635CE,
+				651F6415039D5B5F0078395C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,6 +275,7 @@
 				933A349E038AE80F008635CE,
 				9374D3AA038D9D74008635CE,
 				931C6CF2038EE8DE008635CE,
+				651F6414039D5B5F0078395C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -441,6 +443,40 @@
 //102
 //103
 //104
+//650
+//651
+//652
+//653
+//654
+		651F6412039D5B5F0078395C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = dtoa.cpp;
+			refType = 4;
+		};
+		651F6413039D5B5F0078395C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = dtoa.h;
+			refType = 4;
+		};
+		651F6414039D5B5F0078395C = {
+			fileRef = 651F6412039D5B5F0078395C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		651F6415039D5B5F0078395C = {
+			fileRef = 651F6413039D5B5F0078395C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//650
+//651
+//652
+//653
+//654
 //930
 //931
 //932
@@ -710,6 +746,8 @@
 				F692A8670255597D01FF60F7,
 				F68EBB8C0255D4C601FF60F7,
 				F5C290E60284F98E018635CA,
+				651F6412039D5B5F0078395C,
+				651F6413039D5B5F0078395C,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
