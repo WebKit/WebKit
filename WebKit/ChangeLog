@@ -1,3 +1,11 @@
+2002-09-24  Chris Blumenberg  <cblu@apple.com>
+
+	More documentation changes.
+
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultContextMenuDelegate.h:
+        * WebView.subproj/WebDocument.h:
+
 2002-09-24  Richard Williamson   <rjw@apple.com>
 
         Added FIXME not about unresolved issue with CFStringEncoding/NSStringEncoding.

@@ -34,6 +34,22 @@ typedef enum {
 } WebPolicyAction;
 
 /*!
+@enum WebClickAction
+ @constant WebClickPolicyShow Have WebKit show the clicked URL.
+ @constant WebClickPolicyOpenNewWindow Open the clicked URL in another window.
+ @constant WebClickPolicySave Save the clicked URL to disk.
+ @constant WebClickPolicySaveAndOpenExternally Save the clicked URL to disk and open the file in another application.
+ @constant WebClickPolicyIgnore Do nothing with the clicked URL.
+ */
+typedef enum {
+    WebClickPolicyShow = WebPolicyUse,
+    WebClickPolicyOpenNewWindow = WebPolicyOpenNewWindow,
+    WebClickPolicySave = WebPolicySave,
+    WebClickPolicySaveAndOpenExternally = WebPolicySaveAndOpen,
+    WebClickPolicyIgnore = WebPolicyIgnore
+} WebClickAction;
+
+/*!
     @enum WebURLAction
     @constant WebURLPolicyUseContentPolicy Continue processing URL, ask for content policy.
     @constant WebURLPolicyOpenExternally Open the URL in another application. 
@@ -62,10 +78,10 @@ typedef enum {
 /*!
     @enum WebContentAction
     @constant WebContentPolicyNone Unitialized state.
-    @constant WebContentPolicyShow Show the resource in WebKit.
-    @constant WebContentPolicySave Save the resource to disk.
-    @constant WebContentPolicySaveAndOpenExternally, Save the resource to disk and open it in another application.
-    @constant WebContentPolicyIgnore Do nothing with the resource.
+    @constant WebContentPolicyShow Show the content in WebKit.
+    @constant WebContentPolicySave Save the content to disk.
+    @constant WebContentPolicySaveAndOpenExternally Save the content to disk and open it in another application.
+    @constant WebContentPolicyIgnore Do nothing with the content.
 */
 typedef enum {
     WebContentPolicyNone = WebPolicyNone,
@@ -74,22 +90,6 @@ typedef enum {
     WebContentPolicySaveAndOpenExternally = WebPolicySaveAndOpen,
     WebContentPolicyIgnore = WebPolicyIgnore
 } WebContentAction;
-
-/*!
-    @enum WebClickAction
-    @constant WebClickPolicyShow Have WebKit show the clicked URL.
-    @constant WebClickPolicyOpenNewWindow Open the clicked URL in another window.
-    @constant WebClickPolicySave Save the clicked URL to disk.
-    @constant WebClickPolicySaveAndOpenExternally Save the clicked URL to disk and open the file in another application.
-    @constant WebClickPolicyIgnore Do nothing with the clicked URL.
-*/
-typedef enum {
-    WebClickPolicyShow = WebPolicyUse,
-    WebClickPolicyOpenNewWindow = WebPolicyOpenNewWindow,
-    WebClickPolicySave = WebPolicySave,
-    WebClickPolicySaveAndOpenExternally = WebPolicySaveAndOpen,
-    WebClickPolicyIgnore = WebPolicyIgnore
-} WebClickAction;
 
 
 /*!
@@ -105,16 +105,19 @@ typedef enum {
 
 /*!
     @method policyAction
+    @abstract The policy action of the WebPolicy.
 */
 - (WebPolicyAction)policyAction;
 
 /*!
     @method path
+    @abstract The path for the saved file.
 */
 - (NSString *)path;
 
 /*!
     @method URL
+    @abstract The URL of the WebPolicy.
 */
 - (NSURL *)URL;
 @end
@@ -127,8 +130,8 @@ typedef enum {
 @interface WebURLPolicy : WebPolicy
 /*!
     @method webPolicyWithURLAction:
-    @abstract WebURLPolicy constructor
-    @param action
+    @abstract WebURLPolicy constructor.
+    @param action The policy action of the WebURLPolicy.
 */
 + webPolicyWithURLAction: (WebURLAction)action;
 @end
@@ -142,7 +145,7 @@ typedef enum {
 /*!
     @method webPolicyWithFileAction:
     @abstract WebFileURLPolicy constructor
-    @param action
+    @param action The policy action of the WebFileURLPolicy.
 */
 + webPolicyWithFileAction: (WebFileAction)action;
 @end
@@ -156,7 +159,7 @@ typedef enum {
 /*!
     @method webPolicyWithContentAction:andPath:
     @abstract WebContentPolicy constructor
-    @param action
+    @param action The policy action of the WebContentPolicy.
     @param thePath Path to where the file should be saved. Only applicable for
     WebContentPolicySave and WebContentPolicySaveAndOpenExternally WebContentActions.
 */
@@ -172,7 +175,7 @@ typedef enum {
 /*!
     @method webPolicyWithClickAction:andPath:
     @abstract WebClickPolicy constructor
-    @param action
+    @param action The policy action of the WebClickPolicy.
     @param thePath Path to where the file should be saved. Only applicable for
     WebClickPolicySave and WebClickPolicySaveAndOpenExternally WebClickActions.
 */
@@ -182,10 +185,26 @@ typedef enum {
 
 /*!
     @protocol WebControllerPolicyHandler
-    @discussion A controller's WebControllerPolicyHandler is asked for policies for files,
-    URL's, clicked URL's and partially loaded content that WebKit has been asked to load.
+    @discussion While loading a URL, WebKit asks the WebControllerPolicyHandler for
+    policies that determine the action of what to do with the URL or the data that
+    the URL represents. Typically, the policy handler methods are called in this order:
+
+    clickPolicyForElement:button:modifierMask:<BR>
+    URLPolicyForURL:inFrame:<BR>
+    fileURLPolicyForMIMEType:inFrame:isDirectory:<BR>
+    contentPolicyForMIMEType:URL:inFrame:<BR>
 */
 @protocol WebControllerPolicyDelegate <NSObject>
+
+/*!
+     @method clickPolicyForElement:button:modifierMask:
+     @discussion Called right after the user clicks on a link.
+     @param elementInformation Dictionary that describes the clicked element.
+     @param eventType The type of event.
+     @param eventMask The event mask as described in NSEvents.h.
+     @result The WebClickPolicy for WebKit to implement
+*/
+- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask;
 
 /*!
     @method URLPolicyForURL:inFrame:
@@ -199,6 +218,16 @@ typedef enum {
 - (WebURLPolicy *)URLPolicyForURL:(NSURL *)URL inFrame:(WebFrame *)frame;
 
 /*!
+     @method fileURLPolicyForMIMEType:inFrame:isDirectory:
+     @discussion Called when the response to URLPolicyForURL is WebURLPolicyUseContentPolicy and the URL is
+     a file URL. This allows clients to special-case WebKit's behavior for file URLs.
+     @param type MIME type for the file.
+     @param frame The frame which will load the file.
+     @param isDirectory YES if the file is a directory.
+*/
+- (WebFileURLPolicy *)fileURLPolicyForMIMEType: (NSString *)type inFrame:(WebFrame *)frame isDirectory: (BOOL)isDirectory;
+
+/*!
     @method contentPolicyForMIMEType:URL:inFrame:
     @discussion Returns the policy for content which has been partially loaded. Sent after locationChangeStarted. 
     Implementations typically call haveContentPolicy:forLocationChangeHandler: on WebController
@@ -210,38 +239,19 @@ typedef enum {
 - (WebContentPolicy *)contentPolicyForMIMEType: (NSString *)type URL:(NSURL *)URL inFrame:(WebFrame *)frame;
 
 /*!
-    @method fileURLPolicyForMIMEType:inFrame:isDirectory:
-    @discussion Called when the response to URLPolicyForURL is WebURLPolicyUseContentPolicy and the URL is
-    a file URL. This allows clients to special-case WebKit's behavior for file URLs.
-    @param type MIME type for the file.
-    @param frame The frame which will load the file.
-    @param isDirectory YES if the file is a directory.
-*/
-- (WebFileURLPolicy *)fileURLPolicyForMIMEType: (NSString *)type inFrame:(WebFrame *)frame isDirectory: (BOOL)isDirectory;
-
-/*!
-    @method clickPolicyForElement:button:modifierMask:
-    @discussion Returns the policy for a clicked URL.
-    @param elementInformation Dictionary that describes the clicked element.
-    @param eventType
-    @param eventMask
-*/
-- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask;
-
-/*!
     @method unableToImplementPolicy:error:forURL:inFrame:
     @discussion Called when a WebPolicy could not be implemented. It is up to the client to display appropriate feedback.
-    @param policy
-    @param error
-    @param frame
+    @param policy The policy that could not be implemented.
+    @param error The error that caused the policy to not be implemented.
+    @param frame The frame in the which the policy could not be implemented.
 */
 - (void)unableToImplementPolicy:(WebPolicy *)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame;
 
 /*!
     @method pluginNotFoundForMIMEType:pluginPageURL:
-    @discussion Called when a plug-in for a certain mime type is not installed
-    @param mime
-    @param URL
+    @discussion Called when a plug-in for a certain mime type is not installed.
+    @param mime The MIME type that no installed plug-in supports.
+    @param URL The web page for the plug-in that supports the MIME type. Can be nil.
 */
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)URL;
 
