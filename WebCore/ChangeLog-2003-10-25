@@ -1,3 +1,17 @@
+2003-08-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3262190, <li> bullets in mail were overly massive.  The bezier path the
+	painter stroked was not setting the line width from QPen's width, so it ended up
+	just using the current line width instead (which happened to be much larger in
+	Mail).
+	
+        Reviewed by darin
+
+        * kwq/KWQPainter.mm:
+        (QPainter::drawEllipse):
+        (QPainter::drawArc):
+        (QPainter::_drawPoints):
+
 2003-08-12  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3370614 -- REGRESSION (81-85): partial inline input from Japanese 

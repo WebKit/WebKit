@@ -327,6 +327,7 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
     }
     if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
+        [path setLineWidth:data->state.pen.width()];
         [path stroke];
     }
 }
@@ -353,6 +354,7 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
                                       clockwise:YES];
     
         _setColorFromPen();
+        [path setLineWidth:data->state.pen.width()];
         [path stroke];
         [path release];
     }
@@ -406,6 +408,7 @@ void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index,
 
     if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
+        [path setLineWidth:data->state.pen.width()];
         [path stroke];
     }
     
