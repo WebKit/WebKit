@@ -32,6 +32,7 @@
 - (id <WebCoreImageRenderer>)imageRenderer;
 - (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length;
 - (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)size;
+- (NSArray *)supportedMIMETypes;
 
 @end
 

@@ -28,6 +28,11 @@
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"
 
+bool canRenderImageType(const QString &type)
+{
+    return [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:type.getNSString()];
+}
+
 QPixmap::QPixmap()
 {
     imageRenderer = nil;

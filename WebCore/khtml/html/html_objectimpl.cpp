@@ -331,7 +331,7 @@ DocumentImpl* HTMLObjectElementImpl::contentDocument() const
 
 bool HTMLObjectElementImpl::rendererIsNeeded(RenderStyle *style)
 {
-    if (serviceType.startsWith("image/")) {
+    if (canRenderImageType(serviceType)) {
         return HTMLElementImpl::rendererIsNeeded(style);
     }
 
@@ -354,7 +354,7 @@ bool HTMLObjectElementImpl::rendererIsNeeded(RenderStyle *style)
 
 RenderObject *HTMLObjectElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    if (serviceType.startsWith("image/")) {
+    if (canRenderImageType(serviceType)) {
         return new (arena) RenderImage(this);
     }
     return new (arena) RenderPartObject(this);
@@ -364,7 +364,7 @@ void HTMLObjectElementImpl::attach()
 {
     createRendererIfNeeded();
     if (m_render) {
-        if (serviceType.startsWith("image/")) {
+        if (canRenderImageType(serviceType)) {
             m_render->updateFromElement();
         } else {
             // If we are already cleared, then it means that we were attach()-ed previously

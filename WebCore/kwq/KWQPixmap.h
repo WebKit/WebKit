@@ -45,6 +45,8 @@ typedef WebCoreImageRenderer *WebCoreImageRendererPtr;
 
 class QWMatrix;
 
+bool canRenderImageType(const QString &type);
+
 class QPixmap : public QPaintDevice, public Qt {
 public:
     QPixmap();
@@ -53,7 +55,7 @@ public:
     QPixmap(int, int);
     QPixmap(const QPixmap &);
     ~QPixmap();
-
+    
     bool isNull() const;
 
     QSize size() const;

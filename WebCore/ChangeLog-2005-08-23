@@ -1,3 +1,24 @@
+2003-04-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3162338 - Embedding SVG with <object type="image/svg+xml"> doesn't work
+
+	Whenever we encounter an OBJECT tag with a type that starts with "image/" we create a render image object instead of a render part object. The behavior is nice because this allows the render object to resize to the size of the image if no WIDTH and HEIGHT are supplied. For example, the image at the bottom of this page:
+
+	http://tantek.com/CSS/Examples/boxmodelhack.html
+
+	The problem is that we do this for image types that we can't handle and when there are plug-ins that *can* handle the types.
+
+        Reviewed by dave.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::rendererIsNeeded): call canRenderImageType instead of serviceType.startsWith
+        (HTMLObjectElementImpl::createRenderer): call canRenderImageType instead of serviceType.startsWith
+        (HTMLObjectElementImpl::attach): call canRenderImageType instead of serviceType.startsWith
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (canRenderImageType): new, checks if the MIME type is supported by the image factory
+        * kwq/WebCoreImageRendererFactory.h: added supportedMIMETypes to the WebCoreImageRendererFactory protocol
+
 2003-04-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
