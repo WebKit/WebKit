@@ -1,3 +1,5 @@
+=== Safari-407 ===
+
 2005-03-17  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4055562> REGRESSION (Tiger): Safari doesn't draw progressively-loaded JPEGs (www.theregister.co.uk, www.titantalk.com)
