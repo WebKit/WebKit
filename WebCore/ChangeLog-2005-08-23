@@ -1,3 +1,55 @@
+2003-11-11  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3481134, shorthand parsing in CSS does not fill in omitted values.  The fix is to implement
+	the CSS3 'initial' value for all properties (covered by 3481323), and then to fill in the omitted 
+	values with the 'initial' value.
+
+	This patch also fixes two bugs in the style system: 3481324, collapsed borders with border-style: none
+	should always return a width of 0, and 3481322, 'clip' not inheriting properly in CSS when explicit
+	inheritance is used.
+	
+        Reviewed by mjs
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSInitialValueImpl::cssText):
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSInitialValueImpl::cssValueType):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseShortHand):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/dom/css_value.h:
+        (DOM::CSSValue::):
+        * khtml/rendering/render_style.cpp:
+        (StyleBoxData::StyleBoxData):
+        (StyleVisualData::StyleVisualData):
+        (StyleBackgroundData::StyleBackgroundData):
+        (StyleMarqueeData::StyleMarqueeData):
+        (StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (opacity):
+        (StyleInheritedData::StyleInheritedData):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::BorderValue::BorderValue):
+        (khtml::CollapsedBorderValue::width):
+        (khtml::RenderStyle::InheritedFlags::operator==):
+        (khtml::RenderStyle::setBitDefaults):
+        (khtml::RenderStyle::resetBorderTop):
+        (khtml::RenderStyle::resetBorderRight):
+        (khtml::RenderStyle::resetBorderBottom):
+        (khtml::RenderStyle::resetBorderLeft):
+        (khtml::RenderStyle::resetOutline):
+        (khtml::RenderStyle::setHasClip):
+        (khtml::RenderStyle::resetMargin):
+        (khtml::RenderStyle::resetPadding):
+        (khtml::RenderStyle::setCursor):
+
 2003-11-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

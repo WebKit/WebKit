@@ -2,17 +2,17 @@ layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x509
   RenderBlock {HTML} at (0,0) size 800x509
-    RenderBody {BODY} at (8,8) size 784x493 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x18 [bgcolor=#000000]
+    RenderBody {BODY} at (8,8) size 784x493
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,34) size 784x60 [bgcolor=#000000]
+      RenderBlock {PRE} at (0,34) size 784x60
         RenderText {TEXT} at (0,0) size 648x45
           text run at (0,0) width 648: "<LINK rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"../resources/bg.gif\">"
           text run at (0,15) width 296: "@import url(../resources/sec642.css);"
           text run at (0,30) width 352: "BODY {background: url(../resources/bg.gif);}"
-      RenderBlock {HR} at (0,107) size 784x2 [bgcolor=#000000]
-      RenderBlock {P} at (0,125) size 784x18 [bgcolor=#000000]
+      RenderBlock {HR} at (0,107) size 784x2
+      RenderBlock {P} at (0,125) size 784x18
         RenderText {TEXT} at (0,0) size 386x18
           text run at (0,0) width 386: "This page should have a green grid pattern as its background."
       RenderBlock {P} at (0,159) size 784x54 [bgcolor=#FFFFFF]
@@ -27,7 +27,7 @@ layer at (0,0) size 800x509
           text run at (620,0) width 159: "If an image, in this case a"
           text run at (0,18) width 756: "red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation to the"
           text run at (0,36) width 274: "document's URL, not the stylesheet's URL."
-      RenderTable {TABLE} at (0,299) size 784x194 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,299) size 784x194
         RenderTableSection {TBODY} at (1,1) size 0x192
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]

@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x138
-  RenderBlock {HTML} at (0,0) size 800x138
-    RenderBody {BODY} at (8,16) size 784x114
+layer at (0,0) size 800x144
+  RenderBlock {HTML} at (0,0) size 800x144
+    RenderBody {BODY} at (8,16) size 784x120
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 295x18
           text run at (0,0) width 295: "The following two squares should be identical."
-      RenderTable {TABLE} at (0,34) size 304x80
-        RenderTableSection {TBODY} at (0,0) size 0x80
+      RenderTable {TABLE} at (0,34) size 316x86
+        RenderTableSection {TBODY} at (0,0) size 0x86
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (16,16) size 128x48 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (0,32) size 128x16 [bgcolor=#FF0000]
+            RenderTableCell {TD} at (16,16) size 134x54 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (3,35) size 128x16 [bgcolor=#FF0000]
                 RenderBlock (floating) {DIV} at (0,0) size 128x16 [bgcolor=#FFFF00]
                 RenderBlock (anonymous) at (0,0) size 128x0 [bgcolor=#000000]
                   RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FF0000]
                 RenderBlock {DIV} at (0,0) size 128x16
-            RenderTableCell {TD} at (160,16) size 128x48 [bgcolor=#00FF00] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 128x32 [bgcolor=#000000]
-              RenderBlock {DIV} at (0,32) size 128x16 [bgcolor=#000000]
+            RenderTableCell {TD} at (166,16) size 134x54 [bgcolor=#00FF00] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 128x32 [bgcolor=#000000]
+              RenderBlock {DIV} at (3,35) size 128x16 [bgcolor=#000000]

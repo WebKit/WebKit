@@ -116,10 +116,16 @@ public:
     CSSInheritedValueImpl() : CSSValueImpl() {}
     virtual ~CSSInheritedValueImpl() {}
 
-    virtual unsigned short cssValueType() const { return CSSValue::CSS_INHERIT; }
+    virtual unsigned short cssValueType() const;
     virtual DOM::DOMString cssText() const;
 };
 
+class CSSInitialValueImpl : public CSSValueImpl
+{
+public:
+    virtual unsigned short cssValueType() const;
+    virtual DOM::DOMString cssText() const;
+};
 
 class CSSValueListImpl : public CSSValueImpl
 {
