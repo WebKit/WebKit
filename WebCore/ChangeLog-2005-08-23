@@ -1,3 +1,23 @@
+2005-03-15  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Ken and Maciej.
+
+	New fix for <rdar://problem/3667701> crash in KHTMLPart::jScriptEnabled()
+	
+	The tokenizer has buffers which mean parsing can continue even after loading is supposed to be stopped. If the loading process was aborted, the tokenizer should abort, too.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer): Initialize loadStopped to false.
+        (khtml::HTMLTokenizer::write): Go ahead and bail out if loadStopped is true. 
+        (khtml::HTMLTokenizer::processToken):
+        * khtml/html/htmltokenizer.h: Added loadStopped flag. Changed the view pointer from a standard pointer to a QGuardedPtr.  This fixes the crash.  Now the tokenizer's handle to the view will now automatically nil-out and never dangle.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::closeURL): Notify the tokenizer to stop parsing. 
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::XMLTokenizer): Initialize loadStopped to false.
+        * khtml/xml/xml_tokenizer.h:
+        (khtml::Tokenizer::stopParsing): Added. 
+
 2005-03-14  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin, Maciej.

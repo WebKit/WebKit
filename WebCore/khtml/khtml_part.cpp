@@ -578,7 +578,11 @@ void KHTMLPart::didExplicitOpen()
 
 
 bool KHTMLPart::closeURL()
-{
+{    
+    if (d->m_doc && d->m_doc->tokenizer()) {
+        d->m_doc->tokenizer()->stopParsing();
+    }
+    
   if ( d->m_job )
   {
     KHTMLPageCache::self()->cancelEntry(d->m_cacheId);

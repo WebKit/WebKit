@@ -250,6 +250,7 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool incl
     attrNamePresent = false;
     timerId = 0;
     includesCommentsInDOM = includesComments;
+    loadStopped = false;
     
     begin();
 }
@@ -270,6 +271,7 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, DOM::DocumentFragmentImpl *
     onHold = false;
     timerId = 0;
     includesCommentsInDOM = includesComments;
+    loadStopped = false;
 
     begin();
 }
@@ -1533,6 +1535,9 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
 
     if (!buffer)
         return;
+    
+    if (loadStopped)
+        return;
 
     if ( ( m_executingScript && appendData ) || !cachedScript.isEmpty() ) {
         // don't parse; we will do this later
@@ -2008,9 +2013,12 @@ void HTMLTokenizer::processToken()
     }
     kdDebug( 6036 ) << endl;
 #endif
-    // pass the token over to the parser, the parser DOES NOT delete the token
-    parser->parseToken(&currToken);
-
+    
+    if (!loadStopped) {
+        // pass the token over to the parser, the parser DOES NOT delete the token
+        parser->parseToken(&currToken);
+    }
+    
     currToken.reset();
     if (jsProxy)
         jsProxy->setEventHandlerLineno(0);

@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -57,10 +57,16 @@ public:
     virtual void finish() = 0;
     virtual void setOnHold(bool onHold) = 0;
     virtual bool isWaitingForScripts() const = 0;
+    void stopParsing() { loadStopped = true; }
 
     virtual void stopped() {};
     virtual bool processingData() const { return false; }
 
+    // The tokenizer has buffers which mean parsing can continue even after
+    // loading is supposed to be stopped. If the loading process has stopped,
+    // so should we. 
+    bool loadStopped;
+    
 #ifdef KHTML_XSLT
     virtual void setTransformSource(DOM::DocumentImpl* doc) {};
 #endif

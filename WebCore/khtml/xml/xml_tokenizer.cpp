@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -254,6 +254,10 @@ XMLTokenizer::XMLTokenizer(DocumentPtr *_doc, KHTMLView *_view)
 {
     if (m_doc)
         m_doc->ref();
+    
+    //FIXME: XMLTokenizer should use this in a fashion similiar to how
+    //HTMLTokenizer uses loadStopped, in the future.
+    loadStopped = false;
 }
 
 XMLTokenizer::~XMLTokenizer()
