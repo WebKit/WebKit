@@ -65,6 +65,8 @@
     stream.lastmodified = [[r lastModifiedDate] timeIntervalSince1970];
     stream.notifyData = notifyData;
 
+    offset = 0;
+
     // FIXME: Need a way to check if stream is seekable
 
     NPError npErr;
@@ -139,27 +141,32 @@
     }
     
     if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
-        ASSERT(!path);
-        path = strdup("/tmp/SafariPlugInStream.XXXXXX");
-        int fd = mkstemp(path);
-        if (fd == -1) {
-            // This should almost never happen.
-            ERROR("can't make temporary file, almost certainly a problem with /tmp");
-            // This is not a network error, but the only error codes are "network error" and "user break".
-            [self destroyStreamWithReason:NPRES_NETWORK_ERR];
-            return;
-        }
-        int dataLength = [data length];
-        int byteCount = write(fd, [data bytes], dataLength);
-        if (byteCount != dataLength) {
-            // This happens only rarely, when we are out of disk space or have a disk I/O error.
-            ERROR("error writing to temporary file, errno %d", errno);
+        if (!path) {
+            path = strdup("/tmp/SafariPlugInStream.XXXXXX");
+            int fd = mkstemp(path);
+            if (fd == -1) {
+                // This should almost never happen.
+                ERROR("can't make temporary file, almost certainly a problem with /tmp");
+                // This is not a network error, but the only error codes are "network error" and "user break".
+                [self destroyStreamWithReason:NPRES_NETWORK_ERR];
+                free(path);
+                path = NULL;
+                return;
+            }
+            int dataLength = [data length];
+            int byteCount = write(fd, [data bytes], dataLength);
+            if (byteCount != dataLength) {
+                // This happens only rarely, when we are out of disk space or have a disk I/O error.
+                ERROR("error writing to temporary file, errno %d", errno);
+                close(fd);
+                // This is not a network error, but the only error codes are "network error" and "user break".
+                [self destroyStreamWithReason:NPRES_NETWORK_ERR];
+                free(path);
+                path = NULL;
+                return;
+            }
             close(fd);
-            // This is not a network error, but the only error codes are "network error" and "user break".
-            [self destroyStreamWithReason:NPRES_NETWORK_ERR];
-            return;
         }
-        close(fd);
         
         NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithCString:path]];
         NPP_StreamAsFile(instance, &stream, [carbonPath cString]);

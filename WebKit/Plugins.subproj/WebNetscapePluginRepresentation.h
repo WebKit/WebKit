@@ -7,11 +7,16 @@
 
 #import <WebKit/WebBaseNetscapePluginStream.h>
 
+@class WebDataSource;
+@class WebError;
 @protocol WebDocumentRepresentation;
 
 @interface WebNetscapePluginRepresentation : WebBaseNetscapePluginStream <WebDocumentRepresentation>
 {
-
+    WebDataSource *_dataSource;
+    WebError *_error;
 }
+
+- (void)redeliverStream;
 
 @end

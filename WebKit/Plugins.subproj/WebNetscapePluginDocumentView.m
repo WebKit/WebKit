@@ -9,6 +9,7 @@
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
+#import <WebKit/WebNetscapePluginRepresentation.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
@@ -24,13 +25,9 @@
 - initWithFrame:(NSRect)frame
 {
     [super initWithFrame:frame];
-
     [self setFrame:NSZeroRect];
-
     [self setMode:NP_FULL];
-
     needsLayout = YES;
-
     return self;
 }
 
@@ -49,15 +46,28 @@
     [super drawRect:rect];
 }
 
+- (void)viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+
+    // If viewDidMoveToWindow is called before setDataSource don't deliver the stream here because the loading process
+    // of WebKit handles that for us. If viewDidMoveToWindow is called after setDataSource,
+    // (this happens if plug-in content is loaded without a window), start the plug-in and redeliver the
+    // stream because the view is now in a window.
+    if ([self window] && dataSource && [self start]) {
+        WebNetscapePluginRepresentation *representation = (WebNetscapePluginRepresentation *)[dataSource representation];
+        ASSERT([representation isKindOfClass:[WebNetscapePluginRepresentation class]]);
+        [representation redeliverStream];
+    }
+}
+
 - (WebDataSource *)dataSource
 {
     return dataSource;
 }
 
 - (void)setDataSource:(WebDataSource *)theDataSource
-{
-    ASSERT([self window]);
-    
+{    
     [dataSource release];
     dataSource = [theDataSource retain];
 
@@ -71,7 +81,7 @@
 
     if (![thePlugin load]){
         // FIXME: It would be nice to stop the load here.
-        
+
         WebPluginError *error = [WebPluginError pluginErrorWithCode:WebKitErrorCannotLoadPlugin
                                                          contentURL:[[[theDataSource request] URL] absoluteString]
                                                       pluginPageURL:nil
@@ -86,7 +96,9 @@
 
     [self setPlugin:thePlugin];
 
-    [self start];
+    if ([self window]) {
+        [self start];
+    }
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource

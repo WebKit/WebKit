@@ -1,3 +1,32 @@
+2003-03-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3197872 - Standalone plug-in content isn't restarted when switching tabs
+	Fixed: 3189675 - assertion in plug-in code fails (nil window) with .swf page displaying standalone in a tab
+
+	We start plug-ins when they are added to the window and stop them when they are removed. To restart a plug-in, the data stream must be redelivered. This works in the embedded plug-in case, but in the standalone plug-in case, the stream is delivered by the machinery in WebKit. The stream is only delivered once. This fix addresses that.
+
+        Reviewed by trey.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]): reset the offset ivar
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): If we create a file for the plug-in, handle the case where the file is already created.
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView isStarted]): added so the stream knows the state of the view
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView initWithFrame:]): tweak
+        (-[WebNetscapePluginDocumentView viewDidMoveToWindow]): call redeliverStream if we are added back to the window
+        (-[WebNetscapePluginDocumentView setDataSource:]): only start the plug-in if we are in a window, don't assert
+        * Plugins.subproj/WebNetscapePluginRepresentation.h:
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation dealloc]): release the retained data source and error
+        (-[WebNetscapePluginRepresentation setDataSource:]): retain the data source
+        (-[WebNetscapePluginRepresentation isPluginViewStarted]): new 
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]): only do work if isPluginViewStarted
+        (-[WebNetscapePluginRepresentation receivedError:withDataSource:]): retain the error, only do work if isPluginViewStarted
+        (-[WebNetscapePluginRepresentation finishedLoadingWithDataSource:]): only do work if isPluginViewStarted
+        (-[WebNetscapePluginRepresentation redeliverStream]): call receivedData:: with all the received data up to this point. Call receivedError:: or finishedLoadingWithDataSource: if the load is already complete.
+
 2003-03-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

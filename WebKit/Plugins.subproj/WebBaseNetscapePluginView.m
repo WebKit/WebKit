@@ -716,7 +716,7 @@ typedef struct {
     }
     
     isStarted = NO;
-
+    
     // Stop any active streams
     [streams makeObjectsPerformSelector:@selector(stop)];
     
@@ -733,6 +733,13 @@ typedef struct {
     NPError npErr;
     npErr = NPP_Destroy(instance, NULL);
     LOG(Plugins, "NPP_Destroy: %d", npErr);
+
+    instance->pdata = NULL;
+}
+
+- (BOOL)isStarted
+{
+    return isStarted;
 }
 
 - (WebDataSource *)dataSource
