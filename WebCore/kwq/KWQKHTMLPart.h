@@ -113,8 +113,6 @@ public:
 
     void jumpToSelection();
 
-    void layout();
-    
     QString userAgent() const;
 
     void updatePolicyBaseURL();
@@ -182,7 +180,6 @@ private:
     KWQSignal _completed;
     KWQSignal _completedWithBool;
     
-    bool _needsToSetWidgetsAside;
     bool _ownsView;
 
     NSEvent *_currentEvent;

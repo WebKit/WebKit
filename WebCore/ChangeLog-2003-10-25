@@ -1,3 +1,21 @@
+2002-12-03  David Hyatt  <hyatt@apple.com>
+
+	Remove the moveWidgetsAside function.  This fixes all the
+	form controls on livepage.apple.com that were getting hosed
+	by the scrolling marquee.
+	
+        Reviewed by: darin
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableRowElementImpl::addChild):
+        * khtml/misc/loader.cpp:
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::layout):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):
+        (KWQKHTMLPart::paint):
+
 2002-12-03  Richard Williamson   <rjw@apple.com>
 
         Fixed 3019986.  Use an array of font families instead of a single

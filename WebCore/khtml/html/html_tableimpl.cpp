@@ -627,7 +627,7 @@ NodeImpl::Id HTMLTableRowElementImpl::id() const
 NodeImpl *HTMLTableRowElementImpl::addChild(NodeImpl *child)
 {
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6030 ) << nodeName().string() << "(Tbody)::addChild( " << child->nodeName().string() << " )" << endl;
+    kdDebug( 6030 ) << nodeName().string() << "(Trow)::addChild( " << child->nodeName().string() << " )" << endl;
 #endif
 
     if (child->id() == ID_FORM) {

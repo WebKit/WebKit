@@ -99,7 +99,6 @@ KWQKHTMLPart::KWQKHTMLPart(KHTMLPart *p)
     , _started(p, SIGNAL(started(KIO::Job *)))
     , _completed(p, SIGNAL(completed()))
     , _completedWithBool(p, SIGNAL(completed(bool)))
-    , _needsToSetWidgetsAside(false)
     , _ownsView(false)
     , _currentEvent(nil)
 {
@@ -284,28 +283,6 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
     }
 }
 
-static void moveWidgetsAside(RenderObject *object)
-{
-    // Would use dynamic_cast, but a virtual function call is faster.
-    if (object->isWidget()) {
-        QWidget *widget = static_cast<RenderWidget *>(object)->widget();
-        if (widget) {
-            widget->move(999999, 0);
-        }
-    }
-    
-    for (RenderObject *child = object->firstChild(); child; child = child->nextSibling()) {
-        moveWidgetsAside(child);
-    }
-}
-
-void KWQKHTMLPart::layout()
-{
-    // Since not all widgets will get a print call, it's important to move them away
-    // so that they won't linger in an old position left over from a previous print.
-    _needsToSetWidgetsAside = true;
-}
-
 void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 {
 #ifdef DEBUG_DRAWING
@@ -314,10 +291,6 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 #endif
 
     if (renderer()) {
-        if (_needsToSetWidgetsAside) {
-            moveWidgetsAside(renderer());
-            _needsToSetWidgetsAside = false;
-        }
         renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height());
     }
 }
