@@ -22,30 +22,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <qradiobutton.h>
+#include <Cocoa/Cocoa.h>
 
-#include <KWQView.h>
+class QWidget;
 
-#include <kwqdebug.h>
-
-QRadioButton::QRadioButton(QWidget *w) : QButton (w)
+@interface KWQNSTextFieldFormatter : NSFormatter
 {
-    KWQNSButton *button;
-    
-    button = (KWQNSButton *)getView();
-    [button setButtonType: NSSwitchButton];
-    setView (button);
+    int maxLength;
+    bool isPassword;
 }
 
+- (void)setPasswordMode: (bool)flag;
+- (bool)passwordMode;
+- (void)setMaximumLength: (int)len;
+- (int)maximumLength;
+- (NSString *)stringForObjectValue:(id)anObject;
+- (BOOL)getObjectValue:(id *)obj forString:(NSString *)string errorDescription:(NSString  **)error;
+- (BOOL)isPartialStringValid:(NSString *)partialString newEditingString:(NSString **)newString errorDescription:(NSString **)error;
+- (NSAttributedString *)attributedStringForObjectValue:(id)anObject withDefaultAttributes:(NSDictionary *)attributes;
 
-void QRadioButton::setChecked(bool isChecked)
+@end
+
+@interface KWQNSTextField : NSTextField
 {
-    KWQNSButton *button;
-    
-    button = (KWQNSButton *)getView();
-    if (isChecked)
-        [button setState: NSOnState];
-    else
-        [button setState: NSOffState];
+@private
+    NSSecureTextField *secureField;
+    QWidget *widget;
+    KWQNSTextFieldFormatter *formatter;
 }
+
+- initWithFrame: (NSRect)r widget: (QWidget *)w;
+- (KWQNSTextFieldFormatter *)formatter;
+- (void)setPasswordMode: (bool)flag;
+- (bool)passwordMode;
+- (void)setMaximumLength: (int)len;
+- (int)maximumLength;
+
+@end
 

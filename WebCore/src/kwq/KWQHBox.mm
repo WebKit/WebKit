@@ -22,30 +22,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <qhbox.h>
+
+#include <KWQView.h>
+#include <KWQNSTextField.h>
+
 #include <kwqdebug.h>
 
-#include <qhbox.h>
+// This class is ONLY used by FORM <input type=file> elements.  It's used
+// to stretch a LineEditWidget.  We don't need it.
 
 QHBox::QHBox()
 {
-    _logNotYetImplemented();
+    KWQView *view = (KWQView *)getView();
+    [view setIsFlipped: NO];
 }
 
 
 QHBox::QHBox(QWidget *)
 {
-    _logNotYetImplemented();
 }
 
 
 QHBox::~QHBox()
 {
-    _logNotYetImplemented();
+}
+
+
+// Override the focus proxy to simply add the line edit widget as a subview.
+void QHBox::setFocusProxy( QWidget *lineEdit)
+{
+    KWQView *view = (KWQView *)getView();
+    KWQNSTextField *fieldView = (KWQNSTextField *)lineEdit->getView();
+
+    // Do we also need to set size, or will layout take care of that?
+    [view addSubview: fieldView];
 }
 
 
 bool QHBox::setStretchFactor(QWidget*, int stretch)
 {
-    _logNotYetImplemented();
 }
 

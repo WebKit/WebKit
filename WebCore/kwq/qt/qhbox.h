@@ -72,6 +72,10 @@ private:
     QHBox &operator=(const QHBox &);
 #endif
 
+#ifdef _KWQ_
+    void setFocusProxy( QWidget *lineEdit);
+#endif
+
 }; // class QHBox ==============================================================
 
 #endif

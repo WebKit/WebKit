@@ -22,32 +22,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <qcombobox.h>
+
+#include <KWQView.h>
+
 #include <kwqdebug.h>
 
 
-#include <qcombobox.h>
-
-
-QComboBox::QComboBox(QWidget *parent=0, const char *name=0)
+QComboBox::QComboBox(QWidget *parent, const char *name)
 {
-    _logNotYetImplemented();
+    init(FALSE);
 }
 
 
-QComboBox::QComboBox(bool rw, QWidget *parent=0, const char *name=0)
+QComboBox::QComboBox(bool rw, QWidget *parent, const char *name)
 {
-    _logNotYetImplemented();
+    init(rw);
 }
+
+
+void QComboBox::init(bool isEditable)
+{
+    KWQNSComboBox *comboBox;
+    
+    comboBox = [[[KWQNSComboBox alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease];
+    if (isEditable == FALSE)
+        [comboBox setEditable: NO];
+}
+
 
 QComboBox::~QComboBox()
 {
-    _logNotYetImplemented();
 }
 
 
 int QComboBox::count() const
 {
-    _logNotYetImplemented();
+    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
+    
+    return [comboBox numberOfItems];
 }
 
 
@@ -69,20 +82,27 @@ bool QComboBox::eventFilter(QObject *object, QEvent *event)
 }
 
 
-void QComboBox::insertItem(const QString &text, int index=-1)
+void QComboBox::insertItem(const QString &text, int index)
 {
-    _logNotYetImplemented();
+    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
+    
+    if (index < 0)
+        index = count();
+    [comboBox insertItemWithObjectValue: QSTRING_TO_NSSTRING (text) atIndex: index]; 
 }
 
 
 void QComboBox::clear()
 {
-    _logNotYetImplemented();
+    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
+    
+    [comboBox removeAllItems];
 }
 
-void QComboBox::setCurrentItem(int)
+void QComboBox::setCurrentItem(int index)
 {
-    _logNotYetImplemented();
+    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
+    [comboBox selectItemAtIndex: index];
 }
 
 

@@ -25,15 +25,27 @@
 
 #include <qcheckbox.h>
 
+#include <KWQView.h>
+
 #include <kwqdebug.h>
 
 QCheckBox::QCheckBox(QWidget *w) : QButton (w)
 {
-    _logNotYetImplemented();
+    KWQNSButton *button;
+    
+    button = (KWQNSButton *)getView();
+    [button setButtonType: NSRadioButton];
+    setView (button);
 }
 
 
-void QCheckBox::setChecked(bool)
+void QCheckBox::setChecked(bool isChecked)
 {
-    _logNotYetImplemented();
+    KWQNSButton *button;
+    
+    button = (KWQNSButton *)getView();
+    if (isChecked)
+        [button setState: NSOnState];
+    else
+        [button setState: NSOffState];
 }

@@ -8,6 +8,7 @@
 {
     [super initWithFrame: r];
     widget = w;
+    isFlipped = YES;
 }
 
 
@@ -16,15 +17,32 @@
     widget->paint((void *)0);
 }
 
+- (void)setIsFlipped: (bool)flag
+{
+    isFlipped = flag;
+}
+
 
 - (BOOL)isFlipped 
 {
-	return YES;
+    return isFlipped;
 }
 
 @end
 
+
 @implementation KWQNSButton
+
+- initWithFrame: (NSRect) r widget: (QWidget *)w 
+{
+    [super initWithFrame: r];
+    widget = w;
+}
+
+@end
+
+
+@implementation KWQNSComboBox
 
 - initWithFrame: (NSRect) r widget: (QWidget *)w 
 {

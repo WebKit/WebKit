@@ -22,18 +22,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
-
 #include <qradiobutton.h>
+
+#include <KWQView.h>
+
+#include <kwqdebug.h>
 
 QRadioButton::QRadioButton(QWidget *w) : QButton (w)
 {
-    _logNotYetImplemented();
+    KWQNSButton *button;
+    
+    button = (KWQNSButton *)getView();
+    [button setButtonType: NSSwitchButton];
+    setView (button);
 }
 
 
-void QRadioButton::setChecked(bool)
+void QRadioButton::setChecked(bool isChecked)
 {
-    _logNotYetImplemented();
+    KWQNSButton *button;
+    
+    button = (KWQNSButton *)getView();
+    if (isChecked)
+        [button setState: NSOnState];
+    else
+        [button setState: NSOffState];
 }
 

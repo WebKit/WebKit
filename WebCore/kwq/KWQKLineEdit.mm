@@ -22,32 +22,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
-
-
 #include <klineedit.h>
 
+#include <KWQNSTextField.h>
 
-KLineEdit::KLineEdit(QWidget *parent=0, const char *name=0)
+#include <kwqdebug.h>
+
+KLineEdit::KLineEdit(QWidget *parent, const char *name)
 {
-    _logNotYetImplemented();
 }
 
 KLineEdit::~KLineEdit()
 {
-    _logNotYetImplemented();
 }
 
 
 void KLineEdit::setMouseTracking(bool)
 {
-    _logNotYetImplemented();
+    KWQNSTextField *fieldView = (KWQNSTextField *)getView();
 }
 
 
 void KLineEdit::setContextMenuEnabled(bool showMenu)
 {
-    _logNotYetImplemented();
+    KWQNSTextField *fieldView = (KWQNSTextField *)getView();
 }
 
 

@@ -22,52 +22,66 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
-
 #include <qlineedit.h>
 
-QLineEdit::QLineEdit(QWidget *parent=0, const char *name=0)
+#include <KWQNSTextField.h>
+
+#include <kwqdebug.h>
+
+QLineEdit::QLineEdit(QWidget *parent, const char *name)
 {
-    _logNotYetImplemented();
+    setView ([[[KWQNSTextField alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease]);
 }
 
 QLineEdit::~QLineEdit()
 {
-    _logNotYetImplemented();
 }
     
-void QLineEdit::setEchoMode(EchoMode)
+void QLineEdit::setEchoMode(EchoMode mode)
 {
-    _logNotYetImplemented();
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    if (mode == QLineEdit::Password)
+        [field setPasswordMode: YES];
+    else
+        [field setPasswordMode: NO];
 }
 
 void QLineEdit::setCursorPosition(int)
 {
-    _logNotYetImplemented();
+    // Don't do anything here.
 }
 
 
-void QLineEdit::setText(const QString &)
+void QLineEdit::setText(const QString &s)
 {
-    _logNotYetImplemented();
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    [field setStringValue: QSTRING_TO_NSSTRING(s)];
 }
 
 
-void QLineEdit::setMaxLength(int)
+void QLineEdit::setMaxLength(int len)
 {
-    _logNotYetImplemented();
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    [field setMaximumLength: len];
 }
 
 
 bool QLineEdit::isReadOnly() const
 {
-    _logNotYetImplemented();
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    return [field isEditable];
 }
 
 
-void QLineEdit::setReadOnly(bool)
+void QLineEdit::setReadOnly(bool flag)
 {
-    _logNotYetImplemented();
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    return [field setEditable: flag];
 }
 
 
@@ -85,30 +99,35 @@ bool QLineEdit::frame() const
 
 int QLineEdit::cursorPosition() const
 {
-    _logNotYetImplemented();
+    // Not needed.  We ignore setCursorPosition().
+    return 0;
 }
 
 
 int QLineEdit::maxLength() const
 {
-    _logNotYetImplemented();
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    return [field maximumLength];
 }
 
 
 void QLineEdit::selectAll()
 {
-    _logNotYetImplemented();
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    return [field selectText: field];
 }
 
 
 QLineEdit::QLineEdit(const QLineEdit &)
 {
-    _logNotYetImplemented();
+    _logNeverImplemented();
 }
 
 QLineEdit &QLineEdit::operator=(const QLineEdit &)
 {
-    _logNotYetImplemented();
+    _logNeverImplemented();
 }
 
 

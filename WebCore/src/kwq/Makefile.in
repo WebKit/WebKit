@@ -93,6 +93,7 @@ MMOBJECTS = \
         KWQListBox.o \
         KWQLineEdit.o \
         KWQMovie.o \
+        KWQNSTextField.o \
         KWQObject.o \
 	KWQPainter.o \
         KWQPaintDevice.o \

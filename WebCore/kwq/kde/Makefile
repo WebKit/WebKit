@@ -1,0 +1,59 @@
+# Generated automatically from Makefile.in by configure.
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ../../..
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+SOURCES = $(wildcard *.cpp)
+CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+
+OBJECTS = $(CXXOBJECTS)
+
+LIBRARY = lib_kde.a
+
+CLEAN_FILES = *.o \
+    *.a \
+    $(NULL)
+
+#----------------------------------------------------------------------
+# Set flags for this directory
+
+CXXFLAGS = $(BASECXXFLAGS) \
+    -I$(TOPSRCDIR) \
+    -I../kdecore \
+    -I../qt \
+    -I.. \
+    -I. \
+    $(NULL)
+
+DEPFLAGS = $(CXXFLAGS)
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: $(OBJECTS) $(LIBRARY)
+
+$(LIBRARY): $(OBJECTS)
+	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
+	$(RANLIB) $(LIBRARY)
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================
