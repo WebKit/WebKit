@@ -1,3 +1,22 @@
+2002-11-09  Darin Adler  <darin@apple.com>
+
+	- fixed 3095156 -- reproducible leak of WebDataSource due to bad URL in stylesheet
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+	Check for errors by looking at the return value from loadWithRequest: rather than
+	making a separate call to canInitWithRequest.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h: Add boolean success/failure result
+	loadWithRequest:.
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]): Return NO if we fail to make a handle.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _startLoading]):
+	Check result of loadWithRequest: and complain if it's NO.
+
+        * WebView.subproj/WebMainResourceClient.m: Tweak whitespace.
+
 2002-11-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 2991610 - Alexander should support services, including Speech

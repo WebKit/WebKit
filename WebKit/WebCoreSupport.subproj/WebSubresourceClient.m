@@ -13,7 +13,7 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandleDelegate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
@@ -42,7 +42,10 @@
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
     withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
 {
-    WebSubresourceClient *client = [[self alloc] initWithLoader:rLoader dataSource:source];
+    WebSubresourceClient *client = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
+    
+    [source _addSubresourceClient:client];
+
     WebResourceRequest *newRequest = [[WebResourceRequest alloc] initWithURL:URL];
     [newRequest setRequestCachePolicy:[[source request] requestCachePolicy]];
     [newRequest setResponseCachePolicy:[[source request] responseCachePolicy]];
@@ -50,8 +53,12 @@
     [newRequest setCookiePolicyBaseURL:[[[[source controller] mainFrame] dataSource] URL]];
     [newRequest setUserAgent:[[source controller] userAgentForURL:URL]];
     
-    if (![WebResourceHandle canInitWithRequest:newRequest]) {
-        [newRequest release];
+    BOOL succeeded = [client loadWithRequest:newRequest];
+    [newRequest release];
+        
+    if (!succeeded) {
+        [source _removeSubresourceClient:client];
+
         [rLoader reportError];
 
         WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
@@ -59,14 +66,10 @@
                                                          failingURL:[URL absoluteString]];
         [[source controller] _receivedError:badURLError fromDataSource:source];
         [badURLError release];
-        return nil;
+        client = nil;
     }
     
-    [source _addSubresourceClient:client];
-    [client loadWithRequest:newRequest];
-    [newRequest release];
-        
-    return [client autorelease];
+    return client;
 }
 
 - (void)receivedError:(WebError *)error

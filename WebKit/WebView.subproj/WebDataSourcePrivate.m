@@ -154,15 +154,20 @@
     [[_private->controller locationChangeDelegate] locationChangeStartedForDataSource:self];
 
     if (!_private->mainClient) {
-        _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
-
 	if ([self webFrame] == [[self controller] mainFrame]) {
 	    [_private->request setCookiePolicyBaseURL:[self URL]];
 	} else {
 	    [_private->request setCookiePolicyBaseURL:[[[_private->controller mainFrame] dataSource] URL]];
 	}
 
-        [_private->mainClient loadWithRequest:_private->request];
+        _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
+        if (![_private->mainClient loadWithRequest:_private->request]) {
+            ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level",
+                [_private->request URL]);
+            [_private->mainClient release];
+            _private->mainClient = nil;
+            [self _updateLoading];
+        }
     }
 }
 

@@ -58,15 +58,19 @@
     [super dealloc];
 }
 
-- (void)loadWithRequest:(WebResourceRequest *)r
+- (BOOL)loadWithRequest:(WebResourceRequest *)r
 {
     ASSERT(handle == nil);
     
     handle = [[WebResourceHandle alloc] initWithRequest:r];
+    if (!handle) {
+        return NO;
+    }
     if (defersCallbacks) {
         [handle _setDefersCallbacks:YES];
     }
     [handle loadWithDelegate:self];
+    return YES;
 }
 
 - (void)setDefersCallbacks:(BOOL)defers
@@ -75,22 +79,17 @@
     [handle _setDefersCallbacks:defers];
 }
 
-- (void)setDataSource: (WebDataSource *)d
+- (void)setDataSource:(WebDataSource *)d
 {
-    if (d != dataSource){
-        [dataSource release];
-        dataSource = [d retain];
-    }
+    [d retain];
+    [dataSource release];
+    dataSource = d;
     
-    if (resourceLoadDelegate != [[dataSource controller] resourceLoadDelegate]){
-        [resourceLoadDelegate release];
-        resourceLoadDelegate = [[[dataSource controller] resourceLoadDelegate] retain];
-    }
+    [resourceLoadDelegate release];
+    resourceLoadDelegate = [[[dataSource controller] resourceLoadDelegate] retain];
 
-    if (downloadDelegate != [[dataSource controller] downloadDelegate]){
-        [downloadDelegate release];
-        downloadDelegate = [[[dataSource controller] downloadDelegate] retain];
-    }    
+    [downloadDelegate release];
+    downloadDelegate = [[[dataSource controller] downloadDelegate] retain];
 }
 
 - (WebDataSource *)dataSource
@@ -108,7 +107,7 @@
     return downloadDelegate;
 }
 
-- (void)setIsDownload: (BOOL)f
+- (void)setIsDownload:(BOOL)f
 {
     isDownload = f;
 }
@@ -159,9 +158,9 @@
     response = r;
 
     if (isDownload)
-        [downloadDelegate resource:identifier didReceiveResponse:r fromDataSource: dataSource];
+        [downloadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];
     else
-        [resourceLoadDelegate resource:identifier didReceiveResponse:r fromDataSource: dataSource];
+        [resourceLoadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
@@ -170,9 +169,9 @@
     ASSERT(!reachedTerminalState);
 
     if ([self isDownload])
-        [downloadDelegate resource: identifier didReceiveContentLength: [data length] fromDataSource: dataSource];
+        [downloadDelegate resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
     else
-        [resourceLoadDelegate resource: identifier didReceiveContentLength: [data length] fromDataSource: dataSource];
+        [resourceLoadDelegate resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h

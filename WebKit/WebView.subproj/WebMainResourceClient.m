@@ -29,7 +29,7 @@
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebView.h>
 
-// FIXME: This is quite similar to WebSubresourceClient; they should share code.
+// FIXME: More that is in common with WebSubresourceClient should move up into WebBaseResourceHandleDelegate.
 
 @implementation WebMainResourceClient
 
@@ -39,7 +39,7 @@
     
     if (self) {
         resourceData = [[NSMutableData alloc] init];
-        [self setDataSource: ds];
+        [self setDataSource:ds];
     }
 
     return self;
@@ -168,7 +168,7 @@
         }
         break;
     
-    case WebContentPolicyIgnore: 
+    case WebContentPolicyIgnore:
         {
             [self cancel];
             [[dataSource webFrame] _setProvisionalDataSource:nil];
@@ -245,7 +245,7 @@
                                                 complete:YES];
     }
     
-    [super handleDidFinishLoading: h];
+    [super handleDidFinishLoading:h];
 
     [self release];
 }
@@ -265,7 +265,7 @@
         downloadHandler = nil;
     }
     
-    [super handle: h didFailLoadingWithError: result];
+    [super handle:h didFailLoadingWithError:result];
 
     [self release];
 }
