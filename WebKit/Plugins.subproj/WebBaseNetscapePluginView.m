@@ -251,7 +251,9 @@ typedef struct {
 
 - (BOOL)sendEvent:(EventRecord *)event
 {
-    ASSERT(isStarted);
+    if (!isStarted || !NPP_HandleEvent) {
+        return NO;
+    }
     
     BOOL defers = [[self controller] _defersCallbacks];
     if (!defers) {
@@ -271,10 +273,7 @@ typedef struct {
     }
 #endif
 
-    BOOL acceptedEvent = NO;
-    if (NPP_HandleEvent) {
-        acceptedEvent = NPP_HandleEvent(instance, event);
-    }
+    BOOL acceptedEvent = NPP_HandleEvent(instance, event);
 
     [self restorePortState:portState];
 
@@ -557,7 +556,9 @@ typedef struct {
 
 - (void)setWindow
 {
-    ASSERT(isStarted);
+    if (!isStarted) {
+        return;
+    }
     
     PortState portState = [self saveAndSetPortState];
 
@@ -857,9 +858,7 @@ typedef struct {
 
 -(void)viewHasMoved:(NSNotification *)notification
 {
-    if (isStarted) {
-        [self setWindow];
-    }
+    [self setWindow];
     [self resetTrackingRect];
 }
 

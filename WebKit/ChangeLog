@@ -2,6 +2,18 @@
 
         Reviewed by Don.
 
+	- follow-on to my fix for 3125877 that fixes a crash I observed when a plug-in fails to NPP_New
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]): Return quietly if this is called when
+	the plug-in is not started rather than asserting (and doing bad things on Deployment).
+        (-[WebBaseNetscapePluginView setWindow]): Ditto.
+        (-[WebBaseNetscapePluginView viewHasMoved:]): Just call setWindow since it now checks isStarted.
+
+2002-12-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
 	- fixed 3120630 -- spacebar scrolls the page as well as pausing the QuickTime movie
 
 	Imitate Mozilla and OmniWeb by not propagating keyboard events after passing them to
