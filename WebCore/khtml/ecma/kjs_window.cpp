@@ -603,15 +603,28 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case ScreenX: {
       if (!m_part->view())
         return Undefined();
+#if APPLE_CHANGES
+      // We want to use frameGeometry here instead of mapToGlobal because it goes through
+      // the windowFrame method of the WebKit's UI delegate. Also we don't want to try
+      // to do anything relative to the screen the window is on, so the code below is no
+      // good of us anyway.
+      return Number(m_part->view()->topLevelWidget()->frameGeometry().x());
+#else
       QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
       return Number(m_part->view()->mapToGlobal(QPoint(0,0)).x() + sg.x());
+#endif
     }
     case ScreenTop:
     case ScreenY: {
       if (!m_part->view())
         return Undefined();
+#if APPLE_CHANGES
+      // See comment above in ScreenX.
+      return Number(m_part->view()->topLevelWidget()->frameGeometry().y());
+#else
       QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
       return Number(m_part->view()->mapToGlobal(QPoint(0,0)).y() + sg.y());
+#endif
     }
     case ScrollX: {
       if (!m_part->view())

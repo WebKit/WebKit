@@ -38,14 +38,6 @@ QWidget *KHTMLView::topLevelWidget() const
     return KWQ(part())->topLevelWidget();
 }
 
-QPoint KHTMLView::mapToGlobal(const QPoint &p) const
-{
-    // This is only used by JavaScript to implement the getting
-    // the screenX and screen Y coordinates.
-
-    return static_cast<KWQWindowWidget *>(topLevelWidget())->mapToGlobal(p);
-}
-
 QPoint KHTMLView::viewportToGlobal(const QPoint &p) const
 {
     return static_cast<KWQWindowWidget *>(topLevelWidget())->viewportToGlobal(p);
