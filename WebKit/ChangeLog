@@ -1,3 +1,24 @@
+2003-07-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+
+        <rdar://problem/3336933>: REGRESSION (Panther): Mozilla build downloaded
+        with wrong extension, bad file size (gzip)
+
+	Use new delegate methods that allow for the correct reporting
+	of progress in cases where Foundation-level content decoding 	
+	has been performed on data received
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient connection:didReceiveData:lengthReceived:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:lengthReceived:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:didReceiveData:lengthReceived:]):
+
 2003-07-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

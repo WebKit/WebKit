@@ -310,6 +310,11 @@
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
 {
+    [self connection:con didReceiveData:data lengthReceived:[data length]];
+}
+
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+{
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData: in a way that invalidates them. This
     // happens with the steps listed in 3266216
@@ -322,9 +327,9 @@
     [webView _incrementProgressForConnection:con data:data];
 
     if (implementations.delegateImplementsDidReceiveContentLength)
-        [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+        [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:lengthReceived fromDataSource:dataSource];
     else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:lengthReceived fromDataSource:dataSource];
     [self release];
 }
 

@@ -101,13 +101,13 @@
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [loader addData:data];
-    [super connection:con didReceiveData:data];
+    [super connection:con didReceiveData:data lengthReceived:lengthReceived];
     [self release];
 }
 

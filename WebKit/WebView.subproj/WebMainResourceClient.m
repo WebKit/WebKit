@@ -253,7 +253,7 @@
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
     ASSERT(data);
     ASSERT([data length] != 0);
@@ -271,7 +271,7 @@
                                        fromDataSource:dataSource
                                              complete:NO];
 
-    [super connection:con didReceiveData:data];
+    [super connection:con didReceiveData:data lengthReceived:lengthReceived];
     _bytesReceived += [data length];
 
     LOG(Loading, "%d of %d", _bytesReceived, _contentLength);
