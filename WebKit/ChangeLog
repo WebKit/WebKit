@@ -1,3 +1,13 @@
+2002-12-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3118647 -- REGRESSION: click policy no longer works
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _actionInformationForNavigationType:event:originalURL:]):
+	Allow mouse up events too. Those are usually the ones that trigger navigation.
+
 2002-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

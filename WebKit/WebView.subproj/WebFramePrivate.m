@@ -1013,6 +1013,9 @@ static const char * const loadTypeNames[] = {
         case NSLeftMouseDown:
         case NSRightMouseDown:
         case NSOtherMouseDown:
+        case NSLeftMouseUp:
+        case NSRightMouseUp:
+        case NSOtherMouseUp:
         {
             NSView *topViewInEventWindow = [[event window] contentView];
             NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
