@@ -45,26 +45,18 @@ extern NSString *WebActionOriginalURLKey; // NSURL
 /*!
     @enum WebPolicyAction
     @abstract Potential actions to take when loading a URL
-    @constant WebPolicyNone Unitialized state.
     @constant WebPolicyUse Have WebKit use the resource.
-    @constant WebPolicyRevealInFinder Reveal the file in the Finder.
     @constant WebPolicySave Save the resource to disk.
-    @constant WebPolicyOpenURL Open the URL in another application.
     @constant WebPolicyOpenNewWindow Open the resource in another window.
     @constant WebPolicyOpenNewWindowBehind Open the resource in another window behind this window.
     @constant WebPolicyIgnore Do nothing with the resource.
-    @constant WebPolicyShow Description forthcoming.
 */
 typedef enum {
-    WebPolicyNone,
     WebPolicyUse,
-    WebPolicyRevealInFinder,
     WebPolicySave,
-    WebPolicyOpenURL,
     WebPolicyOpenNewWindow,
     WebPolicyOpenNewWindowBehind,
     WebPolicyIgnore,
-    WebPolicyShow
 } WebPolicyAction;
 
 
@@ -82,15 +74,15 @@ typedef enum {
 
 
 /*!
-    @category WebControllerPolicyDelegate
-    @discussion While loading a URL, WebKit asks the WebControllerPolicyDelegate for
+    @category WebPolicyDelegate
+    @discussion While loading a URL, WebKit asks the WebPolicyDelegate for
     policies that determine the action of what to do with the URL or the data that
     the URL represents. Typically, the policy handler methods are called in this order:
 
     decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:<BR>
     contentPolicyForMIMEType:andRequest:inFrame:<BR>
 */
-@interface NSObject (WebControllerPolicyDelegate)
+@interface NSObject (WebPolicyDelegate)
 
 /*!
      @method decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:

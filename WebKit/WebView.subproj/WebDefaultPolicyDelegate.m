@@ -43,12 +43,12 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 	if(isDirectory)
 	    return WebPolicyIgnore;
 	if([WebContentTypes canShowMIMEType:type])
-	    return WebPolicyShow;
+	    return WebPolicyUse;
 	return WebPolicyIgnore;
     }
 
     if ([WebContentTypes canShowMIMEType:type]) {
-        return WebPolicyShow;
+        return WebPolicyUse;
     } else {
         return WebPolicyIgnore;
     }
@@ -61,8 +61,13 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 {
     if ([WebResource canInitWithRequest:request]) {
 	[listener usePolicy:WebPolicyUse];
-    }else{
-        [listener usePolicy:WebPolicyOpenURL];
+    } else {
+	// A file URL shouldn't fall through to here, but if it did,
+	// it would be a security risk to open it.
+	if (![[request URL] isFileURL]) {
+	    [[NSWorkspace sharedWorkspace] openURL:[request URL]];
+	}
+        [listener usePolicy:WebPolicyIgnore];
     }
 }
 

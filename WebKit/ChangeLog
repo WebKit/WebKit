@@ -1,3 +1,18 @@
+2003-03-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	Step towards policy API changes. Remove WebPolicyNone,
+	WebPolicyRevealInFinder, WebPolicyOpenURL and WebPolicyShow.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (switch):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+
 2003-03-06  Richard Williamson   <rjw@apple.com>
 
         Remove setWebView: from WebFrame.
