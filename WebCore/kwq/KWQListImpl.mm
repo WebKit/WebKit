@@ -43,12 +43,20 @@ class KWQListNode
 {
 public:
     KWQListNode() : data(NULL), next(NULL), prev(NULL) {}
+    ~KWQListNode();
 
     void *data;
     KWQListNode *next;
     KWQListNode *prev;
 };
 
+
+KWQListNode::~KWQListNode()
+{
+    if (next != NULL) {
+	delete next;
+    }
+}
 
 // KWQListImpl::KWQListPrivate
 
@@ -72,7 +80,7 @@ public:
 KWQListNode *KWQListImpl::KWQListPrivate::copyList(KWQListNode *l)
 {
     KWQListNode *node = l;
-    KWQListNode *head = NULL;
+    KWQListNode *copyHead = NULL;
     KWQListNode *last = NULL;
 
     while (node != NULL) {
@@ -80,18 +88,18 @@ KWQListNode *KWQListImpl::KWQListPrivate::copyList(KWQListNode *l)
 	copy->data = node->data;
 	if (last != NULL) {
 	    last->next = copy;
-	    copy->prev = last;
 	} else {
-	    head = copy;
-	    copy->prev = NULL;
+	    copyHead = copy;
 	}
+
+	copy->prev = last;
 	copy->next = NULL;
 	
 	last = copy;
 	node = node->next;
     }
 
-    return head;
+    return copyHead;
 }
 
 KWQListImpl::KWQListPrivate::KWQListPrivate(void (*deleteFunc)(void *)) :
@@ -114,11 +122,7 @@ KWQListImpl::KWQListPrivate::KWQListPrivate(KWQListPrivate &vp) :
 
 KWQListImpl::KWQListPrivate::~KWQListPrivate()
 {
-    while (head != NULL) {
-	KWQListNode *tmp = head->next;
-	delete head;
-	head = tmp;
-    }
+    delete head;
 }
 
 // KWQListIteratorImpl::KWQListIteratorPrivate
@@ -206,6 +210,8 @@ void KWQListImpl::sort(int (*compareFunc)(void *a, void *b, void *data), void *d
 	node->data = (void *)CFArrayGetValueAtIndex(array, i);
 	i++;
     }
+
+    CFRelease(array);
 }
 
 void *KWQListImpl::at(uint n)

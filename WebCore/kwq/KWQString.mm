@@ -1152,12 +1152,12 @@ QString &QString::remove(uint index, uint width)
 
 QString &QString::replace(const QRegExp &qre, const QString &qs)
 {
-    flushCache();
     if (s) {
         int len = qs.length();
         for (int i = 0; i < CFStringGetLength(s); i += len) {
             int width = 0;
             i = qre.match(*this, i, &width, FALSE);
+	    flushCache();
             if ((i < 0) || !width) {
                 break;
             }
