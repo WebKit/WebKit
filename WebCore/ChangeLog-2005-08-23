@@ -1,3 +1,13 @@
+2004-12-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3871718> REGRESSION (125-168): text marked bold with font that does not have bold variant copies as non-bold
+
+        Reviewed by hyatt.
+
+        * kwq/DOM.mm:
+        (-[DOMElement _font]): new SPI for AppKit
+        * kwq/DOMPrivate.h:
+
 2004-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

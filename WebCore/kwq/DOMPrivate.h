@@ -34,3 +34,7 @@
 // fast and easy way of getting an NSColor for a DOMRGBColor
 - (NSColor *)_color;
 @end
+
+@interface DOMElement (WebPrivate)
+- (NSFont *)_font;
+@end

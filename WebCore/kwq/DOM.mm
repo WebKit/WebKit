@@ -51,6 +51,8 @@
 
 #import "khtml_part.h"
 
+#import "render_object.h"
+
 #import "DOMEventsInternal.h"
 #import "DOMHTML.h"
 #import "DOMInternal.h"
@@ -90,6 +92,8 @@ using DOM::RangeException;
 using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
+
+using khtml::RenderObject;
 
 @interface DOMAttr (WebCoreInternal)
 + (DOMAttr *)_attrWithImpl:(AttrImpl *)impl;
@@ -1541,6 +1545,20 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 }
 
 @end
+
+@implementation DOMElement (WebPrivate)
+
+- (NSFont *)_font
+{
+    RenderObject *renderer = [self _elementImpl]->renderer();
+    if (renderer) {
+        return renderer->style()->font().getNSFont();
+    }
+    return nil;
+}
+
+@end
+
 
 //------------------------------------------------------------------------------------------
 // DOMText
