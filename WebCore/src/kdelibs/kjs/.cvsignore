@@ -10,3 +10,5 @@ grammar.h
 *.la
 .libs
 *.lut.h
+kjs-test.diff
+kjs-test.out

@@ -1,7 +1,5 @@
 NULL = 
 
-SUBDIRS = . tests
-
 noinst_LIBRARIES = libkhtmljava.o
 LDFLAGS = -Wl,-r -nostdlib
 libkhtmljava_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o

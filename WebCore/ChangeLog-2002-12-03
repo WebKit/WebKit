@@ -1,3 +1,12 @@
+2002-03-22  Darin Adler  <darin@apple.com>
+
+	* src/kdelibs/khtml/java/Makefile.am:
+	* src/kdelibs/khtml/java/tests/.cvsignore:
+	* src/kdelibs/khtml/java/tests/Makefile.am:
+	Remove empty test subdirectory.
+
+	* src/kdelibs/kjs/.cvsignore: Ignore kjs-test output.
+
 2002-03-22  Maciej Stachowiak  <mjs@apple.com>
 
 	Fix some things that were making automake complain.
