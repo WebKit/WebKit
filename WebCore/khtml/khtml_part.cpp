@@ -2257,13 +2257,17 @@ QString KHTMLPart::text(const DOM::Range &r) const
   DOM::Node endNode = r.endContainer();
   int startOffset = r.startOffset();
   int endOffset = r.endOffset();
-  if (!startNode.isNull() && startNode.nodeType() == DOM::Node::ELEMENT_NODE) {
-      startOffset = -1;
-      startNode = !startNode.childNodes().isNull() ? startNode.childNodes().item(r.startOffset()) : Node();
+  if (!startNode.isNull() && startNode.nodeType() == Node::ELEMENT_NODE) {
+      if (startOffset >= 0 && startOffset < (int)startNode.childNodes().length()) {
+          startNode = startNode.childNodes().item(r.startOffset());
+          startOffset = -1;
+      }
   }
-  if (!endNode.isNull() && endNode.nodeType() == DOM::Node::ELEMENT_NODE) {
-      endOffset = -1;
-      endNode = !endNode.childNodes().isNull() ? endNode.childNodes().item(r.endOffset()-1) : Node();
+  if (!endNode.isNull() && endNode.nodeType() == Node::ELEMENT_NODE) {
+      if (endOffset > 0 && endOffset <= (int)endNode.childNodes().length()) {
+          endNode = endNode.childNodes().item(endOffset - 1);
+          endOffset = -1;
+      }
   }
 
   DOM::Node n = startNode;

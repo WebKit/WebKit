@@ -1,3 +1,13 @@
+2003-10-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3469383 -- REGRESSION (100-111): if one line is selected on this page, too much gets copied (plain text)
+
+        * khtml/khtml_part.cpp: (KHTMLPart::text): Range check the child node indices before using them
+        to get at a child node. We don't want to set startNode or endNode to nil in any case. If the end
+        node is set to nil, we end up copying the entire remainder of the page.
+
 2003-10-31  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3470007, links don't get focus on mouse down.  Fix the focus check on mouse down to actually
