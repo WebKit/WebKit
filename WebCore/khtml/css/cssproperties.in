@@ -76,6 +76,7 @@ margin-top
 margin-right
 margin-bottom
 margin-left
+-khtml-line-break
 -khtml-margin-collapse
 -khtml-margin-top-collapse
 -khtml-margin-bottom-collapse
@@ -90,6 +91,7 @@ max-height
 max-width
 min-height
 min-width
+-khtml-nbsp-mode
 opacity
 orphans
 outline-color

@@ -243,7 +243,8 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
 }
 
 StyleCSS3InheritedData::StyleCSS3InheritedData()
-:Shared<StyleCSS3InheritedData>(), textShadow(0), userModify(READ_ONLY), wordWrap(WBNORMAL)
+:Shared<StyleCSS3InheritedData>(), textShadow(0), userModify(READ_ONLY), wordWrap(WBNORMAL), 
+    nbspMode(NBNORMAL), khtmlLineBreak(LBNORMAL)
 #if APPLE_CHANGES
 , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
 #endif
@@ -257,6 +258,8 @@ StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData& o)
     textShadow = o.textShadow ? new ShadowData(*o.textShadow) : 0;
     userModify = o.userModify;
     wordWrap = o.wordWrap;
+    nbspMode = o.nbspMode;
+    khtmlLineBreak = o.khtmlLineBreak;
 #if APPLE_CHANGES
     textSizeAdjust = o.textSizeAdjust;
 #endif
@@ -269,7 +272,8 @@ StyleCSS3InheritedData::~StyleCSS3InheritedData()
 
 bool StyleCSS3InheritedData::operator==(const StyleCSS3InheritedData& o) const
 {
-    return (userModify == o.userModify) && shadowDataEquivalent(o) && (wordWrap == o.wordWrap) 
+    return (userModify == o.userModify) && shadowDataEquivalent(o) && (wordWrap == o.wordWrap) &&
+        (nbspMode == o.nbspMode) && (khtmlLineBreak == o.khtmlLineBreak)
 #if APPLE_CHANGES
             && (textSizeAdjust == o.textSizeAdjust)
 #endif
@@ -560,6 +564,8 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
          (css3InheritedData->textSizeAdjust != other->css3InheritedData->textSizeAdjust) ||
 #endif
          (css3InheritedData->wordWrap != other->css3InheritedData->wordWrap) ||
+         (css3InheritedData->nbspMode != other->css3InheritedData->nbspMode) ||
+         (css3InheritedData->khtmlLineBreak != other->css3InheritedData->khtmlLineBreak) ||
         !(inherited->indent == other->inherited->indent) ||
         !(inherited->line_height == other->inherited->line_height) ||
         !(inherited->style_image == other->inherited->style_image) ||

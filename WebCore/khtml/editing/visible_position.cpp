@@ -42,6 +42,7 @@ using DOM::offsetInCharacters;
 using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
+using DOM::StayInBlock;
 
 namespace khtml {
 
@@ -344,6 +345,28 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
         node = child;
     }
     return Position(node, 0);
+}
+
+Position VisiblePosition::upstreamDeepEquivalent() const
+{
+    Position pos = m_deepPosition;
+    
+    if (pos.isNull() || atStart(pos))
+        return pos;
+
+    Position downstreamTest = pos.downstream(StayInBlock);
+
+    Position current = pos;
+    while (!atStart(current)) {
+        current = previousPosition(current);
+        if (isCandidate(current)) {
+            if (downstreamTest != current.downstream(StayInBlock))
+                break;
+            pos = current;
+        }
+    }
+    
+    return pos;
 }
 
 Position VisiblePosition::rangeCompliantEquivalent(const Position &pos)

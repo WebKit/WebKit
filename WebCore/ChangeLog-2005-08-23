@@ -1,3 +1,45 @@
+2004-10-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for these bugs:
+        
+        In this patch, I add two new CSS properties and their associated behavior.
+        This is to support end-of-line and word-wrapping features that match the 
+        conventions of text editors.
+
+        There are also some other small changes here which begin to lay the groundwork
+        for using these new properties to bring about the desired editing behavior.
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue): Add support for new CSS properties.
+        * khtml/css/cssproperties.c: Generated file.
+        * khtml/css/cssproperties.h: Ditto.
+        * khtml/css/cssproperties.in: Add new properties.
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty): Add support for new CSS properties.
+        * khtml/css/cssvalues.c: Generated file.
+        * khtml/css/cssvalues.h: Ditto.
+        * khtml/css/cssvalues.in:  Add support for new CSS properties.
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::upstreamDeepEquivalent): Added new helper.
+        * khtml/editing/visible_position.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::deleteLineBoxWrapper): Zero out inlineBoxWrapper.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::detach): Zero out inlineBoxWrapper.
+        * khtml/rendering/render_style.cpp:
+        (StyleCSS3InheritedData):
+        (StyleCSS3InheritedData::operator==): Add support for new CSS properties.
+        (RenderStyle::diff): Ditto.
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::nbspMode): Ditto.
+        (khtml::RenderStyle::khtmlLineBreak): Ditto.
+        (khtml::RenderStyle::setNBSPMode): Ditto.
+        (khtml::RenderStyle::setKHTMLLineBreak): Ditto.
+        (khtml::RenderStyle::initialNBSPMode): Ditto.
+        (khtml::RenderStyle::initialKHTMLLineBreak): Ditto.
+
 2004-10-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -418,3 +418,14 @@ skip-white-space
 # CSS_PROP_WORD_BREAK
 #
 break-word
+
+#
+# CSS_PROP__KHTML_NBSP_MODE
+#
+space
+
+#
+# CSS_PROP__KHTML_LINE_BREAK
+#
+after-white-space
+

@@ -624,6 +624,7 @@ void RenderBox::deleteLineBoxWrapper()
 {
     if (m_inlineBoxWrapper)
         m_inlineBoxWrapper->detach(renderArena());
+    m_inlineBoxWrapper = 0;
 }
 
 void RenderBox::setInlineBoxWrapper(InlineBox* b)

@@ -2530,6 +2530,46 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         break;
     }
 
+    case CSS_PROP__KHTML_NBSP_MODE:
+    {
+        HANDLE_INHERIT_AND_INITIAL(nbspMode, NBSPMode)
+
+        if (!primitiveValue->getIdent()) return;
+
+        ENBSPMode m;
+        switch(primitiveValue->getIdent()) {
+        case CSS_VAL_SPACE:
+            m = SPACE;
+            break;
+        case CSS_VAL_NORMAL:
+        default:
+            m = NBNORMAL;
+            break;
+        }
+        style->setNBSPMode(m);
+        break;
+    }
+
+    case CSS_PROP__KHTML_LINE_BREAK:
+    {
+        HANDLE_INHERIT_AND_INITIAL(khtmlLineBreak, KHTMLLineBreak)
+
+        if (!primitiveValue->getIdent()) return;
+
+        EKHTMLLineBreak b;
+        switch(primitiveValue->getIdent()) {
+        case CSS_VAL_AFTER_WHITE_SPACE:
+            b = AFTER_WHITE_SPACE;
+            break;
+        case CSS_VAL_NORMAL:
+        default:
+            b = LBNORMAL;
+            break;
+        }
+        style->setKHTMLLineBreak(b);
+        break;
+    }
+
         // length, percent
     case CSS_PROP_MAX_WIDTH:
         // +none +inherit

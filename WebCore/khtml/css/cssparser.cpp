@@ -856,6 +856,16 @@ bool CSSParser::parseValue( int propId, bool important )
 	    valid_primitive = true;
 	break;
 
+    case CSS_PROP__KHTML_NBSP_MODE:     // normal | space
+	if (id == CSS_VAL_NORMAL || id == CSS_VAL_SPACE)
+	    valid_primitive = true;
+	break;
+
+    case CSS_PROP__KHTML_LINE_BREAK:   // normal | after-white-space
+	if (id == CSS_VAL_NORMAL || id == CSS_VAL_AFTER_WHITE_SPACE)
+	    valid_primitive = true;
+	break;
+
     case CSS_PROP_TEXT_INDENT:          // <length> | <percentage> | inherit
     case CSS_PROP_PADDING_TOP:          //// <padding-width> | inherit
     case CSS_PROP_PADDING_RIGHT:        //   Which is defined as

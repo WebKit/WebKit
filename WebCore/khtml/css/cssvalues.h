@@ -278,7 +278,9 @@ DOM::DOMString getValueName(unsigned short id);
 #define CSS_VAL_CONTINUOUS 267
 #define CSS_VAL_SKIP_WHITE_SPACE 268
 #define CSS_VAL_BREAK_WORD 269
+#define CSS_VAL_SPACE 270
+#define CSS_VAL_AFTER_WHITE_SPACE 271
 
-#define CSS_VAL_TOTAL 270
+#define CSS_VAL_TOTAL 272
 #endif
 
