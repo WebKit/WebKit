@@ -1,3 +1,10 @@
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        - added test for the DOM::Range bug fixed recently
+
+        * layout-tests/fast/dom/clone-contents-0-end-offset-expected.txt: Added.
+        * layout-tests/fast/dom/clone-contents-0-end-offset.html: Added.
+
 2004-09-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for hitlist bug, crash when deleting.  
