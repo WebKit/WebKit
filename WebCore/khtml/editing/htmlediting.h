@@ -220,6 +220,10 @@ protected:
     void insertBlockPlaceholderIfNeeded(DOM::NodeImpl *);
     bool removeBlockPlaceholderIfNeeded(DOM::NodeImpl *);
 
+    void moveParagraphContentsToNewBlockIfNecessary(const DOM::Position &);
+
+    bool isMailBlockquote(const DOM::NodeImpl *) const;
+
     QValueList<EditCommandPtr> m_cmds;
 };
 
@@ -271,7 +275,7 @@ private:
     // style-application helpers
     void applyBlockStyle(DOM::CSSMutableStyleDeclarationImpl *);
     void applyInlineStyle(DOM::CSSMutableStyleDeclarationImpl *);
-    void addBlockStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
+    void addBlockStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *);
     void addInlineStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *start, DOM::NodeImpl *end);
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
     DOM::NodeImpl *splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
@@ -445,8 +449,6 @@ public:
     virtual void doApply();
     
 private:
-    bool isMailBlockquote(const DOM::NodeImpl *) const;
-
     QPtrList<DOM::NodeImpl> ancestors;
     QPtrList<DOM::NodeImpl> clonedNodes;
     DOM::ElementImpl *m_breakNode;

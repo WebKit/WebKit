@@ -975,6 +975,90 @@ bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
     return false;
 }
 
+void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position &pos)
+{
+    if (pos.isNull())
+        return;
+        
+    VisiblePosition visiblePos(pos);
+    VisiblePosition visibleParagraphStart(startOfParagraph(visiblePos));
+    VisiblePosition visibleParagraphEnd(endOfParagraph(visiblePos, IncludeLineBreak));
+    Position paragraphStart = visibleParagraphStart.deepEquivalent().upstream(StayInBlock);
+    Position paragraphEnd = visibleParagraphEnd.deepEquivalent().upstream(StayInBlock);
+    Position beforeParagraphStart = paragraphStart.upstream(DoNotStayInBlock);
+    
+    // Perform some checks to see if we need to perform work in this function.
+    if (paragraphStart.node()->isBlockFlow()) {
+        if (paragraphEnd.node()->isBlockFlow()) {
+            if (!paragraphEnd.node()->isAncestor(paragraphStart.node())) {
+                // If the paragraph end is a descendant of paragraph start, then we need to run
+                // the rest of this function. If not, we can bail here.
+                return;
+            }
+        }
+        else if (paragraphEnd.node()->enclosingBlockFlowElement() != paragraphStart.node()) {
+            // The paragraph end is in another block that is an ancestor of the paragraph start.
+            // We can bail as we have a full block to work with.
+            ASSERT(paragraphStart.node()->isAncestor(paragraphEnd.node()->enclosingBlockFlowElement()));
+            return;
+        }
+        else if (visibleParagraphEnd.next().isNull()) {
+            // At the end of the document. We can bail here as well.
+            return;
+        }
+    }
+    
+    // Create the block to insert. Most times, this will be a shallow clone of the block containing
+    // the start of the selection (the start block), except for two cases:
+    //    1) When the start block is a body element.
+    //    2) When the start block is a mail blockquote and we are not in a position to insert
+    //       the new block as a peer of the start block. This prevents creating an unwanted 
+    //       additional level of quoting.
+    NodeImpl *startBlock = paragraphStart.node()->enclosingBlockFlowElement();
+    NodeImpl *newBlock = 0;
+    if (startBlock->id() == ID_BODY || (isMailBlockquote(startBlock) && paragraphStart.node() != startBlock))
+        newBlock = createDefaultParagraphElement(document());
+    else
+        newBlock = startBlock->cloneNode(false);
+
+    NodeImpl *moveNode = paragraphStart.node();
+    if (paragraphStart.offset() >= paragraphStart.node()->caretMaxOffset())
+        moveNode = moveNode->traverseNextNode();
+    NodeImpl *endNode = paragraphEnd.node();
+    while (moveNode && !moveNode->isBlockFlow()) {
+        NodeImpl *next = moveNode->traverseNextNode();
+        removeNode(moveNode);
+        appendNode(moveNode, newBlock);
+        if (moveNode == endNode)
+            break;
+        moveNode = next;
+    }
+
+    if (paragraphStart.node()->id() == ID_BODY) {
+        insertNodeAt(newBlock, paragraphStart.node(), 0);
+    }
+    else if (paragraphStart.node()->id() == ID_BR) {
+        insertNodeAfter(newBlock, paragraphStart.node());
+    }
+    else if (paragraphStart.node()->isBlockFlow()) {
+        insertNodeBefore(newBlock, paragraphStart.node());
+    }
+    else if (beforeParagraphStart.node()->enclosingBlockFlowElement()->id() != ID_BODY) {
+        insertNodeAfter(newBlock, beforeParagraphStart.node()->enclosingBlockFlowElement());
+    }
+    else {
+        insertNodeAfter(newBlock, beforeParagraphStart.node());
+    }
+}
+
+bool CompositeEditCommand::isMailBlockquote(const NodeImpl *node) const
+{
+    if (!node || !node->renderer() || !node->isElementNode() && node->id() != ID_BLOCKQUOTE)
+        return false;
+        
+    return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";
+}
+
 //==========================================================================================
 // Concrete commands
 //------------------------------------------------------------------------------------------
@@ -1089,10 +1173,12 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
     // apply specified styles to the block flow elements in the selected range
     prevBlock = 0;
     for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
-        NodeImpl *block = node->enclosingBlockFlowElement();
-        if (block != prevBlock && block->isHTMLElement()) {
-            addBlockStyleIfNeeded(style, static_cast<HTMLElementImpl *>(block));
-            prevBlock = block;
+        if (node->renderer()) {
+            NodeImpl *block = node->enclosingBlockFlowElement();
+            if (block != prevBlock) {
+                addBlockStyleIfNeeded(style, node);
+                prevBlock = block;
+            }
         }
     }
 }
@@ -1321,17 +1407,26 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(NodeImpl *startNode, NodeIm
     }
 }
 
-void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl *style, HTMLElementImpl *block)
+void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl *style, NodeImpl *node)
 {
     // Do not check for legacy styles here. Those styles, like <B> and <I>, only apply for
     // inline content.
+    if (!node)
+        return;
+    
+    HTMLElementImpl *block = static_cast<HTMLElementImpl *>(node->enclosingBlockFlowElement());
+    if (!block)
+        return;
+        
     StyleChange styleChange(style, Position(block, 0), StyleChange::DoNotUseLegacyHTMLStyles);
     if (styleChange.cssStyle().length() > 0) {
+        moveParagraphContentsToNewBlockIfNecessary(Position(node, 0));
+        block = static_cast<HTMLElementImpl *>(node->enclosingBlockFlowElement());
         DOMString cssText = styleChange.cssStyle();
         CSSMutableStyleDeclarationImpl *decl = block->inlineStyleDecl();
         if (decl)
             cssText += decl->cssText();
-        block->setAttribute(ATTR_STYLE, cssText);
+        setNodeAttribute(block, ATTR_STYLE, cssText);
     }
 }
 
@@ -2472,14 +2567,6 @@ InsertParagraphSeparatorInQuotedContentCommand::~InsertParagraphSeparatorInQuote
     derefNodesInList(clonedNodes);
     if (m_breakNode)
         m_breakNode->deref();
-}
-
-bool InsertParagraphSeparatorInQuotedContentCommand::isMailBlockquote(const NodeImpl *node) const
-{
-    if (!node || !node->renderer() || !node->isElementNode() && node->id() != ID_BLOCKQUOTE)
-        return false;
-        
-    return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";
 }
 
 void InsertParagraphSeparatorInQuotedContentCommand::doApply()
@@ -3744,10 +3831,12 @@ void SetNodeAttributeCommand::doApply()
 void SetNodeAttributeCommand::doUnapply()
 {
     ASSERT(m_element);
-    ASSERT(!m_oldValue.isNull());
 
     int exceptionCode = 0;
-    m_element->setAttribute(m_attribute, m_oldValue.implementation(), exceptionCode);
+    if (m_oldValue.isNull())
+        m_element->removeAttribute(m_attribute, exceptionCode);
+    else
+        m_element->setAttribute(m_attribute, m_oldValue.implementation(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
