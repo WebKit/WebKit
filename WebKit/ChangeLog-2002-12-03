@@ -1,3 +1,24 @@
+2002-03-06  Richard Williamson  <rjw@apple.com>
+
+        Lots of little changes to improve drawing, and dynamic scroll bar
+        layout.  We now have NO flash between pages, however, I still need
+        to add a transition timeout.  As currently implemented the page will not
+        transition until the document is read.
+        
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	locationChangeDone:forFrame:]):
+	* WebView.subproj/IFDynamicScrollBarsView.m: (-[IFDynamicScrollBarsView
+	reflectScrolledClipView:]):
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame
+	_transitionProvisionalToCommitted]), (-[IFWebFrame _checkLoadComplete:]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView initWithFrame:]), (-[IFWebView
+	dataSourceChanged:]), (-[IFWebView layout]), (-[IFWebView isOpaque]),
+	(-[IFWebView setNeedsDisplay:]), (-[IFWebView setNeedsLayout:]), (-[IFWebView
+	drawRect:]), (-[IFWebView setFrame:]):
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebView _stopPlugins]), (-[IFWebView
+	_removeSubviews]):
+
 2002-03-06  John Sullivan  <sullivan@apple.com>
 
 	* Misc.subproj/IFError.h: Removed stray but evil import.

@@ -30,7 +30,7 @@
     ((IFWebViewPrivate *)_viewPrivate)->needsLayout = YES;
 
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
-    
+        
     return self;
 }
 
@@ -86,13 +86,15 @@
 
     data->widget = data->provisionalWidget;
     data->provisionalWidget = 0;
-    
+
+/*    
     // Remove any remnants, i.e. form widgets, from the
     // previous page.
     [self _resetView];
     
     // Force a layout.
     [self layout];
+*/
 }
 
 
@@ -111,7 +113,7 @@
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (((IFWebViewPrivate *)_viewPrivate)->needsLayout){
-            //WEBKITDEBUGLEVEL (0x100, "doing layout\n");
+            WEBKITDEBUGLEVEL (0x100, "doing layout\n");
             //double start = CFAbsoluteTimeGetCurrent();
             widget->layout(TRUE);
             //WebKitDebugAtLevel (0x200, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
@@ -248,6 +250,11 @@
 }
 
 
+- (BOOL)isOpaque
+{
+    return YES;
+}
+
 
 #ifdef DELAY_LAYOUT
 - delayLayout: sender
@@ -277,14 +284,14 @@
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    //WEBKITDEBUGLEVEL (0x100, "setNeedsDisplay:\n");
+    WEBKITDEBUGLEVEL1 (0x100, "flag = %d\n", (int)flag);
     [super setNeedsDisplay: flag];
 }
 
 
 - (void)setNeedsLayout: (bool)flag
 {
-    //WEBKITDEBUGLEVEL (0x100, "setNeedsLayout:\n");
+    WEBKITDEBUGLEVEL1 (0x100, "flag = %d\n", (int)flag);
     ((IFWebViewPrivate *)_viewPrivate)->needsLayout = flag;
 }
 
@@ -292,10 +299,15 @@
 // This should eventually be removed.
 - (void)drawRect:(NSRect)rect {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
+    IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
 
-    //WEBKITDEBUGLEVEL (0x100, "drawRect:\n");
+    if (data->provisionalWidget != 0){
+        WEBKITDEBUGLEVEL (0x100, "not drawing, frame in provisional state.\n");
+        return;
+    }
+    
     if (widget != 0l){        
-        //WEBKITDEBUGLEVEL (0x100, "drawRect: drawing\n");
+        WEBKITDEBUGLEVEL (0x100, "drawing\n");
         [self layout];
 
 #ifdef _KWQ_TIMING        
@@ -353,10 +365,10 @@
 
 
 // Override superclass implementation.  We want to relayout when the frame size is changed.
-- (void)setFrame:(NSRect)frameRect
+- (void)setFrame:(NSRect)rect
 {
-    [super setFrame:frameRect];
-    //[self setNeedsLayout: YES];
+    WEBKITDEBUGLEVEL4 (0x100, "(%f,%f) width = %f, height = %f\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    [super setFrame:rect];
 }
 
 - (void)windowResized: (NSNotification *)notification

@@ -225,8 +225,8 @@ static id IFLoadProgressMake()
 
 - (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame
 {    
-    [[frame view] setNeedsLayout: YES];
-    [[frame view] setNeedsDisplay: YES];
+    //[[frame view] setNeedsLayout: YES];
+    //[[frame view] setNeedsDisplay: YES];
 }
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource

@@ -10,6 +10,9 @@
 
 #import <WebKit/WebKitDebug.h>
 
+// includes from kde
+#include <khtmlview.h>
+
 @implementation IFWebFramePrivate
 
 - (void)dealloc
@@ -101,6 +104,10 @@
 
     WEBKIT_ASSERT ([self _state] == IFWEBFRAMESTATE_PROVISIONAL);
 
+    [[self view] _stopPlugins];
+    
+    [[self view] _removeSubviews];
+    
     // Set the committed data source on the frame.
     [self _setDataSource: data->provisionalDataSource];
     
@@ -161,9 +168,11 @@
 
     if (![[self dataSource] isLoading]){
         [self _setState: IFWEBFRAMESTATE_COMPLETE];
-        [[self view] setNeedsLayout: YES];
-        [[self view] setNeedsDisplay: YES];
+        
+        [[self dataSource] _part]->end();
+        
         if ([[self controller] mainFrame] == self){
+            [[self view] setNeedsLayout: YES];
             [[self view] layout];
             [[self view] display];
         }

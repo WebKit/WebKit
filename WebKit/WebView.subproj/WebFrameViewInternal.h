@@ -29,10 +29,11 @@ class KHTMLView;
 
 @interface IFWebView (IFPrivate)
 - (void)_setController: (id <IFWebController>)controller;
-- (void)_resetView;
 - (void)_resetWidget;
 - (KHTMLView *)_widget;
 - (KHTMLView *)_provisionalWidget;
+- (void)_stopPlugins;
+- (void)_removeSubviews;
 - (void)_setFrameScrollView: (IFDynamicScrollBarsView *)sv;
 - (IFDynamicScrollBarsView *)_frameScrollView;
 @end
