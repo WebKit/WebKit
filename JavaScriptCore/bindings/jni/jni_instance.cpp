@@ -172,6 +172,38 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
 }
 
 
+KJS::Value JavaInstance::defaultValue (KJS::Type hint) const
+{
+    if (hint == StringType) {
+        return stringValue();
+    }
+    else if (hint == NumberType) {
+        return numberValue();
+    }
+    else if (hint == BooleanType) {
+        return booleanValue();
+    }
+    else if (hint == UnspecifiedType) {
+        JavaClass *aClass = static_cast<JavaClass*>(getClass());
+        if (aClass->isStringClass()) {
+            return stringValue();
+        }
+        else if (aClass->isNumberClass()) {
+            return numberValue();
+        }
+        else if (aClass->isBooleanClass()) {
+            return booleanValue();
+        }
+    }
+    
+    return valueOf();
+}
+
+KJS::Value JavaInstance::valueOf() const 
+{
+    return stringValue();
+};
+
 JObjectWrapper::JObjectWrapper(jobject instance)
 {
     _ref = 1;

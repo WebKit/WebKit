@@ -115,21 +115,7 @@ bool RuntimeObjectImp::deleteProperty(ExecState *exec,
 
 Value RuntimeObjectImp::defaultValue(ExecState *exec, Type hint) const
 {
-    // FIXME:  Convert to appropriate type based on hint.
-    // If UnspecifiedType should only convert to string if
-    // native class is a string.  
-    // FIXME  defaultValue should move to Instance.
-    if (hint == StringType || hint == UnspecifiedType) {
-        return getInternalInstance()->stringValue();
-    }
-    else if (hint == NumberType) {
-        return getInternalInstance()->numberValue();
-    }
-    else if (hint == BooleanType) {
-        return getInternalInstance()->booleanValue();
-    }
-    
-    return getInternalInstance()->valueOf();
+    return getInternalInstance()->defaultValue(hint);
 }
     
 void RuntimeObjectImp::_initializeClassInfoFromInstance()

@@ -111,9 +111,8 @@ public:
     
     virtual KJS::Value invokeMethod (KJS::ExecState *exec, const Method *method, const KJS::List &args) = 0;
     
-    virtual KJS::Value booleanValue() const = 0;
-    virtual KJS::Value numberValue() const = 0;
-    virtual KJS::Value stringValue() const = 0;
+    virtual KJS::Value defaultValue (KJS::Type hint) const = 0;
+    
     virtual KJS::Value valueOf() const { return KJS::String(getClass()->name()); };
     
     virtual ~Instance() {};

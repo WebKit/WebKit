@@ -1,5 +1,27 @@
 2003-12-04  Richard Williamson   <rjw@apple.com>
 
+	LiveConnect:  Moved defaultValue into concrete implementation because
+	more intelligent conversion can be perform with knowledge
+	of the class of the original instance.
+
+        Reviewed by Chris.
+
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::isNumberClass):
+        (JavaClass::isBooleanClass):
+        (JavaClass::isStringClass):
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::defaultValue):
+        (JavaInstance::valueOf):
+        * bindings/jni/jni_instance.h:
+        (Bindings::JavaInstance::javaInstance):
+        * bindings/runtime.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::defaultValue):
+
+2003-12-04  Richard Williamson   <rjw@apple.com>
+
 	LiveConnect:  Added support for setting the value of Java
 	fields.
 

@@ -83,13 +83,16 @@ public:
         return *this;
     };
 
-    virtual KJS::Value booleanValue() const;
-    virtual KJS::Value numberValue() const;
-    virtual KJS::Value stringValue() const;
-    
-    jobject javaInstance() const { return _instance->_instance; }
+    virtual KJS::Value valueOf() const;
+    virtual KJS::Value defaultValue (KJS::Type hint) const;
 
     virtual KJS::Value invokeMethod (KJS::ExecState *exec, const Method *method, const KJS::List &args);
+
+    jobject javaInstance() const { return _instance->_instance; }
+    
+    KJS::Value stringValue() const;
+    KJS::Value numberValue() const;
+    KJS::Value booleanValue() const;
     
 private:
     JObjectWrapper *_instance;

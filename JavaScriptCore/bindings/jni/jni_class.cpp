@@ -159,3 +159,22 @@ Field *JavaClass::fieldNamed(const char *name) const
     return aField;
 };
 
+bool JavaClass::isNumberClass() const
+{
+    return ((strcmp(_name, "java.lang.Byte") == 0 ||
+             strcmp(_name, "java.lang.Short") == 0 ||
+             strcmp(_name, "java.lang.Integer") == 0 ||
+             strcmp(_name, "java.lang.Long") == 0 ||
+             strcmp(_name, "java.lang.Float") == 0 ||
+             strcmp(_name, "java.lang.Double") == 0) );
+}
+
+bool JavaClass::isBooleanClass() const
+{
+    return strcmp(_name, "java.lang.Boolean") == 0;
+}
+
+bool JavaClass::isStringClass() const
+{
+    return strcmp(_name, "java.lang.String") == 0;
+}
