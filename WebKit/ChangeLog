@@ -1,3 +1,11 @@
+2003-02-10  Richard Williamson   <rjw@apple.com>
+
+        Update API issues document.
+        
+        Reviewed by me.
+
+        * API-Issues.rtf:
+
 2003-02-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3168888 - REGRESSION: many downloads fail (due to -36 error from write)

@@ -13,8 +13,8 @@
 3a.  Need to finalize decision on use of NSString or NSURL to express URLs in APIs.  (1 day)\
 4.  WebKit error codes should use WebKit prefix.  (3078996, .5 day). (DONE, still need to update WebFoundation errors)\
 5.  Remove all references to DOM classes from public API and make DOM classes SPI. (.5 day) DONE\
-6.  Separate download behavior from WebResourceLoadDelegate.\
-7.  Make NSMenuItems identifiable in WebContentMenuDelegate.\
+6.  Separate download behavior from WebResourceLoadDelegate. (DONE)\
+7.  Make NSMenuItems identifiable in WebContentMenuDelegate. (DONE)\
 \
 \
 
@@ -22,13 +22,14 @@
 \f1\b0 \
 \
 1.  API to support the notion of a focused frame.  (2959069, 2 days)\
-2.  WebPreferences needs to be scoped to a WebController (and/or set).  (3083707, 3 days)\
+2.  WebPreferences needs to be scoped to a WebController (and/or set).  (3083707, 3 days) (DONE)\
 \
 
 \f0\b Issues relating to internal clients:
 \f1\b0 \
 \
 1.  Ensure that all interaction with users via sheets and panels is done with delegates. (Ed Voas, carbon integration, 2 days)\
+1a.  Ensure that WebWindowOperations delegate is sufficient for tabbed browsing. (? days)\
 2.  Allow custom views to share scrollview with WebView. (Grant B., mail, 2 days)\
 3.  Ensure that clients (Help, Mail, PB) can cleanly write their own protocol handlers with API/SPI. (3163688, ? days)\
 \
