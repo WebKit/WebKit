@@ -1,3 +1,11 @@
+2002-02-21  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kwq/KWQString.mm: (QString::fill): Fix a bug that was
+	triggering assertion failures in CF.
+	
+	* src/kdelibs/kjs/kjs-test: Turn off some environment variables to
+	make the tests pass.
+
 2002-02-21  Richard Williamson  <rjw@apple.com>
 
     Stop mostly working.

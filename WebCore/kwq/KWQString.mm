@@ -1208,13 +1208,17 @@ void QString::fill(QChar qc, int len)
                 ucs[i] = qc.c;
             }
             s = CFStringCreateMutableWithExternalCharactersNoCopy(
-                    kCFAllocatorDefault, ucs, len, 0, kCFAllocatorDefault);
+                    kCFAllocatorDefault, ucs, len, len, kCFAllocatorDefault);
             if (!s) {
 #ifdef KWQ_STRING_DEBUG
 #else
                 CFAllocatorDeallocate(kCFAllocatorDefault, ucs);
 #endif
-            }
+            } else {
+		CFMutableStringRef tmp = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
+		CFRelease(s);
+		s = tmp;
+	    }
         }
     }
 }

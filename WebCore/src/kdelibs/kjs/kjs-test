@@ -1,8 +1,13 @@
 #!/bin/sh
 
-unsetenv MallocStackLogging
-unsetenv MallocScribble
-unsetenv MallocGuardEdges
+unset MallocStackLogging
+export MallocStackLogging
+unset MallocScribble
+export MallocScribble
+unset MallocGuardEdges
+export MallocGuardEdges
+unset DYLD_IMAGE_SUFFIX
+export DYLD_IMAGE_SUFFIX
 
 `dirname $0`/testkjs `dirname $0`/test.js 2>&1
 
