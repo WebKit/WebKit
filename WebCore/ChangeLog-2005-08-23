@@ -1,3 +1,14 @@
+2003-11-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3478781>: drag image of selected text and images doesn't include images
+
+        Reviewed by rjw.
+
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paintObject): paint when the paint action is PaintActionSelection
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::paint): ditto
+
 2003-11-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

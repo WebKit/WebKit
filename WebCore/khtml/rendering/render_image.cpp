@@ -197,7 +197,7 @@ void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, i
     if (paintAction == PaintActionOutline && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(p, _tx, _ty, width(), height(), style());
     
-    if (paintAction != PaintActionForeground)
+    if (paintAction != PaintActionForeground && paintAction != PaintActionSelection)
         return;
         
     int cWidth = contentWidth();
