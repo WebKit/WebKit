@@ -1,3 +1,13 @@
+2002-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3007072 - need to be able to build fat
+	
+        * WebKit.pbproj/project.pbxproj: Fixed DeploymentFat build.
+        * Makefile.am: Build WebCore-combined.exp for Development and
+	Mixed build.
+        * WebKit-tests.exp: Added.
+        * WebKit.exp: Remove test-only function.
+
 2002-08-05  Darin Adler  <darin@apple.com>
 
 	Do the wiring for the "text size multiplier" feature. The rest of the work will probably be done

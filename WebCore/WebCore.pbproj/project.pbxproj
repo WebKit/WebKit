@@ -3639,7 +3639,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = "\U0001-arch ppc -arch i386";
+				i386 = YES;
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;

@@ -1,3 +1,9 @@
+2002-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3007072 - need to be able to build fat
+	
+        * JavaScriptCore.pbproj/project.pbxproj: Fixed DeploymentFat build.
+
 === Alexander-15 ===
 
 2002-07-25  Darin Adler  <darin@apple.com>

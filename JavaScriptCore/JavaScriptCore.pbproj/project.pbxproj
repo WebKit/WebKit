@@ -427,7 +427,7 @@
 			);
 			buildSettings = {
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = "\U0001-arch ppc -arch i386";
+				i386 = YES;
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
