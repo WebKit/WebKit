@@ -59,18 +59,12 @@ static unsigned rightTruncateToBuffer(NSString *string, unsigned length, unsigne
 
 static float stringWidth(WebTextRenderer *renderer, const unichar *characters, unsigned length)
 {
-    return [renderer floatWidthForCharacters:characters
-                                stringLength:length
-                       fromCharacterPosition:0
-                          numberOfCharacters:length
-                                 withPadding:0
+    WebCoreTextRun run = WebCoreMakeTextRun (characters, length, 0, length);
+    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    return [renderer floatWidthForRun:run style:style
                                applyRounding:NO
                      attemptFontSubstitution:YES
-                                      widths:0
-                               letterSpacing:0
-                                 wordSpacing:0
-                                   smallCaps:false
-                                fontFamilies:0];
+                                      widths:0];
 }
 
 static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, TruncationFunction truncateToBuffer)

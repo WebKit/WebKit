@@ -23,9 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
 #import "KWQAssertions.h"
+
+inline WebCoreTextRun WebCoreMakeTextRun(const UniChar *characters, unsigned int length, int from, int to)
+{
+    WebCoreTextRun run;
+    run.characters = characters;
+    run.length = length;
+    run.from = from;
+    run.to = to;
+    return run;
+}
+
+inline WebCoreTextStyle WebCoreMakeEmptyTextStyle(void)
+{
+    WebCoreTextStyle style;
+    
+    style.padding = 0;
+    style.textColor = nil;
+    style.backgroundColor = nil;
+    style.rtl = false;
+    style.letterSpacing = 0;
+    style.wordSpacing = 0;
+    style.smallCaps = false;
+    style.families = nil;
+    
+    return style;
+}
 
 @implementation WebCoreTextRendererFactory
 

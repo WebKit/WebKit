@@ -1,3 +1,40 @@
+2003-07-23  Richard Williamson   <rjw@apple.com>
+
+	Fixed for 3259840.  Use ATSU for scripts we don't handle internally,
+	i.e.:  Syriac, Thaana, Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar, Hangul Jamo, Khmer, Mongolian
+
+	Also fixed issues with our rendering of Arabic.
+
+	Changed the internal API to take WebCoreTextRun and WebCoreTextStyle
+	parameters instead of scads on individual parameters.  Much cleaner.
+
+        Reviewed by Maciej.
+
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_widthWithFont:]):
+        * Misc.subproj/WebStringTruncator.m:
+        (stringWidth):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (shouldUseATSU):
+        (-[WebTextRenderer _setupFont:]):
+        (-[WebTextRenderer dealloc]):
+        (-[WebTextRenderer widthForCharacters:length:]):
+        (-[WebTextRenderer drawRun:style:atPoint:]):
+        (-[WebTextRenderer _CG_drawRun:style:atPoint:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:characterPosition:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:letterSpacing:wordSpacing:smallCaps:fontFamilies:]):
+        (-[WebTextRenderer floatWidthForRun:style:applyRounding:attemptFontSubstitution:widths:]):
+        (-[WebTextRenderer _floatWidthForRun:style:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+        (-[WebTextRenderer _CG_floatWidthForRun:style:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+        (-[WebTextRenderer extendCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer _initializeATSUStyle]):
+        (-[WebTextRenderer _createATSUTextLayoutForRun:]):
+        (-[WebTextRenderer _trapezoidForRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_floatWidthForRun:style:]):
+        (-[WebTextRenderer _ATSU_drawRun:style:atPoint:]):
+
 2003-07-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

@@ -1,3 +1,28 @@
+2003-07-23  Richard Williamson   <rjw@apple.com>
+
+	Fixed for 3259840.  Use ATSU for scripts we don't handle internally,
+	i.e.:  Syriac, Thaana, Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar, Hangul Jamo, Khmer, Mongolian
+
+	Also fixed issues with our rendering of Arabic.
+
+	Changed the internal API to take WebCoreTextRun and WebCoreTextStyle
+	parameters instead of scads on individual parameters.  Much cleaner.
+
+        Reviewed by Maciej.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidths):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/WebCoreTextRendererFactory.m:
+        (WebCoreMakeTextRun):
+        (WebCoreMakeEmptyTextStyle):
+
 2003-07-23  Dave Hyatt  <hyatt@apple.com>
 
 	Clean up the mess left by a couple of previous checkins.  I had

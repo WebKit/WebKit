@@ -468,23 +468,19 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
     CREATE_FAMILY_ARRAY(data->state.font, families);
 
     _updateRenderer(families);
-    
+
     const UniChar* str = (const UniChar*)qstring.unicode();
+
+    WebCoreTextRun run = WebCoreMakeTextRun(str, qstring.length(), 0, qstring.length());
+    
+    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    style.textColor = data->state.pen.color().getNSColor();
+    style.families = families;
+    
     if (alignmentFlags & Qt::AlignRight)
-        x -= ROUND_TO_INT([data->textRenderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 smallCaps: false fontFamilies: families]);
+        x -= ROUND_TO_INT([data->textRenderer floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution: YES widths:0]);
      
-    [data->textRenderer drawCharacters:str stringLength:qstring.length()
-        fromCharacterPosition:0 
-        toCharacterPosition:qstring.length() 
-        atPoint:NSMakePoint(x, y)
-        withPadding: 0
-        withTextColor:data->state.pen.color().getNSColor() 
-        backgroundColor:nil
-        rightToLeft: false
-        letterSpacing: 0
-        wordSpacing: 0
-        smallCaps: false
-        fontFamilies: families];
+    [data->textRenderer drawRun:run style:style atPoint:NSMakePoint(x, y)];
 }
 
 void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, int letterSpacing, int wordSpacing, bool smallCaps)
@@ -498,19 +494,23 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     
     _updateRenderer(families);
 
-    [data->textRenderer
-    	drawCharacters:(const UniChar *)str stringLength:len
-        fromCharacterPosition:from 
-        toCharacterPosition:to 
-        atPoint:NSMakePoint(x, y)
-        withPadding: toAdd
-        withTextColor:data->state.pen.color().getNSColor() 
-        backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil
-        rightToLeft: d == RTL ? true : false
-        letterSpacing: letterSpacing
-        wordSpacing: wordSpacing
-        smallCaps: smallCaps
-        fontFamilies: families];
+    if (from < 0)
+        from = 0;
+    if (to < 0)
+        to = len;
+        
+    WebCoreTextRun run = WebCoreMakeTextRun((const UniChar *)str, len, from, to);    
+    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    style.textColor = data->state.pen.color().getNSColor();
+    style.backgroundColor = backgroundColor.isValid() ? backgroundColor.getNSColor() : nil;
+    style.rtl = d == RTL ? true : false;
+    style.letterSpacing = letterSpacing;
+    style.wordSpacing = wordSpacing;
+    style.smallCaps = smallCaps;
+    style.families = families;
+    style.padding = toAdd;
+    
+    [data->textRenderer drawRun:run style:style atPoint:NSMakePoint(x, y)];
 }
 
 void QPainter::drawLineForText(int x, int y, int yOffset, int width)

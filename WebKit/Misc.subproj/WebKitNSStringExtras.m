@@ -33,19 +33,11 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     
     if (canUseFastRenderer(buffer, length)){
         WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
-        [renderer drawCharacters:buffer
-                    stringLength:length
-        fromCharacterPosition:0
-            toCharacterPosition:length
-                        atPoint:point
-                    withPadding:0
-                withTextColor:textColor
-                backgroundColor:nil
-                    rightToLeft:NO
-                letterSpacing:0
-                    wordSpacing:0
-                    smallCaps:false
-                    fontFamilies:0];
+
+        WebCoreTextRun run = WebCoreMakeTextRun (buffer, length, 0, length);
+        WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+        style.textColor = textColor;
+        [renderer drawRun:run style:style atPoint:point];
     }
     else {
         // WebTextRenderer assumes drawing from baseline.
@@ -66,21 +58,13 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
 
     if (canUseFastRenderer(buffer, length)){
         WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
-        width = [renderer _floatWidthForCharacters:buffer
-                    stringLength:length
-                    fromCharacterPosition: 0
-                    numberOfCharacters: length
-                    withPadding:0
+
+        WebCoreTextRun run = WebCoreMakeTextRun (buffer, length, 0, length);
+        WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+        width = [renderer floatWidthForRun:run style:style
                     applyRounding: NO
                     attemptFontSubstitution: YES
-                    widths: 0
-                    fonts: 0
-                    glyphs: 0
-                    numGlyphs: 0
-                    letterSpacing: 0
-                    wordSpacing: 0
-                    smallCaps: false
-                    fontFamilies: 0];
+                    widths: 0];
     }
     else {
         width = [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
