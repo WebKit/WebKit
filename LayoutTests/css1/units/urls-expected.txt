@@ -1,0 +1,56 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x484
+  RenderBlock {HTML} at (0,0) size 800x484
+    RenderBody {BODY} at (8,8) size 784x468 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 385x17
+          text run at (0,0) width 385: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,31) size 784x64 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 648x48
+          text run at (0,0) width 648: "<LINK rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"../resources/bg.gif\">"
+          text run at (0,16) width 296: "@import url(../resources/sec642.css);"
+          text run at (0,32) width 352: "BODY {background: url(../resources/bg.gif);}"
+      RenderBlock {HR} at (1,109) size 782x2 [bgcolor=#000000]
+      RenderBlock {P} at (0,125) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 425x17
+          text run at (0,0) width 425: "This page should have a green grid pattern as its background."
+      RenderBlock {P} at (0,156) size 784x51 [bgcolor=#FFFFFF]
+        RenderText {TEXT} at (0,0) size 770x51
+          text run at (0,0) width 671: "This paragraph should have a white background, but NO image should appear in the background. "
+          text run at (671,0) width 99: "If an image, in"
+          text run at (0,17) width 767: "this case a red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a"
+          text run at (0,34) width 435: "URL in relation to the document's URL, not the stylesheet's URL."
+      RenderBlock {P} at (0,221) size 784x51 [bgcolor=#FFFFFF]
+        RenderText {TEXT} at (0,0) size 770x51
+          text run at (0,0) width 671: "This paragraph should have a white background, but NO image should appear in the background. "
+          text run at (671,0) width 99: "If an image, in"
+          text run at (0,17) width 767: "this case a red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a"
+          text run at (0,34) width 435: "URL in relation to the document's URL, not the stylesheet's URL."
+      RenderTable {TABLE} at (0,286) size 784x182 [bgcolor=#000000]
+        RenderTableSection {TBODY} at (1,1) size 0x180
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 782x25 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 164x17 [bgcolor=#000000]
+                RenderText {TEXT} at (4,4) size 164x17
+                  text run at (4,4) width 164: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,90) size 12x25 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (4,4) size 4x17
+                text run at (4,4) width 4: "\x{A0}"
+            RenderTableCell {TD} at (12,25) size 770x155 [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x17
+                RenderText {TEXT} at (0,0) size 425x17
+                  text run at (0,0) width 425: "This page should have a green grid pattern as its background."
+              RenderBlock {P} at (4,35) size 762x51 [bgcolor=#FFFFFF]
+                RenderText {TEXT} at (0,0) size 753x51
+                  text run at (0,0) width 671: "This paragraph should have a white background, but NO image should appear in the background. "
+                  text run at (671,0) width 82: "If an image,"
+                  text run at (0,17) width 692: "in this case a red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly"
+                  text run at (0,34) width 527: "interpreted a URL in relation to the document's URL, not the stylesheet's URL."
+              RenderBlock {P} at (4,100) size 762x51 [bgcolor=#FFFFFF]
+                RenderText {TEXT} at (0,0) size 753x51
+                  text run at (0,0) width 671: "This paragraph should have a white background, but NO image should appear in the background. "
+                  text run at (671,0) width 82: "If an image,"
+                  text run at (0,17) width 692: "in this case a red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly"
+                  text run at (0,34) width 527: "interpreted a URL in relation to the document's URL, not the stylesheet's URL."

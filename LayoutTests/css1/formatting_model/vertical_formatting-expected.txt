@@ -1,0 +1,172 @@
+layer at (0,0) size 800x2424
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x2424
+  RenderBlock {HTML} at (0,0) size 800x2424
+    RenderBody {BODY} at (8,8) size 784x2408 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 385x17
+          text run at (0,0) width 385: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,31) size 784x320 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 496x304
+          text run at (0,0) width 184: "P.one {margin-bottom: 2"
+          text run at (184,0) width 184: "cm; padding-bottom: 0;}"
+          text run at (0,16) width 160: "P.two {margin-top: 2"
+          text run at (160,16) width 160: "cm; padding-top: 0;}"
+          text run at (0,32) width 320: "P.three {margin-top: 0; padding-top: 0;}"
+          text run at (0,48) width 176: "P.four {margin-top: -1"
+          text run at (176,48) width 168: "cm; margin-bottom: 0;"
+          text run at (0,64) width 344: "        padding-top: 0; padding-bottom: 0;}"
+          text run at (0,80) width 184: "DIV.five {margin-top: 1"
+          text run at (184,80) width 160: "cm; margin-bottom: 1"
+          text run at (344,80) width 24: "cm;"
+          text run at (0,96) width 192: "          padding-top: 1"
+          text run at (192,96) width 184: "cm; padding-bottom: 0;}"
+          text run at (0,112) width 160: "P.six {margin-top: 1"
+          text run at (160,112) width 160: "cm; margin-bottom: 1"
+          text run at (320,112) width 24: "cm;"
+          text run at (0,128) width 336: "       padding-top: 0; padding-bottom: 0;}"
+          text run at (0,144) width 176: "P.seven {margin-top: 1"
+          text run at (176,144) width 160: "cm; padding-top: 0;}"
+          text run at (0,160) width 208: "P.eight {margin-bottom: -1"
+          text run at (208,160) width 168: "cm; padding-bottom: 2"
+          text run at (376,160) width 32: "cm;}"
+          text run at (0,176) width 176: "P.nine {margin-top: -1"
+          text run at (176,176) width 144: "cm; padding-top: 1"
+          text run at (320,176) width 24: "cm;"
+          text run at (0,192) width 344: "        padding-bottom: 0; margin-bottom: 1"
+          text run at (344,192) width 32: "cm;}"
+          text run at (0,208) width 160: "P.ten {margin-top: 1"
+          text run at (160,208) width 144: "cm;padding-top: 0;"
+          text run at (0,224) width 248: "       float: left;width: 50%;}"
+          text run at (0,240) width 184: "P.eleven {margin-top: 1"
+          text run at (184,240) width 264: "cm; padding-top: 0; clear: none;}"
+          text run at (0,256) width 360: "P.twelve {margin-bottom: 0; padding-bottom: 1"
+          text run at (360,256) width 136: "cm; clear: both;}"
+          text run at (0,272) width 328: "P.thirteen {margin-top: 0; padding-top: 1"
+          text run at (328,272) width 32: "cm;}"
+          text run at (0,288) width 160: "TABLE {clear: both;}"
+      RenderBlock {HR} at (1,365) size 782x2 [bgcolor=#000000]
+      RenderBlock {P} at (0,381) size 784x34 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 781x34
+          text run at (0,0) width 781: "There should be a two-centimeter margin between this paragraph and the next, because adjacent vertical margins"
+          text run at (0,17) width 332: "should collapse to the maximum of the margins."
+      RenderBlock {P} at (0,490) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 181x17
+          text run at (0,0) width 181: "This is another paragraph."
+      RenderBlock {P} at (0,521) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 545x17
+          text run at (0,0) width 545: "There should be a two-centimeter margin between this paragraph and the next."
+      RenderBlock {P} at (0,613) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 181x17
+          text run at (0,0) width 181: "This is another paragraph."
+      RenderBlock {P} at (0,644) size 784x34 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 731x34
+          text run at (0,0) width 731: "There should be a one-centimeter margin between this paragraph and the next, because when there is one"
+          text run at (0,17) width 572: "negative margin, the two margins should be added (the minus sign should be kept)."
+      RenderBlock {P} at (0,716) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 181x17
+          text run at (0,0) width 181: "This is another paragraph."
+      RenderBlock {DIV} at (0,770) size 784x125 [bgcolor=#000000]
+        RenderBlock {P} at (0,74) size 784x51
+          RenderText {TEXT} at (0,0) size 782x51
+            text run at (0,0) width 782: "There should be three centimeters between this text and the text above, but only one centimeter between this text"
+            text run at (0,17) width 745: "and the text below, because vertical margins of nested elements should collapse only if there is no border or"
+            text run at (0,34) width 208: "padding between the margins."
+      RenderBlock {P} at (0,932) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 121x17
+          text run at (0,0) width 121: "This is more text."
+      RenderBlock {P} at (0,963) size 784x109 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 784x34
+          text run at (0,0) width 784: "There should be two centimeters between this paragraph and the one below, because negative margins collapse to"
+          text run at (0,17) width 513: "a negative margin with the largest absolute value of the margins collapsed."
+      RenderBlock {P} at (0,1035) size 784x71 [bgcolor=#000000]
+        RenderText {TEXT} at (0,37) size 775x34
+          text run at (0,37) width 775: "This is a paragraph, which I should make very long so that you can easily see how much space there is between it"
+          text run at (0,54) width 257: "and the one below it and to the right."
+      RenderBlock (floating) {P} at (0,1180) size 392x51 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 388x51
+          text run at (0,0) width 388: "There should be two centimeters between this paragraph"
+          text run at (0,17) width 376: "and the one above it, since margins do not collapse on"
+          text run at (0,34) width 124: "floating elements."
+      RenderBlock {P} at (0,1143) size 784x51 [bgcolor=#000000]
+        RenderText {TEXT} at (392,0) size 382x51
+          text run at (392,0) width 382: "There should be one centimeter between this paragraph"
+          text run at (392,17) width 346: "and the (non-floating) one above it, since the float"
+          text run at (392,34) width 278: "should not effect the paragraph spacing."
+      RenderBlock {P} at (0,1245) size 784x71 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 725x34
+          text run at (0,0) width 606: "There should be two centimeters of padding between this paragraph and the one below. "
+          text run at (606,0) width 119: "Padding does not"
+          text run at (0,17) width 160: "collapse, and there is 1"
+          text run at (160,17) width 194: "cm of padding on each side."
+      RenderBlock {P} at (0,1316) size 784x54 [bgcolor=#000000]
+        RenderText {TEXT} at (0,37) size 185x17
+          text run at (0,37) width 185: "This is the next paragraph."
+      RenderTable {TABLE} at (0,1384) size 784x1024 [bgcolor=#000000]
+        RenderTableSection {TBODY} at (1,1) size 0x1022
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 782x25 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 164x17 [bgcolor=#000000]
+                RenderText {TEXT} at (4,4) size 164x17
+                  text run at (4,4) width 164: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,511) size 12x25 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (4,4) size 4x17
+                text run at (4,4) width 4: "\x{A0}"
+            RenderTableCell {TD} at (12,25) size 770x997 [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x34
+                RenderText {TEXT} at (0,0) size 721x34
+                  text run at (0,0) width 721: "There should be a two-centimeter margin between this paragraph and the next, because adjacent vertical"
+                  text run at (0,17) width 392: "margins should collapse to the maximum of the margins."
+              RenderBlock {P} at (4,113) size 762x17
+                RenderText {TEXT} at (0,0) size 181x17
+                  text run at (0,0) width 181: "This is another paragraph."
+              RenderBlock {P} at (4,144) size 762x17
+                RenderText {TEXT} at (0,0) size 545x17
+                  text run at (0,0) width 545: "There should be a two-centimeter margin between this paragraph and the next."
+              RenderBlock {P} at (4,236) size 762x17
+                RenderText {TEXT} at (0,0) size 181x17
+                  text run at (0,0) width 181: "This is another paragraph."
+              RenderBlock {P} at (4,267) size 762x34
+                RenderText {TEXT} at (0,0) size 731x34
+                  text run at (0,0) width 731: "There should be a one-centimeter margin between this paragraph and the next, because when there is one"
+                  text run at (0,17) width 572: "negative margin, the two margins should be added (the minus sign should be kept)."
+              RenderBlock {P} at (4,339) size 762x17
+                RenderText {TEXT} at (0,0) size 181x17
+                  text run at (0,0) width 181: "This is another paragraph."
+              RenderBlock {DIV} at (4,393) size 762x125
+                RenderBlock {P} at (0,74) size 762x51
+                  RenderText {TEXT} at (0,0) size 757x51
+                    text run at (0,0) width 751: "There should be three centimeters between this text and the text above, but only one centimeter between this"
+                    text run at (0,17) width 757: "text and the text below, because vertical margins of nested elements should collapse only if there is no border"
+                    text run at (0,34) width 227: "or padding between the margins."
+              RenderBlock {P} at (4,555) size 762x17
+                RenderText {TEXT} at (0,0) size 121x17
+                  text run at (0,0) width 121: "This is more text."
+              RenderBlock {P} at (4,586) size 762x109
+                RenderText {TEXT} at (0,0) size 706x34
+                  text run at (0,0) width 706: "There should be two centimeters between this paragraph and the one below, because negative margins"
+                  text run at (0,17) width 591: "collapse to a negative margin with the largest absolute value of the margins collapsed."
+              RenderBlock {P} at (4,658) size 762x71
+                RenderText {TEXT} at (0,37) size 761x34
+                  text run at (0,37) width 761: "This is a paragraph, which I should make very long so that you can easily see how much space there is between"
+                  text run at (0,54) width 271: "it and the one below it and to the right."
+              RenderBlock (floating) {P} at (4,803) size 381x51
+                RenderText {TEXT} at (0,0) size 368x51
+                  text run at (0,0) width 314: "There should be two centimeters between this"
+                  text run at (0,17) width 368: "paragraph and the one above it, since margins do not"
+                  text run at (0,34) width 206: "collapse on floating elements."
+              RenderBlock {P} at (4,766) size 762x51
+                RenderText {TEXT} at (381,0) size 359x51
+                  text run at (381,0) width 308: "There should be one centimeter between this"
+                  text run at (381,17) width 359: "paragraph and the (non-floating) one above it, since"
+                  text run at (381,34) width 339: "the float should not effect the paragraph spacing."
+              RenderBlock {P} at (4,868) size 762x71
+                RenderText {TEXT} at (0,0) size 725x34
+                  text run at (0,0) width 606: "There should be two centimeters of padding between this paragraph and the one below. "
+                  text run at (606,0) width 119: "Padding does not"
+                  text run at (0,17) width 160: "collapse, and there is 1"
+                  text run at (160,17) width 194: "cm of padding on each side."
+              RenderBlock {P} at (4,939) size 762x54
+                RenderText {TEXT} at (0,37) size 185x17
+                  text run at (0,37) width 185: "This is the next paragraph."

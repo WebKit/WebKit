@@ -1,0 +1,227 @@
+layer at (0,0) size 800x1604
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x1604
+  RenderBlock {HTML} at (0,0) size 800x1604
+    RenderBody {BODY} at (8,8) size 784x1588 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 385x17
+          text run at (0,0) width 385: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,31) size 784x192 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 288x192
+          text run at (0,0) width 160: "BODY {color: black;}"
+          text run at (0,16) width 152: ".one {color: #080;}"
+          text run at (0,32) width 176: ".two {color: #008000;}"
+          text run at (0,48) width 232: ".three {color: rgb(0,128,0);}"
+          text run at (0,64) width 240: ".four {color: rgb(0%,50%,0%);}"
+          text run at (0,80) width 288: ".five {color: rgb(0.0%,50.0%,0.0%);}"
+          text run at (0,96) width 160: ".six {color: green;}"
+          text run at (0,112) width 232: ".seven {color: invalidValue;}"
+          text run at (0,128) width 256: ".eight {color: rgb(0,128,1280);}"
+          text run at (0,144) width 240: ".nine {color: rgb(0,128,255);}"
+          text run at (0,160) width 264: ".ten {color: rgb(50%,-500%,60%);}"
+          text run at (0,176) width 264: ".eleven {color: rgb(50%,0%,60%);}"
+      RenderBlock {HR} at (1,237) size 782x2 [bgcolor=#000000]
+      RenderBlock {P} at (0,253) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 210x17
+          text run at (0,0) width 210: "This sentence should be black."
+      RenderBlock {P} at (0,284) size 784x17 [color=#008800] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 556x17
+          text run at (0,0) width 556: "This sentence should be green, although slightly different from those that follow."
+      RenderBlock {P} at (0,315) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 213x17
+          text run at (0,0) width 213: "This sentence should be green."
+      RenderBlock {P} at (0,346) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 213x17
+          text run at (0,0) width 213: "This sentence should be green."
+      RenderBlock {P} at (0,377) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 213x17
+          text run at (0,0) width 213: "This sentence should be green."
+      RenderBlock {P} at (0,408) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 213x17
+          text run at (0,0) width 213: "This sentence should be green."
+      RenderBlock {P} at (0,439) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 213x17
+          text run at (0,0) width 213: "This sentence should be green."
+      RenderBlock {P} at (0,470) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 443x17
+          text run at (0,0) width 443: "This sentence should be black, because the value given for class "
+        RenderInline {CODE} at (0,0) size 48x16
+          RenderText {TEXT} at (443,1) size 48x16
+            text run at (443,1) width 48: ".seven"
+        RenderText {TEXT} at (491,0) size 70x17
+          text run at (491,0) width 70: " is invalid."
+      RenderBlock {P} at (0,501) size 784x34 [color=#0080FF] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 751x34
+          text run at (0,0) width 751: "This sentence should be a shade of blue-green which, on a typical RGB computer display, exactly matches the"
+          text run at (0,17) width 110: "next paragraph."
+      RenderBlock {P} at (0,549) size 784x34 [color=#0080FF] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 751x34
+          text run at (0,0) width 751: "This sentence should be a shade of blue-green which, on a typical RGB computer display, exactly matches the"
+          text run at (0,17) width 138: "previous paragraph."
+      RenderBlock {P} at (0,597) size 784x34 [color=#800099] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 753x34
+          text run at (0,0) width 753: "This sentence should be a shade of purple which, on a typical RGB computer display, exactly matches the next"
+          text run at (0,17) width 75: "paragraph."
+      RenderBlock {P} at (0,645) size 784x34 [color=#800099] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 781x34
+          text run at (0,0) width 781: "This sentence should be a shade of purple which, on a typical RGB computer display, exactly matches the previous"
+          text run at (0,17) width 75: "paragraph."
+      RenderBlock {P} at (0,693) size 784x17 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 210x17
+          text run at (0,0) width 210: "This sentence should be black."
+      RenderBlock {P} at (0,724) size 784x17 [color=#008800] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 439x17
+          text run at (0,0) width 439: "This sentence should be a slightly different green, and used the "
+        RenderInline {TT} at (0,0) size 40x16
+          RenderText {TEXT} at (439,1) size 40x16
+            text run at (439,1) width 40: "style"
+        RenderText {TEXT} at (479,0) size 68x17
+          text run at (479,0) width 68: " attribute."
+      RenderBlock {P} at (0,755) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 310x17
+          text run at (0,0) width 310: "This sentence should be green, and used the "
+        RenderInline {TT} at (0,0) size 40x16
+          RenderText {TEXT} at (310,1) size 40x16
+            text run at (310,1) width 40: "style"
+        RenderText {TEXT} at (350,0) size 68x17
+          text run at (350,0) width 68: " attribute."
+      RenderBlock {P} at (0,786) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 310x17
+          text run at (0,0) width 310: "This sentence should be green, and used the "
+        RenderInline {TT} at (0,0) size 40x16
+          RenderText {TEXT} at (310,1) size 40x16
+            text run at (310,1) width 40: "style"
+        RenderText {TEXT} at (350,0) size 68x17
+          text run at (350,0) width 68: " attribute."
+      RenderBlock {P} at (0,817) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 310x17
+          text run at (0,0) width 310: "This sentence should be green, and used the "
+        RenderInline {TT} at (0,0) size 40x16
+          RenderText {TEXT} at (310,1) size 40x16
+            text run at (310,1) width 40: "style"
+        RenderText {TEXT} at (350,0) size 68x17
+          text run at (350,0) width 68: " attribute."
+      RenderBlock {P} at (0,848) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 310x17
+          text run at (0,0) width 310: "This sentence should be green, and used the "
+        RenderInline {TT} at (0,0) size 40x16
+          RenderText {TEXT} at (310,1) size 40x16
+            text run at (310,1) width 40: "style"
+        RenderText {TEXT} at (350,0) size 68x17
+          text run at (350,0) width 68: " attribute."
+      RenderBlock {P} at (0,879) size 784x17 [color=#008000] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 310x17
+          text run at (0,0) width 310: "This sentence should be green, and used the "
+        RenderInline {TT} at (0,0) size 40x16
+          RenderText {TEXT} at (310,1) size 40x16
+            text run at (310,1) width 40: "style"
+        RenderText {TEXT} at (350,0) size 68x17
+          text run at (350,0) width 68: " attribute."
+      RenderTable {TABLE} at (0,910) size 784x678 [bgcolor=#000000]
+        RenderTableSection {TBODY} at (1,1) size 0x676
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 782x25 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 164x17 [bgcolor=#000000]
+                RenderText {TEXT} at (4,4) size 164x17
+                  text run at (4,4) width 164: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,338) size 12x25 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (4,4) size 4x17
+                text run at (4,4) width 4: "\x{A0}"
+            RenderTableCell {TD} at (12,25) size 770x651 [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x17
+                RenderText {TEXT} at (0,0) size 210x17
+                  text run at (0,0) width 210: "This sentence should be black."
+              RenderBlock {P} at (4,35) size 762x17 [color=#008800]
+                RenderText {TEXT} at (0,0) size 556x17
+                  text run at (0,0) width 556: "This sentence should be green, although slightly different from those that follow."
+              RenderBlock {P} at (4,66) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 213x17
+                  text run at (0,0) width 213: "This sentence should be green."
+              RenderBlock {P} at (4,97) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 213x17
+                  text run at (0,0) width 213: "This sentence should be green."
+              RenderBlock {P} at (4,128) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 213x17
+                  text run at (0,0) width 213: "This sentence should be green."
+              RenderBlock {P} at (4,159) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 213x17
+                  text run at (0,0) width 213: "This sentence should be green."
+              RenderBlock {P} at (4,190) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 213x17
+                  text run at (0,0) width 213: "This sentence should be green."
+              RenderBlock {P} at (4,221) size 762x17
+                RenderText {TEXT} at (0,0) size 443x17
+                  text run at (0,0) width 443: "This sentence should be black, because the value given for class "
+                RenderInline {CODE} at (0,0) size 48x16
+                  RenderText {TEXT} at (443,1) size 48x16
+                    text run at (443,1) width 48: ".seven"
+                RenderText {TEXT} at (491,0) size 70x17
+                  text run at (491,0) width 70: " is invalid."
+              RenderBlock {P} at (4,252) size 762x34 [color=#0080FF]
+                RenderText {TEXT} at (0,0) size 751x34
+                  text run at (0,0) width 751: "This sentence should be a shade of blue-green which, on a typical RGB computer display, exactly matches the"
+                  text run at (0,17) width 110: "next paragraph."
+              RenderBlock {P} at (4,300) size 762x34 [color=#0080FF]
+                RenderText {TEXT} at (0,0) size 751x34
+                  text run at (0,0) width 751: "This sentence should be a shade of blue-green which, on a typical RGB computer display, exactly matches the"
+                  text run at (0,17) width 138: "previous paragraph."
+              RenderBlock {P} at (4,348) size 762x34 [color=#800099]
+                RenderText {TEXT} at (0,0) size 753x34
+                  text run at (0,0) width 753: "This sentence should be a shade of purple which, on a typical RGB computer display, exactly matches the next"
+                  text run at (0,17) width 75: "paragraph."
+              RenderBlock {P} at (4,396) size 762x34 [color=#800099]
+                RenderText {TEXT} at (0,0) size 718x34
+                  text run at (0,0) width 718: "This sentence should be a shade of purple which, on a typical RGB computer display, exactly matches the"
+                  text run at (0,17) width 138: "previous paragraph."
+              RenderBlock {P} at (4,444) size 762x17
+                RenderText {TEXT} at (0,0) size 210x17
+                  text run at (0,0) width 210: "This sentence should be black."
+              RenderBlock {P} at (4,475) size 762x17 [color=#008800]
+                RenderText {TEXT} at (0,0) size 439x17
+                  text run at (0,0) width 439: "This sentence should be a slightly different green, and used the "
+                RenderInline {TT} at (0,0) size 40x16
+                  RenderText {TEXT} at (439,1) size 40x16
+                    text run at (439,1) width 40: "style"
+                RenderText {TEXT} at (479,0) size 68x17
+                  text run at (479,0) width 68: " attribute."
+              RenderBlock {P} at (4,506) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 310x17
+                  text run at (0,0) width 310: "This sentence should be green, and used the "
+                RenderInline {TT} at (0,0) size 40x16
+                  RenderText {TEXT} at (310,1) size 40x16
+                    text run at (310,1) width 40: "style"
+                RenderText {TEXT} at (350,0) size 68x17
+                  text run at (350,0) width 68: " attribute."
+              RenderBlock {P} at (4,537) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 310x17
+                  text run at (0,0) width 310: "This sentence should be green, and used the "
+                RenderInline {TT} at (0,0) size 40x16
+                  RenderText {TEXT} at (310,1) size 40x16
+                    text run at (310,1) width 40: "style"
+                RenderText {TEXT} at (350,0) size 68x17
+                  text run at (350,0) width 68: " attribute."
+              RenderBlock {P} at (4,568) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 310x17
+                  text run at (0,0) width 310: "This sentence should be green, and used the "
+                RenderInline {TT} at (0,0) size 40x16
+                  RenderText {TEXT} at (310,1) size 40x16
+                    text run at (310,1) width 40: "style"
+                RenderText {TEXT} at (350,0) size 68x17
+                  text run at (350,0) width 68: " attribute."
+              RenderBlock {P} at (4,599) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 310x17
+                  text run at (0,0) width 310: "This sentence should be green, and used the "
+                RenderInline {TT} at (0,0) size 40x16
+                  RenderText {TEXT} at (310,1) size 40x16
+                    text run at (310,1) width 40: "style"
+                RenderText {TEXT} at (350,0) size 68x17
+                  text run at (350,0) width 68: " attribute."
+              RenderBlock {P} at (4,630) size 762x17 [color=#008000]
+                RenderText {TEXT} at (0,0) size 310x17
+                  text run at (0,0) width 310: "This sentence should be green, and used the "
+                RenderInline {TT} at (0,0) size 40x16
+                  RenderText {TEXT} at (310,1) size 40x16
+                    text run at (310,1) width 40: "style"
+                RenderText {TEXT} at (350,0) size 68x17
+                  text run at (350,0) width 68: " attribute."
