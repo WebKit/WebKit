@@ -1351,7 +1351,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     switch (policy) {
     case WebPolicyIgnore:
         break;
-    case WebPolicySave:
+    case WebPolicyDownload:
 	// FIXME: should download full request
         [[self controller] _downloadURL:[request URL]];
         break;
@@ -1359,8 +1359,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 	shouldContinue = YES;
         break;
     default:
-        [NSException raise:NSInvalidArgumentException
-                    format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
+	ASSERT_NOT_REACHED();
     }
 
     [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:frameName withObject:formState];
@@ -1422,7 +1421,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     switch (policy) {
     case WebPolicyIgnore:
         break;
-    case WebPolicySave:
+    case WebPolicyDownload:
 	// FIXME: should download full request
         [[self controller] _downloadURL:[request URL]];
         break;
@@ -1434,8 +1433,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
         break;
     default:
-        [NSException raise:NSInvalidArgumentException
-                    format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
+	ASSERT_NOT_REACHED();
     }
 
     [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:formState];

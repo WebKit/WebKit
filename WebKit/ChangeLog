@@ -1,3 +1,39 @@
+2003-03-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	Final policy API changes:
+
+	- changed WebPolicyDecisionListener to protocol in public API
+	- replaced policy enum with separate methods
+	- made content policy handling async
+	
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPolicyDelegate.m:
+        (-[WebPolicyDecisionListener _usePolicy:]):
+        (-[WebPolicyDecisionListener use]):
+        (-[WebPolicyDecisionListener ignore]):
+        (-[WebPolicyDecisionListener download]):
+        * WebView.subproj/WebControllerPolicyDelegatePrivate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate unableToImplementPolicyWithError:inFrame:]):
+        (-[WebDefaultPolicyDelegate decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:]):
+        (-[WebDefaultPolicyDelegate decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (switch):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient cancelContentPolicy]):
+        (-[WebMainResourceClient cancel]):
+        (-[WebMainResourceClient cancelQuietly]):
+        (-[WebMainResourceClient cancelWithError:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:]):
+        (-[WebMainResourceClient checkContentPolicyForResponse:]):
+        (-[WebMainResourceClient resource:didReceiveResponse:]):
+
 2003-03-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

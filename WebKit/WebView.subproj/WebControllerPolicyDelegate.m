@@ -46,17 +46,6 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 
 @implementation WebPolicyDecisionListener
 
--(void)usePolicy:(WebPolicyAction)policy
-{
-    if (_private->target != nil) {
-	[_private->target performSelector:_private->action withObject:(id)policy];
-    }
-}
-
-@end
-
-@implementation WebPolicyDecisionListener (WebPrivate)
-
 -(id)_initWithTarget:(id)target action:(SEL)action
 {
     self = [super init];
@@ -72,6 +61,14 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
     [super dealloc];
 }
 
+
+-(void)_usePolicy:(WebPolicyAction)policy
+{
+    if (_private->target != nil) {
+	[_private->target performSelector:_private->action withObject:(id)policy];
+    }
+}
+
 -(void)_invalidate
 {
     [self retain];
@@ -79,5 +76,20 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
     _private->target = nil;
     [self release];
 }
+
+-(void)use
+{
+    [self _usePolicy:WebPolicyUse];
+}
+
+-(void)ignore
+{
+    [self _usePolicy:WebPolicyIgnore];
+}
+
+-(void)download
+{
+    [self _usePolicy:WebPolicyDownload];
+}   
 
 @end

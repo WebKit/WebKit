@@ -10,6 +10,7 @@
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/WebRequest.h>
 #import <WebFoundation/WebResponse.h>
+#import <WebFoundation/WebAssertions.h>
 
 
 @implementation WebDefaultPolicyDelegate
@@ -26,31 +27,32 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (void)unableToImplementPolicy:(WebPolicyAction)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame
+- (void)unableToImplementPolicyWithError:(WebError *)error inFrame:(WebFrame *)frame
 {
-    NSLog (@"called unableToImplementPolicy:%derror:%@:inFrame:%@", policy, error, frame);
+    ERROR("called unableToImplementPolicyWithError:%@ inFrame:%@", error, frame);
 }
 
 
-- (WebPolicyAction)contentPolicyForMIMEType:(NSString *)type
+- (void)decideContentPolicyForMIMEType:(NSString *)type
 				 andRequest:(WebRequest *)request
-				    inFrame:(WebFrame *)frame;
+				    inFrame:(WebFrame *)frame
+		           decisionListener:(WebPolicyDecisionListener *)listener;
 {
     if ([[request URL] isFileURL]) {
 	BOOL isDirectory;
 	[[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
 	
-	if(isDirectory)
-	    return WebPolicyIgnore;
-	if([WebContentTypes canShowMIMEType:type])
-	    return WebPolicyUse;
-	return WebPolicyIgnore;
-    }
-
-    if ([WebContentTypes canShowMIMEType:type]) {
-        return WebPolicyUse;
+	if (isDirectory) {
+	    [listener ignore];
+	} else if([WebContentTypes canShowMIMEType:type]) {
+	    [listener use];
+	} else{
+	    [listener ignore];
+	}
+    } else if ([WebContentTypes canShowMIMEType:type]) {
+        [listener use];
     } else {
-        return WebPolicyIgnore;
+        [listener ignore];
     }
 }
 
@@ -60,14 +62,14 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 		       decisionListener:(WebPolicyDecisionListener *)listener
 {
     if ([WebResource canInitWithRequest:request]) {
-	[listener usePolicy:WebPolicyUse];
+	[listener use];
     } else {
 	// A file URL shouldn't fall through to here, but if it did,
 	// it would be a security risk to open it.
 	if (![[request URL] isFileURL]) {
 	    [[NSWorkspace sharedWorkspace] openURL:[request URL]];
 	}
-        [listener usePolicy:WebPolicyIgnore];
+        [listener ignore];
     }
 }
 
@@ -76,7 +78,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 			   newFrameName:(NSString *)frameName
 		       decisionListener:(WebPolicyDecisionListener *)listener
 {
-    [listener usePolicy:WebPolicyUse];
+    [listener use];
 }
 
 @end

@@ -10,6 +10,7 @@
 
 #import <WebKit/WebBaseResourceHandleDelegate.h>
 
+@class WebPolicyDecisionListener;
 @class WebDataSource;
 
 @interface WebResourceDelegateProxy : NSObject <WebResourceDelegate>
@@ -24,6 +25,8 @@
     NSMutableData *resourceData;
     int _contentLength; // for logging only
     int _bytesReceived; // for logging only
+    WebPolicyDecisionListener *listener;
+    WebResponse *policyResponse;
     WebResourceDelegateProxy *proxy;
 }
 

@@ -6,7 +6,20 @@
 
 #import <WebKit/WebControllerPolicyDelegate.h>
 
-@interface WebPolicyDecisionListener (WebPrivate)
+typedef enum {
+    WebPolicyUse,
+    WebPolicyDownload,
+    WebPolicyIgnore,
+} WebPolicyAction;
+
+
+@class WebPolicyDecisionListenerPrivate;
+
+@interface WebPolicyDecisionListener : NSObject <WebPolicyDecisionListener>
+{
+@private
+    WebPolicyDecisionListenerPrivate *_private;
+}
 
 -(id)_initWithTarget:(id)target action:(SEL)action;
 

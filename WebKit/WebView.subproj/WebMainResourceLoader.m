@@ -20,6 +20,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
+#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFrame.h>
@@ -73,13 +74,36 @@
     [self release];
 }
 
+- (void)cancelContentPolicy
+{
+    [listener _invalidate];
+    [listener release];
+    listener = nil;
+    [policyResponse release];
+    policyResponse = nil;
+}
+
 - (void)cancel
 {
+    [self cancelContentPolicy];
     LOG(Loading, "URL = %@", [dataSource _URL]);
     
     [resource cancel];
     [self receivedError:[self cancelledError]];
 }
+
+-(void)cancelQuietly
+{
+    [self cancelContentPolicy];
+    [super cancelQuietly];
+}
+
+-(void)cancelWithError:(WebError *)error
+{
+    [self cancelContentPolicy];
+    [super cancelWithError:error];
+}
+
 
 - (void)interruptForPolicyChange
 {
@@ -147,7 +171,7 @@
 	}
         break;
 
-    case WebPolicySave:
+    case WebPolicyDownload:
         [proxy setDelegate:nil];
         [WebDownload _downloadWithLoadingResource:resource
                                           request:request
@@ -165,7 +189,7 @@
         break;
     
     default:
-        ERROR("contentPolicyForMIMEType:andRequest:inFrame: returned an invalid content policy.");
+	ASSERT_NOT_REACHED();
     }
 
     [super resource:resource didReceiveResponse:r];
@@ -175,21 +199,25 @@
     }
 }
 
-
--(void)checkContentPolicyForResponse:(WebResponse *)r andCallSelector:(SEL)selector
+-(void)continueAfterContentPolicy:(WebPolicyAction)policy
 {
-    id pd = [[dataSource _controller] policyDelegate];
-    WebPolicyAction contentPolicy;
-    
-    if ([pd respondsToSelector:@selector(contentPolicyForMIMEType:andRequest:inFrame:)])
-        contentPolicy = [pd contentPolicyForMIMEType:[r contentType]
-                                                                andRequest:[dataSource request]
-                                                                   inFrame:[dataSource webFrame]];
-    else
-        contentPolicy = [[WebDefaultPolicyDelegate sharedPolicyDelegate] contentPolicyForMIMEType:[r contentType]
-                                                                andRequest:[dataSource request]
-                                                                   inFrame:[dataSource webFrame]];
-    [self performSelector:selector withObject:(id)contentPolicy withObject:r];
+    WebResponse *r = [policyResponse retain];
+    [self cancelContentPolicy];
+    [self continueAfterContentPolicy:policy response:r];
+    [r release];
+}
+
+-(void)checkContentPolicyForResponse:(WebResponse *)r
+{
+    listener = [[WebPolicyDecisionListener alloc]
+		   _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
+    policyResponse = [r retain];
+
+    [[dataSource _controller] setDefersCallbacks:YES];
+    [[[dataSource _controller] _policyDelegateForwarder] decideContentPolicyForMIMEType:[r contentType]
+						                      andRequest:[dataSource request]
+						                         inFrame:[dataSource webFrame]
+						                decisionListener:listener];
 }
 
 
@@ -205,7 +233,7 @@
     [[dataSource _controller] setDefersCallbacks:YES];
 
     // Figure out the content policy.
-    [self checkContentPolicyForResponse:r andCallSelector:@selector(continueAfterContentPolicy:response:)];
+    [self checkContentPolicyForResponse:r];
 
     _contentLength = [r contentLength];
 }
