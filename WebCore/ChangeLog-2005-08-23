@@ -1,3 +1,15 @@
+2005-03-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/4058740> Crash (nil-deref) editing Mail reply 
+        message in KWQKHTMLPart::fontForSelection (MailViewer-723)
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fontForSelection):
+        Add nil check to loop. It shouldn't be necessary, but this crash trace seems to be
+        running into it. We're not completely certain, but the check is harmless at worst.
+
 === Safari-408 ===
 
 2005-03-18  David Harrison  <harrison@apple.com>

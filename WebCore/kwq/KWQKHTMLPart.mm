@@ -3530,7 +3530,9 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
     NodeImpl *startNode = range->editingStartPosition().node();
     if (startNode != nil) {
         NodeImpl *pastEnd = range->pastEndNode();
-        for (NodeImpl *n = startNode; n != pastEnd; n = n->traverseNextNode()) {
+        // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
+        // unreproducible case where this didn't happen, so check for nil also.
+        for (NodeImpl *n = startNode; n && n != pastEnd; n = n->traverseNextNode()) {
             RenderObject *renderer = n->renderer();
             if (!renderer)
                 continue;
