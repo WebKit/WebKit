@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - follow-on to fix for 3310943 -- REGRESSION (Panther): textareas in forms sometimes draw blank (bugreporter)
+
+        * kwq/KWQListBox.mm: (QListBox::QListBox): Remove call to releaseGState. This was here to
+        work around a problem we thought was an AppKit bug, but it turns out it was caused by
+        NSView hackery in WebKit. We now do the WebKit part in a way that does not create the problem.
+
+2003-08-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed 3031562 -- most forms don't work in certain configurations because of a bug in KWQVariant
 
         * kwq/KWQVariant.mm: (QVariant::QVariant): Set the b element of the union, not the d element,

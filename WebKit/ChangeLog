@@ -2,6 +2,31 @@
 
         Reviewed by Maciej.
 
+        - fixed 3310943 -- REGRESSION (Panther): textareas in forms sometimes draw blank (bugreporter)
+
+        There are two fixes here. The more elegant and slightly faster one that requires a new AppKit,
+        and the less elegant one that works without AppKit support. By including both we don't have to
+        worry about timing of submission of WebKit vs. AppKit but we get the good, elegant fix. Later,
+        we can delete the less elegant fix.
+
+        * WebView.subproj/WebClipView.m:
+        (+[WebClipView initialize]): Set up a boolean global so we only hav to do the "does AppKit support
+        _focusRingVisibleRect" check one time.
+        (-[WebClipView resetAdditionalClip]): Only do the renewGState thing if we don't have the
+        _focusRingVisibleRect method, but if we do the renewGState thing, do it to self and all descendants
+        using _web_renewGStateDeep.
+        (-[WebClipView setAdditionalClip:]): Ditto.
+        (-[WebClipView visibleRect]): Only limit this based on the additional clip if we don't have the
+        _focusRingVisibleRect method.
+        (-[WebClipView _focusRingVisibleRect]): Override the new method. Harmless if it's an old AppKit
+        that doesn't have the method yet.
+        (-[NSView _web_renewGStateDeep]): Implemented this helper method. We can get rid of it once we
+        are entirely on the new AppKit.
+
+2003-08-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed 3321247 -- window size box disappears from Help window (caused by WebKit NSView hackery)
 
         * WebView.subproj/WebHTMLViewPrivate.m:
