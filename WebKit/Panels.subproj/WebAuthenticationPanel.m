@@ -12,7 +12,7 @@
 #import <Foundation/NSURLCredential.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebLocalizableStrings.h>
-#import <Foundation/NSURL_NSURLExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 
 #import <WebKit/WebNSControlExtras.h>
 

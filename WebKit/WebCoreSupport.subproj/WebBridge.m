@@ -45,7 +45,6 @@
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLFileTypeMappings.h>
@@ -569,7 +568,7 @@
 // This URL is only used for coloring visited links.
 - (NSString *)requestedURLString
 {
-    return [[[[self dataSource] request] URL] _web_absoluteString];
+    return [[[[self dataSource] request] URL] _web_displayableString];
 }
 
 - (NSString *)incomingReferrer
@@ -672,7 +671,7 @@
 
     if (errorCode) {
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-                                                  contentURLString:[URL _web_absoluteString]
+                                                  contentURLString:[URL _web_displayableString]
                                                pluginPageURLString:[attributes objectForKey:@"pluginspage"]
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];

@@ -1,3 +1,80 @@
+2003-07-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+	
+	Removed dependency on Foundation NSURL_NSURLExtras file.
+	Copied the required methods from that file to WebNSURLExtras,
+	temporarily renaming the methods that are now in both
+	places to have a _webkit_ prefix. The names will be changed
+	back once every one is living on a Foundation version that
+	no longer contains these methods.
+
+	The files below were changed in one of three ways:
+	1. Rename _web_URLWithString: to _web_URLWithDataAsString:
+	2. Tweak headers to depend on WebNSURLExtras instead of NSURL_NSURLExtras.
+	3. At call sites, tweak names of methods that moved to WebKit (_web_ -> _webkit_).
+
+        * History.subproj/WebHistory.m:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem URL]):
+        * History.subproj/WebHistoryPrivate.m:
+        * History.subproj/WebURLsWithTitles.m:
+        (+[WebURLsWithTitles URLsFromPasteboard:]):
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _iconForFileURL:withSize:]):
+        * Misc.subproj/WebIconLoader.m:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_bestURL]):
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (ReleaseIfNotNULL):
+        (+[NSURL _web_URLWithDataAsString:]):
+        (+[NSURL _web_URLWithDataAsString:relativeToURL:]):
+        (+[NSURL _web_URLWithData:]):
+        (+[NSURL _web_URLWithData:relativeToURL:]):
+        (-[NSURL _web_originalData]):
+        (-[NSURL _web_displayableString]):
+        (-[NSURL _web_URLStringLength]):
+        (-[NSURL _webkit_canonicalize]):
+        (-[NSURL _webkit_URLByRemovingFragment]):
+        (-[NSURL _webkit_isJavaScriptURL]):
+        (-[NSURL _webkit_scriptIfJavaScriptURL]):
+        (-[NSURL _webkit_isFTPDirectoryURL]):
+        (-[NSURL _webkit_shouldLoadAsEmptyDocument]):
+        (isHexDigit):
+        (hexDigitValue):
+        (-[NSString _webkit_isJavaScriptURL]):
+        (-[NSString _webkit_stringByReplacingValidPercentEscapes]):
+        (-[NSString _webkit_scriptIfJavaScriptURL]):
+        * Misc.subproj/WebNSViewExtras.m:
+        * Panels.subproj/WebAuthenticationPanel.m:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]):
+        * Plugins.subproj/WebNullPluginView.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge requestedURLString]):
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        (-[WebCookieAdapter cookiesForURL:]):
+        (-[WebCookieAdapter setCookies:forURL:policyBaseURL:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _loadIcon]):
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _shouldReloadForCurrent:andDestination:]):
+        (-[WebFrame _URLsMatchItem:]):
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient loadWithRequest:]):
+        (-[WebMainResourceClient setDefersCallbacks:]):
+
 2003-07-22  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.

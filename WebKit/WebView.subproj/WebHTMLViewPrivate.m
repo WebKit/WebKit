@@ -9,7 +9,6 @@
 #import <AppKit/NSResponder_Private.h>
 
 #import <WebKit/WebAssertions.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <WebCore/WebCoreFirstResponderChanges.h>
 
@@ -21,6 +20,7 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebPluginController.h>
@@ -199,8 +199,8 @@ static BOOL forceRealHitTest = NO;
     NSMutableDictionary *elementInfo = [elementInfoWC mutableCopy];
 
     // Convert URL strings to NSURLs
-    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebElementLinkURLKey]] forKey:WebElementLinkURLKey];
-    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
+    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementLinkURLKey]] forKey:WebElementLinkURLKey];
+    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
     
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
     ASSERT(webFrameView);

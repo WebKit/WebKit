@@ -25,13 +25,13 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <Foundation/NSError_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
@@ -660,7 +660,7 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
                 }
                 // Update the last visited time.  Mostly interesting for URL autocompletion
                 // statistics.
-                NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
+                NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
                 WebHistoryItem *oldItem = [[WebHistory optionalSharedHistory] itemForURL:URL];
                 if (oldItem) {
                     [oldItem _setLastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
@@ -677,7 +677,7 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
             case WebFrameLoadTypeStandard:
                 if (![ds _isClientRedirect]) {
                     // Add item to history.
-		    NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
+		    NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
 		    if ([[URL absoluteString] length] > 0 && ![WebDataProtocol _webIsDataProtocolURL:URL]) {
 			entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
 			if (ptitle)
@@ -1109,7 +1109,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (BOOL)_shouldReloadForCurrent:(NSURL *)currentURL andDestination:(NSURL *)destinationURL
 {
     return !(([currentURL fragment] || [destinationURL fragment]) &&
-    [[currentURL _web_URLByRemovingFragment] isEqual: [destinationURL _web_URLByRemovingFragment]]);
+    [[currentURL _webkit_URLByRemovingFragment] isEqual: [destinationURL _webkit_URLByRemovingFragment]]);
 }
 
 // Walk the frame tree and ensure that the URLs match the URLs in the item.
@@ -1117,7 +1117,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     NSURL *currentURL = [[[self dataSource] request] URL];
 
-    if (![[[item URL] _web_URLByRemovingFragment] isEqual:[currentURL _web_URLByRemovingFragment]])
+    if (![[[item URL] _webkit_URLByRemovingFragment] isEqual:[currentURL _webkit_URLByRemovingFragment]])
         return NO;
     
     NSArray *childItems = [item children];

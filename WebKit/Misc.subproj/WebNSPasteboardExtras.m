@@ -7,12 +7,12 @@
 //
 
 #import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebKit/WebAssertions.h>
 #import <Foundation/NSString_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <ApplicationServices/ApplicationServicesPriv.h>
 
@@ -46,14 +46,14 @@ NSString *WebURLNamePboardType = nil;
         NSURL *URLFromPasteboard = [NSURL URLFromPasteboard:self];
         NSString *scheme = [URLFromPasteboard scheme];
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
-            return [URLFromPasteboard _web_canonicalize];
+            return [URLFromPasteboard _webkit_canonicalize];
         }
     }
 
     if ([types containsObject:NSStringPboardType]) {
         NSString *URLString = [self stringForType:NSStringPboardType];
         if ([URLString _web_looksLikeAbsoluteURL]) {
-            NSURL *URL = [[NSURL _web_URLWithString:URLString] _web_canonicalize];
+            NSURL *URL = [[NSURL _web_URLWithDataAsString:URLString] _webkit_canonicalize];
             if (URL) {
                 return URL;
             }
@@ -67,7 +67,7 @@ NSString *WebURLNamePboardType = nil;
             BOOL isDirectory;
             if([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && !isDirectory){
                 if ([WebView canShowFile:file]) {
-                    return [[NSURL fileURLWithPath:file] _web_canonicalize];
+                    return [[NSURL fileURLWithPath:file] _webkit_canonicalize];
                 }
             }
         }

@@ -10,11 +10,11 @@
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPluginController.h>
 
 #import <WebKit/WebAssertions.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
@@ -264,7 +264,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (NSURL *)URL
 {
-    return _private->URLString ? [NSURL _web_URLWithString:_private->URLString] : nil;
+    return _private->URLString ? [NSURL _web_URLWithDataAsString:_private->URLString] : nil;
 }
 
 - (NSString *)target

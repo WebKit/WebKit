@@ -14,6 +14,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPreferences.h>
@@ -25,7 +26,6 @@
 
 #import <Foundation/NSData_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>
@@ -1188,7 +1188,7 @@ typedef struct {
     }
     
     NSString *URLString = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingWindowsLatin1);
-    NSURL *URL = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
+    NSURL *URL = [NSURL _web_URLWithDataAsString:URLString relativeToURL:baseURL];
     [URLString release];
 
     if (!URL) {
@@ -1223,7 +1223,7 @@ typedef struct {
     }
 
     NSURL *URL = [request URL];
-    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     if (JSString) {
         [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
         // FIXME: If the result is a string, we probably want to put that string into the frame, just
@@ -1318,7 +1318,7 @@ typedef struct {
         if (!bufString) {
             return NPERR_INVALID_PARAM;
         }
-        NSURL *fileURL = [NSURL _web_URLWithString:bufString];
+        NSURL *fileURL = [NSURL _web_URLWithDataAsString:bufString];
         NSString *path;
         if ([fileURL isFileURL]) {
             path = [fileURL path];

@@ -9,9 +9,9 @@
 #import "WebCookieAdapter.h"
 
 #import <WebKit/WebAssertions.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSHTTPCookieStorage.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 @implementation WebCookieAdapter
 
@@ -35,7 +35,7 @@
 
 - (NSString *)cookiesForURL:(NSString *)URLString
 {
-    NSURL *URL = [NSURL _web_URLWithString:URLString];
+    NSURL *URL = [NSURL _web_URLWithDataAsString:URLString];
     NSArray *cookiesForURL = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:URL];
     NSDictionary *header = [NSHTTPCookie requestHeaderFieldsWithCookies:cookiesForURL];
     return [header objectForKey:@"Cookie"];
@@ -43,9 +43,9 @@
 
 - (void)setCookies:(NSString *)cookieString forURL:(NSString *)URLString policyBaseURL:(NSString *)policyBaseURL
 {
-    NSURL *URL = [NSURL _web_URLWithString:URLString];
+    NSURL *URL = [NSURL _web_URLWithDataAsString:URLString];
     NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:URL];
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:URL mainDocumentURL:[NSURL _web_URLWithString:policyBaseURL]];    
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:URL mainDocumentURL:[NSURL _web_URLWithDataAsString:policyBaseURL]];    
 }
 
 @end

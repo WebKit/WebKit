@@ -25,7 +25,6 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
 
 enum {

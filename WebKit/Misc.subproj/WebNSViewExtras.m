@@ -7,10 +7,10 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
 #define WebDragStartHysteresisX			5.0

@@ -9,7 +9,6 @@
 #import <Foundation/NSError_NSURLExtras.h>
 
 #import <Foundation/NSURLFileTypeMappings.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLDownloadPrivate.h>
@@ -28,6 +27,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -200,7 +200,7 @@
     [super connection:connection didReceiveResponse:r];
 
     if (![dataSource _isStopping]
-            && ([[request URL] _web_shouldLoadAsEmptyDocument]
+            && ([[request URL] _webkit_shouldLoadAsEmptyDocument]
             	|| [WebView _representationExistsForURLScheme:[[request URL] scheme]])) {
         [self connectionDidFinishLoading:connection];
     }
@@ -319,7 +319,7 @@
     r = [proxy connection:nil willSendRequest:r redirectResponse:nil];
 
     NSURL *URL = [r URL];
-    BOOL shouldLoadEmpty = [URL _web_shouldLoadAsEmptyDocument];
+    BOOL shouldLoadEmpty = [URL _webkit_shouldLoadAsEmptyDocument];
     if (shouldLoadEmpty || [WebView _representationExistsForURLScheme:[URL scheme]]) {
         NSString *MIMEType;
         if (shouldLoadEmpty) {
@@ -345,7 +345,7 @@
 - (void)setDefersCallbacks:(BOOL)defers
 {
     if (request
-            && ![[request URL] _web_shouldLoadAsEmptyDocument]
+            && ![[request URL] _webkit_shouldLoadAsEmptyDocument]
             && ![WebView _representationExistsForURLScheme:[[request URL] scheme]]) {
 	[super setDefersCallbacks:defers];
     }

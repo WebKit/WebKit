@@ -7,11 +7,10 @@
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
-
-#import <Foundation/NSURL_NSURLExtras.h>
 
 static NSImage *image = nil;
 

@@ -11,13 +11,13 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSURLExtras.h>
 
 #import <Foundation/NSError.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 
 #import <Foundation/NSCalendarDate_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 NSString *FileVersionKey = @"WebHistoryFileVersion";
 NSString *DatesArrayKey = @"WebHistoryDates";

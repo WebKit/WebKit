@@ -34,7 +34,6 @@
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
@@ -307,7 +306,7 @@
     // The title doesn't get communicated to the WebView until we are committed.
     if (_private->committed) {
         WebHistoryItem *entry;
-        NSURL *canonURL = [[[self _originalRequest] URL] _web_canonicalize];
+        NSURL *canonURL = [[[self _originalRequest] URL] _webkit_canonicalize];
         entry = [[WebHistory optionalSharedHistory] itemForURL: canonURL];
         [entry setTitle: _private->pageTitle];
 
@@ -630,7 +629,7 @@
         // This is only really a feature of http or https, so don't try this with other protocols.
         NSString *scheme = [[self _URL] scheme];
         if([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]){
-            _private->iconURL = [[[NSURL _web_URLWithString:@"/favicon.ico"
+            _private->iconURL = [[[NSURL _web_URLWithDataAsString:@"/favicon.ico"
                                               relativeToURL:[self _URL]] absoluteURL] retain];
         }
     }

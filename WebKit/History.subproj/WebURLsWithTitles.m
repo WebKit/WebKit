@@ -8,7 +8,7 @@
 
 #import "WebURLsWithTitles.h"
 
-#import <Foundation/NSURL_NSURLExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 
 @implementation WebURLsWithTitles
 
@@ -77,7 +77,7 @@
     count = [URLStrings count];
     URLs = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLs addObject:[NSURL _web_URLWithString:[URLStrings objectAtIndex:index]]];
+        [URLs addObject:[NSURL _web_URLWithDataAsString:[URLStrings objectAtIndex:index]]];
     }
 
     return URLs;

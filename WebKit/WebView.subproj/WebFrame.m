@@ -22,7 +22,6 @@
 #import <WebKit/WebUIDelegate.h>
 
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
 

@@ -11,9 +11,9 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebFileDatabase.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSURLExtras.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";
 NSString * const WebIconsOnDiskKey = 		@"WebIconsOnDisk";
@@ -426,7 +426,7 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(size.height);
 
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-    NSString *path = [[NSURL _web_URLWithString:file] path];
+    NSString *path = [[NSURL _web_URLWithDataAsString:file] path];
     NSString *suffix = [path pathExtension];
     NSImage *icon = nil;
     

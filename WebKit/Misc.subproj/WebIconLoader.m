@@ -10,8 +10,8 @@
 
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
+#import <WebKit/WebNSURLExtras.h>
 
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLRequestPrivate.h>
