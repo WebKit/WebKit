@@ -191,7 +191,8 @@ void QComboBox::setCurrentItem(int index)
 
 bool QComboBox::updateCurrentItem() const
 {
-    int i = [(KWQPopUpButton *)getView() indexOfSelectedItem];
+    KWQPopUpButton *button = (KWQPopUpButton *)getView();
+    int i = [button indexOfSelectedItem];
     if (_currentItem == i) {
         return false;
     }

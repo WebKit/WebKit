@@ -1,3 +1,16 @@
+2003-06-30  John Sullivan  <sullivan@apple.com>
+
+	- fixed gcc3.3 incompatibility
+
+        Reviewed by Darin
+
+        * kwq/KWQComboBox.mm:
+        (QComboBox::updateCurrentItem):
+	cast result of getView() in a local variable to work around
+	compiler bug where casting in a method call doesn't work (all other
+	callers of getView() in this file were already using a local
+	variable)
+
 2003-06-26  Chris Blumenberg  <cblu@apple.com>
 
 	More changes to make WebKit and WebCore compile with gcc 3.3.
