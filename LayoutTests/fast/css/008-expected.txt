@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x48 [border: (10px solid #808000)]
+        RenderText {TEXT} at (10,10) size 563x28
+          text run at (10,10) width 180: "You should see 24"
+          text run at (190,10) width 177: "px text inside a 10"
+          text run at (367,10) width 206: "px solid olive border."

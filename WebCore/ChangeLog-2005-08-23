@@ -1,3 +1,27 @@
+2004-12-14  David Hyatt  <hyatt@apple.com>
+
+	Make sure the class attribute works when newlines are present in the attribute.
+
+        Reviewed by kocienda
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLNamedAttrMapImpl::parseClassAttribute):
+
+2004-12-14  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3724938, float element is duplicated and paints twice.  The logic for when to paint floats was
+	actually fairly screwed up.  This patch simplifies the logic and makes addOverhangingFloats easier to
+	read by splitting it into two separate functions.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+        (khtml::RenderBlock::clearFloats):
+        (khtml::RenderBlock::addOverhangingFloats):
+        (khtml::RenderBlock::addIntrudingFloats):
+        * khtml/rendering/render_block.h:
+
 2004-12-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

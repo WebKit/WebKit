@@ -1090,10 +1090,9 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         if (m_height + overflowDelta > m_overflowHeight)
             m_overflowHeight = m_height + overflowDelta;
 
-        if (child->hasOverhangingFloats() && !child->hasOverflowClip())
-            // need to add the child's floats to our floating objects list, but not in the case where
-            // overflow is auto/scroll
-            addOverHangingFloats(static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos(), true);
+        // If the child has overhanging floats that intrude into following siblings (or possibly out
+        // of this block), then the parent gets notified of the floats now.
+        addOverhangingFloats(static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos());
 
         // See if this child has made our overflow need to grow.
         int rightChildPos = child->xPos() + kMax(child->overflowWidth(false), child->width());
@@ -2217,8 +2216,8 @@ RenderBlock::clearFloats()
     // First add in floats from the parent.
     int offset = m_y;
     if (parentHasFloats)
-        addOverHangingFloats( static_cast<RenderBlock *>( parent() ),
-                              parent()->borderLeft() + parent()->paddingLeft(), offset, false );
+        addIntrudingFloats(static_cast<RenderBlock *>(parent()),
+                           parent()->borderLeft() + parent()->paddingLeft(), offset);
 
     int xoffset = 0;
     if (prev)
@@ -2234,68 +2233,103 @@ RenderBlock::clearFloats()
     RenderBlock* block = static_cast<RenderBlock *>(prev);
     if (!block->m_floatingObjects) return;
     if (block->floatBottom() > offset)
-        addOverHangingFloats(block, xoffset, offset);
+        addIntrudingFloats(block, xoffset, offset);
 }
 
-void RenderBlock::addOverHangingFloats( RenderBlock *flow, int xoff, int offset, bool child )
+void RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
 {
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << (void *)this << ": adding overhanging floats xoff=" << xoff << "  offset=" << offset << " child=" << child << endl;
-#endif
-
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
-    if ( !flow->m_floatingObjects || (child && flow->isRoot()) )
+    if (child->hasOverflowClip() || !child->hasOverhangingFloats() || child->isRoot())
         return;
 
-    // we have overhanging floats
-    if (!m_floatingObjects) {
-        m_floatingObjects = new QPtrList<FloatingObject>;
-        m_floatingObjects->setAutoDelete(true);
-    }
-
-    QPtrListIterator<FloatingObject> it(*flow->m_floatingObjects);
-    FloatingObject *r;
-    for ( ; (r = it.current()); ++it ) {
-        if ( ( !child && r->endY > offset ) ||
-             ( child && flow->yPos() + r->endY > height() ) ) {
-
-            if (child && (flow->enclosingLayer() == enclosingLayer()))
-                // Set noPaint to true only if we didn't cross layers.
-                r->noPaint = true;
-
+    QPtrListIterator<FloatingObject> it(*child->m_floatingObjects);
+    for (FloatingObject *r; (r = it.current()); ++it) {
+        if (child->yPos() + r->endY > height()) {
+            // The object may already be in our list. Check for it up front to avoid
+            // creating duplicate entries.
             FloatingObject* f = 0;
-            // don't insert it twice!
-            QPtrListIterator<FloatingObject> it(*m_floatingObjects);
-            while ( (f = it.current()) ) {
-                if (f->node == r->node) break;
-                ++it;
+            if (m_floatingObjects) {
+                QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+                while ((f = it.current())) {
+                    if (f->node == r->node) break;
+                    ++it;
+                }
             }
-            if ( !f ) {
+
+            // If the object is not in the list, we add it now.
+            if (!f) {
                 FloatingObject *floatingObj = new FloatingObject(r->type);
-                floatingObj->startY = r->startY - offset;
-                floatingObj->endY = r->endY - offset;
+                floatingObj->startY = r->startY - yoff;
+                floatingObj->endY = r->endY - yoff;
+                floatingObj->left = r->left - xoff;
+                
+                // The nearest enclosing layer always paints the float (so that zindex and stacking
+                // behaves properly).  We always want to propagate the desire to paint the float as
+                // far out as we can, to the outermost block that overlaps the float, stopping only
+                // if we hit a layer boundary.
+                if (r->noPaint || child->enclosingLayer() != enclosingLayer())
+                    floatingObj->noPaint = true;
+                else {
+                    floatingObj->noPaint = false;
+                    r->noPaint = true;
+                }
+
+                floatingObj->width = r->width;
+                floatingObj->node = r->node;
+                
+                // We create the floating object list lazily.
+                if (!m_floatingObjects) {
+                    m_floatingObjects = new QPtrList<FloatingObject>;
+                    m_floatingObjects->setAutoDelete(true);
+                }
+                m_floatingObjects->append(floatingObj);
+            }
+        }
+    }
+}
+
+void RenderBlock::addIntrudingFloats(RenderBlock* prev, int xoff, int yoff)
+{
+    // If the parent or previous sibling doesn't have any floats to add, don't bother.
+    if (!prev->m_floatingObjects)
+        return;
+
+    QPtrListIterator<FloatingObject> it(*prev->m_floatingObjects);
+    for (FloatingObject *r; (r = it.current()); ++it) {
+        if (r->endY > yoff) {
+            // The object may already be in our list. Check for it up front to avoid
+            // creating duplicate entries.
+            FloatingObject* f = 0;
+            if (m_floatingObjects) {
+                QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+                while ((f = it.current())) {
+                    if (f->node == r->node) break;
+                    ++it;
+                }
+            }
+            if (!f) {
+                FloatingObject *floatingObj = new FloatingObject(r->type);
+                floatingObj->startY = r->startY - yoff;
+                floatingObj->endY = r->endY - yoff;
                 floatingObj->left = r->left - xoff;
                 // Applying the child's margin makes no sense in the case where the child was passed in.
                 // since his own margin was added already through the subtraction of the |xoff| variable
                 // above.  |xoff| will equal -flow->marginLeft() in this case, so it's already been taken
                 // into account.  Only apply this code if |child| is false, since otherwise the left margin
                 // will get applied twice.
-                if (!child && flow != parent())
-                    floatingObj->left += flow->marginLeft();
-                if ( !child ) {
-                    floatingObj->left -= marginLeft();
-                    floatingObj->noPaint = true;
-                }
-                else
-                    // Only paint if |flow| isn't.
-                    floatingObj->noPaint = !r->noPaint;
-                
+                if (prev != parent())
+                    floatingObj->left += prev->marginLeft();
+                floatingObj->left -= marginLeft();
+                floatingObj->noPaint = true;
                 floatingObj->width = r->width;
                 floatingObj->node = r->node;
+                
+                // We create the floating object list lazily.
+                if (!m_floatingObjects) {
+                    m_floatingObjects = new QPtrList<FloatingObject>;
+                    m_floatingObjects->setAutoDelete(true);
+                }
                 m_floatingObjects->append(floatingObj);
-#ifdef DEBUG_LAYOUT
-                kdDebug( 6040 ) << "addOverHangingFloats x/y= (" << floatingObj->left << "/" << floatingObj->startY << "-" << floatingObj->width << "/" << floatingObj->endY - floatingObj->startY << ")" << endl;
-#endif
             }
         }
     }

@@ -179,15 +179,15 @@ void HTMLNamedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
         (classStr.implementation()->isLower() ? classStr : DOMString(classStr.implementation()->lower())) :
         classStr;
     
-    if (classAttr.find(' ') == -1)
+    if (classAttr.find(' ') == -1 && classAttr.find('\n') == -1)
         m_classList.setString(AtomicString(classAttr));
     else {
         QString val = classAttr.string();
+        val.replace('\n', ' ');
         QStringList list = QStringList::split(' ', val);
         
         AtomicStringList* curr = 0;
-        for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
-        {
+        for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
             const QString& singleClass = *it;
             if (!singleClass.isEmpty()) {
                 if (curr) {

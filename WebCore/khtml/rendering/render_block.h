@@ -154,8 +154,9 @@ public:
     virtual bool containsFloat(RenderObject* o);
 
     virtual bool hasOverhangingFloats() { return floatBottom() > m_height; }
-    void addOverHangingFloats( RenderBlock *block, int xoffset, int yoffset, bool child = false );
-    
+    void addIntrudingFloats(RenderBlock* prev, int xoffset, int yoffset);
+    void addOverhangingFloats(RenderBlock* child, int xoffset, int yoffset);
+
     int nearestFloatBottom(int height) const;
     int floatBottom() const;
     inline int leftBottom();
