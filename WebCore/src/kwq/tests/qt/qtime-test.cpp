@@ -9,7 +9,6 @@
 int main() {
 
     QTime d0;
-
     QTime d1 = QTime(23, 59, 59, 999);
     QTime d2 = QTime(1, 8, 6, 0);
     QTime d3;
