@@ -49,25 +49,37 @@
 - (NSDictionary *)attributes;
 @end
 
-@interface KWQLayoutFragment : NSObject
-{
-    NSSize boundingRectSize;
-    unsigned short glyphRangeLength;  // Is location always zero?  Only need length.
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-    int accessCount;
-#endif
-}
-
-
-- (void)setGlyphRangeLength: (unsigned short)l;
+@protocol KWQLayoutFragment
+- (void)setGlyphRange: (NSRange)r;
 - (NSRange)glyphRange;
-- (void)setBoundingRectSize: (NSSize)s;
+- (void)setBoundingRect: (NSRect)r;
 - (NSRect)boundingRect;
 
 #ifdef _DEBUG_LAYOUT_FRAGMENT
 - (int)accessCount;
 #endif
 
+@end
+
+@interface KWQSmallLayoutFragment : NSObject <KWQLayoutFragment>
+{
+    unsigned short width;
+    unsigned short height;
+    unsigned short glyphRangeLength;  // Is location always zero?  Only need length.
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+    int accessCount;
+#endif
+}
+@end
+
+@interface KWQLargeLayoutFragment : NSObject <KWQLayoutFragment>
+{
+    NSRect boundingRect;
+    NSRange glyphRange;
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+    int accessCount;
+#endif
+}
 @end
 
 #endif

@@ -40,8 +40,8 @@
 - (id)initWithFontAttribute:(NSDictionary *)attrs;
 - (void)setAttributes: (NSDictionary *)at;
 
-- (KWQLayoutFragment *)getFragmentForString: (NSString *)string;
-- (KWQLayoutFragment *)addFragmentForString: (NSString *)string;
+- (id <KWQLayoutFragment>)getFragmentForString: (NSString *)string;
+- (id <KWQLayoutFragment>)addFragmentForString: (NSString *)string;
 
 - (void)setString: (NSString *)dString;
 

@@ -1,3 +1,20 @@
+2002-03-14  Richard Williamson  <rjw@apple.com>
+
+        Implemented a progressively cache fragment.
+        
+	* src/kwq/KWQFontMetrics.mm: (-[KWQSmallLayoutFragment setGlyphRange:]),
+	(-[KWQSmallLayoutFragment setBoundingRect:]), (-[KWQSmallLayoutFragment
+	boundingRect]), (-[KWQLargeLayoutFragment glyphRange]), (-[KWQLargeLayoutFragment
+	setGlyphRange:]), (-[KWQLargeLayoutFragment setBoundingRect:]),
+	(-[KWQLargeLayoutFragment boundingRect]), (-[KWQLargeLayoutFragment compare:]),
+	(+[KWQLayoutInfo drawString:atPoint:withFont:color:]), (+[KWQLayoutInfo
+	drawUnderlineForString:atPoint:withFont:color:]), (+[KWQLayoutInfo
+	_dumpLayoutCache:]), (-[KWQLayoutInfo rectForString:]):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/KWQTextStorage.h:
+	* src/kwq/KWQTextStorage.mm: (-[KWQTextStorage getFragmentForString:]),
+	(-[KWQTextStorage addFragmentForString:]):
+
 2002-03-13  Richard Williamson  <rjw@apple.com>
 
         Added font cache.  Attempted to reduce size of fragment cache, but

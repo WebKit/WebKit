@@ -38,7 +38,7 @@
 const float LargeNumberForText = 1.0e7;
 
 
-@implementation KWQLayoutFragment
+@implementation KWQSmallLayoutFragment
 - (NSRange)glyphRange
 {
     NSRange glyphRange;
@@ -49,14 +49,15 @@ const float LargeNumberForText = 1.0e7;
     return glyphRange;
 }
 
-- (void)setGlyphRangeLength: (unsigned short)l
+- (void)setGlyphRange: (NSRange)r
 {
-    glyphRangeLength = l;
+    glyphRangeLength = r.length;
 }
 
-- (void)setBoundingRectSize: (NSSize)s
+- (void)setBoundingRect: (NSRect)r
 {
-    boundingRectSize = s;
+    width = (unsigned short)r.size.width;
+    height = (unsigned short)r.size.height;
 }
 
 - (NSRect)boundingRect
@@ -65,7 +66,8 @@ const float LargeNumberForText = 1.0e7;
     
     boundingRect.origin.x = 0;
     boundingRect.origin.y = 0;
-    boundingRect.size = boundingRectSize;
+    boundingRect.size.width = (float)width;
+    boundingRect.size.height = (float)height;
     
 #ifdef _DEBUG_LAYOUT_FRAGMENT
     accessCount++;
@@ -92,6 +94,48 @@ const float LargeNumberForText = 1.0e7;
 
 @end
 
+@implementation KWQLargeLayoutFragment
+- (NSRange)glyphRange
+{
+    return glyphRange;
+}
+
+- (void)setGlyphRange: (NSRange)r
+{
+    glyphRange = r;
+}
+
+- (void)setBoundingRect: (NSRect)r
+{
+    boundingRect = r;
+}
+
+- (NSRect)boundingRect
+{
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+    accessCount++;
+#endif
+
+    return boundingRect;
+}
+
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (int)accessCount { return accessCount; }
+#endif
+
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (NSComparisonResult)compare: (id)val
+{
+    if ([val accessCount] > accessCount)
+        return NSOrderedDescending;
+    else if ([val accessCount] < accessCount)
+        return NSOrderedAscending;
+    return NSOrderedSame;
+}
+
+#endif
+
+@end
 
 static NSMutableDictionary *metricsCache = nil;
 
@@ -107,7 +151,7 @@ static NSMutableDictionary *metricsCache = nil;
     KWQTextStorage *storage = [layoutInfo textStorage];
 
     if (manager != nil){
-        KWQLayoutFragment *frag = [storage getFragmentForString: (NSString *)string];
+        id <KWQLayoutFragment> frag = [storage getFragmentForString: (NSString *)string];
 
         [layoutInfo setColor: color];
         [layoutInfo setFont: font];
@@ -124,7 +168,7 @@ static NSMutableDictionary *metricsCache = nil;
     KWQTextStorage *storage = [layoutInfo textStorage];
 
     if (manager != nil){
-        KWQLayoutFragment *frag = [storage getFragmentForString: (NSString *)string];
+        id <KWQLayoutFragment>frag = [storage getFragmentForString: (NSString *)string];
 
         [layoutInfo setColor: color];
         [layoutInfo setFont: font];
@@ -141,7 +185,7 @@ static NSMutableDictionary *metricsCache = nil;
     int i, count;
     NSArray *stringKeys;
     NSString *string;
-    KWQLayoutFragment *fragment;
+    id KWQLayoutFragment>fragment;
 
     if (fragCache == nil){
         fprintf (stdout, "Fragment cache empty\n");
@@ -230,7 +274,7 @@ static NSMutableDictionary *metricsCache = nil;
 
 - (NSRect)rectForString:(NSString *)string
  {
-    KWQLayoutFragment *cachedFragment, *fragment;
+    id <KWQLayoutFragment> cachedFragment, fragment;
 
     cachedFragment = [textStorage getFragmentForString: string];
     if (cachedFragment != nil){

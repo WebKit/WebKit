@@ -45,47 +45,71 @@
 
 @implementation KWQTextStorage
 
-- (KWQLayoutFragment *)getFragmentForString: (NSString *)fragString
+- (id <KWQLayoutFragment>)getFragmentForString: (NSString *)fragString
 {
     return [fragmentCache objectForKey: fragString];
 }
 
-- (KWQLayoutFragment *)addFragmentForString: (NSString *)fragString
+#ifdef DEBUG_SPACE_OPTIMIZATION
+static int totalMeasurements = 0;
+static int leadingSpace = 0;
+static int trailingSpace = 0;
+#endif
+
+- (id <KWQLayoutFragment>)addFragmentForString: (NSString *)fragString
 {
-    KWQLayoutFragment *fragment;
+    id <KWQLayoutFragment> fragment;
+    bool useLargeFragment = NO;
     
     if (fragmentCache == nil)
         fragmentCache = [[NSMutableDictionary alloc] init];
 
     int fragStringLength = [fragString length];
 
-    fragment = [[KWQLayoutFragment alloc] init];
-
-    [fragmentCache setObject: fragment forKey: fragString];
+#ifdef DEBUG_SPACE_OPTIMIZATION
+    totalMeasurements++;
+    if (fragStringLength > 1){
+    
+        [fragString rangeOfString: @" " options: NSLiteralSearch range: NSMakeRange (0,1)].location = 0;
+        
+        or
+        
+        [fragString rangeOfString: @" " options: NSLiteralSearch range: NSMakeRange (fragStringLength,1)].location = fragStringLength
+       
+        if ([[fragString substringWithRange:NSMakeRange (fragStringLength-1,1)] isEqual: @" "])
+            trailingSpace++;
+        if ([[fragString substringWithRange:NSMakeRange (0,1)] isEqual: @" "])
+            leadingSpace++;
+        if (totalMeasurements % 500 == 0){
+            fprintf (stdout, "totalMeasurements = %d, trailingSpace = %d, leadingSpace = %d\n", totalMeasurements, trailingSpace, leadingSpace);
+        }
+    }
+#endif
     
     [self setString: fragString];
 
     NSRange range = NSMakeRange (0, fragStringLength);
     NSRange glyphRange = [_layoutManager glyphRangeForCharacterRange:range actualCharacterRange:nil];
-    
-    if (glyphRange.location != 0){
-        [NSException raise:@"OPTIMIZATION ASSUMPTION VIOLATED" format:@"glyphRange.location != 0"];
-    }
-
-    if (glyphRange.length > UINT16_MAX){
-        [NSException raise:@"OPTIMIZATION ASSUMPTION VIOLATED" format:@"glyphRange.length > UINT16_MAX"];
-    }
-    
-    [fragment setGlyphRangeLength: glyphRange.length];
-    
     NSRect boundingRect = [_layoutManager boundingRectForGlyphRange: glyphRange inTextContainer: [KWQTextContainer sharedInstance]];
     
     if (boundingRect.origin.x != 0 || boundingRect.origin.y != 0){
         [NSException raise:@"OPTIMIZATION ASSUMPTION VIOLATED" format:@"bounding rect origin not 0,0"];
     }
-    
-    [fragment setBoundingRectSize: boundingRect.size];
+    if (glyphRange.location != 0 ||
+            glyphRange.length > UINT16_MAX || 
+            boundingRect.size.width > (float)UINT16_MAX ||
+            boundingRect.size.height > (float)UINT16_MAX){
+        useLargeFragment = YES;
+    }
 
+    if (useLargeFragment)
+        fragment = [[KWQLargeLayoutFragment alloc] init];
+    else
+        fragment = [[KWQSmallLayoutFragment alloc] init];
+
+    [fragment setGlyphRange: glyphRange];
+    [fragment setBoundingRect: boundingRect];
+    [fragmentCache setObject: fragment forKey: fragString];
     [fragment release];
     
     return fragment;
