@@ -365,7 +365,7 @@ Position Position::previousWordPosition() const
     while (!it.atEnd() && it.length() > 0) {
         // Keep asking the iterator for chunks until the nextWordFromIndex() function
         // returns a non-zero value.
-        string.prepend(QString(it.characters(), it.length()));
+        string.prepend(it.characters(), it.length());
         next = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
         if (next != 0)
             break;
@@ -383,7 +383,10 @@ Position Position::previousWordPosition() const
         // Make a check to see if the position should be before or after the replaced element
         // by performing an additional check with a modified string which uses an "X" 
         // character to stand in for the replaced element.
-        string.prepend("X ");
+        QChar chars[2];
+        chars[0] = 'X';
+        chars[1] = ' ';
+        string.prepend(chars, 2);
         unsigned pastImage = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
         Range range(it.range());
         if (pastImage == 0)
@@ -425,7 +428,7 @@ Position Position::nextWordPosition() const
     while (!it.atEnd() && it.length() > 0) {
         // Keep asking the iterator for chunks until the nextWordFromIndex() function
         // returns a value not equal to the length of the string passed to it.
-        string += QString(it.characters(), it.length());
+        string.append(it.characters(), it.length());
         next = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
         if (next != string.length())
             break;
@@ -443,7 +446,10 @@ Position Position::nextWordPosition() const
         // Make a check to see if the position should be before or after the replaced element
         // by performing an additional check with a modified string which uses an "X" 
         // character to stand in for the replaced element.
-        string += " X";
+        QChar chars[2];
+        chars[0] = ' ';
+        chars[1] = 'X';
+        string.append(chars, 2);
         unsigned pastImage = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
         Range range(it.range());
         if (next != pastImage)
