@@ -224,6 +224,46 @@
     return [self _frameForDataSource: dataSource fromFrame: frame];
 }
 
+
+- (IFWebFrame *)_frameForView: (NSView *)aView fromFrame: (IFWebFrame *)frame
+{
+    NSArray *frames;
+    int i, count;
+    IFWebFrame *result, *aFrame;
+    
+    if ([frame view] == aView)
+        return frame;
+        
+    frames = [[frame dataSource] children];
+    count = [frames count];
+    for (i = 0; i < count; i++){
+        aFrame = [frames objectAtIndex: i];
+        result = [self _frameForView: aView fromFrame: aFrame];
+        if (result)
+            return result;
+    }
+
+    frames = [[frame provisionalDataSource] children];
+    count = [frames count];
+    for (i = 0; i < count; i++){
+        aFrame = [frames objectAtIndex: i];
+        result = [self _frameForView: aView fromFrame: aFrame];
+        if (result)
+            return result;
+    }
+    
+    return nil;       
+}
+
+
+- (IFWebFrame *)frameForView: (NSView *)aView
+{
+    IFWebFrame *frame = [self mainFrame];
+    
+    return [self _frameForView: aView fromFrame: frame];
+}
+
+
 - (IFWebFrame *)_frameNamed: (NSString *)name fromFrame: (IFWebFrame *)frame
 {
     if ([[frame name] isEqual: name])

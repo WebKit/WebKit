@@ -1,3 +1,12 @@
+2002-04-08  Richard Williamson  <rjw@apple.com>
+
+        Added frameForView:
+        Cleaned up out-of-date comments.
+        
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	_frameForView:fromFrame:]), (-[IFBaseWebController frameForView:]):
+	* WebView.subproj/IFWebController.h:
+
 2002-04-05  Chris Blumenberg  <cblu@apple.com>
 
 	* Plugins.subproj/IFNullPluginView.mm: (+[IFNullPluginView load]):
