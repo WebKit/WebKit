@@ -253,6 +253,10 @@
 // FIXME: Move to representation
 - (NSString *)documentTextFromDOM
 {
+    if (_private->committed) {
+	return nil;
+    }
+
     return [[self _bridge] documentTextFromDOM];
 }
 

@@ -210,7 +210,9 @@
         [[_private->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 
-    [[self _bridge] closeURL];        
+    if (_private->committed) {
+	[[self _bridge] closeURL];        
+    }
 }
 
 - (void)_recursiveStopLoading
@@ -270,6 +272,10 @@
     [url retain];
     [_private->finalURL release];
     _private->finalURL = url;
+    if (_private->committed) {
+	[[self _bridge] setURL:url];
+    }
+    [[self _locationChangeHandler] serverRedirectTo:url forDataSource:self];
 }
 
 - (id <WebLocationChangeHandler>)_locationChangeHandler
@@ -401,6 +407,7 @@
 
 - (void)_removeFromFrame
 {
+    WEBKIT_ASSERT(_private->committed);
     [[self _bridge] removeFromFrame];
     [self _setController:nil];
     [self _setLocationChangeHandler:nil];
@@ -408,13 +415,14 @@
 
 - (WebBridge *)_bridge
 {
+    WEBKIT_ASSERT(_private->committed);
     id representation = [self representation];
     return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
 }
 
 -(void)_commitIfReady
 {
-    if (_private->contentPolicy == WebContentPolicyShow && _private->gotFirstByte) {
+    if (_private->contentPolicy == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {
         WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s\n", [[[self inputURL] absoluteString] cString]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
@@ -447,11 +455,8 @@
 
 -(void)_receivedData:(NSData *)data
 {
-    if (!_private->gotFirstByte) {
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "got first byte for resource = %s\n", [[[self inputURL] absoluteString] cString]);
-	_private->gotFirstByte = YES;
-	[self _commitIfReady];
-    }
+    _private->gotFirstByte = YES;
+    [self _commitIfReady];
 
     [[self representation] receivedData:data withDataSource:self];
     [[[[self webFrame] webView] documentView] dataSourceUpdated:self];

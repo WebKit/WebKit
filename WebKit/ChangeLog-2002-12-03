@@ -1,5 +1,30 @@
 2002-07-19  Maciej Stachowiak  <mjs@apple.com>
 
+        More refactoring: Use assertions to make sure a provisional data
+	source's bridge is never used - and then fix the places where it
+	would have been used. :-)
+
+	* WebView.subproj/WebDataSource.m:
+        (-[WebDataSource documentTextFromDOM]): Return nil if the document
+	is not committed.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoading]): Don't tell the bridge to stop
+	if we're provisional, because we won't have one.
+        (-[WebDataSource _setFinalURL:]): Don't try to set the bridge URL
+	if we are not committed - it will get set at commit time.
+        (-[WebDataSource _removeFromFrame]): Assert that the data soource is
+	committed - a provisional data source should never be removed from a frame
+	because it should never be in a frame in the first place.
+        (-[WebDataSource _bridge]): Assert that the view is committed.
+        (-[WebDataSource _commitIfReady]): Do nothing if already committed.
+        (-[WebDataSource _receivedData:]): Notice that first byte was read,
+	if appropriate, and commit when ready.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient WebResourceHandle:didRedirectToURL:]):
+	Simplify code by using [WebDataSource _receivedData:]
+
+2002-07-19  Maciej Stachowiak  <mjs@apple.com>
+
         Fix a regression caused by a previous commit that broke frames.
 
 	* WebCoreSupport.subproj/WebBridge.m:

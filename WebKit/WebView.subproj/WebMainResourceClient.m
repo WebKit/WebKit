@@ -255,11 +255,7 @@
     WEBKIT_ASSERT(currentURL != nil);
     WEBKIT_ASSERT([URL isEqual:[handle redirectedURL]]);
     
-    [[dataSource _bridge] setURL:URL];
-    
     [dataSource _setFinalURL:URL];
-    
-    [[dataSource _locationChangeHandler] serverRedirectTo:URL forDataSource:dataSource];
 
     [self didStopLoading];
     [self didStartLoadingWithURL:URL];
