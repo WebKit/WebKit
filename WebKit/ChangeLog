@@ -1,3 +1,12 @@
+2004-10-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3577255> custom file icon shows up upside down in <input type=file>
+
+        * WebCoreSupport.subproj/WebFileButton.m: (-[WebFileButton setFilename:]): Added a call to
+        setFlipped that fixes the problem, even though I don't know why.
+
 2004-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -150,6 +150,10 @@
         _icon = nil;
     } else {
         _icon = [[[NSWorkspace sharedWorkspace] iconForFile:_filename] retain];
+        // I'm not sure why this has any effect, but including this line of code seems to make
+        // the image appear right-side-up. As far as I know, the drawInRect method used above
+        // in our drawRect method should work regardless of whether the image is flipped or not.
+        [_icon setFlipped:YES];
     }
     
     [self updateLabel];
