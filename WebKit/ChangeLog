@@ -1,3 +1,9 @@
+2004-02-07  Darin Adler  <darin@apple.com>
+
+        * WebKit.pbproj/project.pbxproj: Get rid of the DEPLOYMENT_LOCATION and DEPLOYMENT_POSTPROCESSING
+        flags that were in the Deployment build style. These were causing the need to chmod all the time
+        after building WebCore successfully, and were doing us no good.
+
 2004-02-06  Darin Adler  <darin@apple.com>
 
         * Resources/missing_image.tiff: Compressed with compress-tiffs; saved 15890 bytes.
