@@ -203,7 +203,7 @@ short RenderButton::baselinePosition( bool f ) const
 #if APPLE_CHANGES
     // We put the bottoms of buttons on the baseline,
     // This looks better than trying to line up the button text's baseline.
-    return height() + marginTop();
+    return height() + marginTop() - 2;
 #else
     return RenderWidget::baselinePosition( f ) - 2;
 #endif
@@ -875,7 +875,7 @@ short RenderSelect::baselinePosition( bool f ) const
     if (!m_useListBox) {
         // We put the bottoms of menus on the baseline,
         // This looks better than trying to line up the button text's baseline.
-        return height() + marginTop();
+        return height() + marginTop() - 2;
     } else {
         return RenderWidget::baselinePosition( f ) - 7;
     }

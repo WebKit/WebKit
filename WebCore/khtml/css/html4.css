@@ -388,6 +388,7 @@ BUTTON:active {
    -dwh */
 INPUT, TEXTAREA {
 	font: 11px 'Lucida Grande';
+	margin: 3px;
 }
 
 INPUT[type="hidden"] {
@@ -405,7 +406,7 @@ PARAM  {
 	display: none; 
 }
 
-SELECT { display: block; }
+SELECT { display: block; margin: 3px; }
 
 /*
  * inline elements
