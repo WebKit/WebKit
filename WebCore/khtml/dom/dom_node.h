@@ -231,6 +231,9 @@ protected:
     friend class Node;
     friend class DocumentType;
     friend class NodeImpl;
+#ifdef APPLE_CHANGES
+    friend class NamedNodeMapImpl;
+#endif
 };
 
 class NamedNodeMap;

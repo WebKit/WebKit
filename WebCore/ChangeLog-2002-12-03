@@ -1,3 +1,118 @@
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
+        First cut at ObjC stubs for DOM API.  Finished the
+        main classes.  Need to finish
+        WebDOMElement, WebDOMElement, WebDOMElement, 
+        WebDOMCDATASection, WebDOMText, WebDOMComment,
+        WebDOMCharacterData and 
+        
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/dom/dom_doc.h:
+        * khtml/dom/dom_element.h:
+        * khtml/dom/dom_node.h:
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/WebCoreDOM.h: Added.
+        * kwq/WebCoreDOMDocument.mm: Added.
+        (DOM::DOMImplementationImpl::createInstance):
+        (DOM::DocumentTypeImpl::createInstance):
+        (DOM::DocumentImpl::createInstance):
+        (domStringToNSString):
+        (NSStringToDOMString):
+        (+[WebCoreDOMDocumentType documentTypeWithImpl:DOM::]):
+        (-[WebCoreDOMDocumentType initWithImpl:DOM::]):
+        (-[WebCoreDOMDocumentType dealloc]):
+        (-[WebCoreDOMDocumentType DOM::]):
+        (-[WebCoreDOMDocumentType name]):
+        (-[WebCoreDOMDocumentType entities]):
+        (-[WebCoreDOMDocumentType notations]):
+        (-[WebCoreDOMDocumentType publicId]):
+        (-[WebCoreDOMDocumentType systemId]):
+        (-[WebCoreDOMDocumentType internalSubset]):
+        (+[WebCoreDOMImplementation implementionatWithImpl:DOM::]):
+        (-[WebCoreDOMImplementation initWithImpl:DOM::]):
+        (-[WebCoreDOMImplementation dealloc]):
+        (-[WebCoreDOMImplementation DOM::]):
+        (-[WebCoreDOMImplementation hasFeature::]):
+        (-[WebCoreDOMImplementation createDocument:::]):
+        (+[WebCoreDOMDocument documentWithImpl:DOM::]):
+        (-[WebCoreDOMDocument initWithImpl:DOM::]):
+        (-[WebCoreDOMDocument dealloc]):
+        (-[WebCoreDOMDocument DOM::]):
+        (-[WebCoreDOMDocument doctype]):
+        (-[WebCoreDOMDocument implementation]):
+        (-[WebCoreDOMDocument documentElement]):
+        (-[WebCoreDOMDocument createElement:]):
+        (-[WebCoreDOMDocument createElementNS::]):
+        (-[WebCoreDOMDocument createDocumentFragment]):
+        (-[WebCoreDOMDocument createTextNode:]):
+        (-[WebCoreDOMDocument createComment:]):
+        (-[WebCoreDOMDocument createCDATASection:]):
+        (-[WebCoreDOMDocument createProcessingInstruction::]):
+        (-[WebCoreDOMDocument createAttribute:]):
+        (-[WebCoreDOMDocument createAttributeNS::]):
+        (-[WebCoreDOMDocument createEntityReference:]):
+        (-[WebCoreDOMDocument getElementById:]):
+        (-[WebCoreDOMDocument getElementsByTagName:]):
+        (-[WebCoreDOMDocument getElementsByTagNameNS::]):
+        (-[WebCoreDOMDocument importNode::]):
+        * kwq/WebCoreDOMNode.mm: Added.
+        (DOM::NamedNodeMapImpl::createInstance):
+        (DOM::AttrImpl::createInstance):
+        (+[WebCoreDOMNode nodeWithImpl:DOM::]):
+        (-[WebCoreDOMNode initWithImpl:DOM::]):
+        (-[WebCoreDOMNode DOM::]):
+        (-[WebCoreDOMNode dealloc]):
+        (-[WebCoreDOMNode nodeName]):
+        (-[WebCoreDOMNode nodeValue]):
+        (-[WebCoreDOMNode setNodeValue:]):
+        (-[WebCoreDOMNode nodeType]):
+        (-[WebCoreDOMNode parentNode]):
+        (-[WebCoreDOMNode firstChild]):
+        (-[WebCoreDOMNode lastChild]):
+        (-[WebCoreDOMNode previousSibling]):
+        (-[WebCoreDOMNode nextSibling]):
+        (-[WebCoreDOMNode ownerDocument]):
+        (-[WebCoreDOMNode insert:before:]):
+        (-[WebCoreDOMNode replace:child:]):
+        (-[WebCoreDOMNode removeChild:]):
+        (-[WebCoreDOMNode hasChildNodes]):
+        (-[WebCoreDOMNode cloneNode:]):
+        (-[WebCoreDOMNode normalize]):
+        (-[WebCoreDOMNode isSupported::]):
+        (-[WebCoreDOMNode namespaceURI]):
+        (-[WebCoreDOMNode prefix]):
+        (-[WebCoreDOMNode setPrefix:]):
+        (-[WebCoreDOMNode localName]):
+        (+[WebCoreDOMNodeList nodeListWithImpl:DOM::]):
+        (-[WebCoreDOMNodeList initWithImpl:DOM::]):
+        (-[WebCoreDOMNodeList DOM::]):
+        (-[WebCoreDOMNodeList dealloc]):
+        (+[WebCoreDOMNamedNodeMap namedNodeMapWithImpl:DOM::]):
+        (-[WebCoreDOMNamedNodeMap initWithImpl:DOM::]):
+        (-[WebCoreDOMNamedNodeMap DOM::]):
+        (-[WebCoreDOMNamedNodeMap dealloc]):
+        (-[WebCoreDOMNamedNodeMap length]):
+        (-[WebCoreDOMNamedNodeMap getNamedItem:]):
+        (-[WebCoreDOMNamedNodeMap setNamedItem:]):
+        (+[WebCoreDOMAttr attrWithImpl:DOM::]):
+        (-[WebCoreDOMAttr initWithImpl:DOM::]):
+        (-[WebCoreDOMAttr DOM::]):
+        (-[WebCoreDOMAttr dealloc]):
+        (-[WebCoreDOMAttr name]):
+        (-[WebCoreDOMAttr specified]):
+        (-[WebCoreDOMAttr value]):
+        (-[WebCoreDOMAttr ownerElement]):
+        (+[WebCoreDOMCDATASection CDATASectionWithImpl:DOM::]):
+        (-[WebCoreDOMCDATASection initWithImpl:DOM::]):
+        (-[WebCoreDOMCDATASection DOM::]):
+        (-[WebCoreDOMCDATASection dealloc]):
+        * kwq/WebCoreDOMPrivate.h: Added.
+        * kwq/WebDOMDocument.h: Added.
+        * kwq/WebDOMElement.h: Added.
+        * kwq/WebDOMNode.h: Added.
+
 2002-10-09  David Hyatt  <hyatt@apple.com>
 
 	Fix a bug in my event handling code for layers.   This makes
@@ -46,7 +161,7 @@
 2002-10-07  Richard Williamson   <rjw@apple.com>
 
         Added response to WebCore's CachedObject.  This allows us to correctly
-        emulated the WebResourceLoadDelegate API when 're'loading an item
+        emulate the WebResourceLoadDelegate API when 're'loading an item
         from the WebCore cache.  
         
         * khtml/misc/loader.cpp:

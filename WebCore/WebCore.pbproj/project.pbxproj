@@ -72,7 +72,6 @@
 				F58C8A07025BD3BC018635CA,
 				F531DDEC02F0C34D018635CA,
 			);
-			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			knownRegions = (
 				English,
@@ -494,6 +493,12 @@
 				93861DE1032C2E52008635CE,
 				93CCF7D6033BD43C008635CE,
 				93CCF7E3033BE9C1008635CE,
+				F565A2740352509B01A80180,
+				F565A27D035284E301A80180,
+				F5EDAAF7035345D901A80180,
+				F5EDAAF8035345D901A80180,
+				F5EDAAF9035345D901A80180,
+				F5EDAAFA035345D901A80180,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -724,6 +729,8 @@
 				9377FB58032C235C008635CE,
 				93861DE2032C2E52008635CE,
 				93CCF7D7033BD43C008635CE,
+				F565A2780352643A01A80180,
+				F565A27B0352675C01A80180,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4087,6 +4094,69 @@
 			settings = {
 			};
 		};
+		F565A2700352410501A80180 = {
+			children = (
+				F565A2730352509B01A80180,
+				F565A2770352643A01A80180,
+				F565A27A0352675C01A80180,
+				F565A27C035284E301A80180,
+				F5EDAAF3035345D901A80180,
+				F5EDAAF4035345D901A80180,
+				F5EDAAF5035345D901A80180,
+				F5EDAAF6035345D901A80180,
+			);
+			isa = PBXGroup;
+			name = DOM;
+			refType = 4;
+		};
+		F565A2730352509B01A80180 = {
+			isa = PBXFileReference;
+			path = WebCoreDOM.h;
+			refType = 4;
+		};
+		F565A2740352509B01A80180 = {
+			fileRef = F565A2730352509B01A80180;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F565A2770352643A01A80180 = {
+			isa = PBXFileReference;
+			name = WebCoreDOMDocument.mm;
+			path = kwq/WebCoreDOMDocument.mm;
+			refType = 2;
+		};
+		F565A2780352643A01A80180 = {
+			fileRef = F565A2770352643A01A80180;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F565A27A0352675C01A80180 = {
+			isa = PBXFileReference;
+			path = WebCoreDOMNode.mm;
+			refType = 4;
+		};
+		F565A27B0352675C01A80180 = {
+			fileRef = F565A27A0352675C01A80180;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F565A27C035284E301A80180 = {
+			isa = PBXFileReference;
+			path = WebCoreDOMPrivate.h;
+			refType = 4;
+		};
+		F565A27D035284E301A80180 = {
+			fileRef = F565A27C035284E301A80180;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F565AE8502ECA583018635CA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -5792,6 +5862,7 @@
 		};
 		F58785E802DE377601EA4122 = {
 			children = (
+				F565A2700352410501A80180,
 				F587871802DE3B8801EA4122,
 				F587861C02DE382201EA4122,
 				F587862F02DE398601EA4122,
@@ -8133,6 +8204,54 @@
 		};
 		F5C287BD02846DCD018635CA = {
 			fileRef = F5C2869502846DCD018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EDAAF3035345D901A80180 = {
+			isa = PBXFileReference;
+			name = WebDOMDocument.h;
+			path = kwq/WebDOMDocument.h;
+			refType = 2;
+		};
+		F5EDAAF4035345D901A80180 = {
+			isa = PBXFileReference;
+			name = WebDOMElement.h;
+			path = kwq/WebDOMElement.h;
+			refType = 2;
+		};
+		F5EDAAF5035345D901A80180 = {
+			isa = PBXFileReference;
+			name = WebDOMNamedNodeMap.h;
+			path = kwq/WebDOMNamedNodeMap.h;
+			refType = 2;
+		};
+		F5EDAAF6035345D901A80180 = {
+			isa = PBXFileReference;
+			name = WebDOMNode.h;
+			path = kwq/WebDOMNode.h;
+			refType = 2;
+		};
+		F5EDAAF7035345D901A80180 = {
+			fileRef = F5EDAAF3035345D901A80180;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EDAAF8035345D901A80180 = {
+			fileRef = F5EDAAF4035345D901A80180;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EDAAF9035345D901A80180 = {
+			fileRef = F5EDAAF5035345D901A80180;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EDAAFA035345D901A80180 = {
+			fileRef = F5EDAAF6035345D901A80180;
 			isa = PBXBuildFile;
 			settings = {
 			};

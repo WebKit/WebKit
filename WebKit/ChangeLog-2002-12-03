@@ -1,3 +1,15 @@
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
+        Fixes to the DOM API.
+        
+        * DOM.subproj/WebDOMDocument.h:
+        * DOM.subproj/WebDOMDocument.m:
+        * DOM.subproj/WebDOMNode.h:
+        * DOM.subproj/WebDOMNode.m:
+        * DOM.subproj/WebDOMNamedNodeMap.h: Removed.
+        * DOM.subproj/WebDOMNamedNodeMap.m: Removed.
+        * WebKit.pbproj/project.pbxproj:
+
 2002-10-08  Ken Kocienda  <kocienda@apple.com>
 
 	Use WebFrameLoadType variable to set the request cache policy for the WebResourceRequest.

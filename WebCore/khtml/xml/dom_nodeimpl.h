@@ -353,6 +353,10 @@ public:
      */
     virtual void childrenChanged();
 
+#ifdef APPLE_CHANGES
+    static Node nodeInstance(NodeImpl *impl);
+#endif
+
 private: // members
     DocumentPtr *document;
     NodeImpl *m_previous;
@@ -550,6 +554,10 @@ public:
     // Other methods (not part of DOM)
     virtual NodeImpl::Id mapId(const DOMString& namespaceURI,  const DOMString& localName,  bool readonly) = 0;
     virtual bool isReadOnly() { return false; }
+
+#ifdef APPLE_CHANGES
+    static NamedNodeMap createInstance(NamedNodeMapImpl *impl);
+#endif
 };
 
 

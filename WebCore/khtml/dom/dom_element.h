@@ -92,6 +92,9 @@ class Attr : public Node
     friend class HTMLDocument;
     friend class ElementImpl;
     friend class NamedAttrMapImpl;
+#ifdef APPLE_CHANGES
+    friend class AttrImpl;
+#endif
 
 public:
     Attr();

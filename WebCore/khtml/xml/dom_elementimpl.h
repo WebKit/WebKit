@@ -137,6 +137,10 @@ public:
     virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short type );
 
+#ifdef APPLE_CHANGES
+    static Attr createInstance(AttrImpl *impl);
+#endif
+
 protected:
     ElementImpl* m_element;
     AttributeImpl* m_attribute;

@@ -75,6 +75,10 @@ class HTMLDocument;
 class DOMImplementation
 {
    friend class Document;
+#ifdef APPLE_CHANGES
+    friend class DOMImplementationImpl;
+#endif
+
 public:
     DOMImplementation();
     DOMImplementation(const DOMImplementation &other);
@@ -249,6 +253,9 @@ class Document : public Node
     friend class HTMLFrameElement;
     friend class HTMLIFrameElement;
     friend class HTMLObjectElement;
+#ifdef APPLE_CHANGES
+    friend class DocumentImpl;
+#endif
 
 public:
     Document();
@@ -869,6 +876,10 @@ class DocumentType : public Node
 {
     friend class Document;
     friend class DOMImplementation;
+#ifdef APPLE_CHANGES
+    friend class DocumentTypeImpl;
+#endif
+
 public:
     DocumentType();
     DocumentType(const DocumentType &other);

@@ -27,53 +27,29 @@ enum WebNodeType {
 @protocol WebDOMNode <NSObject>
 
 - (NSString *)nodeName;
-
 - (NSString *)nodeValue;
-
 - (void)setNodeValue: (NSString *)string; 
-
 - (unsigned short)nodeType;
-
 - (id<WebDOMNode>)parentNode;
-
 - (id<WebDOMNodeList>)childNodes;
-
 - (id<WebDOMNode>)firstChild;
-
 - (id<WebDOMNode>)lastChild;
-
 - (id<WebDOMNode>) previousSibling;
-
 - (id<WebDOMNode>)nextSibling;
-
 - (id<WebDOMNamedNodeMap>)attributes;
-
 - (id<WebDOMDocument>)ownerDocument;
-
-- (id<WebDOMNode>)insert:(id<WebDOMNode>)newChild before:(id<WebDOMNode>)refChild;
-
+- (id<WebDOMNode>)insert:(id<(WebDOMNode)>)newChild before:(id<WebDOMNode>)refChild;
 - (id<WebDOMNode>)replace:(id<WebDOMNode>)newChild child:(id<WebDOMNode>)oldChild;
-
 - (id<WebDOMNode>)removeChild:(id<WebDOMNode>)oldChild;
-
 - (id<WebDOMNode>)appendChild:(id<WebDOMNode>)newChild;
-
 - (BOOL)hasChildNodes;
-
 - (id<WebDOMNode>)cloneNode: (BOOL) deep;
-
 - (void)normalize;
-
 - (BOOL)isSupported:(NSString *)feature : (NSString *)version;
-
 - (NSString *)namespaceURI;
-
 - (NSString *)prefix;
-
 - (void)setPrefix: (NSString *)prefix;
-
 - (NSString *)localName;
-
 - (BOOL)hasAttributes;
 
 @end
@@ -82,19 +58,12 @@ enum WebNodeType {
 @protocol WebDOMNamedNodeMap <NSObject>
 
 - (unsigned long) length;
-
 - (id<WebDOMNode>)getNamedItem:(NSString *)name;
-
 - (id<WebDOMNode>)setNamedItem:(id<WebDOMNode>)arg;
-
 - (id<WebDOMNode>)removeNamedItem:(NSString *)name;
-
 - (id<WebDOMNode>)item:(unsigned long) index;
-
 - (id<WebDOMNode>)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
-
 - (id<WebDOMNode>)setNamedItemNS:(id<WebDOMNode>)arg;
-
 - (id<WebDOMNode>)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
 
 @end
@@ -103,7 +72,7 @@ enum WebNodeType {
 @protocol WebDOMNodeList <NSObject>
 
 - (unsigned long)length;
-
 - (id<WebDOMNode>)item: (unsigned long)index;
 
 @end
+
