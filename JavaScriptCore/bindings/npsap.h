@@ -28,20 +28,20 @@
 #include <npruntime.h>
 
 /*
-	NPP_GetNativeObjectForJavaScript allows user agents to retrieve a plugin's exported
+	NPP_GetNativeObjectForScript allows user agents to retrieve a plugin's exported
 	interface.
 */
-typedef NPObject *(*NPP_GetNativeObjectForScript) (NPP instance);
+NPObject *(*NPP_GetNativeObjectForScript) (NPP instance);
 
 /*
 	Get the window object for the page that contains the plugin.
 */
-typedef NPScriptObject *(*NPN_GetWindowScriptObject) (NPP instance);
+NPScriptObject *(*NPN_GetWindowScriptObject) (NPP instance);
 
 /*
-	Get the JavaScript DOM object that refers to the plugin.
+	Get the script DOM object that refers to the plugin.
 */
-typedef NPScriptObject *(*NPN_GetInstanceScriptObject) (NPP instance);
+NPScriptObject *(*NPN_GetInstanceScriptObject) (NPP instance);
 
 #endif
 

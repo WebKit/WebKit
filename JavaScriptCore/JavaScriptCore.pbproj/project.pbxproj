@@ -255,6 +255,7 @@
 				5182A53D06012C3000CBD2F2,
 				517BE7F50610E39600221947,
 				5199B1C0061B65BC0070C006,
+				5199B266061BB1300070C006,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -788,6 +789,7 @@
 		};
 		51856D950562EE9C008B9D83 = {
 			children = (
+				5199B265061BB1300070C006,
 				5199B1BD061B65BC0070C006,
 				5199B1BE061B65BC0070C006,
 				5182A53A06012C3000CBD2F2,
@@ -922,6 +924,21 @@
 		};
 		5199B1C0061B65BC0070C006 = {
 			fileRef = 5199B1BE061B65BC0070C006;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		5199B265061BB1300070C006 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = npsap.h;
+			path = bindings/npsap.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		5199B266061BB1300070C006 = {
+			fileRef = 5199B265061BB1300070C006;
 			isa = PBXBuildFile;
 			settings = {
 			};
