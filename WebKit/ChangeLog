@@ -1,3 +1,16 @@
+2003-07-23  Maciej Stachowiak  <mjs@apple.com>
+
+	Build breakage fix:
+	
+	Fix WebKit to build with the latest Foundation.
+	
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _webkit_isJavaScriptURL]):
+        (-[NSURL _webkit_scriptIfJavaScriptURL]):
+        (-[NSURL _webkit_isFTPDirectoryURL]):
+        (-[NSString _webkit_isFTPDirectoryURL]):
+
 2003-07-23  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3311725:  Added support for key/value binding. 

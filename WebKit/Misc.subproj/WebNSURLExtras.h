@@ -36,5 +36,7 @@
 // methods are removed from Foundation
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes;
 - (NSString *)_webkit_scriptIfJavaScriptURL;
+- (BOOL)_webkit_isJavaScriptURL;
+- (BOOL)_webkit_isFTPDirectoryURL;
 
 @end

@@ -148,17 +148,17 @@ static inline void ReleaseIfNotNULL(CFTypeRef object)
 
 - (BOOL)_webkit_isJavaScriptURL
 {
-    return [[self absoluteString] _web_isJavaScriptURL];
+    return [[self absoluteString] _webkit_isJavaScriptURL];
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL
 {
-    return [[self absoluteString] _web_scriptIfJavaScriptURL];
+    return [[self absoluteString] _webkit_scriptIfJavaScriptURL];
 }
 
 - (BOOL)_webkit_isFTPDirectoryURL
 {
-    return [[self absoluteString] _web_isFTPDirectoryURL];
+    return [[self absoluteString] _webkit_isFTPDirectoryURL];
 }
 
 - (BOOL)_webkit_shouldLoadAsEmptyDocument
@@ -230,6 +230,16 @@ static int hexDigitValue(char c)
         return nil;
     }
     return [[self substringFromIndex:11] _webkit_stringByReplacingValidPercentEscapes];
+}
+
+- (BOOL)_webkit_isFTPDirectoryURL
+{
+    int length = [self length];
+    if (length < 5) {  // 5 is length of "ftp:/"
+	return NO;
+    }
+    unichar lastChar = [self characterAtIndex:length - 1];
+    return lastChar == '/' && [self _web_hasCaseInsensitivePrefix:@"ftp:"];
 }
 
 @end
