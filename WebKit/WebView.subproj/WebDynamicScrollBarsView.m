@@ -12,16 +12,6 @@
 
 @implementation WebDynamicScrollBarsView
 
-- (id)initWithFrame:(NSRect)frameRect
-{
-    [super initWithFrame:frameRect];
-
-    hScroll = WebCoreScrollBarAuto;
-    vScroll = WebCoreScrollBarAuto;
-
-    return self;
-}
-
 - (void)setSuppressLayout: (BOOL)flag;
 {
     suppressLayout = flag;
