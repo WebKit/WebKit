@@ -35,21 +35,24 @@
 
 template <class T> class QMemArray {
 public:
-    QMemArray() : impl(sizeof(T)) {}
-    QMemArray(int i) : impl(sizeof(T),i) {}
+    QMemArray() : impl(sizeof(T)) { }
+    QMemArray(int i) : impl(sizeof(T), i) { }
     
-    bool isEmpty() {return impl.size() == 0; }
-    T &at(uint u) const {return *(T *)impl.at(u); }
-    T *data() const { return (T *)impl.data(); }
+    bool isEmpty() { return impl.size() == 0; }
+    T &at(uint u) { return *(T *)impl.at(u); }
+    const T &at(uint u) const { return *(T *)impl.at(u); }
+    T *data() { return (T *)impl.data(); }
+    const T *data() const { return (T *)impl.data(); }
     uint size() const { return impl.size(); }
-    uint count() const { return size(); }
+    uint count() const { return impl.size(); }
     bool resize(uint size) { return impl.resize(size); }
     QMemArray<T>& duplicate(const T *data, int size) { impl.duplicate(data, size); return *this; }
     void detach() { duplicate(data(), size()); }
     bool fill(const T &item, int size=-1) { return impl.fill(&item, size); }
     QMemArray<T>& assign(const QMemArray<T> &a) { return *this = a; }
 
-    T &operator[](int i) const { return at(i); }
+    T &operator[](int i) { return *(T *)impl.at(i); }
+    const T &operator[](int i) const { return *(T *)impl.at(i); }
     bool operator==(const QMemArray<T> &a) const { return impl == a.impl; }
     bool operator!=(const QMemArray<T> &a) const { return !(*this == a); }    
     operator const T*() const { return data(); }

@@ -69,7 +69,7 @@ bool QCString::isEmpty() const
 int QCString::find(const char *s, int index, bool cs) const
 {
     int result;
-    char *tmp;
+    const char *tmp;
 
     result = -1;
 
@@ -108,7 +108,7 @@ int QCString::find(const char *s, int index, bool cs) const
 int QCString::contains(char c, bool cs) const
 {
     int result;
-    char *tmp;
+    const char *tmp;
 
     result = 0;
     tmp = data();
@@ -227,7 +227,7 @@ QCString QCString::right(uint len) const
         if (len > l) {
             len = l;
         }
-        char *p = data() + (l - len);
+        const char *p = data() + (l - len);
         return QCString(p);
     }
 }
@@ -247,7 +247,7 @@ QCString QCString::mid(uint index, uint len) const
         return result;
     } 
     else {
-        char *p = data() + index;
+        const char *p = data() + index;
         QCString result(len + 1);
         strncpy(result.data(), p, len);
         *(result.data() + len) = '\0';

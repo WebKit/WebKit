@@ -54,7 +54,10 @@ QRegion::QRegion(int x, int y, int w, int h, RegionType t)
 QRegion::QRegion(const QPointArray &arr)
     : path([[NSBezierPath alloc] init])
 {
-    _logNotYetImplemented();
+    [path moveToPoint:NSMakePoint(arr[0].x(), arr[0].y())];
+    for (uint i = 1; i < arr.count(); ++i) {
+        [path lineToPoint:NSMakePoint(arr[i].x(), arr[i].y())];
+    }
 }
 
 QRegion::QRegion(const QRegion &other)

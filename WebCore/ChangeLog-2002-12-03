@@ -1,3 +1,18 @@
+2002-07-10  Darin Adler  <darin@apple.com>
+
+	- fixed 2978796 -- Client-side image map not working
+
+        * kwq/KWQRegion.mm: (QRegion::QRegion): Implement constructor that
+	takes a QPointArray.
+
+        * kwq/qt/qarray.h: Fix some const loopholes.
+
+        * kwq/KWQCString.mm:
+        (QCString::find): Use const char * instead of char *.
+        (QCString::contains): Use const char * instead of char *.
+        (QCString::right): Use const char * instead of char *.
+        (QCString::mid): Use const char * instead of char *.
+
 2002-07-10  Maciej Stachowiak  <mjs@apple.com>
 
         WebCore part of fix for:
