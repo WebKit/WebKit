@@ -451,10 +451,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case Length:
       return Number(m_part->frames().count());
     case _Location:
-      if (isSafeScript(exec))
-        return Value(location());
-      else
-        return Undefined();
+      return Value(location());
     case Name:
       return String(m_part->name());
     case _Navigator:
@@ -977,7 +974,13 @@ bool Window::isSafeScript(ExecState *exec) const
   //kdDebug(6070) << "current domain:" << actDomain.string() << ", frame domain:" << thisDomain.string() << endl;
   if ( actDomain == thisDomain )
     return true;
-
+#if APPLE_CHANGES
+  if (Interpreter::shouldPrintExceptions()) {
+      printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+             thisDocument->URL().latin1(), actDocument->URL().latin1());
+  }
+#endif
+  
   kdWarning(6070) << "Javascript: access denied for current frame '" << actDomain.string() << "' to frame '" << thisDomain.string() << "'" << endl;
   return false;
 }
@@ -1801,6 +1804,10 @@ Value Location::get(ExecState *exec, const Identifier &p) const
 
   if (m_part.isNull())
     return Undefined();
+  
+  const Window* window = Window::retrieveWindow(m_part);
+  if (!window || !window->isSafeScript(exec))
+      return Undefined();
 
   KURL url = m_part->url();
   const HashEntry *entry = Lookup::findEntry(&LocationTable, p);
@@ -1935,6 +1942,11 @@ Value LocationFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   Location *location = static_cast<Location *>(thisObj.imp());
   KHTMLPart *part = location->part();
   if (part) {
+      
+    Window* window = Window::retrieveWindow(part);
+    if (!window->isSafeScript(exec) && id != Location::Replace)
+        return Undefined();
+      
     switch (id) {
     case Location::Replace:
     {

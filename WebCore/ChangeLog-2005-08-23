@@ -1,3 +1,16 @@
+2003-08-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3386673>: a particular fidelity.com "Log in" link does nothing because of cross-domain JavaScript rules
+
+        Reviewed by mjs.
+
+        * config.h:
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get): allow other frames to get the location object
+        (Window::isSafeScript): added JS logging
+        (Location::get): don't allow other frames to access location attributes
+        (LocationFunc::tryCall): don't allow other frames to call functions on the location object
+
 2003-08-21  Richard Williamson   <rjw@apple.com>
 	
 	Fixed 3378810.  Avoid resizing frame from drawRect: when printing.  This will corrupt the graphics context.
