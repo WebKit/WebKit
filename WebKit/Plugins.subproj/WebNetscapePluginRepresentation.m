@@ -21,7 +21,7 @@
 {
     if(!instance){
         NSView *view = [[[ds webFrame] webView] documentView];
-        if([[view class] isKindOfClass:[WebNetscapePluginDocumentView class]]){
+        if([view isKindOfClass:[WebNetscapePluginDocumentView class]]){
             [self setPluginPointer:[(WebNetscapePluginDocumentView *)view pluginPointer]];
             [self setResponse:[ds response]];
         }

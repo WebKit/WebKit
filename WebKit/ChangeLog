@@ -1,3 +1,12 @@
+2002-11-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3098767 - REGRESSION: standalone quicktime content just shows blank window
+
+	Check the instance not the class for the class type.
+
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]):
+
 2002-11-18  Ken Kocienda  <kocienda@apple.com>
 
 	Added feature to import bookmarks/favorites from MSIE. This
