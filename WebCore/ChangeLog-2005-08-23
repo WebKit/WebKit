@@ -1,5 +1,15 @@
 2005-03-14  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Added a couple of comments about setChanged() to this code based on my experiences with 4047028.
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::addParsedProperties)
+        (DOM::CSSMutableStyleDeclarationImpl::merge)
+
+2005-03-14  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:

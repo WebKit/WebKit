@@ -422,6 +422,8 @@ void CSSMutableStyleDeclarationImpl::addParsedProperties(const CSSProperty * con
         removeProperty(properties[i]->id(), false);
         m_values.append(*properties[i]);
     }
+    // FIXME: This probably should have a call to setChanged() if something changed. We may also wish to add
+    // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
 
 void CSSMutableStyleDeclarationImpl::setLengthProperty(int id, const DOM::DOMString &value, bool important, bool _multiLength )
@@ -488,6 +490,8 @@ void CSSMutableStyleDeclarationImpl::merge(CSSMutableStyleDeclarationImpl *other
         }
         m_values.append(property);
     }
+    // FIXME: This probably should have a call to setChanged() if something changed. We may also wish to add
+    // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
 
 void CSSStyleDeclarationImpl::diff(CSSMutableStyleDeclarationImpl *style) const
