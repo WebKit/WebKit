@@ -1,5 +1,9 @@
 #!/bin/sh
 
+unsetenv MallocStackLogging
+unsetenv MallocScribble
+unsetenv MallocGuardEdges
+
 `dirname $0`/testkjs `dirname $0`/test.js 2>&1
 
 if [ $? -eq 1 ]; then

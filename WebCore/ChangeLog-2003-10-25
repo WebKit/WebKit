@@ -1,3 +1,8 @@
+2002-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kdelibs/kjs/kjs-test:
+	* src/kwq/KWQKURL.mm: (KURL::setQuery):
+
 2002-02-18  Kenneth Kocienda  <kocienda@apple.com>
 
 	* src/Makefile.am:

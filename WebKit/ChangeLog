@@ -1,3 +1,7 @@
+2002-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+	* WebView.subproj/IFWebController.h:
+
 2002-02-19  John Sullivan  <sullivan@apple.com>
 
 	Finished first cut at IFWebHistory implementation. All methods are implemented
