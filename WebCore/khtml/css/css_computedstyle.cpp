@@ -810,6 +810,10 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
             uint i, count = regions.count();
             DashboardRegionImpl *firstRegion = new DashboardRegionImpl(), *region;
             region = firstRegion;
+            
+            if (count == 1 && regions[0].type == StyleDashboardRegion::None)
+                return new CSSPrimitiveValueImpl (CSS_VAL_NONE);
+                
             for (i = 0; i < count; i++) {
                 StyleDashboardRegion styleRegion = regions[i];
                 region->m_label = styleRegion.label;

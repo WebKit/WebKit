@@ -3776,9 +3776,13 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     }
     case CSS_PROP__APPLE_DASHBOARD_REGION: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
-
         if (!primitiveValue)
             return;
+
+        if(primitiveValue->getIdent() == CSS_VAL_NONE) {
+            style->setDashboardRegions(RenderStyle::noneDashboardRegions());
+            return;
+        }
 
         DashboardRegionImpl *region = primitiveValue->getDashboardRegionValue();
         if (!region)

@@ -934,3 +934,22 @@ const QValueList<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
     static QValueList<StyleDashboardRegion> emptyList;
     return emptyList;
 }
+
+const QValueList<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
+{ 
+    static QValueList<StyleDashboardRegion> noneList;
+    static bool noneListInitialized = false;
+    
+    if (!noneListInitialized) {
+        StyleDashboardRegion region;
+        region.label = "";
+        region.offset.top  = Length();
+        region.offset.right = Length();
+        region.offset.bottom = Length();
+        region.offset.left = Length();
+        region.type = StyleDashboardRegion::None;
+        noneList.append (region);
+        noneListInitialized = true;
+    }
+    return noneList;
+}

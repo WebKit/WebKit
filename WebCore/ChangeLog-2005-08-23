@@ -1,3 +1,26 @@
+2004-10-13  Richard Williamson   <rjw@apple.com>
+
+        Added support for -apple-dashboard-region:none.  And fixed
+	a few computed style problems.
+
+        Fixed <rdar://problem/3833532> -apple-dashboard-region: none; is needed
+        Reviewed by Hyatt.
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::cssText):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseDashboardRegions):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::noneDashboardRegions):
+        * khtml/rendering/render_style.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::dashboardRegionsDictionary):
+
 2004-10-13  David Hyatt  <hyatt@apple.com>
 
 	Rework block layout to clean it up and simplify it (r=kocienda).  

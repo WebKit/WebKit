@@ -823,19 +823,19 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
                 text = "dashboard-region(";
                 text += region->m_label;
                 if (region->m_isCircle){
-                    text = " circle ";
+                    text += " circle ";
                 }
                 else if (region->m_isRectangle){
-                    text = " rectangle ";
+                    text += " rectangle ";
                 }
                 else
                     break;
-                text += " ";
                 text += region->top()->cssText() + " ";
                 text += region->right()->cssText() + " ";
                 text += region->bottom()->cssText() + " ";
                 text += region->left()->cssText();
                 text += ")";
+                region = region->m_next;
             }
             break;
         }

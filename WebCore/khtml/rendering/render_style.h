@@ -1485,6 +1485,7 @@ public:
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static const QValueList<StyleDashboardRegion>& initialDashboardRegions();
+    static const QValueList<StyleDashboardRegion>& noneDashboardRegions();
 #endif
 };
 

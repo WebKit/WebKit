@@ -523,7 +523,7 @@ bool CSSParser::parseValue( int propId, bool important )
 
 #if APPLE_CHANGES
     case CSS_PROP__APPLE_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
-	if ( value->unit == Value::Function )
+	if ( value->unit == Value::Function || id == CSS_VAL_NONE)
 	    return parseDashboardRegions( propId, important );
 	break;
 #endif
@@ -1538,9 +1538,15 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
 {
     bool valid = true;
     
+    Value *value = valueList->current();
+
+    if (value->id == CSS_VAL_NONE) {
+        addProperty( propId, new CSSPrimitiveValueImpl( value->id ), important );
+        return valid;
+    }
+        
     DashboardRegionImpl *firstRegion = new DashboardRegionImpl(), *region = 0;
 
-    Value *value = valueList->current();
     while (value) {
         if (region == 0) {
             region = firstRegion;

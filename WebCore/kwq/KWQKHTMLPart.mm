@@ -4143,6 +4143,10 @@ NSMutableDictionary *KWQKHTMLPart::dashboardRegionsDictionary()
     NSMutableDictionary *webRegions = [[[NSMutableDictionary alloc] initWithCapacity:count] autorelease];
     for (i = 0; i < count; i++) {
         DashboardRegionValue region = regions[i];
+
+        if (region.type == StyleDashboardRegion::None)
+            continue;
+            
         NSRect clip;
         clip.origin.x = region.clip.x();
         clip.origin.y = region.clip.y();
