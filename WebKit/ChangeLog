@@ -1,3 +1,49 @@
+2002-08-14  Darin Adler  <darin@apple.com>
+
+	Remove some unused things. Fix minor problems.
+
+        * Plugins.subproj/WebPluginNullEventSender.m:
+        * Plugins.subproj/WebPluginView.m:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+	Fixed places that were using the C++ bool instead of
+	the Objective C BOOL.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _receivedData:]):
+	Remove old code related to the dummy data source.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]):
+	Remove _changeBridge, since we don't any more. Hoist the creation of the
+	bridge up here.
+        * WebView.subproj/WebFramePrivate.h: Remove _changeBridge.
+        * WebView.subproj/WebFramePrivate.m: Remove _changeBridge.
+
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebTextRepresentation.h:
+        * WebView.subproj/WebTextView.h:
+	Don't re-declare methods that are part of protocols we implement.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView initWithFrame:]): Don't add the mouse moved observer until
+	the view gets put into a window.
+        (-[WebHTMLView addMouseMovedObserver]): Added.
+        (-[WebHTMLView removeMouseMovedObserver]): Added.
+        (-[WebHTMLView viewWillMoveToWindow:]): Remove observer if we were in the
+	main window.
+        (-[WebHTMLView viewDidMoveToWindow]): Add observer if we are now in the main
+	window.
+        * WebView.subproj/WebHTMLViewPrivate.h: Add _frame method. Remove unused
+	controller and cursor instance variables.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _frame]): Added.
+        (-[WebHTMLView _bridge]): Call _frame.
+
+        * WebView.subproj/WebTextRepresentation.m: Add now-needed import.
+
+        * WebView.subproj/WebHTMLRepresentation.m: Tweak.
+
 2002-08-13  Maciej Stachowiak  <mjs@apple.com>
 
 	Add the ability to determine the classes of live JavaScript

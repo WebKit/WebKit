@@ -32,7 +32,7 @@
 {
     if (!shouldStop) {
         EventRecord event;
-        bool acceptedEvent;
+        BOOL acceptedEvent;
         
         [WebPluginView getCarbonEvent:&event];
         

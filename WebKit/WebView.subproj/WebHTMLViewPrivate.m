@@ -38,7 +38,6 @@
 
 - (void)dealloc
 {
-    [cursor release];
     [draggedURL release];
     [super dealloc];
 }
@@ -56,7 +55,6 @@
     [[self _bridge] adjustFrames:[self frame]];
 }
 
-
 - (void)_reset
 {
     NSArray *subviews = [[self subviews] copy];
@@ -66,24 +64,21 @@
     [WebImageRenderer stopAnimationsInView:self];
 }
 
-//FIXME: WebHTMLView doesn't seem to use _private->controller so is _setController needed?
-- (void)_setController:(WebController *)controller
-{
-    // Not retained; the controller owns the view.
-    _private->controller = controller;    
-}
-
 - (WebController *)_controller
 {
     return [[self _web_parentWebView] _controller];
 }
 
+- (WebFrame *)_frame
+{
+    WebView *webView = [self _web_parentWebView];
+    return [[webView _controller] frameForView:webView];
+}
+
 // Required so view can access the part's selection.
 - (WebBridge *)_bridge
 {
-    WebView *webView = [self _web_parentWebView];
-    WebFrame *webFrame = [[webView _controller] frameForView:webView];
-    return [webFrame _bridge];
+    return [[self _frame] _bridge];
 }
 
 BOOL _modifierTrackingEnabled = FALSE;

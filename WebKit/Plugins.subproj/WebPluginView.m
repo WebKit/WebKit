@@ -113,7 +113,7 @@
 -(void)sendActivateEvent:(BOOL)activate
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event];
     event.what = activateEvt;
@@ -130,7 +130,7 @@
 - (void)sendUpdateEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event];
     event.what = updateEvt;
@@ -150,7 +150,7 @@
 - (BOOL)becomeFirstResponder
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event];
     event.what = getFocusEvent;
@@ -164,7 +164,7 @@
 - (BOOL)resignFirstResponder
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event];
     event.what = loseFocusEvent;
@@ -179,7 +179,7 @@
 -(void)mouseDown:(NSEvent *)theEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
 
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseDown;
@@ -192,7 +192,7 @@
 -(void)mouseUp:(NSEvent *)theEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseUp;
@@ -205,7 +205,7 @@
 - (void)mouseEntered:(NSEvent *)theEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
@@ -218,7 +218,7 @@
 - (void)mouseExited:(NSEvent *)theEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
         
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
@@ -234,7 +234,7 @@
 - (void)keyUp:(NSEvent *)theEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
 
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyUp;
@@ -258,7 +258,7 @@
 - (void)keyDown:(NSEvent *)theEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
 
     // Some command keys are sent with both performKeyEquivalent and keyDown.
     // We should send only 1 keyDown to the plug-in, so we'll ignore this one.
@@ -301,7 +301,7 @@
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
 
     if(![self isInResponderChain]){
         return NO;
@@ -326,7 +326,7 @@
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     EventRecord event;
-    bool acceptedEvent;
+    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event withEvent:theEvent];
     acceptedEvent = NPP_HandleEvent(instance, &event);

@@ -86,7 +86,6 @@ typedef enum {
 - (void)_isLoadComplete;
 - (void)_checkLoadComplete;
 - (void)_timedLayout: userInfo;
-- (void)_changeBridge;
 - (WebBridge *)_bridge;
 - (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource;
 - (void)_setProvisionalDataSource:(WebDataSource *)d;

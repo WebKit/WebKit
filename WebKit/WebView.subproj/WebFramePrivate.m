@@ -535,19 +535,6 @@ static const char * const stateNames[] = {
     [WebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
 }
 
-- (void)_changeBridge
-{
-    WebBridge *oldBridge = _private->bridge;
-    //[oldBridge removeFromFrame];
-    _private->bridge = [[WebBridge alloc] init];
-    [_private->bridge setFrame:self];
-    if ([oldBridge renderPart] != nil) {
-	[_private->bridge setRenderPart:[oldBridge renderPart]]; 
-    }
-
-    [oldBridge release];
-}
-
 - (WebBridge *)_bridge
 {
     return _private->bridge;

@@ -134,7 +134,7 @@ static double totalCGGetAdvancesTime = 0;
 static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
 {
     WebGlyphWidth width;
-    bool errorResult;
+    BOOL errorResult;
     
     if (map == 0){
         map = [renderer extendGlyphToWidthMapToInclude: glyph];

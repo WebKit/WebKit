@@ -38,7 +38,8 @@
 
     [self setController: c];
 
-    [self _changeBridge];
+    _private->bridge = [[WebBridge alloc] init];
+    [_private->bridge setFrame:self];
 
     if (d != nil && [self setProvisionalDataSource: d] == NO){
         [self release];

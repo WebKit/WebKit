@@ -433,12 +433,7 @@
     _private->gotFirstByte = YES;
     [self _commitIfReady];
 
-    // FIXME: remove the conditional check, which exists to avoid jiggling the part
-    // the wrong way, when we change to the frame owning the bridge, and not needing
-    // a dummy data source to create one.
-    if ([data length] > 0) {
-	[[self representation] receivedData:data withDataSource:self];
-    }
+    [[self representation] receivedData:data withDataSource:self];
     [[[[self webFrame] webView] documentView] dataSourceUpdated:self];
 }
 

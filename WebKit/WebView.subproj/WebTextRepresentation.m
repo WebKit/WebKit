@@ -5,6 +5,7 @@
 
 #import "WebTextRepresentation.h"
 
+#import <WebKit/WebDataSource.h>
 
 @implementation WebTextRepresentation
 

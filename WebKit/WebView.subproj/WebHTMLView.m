@@ -35,13 +35,9 @@
     _private->canDragTo = YES;
     _private->canDragFrom = YES;
 
-    // We added add/remove this view as a mouse moved observer when its window becomes/resigns main.
+    // We will add/remove this view as a mouse moved observer when its window becomes/resigns main.
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidBecomeMain:) name: NSWindowDidBecomeMainNotification object: nil];
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidResignMain:) name: NSWindowDidResignMainNotification object: nil];
-
-    // Add this view initially as a mouse move observer.  Subsequently we will add/remove this view
-    // when the window becomes/resigns main.
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
 
     return self;
 }
@@ -62,8 +58,8 @@
         return;
     }
     
-    // Note: can't use writeSelectionToPasteboard:type: here, though it seems equivalent, because
-    // it doesn't declare the types to the pasteboard and thus doesn't bump the change count
+    // Note: Can't use writeSelectionToPasteboard:type: here, though it seems equivalent, because
+    // it doesn't declare the types to the pasteboard and thus doesn't bump the change count.
     findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
     [findPasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
     [findPasteboard setString:[[self _bridge] selectedText] forType:NSStringPboardType];
@@ -71,18 +67,15 @@
 
 - (void)copy:(id)sender
 {
-    WebBridge *bridge = [self _bridge];
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-    
     [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
-    [pboard setString:[bridge selectedText] forType:NSStringPboardType];
+    [pboard setString:[[self _bridge] selectedText] forType:NSStringPboardType];
 }
 
 
 - (void)selectAll: sender
 {
-    WebBridge *bridge = [self _bridge];
-    [bridge selectAll];
+    [[self _bridge] selectAll];
 }
 
 - (void)jumpToSelection: sender
@@ -120,18 +113,36 @@
     return YES;
 }
 
+- (void)addMouseMovedObserver
+{
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
+}
+
+- (void)removeMouseMovedObserver
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
+}
 
 - (void)removeNotifications
 {
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
+    [self removeMouseMovedObserver];
     [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
     [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
 }
 
+- (void)viewWillMoveToWindow:(NSWindow *)window
+{
+    if ([[self window] isMainWindow]) {
+	[self removeMouseMovedObserver];
+    }
+}
 
 - (void)viewDidMoveToWindow
 {
     if ([self window]) {
+        if ([[self window] isMainWindow]) {
+            [self addMouseMovedObserver];
+        }
         _private->inWindow = YES;
     } else {
         // Reset when we are moved out of a window after being moved into one.
@@ -147,9 +158,7 @@
     [super viewDidMoveToWindow];
 }
 
-
-// This method is typically called by the view's controller when
-// the data source is changed.
+// This method is typically called by the view's controller when the data source is changed.
 - (void)provisionalDataSourceChanged:(WebDataSource *)dataSource 
 {
     [[dataSource _bridge]
@@ -213,13 +222,6 @@
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL(WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", [self URL], thisTime);
 #endif
-}
-
-
-// Stop animating animated GIFs, etc.
-- (void)stopAnimations
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebView::stopAnimations is not implemented"];
 }
 
 
@@ -326,14 +328,14 @@
 }
 
 
-- (void)setNeedsLayout: (bool)flag
+- (void)setNeedsLayout: (BOOL)flag
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s flag = %d\n", DEBUG_OBJECT(self), (int)flag);
     _private->needsLayout = flag;
 }
 
 
-- (void)setNeedsToApplyStyles: (bool)flag
+- (void)setNeedsToApplyStyles: (BOOL)flag
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s flag = %d\n", DEBUG_OBJECT(self), (int)flag);
     _private->needsToApplyStyles = flag;
@@ -402,14 +404,16 @@
 
 - (void)windowDidBecomeMain: (NSNotification *)notification
 {
-    if ([notification object] == [self window])
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
+    if ([notification object] == [self window]) {
+        [self addMouseMovedObserver];
+    }
 }
 
 - (void)windowDidResignMain: (NSNotification *)notification
 {
-    if ([notification object] == [self window])
-        [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
+    if ([notification object] == [self window]) {
+        [self removeMouseMovedObserver];
+    }
 }
 
 - (void)mouseDown: (NSEvent *)event
@@ -513,7 +517,7 @@
 
 #endif
 
-- (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)isLocal
+- (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
     return NSDragOperationCopy;
 }
@@ -534,25 +538,21 @@
 
 - (void)setTextEncoding:(CFStringEncoding)encoding
 {
-    WebView *webView = [self _web_parentWebView];
-    WebFrame *webFrame = [[webView _controller] frameForView:webView];
-    [webFrame reload:NO];
-    [[webFrame provisionalDataSource] _setOverrideEncoding:encoding];
+    WebFrame *frame = [self _frame];
+    [frame reload:NO];
+    [[frame provisionalDataSource] _setOverrideEncoding:encoding];
 }
 
 - (void)setDefaultTextEncoding
 {
-    WebView *webView = [self _web_parentWebView];
-    WebFrame *webFrame = [[webView _controller] frameForView:webView];
-    [webFrame reload:NO];
-    [[webFrame provisionalDataSource] _setOverrideEncoding:kCFStringEncodingInvalidId];
+    WebFrame *frame = [self _frame];
+    [frame reload:NO];
+    [[frame provisionalDataSource] _setOverrideEncoding:kCFStringEncodingInvalidId];
 }
 
 - (BOOL)usingDefaultTextEncoding
 {
-    WebView *webView = [self _web_parentWebView];
-    WebFrame *webFrame = [[webView _controller] frameForView:webView];
-    return [[webFrame dataSource] _overrideEncoding] == kCFStringEncodingInvalidId;
+    return [[[self _frame] dataSource] _overrideEncoding] == kCFStringEncodingInvalidId;
 }
 
 @end

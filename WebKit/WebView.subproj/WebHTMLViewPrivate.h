@@ -10,16 +10,15 @@
 
 @class WebBridge;
 @class WebController;
+@class WebFrame;
 
 @interface WebHTMLViewPrivate : NSObject
 {
 @public
-    WebController *controller;
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL canDragTo;
     BOOL canDragFrom;
-    NSCursor *cursor;
     BOOL liveAllowsScrolling;
     BOOL inWindow;
     NSURL *draggedURL;
@@ -29,7 +28,7 @@
 @interface WebHTMLView (WebPrivate)
 - (void)_reset;
 - (WebController *)_controller;
-- (void)_setController: (WebController *)controller;
+- (WebFrame *)_frame;
 - (WebBridge *)_bridge;
 - (void)_adjustFrames;
 
