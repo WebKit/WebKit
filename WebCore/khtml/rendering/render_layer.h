@@ -28,10 +28,7 @@
 #include <qrect.h>
 #include <assert.h>
 
-#include "misc/khtmllayout.h"
-#include "misc/loader_client.h"
-#include "misc/helper.h"
-#include "rendering/render_style.h"
+#include "render_object.h"
 #include <qvector.h>
 
 namespace khtml {
@@ -50,6 +47,7 @@ public:
     RenderLayer(RenderObject* object);
     ~RenderLayer();
     
+    RenderObject* renderer() const { return m_object; }
     RenderLayer *parent() const { return m_parent; }
     RenderLayer *previousSibling() const { return m_previous; }
     RenderLayer *nextSibling() const { return m_next; }
@@ -70,7 +68,12 @@ public:
     
     void setPos( int xPos, int yPos ) { m_x = xPos; m_y = yPos; }
 
-protected:
+    void convertToLayerCoords(RenderLayer* ancestorLayer, int& x, int& y);
+    
+    bool hasAutoZIndex() { return renderer()->style()->hasAutoZIndex(); }
+    int zIndex() { return renderer()->style()->zIndex(); }
+    
+public:
     // Z-Index Implementation Notes
     //
     // In order to properly handle mouse events as well as painting,
@@ -94,10 +97,16 @@ protected:
     // 
     struct RenderLayerElement {
       RenderLayer* layer;
+      QRect absBounds; // Our bounds in absolute coordinates relative to the root.
       int zindex; // Temporary z-index used for processing and sorting.
-      int x; // The coords relative to the view that will be using this list
+      bool zauto; // Whether or not we are using auto z-indexing.
+      int x; // The coords relative to the layer that will be using this list
              // to paint.
       int y;
+
+      RenderLayerElement(RenderLayer* l, const QRect& rect, int xpos, int ypos)
+          :layer(l), absBounds(rect), zindex(l->zIndex()), zauto(l->hasAutoZIndex()),
+          x(xpos), y(ypos) {}
     };
 
     // The list of layer elements is built through a recursive examination
@@ -123,13 +132,25 @@ protected:
       // Only one of these will ever be defined.
       RenderZTreeNode* child; // Defined for interior nodes.
       RenderLayerElement* layerElement; // Defined for leaf nodes.
+
+      RenderZTreeNode(RenderLayer* l)
+          :layer(l), next(0), child(0), layerElement(0) {}
+
+      RenderZTreeNode(RenderLayerElement* layerElt)
+          :layer(layerElt->layer), next(0), child(0), layerElement(layerElt) {}
+      
+      ~RenderZTreeNode() { delete next; delete child; }
+
+      void constructLayerList(QPtrVector<RenderLayerElement>* mergeTmpBuffer,
+                              QPtrVector<RenderLayerElement>* finalBuffer) { };
+      
     };
       
-public:
+private:
     // The createZTree function creates a z-tree for a given layer hierarchy
     // rooted on this layer.  It will ensure that immediate child
     // elements of a given z-tree node are at least initially sorted
-    // into <negative z-index children>, <this layer>, <positive z-index
+    // into <negative z-index children>, <this layer>, <non-negative z-index
     // children>.
     //
     // Here is a concrete example (lifted from Gecko's view system,
@@ -153,7 +174,9 @@ public:
     // +-------> L(L5)
     // +-------> L(L6)
     //
-    void constructZTree(RenderZTreeNode*& ztree) {};
+    RenderZTreeNode* constructZTree(const QRect& damageRect, 
+                                    RenderLayer* rootLayer,
+                                    RenderLayer* paintingLayer);
 
     // Once the z-tree has been constructed, we call constructLayerList
     // to produce a flattened layer list for rendering/event handling.
@@ -173,23 +196,22 @@ public:
     // I(L2) has a list [ L(L2)(0), L(L3)(0), L(L4)(2) ]
     // I(L2) is auto so the z-indices of the child layer elements remain
     // unaltered.
-    // I(L1) has a list [ L(L1)(0), L(L2)(0), L(L3)(0), L(L4)(2), L(L5)(1)
+    // I(L1) has a list [ L(L1)(0), L(L2)(0), L(L3)(0), L(L4)(2), L(L5)(1) ]
     // The nodes are sorted and then reassigned a z-index of 0, so this
     // list becomes:
-    //   [ L(L1)(0), L(L2)(0), L(L3)(0), L(L5)(0), L(L4)(0) ]
+    // [ L(L1)(0), L(L2)(0), L(L3)(0), L(L5)(0), L(L4)(0) ]
     // Finally we end up with the list for L0, which sorted becomes:
     // [ L(L0)(0), L(L1)(0), L(L2)(0), L(L3)(0), L(L5)(0), L(L4)(0), L(L6)(1) ]
-
     void constructLayerList(RenderZTreeNode* ztree,
-			    QPtrVector<RenderLayerElement>& layerList) {};
-
+                            QPtrVector<RenderLayerElement>* result);
+    
 private:
     void setNextSibling(RenderLayer* next) { m_next = next; }
     void setPreviousSibling(RenderLayer* prev) { m_previous = prev; }
     void setParent(RenderLayer* parent) { m_parent = parent; }
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
-    
+
 protected:   
     RenderObject* m_object;
     

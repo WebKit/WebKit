@@ -47,7 +47,7 @@ bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 }
 
 StyleBoxData::StyleBoxData()
-    : z_index( ZAUTO )
+    : z_index( 0 ), z_auto(true)
 {
 }
 

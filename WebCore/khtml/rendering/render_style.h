@@ -255,9 +255,6 @@ public:
 //------------------------------------------------
 // Box attributes. Not inherited.
 
-
-const int ZAUTO=0;
-
 class StyleBoxData : public Shared<StyleBoxData>
 {
 public:
@@ -287,6 +284,7 @@ public:
     Length vertical_align;
 
     int z_index;
+    bool z_auto : 1;
 };
 
 //------------------------------------------------
@@ -883,8 +881,9 @@ public:
     bool flowAroundFloats() const { return  noninherited_flags._flowAroundFloats; }
     void setFlowAroundFloats(bool b=true) {  noninherited_flags._flowAroundFloats = b; }
 
+    bool hasAutoZIndex() { return box->z_auto; }
     int zIndex() const { return box->z_index; }
-    void setZIndex(int v) { SET_VAR(box,z_index,v) }
+    void setZIndex(int v) { SET_VAR(box, z_auto, false); SET_VAR(box,z_index,v) }
 
     QPalette palette() const { return visual->palette; }
     void setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c);
