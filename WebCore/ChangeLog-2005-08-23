@@ -1,3 +1,14 @@
+2004-06-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * khtml/editing/jsediting.cpp:
+        (DOM::EditorCommand::): Stray capital letter in "selectAll" command static
+        initializer prevented the command from ever working since the command
+        strings are lower-cased when trying to find a match, but not when they
+        are inserted into the dictionary. This is a one character change to make
+        the string "selectall" in the initializer.
+
 2004-06-07  Trey Matteson  <trey@apple.com>
 
 	WebCore will now generate a default drag image when an element serves as a drag
