@@ -394,11 +394,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] _web_originalDataAsString]];
 
     // save form state if this is a POST
-    if ([[request HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
-        [bfItem setFormData:[request HTTPBody]];
-        [bfItem setFormContentType:[request HTTPContentType]];
-        [bfItem setFormReferrer:[request HTTPReferrer]];
-    }
+    [bfItem _setFormInfoFromRequest:request];
 
     // Set the item for which we will save document state
     [_private setPreviousItem:[_private currentItem]];
@@ -734,6 +730,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 } else {
                     // update the URL in the BF list that we made before the redirect
                     [[_private currentItem] setURL:[[ds request] URL]];
+                    // clear out the form data so we don't repost it to the wrong place if we
+                    // ever go back/forward to this item
+                    [[_private currentItem] _setFormInfoFromRequest:[ds request]];
                 }
                 [self _makeDocumentView];
                 break;

@@ -1,3 +1,38 @@
+2004-06-15  Trey Matteson  <trey@apple.com>
+
+	3639321 - Harvard PIN authentication ends up sending PIN as clear text with POST action
+
+	When going back/forward to an item, if we went there originally via a POST, 
+	we ask the user about rePOSTing, and if they say yes, we resend the POST. 
+	This rePOST case is triggered by the form data that we saved on the b/f item.
+	In the case of this bug, the overall navigation was accomplished by a POST,
+	then a redirect, causing a GET.  When a load of type redirect achieves the Committed
+	stage, we replace the current URL in the b/f item with the new URL (instead of
+	adding a new item to the b/f list).
+
+	The bug is that at the same time we should also update the form data in
+	the b/f item to match that of the new request.  I think this will normally
+	mean nil'ing it out, unless there's some way for the result of the redirect
+	to be another POST.
+ 
+	The security leak occurred because we did not clear the form data on the item,
+	so when going back or forward to the page, we would go into the rePOSTing code,
+	even though we eventually reached that page via a GET (caused by the redirect).
+	So we would do a POST to the redirect URL containing the private data sent in
+	the original POST.
+
+        Reviewed by mjs and rjw.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _setFormInfoFromRequest:]):  New method, just wraps 3 old set methods.
+        (-[WebHistoryItem formData]):  Diff being dumb, no change.
+        (-[WebHistoryItem formContentType]):  Ditto
+        (-[WebHistoryItem formReferrer]): Ditto
+        * History.subproj/WebHistoryItemPrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _createItem:]):  Call new WebHistoryItem method - no change in real behavior
+        (-[WebFrame _transitionToCommitted:]):  Clear out the form data at the key time, to fix the bug.
+
 2004-06-15  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3695724> WebKit plug-ins should only have to implement plugInViewWithArguments:

@@ -17,6 +17,8 @@
 #import <WebKit/WebPluginController.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
@@ -456,16 +458,31 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     }
 }
 
+- (void)_setFormInfoFromRequest:(NSURLRequest *)request
+{
+    NSData *newData = nil;
+    NSString *newContentType = nil;
+    NSString *newReferrer = nil;
+    if ([[request HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+        // save form state iff this is a POST
+        newData = [[request HTTPBody] copy];
+        newContentType = [[request HTTPContentType] copy];
+        newReferrer = [[request HTTPReferrer] copy];
+    }
+
+    [_private->formData release];
+    _private->formData = newData;
+
+    [_private->formContentType release];
+    _private->formContentType = newContentType;
+    
+    [_private->formReferrer release];
+    _private->formReferrer = newReferrer;
+}
+
 - (NSData *)formData
 {
     return _private->formData;
-}
-
-- (void)setFormData:(NSData *)data
-{
-    NSData *copy = [data copy];
-    [_private->formData release];
-    _private->formData = copy;
 }
 
 - (NSString *)formContentType
@@ -473,23 +490,9 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     return _private->formContentType;
 }
 
-- (void)setFormContentType:(NSString *)type
-{
-    NSString *copy = [type copy];
-    [_private->formContentType release];
-    _private->formContentType = copy;
-}
-
 - (NSString *)formReferrer
 {
     return _private->formReferrer;
-}
-
-- (void)setFormReferrer:(NSString *)referrer
-{
-    NSString *copy = [referrer copy];
-    [_private->formReferrer release];
-    _private->formReferrer = copy;
 }
 
 - (NSString *)RSSFeedReferrer

@@ -45,9 +45,7 @@
 - (void)setScrollPoint:(NSPoint)p;
 - (void)setDocumentState:(NSArray *)state;
 - (void)setIsTargetItem:(BOOL)flag;
-- (void)setFormData:(NSData *)data;
-- (void)setFormContentType:(NSString *)type;
-- (void)setFormReferrer:(NSString *)referrer;
+- (void)_setFormInfoFromRequest:(NSURLRequest *)request;
 - (void)setRSSFeedReferrer:(NSString *)referrer;
 - (void)setVisitCount:(int)count;
 
