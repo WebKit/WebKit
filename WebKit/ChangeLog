@@ -1,3 +1,12 @@
+2002-10-05  Darin Adler  <darin@apple.com>
+
+	- fixed 3068323 -- nil object inserted in dictionary exception on mouse move
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView _elementAtPoint:]):
+	Add some assertions in the hope of finding if my assumptions about this are
+	wrong, and use the version of the dictionary setter that does nothing if it's
+	passed nil when putting in the frame found by name.
+
 2002-10-04  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Add a localization

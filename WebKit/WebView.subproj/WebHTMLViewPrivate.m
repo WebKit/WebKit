@@ -139,13 +139,15 @@ BOOL _modifierTrackingEnabled = FALSE;
     [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImageLocation] forKey:WebElementImageLocationKey];
     
     WebView *webView = [self _web_parentWebView];
+    ASSERT(webView);
     WebFrame *webFrame = [[webView controller] frameForView:webView];
+    ASSERT(webFrame);
 
     NSString *frameName = [elementInfoWC objectForKey:WebCoreElementLinkTarget];
     if ([frameName length] == 0) {
         [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
     } else if (![frameName isEqualToString:@"_blank"]) {
-        [elementInfo setObject:[webFrame frameNamed:frameName] forKey:WebElementLinkTargetFrameKey];
+        [elementInfo _web_setObjectIfNotNil:[webFrame frameNamed:frameName] forKey:WebElementLinkTargetFrameKey];
     }
 
     [elementInfo setObject:webFrame forKey:WebElementFrameKey];
