@@ -1,8 +1,8 @@
-layer at (0,0) size 800x1357
+layer at (0,0) size 800x1353
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x1357
-  RenderBlock {HTML} at (0,0) size 800x1357
-    RenderBody {BODY} at (8,8) size 784x1341 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x1353
+  RenderBlock {HTML} at (0,0) size 800x1353
+    RenderBody {BODY} at (8,8) size 784x1337 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -13,19 +13,19 @@ layer at (0,0) size 800x1357
           text run at (0,15) width 144: ".two {width: 50%;}"
           text run at (0,30) width 152: "TABLE {width: 50%;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,106) size 784x50
+      RenderBlock (anonymous) at (0,102) size 784x50
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {P} at (0,172) size 784x18
+      RenderBlock {P} at (0,168) size 784x18
         RenderText {TEXT} at (0,0) size 287x18
           text run at (0,0) width 287: "The square above should be fifty pixels wide."
-      RenderBlock (anonymous) at (0,206) size 784x392
+      RenderBlock (anonymous) at (0,202) size 784x392
         RenderImage {IMG} at (0,0) size 392x392
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {P} at (0,614) size 784x18
+      RenderBlock {P} at (0,610) size 784x18
         RenderText {TEXT} at (0,0) size 671x18
           text run at (0,0) width 671: "The square above should be half as wide as the image's parent element (either the BODY or the table cell)."
-      RenderBlock {P} at (0,648) size 392x90
+      RenderBlock {P} at (0,644) size 392x90
         RenderText {TEXT} at (0,0) size 382x72
           text run at (0,0) width 382: "This paragraph should be half the width of its parent element"
           text run at (0,18) width 379: "(either the BODY or the table, which should itself be half as"
@@ -38,7 +38,7 @@ layer at (0,0) size 800x1357
         RenderText {TEXT} at (286,54) size 374x36
           text run at (286,54) width 57: " property"
           text run at (0,72) width 374: "without the need for the user to resize the viewing window."
-      RenderTable {TABLE} at (0,754) size 392x587 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,750) size 392x587 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x585
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 390x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]

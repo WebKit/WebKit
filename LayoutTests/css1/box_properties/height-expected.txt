@@ -1,8 +1,8 @@
-layer at (0,0) size 800x978
+layer at (0,0) size 800x974
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x978
-  RenderBlock {HTML} at (0,0) size 800x978
-    RenderBody {BODY} at (8,8) size 784x962 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x974
+  RenderBlock {HTML} at (0,0) size 800x974
+    RenderBody {BODY} at (8,8) size 784x958 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -13,22 +13,22 @@ layer at (0,0) size 800x978
           text run at (0,15) width 136: ".two {height: 100"
           text run at (136,15) width 32: "px;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,106) size 784x50
+      RenderBlock (anonymous) at (0,102) size 784x50
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {P} at (0,172) size 784x18
+      RenderBlock {P} at (0,168) size 784x18
         RenderText {TEXT} at (0,0) size 275x18
           text run at (0,0) width 275: "The square above should be fifty pixels tall."
-      RenderBlock (anonymous) at (0,206) size 784x100
+      RenderBlock (anonymous) at (0,202) size 784x100
         RenderImage {IMG} at (0,0) size 100x100
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {P} at (0,322) size 784x18
+      RenderBlock {P} at (0,318) size 784x18
         RenderText {TEXT} at (0,0) size 335x18
           text run at (0,0) width 335: "The square above should be 100 pixels tall and wide."
-      RenderBlock (anonymous) at (0,356) size 784x100
+      RenderBlock (anonymous) at (0,352) size 784x100
         RenderImage {IMG} at (0,0) size 30x100
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {P} at (0,472) size 784x36
+      RenderBlock {P} at (0,468) size 784x36
         RenderText {TEXT} at (0,0) size 784x36
           text run at (0,0) width 619: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50"
           text run at (619,0) width 165: "x15, and the size has been"
@@ -38,7 +38,7 @@ layer at (0,0) size 800x978
             text run at (116,20) width 48: "height"
         RenderText {TEXT} at (164,18) size 66x18
           text run at (164,18) width 66: " property)."
-      RenderTable {TABLE} at (0,524) size 784x438 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,520) size 784x438 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x436
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]

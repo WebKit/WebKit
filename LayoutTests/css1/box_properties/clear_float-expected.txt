@@ -1,8 +1,8 @@
-layer at (0,0) size 800x777
+layer at (0,0) size 800x773
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x777
-  RenderBlock {HTML} at (0,0) size 800x777
-    RenderBody {BODY} at (8,8) size 784x761 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x773
+  RenderBlock {HTML} at (0,0) size 800x773
+    RenderBody {BODY} at (8,8) size 784x757 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -27,7 +27,7 @@ layer at (0,0) size 800x777
           text run at (592,90) width 24: "em;"
           text run at (0,105) width 480: "             color: black; background: yellow; clear: none;}"
       RenderBlock {HR} at (0,179) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {DIV} at (0,193) size 192x116 [color=#FFFFFF] [bgcolor=#008000]
+      RenderBlock (floating) {DIV} at (0,189) size 192x116 [color=#FFFFFF] [bgcolor=#008000]
         RenderBlock {H1} at (8,8) size 176x22
           RenderText {TEXT} at (0,0) size 85x22
             text run at (0,0) width 85: "Top menu"
@@ -50,7 +50,7 @@ layer at (0,0) size 800x777
             RenderText {TEXT} at (0,0) size 87x18
               text run at (0,0) width 20: "0.5"
               text run at (20,0) width 67: "em margin"
-      RenderBlock (floating) {DIV} at (0,319) size 192x116 [color=#FFFFFF] [bgcolor=#0000FF]
+      RenderBlock (floating) {DIV} at (0,315) size 192x116 [color=#FFFFFF] [bgcolor=#0000FF]
         RenderBlock {H1} at (8,8) size 176x22
           RenderText {TEXT} at (0,0) size 112x22
             text run at (0,0) width 112: "Bottom menu"
@@ -73,7 +73,7 @@ layer at (0,0) size 800x777
             RenderText {TEXT} at (0,0) size 87x18
               text run at (0,0) width 20: "0.5"
               text run at (20,0) width 67: "em margin"
-      RenderBlock {DIV} at (224,193) size 528x221 [bgcolor=#FFFF00]
+      RenderBlock {DIV} at (224,189) size 528x221 [bgcolor=#FFFF00]
         RenderBlock {H1} at (8,29) size 512x37
           RenderText {TEXT} at (0,0) size 275x37
             text run at (0,0) width 275: "The 'clear' property"
@@ -91,7 +91,7 @@ layer at (0,0) size 800x777
           RenderText {TEXT} at (0,0) size 512x36
             text run at (0,0) width 512: "The top of the yellow rectangle (to which this paragraph belongs) should be"
             text run at (0,18) width 331: "vertically aligned with the top of the green rectangle."
-      RenderTable {TABLE} at (192,414) size 592x347 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (192,410) size 592x347 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x345
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 590x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]

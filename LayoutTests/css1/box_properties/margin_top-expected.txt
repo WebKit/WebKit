@@ -1,8 +1,8 @@
-layer at (0,0) size 800x1650
+layer at (0,0) size 800x1646
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x1650
-  RenderBlock {HTML} at (0,0) size 800x1650
-    RenderBody {BODY} at (8,8) size 784x1634 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x1646
+  RenderBlock {HTML} at (0,0) size 800x1646
+    RenderBody {BODY} at (8,8) size 784x1630 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -22,30 +22,30 @@ layer at (0,0) size 800x1650
           text run at (168,90) width 224: "px; background-color: aqua;}"
           text run at (0,105) width 200: "P, UL {margin-bottom: 0;}"
       RenderBlock {HR} at (0,164) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,178) size 784x18 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,174) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
-      RenderBlock {P} at (0,196) size 784x18 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,192) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 232x18
           text run at (0,0) width 232: "This element also has a class of zero."
-      RenderBlock {P} at (0,262) size 784x36 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,258) size 784x36 [bgcolor=#00FFFF]
         RenderText {TEXT} at (0,0) size 759x36
           text run at (0,0) width 759: "This element should have a top margin of half an inch, which will require extra text in order to make sure that the margin"
           text run at (0,18) width 155: "isn't applied to each line."
-      RenderBlock {P} at (0,323) size 784x36 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,319) size 784x36 [bgcolor=#00FFFF]
         RenderText {TEXT} at (0,0) size 771x36
           text run at (0,0) width 771: "This element should have a top margin of 25 pixels, which will require extra text in order to make sure that the margin isn't"
           text run at (0,18) width 126: "applied to each line."
-      RenderBlock {P} at (0,439) size 784x36 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,435) size 784x36 [bgcolor=#00FFFF]
         RenderText {TEXT} at (0,0) size 745x36
           text run at (0,0) width 745: "This element should have a top margin of 5 em, which will require extra text in order to make sure that the margin isn't"
           text run at (0,18) width 126: "applied to each line."
-      RenderBlock {P} at (0,671) size 784x36 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,667) size 784x36 [bgcolor=#00FFFF]
         RenderText {TEXT} at (0,0) size 781x36
           text run at (0,0) width 725: "This element should have a top margin of 25%, which is calculated with respect to the width of the parent element. "
           text run at (725,0) width 56: "This will"
           text run at (0,18) width 204: "require extra text in order to test."
-      RenderBlock {UL} at (0,732) size 784x97 [bgcolor=#00FFFF]
+      RenderBlock {UL} at (0,728) size 784x97 [bgcolor=#00FFFF]
         RenderListItem {LI} at (40,0) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderText {TEXT} at (0,0) size 400x18
@@ -64,17 +64,17 @@ layer at (0,0) size 800x1650
           RenderListMarker at (0,0) size 0x14
           RenderText {TEXT} at (0,0) size 294x18
             text run at (0,0) width 294: "This list item has no special styles applied to it."
-      RenderBlock {P} at (0,829) size 784x18 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,825) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
-      RenderBlock {P} at (0,837) size 784x54 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,833) size 784x54 [bgcolor=#00FFFF]
         RenderText {TEXT} at (0,0) size 766x54
           text run at (0,0) width 231: "This element has a top margin of -10"
           text run at (231,0) width 535: "px, which should cause it to be shifted \"upward\" on the page, and no bottom margin."
           text run at (0,18) width 488: "No other styles have been applied to it besides a light blue background color. "
           text run at (488,18) width 267: "In all other respects, the element should be"
           text run at (0,36) width 48: "normal."
-      RenderTable {TABLE} at (0,891) size 784x743 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,887) size 784x743 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x741
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]

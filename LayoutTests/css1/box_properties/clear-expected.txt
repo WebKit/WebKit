@@ -13,7 +13,7 @@ layer at (0,0) size 800x961
           text run at (0,30) width 168: ".three {clear: both;}"
           text run at (0,45) width 160: ".four {clear: none;}"
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
-      RenderImage {IMG} at (0,121) size 15x50
+      RenderImage {IMG} at (0,117) size 15x50
       RenderBlock {P} at (0,125) size 784x18
         RenderText {TEXT} at (18,0) size 595x18
           text run at (18,0) width 595: "This text should be flowing past a tall orange rectangle on the left side of the browser window."

@@ -1,8 +1,8 @@
-layer at (0,0) size 800x700
+layer at (0,0) size 800x696
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x700
-  RenderBlock {HTML} at (0,0) size 800x700
-    RenderBody {BODY} at (8,8) size 784x684 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x696
+  RenderBlock {HTML} at (0,0) size 800x696
+    RenderBody {BODY} at (8,8) size 784x680 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -14,10 +14,10 @@ layer at (0,0) size 800x700
           text run at (0,30) width 136: ".two {margin: -10"
           text run at (136,30) width 224: "px; background-color: aqua;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,106) size 784x18 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,102) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
-      RenderBlock {P} at (0,140) size 784x72 [bgcolor=#808080]
+      RenderBlock {P} at (0,136) size 784x72 [bgcolor=#808080]
         RenderText {TEXT} at (0,0) size 481x18
           text run at (0,0) width 393: "This element is unstyled save for a background color of gray.. "
           text run at (393,0) width 88: "It contains an "
@@ -39,10 +39,10 @@ layer at (0,0) size 800x700
           text run at (487,36) width 279: "px margin to the left side of the inline box in"
           text run at (0,54) width 200: "the first line it appears, and a 25"
           text run at (200,54) width 527: "px margin to the right side of the inline element box in the last line where it appears."
-      RenderBlock {P} at (0,228) size 784x18 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,224) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
-      RenderBlock {P} at (0,262) size 784x72 [bgcolor=#808080]
+      RenderBlock {P} at (0,258) size 784x72 [bgcolor=#808080]
         RenderText {TEXT} at (0,0) size 481x18
           text run at (0,0) width 393: "This element is unstyled save for a background color of gray.. "
           text run at (393,0) width 88: "It contains an "
@@ -64,10 +64,10 @@ layer at (0,0) size 800x700
           text run at (413,36) width 369: "px margin to the left side of the inline box in the first line it"
           text run at (0,54) width 115: "appears, and a -10"
           text run at (115,54) width 527: "px margin to the right side of the inline element box in the last line where it appears."
-      RenderBlock {P} at (0,350) size 784x18 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,346) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
-      RenderTable {TABLE} at (0,368) size 784x316 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,364) size 784x316 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x314
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
