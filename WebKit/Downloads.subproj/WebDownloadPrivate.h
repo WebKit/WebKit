@@ -7,10 +7,16 @@
 
 #import <WebKit/WebDownload.h>
 
-@class WebDataSource;
+@class WebRequest;
 @class WebResource;
+@class WebResponse;
+@class WebResourceDelegateProxy;
 
 @interface WebDownload (WebPrivate)
-- _initWithLoadingResource:(WebResource *)resource dataSource:(WebDataSource *)dataSource;
++ _downloadWithLoadingResource:(WebResource *)resource
+                       request:(WebRequest *)request
+                      response:(WebResponse *)response
+                      delegate:(id)delegate
+                         proxy:(WebResourceDelegateProxy *)proxy;
 - (void)_setDirectoryPath:(NSString *)directoryPath;
 @end

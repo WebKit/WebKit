@@ -34,13 +34,6 @@
 
 // FIXME: More that is in common with WebSubresourceClient should move up into WebBaseResourceHandleDelegate.
 
-@interface WebResourceDelegateProxy : NSObject <WebResourceDelegate>
-{
-    id <WebResourceDelegate> delegate;
-}
-- (void)setDelegate:(id <WebResourceDelegate>)theDelegate;
-@end
-
 @implementation WebMainResourceClient
 
 - initWithDataSource:(WebDataSource *)ds
@@ -58,8 +51,9 @@
 }
 
 - (void)dealloc
-{    
+{
     [resourceData release];
+    [proxy setDelegate:nil];
     [proxy release];
     
     [super dealloc];
@@ -70,51 +64,35 @@
     return resourceData;
 }
 
-- (void)receivedError:(WebError *)error complete:(BOOL)isComplete
+- (void)receivedError:(WebError *)error
 {
-    [dataSource _receivedError:error complete:isComplete];
+    // Calling _receivedError will likely result in a call to release, so we must retain.
+    [self retain];
+    [dataSource _receivedError:error complete:YES];
+    [super resource:resource didFailLoadingWithError:error];
+    [self release];
 }
 
 - (void)cancel
 {
     LOG(Loading, "URL = %@", [dataSource _URL]);
     
-    // Calling receivedError will likely result in a call to release, so we must retain.
-    [self retain];
-
-    [self receivedError:[self cancelledError] complete:YES];
-    [super cancel];
-
-    [self release];
+    [resource cancel];
+    [self receivedError:[self cancelledError]];
 }
 
-- (void)interruptForPolicyChangeAndKeepLoading:(BOOL)keepLoading
+- (void)interruptForPolicyChange
 {
     // Terminate the locationChangeDelegate correctly.
-    WebError *interruptError = [WebError errorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
-
-    // Must call receivedError before _clearProvisionalDataSource because
-    // if we remove the data source from the frame, we can't get back to the frame any more.
-    [self receivedError:interruptError complete:!keepLoading];
-
-    [[dataSource webFrame] _clearProvisionalDataSource];
-    
-    // Deliver the error to the location change delegate.
-    // We have to do this explicitly because since we are still loading, WebFrame
-    // won't do it for us. Also, we have to do this after the provisional data source
-    // is cleared so the delegate will get false if they ask the frame if it's loading.
-    // There's probably a better way to do this, but this should do for now.
-    if (keepLoading) {
-        [[[dataSource _controller] _locationChangeDelegateForwarder]
-            locationChangeDone:interruptError forDataSource:dataSource];
-    }
-	
-    [self notifyDelegatesOfInterruptionByPolicyChange];
+    WebError *interruptError = [WebError errorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
+                                              inDomain:WebErrorDomainWebKit
+                                            failingURL:nil];
+    [self receivedError:interruptError];
 }
 
 -(void)stopLoadingForPolicyChange
 {
-    [self interruptForPolicyChangeAndKeepLoading:NO];
+    [self interruptForPolicyChange];
     [self cancelQuietly];
 }
 
@@ -168,16 +146,18 @@
 	    return;
 	}
         break;
-        
+
     case WebPolicySave:
-    {
-        WebDownload *download = [[WebDownload alloc] _initWithLoadingResource:resource dataSource:dataSource];
-        [proxy setDelegate:(id <WebResourceDelegate>)download];
-        [download release];
-        
-        [self interruptForPolicyChangeAndKeepLoading:YES];
-    }
-        break;
+        [proxy setDelegate:nil];
+        [WebDownload _downloadWithLoadingResource:resource
+                                          request:request
+                                         response:r
+                                         delegate:[self downloadDelegate]
+                                            proxy:proxy];
+        [proxy release];
+        proxy = nil;
+        [self interruptForPolicyChange];
+        return;
 
     case WebPolicyIgnore:
 	[self stopLoadingForPolicyChange];
@@ -281,13 +261,7 @@
 
     LOG(Loading, "URL = %@, error = %@", [error failingURL], [error errorDescription]);
 
-    // Calling receivedError will likely result in a call to release, so we must retain.
-    [self retain];
-
-    [self receivedError:error complete:YES];
-    [super resource:h didFailLoadingWithError:error];
-
-    [self release];
+    [self receivedError:error];
 }
 
 - (void)startLoading:(WebRequest *)r
@@ -320,37 +294,37 @@
 
 - (void)setDelegate:(id <WebResourceDelegate>)theDelegate
 {
-    if (delegate != theDelegate) {
-        [delegate release];
-        delegate = [theDelegate retain];
-    }
+    delegate = theDelegate;
 }
 
 - (WebRequest *)resource:(WebResource *)resource willSendRequest:(WebRequest *)request
 {
+    ASSERT(delegate);
     return [delegate resource:resource willSendRequest:request];
 }
 
 -(void)resource:(WebResource *)resource didReceiveResponse:(WebResponse *)response
 {
+    ASSERT(delegate);
     [delegate resource:resource didReceiveResponse:response];
 }
 
 -(void)resource:(WebResource *)resource didReceiveData:(NSData *)data
 {
+    ASSERT(delegate);
     [delegate resource:resource didReceiveData:data];
 }
 
 -(void)resourceDidFinishLoading:(WebResource *)resource
 {
+    ASSERT(delegate);
     [delegate resourceDidFinishLoading:resource];
-    [delegate release];
 }
 
 -(void)resource:(WebResource *)resource didFailLoadingWithError:(WebError *)error
 {
+    ASSERT(delegate);
     [delegate resource:resource didFailLoadingWithError:error];
-    [delegate release];
 }
 
 @end

@@ -9,13 +9,12 @@
 #import <WebKit/WebDownloadPrivate.h>
 
 #import <WebKit/WebBinHexDecoder.h>
-#import <WebKit/WebController.h>
-#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDownloadDecoder.h>
 #import <WebKit/WebGZipDecoder.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebMacBinaryDecoder.h>
+#import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebNSWorkspaceExtras.h>
 #import <WebKit/WebResourceResponseExtras.h>
 
@@ -58,6 +57,7 @@ typedef struct WebFSRefParam
     WebResource *resource;
     WebRequest *request;
     WebResponse *response;
+    WebResourceDelegateProxy *proxy;
 
     id delegate;
 
@@ -77,6 +77,8 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 #pragma mark LOADING
 - (void)_loadStarted;
 - (void)_loadEnded;
+- (void)_setRequest:(WebRequest *)request;
+- (void)_setResponse:(WebResponse *)response;
 #pragma mark CREATING
 - (NSString *)_pathWithUniqueFilenameForPath:(NSString *)path;
 - (BOOL)_createFSRefForPath:(NSString *)path;
@@ -147,6 +149,8 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     [request release];
     [resource release];
     [response release];
+    [proxy setDelegate:nil];
+    [proxy release];
     [path release];
     [tempPath release];
     [directoryPath release];
@@ -175,15 +179,21 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return self;
 }
 
-- _initWithLoadingResource:(WebResource *)resource dataSource:(WebDataSource *)dataSource
+- _initWithLoadingResource:(WebResource *)resource
+                   request:(WebRequest *)request
+                  response:(WebResponse *)response
+                  delegate:(id)delegate
+                     proxy:(WebResourceDelegateProxy *)proxy
 {
     [super init];
     
     _private = [[WebDownloadPrivate alloc] init];
+    _private->request =  [request retain];
     _private->resource = [resource retain];
-    _private->request = [[dataSource request] retain];
-    _private->response = [[dataSource response] retain];
-    _private->delegate = [[dataSource _controller] downloadDelegate];
+    _private->response = [response retain];
+    _private->delegate = delegate;
+    _private->proxy = 	 [proxy retain];
+    [_private->proxy setDelegate:(id <WebResourceDelegate>)self];
     [self _loadStarted];
 
     // Replay the delegate methods that would be called in the standalone download case.
@@ -197,11 +207,16 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
             // If the request is altered, cancel the resource and start a new one.
             [self cancel];
             if (request) {
+                [self _setRequest:request];
+                [self _setResponse:nil];
+                [_private->resource release];
                 _private->resource = [[WebResource alloc] initWithRequest:request];
-                ASSERT(_private->resource);                
+                if (!_private->resource) {
+                    [self release];
+                    return nil;
+                }
                 [_private->resource loadWithDelegate:(id <WebResourceDelegate>)self];
-            } else {
-                [self _loadEnded];
+                [self _loadStarted];
             }
             return self;
         }
@@ -212,6 +227,19 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     }
     
     return self;
+}
+
++ _downloadWithLoadingResource:(WebResource *)resource
+                       request:(WebRequest *)request
+                      response:(WebResponse *)response
+                      delegate:(id)delegate
+                         proxy:(WebResourceDelegateProxy *)proxy
+{
+    return [[[WebDownload alloc] _initWithLoadingResource:resource
+                                                  request:request
+                                                 response:response
+                                                 delegate:delegate
+                                                    proxy:proxy] autorelease];
 }
 
 - (void)dealloc
@@ -266,12 +294,28 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 {
     if (_private->isLoading) {
         _private->isLoading = NO;
-    
+
         [_private->resource release];
         _private->resource = nil;
 
         // Balance the retain from when the load started.
         [self release];
+    }
+}
+
+- (void)_setRequest:(WebRequest *)request
+{
+    if (_private->request != request) {
+        [_private->request release];
+        _private->request = [request retain];
+    }
+}
+
+- (void)_setResponse:(WebResponse *)response
+{
+    if (_private->response != response) {
+        [_private->response release];
+        _private->response = [response retain];
     }
 }
 
@@ -289,19 +333,15 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         [self _loadEnded];
     }
 
-    if (_private->request != request) {
-        [_private->request release];
-        _private->request = [request retain];
-    }
+    [self _setRequest:request];
 
     return request;
 }
 
 -(void)resource:(WebResource *)resource didReceiveResponse:(WebResponse *)response
 {
-    ASSERT(!_private->response);
+    [self _setResponse:response];
     
-    _private->response = [response retain];
     if ([_private->delegate respondsToSelector:@selector(download:didReceiveResponse:)]) {
         [_private->delegate download:self didReceiveResponse:response];
     }

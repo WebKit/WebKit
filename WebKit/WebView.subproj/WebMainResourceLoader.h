@@ -9,14 +9,15 @@
 #import <Foundation/Foundation.h>
 
 #import <WebKit/WebBaseResourceHandleDelegate.h>
-#import <WebKit/WebControllerPolicyDelegate.h>
 
-@class WebDownload;
 @class WebDataSource;
-@class WebResource;
-@class WebResourceDelegateProxy;
-@class WebRequest;
-@class WebResponse;
+
+@interface WebResourceDelegateProxy : NSObject <WebResourceDelegate>
+{
+    id <WebResourceDelegate> delegate;
+}
+- (void)setDelegate:(id <WebResourceDelegate>)theDelegate;
+@end
 
 @interface WebMainResourceClient : WebBaseResourceHandleDelegate
 {

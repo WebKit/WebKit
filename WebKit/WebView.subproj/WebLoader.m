@@ -257,17 +257,6 @@
                         failingURL:[[request URL] absoluteString]];
 }
 
-- (void)notifyDelegatesOfInterruptionByPolicyChange
-{
-    WebError *error = [WebError errorWithCode:WebKitErrorResourceLoadInterruptedByPolicyChange
-                                     inDomain:WebErrorDomainWebKit
-                                   failingURL:nil];
-    
-    [[controller _resourceLoadDelegateForwarder] resource:identifier
-                  didFailLoadingWithError:error
-                           fromDataSource:dataSource];
-}
-
 - (void)setIdentifier: ident
 {
     if (identifier != ident){

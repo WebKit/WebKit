@@ -1,3 +1,31 @@
+2003-03-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed some download-related leaks. Primarily, we were leaking the data source that started the download. The data source is now immediately released when it becomes a download.
+
+        Reviewed by darin.
+
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownloadPrivate dealloc]): release the WebResourceDelegateProxy
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]): renamed, don't pass a datasource so WebDownload is completely disconnected from the that. Pass the proxy so it transfers ownership from WebMainResourceClient and it doesn't leak when we cancel a download.
+        (-[WebDownload _setRequest:]): added
+        (-[WebDownload _setResponse:]): added
+        (-[WebDownload resource:willSendRequest:]): call _setRequest
+        (-[WebDownload resource:didReceiveResponse:]): call _setResponse
+        * Downloads.subproj/WebDownloadPrivate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m: removed notifyDelegatesOfInterruptionByPolicyChange, no longer called
+        * WebView.subproj/WebMainResourceClient.h: made WebResourceDelegateProxy available to other classes
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]): moved most error handling code here
+        (-[WebMainResourceClient cancel]): stop load, call receivedError
+        (-[WebMainResourceClient interruptForPolicyChange]): renamed, call receivedError with the policy interrupt error
+        (-[WebMainResourceClient stopLoadingForPolicyChange]): call interruptForPolicyChange
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): for WebPolicySave, create the download, call interruptForPolicyChange and return so the response isn't set on the superclass.
+        (-[WebMainResourceClient resource:didFailLoadingWithError:]): call receivedError
+        (-[WebResourceDelegateProxy setDelegate:]): don't retain the delegate
+        (-[WebResourceDelegateProxy resourceDidFinishLoading:]): don't release the delegate
+        (-[WebResourceDelegateProxy resource:didFailLoadingWithError:]): don't release the delegate
+
 2003-03-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
