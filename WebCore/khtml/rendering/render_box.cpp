@@ -1036,8 +1036,20 @@ int RenderBox::calcPercentageHeight(const Length& height)
     // be a percentage of the cell's current content height.
     if (cb->isTableCell()) {
         result = cb->overrideSize();
-        if (result == -1)
+        if (result == -1) {
+            // Normally we would let the cell size intrinsically, but scrolling overflow has to be
+            // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
+            // While we can't get all cases right, we can at least detect when the cell has a specified
+            // height or when the table has a specified height.  In these cases we want to initially have
+            // no size and allow the flexing of the table or the cell to its specified height to cause us
+            // to grow to fill the space.  This could end up being wrong in some cases, but it is
+            // preferable to the alternative (sizing intrinsically and making the row end up too big).
+            RenderTableCell* cell = static_cast<RenderTableCell*>(cb);
+            if (scrollsOverflow() && 
+                (!cell->style()->height().isVariable() || !cell->table()->style()->height().isVariable()))
+                return 0;
             return -1;
+        }
         includeBorderPadding = true;
     }
 
