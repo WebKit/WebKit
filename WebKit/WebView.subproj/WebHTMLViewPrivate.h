@@ -29,4 +29,9 @@
 - (void)_setController: (WebController *)controller;
 - (WebBridge *)_bridge;
 - (void)_adjustFrames;
+
+// Modifier (flagsChanged) tracking SPI
++ (void)_setModifierTrackingEnabled:(BOOL)enabled;
++ (BOOL)_modifierTrackingEnabled;
++ (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 @end

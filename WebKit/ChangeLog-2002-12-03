@@ -1,3 +1,23 @@
+2002-07-16  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit part of fix for:
+
+	Radar 2982043 - Link mouseover status messages are not localizable
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge modifierTrackingEnabled]): Implemented by checking
+	bit on WebHTMLView class.
+	* WebKit.pbproj/project.pbxproj: Install WebHTMLViewPrivate as a
+	Private header.
+        * WebView.subproj/WebHTMLViewPrivate.h: Prototype new modifier tracking SPI.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+	(+[WebHTMLView _setModifierTrackingEnabled:]): Method to inform
+	WebHTMLView that modifier tracking is working.
+        (+[WebHTMLView _modifierTrackingEnabled]): Obligatory getter.
+        (+[WebHTMLView _postFlagsChangedEvent:]): Method to report
+	flagsChanged events. Creates corresponding fake mouseMoved event
+	and sends it as a notification.
+
 2002-07-16  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/WebBridge.m:

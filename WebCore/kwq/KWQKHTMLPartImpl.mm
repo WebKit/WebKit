@@ -662,3 +662,74 @@ void KWQKHTMLPartImpl::unfocusWindow()
     [bridge unfocusWindow];
 }
 
+
+void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int modifierState)
+{
+  if (url.isEmpty()) {
+      setStatusBarText(QString());
+      return;
+  }
+
+  NSString *message;
+
+  if (url.find(QString::fromLatin1("javascript:"), 0, false) != -1) {
+      // FIXME: Is it worthwhile to special-case scripts that do a
+      // window.open and nothing else?
+      
+      NSString *script = url.mid(url.find("javascript:", 0, false) + strlen("javascript:")).getNSString();
+      // FIXME: should use curly quotes
+      message = [NSString stringWithFormat:@"Run script \"%@\"", script];
+
+      setStatusBarText(QString::fromNSString(message));
+      return;
+  }
+
+  KURL u = part->completeURL(url);
+
+  if (u.protocol() == QString("mailto")) {
+      // FIXME: addressbook integration? probably not worth it...
+      
+      setStatusBarText(QString::fromNSString([NSString stringWithFormat:@"Send email to %@", KURL::decode_string(u.path()).getNSString()]));
+      return;
+  }
+
+  NSString *format;
+
+  if (target == QString("_blank")) {
+      // FIXME: should use curly quotes
+      format = @"Open \"%@\" in a new window";
+      
+  } else if (!target.isEmpty() &&
+             (target != QString("_top")) &&
+             (target != QString("_self")) &&
+             (target != QString("_parent"))) {
+      if (frameExists(target)) {
+	  // FIXME: distinguish existing frame in same window from
+	  // existing frame name for other window
+	  // FIXME: should use curly quotes
+          format = @"Go to \"%@\" in another frame";
+      } else {
+	  // FIXME: should use curly quotes
+	  format = @"Open \"%@\" in a new window";
+      }
+  } else {
+      format = @"Go to \"%@\"";
+  }
+
+  if ([bridge modifierTrackingEnabled]) {
+      if (modifierState & MetaButton) {
+	  if (modifierState & ShiftButton) {
+	      // FIXME: should use curly quotes
+	      format = @"Open \"%@\" in a new window, behind the current window";
+	  } else {
+	      // FIXME: should use curly quotes
+	      format = @"Open \"%@\" in a new window";
+	  }
+      } else if (modifierState & AltButton) {
+	  // FIXME: should use curly quotes
+	  format = @"Download \"%@\"";
+      }
+  }
+  
+  setStatusBarText(QString::fromNSString([NSString stringWithFormat:format, url.getNSString()]));
+}

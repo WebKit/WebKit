@@ -147,6 +147,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)unfocusWindow;
 
+- (BOOL)modifierTrackingEnabled;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

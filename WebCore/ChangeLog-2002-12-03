@@ -1,3 +1,21 @@
+2002-07-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Moved URL mouseover status to KWQKHTMLPartImpl, and made it
+	responsive to modifier key presses, if enabled. Fixes:
+
+	Radar 2980152 - Link mouseover status messages are not localizable
+	Radar 2982043 - Link mouse-over status should change in response to modifier keys
+
+	* khtml/khtml_part.cpp:
+        (KHTMLPart::overURL): Remove extensive APPLE_CHANGES, and just call the
+	impl method.
+        * kwq/KWQKHTMLPartImpl.h: Prototype overURL method.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::overURL): Construct status messages using format strings
+	for localizability; change message in response to modifiers if modifier
+	tracking is enabled.
+        * kwq/WebCoreBridge.h: Prototype modifierTrackingEnabled method.
+
 2002-07-16  Richard Williamson (Local)  <rjw@apple.com>
 
         Fixed field length test.  We were testing >= instead of >.

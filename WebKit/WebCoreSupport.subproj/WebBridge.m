@@ -6,6 +6,7 @@
 #import <WebKit/WebBridge.h>
 
 #import <WebKit/WebHTMLRepresentationPrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebFrameBridge.h>
@@ -218,6 +219,12 @@
     if ([[self window] isKeyWindow] || [[[self window] attachedSheet] isKeyWindow]) {
 	[NSApp _cycleWindowsReversed:FALSE];
     }
+}
+
+
+- (BOOL)modifierTrackingEnabled
+{
+    return [WebHTMLView _modifierTrackingEnabled];
 }
 
 @end
