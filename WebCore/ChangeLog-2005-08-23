@@ -2,6 +2,21 @@
 
         Reviewed by Ken.
 
+        - fixed some minor mistakes discovered by code inspection
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): Changed to not grab focus if clearing the selection.
+        Grabbing focus when we get the selection is also probably something that should be
+        conditional, since you can use a WebView in a mode where it can have selection even
+        when not first responder, ala NSTextView.
+        (KHTMLPart::setCaretVisible): Changed to not grab focus if making the caret invisible.
+        Not sure if it's ever important to grab focus when making the caret visible, but by
+        code inspection it seemed that was unlikely to do harm.
+
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3790595> "ERROR: unimplemented propertyID: 97" logged to console when copying selection (table-layout)
 
         * khtml/css/css_computedstyle.cpp: (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):

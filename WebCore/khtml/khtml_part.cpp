@@ -2354,7 +2354,8 @@ void KHTMLPart::setSelection(const Selection &s, bool closeTyping, bool unmarkOl
         }
 #endif
         d->m_selection = s;
-        setFocusNodeIfNeeded();
+        if (!s.isNone())
+            setFocusNodeIfNeeded();
         notifySelectionChanged(closeTyping);
     }
 }
@@ -2388,9 +2389,9 @@ void KHTMLPart::setCaretVisible(bool flag)
 {
     if (d->m_caretVisible == flag)
         return;
-
     clearCaretRectIfNeeded();
-    setFocusNodeIfNeeded();
+    if (flag)
+        setFocusNodeIfNeeded();
     d->m_caretVisible = flag;
     selectionLayoutChanged();
 }
