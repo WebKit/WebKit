@@ -27,6 +27,7 @@
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebNSUserDefaultsExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 
 NSString *WebElementFrameKey = 			@"WebElementFrame";
@@ -303,10 +304,8 @@ NSString *WebElementStringKey = 		@"WebElementString";
 - (void)setApplicationNameForUserAgent:(NSString *)applicationName
 {
     NSString *name = [applicationName copy];
-    [_private->userAgentLock lock];
     [_private->applicationNameForUserAgent release];
     _private->applicationNameForUserAgent = name;
-    [_private->userAgentLock unlock];
 }
 
 - (NSString *)applicationNameForUserAgent
@@ -318,23 +317,15 @@ NSString *WebElementStringKey = 		@"WebElementString";
 {
     ASSERT_ARG(userAgentString, userAgentString);
     
-    // FIXME: Lock can go away once WebFoundation's user agent callback is replaced with something
-    // that's thread safe.
     NSString *override = [userAgentString copy];
-    [_private->userAgentLock lock];
     [_private->userAgentOverride release];
     _private->userAgentOverride = override;
-    [_private->userAgentLock unlock];
 }
 
 - (void)resetUserAgent
 {
-    // FIXME: Lock can go away once WebFoundation's user agent callback is replaced with something
-    // that's thread safe.
-    [_private->userAgentLock lock];
     [_private->userAgentOverride release];
     _private->userAgentOverride = nil;
-    [_private->userAgentLock unlock];
 }
 
 - (BOOL)hasCustomUserAgent
@@ -354,24 +345,28 @@ NSString *WebElementStringKey = 		@"WebElementString";
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
-    // FIXME: Lock can go away once WebFoundation's user agent callback is replaced with something
-    // that's thread safe.
-    [_private->userAgentLock lock];
     NSString *result = [[_private->userAgentOverride copy] autorelease];
-    [_private->userAgentLock unlock];
     if (result) {
         return result;
     }
 
     // Note that we currently don't look at the URL.
-    // If we find that we need to spoof different user agent strings for different web pages
-    // for best results, then that logic will go here.
+    // Soon we will spoof different user agent strings for different web pages
+    // for best results, and that logic will go here.
 
-    // FIXME: Incorporate applicationNameForUserAgent in this string so that people
-    // can tell that they are talking to Alexander and not another WebKit client.
-    // Maybe also incorporate something that identifies WebKit's involvement.
+    // FIXME: Some day we will start reporting the actual CPU here instead of hardcoding PPC.
     
-    return @"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.1) Gecko/20020826";
+    NSString *language = [NSUserDefaults _web_preferredLanguageCode];
+    id sourceVersion = [[NSBundle bundleForClass:[WebController class]]
+        objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
+    NSString *applicationName = _private->applicationNameForUserAgent;
+
+    if ([applicationName length]) {
+        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC; %@) WebKit/%@ %@",
+            language, sourceVersion, applicationName];
+    }
+    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC; %@) WebKit/%@",
+        language, sourceVersion];
 }
 
 - (BOOL)supportsTextEncoding

@@ -1,3 +1,28 @@
+2002-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3028664 -- change user agent string to include application name and version
+
+        * WebView.subproj/WebController.m:
+        (-[WebController setApplicationNameForUserAgent:]): Remove locking, unneeded since we changed
+	how WebFoundation handles user agent.
+        (-[WebController setCustomUserAgent:]): Ditto.
+        (-[WebController resetUserAgent]): Ditto.
+        (-[WebController userAgentForURL:]): Remove locking. Also add new algorithm for computing the
+	user agent which takes the preferred language into account, and incorporates the WebKit version
+	and the application name.
+
+        * WebView.subproj/WebControllerPrivate.h: No need for a lock.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate init]): Don't create a lock.
+        (-[WebControllerPrivate dealloc]): Don't release a lock.
+
+        * WebKit.pbproj/project.pbxproj: Bump versions to 0.8 and 35u.
+	* English.lproj/InfoPlist.strings: In here too.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for these and other recent changes.
+
 2002-12-09  Richard Williamson   <rjw@apple.com>
 
         Many changes for b/f list.

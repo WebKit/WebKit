@@ -32,7 +32,6 @@
     backForwardList = [[WebBackForwardList alloc] init];
     defaultContextMenuDelegate = [[WebDefaultContextMenuDelegate alloc] init];
     textSizeMultiplier = 1;
-    userAgentLock = [[NSLock alloc] init];
     return self;
 }
 
@@ -65,7 +64,6 @@
     [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
-    [userAgentLock release];
     
     [controllerSetName release];
     [topLevelFrameName release];

@@ -1,3 +1,10 @@
+2002-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Bump versions to 0.8 and 35u.
+	* English.lproj/InfoPlist.strings: In here too.
+
 2002-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
