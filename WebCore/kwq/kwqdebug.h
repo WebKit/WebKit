@@ -86,6 +86,7 @@ void KWQLog(unsigned int level, const char *file, int line, const char *function
 
 #import <signal.h>
 #import <sys/types.h>
+#import <sys/time.h>
 #import <sys/resource.h>
 
 #define KWQ_ASSERTION_FAILURE \

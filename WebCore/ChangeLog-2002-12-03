@@ -1,5 +1,10 @@
 2002-05-20  Kenneth Kocienda  <kocienda@apple.com>
 
+	* kwq/kwqdebug.h: Now includes <sys/time.h> to prevent possible
+        build breakage in the inclusion of <sys/resource.h>
+
+2002-05-20  Kenneth Kocienda  <kocienda@apple.com>
+
         Changed assertion failure code to send a SIGQUIT instead
         of raising an NSException.
 
