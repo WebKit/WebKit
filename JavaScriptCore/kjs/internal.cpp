@@ -1081,9 +1081,6 @@ void KJS::printInfo(ExecState *exec, const char *s, const Value &o, int lineno)
     case ListType:
       name = "List";
       break;
-    case CompletionType:
-      name = "Completion";
-      break;
     default:
       break;
     }
