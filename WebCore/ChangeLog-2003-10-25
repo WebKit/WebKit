@@ -1,3 +1,32 @@
+2002-03-05  Richard Williamson  <rjw@apple.com>
+
+        With fonts now being correctly specified we're exercising some new code paths.  This introduced a new
+        class of weird string bugs.  Turns out that CFString is doing some mojo that I suspect is a performance
+        optimization.  Constants strings appears to be uniqued and hard-wired to have a -1 retain count.  It
+        looks like strings created by preferences are uniqued in this manner.  This plays havoc with our
+        copy-on-write QString implementation.  The following GDB exercise illustrates the problem:
+        
+        (gdb) po (id)[(id)[NSUserDefaults standardUserDefaults] objectForKey:(id)[NSString stringWithCString: "WebKitFixedFont"]]
+        Andale Mono
+        (gdb) p (int)[(id)[(id)[NSUserDefaults standardUserDefaults] objectForKey:(id)[NSString stringWithCString: "WebKitFixedFont"]] retainCount]
+        $28 = -1
+        (gdb) p (id)[(id)[NSUserDefaults standardUserDefaults] objectForKey:(id)[NSString stringWithCString: "WebKitFixedFont"]]
+        $27 = (objc_object *) 0x40172a4
+        (gdb) p (void)[$27 retain]
+        $29 = void
+        (gdb) p (int)[$27 retainCount]
+        $30 = -1
+        (gdb) p (void)[$27 release]
+        $33 = void
+        (gdb) p (int)[$27 retainCount]
+        $32 = -1
+        
+        So, it appears that these strings are permanently allocated.  It'd be interesting to find out what is in the uniqued string cache, and how big it is.
+        
+        I've fixed the problem by special casing our copy-on-write trigger to also check for -1.
+
+	* src/kwq/KWQString.mm: (QString::_copyIfNeededInternalString):
+
 2002-03-04  Richard Williamson  <rjw@apple.com>
  
         Changes to support 'provisional' data sources.

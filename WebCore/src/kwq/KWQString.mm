@@ -1091,7 +1091,7 @@ QString &QString::append(const QString &qs)
 
 void QString::_copyIfNeededInternalString()
 {
-    if (s && CFGetRetainCount(s) > 1) {
+    if (s && CFGetRetainCount(s) > 1 || CFGetRetainCount(s) == -1) {
         CFMutableStringRef tmp;
         tmp = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
         _cf_release (s);
