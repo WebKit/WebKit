@@ -210,7 +210,7 @@ extern NSString *WebElementFrameKey;
 /*!
     @method frameForDataSource:
     @abstract Return the frame associated with the data source.  
-    @disucssion Traverses the frame tree to find the frame associated
+    @discussion Traverses the frame tree to find the frame associated
     with a datasource.
     @param datasource The datasource to  match against each frame.
     @result The frame that has the associated datasource.
@@ -309,7 +309,7 @@ extern NSString *WebElementFrameKey;
     @method hasCustomUserAgent
     @abstract Determine whether or not a custom user-agent string is in use.
     @discussion It's an error to call customUserAgent if hasCustomUserAgent is NO.
-    @reselt Returns YES if a custom encoding has been set, NO otherwise.
+    @result Returns YES if a custom encoding has been set, NO otherwise.
 */
 - (BOOL)hasCustomUserAgent;
 
@@ -357,7 +357,7 @@ extern NSString *WebElementFrameKey;
     @method hasCustomTextEncoding
     @abstract Determine whether or not a custom text encoding is in use.
     @discussion It's an error to call customTextEncoding if hasCustomTextEncoding is NO.
-    @reselt Returns YES if a custom encoding has been set, NO otherwise.
+    @result Returns YES if a custom encoding has been set, NO otherwise.
 */
 - (BOOL)hasCustomTextEncoding;
 

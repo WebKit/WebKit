@@ -1,3 +1,9 @@
+2002-10-21  Trey Matteson  trey@apple.com
+
+	Fixed typos and other doc comment errors found during API review.
+
+        * WebView.subproj/WebController.h:
+
 2002-10-21  Richard Williamson   <rjw@apple.com>
 
         Changed WebResourceLoadDelegate methods to include an identifier
