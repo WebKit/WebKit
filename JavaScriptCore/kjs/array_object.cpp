@@ -461,7 +461,7 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     UString separator = ",";
     UString str = "";
 
-    if (args.size() > 0)
+    if (args[0].type() != UndefinedType)
       separator = args[0].toString(exec);
     for (unsigned int k = 0; k < length; k++) {
       if (k >= 1)

@@ -57,13 +57,13 @@
                                     ('a'.split(',')).length );
 
 /*
- * Deviate from ECMA by never splitting an empty string by any separator
- * string into a non-empty array (an array of length 1 that contains the
- * empty string).
+ * Mozilla deviates from ECMA by never splitting an empty string by any separator
+ * string into a non-empty array (an array of length 1 that contains the empty string).
+ * But Internet Explorer does not do this, so we won't do it in JavaScriptCore either.
  */
     testcases[tc++] = new TestCase( SECTION,
                                     "(''.split(',')).length",
-                                    0,
+                                    1,
                                     (''.split(',')).length );
 
 

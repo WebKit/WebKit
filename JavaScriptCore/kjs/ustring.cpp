@@ -42,10 +42,14 @@
 #include "dtoa.h"
 
 #if APPLE_CHANGES
+
+#include <unicode/uchar.h>
+
 // malloc_good_size is not prototyped anywhere!
 extern "C" {
   size_t malloc_good_size(size_t size);
 }
+
 #endif
 
 namespace KJS {
@@ -146,19 +150,27 @@ static int statBufferSize = 0;
 
 UChar UChar::toLower() const
 {
+#if APPLE_CHANGES
+  return static_cast<unsigned short>(u_tolower(uc));
+#else
   // ### properly support unicode tolower
   if (uc >= 256 || islower(uc))
     return *this;
 
   return (unsigned char)tolower(uc);
+#endif
 }
 
 UChar UChar::toUpper() const
 {
+#if APPLE_CHANGES
+  return static_cast<unsigned short>(u_toupper(uc));
+#else
   if (uc >= 256 || isupper(uc))
     return *this;
 
   return (unsigned char)toupper(uc);
+#endif
 }
 
 UCharReference& UCharReference::operator=(UChar c)
@@ -1419,15 +1431,17 @@ void convertUTF16OffsetsToUTF8Offsets(const char *s, int *offsets, int numOffset
     const char *p = s;
     for (int oi = 0; oi != numOffsets; ++oi) {
         const int nextOffset = sortedOffsets[oi].offset;
-        while (*p && UTF16Offset < nextOffset) {
-            // Skip to the next character.
-            const int sequenceLength = inlineUTF8SequenceLength(*p);
-            assert(sequenceLength >= 1 && sequenceLength <= 4);
-            p += sequenceLength;
-            // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
-            UTF16Offset += sequenceLength < 4 ? 1 : 2;
+        if (nextOffset >= 0) {
+            while (*p && UTF16Offset < nextOffset) {
+                // Skip to the next character.
+                const int sequenceLength = inlineUTF8SequenceLength(*p);
+                assert(sequenceLength >= 1 && sequenceLength <= 4);
+                p += sequenceLength;
+                // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
+                UTF16Offset += sequenceLength < 4 ? 1 : 2;
+            }
+            offsets[sortedOffsets[oi].locationInOffsetsArray] = p - s;
         }
-        offsets[sortedOffsets[oi].locationInOffsetsArray] = p - s;
     }
 
     // Free buffer.
@@ -1450,15 +1464,17 @@ void convertUTF8OffsetsToUTF16Offsets(const char *s, int *offsets, int numOffset
     const char *p = s;
     for (int oi = 0; oi != numOffsets; ++oi) {
         const int nextOffset = sortedOffsets[oi].offset;
-        while (*p && (p - s) < nextOffset) {
-            // Skip to the next character.
-            const int sequenceLength = inlineUTF8SequenceLength(*p);
-            assert(sequenceLength >= 1 && sequenceLength <= 4);
-            p += sequenceLength;
-            // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
-            UTF16Offset += sequenceLength < 4 ? 1 : 2;
+        if (nextOffset >= 0) {
+            while (*p && (p - s) < nextOffset) {
+                // Skip to the next character.
+                const int sequenceLength = inlineUTF8SequenceLength(*p);
+                assert(sequenceLength >= 1 && sequenceLength <= 4);
+                p += sequenceLength;
+                // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
+                UTF16Offset += sequenceLength < 4 ? 1 : 2;
+            }
+            offsets[sortedOffsets[oi].locationInOffsetsArray] = UTF16Offset;
         }
-        offsets[sortedOffsets[oi].locationInOffsetsArray] = UTF16Offset;
     }
 
     // Free buffer.

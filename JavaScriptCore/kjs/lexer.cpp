@@ -448,15 +448,18 @@ int Lexer::lex()
   if (state == Number) {
     dval = strtod(buffer8, 0L);
   } else if (state == Hex) { // scan hex numbers
-    // TODO: support long unsigned int
-    unsigned int i;
-    sscanf(buffer8, "%x", &i);
-    dval = i;
+    const char *p = buffer8 + 2;
+    while (char c = *p++) {
+      dval *= 16;
+      dval += convertHex(c);
+    }
     state = Number;
   } else if (state == Octal) {   // scan octal number
-    unsigned int ui;
-    sscanf(buffer8, "%o", &ui);
-    dval = ui;
+    const char *p = buffer8 + 1;
+    while (char c = *p++) {
+      dval *= 8;
+      dval += c - '0';
+    }
     state = Number;
   }
 

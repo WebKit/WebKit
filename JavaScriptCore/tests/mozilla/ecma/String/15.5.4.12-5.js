@@ -119,6 +119,11 @@ function GetUnicodeValues( c ) {
     }
 
     // upper case Latin-1 Supplement
+    if ( c == 0x00B5 ) {
+        u[0] = c;
+        u[1] = 0x039C;
+        return u;
+    }
     if ( (c >= 0x00C0 && c <= 0x00D6) || (c >= 0x00D8 && c<=0x00DE) ) {
         u[0] = c;
         u[1] = c + 32;
@@ -215,7 +220,7 @@ function GetUnicodeValues( c ) {
     // Cyrillic
     // Range: U+0400 to U+04FF
 
-    if ( (c >= 0x0401 && c <= 0x040C) || ( c>= 0x040E && c <= 0x040F ) ) {
+    if ( c >= 0x0400 && c <= 0x040F) {
         u[0] = c;
         u[1] = c + 80;
         return u;
@@ -234,7 +239,7 @@ function GetUnicodeValues( c ) {
         return u;
 
     }
-    if ( (c >= 0x0451 && c <= 0x045C) || (c >=0x045E && c<= 0x045F) ) {
+    if ( c >= 0x0450 && c<= 0x045F ) {
         u[0] = c -80;
         u[1] = c;
         return u;
@@ -323,16 +328,6 @@ function GetUnicodeValues( c ) {
 
     // Georgian
     // Range: U+10A0 to U+10F0
-    if ( c >= 0x10A0 && c <= 0x10C5 ) {
-        u[0] = c;
-        u[1] = c + 48;
-        return u;
-    }
-    if ( c >= 0x10D0 && c <= 0x10F5 ) {
-        u[0] = c;
-        u[1] = c;
-        return u;
-    }
 
     // Hangul Jamo
     // Range: U+1100 to U+11FF

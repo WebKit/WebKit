@@ -104,6 +104,7 @@
 		};
 		0867D69AFE84028FC02AAC07 = {
 			children = (
+				9322A00306C341D3009067BB,
 				51F0EC0705C86C9A00E6DF1B,
 				51F0EB6105C86C6B00E6DF1B,
 				6560A4CF04B3B3E7008AE952,
@@ -347,6 +348,7 @@
 				51856D990562F158008B9D83,
 				51F0EB6205C86C6B00E6DF1B,
 				51F0EC0805C86C9A00E6DF1B,
+				9322A00406C341D3009067BB,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1750,6 +1752,20 @@
 		};
 		931C6CF2038EE8DE008635CE = {
 			fileRef = 931C6CF0038EE8DE008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9322A00306C341D3009067BB = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libicucore.dylib;
+			path = /usr/lib/libicucore.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		9322A00406C341D3009067BB = {
+			fileRef = 9322A00306C341D3009067BB;
 			isa = PBXBuildFile;
 			settings = {
 			};

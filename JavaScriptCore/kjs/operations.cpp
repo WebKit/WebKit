@@ -74,6 +74,9 @@ bool KJS::isInf(double d)
 
 bool KJS::isPosInf(double d)
 {
+#if APPLE_CHANGES
+  return isinf(d) && d > 0;
+#else
 #if defined(HAVE_FUNC_ISINF)
   return (isinf(d) == 1);
 #elif HAVE_FUNC_FINITE
@@ -83,10 +86,14 @@ bool KJS::isPosInf(double d)
 #else
   return false;
 #endif
+#endif
 }
 
 bool KJS::isNegInf(double d)
 {
+#if APPLE_CHANGES
+  return isinf(d) && d < 0;
+#else
 #if defined(HAVE_FUNC_ISINF)
   return (isinf(d) == -1);
 #elif HAVE_FUNC_FINITE
@@ -95,6 +102,7 @@ bool KJS::isNegInf(double d)
   return _finite(d) == 0 && d == d; // ###
 #else
   return false;
+#endif
 #endif
 }
 
@@ -193,6 +201,9 @@ int KJS::relation(ExecState *exec, const Value& v1, const Value& v2)
   double n2 = p2.toNumber(exec);
   if ( isNaN( n1 ) || isNaN( n2 ) )
     return -1; // means undefined
+#if APPLE_CHANGES
+  return n1 < n2;
+#else
   if (n1 == n2)
     return 0;
   /* TODO: +0, -0 */
@@ -205,6 +216,7 @@ int KJS::relation(ExecState *exec, const Value& v1, const Value& v2)
   if ( isNegInf( n1 ) )
     return 1;
   return (n1 < n2) ? 1 : 0;
+#endif
 }
 
 int KJS::maxInt(int d1, int d2)

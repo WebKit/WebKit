@@ -1094,7 +1094,7 @@ Value ShiftNode::evaluate(ExecState *exec)
   unsigned int i2 = v2.toUInt32(exec);
   i2 &= 0x1f;
 
-  long result;
+  double result;
   switch (oper) {
   case OpLShift:
     result = v1.toInt32(exec) << i2;
@@ -1107,10 +1107,10 @@ Value ShiftNode::evaluate(ExecState *exec)
     break;
   default:
     assert(!"ShiftNode: unhandled switch case");
-    result = 0L;
+    result = 0;
   }
 
-  return Number(static_cast<double>(result));
+  return Number(result);
 }
 
 // ------------------------------ RelationalNode -------------------------------

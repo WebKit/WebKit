@@ -2,6 +2,73 @@
 
         Reviewed by Maciej.
 
+        - fixed 28 Mozilla JavaScript tests
+
+        * kjs/array_object.cpp: (ArrayProtoFuncImp::call): Check for undefined rather than
+        checking the number of arguments for the join method.
+
+        * kjs/lexer.cpp: (Lexer::lex): Parse hexadecimal and octal constants in doubles rather
+        than integers, so we aren't limited to 32 bits.
+
+        * kjs/math_object.cpp: (MathFuncImp::call): Get rid of many unneeded special cases in
+        the implementation of the pow operation. Also simplied a case that was handling positive
+        and negative infinity separately.
+
+        * kjs/nodes.cpp: (ShiftNode::evaluate): Keep the result of shifts in a double instead of
+        putting them in a long, so that unsigned shift will work properly.
+
+        * kjs/number_object.cpp: Add the DontDelete and ReadOnly flags to the numeric constants.
+
+        * kjs/operations.cpp:
+        (KJS::isPosInf): Added an implementation inside APPLE_CHANGES that does not depend on the
+        sign of isinf; our isinf function returns +1 even for negative infinity.
+        (KJS::isNegInf): And again.
+        (KJS::relation): Put in a nice simple implementation of comparison inside APPLE_CHANGES.
+        Our floating point already handles the various infinity cases correctly.
+
+        * kjs/regexp_object.cpp:
+        (RegExpProtoFuncImp::call): Add missing return before Null() in Exec method.
+        (RegExpObjectImp::arrayOfMatches): Put undefined rather than an empty string into the
+        array in cases where we did not match.
+        (RegExpObjectImp::construct): Set the DontDelete, ReadOnly, and DontEnum flags for
+        "global", "ignoreCase", "multiline", and "source".
+
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): For the match method, turn a null
+        string into undefined rather than an empty string. For the slice method, handle an
+        undefined parameter for the limit properly as decribed in the specification, and add
+        the limit to one case that didn't have the limit at all. For the methods that generate
+        HTML strings, use lowercase tags instead of uppercase.
+
+        * kjs/ustring.cpp:
+        (KJS::UChar::toLower): Use u_tolower from the ICU library.
+        (KJS::UChar::toUpper): Use u_toupper from the ICU library.
+        (KJS::UString::append): Fix some math that caused a buffer overflow.
+        (KJS::convertUTF16OffsetsToUTF8Offsets): Ignore negative numbers (-1 is used as a special
+        flag) rather than converting them all to 0.
+        (KJS::convertUTF8OffsetsToUTF16Offsets): Ditto.
+
+        * tests/mozilla/jsDriver.pl: Fixed the relative links to point to our actual test files.
+
+        * tests/mozilla/ecma/String/15.5.4.11-1.js: Fixed the Unicode table in this test to match
+        the Unicode specification in a few cases where it was wrong before.
+        * tests/mozilla/ecma/String/15.5.4.11-2.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.11-3.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.11-5.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.11-6.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-1.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-2.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-3.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-4.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-5.js: Ditto.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Link to libicu.
+
+        * kjs/number_object.lut.h: Regenerated.
+
+2004-08-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3753467> REGRESSION (137-138): reproducible buffer overrun in UString manipulation code
 
         * kjs/ustring.cpp: (KJS::UString::append): Fix incorrect size computation. Without it

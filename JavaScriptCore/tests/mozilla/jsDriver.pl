@@ -62,7 +62,7 @@ my $opt_shell_path = "";
 my $opt_java_path = "";
 my $opt_bug_url = "http://bugzilla.mozilla.org/show_bug.cgi?id=";
 my $opt_console_failures = 0;
-my $opt_lxr_url = "http://lxr.mozilla.org/mozilla/source/js/tests/";
+my $opt_lxr_url = "./"; # "http://lxr.mozilla.org/mozilla/source/js/tests/";
 my $opt_exit_munge = ($os_type ne "MAC") ? 1 : 0;
 
 # command line option definition
