@@ -1,3 +1,7 @@
+2003-01-30  Darin Adler  <darin@apple.com>
+
+        * khtml/html/html_documentimpl.cpp: Updated license.
+
 2003-01-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
@@ -107,7 +111,7 @@
 
         Reviewed by Ken.
 
-	- 3158477 -- text break locator leak leads to giant (2.04 GB) VSIZE idling at livepage
+	- fixed 3158477 -- text break locator leak leads to giant (2.04 GB) VSIZE idling at livepage
 
         * khtml/rendering/break_lines.cpp: (isBreakable): Dispose the text locator.
 
