@@ -34,6 +34,13 @@
 
 // FIXME: More that is in common with WebSubresourceClient should move up into WebBaseResourceHandleDelegate.
 
+@interface WebResourceDelegateProxy : NSObject <WebResourceDelegate>
+{
+    id <WebResourceDelegate> delegate;
+}
+- (void)setDelegate:(id <WebResourceDelegate>)theDelegate;
+@end
+
 @implementation WebMainResourceClient
 
 - initWithDataSource:(WebDataSource *)ds
@@ -43,16 +50,17 @@
     if (self) {
         resourceData = [[NSMutableData alloc] init];
         [self setDataSource:ds];
+        proxy = [[WebResourceDelegateProxy alloc] init];
+        [proxy setDelegate:self];
     }
 
     return self;
 }
 
 - (void)dealloc
-{
-    ASSERT(download == nil);
-    
+{    
     [resourceData release];
+    [proxy release];
     
     [super dealloc];
 }
@@ -62,27 +70,9 @@
     return resourceData;
 }
 
-- (WebDownload *)download
-{
-    return download;
-}
-
-- (BOOL)isDownload
-{
-    return download != nil;
-}
-
 - (void)receivedError:(WebError *)error complete:(BOOL)isComplete
 {
-    if (download) {
-        ASSERT(isComplete);
-        [download cancel];
-        [download release];
-        download = nil;
-        [dataSource _setPrimaryLoadComplete:YES];
-    } else {
-        [dataSource _receivedError:error complete:isComplete];
-    }
+    [dataSource _receivedError:error complete:isComplete];
 }
 
 - (void)cancel
@@ -180,34 +170,20 @@
         break;
         
     case WebPolicySave:
-	[dataSource _setIsDownloading:YES];
+        ASSERT([self downloadDelegate]);
 
-        NSString *path = [dataSource downloadPath];
-        if (path == nil || ![path isAbsolutePath]) {
-            NSString *directory = [dataSource _downloadDirectory];
-            if (directory != nil && [directory isAbsolutePath]) {
-                path = [directory stringByAppendingPathComponent:[r suggestedFilenameForSaving]];
-            } else {
-                id pd = [[dataSource _controller] policyDelegate];
-                
-                if ([pd respondsToSelector: @selector(savePathForResponse:andRequest:)])
-                    path = [pd savePathForResponse:r andRequest:req];
-                // FIXME: Maybe there a cleaner way handle the bad filename case?
-                if (path == nil || ![path isAbsolutePath]) {
-                    ERROR("Nil or non-absolute path returned from savePathForResponse:andRequest:.");
-                    [self stopLoadingForPolicyChange];
-                    return;
-                }
-            }
+        WebDownload *download = [[WebDownload alloc] _initWithLoadingResource:resource dataSource:dataSource];
+        NSString *directory = [dataSource _downloadDirectory];
+        if (directory != nil && [directory isAbsolutePath]) {
+            // FIXME: Predetermined downloads should not be using this code path (3191052).
+            NSString *path = [directory stringByAppendingPathComponent:[r suggestedFilenameForSaving]];
+            [download _setPath:path];
+        }
 
-	    [dataSource _setDownloadPath:path];
-	}
-
-        [self interruptForPolicyChangeAndKeepLoading:YES];
+        [proxy setDelegate:(id <WebResourceDelegate>)download];
+        [download release];
         
-	// Hand off the dataSource to the download handler.  This will cause the remaining
-	// handle delegate callbacks to go to the controller's download delegate.
-	download = [[WebDownload alloc] initWithDataSource:dataSource];
+        [self interruptForPolicyChangeAndKeepLoading:YES];
         break;
 
     case WebPolicyOpenURL:
@@ -245,10 +221,10 @@
         ERROR("contentPolicyForMIMEType:andRequest:inFrame: returned an invalid content policy.");
     }
 
-    [super resource:handle didReceiveResponse:r];
+    [super resource:resource didReceiveResponse:r];
 
     if ([[req URL] _web_shouldLoadAsEmptyDocument]) {
-	[self resourceDidFinishLoading:handle];
+	[self resourceDidFinishLoading:resource];
     }
 }
 
@@ -277,10 +253,11 @@
     ASSERT([dataSource isDownloading] || ![[dataSource _controller] defersCallbacks]);
     [dataSource _setResponse:r];
 
-    LOG(Download, "main content type: %@", [r contentType]);
+    LOG(Loading, "main content type: %@", [r contentType]);
 
     [[dataSource _controller] setDefersCallbacks:YES];
 
+    // FIXME: Predetermined downloads should not be using this code path (3191052).
     // Figure out the content policy.
     if (![dataSource isDownloading]) {
 	[self checkContentPolicyForResponse:r andCallSelector:@selector(continueAfterContentPolicy:response:)];
@@ -297,64 +274,39 @@
     ASSERT([data length] != 0);
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource _controller] defersCallbacks]);
+    ASSERT(![[dataSource _controller] defersCallbacks]);
  
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource _URL], data, [data length]);
 
-    WebError *downloadError= nil;
-    
-    if (download) {
-        downloadError = [download receivedData:data];
-    } else {
-        [resourceData appendData:data];
-        [dataSource _receivedData:data];
-        [[dataSource _controller] _mainReceivedBytesSoFar:[resourceData length]
-                                          fromDataSource:dataSource
-                                                complete:NO];
-    }
-    
+    [resourceData appendData:data];
+    [dataSource _receivedData:data];
+    [[dataSource _controller] _mainReceivedBytesSoFar:[resourceData length]
+                                        fromDataSource:dataSource
+                                            complete:NO];
+
     [super resource:h didReceiveData:data];
     _bytesReceived += [data length];
-    
-    if(downloadError){
-        // Cancel download after calling didReceiveData to preserve ordering of calls.
-        [self cancelWithError:downloadError];
-    }
 
-    LOG(Download, "%d of %d", _bytesReceived, _contentLength);
+    LOG(Loading, "%d of %d", _bytesReceived, _contentLength);
 }
 
 - (void)resourceDidFinishLoading:(WebResource *)h
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource _controller] defersCallbacks]);
+    ASSERT(![[dataSource _controller] defersCallbacks]);
+
     LOG(Loading, "URL = %@", [dataSource _URL]);
         
     // Calls in this method will most likely result in a call to release, so we must retain.
     [self retain];
 
-    WebError *downloadError = nil;
-    
-    if (download) {
-        downloadError = [download finishedLoading];
-        [dataSource _setPrimaryLoadComplete:YES];
-    } else {
-        [dataSource _setResourceData:resourceData];
-        [dataSource _finishedLoading];
-        [[dataSource _controller] _mainReceivedBytesSoFar:[resourceData length]
-                                          fromDataSource:dataSource
-                                                complete:YES];
-    }
-
-    if(downloadError){
-        [super resource:h didFailLoadingWithError:downloadError];
-    } else {
-        [super resourceDidFinishLoading:h];
-    }
-
-    [download release];
-    download = nil;
+    [dataSource _setResourceData:resourceData];
+    [dataSource _finishedLoading];
+    [[dataSource _controller] _mainReceivedBytesSoFar:[resourceData length]
+                                        fromDataSource:dataSource
+                                            complete:YES];
+    [super resourceDidFinishLoading:h];
     
     [self release];
 }
@@ -363,7 +315,8 @@
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource _controller] defersCallbacks]);
+    ASSERT(![[dataSource _controller] defersCallbacks]);
+
     LOG(Loading, "URL = %@, error = %@", [error failingURL], [error errorDescription]);
 
     // Calling receivedError will likely result in a call to release, so we must retain.
@@ -378,16 +331,16 @@
 - (void)startLoading:(WebRequest *)r
 {
     if ([[r URL] _web_shouldLoadAsEmptyDocument]) {
-	[self resource:handle willSendRequest:r];
+	[self resource:resource willSendRequest:r];
 
 	WebResponse *rsp = [[WebResponse alloc] init];
 	[rsp setURL:[r URL]];
 	[rsp setContentType:@"text/html"];
 	[rsp setContentLength:0];
-	[self resource:handle didReceiveResponse:rsp];
+	[self resource:resource didReceiveResponse:rsp];
 	[rsp release];
     } else {
-	[super startLoading:r];
+	[resource loadWithDelegate:proxy];
     }
 }
 
@@ -398,5 +351,44 @@
     }
 }
 
+
+@end
+
+@implementation WebResourceDelegateProxy
+
+- (void)setDelegate:(id <WebResourceDelegate>)theDelegate
+{
+    if (delegate != theDelegate) {
+        [delegate release];
+        delegate = [theDelegate retain];
+    }
+}
+
+- (WebRequest *)resource:(WebResource *)resource willSendRequest:(WebRequest *)request
+{
+    return [delegate resource:resource willSendRequest:request];
+}
+
+-(void)resource:(WebResource *)resource didReceiveResponse:(WebResponse *)response
+{
+    [delegate resource:resource didReceiveResponse:response];
+}
+
+-(void)resource:(WebResource *)resource didReceiveData:(NSData *)data
+{
+    [delegate resource:resource didReceiveData:data];
+}
+
+-(void)resourceDidFinishLoading:(WebResource *)resource
+{
+    [delegate resourceDidFinishLoading:resource];
+    [delegate release];
+}
+
+-(void)resource:(WebResource *)resource didFailLoadingWithError:(WebError *)error
+{
+    [delegate resource:resource didFailLoadingWithError:error];
+    [delegate release];
+}
 
 @end

@@ -14,19 +14,19 @@
 @class WebDownload;
 @class WebDataSource;
 @class WebResource;
+@class WebResourceDelegateProxy;
 @class WebRequest;
 @class WebResponse;
 
 @interface WebMainResourceClient : WebBaseResourceHandleDelegate
 {
-    WebDownload *download;
     NSMutableData *resourceData;
     int _contentLength; // for logging only
     int _bytesReceived; // for logging only
+    WebResourceDelegateProxy *proxy;
 }
 
 - initWithDataSource:(WebDataSource *)dataSource;
-- (WebDownload *)download;
 - (NSData *)resourceData;
 
 @end

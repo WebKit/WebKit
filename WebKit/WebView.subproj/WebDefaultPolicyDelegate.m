@@ -54,12 +54,6 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     }
 }
 
-- (NSString *)savePathForResponse:(WebResponse *)response
-                       andRequest:(WebRequest *)request
-{
-    return nil;
-}
-
 - (void)decideNavigationPolicyForAction:(NSDictionary *)actionInformation 
 			     andRequest:(WebRequest *)request
 				inFrame:(WebFrame *)frame

@@ -18,7 +18,7 @@
 {
 @protected
     WebDataSource *dataSource;
-    WebResource *handle;
+    WebResource *resource;
     WebRequest *request;
 @private
     WebController *controller;
@@ -41,7 +41,6 @@
 
 - resourceLoadDelegate;
 - downloadDelegate;
-- (BOOL)isDownload;
 
 - (void)cancel;
 - (void)cancelQuietly;

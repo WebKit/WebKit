@@ -146,15 +146,15 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method setDownloadDelegate:
-    @abstract Set the controller's WebResourceLoadDelegate download delegate.
-    @param delegate The WebResourceLoadDelegate to set as the download delegate.
+    @abstract Set the controller's WebDownloadDelegate.
+    @param delegate The WebDownloadDelegate to set as the download delegate.
 */    
 - (void)setDownloadDelegate: (id)delegate;
 
 /*!
     @method downloadDelegate
-    @abstract Return the controller's WebResourceLoadDelegate download delegate.
-    @result The controller's WebResourceLoadDelegate download delegate.
+    @abstract Return the controller's WebDownloadDelegate.
+    @result The controller's WebDownloadDelegate.
 */    
 - (id)downloadDelegate;
 

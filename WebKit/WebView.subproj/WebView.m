@@ -167,13 +167,13 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (void)setDownloadDelegate: delegate
 {
-    _private->downloadProgressDelegate = delegate;
+    _private->downloadDelegate = delegate;
 }
 
 
 - downloadDelegate
 {
-    return _private->downloadProgressDelegate;
+    return _private->downloadDelegate;
 }
 
 - (void)setContextMenuDelegate: delegate

@@ -1,3 +1,98 @@
+2003-03-06  Chris Blumenberg  <cblu@apple.com>
+
+	Implemented WebDownload API.
+
+	Fixed: 3118355 - Download mechanism that doesn't involve WebDataSource, WebFrame, WebController etc
+	Fixed: 3110173 - add per-request disabling of download decoding, use to turn off when "Open Safe Files" is off
+
+        Reviewed by trey, rjw, mjs.
+
+        * Downloads.subproj/WebDownload.h: Tweaked comments, added new methods.
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownloadPrivate dealloc]): release new objects
+        (-[WebDownload initWithRequest:]): was initWithRequest:delegate:, but found that starting the load from the init method made it tricky to do other set up work before the load started.
+        (-[WebDownload _initWithLoadingResource:dataSource:]): private init method, "catches up" to load by sending delegate method immediately, doesn't retain the dataSource, uses it for info
+        (-[WebDownload loadWithDelegate:]): new, starts load
+        (-[WebDownload cancel]): cancel load with no error
+        (-[WebDownload path]): simple getter
+        (-[WebDownload setPath:]): implement this because WebDownload is the WebDownloadDecisionListener, call _setPath
+        (-[WebDownload resource:willSendRequest:]): resource delegate method
+        (-[WebDownload resource:didReceiveResponse:]): resource delegate method
+        (-[WebDownload resource:didReceiveData:]): resource delegate method, decode and write data, cancel load if error
+        (-[WebDownload resourceDidFinishLoading:]): resource delegate method, decode and write data if necessary, end in error if error
+        (-[WebDownload resource:didFailLoadingWithError:]): resource delegate method, end in error
+        (-[WebDownload _pathWithUniqueFilenameForPath:]): this work was done in _createFileIfNecessary, does what it says
+        (-[WebDownload _createFSRefForPath:]): this work was done in _createFileIfNecessary as well, makes fileRefPtr point to a file
+        (-[WebDownload _createFileIfNecessary]): creates file, creates temp file if path hasn't been set yet
+        (-[WebDownload _decodeHeaderData:dataForkData:resourceForkData:]): call private method
+        (-[WebDownload _decodeData:dataForkData:resourceForkData:]): made private, if the download is encoded, ask client if OK to decode
+        (-[WebDownload _decodeData:]): hardly changed, don't cancel, just return error
+        (-[WebDownload _dataIfDoneBufferingData:]): moved, not changed
+        (-[WebDownload _finishDecoding]): hardly changed, don't cancel, just return error
+        (-[WebDownload _writeForkData:isDataFork:]): moved, not changed
+        (-[WebDownload _writeDataForkData:resourceForkData:]): moved, not changed
+        (-[WebDownload _isFileClosed]): new
+        (-[WebDownload _fileDidClose:]): new, called by the callback thread, delete file if deleteFile flag is set, report error or end successfully
+        (-[WebDownload _closeForkAsync:]): new
+        (-[WebDownload _closeForkSync:]): new
+        (-[WebDownload _closeFileAsync]): new
+        (-[WebDownload _closeFileSync]): new
+        (-[WebDownload _deleteFileAsnyc]): new
+        (-[WebDownload _closeAndDeleteFileAsync]): new
+        (-[WebDownload _cancelWithError:]): kill load if there is one, report error if there is one, close and delete file is not already closed or deleted
+        (-[WebDownload _cancelWithErrorCode:]): internal convenienve, calls _cancelWithError
+        (-[WebDownload _setPath:]): set path, if we are already saving data to a temp path, move the file and continue downloading
+        (-[WebDownload _currentPath]): new 
+        (-[WebDownload _errorWithCode:]): new
+        (-[WebDownload _dataForkReferenceNumber]): added underscore
+        (-[WebDownload _setDataForkReferenceNumber:]): added underscore
+        (-[WebDownload _resourceForkReferenceNumber]): added underscore
+        (-[WebDownload _setResourceForkReferenceNumber:]): added underscore
+        (-[WebDownload _areWritesCancelled]): added underscore
+        (-[WebDownload _setWritesCancelled:]): added underscore
+        (-[WebDownload _encounteredCloseError]): new
+        (-[WebDownload _setEncounteredCloseError:]): new 
+        (WriteCompletionCallback): call underscored methods
+        (CloseCompletionCallback): call underscored methods, handle close error, don't delete file
+        (DeleteCompletionCallback): call _currentPath
+        * Downloads.subproj/WebDownloadPrivate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h: renamed handle to resource
+        * WebView.subproj/WebBaseResourceHandleDelegate.m: renamed handle to resource
+        (-[WebBaseResourceHandleDelegate _releaseResources]): renamed handle to resource
+        (-[WebBaseResourceHandleDelegate startLoading:]): renamed handle to resource
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]): renamed handle to resource
+        (-[WebBaseResourceHandleDelegate setDefersCallbacks:]): renamed handle to resource
+        (-[WebBaseResourceHandleDelegate resource:willSendRequest:]): renamed handle to resource
+        (-[WebBaseResourceHandleDelegate resource:didReceiveResponse:]): renamed handle to resource, don't handle downloads
+        (-[WebBaseResourceHandleDelegate resource:didReceiveData:]): renamed handle to resource, don't handle downloads
+        (-[WebBaseResourceHandleDelegate resourceDidFinishLoading:]): renamed handle to resource, don't handle downloads
+        (-[WebBaseResourceHandleDelegate resource:didFailLoadingWithError:]): renamed handle to resource, don't handle downloads
+        (-[WebBaseResourceHandleDelegate cancelWithError:]): renamed handle to resource, don't handle downloads
+        * WebView.subproj/WebController.h: updated comments
+        * WebView.subproj/WebController.m: 
+        (-[WebController setDownloadDelegate:]): call the ivar downloadDelegate, not downloadProgressDelegate
+        (-[WebController downloadDelegate]): call the ivar downloadDelegate, not downloadProgressDelegate
+        * WebView.subproj/WebControllerPolicyDelegate.h: removed saveFilenameForResponse:andRequest:, handle by WebDownload
+        * WebView.subproj/WebControllerPrivate.h: call the ivar downloadDelegate, not downloadProgressDelegate
+        * WebView.subproj/WebDefaultPolicyDelegate.m: removed saveFilenameForResponse:andRequest:, handle by WebDownload
+        * WebView.subproj/WebMainResourceClient.h: added WebResourceDelegateProxy icar
+        * WebView.subproj/WebMainResourceClient.m: remove most download related stuff
+        (-[WebMainResourceClient initWithDataSource:]): create a WebResourceDelegateProxy which allows us to change the resource delegate
+        (-[WebMainResourceClient dealloc]): release the proxy
+        (-[WebMainResourceClient receivedError:complete:]): don't handle downloads
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): pass the load off to the download
+        (-[WebMainResourceClient resource:didReceiveResponse:]): don't handle downloads
+        (-[WebMainResourceClient resource:didReceiveData:]): don't handle downloads
+        (-[WebMainResourceClient resourceDidFinishLoading:]): don't handle downloads
+        (-[WebMainResourceClient resource:didFailLoadingWithError:]): don't handle downloads
+        (-[WebMainResourceClient startLoading:]): make the proxy the delegate
+        (-[WebResourceDelegateProxy setDelegate:]): switches the resource delegate
+        (-[WebResourceDelegateProxy resource:willSendRequest:]): forwards message
+        (-[WebResourceDelegateProxy resource:didReceiveResponse:]): forwards message
+        (-[WebResourceDelegateProxy resource:didReceiveData:]): forwards message
+        (-[WebResourceDelegateProxy resourceDidFinishLoading:]): forwards message
+        (-[WebResourceDelegateProxy resource:didFailLoadingWithError:]): forwards message
+
 2003-03-06  Richard Williamson   <rjw@apple.com>
 
         Move tweaks to WebKit API.

@@ -24,7 +24,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
     
     id windowContext;
     id resourceProgressDelegate;
-    id downloadProgressDelegate;
+    id downloadDelegate;
     id contextMenuDelegate;
     id policyDelegate;
     id locationChangeDelegate;

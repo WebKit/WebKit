@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class WebDataSource;
 @class WebDownload;
 @class WebDownloadPrivate;
 @class WebError;
@@ -24,30 +25,37 @@
     @method setPath:
     @abstract This method should be called when the path of the downloaded file has been decided.
     @param path The path of the downloaded file.
+    @discussion If necessary, to avoid overwriting files, "-n" will be appended to the filename before the
+    extension where "n" is a number. Because of this, use the path passed with download:didCreateFileAtPath:
+    on WebDownload when referring to the path of the downloaded file, not the path set with this method.
 */
 -(void)setPath:(NSString *)path;
+
 @end
 
 /*!
     @protocol WebDownloadDelegate
-    @discussion The delegate of a WebDownload must conform to the WebDownloadDelegate protocol.
+    @discussion The delegate of a WebDownload can conform to the WebDownloadDelegate protocol.
     The delegate is primarily used to report the progress of the download. Note: The word "download" is used to
     refer to the process of loading data off a network, decoding the data if necessary and saving the data to a file.
-    The delegate recieves these calls in this order:
-
-    - download:willSendRequest: (called once or more)<BR>
-    - download:didReceiveResponse:<BR>
-    - download:decidePathWithListener:suggestedFilename: (possibly not called)<BR>
-    - download:didReceiveDataOfLength: (called once or more)<BR>
-    - downloadDidFinishLoading: or - download:didFailLoadingWithError:
 */
-@protocol WebDownloadDelegate <NSObject>
+@interface NSObject (WebDownloadDelegate)
+
+/*!
+    @method download:startedFromDataSource:
+    @abstract This method is called immediately after the download has started.
+    @discussion A download is started from a data source if the WebPolicySave WebPolicyAction was chosen for a request.
+    @param download The download that just started downloading.
+    @param response The data source that the download started from. Nil if the download was not started from a data source.
+ */
+- (void)download:(WebDownload *)download didStartFromDataSource:(WebDataSource *)dataSource;
+
 /*!
     @method download:willSendRequest:
     @abstract This method is called whenever the download is about to load a request or if the download
     must load another request because the previous request was redirected.
-    @discussion This method is always initially called with a copy of the request that was passed with
-    initWithRequest:delegate:. This method gives the delegate an opportunity to inspect the request
+    @discussion This method is called with a copy of the request that was passed with
+    initWithRequest:. This method gives the delegate an opportunity to inspect the request
     that will be used to continue loading the request, and modify it if necessary.
     @param download The download that will send the request.
     @param request The request that will be used to continue loading.
@@ -57,8 +65,8 @@
 
 /*!
     @method download:didReceiveResponse:
-    @abstract This method is called when the download has received enough information to contruct a WebResourceResponse.
-    @param download The download that now has a WebResourceResponse available for inspection.
+    @abstract This method is called when the download has received enough information to contruct a WebResponse.
+    @param download The download that now has a WebResponse available for inspection.
     @param response The WebResourceResponse object for the given download.
 */
 - (void)download:(WebDownload *)download didReceiveResponse:(WebResponse *)response;
@@ -86,23 +94,44 @@
 - (void)download:(WebDownload *)download didReceiveDataOfLength:(unsigned)length;
 
 /*!
-    @method downloadDidFinishLoading:
-    @abstract This method is called when the download has finished downloading.
-    @discussion This method is called after all the data has been received and written to disk.
-    This method or download:didFailLoadingWithError: will only be called once.
-    @param download The download that has finished downloading.
+    @method downloadShouldDecodeEncodedFile:
+    @abstract This method is called if the download detects that the downloading file is encoded.
+    @discussion An encoded file is encoded in MacBinary, BinHex or gzip format.
+    This method is not called if the download is not encoded.
+    @param download The download that has detected that the downloading file is encoded.
+    @result Return YES to decode the file, NO to not decode the file.
 */
-- (void)downloadDidFinishLoading:(WebDownload *)download;
+- (BOOL)downloadShouldDecodeEncodedFile:(WebDownload *)download;
 
 /*!
-    @method download:didFailLoadingWithError:
+    @method download:didCreatedFileAtPath:
+    @abstract This method is called after the download creates the download file.
+    @discussion The filename of path may be different than the path set with setPath:
+    so the download does not overwrite an existing file.
+    @param download The download that created the downloading file.
+    @param path The path of the downloading file.
+*/
+- (void)download:(WebDownload *)download didCreateFileAtPath:(NSString *)path;
+
+/*!
+    @method downloadDidFinishDownloading:
+    @abstract This method is called when the download has finished downloading.
+    @discussion This method is called after all the data has been received and written to disk.
+    This method or download:didFailDownloadingWithError: will only be called once.
+    @param download The download that has finished downloading.
+*/
+- (void)downloadDidFinishDownloading:(WebDownload *)download;
+
+/*!
+    @method download:didFailDownloadingWithError:
     @abstract This method is called when the download has failed. 
     @discussion This method is called when the download encounters a network or file I/O related error.
-    This method or downloadDidFinishLoading: will only be called once.
+    This method or downloadDidFinishDownloading: will only be called once.
     @param download The download that ended in error.
     @param error The error caused the download to fail.
 */
-- (void)download:(WebDownload *)download didFailLoadingWithError:(WebError *)error;
+- (void)download:(WebDownload *)download didFailDownloadingWithError:(WebError *)error;
+
 @end
 
 /*!
@@ -118,18 +147,22 @@
 }
 
 /*!
-    @method initWithRequest:delegate:
+    @method initWithRequest:
     @abstract Initializes a WebDownload object.
-    @discussion This method also begins the download.
     @param request The request to download. Must not be nil.
+*/
+- initWithRequest:(WebRequest *)request;
+
+/*!
+    @method loadWithDelegate:
+    @abstract Starts the download.
     @param delegate The delegate of the download. Must not be nil.
 */
-- initWithRequest:(WebRequest *)request delegate:(id <WebDownloadDelegate>)delegate;
+- (void)loadWithDelegate:(id)delegate;
 
 /*!
     @method cancel
     @abstract Cancels the download and deletes the downloaded file.
-    @discussion Has no effect after the download has completed.
 */
 - (void)cancel;
 

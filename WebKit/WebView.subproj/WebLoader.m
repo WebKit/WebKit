@@ -33,8 +33,8 @@
     [identifier release];
     identifier = nil;
 
-    [handle release];
-    handle = nil;
+    [resource release];
+    resource = nil;
 
     [controller release];
     controller = nil;
@@ -64,19 +64,19 @@
 
 - (void)startLoading:(WebRequest *)r
 {
-    [handle loadWithDelegate:self];
+    [resource loadWithDelegate:self];
 }
 
 - (BOOL)loadWithRequest:(WebRequest *)r
 {
-    ASSERT(handle == nil);
+    ASSERT(resource == nil);
     
-    handle = [[WebResource alloc] initWithRequest:r];
-    if (!handle) {
+    resource = [[WebResource alloc] initWithRequest:r];
+    if (!resource) {
         return NO;
     }
     if (defersCallbacks) {
-        [handle setDefersCallbacks:YES];
+        [resource setDefersCallbacks:YES];
     }
 
     [self startLoading:r];
@@ -87,7 +87,7 @@
 - (void)setDefersCallbacks:(BOOL)defers
 {
     defersCallbacks = defers;
-    [handle setDefersCallbacks:defers];
+    [resource setDefersCallbacks:defers];
 }
 
 - (BOOL)defersCallbacks
@@ -129,14 +129,9 @@
     return downloadDelegate;
 }
 
-- (BOOL)isDownload
-{
-    return NO;
-}
-
 -(WebRequest *)resource:(WebResource *)h willSendRequest:(WebRequest *)newRequest
 {
-    ASSERT(handle == h);
+    ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
     
     [newRequest setUserAgent:[controller userAgentForURL:[newRequest URL]]];
@@ -182,41 +177,31 @@
 
 -(void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)r
 {
-    ASSERT(handle == h);
+    ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
 
     [r retain];
     [response release];
     response = r;
 
-    if ([self isDownload])
-        [downloadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];
-    else {
-        [dataSource _addResponse: r];
-        [[controller _resourceLoadDelegateForwarder] resource:identifier didReceiveResponse:r fromDataSource:dataSource];
-    }
+    [dataSource _addResponse: r];
+    [[controller _resourceLoadDelegateForwarder] resource:identifier didReceiveResponse:r fromDataSource:dataSource];
 }
 
 - (void)resource:(WebResource *)h didReceiveData:(NSData *)data
 {
-    ASSERT(handle == h);
+    ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
 
-    if ([self isDownload])
-        [downloadDelegate resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
-    else
-        [[controller _resourceLoadDelegateForwarder] resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+    [[controller _resourceLoadDelegateForwarder] resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
 - (void)resourceDidFinishLoading:(WebResource *)h
 {
-    ASSERT(handle == h);
+    ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
 
-    if ([self isDownload])
-        [downloadDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
-    else
-        [[controller _resourceLoadDelegateForwarder] resource:identifier didFinishLoadingFromDataSource:dataSource];
+    [[controller _resourceLoadDelegateForwarder] resource:identifier didFinishLoadingFromDataSource:dataSource];
 
     ASSERT(currentURL);
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
@@ -226,13 +211,10 @@
 
 - (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)result
 {
-    ASSERT(handle == h);
+    ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
     
-    if ([self isDownload])
-        [downloadDelegate resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
-    else
-        [[controller _resourceLoadDelegateForwarder] resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
+    [[controller _resourceLoadDelegateForwarder] resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
     // currentURL may be nil if the request was aborted
     if (currentURL)
@@ -245,18 +227,14 @@
 {
     ASSERT(!reachedTerminalState);
 
-    [handle cancel];
+    [resource cancel];
     
     // currentURL may be nil if the request was aborted
     if (currentURL)
         [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     if (error) {
-        if ([self isDownload]) {
-            [downloadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
-        } else {
-            [[controller _resourceLoadDelegateForwarder] resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
-        }
+        [[controller _resourceLoadDelegateForwarder] resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }
 
     [self _releaseResources];
