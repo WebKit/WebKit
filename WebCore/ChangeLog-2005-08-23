@@ -2,6 +2,27 @@
 
         Reviewed by Hyatt
 
+        Fix for these bugs:
+
+        <rdar://problem/3730785> Crash when arrow navigation goes to empty table cell
+        <rdar://problem/3730790> Caret does not blink when placed in empty table cell
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject): Caret node's renderer might be this block, so
+        don't block the painting of the caret in this case. This was the case in 3730790.
+        We had the right geometry for the caret but blocked its painting. 
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousLinePosition): Rework the logic here. This function asserted
+        that the new position we would navigate to had a line box, but empty table cells, for
+        instance will not. So, deal with this situation as well. The end result is a 
+        function that worked like it did before in cases where the previous line position has
+        a line box, but now also will allow navigation to work when it does not.
+        (DOM::Position::nextLinePosition): Ditto.
+
+2004-07-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
         Fix for this bug:
         
         <rdar://problem/3687216> editable inline causes crash when focused
