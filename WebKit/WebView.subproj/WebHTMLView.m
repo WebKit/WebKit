@@ -1623,16 +1623,19 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
 {
-    NSPoint point = [self  convertPoint:[sender draggingLocation] fromView:nil];
+    NSPoint point = [self convertPoint:[sender draggingLocation] fromView:nil];
     NSDictionary *element = [self _elementAtPoint:point];
     if ([[element objectForKey:WebElementIsEditableKey] boolValue] && [[self _bridge] moveCaretToPoint:point]) {
         if (_private->isDragging) {
-            return [[element objectForKey:WebElementIsSelectedKey] boolValue] ? NSDragOperationNone : NSDragOperationMove;
+            if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+                return NSDragOperationMove;
+            }
         } else {
             return NSDragOperationCopy;
         }
     }
-    return NSDragOperationNone;
+    // Since we're not handling the drag, forward this message to the WebView since it may want to handle it.
+    return [[self _webView] draggingUpdated:sender];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
@@ -1647,8 +1650,14 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    // FIXME: We should delete the original selection if we're doing a move.
-    [self _pasteHTMLFromPasteboard:[sender draggingPasteboard]];
+    NSDictionary *element = [self _elementAtPoint:[self convertPoint:[sender draggingLocation] fromView:nil]];
+    if ([[element objectForKey:WebElementIsEditableKey] boolValue]) {
+        // FIXME: We should delete the original selection if we're doing a move.
+        [self _pasteHTMLFromPasteboard:[sender draggingPasteboard]];
+    } else {
+        // Since we're not handling the drag, forward this message to the WebView since it may want to handle it.
+        [[self _webView] concludeDragOperation:sender];
+    }
 }
 
 - (void)mouseUp:(NSEvent *)event

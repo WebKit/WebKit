@@ -1,3 +1,13 @@
+2004-03-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3576070>: REGRESSION: web view won't accept drag of webloc file
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView draggingUpdated:]): if we're not handling the drag, forward this message to the WebView since it may want to handle it
+        (-[WebHTMLView concludeDragOperation:]): if we're not handling the drag, forward this message to the WebView since it may want to handle it
+
 2004-03-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.
@@ -1548,6 +1558,7 @@
         * WebView.subproj/WebTextView.m:
         (-[WebTextView setFixedWidthFont]): Use [[WebTextRendererFactory sharedFactory] fontWithFamilies:traits:size:] to get the font since it takes the font family which is what we store in WebPreferences and it does fallback work. Only set the font if 
 
+
 non-nil is returned.
 
 2003-11-21  Maciej Stachowiak  <mjs@apple.com>
@@ -2104,6 +2115,7 @@ non-nil is returned.
         * WebView.subproj/WebTextView.m:
         (-[WebTextView menuForEvent:]): Made WebTextView's context menu behavior like WebHTMLView's context menu behavior with regards to selection. If the control-click was on a selection, show menu options for the selection like copy. If it was not on a
 
+
  selection, show menu options such as save and print. Don't select anything when control-clicking.
 
 2003-11-08  Chris Blumenberg  <cblu@apple.com>
@@ -2565,6 +2577,7 @@ non-nil is returned.
         * WebView.subproj/WebFrame.m:
         (-[WebFrame _isLoadComplete]): call _progressCompleted after we deliver the didFailLoadWithError or didFinishLoadForFrame message as we do in other places. This allows to be aware of the error (if there is one), when they get the WebViewProgressFi
 
+
 nishedNotification notification.
 
 2003-10-27  Maciej Stachowiak  <mjs@apple.com>
@@ -2685,6 +2698,7 @@ nishedNotification notification.
         * WebView.subproj/WebView.m:
 	(+[WebView _viewClass:andRepresentationClass:forMIMEType:]): use _web_objectForMIMEType when getting an object for a MIME. Removed unnecessary code that checked for the document classes after loading the plug-in DB since it is not an optimization because
 
+
  the plug-in DB calls _viewTypesAllowImageTypeOmission:NO.
 
 2003-10-23  Chris Blumenberg  <cblu@apple.com>
@@ -2707,6 +2721,7 @@ nishedNotification notification.
         (+[WebFrameView _viewClassForMIMEType:]): call [WebView _viewClass:andRepresentationClass:forMIMEType:]
         * WebView.subproj/WebView.m:
 	(+[WebView _viewClass:andRepresentationClass:forMIMEType:]): new, central place for mapping from a MIME to the document classes. We now load the plug-in DB when a non-HTML MIME type is encountered instead of loading the plug-in DB when the class for the 
+
 
 MIME type is not found. This is required to fully fix 3364036.
         (+[WebView canShowMIMEType:]): call [WebView _viewClass:andRepresentationClass:forMIMEType:]
@@ -2842,6 +2857,7 @@ MIME type is not found. This is required to fully fix 3364036.
 
         * Plugins.subproj/WebPluginDatabase.m:
         (-[WebPluginDatabase pluginForExtension:]): If no plug-in is found from the extension, attempt to map from the extension to a MIME type using our mappings and find a plug-in from the MIME type. This improves our chances of finding a plug-in when n
+
 
 o MIME type is specified.
         * WebCoreSupport.subproj/WebBridge.m:
@@ -3516,6 +3532,7 @@ o MIME type is specified.
 
 	Fixed 3420396.  If a frame targets _top and a URL that contains a fragment (very unusual, it's meaningless for a frameset to contain a named anchor point) the frameset won't be reloaded.  Our normal path is to just scroll to the anchor point.  This is on
 
+
 ly important because our Help folks oddly depend on the behavior.
 
         Reviewed by Chris.
@@ -4050,7 +4067,9 @@ ly important because our Help folks oddly depend on the behavior.
 
 	The default encoding that Safari uses is latin1 regardless of the current system encoding. This is how it's always been. The problem is that the UI is displaying shift JIS for the default text encoding instead of latin1. This is happening because WebKit 
 
+
 is using "latin1" instead of "ISO-8859-1" for the default text encoding name. "ISO-8859-1" is the IANA character set name for latin1 and this is what the  WebKitDefaultTextEncodingNamePreferenceKey preference expects. This ends up confusing Safari, so Saf
+
 
 ari just ends up displaying the first item in the pop-up menu which is shift JIS.
 
@@ -4251,6 +4270,7 @@ ari just ends up displaying the first item in the pop-up menu which is shift JIS
 
 	Fixed 3400807.  Don't release state associated with the current b/f item.  We shouldn't normally have page cache state associated with the current item (3401376).  This fix guarantees that we won't prematurely release the page cache state for the current
 
+
  item.
 
         Reviewed byJohn Sullivan.
@@ -4288,6 +4308,7 @@ ari just ends up displaying the first item in the pop-up menu which is shift JIS
 2003-08-27  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3398229.  When we request a font from NSFont by name we should use a case specific name.  We do case insensitve comparsion, but once a match is found we should use the actual font name, not the requested name.  Two layout tests are still failing, b
+
 
 ut I don't think the failures are font related.
 
@@ -6246,6 +6267,7 @@ ut I don't think the failures are font related.
 
 
 
+
 Source::
         (-[WebFrame _loadDataSource:withLoadType:formState:]): set the policyLoadType and policyDataSource (the beginning of the regular load case)
 
@@ -6276,6 +6298,7 @@ Source::
         (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]): formatting tweak
         (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): if there is no request to continue with, don't reset things like the provisional data source since it was never unset in this case
         (-[WebFrame _loadDataSource:withLoadType:formState:]): don't call stopLoading, _setLoadType and _setProvisionalDataSource, since that stops the frame even for command-click and option-click. Do this work in _prepareForProvisionalLoadWithDataSource
+
 
 
 
@@ -6548,7 +6571,9 @@ Source::
 
 
 
+
 . This is when it draws successfully. It seems to me that the fix is to always pass the correct width and height to NPP_SetWindow. You always position the plug-in far offscreen (1000000, -52) and set the clip region to an empty rect (48576, 52, 48576, 52)
+
 
 
 
@@ -12498,6 +12523,7 @@ Source::
 
 
 
+
 is to retain the incomplete data even though the load ends in error.
 
         Reviewed by darin.
@@ -12559,6 +12585,7 @@ is to retain the incomplete data even though the load ends in error.
 	Fixed: 3189675 - assertion in plug-in code fails (nil window) with .swf page displaying standalone in a tab
 
 	We start plug-ins when they are added to the window and stop them when they are removed. To restart a plug-in, the data stream must be redelivered. This works in the embedded plug-in case, but in the standalone plug-in case, the stream is delivered by th
+
 
 
 
@@ -13031,6 +13058,7 @@ e machinery in WebKit. The stream is only delivered once. This fix addresses tha
 
 
 
+
 t leak when we cancel a download.
         (-[WebDownload _setRequest:]): added
         (-[WebDownload _setResponse:]): added
@@ -13167,6 +13195,7 @@ t leak when we cancel a download.
         Reviewed by trey.
 
         * Downloads.subproj/WebDownload.h: Changed the download delegate method from download:didStartFromDataSource: download:didStartFromRequest:. Passing the data source wasn't that helpful. It was also quirky that the data source would sometimes be ni
+
 
 
 
@@ -16975,6 +17004,7 @@ l.
 
 
 
+
 ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
 
 	We should:
@@ -16991,6 +17021,7 @@ ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
         * Misc.subproj/WebNSWorkspaceExtras.h: Added.
         * Misc.subproj/WebNSWorkspaceExtras.m: Added.
         (-[NSWorkspace _web_noteFileChangedAtPath:]): Notifies the Finder (or any other app that cares) that we added, removed or changed the attributes of a file. This method is better than calling noteFileSystemChanged: because noteFileSystemChanged: se
+
 
 
 
@@ -17626,6 +17657,7 @@ nds 2 apple events both with a 60 second timeout. This method returns immediatel
         Reviewed by john.
 
 	We were reusing the drag types from the previous drag pasteboard. For example, we would declare image types when dragging URLs. This would confuse the Finder, so location files weren't being created. This would occasional cause us to crash because we wer
+
 
 
 
