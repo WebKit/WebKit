@@ -102,8 +102,8 @@ public:
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     // Used to obtain either a solid or outset border decl.
-    virtual CSSStyleDeclarationImpl* additionalAttributeStyleDecl();
-    CSSStyleDeclarationImpl* getSharedCellDecl();
+    virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
+    CSSMutableStyleDeclarationImpl* getSharedCellDecl();
 
     virtual void attach();
     
@@ -212,7 +212,7 @@ public:
     virtual void attach();
 
     // used by table cells to share style decls created by the enclosing table.
-    virtual CSSStyleDeclarationImpl* additionalAttributeStyleDecl();
+    virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 

@@ -1718,41 +1718,38 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
     if (startIndex == -1) return;
     for (int i = startIndex; i <= endIndex; i++) {
         CSSMutableStyleDeclarationImpl* decl = m_matchedDecls[i];
-        QPtrList<CSSProperty>* props = decl->values();
-        if (props) {
-            QPtrListIterator<CSSProperty> propertyIt(*props);
-            CSSProperty* current;
-            for (propertyIt.toFirst(); (current = propertyIt.current()); ++propertyIt) {
-                // give special priority to font-xxx, color properties
-                if (isImportant == current->isImportant()) {
-                    bool first;
-                    switch(current->id())
-                    {
-                        case CSS_PROP_BACKGROUND:
-                        case CSS_PROP_BACKGROUND_IMAGE:
-                        case CSS_PROP_COLOR:
-                        case CSS_PROP_DIRECTION:
-                        case CSS_PROP_DISPLAY:
-                        case CSS_PROP_FONT:
-                        case CSS_PROP_FONT_SIZE:
-                        case CSS_PROP_FONT_STYLE:
-                        case CSS_PROP_FONT_FAMILY:
-                        case CSS_PROP_FONT_WEIGHT:
+        QValueListConstIterator<CSSProperty> end;
+        for (QValueListConstIterator<CSSProperty> it = decl->valuesIterator(); it != end; ++it) {
+            const CSSProperty& current = *it;
+            // give special priority to font-xxx, color properties
+            if (isImportant == current.isImportant()) {
+                bool first;
+                switch(current.id())
+                {
+                    case CSS_PROP_BACKGROUND:
+                    case CSS_PROP_BACKGROUND_IMAGE:
+                    case CSS_PROP_COLOR:
+                    case CSS_PROP_DIRECTION:
+                    case CSS_PROP_DISPLAY:
+                    case CSS_PROP_FONT:
+                    case CSS_PROP_FONT_SIZE:
+                    case CSS_PROP_FONT_STYLE:
+                    case CSS_PROP_FONT_FAMILY:
+                    case CSS_PROP_FONT_WEIGHT:
 #if APPLE_CHANGES
-                        case CSS_PROP__APPLE_TEXT_SIZE_ADJUST:
+                    case CSS_PROP__APPLE_TEXT_SIZE_ADJUST:
 #endif
-                            // these have to be applied first, because other properties use the computed
-                            // values of these porperties.
-                            first = true;
-                            break;
-                        default:
-                            first = false;
-                            break;
-                    }
-                    
-                    if (first == applyFirst)
-                        applyProperty(current->id(), current->value());
+                        // these have to be applied first, because other properties use the computed
+                        // values of these porperties.
+                        first = true;
+                        break;
+                    default:
+                        first = false;
+                        break;
                 }
+                
+                if (first == applyFirst)
+                    applyProperty(current.id(), current.value());
             }
         }
     }

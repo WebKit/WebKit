@@ -787,7 +787,9 @@ static inline int getPropertyID(NSString *string)
 
 - (void)setCssText:(NSString *)cssText
 {
-    [self _styleDeclarationImpl]->setCssText(cssText);
+    int exceptionCode;
+    [self _styleDeclarationImpl]->setCssText(cssText, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (NSString *)getPropertyValue:(NSString *)propertyName
@@ -811,7 +813,10 @@ static inline int getPropertyID(NSString *string)
     int propid = getPropertyID(propertyName);
     if (!propid) 
         return nil;
-    return [self _styleDeclarationImpl]->removeProperty(propid);
+    int exceptionCode = 0;
+    DOMString result = [self _styleDeclarationImpl]->removeProperty(propid, exceptionCode);
+    raiseOnDOMError(exceptionCode);
+    return result;
 }
 
 - (NSString *)getPropertyPriority:(NSString *)propertyName
@@ -831,7 +836,9 @@ static inline int getPropertyID(NSString *string)
     if (!propid) 
         return;
     bool important = strcasecmp(DOMString(priority), "important") == 0;
-    [self _styleDeclarationImpl]->setProperty(propid, value, important);
+    int exceptionCode;
+    [self _styleDeclarationImpl]->setProperty(propid, value, important, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (unsigned long)length

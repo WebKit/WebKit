@@ -410,16 +410,6 @@ QRect Node::getRect()
     return impl->getRect();
 }
 
-bool Node::isNull() const
-{
-    return (impl == 0);
-}
-
-NodeImpl *Node::handle() const
-{
-    return impl;
-}
-
 bool Node::isContentEditable() const
 {
     if (!impl) return false;

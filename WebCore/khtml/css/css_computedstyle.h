@@ -2,7 +2,7 @@
  * css_computedstyle.h
  *
  * Copyright (C)  2004  Zack Rusin <zack@kde.org>
- * Copyright (C)  2004  Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,23 +19,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  * 02111-1307  USA
  */
+
 #ifndef CSS_COMPUTEDSTYLE_H
 #define CSS_COMPUTEDSTYLE_H
 
 #include "css/css_valueimpl.h"
-#include "dom/dom_string.h"
 
 namespace khtml {
     class RenderObject;
+    class RenderStyle;
 }
 
 namespace DOM {
 
 class CSSProperty;
-class CSSStyleDeclarationImpl;
-class CSSValueImpl;
-class DOMString;
-class NodeImpl;
 
 enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 
@@ -46,31 +43,28 @@ public:
     virtual ~CSSComputedStyleDeclarationImpl();
 
     virtual DOMString cssText() const;
-    virtual void setCssText(const DOMString &);
+
+    virtual unsigned long length() const;
+    virtual DOMString item(unsigned long index) const;
 
     virtual CSSValueImpl *getPropertyCSSValue(int propertyID) const;
-    CSSValueImpl *getPropertyCSSValue(int propertyID, bool updateLayout) const;
     virtual DOMString getPropertyValue(int propertyID) const;
     virtual bool getPropertyPriority(int propertyID) const;
 
-    virtual DOMString removeProperty(int propertyID);
-    virtual bool setProperty(int propertyId, const DOMString &value, bool important = false);
-    virtual void setProperty(int propertyId, int value, bool important = false);
-    virtual void setLengthProperty(int id, const DOMString &value, bool important, bool multiLength = false);
+    virtual CSSMutableStyleDeclarationImpl *copy() const;
+    virtual CSSMutableStyleDeclarationImpl *makeMutable();
 
-    virtual void setProperty(const DOMString &propertyString);
-    virtual DOMString item(unsigned long index) const;
+    CSSValueImpl *getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const;
 
-    CSSStyleDeclarationImpl *copyInheritableProperties() const;
-
-    CSSValueImpl* getPositionOffsetValue(int propertyID) const;
+    CSSMutableStyleDeclarationImpl *copyInheritableProperties() const;
 
 private:
-    CSSProperty property(int id) const;
+    virtual void setCssText(const DOMString &, int &exceptionCode);
+    virtual DOMString removeProperty(int propertyID, int &exceptionCode);
+    virtual void setProperty(int propertyId, const DOMString &value, bool important, int &exceptionCode);
 
-    khtml::RenderObject *m_renderer;
+    Node m_node;
 };
-
 
 }
 

@@ -67,7 +67,7 @@ public:
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
 protected:
-    CSSStyleDeclarationImpl* m_linkDecl;
+    CSSMutableStyleDeclarationImpl* m_linkDecl;
 };
 
 // -------------------------------------------------------------------------

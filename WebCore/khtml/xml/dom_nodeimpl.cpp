@@ -160,14 +160,18 @@ NodeImpl *NodeImpl::lastChild() const
   return 0;
 }
 
-NodeImpl *NodeImpl::insertBefore( NodeImpl *, NodeImpl *, int &exceptioncode )
+NodeImpl *NodeImpl::insertBefore( NodeImpl *newChild, NodeImpl *, int &exceptioncode )
 {
+    newChild->ref();
+    newChild->deref();
     exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
     return 0;
 }
 
-NodeImpl *NodeImpl::replaceChild( NodeImpl *, NodeImpl *, int &exceptioncode )
+NodeImpl *NodeImpl::replaceChild( NodeImpl *newChild, NodeImpl *, int &exceptioncode )
 {
+  newChild->ref();
+  newChild->deref();
   exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
   return 0;
 }
@@ -178,10 +182,12 @@ NodeImpl *NodeImpl::removeChild( NodeImpl *, int &exceptioncode )
   return 0;
 }
 
-NodeImpl *NodeImpl::appendChild( NodeImpl *, int &exceptioncode )
+NodeImpl *NodeImpl::appendChild( NodeImpl *newChild, int &exceptioncode )
 {
-  exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
-  return 0;
+    newChild->ref();
+    newChild->deref();
+    exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+    return 0;
 }
 
 void NodeImpl::remove(int &exceptioncode)
@@ -1607,6 +1613,8 @@ NodeImpl *NodeBaseImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChild, i
     if(!refChild)
         return appendChild(newChild, exceptioncode);
 
+    Node protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
+
     // Make sure adding the new child is ok
     checkAddChild(newChild, exceptioncode);
     if (exceptioncode)
@@ -1623,7 +1631,7 @@ NodeImpl *NodeBaseImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChild, i
     // If newChild is a DocumentFragment with no children.... there's nothing to do.
     // Just return the document fragment
     if (isFragment && !newChild->firstChild())
-        return newChild;
+        return (newChild->hasOneRef() && !newChild->parent()) ? 0 : newChild;
 
     // Now actually add the child(ren)
     NodeImpl *nextChild;
@@ -1674,6 +1682,8 @@ NodeImpl *NodeBaseImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, i
 {
     exceptioncode = 0;
 
+    Node protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
+
     if ( oldChild == newChild ) // nothing to do
 	return oldChild;
     
@@ -1691,7 +1701,6 @@ NodeImpl *NodeBaseImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, i
     bool isFragment = newChild->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
     NodeImpl *nextChild;
     NodeImpl *child = isFragment ? newChild->firstChild() : newChild;
-
 
     // Remove the old child
     NodeImpl *prev = oldChild->previousSibling();
@@ -1832,6 +1841,8 @@ NodeImpl *NodeBaseImpl::appendChild ( NodeImpl *newChild, int &exceptioncode )
 {
     exceptioncode = 0;
 
+    Node protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
+
     // Make sure adding the new child is ok
     checkAddChild(newChild, exceptioncode);
     if (exceptioncode)
@@ -1950,6 +1961,8 @@ bool NodeBaseImpl::checkIsChild( NodeImpl *oldChild, int &exceptioncode )
 NodeImpl *NodeBaseImpl::addChild(NodeImpl *newChild)
 {
     // do not add applyChanges here! This function is only used during parsing
+
+    Node protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
 
     // short check for consistency with DTD
     if(!isXMLElementNode() && !newChild->isXMLElementNode() && !childAllowed(newChild))

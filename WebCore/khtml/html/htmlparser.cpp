@@ -248,6 +248,8 @@ void KHTMLParser::parseToken(Token *t)
     if(!n)
         return;
 
+    Node protectNode(n);
+
     // set attributes
     if(n->isElementNode())
     {
@@ -299,7 +301,6 @@ void KHTMLParser::parseToken(Token *t)
 #endif
             form = 0;
         }
-        delete n;
     }
 }
 
@@ -311,6 +312,8 @@ static bool isTableRelatedTag(int id)
 
 bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
 {
+    Node protectNode(n);
+
     int id = n->id();
 
     // let's be stupid and just try to insert it.
@@ -1655,7 +1658,6 @@ void KHTMLParser::createHead()
 #ifdef PARSER_DEBUG
         kdDebug( 6035 ) << "creation of head failed!!!!" << endl;
 #endif
-        delete head;
         head = 0;
     }
 }

@@ -33,6 +33,7 @@
 #include "shared.h"
 
 namespace DOM {
+    class CSSMutableStyleDeclarationImpl;
     class CSSProperty;
     class DocumentFragmentImpl;
     class HTMLElementImpl;
@@ -72,8 +73,8 @@ public:
     void setStartingSelection(const khtml::Selection &s) const;
     void setEndingSelection(const khtml::Selection &s) const;
 
-    DOM::CSSStyleDeclarationImpl *typingStyle() const;
-    void setTypingStyle(DOM::CSSStyleDeclarationImpl *) const;
+    DOM::CSSMutableStyleDeclarationImpl *typingStyle() const;
+    void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *) const;
 
     EditCommandPtr parent() const;
     void setParent(const EditCommandPtr &) const;
@@ -147,14 +148,14 @@ public:
     void setStartingSelection(const khtml::Selection &s);
     void setEndingSelection(const khtml::Selection &s);
 
-    DOM::CSSStyleDeclarationImpl *typingStyle() const { return m_typingStyle; };
-    void setTypingStyle(DOM::CSSStyleDeclarationImpl *);
+    DOM::CSSMutableStyleDeclarationImpl *typingStyle() const { return m_typingStyle; };
+    void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
     
     virtual bool isInsertTextCommand() const;
     virtual bool isTypingCommand() const;
 
 private:
-    void assignTypingStyle(DOM::CSSStyleDeclarationImpl *);
+    void assignTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
 
     virtual bool preservesTypingStyle() const;
 
@@ -162,7 +163,7 @@ private:
     ECommandState m_state;
     khtml::Selection m_startingSelection;
     khtml::Selection m_endingSelection;
-    DOM::CSSStyleDeclarationImpl *m_typingStyle;
+    DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
     EditCommand *m_parent;
 };
 
@@ -247,28 +248,28 @@ public:
 	
     virtual void doApply();
 
-    DOM::CSSStyleDeclarationImpl *style() const { return m_style; }
+    DOM::CSSMutableStyleDeclarationImpl *style() const { return m_style; }
 
 private:
     // style-removal helpers
-    bool isHTMLStyleNode(DOM::CSSStyleDeclarationImpl *, DOM::HTMLElementImpl *);
+    bool isHTMLStyleNode(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
     void removeHTMLStyleNode(DOM::HTMLElementImpl *);
-    void removeCSSStyle(DOM::CSSStyleDeclarationImpl *, DOM::HTMLElementImpl *);
-    void removeBlockStyle(DOM::CSSStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
-    void removeInlineStyle(DOM::CSSStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
+    void removeCSSStyle(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
+    void removeBlockStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
+    void removeInlineStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
     bool nodeFullySelected(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end) const;
 
     // style-application helpers
-    void applyBlockStyle(DOM::CSSStyleDeclarationImpl *);
-    void applyInlineStyle(DOM::CSSStyleDeclarationImpl *);
-    void addBlockStyleIfNeeded(DOM::CSSStyleDeclarationImpl *, DOM::HTMLElementImpl *);
-    void addInlineStyleIfNeeded(DOM::CSSStyleDeclarationImpl *, DOM::NodeImpl *start, DOM::NodeImpl *end);
+    void applyBlockStyle(DOM::CSSMutableStyleDeclarationImpl *);
+    void applyInlineStyle(DOM::CSSMutableStyleDeclarationImpl *);
+    void addBlockStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
+    void addInlineStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *start, DOM::NodeImpl *end);
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
     DOM::NodeImpl *splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
     void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);
     DOM::Position positionInsertionPoint(DOM::Position);
     
-    DOM::CSSStyleDeclarationImpl *m_style;
+    DOM::CSSMutableStyleDeclarationImpl *m_style;
 };
 
 //------------------------------------------------------------------------------------------
@@ -336,7 +337,7 @@ private:
     DOM::NodeImpl *m_startBlock;
     DOM::NodeImpl *m_endBlock;
     DOM::NodeImpl *m_startNode;
-    DOM::CSSStyleDeclarationImpl *m_typingStyle;
+    DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
 };
 
 //------------------------------------------------------------------------------------------
@@ -522,11 +523,11 @@ public:
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::CSSStyleDeclarationImpl *styleDeclaration() const { return m_decl; }
+    DOM::CSSMutableStyleDeclarationImpl *styleDeclaration() const { return m_decl; }
     int property() const { return m_property; }
     
 private:
-    DOM::CSSStyleDeclarationImpl *m_decl;
+    DOM::CSSMutableStyleDeclarationImpl *m_decl;
     int m_property;
     DOM::DOMString m_oldValue;
     bool m_important;

@@ -32,18 +32,17 @@
 namespace DOM {
 
 class DOMString;
-class CSSStyleDeclarationImpl;
 class HTMLFormElementImpl;
 class DocumentFragmentImpl;
 
 enum MappedAttributeEntry { eNone, eUniversal, ePersistent, eReplaced, eBlock, eHR, eUnorderedList, eListItem,
     eTable, eCell, eCaption };
 
-class CSSMappedAttributeDeclarationImpl : public CSSStyleDeclarationImpl
+class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl
 {
 public:
     CSSMappedAttributeDeclarationImpl(CSSRuleImpl *parentRule)
-    : CSSStyleDeclarationImpl(parentRule), m_entryType(eNone), m_attrName(0)
+    : CSSMutableStyleDeclarationImpl(parentRule), m_entryType(eNone), m_attrName(0)
     {}
     
     virtual ~CSSMappedAttributeDeclarationImpl();
@@ -168,9 +167,9 @@ public:
 
     virtual void click();
     
-    CSSStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl; }
-    virtual CSSStyleDeclarationImpl* additionalAttributeStyleDecl();
-    CSSStyleDeclarationImpl* getInlineStyleDecl();
+    CSSMutableStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl; }
+    virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
+    CSSMutableStyleDeclarationImpl* getInlineStyleDecl();
     void createInlineStyleDecl();
      
     virtual AttributeImpl* createAttribute(NodeImpl::Id id, DOMStringImpl* value);
@@ -190,7 +189,7 @@ protected:
     // for IMG, OBJECT and APPLET
     void addHTMLAlignment(HTMLAttributeImpl* htmlAttr);
 
-    CSSStyleDeclarationImpl* m_inlineStyleDecl;
+    CSSMutableStyleDeclarationImpl* m_inlineStyleDecl;
 };
 
 class HTMLGenericElementImpl : public HTMLElementImpl

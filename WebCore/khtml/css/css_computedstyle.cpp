@@ -2,7 +2,7 @@
  * css_computedstyle.cpp
  *
  * Copyright (C)  2004  Zack Rusin <zack@kde.org>
- * Copyright (C)  2004  Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  * 02111-1307  USA
  */
+
 #include "css_computedstyle.h"
 
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "dom_atomicstring.h"
+#include "dom_exception.h"
 #include "dom_string.h"
 #include "font.h"
 #include "khtmllayout.h"
@@ -43,16 +45,120 @@ using khtml::Font;
 using khtml::FontDef;
 using khtml::Length;
 using khtml::LengthBox;
+using khtml::RenderObject;
 using khtml::RenderStyle;
 using khtml::ShadowData;
 using khtml::StyleDashboardRegion;
 
 namespace DOM {
 
+// List of all properties we know how to compute, omitting shorthands.
+static const int computedProperties[] = {
+    CSS_PROP_BACKGROUND_COLOR,
+    CSS_PROP_BACKGROUND_IMAGE,
+    CSS_PROP_BACKGROUND_REPEAT,
+    CSS_PROP_BACKGROUND_ATTACHMENT,
+    CSS_PROP_BACKGROUND_POSITION,
+    CSS_PROP_BACKGROUND_POSITION_X,
+    CSS_PROP_BACKGROUND_POSITION_Y,
+    CSS_PROP_BORDER_COLLAPSE,
+    CSS_PROP_BORDER_SPACING,
+    CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING,
+    CSS_PROP__KHTML_BORDER_VERTICAL_SPACING,
+    CSS_PROP_BORDER_TOP_COLOR,
+    CSS_PROP_BORDER_RIGHT_COLOR,
+    CSS_PROP_BORDER_BOTTOM_COLOR,
+    CSS_PROP_BORDER_LEFT_COLOR,
+    CSS_PROP_BORDER_TOP_STYLE,
+    CSS_PROP_BORDER_RIGHT_STYLE,
+    CSS_PROP_BORDER_BOTTOM_STYLE,
+    CSS_PROP_BORDER_LEFT_STYLE,
+    CSS_PROP_BORDER_TOP_WIDTH,
+    CSS_PROP_BORDER_RIGHT_WIDTH,
+    CSS_PROP_BORDER_BOTTOM_WIDTH,
+    CSS_PROP_BORDER_LEFT_WIDTH,
+    CSS_PROP_BOTTOM,
+    CSS_PROP__KHTML_BOX_ALIGN,
+    CSS_PROP__KHTML_BOX_DIRECTION,
+    CSS_PROP__KHTML_BOX_FLEX,
+    CSS_PROP__KHTML_BOX_FLEX_GROUP,
+    CSS_PROP__KHTML_BOX_LINES,
+    CSS_PROP__KHTML_BOX_ORDINAL_GROUP,
+    CSS_PROP__KHTML_BOX_ORIENT,
+    CSS_PROP__KHTML_BOX_PACK,
+    CSS_PROP_CAPTION_SIDE,
+    CSS_PROP_CLEAR,
+    CSS_PROP_COLOR,
+    CSS_PROP_CURSOR,
+    CSS_PROP__APPLE_DASHBOARD_REGION,
+    CSS_PROP_DIRECTION,
+    CSS_PROP_DISPLAY,
+    CSS_PROP_EMPTY_CELLS,
+    CSS_PROP_FLOAT,
+    CSS_PROP_FONT_FAMILY,
+    CSS_PROP_FONT_SIZE,
+    CSS_PROP_FONT_STYLE,
+    CSS_PROP_FONT_VARIANT,
+    CSS_PROP_FONT_WEIGHT,
+    CSS_PROP_HEIGHT,
+    CSS_PROP_LEFT,
+    CSS_PROP_LETTER_SPACING,
+    CSS_PROP__KHTML_LINE_BREAK,
+    CSS_PROP_LINE_HEIGHT,
+    CSS_PROP_LIST_STYLE_IMAGE,
+    CSS_PROP_LIST_STYLE_POSITION,
+    CSS_PROP_LIST_STYLE_TYPE,
+    CSS_PROP_MARGIN_TOP,
+    CSS_PROP_MARGIN_RIGHT,
+    CSS_PROP_MARGIN_BOTTOM,
+    CSS_PROP_MARGIN_LEFT,
+    CSS_PROP__KHTML_MARQUEE_DIRECTION,
+    CSS_PROP__KHTML_MARQUEE_INCREMENT,
+    CSS_PROP__KHTML_MARQUEE_REPETITION,
+    CSS_PROP__KHTML_MARQUEE_STYLE,
+    CSS_PROP_MAX_HEIGHT,
+    CSS_PROP_MAX_WIDTH,
+    CSS_PROP_MIN_HEIGHT,
+    CSS_PROP_MIN_WIDTH,
+    CSS_PROP__KHTML_NBSP_MODE,
+    CSS_PROP_OPACITY,
+    CSS_PROP_ORPHANS,
+    CSS_PROP_OUTLINE_STYLE,
+    CSS_PROP_OVERFLOW,
+    CSS_PROP_PADDING_TOP,
+    CSS_PROP_PADDING_RIGHT,
+    CSS_PROP_PADDING_BOTTOM,
+    CSS_PROP_PADDING_LEFT,
+    CSS_PROP_PAGE_BREAK_AFTER,
+    CSS_PROP_PAGE_BREAK_BEFORE,
+    CSS_PROP_PAGE_BREAK_INSIDE,
+    CSS_PROP_POSITION,
+    CSS_PROP_RIGHT,
+    CSS_PROP_TABLE_LAYOUT,
+    CSS_PROP_TEXT_ALIGN,
+    CSS_PROP_TEXT_DECORATION,
+    CSS_PROP_TEXT_INDENT,
+    CSS_PROP_TEXT_SHADOW,
+    CSS_PROP_TEXT_TRANSFORM,
+    CSS_PROP_TOP,
+    CSS_PROP_UNICODE_BIDI,
+    CSS_PROP__KHTML_USER_MODIFY,
+    CSS_PROP_VERTICAL_ALIGN,
+    CSS_PROP_VISIBILITY,
+    CSS_PROP_WHITE_SPACE,
+    CSS_PROP_WIDOWS,
+    CSS_PROP_WIDTH,
+    CSS_PROP_WORD_SPACING,
+    CSS_PROP_WORD_WRAP,
+    CSS_PROP_Z_INDEX,
+};
+
+const unsigned numComputedProperties = sizeof(computedProperties) / sizeof(computedProperties[0]);
+
 // This is the list of properties we want to copy in the copyInheritableProperties() function.
 // It is the intersection of the list of inherited CSS properties and the
 // properties for which we have a computed implementation in this file.
-static const int InheritableProperties[] = {
+static const int inheritableProperties[] = {
     CSS_PROP_BORDER_COLLAPSE,
     CSS_PROP_BORDER_SPACING,
     CSS_PROP_COLOR,
@@ -67,9 +173,13 @@ static const int InheritableProperties[] = {
     CSS_PROP_TEXT_DECORATION, // this is not inheritable, yet we do want to consider it for typing style (name change needed? redesign?)
     CSS_PROP_TEXT_INDENT,
     CSS_PROP_TEXT_TRANSFORM,
+    CSS_PROP_ORPHANS,
     CSS_PROP_WHITE_SPACE,
+    CSS_PROP_WIDOWS,
     CSS_PROP_WORD_SPACING,
 };
+
+const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);
 
 static CSSValueImpl* valueForLength(const Length &length)
 {
@@ -150,30 +260,37 @@ static CSSValueImpl* valueForShadow(const ShadowData *shadow)
     return list;
 }
 
-CSSValueImpl* CSSComputedStyleDeclarationImpl::getPositionOffsetValue(int propertyID) const
+static CSSValueImpl *getPositionOffsetValue(RenderObject *renderer, int propertyID)
 {
+    if (!renderer)
+        return 0;
+
+    RenderStyle *style = renderer->style();
+    if (!style)
+        return 0;
+
     Length l;
     switch (propertyID) {
     case CSS_PROP_LEFT:
-        l = m_renderer->style()->left();
+        l = style->left();
         break;
     case CSS_PROP_RIGHT:
-        l = m_renderer->style()->right();
+        l = style->right();
         break;
     case CSS_PROP_TOP:
-        l = m_renderer->style()->top();
+        l = style->top();
         break;
     case CSS_PROP_BOTTOM:
-        l = m_renderer->style()->bottom();
+        l = style->bottom();
         break;
     default:
         return 0;
     }
 
-    if (m_renderer->isPositioned())
+    if (renderer->isPositioned())
         return valueForLength(l);
     
-    if (m_renderer->isRelPositioned())
+    if (renderer->isRelPositioned())
         // FIXME: It's not enough to simply return "auto" values for one offset if the other side is defined.
         // In other words if left is auto and right is not auto, then left's computed value is negative right.
         // So we should get the opposite length unit and see if it is auto.
@@ -183,10 +300,8 @@ CSSValueImpl* CSSComputedStyleDeclarationImpl::getPositionOffsetValue(int proper
 }
 
 CSSComputedStyleDeclarationImpl::CSSComputedStyleDeclarationImpl(NodeImpl *n)
-    : CSSStyleDeclarationImpl(0)
+    : m_node(n)
 {
-    setNode(n);
-    m_renderer = node()->renderer();
 }
 
 CSSComputedStyleDeclarationImpl::~CSSComputedStyleDeclarationImpl()
@@ -199,9 +314,9 @@ DOMString CSSComputedStyleDeclarationImpl::cssText() const
     return DOMString();
 }
 
-void CSSComputedStyleDeclarationImpl::setCssText(const DOMString &)
+void CSSComputedStyleDeclarationImpl::setCssText(const DOMString &, int &exceptionCode)
 {
-    ERROR("CSSComputedStyleDeclarationImpl is a read-only object");
+    exceptionCode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
 }
 
 // Display integers in integer format instead of "1.0".
@@ -216,28 +331,32 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     return getPropertyCSSValue(propertyID, UpdateLayout);
 }
 
-CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID, bool updateLayout) const
+CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
 {
+    NodeImpl *node = m_node.handle();
+    if (!node)
+        return 0;
+
     // Make sure our layout is up to date before we allow a query on these attributes.
-    DocumentImpl* docimpl = node()->getDocument();
+    DocumentImpl* docimpl = node->getDocument();
     if (docimpl && updateLayout)
         docimpl->updateLayout();
 
-    if (!m_renderer)
+    RenderObject *renderer = node->renderer();
+    if (!renderer)
         return 0;
-    RenderStyle *style = m_renderer->style();
+    RenderStyle *style = renderer->style();
     if (!style)
         return 0;
 
-    switch(propertyID)
+    switch (propertyID)
     {
     case CSS_PROP_BACKGROUND_COLOR:
         return new CSSPrimitiveValueImpl(style->backgroundColor().rgb());
     case CSS_PROP_BACKGROUND_IMAGE:
         if (style->backgroundImage())
-            return new CSSPrimitiveValueImpl(style->backgroundImage()->url(),
-                                             CSSPrimitiveValue::CSS_URI);
-        return 0;
+            return new CSSPrimitiveValueImpl(style->backgroundImage()->url(), CSSPrimitiveValue::CSS_URI);
+        return new CSSPrimitiveValueImpl(CSS_VAL_NONE);
     case CSS_PROP_BACKGROUND_REPEAT:
         switch (style->backgroundRepeat()) {
             case khtml::REPEAT:
@@ -263,13 +382,13 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         if (length.isPercent())
             string = numberAsString(length.length()) + "%";
         else
-            string = numberAsString(length.minWidth(m_renderer->contentWidth()));
+            string = numberAsString(length.minWidth(renderer->contentWidth()));
         string += " ";
         length = style->backgroundYPosition();
         if (length.isPercent())
             string += numberAsString(length.length()) + "%";
         else
-            string += numberAsString(length.minWidth(m_renderer->contentWidth()));
+            string += numberAsString(length.minWidth(renderer->contentWidth()));
         return new CSSPrimitiveValueImpl(string, CSSPrimitiveValue::CSS_STRING);
     }
     case CSS_PROP_BACKGROUND_POSITION_X:
@@ -323,37 +442,99 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP_BORDER_LEFT_WIDTH:
         return new CSSPrimitiveValueImpl(style->borderLeftWidth(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_BOTTOM:
-        return getPositionOffsetValue(CSS_PROP_BOTTOM);
+        return getPositionOffsetValue(renderer, CSS_PROP_BOTTOM);
     case CSS_PROP__KHTML_BOX_ALIGN:
-        // FIXME: unimplemented
-        break;
+        switch (style->boxAlign()) {
+            case khtml::BSTRETCH:
+                return new CSSPrimitiveValueImpl(CSS_VAL_STRETCH);
+            case khtml::BSTART:
+                return new CSSPrimitiveValueImpl(CSS_VAL_START);
+            case khtml::BCENTER:
+                return new CSSPrimitiveValueImpl(CSS_VAL_CENTER);
+            case khtml::BEND:
+                return new CSSPrimitiveValueImpl(CSS_VAL_END);
+            case khtml::BBASELINE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_BASELINE);
+            case khtml::BJUSTIFY:
+                break; // not allowed
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP__KHTML_BOX_DIRECTION:
-        // FIXME: unimplemented
-        break;
+        switch (style->boxDirection()) {
+            case khtml::BNORMAL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
+            case khtml::BREVERSE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_REVERSE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP__KHTML_BOX_FLEX:
-        // FIXME: unimplemented
-        break;
+        return new CSSPrimitiveValueImpl(style->boxFlex(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP__KHTML_BOX_FLEX_GROUP:
-        // FIXME: unimplemented
-        break;
+        return new CSSPrimitiveValueImpl(style->boxFlexGroup(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP__KHTML_BOX_LINES:
-        // FIXME: unimplemented
-        break;
+        switch (style->boxLines()) {
+            case khtml::SINGLE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_SINGLE);
+            case khtml::MULTIPLE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_MULTIPLE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP__KHTML_BOX_ORDINAL_GROUP:
-        // FIXME: unimplemented
-        break;
+        return new CSSPrimitiveValueImpl(style->boxOrdinalGroup(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP__KHTML_BOX_ORIENT:
-        // FIXME: unimplemented
-        break;
+        switch (style->boxOrient()) {
+            case khtml::HORIZONTAL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_HORIZONTAL);
+            case khtml::VERTICAL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_VERTICAL);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP__KHTML_BOX_PACK:
-        // FIXME: unimplemented
-        break;
+        switch (style->boxPack()) {
+            case khtml::BSTART:
+                return new CSSPrimitiveValueImpl(CSS_VAL_START);
+            case khtml::BEND:
+                return new CSSPrimitiveValueImpl(CSS_VAL_END);
+            case khtml::BCENTER:
+                return new CSSPrimitiveValueImpl(CSS_VAL_CENTER);
+            case khtml::BJUSTIFY:
+                return new CSSPrimitiveValueImpl(CSS_VAL_JUSTIFY);
+            case khtml::BSTRETCH:
+            case khtml::BBASELINE:
+                break; // not allowed
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_CAPTION_SIDE:
-        // FIXME: unimplemented
-        break;
+        switch (style->captionSide()) {
+            case khtml::CAPLEFT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_LEFT);
+            case khtml::CAPRIGHT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_RIGHT);
+            case khtml::CAPTOP:
+                return new CSSPrimitiveValueImpl(CSS_VAL_TOP);
+            case khtml::CAPBOTTOM:
+                return new CSSPrimitiveValueImpl(CSS_VAL_BOTTOM);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_CLEAR:
-        // FIXME: unimplemented
-        break;
+        switch (style->clear()) {
+            case khtml::CNONE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NONE);
+            case khtml::CLEFT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_LEFT);
+            case khtml::CRIGHT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_RIGHT);
+            case khtml::CBOTH:
+                return new CSSPrimitiveValueImpl(CSS_VAL_BOTH);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_CLIP:
         // FIXME: unimplemented
         break;
@@ -369,11 +550,51 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
         break;
     case CSS_PROP_CURSOR:
-        // FIXME: unimplemented
-        break;
+        switch (style->cursor()) {
+            case khtml::CURSOR_AUTO:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
+            case khtml::CURSOR_CROSS:
+                return new CSSPrimitiveValueImpl(CSS_VAL_CROSSHAIR);
+            case khtml::CURSOR_DEFAULT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_DEFAULT);
+            case khtml::CURSOR_POINTER:
+                return new CSSPrimitiveValueImpl(CSS_VAL_POINTER);
+            case khtml::CURSOR_MOVE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_MOVE);
+            case khtml::CURSOR_E_RESIZE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_E_RESIZE);
+            case khtml::CURSOR_NE_RESIZE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NE_RESIZE);
+            case khtml::CURSOR_NW_RESIZE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NW_RESIZE);
+            case khtml::CURSOR_N_RESIZE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_N_RESIZE);
+            case khtml::CURSOR_SE_RESIZE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_SE_RESIZE);
+            case khtml::CURSOR_SW_RESIZE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_SW_RESIZE);
+            case khtml::CURSOR_S_RESIZE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_S_RESIZE);
+            case khtml::CURSOR_W_RESIZE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_W_RESIZE);
+            case khtml::CURSOR_TEXT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_TEXT);
+            case khtml::CURSOR_WAIT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_WAIT);
+            case khtml::CURSOR_HELP:
+                return new CSSPrimitiveValueImpl(CSS_VAL_HELP);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_DIRECTION:
-        // FIXME: unimplemented
-        break;
+        switch (style->direction()) {
+            case khtml::LTR:
+                return new CSSPrimitiveValueImpl(CSS_VAL_LTR);
+            case khtml::RTL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_RTL);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_DISPLAY:
         switch (style->display()) {
             case khtml::INLINE:
@@ -447,9 +668,6 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         FontDef def = style->htmlFont().getFontDef();
         return new CSSPrimitiveValueImpl(def.specifiedSize, CSSPrimitiveValue::CSS_PX);
     }
-    case CSS_PROP_FONT_SIZE_ADJUST:
-        // FIXME: unimplemented
-        break;
     case CSS_PROP_FONT_STRETCH:
         // FIXME: unimplemented
         break;
@@ -481,9 +699,9 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
             return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
     }
     case CSS_PROP_HEIGHT:
-        return new CSSPrimitiveValueImpl(m_renderer->contentHeight(), CSSPrimitiveValue::CSS_PX);
+        return new CSSPrimitiveValueImpl(renderer->contentHeight(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_LEFT:
-        return getPositionOffsetValue(CSS_PROP_LEFT);
+        return getPositionOffsetValue(renderer, CSS_PROP_LEFT);
     case CSS_PROP_LETTER_SPACING:
         if (style->letterSpacing() == 0)
             return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
@@ -501,14 +719,65 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         }
     }
     case CSS_PROP_LIST_STYLE_IMAGE:
-        // FIXME: unimplemented
-        break;
+        if (style->listStyleImage())
+            return new CSSPrimitiveValueImpl(style->listStyleImage()->url(), CSSPrimitiveValue::CSS_URI);
+        return new CSSPrimitiveValueImpl(CSS_VAL_NONE);
     case CSS_PROP_LIST_STYLE_POSITION:
-        // FIXME: unimplemented
-        break;
+        switch (style->listStylePosition()) {
+            case khtml::OUTSIDE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_OUTSIDE);
+            case khtml::INSIDE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_INSIDE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_LIST_STYLE_TYPE:
-        // FIXME: unimplemented
-        break;
+        switch (style->listStyleType()) {
+            case khtml::LNONE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NONE);
+            case khtml::DISC:
+                return new CSSPrimitiveValueImpl(CSS_VAL_DISC);
+            case khtml::CIRCLE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_CIRCLE);
+            case khtml::SQUARE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_SQUARE);
+            case khtml::LDECIMAL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_DECIMAL);
+            case khtml::DECIMAL_LEADING_ZERO:
+                return new CSSPrimitiveValueImpl(CSS_VAL_DECIMAL_LEADING_ZERO);
+            case khtml::LOWER_ROMAN:
+                return new CSSPrimitiveValueImpl(CSS_VAL_LOWER_ROMAN);
+            case khtml::UPPER_ROMAN:
+                return new CSSPrimitiveValueImpl(CSS_VAL_UPPER_ROMAN);
+            case khtml::LOWER_GREEK:
+                return new CSSPrimitiveValueImpl(CSS_VAL_LOWER_GREEK);
+            case khtml::LOWER_ALPHA:
+                return new CSSPrimitiveValueImpl(CSS_VAL_LOWER_ALPHA);
+            case khtml::LOWER_LATIN:
+                return new CSSPrimitiveValueImpl(CSS_VAL_LOWER_LATIN);
+            case khtml::UPPER_ALPHA:
+                return new CSSPrimitiveValueImpl(CSS_VAL_UPPER_ALPHA);
+            case khtml::UPPER_LATIN:
+                return new CSSPrimitiveValueImpl(CSS_VAL_UPPER_LATIN);
+            case khtml::HEBREW:
+                return new CSSPrimitiveValueImpl(CSS_VAL_HEBREW);
+            case khtml::ARMENIAN:
+                return new CSSPrimitiveValueImpl(CSS_VAL_ARMENIAN);
+            case khtml::GEORGIAN:
+                return new CSSPrimitiveValueImpl(CSS_VAL_GEORGIAN);
+            case khtml::CJK_IDEOGRAPHIC:
+                return new CSSPrimitiveValueImpl(CSS_VAL_CJK_IDEOGRAPHIC);
+            case khtml::HIRAGANA:
+                return new CSSPrimitiveValueImpl(CSS_VAL_HIRAGANA);
+            case khtml::KATAKANA:
+                return new CSSPrimitiveValueImpl(CSS_VAL_KATAKANA);
+            case khtml::HIRAGANA_IROHA:
+                return new CSSPrimitiveValueImpl(CSS_VAL_HIRAGANA_IROHA);
+            case khtml::KATAKANA_IROHA:
+                return new CSSPrimitiveValueImpl(CSS_VAL_KATAKANA_IROHA);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_MARGIN_TOP:
         return valueForLength(style->marginTop());
     case CSS_PROP_MARGIN_RIGHT:
@@ -521,22 +790,57 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
         break;
     case CSS_PROP__KHTML_MARQUEE_DIRECTION:
-        // FIXME: unimplemented
-        break;
+        switch (style->marqueeDirection()) {
+            case khtml::MFORWARD:
+                return new CSSPrimitiveValueImpl(CSS_VAL_FORWARDS);
+            case khtml::MBACKWARD:
+                return new CSSPrimitiveValueImpl(CSS_VAL_BACKWARDS);
+            case khtml::MAUTO:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
+            case khtml::MUP:
+                return new CSSPrimitiveValueImpl(CSS_VAL_UP);
+            case khtml::MDOWN:
+                return new CSSPrimitiveValueImpl(CSS_VAL_DOWN);
+            case khtml::MLEFT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_LEFT);
+            case khtml::MRIGHT:
+                return new CSSPrimitiveValueImpl(CSS_VAL_RIGHT);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP__KHTML_MARQUEE_INCREMENT:
         return valueForLength(style->marqueeIncrement());
     case CSS_PROP__KHTML_MARQUEE_REPETITION:
-        // FIXME: unimplemented
-        break;
+        if (style->marqueeLoopCount() < 0)
+            return new CSSPrimitiveValueImpl(CSS_VAL_INFINITE);
+        return new CSSPrimitiveValueImpl(style->marqueeLoopCount(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP__KHTML_MARQUEE_SPEED:
         // FIXME: unimplemented
         break;
     case CSS_PROP__KHTML_MARQUEE_STYLE:
-        // FIXME: unimplemented
-        break;
+        switch (style->marqueeBehavior()) {
+            case khtml::MNONE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NONE);
+            case khtml::MSCROLL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_SCROLL);
+            case khtml::MSLIDE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_SLIDE);
+            case khtml::MALTERNATE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_ALTERNATE);
+            case khtml::MUNFURL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_UNFURL);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP__KHTML_USER_MODIFY:
-        // FIXME: unimplemented
-        break;
+        switch (style->userModify()) {
+            case khtml::READ_ONLY:
+                return new CSSPrimitiveValueImpl(CSS_VAL_READ_ONLY);
+            case khtml::READ_WRITE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_READ_WRITE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_MAX_HEIGHT:
         return valueForLength(style->maxHeight());
     case CSS_PROP_MAX_WIDTH:
@@ -546,13 +850,9 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP_MIN_WIDTH:
         return valueForLength(style->minWidth());
     case CSS_PROP_OPACITY:
-        // FIXME: unimplemented
-        break;
+        return new CSSPrimitiveValueImpl(style->opacity(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP_ORPHANS:
-        // FIXME: unimplemented
-        break;
-        // FIXME: unimplemented
-        break;
+        return new CSSPrimitiveValueImpl(style->orphans(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP_OUTLINE_COLOR:
         // FIXME: unimplemented
         break;
@@ -560,8 +860,9 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
         break;
     case CSS_PROP_OUTLINE_STYLE:
-        // FIXME: unimplemented
-        break;
+        if (style->outlineStyleIsAuto())
+            return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
+        return valueForBorderStyle(style->outlineStyle());
     case CSS_PROP_OUTLINE_WIDTH:
         // FIXME: unimplemented
         break;
@@ -594,22 +895,56 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
         break;
     case CSS_PROP_PAGE_BREAK_AFTER:
-        // FIXME: unimplemented
-        break;
+        switch (style->pageBreakAfter()) {
+            case khtml::PBAUTO:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
+            case khtml::PBALWAYS:
+                return new CSSPrimitiveValueImpl(CSS_VAL_ALWAYS);
+            case khtml::PBAVOID:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AVOID);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_PAGE_BREAK_BEFORE:
-        // FIXME: unimplemented
-        break;
+        switch (style->pageBreakBefore()) {
+            case khtml::PBAUTO:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
+            case khtml::PBALWAYS:
+                return new CSSPrimitiveValueImpl(CSS_VAL_ALWAYS);
+            case khtml::PBAVOID:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AVOID);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_PAGE_BREAK_INSIDE:
-        // FIXME: unimplemented
-        break;
+        switch (style->pageBreakInside()) {
+            case khtml::PBAUTO:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
+            case khtml::PBAVOID:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AVOID);
+            case khtml::PBALWAYS:
+                break; // not allowed
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_POSITION:
-        // FIXME: unimplemented
-        break;
+        switch (style->position()) {
+            case khtml::STATIC:
+                return new CSSPrimitiveValueImpl(CSS_VAL_STATIC);
+            case khtml::RELATIVE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_RELATIVE);
+            case khtml::ABSOLUTE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_ABSOLUTE);
+            case khtml::FIXED:
+                return new CSSPrimitiveValueImpl(CSS_VAL_FIXED);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_QUOTES:
         // FIXME: unimplemented
         break;
     case CSS_PROP_RIGHT:
-        return getPositionOffsetValue(CSS_PROP_RIGHT);
+        return getPositionOffsetValue(renderer, CSS_PROP_RIGHT);
     case CSS_PROP_SIZE:
         // FIXME: unimplemented
         break;
@@ -666,10 +1001,18 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         ASSERT_NOT_REACHED();
         return 0;
     case CSS_PROP_TOP:
-        return getPositionOffsetValue(CSS_PROP_TOP);
+        return getPositionOffsetValue(renderer, CSS_PROP_TOP);
     case CSS_PROP_UNICODE_BIDI:
-        // FIXME: unimplemented
-        break;
+        switch (style->unicodeBidi()) {
+            case khtml::UBNormal:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
+            case khtml::Embed:
+                return new CSSPrimitiveValueImpl(CSS_VAL_EMBED);
+            case khtml::Override:
+                return new CSSPrimitiveValueImpl(CSS_VAL_BIDI_OVERRIDE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_VERTICAL_ALIGN:
         switch (style->verticalAlign()) {
             case khtml::BASELINE:
@@ -720,10 +1063,9 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         ASSERT_NOT_REACHED();
         return 0;
     case CSS_PROP_WIDOWS:
-        // FIXME: unimplemented
-        break;
+        return new CSSPrimitiveValueImpl(style->widows(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP_WIDTH:
-        return new CSSPrimitiveValueImpl(m_renderer->contentWidth(), CSSPrimitiveValue::CSS_PX);
+        return new CSSPrimitiveValueImpl(renderer->contentWidth(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_WORD_SPACING:
         return new CSSPrimitiveValueImpl(style->wordSpacing(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_WORD_WRAP:
@@ -754,8 +1096,9 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         ASSERT_NOT_REACHED();
         return 0;
     case CSS_PROP_Z_INDEX:
-        // FIXME: unimplemented
-        break;
+        if (style->hasAutoZIndex())
+            return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
+        return new CSSPrimitiveValueImpl(style->zIndex(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP_BACKGROUND:
         // FIXME: unimplemented
         break;
@@ -821,9 +1164,6 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
         break;
 #endif
-    case CSS_PROP__KHTML_FLOW_MODE:
-        // FIXME: unimplemented
-        break;
 #if APPLE_CHANGES
         case CSS_PROP__APPLE_DASHBOARD_REGION: {
             QValueList<StyleDashboardRegion> regions = style->dashboardRegions();
@@ -872,57 +1212,46 @@ DOMString CSSComputedStyleDeclarationImpl::getPropertyValue(int propertyID) cons
 
 bool CSSComputedStyleDeclarationImpl::getPropertyPriority(int) const
 {
-    // This class does not support the notion of priority, since the object
-    // is a computed value.
+    // All computed styles have a priority of false (not "important").
     return false;
 }
 
-DOMString CSSComputedStyleDeclarationImpl::removeProperty(int)
+DOMString CSSComputedStyleDeclarationImpl::removeProperty(int, int &exceptionCode)
 {
-    ASSERT_NOT_REACHED();
+    exceptionCode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
     return DOMString();
 }
 
-bool CSSComputedStyleDeclarationImpl::setProperty(int, const DOMString &, bool)
+void CSSComputedStyleDeclarationImpl::setProperty(int, const DOMString &, bool, int &exceptionCode)
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    exceptionCode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
 }
 
-void CSSComputedStyleDeclarationImpl::setProperty(int, int, bool)
+unsigned long CSSComputedStyleDeclarationImpl::length() const
 {
-    ASSERT_NOT_REACHED();
+    return numComputedProperties;
 }
 
-void CSSComputedStyleDeclarationImpl::setLengthProperty(int, const DOMString&, bool, bool)
+DOMString CSSComputedStyleDeclarationImpl::item(unsigned long i) const
 {
-    ASSERT_NOT_REACHED();
+    if (i >= numComputedProperties)
+        return DOMString();
+    return getPropertyValue(computedProperties[i]);
 }
 
-void CSSComputedStyleDeclarationImpl::setProperty(const DOMString &)
+CSSMutableStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::copyInheritableProperties() const
 {
-    ASSERT_NOT_REACHED();
+    return copyPropertiesInSet(inheritableProperties, numInheritableProperties);
 }
 
-DOMString CSSComputedStyleDeclarationImpl::item(unsigned long) const
+CSSMutableStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::copy() const
 {
-    ERROR("unimplemented");
-    return DOMString();
+    return copyPropertiesInSet(computedProperties, numComputedProperties);
 }
 
-
-CSSProperty CSSComputedStyleDeclarationImpl::property(int id) const
+CSSMutableStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::makeMutable()
 {
-    CSSProperty prop;
-    prop.m_id = id;
-    prop.m_bImportant = false;
-    prop.setValue(getPropertyCSSValue(id));
-    return prop;
-}
-
-CSSStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::copyInheritableProperties() const
-{
-    return copyPropertiesInSet(InheritableProperties, sizeof(InheritableProperties) / sizeof(InheritableProperties[0]));
+    return copy();
 }
 
 } // namespace DOM

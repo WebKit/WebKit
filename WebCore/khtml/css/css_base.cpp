@@ -75,32 +75,6 @@ DOMString StyleBaseImpl::baseURL()
     return doc->baseURL();
 }
 
-void StyleBaseImpl::setParsedValue(int propId, const CSSValueImpl *parsedValue,
-				   bool important, QPtrList<CSSProperty> *propList)
-{
-    QPtrListIterator<CSSProperty> propIt(*propList);
-    propIt.toLast(); // just remove the top one - not sure what should happen if we have multiple instances of the property
-    while (propIt.current() &&
-           ( propIt.current()->m_id != propId ||
-             propIt.current()->m_bImportant != important) )
-        --propIt;
-    if (propIt.current())
-        propList->removeRef(propIt.current());
-
-    CSSProperty *prop = new CSSProperty();
-    prop->m_id = propId;
-    prop->setValue((CSSValueImpl *) parsedValue);
-    prop->m_bImportant = important;
-    
-    propList->append(prop);
-#ifdef CSS_DEBUG
-    kdDebug( 6080 ) << "added property: " << getPropertyName(propId).string()
-                    // non implemented yet << ", value: " << parsedValue->cssText().string()
-                    << " important: " << prop->m_bImportant
-                    << " nonCSS: " << prop->nonCSSHint << endl;
-#endif
-}
-
 // ------------------------------------------------------------------------------
 
 StyleListImpl::~StyleListImpl()

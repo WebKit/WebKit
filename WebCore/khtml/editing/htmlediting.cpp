@@ -55,6 +55,7 @@
 
 using DOM::AttrImpl;
 using DOM::CSSComputedStyleDeclarationImpl;
+using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::CSSPrimitiveValue;
 using DOM::CSSPrimitiveValueImpl;
 using DOM::CSSProperty;
@@ -292,13 +293,13 @@ void EditCommandPtr::setEndingSelection(const Selection &s) const
     get()->setEndingSelection(s);
 }
 
-CSSStyleDeclarationImpl *EditCommandPtr::typingStyle() const
+CSSMutableStyleDeclarationImpl *EditCommandPtr::typingStyle() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
     return get()->typingStyle();
 }
 
-void EditCommandPtr::setTypingStyle(CSSStyleDeclarationImpl *style) const
+void EditCommandPtr::setTypingStyle(CSSMutableStyleDeclarationImpl *style) const
 {
     IF_IMPL_NULL_RETURN;
     get()->setTypingStyle(style);
@@ -339,10 +340,16 @@ StyleChange::StyleChange(CSSStyleDeclarationImpl *style, const Position &positio
 
 void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
 {
-    QString styleText;
+    style->ref();
+    CSSMutableStyleDeclarationImpl *mutableStyle = style->makeMutable();
+    mutableStyle->ref();
+    style->deref();
+    
+    QString styleText("");
 
-    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
-        CSSProperty *property = it.current();
+    QValueListConstIterator<CSSProperty> end;
+    for (QValueListConstIterator<CSSProperty> it = mutableStyle->valuesIterator(); it != end; ++it) {
+        const CSSProperty *property = &*it;
 
         // If position is empty or the position passed in already has the 
         // style, just move on.
@@ -355,6 +362,8 @@ void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
 
         styleText += property->cssText().string();
     }
+
+    mutableStyle->deref();
 
     m_cssStyle = styleText.stripWhiteSpace();
 }
@@ -513,12 +522,12 @@ void EditCommand::setEndingSelection(const Selection &s)
         cmd->m_endingSelection = s;
 }
 
-void EditCommand::assignTypingStyle(CSSStyleDeclarationImpl *style)
+void EditCommand::assignTypingStyle(CSSMutableStyleDeclarationImpl *style)
 {
     if (m_typingStyle == style)
         return;
         
-    CSSStyleDeclarationImpl *old = m_typingStyle;
+    CSSMutableStyleDeclarationImpl *old = m_typingStyle;
     m_typingStyle = style;
     if (m_typingStyle)
         m_typingStyle->ref();
@@ -526,7 +535,7 @@ void EditCommand::assignTypingStyle(CSSStyleDeclarationImpl *style)
         old->deref();
 }
 
-void EditCommand::setTypingStyle(CSSStyleDeclarationImpl *style)
+void EditCommand::setTypingStyle(CSSMutableStyleDeclarationImpl *style)
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
@@ -978,7 +987,7 @@ void AppendNodeCommand::doUnapply()
 // ApplyStyleCommand
 
 ApplyStyleCommand::ApplyStyleCommand(DocumentImpl *document, CSSStyleDeclarationImpl *style)
-    : CompositeEditCommand(document), m_style(style)
+    : CompositeEditCommand(document), m_style(style->makeMutable())
 {   
     ASSERT(m_style);
     m_style->ref();
@@ -992,12 +1001,12 @@ ApplyStyleCommand::~ApplyStyleCommand()
 
 void ApplyStyleCommand::doApply()
 {
-    CSSStyleDeclarationImpl *blockStyle = m_style->copyBlockProperties();
+    CSSMutableStyleDeclarationImpl *blockStyle = m_style->copyBlockProperties();
     blockStyle->ref();
     applyBlockStyle(blockStyle);
 
     if (blockStyle->length() < m_style->length()) {
-        CSSStyleDeclarationImpl *inlineStyle = new CSSStyleDeclarationImpl(0, m_style->values());
+        CSSMutableStyleDeclarationImpl *inlineStyle = m_style->copy();
         inlineStyle->ref();
         blockStyle->diff(inlineStyle);
         applyInlineStyle(inlineStyle);
@@ -1009,7 +1018,7 @@ void ApplyStyleCommand::doApply()
     setEndingSelectionNeedsLayout();
 }
 
-void ApplyStyleCommand::applyBlockStyle(CSSStyleDeclarationImpl *style)
+void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
 {
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
@@ -1042,7 +1051,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSStyleDeclarationImpl *style)
     }
 }
 
-void ApplyStyleCommand::applyInlineStyle(CSSStyleDeclarationImpl *style)
+void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
 {
     // adjust to the positions we want to use for applying style
     Position start(endingSelection().start().downstream(StayInBlock).equivalentRangeCompliantPosition());
@@ -1107,11 +1116,11 @@ void ApplyStyleCommand::applyInlineStyle(CSSStyleDeclarationImpl *style)
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommand: style-removal helpers
 
-bool ApplyStyleCommand::isHTMLStyleNode(CSSStyleDeclarationImpl *style, HTMLElementImpl *elem)
+bool ApplyStyleCommand::isHTMLStyleNode(CSSMutableStyleDeclarationImpl *style, HTMLElementImpl *elem)
 {
-    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
-        CSSProperty *property = it.current();
-        switch (property->id()) {
+    QValueListConstIterator<CSSProperty> end;
+    for (QValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
+        switch ((*it).id()) {
             case CSS_PROP_FONT_WEIGHT:
                 if (elem->id() == ID_B)
                     return true;
@@ -1136,21 +1145,22 @@ void ApplyStyleCommand::removeHTMLStyleNode(HTMLElementImpl *elem)
     removeNodePreservingChildren(elem);
 }
 
-void ApplyStyleCommand::removeCSSStyle(CSSStyleDeclarationImpl *style, HTMLElementImpl *elem)
+void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclarationImpl *style, HTMLElementImpl *elem)
 {
     ASSERT(style);
     ASSERT(elem);
 
-    CSSStyleDeclarationImpl *decl = elem->inlineStyleDecl();
+    CSSMutableStyleDeclarationImpl *decl = elem->inlineStyleDecl();
     if (!decl)
         return;
 
-    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
-        CSSProperty *property = it.current();
-        CSSValueImpl *value = decl->getPropertyCSSValue(property->id());
+    QValueListConstIterator<CSSProperty> end;
+    for (QValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
+        int propertyID = (*it).id();
+        CSSValueImpl *value = decl->getPropertyCSSValue(propertyID);
         if (value) {
             value->ref();
-            removeCSSProperty(decl, property->id());
+            removeCSSProperty(decl, propertyID);
             value->deref();
         }
     }
@@ -1159,7 +1169,7 @@ void ApplyStyleCommand::removeCSSStyle(CSSStyleDeclarationImpl *style, HTMLEleme
         // Check to see if the span is one we added to apply style.
         // If it is, and there are no more attributes on the span other than our
         // class marker, remove the span.
-        if (decl->values()->count() == 0) {
+        if (decl->length() == 0) {
             removeNodeAttribute(elem, ATTR_STYLE);
             NamedAttrMapImpl *map = elem->attributes();
             if (map && map->length() == 1 && elem->getAttribute(ATTR_CLASS) == styleSpanClassString())
@@ -1168,7 +1178,7 @@ void ApplyStyleCommand::removeCSSStyle(CSSStyleDeclarationImpl *style, HTMLEleme
     }
 }
 
-void ApplyStyleCommand::removeBlockStyle(CSSStyleDeclarationImpl *style, const Position &start, const Position &end)
+void ApplyStyleCommand::removeBlockStyle(CSSMutableStyleDeclarationImpl *style, const Position &start, const Position &end)
 {
     ASSERT(start.isNotNull());
     ASSERT(end.isNotNull());
@@ -1178,7 +1188,7 @@ void ApplyStyleCommand::removeBlockStyle(CSSStyleDeclarationImpl *style, const P
     
 }
 
-void ApplyStyleCommand::removeInlineStyle(CSSStyleDeclarationImpl *style, const Position &start, const Position &end)
+void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style, const Position &start, const Position &end)
 {
     ASSERT(start.isNotNull());
     ASSERT(end.isNotNull());
@@ -1262,21 +1272,21 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(NodeImpl *startNode, NodeIm
     }
 }
 
-void ApplyStyleCommand::addBlockStyleIfNeeded(CSSStyleDeclarationImpl *style, HTMLElementImpl *block)
+void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl *style, HTMLElementImpl *block)
 {
     // Do not check for legacy styles here. Those styles, like <B> and <I>, only apply for
     // inline content.
     StyleChange styleChange(style, Position(block, 0), StyleChange::DoNotUseLegacyHTMLStyles);
     if (styleChange.cssStyle().length() > 0) {
         DOMString cssText = styleChange.cssStyle();
-        CSSStyleDeclarationImpl *decl = block->inlineStyleDecl();
+        CSSMutableStyleDeclarationImpl *decl = block->inlineStyleDecl();
         if (decl)
             cssText += decl->cssText();
         block->setAttribute(ATTR_STYLE, cssText);
     }
 }
 
-void ApplyStyleCommand::addInlineStyleIfNeeded(CSSStyleDeclarationImpl *style, NodeImpl *startNode, NodeImpl *endNode)
+void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *style, NodeImpl *startNode, NodeImpl *endNode)
 {
     // FIXME: This function should share code with CompositeEditCommand::applyTypingStyle.
     // Both functions do similar work, and the common parts could be factored out.
@@ -1979,7 +1989,7 @@ void InsertLineBreakCommand::doApply()
     // Handle the case where there is a typing style.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
     if (typingStyle && typingStyle->length() > 0)
         nodeToInsert = applyTypingStyle(breakNode);
     
@@ -2413,7 +2423,7 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
         // Handle the case where there is a typing style.
         // FIXME: Improve typing style.
         // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-        CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+        CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
         if (typingStyle && typingStyle->length() > 0)
             nodeToInsert = applyTypingStyle(textNode);
         
@@ -2439,7 +2449,7 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
         // Handle the case where there is a typing style.
         // FIXME: Improve typing style.
         // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-        CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+        CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
         if (typingStyle && typingStyle->length() > 0) {
             if (pos.node()->isTextNode() && pos.offset() > pos.node()->caretMinOffset() && pos.offset() < pos.node()->caretMaxOffset()) {
                 // Need to split current text node in order to insert a span.
@@ -2822,7 +2832,7 @@ void MoveSelectionCommand::doApply()
 // RemoveCSSPropertyCommand
 
 RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(DocumentImpl *document, CSSStyleDeclarationImpl *decl, int property)
-    : EditCommand(document), m_decl(decl), m_property(property), m_important(false)
+    : EditCommand(document), m_decl(decl->makeMutable()), m_property(property), m_important(false)
 {
     ASSERT(m_decl);
     m_decl->ref();

@@ -1,3 +1,214 @@
+2004-11-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3885744> crash with XMLHttpRequest test page (reported by KDE folks)
+
+        * khtml/ecma/xmlhttprequest.cpp: (KJS::XMLHttpRequest::slotFinished):
+        Rolled in fix from KDE; make sure to set job to 0 before calling changeState.
+
+        - fixed <rdar://problem/3885729> attempting to modify a computed style does nothing, but should raise a DOM exception
+        - fixed <rdar://problem/3885731> style declarations use too many malloc blocks; switch to QValueList
+        - fixed <rdar://problem/3885739> DOM::NodeImpl accessor in DOM::Node class is hot; should be inlined
+        - changed NodeImpl calls like replaceChild to always ref/deref the parameter; this is a better way to fix
+          an entire category of leaks we have been fixing one by one recently
+        - changed computed styles so they hold a reference to the DOM node; the old code could end up with a
+          stale RenderObject pointer, although I never saw it do that in practice
+        - implemented the length and item methods for computed styles
+        - implemented querying additional properties in computed styles (29 more)
+
+        * khtml/khtml_part.h: Update forward declaration of CSSMutableStyleDeclarationImpl since it's
+        now a separate class rather than a typedef. Changed the parameter type of setTypingStyle to
+        take a mutable style.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setTypingStyle): Change parameter to take a mutable style.
+        (KHTMLPart::applyStyle): Add code to make a mutable style in case we are passed
+        a computed style; also change some types to mutable style.
+        (updateState): Update iteration of CSSProperty objects in a style declaration to use
+        the new valuesIterator interface.
+        (KHTMLPart::selectionHasStyle): Add a call to makeMutable.
+        (KHTMLPart::selectionStartHasStyle): Add call to makeMutable and update iteration.
+        (editingStyle): Change type to mutable style, and simplify the style-creation calls,
+        including accomodating the exception code that setCssText has now.
+        (KHTMLPart::applyEditingStyleToElement): Change types to mutable style.
+        (KHTMLPart::removeEditingStyleFromElement): Change code to call setChanged only if removing
+        the style attributes really was a change, although it's not an important optimization it's
+        good to do it right.
+
+        * khtml/css/css_base.h: Remove unneeded setParsedValue method.
+        * khtml/css/css_base.cpp: Remove unneeded setParsedValue method. All the places that were
+        calling it were already removing the old property explicitly, so the code in here to remove
+        the property again was redundant.
+
+        * khtml/css/css_computedstyle.h: Updated virtual functions for changes to parameters in base class.
+        Moved all the "set"-type functions so they are private. Store a node pointer instead of a renderer.
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::CSSComputedStyleDeclarationImpl): Hold a reference to
+        the node we compute style for, so we don't end up with a pointer to a deallocated RenderObject.
+        Before we had no guarantee the object would outlast us.
+        (DOM::CSSComputedStyleDeclarationImpl::setCssText): Add exception parameter, and set the
+        exception to NO_MODIFICATION_ALLOWED_ERR.
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Update to use node pointer rather
+        than renderer pointer. Added implementation for box-align, box-direction, box-flex, box-flex-group,
+        box-lines, box-ordinal-group, box-orient, box-pack, caption-side, clear, cursor, direction,
+        list-style-image, list-style-position, list-style-type, marquee-direction, marquee-repetition,
+        marquee-style, user-modify, opacity, orphans, outline-style, page-break-after, page-break-before,
+        page-break-inside, position, unicode-bidi, widows, z-index.
+        (DOM::CSSComputedStyleDeclarationImpl::removeProperty): Add exception parameter, and set the
+        exception to NO_MODIFICATION_ALLOWED_ERR.
+        (DOM::CSSComputedStyleDeclarationImpl::setProperty): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::length): Implemented.
+        (DOM::CSSComputedStyleDeclarationImpl::item): Implemented, calls getPropertyValue.
+        (DOM::CSSComputedStyleDeclarationImpl::copyInheritableProperties): Changed return type to
+        CSSMutableStyleDeclarationImpl.
+        (DOM::CSSComputedStyleDeclarationImpl::copy): Added.
+        (DOM::CSSComputedStyleDeclarationImpl::makeMutable): Added.
+
+        * khtml/css/css_ruleimpl.h: Update forward declaration of CSSMutableStyleDeclarationImpl since it's
+        now a separate class rather than a typedef.
+        * khtml/css/cssparser.h: Ditto.
+
+        * khtml/css/css_valueimpl.h: Refactor CSSStyleDeclarationImpl into two classes. New derived class
+        CSSMutableStyleDeclarationImpl has the guts, and the base class has only some virtual functions.
+        Removed a bunch of redundant stuff from other classes in this file too.
+        (DOM::DashboardRegionImpl::setNext): Ref new before deref'ing old to handle the set-to-same case.
+        (DOM::CSSProperty::CSSProperty): Added new overload so you can create a CSSProperty with initial values.
+        (DOM::CSSProperty::operator=): Added.
+        (DOM::CSSProperty::setValue): Use ref-before-deref pattern to simplify slightly.
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSStyleDeclarationImpl::CSSStyleDeclarationImpl): Remove uneeded things.
+        (DOM::CSSStyleDeclarationImpl::isStyleDeclaration): Put here now that it's no longer inline.
+        (DOM::CSSMutableStyleDeclarationImpl::CSSMutableStyleDeclarationImpl): Added.
+        (DOM::CSSMutableStyleDeclarationImpl::operator=): Added.
+        (DOM::CSSMutableStyleDeclarationImpl::~CSSMutableStyleDeclarationImpl): Updated.
+        (DOM::CSSMutableStyleDeclarationImpl::getPropertyValue): Removed now-uneeded check.
+        (DOM::CSSMutableStyleDeclarationImpl::get4Values): Moved here from base class.
+        (DOM::CSSMutableStyleDeclarationImpl::getShortHandValue): Ditto.
+        (DOM::CSSMutableStyleDeclarationImpl::getPropertyCSSValue): Update to use QValueList instead of QPtrList.
+        (DOM::CSSMutableStyleDeclarationImpl::removeProperty): Added exception parameter, updated for QValueList.
+        (DOM::CSSMutableStyleDeclarationImpl::setChanged): Moved here from base class.
+        (DOM::CSSMutableStyleDeclarationImpl::getPropertyPriority): Update to use QValueList.
+        (DOM::CSSMutableStyleDeclarationImpl::setProperty): Added more overloads to match new parameters.
+        (DOM::CSSMutableStyleDeclarationImpl::setStringProperty): Update to use QValueList.
+        (DOM::CSSMutableStyleDeclarationImpl::setImageProperty): Ditto.
+        (DOM::CSSMutableStyleDeclarationImpl::parseProperty): Remove unneeded initialization code due to QValueList.
+        (DOM::CSSMutableStyleDeclarationImpl::addParsedProperties): Added.
+        (DOM::CSSMutableStyleDeclarationImpl::setLengthProperty): Moved here from base class.
+        (DOM::CSSMutableStyleDeclarationImpl::length): Update to use QValueList.
+        (DOM::CSSMutableStyleDeclarationImpl::item): Moved here from base class.
+        (DOM::CSSMutableStyleDeclarationImpl::cssText): Return empty string rather than null string when there are
+        no styles in the list. Update to use QValueList.
+        (DOM::CSSMutableStyleDeclarationImpl::setCssText): Update to use QValueList and to take an exceptionCode
+        parameter and set it.
+        (DOM::CSSMutableStyleDeclarationImpl::merge): Update to use QValueList.
+        (DOM::CSSStyleDeclarationImpl::diff): Update to use QValueList.
+        (DOM::CSSMutableStyleDeclarationImpl::copyBlockProperties): Moved here from base class. Change return type.
+        (DOM::CSSStyleDeclarationImpl::copyPropertiesInSet): Update to use QValueList and use stack, not new/delete.
+        (DOM::CSSMutableStyleDeclarationImpl::makeMutable): Added.
+        (DOM::CSSMutableStyleDeclarationImpl::copy): Added.
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue): Changed to use addParsedProperties.
+        (CSSParser::parseDeclaration): Ditto.
+        (CSSParser::createStyleDeclaration): Use new constructor to create declaration in a more efficient manner.
+
+        * khtml/css/cssproperties.in: Removed unused font-size-adjust and -khtml-flow-mode.
+        * khtml/css/cssproperties.c: Regenerated.
+        * khtml/css/cssproperties.h: Regenerated.
+
+        * khtml/css/cssstyleselector.cpp: (khtml::CSSStyleSelector::applyDeclarations):
+        Updated to use QValueList interface to CSSMutableStyleDeclarationImpl.
+
+        * khtml/dom/css_value.cpp:
+        (DOM::CSSStyleDeclaration::cssText): Removed unneeded cast.
+        (DOM::CSSStyleDeclaration::setCssText): Added exception code handling.
+        (DOM::CSSStyleDeclaration::getPropertyValue): Changed to call getPropertyValue directly instead of
+        first doing getPropertyCSSValue and then doing cssText.
+        (DOM::CSSStyleDeclaration::getPropertyCSSValue): Removed unneeded cast.
+        (DOM::CSSStyleDeclaration::removeProperty): Added exception code handling. 
+        (DOM::CSSStyleDeclaration::setProperty): Added exception code handling.
+        (DOM::CSSStyleDeclaration::length): Removed unneeded cast.
+        (DOM::CSSStyleDeclaration::item): Removed unneeded cast.
+        (DOM::CSSStyleDeclaration::parentRule): Removed unneeded cast.
+        (DOM::CSSValue::setCssText): Removed strange non-implementation (still not implemented).
+
+        * khtml/dom/dom_node.h: Made isNull and handle functions inline.
+        * khtml/dom/dom_node.cpp: Ditto.
+
+        * khtml/editing/htmlediting.h: Change some types to mutable style.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommandPtr::typingStyle): Change return type to mutable style.
+        (khtml::EditCommandPtr::setTypingStyle): Change parameter to mutable style.
+        (khtml::StyleChange::init): Convert parameter to mutable style. Update to use QValueList.
+        (khtml::EditCommand::assignTypingStyle): Change parameter to mutable type.
+        (khtml::EditCommand::setTypingStyle): Ditto.
+        (khtml::ApplyStyleCommand::ApplyStyleCommand): Convert parameter to mutable style.
+        (khtml::ApplyStyleCommand::doApply): Change local variables to mutable style.
+        (khtml::ApplyStyleCommand::applyBlockStyle): Change parameter to mutable style.
+        (khtml::ApplyStyleCommand::applyInlineStyle): Ditto.
+        (khtml::ApplyStyleCommand::isHTMLStyleNode): Ditto.
+        (khtml::ApplyStyleCommand::removeCSSStyle): Ditto. Also update to use QValueList.
+        (khtml::ApplyStyleCommand::removeBlockStyle): Change parameter to mutable style.
+        (khtml::ApplyStyleCommand::removeInlineStyle): Ditto.
+        (khtml::ApplyStyleCommand::addBlockStyleIfNeeded): Ditto.
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded): Ditto.
+        (khtml::InsertLineBreakCommand::doApply): Convert locals to mutable style.
+        (khtml::InsertTextCommand::prepareForTextInsertion): Ditto.
+        (khtml::RemoveCSSPropertyCommand::RemoveCSSPropertyCommand): Convert parameter to mutable style.
+
+        * khtml/editing/jsediting.cpp: Convert types to mutable styles where we create styles.
+        * khtml/html/html_baseimpl.h: Change type to mutable style.
+        * khtml/html/html_baseimpl.cpp: (HTMLBodyElementImpl::createLinkDecl): Ditto.
+
+        * khtml/html/html_elementimpl.h: Make CSSMappedAttributeDeclarationImpl use the mutable style
+        class as a base class, and change types to mutable style as needed.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createInlineStyleDecl): Change type to mutable style.
+        (HTMLElementImpl::parseHTMLAttribute): Call parseProperty method.
+        (HTMLElementImpl::getInlineStyleDecl): Change type to mutable style.
+        (HTMLElementImpl::additionalAttributeStyleDecl): Ditto.
+        (HTMLElementImpl::createContextualFragment): Add ref/deref to fix potential node leak.
+        (HTMLElementImpl::setInnerHTML): Remove ref/deref pair because this leak is now fixed by changes
+        to appendChild.
+        (HTMLElementImpl::setOuterHTML): Remove ref/deref pair because this leak is now fixed by changes
+        to replaceChild.
+
+        * khtml/html/html_tableimpl.h: Change types to mutable style.
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::additionalAttributeStyleDecl): Change type to mutable style.
+        (HTMLTableElementImpl::getSharedCellDecl): Change type to mutable style.
+        (HTMLTableCellElementImpl::additionalAttributeStyleDecl): Change type to mutable style.
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::parseToken): Use a local variable to protect the node by ref'ing it. This is better
+        than using an explicit delete to make the node go away, and is required for compatibility with the
+        changes to the NodeImpl functions.
+        (KHTMLParser::insertNode): Ditto.
+        (KHTMLParser::createHead): Get rid of explicit delete, no longer needed because of changes to
+        the NodeImpl functions.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::createCSSStyleDeclaration): Call simpler constructor
+        now that there's no need to make the property list explictly.
+
+        * kwq/DOM-CSS.mm:
+        (-[DOMCSSStyleDeclaration setCssText:]): Raise exception when appropriate.
+        (-[DOMCSSStyleDeclaration removeProperty:]): Ditto.
+        (-[DOMCSSStyleDeclaration setProperty:::]): Dito.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::insertBefore): Always do a ref/deref, so callers don't have to worry about whether the
+        function succeeded or not for ownership purposes.
+        (NodeImpl::replaceChild): Ditto.
+        (NodeImpl::appendChild): Ditto.
+        (NodeBaseImpl::insertBefore): Ditto.
+        (NodeBaseImpl::replaceChild): Ditto.
+        (NodeBaseImpl::appendChild): Ditto.
+        (NodeBaseImpl::addChild): Ditto.
+
+        * WebCore-tests.exp: Removed CSSStyleDeclaration::length; not sure why it was in here.
+        * WebCore-combined.exp: Regenerated.
+
 2004-11-18  Maciej Stachowiak  <mjs@apple.com>
 
         still even more build fixing

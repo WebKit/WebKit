@@ -855,12 +855,12 @@ public:
      *   kdDebug(300) << "node isn't an element node" << endl;
      * </pre>
      */
-    bool isNull() const;
+    bool isNull() const { return impl == 0; }
 
     /**
      * @internal handle to the implementation object
      */
-    NodeImpl *handle() const;
+    NodeImpl *handle() const { return impl; }
 
     /**
      * @internal returns the index of a node

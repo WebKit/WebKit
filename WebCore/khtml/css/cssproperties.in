@@ -59,7 +59,6 @@ empty-cells
 float
 font-family
 font-size
-font-size-adjust
 font-stretch
 font-style
 font-variant
@@ -170,4 +169,3 @@ scrollbar-3dlight-color
 scrollbar-darkshadow-color
 scrollbar-track-color
 scrollbar-arrow-color
--khtml-flow-mode

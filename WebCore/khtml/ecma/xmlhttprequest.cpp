@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
  */
 
 #include "xmlhttprequest.h"
+
 #include "xmlhttprequest.lut.h"
 #include "kjs_window.h"
 #include "kjs_events.h"
@@ -505,8 +506,9 @@ void XMLHttpRequest::slotFinished(KIO::Job *)
     response += decoder->flush();
   }
 
-  changeState(Completed);
   job = 0;
+
+  changeState(Completed);
   
   if (decoder) {
     decoder->deref();
@@ -668,4 +670,4 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
   return Undefined();
 }
 
-}; // end namespace
+} // end namespace

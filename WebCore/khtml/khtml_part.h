@@ -42,8 +42,8 @@ class KJavaAppletContext;
 namespace DOM
 {
   class CSSComputedStyleDeclarationImpl;
+  class CSSMutableStyleDeclarationImpl;
   class CSSStyleDeclarationImpl;
-  typedef CSSStyleDeclarationImpl CSSMutableStyleDeclarationImpl;
   class DOMString;
   class Document;
   class DocumentImpl;
@@ -715,7 +715,7 @@ public:
   /**
    * Sets the typing style for the document.
    */
-  void setTypingStyle(DOM::CSSStyleDeclarationImpl *);
+  void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
 
   /**
    * Clears the typing style for the document.

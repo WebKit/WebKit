@@ -544,7 +544,7 @@ void HTMLTableElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     }
 }
 
-CSSStyleDeclarationImpl* HTMLTableElementImpl::additionalAttributeStyleDecl()
+CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::additionalAttributeStyleDecl()
 {
     if (m_noBorder)
         return 0;
@@ -572,7 +572,7 @@ CSSStyleDeclarationImpl* HTMLTableElementImpl::additionalAttributeStyleDecl()
     return decl;
 }
 
-CSSStyleDeclarationImpl* HTMLTableElementImpl::getSharedCellDecl()
+CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::getSharedCellDecl()
 {
     HTMLAttributeImpl attr(ATTR_CELLBORDER, m_noBorder ? "none" : (m_solid ? "solid" : "inset"));
     CSSMappedAttributeDeclarationImpl* decl = getMappedAttributeDecl(ePersistent, &attr);
@@ -972,7 +972,7 @@ void HTMLTableCellElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 }
 
 // used by table cells to share style decls created by the enclosing table.
-CSSStyleDeclarationImpl* HTMLTableCellElementImpl::additionalAttributeStyleDecl()
+CSSMutableStyleDeclarationImpl* HTMLTableCellElementImpl::additionalAttributeStyleDecl()
 {
     HTMLElementImpl* p = static_cast<HTMLElementImpl*>(parentNode());
     while(p && p->id() != ID_TABLE)
