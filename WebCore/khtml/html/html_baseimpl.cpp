@@ -226,6 +226,7 @@ NodeImpl::Id HTMLFrameElementImpl::id() const
     return ID_FRAME;
 }
 
+// FIXME: Why is this different from setLocation?
 void HTMLFrameElementImpl::updateForNewURL()
 {
     if (attached()) {
@@ -277,21 +278,28 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ID:
     case ATTR_NAME:
         name = attr->value();
+        // FIXME: If we are already attached, this doesn't actually change the frame's name.
+        // FIXME: If we are already attached, this doesn't check for frame name
+        // conflicts and generate a unique frame name.
         break;
     case ATTR_FRAMEBORDER:
     {
         frameBorder = attr->value().toInt();
         frameBorderSet = ( attr->val() != 0 );
+        // FIXME: If we are already attached, this has no effect.
     }
     break;
     case ATTR_MARGINWIDTH:
         marginWidth = attr->val()->toInt();
+        // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_MARGINHEIGHT:
         marginHeight = attr->val()->toInt();
+        // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_NORESIZE:
         noresize = true;
+        // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_SCROLLING:
         kdDebug( 6031 ) << "set scroll mode" << endl;
@@ -301,6 +309,8 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
             scrolling = QScrollView::AlwaysOn;
         else if( strcasecmp( attr->value(), "no" ) == 0 )
             scrolling = QScrollView::AlwaysOff;
+        // FIXME: If we are already attached, this has no effect.
+        // FIXME: Is this falling through on purpose, or do we want a break here?
 
     default:
         HTMLElementImpl::parseAttribute(attr);
@@ -369,6 +379,7 @@ void HTMLFrameElementImpl::attach()
         w->part()->requestFrame( static_cast<RenderFrame*>(m_render), url.string(), name.string() );
 }
 
+// FIXME: Why is this different from updateForNewURL?
 void HTMLFrameElementImpl::setLocation( const DOMString& str )
 {
     url = str;
@@ -400,8 +411,10 @@ DocumentImpl* HTMLFrameElementImpl::contentDocument() const
     KHTMLView* w = getDocument()->view();
 
     if (w) {
-	KHTMLPart *part = w->part()->findFrame( name.string() );
-	return part->xmlDocImpl();
+        KHTMLPart *part = w->part()->findFrame( name.string() );
+        if (part) {
+            return part->xmlDocImpl();
+        }
     }
 
     return 0;
@@ -642,6 +655,9 @@ void HTMLIFrameElementImpl::attach()
     assert(!m_render);
     assert(parentNode());
 
+    // FIXME: This self-reference check is the same as the code in the base class attach.
+    // We should refactor so we can share the code.
+    
     KHTMLView* w = getDocument()->view();
     // avoid endless recursion
     KURL u;

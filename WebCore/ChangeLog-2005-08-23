@@ -1,5 +1,14 @@
 2002-12-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Don.
+
+	- fixed 3135010 -- nil-dereference in KHTMLPart::xmlDocImpl() at channels.netscape.com
+
+        * khtml/html/html_baseimpl.cpp: (HTMLFrameElementImpl::contentDocument):
+        Add missing nil check. Also added lots of FIXME comments about problems I observed here.
+
+2002-12-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Richard and Don.
 
 	- fixed 3133207 -- crash in HTMLFrameElementImpl updateForNewURL at home.real.com
