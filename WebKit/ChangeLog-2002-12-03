@@ -7,7 +7,7 @@
 	* WebCoreSupport.subproj/IFImageRenderer.m:
 	* WebCoreSupport.subproj/IFImageRendererFactory.m:
 
-ut 2002-06-04  Darin Adler  <darin@apple.com>
+2002-06-04  Darin Adler  <darin@apple.com>
 
 	- fixed 2932862 -- exception -[NSCFArray getObjects:range:]: index (137)
 	beyond bounds (10)
