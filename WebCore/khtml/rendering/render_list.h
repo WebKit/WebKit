@@ -101,6 +101,9 @@ public:
                        int xoff, int yoff, int paintPhase);
 
     virtual void layout( );
+    virtual void calcMinMaxWidth();
+    
+    void updateMarkerLocation();
     
     void setNotInList(bool notInList) { _notInList = notInList; }
     bool notInList() const { return _notInList; }
