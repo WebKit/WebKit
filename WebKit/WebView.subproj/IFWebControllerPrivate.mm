@@ -114,7 +114,7 @@
         // Note that transitioning a frame to this state doesn't guarantee a layout, rather it
         // just indicates that an early layout can be performed.
         int timedLayoutSize = [[IFPreferences standardPreferences] _initialTimedLayoutSize];
-        if (progress->bytesSoFar > timedLayoutSize)
+        if ([progress bytesSoFar] > timedLayoutSize)
             [frame _transitionProvisionalToLayoutAcceptable];
     }
 }

@@ -352,7 +352,7 @@ static const char * const stateNames[6] = {
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
                 if ([thisView isDocumentHTML]){
-                    IFHTMLView *hview = thisDocumentView;
+                    IFHTMLView *hview = (IFHTMLView *)thisDocumentView;
                     [hview setNeedsLayout: YES];
                 }
                 [thisDocumentView layout];
@@ -543,6 +543,11 @@ static const char * const stateNames[6] = {
         [NSException raise:NSInvalidArgumentException format:@"URLPolicyForURL: returned an invalid IFURLPolicy"];
         return NO;
     }
+}
+
+- (void)_setProvisionalDataSource:(IFWebDataSource *)d
+{
+    [_private setProvisionalDataSource:d];
 }
 
 @end

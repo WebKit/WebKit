@@ -1,3 +1,37 @@
+2002-07-15  Darin Adler  <darin@apple.com>
+
+	Fixes so we are ready to compile as Objective C, not C++.
+	The C++ front end misses a lot of things the C front end catches.
+
+        * Plugins.subproj/IFNullPluginView.mm:
+        (-[IFNullPluginView drawRect:]): Add missing cast.
+        * Plugins.subproj/IFPluginStream.mm:
+        (-[IFPluginStream IFURLHandle:resourceDidFailLoadingWithResult:]): Use
+	[IFLoadProgress initWithURLHandle:] instead of getting at private fields.
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView setUpWindowAndPort]): Remove unused windowFrame.
+        (-[IFPluginView start]): Don't use a variable within a for statement.
+	Add missing cast.
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	Use [IFWebFrame _setProvisionalDataSource:] so we don't have to get at the
+	protected field _private.
+        * WebView.subproj/IFWebControllerPrivate.mm:
+        (-[IFWebController _mainReceivedProgress:forResourceHandle:fromDataSource:complete:]):
+	Use [IFProgress bytesSoFar] so we don't have to get at the protected field bytesSoFar.
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFrame _isLoadComplete]): Add missing cast.
+        (-[IFWebFrame _setProvisionalDataSource:]): Added.
+
+        * WebView.subproj/IFHTMLRepresentation.mm:
+        * WebView.subproj/IFHTMLViewPrivate.h:
+        * WebView.subproj/IFWebControllerPrivate.h:
+        * WebView.subproj/IFWebDataSourcePrivate.h:
+        * WebView.subproj/IFWebFramePrivate.h:
+        * WebView.subproj/IFWebViewPrivate.h:
+	Make data in private class @public, since the main class needs to get at it
+	directly.
+	
 2002-07-15  Richard Williamson (Home)  <rjw@apple.com>
 
         Only adjustFrames in parent if parent is a frame set.

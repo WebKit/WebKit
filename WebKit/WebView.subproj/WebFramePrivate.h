@@ -35,6 +35,7 @@ typedef enum {
 
 @interface IFWebFramePrivate : NSObject
 {
+@public
     NSString *name;
     IFWebView *webView;
     IFWebDataSource *dataSource;
@@ -72,4 +73,5 @@ typedef enum {
 - (void)_timedLayout: userInfo;
 - (IFWebCoreFrame *)_frameBridge;
 - (BOOL)_shouldShowDataSource:(IFWebDataSource *)dataSource;
+- (void)_setProvisionalDataSource:(IFWebDataSource *)d;
 @end

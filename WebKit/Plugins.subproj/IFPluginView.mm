@@ -365,7 +365,6 @@ static char *newCString(NSString *string)
 - (void)setUpWindowAndPort
 {
     CGrafPtr port = GetWindowPort([[self window] _windowRef]);
-    NSRect windowFrame = [[self window] frame];
     NSRect contentViewFrame = [[[self window] contentView] frame];
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
@@ -460,7 +459,8 @@ static char *newCString(NSString *string)
     
     theWindow = [self window];
     notificationCenter = [NSNotificationCenter defaultCenter];
-    for (NSView *view = self; view; view = [view superview]) {
+    NSView *view;
+    for (view = self; view; view = [view superview]) {
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
             name:NSViewFrameDidChangeNotification object:view];
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
@@ -478,7 +478,7 @@ static char *newCString(NSString *string)
     if ([theWindow isKeyWindow])
         [self sendActivateEvent:YES];
     
-    IFWebView *webView = [self _IF_superviewWithName:@"IFWebView"];
+    IFWebView *webView = (IFWebView *)[self _IF_superviewWithName:@"IFWebView"];
     webController = [[webView controller] retain];
     webFrame = 	    [[webController frameForView:webView] retain];
     webDataSource = [[webFrame dataSource] retain];

@@ -214,7 +214,7 @@
     }
     else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicySaveAndOpenExternally){
         if(!downloadHandler){
-            [frame->_private setProvisionalDataSource:nil];
+            [frame _setProvisionalDataSource:nil];
             [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
             downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
         }
@@ -222,7 +222,7 @@
     }
     else if(contentPolicy == IFContentPolicyIgnore){
         [handle cancelLoadInBackground];
-        [frame->_private setProvisionalDataSource:nil];
+        [frame _setProvisionalDataSource:nil];
         [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
     }
     else{

@@ -223,17 +223,17 @@ static NSString *getCarbonPath(NSString *posixPath);
     [self finishedLoadingWithData:[dataSource data]];
 }
 
-- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
+- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)handle
 {
     [[view webController] _didStartLoading:URL];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
+- (void)IFURLHandle:(IFURLHandle *)handle resourceDataDidBecomeAvailable:(NSData *)data
 {
     IFWebController *webController = [view webController];
     
     if(isFirstChunk){
-        NSString *URLString = [[sender url] absoluteString];
+        NSString *URLString = [[handle url] absoluteString];
         char *cURL = (char *)malloc([URLString cStringLength]+1);
         [URLString getCString:cURL];
         
@@ -243,47 +243,45 @@ static NSString *getCarbonPath(NSString *posixPath);
         npStream.lastmodified = 0;
         npStream.notifyData = notifyData;
         offset = 0;
-        mimeType = [[sender contentType] retain];
+        mimeType = [[handle contentType] retain];
     }
     [self receivedData:data];
     
-    [webController _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle: sender fromDataSource: [view webDataSource] complete: NO];
+    [webController _receivedProgress:[IFLoadProgress progressWithURLHandle:handle]
+        forResourceHandle: handle fromDataSource: [view webDataSource] complete: NO];
 }
 
-- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
+- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)handle data: (NSData *)data
 {
     IFWebController *webController = [view webController];
     
-    [webController _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-            forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
+    [webController _receivedProgress:[IFLoadProgress progressWithURLHandle:handle]
+            forResourceHandle: handle fromDataSource: [view webDataSource] complete: YES];
  
     [self finishedLoadingWithData:data];
           
     [webController _didStopLoading:URL];
 }
 
-- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
+- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)handle
 {
     IFWebController *webController = [view webController];
     
     [webController _receivedProgress:[IFLoadProgress progress]
-        forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
+        forResourceHandle: handle fromDataSource: [view webDataSource] complete: YES];
             
     [self receivedError];
     
     [webController _didStopLoading:URL];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
+- (void)IFURLHandle:(IFURLHandle *)handle resourceDidFailLoadingWithResult:(IFError *)result
 {
     IFWebController *webController = [view webController];
     
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [sender contentLengthReceived];
+    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] initWithURLHandle:handle];
     
-    [webController _receivedError: result forResourceHandle: sender 
+    [webController _receivedError: result forResourceHandle: handle 
         partialProgress: loadProgress fromDataSource: [view webDataSource]];
     [loadProgress release];
     
@@ -292,7 +290,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     [webController _didStopLoading:URL];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)toURL
+- (void)IFURLHandle:(IFURLHandle *)handle didRedirectToURL:(NSURL *)toURL
 {
     IFWebController *webController = [view webController];
     

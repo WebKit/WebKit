@@ -9,6 +9,7 @@
 
 @interface IFHTMLRepresentationPrivate : NSObject
 {
+@public
     IFWebCoreBridge *bridge;
 }
 @end

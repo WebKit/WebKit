@@ -12,6 +12,7 @@
 
 @interface IFHTMLViewPrivate : NSObject
 {
+@public
     IFWebController *controller;
     BOOL needsLayout;
     BOOL needsToApplyStyles;

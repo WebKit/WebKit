@@ -8,12 +8,11 @@
 
 #import <WebKit/IFWebView.h>
 
-class QWidget;
-
 @class IFDynamicScrollBarsView;
 
 @interface IFWebViewPrivate : NSObject
 {
+@public
     IFWebController *controller;
     IFDynamicScrollBarsView *frameScrollView;
     
