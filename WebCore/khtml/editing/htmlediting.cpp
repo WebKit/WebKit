@@ -4415,8 +4415,9 @@ void ReplaceSelectionCommand::doApply()
     // decide whether to later merge content into the startBlock
     bool mergeStart = false;
     if (startBlock == startBlock->rootEditableElement() && startAtStartOfBlock && startAtEndOfBlock) {
-        // empty document, so no merge
-        mergeStart = false;
+        // empty editable subtree, need to mergeStart so that fragment ends up
+        // inside the editable subtree rather than just before it
+        mergeStart = true;
     } else {
         // merge if current selection starts inside a paragraph, or there is only one block and no interchange newline to add
         mergeStart = !isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewline() && !m_fragment.hasMoreThanOneBlock());
