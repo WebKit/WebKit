@@ -1,5 +1,11 @@
 2002-04-18  Darin Adler  <darin@apple.com>
 
+	* JavaScriptCore.pbproj/project.pbxproj: Take out -Wmissing-prototypes
+	because system headers are triggering it when we don't have
+	precompiled headers on.
+
+2002-04-18  Darin Adler  <darin@apple.com>
+
 	Reviewed by Maciej
 
 	* JavaScriptCore.pbproj/project.pbxproj: Turn on gcc3 and the same set of warnings

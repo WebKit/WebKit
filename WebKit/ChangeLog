@@ -1,5 +1,11 @@
 2002-04-18  Darin Adler  <darin@apple.com>
 
+	* WebKit.pbproj/project.pbxproj: Take out -Wmissing-prototypes
+	because system headers are triggering it when we don't have
+	precompiled headers on.
+
+2002-04-18  Darin Adler  <darin@apple.com>
+
 	Fixes for compiling with gcc3 and more warnings.
 
 	* WebKit.pbproj/project.pbxproj: Turn on gcc3 and the same set of warnings

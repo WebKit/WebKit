@@ -142,7 +142,7 @@
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
 				USE_GCC3 = YES;
-				WARNING_CFLAGS = "-Werror -Wall -W -Wbad-function-cast -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-declarations -Wmissing-format-attribute -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wstrict-prototypes -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
+				WARNING_CFLAGS = "-Werror -Wall -W -Wbad-function-cast -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-declarations -Wmissing-format-attribute -Wnested-externs -Wpointer-arith -Wstrict-prototypes -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (
