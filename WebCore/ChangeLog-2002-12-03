@@ -1,5 +1,14 @@
 2002-11-21  David Hyatt  <hyatt@apple.com>
 
+	Stop table cells from repainting the whole table when they
+	get a repaint.  Gives another big boost to link rollover
+	performance when links' containing blocks are table cells.
+	
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::repaint):
+
+2002-11-21  David Hyatt  <hyatt@apple.com>
+
 	Fix <font> so that behaves just like <i>, <b>, etc. Stop
 	the (incorrect) allowance of blocks inside <font> tags.
 	This fixes the mispositioning on avoyagetoarcturus.blogspot.com
