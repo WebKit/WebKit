@@ -64,6 +64,7 @@
 
 - (void)setFrame: (IFWebFrame *)f
 {
+    // Careful, there is a cycle between IFWebFrame and IFWebDataSource.
     if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame == f)
         return;
         

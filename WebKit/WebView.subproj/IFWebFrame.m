@@ -75,11 +75,13 @@
     [[data dataSource] setFrame: self];
 }
 
-// Required to break retain cycle between frame and data source.
+// Required to break retain cycle between frame and data source,
+// and also release the widget's view reference.
 - (void)reset
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     [data setDataSource: nil];
+    [[data view] _resetWidget];
     [data setView: nil];
 }
 

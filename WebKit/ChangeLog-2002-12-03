@@ -1,3 +1,14 @@
+2002-02-13  Richard Williamson  <rjw@apple.com>
+
+    Fixed cleanup.  Should revisit ownership graph.  Cycles may be avoidable.
+    
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebControllerPrivate
+	dealloc]):
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource setFrame:]):
+	* WebView.subproj/IFWebFrame.m: (-[IFWebFrame reset]):
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebView _resetWidget]):
+
 2002-02-12  Richard Williamson  <rjw@apple.com>
 
     Made basic forms work.

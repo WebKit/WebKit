@@ -44,6 +44,13 @@
 
 @implementation IFWebView  (IFPrivate)
 
+- (void)_resetWidget
+{
+    if (((IFWebViewPrivate *)_viewPrivate)->widget)
+        delete ((IFWebViewPrivate *)_viewPrivate)->widget;
+    ((IFWebViewPrivate *)_viewPrivate)->widget = 0;
+}
+
 - (void)_resetView 
 {
     NSArray *views = [self subviews];
