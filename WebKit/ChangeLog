@@ -151,17 +151,17 @@
 
         Reviewed by me, bug fix by Darin.
 
-		- fixed <rdar://problem/3736477> Pages don't load if hard drive is named with non-ASCII Symbol
+        - fixed <rdar://problem/3736477> Pages don't load if hard drive is named with non-ASCII Symbol
 
         * Plugins.subproj/WebBaseNetscapePluginStream.m:
         (-[WebBaseNetscapePluginStream startStreamWithURL:expectedContentLength:lastModifiedDate:MIMEType:]):
-		Use UTF8String instead of cString to convert the MIME type to a C string. Safer, since it can't
-		ever fail due to encoding problems even though this string should always be ASCII.
+        Use UTF8String instead of cString to convert the MIME type to a C string. Safer, since it can't
+        ever fail due to encoding problems even though this string should always be ASCII.
         (-[WebBaseNetscapePluginStream destroyStream]): Use stringWithUTF8String to convert the path name
-		to an NSString, since stringWithCString is deprecated (doesn't really matter since the path is always
-		all ASCII). Fix the bug by calling fileSystemRepresentation on the NSString to turn it into a C
-		string form. Even though the POSIX path can't have any non-ASCII characters in it, the Carbon path
-		can, so we need to use this instead of cString which can fail depending on characters and encoding.
+        to an NSString, since stringWithCString is deprecated (doesn't really matter since the path is always
+        all ASCII). Fix the bug by calling fileSystemRepresentation on the NSString to turn it into a C
+        string form. Even though the POSIX path can't have any non-ASCII characters in it, the Carbon path
+        can, so we need to use this instead of cString which can fail depending on characters and encoding.
 
 2004-08-09  Maciej Stachowiak  <mjs@apple.com>
 
