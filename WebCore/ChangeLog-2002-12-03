@@ -1,3 +1,12 @@
+2002-03-27  Kenneth Kocienda  <kocienda@apple.com>
+
+        Changed loadProgress->bytesSoFar to use [sender contentLengthReceived]
+        instead of the size of the chunk that was delivered in the callback.
+        This makes the activity window data more correct than it was.
+        
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]):
+
 2002-03-27  Darin Adler  <darin@apple.com>
 
 	* src/kdelibs/khtml/ecma/Makefile.am: Get the create_hash_table tool

@@ -1089,7 +1089,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
     loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [data length];
+    loadProgress->bytesSoFar = [sender contentLengthReceived];
     
     controller = [m_dataSource controller];
     [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];

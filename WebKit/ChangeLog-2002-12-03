@@ -1,3 +1,12 @@
+2002-03-27  Kenneth Kocienda  <kocienda@apple.com>
+
+        Changed loadProgress->bytesSoFar to use [sender contentLengthReceived]
+        instead of the size of the chunk that was delivered in the callback.
+        This makes the activity window data more correct than it was.
+
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]):
+
 2002-03-27  Chris Blumenberg  <cblu@apple.com>
 
 	Now setting the modifier bit for the activate and cursor events.

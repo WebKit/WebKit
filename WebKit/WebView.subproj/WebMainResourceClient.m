@@ -62,7 +62,7 @@
     
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [data length];
+    loadProgress->bytesSoFar = [sender contentLengthReceived];
     [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
 }
