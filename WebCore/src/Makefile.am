@@ -10,11 +10,13 @@ symrootsdir = $(SYMROOTS)
 
 symroots_LIBRARIES = libwebcore.dylib
 
-libwebcore_dylib_SOURCES = \
+noinst_LIBRARIES = libwebcoreunstripped.dylib
+
+libwebcoreunstripped_dylib_SOURCES = \
 	dummy.mm \
 	$(NULL)
 
-libwebcore_dylib_LIBADD = \
+libwebcoreunstripped_dylib_LIBADD = \
 	./kdelibs/khtml/libkhtml.o \
 	./kwq/libkwq.o \
 	-ljpeg \
@@ -25,6 +27,12 @@ LIBWEBCORE_INSTALL_PATH = @executable_path/../Frameworks
 DYLIB_NAME = libwebcore.dylib
 EMBED_HOST = $(SYMROOTS)/Alexander.app
 EMBED_DIR = $(EMBED_HOST)/Contents/Frameworks
+
+libwebcorenmedited.dylib: libwebcoreunstripped.dylib
+	cp $< $@
+
+libwebcore.dylib: libwebcorenmedited.dylib
+	cp $< $@
 
 embed:
 	@if test -f "$(DYLIB_NAME)"; then \
@@ -67,5 +75,6 @@ noinst_DATA = webcore-install-stamp
 
 webcore-install-stamp: libwebcore.dylib
 	$(MAKE) install-symrootsLIBRARIES
+	$(MAKE) embed
 	touch ./webcore-install-stamp
 

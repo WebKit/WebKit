@@ -1,5 +1,10 @@
 2002-04-03  Maciej Stachowiak  <mjs@apple.com>
 
+	* src/Makefile.am: Pave the way for cutting down the exports
+	list. Also, make the embed target when installing libwebcore.
+
+2002-04-03  Maciej Stachowiak  <mjs@apple.com>
+
 	Fixed Radar 2893361 (Two frames with same name cause memory
 	trasher (likely double-free)) by implementing the mechanism KDE
 	uses to guarantee unique frame names.
