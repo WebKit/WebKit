@@ -45,7 +45,7 @@ const ClassInfo ArrayInstanceImp::info = {"Array", 0, 0, 0};
 ArrayInstanceImp::ArrayInstanceImp(ObjectImp *proto, unsigned initialLength)
   : ObjectImp(proto)
   , length(initialLength)
-  , storageLength(initialLength)
+  , storageLength(initialLength < sparseArrayCutoff ? initialLength : 0)
   , capacity(storageLength)
   , storage(capacity ? (ValueImp **)calloc(capacity, sizeof(ValueImp *)) : 0)
 {
@@ -795,8 +795,15 @@ bool ArrayObjectImp::implementsConstruct() const
 Object ArrayObjectImp::construct(ExecState *exec, const List &args)
 {
   // a single numeric argument denotes the array size (!)
-  if (args.size() == 1 && args[0].type() == NumberType)
-    return Object(new ArrayInstanceImp(exec->interpreter()->builtinArrayPrototype().imp(), args[0].toUInt32(exec)));
+  if (args.size() == 1 && args[0].type() == NumberType) {
+    uint32_t n = args[0].toUInt32(exec);
+    if (n != args[0].toNumber(exec)) {
+      Object error = Error::create(exec, RangeError, "Array size is not a small enough positive integer.");
+      exec->setException(error);
+      return error;
+    }
+    return Object(new ArrayInstanceImp(exec->interpreter()->builtinArrayPrototype().imp(), n));
+  }
 
   // otherwise the array is constructed with the arguments in it
   return Object(new ArrayInstanceImp(exec->interpreter()->builtinArrayPrototype().imp(), args));

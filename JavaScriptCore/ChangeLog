@@ -2,6 +2,23 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3546613>: array of negative size leads to crash (test page at oscar.the-rileys.net)
+
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::ArrayInstanceImp): If the length is greater than 10,000, don't allocate an array until
+        we start putting values in. This prevents new Array(2147483647) from causing trouble.
+        (ArrayObjectImp::construct): Check number as described in specification, and raise a range error if the
+        number is out of range. This prevents new Array(-1) from causing trouble.
+
+        - fixed <rdar://problem/3545756>: Math.round screws up on numbers bigger than 2^31 (incorrect results on HP-35 calculator page)
+
+        * kjs/math_object.cpp: (MathFuncImp::call): Change implementation to be much simpler and not involve
+        casting to int. Results now match those in other browsers.
+
+2004-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3519285>: integer operations on large negative numbers yield bad results (discovered with "HTMLCrypt")
         - fixed other related overflow issues
 
