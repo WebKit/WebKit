@@ -184,6 +184,8 @@ __ZN7QStringD1Ev
 __ZN7QStringpLE5QChar
 __ZN7QStringpLERKS_
 __ZN7QStringpLEc
+__ZN8QCString6appendEPKc
+__ZN8QCString6appendEc
 __ZN8QCString8truncateEj
 __ZN8QCStringC1EPKc
 __ZN8QCStringC1EPKcj

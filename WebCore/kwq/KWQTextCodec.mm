@@ -30,13 +30,6 @@
 
 const UniChar BOM = 0xFEFF;
 
-struct TECObjectPeek {
-    UInt32 skip1;
-    UInt32 skip2;
-    UInt32 skip3;
-    OptionBits optionsControlFlags;
-};
-
 class KWQTextDecoder : public QTextDecoder {
 public:
     KWQTextDecoder(CFStringEncoding, KWQEncodingFlags);
@@ -140,13 +133,38 @@ QCString QTextCodec::fromUnicode(const QString &qcs) const
     
     CFStringEncoding encoding = effectiveEncoding(_encoding);
 
-    CFStringRef cfs = qcs.getCFString();
+    QString copy;
+    bool doingTildeWorkaround = false;
+
+    // This is a hack to work around bug 3254512 -- tilde does not make the round trip when encoding/decoding Shift-JIS.
+    // We change decoded tilde characters into U+0001 because that will survive the decoding process (turn into ASCII 0x01)
+    // and we don't care about preserving U+0001 characters; they should never occur.
+    switch (encoding) {
+        case kCFStringEncodingShiftJIS_X0213_00:
+        case kCFStringEncodingEUC_JP: {
+            const QChar decodedTilde(0x203E);
+            if (qcs.find(decodedTilde) != -1) {
+                doingTildeWorkaround = true;
+                copy = qcs;
+                copy.replace(decodedTilde, 0x0001);
+            }
+        }
+    }
+
+    CFStringRef cfs = doingTildeWorkaround ? copy.getCFString() : qcs.getCFString();
+
     CFRange range = CFRangeMake(0, CFStringGetLength(cfs));
     CFIndex bufferLength;
-    CFStringGetBytes(cfs, range, encoding, '?', false, NULL, 0x7FFFFFFF, &bufferLength);
+    CFStringGetBytes(cfs, range, encoding, '?', FALSE, NULL, 0x7FFFFFFF, &bufferLength);
     QCString result(bufferLength + 1);
-    CFStringGetBytes(cfs, range, encoding, '?', false, (UInt8 *)result.data(), bufferLength, &bufferLength);
+    CFStringGetBytes(cfs, range, encoding, '?', FALSE, reinterpret_cast<UInt8 *>(result.data()), bufferLength, &bufferLength);
     result[bufferLength] = 0;
+
+    // Change the decoded U+0001 characters (now 0x01) into tilde.
+    if (doingTildeWorkaround) {
+        result.replace(0x01, '~');
+    }
+
     return result;
 }
 
@@ -293,9 +311,6 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
                 ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
                 return QString();
             }
-
-            // Workaround for missing TECSetBasicOptions call.
-            reinterpret_cast<TECObjectPeek **>(_converter)[0]->optionsControlFlags |= kUnicodeForceASCIIRangeMask;
         }
     }
     

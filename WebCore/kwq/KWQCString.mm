@@ -199,24 +199,24 @@ int QCString::find(const char *sub, int index, bool cs) const
 
 int QCString::contains(char c, bool cs) const
 {
-    const char* str = data();
     uint found = 0;
     uint len = length();
 
-    if( str && len )
-    {
-        // drop char if we're insensitive
-        if( !cs )
+    if (len) {
+        const char *str = data();
+
+        if (cs) {
+            for (unsigned i = 0; i != len; ++i) {
+                found += str[i] == c;
+            }
+        } else {
             c = tolower(c);
 
-        for( unsigned i=0; i<len; i++ )
-        {
-            char chr = str[i];
-            if( !cs )
+            for (unsigned i = 0; i != len; ++i) {
+                char chr = str[i];
                 chr = tolower(chr);
-
-            if( chr == c )
-                found ++;
+                found += chr == c;
+            }
         }
     }
 
@@ -229,30 +229,64 @@ QCString &QCString::operator=(const char *assignFrom)
     return *this;
 }
 
-QCString& QCString::operator+=(const char *s)
+QCString& QCString::append(const char *s)
 {
     if (s) {
-        detach();
-        uint len1 = length();
         uint len2 = strlen(s);
-        if (QByteArray::resize(len1 + len2 + 1)) {
-            memcpy(data() + len1, s, len2 + 1);
+        if (len2) {
+            detach();
+            uint len1 = length();
+            if (QByteArray::resize(len1 + len2 + 1)) {
+                memcpy(data() + len1, s, len2 + 1);
+            }
         }
     }
 
     return *this;
 }
 
-QCString &QCString::operator+=(char c)
+QCString &QCString::append(char c)
 {
-    uint len;
-
     detach();
-    len = length();
+    uint len = length();
 
     if (QByteArray::resize(len + 2)) {
         *(data() + len) = c;
         *(data() + len + 1) = '\0';
+    }
+
+    return *this;
+}
+
+QCString &QCString::replace(char c1, char c2)
+{
+    uint len = length();
+
+    if (len) {
+        // Search for the first instance of c1 before detaching,
+        // just in case there is nothing to replace. In that case
+        // we don't want to detach this from other shared instances
+        // since we have no need to modify it.
+        unsigned i;
+        {
+            const char *s = data();
+            for (i = 0; i != len; ++i) {
+                if (s[i] == c1) {
+                    break;
+                }
+            }
+        }
+
+        if (i != len) {
+            detach();
+            char *s = data();
+            // Start at the first instance of c1; no need to rescan earlier chars.
+            for (; i != len; ++i) {
+                if (s[i] == c1) {
+                    s[i] = c2;
+                }
+            }
+        }
     }
 
     return *this;

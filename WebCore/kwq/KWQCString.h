@@ -38,6 +38,8 @@ public:
     QCString(const char *);
     QCString(const char *, uint);
 
+    QCString &operator=(const char *);
+
     bool isEmpty() const;
     bool isNull() const { return data() == 0; }
     int find(const char *, int index=0, bool cs=true) const;
@@ -50,10 +52,13 @@ public:
     QCString right(uint) const;
     QCString mid(uint, uint len=0xffffffff) const;
 
+    QCString &append(char);
+    QCString &append(const char *);
+    QCString &replace(char, char);
+
     operator const char *() const { return data(); }
-    QCString &operator=(const char *);
-    QCString &operator+=(const char *);
-    QCString &operator+=(char);
+    QCString &operator+=(const char *s) { return append(s); }
+    QCString &operator+=(char c) { return append(c); }
 
 #ifdef _KWQ_IOSTREAM_
     friend std::ostream &operator<<(std::ostream &, const QCString &);

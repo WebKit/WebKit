@@ -1,3 +1,35 @@
+2003-05-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3131026 -- half-width yen character (x5C) shows up as a backslash
+
+        To fix this, I had to reverse our previous decoding approach for the characters
+        that are different in Shift-JIS and ASCII. Before, we would decode them as
+        ASCII, and so they would be wrong in web pages, but right in URLs. Now, I decode
+        them as Shift-JIS, so they are right for web pages. This does not break URLs,
+        though, because back in February we added code to re-encode characters for URLs
+        to fix bug 3124596. But there is a TEC bug we have to work around to make this
+        work right for the tilde character.
+
+        * kwq/KWQTextCodec.mm:
+        (QTextCodec::fromUnicode): Work around the TEC bug that prevents the tilde
+        character from surviving the round trip through the decoding process by explicitly
+        changing decoded tildes back to ASCII tildes.
+        (KWQTextDecoder::convertUsingTEC): Do not set kUnicodeForceASCIIRangeMask.
+
+        * kwq/KWQCString.h: Added replace call for use by new code. Some other
+        small improvements.
+        * kwq/KWQCString.mm:
+        (QCString::contains): Make this faster by not doing the case-insensitive
+        and case-sensitive cases both in the same loop.
+        (QCString::append): Changed the += calls to this name, and made the
+        += operator override call these.
+        (QCString::replace): Added.
+
+        * WebCore-tests.exp: Changed to export append calls.
+        * WebCore-combined.exp: Regenerated.
+
 2003-05-09  David Hyatt  <hyatt@apple.com>
 
 	Finally get tables cutting the right properties off and letting
