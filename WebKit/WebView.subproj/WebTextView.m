@@ -36,6 +36,7 @@
         @"text/vcard",		// vCard
         @"text/x-vcard",
         @"text/directory",
+        @"text/ldif",           // Netscape Address Book
         @"text/qif",		// Quicken
         @"text/x-qif",
         nil];
