@@ -61,14 +61,14 @@
     return [[frame frameNamed:name] _bridge];
 }
 
-- (BOOL)createChildFrameNamed:(NSString *)frameName
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName
     withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)childRenderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
     WEBKIT_ASSERT(frame != nil);
     WebFrame *newFrame = [[frame controller] createFrameNamed:frameName for:nil inParent:[self dataSource] allowsScrolling:allowsScrolling];
     if (newFrame == nil) {
-        return NO;
+        return nil;
     }
     
     [[newFrame _bridge] setRenderPart:childRenderPart];
@@ -82,7 +82,7 @@
     // forward list.
     [newFrame _setLoadType:WebFrameLoadTypeInternal];
 
-    return YES;
+    return [newFrame _bridge];
 }
 
 - (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL

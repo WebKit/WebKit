@@ -1,3 +1,10 @@
+2002-08-08  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix to get onLoad to fire, so the iBench test works.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]): Return the bridge for the new child frame.
+
 2002-08-08  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Change the group name back to Debug.
