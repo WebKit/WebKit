@@ -19,6 +19,7 @@
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
+#import <WebKit/WebUIDelegatePrivate.h>
 
 #import <WebCore/WebCoreBridge.h>
 
@@ -27,6 +28,15 @@
 #import <Foundation/NSURLRequestPrivate.h>
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
+
+static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
+{
+    NSBundle *appKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.AppKit"];
+    if (!appKitBundle) {
+        return key;
+    }
+    return NSLocalizedStringFromTableInBundle(key, @"MenuCommands", appKitBundle, comment);
+}
 
 - (NSMenuItem *)menuItemWithTag:(int)tag
 {
@@ -114,6 +124,18 @@
             title = UI_STRING("Learn Spelling", "Learn Spelling context menu item");
             action = @selector(_learnSpellingFromMenu:);
             break;
+#ifndef OMIT_TIGER_FEATURES
+        case WebMenuItemTagSearchInSpotlight:
+            // FIXME: Perhaps move this string into WebKit directly when we're not in localization freeze
+            title = localizedMenuTitleFromAppKit(@"Search in Spotlight", @"Search in Spotlight menu title.");
+            action = @selector(_searchWithSpotlightFromMenu:);
+            break;
+        case WebMenuItemTagSearchInGoogle:
+            // FIXME: Perhaps move this string into WebKit directly when we're not in localization freeze
+            title = localizedMenuTitleFromAppKit(@"Search in Google", @"Search in Google menu title.");
+            action = @selector(_searchWithGoogleFromMenu:);
+            break;
+#endif
         default:
             return nil;
     }
@@ -156,6 +178,13 @@
     
     if (!imageURL && !linkURL) {
         if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+#ifndef OMIT_TIGER_FEATURES
+            // Add Tiger-only items that act on selected text. Google search needn't be Tiger-only technically,
+            // but it's a new Tiger-only feature to have it in the context menu by default.
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInGoogle]];
+            [menuItems addObject:[NSMenuItem separatorItem]];
+#endif
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy]];
         } else {
             WebView *wv = [webFrame webView];
@@ -210,6 +239,14 @@
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLearnSpelling]];
         [menuItems addObject:[NSMenuItem separatorItem]];
     }
+    
+#ifndef OMIT_TIGER_FEATURES
+    // Add Tiger-only items that aren't in our nib.
+    // FIXME: When we're not building for Panther anymore we should update the nib to include these.
+    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight]];
+    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInGoogle]];
+    [menuItems addObject:[NSMenuItem separatorItem]];
+#endif
     
     // Load our NSTextView-like context menu nib.
     if (defaultMenu == nil) {

@@ -59,6 +59,10 @@
 // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
 #import <AppKit/NSKeyBindingManager.h>
 
+// Included so usage of _NSSoftLinkingGetFrameworkFuncPtr will compile
+#import <mach-o/dyld.h> 
+
+
 // need to declare this because AppKit does not make it available as API or SPI
 extern NSString *NSMarkedClauseSegmentAttributeName; 
 
@@ -134,6 +138,13 @@ void _NSResetKillRingOperationFlag(void);
 #define WebSmartPastePboardType @"NeXT smart paste pasteboard type"
 
 static BOOL forceRealHitTest = NO;
+
+// Used to avoid linking with ApplicationServices framework for _DCMDictionaryServiceWindowShow
+void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
+                                        NSString *inFrameworkName,
+                                        const char *inFuncName,
+                                        const struct mach_header **ioCachedFrameworkImageHeaderPtr);
+
 
 @interface WebHTMLView (WebTextSizing) <_web_WebDocumentTextSizing>
 @end
@@ -1342,6 +1353,32 @@ static WebHTMLView *lastHitView = nil;
     [[NSSpellChecker sharedSpellChecker] learnWord:[self selectedString]];
 }
 
+#ifndef OMIT_TIGER_FEATURES
+- (void)_searchWithGoogleFromMenu:(id)sender
+{
+    // This should only be called when there's a selection, but play it safe.
+    if (![self _hasSelection]) {
+        return;
+    }
+    
+    NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
+    if ([self writeSelectionToPasteboard:pboard types:[NSArray arrayWithObject:NSStringPboardType]]) {
+        // FIXME: seems fragile to use the service by name, but this is what AppKit does
+        NSPerformService(@"Search With Google", pboard);
+    }
+}
+
+- (void)_searchWithSpotlightFromMenu:(id)sender
+{
+    // This should only be called when there's a selection, but play it safe.
+    if (![self _hasSelection]) {
+        return;
+    }
+
+    (void)HISearchWindowShow((CFStringRef)[self selectedString], kNilOptions);
+}
+#endif
+
 #if APPKIT_CODE_FOR_REFERENCE
 
 - (void)_openLinkFromMenu:(id)sender
@@ -1658,8 +1695,13 @@ static WebHTMLView *lastHitView = nil;
                || action == @selector(changeSpelling:)
                || action == @selector(ignoreSpelling:)) {
         return [[self _bridge] isSelectionEditable];
+#ifndef OMIT_TIGER_FEATURES
+    } else if (action == @selector(_searchWithSpotlightFromMenu:)
+               || action == @selector(_searchWithGoogleFromMenu:)) {
+        return [self _hasSelection];
+#endif
     }
-
+    
     return YES;
 }
 
@@ -3328,9 +3370,7 @@ static WebHTMLView *lastHitView = nil;
         [style setVerticalAlign:@"sub"];
     else
         [style setVerticalAlign:@"baseline"];
-
     int underlineInt = [[dictionary objectForKey:NSUnderlineStyleAttributeName] intValue];
-
     // FIXME: Underline wins here if we have both (see bug 3790443).
     if (strikethroughInt == NSUnderlineStyleNone && underlineInt == NSUnderlineStyleNone)
         [style setTextDecoration:@"none"];

@@ -1,3 +1,37 @@
+2005-01-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - WebKit part of fix for <rdar://problem/3960231> Text context menu in WebKit needs Spotlight and Google items
+        
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (localizedMenuTitleFromAppKit):
+        new function, gets localized string from AppKit so we can avoid adding localized
+        strings to WebKit at this late date in Tiger. Returns the non-localized English
+        string if we can't find the localized string in AppKit.
+        (-[WebDefaultUIDelegate menuItemWithTag:]):
+        handle the two new menu items by tag name
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:]):
+        add menu items for Search in Google and Search in Spotlight to selected-text menu item
+        for the noneditable case
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:]):
+        add menu items for Search in Google and Search in Spotlight to selected-text menu item
+        for the editable case
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _searchWithGoogleFromMenu:]):
+        implement this menu item action method, using same method name and implementation as NSTextView
+        (-[WebHTMLView _searchWithSpotlightFromMenu:]):
+        implement this menu item action method, using same basic implementation as NSTextView
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        validate new menu items
+        
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        define new tags for new menu items
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        updated for these changes
+
 2005-01-24  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebDataSource.m: (+[WebDataSource _repTypesAllowImageTypeOmission:]):
