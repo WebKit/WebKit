@@ -1,3 +1,11 @@
+2002-09-12  Chris Blumenberg  <cblu@apple.com>
+	
+	Make WebTextView private and exported.
+
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebTextView.h:
+
 2002-09-11  Maciej Stachowiak  <mjs@apple.com>
 
 	Combined provisionalDataSourceChanged: and

@@ -24,6 +24,7 @@
 .objc_class_name_WebTestController
 .objc_class_name_WebURLsWithTitles
 .objc_class_name_WebView
+.objc_class_name_WebTextView
 _WebContextMenuElementLinkLabelKey
 _WebContextMenuElementLinkURLKey
 _WebContextMenuElementImageURLKey

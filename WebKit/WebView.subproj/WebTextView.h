@@ -14,4 +14,7 @@
     BOOL canDragFrom;
     BOOL canDragTo;
 }
+
+- (void)setFixedWidthFont;
+
 @end

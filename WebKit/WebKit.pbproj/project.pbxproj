@@ -671,6 +671,9 @@
 			fileRef = 35081DA802B6D4E40ACA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		35081DAD02B6D4E40ACA2ACA = {
