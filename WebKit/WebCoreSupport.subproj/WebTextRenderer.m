@@ -207,9 +207,17 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 
 @implementation WebTextRenderer
 
+static BOOL bufferTextDrawing = NO;
+
++ (BOOL)shouldBufferTextDrawing
+{
+    return bufferTextDrawing;
+}
+
 + (void)initialize
 {
     nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
+    bufferTextDrawing = [[[NSUserDefaults standardUserDefaults] stringForKey:@"BufferTextDrawing"] isEqual: @"YES"];
 }
 
 
@@ -454,14 +462,12 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
     
     // Finally, draw the glyphs.
     if (from < (int)numGlyphs){
-#ifdef DRAW_FAST_TEXT
-        if ([[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
+        if ([WebTextRenderer shouldBufferTextDrawing] && [[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
             // Add buffered glyphs and advances
             WebGlyphBuffer *glyphBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: font andColor: textColor];
             [glyphBuffer addGlyphs: &glyphs[from] advances: &advances[from] count: to - from at: startX : point.y];
         }
         else {
-#endif
             cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             // Setup the color and font.
             [textColor set];
@@ -469,9 +475,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
     
             CGContextSetTextPosition (cgContext, startX, point.y);
             CGContextShowGlyphsWithAdvances (cgContext, &glyphs[from], &advances[from], to - from);
-#ifdef DRAW_FAST_TEXT
         }
-#endif
     }
 
     if (advances != localAdvanceBuffer) {

@@ -1,3 +1,21 @@
+2002-08-08  Richard Williamson (Local)  <rjw@apple.com>
+
+        Added flag to turn on/off buffered text drawing to help
+        determine if we get any speed boost.  Run from console
+        with "-BufferTextDrawing YES" to enable buffered text
+        drawing.
+        
+        Moved buffered text drawing out of web core.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (+[WebTextRenderer shouldBufferTextDrawing]):
+        (+[WebTextRenderer initialize]):
+        (-[WebTextRenderer drawGlyphs:numGlyphs:fromGlyphPosition:toGlyphPosition:atPoint:withTextColor:backgroundColor:]):
+        * WebCoreSupport.subproj/WebTextRendererFactory.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]):
+
 2002-08-08  Darin Adler  <darin@apple.com>
 
 	Placeholders for the "drawing observer" method that I'll be using

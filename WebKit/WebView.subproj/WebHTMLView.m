@@ -1,21 +1,23 @@
 /*	
     WebHTMLView.mm
-	Copyright 2002, Apple, Inc. All rights reserved.
+    Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebHTMLView.h>
 
-#import <WebKit/WebDynamicScrollBarsView.h>
-#import <WebKit/WebException.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
+#import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebTextRenderer.h>
+#import <WebKit/WebTextRendererFactory.h>
+#import <WebKit/WebViewPrivate.h>
 
 // Needed for the mouse moved notification.
 #import <AppKit/NSResponder_Private.h>
@@ -358,9 +360,16 @@
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
+    NSView *focusView = [NSView focusView];
+    if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
+        [[WebTextRendererFactory sharedFactory] startCoalesceTextDrawing];
+
     //double start = CFAbsoluteTimeGetCurrent();
     [[self _bridge] drawRect:rect];
     //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
+
+    if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
+        [[WebTextRendererFactory sharedFactory] endCoalesceTextDrawing];
 
 #ifdef DEBUG_LAYOUT
     NSRect vframe = [self frame];

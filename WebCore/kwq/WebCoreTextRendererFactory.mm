@@ -35,17 +35,6 @@ static WebCoreTextRendererFactory *sharedFactory;
     return sharedFactory;
 }
 
-- (void)endCoalesceTextDrawing
-{
-    // Implemented in subclass.
-}
-
-- (void)startCoalesceTextDrawing
-{
-    // Implemented in subclass.
-}
-
-
 
 - init
 {

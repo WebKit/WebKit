@@ -26,6 +26,8 @@ typedef struct GlyphMap GlyphMap;
     WidthMap *glyphToWidthMap;
 }
 
++ (BOOL)shouldBufferTextDrawing;
+
 - initWithFont:(NSFont *)font;
 
 // Set applyRounding = NO to get an Cocoa equivalent width.

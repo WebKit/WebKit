@@ -31,10 +31,6 @@
 {
 }
 
-- (void)startCoalesceTextDrawing;
-- (void)endCoalesceTextDrawing;
-
-
 + (WebCoreTextRendererFactory *)sharedFactory;
 - (id <WebCoreTextRenderer>)rendererWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size;
 - (NSFont *)fontWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size;
