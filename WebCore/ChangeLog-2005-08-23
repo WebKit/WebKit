@@ -1,3 +1,13 @@
+2004-09-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3787686, CSS parser should do case-sensitive matching of ids and attributes only in strict mode
+	(and not whenever you have an HTML document).
+	
+        Reviewed by john
+
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+
 === Safari-162 ===
 
 2004-09-02  David Hyatt  <hyatt@apple.com>

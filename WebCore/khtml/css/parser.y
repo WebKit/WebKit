@@ -631,7 +631,7 @@ element_name:
 	DOM::DocumentImpl *doc = p->document();
 	QString tag = qString($1);
 	if ( doc ) {
-	    if (doc->isHTMLDocument())
+	    if (!p->strict)
 		tag = tag.lower();
 	    const DOMString dtag(tag);
             $$ = makeId(p->defaultNamespace, doc->tagId(0, dtag.implementation(), false));
@@ -701,7 +701,7 @@ attrib_id:
 
 	QString attr = qString($1);
 	if ( doc ) {
-	    if (doc->isHTMLDocument())
+	    if (!p->strict)
 		attr = attr.lower();
 	    const DOMString dattr(attr);
             $$ = doc->attrId(0, dattr.implementation(), false);

@@ -1565,7 +1565,7 @@ case 75:
 	DOM::DocumentImpl *doc = p->document();
 	QString tag = qString(yyvsp[0].string);
 	if ( doc ) {
-	    if (doc->isHTMLDocument())
+	    if (!p->strict)
 		tag = tag.lower();
 	    const DOMString dtag(tag);
             yyval.element = makeId(p->defaultNamespace, doc->tagId(0, dtag.implementation(), false));
@@ -1641,7 +1641,7 @@ case 85:
 
 	QString attr = qString(yyvsp[-1].string);
 	if ( doc ) {
-	    if (doc->isHTMLDocument())
+	    if (!p->strict)
 		attr = attr.lower();
 	    const DOMString dattr(attr);
             yyval.attribute = doc->attrId(0, dattr.implementation(), false);
