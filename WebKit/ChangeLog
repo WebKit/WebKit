@@ -1,5 +1,21 @@
 2002-12-03  Richard Williamson   <rjw@apple.com>
 
+        Added a preference to change the page cache size, i.e.:
+        Alexander.app/Contents/MacOS/Alexander -WebKitPageCacheSizePreferenceKey 4
+        
+        Reviewed by: hyatt
+
+        * History.subproj/WebBackForwardList.m:
+        (+[WebBackForwardList setPageCacheSize:]):
+        (+[WebBackForwardList pageCacheSize]):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]):
+        (-[WebPreferences _initialTimedLayoutSize]):
+        (-[WebPreferences _pageCacheSize]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+
+2002-12-03  Richard Williamson   <rjw@apple.com>
+
         Fixed 3019986.  Use an array of font families instead of a single
         font family to support CSS family lists.
         r=hyatt

@@ -33,6 +33,7 @@
 #define WebKitAllowAnimatedImagesPreferenceKey @"WebKitAllowAnimatedImagesPreferenceKey"
 #define WebKitAllowAnimatedImageLoopingPreferenceKey @"WebKitAllowAnimatedImageLoopingPreferenceKey"
 #define WebKitDisplayImagesKey @"WebKitDisplayImagesKey"
+#define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
 
 @implementation WebPreferences
 
@@ -93,6 +94,7 @@
         @"1.00",                        WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
         @"1.00",                        WebKitResourceTimedLayoutDelayPreferenceKey,
+        @"10",                          WebKitPageCacheSizePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitInitialTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitResourceTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
@@ -302,6 +304,11 @@
 - (int)_initialTimedLayoutSize
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitInitialTimedLayoutDelayPreferenceKey];
+}
+
+- (int)_pageCacheSize
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitPageCacheSizePreferenceKey];
 }
 
 - (BOOL)_initialTimedLayoutEnabled

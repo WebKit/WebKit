@@ -6,8 +6,10 @@
 //  Copyright (c) 2001 Apple Computer, Inc. All rights reserved.
 //
 
-#import "WebBackForwardList.h"
-#import "WebHistoryItem.h"
+#import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebPreferencesPrivate.h>
+
 #import <WebFoundation/WebAssertions.h>
 
 @implementation WebBackForwardList
@@ -200,16 +202,20 @@ static BOOL usesPageCache = 0;
     return usesPageCache;
 }
 
+static BOOL pageCacheSizeModified = NO;
 static unsigned pageCacheSize = 10;
 
 + (void)setPageCacheSize: (unsigned)size
 {
+    pageCacheSizeModified = YES;
     pageCacheSize = size;
 }
 
 
 + (unsigned)pageCacheSize
 {
+    if (!pageCacheSizeModified)
+        return [[WebPreferences standardPreferences] _pageCacheSize];
     return pageCacheSize;
 }
 

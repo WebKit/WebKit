@@ -14,5 +14,6 @@
 - (BOOL)_initialTimedLayoutEnabled;
 - (BOOL)_resourceTimedLayoutEnabled;
 - (NSTimeInterval)_resourceTimedLayoutDelay;
+- (int)_pageCacheSize;
 
 @end
