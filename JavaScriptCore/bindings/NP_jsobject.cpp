@@ -71,8 +71,7 @@ static NPClass _javascriptClass = {
     0
 };
 
-static NPClass *javascriptClass = &_javascriptClass;
-NPClass *NPScriptObjectClass = javascriptClass;
+NPClass *NPScriptObjectClass = &_javascriptClass;
 
 Identifier identiferFromNPIdentifier(const NPUTF8 *name)
 {

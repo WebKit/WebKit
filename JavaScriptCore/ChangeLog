@@ -2,6 +2,18 @@
 
         Reviewed by Kevin.
 
+        - fixed <rdar://problem/3804661> REGRESSION: JavaScriptCore framework now has two init routines
+
+        * bindings/NP_jsobject.cpp: Fixed unnecessarily-complex globals set up that was
+        creating an init routine.
+
+        * kjs/ustring.cpp: Changed around the UString::Rep::empty construction to not
+        require a global constructor that creates an init routine.
+
+2004-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
         - fixed <rdar://problem/3822618> REGRESSION (164-165): expedia.com's popup help doesn't work
 
         * kjs/reference.cpp: (Reference::putValue): Change so that references not found in any object

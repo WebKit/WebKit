@@ -142,9 +142,11 @@ bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
   return len == c2.size() && (len == 0 || memcmp(c1.c_str(), c2.c_str(), len) == 0);
 }
 
-static UChar dummy;
+// Hack here to avoid a global with a constructor; point to an unsigned short instead of a UChar.
+static unsigned short almostUChar;
+static UChar *const nonNullUCharPointer = reinterpret_cast<UChar *>(&almostUChar);
 UString::Rep UString::Rep::null = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
-UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, 0, &dummy, 0, 0, 0, 0 };
+UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, 0, nonNullUCharPointer, 0, 0, 0, 0 };
 const int normalStatBufferSize = 4096;
 static char *statBuffer = 0;
 static int statBufferSize = 0;
