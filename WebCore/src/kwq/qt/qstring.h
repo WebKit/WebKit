@@ -249,15 +249,14 @@ public:
     // operators ---------------------------------------------------------------
 
     bool operator!() const;
-    operator QChar () const;
+
     operator const char *() const;
+
     QChar operator[](int) const;
-    QString &operator+(char);
-    QString &operator+(QChar);
-    QString &operator+(const QString &);
-    QString &operator+=(char);
-    QString &operator+=(QChar);
+
     QString &operator+=(const QString &);
+    QString &operator+=(QChar);
+    QString &operator+=(char);
 
     // data members ------------------------------------------------------------
 
@@ -275,19 +274,19 @@ public:
 }; // class QString ============================================================
 
 
-// operators associated with QChar and QString =================================
+// operators associated with QString ===========================================
 
-bool operator==(const QString &, QChar);
 bool operator==(const QString &, const QString &);
 bool operator==(const QString &, const char *);
 bool operator==(const char *, const QString &);
-bool operator!=(const QString &, QChar);
+
 bool operator!=(const QString &, const QString &);
 bool operator!=(const QString &, const char *);
 bool operator!=(const char *, const QString &);
-QString operator+(char, const QString &);
+
+QString operator+(const QString &, const QString &);
+QString operator+(const QString &, const char *);
 QString operator+(const char *, const QString &);
-QString operator+(QChar, const QString &);
 
 
 // class QConstString ==========================================================
