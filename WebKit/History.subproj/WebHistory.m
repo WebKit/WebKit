@@ -12,7 +12,10 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
-NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotification";
+NSString *WebHistoryEntriesAddedNotification = @"WebHistoryEntriesAddedNotification";
+NSString *WebHistoryEntriesRemovedNotification = @"WebHistoryEntriesRemovedNotification";
+NSString *WebHistoryAllEntriesRemovedNotification = @"WebHistoryAllEntriesRemovedNotification";
+NSString *WebHistoryLoadedNotification = @"WebHistoryLoadedNotification";
 
 @implementation WebHistory
 
@@ -50,11 +53,11 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
 
 #pragma mark MODIFYING CONTENTS
 
-- (void)sendEntriesChangedNotification
+- (void)_sendNotification:(NSString *)name entries:(NSArray *)entries
 {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:entries, @"Entries", nil];
     [[NSNotificationCenter defaultCenter]
-        postNotificationName: WebHistoryEntriesChangedNotification
-                      object: self];
+        postNotificationName: name object: self userInfo: userInfo];
 }
 
 - (WebHistoryItem *)addEntryForURL: (NSURL *)URL
@@ -69,34 +72,40 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
 - (void)addEntry: (WebHistoryItem *)entry
 {
     [_historyPrivate addEntry: entry];
-    [self sendEntriesChangedNotification];
+    [self _sendNotification: WebHistoryEntriesAddedNotification
+                    entries: [NSArray arrayWithObject:entry]];
 }
 
 - (void)removeEntry: (WebHistoryItem *)entry
 {
     if ([_historyPrivate removeEntry: entry]) {
-        [self sendEntriesChangedNotification];
+        [self _sendNotification: WebHistoryEntriesRemovedNotification
+                        entries: [NSArray arrayWithObject:entry]];
     }
 }
 
 - (void)removeEntries: (NSArray *)entries
 {
     if ([_historyPrivate removeEntries:entries]) {
-        [self sendEntriesChangedNotification];
+        [self _sendNotification: WebHistoryEntriesRemovedNotification
+                        entries: entries];
     }
 }
 
 - (void)removeAllEntries
 {
     if ([_historyPrivate removeAllEntries]) {
-        [self sendEntriesChangedNotification];
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName: WebHistoryAllEntriesRemovedNotification
+                          object: self];
     }
 }
 
 - (void)addEntries:(NSArray *)newEntries
 {
     [_historyPrivate addEntries:newEntries];
-    [self sendEntriesChangedNotification];
+    [self _sendNotification: WebHistoryEntriesAddedNotification
+                    entries: newEntries];
 }
 
 #pragma mark DATE-BASED RETRIEVAL
@@ -138,7 +147,9 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
 - (BOOL)loadHistory
 {
     if ([_historyPrivate loadHistory]) {
-        [self sendEntriesChangedNotification];
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName: WebHistoryLoadedNotification
+                          object: self];
         return YES;
     }
     return NO;

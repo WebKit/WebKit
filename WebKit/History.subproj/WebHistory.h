@@ -14,8 +14,18 @@
 @class WebHistoryItem;
 @class WebHistoryPrivate;
 
-// notification sent when history is modified
-extern NSString *WebHistoryEntriesChangedNotification;
+// Notifications sent when history is modified.
+// The first two come with a userInfo dictionary with a single key "Entries", which contains
+// an array of entries that were added or removed.
+
+// posted from addEntry: and addEntries:
+extern NSString *WebHistoryEntriesAddedNotification;
+// posted from removeEntry: and removeEntries:
+extern NSString *WebHistoryEntriesRemovedNotification;
+// posted from removeAllEntries
+extern NSString *WebHistoryAllEntriesRemovedNotification;
+// posted from loadHistory
+extern NSString *WebHistoryLoadedNotification;
 
 /*!
     @class WebHistory

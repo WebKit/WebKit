@@ -1,3 +1,20 @@
+2002-11-22  Trey Matteson  <trey@apple.com>
+
+	Added more detailed notifications on history changes.
+	All changes below are just posting the new notes at the right time.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        (-[WebHistory _sendNotification:entries:]):
+        (-[WebHistory addEntry:]):
+        (-[WebHistory removeEntry:]):
+        (-[WebHistory removeEntries:]):
+        (-[WebHistory removeAllEntries]):
+        (-[WebHistory addEntries:]):
+        (-[WebHistory loadHistory]):
+        * WebKit.exp:
+
 2002-11-22  Richard Williamson   <rjw@apple.com>
 
         Changed NSString category methods to include _web_ prefix.
