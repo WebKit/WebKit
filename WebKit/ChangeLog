@@ -1,5 +1,9 @@
 2002-06-04  Darin Adler  <darin@apple.com>
 
+	* WebKit.pbproj/project.pbxproj: Exported IFStringTruncator.h as Private.
+
+2002-06-04  Darin Adler  <darin@apple.com>
+
 	Moved the string truncator class here from WebBrowser so we don't have to
 	export our text machinery.
 
