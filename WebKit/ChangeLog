@@ -1,3 +1,41 @@
+2003-04-24  Richard Williamson   <rjw@apple.com>
+
+        Final API review changes.
+        
+        Reviewed by Chris.
+
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList containsItem:]):
+        (-[WebBackForwardList capacity]):
+        (-[WebBackForwardList setCapacity:]):
+        (-[WebBackForwardList _clearPageCache]):
+        (-[WebBackForwardList setPageCacheSize:]):
+        (-[WebBackForwardList _setUsesPageCache:]):
+        (-[WebBackForwardList _usesPageCache]):
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        (+[WebHistory optionalSharedHistory]):
+        (+[WebHistory setOptionalSharedHistory:]):
+        (-[WebHistory init]):
+        (-[WebHistory loadFromURL:error:]):
+        (-[WebHistory saveToURL:error:]):
+        * History.subproj/WebHistoryItemPrivate.h:
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate init]):
+        (-[WebHistoryPrivate dealloc]):
+        (-[WebHistoryPrivate _loadHistoryGuts:URL:error:]):
+        (-[WebHistoryPrivate loadFromURL:error:]):
+        (-[WebHistoryPrivate _saveHistoryGuts:URL:error:]):
+        (-[WebHistoryPrivate saveToURL:error:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setTitle:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _canCachePage]):
+        (-[WebFrame _purgePageCache]):
+
 2003-04-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris.

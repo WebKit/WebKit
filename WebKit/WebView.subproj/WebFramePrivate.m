@@ -656,7 +656,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 // Update the last visited time.  Mostly interesting for URL autocompletion
                 // statistics.
                 NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
-                WebHistoryItem *oldItem = [[WebHistory sharedHistory] itemForURL:URL];
+                WebHistoryItem *oldItem = [[WebHistory optionalSharedHistory] itemForURL:URL];
                 if (oldItem) {
                     [oldItem setLastVisitedDate:[NSCalendarDate date]];
                 }
@@ -674,7 +674,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     // Add item to history.
 		    NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
 		    if ([[URL absoluteString] length] > 0 && ![WebDataProtocol _webIsDataProtocolURL:URL]) {
-			entry = [[WebHistory sharedHistory] addItemForURL:URL];
+			entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
 			if (ptitle)
 			    [entry setTitle: ptitle];
                         [self _addBackForwardItemClippedAtTarget:YES];
@@ -736,7 +736,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (BOOL)_canCachePage
 {
-    return [[[self webView] backForwardList] usesPageCache];
+    return [[[self webView] backForwardList] _usesPageCache];
 }
 
 - (void)_purgePageCache
@@ -745,7 +745,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     unsigned sizeLimit = [[[self webView] backForwardList] pageCacheSize];
     unsigned pagesCached = 0;
     WebBackForwardList *backForwardList = [[self webView] backForwardList];
-    NSArray *backList = [backForwardList backListWithSizeLimit: 999999];
+    NSArray *backList = [backForwardList backListWithLimit: 999999];
     WebHistoryItem *oldestItem = nil;
     
     unsigned i;

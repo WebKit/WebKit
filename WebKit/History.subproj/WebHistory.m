@@ -10,7 +10,9 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 
+#import <WebFoundation/NSError.h>
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
 #import <WebCore/WebCoreHistory.h>
@@ -53,13 +55,13 @@ static WebHistory *_sharedHistory = nil;
 
 @implementation WebHistory
 
-+ (WebHistory *)sharedHistory
++ (WebHistory *)optionalSharedHistory
 {
     return _sharedHistory;
 }
 
 
-+ (void)setSharedHistory: (WebHistory *)history
++ (void)setOptionalSharedHistory: (WebHistory *)history
 {
     // FIXME.  Need to think about multiple instances of WebHistory per application
     // and correct synchronization of history file between applications.
@@ -70,10 +72,10 @@ static WebHistory *_sharedHistory = nil;
     }
 }
 
-- (id)initWithContentsOfURL: (NSURL *)URL
+- (id)init
 {
     if ((self = [super init]) != nil) {
-        _historyPrivate = [[WebHistoryPrivate alloc] initWithContentsOfURL:URL];
+        _historyPrivate = [[WebHistoryPrivate alloc] init];
     }
 
     return self;
@@ -174,14 +176,9 @@ static WebHistory *_sharedHistory = nil;
 
 #pragma mark SAVING TO DISK
 
-- (NSURL *)URL
+- (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error
 {
-    return [_historyPrivate URL];
-}
-
-- (BOOL)loadHistory
-{
-    if ([_historyPrivate loadHistory]) {
+    if ([_historyPrivate loadFromURL:URL error:error]) {
         [[NSNotificationCenter defaultCenter]
             postNotificationName: WebHistoryLoadedNotification
                           object: self];
@@ -190,9 +187,10 @@ static WebHistory *_sharedHistory = nil;
     return NO;
 }
 
-- (BOOL)saveHistory
+- (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error
 {
-    return [_historyPrivate saveHistory];
+    // FIXME:  Use new foundation API to get error when ready.
+    return [_historyPrivate saveToURL:URL error:error];
 }
 
 - (WebHistoryItem *)_itemForURLString:(NSString *)URLString

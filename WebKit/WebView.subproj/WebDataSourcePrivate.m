@@ -300,7 +300,7 @@
     if (_private->committed) {
         WebHistoryItem *entry;
         NSURL *canonURL = [[[self _originalRequest] URL] _web_canonicalize];
-        entry = [[WebHistory sharedHistory] itemForURL: canonURL];
+        entry = [[WebHistory optionalSharedHistory] itemForURL: canonURL];
         [entry setTitle: _private->pageTitle];
 
         // Must update the entries in the back-forward list too.

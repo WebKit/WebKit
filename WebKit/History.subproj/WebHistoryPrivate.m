@@ -12,6 +12,10 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitLogging.h>
 
+#import <WebFoundation/NSError.h>
+#import <WebFoundation/NSURLConnection.h>
+#import <WebFoundation/NSURLRequest.h>
+
 #import <WebFoundation/WebNSCalendarDateExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
@@ -35,7 +39,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
             nil]];    
 }
 
-- (id)initWithContentsOfURL: (NSURL *)URL
+- (id)init
 {
     if (![super init]) {
         return nil;
@@ -44,11 +48,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     _entriesByURL = [[NSMutableDictionary alloc] init];
     _datesWithEntries = [[NSMutableArray alloc] init];
     _entriesByDate = [[NSMutableArray alloc] init];
-    _URL = [URL retain];
 
-    // read history from disk
-    [self loadHistory];
-    
     return self;
 }
 
@@ -57,7 +57,6 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     [_entriesByURL release];
     [_datesWithEntries release];
     [_entriesByDate release];
-    [_URL release];
     
     [super dealloc];
 }
@@ -346,24 +345,26 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     return arrayRep;
 }
 
-- (BOOL)_loadHistoryGuts: (int *)numberOfItemsLoaded
+- (BOOL)_loadHistoryGuts: (int *)numberOfItemsLoaded URL:(NSURL *)URL error:(NSError **)error
 {
     NSEnumerator *enumerator;
     int index;
     int limit;
     NSCalendarDate *ageLimitDate;
+    NSDictionary *fileAsDictionary;
     BOOL ageLimitPassed;
 
     *numberOfItemsLoaded = 0;
 
-    NSDictionary *fileAsDictionary = [NSDictionary dictionaryWithContentsOfURL: [self URL]];
+    NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:URL] returningResponse:nil error:error];
+    fileAsDictionary = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:NSPropertyListImmutable format:nil errorDescription:nil];
     if (fileAsDictionary == nil) {
         // Couldn't read a dictionary; let's see if we can read an old-style array instead
-        NSArray *fileAsArray = [NSArray arrayWithContentsOfURL:[self URL]];
+        NSArray *fileAsArray = [NSArray arrayWithContentsOfURL:URL];
         if (fileAsArray == nil) {
 #if !ERROR_DISABLED
-            if ([[self URL] isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [[self URL] path]]) {
-                ERROR("unable to read history from file %@; perhaps contents are corrupted", [[self URL] path]);
+            if ([URL isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [URL path]]) {
+                ERROR("unable to read history from file %@; perhaps contents are corrupted", [URL path]);
             }
 #endif
             return NO;
@@ -430,35 +431,39 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     return YES;    
 }
 
-- (BOOL)loadHistory
+- (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error
 {
     int numberOfItems;
     double start, duration;
     BOOL result;
 
     start = CFAbsoluteTimeGetCurrent();
-    result = [self _loadHistoryGuts: &numberOfItems];
+    result = [self _loadHistoryGuts: &numberOfItems URL:URL error:error];
 
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         LOG(Timing, "loading %d history entries from %@ took %f seconds",
-            numberOfItems, [[self URL] absoluteString], duration);
+            numberOfItems, [URL absoluteString], duration);
     }
 
     return result;
 }
 
-- (BOOL)_saveHistoryGuts: (int *)numberOfItemsSaved
+- (BOOL)_saveHistoryGuts: (int *)numberOfItemsSaved URL:(NSURL *)URL error:(NSError **)error
 {
     *numberOfItemsSaved = 0;
+
+    // FIXME:  Correctly report error when new API is ready.
+    if (error)
+        *error = nil;
 
     NSArray *array = [self arrayRepresentation];
     NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
         array, DatesArrayKey,
         [NSNumber numberWithInt:currentFileVersion], FileVersionKey,
         nil];
-    if (![dictionary writeToURL:[self URL] atomically:YES]) {
-        ERROR("attempt to save %@ to %@ failed", dictionary, [[self URL] absoluteString]);
+    if (![dictionary writeToURL:URL atomically:YES]) {
+        ERROR("attempt to save %@ to %@ failed", dictionary, [URL absoluteString]);
         return NO;
     }
     
@@ -466,25 +471,19 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     return YES;
 }
 
-- (NSURL *)URL
-{
-    return _URL;
-}
-
-
-- (BOOL)saveHistory
+- (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error
 {
     int numberOfItems;
     double start, duration;
     BOOL result;
 
     start = CFAbsoluteTimeGetCurrent();
-    result = [self _saveHistoryGuts: &numberOfItems];
+    result = [self _saveHistoryGuts: &numberOfItems URL:URL error:error];
 
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         LOG(Timing, "saving %d history entries to %@ took %f seconds",
-            numberOfItems, [[self URL] absoluteString], duration);
+            numberOfItems, [URL absoluteString], duration);
     }
 
     return result;

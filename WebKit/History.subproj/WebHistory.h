@@ -6,6 +6,8 @@
 */
 #import <Foundation/Foundation.h>
 
+@class NSError;
+
 @class WebHistoryItem;
 @class WebHistoryPrivate;
 
@@ -38,26 +40,33 @@ extern NSString *WebHistoryItemsKey;
 }
 
 /*!
-    @method sharedHistory
+    @method optionalSharedHistory
     @abstract Returns a shared WebHistory instance initialized with the default history file.
     @result A WebHistory object.
 */
-+ (WebHistory *)sharedHistory;
++ (WebHistory *)optionalSharedHistory;
 
 /*!
-    @method createSharedHistoryWithFile:
+    @method setOptionalSharedHistory:
     @param history The history to use for the global WebHistory.
     @result Returns a WebHistory initialized with the contents of file.
 */
-+ (void)setSharedHistory:(WebHistory *)history;
++ (void)setOptionalSharedHistory:(WebHistory *)history;
 
 /*!
-    @method initWithContentsOfURL:
+    @method loadFromURL:error:
     @param URL The URL to use to initialize the WebHistory.
     @abstract The designated initializer for WebHistory.
     @result Returns an initialized WebHistory.
 */
-- initWithContentsOfURL:(NSURL *)URL;
+- (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error;
+
+/*!
+    @method saveToURL:error:
+    @discussion Save history to URL. It is the client's responsibility to call this at appropriate times.
+    @result Returns YES if successful, NO otherwise.
+*/
+- (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error;
 
 /*!
     @method addItems:
@@ -94,41 +103,11 @@ extern NSString *WebHistoryItemsKey;
 - (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
 
 /*!
-    @method containsURL:
-    @abstract Return whether a URL is in the WebHistory.
-    @param URL The URL for which to search the WebHistory.
-    @discussion This method is useful for implementing a visited-link mechanism.
-    @result YES if WebHistory contains a history item for the given URL, otherwise NO.
-*/
-- (BOOL)containsURL:(NSURL *)URL;
-
-/*!
     @method entryForURL:
     @abstract Get an item for a specific URL
     @param URL The URL of the history item to search for
     @result Returns an item matching the URL
 */
 - (WebHistoryItem *)itemForURL:(NSURL *)URL;
-
-/*!
-    @method file
-    @discussion The file path used for storing history, specified in -[WebHistory initWithFile:] or +[WebHistory webHistoryWithFile:]
-    @result Returns the file path used to store the history.
-*/
-- (NSURL *)URL;
-
-/*!
-    @method loadHistory
-    @discussion Load history from file. This happens automatically at init time, and need not normally be called.
-    @result Returns YES if successful, NO otherwise.
-*/
-- (BOOL)loadHistory;
-
-/*!
-    @method saveHistory
-    @discussion Save history to file. It is the client's responsibility to call this at appropriate times.
-    @result Returns YES if successful, NO otherwise.
-*/
-- (BOOL)saveHistory;
 
 @end

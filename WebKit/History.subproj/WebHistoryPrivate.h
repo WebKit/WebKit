@@ -11,16 +11,14 @@
 #import <WebKit/WebHistory.h>
 
 @class WebHistoryItem;
+@class NSError;
 
 @interface WebHistoryPrivate : NSObject {
 @private
     NSMutableDictionary *_entriesByURL;
     NSMutableArray *_datesWithEntries;
     NSMutableArray *_entriesByDate;
-    NSURL *_URL;
 }
-
-- (id)initWithContentsOfURL: (NSURL *)URL;
 
 - (void)addItem: (WebHistoryItem *)entry;
 - (void)addItems:(NSArray *)newEntries;
@@ -35,9 +33,8 @@
 - (WebHistoryItem *)itemForURL:(NSURL *)URL;
 - (WebHistoryItem *)itemForURLString:(NSString *)URLString;
 
-- (NSURL *)URL;
-- (BOOL)loadHistory;
-- (BOOL)saveHistory;
+- (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error;
+- (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error;
 
 @end
 

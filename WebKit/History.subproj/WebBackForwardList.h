@@ -22,42 +22,6 @@
 }
 
 /*!
-    @method setUsesPageCache:
-    @param flag Set to YES if pages should be cached
-    @discussion Pages in the back/forward list may be cached.  Pages in this cache
-    will load much more quickly; however, they may not always be up-to-date.  The
-    page cache may not apply to all pages.
-*/
-- (void)setUsesPageCache: (BOOL)flag;
-
-/*!
-    @method usesPageCache
-    @abstract Returns whether page cacheing is enabled. 
-    @result YES if the page cache is enabled, otherwise NO. 
-*/
-- (BOOL)usesPageCache;
-
-/*!
-    @method setPageCacheSize:
-    @abstract Sets the size of the page cache.
-    @param size The number of pages to allow in the page cache.
-*/
-- (void)setPageCacheSize: (unsigned)size;
-
-/*!
-    @method pageCacheSize
-    @abstract Returns the number of pages that may be cached.
-    @result The number of pages that may be cached.
-*/
-- (unsigned)pageCacheSize;
-
-/*!
-    @method clearPageCache
-    @abstract Clears all items in the page cache. 
-*/
-- (void)clearPageCache;
-
-/*!
     @method addItem:
     @abstract Adds an entry to the list.
     @param entry The entry to add.
@@ -109,42 +73,34 @@
 - (WebHistoryItem *)forwardItem;
 
 /*!
-    @method containsItem:
-    @abstract Returns whether the receiver contains the given entry.
-    @param item The history item to search for.
-    @result YES if the list contains the given entry, otherwise NO.
-*/
-- (BOOL)containsItem:(WebHistoryItem *)item;
-
-/*!
-    @method backListWithSizeLimit:
+    @method backListWithLimit:
     @abstract Returns a portion of the list before the current entry.
     @param limit A cap on the size of the array returned.
     @result An array of items before the current entry, or nil if there are none.  The entries are in the order that they were originally visited.
 */
-- (NSArray *)backListWithSizeLimit:(int)limit;
+- (NSArray *)backListWithLimit:(int)limit;
 
 /*!
-    @method forwardListWithSizeLimit:
+    @method forwardListWithLimit:
     @abstract Returns a portion of the list after the current entry.
     @param limit A cap on the size of the array returned.
     @result An array of items after the current entry, or nil if there are none.  The entries are in the order that they were originally visited.
 */
-- (NSArray *)forwardListWithSizeLimit:(int)limit;
+- (NSArray *)forwardListWithLimit:(int)limit;
 
 /*!
-    @method maximumSize
+    @method capacity
     @abstract Returns the list's maximum size.
     @result The list's maximum size.
 */
-- (int)maximumSize;
+- (int)capacity;
 
 /*!
-    @method maximumSize
+    @method setCacpacity
     @abstract Sets the list's maximum size.
     @param size The new maximum size for the list.
 */
-- (void)setMaximumSize:(int)size;
+- (void)setCapacity:(int)size;
 
 /*!
     @method backListCount
@@ -161,11 +117,32 @@
 - (int)forwardListCount;
 
 /*!
+    @method containsItem:
+    @param item The item that will be checked for presence in the WebBackForwardList.
+    @result Returns YES if the item is in the list. 
+*/
+- (BOOL)containsItem:(WebHistoryItem *)item;
+
+/*!
     @method itemAtIndex:
     @abstract Returns an entry the given distance from the current entry.
     @param index Index of the desired list item relative to the current item; 0 is current item, -1 is back item, 1 is forward item, etc.
     @result The entry the given distance from the current entry. If index exceeds the limits of the list, nil is returned.
 */
 - (WebHistoryItem *)itemAtIndex:(int)index;
+
+    /*!
+       @method setPageCacheSize:
+     @abstract Sets the size of the page cache.
+     @param size The number of pages to allow in the page cache.
+     */
+- (void)setPageCacheSize: (unsigned)size;
+
+    /*!
+    @method pageCacheSize
+     @abstract Returns the number of pages that may be cached.
+     @result The number of pages that may be cached.
+     */
+- (unsigned)pageCacheSize;
 
 @end

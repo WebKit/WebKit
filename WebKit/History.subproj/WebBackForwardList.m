@@ -23,6 +23,7 @@
 @end
 
 @implementation WebBackForwardListPrivate
+
 - (void)dealloc
 {
     [entries release];
@@ -93,6 +94,12 @@
     _private->current++;
 }
 
+- (BOOL)containsItem:(WebHistoryItem *)entry
+{
+    return [_private->entries indexOfObjectIdenticalTo:entry] != NSNotFound;
+}
+
+
 - (void)goBack
 {
     if(_private->current > 0)
@@ -145,12 +152,7 @@
     }
 }
 
-- (BOOL)containsItem:(WebHistoryItem *)entry
-{
-    return [_private->entries indexOfObjectIdenticalTo:entry] != NSNotFound;
-}
-
-- (NSArray *)backListWithSizeLimit:(int)limit;
+- (NSArray *)backListWithLimit:(int)limit;
 {
     if (_private->current > 0) {
         NSRange r;
@@ -162,7 +164,7 @@
     }
 }
 
-- (NSArray *)forwardListWithSizeLimit:(int)limit;
+- (NSArray *)forwardListWithLimit:(int)limit;
 {
     int lastEntry = (int)[_private->entries count]-1;
     if (_private->current < lastEntry) {
@@ -175,12 +177,12 @@
     }
 }
 
-- (int)maximumSize
+- (int)capacity
 {
     return _private->maximumSize;
 }
 
-- (void)setMaximumSize:(int)size
+- (void)setCapacity:(int)size
 {
     _private->maximumSize = size;
 }
@@ -219,7 +221,7 @@
     return result;
 }
 
-- (void)clearPageCache
+- (void)_clearPageCache
 {
     int i;
     for (i = 0; i < (int)[_private->entries count]; i++) {
@@ -233,6 +235,10 @@
 {
     _private->pageCacheSizeModified = YES;
     _private->pageCacheSize = size;
+    if (size == 0){
+        [self _clearPageCache];
+        [self _setUsesPageCache: NO];
+    }
 }
 
 #ifndef NDEBUG
@@ -266,12 +272,12 @@ static BOOL loggedPageCacheSize = NO;
 
 // On be default for now.
 
-- (void)setUsesPageCache: (BOOL)f
+- (void)_setUsesPageCache: (BOOL)f
 {
     _private->usesPageCache = f ? YES : NO;
 }
 
-- (BOOL)usesPageCache
+- (BOOL)_usesPageCache
 {
     if ([self pageCacheSize] == 0)
         return NO;
