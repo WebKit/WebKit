@@ -26,21 +26,25 @@
 {
     BOOL result;
 
-    NSHTTPCookieAcceptPolicy acceptPolicy = [[NSHTTPCookieStorage sharedCookieManager] acceptPolicy];
-    result = (acceptPolicy == NSHTTPCookieAcceptPolicyAlways || acceptPolicy == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
+    NSHTTPCookieAcceptPolicy cookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
+    result = (cookieAcceptPolicy == NSHTTPCookieAcceptPolicyAlways || cookieAcceptPolicy == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
     
     return result;
 }
 
-- (NSString *)cookiesForURL:(NSString *)URL
+- (NSString *)cookiesForURL:(NSString *)URLString
 {
-    return [[[NSHTTPCookieStorage sharedCookieManager] cookieRequestHeaderFieldsForURL:[NSURL _web_URLWithString:URL]] objectForKey:@"Cookie"];
+    NSURL *URL = [NSURL _web_URLWithString:URLString];
+    NSArray *cookiesForURL = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:URL];
+    NSDictionary *header = [NSHTTPCookie requestHeaderFieldsWithCookies:cookiesForURL];
+    return [header objectForKey:@"Cookie"];
 }
 
-- (void)setCookies:(NSString *)cookies forURL:(NSString *)URL policyBaseURL:(NSString *)policyBaseURL
+- (void)setCookies:(NSString *)cookieString forURL:(NSString *)URLString policyBaseURL:(NSString *)policyBaseURL
 {
-    [[NSHTTPCookieStorage sharedCookieManager] setCookiesFromResponseHeader:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"]
-        forURL:[NSURL _web_URLWithString:URL] policyBaseURL:[NSURL _web_URLWithString:policyBaseURL]];    
+    NSURL *URL = [NSURL _web_URLWithString:URLString];
+    NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:URL];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:URL mainDocumentURL:[NSURL _web_URLWithString:policyBaseURL]];    
 }
 
 @end

@@ -1,3 +1,19 @@
+2003-05-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Updated to use approved NSHTTPCookieStorage API.
+
+        +sharedCookieManager -> +sharedHTTPCookieStorage
+        -acceptPolicy -> -cookieAcceptPolicy
+        -cookieRequestHeaderFieldsForURL: -> -cookiesForURL:
+        -setCookiesFromResponseHeader:forURL:policyBaseURL: -> -setCookies:forURL:mainDocumentURL:
+
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        (-[WebCookieAdapter cookiesEnabled]):
+        (-[WebCookieAdapter cookiesForURL:]):
+        (-[WebCookieAdapter setCookies:forURL:policyBaseURL:]):
+
 2003-05-01  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
