@@ -1734,12 +1734,22 @@ bool RenderBlock::matchedEndLine(const BidiIterator& start, const BidiIterator& 
 
 static const ushort nonBreakingSpace = 0xa0;
 
+inline bool RenderBlock::skipNonBreakingSpace(BidiIterator &it)
+{
+    if (it.obj->style()->nbspMode() != SPACE || it.current().unicode() != nonBreakingSpace)
+        return false;
+ 
+    // Do not skip a non-breaking spaces if it is the first character
+    // on the first line of a block.
+    return !m_firstLine || !isLineEmpty;
+}
+
 int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
 {
     int width = lineWidth(m_height);
     while (!it.atEnd() && (it.obj->isInlineFlow() || (it.obj->style()->whiteSpace() != PRE && !it.obj->isBR() &&
           (it.current() == ' ' || it.current() == '\n' || 
-          (it.obj->style()->nbspMode() == SPACE && it.current().unicode() == nonBreakingSpace) || it.obj->isFloatingOrPositioned())))) {
+           skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
         if (it.obj->isFloatingOrPositioned()) {
             RenderObject *o = it.obj;
             // add to special objects...

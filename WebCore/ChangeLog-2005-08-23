@@ -1,3 +1,15 @@
+2004-10-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::skipNonBreakingSpace): New helper.
+        (khtml::RenderBlock::skipWhitespace): Do not skip non-breaking spaces that are
+        at the start of a block. This was preventing users from typing spaces in empty
+        documents.
+        * layout-tests/editing/inserting/insert-space-in-empty-doc-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-space-in-empty-doc.html: Added.
+
 2004-10-14  Adele Amchan  <adele@apple.com>
 
         Reviewed by Darin and Ken.
