@@ -370,8 +370,14 @@ void TextImpl::attach()
         if (onlyWS) {
             if (par->isTable() || par->isTableRow() || par->isTableSection())
                 return CharacterDataImpl::attach();
-        
-            if (!par->isInline() && _style->whiteSpace() != PRE) {
+            
+            if (par->isInline() && _style->whiteSpace() != PRE) {
+                // <span><div/> <div/></span>
+                RenderObject* prevRender = previousRenderer();
+                if (prevRender && prevRender->isFlow() && !prevRender->isInline())
+                    return CharacterDataImpl::attach();
+            }
+            else if (!par->isInline() && _style->whiteSpace() != PRE) {
                 RenderObject* prevRender = previousRenderer();
                 if (par->isFlow() && !par->childrenInline() && 
                     (!prevRender || !prevRender->isInline()))

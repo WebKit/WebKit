@@ -1,5 +1,13 @@
 2002-11-26  David Hyatt  <hyatt@apple.com>
 
+	Smarter block inside inline handling.  Eliminate whitespace
+	that is in between blocks inside inilnes.
+	
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::attach):
+
+2002-11-26  David Hyatt  <hyatt@apple.com>
+
 	Don't let blocks inside inlines collapse with their surroundings
 	ever.
 	
