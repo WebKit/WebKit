@@ -1,3 +1,13 @@
+2003-11-14  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3473707, 100% height positioned divs are too tall.  The padding box wasn't being used like it was
+	supposed to be when calcing percentage heights.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteVertical):
+
 === Safari-114 ===
 
 2003-11-14  Maciej Stachowiak  <mjs@apple.com>

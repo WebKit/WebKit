@@ -1246,17 +1246,16 @@ void RenderBox::calcAbsoluteVertical()
     RenderObject* cb = container();
     Length hl = cb->style()->height();
     if (hl.isFixed())
-        ch = hl.value + cb->paddingTop()
-             + cb->paddingBottom() + cb->borderTop() + cb->borderBottom();
+        ch = hl.value + cb->paddingTop() + cb->paddingBottom();
     else if (cb->isRoot())
         ch = cb->availableHeight();
     else
-        ch = cb->height();
+        ch = cb->height() - cb->borderTop() - cb->borderBottom();
 
     if(!style()->top().isVariable())
-        t = style()->top().width(ch) + cb->borderTop();
+        t = style()->top().width(ch);
     if(!style()->bottom().isVariable())
-        b = style()->bottom().width(ch) + cb->borderBottom();
+        b = style()->bottom().width(ch);
     if (isTable() && style()->height().isVariable())
         // Height is never unsolved for tables. "auto" means shrink to fit.  Use our
         // height instead.
@@ -1285,7 +1284,7 @@ void RenderBox::calcAbsoluteVertical()
         // used for 1) top=static-position
         //          2) top, bottom, height are all auto -> calc top -> 3.
         //          3) precalc for case 2 below
-        static_top = m_staticY; // Should already have been set through layout of the parent().
+        static_top = m_staticY - cb->borderTop(); // Should already have been set through layout of the parent().
         RenderObject* po = parent();
         for (; po && po != cb; po = po->parent())
             static_top += po->yPos();
@@ -1370,7 +1369,7 @@ void RenderBox::calcAbsoluteVertical()
     
     m_marginTop = mt;
     m_marginBottom = mb;
-    m_y = t + mt;
+    m_y = t + mt + cb->borderTop();
     
 //    printf("v: h=%d, t=%d, b=%d, mt=%d, mb=%d, m_y=%d\n",h,t,b,mt,mb,m_y);
 
