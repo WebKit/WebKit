@@ -1,3 +1,28 @@
+2002-12-20  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3133261.  This fix really has two parts.  This first part
+        fixes the stupid stack allocated buffer that caused the crash.
+        The second part makes any RenderText with a large string perform
+        much faster.  The page mentioned in the bug used to load and draw
+        in about 15 minutes.  Now it loads in about 10 seconds and draws in about
+        2 seconds.  The performance optimization caches a widths array
+        for the string in the RenderText, and only updates that array if
+        the font or text for the RenderText change.  
+        
+        Reviewed by john.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::RenderText):
+        (RenderText::setStyle):
+        (RenderText::~RenderText):
+        (RenderText::computeWidths):
+        (RenderText::widthFromBuffer):
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        (RenderText::setText):
+        (RenderText::width):
+        * khtml/rendering/render_text.h:
+
 2002-12-20  Trey Matteson  <trey@apple.com>
 
 	We now build with symbols the B&I.  Deployment builds are without symbols,

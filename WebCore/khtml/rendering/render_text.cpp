@@ -326,6 +326,9 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
 
     m_minWidth = -1;
     m_maxWidth = -1;
+#if APPLE_CHANGES
+    m_widths = 0;
+#endif
     str = _str;
     if(str) str->ref();
     KHTMLAssert(!str || !str->l || str->s);
@@ -351,12 +354,21 @@ void RenderText::setStyle(RenderStyle *_style)
 
         if (changedText && element() && element()->string())
             setText(element()->string(), changedText);
+#if APPLE_CHANGES
+        // set also call computeWidths(), so no need to recache if that has already been done.
+        else
+            computeWidths();
+#endif
     }
 }
 
 RenderText::~RenderText()
 {
     if(str) str->deref();
+#if APPLE_CHANGES
+    if (m_widths)
+        free (m_widths);
+#endif
 }
 
 void RenderText::detach(RenderArena* renderArena)
@@ -760,6 +772,50 @@ void RenderText::paint(QPainter *p, int x, int y, int w, int h,
     paintObject(p, x, y, w, h, tx, ty, paintPhase);
 }
 
+#ifdef APPLE_CHANGES
+
+// We cache the widths array for the characters in the string only
+// if the string is very large.  This is a short term performance
+// optimization.  It has the downside of increasing the size
+// of each render text by float * str->l.  The performance
+// gained is huge though, so this is justifiable.  The long term
+// fix is to rework the word break/line break/bidi mechanisms
+// to reduce the measurement performed, and to correctly account
+// for unicode break points and surrogate pairs.
+#define MIN_STRING_LENGTH_FOR_WIDTH_CACHE 1024
+
+void RenderText::computeWidths()
+{
+    const Font *f = htmlFont( false );
+    
+    if (f){
+        if (m_widths){
+            free (m_widths);
+            m_widths = 0;
+        }
+
+        if (str->l > MIN_STRING_LENGTH_FOR_WIDTH_CACHE){
+            m_widths = (float *)malloc(str->l * sizeof(float));
+            f->floatCharacterWidths( str->s, str->l, 0, str->l, 0, m_widths);
+        }
+    }
+}
+
+inline int RenderText::widthFromBuffer(const Font *f, int start, int len) const
+{
+    float width = 0;
+    int i;
+    
+    if (m_widths == 0)
+        return f->width(str->s, str->l, start, len);
+        
+    for (i = start; i < start+len; i++){
+        width += m_widths[i];
+    }
+    return (int)width;
+}
+#endif
+
 void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS, 
                                     short& endMinW, bool& endWS,
                                     bool& hasBreakableChar, bool& hasBreak,
@@ -781,7 +837,6 @@ void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS,
     endMinW = m_endMinWidth;
     
     hasBreakableChar = m_hasBreakableChar;
-    hasBreak = m_hasBreak;
     
     if (len == 0)
         return;
@@ -799,35 +854,9 @@ void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS,
         minW = maxW;
     else if (minW > maxW)
         minW = maxW;
-
-    // Compute our max widths by scanning the string for newlines.
-    if (hasBreak) {
-        const Font *f = htmlFont( false );
-        bool firstLine = true;
-        beginMaxW = endMaxW = maxW;
-        for(int i = 0; i < len; i++)
-        {
-            int linelen = 0;
-            while( i+linelen < len && str->s[i+linelen] != '\n')
-                linelen++;
-                
-            if (linelen)
-            {
-                endMaxW = f->width(str->s, str->l, i, linelen);
-                if (firstLine) {
-                    firstLine = false;
-                    beginMaxW = endMaxW;
-                }
-                i += linelen;
-                if (i == len-1)
-                    endMaxW = 0;
-            }
-            else if (firstLine) {
-                beginMaxW = 0;
-                firstLine = false;
-            }
-        }
-    }
+        
+    beginMaxW = m_beginMaxWidth;
+    endMaxW = m_endMaxWidth;
 }
 
 void RenderText::calcMinMaxWidth()
@@ -836,7 +865,7 @@ void RenderText::calcMinMaxWidth()
 
     // ### calc Min and Max width...
     m_minWidth = m_beginMinWidth = m_endMinWidth = 0;
-    m_maxWidth = 0;
+    m_maxWidth = m_beginMaxWidth = m_endMaxWidth = 0;
 
     if (isBR())
         return;
@@ -889,7 +918,11 @@ void RenderText::calcMinMaxWidth()
             
         if (wordlen)
         {
+#if !APPLE_CHANGES
             int w = f->width(str->s, str->l, i, wordlen);
+#else
+            int w = widthFromBuffer(f, i, wordlen);
+#endif
             currMinWidth += w;
             currMaxWidth += w;
             if (firstWord) {
@@ -929,6 +962,39 @@ void RenderText::calcMinMaxWidth()
 
     if (style()->whiteSpace() == NOWRAP)
         m_minWidth = m_maxWidth;
+
+    // Compute our max widths by scanning the string for newlines.
+    m_beginMaxWidth = m_endMaxWidth = m_maxWidth;
+    if (m_hasBreak) {
+        const Font *f = htmlFont( false );
+        bool firstLine = true;
+        for(int i = 0; i < len; i++)
+        {
+            int linelen = 0;
+            while( i+linelen < len && str->s[i+linelen] != '\n')
+                linelen++;
+                
+            if (linelen)
+            {
+#if !APPLE_CHANGES
+                m_endMaxWidth = f->width(str->s, str->l, i, linelen);
+#else
+                m_endMaxWidth = widthFromBuffer(f, i, linelen);
+#endif
+                if (firstLine) {
+                    firstLine = false;
+                    m_beginMaxWidth = m_endMaxWidth;
+                }
+                i += linelen;
+                if (i == len-1)
+                    m_endMaxWidth = 0;
+            }
+            else if (firstLine) {
+                m_beginMaxWidth = 0;
+                firstLine = false;
+            }
+        }
+    }
 
     setMinMaxKnown();
     //kdDebug( 6040 ) << "Text::calcMinMaxWidth(): min = " << m_minWidth << " max = " << m_maxWidth << endl;
@@ -991,6 +1057,9 @@ void RenderText::setText(DOMStringImpl *text, bool force)
         str->ref();
     }
 
+#if APPLE_CHANGES
+    computeWidths();
+#endif
     // ### what should happen if we change the text of a
     // RenderBR object ?
     KHTMLAssert(!isBR() || (str->l == 1 && (*str->s) == '\n'));
@@ -1082,6 +1151,10 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     int w;
     if ( f == &style()->htmlFont() && from == 0 && len == str->l )
  	 w = m_maxWidth;
+#if APPLE_CHANGES
+    else if (f == &style()->htmlFont())
+        w = widthFromBuffer (f, from, len);
+#endif
     else
 	w = f->width(str->s, str->l, from, len );
 

@@ -1,3 +1,14 @@
+2002-12-20  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3133261.  This fix really has two parts.  This first part
+        is here in WebTextRenderer.  The second part adds some width
+        caching to RenderText.  I was using a stack allocated array,
+        this would blow out the stack for large strings.
+
+        Reviewed by john.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+
 2002-12-20  Trey Matteson  <trey@apple.com>
 
 	We now build with symbols the B&I.  Deployment builds are without symbols,

@@ -889,7 +889,8 @@ static const char *joiningNames[] = {
 
 #define SHAPE_STRINGS
 #ifdef SHAPE_STRINGS
-    UniChar munged[stringLength];
+     UniChar *munged = 0;
+     UniChar _localMunged[LOCAL_BUFFER_SIZE];
     {
         UniChar *shaped;
         int lengthOut;
@@ -898,6 +899,10 @@ static const char *joiningNames[] = {
                                len,
                                0, &lengthOut);
         if (shaped){
+             if (stringLength < LOCAL_BUFFER_SIZE)
+                 munged = &_localMunged[0];
+             else
+                 munged = (UniChar *)malloc(stringLength * sizeof(UniChar));
             //printf ("%d input, %d output\n", len, lengthOut);
             //for (i = 0; i < (int)len; i++){
             //    printf ("0x%04x shaped to 0x%04x\n", characters[i], shaped[i]);
@@ -1126,6 +1131,11 @@ static const char *joiningNames[] = {
 
     if (_numGlyphs)
         *_numGlyphs = numGlyphs;
+
+#ifdef SHAPE_STRINGS
+     if (munged != &_localMunged[0])
+         free (munged);
+#endif
     
     return totalWidth;
 }
