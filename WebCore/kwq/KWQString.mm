@@ -1009,12 +1009,18 @@ QString &QString::insert(uint, char)
     return *this;
 }
 
-QString &QString::remove(uint, uint)
+QString &QString::remove(uint index, uint width)
 {
     flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len && (index < len) && width) {
+            if (width > (len - index)) {
+                width = len - index;
+            }
+            CFStringDelete(s, CFRangeMake(index, width));
+        }
+    }
     return *this;
 }
 
