@@ -944,8 +944,6 @@ void KWQKHTMLPart::saveWindowProperties(SavedProperties *windowProperties)
     Window *window = Window::retrieveWindow(this);
     if (window)
         window->saveProperties(*windowProperties);
-    else
-        ERROR("NULL window");
 }
 
 void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
@@ -953,8 +951,6 @@ void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
     Window *window = Window::retrieveWindow(this);
     if (window)
         window->location()->saveProperties(*locationProperties);
-    else
-        ERROR("NULL window");
 }
 
 void KWQKHTMLPart::restoreWindowProperties(SavedProperties *windowProperties)
@@ -962,8 +958,6 @@ void KWQKHTMLPart::restoreWindowProperties(SavedProperties *windowProperties)
     Window *window = Window::retrieveWindow(this);
     if (window)
         window->restoreProperties(*windowProperties);
-    else
-        ERROR("NULL window");
 }
 
 void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties)
@@ -971,18 +965,20 @@ void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties
     Window *window = Window::retrieveWindow(this);
     if (window)
         window->location()->restoreProperties(*locationProperties);
-    else
-        ERROR("NULL window");
 }
 
 void KWQKHTMLPart::saveInterpreterBuiltins(SavedBuiltins &interpreterBuiltins)
 {
-    jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
+    if (jScript() && jScript()->interpreter()) {
+	jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
+    }
 }
 
 void KWQKHTMLPart::restoreInterpreterBuiltins(const SavedBuiltins &interpreterBuiltins)
 {
-    jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
+    if (jScript() && jScript()->interpreter()) {
+	jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
+    }
 }
 
 void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)

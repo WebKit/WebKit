@@ -1,3 +1,24 @@
+2003-07-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3343050 - nil-deref in saveInterpreterBuiltins running Sherlock via MallocDebug in Panther7B20
+	- fixed 3343942 - Safari crashes when clicking on link w/ JavaScript turned off
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::saveInterpreterBuiltins): Don't attempt to save
+	when JavaScript is off.
+        (KWQKHTMLPart::restoreInterpreterBuiltins): Don't attempt to restore
+	when JavaScript is off.
+        (KWQKHTMLPart::saveWindowProperties): Remove ERROR, since that
+	case is normal when JS is off.
+        (KWQKHTMLPart::saveLocationProperties): Remove ERROR, since that
+	case is normal when JS is off.
+        (KWQKHTMLPart::restoreWindowProperties): Remove ERROR, since that
+	case is normal when JS is off.
+        (KWQKHTMLPart::restoreLocationProperties): Remove ERROR, since that
+	case is normal when JS is off.
+
 2003-07-28  Dave Hyatt  <hyatt@apple.com>
 
 	Fix build bustage on my buggy panther compiler.
