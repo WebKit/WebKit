@@ -1,3 +1,5 @@
+=== Safari-162 ===
+
 2004-09-01  Richard Williamson   <rjw@apple.com>
 
 	Add pid to exception messages (to help debug dashboard clients).
