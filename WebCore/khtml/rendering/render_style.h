@@ -271,7 +271,6 @@ class StyleSurroundData : public Shared<StyleSurroundData>
 public:
     StyleSurroundData();
 
-    StyleSurroundData(const StyleSurroundData& o );
     bool operator==(const StyleSurroundData& o) const;
     bool operator!=(const StyleSurroundData& o) const {
         return !(*this == o);
@@ -291,13 +290,6 @@ class StyleBoxData : public Shared<StyleBoxData>
 {
 public:
     StyleBoxData();
-
-    StyleBoxData(const StyleBoxData& o );
-
-
-    // copy and assignment
-//    StyleBoxData(const StyleBoxData &other);
-//    const StyleBoxData &operator = (const StyleBoxData &other);
 
     bool operator==(const StyleBoxData& o) const;
     bool operator!=(const StyleBoxData& o) const {
@@ -348,10 +340,6 @@ class StyleVisualData : public Shared<StyleVisualData>
 public:
     StyleVisualData();
 
-    ~StyleVisualData();
-
-    StyleVisualData(const StyleVisualData& o );
-
     bool operator==( const StyleVisualData &o ) const {
 	return ( clip == o.clip &&
                  hasClip == o.hasClip &&
@@ -387,8 +375,6 @@ class StyleBackgroundData : public Shared<StyleBackgroundData>
 {
 public:
     StyleBackgroundData();
-    ~StyleBackgroundData() {}
-    StyleBackgroundData(const StyleBackgroundData& o );
 
     bool operator==(const StyleBackgroundData& o) const;
     bool operator!=(const StyleBackgroundData &o) const {
@@ -440,8 +426,6 @@ class StyleFlexibleBoxData : public Shared<StyleFlexibleBoxData>
 {
 public:
     StyleFlexibleBoxData();
-    ~StyleFlexibleBoxData() {}
-    StyleFlexibleBoxData(const StyleFlexibleBoxData& o);
 
     bool operator==(const StyleFlexibleBoxData& o) const;
     bool operator!=(const StyleFlexibleBoxData &o) const {
@@ -542,12 +526,14 @@ enum ETextDecoration {
     TDNONE = 0x0 , UNDERLINE = 0x1, OVERLINE = 0x2, LINE_THROUGH= 0x4, BLINK = 0x8
 };
 
+enum EPageBreak {
+    PBAUTO, PBALWAYS, PBAVOID
+};
+
 class StyleInheritedData : public Shared<StyleInheritedData>
 {
 public:
     StyleInheritedData();
-    ~StyleInheritedData();
-    StyleInheritedData(const StyleInheritedData& o );
 
     bool operator==(const StyleInheritedData& o) const;
     bool operator != ( const StyleInheritedData &o ) const {
@@ -567,6 +553,11 @@ public:
     
     short horizontal_border_spacing;
     short vertical_border_spacing;
+    
+    // Paged media properties.
+    short widows;
+    short orphans;
+    EPageBreak pageBreakInside : 2;
 };
 
 
@@ -706,7 +697,9 @@ protected:
             (_clear == other._clear) &&
             (_position == other._position) &&
             (_floating == other._floating) &&
-            (_table_layout == other._table_layout) &&
+            (_table_layout == other._table_layout) && 
+            (_page_break_before == other._page_break_before) &&
+            (_page_break_after == other._page_break_after) &&
             (_flowAroundFloats == other._flowAroundFloats) &&
             (_styleType == other._styleType) &&
             (_affectedByHover == other._affectedByHover) &&
@@ -729,6 +722,10 @@ protected:
         EPosition _position : 2;
         EFloat _floating : 2;
         ETableLayout _table_layout : 1;
+        
+        EPageBreak _page_break_before : 2;
+        EPageBreak _page_break_after : 2;
+        
         bool _flowAroundFloats :1;
 
         PseudoId _styleType : 3;
@@ -790,6 +787,8 @@ protected:
 	noninherited_flags._position = STATIC;
 	noninherited_flags._floating = FNONE;
 	noninherited_flags._table_layout = TAUTO;
+        noninherited_flags._page_break_before = PBAUTO;
+        noninherited_flags._page_break_after = PBAUTO;
 	noninherited_flags._flowAroundFloats=false;
 	noninherited_flags._styleType = NOPSEUDO;
         noninherited_flags._affectedByHover = false;
@@ -963,6 +962,12 @@ public:
 
     CachedImage *cursorImage() const { return inherited->cursor_image; }
 
+    short widows() const { return inherited->widows; }
+    short orphans() const { return inherited->orphans; }
+    EPageBreak pageBreakInside() const { return inherited->pageBreakInside; }
+    EPageBreak pageBreakBefore() const { return noninherited_flags._page_break_before; }
+    EPageBreak pageBreakAfter() const { return noninherited_flags._page_break_after; }
+    
     // CSS3 Getter Methods
     ShadowData* textShadow() const { return css3InheritedData->textShadow; }
     float opacity() { return css3NonInheritedData->opacity; }
@@ -1125,6 +1130,12 @@ public:
     int zIndex() const { return box->z_index; }
     void setZIndex(int v) { SET_VAR(box, z_auto, false); SET_VAR(box,z_index,v) }
 
+    void setWidows(short w) { SET_VAR(inherited, widows, w); }
+    void setOrphans(short o) { SET_VAR(inherited, orphans, o); }
+    void setPageBreakInside(EPageBreak b) { SET_VAR(inherited, pageBreakInside, b); }
+    void setPageBreakBefore(EPageBreak b) { noninherited_flags._page_break_before = b; }
+    void setPageBreakAfter(EPageBreak b) { noninherited_flags._page_break_after = b; }
+    
     // CSS3 Setters
     void setTextShadow(ShadowData* val, bool add=false);
     void setOpacity(float f) { SET_VAR(css3NonInheritedData, opacity, f); }

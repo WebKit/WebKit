@@ -1,5 +1,36 @@
 2003-10-29  David Hyatt  <hyatt@apple.com>
 
+	Add the paged media properties to RenderStyle.  They aren't used yet, but they should now be 
+	parsed and interpreted correctly.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/rendering/render_style.cpp:
+        (StyleBoxData::operator==):
+        (StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (:opacity):
+        (:textShadow):
+        (StyleInheritedData::StyleInheritedData):
+        (StyleInheritedData::operator==):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::RenderStyle::NonInheritedFlags::operator==):
+        (khtml::RenderStyle::setBitDefaults):
+        (khtml::RenderStyle::widows):
+        (khtml::RenderStyle::orphans):
+        (khtml::RenderStyle::pageBreakInside):
+        (khtml::RenderStyle::pageBreakBefore):
+        (khtml::RenderStyle::pageBreakAfter):
+        (khtml::RenderStyle::setWidows):
+        (khtml::RenderStyle::setOrphans):
+        (khtml::RenderStyle::setPageBreakInside):
+        (khtml::RenderStyle::setPageBreakBefore):
+        (khtml::RenderStyle::setPageBreakAfter):
+
+2003-10-29  David Hyatt  <hyatt@apple.com>
+
 	Refine the fix to updateLayout.
 	updateStyleSelector would get called over and over again when you queried for layout properties from
 	JS.  If no stylesheets are pending, this isn't necessary (and is quite expensive, since updateStyleSelector
