@@ -27,6 +27,8 @@
 #define QDRAWUTIL_H_
 
 #include "qpainter.h"
+#include "qpalette.h"
+#include "qbrush.h"
 
 void qDrawShadePanel(QPainter *, int, int, int, int, const QColorGroup &, bool
         sunken = FALSE, int lineWidth = 1, const QBrush *fill = 0);

@@ -26,8 +26,6 @@
 #ifndef QOBJECTDEFS_H_
 #define QOBJECTDEFS_H_
 
-#include <kglobalsettings.h>
-
 #define Q_PROPERTY(text)
 
 class QObject;

@@ -26,6 +26,8 @@
 #ifndef QFONTINFO_H_
 #define QFONTINFO_H_
 
+#include "qfont.h"
+
 class QFontInfo {
 public:
     QFontInfo(const QFont &);

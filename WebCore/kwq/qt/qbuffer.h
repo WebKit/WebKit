@@ -26,6 +26,10 @@
 #ifndef QBUFFER_H_
 #define QBUFFER_H_
 
+#include <kwqdef.h>
+
+#include "qstring.h"
+
 class QBuffer {
 public:
     QByteArray buffer() const;

@@ -26,6 +26,8 @@
 #ifndef QVALUELIST_H_
 #define QVALUELIST_H_
 
+#include <kwqdef.h>
+
 template<class T> class QValueListIterator {
 public: 
     bool operator!=(const QValueListIterator<T>& it);

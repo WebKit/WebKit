@@ -26,7 +26,7 @@
 #ifndef QCOLOR_H_
 #define QCOLOR_H_
 
-class QString;
+#include "qstring.h"
 
 class QColor {
 public:

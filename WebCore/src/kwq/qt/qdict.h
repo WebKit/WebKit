@@ -27,6 +27,7 @@
 #define QDICT_H_
 
 #include "qcollection.h"
+#include "qstring.h"
 
 template <class T> class QDict : public QCollection {
 public:

@@ -27,9 +27,8 @@
 #define QFONTDATABASE_H_
 
 #include "qvaluelist.h"
-
-class QFont;
-class QString;
+#include "qfont.h"
+#include "qstring.h"
 
 class QFontDatabase {
 public:

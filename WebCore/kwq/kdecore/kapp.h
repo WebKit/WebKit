@@ -27,6 +27,7 @@
 #define KAPP_H_
 
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <dcopclient.h>
 #include <qapplication.h>
 #include <qpalette.h>

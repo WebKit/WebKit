@@ -28,6 +28,7 @@
 
 #include <qarray.h>
 #include <qiodevice.h>
+#include <qstring.h>
 
 class QDataStream {
 public:
