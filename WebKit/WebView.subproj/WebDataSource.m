@@ -896,7 +896,10 @@
         [client setDefersCallbacks:defers];
     }
 
-    [[[self webFrame] childFrames] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
+    // It's OK to use the internal version of getting the child
+    // frames, since undeferring callbacks will not do any immediate
+    // work, and so the set of frames can't change out from under us.
+    [[[self webFrame] _internalChildFrames] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
 - (NSURLRequest *)_originalRequest
@@ -1109,7 +1112,11 @@
     // Put in the auto-release pool because it's common to call this from a run loop source,
     // and then the entire list of frames lasts until the next autorelease.
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    NSEnumerator *e = [[[self webFrame] childFrames] objectEnumerator];
+
+    // It's OK to use the internal version of getting the child
+    // frames, since nothing we do here can possibly change the set of
+    // frames.
+    NSEnumerator *e = [[[self webFrame] _internalChildFrames] objectEnumerator];
     WebFrame *childFrame;
     while ((childFrame = [e nextObject])) {
         if ([[childFrame dataSource] isLoading] || [[childFrame provisionalDataSource] isLoading]) {

@@ -669,7 +669,9 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     if ([frame provisionalDataSource] == dataSource)
         return frame;
 
-    frames = [frame childFrames];
+    // It's safe to use the internal version because we know this
+    // function will not change the set of frames
+    frames = [frame _internalChildFrames];
     count = [frames count];
     for (i = 0; i < count; i++){
         aFrame = [frames objectAtIndex: i];
@@ -699,7 +701,9 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     if ([frame frameView] == aView)
         return frame;
 
-    frames = [frame childFrames];
+    // It's safe to use the internal version because we know this
+    // function will not change the set of frames
+    frames = [frame _internalChildFrames];
     count = [frames count];
     for (i = 0; i < count; i++){
         aFrame = [frames objectAtIndex: i];

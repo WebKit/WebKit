@@ -144,8 +144,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_transitionToLayoutAcceptable;
 - (WebFrameState)_state;
 - (void)_setState:(WebFrameState)newState;
-+ (void)_recursiveCheckCompleteFromFrame:(WebFrame *)fromFrame;
-- (void)_isLoadComplete;
+- (void)_checkLoadCompleteForThisFrame;
 - (void)_checkLoadComplete;
 - (void)_timedLayout:userInfo;
 - (WebBridge *)_bridge;
@@ -218,5 +217,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (NSColor *)_bodyBackgroundColor;
 
 - (void)_reloadForPluginChanges;
+
+- (NSArray *)_internalChildFrames;
 
 @end

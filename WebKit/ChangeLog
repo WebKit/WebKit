@@ -1,3 +1,36 @@
+2004-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- -[WebFrame childFrames] is so hot that a special internal
+	version which avoids the copy and autorelease results in a .75%
+	performance improvement on HTML iBench.
+
+        * WebView.subproj/WebFramePrivate.h: Prototype new method.
+        * WebView.subproj/WebFrame.m:
+	(-[WebFrame _internalChildFrames]): New method, just returns
+	internal value instead of copying.
+
+        (-[WebFrame _descendantFrameNamed:]): Use it
+        (-[WebFrame _textSizeMultiplierChanged]): likewise
+        (-[WebFrame _viewWillMoveToHostWindow:]): likewise
+        (-[WebFrame _viewDidMoveToHostWindow]): likewise
+        (-[WebFrame _saveDocumentAndScrollState]): likewise
+        (-[WebFrame _numPendingOrLoadingRequests:]): likewise
+        (-[WebFrame _checkLoadComplete]): Refactored this and it's two
+	helpers a little so we could get away with using
+	_internalChildFrames.
+        (-[WebFrame _checkLoadCompleteForThisFrame]): Renamed from
+	_isLoadComplete
+	(-[WebFrame _recursiveCheckLoadComplete]): renamed from (class
+	method) _recursiveCheckCompleteFromFrame:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _defersCallbacksChanged]): Use it
+        (-[WebDataSource isLoading]): likewise
+        * WebView.subproj/WebView.m:
+        (-[WebView _frameForDataSource:fromFrame:]): likewise
+        (-[WebView _frameForView:fromFrame:]): likewise
+
 2004-05-10  Chris Blumenberg  <cblu@apple.com>
 
 	Forgot to commit this copied header.

@@ -100,6 +100,35 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @end
 
+@interface NSArray (WebSafeMakePerform)
+
+- (void)_web_safeMakeObjectsPerformSelector:(SEL)aSelector
+
+@end
+
+
+@implementation NSArray (WebSafeMakePerform)
+
+- (void)_web_safeMakeObjectsPerformSelector:(SEL)aSelector
+{
+    unsigned count = [self count];
+    if (0 == count)
+	return;
+
+    if (count > 128) {
+	[[self copy] makeObjectsPerformSelector:aSelector];
+	return;
+    }
+ 
+    id batch[128];
+    [self getObjects:batch range:NSMakeRange(0, count)];
+    unsigned i;
+    for (i = 0; i < count; i++) {
+	objc_msgSend(batch[i], aSelector);
+    }
+}
+
+@end
 
 // One day we might want to expand the use of this kind of class such that we'd receive one
 // over the bridge, and possibly hand it on through to the FormsDelegate.
@@ -454,7 +483,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
         return self;
     }
 
-    NSArray *children = [self childFrames];
+    // It's OK to use the internal version of getting the child
+    // frames, since we know this method won't change the set of
+    // frames
+    NSArray *children = [self _internalChildFrames];
     WebFrame *frame;
     unsigned i;
 
@@ -841,7 +873,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
     if (pageCache){
         [[self dataSource] _setPrimaryLoadComplete: YES];
-        [self _isLoadComplete];
+        [self _checkLoadCompleteForThisFrame];
     }
 }
 
@@ -1015,7 +1047,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
-- (void)_isLoadComplete
+- (void)_checkLoadCompleteForThisFrame
 {
     ASSERT([self webView] != nil);
 
@@ -1162,21 +1194,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT_NOT_REACHED();
 }
 
-+ (void)_recursiveCheckCompleteFromFrame: (WebFrame *)fromFrame
+- (void)_recursiveCheckLoadComplete
 {
-    int i, count;
-    NSArray *childFrames;
-    
-    childFrames = [fromFrame childFrames];
-    count = [childFrames count];
-    for (i = 0; i < count; i++) {
-        WebFrame *childFrame;
-        
-        childFrame = [childFrames objectAtIndex: i];
-        [WebFrame _recursiveCheckCompleteFromFrame: childFrame];
-        [childFrame _isLoadComplete];
-    }
-    [fromFrame _isLoadComplete];
+    // Checking for load complete may indeed alter the set of child
+    // frames. However, _web_safeMakeObjectsPerformSelector: makes
+    // sure to copy the array so it is safe against changes.
+    [[self _internalChildFrames] _web_safeMakeObjectsPerformSelector:@selector(_recursiveCheckLoadComplete)];
+    [self _checkLoadCompleteForThisFrame];
 }
 
 // Called every time a resource is completely loaded, or an error is received.
@@ -1185,7 +1209,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT([self webView] != nil);
 
     // Now walk the frame tree to see if any frame that may have initiated a load is done.
-    [WebFrame _recursiveCheckCompleteFromFrame: [[self webView] mainFrame]];
+    [[[self webView] mainFrame] _recursiveCheckLoadComplete];
 }
 
 - (WebBridge *)_bridge
@@ -2037,7 +2061,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [(NSView <_web_WebDocumentTextSizing> *)view _web_textSizeMultiplierChanged];
     }
 
-    [[self childFrames] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
+    // It's OK to use the internal version because this method is
+    // guaranteed not to change the set of frames.
+    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
 }
 
 - (void)_defersCallbacksChanged
@@ -2049,13 +2075,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow
 {
     [[[self frameView] documentView] viewWillMoveToHostWindow:hostWindow];
-    [[self childFrames] makeObjectsPerformSelector:@selector(_viewWillMoveToHostWindow:) withObject:hostWindow];
+    // It's OK to use the internal version because this method is
+    // guaranteed not to change the set of frames.
+    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_viewWillMoveToHostWindow:) withObject:hostWindow];
 }
 
 - (void)_viewDidMoveToHostWindow
 {
     [[[self frameView] documentView] viewDidMoveToHostWindow];
-    [[self childFrames] makeObjectsPerformSelector:@selector(_viewDidMoveToHostWindow)];
+    // It's OK to use the internal version because this method is
+    // guaranteed not to change the set of frames.
+    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_viewDidMoveToHostWindow)];
 }
 
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
@@ -2187,7 +2217,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->bridge saveDocumentState];
     [self _saveScrollPositionToItem:[_private currentItem]];
 
-    NSArray *frames = [self childFrames];
+    // It's OK to use the internal version because this method is
+    // guaranteed not to change the set of frames.
+    NSArray *frames = [self _internalChildFrames];
     int count = [frames count];
     int i;
     for (i = 0; i < count; i++) {
@@ -2426,7 +2458,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return [[self _bridge] numPendingOrLoadingRequests];
 
     num = [[self _bridge] numPendingOrLoadingRequests];
-    NSArray *children = [self childFrames];
+    // It's OK to use the internal version because this method is
+    // guaranteed not to change the set of frames.
+    NSArray *children = [self _internalChildFrames];
     int i, count = [children count];
     WebFrame *child;
     for (i = 0; i < count; i++){
@@ -2460,6 +2494,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     } else {
         [[self childFrames] makeObjectsPerformSelector:@selector(_reloadForPluginChanges)];
     }
+}
+
+- (NSArray *)_internalChildFrames
+{
+    return _private->children;
 }
 
 @end
