@@ -1,3 +1,88 @@
+2004-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed reinterpret_cast mistakes and some style issues in DOM implementation
+
+        * kwq/DOM-CSS.mm:
+        (-[DOMCSSStyleRule _styleRuleImpl]): Fix broken reinterpret_cast; you must reinterpret_cast back
+        to the class you reinterpret_casted from, not to a derived class.
+        (-[DOMCSSMediaRule _mediaRuleImpl]): Ditto.
+        (-[DOMCSSFontFaceRule _fontFaceRuleImpl]): Ditto.
+        (-[DOMCSSPageRule _pageRuleImpl]): Ditto.
+        (-[DOMCSSImportRule _importRuleImpl]): Ditto.
+        (-[DOMCSSCharsetRule _importRuleImpl]): Ditto.
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLOptionsCollection length]): Put in an "unimplemented" version instead of leaving out
+        the class implementation altogether.
+        (-[DOMHTMLOptionsCollection setLength:]): Ditto.
+        (-[DOMHTMLOptionsCollection item:]): Ditto.
+        (-[DOMHTMLOptionsCollection namedItem:]): Ditto.
+        (+[DOMHTMLElement _elementWithImpl:]): Corrected this implementation. The wrapper must use a
+        standard node wrapper, since this is a subclass of DOMNode. Also moved into a separate category
+        so it gets checked against the declarations above.
+        (-[DOMHTMLElement _HTMLElementImpl]): Fix broken reinterpret_cast.
+        (-[DOMHTMLHtmlElement _HTMLHtmlElementImpl]): Ditto.
+        (-[DOMHTMLHeadElement _headElementImpl]): Ditto.
+        (-[DOMHTMLLinkElement _linkElementImpl]): Ditto.
+        (-[DOMHTMLTitleElement _titleElementImpl]): Ditto.
+        (-[DOMHTMLMetaElement _metaElementImpl]): Ditto.
+        (-[DOMHTMLBaseElement _baseElementImpl]): Ditto.
+        (-[DOMHTMLStyleElement _styleElementImpl]): Ditto.
+        (-[DOMHTMLBodyElement _bodyElementImpl]): Ditto.
+        (-[DOMHTMLFormElement _formElementImpl]): Ditto.
+        (+[DOMHTMLFormElement _formElementWithImpl:]): Another DOMNode subclass wrapper fix.
+        (-[DOMHTMLIsIndexElement _isIndexElementImpl]): Fix broken reinterpret_cast.
+        (-[DOMHTMLSelectElement _selectElementImpl]): Ditto.
+        (-[DOMHTMLOptGroupElement _optGroupElementImpl]): Ditto.
+        (-[DOMHTMLOptionElement _optionElementImpl]): Ditto.
+        (-[DOMHTMLInputElement _inputElementImpl]): Ditto.
+        (-[DOMHTMLTextAreaElement _textAreaElementImpl]): Ditto.
+        (-[DOMHTMLButtonElement _buttonElementImpl]): Ditto.
+        (-[DOMHTMLLabelElement _labelElementImpl]): Ditto.
+        (-[DOMHTMLFieldSetElement _fieldSetElementImpl]): Ditto.
+        (-[DOMHTMLLegendElement _legendElementImpl]): Ditto.
+        (-[DOMHTMLUListElement _uListElementImpl]): Ditto.
+        (-[DOMHTMLOListElement _oListElementImpl]): Ditto.
+        (-[DOMHTMLDListElement _dListElementImpl]): Ditto.
+        (-[DOMHTMLDirectoryElement _directoryListElementImpl]): Ditto.
+        (-[DOMHTMLMenuElement _menuListElementImpl]): Ditto.
+        (-[DOMHTMLLIElement _liElementImpl]): Ditto.
+        (-[DOMHTMLQuoteElement _quoteElementImpl]): Ditto.
+        (-[DOMHTMLDivElement _divElementImpl]): Ditto.
+        (-[DOMHTMLParagraphElement _paragraphElementImpl]): Ditto.
+        (-[DOMHTMLHeadingElement _headingElementImpl]): Ditto.
+        (-[DOMHTMLPreElement _preElementImpl]): Ditto.
+        (-[DOMHTMLBRElement _BRElementImpl]): Ditto.
+        (-[DOMHTMLBaseFontElement _baseFontElementImpl]): Ditto.
+        (-[DOMHTMLFontElement _fontElementImpl]): Ditto.
+        (-[DOMHTMLHRElement _HRElementImpl]): Ditto.
+        (-[DOMHTMLModElement _modElementImpl]): Ditto.
+        (-[DOMHTMLAnchorElement _anchorElementImpl]): Ditto.
+        (-[DOMHTMLImageElement _imageElementImpl]): Ditto.
+        (-[DOMHTMLObjectElement _objectElementImpl]): Ditto.
+        (-[DOMHTMLParamElement _paramElementImpl]): Ditto.
+        (-[DOMHTMLAppletElement _appletElementImpl]): Ditto.
+        (-[DOMHTMLMapElement _mapElementImpl]): Ditto.
+        (-[DOMHTMLAreaElement _areaElementImpl]): Ditto.
+        (-[DOMHTMLScriptElement _scriptElementImpl]): Ditto.
+        (+[DOMHTMLTableCaptionElement _tableCaptionElementWithImpl:]): Another DOMNode subclass wrapper fix.
+        (-[DOMHTMLTableCaptionElement _tableCaptionElementImpl]): Fix broken reinterpret_cast.
+        (+[DOMHTMLTableSectionElement _tableSectionElementWithImpl:]): Another DOMNode subclass wrapper fix.
+        (-[DOMHTMLTableSectionElement _tableSectionElementImpl]): Fix broken reinterpret_cast.
+        (+[DOMHTMLTableElement _tableElementWithImpl:]): Another DOMNode subclass wrapper fix.
+        (-[DOMHTMLTableElement _tableElementImpl]): Fix broken reinterpret_cast.
+        (-[DOMHTMLTableColElement _tableColElementImpl]): Ditto.
+        (-[DOMHTMLTableRowElement _tableRowElementImpl]): Ditto.
+        (+[DOMHTMLTableCellElement _tableCellElementWithImpl:]): Another DOMNode subclass wrapper fix.
+        (-[DOMHTMLTableCellElement _tableCellElementImpl]): Fix broken reinterpret_cast.
+        (-[DOMHTMLFrameSetElement _frameSetElementImpl]): Ditto.
+        (-[DOMHTMLFrameElement _frameElementImpl]): Ditto.
+        (-[DOMHTMLIFrameElement _IFrameElementImpl]): Ditto.
+        (-[DOMHTMLEmbedElement _embedElementImpl]): Ditto.
+
+        * kwq/HTMLDOM.mm: Removed.
+
 2004-04-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
@@ -853,7 +938,7 @@
         * khtml/xml/dom_nodeimpl.cpp:
         (NodeImpl::recursive_toHTMLWithOptions): indent tweak
         * kwq/DOMHTML.mm:
-        (-[DOMHTMLLinkElement _linkElementImpl]): C++ casting voodoo to make methods like rel and href work correctly
+        (-[DOMHTMLLinkElement _linkElementImpl]): C+casting voodoo to make methods like rel and href work correctly
 
 2004-04-16  Ken Kocienda  <kocienda@apple.com>
 
@@ -3829,7 +3914,7 @@
         3) Make DOMObject refuse to init, which might prevent
         problems where people get confused and think they can
         subclass or instantiate it or its subclasses.
-        4) Use some C++ mojo to replace NSStringToDOMString and
+        4) Use some C+mojo to replace NSStringToDOMString and
         DOMStringToNSString with type conversions built into the
         DOMString class.
         5) Removed NSError out parameters from the API. Methods
@@ -5248,10 +5333,10 @@
         - fixed some layout regressions from my last speedup due to text measurement inconsistencies
 
         * WebCorePrefix.h: Add a workaround for a bug in our system headers that prevents the <ctype.h>
-        macros from working right in C++ code that uses the <cctype> header.
+        macros from working right in C+code that uses the <cctype> header.
 
         * khtml/css/cssstyleselector.cpp:
-        (khtml::checkPseudoState): Use prepend instead of operator + here. Will probably be obviated if
+        (khtml::checkPseudoState): Use prepend instead of operator here. Will probably be obviated if
         someone fixes the checkPseudoState problem.
         (khtml::colorForCSSValue): Get rid of all the code that uses QPalette; it wasn't doing any good
         in Safari. Instead, hardcode the UI colors.
@@ -5530,7 +5615,7 @@
 	a text editor failed for reasons which could not have been
 	figured out ahead of time...like file permissions?).
 	If this does not work for the future, perhaps we can change 
-	some or all of the many asserts in the code to throw C++ 
+	some or all of the many asserts in the code to throw C+
 	exceptions instead, which can be caught and handled at a
 	suitable level.
 
@@ -8873,7 +8958,7 @@
         (DocumentImpl::createElementNS): Add exception code parameter. Propagate the exception
         codes that we get from createHTMLElement and setPrefix.
         (DocumentImpl::createHTMLElement): Add exception code parameter. Use an exception code
-        rather than a C++ exception for INVALID_CHARACTER_ERR.
+        rather than a C+exception for INVALID_CHARACTER_ERR.
 
         * khtml/xml/dom_elementimpl.cpp: (ElementImpl::cloneNode): Pass exception code parameter to
         createElement.
@@ -13029,7 +13114,7 @@ Added support for getting at Java object fields.
 
 	Improved exception blocking in the following ways:
 
-	- use C++ constructors and destructors so returning or breaking out of an exception block works
+	- use C+constructors and destructors so returning or breaking out of an exception block works
 	- Remove use of volatile
 	- Collapse the caught exception case into a single function call to reduce code size.
 

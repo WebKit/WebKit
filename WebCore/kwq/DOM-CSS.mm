@@ -537,7 +537,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSStyleRuleImpl *)_styleRuleImpl
 {
-    return reinterpret_cast<CSSStyleRuleImpl *>(_internal);
+    return static_cast<CSSStyleRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
 }
 
 - (NSString *)selectorText
@@ -564,7 +564,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSMediaRuleImpl *)_mediaRuleImpl
 {
-    return reinterpret_cast<CSSMediaRuleImpl *>(_internal);
+    return static_cast<CSSMediaRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
 }
 
 - (DOMMediaList *)media
@@ -596,7 +596,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSFontFaceRuleImpl *)_fontFaceRuleImpl
 {
-    return reinterpret_cast<CSSFontFaceRuleImpl *>(_internal);
+    return static_cast<CSSFontFaceRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
 }
 
 - (DOMCSSStyleDeclaration *)style
@@ -613,7 +613,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSPageRuleImpl *)_pageRuleImpl
 {
-    return reinterpret_cast<CSSPageRuleImpl *>(_internal);
+    return static_cast<CSSPageRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
 }
 
 - (NSString *)selectorText
@@ -640,7 +640,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSImportRuleImpl *)_importRuleImpl
 {
-    return reinterpret_cast<CSSImportRuleImpl *>(_internal);
+    return static_cast<CSSImportRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
 }
 
 - (DOMMediaList *)media
@@ -667,7 +667,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSCharsetRuleImpl *)_importRuleImpl
 {
-    return reinterpret_cast<CSSCharsetRuleImpl *>(_internal);
+    return static_cast<CSSCharsetRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
 }
 
 - (NSString *)encoding

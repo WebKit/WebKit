@@ -112,23 +112,23 @@ using DOM::HTMLUListElementImpl;
 using DOM::NameNodeListImpl;
 using DOM::NodeImpl;
 
-@interface DOMHTMLCollection (HTMLCollectionInternal)
+@interface DOMHTMLCollection (WebCoreInternal)
 + (DOMHTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl;
-@end;
+@end
 
-@interface DOMHTMLElement (HTMLElementInternal)
+@interface DOMHTMLElement (WebCoreInternal)
 + (DOMHTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl;
 - (HTMLElementImpl *)_HTMLElementImpl;
-@end;
+@end
 
 @interface DOMHTMLFormElement (WebCoreInternal)
 + (DOMHTMLFormElement *)_formElementWithImpl:(HTMLFormElementImpl *)impl;
-@end;
+@end
 
 @interface DOMHTMLTableCaptionElement (WebCoreInternal)
 + (DOMHTMLTableCaptionElement *)_tableCaptionElementWithImpl:(HTMLTableCaptionElementImpl *)impl;
 - (HTMLTableCaptionElementImpl *)_tableCaptionElementImpl;
-@end;
+@end
 
 @interface DOMHTMLTableSectionElement (WebCoreInternal)
 + (DOMHTMLTableSectionElement *)_tableSectionElementWithImpl:(HTMLTableSectionElementImpl *)impl;
@@ -148,6 +148,30 @@ using DOM::NodeImpl;
 //------------------------------------------------------------------------------------------
 
 @implementation DOMHTMLCollection
+
+- (HTMLCollectionImpl *)_collectionImpl
+{
+    return reinterpret_cast<HTMLCollectionImpl *>(_internal);
+}
+
+- (unsigned long)length
+{
+    return [self _collectionImpl]->length();
+}
+
+- (DOMNode *)item:(unsigned long)index
+{
+    return [DOMNode _nodeWithImpl:[self _collectionImpl]->item(index)];
+}
+
+- (DOMNode *)namedItem:(NSString *)name
+{
+    return [DOMNode _nodeWithImpl:[self _collectionImpl]->namedItem(name)];
+}
+
+@end
+
+@implementation DOMHTMLCollection (WebCoreInternal)
 
 - (id)_initWithCollectionImpl:(HTMLCollectionImpl *)impl
 {
@@ -173,34 +197,14 @@ using DOM::NodeImpl;
     return [[[self alloc] _initWithCollectionImpl:impl] autorelease];
 }
 
-- (HTMLCollectionImpl *)_collectionImpl
-{
-    return reinterpret_cast<HTMLCollectionImpl *>(_internal);
-}
-
-- (unsigned long)length
-{
-    return [self _collectionImpl]->length();
-}
-
-- (DOMNode *)item:(unsigned long)index
-{
-    return [DOMNode _nodeWithImpl:[self _collectionImpl]->item(index)];
-}
-
-- (DOMNode *)namedItem:(NSString *)name
-{
-    return [DOMNode _nodeWithImpl:[self _collectionImpl]->namedItem(name)];
-}
-
 @end
+
+@implementation DOMHTMLOptionsCollection
 
 #if 0
 //
-// We need to implement a khtml element to back this object 
+// We need to implement a KHTML element to back this object 
 //
-@implementation DOMHTMLOptionsCollection
-
 - (id)_initWithOptionsCollectionImpl:(HTMLOptionsCollectionImpl *)impl
 {
     ASSERT(impl);
@@ -230,54 +234,37 @@ using DOM::NodeImpl;
     return reinterpret_cast<HTMLOptionsCollectionImpl *>(_internal);
 }
 
+#endif
+
 - (unsigned long)length
 {
-    return [self _optionsCollectionImpl]->length();
+    //return [self _optionsCollectionImpl]->length();
+    ERROR("unimplemented");
+    return 0;
+}
+
+- (void)setLength:(unsigned long)length
+{
+    ERROR("unimplemented");
 }
 
 - (DOMNode *)item:(unsigned long)index
 {
-    return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->item(index)];
+    //return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->item(index)];
+    ERROR("unimplemented");
+    return nil;
 }
 
 - (DOMNode *)namedItem:(NSString *)name
 {
-    return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->namedItem(name)];
+    //return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->namedItem(name)];
+    ERROR("unimplemented");
+    return nil;
 }
 
 @end
-#endif
 
 @implementation DOMHTMLElement
-
-- (id)_initWithElementImpl:(HTMLElementImpl *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    setDOMWrapperForImpl(self, impl);
-    return self;
-}
-
-+ (DOMHTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithElementImpl:impl] autorelease];
-}
-
-- (HTMLElementImpl *)_HTMLElementImpl
-{
-    return reinterpret_cast<HTMLElementImpl *>(_internal);
-}
 
 - (NSString *)idName
 {
@@ -327,6 +314,20 @@ using DOM::NodeImpl;
 - (void)setClassName:(NSString *)className
 {
     [self _HTMLElementImpl]->setAttribute(ATTR_CLASS, className);
+}
+
+@end
+
+@implementation DOMHTMLElement (WebCoreInternal)
+
++ (DOMHTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl
+{
+    return static_cast<DOMHTMLElement *>([DOMNode _nodeWithImpl:impl]);
+}
+
+- (HTMLElementImpl *)_HTMLElementImpl
+{
+    return static_cast<HTMLElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -452,7 +453,7 @@ using DOM::NodeImpl;
 
 - (HTMLHtmlElementImpl *)_HTMLHtmlElementImpl
 {
-    return reinterpret_cast<HTMLHtmlElementImpl *>(_internal);
+    return static_cast<HTMLHtmlElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)version
@@ -471,7 +472,7 @@ using DOM::NodeImpl;
 
 - (HTMLHeadElementImpl *)_headElementImpl
 {
-    return reinterpret_cast<HTMLHeadElementImpl *>(_internal);
+    return static_cast<HTMLHeadElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)profile
@@ -490,7 +491,7 @@ using DOM::NodeImpl;
 
 - (HTMLLinkElementImpl *)_linkElementImpl
 {
-    return static_cast<HTMLLinkElementImpl *>(reinterpret_cast<HTMLElementImpl *>(_internal));
+    return static_cast<HTMLLinkElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)disabled
@@ -595,7 +596,7 @@ using DOM::NodeImpl;
 
 - (HTMLTitleElementImpl *)_titleElementImpl
 {
-    return reinterpret_cast<HTMLTitleElementImpl *>(_internal);
+    return static_cast<HTMLTitleElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)text
@@ -614,7 +615,7 @@ using DOM::NodeImpl;
 
 - (HTMLMetaElementImpl *)_metaElementImpl
 {
-    return reinterpret_cast<HTMLMetaElementImpl *>(_internal);
+    return static_cast<HTMLMetaElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)content
@@ -663,7 +664,7 @@ using DOM::NodeImpl;
 
 - (HTMLBaseElementImpl *)_baseElementImpl
 {
-    return reinterpret_cast<HTMLBaseElementImpl *>(_internal);
+    return static_cast<HTMLBaseElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)href
@@ -697,7 +698,7 @@ using DOM::NodeImpl;
 
 - (HTMLStyleElementImpl *)_styleElementImpl
 {
-    return reinterpret_cast<HTMLStyleElementImpl *>(_internal);
+    return static_cast<HTMLStyleElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)disabled
@@ -736,7 +737,7 @@ using DOM::NodeImpl;
 
 - (HTMLBodyElementImpl *)_bodyElementImpl
 {
-    return reinterpret_cast<HTMLBodyElementImpl *>(_internal);
+    return static_cast<HTMLBodyElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)aLink
@@ -803,33 +804,9 @@ using DOM::NodeImpl;
 
 @implementation DOMHTMLFormElement
 
-- (id)_initWithFormElementImpl:(HTMLElementImpl *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    setDOMWrapperForImpl(self, impl);
-    return self;
-}
-
-+ (DOMHTMLFormElement *)_formElementWithImpl:(HTMLFormElementImpl *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithFormElementImpl:impl] autorelease];
-}
-
 - (HTMLFormElementImpl *)_formElementImpl
 {
-    return reinterpret_cast<HTMLFormElementImpl *>(_internal);
+    return static_cast<HTMLFormElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLCollection *)elements
@@ -915,11 +892,20 @@ using DOM::NodeImpl;
 
 @end
 
+@implementation DOMHTMLFormElement (WebCoreInternal)
+
++ (DOMHTMLFormElement *)_formElementWithImpl:(HTMLFormElementImpl *)impl
+{
+    return static_cast<DOMHTMLFormElement *>([DOMNode _nodeWithImpl:impl]);
+}
+
+@end
+
 @implementation DOMHTMLIsIndexElement
 
 - (HTMLIsIndexElementImpl *)_isIndexElementImpl
 {
-    return reinterpret_cast<HTMLIsIndexElementImpl *>(_internal);
+    return static_cast<HTMLIsIndexElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -943,7 +929,7 @@ using DOM::NodeImpl;
 
 - (HTMLSelectElementImpl *)_selectElementImpl
 {
-    return reinterpret_cast<HTMLSelectElementImpl *>(_internal);
+    return static_cast<HTMLSelectElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)type
@@ -1071,7 +1057,7 @@ using DOM::NodeImpl;
 
 - (HTMLOptGroupElementImpl *)_optGroupElementImpl
 {
-    return reinterpret_cast<HTMLOptGroupElementImpl *>(_internal);
+    return static_cast<HTMLOptGroupElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)disabled
@@ -1100,7 +1086,7 @@ using DOM::NodeImpl;
 
 - (HTMLOptionElementImpl *)_optionElementImpl
 {
-    return reinterpret_cast<HTMLOptionElementImpl *>(_internal);
+    return static_cast<HTMLOptionElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1175,7 +1161,7 @@ using DOM::NodeImpl;
 
 - (HTMLInputElementImpl *)_inputElementImpl
 {
-    return reinterpret_cast<HTMLInputElementImpl *>(_internal);
+    return static_cast<HTMLInputElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)defaultValue
@@ -1385,7 +1371,7 @@ using DOM::NodeImpl;
 
 - (HTMLTextAreaElementImpl *)_textAreaElementImpl
 {
-    return reinterpret_cast<HTMLTextAreaElementImpl *>(_internal);
+    return static_cast<HTMLTextAreaElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)defaultValue
@@ -1516,7 +1502,7 @@ using DOM::NodeImpl;
 
 - (HTMLButtonElementImpl *)_buttonElementImpl
 {
-    return reinterpret_cast<HTMLButtonElementImpl *>(_internal);
+    return static_cast<HTMLButtonElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1585,7 +1571,7 @@ using DOM::NodeImpl;
 
 - (HTMLLabelElementImpl *)_labelElementImpl
 {
-    return reinterpret_cast<HTMLLabelElementImpl *>(_internal);
+    return static_cast<HTMLLabelElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1622,7 +1608,7 @@ using DOM::NodeImpl;
 
 - (HTMLFieldSetElementImpl *)_fieldSetElementImpl
 {
-    return reinterpret_cast<HTMLFieldSetElementImpl *>(_internal);
+    return static_cast<HTMLFieldSetElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1636,7 +1622,7 @@ using DOM::NodeImpl;
 
 - (HTMLLegendElementImpl *)_legendElementImpl
 {
-    return reinterpret_cast<HTMLLegendElementImpl *>(_internal);
+    return static_cast<HTMLLegendElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1670,7 +1656,7 @@ using DOM::NodeImpl;
 
 - (HTMLUListElementImpl *)_uListElementImpl
 {
-    return reinterpret_cast<HTMLUListElementImpl *>(_internal);
+    return static_cast<HTMLUListElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1699,7 +1685,7 @@ using DOM::NodeImpl;
 
 - (HTMLOListElementImpl *)_oListElementImpl
 {
-    return reinterpret_cast<HTMLOListElementImpl *>(_internal);
+    return static_cast<HTMLOListElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1739,7 +1725,7 @@ using DOM::NodeImpl;
 
 - (HTMLDListElementImpl *)_dListElementImpl
 {
-    return reinterpret_cast<HTMLDListElementImpl *>(_internal);
+    return static_cast<HTMLDListElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1758,7 +1744,7 @@ using DOM::NodeImpl;
 
 - (HTMLDirectoryElementImpl *)_directoryListElementImpl
 {
-    return reinterpret_cast<HTMLDirectoryElementImpl *>(_internal);
+    return static_cast<HTMLDirectoryElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1777,7 +1763,7 @@ using DOM::NodeImpl;
 
 - (HTMLMenuElementImpl *)_menuListElementImpl
 {
-    return reinterpret_cast<HTMLMenuElementImpl *>(_internal);
+    return static_cast<HTMLMenuElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1796,7 +1782,7 @@ using DOM::NodeImpl;
 
 - (HTMLLIElementImpl *)_liElementImpl
 {
-    return reinterpret_cast<HTMLLIElementImpl *>(_internal);
+    return static_cast<HTMLLIElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)type
@@ -1826,7 +1812,7 @@ using DOM::NodeImpl;
 
 - (HTMLGenericElementImpl *)_quoteElementImpl
 {
-    return reinterpret_cast<HTMLGenericElementImpl *>(_internal);
+    return static_cast<HTMLGenericElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)cite
@@ -1845,7 +1831,7 @@ using DOM::NodeImpl;
 
 - (HTMLDivElementImpl *)_divElementImpl
 {
-    return reinterpret_cast<HTMLDivElementImpl *>(_internal);
+    return static_cast<HTMLDivElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -1864,7 +1850,7 @@ using DOM::NodeImpl;
 
 - (HTMLParagraphElementImpl *)_paragraphElementImpl
 {
-    return reinterpret_cast<HTMLParagraphElementImpl *>(_internal);
+    return static_cast<HTMLParagraphElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -1883,7 +1869,7 @@ using DOM::NodeImpl;
 
 - (HTMLHeadingElementImpl *)_headingElementImpl
 {
-    return reinterpret_cast<HTMLHeadingElementImpl *>(_internal);
+    return static_cast<HTMLHeadingElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -1902,7 +1888,7 @@ using DOM::NodeImpl;
 
 - (HTMLPreElementImpl *)_preElementImpl
 {
-    return reinterpret_cast<HTMLPreElementImpl *>(_internal);
+    return static_cast<HTMLPreElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (long)width
@@ -1922,7 +1908,7 @@ using DOM::NodeImpl;
 
 - (HTMLBRElementImpl *)_BRElementImpl
 {
-    return reinterpret_cast<HTMLBRElementImpl *>(_internal);
+    return static_cast<HTMLBRElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)clear
@@ -1941,7 +1927,7 @@ using DOM::NodeImpl;
 
 - (HTMLBaseFontElementImpl *)_baseFontElementImpl
 {
-    return reinterpret_cast<HTMLBaseFontElementImpl *>(_internal);
+    return static_cast<HTMLBaseFontElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)color
@@ -1980,7 +1966,7 @@ using DOM::NodeImpl;
 
 - (HTMLFontElementImpl *)_fontElementImpl
 {
-    return reinterpret_cast<HTMLFontElementImpl *>(_internal);
+    return static_cast<HTMLFontElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)color
@@ -2019,7 +2005,7 @@ using DOM::NodeImpl;
 
 - (HTMLHRElementImpl *)_HRElementImpl
 {
-    return reinterpret_cast<HTMLHRElementImpl *>(_internal);
+    return static_cast<HTMLHRElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -2068,7 +2054,7 @@ using DOM::NodeImpl;
 
 - (HTMLElementImpl *)_modElementImpl
 {
-    return reinterpret_cast<HTMLElementImpl *>(_internal);
+    return static_cast<HTMLElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)cite
@@ -2097,7 +2083,7 @@ using DOM::NodeImpl;
 
 - (HTMLAnchorElementImpl *)_anchorElementImpl
 {
-    return reinterpret_cast<HTMLAnchorElementImpl *>(_internal);
+    return static_cast<HTMLAnchorElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)accessKey
@@ -2245,7 +2231,7 @@ using DOM::NodeImpl;
 
 - (HTMLImageElementImpl *)_imageElementImpl
 {
-    return reinterpret_cast<HTMLImageElementImpl *>(_internal);
+    return static_cast<HTMLImageElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)name
@@ -2383,7 +2369,7 @@ using DOM::NodeImpl;
 
 - (HTMLObjectElementImpl *)_objectElementImpl
 {
-    return reinterpret_cast<HTMLObjectElementImpl *>(_internal);
+    return static_cast<HTMLObjectElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -2575,7 +2561,7 @@ using DOM::NodeImpl;
 
 - (HTMLParamElementImpl *)_paramElementImpl
 {
-    return reinterpret_cast<HTMLParamElementImpl *>(_internal);
+    return static_cast<HTMLParamElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)name
@@ -2624,7 +2610,7 @@ using DOM::NodeImpl;
 
 - (HTMLAppletElementImpl *)_appletElementImpl
 {
-    return reinterpret_cast<HTMLAppletElementImpl *>(_internal);
+    return static_cast<HTMLAppletElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -2745,7 +2731,7 @@ using DOM::NodeImpl;
 
 - (HTMLMapElementImpl *)_mapElementImpl
 {
-    return reinterpret_cast<HTMLMapElementImpl *>(_internal);
+    return static_cast<HTMLMapElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLCollection *)areas
@@ -2770,7 +2756,7 @@ using DOM::NodeImpl;
 
 - (HTMLAreaElementImpl *)_areaElementImpl
 {
-    return reinterpret_cast<HTMLAreaElementImpl *>(_internal);
+    return static_cast<HTMLAreaElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)accessKey
@@ -2865,7 +2851,7 @@ using DOM::NodeImpl;
 
 - (HTMLScriptElementImpl *)_scriptElementImpl
 {
-    return reinterpret_cast<HTMLScriptElementImpl *>(_internal);
+    return static_cast<HTMLScriptElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)text
@@ -2944,35 +2930,6 @@ using DOM::NodeImpl;
 
 @implementation DOMHTMLTableCaptionElement
 
-- (id)_initWithTableCaptionElement:(HTMLTableCaptionElementImpl *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    setDOMWrapperForImpl(self, impl);
-    return self;
-}
-
-+ (DOMHTMLTableCaptionElement *)_tableCaptionElementWithImpl:(HTMLTableCaptionElementImpl *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithTableCaptionElement:impl] autorelease];
-}
-
-- (HTMLTableCaptionElementImpl *)_tableCaptionElementImpl
-{
-    return reinterpret_cast<HTMLTableCaptionElementImpl *>(_internal);
-}
-
 - (NSString *)align
 {
     return [self _tableCaptionElementImpl]->getAttribute(ATTR_ALIGN);
@@ -2985,36 +2942,21 @@ using DOM::NodeImpl;
 
 @end
 
+@implementation DOMHTMLTableCaptionElement (WebCoreInternal)
+
++ (DOMHTMLTableCaptionElement *)_tableCaptionElementWithImpl:(HTMLTableCaptionElementImpl *)impl
+{
+    return static_cast<DOMHTMLTableCaptionElement *>([DOMNode _nodeWithImpl:impl]);
+}
+
+- (HTMLTableCaptionElementImpl *)_tableCaptionElementImpl
+{
+    return static_cast<HTMLTableCaptionElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+}
+
+@end
+
 @implementation DOMHTMLTableSectionElement
-
-- (id)_initWithTableSectionElement:(HTMLTableSectionElementImpl *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    setDOMWrapperForImpl(self, impl);
-    return self;
-}
-
-+ (DOMHTMLTableSectionElement *)_tableSectionElementWithImpl:(HTMLTableSectionElementImpl *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithTableSectionElement:impl] autorelease];
-}
-
-- (HTMLTableSectionElementImpl *)_tableSectionElementImpl
-{
-    return reinterpret_cast<HTMLTableSectionElementImpl *>(_internal);
-}
 
 - (NSString *)align
 {
@@ -3079,36 +3021,21 @@ using DOM::NodeImpl;
 
 @end
 
+@implementation DOMHTMLTableSectionElement (WebCoreInternal)
+
++ (DOMHTMLTableSectionElement *)_tableSectionElementWithImpl:(HTMLTableSectionElementImpl *)impl
+{
+    return static_cast<DOMHTMLTableSectionElement *>([DOMNode _nodeWithImpl:impl]);
+}
+
+- (HTMLTableSectionElementImpl *)_tableSectionElementImpl
+{
+    return static_cast<HTMLTableSectionElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+}
+
+@end
+
 @implementation DOMHTMLTableElement
-
-- (id)_initWithTableElement:(HTMLTableElementImpl *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    setDOMWrapperForImpl(self, impl);
-    return self;
-}
-
-+ (DOMHTMLTableElement *)_tableElementWithImpl:(HTMLTableElementImpl *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithTableElement:impl] autorelease];
-}
-
-- (HTMLTableElementImpl *)_tableElementImpl
-{
-    return reinterpret_cast<HTMLTableElementImpl *>(_internal);
-}
 
 - (DOMHTMLTableCaptionElement *)caption
 {
@@ -3292,11 +3219,25 @@ using DOM::NodeImpl;
 
 @end
 
+@implementation DOMHTMLTableElement (WebCoreInternal)
+
++ (DOMHTMLTableElement *)_tableElementWithImpl:(HTMLTableElementImpl *)impl
+{
+    return static_cast<DOMHTMLTableElement *>([DOMNode _nodeWithImpl:impl]);
+}
+
+- (HTMLTableElementImpl *)_tableElementImpl
+{
+    return static_cast<HTMLTableElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+}
+
+@end
+
 @implementation DOMHTMLTableColElement
 
 - (HTMLTableColElementImpl *)_tableColElementImpl
 {
-    return reinterpret_cast<HTMLTableColElementImpl *>(_internal);
+    return static_cast<HTMLTableColElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -3366,7 +3307,7 @@ using DOM::NodeImpl;
 
 - (HTMLTableRowElementImpl *)_tableRowElementImpl
 {
-    return reinterpret_cast<HTMLTableRowElementImpl *>(_internal);
+    return static_cast<HTMLTableRowElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (long)rowIndex
@@ -3453,35 +3394,6 @@ using DOM::NodeImpl;
 @end
 
 @implementation DOMHTMLTableCellElement
-
-- (id)_initWithTableCellElement:(HTMLTableCellElementImpl *)impl
-{
-    ASSERT(impl);
-    
-    [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
-    impl->ref();
-    setDOMWrapperForImpl(self, impl);
-    return self;
-}
-
-+ (DOMHTMLTableCellElement *)_tableCellElementWithImpl:(HTMLTableCellElementImpl *)impl
-{
-    if (!impl)
-        return nil;
-    
-    id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
-    if (cachedInstance)
-        return [[cachedInstance retain] autorelease];
-    
-    return [[[self alloc] _initWithTableCellElement:impl] autorelease];
-}
-
-- (HTMLTableCellElementImpl *)_tableCellElementImpl
-{
-    return reinterpret_cast<HTMLTableCellElementImpl *>(_internal);
-}
 
 - (long)cellIndex
 {
@@ -3632,11 +3544,25 @@ using DOM::NodeImpl;
 
 @end
 
+@implementation DOMHTMLTableCellElement (WebCoreInternal)
+
++ (DOMHTMLTableCellElement *)_tableCellElementWithImpl:(HTMLTableCellElementImpl *)impl
+{
+    return static_cast<DOMHTMLTableCellElement *>([DOMNode _nodeWithImpl:impl]);
+}
+
+- (HTMLTableCellElementImpl *)_tableCellElementImpl
+{
+    return static_cast<HTMLTableCellElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+}
+
+@end
+
 @implementation DOMHTMLFrameSetElement
 
 - (HTMLFrameSetElementImpl *)_frameSetElementImpl
 {
-    return reinterpret_cast<HTMLFrameSetElementImpl *>(_internal);
+    return static_cast<HTMLFrameSetElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)rows
@@ -3665,9 +3591,8 @@ using DOM::NodeImpl;
 
 - (HTMLFrameElementImpl *)_frameElementImpl
 {
-    return reinterpret_cast<HTMLFrameElementImpl *>(_internal);
+    return static_cast<HTMLFrameElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
-
 
 - (NSString *)frameBorder
 {
@@ -3760,7 +3685,7 @@ using DOM::NodeImpl;
 
 - (HTMLIFrameElementImpl *)_IFrameElementImpl
 {
-    return reinterpret_cast<HTMLIFrameElementImpl *>(_internal);
+    return static_cast<HTMLIFrameElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -3886,7 +3811,7 @@ using DOM::NodeImpl;
 
 - (HTMLEmbedElementImpl *)_embedElementImpl
 {
-    return reinterpret_cast<HTMLEmbedElementImpl *>(_internal);
+    return static_cast<HTMLEmbedElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
