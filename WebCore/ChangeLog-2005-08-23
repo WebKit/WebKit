@@ -1,3 +1,10 @@
+2002-11-15  Darin Adler  <darin@apple.com>
+
+	- fixed 3090219 -- Window jumps up and down when loading nikon page
+
+        * kwq/KWQWindowWidget.mm: (KWQWindowWidget::setFrameGeometry):
+	Don't pass display:NO when resizing the window.
+
 2002-11-15  Ken Kocienda  <kocienda@apple.com>
 
 	Remove characters RFC 2396 describes as "unwise" from the
