@@ -1,6 +1,15 @@
 2004-08-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
+        
+        Added test case for <rdar://problem/3775172> Blot crashes after typing one character then deleting it
+
+        * layout-tests/editing/deleting/delete-3775172-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-3775172-fix.html: Added.
+
+2004-08-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
 
         * layout-tests/editing/style/style-3690704-fix-expected.txt: Fewer styling spans added
         on this test as a result of the previously-checked-in fix.
