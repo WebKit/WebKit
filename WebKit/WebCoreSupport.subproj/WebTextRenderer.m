@@ -613,15 +613,23 @@ static BOOL alwaysUseATSU = NO;
     }
 }
 
-// Constants for pattern underline
-#define patternWidth 4
-#define patternHeight 3
+- (int)misspellingLineThickness
+{
+    return 3;
+}
+
+- (int)misspellingLinePatternWidth
+{
+    return 4;
+}
 
 - (void)drawLineForMisspelling:(NSPoint)point withWidth:(int)width
 {
     // Constants for pattern color
     static NSColor *spellingPatternColor = nil;
     static bool usingDot = false;
+    int patternHeight = [self misspellingLineThickness];
+    int patternWidth = [self misspellingLinePatternWidth];
  
     // Initialize pattern color if needed
     if (!spellingPatternColor) {
@@ -635,15 +643,12 @@ static BOOL alwaysUseATSU = NO;
         spellingPatternColor = [color retain];
     }
 
-    // Width must be divisible by 4 to make sure we always draw full misspelling dots under words.
-    // Do a small adjustment to shift the underline back to the left if the pattern was
-    // expanded to the right "too much" to accomodate the drawing of a full dot.
-    if (usingDot) {
-        int w = (width + patternWidth) - (width % patternWidth);
-        if (w - width > 2) 
-            point.x -= 1;
-        width = w;
-    }
+    // Make sure to draw only complete dots
+    // NOTE: Code here used to shift the underline to the left and increase the width
+    // to make sure everything gets underlined, but that results in drawing out of
+    // bounds, e.g. when at the edge of a view.
+    if (usingDot)
+        width -= (width % patternWidth);
 
     // Compute the appropriate phase relative to the top level view in the window.
     NSPoint originInWindow = [[NSView focusView] convertPoint:point toView:nil];
@@ -661,9 +666,6 @@ static BOOL alwaysUseATSU = NO;
     NSRectFillUsingOperation(NSMakeRect(point.x, point.y, width, patternHeight), NSCompositeSourceOver);
     [currentContext restoreGraphicsState];
 }
-
-#undef patternWidth
-#undef patternHeight
 
 - (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {

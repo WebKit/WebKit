@@ -1,3 +1,18 @@
+2005-02-21  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3943090> REGRESSION (Mail): Spelling underline incompletely erased following certain steps
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer misspellingLineThickness]):
+        (-[WebTextRenderer misspellingLinePatternWidth]):
+        Replaced #defines with these methods, so others can get the same info.
+        
+        (-[WebTextRenderer drawLineForMisspelling:withWidth:]):
+        Keep underline within originally specified bounds.
+        
+
 2005-02-21  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
