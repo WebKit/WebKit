@@ -27,6 +27,7 @@
 #import <WebKit/WebPluginError.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebPluginViewFactory.h>
+#import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
@@ -37,6 +38,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceResponse.h>
@@ -547,6 +549,22 @@ static BOOL loggedObjectCacheSize = NO;
 #endif
 
     return cacheSize * multiplier;
+}
+
+- (BOOL)frameRequiredForMIMEType: (NSString*)mimeType
+{
+    // Assume a plugin is required. Don't make a frame.
+    if ([mimeType length] == 0)
+        return NO;
+    
+    Class result = [[WebView _viewTypes] _web_objectForMIMEType: mimeType];
+    if (!result)
+        return NO;  // Want to display a "plugin not found" dialog/image, so let a plugin get made.
+        
+    // If we're a supported type other than a plugin, we want to make a frame.
+    // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
+    // but for now we're burdened with making a distinction between the two.
+    return ![result isSubclassOfClass: [WebNetscapePluginDocumentView class]];
 }
 
 - (void)loadEmptyDocumentSynchronously

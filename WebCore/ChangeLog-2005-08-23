@@ -1,3 +1,13 @@
+2003-01-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3111432 - Support OBJECT tags with type text/plain or text/html
+
+        Reviewed by dave.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart): call [_bridge frameRequiredForMIMEType:] to determine if we should create a plug-in view or iframe 
+        * kwq/WebCoreBridge.h: add frameRequiredForMIMEType:
+
 2003-01-08  Trey Matteson  <trey@apple.com>
 
 	3136213 - Page loads stopped by backtracking don't finish when moving forward

@@ -1,5 +1,14 @@
 2003-01-08  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3111432 - Support OBJECT tags with type text/plain or text/html
+
+        Reviewed by dave.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge frameRequiredForMIMEType:]): added, returns YES for non-plug-in views
+
+2003-01-08  Chris Blumenberg  <cblu@apple.com>
+
 	FIXED: 3128098 - flash performance weak!!!
 
         Reviewed by darin.

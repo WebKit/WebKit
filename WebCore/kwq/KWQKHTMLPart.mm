@@ -236,7 +236,8 @@ class KWQPluginPart : public ReadOnlyPart
 
 ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
 {
-    if (child.m_type == ChildFrame::Object) {
+    BOOL needFrame = [_bridge frameRequiredForMIMEType: mimeType.getNSString()];
+    if (child.m_type == ChildFrame::Object && !needFrame) {
         NSMutableArray *attributesArray = [NSMutableArray arrayWithCapacity:child.m_params.count()];
         for (uint i = 0; i < child.m_params.count(); i++) {
             [attributesArray addObject:child.m_params[i].getNSString()];
