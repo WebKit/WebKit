@@ -82,41 +82,22 @@
     policyResponse = nil;
 }
 
-- (void)cancel
-{
-    [self cancelContentPolicy];
-    LOG(Loading, "URL = %@", [dataSource _URL]);
-    
-    [resource cancel];
-    [self receivedError:[self cancelledError]];
-}
-
--(void)cancelQuietly
-{
-    [self cancelContentPolicy];
-    [super cancelQuietly];
-}
-
 -(void)cancelWithError:(WebError *)error
 {
     [self cancelContentPolicy];
     [super cancelWithError:error];
 }
 
-
-- (void)interruptForPolicyChange
+- (WebError *)interruptForPolicyChangeError
 {
-    // Terminate the locationChangeDelegate correctly.
-    WebError *interruptError = [WebError errorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
-                                              inDomain:WebErrorDomainWebKit
-                                            failingURL:nil];
-    [self receivedError:interruptError];
+    return [WebError errorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
+                          inDomain:WebErrorDomainWebKit
+                        failingURL:nil];
 }
 
 -(void)stopLoadingForPolicyChange
 {
-    [self interruptForPolicyChange];
-    [self cancelQuietly];
+    [self cancelWithError:[self interruptForPolicyChangeError]];
 }
 
 -(void)continueAfterNavigationPolicy:(WebRequest *)_request formState:(WebFormState *)state
@@ -151,7 +132,13 @@
     // Don't set this on the first request.  It is set
     // when the main load was started.
     [dataSource _setRequest:newRequest];
-    [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest dataSource:dataSource formState:nil andCall:self withSelector:@selector(continueAfterNavigationPolicy:formState:)];
+    
+    [[dataSource _controller] setDefersCallbacks:YES];
+    [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest
+                                                 dataSource:dataSource
+                                                  formState:nil
+                                                    andCall:self
+                                               withSelector:@selector(continueAfterNavigationPolicy:formState:)];
 
     return newRequest;
 }
@@ -179,13 +166,12 @@
                                             proxy:proxy];
         [proxy release];
         proxy = nil;
-        [self interruptForPolicyChange];
+        [self receivedError:[self interruptForPolicyChangeError]];
         return;
 
     case WebPolicyIgnore:
 	[self stopLoadingForPolicyChange];
 	return;
-        break;
     
     default:
 	ASSERT_NOT_REACHED();
@@ -215,9 +201,9 @@
     WebController *c = [dataSource _controller];
     [c setDefersCallbacks:YES];
     [[c _policyDelegateForwarder] controller:c decideContentPolicyForMIMEType:[r contentType]
-						                      andRequest:[dataSource request]
-						                         inFrame:[dataSource webFrame]
-						                decisionListener:listener];
+                                                                   andRequest:[dataSource request]
+                                                                      inFrame:[dataSource webFrame]
+                                                             decisionListener:listener];
 }
 
 
@@ -226,16 +212,14 @@
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _controller] defersCallbacks]);
-    [dataSource _setResponse:r];
 
     LOG(Loading, "main content type: %@", [r contentType]);
 
-    [[dataSource _controller] setDefersCallbacks:YES];
+    [dataSource _setResponse:r];
+    _contentLength = [r contentLength];
 
     // Figure out the content policy.
     [self checkContentPolicyForResponse:r];
-
-    _contentLength = [r contentLength];
 }
 
 - (void)resource:(WebResource *)h didReceiveData:(NSData *)data

@@ -1,4 +1,33 @@
-(2003-03-12  John Sullivan  <sullivan@apple.com>
+2003-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3193552 -- REGRESSION: crash loading ftp directory URL
+        - fixed minor problems with setDefersCallbacks handling and object lifetime
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h: Removed now-unused cancelQuietly.
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate cancel]): Changed cancel to tolerate being called
+        when we have already cancelled. It's an error to call cancelWithError once we
+        have cancelled.
+        
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeError]): Added. New function to
+        create the WebError object for policy change.
+        (-[WebMainResourceClient stopLoadingForPolicyChange]): Changed to just be a call
+        to cancelWithError:.
+        (-[WebMainResourceClient resource:willSendRequest:]): Call setDefersCallbacks:YES
+        here; continueAfterNavigationPolicy already takes care of setDefersCallbacks:NO,
+        but we lost this one somewhere along the way.
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): Changed to call
+        receivedError: on interruptForPolicyChangeError directly. It wasn't clearer to call
+        a method named interruptForPolicyChange.
+        (-[WebMainResourceClient resource:didReceiveResponse:]): Don't bother calling
+        setDefersCallbacks:YES here any more; checkContentPolicyForResponse: takes care
+        of that so there's no need to do it here. Initialize _contentLength before calling
+        checkContentPolicyForResponse:, since that method can result in deallocating self.
+
+2003-03-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Trey
 

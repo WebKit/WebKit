@@ -242,12 +242,9 @@
 
 - (void)cancel
 {
-    [self cancelWithError:[self cancelledError]];
-}
-
-- (void)cancelQuietly
-{
-    [self cancelWithError:nil];
+    if (!reachedTerminalState) {
+        [self cancelWithError:[self cancelledError]];
+    }
 }
 
 - (WebError *)cancelledError
