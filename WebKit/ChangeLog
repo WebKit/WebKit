@@ -1,3 +1,22 @@
+2003-03-19  Ed Voas  voas@apple.com
+
+        Reviewed by Richard.
+
+		Got it working in non-compositing mode as well, so in theory it
+		can work inside a PowerPlant application as well. It's a bit of what
+		I'd consider a hack, but it's pretty straightforward.
+
+        * Carbon.subproj/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter setViewsNeedDisplay:]):
+        * Carbon.subproj/HIViewAdapter.h:
+        * Carbon.subproj/HIViewAdapter.m:
+        (+[HIViewAdapter bindHIViewToNSView:nsView:]):
+        (-[HIViewAdapter setNeedsDisplay:]):
+        (-[HIViewAdapter setNeedsDisplayInRect:]):
+        (SetViewNeedsDisplay):
+        * Carbon.subproj/HIWebView.m:
+        (if):
+
 2003-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

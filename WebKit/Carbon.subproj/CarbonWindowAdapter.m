@@ -281,14 +281,17 @@ extern const OSType NSCarbonWindowPropertyTag;
 - (void)setViewsNeedDisplay:(BOOL)wellDoThey {
 	// Make sure we can flush anything that needs it.
 
-	// Apparently we don't need to sync the context anymore now that we are
-	// using the HIView context. I might need to turn this back on when I get
-	// around to making this work in non-composited mode. We'll see. But this
-	// function needs to exist no matter what to make sure the normal appkit
-	// thing does not happen.
+	// We need to sync the context here. I was hoping I didn't need to do this,
+	// but apparently when scrolling, the AppKit view system draws directly.
+	// When this occurs, I cannot intercept it to make it draw in my HIView
+	// context. What ends up happening is that it draws, but nothing ever
+	// flushes it.
 
-///	CGContextRef cgContext = (CGContextRef)[[self _threadContext] graphicsPort];
-///	CGContextSynchronize( cgContext );
+	if ( [self windowNumber] != -1 )
+	{
+		CGContextRef cgContext = (CGContextRef)[[self _threadContext] graphicsPort];
+		CGContextSynchronize( cgContext );
+	}
 }
 
 // Given a reference to a Carbon window that is to be encapsulated, and an indicator of whether or not this object should take responsibility for disposing of the Carbon window, initialize.

@@ -16,6 +16,9 @@
 + (void)bindHIViewToNSView:(HIViewRef)hiView nsView:(NSView*)nsView;
 + (void)unbindNSView:(NSView*)nsView;
 + (HIViewRef)getHIViewForNSView:(NSView*)inView;
+//- (void)mouseIsDown;
+//- (void)mouseIsUp;
+
 //- (id)initWithFrame:(NSRect)frame view:(HIViewRef) inView;
 //- (HIViewRef)hiView;
 

@@ -8,22 +8,14 @@
 
 #import "HIViewAdapter.h"
 
-extern OSStatus		_HIViewSetNeedsDisplayInRect( HIViewRef inView, const HIRect* inBounds, Boolean inNeedsDisplay );
+//extern OSStatus		_HIViewSetNeedsDisplayInRect( HIViewRef inView, const HIRect* inBounds, Boolean inNeedsDisplay );
+static void			SetViewNeedsDisplay( HIViewRef inView, RgnHandle inRegion, Boolean inNeedsDisplay );
 
-#define SHEET_INTERCEPTOR 0
+#define WATCH_INVALIDATION 		0
 
 @interface NSView(ShhhhDontTell)
 - (NSRect)_dirtyRect;
 @end
-
-#if SHEET_INTERCEPTOR
-@interface CarbonSheetInterceptor : NSWindow
-{
-}
-
-- (void)_orderFrontRelativeToWindow:(NSWindow *)docWindow;
-@end
-#endif
 
 @implementation HIViewAdapter
 
@@ -34,9 +26,6 @@ static CFMutableDictionaryRef	sViewMap;
 	if ( sViewMap == NULL )
 	{
 		[HIViewAdapter poseAsClass: [NSView class]];
-#if SHEET_INTERCEPTOR
-		[CarbonSheetInterceptor poseAsClass: [NSWindow class]];
-#endif
 		sViewMap = CFDictionaryCreateMutable( NULL, 0, NULL, NULL );
 	}
 	
@@ -121,12 +110,8 @@ static CFMutableDictionaryRef	sViewMap;
 					qdRect.right = CGRectGetMaxX( rect );
 				
 					RectRgn( rgn, &qdRect );
-					HIViewSetNeedsDisplayInRegion( hiView, rgn, false );
+					SetViewNeedsDisplay( hiView, rgn, false );
 					DisposeRgn( rgn );
-				}
-				else
-				{
-					HIViewSetNeedsDisplay( hiView, false );
 				}
 			}
 			//_HIViewSetNeedsDisplayInRect( hiView, &rect, false );
@@ -186,12 +171,8 @@ static CFMutableDictionaryRef	sViewMap;
 						qdRect.right = CGRectGetMaxX( rect );
 					
 						RectRgn( rgn, &qdRect );
-						HIViewSetNeedsDisplayInRegion( hiView, rgn, true );
+						SetViewNeedsDisplay( hiView, rgn, true );
 						DisposeRgn( rgn );
-					}
-					else
-					{
-						HIViewSetNeedsDisplay( hiView, true );
 					}
 				}
 	    		//_HIViewSetNeedsDisplayInRect( hiView, &rect, true );
@@ -222,23 +203,63 @@ static CFMutableDictionaryRef	sViewMap;
 
 @end
 
-#if SHEET_INTERCEPTOR
-@implementation CarbonSheetInterceptor
-
-- (void)_orderFrontRelativeToWindow:(NSWindow *)docWindow
+static void
+SetViewNeedsDisplay( HIViewRef inHIView, RgnHandle inRegion, Boolean inNeedsDisplay )
 {
-	printf( "Here I am!\n" );
-    [docWindow _attachSheetWindow:self];	
-	SetWindowClass( [self windowRef], kSheetWindowClass );
-	ShowSheetWindow( [self windowRef], [docWindow windowRef] );
-}
+	WindowAttributes		attrs;
+	
+	GetWindowAttributes( GetControlOwner( inHIView ), &attrs );
 
-- (void)_orderOutRelativeToWindow:(NSWindow *)docWindow
-{
-	printf( "Here I go!\n" );
-	HideSheetWindow( [self windowRef] );
-    [docWindow _detachSheetWindow];
-}
-
-@end
+	if ( attrs & kWindowCompositingAttribute )
+	{
+#if WATCH_INVALIDATION
+		Rect		bounds;
+		GetRegionBounds( inRegion, &bounds );
+		printf( "%s: rect on input %d %d %d %d\n", inNeedsDisplay ? "INVALIDATE" : "VALIDATE",
+			bounds.top, bounds.left, bounds.bottom, bounds.right );
 #endif
+		HIViewSetNeedsDisplayInRegion( inHIView, inRegion, inNeedsDisplay );
+	}
+	else
+	{
+		Rect			bounds, cntlBounds;
+		GrafPtr			port, savePort;
+		Rect			portBounds;
+		
+#if WATCH_INVALIDATION
+		printf( "%s: rect on input %d %d %d %d\n", inNeedsDisplay ? "INVALIDATE" : "VALIDATE",
+			bounds.top, bounds.left, bounds.bottom, bounds.right );
+#endif
+		GetControlBounds( inHIView, &cntlBounds );
+
+#if WATCH_INVALIDATION
+		printf( "%s: control bounds are %d %d %d %d\n", inNeedsDisplay ? "INVALIDATE" : "VALIDATE",
+			cntlBounds.top, cntlBounds.left, cntlBounds.bottom, cntlBounds.right );
+#endif
+
+		port = GetWindowPort( GetControlOwner( inHIView ) );
+		
+		GetPort( &savePort );
+		SetPort( port );
+		GetPortBounds( port, &portBounds );
+		SetOrigin( 0, 0 );
+		
+		OffsetRgn( inRegion, cntlBounds.left, cntlBounds.top );
+
+		GetRegionBounds( inRegion, &bounds );
+
+#if WATCH_INVALIDATION
+		printf( "%s: rect in port coords %d %d %d %d\n", inNeedsDisplay ? "INVALIDATE" : "VALIDATE",
+			bounds.top, bounds.left, bounds.bottom, bounds.right );
+#endif
+
+		if ( inNeedsDisplay )
+			InvalWindowRgn( GetControlOwner( inHIView ), inRegion );
+		else
+			ValidWindowRgn( GetControlOwner( inHIView ), inRegion );
+		
+		SetOrigin( portBounds.left, portBounds.top );
+		SetPort( savePort );
+	}
+}
+

@@ -23,9 +23,11 @@ struct HIWebFrameView
 {
     HIViewRef							fViewRef;
 
-    WebFrameView*							fWebFrameView;
+    WebFrameView*						fWebFrameView;
     NSView*								fFirstResponder;
     CarbonWindowAdapter	*				fKitWindow;
+    bool								fIsComposited;
+    CFRunLoopObserverRef				fUpdateObserver;
 };
 typedef struct HIWebFrameView HIWebFrameView;
 
@@ -184,6 +186,18 @@ static void				SyncFrame( HIWebFrameView* inView );
 
 static OSStatus			WindowCloseHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData );
 
+static void				StartUpdateObserver( HIWebFrameView* view );
+static void				StopUpdateObserver( HIWebFrameView* view );
+static void 			UpdateObserver( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info );
+
+static inline void HIRectToQDRect( const HIRect* inRect, Rect* outRect )
+{
+    outRect->top = CGRectGetMinY( *inRect );
+    outRect->left = CGRectGetMinX( *inRect );
+    outRect->bottom = CGRectGetMaxY( *inRect );
+    outRect->right = CGRectGetMaxX( *inRect );
+}
+
 //----------------------------------------------------------------------------------
 // HIWebFrameViewCreate
 //----------------------------------------------------------------------------------
@@ -208,7 +222,7 @@ NSView*
 HIWebFrameViewGetNSView( HIViewRef inView )
 {
 	HIWebFrameView* 	view = (HIWebFrameView*)HIObjectDynamicCast( (HIObjectRef)inView, kHIWebFrameViewClassID );
-	NSView*		result = NULL;
+	NSView*				result = NULL;
 	
 	if ( view )
 		result = view->fWebFrameView;
@@ -264,6 +278,8 @@ HIWebFrameViewConstructor( HIViewRef inView )
 		
 		view->fFirstResponder = NULL;
 		view->fKitWindow = NULL;
+        view->fIsComposited = false;
+        view->fUpdateObserver = NULL;
 	}
 	
 	return view;
@@ -316,13 +332,27 @@ GetBehaviors()
 static void
 Draw( HIWebFrameView* inView, RgnHandle limitRgn, CGContextRef inContext )
 {
-	HIRect		bounds;
+	HIRect				bounds;
 	CGContextRef		temp;
 	Rect				drawRect;
 	HIRect				hiRect;
-	
+	bool				createdContext = false;
+    GrafPtr				port;
+
+    if ( !inView->fIsComposited )
+    {
+		Rect	portRect;
+
+        GetPort( &port );
+		GetPortBounds( port, &portRect );
+        CreateCGContextForPort( port, &inContext );
+        SyncCGContextOriginWithPort( inContext, port );
+ 		CGContextTranslateCTM( inContext, 0, (portRect.bottom - portRect.top) );
+		CGContextScaleCTM( inContext, 1, -1 );
+        createdContext = true;
+    }
+    
 	HIViewGetBounds( inView->fViewRef, &bounds );
-//	CGContextStrokeRect( inContext, bounds );
 
 	temp = (CGContextRef)[[inView->fKitWindow _threadContext] graphicsPort];
 	CGContextRetain( temp );
@@ -331,16 +361,31 @@ Draw( HIWebFrameView* inView, RgnHandle limitRgn, CGContextRef inContext )
 
 	GetRegionBounds( limitRgn, &drawRect );
 
+    if ( !inView->fIsComposited )
+        OffsetRect( &drawRect, -bounds.origin.x, -bounds.origin.y );
+    
 	hiRect.origin.x = drawRect.left;
 	hiRect.origin.y = bounds.size.height - drawRect.bottom; // flip y
 	hiRect.size.width = drawRect.right - drawRect.left;
 	hiRect.size.height = drawRect.bottom - drawRect.top;
 
-	[inView->fWebFrameView displayIfNeededInRect: *(NSRect*)&hiRect];
+//    printf( "Drawing: drawRect is (%g %g) (%g %g)\n", hiRect.origin.x, hiRect.origin.y,
+//            hiRect.size.width, hiRect.size.height );
+
+    if ( inView->fIsComposited )
+        [inView->fWebFrameView displayIfNeededInRect: *(NSRect*)&hiRect];
+    else
+        [inView->fWebFrameView displayRect:*(NSRect*)&hiRect];
 
 	[[inView->fKitWindow _threadContext] setCGContext: temp];
 
 	CGContextRelease( temp );
+    
+    if ( createdContext )
+    {
+        CGContextSynchronize( inContext );
+        CGContextRelease( inContext );
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -454,8 +499,14 @@ Click( HIWebFrameView* inView, EventRef inEvent )
 
 //	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
 
+    if ( !inView->fIsComposited )
+        StartUpdateObserver( inView );
+        
 //	[targ mouseDown:kitEvent];
     [inView->fKitWindow sendEvent:kitEvent];
+
+    if ( !inView->fIsComposited )
+        StopUpdateObserver( inView );
 
 	[kitEvent release];
 
@@ -639,6 +690,8 @@ OwningWindowChanged(
 {
 	if ( newWindow )
 	{
+        WindowAttributes	attrs;
+        
     	OSStatus err = GetWindowProperty(newWindow, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), NULL, &view->fKitWindow);
 		if ( err != noErr )
 		{
@@ -651,7 +704,11 @@ OwningWindowChanged(
 		}
 		
 		[[view->fKitWindow contentView] addSubview:view->fWebFrameView];
-		SyncFrame( view );
+
+        GetWindowAttributes( newWindow, &attrs );
+        view->fIsComposited = ( ( attrs & kWindowCompositingAttribute ) != 0 );
+
+		SyncFrame( view );        
 	}
 }
 
@@ -688,18 +745,54 @@ SyncFrame( HIWebFrameView* inView )
 	
 	if ( parent )
 	{
-		HIRect		frame;
-		HIRect		parentBounds;
-		NSPoint		origin;
+        if ( inView->fIsComposited )
+        {
+            HIRect		frame;
+            HIRect		parentBounds;
+            NSPoint		origin;
 
-		HIViewGetFrame( inView->fViewRef, &frame );
-		HIViewGetBounds( parent, &parentBounds );
-		
-		origin.x = frame.origin.x;
-		origin.y = parentBounds.size.height - CGRectGetMaxY( frame );
+            HIViewGetFrame( inView->fViewRef, &frame );
+            HIViewGetBounds( parent, &parentBounds );
+            
+            origin.x = frame.origin.x;
+            origin.y = parentBounds.size.height - CGRectGetMaxY( frame );
+    printf( "syncing to (%g %g) (%g %g)\n", origin.x, origin.y,
+            frame.size.width, frame.size.height );
+            [inView->fWebFrameView setFrameOrigin: origin];
+            [inView->fWebFrameView setFrameSize: *(NSSize*)&frame.size];
+        }
+        else
+        {
+            GrafPtr			port = GetWindowPort( GetControlOwner( inView->fViewRef ) );
+            PixMapHandle	portPix = GetPortPixMap( port );
+            Rect			bounds;
+            HIRect			rootFrame;
+            HIRect			frame;
 
-		[inView->fWebFrameView setFrameOrigin: origin];
-		[inView->fWebFrameView setFrameSize: *(NSSize*)&frame.size];
+            GetControlBounds( inView->fViewRef, &bounds );
+            OffsetRect( &bounds, -(**portPix).bounds.left, -(**portPix).bounds.top );
+
+//            printf( "control lives at %d %d %d %d in window-coords\n", bounds.top, bounds.left,
+//                bounds.bottom, bounds.right );
+  
+            HIViewGetFrame( HIViewGetRoot( GetControlOwner( inView->fViewRef ) ), &rootFrame );
+
+            frame.origin.x = bounds.left;
+            frame.origin.y = rootFrame.size.height - bounds.bottom;
+            frame.size.width = bounds.right - bounds.left;
+            frame.size.height = bounds.bottom - bounds.top;
+
+//            printf( "   before frame convert (%g %g) (%g %g)\n", frame.origin.x, frame.origin.y,
+//                frame.size.width, frame.size.height );
+            
+            [inView->fWebFrameView convertRect:*(NSRect*)&frame fromView:nil];
+
+//            printf( "   moving web view to (%g %g) (%g %g)\n", frame.origin.x, frame.origin.y,
+//                frame.size.width, frame.size.height );
+
+            [inView->fWebFrameView setFrameOrigin: *(NSPoint*)&frame.origin];
+            [inView->fWebFrameView setFrameSize: *(NSSize*)&frame.size];
+        }
 	}
 }
 
@@ -1397,4 +1490,128 @@ HIWebFrameViewEventHandler(
 
 MissingParameter:
 	return result;
+}
+
+static void
+StartUpdateObserver( HIWebFrameView* view )
+{
+	CFRunLoopObserverContext	context;
+	CFRunLoopObserverRef		observer;
+    CFRunLoopRef				mainRunLoop;
+    
+    check( view->fIsComposited == false );
+    check( view->fUpdateObserver == NULL );
+
+	context.version = 0;
+	context.info = view;
+	context.retain = NULL;
+	context.release = NULL;
+	context.copyDescription = NULL;
+
+    mainRunLoop = (CFRunLoopRef)GetCFRunLoopFromEventLoop( GetMainEventLoop() );
+	observer = CFRunLoopObserverCreate( NULL, kCFRunLoopEntry | kCFRunLoopBeforeWaiting, true, 0, UpdateObserver, &context );
+	CFRunLoopAddObserver( mainRunLoop, observer, kCFRunLoopCommonModes ); 
+
+    view->fUpdateObserver = observer;
+    
+//    printf( "Update observer started\n" );
+}
+
+static void
+StopUpdateObserver( HIWebFrameView* view )
+{
+    check( view->fIsComposited == false );
+    check( view->fUpdateObserver != NULL );
+
+    CFRunLoopObserverInvalidate( view->fUpdateObserver );
+    CFRelease( view->fUpdateObserver );
+    view->fUpdateObserver = NULL;
+
+//    printf( "Update observer removed\n" );
+}
+
+static void 
+UpdateObserver( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info )
+{
+	HIWebFrameView*			view = (HIWebFrameView*)info;
+    RgnHandle				region = NewRgn();
+    
+//    printf( "Update observer called\n" );
+
+    if ( region )
+    {
+        GetWindowRegion( GetControlOwner( view->fViewRef ), kWindowUpdateRgn, region );
+        
+        if ( !EmptyRgn( region ) )
+        {
+            RgnHandle		ourRgn = NewRgn();
+            Rect			rect;
+            
+            GetWindowBounds( GetControlOwner( view->fViewRef ), kWindowStructureRgn, &rect );
+            
+//            printf( "Update region is non-empty\n" );
+            
+            if ( ourRgn )
+            {
+                Rect		rect;
+                GrafPtr		savePort, port;
+                Point		offset = { 0, 0 };
+                
+                port = GetWindowPort( GetControlOwner( view->fViewRef ) );
+                
+                GetPort( &savePort );
+                SetPort( port );
+                
+                GlobalToLocal( &offset );
+                OffsetRgn( region, offset.h, offset.v );
+
+                GetControlBounds( view->fViewRef, &rect );
+                RectRgn( ourRgn, &rect );
+                
+//                printf( "our control is at %d %d %d %d\n",
+//                        rect.top, rect.left, rect.bottom, rect.right );
+                
+                GetRegionBounds( region, &rect );
+//                printf( "region is at %d %d %d %d\n",
+//                        rect.top, rect.left, rect.bottom, rect.right );
+
+                SectRgn( ourRgn, region, ourRgn );
+                
+                GetRegionBounds( ourRgn, &rect );
+//                printf( "intersection is  %d %d %d %d\n",
+//                       rect.top, rect.left, rect.bottom, rect.right );
+                if ( !EmptyRgn( ourRgn ) )
+                {
+                    RgnHandle	saveVis = NewRgn();
+                    
+//                    printf( "looks like we should draw\n" );
+
+                    if ( saveVis )
+                    {
+//                        RGBColor	kRedColor = { 0xffff, 0, 0 };
+                        
+                        GetPortVisibleRegion( GetWindowPort( GetControlOwner( view->fViewRef ) ), saveVis );
+                        SetPortVisibleRegion( GetWindowPort( GetControlOwner( view->fViewRef ) ), ourRgn );
+                        
+//                        RGBForeColor( &kRedColor );
+//                        PaintRgn( ourRgn );
+//                        QDFlushPortBuffer( port, NULL );
+//                        Delay( 15, NULL );
+
+                        Draw1Control( view->fViewRef );
+                        ValidWindowRgn( GetControlOwner( view->fViewRef ), ourRgn );
+                        
+                        SetPortVisibleRegion( GetWindowPort( GetControlOwner( view->fViewRef ) ), saveVis );
+                        DisposeRgn( saveVis );
+                    }
+                }
+
+                SetPort( savePort );
+                
+                DisposeRgn( ourRgn );
+            }
+        }
+        
+        DisposeRgn( region );
+    }
 }
