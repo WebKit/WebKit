@@ -9,6 +9,7 @@
 #import "WebCookieAdapter.h"
 #import <WebFoundation/WebCookieManager.h>
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebCookieConstants.h>
 
 
 @implementation WebCookieAdapter
@@ -24,17 +25,8 @@
 - (BOOL)cookiesEnabled
 {
     BOOL result;
-    id acceptCookiesPref = (id)CFPreferencesCopyAppValue((CFStringRef)WebAcceptCookiesPreference, (CFStringRef)WebFoundationPreferenceDomain);
 
-    if ([acceptCookiesPref isEqualTo:WebAcceptCookiesPreferenceNever]) {
-        result = NO;
-    } else if ([acceptCookiesPref isEqualTo:WebAcceptCookiesPreferenceAlways]) {
-        result = YES;
-    } else {
-        // Treat missing or bad value as always accept
-        result = YES;
-    }
-    [acceptCookiesPref release];
+    result = ([[WebCookieManager sharedCookieManager] acceptPolicy] == WebCookieAcceptPolicyAlways);
 
     return result;
 }

@@ -23,6 +23,7 @@
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebCookieConstants.h>
 
 // FIXME: This is quite similar to WebSubresourceClient; they should share code.
 
@@ -131,7 +132,7 @@
     [self retain];
     
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
-    WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled
+    WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
                                                  inDomain:WebErrorDomainWebFoundation
                                                failingURL:[[dataSource originalURL] absoluteString]];
     [self receivedError:error forHandle:handle];

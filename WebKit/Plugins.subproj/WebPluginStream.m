@@ -257,7 +257,7 @@
 
 - (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
 {
-    if([error errorCode] == WebResultCancelled){
+    if([error errorCode] == WebErrorCodeCancelled){
         [self receivedError:NPRES_USER_BREAK];
     } else {
         [self receivedError:NPRES_NETWORK_ERR];
@@ -319,7 +319,7 @@
     
     WebController *webController = [view webController];
     
-    WebError *cancelError = [[WebError alloc] initWithErrorCode:WebResultCancelled
+    WebError *cancelError = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
                                                        inDomain:WebErrorDomainWebFoundation
                                                      failingURL:nil];
     WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithResourceHandle:resource];

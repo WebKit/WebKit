@@ -79,7 +79,7 @@
     if (h == nil) {
         [rLoader cancel];
 
-        WebError *badURLError = [[WebError alloc] initWithErrorCode:WebResultBadURLError
+        WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
                                                            inDomain:WebErrorDomainWebFoundation
                                                          failingURL:[URL absoluteString]];
         [[source controller] _receivedError:badURLError forResourceHandle:nil
@@ -195,7 +195,7 @@
     
     [dataSource _removeSubresourceClient:self];
         
-    WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
+    WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled 
         inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
     [self receivedError:error];
     [error release];
