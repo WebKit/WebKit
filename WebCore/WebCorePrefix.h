@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <pthread.h>
 #include <regex.h>
 #include <setjmp.h>
 #include <signal.h>
@@ -11,10 +12,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #ifdef __cplusplus
 
+#include <algorithm>
 #include <cstddef>
 #include <new>
 

@@ -1,5 +1,10 @@
 2003-01-12  Darin Adler  <darin@apple.com>
 
+        * WebCorePrefix.h: Needed to touch this file since we now have plain C source (expat).
+        * kwq/KWQKHTMLPart.cpp: Reformatted a bit.
+
+2003-01-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
 	- first step towards integrating expat for XML support: make it compile and link

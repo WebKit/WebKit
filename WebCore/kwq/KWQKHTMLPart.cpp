@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002, 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQKHTMLPart.h>
+#include "KWQKHTMLPart.h"
 
-#include <html_documentimpl.h>
-#include <html_elementimpl.h>
-#include <htmltokenizer.h>
-#include <khtmlpart_p.h>
+#include "html_documentimpl.h"
+#include "html_elementimpl.h"
+#include "htmltokenizer.h"
+#include "khtmlpart_p.h"
 
 using DOM::DocumentImpl;
 using DOM::HTMLDocumentImpl;
@@ -43,7 +43,22 @@ bool KWQKHTMLPart::isFrameSet() const
     return body && body->renderer() && body->id() == ID_FRAMESET;
 }
 
-int KWQKHTMLPart::selectionStartOffset() const { return d->m_startOffset; }
-int KWQKHTMLPart::selectionEndOffset() const { return d->m_endOffset; }
-NodeImpl *KWQKHTMLPart::selectionStart() const { return d->m_selectionStart.handle(); }
-NodeImpl *KWQKHTMLPart::selectionEnd() const { return d->m_selectionEnd.handle(); }
+int KWQKHTMLPart::selectionStartOffset() const
+{
+    return d->m_startOffset;
+}
+
+int KWQKHTMLPart::selectionEndOffset() const
+{
+    return d->m_endOffset;
+}
+
+NodeImpl *KWQKHTMLPart::selectionStart() const
+{
+    return d->m_selectionStart.handle();
+}
+
+NodeImpl *KWQKHTMLPart::selectionEnd() const
+{
+    return d->m_selectionEnd.handle();
+}
