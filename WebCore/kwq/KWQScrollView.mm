@@ -106,6 +106,18 @@ int QScrollView::contentsY() const
 }
 
 
+int QScrollView::childX(QWidget *)
+{
+    return 0;
+}
+
+
+int QScrollView::childY(QWidget *)
+{
+    return 0;
+}
+
+
 void QScrollView::scrollBy(int dx, int dy)
 {
     _logNeverImplemented();

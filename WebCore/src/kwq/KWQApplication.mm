@@ -33,33 +33,36 @@ QPalette QApplication::palette(const QWidget *p)
     return pal;
 }
 
-static QWidget *mainWidget = 0;
-
 // Do we need to worry about multiple screens?
-class KWQDesktopWidget : public QWidget
-{
-public:
-    int width() const;
-    int height() const;
-};
 
-int KWQDesktopWidget::width() const
+int QDesktopWidget::width() const
 {
     return (int)[[NSScreen mainScreen] frame].size.width;
 }
     
-int KWQDesktopWidget::height() const
+int QDesktopWidget::height() const
 {
     return (int)[[NSScreen mainScreen] frame].size.height;
 }
 
-
-QWidget *QApplication::desktop()
+int QDesktopWidget::screenNumber(QWidget *) const
 {
-    if (mainWidget == 0) {
-        mainWidget = new KWQDesktopWidget();
+    return 0;
+}
+
+QRect QDesktopWidget::screenGeometry(int screenNumber)
+{
+    NSRect rect = [[NSScreen mainScreen] frame];
+    return QRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+}
+
+QDesktopWidget *QApplication::desktop()
+{
+    static QDesktopWidget *desktopWidget;
+    if (desktopWidget == 0) {
+        desktopWidget = new QDesktopWidget();
     }
-    return mainWidget;
+    return desktopWidget;
 }
 
 
@@ -201,4 +204,10 @@ QWidget *QApplication::focusWidget() const
 {
     _logNeverImplemented();
     return NULL;
+}
+
+QStyle &QApplication::style() const
+{
+    static QStyle style;
+    return style;
 }

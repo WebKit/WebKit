@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 
 #include "dom/dom_exception.h"
@@ -65,7 +64,8 @@ Attr::~Attr()
 DOMString Attr::name() const
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    return impl->getDocument()->attrName(impl->id());
+    return impl->getDocument()->attrName(
+        static_cast<AttrImpl*>(impl)->attrImpl()->id());
 }
 
 
@@ -151,7 +151,7 @@ void Element::setAttribute( const DOMString &name, const DOMString &value )
 
 void Element::removeAttribute( const DOMString &name )
 {
-    return removeAttributeNS(DOMString(), name);
+    removeAttributeNS(DOMString(), name);
 }
 
 Attr Element::getAttributeNode( const DOMString &name )

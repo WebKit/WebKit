@@ -26,7 +26,6 @@
 //----------------------------------------------------------------------------
 //
 // KDE HTML Widget - Tokenizers
-// $Id$
 
 //#define TOKEN_DEBUG 1
 //#define TOKEN_DEBUG 2
@@ -356,7 +355,7 @@ void HTMLTokenizer::parseSpecial(DOMStringIt &src, bool begin)
         // possible end of tagname, lets check.
         if ( !scriptCodeResync && !escaped && !src.escaped() && ( ch == '>' || ch == '/' || ch <= ' ' ) && ch &&
              scriptCodeSize >= searchStopperLen &&
-             !QConstString( scriptCode+scriptCodeSize-searchStopperLen, searchStopperLen+1 ).string().find( searchStopper, 0, false )) {
+             !QConstString( scriptCode+scriptCodeSize-searchStopperLen, searchStopperLen ).string().find( searchStopper, 0, false )) {
             scriptCodeResync = scriptCodeSize-searchStopperLen+1;
             tquote = NoQuote;
             continue;
@@ -414,9 +413,9 @@ void HTMLTokenizer::scriptHandler()
     QString prependingSrc;
     if ( !parser->skipMode() ) {
         if (cs) {
-             //qDebug( "cachedscript extern!" );
-             //qDebug( "src: *%s*", QString( src.current(), src.length() ).latin1() );
-             //qDebug( "pending: *%s*", pendingSrc.latin1() );
+             //kdDebug( 6036 ) << "cachedscript extern!" << endl;
+             //kdDebug( 6036 ) << "src: *" << QString( src.current(), src.length() ).latin1() << "*" << endl;
+             //kdDebug( 6036 ) << "pending: *" << pendingSrc.latin1() << "*" << endl;
             pendingSrc.prepend( QString(src.current(), src.length() ) );
             setSrc(QString::null);
             scriptCodeSize = scriptCodeResync = 0;
@@ -433,7 +432,10 @@ void HTMLTokenizer::scriptHandler()
 
             setSrc(QString::null);
             scriptCodeSize = scriptCodeResync = 0;
+            //QTime dt;
+            //dt.start();
             scriptExecution( exScript, QString(), scriptStartLineno );
+	    //kdDebug( 6036 ) << "script execution time:" << dt.elapsed() << endl;
         }
     }
 
@@ -748,7 +750,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
     {
         checkBuffer();
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
-        int l = 0;
+        uint l = 0;
         while(l < src.length() && (*(src.current()+l)).latin1() != '>')
             l++;
         qDebug("src is now: *%s*, tquote: %d",
@@ -825,8 +827,13 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 else
                     // Start Tag
                     beginTag = true;
-                // limited xhtml support. Accept empty xml tags like <br/>
-                if(len > 1 && ptr[len-1] == '/' ) ptr[--len] = '\0';
+                // Accept empty xml tags like <br/>
+                if(len > 1 && ptr[len-1] == '/' ) {
+                    ptr[--len] = '\0';
+                    // if its like <br/> and not like <input/ value=foo>, take it as flat
+                    if (*src == '>')
+                        currToken.flat = true;
+                }
 
                 uint tagID = khtml::getTagID(ptr, len);
                 if (!tagID) {
@@ -860,7 +867,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
             while(src.length()) {
                 curchar = *src;
                 if(curchar > ' ') {
-                    if(curchar == '>' || curchar == '/')
+                    if(curchar == '>')
                         tag = SearchEnd;
                     else if(atespace && (curchar == '\'' || curchar == '"'))
                     {
@@ -905,6 +912,10 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         else
                             kdDebug( 6036 ) << "Known attribute: " << QCString(cBuffer, cBufferPos+1).data() << endl;
 #endif
+                        // did we just get />
+                        if (!a && cBufferPos == 1 && *cBuffer == '/' && curchar == '>')
+                            currToken.flat = true;
+
                         tag = SearchEqual;
                         break;
                     }
@@ -1058,6 +1069,9 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 if(*src == '>')
                     break;
 
+                if (*src == '/')
+                    currToken.flat = true;
+
                 ++src;
             }
             if(!src.length() && *src != '>') break;
@@ -1071,6 +1085,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 return;
 
             uint tagID = currToken.id;
+            bool flat = currToken.flat;
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 0
             kdDebug( 6036 ) << "appending Tag: " << tagID << endl;
 #endif
@@ -1081,7 +1096,10 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
             else if ( beginTag && tagID == ID_SCRIPT ) {
                 AttributeImpl* a = 0;
                 scriptSrc = scriptSrcCharset = "";
-                if ( currToken.attrs && !parser->doc()->view()->part()->onlyLocalReferences()) {
+                if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
+                     parser->doc()->view()->part()->jScriptEnabled() && /* jscript allowed at all? */
+                     view /* are we a regular tokenizer or just for innerHTML ? */
+                    ) {
                     if ( ( a = currToken.attrs->getAttributeItem( ATTR_SRC ) ) )
                         scriptSrc = parser->doc()->completeURL(khtml::parseURL( a->value() ).string() );
                     if ( ( a = currToken.attrs->getAttributeItem( ATTR_CHARSET ) ) )
@@ -1118,19 +1136,19 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 pre = beginTag;
                 break;
             case ID_TEXTAREA:
-                if(beginTag)
+                if(beginTag && !flat)
                     parseSpecial(src, textarea = true );
                 break;
             case ID_SCRIPT:
-                if (beginTag)
+                if (beginTag && !flat)
                     parseSpecial(src, script = true);
                 break;
             case ID_STYLE:
-                if (beginTag)
+                if (beginTag && !flat)
                     parseSpecial(src, style = true);
                 break;
             case ID_XMP:
-                if (beginTag)
+                if (beginTag && !flat)
                     parseSpecial(src, xmp = true);
                 break;
             case ID_SELECT:
@@ -1351,8 +1369,6 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
             tagStartLineno = lineno+src.lineCount();
             ++src;
             startTag = true;
-            if (parser->noSpaces())
-                discard = NoneDiscard;
         }
         else if (( cc == '\n' ) || ( cc == '\r' ))
         {
@@ -1513,13 +1529,10 @@ void HTMLTokenizer::finish()
 
 void HTMLTokenizer::processToken()
 {
-    KJSProxy *jsProxy;
-    
 #ifdef APPLE_CHANGES
-    if (view && view->part())
-        jsProxy = view->part()->jScript();
-    else
-        jsProxy = 0L;
+    KJSProxy *jsProxy = (view && view->part()) ? view->part()->jScript() : 0L;
+#else
+    KJSProxy *jsProxy = view ? view->part()->jScript() : 0L;
 #endif
     
     if (jsProxy)
@@ -1533,20 +1546,8 @@ void HTMLTokenizer::processToken()
         }
 
 #endif
-#if QT_VERSION < 300
-        if ( currToken.complexText ) {
-            // ### we do too much QString copying here, but better here than in RenderText...
-            // anyway have to find a better solution in the long run (lars)
-            QString s(buffer, dest-buffer);
-            s.compose();
-            currToken.text = new DOMStringImpl( s.unicode(), s.length() );
-            currToken.text->ref();
-        } else
-#endif
-	{
-            currToken.text = new DOMStringImpl( buffer, dest - buffer );
-            currToken.text->ref();
-        }
+        currToken.text = new DOMStringImpl( buffer, dest - buffer );
+        currToken.text->ref();
         if (currToken.id != ID_COMMENT)
             currToken.id = ID_TEXT;
     }
@@ -1566,9 +1567,11 @@ void HTMLTokenizer::processToken()
         text = QConstString(currToken.text->s, currToken.text->l).string();
 
     kdDebug( 6036 ) << "Token --> " << name << "   id = " << currToken.id << endl;
+    if (currToken.flat)
+        kdDebug( 6036 ) << "Token is FLAT!" << endl;
     if(!text.isNull())
         kdDebug( 6036 ) << "text: \"" << text << "\"" << endl;
-    int l = currToken.attrs ? currToken.attrs->length() : 0;
+    unsigned long l = currToken.attrs ? currToken.attrs->length() : 0;
     if(l) {
         kdDebug( 6036 ) << "Attributes: " << l << endl;
         for (unsigned long i = 0; i < l; ++i) {

@@ -66,16 +66,18 @@ public:
     // member functions --------------------------------------------------------
 
     int ascent() const;
+    int descent() const;
     int height() const;
+    int lineSpacing() const;
+    
     int width(QChar) const;
     int width(char) const;
     int width(const QString &, int len=-1) const;
 #if (defined(__APPLE__))
     int _width (CFStringRef string) const;
-    int _width (const UniChar *uchars, int len) const;
+    int _width (const QChar *, int len) const;
 #endif
 
-    int descent() const;
     QRect boundingRect(const QString &, int len=-1) const;
     QRect boundingRect(QChar) const;
     QRect boundingRect(int, int, int, int, int, const QString &) const;

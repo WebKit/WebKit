@@ -74,9 +74,13 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_BACKGROUND:
     {
         QString url = khtml::parseURL( attr->value() ).string();
-        url = getDocument()->completeURL( url );
-        addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
-        m_bgSet = !attr->value().isNull();
+        if (!url.isEmpty()) {
+            url = getDocument()->completeURL( url );
+            addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
+            m_bgSet = true;
+        }
+        else
+            m_bgSet = false;
         break;
     }
     case ATTR_MARGINWIDTH:
@@ -170,8 +174,8 @@ void HTMLBodyElementImpl::init()
         addCSSLength(CSS_PROP_MARGIN_BOTTOM, s);
     }
 
-//     if ( m_bgSet && !m_fgSet )
-//         addCSSProperty(CSS_PROP_COLOR, "black");
+    if ( m_bgSet && !m_fgSet )
+        addCSSProperty(CSS_PROP_COLOR, "#000000");
 
     getDocument()->updateStyleSelector();
 }
@@ -182,9 +186,14 @@ void HTMLBodyElementImpl::attach()
     assert(parentNode());
     assert(parentNode()->renderer());
 
-    m_render = new RenderBody(this);
-    m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
-    parentNode()->renderer()->addChild(m_render, nextRenderer());
+    RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
+    style->ref();
+    if (style->display() != NONE) {
+        m_render = new RenderBody(this);
+        m_render->setStyle(style);
+        parentNode()->renderer()->addChild(m_render, nextRenderer());
+    }
+    style->deref();
 
     NodeBaseImpl::attach();
 }
@@ -202,6 +211,7 @@ HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
     marginHeight = -1;
     scrolling = QScrollView::Auto;
     noresize = false;
+    url = "about:blank";
 }
 
 HTMLFrameElementImpl::~HTMLFrameElementImpl()
@@ -221,8 +231,6 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
         url = khtml::parseURL(attr->val());
         break;
     case ATTR_ID:
-        if (getDocument()->htmlMode() != DocumentImpl::XHtml) break;
-        // fall through
     case ATTR_NAME:
         name = attr->value();
         break;
@@ -259,6 +267,12 @@ void HTMLFrameElementImpl::init()
 {
     HTMLElementImpl::init();
 
+    // we should first look up via id, then via name.
+    // this shortterm hack fixes the ugly case. ### rewrite needed for next release
+    name = getAttribute(ATTR_NAME);
+    if (name.isNull())
+        name = getAttribute(ATTR_ID);
+
     // inherit default settings from parent frameset
     HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
     while(node)
@@ -288,7 +302,7 @@ void HTMLFrameElementImpl::attach()
     while ((part = part->parentPart()))
         depth++;
 
-    if (depth < 7)  {
+    if (depth < 5)  {
         m_render = new RenderFrame(this);
         m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
         parentNode()->renderer()->addChild(m_render, nextRenderer());
@@ -304,7 +318,7 @@ void HTMLFrameElementImpl::attach()
       name = DOMString(w->part()->requestFrameName());
 
     // load the frame contents
-    if (!url.isNull())
+    if (!url.isEmpty())
         w->part()->requestFrame( static_cast<RenderFrame*>(m_render), url.string(), name.string() );
 }
 
@@ -484,7 +498,7 @@ void HTMLFrameSetElementImpl::recalcStyle( StyleChange ch )
 {
     if (changed() && m_render) {
         m_render->setLayouted(false);
-        m_render->layout();
+//         m_render->layout();
         setChanged(false);
     }
     HTMLElementImpl::recalcStyle( ch );

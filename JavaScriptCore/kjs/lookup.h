@@ -17,7 +17,6 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *  $Id$
  */
 
 #ifndef _KJSLOOKUP_H_
@@ -33,16 +32,26 @@ namespace KJS {
    * An entry in a hash table.
    */
   struct HashEntry {
-    /** s is the key (e.g. a property name) */
+    /**
+     * s is the key (e.g. a property name)
+     */
     const char *s;
-    /** value is the result value (usually an enum value) */
+    /**
+     * value is the result value (usually an enum value)
+     */
     int value;
-    /** attr is a set for flags (e.g. the property flags, see object.h) */
+    /**
+     * attr is a set for flags (e.g. the property flags, see object.h)
+     */
     short int attr;
-    /** params is another number. For property hashtables, it is used to
-        denote the number of argument of the function */
+    /**
+     * params is another number. For property hashtables, it is used to
+     * denote the number of argument of the function
+     */
     short int params;
-    /** next is the pointer to the next entry for the same hash value */
+    /**
+     * next is the pointer to the next entry for the same hash value
+     */
     const HashEntry *next;
   };
 
@@ -58,16 +67,24 @@ namespace KJS {
    * and links overflow entries between them.
    */
   struct HashTable {
-    /** type is a version number. Currently always 2 */
+    /**
+     * type is a version number. Currently always 2
+     */
     int type;
-    /** size is the total number of entries in the hashtable, including the null entries,
+    /**
+     * size is the total number of entries in the hashtable, including the null entries,
      * i.e. the size of the "entries" array.
-     * Used to iterate over all entries in the table */
+     * Used to iterate over all entries in the table
+     */
     int size;
-    /** pointer to the array of entries
-     * Mind that some entries in the array are null (0,0,0,0). */
+    /**
+     * pointer to the array of entries
+     * Mind that some entries in the array are null (0,0,0,0).
+     */
     const HashEntry *entries;
-    /** the maximum value for the hash. Always smaller than size. */
+    /**
+     * the maximum value for the hash. Always smaller than size.
+     */
     int hashSize;
   };
 
@@ -76,7 +93,9 @@ namespace KJS {
    */
   class Lookup {
   public:
-    /** Find an entry in the table, and return its value (i.e. the value field of HashEntry) */
+    /**
+     * Find an entry in the table, and return its value (i.e. the value field of HashEntry)
+     */
     static int find(const struct HashTable *table, const UString &s);
     static int find(const struct HashTable *table,
 		    const UChar *c, unsigned int len);
@@ -91,7 +110,9 @@ namespace KJS {
     static const HashEntry* findEntry(const struct HashTable *table,
                                       const UChar *c, unsigned int len);
 
-    /** Calculate the hash value for a given key */
+    /**
+     * Calculate the hash value for a given key
+     */
     static unsigned int hash(const UString &key);
     static unsigned int hash(const UChar *c, unsigned int len);
     static unsigned int hash(const char *s);
@@ -99,8 +120,10 @@ namespace KJS {
 
   class ExecState;
   class UString;
-  /** @internal
-   * Helper for lookupFunction and lookupValueOrFunction */
+  /**
+   * @internal
+   * Helper for lookupFunction and lookupValueOrFunction
+   */
   template <class FuncImp>
   inline Value lookupOrCreateFunction(ExecState *exec, const UString &propertyName,
                                       const ObjectImp *thisObj, int token, int params, int attr)

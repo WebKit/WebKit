@@ -22,7 +22,6 @@
 #----------------------------------------------------------------------------
 #
 #  KDE HTML Widget -- Script to generate htmltags.c and htmltags.h
-#  $Id$
 #
 open IN, "htmltags.in"
   or die "Can't open in\n";

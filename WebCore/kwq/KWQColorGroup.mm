@@ -27,7 +27,7 @@
 #include <qpalette.h>
 #include <qcolor.h>
 
-#define QCOLOR_GROUP_SIZE 11
+#define QCOLOR_GROUP_SIZE (QColorGroup::HighlightedText + 1)
 
 class QColorGroupPrivate
 {
@@ -48,6 +48,8 @@ public:
         brushes[QColorGroup::Button] = QColor(192,192,192);    
         brushes[QColorGroup::Background] = QColor(255,255,255);    
         brushes[QColorGroup::Text] = QColor(0,0,0);    
+        brushes[QColorGroup::Highlight] = QColor(64,64,64);    
+        brushes[QColorGroup::HighlightedText] = QColor(0,0,0);    
     }
 
     QColorGroupPrivate(const QColorGroupPrivate *other) {
@@ -157,6 +159,17 @@ const QColor &QColorGroup::text() const
 const QColor &QColorGroup::background() const
 {
     return d->brushes[Background].color();
+}
+
+const QColor &QColorGroup::highlight() const
+{
+    return d->brushes[Highlight].color();
+}
+
+
+const QColor &QColorGroup::highlightedText() const
+{
+    return d->brushes[HighlightedText].color();
 }
 
 

@@ -18,7 +18,6 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 #ifndef _KJS_FUNCTION_H_
@@ -46,6 +45,8 @@ namespace KJS {
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
     void addParameter(const UString &n);
+    // parameters in string representation, e.g. (a, b, c)
+    UString parameterString() const;
     virtual CodeType codeType() const = 0;
 
     virtual Completion execute(ExecState *exec) = 0;

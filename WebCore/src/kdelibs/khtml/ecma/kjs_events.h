@@ -63,12 +63,15 @@ namespace KJS {
     ~DOMEvent();
     virtual Value tryGet(ExecState *exec,const UString &p) const;
     Value getValueProperty(ExecState *, int token) const;
-    // no put - all read-only
+    virtual void tryPut(ExecState *exec, const UString &propertyName,
+			const Value& value, int attr = None);
+    void putValue(ExecState *exec, int token, const Value& value, int);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Type, Target, CurrentTarget, EventPhase, Bubbles,
-           Cancelable, TimeStamp, SrcElement,
-           StopPropagation, PreventDefault, InitEvent };
+           Cancelable, TimeStamp, StopPropagation, PreventDefault, InitEvent,
+	   // MS IE equivalents
+	   SrcElement, ReturnValue, CancelBubble };
     DOM::Event toEvent() const { return event; }
   protected:
     DOM::Event event;

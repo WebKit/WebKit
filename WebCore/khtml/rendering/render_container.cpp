@@ -20,7 +20,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 
 //#define DEBUG_LAYOUT
@@ -246,6 +245,8 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     }
 
     KHTMLAssert(!child->parent());
+    while ( beforeChild->parent() != this && beforeChild->parent()->isAnonymousBox() )
+	beforeChild = beforeChild->parent();
     KHTMLAssert(beforeChild->parent() == this);
 
     if(beforeChild == firstChild())

@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef _CSS_cssstyleselector_h_
 #define _CSS_cssstyleselector_h_
@@ -30,9 +29,12 @@
 
 class KHTMLSettings;
 class KHTMLView;
+class KHTMLPart;
 class KURL;
 
 namespace DOM {
+    class DocumentImpl;
+    class NodeImpl;
     class ElementImpl;
     class StyleSheetImpl;
     class CSSStyleRuleImpl;
@@ -50,10 +52,6 @@ namespace khtml
     class CSSOrderedProperty;
     class CSSOrderedPropertyList;
     class RenderStyle;
-
-    // independent of classes. Applies on styleDeclaration to the RenderStyle style
-    void applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop,
-		   DOM::ElementImpl *e);
 
     /*
      * to remember the source where a rule came from. Differntiates between
@@ -108,7 +106,7 @@ namespace khtml
 	 * Also takes into account special cases for HTML documents,
 	 * including the defaultStyle (which is html only)
 	 */
-	CSSStyleSelector( KHTMLView *view, QString userStyleSheet, DOM::StyleSheetListImpl *styleSheets, const KURL &url,
+	CSSStyleSelector( DOM::DocumentImpl* doc, QString userStyleSheet, DOM::StyleSheetListImpl *styleSheets, const KURL &url,
                           bool _strictParsing );
 	/**
 	 * same as above but for a single stylesheet.
@@ -124,12 +122,16 @@ namespace khtml
 
 	virtual RenderStyle *styleForElement(DOM::ElementImpl *e, int state = None );
 
+        QValueList<int> fontSizes() const { return m_fontSizes; }
+
 	bool strictParsing;
 	struct Encodedurl {
 	    QString host; //also contains protocol
 	    QString path;
 	    QString file;
 	} encodedurl;
+
+        void computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics, int zoomFactor);
     protected:
 
 	/* checks if the complete selector (which can be build up from a few CSSSelector's
@@ -151,6 +153,9 @@ namespace khtml
 	CSSStyleSelectorList *authorStyle;
         CSSStyleSelectorList *userStyle;
         DOM::CSSStyleSheetImpl *userSheet;
+
+    private:
+        void init();
 
     public: // we need to make the enum public for SelectorCache
 	enum SelectorState {
@@ -186,6 +191,26 @@ namespace khtml
 	CSSOrderedProperty **properties;
 	QMemArray<CSSOrderedProperty> inlineProps;
         QString m_medium;
+
+
+	int dynamicState;
+	RenderStyle::PseudoId dynamicPseudo;
+	int usedDynamicStates;
+	int selectorDynamicState;
+
+	RenderStyle *style;
+	RenderStyle *parentStyle;
+	DOM::ElementImpl *element;
+	DOM::NodeImpl *parentNode;
+	KHTMLView *view;
+	KHTMLPart *part;
+	const KHTMLSettings *settings;
+	QPaintDeviceMetrics *paintDeviceMetrics;
+        QValueList<int>     m_fontSizes;
+
+	bool fontDirty;
+
+	void applyRule(DOM::CSSProperty *prop);
     };
 
     /*

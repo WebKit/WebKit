@@ -19,7 +19,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 //#define DEBUG_LAYOUT
 //#define BIDI_DEBUG
@@ -34,64 +33,23 @@
 #include <kdebug.h>
 #include <assert.h>
 
-#define QT_ALLOC_QCHAR_VEC( N ) (QChar*) new char[ sizeof(QChar)*( N ) ]
-#define QT_DELETE_QCHAR_VEC( P ) delete[] ((char*)( P ))
-
-#ifdef APPLE_CHANGES
-#define OPTIMIZE_STRING_USAGE
-#endif
-
-
 using namespace khtml;
 using namespace DOM;
 
-TextSlave::~TextSlave()
-{
-}
-
-void TextSlave::print( QPainter *pt, int _tx, int _ty)
-{
-    if (!m_text || m_len <= 0)
-        return;
-
-    QConstString s(m_text, m_len);
-    //kdDebug( 6040 ) << "textSlave::printing(" << s.string() << ") at(" << x+_tx << "/" << y+_ty << ")" << endl;
-
-    pt->drawText(m_x + _tx, m_y + _ty + m_baseline, s.string(), -1, m_reversed ? QPainter::RTL : QPainter::LTR);
-}
-
-void TextSlave::printSelection(QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
+void TextSlave::printSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
 {
     if(startPos > m_len) return;
     if(startPos < 0) startPos = 0;
 
-    int _len = m_len;
-    int _width = m_width;
-    if(endPos > 0 && endPos < m_len) {
-        _len = endPos;
-    }
-    _len -= startPos;
-
-    //kdDebug(6040) << "TextSlave::printSelection startPos (relative)=" << startPos << " len (of selection)=" << _len << "  (m_len=" << m_len << ")" << endl;
-    QConstString s(m_text+startPos , _len);
-
-    if (_len != m_len)
-        _width = p->fontMetrics().width(s.string());
-
-    int _offset = 0;
-    if ( startPos > 0 )
-        _offset = p->fontMetrics().width(QConstString( m_text, startPos ).string());
-
     p->save();
     QColor c = style->color();
     p->setPen(QColor(0xff-c.red(),0xff-c.green(),0xff-c.blue()));
-    QFontMetrics fm = p->fontMetrics();
-    p->fillRect(m_x + tx + _offset, m_y + ty + m_baseline - fm.ascent(), _width, fm.height(), c);
 
     ty += m_baseline;
 
     //kdDebug( 6040 ) << "textSlave::printing(" << s.string() << ") at(" << x+_tx << "/" << y+_ty << ")" << endl;
-    p->drawText(m_x + tx + _offset, m_y + ty, s.string(), -1, m_reversed ? QPainter::RTL : QPainter::LTR);
+    f->drawText(p, m_x + tx, m_y + ty, text->str->s, text->str->l, m_start, m_len,
+		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, startPos, endPos, c);
     p->restore();
 }
 
@@ -108,24 +66,18 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
     if ( end )
         width -= p->paddingRight() + p->borderRight();
 
-#ifdef APPLE_CHANGES
-    //int underlineOffset = pt->fontMetrics().baselineOffset() + 2;
+#if APPLE_CHANGES
+    if(deco & UNDERLINE) {
+        QConstString s(p->str->s + m_start, m_len);
+        pt->drawUnderlineForText(_tx, _ty + m_baseline, s.string());
+    }
 #else /* APPLE_CHANGES not defined */
     int underlineOffset = ( pt->fontMetrics().height() + m_baseline ) / 2;
     if(underlineOffset <= m_baseline) underlineOffset = m_baseline+1;
-#endif /* APPLE_CHANGES not defined */
 
-    if(deco & UNDERLINE)
-#ifdef APPLE_CHANGES
-    {
-        //fprintf (stderr, "UNDERLINE (%d, %d) to (%d, %d)\n", _tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
-        QConstString s(m_text, m_len);
-        pt->drawUnderlineForText(_tx, _ty + m_baseline, s.string());
-        //pt->drawLine(_tx, _ty, _tx + width, _ty );
-        //pt->drawLine(_tx, _ty + pt->fontMetrics().height(), _tx + width, _ty + pt->fontMetrics().height() );
-    }
-#else /* APPLE_CHANGES not defined */
+    if(deco & UNDERLINE){
         pt->drawLine(_tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
+    }
 #endif /* APPLE_CHANGES not defined */
     if(deco & OVERLINE)
         pt->drawLine(_tx, _ty, _tx + width, _ty );
@@ -172,45 +124,57 @@ void TextSlave::printBoxDecorations(QPainter *pt, RenderStyle* style, RenderText
         p->printBorder(pt, _tx, _ty, width, height, style, begin, end);
 }
 
-FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int _ty, const QFontMetrics * fm, int & offset, short lineHeight)
+FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineHeight)
 {
-    //kdDebug(6040) << "TextSlave::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
-    //              << " _tx+m_x=" << _tx+m_x << " _ty+m_y=" << _ty+m_y << endl;
+//     kdDebug(6040) << "TextSlave::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
+//                   << " _tx+m_x=" << _tx+m_x << " _ty+m_y=" << _ty+m_y << endl;
     offset = 0;
 
     if ( _y < _ty + m_y )
         return SelectionPointBefore; // above -> before
 
-    if ( _y > _ty + m_y + lineHeight || _x > _tx + m_x + m_width )
-    {
-        // below or on the right -> after
+    if ( _y > _ty + m_y + lineHeight ) {
+        // below -> after
         // Set the offset to the max
         offset = m_len;
         return SelectionPointAfter;
     }
+    if ( _x > _tx + m_x + m_width ) {
+	// to the right
+	return m_reversed ? SelectionPointBeforeInLine : SelectionPointAfterInLine;
+    }
 
     // The Y matches, check if we're on the left
-    if ( _x < _tx + m_x )
-        return SelectionPointBefore; // on the left (and not below) -> before
-
-    if ( m_reversed )
-        return SelectionPointBefore; // Abort if RTL (TODO)
+    if ( _x < _tx + m_x ) {
+        return m_reversed ? SelectionPointAfterInLine : SelectionPointBeforeInLine;
+    }
 
     int delta = _x - (_tx + m_x);
     //kdDebug(6040) << "TextSlave::checkSelectionPoint delta=" << delta << endl;
     int pos = 0;
-    while(pos < m_len)
-    {
-        // ### this will produce wrong results for RTL text!!!
-        int w = fm->width(*(m_text+pos));
-        int w2 = w/2;
-        w -= w2;
-        delta -= w2;
-        if(delta <= 0) break;
-        pos++;
-        delta -= w;
+    if ( m_reversed ) {
+	delta -= m_width;
+	while(pos < m_len) {
+	    int w = f->width( text->str->s, text->str->l, m_start + pos);
+	    int w2 = w/2;
+	    w -= w2;
+	    delta += w2;
+	    if(delta >= 0) break;
+	    pos++;
+	    delta += w;
+	}
+    } else {
+	while(pos < m_len) {
+	    int w = f->width( text->str->s, text->str->l, m_start + pos);
+	    int w2 = w/2;
+	    w -= w2;
+	    delta -= w2;
+	    if(delta <= 0) break;
+	    pos++;
+	    delta -= w;
+	}
     }
-    //kdDebug( 6040 ) << " Text  --> inside at position " << pos << endl;
+//     kdDebug( 6040 ) << " Text  --> inside at position " << pos << endl;
     offset = pos;
     return SelectionPointInside;
 }
@@ -301,21 +265,16 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
 void RenderText::setStyle(RenderStyle *_style)
 {
     if ( style() != _style ) {
-	RenderObject::setStyle( _style );
-	m_lineHeight = RenderObject::lineHeight(false);
+        // ### fontvariant being implemented as text-transform: upper. sucks!
+        bool changedText = (!style() && (_style->fontVariant() != FVNORMAL || _style->textTransform() != TTNONE)) ||
+            ((style() && style()->textTransform() != _style->textTransform()) ||
+             (style() && style()->fontVariant() != _style->fontVariant()));
 
-	if ( style()->fontVariant() == SMALL_CAPS ) {
-	    setText( str->upper() );
-	} else {
-	    // ### does not work if texttransform is set to None again!
-	    switch(style()->textTransform()) {
-		case CAPITALIZE:  setText(str->capitalize());  break;
-		case UPPERCASE:   setText(str->upper());       break;
-		case LOWERCASE:   setText(str->lower());       break;
-		case NONE:
-		default:;
-	    }
-	}
+        RenderObject::setStyle( _style );
+        m_lineHeight = RenderObject::lineHeight(false);
+
+        if (changedText && element())
+            setText(element()->string(), changedText);
     }
 }
 
@@ -354,17 +313,14 @@ TextSlave * RenderText::findTextSlave( int offset, int &pos )
     while(offset > off && si < m_lines.count())
     {
         s = m_lines[++si];
-        if ( s->m_reversed )
-            return 0L; // Abort if RTL (TODO)
-        // ### only for visuallyOrdered !
-        off = s->m_text - str->s + s->m_len;
+        off = s->m_start + s->m_len;
     }
     // we are now in the correct text slave
     pos = (offset > off ? s->m_len : s->m_len - (off - offset) );
     return s;
 }
 
-bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
+bool RenderText::nodeAtPoint(NodeInfo& /*info*/, int _x, int _y, int _tx, int _ty)
 {
     assert(parent());
 
@@ -389,10 +345,11 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 
 #ifndef APPLE_CHANGES
     bool oldinside = mouseInside();
-#endif /* not APPLE_CHANGES */
+#endif
     setMouseInside(inside);
-    if (mouseInside() != inside && element())
-        element()->setChanged();
+// don't need this, no DOM Element associated with us
+//     if (mouseInside() != oldinside && element())
+//         element()->setChanged();
 
     return inside;
 }
@@ -401,41 +358,39 @@ FindSelectionResult RenderText::checkSelectionPoint(int _x, int _y, int _tx, int
 {
 //     kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
 //                   << " _tx=" << _tx << " _ty=" << _ty << endl;
+    TextSlave *lastPointAfterInline=0;
+
     for(unsigned int si = 0; si < m_lines.count(); si++)
     {
         TextSlave* s = m_lines[si];
-        if ( s->m_reversed )
-            return SelectionPointBefore; // abort if RTL (TODO)
         int result;
-        const QFontMetrics &fm = metrics(si == 0);
-        result = s->checkSelectionPoint(_x, _y, _tx, _ty, &fm, offset, m_lineHeight);
+        const Font *f = htmlFont( si==0 );
+        result = s->checkSelectionPoint(_x, _y, _tx, _ty, f, this, offset, m_lineHeight);
 
-        //kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " line " << si << " result=" << result << " offset=" << offset << endl;
+//         kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " line " << si << " result=" << result << " offset=" << offset << endl;
         if ( result == SelectionPointInside ) // x,y is inside the textslave
         {
-            // ### only for visuallyOrdered !
-            offset += s->m_text - str->s; // add the offset from the previous lines
+            offset += s->m_start; // add the offset from the previous lines
             //kdDebug(6040) << "RenderText::checkSelectionPoint inside -> " << offset << endl;
             node = element();
             return SelectionPointInside;
-        } else if ( result == SelectionPointBefore )
-        {
+        } else if ( result == SelectionPointBefore ) {
             // x,y is before the textslave -> stop here
-            if ( si > 0 )
-            {
-                // ### only for visuallyOrdered !
-                offset = s->m_text - str->s - 1;
+            if ( si > 0 && lastPointAfterInline ) {
+                offset = lastPointAfterInline->m_start + lastPointAfterInline->m_len;
                 //kdDebug(6040) << "RenderText::checkSelectionPoint before -> " << offset << endl;
                 node = element();
                 return SelectionPointInside;
-            } else
-            {
+            } else {
                 offset = 0;
                 //kdDebug(6040) << "RenderText::checkSelectionPoint " << this << "before us -> returning Before" << endl;
                 node = element();
                 return SelectionPointBefore;
             }
-        }
+        } else if ( result == SelectionPointAfterInLine ) {
+	    lastPointAfterInline = s;
+	}
+
     }
 
     // set offset to max
@@ -458,10 +413,10 @@ void RenderText::cursorPos(int offset, int &_x, int &_y, int &height)
   height = m_lineHeight; // ### firstLine!!! s->m_height;
 
   const QFontMetrics &fm = metrics( false ); // #### wrong for first-line!
-  QString tekst(s->m_text, s->m_len);
+  QString tekst(str->s + s->m_start, s->m_len);
   _x = s->m_x + (fm.boundingRect(tekst, pos)).right();
   if(pos)
-      _x += fm.rightBearing( *(s->m_text + pos - 1 ) );
+      _x += fm.rightBearing( *(str->s + s->m_start + pos - 1 ) );
 
   int absx, absy;
 
@@ -545,16 +500,12 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
         // Now calculate startPos and endPos, for printing selection.
         // We print selection while endPos > 0
         int endPos, startPos;
-        if (selectionState() != SelectionNone)
-        {
-            if (selectionState() == SelectionInside)
-            {
+        if (selectionState() != SelectionNone) {
+            if (selectionState() == SelectionInside) {
                 //kdDebug(6040) << this << " SelectionInside -> 0 to end" << endl;
                 startPos = 0;
                 endPos = str->l;
-            }
-            else
-            {
+            } else {
                 selectionStartEnd(startPos, endPos);
                 if(selectionState() == SelectionStart)
                     endPos = str->l;
@@ -562,20 +513,6 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
                     startPos = 0;
             }
             //kdDebug(6040) << this << " Selection from " << startPos << " to " << endPos << endl;
-
-            // Eat the lines we don't print (startPos and endPos are from line 0!)
-            // Note that we do this even if si==0, because we may have \n as the first char,
-            // and this takes care of it too (David)
-            if ( m_lines[si]->m_reversed )
-                endPos = -1; // No selection if RTL (TODO)
-            else
-            {
-                // ## Only valid for visuallyOrdered
-                int len = m_lines[si]->m_text - str->s;
-                //kdDebug(6040) << this << " RenderText::printObject adjustement si=" << si << " len=" << len << endl;
-                startPos -= len;
-                endPos -= len;
-            }
         }
 
         TextSlave* s;
@@ -588,14 +525,18 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
 
 	bool renderOutline = style()->outlineWidth()!=0;
 
+	const Font *font = &style()->htmlFont();
+
         // run until we find one that is outside the range, then we
         // know we can stop
         do {
             s = m_lines[si];
             RenderStyle* _style = pseudoStyle && s->m_firstLine ? pseudoStyle : style();
 
-            if(_style->font() != p->font())
+            if(_style->font() != p->font()) {
                 p->setFont(_style->font());
+		font = &_style->htmlFont();
+	    }
             if((hasSpecialObjects()  &&
                 (parent()->isInline() || pseudoStyle)) &&
                (!pseudoStyle || s->m_firstLine))
@@ -605,7 +546,9 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
             if(_style->color() != p->pen().color())
                 p->setPen(_style->color());
 
-            s->print(p, tx, ty);
+	    if (s->m_len > 0)
+		font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s, str->l, s->m_start, s->m_len,
+			       s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR);
 
             if(d != TDNONE)
             {
@@ -613,21 +556,14 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
                 s->printDecoration(p, this, tx, ty, d, si == 0, si == ( int ) m_lines.count()-1);
             }
 
-            if (selectionState() != SelectionNone && endPos > 0)
-            {
-                //kdDebug(6040) << this << " printSelection with startPos=" << startPos << " endPos=" << endPos << endl;
-                s->printSelection(p, _style, tx, ty, startPos, endPos);
+            if (selectionState() != SelectionNone ) {
+		int offset = s->m_start;
+		int sPos = QMAX( startPos - offset, 0 );
+		int ePos = QMIN( endPos - offset, s->m_len );
+                //kdDebug(6040) << this << " printSelection with startPos=" << sPos << " endPos=" << ePos << endl;
+		if ( sPos < ePos )
+		    s->printSelection(font, this, p, _style, tx, ty, sPos, ePos);
 
-                int diff;
-                if(si < (int)m_lines.count()-1)
-                    // ### only for visuallyOrdered ! (we disabled endPos for RTL, so we can't go here in RTL mode)
-                    diff = m_lines[si+1]->m_text - s->m_text;
-                else
-                    diff = s->m_len;
-                //kdDebug(6040) << this << " RenderText::printSelection eating the line si=" << si << " length=" << diff << endl;
-                endPos -= diff;
-                startPos -= diff;
-                //kdDebug(6040) << this << " startPos now " << startPos << ", endPos now " << endPos << endl;
             }
             if(renderOutline) {
                 if(outlinebox_y == s->m_y) {
@@ -702,23 +638,18 @@ void RenderText::calcMinMaxWidth()
     m_hasBreakableChar = false;
 
     // ### not 100% correct for first-line
-    const QFontMetrics &_fm = metrics( false );
+    const Font *f = htmlFont( false );
     int len = str->l;
     if ( len == 1 && str->s->latin1() == '\n' )
 	m_hasReturn = true;
     for(int i = 0; i < len; i++)
     {
         int wordlen = 0;
-        do {
+        while( i+wordlen < len && !(isBreakable( str->s, i+wordlen, str->l )) )
             wordlen++;
-        } while( i+wordlen < len && !(isBreakable( str->s, i+wordlen, str->l )) );
         if (wordlen)
         {
-#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
-            int w = _fm._width((const UniChar *)(str->s+i), wordlen);
-#else
-            int w = _fm.width(QConstString(str->s+i, wordlen).string());
-#endif
+            int w = f->width(str->s, str->l, i, wordlen);
             currMinWidth += w;
             currMaxWidth += w;
         }
@@ -737,11 +668,7 @@ void RenderText::calcMinMaxWidth()
             {
                 if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
                 currMinWidth = 0;
-#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
-                currMaxWidth += _fm._width((const UniChar *)(str->s+i+wordlen), 1);
-#else
-                currMaxWidth += _fm.width( *(str->s+i+wordlen) );
-#endif
+                currMaxWidth += f->width( str->s, str->l, i + wordlen );
             }
             /* else if( c == '-')
             {
@@ -796,11 +723,24 @@ const QFont &RenderText::font()
     return style()->font();
 }
 
-void RenderText::setText(DOMStringImpl *text)
+void RenderText::setText(DOMStringImpl *text, bool force)
 {
-    if( str == text ) return;
+    if( !force && str == text ) return;
     if(str) str->deref();
     str = text;
+
+    if ( style() ) {
+        if ( style()->fontVariant() == SMALL_CAPS )
+            str = str->upper();
+        else
+            switch(style()->textTransform()) {
+            case CAPITALIZE:   str = str->capitalize();  break;
+            case UPPERCASE:   str = str->upper();       break;
+            case LOWERCASE:  str = str->lower();       break;
+            case NONE:
+            default:;
+            }
+    }
     if(str) str->ref();
 
     // ### what should happen if we change the text of a
@@ -843,14 +783,12 @@ short RenderText::baselinePosition( bool firstLine ) const
         ( lineHeight( firstLine ) - fm.height() ) / 2;
 }
 
-void RenderText::position(int x, int y, int from, int len, int width, bool reverse, bool firstLine)
+void RenderText::position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int spaceAdd)
 {
     // ### should not be needed!!!
     if(len == 0 || (len == 1 && *(str->s+from) == '\n') ) return;
 
-    QChar *ch;
     reverse = reverse && !style()->visuallyOrdered();
-    ch = str->s+from;
 
     // ### margins and RTL
     if(from == 0 && parent()->isInline() && parent()->firstChild()==this)
@@ -863,13 +801,14 @@ void RenderText::position(int x, int y, int from, int len, int width, bool rever
         width -= marginRight();
 
 #ifdef DEBUG_LAYOUT
+    QChar *ch = str->s+from;
     QConstString cstr(ch, len);
     qDebug("setting slave text to *%s*, len=%d, w)=%d" , cstr.string().latin1(), len, width );//" << y << ")" << " height=" << lineHeight(false) << " fontHeight=" << metrics(false).height() << " ascent =" << metrics(false).ascent() << endl;
 #endif
 
-    TextSlave *s = new TextSlave(x, y, ch, len,
+    TextSlave *s = new TextSlave(x, y, from, len,
                                  baselinePosition( firstLine ),
-                                 width, reverse, firstLine);
+                                 width, reverse, spaceAdd, firstLine);
 
     if(m_lines.count() == m_lines.size())
         m_lines.resize(m_lines.size()*2+1);
@@ -882,26 +821,20 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, bool firstLi
     if(!str->s || from > str->l ) return 0;
     if ( from + len > str->l ) len = str->l - from;
 
-    const QFontMetrics &fm = metrics(firstLine);
-    return width( from, len, &fm);
+    const Font *f = htmlFont( firstLine );
+    return width( from, len, f );
 }
 
-unsigned int RenderText::width(unsigned int from, unsigned int len, const QFontMetrics *_fm) const
+unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *f) const
 {
     if(!str->s || from > str->l ) return 0;
     if ( from + len > str->l ) len = str->l - from;
 
     int w;
-    if ( _fm == &style()->fontMetrics() && from == 0 && len == str->l )
+    if ( f == &style()->htmlFont() && from == 0 && len == str->l )
  	 w = m_maxWidth;
-    if( len == 1)
-        w = _fm->width( *(str->s+from) );
     else
-#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
-        w = _fm->_width((const UniChar *)(str->s+from), len);
-#else
-        w = _fm->width(QConstString(str->s+from, len).string());
-#endif
+	w = f->width(str->s, str->l, from, len );
 
     // ### add margins and support for RTL
 
@@ -970,6 +903,19 @@ const QFontMetrics &RenderText::metrics(bool firstLine) const
 	    return pseudoStyle->fontMetrics();
     }
     return style()->fontMetrics();
+}
+
+const Font *RenderText::htmlFont(bool firstLine) const
+{
+    const Font *f = 0;
+    if( firstLine && hasFirstLine() ) {
+	RenderStyle *pseudoStyle  = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
+	if ( pseudoStyle )
+	    f = &pseudoStyle->htmlFont();
+    } else {
+	f = &style()->htmlFont();
+    }
+    return f;
 }
 
 void RenderText::printTextOutline(QPainter *p, int tx, int ty, const QRect &lastline, const QRect &thisline, const QRect &nextline)

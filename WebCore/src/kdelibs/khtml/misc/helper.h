@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef html_helper_h
 #define html_helper_h
@@ -38,7 +37,11 @@ namespace khtml
     //enumerator for findSelectionNode
     enum FindSelectionResult { SelectionPointBefore,
 			       SelectionPointAfter,
-			       SelectionPointInside };
+			       SelectionPointInside,
+			       // the next two are only used inside one line in RenderText
+			       // to get BiDi contexts right.
+			       SelectionPointBeforeInLine,
+			       SelectionPointAfterInLine };
 };
 
 #endif

@@ -30,7 +30,7 @@
 #include <config.h>
 #endif
 
-class QString;
+#include <qt/qstringlist.h>
 
 QString i18n(const char* text);
 
@@ -53,6 +53,7 @@ public:
     // member functions --------------------------------------------------------
 
     QString language() const;
+    QStringList languageList() const;
 
     // operators ---------------------------------------------------------------
 

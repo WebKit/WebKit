@@ -19,7 +19,6 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 #ifndef _KJS_INTERPRETER_H_
@@ -114,7 +113,7 @@ namespace KJS {
    * Interpreter objects can be used to evaluate ECMAScript code. Each
    * interpreter has a global object which is used for the purposes of code
    * evaluation, and also provides access to built-in properties such as
-   " Object" and "Number".
+   * " Object" and "Number".
    */
   class Interpreter {
   public:
@@ -147,6 +146,8 @@ namespace KJS {
      * execution performed by this interpreter
      */
     Object globalObject() const;
+
+    void initGlobalObject();
 
     /**
      * Returns the execution state object which can be used to execute
@@ -204,59 +205,95 @@ namespace KJS {
      */
     Object builtinObject() const;
 
-    /** Returns the builtin "Function" object. */
+    /**
+     * Returns the builtin "Function" object.
+     */
     Object builtinFunction() const;
 
-    /** Returns the builtin "Array" object. */
+    /**
+     * Returns the builtin "Array" object.
+     */
     Object builtinArray() const;
 
 
-    /** Returns the builtin "Boolean" object. */
+    /**
+     * Returns the builtin "Boolean" object.
+     */
     Object builtinBoolean() const;
 
-    /** Returns the builtin "String" object. */
+    /**
+     * Returns the builtin "String" object.
+     */
     Object builtinString() const;
 
-    /** Returns the builtin "Number" object. */
+    /**
+     * Returns the builtin "Number" object.
+     */
     Object builtinNumber() const;
 
-    /** Returns the builtin "Date" object. */
+    /**
+     * Returns the builtin "Date" object.
+     */
     Object builtinDate() const;
 
-    /** Returns the builtin "RegExp" object. */
+    /**
+     * Returns the builtin "RegExp" object.
+     */
     Object builtinRegExp() const;
 
-    /** Returns the builtin "Error" object. */
+    /**
+     * Returns the builtin "Error" object.
+     */
     Object builtinError() const;
 
-    /** Returns the builtin "Object.prototype" object. */
+    /**
+     * Returns the builtin "Object.prototype" object.
+     */
     Object builtinObjectPrototype() const;
 
-    /** Returns the builtin "Function.prototype" object. */
+    /**
+     * Returns the builtin "Function.prototype" object.
+     */
     Object builtinFunctionPrototype() const;
 
-    /** Returns the builtin "Array.prototype" object. */
+    /**
+     * Returns the builtin "Array.prototype" object.
+     */
     Object builtinArrayPrototype() const;
 
-    /** Returns the builtin "Boolean.prototype" object. */
+    /**
+     * Returns the builtin "Boolean.prototype" object.
+     */
     Object builtinBooleanPrototype() const;
 
-    /** Returns the builtin "String.prototype" object. */
+    /**
+     * Returns the builtin "String.prototype" object.
+     */
     Object builtinStringPrototype() const;
 
-    /** Returns the builtin "Number.prototype" object. */
+    /**
+     * Returns the builtin "Number.prototype" object.
+     */
     Object builtinNumberPrototype() const;
 
-    /** Returns the builtin "Date.prototype" object. */
+    /**
+     * Returns the builtin "Date.prototype" object.
+     */
     Object builtinDatePrototype() const;
 
-    /** Returns the builtin "RegExp.prototype" object. */
+    /**
+     * Returns the builtin "RegExp.prototype" object.
+     */
     Object builtinRegExpPrototype() const;
 
-    /** Returns the builtin "Error.prototype" object. */
+    /**
+     * Returns the builtin "Error.prototype" object.
+     */
     Object builtinErrorPrototype() const;
 
-    /** The initial value of "Error" global property */
+    /**
+     * The initial value of "Error" global property
+     */
     Object builtinEvalError() const;
     Object builtinRangeError() const;
     Object builtinReferenceError() const;
@@ -317,6 +354,8 @@ namespace KJS {
      * interpreter instance instead.
      */
     Interpreter operator=(const Interpreter&);
+  protected:
+    virtual void virtual_hook( int id, void* data );
   };
 
   /**

@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef _DOM_DOMString_h_
 #define _DOM_DOMString_h_
@@ -43,7 +42,9 @@ class DOMString
     friend class CharacterDataImpl;
     friend bool operator==( const DOMString &a, const char *b );
 public:
-    /** default constructor. Gives an empty DOMString */
+    /**
+     * default constructor. Gives an empty DOMString
+     */
     DOMString();
 
     DOMString(const QChar *str, uint len);

@@ -74,15 +74,14 @@ DOMCSSStyleDeclaration::~DOMCSSStyleDeclaration()
   ScriptInterpreter::forgetDOMObject(styleDecl.handle());
 }
 
-bool DOMCSSStyleDeclaration::hasProperty(ExecState *exec, const UString &p,
-					 bool recursive) const
+bool DOMCSSStyleDeclaration::hasProperty(ExecState *exec, const UString &p) const
 {
   DOM::DOMString cssprop = jsNameToProp(p);
   // strip pos- / pixel- prefix here?
   if (DOM::getPropertyID(cssprop.string().ascii(), cssprop.length()))
       return true;
 
-  return ObjectImp::hasProperty(exec, p, recursive);
+  return ObjectImp::hasProperty(exec, p);
 }
 
 Value DOMCSSStyleDeclaration::tryGet(ExecState *exec, const UString &propertyName) const
@@ -151,10 +150,12 @@ Value DOMCSSStyleDeclaration::tryGet(ExecState *exec, const UString &propertyNam
 void DOMCSSStyleDeclaration::tryPut(ExecState *exec, const UString &pName, const Value& value, int )
 {
   UString propertyName = pName;
-  if ( propertyName == "clip" ) {
+   if ( propertyName == "clip" ) {
+//      QString propvalue = value.toString(exec).qstring();
+//      qDebug("clip: %s", propvalue.latin1());
     propertyName = "-konq-js-clip";
-  }
-  
+   }
+
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "DOMCSSStyleDeclaration::tryPut " << propertyName.qstring() << endl;
 #endif
@@ -1114,13 +1115,23 @@ DOMRGBColor::~DOMRGBColor()
 
 Value DOMRGBColor::tryGet(ExecState *exec, const UString &p) const
 {
-  if (p == "red")
-    return getDOMCSSValue(exec,rgbColor.red());
-  if (p == "green")
-    return getDOMCSSValue(exec,rgbColor.green());
-  if (p == "blue")
-    return getDOMCSSValue(exec,rgbColor.blue());
-  return DOMObject::tryGet(exec,p);
+  return DOMObjectLookupGetValue<DOMRGBColor,DOMObject>(exec, p,
+						       &DOMRGBColorTable,
+						       this);
+}
+
+Value DOMRGBColor::getValueProperty(ExecState *exec, int token) const
+{
+  switch (token) {
+  case Red:
+    return getDOMCSSValue(exec, rgbColor.red());
+  case Green:
+    return getDOMCSSValue(exec, rgbColor.green());
+  case Blue:
+    return getDOMCSSValue(exec, rgbColor.blue());
+  default:
+    return Value();
+  }
 }
 
 Value KJS::getDOMRGBColor(ExecState *, DOM::RGBColor c)
@@ -1147,15 +1158,24 @@ DOMRect::~DOMRect()
 
 Value DOMRect::tryGet(ExecState *exec, const UString &p) const
 {
-  if (p == "top")
-    return getDOMCSSValue(exec,rect.top());
-  if (p == "right")
-    return getDOMCSSValue(exec,rect.right());
-  if (p == "bottom")
-    return getDOMCSSValue(exec,rect.bottom());
-  if (p == "left")
-    return getDOMCSSValue(exec,rect.left());
-  return DOMObject::tryGet(exec,p);
+  return DOMObjectLookupGetValue<DOMRect,DOMObject>(exec, p,
+						    &DOMRectTable, this);
+}
+
+Value DOMRect::getValueProperty(ExecState *exec, int token) const
+{
+  switch (token) {
+  case Top:
+    return getDOMCSSValue(exec, rect.top());
+  case Right:
+    return getDOMCSSValue(exec, rect.right());
+  case Bottom:
+    return getDOMCSSValue(exec, rect.bottom());
+  case Left:
+    return getDOMCSSValue(exec, rect.left());
+  default:
+    return Value();
+  }
 }
 
 Value KJS::getDOMRect(ExecState *exec, DOM::Rect r)
@@ -1180,14 +1200,22 @@ DOMCounter::~DOMCounter()
 
 Value DOMCounter::tryGet(ExecState *exec, const UString &p) const
 {
-  if (p == "identifier")
-    return getString(counter.identifier());
-  if (p == "listStyle")
-    return getString(counter.listStyle());
-  if (p == "separator")
-    return getString(counter.separator());
+  return DOMObjectLookupGetValue<DOMCounter,DOMObject>(exec, p,
+						       &DOMCounterTable, this);
+}
 
-  return DOMObject::tryGet(exec,p);
+Value DOMCounter::getValueProperty(ExecState *, int token) const
+{
+  switch (token) {
+  case Identifier:
+    return getString(counter.identifier());
+  case ListStyle:
+    return getString(counter.listStyle());
+  case Separator:
+    return getString(counter.separator());
+  default:
+    return Value();
+  }
 }
 
 Value KJS::getDOMCounter(ExecState *exec, DOM::Counter c)

@@ -25,7 +25,6 @@
  * Technology , Institut National de Recherche en Informatique et en
  * Automatique , Keio University ). All Rights Reserved.
  *
- * $Id$
  */
 #ifndef _DOM_Node_h_
 #define _DOM_Node_h_

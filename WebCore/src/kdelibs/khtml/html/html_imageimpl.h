@@ -19,7 +19,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef HTML_IMAGEIMPL_H
 #define HTML_IMAGEIMPL_H
@@ -47,6 +46,9 @@ public:
     virtual void parseAttribute(AttributeImpl *);
 
     virtual void attach();
+
+    long width() const;
+    long height() const;
 
     bool isServerMap() const { return ( ismap && !usemap.length() );  }
     QImage currentImage() const;

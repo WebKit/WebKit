@@ -27,10 +27,11 @@ class khtml::MouseEvent::MouseEventPrivate
 {
 };
 
-khtml::MouseEvent::MouseEvent( const char *name, QMouseEvent *qmouseEvent, int x, int y, const DOM::DOMString &url,
-	                const DOM::Node &innerNode, long )
+khtml::MouseEvent::MouseEvent( const char *name, QMouseEvent *qmouseEvent, int x, int y,
+                               const DOM::DOMString &url, const DOM::DOMString& target,
+	                const DOM::Node &innerNode )
 : KParts::Event( name ), m_qmouseEvent( qmouseEvent ), m_x( x ), m_y( y ),
-  m_url( url ), m_innerNode( innerNode )
+  m_url( url ), m_target(target), m_innerNode( innerNode )
 {
   d = 0;
   if (innerNode.handle() && innerNode.handle()->renderer())

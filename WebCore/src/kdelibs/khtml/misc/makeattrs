@@ -22,7 +22,6 @@
 #----------------------------------------------------------------------------
 #
 #  KDE HTML Widget -- Script to generate khtmlattrs.c and khtmlattrs.h
-#  $Id$
 #
 open IN, "htmlattrs.in"
   or die "Can't open in\n";

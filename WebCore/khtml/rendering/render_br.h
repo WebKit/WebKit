@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef RENDER_BR_H
 #define RENDER_BR_H
@@ -42,10 +41,8 @@ public:
     virtual void print( QPainter *, int, int, int, int, int, int) {}
     virtual void printObject( QPainter *, int, int, int, int, int, int) {}
 
-    // from BiDiObject
-    //virtual unsigned int length() const { return 1; }
-    virtual void position(int, int, int, int, int, bool, bool) {}
-    virtual unsigned int width(unsigned int, unsigned int, QFontMetrics *) const { return 0; }
+    virtual void position(int, int, int, int, int, bool, bool, int) {}
+    virtual unsigned int width(unsigned int, unsigned int, const Font *) const { return 0; }
     virtual unsigned int width( unsigned int, unsigned int, bool) const { return 0; }
     virtual short width() const { return RenderText::width(); }
 

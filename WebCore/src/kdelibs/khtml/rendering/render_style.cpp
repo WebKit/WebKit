@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 
 #include "xml/dom_stringimpl.h"
@@ -88,6 +87,7 @@ StyleVisualData::StyleVisualData()
 {
     colspan = 1;
     palette = QApplication::palette();
+    counter_increment = counter_reset = 0;
 }
 
 StyleVisualData::~StyleVisualData() {
@@ -112,7 +112,7 @@ RenderStyle::setBitDefaults()
     inherited_flags._list_style_type = DISC;
     inherited_flags._list_style_position = OUTSIDE;
     inherited_flags._visibility = VISIBLE;
-    inherited_flags._text_align = JUSTIFY;
+    inherited_flags._text_align = TAAUTO;
     inherited_flags._text_transform = TTNONE;
     inherited_flags._direction = LTR;
     inherited_flags._white_space = NORMAL;

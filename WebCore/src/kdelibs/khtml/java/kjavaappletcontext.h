@@ -33,7 +33,6 @@
  * on contexts).  Currently, each document in KHTML creates one context, in
  * which multiple applets can run.
  *
- * @version $Id$
  * @author Richard J. Moore, rich@kde.org
  * @author Wynn Wilkes, wynnw@caldera.com
  */

@@ -22,7 +22,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef RENDER_TABLE_H
 #define RENDER_TABLE_H
@@ -117,7 +116,7 @@ public:
 
     int getBaseline(int row) {return rowBaselines[row];}
 
-    virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine);
+    virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int);
 
     virtual void calcWidth();
 
@@ -275,7 +274,7 @@ public:
     virtual bool isTableSection() const { return true; }
 
     virtual short lineHeight(bool) const { return 0; }
-    virtual void position(int, int, int, int, int, bool, bool) {}
+    virtual void position(int, int, int, int, int, bool, bool, int) {}
 
     virtual void setTable(RenderTable *t) { table = t; }
 
@@ -310,7 +309,7 @@ public:
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
 
     virtual short lineHeight( bool ) const { return 0; }
-    virtual void position(int, int, int, int, int, bool, bool) {}
+    virtual void position(int, int, int, int, int, bool, bool, int) {}
 
     virtual void close();
 
@@ -450,7 +449,7 @@ public:
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
 
     virtual short lineHeight( bool ) const { return 0; }
-    virtual void position(int, int, int, int, int, bool, bool) {}
+    virtual void position(int, int, int, int, int, bool, bool, int) {}
     virtual void layout() {}
 
     virtual void setTable(RenderTable *t) { table = t; }

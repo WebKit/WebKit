@@ -41,11 +41,11 @@ namespace KJS {
   // ECMA 262-3 8.6.1
   // Attributes (only applicable to the Object type)
   enum Attribute { None       = 0,
-		   ReadOnly   = 1 << 1, // property can be only read, not written
-		   DontEnum   = 1 << 2, // property doesn't appear in (for .. in ..)
-		   DontDelete = 1 << 3, // property can't be deleted
-		   Internal   = 1 << 4, // an internal property, set to by pass checks
-		   Function   = 1 << 5 }; // property is a function - only used by static hashtables
+                   ReadOnly   = 1 << 1, // property can be only read, not written
+                   DontEnum   = 1 << 2, // property doesn't appear in (for .. in ..)
+                   DontDelete = 1 << 3, // property can't be deleted
+                   Internal   = 1 << 4, // an internal property, set to by pass checks
+                   Function   = 1 << 5 }; // property is a function - only used by static hashtables
 
   /**
    * Class Information
@@ -163,8 +163,7 @@ namespace KJS {
      * @param propertyName The name of the property to check for
      * @return true if the object has the property, otherwise false
      */
-    bool hasProperty(ExecState *exec, const UString &propertyName,
-                     bool recursive = true) const;
+    bool hasProperty(ExecState *exec, const UString &propertyName) const;
 
     /**
      * Removes the specified property from the object.
@@ -487,8 +486,8 @@ namespace KJS {
      *
      * @see Object::hasProperty()
      */
-    virtual bool hasProperty(ExecState *exec, const UString &propertyName,
-                             bool recursive = true) const;
+    virtual bool hasProperty(ExecState *exec,
+			     const UString &propertyName) const;
 
     /**
      * Implementation of the [[Delete]] internal property (implemented by all
@@ -578,12 +577,12 @@ namespace KJS {
    * should be used.
    */
   enum ErrorType { GeneralError   = 0,
-		   EvalError      = 1,
-		   RangeError     = 2,
-		   ReferenceError = 3,
-		   SyntaxError    = 4,
-		   TypeError      = 5,
-		   URIError       = 6};
+                   EvalError      = 1,
+                   RangeError     = 2,
+                   ReferenceError = 3,
+                   SyntaxError    = 4,
+                   TypeError      = 5,
+                   URIError       = 6};
 
   /**
    * @short Factory methods for error objects.

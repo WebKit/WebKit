@@ -159,11 +159,7 @@ void HTMLEmbedElementImpl::parseAttribute(AttributeImpl *attr)
         break;
      case ATTR_CODE:
      case ATTR_SRC:
-#ifdef APPLE_CHANGES
-         url = khtml::parseURL(attr->val()).string().copy();
-#else /* APPLE_CHANGES not defined */
          url = khtml::parseURL(attr->val()).string();
-#endif /* APPLE_CHANGES not defined */
          break;
      case ATTR_WIDTH:
         addCSSLength( CSS_PROP_WIDTH, attr->value() );

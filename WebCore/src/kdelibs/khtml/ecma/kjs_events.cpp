@@ -25,6 +25,7 @@
 #include "kjs_proxy.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom2_eventsimpl.h"
 #include "rendering/render_object.h"
 
 #include <kdebug.h>
@@ -55,10 +56,14 @@ void JSEventListener::handleEvent(DOM::Event &evt)
     return;
 #endif
   KHTMLPart *part = static_cast<Window*>(win.imp())->part();
-  if (part && listener.implementsCall()) {
+  KJSProxy *proxy = 0L;
+  if (part)
+      proxy = KJSProxy::proxy( part );
+
+  if (proxy && listener.implementsCall()) {
     ref();
 
-    KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(KJSProxy::proxy( part )->interpreter());
+    KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(proxy->interpreter());
     ExecState *exec = interpreter->globalExec();
 
     List args;
@@ -180,6 +185,8 @@ const ClassInfo DOMEvent::info = { "Event", 0, &DOMEventTable, 0 };
   bubbles	DOMEvent::Bubbles	DontDelete|ReadOnly
   cancelable	DOMEvent::Cancelable	DontDelete|ReadOnly
   timeStamp	DOMEvent::TimeStamp	DontDelete|ReadOnly
+  returnValue   DOMEvent::ReturnValue   DontDelete
+  cancelBubble  DOMEvent::CancelBubble  DontDelete
 @end
 @begin DOMEventProtoTable 3
   stopPropagation 	DOMEvent::StopPropagation	DontDelete|Function 0
@@ -220,6 +227,7 @@ Value DOMEvent::getValueProperty(ExecState *exec, int token) const
   case EventPhase:
     return Number((unsigned int)event.eventPhase());
   case Bubbles:
+  case CancelBubble: // MSIE extension. not sure if readable. and returnValue ?
     return Boolean(event.bubbles());
   case Cancelable:
     return Boolean(event.cancelable());
@@ -228,6 +236,29 @@ Value DOMEvent::getValueProperty(ExecState *exec, int token) const
   default:
     kdWarning() << "Unhandled token in DOMEvent::getValueProperty : " << token << endl;
     return Value();
+  }
+}
+
+void DOMEvent::tryPut(ExecState *exec, const UString &propertyName,
+                      const Value& value, int attr)
+{
+  DOMObjectLookupPut<DOMEvent, DOMObject>(exec, propertyName, value, attr,
+                                          &DOMEventTable, this);
+}
+
+void DOMEvent::putValue(ExecState *exec, int token, const Value& value, int)
+{
+  switch (token) {
+  case ReturnValue:
+    if (value.toBoolean(exec))
+      event.preventDefault();
+    break;
+  case CancelBubble:
+    if (value.toBoolean(exec))
+      event.stopPropagation();
+    break;
+  default:
+    break;
   }
 }
 
@@ -460,15 +491,19 @@ Value DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
     int button = domButton==0 ? 1 : domButton==1 ? 4 : domButton==2 ? 2 : 0;
     return Number( (unsigned int)button );
   }
-  case RelatedTarget:
-    return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).relatedTarget());
-  case FromElement:
-    // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
-    // ### TODO: meaning of currentTarget differs between mouseover and mouseout, need to pick the right one
-    return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).relatedTarget());
   case ToElement:
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
-    return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).currentTarget());
+    if (event.handle()->id() == DOM::EventImpl::MOUSEOUT_EVENT)
+      return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).relatedTarget());
+    return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).target());
+  case FromElement:
+    // MSIE extension - "object from which activation
+    // or the mouse pointer is exiting during the event" (huh?)
+    if (event.handle()->id() == DOM::EventImpl::MOUSEOUT_EVENT)
+      return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).target());
+    /* fall through */
+  case RelatedTarget:
+    return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).relatedTarget());
   default:
     kdWarning() << "Unhandled token in DOMMouseEvent::getValueProperty : " << token << endl;
     return Value();

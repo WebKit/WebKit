@@ -181,6 +181,34 @@ void HTMLImageElementImpl::attach()
     NodeBaseImpl::attach();
 }
 
+long HTMLImageElementImpl::width() const
+{
+    if (!m_render) return getAttribute(ATTR_WIDTH).toInt();
+
+    // ### make a unified call for this
+    if (changed()) {
+        getDocument()->updateRendering();
+        if (getDocument()->view())
+            getDocument()->view()->layout();
+    }
+
+    return m_render->contentWidth();
+}
+
+long HTMLImageElementImpl::height() const
+{
+    if (!m_render) return getAttribute(ATTR_HEIGHT).toInt();
+
+    // ### make a unified call for this
+    if (changed()) {
+        getDocument()->updateRendering();
+        if (getDocument()->view())
+            getDocument()->view()->layout();
+    }
+
+    return m_render->contentHeight();
+}
+
 QImage HTMLImageElementImpl::currentImage() const
 {
     RenderImage *r = static_cast<RenderImage*>(renderer());

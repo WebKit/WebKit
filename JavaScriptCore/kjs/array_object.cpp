@@ -58,7 +58,7 @@ void ArrayInstanceImp::put(ExecState *exec, const UString &propertyName, const V
       // shrink array
       for (unsigned int u = newLen; u < oldLen; u++) {
 	UString p = UString::from(u);
-	if (hasProperty(exec, p, false))
+	if (hasOwnProperty(exec, p))
 	  deleteProperty(exec, p);
       }
       ObjectImp::put(exec, "length", Number(newLen), DontEnum | DontDelete);
@@ -74,7 +74,7 @@ void ArrayInstanceImp::put(ExecState *exec, const UString &propertyName, const V
     return;
 
   // do we need to update/create the length property ?
-  if (hasProperty(exec, "length", false)) {
+  if (hasOwnProperty(exec, "length")) {
     Value len = get(exec, "length");
     if (idx < len.toUInt32(exec))
       return;
@@ -87,6 +87,18 @@ void ArrayInstanceImp::putDirect(ExecState *exec, const UString &propertyName, c
 {
   ObjectImp::put(exec,propertyName,value,attr);
 }
+
+bool ArrayInstanceImp::hasOwnProperty(ExecState *exec,
+                                      const UString &propertyName)
+{
+  // disable this object's prototype temporarily for the hasProperty() call
+  Value protoBackup = prototype();
+  setPrototype(Undefined());
+  bool b = hasProperty(exec, propertyName);
+  setPrototype(protoBackup);
+  return b;
+}
+
 // ------------------------------ ArrayPrototypeImp ----------------------------
 
 const ClassInfo ArrayPrototypeImp::info = {"Array", &ArrayInstanceImp::info, &arrayTable, 0};

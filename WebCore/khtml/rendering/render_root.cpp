@@ -50,6 +50,7 @@ RenderRoot::RenderRoot(DOM::NodeImpl* node, KHTMLView *view)
     setPositioned(true); // to 0,0 :)
 
     m_printingMode = false;
+    m_printImages = true;
 
     m_selectionStart = 0;
     m_selectionEnd = 0;
@@ -199,19 +200,7 @@ void RenderRoot::printObject(QPainter *p, int _x, int _y,
     }
 
     if(specialObjects)
-    {
-        SpecialObject* r;
-        QPtrListIterator<SpecialObject> it(*specialObjects);
-        for ( ; (r = it.current()); ++it )
-        {
-            if (r->node->containingBlock()==this)
-            {
-                RenderObject *o = r->node;
-                //kdDebug(0) << "printing positioned at " << _tx + o->xPos() << "/" << _ty + o->yPos()<< endl;
-                o->print(p, _x, _y, _w, _h, _tx , _ty);
-            }
-        }
-    }
+        printSpecialObjects(p, _x, _y, _w, _h, _tx, _ty);
 
 #ifdef BOX_DEBUG
     outlineBox(p, _tx, _ty);

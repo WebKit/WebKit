@@ -68,12 +68,18 @@ namespace khtml
   };
 };
 
+namespace KJS
+{
+  class WindowFunc;
+}
+
 extern "C" {
     KJSProxy *kjs_html_init(KHTMLPart *khtmlpart);
 }
  
 class KHTMLPart : public KParts::ReadOnlyPart		// a.k.a. WebPageDocument
 {
+  friend class KJS::WindowFunc;
 public:
   /**
    * Construct a new @ref KHTMLPart.
@@ -463,6 +469,11 @@ public:
   bool findTextNext( const QString &str, bool forward, bool caseSensitive );
 
   /**
+   * Returns the current zoom factor.
+   */
+  int zoomFactor() const;
+
+  /**
    * Get the text the user has marked.
    */
     // DUBIOUS, perhaps selection should be managed externally
@@ -596,6 +607,9 @@ public:
     void khtmlMouseMoveEvent( khtml::MouseMoveEvent *event );
     void khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event );
     void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
+
+    QString sheetUsed() const;
+    void setSheetUsed(const QString&);
 
 #ifdef APPLE_CHANGES
     QString documentSource();

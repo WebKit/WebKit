@@ -42,7 +42,8 @@ public:
 	PM_IndicatorWidth,
 	PM_IndicatorHeight,
 	PM_ExclusiveIndicatorWidth,
-	PM_ExclusiveIndicatorHeight
+	PM_ExclusiveIndicatorHeight,
+        PM_DefaultFrameWidth
     } PixelMetric;
 
     typedef enum {

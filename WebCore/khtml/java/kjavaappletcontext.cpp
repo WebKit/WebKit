@@ -6,6 +6,7 @@
 #include <qmap.h>
 #include <qguardedptr.h>
 #include <qstringlist.h>
+#include <qregexp.h>
 
 // For future expansion
 class KJavaAppletContextPrivate
@@ -105,8 +106,10 @@ void KJavaAppletContext::received( const QString& cmd, const QStringList& arg )
     if ( cmd == QString::fromLatin1("showstatus")
          && arg.count() > 0 )
     {
-        kdDebug(6100) << "status message = " << arg[0] << endl;
-        emit showStatus( arg[0] );
+        QString tmp = arg[0];
+        tmp.replace(QRegExp("[\n\r]"), "");
+        kdDebug(6100) << "status message = " << tmp << endl;
+        emit showStatus( tmp );
     }
     else if ( cmd == QString::fromLatin1( "showurlinframe" )
               && arg.count() > 1 )

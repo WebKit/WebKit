@@ -18,13 +18,10 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 
 #include "property_map.h"
-
-#include <config.h>
 
 #include <string.h>
 #include <assert.h>
@@ -128,9 +125,7 @@ PropertyMap::PropertyMap()
 
 PropertyMap::~PropertyMap()
 {
-#ifdef APPLE_CHANGES
   clear();
-#endif
 }
 
 void PropertyMap::put(const UString &name, ValueImp *value, int attr)

@@ -19,7 +19,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef _CSS_cssparser_h_
 #define _CSS_cssparser_h_
@@ -51,15 +50,23 @@ class CSSSelector
 {
 public:
     CSSSelector(void)
-	: tagHistory(0), attr(0), tag(0), relation( Descendant ), 
+	: tagHistory(0), attr(0), tag(0), relation( Descendant ),
     match( None ), nonCSSHint( false ), pseudoId( 0 ) {}
 
     ~CSSSelector(void) {
 	if (tagHistory)
 	    delete tagHistory;
     }
-    
+
+    /**
+     * Print debug output for this selector
+     */
     void print(void);
+
+    /**
+     * Re-create selector text from selector's data
+     */
+    DOMString selectorText() const;
 
     // checks if the 2 selectors (including sub selectors) agree.
     bool operator == ( const CSSSelector &other );
@@ -107,8 +114,8 @@ public:
     class StyleBaseImpl : public DomShared
     {
     public:
-	StyleBaseImpl() { m_parent = 0; hasInlinedDecl = false; strictParsing = true; }
-	StyleBaseImpl(StyleBaseImpl *p) { m_parent = p; hasInlinedDecl = false; strictParsing = true; }
+	StyleBaseImpl() : DOM::DomShared() { m_parent = 0; hasInlinedDecl = false; strictParsing = true; }
+	StyleBaseImpl(StyleBaseImpl *p) : DOM::DomShared() { m_parent = p; hasInlinedDecl = false; strictParsing = true; }
 
 	virtual ~StyleBaseImpl() {}
 
@@ -171,7 +178,7 @@ public:
 
         CSSValueImpl* parseContent(const QChar *curP, const QChar *endP);
         QPtrList<QChar> splitContent(const QChar *curP, const QChar *endP);
-                
+
 	// defines units allowed for a certain property, used in parseUnit
 	enum Units
 	{

@@ -718,10 +718,9 @@ struct QFontMetricsPrivate {
         refCount = 0;
         font = [aFont retain];
         info = nil;
-        spaceWidth = -1;
-        xWidth = -1;
         ascent = -1;
         descent = -1;
+        lineSpacing = -1;
     }
     ~QFontMetricsPrivate()
     {
@@ -731,10 +730,9 @@ struct QFontMetricsPrivate {
     KWQLayoutInfo *getInfo();
     int refCount;
     NSFont *font;
-    int spaceWidth;
-    int xWidth;
     int ascent;
     int descent;
+    int lineSpacing;
 private:
     KWQLayoutInfo *info;
 };
@@ -796,24 +794,16 @@ int QFontMetrics::height() const
     return ascent() + descent() + 1;
 }
 
+int QFontMetrics::lineSpacing() const
+{
+    if (data->lineSpacing < 0)
+        data->lineSpacing = ROUND_TO_INT([data->font defaultLineHeightForFont]);
+    return data->lineSpacing;
+}
+
 int QFontMetrics::width(QChar qc) const
 {
     unichar c = qc.unicode();
-#ifdef NOT_THERE
-    switch (c) {
-        // cheesy, we use the char version of width to do the work here,
-        // and since it doesn't have the optimization, we don't get an
-        // infinite loop
-        case ' ':
-            if (data->spaceWidth < 0)
-                data->spaceWidth = width(' ');
-            return data->spaceWidth;
-        case 'x':
-            if (data->xWidth < 0)
-                data->xWidth = width('x');
-            return data->xWidth;
-    }
-#endif
     return ROUND_TO_INT(_rectForString(data->getInfo(), &c, 1).size.width);
 }
 
@@ -834,9 +824,9 @@ int QFontMetrics::width(const QString &qstring, int len) const
     return ROUND_TO_INT([data->getInfo() rectForString: string].size.width);
 }
 
-int QFontMetrics::_width(const UniChar *uchars, int len) const
+int QFontMetrics::_width(const QChar *uchars, int len) const
 {
-    return ROUND_TO_INT(_rectForString(data->getInfo(), uchars, len).size.width);
+    return ROUND_TO_INT(_rectForString(data->getInfo(), (const UniChar *)uchars, len).size.width);
 }
 
 

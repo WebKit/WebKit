@@ -202,17 +202,13 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
       RegExpImp* imp = static_cast<RegExpImp *>( a0.toObject(exec).imp() );
       reg = imp->regExp();
     }
-    else if (a0.isA(StringType))
-    {
-      reg = new RegExp(a0.toString(exec), RegExp::None);
-    }
     else
-    {
-#ifndef NDEBUG
-      printf("KJS: Match/Search. Argument is not a RegExp nor a String - returning Undefined\n");
-#endif
-      result = Undefined();
-      break;
+    { /*
+       *  ECMA 15.5.4.12 String.prototype.search (regexp)
+       *  If regexp is not an object whose [[Class]] property is "RegExp", it is
+       *  replaced with the result of the expression new RegExp(regexp).
+       */
+      reg = new RegExp(a0.toString(exec), RegExp::None);
     }
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->interpreter()->builtinRegExp().imp());
     int **ovector = regExpObj->registerRegexp( reg, u );
@@ -240,16 +236,34 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
         global = true;
 
       RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->interpreter()->builtinRegExp().imp());
-      int **ovector = regExpObj->registerRegexp( reg, u );
       int lastIndex = 0;
       u3 = a1.toString(exec); // replacement string
       // This is either a loop (if global is set) or a one-way (if not).
       do {
+        int **ovector = regExpObj->registerRegexp( reg, u );
         UString mstr = reg->match(u, lastIndex, &pos, ovector);
         len = mstr.size();
-        lastIndex = pos + u3.size();
+        UString rstr(u3);
+        bool ok;
+        // check if u3 matches $1 or $2 etc
+        for (int i = 0; (i = rstr.find(UString("$"), i)) != -1; i++) {
+          if (i+1<rstr.size() && rstr[i+1] == '$') {  // "$$" -> "$"
+            rstr = rstr.substr(0,i) + "$" + rstr.substr(i+2);
+            continue;
+          }
+          // Assume number part is one char exactly
+          unsigned long pos = rstr.substr(i+1,1).toULong(&ok);
+          if (ok && pos <= (unsigned)reg->subPatterns()) {
+            rstr = rstr.substr(0,i)
+                      + u.substr((*ovector)[2*pos],
+                                     (*ovector)[2*pos+1]-(*ovector)[2*pos])
+                      + rstr.substr(i+2);
+            i += (*ovector)[2*pos+1]-(*ovector)[2*pos] - 1; // -1 offsets i++
+          }
+        }
+        lastIndex = pos + rstr.size();
         if ( pos != -1 )
-          u = u.substr(0, pos) + u3 + u.substr(pos + len);
+          u = u.substr(0, pos) + rstr + u.substr(pos + len);
         //fprintf(stderr,"pos=%d,len=%d,lastIndex=%d,u=%s\n",pos,len,lastIndex,u.ascii());
       } while ( global && pos != -1 );
 
@@ -320,7 +334,7 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
 	  i++;
 	}
       }
-      delete ovector;
+      delete [] ovector;
     } else if (a0.type() != UndefinedType) {
       u2 = a0.toString(exec);
       if (u2.isEmpty()) {

@@ -1,3 +1,20 @@
+2002-04-15  Darin Adler  <darin@apple.com>
+
+	* kjs/internal.cpp:
+	* kjs/property_map.cpp:
+	* kjs/ustring.h:
+	Removed some unneeded <config.h> includes so we are more similar
+	to the real KDE sources.
+
+2002-04-15  Darin Adler  <darin@apple.com>
+
+	Merged changes from KDE 3.0 final and did some build fixes.
+
+	* JavaScriptCore.pbproj/project.pbxproj: Added nodes2string.cpp.
+
+	* kjs/grammar.*: Regenerated.
+	* kjs/*.lut.h: Regenerated.
+
 2002-04-08  Darin Adler  <darin@apple.com>
 
 	Reviwed by: Maciej Stachowiak  <mjs@apple.com>

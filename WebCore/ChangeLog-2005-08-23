@@ -1,3 +1,161 @@
+2002-04-15  Darin Adler  <darin@apple.com>
+
+	* src/kdelibs/khtml/rendering/render_text.cpp: (TextSlave::printDecoration):
+	Remove some minor gratuitous diffs vs. KDE.
+
+2002-04-15  Richard Williamson  <rjw@apple.com>
+
+        Updated to reflect changes in KDE.
+        
+	* src/kdelibs/khtml/rendering/render_text.cpp: (TextSlave::printDecoration):
+
+2002-04-15  Darin Adler  <darin@apple.com>
+
+	* src/kdelibs/khtml/css/css_valueimpl.cpp:
+	(FontFamilyValueImpl::FontFamilyValueImpl): Fix comment.
+	* src/kdelibs/khtml/css/cssstyleselector.cpp: Remove some gratuitous diffs vs. KDE.
+	* src/kdelibs/khtml/html/html_objectimpl.cpp:
+	(HTMLEmbedElementImpl::parseAttribute): Remove unneeded copy from KWQ's early days.
+	* src/kdelibs/khtml/html/html_tableimpl.cpp:
+	(HTMLTableElementImpl::parseAttribute),
+	(HTMLTablePartElementImpl::parseAttribute): Remove unneeded copy from KWQ's early days.
+	* src/kdelibs/khtml/html/htmltokenizer.cpp: (HTMLTokenizer::processToken): Redo the
+	APPLE_CHANGES ifdef here.
+	* src/kdelibs/khtml/khtmlpart_p.h: Update to latest kde.
+	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::KHTMLView): Add ifdef APPLE_CHANGES.
+	(KHTMLView::~KHTMLView): Add ifdef APPLE_CHANGES.
+	(KHTMLView::print): Remove code left in here during merge process.
+	* src/kwq/KWQKHTMLPart.mm: Remove unused setFontSizes(), fontSizes(), and
+	resetFontSizes(). After the merge is landed, remove more.
+	* src/libwebcore.exp: Export updateStyleSelector() for WebKit.
+
+2002-04-15  Darin Adler  <darin@apple.com>
+
+	Fix text to it displays at the right font size.
+
+	* src/kdelibs/khtml/css/cssstyleselector.cpp:
+	(CSSStyleSelector::computeFontSizes): Apply the same SCREEN_RESOLUTION hack here
+	that we do elsewhere.
+	* src/kdelibs/khtml/rendering/font.cpp: (Font::width): Use kMin instead of max (oops).
+	(Font::update): Turn off font database chicanery.
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::zoomFactor): Use zoom factor 100, not 1.
+
+2002-04-15  Darin Adler  <darin@apple.com>
+
+	More fixes so text displays (still at wrong font size).
+
+	* src/kdelibs/khtml/rendering/font.cpp: (max): New helper.
+	(Font::drawText): Simplified implementation for now.
+	(Font::width): Simplified implementation for now.
+	* src/kwq/KWQColorGroup.mm: Reinstated QCOLOR_GROUP_SIZE.
+
+	* src/kwq/qt/qfontmetrics.h: Removed charWidth and changed _width to take QChar *.
+	* src/kwq/KWQFontMetrics.mm: Removed charWidth and changed _width to take QChar *.
+
+2002-04-15  Darin Adler  <darin@apple.com>
+
+	Merged changes from KDE 3.0 final. Other fixes to get things compiling.
+
+	* src/kdelibs/khtml/css/css_valueimpl.cpp:
+	(CSSStyleDeclarationImpl::setProperty): Fix unused variable.
+	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::contentsContextMenuEvent):
+	Fix unused variable.
+	* src/kdelibs/khtml/rendering/font.cpp: (Font::drawText), (Font::width),
+	(Font::update): Disable special "nsbp" logic for now. We can reenable it
+	if necessary.
+	* src/kdelibs/khtml/rendering/render_replaced.cpp: Fix mismerge.
+	* src/kdelibs/khtml/rendering/render_text.cpp: (RenderText::nodeAtPoint):
+	Fix unused variable.
+	* src/kwq/KWQApplication.mm: (QDesktopWidget::width), (QApplication::desktop):
+	Fix mismerge.
+	* src/kwq/KWQColorGroup.mm: Fix QCOLOR_GROUP_SIZE.
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::lineSpacing): New.
+	(QFontMetrics::width): Remove unused optimization.
+	* src/kwq/qt/qfontmetrics.h: Add lineSpacing().
+
+2002-04-15  Darin Adler  <darin@apple.com>
+
+        Merged changes from previous merge pass.
+
+        2002-03-25  Darin Adler  <darin@apple.com>
+
+        Last bit of making stuff compile and link. Probably will drop the merge now
+        and take it up again when it's time to merge in KDE 3.0 final.
+
+	* src/kwq/KWQEvent.mm: (QFocusEvent::reason): New.
+	* src/kwq/KWQPainter.mm: (QPainter::drawText): New overload.
+
+        2002-03-25  Darin Adler  <darin@apple.com>
+
+	* src/kdelibs/khtml/rendering/font.cpp: (Font::width): Make it call _width so we
+        don't lose the optimization.
+        
+	* src/kwq/KWQApplication.mm: (QDesktopWidget::screenNumber): New.
+	(QDesktopWidget::screenGeometry): New.
+        (QApplication::style): New.
+	* src/kwq/KWQColorGroup.mm: (QColorGroup::highlight): New.
+	(QColorGroup::highlightedText): New.
+	* src/kwq/KWQFont.mm: (QFont::setPixelSize): New.
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::charWidth): New.
+	* src/kwq/KWQKGlobal.mm: (KGlobal::locale): Implement.
+        (KLocale::KLocale): New.
+	(KLocale::languageList): New.
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::sheetUsed): New.
+	(KHTMLPart::setSheetUsed): New.
+        (KHTMLPart::zoomFactor): New.
+	* src/kwq/KWQKHTMLSettings.mm: (KHTMLSettings::mediumFontSize): New.
+	* src/kwq/KWQScrollView.mm: (QScrollView::childX): New.
+        (QScrollView::childY): New.
+        
+	* src/kwq/qt/qapplication.h: style() returns a QStyle &.
+	* src/kwq/qt/qpalette.h: Add Highlight and HighlightedText.
+
+        2002-03-24  Darin Adler  <darin@apple.com>
+
+        More compiling. Still won't link.
+
+	* src/kdelibs/khtml/khtmlview.cpp: Disable printing and drag and drop code.
+	* src/kdelibs/khtml/rendering/render_text.cpp: (TextSlave::printDecoration):
+        Temporarily turn off our smarter underlining since it relies on access to the
+        string, and TextSlave doesn't have that any more.
+	(RenderText::nodeAtPoint): Get rid of a workaround we don't need any more for
+        a bug that was fixed by KDE folks.
+	* src/kwq/KWQApplication.mm: (QApplication::desktop): Make the desktop be a
+        QDesktopWidget.
+	* src/kwq/qt/qnamespace.h: Add MetaButton.
+	* src/kwq/qt/qtooltip.h: Add a maybeTip virtual function member and a virtual
+        destructor.
+
+        2002-03-24  Darin Adler  <darin@apple.com>
+
+        Some fixes to get more stuff to compile.
+
+	* src/kdelibs/khtml/ecma/kjs_dom.cpp: (DOMDocument::getValueProperty):
+        Don't try to look at the private m_bComplete to display "complete". Just do
+        "loading" and "loaded".
+        * src/kdelibs/khtml/khtmlpart_p.h: #ifdef this all out for APPLE_CHANGES.
+	* src/kdelibs/khtml/rendering/font.cpp: (Font::update): Add an explicit cast to
+        int to avoid float -> int warning.
+	* src/kdelibs/khtml/rendering/render_table.cpp: (RenderTable::calcColMinMax):
+        Add an explicit cast to int to avoid uint compared with int warning.
+	* src/kdelibs/khtml/xml/dom_docimpl.cpp: (DocumentImpl::recalcStyleSelector):
+        Use sheetUsed() and setSheetUsed() functions on KHTMLPart intead of getting
+        at private fields the way the real KDE code does.
+        
+        * src/kwq/KWQKHTMLPart.h: Declare zoomFactor(), sheetUsed(), and setSheetUsed().
+	* src/kwq/KWQStyle.h: Add PM_DefaultFramWidth as another metric.
+	* src/kwq/kdecore/klocale.h: Add languageList().
+	* src/kwq/khtml/khtml_settings.h: Add mediumFontSize().
+	* src/kwq/qt/qapplication.h: Add style() and QDesktopWidget.
+	* src/kwq/qt/qevent.h: Add reason().
+	* src/kwq/qt/qfont.h: Add setPixelSize(int).
+	* src/kwq/qt/qfontmetrics.h: Add charWidth() and _charWidth() functions.
+	* src/kwq/qt/qpainter.h: Add drawText() overload with position parameter.
+	* src/kwq/qt/qpalette.h: Add highlight() and highlightedText().
+	* src/kwq/qt/qscrollview.h: Add childX() and childY().
+        
+	* src/kwq/KWQApplication.mm: Change KWQDesktopWidget to QDesktopWidget.
+
 2002-04-11  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
 
         Added a symbol for WCPluginDatabase.

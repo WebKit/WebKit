@@ -223,6 +223,12 @@ void QFont::setFamily(const QString &qfamilyName)
 }
 
 
+void QFont::setPixelSize(int sz)
+{
+    setPixelSizeFloat(sz);
+}
+
+
 void QFont::setPixelSizeFloat(float sz)
 {
     if (sz != _size){

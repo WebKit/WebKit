@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 
 //#define CSS_STYLESHEET_DEBUG
@@ -73,7 +72,10 @@ StyleSheetImpl::StyleSheetImpl(StyleBaseImpl *owner, DOMString href)
 
 StyleSheetImpl::~StyleSheetImpl()
 {
-    if(m_media) m_media->deref();
+    if(m_media) {
+	m_media->setParent( 0 );
+	m_media->deref();
+    }
 }
 
 bool StyleSheetImpl::deleteMe()
@@ -121,11 +123,11 @@ MediaListImpl *StyleSheetImpl::media() const
 
 void StyleSheetImpl::setMedia( MediaListImpl *media )
 {
+    if( media )
+	media->ref();
     if( m_media )
-        m_media->deref();
+	m_media->deref();
     m_media = media;
-    if( m_media )
-        m_media->ref();
 }
 
 // -----------------------------------------------------------------------

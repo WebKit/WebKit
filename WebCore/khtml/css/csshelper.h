@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef css_helper_h
 #define css_helper_h
@@ -41,28 +40,9 @@ namespace khtml
     class RenderStyle;
 
     /*
-     * computes a length in pixels out of the given CSSValue. Need the RenderStyle to get
-     * the fontinfo in case val is defined in em or ex.
-     *
-     * The metrics have to be a bit different for screen and printer output.
-     * For screen output we assume 1 inch == 72 px, for printer we assume 300 dpi
-     *
-     * this is screen/printer dependent, so we probably need a config option for this,
-     * and some tool to calibrate.
-     */
-    int computeLength(DOM::CSSPrimitiveValueImpl *val, RenderStyle *style, QPaintDeviceMetrics *devMetrics );
-
-    float computeLengthFloat(DOM::CSSPrimitiveValueImpl *val, RenderStyle *style, QPaintDeviceMetrics *devMetrics );
-
-    /*
      * mostly just removes the url("...") brace
      */
     DOM::DOMString parseURL(const DOM::DOMString &url);
-
-    /*
-      Sets the font to the size closest to the requested one while trying not to use a scaled bitmap font
-    */
-    void setFontSize(  QFont &f,  int pixelSize, const KHTMLSettings *s, QPaintDeviceMetrics *devMetrics );
 
 };
 

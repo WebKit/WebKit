@@ -34,6 +34,8 @@
 
 #include <kglobal.h>
 
+#include <qapplication.h>
+#include <qstyle.h>
 
 #include <kdebug.h>
 #include <assert.h>
@@ -139,7 +141,7 @@ void RenderTable::setStyle(RenderStyle *_style)
     collapseBorders = style()->borderCollapse();
 }
 
-void RenderTable::position(int x, int y, int, int, int, bool, bool)
+void RenderTable::position(int x, int y, int, int, int, bool, bool, int)
 {
     //for inline tables only
     m_x = x + marginLeft();
@@ -150,7 +152,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
 {
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(Table)::addChild( " << child->renderName() << ", " <<
-                       (beforeChild ? beforeChild->renderName() : 0) << " )" << endl;
+                       (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
 #endif
     RenderObject *o = child;
 
@@ -200,14 +202,23 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
         if ( beforeChild && beforeChild->isAnonymousBox() )
             o = beforeChild;
         else {
+	    RenderObject *lastBox = beforeChild;
+	    while ( lastBox && lastBox->parent()->isAnonymousBox() && 
+		    !lastBox->isTableSection() && lastBox->style()->display() != TABLE_CAPTION )
+		lastBox = lastBox->parent();
+	    if ( lastBox && lastBox->isAnonymousBox() ) {
+		lastBox->addChild( child, beforeChild );
+		return;
+	    } else {
 //          kdDebug( 6040 ) << "creating anonymous table section" << endl;
-            o = new RenderTableSection(0 /* anonymous */);
-            RenderStyle *newStyle = new RenderStyle();
-            newStyle->inheritFrom(style());
-            newStyle->setDisplay(TABLE_ROW_GROUP);
-            o->setStyle(newStyle);
-            o->setIsAnonymousBox(true);
-            addChild(o, beforeChild);
+		o = new RenderTableSection(0 /* anonymous */);
+		RenderStyle *newStyle = new RenderStyle();
+		newStyle->inheritFrom(style());
+		newStyle->setDisplay(TABLE_ROW_GROUP);
+		o->setStyle(newStyle);
+		o->setIsAnonymousBox(true);
+		addChild(o, beforeChild);
+	    }
         }
         o->addChild(child);
 	child->setLayouted( false );
@@ -913,6 +924,9 @@ void RenderTable::calcColMinMax()
     hasPercent=false;
     bool hasRel=false;
     bool hasVar=false;
+    
+    int maxPercentColumn=0;    
+    int maxTentativePercentWidth=0;
 
     m_minWidth = spacing;
     m_maxWidth = spacing;
@@ -930,8 +944,14 @@ void RenderTable::calcColMinMax()
                 minPercent=maxPercent=spacing;
             }
             totalPercent += colValue[i];
+            
+            maxPercentColumn = KMAX(colValue[i],maxPercentColumn);
+            
             minPercent += colMinWidth[i] + spacing;
             maxPercent += colMaxWidth[i] + spacing;
+            
+            maxTentativePercentWidth = KMAX(colValue[i]==0?0:colMaxWidth[i]*100/colValue[i], 
+                    maxTentativePercentWidth);
             break;
         case Relative:
             if (!hasRel){
@@ -965,11 +985,18 @@ void RenderTable::calcColMinMax()
     delete[] spanPercent;
 
     if (widthType <= Relative && hasPercent) {
-	    int tot = KMIN(100u, totalPercent );
+	int tot = KMIN(100u, totalPercent );
+
         if (tot>0)
-	        m_maxWidth = maxPercent*100/tot;
+    	    m_maxWidth = maxPercent*100/tot;        
+  
         if (tot<100)
             m_maxWidth = KMAX( short((maxVar+maxRel)*100/(100-tot)), m_maxWidth );
+        else if (hasRel || hasVar || ((int)totalPercent>maxPercentColumn && maxPercentColumn>=100))
+            m_maxWidth = 10000;
+        else if (totalPercent>0)
+            m_maxWidth = KMAX(short(maxTentativePercentWidth*100/totalPercent), m_maxWidth);
+
     }
 
 
@@ -1004,7 +1031,8 @@ void RenderTable::calcWidth()
     }
 
     int borderWidth = borderLeft() + borderRight();
-    int availableWidth = containingBlockWidth() - borderWidth;
+    RenderObject *cb = containingBlock();
+    int availableWidth = cb->contentWidth() - borderWidth;
 
 
     LengthType widthType = style()->width().type;
@@ -1020,6 +1048,10 @@ void RenderTable::calcWidth()
         m_width = KMIN(short( availableWidth ),m_maxWidth);
     }
 
+    // restrict width to what we really have in case we flow around floats
+    if ( style()->flowAroundFloats() && cb->isFlow() )
+	m_width = QMIN( static_cast<RenderFlow *>(cb)->lineWidth( m_y ) - borderWidth, m_width );
+    
     m_width = KMAX (m_width, m_minWidth);
 
     m_marginRight=0;
@@ -1428,7 +1460,9 @@ void RenderTable::layoutRows(int yoff)
             for (; ro && !ro->isTableCell(); ro=ro->parent());
             if (!ro)
             {
-                th = h.width(viewRect().height())-5;
+		// we need to substract the bodys margins
+		// ### fixme: use exact values here.
+                th = h.width(viewRect().height() - 20 );
                 // not really, but this way the view height change
                 // gets propagated correctly
                 setOverhangingContents();
@@ -1601,6 +1635,7 @@ void RenderTable::print( QPainter *p, int _x, int _y,
     }
     unsigned int startcol = 0;
     unsigned int endcol = totalCols;
+    if ( style()->direction() == LTR ) {
     for ( ; startcol < totalCols; startcol++ ) {
 	if ( _tx + columnPos[startcol+1] > _x )
 	    break;
@@ -1608,6 +1643,7 @@ void RenderTable::print( QPainter *p, int _x, int _y,
     for ( ; endcol > 0; endcol-- ) {
 	if ( _tx + columnPos[endcol-1] < _x + _w )
 	    break;
+    }
     }
 
     // draw the cells
@@ -1811,7 +1847,7 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
 {
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(TableSection)::addChild( " << child->renderName()  << ", beforeChild=" <<
-                       (beforeChild ? beforeChild->renderName() : 0) << " )" << endl;
+                       (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
 #endif
     RenderObject *row = child;
 
@@ -1823,14 +1859,22 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
         if( beforeChild && beforeChild->isAnonymousBox() )
             row = beforeChild;
         else {
-            kdDebug( 6040 ) << "creating anonymous table row" << endl;
-            row = new RenderTableRow(0 /* anonymous table */);
-            RenderStyle *newStyle = new RenderStyle();
-            newStyle->inheritFrom(style());
-            newStyle->setDisplay(TABLE_ROW);
-            row->setStyle(newStyle);
-            row->setIsAnonymousBox(true);
-            addChild(row, beforeChild);
+	    RenderObject *lastBox = beforeChild;
+	    while ( lastBox && lastBox->parent()->isAnonymousBox() && !lastBox->isTableRow() )
+		lastBox = lastBox->parent();
+	    if ( lastBox && lastBox->isAnonymousBox() ) {
+		lastBox->addChild( child, beforeChild );
+		return;
+	    } else {
+		kdDebug( 6040 ) << "creating anonymous table row" << endl;
+		row = new RenderTableRow(0 /* anonymous table */);
+		RenderStyle *newStyle = new RenderStyle();
+		newStyle->inheritFrom(style());
+		newStyle->setDisplay(TABLE_ROW);
+		row->setStyle(newStyle);
+		row->setIsAnonymousBox(true);
+		addChild(row, beforeChild);
+	    }
         }
         row->addChild(child);
 	child->setLayouted( false );
@@ -1895,7 +1939,7 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
 {
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(TableRow)::addChild( " << child->renderName() << " )"  << ", " <<
-                       (beforeChild ? beforeChild->renderName() : 0) << " )" << endl;
+                       (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
 #endif
     RenderTableCell *cell;
 
@@ -1906,14 +1950,22 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
         if( beforeChild && beforeChild->isAnonymousBox() && beforeChild->isTableCell() )
             cell = static_cast<RenderTableCell *>(beforeChild);
         else {
+	    RenderObject *lastBox = beforeChild;
+	    while ( lastBox && lastBox->parent()->isAnonymousBox() && !lastBox->isTableCell() )
+		lastBox = lastBox->parent();
+	    if ( lastBox && lastBox->isAnonymousBox() ) {
+		lastBox->addChild( child, beforeChild );
+		return;
+	    } else {
 //          kdDebug( 6040 ) << "creating anonymous table cell" << endl;
-            cell = new RenderTableCell(0 /* anonymous object */);
-            RenderStyle *newStyle = new RenderStyle();
-            newStyle->inheritFrom(style());
-            newStyle->setDisplay(TABLE_CELL);
-            cell->setStyle(newStyle);
-            cell->setIsAnonymousBox(true);
-            addChild(cell, beforeChild);
+		cell = new RenderTableCell(0 /* anonymous object */);
+		RenderStyle *newStyle = new RenderStyle();
+		newStyle->inheritFrom(style());
+		newStyle->setDisplay(TABLE_CELL);
+		cell->setStyle(newStyle);
+		cell->setIsAnonymousBox(true);
+		addChild(cell, beforeChild);
+	    }
         }
         cell->addChild(child);
 	child->setLayouted( false );

@@ -547,10 +547,16 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 void QPainter::drawText (int x, int y, const QString &qstring, int len, TextDirection dir)
 {
     if (dir == RTL) {
-	_logPartiallyImplemented();
+        _logPartiallyImplemented();
     }
 
     drawText(x, y, qstring, len);
+}
+
+
+void QPainter::drawText (int x, int y, const QString &qstring, int len, int pos, TextDirection dir)
+{
+    _logNotYetImplemented();
 }
 
 

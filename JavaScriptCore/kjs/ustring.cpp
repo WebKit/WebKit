@@ -18,7 +18,6 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 #ifdef HAVE_CONFIG_H
@@ -181,7 +180,9 @@ UString::UString()
 
 UString::UString(char c)
 {
-  rep = Rep::create(new UChar(0, c), 1);
+    UChar *d = new UChar[1];
+    d[0] = UChar(0, c);
+    rep = Rep::create(d, 1);
 }
 
 UString::UString(const char *c)
@@ -523,21 +524,21 @@ bool KJS::operator==(const UString& s1, const char *s2)
 
 bool KJS::operator<(const UString& s1, const UString& s2)
 {
-  int l1 = s1.size();
-  int l2 = s2.size();
+  const int l1 = s1.size();
+  const int l2 = s2.size();
+  const int lmin = l1 < l2 ? l1 : l2;
   const UChar *c1 = s1.data();
   const UChar *c2 = s2.data();
   int l = 0;
-  int le = l1 < l2 ? l1 : l2;
-  while (l < le && *c1 == *c2) {
+  while (l < lmin && *c1 == *c2) {
     c1++;
     c2++;
     l++;
   }
-  if (l != le)
+  if (l < lmin)
     return (c1->unicode() < c2->unicode());
 
-  return (l1 < l2 && !(*c1 == *c2));
+  return (l1 < l2);
 }
 
 UString KJS::operator+(const UString& s1, const UString& s2)

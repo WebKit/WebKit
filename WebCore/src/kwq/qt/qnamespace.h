@@ -55,7 +55,8 @@ public:
 	ShiftButton	= 0x0008,
 	ControlButton   = 0x0010,
 	AltButton	= 0x0020,
-	KeyButtonMask	= 0x0038,
+	MetaButton	= 0x0040,
+	KeyButtonMask	= 0x0078,
 	Keypad		= 0x4000
     };
 

@@ -18,7 +18,6 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 #include <stdio.h>
@@ -63,12 +62,10 @@ int main(int argc, char **argv)
 
     // create interpreter
     Interpreter interp(global);
+    // add debug() function
     global.put(interp.globalExec(),"debug", Object(new TestFunctionImp()));
     // add "print" for compatibility with the mozilla js shell
     global.put(interp.globalExec(),"print", Object(new TestFunctionImp()));
-
-    // add debug() function
-    //  kjs->enableDebug();
 
     const int BufferSize = 200000;
     char code[BufferSize];
@@ -78,7 +75,7 @@ int main(int argc, char **argv)
       FILE *f = fopen(file, "r");
       if (!f) {
         fprintf(stderr, "Error opening %s.\n", file);
-        return -1;
+        return 2;
       }
       int num = fread(code, 1, BufferSize, f);
       code[num] = '\0';
@@ -112,7 +109,6 @@ int main(int argc, char **argv)
       }
     }
 
-    //  delete kjs;
   } // end block, so that Interpreter and global get deleted
 
   if (ret)
@@ -121,5 +117,5 @@ int main(int argc, char **argv)
 #ifdef KJS_DEBUG_MEM
   Interpreter::finalCheck();
 #endif
-  return ret;
+  return ret ? 0 : 1;
 }

@@ -20,11 +20,11 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 //#define DEBUG_LAYOUT
 
 #include "render_image.h"
+#include "render_root.h"
 
 #include <qdrawutil.h>
 #include <qpainter.h>
@@ -185,6 +185,9 @@ void RenderImage::printObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, i
     int topBorder = borderTop();
     int leftPad = paddingLeft();
     int topPad = paddingTop();
+
+    if (khtml::printpainter && !root()->printImages())
+        return;
 
     //kdDebug( 6040 ) << "    contents (" << contentWidth << "/" << contentHeight << ") border=" << borderLeft() << " padding=" << paddingLeft() << endl;
     if ( pix.isNull() || berrorPic)

@@ -103,12 +103,12 @@ private:
   KHTMLPopupGUIClientPrivate *d;
 };
 
-class KHTMLFontSizeAction : public KAction
+class KHTMLZoomFactorAction : public KAction
 {
     Q_OBJECT
 public:
-    KHTMLFontSizeAction( KHTMLPart *part, bool direction, const QString &text, const QString &icon, const QObject *receiver, const char *slot, QObject *parent, const char *name );
-    virtual ~KHTMLFontSizeAction();
+    KHTMLZoomFactorAction( KHTMLPart *part, bool direction, const QString &text, const QString &icon, const QObject *receiver, const char *slot, QObject *parent, const char *name );
+    virtual ~KHTMLZoomFactorAction();
 
     virtual int plug( QWidget *w, int index );
 

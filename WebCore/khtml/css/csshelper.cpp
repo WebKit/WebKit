@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #include "csshelper.h"
 
@@ -42,63 +41,6 @@
 using namespace DOM;
 using namespace khtml;
 
-int khtml::computeLength(DOM::CSSPrimitiveValueImpl *val, RenderStyle *style, QPaintDeviceMetrics *devMetrics )
-{
-    return ( int ) computeLengthFloat( val, style, devMetrics );
-}
-
-float khtml::computeLengthFloat(DOM::CSSPrimitiveValueImpl *val, RenderStyle *style, QPaintDeviceMetrics *devMetrics )
-{
-    unsigned short type = val->primitiveType();
-
-    float dpiY = 72.; // fallback
-    if ( devMetrics )
-        dpiY = devMetrics->logicalDpiY();
-#ifdef APPLE_CHANGES
-    // FIXME: SCREEN_RESOLUTION hack good enough to keep?
-    if ( !khtml::printpainter && dpiY < SCREEN_RESOLUTION )
-        dpiY = SCREEN_RESOLUTION;
-#else /* APPLE_CHANGES not defined */
-    if ( !khtml::printpainter && dpiY < 96 )
-        dpiY = 96.;
-#endif /* APPLE_CHANGES not defined */
-
-    float factor = 1.;
-    switch(type)
-    {
-    case CSSPrimitiveValue::CSS_EMS:
-       	factor = style->font().pixelSize();
-		break;
-    case CSSPrimitiveValue::CSS_EXS:
-	{
-        QFontMetrics fm = style->fontMetrics();
-        QRect b = fm.boundingRect('x');
-        factor = b.height();
-        break;
-	}
-    case CSSPrimitiveValue::CSS_PX:
-        break;
-    case CSSPrimitiveValue::CSS_CM:
-	factor = dpiY/2.54; //72dpi/(2.54 cm/in)
-        break;
-    case CSSPrimitiveValue::CSS_MM:
-	factor = dpiY/25.4;
-        break;
-    case CSSPrimitiveValue::CSS_IN:
-            factor = dpiY;
-        break;
-    case CSSPrimitiveValue::CSS_PT:
-            factor = dpiY/72.;
-        break;
-    case CSSPrimitiveValue::CSS_PC:
-        // 1 pc == 12 pt
-            factor = dpiY*12./72.;
-        break;
-    default:
-        return -1;
-    }
-    return val->getFloatValue(type)*factor;
-}
 
 DOMString khtml::parseURL(const DOMString &url)
 {
@@ -142,54 +84,4 @@ DOMString khtml::parseURL(const DOMString &url)
     j->l = nl;
 
     return j;
-}
-
-
-void khtml::setFontSize( QFont &f,  int  pixelsize, const KHTMLSettings *s, QPaintDeviceMetrics *devMetrics )
-{
-#ifndef APPLE_CHANGES
-    QFontDatabase db;
-#endif /* APPLE_CHANGES not defined */
-
-    float size = pixelsize;
-
-#ifndef APPLE_CHANGES
-    float toPix = devMetrics->logicalDpiY()/72.;
-
-    // ok, now some magic to get a nice unscaled font
-    // ### all other font properties should be set before this one!!!!
-    // ####### make it use the charset needed!!!!
-
-    if( !db.isSmoothlyScalable(f.family(), db.styleString(f)) )
-    {
-        QValueList<int> pointSizes = db.smoothSizes(f.family(), db.styleString(f));
-        // lets see if we find a nice looking font, which is not too far away
-        // from the requested one.
-        //kdDebug(6080) << "khtml::setFontSize family = " << f.family() << " size requested=" << size << endl;
-
-        QValueList<int>::Iterator it;
-        float diff = 1; // ### 100% deviation
-        float bestSize = 0;
-        for( it = pointSizes.begin(); it != pointSizes.end(); ++it )
-        {
-            float newDiff = ((*it)*toPix - size)/size;
-            //kdDebug( 6080 ) << "smooth font size: " << *it << " diff=" << newDiff << endl;
-            if(newDiff < 0) newDiff = -newDiff;
-            if(newDiff < diff)
-            {
-                diff = newDiff;
-                bestSize = *it;
-            }
-        }
-        //kdDebug( 6080 ) << "best smooth font size: " << bestSize << " diff=" << diff << endl;
-        if ( bestSize != 0 && diff < 0.2 ) // 20% deviation, otherwise we use a scaled font...
-            size = bestSize*toPix;
-//         else if ( size > 4 && size < 16 )
-//             size = float( int( ( size + 1 ) / 2 )*2 );
-    }
-#endif /* APPLE_CHANGES not defined */
-
-    //qDebug(" -->>> using %f pixel font", size);
-
-    f.setPixelSizeFloat( size );
 }

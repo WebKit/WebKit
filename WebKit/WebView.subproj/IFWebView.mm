@@ -120,7 +120,7 @@
 #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
 #endif
-            widget->part()->xmlDocImpl()->recalcStyle(DOM::NodeImpl::Force);
+            widget->part()->xmlDocImpl()->updateStyleSelector();
             ((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles = NO;
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;

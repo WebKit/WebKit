@@ -19,7 +19,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 // -------------------------------------------------------------------------
 //#define DEBUG
@@ -138,7 +137,7 @@ void HTMLHRElementImpl::attach()
         // there are some attributes, lets check
         DOMString color = getAttribute(ATTR_COLOR);
         DOMStringImpl* si = getAttribute(ATTR_SIZE).implementation();
-        int _s =  si ? si->toInt() : 0;
+        int _s =  si ? si->toInt() : -1;
         DOMString n("1");
         if (!color.isNull()) {
             addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
@@ -157,12 +156,12 @@ void HTMLHRElementImpl::attach()
                 addCSSProperty(CSS_PROP_BORDER_RIGHT_WIDTH, n);
                 addCSSLength(CSS_PROP_HEIGHT, DOMString(QString::number(_s-2)));
             }
-            else {
+            else if (_s >= 0) {
                 addCSSProperty(CSS_PROP_BORDER_TOP_WIDTH, DOMString(QString::number(_s)));
                 addCSSProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, DOMString("0"));
             }
         }
-        if (!_s)
+        if (_s == 0)
             addCSSProperty(CSS_PROP_MARGIN_BOTTOM, n);
     }
 

@@ -9,6 +9,8 @@ libkhtmlrendering_o_SOURCES = \
 	bidi.h \
 	break_lines.cpp \
 	break_lines.h \
+        font.cpp \
+        font.h \
 	render_applet.cpp \
 	render_applet.h \
 	render_body.cpp \

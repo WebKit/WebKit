@@ -74,6 +74,7 @@ KJSProxyImpl::KJSProxyImpl(KHTMLPart *part)
 
 KJSProxyImpl::~KJSProxyImpl()
 {
+  //kdDebug() << "KJSProxyImpl::~KJSProxyImpl deleting interpreter " << m_script << endl;
   delete m_script;
 #ifndef NDEBUG
   s_count--;
@@ -105,6 +106,8 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
   if (KJSDebugWin::instance())
     KJSDebugWin::instance()->setNextSourceInfo(filename,baseLine);
   //    KJSDebugWin::instance()->setMode(KJS::Debugger::Step);
+#else
+  Q_UNUSED(baseLine);
 #endif
 
   m_script->setInlineCode(inlineCode);
@@ -133,7 +136,9 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
 }
 
 void KJSProxyImpl::clear() {
-  // clear resources allocated by the interpreter
+  // clear resources allocated by the interpreter, and make it ready to be used by another page
+  // We have to keep it, so that the Window object for the part remains the same.
+  // (we used to delete and re-create it, previously)
   if (m_script) {
 #ifdef KJS_DEBUGGER
     KJSDebugWin *debugWin = KJSDebugWin::instance();
@@ -145,8 +150,6 @@ void KJSProxyImpl::clear() {
     Window *win = Window::retrieveWindow(m_part);
     if (win)
         win->clear( m_script->globalExec() );
-    delete m_script;
-    m_script = 0;
   }
 }
 
@@ -155,6 +158,8 @@ DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString sourceUrl, QStr
 #ifdef KJS_DEBUGGER
   if (KJSDebugWin::instance())
     KJSDebugWin::instance()->setNextSourceInfo(sourceUrl,m_handlerLineno);
+#else
+  Q_UNUSED(sourceUrl);
 #endif
 
   initScript();
@@ -200,6 +205,8 @@ void KJSProxyImpl::setDebugEnabled(bool enabled)
     initScript();
     KJSDebugWin::instance()->attach(m_script);
   }
+#else
+  Q_UNUSED(enabled);
 #endif
 }
 
@@ -217,7 +224,11 @@ void KJSProxyImpl::setSourceFile(QString url, QString code)
 #ifdef KJS_DEBUGGER
   if (KJSDebugWin::instance())
     KJSDebugWin::instance()->setSourceFile(url,code);
+#else
+  Q_UNUSED(url);
+  Q_UNUSED(code);
 #endif
+
 }
 
 void KJSProxyImpl::appendSourceFile(QString url, QString code)
@@ -225,6 +236,9 @@ void KJSProxyImpl::appendSourceFile(QString url, QString code)
 #ifdef KJS_DEBUGGER
   if (KJSDebugWin::instance())
     KJSDebugWin::instance()->appendSourceFile(url,code);
+#else
+  Q_UNUSED(url);
+  Q_UNUSED(code);
 #endif
 }
 

@@ -250,6 +250,7 @@
 				F692A8C10255597D01FF60F7,
 				F692A8C30255597D01FF60F7,
 				F692A8CB02555BA201FF60F7,
+				F5FFE657026B47A6018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -339,6 +340,7 @@
 				F692A86C0255597D01FF60F7,
 				F692A86D0255597D01FF60F7,
 				F692A86E0255597D01FF60F7,
+				F5FFE656026B47A6018635CA,
 				F692A8700255597D01FF60F7,
 				F692A8710255597D01FF60F7,
 				F692A8720255597D01FF60F7,
@@ -431,6 +433,18 @@
 			};
 			isa = PBXBuildStyle;
 			name = Unoptimized;
+		};
+		F5FFE656026B47A6018635CA = {
+			isa = PBXFileReference;
+			name = nodes2string.cpp;
+			path = kjs/nodes2string.cpp;
+			refType = 4;
+		};
+		F5FFE657026B47A6018635CA = {
+			fileRef = F5FFE656026B47A6018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 //F50
 //F51

@@ -57,15 +57,19 @@ FunctionImp::FunctionImp(ExecState *exec, const UString &n)
 {
   Value protect(this);
   argStack = new ListImp();
+  Value protectArgStack( argStack ); // this also calls setGcAllowed on argStack
+  //fprintf(stderr,"FunctionImp::FunctionImp this=%p argStack=%p\n");
   put(exec,"arguments",Null(),ReadOnly|DontDelete|DontEnum);
 }
 
 FunctionImp::~FunctionImp()
 {
-  argStack->setGcAllowed();
   // The function shouldn't be deleted while it is still executed; argStack
   // should be set to 0 by the last call to popArgs()
-  assert(argStack->isEmpty());
+  //assert(argStack->isEmpty());
+  // Accessing argStack from here is a problem though.
+  // When the function isn't used anymore, it's not marked, and neither is the
+  // argStack, so both can be deleted - in any order!
   delete param;
 }
 
@@ -169,6 +173,20 @@ void FunctionImp::addParameter(const UString &n)
     p = &(*p)->next;
 
   *p = new Parameter(n);
+}
+
+UString FunctionImp::parameterString() const
+{
+  UString s;
+  const Parameter * const *p = &param;
+  while (*p) {
+    if (!s.isEmpty())
+        s += ", ";
+    s += (*p)->name;
+    p = &(*p)->next;
+  }
+
+  return s;
 }
 
 

@@ -263,6 +263,157 @@ Document HTMLFrameElement::contentDocument() const
 
 // --------------------------------------------------------------------------
 
+HTMLIFrameElement::HTMLIFrameElement() : HTMLElement()
+{
+}
+
+HTMLIFrameElement::HTMLIFrameElement(const HTMLIFrameElement &other) : HTMLElement(other)
+{
+}
+
+HTMLIFrameElement::HTMLIFrameElement(HTMLIFrameElementImpl *impl) : HTMLElement(impl)
+{
+}
+
+HTMLIFrameElement &HTMLIFrameElement::operator = (const Node &other)
+{
+    if(other.elementId() != ID_IFRAME)
+    {
+	impl = 0;
+	return *this;
+    }
+    Node::operator = (other);
+    return *this;
+}
+
+HTMLIFrameElement &HTMLIFrameElement::operator = (const HTMLIFrameElement &other)
+{
+    HTMLElement::operator = (other);
+    return *this;
+}
+
+HTMLIFrameElement::~HTMLIFrameElement()
+{
+}
+
+DOMString HTMLIFrameElement::align() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_ALIGN);
+}
+
+void HTMLIFrameElement::setAlign( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLIFrameElement::frameBorder() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_FRAMEBORDER);
+}
+
+void HTMLIFrameElement::setFrameBorder( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_FRAMEBORDER, value);
+}
+
+DOMString HTMLIFrameElement::height() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_HEIGHT);
+}
+
+void HTMLIFrameElement::setHeight( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_HEIGHT, value);
+}
+
+DOMString HTMLIFrameElement::longDesc() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_LONGDESC);
+}
+
+void HTMLIFrameElement::setLongDesc( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_LONGDESC, value);
+}
+
+DOMString HTMLIFrameElement::marginHeight() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_MARGINHEIGHT);
+}
+
+void HTMLIFrameElement::setMarginHeight( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_MARGINHEIGHT, value);
+}
+
+DOMString HTMLIFrameElement::marginWidth() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_MARGINWIDTH);
+}
+
+void HTMLIFrameElement::setMarginWidth( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_MARGINWIDTH, value);
+}
+
+DOMString HTMLIFrameElement::name() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_NAME);
+}
+
+void HTMLIFrameElement::setName( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_NAME, value);
+}
+
+DOMString HTMLIFrameElement::scrolling() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_SCROLLING);
+}
+
+void HTMLIFrameElement::setScrolling( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_SCROLLING, value);
+}
+
+DOMString HTMLIFrameElement::src() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_SRC);
+}
+
+void HTMLIFrameElement::setSrc( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_SRC, value);
+}
+
+DOMString HTMLIFrameElement::width() const
+{
+    if(!impl) return DOMString();
+    return ((ElementImpl *)impl)->getAttribute(ATTR_WIDTH);
+}
+
+void HTMLIFrameElement::setWidth( const DOMString &value )
+{
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_WIDTH, value);
+}
+
+Document HTMLIFrameElement::contentDocument() const
+{
+    if (impl) return static_cast<HTMLIFrameElementImpl*>(impl)->contentDocument();
+    return Document();
+}
+
+// --------------------------------------------------------------------------
+
 HTMLFrameSetElement::HTMLFrameSetElement() : HTMLElement()
 {
 }

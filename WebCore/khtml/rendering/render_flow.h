@@ -19,7 +19,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef RENDER_FLOW_H
 #define RENDER_FLOW_H
@@ -154,8 +153,8 @@ protected:
         short left;
         short width;
         short count;
-        Type type; // left or right aligned
-        bool noPaint;
+        Type type : 2; // left or right aligned
+        bool noPaint : 1;
 
         bool operator==(const SpecialObject& ) const
         {

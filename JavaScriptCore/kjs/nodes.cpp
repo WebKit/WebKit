@@ -23,15 +23,11 @@
 
 #include "nodes.h"
 
-#include <assert.h>
-#ifdef APPLE_CHANGES
-#include <iostream>
-#else
-#include <iostream.h>
-#endif
+//#include <iostream>
 #include <math.h>
-#include <stdio.h>
+#include <assert.h>
 #ifdef KJS_DEBUG_MEM
+#include <stdio.h>
 #include <typeinfo>
 #endif
 
@@ -2541,7 +2537,6 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, const Value& input)
   ClauseListNode *a = list1, *b = list2;
   CaseClauseNode *clause;
 
-  if (a) {
     while (a) {
       clause = a->clause();
       a = a->next();
@@ -2560,7 +2555,6 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, const Value& input)
 	break;
       }
     }
-  }
 
   while (b) {
     clause = b->clause();
@@ -2946,7 +2940,7 @@ Completion FunctionBodyNode::execute(ExecState *exec)
 {
   /* TODO: workaround for empty body which I don't see covered by the spec */
   if (!source)
-    return Completion(ReturnValue, Undefined());
+    return Completion(Normal);
 
   source->processFuncDecl(exec);
 

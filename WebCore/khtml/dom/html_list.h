@@ -25,7 +25,6 @@
  * Technology , Institut National de Recherche en Informatique et en
  * Automatique , Keio University ). All Rights Reserved.
  *
- * $Id$
  */
 #ifndef HTML_LIST_H
 #define HTML_LIST_H

@@ -124,6 +124,7 @@ bottom
 #
 # CSS_PROP_TEXT_ALIGN: 
 #
+-konq-auto
 left
 right
 center

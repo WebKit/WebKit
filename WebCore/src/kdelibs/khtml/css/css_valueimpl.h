@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef _CSS_css_valueimpl_h_
 #define _CSS_css_valueimpl_h_
@@ -31,6 +30,7 @@
 #include <qintdict.h>
 
 namespace khtml {
+    class RenderStyle;
     class CachedImage;
 };
 
@@ -47,8 +47,9 @@ class CSSStyleDeclarationImpl : public StyleBaseImpl
 public:
     CSSStyleDeclarationImpl(CSSRuleImpl *parentRule);
     CSSStyleDeclarationImpl(CSSRuleImpl *parentRule, QPtrList<CSSProperty> *lstValues);
-
     virtual ~CSSStyleDeclarationImpl();
+
+    CSSStyleDeclarationImpl& operator=( const CSSStyleDeclarationImpl&);
 
     unsigned long length() const;
     CSSRuleImpl *parentRule() const;
@@ -76,9 +77,15 @@ public:
     QPtrList<CSSProperty> *values() { return m_lstValues; }
     void setNode(NodeImpl *_node) { m_node = _node; }
 
+    void setChanged();
+
 protected:
     QPtrList<CSSProperty> *m_lstValues;
     NodeImpl *m_node;
+
+private:
+    // currently not needed - make sure its not used
+    CSSStyleDeclarationImpl(const CSSStyleDeclarationImpl& o);
 };
 
 class CSSValueImpl : public StyleBaseImpl
@@ -152,6 +159,21 @@ public:
     unsigned short primitiveType() const {
 	    return m_type;
     }
+
+    /*
+     * computes a length in pixels out of the given CSSValue. Need the RenderStyle to get
+     * the fontinfo in case val is defined in em or ex.
+     *
+     * The metrics have to be a bit different for screen and printer output.
+     * For screen output we assume 1 inch == 72 px, for printer we assume 300 dpi
+     *
+     * this is screen/printer dependent, so we probably need a config option for this,
+     * and some tool to calibrate.
+     */
+    int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
+
+    float computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
+
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }
@@ -262,9 +284,17 @@ public:
     CSSProperty()
     {
 	m_id = -1;
-	m_value = 0;
 	m_bImportant = false;
 	nonCSSHint = false;
+        m_value = 0;
+    }
+    CSSProperty(const CSSProperty& o)
+    {
+        m_id = o.m_id;
+        m_bImportant = o.m_bImportant;
+        nonCSSHint = o.nonCSSHint;
+        m_value = o.m_value;
+        if (m_value) m_value->ref();
     }
     ~CSSProperty() {
 	if(m_value) m_value->deref();

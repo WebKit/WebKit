@@ -315,12 +315,13 @@ void KJavaProcess::slotReceivedData( int fd, int& )
     if( num_bytes == -1 ||  num_bytes != num_len )
     {
         kdError(6100) << "could not read the msg, num_bytes = " << num_bytes << endl;
+        delete[] msg;
         return;
     }
 
     QByteArray qb;
     emit received( qb.duplicate( msg, num_len ) );
-    delete msg;
+    delete[] msg;
 }
 
 

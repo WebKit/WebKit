@@ -104,6 +104,12 @@ int KHTMLSettings::minFontSize() const
 }
 
 
+int KHTMLSettings::mediumFontSize() const
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitMediumFontSize"];
+}
+
+
 static QString *_availableFamiles = 0;
 QString KHTMLSettings::availableFamilies()
 {

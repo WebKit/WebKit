@@ -1,5 +1,5 @@
 /**
- * This file is part of the DOM implementation for KDE.
+ * This file is part of the html renderer for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
@@ -20,7 +20,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 
 #include "rendering/render_object.h"
@@ -533,8 +532,10 @@ QString RenderObject::information() const
     if (overhangingContents()) ts << "oc ";
     if (layouted()) ts << "lt ";
     if (m_recalcMinMax) ts << "rmm ";
-    if (mouseInside()) ts << "mi";
-    if (element() && element()->active()) ts << "act";
+    if (mouseInside()) ts << "mi ";
+    if (element() && element()->active()) ts << "act ";
+    if (element() && element()->hasAnchor()) ts << "anchor ";
+    if (element() && element()->focused()) ts << "focus ";
     if (element()) ts << " <" <<  getTagName(element()->id()).string() << ">";
     ts << " (" << xPos() << "," << yPos() << "," << width() << "," << height() << ")"
 	<< (isTableCell() ?
@@ -795,6 +796,8 @@ FindSelectionResult RenderObject::checkSelectionPoint( int _x, int _y, int _tx, 
         khtml::FindSelectionResult pos = child->checkSelectionPoint(_x, _y, _tx+xPos(), _ty+yPos(), nod, off);
         //kdDebug(6030) << this << " child->findSelectionNode returned " << pos << endl;
         switch(pos) {
+        case SelectionPointBeforeInLine:
+        case SelectionPointAfterInLine:
         case SelectionPointInside:
             node = nod;
             offset = off;
@@ -831,21 +834,31 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
         static_cast<RenderBox*>(this)->relativePositionOffset(tx, ty);
 
     bool inside = (style()->visibility() != HIDDEN && ((_y >= ty) && (_y < ty + height()) &&
-                  (_x >= tx) && (_x < tx + width()))) || isBody();
+                  (_x >= tx) && (_x < tx + width()))) || isBody() || isHtml();
     bool inner = !info.innerNode();
 
     // ### table should have its own, more performant method
-     if (isInline() || isRoot() || isTableRow() || isTableSection() || inside || mouseInside()) {
+    if (isInline() || isRoot() || isTableRow() || isTableSection() || inside || mouseInside() ) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling())
-            if (!child->isSpecial() && child->nodeAtPoint(info, _x, _y, _tx+xPos(), _ty+yPos()))
+            if (!child->isPositioned() && child->nodeAtPoint(info, _x, _y, _tx+xPos(), _ty+yPos()))
                 inside = true;
     }
 
     if (inside && element()) {
         if (!info.innerNode())
             info.setInnerNode(element());
-        if (element()->hasAnchor() && !info.URLElement())
-            info.setURLElement(element());
+
+        if (!info.URLElement()) {
+            RenderObject* p = this;
+            while (p) {
+                if (p->element() && p->element()->hasAnchor()) {
+                    info.setURLElement(p->element());
+                    break;
+                }
+                if (!isSpecial()) break;
+                p = p->parent();
+            }
+        }
     }
 
     if (!info.readonly()) {
@@ -942,7 +955,7 @@ short RenderObject::lineHeight( bool firstLine ) const
 
     // its "unset", choose nice default
     if ( lh.value < 0 )
-        return style()->fontMetrics().height();
+        return style()->fontMetrics().lineSpacing();
 
     if ( lh.isPercent() )
         return lh.minWidth( style()->font().pixelSize() );

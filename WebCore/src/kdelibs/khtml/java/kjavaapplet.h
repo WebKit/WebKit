@@ -37,7 +37,6 @@
  * the Applet class files, and set the proper size of the Applet.  It also
  * has an interface for applets to resize themselves.
  *
- * @version $Id$
  * @author Richard J. Moore, rich@kde.org
  * @author Wynn Wilkes, wynnw@kde.org
  */

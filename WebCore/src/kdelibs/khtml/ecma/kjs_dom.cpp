@@ -24,6 +24,7 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include <kdebug.h>
+#include <khtml_part.h>
 
 #include "kjs_dom.h"
 #include "kjs_html.h"
@@ -35,6 +36,7 @@
 #include "kjs_window.h"
 #include "dom/dom_exception.h"
 #include "kjs_dom.lut.h"
+#include "khtmlpart_p.h"
 
 using namespace KJS;
 
@@ -115,7 +117,7 @@ bool DOMNode::toBoolean(ExecState *) const
   onkeypress	DOMNode::OnKeyPress		DontDelete
   onkeyup	DOMNode::OnKeyUp		DontDelete
   onload	DOMNode::OnLoad			DontDelete
-  onmousedwn	DOMNode::OnMouseDown		DontDelete
+  onmousedown	DOMNode::OnMouseDown		DontDelete
   onmousemove	DOMNode::OnMouseMove		DontDelete
   onmouseout	DOMNode::OnMouseOut		DontDelete
   onmouseover	DOMNode::OnMouseOver		DontDelete
@@ -232,8 +234,13 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
 
     // make sure our rendering is up to date before
     // we allow a query on these attributes.
-    // ### how often does it fall into the final else case ?
-    node.handle()->getDocument()->updateRendering();
+    DOM::DocumentImpl* docimpl = node.handle()->getDocument();
+    if ( docimpl )
+    {
+      docimpl->updateRendering();
+      if ( docimpl->view() )
+        docimpl->view()->layout();
+    }
 
     switch (token) {
     case OffsetLeft:
@@ -247,13 +254,27 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     case OffsetParent:
       return getDOMNode(exec,node.parentNode()); // not necessarily correct
     case ClientWidth:
-      return rend ? static_cast<Value>(Number(rend->contentWidth())) : Value(Undefined());
+      if (!rend)
+        return Undefined();
+      else
+        // "Width of the object including padding, but not including margin, border, or scroll bar."
+        return Number(rend->width() - rend->borderLeft() - rend->borderRight() );
     case ClientHeight:
-      return rend ? static_cast<Value>(Number(rend->contentHeight())) : Value(Undefined());
+      if (!rend)
+        return Undefined();
+      else
+        // "Width of the object including padding, but not including margin, border, or scroll bar."
+        return Number(rend->height() - rend->borderTop() - rend->borderBottom() );
     case ScrollLeft:
-      return rend ? static_cast<Value>(Number(-rend->xPos() + node.ownerDocument().view()->contentsX())) : Value(Undefined());
+      if (!rend)
+        return Undefined();
+      else
+        return Number(-rend->xPos() + node.ownerDocument().view()->contentsX());
     case ScrollTop:
-      return rend ? static_cast<Value>(Number(-rend->yPos() + node.ownerDocument().view()->contentsY())) : Value(Undefined());
+      if (!rend)
+        return Undefined();
+      else
+        return Number(-rend->yPos() + node.ownerDocument().view()->contentsY());
     default:
       kdWarning() << "Unhandled token in DOMNode::getValueProperty : " << token << endl;
       break;
@@ -468,11 +489,11 @@ DOMNodeList::~DOMNodeList()
 
 // We have to implement hasProperty since we don't use a hashtable for 'length' and 'item'
 // ## this breaks "for (..in..)" though.
-bool DOMNodeList::hasProperty(ExecState *exec, const UString &p, bool recursive) const
+bool DOMNodeList::hasProperty(ExecState *exec, const UString &p) const
 {
   if (p == "length" || p == "item")
     return true;
-  return ObjectImp::hasProperty(exec,p,recursive);
+  return ObjectImp::hasProperty(exec, p);
 }
 
 Value DOMNodeList::tryGet(ExecState *exec, const UString &p) const
@@ -662,6 +683,7 @@ const ClassInfo DOMDocument::info = { "Document", &DOMNode::info, &DOMDocumentTa
   implementation  DOMDocument::Implementation                  DontDelete|ReadOnly
   documentElement DOMDocument::DocumentElement                 DontDelete|ReadOnly
   styleSheets     DOMDocument::StyleSheets                     DontDelete|ReadOnly
+  readyState      DOMDocument::ReadyState                      DontDelete|ReadOnly
 @end
 */
 
@@ -694,6 +716,24 @@ Value DOMDocument::getValueProperty(ExecState *exec, int token) const
   case StyleSheets:
     //kdDebug() << "DOMDocument::StyleSheets, returning " << doc.styleSheets().length() << " stylesheets" << endl;
     return getDOMStyleSheetList(exec, doc.styleSheets(), doc);
+  case ReadyState:
+    {
+    DOM::DocumentImpl* docimpl = node.handle()->getDocument();
+    if ( docimpl && docimpl->view() )
+    {
+      KHTMLPart* part = docimpl->view()->part();
+      if ( part ) {
+#ifndef APPLE_CHANGES
+        if (part->d->m_bComplete) return String("complete");
+#endif
+        if (docimpl->parsing()) return String("loading");
+        return String("loaded");
+        // What does the interactive value mean ?
+        // Missing support for "uninitialized"
+      }
+    }
+    return Undefined();
+    }
   default:
     kdWarning() << "DOMDocument::getValueProperty unhandled token " << token << endl;
     return Value();
@@ -847,7 +887,7 @@ Value DOMElement::tryGet(ExecState *exec, const UString &propertyName) const
   // We have to check in DOMNode before giving access to attributes, otherwise
   // onload="..." would make onload return the string (attribute value) instead of
   // the listener object (function).
-  if ( DOMNode::hasProperty(exec, propertyName, true) )
+  if (DOMNode::hasProperty(exec, propertyName))
     return DOMNode::tryGet(exec, propertyName);
 
   DOM::DOMString attr = element.getAttribute( propertyName.string() );
@@ -1035,11 +1075,11 @@ DOMNamedNodeMap::~DOMNamedNodeMap()
 
 // We have to implement hasProperty since we don't use a hashtable for 'length'
 // ## this breaks "for (..in..)" though.
-bool DOMNamedNodeMap::hasProperty(ExecState *exec, const UString &p, bool recursive) const
+bool DOMNamedNodeMap::hasProperty(ExecState *exec, const UString &p) const
 {
   if (p == "length")
     return true;
-  return DOMObject::hasProperty(exec,p,recursive);
+  return DOMObject::hasProperty(exec, p);
 }
 
 Value DOMNamedNodeMap::tryGet(ExecState* exec, const UString &p) const

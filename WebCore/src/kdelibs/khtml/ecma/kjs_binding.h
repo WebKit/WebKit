@@ -32,9 +32,11 @@ class KHTMLPart;
 
 namespace KJS {
 
-  /** Base class for all objects in this binding - get() and put() run
-      tryGet() and tryPut() respectively, and catch exceptions if they
-      occur. */
+  /**
+   * Base class for all objects in this binding - get() and put() run
+   * tryGet() and tryPut() respectively, and catch exceptions if they
+   * occur.
+   */
   class DOMObject : public ObjectImp {
   public:
     DOMObject(const Object &proto) : ObjectImp(proto) {}
@@ -52,9 +54,11 @@ namespace KJS {
     virtual UString toString(ExecState *exec) const;
   };
 
-  /** Base class for all functions in this binding - get() and call() run
-      tryGet() and tryCall() respectively, and catch exceptions if they
-      occur. */
+  /**
+   * Base class for all functions in this binding - get() and call() run
+   * tryGet() and tryCall() respectively, and catch exceptions if they
+   * occur.
+   */
   class DOMFunction : public ObjectImp {
   public:
     DOMFunction() : ObjectImp( /* proto? */ ) {}
@@ -80,10 +84,7 @@ namespace KJS {
   class ScriptInterpreter : public Interpreter
   {
   public:
-    ScriptInterpreter( const Object &global, KHTMLPart* part )
-      : Interpreter( global ), m_part( part ), m_domObjects(1021),
-        m_evt( 0L ), m_inlineCode(false)
-      { }
+    ScriptInterpreter( const Object &global, KHTMLPart* part );
     virtual ~ScriptInterpreter();
 
     DOMObject* getDOMObject( void* objectHandle ) const {
@@ -95,19 +96,27 @@ namespace KJS {
     bool deleteDOMObject( void* objectHandle ) {
       return m_domObjects.remove( objectHandle );
     }
-    /** Static method. Makes all interpreters forget about the object */
+    /**
+     * Static method. Makes all interpreters forget about the object
+     */
     static void forgetDOMObject( void* objectHandle );
 
-    /** Mark objects in the DOMObject cache. */
+    /**
+     * Mark objects in the DOMObject cache.
+     */
     virtual void mark();
     KHTMLPart* part() const { return m_part; }
 
     virtual int rtti() { return 1; }
 
-    /** Set the event that is triggering the execution of a script, if any */
+    /**
+     * Set the event that is triggering the execution of a script, if any
+     */
     void setCurrentEvent( DOM::Event *evt ) { m_evt = evt; }
     void setInlineCode( bool inlineCode ) { m_inlineCode = inlineCode; }
-    /** "Smart" window.open policy */
+    /**
+     * "Smart" window.open policy
+     */
     bool isWindowOpenAllowed() const;
 
   private:
@@ -116,7 +125,9 @@ namespace KJS {
     DOM::Event *m_evt;
     bool m_inlineCode;
   };
-  /** Retrieve from cache, or create, a KJS object around a DOM object */
+  /**
+   * Retrieve from cache, or create, a KJS object around a DOM object
+   */
   template<class DOMObj, class KJSDOMObj>
   inline Value cacheDOMObject(ExecState *exec, DOMObj domObj)
   {
@@ -262,7 +273,7 @@ namespace KJS {
     virtual const ClassInfo *classInfo() const { return &info; } \
     static const ClassInfo info; \
     Value get(ExecState *exec, const UString &propertyName) const; \
-    bool hasProperty(ExecState *exec, const UString &propertyName, bool recursive) const; \
+    bool hasProperty(ExecState *exec, const UString &propertyName) const; \
   }; \
   const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 }; \
   };
@@ -273,9 +284,9 @@ namespace KJS {
       /*fprintf( stderr, "%sProto::get(%s) [in macro, no parent]\n", info.className, propertyName.ascii());*/ \
       return lookupGetFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this ); \
     } \
-    bool KJS::ClassProto::hasProperty(ExecState *exec, const UString &propertyName, bool recursive) const \
+    bool KJS::ClassProto::hasProperty(ExecState *exec, const UString &propertyName) const \
     { /*stupid but we need this to have a common macro for the declaration*/ \
-      return ObjectImp::hasProperty(exec, propertyName, recursive ); \
+      return ObjectImp::hasProperty(exec, propertyName); \
     }
 
 #define IMPLEMENT_PROTOTYPE_WITH_PARENT(ClassProto,ClassFunc,ParentProto)  \
@@ -287,11 +298,11 @@ namespace KJS {
       /* Not found -> forward request to "parent" prototype */ \
       return ParentProto::self(exec).get( exec, propertyName ); \
     } \
-    bool KJS::ClassProto::hasProperty(ExecState *exec, const UString &propertyName, bool recursive) const \
+    bool KJS::ClassProto::hasProperty(ExecState *exec, const UString &propertyName) const \
     { \
-      if ( ObjectImp::hasProperty(exec, propertyName, recursive ) ) \
+      if (ObjectImp::hasProperty(exec, propertyName)) \
         return true; \
-      return ParentProto::self(exec).hasProperty(exec, propertyName, recursive); \
+      return ParentProto::self(exec).hasProperty(exec, propertyName); \
     }
 
 #define IMPLEMENT_PROTOFUNC(ClassFunc) \

@@ -19,7 +19,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef RENDER_BOX_H
 #define RENDER_BOX_H
@@ -72,7 +71,7 @@ public:
     virtual void setWidth( int width ) { m_width = width; }
     virtual void setHeight( int height ) { m_height = height; }
 
-    virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine);
+    virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int);
     
     virtual int lowestPosition() const;
     virtual int rightmostPosition() const;

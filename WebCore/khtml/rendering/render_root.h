@@ -18,7 +18,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef render_root_h
 #define render_root_h
@@ -65,6 +64,8 @@ public:
 
     void setPrintingMode(bool print) { m_printingMode = print; }
     bool printingMode() const { return m_printingMode; }
+    void setPrintImages(bool enable) { m_printImages = enable; }
+    bool printImages() const { return m_printImages; }
 
     virtual void setWidth( int width ) { m_rootWidth = m_width = width; }
     virtual void setHeight( int height ) { m_rootHeight = m_height = height; }
@@ -87,6 +88,7 @@ protected:
 
     // used to ignore viewport width when printing to the printer
     bool m_printingMode;
+    bool m_printImages;
 };
 
 };

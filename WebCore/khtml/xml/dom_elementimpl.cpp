@@ -259,6 +259,10 @@ NodeImpl *ElementImpl::cloneNode(bool deep)
     if(namedAttrMap)
         *(static_cast<NamedAttrMapImpl*>(clone->attributes())) = *namedAttrMap;
 
+    // clone individual style rules
+    if (m_styleDecls)
+        *(clone->styleRules()) = *m_styleDecls;
+
     if (deep)
         cloneChildNodes(clone);
     return clone;
@@ -357,11 +361,14 @@ void ElementImpl::recalcStyle( StyleChange change )
         StyleChange ch = diff( _style, newStyle );
         if ( ch != NoChange ) {
             if (oldDisplay != newStyle->display()) {
-                // ### doesn't this already take care of changing the style
-                // for all children?
                 if (attached()) detach();
                 // ### uuhm, suboptimal. style gets calculated again
                 attach();
+		// attach recalulates the style for all children. No need to do it twice.
+		setChanged( false );
+		setHasChangedChild( false );
+		newStyle->deref();
+		return;
             }
             if( m_render && newStyle ) {
                 //qDebug("--> setting style on render element bgcolor=%s", newStyle->backgroundColor().name().latin1());
@@ -376,7 +383,7 @@ void ElementImpl::recalcStyle( StyleChange change )
 
     NodeImpl *n;
     for (n = _first; n; n = n->nextSibling()) {
-// 	    qDebug("    (%p) calling recalcStyle on child %s, change=%d", this, n->isElementNode() ? ((ElementImpl *)n)->tagName().string().latin1() : n->isTextNode() ? "text" : "unknown", change );
+	//qDebug("    (%p) calling recalcStyle on child %s/%p, change=%d", this, n, n->isElementNode() ? ((ElementImpl *)n)->tagName().string().latin1() : n->isTextNode() ? "text" : "unknown", change );
         if ( change >= Inherit || n->isTextNode() ||
              n->hasChangedChild() || n->changed() )
             n->recalcStyle( change );
@@ -436,9 +443,7 @@ void ElementImpl::dispatchAttrRemovalEvent(AttributeImpl *attr)
 {
     if (!getDocument()->hasListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER))
 	return;
-#ifndef APPLE_CHANGES
-    int exceptioncode = 0;
-#endif /* not APPLE_CHANGES */
+    //int exceptioncode = 0;
 //     dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,attr->value(),
 // 		  attr->value(), getDocument()->attrName(attr->id()),MutationEvent::REMOVAL),exceptioncode);
 }
@@ -447,9 +452,7 @@ void ElementImpl::dispatchAttrAdditionEvent(AttributeImpl *attr)
 {
     if (!getDocument()->hasListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER))
 	return;
-#ifndef APPLE_CHANGES
-    int exceptioncode = 0;
-#endif
+   // int exceptioncode = 0;
 //     dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,attr->value(),
 //                                         attr->value(),getDocument()->attrName(attr->id()),MutationEvent::ADDITION),exceptioncode);
 }
@@ -525,6 +528,10 @@ NodeImpl *XMLElementImpl::cloneNode ( bool deep )
     // clone attributes
     if(namedAttrMap)
         *(static_cast<NamedAttrMapImpl*>(clone->attributes())) = *namedAttrMap;
+
+    // clone individual style rules
+    if (m_styleDecls)
+        *(clone->styleRules()) = *m_styleDecls;
 
     if (deep)
         cloneChildNodes(clone);

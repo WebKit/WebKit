@@ -41,10 +41,11 @@ using namespace KJS;
 
 // ------------------------------ ValueImp -------------------------------------
 
-ValueImp::ValueImp() : refcount(0), _flags(0)
-{
+ValueImp::ValueImp() :
+  refcount(0),
   // Tell the garbage collector that this memory block corresponds to a real object now
-  _flags |= VI_CREATED;
+  _flags(VI_CREATED)
+{
   //fprintf(stderr,"ValueImp::ValueImp %p\n",(void*)this);
 }
 
@@ -66,6 +67,7 @@ bool ValueImp::marked() const
 
 void ValueImp::setGcAllowed()
 {
+  //fprintf(stderr,"ValueImp::setGcAllowed %p\n",(void*)this);
   _flags |= VI_GCALLOWED;
 }
 

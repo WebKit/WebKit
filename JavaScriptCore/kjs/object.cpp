@@ -19,7 +19,6 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 #include "value.h"
@@ -108,9 +107,9 @@ bool Object::canPut(ExecState *exec, const UString &propertyName) const
   return static_cast<ObjectImp*>(rep)->canPut(exec,propertyName);
 }
 
-bool Object::hasProperty(ExecState *exec, const UString &propertyName, bool recursive) const
+bool Object::hasProperty(ExecState *exec, const UString &propertyName) const
 {
-  return static_cast<ObjectImp*>(rep)->hasProperty(exec,propertyName,recursive);
+  return static_cast<ObjectImp*>(rep)->hasProperty(exec, propertyName);
 }
 
 bool Object::deleteProperty(ExecState *exec, const UString &propertyName)
@@ -183,14 +182,14 @@ void Object::setInternalValue(const Value &v)
 ObjectImp::ObjectImp(const Object &proto)
   : _prop(0), _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L), _scope(0)
 {
-  //fprintf(stderr,"ObjectImp::ObjectImp %p %s\n",(void*)this);
+  //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
   _scope = ListImp::empty();
   _prop = new PropertyMap();
 }
 
 ObjectImp::ObjectImp()
 {
-  //fprintf(stderr,"ObjectImp::ObjectImp %p %s\n",(void*)this);
+  //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
   _prop = 0;
   _proto = NullImp::staticNull;
   _internalValue = 0L;
@@ -356,7 +355,7 @@ bool ObjectImp::canPut(ExecState *, const UString &propertyName) const
 }
 
 // ECMA 8.6.2.4
-bool ObjectImp::hasProperty(ExecState *exec, const UString &propertyName, bool recursive) const
+bool ObjectImp::hasProperty(ExecState *exec, const UString &propertyName) const
 {
   if (propertyName == "__proto__")
     return true;
@@ -369,10 +368,7 @@ bool ObjectImp::hasProperty(ExecState *exec, const UString &propertyName, bool r
 
   // Look in the prototype
   Object proto = Object::dynamicCast(prototype());
-  if (proto.isNull() || !recursive)
-    return false;
-
-  return proto.hasProperty(exec,propertyName);
+  return !proto.isNull() && proto.hasProperty(exec,propertyName);
 }
 
 // ECMA 8.6.2.5
@@ -387,8 +383,9 @@ bool ObjectImp::deleteProperty(ExecState */*exec*/, const UString &propertyName)
   }
 
   // Look in the static hashtable of properties
-  if (findPropertyHashEntry(propertyName))
-    return false; // No builtin property can be deleted
+  const HashEntry* entry = findPropertyHashEntry(propertyName);
+  if (entry && entry->attr & DontDelete)
+    return false; // this builtin property can't be deleted
   return true;
 }
 

@@ -136,6 +136,7 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
   mimeTypes	Navigator::_MimeTypes	DontDelete|ReadOnly
   product	Navigator::Product	DontDelete|ReadOnly
   vendor	Navigator::Vendor	DontDelete|ReadOnly
+  cookieEnabled	Navigator::CookieEnabled DontDelete|ReadOnly
   javaEnabled	Navigator::JavaEnabled	DontDelete|Function 0
 @end
 */
@@ -200,6 +201,8 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
     return Value(new Plugins(exec));
   case _MimeTypes:
     return Value(new MimeTypes(exec));
+  case CookieEnabled:
+    return Boolean(true); /// ##### FIXME
   default:
     kdWarning() << "Unhandled token in DOMEvent::getValueProperty : " << token << endl;
     return Value();

@@ -317,23 +317,23 @@ static const short yyrline[] = { 0,
    160,   162,   163,   164,   165,   166,   169,   175,   177,   179,
    180,   181,   182,   183,   186,   188,   189,   192,   194,   198,
    200,   203,   205,   208,   210,   214,   217,   218,   221,   223,
-   224,   225,   227,   230,   232,   235,   237,   238,   239,   242,
-   244,   247,   249,   252,   254,   257,   259,   260,   263,   265,
-   266,   267,   268,   269,   270,   271,   272,   273,   274,   275,
-   278,   280,   281,   282,   285,   287,   288,   291,   293,   294,
-   295,   298,   300,   302,   304,   306,   308,   310,   314,   316,
-   317,   318,   319,   322,   324,   327,   329,   332,   334,   337,
-   339,   343,   345,   349,   351,   355,   357,   361,   363,   364,
-   365,   366,   367,   368,   369,   370,   371,   372,   373,   376,
-   378,   381,   383,   384,   385,   386,   387,   388,   389,   390,
-   391,   392,   393,   394,   395,   398,   400,   403,   405,   408,
-   411,   420,   422,   426,   428,   431,   435,   439,   442,   449,
-   451,   455,   457,   458,   461,   464,   467,   471,   477,   479,
-   482,   484,   488,   490,   497,   499,   503,   505,   513,   515,
-   519,   520,   526,   531,   536,   538,   542,   544,   547,   549,
-   552,   554,   557,   559,   562,   568,   572,   574,   575,   578,
-   582,   586,   589,   593,   595,   600,   602,   606,   609,   613,
-   616,   620,   622,   625,   627
+   224,   225,   227,   230,   232,   235,   237,   238,   239,   243,
+   245,   248,   250,   253,   255,   258,   260,   261,   264,   266,
+   267,   268,   269,   270,   271,   272,   273,   274,   275,   276,
+   279,   281,   282,   283,   286,   288,   289,   292,   294,   295,
+   296,   299,   301,   303,   305,   307,   309,   311,   315,   317,
+   318,   319,   320,   323,   325,   328,   330,   333,   335,   338,
+   340,   344,   346,   350,   352,   356,   358,   362,   364,   365,
+   366,   367,   368,   369,   370,   371,   372,   373,   374,   377,
+   379,   382,   384,   385,   386,   387,   388,   389,   390,   391,
+   392,   393,   394,   395,   396,   399,   401,   404,   406,   409,
+   412,   421,   423,   427,   429,   432,   436,   440,   443,   450,
+   452,   456,   458,   459,   462,   465,   468,   472,   478,   480,
+   483,   485,   489,   491,   498,   500,   504,   506,   514,   516,
+   520,   521,   527,   532,   537,   539,   543,   545,   548,   550,
+   553,   555,   558,   560,   563,   569,   573,   575,   576,   579,
+   583,   587,   590,   594,   596,   601,   603,   607,   610,   614,
+   617,   621,   623,   626,   628
 };
 #endif
 
@@ -1464,251 +1464,252 @@ case 38:
     break;}
 case 39:
 #line 239 "grammar.y"
-{ yyval.node = new AccessorNode2(yyvsp[-2].node, yyvsp[0].ustr); ;
+{ yyval.node = new AccessorNode2(yyvsp[-2].node, yyvsp[0].ustr);
+                                     delete yyvsp[0].ustr; ;
     break;}
 case 40:
-#line 243 "grammar.y"
+#line 244 "grammar.y"
 { yyval.args = new ArgumentsNode(0L); ;
     break;}
 case 41:
-#line 244 "grammar.y"
+#line 245 "grammar.y"
 { yyval.args = new ArgumentsNode(yyvsp[-1].alist); ;
     break;}
 case 42:
-#line 248 "grammar.y"
+#line 249 "grammar.y"
 { yyval.alist = new ArgumentListNode(yyvsp[0].node); ;
     break;}
 case 43:
-#line 249 "grammar.y"
+#line 250 "grammar.y"
 { yyval.alist = new ArgumentListNode(yyvsp[-2].alist, yyvsp[0].node); ;
     break;}
 case 47:
-#line 259 "grammar.y"
+#line 260 "grammar.y"
 { yyval.node = new PostfixNode(yyvsp[-1].node, OpPlusPlus); ;
     break;}
 case 48:
-#line 260 "grammar.y"
+#line 261 "grammar.y"
 { yyval.node = new PostfixNode(yyvsp[-1].node, OpMinusMinus); ;
     break;}
 case 50:
-#line 265 "grammar.y"
+#line 266 "grammar.y"
 { yyval.node = new DeleteNode(yyvsp[0].node); ;
     break;}
 case 51:
-#line 266 "grammar.y"
+#line 267 "grammar.y"
 { yyval.node = new VoidNode(yyvsp[0].node); ;
     break;}
 case 52:
-#line 267 "grammar.y"
+#line 268 "grammar.y"
 { yyval.node = new TypeOfNode(yyvsp[0].node); ;
     break;}
 case 53:
-#line 268 "grammar.y"
-{ yyval.node = new PrefixNode(OpPlusPlus, yyvsp[0].node); ;
-    break;}
-case 54:
 #line 269 "grammar.y"
 { yyval.node = new PrefixNode(OpPlusPlus, yyvsp[0].node); ;
     break;}
-case 55:
+case 54:
 #line 270 "grammar.y"
-{ yyval.node = new PrefixNode(OpMinusMinus, yyvsp[0].node); ;
+{ yyval.node = new PrefixNode(OpPlusPlus, yyvsp[0].node); ;
     break;}
-case 56:
+case 55:
 #line 271 "grammar.y"
 { yyval.node = new PrefixNode(OpMinusMinus, yyvsp[0].node); ;
     break;}
-case 57:
+case 56:
 #line 272 "grammar.y"
+{ yyval.node = new PrefixNode(OpMinusMinus, yyvsp[0].node); ;
+    break;}
+case 57:
+#line 273 "grammar.y"
 { yyval.node = new UnaryPlusNode(yyvsp[0].node); ;
     break;}
 case 58:
-#line 273 "grammar.y"
+#line 274 "grammar.y"
 { yyval.node = new NegateNode(yyvsp[0].node); ;
     break;}
 case 59:
-#line 274 "grammar.y"
+#line 275 "grammar.y"
 { yyval.node = new BitwiseNotNode(yyvsp[0].node); ;
     break;}
 case 60:
-#line 275 "grammar.y"
+#line 276 "grammar.y"
 { yyval.node = new LogicalNotNode(yyvsp[0].node); ;
     break;}
 case 62:
-#line 280 "grammar.y"
+#line 281 "grammar.y"
 { yyval.node = new MultNode(yyvsp[-2].node, yyvsp[0].node, '*'); ;
     break;}
 case 63:
-#line 281 "grammar.y"
+#line 282 "grammar.y"
 { yyval.node = new MultNode(yyvsp[-2].node, yyvsp[0].node, '/'); ;
     break;}
 case 64:
-#line 282 "grammar.y"
+#line 283 "grammar.y"
 { yyval.node = new MultNode(yyvsp[-2].node,yyvsp[0].node,'%'); ;
     break;}
 case 66:
-#line 287 "grammar.y"
+#line 288 "grammar.y"
 { yyval.node = new AddNode(yyvsp[-2].node, yyvsp[0].node, '+'); ;
     break;}
 case 67:
-#line 288 "grammar.y"
+#line 289 "grammar.y"
 { yyval.node = new AddNode(yyvsp[-2].node, yyvsp[0].node, '-'); ;
     break;}
 case 69:
-#line 293 "grammar.y"
+#line 294 "grammar.y"
 { yyval.node = new ShiftNode(yyvsp[-2].node, OpLShift, yyvsp[0].node); ;
     break;}
 case 70:
-#line 294 "grammar.y"
+#line 295 "grammar.y"
 { yyval.node = new ShiftNode(yyvsp[-2].node, OpRShift, yyvsp[0].node); ;
     break;}
 case 71:
-#line 295 "grammar.y"
+#line 296 "grammar.y"
 { yyval.node = new ShiftNode(yyvsp[-2].node, OpURShift, yyvsp[0].node); ;
     break;}
 case 73:
-#line 301 "grammar.y"
+#line 302 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpLess, yyvsp[0].node); ;
     break;}
 case 74:
-#line 303 "grammar.y"
+#line 304 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpGreater, yyvsp[0].node); ;
     break;}
 case 75:
-#line 305 "grammar.y"
+#line 306 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpLessEq, yyvsp[0].node); ;
     break;}
 case 76:
-#line 307 "grammar.y"
+#line 308 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpGreaterEq, yyvsp[0].node); ;
     break;}
 case 77:
-#line 309 "grammar.y"
+#line 310 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpInstanceOf, yyvsp[0].node); ;
     break;}
 case 78:
-#line 311 "grammar.y"
+#line 312 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpIn, yyvsp[0].node); ;
     break;}
 case 80:
-#line 316 "grammar.y"
+#line 317 "grammar.y"
 { yyval.node = new EqualNode(yyvsp[-2].node, OpEqEq, yyvsp[0].node); ;
     break;}
 case 81:
-#line 317 "grammar.y"
+#line 318 "grammar.y"
 { yyval.node = new EqualNode(yyvsp[-2].node, OpNotEq, yyvsp[0].node); ;
     break;}
 case 82:
-#line 318 "grammar.y"
+#line 319 "grammar.y"
 { yyval.node = new EqualNode(yyvsp[-2].node, OpStrEq, yyvsp[0].node); ;
     break;}
 case 83:
-#line 319 "grammar.y"
+#line 320 "grammar.y"
 { yyval.node = new EqualNode(yyvsp[-2].node, OpStrNEq, yyvsp[0].node);;
     break;}
 case 85:
-#line 324 "grammar.y"
+#line 325 "grammar.y"
 { yyval.node = new BitOperNode(yyvsp[-2].node, OpBitAnd, yyvsp[0].node); ;
     break;}
 case 87:
-#line 329 "grammar.y"
+#line 330 "grammar.y"
 { yyval.node = new BitOperNode(yyvsp[-2].node, OpBitXOr, yyvsp[0].node); ;
     break;}
 case 89:
-#line 334 "grammar.y"
+#line 335 "grammar.y"
 { yyval.node = new BitOperNode(yyvsp[-2].node, OpBitOr, yyvsp[0].node); ;
     break;}
 case 91:
-#line 340 "grammar.y"
+#line 341 "grammar.y"
 { yyval.node = new BinaryLogicalNode(yyvsp[-2].node, OpAnd, yyvsp[0].node); ;
     break;}
 case 93:
-#line 346 "grammar.y"
+#line 347 "grammar.y"
 { yyval.node = new BinaryLogicalNode(yyvsp[-2].node, OpOr, yyvsp[0].node); ;
     break;}
 case 95:
-#line 352 "grammar.y"
+#line 353 "grammar.y"
 { yyval.node = new ConditionalNode(yyvsp[-4].node, yyvsp[-2].node, yyvsp[0].node); ;
     break;}
 case 97:
-#line 358 "grammar.y"
+#line 359 "grammar.y"
 { yyval.node = new AssignNode(yyvsp[-2].node, yyvsp[-1].op, yyvsp[0].node);;
     break;}
 case 98:
-#line 362 "grammar.y"
+#line 363 "grammar.y"
 { yyval.op = OpEqual; ;
     break;}
 case 99:
-#line 363 "grammar.y"
+#line 364 "grammar.y"
 { yyval.op = OpPlusEq; ;
     break;}
 case 100:
-#line 364 "grammar.y"
+#line 365 "grammar.y"
 { yyval.op = OpMinusEq; ;
     break;}
 case 101:
-#line 365 "grammar.y"
+#line 366 "grammar.y"
 { yyval.op = OpMultEq; ;
     break;}
 case 102:
-#line 366 "grammar.y"
+#line 367 "grammar.y"
 { yyval.op = OpDivEq; ;
     break;}
 case 103:
-#line 367 "grammar.y"
+#line 368 "grammar.y"
 { yyval.op = OpLShift; ;
     break;}
 case 104:
-#line 368 "grammar.y"
+#line 369 "grammar.y"
 { yyval.op = OpRShift; ;
     break;}
 case 105:
-#line 369 "grammar.y"
+#line 370 "grammar.y"
 { yyval.op = OpURShift; ;
     break;}
 case 106:
-#line 370 "grammar.y"
+#line 371 "grammar.y"
 { yyval.op = OpAndEq; ;
     break;}
 case 107:
-#line 371 "grammar.y"
+#line 372 "grammar.y"
 { yyval.op = OpXOrEq; ;
     break;}
 case 108:
-#line 372 "grammar.y"
+#line 373 "grammar.y"
 { yyval.op = OpOrEq; ;
     break;}
 case 109:
-#line 373 "grammar.y"
+#line 374 "grammar.y"
 { yyval.op = OpModEq; ;
     break;}
 case 111:
-#line 378 "grammar.y"
+#line 379 "grammar.y"
 { yyval.node = new CommaNode(yyvsp[-2].node, yyvsp[0].node); ;
     break;}
 case 126:
-#line 399 "grammar.y"
+#line 400 "grammar.y"
 { yyval.stat = new BlockNode(0L); DBG(yyval.stat, yylsp[0], yylsp[0]); ;
     break;}
 case 127:
-#line 400 "grammar.y"
+#line 401 "grammar.y"
 { yyval.stat = new BlockNode(yyvsp[-1].srcs); DBG(yyval.stat, yylsp[0], yylsp[0]); ;
     break;}
 case 128:
-#line 404 "grammar.y"
+#line 405 "grammar.y"
 { yyval.slist = new StatListNode(yyvsp[0].stat); ;
     break;}
 case 129:
-#line 405 "grammar.y"
+#line 406 "grammar.y"
 { yyval.slist = new StatListNode(yyvsp[-1].slist, yyvsp[0].stat); ;
     break;}
 case 130:
-#line 409 "grammar.y"
+#line 410 "grammar.y"
 { yyval.stat = new VarStatementNode(yyvsp[-1].vlist);
                                       DBG(yyval.stat, yylsp[-2], yylsp[0]); ;
     break;}
 case 131:
-#line 411 "grammar.y"
+#line 412 "grammar.y"
 { if (automatic()) {
                                           yyval.stat = new VarStatementNode(yyvsp[-1].vlist);
 					  DBG(yyval.stat, yylsp[-2], yylsp[-1]);
@@ -1718,36 +1719,36 @@ case 131:
                                       ;
     break;}
 case 132:
-#line 421 "grammar.y"
+#line 422 "grammar.y"
 { yyval.vlist = new VarDeclListNode(yyvsp[0].decl); ;
     break;}
 case 133:
-#line 423 "grammar.y"
+#line 424 "grammar.y"
 { yyval.vlist = new VarDeclListNode(yyvsp[-2].vlist, yyvsp[0].decl); ;
     break;}
 case 134:
-#line 427 "grammar.y"
+#line 428 "grammar.y"
 { yyval.decl = new VarDeclNode(yyvsp[0].ustr, 0); delete yyvsp[0].ustr; ;
     break;}
 case 135:
-#line 428 "grammar.y"
+#line 429 "grammar.y"
 { yyval.decl = new VarDeclNode(yyvsp[-1].ustr, yyvsp[0].init); delete yyvsp[-1].ustr; ;
     break;}
 case 136:
-#line 432 "grammar.y"
+#line 433 "grammar.y"
 { yyval.init = new AssignExprNode(yyvsp[0].node); ;
     break;}
 case 137:
-#line 436 "grammar.y"
+#line 437 "grammar.y"
 { yyval.stat = new EmptyStatementNode(); ;
     break;}
 case 138:
-#line 440 "grammar.y"
+#line 441 "grammar.y"
 { yyval.stat = new ExprStatementNode(yyvsp[-1].node);
                                      DBG(yyval.stat, yylsp[-1], yylsp[0]); ;
     break;}
 case 139:
-#line 442 "grammar.y"
+#line 443 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new ExprStatementNode(yyvsp[-1].node);
 				       DBG(yyval.stat, yylsp[-1], yylsp[-1]);
@@ -1755,70 +1756,70 @@ case 139:
 				       YYABORT; ;
     break;}
 case 140:
-#line 450 "grammar.y"
+#line 451 "grammar.y"
 { yyval.stat = new IfNode(yyvsp[-2].node,yyvsp[0].stat,0L);DBG(yyval.stat,yylsp[-4],yylsp[-1]); ;
     break;}
 case 141:
-#line 452 "grammar.y"
+#line 453 "grammar.y"
 { yyval.stat = new IfNode(yyvsp[-4].node,yyvsp[-2].stat,yyvsp[0].stat);DBG(yyval.stat,yylsp[-6],yylsp[-3]); ;
     break;}
 case 142:
-#line 456 "grammar.y"
+#line 457 "grammar.y"
 { yyval.stat=new DoWhileNode(yyvsp[-4].stat,yyvsp[-1].node);DBG(yyval.stat,yylsp[-5],yylsp[-3]);;
     break;}
 case 143:
-#line 457 "grammar.y"
+#line 458 "grammar.y"
 { yyval.stat = new WhileNode(yyvsp[-2].node,yyvsp[0].stat);DBG(yyval.stat,yylsp[-4],yylsp[-1]); ;
     break;}
 case 144:
-#line 459 "grammar.y"
+#line 460 "grammar.y"
 { yyval.stat = new ForNode(yyvsp[-6].node,yyvsp[-4].node,yyvsp[-2].node,yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-8],yylsp[-1]); ;
     break;}
 case 145:
-#line 462 "grammar.y"
+#line 463 "grammar.y"
 { yyval.stat = new ForNode(yyvsp[-6].vlist,yyvsp[-4].node,yyvsp[-2].node,yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-9],yylsp[-1]); ;
     break;}
 case 146:
-#line 465 "grammar.y"
+#line 466 "grammar.y"
 { yyval.stat = new ForInNode(yyvsp[-4].node, yyvsp[-2].node, yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-6],yylsp[-1]); ;
     break;}
 case 147:
-#line 468 "grammar.y"
+#line 469 "grammar.y"
 { yyval.stat = new ForInNode(yyvsp[-4].ustr,0L,yyvsp[-2].node,yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-7],yylsp[-1]);
                                      delete yyvsp[-4].ustr; ;
     break;}
 case 148:
-#line 472 "grammar.y"
+#line 473 "grammar.y"
 { yyval.stat = new ForInNode(yyvsp[-5].ustr,yyvsp[-4].init,yyvsp[-2].node,yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-8],yylsp[-1]);
                                      delete yyvsp[-5].ustr; ;
     break;}
 case 149:
-#line 478 "grammar.y"
+#line 479 "grammar.y"
 { yyval.node = 0L; ;
     break;}
 case 151:
-#line 483 "grammar.y"
+#line 484 "grammar.y"
 { yyval.stat = new ContinueNode(); DBG(yyval.stat,yylsp[-1],yylsp[0]); ;
     break;}
 case 152:
-#line 484 "grammar.y"
+#line 485 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new ContinueNode(); DBG(yyval.stat,yylsp[-1],yylsp[0]);
                                      } else
 				       YYABORT; ;
     break;}
 case 153:
-#line 488 "grammar.y"
+#line 489 "grammar.y"
 { yyval.stat = new ContinueNode(yyvsp[-1].ustr); DBG(yyval.stat,yylsp[-2],yylsp[0]);
                                      delete yyvsp[-1].ustr; ;
     break;}
 case 154:
-#line 490 "grammar.y"
+#line 491 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new ContinueNode(yyvsp[-1].ustr);DBG(yyval.stat,yylsp[-2],yylsp[-1]);
 				       delete yyvsp[-1].ustr;
@@ -1826,23 +1827,23 @@ case 154:
 				       YYABORT; ;
     break;}
 case 155:
-#line 498 "grammar.y"
+#line 499 "grammar.y"
 { yyval.stat = new BreakNode();DBG(yyval.stat,yylsp[-1],yylsp[0]); ;
     break;}
 case 156:
-#line 499 "grammar.y"
+#line 500 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new BreakNode(); DBG(yyval.stat,yylsp[-1],yylsp[-1]);
                                      } else
 				       YYABORT; ;
     break;}
 case 157:
-#line 503 "grammar.y"
+#line 504 "grammar.y"
 { yyval.stat = new BreakNode(yyvsp[-1].ustr); DBG(yyval.stat,yylsp[-2],yylsp[0]);
                                      delete yyvsp[-1].ustr; ;
     break;}
 case 158:
-#line 505 "grammar.y"
+#line 506 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new BreakNode(yyvsp[-1].ustr); DBG(yyval.stat,yylsp[-2],yylsp[-1]);
 				       delete yyvsp[-1].ustr;
@@ -1851,164 +1852,164 @@ case 158:
                                    ;
     break;}
 case 159:
-#line 514 "grammar.y"
+#line 515 "grammar.y"
 { yyval.stat = new ReturnNode(0L); DBG(yyval.stat,yylsp[-1],yylsp[0]); ;
     break;}
 case 160:
-#line 515 "grammar.y"
+#line 516 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new ReturnNode(0L); DBG(yyval.stat,yylsp[-1],yylsp[-1]);
                                      } else
 				       YYABORT; ;
     break;}
 case 161:
-#line 519 "grammar.y"
+#line 520 "grammar.y"
 { yyval.stat = new ReturnNode(yyvsp[-1].node); ;
     break;}
 case 162:
-#line 520 "grammar.y"
+#line 521 "grammar.y"
 { if (automatic())
                                        yyval.stat = new ReturnNode(yyvsp[-1].node);
                                      else
 				       YYABORT; ;
     break;}
 case 163:
-#line 527 "grammar.y"
+#line 528 "grammar.y"
 { yyval.stat = new WithNode(yyvsp[-2].node,yyvsp[0].stat);
                                      DBG(yyval.stat, yylsp[-4], yylsp[-1]); ;
     break;}
 case 164:
-#line 532 "grammar.y"
+#line 533 "grammar.y"
 { yyval.stat = new SwitchNode(yyvsp[-2].node, yyvsp[0].cblk);
                                      DBG(yyval.stat, yylsp[-4], yylsp[-1]); ;
     break;}
 case 165:
-#line 537 "grammar.y"
+#line 538 "grammar.y"
 { yyval.cblk = new CaseBlockNode(yyvsp[-1].clist, 0L, 0L); ;
     break;}
 case 166:
-#line 539 "grammar.y"
+#line 540 "grammar.y"
 { yyval.cblk = new CaseBlockNode(yyvsp[-3].clist, yyvsp[-2].ccl, yyvsp[-1].clist); ;
     break;}
 case 167:
-#line 543 "grammar.y"
+#line 544 "grammar.y"
 { yyval.clist = 0L; ;
     break;}
 case 169:
-#line 548 "grammar.y"
+#line 549 "grammar.y"
 { yyval.clist = new ClauseListNode(yyvsp[0].ccl); ;
     break;}
 case 170:
-#line 549 "grammar.y"
+#line 550 "grammar.y"
 { yyval.clist = yyvsp[-1].clist->append(yyvsp[0].ccl); ;
     break;}
 case 171:
-#line 553 "grammar.y"
+#line 554 "grammar.y"
 { yyval.ccl = new CaseClauseNode(yyvsp[-1].node, 0L); ;
     break;}
 case 172:
-#line 554 "grammar.y"
+#line 555 "grammar.y"
 { yyval.ccl = new CaseClauseNode(yyvsp[-2].node, yyvsp[0].slist); ;
     break;}
 case 173:
-#line 558 "grammar.y"
+#line 559 "grammar.y"
 { yyval.ccl = new CaseClauseNode(0L, 0L);; ;
     break;}
 case 174:
-#line 559 "grammar.y"
+#line 560 "grammar.y"
 { yyval.ccl = new CaseClauseNode(0L, yyvsp[0].slist); ;
     break;}
 case 175:
-#line 563 "grammar.y"
+#line 564 "grammar.y"
 { yyvsp[0].stat->pushLabel(yyvsp[-2].ustr);
                                      yyval.stat = new LabelNode(yyvsp[-2].ustr, yyvsp[0].stat);
                                      delete yyvsp[-2].ustr; ;
     break;}
 case 176:
-#line 569 "grammar.y"
+#line 570 "grammar.y"
 { yyval.stat = new ThrowNode(yyvsp[-1].node); ;
     break;}
 case 177:
-#line 573 "grammar.y"
+#line 574 "grammar.y"
 { yyval.stat = new TryNode(yyvsp[-1].stat, yyvsp[0].node); ;
     break;}
 case 178:
-#line 574 "grammar.y"
+#line 575 "grammar.y"
 { yyval.stat = new TryNode(yyvsp[-1].stat, 0L, yyvsp[0].node); ;
     break;}
 case 179:
-#line 575 "grammar.y"
+#line 576 "grammar.y"
 { yyval.stat = new TryNode(yyvsp[-2].stat, yyvsp[-1].node, yyvsp[0].node); ;
     break;}
 case 180:
-#line 579 "grammar.y"
+#line 580 "grammar.y"
 { yyval.node = new CatchNode(yyvsp[-2].ustr, yyvsp[0].stat); delete yyvsp[-2].ustr; ;
     break;}
 case 181:
-#line 583 "grammar.y"
+#line 584 "grammar.y"
 { yyval.node = new FinallyNode(yyvsp[0].stat); ;
     break;}
 case 182:
-#line 587 "grammar.y"
+#line 588 "grammar.y"
 { yyval.func = new FuncDeclNode(yyvsp[-3].ustr, 0L, yyvsp[0].body);
                                              delete yyvsp[-3].ustr; ;
     break;}
 case 183:
-#line 590 "grammar.y"
+#line 591 "grammar.y"
 { yyval.func = new FuncDeclNode(yyvsp[-4].ustr, yyvsp[-2].param, yyvsp[0].body);
                                      delete yyvsp[-4].ustr; ;
     break;}
 case 184:
-#line 594 "grammar.y"
+#line 595 "grammar.y"
 { yyval.node = new FuncExprNode(0L, yyvsp[0].body); ;
     break;}
 case 185:
-#line 596 "grammar.y"
+#line 597 "grammar.y"
 { yyval.node = new FuncExprNode(yyvsp[-2].param, yyvsp[0].body); ;
     break;}
 case 186:
-#line 601 "grammar.y"
+#line 602 "grammar.y"
 { yyval.param = new ParameterNode(yyvsp[0].ustr); delete yyvsp[0].ustr; ;
     break;}
 case 187:
-#line 602 "grammar.y"
+#line 603 "grammar.y"
 { yyval.param = yyvsp[-2].param->append(yyvsp[0].ustr);
 	                             delete yyvsp[0].ustr; ;
     break;}
 case 188:
-#line 607 "grammar.y"
+#line 608 "grammar.y"
 { yyval.body = new FunctionBodyNode(0L);
 	                             DBG(yyval.body, yylsp[-1], yylsp[0]);;
     break;}
 case 189:
-#line 609 "grammar.y"
+#line 610 "grammar.y"
 { yyval.body = new FunctionBodyNode(yyvsp[-1].srcs);
 	                             DBG(yyval.body, yylsp[-2], yylsp[0]);;
     break;}
 case 190:
-#line 614 "grammar.y"
+#line 615 "grammar.y"
 { yyval.prog = new ProgramNode(0L);
                                      Parser::progNode = yyval.prog; ;
     break;}
 case 191:
-#line 616 "grammar.y"
+#line 617 "grammar.y"
 { yyval.prog = new ProgramNode(yyvsp[0].srcs);
                                      Parser::progNode = yyval.prog; ;
     break;}
 case 192:
-#line 621 "grammar.y"
+#line 622 "grammar.y"
 { yyval.srcs = new SourceElementsNode(yyvsp[0].src); ;
     break;}
 case 193:
-#line 622 "grammar.y"
+#line 623 "grammar.y"
 { yyval.srcs = new SourceElementsNode(yyvsp[-1].srcs, yyvsp[0].src); ;
     break;}
 case 194:
-#line 626 "grammar.y"
+#line 627 "grammar.y"
 { yyval.src = new SourceElementNode(yyvsp[0].stat); ;
     break;}
 case 195:
-#line 627 "grammar.y"
+#line 628 "grammar.y"
 { yyval.src = new SourceElementNode(yyvsp[0].func); ;
     break;}
 }
@@ -2233,7 +2234,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 630 "grammar.y"
+#line 631 "grammar.y"
 
 
 int yyerror (const char *)  /* Called by yyparse on error */

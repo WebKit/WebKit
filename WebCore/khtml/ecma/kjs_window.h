@@ -71,7 +71,7 @@ namespace KJS {
      * for the specified part p this will be returned in order to have unique
      * bindings.
      */
-    static Object retrieve(KHTMLPart *p);
+    static Value retrieve(KHTMLPart *p);
     /**
      * Returns the Window object for a given HTML part
      */
@@ -83,7 +83,7 @@ namespace KJS {
     static Window *retrieveActive(ExecState *exec);
     QGuardedPtr<KHTMLPart> part() const { return m_part; }
     virtual void mark();
-    virtual bool hasProperty(ExecState *exec, const UString &p, bool recursive = true) const;
+    virtual bool hasProperty(ExecState *exec, const UString &p) const;
     virtual Value get(ExecState *exec, const UString &propertyName) const;
     virtual void put(ExecState *exec, const UString &propertyName, const Value &value, int attr = None);
     virtual bool toBoolean(ExecState *exec) const;
@@ -103,8 +103,8 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, Range,
-           NodeFilter, DOMException, Frames, _History, Event, InnerHeight,
-           InnerWidth, Length, _Location, Name, _Navigator, _Konqueror,
+           NodeFilter, DOMException, CSSRule, Frames, _History, Event, InnerHeight,
+           InnerWidth, Length, _Location, Name, _Navigator, _Konqueror, ClientInformation,
            OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,
            ScrollTo, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, _Window, Top, _Screen,
@@ -190,7 +190,7 @@ namespace KJS {
   public:
     Konqueror(KHTMLPart *p) : part(p) { }
     virtual Value get(ExecState *exec, const UString &propertyName) const;
-    virtual bool hasProperty(ExecState *exec, const UString &p, bool recursive) const;
+    virtual bool hasProperty(ExecState *exec, const UString &p) const;
     virtual UString toString(ExecState *exec) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

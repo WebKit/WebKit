@@ -20,7 +20,6 @@
 #----------------------------------------------------------------------------
 #
 #  KDE HTML Widget -- Script to generate cssproperties.c and cssproperties.h
-#  $Id$
 #
 grep "^[^\#]" cssproperties.in > cssproperties.strip
 

@@ -177,6 +177,8 @@ public:
     double totalWriteTime;
 #endif
 
+    QString m_sheetUsed;
+
     KHTMLPartPrivate(KHTMLPart *part)
     {
         if (!cache_init) {
@@ -771,21 +773,6 @@ void KHTMLPart::setUserStyleSheet(const KURL &url)
 }
 
 void KHTMLPart::setUserStyleSheet(const QString &styleSheet)
-{
-    _logNeverImplemented();
-}
-
-void KHTMLPart::setFontSizes( const QValueList<int> &newFontSizes )
-{
-    _logNeverImplemented();
-}
-
-QValueList<int> KHTMLPart::fontSizes() const
-{
-  return d->m_settings->fontSizes();
-}
-
-void KHTMLPart::resetFontSizes()
 {
     _logNeverImplemented();
 }
@@ -1653,4 +1640,19 @@ void KHTMLPart::stopAutoScroll()
 void KHTMLPart::setTitle(const DOMString &title)
 {
     [dataSource _setTitle:(NSString *)title.string().getCFMutableString()];
+}
+
+QString KHTMLPart::sheetUsed() const
+{
+    return d->m_sheetUsed;
+}
+
+void KHTMLPart::setSheetUsed(const QString &qs)
+{
+    d->m_sheetUsed = qs;
+}
+
+int KHTMLPart::zoomFactor(void) const
+{
+    return 100;
 }

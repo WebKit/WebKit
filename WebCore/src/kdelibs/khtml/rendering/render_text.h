@@ -19,13 +19,13 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef RENDERTEXT_H
 #define RENDERTEXT_H
 
 #include "dom/dom_string.h"
 #include "xml/dom_stringimpl.h"
+#include "xml/dom_textimpl.h"
 #include "rendering/render_object.h"
 
 #include <qptrvector.h>
@@ -42,27 +42,26 @@ namespace khtml
 class TextSlave
 {
 public:
-    TextSlave(int x, int y, QChar *text, int len,
+    TextSlave(int x, int y, int start, int len,
 	      int baseline, int width,
-              bool reversed = false, bool firstLine = false)
+              bool reversed = false, int toAdd = 0, bool firstLine = false)
     {
         m_x = x;
         m_y = y;
-        m_text = text;
+        m_start = start;
         m_len = len;
         m_baseline = baseline;
         m_width = width;
         m_reversed = reversed;
         m_firstLine = firstLine;
+        m_toAdd = toAdd;
     }
-    ~TextSlave();
-    void print( QPainter *pt, int _tx, int _ty);
     void printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, int decoration, bool begin, bool end);
     void printBoxDecorations(QPainter *p, RenderStyle* style, RenderText *parent, int _tx, int _ty, bool begin, bool end);
-    void printSelection(QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
+    void printSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
 
     // Return before, after (offset set to max), or inside the text, at @p offset
-    FindSelectionResult checkSelectionPoint(int _x, int _y, int _tx, int _ty, const QFontMetrics * fm, int & offset, short lineheight);
+    FindSelectionResult checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineheight);
 
     /**
      * if this textslave was rendered @ref _ty pixels below the upper edge
@@ -72,21 +71,16 @@ public:
     bool checkVerticalPoint(int _y, int _ty, int _h, int height)
     { if((_ty + m_y > _y + _h) || (_ty + m_y + m_baseline + height < _y)) return false; return true; }
 
-    QChar* m_text;
+    int m_start;
     int m_y;
     unsigned short m_len;
     short m_x;
     unsigned short m_baseline;
     unsigned short m_width;
 
-    // If m_reversed is true, this is right to left text.
-    // In this case, m_text will point to a QChar array which holds the already
-    // reversed string, and the slave has to delete this string by itself.
-    // If false, m_text points into the render text's own QChar array,
-    // and in this case it's allowed to do substractions between m_texts of
-    // different slaves.
     bool m_reversed : 1;
     bool m_firstLine : 1;
+    int m_toAdd : 14; // for justified text
 private:
     // this is just for QVector::bsearch. Don't use it otherwise
     TextSlave(int _x, int _y)
@@ -143,9 +137,9 @@ public:
 
     unsigned int length() const { return str->l; }
     QChar *text() const { return str->s; }
-    virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine);
+    virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int spaceAdd);
 
-    virtual unsigned int width(unsigned int from, unsigned int len, const QFontMetrics *fm) const;
+    virtual unsigned int width(unsigned int from, unsigned int len, const Font *f) const;
     virtual unsigned int width(unsigned int from, unsigned int len, bool firstLine = false) const;
     virtual short width() const;
     virtual int height() const;
@@ -173,7 +167,7 @@ public:
 
     bool isFixedWidthFont() const;
 
-    void setText(DOM::DOMStringImpl *text);
+    void setText(DOM::DOMStringImpl *text, bool force=false);
 
     virtual SelectionState selectionState() const {return m_selectionState;}
     virtual void setSelectionState(SelectionState s) {m_selectionState = s; }
@@ -190,6 +184,10 @@ public:
 
     bool hasBreakableChar() const { return m_hasBreakableChar; }
     const QFontMetrics &metrics(bool firstLine) const;
+    const Font *htmlFont(bool firstLine) const;
+
+    DOM::TextImpl *element() const
+    { return static_cast<DOM::TextImpl*>(RenderObject::element()); }
 
 protected:
     void printTextOutline(QPainter *p, int tx, int ty, const QRect &prevLine, const QRect &thisLine, const QRect &nextLine);

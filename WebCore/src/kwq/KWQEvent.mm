@@ -197,6 +197,11 @@ QFocusEvent::QFocusEvent(Type)
     _logNotYetImplemented();
 }
 
+QFocusEvent::Reason QFocusEvent::reason()
+{
+    _logNotYetImplemented();
+    return Other;
+}
 
 // class QHideEvent ============================================================
 

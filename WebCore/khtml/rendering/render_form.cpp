@@ -20,7 +20,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 
 #include <kdebug.h>
@@ -45,6 +44,8 @@
 #include "khtmlview.h"
 #include "khtml_ext.h"
 #include "xml/dom_docimpl.h" // ### remove dependency
+
+#include <kdebug.h>
 
 using namespace khtml;
 
@@ -189,8 +190,8 @@ void RenderFormElement::performAction(QObject::Actions action)
     if (action == QObject::ACTION_BUTTON_CLICKED)
         slotClicked();
 }
-
 #endif /* APPLE_CHANGES */
+
 void RenderFormElement::slotClicked()
 {
 #ifdef APPLE_CHANGES
@@ -201,8 +202,6 @@ void RenderFormElement::slotClicked()
         QMouseEvent e2( QEvent::MouseButtonRelease, m_mousePos, m_button, m_state);
 
         element()->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);
-        //already done by NodeImpl::dispatchGenericEvent
-        //element()->dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT,m_isDoubleClick ? 2 : 1);
         m_isDoubleClick = false;
         deref();
     }
@@ -268,10 +267,10 @@ void RenderCheckBox::performAction(QObject::Actions action)
     if (action == QObject::ACTION_CHECKBOX_CLICKED)
         slotStateChanged(cb->isChecked() ? 2 : 0);
 }
+#endif /* APPLE_CHANGES */
 
 // From the Qt documentation:
 // state is 2 if the button is on, 1 if it is in the "no change" state or 0 if the button is off. 
-#endif /* APPLE_CHANGES */
 void RenderCheckBox::slotStateChanged(int state)
 {
     element()->setChecked(state == 2);
@@ -346,10 +345,8 @@ RenderSubmitButton::RenderSubmitButton(HTMLInputElementImpl *element)
 #endif /* APPLE_CHANGES not defined */
 }
 
-void RenderSubmitButton::calcMinMaxWidth()
+QString RenderSubmitButton::rawText()
 {
-    KHTMLAssert( !minMaxKnown() );
-
     QString value = element()->value().isEmpty() ? defaultLabel() : element()->value().string();
     value = value.stripWhiteSpace();
     QString raw;
@@ -358,7 +355,14 @@ void RenderSubmitButton::calcMinMaxWidth()
         if(value[i] == '&')
             raw += '&';
     }
+    return raw;
+}
 
+void RenderSubmitButton::calcMinMaxWidth()
+{
+    KHTMLAssert( !minMaxKnown() );
+
+    QString raw = rawText();
     static_cast<QPushButton*>(m_widget)->setText(raw);
     static_cast<QPushButton*>(m_widget)->setFont(style()->font());
 
@@ -376,6 +380,18 @@ void RenderSubmitButton::calcMinMaxWidth()
     setIntrinsicHeight( s.height() );
 
     RenderButton::calcMinMaxWidth();
+}
+
+void RenderSubmitButton::updateFromElement()
+{
+    QString oldText = static_cast<QPushButton*>(m_widget)->text();
+    QString newText = rawText();
+    static_cast<QPushButton*>(m_widget)->setText(newText);
+    if ( oldText != newText ) {
+        setMinMaxKnown(false);
+	setLayouted(false);
+    }
+    RenderFormElement::updateFromElement();
 }
 
 QString RenderSubmitButton::defaultLabel() {
@@ -550,17 +566,21 @@ void RenderLineEdit::calcMinMaxWidth()
 
 void RenderLineEdit::updateFromElement()
 {
-    widget()->blockSignals(true);
-    int pos = widget()->cursorPosition();
-    widget()->setText(element()->value().string());
-    widget()->setCursorPosition(pos);
-    widget()->blockSignals(false);
+    if (element()->value().string() != widget()->text()) {
+        widget()->blockSignals(true);
+        int pos = widget()->cursorPosition();
+        widget()->setText(element()->value().string());
 
-    int ml = element()->maxLength();
-    if ( ml < 0 || ml > 1024 )
-        ml = 1024;
-    widget()->setMaxLength( ml );
-    widget()->setEdited( false );
+        int ml = element()->maxLength();
+        if ( ml < 0 || ml > 1024 )
+            ml = 1024;
+        if ( widget()->maxLength() != ml )
+            widget()->setMaxLength( ml );
+        widget()->setEdited( false );
+
+        widget()->setCursorPosition(pos);
+        widget()->blockSignals(false);
+    }
 
     RenderFormElement::updateFromElement();
 }
@@ -576,8 +596,8 @@ void RenderLineEdit::performAction(QObject::Actions action)
     else if (action == QObject::ACTION_TEXT_FIELD)
         slotReturnPressed();
 }
-
 #endif /* APPLE_CHANGES */
+
 void RenderLineEdit::slotTextChanged(const QString &string)
 {
     // don't use setValue here!
@@ -780,6 +800,8 @@ RenderSelect::RenderSelect(HTMLSelectElementImpl *element)
     m_multiple = element->multiple();
     m_size = element->size();
     m_useListBox = (m_multiple || m_size > 1);
+    m_selectionChanged = true;
+    m_optionsChanged = true;
 
     if(m_useListBox)
         setQWidget(createListBox());
@@ -789,42 +811,9 @@ RenderSelect::RenderSelect(HTMLSelectElementImpl *element)
 
 void RenderSelect::updateFromElement()
 {
-    // ### remove me, quick hack
-    setMinMaxKnown(false);
-    setLayouted(false);
-
-    RenderFormElement::updateFromElement();
-}
-
-void RenderSelect::calcMinMaxWidth()
-{
-    KHTMLAssert( !minMaxKnown() );
-
-    // ### ugly HACK FIXME!!!
-    setMinMaxKnown();
-    if ( !layouted() )
-        layout();
-    setLayouted( false );
-    setMinMaxKnown( false );
-    // ### end FIXME
-
-    RenderFormElement::calcMinMaxWidth();
-}
-
-void RenderSelect::layout( )
-{
-    KHTMLAssert(!layouted());
-    KHTMLAssert(minMaxKnown());
-
-    // ### maintain selection properly between type/size changes, and work
-    // out how to handle multiselect->singleselect (probably just select
-    // first selected one)
-
-    // ### reconnect mouse signals when we change widget type
     m_ignoreSelectEvents = true;
 
     // change widget type
-
     bool oldMultiple = m_multiple;
     unsigned oldSize = m_size;
     bool oldListbox = m_useListBox;
@@ -853,16 +842,22 @@ void RenderSelect::layout( )
 
     // update contents listbox/combobox based on options in m_element
     if ( m_optionsChanged ) {
+        if (element()->m_recalcListItems)
+            element()->recalcListItems();
         QMemArray<HTMLGenericFormElementImpl*> listItems = element()->listItems();
         int listIndex;
 
-        if(m_useListBox)
+        if(m_useListBox) {
             static_cast<KListBox*>(m_widget)->clear();
+        }
+
         else
             static_cast<KComboBox*>(m_widget)->clear();
 
+#ifdef APPLE_CHANGES
         if(!m_useListBox)
             static_cast<KComboBox*>(m_widget)->setSize(listItems.size());
+#endif
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
             if (listItems[listIndex]->id() == ID_OPTGROUP) {
                 DOMString text = listItems[listIndex]->getAttribute(ATTR_LABEL);
@@ -897,14 +892,52 @@ void RenderSelect::layout( )
                 KHTMLAssert(false);
             m_selectionChanged = true;
         }
+#ifdef APPLE_CHANGES
         if(!m_useListBox)
             static_cast<KComboBox*>(m_widget)->doneLoading();
+#endif
+        setMinMaxKnown(false);
+        setLayouted(false);
         m_optionsChanged = false;
     }
 
     // update selection
-    if (m_selectionChanged)
+    if (m_selectionChanged) {
         updateSelection();
+    }
+
+
+    m_ignoreSelectEvents = false;
+
+    RenderFormElement::updateFromElement();
+}
+
+void RenderSelect::calcMinMaxWidth()
+{
+    KHTMLAssert( !minMaxKnown() );
+
+    if (m_optionsChanged)
+        updateFromElement();
+
+    // ### ugly HACK FIXME!!!
+    setMinMaxKnown();
+    if ( !layouted() )
+        layout();
+    setLayouted( false );
+    setMinMaxKnown( false );
+    // ### end FIXME
+
+    RenderFormElement::calcMinMaxWidth();
+}
+
+void RenderSelect::layout( )
+{
+    KHTMLAssert(!layouted());
+    KHTMLAssert(minMaxKnown());
+
+    // ### maintain selection properly between type/size changes, and work
+    // out how to handle multiselect->singleselect (probably just select
+    // first selected one)
 
     // calculate size
     if(m_useListBox) {
@@ -960,15 +993,6 @@ void RenderSelect::layout( )
 	foundOption = (listItems[i]->id() == ID_OPTION);
 
     m_widget->setEnabled(foundOption && ! element()->disabled());
-
-    m_ignoreSelectEvents = false;
-}
-
-void RenderSelect::close()
-{
-    element()->recalcListItems();
-
-    RenderFormElement::close();
 }
 
 void RenderSelect::slotSelected(int index)
@@ -1031,13 +1055,15 @@ void RenderSelect::performAction(QObject::Actions action)
         slotSelected(combo->indexOfCurrentItem());
     }
 }
-
 #endif /* APPLE_CHANGES */
+
 void RenderSelect::slotSelectionChanged()
 {
     if ( m_ignoreSelectEvents ) return;
 
-    QMemArray<HTMLGenericFormElementImpl*> listItems = element()->listItems();
+    // don't use listItems() here as we have to avoid recalculations - changing the
+    // option list will make use update options not in the way the user expects them
+    QMemArray<HTMLGenericFormElementImpl*> listItems = element()->m_listItems;
     for ( unsigned i = 0; i < listItems.count(); i++ )
         // don't use setSelected() here because it will cause us to be called
         // again with updateSelection.
@@ -1104,9 +1130,8 @@ void RenderSelect::updateSelection()
         // ok, nothing was selected, select the first one..
         for (i = 0; !found && i < int(listItems.size()); i++)
             if ( listItems[i]->id() == ID_OPTION ) {
-                static_cast<HTMLOptionElementImpl*>( listItems[i] )->m_selected = true;
+//                static_cast<HTMLOptionElementImpl*>( listItems[i] )->m_selected = true;
                 static_cast<KComboBox*>( m_widget )->setCurrentItem( i );
-                found = true;
                 break;
             }
     }
@@ -1158,9 +1183,6 @@ bool TextAreaWidget::event( QEvent *e )
 }
 
 // -------------------------------------------------------------------------
-
-// ### allow contents to be manipulated via DOM - will require updating
-// of text node child
 
 RenderTextArea::RenderTextArea(HTMLTextAreaElementImpl *element)
     : RenderFormElement(element)
@@ -1281,8 +1303,8 @@ void RenderTextArea::performAction(QObject::Actions action)
     if (action == QObject::ACTION_TEXT_AREA_END_EDITING)
         slotTextChanged();
 }
-
 #endif /* APPLE_CHANGES */
+
 void RenderTextArea::slotTextChanged()
 {
     element()->m_dirtyvalue = true;

@@ -18,7 +18,6 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 #ifndef _KJSLEXER_H_
@@ -44,28 +43,28 @@ namespace KJS {
     bool prevTerminator() const { return terminator; }
 
     enum State { Start,
-		 Identifier,
-		 InIdentifier,
-		 InSingleLineComment,
-		 InMultiLineComment,
-		 InNum,
-		 InNum0,
-		 InHex,
-		 InOctal,
-		 InDecimal,
-		 InExponentIndicator,
-		 InExponent,
-		 Hex,
-		 Octal,
-		 Number,
-		 String,
-		 Eof,
-		 InString,
-		 InEscapeSequence,
-		 InHexEscape,
-		 InUnicodeEscape,
-		 Other,
-		 Bad };
+                 Identifier,
+                 InIdentifier,
+                 InSingleLineComment,
+                 InMultiLineComment,
+                 InNum,
+                 InNum0,
+                 InHex,
+                 InOctal,
+                 InDecimal,
+                 InExponentIndicator,
+                 InExponent,
+                 Hex,
+                 Octal,
+                 Number,
+                 String,
+                 Eof,
+                 InString,
+                 InEscapeSequence,
+                 InHexEscape,
+                 InUnicodeEscape,
+                 Other,
+                 Bad };
 
     bool scanRegExp();
     UString pattern, flags;
@@ -91,6 +90,7 @@ namespace KJS {
     void setDone(State s);
     unsigned int pos;
     void shift(unsigned int p);
+    void nextLine();
     int lookupKeyword(const char *);
 
     bool isWhiteSpace() const;
@@ -99,7 +99,7 @@ namespace KJS {
     bool isOctalDigit(unsigned short c) const;
 
     int matchPunctuator(unsigned short c1, unsigned short c2,
-			unsigned short c3, unsigned short c4);
+                        unsigned short c3, unsigned short c4);
     unsigned short singleEscape(unsigned short c) const;
     unsigned short convertOctal(unsigned short c1, unsigned short c2,
                                 unsigned short c3) const;
@@ -107,7 +107,7 @@ namespace KJS {
     static unsigned char convertHex(unsigned short c1);
     static unsigned char convertHex(unsigned short c1, unsigned short c2);
     static UChar convertUnicode(unsigned short c1, unsigned short c2,
-				unsigned short c3, unsigned short c4);
+                                unsigned short c3, unsigned short c4);
     static bool isIdentLetter(unsigned short c);
     static bool isDecimalDigit(unsigned short c);
 

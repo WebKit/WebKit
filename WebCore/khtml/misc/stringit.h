@@ -21,7 +21,6 @@
 //----------------------------------------------------------------------------
 //
 // KDE HTML Widget -- String class
-// $Id$
 
 #ifndef KHTMLSTRING_H
 #define KHTMLSTRING_H

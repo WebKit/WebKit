@@ -77,12 +77,14 @@ namespace khtml
   class DrawContentsEvent;
   class CachedObject;
   class RenderWidget;
+  class CSSStyleSelector;
 };
 
 namespace KJS {
     class Window;
     class WindowFunc;
     class JSEventListener;
+    class DOMDocument;
 };
 
 namespace KParts
@@ -129,7 +131,6 @@ namespace KParts
  *
  * @short HTML Browser Widget
  * @author Lars Knoll (knoll@kde.org)
- * @version $Id$
  * */
 class KHTMLPart : public KParts::ReadOnlyPart
 {
@@ -148,15 +149,16 @@ class KHTMLPart : public KParts::ReadOnlyPart
   friend class KJS::Window;
   friend class KJS::WindowFunc;
   friend class KJS::JSEventListener;
+  friend class KJS::DOMDocument;
   friend class KJSProxy;
   friend class KHTMLPartBrowserExtension;
-  friend class KHTMLFontSizeAction;
   friend class DOM::DocumentImpl;
   friend class DOM::HTMLDocumentImpl;
   friend class KHTMLPartBrowserHostExtension;
   friend class HTMLTokenizer;
   friend class XMLTokenizer;
   friend class khtml::RenderWidget;
+  friend class khtml::CSSStyleSelector;
   friend class KHTMLPartIface;
 
   Q_PROPERTY( bool javaScriptEnabled READ jScriptEnabled WRITE setJScriptEnabled )
@@ -367,7 +369,7 @@ public:
   /**
    * Schedules a redirection after @p delay seconds.
    */
-  void scheduleRedirection( int delay, const QString &url );
+  void scheduleRedirection( int delay, const QString &url, bool lockHistory = true );
 
   /**
    * Clears the widget and prepares it for new content.
@@ -474,35 +476,7 @@ public:
    */
   void setUserStyleSheet(const QString &styleSheet);
 
-  /**
-   * Sets point sizes to be associated with the HTML-sizes used in
-   * <FONT size=Html-Font-Size>
-   *
-   * Html-Font-Sizes range from 0 (smallest) to 6 (biggest), but you
-   * can specify up to 15 font sizes, the bigger ones will get used,
-   * if <font size=+1> extends over 7, or if a 'font-size: larger'
-   * style declaration gets into this region.
-   *
-   * They are related to the CSS font sizes by 0 == xx-small to 6 == xx-large.  */
-  void setFontSizes(const QValueList<int> &newFontSizes );
-
-  /**
-   * Returns the list of point sizes to be associated with the HTML-sizes used in
-   * <FONT size=Html-Font-Size>
-   *
-   * Html-Font-Sizes range from 0 (smallest) to 6 (biggest).
-   *
-   * They are related to the CSS font sizes by 0 == xx-small to 6 == xx-large.
-   */
-  QValueList<int> fontSizes() const;
-
-  /**
-   * Resets the point sizes to be associated with the HTML-sizes used in
-   * <FONT size=Html-Font-Size> to their default.
-   *
-   * Html-Font-Sizes range from 0 (smallest) to 6 (biggest).
-   */
-  void resetFontSizes();
+public:
 
   /**
    * Sets the standard font style.
@@ -548,6 +522,23 @@ public:
    * If isRegExp is true then str is converted to a QRegExp, and caseSensitive is ignored.
    */
   bool findTextNext( const QString &str, bool forward, bool caseSensitive, bool isRegExp );
+
+  /**
+   * Sets the Zoom factor. The value is given in percent, larger values mean a
+   * generally larger font and larger page contents. It is not guaranteed that
+   * all parts of the page are scaled with the same factor though.
+   *
+   * The given value should be in the range of 20..300, values outside that
+   * range are not guaranteed to work. A value of 100 will disable all zooming
+   * and show the page with the sizes determined via the given lengths in the
+   * stylesheets.
+   */
+  void setZoomFactor(int percent);
+
+  /**
+   * Returns the current zoom factor.
+   */
+  int zoomFactor() const;
 
   /**
    * Returns the text the user has marked.
@@ -897,12 +888,17 @@ private slots:
    */
   virtual void slotSetEncoding();
 
+  /**
+   * @internal
+   */
+  virtual void slotUseStylesheet();
+
   virtual void slotFind();
   virtual void slotFindDone();
   virtual void slotFindDialogDestroyed();
 
-  void slotIncFontSizes();
-  void slotDecFontSizes();
+  void slotIncZoom();
+  void slotDecZoom();
 
   void slotLoadImages();
 
@@ -962,7 +958,6 @@ private slots:
 
   void slotSelectAll();
 
-
   /**
    * @internal
    */
@@ -977,6 +972,11 @@ private slots:
    * @internal
    */
   void slotJobSpeed(KIO::Job*, unsigned long);
+
+  /**
+   * @internal
+   */
+  void slotClearSelection();
 
 private:
 
@@ -999,8 +999,6 @@ private:
   void startAutoScroll();
   void stopAutoScroll();
   void overURL( const QString &url, const QString &target, bool shiftPressed = false );
-  void updateFontSize( int add );
-  void setFontBaseInternal( int base, bool absolute );
 
   /**
    * @internal
@@ -1022,7 +1020,7 @@ private:
 
   void init( KHTMLView *view, GUIProfile prof );
 
-  void clear( bool clearJS = true );
+  void clear();
 
   bool scheduleScript( const DOM::Node &n, const QString& script);
 

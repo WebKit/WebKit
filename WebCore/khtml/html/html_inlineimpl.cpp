@@ -59,15 +59,17 @@ NodeImpl::Id HTMLAnchorElementImpl::id() const
 
 void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
 {
+    // React on clicks and on keypresses.
+    // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
+    // when pressing Enter in the combo.
     if ( ( evt->id() == EventImpl::KHTML_CLICK_EVENT ||
-         ( evt->id() == EventImpl::KHTML_KEYUP_EVENT && m_focused)) && m_hasAnchor) {
-
+         ( evt->id() == EventImpl::KHTML_KEYDOWN_EVENT && m_focused)) && m_hasAnchor) {
         MouseEventImpl *e = 0;
         if ( evt->id() == EventImpl::KHTML_CLICK_EVENT )
             e = static_cast<MouseEventImpl*>( evt );
 
         KeyEventImpl *k = 0;
-        if (evt->id() == EventImpl::KHTML_KEYUP_EVENT)
+        if (evt->id() == EventImpl::KHTML_KEYDOWN_EVENT)
             k = static_cast<KeyEventImpl *>( evt );
 
         QString utarget;

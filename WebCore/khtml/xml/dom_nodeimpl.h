@@ -20,7 +20,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef _DOM_NodeImpl_h_
 #define _DOM_NodeImpl_h_
@@ -121,8 +120,8 @@ public:
     virtual NodeImpl *addChild(NodeImpl *newChild);
 
     typedef Q_UINT32 Id;
-    static const Q_UINT32 IdNSMask    = 0xffff0000;
-    static const Q_UINT32 IdLocalMask = 0x0000ffff;
+    static const Q_UINT32 IdNSMask;
+    static const Q_UINT32 IdLocalMask;
     // id() is used to easily and exactly identify a node. It
     // is optimized for quick comparison and low memory consumption.
     // its value depends on the owner document of the node and is
@@ -150,16 +149,18 @@ public:
     struct MouseEvent
     {
         MouseEvent( int _button, MouseEventType _type,
-                    const DOMString &_url = DOMString(), NodeImpl *_innerNode = 0)
+                    const DOMString &_url = DOMString(), const DOMString& _target = DOMString(),
+                    NodeImpl *_innerNode = 0)
             {
                 button = _button; type = _type;
-                url = _url;
+                url = _url; target = _target;
                 innerNode = _innerNode;
             }
 
         int button;
         MouseEventType type;
         DOMString url; // url under mouse or empty
+        DOMString target;
         Node innerNode;
     };
 
@@ -171,6 +172,7 @@ public:
     bool hasStyle() const   { return m_hasStyle; }
     bool pressed() const    { return m_pressed; }
     bool active() const     { return m_active; }
+    bool focused() const { return m_focused; }
     bool attached() const   { return m_attached; }
     bool changed() const    { return m_changed; }
     bool hasChangedChild() const { return m_hasChangedChild; }

@@ -24,7 +24,6 @@
 //----------------------------------------------------------------------------
 //
 // KDE HTML Widget -- HTML Parser
-// $Id$
 
 #ifndef HTMLPARSER_H
 #define HTMLPARSER_H

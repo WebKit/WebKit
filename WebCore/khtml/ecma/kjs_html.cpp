@@ -107,6 +107,7 @@ const ClassInfo KJS::HTMLDocument::info =
   links			HTMLDocument::Links		DontDelete|ReadOnly
   forms			HTMLDocument::Forms		DontDelete|ReadOnly
   anchors		HTMLDocument::Anchors		DontDelete|ReadOnly
+  scripts		HTMLDocument::Scripts		DontDelete|ReadOnly
   all			HTMLDocument::All		DontDelete|ReadOnly
   clear			HTMLDocument::Clear		DontDelete|Function 0
   open			HTMLDocument::Open		DontDelete|Function 0
@@ -132,7 +133,7 @@ const ClassInfo KJS::HTMLDocument::info =
 # ids
 @end
 */
-bool KJS::HTMLDocument::hasProperty(ExecState *exec, const UString &p, bool recursive) const
+bool KJS::HTMLDocument::hasProperty(ExecState *exec, const UString &p) const
 {
 #ifdef KJS_VERBOSE
   //kdDebug(6070) << "KJS::HTMLDocument::hasProperty " << p.qstring() << endl;
@@ -140,7 +141,7 @@ bool KJS::HTMLDocument::hasProperty(ExecState *exec, const UString &p, bool recu
   if (!static_cast<DOM::HTMLDocument>(node).all().
       namedItem(p.string()).isNull())
     return true;
-  return DOMDocument::hasProperty(exec, p, recursive);
+  return DOMDocument::hasProperty(exec, p);
 }
 
 Value KJS::HTMLDocument::tryGet(ExecState *exec, const UString &propertyName) const
@@ -180,7 +181,13 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const UString &propertyName) co
       Q_ASSERT(view);
       Q_ASSERT(view->part());
       if ( view && view->part() )
-        return Value(Window::retrieveWindow(view->part())->location());
+      {
+        Window* win = Window::retrieveWindow(view->part());
+        if (win)
+          return Value(win->location());
+	else
+          return Undefined();
+      }
       else
         return Undefined();
     case Cookie:
@@ -195,6 +202,14 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const UString &propertyName) co
       return getHTMLCollection(exec,doc.forms());
     case Anchors:
       return getHTMLCollection(exec,doc.anchors());
+    case Scripts: // TODO (IE-specific)
+    {
+      // To be implemented. Meanwhile, return an object with a length property set to 0
+      kdWarning() << "KJS::HTMLDocument document.scripts called - not implemented" << endl;
+      Object obj( new ObjectImp() );
+      obj.put( exec, "length", Number(0) );
+      return obj;
+    }
     case All:
       // Disable document.all when we try to be Netscape-compatible
       if ( exec->interpreter()->compatMode() == Interpreter::NetscapeCompat )
@@ -236,7 +251,7 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const UString &propertyName) co
       return String(body.dir());
     }
   }
-  if (DOMDocument::hasProperty(exec, propertyName, true))
+  if (DOMDocument::hasProperty(exec, propertyName))
     return DOMDocument::tryGet(exec, propertyName);
 
   //kdDebug(6070) << "KJS::HTMLDocument::tryGet " << propertyName.qstring() << " not found, returning element" << endl;
@@ -977,8 +992,10 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const UString &propertyName) con
       if ( doc && doc->view() ) {
         KHTMLPart* part = doc->view()->part();
         if ( part ) {
-          Object globalObject = Window::retrieve( part );
-          if ( globalObject.hasProperty( exec, propertyName ) )
+          Object globalObject = Object::dynamicCast( Window::retrieve( part ) );
+          // Calling hasProperty on a Window object doesn't work, it always says true.
+          // Hence we need to use getDirect instead.
+          if ( !globalObject.isNull() && static_cast<ObjectImp *>(globalObject.imp())->getDirect( propertyName ) )
             return globalObject.get( exec, propertyName );
         }
       }
@@ -1665,7 +1682,7 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   return Undefined();
 }
 
-bool KJS::HTMLElement::hasProperty(ExecState *exec, const UString &propertyName, bool recursive) const
+bool KJS::HTMLElement::hasProperty(ExecState *exec, const UString &propertyName) const
 {
 #ifdef KJS_VERBOSE
   //kdDebug(6070) << "HTMLElement::hasProperty " << propertyName.qstring() << endl;
@@ -1695,7 +1712,7 @@ bool KJS::HTMLElement::hasProperty(ExecState *exec, const UString &propertyName,
       break;
   }
 
-  return DOMElement::hasProperty(exec, propertyName, recursive);
+  return DOMElement::hasProperty(exec, propertyName);
 }
 
 UString KJS::HTMLElement::toString(ExecState *exec) const
@@ -1882,11 +1899,31 @@ void KJS::HTMLElement::tryPut(ExecState *exec, const UString &propertyName, cons
 {
 #ifdef KJS_VERBOSE
   DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
+#endif
   DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
+#ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLElement::tryPut " << propertyName.qstring()
                 << " thisTag=" << element.tagName().string()
                 << " str=" << str.string() << endl;
 #endif
+  // First look at dynamic properties
+  switch (element.elementId()) {
+    case ID_SELECT: {
+      DOM::HTMLSelectElement select = element;
+      bool ok;
+      /*uint u =*/ propertyName.toULong(&ok);
+      if (ok) {
+        Object coll = Object::dynamicCast( getSelectHTMLCollection(exec, select.options(), select) );
+        if ( !coll.isNull() )
+          coll.put(exec,propertyName,value);
+        return;
+      }
+    }
+    break;
+  default:
+      break;
+  }
+
   const HashTable* table = classInfo()->propHashTable; // get the right hashtable
   const HashEntry* entry = Lookup::findEntry(table, propertyName);
   if (entry) {
@@ -2597,11 +2634,11 @@ HTMLCollection::~HTMLCollection()
 
 // We have to implement hasProperty since we don't use a hashtable for 'selectedIndex' and 'length'
 // ## this breaks "for (..in..)" though.
-bool KJS::HTMLCollection::hasProperty(ExecState *exec, const UString &p, bool recursive) const
+bool KJS::HTMLCollection::hasProperty(ExecState *exec, const UString &p) const
 {
   if (p == "selectedIndex" || p == "length")
     return true;
-  return DOMObject::hasProperty(exec,p,recursive);
+  return DOMObject::hasProperty(exec, p);
 }
 
 Value KJS::HTMLCollection::tryGet(ExecState *exec, const UString &propertyName) const

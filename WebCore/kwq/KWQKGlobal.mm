@@ -27,6 +27,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kcharsets.h>
+#include <klocale.h>
 
 #include <qdict.h>
 
@@ -38,10 +39,10 @@
 #undef Rect
 #undef Boolean
 
-KWQStaticStringDict *KGlobal::_stringDict = 0L;
-KInstance *KGlobal::_instance = 0L;
-KLocale *KGlobal::_locale = 0L;
-KCharsets *KGlobal::_charsets = 0L;
+KWQStaticStringDict *KGlobal::_stringDict = 0;
+KInstance *KGlobal::_instance = 0;
+KLocale *KGlobal::_locale = 0;
+KCharsets *KGlobal::_charsets = 0;
 
 class KWQStaticStringDict : public QDict<QString>
 {
@@ -52,13 +53,13 @@ public:
 KInstance *KGlobal::instance()
 {
     _logNotYetImplemented();
-    return 0L;
+    return 0;
 }
 
 
 KCharsets *KGlobal::charsets()
 {
-    if (_charsets == 0L) {
+    if (_charsets == 0) {
         _charsets = new KCharsets();    
     }
     return _charsets;
@@ -67,15 +68,17 @@ KCharsets *KGlobal::charsets()
 
 KLocale *KGlobal::locale()
 {
-    _logNotYetImplemented();
-    return 0L;
+    if (_locale == 0) {
+        _locale = new KLocale;
+    }
+    return _locale;
 }
 
 
 KStandardDirs *KGlobal::dirs()
 {
     _logNotYetImplemented();
-    return 0L;
+    return 0;
 }
 
 
@@ -98,4 +101,13 @@ const QString &KGlobal::staticQString(const QString &str)
         _stringDict->insert(str, result);
     }
     return *result;
+}
+
+KLocale::KLocale()
+{
+}
+
+QStringList KLocale::languageList() const
+{
+    return QStringList::split(",", "us");
 }

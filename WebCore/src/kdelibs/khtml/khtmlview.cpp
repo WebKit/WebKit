@@ -22,6 +22,8 @@
  */
 #include "khtmlview.moc"
 
+#include "khtmlview.h"
+
 #include "khtml_part.h"
 #include "khtml_events.h"
 
@@ -32,9 +34,13 @@
 #include "rendering/render_style.h"
 #include "rendering/render_replaced.h"
 #include "xml/dom2_eventsimpl.h"
+#include "css/cssstyleselector.h"
 #include "misc/htmlhashes.h"
 #include "misc/helper.h"
 #include "khtml_settings.h"
+#ifndef APPLE_CHANGES
+#include "khtml_printsettings.h"
+#endif
 
 #include <kcursor.h>
 #include <ksimpleconfig.h>
@@ -47,13 +53,39 @@
 #include <kapplication.h>
 
 #include <kimageio.h>
+#include <assert.h>
 #include <kdebug.h>
+#ifndef APPLE_CHANGES
+#include <kurldrag.h>
+#include <qobjectlist.h>
+#endif
 
 #define PAINT_BUFFER_HEIGHT 128
 
 using namespace DOM;
 using namespace khtml;
 class KHTMLToolTip;
+
+#ifndef QT_NO_TOOLTIP
+
+class KHTMLToolTip : public QToolTip
+{
+public:
+    KHTMLToolTip(KHTMLView *view,  KHTMLViewPrivate* vp) : QToolTip(view->viewport())
+    {
+        m_view = view;
+        m_viewprivate = vp;
+    };
+
+protected:
+    virtual void maybeTip(const QPoint &);
+
+private:
+    KHTMLView *m_view;
+    KHTMLViewPrivate* m_viewprivate;
+};
+
+#endif
 
 class KHTMLViewPrivate {
     friend class KHTMLToolTip;
@@ -71,6 +103,7 @@ public:
 	timerId = 0;
         repaintTimerId = 0;
         complete = false;
+	tooltip = 0;
     }
     ~KHTMLViewPrivate()
     {
@@ -81,6 +114,7 @@ public:
 #endif /* APPLE_CHANGES not defined */
         if (underMouse)
 	    underMouse->deref();
+	delete tooltip;
     }
     void reset()
     {
@@ -99,7 +133,6 @@ public:
         hmode = QScrollView::AlwaysOff;
 #endif
         scrollBarMoved = false;
-        ignoreEvents = false;
         ignoreWheelEvents = false;
 	borderX = 30;
 	borderY = 30;
@@ -139,7 +172,6 @@ public:
     bool prevScrollbarVisible;
     bool linkPressed;
     bool useSlowRepaints;
-    bool ignoreEvents;
     bool ignoreWheelEvents;
 
     int borderX, borderY;
@@ -157,30 +189,10 @@ public:
     bool firstRelayout;
     bool layoutSchedulingEnabled;
     QRect updateRect;
-
+    KHTMLToolTip *tooltip;
 };
 
 #ifndef QT_NO_TOOLTIP
-
-class KHTMLToolTip : public QToolTip
-{
-public:
-    KHTMLToolTip(KHTMLView *view,  KHTMLViewPrivate* vp) : QToolTip(view->viewport())
-    {
-        m_view = view;
-        m_viewprivate = vp;
-    };
-
-#ifdef APPLE_CHANGES
-    virtual ~KHTMLToolTip() {}
-#endif /* APPLE_CHANGES */
-protected:
-    virtual void maybeTip(const QPoint &);
-
-private:
-    KHTMLView *m_view;
-    KHTMLViewPrivate* m_viewprivate;
-};
 
 void KHTMLToolTip::maybeTip(const QPoint& /*p*/)
 {
@@ -205,7 +217,9 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
     m_medium = "screen";
 
     m_part = part;
+#ifdef APPLE_CHANGES
     m_part->ref();
+#endif
     d = new KHTMLViewPrivate;
     QScrollView::setVScrollBarMode(d->vmode);
     QScrollView::setHScrollBarMode(d->hmode);
@@ -220,7 +234,7 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
     KImageIO::registerFormats();
 
 #ifndef QT_NO_TOOLTIP
-    ( void ) new KHTMLToolTip( this, d );
+    d->tooltip = new KHTMLToolTip( this, d );
 #endif
 
     init();
@@ -232,7 +246,9 @@ KHTMLView::~KHTMLView()
 {
     if (m_part)
     {
+#ifdef APPLE_CHANGES
         m_part->deref();
+#endif
         
         //WABA: Is this Ok? Do I need to deref it as well?
         //Does this need to be done somewhere else?
@@ -387,7 +403,7 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
 
     khtml::DrawContentsEvent event( p, ex, ey, ew, eh );
 #ifdef APPLE_CHANGES
-    m_part->event (&event);
+    m_part->event(&event);
 #else /* APPLE_CHANGES not defined */
     QApplication::sendEvent( m_part, &event );
 #endif /* APPLE_CHANGES not defined */
@@ -447,8 +463,6 @@ void KHTMLView::layout()
 
 void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 {
-    if (d->ignoreEvents)
-        return;
     if(!m_part->xmlDocImpl()) return;
 
     int xm, ym;
@@ -486,11 +500,11 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 	mev.innerNode.handle()->setPressed();
 
     if (!swallowEvent) {
-	khtml::MousePressEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
+	khtml::MousePressEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
 #ifdef APPLE_CHANGES
-	m_part->event (&event);
+        m_part->event(&event);
 #else /* APPLE_CHANGES not defined */
-	QApplication::sendEvent( m_part, &event );
+        QApplication::sendEvent( m_part, &event );
 #endif /* APPLE_CHANGES not defined */
 
 	emit m_part->nodeActivated(mev.innerNode);
@@ -499,8 +513,6 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
 void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 {
-    if (d->ignoreEvents)
-        return;
     if(!m_part->xmlDocImpl()) return;
 
     int xm, ym;
@@ -531,9 +543,9 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 	mev.innerNode.handle()->setPressed();
 
     if (!swallowEvent) {
-	khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
+	khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
 #ifdef APPLE_CHANGES
-	m_part->event (&event);
+        m_part->event(&event);
 #else /* APPLE_CHANGES not defined */
 	QApplication::sendEvent( m_part, &event );
 #endif /* APPLE_CHANGES not defined */
@@ -546,8 +558,6 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
 void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 {
-    if (d->ignoreEvents)
-        return;
     if(!m_part->xmlDocImpl()) return;
 
     int xm, ym;
@@ -635,9 +645,9 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     d->prevMouseY = ym;
 
     if (!swallowEvent) {
-        khtml::MouseMoveEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
+        khtml::MouseMoveEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
 #ifdef APPLE_CHANGES
-	m_part->event (&event);
+        m_part->event(&event);
 #else /* APPLE_CHANGES not defined */
         QApplication::sendEvent( m_part, &event );
 #endif /* APPLE_CHANGES not defined */
@@ -651,8 +661,6 @@ void KHTMLView::resetCursor()
 
 void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 {
-    if (d->ignoreEvents)
-        return;
     if ( !m_part->xmlDocImpl() ) return;
 
     int xm, ym;
@@ -675,9 +683,9 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 	mev.innerNode.handle()->setPressed(false);
 
     if (!swallowEvent) {
-	khtml::MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
+	khtml::MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
 #ifdef APPLE_CHANGES
-	m_part->event (&event);
+	m_part->event(&event);
 #else /* APPLE_CHANGES not defined */
 	QApplication::sendEvent( m_part, &event );
 #endif /* APPLE_CHANGES not defined */
@@ -686,12 +694,13 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
 void KHTMLView::keyPressEvent( QKeyEvent *_ke )
 {
-    if (d->ignoreEvents)
-        return;
 
     if (m_part->xmlDocImpl() && m_part->xmlDocImpl()->focusNode()) {
         if (m_part->xmlDocImpl()->focusNode()->dispatchKeyEvent(_ke))
+        {
             _ke->accept();
+            return;
+        }
     }
 
     int offs = (clipper()->height() < 30) ? clipper()->height() : 30;
@@ -785,19 +794,22 @@ void KHTMLView::keyPressEvent( QKeyEvent *_ke )
 
 void KHTMLView::keyReleaseEvent(QKeyEvent *_ke)
 {
-    if (d->ignoreEvents)
-        return;
-
-    if (m_part->xmlDocImpl() && m_part->xmlDocImpl()->focusNode()) {
-        if (m_part->xmlDocImpl()->focusNode()->dispatchKeyEvent(_ke))
-            _ke->accept();
+    if(m_part->xmlDocImpl() && m_part->xmlDocImpl()->focusNode()) {
+        // Qt is damn buggy. we receive release events from our child
+        // widgets. therefore, do not support keyrelease event on generic
+        // nodes for now until we found  a workaround for the Qt bugs. (Dirk)
+//         if (m_part->xmlDocImpl()->focusNode()->dispatchKeyEvent(_ke)) {
+//             _ke->accept();
+//             return;
+//         }
+//        QScrollView::keyReleaseEvent(_ke);
+        Q_UNUSED(_ke);
     }
 }
 
 void KHTMLView::contentsContextMenuEvent ( QContextMenuEvent *_ce )
 {
-    if (d->ignoreEvents)
-        return;
+    if (!m_part->xmlDocImpl()) return;
     int xm = _ce->x();
     int ym = _ce->y();
 
@@ -811,34 +823,31 @@ void KHTMLView::contentsContextMenuEvent ( QContextMenuEvent *_ce )
         targetNode->renderer()->absolutePosition(absx,absy);
         QPoint pos(xm-absx,ym-absy);
 
+#ifndef APPLE_CHANGES
         QWidget *w = static_cast<RenderWidget*>(targetNode->renderer())->widget();
+#endif
         QContextMenuEvent cme(_ce->reason(),pos,_ce->globalPos(),_ce->state());
-        setIgnoreEvents(true);
-        QApplication::sendEvent(w,&cme);
-        setIgnoreEvents(false);
+// ### what kind of c*** is that ?
+//        setIgnoreEvents(true);
+//        QApplication::sendEvent(w,&cme);
+//        setIgnoreEvents(false);
     }
 
 }
 
 bool KHTMLView::focusNextPrevChild( bool next )
 {
-    if (d->ignoreEvents)
-        return true;
-    // First make sure we actually have focus
-    if (focusWidget() != this)
-        setFocus();
-
     // Now try to find the next child
     if (m_part->xmlDocImpl()) {
         focusNextPrevNode(next);
-        if (m_part->xmlDocImpl()->focusNode() != 0) // focus node found
-            return true;
+        if (m_part->xmlDocImpl()->focusNode() != 0)
+            return true; // focus node found
     }
 
     // If we get here, there is no next/previous child to go to, so pass up to the next/previous child in our parent
-    if (m_part->parentPart() && m_part->parentPart()->view())
+    if (m_part->parentPart() && m_part->parentPart()->view()) {
         return m_part->parentPart()->view()->focusNextPrevChild(next);
-    m_part->overURL(QString(), 0);
+    }
 
     return QWidget::focusNextPrevChild(next);
 }
@@ -961,7 +970,10 @@ void KHTMLView::focusNextPrevNode(bool next)
 
     // If there was previously no focus node and the user has scrolled the document, then instead of picking the first
     // focusable node in the document, use the first one that lies within the visible area (if possible).
-    if (!oldFocusNode && newFocusNode) {
+    if (!oldFocusNode && newFocusNode && d->scrollBarMoved) {
+
+      kdDebug(6000) << " searching for visible link" << endl;
+
         bool visible = false;
         NodeImpl *toFocus = newFocusNode;
         while (!visible && toFocus) {
@@ -984,18 +996,40 @@ void KHTMLView::focusNextPrevNode(bool next)
             newFocusNode = toFocus;
     }
 
+    d->scrollBarMoved = false;
+
+    if (!newFocusNode)
+      {
+        // No new focus node, scroll to bottom or top depending on next
+        if (next)
+            scrollTo(QRect(contentsX()+visibleWidth()/2,contentsHeight(),0,0));
+        else
+            scrollTo(QRect(contentsX()+visibleWidth()/2,0,0,0));
+    }
+    else
+    // Scroll the view as necessary to ensure that the new focus node is visible
+    {
+      if (oldFocusNode)
+	{
+	  if (!scrollTo(newFocusNode->getRect()))
+	    return;
+	}
+      else
+	{
+	  ensureVisible(contentsX(), next?0:contentsHeight());
+	  //return;
+	}
+    }
     // Set focus node on the document
     m_part->xmlDocImpl()->setFocusNode(newFocusNode);
     emit m_part->nodeActivated(Node(newFocusNode));
 
+#if 0
     if (newFocusNode) {
-        // Scroll the view as necessary to ensure that the new focus node is visible
-        scrollTo(newFocusNode->getRect());
 
         // this does not belong here. it should run a query on the tree (Dirk)
         // I'll fix this very particular part of the code soon when I cleaned
         // up the positioning code
-#if 0
         // If the newly focussed node is a link, notify the part
 
         HTMLAnchorElementImpl *anchor = 0;
@@ -1006,15 +1040,8 @@ void KHTMLView::focusNextPrevNode(bool next)
             m_part->overURL(anchor->areaHref().string(), 0);
         else
             m_part->overURL(QString(), 0);
+    }
 #endif
-    }
-    else {
-        // No new focus node, scroll to bottom or top depending on next
-        if (next)
-            scrollTo(QRect(contentsX()+visibleWidth()/2,contentsHeight(),0,0));
-        else
-            scrollTo(QRect(contentsX()+visibleWidth()/2,0,0,0));
-    }
 }
 
 void KHTMLView::setMediaType( const QString &medium )
@@ -1027,6 +1054,7 @@ QString KHTMLView::mediaType() const
     return m_medium;
 }
 
+#ifndef APPLE_CHANGES
 void KHTMLView::print()
 {
     if(!m_part->xmlDocImpl()) return;
@@ -1035,6 +1063,7 @@ void KHTMLView::print()
 
     // this only works on Unix - we assume 72dpi
     KPrinter *printer = new KPrinter(QPrinter::PrinterResolution);
+    printer->addDialogPage(new KHTMLPrintSettings());
     if(printer->setup(this)) {
         viewport()->setCursor( waitCursor ); // only viewport(), no QApplication::, otherwise we get the busy cursor in kdeprint's dialogs
         // set up KPrinter
@@ -1051,7 +1080,10 @@ void KHTMLView::print()
         m_part->xmlDocImpl()->setPaintDevice( printer );
         QString oldMediaType = mediaType();
         setMediaType( "print" );
-        m_part->xmlDocImpl()->updateStyleSelector();
+        m_part->xmlDocImpl()->setPrintStyleSheet( printer->option("kde-khtml-printfriendly") == "true" ?
+                                                  "* { background-image: none !important;"
+                                                  "    background-color: transparent !important;"
+                                                  "    color: black !important }" : "" );
 
         QPaintDeviceMetrics metrics( printer );
 
@@ -1065,16 +1097,9 @@ void KHTMLView::print()
         root->setPrintingMode(true);
         root->setWidth(metrics.width());
 
-        QValueList<int> oldSizes = m_part->fontSizes();
-
-        const int printFontSizes[] = { 6, 7, 8, 10, 12, 14, 18, 24,
-                                       28, 34, 40, 48, 56, 68, 82, 100, 0 };
-        QValueList<int> fontSizes;
-        for ( int i = 0; printFontSizes[i] != 0; i++ )
-            fontSizes << printFontSizes[ i ];
-        m_part->setFontSizes(fontSizes);
-        m_part->xmlDocImpl()->recalcStyle( NodeImpl::Force );
-
+        m_part->xmlDocImpl()->styleSelector()->computeFontSizes(&metrics, 100);
+        m_part->xmlDocImpl()->updateStyleSelector();
+        root->setPrintImages( printer->option("kde-khtml-printimages") == "true");
         root->setLayouted( false );
         root->setMinMaxKnown( false );
         root->layout();
@@ -1122,14 +1147,14 @@ void KHTMLView::print()
         root->setPrintingMode(false);
         khtml::setPrintPainter( 0 );
         setMediaType( oldMediaType );
-        m_part->xmlDocImpl()->updateStyleSelector();
         m_part->xmlDocImpl()->setPaintDevice( this );
-        m_part->setFontSizes(oldSizes);
-        m_part->xmlDocImpl()->recalcStyle( NodeImpl::Force );
+        m_part->xmlDocImpl()->styleSelector()->computeFontSizes(m_part->xmlDocImpl()->paintDeviceMetrics(), m_part->zoomFactor());
+        m_part->xmlDocImpl()->updateStyleSelector();
         viewport()->unsetCursor();
     }
     delete printer;
 }
+#endif // !APPLE_CHANGES
 
 void KHTMLView::slotPaletteChanged()
 {
@@ -1284,7 +1309,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
     bool ctrlKey = (_mouse->state() & ControlButton);
     bool altKey = (_mouse->state() & AltButton);
     bool shiftKey = (_mouse->state() & ShiftButton);
-    bool metaKey = false; // ### qt support?
+	bool metaKey = (_mouse->state() & MetaButton);
 
     // mouseout/mouseover
     if (setUnder && (d->prevMouseX != clientX || d->prevMouseY != clientY)) {
@@ -1373,16 +1398,6 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
     return swallowEvent;
 }
 
-void KHTMLView::setIgnoreEvents(bool ignore)
-{
-    d->ignoreEvents = ignore;
-}
-
-bool KHTMLView::ignoreEvents()
-{
-    return d->ignoreEvents;
-}
-
 void KHTMLView::setIgnoreWheelEvents( bool e )
 {
     d->ignoreWheelEvents = e;
@@ -1408,6 +1423,55 @@ void KHTMLView::viewportWheelEvent(QWheelEvent* e)
 #endif
 }
 #endif
+
+#ifndef APPLE_CHANGES
+void KHTMLView::dragEnterEvent( QDragEnterEvent* ev )
+{
+    // Handle drops onto frames (#16820)
+    // Drops on the main html part is handled by Konqueror (and shouldn't do anything
+    // in e.g. kmail, so not handled here).
+    if ( m_part->parentPart() )
+    {
+        // Duplicated from KonqView::eventFilter
+        if ( QUriDrag::canDecode( ev ) )
+        {
+            KURL::List lstDragURLs;
+            bool ok = KURLDrag::decode( ev, lstDragURLs );
+            QObjectList *children = this->queryList( "QWidget" );
+
+            if ( ok &&
+                 !lstDragURLs.first().url().contains( "javascript:", false ) && // ### this looks like a hack to me
+                 ev->source() != this &&
+                 children &&
+                 children->findRef( ev->source() ) == -1 )
+                ev->acceptAction();
+
+            delete children;
+        }
+    }
+    QScrollView::dragEnterEvent( ev );
+}
+
+void KHTMLView::dropEvent( QDropEvent *ev )
+{
+    // Handle drops onto frames (#16820)
+    // Drops on the main html part is handled by Konqueror (and shouldn't do anything
+    // in e.g. kmail, so not handled here).
+    if ( m_part->parentPart() )
+    {
+        KURL::List lstDragURLs;
+        bool ok = KURLDrag::decode( ev, lstDragURLs );
+
+        KHTMLPart* part = m_part->parentPart();
+        while ( part && part->parentPart() )
+            part = part->parentPart();
+        KParts::BrowserExtension *ext = part->browserExtension();
+        if ( ok && ext && lstDragURLs.first().isValid() )
+            emit ext->openURLRequest( lstDragURLs.first() );
+    }
+    QScrollView::dropEvent( ev );
+}
+#endif // !APPLE_CHANGES
 
 void KHTMLView::focusOutEvent( QFocusEvent *e )
 {

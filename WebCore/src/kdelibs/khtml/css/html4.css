@@ -181,7 +181,6 @@ H4 {
 H5 { 
 	display: block;
 	font-size: .83em; 
-	line-height: 1.17em; 
 	margin: 1.67em auto;
 	font-weight: bolder;
 }
@@ -201,7 +200,7 @@ TABLE {
 	display: table;
 	border-collapse: separate;
 	vertical-align: middle;
-	text-align: justify;
+	text-align: -konq-auto;
 	border-spacing: 2px;
 	border-color: gray;
 	padding: 1px;
@@ -375,7 +374,15 @@ FIELDSET {
 
 BUTTON {
         display: block;
-        border-style: outset;
+        border: 2px outset ButtonFace;
+        background-color: ButtonFace;
+        color: ButtonText;
+        padding: 2px 2px 2px 2px;
+        cursor: default;
+}
+
+BUTTON:active {
+        border-style: inset;
 }
 
 /* we want a fixed font for form elements (input & textarea) */
@@ -397,7 +404,8 @@ INPUT[type="radio"], INPUT[type="checkbox"] {
       
 OPTION, 
 OPTGROUP, 
-AREA  { 
+AREA,
+PARAM  { 
 	display: none; 
 }
 
@@ -438,6 +446,7 @@ PLAINTEXT {
 	display: block;
 	font-family: monospace; 
 	white-space: pre; 
+	text-align: -konq-auto;
 }
       
 BIG { 

@@ -1,4 +1,3 @@
-// $Id$
 
 #ifndef LOADER_CLIENT_H
 #define LOADER_CLIENT_H

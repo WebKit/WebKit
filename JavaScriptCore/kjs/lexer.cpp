@@ -18,7 +18,6 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 #ifdef HAVE_CONFIG_H
@@ -52,7 +51,7 @@ static Lexer *currLexer = 0;
 
 #include "lexer.lut.h"
 
-extern YYLTYPE yylloc;	// global bison variable holding token info
+extern YYLTYPE yylloc; // global bison variable holding token info
 
 // a bridge for yacc from the C world to C++
 int kjsyylex()
@@ -61,7 +60,7 @@ int kjsyylex()
 }
 
 Lexer::Lexer()
-  : yylineno(0),
+  : yylineno(1),
     size8(128), size16(128), restrKeyword(false),
     eatNextIdentifier(false), stackToken(-1), lastToken(-1), pos(0),
     code(0), length(0),
@@ -94,7 +93,7 @@ Lexer *Lexer::curr()
 
 void Lexer::setCode(const UChar *c, unsigned int len)
 {
-  yylineno = 0;
+  yylineno = 1;
   restrKeyword = false;
   delimited = false;
   eatNextIdentifier = false;
@@ -125,6 +124,15 @@ void Lexer::shift(unsigned int p)
     next2 = next3;
     next3 = (pos + 3 < length) ? code[pos+3].unicode() : 0;
   }
+}
+
+// called on each new line
+void Lexer::nextLine()
+{
+  yylineno++;
+#ifndef KJS_PURE_ECMA
+  bol = true;
+#endif
 }
 
 void Lexer::setDone(State s)
@@ -166,240 +174,234 @@ int Lexer::lex()
     switch (state) {
     case Start:
       if (isWhiteSpace()) {
-	// do nothing
+        // do nothing
       } else if (current == '/' && next1 == '/') {
-	shift(1);
-	state = InSingleLineComment;
+        shift(1);
+        state = InSingleLineComment;
       } else if (current == '/' && next1 == '*') {
-	shift(1);
-	state = InMultiLineComment;
+        shift(1);
+        state = InMultiLineComment;
       } else if (current == 0) {
-	if (!terminator && !delimited) {
-	  // automatic semicolon insertion if program incomplete
-	  token = ';';
-	  stackToken = 0;
-	  setDone(Other);
-	} else
-	  setDone(Eof);
+        if (!terminator && !delimited) {
+          // automatic semicolon insertion if program incomplete
+          token = ';';
+          stackToken = 0;
+          setDone(Other);
+        } else
+          setDone(Eof);
       } else if (isLineTerminator()) {
-	yylineno++;
-#ifndef KJS_PURE_ECMA
-	bol = true;
-#endif
-	terminator = true;
-	if (restrKeyword) {
-	  token = ';';
-	  setDone(Other);
-	}
+        nextLine();
+        terminator = true;
+        if (restrKeyword) {
+          token = ';';
+          setDone(Other);
+        }
       } else if (current == '"' || current == '\'') {
-	state = InString;
-	stringType = current;
+        state = InString;
+        stringType = current;
       } else if (isIdentLetter(current)) {
-	record16(current);
-	state = InIdentifier;
+        record16(current);
+        state = InIdentifier;
       } else if (current == '0') {
-	record8(current);
-	state = InNum0;
+        record8(current);
+        state = InNum0;
       } else if (isDecimalDigit(current)) {
-	record8(current);
-	state = InNum;
+        record8(current);
+        state = InNum;
       } else if (current == '.' && isDecimalDigit(next1)) {
-	record8(current);
-	state = InDecimal;
+        record8(current);
+        state = InDecimal;
 #ifndef KJS_PURE_ECMA
-	// <!-- marks the beginning of a line comment (for www usage)
-      } else if (bol && current == '<' && next1 == '!' &&
-		 next2 == '-' && next3 == '-') {
-	shift(3);
-	state = InSingleLineComment;
-	// same of -->
+        // <!-- marks the beginning of a line comment (for www usage)
+      } else if (current == '<' && next1 == '!' &&
+                 next2 == '-' && next3 == '-') {
+        shift(3);
+        state = InSingleLineComment;
+        // same for -->
       } else if (bol && current == '-' && next1 == '-' &&  next2 == '>') {
-	shift(2);
-	state = InSingleLineComment;
+        shift(2);
+        state = InSingleLineComment;
 #endif
       } else {
-	token = matchPunctuator(current, next1, next2, next3);
-	if (token != -1) {
-	  setDone(Other);
-	} else {
-	  //	  cerr << "encountered unknown character" << endl;
-	  setDone(Bad);
-	}
+        token = matchPunctuator(current, next1, next2, next3);
+        if (token != -1) {
+          setDone(Other);
+        } else {
+          //      cerr << "encountered unknown character" << endl;
+          setDone(Bad);
+        }
       }
       break;
     case InString:
       if (current == stringType) {
-	shift(1);
-	setDone(String);
+        shift(1);
+        setDone(String);
       } else if (current == 0 || isLineTerminator()) {
-	setDone(Bad);
+        setDone(Bad);
       } else if (current == '\\') {
-	state = InEscapeSequence;
+        state = InEscapeSequence;
       } else {
-	record16(current);
+        record16(current);
       }
       break;
     // Escape Sequences inside of strings
     case InEscapeSequence:
       if (isOctalDigit(current)) {
-	if (current >= '0' && current <= '3' &&
-	    isOctalDigit(next1) && isOctalDigit(next2)) {
-	  record16(convertOctal(current, next1, next2));
-	  shift(2);
-	  state = InString;
-	} else if (isOctalDigit(current) && isOctalDigit(next1)) {
-	  record16(convertOctal('0', current, next1));
-	  shift(1);
-	  state = InString;
-	} else if (isOctalDigit(current)) {
-	  record16(convertOctal('0', '0', current));
-	  state = InString;
-	} else {
-	  setDone(Bad);
-	}
+        if (current >= '0' && current <= '3' &&
+            isOctalDigit(next1) && isOctalDigit(next2)) {
+          record16(convertOctal(current, next1, next2));
+          shift(2);
+          state = InString;
+        } else if (isOctalDigit(current) && isOctalDigit(next1)) {
+          record16(convertOctal('0', current, next1));
+          shift(1);
+          state = InString;
+        } else if (isOctalDigit(current)) {
+          record16(convertOctal('0', '0', current));
+          state = InString;
+        } else {
+          setDone(Bad);
+        }
       } else if (current == 'x')
-	state = InHexEscape;
+        state = InHexEscape;
       else if (current == 'u')
-	state = InUnicodeEscape;
+        state = InUnicodeEscape;
       else {
-	record16(singleEscape(current));
-	state = InString;
+        record16(singleEscape(current));
+        state = InString;
       }
       break;
     case InHexEscape:
       if (isHexDigit(current) && isHexDigit(next1)) {
-	state = InString;
-	record16(convertHex(current, next1));
-	shift(1);
+        state = InString;
+        record16(convertHex(current, next1));
+        shift(1);
       } else if (current == stringType) {
-	record16('x');
-	shift(1);
-	setDone(String);
+        record16('x');
+        shift(1);
+        setDone(String);
       } else {
-	record16('x');
-	record16(current);
-	state = InString;
+        record16('x');
+        record16(current);
+        state = InString;
       }
       break;
     case InUnicodeEscape:
       if (isHexDigit(current) && isHexDigit(next1) &&
-	  isHexDigit(next2) && isHexDigit(next3)) {
-	record16(convertUnicode(current, next1, next2, next3));
-	shift(3);
-	state = InString;
+          isHexDigit(next2) && isHexDigit(next3)) {
+        record16(convertUnicode(current, next1, next2, next3));
+        shift(3);
+        state = InString;
       } else if (current == stringType) {
-	record16('u');
-	shift(1);
-	setDone(String);
+        record16('u');
+        shift(1);
+        setDone(String);
       } else {
-	setDone(Bad);
+        setDone(Bad);
       }
       break;
     case InSingleLineComment:
       if (isLineTerminator()) {
-	yylineno++;
-	terminator = true;
-#ifndef KJS_PURE_ECMA
-	bol = true;
-#endif
-	if (restrKeyword) {
-	  token = ';';
-	  setDone(Other);
-	} else
-	  state = Start;
+        nextLine();
+        terminator = true;
+        if (restrKeyword) {
+          token = ';';
+          setDone(Other);
+        } else
+          state = Start;
       } else if (current == 0) {
-	setDone(Eof);
+        setDone(Eof);
       }
       break;
     case InMultiLineComment:
       if (current == 0) {
-	setDone(Bad);
+        setDone(Bad);
       } else if (isLineTerminator()) {
-	yylineno++;
+        nextLine();
       } else if (current == '*' && next1 == '/') {
-	state = Start;
-	shift(1);
+        state = Start;
+        shift(1);
       }
       break;
     case InIdentifier:
       if (isIdentLetter(current) || isDecimalDigit(current)) {
-	record16(current);
-	break;
+        record16(current);
+        break;
       }
       setDone(Identifier);
       break;
     case InNum0:
       if (current == 'x' || current == 'X') {
-	record8(current);
-	state = InHex;
+        record8(current);
+        state = InHex;
       } else if (current == '.') {
-	record8(current);
-	state = InDecimal;
+        record8(current);
+        state = InDecimal;
       } else if (current == 'e' || current == 'E') {
-	record8(current);
-	state = InExponentIndicator;
+        record8(current);
+        state = InExponentIndicator;
       } else if (isOctalDigit(current)) {
-	record8(current);
-	state = InOctal;
+        record8(current);
+        state = InOctal;
       } else if (isDecimalDigit(current)) {
         record8(current);
         state = InDecimal;
       } else {
-	setDone(Number);
+        setDone(Number);
       }
       break;
     case InHex:
       if (isHexDigit(current)) {
-	record8(current);
+        record8(current);
       } else {
-	setDone(Hex);
+        setDone(Hex);
       }
       break;
     case InOctal:
       if (isOctalDigit(current)) {
-	record8(current);
+        record8(current);
       }
       else if (isDecimalDigit(current)) {
         record8(current);
         state = InDecimal;
       } else
-	setDone(Octal);
+        setDone(Octal);
       break;
     case InNum:
       if (isDecimalDigit(current)) {
-	record8(current);
+        record8(current);
       } else if (current == '.') {
-	record8(current);
-	state = InDecimal;
+        record8(current);
+        state = InDecimal;
       } else if (current == 'e' || current == 'E') {
-	record8(current);
-	state = InExponentIndicator;
+        record8(current);
+        state = InExponentIndicator;
       } else
-	setDone(Number);
+        setDone(Number);
       break;
     case InDecimal:
       if (isDecimalDigit(current)) {
-	record8(current);
+        record8(current);
       } else if (current == 'e' || current == 'E') {
-	record8(current);
-	state = InExponentIndicator;
+        record8(current);
+        state = InExponentIndicator;
       } else
-	setDone(Number);
+        setDone(Number);
       break;
     case InExponentIndicator:
       if (current == '+' || current == '-') {
-	record8(current);
+        record8(current);
       } else if (isDecimalDigit(current)) {
-	record8(current);
-	state = InExponent;
+        record8(current);
+        state = InExponent;
       } else
-	setDone(Bad);
+        setDone(Bad);
       break;
     case InExponent:
       if (isDecimalDigit(current)) {
-	record8(current);
+        record8(current);
       } else
-	setDone(Number);
+        setDone(Number);
       break;
     default:
       assert(!"Unhandled state in switch statement");
@@ -505,7 +507,7 @@ int Lexer::lex()
       eatNextIdentifier = true;
 
     if (token == CONTINUE || token == BREAK ||
-	token == RETURN || token == THROW)
+        token == RETURN || token == THROW)
       restrKeyword = true;
     break;
   case String:
@@ -530,7 +532,7 @@ int Lexer::lex()
 bool Lexer::isWhiteSpace() const
 {
   return (current == ' ' || current == '\t' ||
-	  current == 0x0b || current == 0x0c);
+          current == 0x0b || current == 0x0c);
 }
 
 bool Lexer::isLineTerminator()
@@ -548,8 +550,8 @@ bool Lexer::isIdentLetter(unsigned short c)
 {
   /* TODO: allow other legitimate unicode chars */
   return (c >= 'a' && c <= 'z' ||
-	  c >= 'A' && c <= 'Z' ||
-	  c == '$' || c == '_');
+          c >= 'A' && c <= 'Z' ||
+          c == '$' || c == '_');
 }
 
 bool Lexer::isDecimalDigit(unsigned short c)
@@ -560,8 +562,8 @@ bool Lexer::isDecimalDigit(unsigned short c)
 bool Lexer::isHexDigit(unsigned short c) const
 {
   return (c >= '0' && c <= '9' ||
-	  c >= 'a' && c <= 'f' ||
-	  c >= 'A' && c <= 'F');
+          c >= 'a' && c <= 'f' ||
+          c >= 'A' && c <= 'F');
 }
 
 bool Lexer::isOctalDigit(unsigned short c) const
@@ -570,7 +572,7 @@ bool Lexer::isOctalDigit(unsigned short c) const
 }
 
 int Lexer::matchPunctuator(unsigned short c1, unsigned short c2,
-			      unsigned short c3, unsigned short c4)
+                              unsigned short c3, unsigned short c4)
 {
   if (c1 == '>' && c2 == '>' && c3 == '>' && c4 == '=') {
     shift(4);
@@ -735,7 +737,7 @@ UChar Lexer::convertUnicode(unsigned short c1, unsigned short c2,
                                      unsigned short c3, unsigned short c4)
 {
   return UChar((convertHex(c1) << 4) + convertHex(c2),
-	       (convertHex(c3) << 4) + convertHex(c4));
+               (convertHex(c3) << 4) + convertHex(c4));
 }
 
 void Lexer::record8(unsigned short c)

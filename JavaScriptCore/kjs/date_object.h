@@ -17,7 +17,6 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *  $Id$
  */
 
 #ifndef _DATE_OBJECT_H_
@@ -25,6 +24,8 @@
 
 #include "internal.h"
 #include "function_object.h"
+
+#include <sys/time.h>
 
 namespace KJS {
 
@@ -119,7 +120,7 @@ namespace KJS {
 
   // helper functions
   Value parseDate(const String &s);
-  time_t KRFCDate_parseDate(const UString &_date);
+  time_t KRFCDate_parseDate(const UString &_date); 
   Value timeClip(const Value &t);
 
 }; // namespace

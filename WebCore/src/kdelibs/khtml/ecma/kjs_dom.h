@@ -81,7 +81,7 @@ namespace KJS {
   public:
     DOMNodeList(ExecState *, DOM::NodeList l) : list(l) { }
     ~DOMNodeList();
-    virtual bool hasProperty(ExecState *exec, const UString &p, bool recursive) const;
+    virtual bool hasProperty(ExecState *exec, const UString &p) const;
     virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
     virtual Value tryCall(ExecState *exec, Object &thisObj, const List&args);
@@ -122,7 +122,7 @@ namespace KJS {
            CreateEntityReference, GetElementsByTagName, ImportNode, CreateElementNS,
            CreateAttributeNS, GetElementsByTagNameNS, GetElementById,
            CreateRange, CreateNodeIterator, CreateTreeWalker, DefaultView,
-           CreateEvent, StyleSheets, GetOverrideStyle };
+           CreateEvent, StyleSheets, GetOverrideStyle, ReadyState };
   };
 
   class DOMAttr : public DOMNode {
@@ -185,7 +185,7 @@ namespace KJS {
   public:
     DOMNamedNodeMap(ExecState *, DOM::NamedNodeMap m);
     ~DOMNamedNodeMap();
-    virtual bool hasProperty(ExecState *exec, const UString &p, bool recursive) const;
+    virtual bool hasProperty(ExecState *exec, const UString &p) const;
     virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }

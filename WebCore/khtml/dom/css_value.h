@@ -23,7 +23,6 @@
  * http://www.w3.org/TR/DOM-Level-2-Style/
  * Copyright © 2000 W3C® (MIT, INRIA, Keio), All Rights Reserved.
  *
- * $Id$
  */
 #ifndef _CSS_css_value_h_
 #define _CSS_css_value_h_

@@ -20,12 +20,10 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef _DOM_DocumentImpl_h_
 #define _DOM_DocumentImpl_h_
 
-#include "xml/dom_nodeimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom2_traversalimpl.h"
 
@@ -57,6 +55,7 @@ namespace DOM {
     class CommentImpl;
     class DocumentFragmentImpl;
     class DocumentImpl;
+    class DocumentType;
     class DocumentTypeImpl;
     class ElementImpl;
     class EntityReferenceImpl;
@@ -173,6 +172,8 @@ public:
 
     // Query all registered elements for their state
     QStringList docState();
+    void registerMaintainsState(NodeImpl* e) { m_maintainsState.append(e); }
+    void deregisterMaintainsState(NodeImpl* e) { m_maintainsState.removeRef(e); }
 
     // Set the state the document should restore to
     void setRestoreState( const QStringList &s) { m_state = s; }
@@ -225,6 +226,8 @@ public:
     virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheetStr);
     void setUserStyleSheet(const QString& sheet);
     QString userStyleSheet() const { return m_usersheet; }
+    void setPrintStyleSheet(const QString& sheet) { m_printSheet = sheet; }
+    QString printStyleSheet() const { return m_printSheet; }
 
     CSSStyleSheetImpl* elementSheet();
     virtual Tokenizer *createTokenizer();
@@ -283,6 +286,7 @@ public:
 
     StyleSheetListImpl* styleSheets();
 
+    QStringList availableStyleSheets() const;
     NodeImpl *focusNode() const { return m_focusNode; }
     void setFocusNode(NodeImpl *newFocusNode);
 
@@ -379,6 +383,8 @@ protected:
 
     StyleSheetImpl *m_sheet;
     QString m_usersheet;
+    QString m_printSheet;
+    QStringList m_availableSheets;
 
     CSSStyleSheetImpl *m_elemSheet;
 
@@ -411,6 +417,7 @@ protected:
     StyleSheetListImpl* m_styleSheets;
     LocalStyleRefs m_localStyleRefs; // references to inlined style elements
     QPtrList<RegisteredEventListener> m_windowEventListeners;
+    QPtrList<NodeImpl> m_maintainsState;
 
     bool m_loadingSheet;
     bool visuallyOrdered;

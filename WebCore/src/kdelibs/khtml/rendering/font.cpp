@@ -20,7 +20,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 
 #include "font.h"
@@ -39,10 +38,25 @@ using namespace khtml;
 void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,
         int toAdd, QPainter::TextDirection d, int from, int to, QColor bg ) const
 {
+#ifdef APPLE_CHANGES
+    p->drawText(x, y, QConstString(str + pos, slen - pos).string(), len, d);
+#else
+    QString qstr = QConstString(str, slen).string();
+
+    // hack for fonts that don't have a welldefined nbsp
+    if ( !fontDef.hasNbsp ) {
+	// str.setLength() always does a deep copy, so the replacement code below is safe.
+	qstr.setLength( slen );
+	QChar *uc = (QChar *)qstr.unicode();
+	for( int i = 0; i < slen; i++ )
+	    if ( uc->unicode() == 0xa0 )
+		*uc = ' ';
+    }
+    
     // ### fixme for RTL
     if ( !letterSpacing && !wordSpacing && !toAdd && from==-1 ) {
 	// simply draw it
-	p->drawText( x, y, QConstString(str, slen).string(), pos, len, d );
+	p->drawText( x, y, qstr, pos, len, d );
     } else {
 	int numSpaces = 0;
 	if ( toAdd ) {
@@ -51,13 +65,11 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
 		    numSpaces++;
 	}
 
-	QConstString cstr( str, slen );
-	QString s( cstr.string() );
 	if ( d == QPainter::RTL ) {
 	    x += width( str, slen, pos, len ) + toAdd;
 	}
 	for( int i = 0; i < len; i++ ) {
-	    int chw = fm.charWidth( s, pos+i );
+	    int chw = fm.charWidth( qstr, pos+i );
 	    if ( letterSpacing )
 		chw += letterSpacing;
 	    if ( (wordSpacing || toAdd) && str[i+pos].isSpace() ) {
@@ -76,19 +88,35 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
                 if ( bg.isValid() )
                     p->fillRect( x, y-fm.ascent(), chw, fm.height(), bg );
 
-	        p->drawText( x, y, s, pos+i, 1, d );
+	        p->drawText( x, y, qstr, pos+i, 1, d );
             }
 	    if ( d != QPainter::RTL )
 		x += chw;
 	}
     }
+#endif
 }
 
 
 int Font::width( QChar *chs, int slen, int pos, int len ) const
 {
+#ifdef APPLE_CHANGES
+    return fm._width(chs + pos, kMin(len, slen - pos));
+#else
+    QString qstr = QConstString(chs+pos, slen-pos).string();
+
+    // hack for fonts that don't have a welldefined nbsp
+    if ( !fontDef.hasNbsp ) {
+	// str.setLength() always does a deep copy, so the replacement code below is safe.
+	qstr.setLength( slen );
+	QChar *uc = (QChar *)qstr.unicode();
+	for( int i = 0; i < slen; i++ )
+	    if ( uc->unicode() == 0xa0 )
+		*uc = ' ';
+    }
+
     // ### might be a little inaccurate
-    int w = fm.width( QConstString( chs+pos, slen-pos).string(), len );
+    int w = fm.width( qstr, len );
 
     if ( letterSpacing )
 	w += len*letterSpacing;
@@ -101,11 +129,19 @@ int Font::width( QChar *chs, int slen, int pos, int len ) const
 	}
     }
     return w;
+#endif
 }
 
 int Font::width( QChar *chs, int slen, int pos ) const
 {
-    int w = fm.charWidth( QConstString( chs, slen).string(), pos );
+#ifdef APPLE_CHANGES
+    return width(chs, slen, pos, 1);
+#else
+    int w;
+    if ( !fontDef.hasNbsp && (chs+pos)->unicode() == 0xa0 )
+	w = fm.width( QChar( ' ' ) );
+    else
+	w = fm.charWidth( QConstString( chs, slen).string(), pos );
 
     if ( letterSpacing )
 	w += letterSpacing;
@@ -113,6 +149,7 @@ int Font::width( QChar *chs, int slen, int pos ) const
     if ( wordSpacing && (chs+pos)->isSpace() )
 		w += wordSpacing;
     return w;
+#endif
 }
 
 
@@ -122,6 +159,9 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
     f.setItalic( fontDef.italic );
     f.setWeight( fontDef.weight );
 
+#ifdef APPLE_CHANGES
+    f.setPixelSize(fontDef.size);
+#else
     QFontDatabase db;
 
     int size = fontDef.size;
@@ -152,13 +192,17 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
         }
         //kdDebug( 6080 ) << "best smooth font size: " << bestSize << " diff=" << diff << endl;
         if ( bestSize != 0 && diff < 0.2 ) // 20% deviation, otherwise we use a scaled font...
-            size = (bestSize*lDpiY) / 72;
+            size = (int)((bestSize*lDpiY) / 72);
     }
 
 //      qDebug("setting font to %s, italic=%d, weight=%d, size=%d", fontDef.family.latin1(), fontDef.italic,
 //   	   fontDef.weight, size );
 
     f.setPixelSize( size );
+#endif
 
     fm = QFontMetrics( f );
+#ifndef APPLE_CHANGES
+    fontDef.hasNbsp = fm.inFont( 0xa0 );
+#endif
 }

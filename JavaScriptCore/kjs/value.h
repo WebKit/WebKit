@@ -33,11 +33,9 @@
 
 #endif
 
-#include "ustring.h"
+#include <stdlib.h> // Needed for size_t
 
-#if APPLE_CHANGES
-#include <stdlib.h>
-#endif
+#include "ustring.h"
 
 // Primitive data types
 
@@ -218,7 +216,7 @@ namespace KJS {
     /**
      * Performs the ToUint32 type conversion operation on this value (ECMA 9.6)
      */
-    uint toUInt32(ExecState *exec) const;
+    unsigned int toUInt32(ExecState *exec) const;
 
     /**
      * Performs the ToUint16 type conversion operation on this value (ECMA 9.7)

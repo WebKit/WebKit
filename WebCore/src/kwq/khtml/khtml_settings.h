@@ -59,6 +59,7 @@ public:
     const QString &encoding() const;
 
     int minFontSize() const;
+    int mediumFontSize() const;
     static QString availableFamilies();
 
     QFont::CharSet script() const;

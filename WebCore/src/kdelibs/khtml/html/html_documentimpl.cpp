@@ -48,6 +48,7 @@
 #include <kcharsets.h>
 #include <kglobalsettings.h>
 
+#include "css/cssproperties.h"
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
 #include <stdlib.h>
@@ -188,10 +189,17 @@ HTMLElementImpl *HTMLDocumentImpl::body()
     NodeImpl *de = documentElement();
     if (!de)
         return 0;
-    NodeImpl *b = de->firstChild();
-    while (b && b->id() != ID_BODY && b->id() != ID_FRAMESET)
-        b = b->nextSibling();
-    return static_cast<HTMLElementImpl *>(b);
+
+    // try to prefer a FRAMESET element over BODY
+    NodeImpl* body = 0;
+    for (NodeImpl* i = de->firstChild(); i; i = i->nextSibling()) {
+        if (i->id() == ID_FRAMESET)
+            return static_cast<HTMLElementImpl*>(i);
+
+        if (i->id() == ID_BODY)
+            body = i;
+    }
+    return static_cast<HTMLElementImpl *>(body);
 }
 
 void HTMLDocumentImpl::setBody(HTMLElementImpl *_body)
@@ -268,9 +276,11 @@ static bool isTransitional(const QString &spec, int start)
 
 void HTMLDocumentImpl::close()
 {
+    bool doload = !parsing() && m_tokenizer;
+
     DocumentImpl::close();
 
-    if (body()) {
+    if (body() && doload) {
         body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
         updateRendering();
     }

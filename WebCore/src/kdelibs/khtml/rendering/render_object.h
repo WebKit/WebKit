@@ -20,7 +20,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef render_object_h
 #define render_object_h
@@ -389,7 +388,7 @@ public:
     virtual bool hasOverhangingFloats() { return false; }
 
     // positioning of inline childs (bidi)
-    virtual void position(int, int, int, int, int, bool, bool) {}
+    virtual void position(int, int, int, int, int, bool, bool, int) {}
 
     enum SelectionState {
         SelectionNone,
@@ -423,8 +422,6 @@ public:
     const QFontMetrics &fontMetrics(bool firstLine) const {
 	return style( firstLine )->fontMetrics();
     }
-
-    virtual void handleDOMEvent(DOM::EventImpl */*evt*/) {}
 
 protected:
     virtual void selectionStartEnd(int& spos, int& epos);

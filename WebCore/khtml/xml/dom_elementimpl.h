@@ -21,7 +21,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #ifndef _DOM_ELEMENTImpl_h_
 #define _DOM_ELEMENTImpl_h_
@@ -33,6 +32,10 @@
 #if defined(APPLE_CHANGES) && defined(__OBJC__)
 #define id id_
 #endif /* APPLE_CHANGES, __OBJC__ */
+
+namespace khtml {
+    class CSSStyleSelector;
+}
 
 namespace DOM {
 
@@ -144,7 +147,7 @@ class ElementImpl : public NodeBaseImpl
     friend class NamedAttrMapImpl;
     friend class AttrImpl;
     friend class NodeImpl;
-
+    friend class khtml::CSSStyleSelector;
 public:
     ElementImpl(DocumentPtr *doc);
     ~ElementImpl();

@@ -18,15 +18,10 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  *
- *  $Id$
  */
 
 #ifndef _KJS_USTRING_H_
 #define _KJS_USTRING_H_
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #ifdef APPLE_CHANGES
 #ifndef KWQ_UNSIGNED_TYPES_DEFINED
@@ -109,7 +104,7 @@ namespace KJS {
     friend bool operator==(const UString& s1, const char *s2);
     friend bool operator<(const UString& s1, const UString& s2);
 
-    ushort uc;
+    unsigned short uc;
   };
 
   inline UChar::UChar() : uc(0) { }

@@ -1,3 +1,22 @@
+2002-04-15  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFPreferences.h:
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]): Remove the old
+	WebKitFontSizes preference.
+	(-[IFPreferences mediumFontSize]), (-[IFPreferences setMediumFontSize:]): New.
+
+	* WebView.subproj/IFWebView.mm: (-[IFWebView reapplyStyles]): Call
+	updateStyleSelector() instead of recalcStyle().
+
+2002-04-15  Darin Adler  <darin@apple.com>
+
+        Merged changes from previous merge branch.
+
+        2002-03-25  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]):
+        Add WebKitMediumFontSizePreferenceKey.
+
 2002-04-15  John Sullivan  <sullivan@apple.com>
 
 	* Plugins.subproj/IFNullPluginView.mm: (-[IFNullPluginView drawRect:]):

@@ -19,7 +19,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * $Id$
  */
 #include "html_listimpl.h"
 
@@ -143,18 +142,19 @@ void HTMLLIElementImpl::attach()
 
     HTMLElementImpl::attach();
 
-    // If we are first, and the OL has a start attr.
-    if (parentNode() && parentNode()->id() == ID_OL)
-    {
-        HTMLOListElementImpl *ol = static_cast<HTMLOListElementImpl *>(parentNode());
+    if ( m_render && m_render->style()->display() == LIST_ITEM ) {
+	// If we are first, and the OL has a start attr.
+	if (parentNode() && parentNode()->id() == ID_OL) {
+	    HTMLOListElementImpl *ol = static_cast<HTMLOListElementImpl *>(parentNode());
 
-        if(ol->firstChild() && ol->firstChild() == this &&  m_render)
-           static_cast<RenderListItem*>(m_render)->setValue(ol->start());
+	    if(ol->firstChild() && ol->firstChild() == this &&  m_render)
+		static_cast<RenderListItem*>(m_render)->setValue(ol->start());
+	}
+
+	// If we had a value attr.
+	if (isValued && m_render)
+	    static_cast<RenderListItem*>(m_render)->setValue(requestedValue);
     }
-
-    // If we had a value attr.
-    if (isValued && m_render)
-        static_cast<RenderListItem*>(m_render)->setValue(requestedValue);
 
 }
 

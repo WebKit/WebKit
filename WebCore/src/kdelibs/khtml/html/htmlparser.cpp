@@ -149,10 +149,9 @@ KHTMLParser::~KHTMLParser()
     kdDebug( ) << "TIME: parsing time was = " << qt.elapsed() << endl;
 #endif
 
+    freeBlock();
 
     document->deref();
-
-    freeBlock();
 
     delete [] forbiddenTag;
     delete isindex;
@@ -210,6 +209,8 @@ void KHTMLParser::parseToken(Token *t)
     // be compatible with IE and NS
     if(t->id == ID_BR+ID_CLOSE_TAG && document->document()->parseMode() != DocumentImpl::Strict)
         t->id -= ID_CLOSE_TAG;
+
+    flat = t->flat;
 
     if(t->id > ID_CLOSE_TAG)
     {
@@ -320,6 +321,7 @@ bool KHTMLParser::insertNode(NodeImpl *n)
                     n->attach();
             }
             if (n->maintainsState()) {
+                document->document()->registerMaintainsState(n);
                 QString state(document->document()->nextState());
                 if (!state.isNull()) n->restoreState(state);
             }
@@ -359,7 +361,7 @@ bool KHTMLParser::insertNode(NodeImpl *n)
             if( !head )
                 createHead();
             if( head ) {
-                head->addChild(n);
+                if ( head->addChild(n) ) {
 #if SPEED_DEBUG < 2
 		if(!n->attached() && HTMLWidget) {
                     n->init();
@@ -368,11 +370,30 @@ bool KHTMLParser::insertNode(NodeImpl *n)
 		}
 #endif
                 return true;
+		} else {
+		    return false;
+		}
             }
             break;
         case ID_HTML:
-            if (!current->isDocumentNode())
+            if (!current->isDocumentNode() ) {
+		if ( doc()->firstChild()->id() == ID_HTML) {
+		    // we have another <HTML> element.... apply attributes to existing one
+		    // make sure we don't overwrite already existing attributes
+		    NamedAttrMapImpl *map = static_cast<ElementImpl*>(n)->attributes(true);
+		    NamedAttrMapImpl *bmap = static_cast<ElementImpl*>(doc()->firstChild())->attributes(false);
+		    bool changed = false;
+		    for (unsigned long l = 0; map && l < map->length(); ++l) {
+			AttributeImpl* it = map->attributeItem(l);
+			changed = !bmap->getAttributeItem(it->id());
+			bmap->insertAttribute(new AttributeImpl(it->id(), it->val()));
+		    }
+		    if ( changed )
+			doc()->recalcStyle( NodeImpl::Inherit );
+		    noRealBody = false;
+		}
                 return false;
+	    }
             break;
         case ID_TITLE:
         case ID_STYLE:
@@ -764,7 +785,13 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         popBlock(ID_HEAD);
         if ( inBody && !haveFrameSet) {
             popBlock( ID_BODY );
-            doc()->setBody( 0 );
+            // ### actually for IE document.body returns the now hidden "body" element
+            // we can't implement that behaviour now because it could cause too many
+            // regressions and the headaches are not worth the work as long as there is
+            // no site actually relying on that detail (Dirk)
+            if (static_cast<HTMLDocumentImpl*>(document->document())->body())
+                static_cast<HTMLDocumentImpl*>(document->document())->body()
+                    ->addCSSProperty(CSS_PROP_DISPLAY, "none");
             inBody = false;
             noRealBody = true;
         }
@@ -1042,7 +1069,7 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         break;
     case ID_MARQUEE:
         n = new HTMLGenericElementImpl(document, t->id);
-        break;        
+        break;
 // text
     case ID_TEXT:
         n = new TextImpl(document, t->text);
@@ -1169,10 +1196,12 @@ void KHTMLParser::popOneBlock()
         if (current->maintainsState()) {
 #ifdef APPLE_CHANGES
             if (document->document()){
+                document->document()->registerMaintainsState(current);
                 QString state(document->document()->nextState());
                 if (!state.isNull()) current->restoreState(state);
             }
 #else
+            document->document()->registerMaintainsState(current);
             QString state(document->document()->nextState());
             if (!state.isNull()) current->restoreState(state);
 #endif
