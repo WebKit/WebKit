@@ -753,7 +753,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 [self _makeDocumentView];
                 break;
                 
-            case WebFrameLoadTypeOnLoadEvent:
             case WebFrameLoadTypeInternal:
                 // Add an item to the item tree for this frame
                 ASSERT(![ds _isClientRedirect]);
@@ -769,6 +768,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                     // See 3556159.  It's not clear if it's valid to be in WebFrameLoadTypeOnLoadEvent
                     // for a top-level frame, but that was a likely explanation for those crashes,
                     // so let's guard against it.
+                    // ...and all WebFrameLoadTypeOnLoadEvent uses were folded to WebFrameLoadTypeInternal
                     ERROR("no parent frame in _transitionToCommitted:, loadType=%d", loadType);
                 }
                 [self _makeDocumentView];
@@ -1066,7 +1066,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                         [self _restoreScrollPosition];
                         break;
 
-                    case WebFrameLoadTypeOnLoadEvent:
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
                     case WebFrameLoadTypeReloadAllowingStaleData:
@@ -1315,7 +1314,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                             [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
                         }
                         break;
-                    case WebFrameLoadTypeOnLoadEvent:
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
                         // no-op: leave as protocol default
@@ -2125,7 +2123,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         case WebFrameLoadTypeForward:
         case WebFrameLoadTypeIndexedBackForward:
         case WebFrameLoadTypeInternal:
-        case WebFrameLoadTypeOnLoadEvent:
         case WebFrameLoadTypeStandard:
             return [_private currentItem];
     }

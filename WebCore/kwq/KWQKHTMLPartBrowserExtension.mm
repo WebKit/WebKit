@@ -78,7 +78,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	bridge = [_part->bridge() findFrameNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
-		[bridge loadURL:url.getNSURL() referrer:[_part->bridge() referrer] reload:urlArgs.reload onLoadEvent:false target:nil triggeringEvent:nil form:nil formValues:nil];
+		[bridge loadURL:url.getNSURL() referrer:[_part->bridge() referrer] reload:urlArgs.reload userGesture:true target:nil triggeringEvent:nil form:nil formValues:nil];
 	    }
 	    [bridge focusWindow];
 	    if (partResult) {

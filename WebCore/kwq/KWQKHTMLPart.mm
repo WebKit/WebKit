@@ -258,18 +258,14 @@ bool KWQKHTMLPart::openURL(const KURL &url)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    bool onLoad = false;
+    bool userGesture = true;
     
     if (jScript() && jScript()->interpreter()) {
         KHTMLPart *rootPart = this;
         while (rootPart->parentPart() != 0)
             rootPart = rootPart->parentPart();
         KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(KJSProxy::proxy(rootPart)->interpreter());
-        DOM::Event *evt = interpreter->getCurrentEvent();
-        
-        if (evt) {
-            onLoad = (evt->type() == "load");
-        }
+        userGesture = interpreter->wasRunByUserGesture();
     }
 
     // FIXME: The lack of args here to get the reload flag from
@@ -278,7 +274,7 @@ bool KWQKHTMLPart::openURL(const KURL &url)
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:NO
-              onLoadEvent:onLoad
+         userGesture:userGesture
               target:nil
      triggeringEvent:nil
                 form:nil
@@ -296,7 +292,7 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:args.reload
-              onLoadEvent:false
+         userGesture:true
               target:args.frameName.getNSString()
      triggeringEvent:nil
                 form:nil
@@ -657,7 +653,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         [_bridge loadURL:url.getNSURL()
 	        referrer:[_bridge referrer] 
                   reload:args.reload
-             onLoadEvent:false
+             userGesture:true
   	          target:args.frameName.getNSString()
          triggeringEvent:_currentEvent
                     form:_formAboutToBeSubmitted
@@ -722,7 +718,7 @@ void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URL
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:args.reload
-         onLoadEvent:false
+         userGesture:true
               target:args.frameName.getNSString()
      triggeringEvent:_currentEvent
                 form:nil

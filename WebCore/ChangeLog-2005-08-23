@@ -1,3 +1,23 @@
+2004-07-06  Trey Matteson  <trey@apple.com>
+
+	3716053 - www.theage.com.au has extra back/forward items due to ads
+
+	This turned out to be easily fixed by generalizing the fix to 3438441.  We prevent
+	addition to the b/f list not just during an onload event, but during any non-user
+	gesture, which includes top level script executing.
+
+        Reviewed by Richard.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURL):  Only real change - prevent adding to b/f list if not
+	a user gesture.
+        (KWQKHTMLPart::openURLRequest):  Rename "onLoadEvent" to "userGesture", swap sense
+        (KWQKHTMLPart::submitForm):  Ditto
+        (KWQKHTMLPart::urlSelected): Ditto
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow):  Ditto
+        * kwq/WebCoreBridge.h:
+
 2004-07-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
