@@ -327,47 +327,51 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 // This method is only used to draw the little circles used in lists.
 void QPainter::drawEllipse(int x, int y, int w, int h)
 {
+    // This code can only handle circles, not ellipses. But khtml only
+    // uses it for circles.
+    ASSERT(w == h);
+
     if (data->state.paintingDisabled)
         return;
         
-    NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect (x, y, w, h)];
-    
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextBeginPath(context);
+    float r = (float)w / 2;
+    CGContextAddArc(context, x + r, y + r, r, 0, 2*M_PI, true);
+    CGContextClosePath(context);
+
     if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
-        [path fill];
+        CGContextFillPath(context);
     }
     if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
-        [path setLineWidth:data->state.pen.width()];
-        [path stroke];
+        CGContextSetLineWidth(context, data->state.pen.width());
+        CGContextStrokePath(context);
     }
 }
 
 
-// Only supports arc on circles.  That's all khtml needs.
 void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
-{
+{ 
+    // Only supports arc on circles.  That's all khtml needs.
+    ASSERT(w == h);
+
     if (data->state.paintingDisabled)
         return;
-        
+    
     if (data->state.pen.style() != NoPen) {
-        if (w != h) {
-            ERROR("only supports drawing arcs on a circle");
-        }
-        
-        NSBezierPath *path = [[NSBezierPath alloc] init];
+        CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+        CGContextBeginPath(context);
+	
+	float r = (float)w / 2;
         float fa = (float)a / 16;
         float falen =  fa + (float)alen / 16;
-        [path appendBezierPathWithArcWithCenter:NSMakePoint(x + w / 2, y + h / 2) 
-                                         radius:(float)w / 2 
-                                     startAngle:-fa
-                                       endAngle:-falen
-                                      clockwise:YES];
-    
+        CGContextAddArc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180, true);
+	
         _setColorFromPen();
-        [path setLineWidth:data->state.pen.width()];
-        [path stroke];
-        [path release];
+        CGContextSetLineWidth(context, data->state.pen.width());
+        CGContextStrokePath(context);
     }
 }
 

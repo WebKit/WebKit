@@ -1,3 +1,13 @@
+2004-06-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	<rdar://problem/3693818>: (Safari should use CG calls for circle drawing for better performance)
+
+	* kwq/KWQPainter.mm:
+        (QPainter::drawEllipse): Use CG calls instead of NS calls for faster circle drawing.
+        (QPainter::drawArc): Ditto.
+
 2004-06-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Vicki
