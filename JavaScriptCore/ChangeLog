@@ -1,3 +1,5 @@
+=== Safari-171 ===
+
 2004-11-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3872724> soft link against JavaVM to save ~2MB RSHRD
