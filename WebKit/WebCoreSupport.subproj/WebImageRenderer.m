@@ -234,6 +234,74 @@
 
 #else
 
+@interface WebInternalImage : NSImage <NSCopying>
+{
+    NSTimer *frameTimer;
+    NSView *frameView;
+    NSRect imageRect;
+    NSRect targetRect;
+
+    int loadStatus;
+
+    NSColor *patternColor;
+    int patternColorLoadStatus;
+
+    int repetitionsComplete;
+    BOOL animationFinished;
+    
+    NSPoint tilePoint;
+    BOOL animatedTile;
+
+    int compositeOperator;
+    id redirectContext;
+    CGContextRef context;
+    BOOL needFlushRasterCache;
+    BOOL rasterFlushing;
+    NSImageCacheMode rasterFlushingOldMode;
+    
+    NSString *MIMEType;
+    BOOL isNull;
+    int useCount;
+
+    CGImageRef cachedImageRef;
+    
+    id _PDFDoc;
+        
+@public    
+    NSData *originalData;
+}
+
+- (id)initWithMIMEType:(NSString *)MIME;
+- (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME;
+
+- (void)releasePatternColor;
+
+- (NSString *)MIMEType;
+- (int)frameCount;
+
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete;
+- (void)resize:(NSSize)s;
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr;
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)compsiteOperator context:(CGContextRef)context;
+- (void)stopAnimation;
+- (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point context:(CGContextRef)aContext;
+- (BOOL)isNull;
+- (void)increaseUseCount;
+- (void)decreaseUseCount;
+- (WebInternalImage *)retainOrCopyIfNeeded;
+- (void)flushRasterCache;
+- (CGImageRef)imageRef;
+
++ (void)stopAnimationsInView:(NSView *)aView;
+
+- (void)startAnimationIfNecessary;
+- (NSGraphicsContext *)_beginRedirectContext:(CGContextRef)aContext;
+- (void)_endRedirectContext:(NSGraphicsContext *)aContext;
+- (void)_needsRasterFlush;
+- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(NSCompositingOperation)op alpha:(float)alpha flipped:(BOOL)flipped;
+
+@end
+
 extern NSString *NSImageLoopCount;
 
 /*
@@ -366,24 +434,14 @@ static CGImageRef _createImageRef(NSBitmapImageRep *rep);
 
 #define MINIMUM_DURATION (1.0/30.0)
 
-// Forward declarations
-@interface WebImageRenderer (WebInternal)
-- (void)startAnimationIfNecessary;
-- (NSGraphicsContext *)_beginRedirectContext:(CGContextRef)aContext;
-- (void)_endRedirectContext:(NSGraphicsContext *)aContext;
-- (void)_needsRasterFlush;
-- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(NSCompositingOperation)op alpha:(float)alpha flipped:(BOOL)flipped;
-@end
-
-
-@implementation WebImageRenderer
+@implementation WebInternalImage
 
 static NSMutableSet *activeImageRenderers;
 
 + (void)stopAnimationsInView:(NSView *)aView
 {
     NSEnumerator *objectEnumerator = [activeImageRenderers objectEnumerator];
-    WebImageRenderer *renderer;
+    WebInternalImage *renderer;
     NSMutableSet *renderersToStop = [[NSMutableSet alloc] init];
 
     while ((renderer = [objectEnumerator nextObject])) {
@@ -420,7 +478,7 @@ static NSMutableSet *activeImageRenderers;
 
 - (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME
 {
-    WebImageRenderer *result = nil;
+    WebInternalImage *result = nil;
 
     NS_DURING
     
@@ -449,7 +507,7 @@ static NSMutableSet *activeImageRenderers;
 {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
-    WebImageRenderer *result = nil;
+    WebInternalImage *result = nil;
 
     NS_DURING
 
@@ -482,9 +540,9 @@ static NSMutableSet *activeImageRenderers;
     useCount--;
 }
 
-- (id <WebCoreImageRenderer>)retainOrCopyIfNeeded
+- (WebInternalImage *)retainOrCopyIfNeeded
 {
-    WebImageRenderer *copy;
+    WebInternalImage *copy;
 
     // If an animated image appears multiple times in a given page, we
     // must create multiple WebCoreImageRenderers so that each copy
@@ -505,7 +563,7 @@ static NSMutableSet *activeImageRenderers;
 - copyWithZone:(NSZone *)zone
 {
     // FIXME: If we copy while doing an incremental load, it won't work.
-    WebImageRenderer *copy;
+    WebInternalImage *copy;
 
     copy = [super copyWithZone:zone];
     copy->MIMEType = [MIMEType copy];
@@ -1068,13 +1126,6 @@ static NSMutableSet *activeImageRenderers;
     [self setSize:s];
 }
 
-// required by protocol -- apparently inherited methods don't count
-
-- (NSSize)size
-{
-    return [super size];
-}
-
 - (NSString *)MIMEType
 {
     return MIMEType;
@@ -1104,8 +1155,172 @@ static NSMutableSet *activeImageRenderers;
     return ref;
 }
 
+- (void)releasePatternColor
+{
+    [patternColor release];
+    patternColor = nil;
+}
+
 @end
 
+@implementation WebImageRenderer
+
+- (id)initWithMIMEType:(NSString *)MIME
+{
+    WebInternalImage *i = [[WebInternalImage alloc] initWithMIMEType:MIME];
+    if (i == nil) {
+        [self dealloc];
+        return nil;
+    }
+    [self init];
+    image = i;
+    return self;
+}
+
+- (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME
+{
+    WebInternalImage *i = [[WebInternalImage alloc] initWithData:data MIMEType:MIME];
+    if (i == nil) {
+        [self dealloc];
+        return nil;
+    }
+    [self init];
+    image = i;
+    return self;
+}
+
+- (id)initWithContentsOfFile:(NSString *)filename
+{
+    WebInternalImage *i = [[WebInternalImage alloc] initWithContentsOfFile:filename];
+    if (i == nil) {
+        [self dealloc];
+        return nil;
+    }
+    [self init];
+    image = i;
+    return self;
+}
+
+- (void)dealloc
+{
+    [image releasePatternColor];
+    [image release];
+    [super dealloc];
+}
+
+- (NSImage *)image
+{
+    return image;
+}
+
+- (NSString *)MIMEType
+{
+    return [image MIMEType];
+}
+
+- (NSData *)TIFFRepresentation
+{
+    return [image TIFFRepresentation];
+}
+
+- (int)frameCount
+{
+    return [image frameCount];
+}
+
+- (void)setOriginalData:(NSData *)data
+{
+    NSData *oldData = image->originalData;
+    image->originalData = [data retain];
+    [oldData release];
+}
+
++ (void)stopAnimationsInView:(NSView *)aView
+{
+    [WebInternalImage stopAnimationsInView:aView];
+}
+
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
+{
+    return [image incrementalLoadWithBytes:bytes length:length complete:isComplete];
+}
+
+- (NSSize)size
+{
+    return [image size];
+}
+
+- (void)resize:(NSSize)s
+{
+    [image resize:s];
+}
+
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr
+{
+    [image drawImageInRect:ir fromRect:fr];
+}
+
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)compsiteOperator context:(CGContextRef)context
+{
+    [image drawImageInRect:ir fromRect:fr compositeOperator:compsiteOperator context:context];
+}
+
+- (void)stopAnimation
+{
+    [image stopAnimation];
+}
+
+- (void)tileInRect:(NSRect)r fromPoint:(NSPoint)p context:(CGContextRef)context
+{
+    [image tileInRect:r fromPoint:p context:context];
+}
+
+- (BOOL)isNull
+{
+    return image == nil || [image isNull];
+}
+
+- (id <WebCoreImageRenderer>)retainOrCopyIfNeeded
+{
+    WebInternalImage *newImage = [image retainOrCopyIfNeeded];
+    if (newImage == image) {
+        [image release];
+        [self retain];
+        return self;
+    }
+    WebImageRenderer *newRenderer = [[WebImageRenderer alloc] init];
+    newRenderer->image = newImage;
+    return newRenderer;
+}
+
+- (void)increaseUseCount
+{
+    [image increaseUseCount];
+}
+
+- (void)decreaseUseCount
+{
+    [image decreaseUseCount];
+}
+
+- (void)flushRasterCache
+{
+    [image flushRasterCache];
+}
+
+- (CGImageRef)imageRef
+{
+    return [image imageRef];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    WebImageRenderer *copy = [[WebImageRenderer alloc] init];
+    copy->image = [image copy];
+    return copy;
+}
+
+@end
 
 //------------------------------------------------------------------------------------
 

@@ -1,3 +1,47 @@
+2004-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3470715> Pattern cache can get huge with use of css background-image in Safari
+
+        * WebCoreSupport.subproj/WebImageRenderer.h: Change WebImageRenderer to be a subclass of NSObject
+        rather than NSImage and contain a pointer to a WebInternalImage.
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebInternalImage releasePatternColor]): Added. Releases patternColor.
+        (-[WebImageRenderer initWithMIMEType:]): Added. Makes WebInternalImage and then self.
+        (-[WebImageRenderer initWithData:MIMEType:]): Ditto.
+        (-[WebImageRenderer initWithContentsOfFile:]): Ditto.
+        (-[WebImageRenderer dealloc]): Added. Calls releasePatternColor and then releases WebInternalImage.
+        (-[WebImageRenderer image]): Added. Returns pointer to image.
+        (-[WebImageRenderer MIMEType]): Added. Calls through to image.
+        (-[WebImageRenderer TIFFRepresentation]): Ditto.
+        (-[WebImageRenderer frameCount]): Ditto.
+        (-[WebImageRenderer setOriginalData:]): Added. Sets image data pointer.
+        (+[WebImageRenderer stopAnimationsInView:]): Added. Calls through to image.
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]): Ditto.
+        (-[WebImageRenderer size]): Ditto.
+        (-[WebImageRenderer resize:]): Ditto.
+        (-[WebImageRenderer drawImageInRect:fromRect:]): Ditto.
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]): Ditto.
+        (-[WebImageRenderer stopAnimation]): Ditto.
+        (-[WebImageRenderer tileInRect:fromPoint:context:]): Ditto.
+        (-[WebImageRenderer isNull]): Ditto.
+        (-[WebImageRenderer retainOrCopyIfNeeded]): Ditto.
+        (-[WebImageRenderer increaseUseCount]): Ditto.
+        (-[WebImageRenderer decreaseUseCount]): Ditto.
+        (-[WebImageRenderer flushRasterCache]): Ditto.
+        (-[WebImageRenderer imageRef]): Ditto.
+        (-[WebImageRenderer copyWithZone:]): Ditto.
+
+        * Misc.subproj/WebNSViewExtras.m: (-[NSView _web_dragImage:rect:event:pasteboard:source:offset:]):
+        Update for slight changes to WebImageRenderer API.
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithMIMEType:]): Ditto.
+        (-[WebImageRendererFactory imageRendererWithData:MIMEType:]): Ditto.
+        (-[WebImageRendererFactory imageRendererWithSize:]): Ditto.
+        (-[WebImageRendererFactory imageRendererWithName:]): Ditto.
+        * WebView.subproj/WebImageView.m: (-[WebImageView image]): Ditto.
+
 2004-10-20  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: <rdar://problem/3846943> REGRESSION: JNLP files are rendered instead of downloaded

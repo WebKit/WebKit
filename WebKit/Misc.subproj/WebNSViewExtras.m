@@ -190,11 +190,7 @@
     NSPoint origin;
     NSImage *image;
     
-#ifdef USE_CGIMAGEREF
     image = [wir image];
-#else
-    image = wir;
-#endif
     if ([image size].height * [image size].width <= WebMaxOriginalImageArea) {
         NSSize originalSize = rect.size;
         origin = rect.origin;

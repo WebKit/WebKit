@@ -48,24 +48,26 @@
 
 - (id <WebCoreImageRenderer>)imageRendererWithMIMEType:(NSString *)MIMEType
 {
-    NSImage *imageRenderer = [[WebImageRenderer alloc] initWithMIMEType:MIMEType];
+    WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithMIMEType:MIMEType];
 
 #ifndef USE_CGIMAGEREF
+    NSImage *image = [imageRenderer image];
+
     if (![MIMEType isEqual:@"application/pdf"]) {
         NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
-        [imageRenderer addRepresentation:rep];
+        [image addRepresentation:rep];
         [rep autorelease];
     }
 
-    [imageRenderer setFlipped:YES];
+    [image setFlipped:YES];
     
     // Turn the default caching mode back on when the image has completed load.
     // Caching intermediate progressive representations causes problems for
     // progressive loads.  We also rely on the NSBitmapImageRep surviving during
     // incremental loads.  See 3165631 and 3262592.
-    [imageRenderer setCacheMode: NSImageCacheNever];
+    [image setCacheMode: NSImageCacheNever];
 
-    [imageRenderer setScalesWhenResized:NO];
+    [image setScalesWhenResized:NO];
 #endif
         
     return [imageRenderer autorelease];
@@ -81,22 +83,24 @@
     WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData:data MIMEType:MIMEType];
 
 #ifndef USE_CGIMAGEREF
-    NSArray *reps = [imageRenderer representations];
+    NSImage *image = [imageRenderer image];
+
+    NSArray *reps = [image representations];
     if ([reps count] == 0){
         [imageRenderer release];
         return nil;
     }
     
     // Force the image to use the pixel size and ignore the dpi.
-    [imageRenderer setScalesWhenResized:NO];
+    [image setScalesWhenResized:NO];
     if ([reps count] > 0){
         NSImageRep *rep = [reps objectAtIndex:0];
         [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
         if ([imageRenderer frameCount] > 1)
-            imageRenderer->originalData = [data retain];
+            [imageRenderer setOriginalData:data];
     }
     
-    [imageRenderer setFlipped:YES];
+    [image setFlipped:YES];
 #endif
 
     return [imageRenderer autorelease];
@@ -119,7 +123,7 @@
 {
     WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithSize:s] autorelease];
 #ifndef USE_CGIMAGEREF
-    [imageRenderer setScalesWhenResized:NO];
+    [[imageRenderer image] setScalesWhenResized:NO];
 #endif
     return imageRenderer;
 }
@@ -128,8 +132,8 @@
 {
     WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithContentsOfFile:name] autorelease];
 #ifndef USE_CGIMAGEREF
-    [imageRenderer setScalesWhenResized:NO];
-    [imageRenderer setFlipped:YES];
+    [[imageRenderer image] setScalesWhenResized:NO];
+    [[imageRenderer image] setFlipped:YES];
 #endif
     return imageRenderer;
 }
