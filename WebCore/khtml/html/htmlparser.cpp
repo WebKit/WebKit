@@ -1473,12 +1473,15 @@ void KHTMLParser::popBlock( int _id )
             Elem = 0;
 
             // This element was the root of some malformed content just inside an implicit or
-            // explicit <tbody>.
+            // explicit <tbody> or <tr>.
             // If we end up needing to reopen residual style tags, the root of the reopened chain
-            // must also know that it is the root of malformed content inside a <tbody>.
-            if (strayTable && !inStrayTableContent && residualStyleStack)
-                malformedTableParent = current && current->parentNode() ? 
-		  current->parentNode()->parentNode() : 0;
+            // must also know that it is the root of malformed content inside a <tbody>/<tr>.
+            if (strayTable && !inStrayTableContent && residualStyleStack) {
+                NodeImpl* curr = current;
+                while (curr && curr->id() != ID_TABLE)
+                    curr = curr->parentNode();
+                malformedTableParent = curr ? curr->parentNode() : 0;
+            }
         }
         else
         {

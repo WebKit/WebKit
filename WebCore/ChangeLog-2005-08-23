@@ -1,3 +1,13 @@
+2003-11-17  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3480108, crash because of the wrong malformedTableParent when stray content is placed inside
+	a <tr>.
+	
+        Reviewed by john
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::popBlock):
+
 2003-11-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
