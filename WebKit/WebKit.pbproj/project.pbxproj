@@ -354,6 +354,8 @@
 				930D02BE06275F710076701E,
 				84AE9060062DE6A80075BBF9,
 				BE4FBECC0653DF47005EDE15,
+				51863EDA065417DA00E9E8DD,
+				51863EFD065419EB00E9E8DD,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1419,6 +1421,40 @@
 			settings = {
 			};
 		};
+		51863ED9065417DA00E9E8DD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebScriptObject.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51863EDA065417DA00E9E8DD = {
+			fileRef = 51863ED9065417DA00E9E8DD;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		51863EFC065419EB00E9E8DD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebJavaPlugIn.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51863EFD065419EB00E9E8DD = {
+			fileRef = 51863EFC065419EB00E9E8DD;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
 		51A8B52E04282B5900CA2D3A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1642,7 +1678,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Private,
+					Public,
 				);
 			};
 		};
@@ -1651,7 +1687,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Private,
+					Public,
 				);
 			};
 		};
@@ -1666,7 +1702,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Private,
+					Public,
 				);
 			};
 		};
@@ -2357,6 +2393,7 @@
 		};
 		848DFF410365F6FB00CA2ACA = {
 			children = (
+				51863ED9065417DA00E9E8DD,
 				515B878E05F5348600EABBF9,
 				51C16E4006138EB400A1657B,
 				F5F717220288493C018635CA,
@@ -2392,6 +2429,7 @@
 				83E4AF4B036659440000E506,
 				83E4AF4C036659440000E506,
 				848DFF860365FE6A00CA2ACA,
+				51863EFC065419EB00E9E8DD,
 			);
 			isa = PBXGroup;
 			name = "WebKit Plug-ins";

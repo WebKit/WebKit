@@ -12,6 +12,16 @@
 
 #import <Foundation/NSPrivateDecls.h>
 
+NSString *WebPlugInBaseURLKey = @"WebPlugInBaseURLKey";
+NSString *WebPlugInAttributesKey = @"WebPlugInAttributesKey";
+NSString *WebPlugInContainerKey = @"WebPlugInContainerKey";
+
+/*!
+	@constant WebPlugInContainingElementKey The DOMElement that was used to specify
+	the plug-in.  May be nil.
+*/
+extern NSString *WebPlugInContainingElementKey;
+
 @implementation WebPluginPackage
 
 - initWithPath:(NSString *)pluginPath

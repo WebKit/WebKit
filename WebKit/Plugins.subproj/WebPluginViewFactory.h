@@ -1,63 +1,56 @@
 /*
-        WebPluginViewFactory.h
-        Copyright 2002, Apple, Inc. All rights reserved.
+    WebPluginViewFactory.h
+    Copyright 2004, Apple, Inc. All rights reserved.
+    
+    Public header file.
 */
 
 #import <Cocoa/Cocoa.h>
 
-@protocol WebPlugin;
-
-
 /*!
-    @constant WebPluginBaseURLKey REQUIRED. The base URL of the document containing
-    the plugin's view.
+    @constant WebPlugInBaseURLKey REQUIRED. The base URL of the document containing
+    the plug-in's view.
 */
-#define WebPluginBaseURLKey @"WebPluginBaseURL"
+extern NSString *WebPlugInBaseURLKey;
 
 /*!
-    @constant WebPluginAttributesKey REQUIRED. The dictionary containing the names
-    and values of all attributes of the HTML element associated with the plugin AND
-    the names and values of all parameters to be passed to the plugin (e.g. PARAM
+    @constant WebPlugInAttributesKey REQUIRED. The dictionary containing the names
+    and values of all attributes of the HTML element associated with the plug-in AND
+    the names and values of all parameters to be passed to the plug-in (e.g. PARAM
     elements within an APPLET element). In the case of a conflict between names,
     the attributes of an element take precedence over any PARAMs.  All of the keys
     and values in this NSDictionary must be NSStrings.
 */
-#define WebPluginAttributesKey @"WebPluginAttributes"
+extern NSString *WebPlugInAttributesKey;
 
 /*!
-    @constant WebPluginContainer OPTIONAL. An object that conforms to the
-    WebPluginContainer protocol (id<WebPluginContainer> *). This object is used for
-    callbacks from the plugin to the app. if this argument is nil, no callbacks will
+    @constant WebPlugInContainer OPTIONAL. An object that conforms to the
+    WebPlugInContainer informal protocol. This object is used for
+    callbacks from the plug-in to the app. if this argument is nil, no callbacks will
     occur.
 */
-#define WebPluginContainerKey @"WebPluginContainer"
+extern NSString *WebPlugInContainerKey;
 
 /*!
-    @constant WebPluginDefaultView OPTIONAL. An NSView object that will be used as a
-    visual placeholder until the plugin begins drawing.  The view will be removed by
-    the plugin immediately before the plugin begins drawing into the view.
-    If this argument is nil, the plugin's default view will be used.
+	@constant WebPlugInContainingElementKey The DOMElement that was used to specify
+	the plug-in.  May be nil.
 */
-#define WebPluginDefaultViewKey @"WebPluginDefaultView"
+extern NSString *WebPlugInContainingElementKey;
 
 /*!
-    @protocol WebPluginViewFactory
-    @discussion Protocol is used to create a Cocoa view that is used as a canvas
-    by a web plugin, to display a Java Applet or QuickTime movie, for example.
-    The view returned will be a descendant of NSView which conforms to the WebPlugin
-    protocol.  Because it is a descendant of NSView, a WebPluginView can be placed
-    inside other Cocoa views or windows easily.  The application can control the web
-    plugin via the WebPlugin protocol.
+    @protocol WebPlugInViewFactory
+    @discussion WebPlugInViewFactory are used to create the NSView for a plug-in.
+	The principal class of the plug-in bundle must implement this protocol.
 */
 
-@protocol WebPluginViewFactory <NSObject>
+@protocol WebPlugInViewFactory <NSObject>
 
 /*!
-    @method pluginViewWithArguments: 
-    @abstract Returns an NSView object that conforms to the WebPlugin protocol.
+    @method plugInViewWithArguments: 
     @param arguments The arguments dictionary with the mentioned keys and objects.
+    @result Returns an NSView object that conforms to the WebPlugIn informal protocol.
 */
-+ (NSView<WebPlugin> *)pluginViewWithArguments:(NSDictionary *)arguments;
++ (NSView *)plugInViewWithArguments:(NSDictionary *)arguments;
 
 @end
 

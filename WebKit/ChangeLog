@@ -1,3 +1,40 @@
+2004-05-13  Richard Williamson   <rjw@apple.com>
+
+	Changed imports of all DOM headers.  DOM headers
+	should be imported using the normal #import <WebCore/foo.h>,
+	they import is modified when copied to WebKit.
+
+	Other approved API changes.  Currently unimplemented.
+
+        Reviewed by Chris.
+
+        * ChangeLog:
+        * DOM.subproj/DOM.h:
+        * DOM.subproj/DOMCSS.h:
+        * DOM.subproj/DOMCore.h:
+        * DOM.subproj/DOMEvents.h:
+        * DOM.subproj/DOMExtensions.h:
+        * DOM.subproj/DOMHTML.h:
+        * DOM.subproj/DOMRange.h:
+        * DOM.subproj/DOMStylesheets.h:
+        * DOM.subproj/DOMTraversal.h:
+        * DOM.subproj/DOMViews.h:
+        * Plugins.subproj/WebPlugin.h:
+        * Plugins.subproj/WebPluginContainer.h:
+        * Plugins.subproj/WebPluginPackage.m:
+        * Plugins.subproj/WebPluginViewFactory.h:
+        * Plugins.subproj/WebScriptObject.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebBridge pluginViewWithPackage:attributes:baseURL:]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebFrameLoadDelegate.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView windowScriptObject]):
+        * copy-webcore-files-to-webkit:
+
 2004-05-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Kevin

@@ -261,6 +261,7 @@
 				65AB004B06261CBA0076DE63,
 				65C02FBC0637462A003E7EE6,
 				650B68DB0639033F009D42DE,
+				51863F70065420E800E9E8DD,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -335,6 +336,7 @@
 				5199B1BF061B65BC0070C006,
 				65AB004A06261CBA0076DE63,
 				650B68DA0639033F009D42DE,
+				51863FC506542D3100E9E8DD,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -801,6 +803,8 @@
 		};
 		51856D950562EE9C008B9D83 = {
 			children = (
+				51863F6F065420E800E9E8DD,
+				51863FC406542D3100E9E8DD,
 				5199B265061BB1300070C006,
 				5199B1BD061B65BC0070C006,
 				5199B1BE061B65BC0070C006,
@@ -861,6 +865,39 @@
 		};
 		51856D990562F158008B9D83 = {
 			fileRef = 51856D980562F158008B9D83;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51863F6F065420E800E9E8DD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WebScriptObject.h;
+			path = bindings/objc/WebScriptObject.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51863F70065420E800E9E8DD = {
+			fileRef = 51863F6F065420E800E9E8DD;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		51863FC406542D3100E9E8DD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			name = WebScriptObject.mm;
+			path = bindings/objc/WebScriptObject.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51863FC506542D3100E9E8DD = {
+			fileRef = 51863FC406542D3100E9E8DD;
 			isa = PBXBuildFile;
 			settings = {
 			};

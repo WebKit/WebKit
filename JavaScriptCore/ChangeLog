@@ -1,3 +1,22 @@
+2004-05-13  Richard Williamson   <rjw@apple.com>
+
+	Approved API changes.  Currently unimplemented.
+
+        Reviewed by Chris.
+
+        * ChangeLog:
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/objc/WebScriptObject.h: Added.
+        * bindings/objc/WebScriptObject.mm: Added.
+        (+[WebScriptObject throwException:]):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject stringRepresentation]):
+        (+[WebUndefined undefined]):
+        (-[WebUndefined initWithCoder:]):
+        (-[WebUndefined encodeWithCoder:]):
+        (-[WebUndefined copyWithZone:]):
+
 2004-05-07  Vicki Murley  <vicki@apple.com>
 
         Reviewed by darin.

@@ -1583,6 +1583,13 @@ NS_ENDHANDLER
     return [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
 }
 
+- (WebScriptObject *)windowScriptObject
+{
+    NSLog (@"%s:%d:  not yet implemented", __PRETTY_FUNCTION__, __LINE__);
+    return nil;
+}
+
+
 // Get the appropriate user-agent string for a particular URL.
 // Since we no longer automatically spoof, this no longer requires looking at the URL.
 - (NSString *)userAgentForURL:(NSURL *)URL

@@ -80,6 +80,9 @@ _WebViewDidChangeNotification
 _WebViewDidEndEditingNotification
 _WebViewDidChangeTypingStyleNotification
 _WebViewDidChangeSelectionNotification
+_WebPlugInBaseURLKey
+_WebPlugInAttributesKey
+_WebPlugInContainerKey
 
 ##
 ## Carbon Support

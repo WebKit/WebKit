@@ -23,6 +23,7 @@ my %WebCoreFiles = (
 my %JavaScriptCoreFiles = (
     'bindings/npruntime.h' => 'Plugins.subproj/npruntime.h',
     'bindings/npsap.h' => 'Plugins.subproj/npsap.h',
+    'bindings/objc/WebScriptObject.h' => 'Plugins.subproj/WebScriptObject.h',
 );
 
 my $JavaScriptCorePath = '';
@@ -102,7 +103,10 @@ sub CopyFilesIfNeeded {
 		if (! -e $dest || system("cmp $source $dest > /dev/null 2>&1")) {
 			Say("$ProgramName: copying files...") if $blab == 0;
 			$blab = 1;
-			ExecuteCommand("cp -f $source $dest");
+			#ExecuteCommand("cp -f $source $dest");
+			ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
+			ExecuteCommand("sed -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $dest-X > $dest");
+			ExecuteCommand("rm $dest-X");
 		}
 	}
 
@@ -118,7 +122,10 @@ sub CopyFilesIfNeeded {
 		if (! -e $dest || system("cmp $source $dest > /dev/null 2>&1")) {
 			Say("$ProgramName: copying files...") if $blab == 0;
 			$blab = 1;
-			ExecuteCommand("cp -f $source $dest");
+			#ExecuteCommand("cp -f $source $dest");
+			ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
+			ExecuteCommand("sed -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $dest-X > $dest");
+			ExecuteCommand("rm $dest-X");
 		}
 	}
 }

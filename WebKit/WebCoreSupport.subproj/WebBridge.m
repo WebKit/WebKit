@@ -444,17 +444,18 @@
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
     if (postData) {
-	[newRequest setHTTPMethod:@"POST"];
-	[newRequest setHTTPBody:postData];
+        [newRequest setHTTPMethod:@"POST"];
+        [newRequest setHTTPBody:postData];
     }
 
     NSEnumerator *e = [requestHeaders keyEnumerator];
     NSString *key;
     while ((key = (NSString *)[e nextObject]) != nil) {
-	[newRequest addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
+        [newRequest addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
     }
-
-    [newRequest setCachePolicy:[[[self dataSource] request] cachePolicy]];
+    
+    // Never use cached data for these requests (xmlhttprequests).
+    [newRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     [newRequest setHTTPReferrer:[self referrer]];
     
     WebView *webView = [_frame webView];
@@ -466,19 +467,19 @@
     NSData *result = [NSURLConnection sendSynchronousRequest:newRequest returningResponse:&response error:&error];
 
     if (error == nil) {
-	*finalURL = [response URL];
-	if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-	    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
-	    *responseHeaderDict = [httpResponse allHeaderFields];
-	    *statusCode = [httpResponse statusCode];
-	} else {
-	    *responseHeaderDict = [NSDictionary dictionary];
-	    *statusCode = 200;
-	}
+        *finalURL = [response URL];
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
+                *responseHeaderDict = [httpResponse allHeaderFields];
+                *statusCode = [httpResponse statusCode];
+        } else {
+            *responseHeaderDict = [NSDictionary dictionary];
+            *statusCode = 200;
+        }
     } else {
-	*finalURL = URL;
-	*responseHeaderDict = [NSDictionary dictionary];
-	*statusCode = 404;
+        *finalURL = URL;
+        *responseHeaderDict = [NSDictionary dictionary];
+        *statusCode = 404;
     }
 
     // notify the delegates
@@ -719,16 +720,16 @@
     WebPluginController *pluginController = [docView _pluginController];
     
     NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-        baseURL, WebPluginBaseURLKey,
-        attributes, WebPluginAttributesKey,
-        pluginController, WebPluginContainerKey,
+        baseURL, WebPlugInBaseURLKey,
+        attributes, WebPlugInAttributesKey,
+        pluginController, WebPlugInContainerKey,
         nil];
 
     LOG(Plugins, "arguments:\n%@", arguments);
 
     [pluginPackage load];
     
-    return [[pluginPackage viewFactory] pluginViewWithArguments:arguments];
+    return [[pluginPackage viewFactory] plugInViewWithArguments:arguments];
 }
 
 - (NSView *)viewForPluginWithURL:(NSURL *)URL

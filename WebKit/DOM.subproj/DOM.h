@@ -23,24 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-//=========================================================================
-//=========================================================================
-//=========================================================================
-
-// Important Note:
-// Though this file appears as an exported header from WebKit, the
-// version you should edit is in WebCore. The WebKit version is copied
-// to WebKit during the build process.
-
-//=========================================================================
-//=========================================================================
-//=========================================================================
-
-#import "DOMCore.h"
-#import "DOMViews.h"
-#import "DOMEvents.h"
-#import "DOMStylesheets.h"
-#import "DOMCSS.h"
-#import "DOMTraversal.h"
-#import "DOMRange.h"
-#import "DOMHTML.h"
+#import <WebKit/DOMCore.h>
+#import <WebKit/DOMViews.h>
+#import <WebKit/DOMEvents.h>
+#import <WebKit/DOMStylesheets.h>
+#import <WebKit/DOMCSS.h>
+#import <WebKit/DOMTraversal.h>
+#import <WebKit/DOMRange.h>
+#import <WebKit/DOMHTML.h>

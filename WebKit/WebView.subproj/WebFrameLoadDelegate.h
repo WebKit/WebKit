@@ -9,6 +9,7 @@
 
 @class NSError;
 @class WebFrame;
+@class WebScriptObject;
 @class WebView;
 
 /*!
@@ -144,6 +145,15 @@
     and the objects that it contains.
 */
 - (void)webView:(WebView *)sender willCloseFrame:(WebFrame *)frame;
+
+/*!
+    @method webView:windowScriptObjectAvailable:
+    @abstract Notifies the delegate that the scripting object for a page is available.  This is called
+    before the page is loaded.  It may be useful to allow delegates to bind native objects to the window.
+    @param webView The webView sending the message.
+    @param windowScriptObject The WebScriptObject for the window in the scripting environment.
+*/
+- (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject;
 
 @end
 

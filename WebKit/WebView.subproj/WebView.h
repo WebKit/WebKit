@@ -12,15 +12,16 @@
 @class DOMElement;
 @class DOMNode;
 @class DOMRange;
+
 @class WebArchive;
 @class WebBackForwardList;
-@class WebHistoryItem;
-@class WebViewPrivate;
 @class WebDataSource;
 @class WebFrame;
-@class WebPreferences;
 @class WebFrameView;
-
+@class WebHistoryItem;
+@class WebPreferences;
+@class WebScriptObject;
+@class WebViewPrivate;
 
 // These strings are keys into the element dictionary provided in
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebwebViewPolicyDelegate's clickPolicyForElement.
@@ -351,6 +352,14 @@ extern NSString *WebViewProgressFinishedNotification;
     @result The result of the script, converted to a string, or nil for failure.
 */
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script;
+
+/*!
+    @method windowScriptObject
+    @discussion windowScriptObject return a WebScriptObject that represents the
+    window object from the script environment.
+    @result Returns the window object from the script environment.
+*/
+- (WebScriptObject *)windowScriptObject;
 
 /*!
     @method setPreferences:

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "DOM.h"
+#import <WebCore/DOM.h>
 
 namespace DOM {
     class CSSStyleDeclarationImpl;

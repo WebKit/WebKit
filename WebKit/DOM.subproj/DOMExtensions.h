@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "DOMCSS.h"
-#import "DOMHTML.h"
+#import <WebKit/DOMCSS.h>
+#import <WebKit/DOMHTML.h>
 
 @class DOMCSSStyleDeclaration;
 

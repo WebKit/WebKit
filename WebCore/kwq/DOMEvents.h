@@ -23,20 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-//=========================================================================
-//=========================================================================
-//=========================================================================
-
-// Important Note:
-// Though this file appears as an exported header from WebKit, the
-// version you should edit is in WebCore. The WebKit version is copied
-// to WebKit during the build process.
-
-//=========================================================================
-//=========================================================================
-//=========================================================================
-
-#import "DOMViews.h"
+#import <WebCore/DOMViews.h>
 
 @class DOMEvent;
 @class DOMEventListener;
