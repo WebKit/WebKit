@@ -1,3 +1,15 @@
+2005-02-18  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: <rdar://problem/3951196> REGRESSION (Mail): too many levels of reply quotes after certain steps
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply):
+	- If we find a new start node, update topBlockquote so we don't use too many block quotes for the contents following the new line.
+	- Build up the list of ancestors after we've determined the actual topBlockquote.
+	- Don't insert an extra new line if there is a new start node.
+
 2005-02-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3978461> smart paste is broken
