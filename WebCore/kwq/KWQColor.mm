@@ -30,6 +30,7 @@
 
 static NSDictionary *namedColors;
 
+#define ROUND_TO_INT(f) ((int)rint((f)))
 
 QRgb qRgb(int r, int g, int b)
 {
@@ -179,9 +180,10 @@ static bool decodeColorFromHexColorString(const QString &string, int *r, int *g,
             *b = (hex2int(p[4]) << 4) + hex2int(p[5]);
             decoded = TRUE;    
         } else if (len == 3) {
-            *r = hex2int(p[0]);
-            *g = hex2int(p[1]);
-            *b = hex2int(p[2]);
+            // Convert 0 to 15, to 0 to 255.
+            *r = ROUND_TO_INT((1.0f/15.0f) * hex2int(p[0]) * 255.0f);
+            *g = ROUND_TO_INT((1.0f/15.0f) * hex2int(p[1]) * 255.0f);
+            *b = ROUND_TO_INT((1.0f/15.0f) * hex2int(p[2]) * 255.0f);
             decoded = TRUE;    
         }
     }
