@@ -2671,6 +2671,195 @@ void JoinTextNodesCommand::doUnapply()
 }
 
 //------------------------------------------------------------------------------------------
+// MoveSelectionCommand
+
+MoveSelectionCommand::MoveSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, Position &position, bool smartMove) 
+    : CompositeEditCommand(document), m_fragment(fragment), m_position(position), m_smartMove(smartMove)
+{
+    ASSERT(m_fragment);
+    m_fragment->ref();
+}
+
+MoveSelectionCommand::~MoveSelectionCommand()
+{
+    ASSERT(m_fragment);
+    m_fragment->deref();
+}
+
+void MoveSelectionCommand::doApply()
+{
+    Selection selection = endingSelection();
+    ASSERT(selection.isRange());
+
+    // Update the position otherwise it may become invalid after the selection is deleted.
+    NodeImpl *positionNode = m_position.node();
+    long positionOffset = m_position.offset();
+    Position selectionEnd = selection.end();
+    long selectionEndOffset = selectionEnd.offset();    
+    if (selectionEnd.node() == positionNode && selectionEndOffset < positionOffset) {
+        positionOffset -= selectionEndOffset;
+        Position selectionStart = selection.start();
+        if (selectionStart.node() == positionNode) {
+            positionOffset += selectionStart.offset();
+        }
+    }
+    
+    deleteSelection(m_smartMove);
+
+    setEndingSelection(Position(positionNode, positionOffset));
+    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), m_fragment, true, m_smartMove));
+    applyCommandToComposite(cmd);
+}
+
+//------------------------------------------------------------------------------------------
+// RemoveCSSPropertyCommand
+
+RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(DocumentImpl *document, CSSStyleDeclarationImpl *decl, int property)
+    : EditCommand(document), m_decl(decl->makeMutable()), m_property(property), m_important(false)
+{
+    ASSERT(m_decl);
+    m_decl->ref();
+}
+
+RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand()
+{
+    ASSERT(m_decl);
+    m_decl->deref();
+}
+
+void RemoveCSSPropertyCommand::doApply()
+{
+    ASSERT(m_decl);
+
+    m_oldValue = m_decl->getPropertyValue(m_property);
+    ASSERT(!m_oldValue.isNull());
+
+    m_important = m_decl->getPropertyPriority(m_property);
+    m_decl->removeProperty(m_property);
+}
+
+void RemoveCSSPropertyCommand::doUnapply()
+{
+    ASSERT(m_decl);
+    ASSERT(!m_oldValue.isNull());
+
+    m_decl->setProperty(m_property, m_oldValue, m_important);
+}
+
+//------------------------------------------------------------------------------------------
+// RemoveNodeAttributeCommand
+
+RemoveNodeAttributeCommand::RemoveNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute)
+    : EditCommand(document), m_element(element), m_attribute(attribute)
+{
+    ASSERT(m_element);
+    m_element->ref();
+}
+
+RemoveNodeAttributeCommand::~RemoveNodeAttributeCommand()
+{
+    ASSERT(m_element);
+    m_element->deref();
+}
+
+void RemoveNodeAttributeCommand::doApply()
+{
+    ASSERT(m_element);
+
+    m_oldValue = m_element->getAttribute(m_attribute);
+    ASSERT(!m_oldValue.isNull());
+
+    int exceptionCode = 0;
+    m_element->removeAttribute(m_attribute, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void RemoveNodeAttributeCommand::doUnapply()
+{
+    ASSERT(m_element);
+    ASSERT(!m_oldValue.isNull());
+
+    int exceptionCode = 0;
+    m_element->setAttribute(m_attribute, m_oldValue.implementation(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// RemoveNodeCommand
+
+RemoveNodeCommand::RemoveNodeCommand(DocumentImpl *document, NodeImpl *removeChild)
+    : EditCommand(document), m_parent(0), m_removeChild(removeChild), m_refChild(0)
+{
+    ASSERT(m_removeChild);
+    m_removeChild->ref();
+
+    m_parent = m_removeChild->parentNode();
+    ASSERT(m_parent);
+    m_parent->ref();
+    
+    m_refChild = m_removeChild->nextSibling();
+    if (m_refChild)
+        m_refChild->ref();
+}
+
+RemoveNodeCommand::~RemoveNodeCommand()
+{
+    ASSERT(m_parent);
+    m_parent->deref();
+
+    ASSERT(m_removeChild);
+    m_removeChild->deref();
+
+    if (m_refChild)
+        m_refChild->deref();
+}
+
+void RemoveNodeCommand::doApply()
+{
+    ASSERT(m_parent);
+    ASSERT(m_removeChild);
+
+    int exceptionCode = 0;
+    m_parent->removeChild(m_removeChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void RemoveNodeCommand::doUnapply()
+{
+    ASSERT(m_parent);
+    ASSERT(m_removeChild);
+
+    int exceptionCode = 0;
+    m_parent->insertBefore(m_removeChild, m_refChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// RemoveNodePreservingChildrenCommand
+
+RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(DocumentImpl *document, NodeImpl *node)
+    : CompositeEditCommand(document), m_node(node)
+{
+    ASSERT(m_node);
+    m_node->ref();
+}
+
+RemoveNodePreservingChildrenCommand::~RemoveNodePreservingChildrenCommand()
+{
+    ASSERT(m_node);
+    m_node->deref();
+}
+
+void RemoveNodePreservingChildrenCommand::doApply()
+{
+    while (NodeImpl* curr = node()->firstChild()) {
+        removeNode(curr);
+        insertNodeBefore(curr, node());
+    }
+    removeNode(node());
+}
+
+//------------------------------------------------------------------------------------------
 // ReplaceSelectionCommand
 
 ReplacementFragment::ReplacementFragment(DocumentFragmentImpl *fragment)
@@ -3155,195 +3344,6 @@ void ReplaceSelectionCommand::completeHTMLReplacement(NodeImpl *firstNodeInserte
         // Place the cursor after what was inserted, and mark misspellings in the inserted content.
         setEndingSelection(end);
     }
-}
-
-//------------------------------------------------------------------------------------------
-// MoveSelectionCommand
-
-MoveSelectionCommand::MoveSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, Position &position, bool smartMove) 
-    : CompositeEditCommand(document), m_fragment(fragment), m_position(position), m_smartMove(smartMove)
-{
-    ASSERT(m_fragment);
-    m_fragment->ref();
-}
-
-MoveSelectionCommand::~MoveSelectionCommand()
-{
-    ASSERT(m_fragment);
-    m_fragment->deref();
-}
-
-void MoveSelectionCommand::doApply()
-{
-    Selection selection = endingSelection();
-    ASSERT(selection.isRange());
-
-    // Update the position otherwise it may become invalid after the selection is deleted.
-    NodeImpl *positionNode = m_position.node();
-    long positionOffset = m_position.offset();
-    Position selectionEnd = selection.end();
-    long selectionEndOffset = selectionEnd.offset();    
-    if (selectionEnd.node() == positionNode && selectionEndOffset < positionOffset) {
-        positionOffset -= selectionEndOffset;
-        Position selectionStart = selection.start();
-        if (selectionStart.node() == positionNode) {
-            positionOffset += selectionStart.offset();
-        }
-    }
-    
-    deleteSelection(m_smartMove);
-
-    setEndingSelection(Position(positionNode, positionOffset));
-    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), m_fragment, true, m_smartMove));
-    applyCommandToComposite(cmd);
-}
-
-//------------------------------------------------------------------------------------------
-// RemoveCSSPropertyCommand
-
-RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(DocumentImpl *document, CSSStyleDeclarationImpl *decl, int property)
-    : EditCommand(document), m_decl(decl->makeMutable()), m_property(property), m_important(false)
-{
-    ASSERT(m_decl);
-    m_decl->ref();
-}
-
-RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand()
-{
-    ASSERT(m_decl);
-    m_decl->deref();
-}
-
-void RemoveCSSPropertyCommand::doApply()
-{
-    ASSERT(m_decl);
-
-    m_oldValue = m_decl->getPropertyValue(m_property);
-    ASSERT(!m_oldValue.isNull());
-
-    m_important = m_decl->getPropertyPriority(m_property);
-    m_decl->removeProperty(m_property);
-}
-
-void RemoveCSSPropertyCommand::doUnapply()
-{
-    ASSERT(m_decl);
-    ASSERT(!m_oldValue.isNull());
-
-    m_decl->setProperty(m_property, m_oldValue, m_important);
-}
-
-//------------------------------------------------------------------------------------------
-// RemoveNodeAttributeCommand
-
-RemoveNodeAttributeCommand::RemoveNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute)
-    : EditCommand(document), m_element(element), m_attribute(attribute)
-{
-    ASSERT(m_element);
-    m_element->ref();
-}
-
-RemoveNodeAttributeCommand::~RemoveNodeAttributeCommand()
-{
-    ASSERT(m_element);
-    m_element->deref();
-}
-
-void RemoveNodeAttributeCommand::doApply()
-{
-    ASSERT(m_element);
-
-    m_oldValue = m_element->getAttribute(m_attribute);
-    ASSERT(!m_oldValue.isNull());
-
-    int exceptionCode = 0;
-    m_element->removeAttribute(m_attribute, exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-void RemoveNodeAttributeCommand::doUnapply()
-{
-    ASSERT(m_element);
-    ASSERT(!m_oldValue.isNull());
-
-    int exceptionCode = 0;
-    m_element->setAttribute(m_attribute, m_oldValue.implementation(), exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-//------------------------------------------------------------------------------------------
-// RemoveNodeCommand
-
-RemoveNodeCommand::RemoveNodeCommand(DocumentImpl *document, NodeImpl *removeChild)
-    : EditCommand(document), m_parent(0), m_removeChild(removeChild), m_refChild(0)
-{
-    ASSERT(m_removeChild);
-    m_removeChild->ref();
-
-    m_parent = m_removeChild->parentNode();
-    ASSERT(m_parent);
-    m_parent->ref();
-    
-    m_refChild = m_removeChild->nextSibling();
-    if (m_refChild)
-        m_refChild->ref();
-}
-
-RemoveNodeCommand::~RemoveNodeCommand()
-{
-    ASSERT(m_parent);
-    m_parent->deref();
-
-    ASSERT(m_removeChild);
-    m_removeChild->deref();
-
-    if (m_refChild)
-        m_refChild->deref();
-}
-
-void RemoveNodeCommand::doApply()
-{
-    ASSERT(m_parent);
-    ASSERT(m_removeChild);
-
-    int exceptionCode = 0;
-    m_parent->removeChild(m_removeChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-void RemoveNodeCommand::doUnapply()
-{
-    ASSERT(m_parent);
-    ASSERT(m_removeChild);
-
-    int exceptionCode = 0;
-    m_parent->insertBefore(m_removeChild, m_refChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-//------------------------------------------------------------------------------------------
-// RemoveNodePreservingChildrenCommand
-
-RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(DocumentImpl *document, NodeImpl *node)
-    : CompositeEditCommand(document), m_node(node)
-{
-    ASSERT(m_node);
-    m_node->ref();
-}
-
-RemoveNodePreservingChildrenCommand::~RemoveNodePreservingChildrenCommand()
-{
-    ASSERT(m_node);
-    m_node->deref();
-}
-
-void RemoveNodePreservingChildrenCommand::doApply()
-{
-    while (NodeImpl* curr = node()->firstChild()) {
-        removeNode(curr);
-        insertNodeBefore(curr, node());
-    }
-    removeNode(node());
 }
 
 //------------------------------------------------------------------------------------------

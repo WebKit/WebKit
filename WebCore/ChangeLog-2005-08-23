@@ -1,5 +1,16 @@
 2004-12-01  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Moving code only.
+
+        * khtml/editing/htmlediting.cpp: Move ReplaceSelectionCommand into alphabetical order with
+        regard to other editing commands. The class had a name change ages ago, and it was never
+        moved.
+        * khtml/editing/htmlediting.h: Ditto.
+
+2004-12-01  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
         
         Some improvements for paste, including some new code to annotate
