@@ -135,14 +135,16 @@ JavaClass *JavaClass::classForInstance (jobject instance)
     return aClass;
 }
 
-Method *JavaClass::methodNamed(const char *name) const {
+Method *JavaClass::methodNamed(const char *name) const 
+{
     CFStringRef methodName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
     Method *aMethod = (Method *)CFDictionaryGetValue(_methods, methodName);
     CFRelease (methodName);
     return aMethod;
 };
 
-Field *JavaClass::fieldNamed(const char *name) const {
+Field *JavaClass::fieldNamed(const char *name) const
+{
     CFStringRef fieldName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
     Field *aField = (Field *)CFDictionaryGetValue(_fields, fieldName);
     CFRelease (fieldName);

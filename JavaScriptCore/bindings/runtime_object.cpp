@@ -70,8 +70,8 @@ Value RuntimeObjectImp::get(ExecState *exec, const Identifier &propertyName) con
     
     Field *aField = instance->getClass()->fieldNamed(propertyName.ascii());
     if (aField){
-        instance->getValueOfField (aField); 
         printf ("%s: found field = %p, type = %s\n", __PRETTY_FUNCTION__, aField, aField->type());
+        return instance->getValueOfField (aField); 
     }
     
     return Undefined();

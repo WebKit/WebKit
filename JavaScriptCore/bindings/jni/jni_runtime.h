@@ -28,6 +28,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include <jni_utility.h>
+#include <jni_instance.h>
 #include <runtime.h>
 
 namespace KJS
@@ -164,14 +165,16 @@ private:
 class JavaField : public Field
 {
 public:
-    JavaField() : _name(0), _type(0) {};
+    JavaField() : _name(0), _type(0), _field(0) {};
     JavaField (JNIEnv *env, jobject aField);
     ~JavaField() {
         delete _name;
         delete _type;
+        delete _field;
     };
 
-    JavaField(const JavaField &other) : Field(), _name(other._name), _type(other._type) {};
+    JavaField(const JavaField &other) : 
+        Field(), _name(other._name), _type(other._type), _field(other._field) {};
 
     JavaField &operator=(const JavaField &other)
     {
@@ -180,20 +183,25 @@ public:
             
         delete _name;
         delete _type;
+        delete _field;
         
         _name = other._name;
         _type = other._type;
+        _field = other._field;
 
         return *this;
     }
     
-    virtual KJS::Value value() const { return KJS::Value(0); }
+    virtual KJS::Value valueFromInstance(const Instance *instance) const;
+    
     virtual const char *name() const { return _name->characters(); }
     virtual RuntimeType type() const { return _type->characters(); }
     
 private:
     JavaString *_name;
     JavaString *_type;
+    JNIType _primitiveType;
+    JavaInstance *_field;
 };
 
 

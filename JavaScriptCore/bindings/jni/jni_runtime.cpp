@@ -22,10 +22,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <value.h>
+#include <internal.h>
+
 #include <jni_utility.h>
 #include <jni_runtime.h>
  
+using namespace KJS;
 using namespace Bindings;
+
 
 JavaField::JavaField (JNIEnv *env, jobject aField)
 {
@@ -33,11 +38,52 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
     jobject fieldType = callJNIObjectMethod (aField, "getType", "()Ljava/lang/Class;");
     jstring fieldTypeName = (jstring)callJNIObjectMethod (fieldType, "toString", "()Ljava/lang/String;");
     _type = new JavaString(env, fieldTypeName);
+    _primitiveType = primitiveTypeFromClassName (_type->characters());
 
     // Get field name
     jstring fieldName = (jstring)callJNIObjectMethod (aField, "getName", "()Ljava/lang/String;");
     _name = new JavaString(env, fieldName);
+    
+    _field = new JavaInstance(aField);
 }
+
+KJS::Value JavaField::valueFromInstance(const Instance *i) const 
+{
+    const JavaInstance *instance = static_cast<const JavaInstance *>(i);
+    jobject jinstance = instance->javaInstance();
+    jobject fieldJInstance = _field->javaInstance();
+
+    switch (_primitiveType) {
+        case object_type: {
+            //jobject value = callJNIObjectMethod(_field->javaInstance(), "get", "(Ljava/lang/Object;)Ljava/lang/Object;", jinstace);
+            return KJS::Value(0);
+        }
+        break;
+            
+        case boolean_type: {
+            jboolean value = callJNIBooleanMethod(fieldJInstance, "getBoolean", "(Ljava/lang/Object;)B", jinstance);
+            return KJS::Boolean((bool)value);
+        }
+        break;
+            
+        case byte_type:
+        case char_type:
+        case short_type:
+        case int_type:
+        case long_type:
+        case float_type:
+        case double_type: {
+            jdouble value;
+            value = callJNIDoubleMethod(fieldJInstance, "getDouble", "(Ljava/lang/Object;)D", jinstance);
+            return Number((double)value);
+        }
+        break;
+        default:
+        break;
+    }
+    return Undefined();
+}
+
 
 JavaConstructor::JavaConstructor (JNIEnv *env, jobject aConstructor)
 {

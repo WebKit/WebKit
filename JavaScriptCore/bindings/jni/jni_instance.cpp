@@ -23,27 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include <jni_utility.h>
-#include <jni_runtime.h>
+#include <jni_class.h>
 #include <jni_instance.h>
+#include <jni_runtime.h>
 
 using namespace Bindings;
 
-JavaInstance::JavaInstance (jobject instance) {
+JavaInstance::JavaInstance (jobject instance) 
+{
     _instance = new JObjectWrapper (instance);
 };
 
-JavaInstance::~JavaInstance () {
+JavaInstance::~JavaInstance () 
+{
     _instance->deref();
 }
 
 
-JavaInstance::JavaInstance (const JavaInstance &other) : Instance() {
+JavaInstance::JavaInstance (const JavaInstance &other) : Instance() 
+{
     _instance = other._instance;
     _instance->ref();
 };
 
-KJS::Value JavaInstance::getValueOfField (const Field *aField) const
+Class *JavaInstance::getClass() const 
 {
-    return KJS::Value(0);
+    return JavaClass::classForInstance (_instance->_instance);
 }
-

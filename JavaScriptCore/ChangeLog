@@ -1,5 +1,63 @@
 2003-11-20  Richard Williamson   <rjw@apple.com>
 
+	More LiveConnect stuff.  Primitive Java fields are now
+	accessible from JavaScript!  Yay!
+
+        Reviewed by Maciej.
+
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::methodNamed):
+        (JavaClass::fieldNamed):
+        * bindings/jni/jni_class.h:
+        (Bindings::JavaClass::_commonDelete):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::JavaInstance):
+        (JavaInstance::~JavaInstance):
+        (JavaInstance::getClass):
+        * bindings/jni/jni_instance.h:
+        (Bindings::JavaInstance::javaInstance):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::JavaField):
+        (JavaField::valueFromInstance):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaField::JavaField):
+        (Bindings::JavaField::~JavaField):
+        (Bindings::JavaField::operator=):
+        * bindings/jni/jni_utility.cpp:
+        (callJNIMethod):
+        (callJNIMethodA):
+        (callJNIVoidMethod):
+        (callJNIObjectMethod):
+        (callJNIBooleanMethod):
+        (callJNIByteMethod):
+        (callJNICharMethod):
+        (callJNIShortMethod):
+        (callJNIIntMethod):
+        (callJNILongMethod):
+        (callJNIFloatMethod):
+        (callJNIDoubleMethod):
+        (callJNIVoidMethodA):
+        (callJNIObjectMethodA):
+        (callJNIByteMethodA):
+        (callJNICharMethodA):
+        (callJNIShortMethodA):
+        (callJNIIntMethodA):
+        (callJNILongMethodA):
+        (callJNIFloatMethodA):
+        (callJNIDoubleMethodA):
+        (releaseCharactersForJStringInEnv):
+        (primitiveTypeFromClassName):
+        (getJNIField):
+        * bindings/jni/jni_utility.h:
+        * bindings/runtime.cpp:
+        (Instance::createBindingForLanguageInstance):
+        (Instance::getValueOfField):
+        * bindings/runtime.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+
+2003-11-20  Richard Williamson   <rjw@apple.com>
+
 	More LiveConnect stuff.
 
         Reviewed by Chris.

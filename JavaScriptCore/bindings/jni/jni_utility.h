@@ -28,23 +28,27 @@
 #include <JavaVM/jni.h>
 
 typedef enum {
-    void_function,
-    object_function,
-    boolean_function,
-    byte_function,
-    char_function,
-    short_function,
-    int_function,
-    long_function,
-    float_function,
-    double_function
-} JNIFunctionType;
+    invalid_type = 0,
+    void_type,
+    object_type,
+    boolean_type,
+    byte_type,
+    char_type,
+    short_type,
+    int_type,
+    long_type,
+    float_type,
+    double_type
+} JNIType;
 
 const char *getCharactersFromJString (jstring aJString);
 void releaseCharactersForJString (jstring aJString, const char *s);
 
 const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString);
 void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s);
+
+JNIType primitiveTypeFromClassName(const char *name);
+jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature);
 
 jobject callJNIObjectMethod( jobject obj, const char *name, const char *sig, ... );
 void callJNIVoidMethod( jobject obj, const char *name, const char *sig, ... );

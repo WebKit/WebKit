@@ -29,12 +29,14 @@
 
 #include <JavaVM/jni.h>
 
-#include <jni_runtime.h>
-#include <jni_utility.h>
-#include <jni_class.h>
+#include <runtime.h>
+
 #include <jni_instance.h>
+#include <jni_utility.h>
 
 namespace Bindings {
+
+class JavaClass;
 
 class JObjectWrapper
 {
@@ -79,10 +81,8 @@ public:
         
     ~JavaInstance ();
     
-    virtual Class *getClass() const {
-        return JavaClass::classForInstance (_instance->_instance);
-    }
-
+    virtual Class *getClass() const;
+    
     JavaInstance (const JavaInstance &other);
 
     JavaInstance &operator=(const JavaInstance &other){
@@ -96,8 +96,8 @@ public:
         
         return *this;
     };
-
-    virtual KJS::Value getValueOfField (const Field *aField) const;
+    
+    jobject javaInstance() const { return _instance->_instance; }
     
 private:
     JObjectWrapper *_instance;

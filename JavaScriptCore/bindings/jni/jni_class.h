@@ -29,11 +29,13 @@
 
 #include <JavaVM/jni.h>
 
+#include <runtime.h>
 #include <jni_runtime.h>
 
 #include <runtime.h>
 
 namespace Bindings {
+
 
 class JavaClass : public Class
 {
@@ -57,7 +59,7 @@ public:
         free((void *)_name);
         CFRelease (_fields);
         CFRelease (_methods);
-        delete _constructors;
+        delete [] _constructors;
     }
     
     ~JavaClass () {

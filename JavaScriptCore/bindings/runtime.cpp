@@ -22,6 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <value.h>
+
 #include <runtime.h>
 #include <jni_instance.h>
 
@@ -33,4 +35,8 @@ Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, 
     if (language == Instance::JavaLanguage)
         return new Bindings::JavaInstance ((jobject)instance);
     return 0;
+}
+
+Value Instance::getValueOfField (const Field *aField) const {  
+    return aField->valueFromInstance (this);
 }
