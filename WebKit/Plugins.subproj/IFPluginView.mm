@@ -321,7 +321,7 @@ static char *newCString(NSString *string)
     }
     
     streams = [[NSMutableArray alloc] init];
-    notificationData = [NSMutableDictionary dictionaryWithCapacity:1];
+    notificationData = [[NSMutableDictionary dictionaryWithCapacity:1] retain];
     
     // Initialize globals
     canRestart = YES;
@@ -630,7 +630,7 @@ static char *newCString(NSString *string)
         return NPERR_INVALID_URL;
         
     if(target)
-        theTarget = [NSString stringWithCString:url];
+        theTarget = [NSString stringWithCString:target];
     
     return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget withNotifyData:notifyData andHandleAttributes:nil];
 }
@@ -645,9 +645,9 @@ static char *newCString(NSString *string)
         return NPERR_INVALID_URL;
         
     if(target)
-        theTarget = [NSString stringWithCString:url];
+        theTarget = [NSString stringWithCString:target];
     
-    return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget withNotifyData:nil andHandleAttributes:nil];
+    return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget withNotifyData:NULL andHandleAttributes:nil];
 }
 
 -(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
@@ -663,7 +663,7 @@ static char *newCString(NSString *string)
         return NPERR_INVALID_URL;
         
     if(target)
-        theTarget = [NSString stringWithCString:url];
+        theTarget = [NSString stringWithCString:target];
  
     if(file){
         if([[NSString stringWithCString:buf] _IF_looksLikeAbsoluteURL]){
@@ -695,7 +695,7 @@ static char *newCString(NSString *string)
         return NPERR_INVALID_URL;
         
     if(target)
-        theTarget = [NSString stringWithCString:url];
+        theTarget = [NSString stringWithCString:target];
         
     return [self postURLNotify:url target:target len:len buf:buf file:file notifyData:NULL];
 }

@@ -1,3 +1,15 @@
+2002-05-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed crasher caused by not retaining.
+	Fixed targeting bug.
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:mode:]):
+	(-[IFPluginView getURLNotify:target:notifyData:]):
+	(-[IFPluginView getURL:target:]):
+	(-[IFPluginView postURLNotify:target:len:buf:file:notifyData:]):
+	(-[IFPluginView postURL:target:len:buf:file:]):
+
 2002-05-22  Richard J. Williamson  <rjw@apple.com>
 
     Changed semantics of isLoading to only return YES if
