@@ -1,3 +1,12 @@
+2002-10-17  Darin Adler  <darin@apple.com>
+
+	- fixed 3078245 -- REGRESSION: lightgrey displays as black, used
+	to display as white, should display light gray
+
+        * kwq/KWQColor.mm: (getNamedColors): For every color with the name
+	"gray" in it, also include the version spelled "grey" as other
+	browsers seem to.
+
 2002-10-17  David Hyatt  <hyatt@apple.com>
 
 	Make navigator.product dynamic based off user agent (i.e.,
