@@ -400,7 +400,10 @@ static char *newCString(NSString *string)
 {
     [self setUpWindowAndPort];
 
-    NPError npErr = NPP_SetWindow(instance, &window);
+#ifndef NDEBUG
+    NPError npErr =
+#endif
+    NPP_SetWindow(instance, &window);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08x\n", npErr, (int)nPort.port);
 
 #if 0
@@ -415,7 +418,6 @@ static char *newCString(NSString *string)
 
 -(void)start
 {
-    NPError npErr;
     NSNotificationCenter *notificationCenter;
     NSWindow *theWindow;
     IFPluginStream *stream;
@@ -425,7 +427,10 @@ static char *newCString(NSString *string)
     
     isStarted = YES;
     
-    npErr = NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, NULL);
+#ifndef NDEBUG
+    NPError npErr =
+#endif
+    NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, NULL);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
     
     // Create a WindowRef is one doesn't already exist
@@ -474,8 +479,6 @@ static char *newCString(NSString *string)
 
 - (void)stop
 {
-    NPError npErr;
-    
     if (!isStarted)
         return;
     isStarted = NO;
@@ -500,7 +503,10 @@ static char *newCString(NSString *string)
     [webFrame release];
     [webDataSource release];    
     
-    npErr = NPP_Destroy(instance, NULL);
+#ifndef NDEBUG
+    NPError npErr =
+#endif
+    NPP_Destroy(instance, NULL);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
 }
 
