@@ -1,3 +1,17 @@
+2002-06-07  Darin Adler  <darin@apple.com>
+
+	* kwq/KWQPtrDictImpl.h: Use CoreFoundation.h -- new compiler
+	is picky about the difference between struct and typedef.
+
+	* kwq/KWQValueListImpl.h: Add a friend declaration that we need
+	because the new compiler is more strict.
+
+	- fix 2949882 -- joecartoon.com crashes
+
+	* khtml/ecma/kjs_window.cpp: (Window::get): Turn off some code that
+	doesn't work for us -- similar to code elsewhere in this file that
+	was also turned off.
+
 2002-06-07  Chris Blumenberg  <cblu@apple.com>
 
         Made IFWebController a class.

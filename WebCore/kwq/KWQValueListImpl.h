@@ -108,6 +108,8 @@ private:
     class KWQValueListPrivate;
 
     KWQRefPtr<KWQValueListPrivate> d;
+    
+    friend class KWQValueListNodeImpl;
 };
 
 class KWQValueListNodeImpl
