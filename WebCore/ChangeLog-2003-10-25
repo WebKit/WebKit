@@ -1,3 +1,13 @@
+2003-01-22  David Hyatt  <hyatt@apple.com>
+
+	Fix the CSS parser so that it disallows class names beginning
+	with a digit even in quirks mode.
+	
+        Reviewed by rjw
+
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseSelector2):
+
 2003-01-22  Richard Williamson   <rjw@apple.com>
 
         Fix 3119777 (and a host of other international bugs).  Word break
