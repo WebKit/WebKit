@@ -1,3 +1,14 @@
+2005-03-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        I need to roll out Kevin's change to fix 3667701. It breaks contextual fragments, and hence breaks
+        paste in editing (among other things).
+
+        * khtml/html/htmltokenizer.cpp: Roll out recent change.
+        (khtml::HTMLTokenizer::write) 
+        * khtml/html/htmltokenizer.h: Ditto.
+
 2005-03-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken and Maciej.
