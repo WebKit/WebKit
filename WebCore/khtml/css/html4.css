@@ -43,18 +43,9 @@ script {
  * generic block level elements
  */
 
-@media print {
-	body {
-		display: block;
-		margin: 2cm;
-	}
-}
-
-@media screen {
-	body {
-		display: block;
-		margin: 8px;
-	}
+body {
+    display: block;
+    margin: 8px;
 }
 
 p {
