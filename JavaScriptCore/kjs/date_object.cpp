@@ -57,6 +57,8 @@
 
 #include "date_object.lut.h"
 
+const time_t invalidDate = -1;
+
 #if APPLE_CHANGES
 
 // Since lots of the time call implementions on OS X hit the disk to get at the localtime file,
@@ -132,7 +134,7 @@ static time_t mktimeUsingCF(struct tm *tm)
     // CFGregorianDateGetAbsoluteTime will go nuts if the year is too large,
     // so we pick an arbitrary cutoff.
     if (!CFGregorianDateIsValid(date, kCFGregorianAllUnits) || date.year > 2500) {
-        return -1;
+        return invalidDate;
     }
 
     CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
@@ -202,8 +204,6 @@ static UString formatLocaleTime(time_t tv)
 #endif // APPLE_CHANGES
 
 using namespace KJS;
-
-const time_t invalidDate = -1;
 
 // ------------------------------ DateInstanceImp ------------------------------
 
@@ -503,7 +503,7 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
       id == SetMinutes || id == SetHours || id == SetDate ||
       id == SetMonth || id == SetFullYear ) {
     time_t mktimeResult = mktime(t);
-    if (mktimeResult < 0)
+    if (mktimeResult == invalidDate)
       result = Number(NaN);
     else
       result = Number(mktimeResult * 1000.0 + ms);
@@ -590,10 +590,10 @@ Object DateObjectImp::construct(ExecState *exec, const List &args)
       t.tm_hour = (numArgs >= 4) ? args[3].toInt32(exec) : 0;
       t.tm_min = (numArgs >= 5) ? args[4].toInt32(exec) : 0;
       t.tm_sec = (numArgs >= 6) ? args[5].toInt32(exec) : 0;
-      t.tm_isdst = -1;
+      t.tm_isdst = invalidDate;
       int ms = (numArgs >= 7) ? args[6].toInt32(exec) : 0;
       time_t mktimeResult = mktime(&t);
-      if (mktimeResult < 0)
+      if (mktimeResult == invalidDate)
         value = Number(NaN);
       else
         value = Number(mktimeResult * 1000.0 + ms);
@@ -675,7 +675,7 @@ Value DateObjectFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &
     t.tm_sec = (n >= 6) ? args[5].toInt32(exec) : 0;
     int ms = (n >= 7) ? args[6].toInt32(exec) : 0;
     time_t mktimeResult = mktime(&t);
-    if (mktimeResult < 0)
+    if (mktimeResult == invalidDate)
       return Number(NaN);
     return Number(mktimeResult * 1000.0 + ms);
   }
@@ -718,14 +718,18 @@ Value KJS::parseDate(const String &s)
     //fprintf(stdout,"KJS::parseDate day=%d, month=%d, year=%d\n", day, month, year);
     struct tm t;
     memset( &t, 0, sizeof(t) );
+#if !APPLE_CHANGES
     year = (year > 2037) ? 2037 : year; // mktime is limited to 2037 !!!
+#endif
     t.tm_year = (year >= 0 && year <= 99) ? year : year - 1900;
     t.tm_mon = month-1; // mktime wants 0-11 for some reason
     t.tm_mday = day;
     time_t seconds = mktime(&t);
-    if ( seconds == -1 )
+    if ( seconds == invalidDate )
     {
+#if !APPLE_CHANGES
       fprintf(stderr,"KJS::parseDate mktime returned -1.\n%s", u.ascii());
+#endif
       return Number(NaN);
     }
     else
@@ -796,6 +800,8 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
      int minute = 0;
      int second = 0;
 
+     errno = 0;
+
      // Skip leading space
      while(*dateString && isspace(*dateString))
      	dateString++;
@@ -812,8 +818,12 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
           monthStr[3] = '\0';
           //fprintf(stderr,"KJS::parseDate found word starting with '%s'\n", monthStr);
           const char *str = strstr(haystack, monthStr);
-          if (str)
-            month = (str-haystack)/3; // Jan=00, Feb=01, Mar=02, ..
+          if (str) {
+            int position = str - haystack;
+            if (position % 3 == 0) {
+              month = position / 3; // Jan=00, Feb=01, Mar=02, ..
+            }
+          }
           while(*dateString && isspace(*dateString))
              dateString++;
           wordStart = dateString;
@@ -826,16 +836,18 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
      	dateString++;
 
      if (!*dateString)
-     	return invalidDate;  // Invalid date
+     	return invalidDate;
 
      // ' 09-Nov-99 23:12:40 GMT'
      day = strtol(dateString, &newPosStr, 10);
+     if (errno)
+        return invalidDate;
      dateString = newPosStr;
 
      if ((day < 1) || (day > 31))
-     	return invalidDate; // Invalid date;
+     	return invalidDate;
      if (!*dateString)
-     	return invalidDate;  // Invalid date
+     	return invalidDate;
 
      if (*dateString == '-')
      	dateString++;
@@ -848,7 +860,7 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
         for(int i=0; i < 3;i++)
         {
            if (!*dateString || (*dateString == '-') || isspace(*dateString))
-              return invalidDate;  // Invalid date
+              return invalidDate;
            monthStr[i] = tolower(*dateString++);
         }
         monthStr[3] = '\0';
@@ -856,31 +868,103 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
         newPosStr = (char*)strstr(haystack, monthStr);
 
         if (!newPosStr)
-           return invalidDate;  // Invalid date
+           return invalidDate;
 
         month = (newPosStr-haystack)/3; // Jan=00, Feb=01, Mar=02, ..
 
         if ((month < 0) || (month > 11))
-           return invalidDate;  // Invalid date
+           return invalidDate;
 
         while(*dateString && (*dateString != '-') && !isspace(*dateString))
            dateString++;
 
         if (!*dateString)
-           return invalidDate;  // Invalid date
+           return invalidDate;
 
         // '-99 23:12:40 GMT'
         if ((*dateString != '-') && !isspace(*dateString))
-           return invalidDate;  // Invalid date
+           return invalidDate;
         dateString++;
      }
 
      if ((month < 0) || (month > 11))
-     	return invalidDate;  // Invalid date
+     	return invalidDate;
 
      // '99 23:12:40 GMT'
+     bool gotYear = true;
      year = strtol(dateString, &newPosStr, 10);
+     if (errno)
+        return invalidDate;
      dateString = newPosStr;
+
+     // Don't fail if the time is missing.
+     if (*dateString)
+     {
+        if (*dateString == ':') {
+          hour = year;
+          gotYear = false;
+        } else {
+          // ' 23:12:40 GMT'
+          if (!isspace(*dateString++))
+            return invalidDate;
+        
+          hour = strtol(dateString, &newPosStr, 10);
+          if (errno)
+            return invalidDate;
+          dateString = newPosStr;
+        }
+
+        if ((hour < 0) || (hour > 23))
+           return invalidDate;
+
+        if (!*dateString)
+           return invalidDate;
+
+        // ':12:40 GMT'
+        if (*dateString++ != ':')
+           return invalidDate;
+
+        minute = strtol(dateString, &newPosStr, 10);
+        if (errno)
+          return invalidDate;
+        dateString = newPosStr;
+
+        if ((minute < 0) || (minute > 59))
+           return invalidDate;
+
+        if (!*dateString)
+           return invalidDate;
+
+        // ':40 GMT'
+        if (*dateString != ':' && !isspace(*dateString))
+           return invalidDate;
+
+        // seconds are optional in rfc822 + rfc2822
+        if (*dateString ==':') {
+           dateString++;
+
+           second = strtol(dateString, &newPosStr, 10);
+           if (errno)
+             return invalidDate;
+           dateString = newPosStr;
+
+           if ((second < 0) || (second > 59))
+              return invalidDate;
+        } else {
+           dateString++;
+        }
+
+        while(*dateString && isspace(*dateString))
+           dateString++;
+     }
+     
+     if (!gotYear) {
+        year = strtol(dateString, &newPosStr, 10);
+        if (errno)
+          return invalidDate;
+        while(*dateString && isspace(*dateString))
+           dateString++;
+     }
 
      // Y2K: Solve 2 digit years
      if ((year >= 0) && (year < 50))
@@ -890,57 +974,7 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
          year += 1900;  // Y2K
 
      if ((year < 1900) || (year > 2500))
-     	return invalidDate; // Invalid date
-
-     // Don't fail if the time is missing.
-     if (*dateString)
-     {
-        // ' 23:12:40 GMT'
-        if (!isspace(*dateString++))
-           return invalidDate;  // Invalid date
-
-        hour = strtol(dateString, &newPosStr, 10);
-        dateString = newPosStr;
-
-        if ((hour < 0) || (hour > 23))
-           return invalidDate; // Invalid date
-
-        if (!*dateString)
-           return invalidDate;  // Invalid date
-
-        // ':12:40 GMT'
-        if (*dateString++ != ':')
-           return invalidDate;  // Invalid date
-
-        minute = strtol(dateString, &newPosStr, 10);
-        dateString = newPosStr;
-
-        if ((minute < 0) || (minute > 59))
-           return invalidDate; // Invalid date
-
-        if (!*dateString)
-           return invalidDate;  // Invalid date
-
-        // ':40 GMT'
-        if (*dateString != ':' && !isspace(*dateString))
-           return invalidDate;  // Invalid date
-
-        // seconds are optional in rfc822 + rfc2822
-        if (*dateString ==':') {
-           dateString++;
-
-           second = strtol(dateString, &newPosStr, 10);
-           dateString = newPosStr;
-
-           if ((second < 0) || (second > 59))
-              return invalidDate; // Invalid date
-        } else {
-           dateString++;
-        }
-
-        while(*dateString && isspace(*dateString))
-           dateString++;
-     }
+     	return invalidDate;
 
      // don't fail if the time zone is missing, some
      // broken mail-/news-clients omit the time zone
@@ -953,8 +987,8 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
         if ((*dateString == '+') || (*dateString == '-')) {
            offset = strtol(dateString, &newPosStr, 10);
 
-           if ((offset < -9959) || (offset > 9959))
-              return invalidDate; // Invalid date
+           if (errno || (offset < -9959) || (offset > 9959))
+              return invalidDate;
 
            int sgn = (offset < 0)? -1:1;
            offset = abs(offset);

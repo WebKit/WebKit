@@ -1,5 +1,13 @@
 2002-11-14  Darin Adler  <darin@apple.com>
 
+	- fixed 3101243 -- excite passes date that can't be parsed, results in bogus date at top right corner
+
+        * kjs/date_object.cpp: (KJS::KRFCDate_parseDate): Handle errors from strtol
+	by checking errno. Check the "string in a haystack" to be sure it's a multiple
+	of 3. Add case that allows year to be after time.
+
+2002-11-14  Darin Adler  <darin@apple.com>
+
 	- fixed 3101191 -- REGRESSION: Hang loading excite.com
 
         * kjs/date_object.cpp:
