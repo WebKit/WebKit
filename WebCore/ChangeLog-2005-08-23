@@ -1,4 +1,17 @@
 2004-12-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Fix for this bug:
+        
+        <rdar://problem/3906948> REGRESSION (Mail): Insert paragraph code can make the insertion point "stick" in place.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): Call insertBlockPlaceholderIfNeeded(), passing block
+        being added to this function. This ensures that the added block has a height.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Ditto.
+
+2004-12-06  Ken Kocienda  <kocienda@apple.com>
  
         Reviewed by John
         

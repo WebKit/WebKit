@@ -2206,6 +2206,7 @@ void InsertParagraphSeparatorCommand::doApply()
         insertNodeAfter(addedBlock, startBlock);
     }
     addedBlock->ref();
+    insertBlockPlaceholderIfNeeded(addedBlock);
     clonedNodes.append(addedBlock);
 
     if (!isLastVisiblePositionInNode(VisiblePosition(pos), startBlock)) {
@@ -2353,6 +2354,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
         // Insert a clone of the top blockquote after the break.
         NodeImpl *clonedBlockquote = topBlockquote->cloneNode(false);
         clonedBlockquote->ref();
+        insertBlockPlaceholderIfNeeded(clonedBlockquote);
         clonedNodes.append(clonedBlockquote);
         insertNodeAfter(clonedBlockquote, m_breakNode);
         
