@@ -1,3 +1,47 @@
+2002-12-08  Trey Matteson  <trey@apple.com>
+
+	Fixed 3115903 - exchangehomes.com sometimes has form state poorly restored
+
+	KHTML is much smarter about restoring form state now, taking into account element names and
+	types instead of blindly blasting data by simple element ordering.  We encode the name
+	and type at the front of the "state" strings that previously just held the value of the
+	element.	
+
+	QString::endsWith() was just plain wrong.  Looks like it had some copied code, but was
+	never really implemented.
+
+        Reviewed by: Darin Adler
+
+        * WebCore.pbproj/project.pbxproj:  PB is hellbent on adding "shouldUseHeadermap = 0;"
+        * khtml/html/html_formimpl.cpp:
+        (encodedElementName):  Utility func to encode an element name, escaping amp and lt
+        (HTMLGenericFormElementImpl::state):  Build the prefix of an element's state string,
+	e.g. ELEMENT_NAME&ELEMENT_TYPE&
+        (HTMLGenericFormElementImpl::findMatchingState):  Find a matching piece of state out of
+	the list of state strings that were previously saved.
+        (HTMLFieldSetElementImpl::type):  Return our element type.
+        (HTMLInputElementImpl::state):  Call super as part of building state string.
+        (HTMLInputElementImpl::restoreState):  Use findMatchingState.
+        (HTMLLegendElementImpl::type):  Return our element type.
+        (HTMLSelectElementImpl::state):  Call super as part of building state string.
+        (HTMLSelectElementImpl::restoreState):  Use findMatchingState.
+        (HTMLKeygenElementImpl::type):  Return our element type.
+        (HTMLOptGroupElementImpl::type):  Return our element type.
+        (HTMLOptionElementImpl::type):  Return our element type.
+        (HTMLTextAreaElementImpl::state):  Call super as part of building state string.
+        (HTMLTextAreaElementImpl::restoreState):  Use findMatchingState.
+        * khtml/html/html_formimpl.h:  type() is moved up to HTMLGenericFormElementImpl
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):  Pass list of states to restoreState.
+        (KHTMLParser::popOneBlock):  Pass list of states to restoreState.
+        * khtml/xml/dom_docimpl.h:  Add method to return the whole list of form states.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::restoreState):    Nodes receive the whole list of form states to restore from,
+	not just a single state that has already been chosen.
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/KWQString.mm:
+        (QString::endsWith):  Walk the search string correctly.
+
 2002-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
@@ -118,7 +162,6 @@
 
         * WebCore.pbproj/project.pbxproj: Electron is doing his thing.
 
->>>>>>> 1.1071
 2002-12-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for image bullets.  They were neglecting to offset

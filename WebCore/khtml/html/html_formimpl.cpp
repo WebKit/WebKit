@@ -775,6 +775,66 @@ bool HTMLGenericFormElementImpl::isEditable()
     return false;
 }
 
+// Special chars used to encode form state strings.
+// We pick chars that are unlikely to be used in an HTML attr, so we rarely have to really encode.
+const QChar stateSeparator = '&';
+const QChar stateEscape = '<';
+const QString stateSeparatorMarker = "<A";
+const QString stateEscapeMarker = "<<";
+
+// Encode an element name so we can put it in a state string without colliding
+// with our separator char.
+static QString encodedElementName(QString str)
+{
+    int sepLoc = str.find(stateSeparator);
+    int escLoc = str.find(stateSeparator);
+    if (sepLoc >= 0 || escLoc >= 0) {
+        QString newStr = str;
+        //   replace "<" with "<<"
+        while (escLoc >= 0) {
+            newStr.replace(escLoc, 1, stateEscapeMarker);
+            escLoc = str.find(stateSeparator, escLoc+1);
+        }
+        //   replace "&" with "<A"
+        while (sepLoc >= 0) {
+            newStr.replace(sepLoc, 1, stateSeparatorMarker);
+            sepLoc = str.find(stateSeparator, sepLoc+1);
+        }
+        return newStr;
+    } else {
+        return str;
+    }
+}
+
+QString HTMLGenericFormElementImpl::state( )
+{
+    // Build a string that contains ElementName&ElementType&
+    return encodedElementName(name().string()) + stateSeparator + type().string() + stateSeparator;
+}
+
+QString HTMLGenericFormElementImpl::findMatchingState(QStringList &states)
+{
+    QString encName = encodedElementName(name().string());
+    QString typeStr = type().string();
+    for (QStringList::Iterator it = states.begin(); it != states.end(); ++it) {
+        QString state = *it;
+        int sep1 = state.find(stateSeparator);
+        int sep2 = state.find(stateSeparator, sep1+1);
+        assert(sep1 >= 0);
+        assert(sep2 >= 0);
+
+        QString nameAndType = state.left(sep2);
+        if (encName.length() + typeStr.length() + 1 == (uint)sep2
+            && nameAndType.startsWith(encName)
+            && nameAndType.endsWith(typeStr))
+        {
+            states.remove(it);
+            return state.mid(sep2+1);
+        }
+    }
+    return QString::null;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLButtonElementImpl::HTMLButtonElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
@@ -884,6 +944,11 @@ NodeImpl::Id HTMLFieldSetElementImpl::id() const
     return ID_FIELDSET;
 }
 
+DOMString HTMLFieldSetElementImpl::type() const
+{
+    return "fieldset";
+}
+
 void HTMLFieldSetElementImpl::attach()
 {
     // Fieldsets need to at least get a render object so that the
@@ -950,17 +1015,21 @@ DOMString HTMLInputElementImpl::type() const
 
 QString HTMLInputElementImpl::state( )
 {
+    QString state = HTMLGenericFormElementImpl::state();
     switch (m_type) {
     case CHECKBOX:
     case RADIO:
-        return QString::fromLatin1(m_checked ? "on" : "off");
+        return state + QString::fromLatin1(m_checked ? "on" : "off");
     default:
-        return value().string()+'.'; // Make sure the string is not empty!
+        return state + value().string()+'.'; // Make sure the string is not empty!
     }
 }
 
-void HTMLInputElementImpl::restoreState(const QString &state)
+void HTMLInputElementImpl::restoreState(QStringList &states)
 {
+    QString state = HTMLGenericFormElementImpl::findMatchingState(states);
+    if (state.isNull()) return;
+
     switch (m_type) {
     case CHECKBOX:
     case RADIO:
@@ -1488,6 +1557,11 @@ NodeImpl::Id HTMLLegendElementImpl::id() const
     return ID_LEGEND;
 }
 
+DOMString HTMLLegendElementImpl::type() const
+{
+    return "legend";
+}
+
 // -------------------------------------------------------------------------
 
 HTMLSelectElementImpl::HTMLSelectElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
@@ -1649,11 +1723,14 @@ QString HTMLSelectElementImpl::state( )
             state[i] = 'X';
 #endif /* APPLE_CHANGES not defined */
 
-    return state;
+    return HTMLGenericFormElementImpl::state() + state;
 }
 
-void HTMLSelectElementImpl::restoreState(const QString &_state)
+void HTMLSelectElementImpl::restoreState(QStringList &_states)
 {
+    QString _state = HTMLGenericFormElementImpl::findMatchingState(_states);
+    if (_state.isNull()) return;
+
     recalcListItems();
 
     QString state = _state;
@@ -1944,6 +2021,11 @@ NodeImpl::Id HTMLKeygenElementImpl::id() const
     return ID_KEYGEN;
 }
 
+DOMString HTMLKeygenElementImpl::type() const
+{
+    return "keygen";
+}
+
 void HTMLKeygenElementImpl::parseAttribute(AttributeImpl* attr)
 {
     switch(attr->id())
@@ -1990,6 +2072,11 @@ HTMLOptGroupElementImpl::~HTMLOptGroupElementImpl()
 NodeImpl::Id HTMLOptGroupElementImpl::id() const
 {
     return ID_OPTGROUP;
+}
+
+DOMString HTMLOptGroupElementImpl::type() const
+{
+    return "optgroup";
 }
 
 NodeImpl *HTMLOptGroupElementImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode )
@@ -2057,6 +2144,11 @@ HTMLOptionElementImpl::HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementIm
 NodeImpl::Id HTMLOptionElementImpl::id() const
 {
     return ID_OPTION;
+}
+
+DOMString HTMLOptionElementImpl::type() const
+{
+    return "option";
 }
 
 DOMString HTMLOptionElementImpl::text() const
@@ -2181,11 +2273,13 @@ DOMString HTMLTextAreaElementImpl::type() const
 QString HTMLTextAreaElementImpl::state( )
 {
     // Make sure the string is not empty!
-    return value().string()+'.';
+    return HTMLGenericFormElementImpl::state() + value().string()+'.';
 }
 
-void HTMLTextAreaElementImpl::restoreState(const QString &state)
+void HTMLTextAreaElementImpl::restoreState(QStringList &states)
 {
+    QString state = HTMLGenericFormElementImpl::findMatchingState(states);
+    if (state.isNull()) return;
     setDefaultValue(state.left(state.length()-1));
     // the close() in the rendertree will take care of transferring defaultvalue to 'value'
 }

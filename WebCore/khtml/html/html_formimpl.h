@@ -133,6 +133,8 @@ public:
 
     HTMLFormElementImpl *form() { return m_form; }
 
+    virtual DOMString type() const = 0;
+
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void attach();
     virtual void reset() {}
@@ -168,6 +170,9 @@ public:
     virtual void defaultEventHandler(EventImpl *evt);
     virtual bool isEditable();
 
+    virtual QString state();
+    QString findMatchingState(QStringList &states);
+
 protected:
     HTMLFormElementImpl *getForm() const;
 
@@ -192,8 +197,8 @@ public:
     };
 
     virtual Id id() const;
-
     DOMString type() const;
+
     virtual void attach();
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
@@ -218,6 +223,7 @@ public:
     virtual ~HTMLFieldSetElementImpl();
 
     virtual Id id() const;
+    DOMString type() const;
 
     virtual void attach();
 };
@@ -270,7 +276,7 @@ public:
 
     virtual bool maintainsState() { return true; }
     virtual QString state();
-    virtual void restoreState(const QString &);
+    virtual void restoreState(QStringList &);
 
     void select();
     void click();
@@ -338,6 +344,7 @@ public:
     virtual ~HTMLLegendElementImpl();
 
     virtual Id id() const;
+    DOMString type() const;
 };
 
 
@@ -352,7 +359,6 @@ public:
     ~HTMLSelectElementImpl();
 
     virtual Id id() const;
-
     DOMString type() const;
 
     virtual void recalcStyle( StyleChange );
@@ -380,7 +386,7 @@ public:
 
     virtual bool maintainsState() { return true; }
     virtual QString state();
-    virtual void restoreState(const QString &);
+    virtual void restoreState(QStringList &);
 
     virtual NodeImpl *insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode );
     virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
@@ -453,6 +459,7 @@ public:
     virtual ~HTMLOptGroupElementImpl();
 
     virtual Id id() const;
+    DOMString type() const;
 
     virtual NodeImpl *insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode );
     virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
@@ -476,6 +483,7 @@ public:
     HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
 
     virtual Id id() const;
+    DOMString type() const;
 
     DOMString text() const;
 
@@ -526,7 +534,7 @@ public:
 
     virtual bool maintainsState() { return true; }
     virtual QString state();
-    virtual void restoreState(const QString &);
+    virtual void restoreState(QStringList &);
 
     void select (  );
 

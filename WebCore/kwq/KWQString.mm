@@ -1080,8 +1080,8 @@ bool QString::endsWith( const QString& s ) const
     if (dataHandle[0]->_length < s.data()->_length)
         return FALSE;
         
-    for ( int i = dataHandle[0]->_length - s.data()->_length; i < (int) s.data()->_length; i++ ) {
-	if ( uni[i] != s[i] )
+    for ( int i = dataHandle[0]->_length - s.data()->_length, j = 0; i < (int) s.data()->_length; i++, j++ ) {
+	if ( uni[i] != s[j] )
 	    return FALSE;
     }
     return TRUE;

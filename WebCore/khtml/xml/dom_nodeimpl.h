@@ -40,6 +40,7 @@ class QRect;
 class QMouseEvent;
 class QKeyEvent;
 class QTextStream;
+class QStringList;
 
 namespace khtml {
     class RenderStyle;
@@ -327,12 +328,13 @@ public:
     virtual QString state();
 
     /**
-     * Sets the state of the element based on a string previosuly returned by state(). This is used to initialize form
-     * controls with their old values when the user returns to the page in their history.
+     * Sets the state of the element based on strings previously returned by state(). This is used to initialize form
+     * controls with their old values when the user returns to the page in their history.  The receiver
+     * should remove the string from the list that it uses for its restore.
      *
-     * @param state A string representation of the node's previously-stored state
+     * @param states The strings previously returned by nodes' state methods.
      */
-    virtual void restoreState(const QString &state);
+    virtual void restoreState(QStringList &stateList);
 
     // -----------------------------------------------------------------------------
     // Notification of document stucture changes
