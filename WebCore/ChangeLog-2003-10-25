@@ -1,3 +1,16 @@
+2003-06-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3292630, misrendered page because of bad doctype.  Add
+	this bad doctype to our list of quirky doctypes to fix the
+	problem, since the screwed up strict mode rendering is actually
+	correct.
+	
+        Reviewed by john
+
+        * khtml/html/doctypes.cpp:
+        (findDoctypeEntry):
+        * khtml/html/doctypes.gperf:
+
 2003-06-13  Richard Williamson  <rjw@apple.com>
 
 	Fixed 3282087.  Don't use our <pre> optimizations
