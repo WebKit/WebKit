@@ -1,5 +1,10 @@
 2002-11-03  Darin Adler  <darin@apple.com>
 
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent
+	changes both to the code here and to the extract script.
+
+2002-11-03  Darin Adler  <darin@apple.com>
+
 	- fixed 3091300 -- "prelighting" on local page is still slow, despite recent bug fix
 
 	Turns out all updating would be slow if any resources on the page failed to load.
