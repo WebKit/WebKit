@@ -4784,10 +4784,20 @@ void ReplaceSelectionCommand::doApply()
     if (linePlaceholder) {
         document()->updateLayout();
         if (linePlaceholder->inDocument()) {
-            if (!linePlaceholder->renderer() || linePlaceholder->renderer()->height() == 0) {
-                removeNode(linePlaceholder);
+            // remove the placeholder if it seems to have no effect
+            // FIXME: cannot rely on height() alone, tho, because it is zero for a BR on a line
+            // that has only non-text in it (e.g. replaced elements).  See <rdar://problem/4040358>.
+            bool dumpIt = (!linePlaceholder->renderer() || linePlaceholder->renderer()->height() == 0);
+            if (dumpIt) {
+                // start workaround for <rdar://problem/4040358>
+                VisiblePosition placeholderPos(linePlaceholder, linePlaceholder->renderer()->caretMinOffset(), DOWNSTREAM);
+                dumpIt = placeholderPos.next().isNull() || isFirstVisiblePositionOnLine(placeholderPos);
+                // end workaround for <rdar://problem/4040358>
             }
-            else if (!mergeStart && !m_fragment.hasInterchangeNewline()) {
+            
+            if (dumpIt) {
+                removeNode(linePlaceholder);
+            } else if (!mergeStart && !m_fragment.hasInterchangeNewline()) {
                 NodeImpl *block = linePlaceholder->enclosingBlockFlowElement();
                 removeNode(linePlaceholder);
                 document()->updateLayout();

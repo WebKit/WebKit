@@ -1,3 +1,16 @@
+2005-03-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken.
+
+        <rdar://problem/4029225> REGRESSION (Mail): Crash if hit return after dragging in attachment - DeleteSelectionCommand::initializePositionData
+
+        Work around the fact that the height() of a BR is 0 if there are no text elements on the line, even if there are replaced elements.
+        Filed <rdar://problem/4040358> RenderBR height() is not accurate.
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply):
+        When height is 0, double check that the placeholder is the first position on the line.
+
 === Safari-403 ===
 
 2005-03-07  Ken Kocienda  <kocienda@apple.com>
