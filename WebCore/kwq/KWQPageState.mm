@@ -78,7 +78,7 @@ using KJS::SavedProperties;
     QObject::clearPausedTimers(self);
 }
 
-// Called when the KWQPageState is restored.  It should relinquish ownership
+// Called when the KWQPageState is restored.  It relinquishs ownership
 // of objects to core.
 - (void)invalidate
 {
@@ -86,6 +86,13 @@ using KJS::SavedProperties;
     ASSERT(document);
     
     document->setInPageCache(NO);
+    
+    // Do NOT detach the renderer here.  The ownership of the renderer
+    // has been handed off to core.  The renderer is being used in an
+    // active page.  It will be either cleaned up with the document or
+    // re-added to another page cache.
+    docRenderer = 0;
+    
     document->deref();
     document = 0;
 
@@ -108,6 +115,7 @@ using KJS::SavedProperties;
         KWQKHTMLPart::clearTimers(view);
 
         document->setInPageCache(NO);
+        document->restoreRenderer(docRenderer);
         document->detach();
         document->deref();
         

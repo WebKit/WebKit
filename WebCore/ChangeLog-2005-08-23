@@ -1,3 +1,14 @@
+2003-03-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed leak of RenderRoot.
+        
+        Reviewed by darin.
+
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState invalidate]):  Added comment.
+        (-[KWQPageState dealloc]):  Ensure that the renderer is "re"set on
+        the document so it will be correctly cleaned up in detach.
+
 2003-03-12  David Hyatt  <hyatt@apple.com>
 
 	Two fixes.  The first is more help with macromedia.  Floats could
