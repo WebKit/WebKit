@@ -1,3 +1,12 @@
+2004-07-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3743204> REGRESSION: crash at startribune.com in InlineBox::root()
+
+        * khtml/rendering/render_flow.cpp: (RenderFlow::dirtyLinesFromChangedChild):
+        Added a check for nil.
+
 2004-07-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
