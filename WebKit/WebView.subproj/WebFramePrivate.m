@@ -293,9 +293,9 @@ static const char * const stateNames[6] = {
                     // Do nothing, this was a frame/iframe non user load.
                     break;
                     
-                // FIXME Remove this check when dummy ds is removed.
+                // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
+                // if we're in the WebFrameLoadTypeUninitialized state.
                 case WebFrameLoadTypeUninitialized:
-                    NSLog (@"temporary check for WebFrameLoadTypeUninitialized until dummy ds is removed, should never encounter this type.");
                     break;
                     
                 default:

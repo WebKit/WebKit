@@ -1,3 +1,11 @@
+2002-07-30  Richard Williamson (local)  <rjw@apple.com>
+
+        Remove annoying log, it's really annoying.  Added FIX ME
+        comment instead.
+        
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+
 2002-07-30  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3012083 "Looked for URLs on the pasteboard, but found
