@@ -2030,18 +2030,28 @@ int MoveSelectionCommandImpl::commandID() const
 
 void MoveSelectionCommandImpl::doApply()
 {
-    Selection originalSelection = endingSelection();
-    ASSERT(originalSelection.state() == Selection::RANGE);
+    Selection selection = endingSelection();
+    ASSERT(selection.state() == Selection::RANGE);
 
-    // FIXME: Inserting the fragment by calling ReplaceSelectionCommand is not working for some reason.
-    /*
-    setEndingSelection(m_position);
+    // Update the position otherwise it may become invalid after the selection is deleted.
+    NodeImpl *positionNode = m_position.node();
+    long positionOffset = m_position.offset();
+    Position selectionEnd = selection.end();
+    long selectionEndOffset = selectionEnd.offset();    
+    if (selectionEnd.node() == positionNode && selectionEndOffset < positionOffset) {
+        positionOffset -= selectionEndOffset;
+        Position selectionStart = selection.start();
+        if (selectionStart.node() == positionNode) {
+            positionOffset += selectionStart.offset();
+        }
+    }
+    
+    deleteSelection();
+
+    setEndingSelection(Position(positionNode, positionOffset));
     ReplaceSelectionCommand cmd(document(), m_fragment, true);
     applyCommandToComposite(cmd);
-    */
-    // FIXME: Need to delete the selection here.
 }
-
 
 //------------------------------------------------------------------------------------------
 // RemoveCSSPropertyCommandImpl

@@ -2292,8 +2292,9 @@ void KHTMLPart::setSelection(const Selection &s, bool closeTyping)
 void KHTMLPart::setDragCaret(const DOM::Selection &dragCaret)
 {
     if (d->m_dragCaret != dragCaret) {
+        d->m_dragCaret.needsCaretRepaint();
         d->m_dragCaret = dragCaret;
-        notifyDragCaretChanged();
+        d->m_dragCaret.needsCaretRepaint();
     }
 }
 
@@ -2403,11 +2404,6 @@ void KHTMLPart::notifySelectionChanged(bool closeTyping)
 #if APPLE_CHANGES
     KWQ(this)->postDidChangeSelectionNotification();
 #endif
-}
-
-void KHTMLPart::notifyDragCaretChanged()
-{
-    d->m_dragCaret.needsCaretRepaint();
 }
 
 void KHTMLPart::setXPosForVerticalArrowNavigation(int x)

@@ -1,3 +1,15 @@
+2004-05-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3546418>: (when dragging text within an editable HTML doc, the selection should be moved not copied)
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::MoveSelectionCommandImpl::doApply): implemented
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setDragCaret): make the old drag cursor rect dirty
+        * khtml/khtml_part.h:
+
 2004-05-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

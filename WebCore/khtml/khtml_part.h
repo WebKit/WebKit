@@ -1127,11 +1127,6 @@ private:
    * @internal
    */
   void notifySelectionChanged(bool closeTyping=true);
-  
-  /**
-   * @internal
-   */
-  void notifyDragCaretChanged();
 
   /**
    * @internal
