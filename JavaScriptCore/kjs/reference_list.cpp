@@ -41,6 +41,7 @@ namespace KJS {
     
     ReferenceListHeadNode(const Reference &ref) : ReferenceListNode(ref), refcount(1) {}
     int refcount;
+    int length;
   };
 
 }
@@ -92,6 +93,12 @@ void ReferenceList::append(const Reference& ref)
     tail->next = new ReferenceListNode(ref);
     tail = tail->next;
   }
+  head->length++;
+}
+
+int ReferenceList::length()
+{
+  return head ? head->length : 0;
 }
 
 ReferenceList::~ReferenceList()

@@ -32,6 +32,8 @@ typedef unsigned long ulong;
 #endif
 #endif
 
+#include <stdint.h>
+
 /**
  * @internal
  */
@@ -383,6 +385,9 @@ namespace KJS {
      * according to the success.
      */
     unsigned long toULong(bool *ok = 0L) const;
+
+    uint32_t toUInt32(bool *ok = 0L) const;
+
     /**
      * @return Position of first occurence of f starting at position pos.
      * -1 if the search was not successful.

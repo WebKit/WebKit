@@ -53,7 +53,8 @@ namespace KJS {
     ~ReferenceList();
 
     void append(const Reference& val);
-    
+    int length();
+
     ReferenceListIterator begin() const;
     ReferenceListIterator end() const;
     

@@ -52,10 +52,12 @@ namespace KJS {
     void sort(ExecState *exec, Object &compareFunction);
     
   private:
-    void setLength(unsigned newLength);
+    void setLength(unsigned newLength, ExecState *exec);
     
-    unsigned pushUndefinedObjectsToEnd();
+    unsigned pushUndefinedObjectsToEnd(ExecState *exec);
     
+    void resizeStorage(unsigned);
+
     unsigned length;
     unsigned storageLength;
     unsigned capacity;

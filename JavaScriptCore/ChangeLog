@@ -1,5 +1,34 @@
 2002-11-23  Maciej Stachowiak  <mjs@apple.com>
 
+	- completed Darin's mostly-fix for 3037795 - Resource use
+	increases when accessing very high index value in array
+
+	The two missing pieces were handling sparse properties when
+	shrinking the array, and when sorting. Thse are now both taken
+	care of.
+	
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::put):
+        (ArrayInstanceImp::deleteProperty):
+        (ArrayInstanceImp::resizeStorage):
+        (ArrayInstanceImp::setLength):
+        (ArrayInstanceImp::sort):
+        (ArrayInstanceImp::pushUndefinedObjectsToEnd):
+        * kjs/identifier.h:
+        * kjs/object.h:
+        * kjs/property_map.cpp:
+        * kjs/property_map.h:
+        * kjs/reference_list.cpp:
+        (ReferenceList::append):
+        (ReferenceList::length):
+        * kjs/reference_list.h:
+        * kjs/ustring.cpp:
+        (UString::toUInt32):
+        * kjs/ustring.h:
+
+2002-11-23  Maciej Stachowiak  <mjs@apple.com>
+
 	Numerous collector changes for a net gain of 3% on JS ibench:
 
 	- Replaced per-block bitmap with free list.

@@ -551,6 +551,22 @@ unsigned long UString::toULong(bool *ok) const
   return static_cast<unsigned long>(d);
 }
 
+uint32_t UString::toUInt32(bool *ok) const
+{
+  double d = toDouble();
+  bool b = true;
+
+  if (isNaN(d) || d != static_cast<uint32_t>(d)) {
+    b = false;
+    d = 0;
+  }
+
+  if (ok)
+    *ok = b;
+
+  return static_cast<uint32_t>(d);
+}
+
 int UString::find(const UString &f, int pos) const
 {
   int sz = size();

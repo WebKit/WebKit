@@ -597,9 +597,10 @@ namespace KJS {
     void saveProperties(SavedProperties &p) const { _prop.save(p); }
     void restoreProperties(const SavedProperties &p) { _prop.restore(p); }
 
+  protected:
+    PropertyMap _prop;
   private:
     const HashEntry* findPropertyHashEntry( const Identifier& propertyName ) const;
-    PropertyMap _prop;
     ValueImp *_proto;
     ValueImp *_internalValue;
     NoRefScopeChain _scope;

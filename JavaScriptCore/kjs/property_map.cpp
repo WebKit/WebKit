@@ -369,6 +369,36 @@ void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Objec
     }
 }
 
+void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, const Object &base) const
+{
+#if USE_SINGLE_ENTRY
+    UString::Rep *key = _singleEntry.key;
+    if (key) {
+      UString k(key);
+      bool fitsInUInt32;
+      k.toUInt32(&fitsInUInt32);
+      if (fitsInUInt32) {
+        list.append(Reference(base, Identifier(key)));
+      }
+    }
+#endif
+    if (!_table) {
+      return;
+    }
+
+    for (int i = 0; i != _table->size; ++i) {
+      UString::Rep *key = _table->entries[i].key;
+      if (key) {
+	UString k(key);
+	bool fitsInUInt32;
+	k.toUInt32(&fitsInUInt32);
+	if (fitsInUInt32) {
+	  list.append(Reference(base, Identifier(key)));
+	}
+      }
+    }
+}
+
 void PropertyMap::save(SavedProperties &p) const
 {
     int count = 0;
