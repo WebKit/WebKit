@@ -197,18 +197,77 @@ void KWQListImpl::clear(bool deleteItems)
 
 void KWQListImpl::sort(int (*compareFunc)(void *a, void *b, void *data), void *data)
 {
+    // no sorting for 0 or 1-element lists
+    if (d->count <= 1) {
+        return;
+    }
+
+    // special case for 2-element lists
+    KWQListNode *head = d->head;
+    if (d->count == 2) {
+        void *a = head->data;
+        void *b = head->next->data;
+        if (compareFunc(a, b, data) <= 0) {
+            return;
+        }
+        head->next->data = a;
+        head->data = b;
+        return;
+    }
+
+    // insertion sort for most common sizes
+    const uint cutoff = 32;
+    if (d->count <= cutoff) {
+        // Straight out of Sedgewick's Algorithms in C++.
+
+        // put all the elements into an array
+        void *a[cutoff];
+        uint i = 0;
+        for (KWQListNode *node = head; node != NULL; node = node->next) {
+            a[i++] = node->data;
+        }
+
+        // move the smallest element to the start to serve as a sentinel
+        for (i = d->count - 1; i > 0; i--) {
+            if (compareFunc(a[i-1], a[i], data) > 0) {
+                void *t = a[i-1];
+                a[i-1] = a[i];
+                a[i] = t;
+            }
+        }
+
+        // move other items to the right and put a[i] into position
+        for (i = 2; i < d->count; i++) {
+            void *v = a[i];
+            uint j = i;
+            while (compareFunc(v, a[j-1], data) < 0) {
+                a[j] = a[j-1];
+                j--;
+            }
+            a[j] = v;
+        }
+
+        // finally, put everything back into the list
+        i = 0;
+        for (KWQListNode *node = head; node != NULL; node = node->next) {
+            node->data = a[i++];
+        }
+        return;
+    }
+
+    // CFArray sort for larger lists
+    
     CFMutableArrayRef array = CFArrayCreateMutable(NULL, d->count, NULL);
 
-    for (KWQListNode *node = d->head; node != NULL; node = node->next) {
+    for (KWQListNode *node = head; node != NULL; node = node->next) {
 	CFArrayAppendValue(array, node->data);
     }
 
     CFArraySortValues(array, CFRangeMake(0, d->count), (CFComparatorFunction) compareFunc, data);
 
     int i = 0;
-    for (KWQListNode *node = d->head; node != NULL; node = node->next) {
-	node->data = (void *)CFArrayGetValueAtIndex(array, i);
-	i++;
+    for (KWQListNode *node = head; node != NULL; node = node->next) {
+	node->data = const_cast<void *>(CFArrayGetValueAtIndex(array, i++));
     }
 
     CFRelease(array);
@@ -250,7 +309,7 @@ bool KWQListImpl::insert(uint n, const void *item)
 	// since we know n > 0 and n <= d->count
 	KWQListNode *node = d->head;
 
-	for  (unsigned i = 0; i < n - 1; i++) {
+	for (unsigned i = 0; i < n - 1; i++) {
 	    node = node->next;
 	}
 	d->current->prev = node;

@@ -1,3 +1,8 @@
+2002-03-18  Darin Adler  <darin@apple.com>
+
+	* src/kwq/KWQListImpl.mm: (KWQListImpl::sort): Use insertion sort for
+	small lists. Also special case for lists of size 2 and under.
+
 2002-03-18  Richard Williamson  <rjw@apple.com>
 
         Added comments about new layout scheme.  Cleaned up code.
