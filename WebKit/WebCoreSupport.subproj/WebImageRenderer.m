@@ -288,7 +288,7 @@
 - (BOOL)isNull;
 - (void)increaseUseCount;
 - (void)decreaseUseCount;
-- (WebInternalImage *)retainOrCopyIfNeeded;
+- (WebImageRenderer *)createRendererIfNeeded;
 - (void)flushRasterCache;
 - (CGImageRef)imageRef;
 
@@ -540,24 +540,18 @@ static NSMutableSet *activeImageRenderers;
     useCount--;
 }
 
-- (WebInternalImage *)retainOrCopyIfNeeded
+- (WebImageRenderer *)createRendererIfNeeded
 {
-    WebInternalImage *copy;
-
     // If an animated image appears multiple times in a given page, we
     // must create multiple WebCoreImageRenderers so that each copy
     // animates. However, we don't want to incur the expense of
     // re-decoding for the very first use on a page, since QPixmap
     // assignment always calls this method, even when just fetching
     // the image from the cache for the first time for a page.
-    if (originalData && useCount){
-        copy = [[[WebImageRendererFactory sharedFactory] imageRendererWithData:originalData MIMEType:MIMEType] retain];
+    if (originalData && useCount) {
+        return [[[WebImageRendererFactory sharedFactory] imageRendererWithData:originalData MIMEType:MIMEType] retain];
     }
-    else {
-        copy = [self retain];
-    }
-
-    return copy;
+    return nil;
 }
 
 - copyWithZone:(NSZone *)zone
@@ -1282,15 +1276,12 @@ static NSMutableSet *activeImageRenderers;
 
 - (id <WebCoreImageRenderer>)retainOrCopyIfNeeded
 {
-    WebInternalImage *newImage = [image retainOrCopyIfNeeded];
-    if (newImage == image) {
-        [image release];
-        [self retain];
-        return self;
+    WebImageRenderer *newRenderer = [image createRendererIfNeeded];
+    if (newRenderer) {
+        return newRenderer;
     }
-    WebImageRenderer *newRenderer = [[WebImageRenderer alloc] init];
-    newRenderer->image = newImage;
-    return newRenderer;
+    [self retain];
+    return self;
 }
 
 - (void)increaseUseCount

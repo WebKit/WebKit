@@ -1,3 +1,16 @@
+2004-10-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3847994> REGRESSION: reproducible exception in WebImageRenderer releasePatternColor; afterwards get crash or no more browsing
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebInternalImage createRendererIfNeeded]): Replaced retainOrCopyIfNeeded with this.
+        This returns nil if a copied renderer isn't needed, and returns a new renderer if a copy is.
+        The old version was sometimes returning a WebInternalImage and other times a WebImageRenderer.
+        (-[WebImageRenderer retainOrCopyIfNeeded]): Returns the result of createRendererIfNeeded
+        or retains self and returns self.
+
 2004-10-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
