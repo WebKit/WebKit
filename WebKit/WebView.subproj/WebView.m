@@ -375,10 +375,10 @@ NSString *WebElementStringKey = 		@"WebElementString";
 
     NSString *userAgent;
     if ([applicationName length]) {
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC; %@) AppleWebKit/%@ (like Gecko) %@",
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko) %@",
             language, sourceVersion, applicationName];
     } else {
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC; %@) AppleWebKit/%@ (like Gecko)",
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko)",
             language, sourceVersion];
     }
     

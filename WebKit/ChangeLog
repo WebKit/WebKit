@@ -1,3 +1,18 @@
+2002-12-14  Don Melton  <gramps@apple.com>
+
+	Fixed 3127173 -- REGRESSION: fboweb.com renders incorrectly
+
+        Reviewed by darin
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * WebView.subproj/WebController.m:
+        (-[WebController userAgentForURL:]):
+
+	Changed "PPC" in our user agent string to "PPC Mac OS X" in order to
+	match Mozilla and make the silly server-side user agent string checking
+	work at fboweb.com.  Actually, just "PPC " would work fine at
+	fboweb.com.  Go figure.
+
 2002-12-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.
