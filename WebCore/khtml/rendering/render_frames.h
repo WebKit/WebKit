@@ -99,6 +99,12 @@ public:
 
     virtual void setWidget( QWidget *widget );
 
+#if APPLE_CHANGES
+    // FIXME: This should not be necessary.  Remove this once WebKit knows to properly schedule
+    // layouts using WebCore when objects resize.
+    void updateWidgetPositions();
+#endif
+    
     /**
      * Called by KHTMLPart to notify the frame object that loading the
      * part was not successfuly. (called either asyncroniously after a
