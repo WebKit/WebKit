@@ -25,6 +25,9 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_stringimpl.h"
 #include "css/css_stylesheetimpl.h"
+#ifdef KHTML_XSLT
+#include "xsl_stylesheetimpl.h"
+#endif
 #include "misc/loader.h"
 #include "xml/xml_tokenizer.h"
 
@@ -302,6 +305,9 @@ ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc) : NodeBas
     m_sheet = 0;
     m_cachedSheet = 0;
     m_loading = false;
+#ifdef KHTML_XSLT
+    m_isXSL = false;
+#endif
 }
 
 ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc, DOMString _target, DOMString _data) : NodeBaseImpl(doc)
@@ -315,6 +321,9 @@ ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc, DOMString
     m_sheet = 0;
     m_cachedSheet = 0;
     m_localHref = 0;
+#ifdef KHTML_XSLT
+    m_isXSL = false;
+#endif
 }
 
 ProcessingInstructionImpl::~ProcessingInstructionImpl()
@@ -407,7 +416,15 @@ void ProcessingInstructionImpl::checkStyleSheet()
         QString type;
         if (i != attrs.end())
             type = *i;
-        if (type != "text/css" && !type.isEmpty())
+        
+        bool isCSS = type.isEmpty() || type == "text/css";
+#ifdef KHTML_XSLT
+        m_isXSL = (type == "text/xml" || type == "text/xsl" || type == "application/xml" ||
+                   type == "application/xml+xhtml");
+        if (!isCSS && !m_isXSL)
+#else
+        if (!isCSS)
+#endif
             return;
 
         i = attrs.find("href");
@@ -434,7 +451,12 @@ void ProcessingInstructionImpl::checkStyleSheet()
 		    m_loading = true;
 		    getDocument()->addPendingSheet();
 		    if (m_cachedSheet) m_cachedSheet->deref(this);
-		    m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href), QString::null);
+#ifdef KHTML_XSLT
+                    if (m_isXSL)
+                        m_cachedSheet = getDocument()->docLoader()->requestXSLStyleSheet(getDocument()->completeURL(href));
+                    else
+#endif
+                    m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href), QString::null);
 		    if (m_cachedSheet)
 			m_cachedSheet->ref( this );
 		}
@@ -444,16 +466,18 @@ void ProcessingInstructionImpl::checkStyleSheet()
     }
 }
 
-StyleSheetImpl *ProcessingInstructionImpl::sheet() const
+StyleSheetImpl* ProcessingInstructionImpl::sheet() const
 {
     return m_sheet;
 }
 
 bool ProcessingInstructionImpl::isLoading() const
 {
-    if(m_loading) return true;
-    if(!m_sheet) return false;
-    return static_cast<CSSStyleSheetImpl *>(m_sheet)->isLoading();
+    if (m_loading)
+        return true;
+    if (!m_sheet)
+        return false;
+    return m_sheet->isLoading();
 }
 
 void ProcessingInstructionImpl::sheetLoaded()
@@ -466,7 +490,12 @@ void ProcessingInstructionImpl::setStyleSheet(const DOM::DOMString &url, const D
 {
     if (m_sheet)
 	m_sheet->deref();
-    m_sheet = new CSSStyleSheetImpl(this, url);
+#ifdef KHTML_XSLT
+    if (m_isXSL)
+        m_sheet = new XSLStyleSheetImpl(this, url);
+    else
+#endif
+        m_sheet = new CSSStyleSheetImpl(this, url);
     m_sheet->ref();
     m_sheet->parseString(sheet);
     if (m_cachedSheet)

@@ -1,5 +1,27 @@
 2004-08-04  David Hyatt  <hyatt@apple.com>
 
+	The top-level XSL sheet is now loaded and shows up in the activity window.  It is not yet parsed.
+	
+        Reviewed by kocienda
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/css_base.h:
+        (DOM::StyleBaseImpl::isXSLStyleSheet):
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::CSSStyleSheetImpl):
+        * khtml/css/css_stylesheetimpl.h:
+        (DOM::StyleSheetImpl::isLoading):
+        * khtml/misc/loader.cpp:
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::ProcessingInstructionImpl::ProcessingInstructionImpl):
+        (DOM::ProcessingInstructionImpl::checkStyleSheet):
+        (DOM::ProcessingInstructionImpl::sheet):
+        (DOM::ProcessingInstructionImpl::isLoading):
+        (DOM::ProcessingInstructionImpl::setStyleSheet):
+        * khtml/xml/dom_xmlimpl.h:
+
+2004-08-04  David Hyatt  <hyatt@apple.com>
+
 	Add XSL Stylesheets to the WebCore cache.
 	
         Reviewed by kocienda

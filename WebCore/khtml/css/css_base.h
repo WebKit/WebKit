@@ -197,6 +197,7 @@ namespace DOM {
 
 	virtual bool isStyleSheet() const { return false; }
 	virtual bool isCSSStyleSheet() const { return false; }
+        virtual bool isXSLStyleSheet() const { return false; }
 	virtual bool isStyleSheetList() const { return false; }
 	virtual bool isMediaList() { return false; }
 	virtual bool isRuleList() { return false; }
