@@ -18,7 +18,7 @@
     uint16 transferMode;
     int32 offset;
     NPStream stream;
-    NSString *path;
+    char *path;
     void *notifyData;
     WebNetscapePluginPackage *plugin;
         

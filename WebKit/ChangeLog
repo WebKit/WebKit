@@ -1,3 +1,25 @@
+2003-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey, John, and Maciej, and given the seal of approval by Don.
+
+	- fixed 3143317 -- plug-in supplied URLs cause correspondingly named files in /tmp to be deleted
+	- fixed 3143330 -- plug-in supplied URLs can overwrite files used in other windows by same plug-in
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h: Make path be a char * rather than an NSString.
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream dealloc]): Use unlink() to delete the temporary file we made.
+	Since we created the file, we know it doesn't have any fancy stuff like a resource fork.
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): Create the file with mkstemp instead of
+	trying to come up with our own filename. This eliminates the need to delete an old file (because we
+	are guaranteed the file is new) and also mkstemp opens the file for us, so we just need to write
+	the contents.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for above changes.
+        
+        - unrelated change to help with other bug analysis
+        
+        * WebView.subproj/WebBaseResourceHandleDelegate.m: Added assertions.
+
 2003-01-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fix for checking and creating proper download filenames.

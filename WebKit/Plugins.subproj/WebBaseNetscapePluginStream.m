@@ -17,13 +17,16 @@
 {
     ASSERT(stream.ndata == nil);
 
+    // FIXME: It's generally considered bad style to do work, like deleting a file,
+    // at dealloc time. We should change things around so that this is done at a
+    // more well-defined time rather than when the last release happens.
     if (path) {
-        [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+        unlink(path);
     }
 
     [URL release];
     free((void *)stream.URL);
-    [path release];
+    free(path);
     [plugin release];
     
     [super dealloc];
@@ -135,27 +138,30 @@
         return;
     }
     
-    NSString *filename = [[URL path] lastPathComponent];
-    
-    // It's very important to not do the below calls, like "removeFileAtPath:", on empty paths.
-    // That's the way you lose your "/tmp" directory.
-    if ([filename length] == 0
-            || [filename isEqualToString:@"."]
-            || [filename isEqualToString:@".."]
-            || [filename isEqualToString:@"/"]) {
-        [self destroyStreamWithReason:NPRES_NETWORK_ERR];
-        return;
-    }
-    
     if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
-        // FIXME: Need to use something like mkstemp?
-        path = [[NSString stringWithFormat:@"/tmp/%@", filename] retain];        
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        [fileManager removeFileAtPath:path handler:nil];
-        [fileManager createFileAtPath:path contents:data attributes:nil];
+        ASSERT(!path);
+        path = strdup("/tmp/SafariPlugInStream.XXXXXX");
+        int fd = mkstemp(path);
+        if (fd == -1) {
+            // This should almost never happen.
+            ERROR("can't make temporary file, almost certainly a problem with /tmp");
+            // This is not a network error, but the only error codes are "network error" and "user break".
+            [self destroyStreamWithReason:NPRES_NETWORK_ERR];
+            return;
+        }
+        int dataLength = [data length];
+        int byteCount = write(fd, [data bytes], dataLength);
+        int writeError = errno;
+        close(fd);
+        if (byteCount != dataLength) {
+            // This happens only rarely, when we are out of disk space or have a disk I/O error.
+            ERROR("error writing to temporary file, errno %d", writeError);
+            // This is not a network error, but the only error codes are "network error" and "user break".
+            [self destroyStreamWithReason:NPRES_NETWORK_ERR];
+            return;
+        }
         
-        // FIXME: Will cString use the correct character set?
-        NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:path];
+        NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithCString:path]];
         NPP_StreamAsFile(instance, &stream, [carbonPath cString]);
         LOG(Plugins, "NPP_StreamAsFile: %@", carbonPath);
     }

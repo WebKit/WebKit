@@ -91,6 +91,9 @@
 
 - (void)setDataSource:(WebDataSource *)d
 {
+    ASSERT(d);
+    ASSERT([d controller]);
+    
     [d retain];
     [dataSource release];
     dataSource = d;
