@@ -411,43 +411,39 @@ NodeImpl *TextImpl::cloneNode(bool /*deep*/)
 
 bool TextImpl::rendererIsNeeded(RenderStyle *style)
 {
-    if (!CharacterDataImpl::rendererIsNeeded(style)) {
+    if (!CharacterDataImpl::rendererIsNeeded(style))
         return false;
-    }
+
     bool onlyWS = containsOnlyWhitespace();
-    if (!onlyWS) {
+    if (!onlyWS)
         return true;
-    }
 
     RenderObject *par = parentNode()->renderer();
     
-    if (par->isTable() || par->isTableRow() || par->isTableSection() || par->isTableCol()) {
+    if (par->isTable() || par->isTableRow() || par->isTableSection() || par->isTableCol())
         return false;
-    }
     
-    if (style->whiteSpace() == PRE) {
+    if (style->whiteSpace() == PRE)
         return true;
-    }
     
+    RenderObject *prev = previousRenderer();
+    if (prev && prev->isBR()) // <span><br/> <br/></span>
+        return false;
+        
     if (par->isInline()) {
         // <span><div/> <div/></span>
-        RenderObject *prev = previousRenderer();
-        if (prev && prev->isRenderBlock()) {
+        if (prev && prev->isRenderBlock())
             return false;
-        }
     } else {
-        RenderObject *prev = previousRenderer();
-        if (par->isRenderBlock() && !par->childrenInline() && (!prev || !prev->isInline())) {
+        if (par->isRenderBlock() && !par->childrenInline() && (!prev || !prev->isInline()))
             return false;
-        }
         
         RenderObject *first = par->firstChild();
         RenderObject *next = nextRenderer();
-        if (!first || next == first) {
+        if (!first || next == first)
             // Whitespace at the start of a block just goes away.  Don't even
             // make a render object for this text.
             return false;
-        }
     }
     
     return true;

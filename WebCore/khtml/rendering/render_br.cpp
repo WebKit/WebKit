@@ -29,7 +29,7 @@ using namespace khtml;
 using DOM::Position;
 
 RenderBR::RenderBR(DOM::NodeImpl* node)
-    : RenderText(node, new DOM::DOMStringImpl(QChar('\n'))), m_x(0), m_y(0), m_height(0),
+    : RenderText(node, new DOM::DOMStringImpl(QChar('\n'))),
       m_lineHeight(-1)
 {
 }
@@ -38,33 +38,27 @@ RenderBR::~RenderBR()
 {
 }
 
-void RenderBR::setPos(int xPos, int yPos)
-{
-    m_x = xPos;
-    m_y = yPos;
-}
-
 InlineBox* RenderBR::createInlineBox(bool makePlaceholder, bool isRootLineBox, bool isOnlyRun)
 {
-    // We only make a box for a <br> if we are on a line by ourself or in strict mode
-    // (Note the use of strict mode.  In "almost strict" mode, we don't make a box for <br>.)
-    if (isOnlyRun || document()->inStrictMode())
-        return RenderText::createInlineBox(makePlaceholder, isRootLineBox, isOnlyRun);
-    return 0;
+    // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
+    // (Note the use of strict mode.  In "almost strict" mode, we don't treat the box for <br> as text.)
+    InlineTextBox* box = static_cast<InlineTextBox*>(RenderText::createInlineBox(makePlaceholder, isRootLineBox, isOnlyRun));
+    box->setIsText(isOnlyRun || document()->inStrictMode());
+    return box;
 }
 
-void RenderBR::position(InlineBox* box, int from, int len, bool reverse)
+short RenderBR::baselinePosition( bool firstLine, bool isRootLineBox) const
 {
-    InlineTextBox *s = static_cast<InlineTextBox*>(box);
-    
-    // We want the box to be destroyed, but get the position of it first.
-    m_x = s->xPos();
-    m_y = s->yPos();
-    m_height = s->height();
+    if (firstTextBox() && !firstTextBox()->isText())
+        return 0;
+    return RenderText::baselinePosition(firstLine, isRootLineBox);
 }
 
 short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
 {
+    if (firstTextBox() && !firstTextBox()->isText())
+        return 0;
+
     if (firstLine) {
         RenderStyle* s = style(firstLine);
         Length lh = s->lineHeight();

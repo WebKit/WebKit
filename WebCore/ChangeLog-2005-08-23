@@ -1,3 +1,35 @@
+2004-09-29  David Hyatt  <hyatt@apple.com>
+
+	Make sure <br>s always get line boxes.  Also prevent the creation of RenderTexts for whitespace normal/nowrap nodes
+	that follow <br>s.
+	
+        Reviewed by kocienda
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::isCandidate):
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::RenderBR):
+        (RenderBR::createInlineBox):
+        (RenderBR::baselinePosition):
+        (RenderBR::lineHeight):
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::placeBoxesVertically):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineBox::isText):
+        (khtml::InlineFlowBox::addToLine):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::detach):
+        * khtml/rendering/render_text.h:
+        (khtml::InlineTextBox:::InlineRunBox):
+        (khtml::InlineTextBox::isInlineTextBox):
+        (khtml::InlineTextBox::isText):
+        (khtml::InlineTextBox::setIsText):
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<):
+
 2004-09-29  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

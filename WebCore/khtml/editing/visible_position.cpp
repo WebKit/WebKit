@@ -259,9 +259,18 @@ bool VisiblePosition::isCandidate(const Position &pos)
         // return true for replaced elements
         return pos.offset() == 0 || pos.offset() == 1;
 
-    if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox())
-        // return true for offset 0 into BR element on a line by itself
-        return pos.offset() == 0;
+    if (renderer->isBR()) {
+        if (pos.offset() == 0) {
+            InlineBox* box = static_cast<RenderText*>(renderer)->firstTextBox();
+            if (box) {
+                // return true for offset 0 into BR element on a line by itself
+                RootInlineBox* root = box->root();
+                if (root)
+                    return root->firstLeafChild() == box && root->lastLeafChild() == box;
+            }
+        }   
+        return false;
+    }
     
     if (renderer->isText()) {
         RenderText *textRenderer = static_cast<RenderText *>(renderer);

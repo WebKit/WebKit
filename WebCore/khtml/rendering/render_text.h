@@ -61,6 +61,7 @@ public:
         m_start = 0;
         m_len = 0;
         m_reversed = false;
+        m_treatAsText = true;
         m_toAdd = 0;
         m_truncation = cNoTruncation;
     }
@@ -102,7 +103,9 @@ public:
     void setSpaceAdd(int add) { m_width -= m_toAdd; m_toAdd = add; m_width += m_toAdd; }
     int spaceAdd() { return m_toAdd; }
 
-    virtual bool isInlineTextBox() { return true; }
+    virtual bool isInlineTextBox() { return true; }    
+    virtual bool isText() const { return m_treatAsText; }
+    void setIsText(bool b) { m_treatAsText = b; }
     
     void paintDecoration( QPainter *pt, int _tx, int _ty, int decoration);
     void paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
@@ -132,7 +135,9 @@ public:
                       // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
 
     bool m_reversed : 1;
+    bool m_treatAsText : 1; // Whether or not to treat a <br> as text for the purposes of line height.
     int m_toAdd : 14; // for justified text
+
 private:
     friend class RenderText;
 };

@@ -47,11 +47,11 @@ public:
     // FIXME: This is just temporary.
     virtual QRect selectionRect();
 
-    virtual void position(InlineBox* box, int from, int len, bool reverse);
     virtual unsigned int width(unsigned int, unsigned int, const Font *) const { return 0; }
     virtual unsigned int width( unsigned int, unsigned int, bool) const { return 0; }
 
     virtual short lineHeight(bool firstLine, bool isRootLineBox=false) const;
+    virtual short baselinePosition( bool firstLine, bool isRootLineBox=false) const;
     virtual void setStyle(RenderStyle* _style);
 
     // overrides
@@ -60,11 +60,6 @@ public:
     virtual int minWidth() const { return 0; }
     virtual int maxWidth() const { return 0; }
 
-    virtual int xPos() const { return m_x; }
-    virtual int yPos() const { return m_y; }
-    virtual int height() const { return m_height; }
-    virtual void setPos(int xPos, int yPos);
-    
     virtual bool isBR() const { return true; }
 
     virtual long caretMinOffset() const;
@@ -77,9 +72,6 @@ public:
     virtual InlineBox *inlineBox(long offset);
     
 private:
-    int m_x;
-    int m_y;
-    int m_height;
     mutable short m_lineHeight;
 
 };
