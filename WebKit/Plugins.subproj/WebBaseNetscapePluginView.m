@@ -3,8 +3,6 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#define USE_CARBON 1
-
 #import <WebKit/WebBaseNetscapePluginView.h>
 
 #import <WebKit/WebController.h>
@@ -28,7 +26,6 @@
 #import <WebFoundation/WebNSURLExtras.h>
 
 #import <AppKit/NSEvent_Private.h>
-#import <AppKit/NSWindow_Private.h>
 
 #import <Carbon/Carbon.h>
 
@@ -83,36 +80,30 @@
 
 - (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent
 {
-    if([cocoaEvent _eventRef] && ConvertEventRefToEventRecord([cocoaEvent _eventRef], carbonEvent)){
+    if ([cocoaEvent _eventRef] && ConvertEventRefToEventRecord([cocoaEvent _eventRef], carbonEvent)) {
         return;
-    } else {
-        NSPoint where;
-        
-        where = [[cocoaEvent window] convertBaseToScreen:[cocoaEvent locationInWindow]];
-        
-        carbonEvent->what = nullEvent;
-        carbonEvent->message = 0;
-        carbonEvent->when = (UInt32)([cocoaEvent timestamp] * 60); // seconds to ticks
-        carbonEvent->where.h = (short)where.x;
-        carbonEvent->where.v = (short)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
-        carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent];
     }
+    
+    NSPoint where = [[cocoaEvent window] convertBaseToScreen:[cocoaEvent locationInWindow]];
+        
+    carbonEvent->what = nullEvent;
+    carbonEvent->message = 0;
+    carbonEvent->when = (UInt32)([cocoaEvent timestamp] * 60); // seconds to ticks
+    carbonEvent->where.h = (short)where.x;
+    carbonEvent->where.v = (short)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
+    carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent];
 }
 
-- (UInt32)keyMessageForEvent:(NSEvent *)theEvent
+- (UInt32)keyMessageForEvent:(NSEvent *)event
 {
-    NSData *data;
-    UInt8 characterCode;
-    UInt16 keyCode;
-    UInt32 message=0;
-
-    data = [[theEvent characters] dataUsingEncoding:CFStringConvertEncodingToNSStringEncoding(CFStringGetSystemEncoding())];
-    if(data){
-        [data getBytes:&characterCode length:1];
-        keyCode = [theEvent keyCode];
-        message = keyCode << 8 | characterCode;
+    NSData *data = [[event characters] dataUsingEncoding:CFStringConvertEncodingToNSStringEncoding(CFStringGetSystemEncoding())];
+    if (!data) {
+        return 0;
     }
-    return message;
+    UInt8 characterCode;
+    [data getBytes:&characterCode length:1];
+    UInt16 keyCode = [event keyCode];
+    return keyCode << 8 | characterCode;
 }
 
 - (BOOL)sendEvent:(EventRecord *)event
@@ -137,7 +128,7 @@
     
     [self getCarbonEvent:&event];
     event.what = activateEvt;
-    WindowRef windowRef = [[self window] _windowRef];
+    WindowRef windowRef = [[self window] windowRef];
     event.message = (UInt32)windowRef;
     if (activate)
         event.modifiers |= activeFlag;
@@ -154,7 +145,7 @@
     
     [self getCarbonEvent:&event];
     event.what = updateEvt;
-    WindowRef windowRef = [[self window] _windowRef];
+    WindowRef windowRef = [[self window] windowRef];
     event.message = (UInt32)windowRef;
 
     BOOL acceptedEvent = [self sendEvent:&event];
@@ -259,7 +250,7 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyUp;
 
-    if(event.message == 0){
+    if (event.message == 0) {
         event.message = [self keyMessageForEvent:theEvent];
     }
     
@@ -288,7 +279,7 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyDown;
 
-    if(event.message == 0){
+    if (event.message == 0) {
         event.message = [self keyMessageForEvent:theEvent];
     }
     
@@ -329,7 +320,7 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyDown;
 
-    if(event.message == 0){
+    if (event.message == 0) {
         event.message = [self keyMessageForEvent:theEvent];
     }
 
@@ -360,7 +351,7 @@
 
 - (void)setUpWindowAndPort
 {
-    CGrafPtr port = GetWindowPort([[self window] _windowRef]);
+    CGrafPtr port = GetWindowPort([[self window] windowRef]);
     NSRect contentViewFrame = [[[self window] contentView] frame];
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
@@ -443,7 +434,7 @@
     LOG(Plugins, "NPP_New: %d", npErr);
     
     // Create a WindowRef is one doesn't already exist
-    [[self window] _windowRef];
+    [[self window] windowRef];
         
     [self setWindow];
     
@@ -464,13 +455,19 @@
         name:NSWindowDidResignKeyNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) 
         name:NSUserDefaultsDidChangeNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(windowDidMiniaturize:)
+        name:NSWindowDidMiniaturizeNotification object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowDidDeminiaturize:)
+        name:NSWindowDidDeminiaturizeNotification object:theWindow];
 
-    if ([theWindow isKeyWindow]){
+    if ([theWindow isKeyWindow]) {
         [self sendActivateEvent:YES];
     }
     
     eventSender = [[WebNetscapePluginNullEventSender alloc] initWithPluginView:self];
-    [eventSender sendNullEvents];
+    if (![theWindow isMiniaturized]) {
+        [eventSender sendNullEvents];
+    }
     [self resetTrackingRect];
 }
 
@@ -712,6 +709,16 @@
 -(void)windowResignedKey:(NSNotification *)notification
 {
     [self sendActivateEvent:NO];
+}
+
+-(void)windowDidMiniaturize:(NSNotification *)notification
+{
+    [eventSender stop];
+}
+
+-(void)windowDidDeminiaturize:(NSNotification *)notification
+{
+    [eventSender sendNullEvents];
 }
 
 - (void)defaultsHaveChanged:(NSNotification *)notification

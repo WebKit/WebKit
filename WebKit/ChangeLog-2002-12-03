@@ -1,5 +1,15 @@
 2002-10-19  Darin Adler  <darin@apple.com>
 
+	- fixed 3073693 -- flash drawn to screen even when window minimized
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView start]): Set up additional notifications.
+	Don't start the null event sender if the window is miniaturized.
+        (-[WebBaseNetscapePluginView windowDidMiniaturize:]): Stop the null event sender.
+        (-[WebBaseNetscapePluginView windowDidDeminiaturize:]): Start the null event sender.
+
+2002-10-19  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebFramePrivate.m: (-[WebFrame _transitionToCommitted]):
 	Removed stray printf.
 
