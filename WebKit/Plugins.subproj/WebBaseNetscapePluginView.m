@@ -436,8 +436,9 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
 
     NSTimeInterval interval;
 
-    // Send null events less frequently when the actual window is not key.
-    if ([[self window] isKeyWindow]) {
+    // Send null events less frequently when the actual window is not key.  Also, allow the DB
+    // to override this behavior and send full speed events to non key windows.
+    if ([[self window] isKeyWindow] || [[self webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns]) {
         interval = NullEventIntervalActive;
     } else {
         interval = NullEventIntervalNotActive;

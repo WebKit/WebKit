@@ -1590,7 +1590,9 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)addMouseMovedObserver
 {
-    if ([[self window] isKeyWindow] && ![self _insideAnotherHTMLView]) {
+    // Always add a mouse move observer if the DB requested, or if we're the key window.
+    if (([[self window] isKeyWindow] && ![self _insideAnotherHTMLView]) ||
+        [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]){
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
             name:NSMouseMovedNotification object:nil];
         [self _frameOrBoundsChanged];
@@ -1599,6 +1601,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)removeMouseMovedObserver
 {
+    // Don't remove the observer if we're running the DB
+    if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows])
+        return;
+        
     [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
     [[NSNotificationCenter defaultCenter] removeObserver:self
         name:NSMouseMovedNotification object:nil];

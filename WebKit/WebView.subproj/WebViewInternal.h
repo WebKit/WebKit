@@ -82,6 +82,9 @@
     BOOL continuousSpellCheckingEnabled;
     BOOL continuousGrammarCheckingEnabled;
     BOOL smartInsertDeleteEnabled;
+    
+    BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
+    BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
 }
 @end
 

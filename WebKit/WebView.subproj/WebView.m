@@ -1181,6 +1181,33 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     return regions;
 }
 
+- (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag;
+{
+    switch (behavior) {
+        case WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows: {
+            _private->dashboardBehaviorAlwaysSendMouseEventsToAllWindows = flag;
+            break;
+        }
+        case WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns: {
+            _private->dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns = flag;
+            break;
+        }
+    }
+}
+
+- (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior
+{
+    switch (behavior) {
+        case WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows: {
+            return _private->dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
+        }
+        case WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns: {
+            return _private->dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
+        }
+    }
+    return NO;
+}
+
 @end
 
 

@@ -3523,6 +3523,17 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
         if (node && node->renderer())
             node->renderer()->repaint();
     }
+    
+    if (doc) {
+        if (flag) {
+            // Send onfocus event.
+            doc->body()->dispatchWindowEvent(EventImpl::FOCUS_EVENT, false, false);
+        }
+        else {
+            // Send onblur event.
+            doc->body()->dispatchWindowEvent(EventImpl::BLUR_EVENT, false, false);
+        }
+    }
 }
 
 bool KWQKHTMLPart::displaysWithFocusAttributes() const

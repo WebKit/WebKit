@@ -1,3 +1,16 @@
+2004-09-29  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3779998> bringing window to front or sending to back does not send focus/blur events to JavaScript window object
+
+	The fix has two parts, 1) make onblur and onfocus work for windows, 
+        and 2), allow the dashboard to override WebKit's special key/non-key
+        behaviors.
+
+        Reviewed by Chris.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes):
+
 2004-09-29  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
