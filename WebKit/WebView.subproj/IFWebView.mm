@@ -115,22 +115,21 @@
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
 
 #define _KWQ_TIMING        
-#ifdef _KWQ_TIMING        
-    double start = CFAbsoluteTimeGetCurrent();
-#endif
-
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles){
+#ifdef _KWQ_TIMING        
+    double start = CFAbsoluteTimeGetCurrent();
+#endif
             widget->part()->xmlDocImpl()->recalcStyle(DOM::NodeImpl::Force);
             ((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles = NO;
-        }
-    }
-
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s apply style seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
 #endif
+        }
+    }
+
 }
 
 
@@ -141,25 +140,25 @@
 {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
 
+    if (widget->part()->xmlDocImpl() && 
+        widget->part()->xmlDocImpl()->renderer()){
+        if (((IFWebViewPrivate *)_viewPrivate)->needsLayout){
 #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    if (widget->part()->xmlDocImpl() && 
-        widget->part()->xmlDocImpl()->renderer()){
-        if (((IFWebViewPrivate *)_viewPrivate)->needsLayout){
             WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "doing layout\n");
             //double start = CFAbsoluteTimeGetCurrent();
             widget->layout();
             //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             ((IFWebViewPrivate *)_viewPrivate)->needsLayout = NO;
-        }
-    }
-
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
 #endif
+        }
+    }
+
 }
 
 

@@ -137,14 +137,14 @@ char *stateNames[6] = {
                 // ahead and schedule a layout.
                 timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
                 if (timeSinceStart > (double)defaultTimedDelay){
-                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "performing early layout because commit time, %f, exceeded initial layout interval %f\n", timeSinceStart, defaultTimedDelay);
-                    [self _initialLayout: nil];
+                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "performing early layout because commit time, %f, exceeded initial layout interval %f\n", timeSinceStart, defaultTimedDelay);
+                    [self _timedLayout: nil];
                 }
                 else {
                     NSTimeInterval timedDelay = defaultTimedDelay - timeSinceStart;
                     
-                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
-                    [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_initialLayout:) userInfo: nil repeats:FALSE];
+                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
+                    [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_timedLayout:) userInfo: nil repeats:FALSE];
                 }
             }
             break;
@@ -225,19 +225,19 @@ char *stateNames[6] = {
 }
 
 
-- (void)_initialLayout: userInfo
+- (void)_timedLayout: userInfo
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
 
-    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "%s:  state = %s\n", [[self name] cString], stateNames[data->state]);
+    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[data->state]);
     
     if (data->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE){
-        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  performing initial layout\n", [[self name] cString]);
+        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
         [[self view] setNeedsLayout: YES];
         [[self view] setNeedsDisplay: YES];
     }
     else {
-        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  timed initial layout not required\n", [[self name] cString]);
+        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
     }
 }
 
@@ -327,15 +327,16 @@ char *stateNames[6] = {
                 [thisView setNeedsDisplay: YES];
                 if ([thisView _frameScrollView])
                     [[thisView _frameScrollView] setNeedsDisplay: YES];
-                
+
+                // Force a relayout and draw NOW if we are complete are the top level.
                 if ([[self controller] mainFrame] == self){
                     [mainView layout];
-                        
-                    [[self dataSource] _part]->gotoBaseAnchor();
-                    
                     [mainView display];
                 }
-                
+ 
+                // Jump to anchor point, if necessary.
+                [[self dataSource] _part]->gotoBaseAnchor();
+                   
                 [[self controller] locationChangeDone: [self mainDocumentError] forFrame: self];
                 
                 return;
