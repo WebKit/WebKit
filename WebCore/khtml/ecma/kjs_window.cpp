@@ -760,17 +760,17 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
       if (p) {
         QString dstUrl = p->htmlDocument().completeURL(value.toString(exec).string()).string();
         if (dstUrl.find("javascript:", 0, false) || isSafeScript(exec))
-#if APPLE_CHANGES
         {
-          // We want a new history item if this JS was called via a user gesture
           bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
-          m_part->scheduleRedirection(0, dstUrl, !userGesture);
-        }
+#if APPLE_CHANGES
+          // We want a new history item if this JS was called via a user gesture
+          m_part->scheduleRedirection(0, dstUrl, !userGesture, userGesture);
 #else
           m_part->scheduleRedirection(0,
                                       dstUrl,
-                                      false /*don't lock history*/);
+                                      false /*don't lock history*/, userGesture);
 #endif
+        }
       }
       return;
     }
@@ -1246,7 +1246,8 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	  // FIXME: referrer?
           while ( part->parentPart() )
               part = part->parentPart();
-          part->scheduleRedirection(0, url.url(), false/*don't lock history*/);
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+          part->scheduleRedirection(0, url.url(), false/*don't lock history*/, userGesture);
           return Window::retrieve(part);
       }
       if ( uargs.frameName == "_parent" )
@@ -1254,7 +1255,8 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	  // FIXME: referrer?
           if ( part->parentPart() )
               part = part->parentPart();
-          part->scheduleRedirection(0, url.url(), false/*don't lock history*/);
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+          part->scheduleRedirection(0, url.url(), false/*don't lock history*/, userGesture);
           return Window::retrieve(part);
       }
       uargs.serviceType = "text/html";
@@ -1278,9 +1280,11 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
           }
         }
 #if APPLE_CHANGES
-        if (!url.isEmpty())
+        if (!url.isEmpty()) {
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
           // FIXME: Need to pass referrer here.
-          khtmlpart->scheduleRedirection(0, url.url(), false);
+          khtmlpart->scheduleRedirection(0, url.url(), false, userGesture);
+	}
 #else
         uargs.serviceType = QString::null;
         if (uargs.frameName == "_blank")
@@ -1881,12 +1885,12 @@ void Location::put(ExecState *exec, const Identifier &p, const Value &v, int att
     ObjectImp::put(exec, p, v, attr);
     return;
   }
+  bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
 #if APPLE_CHANGES
   // We want a new history item if this JS was called via a user gesture
-  bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
-  m_part->scheduleRedirection(0, url.url(), !userGesture);
+  m_part->scheduleRedirection(0, url.url(), !userGesture, userGesture);
 #else
-  m_part->scheduleRedirection(0, url.url(), false /*don't lock history*/);
+  m_part->scheduleRedirection(0, url.url(), false /*don't lock history*/, userGesture);
 #endif
 }
 
@@ -1918,13 +1922,18 @@ Value LocationFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     {
       QString str = args[0].toString(exec).qstring();
       KHTMLPart* p = Window::retrieveActive(exec)->part();
-      if ( p )
-        part->scheduleRedirection(0, p->htmlDocument().completeURL(str).string(), true /*lock history*/);
+      if ( p ) {
+	bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+        part->scheduleRedirection(0, p->htmlDocument().completeURL(str).string(), true /*lock history*/, userGesture);
+      }
       break;
     }
     case Location::Reload:
-      part->scheduleRedirection(0, part->url().url(), true/*lock history*/);
+    {
+      bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+      part->scheduleRedirection(0, part->url().url(), true/*lock history*/, userGesture);
       break;
+    }
     case Location::ToString:
       return String(location->toString(exec));
     }

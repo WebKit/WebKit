@@ -272,7 +272,8 @@ public:
   bool m_bHTTPRefresh:1;
   bool m_onlyLocalReferences :1;
   bool m_redirectLockHistory:1;
-
+  bool m_redirectUserGesture:1;
+  
   KURL m_workingURL;
 
   KIO::CacheControl m_cachePolicy;

@@ -1,3 +1,29 @@
+2003-05-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3245048 - "Block Pop-Up Windows" can easily be bypassed using javascript: URLs
+
+	Closed the loophole by tracking what client redirects were
+	triggered by user actions, and making sure the script interpreter
+	knows.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::put):
+        (WindowFunc::tryCall):
+        (Location::put):
+        (LocationFunc::tryCall):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::executeScript):
+        (KHTMLPart::clear):
+        (KHTMLPart::scheduleRedirection):
+        (KHTMLPart::slotRedirect):
+        (KHTMLPart::urlSelected):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stringByEvaluatingJavaScriptFromString:]):
+
 2003-05-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

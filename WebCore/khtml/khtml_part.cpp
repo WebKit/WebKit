@@ -677,15 +677,15 @@ KJSProxy *KHTMLPart::jScript()
   return d->m_jscript;
 }
 
-QVariant KHTMLPart::executeScript( const QString &script )
+QVariant KHTMLPart::executeScript( const QString &script, bool forceUserGesture )
 {
-    return executeScript( DOM::Node(), script );
+    return executeScript( DOM::Node(), script, forceUserGesture );
 }
 
 //Enable this to see all JS scripts being executed
 //#define KJS_VERBOSE
 
-QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
+QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script, bool forceUserGesture )
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KHTMLPart::executeScript n=" << n.nodeName().string().latin1() << "(" << (n.isNull() ? 0 : n.nodeType()) << ") " << script << endl;
@@ -695,7 +695,10 @@ QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
   if (!proxy || proxy->paused())
     return QVariant();
   d->m_runningScripts++;
-  QVariant ret = proxy->evaluate( QString::null, 0, script, n );
+  // If forceUserGesture is true, then make the script interpreter
+  // treat it as if triggered by a user gesture even if there is no
+  // current DOM event being processed.
+  QVariant ret = proxy->evaluate( forceUserGesture ? QString::null : m_url.url(), 0, script, n );
   d->m_runningScripts--;
   if (!d->m_runningScripts && d->m_doc && !d->m_doc->parsing() && d->m_submitForm )
       submitFormAgain();
@@ -986,6 +989,7 @@ void KHTMLPart::clear()
   d->m_delayRedirect = 0;
   d->m_redirectURL = QString::null;
   d->m_redirectLockHistory = true;
+  d->m_redirectUserGesture = false;
   d->m_bHTTPRefresh = false;
   d->m_bClearing = false;
   d->m_frameNameId = 1;
@@ -1823,7 +1827,7 @@ KURL KHTMLPart::completeURL( const QString &url )
   return KURL( d->m_doc->completeURL( url ) );
 }
 
-void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLockHistory )
+void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLockHistory, bool userGesture )
 {
     kdDebug(6050) << "KHTMLPart::scheduleRedirection delay=" << delay << " url=" << url << endl;
     if (delay < 0 || delay > INT_MAX / 1000)
@@ -1834,6 +1838,7 @@ void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLo
        d->m_delayRedirect = delay;
        d->m_redirectURL = url;
        d->m_redirectLockHistory = doLockHistory;
+       d->m_redirectUserGesture = userGesture;
        if ( d->m_bComplete ) {
          d->m_redirectionTimer.stop();
          d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true );
@@ -1882,7 +1887,7 @@ void KHTMLPart::slotRedirect()
   {
     QString script = KURL::decode_string( u.right( u.length() - 11 ) );
     //kdDebug( 6050 ) << "KHTMLPart::slotRedirect script=" << script << endl;
-    QVariant res = executeScript( script );
+    QVariant res = executeScript( script, d->m_redirectUserGesture );
     if ( res.type() == QVariant::String ) {
       begin( url() );
       write( res.asString() );
@@ -2476,7 +2481,7 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 
   if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
   {
-    executeScript( KURL::decode_string( url.right( url.length() - 11) ) );
+    executeScript( KURL::decode_string( url.right( url.length() - 11) ), true );
     return;
   }
 

@@ -764,7 +764,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
 {
     _part->createEmptyDocument();
-    return _part->executeScript(QString::fromNSString(string)).asString().getNSString();
+    return _part->executeScript(QString::fromNSString(string), true).asString().getNSString();
 }
 
 - (id<WebDOMDocument>)DOMDocument

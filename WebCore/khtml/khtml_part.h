@@ -270,11 +270,11 @@ public:
    * and the code returned true itself or @p false otherwise.
    * @deprecated, use the one below.
    */
-  QVariant executeScript( const QString &script );
+  QVariant executeScript( const QString &script, bool forceUserGesture = false );
   /**
    * Same as above except the Node parameter specifying the 'this' value.
    */
-  QVariant executeScript( const DOM::Node &n, const QString &script );
+  QVariant executeScript( const DOM::Node &n, const QString &script, bool forceUserGesture = false );
 
   /**
    * Enables or disables Drag'n'Drop support. A drag operation is started if
@@ -370,7 +370,7 @@ public:
    * Schedules a redirection after @p delay seconds.
    * Note that this is used for JavaScript-triggered location changes as well.
    */
-  void scheduleRedirection( double delay, const QString &url, bool lockHistory = true );
+  void scheduleRedirection( double delay, const QString &url, bool lockHistory = true, bool userGesture = false );
 
   /**
    * Schedules a history navigation operation (go forward, go back, etc.).
