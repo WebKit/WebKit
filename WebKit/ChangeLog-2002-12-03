@@ -1,3 +1,8 @@
+2002-03-26  John Sullivan  <sullivan@apple.com>
+
+	* WebKit.pbproj/project.pbxproj:
+	Marked IFProgress.h Public.
+
 2002-03-25  John Sullivan  <sullivan@apple.com>
 
 	Broke IFLoadProgress out into its own file, and added

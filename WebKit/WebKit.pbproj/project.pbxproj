@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -1089,6 +1089,9 @@
 			fileRef = F58BAB3A025036CA01C1A526;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F5AEBB3D024A527601C1A526 = {
