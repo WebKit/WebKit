@@ -1,3 +1,14 @@
+2004-09-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed typos in last check-in.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectClosestWordFromMouseEvent):
+        (KHTMLPart::handleMousePressEventDoubleClick):
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendContextMenuEvent):
+
 2004-09-09  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3667862, regression where dragging of selection became really slow.  This patch completely rewrites
