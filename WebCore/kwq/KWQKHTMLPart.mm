@@ -659,6 +659,9 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
                                                     allowsScrolling:allowsScrolling
                                                         marginWidth:marginWidth
                                                        marginHeight:marginHeight];
+	// This call needs to return an object with a ref, since the caller will expect to own it.
+	// childBridge owns the only ref so far.
+	[childBridge part]->ref();
         return [childBridge part];
     }
 }

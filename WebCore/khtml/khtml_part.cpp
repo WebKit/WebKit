@@ -975,7 +975,6 @@ void KHTMLPart::clear()
     d->m_decoder->deref();
   d->m_decoder = 0;
 
-#if !APPLE_CHANGES
   {
     ConstFrameIt it = d->m_frames.begin();
     ConstFrameIt end = d->m_frames.end();
@@ -983,14 +982,29 @@ void KHTMLPart::clear()
     {
       if ( (*it).m_part )
       {
+#if !APPLE_CHANGES
         partManager()->removePart( (*it).m_part );
-        delete (KParts::ReadOnlyPart *)(*it).m_part;
+#endif
+        (*it).m_part->deref();
       }
     }
   }
-#endif
-
   d->m_frames.clear();
+
+  {
+    ConstFrameIt it = d->m_objects.begin();
+    ConstFrameIt end = d->m_objects.end();
+    for(; it != end; ++it )
+    {
+      if ( (*it).m_part )
+      {
+#if !APPLE_CHANGES
+        partManager()->removePart( (*it).m_part );
+#endif
+        (*it).m_part->deref();
+      }
+    }
+  }
   d->m_objects.clear();
 
 #ifndef Q_WS_QWS
@@ -3053,7 +3067,7 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
 #if !APPLE_CHANGES
       partManager()->removePart( (KParts::ReadOnlyPart *)child->m_part );
 #endif
-      delete (KParts::ReadOnlyPart *)child->m_part;
+      child->m_part->deref();
     }
 
     child->m_serviceType = mimetype;
