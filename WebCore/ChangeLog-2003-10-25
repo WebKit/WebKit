@@ -1,3 +1,14 @@
+2003-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3136944 -- mouseover feedback over non-mapped part of image map claims
+	link to current page
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]):
+	Change code so we won't call completeURL and complete a null ATTR_HREF (which is distinct
+	from an empty ATTR_HREF). Did a similar cleanup on the image code.
+
 2003-01-09  Darin Adler  <darin@apple.com>
 
         * WebCore.pbproj/project.pbxproj: Add the year 2003, remove CFBundleIconFile,

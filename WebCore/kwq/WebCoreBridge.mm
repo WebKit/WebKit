@@ -438,15 +438,15 @@ static bool initializedObjectCacheSize = FALSE;
     
     NodeImpl *URLNode = nodeInfo.URLElement();
     if (URLNode) {
-        ElementImpl* e = static_cast<ElementImpl*>(URLNode);
-        NSString *title = e->getAttribute(ATTR_TITLE).string().getNSString();
-        if(title){
-            [element setObject:title forKey:WebCoreElementLinkTitleKey];
+        ElementImpl *e = static_cast<ElementImpl *>(URLNode);
+        
+        DOMString title = e->getAttribute(ATTR_TITLE);
+        if (!title.isEmpty()) {
+            [element setObject:title.string().getNSString() forKey:WebCoreElementLinkTitleKey];
         }
         
-        NSString *URLString = _part->xmlDocImpl()->completeURL(e->getAttribute(ATTR_HREF).string()).getNSString();
-        
-        if (URLString) {
+        DOMString link = e->getAttribute(ATTR_HREF);
+        if (!link.isNull()) {
             // Look for the first #text node to use as a label.
             NodeImpl *labelParent = e;
             while (labelParent->hasChildNodes()){
@@ -462,7 +462,7 @@ static bool initializedObjectCacheSize = FALSE;
                 }
                 labelParent = childNode;
             }
-            [element setObject:URLString forKey:WebCoreElementLinkURLKey];
+            [element setObject:_part->xmlDocImpl()->completeURL(link.string()).getNSString() forKey:WebCoreElementLinkURLKey];
         }
         
         DOMString target = e->getAttribute(ATTR_TARGET);
@@ -476,32 +476,30 @@ static bool initializedObjectCacheSize = FALSE;
 
     NodeImpl *node = nodeInfo.innerNonSharedNode();
     if (node && isImage(node)){
-
-        ElementImpl* i =  static_cast<ElementImpl*>(node);
+        ElementImpl *i = static_cast<ElementImpl*>(node);
         DOMString attr = i->getAttribute(ATTR_SRC);
-        if(attr.isEmpty()){
+        if (attr.isEmpty()) {
             // Look for the URL in the DATA attribute of the OBJECT tag.
             attr = i->getAttribute(ATTR_DATA);
         }
 
-        NSString *URLString = _part->xmlDocImpl()->completeURL(attr.string()).getNSString();        
-        if (URLString) {
-            [element setObject:URLString forKey:WebCoreElementImageURLKey];
-            
-            NSString *altString = i->getAttribute(ATTR_ALT).string().getNSString();
-            if(altString){
-                [element setObject:altString forKey:WebCoreElementImageAltStringKey];
-            }
-            
-            RenderImage *r = (RenderImage *)node->renderer();
-            id <WebCoreImageRenderer> image = r->pixmap().image();
-            if (image) {
-                [element setObject:image forKey:WebCoreElementImageKey];
-                int x, y;
-                if(r->absolutePosition(x, y)){
-                    [element setObject:[NSValue valueWithPoint:NSMakePoint(x,y)] forKey:WebCoreElementImageLocationKey];
-                }
-            }
+        if (!attr.isEmpty()) {
+            [element setObject:_part->xmlDocImpl()->completeURL(attr.string()).getNSString() forKey:WebCoreElementImageURLKey];
+        }
+        
+        DOMString alt = i->getAttribute(ATTR_ALT);
+        if (!alt.isNull()) {
+            [element setObject:alt.string().getNSString() forKey:WebCoreElementImageAltStringKey];
+        }
+        
+        RenderImage *r = (RenderImage *)node->renderer();
+        id <WebCoreImageRenderer> image = r->pixmap().image();
+        if (image) {
+            [element setObject:image forKey:WebCoreElementImageKey];
+        }
+        int x, y;
+        if (r->absolutePosition(x, y)) {
+            [element setObject:[NSValue valueWithPoint:NSMakePoint(x,y)] forKey:WebCoreElementImageLocationKey];
         }
     }
 
