@@ -338,6 +338,11 @@ static BOOL bufferTextDrawing = NO;
 }
 
 
+- (int)widthForCharacters:(const UniChar *)characters length:(unsigned)stringLength
+{
+    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength applyRounding:YES attemptFontSubstitution: YES]);
+}
+
 - (int)widthForString:(NSString *)string
 {
     UniChar localCharacterBuffer[LOCAL_BUFFER_SIZE];
@@ -870,11 +875,6 @@ cleanup:
         totalWidth += ceil(totalWidth) - totalWidth;
         
     return totalWidth;
-}
-
-- (int)widthForCharacters:(const UniChar *)characters length:(unsigned)stringLength
-{
-    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength applyRounding:YES attemptFontSubstitution: YES]);
 }
 
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c

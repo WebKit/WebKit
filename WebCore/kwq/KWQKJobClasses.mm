@@ -30,8 +30,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceClient.h>
+#import <WebCoreResourceLoader.h>
 
 namespace KIO {
 
@@ -55,7 +54,7 @@ public:
     int status;
     NSMutableDictionary *metaData;
     KURL URL;
-    WebResourceHandle *handle;
+    id <WebCoreResourceHandle> handle;
 };
 
 TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
@@ -65,6 +64,7 @@ TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
 
 TransferJob::~TransferJob()
 {
+    kill();
     delete d;
 }
 
@@ -108,17 +108,17 @@ void TransferJob::addMetaData(const QString &key, const QString &value)
 
 void TransferJob::kill()
 {
-    [d->handle cancelLoadInBackground];
+    [d->handle cancel];
 }
 
-void TransferJob::setHandle(WebResourceHandle *handle)
+void TransferJob::setHandle(id <WebCoreResourceHandle> handle)
 {
     [handle retain];
     [d->handle release];
     d->handle = handle;
 }
 
-WebResourceHandle *TransferJob::handle() const
+id <WebCoreResourceHandle> TransferJob::handle() const
 {
     return d->handle;
 }

@@ -28,7 +28,7 @@
 
 @implementation WebMainResourceClient
 
-- initWithDataSource: (WebDataSource *)ds
+- initWithDataSource:(WebDataSource *)ds
 {
     self = [super init];
     
@@ -117,19 +117,18 @@
 
 - (void)handleDidBeginLoading:(WebResourceHandle *)handle
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s", DEBUG_OBJECT([handle URL]));
-    
-    [self didStartLoadingWithURL:[handle URL]];
 }
 
-- (void)handleDidCancelLoading:(WebResourceHandle *)handle
+- (void)didCancelWithHandle:(WebResourceHandle *)handle
 {
-    WebError *error;
+    if (currentURL == nil) {
+        return;
+    }
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s", DEBUG_OBJECT([handle URL]));
     
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
-    error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
+    WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
         inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
     [self receivedError:error forHandle:handle];
     [error release];
@@ -138,6 +137,10 @@
     downloadHandler = nil;
 
     [self didStopLoading];
+}
+
+- (void)handleDidCancelLoading:(WebResourceHandle *)handle
+{
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle

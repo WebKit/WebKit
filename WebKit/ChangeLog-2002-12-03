@@ -1,4 +1,58 @@
-2002-09-06  Richard Williamson (Home)  <rjw@apple.com>
+2002-09-06  Darin Adler  <darin@apple.com>
+
+	Almost weaned WebKit entirely from the handleDidBeginLoading and handleDidCancelLoading
+	loading callbacks. We are planning to remove both of them.
+
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream startLoad]): Call _didStartLoading here so we don't need
+	to rely on handleDidBeginLoading any more.
+        (-[WebNetscapePluginStream stop]): Call cancel here so we don't need to rely on
+	handleDidCancelLoading any more.
+        (-[WebNetscapePluginStream handleDidBeginLoading:]): Empty out.
+        (-[WebNetscapePluginStream handleDidFinishLoading:]): Nil out resource here.
+        (-[WebNetscapePluginStream handleDidCancelLoading:]): Empty out.
+        (-[WebNetscapePluginStream cancel]): Put cancel code here.
+        (-[WebNetscapePluginStream handleDidFailLoading:withError:]): Nil out resource here.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:]): Change to use WebCoreResourceHandle.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.h: Change to use WebCoreResourceHandle.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient dealloc]): Release handle too, now that we have it.
+        (-[WebSubresourceClient receivedProgressWithComplete:]): Moved up here and removed handle
+	parameter.
+        (+[WebSubresourceClient startLoadingResource:withURL:dataSource:]): Do work here so
+	we don't need to rely on handleDidBeginLoading any more.
+        (-[WebSubresourceClient receivedError:]): Removed handle parameter.
+        (-[WebSubresourceClient handleWillUseUserAgent:forURL:]):
+        (-[WebSubresourceClient handleDidBeginLoading:]): Emptied out.
+        (-[WebSubresourceClient handleDidCancelLoading:]): Updated, still needs to be emptied out.
+        (-[WebSubresourceClient handleDidFinishLoading:]): Nil out handle.
+        (-[WebSubresourceClient handleDidFailLoading:withError:]): Nil out handle.
+        (-[WebSubresourceClient cancel]): New method, used by WebCore.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer widthForCharacters:length:]): Moved up in the file to fix build failure.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]): Call didStartLoadingWithURL so we don't have to
+	rely on handleDidBeginLoading.
+        (-[WebDataSource _stopLoading]): Call didCancelWithHandle so we don't have to rely
+	on handleDidCancelLoading.
+
+        * WebView.subproj/WebMainResourceClient.h: Add didStartLoadingWithURL and
+	didCancelWithHandle to the public methods.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]):
+        (-[WebMainResourceClient handleDidBeginLoading:]): Empty out.
+        (-[WebMainResourceClient didCancelWithHandle:]): Move the bulk of handleDidCancelLoading here.
+        (-[WebMainResourceClient handleDidCancelLoading:]): Empty out.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView mouseDragged:]): Move the mouse up a little
+	bit so it's "on" the dragged area, but not over the text.
+
+2002-09-06  Richard Williamson  <rjw@apple.com>
 
         Added support for khtml's justified text drawing.  Additional padding is distributed
         to space widths.  (Sites like www.osnews.com now render correctly.)

@@ -8,17 +8,19 @@
 
 #import <WebFoundation/WebResourceClient.h>
 
-@protocol WebCoreResourceLoader;
 @class WebDataSource;
+@protocol WebCoreResourceHandle;
+@protocol WebCoreResourceLoader;
 
-@interface WebSubresourceClient : NSObject <WebResourceClient>
+@interface WebSubresourceClient : NSObject <WebResourceClient, WebCoreResourceHandle>
 {
     id <WebCoreResourceLoader> loader;
     WebDataSource *dataSource;
     NSURL *currentURL;
+    WebResourceHandle *handle;
 }
 
-+ (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader
++ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader
     withURL:(NSURL *)URL dataSource:(WebDataSource *)dataSource;
 
 @end

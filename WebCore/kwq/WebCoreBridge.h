@@ -47,10 +47,10 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 @class WebError;
 @class WebFrame;
-@class WebResourceHandle;
 
 @protocol WebCoreDOMTreeCopier;
 @protocol WebCoreRenderTreeCopier;
+@protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
 
 #define WebCoreContextLinkURL  @"WebContextLinkURL"
@@ -167,7 +167,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSWindow *)window;
 - (void)setWindowFrame:(NSRect)frame;
 
-- (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
 - (void)reportError:(WebError *)error;
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
 - (BOOL)isReloading;

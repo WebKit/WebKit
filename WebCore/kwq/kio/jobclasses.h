@@ -31,9 +31,11 @@
 #include <qstring.h>
 
 #ifdef __OBJC__
-@class WebResourceHandle;
+@protocol WebCoreResourceHandle;
+typedef id <WebCoreResourceHandle> WebCoreResourceHandlePtr;
 #else
-class WebResourceHandle;
+class WebCoreResourceHandle;
+typedef WebCoreResourceHandle *WebCoreResourceHandlePtr;
 #endif
 
 namespace KIO {
@@ -60,8 +62,8 @@ public:
     void addMetaData(const QString &key, const QString &value);
     void kill();
 
-    void setHandle(WebResourceHandle *);
-    WebResourceHandle *handle() const;
+    void setHandle(WebCoreResourceHandlePtr);
+    WebCoreResourceHandlePtr handle() const;
     
     KURL url() const;
 

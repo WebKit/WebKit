@@ -112,7 +112,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     }
     
     WebCoreResourceLoader *resourceLoader = [[WebCoreResourceLoader alloc] initWithLoader:loader job:job];
-    WebResourceHandle *handle = [bridge startLoadingResource:resourceLoader withURL:URL];
+    id <WebCoreResourceHandle> handle = [bridge startLoadingResource:resourceLoader withURL:URL];
     [resourceLoader release];
 
     if (handle == nil) {

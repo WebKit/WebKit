@@ -12,6 +12,7 @@
 
 @class WebDownloadHandler;
 @class WebDataSource;
+@class WebResourceHandle;
 @protocol WebResourceClient;
 @protocol WebResourceProgressHandler;
 
@@ -25,7 +26,12 @@
     WebContentAction policyAction;
     NSMutableData *resourceData;
 }
+
 - initWithDataSource:(WebDataSource *)dataSource;
 - (WebDownloadHandler *)downloadHandler;
 - (NSData *)resourceData;
+
+- (void)didStartLoadingWithURL:(NSURL *)URL;
+- (void)didCancelWithHandle:(WebResourceHandle *)handle;
+
 @end

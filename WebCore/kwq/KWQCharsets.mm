@@ -41,92 +41,92 @@ static CFMutableDictionaryRef mibToEncoding = NULL;
 static CFMutableDictionaryRef encodingToName = NULL;
 static CFMutableDictionaryRef encodingToMIB = NULL;
 
-static void buildDictionaries (void)
+static void buildDictionaries()
 {
-  int i;
+    int i;
 
-  nameToEncoding = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-  mibToEncoding = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+    nameToEncoding = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    mibToEncoding = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
 
-  encodingToName = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
-  encodingToMIB = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+    encodingToName = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+    encodingToMIB = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
 
-  for (i = 0; table[i].name != NULL; i++) {
-    CFStringRef name;
-    name = CFStringCreateWithCString(NULL, table[i].name, kCFStringEncodingASCII);
+    for (i = 0; table[i].name != NULL; i++) {
+        CFStringRef name;
+        name = CFStringCreateWithCString(NULL, table[i].name, kCFStringEncodingASCII);
 
-    if (name != NULL) {
-      CFDictionarySetValue(nameToEncoding, name, (void *) table[i].encoding);
-      CFDictionarySetValue(encodingToName, (void *) table[i].encoding, name);
+        if (name != NULL) {
+            CFDictionarySetValue(nameToEncoding, name, (void *)table[i].encoding);
+            CFDictionarySetValue(encodingToName, (void *)table[i].encoding, name);
+        }
+
+        if (table[i].mib != -1) {
+            CFDictionarySetValue(mibToEncoding, (void *)table[i].mib, (void *)table[i].encoding);
+            CFDictionarySetValue(encodingToMIB, (void *)table[i].encoding, (void *)table[i].mib);
+        }
     }
-
-    if (table[i].mib != -1) {
-      CFDictionarySetValue(mibToEncoding, (void *) table[i].mib, (void *) table[i].encoding);
-      CFDictionarySetValue(encodingToMIB, (void *) table[i].encoding, (void *) table[i].mib);
-    }
-  }
 }
 
 CFStringEncoding KWQCFStringEncodingFromIANACharsetName(CFStringRef charsetName)
 {
-  const void *value;
-
-  if (nameToEncoding == NULL) {
-    buildDictionaries ();
-  }
-  
-  if (CFDictionaryGetValueIfPresent(nameToEncoding, (void *) charsetName, &value)) {
-    return (CFStringEncoding) value;
-  } else {
-    return kCFStringEncodingInvalidId;
-  }
+    const void *value;
+    
+    if (nameToEncoding == NULL) {
+        buildDictionaries ();
+    }
+    
+    if (CFDictionaryGetValueIfPresent(nameToEncoding, (void *)charsetName, &value)) {
+        return (CFStringEncoding)value;
+    } else {
+        return kCFStringEncodingInvalidId;
+    }
 }
 
 
 CFStringEncoding KWQCFStringEncodingFromMIB(int mib)
 {
-  const void *value;
-
-  if (mibToEncoding == NULL) {
-    buildDictionaries ();
-  }
-
-  if (CFDictionaryGetValueIfPresent(mibToEncoding, (void *) mib,  &value)) {
-    return (CFStringEncoding) value;
-  } else {
-    return kCFStringEncodingInvalidId;
-  }
+    const void *value;
+    
+    if (mibToEncoding == NULL) {
+        buildDictionaries ();
+    }
+    
+    if (CFDictionaryGetValueIfPresent(mibToEncoding, (void *)mib, &value)) {
+        return (CFStringEncoding) value;
+    } else {
+        return kCFStringEncodingInvalidId;
+    }
 }
 
 
 
 CFStringRef KWQCFStringEncodingToIANACharsetName(CFStringEncoding encoding)
 {
-  const void *value;
-
-  if (encodingToName == NULL) {
-      buildDictionaries ();
-  }
-
-  if (CFDictionaryGetValueIfPresent(encodingToName, (void *) encoding, &value)) {
-      return (CFStringRef) value;
-  } else {
-    return NULL;
-  }
+    const void *value;
+    
+    if (encodingToName == NULL) {
+        buildDictionaries ();
+    }
+    
+    if (CFDictionaryGetValueIfPresent(encodingToName, (void *)encoding, &value)) {
+        return (CFStringRef) value;
+    } else {
+        return NULL;
+    }
 }
 
 
 int KWQCFStringEncodingToMIB(CFStringEncoding encoding)
 {
-  const void *value;
-
-  if (encodingToMIB == NULL) {
-      buildDictionaries ();
-  }
-
-  if (CFDictionaryGetValueIfPresent(encodingToMIB, (void *) encoding, &value)) {
-      return (int) value;
-  } else {
-      return -1;
-  }
+    const void *value;
+    
+    if (encodingToMIB == NULL) {
+        buildDictionaries ();
+    }
+    
+    if (CFDictionaryGetValueIfPresent(encodingToMIB, (void *)encoding, &value)) {
+        return (int) value;
+    } else {
+        return -1;
+    }
 }

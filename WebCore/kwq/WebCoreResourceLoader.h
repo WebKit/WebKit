@@ -34,3 +34,9 @@
 - (void)finish;
 
 @end
+
+@protocol WebCoreResourceHandle <NSObject>
+
+- (void)cancel;
+
+@end

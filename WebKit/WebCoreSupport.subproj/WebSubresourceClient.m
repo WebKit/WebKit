@@ -33,6 +33,17 @@
     return self;
 }
 
+- (void)dealloc
+{
+    ASSERT(currentURL == nil);
+    
+    [loader release];
+    [dataSource release];
+    [handle release];
+    
+    [super dealloc];
+}
+
 - (void)didStartLoadingWithURL:(NSURL *)URL
 {
     ASSERT(currentURL == nil);
@@ -48,26 +59,21 @@
     currentURL = nil;
 }
 
-- (void)dealloc
+- (void)receivedProgressWithComplete:(BOOL)isComplete
 {
-    ASSERT(currentURL == nil);
-    
-    [loader release];
-    [dataSource release];
-    
-    [super dealloc];
+    [[dataSource controller] _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
+        forResourceHandle:handle fromDataSource:dataSource complete:isComplete];
 }
 
-+ (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
++ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
     withURL:(NSURL *)URL dataSource:(WebDataSource *)source
 {
     WebSubresourceClient *client = [[self alloc] initWithLoader:rLoader dataSource:source];
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:client URL:URL attributes:nil flags:[source flags]];
-    WebResourceHandle *handle = [[[WebResourceHandle alloc] initWithRequest:request] autorelease];
-    [client release];
+    WebResourceHandle *h = [[[WebResourceHandle alloc] initWithRequest:request] autorelease];
     [request release];
-
-    if (handle == nil) {
+    
+    if (h == nil) {
         [rLoader cancel];
 
         WebError *badURLError = [[WebError alloc] initWithErrorCode:WebResultBadURLError
@@ -76,63 +82,64 @@
         [[source controller] _receivedError:badURLError forResourceHandle:nil
             partialProgress:nil fromDataSource:source];
         [badURLError release];
-    } else {
-        [source _addResourceHandle:handle];
-        [handle loadInBackground];
+        return nil;
     }
+    
+    client->handle = [h retain];
+    [source _addResourceHandle:h];
+    [client didStartLoadingWithURL:[h URL]];
+    [client receivedProgressWithComplete:NO];
+    [h loadInBackground];
         
-    return handle;
+    return [client autorelease];
 }
 
-- (void)receivedProgressWithHandle:(WebResourceHandle *)handle complete:(BOOL)isComplete
-{
-    [[dataSource controller] _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
-        forResourceHandle:handle fromDataSource:dataSource complete:isComplete];
-}
-
-- (void)receivedError:(WebError *)error forHandle:(WebResourceHandle *)handle
+- (void)receivedError:(WebError *)error
 {
     [[dataSource controller] _receivedError:error forResourceHandle:handle
         partialProgress:[WebLoadProgress progressWithResourceHandle:handle] fromDataSource:dataSource];
 }
 
-- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)URL
+- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)h forURL:(NSURL *)URL
 {
     return [[dataSource controller] userAgentForURL:URL];
 }
 
-- (void)handleDidBeginLoading:(WebResourceHandle *)handle
+- (void)handleDidBeginLoading:(WebResourceHandle *)h
 {
-    [self didStartLoadingWithURL:[handle URL]];
-    [self receivedProgressWithHandle:handle complete: NO];
 }
 
-- (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
+- (void)handleDidReceiveData:(WebResourceHandle *)h data:(NSData *)data
 {
+    ASSERT(handle == h);
     ASSERT([currentURL isEqual:[handle URL]]);
 
-    [self receivedProgressWithHandle:handle complete: NO];
+    [self receivedProgressWithComplete:NO];
     [loader addData:data];
 }
 
-- (void)handleDidCancelLoading:(WebResourceHandle *)handle
+- (void)handleDidCancelLoading:(WebResourceHandle *)h
 {
-    WebError *error;
+    ASSERT(handle == h);
     
     [loader cancel];
     
     [dataSource _removeResourceHandle:handle];
         
-    error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
+    WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
         inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
-    [self receivedError:error forHandle:handle];
+    [self receivedError:error];
     [error release];
 
     [self didStopLoading];
+
+    [handle release];
+    handle = nil;
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)handle
-{    
+- (void)handleDidFinishLoading:(WebResourceHandle *)h
+{
+    ASSERT(handle == h);
     ASSERT([currentURL isEqual:[handle URL]]);
     ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
 
@@ -142,29 +149,37 @@
     
     WebError *nonTerminalError = [[handle response] error];
     if (nonTerminalError) {
-        [self receivedError:nonTerminalError forHandle:handle];
+        [self receivedError:nonTerminalError];
     }
     
-    [self receivedProgressWithHandle:handle complete:YES];
+    [self receivedProgressWithComplete:YES];
     
     [self didStopLoading];
+
+    [handle release];
+    handle = nil;
 }
 
-- (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)error
+- (void)handleDidFailLoading:(WebResourceHandle *)h withError:(WebError *)error
 {
+    ASSERT(handle == h);
     ASSERT([currentURL isEqual:[handle URL]]);
 
     [loader cancel];
     
     [dataSource _removeResourceHandle:handle];
     
-    [self receivedError:error forHandle:handle];
+    [self receivedError:error];
 
     [self didStopLoading];
+
+    [handle release];
+    handle = nil;
 }
 
-- (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL
+- (void)handleDidRedirect:(WebResourceHandle *)h toURL:(NSURL *)URL
 {
+    ASSERT(handle == h);
     ASSERT(currentURL != nil);
     ASSERT([URL isEqual:[handle URL]]);
 
@@ -177,6 +192,12 @@
     
     [self didStopLoading];
     [self didStartLoadingWithURL:URL];
+
+}
+
+- (void)cancel
+{
+    [handle cancelLoadInBackground];
 }
 
 @end

@@ -1,4 +1,25 @@
-2002-09-06  Richard Williamson (Home)  <rjw@apple.com>
+2002-09-06  Darin Adler  <darin@apple.com>
+
+        * kwq/WebCoreResourceLoader.h:
+	Define WebCoreResourceHandle protocol.
+
+        * kwq/kio/jobclasses.h:
+        * kwq/KWQKjobclasses.mm:
+        * kwq/KWQLoaderImpl.mm: (KWQServeRequest):
+        * kwq/WebCoreBridge.h:
+	Use WebCoreResourceHandle instead of WebResourceHandle.
+
+        * kwq/KWQString.mm: (QString::fill): Fix case where the new string
+	is going to be empty, but the old string was not. Before, it leaked
+	a handle.
+
+        * kwq/character-sets.txt: Updated to 2002-06-14 version from 2001-08-23 version.
+        * kwq/mac-encodings.txt: Updated encoding names to include ones gleaned from
+	the I18N-Charset-1.17 Perl module.
+
+        * kwq/KWQCharsets.mm: Formatting tweaks.
+
+2002-09-06  Richard Williamson  <rjw@apple.com>
 
         Start using khtml's 'toAdd' parameter to justify text.
         
@@ -105,14 +126,14 @@
         * kwq/KWQString.mm:
         (QString::fromStringWithEncoding)
 
-2002-08-30  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-30  Richard Williamson  <rjw@apple.com>
 
         Removed debugging log.
         
         * kwq/KWQString.mm:
         (QString::fromStringWithEncoding):
 
-2002-08-30  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-30  Richard Williamson  <rjw@apple.com>
 
         Made decoder more robust wrt nulls in content.  Changed use
         of QCString to null safe QString rather than modify

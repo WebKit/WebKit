@@ -184,6 +184,7 @@
         WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:_private->mainHandleClient URL:_private->inputURL attributes:_private->attributes flags:_private->flags];
         _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:request];
         [request release];
+        [_private->mainHandleClient didStartLoadingWithURL:[_private->mainHandle URL]];
     }
     [_private->mainHandle loadInBackground];
 }
@@ -225,6 +226,7 @@
     _private->stopping = YES;
     
     [_private->mainHandle cancelLoadInBackground];
+    [_private->mainHandleClient didCancelWithHandle:_private->mainHandle];
     
     handles = [_private->resourceHandles copy];
     [handles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];

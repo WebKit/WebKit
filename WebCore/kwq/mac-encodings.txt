@@ -4,15 +4,18 @@
 # that group.
 
 MacRoman: macintosh, x-mac-roman
-WindowsLatin1: windows-1252, x-ansi
+WindowsLatin1: windows-1252, winlatin1, x-ansi
 ISOLatin1: iso-8859-1, iso8859-1
 NextStepLatin: x-nextstep
 ASCII: iso-ir-6us, us-ascii
-Unicode: iso-10646-ucs-2 # utf-16be, unicodeFFFE, unicode? (would this help us?)
-  # Note the bogus entry to make UTF-16 mean UTF-8.
-  # We do this because Internet Explorer does, and because web pages say UTF-16 and mean UTF-8.
-  # See bug 2969378 and http://zingermans.com/ for a concrete example.
-  # It's not clear what to do about 16-bit encodings in general.
+Unicode: iso-10646-ucs-2 # utf-16be, unicodeFFFE, unicode? (would adding these help us?)
+# Note the bogus entry below that makes UTF-16 mean UTF-8.
+# We do this because Internet Explorer does, and because web pages say UTF-16 and mean UTF-8.
+# See bug 2969378 and http://zingermans.com/ for a concrete example.
+# It's not clear what to do about 16-bit encodings in general.
+# We may have to add code to deal with encodings vs. character sets
+# that understands that characters sets in <head> can't change to a 16-bit
+# encoding, while character sets from the server can.
 UTF8: unicode-1-1-utf-8, unicode-2-0-utf-8, utf-16, utf-8, x-unicode-2-0-utf-8
 NonLossyASCII
 
@@ -97,18 +100,18 @@ DOSRussian: cp866
 DOSGreek2: ibm869
 DOSThai: cp874, dos-874, tis-620, windows-874
 DOSJapanese: cp932
-DOSChineseSimplif: cp936
+DOSChineseSimplif
 DOSKorean: cp949
 DOSChineseTrad: cp950
-WindowsLatin2: windows-1250, x-cp1250
-WindowsCyrillic: windows-1251, x-cp1251
-WindowsGreek: windows-1253
-WindowsLatin5: windows-1254
-WindowsHebrew: windows-1255
-WindowsArabic: cp1256, windows-1256
-WindowsBalticRim: windows-1257
+WindowsLatin2: windows-1250, winlatin2, x-cp1250
+WindowsCyrillic: wincyrillic, windows-1251, x-cp1251
+WindowsGreek: windows-1253, wingreek
+WindowsLatin5: windows-1254, winturkish
+WindowsHebrew: windows-1255, winhebrew
+WindowsArabic: cp1256, winarabic, windows-1256
+WindowsBalticRim: winbaltic, windows-1257
 WindowsKoreanJohab: johab
-WindowsVietnamese: windows-1258
+WindowsVietnamese: windows-1258, winvietnamese
 
 JIS_X0201_76: jis_x0201
 JIS_X0208_83: jis_x0208-1983
@@ -148,6 +151,21 @@ Big5_HKSCS_1999: big5-hkscs
 EBCDIC_US
 EBCDIC_CP037: cp037
 
-  # There doesn't seem to be a kCFStringEncoding constant for this one.
-  # In fact, I got this value from Mail source code, and I'm not sure how it works.
+# There doesn't seem to be a kCFStringEncoding constant for this one.
+# In fact, I got this value from Mail source code, and I'm not sure how or if it works.
 0xAFE: japanese-autodetect
+
+# I got these additional items from the Perl module I18N-Charset-1.17,
+# but could not figure out what to do with them.
+#
+# Adobe-Standard-Encoding === adobe-standard
+# Adobe-Symbol-Encoding === adobe-symbol
+# EBCDIC-ES === ebcdic-cp-es
+# EBCDIC-FR === ebcdic-cp-fr
+# EBCDIC-IT === ebcdic-cp-it
+# EBCDIC-UK === ebcdic-cp-gb
+# EBCDIC-US === ebcdic-cp-us
+# EBCDIC-FI-SE === ebcdic-cp-fi
+# UTF-7 === Unicode-2-0-utf-7
+# ISO-10646-UCS-2 === ucs2
+# ISO-10646-UCS-4 === ucs4
