@@ -2478,7 +2478,9 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
         if (hitTestAction == HitTestChildBlockBackgrounds)
             childHitTest = HitTestChildBlockBackground;
         for (RenderObject* child = lastChild(); child; child = child->previousSibling())
-            if (!child->layer() && !child->isFloating() && child->nodeAtPoint(info, _x, _y, scrolledX, scrolledY, childHitTest)) {
+            // FIXME: We have to skip over inline flows, since they can show up inside RenderTables at the moment (a demoted inline <form> for example).  If we ever implement a
+            // table-specific hit-test method (which we should do for performance reasons anyway), then we can remove this check.
+            if (!child->layer() && !child->isFloating() && !child->isInlineFlow() && child->nodeAtPoint(info, _x, _y, scrolledX, scrolledY, childHitTest)) {
                 setInnerNode(info);
                 return true;
             }

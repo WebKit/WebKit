@@ -237,11 +237,12 @@ void RenderTable::layout()
     
     //kdDebug( 6040 ) << renderName() << "(Table)"<< this << " ::layout0() width=" << width() << ", needsLayout=" << needsLayout() << endl;
     
-    m_height = 0;
+    m_height = m_overflowHeight = 0;
     initMaxMarginValues();
     
     //int oldWidth = m_width;
     calcWidth();
+    m_overflowWidth = m_width;
 
     // the optimisation below doesn't work since the internal table
     // layout could have changed.  we need to add a flag to the table

@@ -1,3 +1,24 @@
+2005-01-07  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3941364, make sure tables reset overflowWidth/Height when they lay out again.  Fixes the odd scrolling
+	behavior on worldofwarcraft.com.
+	
+        Reviewed by kevin
+
+        * ChangeLog:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+
+2005-01-06  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3932418 and 3920998, assertion failures caused by stray inline content inside tables.  Bulletproof the hit testing to
+	ignore inline flows in this case.
+	
+        Reviewed by kevin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::nodeAtPoint):
+
 2005-01-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
