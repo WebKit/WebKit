@@ -157,7 +157,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     
     [subView removeFromSuperview];
     
-    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "Adding 0x%08x %s at (%d,%d) w %d h %d\n", subView, [[[subView class] className] cString], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
+    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "Adding %p %s at (%d,%d) w %d h %d\n", subView, [[[subView class] className] cString], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
     [thisView addSubview: subView];
 }
 
@@ -177,12 +177,12 @@ void QScrollView::removeChild(QWidget* child)
 
 void QScrollView::resizeContents(int w, int h)
 {
-    KWQDEBUGLEVEL4 (KWQ_LOG_FRAMES, "0x%08x %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
+    KWQDEBUGLEVEL4 (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
     //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
     if ([getView() isKindOfClass: NSClassFromString(@"NSScrollView")]){
         IFWebView *wview = [(NSScrollView *)getView() documentView];
         
-        KWQDEBUGLEVEL4 (KWQ_LOG_FRAMES, "0x%08x %s at w %d h %d\n", wview, [[[wview class] className] cString], w, h);
+        KWQDEBUGLEVEL4 (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", wview, [[[wview class] className] cString], w, h);
         //w -= (int)[NSScroller scrollerWidth];
         //w -= 1;
         if (w < 0)
@@ -202,7 +202,7 @@ void QScrollView::resizeContents(int w, int h)
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
-    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
+    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "%p %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }
 
 void QScrollView::updateContents(const QRect &rect)
@@ -213,7 +213,7 @@ void QScrollView::updateContents(const QRect &rect)
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase=TRUE)
 {
-    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
+    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "%p %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }
 
 QPoint QScrollView::contentsToViewport(const QPoint &)

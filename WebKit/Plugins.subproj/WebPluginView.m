@@ -6,23 +6,17 @@
 
 #import "IFPluginView.h"
 #import <AppKit/NSWindow_Private.h>
+#import "WebKitDebug.h"
 
 #include <Carbon/Carbon.h> 
-#include "kwqdebug.h"
 #include <WebFoundation/IFURLHandle.h>
 #import <IFWebDataSource.h>
 #include <WCPluginWidget.h>
 
-#ifdef __cplusplus
 extern "C" {
-#endif
-
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
-
-#ifdef __cplusplus
 }
-#endif
 
 @implementation IFPluginViewNullEventSender
 
@@ -52,7 +46,7 @@ extern "C" {
 
 -(void) stop
 {
-    KWQDebug("Stopping null events\n");
+    WEBKITDEBUG("Stopping null events\n");
     shouldStop = TRUE;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil];
 }
@@ -138,7 +132,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     }else{
         npErr = NPP_New(cMime, instance, mode, 0, NULL, NULL, &saved);
     }
-    KWQDebug("NPP_New: %d\n", npErr);
+    WEBKITDEBUG1("NPP_New: %d\n", npErr);
     
     transferred = FALSE;
     stopped = FALSE;
@@ -228,10 +222,10 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     window.type = NPWindowTypeWindow;
     
     npErr = NPP_SetWindow(instance, &window);
-    KWQDebug("NPP_SetWindow: %d, port=%d\n", npErr, (int)nPort.port);
-    KWQDebug("frameInWindow.origin.x=%f, frameInWindow.origin.y=%f, frameInWindow.size.height=%d, frameInWindow.size.width=%d\n", 
+    WEBKITDEBUG2("NPP_SetWindow: %d, port=%d\n", npErr, (int)nPort.port);
+    WEBKITDEBUG4("frameInWindow.origin.x=%f, frameInWindow.origin.y=%f, frameInWindow.size.height=%d, frameInWindow.size.width=%d\n", 
         frameInWindow.origin.x, frameInWindow.origin.y, (int)frameInWindow.size.height, (int)frameInWindow.size.width);
-    KWQDebug("visibleRectInWindow.origin.x=%f, visibleRectInWindow.origin.y=%f, visibleRectInWindow.size.height=%d, visibleRectInWindow.size.width=%d\n", 
+    WEBKITDEBUG4("visibleRectInWindow.origin.x=%f, visibleRectInWindow.origin.y=%f, visibleRectInWindow.size.height=%d, visibleRectInWindow.size.width=%d\n", 
         visibleRectInWindow.origin.x, visibleRectInWindow.origin.y, (int)visibleRectInWindow.size.height, (int)visibleRectInWindow.size.width);
 }
 
@@ -281,19 +275,19 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     streamData->mimeType = cMime;
     
     npErr = NPP_NewStream(instance, cMime, stream, FALSE, &transferMode);
-    KWQDebug("NPP_NewStream: %d\n", npErr);
+    WEBKITDEBUG1("NPP_NewStream: %d\n", npErr);
     streamData->transferMode = transferMode;
     
     if(transferMode == NP_NORMAL){
-        KWQDebug("Stream type: NP_NORMAL\n");
+        WEBKITDEBUG("Stream type: NP_NORMAL\n");
         attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:streamData] forKey:IFURLHandleUserData];
         urlHandle = [[IFURLHandle alloc] initWithURL:[NSURL URLWithString:streamURL] attributes:attributes flags:0];
         [urlHandle addClient:self];
         [activeURLHandles addObject:urlHandle];
         [urlHandle loadInBackground];
     }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
-        if(transferMode == NP_ASFILEONLY) KWQDebug("Stream type: NP_ASFILEONLY\n");
-        if(transferMode == NP_ASFILE) KWQDebug("Stream type: NP_ASFILE\n");
+        if(transferMode == NP_ASFILEONLY) WEBKITDEBUG("Stream type: NP_ASFILEONLY\n");
+        if(transferMode == NP_ASFILE) WEBKITDEBUG("Stream type: NP_ASFILE\n");
         streamData->filename  = [NSString stringWithString:[streamURL lastPathComponent]];
         [streamData->filename retain];
         streamData->data = [NSMutableData dataWithCapacity:0];
@@ -306,7 +300,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
             [urlHandle loadInBackground];
         }
     }else if(transferMode == NP_SEEK){
-        KWQDebug("Stream type: NP_SEEK not yet supported\n");
+        WEBKITDEBUG("Stream type: NP_SEEK not yet supported\n");
     }
 }
 
@@ -320,9 +314,9 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     streamData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
     if(streamData->transferMode != NP_ASFILEONLY){
         bytes = NPP_WriteReady(instance, streamData->stream);
-        //KWQDebug("NPP_WriteReady bytes=%u\n", bytes);
+        //WEBKITDEBUG1("NPP_WriteReady bytes=%u\n", bytes);
         bytes = NPP_Write(instance, streamData->stream, streamData->offset, [data length], (void *)[data bytes]);
-        //KWQDebug("NPP_Write bytes=%u\n", bytes);
+        //WEBKITDEBUG1("NPP_Write bytes=%u\n", bytes);
         streamData->offset += [data length];
     }
     if(streamData->transferMode == NP_ASFILE || streamData->transferMode == NP_ASFILEONLY){
@@ -349,21 +343,21 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         [filename appendString:streamData->filename];
         [filesToErase addObject:filename];
         fileManager = [NSFileManager defaultManager];
-        KWQDebug("Writing plugin file out to: %s %s size: %u\n", [filenameClassic cString], [filename cString], [streamData->data length]);
+        WEBKITDEBUG3("Writing plugin file out to: %s %s size: %u\n", [filenameClassic cString], [filename cString], [streamData->data length]);
         [fileManager removeFileAtPath:filename handler:nil];
         [fileManager createFileAtPath:filename contents:streamData->data attributes:nil];
         cFilename = malloc([filenameClassic length]+1);
         [filenameClassic getCString:cFilename];
         NPP_StreamAsFile(instance, streamData->stream, cFilename);
-        KWQDebug("NPP_StreamAsFile: %s\n", cFilename);
+        WEBKITDEBUG1("NPP_StreamAsFile: %s\n", cFilename);
         [streamData->data release];
         [streamData->filename release];
     }
     npErr = NPP_DestroyStream(instance, streamData->stream, NPRES_DONE);
-    KWQDebug("NPP_DestroyStream: %d\n", npErr);
+    WEBKITDEBUG1("NPP_DestroyStream: %d\n", npErr);
     if(streamData->stream->notifyData){
         NPP_URLNotify(instance, streamData->stream->url, NPRES_DONE, streamData->stream->notifyData);
-        KWQDebug("NPP_URLNotify\n");
+        WEBKITDEBUG("NPP_URLNotify\n");
     }
     free(streamData);
     [activeURLHandles removeObject:sender];
@@ -405,7 +399,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    KWQDebug("NPP_HandleEvent(getFocusEvent): %d  when: %u\n", acceptedEvent, event.when);
+    WEBKITDEBUG2("NPP_HandleEvent(getFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
     return YES;
 }
 
@@ -419,7 +413,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    KWQDebug("NPP_HandleEvent(loseFocusEvent): %d  when: %u\n", acceptedEvent, event.when);
+    WEBKITDEBUG2("NPP_HandleEvent(loseFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
     return YES;
 }
 
@@ -435,7 +429,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     event.modifiers = isActive;
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    KWQDebug("NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
+    WEBKITDEBUG2("NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
 }
 
 -(void)sendUpdateEvent
@@ -449,7 +443,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    KWQDebug("NPP_HandleEvent(updateEvt): %d  when: %u\n", acceptedEvent, event.when);
+    WEBKITDEBUG2("NPP_HandleEvent(updateEvt): %d  when: %lu\n", acceptedEvent, event.when);
 }
 
 -(void)mouseDown:(NSEvent *)theEvent
@@ -466,7 +460,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     event.when = (uint32)([theEvent timestamp] * 60); // seconds to ticks
     event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    KWQDebug("NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%u\n", acceptedEvent, pt.v, pt.h, event.when);
+    WEBKITDEBUG4("NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, pt.v, pt.h, event.when);
 }
 
 -(void)mouseUp:(NSEvent *)theEvent
@@ -483,7 +477,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     event.when = (uint32)([theEvent timestamp] * 60); 
     event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    KWQDebug("NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%u\n", acceptedEvent, pt.v, pt.h, event.when);
+    WEBKITDEBUG4("NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, pt.v, pt.h, event.when);
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
@@ -495,7 +489,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     event.when = (uint32)([theEvent timestamp] * 60);
     event.modifiers = 1;
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    KWQDebug("NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
+    WEBKITDEBUG1("NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
@@ -507,7 +501,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     event.when = (uint32)([theEvent timestamp] * 60);
     event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    KWQDebug("NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
+    WEBKITDEBUG1("NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
 }
 
 - (void)keyUp:(NSEvent *)theEvent
@@ -519,7 +513,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     event.message = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
     event.when = (uint32)([theEvent timestamp] * 60);
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    KWQDebug("NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (event.message & charCodeMask));
+    WEBKITDEBUG2("NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
     //Note: QT Plug-in doesn't use keyUp's
 }
 
@@ -532,7 +526,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     event.message = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
     event.when = (uint32)([theEvent timestamp] * 60);
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    KWQDebug("NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (event.message & charCodeMask));
+    WEBKITDEBUG2("NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
 }
 
 // plug-in to browser calls
@@ -542,7 +536,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     NSURL *newURL;
     IFWebDataSource *dataSource;
     
-    KWQDebug("NPN_GetURLNotify: %s target: %s\n", url, target);
+    WEBKITDEBUG2("NPN_GetURLNotify: %s target: %s\n", url, target);
  
     if(!strcmp(url, "")){
         return NPERR_INVALID_URL;
@@ -564,37 +558,37 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 
 -(NPError)getURL:(const char *)url target:(const char *)target
 {
-    KWQDebug("NPN_GetURL: %s target: %s\n", url, target);
+    WEBKITDEBUG2("NPN_GetURL: %s target: %s\n", url, target);
     return [self getURLNotify:url target:target notifyData:NULL];
 }
 
 -(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
 {
-    KWQDebug("NPN_PostURLNotify\n");
+    WEBKITDEBUG("NPN_PostURLNotify\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)postURL:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file
 {
-    KWQDebug("NPN_PostURL\n");
+    WEBKITDEBUG("NPN_PostURL\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream
 {
-    KWQDebug("NPN_NewStream\n");
+    WEBKITDEBUG("NPN_NewStream\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)write:(NPStream*)stream len:(SInt32)len buffer:(void *)buffer
 {
-    KWQDebug("NPN_Write\n");
+    WEBKITDEBUG("NPN_Write\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason
 {
-    KWQDebug("NPN_DestroyStream\n");
+    WEBKITDEBUG("NPN_DestroyStream\n");
     return NPERR_GENERIC_ERROR;
 }
 
@@ -602,7 +596,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 {
     IFWebDataSource *dataSource;
     
-    KWQDebug("NPN_Status: %s\n", message);
+    WEBKITDEBUG1("NPN_Status: %s\n", message);
     if(webController){
         dataSource = [[webController mainFrame] dataSource];
         [webController setStatusText:[NSString stringWithCString:message] forDataSource:dataSource];
@@ -611,24 +605,24 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 
 -(NPError)getValue:(NPNVariable)variable value:(void *)value
 {
-    KWQDebug("NPN_GetValue\n");
+    WEBKITDEBUG("NPN_GetValue\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)setValue:(NPPVariable)variable value:(void *)value
 {
-    KWQDebug("NPN_SetValue\n");
+    WEBKITDEBUG("NPN_SetValue\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(void)invalidateRect:(NPRect *)invalidRect
 {
-    KWQDebug("NPN_InvalidateRect\n");
+    WEBKITDEBUG("NPN_InvalidateRect\n");
 }
 
 -(void)invalidateRegion:(NPRegion)invalidateRegion
 {
-    KWQDebug("NPN_InvalidateRegion\n");
+    WEBKITDEBUG("NPN_InvalidateRegion\n");
 }
 
 -(void)start
@@ -650,14 +644,14 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         [self removeTrackingRect:trackingTag];
         npErr = NPP_Destroy(instance, NULL);
-        KWQDebug("NPP_Destroy: %d\n", npErr);
+        WEBKITDEBUG1("NPP_Destroy: %d\n", npErr);
         stopped = TRUE;
     }
 }
 
 -(void)forceRedraw
 {
-    KWQDebug("forceRedraw\n");
+    WEBKITDEBUG("forceRedraw\n");
 }
 
 -(void)dealloc

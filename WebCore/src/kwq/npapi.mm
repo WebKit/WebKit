@@ -46,29 +46,29 @@
 // general plug-in to browser functions
 
 const char* NPN_UserAgent(NPP instance){
-    KWQDebug("NPN_UserAgent\n");
+    KWQDEBUG("NPN_UserAgent\n");
     return "IE";
 }
 
 void* NPN_MemAlloc(UInt32 size){
-    //KWQDebug("NPN_MemAlloc\n");
+    //KWQDEBUG("NPN_MemAlloc\n");
     return malloc(size);
 
 }
 
 void NPN_MemFree(void* ptr){
-    //KWQDebug("NPN_MemFree\n");
+    //KWQDEBUG("NPN_MemFree\n");
     free(ptr);
 
 }
 
 UInt32 NPN_MemFlush(UInt32 size){
-    KWQDebug("NPN_MemFlush\n");
+    KWQDEBUG("NPN_MemFlush\n");
     return 0;
 }
 
 void NPN_ReloadPlugins(NPBool reloadPages){
-    KWQDebug("NPN_ReloadPlugins\n");
+    KWQDEBUG("NPN_ReloadPlugins\n");
 
 }
 

@@ -1,3 +1,8 @@
+2002-04-02  Darin Adler  <darin@apple.com>
+
+	* JavaScriptCore.pbproj/project.pbxproj: Update flags as I did for
+	WebFoundation.
+
 2002-04-02  Maciej Stachowiak  <mjs@apple.com>
 
 	* JavaScriptCore.pbproj/project.pbxproj: Pass -Wno-format-y2k so

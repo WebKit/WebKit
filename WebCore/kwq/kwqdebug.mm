@@ -47,36 +47,6 @@ unsigned int KWQGetLogLevel(){
 }
 
 
-void KWQLog(NSString *format, ...) {    
-    if (KWQGetLogLevel() & KWQ_LOG_ERROR){
-        va_list args;
-        va_start(args, format); 
-        NSLogv(format, args);
-        va_end(args);
-    }
-}
-
-
-void KWQLogAtLevel(unsigned int level, NSString *format, ...) {    
-    if (KWQGetLogLevel() & level){
-        va_list args;
-        va_start(args, format); 
-        NSLogv(format, args);
-        va_end(args);
-    }
-}
-
-
-void KWQDebug(const char *format, ...) {    
-    if (KWQGetLogLevel() & KWQ_LOG_DEBUG){
-        va_list args;
-        va_start(args, format); 
-        vfprintf(stderr, format, args);
-        va_end(args);
-    }
-}
-
-
 void KWQDebugAtLevel(unsigned int level, const char *format, ...) {    
     if (KWQGetLogLevel() & level){
         va_list args;

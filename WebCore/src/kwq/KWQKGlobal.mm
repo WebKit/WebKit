@@ -82,7 +82,8 @@ KStandardDirs *KGlobal::dirs()
 KConfig *KGlobal::config()
 {
     _logNotYetImplemented();
-    return new KConfig("foo");
+    static KConfig c("foo");
+    return &c;
 }
 
 const QString &KGlobal::staticQString(const QString &str)

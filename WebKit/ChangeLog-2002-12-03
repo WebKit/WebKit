@@ -1,3 +1,18 @@
+2002-04-02  Darin Adler  <darin@apple.com>
+
+	* WebKit.pbproj/project.pbxproj: Fix flags as I did in WebFoundation.
+
+	* Misc.subproj/WebKitDebug.h: Turn off logging when xNDEBUG is defined.
+	Remove unused stuff. Add checking for printf parameters.
+	* Misc.subproj/WebKitDebug.m: Remove unused variants.
+
+	* Plugins.subproj/IFPluginView.mm: Change to use WebKit logging, not
+	WebCore logging.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	* WebView.subproj/IFWebView.mm:
+	Fix types in log statements caught by the compiler.
+
 2002-04-02  Chris Blumenberg  <cblu@apple.com>
 
 	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView

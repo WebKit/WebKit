@@ -92,7 +92,7 @@ QSize QWidget::sizeHint() const
 
 void QWidget::resize(int w, int h) 
 {
-    KWQDEBUG4 ("0x%08x %s to w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
+    KWQDEBUG4 ("%p %s to w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
     internalSetGeometry( pos().x(), pos().y(), w, h );
 }
 
@@ -183,7 +183,7 @@ QPoint QWidget::pos() const
 
 void QWidget::move(int x, int y) 
 {
-    KWQDEBUG4 ("0x%08x %s to x %d y %d\n", getView(), [[[getView() class] className] cString], x, y);
+    KWQDEBUG4 ("%p %s to x %d y %d\n", getView(), [[[getView() class] className] cString], x, y);
     internalSetGeometry( x,
 			 y,
 			 width(), height() );

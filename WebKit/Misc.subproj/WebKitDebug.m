@@ -4,6 +4,8 @@
 
 #import "WebKitDebug.h"
 
+#ifndef xNDEBUG
+
 unsigned int WEBKIT_LOG_LEVEL = 0;
 
 
@@ -27,36 +29,6 @@ unsigned int WebKitGetLogLevel(){
 }
 
 
-void WebKitLog(NSString *format, ...) {    
-    if (WebKitGetLogLevel() & WEBKIT_LOG_GENERIC_ERROR){
-        va_list args;
-        va_start(args, format); 
-        NSLogv(format, args);
-        va_end(args);
-    }
-}
-
-
-void WebKitLogAtLevel(unsigned int level, NSString *format, ...) {    
-    if (WebKitGetLogLevel() & level){
-        va_list args;
-        va_start(args, format); 
-        NSLogv(format, args);
-        va_end(args);
-    }
-}
-
-
-void WebKitDebug(const char *format, ...) {    
-    if (WebKitGetLogLevel() & WEBKIT_LOG_GENERIC_DEBUG){
-        va_list args;
-        va_start(args, format); 
-        vfprintf(stderr, format, args);
-        va_end(args);
-    }
-}
-
-
 void WebKitDebugAtLevel(unsigned int level, const char *format, ...) {    
     if (WebKitGetLogLevel() & level){
         va_list args;
@@ -66,3 +38,4 @@ void WebKitDebugAtLevel(unsigned int level, const char *format, ...) {
     }
 }
 
+#endif

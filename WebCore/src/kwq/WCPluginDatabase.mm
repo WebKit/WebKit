@@ -152,8 +152,8 @@ NSArray *findPlugins(void)
         if([plugin initializeWithPath:[pluginPaths objectAtIndex:i]]){
             [plugin retain];
             [pluginArray addObject:plugin];
-            KWQDebug("Found plugin: %s\n", [[plugin name] cString]);
-            KWQDebug("%s", [[plugin description] cString]);
+            KWQDEBUG1("Found plugin: %s\n", [[plugin name] lossyCString]);
+            KWQDEBUG1("%s", [[plugin description] lossyCString]);
         }
     }
     return [pluginArray retain];

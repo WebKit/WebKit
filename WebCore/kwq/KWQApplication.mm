@@ -27,19 +27,11 @@
 #include <qapplication.h>
 #include <qpalette.h>
 
-// FIXME: 
-static QPalette *DEFAULT_PALETTE = NULL;
-static QSize *DEFAULT_SIZE = NULL;
-
 QPalette QApplication::palette(const QWidget *p)
 {
-    if (DEFAULT_PALETTE == NULL) {
-        DEFAULT_PALETTE = new QPalette();
-    }
-
-    return *DEFAULT_PALETTE;
+    static QPalette pal;
+    return pal;
 }
-
 
 static QWidget *mainWidget = 0;
 
@@ -64,7 +56,7 @@ int KWQDesktopWidget::height() const
 
 QWidget *QApplication::desktop()
 {
-    if (mainWidget == 0){
+    if (mainWidget == 0) {
         mainWidget = new KWQDesktopWidget();
     }
     return mainWidget;
@@ -81,12 +73,7 @@ int QApplication::startDragDistance()
 QSize QApplication::globalStrut()
 {
     _logNotYetImplemented();
-
-    if (DEFAULT_SIZE == NULL) {
-        DEFAULT_SIZE = new QSize(0,0);
-    }
-
-    return *DEFAULT_SIZE;
+    return QSize(0,0);
 }
 
 

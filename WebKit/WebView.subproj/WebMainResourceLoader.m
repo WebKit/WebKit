@@ -61,7 +61,7 @@
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
-    WEBKITDEBUGLEVEL3 (WEBKIT_LOG_LOADING, "url = %s, data = 0x%08x, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
+    WEBKITDEBUGLEVEL3 (WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     
     //FIXME: This is a temporary hack to make sure we don't load non-html content. 
     //Since the cache returns nil for contentType when the URL is in the cache (2892912),

@@ -10,8 +10,11 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_CFLAGS = "";
 				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OPTIMIZATION_CFLAGS = "-O";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
@@ -21,9 +24,8 @@
 			buildRules = (
 			);
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "";
-				INSTALL_PATH = "";
+				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
@@ -124,17 +126,21 @@
 				255AF6590250FC030ECA149E,
 			);
 			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUGGING_SYMBOLS = NO;
+				DEBUG_CFLAGS = "-DxNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = "../WebCore/include ../JavaScriptCore";
+				HEADER_SEARCH_PATHS = "../WebCore/include ../JavaScriptCore .. ../WebCore/src/kdelibs/khtml ../WebCore/src/kwq ../WebCore/src/kwq/kparts ../WebCore/include ../WebCore/include/private";
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "-Werror -Wall -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_  -I.. -I../WebCore/src/kdelibs/khtml -I../WebCore/src/kwq -I../WebCore/src/kwq/kparts -I../WebCore/include -I../WebCore/include/private -F/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ -F/System/Library/Frameworks/CoreServices.framework/Frameworks/ -F/System/Library/Frameworks/Carbon.framework/Frameworks/";
+				OPTIMIZATION_CFLAGS = "-Os";
+				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H -F/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ -F/System/Library/Frameworks/CoreServices.framework/Frameworks/ -F/System/Library/Frameworks/Carbon.framework/Frameworks/";
 				OTHER_LDFLAGS = "-lwebcore -framework JavaScriptCore -framework WebFoundation -seg1addr 0x4000000";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WARNING_CFLAGS = "-Werror -Wall -Wcast-align -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wreorder -Wsign-compare";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (

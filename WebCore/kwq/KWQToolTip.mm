@@ -26,29 +26,18 @@
 #include <kwqdebug.h>
 #include <qtooltip.h>
 
-// FIXME: 
-static QPalette *DEFAULT_PALETTE = NULL;
-
 QPalette QToolTip::palette()
 {
-    _logNotYetImplemented();
-    if (DEFAULT_PALETTE == NULL) {
-	DEFAULT_PALETTE = new QPalette();
-    }
-
-    return *DEFAULT_PALETTE;
+    static QPalette pal;
+    return pal;
 }
-
 
 QToolTip::QToolTip(QWidget *)
 {
     _logNotYetImplemented();
 }
 
-
 void QToolTip::tip(const QRect &, const QString &)
 {
     _logNotYetImplemented();
 }
-
-

@@ -1026,7 +1026,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
+    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, job->url().url().latin1());
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
@@ -1041,7 +1041,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     [m_dataSource _removeURLHandle: job->handle()];
     
-    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = 0x%08x for URL %s\n", m_dataSource, urlString.latin1());
+    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, urlString.latin1());
 
     m_loader->slotFinished(job);
     
@@ -1067,7 +1067,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     [m_dataSource _removeURLHandle: job->handle()];
     
-    KWQDEBUGLEVEL4 (KWQ_LOG_LOADING, "dataSource = 0x%08x for URL %s data at 0x%08x, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
+    KWQDEBUGLEVEL4 (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
 
     m_loader->slotFinished(job);
     
@@ -1090,7 +1090,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
     
-    KWQDEBUGLEVEL4 (KWQ_LOG_LOADING, "dataSource = 0x%08x for URL %s data at 0x%08x, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
+    KWQDEBUGLEVEL4 (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
 
     m_loader->slotData(job, (const char *)[data bytes], [data length]);    
 
@@ -1111,7 +1111,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQDEBUGLEVEL3 (KWQ_LOG_LOADING, "dataSource = 0x%08x, result = %d, URL = %s\n", m_dataSource, result, job->url().url().latin1());
+    KWQDEBUGLEVEL3 (KWQ_LOG_LOADING, "dataSource = %p, result = %d, URL = %s\n", m_dataSource, result, job->url().url().latin1());
 
     [m_dataSource _removeURLHandle: job->handle()];
 

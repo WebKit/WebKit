@@ -1,3 +1,21 @@
+2002-04-02  Darin Adler  <darin@apple.com>
+
+	* src/kwq/kwqdebug.h: Turn off logging when xNDEBUG is defined.
+	Remove unused stuff. Add checking for printf parameters.
+	* src/kwq/kwqdebug.mm: Remove unused variants.
+
+	* src/kwq/KWQApplication.mm:
+	* src/kwq/KWQKGlobal.mm:
+	* src/kwq/KWQKloader.mm:
+	* src/kwq/KWQObject.mm:
+	* src/kwq/KWQString.mm:
+	* src/kwq/KWQToolTip.mm:
+	* src/kwq/KWQWidget.mm:
+	* src/kwq/WCPlugin.mm:
+	* src/kwq/WCPluginDatabase.mm:
+	* src/kwq/npapi.mm:
+	Fix types in log statements caught by the compiler.
+
 2002-04-02  Richard Williamson  <rjw@apple.com>
 
         Fixed a fix, shoulda' been a #ifndef to exclude unnecessary code.

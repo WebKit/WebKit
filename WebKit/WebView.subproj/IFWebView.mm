@@ -114,7 +114,6 @@
 {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
 
-#define _KWQ_TIMING        
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles){

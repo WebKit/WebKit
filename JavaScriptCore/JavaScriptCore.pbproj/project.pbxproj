@@ -3,14 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 36;
+	objectVersion = 38;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_CFLAGS = "";
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OPTIMIZATION_CFLAGS = "-O";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
@@ -20,9 +23,7 @@
 			buildRules = (
 			);
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = "-Os";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
@@ -65,7 +66,6 @@
 			buildStyles = (
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
-				F692A8D90255645D01FF60F7,
 			);
 			isa = PBXProject;
 			mainGroup = 0867D691FE84028FC02AAC07;
@@ -111,6 +111,9 @@
 				F692A8D8025563E401FF60F7,
 			);
 			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUGGING_SYMBOLS = NO;
+				DEBUG_CFLAGS = "-DxNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -118,10 +121,11 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = /System/Library/PrivateFrameworks;
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "-Wall -Werror -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -Wno-format-y2k -DAPPLE_CHANGES -DHAVE_CONFIG_H";
+				OPTIMIZATION_CFLAGS = "-Os";
+				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WARNING_CFLAGS = "-Werror -Wall -Wcast-align -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wreorder -Wsign-compare";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (
@@ -1216,17 +1220,6 @@
 			);
 			shellPath = /bin/sh;
 			shellScript = "if [ -f ../configure.in ]; then make embed; fi";
-		};
-		F692A8D90255645D01FF60F7 = {
-			buildRules = (
-			);
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				INSTALL_PATH = "";
-				OPTIMIZATION_CFLAGS = "-Os";
-			};
-			isa = PBXBuildStyle;
-			name = Standalone;
 		};
 	};
 	rootObject = 0867D690FE84028FC02AAC07;
