@@ -5,3 +5,5 @@ struct UserAgentSpoofTableEntry { const char *name; UserAgentStringType type; };
 #
 # pretend to be Mac IE because these sites forbid unknown browsers
 jaguar.com, MacIE
+# pretend to be Mac IE to avoid gzipped HTML which we don't support yet
+freebsd.org, MacIE

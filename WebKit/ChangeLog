@@ -1,3 +1,14 @@
+2003-06-13  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3291502>: REGRESSION (80-81): freebsd.org is giving us gzipped content (because we stopped spoofing)
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebUserAgentSpoofTable.c:
+        (hash):
+        (_web_findSpoofTableEntry):
+        * WebView.subproj/WebUserAgentSpoofTable.gperf:
+
 2003-06-12  Richard Williamson  <rjw@apple.com>
 
 	Restoring fix for 3221078 that I earlier backed out in a
