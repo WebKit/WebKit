@@ -1,3 +1,14 @@
+2003-04-03  Richard Williamson  <rjw@apple.com>
+
+        Fix checks for about: to avoid using our 'fake' request when
+        using WebDataProtocol.  This fixes the assertion in the Snippet
+        Editor.
+        
+        Reviewed by mjs.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+
 2003-04-03  Trey Matteson  <trey@apple.com>
 
 	3218212 REGRESSION: page on screen draws ugly while printing is happening

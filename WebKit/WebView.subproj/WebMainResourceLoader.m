@@ -160,12 +160,11 @@
 -(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(NSURLResponse *)r
 {
     [[dataSource _controller] setDefersCallbacks:NO];
-    NSURLRequest *req = [dataSource request];
 
     switch (contentPolicy) {
     case WebPolicyUse:
 	if (![WebView canShowMIMEType:[r MIMEType]]) {
-	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:[req URL]];
+	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:[[dataSource request] URL]];
 	    [self stopLoadingForPolicyChange];
 	    return;
 	}
@@ -193,7 +192,7 @@
 
     [super connection:connection didReceiveResponse:r];
 
-    if ([[req URL] _web_shouldLoadAsEmptyDocument]) {
+    if ([[request URL] _web_shouldLoadAsEmptyDocument]) {
 	[self connectionDidFinishLoading:connection];
     }
 }
