@@ -35,8 +35,6 @@
     _private->needsLayout = YES;
 
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidBecomeMain:) name: NSWindowDidBecomeMainNotification object: nil];
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidBecomeKey:) name: NSWindowDidBecomeKeyNotification object: nil];
         
     return self;
 }
@@ -395,18 +393,6 @@
 }
 
 
-- (void)windowDidBecomeMain: (NSNotification *)notification
-{
-    [[self window] makeFirstResponder: self];
-}
-
-
-- (void)windowDidBecomeKey: (NSNotification *)notification
-{
-    [[self window] makeFirstResponder: self];
-}
-
-
 - (void)mouseUp: (NSEvent *)event
 {
     int button, state;
@@ -465,6 +451,8 @@
     }
 }
 
+// FIXME: This needs to use the mouse moved notification rather than the mouse moved event so
+// it works even when this view is not in the responder chain.
 - (void)mouseMoved: (NSEvent *)event
 {
     NSPoint p = [event locationInWindow];

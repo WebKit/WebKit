@@ -1,3 +1,9 @@
+2002-05-14  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFWebView.mm: (-[IFWebView initWithFrame:]):
+	Remove code that makes us the first responder. That's up to the higher levels,
+	not the web view.
+
 2002-05-14  John Sullivan  <sullivan@apple.com>
 
 	* History.subproj/IFURIEntry.h:
@@ -15,7 +21,7 @@
 	fields comment, creationDate, modificationDate
 	* WebKit.pbproj/project.pbxproj: Updated for removed file.
 
-2002-05-13  System Administrator  <cblu@apple.com>
+2002-05-13  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for setting the content policy on the location change handler
 	and data source at any time instead of depending on an immediate response.
@@ -44,7 +50,6 @@
 	rebuild.
 
 2002-05-13  Chris Blumenberg  <cblu@apple.com>
-
 
 	* WebView.subproj/IFBaseWebController.mm:
 	(-[IFBaseWebController URLPolicyForURL:]):
