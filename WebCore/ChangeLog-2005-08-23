@@ -1,3 +1,13 @@
+2004-08-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3767274> crash in partForWidget inside setFocus (test page attached)
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::nextKeyViewInFrame): Remove code to do position
+        the widget; no longer needed since we reworked how widgets get their positions.
+        * kwq/KWQWidget.mm: (QWidget::setFocus): Ditto. This was the one that caused the bug.
+
 2004-08-19  David Hyatt  <hyatt@apple.com>
 
 	Fix crash when text is contained inside a table-colgroup.
@@ -90,6 +100,8 @@
         (DOM::PositionIterator::atEnd):
 
 2004-08-18  David Hyatt  <hyatt@apple.com>
+
+        - did WebCore part of <rdar://problem/3682969> SLIDER: absolute left position of slider should be headline only
 
 	Make the header overlap the footer in the zero-line case.  Changes to Emerson's template will ensure the
 	header draws over the footer.

@@ -223,20 +223,6 @@ void QWidget::setFocus()
         return;
     }
     
-    // KHTML will call setFocus on us without first putting us in our
-    // superview and positioning us. Normally layout computes the position
-    // and the drawing process positions the widget. Do both things explicitly.
-    RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(const_cast<QObject *>(eventFilterObject()));
-    int x, y;
-    if (renderWidget) {
-        if (renderWidget->canvas()->needsLayout()) {
-            renderWidget->view()->layout();
-        }
-        if (renderWidget->absolutePosition(x, y)) {
-            renderWidget->view()->addChild(this, x, y);
-        }
-    }
-    
     NSView *view = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
