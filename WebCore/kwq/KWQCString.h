@@ -46,7 +46,7 @@ public:
     QCString mid(uint index, uint len=0xffffffff) const;
     
     int find(const char *str, int index=0, bool cs=TRUE) const;
-    int contains(char,) const;
+    int contains(char) const;
     bool isEmpty() const;
     bool isNull() const;
     uint length() const;
