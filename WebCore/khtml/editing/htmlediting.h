@@ -259,7 +259,9 @@ private:
 class ApplyStyleCommand : public CompositeEditCommand
 {
 public:
-    ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes);
+    enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
+
+    ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes, EPropertyLevel=PropertyDefault);
     virtual ~ApplyStyleCommand();
 	
     virtual void doApply();
@@ -302,6 +304,7 @@ private:
     
     DOM::CSSMutableStyleDeclarationImpl *m_style;
     EditAction m_editingAction;
+    EPropertyLevel m_propertyLevel;
 };
 
 //------------------------------------------------------------------------------------------

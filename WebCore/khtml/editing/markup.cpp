@@ -128,23 +128,25 @@ static QString renderedText(const NodeImpl *node, const RangeImpl *range)
             unsigned s = kMax(start, startOffset);
             unsigned e = kMin(end, endOffset);
             result.append(str.mid(s, e-s));
-            // now add in collapsed-away spaces if at the end of the line
-            InlineTextBox *nextBox = box->nextTextBox();
-            if (nextBox && box->root() != nextBox->root()) {
-                const char nonBreakingSpace = '\xa0';
-                // count the number of characters between the end of the
-                // current box and the start of the next box.
-                int collapsedStart = e;
-                int collapsedPastEnd = kMin((unsigned)nextBox->m_start, endOffset + 1);
-                bool addNextNonNBSP = true;
-                for (int i = collapsedStart; i < collapsedPastEnd; i++) {
-                    if (str[i] == nonBreakingSpace) {
-                        result.append(str[i]);
-                        addNextNonNBSP = true;
-                    }
-                    else if (addNextNonNBSP) {
-                        result.append(str[i]);
-                        addNextNonNBSP = false;
+            if (e == end) {
+                // now add in collapsed-away spaces if at the end of the line
+                InlineTextBox *nextBox = box->nextTextBox();
+                if (nextBox && box->root() != nextBox->root()) {
+                    const char nonBreakingSpace = '\xa0';
+                    // count the number of characters between the end of the
+                    // current box and the start of the next box.
+                    int collapsedStart = e;
+                    int collapsedPastEnd = kMin((unsigned)nextBox->m_start, endOffset + 1);
+                    bool addNextNonNBSP = true;
+                    for (int i = collapsedStart; i < collapsedPastEnd; i++) {
+                        if (str[i] == nonBreakingSpace) {
+                            result.append(str[i]);
+                            addNextNonNBSP = true;
+                        }
+                        else if (addNextNonNBSP) {
+                            result.append(str[i]);
+                            addNextNonNBSP = false;
+                        }
                     }
                 }
             }
@@ -364,6 +366,8 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     markups.prepend(openTag);
     markups.append("</span>");
     style->deref();
+
+    fprintf(stderr, "markup:\n%s\n---------------------------------\n", markups.join("").ascii());
 
     return markups.join("");
 }

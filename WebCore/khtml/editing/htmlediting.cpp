@@ -1139,8 +1139,8 @@ void AppendNodeCommand::doUnapply()
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommand
 
-ApplyStyleCommand::ApplyStyleCommand(DocumentImpl *document, CSSStyleDeclarationImpl *style, EditAction editingAction)
-    : CompositeEditCommand(document), m_style(style->makeMutable()), m_editingAction(editingAction)
+ApplyStyleCommand::ApplyStyleCommand(DocumentImpl *document, CSSStyleDeclarationImpl *style, EditAction editingAction, EPropertyLevel propertyLevel)
+    : CompositeEditCommand(document), m_style(style->makeMutable()), m_editingAction(editingAction), m_propertyLevel(propertyLevel)
 {   
     ASSERT(m_style);
     m_style->ref();
@@ -1154,24 +1154,31 @@ ApplyStyleCommand::~ApplyStyleCommand()
 
 void ApplyStyleCommand::doApply()
 {
-    // apply the block-centric properties of the style
-    CSSMutableStyleDeclarationImpl *blockStyle = m_style->copyBlockProperties();
-    blockStyle->ref();
-    applyBlockStyle(blockStyle);
-
-    // apply any remaining styles to the inline elements
-    // NOTE: hopefully, this string comparison is the same as checking for a non-null diff
-    if (blockStyle->length() < m_style->length()) {
-        CSSMutableStyleDeclarationImpl *inlineStyle = m_style->copy();
-        inlineStyle->ref();
-        applyRelativeFontStyleChange(inlineStyle);
-        blockStyle->diff(inlineStyle);
-        applyInlineStyle(inlineStyle);
-        inlineStyle->deref();
+    switch (m_propertyLevel) {
+        case PropertyDefault: {
+            // apply the block-centric properties of the style
+            CSSMutableStyleDeclarationImpl *blockStyle = m_style->copyBlockProperties();
+            blockStyle->ref();
+            applyBlockStyle(blockStyle);
+            // apply any remaining styles to the inline elements
+            // NOTE: hopefully, this string comparison is the same as checking for a non-null diff
+            if (blockStyle->length() < m_style->length()) {
+                CSSMutableStyleDeclarationImpl *inlineStyle = m_style->copy();
+                inlineStyle->ref();
+                applyRelativeFontStyleChange(inlineStyle);
+                blockStyle->diff(inlineStyle);
+                applyInlineStyle(inlineStyle);
+                inlineStyle->deref();
+            }
+            blockStyle->deref();
+            break;
+        }
+        case ForceBlockProperties:
+            // Force all properties to be applied as block styles.
+            applyBlockStyle(m_style);
+            break;
     }
-
-    blockStyle->deref();
-    
+   
     setEndingSelectionNeedsLayout();
 }
 

@@ -27,6 +27,7 @@
 
 #include <qstring.h>
 
+#include "htmltags.h"
 #include "misc/helper.h"
 #include "rendering/render_text.h"
 #include "visible_position.h"
@@ -282,7 +283,7 @@ VisiblePosition endOfLine(const VisiblePosition &c, EAffinity affinity, EInclude
     if (!rootBox)
         return VisiblePosition();
     
-    InlineBox *endBox = rootBox->lastChild();
+    InlineBox *endBox = rootBox->lastLeafChild();
     if (!endBox)
         return VisiblePosition();
 
@@ -295,7 +296,10 @@ VisiblePosition endOfLine(const VisiblePosition &c, EAffinity affinity, EInclude
         return VisiblePosition();
 
     long endOffset = 1;
-    if (endBox->isInlineTextBox()) {
+    if (endNode->id() == ID_BR) {
+        endOffset = 0;
+    }
+    else if (endBox->isInlineTextBox()) {
         InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);
         endOffset = endTextBox->m_start + endTextBox->m_len;
     }

@@ -1752,6 +1752,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->applyStyle([style _styleDeclarationImpl], static_cast<EditAction>(undoAction));
 }
 
+- (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
+{
+    if (!_part)
+        return;
+    _part->applyParagraphStyle([style _styleDeclarationImpl], static_cast<EditAction>(undoAction));
+}
+
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!_part)
@@ -1801,6 +1808,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (NSDictionary *)fontAttributesForSelectionStart
 {
     return _part ? _part->fontAttributesForSelectionStart() : nil;
+}
+
+- (NSWritingDirection)baseWritingDirectionForSelectionStart
+{
+    return _part ? _part->baseWritingDirectionForSelectionStart() : NSWritingDirectionLeftToRight;
 }
 
 - (void)ensureSelectionVisible

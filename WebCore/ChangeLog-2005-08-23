@@ -1,3 +1,53 @@
+2005-02-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3823109> WebKit should support -toggleBaseWritingDirection: (bidi editing support)
+
+        Since base writing direction is a paragraph-level property in AppKit, and we use the CSS direction
+        property in WebCore, which can be applied to inline elements as well as blocks, a new notion has
+        been added to the WebCore apply style logic. It is now possible to force all properties in a 
+        style declaration to be applied as though they were block properties.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::ApplyStyleCommand): Add an enum and a flag to this command that controls whether to force all
+        properties in the style to be applied as block styles. Default is "no", retaining previous behavior.
+        (khtml::ApplyStyleCommand::doApply): Switch on new flag to apply styles as before, or force all preoperties to be applied
+        as block styles.
+        * khtml/editing/htmlediting.h:
+        (khtml::ApplyStyleCommand::): Add an enum and a flag, as above.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::applyParagraphStyle): New method to force application of all style properties as block styles.
+        * khtml/khtml_part.h: Update header declarations.
+        * kwq/KWQKHTMLPart.h: Update header declarations.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::baseWritingDirectionForSelectionStart): Accessor to help WebKit do a toggle operation on 
+        writing direction.
+        * kwq/WebCoreBridge.h: Update header declarations.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge applyParagraphStyle:withUndoAction:]): New method to force application of all style properties as block styles.
+        (-[WebCoreBridge baseWritingDirectionForSelectionStart]): Accessor to help WebKit do a toggle operation on 
+        writing direction.
+
+2005-02-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for these bugs:
+        
+        <rdar://problem/3984894> REGRESSION (Mail): Command-right-arrow in reply does the wrong thing (two ways)
+        <rdar://problem/3985130> REGRESSION (Mail): command-right-arrow in pasted RTF selects only up to tab
+
+        * khtml/editing/visible_units.cpp:
+        (khtml::endOfLine): Two separate problems in this new function recently added to take the place of
+        selectionForLine. In the first, endOfLine did not stop at BR elements, and returned the position
+        beyond them. In the second, the VisiblePosition constructor gives the wrong answer in certain cases.
+        Darin is going to work on a solution for that problem. In the meantime, I can fix the symptom of this
+        bug by going down to the last leaf child of the root line box; a one line change we will roll out when
+        Darin's fix is in.
+
 2005-02-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3985535> QT Plug-in JavaScript support now fails in <embed> tag only case

@@ -3581,6 +3581,30 @@ NSDictionary *KWQKHTMLPart::fontAttributesForSelectionStart() const
     return result;
 }
 
+NSWritingDirection KWQKHTMLPart::baseWritingDirectionForSelectionStart() const
+{
+    NSWritingDirection result = NSWritingDirectionLeftToRight;
+
+    Position pos = VisiblePosition(d->m_selection.start()).deepEquivalent();
+    NodeImpl *node = pos.node();
+    if (!node || !node->renderer() || !node->renderer()->containingBlock())
+        return result;
+    RenderStyle *style = node->renderer()->containingBlock()->style();
+    if (!style)
+        return result;
+        
+    switch (style->direction()) {
+        case khtml::LTR:
+            result = NSWritingDirectionLeftToRight;
+            break;
+        case khtml::RTL:
+            result = NSWritingDirectionRightToLeft;
+            break;
+    }
+
+    return result;
+}
+
 KWQWindowWidget *KWQKHTMLPart::topLevelWidget()
 {
     return _windowWidget;

@@ -108,6 +108,8 @@ class NSView;
 class WebCoreBridge;
 class WebScriptObject;
 
+typedef int NSWritingDirection;
+
 #endif
 
 enum KWQSelectionDirection {
@@ -237,6 +239,8 @@ public:
 
     NSFont *fontForSelection(bool *hasMultipleFonts) const;
     NSDictionary *fontAttributesForSelectionStart() const;
+    
+    NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
     void markMisspellingsInAdjacentWords(const khtml::VisiblePosition &);
     void markMisspellings(const khtml::Selection &);
