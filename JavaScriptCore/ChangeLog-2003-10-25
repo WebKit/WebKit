@@ -1,3 +1,11 @@
+2003-09-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        Rolled in Harri Porten's change to accept non-breaking space in JavaScript.
+
+        * kjs/lexer.cpp: (Lexer::isWhiteSpace): Accept 00A0 as "whitespace".
+
 2003-09-25  Maciej Stachowiak  <mjs@apple.com>
 
 	Roll out build system change since it did not actually work. :-(
