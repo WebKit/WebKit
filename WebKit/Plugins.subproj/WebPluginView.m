@@ -120,7 +120,7 @@
     WindowRef windowRef = [[self window] _windowRef];
     event.message = (UInt32)windowRef;
     if (activate)
-        event.modifiers |= activMask;
+        event.modifiers |= activeFlag;
     
     acceptedEvent = NPP_HandleEvent(instance, &event); 
     
