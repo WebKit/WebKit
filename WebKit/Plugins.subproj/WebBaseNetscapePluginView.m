@@ -63,9 +63,9 @@ typedef struct {
 
 @end
 
-@interface NSData (PluginExtras)
-- (BOOL)startsWithBlankLine;
-- (unsigned)locationAfterFirstBlankLine;
+@interface NSData (WebPluginDataExtras)
+- (BOOL)_web_startsWithBlankLine;
+- (unsigned)_web_locationAfterFirstBlankLine;
 @end
 
 
@@ -1168,10 +1168,10 @@ typedef struct {
     [request setRequestMethod:@"POST"];
     
     if (allowHeaders) {
-        if ([postData startsWithBlankLine]) {
+        if ([postData _web_startsWithBlankLine]) {
             postData = [postData subdataWithRange:NSMakeRange(1, [postData length] - 1)];
         } else {
-            unsigned location = [postData locationAfterFirstBlankLine];
+            unsigned location = [postData _web_locationAfterFirstBlankLine];
             if (location != NSNotFound) {
                 // If the blank line is somewhere in the middle of postData, everything before is the header.
                 NSData *headerData = [postData subdataWithRange:NSMakeRange(0, location)];
@@ -1315,12 +1315,12 @@ typedef struct {
 
 @implementation NSData (PluginExtras)
 
-- (BOOL)startsWithBlankLine
+- (BOOL)_web_startsWithBlankLine
 {
     return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
 }
 
-- (unsigned)locationAfterFirstBlankLine
+- (unsigned)_web_locationAfterFirstBlankLine
 {
     const char *bytes = (const char *)[self bytes];
     unsigned length = [self length];

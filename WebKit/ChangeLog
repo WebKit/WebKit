@@ -1,5 +1,16 @@
 2003-03-17  Chris Blumenberg  <cblu@apple.com>
 
+	Made data categories use the "_web_" prefix.
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]):
+        (-[NSData _web_startsWithBlankLine]):
+        (-[NSData _web_locationAfterFirstBlankLine]):
+
+2003-03-17  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3199105 - Accept carbon-style file URLs from plug-in POST requests
 	Fixed: 3148767 - POST (aka Flash Remoting) doesn't work from Flash
 
