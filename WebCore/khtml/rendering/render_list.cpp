@@ -577,8 +577,7 @@ void RenderListMarker::calcMinMaxWidth()
         break;
     }
 
-    if (style()->direction() == LTR)
-        m_item += QString::fromLatin1(". ");
+    m_item += QString::fromLatin1(". ");
 
     if (isInside())
         m_width = fm.width(m_item);
