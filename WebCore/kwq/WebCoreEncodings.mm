@@ -31,9 +31,10 @@
 
 + (NSString *)decodeData:(NSData *)data
 {
-    khtml::Decoder decoder;
-    QString result = decoder.decode(static_cast<const char *>([data bytes]), [data length]);
-    result += decoder.flush();
+    khtml::Decoder *decoder = new khtml::Decoder();
+    QString result = decoder->decode(static_cast<const char *>([data bytes]), [data length]);
+    result += decoder->flush();
+    decoder->deref();
     return result.getNSString();
 }
 
