@@ -65,7 +65,6 @@ typedef enum {
  @constant WebClickPolicyOpenNewWindow Open the clicked URL in another window.
  @constant WebClickPolicyOpenNewWindowBehind Open the clicked URL in another window behind this window.
  @constant WebClickPolicySave Save the clicked URL to disk.
- @constant WebClickPolicySaveAndOpenExternally Save the clicked URL to disk and open the file in another application.
  @constant WebClickPolicyIgnore Do nothing with the clicked URL.
  */
 typedef enum {
@@ -74,7 +73,6 @@ typedef enum {
     WebClickPolicyOpenNewWindow = WebPolicyOpenNewWindow,
     WebClickPolicyOpenNewWindowBehind = WebPolicyOpenNewWindowBehind,
     WebClickPolicySave = WebPolicySave,
-    WebClickPolicySaveAndOpenExternally = WebPolicySaveAndOpen,
     WebClickPolicyIgnore = WebPolicyIgnore
 } WebClickAction;
 
@@ -109,14 +107,12 @@ typedef enum {
     @constant WebContentPolicyNone Unitialized state.
     @constant WebContentPolicyShow Show the content in WebKit.
     @constant WebContentPolicySave Save the content to disk.
-    @constant WebContentPolicySaveAndOpenExternally Save the content to disk and open it in another application.
     @constant WebContentPolicyIgnore Do nothing with the content.
 */
 typedef enum {
     WebContentPolicyNone = WebPolicyNone,
     WebContentPolicyShow = WebPolicyUse,
     WebContentPolicySave = WebPolicySave,
-    WebContentPolicySaveAndOpenExternally = WebPolicySaveAndOpen,
     WebContentPolicyIgnore = WebPolicyIgnore
 } WebContentAction;
 
@@ -185,7 +181,7 @@ typedef enum {
     @abstract WebContentPolicy constructor
     @param action The policy action of the WebContentPolicy.
     @param thePath Path to where the file should be saved. Only applicable for
-    WebContentPolicySave and WebContentPolicySaveAndOpenExternally WebContentActions.
+    WebContentPolicySave WebContentAction.
 */
 + webPolicyWithContentAction: (WebContentAction)action andPath: (NSString *)thePath;
 @end
@@ -201,7 +197,7 @@ typedef enum {
     @abstract WebClickPolicy constructor
     @param action The policy action of the WebClickPolicy.
     @param thePath Path to where the file should be saved. Only applicable for
-    WebClickPolicySave and WebClickPolicySaveAndOpenExternally WebClickActions.
+    WebClickPolicySave  WebClickAction.
 */
 + webPolicyWithClickAction: (WebClickAction)action andPath: (NSString *)thePath;
 @end

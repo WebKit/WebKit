@@ -343,12 +343,6 @@
     NSString *path = [[dataSource contentPolicy] path];
     
     LOG(Download, "Download complete. Saved to: %s", [path cString]);
-    
-    if ([[dataSource contentPolicy] policyAction] == WebContentPolicySaveAndOpenExternally) {
-        if (![[NSWorkspace sharedWorkspace] openFile:path]) {
-            return [self errorWithCode:WebErrorCannotFindApplicationForFile];
-        }
-    }
 
     return nil;
 }

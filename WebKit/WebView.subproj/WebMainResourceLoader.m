@@ -68,7 +68,7 @@
 {    
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
-    if (contentAction != WebContentPolicySaveAndOpenExternally && contentAction != WebContentPolicySave) {
+    if (contentAction != WebContentPolicySave) {
         [[dataSource controller] _mainReceivedError:error fromDataSource:dataSource];
     }
 }
@@ -178,7 +178,6 @@
         break;
         
     case WebContentPolicySave:
-    case WebContentPolicySaveAndOpenExternally: 
         {
             [[dataSource webFrame] _setProvisionalDataSource:nil];
             
@@ -241,7 +240,7 @@
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
     
     // Don't retain data for downloaded files
-    if (contentAction != WebContentPolicySave && contentAction != WebContentPolicySaveAndOpenExternally) {
+    if (contentAction != WebContentPolicySave) {
     	[dataSource _setResourceData:resourceData];
     }
 

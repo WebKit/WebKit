@@ -1,3 +1,17 @@
+2002-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+	Removed SaveAndOpenExternally policy.
+	
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler finishedLoading]):
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterClickPolicyForEvent:request:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+
 2002-11-07  Chris Blumenberg  <cblu@apple.com>
 
         * WebKit.pbproj/project.pbxproj:
