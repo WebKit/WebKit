@@ -317,16 +317,8 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
     if (!node)
         return Position();
     
-    if (isAtomicNode(node)) {
-        // This is part of the strategy to wean the code off Positions with BRs and replaced elements
-        // as the nodes and offsets > 0.
-        if (offset > 0 && (node->id() == ID_BR || node->renderer() && node->renderer()->isReplaced())) {
-            NodeImpl *next = node->traverseNextNode();
-            if (next && node->enclosingBlockFlowElement() == next->enclosingBlockFlowElement())
-                return deepEquivalent(Position(next, 0));
-        }
+    if (isAtomicNode(node))
         return pos;
-    }
 
     if (offset >= (long)node->childNodeCount()) {
         do {

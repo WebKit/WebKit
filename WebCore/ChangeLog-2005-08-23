@@ -1,5 +1,21 @@
 2004-10-14  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3839989> REGRESSION (Mail): Left arrow does nothing after inserting attachment
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::deepEquivalent): Remove code that attempted to bridge old-style
+        position code to new-style VisiblePosition code. In retrospect, this code was misguided.
+        Since we do a good job of insulating external code from the internal workings of 
+        VisiblePosition, the "hop ahead" being done here was not doing anyone any real good, and
+        in the case of this bug, was doing harm. Simply removing this code makes the bug
+        go away and does not cause any editing layout test regresssions.
+
+2004-10-14  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         * khtml/rendering/bidi.cpp:
