@@ -62,4 +62,7 @@ public:
     KHTMLPartBrowserHostExtension(KHTMLPart *) { }
 };
 
-class KHTMLZoomFactorAction { };
+class KHTMLZoomFactorAction {
+public:
+    void setEnabled(bool) { }
+};

@@ -164,27 +164,16 @@
 
 
 // May return nil if not initialized with a URL.
+- (NSURL *)URL
+{
+    return _private->finalURL ? _private->finalURL : _private->inputURL;
+}
+
+
+// May return nil if not initialized with a URL.
 - (NSURL *)inputURL
 {
     return _private->inputURL;
-}
-
-
-// finalURL returns the URL that was actually used.  The final URL
-// may be different than the inputURL if the server redirects.
-// <WebLocationChangedHandler> includes a message that is sent when
-// a redirect is processed
-- (NSURL *)redirectedURL
-{
-    return _private->finalURL;
-}
-
-
-// Returns true if the inputURL has been redirected by the server,
-// i.e. inputURL != redirectedURL.
-- (BOOL)wasRedirected
-{
-    return [self redirectedURL] != nil && ![_private->inputURL isEqual: [self redirectedURL]];
 }
 
 

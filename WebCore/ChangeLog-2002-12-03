@@ -1,3 +1,38 @@
+2002-08-06  Darin Adler  <darin@apple.com>
+
+	- fixed 2948805 -- Need WebKit API for larger/smaller font feature
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::clear): Head in the direction of using the m_frames and
+	m_objects arrays, by turning some APPLE_CHANGES code on.
+        (KHTMLPart::checkCompleted): More code turned on here.
+        (KHTMLPart::checkEmitLoadEvent): And more code turned on here.
+        (KHTMLPart::parentPart): Remove APPLE_CHANGES version. We can use the original now.
+        (KHTMLPart::setZoomFactor): Remove APPLE_CHANGES. We want this function now.
+        * khtml/khtml_part.h: Remove some APPLE_CHANGES to make xmlDocImpl public.
+	No longer needed.
+        * khtml/khtmlpart_p.h: Remove a bunch of APPLE_CHANGES.
+        * kwq/KWQKHTMLPartImpl.h: Remove parentPart(), add getDocument() and getRenderer().
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::urlSelected): Use parentPart() instead of [bridge parent].
+        (KWQKHTMLPartImpl::requestFrame): Set up a ChildFrame in the m_frames array.
+        (KWQKHTMLPartImpl::layout): Use getRenderer().
+        (KWQKHTMLPartImpl::getDocument): Added.
+        (KWQKHTMLPartImpl::getRenderer): Added.
+        * kwq/WebCoreBridge.h: Add [setParent:], remove [parent].
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setParent:]): Added.
+        (-[WebCoreBridge reapplyStyles]): Use getDocument().
+        (-[WebCoreBridge forceLayout]): Use getRenderer().
+        (-[WebCoreBridge drawRect:withPainter:]): Use getRenderer().
+        (-[WebCoreBridge copyDOMTree:]): Use getDocument().
+        (-[WebCoreBridge copyRenderTree:]): Use getRenderer().
+        (-[WebCoreBridge completeURLForDOMString:]): Use getDocument().
+        (-[WebCoreBridge elementAtPoint:]): Use getRenderer().
+        (-[WebCoreBridge setTextSizeMultiplier:]):
+        * kwq/khtml/khtml_ext.h: Add dummy setEnabled function to make khtml_part.cpp compile.
+        * kwq/kparts/part.h: Add real parent() and setParent() implementation.
+
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed crashers and leaks that come up when changing the view

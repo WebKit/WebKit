@@ -62,14 +62,18 @@ private:
 
 class ReadOnlyPart : public Part {
 public:
-    ReadOnlyPart(QObject * = 0, const char * = 0) { }
+    ReadOnlyPart(QObject * = 0, const char * = 0) : m_parent(0) { }
     
     KURL url() const { return m_url; }
     KURL m_url;
     
     void setXMLFile(const char *) { }
-    QObject *parent() const { return 0; }
+    void setParent(QObject *parent) { m_parent = parent; }
+    QObject *parent() const { return m_parent; }
     void setInstance(KInstance *, bool) { }
+
+private:
+    QObject *m_parent;
 };
 
 class GUIActivateEvent { };

@@ -33,18 +33,19 @@
 #import <render_root.h>
 #import <render_frames.h>
 #import <kwqdebug.h>
-#include <html/html_documentimpl.h>
-#include <xml/dom_nodeimpl.h>
-#include <htmlattrs.h>
-#include <htmltags.h>
-#include <csshelper.h>
-#include <KWQDOMNode.h>
-#include <WebCoreImageRenderer.h>
+#import <html/html_documentimpl.h>
+#import <xml/dom_nodeimpl.h>
+#import <htmlattrs.h>
+#import <htmltags.h>
+#import <csshelper.h>
+#import <KWQDOMNode.h>
+#import <WebCoreImageRenderer.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
-#include <WebFoundation/WebNSURLExtras.h>
-
-using namespace DOM;
-using namespace khtml;
+using khtml::parseURL;
+using khtml::RenderImage;
+using khtml::RenderObject;
+using khtml::RenderPart;
 
 @implementation WebCoreBridge
 
@@ -89,6 +90,10 @@ using namespace khtml;
     return renderPart;
 }
 
+- (void)setParent:(WebCoreBridge *)parent
+{
+    part->setParent([parent part]);
+}
 
 - (void)openURL:(NSURL *)URL
 {
@@ -155,7 +160,7 @@ using namespace khtml;
 
 - (void)reapplyStyles
 {
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    DOM::DocumentImpl *doc = part->impl->getDocument();
     if (doc && doc->renderer()) {
         doc->updateStyleSelector();
     }
@@ -163,12 +168,9 @@ using namespace khtml;
 
 - (void)forceLayout
 {
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
-    if (doc) {
-        khtml::RenderObject *renderer = doc->renderer();
-        if (renderer) {
-            renderer->setLayouted(false);
-        }
+    RenderObject *renderer = part->impl->getRenderer();
+    if (renderer) {
+        renderer->setLayouted(false);
     }
     KHTMLView *view = part->impl->getView();
     if (view) {
@@ -178,13 +180,10 @@ using namespace khtml;
 
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
-    if (doc) {
-        RenderObject *renderer = doc->renderer();
-        if (renderer) {
-            renderer->print(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
-        }
-    }    
+    RenderObject *renderer = part->impl->getRenderer();
+    if (renderer) {
+        renderer->print(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
+    }
 }
 
 - (void)drawRect:(NSRect)rect
@@ -221,23 +220,23 @@ using namespace khtml;
 
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier
 {
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    DOM::DocumentImpl *doc = part->impl->getDocument();
     if (!doc) {
         return nil;
     }
     return [self copyDOMNode:doc copier:copier];
 }
 
-- (NSObject *)copyRenderNode:(khtml::RenderObject *)node copier:(id <WebCoreRenderTreeCopier>)copier
+- (NSObject *)copyRenderNode:(RenderObject *)node copier:(id <WebCoreRenderTreeCopier>)copier
 {
     NSMutableArray *children = [[NSMutableArray alloc] init];
-    for (khtml::RenderObject *child = node->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject *child = node->firstChild(); child; child = child->nextSibling()) {
         [children addObject:[self copyRenderNode:child copier:copier]];
     }
     
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
-    khtml::RenderPart *nodeRenderPart = dynamic_cast<khtml::RenderPart *>(node);
+    RenderPart *nodeRenderPart = dynamic_cast<RenderPart *>(node);
     QWidget *widget = nodeRenderPart ? nodeRenderPart->widget() : 0;
     NSView *view = widget ? widget->getView() : nil;
     
@@ -254,11 +253,7 @@ using namespace khtml;
 
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier
 {
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
-    if (!doc) {
-        return nil;
-    }
-    khtml::RenderObject *renderer = doc->renderer();
+    RenderObject *renderer = part->impl->getRenderer();
     if (!renderer) {
         return nil;
     }
@@ -381,50 +376,44 @@ using namespace khtml;
     }
 }
 
-- (NSURL *)completeURLForDOMString:(DOMString &)s
+- (NSURL *)completeURLForDOMString:(const DOMString &)s
 {
-    NSString *URLString = part->xmlDocImpl()->completeURL(s.string()).getNSString();
+    NSString *URLString = part->impl->getDocument()->completeURL(s.string()).getNSString();
     return [NSURL _web_URLWithString:URLString];
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
-    NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
     RenderObject::NodeInfo nodeInfo(true, true);
-    NodeImpl *node, *URLNode;
-    DOMString domURL;
-    NSURL *URL;
+    part->impl->getRenderer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y, 0, 0);
+    
+    NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 
-    part->xmlDocImpl()->renderer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y, 0, 0);
-    
-    node = nodeInfo.innerNode();
-    URLNode = nodeInfo.URLElement();
-    
-    if(URLNode){
+    NodeImpl *URLNode = nodeInfo.URLElement();
+    if (URLNode) {
         ElementImpl* e =  static_cast<ElementImpl*>(URLNode);
-        domURL = khtml::parseURL(e->getAttribute(ATTR_HREF));
-        URL = [self completeURLForDOMString:domURL];
-        if(URL){
-            [elementInfo setObject: URL forKey: WebCoreContextLinkURL];
+        NSURL *URL = [self completeURLForDOMString:parseURL(e->getAttribute(ATTR_HREF))];
+        if (URL) {
+            [elementInfo setObject:URL forKey:WebCoreContextLinkURL];
         }
     }
 
-    if(isImage(node)){
+    NodeImpl *node = nodeInfo.innerNode();
+    if (isImage(node)) {
         ElementImpl* i =  static_cast<ElementImpl*>(node);
-        domURL = khtml::parseURL(i->getAttribute(ATTR_SRC));
-        URL = [self completeURLForDOMString:domURL];
-        if(URL){
-            [elementInfo setObject: URL forKey: WebCoreContextImageURL];
+        NSURL *URL = [self completeURLForDOMString:parseURL(i->getAttribute(ATTR_SRC))];
+        if (URL) {
+            [elementInfo setObject:URL forKey:WebCoreContextImageURL];
             RenderImage *r = (RenderImage *)node->renderer();
             id <WebCoreImageRenderer> image = r->pixmap().image();
-            if(image){
-                [elementInfo setObject: image forKey: WebCoreContextImage];
+            if (image) {
+                [elementInfo setObject:image forKey:WebCoreContextImage];
             }
         }
     }
 
-    if(part->hasSelection()){
-        [elementInfo setObject: [self selectedText] forKey: WebCoreContextString];
+    if (part->hasSelection()) {
+        [elementInfo setObject:[self selectedText] forKey:WebCoreContextString];
     }
     
     return elementInfo;

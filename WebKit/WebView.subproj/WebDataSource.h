@@ -91,18 +91,11 @@
 - (WebController *)controller;
 
 // May return nil if not initialized with a URL.
-- (NSURL *)inputURL;
-
-// redirectedURL returns the URL that was actually used if there was a redirect.
-// The value of redirectedURL will change if more than one redirect occurs.  If no
-// redirect occurs the value of redirectedURL will be nil.  To monitor change in
-// the value of the redirected URL override the <WebLocationChangeHandler> 
+// The value of URL will change if a redirect occurs.
+// To monitor change in the URL, override the <WebLocationChangeHandler> 
 // serverRedirectTo:forDataSource: method.
-- (NSURL *)redirectedURL;
-
-// Returns true if the inputURL has been redirected by the server,
-// i.e. inputURL != finalURL.
-- (BOOL)wasRedirected;
+- (NSURL *)URL;
+- (NSURL *)inputURL; // deprecated
 
 // Start actually getting (if initialized with a URL) and parsing data. If the data source
 // is still performing a previous load it will be stopped.

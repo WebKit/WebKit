@@ -41,11 +41,6 @@
     [super dealloc];
 }
 
-- (WebCoreBridge *)parent
-{
-    return [[[self dataSource] parent] _bridge];
-}
-
 - (NSArray *)childFrames
 {
     NSArray *frames = [[self dataSource] children];
@@ -222,8 +217,8 @@
 
 - (void)dataSourceChanged
 {
-    [self openURL:[[self dataSource] redirectedURL] == nil
-        ? [[self dataSource] inputURL] : [[self dataSource] redirectedURL]];
+    [self setParent:[[[self dataSource] parent] _bridge]];
+    [self openURL:[[self dataSource] URL]];
 }
 
 - (WebDataSource *)dataSource

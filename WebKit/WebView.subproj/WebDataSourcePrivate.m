@@ -438,7 +438,7 @@
         // If no icon URL has been set using the LINK tag, use the icon at the server's root directory
         // If it is file URL, return its icon provided by NSWorkspace.
         if(_private->iconURL == nil){
-            NSURL *dataSourceURL = [self wasRedirected] ? [self redirectedURL] : [self inputURL];
+            NSURL *dataSourceURL = [self URL];
     
             if([dataSourceURL isFileURL]){
                 NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:[dataSourceURL path]];

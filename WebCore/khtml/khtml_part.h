@@ -1061,13 +1061,7 @@ private:
   DOM::EventListener *createHTMLEventListener( QString code );
 
   DOM::HTMLDocumentImpl *docImpl() const;
-#ifdef APPLE_CHANGES
-public:
-#endif
   DOM::DocumentImpl *xmlDocImpl() const;
-#ifdef APPLE_CHANGES
-private:
-#endif
   khtml::ChildFrame *frame( const QObject *obj );
 
   khtml::ChildFrame *recursiveFrameRequest( const KURL &url, const KParts::URLArgs &args, bool callParent = true );

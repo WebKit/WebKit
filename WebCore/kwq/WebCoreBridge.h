@@ -79,6 +79,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (KHTMLPart *)part;
 
+- (void)setParent:(WebCoreBridge *)parent;
+
 - (void)openURL:(NSURL *)URL;
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding;
 - (void)closeURL;
@@ -123,8 +125,6 @@ typedef khtml::RenderPart KHTMLRenderPart;
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.
 
 @protocol WebCoreBridge
-
-- (WebCoreBridge *)parent;
 
 - (NSArray *)childFrames; // WebCoreBridge objects
 - (WebCoreBridge *)descendantFrameNamed:(NSString *)name;

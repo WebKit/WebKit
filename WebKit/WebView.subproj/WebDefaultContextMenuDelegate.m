@@ -151,7 +151,7 @@
 {
     WebFrame *webFrame = [element objectForKey:WebContextFrame];
     WebDataSource *dataSource = [webFrame dataSource];
-    NSURL *URL = [dataSource wasRedirected] ? [dataSource redirectedURL] : [dataSource inputURL];
+    NSURL *URL = [dataSource URL];
     [self openNewWindowWithURL:URL];
 }
 

@@ -42,6 +42,7 @@
 
 #undef _KWQ_TIMING
 
+using khtml::ChildFrame;
 using khtml::Decoder;
 using khtml::RenderObject;
 using khtml::RenderPart;
@@ -154,9 +155,8 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     WebCoreBridge *frame;
     if (_target.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
-        if ([[[bridge parent] childFrames] count] == 1) {
-            frame = [bridge parent];
-        } else {
+        frame = part->parentPart()->impl->bridge;
+        if ([[frame childFrames] count] != 1) {
             frame = bridge;
         }
     } else {
@@ -189,6 +189,13 @@ bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, cons
             marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()]) {
         return false;
     }
+    
+    ChildFrame childFrame;
+    childFrame.m_name = frameName;
+    childFrame.m_type = isIFrame ? khtml::ChildFrame::IFrame : khtml::ChildFrame::Frame;
+    childFrame.m_frame = frame;
+    childFrame.m_params = params;
+    d->m_frames.append(childFrame);
 
 #ifdef _SUPPORT_JAVASCRIPT_URL_    
     if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 && !isIFrame )
@@ -374,12 +381,6 @@ void KWQKHTMLPartImpl::setStatusBarText(const QString &status)
     [bridge setStatusText:status.getNSString()];
 }
 
-
-KHTMLPart *KWQKHTMLPartImpl::parentPart()
-{
-    return [[bridge parent] part];
-}
-
 bool KWQKHTMLPartImpl::openedByJS()
 {
     return [bridge openedByScript];
@@ -510,8 +511,18 @@ void KWQKHTMLPartImpl::layout()
 {
     // Since not all widgets will get a print call, it's important to move them away
     // so that they won't linger in an old position left over from a previous print.
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
-    if (doc && doc->renderer()) {
-        moveWidgetsAside(doc->renderer());
+    if (getRenderer()) {
+        moveWidgetsAside(getRenderer());
     }
+}
+
+DocumentImpl *KWQKHTMLPartImpl::getDocument()
+{
+    return part->xmlDocImpl();
+}
+
+RenderObject *KWQKHTMLPartImpl::getRenderer()
+{
+    DocumentImpl *doc = part->xmlDocImpl();
+    return doc ? doc->renderer() : 0;
 }
