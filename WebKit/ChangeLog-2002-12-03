@@ -1,3 +1,16 @@
+2002-06-27  Darin Adler  <darin@apple.com>
+
+        - fixed 2973212 -- bad arg string != nil in _IF_URLWithString
+
+        * WebView.subproj/IFWebDataSourcePrivate.mm:
+        (-[IFWebDataSource _startLoading:]): Get rid of essentially-dead code that
+	computed but did not use a URL. Also order operations so that we first
+	set the flag to say that we're loading, then tell the location change
+	handler, and only then ask for the actual I/O to being.
+
+        * WebView.subproj/IFBaseLocationChangeHandler.h: Removed.
+        * WebView.subproj/IFBaseLocationChangeHandler.m: Removed.
+
 === Alexander-10 ===
 
 2002-06-27  Richard Williamson  <rjw@apple.com>

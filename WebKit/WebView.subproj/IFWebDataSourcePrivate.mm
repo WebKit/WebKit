@@ -143,10 +143,6 @@ static NSMutableDictionary *_repTypes=nil;
 
 - (void)_startLoading: (BOOL)forceRefresh
 {
-    NSString *urlString = [[self inputURL] absoluteString];
-    NSURL *theURL;
-    KURL url = [[[self inputURL] absoluteString] cString];
-
     WEBKIT_ASSERT ([self _isStopping] == NO);
     
     [self _setPrimaryLoadComplete: NO];
@@ -155,27 +151,18 @@ static NSMutableDictionary *_repTypes=nil;
     
     [self _clearErrors];
     
-    // FIXME [mjs]: temporary hack to make file: URLs work right
-    if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
-        urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
-    }
-    if ([urlString hasSuffix:@"/"]) {
-        urlString = [urlString substringToIndex:([urlString length] - 1)];
-    }
-    theURL = [NSURL _IF_URLWithString:urlString];
-
     _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self];
     [_private->mainHandle addClient: _private->mainURLHandleClient];
     
     // Mark the start loading time.
     _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
     
+    [self _setLoading:YES];
+    
+    [[self _locationChangeHandler] locationChangeStartedForDataSource:self];
+
     // Fire this guy up.
     [_private->mainHandle loadInBackground];
-    
-    [self _setLoading:YES];
-
-    [[self _locationChangeHandler] locationChangeStartedForDataSource:self];
 }
 
 - (void)_addURLHandle: (IFURLHandle *)handle
