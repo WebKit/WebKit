@@ -379,6 +379,8 @@ static void URLFileReaderInit(void)
         free(buf);
         close(fd);
     }
+
+    WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "writing size file - %u", value);
     
     [mutex unlock];
 }
@@ -553,10 +555,12 @@ static void databaseInit()
     [mutex lock];
     [setCache removeAllObjects];
     [removeCache removeAllObjects];
+    [ops removeAllObjects];
     [self close];
     [[NSFileManager defaultManager] _IF_backgroundRemoveFileAtPath:path];
     [self open];
     [self writeSizeFile:0];
+    usage = 0;
     [mutex unlock];
 
     WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "removeAllObjects");
@@ -637,6 +641,8 @@ static void databaseInit()
     NSDictionary *directoryAttributes;
     NSArchiver *archiver;
     NSFileManager *defaultManager;
+    NSNumber *oldSize;
+    BOOL result;
 
     WEBFOUNDATION_ASSERT_NOT_NIL(object);
     WEBFOUNDATION_ASSERT_NOT_NIL(key);
@@ -664,15 +670,26 @@ static void databaseInit()
     defaultManager = [NSFileManager defaultManager];
 
     filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+    attributes = [defaultManager fileAttributesAtPath:filePath traverseLink:YES];
 
-    [defaultManager _IF_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
+    result = [defaultManager _IF_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
+
+    if (result) {
+        // we're going to write a new file
+        // if there was an old file, we have to subtract the size of the old file before adding the new size
+        if (attributes) {
+            oldSize = [attributes objectForKey:NSFileSize];
+            if (oldSize) {
+                usage -= [oldSize unsignedIntValue];
+            }
+        }
+        usage += [data length];
+        [self writeSizeFile:usage];
+        [self truncateToSizeLimit:[self sizeLimit]];
+    }
 
     [archiver release];
-    [filePath release];
-    
-    usage += [data length];
-    [self writeSizeFile:usage];
-    [self truncateToSizeLimit:[self sizeLimit]];
+    [filePath release];    
 }
 
 -(void)performRemoveObjectForKey:(id)key
@@ -680,6 +697,7 @@ static void databaseInit()
     NSString *filePath;
     NSDictionary *attributes;
     NSNumber *size;
+    BOOL result;
     
     WEBFOUNDATION_ASSERT_NOT_NIL(key);
     
@@ -687,14 +705,14 @@ static void databaseInit()
 
     filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
     attributes = [[NSFileManager defaultManager] fileAttributesAtPath:filePath traverseLink:YES];
-    if (attributes) {
+    result = [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
+    if (result && attributes) {
         size = [attributes objectForKey:NSFileSize];
         if (size) {
             usage -= [size unsignedIntValue];
             [self writeSizeFile:usage];
         }
     }
-    [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
     [filePath release];
 }
 
