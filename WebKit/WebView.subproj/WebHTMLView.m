@@ -781,13 +781,6 @@ static WebHTMLView *lastHitView = nil;
     return [[self _dataSource] _archiveWithMarkupString:markupString nodes:nodes];
 }
 
-- (NSData *)_selectedRTFData
-{
-    NSAttributedString *attributedString = [self selectedAttributedString];
-    NSRange range = NSMakeRange(0, [attributedString length]);
-    return [attributedString RTFFromRange:range documentAttributes:nil];
-}
-
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
     ASSERT([self _hasSelection]);
@@ -1373,17 +1366,19 @@ static WebHTMLView *lastHitView = nil;
         [pasteboard setData:[archive data] forType:WebArchivePboardType];
     }
     
-    // Put attributed string on the pasteboard (RTF format).
-    NSData *RTFData = nil;
+    // Put the attributed string on the pasteboard (RTF/RTFD format).
+    NSAttributedString *attributedString = nil;
     if ([types containsObject:NSRTFPboardType]) {
-        RTFData = [self _selectedRTFData];
+        attributedString = [self selectedAttributedString];
+        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
         [pasteboard setData:RTFData forType:NSRTFPboardType];
     }
     if ([types containsObject:NSRTFDPboardType]) {
-        if (!RTFData) {
-            RTFData = [self _selectedRTFData];
+        if (attributedString == nil) {
+            attributedString = [self selectedAttributedString];
         }
-        [pasteboard setData:RTFData forType:NSRTFDPboardType];
+        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        [pasteboard setData:RTFDData forType:NSRTFDPboardType];
     }
     
     // Put plain string on the pasteboard.

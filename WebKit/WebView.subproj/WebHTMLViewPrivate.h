@@ -37,7 +37,6 @@
 + (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
 - (WebArchive *)_selectedArchive;
-- (NSData *)_selectedRTFData;
 
 - (void)_frameOrBoundsChanged;
 

@@ -1,3 +1,13 @@
+2004-09-16  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3779150> REGRESSION: images not copied when copying HTML in Safari and pasting into TextEdit
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView writeSelectionWithPasteboardTypes:toPasteboard:]): use RTFDFromRange:: for RTFD
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2004-09-15  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
