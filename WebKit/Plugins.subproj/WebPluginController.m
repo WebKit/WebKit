@@ -27,6 +27,14 @@
 - (void)setContainingWindow:(NSWindow *)w;
 @end
 
+// For compatibility only.
+@interface NSView (OldPluginAPI)
+- (void)pluginInitialize;
+- (void)pluginStart;
+- (void)pluginStop;
+- (void)pluginDestroy;
+@end
+
 @implementation WebPluginController
 
 - initWithHTMLView:(WebHTMLView *)HTMLView
@@ -47,7 +55,14 @@
         LOG(Plugins, "starting WebKit plugins : %@", [_views description]);
     }
     
-    [_views makeObjectsPerformSelector:@selector(pluginStart)];
+    int i, count = [_views count];
+    for (i = 0; i < count; i++) {
+        id aView = [_views objectAtIndex:i];
+        if ([aView respondsToSelector:@selector(webPlugInStart)])
+            [aView webPlugInStart];
+        else if ([aView respondsToSelector:@selector(pluginStart)])
+            [aView pluginStart];
+    }
     _started = YES;
 }
 
@@ -61,11 +76,18 @@
         LOG(Plugins, "stopping WebKit plugins: %@", [_views description]);
     }
     
-    [_views makeObjectsPerformSelector:@selector(pluginStop)];
+    int i, count = [_views count];
+    for (i = 0; i < count; i++) {
+        id aView = [_views objectAtIndex:i];
+        if ([aView respondsToSelector:@selector(webPlugInStop)])
+            [aView webPlugInStop];
+        else if ([aView respondsToSelector:@selector(pluginStop)])
+            [aView pluginStop];
+    }
     _started = NO;
 }
 
-- (void)addPlugin:(NSView <WebPlugin> *)view
+- (void)addPlugin:(NSView *)view
 {
     if (!_HTMLView) {
         ERROR("can't add a plug-in to a defunct WebPluginController");
@@ -76,11 +98,17 @@
         [_views addObject:view];
         
         LOG(Plugins, "initializing plug-in %@", view);
-        [view pluginInitialize];
+        if ([view respondsToSelector:@selector(webPlugInInitialize)])
+            [view webPlugInInitialize];
+        else if ([view respondsToSelector:@selector(pluginInitialize)])
+            [view pluginInitialize];
 
         if (_started) {
             LOG(Plugins, "starting plug-in %@", view);
-            [view pluginStart];
+            if ([view respondsToSelector:@selector(webPlugInStart)])
+                [view webPlugInStart];
+            else if ([view respondsToSelector:@selector(pluginStart)])
+                [view pluginStart];
             
             if ([view respondsToSelector:@selector(setContainingWindow:)])
                 [view setContainingWindow:[_HTMLView window]];
@@ -96,7 +124,14 @@
         LOG(Plugins, "destroying WebKit plugins: %@", [_views description]);
     }
     
-    [_views makeObjectsPerformSelector:@selector(pluginDestroy)];
+    int i, count = [_views count];
+    for (i = 0; i < count; i++) {
+        id aView = [_views objectAtIndex:i];
+        if ([aView respondsToSelector:@selector(webPlugInDestroy)])
+            [aView webPlugInDestroy];
+        else if ([aView respondsToSelector:@selector(pluginDestroy)])
+            [aView pluginDestroy];
+    }
     [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [_views release];
     _views = nil;
@@ -104,25 +139,25 @@
     _HTMLView = nil;
 }
 
-- (void)showURL:(NSURL *)URL inFrame:(NSString *)target
+- (void)webPlugInContainerLoadRequest:(NSURLRequest *)request inFrame:(NSString *)target
 {
-    if (!URL) {
+    if (!request) {
         ERROR("nil URL passed");
         return;
     }
     if (!_HTMLView) {
-        ERROR("could not load URL %@ because plug-in has already been destroyed", URL);
+        ERROR("could not load URL %@ because plug-in has already been destroyed", request);
         return;
     }
     WebFrame *frame = [_HTMLView _frame];
     if (!frame) {
-        ERROR("could not load URL %@ because plug-in has already been stopped", URL);
+        ERROR("could not load URL %@ because plug-in has already been stopped", request);
         return;
     }
     if (!target) {
         target = @"_top";
     }
-    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    NSString *JSString = [[request URL] _web_scriptIfJavaScriptURL];
     if (JSString) {
         if ([frame findFrameNamed:target] != frame) {
             ERROR("JavaScript requests can only be made on the frame that contains the plug-in");
@@ -130,7 +165,6 @@
         }
         [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
     } else {
-        NSURLRequest *request = [NSURLRequest requestWithURL:URL];
         if (!request) {
             ERROR("could not load URL %@", URL);
             return;
@@ -139,7 +173,13 @@
     }
 }
 
-- (void)showStatus:(NSString *)message
+// For compatibility only.
+- (void)showURL:(NSURL *)URL inFrame:(NSString *)target
+{
+    [self webPlugInContainerLoadRequest:[NSURLRequest requestWithURL:URL] inFrame:target];
+}
+
+- (void)webPlugInContainerShowStatus:(NSString *)message
 {
     if (!message) {
         message = @"";
@@ -152,9 +192,26 @@
     [[v _UIDelegateForwarder] webView:v setStatusText:message];
 }
 
-- (NSColor *)selectionColor
+// For compatibility only.
+- (void)showStatus:(NSString *)message
+{
+    [self webPlugInContainerShowStatus:message];
+}
+
+- (NSColor *)webPlugInContainerSelectionColor
 {
     return [[_HTMLView _bridge] selectionColor];
+}
+
+// For compatibility only.
+- (NSColor *)selectionColor
+{
+    return [self webPlugInContainerSelectionColor];
+}
+
+- (WebFrame *)webFrame
+{
+    return [_HTMLView _frame];
 }
 
 @end

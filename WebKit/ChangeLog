@@ -1,3 +1,27 @@
+2004-05-13  Richard Williamson   <rjw@apple.com>
+
+	Updated to implementation to reflect new API.  Left old SPI
+	in place for compatibility.  Can remove when the Java plug-in
+	updates.
+
+        Reviewed by Chris.
+
+        * Plugins.subproj/WebPlugin.h:
+        * Plugins.subproj/WebPluginContainer.h:
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController startAllPlugins]):
+        (-[WebPluginController stopAllPlugins]):
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        (-[WebPluginController showURL:inFrame:]):
+        (-[WebPluginController webPlugInContainerShowStatus:]):
+        (-[WebPluginController showStatus:]):
+        (-[WebPluginController webPlugInContainerSelectionColor]):
+        (-[WebPluginController selectionColor]):
+        (-[WebPluginController webFrame]):
+
 2004-05-13  Chris Blumenberg  <cblu@apple.com>
 
 	- Added stubs for WebView action and drag & drop customization API's
