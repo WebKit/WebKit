@@ -2,6 +2,34 @@
 
         Reviewed by Darin.
 
+	<rdar://problem/3685236>: (Safari does not support onselectstart event handler)
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::getValueProperty):
+        (DOMNode::putValue):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):
+        * khtml/ecma/kjs_dom.lut.h:
+        (KJS::):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseHTMLAttribute):
+        * khtml/misc/htmlattrs.c:
+        (hash_attr):
+        (findAttr):
+        * khtml/misc/htmlattrs.h:
+        * khtml/misc/htmlattrs.in:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::shouldSelect):
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId):
+        (EventImpl::idToType):
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::):
+
+2004-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	Fix crash with last checkin.
 
         * khtml/ecma/kjs_binding.cpp:

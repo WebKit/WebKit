@@ -30,6 +30,7 @@
 #include "rendering/render_list.h"
 #include "rendering/render_canvas.h"
 #include "xml/dom_elementimpl.h"
+#include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
 #include "css/cssstyleselector.h"
@@ -1370,12 +1371,20 @@ void RenderObject::dump(QTextStream *stream, QString ind) const
 bool RenderObject::shouldSelect() const
 {
     const RenderObject* curr = this;
+    DOM::NodeImpl *node = 0;
+
     while (curr) {
         if (!curr->style()->userSelect())
             return false;
+	if (!node)
+	    node = curr->element();
         curr = curr->parent();
     }
-    return true;
+
+    // somewhere up the render tree there must be an element!
+    assert(node);
+
+    return node->dispatchHTMLEvent(DOM::EventImpl::SELECTSTART_EVENT, true, true);
 }
 
 DOM::NodeImpl* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, bool& dhtmlWillDrag) const

@@ -123,6 +123,7 @@ onresize
 onscroll
 onsearch
 onselect
+onselectstart
 onsubmit
 onunload
 oversrc

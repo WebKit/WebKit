@@ -209,6 +209,8 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
 	return DRAG_EVENT;
     else if (type == "dragend")
 	return DRAGEND_EVENT;
+    else if (type == "selectstart")
+	return SELECTSTART_EVENT;
     else if (type == "DOMSubtreeModified")
 	return DOMSUBTREEMODIFIED_EVENT;
     else if (type == "DOMNodeInserted")
@@ -315,6 +317,8 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
 	    return "drag";
 	case DRAGEND_EVENT:
 	    return "dragend";
+	case SELECTSTART_EVENT:
+	    return "selectstart";
 	case DOMSUBTREEMODIFIED_EVENT:
 	    return "DOMSubtreeModified";
 	case DOMNODEINSERTED_EVENT:
