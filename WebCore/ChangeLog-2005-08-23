@@ -1,3 +1,18 @@
+2004-08-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Improved the ability of the bridge to report selection state.     
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::TypingCommandImpl::doApply): Bail when there is no selection.
+        * kwq/WebCoreBridge.h: Added an enum to report selection state. These constants
+        mirror those used in DOM::Selection.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectionState]): Replacement for haveSelection. Returns a value 
+        from an enum telling whether the selection is in the None, Caret, or Range state, 
+        rather than just true/false for the Range state as it did before.
+
 2004-08-24  David Hyatt  <hyatt@apple.com>
 
 	Make sure the ifdef XSLT is present for Panther.

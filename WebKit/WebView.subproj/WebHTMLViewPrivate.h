@@ -38,9 +38,6 @@
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
 - (WebArchive *)_selectedArchive;
 - (NSData *)_selectedRTFData;
-- (BOOL)_canDelete;
-- (BOOL)_canPaste;
-- (BOOL)_haveSelection;
 
 - (void)_frameOrBoundsChanged;
 
@@ -55,5 +52,14 @@
 
 - (void)_startAutoscrollTimer:(NSEvent *)event;
 - (void)_stopAutoscrollTimer;
+
+- (BOOL)_canCopy;
+- (BOOL)_canCut;
+- (BOOL)_canDelete;
+- (BOOL)_canPaste;
+- (BOOL)_canType;
+- (BOOL)_hasSelection;
+- (BOOL)_hasSelectionOrInsertionPoint;
+- (BOOL)_isEditable;
 
 @end

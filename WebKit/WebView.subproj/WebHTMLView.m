@@ -718,25 +718,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
-    ASSERT([self _haveSelection]);
+    ASSERT([self _hasSelection]);
     NSArray *types = [[self class] _selectionPasteboardTypes];
     [pasteboard declareTypes:types owner:nil];
     [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
-}
-
-- (BOOL)_haveSelection
-{
-    return [[self _bridge] haveSelection];
-}
-
-- (BOOL)_canDelete
-{
-    return [self _haveSelection] && [[self _bridge] isSelectionEditable];
-}
-
-- (BOOL)_canPaste
-{
-    return [[self _bridge] isSelectionEditable];
 }
 
 - (NSImage *)_dragImageForLinkElement:(NSDictionary *)element
@@ -1067,6 +1052,47 @@ static WebHTMLView *lastHitView = nil;
     [self mouseDragged:fakeEvent];
 }
 
+- (BOOL)_canCopy
+{
+    // Copying can be done regardless of whether you can edit.
+    return [self _hasSelection];
+}
+
+- (BOOL)_canCut
+{
+    return [self _hasSelection] && [self _isEditable];
+}
+
+- (BOOL)_canDelete
+{
+    return [self _hasSelection] && [self _isEditable];
+}
+
+- (BOOL)_canPaste
+{
+    return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
+}
+
+- (BOOL)_canType
+{
+    return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
+}
+
+- (BOOL)_hasSelection
+{
+    return [[self _bridge] selectionState] == WebSelectionStateRange;
+}
+
+- (BOOL)_hasSelectionOrInsertionPoint
+{
+    return [[self _bridge] selectionState] != WebSelectionStateNone;
+}
+
+- (BOOL)_isEditable
+{
+    return [[self _webView] isEditable] || [[self _bridge] isSelectionEditable];
+}
+
 @end
 
 @implementation NSView (WebHTMLViewPrivate)
@@ -1184,7 +1210,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (IBAction)takeFindStringFromSelection:(id)sender
 {
-    if (![self _haveSelection]) {
+    if (![self _hasSelection]) {
         NSBeep();
         return;
     }
@@ -1255,15 +1281,15 @@ static WebHTMLView *lastHitView = nil;
     if (action == @selector(cut:)) {
         return [bridge mayDHTMLCut] || [self _canDelete];
     } else if (action == @selector(copy:)) {
-        return [bridge mayDHTMLCopy] || [self _haveSelection];
+        return [bridge mayDHTMLCopy] || [self _canCopy];
     } else if (action == @selector(delete:)) {
         return [self _canDelete];
     } else if (action == @selector(paste:)) {
         return [bridge mayDHTMLPaste] || [self _canPaste];
     } else if (action == @selector(takeFindStringFromSelection:)) {
-        return [self _haveSelection];
+        return [self _hasSelection];
     } else if (action == @selector(jumpToSelection:)) {
-        return [self _haveSelection];
+        return [self _hasSelection];
     } else if (action == @selector(checkSpelling:)
                || action == @selector(showGuessPanel:)
                || action == @selector(changeSpelling:)
@@ -1276,7 +1302,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
-    if (sendType && ([[[self class] _selectionPasteboardTypes] containsObject:sendType]) && [self _haveSelection]){
+    if (sendType && ([[[self class] _selectionPasteboardTypes] containsObject:sendType]) && [self _hasSelection]){
         return self;
     }
 
@@ -2362,7 +2388,7 @@ static WebHTMLView *lastHitView = nil;
     // We're going to process a key event, bail on any outstanding complete: UI
     [_private->compController endRevertingChange:YES moveLeft:NO];
     
-    if (([[self _webView] isEditable] || [bridge isSelectionEditable]) && [self _interceptEditingKeyEvent:event]) 
+    if ([self _canType] && [self _interceptEditingKeyEvent:event]) 
         return;
     
     [super keyDown:event];
@@ -2618,7 +2644,7 @@ static WebHTMLView *lastHitView = nil;
         return;     // DHTML did the whole operation
     }
 
-    if (![self _haveSelection]) {
+    if (![self _canCopy]) {
         NSBeep();
         return;
     }
@@ -2631,7 +2657,7 @@ static WebHTMLView *lastHitView = nil;
         return;     // DHTML did the whole operation
     }
 
-    if (![self _haveSelection]) {
+    if (![self _canCut]) {
         NSBeep();
         return;
     }
@@ -2641,7 +2667,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)delete:(id)sender
 {
-    if (![self _haveSelection]) {
+    if (![self _canDelete]) {
         NSBeep();
         return;
     }
@@ -2652,6 +2678,11 @@ static WebHTMLView *lastHitView = nil;
 {
     if ([[self _bridge] tryDHTMLPaste]) {
         return;     // DHTML did the whole operation
+    }
+
+    if (![self _canPaste]) {
+        NSBeep();
+        return;
     }
 
     [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
@@ -3313,7 +3344,7 @@ static WebHTMLView *lastHitView = nil;
     BOOL onlyOneFontInSelection = YES;
     NSFont *font = nil;
     
-    if (![bridge haveSelection]) {
+    if (![self _hasSelection]) {
         font = [bridge fontForCurrentPosition];
     } 
     else {
@@ -3349,7 +3380,7 @@ static WebHTMLView *lastHitView = nil;
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
     // selection. We should be able to remove this once the rest of this code works properly.
     if (font == nil) {
-        if (![bridge haveSelection]) {
+        if (![self _hasSelection]) {
             font = [NSFont toolTipsFontOfSize:17];
         } else {
             font = [NSFont menuFontOfSize:23];

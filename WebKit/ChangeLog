@@ -1,3 +1,42 @@
+2004-08-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Improved the checks used to see if certain operations can be done based
+        on the state of the selection and whether the selection is editable. I
+        added some helpers and improved some others to assist in making these
+        determinations.
+        
+        This helps to fix this bug:
+        <rdar://problem/3764987> Crash after adding newline to quoted text
+        
+        Since some editing methods expect the the selection to be in a certain state 
+        in order to work, these checks help obviate crashes like 3764987.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _writeSelectionToPasteboard:]): _haveSelection name changed to _hasSelection.
+        (-[WebHTMLView _canCopy]): Checks to see if state is appropriate to perform this operation.
+        (-[WebHTMLView _canCut]): Ditto. Function added.
+        (-[WebHTMLView _canDelete]): Ditto. Function refined.
+        (-[WebHTMLView _canPaste]): Ditto. Function refined.
+        (-[WebHTMLView _canType]): Ditto. Function added.
+        (-[WebHTMLView _hasSelection]): Name changed from _haveSelection.
+        (-[WebHTMLView _hasSelectionOrInsertionPoint]): Added.
+        (-[WebHTMLView _isEditable]): Added.
+        (-[WebHTMLView takeFindStringFromSelection:]): _haveSelection name changed to _hasSelection.
+        (-[WebHTMLView validateUserInterfaceItem:]): Ditto
+        (-[WebHTMLView validRequestorForSendType:returnType:]): Ditto
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView copy:]): Uses new _canCopy check.
+        (-[WebHTMLView cut:]): Uses new _canCut check.
+        (-[WebHTMLView delete:]): Now uses _canDelete check.
+        (-[WebHTMLView paste:]): Now uses _canPaste check.
+        (-[WebHTMLView _updateFontPanel]): _haveSelection name changed to _hasSelection.
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView writeSelectionWithPasteboardTypes:toPasteboard:]): Use selectionState check to
+        determine whether or not operation can be done.
+
 2004-08-24  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3770469> Some PDFs open with line of previous page above PDF view

@@ -1972,7 +1972,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     WebBridge *bridge = [self _bridgeForCurrentSelection];
-    if ([bridge haveSelection]) {
+    if ([bridge selectionState] != WebSelectionStateRange) {
         NSView <WebDocumentView> *documentView = [[[bridge webFrame] frameView] documentView];
         if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
             [(NSView <WebDocumentSelection> *)documentView writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];

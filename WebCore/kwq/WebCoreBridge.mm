@@ -450,9 +450,19 @@ static bool initializedKJS = FALSE;
 	return startNode ? startNode->isContentEditable() : NO;
 }
 
-- (BOOL)haveSelection
+- (WebSelectionState)selectionState
 {
-    return _part->selection().state() == Selection::RANGE;
+    switch (_part->selection().state()) {
+        case Selection::NONE:
+            return WebSelectionStateNone;
+        case Selection::CARET:
+            return WebSelectionStateCaret;
+        case Selection::RANGE:
+            return WebSelectionStateRange;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return WebSelectionStateNone;
 }
 
 - (NSString *)_documentTypeString

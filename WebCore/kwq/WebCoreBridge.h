@@ -91,6 +91,12 @@ typedef enum {
 } WebCoreDeviceType;
 
 typedef enum {
+    WebSelectionStateNone,
+    WebSelectionStateCaret,
+    WebSelectionStateRange,
+} WebSelectionState;
+
+typedef enum {
     WebSelectByMoving,
     WebSelectByExtending
 } WebSelectionAlteration;
@@ -234,8 +240,7 @@ typedef enum {
 - (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset;
 
 - (BOOL)isSelectionEditable;
-
-- (BOOL)haveSelection;
+- (WebSelectionState)selectionState;
 
 - (NSAttributedString *)selectedAttributedString;
 - (NSString *)selectedString;
