@@ -94,27 +94,21 @@
 
     WebAuthenticatingResource *resource = [req resource];
 
-    // FIXME Radar 2876448: we should display a different dialog depending on the
-    // failure count (if the user tried and failed, the dialog should
-    // explain possible reasons)
+    NSString *host;
+    if ([resource port] == 0) {
+	host = [resource host];
+    } else {
+	host = [NSString stringWithFormat:@"%@:%u", [resource host], [resource port]];
+    }
 
     NSString *realm = [resource realm];
-    NSString *proxyType = [resource proxyType];
-    NSString *host;
-
-    if ([resource isProxy]) {
-        host = [resource proxyHost];
-    } else {
-        host = [[resource URL] _web_hostWithPort];
-    }
-    
     NSString *message;
 
     if ([req previousFailureCount] == 0) {
         if ([resource isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
-                proxyType, host];
+                [resource type], host];
         } else {
             message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to area “%@” on %@.",
                                                            "prompt string in authentication panel"),
@@ -124,7 +118,7 @@
         if ([resource isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("The name or password entered for the %@ proxy server %@ was incorrect. Please try again.",
                                                            "prompt string in authentication panel"),
-                proxyType, host];
+				[resource type], host];
         } else {
             message = [NSString stringWithFormat:UI_STRING("The name or password entered for area “%@” on %@ was incorrect. Please try again.",
                                                            "prompt string in authentication panel"),
@@ -145,8 +139,8 @@
                 "message in authentication panel")];
     }
 
-    if ([resource username] != nil) {
-        [username setStringValue:[resource username]];
+    if ([req defaultUsername] != nil) {
+        [username setStringValue:[req defaultUsername]];
         [panel setInitialFirstResponder:password];
     } else {
         [username setStringValue:@""];
