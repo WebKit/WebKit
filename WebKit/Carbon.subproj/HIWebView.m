@@ -19,6 +19,7 @@
 
 
 extern Boolean GetEventPlatformEventRecord( EventRef inEvent, void * eventRec );
+Boolean WebGetEventPlatformEventRecord( EventRef inEvent, void * eventRec );
 
 struct HIWebView
 {
@@ -487,7 +488,7 @@ Click( HIWebView* inView, EventRef inEvent )
 	UInt32					modifiers;
 	Rect					windRect;
 	
-	if (!GetEventPlatformEventRecord( inEvent, &eventRec )) {
+	if (!WebGetEventPlatformEventRecord( inEvent, &eventRec )) {
             NSLog (@"Unable to get platform event");
             return noErr;
         }
@@ -541,7 +542,7 @@ MouseUp( HIWebView* inView, EventRef inEvent )
 	NSEvent*				kitEvent;
 //	NSView*					targ;
 	
-	GetEventPlatformEventRecord( inEvent, &eventRec );
+	WebGetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
 
@@ -567,7 +568,7 @@ MouseMoved( HIWebView* inView, EventRef inEvent )
 	NSEvent*				kitEvent;
 //	NSView*					targ;
 	
-	GetEventPlatformEventRecord( inEvent, &eventRec );
+	WebGetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 
 #define WORK_AROUND_3585644
@@ -600,7 +601,7 @@ MouseDragged( HIWebView* inView, EventRef inEvent )
 	NSEvent*				kitEvent;
 //	NSView*					targ;
     
-	GetEventPlatformEventRecord( inEvent, &eventRec );
+	WebGetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
 
@@ -625,7 +626,7 @@ MouseWheelMoved( HIWebView* inView, EventRef inEvent )
 	NSEvent*				kitEvent;
 //	NSView*					targ;
 	
-	GetEventPlatformEventRecord( inEvent, &eventRec );
+	WebGetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
 
@@ -804,7 +805,7 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
 					NSResponder* responder = [kitWindow firstResponder];
 					if ( responder != kitWindow )
 					{
-						GetEventPlatformEventRecord( inEvent, &eventRec );
+						WebGetEventPlatformEventRecord( inEvent, &eventRec );
 						RetainEvent( inEvent );
 						kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
 						
@@ -1400,7 +1401,7 @@ HIWebViewEventHandler(
 				CGSEventRecord		eventRec;
 				NSEvent*			kitEvent;
 
-				GetEventPlatformEventRecord( inEvent, &eventRec );
+				WebGetEventPlatformEventRecord( inEvent, &eventRec );
 				RetainEvent( inEvent );
 				kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
 
@@ -1741,4 +1742,21 @@ UpdateObserver( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void 
         
         DisposeRgn( region );
     }
+}
+
+Boolean WebGetEventPlatformEventRecord( EventRef event, void * eventRec )
+{
+    if (GetEventPlatformEventRecord(event, eventRec)) {
+        return true;
+    }
+    // This event might not have been created directly from a CGS event, and might not
+    // have a platform event associated with it. In that case, try using the event most
+    // recently dispatched by the event dispatcher, which is likely to be the original
+    // user-input event containing a valid platform event.
+    // See 3768439 for more info.
+    event = GetCurrentEvent();
+    if (event != NULL && GetEventPlatformEventRecord(event, eventRec)) {
+        return true;
+    }
+    return false;
 }

@@ -1,3 +1,20 @@
+2004-08-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3768439> can't click in WebView in Carbon WebKit apps (GetEventPlatformEventRecord returns false)
+
+        Reviewed by rjw.
+
+        * Carbon.subproj/HIWebView.m:
+        (Click): use WebGetEventPlatformEventRecord not GetEventPlatformEventRecord
+        (MouseUp): ditto
+        (MouseMoved): ditto
+        (MouseDragged): ditto
+        (MouseWheelMoved): ditto
+        (WindowHandler): ditto
+        (HIWebViewEventHandler): ditto
+        (UpdateObserver): ditto
+        (WebGetEventPlatformEventRecord): Call GetEventPlatformEventRecord, if that fails fallback to the current event. This is code Eric Schlegel to me to use. 
+
 2004-08-24  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed with help from Trey:
