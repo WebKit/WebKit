@@ -624,7 +624,7 @@ typedef struct {
     }
     
     PortState portState = [self saveAndSetPortState];
-
+    
     // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
     // We probably don't want more general reentrancy protection; we are really
     // protecting only against this one case, which actually comes up when
@@ -1001,6 +1001,11 @@ typedef struct {
         [self start];
         [self restartNullEvents];
         [self addWindowObservers];
+    } else if ([[self controller] hostWindow]) {
+        // View moved out of an actual window, but still has a host window.
+        // Call setWindow to explicitly "clip out" the plug-in from sight.
+        // FIXME: It would be nice to do this where we call stopNullEvents in viewWillMoveToWindow.
+        [self setWindow];
     }
 }
 

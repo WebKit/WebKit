@@ -1,3 +1,12 @@
+2003-04-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3223022 - Plug-in content bleeds onto frontmost tab
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]): Explicitly call setWindow when the plug-in view is moved out of the window so it is clipped out of sight.
+
 2003-04-08  Trey Matteson  <trey@apple.com>
 
 	3221355 document is numb to clicks after going back
