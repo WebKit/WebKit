@@ -1,3 +1,15 @@
+2005-03-02  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4029010> Expose method to retrieve drag image for WebView's selection
+
+        Reviewed by sullivan.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]): call _selectionDraggingImage
+        (-[WebHTMLView _selectionDraggingImage]): new SPI for Mail, factored from previous method
+        (-[WebHTMLView _selectionDraggingRect]): new SPI for Mail
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2005-03-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele.

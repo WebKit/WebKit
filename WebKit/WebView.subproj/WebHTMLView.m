@@ -1228,10 +1228,9 @@ static WebHTMLView *lastHitView = nil;
         }
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionSelection fromPoint:mouseDownPoint withPasteboard:pasteboard];
         if (dragImage == nil) {
-            dragImage = [[self _bridge] selectionImage];
-            [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-            NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
-            dragLoc = NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect));
+            dragImage = [self _selectionDraggingImage];
+            NSRect draggingRect = [self _selectionDraggingRect];
+            dragLoc = NSMakePoint(NSMinX(draggingRect), NSMaxY(draggingRect));
             _private->dragOffset.x = mouseDownPoint.x - dragLoc.x;
             _private->dragOffset.y = dragLoc.y - mouseDownPoint.y;        // inverted because we are flipped
         }
@@ -1565,6 +1564,24 @@ static WebHTMLView *lastHitView = nil;
 - (void)_setTransparentBackground:(BOOL)f
 {
     _private->transparentBackground = f;
+}
+
+- (NSImage *)_selectionDraggingImage
+{
+    if ([self _hasSelection]) {
+        NSImage *dragImage = [[self _bridge] selectionImage];
+        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+        return dragImage;
+    }
+    return nil;
+}
+
+- (NSRect)_selectionDraggingRect
+{
+    if ([self _hasSelection]) {
+        return [[self _bridge] visibleSelectionRect];
+    }
+    return NSZeroRect;
 }
 
 @end
