@@ -335,9 +335,11 @@ bool RenderBlock::isSelfCollapsingBlock() const
     // (b) are a table,
     // (c) have border/padding,
     // (d) have a min-height
+    // (e) have specified that one of our margins can't collapse using a CSS extension
     if (m_height > 0 ||
         isTable() || (borderBottom() + paddingBottom() + borderTop() + paddingTop()) != 0 ||
-        style()->minHeight().value > 0)
+        style()->minHeight().value > 0 || 
+        style()->marginTopCollapse() == MSEPARATE || style()->marginBottomCollapse() == MSEPARATE)
         return false;
 
     // If the height is 0 or auto, then whether or not we are a self-collapsing block depends
@@ -569,7 +571,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     // value when it comes time to check against the bottom border/padding.
     bool canCollapseWithChildren = !isCanvas() && !isRoot() && !isPositioned() &&
         !isFloating() && !isTableCell() && !hasOverflowClip() && !isInlineBlockOrInlineTable();
-    bool canCollapseTopWithChildren = canCollapseWithChildren && (m_height == 0);
+    bool canCollapseTopWithChildren = canCollapseWithChildren && (m_height == 0) && style()->marginTopCollapse() != MSEPARATE;
 
     // If any height other than auto is specified in CSS, then we don't collapse our bottom
     // margins with our children's margins.  To do otherwise would be to risk odd visual
@@ -577,11 +579,12 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     // with it.  We also don't collapse if we had any bottom border/padding (represented by
     // |toAdd|).
     bool canCollapseBottomWithChildren = canCollapseWithChildren && (toAdd == 0) &&
-        (style()->height().isVariable() && style()->height().value == 0);
+        (style()->height().isVariable() && style()->height().value == 0) && style()->marginBottomCollapse() != MSEPARATE;
     
     // Whether or not we are a quirky container, i.e., do we collapse away top and bottom
     // margins in our container.
-    bool quirkContainer = isTableCell() || isBody();
+    bool quirkContainer = isTableCell() || isBody() || style()->marginTopCollapse() == MDISCARD ||
+                          style()->marginBottomCollapse() == MDISCARD;
 
     // This flag tracks whether the child should collapse with the top margins of the block.
     // It can remain set through multiple iterations as long as we keep encountering
@@ -771,6 +774,10 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         // Try to guess our correct y position.  In most cases this guess will
         // be correct.  Only if we're wrong (when we compute the real y position)
         // will we have to relayout.
+        if (child->style()->marginTopCollapse() == MSEPARATE) {
+            topMarginContributor = false;
+            prevPosMargin = prevNegMargin = 0;
+        }
         int yPosEstimate = m_height;
         if (prevBlock) {
             yPosEstimate += kMax(prevBlock->collapsedMarginBottom(), child->marginTop());
@@ -829,7 +836,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             
             // See if the top margin is quirky. We only care if this child has
             // margins that will collapse with us.
-            bool topQuirk = child->isTopMarginQuirk();
+            bool topQuirk = child->isTopMarginQuirk() || style()->marginTopCollapse() == MDISCARD;
 
             if (canCollapseTopWithChildren && topMarginContributor && !clearOccurred) {
                 // This child is collapsing with the top of the
@@ -891,10 +898,13 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                     ypos = m_height + collapsedTopPos - collapsedTopNeg;
             }
             else {
-                if (!topMarginContributor ||
+                if (child->style()->marginTopCollapse() == MSEPARATE) {
+                    m_height += (prevPosMargin - prevNegMargin) + child->marginTop();
+                    ypos = m_height;
+                }
+                else if (!topMarginContributor ||
                     (!canCollapseTopWithChildren
-                     && (strictMode || !quirkContainer || !topChildQuirk)
-                     )) {
+                     && (strictMode || !quirkContainer || !topChildQuirk))) {
                     // We're collapsing with a previous sibling's margins and not
                     // with the top of the block.
                     int absPos = prevPosMargin > posTop ? prevPosMargin : posTop;
@@ -903,11 +913,12 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                     m_height += collapsedMargin;
                     ypos = m_height;
                 }
+
                 prevPosMargin = child->maxBottomMargin(true);
                 prevNegMargin = child->maxBottomMargin(false);
 
                 if (prevPosMargin-prevNegMargin) {
-                    bottomChildQuirk = child->isBottomMarginQuirk();
+                    bottomChildQuirk = child->isBottomMarginQuirk() || style()->marginBottomCollapse() == MDISCARD;
                 }
 
                 selfCollapsingBlockClearedFloat = false;
@@ -1036,6 +1047,12 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         child->setPos(chPos, child->yPos());
 
         m_height += child->height();
+        
+        if (child->style()->marginBottomCollapse() == MSEPARATE) {
+            m_height += child->marginBottom();
+            prevPosMargin = prevNegMargin = 0;
+        }
+        
         int overflowDelta = child->overflowHeight(false) - child->height();
         if (m_height + overflowDelta > m_overflowHeight)
             m_overflowHeight = m_height + overflowDelta;

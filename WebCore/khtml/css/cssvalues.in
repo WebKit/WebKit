@@ -393,3 +393,10 @@ min-intrinsic
 #
 clip
 ellipsis
+
+#
+# CSS_PROP__KHTML_MARGIN_COLLAPSE
+#
+# collapse
+# separate
+discard

@@ -2257,9 +2257,14 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         break;
     }
     case CSS_PROP_BORDER_SPACING: {
-        if(value->cssValueType() != CSSValue::CSS_INHERIT || !parentNode) return;
-        style->setHorizontalBorderSpacing(parentStyle->horizontalBorderSpacing());
-        style->setVerticalBorderSpacing(parentStyle->verticalBorderSpacing());
+        if (isInherit) {
+            style->setHorizontalBorderSpacing(parentStyle->horizontalBorderSpacing());
+            style->setVerticalBorderSpacing(parentStyle->verticalBorderSpacing());
+        }
+        else if (isInitial) {
+            style->setHorizontalBorderSpacing(0);
+            style->setVerticalBorderSpacing(0);
+        }
         break;
     }
     case CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING: {
@@ -3640,6 +3645,51 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         if (!primitiveValue || !primitiveValue->getIdent())
             return;
         style->setTextOverflow(primitiveValue->getIdent() == CSS_VAL_ELLIPSIS);
+        break;
+    }
+    case CSS_PROP__KHTML_MARGIN_COLLAPSE: {
+        if (isInherit) {
+            style->setMarginTopCollapse(parentStyle->marginTopCollapse());
+            style->setMarginBottomCollapse(parentStyle->marginBottomCollapse());
+        }
+        else if (isInitial) {
+            style->setMarginTopCollapse(MCOLLAPSE);
+            style->setMarginBottomCollapse(MCOLLAPSE);
+        }
+        break;
+    }
+    case CSS_PROP__KHTML_MARGIN_TOP_COLLAPSE: {
+        HANDLE_INHERIT_AND_INITIAL(marginTopCollapse, MarginTopCollapse)
+        if (!primitiveValue || !primitiveValue->getIdent()) return;
+        EMarginCollapse val;
+        switch (primitiveValue->getIdent()) {
+            case CSS_VAL_SEPARATE:
+                val = MSEPARATE;
+                break;
+            case CSS_VAL_DISCARD:
+                val = MDISCARD;
+                break;
+            default:
+                val = MCOLLAPSE;
+        }
+        style->setMarginTopCollapse(val);
+        break;
+    }
+    case CSS_PROP__KHTML_MARGIN_BOTTOM_COLLAPSE: {
+        HANDLE_INHERIT_AND_INITIAL(marginBottomCollapse, MarginBottomCollapse)
+        if (!primitiveValue || !primitiveValue->getIdent()) return;
+        EMarginCollapse val;
+        switch (primitiveValue->getIdent()) {
+            case CSS_VAL_SEPARATE:
+                val = MSEPARATE;
+                break;
+            case CSS_VAL_DISCARD:
+                val = MDISCARD;
+                break;
+            default:
+                val = MCOLLAPSE;
+        }
+        style->setMarginBottomCollapse(val);
         break;
     }
 

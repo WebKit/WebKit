@@ -76,6 +76,9 @@ margin-top
 margin-right
 margin-bottom
 margin-left
+-khtml-margin-collapse
+-khtml-margin-top-collapse
+-khtml-margin-bottom-collapse
 -khtml-marquee
 -khtml-marquee-direction
 -khtml-marquee-increment

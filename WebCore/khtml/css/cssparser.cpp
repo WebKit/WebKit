@@ -1136,6 +1136,28 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id == CSS_VAL_CLIP || id == CSS_VAL_ELLIPSIS)
             valid_primitive = true;
         break;
+    case CSS_PROP__KHTML_MARGIN_COLLAPSE: {
+        const int properties[2] = { CSS_PROP__KHTML_MARGIN_TOP_COLLAPSE,
+            CSS_PROP__KHTML_MARGIN_BOTTOM_COLLAPSE };
+        int num = valueList->numValues;
+        if (num == 1) {
+            if (!parseValue(properties[0], important)) return false;
+            CSSValueImpl* value = parsedProperties[numParsedProperties-1]->value();
+            addProperty(properties[1], value, important);
+            return true;
+        }
+        else if (num == 2) {
+            if (!parseValue(properties[0], important)) return false;
+            if (!parseValue(properties[1], important)) return false;
+            return true;
+        }
+        return false;
+    }
+    case CSS_PROP__KHTML_MARGIN_TOP_COLLAPSE:
+    case CSS_PROP__KHTML_MARGIN_BOTTOM_COLLAPSE:
+        if (id == CSS_VAL_COLLAPSE || id == CSS_VAL_SEPARATE || id == CSS_VAL_DISCARD)
+            valid_primitive = true;
+        break;
     // End of CSS3 properties
 
 #if APPLE_CHANGES

@@ -35,21 +35,22 @@ using DOM::DOMStringImpl;
 using DOM::DOMString;
 
 StyleSurroundData::StyleSurroundData()
-    : margin( Fixed ), padding( Variable )
+    : margin( Fixed ), padding( Variable ), marginTopCollapse(MCOLLAPSE), marginBottomCollapse(MCOLLAPSE)
 {
 }
 
 StyleSurroundData::StyleSurroundData(const StyleSurroundData& o )
     : Shared<StyleSurroundData>(),
       offset( o.offset ), margin( o.margin ), padding( o.padding ),
-      border( o.border )
+      border( o.border ), marginTopCollapse(o.marginTopCollapse), marginBottomCollapse(o.marginBottomCollapse)
 {
 }
 
 bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 {
     return offset==o.offset && margin==o.margin &&
-	padding==o.padding && border==o.border;
+	padding==o.padding && border==o.border && marginTopCollapse == o.marginTopCollapse &&
+        marginBottomCollapse == o.marginBottomCollapse;
 }
 
 StyleBoxData::StyleBoxData()
@@ -540,6 +541,8 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
     if ( *box.get() != *other->box.get() ||
          !(surround->margin == other->surround->margin) ||
          !(surround->padding == other->surround->padding) ||
+         surround->marginTopCollapse != other->surround->marginTopCollapse ||
+         surround->marginBottomCollapse != other->surround->marginBottomCollapse ||
          *css3NonInheritedData->flexibleBox.get() != *other->css3NonInheritedData->flexibleBox.get() ||
 #if APPLE_CHANGES
          (css3NonInheritedData->lineClamp != other->css3NonInheritedData->lineClamp) ||
