@@ -71,6 +71,7 @@ public:
     }
 
     void setFirstLineStyleBit(bool f) { m_firstLine = f; }
+    bool isFirstLineStyle() const { return m_firstLine; }
 
     InlineBox* nextOnLine() const { return m_next; }
     InlineBox* prevOnLine() const { return m_prev; }

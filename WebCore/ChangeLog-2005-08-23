@@ -1,3 +1,14 @@
+2004-01-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/rendering/render_line.h:
+        (khtml::InlineBox::isFirstLineStyle): Helper to return whether
+	the line box has the first line style bit set.
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretPos): Noe correctly accounts for white space
+	which can precede an inline text box.
+
 2004-01-26  David Hyatt  <hyatt@apple.com>
 
 	Remove incremental repainting ifdef.
