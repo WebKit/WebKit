@@ -655,7 +655,8 @@
     NSString *filename = [[imageURL path] lastPathComponent];
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
 
-    [[self _controller] _downloadURL:imageURL toPath:path];
+    [[self _controller] _downloadURL:imageURL
+                   withContentPolicy:[WebContentPolicy webPolicyWithContentAction:WebContentPolicySave andPath:path]];
     
     return [NSArray arrayWithObject:filename];
 }

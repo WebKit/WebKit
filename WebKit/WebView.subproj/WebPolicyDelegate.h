@@ -239,8 +239,12 @@ typedef enum {
     @param type MIME type of the partially loaded content.
     @param URL URL of the partially loaded content.
     @param frame The frame which is loading the URL.
+    @param content policy if one was determined before the load started. nil if none was predetermined.
 */
-- (WebContentPolicy *)contentPolicyForMIMEType: (NSString *)type URL:(NSURL *)URL inFrame:(WebFrame *)frame;
+- (WebContentPolicy *)contentPolicyForMIMEType:(NSString *)type
+                                        andURL:(NSURL *)URL
+                                       inFrame:(WebFrame *)frame
+                             withContentPolicy:(WebContentPolicy *)contentPolicy;
 
 /*!
     @method unableToImplementPolicy:error:forURL:inFrame:

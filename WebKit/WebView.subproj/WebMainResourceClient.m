@@ -245,11 +245,12 @@
 
     // Figure out the content policy.
     WebContentPolicy *contentPolicy = [dataSource contentPolicy];
-    if (contentPolicy == nil) {
-        contentPolicy = [[[dataSource controller] policyDelegate]
-            contentPolicyForMIMEType:contentType URL:currentURL inFrame:[dataSource webFrame]];
-        [dataSource _setContentPolicy:contentPolicy];
-    }
+    contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForMIMEType:contentType
+                                                                                andURL:currentURL
+                                                                               inFrame:[dataSource webFrame]
+                                                                     withContentPolicy:contentPolicy];
+    [dataSource _setContentPolicy:contentPolicy];
+
     policyAction = [contentPolicy policyAction];
 
     switch (policyAction) {

@@ -179,7 +179,8 @@ BOOL _modifierTrackingEnabled = FALSE;
             break;
         case WebClickPolicySave:
         case WebClickPolicySaveAndOpenExternally:
-            [controller _downloadURL:URL toPath:[clickPolicy path]];
+            [controller _downloadURL:URL
+                   withContentPolicy:[WebContentPolicy webPolicyWithContentAction:clickAction andPath:nil]];
             break;
         case WebClickPolicyIgnore:
             break;

@@ -50,7 +50,10 @@
 }
 
 
-- (WebContentPolicy *)contentPolicyForMIMEType: (NSString *)type URL:(NSURL *)URL inFrame:(WebFrame *)frame;
+- (WebContentPolicy *)contentPolicyForMIMEType:(NSString *)type
+                                        andURL:(NSURL *)URL
+                                       inFrame:(WebFrame *)frame
+                             withContentPolicy:(WebContentPolicy *)contentPolicy;
 {
     if([WebController canShowMIMEType:type]){
         return [WebContentPolicy webPolicyWithContentAction: WebContentPolicyShow andPath:nil];

@@ -4,6 +4,7 @@
 */
 
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 
 @class WebError;
 @class WebFrame;
@@ -50,7 +51,7 @@
 - (void)_didStartLoading:(NSURL *)URL;
 - (void)_didStopLoading:(NSURL *)URL;
 + (NSString *)_MIMETypeForFile:(NSString *)path;
-- (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path;
+- (void)_downloadURL:(NSURL *)URL withContentPolicy:(WebContentPolicy *)contentPolicy;
 
 - (BOOL)_defersCallbacks;
 - (void)_setDefersCallbacks:(BOOL)defers;

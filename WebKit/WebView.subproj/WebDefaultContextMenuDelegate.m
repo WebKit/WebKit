@@ -107,8 +107,7 @@
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebController *controller = [webFrame controller];
-    WebContentPolicy *contentPolicy = [[controller policyDelegate] contentPolicyForMIMEType:@"application/octet-stream" URL:URL inFrame:webFrame];
-    [controller _downloadURL:URL toPath:[contentPolicy path]];
+    [controller _downloadURL:URL withContentPolicy:[WebContentPolicy webPolicyWithContentAction:WebContentPolicySave andPath:nil]];
 }
 
 - (void)openLinkInNewWindow:(id)sender

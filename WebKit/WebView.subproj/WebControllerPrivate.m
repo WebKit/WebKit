@@ -207,12 +207,11 @@
     return result;
 }
 
-- (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path
+- (void)_downloadURL:(NSURL *)URL withContentPolicy:(WebContentPolicy *)contentPolicy
 {
     WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
     WebFrame *webFrame = [self mainFrame];
         
-    WebContentPolicy *contentPolicy = [WebContentPolicy webPolicyWithContentAction:WebContentPolicySave andPath:path];
     [dataSource _setContentPolicy:contentPolicy];
     if([webFrame setProvisionalDataSource:dataSource]){
         [webFrame startLoading];

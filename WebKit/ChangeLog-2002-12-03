@@ -1,5 +1,23 @@
 2002-10-14  Chris Blumenberg  <cblu@apple.com>
 
+	- Made all downloads no matter how prompted, pass through the content policy API so the client can properly choose the file name and correct the extension if necessary. We now ask for the content policy even if one has been predetermined. 
+
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _downloadURL:withContentPolicy:]): Renamed, set the predetermined content policy.
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate downloadURL:]): call [WebController _downloadURL:withContentPolicy:]
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): call [WebController _downloadURL:withContentPolicy:]
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _continueAfterClickPolicyForEvent:]): call [WebController _downloadURL:withContentPolicy:]
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]): ask for content policy even if one is predetermined
+
+2002-10-14  Chris Blumenberg  <cblu@apple.com>
+
 	- Cleaned up download handler and download progress delegate interactions.
 	- Got rid of error suppression junk.
 	- Only send 1 final message to the download progress delegate
