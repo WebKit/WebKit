@@ -1236,8 +1236,8 @@ void DocumentImpl::updateSelection()
         canvas->clearSelection();
     }
     else {
-        Position startPos(s.start().closestRenderedPosition(s.affinity()));
-        Position endPos(s.end().closestRenderedPosition(s.affinity()));
+        Position startPos(s.start());
+        Position endPos(s.end());
         if (startPos.notEmpty() && endPos.notEmpty()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();

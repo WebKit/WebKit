@@ -1,3 +1,29 @@
+2004-07-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/rendering/render_block.cpp: 
+        (khtml::RenderBlock::paintObject): Change back to start() from caretPosition().
+        Since the policy is now to move the selection to rendered content, if possible,
+        when the selection is set, there is no longer any reason to have the additional
+        caretPosition() function to store where the caret should be drawn.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection): No longer any need to call closestRenderedPosition here.
+        This is done in Selection::validate.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::closestRenderedPosition): Improved algorithm. Now much simpler.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::Selection): caretPosition() and m_caretPosition now obsolete.
+        (DOM::Selection::init): Ditto.
+        (DOM::Selection::modifyExtendingRightForward): No longer any need to call 
+        closestRenderedPosition here. This is done in Selection::validate.
+        (DOM::Selection::modifyMovingRightForward): Ditto.
+        (DOM::Selection::modifyExtendingLeftBackward): Ditto.
+        (DOM::Selection::modifyMovingLeftBackward): Ditto.
+        (DOM::Selection::layoutCaret): Ditto.
+        (DOM::Selection::validate): Add code to move the selection to rendered content if possible.
+        * khtml/xml/dom_selection.h: caretPosition() and m_caretPosition now obsolete.
+
 2004-07-14  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3716082, assert when you dynamically remove float or position styles.

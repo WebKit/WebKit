@@ -594,31 +594,41 @@ Position Position::closestRenderedPosition(EAffinity affinity) const
         return *this;
 
     Position pos;
+    PositionIterator it(*this);
     
-    pos = affinity == UPSTREAM ? equivalentUpstreamPosition() : equivalentDownstreamPosition();
-    if (pos.inRenderedContent())
-        return pos;
-
-    pos = affinity == DOWNSTREAM ? equivalentDownstreamPosition() : equivalentUpstreamPosition();
-    if (pos.inRenderedContent())
-        return pos;
-    
-    pos = *this;
-    Position prev(previousCharacterPosition());    
-    while (prev != pos && prev.node()->inSameContainingBlockFlowElement(node())) {
-        if (prev.inRenderedContent())
-            return prev;
-        pos = prev;
-        prev = pos.previousCharacterPosition();
-    }
-    
-    pos = *this;
-    Position next(nextCharacterPosition());    
-    while (next != pos && next.node()->inSameContainingBlockFlowElement(node())) {
-        if (next.inRenderedContent())
-            return next;
-        pos = next;
-        next = pos.nextCharacterPosition();
+    switch (affinity) {
+        case UPSTREAM:
+            // look upstream first
+            it.setPosition(*this);
+            while (!it.atStart()) {
+                it.previous();
+                if (it.current().inRenderedContent())
+                    return it.current();
+            }
+            // if this does not find something rendered, look downstream
+            it.setPosition(*this);
+            while (!it.atEnd()) {
+                it.next();
+                if (it.current().inRenderedContent())
+                    return it.current();
+            }
+            break;
+        case DOWNSTREAM:
+            // look downstream first
+            it.setPosition(*this);
+            while (!it.atEnd()) {
+                it.next();
+                if (it.current().inRenderedContent())
+                    return it.current();
+            }
+            // if this does not find something rendered, look upstream
+            it.setPosition(*this);
+            while (!it.atStart()) {
+                it.previous();
+                if (it.current().inRenderedContent())
+                    return it.current();
+            }
+            break;
     }
     
     return Position();
