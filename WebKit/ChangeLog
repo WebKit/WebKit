@@ -1,3 +1,14 @@
+2005-02-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4016358> don't ever display IDN URLs with characters from "possible Latin look-alike" scripts
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (containsPossibleLatinLookalikes): Added.
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]): Call containsPossibleLatinLookalikes, and if true,
+        don't decode the host name.
+
 2005-02-19  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Chris.

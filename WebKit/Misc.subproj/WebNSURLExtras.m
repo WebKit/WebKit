@@ -16,6 +16,7 @@
 #import <Foundation/NSURL_NSURLExtras.h>
 
 #import <unicode/uidna.h>
+#import <unicode/uscript.h>
 
 typedef void (* StringRangeApplierFunction)(NSString *string, NSRange range, void *context);
 
@@ -771,6 +772,34 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     return lastChar == '/' && [self _web_hasCaseInsensitivePrefix:@"ftp:"];
 }
 
+static bool containsPossibleLatinLookalikes(const UChar *buffer, int32_t length)
+{
+    int32_t i = 0;
+    while (i < length) {
+        UChar32 c;
+        U16_NEXT(buffer, i, length, c)
+        UErrorCode error = U_ZERO_ERROR;
+        UScriptCode script = uscript_getScript(c, &error);
+        if (error != U_ZERO_ERROR) {
+            ERROR("got ICU error while trying to look at scripts: %d", error);
+            return true;
+        }
+        // According to Deborah Goldsmith and the Unicode Technical committee, these are the
+        // three scripts that contain characters that look like Latin characters. So as a
+        // matter of policy, we don't display host names containing characters from these
+        // scripts in a "nice" way, to protect the user from misleading host names.
+        switch (script) {
+            case USCRIPT_CHEROKEE:
+            case USCRIPT_CYRILLIC:
+            case USCRIPT_GREEK:
+                return true;
+            default:
+                break;
+        }
+    }
+    return false;
+}
+
 // Return value of nil means no mapping is necessary.
 // If makeString is NO, then return value is either nil or self to indicate mapping is necessary.
 // If makeString is YES, then return value is either nil or the mapped string.
@@ -805,6 +834,9 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         return nil;
     }
     if (numCharactersConverted == length && memcmp(sourceBuffer, destinationBuffer, length * sizeof(UChar)) == 0) {
+        return nil;
+    }
+    if (!encode && containsPossibleLatinLookalikes(destinationBuffer, numCharactersConverted)) {
         return nil;
     }
     return makeString ? [NSString stringWithCharacters:destinationBuffer length:numCharactersConverted] : self;
