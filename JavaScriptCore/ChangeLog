@@ -1,3 +1,26 @@
+2004-05-24  Richard Williamson   <rjw@apple.com>
+
+	Changed RuntimeArrayImp to inherit from ArrayInstanceImp and
+	fixed ClassInfo to correctly reflect inheritance.  This is required
+	because of the runtime checks in JSC for arrays, i.e. in
+	the Function objects apply method.
+
+        Reviewed by Ken.
+
+        * bindings/jni/jni_runtime.cpp:
+        (JavaArray::convertJObjectToArray):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::RuntimeArrayImp):
+        * bindings/runtime_array.h:
+        * bindings/testM.js: Added.
+        * bindings/testbindings.mm:
+        (+[MyFirstInterface webScriptNameForSelector:]):
+        (-[MyFirstInterface logMessages:]):
+        (-[MyFirstInterface logMessage:prefix:]):
+        (-[MyFirstInterface callJSObject::]):
+
 2004-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

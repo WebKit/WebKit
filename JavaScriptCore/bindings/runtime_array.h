@@ -25,15 +25,16 @@
 #ifndef _RUNTIME_ARRAY_H_
 #define _RUNTIME_ARRAY_H_
 
+#include <array_instance.h>
 #include <object.h>
 #include <runtime.h>
 
 
 namespace KJS {
     
-class RuntimeArrayImp : public ObjectImp {
+class RuntimeArrayImp : public ArrayInstanceImp {
 public:
-    RuntimeArrayImp(Bindings::Array *i);
+    RuntimeArrayImp(ExecState *exec, Bindings::Array *i);
     ~RuntimeArrayImp();
     
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;

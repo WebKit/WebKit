@@ -75,6 +75,17 @@
 
 @implementation MyFirstInterface
 
++ (NSString *)webScriptNameForSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(logMessage:))
+        return @"logMessage";
+    if (aSelector == @selector(logMessages:))
+        return @"logMessages";
+    if (aSelector == @selector(logMessage:prefix:))
+        return @"logMessageWithPrefix";
+    return nil;
+}
+
 - init
 {
     LOG ("\n");
@@ -87,13 +98,6 @@
     LOG ("\n");
     [mySecondInterface release];
     [super dealloc];
-}
-
-+ (NSString *)webScriptNameForSelector:(SEL)aSelector
-{
-    if (aSelector == @selector(logMessage:))
-        return @"logMessage";
-    return nil;
 }
 
 - (int)getInt 
@@ -124,6 +128,18 @@
     printf ("%s\n", [message lossyCString]);
 }
 
+- (void)logMessages:(id)messages
+{
+    int i, count = [[messages valueForKey:@"length"] intValue];
+    for (i = 0; i < count; i++)
+        printf ("%s\n", [[messages webScriptValueAtIndex:i] lossyCString]);
+}
+
+- (void)logMessage:(NSString *)message prefix:(NSString *)prefix
+{
+    printf ("%s:%s\n", [prefix lossyCString], [message lossyCString]);
+}
+
 - (void)setJSObject:(id)jso
 {
     [jsobject autorelease];
@@ -132,8 +148,10 @@
 
 - (void)callJSObject:(int)arg1 :(int)arg2
 {
-    id foo = [jsobject callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:jsobject, [NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil]];
-    printf ("foo = %s\n", [[foo description] lossyCString] );
+    id foo1 = [jsobject callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:jsobject, [NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil]];
+    printf ("foo (via call) = %s\n", [[foo1 description] lossyCString] );
+    id foo2 = [jsobject callWebScriptMethod:@"apply" withArguments:[NSArray arrayWithObjects:jsobject, [NSArray arrayWithObjects:[NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil], nil]];
+    printf ("foo (via apply) = %s\n", [[foo2 description] lossyCString] );
 }
 
 @end

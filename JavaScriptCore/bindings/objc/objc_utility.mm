@@ -198,7 +198,7 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                     aValue = Number([*obj doubleValue]);
                 }
                 else if ([*obj isKindOfClass:[NSArray class]]) {
-                    aValue = Object(new RuntimeArrayImp(new ObjcArray (*obj)));
+                    aValue = Object(new RuntimeArrayImp(exec, new ObjcArray (*obj)));
                 }
                 else if ([*obj isKindOfClass:[WebScriptObject class]]) {
                     WebScriptObject *jsobject = (WebScriptObject *)*obj;
