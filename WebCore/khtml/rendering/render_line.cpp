@@ -129,6 +129,7 @@ void InlineBox::dirtyLineBoxes()
 
 void InlineBox::deleteLine(RenderArena* arena)
 {
+    m_object->setInlineBoxWrapper(0);
     detach(arena);
 }
 

@@ -308,7 +308,7 @@ short RenderFlow::lineHeight(bool firstLine, bool isRootLineBox) const
 void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
 {
     if (!isRootLineBox && isReplaced())
-        return RenderContainer::dirtyLineBoxes(isRootLineBox);
+        return RenderContainer::dirtyLineBoxes(fullLayout, isRootLineBox);
     
     if (fullLayout)
         deleteLineBoxes();

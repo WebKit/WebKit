@@ -1,3 +1,16 @@
+2005-03-02  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4031483> Leak (RenderObject::createInlineBox) reproducible with Stock widget
+
+	We were leaking inline block line boxes.  Argh!
+
+        Reviewed by Hyatt.
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::dirtyLineBoxes):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineBox::deleteLine):
+
 2005-03-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3976872> REGRESSION (Mail): Pasted plain text doesn't get the proper style if pasted into newlines
