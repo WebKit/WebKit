@@ -27,8 +27,12 @@
 #define KLISTBOX_H_
 
 #include <qlistbox.h>
+#include <qwidget.h>
 
 class KListBox : public QListBox {
+public:
+    KListBox();
+    KListBox(QWidget *);
 };
 
 #endif

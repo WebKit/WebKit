@@ -34,6 +34,7 @@
 #include "qstyle.h"
 #include "qfont.h"
 #include "qcursor.h"
+#include "qevent.h"
 
 class QWidget : public QObject, public QPaintDevice {
 public:
@@ -82,6 +83,8 @@ public:
     virtual QSize minimumSizeHint() const;
     bool isVisible() const;
     virtual void setCursor(const QCursor &);
+    bool event(QEvent *);
+    bool focusNextPrevChild(bool);
 };
 
 #endif

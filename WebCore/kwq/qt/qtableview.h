@@ -23,24 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QCOMBOBOX_H_
-#define QCOMBOBOX_H_
+#ifndef QTABLEVIEW_H_
+#define QTABLEVIEW_H_
 
-#include "qwidget.h"
-#include "qlistbox.h"
+#include "qframe.h"
+#include "qscrollbar.h"
 
-class QComboBox : public QWidget {
+class QTableView : public QFrame {
 public:
-    QComboBox(QWidget *parent=0, const char *name=0);
-    QComboBox(bool rw, QWidget *parent=0, const char *name=0);
+    QScrollBar *verticalScrollBar() const;
+    QScrollBar *horizontalScrollBar() const;
 
-    int count() const;
-    QListBox *listBox() const;
-    void popup();
-    bool eventFilter(QObject *object, QEvent *event);
-    void insertItem(const QString &text, int index=-1);
-    void clear();
-    virtual void setCurrentItem(int);
+    virtual void setTableFlags(uint);
+    void clearTableFlags(uint f = ~0);
 };
+
+const uint Tbl_vScrollBar       = 0x00000001;
+const uint Tbl_hScrollBar       = 0x00000002;
+const uint Tbl_autoVScrollBar   = 0x00000004;
+const uint Tbl_autoHScrollBar   = 0x00000008;
+const uint Tbl_autoScrollBars   = 0x0000000C;
 
 #endif

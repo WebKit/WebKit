@@ -40,6 +40,7 @@ public:
         FocusIn,
         FocusOut,
         AccelAvailable,
+        KeyPress,
     };
     Type type() const;
 };
@@ -64,6 +65,8 @@ public:
 
 class QKeyEvent : public QEvent {
 public:
+    QKeyEvent();
+    QKeyEvent(Type, Key, int, int);
     int key() const;
     ButtonState state() const;
     void accept();

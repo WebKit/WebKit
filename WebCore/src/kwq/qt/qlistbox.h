@@ -27,10 +27,39 @@
 #define QLISTBOX_H_
 
 #include "qscrollview.h"
+#include "qstring.h"
+
+class QListBoxItem;
+class QListBoxText;
 
 class QListBox : public QScrollView {
 public:
+    enum SelectionMode { Single, Multi, Extended, NoSelection };
+
+    uint count() const;
+    void clear();
+    virtual void setSelectionMode(SelectionMode);
+    QListBoxItem *firstItem() const;
     int currentItem() const;
+    void insertItem(const QString &, int index=-1);
+    void insertItem(const QListBoxItem *, int index=-1);
+    void setSelected(int, bool);
+    bool isSelected(int);
+};
+
+class QListBoxItem {
+public:
+    void setSelectable(bool);
+    QListBox *listBox() const;
+    virtual int width(const QListBox *) const;
+    virtual int height(const QListBox *) const;
+    QListBoxItem *next() const;
+    QListBoxItem *prev() const;
+};
+
+class QListBoxText : public QListBoxItem {
+public:
+     QListBoxText(const QString & text=QString::null);
 };
 
 #endif

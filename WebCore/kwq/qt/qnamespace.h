@@ -63,6 +63,17 @@ public:
     };
 
     enum Key {
+        Key_Escape = 0x1000,            // misc keys
+        Key_Tab = 0x1001,
+        Key_Backtab = 0x1002, Key_BackTab = Key_Backtab,
+        Key_Backspace = 0x1003, Key_BackSpace = Key_Backspace,
+        Key_Return = 0x1004,
+        Key_Enter = 0x1005,
+        Key_Insert = 0x1006,
+        Key_Delete = 0x1007,
+        Key_Pause = 0x1008,
+        Key_Print = 0x1009,
+        Key_SysReq = 0x100a,
         Key_Home = 0x1010,              // cursor movement
         Key_End = 0x1011,
         Key_Left = 0x1012,

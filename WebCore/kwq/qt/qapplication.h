@@ -38,6 +38,7 @@ public:
     static QSize globalStrut();
     static void	setOverrideCursor(const QCursor &);
     static void restoreOverrideCursor();
+    static bool sendEvent(QObject *receiver, QEvent *event);
 };
 
 #endif

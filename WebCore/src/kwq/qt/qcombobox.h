@@ -34,7 +34,13 @@ public:
     QComboBox(QWidget *parent=0, const char *name=0);
     QComboBox(bool rw, QWidget *parent=0, const char *name=0);
 
+    int count() const;
     QListBox *listBox() const;
+    void popup();
+    bool eventFilter(QObject *object, QEvent *event);
+    void insertItem(const QString &text, int index=-1);
+    void clear();
+    virtual void setCurrentItem(int);
 };
 
 #endif

@@ -43,6 +43,7 @@ public:
     QFrame(QWidget *parent);
 
     virtual void setFrameStyle(int);
+    int frameWidth() const;
 };
 
 #endif

@@ -26,4 +26,32 @@
 #ifndef QMULTILINEEDIT_H_
 #define QMULTILINEEDIT_H_
 
+#include "qtableview.h"
+#include "qscrollbar.h"
+#include "qstring.h"
+
+class QMultiLineEdit : public QTableView {
+public:
+
+    enum WordWrap {
+        NoWrap,
+        WidgetWidth,
+        FixedPixelWidth,
+        FixedColumnWidth
+    };    
+
+    void setWordWrap(WordWrap);
+    WordWrap wordWrap() const;
+    bool hasMarkedText() const;
+    bool isReadOnly() const;
+    virtual void setReadOnly(bool);
+    virtual void setCursorPosition(int line, int col, bool mark = FALSE);
+    void getCursorPosition(int *line, int *col) const;
+    virtual void setText(const QString &);
+    QString text();
+    QString textLine(int line) const;
+    int numLines() const;
+    void selectAll();
+};
+
 #endif

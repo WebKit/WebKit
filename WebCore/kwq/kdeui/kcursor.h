@@ -26,4 +26,13 @@
 #ifndef KCURSOR_H_
 #define KCURSOR_H_
 
+#include <qwidget.h>
+
+class KCursor {
+public:
+    KCursor();
+
+    static void setAutoHideCursor(QWidget *w, bool enable);
+};
+
 #endif
