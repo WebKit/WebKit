@@ -29,6 +29,7 @@
 #define        WebKitResourceTimedLayoutDelayPreferenceKey        @"WebKitResourceTimedLayoutDelay"
 #define        WebKitAllowAnimatedImagesPreferenceKey        @"WebKitAllowAnimatedImagesPreferenceKey"
 #define        WebKitAllowAnimatedImageLoopingPreferenceKey        @"WebKitAllowAnimatedImageLoopingPreferenceKey"
+#define        WebKitDisplayImagesKey				@"WebKitDisplayImagesKey"
 
 @implementation WebPreferences
 
@@ -48,6 +49,7 @@ static WebPreferences *_standardPreferences = nil;
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
+    NSNumber *displayImages = [NSNumber numberWithBool:TRUE];
     NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *userStyleSheetEnabled = [NSNumber numberWithBool:FALSE];
     NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
@@ -84,6 +86,7 @@ static WebPreferences *_standardPreferences = nil;
         pluginsEnabled,                 WebKitPluginsEnabledPreferenceKey,
         allowAnimatedImages,            WebKitAllowAnimatedImagesPreferenceKey,
         allowAnimatedImageLooping,      WebKitAllowAnimatedImageLoopingPreferenceKey,
+        displayImages,			WebKitDisplayImagesKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -301,5 +304,14 @@ static WebPreferences *_standardPreferences = nil;
 }
 
 
+- (void)setDisplayImages: (BOOL)flag
+{
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitDisplayImagesKey];
+}
+
+- (BOOL)displayImages
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitDisplayImagesKey];
+}
 
 @end

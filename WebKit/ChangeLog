@@ -1,3 +1,13 @@
+2002-09-09  Richard Williamson (Home)  <rjw@apple.com>
+
+        Implemented  disable images automatically (2896319).
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]):
+        (-[WebPreferences setDisplayImages:]):
+        (-[WebPreferences displayImages]):
+
 2002-09-09  Darin Adler  <darin@apple.com>
 
 	- fixed 3003605 -- Leaking 1 WebView after second run of static PLT

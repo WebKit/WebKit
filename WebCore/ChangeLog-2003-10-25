@@ -1,3 +1,10 @@
+2002-09-09  Richard Williamson (Home)  <rjw@apple.com>
+
+        Implemented  disable images automatically (2896319).
+
+        * kwq/KWQKHTMLSettings.mm:
+        (KHTMLSettings::autoLoadImages):
+
 2002-09-09  Darin Adler  <darin@apple.com>
 
         * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::nextKeyView):

@@ -66,6 +66,9 @@
 - (BOOL)allowAnimatedImageLooping;
 - (void)setAllowAnimatedImageLooping: (BOOL)flag;
 
+- (void)setDisplayImages: (BOOL)flag;
+- (BOOL)displayImages;
+
 @end
 
 #ifdef READY_FOR_PRIMETIME

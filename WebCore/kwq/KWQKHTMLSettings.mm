@@ -114,7 +114,7 @@ bool KHTMLSettings::isJavaEnabled() const
 
 bool KHTMLSettings::autoLoadImages() const
 {
-    return true;
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitDisplayImagesKey"] boolValue];
 }
 
 bool KHTMLSettings::isPluginsEnabled(QString const&) const
