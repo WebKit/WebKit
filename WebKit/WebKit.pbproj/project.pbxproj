@@ -141,6 +141,7 @@
 				0867D6A0FE84028FC02AAC07,
 				255AF6590250FC030ECA149E,
 				65CBE7AA04B53388006ACFE6,
+				6566F34204C12D14008B3232,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -1667,6 +1668,19 @@
 			settings = {
 			};
 		};
+		6566F34204C12D14008B3232 = {
+			buildActionMask = 8;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "ln -sf Versions/A/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/A/Frameworks ${DSTROOT}/WebKit.framework/Frameworks";
+		};
 		6578F5DE045F817400000128 = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
@@ -1775,7 +1789,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ln -sf Versions/A/Frameworks ${SYMROOT}/WebKit.framework/Frameworks";
+			shellScript = "ln -sf Versions/A/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/A/Frameworks ${DSTROOT}/WebKit.framework/Frameworks";
 		};
 //650
 //651
