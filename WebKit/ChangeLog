@@ -1,3 +1,13 @@
+2003-03-18  Trey Matteson  <trey@apple.com>
+
+	3077223 full keyboard UI navigation fails in authentication sheet
+
+	Hook up the views in this panel into a useful nextKeyView cycle.
+
+        Reviewed by Maciej.
+
+        * Panels.subproj/English.lproj/WebAuthenticationPanel.nib:
+
 2003-03-17  Trey Matteson  <trey@apple.com>
 
 	Support for saving passwords on forms-based logins.  Biggest change is that
