@@ -1,5 +1,14 @@
 2003-01-23  Richard Williamson   <rjw@apple.com>
 
+        Fix for 3152494.  Set the default iframe width to 300 and
+        height to 150.  This copies the behavior of mozilla and IE.
+        
+        Reviewed by hyatt.
+
+        * khtml/css/html4.css:
+
+2003-01-23  Richard Williamson   <rjw@apple.com>
+
         Fixed whitespace exclusion code.  Fixes many sites
         that have problems that were exposed after
         fixing 3119777.
