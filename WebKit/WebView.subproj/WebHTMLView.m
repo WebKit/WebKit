@@ -4283,19 +4283,20 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (![self _canEdit])
         return;
     
-    NSString *direction;
+    NSString *direction = @"RTL";
     switch ([[self _bridge] baseWritingDirectionForSelectionStart]) {
         case NSWritingDirectionLeftToRight:
-            direction = @"RTL";
             break;
         case NSWritingDirectionRightToLeft:
             direction = @"LTR";
             break;
         // The writingDirectionForSelectionStart method will never return "natural". It
         // will always return a concrete direction. So, keep the compiler happy, and assert not reached.
+#if !BUILDING_ON_PANTHER   
         case NSWritingDirectionNatural:
             ASSERT_NOT_REACHED();
             break;
+#endif
     }
 
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
