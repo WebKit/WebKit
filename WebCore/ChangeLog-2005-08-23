@@ -1,3 +1,12 @@
+2002-09-24  David Hyatt  <hyatt@apple.com>
+
+	Make sure we dispatch both a capturing and a bubbling event
+	to target nodes. DOM lvl 2 event compliance.
+	
+        * ChangeLog:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchGenericEvent):
+
 2002-09-24  Richard Williamson   <rjw@apple.com>
 
         Fixed 3055078.  Ensure file: URLs have // before path.

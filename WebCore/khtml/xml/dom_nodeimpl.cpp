@@ -506,7 +506,13 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
     if (!evt->propagationStopped()) {
         evt->setEventPhase(Event::AT_TARGET);
         evt->setCurrentTarget(it.current());
-        it.current()->handleLocalEvents(evt,false);
+
+	// Capturing first. -dwh
+        it.current()->handleLocalEvents(evt,true);
+
+	// Bubbling second. -dwh
+	if (!evt->propagationStopped())
+	  it.current()->handleLocalEvents(evt,false);
     }
     --it;
 
