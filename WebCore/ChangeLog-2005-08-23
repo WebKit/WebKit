@@ -1,3 +1,9 @@
+2002-03-25  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::slotData): Use
+	-[IFURLHandle characterSet] to get the character set, instead of
+	parsing it out of the header by hand.
+
 2002-03-25  Chris Blumenberg  <cblu@apple.com>
 
 	* src/kwq/WCPlugin.mm: (-[WCPlugin load]):

@@ -208,27 +208,6 @@ public:
 
 };
 
-static NSString *
-encodingFromContentType (NSString *contentType)
-{
-    NSRange range;
-    NSString *result = nil;
-
-    if (contentType == nil) {
-	return result;
-    }
-
-    range = [contentType rangeOfString:@"charset="];
-    
-    if (range.length != 0) {
-        result = [contentType substringFromIndex:range.location+range.length];
-    }
-
-    result = [[result componentsSeparatedByString:@";"] objectAtIndex:0];
-
-    return result;
-}
-
 static QString splitUrlTarget(const QString &url, QString *target=0)
 {
    QString result = url;
@@ -459,12 +438,10 @@ void KHTMLPart::slotData(id handle, const char *bytes, int length)
         d->m_workingURL = KURL();
     }
 
-    if (d->m_encoding.isNull() && [handle respondsToSelector:@selector(responseHeaders)]) {
-        encoding = encodingFromContentType([[handle responseHeaders] objectForKey:@"Content-Type"]);
-        if (encoding != NULL) {
-            enc = QString::fromCFString((CFStringRef) encoding);
-            setEncoding (enc, true);
-        }
+    encoding = [handle characterSet];
+    if (encoding != NULL) {
+      enc = QString::fromCFString((CFStringRef) encoding);
+      setEncoding(enc, true);
     }
 
     write(bytes, length);
