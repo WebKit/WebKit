@@ -2,6 +2,14 @@
 
         Reviewed by John
 
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::applyStyleAfterInsertion): Small, cosmetic change John and I decided
+        to do on my last checkin, but I forgot to do before landing.
+
+2005-01-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         Fix for this bug:
         
         <rdar://problem/3959727> REGRESSION (Mail): Style not preserved on blank lines

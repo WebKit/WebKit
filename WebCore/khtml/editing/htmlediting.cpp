@@ -2596,11 +2596,7 @@ void InsertParagraphSeparatorCommand::applyStyleAfterInsertion()
 
     CSSComputedStyleDeclarationImpl endingStyle(endingSelection().start().node());
     endingStyle.diff(m_style);
-    if (!m_style->length()) {
-        m_style->deref();
-        m_style = 0;
-    }
-    else {
+    if (m_style->length() > 0) {
         applyStyle(m_style);
     }
 }
