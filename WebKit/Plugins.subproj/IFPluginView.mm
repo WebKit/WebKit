@@ -94,6 +94,22 @@
     carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent];    
 }
 
+- (UInt32)keyMessageForEvent:(NSEvent *)theEvent
+{
+    NSData *data;
+    UInt8 characterCode;
+    UInt16 keyCode;
+    UInt32 message=0;
+
+    data = [[theEvent characters] dataUsingEncoding:CFStringConvertEncodingToNSStringEncoding(CFStringGetSystemEncoding())];
+    if(data){
+        [data getBytes:&characterCode length:1];
+        keyCode = [theEvent keyCode];
+        message = keyCode << 8 | characterCode;
+    }
+    return message;
+}
+
 -(void)sendActivateEvent:(BOOL)activate
 {
     EventRecord event;
@@ -217,14 +233,11 @@
 {
     EventRecord event;
     bool acceptedEvent;
-        
+
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyUp;
-    // FIXME: Unicode characters vs. Macintosh ASCII character codes?
-    // FIXME: Multiple characters?
-    // FIXME: Key codes?
-    event.message = [[theEvent characters] characterAtIndex:0];
-
+    event.message = [self keyMessageForEvent:theEvent];
+    
     acceptedEvent = NPP_HandleEvent(instance, &event);
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
@@ -237,10 +250,7 @@
     
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyDown;
-    // FIXME: Unicode characters vs. Macintosh ASCII character codes?
-    // FIXME: Multiple characters?
-    // FIXME: Key codes?
-    event.message = [[theEvent characters] characterAtIndex:0];
+    event.message = [self keyMessageForEvent:theEvent];
     
     acceptedEvent = NPP_HandleEvent(instance, &event);
     
@@ -524,11 +534,13 @@ static char *newCString(NSString *string)
 
 -(void) windowBecameKey:(NSNotification *)notification
 {
+    [self sendActivateEvent:YES];
     [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.001];
 }
 
 -(void) windowResignedKey:(NSNotification *)notification
 {
+    [self sendActivateEvent:NO];
     [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.001];
 }
 

@@ -1,3 +1,15 @@
+2002-06-06  Chris Blumenberg  <cblu@apple.com>
+
+	Added support for key codes and other encodings.
+	Send activate to make Java happy.
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView keyMessageForEvent:]): added
+	(-[IFPluginView keyUp:]): use above.
+	(-[IFPluginView keyDown:]): use above.
+	(-[IFPluginView windowBecameKey:]): send activate.
+	(-[IFPluginView windowResignedKey:]): send activate.
+
 2002-06-06  John Sullivan  <sullivan@apple.com>
 
 	* Bookmarks.subproj/IFBookmarkList.m:
