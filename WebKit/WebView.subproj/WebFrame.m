@@ -1,4 +1,4 @@
-/*	
+/*
         WebFrame.m
         Copyright (c) 2001, Apple, Inc. All rights reserved.
 */
@@ -356,7 +356,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 {
     // It's wrong to name a frame "_blank".
     if (![name isEqualToString:@"_blank"]) {
-	[_private setName:name];
+        [_private setName:name];
     }
 }
 
@@ -444,7 +444,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (void)_setDataSource:(WebDataSource *)ds
 {
     if (ds == nil && _private->dataSource == nil) {
-	return;
+        return;
     }
 
     ASSERT(ds != _private->dataSource);
@@ -610,7 +610,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     switch ([self _state]) {
         case WebFrameStateProvisional:
         {
-	    [[[[self frameView] _scrollView] contentView] setCopiesOnScroll:YES];
+            [[[[self frameView] _scrollView] contentView] setCopiesOnScroll:YES];
 
             WebFrameLoadType loadType = [self _loadType];
             if (loadType == WebFrameLoadTypeForward ||
@@ -691,13 +691,13 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
             case WebFrameLoadTypeStandard:
                 if (![ds _isClientRedirect]) {
                     // Add item to history.
-		    NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
-		    if (![URL _web_isEmpty] && ![WebDataProtocol _webIsDataProtocolURL:URL] ){
-			entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
-			if (ptitle)
-			    [entry setTitle: ptitle];
+                    NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
+                    if (![URL _web_isEmpty] && ![WebDataProtocol _webIsDataProtocolURL:URL] ){
+                        entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
+                        if (ptitle)
+                            [entry setTitle: ptitle];
                         [self _addBackForwardItemClippedAtTarget:YES];
-		    }
+                    }
 
                 } else {
                     // update the URL in the BF list that we made before the redirect
@@ -838,7 +838,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->state = newState;
     
     if (_private->state == WebFrameStateProvisional) {
-	[_private->bridge provisionalLoadStarted];
+        [_private->bridge provisionalLoadStarted];
     
         // FIXME: This is OK as long as no one resizes the window,
         // but in the case where someone does, it means garbage outside
@@ -1269,9 +1269,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     case WebFrameLoadTypeBack:
                     case WebFrameLoadTypeForward:
                     case WebFrameLoadTypeIndexedBackForward:
-			if (![[itemURL scheme] isEqual:@"https"]) {
-			    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
-			}
+                        if (![[itemURL scheme] isEqual:@"https"]) {
+                            [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
+                        }
                         break;
                     case WebFrameLoadTypeOnLoadEvent:
                     case WebFrameLoadTypeStandard:
@@ -1311,7 +1311,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // The current frame tree and the frame tree snapshot in the item have to match.
     if (![item isTargetItem] &&
         [itemURL isEqual:currentURL] &&
-	(([self name] == nil && [item target] == nil) ||[[self name] isEqualToString:[item target]]) &&
+        (([self name] == nil && [item target] == nil) ||[[self name] isEqualToString:[item target]]) &&
         [self _childFramesMatchItem:item])
     {
         // This content is good, so leave it alone and look for children that need reloading
@@ -1454,11 +1454,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->policyFormState = nil;
 
     if (call) {
-	if (frameName) {
-	    [target performSelector:selector withObject:nil withObject:nil withObject:nil];
-	} else {
-	    [target performSelector:selector withObject:nil withObject:nil];
-	}
+        if (frameName) {
+            [target performSelector:selector withObject:nil withObject:nil withObject:nil];
+        } else {
+            [target performSelector:selector withObject:nil withObject:nil];
+        }
     }
 
     [request release];
@@ -1513,14 +1513,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     case WebPolicyIgnore:
         break;
     case WebPolicyDownload:
-	// FIXME: should download full request
+        // FIXME: should download full request
         [[self webView] _downloadURL:[request URL]];
         break;
     case WebPolicyUse:
-	shouldContinue = YES;
+        shouldContinue = YES;
         break;
     default:
-	ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
     }
 
     [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:frameName withObject:formState];
@@ -1581,7 +1581,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     case WebPolicyIgnore:
         break;
     case WebPolicyDownload:
-	// FIXME: should download full request
+        // FIXME: should download full request
         [[self webView] _downloadURL:[request URL]];
         break;
     case WebPolicyUse:
@@ -1592,7 +1592,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
         break;
     default:
-	ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
     }
 
     [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:formState];
@@ -1665,7 +1665,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebView *currentWebView = [self webView];
     id wd = [currentWebView UIDelegate];
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-	webView = [wd webView:currentWebView createWebViewWithRequest:nil];
+        webView = [wd webView:currentWebView createWebViewWithRequest:nil];
     else
         webView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
         
@@ -1700,20 +1700,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     if (target != nil) {
-	WebFrame *targetFrame = [self findFrameNamed:target];
-	if (targetFrame != nil) {
-	    [targetFrame _loadURL:URL referrer:referrer loadType:loadType target:nil triggeringEvent:event form:form formValues:values];
-	} else {
-	    [self _checkNewWindowPolicyForRequest:request
+        WebFrame *targetFrame = [self findFrameNamed:target];
+        if (targetFrame != nil) {
+            [targetFrame _loadURL:URL referrer:referrer loadType:loadType target:nil triggeringEvent:event form:form formValues:values];
+        } else {
+            [self _checkNewWindowPolicyForRequest:request
                                     action:action
                                  frameName:target
                                  formState:formState
                                    andCall:self
                               withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
-	}
-	[request release];
-	[formState release];
-	return;
+        }
+        [request release];
+        [formState release];
+        return;
     }
 
     WebDataSource *oldDataSource = [[self dataSource] retain];
@@ -1764,9 +1764,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             // frame, where the user has clicked on the same link repeatedly.
             [self _setLoadType:WebFrameLoadTypeSame];
         }            
-        [request release];
     }
 
+    [request release];
     [oldDataSource release];
     [formState release];
 }
@@ -1791,9 +1791,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     {
         childItem = [parentItem childItemWithName:[childFrame name]];
         if (childItem) {
-	    // Use the original URL to ensure we get all the side-effects, such as
-	    // onLoad handlers, of any redirects that happened. An example of where
-	    // this is needed is Radar 3213556.
+            // Use the original URL to ensure we get all the side-effects, such as
+            // onLoad handlers, of any redirects that happened. An example of where
+            // this is needed is Radar 3213556.
             URL = [NSURL _web_URLWithDataAsString:[childItem originalURLString]];
             // These behaviors implied by these loadTypes should apply to the child frames
             childLoadType = loadType;
@@ -1834,16 +1834,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     if (target != nil) {
-	WebFrame *targetFrame = [self findFrameNamed:target];
+        WebFrame *targetFrame = [self findFrameNamed:target];
 
-	if (targetFrame != nil) {
-	    [targetFrame _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
-	} else {
-	    [self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
-	}
-	[request release];
-	[formState release];
-	return;
+        if (targetFrame != nil) {
+            [targetFrame _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
+        } else {
+            [self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+        }
+        [request release];
+        [formState release];
+        return;
     }
 
     [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
@@ -2167,7 +2167,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_setProvisionalDataSource: (WebDataSource *)d
 {
     if (_private->provisionalDataSource != _private->dataSource) {
-	[_private->provisionalDataSource _setWebFrame:nil];
+        [_private->provisionalDataSource _setWebFrame:nil];
     }
     [_private setProvisionalDataSource: d];
     [d _setWebFrame:self];
@@ -2184,15 +2184,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName
 {
     if (frameName == nil) {
-	[self loadRequest:request];
-	return;
+        [self loadRequest:request];
+        return;
     }
 
     WebFrame *frame = [self findFrameNamed:frameName];
     
     if (frame != nil) {
-	[frame loadRequest:request];
-	return;
+        [frame loadRequest:request];
+        return;
     }
 
     NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
@@ -2210,7 +2210,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             return [parentsKids objectAtIndex:selfIndex+1];
         }
     }
-    return nil;		// no parent, or no more later siblings
+    return nil;                // no parent, or no more later siblings
 }
 
 // Returns the previous frame in our parent's children array, or nil
@@ -2224,7 +2224,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             return [parentsKids objectAtIndex:selfIndex-1];
         }
     }
-    return nil;		// no parent, or no more earlier siblings
+    return nil;                // no parent, or no more earlier siblings
 }
 
 // Returns the last child of us and any children, or nil
@@ -2235,7 +2235,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         WebFrame *kidsLastKid = [ourLastKid _lastChild];
         return kidsLastKid ? kidsLastKid : ourLastKid;
     }
-    return nil;		// no kids
+    return nil;                // no kids
 }
 
 // Return next frame to be traversed, visiting children after parent
@@ -2251,9 +2251,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 return nextSibling;
             }
         }
-        return wrapFlag ? frame : nil;		// made it all the way to the top
+        return wrapFlag ? frame : nil;                // made it all the way to the top
     } else {
-        return wrapFlag ? self : nil;		// self is the top and we have no kids
+        return wrapFlag ? self : nil;                // self is the top and we have no kids
     }
 }
 
@@ -2510,7 +2510,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     WebDataSource *dataSource = [self dataSource];
     if (dataSource == nil) {
-	return;
+        return;
     }
 
     // initWithRequest copies the request

@@ -1,3 +1,13 @@
+2003-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed a storage leak
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        Move the release of the request out of an if statement, since it's always needed.
+
 2003-12-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3515255>: Standalone image drag makes ocassionally makes 2 copies
