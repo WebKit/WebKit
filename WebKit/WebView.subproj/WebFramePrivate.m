@@ -714,7 +714,7 @@ static const char * const stateNames[] = {
     return _private->bridge;
 }
 
-- (void)handleUnimplementablePolicy:(WebPolicy *)policy errorCode:(int)code forURL:(NSURL *)URL
+- (void)handleUnimplementablePolicy:(WebPolicyAction)policy errorCode:(int)code forURL:(NSURL *)URL
 {
     WebError *error = [WebError errorWithCode:code
                                      inDomain:WebErrorDomainWebKit
@@ -725,9 +725,9 @@ static const char * const stateNames[] = {
 - (BOOL)_shouldShowRequest:(WebResourceRequest *)request
 {
     id <WebControllerPolicyDelegate> policyDelegate = [[self controller] policyDelegate];
-    WebURLPolicy *URLPolicy = [policyDelegate URLPolicyForRequest:request inFrame:self];
+    WebURLAction URLPolicy = [policyDelegate URLPolicyForRequest:request inFrame:self];
 
-    switch ([URLPolicy policyAction]) {
+    switch (URLPolicy) {
         case WebURLPolicyIgnore:
             return NO;
 
@@ -750,9 +750,9 @@ static const char * const stateNames[] = {
                 NSFileManager *fileManager = [NSFileManager defaultManager];
                 NSString *path = [[request URL] path];
                 NSString *type = [WebController _MIMETypeForFile: path];
-                WebFileURLPolicy *fileURLPolicy = [policyDelegate fileURLPolicyForMIMEType:type andRequest:request inFrame:self];
+                WebFileAction fileURLPolicy = [policyDelegate fileURLPolicyForMIMEType:type andRequest:request inFrame:self];
 
-                if([fileURLPolicy policyAction] == WebFileURLPolicyIgnore)
+                if(fileURLPolicy == WebFileURLPolicyIgnore)
                     return NO;
 
 		BOOL isDirectory;
@@ -768,7 +768,7 @@ static const char * const stateNames[] = {
                     return NO;
                 }
 
-                switch ([fileURLPolicy policyAction]) {
+                switch (fileURLPolicy) {
                     case WebFileURLPolicyUseContentPolicy:
                         if (isDirectory) {
                             [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotShowDirectory forURL:[request URL]];
@@ -793,7 +793,7 @@ static const char * const stateNames[] = {
 
                     default:
                         [NSException raise:NSInvalidArgumentException format:
-                @"fileURLPolicyForMIMEType:inFrame:isDirectory: returned WebFileURLPolicy with invalid action %d", [fileURLPolicy policyAction]];
+                @"fileURLPolicyForMIMEType:inFrame:isDirectory: returned WebFileURLPolicy with invalid action %d", fileURLPolicy];
                         return NO;
                 }
             }
@@ -1008,15 +1008,13 @@ static const char * const stateNames[] = {
 -(BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event request:(WebResourceRequest *)request
 {
     WebController *controller = [self controller];
-    WebClickPolicy *clickPolicy;
+    WebClickAction clickPolicy;
 
     clickPolicy = [[controller policyDelegate] clickPolicyForAction:[self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event]
 					       andRequest:request
 					       inFrame:self];
 
-    WebPolicyAction clickAction = [clickPolicy policyAction];
-
-    switch (clickAction) {
+    switch (clickPolicy) {
     case WebClickPolicyShow:
 	return YES;
     case WebClickPolicyOpenExternally:

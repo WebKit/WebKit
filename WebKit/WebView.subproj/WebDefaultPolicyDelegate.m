@@ -14,12 +14,12 @@
 
 @implementation WebDefaultPolicyDelegate
 
-+ (WebURLPolicy *)defaultURLPolicyForRequest: (WebResourceRequest *)request
++ (WebURLAction)defaultURLPolicyForRequest: (WebResourceRequest *)request
 {
     if([WebResourceHandle canInitWithRequest:request]){
-        return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyUseContentPolicy];
+        return WebURLPolicyUseContentPolicy;
     }else{
-        return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyOpenExternally];
+        return WebURLPolicyOpenExternally;
     }
 }
 
@@ -31,37 +31,37 @@
     return self;
 }
 
-- (WebURLPolicy *)URLPolicyForRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
+- (WebURLAction)URLPolicyForRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
 {
     return [WebDefaultPolicyDelegate defaultURLPolicyForRequest:request];
 }
 
-- (WebFileURLPolicy *)fileURLPolicyForMIMEType:(NSString *)type andRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
+- (WebFileAction)fileURLPolicyForMIMEType:(NSString *)type andRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
 {
     BOOL isDirectory;
     [[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
 
     if(isDirectory)
-        return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyIgnore];
+        return WebFileURLPolicyIgnore;
     if([WebController canShowMIMEType:type])
-        return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyUseContentPolicy];
-    return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyIgnore];
+        return WebFileURLPolicyUseContentPolicy;
+    return WebFileURLPolicyIgnore;
 }
 
-- (void)unableToImplementPolicy:(WebPolicy *)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame
+- (void)unableToImplementPolicy:(WebPolicyAction)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame
 {
     NSLog (@"called unableToImplementPolicy:%derror:%@:inFrame:%@", policy, error, frame);
 }
 
 
-- (WebContentPolicy *)contentPolicyForResponse:(WebResourceResponse *)response
+- (WebPolicyAction)contentPolicyForResponse:(WebResourceResponse *)response
 				    andRequest:(WebResourceRequest *)request
                                        inFrame:(WebFrame *)frame;
 {
     if ([WebController canShowMIMEType:[response contentType]]) {
-        return [WebContentPolicy webPolicyWithContentAction:WebContentPolicyShow];
+        return WebContentPolicyShow;
     } else {
-        return [WebContentPolicy webPolicyWithContentAction:WebContentPolicyIgnore];
+        return WebContentPolicyIgnore;
     }
 }
 
@@ -71,11 +71,11 @@
     return nil;
 }
 
-- (WebClickPolicy *)clickPolicyForAction:(NSDictionary *)actionInformation 
+- (WebClickAction)clickPolicyForAction:(NSDictionary *)actionInformation 
 			      andRequest:(WebResourceRequest *)request
 				 inFrame:(WebFrame *)frame
 {
-    return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow];
+    return [WebDefaultPolicyDelegate defaultURLPolicyForRequest:request];
 }
 
 @end

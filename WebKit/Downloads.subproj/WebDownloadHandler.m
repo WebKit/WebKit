@@ -9,7 +9,6 @@
 #import <WebKit/WebDownloadHandler.h>
 
 #import <WebKit/WebBinHexDecoder.h>
-#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDownloadDecoder.h>
 #import <WebKit/WebKitErrors.h>

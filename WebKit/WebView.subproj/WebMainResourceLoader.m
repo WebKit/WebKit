@@ -16,7 +16,6 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
@@ -140,7 +139,7 @@
 
     LOG(Download, "main content type: %@", [r contentType]);
 
-    WebContentPolicy *contentPolicy;
+    WebContentAction contentPolicy;
 
     // Figure out the content policy.
     if (![dataSource isDownloading]) {
@@ -148,12 +147,10 @@
 								  andRequest:[dataSource request]
 								  inFrame:[dataSource webFrame]];
     } else {
-	contentPolicy = [WebContentPolicy webPolicyWithContentAction:WebContentPolicySave];
+	contentPolicy = WebContentPolicySave;
     }
 
-    policyAction = [contentPolicy policyAction];
-
-    switch (policyAction) {
+    switch (contentPolicy) {
     case WebContentPolicyShow:
         break;
         

@@ -1,14 +1,11 @@
 .objc_class_name_WebBookmark
 .objc_class_name_WebBookmarkGroup
-.objc_class_name_WebClickPolicy
-.objc_class_name_WebContentPolicy
 .objc_class_name_WebController
 .objc_class_name_WebCoreStatistics
 .objc_class_name_WebDataSource
 .objc_class_name_WebDebugDOMNode
 .objc_class_name_WebDefaultContextMenuDelegate
 .objc_class_name_WebDefaultPolicyDelegate
-.objc_class_name_WebFileURLPolicy
 .objc_class_name_WebFrame
 .objc_class_name_WebHTMLView
 .objc_class_name_WebHistory

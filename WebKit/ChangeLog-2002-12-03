@@ -1,5 +1,31 @@
 2002-11-12  Maciej Stachowiak  <mjs@apple.com>
 
+	Removed policy classes and instead use the policy enums directly,
+	since we no longer hold the path in the enum.
+	
+        * Downloads.subproj/WebDownloadHandler.m:
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPolicyDelegate.m:
+        * WebView.subproj/WebControllerPolicyDelegatePrivate.h: Removed.
+        * WebView.subproj/WebControllerPrivate.m:
+        * WebView.subproj/WebDefaultPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (+[WebDefaultPolicyDelegate defaultURLPolicyForRequest:]):
+        (-[WebDefaultPolicyDelegate URLPolicyForRequest:inFrame:]):
+        (-[WebDefaultPolicyDelegate fileURLPolicyForMIMEType:andRequest:inFrame:]):
+        (-[WebDefaultPolicyDelegate unableToImplementPolicy:error:forURL:inFrame:]):
+        (-[WebDefaultPolicyDelegate clickPolicyForAction:andRequest:inFrame:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame handleUnimplementablePolicy:errorCode:forURL:]):
+        (-[WebFrame _shouldShowRequest:]):
+        (-[WebFrame _continueAfterClickPolicyForEvent:request:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+
+2002-11-12  Maciej Stachowiak  <mjs@apple.com>
+
 	Keep the triggering event around on the data source, so it can be
 	used with redirects.
 

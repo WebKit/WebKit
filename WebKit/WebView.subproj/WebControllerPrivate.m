@@ -6,7 +6,6 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
