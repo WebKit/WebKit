@@ -394,6 +394,10 @@ void AutoTableLayout::recalcColumn( int effCol )
 		if ( cell == (RenderTableCell *)-1 )
 		    continue;
 		if ( cell && cell->colSpan() == 1 ) {
+                    // A cell originates in this column.  Ensure we have
+                    // a min/max width of at least 1px for this column now.
+                    l.minWidth = QMAX(l.minWidth, 1);
+                    l.maxWidth = QMAX(l.maxWidth, 1);
 		    if ( !cell->minMaxKnown() )
 			cell->calcMinMaxWidth();
 		    if ( cell->minWidth() > l.minWidth )
@@ -439,8 +443,13 @@ void AutoTableLayout::recalcColumn( int effCol )
 			break;
 		    }
 		} else {
-		    if ( !effCol || section->cellAt( i, effCol-1 ) != cell )
+                    if ( cell && (!effCol || section->cellAt( i, effCol-1 ) != cell) ) {
+                        // This spanning cell originates in this column.  Ensure we have
+                        // a min/max width of at least 1px for this column now.
+                        l.minWidth = QMAX(l.minWidth, 1);
+                        l.maxWidth = QMAX(l.maxWidth, 1);
 			insertSpanCell( cell );
+                    }
 		    last = cell;
 		}
 	    }

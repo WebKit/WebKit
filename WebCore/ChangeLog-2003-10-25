@@ -1,3 +1,22 @@
+2003-04-02  David Hyatt  <hyatt@apple.com>
+
+	Do not assume all columns have a minwidth/maxwidth of 1px.
+	Instead give them a min/maxwidth of 0px, and only inflate to
+	1px if a cell originates in the column.
+
+	This fixes the error on travelocity.com, where a large colspan
+	leads to the implicit creation of a new column that contains no
+	originating cells.  That new column should be 0px wide, not 
+	1px.
+
+	The bug # is 3170592.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::recalcColumn):
+        * khtml/rendering/table_layout.h:
+
 2003-04-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for excite.com.  There are many bugs being fixed that all
