@@ -1,3 +1,16 @@
+2003-09-04  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3399880 -- Repro crash when filling out a form to
+	download Macromedia software. I managed to check in this
+	ChangeLog comment a few days ago without actually checking
+	in the changed file, weird.
+
+        Reviewed by Chris
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementForView:]):
+	check for nil widget before dereferencing
+
 2003-09-04  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3408630, leak of child frame parts caused by a missing deref when frames

@@ -541,15 +541,16 @@ static BOOL nowPrinting(WebCoreBridge *self)
 
 - (id <WebDOMElement>)elementForView:(NSView *)view
 {
-    // FIXME: implemetented currently for only a subset of the KWQ widgets
+    // FIXME: implemented currently for only a subset of the KWQ widgets
     if ([view conformsToProtocol:@protocol(KWQWidgetHolder)]) {
         NSView <KWQWidgetHolder> *widgetHolder = view;
         QWidget *widget = [widgetHolder widget];
-        NodeImpl *node = static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
-        return [WebCoreDOMElement elementWithImpl:static_cast<ElementImpl *>(node)];
-    } else {
-        return nil;
+        if (widget != nil) {
+            NodeImpl *node = static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
+            return [WebCoreDOMElement elementWithImpl:static_cast<ElementImpl *>(node)];
+        }
     }
+    return nil;
 }
 
 static NSView *viewForElement(DOM::ElementImpl *elementImpl)
