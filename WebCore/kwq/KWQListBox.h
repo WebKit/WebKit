@@ -27,9 +27,6 @@
 #define KWQLISTBOX_H_
 
 #include "KWQScrollView.h"
-#include "KWQSignal.h"
-#include "KWQString.h"
-#include "KWQValueList.h"
 
 struct KWQListBoxItem
 {
@@ -77,7 +74,7 @@ public:
 private:
     void appendItem(const QString &, bool isLabel);
 
-    // A vector<QString> or QValueVector<QString> might be more efficient for large lists.
+    // A vector<KWQListBoxItem> or QValueVector<KWQListBoxItem> might be more efficient for large lists.
     QValueList<KWQListBoxItem> _items;
 
     bool _changingSelection;

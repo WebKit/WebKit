@@ -69,6 +69,7 @@ QComboBox::QComboBox()
     : _widthGood(false)
     , _currentItem(0)
     , _menuPopulated(true)
+    , _labelFont(nil)
     , _activated(this, SIGNAL(activated(int)))
 {
     KWQ_BLOCK_EXCEPTIONS;
@@ -96,15 +97,29 @@ QComboBox::~QComboBox()
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button setTarget:nil];
+    [_labelFont release];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QComboBox::appendItem(const QString &text)
+void QComboBox::setTitle(NSMenuItem *menuItem, const KWQListBoxItem &title)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    if (title.isGroupLabel) {
+        NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:labelFont(), NSFontAttributeName, nil];
+        NSAttributedString *string = [[NSAttributedString alloc] initWithString:title.string.getNSString() attributes:attributes];
+        [menuItem setAttributedTitle:string];
+        [string release];
+        [attributes release];
+        [menuItem setAction:NULL /*@selector(fakeSelectorForDisabledItem)*/];
+    } else {
+        [menuItem setTitle:title.string.getNSString()];
+    }
+}
 
-    _items.append(text);
+void QComboBox::appendItem(const QString &text, bool isLabel)
+{
+    const KWQListBoxItem listItem(text, isLabel);
+    _items.append(listItem);
     if (_menuPopulated) {
         KWQPopUpButton *button = (KWQPopUpButton *)getView();
         if (![[button cell] isHighlighted]) {
@@ -112,13 +127,14 @@ void QComboBox::appendItem(const QString &text)
         } else {
             // We must add the item with no title and then set the title because
             // addItemWithTitle does not allow duplicate titles.
+            KWQ_BLOCK_EXCEPTIONS;
             [button addItemWithTitle:@""];
-            [[button lastItem] setTitle:text.getNSString()];
+            NSMenuItem *menuItem = [button lastItem];
+            setTitle(menuItem, listItem);
+            KWQ_UNBLOCK_EXCEPTIONS;
         }
     }
     _widthGood = false;
-
-    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 QSize QComboBox::sizeHint() const 
@@ -129,23 +145,37 @@ QSize QComboBox::sizeHint() const
     
     if (!_widthGood) {
         float width = 0;
-        QValueListConstIterator<QString> i = const_cast<const QStringList &>(_items).begin();
-        QValueListConstIterator<QString> e = const_cast<const QStringList &>(_items).end();
+        QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
+        QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
         if (i != e) {
-            id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFont:[button font] usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+            id <WebCoreTextRenderer> itemRenderer = [[WebCoreTextRendererFactory sharedFactory]
+                rendererWithFont:[button font]
+                usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+            id <WebCoreTextRenderer> labelRenderer = nil;
             WebCoreTextStyle style;
             WebCoreInitializeEmptyTextStyle(&style);
             style.applyRunRounding = NO;
             style.applyWordRounding = NO;
             do {
-                const QString &s = *i;
+                const QString &s = (*i).string;
+                bool isLabel = (*i).isGroupLabel;
                 ++i;
 
                 WebCoreTextRun run;
                 int length = s.length();
                 WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
 
+                id <WebCoreTextRenderer> renderer;
+                if (isLabel) {
+                    if (labelRenderer == nil) {
+                        labelRenderer = [[WebCoreTextRendererFactory sharedFactory]
+                            rendererWithFont:labelFont()
+                            usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+                    }
+                    renderer = labelRenderer;
+                } else {
+                    renderer = itemRenderer;
+                }
                 float textWidth = [renderer floatWidthForRun:&run style:&style widths:0];
                 width = kMax(width, textWidth);
             } while (i != e);
@@ -206,7 +236,8 @@ void QComboBox::setCurrentItem(int index)
     } else {
         [button removeAllItems];
         [button addItemWithTitle:@""];
-        [[button itemAtIndex:0] setTitle:_items[index].getNSString()];
+        NSMenuItem *menuItem = [button itemAtIndex:0];
+        setTitle(menuItem, _items[index]);
     }
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -244,10 +275,21 @@ void QComboBox::setFont(const QFont &f)
     if (size != [[button cell] controlSize]) {
         [[button cell] setControlSize:size];
         [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
+        [_labelFont release];
+        _labelFont = nil;
         _widthGood = false;
     }
 
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+NSFont *QComboBox::labelFont() const
+{
+    if (_labelFont == nil) {
+        NSControl * const button = static_cast<NSControl *>(getView());
+        _labelFont = [[NSFont boldSystemFontOfSize:[[button font] pointSize]] retain];
+    }
+    return _labelFont;
 }
 
 const int *QComboBox::dimensions() const
@@ -304,13 +346,14 @@ void QComboBox::populateMenu()
 
         KWQPopUpButton *button = getView();
         [button removeAllItems];
-        QValueListConstIterator<QString> i = const_cast<const QStringList &>(_items).begin();
-        QValueListConstIterator<QString> e = const_cast<const QStringList &>(_items).end();
+        QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
+        QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
         for (; i != e; ++i) {
             // We must add the item with no title and then set the title because
             // addItemWithTitle does not allow duplicate titles.
             [button addItemWithTitle:@""];
-            [[button lastItem] setTitle:(*i).getNSString()];
+            NSMenuItem *menuItem = [button lastItem];
+            setTitle(menuItem, *i);
         }
         [button selectItemAtIndex:_currentItem];
 

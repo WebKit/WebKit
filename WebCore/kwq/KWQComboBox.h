@@ -26,15 +26,13 @@
 #ifndef QCOMBOBOX_H_
 #define QCOMBOBOX_H_
 
-#include "KWQWidget.h"
-#include "KWQStringList.h"
-
-class QListBox;
+#include "KWQListBox.h"
 
 #ifdef __OBJC__
 @class KWQComboBoxAdapter;
 #else
 class KWQComboBoxAdapter;
+class NSMenuItem;
 #endif
 
 class QComboBox : public QWidget {
@@ -43,7 +41,8 @@ public:
     ~QComboBox();
     
     void clear();
-    void appendItem(const QString &text);
+    void appendItem(const QString &text) { appendItem(text, false); }
+    void appendGroupLabel(const QString &text) { appendItem(text, true); }
 
     int currentItem() const { return _currentItem; }
     void setCurrentItem(int);
@@ -67,16 +66,21 @@ public:
     void populateMenu();
     
 private:
+    void appendItem(const QString &, bool isLabel);
     const int *dimensions() const;
+    NSFont *labelFont() const;
+    void setTitle(NSMenuItem *, const KWQListBoxItem &);
     
     mutable int _width;
     mutable bool _widthGood;
 
     mutable int _currentItem;
 
-    // A vector<QString> or QValueVector<QString> may be more efficient for large menus.
-    QStringList _items;
+    // A vector<KWQListBoxItem> or QValueVector<KWQListBoxItem> may be more efficient for large menus.
+    QValueList<KWQListBoxItem> _items;
     mutable bool _menuPopulated;
+
+    mutable NSFont *_labelFont;
 
     KWQSignal _activated;
 };

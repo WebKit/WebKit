@@ -1,3 +1,28 @@
+2004-04-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3623694>: "top level <option> and <optgroup> labels look identical in pop-up menus; should not"
+
+        * khtml/rendering/render_form.cpp: (RenderSelect::updateFromElement):
+        Call appendGroupLabel instead of appendItem for group labels.
+
+        * kwq/KWQComboBox.h: Added appendGroupLabel, private setControlSize, labelFont, setTitle, _labelFont,
+        and make _items a QValueList<KWQListBoxItem> instead of QStringList.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox): Initializes _labelFont to nil.
+        (QComboBox::~QComboBox): Release _labelFont.
+        (QComboBox::setTitle): Added helper function. Uses an attributed string for group labels, and also sets
+        the action to NULL so they are disabled.
+        (QComboBox::appendItem): Added isLabel boolean parameter, make KWQListBoxItem, call setTitle.
+        (QComboBox::sizeHint): Changed to handle group labels with a separate renderer to measure bolded text.
+        (QComboBox::setCurrentItem): Changed to use setTitle helper.
+        (QComboBox::setFont): Release _labelFont if control size changed.
+        (QComboBox::labelFont): Compute label font lazily.
+        (QComboBox::populateMenu): Changed to use setTitle helper.
+
+        * kwq/KWQListBox.h: Removed excess includes, fixed comment.
+
 2004-04-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

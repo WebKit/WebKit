@@ -1158,7 +1158,7 @@ void RenderSelect::updateFromElement()
                 if (m_useListBox)
                     static_cast<KListBox*>(m_widget)->appendGroupLabel(label);
                 else
-                    static_cast<KComboBox*>(m_widget)->appendItem(label);
+                    static_cast<KComboBox*>(m_widget)->appendGroupLabel(label);
 #else
                 if(m_useListBox) {
                     QListBoxText *item = new QListBoxText(label);
