@@ -980,7 +980,7 @@ int RenderTableSection::layoutRows( int toAdd )
     int totalRows = grid.size();
     int spacing = table()->cellSpacing();
 
-    if (toAdd && totalRows && rowPos[totalRows]) {
+    if (toAdd && totalRows && (rowPos[totalRows] || !nextSibling())) {
 
 	int totalHeight = rowPos[totalRows] + toAdd;
 // 	qDebug("layoutRows: totalHeight = %d",  totalHeight );

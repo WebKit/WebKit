@@ -1,3 +1,13 @@
+2003-01-24  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3153260, tables used as height spacers don't get the
+	specified height.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+
 2003-01-24  Trey Matteson  <trey@apple.com>
 
 	Chris pointed out a FIXME that led to a more contained way to make sure the cursor
