@@ -8,9 +8,9 @@
 #import <WebKitDebug.h>
 #import <WebKit/WebPluginView.h>
 
-@implementation WebPluginNullEventSender
+@implementation WebNetscapePluginNullEventSender
 
--(id)initWithPluginView:(WebPluginView *)pluginView
+-(id)initWithPluginView:(WebNetscapePluginView *)pluginView
 {
     [super init];
     
@@ -34,7 +34,7 @@
         EventRecord event;
         BOOL acceptedEvent;
         
-        [WebPluginView getCarbonEvent:&event];
+        [WebNetscapePluginView getCarbonEvent:&event];
         
         // plug-in should not react to cursor position when not active.
         if(![window isKeyWindow]){

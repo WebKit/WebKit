@@ -40,8 +40,6 @@
 @class WebResourceHandle;
 @class WebView;
 
-@protocol WebDocumentLoading;
-
 /*
    ============================================================================= 
 

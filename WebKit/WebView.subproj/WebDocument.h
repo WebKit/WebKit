@@ -9,9 +9,9 @@
 @class WebError;
 
 @protocol WebDocumentView <NSObject>
-- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource;
-- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource;
-- (void)dataSourceUpdated:(WebDataSource *)dataSource; 
+- (void)provisionalDataSourceChanged: (WebDataSource *)dataSource;
+- (void)provisionalDataSourceCommitted: (WebDataSource *)dataSource;
+- (void)dataSourceUpdated: (WebDataSource *)dataSource;
 - (void)layout;
 @end
 
@@ -28,14 +28,14 @@
 
 @protocol WebDocumentTextEncoding <NSObject>
 - (CFStringEncoding)textEncoding;
-- (void)setTextEncoding:(CFStringEncoding)encoding;
+- (void)setTextEncoding: (CFStringEncoding)encoding;
 - (void)setDefaultTextEncoding;
 - (BOOL)usingDefaultTextEncoding;
 @end
 
 @protocol WebDocumentRepresentation <NSObject>
-- (void)setDataSource:(WebDataSource *)dataSource;
-- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
-- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource;
-- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource;
+- (void)setDataSource: (WebDataSource *)dataSource;
+- (void)receivedData: (NSData *)data withDataSource: (WebDataSource *)dataSource;
+- (void)receivedError: (WebError *)error withDataSource: (WebDataSource *)dataSource;
+- (void)finishedLoadingWithDataSource: (WebDataSource *)dataSource;
 @end

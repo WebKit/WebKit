@@ -1,3 +1,60 @@
+2002-08-21  Richard Williamson (Local)  <rjw@apple.com>
+
+        Simple name change.  Plugin -> NetscapePlugin in anticipation
+        of other plugin related API.
+        
+        Removed vestigal WebDocumentLoading.
+        
+        * Plugins.subproj/WebPlugin.h:
+        * Plugins.subproj/WebPlugin.m:
+        (-[WebNetscapePlugin load]):
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        (+[WebNetscapePluginDatabase installedPlugins]):
+        (-[WebNetscapePluginDatabase pluginForMimeType:]):
+        (-[WebNetscapePluginDatabase pluginForExtension:]):
+        (-[WebNetscapePluginDatabase pluginWithFilename:]):
+        (-[WebNetscapePluginDatabase MIMETypes]):
+        (-[WebNetscapePluginDatabase init]):
+        * Plugins.subproj/WebPluginNullEventSender.h:
+        * Plugins.subproj/WebPluginNullEventSender.m:
+        (-[WebNetscapePluginNullEventSender initWithPluginView:]):
+        (-[WebNetscapePluginNullEventSender sendNullEvents]):
+        * Plugins.subproj/WebPluginStream.h:
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream getFunctionPointersFromPluginView:]):
+        (-[WebNetscapePluginStream initWithURL:pluginPointer:notifyData:attributes:]):
+        * Plugins.subproj/WebPluginView.h:
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView initWithFrame:plugin:URL:baseURL:mime:arguments:]):
+        (-[WebNetscapePluginView start]):
+        (-[WebNetscapePluginView provisionalDataSourceChanged:]):
+        (-[WebNetscapePluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]):
+        (-[WebNetscapePluginView destroyStream:reason:]):
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory viewForPluginWithURL:serviceType:arguments:baseURL:]):
+        (-[WebViewFactory pluginsInfo]):
+        (-[WebViewFactory viewForJavaAppletWithFrame:baseURL:parameters:]):
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (+[WebController canShowMIMEType:]):
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView provisionalDataSourceChanged:]):
+        (-[WebHTMLView provisionalDataSourceCommitted:]):
+        (-[WebHTMLView dataSourceUpdated:]):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[NSView _web_stopIfPluginView]):
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _makeDocumentViewForDataSource:]):
+
+        Still need to muck with cvs server to change file names.
+        
 2002-08-20  David Hyatt  <hyatt@apple.com>
 
 	Raising the layout delay from 0.75 to 1.00.  This should be

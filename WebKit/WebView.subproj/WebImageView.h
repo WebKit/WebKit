@@ -6,10 +6,10 @@
 #import <Cocoa/Cocoa.h>
 
 @class WebImageRepresentation;
-@protocol WebDocumentLoading;
+@protocol WebDocumentView;
 @protocol WebDocumentDragSettings;
 
-@interface WebImageView : NSView <WebDocumentLoading, WebDocumentDragSettings>
+@interface WebImageView : NSView <WebDocumentView, WebDocumentDragSettings>
 {
     WebImageRepresentation *representation;
     BOOL canDragFrom;

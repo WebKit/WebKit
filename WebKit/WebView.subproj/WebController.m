@@ -278,7 +278,7 @@
         return YES;
     }else{
         // Have the plug-ins register views and representations
-        [WebPluginDatabase installedPlugins];
+        [WebNetscapePluginDatabase installedPlugins];
         if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType])
             return YES;
     }

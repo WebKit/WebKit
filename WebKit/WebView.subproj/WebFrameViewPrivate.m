@@ -71,7 +71,7 @@
 {
     Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[dataSource contentType]];
     id documentView = viewClass ? [[viewClass alloc] init] : nil;
-    [self _setDocumentView:(id<WebDocumentLoading>)documentView];
+    [self _setDocumentView:(id<WebDocumentView>)documentView];
     [documentView release];
 
     [[self documentView] provisionalDataSourceChanged:dataSource];

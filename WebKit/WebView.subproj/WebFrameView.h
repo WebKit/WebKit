@@ -14,7 +14,7 @@
 @class WebDataSource;
 @class WebController;
 @class WebViewPrivate;
-@protocol WebDocumentLoading;
+
 @protocol WebDocumentView;
 
 @interface WebView : NSView
@@ -37,7 +37,7 @@
 - (BOOL)allowsScrolling;
 
 // Extends the views that WebKit supports
-// The view must conform to the WebDocumentLoading protocol
+// The view must conform to the WebDocumentView protocol
 + (void)registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType;
 
 @end

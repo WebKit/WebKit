@@ -9,15 +9,15 @@
 #import <Cocoa/Cocoa.h>
 #import <npapi.h>
 
-@class WebPluginNullEventSender;
+@class WebNetscapePluginNullEventSender;
 @class WebDataSource;
-@class WebPlugin;
+@class WebNetscapePlugin;
 @class WebController;
 @protocol WebDocumentView;
 
-@interface WebPluginView : NSView <WebDocumentView>
+@interface WebNetscapePluginView : NSView <WebDocumentView>
 {
-    WebPluginNullEventSender *eventSender;
+    WebNetscapePluginNullEventSender *eventSender;
     unsigned argsCount;
     char **cAttributes, **cValues;
     
@@ -53,7 +53,7 @@
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(WebPlugin *)plugin URL:(NSURL *)URL baseURL:(NSURL *)baseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments;
+- (id)initWithFrame:(NSRect)r plugin:(WebNetscapePlugin *)plugin URL:(NSURL *)URL baseURL:(NSURL *)baseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments;
 -(void)stop;
 - (WebDataSource *)webDataSource;
 - (WebController *)webController;

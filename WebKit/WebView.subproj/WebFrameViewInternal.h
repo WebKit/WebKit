@@ -28,7 +28,7 @@
 @end
 
 @interface WebView (WebPrivate)
-- (void)_setDocumentView:(id <WebDocumentLoading>)view;
+- (void)_setDocumentView:(id <WebDocumentView>)view;
 - (void)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;
 - (void)_setController:(WebController *)controller;
 - (WebController *)_controller;

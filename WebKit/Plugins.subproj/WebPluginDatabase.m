@@ -32,24 +32,24 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebKitDebug.h>
 
-@implementation WebPluginDatabase
+@implementation WebNetscapePluginDatabase
 
-static WebPluginDatabase *database = nil;
+static WebNetscapePluginDatabase *database = nil;
 
-+ (WebPluginDatabase *)installedPlugins 
++ (WebNetscapePluginDatabase *)installedPlugins 
 {
     if (!database) {
-        database = [[WebPluginDatabase alloc] init];
+        database = [[WebNetscapePluginDatabase alloc] init];
     }
     return database;
 }
 
 // FIXME: Use a dictionary for this?
 // The first plugin with the specified mime type is returned. We may want to tie this to the defaults so that this is configurable.
-- (WebPlugin *)pluginForMimeType:(NSString *)mimeType
+- (WebNetscapePlugin *)pluginForMimeType:(NSString *)mimeType
 {
     uint i, n;
-    WebPlugin *plugin;
+    WebNetscapePlugin *plugin;
     NSArray *mimeArray;
     
     for(i=0; i<[plugins count]; i++){      
@@ -65,10 +65,10 @@ static WebPluginDatabase *database = nil;
 }
 
 // FIXME: Use a dictionary for this?
-- (WebPlugin *)pluginForExtension:(NSString *)extension
+- (WebNetscapePlugin *)pluginForExtension:(NSString *)extension
 {
     uint i, n;
-    WebPlugin *plugin;
+    WebNetscapePlugin *plugin;
     NSArray *mimeArray;
     NSRange hasExtension;
 
@@ -86,10 +86,10 @@ static WebPluginDatabase *database = nil;
 }
 
 // FIXME: Use a dictionary for this?
-- (WebPlugin *)pluginWithFilename:(NSString *)filename
+- (WebNetscapePlugin *)pluginWithFilename:(NSString *)filename
 {
     uint i;
-    WebPlugin *plugin;
+    WebNetscapePlugin *plugin;
     
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
@@ -109,7 +109,7 @@ static WebPluginDatabase *database = nil;
 - (NSArray *)MIMETypes
 {
     NSMutableArray *allHandledMIMETypes;
-    WebPlugin *plugin;
+    WebNetscapePlugin *plugin;
     NSArray *mimeArray;
     uint i, n;
         
@@ -146,7 +146,7 @@ static NSArray *pluginLocations(void)
     NSString *file;
     NSMutableArray *pluginPaths, *pluginArray;
     NSMutableSet *filenames;
-    WebPlugin *plugin;
+    WebNetscapePlugin *plugin;
     uint i, n;
     
     self = [super init];
@@ -175,7 +175,7 @@ static NSArray *pluginLocations(void)
     pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
     
     for (i = 0; i < [pluginPaths count]; i++) {
-        plugin = [[WebPlugin alloc] initWithPath:[pluginPaths objectAtIndex:i]];
+        plugin = [[WebNetscapePlugin alloc] initWithPath:[pluginPaths objectAtIndex:i]];
         if (plugin) {
             [pluginArray addObject:plugin];
             WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Found plugin: %s\n", [[plugin name] lossyCString]);
@@ -189,8 +189,8 @@ static NSArray *pluginLocations(void)
     // register plug-in WebDocumentViews and WebDocumentRepresentations
     NSArray *mimes = [self MIMETypes];
     for (i = 0; i < [mimes count]; i++) {
-        [WebView registerViewClass:[WebPluginView class] forMIMEType:[mimes objectAtIndex:i]];
-        [WebDataSource registerRepresentationClass:[WebPluginStream class] forMIMEType:[mimes objectAtIndex:i]];
+        [WebView registerViewClass:[WebNetscapePluginView class] forMIMEType:[mimes objectAtIndex:i]];
+        [WebDataSource registerRepresentationClass:[WebNetscapePluginStream class] forMIMEType:[mimes objectAtIndex:i]];
     }
 
     return self;

@@ -31,7 +31,7 @@
     NSMutableDictionary *arguments;
     NSString *mimeType, *extension;
     NSRange r1, r2, r3;
-    WebPlugin *plugin;
+    WebNetscapePlugin *plugin;
     uint i;
         
     arguments = [NSMutableDictionary dictionary];
@@ -48,34 +48,34 @@
         
     if ([serviceType length]) {
         mimeType = serviceType;
-        plugin = [[WebPluginDatabase installedPlugins] pluginForMimeType:mimeType];
+        plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMimeType:mimeType];
     } else {
         extension = [[pluginURL path] pathExtension];
-        plugin = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
+        plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForExtension:extension];
         mimeType = [plugin mimeTypeForExtension:extension];
     }
     
     if (plugin == nil) {
         return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
     }
-    return [[[WebPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin URL:pluginURL baseURL:baseURL mime:mimeType arguments:arguments] autorelease];
+    return [[[WebNetscapePluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin URL:pluginURL baseURL:baseURL mime:mimeType arguments:arguments] autorelease];
 }
 
 - (NSArray *)pluginsInfo
 {
-    return [[WebPluginDatabase installedPlugins] plugins];
+    return [[WebNetscapePluginDatabase installedPlugins] plugins];
 }
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)baseURL parameters:(NSDictionary *)parameters
 {
-    WebPlugin *plugin;
+    WebNetscapePlugin *plugin;
     
-    plugin = [[WebPluginDatabase installedPlugins] pluginForMimeType:@"application/x-java-applet"];
+    plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMimeType:@"application/x-java-applet"];
     if (plugin == nil) {
         return nil;
     }
     
-    return [[[WebPluginView alloc] initWithFrame:frame plugin:plugin URL:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:parameters] autorelease];
+    return [[[WebNetscapePluginView alloc] initWithFrame:frame plugin:plugin URL:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:parameters] autorelease];
 }
 
 @end

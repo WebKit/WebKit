@@ -159,24 +159,6 @@
     [super viewDidMoveToWindow];
 }
 
-// This method is typically called by the view's controller when the data source is changed.
-- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource 
-{
-    [[dataSource _bridge]
-        createKHTMLViewWithNSView:self
-        marginWidth:[[[dataSource webFrame] webView] _marginWidth]
-        marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
-}
-
-- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource 
-{
-    [[self _bridge] installInFrame:[[self _web_parentWebView] frameScrollView]];
-}
-
-- (void)dataSourceUpdated:(WebDataSource *)dataSource
-{
-}
-
 - (void)reapplyStyles
 {
     if (!_private->needsToApplyStyles) {
@@ -603,5 +585,29 @@
     } 
     return YES;
 }
+
+//------------------------------------------------------------------------------------
+// WebDocumentView protocol
+//------------------------------------------------------------------------------------
+- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource 
+{
+    [[dataSource _bridge]
+        createKHTMLViewWithNSView:self
+        marginWidth:[[[dataSource webFrame] webView] _marginWidth]
+        marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
+}
+
+
+- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource 
+{
+    [[self _bridge] installInFrame:[[self _web_parentWebView] frameScrollView]];
+}
+
+- (void)dataSourceUpdated:(WebDataSource *)dataSource
+{
+}
+
+
+
 
 @end

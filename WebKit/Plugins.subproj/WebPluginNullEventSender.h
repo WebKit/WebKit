@@ -6,16 +6,16 @@
 #import <Foundation/Foundation.h>
 #import <npapi.h>
 
-@class WebPluginView;
+@class WebNetscapePluginView;
 
-@interface WebPluginNullEventSender : NSObject{
+@interface WebNetscapePluginNullEventSender : NSObject{
     NPP instance;
     NPP_HandleEventProcPtr NPP_HandleEvent;
     bool shouldStop;
     NSWindow *window;
 }
 
--(id)initWithPluginView:(WebPluginView *)pluginView;
+-(id)initWithPluginView:(WebNetscapePluginView *)pluginView;
 -(void)sendNullEvents;
 -(void)stop;
 @end

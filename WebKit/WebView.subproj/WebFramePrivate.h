@@ -13,8 +13,6 @@
 @class WebHistoryItem;
 @class WebView;
 
-@protocol WebDocumentLoading;
-
 typedef enum {
     WebFrameStateProvisional,
     

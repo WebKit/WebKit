@@ -27,7 +27,7 @@
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
 
-@implementation WebPluginView
+@implementation WebNetscapePluginView
 
 #pragma mark EVENTS
 
@@ -337,7 +337,7 @@
 
 #pragma mark WEB_PLUGIN_VIEW
 
-- (id)initWithFrame:(NSRect)r plugin:(WebPlugin *)plugin URL:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
+- (id)initWithFrame:(NSRect)r plugin:(WebNetscapePlugin *)plugin URL:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
 {
     [super initWithFrame:r];
     
@@ -501,7 +501,7 @@
 {
     NSNotificationCenter *notificationCenter;
     NSWindow *theWindow;
-    WebPluginStream *stream;
+    WebNetscapePluginStream *stream;
         
     if(isStarted || !canRestart)
         return;
@@ -546,7 +546,7 @@
     webDataSource = [[webFrame dataSource] retain];
     
     if(srcURL){
-        stream = [[WebPluginStream alloc] initWithURL:srcURL pluginPointer:instance];
+        stream = [[WebNetscapePluginStream alloc] initWithURL:srcURL pluginPointer:instance];
         if(stream){
             [stream startLoad];
             [streams addObject:stream];
@@ -554,7 +554,7 @@
         }
     }
     
-    eventSender = [[WebPluginNullEventSender alloc] initWithPluginView:self];
+    eventSender = [[WebNetscapePluginNullEventSender alloc] initWithPluginView:self];
     [eventSender sendNullEvents];
     [self resetTrackingRect];
 }
@@ -621,10 +621,10 @@
 
 - (void)provisionalDataSourceChanged:(WebDataSource *)dataSource
 {
-    WebPlugin *plugin;
+    WebNetscapePlugin *plugin;
     
     mime = [[dataSource contentType] retain];
-    plugin = [[WebPluginDatabase installedPlugins] pluginForMimeType:mime];
+    plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMimeType:mime];
     
     if(![plugin load])
         return;
@@ -766,7 +766,7 @@
 
 - (NPError) loadURL:(NSString *)URLString inTarget:(NSString *)target withNotifyData:(void *)notifyData andHandleAttributes:(NSDictionary *)attributes
 {
-    WebPluginStream *stream;
+    WebNetscapePluginStream *stream;
     WebDataSource *dataSource;
     WebFrame *frame;
     NSURL *URL;
@@ -780,7 +780,7 @@
         return NPERR_INVALID_URL;
     
     if(!target){
-        stream = [[WebPluginStream alloc] initWithURL:URL pluginPointer:instance notifyData:notifyData attributes:attributes];
+        stream = [[WebNetscapePluginStream alloc] initWithURL:URL pluginPointer:instance notifyData:notifyData attributes:attributes];
         if(stream){
             [stream startLoad];
             [streams addObject:stream];
@@ -917,7 +917,7 @@
     if(!stream->ndata)
         return NPERR_INVALID_INSTANCE_ERROR;
         
-    [(WebPluginStream *)stream->ndata stop];
+    [(WebNetscapePluginStream *)stream->ndata stop];
     return NPERR_NO_ERROR;
 }
 

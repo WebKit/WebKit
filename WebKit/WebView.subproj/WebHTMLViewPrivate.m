@@ -27,8 +27,8 @@
 @implementation NSView (WebHTMLViewPrivate)
 - (void)_web_stopIfPluginView
 {
-    if ([self isKindOfClass:[WebPluginView class]]) {
-	WebPluginView *pluginView = (WebPluginView *)self;
+    if ([self isKindOfClass:[WebNetscapePluginView class]]) {
+	WebNetscapePluginView *pluginView = (WebNetscapePluginView *)self;
         [pluginView stop];
     }
 }

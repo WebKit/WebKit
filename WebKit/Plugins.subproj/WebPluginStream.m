@@ -14,19 +14,19 @@
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 
-@interface WebPluginStream (ClassInternal)
+@interface WebNetscapePluginStream (ClassInternal)
 - (void)receivedData:(NSData *)data;
 - (void)receivedError:(NPError)error;
 - (void)finishedLoadingWithData:(NSData *)data;
 - (void)setUpGlobalsWithHandle:(WebResourceHandle *)handle;
 @end
 
-@interface WebPluginStream (WebResourceClient) <WebResourceClient>
+@interface WebNetscapePluginStream (WebResourceClient) <WebResourceClient>
 @end
 
-@implementation WebPluginStream
+@implementation WebNetscapePluginStream
 
-- (void) getFunctionPointersFromPluginView:(WebPluginView *)pluginView
+- (void) getFunctionPointersFromPluginView:(WebNetscapePluginView *)pluginView
 {
     NPP_NewStream = 	[pluginView NPP_NewStream];
     NPP_WriteReady = 	[pluginView NPP_WriteReady];
@@ -65,7 +65,7 @@
     if(!thePluginPointer)
        return nil;
     
-    view = [(WebPluginView *)thePluginPointer->ndata retain];
+    view = [(WebNetscapePluginView *)thePluginPointer->ndata retain];
     URL = [theURL retain];
     attributes = [theAttributes retain];
     instance = thePluginPointer;
@@ -243,7 +243,7 @@
 
 #pragma mark WebResourceHandle
 
-@implementation WebPluginStream (WebResourceClient)
+@implementation WebNetscapePluginStream (WebResourceClient)
 
 - (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)theURL
 {
