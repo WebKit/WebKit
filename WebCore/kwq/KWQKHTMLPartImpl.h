@@ -131,6 +131,11 @@ public:
 
     QString requestedURLString() const;
     
+    int selectionStartOffset() const;
+    int selectionEndOffset() const;
+    DOM::NodeImpl *selectionStart() const;
+    DOM::NodeImpl *selectionEnd() const;
+    
 private:
     void setPolicyBaseURL(const DOM::DOMString &);
 

@@ -1,3 +1,17 @@
+2002-10-11  Richard Williamson   <rjw@apple.com>
+
+        More DOM/attributed string work.
+        
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]):
+        * WebView.subproj/WebHTMLRepresentationPrivate.h:
+
+2002-10-11  Richard Williamson   <rjw@apple.com>
+
+        * WebView.subproj/WebHTMLRepresentation.m:
+        * WebView.subproj/WebHTMLRepresentationPrivate.h:
+
 2002-10-11  Ken Kocienda  <kocienda@apple.com>
 
 	Fixed uninitialized variable build breaker I got when

@@ -42,3 +42,9 @@ bool KWQKHTMLPartImpl::isFrameSet()
     NodeImpl *body = static_cast<HTMLDocumentImpl *>(document)->body();
     return body && body->renderer() && body->id() == ID_FRAMESET;
 }
+
+
+int KWQKHTMLPartImpl::selectionStartOffset() const { return d->m_startOffset; }
+int KWQKHTMLPartImpl::selectionEndOffset() const { return d->m_endOffset; }
+DOM::NodeImpl *KWQKHTMLPartImpl::selectionStart() const { return d->m_selectionStart.handle(); }
+DOM::NodeImpl *KWQKHTMLPartImpl::selectionEnd() const { return d->m_selectionEnd.handle(); }

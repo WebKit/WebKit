@@ -140,6 +140,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset;
 
+- (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.

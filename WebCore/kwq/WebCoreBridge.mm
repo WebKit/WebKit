@@ -25,13 +25,19 @@
 
 #import <WebCoreBridge.h>
 
+#import <dom_node.h>
+#import <dom_docimpl.h>
+#import <dom_nodeimpl.h>
 #import <khtml_part.h>
 #import <khtmlview.h>
-#import <dom_docimpl.h>
+#import <render_frames.h>
 #import <render_image.h>
 #import <render_object.h>
 #import <render_root.h>
-#import <render_frames.h>
+#import <render_style.h>
+
+#import <qfont.h>
+
 #import <KWQAssertions.h>
 #import <html/html_documentimpl.h>
 #import <xml/dom_nodeimpl.h>
@@ -544,6 +550,7 @@ using khtml::RenderPart;
 - (id<WebDOMDocument>)DOMDocument
 {
     DocumentImpl *doc = part->impl->document();
+    printf ("(id<WebDOMDocument>)DOMDocument doc = %p, lastChild = %p\n", doc, doc->lastChild());
     return [WebCoreDOMDocument documentWithImpl:doc];
 }
 
@@ -552,6 +559,171 @@ using khtml::RenderPart;
     DocumentImpl *doc = part->impl->document();
     
     doc->setSelection ([(WebCoreDOMNode *)start impl], startOffset, [(WebCoreDOMNode *)end impl], endOffset);
+}
+
+
+static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset)
+{
+    bool hasNewLine = true;
+    DOM::Node n = _startNode;
+    khtml::RenderObject *renderer;
+    khtml::RenderStyle *style;
+    NSFont *font;
+    NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
+    NSAttributedString *partialString;
+    
+    while(!n.isNull()) {
+        if(n.nodeType() == DOM::Node::TEXT_NODE) {
+            QString text;
+            QString str = n.nodeValue().string();
+            
+            renderer = n.handle()->renderer();
+            font = nil;
+            if (renderer){
+                style = renderer->style();
+                if (style)
+                    font = style->font().getNSFont();
+            }
+            
+            hasNewLine = false;            
+            if(n == _startNode && n == endNode && startOffset >=0 && endOffset >= 0)
+                text = str.mid(startOffset, endOffset - startOffset);
+            else if(n == _startNode && startOffset >= 0)
+                text = str.mid(startOffset);
+            else if(n == endNode && endOffset >= 0)
+                text = str.left(endOffset);
+            else
+                text = str;
+                
+            if (font)
+                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: [NSDictionary dictionaryWithObjectsAndKeys: font, NSFontAttributeName, 0]];
+            else
+                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
+                
+            [result appendAttributedString: partialString];
+            [partialString release];
+        }
+        else {
+            // This is our simple HTML -> ASCII transformation:
+            QString text;
+            unsigned short _id = n.elementId();
+            switch(_id) {
+                case ID_BR:
+                    text += "\n";
+                    hasNewLine = true;
+                break;
+        
+                case ID_TD:
+                case ID_TH:
+                case ID_HR:
+                case ID_OL:
+                case ID_UL:
+                case ID_LI:
+                case ID_DD:
+                case ID_DL:
+                case ID_DT:
+                case ID_PRE:
+                case ID_BLOCKQUOTE:
+                case ID_DIV:
+                    if (!hasNewLine)
+                        text += "\n";
+                    hasNewLine = true;
+                break;
+                case ID_P:
+                case ID_TR:
+                case ID_H1:
+                case ID_H2:
+                case ID_H3:
+                case ID_H4:
+                case ID_H5:
+                case ID_H6:
+                    if (!hasNewLine)
+                        text += "\n";
+                    text += "\n";
+                    hasNewLine = true;
+                break;
+            }
+            partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
+            [result appendAttributedString: partialString];
+            [partialString release];
+        }
+        
+        if(n == endNode)
+            break;
+        
+        DOM::Node next = n.firstChild();
+        if(next.isNull())
+            next = n.nextSibling();
+        while( next.isNull() && !n.parentNode().isNull() ) {
+            QString text;
+            n = n.parentNode();
+            next = n.nextSibling();
+            
+            unsigned short _id = n.elementId();
+            switch(_id) {
+                case ID_TD:
+                case ID_TH:
+                case ID_HR:
+                case ID_OL:
+                case ID_UL:
+                case ID_LI:
+                case ID_DD:
+                case ID_DL:
+                case ID_DT:
+                case ID_PRE:
+                case ID_BLOCKQUOTE:
+                case ID_DIV:
+                if (!hasNewLine)
+                    text += "\n";
+                hasNewLine = true;
+                break;
+                case ID_P:
+                case ID_TR:
+                case ID_H1:
+                case ID_H2:
+                case ID_H3:
+                case ID_H4:
+                case ID_H5:
+                case ID_H6:
+                if (!hasNewLine)
+                    text += "\n";
+                // An extra newline is needed at the start, not the end, of these types of tags,
+                // so don't add another here.
+                hasNewLine = true;
+                break;
+            }
+            partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
+            [result appendAttributedString: partialString];
+            [partialString release];
+        }
+    
+        n = next;
+    }
+/*    
+    int start = 0;
+    int end = text.length();
+    
+    // Strip leading LFs
+    while ((start < end) && (text[start] == '\n'))
+        start++;
+    
+    // Strip excessive trailing LFs
+    while ((start < (end-1)) && (text[end-1] == '\n') && (text[end-2] == '\n'))
+        end--;
+        
+    text.mid(start, end-start);
+*/    
+    return result;
+}
+
+- (NSAttributedString *)selectedAttributedString
+{
+    return attributedString (part->impl->selectionStart(), part->impl->selectionStartOffset(), part->impl->selectionEnd(), part->impl->selectionEndOffset());
+}
+
+- (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset
+{
+    return attributedString ([(WebCoreDOMNode *)startNode impl], startOffset, [(WebCoreDOMNode *)endNode impl], endOffset);
 }
 
 @end

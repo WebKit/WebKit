@@ -50,7 +50,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 {
     [super init];
     impl = coreImpl;
-    impl->ref();
+    impl->ref();        
     return self;
 }
 
@@ -101,12 +101,25 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (id<WebDOMNode>)firstChild
 {
-    return [WebCoreDOMNode nodeWithImpl: [self impl]->firstChild()];
+    DOM::Node instance([self impl]);
+    DOM::NodeImpl *firstChild = instance.firstChild().handle();
+    
+    if (firstChild)
+        return [WebCoreDOMNode nodeWithImpl: firstChild];
+    return nil;
 }
 
 - (id<WebDOMNode>)lastChild
 {
-    return [WebCoreDOMNode nodeWithImpl: [self impl]->lastChild()];
+    DOM::Node instance([self impl]);
+    DOM::NodeImpl *lastChild = instance.lastChild().handle();
+    
+    printf ("lastChild = %p\n", lastChild);
+    
+    if (lastChild)
+        return [WebCoreDOMNode nodeWithImpl: lastChild];
+
+    return nil;
 }
 
 - (id<WebDOMNode>) previousSibling

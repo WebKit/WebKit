@@ -43,6 +43,8 @@
 */
 - (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset;
 
+//- (NSAttributedString *)selectedAttributedString;
+
 /*!
     @method documentSource
     @abstract Get the current HTML reconstructed from the current state of the DOM.
@@ -50,10 +52,6 @@
 - (NSString *)reconstructedDocumentSource;
 
 
-/*!
-    @method attributedText
-    @discussion Return the document source as an attributed string.
-*/
-- (NSAttributedString *)attributedText;
+- (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset;
 
 @end

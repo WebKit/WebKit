@@ -3,6 +3,7 @@
     Copyright 2002, Apple, Inc. All rights reserved.
 */
 #include <dom/dom_element.h>
+#include <dom/dom_node.h>
 #include <dom/dom_string.h>
 #include <dom/dom_text.h>
 #include <dom/dom_xml.h>
@@ -12,6 +13,7 @@
 #include <xml/dom2_eventsimpl.h>
 #include <xml/xml_tokenizer.h>
 #include <xml/dom_docimpl.h>
+#include <xml/dom_nodeimpl.h>
 
 #import "WebCoreDOM.h"
 
@@ -20,20 +22,18 @@ extern DOM::DOMString NSStringToDOMString(NSString *aString);
 
 @interface WebCoreDOMDocumentType (CorePrivate)
 + (WebCoreDOMDocumentType *)documentTypeWithImpl: (DOM::DocumentTypeImpl *)impl;
-- initWithImpl: (DOM::DocumentTypeImpl *)coreImpl;
-- (DOM::DocumentTypeImpl *)impl;
+- (DOM::DocumentTypeImpl *)documentTypeImpl;
 @end
 
 @interface WebCoreDOMImplementation (CorePrivate)
 + (WebCoreDOMImplementation *)implementationWithImpl: (DOM::DOMImplementationImpl *)impl;
 - initWithImpl: (DOM::DOMImplementationImpl *)coreImpl;
-- (DOM::DOMImplementationImpl *)impl;
+- (DOM::DOMImplementationImpl *)DOMImplementationImpl;
 @end
 
 @interface WebCoreDOMDocument (CorePrivate)
 + (WebCoreDOMDocument *)documentWithImpl: (DOM::DocumentImpl *)impl;
-- initWithImpl: (DOM::DocumentImpl *)coreImpl;
-- (DOM::DocumentImpl *)impl;
+- (DOM::DocumentImpl *)documentImpl;
 @end
 
 @interface WebCoreDOMNamedNodeMap (CorePrivate)

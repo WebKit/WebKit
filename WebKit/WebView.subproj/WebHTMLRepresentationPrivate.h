@@ -9,4 +9,5 @@
 
 @interface WebHTMLRepresentation (WebPrivate)
 - (WebBridge *)_bridge;
+- (void)printDOMTree;
 @end

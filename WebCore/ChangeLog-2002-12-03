@@ -1,3 +1,67 @@
+2002-10-11  Richard Williamson   <rjw@apple.com>
+
+        More DOM/attributed string work.  Still need to fix more
+        inappropriate casting problems.
+        
+        * khtml/dom/dom_node.cpp:
+        (Node::lastChild):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::lastChild):
+        (NodeBaseImpl::lastChild):
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/KWQKHTMLPartImpl.cpp:
+        (KWQKHTMLPartImpl::selectionStartOffset):
+        (KWQKHTMLPartImpl::selectionEndOffset):
+        (KWQKHTMLPartImpl::selectionStart):
+        (KWQKHTMLPartImpl::selectionEnd):
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge DOMDocument]):
+        (-[WebCoreBridge setSelectionFrom:startOffset:to:endOffset:]):
+        (attributedString):
+        (-[WebCoreBridge selectedAttributedString]):
+        (-[WebCoreBridge attributedStringFrom:startOffset:to:endOffset:]):
+        * kwq/WebCoreDOMDocument.mm:
+        (-[WebCoreDOMDocumentType DOM::]):
+        (-[WebCoreDOMDocumentType name]):
+        (-[WebCoreDOMDocumentType entities]):
+        (-[WebCoreDOMDocumentType notations]):
+        (-[WebCoreDOMDocumentType publicId]):
+        (-[WebCoreDOMDocumentType systemId]):
+        (-[WebCoreDOMDocumentType internalSubset]):
+        (-[WebCoreDOMImplementation DOM::]):
+        (-[WebCoreDOMImplementation hasFeature::]):
+        (-[WebCoreDOMImplementation createDocument:::]):
+        (+[WebCoreDOMDocument documentWithImpl:DOM::]):
+        (-[WebCoreDOMDocument DOM::]):
+        (-[WebCoreDOMDocument doctype]):
+        (-[WebCoreDOMDocument implementation]):
+        (-[WebCoreDOMDocument documentElement]):
+        (-[WebCoreDOMDocument createElement:]):
+        (-[WebCoreDOMDocument createElementNS::]):
+        (-[WebCoreDOMDocument createDocumentFragment]):
+        (-[WebCoreDOMDocument createTextNode:]):
+        (-[WebCoreDOMDocument createComment:]):
+        (-[WebCoreDOMDocument createCDATASection:]):
+        (-[WebCoreDOMDocument createProcessingInstruction::]):
+        (-[WebCoreDOMDocument createAttribute:]):
+        (-[WebCoreDOMDocument createAttributeNS::]):
+        (-[WebCoreDOMDocument createEntityReference:]):
+        (-[WebCoreDOMDocument getElementById:]):
+        (-[WebCoreDOMDocument getElementsByTagName:]):
+        (-[WebCoreDOMDocument getElementsByTagNameNS::]):
+        (-[WebCoreDOMDocument importNode::]):
+        * kwq/WebCoreDOMNode.mm:
+        (-[WebCoreDOMNode initWithImpl:DOM::]):
+        (-[WebCoreDOMNode firstChild]):
+        (-[WebCoreDOMNode lastChild]):
+        * kwq/WebCoreDOMPrivate.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectionFrom:startOffset:to:endOffset:]):
+        (recursive_toHTML):
+        (attributedString):
+
 2002-10-11  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3058829, assertion caused by table cell with

@@ -41,48 +41,42 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
     return [[(WebCoreDOMDocumentType *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
 
-- initWithImpl: (DOM::DocumentTypeImpl *)coreImpl
+- (DOM::DocumentTypeImpl *)documentTypeImpl
 {
-    [super initWithImpl:coreImpl];
-    return self;
-}
-
-- (DOM::DocumentTypeImpl *)impl
-{
-    return (DOM::DocumentTypeImpl *)impl;
+    return static_cast<DOM::DocumentTypeImpl *>(impl);
 }
 
 - (NSString *)name
 {
-    DOM::DOMString name = [self impl]->name();
+    DOM::DOMString name = [self documentTypeImpl]->name();
     return domStringToNSString(name);
 }
 
 - (id<WebDOMNamedNodeMap>)entities
 {
-    return [WebCoreDOMNamedNodeMap namedNodeMapWithImpl:[self impl]->entities()];
+    return [WebCoreDOMNamedNodeMap namedNodeMapWithImpl:[self documentTypeImpl]->entities()];
 }
 
 - (id<WebDOMNamedNodeMap>)notations
 {
-    return [WebCoreDOMNamedNodeMap namedNodeMapWithImpl:[self impl]->entities()];
+    return [WebCoreDOMNamedNodeMap namedNodeMapWithImpl:[self documentTypeImpl]->entities()];
 }
 
 - (NSString *)publicId
 {
-    DOM::DOMString publicId = [self impl]->publicId();
+    DOM::DOMString publicId = [self documentTypeImpl]->publicId();
     return domStringToNSString(publicId);
 }
 
 - (NSString *)systemId
 {
-    DOM::DOMString systemId = [self impl]->systemId();
+    DOM::DOMString systemId = [self documentTypeImpl]->systemId();
     return domStringToNSString(systemId);
 }
 
 - (NSString *)internalSubset
 {
-    DOM::DOMString internalSubset = [self impl]->internalSubset();
+    DOM::DOMString internalSubset = [self documentTypeImpl]->internalSubset();
     return domStringToNSString(internalSubset);
 }
 @end
@@ -95,28 +89,20 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
     return [[(WebCoreDOMImplementation *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
 
-- initWithImpl: (DOM::DOMImplementationImpl *)coreImpl
-{
-    [super init];
-    impl = coreImpl;
-    impl->ref();
-    return self;
-}
-
 - (void)dealloc
 {
     impl->deref();
     [super dealloc];
 }
 
-- (DOM::DOMImplementationImpl *)impl
+- (DOM::DOMImplementationImpl *)DOMImplementationImpl
 {
-    return (DOM::DOMImplementationImpl *)impl;
+    return static_cast<DOM::DOMImplementationImpl *>(impl);
 }
 
 - (BOOL)hasFeature: (NSString *)feature : (NSString *)version
 {
-    return [self impl]->hasFeature(NSStringToDOMString(feature),NSStringToDOMString(version));
+    return [self DOMImplementationImpl]->hasFeature(NSStringToDOMString(feature),NSStringToDOMString(version));
 }
 
 - (id<WebDOMDocumentType>)createDocumentType: (NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId;
@@ -124,7 +110,7 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
     DOM::DOMString _qualifiedName = NSStringToDOMString(qualifiedName);
     DOM::DOMString _publicId = NSStringToDOMString(publicId);
     DOM::DOMString _systemId = NSStringToDOMString(systemId);
-    DOM::DOMImplementation instance = DOM::DOMImplementationImpl::createInstance([self impl]);
+    DOM::DOMImplementation instance = DOM::DOMImplementationImpl::createInstance([self DOMImplementationImpl]);
     DOM::DocumentType ret;
     
     ret = instance.createDocumentType (_qualifiedName, _publicId, _systemId);
@@ -136,8 +122,8 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 {
     DOM::DOMString _namespaceURI = NSStringToDOMString(namespaceURI);
     DOM::DOMString _qualifiedName = NSStringToDOMString(qualifiedName);
-    DOM::DOMImplementation instance = DOM::DOMImplementationImpl::createInstance([self impl]);
-    DOM::DocumentType docTypeInstance = DOM::DocumentTypeImpl::createInstance([(WebCoreDOMDocumentType *)doctype impl]);
+    DOM::DOMImplementation instance = DOM::DOMImplementationImpl::createInstance([self DOMImplementationImpl]);
+    DOM::DocumentType docTypeInstance = DOM::DocumentTypeImpl::createInstance([(WebCoreDOMDocumentType *)doctype documentTypeImpl]);
     DOM::Document ret;
     
     ret = instance.createDocument (_namespaceURI, _qualifiedName, docTypeInstance);
@@ -152,76 +138,72 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 
 + (WebCoreDOMDocument *)documentWithImpl: (DOM::DocumentImpl *)_impl
 {
-    return [[(WebCoreDOMDocument *)[[self class] alloc] initWithImpl: _impl] autorelease];
+    printf ("documentWithImpl:  _impl = %p, lastChild = %p\n", _impl, _impl->lastChild());
+    return [[(WebCoreDOMDocument *)[WebCoreDOMDocument alloc] initWithImpl: _impl] autorelease];
 }
 
-- initWithImpl: (DOM::DocumentImpl *)coreImpl
+- (DOM::DocumentImpl *)documentImpl
 {
-    [super initWithImpl:coreImpl];
-    return self;
+    return static_cast<DOM::DocumentImpl *>(impl);
 }
 
-- (DOM::DocumentImpl *)impl
-{
-    return (DOM::DocumentImpl *)impl;
-}
 
 - (id<WebDOMDocumentType>)doctype
 {
-    return [WebCoreDOMDocumentType documentTypeWithImpl: [self impl]->doctype()];
+    return [WebCoreDOMDocumentType documentTypeWithImpl: [self documentImpl]->doctype()];
 }
 
 - (id<WebDOMImplementation>)implementation
 {
-    return [WebCoreDOMImplementation implementationWithImpl: [self impl]->implementation()];
+    return [WebCoreDOMImplementation implementationWithImpl: [self documentImpl]->implementation()];
 }
 
 - (id<WebDOMElement>)documentElement
 {
-    return [WebCoreDOMElement elementWithImpl: [self impl]->documentElement()];
+    return [WebCoreDOMElement elementWithImpl: [self documentImpl]->documentElement()];
 }
 
 - (id<WebDOMElement>)createElement:(NSString *)tagName
 {
-    return [WebCoreDOMElement elementWithImpl: [self impl]->createElement(NSStringToDOMString(tagName))];
+    return [WebCoreDOMElement elementWithImpl: [self documentImpl]->createElement(NSStringToDOMString(tagName))];
 }
 
 - (id<WebDOMElement>)createElementNS:(NSString *)namespaceURI :(NSString *)qualifiedName
 {
-    return [WebCoreDOMElement elementWithImpl: [self impl]->createElementNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(qualifiedName))];
+    return [WebCoreDOMElement elementWithImpl: [self documentImpl]->createElementNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(qualifiedName))];
 }
 
 - (id<WebDOMDocumentFragment>)createDocumentFragment
 {
-    return [WebCoreDOMDocumentFragment documentFragmentWithImpl: [self impl]->createDocumentFragment()];
+    return [WebCoreDOMDocumentFragment documentFragmentWithImpl: [self documentImpl]->createDocumentFragment()];
 }
 
 - (id<WebDOMText>)createTextNode:(NSString *)data
 {
-    return [WebCoreDOMText textWithImpl: [self impl]->createTextNode(NSStringToDOMString(data))];
+    return [WebCoreDOMText textWithImpl: [self documentImpl]->createTextNode(NSStringToDOMString(data))];
 }
 
 - (id<WebDOMComment>)createComment:(NSString *)data
 {
-    return [WebCoreDOMComment commentWithImpl: [self impl]->createComment(NSStringToDOMString(data))];
+    return [WebCoreDOMComment commentWithImpl: [self documentImpl]->createComment(NSStringToDOMString(data))];
 }
 
 - (id<WebDOMCDATASection>)createCDATASection:(NSString *)data
 {
-    return [WebCoreDOMCDATASection CDATASectionWithImpl: [self impl]->createCDATASection(NSStringToDOMString(data))];
+    return [WebCoreDOMCDATASection CDATASectionWithImpl: [self documentImpl]->createCDATASection(NSStringToDOMString(data))];
 }
 
 - (id<WebDOMProcessingInstruction>)createProcessingInstruction:(NSString *)target :(NSString *)data
 {
     DOM::DOMString _target = NSStringToDOMString(target);
     DOM::DOMString _data = NSStringToDOMString(data);
-    return [WebCoreDOMProcessingInstruction processingInstructionWithImpl: [self impl]->createProcessingInstruction(_target,_data)];
+    return [WebCoreDOMProcessingInstruction processingInstructionWithImpl: [self documentImpl]->createProcessingInstruction(_target,_data)];
 }
 
 - (id<WebDOMAttr>)createAttribute:(NSString *)name
 {
     DOM::DOMString _name = NSStringToDOMString(name);
-    DOM::Document instance = DOM::DocumentImpl::createInstance([self impl]);
+    DOM::Document instance = DOM::DocumentImpl::createInstance([self documentImpl]);
     DOM::AttrImpl *attr = (DOM::AttrImpl *)instance.createAttribute(_name).handle();
     return [WebCoreDOMAttr attrWithImpl: attr];
 }
@@ -230,7 +212,7 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 {
     DOM::DOMString _namespaceURI = NSStringToDOMString(namespaceURI);
     DOM::DOMString _qualifiedName = NSStringToDOMString(qualifiedName);
-    DOM::Document instance = DOM::DocumentImpl::createInstance([self impl]);
+    DOM::Document instance = DOM::DocumentImpl::createInstance([self documentImpl]);
     DOM::Attr ret;
     
     ret= instance.createAttributeNS (_namespaceURI,_qualifiedName);
@@ -240,19 +222,19 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 
 - (id<WebDOMEntityReference>)createEntityReference:(NSString *)name
 {
-    return [WebCoreDOMEntityReference entityReferenceWithImpl: [self impl]->createEntityReference(NSStringToDOMString(name))];
+    return [WebCoreDOMEntityReference entityReferenceWithImpl: [self documentImpl]->createEntityReference(NSStringToDOMString(name))];
 }
 
 - (id<WebDOMElement>)getElementById:(NSString *)elementId
 {
     DOM::DOMString _elementId = NSStringToDOMString(elementId);
-    return [WebCoreDOMElement elementWithImpl: [self impl]->getElementById(_elementId)];
+    return [WebCoreDOMElement elementWithImpl: [self documentImpl]->getElementById(_elementId)];
 }
 
 - (id<WebDOMNodeList>)getElementsByTagName:(NSString *)tagname
 {
     DOM::DOMString _tagname = NSStringToDOMString(tagname);
-    DOM::Document instance = DOM::DocumentImpl::createInstance([self impl]);
+    DOM::Document instance = DOM::DocumentImpl::createInstance([self documentImpl]);
     DOM::NodeListImpl *nodeList = (DOM::NodeListImpl *)instance.getElementsByTagName(_tagname).handle();
     return [WebCoreDOMNodeList nodeListWithImpl: nodeList];
 }
@@ -261,7 +243,7 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 {
     DOM::DOMString _namespaceURI = NSStringToDOMString(namespaceURI);
     DOM::DOMString _localName = NSStringToDOMString(localName);
-    DOM::Document instance = DOM::DocumentImpl::createInstance([self impl]);
+    DOM::Document instance = DOM::DocumentImpl::createInstance([self documentImpl]);
     DOM::NodeList ret;
     
     ret = instance.getElementsByTagNameNS(_namespaceURI,_localName);
@@ -272,7 +254,7 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 - (id<WebDOMNode>)importNode:importedNode :(BOOL)deep
 {
     DOM::Node importNode([(WebCoreDOMNode *)importedNode impl]);
-    DOM::Document instance = DOM::DocumentImpl::createInstance([self impl]);
+    DOM::Document instance = DOM::DocumentImpl::createInstance([self documentImpl]);
     DOM::Node ret;
     
     ret = instance.importNode(importNode,deep);
