@@ -485,31 +485,33 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 
 void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e)
 {
-    // If we have a <td> that specifies a float property, in quirks mode we just drop the float
-    // property (Chris Lydon's blog is an example of a site afflicted by this problem).
-    // Sites also commonly use display:inline/block on <td>s and <table>s.  In quirks mode we force
-    // these tags to retain their display types.
-    if (!strictParsing && e) {
-        if (e->id() == ID_TD) {
-            style->setDisplay(TABLE_CELL);
-            style->setFloating(FNONE);
-        }
-        else if (e->id() == ID_TABLE)
-            style->setDisplay(style->isDisplayInlineType() ? INLINE_TABLE : TABLE);
-    }
+    // Cache our original display.
+    style->setOriginalDisplay(style->display());
 
-    // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
-    // position or float an inline, compact, or run-in.  Cache the original display, since it
-    // may be needed for positioned elements that have to compute their static normal flow
-    // positions.  We also force inline-level roots to be block-level.
-    // FIXME: For now we do not mutate pseudo styles.  This is because we do not yet support the
-    // ability to position and float generated content.  This is per the CSS 2 spec, but it's changing
-    // in CSS2.1.  For now, we will just support CSS2.
-    if (e) {
-        style->setOriginalDisplay(style->display());
-        if (style->display() != NONE && style->display() != BLOCK && style->display() != TABLE && style->display() != BOX &&
+    if (style->display() != NONE && e) {
+        // If we have a <td> that specifies a float property, in quirks mode we just drop the float
+        // property.
+        // Sites also commonly use display:inline/block on <td>s and <table>s.  In quirks mode we force
+        // these tags to retain their display types.
+        if (!strictParsing) {
+            if (e->id() == ID_TD) {
+                style->setDisplay(TABLE_CELL);
+                style->setFloating(FNONE);
+            }
+            else if (e->id() == ID_TABLE)
+                style->setDisplay(style->isDisplayInlineType() ? INLINE_TABLE : TABLE);
+        }
+
+        // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
+        // position or float an inline, compact, or run-in.  Cache the original display, since it
+        // may be needed for positioned elements that have to compute their static normal flow
+        // positions.  We also force inline-level roots to be block-level.
+        // FIXME: For now we do not mutate pseudo styles.  This is because we do not yet support the
+        // ability to position and float generated content.  This is per the CSS 2 spec, but it's changing
+        // in CSS2.1.  For now, we will just support CSS2.
+        if (style->display() != BLOCK && style->display() != TABLE && style->display() != BOX &&
             (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE ||
-            e->getDocument()->documentElement() == e)) {
+             e->getDocument()->documentElement() == e)) {
             if (style->display() == INLINE_TABLE)
                 style->setDisplay(TABLE);
             else if (style->display() == INLINE_BOX)
@@ -524,7 +526,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
                 style->setDisplay(BLOCK);
         }
     }
-    
+
     // Finally update our text decorations in effect, but don't allow text-decoration to percolate through
     // tables, inline blocks, inline tables, or run-ins.
     if (style->display() == TABLE || style->display() == INLINE_TABLE || style->display() == RUN_IN
