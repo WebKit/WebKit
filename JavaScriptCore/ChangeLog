@@ -1,5 +1,16 @@
 2005-01-12  Richard Williamson   <rjw@apple.com>
 
+	Avoid additional work on dealloc by adding early out to
+	removeNativeReference().  (This will save time on dealloc
+	for all ObjC DOM objects.)
+
+        Reviewed by Darin.
+
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::removeNativeReference):
+
+2005-01-12  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/3923356> REGRESSION: Java/JavaScript security checks working incorrectly
 
 	We were always returning the first "root" object for all runtime
