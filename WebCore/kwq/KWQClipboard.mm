@@ -65,7 +65,7 @@ KWQClipboard::AccessPolicy KWQClipboard::accessPolicy() const
 
 // FIXME hardwired for now, will use UTI
 static NSString *cocoaTypeFromMIMEType(const DOMString &type) {
-    QString qType = type.string();
+    QString qType = type.string().stripWhiteSpace();
 
     // two special cases for IE compatibility
     if (qType == "Text") {
@@ -73,44 +73,55 @@ static NSString *cocoaTypeFromMIMEType(const DOMString &type) {
     } else if (qType == "URL") {
         return NSURLPboardType;
     } 
-    
-    // Cut off any trailing charset - JS String are Unicode, which encapsulates this issue
-    int semicolon = qType.find(';');
-    if (semicolon >= 0) {
-        qType = qType.left(semicolon+1);
-    }
-    qType = qType.stripWhiteSpace();
 
-    if (!qType.compare("text/plain")) {
+    // Ignore any trailing charset - JS String are Unicode, which encapsulates the charset issue
+    if (!qType.compare("text/plain") || qType.startsWith("text/plain;")) {
         return NSStringPboardType;
-    } else if (!qType.compare("text/html")) {
-        return NSHTMLPboardType;
-    } else if (!qType.compare("text/rtf")) {
-        return NSRTFPboardType;
     } else if (!qType.compare("text/uri-list")) {
+        // special case because UTI doesn't work with Cocoa's URL type
         return NSURLPboardType;     // note fallback to NSFilenamesPboardType in caller
-    } else {
-        // FIXME - Better fallback for application/Foo might be to take Foo
-        return qType.getNSString();
     }
+    
+    // Try UTI now
+    NSString *mimeType = qType.getNSString();
+    CFStringRef UTIType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)mimeType, NULL);
+    if (UTIType) {
+        CFStringRef pbType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassNSPboardType);
+        CFRelease(UTIType);
+        if (pbType) {
+            [(NSString *)pbType autorelease];
+            return (NSString *)pbType;
+        }
+    }
+
+   // No mapping, just pass the whole string though
+    return qType.getNSString();
 }
 
 static QString MIMETypeFromCocoaType(NSString *type)
 {
+    // UTI may not do these right, so make sure we get the right, predictable result
     if ([type isEqualToString:NSStringPboardType]) {
         return QString("text/plain");
     } else if ([type isEqualToString:NSURLPboardType]
                || [type isEqualToString:NSFilenamesPboardType]) {
         return QString("text/uri-list");
-    } else if ([type isEqualToString:NSHTMLPboardType]) {
-        return QString("text/html");
-    } else if ([type isEqualToString:NSRTFPboardType]) {
-        return QString("text/rtf");
-    } else {
-        // FIXME - Better fallback for Foo might be application/Foo
-        // FIXME - Ignore way old _NSAsciiPboardType, used by 3.3 apps
-        return QString::fromNSString(type);
-    }    
+    }
+    
+    // Now try the general UTI mechanism
+    CFStringRef UTIType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (CFStringRef)type, NULL);
+    if (UTIType) {
+        CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassMIMEType);
+        CFRelease(UTIType);
+        if (mimeType) {
+            QString result = QString::fromNSString((NSString *)mimeType);
+            CFRelease(mimeType);
+            return result;
+        }
+    }
+
+    // No mapping, just pass the whole string though
+    return QString::fromNSString(type);
 }
 
 void KWQClipboard::clearData(const DOMString &type)
@@ -247,7 +258,12 @@ QStringList KWQClipboard::types() const
         unsigned count = [types count];
         unsigned i;
         for (i = 0; i < count; i++) {
-            QString qstr = MIMETypeFromCocoaType([types objectAtIndex:i]);
+            NSString *pbType = [types objectAtIndex:i];
+            if ([pbType isEqualToString:@"NeXT plain ascii pasteboard type"]) {
+                continue;   // skip this ancient type that gets auto-supplied by some system conversion
+            }
+
+            QString qstr = MIMETypeFromCocoaType(pbType);
             if (!result.contains(qstr)) {
                 result.append(qstr);
             }

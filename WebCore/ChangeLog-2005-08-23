@@ -1,3 +1,15 @@
+2004-07-21  Trey Matteson  <trey@apple.com>
+
+	DHTML dragging should use UTI for MIME-pboard type conversion
+
+        Reviewed by Ken
+
+        * kwq/KWQClipboard.mm:
+        (cocoaTypeFromMIMEType):  Use UTI, except for cases we need to hardwire.  Only cut off
+	MIME args following a semi-colon for text/plain.
+        (MIMETypeFromCocoaType): Use UTI, except for cases we need to hardwire.  
+        (KWQClipboard::types):  Filter out ancient NSAsciiPboardType so DHTML never sees this cruft.
+
 2004-07-21  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Trey
