@@ -946,8 +946,10 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
                 // and the x coordinate is to the left of the right edge of this box
                 // check to see if position goes in this box
                 int offset = box->offsetForPosition(_x - absx);
-                if (offset != -1)
-                    return VisiblePosition(element(), offset + box->m_start, DOWNSTREAM);
+                if (offset != -1) {
+                    EAffinity affinity = offset >= box->m_len && !box->nextOnLine() ? UPSTREAM : DOWNSTREAM;
+                    return VisiblePosition(element(), offset + box->m_start, affinity);
+                }
             }
             else if (!box->prevOnLine() && _x < absx + box->m_x) {
                 // box is first on line

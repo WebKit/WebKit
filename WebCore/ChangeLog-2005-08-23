@@ -1,3 +1,18 @@
+2005-03-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Fix for this bug:
+        
+        <rdar://problem/4051809> 8A413: Cursor-up in a mail message sometimes gets stuck (with specific reproducible case)
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::positionForCoordinates): Consider two lines: line-above and line-below. If the caret position in line-below
+        was at an x coordinate between half way through the x coordinate of the last character on the line-above and the
+        end of that same character, this bug would happen since the positioning code would assume that it could create a 
+        VisiblePosition with a DOWNSTREAM affinity. Now, I check to see if the character position on the line-above is the 
+        last character on that line, and if it is, I use UPSTREAM as the affinity.
+
 === Safari-407 ===
 
 2005-03-17  David Harrison  <harrison@apple.com>
