@@ -29,6 +29,7 @@
 
 #import "KWQFont.h"
 #import "KWQLogging.h"
+#import "KWQTextRendererFactory.h"
 
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
@@ -45,8 +46,11 @@ struct QFontMetricsPrivate
     }
     id <WebCoreTextRenderer> getRenderer()
     {
-        if (!_renderer) {
+        if (!_renderer || _rendererUsesPrinterFont != KWQTextRendererFactoryUsingPrinterFonts) {
+            id <WebCoreTextRenderer> oldRenderer = _renderer;
             _renderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFont:_font.getNSFont()] retain];
+            _rendererUsesPrinterFont = KWQTextRendererFactoryUsingPrinterFonts;
+            [oldRenderer release];
         }
         return _renderer;
     }
@@ -67,6 +71,7 @@ struct QFontMetricsPrivate
 private:
     QFont _font;
     id <WebCoreTextRenderer> _renderer;
+    bool _rendererUsesPrinterFont;
     
     QFontMetricsPrivate(const QFontMetricsPrivate&);
     QFontMetricsPrivate& operator=(const QFontMetricsPrivate&);

@@ -277,25 +277,33 @@ static int getLCDScaleParameters(void)
 {
     [super init];
     
-    cache = [[NSMutableDictionary alloc] init];
+    cacheForScreen = [[NSMutableDictionary alloc] init];
+    cacheForPrinter = [[NSMutableDictionary alloc] init];
     
     return self;
 }
 
 - (void)dealloc
 {
-    [cache release];
+    [cacheForScreen release];
+    [cacheForPrinter release];
     [viewBuffers release];
     [viewStack release];
     
     [super dealloc];
 }
 
-- (WebTextRenderer *)rendererWithFont:(NSFont *)font
+- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font
 {
+    return [self rendererWithFont:font usingPrinterFont:[self usingPrinterFonts]];
+}
+
+- (WebTextRenderer *)rendererWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont
+{
+    NSMutableDictionary *cache = usingPrinterFont ? cacheForPrinter : cacheForScreen;
     WebTextRenderer *renderer = [cache objectForKey:font];
     if (renderer == nil) {
-        renderer = [[WebTextRenderer alloc] initWithFont:font];
+        renderer = [[WebTextRenderer alloc] initWithFont:font usingPrinterFont:usingPrinterFont];
         [cache setObject:renderer forKey:font];
         [renderer release];
     }

@@ -49,9 +49,6 @@
 
     _private->needsLayout = YES;
 
-    _private->canDragTo = YES;
-    _private->canDragFrom = YES;
-
     return self;
 }
 
@@ -454,6 +451,10 @@
 {
     LOG(View, "%@ drawing", self);
     
+    if (_private->usingPrinterFonts) {
+        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:YES];
+    }
+
     BOOL subviewsWereSetAside = _private->subviewsSetAside;
     if (subviewsWereSetAside) {
         [self _restoreSubviews];
@@ -536,6 +537,10 @@
 
     if (subviewsWereSetAside) {
         [self _setAsideSubviews];
+    }
+
+    if (_private->usingPrinterFonts) {
+        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:NO];
     }
 }
 
@@ -739,6 +744,50 @@
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
+}
+
+// Does setNeedsDisplay:NO as a side effect. Useful for begin/endDocument.
+- (void)_setUsingPrinterFonts:(BOOL)usingPrinterFonts
+{
+    WebFrame *frame = [self _frame];
+    NSArray *subframes = [frame children];
+    unsigned n = [subframes count];
+    unsigned i;
+    for (i = 0; i != n; ++i) {
+        WebFrame *subframe = [subframes objectAtIndex:i];
+        WebFrameView *frameView = [subframe frameView];
+        if ([frameView isDocumentHTML]) {
+            [(WebHTMLView *)[frameView documentView] _setUsingPrinterFonts:usingPrinterFonts];
+        }
+    }
+
+    if (usingPrinterFonts != _private->usingPrinterFonts) {
+        _private->usingPrinterFonts = usingPrinterFonts;
+        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:usingPrinterFonts];
+        [self setNeedsToApplyStyles:YES];
+        [self setNeedsLayout:YES];
+        [self layout];
+        [self setNeedsDisplay:NO];
+        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:NO];
+    }
+}
+
+- (void)beginDocument
+{
+    // Must do this explicit display here, because otherwise the view might redisplay while the print
+    // sheet was up, using printer fonts (and looking different).
+    [self displayIfNeeded];
+    [self _setUsingPrinterFonts:YES];
+    [super beginDocument];
+    // There is a theoretical chance that someone could do some drawing between here and endDocument,
+    // if something caused setNeedsDisplay after this point. If so, it's not a big tragedy, because
+    // you'd simply see the printer fonts on screen. As of this writing, this does not happen with Safari.
+}
+
+- (void)endDocument
+{
+    [super endDocument];
+    [self _setUsingPrinterFonts:NO];
 }
 
 @end

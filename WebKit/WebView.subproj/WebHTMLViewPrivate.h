@@ -18,12 +18,10 @@
 @public
     BOOL needsLayout;
     BOOL needsToApplyStyles;
-    BOOL canDragTo;
-    BOOL canDragFrom;
-    BOOL liveAllowsScrolling;
     BOOL inWindow;
     BOOL inNextValidKeyView;
     BOOL ignoringMouseDraggedEvents;
+    BOOL usingPrinterFonts;
     
     id savedSubviews;
     BOOL subviewsSetAside;

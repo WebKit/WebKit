@@ -30,11 +30,14 @@ typedef struct UnicodeGlyphMap UnicodeGlyphMap;
     float ceiledSpaceWidth;
     float roundedSpaceWidth;
     float adjustedSpaceWidth;
+
+@private
+    BOOL usingPrinterFont;
 }
 
 + (BOOL)shouldBufferTextDrawing;
 
-- initWithFont:(NSFont *)font;
+- initWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont;
 
 - (float)_floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer numGlyphs: (int *)_numGlyphs letterSpacing: (int)ls wordSpacing: (int)ws fontFamilies: (NSString **)families;
 

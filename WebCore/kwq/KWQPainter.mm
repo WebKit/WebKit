@@ -31,10 +31,11 @@
 #import "KWQPointArray.h"
 
 #import "KWQAssertions.h"
+#import "KWQTextRendererFactory.h"
 
-#import "WebCoreTextRendererFactory.h"
-#import "WebCoreTextRenderer.h"
 #import "WebCoreImageRenderer.h"
+#import "WebCoreTextRenderer.h"
+#import "WebCoreTextRendererFactory.h"
 
 struct QPState {
     QPState() : paintingDisabled(false) { }
@@ -46,12 +47,13 @@ struct QPState {
 };
 
 struct QPainterPrivate {
-    QPainterPrivate() : lastTextRenderer(0) { }
-    ~QPainterPrivate() { [lastTextRenderer release]; }
+    QPainterPrivate() : textRenderer(0) { }
+    ~QPainterPrivate() { [textRenderer release]; }
     QPState state;
     QPtrStack<QPState> stack;
-    id<WebCoreTextRenderer>lastTextRenderer;
-    QFont lastFont;
+    id <WebCoreTextRenderer> textRenderer;
+    bool textRendererUsesPrinterFont;
+    QFont textRendererFont;
 };
 
 QPainter::QPainter() : data(new QPainterPrivate)
@@ -423,12 +425,15 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
 
 void QPainter::_updateRenderer(NSString **families)
 {
-    if (data->state.font != data->lastFont || data->lastTextRenderer == 0){
-        data->lastFont = data->state.font;
-        [data->lastTextRenderer release];
-        data->lastTextRenderer = 
-            [[[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFont: data->state.font.getNSFont()] retain];
+    if (data->textRenderer == 0
+            || data->textRendererUsesPrinterFont != KWQTextRendererFactoryUsingPrinterFonts
+            || data->state.font != data->textRendererFont) {
+        data->textRendererFont = data->state.font;
+        id <WebCoreTextRenderer> oldRenderer = data->textRenderer;
+        data->textRenderer = [[[WebCoreTextRendererFactory sharedFactory]
+            rendererWithFont:data->textRendererFont.getNSFont()] retain];
+        data->textRendererUsesPrinterFont = KWQTextRendererFactoryUsingPrinterFonts;
+        [oldRenderer release];
     }
 }
     
@@ -445,9 +450,9 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
     
     const UniChar* str = (const UniChar*)qstring.unicode();
     if (alignmentFlags & Qt::AlignRight)
-        x -= ROUND_TO_INT([data->lastTextRenderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: families]);
+        x -= ROUND_TO_INT([data->textRenderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: families]);
      
-    [data->lastTextRenderer drawCharacters:str stringLength:qstring.length()
+    [data->textRenderer drawCharacters:str stringLength:qstring.length()
         fromCharacterPosition:0 
         toCharacterPosition:qstring.length() 
         atPoint:NSMakePoint(x, y)
@@ -471,7 +476,7 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     
     _updateRenderer(families);
 
-    [data->lastTextRenderer
+    [data->textRenderer
     	drawCharacters:(const UniChar *)str stringLength:len
         fromCharacterPosition:from 
         toCharacterPosition:to 
@@ -490,7 +495,7 @@ void QPainter::drawLineForText(int x, int y, int yOffset, int width)
     if (data->state.paintingDisabled)
         return;
 
-    [data->lastTextRenderer
+    [data->textRenderer
         drawLineForCharacters: NSMakePoint(x, y)
                yOffset:(float)yOffset
              withWidth: width

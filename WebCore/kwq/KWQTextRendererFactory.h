@@ -22,55 +22,5 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
-#import "WebCoreTextRendererFactory.h"
-
-#import "KWQAssertions.h"
-
-bool KWQTextRendererFactoryUsingPrinterFonts;
-
-@implementation WebCoreTextRendererFactory
-
-static WebCoreTextRendererFactory *sharedFactory;
-
-+ (WebCoreTextRendererFactory *)sharedFactory
-{
-    return sharedFactory;
-}
-
-- init
-{
-    [super init];
-    
-    ASSERT(!sharedFactory);
-    sharedFactory = [self retain];
-    
-    return self;
-}
-
-- (void)setUsingPrinterFonts:(BOOL)usingPrinterFonts
-{
-    KWQTextRendererFactoryUsingPrinterFonts = usingPrinterFonts;
-}
-
-- (BOOL)usingPrinterFonts
-{
-    return KWQTextRendererFactoryUsingPrinterFonts;
-}
-
-- (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
-{
-    return nil;
-}
-
-- (BOOL)isFontFixedPitch:(NSFont *)font
-{
-    return NO;
-}
-
-- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font
-{
-    return nil;
-}
-
-@end
+ 
+extern bool KWQTextRendererFactoryUsingPrinterFonts;

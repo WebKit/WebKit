@@ -92,7 +92,7 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
         currentFont = [font retain];
         [currentRenderer release];
         [WebTextRendererFactory createSharedFactory];
-        currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font] retain];
+        currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO] retain];
         ellipsis = ELLIPSIS_CHARACTER;
         currentEllipsisWidth = stringWidth(currentRenderer, &ellipsis, 1);
     }

@@ -11,7 +11,8 @@
 
 @interface WebTextRendererFactory : WebCoreTextRendererFactory
 {
-    NSMutableDictionary *cache;
+    NSMutableDictionary *cacheForScreen;
+    NSMutableDictionary *cacheForPrinter;
     NSMutableDictionary *viewBuffers;
     NSMutableArray *viewStack;
 }
@@ -21,12 +22,12 @@
 - (NSFont *)cachedFontFromFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size;
 - init;
 
-- (WebTextRenderer *)rendererWithFont:(NSFont *)font;
+- (WebTextRenderer *)rendererWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont;
 
 - (BOOL)coalesceTextDrawing;
 - (void)endCoalesceTextDrawing;
 - (void)startCoalesceTextDrawing;
 
-- (WebGlyphBuffer *)glyphBufferForFont: (NSFont *)font andColor: (NSColor *)color;
+- (WebGlyphBuffer *)glyphBufferForFont:(NSFont *)font andColor:(NSColor *)color;
 
 @end

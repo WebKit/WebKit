@@ -457,7 +457,7 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
 }
 
 
-- initWithFont:(NSFont *)f
+- initWithFont:(NSFont *)f usingPrinterFont:(BOOL)p
 {
     if ([f glyphPacking] != NSNativeShortGlyphPacking &&
         [f glyphPacking] != NSTwoByteGlyphPacking)
@@ -465,7 +465,8 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
         
     [super init];
     
-    font = [f retain];
+    font = [(p ? [f printerFont] : [f screenFont]) retain];
+    usingPrinterFont = p;
     
     OSStatus errCode;
     ATSUStyle style;
@@ -981,7 +982,7 @@ static const char *joiningNames[] = {
                 int cNumGlyphs;
                 ATSGlyphRef localGlyphBuffer[clusterLength*4];
                 
-                lastWidth = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] 
+                lastWidth = [[[WebTextRendererFactory sharedFactory] rendererWithFont:substituteFont usingPrinterFont:usingPrinterFont]
                                 _floatWidthForCharacters: _characters 
                                 stringLength: clusterLength 
                                 fromCharacterPosition: 0 numberOfCharacters: clusterLength 

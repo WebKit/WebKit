@@ -24,7 +24,10 @@
  */
 
 #import "WebCoreTextRendererFactory.h"
+
 #import "KWQAssertions.h"
+
+bool KWQTextRendererFactoryUsingPrinterFonts;
 
 @implementation WebCoreTextRendererFactory
 
@@ -33,11 +36,6 @@ static WebCoreTextRendererFactory *sharedFactory;
 + (WebCoreTextRendererFactory *)sharedFactory
 {
     return sharedFactory;
-}
-
-- (BOOL)isFontFixedPitch:(NSFont *)font
-{
-    return NO;
 }
 
 - init
@@ -50,12 +48,27 @@ static WebCoreTextRendererFactory *sharedFactory;
     return self;
 }
 
-- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font
+- (void)setUsingPrinterFonts:(BOOL)usingPrinterFonts
+{
+    KWQTextRendererFactoryUsingPrinterFonts = usingPrinterFonts;
+}
+
+- (BOOL)usingPrinterFonts
+{
+    return KWQTextRendererFactoryUsingPrinterFonts;
+}
+
+- (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
 {
     return nil;
 }
 
-- (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
+- (BOOL)isFontFixedPitch:(NSFont *)font
+{
+    return NO;
+}
+
+- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font
 {
     return nil;
 }

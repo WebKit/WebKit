@@ -1,3 +1,25 @@
+2003-03-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3203869 -- Monaco 9 looks different in Safari than in TextEdit (uses outline instead of bitmap)
+
+        * kwq/KWQFontMetrics.mm: (QFontMetricsPrivate::getRenderer): Get a new renderer
+        if the one we have is wrong printer-vs-screen-wise. For speed, use a global
+        variable rather than methods.
+        * kwq/KWQPainter.mm: (QPainter::_updateRenderer): Get a new renderer if the
+        one we have is wrong printer-vs-screen-wise. For speed, use a global variable
+        rather than methods.
+
+        * kwq/KWQTextRendererFactory.h: Added. Exposes a global variable that tells whether we are
+        in global "using printer font" mode.
+        * kwq/WebCoreTextRendererFactory.h: Added setUsingPrinterFonts: and usingPrinterFonts methods.
+        * kwq/WebCoreTextRendererFactory.m:
+        (-[WebCoreTextRendererFactory setUsingPrinterFonts:]): Added. Sets global.
+        (-[WebCoreTextRendererFactory usingPrinterFonts]): Added. Returns value of global.
+
+        * WebCore.pbproj/project.pbxproj: Added KWQTextRendererFactory.h.
+
 2003-03-22  David Hyatt  <hyatt@apple.com>
 
 	Fix the top of the gamespot.com page on the PLT.  The
@@ -423,8 +445,6 @@
         * khtml/css/cssstyleselector.cpp:
 
 2003-03-14  Maciej Stachowiak  <mjs@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
 	- fixed 3190846 - REGRESSION: can't use Fidelity NetBenefits account
 	
@@ -1431,8 +1451,6 @@
 
 	The bug # is 3175670.
 	
-        Reviewed by NOBODY (OOPS!).
-
         * khtml/rendering/bidi.cpp:
 
 2003-02-25  David Hyatt  <hyatt@apple.com>
@@ -1909,8 +1927,6 @@
 	decl object (owned by the table).  This stops every cell in a table
 	from having the exact same values copied on the cell itself.
 	
-        Reviewed by NOBODY (OOPS!).
-
         * khtml/css/cssstyleselector.cpp:
         * khtml/css/cssstyleselector.h:
         * khtml/html/html_tableimpl.cpp:
@@ -5402,8 +5418,6 @@
 	merging calcAbsoluteVertical to KHTML's trunk and then fixing
 	a math error in the bottom computation.
 	
-        Reviewed by NOBODY (OOPS!).
-
         * khtml/html/html_baseimpl.cpp:
         (HTMLBodyElementImpl::parseAttribute):
         * khtml/rendering/render_box.cpp:

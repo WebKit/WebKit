@@ -1,3 +1,53 @@
+2003-03-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3203869 -- Monaco 9 looks different in Safari than in TextEdit (uses outline instead of bitmap)
+
+        * Misc.subproj/WebKitNSStringExtras.m: (-[NSString _web_widthWithFont:]):
+        Pass usingPrinterFont:NO, since this is used exclusively for on-screen text, not printing.
+        * Misc.subproj/WebStringTruncator.m: (truncateString): Ditto.
+
+        * WebCoreSupport.subproj/WebTextRenderer.h: Add usingPrinterFont boolean field and parameter to init.
+        * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer initWithFont:forScreen:]):
+        Add usingPrinterFont parameter, and get the screen font if it's NO, also store the boolean
+        for later use.
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding: attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:fontFamilies:]):
+        Pass the usingPrinterFont parameter through when getting a substitute font.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.h: Add separate caches for screen and printing text
+        renderers. Add usingPrinterFont parameter to our rendererWithFont: method (the one inherited from WebCore
+        still has no parameter).
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory init]): Create both caches.
+        (-[WebTextRendererFactory dealloc]): Release both caches.
+        (-[WebTextRendererFactory rendererWithFont:]): Call the new rendererWithFont:usingPrinterFont: method,
+        passing usingPrinterFonts from the WebCore side. Thus any fonts fetched by WebCore during printing
+        are printing fonts, and otherwise they are screen fonts.
+        (-[WebTextRendererFactory rendererWithFont:usingPrinterFont:]): Added. Has the code from the old
+        rendererWithFont: method, but passes the usingPrinterFont parameter through to the WebTextRenderer
+        init method.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView initWithFrame:]): Don't set unused canDragTo and canDragFrom fields.
+        (-[WebHTMLView drawRect:]): Call -[WebTextRendererFactory setUsingPrinterFonts:] here if we are printing,
+        as indicated by the usingPrinterFonts field. The reason we do this only inside drawRect is so we don't
+        affect redraws of other HTML views that are not being printed that might be in "needs display" state when
+        printing began. 
+        (-[WebHTMLView _setUsingPrinterFonts:]): Added. Calls _setUsingPrinterFonts on all WebHTMLViews inside
+        this one, then does the work for this one. Uses the frame hierarchy rather than the view hierarchy, but
+        either would work. If printer font state is changing, then sets the WebTextRendererFactory mode, then
+        forces a layout and application of styles, but without triggering display.
+        (-[WebHTMLView beginDocument]): Do an explicit display so this view does not have to be displayed while
+        it is in "use printer fonts" mode. Then call _setUsingPrinterFonts:YES so that drawRect will use printer
+        fonts, and also that the WebCore data structures and layout will be updated to reflect printer fonts as
+        opposed to screen fonts.
+        (-[WebHTMLView endDocument]): Call _setUsingPrinterFonts:NO to restore things to normal after printing.
+        * WebView.subproj/WebHTMLViewPrivate.h: Removed unused canDragTo, canDragFrom, and liveAllowsScrolling
+        fields. Added usingPrinterFonts field.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2003-03-24  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
