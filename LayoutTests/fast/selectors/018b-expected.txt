@@ -7,7 +7,7 @@ layer at (0,0) size 800x291
         RenderBlock {P} at (0,0) size 784x36
           RenderText {TEXT} at (0,0) size 749x18
             text run at (0,0) width 749: "The background color of this paragraph should turn to green when the mouse pointer hovers over any of the following:"
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (749,0) size 0x18
           RenderInline {STRONG} at (0,0) size 63x18
             RenderText {TEXT} at (0,18) size 63x18
               text run at (0,18) width 63: "This text."
