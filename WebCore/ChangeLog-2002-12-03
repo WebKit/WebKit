@@ -1,5 +1,11 @@
 2002-06-03  Darin Adler  <darin@apple.com>
 
+	Forgot one file.
+
+	* kwq/qt/qframe.h: Added.
+
+2002-06-03  Darin Adler  <darin@apple.com>
+
 	Get rid of many unneeded APPLE_CHANGES.
 	Also get rid of _KWQ_ and _KWQ_PEDANTIC_.
 
