@@ -1024,10 +1024,9 @@ JSEventListener *Window::getJSEventListener(const Value& val, bool html)
     return 0;
   ObjectImp *listenerObject = static_cast<ObjectImp *>(val.imp());
 
-  QPtrListIterator<JSEventListener> it(jsEventListeners);
-  for (; it.current(); ++it)
-    if (it.current()->listenerObjImp() == listenerObject)
-      return it.current();
+  JSEventListener *existingListener = jsEventListeners[listenerObject];
+  if (existingListener)
+    return existingListener;
 
   // Note that the JSEventListener constructor adds it to our jsEventListeners list
   return new JSEventListener(Object(listenerObject), Object(this), html);

@@ -41,12 +41,12 @@ JSEventListener::JSEventListener(Object _listener, const Object &_win, bool _htm
     //fprintf(stderr,"JSEventListener::JSEventListener this=%p listener=%p\n",this,listener.imp());
     html = _html;
     win = _win;
-    static_cast<Window*>(win.imp())->jsEventListeners.append(this);
+    static_cast<Window*>(win.imp())->jsEventListeners.insert(_listener.imp(), this);
 }
 
 JSEventListener::~JSEventListener()
 {
-    static_cast<Window*>(win.imp())->jsEventListeners.removeRef(this);
+    static_cast<Window*>(win.imp())->jsEventListeners.remove(listener.imp());
     //fprintf(stderr,"JSEventListener::~JSEventListener this=%p listener=%p\n",this,listener.imp());
 }
 

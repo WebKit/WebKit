@@ -1,3 +1,18 @@
+2003-11-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3474756 - Creating HTML event listeners takes 5% of time on particular slow intel page
+	
+        * khtml/ecma/kjs_window.h: Make jsEventListeners a hashtable keyed
+	by listener object, not a list.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::getJSEventListener): Do hashtable lookup for existing listener instead of
+	walking list.
+        * khtml/ecma/kjs_events.cpp:
+        (JSEventListener::JSEventListener): Use hashtable insert instead of list append.
+        (JSEventListener::~JSEventListener): Use hashtable remove instead of list removeRef.
+
 2003-11-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

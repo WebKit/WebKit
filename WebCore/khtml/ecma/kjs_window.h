@@ -106,7 +106,7 @@ namespace KJS {
     // Set the current "event" object
     void setCurrentEvent( DOM::Event *evt );
 
-    QPtrList<JSEventListener> jsEventListeners;
+    QPtrDict<JSEventListener> jsEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, Range,
