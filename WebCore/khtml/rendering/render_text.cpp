@@ -1761,24 +1761,24 @@ const Font *RenderText::htmlFont(bool firstLine) const
 
 long RenderText::caretMinOffset() const
 {
-    if (!firstTextBox()) 
+    InlineTextBox *box = firstTextBox();
+    if (!box)
         return 0;
-    // EDIT FIXME: it is *not* guaranteed that the first run contains the lowest offset
-    // Either make this a linear search (slow),
-    // or maintain an index (needs much mem),
-    // or calculate and store it in bidi.cpp (needs calculation even if not needed)
-    return firstTextBox()->m_start;
+    int minOffset = box->m_start;
+    for (box = box->nextTextBox(); box; box = box->nextTextBox())
+        minOffset = kMin(minOffset, box->m_start);
+    return minOffset;
 }
 
 long RenderText::caretMaxOffset() const
 {
-    if (!firstTextBox()) 
+    InlineTextBox* box = lastTextBox();
+    if (!box) 
         return str->l;
-    // EDIT FIXME: it is *not* guaranteed that the last run contains the highest offset
-    // Either make this a linear search (slow),
-    // or maintain an index (needs much mem),
-    // or calculate and store it in bidi.cpp (needs calculation even if not needed)
-    return lastTextBox()->m_start + lastTextBox()->m_len;
+    int maxOffset = box->m_start - box->m_len;
+    for (box = box->prevTextBox(); box; box = box->prevTextBox())
+	maxOffset = kMax(maxOffset,box->m_start + box->m_len);
+    return maxOffset;
 }
 
 unsigned long RenderText::caretMaxRenderedOffset() const

@@ -1,3 +1,11 @@
+2005-03-07  Christy Warren  <set EMAIL_ADDRESS environment variable>
+
+        Reviewed by Darin
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretMinOffset): modified to handle BIDI case by checking all text boxes for min offset
+        (RenderText::caretMaxOffset): modified to handle BIDI case by checking all text boxes for max offset
+
 2005-03-07  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken.
