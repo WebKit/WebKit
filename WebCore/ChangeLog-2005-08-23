@@ -1,3 +1,11 @@
+2004-04-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        * kwq/DOMCSS.h: Changed DOMCSS2Properties to be a category on DOMCSSStyleDeclaration
+        (after API review, oops!, but I doubt anyone will even notice).
+        * kwq/DOM-CSS.mm: Implemented the entire DOMCSS2Properties category.
+
 2004-04-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris

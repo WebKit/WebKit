@@ -203,7 +203,7 @@ enum {
 - (DOMCSSStyleDeclaration *)style;
 @end
 
-@interface DOMCSS2Properties : DOMObject
+@interface DOMCSSStyleDeclaration (DOMCSS2Properties)
 - (NSString *)azimuth;
 - (void)setAzimuth:(NSString *)azimuth;
 - (NSString *)background;

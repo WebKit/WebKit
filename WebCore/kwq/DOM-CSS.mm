@@ -1178,3 +1178,1229 @@ void removeWrapperForRGB(QRgb value)
 @end
 
 //------------------------------------------------------------------------------------------
+
+@implementation DOMCSSStyleDeclaration (DOMCSS2Properties)
+
+- (NSString *)azimuth
+{
+    return [self getPropertyValue:@"azimuth"];
+}
+
+- (void)setAzimuth:(NSString *)azimuth
+{
+    [self setProperty:@"azimuth" :azimuth :@""];
+}
+
+- (NSString *)background
+{
+    return [self getPropertyValue:@"background"];
+}
+
+- (void)setBackground:(NSString *)background
+{
+    [self setProperty:@"background" :background :@""];
+}
+
+- (NSString *)backgroundAttachment
+{
+    return [self getPropertyValue:@"backgroundAttachment"];
+}
+
+- (void)setBackgroundAttachment:(NSString *)backgroundAttachment
+{
+    [self setProperty:@"backgroundAttachment" :backgroundAttachment :@""];
+}
+
+- (NSString *)backgroundColor
+{
+    return [self getPropertyValue:@"backgroundColor"];
+}
+
+- (void)setBackgroundColor:(NSString *)backgroundColor
+{
+    [self setProperty:@"backgroundColor" :backgroundColor :@""];
+}
+
+- (NSString *)backgroundImage
+{
+    return [self getPropertyValue:@"backgroundImage"];
+}
+
+- (void)setBackgroundImage:(NSString *)backgroundImage
+{
+    [self setProperty:@"backgroundImage" :backgroundImage :@""];
+}
+
+- (NSString *)backgroundPosition
+{
+    return [self getPropertyValue:@"backgroundPosition"];
+}
+
+- (void)setBackgroundPosition:(NSString *)backgroundPosition
+{
+    [self setProperty:@"backgroundPosition" :backgroundPosition :@""];
+}
+
+- (NSString *)backgroundRepeat
+{
+    return [self getPropertyValue:@"backgroundRepeat"];
+}
+
+- (void)setBackgroundRepeat:(NSString *)backgroundRepeat
+{
+    [self setProperty:@"backgroundRepeat" :backgroundRepeat :@""];
+}
+
+- (NSString *)border
+{
+    return [self getPropertyValue:@"border"];
+}
+
+- (void)setBorder:(NSString *)border
+{
+    [self setProperty:@"border" :border :@""];
+}
+
+- (NSString *)borderCollapse
+{
+    return [self getPropertyValue:@"borderCollapse"];
+}
+
+- (void)setBorderCollapse:(NSString *)borderCollapse
+{
+    [self setProperty:@"borderCollapse" :borderCollapse :@""];
+}
+
+- (NSString *)borderColor
+{
+    return [self getPropertyValue:@"borderColor"];
+}
+
+- (void)setBorderColor:(NSString *)borderColor
+{
+    [self setProperty:@"borderColor" :borderColor :@""];
+}
+
+- (NSString *)borderSpacing
+{
+    return [self getPropertyValue:@"borderSpacing"];
+}
+
+- (void)setBorderSpacing:(NSString *)borderSpacing
+{
+    [self setProperty:@"borderSpacing" :borderSpacing :@""];
+}
+
+- (NSString *)borderStyle
+{
+    return [self getPropertyValue:@"borderStyle"];
+}
+
+- (void)setBorderStyle:(NSString *)borderStyle
+{
+    [self setProperty:@"borderStyle" :borderStyle :@""];
+}
+
+- (NSString *)borderTop
+{
+    return [self getPropertyValue:@"borderTop"];
+}
+
+- (void)setBorderTop:(NSString *)borderTop
+{
+    [self setProperty:@"borderTop" :borderTop :@""];
+}
+
+- (NSString *)borderRight
+{
+    return [self getPropertyValue:@"borderRight"];
+}
+
+- (void)setBorderRight:(NSString *)borderRight
+{
+    [self setProperty:@"borderRight" :borderRight :@""];
+}
+
+- (NSString *)borderBottom
+{
+    return [self getPropertyValue:@"borderBottom"];
+}
+
+- (void)setBorderBottom:(NSString *)borderBottom
+{
+    [self setProperty:@"borderBottom" :borderBottom :@""];
+}
+
+- (NSString *)borderLeft
+{
+    return [self getPropertyValue:@"borderLeft"];
+}
+
+- (void)setBorderLeft:(NSString *)borderLeft
+{
+    [self setProperty:@"borderLeft" :borderLeft :@""];
+}
+
+- (NSString *)borderTopColor
+{
+    return [self getPropertyValue:@"borderTopColor"];
+}
+
+- (void)setBorderTopColor:(NSString *)borderTopColor
+{
+    [self setProperty:@"borderTopColor" :borderTopColor :@""];
+}
+
+- (NSString *)borderRightColor
+{
+    return [self getPropertyValue:@"borderRightColor"];
+}
+
+- (void)setBorderRightColor:(NSString *)borderRightColor
+{
+    [self setProperty:@"borderRightColor" :borderRightColor :@""];
+}
+
+- (NSString *)borderBottomColor
+{
+    return [self getPropertyValue:@"borderBottomColor"];
+}
+
+- (void)setBorderBottomColor:(NSString *)borderBottomColor
+{
+    [self setProperty:@"borderBottomColor" :borderBottomColor :@""];
+}
+
+- (NSString *)borderLeftColor
+{
+    return [self getPropertyValue:@"borderLeftColor"];
+}
+
+- (void)setBorderLeftColor:(NSString *)borderLeftColor
+{
+    [self setProperty:@"borderLeftColor" :borderLeftColor :@""];
+}
+
+- (NSString *)borderTopStyle
+{
+    return [self getPropertyValue:@"borderTopStyle"];
+}
+
+- (void)setBorderTopStyle:(NSString *)borderTopStyle
+{
+    [self setProperty:@"borderTopStyle" :borderTopStyle :@""];
+}
+
+- (NSString *)borderRightStyle
+{
+    return [self getPropertyValue:@"borderRightStyle"];
+}
+
+- (void)setBorderRightStyle:(NSString *)borderRightStyle
+{
+    [self setProperty:@"borderRightStyle" :borderRightStyle :@""];
+}
+
+- (NSString *)borderBottomStyle
+{
+    return [self getPropertyValue:@"borderBottomStyle"];
+}
+
+- (void)setBorderBottomStyle:(NSString *)borderBottomStyle
+{
+    [self setProperty:@"borderBottomStyle" :borderBottomStyle :@""];
+}
+
+- (NSString *)borderLeftStyle
+{
+    return [self getPropertyValue:@"borderLeftStyle"];
+}
+
+- (void)setBorderLeftStyle:(NSString *)borderLeftStyle
+{
+    [self setProperty:@"borderLeftStyle" :borderLeftStyle :@""];
+}
+
+- (NSString *)borderTopWidth
+{
+    return [self getPropertyValue:@"borderTopWidth"];
+}
+
+- (void)setBorderTopWidth:(NSString *)borderTopWidth
+{
+    [self setProperty:@"borderTopWidth" :borderTopWidth :@""];
+}
+
+- (NSString *)borderRightWidth
+{
+    return [self getPropertyValue:@"borderRightWidth"];
+}
+
+- (void)setBorderRightWidth:(NSString *)borderRightWidth
+{
+    [self setProperty:@"borderRightWidth" :borderRightWidth :@""];
+}
+
+- (NSString *)borderBottomWidth
+{
+    return [self getPropertyValue:@"borderBottomWidth"];
+}
+
+- (void)setBorderBottomWidth:(NSString *)borderBottomWidth
+{
+    [self setProperty:@"borderBottomWidth" :borderBottomWidth :@""];
+}
+
+- (NSString *)borderLeftWidth
+{
+    return [self getPropertyValue:@"borderLeftWidth"];
+}
+
+- (void)setBorderLeftWidth:(NSString *)borderLeftWidth
+{
+    [self setProperty:@"borderLeftWidth" :borderLeftWidth :@""];
+}
+
+- (NSString *)borderWidth
+{
+    return [self getPropertyValue:@"borderWidth"];
+}
+
+- (void)setBorderWidth:(NSString *)borderWidth
+{
+    [self setProperty:@"borderWidth" :borderWidth :@""];
+}
+
+- (NSString *)bottom
+{
+    return [self getPropertyValue:@"bottom"];
+}
+
+- (void)setBottom:(NSString *)bottom
+{
+    [self setProperty:@"bottom" :bottom :@""];
+}
+
+- (NSString *)captionSide
+{
+    return [self getPropertyValue:@"captionSide"];
+}
+
+- (void)setCaptionSide:(NSString *)captionSide
+{
+    [self setProperty:@"captionSide" :captionSide :@""];
+}
+
+- (NSString *)clear
+{
+    return [self getPropertyValue:@"clear"];
+}
+
+- (void)setClear:(NSString *)clear
+{
+    [self setProperty:@"clear" :clear :@""];
+}
+
+- (NSString *)clip
+{
+    return [self getPropertyValue:@"clip"];
+}
+
+- (void)setClip:(NSString *)clip
+{
+    [self setProperty:@"clip" :clip :@""];
+}
+
+- (NSString *)color
+{
+    return [self getPropertyValue:@"color"];
+}
+
+- (void)setColor:(NSString *)color
+{
+    [self setProperty:@"color" :color :@""];
+}
+
+- (NSString *)content
+{
+    return [self getPropertyValue:@"content"];
+}
+
+- (void)setContent:(NSString *)content
+{
+    [self setProperty:@"content" :content :@""];
+}
+
+- (NSString *)counterIncrement
+{
+    return [self getPropertyValue:@"counterIncrement"];
+}
+
+- (void)setCounterIncrement:(NSString *)counterIncrement
+{
+    [self setProperty:@"counterIncrement" :counterIncrement :@""];
+}
+
+- (NSString *)counterReset
+{
+    return [self getPropertyValue:@"counterReset"];
+}
+
+- (void)setCounterReset:(NSString *)counterReset
+{
+    [self setProperty:@"counterReset" :counterReset :@""];
+}
+
+- (NSString *)cue
+{
+    return [self getPropertyValue:@"cue"];
+}
+
+- (void)setCue:(NSString *)cue
+{
+    [self setProperty:@"cue" :cue :@""];
+}
+
+- (NSString *)cueAfter
+{
+    return [self getPropertyValue:@"cueAfter"];
+}
+
+- (void)setCueAfter:(NSString *)cueAfter
+{
+    [self setProperty:@"cueAfter" :cueAfter :@""];
+}
+
+- (NSString *)cueBefore
+{
+    return [self getPropertyValue:@"cueBefore"];
+}
+
+- (void)setCueBefore:(NSString *)cueBefore
+{
+    [self setProperty:@"cueBefore" :cueBefore :@""];
+}
+
+- (NSString *)cursor
+{
+    return [self getPropertyValue:@"cursor"];
+}
+
+- (void)setCursor:(NSString *)cursor
+{
+    [self setProperty:@"cursor" :cursor :@""];
+}
+
+- (NSString *)direction
+{
+    return [self getPropertyValue:@"direction"];
+}
+
+- (void)setDirection:(NSString *)direction
+{
+    [self setProperty:@"direction" :direction :@""];
+}
+
+- (NSString *)display
+{
+    return [self getPropertyValue:@"display"];
+}
+
+- (void)setDisplay:(NSString *)display
+{
+    [self setProperty:@"display" :display :@""];
+}
+
+- (NSString *)elevation
+{
+    return [self getPropertyValue:@"elevation"];
+}
+
+- (void)setElevation:(NSString *)elevation
+{
+    [self setProperty:@"elevation" :elevation :@""];
+}
+
+- (NSString *)emptyCells
+{
+    return [self getPropertyValue:@"emptyCells"];
+}
+
+- (void)setEmptyCells:(NSString *)emptyCells
+{
+    [self setProperty:@"emptyCells" :emptyCells :@""];
+}
+
+- (NSString *)cssFloat
+{
+    return [self getPropertyValue:@"cssFloat"];
+}
+
+- (void)setCssFloat:(NSString *)cssFloat
+{
+    [self setProperty:@"cssFloat" :cssFloat :@""];
+}
+
+- (NSString *)font
+{
+    return [self getPropertyValue:@"font"];
+}
+
+- (void)setFont:(NSString *)font
+{
+    [self setProperty:@"font" :font :@""];
+}
+
+- (NSString *)fontFamily
+{
+    return [self getPropertyValue:@"fontFamily"];
+}
+
+- (void)setFontFamily:(NSString *)fontFamily
+{
+    [self setProperty:@"fontFamily" :fontFamily :@""];
+}
+
+- (NSString *)fontSize
+{
+    return [self getPropertyValue:@"fontSize"];
+}
+
+- (void)setFontSize:(NSString *)fontSize
+{
+    [self setProperty:@"fontSize" :fontSize :@""];
+}
+
+- (NSString *)fontSizeAdjust
+{
+    return [self getPropertyValue:@"fontSizeAdjust"];
+}
+
+- (void)setFontSizeAdjust:(NSString *)fontSizeAdjust
+{
+    [self setProperty:@"fontSizeAdjust" :fontSizeAdjust :@""];
+}
+
+- (NSString *)fontStretch
+{
+    return [self getPropertyValue:@"fontStretch"];
+}
+
+- (void)setFontStretch:(NSString *)fontStretch
+{
+    [self setProperty:@"fontStretch" :fontStretch :@""];
+}
+
+- (NSString *)fontStyle
+{
+    return [self getPropertyValue:@"fontStyle"];
+}
+
+- (void)setFontStyle:(NSString *)fontStyle
+{
+    [self setProperty:@"fontStyle" :fontStyle :@""];
+}
+
+- (NSString *)fontVariant
+{
+    return [self getPropertyValue:@"fontVariant"];
+}
+
+- (void)setFontVariant:(NSString *)fontVariant
+{
+    [self setProperty:@"fontVariant" :fontVariant :@""];
+}
+
+- (NSString *)fontWeight
+{
+    return [self getPropertyValue:@"fontWeight"];
+}
+
+- (void)setFontWeight:(NSString *)fontWeight
+{
+    [self setProperty:@"fontWeight" :fontWeight :@""];
+}
+
+- (NSString *)height
+{
+    return [self getPropertyValue:@"height"];
+}
+
+- (void)setHeight:(NSString *)height
+{
+    [self setProperty:@"height" :height :@""];
+}
+
+- (NSString *)left
+{
+    return [self getPropertyValue:@"left"];
+}
+
+- (void)setLeft:(NSString *)left
+{
+    [self setProperty:@"left" :left :@""];
+}
+
+- (NSString *)letterSpacing
+{
+    return [self getPropertyValue:@"letterSpacing"];
+}
+
+- (void)setLetterSpacing:(NSString *)letterSpacing
+{
+    [self setProperty:@"letterSpacing" :letterSpacing :@""];
+}
+
+- (NSString *)lineHeight
+{
+    return [self getPropertyValue:@"lineHeight"];
+}
+
+- (void)setLineHeight:(NSString *)lineHeight
+{
+    [self setProperty:@"lineHeight" :lineHeight :@""];
+}
+
+- (NSString *)listStyle
+{
+    return [self getPropertyValue:@"listStyle"];
+}
+
+- (void)setListStyle:(NSString *)listStyle
+{
+    [self setProperty:@"listStyle" :listStyle :@""];
+}
+
+- (NSString *)listStyleImage
+{
+    return [self getPropertyValue:@"listStyleImage"];
+}
+
+- (void)setListStyleImage:(NSString *)listStyleImage
+{
+    [self setProperty:@"listStyleImage" :listStyleImage :@""];
+}
+
+- (NSString *)listStylePosition
+{
+    return [self getPropertyValue:@"listStylePosition"];
+}
+
+- (void)setListStylePosition:(NSString *)listStylePosition
+{
+    [self setProperty:@"listStylePosition" :listStylePosition :@""];
+}
+
+- (NSString *)listStyleType
+{
+    return [self getPropertyValue:@"listStyleType"];
+}
+
+- (void)setListStyleType:(NSString *)listStyleType
+{
+    [self setProperty:@"listStyleType" :listStyleType :@""];
+}
+
+- (NSString *)margin
+{
+    return [self getPropertyValue:@"margin"];
+}
+
+- (void)setMargin:(NSString *)margin
+{
+    [self setProperty:@"margin" :margin :@""];
+}
+
+- (NSString *)marginTop
+{
+    return [self getPropertyValue:@"marginTop"];
+}
+
+- (void)setMarginTop:(NSString *)marginTop
+{
+    [self setProperty:@"marginTop" :marginTop :@""];
+}
+
+- (NSString *)marginRight
+{
+    return [self getPropertyValue:@"marginRight"];
+}
+
+- (void)setMarginRight:(NSString *)marginRight
+{
+    [self setProperty:@"marginRight" :marginRight :@""];
+}
+
+- (NSString *)marginBottom
+{
+    return [self getPropertyValue:@"marginBottom"];
+}
+
+- (void)setMarginBottom:(NSString *)marginBottom
+{
+    [self setProperty:@"marginBottom" :marginBottom :@""];
+}
+
+- (NSString *)marginLeft
+{
+    return [self getPropertyValue:@"marginLeft"];
+}
+
+- (void)setMarginLeft:(NSString *)marginLeft
+{
+    [self setProperty:@"marginLeft" :marginLeft :@""];
+}
+
+- (NSString *)markerOffset
+{
+    return [self getPropertyValue:@"markerOffset"];
+}
+
+- (void)setMarkerOffset:(NSString *)markerOffset
+{
+    [self setProperty:@"markerOffset" :markerOffset :@""];
+}
+
+- (NSString *)marks
+{
+    return [self getPropertyValue:@"marks"];
+}
+
+- (void)setMarks:(NSString *)marks
+{
+    [self setProperty:@"marks" :marks :@""];
+}
+
+- (NSString *)maxHeight
+{
+    return [self getPropertyValue:@"maxHeight"];
+}
+
+- (void)setMaxHeight:(NSString *)maxHeight
+{
+    [self setProperty:@"maxHeight" :maxHeight :@""];
+}
+
+- (NSString *)maxWidth
+{
+    return [self getPropertyValue:@"maxWidth"];
+}
+
+- (void)setMaxWidth:(NSString *)maxWidth
+{
+    [self setProperty:@"maxWidth" :maxWidth :@""];
+}
+
+- (NSString *)minHeight
+{
+    return [self getPropertyValue:@"minHeight"];
+}
+
+- (void)setMinHeight:(NSString *)minHeight
+{
+    [self setProperty:@"minHeight" :minHeight :@""];
+}
+
+- (NSString *)minWidth
+{
+    return [self getPropertyValue:@"minWidth"];
+}
+
+- (void)setMinWidth:(NSString *)minWidth
+{
+    [self setProperty:@"minWidth" :minWidth :@""];
+}
+
+- (NSString *)orphans
+{
+    return [self getPropertyValue:@"orphans"];
+}
+
+- (void)setOrphans:(NSString *)orphans
+{
+    [self setProperty:@"orphans" :orphans :@""];
+}
+
+- (NSString *)outline
+{
+    return [self getPropertyValue:@"outline"];
+}
+
+- (void)setOutline:(NSString *)outline
+{
+    [self setProperty:@"outline" :outline :@""];
+}
+
+- (NSString *)outlineColor
+{
+    return [self getPropertyValue:@"outlineColor"];
+}
+
+- (void)setOutlineColor:(NSString *)outlineColor
+{
+    [self setProperty:@"outlineColor" :outlineColor :@""];
+}
+
+- (NSString *)outlineStyle
+{
+    return [self getPropertyValue:@"outlineStyle"];
+}
+
+- (void)setOutlineStyle:(NSString *)outlineStyle
+{
+    [self setProperty:@"outlineStyle" :outlineStyle :@""];
+}
+
+- (NSString *)outlineWidth
+{
+    return [self getPropertyValue:@"outlineWidth"];
+}
+
+- (void)setOutlineWidth:(NSString *)outlineWidth
+{
+    [self setProperty:@"outlineWidth" :outlineWidth :@""];
+}
+
+- (NSString *)overflow
+{
+    return [self getPropertyValue:@"overflow"];
+}
+
+- (void)setOverflow:(NSString *)overflow
+{
+    [self setProperty:@"overflow" :overflow :@""];
+}
+
+- (NSString *)padding
+{
+    return [self getPropertyValue:@"padding"];
+}
+
+- (void)setPadding:(NSString *)padding
+{
+    [self setProperty:@"padding" :padding :@""];
+}
+
+- (NSString *)paddingTop
+{
+    return [self getPropertyValue:@"paddingTop"];
+}
+
+- (void)setPaddingTop:(NSString *)paddingTop
+{
+    [self setProperty:@"paddingTop" :paddingTop :@""];
+}
+
+- (NSString *)paddingRight
+{
+    return [self getPropertyValue:@"paddingRight"];
+}
+
+- (void)setPaddingRight:(NSString *)paddingRight
+{
+    [self setProperty:@"paddingRight" :paddingRight :@""];
+}
+
+- (NSString *)paddingBottom
+{
+    return [self getPropertyValue:@"paddingBottom"];
+}
+
+- (void)setPaddingBottom:(NSString *)paddingBottom
+{
+    [self setProperty:@"paddingBottom" :paddingBottom :@""];
+}
+
+- (NSString *)paddingLeft
+{
+    return [self getPropertyValue:@"paddingLeft"];
+}
+
+- (void)setPaddingLeft:(NSString *)paddingLeft
+{
+    [self setProperty:@"paddingLeft" :paddingLeft :@""];
+}
+
+- (NSString *)page
+{
+    return [self getPropertyValue:@"page"];
+}
+
+- (void)setPage:(NSString *)page
+{
+    [self setProperty:@"page" :page :@""];
+}
+
+- (NSString *)pageBreakAfter
+{
+    return [self getPropertyValue:@"pageBreakAfter"];
+}
+
+- (void)setPageBreakAfter:(NSString *)pageBreakAfter
+{
+    [self setProperty:@"pageBreakAfter" :pageBreakAfter :@""];
+}
+
+- (NSString *)pageBreakBefore
+{
+    return [self getPropertyValue:@"pageBreakBefore"];
+}
+
+- (void)setPageBreakBefore:(NSString *)pageBreakBefore
+{
+    [self setProperty:@"pageBreakBefore" :pageBreakBefore :@""];
+}
+
+- (NSString *)pageBreakInside
+{
+    return [self getPropertyValue:@"pageBreakInside"];
+}
+
+- (void)setPageBreakInside:(NSString *)pageBreakInside
+{
+    [self setProperty:@"pageBreakInside" :pageBreakInside :@""];
+}
+
+- (NSString *)pause
+{
+    return [self getPropertyValue:@"pause"];
+}
+
+- (void)setPause:(NSString *)pause
+{
+    [self setProperty:@"pause" :pause :@""];
+}
+
+- (NSString *)pauseAfter
+{
+    return [self getPropertyValue:@"pauseAfter"];
+}
+
+- (void)setPauseAfter:(NSString *)pauseAfter
+{
+    [self setProperty:@"pauseAfter" :pauseAfter :@""];
+}
+
+- (NSString *)pauseBefore
+{
+    return [self getPropertyValue:@"pauseBefore"];
+}
+
+- (void)setPauseBefore:(NSString *)pauseBefore
+{
+    [self setProperty:@"pauseBefore" :pauseBefore :@""];
+}
+
+- (NSString *)pitch
+{
+    return [self getPropertyValue:@"pitch"];
+}
+
+- (void)setPitch:(NSString *)pitch
+{
+    [self setProperty:@"pitch" :pitch :@""];
+}
+
+- (NSString *)pitchRange
+{
+    return [self getPropertyValue:@"pitchRange"];
+}
+
+- (void)setPitchRange:(NSString *)pitchRange
+{
+    [self setProperty:@"pitchRange" :pitchRange :@""];
+}
+
+- (NSString *)playDuring
+{
+    return [self getPropertyValue:@"playDuring"];
+}
+
+- (void)setPlayDuring:(NSString *)playDuring
+{
+    [self setProperty:@"playDuring" :playDuring :@""];
+}
+
+- (NSString *)position
+{
+    return [self getPropertyValue:@"position"];
+}
+
+- (void)setPosition:(NSString *)position
+{
+    [self setProperty:@"position" :position :@""];
+}
+
+- (NSString *)quotes
+{
+    return [self getPropertyValue:@"quotes"];
+}
+
+- (void)setQuotes:(NSString *)quotes
+{
+    [self setProperty:@"quotes" :quotes :@""];
+}
+
+- (NSString *)richness
+{
+    return [self getPropertyValue:@"richness"];
+}
+
+- (void)setRichness:(NSString *)richness
+{
+    [self setProperty:@"richness" :richness :@""];
+}
+
+- (NSString *)right
+{
+    return [self getPropertyValue:@"right"];
+}
+
+- (void)setRight:(NSString *)right
+{
+    [self setProperty:@"right" :right :@""];
+}
+
+- (NSString *)size
+{
+    return [self getPropertyValue:@"size"];
+}
+
+- (void)setSize:(NSString *)size
+{
+    [self setProperty:@"size" :size :@""];
+}
+
+- (NSString *)speak
+{
+    return [self getPropertyValue:@"speak"];
+}
+
+- (void)setSpeak:(NSString *)speak
+{
+    [self setProperty:@"speak" :speak :@""];
+}
+
+- (NSString *)speakHeader
+{
+    return [self getPropertyValue:@"speakHeader"];
+}
+
+- (void)setSpeakHeader:(NSString *)speakHeader
+{
+    [self setProperty:@"speakHeader" :speakHeader :@""];
+}
+
+- (NSString *)speakNumeral
+{
+    return [self getPropertyValue:@"speakNumeral"];
+}
+
+- (void)setSpeakNumeral:(NSString *)speakNumeral
+{
+    [self setProperty:@"speakNumeral" :speakNumeral :@""];
+}
+
+- (NSString *)speakPunctuation
+{
+    return [self getPropertyValue:@"speakPunctuation"];
+}
+
+- (void)setSpeakPunctuation:(NSString *)speakPunctuation
+{
+    [self setProperty:@"speakPunctuation" :speakPunctuation :@""];
+}
+
+- (NSString *)speechRate
+{
+    return [self getPropertyValue:@"speechRate"];
+}
+
+- (void)setSpeechRate:(NSString *)speechRate
+{
+    [self setProperty:@"speechRate" :speechRate :@""];
+}
+
+- (NSString *)stress
+{
+    return [self getPropertyValue:@"stress"];
+}
+
+- (void)setStress:(NSString *)stress
+{
+    [self setProperty:@"stress" :stress :@""];
+}
+
+- (NSString *)tableLayout
+{
+    return [self getPropertyValue:@"tableLayout"];
+}
+
+- (void)setTableLayout:(NSString *)tableLayout
+{
+    [self setProperty:@"tableLayout" :tableLayout :@""];
+}
+
+- (NSString *)textAlign
+{
+    return [self getPropertyValue:@"textAlign"];
+}
+
+- (void)setTextAlign:(NSString *)textAlign
+{
+    [self setProperty:@"textAlign" :textAlign :@""];
+}
+
+- (NSString *)textDecoration
+{
+    return [self getPropertyValue:@"textDecoration"];
+}
+
+- (void)setTextDecoration:(NSString *)textDecoration
+{
+    [self setProperty:@"textDecoration" :textDecoration :@""];
+}
+
+- (NSString *)textIndent
+{
+    return [self getPropertyValue:@"textIndent"];
+}
+
+- (void)setTextIndent:(NSString *)textIndent
+{
+    [self setProperty:@"textIndent" :textIndent :@""];
+}
+
+- (NSString *)textShadow
+{
+    return [self getPropertyValue:@"textShadow"];
+}
+
+- (void)setTextShadow:(NSString *)textShadow
+{
+    [self setProperty:@"textShadow" :textShadow :@""];
+}
+
+- (NSString *)textTransform
+{
+    return [self getPropertyValue:@"textTransform"];
+}
+
+- (void)setTextTransform:(NSString *)textTransform
+{
+    [self setProperty:@"textTransform" :textTransform :@""];
+}
+
+- (NSString *)top
+{
+    return [self getPropertyValue:@"top"];
+}
+
+- (void)setTop:(NSString *)top
+{
+    [self setProperty:@"top" :top :@""];
+}
+
+- (NSString *)unicodeBidi
+{
+    return [self getPropertyValue:@"unicodeBidi"];
+}
+
+- (void)setUnicodeBidi:(NSString *)unicodeBidi
+{
+    [self setProperty:@"unicodeBidi" :unicodeBidi :@""];
+}
+
+- (NSString *)verticalAlign
+{
+    return [self getPropertyValue:@"verticalAlign"];
+}
+
+- (void)setVerticalAlign:(NSString *)verticalAlign
+{
+    [self setProperty:@"verticalAlign" :verticalAlign :@""];
+}
+
+- (NSString *)visibility
+{
+    return [self getPropertyValue:@"visibility"];
+}
+
+- (void)setVisibility:(NSString *)visibility
+{
+    [self setProperty:@"visibility" :visibility :@""];
+}
+
+- (NSString *)voiceFamily
+{
+    return [self getPropertyValue:@"voiceFamily"];
+}
+
+- (void)setVoiceFamily:(NSString *)voiceFamily
+{
+    [self setProperty:@"voiceFamily" :voiceFamily :@""];
+}
+
+- (NSString *)volume
+{
+    return [self getPropertyValue:@"volume"];
+}
+
+- (void)setVolume:(NSString *)volume
+{
+    [self setProperty:@"volume" :volume :@""];
+}
+
+- (NSString *)whiteSpace
+{
+    return [self getPropertyValue:@"whiteSpace"];
+}
+
+- (void)setWhiteSpace:(NSString *)whiteSpace
+{
+    [self setProperty:@"whiteSpace" :whiteSpace :@""];
+}
+
+- (NSString *)widows
+{
+    return [self getPropertyValue:@"widows"];
+}
+
+- (void)setWidows:(NSString *)widows
+{
+    [self setProperty:@"widows" :widows :@""];
+}
+
+- (NSString *)width
+{
+    return [self getPropertyValue:@"width"];
+}
+
+- (void)setWidth:(NSString *)width
+{
+    [self setProperty:@"width" :width :@""];
+}
+
+- (NSString *)wordSpacing
+{
+    return [self getPropertyValue:@"wordSpacing"];
+}
+
+- (void)setWordSpacing:(NSString *)wordSpacing
+{
+    [self setProperty:@"wordSpacing" :wordSpacing :@""];
+}
+
+- (NSString *)zIndex
+{
+    return [self getPropertyValue:@"zIndex"];
+}
+
+- (void)setZIndex:(NSString *)zIndex
+{
+    [self setProperty:@"zIndex" :zIndex :@""];
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
