@@ -33,8 +33,7 @@ static HistoryProvider *instance = 0;
 
 HistoryProvider *HistoryProvider::self()
 {
-    _logNotYetImplemented();
-    if (instance == 0) {
+     if (instance == 0) {
         instance = new HistoryProvider();
     }
     return instance;
@@ -43,19 +42,17 @@ HistoryProvider *HistoryProvider::self()
 
 HistoryProvider::HistoryProvider()
 {
-    _logNotYetImplemented();
 }
 
 
 HistoryProvider::~HistoryProvider()
 {
-    _logNotYetImplemented();
 }
 
 
-bool HistoryProvider::contains(const QString &) const
+bool HistoryProvider::contains(const QString &s) const
 {
-    _logNotYetImplemented();
+    // FIXME: implement real history
     return FALSE;
 }
 

@@ -417,8 +417,6 @@ void KHTMLPart::write( const char *str, int len)
     Tokenizer* t = d->m_doc->tokenizer();
     if(t)
         t->write( decoded, true );
-        
-    NSLog(@"!!! write complete");
 }
 
 
@@ -668,7 +666,7 @@ KURL KHTMLPart::completeURL( const QString &url, const QString &target = QString
 
 const KURL & KHTMLPart::url() const
 {
-    _logNotYetImplemented();
+    return d->m_workingURL;
 }
 
 

@@ -1218,13 +1218,8 @@ void Cache::clear()
 
 CachedImage *Cache::requestImage( const DocLoader* dl, const DOMString & url, const DOMString &baseUrl, bool reload, int _expireDate )
 {
-
-    fprintf(stderr, "!!! Cache::requestImage: url = %s\n", url.string().latin1());
-    fprintf(stderr, "!!! Cache::requestImage: baseUrl = %s\n", baseUrl.string().latin1());
-
     // this brings the _url to a standard form...
     KURL kurl = completeURL( url, baseUrl );
-    fprintf(stderr, "!!! Cache::requestImage: complete url = %s\n", kurl.url().latin1());
     if( kurl.isMalformed() )
     {
 #ifdef CACHE_DEBUG
@@ -1242,7 +1237,6 @@ CachedImage *Cache::requestImage( const DocLoader* dl, const DOMString & url, co
         kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
 #endif
         CachedImage *im = new CachedImage(kurl.url(), baseUrl, reload, _expireDate);
-        fprintf(stderr, "!!! Cache::requestImage: im->baseURL() = %s\n", im->baseURL().string().latin1());
         if ( dl && dl->autoloadImages() ) Cache::loader()->load(im, im->baseURL(), true);
         cache->insert( kurl.url(), im );
         lru->append( kurl.url() );
