@@ -1999,31 +1999,41 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSView *)nextKeyView
 {
-    return (_private && _private->inNextValidKeyView && ![[self _bridge] inNextKeyViewOutsideWebFrameViews])
-        ? [[self _bridge] nextKeyView]
-        : [super nextKeyView];
+    if (_private && _private->nextKeyViewAccessShouldMoveFocus && ![[self _bridge] inNextKeyViewOutsideWebFrameViews]) {
+        _private->nextKeyViewAccessShouldMoveFocus = NO;
+        return [[self _bridge] nextKeyView];
+    }
+    
+    return [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
-    return (_private && _private->inNextValidKeyView)
-        ? [[self _bridge] previousKeyView]
-        : [super previousKeyView];
+    if (_private && _private->nextKeyViewAccessShouldMoveFocus) {
+        _private->nextKeyViewAccessShouldMoveFocus = NO;
+        return [[self _bridge] previousKeyView];
+    }
+        
+    return [super previousKeyView];
 }
 
 - (NSView *)nextValidKeyView
 {
-    _private->inNextValidKeyView = YES;
+    if (![self isHiddenOrHasHiddenAncestor]) {
+        _private->nextKeyViewAccessShouldMoveFocus = YES;
+    }
     NSView *view = [super nextValidKeyView];
-    _private->inNextValidKeyView = NO;
+    _private->nextKeyViewAccessShouldMoveFocus = NO;
     return view;
 }
 
 - (NSView *)previousValidKeyView
 {
-    _private->inNextValidKeyView = YES;
+    if (![self isHiddenOrHasHiddenAncestor]) {
+        _private->nextKeyViewAccessShouldMoveFocus = YES;
+    }
     NSView *view = [super previousValidKeyView];
-    _private->inNextValidKeyView = NO;
+    _private->nextKeyViewAccessShouldMoveFocus = NO;
     return view;
 }
 

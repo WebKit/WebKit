@@ -1,3 +1,35 @@
+2004-07-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Trey.
+        
+        - fixed these bugs:
+        <rdar://problem/3709110> REGRESSION (Tiger): Pressing Tab key to move focus 
+        onto links skips every other link
+        <rdar://problem/3692576> focus ring is in odd place after clicking RSS button 
+        with "Tab to links" enabled
+        
+        WebHTMLView has some trickery by which we advance the focused link when nextKeyView
+        or previousKeyView is called within nextValidKeyView or previousValidKeyView. This
+        broke in Tiger because AppKit now (sometimes at least) calls nextKeyView more than
+        once within nextValidKeyView. Fixed 3709110 by making sure we only advance the focus 
+        once within a call to nextValidKeyView or previousValidKeyView.
+        
+        Also, this same trickery didn't work right with hidden views. Fixed 3692576 by checking
+        whether the view is hidden and bypassing the focus-moving trickery in that case.
+
+        * WebView.subproj/WebHTMLViewInternal.h:
+        renamed inNextValidKeyView -> nextKeyViewAccessShouldMoveFocus
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView nextKeyView]):
+        now clears nextKeyViewAccessShouldMoveFocus
+        (-[WebHTMLView previousKeyView]):
+        ditto
+        (-[WebHTMLView nextValidKeyView]):
+        now doesn't set focus-moving trigger ivar if view is hidden or has hidden ancestor
+        (-[WebHTMLView previousValidKeyView]):
+        ditto
+
 2004-06-30  Trey Matteson  <trey@apple.com>
 
 	Dragging within a web view should be allowed to start when the window isn't key.
