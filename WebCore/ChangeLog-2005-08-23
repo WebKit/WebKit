@@ -1,3 +1,18 @@
+2002-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed regression where clicked-on buttons were getting keyboard focus
+
+        * kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPart::khtmlMousePressEvent): Check clickCount here the way NSWindow does.
+	See below for rationale.
+	(KWQKHTMLPart::passWidgetMouseDownEventToWidget): I didn't read the code in
+	[NSWindow sendEvent:] that I was stealing carefully enough. The old needsPanelToBecomeKey
+	flag is used to decide whether something should really get first responder, and I need to
+	do check that too. And while I was in here, did the same clickCount check that NSWindow
+	does for good measure.
+
 2002-12-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
@@ -37,7 +52,6 @@
 
 2002-12-15  David Hyatt  <hyatt@apple.com>
 
->>>>>>> 1.1128
 	Fix for 3109226, epinions page is mostly blank.  Add a hack
 	to disallow > but only inside attribute values for which there
 	is no corresponding attribute name.
