@@ -6490,7 +6490,7 @@
 		F587867902DE3B8601EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = KWQQAsyncIO.h;
+			path = KWQAsyncIO.h;
 			refType = 4;
 		};
 		F587867B02DE3B8601EA4122 = {
@@ -6826,7 +6826,7 @@
 		F58786BC02DE3B8601EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = KWQQStyleSheet.h;
+			path = KWQStyleSheet.h;
 			refType = 4;
 		};
 		F58786BD02DE3B8601EA4122 = {

@@ -27,7 +27,7 @@
 #define QMOVIE_H_
 
 #include "KWQObject.h"
-#include "KWQQAsyncIO.h"
+#include "KWQAsyncIO.h"
 #include "KWQPixmap.h"
 #include "KWQImage.h"
 #include "KWQRect.h"

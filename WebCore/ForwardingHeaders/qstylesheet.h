@@ -1,1 +1,1 @@
-#include "KWQQStyleSheet.h"
+#include "KWQStyleSheet.h"

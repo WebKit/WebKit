@@ -1,5 +1,14 @@
 2002-10-26  Darin Adler  <darin@apple.com>
 
+	- fixed a couple of files accidentally checked in with KWQQ names
+
+        * ForwardingHeaders/qasyncio.h: Change names.
+        * ForwardingHeaders/qstylesheet.h: Ditto.
+        * WebCore.pbproj/project.pbxproj: Ditto.
+        * kwq/KWQMovie.h: Ditto.
+
+2002-10-26  Darin Adler  <darin@apple.com>
+
 	- changed to use #if APPLE_CHANGES and #if !APPLE_CHANGES consistently
 
 	We no longer do #ifdef APPLE_CHANGES or #ifndef APPLE_CHANGES.
