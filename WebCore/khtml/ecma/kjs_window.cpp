@@ -1473,7 +1473,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 
           if (part->xmlDocImpl()) {
             kdDebug(6070) << "Setting domain to " << part->xmlDocImpl()->domain().string() << endl;
-            khtmlpart->xmlDocImpl()->setDomain( part->docImpl()->domain(), true );
+            khtmlpart->xmlDocImpl()->setDomain( part->xmlDocImpl()->domain(), true );
           }
           
           if ( part->docImpl() )

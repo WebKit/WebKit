@@ -1,3 +1,12 @@
+2004-08-23  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed rdar://problem/3681094> Crash in KJS::WindowFunc::tryCall 	with application/xhtml+xml Content-Type
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): since this is an xml document, we get the
+	domain from the xmlDocImpl(), not docImpl().
+
 2004-08-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
