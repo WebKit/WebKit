@@ -52,6 +52,8 @@
 
 #import "WebCoreDOMPrivate.h"
 
+using KParts::URLArgs;
+
 using DOM::DocumentImpl;
 
 using khtml::parseURL;
@@ -108,15 +110,20 @@ using khtml::RenderPart;
     _part->setParent([parent part]);
 }
 
-- (void)openURL:(NSURL *)URL withHeaders:(NSDictionary *)headers
+- (void)openURL:(NSURL *)URL reload:(BOOL)reload headers:(NSDictionary *)headers
 {
+    URLArgs args(_part->browserExtension()->urlArgs());
+
+    // reload
+    args.reload = reload;
+
     // Content-Type
     NSString *contentType = [headers objectForKey:@"Content-Type"];
     if (contentType) {
-        KParts::URLArgs args(_part->browserExtension()->urlArgs());
         args.serviceType = QString::fromNSString(contentType);
-        _part->browserExtension()->setURLArgs(args);
     }
+    
+    _part->browserExtension()->setURLArgs(args);
 
     // URL
     _part->openURL([[URL absoluteString] cString]);

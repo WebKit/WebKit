@@ -1782,7 +1782,7 @@ void KHTMLPart::slotRedirect()
     return;
   }
   KParts::URLArgs args;
-  if ( urlcmp( u, m_url.url(), true, true ) )
+  if ( urlcmp( u, m_url.url(), true, false ) )
     args.reload = true;
 
   args.setLockHistory( d->m_redirectLockHistory );

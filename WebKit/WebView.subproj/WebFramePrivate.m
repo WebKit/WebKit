@@ -1080,7 +1080,7 @@ static const char * const stateNames[] = {
 
         ASSERT(![_private previousItem]);
         // will save form state to current item, since prevItem not set
-        [_private->bridge openURL:URL withHeaders:nil];
+        [_private->bridge openURL:URL reload:NO headers:nil];
         [dataSrc _setURL:URL];
         // NB: must happen after _setURL, since we add based on the current request
         [self _addBackForwardItemClippedAtTarget:NO];
@@ -1099,8 +1099,12 @@ static const char * const stateNames[] = {
         [self _setLoadType:loadType];
         if (_private->instantRedirectComing) {
             _private->instantRedirectComing = NO;
-            // Inherit the loadType from the operation that spawned the redirect
-            [self _setLoadType:previousLoadType];
+            
+            // Inherit the loadType from the operation that spawned the redirect,
+            // unless the new load type is some kind of reload.
+            if (loadType != WebFrameLoadTypeReload && loadType != WebFrameLoadTypeReloadAllowingStaleData) {
+                [self _setLoadType:previousLoadType];
+            }
 
             // need to transfer BF items from the dataSource that we're replacing
             WebDataSource *newDataSource = [self provisionalDataSource];

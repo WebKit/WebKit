@@ -424,17 +424,18 @@
 -(void)_commitIfReady
 {
     if (![self isDownloading] && _private->gotFirstByte && !_private->committed) {
+        WebFrameLoadType loadType = [[self webFrame] _loadType];
+        bool reload = loadType == WebFrameLoadTypeReload
+            || loadType == WebFrameLoadTypeReloadAllowingStaleData;
+        
+        NSDictionary *headers = [_private->response isKindOfClass:[WebHTTPResourceResponse class]]
+            ? [(WebHTTPResourceResponse *)_private->response headers] : nil;
+
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
-        
         [self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];
-	[[self _bridge] openURL:[_private->response URL]
-                    withHeaders:[_private->response isKindOfClass:[WebHTTPResourceResponse class]]
-                        ? [(WebHTTPResourceResponse *)_private->response headers] : nil];
-        
-        // Must do this after dataSourceChanged.  makeRep installs a new view, which blows away
-        // scroll state, which is saved within _transitionToCommitted
+	[[self _bridge] openURL:[_private->response URL] reload:reload headers:headers];
     }
 }
 

@@ -1,5 +1,22 @@
 2002-11-14  Darin Adler  <darin@apple.com>
 
+	- fixed 3099240 -- REGRESSION: repro assert d->m_doc->parsing
+
+	Don't force all redirects to be reloads, because the ones from JavaScript must
+	not be. Maybe a better solution post-Alex-32 will be to pass a flag that distinguishes
+	redirects from other location changes.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::slotRedirect): Don't ignore the anchor when
+	comparing URLs to see if they should be a reload. We'll still do a reload if the URLs
+	are actually equal, but if they differ in anchor we will just go to the anchor.
+	This is the bug fix.
+
+        * kwq/WebCoreBridge.h: Add reload parameter.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge openURL:reload:headers:]): Stuff the reload
+	parameter into the URLArgs.
+
+2002-11-14  Darin Adler  <darin@apple.com>
+
 	- fixed 3100235 -- nil-deference in khtml::RenderTable at money.cnn.com
 
         * kwq/WebCoreBridge.h: Add needsLayout.

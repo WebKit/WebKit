@@ -1,5 +1,18 @@
 2002-11-14  Darin Adler  <darin@apple.com>
 
+	- fixed 3099240 -- REGRESSION: repro assert d->m_doc->parsing
+
+	Make the reload flag pass across the bridge.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _commitIfReady]):
+	Pass a reload flag, based on the load type, to the bridge.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]): Pass a
+	reload flag of NO in the anchor case. Preserve reload load types even when
+	doing client redirects (have to talk with Trey about this tomorrow).
+
+2002-11-14  Darin Adler  <darin@apple.com>
+
 	- fixed 3100235 -- nil-deference in khtml::RenderTable at money.cnn.com
 
         * WebView.subproj/WebHTMLView.m: (-[WebHTMLView drawRect:]):

@@ -94,7 +94,7 @@ enum FrameBorderStyle {
 
 - (void)setParent:(WebCoreBridge *)parent;
 
-- (void)openURL:(NSURL *)URL withHeaders:(NSDictionary *)headers;
+- (void)openURL:(NSURL *)URL reload:(BOOL)reload headers:(NSDictionary *)headers;
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding;
 - (void)addData:(NSData *)data withOverrideEncoding:(NSString *)encoding;
 - (void)closeURL;
