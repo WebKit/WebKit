@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
             text run at (95,14) width 34: "baz"
         RenderText {TEXT} at (0,0) size 0x0
 selection is RANGE:
-start:      position 2 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
+start:      position 5 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
 upstream:   position 2 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
 downstream: position 5 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
 end:        position 14 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}

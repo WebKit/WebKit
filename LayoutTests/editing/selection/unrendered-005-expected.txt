@@ -10,6 +10,6 @@ layer at (0,0) size 820x585
         RenderText {TEXT} at (106,84) size 40x48
           text run at (106,84) width 40: " baz"
 selection is CARET:
-start:      position 0 of child 4 {TEXT} of root {DIV}
+start:      position 3 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
 upstream:   position 3 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
 downstream: position 0 of child 4 {TEXT} of root {DIV}
