@@ -118,6 +118,7 @@ static NSMutableSet *activeImageRenderers;
     NSSize size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
     [self setCacheMode: NSImageCacheDefault];
     [imageRep setSize:size];
+    [self setScalesWhenResized:YES];
     [self setSize:size];
 }
 

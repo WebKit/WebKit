@@ -1,3 +1,14 @@
+2003-07-28  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3236815 -- bitmap TIFFs at > 72 dpi are scaled incorrectly 
+	in Safari when viewed standalone (uspto.gov)
+
+        Reviewed by Darin
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer _adjustSizeToPixelDimensions]):
+	call setScalesWhenResized:YES
+
 2003-07-25  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3344519.  Prevent infinite recursion attempting font substitution.
