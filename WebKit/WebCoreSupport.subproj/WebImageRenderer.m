@@ -152,7 +152,7 @@ static NSMutableSet *activeImageRenderers;
         //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
         return NO;
     case NSImageRepLoadStatusCompleted:         // all is well, the full pixelsHigh image is valid.
-        //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
+        //printf ("NSImageRepLoadStatusCompleted size %d, isComplete %d\n", length, isComplete);
         [self _adjustSizeToPixelDimensions];        
         isNull = NO;
         return YES;

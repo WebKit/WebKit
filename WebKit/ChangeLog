@@ -1,3 +1,11 @@
+2003-07-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+	fixed copy/paste error in comment that I stumbled across
+
 2003-07-09  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3141257.  Animate multiple copies of the same
