@@ -9,11 +9,19 @@ with #if APPLE_CHANGES. Other changes to improve performance and web
 page compatibility are intended for integration into future versions of
 the KJS library.
 
-To build the JavaScriptCore framework, you'll need Mac OS X 10.2,
-including the development tools, and the following commands:
+In order to use the WebCore and JavaScriptCore projects together you
+will need to set both projects to use the same build products directory.
+To do this:
 
-    % cd JavaScriptCore
-    % pbxbuild install
+    1. Click on the JavaScriptCore project item in the Files tab and
+       "Show Info" (in the Project menu or use cmd-I).
+    2. Select "Place build products for this project in a separate
+       location" and type in the shared location (or click the
+       "Choose..." button to choose a directory).
+    3. Select "Place intermediate build files for this project in the
+       same location as the build products".
 
-The framework will be installed in /WebCore/Library/Frameworks,
-which is where the WebCore project looks for it.
+The repeat these same three steps for WebCore.
+
+Build first JavaScriptCore and then WebCore using either the Project
+Builder interface or the "pbxbuild" command from the command line.
