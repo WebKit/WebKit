@@ -21,7 +21,7 @@ int main() {
     d1.insert("four", &v4);
     d1.insert("five", &v5);
 
-    cout << d1 << endl;
+    //cout << d1 << endl; 
 
     cout << "item keyed to 'one': " << *(d1.find("one")) << endl;
 
@@ -34,10 +34,10 @@ int main() {
     cout << "d1 count: " << d1.count() << endl;
     
     d2 = d1;
-    cout << "d2 = d1: " << d2 << endl;
+   // cout << "d2 = d1: " << d2 << endl;
     
     d1.clear();
-    cout << "d1 cleared: " << d1 << endl;
+   // cout << "d1 cleared: " << d1 << endl;
     
     
     

@@ -22,7 +22,7 @@ int main() {
     d1.insert(&v5, &v5);
 
     
-    cout << "d1: " << d1 << endl;
+    //cout << "d1: " << d1 << endl;
     
     cout << "d1 find 1: " << *(d1.find(&v1)) << endl;
     cout << "d1 find 2: " << *(d1.find(&v2)) << endl;
@@ -35,7 +35,7 @@ int main() {
     cout << "d1 take 4: " << *n2 << endl;
 
     d1.remove(&v2);
-    cout << "d1 remove 2: " << d1 << endl;
+    //cout << "d1 remove 2: " << d1 << endl;
     cout << "d1 find 2: " << d1.find(&v2) << endl;
 
     cout << "d0 is empty: " << d0.isEmpty() << endl;
@@ -44,9 +44,9 @@ int main() {
     cout << "d1 count: " << d1.count() << endl;
 
     d2 = d1;
-    cout << "d2 = d1: " << d2 << endl;
+    //cout << "d2 = d1: " << d2 << endl;
     
     d1.clear();
-    cout << "d1 clear: " << d1 << endl;
+    //cout << "d1 clear: " << d1 << endl;
     return 0;
 }
