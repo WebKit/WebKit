@@ -45,7 +45,7 @@
 
 /*!
     @method pluginDestroy
-    @abstract Tell the plugin perform cleanup and prepare to be dealloced.
+    @abstract Tell the plugin perform cleanup and prepare to be deallocated.
     @discussion The plug-in typically releases memory and other resources in this
     method.  If the plug-in has retained the WebPluginContainer, it must release
     it in this mehthod.  This method must be only called once per instance of the

@@ -27,6 +27,7 @@
     [MIMEType release];
     [pluginPageURL release];
     [pluginName release];
+    [super dealloc];
 }
 
 @end

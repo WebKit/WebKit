@@ -57,18 +57,16 @@ static const char * const stateNames[] = {
 
 - (void)dealloc
 {
-    [scheduledLayoutTimer invalidate];
-    [scheduledLayoutTimer release];
-    
     [webView _setController:nil];
     [dataSource _setController:nil];
     [provisionalDataSource _setController:nil];
 
-    [bridge release];
     [name release];
     [webView release];
     [dataSource release];
     [provisionalDataSource release];
+    [bridge release];
+    [scheduledLayoutTimer release];
     [children release];
     [pluginController release];
     

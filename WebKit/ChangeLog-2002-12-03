@@ -1,3 +1,14 @@
+2002-11-03  Darin Adler  <darin@apple.com>
+
+        * Plugins.subproj/WebPlugin.h: Fix comment.
+
+        * Plugins.subproj/WebPluginError.m: (-[WebPluginErrorPrivate dealloc]):
+	Fix leak by calling [super dealloc].
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFramePrivate dealloc]): Remove the
+	timer invalidate since, as Trey pointed out, it's pointless to invalidate a
+	timer in dealloc if it's retaining this object while valid.
+
 2002-11-03  Chris Blumenberg  <cblu@apple.com>
 
 	- Added MacBinary decoding code. Not yet used.
