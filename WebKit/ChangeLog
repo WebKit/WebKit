@@ -1,6 +1,6 @@
 2002-12-25  Darin Adler  <darin@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Don.
 
 	- fixed 3133611 -- Java "ticker" applet renders badly when scrolling page
 
