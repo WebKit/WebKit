@@ -234,7 +234,7 @@ void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DO
     m_loading = false;
 
     // Tell the doc about the sheet.
-    if (!isLoading())
+    if (!isLoading() && m_sheet)
         getDocument()->stylesheetLoaded();
 }
 
@@ -387,7 +387,7 @@ void HTMLStyleElementImpl::childrenChanged()
         m_sheet->parseString( text, (getDocument()->parseMode() == DocumentImpl::Strict) );
     }
 
-    if (!isLoading())
+    if (!isLoading() && m_sheet)
         getDocument()->stylesheetLoaded();
 }
 
