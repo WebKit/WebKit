@@ -14,7 +14,7 @@
 #import <sys/mman.h>
 
 #import "WebFoundationLogging.h"
-#import "WebLRUFileList.h"
+#import "NSLRUFileList.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebSystemBits.h"
 
@@ -185,8 +185,8 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
     BEGIN_EXCEPTION_HANDLER
     
-    WebLRUFileList *fileList = WebLRUFileListCreate();
-    WebLRUFileListRebuildFileDataUsingRootDirectory(fileList, [path fileSystemRepresentation]);
+    NSLRUFileList *fileList = NSLRUFileListCreate();
+    NSLRUFileListRebuildFileDataUsingRootDirectory(fileList, [path fileSystemRepresentation]);
     lru = fileList;
 
     END_EXCEPTION_HANDLER
@@ -212,13 +212,13 @@ static void UniqueFilePathForKey(id key, char *buffer)
         [mutex lock];
         while ([self usage] > size) {
             char uniqueKey[UniqueFilePathSize];
-            if (!WebLRUFileListGetPathOfOldestFile(lru, uniqueKey, UniqueFilePathSize)) {
+            if (!NSLRUFileListGetPathOfOldestFile(lru, uniqueKey, UniqueFilePathSize)) {
                 break;
             }
             NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
             [defaultManager _web_removeFileOnlyAtPath:filePath];
             [filePath release];
-            WebLRUFileListRemoveOldestFileFromList(lru);
+            NSLRUFileListRemoveOldestFileFromList(lru);
         }
         [mutex unlock];
     }
@@ -418,7 +418,7 @@ static void databaseInit()
                         if (lru) {
                             // if we can't update the list yet, that's too bad
                             // but not critically bad
-                            WebLRUFileListTouchFileWithPath(lru, uniqueKey);
+                            NSLRUFileListTouchFileWithPath(lru, uniqueKey);
                         }
                         LOG(WebFileDatabaseActivity, "read disk cache file - %@", key);
                     }
@@ -479,13 +479,13 @@ static void databaseInit()
 
     // update usage and truncate before writing file
     // this has the effect of _always_ keeping disk usage under sizeLimit by clearing away space in anticipation of the write.
-    WebLRUFileListSetFileData(lru, uniqueKey, [data length], CFAbsoluteTimeGetCurrent());
+    NSLRUFileListSetFileData(lru, uniqueKey, [data length], CFAbsoluteTimeGetCurrent());
     [self _truncateToSizeLimit:[self sizeLimit]];
 
     result = [defaultManager _web_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
     if (!result) {
-        WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
+        NSLRUFileListRemoveFileWithPath(lru, uniqueKey);
     }
 
     [archiver release];
@@ -504,7 +504,7 @@ static void databaseInit()
     UniqueFilePathForKey(key, uniqueKey);
     filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
     [[NSFileManager defaultManager] _web_removeFileOnlyAtPath:filePath];
-    WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
+    NSLRUFileListRemoveFileWithPath(lru, uniqueKey);
     [filePath release];
 }
 
@@ -549,7 +549,7 @@ static void databaseInit()
     if (isOpen) {
         isOpen = NO;
         if (lru) {
-            WebLRUFileListRelease(lru);
+            NSLRUFileListRelease(lru);
             lru = NULL;
         }
     }
@@ -566,7 +566,7 @@ static void databaseInit()
     CFTimeInterval mark = CFAbsoluteTimeGetCurrent();
 #endif
 
-    LOG(WebFileDatabaseActivity, ">>> BEFORE lazySync\n%@", WebLRUFileListDescription(lru));
+    LOG(WebFileDatabaseActivity, ">>> BEFORE lazySync\n%@", NSLRUFileListDescription(lru));
 
     WebFileDatabaseOp *op;
 
@@ -603,7 +603,7 @@ static void databaseInit()
 
 #ifndef NDEBUG
     if (lru)
-        LOG(WebFileDatabaseActivity, "<<< AFTER lazySync\n%@", WebLRUFileListDescription(lru));
+        LOG(WebFileDatabaseActivity, "<<< AFTER lazySync\n%@", NSLRUFileListDescription(lru));
 
     CFTimeInterval now = CFAbsoluteTimeGetCurrent();
     LOG(WebFileDatabaseActivity, "lazySync ran in %.3f secs.", now - mark);
@@ -621,7 +621,7 @@ static void databaseInit()
 
     touch = CFAbsoluteTimeGetCurrent();
 
-    LOG(WebFileDatabaseActivity, ">>> BEFORE sync\n%@", WebLRUFileListDescription(lru));
+    LOG(WebFileDatabaseActivity, ">>> BEFORE sync\n%@", NSLRUFileListDescription(lru));
     
     [mutex lock];
     array = [ops copy];
@@ -636,13 +636,13 @@ static void databaseInit()
     [array makeObjectsPerformSelector:@selector(perform:) withObject:self];
     [array release];
 
-    LOG(WebFileDatabaseActivity, "<<< AFTER sync\n%@", WebLRUFileListDescription(lru));
+    LOG(WebFileDatabaseActivity, "<<< AFTER sync\n%@", NSLRUFileListDescription(lru));
 }
 
 -(unsigned)count
 {
     if (lru)
-        return WebLRUFileListCountItems(lru);
+        return NSLRUFileListCountItems(lru);
     
     return 0;
 }
@@ -650,7 +650,7 @@ static void databaseInit()
 -(unsigned)usage
 {
     if (lru)
-        return WebLRUFileListGetTotalSize(lru);
+        return NSLRUFileListGetTotalSize(lru);
     
     return 0;
 }
