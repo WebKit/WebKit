@@ -1141,8 +1141,8 @@ void RenderObject::setHoverAndActive(NodeInfo& info, bool oldinside, bool inside
     DOM::NodeImpl* elt = element();
     if (elt) {
         bool oldactive = elt->active();
-        if (oldactive != (inside && info.active() && elt == info.innerNode()))
-            elt->setActive(inside && info.active() && elt == info.innerNode());
+        if (oldactive != (inside && info.active()))
+            elt->setActive(inside && info.active());
         if ((oldinside != mouseInside() && style()->affectedByHoverRules()) ||
             (oldactive != elt->active() && style()->affectedByActiveRules()))
             elt->setChanged();

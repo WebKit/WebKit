@@ -436,7 +436,7 @@ TextSlave * RenderText::findTextSlave( int offset, int &pos )
     return s;
 }
 
-bool RenderText::nodeAtPoint(NodeInfo& /*info*/, int _x, int _y, int _tx, int _ty, bool inside)
+bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside)
 {
     assert(parent());
 
@@ -459,6 +459,24 @@ bool RenderText::nodeAtPoint(NodeInfo& /*info*/, int _x, int _y, int _tx, int _t
     }
 
     setMouseInside(inside);
+
+    if (inside) {
+        if (info.innerNode() && info.innerNode()->renderer() && 
+            !info.innerNode()->renderer()->isInline()) {
+            // Within the same layer, inlines are ALWAYS fully above blocks.  Change inner node.
+            info.setInnerNode(element());
+            
+            // Clear everything else.
+            info.setInnerNonSharedNode(0);
+            info.setURLElement(0);
+        }
+        
+        if (!info.innerNode())
+            info.setInnerNode(element());
+
+        if(!info.innerNonSharedNode())
+            info.setInnerNonSharedNode(element());
+    }
 
     return inside;
 }

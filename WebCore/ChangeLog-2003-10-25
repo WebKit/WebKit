@@ -1,5 +1,18 @@
 2003-01-21  David Hyatt  <hyatt@apple.com>
 
+	Fix nodeAtPoint to return text nodes if the mouse is over them.
+	Make :active fully hierarchical so that e.g., <a><b>Foo</b></a>
+	gets an outline when clicked.
+	
+        Reviewed by ???
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setHoverAndActive):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::nodeAtPoint):
+
+2003-01-21  David Hyatt  <hyatt@apple.com>
+
 	Fix for regressions on layout-tests caused by new table code.
 	Make sure cell's padding is used and not just the table's cellpadding.
 
