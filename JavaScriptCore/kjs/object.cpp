@@ -79,12 +79,6 @@ ObjectImp::ObjectImp()
 ObjectImp::~ObjectImp()
 {
   //fprintf(stderr,"ObjectImp::~ObjectImp %p\n",(void*)this);
-  if (_proto)
-    _proto->setGcAllowed();
-  if (_internalValue)
-    _internalValue->setGcAllowed();
-  if (_scope)
-    _scope->setGcAllowed();
   delete _prop;
 }
 
