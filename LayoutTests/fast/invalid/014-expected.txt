@@ -4,11 +4,11 @@ layer at (0,0) size 800x64
   RenderBlock {HTML} at (0,0) size 800x64
     RenderBody {BODY} at (8,8) size 784x40
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 599x18
+        RenderText {TEXT} at (0,0) size 603x18
           text run at (0,0) width 282: "Random tests of some bizarre combinations. "
-          text run at (282,0) width 317: "H2 should allow a form inside it, but p should not."
-      RenderBlock (anonymous) at (0,18) size 784x0
-        RenderText {TEXT} at (0,0) size 0x0
+          text run at (282,0) width 321: "H2 should allow a form inside it, but p should not. "
+        RenderText {TEXT} at (603,0) size 4x18
+          text run at (603,0) width 4: "  "
       RenderBlock {FORM} at (0,18) size 784x22
         RenderSelect {SELECT} at (2,2) size 39x18
         RenderText {TEXT} at (0,0) size 0x0
