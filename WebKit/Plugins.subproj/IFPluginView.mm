@@ -109,32 +109,38 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     NPP_SetValue = 	[plugin NPP_SetValue];
     NPP_Print = 	[plugin NPP_Print]; 
     
-    attributes = [arguments allKeys];
-    values = [arguments allValues];
-    cAttributes = malloc(sizeof(char *) * [arguments count]);
-    cValues = malloc(sizeof(char *) * [arguments count]);
-    
-    for(i=0; i<[arguments count]; i++){ // convert dictionary to 2 string arrays
-        attributeString = [attributes objectAtIndex:i];
-        s = malloc([attributeString length]+1);
-        [attributeString getCString:s];
-        cAttributes[i] = s;
-        
-        attributeString = [values objectAtIndex:i];
-        s = malloc([attributeString length]+1);
-        [attributeString getCString:s];
-        cValues[i] = s;
-    }
     cMime = malloc([mime length]+1);
     [mime getCString:cMime];
-    npErr = NPP_New(cMime, instance, mode, [arguments count], cAttributes, cValues, &saved);
+    
+    if(arguments){
+        attributes = [arguments allKeys];
+        values = [arguments allValues];
+        cAttributes = malloc(sizeof(char *) * [arguments count]);
+        cValues = malloc(sizeof(char *) * [arguments count]);
+        
+        if([attributes containsObject:@"HIDDEN"]){
+            hidden = TRUE;
+        }else{
+            hidden = FALSE;
+        }
+        
+        for(i=0; i<[arguments count]; i++){ // convert dictionary to 2 string arrays
+            attributeString = [attributes objectAtIndex:i];
+            s = malloc([attributeString length]+1);
+            [attributeString getCString:s];
+            cAttributes[i] = s;
+            
+            attributeString = [values objectAtIndex:i];
+            s = malloc([attributeString length]+1);
+            [attributeString getCString:s];
+            cValues[i] = s;
+        }
+        npErr = NPP_New(cMime, instance, mode, [arguments count], cAttributes, cValues, &saved);
+    }else{
+        npErr = NPP_New(cMime, instance, mode, 0, NULL, NULL, &saved);
+    }
     KWQDebug("NPP_New: %d\n", npErr);
     
-    if([attributes containsObject:@"HIDDEN"]){
-        hidden = TRUE;
-    }else{
-        hidden = FALSE;
-    }
     transferred = FALSE;
     stopped = FALSE;
     filesToErase = [NSMutableArray arrayWithCapacity:2];
@@ -154,7 +160,8 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:[self window]];
         [self sendActivateEvent];
-        [self newStream:URL mimeType:mime notifyData:NULL];
+        if(URL)
+            [self newStream:URL mimeType:mime notifyData:NULL];
         eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
         [eventSender sendNullEvents];
         transferred = TRUE;
@@ -170,8 +177,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 -(void) viewHasMoved:(NSNotification *)note
 {
     [self setWindow];
-    //[self sendUpdateEvent];
-    [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.1];
+    [self sendUpdateEvent];
 }
 
 - (void) setWindow
