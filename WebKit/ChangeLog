@@ -1,3 +1,19 @@
+2002-10-04  Richard Williamson   <rjw@apple.com>
+
+        Stubs for DOM level 2 core API.
+        
+        * DOM.subproj/WebDOMDocument.h: Added.
+        * DOM.subproj/WebDOMDocument.m: Added.
+        * DOM.subproj/WebDOMElement.h: Added.
+        * DOM.subproj/WebDOMElement.m: Added.
+        * DOM.subproj/WebDOMNamedNodeMap.h: Added.
+        * DOM.subproj/WebDOMNamedNodeMap.m: Added.
+        * DOM.subproj/WebDOMNode.h: Added.
+        * DOM.subproj/WebDOMNode.m: Added.
+        * WebKit.pbproj/project.pbxproj:
+        
+        * WebView.subproj/WebHTMLViewPrivate.m: tweak.
+
 2002-10-04  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Add the last few exceptions.

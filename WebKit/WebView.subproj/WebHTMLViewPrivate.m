@@ -1,9 +1,6 @@
-/*	WebHTMLViewPrivate.mm
-	Copyright 2002, Apple, Inc. All rights reserved.
-        
-        Private header file.  This file may reference classes (both ObjectiveC and C++)
-        in WebCore.  Instances of this class are referenced by _private in 
-        NSWebPageView.
+/*	
+    WebHTMLViewPrivate.m
+    Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebHTMLViewPrivate.h>
