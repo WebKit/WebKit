@@ -40,6 +40,7 @@
     npErr = NPP_New(cMime, instance, NP_EMBED, 0, NULL, NULL, &saved); //need to pass parameters to plug-in
     KWQDebug("NPP_New: %d\n", npErr);
     transferred = FALSE;
+    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:0];
     return self;
 }
 
@@ -130,21 +131,31 @@
     return true;
 }
 
--(void)sendNullEvent
+-(void)sendNullEvents
 {
     EventRecord event;
+    bool acceptedEvent;
     
     event.what = 0;
-    KWQDebug("NPP_HandleEvent: %d\n", NPP_HandleEvent(instance, &event));
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    //KWQDebug("NPP_HandleEvent: %d\n", acceptedEvent);
+    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:0];
+}
+
+-(void)mouseDown:(NSEvent *)theEvent
+{
+
 }
 
 -(void)dealloc
 {
     NPError npErr;
-    
+    //[self cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil]; //compiler can't find this method!
     npErr = NPP_Destroy(instance, NULL);
     KWQDebug("NPP_Destroy: %d\n", npErr);
     [super dealloc];
 }
+
+
 
 @end

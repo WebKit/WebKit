@@ -7,24 +7,14 @@
 //
 
 #import <AppKit/AppKit.h>
+#include <Carbon/Carbon.h> 
 #include <qwidget.h>
 #import <WKPlugin.h>
 #include "npapi.h"
 #include "kwqdebug.h"
 
+
 typedef NPStream* NPS;
-
-typedef UInt16 EventKind;
-typedef UInt16 EventModifiers;
-struct EventRecord {
-  EventKind           what;
-  UInt32              message;
-  UInt32              when;
-  Point               where;
-  EventModifiers      modifiers;
-};
-typedef struct EventRecord EventRecord;
-
 
 @interface WKPluginView : NSQuickDrawView {
     QWidget *widget;
@@ -59,7 +49,8 @@ typedef struct EventRecord EventRecord;
 - initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WKPlugin *)plug url: (NSString *)location mime:(NSString *)mime;
 -(void)drawRect:(NSRect)rect;
 -(BOOL)acceptsFirstResponder;
--(void)sendNullEvent;
+-(void)sendNullEvents;
+-(void)mouseDown:(NSEvent *)event;
 -(void)dealloc;
 
 @end
