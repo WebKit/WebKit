@@ -10,6 +10,7 @@
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL inWindow;
+    BOOL showsURLsInToolTips;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
     BOOL initiatedDrag;

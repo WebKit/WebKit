@@ -522,7 +522,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
     // When in private browsing mode, prevent caching to disk
-    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [[WebPreferences standardPreferences] privateBrowsingEnabled]) {
+    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [[webView preferences] privateBrowsingEnabled]) {
         cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:[cachedResponse response]
                                                                    data:[cachedResponse data]
                                                                userInfo:[cachedResponse userInfo]

@@ -822,7 +822,14 @@ static WebHTMLView *lastHitView = nil;
     [[self _webView] _mouseDidMoveOverElement:element modifierFlags:[event modifierFlags]];
 
     // Set a tool tip; it won't show up right away but will if the user pauses.
-    [self _setToolTip:[element objectForKey:WebCoreElementTitleKey]];
+    NSString *newToolTip = nil;
+    if (_private->showsURLsInToolTips) {
+        newToolTip = [[element objectForKey:WebCoreElementLinkURLKey] _web_userVisibleString];
+    }
+    if (newToolTip == nil) {
+        newToolTip = [element objectForKey:WebCoreElementTitleKey];
+    }
+    [self _setToolTip:newToolTip];
 }
 
 + (NSArray *)_insertablePasteboardTypes
@@ -1093,9 +1100,10 @@ static WebHTMLView *lastHitView = nil;
     NSPoint mouseDownPoint = [self convertPoint:location fromView:nil];
     NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint];
 
+    ASSERT([self _webView]);
     if ([mouseDownElement objectForKey: WebElementImageKey] != nil &&
         [mouseDownElement objectForKey: WebElementImageURLKey] != nil && 
-        [[WebPreferences standardPreferences] loadsImagesAutomatically] && 
+        [[[self _webView] preferences] loadsImagesAutomatically] && 
         (_private->dragSourceActionMask & WebDragSourceActionImage)) {
         return YES;
     }
@@ -1386,6 +1394,16 @@ static WebHTMLView *lastHitView = nil;
     _NSInitializeKillRing();
 }
 
+- (void)_resetCachedWebPreferences:(NSNotification *)ignored
+{
+    WebPreferences *preferences = [[self _webView] preferences];
+    // Check for nil because we might not yet have an associated webView when this is called
+    if (preferences == nil) {
+        preferences = [WebPreferences standardPreferences];
+    }
+    _private->showsURLsInToolTips = [preferences showsURLsInToolTips];
+}
+
 - (id)initWithFrame:(NSRect)frame
 {
     [super initWithFrame:frame];
@@ -1399,7 +1417,11 @@ static WebHTMLView *lastHitView = nil;
 
     _private->pluginController = [[WebPluginController alloc] initWithDocumentView:self];
     _private->needsLayout = YES;
-
+    [self _resetCachedWebPreferences:nil];
+    [[NSNotificationCenter defaultCenter] 
+            addObserver:self selector:@selector(_resetCachedWebPreferences:) 
+                   name:WebPreferencesChangedNotification object:nil];
+    
     return self;
 }
 
@@ -3268,7 +3290,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
 {
-    if (![[WebPreferences standardPreferences] respectStandardStyleKeyEquivalents]) {
+    ASSERT([self _webView]);
+    if (![[[self _webView] preferences] respectStandardStyleKeyEquivalents]) {
         return NO;
     }
     

@@ -11,6 +11,9 @@
 - (BOOL)respectStandardStyleKeyEquivalents;
 - (void)setRespectStandardStyleKeyEquivalents:(BOOL)flag;
 
+- (BOOL)showsURLsInToolTips;
+- (void)setShowsURLsInToolTips:(BOOL)flag;
+
 // Other private methods
 - (int)_pageCacheSize;
 - (int)_objectCacheSize;

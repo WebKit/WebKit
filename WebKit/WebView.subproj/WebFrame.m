@@ -762,7 +762,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                     // Add item to history and BF list
                     NSURL *URL = [ds _URLForHistory];
                     if (URL && ![URL _web_isEmpty]){
-                        if (![[WebPreferences standardPreferences] privateBrowsingEnabled]) {
+                        ASSERT([self webView]);
+                        if (![[[self webView] preferences] privateBrowsingEnabled]) {
                             entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
                             if (ptitle)
                                 [entry setTitle: ptitle];                            
@@ -1309,13 +1310,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             NSDate *cacheDate = [pageCache objectForKey: WebPageCacheEntryDateKey];
             NSTimeInterval delta = [[NSDate date] timeIntervalSinceDate: cacheDate];
 
-            if (delta <= [[WebPreferences standardPreferences] _backForwardCacheExpirationInterval]){
+            if (delta <= [[[self webView] preferences] _backForwardCacheExpirationInterval]){
                 newDataSource = [pageCache objectForKey: WebPageCacheDataSourceKey];
                 [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];   
                 inPageCache = YES;
             }         
             else {
-                LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [[_private provisionalItem] URL], delta, [[WebPreferences standardPreferences] _backForwardCacheExpirationInterval]);
+                LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [[_private provisionalItem] URL], delta, [[[self webView] preferences] _backForwardCacheExpirationInterval]);
                 [item setHasPageCache: NO];
             }
         }

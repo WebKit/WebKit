@@ -48,7 +48,7 @@
         [self setEditable:NO];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(defaultsChanged:)
-                                                     name:NSUserDefaultsDidChangeNotification
+                                                     name:WebPreferencesChangedNotification
                                                    object:nil];
     }
     return self;
@@ -73,9 +73,20 @@
     return webView ? [webView textSizeMultiplier] : 1.0;
 }
 
+- (WebPreferences *)_preferences
+{
+    // Handle nil result because we might not be in a WebView at any given time.
+    WebPreferences *preferences = [[self _web_parentWebView] preferences];
+    if (preferences == nil) {
+        preferences = [WebPreferences standardPreferences];
+    }
+    return preferences;
+}
+
+
 - (void)setFixedWidthFont
 {
-    WebPreferences *preferences = [WebPreferences standardPreferences];
+    WebPreferences *preferences = [self _preferences];
     NSString *families[2];
     families[0] = [preferences fixedFontFamily];
     families[1] = nil;

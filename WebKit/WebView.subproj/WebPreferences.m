@@ -200,6 +200,7 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:NO],   WebKitTabToLinksPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitPrivateBrowsingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitRespectStandardStyleKeyEquivalentsPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitShowsURLsInToolTipsPreferenceKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -540,6 +541,16 @@ NS_ENDHANDLER
 - (void)setRespectStandardStyleKeyEquivalents:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitRespectStandardStyleKeyEquivalentsPreferenceKey];
+}
+
+- (BOOL)showsURLsInToolTips
+{
+    return [self _boolValueForKey:WebKitShowsURLsInToolTipsPreferenceKey];
+}
+
+- (void)setShowsURLsInToolTips:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitShowsURLsInToolTipsPreferenceKey];
 }
 
 - (int)_pageCacheSize

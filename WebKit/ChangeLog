@@ -1,3 +1,78 @@
+2004-12-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/3913523> Mail needs SPI for adding tooltips to links
+        - cleaned up some calls to +[WebPreferences standardPreferences] that should
+          have been using -[WebView preferences]
+          
+        This adds a (currently SPI-only) new feature that shows the URL of the link
+        under the mouse in a toolTip. I tested this in Safari, but we're adding this
+        feature for Mail, and Safari won't use it (unless of course you know the
+        magic defaults command)
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView start]):
+        use -[WebView preferences] instead of +[WebPreferences standardPreferences]
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge getObjectCacheSize]):
+        ditto
+        (-[WebBridge _retrieveKeyboardUIModeFromPreferences:]):
+        ditto
+        
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate willCacheResponse:]):
+        ditto
+        
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        ditto
+        (-[WebFrame _loadItem:withLoadType:]):
+        ditto
+        
+        * WebView.subproj/WebHTMLViewInternal.h:
+        private struct now keeps ivar for cached value of showsURLsInToolTips
+        so it doesn't have look it up in preferences a zillion times
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        if private->showsURLsInToolTips is true, set the toolTip from the URL.
+        Fall back to showing the title attribute in case some element has a title
+        attribute but no URL.
+        (-[WebHTMLView _mayStartDragAtEventLocation:]):
+        use -[WebView preferences] instead of +[WebPreferences standardPreferences]
+        (-[WebHTMLView _resetCachedWebPreferences:]):
+        get a fresh value for private->showsURLsInToolTips
+        (-[WebHTMLView initWithFrame:]):
+        call _resetCachedWebPreferences the first time, and listen for WebPreferencesChanged notifications
+        (-[WebHTMLView _handleStyleKeyEquivalent:]):
+        use -[WebView preferences] instead of +[WebPreferences standardPreferences]
+        
+        * WebView.subproj/WebPreferenceKeysPrivate.h:
+        added WebKitShowsURLsInToolTipsPreferenceKey
+        
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        initialize WebKitShowsURLsInToolTipsPreferenceKey to 0
+        (-[WebPreferences showsURLsInToolTips]):
+        return WebKitShowsURLsInToolTipsPreferenceKey value
+        (-[WebPreferences setShowsURLsInToolTips:]):
+        set WebKitShowsURLsInToolTipsPreferenceKey value
+        
+        * WebView.subproj/WebPreferencesPrivate.h:
+        add declarations for showsURLsInToolTips and setter
+        
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView _preferences]):
+        new helper method that gets preferences from webView if there is a webView,
+        otherwise gets global preferences
+        (-[WebTextView setFixedWidthFont]):
+        use new helper method rather than always using global preferences
+        (-[WebTextView initWithFrame:]):
+        observe WebPreferencesChangedNotification instead of unnecessarily general
+        NSUserDefaultsChangedNotification
+
 2004-12-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

@@ -974,7 +974,8 @@ static BOOL loggedObjectCacheSize = NO;
 -(int)getObjectCacheSize
 {
     vm_size_t memSize = WebSystemMainMemory();
-    int cacheSize = [[WebPreferences standardPreferences] _objectCacheSize];
+    ASSERT([_frame webView]);
+    int cacheSize = [[[_frame webView] preferences] _objectCacheSize];
     int multiplier = 1;
     if (memSize >= 1024 * 1024 * 1024)
         multiplier = 4;
@@ -1214,7 +1215,8 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     _keyboardUIMode = (mode & 0x2) ? WebCoreKeyboardAccessFull : WebCoreKeyboardAccessDefault;
     
     // check for tabbing to links
-    if ([[WebPreferences standardPreferences] tabsToLinks]) {
+    ASSERT([_frame webView]);
+    if ([[[_frame webView] preferences] tabsToLinks]) {
         _keyboardUIMode |= WebCoreKeyboardAccessTabsToLinks;
     }
 }
