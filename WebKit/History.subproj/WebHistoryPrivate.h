@@ -36,6 +36,8 @@
 - (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error;
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error;
 
+- (NSCalendarDate*)_ageLimitDate;
+
 @end
 
 @interface WebHistory (WebPrivate)
@@ -47,5 +49,6 @@
 - (WebHistoryItem *)addItemForURL:(NSURL *)URL;
 - (BOOL)containsItemForURLString:(NSString *)URLString;
 - (WebHistoryItem *)_itemForURLString:(NSString *)URLString;
+- (NSCalendarDate*)ageLimitDate;
 
 @end

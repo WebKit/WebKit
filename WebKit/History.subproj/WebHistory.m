@@ -774,5 +774,8 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
     return [_historyPrivate itemForURLString: URLString];
 }
 
-
+- (NSCalendarDate*)ageLimitDate
+{
+    return [_historyPrivate _ageLimitDate];
+}
 @end

@@ -1,3 +1,13 @@
+2004-03-17  David Hyatt  <hyatt@apple.com>
+
+	Expose ageLimitDate so that the autocomplete code can access it.
+	
+        Reviewed by john
+
+        * History.subproj/WebHistory.m:
+        (-[WebHistory ageLimitDate]):
+        * History.subproj/WebHistoryPrivate.h:
+
 2004-03-17  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3591667.  Plugin view is added to view hierarchy before calling init.
