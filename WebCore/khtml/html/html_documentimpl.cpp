@@ -294,14 +294,21 @@ static bool isTransitional(const QString &spec, int start)
 
 void HTMLDocumentImpl::close()
 {
+    // First fire the onload.
     bool doload = !parsing() && m_tokenizer;
-
+    if (body() && doload)
+        body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
+        
+    // Make sure both the initial layout and reflow happen after the onload
+    // fires.  This will improve onload scores, and other browsers do it.
+    // If they wanna cheat, we can too. -dwh
+    
+    // The initial layout happens here.
     DocumentImpl::close();
 
-    if (body() && doload) {
-        body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
+    // Now do our painting
+    if (body() && doload)
         updateRendering();
-    }
 }
 
 
