@@ -2032,43 +2032,27 @@ static WebHTMLView *lastHitView = nil;
     return YES;
 }
 
-- (NSView *)nextKeyView
-{
-    if (_private && _private->nextKeyViewAccessShouldMoveFocus && ![[self _bridge] inNextKeyViewOutsideWebFrameViews]) {
-        _private->nextKeyViewAccessShouldMoveFocus = NO;
-        return [[self _bridge] nextKeyView];
-    }
-    
-    return [super nextKeyView];
-}
-
-- (NSView *)previousKeyView
-{
-    if (_private && _private->nextKeyViewAccessShouldMoveFocus) {
-        _private->nextKeyViewAccessShouldMoveFocus = NO;
-        return [[self _bridge] previousKeyView];
-    }
-        
-    return [super previousKeyView];
-}
-
 - (NSView *)nextValidKeyView
 {
+    NSView *view = nil;
     if (![self isHiddenOrHasHiddenAncestor]) {
-        _private->nextKeyViewAccessShouldMoveFocus = YES;
+        view = [[self _bridge] nextKeyViewInsideWebFrameViews];
     }
-    NSView *view = [super nextValidKeyView];
-    _private->nextKeyViewAccessShouldMoveFocus = NO;
+    if (view == nil) {
+        view = [super nextValidKeyView];
+    }
     return view;
 }
 
 - (NSView *)previousValidKeyView
 {
+    NSView *view = nil;
     if (![self isHiddenOrHasHiddenAncestor]) {
-        _private->nextKeyViewAccessShouldMoveFocus = YES;
+        view = [[self _bridge] previousKeyViewInsideWebFrameViews];
     }
-    NSView *view = [super previousValidKeyView];
-    _private->nextKeyViewAccessShouldMoveFocus = NO;
+    if (view == nil) {
+        view = [super previousValidKeyView];
+    }
     return view;
 }
 

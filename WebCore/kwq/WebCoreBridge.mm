@@ -1088,12 +1088,22 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)nextKeyViewInsideWebFrameViews
 {
-    return _part->nextKeyViewInFrameHierarchy(0, KWQSelectingNext);
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (!doc) {
+        return nil;
+    }
+    
+    return _part->nextKeyViewInFrameHierarchy(doc->focusNode(), KWQSelectingNext);
 }
 
 - (NSView *)previousKeyViewInsideWebFrameViews
 {
-    return _part->nextKeyViewInFrameHierarchy(0, KWQSelectingPrevious);
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (!doc) {
+        return nil;
+    }
+
+    return _part->nextKeyViewInFrameHierarchy(doc->focusNode(), KWQSelectingPrevious);
 }
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string

@@ -1,3 +1,17 @@
+2004-08-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        WebCore part of fix for <rdar://problem/3631868> NSToolbar adoption: 
+        Tab key should cycle around toolbar and page content
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge nextKeyViewInsideWebFrameViews]):
+        Made this method start looking from the current focus node. This won't
+        affect any existing callers because there were no existing callers.
+        (-[WebCoreBridge previousKeyViewInsideWebFrameViews]):
+        ditto
+
 2004-08-02  David Hyatt  <hyatt@apple.com>
 
 	Create a #define for XSLT support that at the moment will only be enabled on Tiger.

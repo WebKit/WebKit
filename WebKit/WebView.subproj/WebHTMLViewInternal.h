@@ -8,7 +8,6 @@
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL inWindow;
-    BOOL nextKeyViewAccessShouldMoveFocus;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
     BOOL initiatedDrag;

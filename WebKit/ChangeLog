@@ -1,3 +1,19 @@
+2004-08-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+
+        WebKit part of fix for <rdar://problem/3631868> NSToolbar adoption: 
+        Tab key should cycle around toolbar and page content
+
+        * WebView.subproj/WebHTMLView.m:
+        removed overrides of nextKeyView and previousKeyView
+        (-[WebHTMLView nextValidKeyView]):
+        call super only if we can't move the focus within the frame hierarchy
+        (-[WebHTMLView previousValidKeyView]):
+        ditto
+        * WebView.subproj/WebHTMLViewInternal.h:
+        removed nextKeyViewAccessShouldMoveFocus ivar
+
 2004-08-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
