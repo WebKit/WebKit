@@ -32,7 +32,8 @@ enum KWQEncodingFlags {
     NoEncodingFlags = 0,
     VisualOrdering = 1,
     BigEndian = 2,
-    LittleEndian = 4
+    LittleEndian = 4,
+    IsJapanese = 8
 };
 
 CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *, KWQEncodingFlags *flags = 0);

@@ -1,3 +1,22 @@
+2003-04-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3056913 -- please add Japanese auto-detect
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Turn on the auto-detect code if the
+        default encoding is one of the Japanese encodings. Also change things around so
+        the auto-detection process doesn't clobber the old chosen encoding if it does
+        not yield a result.
+        
+        * kwq/KWQCharsets.h: Add a new IsJapanese encoding flag.
+        * kwq/KWQTextCodec.h: Add a new isJapanese() member function, used by the above.
+        * kwq/mac-encodings.txt: Add the IsJapanese flag to all Japanese encodings, and
+        add "jis7" as a synonym for ISO-2022-JP.
+        * kwq/make-charset-table.pl: Changed to allow flags even for unused encodings.
+
+        * kwq/KWQCharsetData.c: Regenerated.
+
 2003-04-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3220809, overflow values other than visible should not

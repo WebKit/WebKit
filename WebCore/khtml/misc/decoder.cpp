@@ -491,7 +491,8 @@ QString Decoder::decode(const char *data, int len)
 
  found:
 #if APPLE_CHANGES
-    if (0) // not ready to turn this on yet; seems to cause problems
+    // Do the auto-detect if our default encoding is one of the Japanese ones.
+    if (!haveEncoding && m_codec && m_codec->isJapanese())
 #else
     if (!haveEncoding && KGlobal::locale()->languageList()[0] == "ja")
 #endif
@@ -499,25 +500,27 @@ QString Decoder::decode(const char *data, int len)
 #ifdef DECODE_DEBUG
 	kdDebug( 6005 ) << "Decoder: use auto-detect (" << strlen(data) << ")" << endl;
 #endif
-	switch ( KanjiCode::judge( data, len ) ) {
+	const char *autoDetectedEncoding;
+        switch ( KanjiCode::judge( data, len ) ) {
 	case KanjiCode::JIS:
-	    enc = "jis7";
+	    autoDetectedEncoding = "jis7";
 	    break;
 	case KanjiCode::EUC:
-	    enc = "eucjp";
+	    autoDetectedEncoding = "eucjp";
 	    break;
 	case KanjiCode::SJIS:
-	    enc = "sjis";
+	    autoDetectedEncoding = "sjis";
 	    break;
 	default:
-	    enc = NULL;
+	    autoDetectedEncoding = NULL;
 	    break;
 	}
 #ifdef DECODE_DEBUG
-	kdDebug( 6005 ) << "Decoder: auto detect encoding is " << enc << endl;
+	kdDebug( 6005 ) << "Decoder: auto detect encoding is "
+            << (autoDetectedEncoding ? autoDetectedEncoding : "NULL") << endl;
 #endif
-	if (!enc.isEmpty()) {
-	    setEncoding(enc, true);
+	if (autoDetectedEncoding != NULL) {
+	    setEncoding(autoDetectedEncoding, true);
 	}
     }
 

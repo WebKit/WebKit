@@ -95,8 +95,8 @@ sub process_mac_encodings
             for my $alias (sort keys %aliases) {
                 emit_line($alias, $MacName, $flags);
             }
-	} elsif (/^[a-zA-Z0-9_]+$/) {
-            my $MacName = $_;
+	} elsif (/^([a-zA-Z0-9_]+)(, (.+))?$/) {
+            my $MacName = $1;
             
             error "CFString encoding name $MacName is mentioned twice in mac-encodings.txt" if $seenMacNames{$MacName};
             $seenMacNames{$MacName} = 1;
