@@ -540,7 +540,7 @@ NSSize WebIconLargeSize = {128, 128};
     NSNumber *retainCount = [_private->iconURLToRetainCount objectForKey:iconURLString];
 
     if (!retainCount) {
-        ERROR("Tried to release a non-retained icon: %@", iconURLString);
+        ASSERT_NOT_REACHED();
         return;
     }
     
@@ -594,9 +594,8 @@ NSSize WebIconLargeSize = {128, 128};
     
     NSNumber *retainCount = [_private->futureURLToRetainCount objectForKey:URL];
 
-    if(!retainCount){
-        [NSException raise:NSGenericException
-                    format:@"Releasing a future icon that was not previously retained."];
+    if (!retainCount) {
+        ASSERT_NOT_REACHED();
         return;
     }
 

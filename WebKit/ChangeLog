@@ -1,3 +1,16 @@
+2003-05-21  Chris Blumenberg  <cblu@apple.com>
+
+	These problems:
+	3184359 - icon exception closing window while typing
+	3245476 - Safari-78 crashes or hangs after IMDB Find and using the history menu to go back ...
+	are not or are no longer reproducible. They were caused by an exception raised in WebKit.
+	Since we don't use exceptions in WebKit, I've replaced the exception with an assert.
+		
+	Reviewed by john.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _releaseFutureIconForURL:]): assert instead of exception if failure
+
 2003-05-21  Ed Voas <voas@apple.com> 
 
 	- fixed 3262868: Update Carbon WebKit API prefixes
