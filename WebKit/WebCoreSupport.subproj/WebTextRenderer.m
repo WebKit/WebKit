@@ -561,11 +561,24 @@ static BOOL alwaysUseATSU = NO;
         CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0, 1.0), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
         lineWidth = size.width;
     }
+    
     CGContextSetLineWidth(cgContext, lineWidth);
+
+#if BUILDING_ON_PANTHER            
     CGContextMoveToPoint(cgContext, point.x, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
     // Subtract 1 to ensure that the line is always within bounds of element.
     CGContextAddLineToPoint(cgContext, point.x + width - 1.0, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
     CGContextStrokePath(cgContext);
+#else
+    // Use CGContextStrokeLineSegments on Tiger.  J. Burkey says this will be a big performance win.
+
+    CGPoint linePoints[2];
+    linePoints[0].x = point.x;
+    linePoints[0].y = point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset;
+    linePoints[1].x = point.x + width - 1.0;
+    linePoints[1].y = linePoints[0].y;
+    CGContextStrokeLineSegments (cgContext, linePoints, 2);
+#endif
 
     [graphicsContext setShouldAntialias: flag];
 }

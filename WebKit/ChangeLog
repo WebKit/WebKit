@@ -1,3 +1,13 @@
+2005-01-11  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3949145.  CG has a much faster API for drawing lines.
+	Switched over to that new API (CGContextStrokeLineSegments).
+
+        Reviewed by John Sullivan.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawLineForCharacters:yOffset:withWidth:withColor:]):
+
 2005-01-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3948862> REGRESSION: missing images when RTFD is pasted into editable WebView
