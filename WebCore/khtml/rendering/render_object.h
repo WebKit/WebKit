@@ -212,10 +212,6 @@ public:
     void setOverhangingContents(bool p=true);
     
     void setLayouted(bool b=true);
-        
-    // hack to block inline layouts during parsing
-    // evil, evil. I didn't do it. <tm>
-    virtual void setBlockBidi() {}
 
     void setMinMaxKnown(bool b=true) {
 	m_minMaxKnown = b;

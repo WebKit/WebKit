@@ -1,3 +1,33 @@
+2002-12-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3125283 - HOMEPAGE: in onload of an IMG, the width and height are equal to zero
+
+	There were two problems here. First, the calls to get image width
+	and height didn't force a layout in all the cases where it was
+	required. Second, layout wouldn't lay out images at all until
+	parsing was done, due to a hack to block inline layout until that
+	point. I'm not sure if this will have other bad consquences, but
+	nearly every page I tried, including Hebrew and Japanese pages as
+	well as every page on the base PLT laid out properly.
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::width): Force a layout if not laid out.
+        (HTMLImageElementImpl::height): Likewise.
+        * khtml/html/htmlparser.cpp:
+	(KHTMLParser::insertNode): Remove setBlockBidi hack - this was
+	preventing images from getting laid out until the document was
+	totally done parsing.
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::RenderFlow): More setBLockBidi removal.
+        (RenderFlow::layout): Likewise.
+        (RenderFlow::close): Likewise.
+        (RenderFlow::addChildToFlow): Likewise.
+        (RenderFlow::printTree): Likewise.
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.h:
+
 2002-12-16  David Hyatt  <hyatt@apple.com>
 
 	When a clear occurs (thus causing a block to move underneath

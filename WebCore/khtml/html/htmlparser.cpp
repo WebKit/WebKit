@@ -332,8 +332,6 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 //
                 if (!n->attached())
                     n->attach();
-                if (n->renderer())
-                    n->renderer()->setBlockBidi();
             }
 #endif
         }
