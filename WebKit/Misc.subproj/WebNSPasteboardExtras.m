@@ -35,6 +35,7 @@ NSString *WebURLNamePboardType = nil;
         WebURLPboardType,
         WebURLNamePboardType,
         NSStringPboardType,
+        NSFilenamesPboardType,
         nil];
 }
 

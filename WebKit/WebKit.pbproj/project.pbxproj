@@ -75,6 +75,8 @@
 //083
 //084
 		0867D690FE84028FC02AAC07 = {
+			buildSettings = {
+			};
 			buildStyles = (
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
@@ -560,11 +562,7 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			generatedFileNames = (
-			);
 			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
@@ -1676,11 +1674,7 @@
 			buildActionMask = 8;
 			files = (
 			);
-			generatedFileNames = (
-			);
 			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "ln -sf Versions/Current/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/Current/Frameworks ${DSTROOT}/System/Library/Frameworks/WebKit.framework/Frameworks; echo -n \"\"";
@@ -1786,11 +1780,7 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			generatedFileNames = (
-			);
 			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "ln -sf Versions/Current/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/Current/Frameworks ${DSTROOT}/System/Library/Frameworks/WebKit.framework/Frameworks; echo -n \"\"";

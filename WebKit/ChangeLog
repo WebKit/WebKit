@@ -1,3 +1,13 @@
+2003-08-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3360977>: REGRESSION (7B28-7B29): main webview rejects drop of doc icon from BBEdit
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard _web_dragTypesForURL]): we handle NSFilenamesPboardType
+        * WebKit.pbproj/project.pbxproj:
+
 2003-08-04  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3223989.  Pass key down events to super if scrolling is disabled.
