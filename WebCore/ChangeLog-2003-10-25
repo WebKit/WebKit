@@ -1,5 +1,16 @@
 2003-01-20  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3147213.  <nobr> is treated like other inlines now,
+	so it can contain blocks.  <wbr> is also fixed.  This fixes
+	tvguide.com.
+	
+        Reviewed by john
+
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+
+2003-01-20  David Hyatt  <hyatt@apple.com>
+
 	Gah. Fix positioned objects and floating objects so that they
 	don't append themselves to the list of runs in normal flow.
 	An astoundingly basic bug. :(

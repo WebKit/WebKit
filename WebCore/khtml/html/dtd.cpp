@@ -590,6 +590,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_LEGEND:
     case ID_FONT:
     case ID_A:
+    case ID_NOBR:
+    case ID_WBR:
         return check_array(childID, tag_list_1);
     case ID_P:
     case ID_H1:
@@ -620,8 +622,6 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         // BODY: _1 * + _2
         if( check_array(childID, tag_list_1) ) return true;
         return check_array(childID, tag_list_2);
-    case ID_NOBR:
-    case ID_WBR:
     case ID_ADDRESS:
         // ADDRESS: ( _0 | P ) *
         if( check_array(childID, tag_list_0) ) return true;
