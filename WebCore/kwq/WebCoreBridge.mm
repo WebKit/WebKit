@@ -110,7 +110,7 @@ using khtml::RenderPart;
     _part->setParent([parent part]);
 }
 
-- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers
+- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers lastModified:(NSDate *)lastModified
 {
     URLArgs args(_part->browserExtension()->urlArgs());
 
@@ -133,6 +133,11 @@ using khtml::RenderPart;
     if (refreshHeader) {
         _part->kwq->addMetaData("http-refresh", QString::fromNSString(refreshHeader));
     }
+
+    if (lastModified) {
+	_part->kwq->addMetaData("modified", QString::fromNSString([lastModified description]));
+    }
+
 }
 
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding

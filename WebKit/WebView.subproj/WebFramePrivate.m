@@ -1066,7 +1066,7 @@ static const char * const stateNames[] = {
         // adding the BF item will save away scroll state.
         [self _addBackForwardItemClippedAtTarget:NO];
     }
-    [_private->bridge openURL:[URL absoluteString] reload:NO headers:nil];
+    [_private->bridge openURL:[URL absoluteString] reload:NO headers:nil lastModified:nil];
     if (!isRedirect) {
         // This will clear previousItem from the rest of the frame tree tree that didn't
         // doing any loading.  We need to make a pass on this now, since for anchor nav

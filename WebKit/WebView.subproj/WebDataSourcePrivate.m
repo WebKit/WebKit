@@ -445,7 +445,7 @@
 	_private->committed = TRUE;
         [self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];
-	[[self _bridge] openURL:[[_private->response URL] absoluteString] reload:reload headers:headers];
+	[[self _bridge] openURL:[[_private->response URL] absoluteString] reload:reload headers:headers lastModified:[_private->response lastModifiedDate]];
     }
 }
 

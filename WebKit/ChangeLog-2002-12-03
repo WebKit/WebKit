@@ -1,3 +1,13 @@
+2002-11-24  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3067939 - no support for window.document.lastModified
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady]): Pass last modified date to WebCore.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:request:]): Pass
+	nil last modified date.
+
 2002-11-23  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3109835 - Download errors aren't communicated to client
