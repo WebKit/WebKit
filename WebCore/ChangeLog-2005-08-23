@@ -1,3 +1,71 @@
+2004-02-11  David Hyatt  <hyatt@apple.com>
+
+	Convert paint methods over to use a new PaintInfo struct.  Eliminate the paintObject method.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paint):
+        (khtml::RenderBlock::paintObject):
+        (khtml::RenderBlock::paintFloats):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paint):
+        (RenderBox::paintRootBoxDecorations):
+        (RenderBox::paintBoxDecorations):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_br.h:
+        (khtml::RenderBR::paint):
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::paint):
+        (RenderCanvas::paintBoxDecorations):
+        * khtml/rendering/render_canvas.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLineBoxBackgroundBorder):
+        (RenderFlow::paintLineBoxDecorations):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderFieldset::paintBoxDecorations):
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        (RenderImage::updateFromElement):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paint):
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paintLayer):
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::paintBackgroundAndBorder):
+        (InlineFlowBox::paintDecorations):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineRunBox::paintBackgroundAndBorder):
+        (khtml::InlineRunBox::paintDecorations):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::paint):
+        (RenderListMarker::paint):
+        * khtml/rendering/render_list.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::paint):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::PaintInfo::PaintInfo):
+        (khtml::RenderObject::paintBoxDecorations):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::shouldPaint):
+        (RenderWidget::paint):
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::paint):
+        (RenderTable::paintBoxDecorations):
+        (RenderTableSection::paint):
+        (RenderTableCell::paint):
+        (RenderTableCell::paintBoxDecorations):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paint):
+        * khtml/rendering/render_text.h:
+
 2004-02-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

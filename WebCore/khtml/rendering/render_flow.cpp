@@ -197,18 +197,17 @@ InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineB
     return flowBox;
 }
 
-void RenderFlow::paintLineBoxBackgroundBorder(QPainter *p, int _x, int _y,
-                                int _w, int _h, int _tx, int _ty, PaintAction paintAction)
+void RenderFlow::paintLineBoxBackgroundBorder(PaintInfo& i, int _tx, int _ty)
 {
     if (!firstLineBox())
         return;
-    
-    if (style()->visibility() == VISIBLE && paintAction == PaintActionForeground) {
+ 
+    if (style()->visibility() == VISIBLE && i.phase == PaintActionForeground) {
         // We can check the first box and last box and avoid painting if we don't
         // intersect.
         int yPos = _ty + firstLineBox()->yPos();
         int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
-        if( (yPos >= _y + _h) || (yPos + h <= _y))
+        if( (yPos >= i.r.y() + i.r.height()) || (yPos + h <= i.r.y()))
             return;
 
         // See if our boxes intersect with the dirty rect.  If so, then we paint
@@ -218,20 +217,19 @@ void RenderFlow::paintLineBoxBackgroundBorder(QPainter *p, int _x, int _y,
         for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
             yPos = _ty + curr->yPos();
             h = curr->height();
-            if ((yPos < _y + _h) && (yPos + h > _y))
-                curr->paintBackgroundAndBorder(p, _x, _y, _w, _h, _tx, _ty, xOffsetWithinLineBoxes);
+            if ((yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
+                curr->paintBackgroundAndBorder(i, _tx, _ty, xOffsetWithinLineBoxes);
             xOffsetWithinLineBoxes += curr->width();
         }
     }
 }
 
-void RenderFlow::paintLineBoxDecorations(QPainter *p, int _x, int _y,
-                                         int _w, int _h, int _tx, int _ty, PaintAction paintAction)
+void RenderFlow::paintLineBoxDecorations(PaintInfo& i, int _tx, int _ty)
 {
     if (!firstLineBox())
         return;
 
-    if (style()->visibility() == VISIBLE && paintAction == PaintActionForeground) {
+    if (style()->visibility() == VISIBLE && i.phase == PaintActionForeground) {
         // We only paint line box decorations in strict or almost strict mode.
         // Otherwise we let the InlineTextBoxes paint their own decorations.
         if (style()->htmlHacks())
@@ -241,7 +239,7 @@ void RenderFlow::paintLineBoxDecorations(QPainter *p, int _x, int _y,
         // intersect.
         int yPos = _ty + firstLineBox()->yPos();;
         int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
-        if( (yPos >= _y + _h) || (yPos + h <= _y))
+        if( (yPos >= i.r.y() + i.r.height()) || (yPos + h <= i.r.y()))
             return;
 
         // See if our boxes intersect with the dirty rect.  If so, then we paint
@@ -250,8 +248,8 @@ void RenderFlow::paintLineBoxDecorations(QPainter *p, int _x, int _y,
         for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
             yPos = _ty + curr->yPos();
             h = curr->height();
-            if ((yPos < _y + _h) && (yPos + h > _y))
-                curr->paintDecorations(p, _x, _y, _w, _h, _tx, _ty);
+            if ((yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
+                curr->paintDecorations(i, _tx, _ty);
         }
     }
 }

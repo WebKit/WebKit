@@ -196,32 +196,21 @@ bool RenderCanvas::absolutePosition(int &xPos, int &yPos, bool f)
     return true;
 }
 
-void RenderCanvas::paint(QPainter *p, int _x, int _y, int _w, int _h, int _tx, int _ty,
-                       PaintAction paintAction)
-{
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
-}
-
-void RenderCanvas::paintObject(QPainter *p, int _x, int _y,
-                             int _w, int _h, int _tx, int _ty, PaintAction paintAction)
+void RenderCanvas::paint(PaintInfo& i, int _tx, int _ty)
 {
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(RenderCanvas) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
     // 1. paint background, borders etc
-    if (paintAction == PaintActionElementBackground) {
-        paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+    if (i.phase == PaintActionElementBackground) {
+        paintBoxDecorations(i, _tx, _ty);
         return;
     }
     
     // 2. paint contents
-    RenderObject *child = firstChild();
-    while(child != 0) {
-        if(!child->layer() && !child->isFloating()) {
-            child->paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
-        }
-        child = child->nextSibling();
-    }
+    for (RenderObject *child = firstChild(); child; child = child->nextSibling())
+        if (!child->layer() && !child->isFloating())
+            child->paint(i, _tx, _ty);
 
     if (m_view)
     {
@@ -230,17 +219,15 @@ void RenderCanvas::paintObject(QPainter *p, int _x, int _y,
     }
     
     // 3. paint floats.
-    if (paintAction == PaintActionFloat)
-        paintFloats(p, _x, _y, _w, _h, _tx, _ty);
+    if (i.phase == PaintActionFloat)
+        paintFloats(i, _tx, _ty);
         
 #ifdef BOX_DEBUG
-    outlineBox(p, _tx, _ty);
+    outlineBox(i.p, _tx, _ty);
 #endif
-
 }
 
-void RenderCanvas::paintBoxDecorations(QPainter *p,int _x, int _y,
-                                       int _w, int _h, int _tx, int _ty)
+void RenderCanvas::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 {
     // Check to see if we are enclosed by a transparent layer.  If so, we cannot blit
     // when scrolling, and we need to use slow repaints.
@@ -260,7 +247,8 @@ void RenderCanvas::paintBoxDecorations(QPainter *p,int _x, int _y,
     if (elt)
         view()->useSlowRepaints(); // The parent must show behind the child.
     else
-        p->fillRect(_x,_y,_w,_h, view()->palette().active().color(QColorGroup::Base));
+        i.p->fillRect(i.r.x(), i.r.y(), i.r.width(), i.r.height(), 
+                    view()->palette().active().color(QColorGroup::Base));
 }
 
 void RenderCanvas::repaintViewRectangle(const QRect& ur, bool immediate)

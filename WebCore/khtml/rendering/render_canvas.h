@@ -56,13 +56,8 @@ public:
     virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
     virtual void repaintViewRectangle(const QRect& r, bool immediate = false);
     
-    virtual void paint(QPainter *, int x, int y, int w, int h, int tx, int ty,
-                       PaintAction paintAction);
-    void paintObject(QPainter *p, int _x, int _y,
-                     int _w, int _h, int _tx, int _ty, PaintAction paintAction);
-
-    virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
-                                     int _w, int _h, int _tx, int _ty);
+    virtual void paint(PaintInfo& i, int tx, int ty);
+    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
     
     virtual void setSelection(RenderObject *s, int sp, RenderObject *e, int ep);
     virtual void clearSelection(bool doRepaint=true);

@@ -338,18 +338,19 @@ public:
      * Paint the object and its children, clipped by (x|y|w|h).
      * (tx|ty) is the calculated position of the parent
      */
-    virtual void paint(QPainter *p, int x, int y, int w, int h, int tx, int ty, 
-                       PaintAction paintAction);
-
-    virtual void paintObject( QPainter */*p*/, int /*x*/, int /*y*/,
-                              int /*w*/, int /*h*/, int /*tx*/, int /*ty*/,
-                              PaintAction paintAction /*paintAction*/) {}
+    struct PaintInfo {
+        PaintInfo(QPainter* _p, const QRect& _r, PaintAction _phase)
+        : p(_p), r(_r), phase(_phase) {}
+        QPainter* p;
+        QRect     r;
+        PaintAction phase;
+    };
+    virtual void paint(PaintInfo& i, int tx, int ty);
     void paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin=true, bool end=true);
     void paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style);
 
     // RenderBox implements this.
-    virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
-                                     int _w, int _h, int _tx, int _ty) {};
+    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty) {};
 
     virtual void paintBackgroundExtended(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph,
                                          int _tx, int _ty, int w, int height,

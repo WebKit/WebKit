@@ -1147,7 +1147,7 @@ void RenderBlock::repaintObjectsBeforeLayout()
     }
 }
 
-void RenderBlock::paint(QPainter* p, int _x, int _y, int _w, int _h, int _tx, int _ty, PaintAction paintAction)
+void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
 {
     _tx += m_x;
     _ty += m_y;
@@ -1166,31 +1166,27 @@ void RenderBlock::paint(QPainter* p, int _x, int _y, int _w, int _h, int _tx, in
         if (m_firstLineBox && m_firstLineBox->topOverflow() < 0)
             yPos += m_firstLineBox->topOverflow();
         
-        int os = 2*maximalOutlineSize(paintAction);
-        if( (yPos >= _y + _h + os) || (_ty + h <= _y - os))
+        int os = 2*maximalOutlineSize(i.phase);
+        if( (yPos >= i.r.y() + i.r.height() + os) || (_ty + h <= i.r.y() - os))
             return;
     }
 
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+    return RenderBlock::paintObject(i, _tx, _ty);
 }
 
-void RenderBlock::paintObject(QPainter *p, int _x, int _y,
-                              int _w, int _h, int _tx, int _ty, PaintAction paintAction)
+void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
 {
-
-#ifdef DEBUG_LAYOUT
-    //    kdDebug( 6040 ) << renderName() << "(RenderBlock) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
-#endif
+    PaintAction paintAction = i.phase;
 
     // If we're a repositioned run-in, don't paint background/borders.
     bool inlineFlow = isInlineFlow();
-    bool isPrinting = (p->device()->devType() == QInternal::Printer);
+    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
 
     // 1. paint background, borders etc
     if (!inlineFlow &&
         (paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground) &&
         shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE) {
-        paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+        paintBoxDecorations(i, _tx, _ty);
     }
 
     // We're done.  We don't bother painting any children.
@@ -1199,8 +1195,9 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     if (paintAction == PaintActionChildBackgrounds)
         paintAction = PaintActionChildBackground;
+    PaintInfo paintInfo(i.p, i.r, paintAction);
     
-    paintLineBoxBackgroundBorder(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+    paintLineBoxBackgroundBorder(paintInfo, _tx, _ty);
 
     // 2. paint contents
     int scrolledX = _tx;
@@ -1210,32 +1207,33 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
     for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {        
         // Check for page-break-before: always, and if it's set, break and bail.
         if (isPrinting && !childrenInline() && child->style()->pageBreakBefore() == PBALWAYS &&
-            inRootBlockContext() && (_ty + child->yPos()) > _y && (_ty + child->yPos()) < _y + _h) {
+            inRootBlockContext() && (_ty + child->yPos()) > i.r.y() && 
+            (_ty + child->yPos()) < i.r.y() + i.r.height()) {
             canvas()->setBestTruncatedAt(_ty + child->yPos(), this, true);
             return;
         }
         
         if (!child->layer() && !child->isFloating())
-            child->paint(p, _x, _y, _w, _h, scrolledX, scrolledY, paintAction);
+            child->paint(paintInfo, scrolledX, scrolledY);
         
         // Check for page-break-after: always, and if it's set, break and bail.
         if (isPrinting && !childrenInline() && child->style()->pageBreakAfter() == PBALWAYS && 
-            inRootBlockContext() && (_ty + child->yPos() + child->height()) > _y && 
-            (_ty + child->yPos() + child->height()) < _y + _h) {
+            inRootBlockContext() && (_ty + child->yPos() + child->height()) > i.r.y() && 
+            (_ty + child->yPos() + child->height()) < i.r.y() + i.r.height()) {
             canvas()->setBestTruncatedAt(_ty + child->yPos() + child->height() + child->collapsedMarginBottom(), this, true);
             return;
         }
     }
-    paintLineBoxDecorations(p, _x, _y, _w, _h, scrolledX, scrolledY, paintAction);
+    paintLineBoxDecorations(paintInfo, scrolledX, scrolledY);
     
     // 3. paint floats.
     if (!inlineFlow && (paintAction == PaintActionFloat || paintAction == PaintActionSelection))
-        paintFloats(p, _x, _y, _w, _h, scrolledX, scrolledY, paintAction == PaintActionSelection);
+        paintFloats(paintInfo, scrolledX, scrolledY, paintAction == PaintActionSelection);
 
     // 4. paint outline.
     if (!inlineFlow && paintAction == PaintActionOutline && 
         style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(p, _tx, _ty, width(), height(), style());
+        paintOutline(i.p, _tx, _ty, width(), height(), style());
 
     // 5. paint caret.
     /*
@@ -1248,7 +1246,7 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
         NodeImpl *baseNode = s.baseNode();
         RenderObject *renderer = baseNode ? baseNode->renderer() : 0;
         if (renderer && renderer->containingBlock() == this && baseNode->isContentEditable()) {
-            document()->part()->paintCaret(p, QRect(_x, _y, _w, _h));
+            document()->part()->paintCaret(i.p, i.r);
         }
     }
     
@@ -1256,17 +1254,16 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
 #ifdef BOX_DEBUG
     if ( style() && style()->visibility() == VISIBLE ) {
         if(isAnonymous())
-            outlineBox(p, _tx, _ty, "green");
+            outlineBox(i.p, _tx, _ty, "green");
         if(isFloating())
-            outlineBox(p, _tx, _ty, "yellow");
+            outlineBox(i.p, _tx, _ty, "yellow");
         else
-            outlineBox(p, _tx, _ty);
+            outlineBox(i.p, _tx, _ty);
     }
 #endif
 }
 
-void RenderBlock::paintFloats(QPainter *p, int _x, int _y,
-                              int _w, int _h, int _tx, int _ty, bool paintSelection)
+void RenderBlock::paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelection)
 {
     if (!m_floatingObjects)
         return;
@@ -1276,33 +1273,19 @@ void RenderBlock::paintFloats(QPainter *p, int _x, int _y,
     for ( ; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
         if (!r->noPaint && !r->node->layer()) {
-            if (paintSelection) {
-                r->node->paint(p, _x, _y, _w, _h,
-                               _tx + r->left - r->node->xPos() + r->node->marginLeft(),
-                               _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                               PaintActionSelection);
-            }
-            else {
-                r->node->paint(p, _x, _y, _w, _h,
-                               _tx + r->left - r->node->xPos() + r->node->marginLeft(),
-                               _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                               PaintActionElementBackground);
-                r->node->paint(p, _x, _y, _w, _h,
-                               _tx + r->left - r->node->xPos() + r->node->marginLeft(),
-                               _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                               PaintActionChildBackgrounds);
-                r->node->paint(p, _x, _y, _w, _h,
-                               _tx + r->left - r->node->xPos() + r->node->marginLeft(),
-                               _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                               PaintActionFloat);
-                r->node->paint(p, _x, _y, _w, _h,
-                               _tx + r->left - r->node->xPos() + r->node->marginLeft(),
-                               _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                               PaintActionForeground);
-                r->node->paint(p, _x, _y, _w, _h,
-                               _tx + r->left - r->node->xPos() + r->node->marginLeft(),
-                               _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                               PaintActionOutline);
+            PaintInfo info(i.p, i.r, paintSelection ? PaintActionSelection : PaintActionElementBackground);
+            int tx = _tx + r->left - r->node->xPos() + r->node->marginLeft();
+            int ty = _ty + r->startY - r->node->yPos() + r->node->marginTop();
+            r->node->paint(info, tx, ty);
+            if (!paintSelection) {
+                info.phase = PaintActionChildBackgrounds;
+                r->node->paint(info, tx, ty);
+                info.phase = PaintActionFloat;
+                r->node->paint(info, tx, ty);
+                info.phase = PaintActionForeground;
+                r->node->paint(info, tx, ty);
+                info.phase = PaintActionOutline;
+                r->node->paint(info, tx, ty);
             }
         }
     }

@@ -120,13 +120,9 @@ public:
     void computeVerticalPositionsForLine(InlineFlowBox* lineBox);
     // end bidi.cpp functions
     
-    virtual void paint(QPainter *, int x, int y, int w, int h,
-                       int tx, int ty, PaintAction paintAction);
-    virtual void paintObject(QPainter *, int x, int y, int w, int h,
-                             int tx, int ty, PaintAction paintAction);
-    void paintFloats(QPainter *p, int _x, int _y,
-                     int _w, int _h, int _tx, int _ty, bool paintSelection = false);
-    
+    virtual void paint(PaintInfo& i, int tx, int ty);
+    void paintObject(PaintInfo& i, int tx, int ty);
+    void paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelection = false);
 
     void insertFloatingObject(RenderObject *o);
     void removeFloatingObject(RenderObject *o);

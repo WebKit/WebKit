@@ -257,52 +257,35 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     block->setNeedsLayoutAndMinMaxRecalc();
 }
 
-void RenderInline::paint(QPainter *p, int _x, int _y, int _w, int _h,
-                      int _tx, int _ty, PaintAction paintAction)
-{
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
-}
-
-void RenderInline::paintObject(QPainter *p, int _x, int _y,
-                             int _w, int _h, int _tx, int _ty, PaintAction paintAction)
+void RenderInline::paint(PaintInfo& i, int _tx, int _ty)
 {
 #ifdef DEBUG_LAYOUT
     //    kdDebug( 6040 ) << renderName() << "(RenderInline) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
-
-    // If we have an inline root, it has to call the special root box decoration painting
-    // function.
-    if (isRoot() &&
-        (paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground) &&
-        shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE) {
-        paintRootBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
-    }
     
     // We're done.  We don't bother painting any children.
-    if (paintAction == PaintActionElementBackground)
+    if (i.phase == PaintActionElementBackground)
         return;
-    // We don't paint our own background, but we do let the kids paint their backgrounds.
-    if (paintAction == PaintActionChildBackgrounds)
-        paintAction = PaintActionChildBackground;
-
-    paintLineBoxBackgroundBorder(p, _x, _y, _w, _h, _tx, _ty, paintAction);
     
-    RenderObject *child = firstChild();
-    while(child != 0)
-    {
-        if(!child->layer() && !child->isFloating())
-            child->paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
-        child = child->nextSibling();
-    }
+    // We don't paint our own background, but we do let the kids paint their backgrounds.
+    PaintInfo paintInfo(i.p, i.r, i.phase);
+    if (i.phase == PaintActionChildBackgrounds)
+        paintInfo.phase = PaintActionChildBackground;
 
-    paintLineBoxDecorations(p, _x, _y, _w, _h, _tx, _ty, paintAction);
-    if (style()->visibility() == VISIBLE && paintAction == PaintActionOutline) {
+    paintLineBoxBackgroundBorder(paintInfo, _tx, _ty);
+    
+    for (RenderObject *child = firstChild(); child; child = child->nextSibling())
+        if(!child->layer() && !child->isFloating())
+            child->paint(paintInfo, _tx, _ty);
+
+    paintLineBoxDecorations(paintInfo, _tx, _ty);
+    if (style()->visibility() == VISIBLE && paintInfo.phase == PaintActionOutline) {
 #if APPLE_CHANGES
         if (style()->outlineStyleIsAuto())
-            paintFocusRing(p, _tx, _ty);
+            paintFocusRing(paintInfo.p, _tx, _ty);
         else
 #endif
-        paintOutlines(p, _tx, _ty);
+        paintOutlines(paintInfo.p, _tx, _ty);
     }
 }
 

@@ -271,24 +271,15 @@ void RenderListItem::layout( )
     RenderBlock::layout();
 }
 
-void RenderListItem::paint(QPainter *p, int _x, int _y, int _w, int _h,
-                           int _tx, int _ty, PaintAction paintAction)
+void RenderListItem::paint(PaintInfo& i, int _tx, int _ty)
 {
-    if ( !m_height )
+    if (!m_height)
         return;
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << nodeName().string() << "(LI)::paint()" << endl;
 #endif
-    RenderBlock::paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
-}
-
-void RenderListItem::paintObject(QPainter *p, int _x, int _y,
-                                    int _w, int _h, int _tx, int _ty, PaintAction paintAction)
-{
-    // ### this should scale with the font size in the body... possible?
-    //m_marker->printIcon(p, _tx, _ty);
-    RenderBlock::paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+    RenderBlock::paint(i, _tx, _ty);
 }
 
 QRect RenderListItem::getAbsoluteRepaintRect()
@@ -359,10 +350,9 @@ void RenderListMarker::setStyle(RenderStyle *s)
 }
 
 
-void RenderListMarker::paint(QPainter *p, int _x, int _y, int _w, int _h,
-                             int _tx, int _ty, PaintAction paintAction)
+void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 {
-    if (paintAction != PaintActionForeground)
+    if (i.phase != PaintActionForeground)
         return;
     
     if (style()->visibility() != VISIBLE)  return;
@@ -370,23 +360,17 @@ void RenderListMarker::paint(QPainter *p, int _x, int _y, int _w, int _h,
     _tx += m_x;
     _ty += m_y;
 
-    if((_ty > _y + _h) || (_ty + m_height < _y))
+    if ((_ty > i.r.y() + i.r.height()) || (_ty + m_height < i.r.y()))
         return;
 
-    if(shouldPaintBackgroundOrBorder()) 
-        paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
-
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
-}
-
-void RenderListMarker::paintObject(QPainter *p, int, int _y,
-                                    int, int _h, int _tx, int _ty, PaintAction paintAction)
-{
-    if (style()->visibility() != VISIBLE) return;
+    if (shouldPaintBackgroundOrBorder()) 
+        paintBoxDecorations(i, _tx, _ty);
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << nodeName().string() << "(ListMarker)::paintObject(" << _tx << ", " << _ty << ")" << endl;
 #endif
+
+    QPainter* p = i.p;
     p->setFont(style()->font());
     const QFontMetrics fm = p->fontMetrics();
     int offset = fm.ascent()*2/3;
@@ -421,12 +405,12 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
     bool isPrinting = (p->device()->devType() == QInternal::Printer);
     if (isPrinting)
     {
-        if (_ty < _y)
+        if (_ty < i.r.y())
         {
             // This has been printed already we suppose.
             return;
         }
-        if (_ty + m_height + paddingBottom() + borderBottom() >= _y+_h)
+        if (_ty + m_height + paddingBottom() + borderBottom() >= i.r.y() + i.r.height())
         {
             RenderCanvas *rootObj = canvas();
             if (_ty < rootObj->truncatedAt())

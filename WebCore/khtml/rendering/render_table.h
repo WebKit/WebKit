@@ -104,10 +104,8 @@ public:
     virtual int overflowHeight(bool includeInterior=true) const { return height(); }
     virtual int overflowWidth(bool includeInterior=true) const { return width(); }
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
-    virtual void paint( QPainter *, int x, int y, int w, int h,
-                        int tx, int ty, PaintAction paintAction);
-    virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
-                                     int _w, int _h, int _tx, int _ty);
+    virtual void paint(PaintInfo& i, int tx, int ty);
+    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
     virtual void layout();
     virtual void calcMinMaxWidth();
     virtual void close();
@@ -251,8 +249,7 @@ public:
 	return (*(grid[row].row))[col];
     }
 
-    virtual void paint( QPainter *, int x, int y, int w, int h,
-                        int tx, int ty, PaintAction paintAction);
+    virtual void paint(PaintInfo& i, int tx, int ty);
 
     int numRows() const { return grid.size(); }
     int getBaseline(int row) {return grid[row].baseLine;}
@@ -365,8 +362,7 @@ public:
     int getCellPercentageHeight() const;
     void setCellPercentageHeight(int h);
     
-    virtual void paint( QPainter* p, int x, int y,
-                        int w, int h, int tx, int ty, PaintAction paintAction);
+    virtual void paint(PaintInfo& i, int tx, int ty);
 
     void paintCollapsedBorder(QPainter* p, int x, int y, int w, int h);
     
@@ -390,14 +386,10 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
-    virtual void paintObject(QPainter *, int x, int y, int w, int h,
-                             int tx, int ty, PaintAction paintAction);
-    
     virtual QRect getAbsoluteRepaintRect();
     
 protected:
-    virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
-                                     int _w, int _h, int _tx, int _ty);
+    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
     
     short _row;
     short _col;

@@ -53,29 +53,25 @@ RenderReplaced::RenderReplaced(DOM::NodeImpl* node)
     m_intrinsicHeight = 150;
 }
 
-void RenderReplaced::paint(QPainter *p, int _x, int _y, int _w, int _h,
-                           int _tx, int _ty, PaintAction paintAction)
+bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
 {
-    if (paintAction != PaintActionForeground && paintAction != PaintActionOutline && paintAction != PaintActionSelection)
-        return;
+    if (i.phase != PaintActionForeground && i.phase != PaintActionOutline && i.phase != PaintActionSelection)
+        return false;
         
     // if we're invisible or haven't received a layout yet, then just bail.
-    if (style()->visibility() != VISIBLE || m_y <=  -500000)  return;
+    if (style()->visibility() != VISIBLE || m_y <=  -500000)  return false;
 
     _tx += m_x;
     _ty += m_y;
 
     // Early exit if the element touches the edges.
-    int os = 2*maximalOutlineSize(paintAction);
-    if((_tx >= _x + _w + os) || (_tx + m_width <= _x - os))
-        return;
-    if((_ty >= _y + _h + os) || (_ty + m_height <= _y - os))
-        return;
+    int os = 2*maximalOutlineSize(i.phase);
+    if ((_tx >= i.r.x() + i.r.width() + os) || (_tx + m_width <= i.r.x() - os))
+        return false;
+    if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + m_height <= i.r.y() - os))
+        return false;
 
-    if(shouldPaintBackgroundOrBorder() && paintAction != PaintActionOutline) 
-        paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
-
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+    return true;
 }
 
 void RenderReplaced::calcMinMaxWidth()
@@ -272,11 +268,15 @@ void RenderWidget::setStyle(RenderStyle *_style)
     }
 }
 
-void RenderWidget::paintObject(QPainter *p, int x, int y, int width, int height, int _tx, int _ty,
-                               PaintAction paintAction)
+void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
 {
+    if (!shouldPaint(i, _tx, _ty)) return;
+
+    if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
+        paintBoxDecorations(i, _tx, _ty);
+
 #if APPLE_CHANGES
-    if (!m_widget || !m_view || paintAction != PaintActionForeground ||
+    if (!m_widget || !m_view || i.phase != PaintActionForeground ||
         style()->visibility() != VISIBLE)
         return;
 
@@ -290,10 +290,10 @@ void RenderWidget::paintObject(QPainter *p, int x, int y, int width, int height,
     
     // Tell the widget to paint now.  This is the only time the widget is allowed
     // to paint itself.  That way it will composite properly with z-indexed layers.
-    m_widget->paint(p, QRect(x, y, width, height));
+    m_widget->paint(i.p, i.r);
     
 #else
-    if (!m_widget || !m_view || paintAction != PaintActionForeground)
+    if (!m_widget || !m_view || i.phase != PaintActionForeground)
         return;
     
     if (style()->visibility() != VISIBLE) {
@@ -327,8 +327,8 @@ void RenderWidget::paintObject(QPainter *p, int x, int y, int width, int height,
 	    }
 // 	    qDebug("calculated yNew=%d", yNew);
 	}
-	yNew = QMIN( yNew, yPos + m_height - childh );
-	yNew = QMAX( yNew, yPos );
+	yNew = kMin( yNew, yPos + m_height - childh );
+	yNew = kMax( yNew, yPos );
 	if ( yNew != childy || xNew != childx ) {
 	    if ( vw->contentsHeight() < yNew - yPos + childh )
 		vw->resizeContents( vw->contentsWidth(), yNew - yPos + childh );

@@ -48,7 +48,7 @@ public:
 
     virtual bool isImage() const { return true; }
     
-    virtual void paintObject( QPainter *p, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int tx, int ty, PaintAction paintAction);
+    virtual void paint(PaintInfo& i, int tx, int ty);
 
     virtual void layout();
 
