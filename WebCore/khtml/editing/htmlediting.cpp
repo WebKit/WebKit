@@ -3126,7 +3126,7 @@ void ReplacementFragment::pruneEmptyNodes()
 
 bool ReplacementFragment::isInterchangeNewlineComment(const NodeImpl *node)
 {
-    return isComment(node) && node->nodeValue() == KHTMLInterchangeNewline;
+    return isComment(node) && node->nodeValue() == AppleInterchangeNewline;
 }
 
 bool ReplacementFragment::isInterchangeConvertedSpaceSpan(const NodeImpl *node)

@@ -28,7 +28,7 @@
 
 class QString;
 
-#define KHTMLInterchangeNewline   "KHTMLInterchangeNewline"
+#define AppleInterchangeNewline   "Apple-interchange-newline"
 #define AppleConvertedSpace       "Apple-converted-space"
 
 enum EAnnotateForInterchange { DoNotAnnotateForInterchange, AnnotateForInterchange };

@@ -1,5 +1,18 @@
 2004-12-07  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Changed name of constant from KHTMLInterchangeNewline to AppleInterchangeNewline.
+        I discussed this with Hyatt and he agreed that going with "Apple" names was OK.
+
+        * khtml/editing/html_interchange.h: Name change, as described above.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::isInterchangeNewlineComment): Ditto.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toHTML): Ditto.
+
+2004-12-07  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
         
         Added a couple more layout tests.
