@@ -27,6 +27,15 @@
 
 #include <kwqdebug.h>
 
+/*
+    This class implementation does NOT actually emulate the Qt QScrollView.
+    Instead out WebPageView, like any other NSView can be set as the document
+    to a standard NSScrollView.
+
+    We do implement the placeWidget() function to essentially addSubview views
+    onto this view.
+*/
+
 QScrollView::QScrollView(QWidget *parent=0, const char *name=0, WFlags f=0)
 {
     _logNeverImplemented();

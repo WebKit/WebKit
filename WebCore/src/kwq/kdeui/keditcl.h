@@ -98,9 +98,7 @@ public:
 
     enum WordWrap {
         NoWrap,
-        WidgetWidth,
-        FixedPixelWidth,
-        FixedColumnWidth
+        WidgetWidth
     };    
 
     // typedefs ----------------------------------------------------------------

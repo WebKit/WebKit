@@ -108,6 +108,7 @@ MMOBJECTS = \
 	KWQScrollView.o \
 	KWQStyle.o \
 	KWQTextEdit.o \
+	KWQTextArea.o \
 	KWQTimer.o \
 	KWQToolTip.o \
 	KWQVariant.o \

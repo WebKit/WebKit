@@ -48,6 +48,7 @@ void QComboBox::init(bool isEditable)
     comboBox = [[[KWQNSComboBox alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease];
     if (isEditable == FALSE)
         [comboBox setEditable: NO];
+    setView (comboBox);
 }
 
 

@@ -22,56 +22,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import "KWQView.h"
+ 
+#import <Cocoa/Cocoa.h>
 
-#import <qwidget.h>
 
-@implementation KWQView
+class QWidget;
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
+
+@interface KWQTextArea : NSScrollView
 {
-    [super initWithFrame: r];
-    widget = w;
-    isFlipped = YES;
+    NSTextView *textView;
+    QWidget *widget;
+    BOOL wrap;
 }
+- initWithFrame: (NSRect)r widget: (QWidget *)w; 
 
+// The following methods corresponds to methods required by KDE.
+- (void) setWordWrap: (BOOL)f;
 
-// This should eventually be removed.
-- (void)drawRect:(NSRect)rect {
-    widget->paint((void *)0);
-}
+- (BOOL) wordWrap;
 
-- (void)setIsFlipped: (bool)flag
-{
-    isFlipped = flag;
-}
+- (BOOL) isReadOnly;
 
+- (void) setReadOnly: (BOOL)flag;
 
-- (BOOL)isFlipped 
-{
-    return isFlipped;
-}
+- (void) setText: (NSString *)s;
 
-@end
+- (NSString *)text;
 
+- (NSString *)textForLine: (int)line;
 
-@implementation KWQNSButton
+- (int) numLines;
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
-{
-    [super initWithFrame: r];
-    widget = w;
-}
+- (void) selectAll;
 
-@end
+- (void) setEditable: (BOOL)flag;
 
+- (BOOL)isEditable;
 
-@implementation KWQNSComboBox
-
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
-{
-    [super initWithFrame: r];
-    widget = w;
-}
 
 @end

@@ -26,142 +26,184 @@
 
 #include <keditcl.h>
 
+#import <KWQTextArea.h>
+
+
+// RenderTextArea actually uses a TextAreaWidget->KEdit->QMultiLineEdit->QTableView
 
 QTableView::QTableView()
 {
+    // Nothing needed.
     _logNotYetImplemented();
 }
 
 
 QTableView::~QTableView()
 {
+    // Nothing needed.
     _logNotYetImplemented();
 }
 
 
 QScrollBar *QTableView::verticalScrollBar() const
 {
-    _logNotYetImplemented();
+    // Nothing needed.
+    _logNeverImplemented();
 }
 
 
 QScrollBar *QTableView::horizontalScrollBar() const
 {
-    _logNotYetImplemented();
+    // Nothing needed.
+    _logNeverImplemented();
 }
 
 
 void QTableView::setTableFlags(uint)
 {
-    _logNotYetImplemented();
+    // Nothing needed.
+    _logNeverImplemented();
 }
 
 
 void QTableView::clearTableFlags(uint f = ~0)
 {
-    _logNotYetImplemented();
+    // Nothing needed.
+    _logNeverImplemented();
 }
 
 
 QMultiLineEdit::QMultiLineEdit()
 {
+    // Nothing needed.
     _logNotYetImplemented();
 }
 
 
 QMultiLineEdit::~QMultiLineEdit()
 {
+    // Nothing needed.
     _logNotYetImplemented();
 }
 
 
-void QMultiLineEdit::setWordWrap(WordWrap)
+void QMultiLineEdit::setWordWrap(WordWrap f)
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+
+    if (f == QMultiLineEdit::WidgetWidth)
+        [textView setWordWrap: TRUE];
+    else
+        [textView setWordWrap: FALSE];
 }
 
 
 QMultiLineEdit::WordWrap QMultiLineEdit::wordWrap() const
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    if ([textView wordWrap])
+        return QMultiLineEdit::WidgetWidth;
+    return QMultiLineEdit::NoWrap;
 }
 
 
 bool QMultiLineEdit::hasMarkedText() const
 {
-    _logNotYetImplemented();
+    // We can safely ignore this method.
+    _logNeverImplemented();
+    return false;
 }
 
 
 bool QMultiLineEdit::isReadOnly() const
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    return [textView isEditable];
 }
 
 
-void QMultiLineEdit::setReadOnly(bool)
+void QMultiLineEdit::setReadOnly(bool flag)
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+
+    [textView setEditable: (BOOL)flag];
 }
 
 
 void QMultiLineEdit::setCursorPosition(int line, int col, bool mark = FALSE)
 {
-    _logNotYetImplemented();
+    // We can safely ignore this method.
+    _logNeverImplemented();
 }
 
 
 void QMultiLineEdit::getCursorPosition(int *line, int *col) const
 {
-    _logNotYetImplemented();
+    // We can safely ignore this method.
+    _logNeverImplemented();
 }
 
 
-void QMultiLineEdit::setText(const QString &)
+void QMultiLineEdit::setText(const QString &string)
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    [textView setText: QSTRING_TO_NSSTRING (string)];
 }
 
 
 QString QMultiLineEdit::text()
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    return NSSTRING_TO_QSTRING ([textView text]);
 }
 
 
 QString QMultiLineEdit::textLine(int line) const
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    return NSSTRING_TO_QSTRING([textView textForLine: line]);
 }
 
 
 int QMultiLineEdit::numLines() const
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    return [textView numLines];
 }
 
 
 void QMultiLineEdit::selectAll()
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    [textView selectAll];
 }
 
 
 KEdit::KEdit()
 {
-    _logNotYetImplemented();
+    _logNeverImplemented();
 }
 
 
-KEdit::KEdit(QWidget *)
+KEdit::KEdit(QWidget *w)
 {
-    _logNotYetImplemented();
+    KWQTextArea *textView;
+    
+    textView = [[KWQTextArea alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this];
+    setView (textView);
+    [textView release];
 }
 
 
 KEdit::~KEdit()
 {
-    _logNotYetImplemented();
 }
 
 
