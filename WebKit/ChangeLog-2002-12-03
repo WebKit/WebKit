@@ -1,5 +1,10 @@
 2002-05-31  Darin Adler  <darin@apple.com>
 
+	* WebView.subproj/IFWebViewPrivate.mm: Add include to prepare for change to WebCore
+	that will make it required.
+
+2002-05-31  Darin Adler  <darin@apple.com>
+
 	* WebCoreSupport.subproj/IFImageRenderer.h: Fixed the line endings (they were
 	Macintosh CRs instead of Unix LFs). Also made all the methods be private for
 	now since there's no need to have them be public.

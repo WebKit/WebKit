@@ -12,6 +12,7 @@
 
 // Includes from KDE
 #import <khtmlview.h>
+#import <khtml_part.h>
 #import <html/html_documentimpl.h>
 #import "IFWebController.h"
 
