@@ -122,7 +122,7 @@ bool QMultiLineEdit::isReadOnly() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     
-    return [textView isEditable];
+    return [textView isEditable] ? NO : YES;
 }
 
 
@@ -130,7 +130,7 @@ void QMultiLineEdit::setReadOnly(bool flag)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
 
-    [textView setEditable: (BOOL)flag];
+    [textView setEditable: (BOOL)flag ? NO : YES];
 }
 
 

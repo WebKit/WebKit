@@ -36,6 +36,7 @@
     [super initWithFrame: r];
     widget = w;
     isFlipped = YES;
+    return self;
 }
 
 
@@ -64,6 +65,7 @@
 {
     [super initWithFrame: r];
     widget = w;
+    return self;
 }
 
 @end
@@ -75,6 +77,7 @@
 {
     [super initWithFrame: r];
     widget = w;
+    return self;
 }
 
 @end
@@ -84,10 +87,40 @@
 
 - initWithFrame: (NSRect) r widget: (QWidget *)w 
 {
+    NSNotificationCenter *notificationCenter;
+    SEL notificationReceivedSEL;
+
     [super initWithFrame: r];
     widget = w;
     isFlipped = YES;
     needsLayout = YES;
+    notificationCenter = [NSNotificationCenter defaultCenter];
+
+    notificationReceivedSEL = @selector(notificationReceived:);
+    [notificationCenter addObserver:self
+            selector:notificationReceivedSEL name:nil object:nil];
+            
+    return self;
+}
+
+-(void)notificationReceived:(NSNotification *)notification
+{
+    if ([[notification name] rangeOfString: @"uri-fin-"].location == 0){
+        NSLog (@"KWQHTMLView: Received notification, %@", [notification name]);
+        [self setNeedsLayout: YES];
+        [self setNeedsDisplay: YES];
+    }
+}
+
+- (void)layout
+{
+    if (((KHTMLView *)widget)->part()->xmlDocImpl() && 
+        ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
+        if (needsLayout){
+            ((KHTMLView *)widget)->layout(TRUE);
+            needsLayout = NO;
+        }
+    }
 }
 
 
@@ -101,17 +134,9 @@
     if (widget != 0l){
         //widget->paint((void *)0);
         
-        QPainter p(widget);
-        NSRect frame = [self frame];
- 
-        if (((KHTMLView *)widget)->part()->xmlDocImpl() && 
-            ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
-            if (needsLayout){
-                ((KHTMLView *)widget)->layout(TRUE);
-                //needsLayout = NO;
-            }
-        }
-    
+        [self layout];
+
+        QPainter p(widget);         
         ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x, 
                     (int)rect.origin.y, 
                     (int)rect.size.width, 
@@ -130,14 +155,29 @@
     return isFlipped;
 }
 
+
+- (void)resetView 
+{
+    NSArray *views = [self subviews];
+    int count;
+    
+    count = [views count];
+    while (count--){
+        NSLog (@"Removing 0x%08x %@", [views objectAtIndex: 0], [[[views objectAtIndex: 0] class] className]);
+        [[views objectAtIndex: 0] removeFromSuperviewWithoutNeedingDisplay]; 
+    }
+}
+
 // FIXME.  This should be replaced.  Ultimately we will use something like:
 // [[webView dataSource] setURL: url];
 - (void)setURL: (NSString *)urlString
 {
     KURL url = [urlString cString];
-    
+ 
+    [self resetView];
     part->openURL (url);
 }
+
 
 @end
 

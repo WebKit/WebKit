@@ -231,6 +231,7 @@ bool KHTMLPart::closeURL()
     
     // Reset the the current working URL to the default URL.
     d->m_workingURL = KURL();
+    //d->m_doc = 0;
 }
 
 

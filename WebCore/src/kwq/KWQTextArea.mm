@@ -79,6 +79,8 @@ const float LargeNumberForText = 1.0e7;
     [self setDocumentView: textView];
     
     widget = w;
+    
+    return self;
 }
 
 
@@ -131,13 +133,13 @@ const float LargeNumberForText = 1.0e7;
 
 - (BOOL) isReadOnly
 {
-    return [textView isEditable];
+    return [textView isEditable] ? NO : YES;
 }
 
 
 - (void) setReadOnly: (BOOL)flag
 {
-    return [textView setEditable: flag];
+    return [textView setEditable: flag?NO:YES];
 }
 
 - (void) setText: (NSString *)s

@@ -35,6 +35,7 @@
     formatter = [[KWQNSTextFieldFormatter alloc] init];
     [self setFormatter: formatter];
     widget = w;
+    return self;
 }
 
 - (void)dealloc
