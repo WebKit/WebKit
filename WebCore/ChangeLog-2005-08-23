@@ -1,3 +1,13 @@
+2003-09-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3437292 -- Safari uses wrong characters for &and; and &or; entities
+
+        * khtml/html/kentities.gperf: Corrected values for &and; and &or; entities.
+        Checked all the rest against a list on the W3C site, and those are the only two that were wrong.
+        * khtml/html/kentities.c: Regnenerated.
+
 2003-09-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
