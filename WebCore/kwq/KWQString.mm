@@ -1071,12 +1071,12 @@ QString &QString::append(const QString &qs)
     return insert(length(), qs);
 }
 
-void QString::_copyInternalString()
+void QString::_copyIfNeededInternalString()
 {
     if (s && CFGetRetainCount(s) > 1) {
         CFMutableStringRef tmp;
         tmp = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
-        CFRelease (s);
+        _cf_release (s);
         s = tmp;
     }
 }
@@ -1092,7 +1092,8 @@ QString &QString::insert(uint index, const QString &qs)
             if (!s) {
                 s = CFStringCreateMutable(kCFAllocatorDefault, 0);
             }
-            _copyInternalString();
+            else
+                _copyIfNeededInternalString();
             if (s) {
                 if (index < (uint)CFStringGetLength(s)) {
                     CFStringInsert(s, index, qs.s);
@@ -1124,7 +1125,7 @@ QString &QString::remove(uint index, uint width)
             if (width > (len - index)) {
                 width = len - index;
             }
-            _copyInternalString();
+            _copyIfNeededInternalString();
             CFStringDelete(s, CFRangeMake(index, width));
         }
     }
@@ -1143,7 +1144,7 @@ QString &QString::replace(const QRegExp &qre, const QString &qs)
                 break;
             }
             CFRange r = CFRangeMake(i, width);
-            _copyInternalString();
+            _copyIfNeededInternalString();
             if (len) {
                 CFStringReplace(s, r, qs.s);
             } else {
@@ -1160,7 +1161,7 @@ void QString::truncate(uint newLen)
     if (s) {
         if (newLen) {
             CFIndex len = CFStringGetLength(s);
-            _copyInternalString();
+            _copyIfNeededInternalString();
             if (len && (newLen < (uint)len)) {
                 CFStringDelete(s, CFRangeMake(newLen, len - newLen));
             }
@@ -1615,8 +1616,10 @@ QConstString::QConstString(QChar *qcs, uint len)
     if (qcs || len) {
         // NOTE: use instead of CFStringCreateWithCharactersNoCopy function to
         // guarantee backing store is not copied even though string is mutable
-        s = CFStringCreateMutableWithExternalCharactersNoCopy(
-                kCFAllocatorDefault, &qcs->c, len, len, kCFAllocatorNull);
+        //s = CFStringCreateMutableWithExternalCharactersNoCopy(
+        //        kCFAllocatorDefault, &qcs->c, len, len, kCFAllocatorNull);
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+        CFStringAppendCharacters (s, &qcs->c, len);
     } else {
         s = NULL;
     }

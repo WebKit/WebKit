@@ -1,3 +1,20 @@
+2002-01-29  Richard Williamson  <rjw@apple.com>
+
+    Fixed QConstString to make a copy on initial chars.
+    
+	* ChangeLog:
+	* src/kwq/KWQString.mm: (QString::_copyIfNeededInternalString),
+	(QString::insert), (QString::remove), (QString::replace), (QString::truncate),
+	(QConstString::QConstString):
+	* src/kwq/qt/qstring.h:
+
+2002-01-29  Richard Williamson  <rjw@apple.com>
+
+	* src/kwq/KWQString.mm: (QString::_copyIfNeededInternalString),
+	(QString::insert), (QString::remove), (QString::replace), (QString::truncate),
+	(QConstString::QConstString):
+	* src/kwq/qt/qstring.h:
+
 2002-01-29  Kenneth Kocienda  <kocienda@apple.com>
 
         - Added in a dummy protocol to clean up a warning that results
