@@ -26,8 +26,8 @@
 {
     BOOL result;
 
-    WebCookieAcceptPolicy acceptPolicy = [[NSHTTPCookieStorage sharedCookieManager] acceptPolicy];
-    result = (acceptPolicy == WebCookieAcceptPolicyAlways || acceptPolicy == WebCookieAcceptPolicyOnlyFromMainDocumentDomain);
+    NSHTTPCookieAcceptPolicy acceptPolicy = [[NSHTTPCookieStorage sharedCookieManager] acceptPolicy];
+    result = (acceptPolicy == NSHTTPCookieAcceptPolicyAlways || acceptPolicy == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
     
     return result;
 }

@@ -1,3 +1,15 @@
+2003-04-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        Changed cookie-related constants and enums to 
+        the API-approved names. Also did some text
+        search and replace in comments to catch usages
+        of now-obsolete names.
+
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        (-[WebCookieAdapter cookiesEnabled]):
+
 2003-04-30  Chris Blumenberg  <cblu@apple.com>
 
         FIXED: Clients of WebKit should have separate icon DB's
