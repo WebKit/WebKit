@@ -1,3 +1,32 @@
+2003-11-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John, except for one bit reviewed by Maciej.
+
+        - first step for IDNA support; helper functions for Safari
+
+        * Misc.subproj/WebNSURLExtras.h: Add six new methods to manipulate host names directly.
+        * Misc.subproj/WebNSURLExtras.m:
+        (applyHostNameFunctionToMailToURLString): Added. Finds host names within a mailto URL.
+        (applyHostNameFunctionToURLString): Added. Finds host names within a URL.
+        (collectRangesThatNeedMapping): Added. Builds a list of host name ranges that need mapping.
+        (collectRangesThatNeedEncoding): Added. Calls the above for encoding.
+        (collectRangesThatNeedDecoding): Added. Calls the above for decoding.
+        (mapHostNames): Added. Helper function that does the entire mapping process for a URL.
+        (+[NSURL _web_URLWithUserTypedString:]): Call mapHostNames to encode after trimming whitespace.
+        (-[NSURL _web_userVisibleString]): Call mapHostNames to decode after decoding escape sequences.
+        (-[NSURL _webkit_URLByRemovingFragment]): Removed unneeded redundant NULL check.
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]): Added. Workhorse function to call
+        the IDN functions in the Unicode library.
+        (-[NSString _web_hostNameNeedsDecodingWithRange:]): Added.
+        (-[NSString _web_hostNameNeedsEncodingWithRange:]): Added.
+        (-[NSString _web_decodeHostNameWithRange:]): Added.
+        (-[NSString _web_encodeHostNameWithRange:]): Added.
+        (-[NSString _web_decodeHostName]): Added.
+        (-[NSString _web_encodeHostName]): Added.
+
+        * WebKit.pbproj/project.pbxproj: Added libicucore.dylib.
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for above changes.
+
 2003-11-04  John Sullivan  <sullivan@apple.com>
 
         - a little optimization I noticed when looking at 3125137

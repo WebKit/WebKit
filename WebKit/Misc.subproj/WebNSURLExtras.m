@@ -13,16 +13,18 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 
-static int URLBytesBufferLength = 2048;
+#import <unicode/uidna.h>
 
-static inline void ReleaseIfNotNULL(CFTypeRef object)
+typedef void (* StringRangeApplierFunction)(NSString *string, NSRange range, void *context);
+
+// Needs to be big enough to hold an IDNA-encoded name.
+// This is way bigger than needed, since I think there's a 63-character limit.
+#define HOST_NAME_BUFFER_LENGTH 2048
+
+#define URL_BYTES_BUFFER_LENGTH 2048
+
+static char hexDigit(int i)
 {
-    if (object) {
-        CFRelease(object);
-    }
-}
-
-static char hexDigit(int i) {
     if (i < 0 || i > 16) {
         ERROR("illegal hex digit");
         return '0';
@@ -57,17 +59,202 @@ static int hexDigitValue(char c)
     return 0;
 }
 
+static void applyHostNameFunctionToMailToURLString(NSString *string, StringRangeApplierFunction f, void *context)
+{
+    // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' character.
+    // Skip quoted strings so that characters in them don't confuse us.
+    // When we find a '?' character, we are past the part of the URL that contains host names.
+
+    static NSCharacterSet *hostNameOrStringStartCharacters;
+    if (hostNameOrStringStartCharacters == nil) {
+        hostNameOrStringStartCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"\"@?"] retain];
+    }
+    static NSCharacterSet *hostNameEndCharacters;
+    if (hostNameEndCharacters == nil) {
+        hostNameEndCharacters = [[NSCharacterSet characterSetWithCharactersInString:@">,"] retain];
+    }
+    static NSCharacterSet *quotedStringCharacters;
+    if (quotedStringCharacters == nil) {
+        quotedStringCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"\"\\"] retain];
+    }
+
+    unsigned stringLength = [string length];
+    NSRange remaining = NSMakeRange(0, stringLength);
+    
+    while (1) {
+        // Find start of host name or of quoted string.
+        NSRange hostNameOrStringStart = [string rangeOfCharacterFromSet:hostNameOrStringStartCharacters options:0 range:remaining];
+        if (hostNameOrStringStart.location == NSNotFound) {
+            return;
+        }
+        unichar c = [string characterAtIndex:hostNameOrStringStart.location];
+        remaining.location = NSMaxRange(hostNameOrStringStart);
+        remaining.length = stringLength - remaining.location;
+
+        if (c == '?') {
+            return;
+        }
+        
+        if (c == '@') {
+            // Find end of host name.
+            unsigned hostNameStart = remaining.location;
+            NSRange hostNameEnd = [string rangeOfCharacterFromSet:hostNameEndCharacters options:0 range:remaining];
+            if (hostNameEnd.location == NSNotFound) {
+                return;
+            }
+            remaining.location = NSMaxRange(hostNameEnd);
+            remaining.length = stringLength - remaining.location;
+
+            // Process host name range.
+            f(string, NSMakeRange(hostNameStart, hostNameEnd.location - hostNameStart), context);
+        } else {
+            // Skip quoted string.
+            ASSERT(c == '"');
+            while (1) {
+                NSRange escapedCharacterOrStringEnd = [string rangeOfCharacterFromSet:quotedStringCharacters options:0 range:remaining];
+                if (escapedCharacterOrStringEnd.location == NSNotFound) {
+                    return;
+                }
+                c = [string characterAtIndex:escapedCharacterOrStringEnd.location];
+                remaining.location = NSMaxRange(escapedCharacterOrStringEnd);
+                remaining.length = stringLength - remaining.location;
+                
+                // If we are the end of the string, then break from the string loop back to the host name loop.
+                if (c == '"') {
+                    break;
+                }
+                
+                // Skip escaped character.
+                ASSERT(c == '\\');
+                if (remaining.length == 0) {
+                    return;
+                }                
+                remaining.location += 1;
+                remaining.length -= 1;
+            }
+        }
+    }
+}
+
+static void applyHostNameFunctionToURLString(NSString *string, StringRangeApplierFunction f, void *context)
+{
+    // Find hostnames. Too bad we can't use any real URL-parsing code to do this,
+    // but we have to do it before doing all the %-escaping, and this is the only
+    // code we have that parses mailto URLs anyway.
+
+    // Maybe we should implement this using a character buffer instead?
+
+    if ([string _web_hasCaseInsensitivePrefix:@"mailto:"]) {
+        applyHostNameFunctionToMailToURLString(string, f, context);
+        return;
+    }
+
+    // Find the host name in a hierarchical URL.
+    // It comes after a "://" sequence, with scheme characters preceding.
+    // If ends with the end of the string or a ":", "/", or a "?".
+    // If there is a "@" character, the host part is just the part after the "@".
+    NSRange separatorRange = [string rangeOfString:@"://"];
+    if (separatorRange.location == NSNotFound) {
+        return;
+    }
+
+    // Check that all characters before the :// are valid scheme characters.
+    static NSCharacterSet *nonSchemeCharacters;
+    if (nonSchemeCharacters == nil) {
+        nonSchemeCharacters = [[[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-."] invertedSet] retain];
+    }
+    if ([string rangeOfCharacterFromSet:nonSchemeCharacters options:0 range:NSMakeRange(0, separatorRange.location)].location != NSNotFound) {
+        return;
+    }
+
+    unsigned stringLength = [string length];
+
+    static NSCharacterSet *hostTerminators;
+    if (hostTerminators == nil) {
+        hostTerminators = [[NSCharacterSet characterSetWithCharactersInString:@":/?"] retain];
+    }
+
+    // Start after the separator.
+    unsigned authorityStart = NSMaxRange(separatorRange);
+
+    // Find terminating character.
+    NSRange hostNameTerminator = [string rangeOfCharacterFromSet:hostTerminators options:0 range:NSMakeRange(authorityStart, stringLength - authorityStart)];
+    unsigned hostNameEnd = hostNameTerminator.location == NSNotFound ? stringLength : hostNameTerminator.location;
+
+    // Find "@" for the start of the host name.
+    NSRange userInfoTerminator = [string rangeOfString:@"@" options:0 range:NSMakeRange(authorityStart, hostNameEnd - authorityStart)];
+    unsigned hostNameStart = userInfoTerminator.location == NSNotFound ? authorityStart : NSMaxRange(userInfoTerminator);
+
+    f(string, NSMakeRange(hostNameStart, hostNameEnd - hostNameStart), context);
+}
+
 @implementation NSURL (WebNSURLExtras)
+
+static void collectRangesThatNeedMapping(NSString *string, NSRange range, void *context, BOOL encode)
+{
+    BOOL needsMapping = encode
+        ? [string _web_hostNameNeedsEncodingWithRange:range]
+        : [string _web_hostNameNeedsDecodingWithRange:range];
+    if (!needsMapping) {
+        return;
+    }
+
+    NSMutableArray **array = (NSMutableArray **)context;
+    if (*array == nil) {
+        *array = [[NSMutableArray alloc] init];
+    }
+
+    [*array addObject:[NSValue valueWithRange:range]];
+}
+
+static void collectRangesThatNeedEncoding(NSString *string, NSRange range, void *context)
+{
+    return collectRangesThatNeedMapping(string, range, context, YES);
+}
+
+static void collectRangesThatNeedDecoding(NSString *string, NSRange range, void *context)
+{
+    return collectRangesThatNeedMapping(string, range, context, NO);
+}
+
+static NSString *mapHostNames(NSString *string, BOOL encode)
+{
+    // Generally, we want to optimize for the case where there is one host name that does not need mapping.
+    
+    // Make a list of ranges that actually need mapping.
+    NSMutableArray *hostNameRanges = nil;
+    StringRangeApplierFunction f = encode
+        ? collectRangesThatNeedEncoding
+        : collectRangesThatNeedDecoding;
+    applyHostNameFunctionToURLString(string, f, &hostNameRanges);
+    if (hostNameRanges == nil) {
+        return string;
+    }
+
+    // Do the mapping.
+    NSMutableString *mutableCopy = [string mutableCopy];
+    unsigned i = [hostNameRanges count];
+    while (i-- != 0) {
+        NSRange hostNameRange = [[hostNameRanges objectAtIndex:i] rangeValue];
+        NSString *mappedHostName = encode
+            ? [string _web_encodeHostNameWithRange:hostNameRange]
+            : [string _web_decodeHostNameWithRange:hostNameRange];
+        [mutableCopy replaceCharactersInRange:hostNameRange withString:mappedHostName];
+    }
+    [hostNameRanges release];
+    return [mutableCopy autorelease];
+}
 
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string
 {
     if (string == nil) {
         return nil;
     }
-    string = [string _web_stringByTrimmingWhitespace];
+    string = mapHostNames([string _web_stringByTrimmingWhitespace], YES);
+
     NSData *userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
     ASSERT(userTypedData);
-        
+
     const UInt8 *inBytes = [userTypedData bytes];
     int inLength = [userTypedData length];
     if (inLength == 0) {
@@ -152,8 +339,8 @@ static int hexDigitValue(char c)
 {
     NSData *data = nil;
 
-    UInt8 static_buffer[URLBytesBufferLength];
-    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, static_buffer, URLBytesBufferLength);
+    UInt8 static_buffer[URL_BYTES_BUFFER_LENGTH];
+    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, static_buffer, URL_BYTES_BUFFER_LENGTH);
     if (bytesFilled != -1) {
         data = [NSData dataWithBytes:static_buffer length:bytesFilled];
     }
@@ -220,7 +407,7 @@ static int hexDigitValue(char c)
         }
     }
     *q = '\0';
-  
+    
     // Check string to see if it can be converted to display using UTF-8  
     NSString *result = [NSString stringWithUTF8String:after];
     if (!result) {
@@ -248,9 +435,13 @@ static int hexDigitValue(char c)
         *q = '\0';
         result = [NSString stringWithUTF8String:after];
     }
+
+    // As an optimization, only do host name decoding if we have xn-- somewhere.
+    bool needsHostNameDecoding = strcasestr(after, "xn--") != NULL;
+  
     free(after);
     
-    return result;
+    return needsHostNameDecoding ? mapHostNames(result, NO) : result;
 }
 
 - (BOOL)_web_isEmpty
@@ -298,8 +489,7 @@ static int hexDigitValue(char c)
     if (!frag) {
         return self;
     }
-    
-    ReleaseIfNotNULL(frag);
+    CFRelease(frag);
     
     WebURLComponents components = [self _web_URLComponents];
     components.fragment = nil;
@@ -328,7 +518,6 @@ static int hexDigitValue(char c)
 }
 
 @end
-
 
 @implementation NSString (WebNSURLExtras)
 
@@ -381,6 +570,63 @@ static int hexDigitValue(char c)
     }
     unichar lastChar = [self characterAtIndex:length - 1];
     return lastChar == '/' && [self _web_hasCaseInsensitivePrefix:@"ftp:"];
+}
+
+// Return value of nil means no mapping is necessary.
+// If makeString is NO, then return value is either nil or self to indicate mapping is necessary.
+// If makeString is YES, then return value is either nil or the mapped string.
+- (NSString *)_web_mapHostNameWithRange:(NSRange)range encode:(BOOL)encode makeString:(BOOL)makeString
+{
+    if (range.length > HOST_NAME_BUFFER_LENGTH) {
+        return nil;
+    }
+    
+    UChar sourceBuffer[HOST_NAME_BUFFER_LENGTH];
+    UChar destinationBuffer[HOST_NAME_BUFFER_LENGTH];
+    
+    [self getCharacters:sourceBuffer range:range];
+    UErrorCode error = U_ZERO_ERROR;
+    int32_t numCharactersConverted = (encode ? uidna_IDNToASCII : uidna_IDNToUnicode)
+        (sourceBuffer, range.length, destinationBuffer, HOST_NAME_BUFFER_LENGTH, UIDNA_ALLOW_UNASSIGNED, NULL, &error);
+    if (error != U_ZERO_ERROR) {
+        return nil;
+    }
+    if (numCharactersConverted == (int)range.length && memcmp(sourceBuffer, destinationBuffer, range.length * sizeof(UChar)) == 0) {
+        return nil;
+    }
+    return makeString ? [NSString stringWithCharacters:destinationBuffer length:numCharactersConverted] : self;
+}
+
+- (BOOL)_web_hostNameNeedsDecodingWithRange:(NSRange)range
+{
+    return [self _web_mapHostNameWithRange:range encode:NO makeString:NO] != nil;
+}
+
+- (BOOL)_web_hostNameNeedsEncodingWithRange:(NSRange)range
+{
+    return [self _web_mapHostNameWithRange:range encode:YES makeString:NO] != nil;
+}
+
+- (NSString *)_web_decodeHostNameWithRange:(NSRange)range
+{
+    return [self _web_mapHostNameWithRange:range encode:NO makeString:YES];
+}
+
+- (NSString *)_web_encodeHostNameWithRange:(NSRange)range
+{
+    return [self _web_mapHostNameWithRange:range encode:YES makeString:YES];
+}
+
+- (NSString *)_web_decodeHostName
+{
+    NSString *name = [self _web_mapHostNameWithRange:NSMakeRange(0, [self length]) encode:NO makeString:YES];
+    return name == nil ? self : name;
+}
+
+- (NSString *)_web_encodeHostName
+{
+    NSString *name = [self _web_mapHostNameWithRange:NSMakeRange(0, [self length]) encode:YES makeString:YES];
+    return name == nil ? self : name;
 }
 
 @end
