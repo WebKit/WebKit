@@ -356,6 +356,19 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 + (void)registerViewClass:(Class)viewClass representationClass:(Class)representationClass forMIMEType:(NSString *)MIMEType;
 
 
+/*!
+    @method setGroupName:
+    @param groupName The name of the group for this WebView.
+    @discussion JavaScript may access named frames within the same group. 
+*/
+- (void)setGroupName:(NSString *)groupName;
+
+/*!
+    @method groupName
+    @discussion The group name for this WebView.
+*/
+- (NSString *)groupName;
+
 @end
 
 

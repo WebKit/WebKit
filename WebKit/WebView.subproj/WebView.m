@@ -90,10 +90,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 {
     _private = [[WebViewPrivate alloc] init];
     _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
-    _private->setName = [groupName copy];
-    if (_private->setName != nil) {
-        [WebViewSets addWebView:self toSetNamed:_private->setName];
-    }
+    [self setGroupName:groupName];
 
     [self setMaintainsBackForwardList: YES];
 
@@ -577,6 +574,21 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [[WebFrameView _viewTypesAllowImageTypeOmission:YES] setObject:viewClass forKey:MIMEType];
     [[WebDataSource _repTypesAllowImageTypeOmission:YES] setObject:representationClass forKey:MIMEType];
 }
+
+- (void)setGroupName:(NSString *)groupName
+{
+    if (groupName != _private->setName){
+        [_private->setName release];
+        _private->setName = [groupName copy];
+        [WebViewSets addWebView:self toSetNamed:_private->setName];
+    }
+}
+
+- (NSString *)groupName
+{
+    return _private->setName;
+}
+
 
 @end
 

@@ -1,5 +1,16 @@
 2003-05-12  Richard Williamson  <rjw@apple.com>
 
+        Fixed 3251316.  *** Public API Change ***
+
+        Added -(void)setGroupName:(NSString *) and -(NSString *)groupName;
+        
+        Reviewed by mjs.
+
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+
+2003-05-12  Richard Williamson  <rjw@apple.com>
+
         Fixed 3194614 and 3194751.  Add SPI to set 'renderless' mode
         for a frame.
         
