@@ -5002,7 +5002,7 @@ static NSArray *validAttributes = nil;
 	text = string;
     }
 
-    [bridge replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
+    [bridge replaceMarkedTextWithText:text];
     [bridge setMarkedTextDOMRange:[self _selectedRange] customAttributes:attributes ranges:ranges];
     if ([self hasMarkedText]) {
         [self _selectRangeInMarkedText:newSelRange];

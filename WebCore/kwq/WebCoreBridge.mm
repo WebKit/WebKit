@@ -29,6 +29,7 @@
 
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
+#import "dom2_range.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_viewsimpl.h"
 #import "dom_docimpl.h"
@@ -1652,6 +1653,21 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (DOMRange *)markedTextDOMRange
 {
     return [DOMRange _rangeWithImpl:_part->markedTextRange().handle()];
+}
+
+- (void)replaceMarkedTextWithText:(NSString *)text
+{
+    if (!partHasSelection(self))
+        return;
+    
+    Range markedTextRange = _part->markedTextRange();
+    if (!markedTextRange.isNull() && !markedTextRange.collapsed())
+        TypingCommand::deleteKeyPressed(_part->xmlDocImpl(), NO);
+    
+    if ([text length] > 0)
+        TypingCommand::insertText(_part->xmlDocImpl(), text, YES);
+    
+    [self ensureSelectionVisible];
 }
 
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should

@@ -1,3 +1,16 @@
+2005-03-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/4042935> undo doesn't work properly during inline input
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView setMarkedText:selectedRange:]): Call new -[WebCoreBridge replaceMarkedTextWithText:] instead of 
+        -[WebCoreBridge replaceSelectionWithText:selectReplacement:smartReplace:]. The former call was just added in 
+        order to provide a better mapping of international text input onto the typing command/undo design.
+
 2005-03-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4040321> Exception: Someone's trying to encode a WebDataRequestParameters instance

@@ -1,3 +1,16 @@
+2005-03-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/4042935> undo doesn't work properly during inline input
+
+        * kwq/WebCoreBridge.h: Declare new method below.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge replaceMarkedTextWithText:]): New method. Wraps calls to TypingCommand::deleteKeyPressed and
+        TypingCommand::insertText to map the way that international text input works onto the typing undo system.
+
 2005-03-16  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

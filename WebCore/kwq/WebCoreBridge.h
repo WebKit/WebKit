@@ -333,6 +333,7 @@ typedef enum {
 // international text input "marked text"
 - (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges;
 - (DOMRange *)markedTextDOMRange;
+- (void)replaceMarkedTextWithText:(NSString *)text;
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 
