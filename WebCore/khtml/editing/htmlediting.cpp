@@ -458,6 +458,10 @@ StyleChange::ELegacyHTMLStyles StyleChange::styleModeForParseMode(bool isQuirksM
 
 bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
 {
+    if (!property || !property->value()) {
+        return false;
+    }
+    
     DOMString valueText(property->value()->cssText());
     switch (property->id()) {
         case CSS_PROP_FONT_WEIGHT:

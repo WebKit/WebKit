@@ -1,3 +1,14 @@
+2005-03-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+        
+        - fixed <rdar://problem/4038417> Mail crashed in StyleChange::checkForLegacyHTMLStyleChange 
+        when composing a reply
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::StyleChange::checkForLegacyHTMLStyleChange):
+        Added missing nil check.
+
 2005-03-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.
