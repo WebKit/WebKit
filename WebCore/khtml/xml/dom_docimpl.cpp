@@ -1428,11 +1428,11 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
 	    delay = content.implementation()->toInt(&ok);
             if(ok) v->part()->scheduleRedirection(delay, v->part()->url().url() );
         } else {
-            int delay = 0;
+            double delay = 0;
             bool ok = false;
 
 	    DOMStringImpl* s = content.implementation()->substring(0, pos);
-	    delay = s->toInt(&ok);
+	    delay = QConstString(s->s, s->l).string().toDouble(&ok);
 	    delete s;
 
             pos++;

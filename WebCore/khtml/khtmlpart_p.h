@@ -268,7 +268,7 @@ public:
   KIO::CacheControl m_cachePolicy;
   QTimer m_redirectionTimer;
   QTime m_parsetime;
-  int m_delayRedirect;
+  double m_delayRedirect;
   QString m_redirectURL;
 
   KAction *m_paViewDocument;

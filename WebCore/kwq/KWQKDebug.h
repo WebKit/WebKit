@@ -38,6 +38,8 @@ public:
     kdbgstream(unsigned int area = 0, unsigned int level = 0, bool print = true) { }
     
     kdbgstream &operator<<(int) { return *this; }
+    kdbgstream &operator<<(unsigned int) { return *this; }
+    kdbgstream &operator<<(double) { return *this; }
     kdbgstream &operator<<(const char *) { return *this; }
     kdbgstream &operator<<(const void *) { return *this; }
     kdbgstream &operator<<(const QString &) { return *this; }

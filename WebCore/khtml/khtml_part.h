@@ -372,7 +372,7 @@ public:
   /**
    * Schedules a redirection after @p delay seconds.
    */
-  void scheduleRedirection( int delay, const QString &url, bool lockHistory = true );
+  void scheduleRedirection( double delay, const QString &url, bool lockHistory = true );
 
   /**
    * Clears the widget and prepares it for new content.

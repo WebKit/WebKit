@@ -1,5 +1,26 @@
 2002-11-01  Darin Adler  <darin@apple.com>
 
+	- fixed 3062598 -- meta refresh of 0.1s fails
+
+	KHTML was using an integer for the delay.
+
+        * khtml/khtml_part.h: Make scheduleRedirection take a double.
+        * khtml/khtmlpart_p.h: Make m_delayRedirect be a double.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::slotData): Use a double when parsing meta refresh.
+        (KHTMLPart::checkCompleted): Cast to int when passing to timer start.
+        (KHTMLPart::scheduleRedirection): Cast to int when passing to timer
+	start; also check for absurd values and do nothing.
+        (KHTMLPart::slotParentCompleted): Cast to int when passing to timer start.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::processHttpEquiv):
+	Use a double when parsing meta refresh.
+
+        * kwq/KWQKDebug.h: Add overloads for unsigned int and double to keep us
+	compiling now that we use a double in one place.
+
+2002-11-01  Darin Adler  <darin@apple.com>
+
 	- fixed 3090249 -- random crash on page load
 	- fixed 3090286 -- assert _job in KWQResourceLoader cancel
 
