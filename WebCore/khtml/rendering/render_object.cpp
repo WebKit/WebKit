@@ -1406,40 +1406,39 @@ InlineBox* RenderObject::createInlineBox()
     return new (renderArena()) InlineBox(this);
 }
 
-void RenderObject::getTextDecorationColors(int& decorations, QColor& underline, QColor& overline,
+void RenderObject::getTextDecorationColors(int decorations, QColor& underline, QColor& overline,
                                            QColor& linethrough, bool quirksMode)
 {
-    int newDecorations = decorations;
     RenderObject* curr = this;
     do {
         int currDecs = curr->style()->textDecoration();
         if (currDecs) {
             if (currDecs & UNDERLINE) {
-                newDecorations &= ~UNDERLINE;
+                decorations &= ~UNDERLINE;
                 underline = curr->style()->color();
             }
             if (currDecs & OVERLINE) {
-                newDecorations &= ~OVERLINE;
+                decorations &= ~OVERLINE;
                 overline = curr->style()->color();
             }
             if (currDecs & LINE_THROUGH) {
-                newDecorations &= ~LINE_THROUGH;
+                decorations &= ~LINE_THROUGH;
                 linethrough = curr->style()->color();
             }
         }
         curr = curr->parent();
         if (curr && curr->isRenderBlock() && curr->continuation())
             curr = curr->continuation();
-    } while (curr && newDecorations && (!quirksMode || !curr->element() ||
-                                        (curr->element()->id() != ID_A && curr->element()->id() != ID_FONT)));
+    } while (curr && decorations && (!quirksMode || !curr->element() ||
+                                     (curr->element()->id() != ID_A && curr->element()->id() != ID_FONT)));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
-    if (newDecorations && curr) {
-        if (newDecorations & UNDERLINE)
+    if (decorations && curr) {
+        if (decorations & UNDERLINE)
             underline = curr->style()->color();
-        if (newDecorations & OVERLINE)
+        if (decorations & OVERLINE)
             overline = curr->style()->color();
-        if (newDecorations & LINE_THROUGH)
+        if (decorations & LINE_THROUGH)
             linethrough = curr->style()->color();
     }        
 }

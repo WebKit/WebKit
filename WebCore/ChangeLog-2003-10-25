@@ -1,3 +1,14 @@
+2003-02-26  David Hyatt  <hyatt@apple.com>
+
+	Additional cleanup.  Don't need the arg to be a reference param
+	any more.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::getTextDecorationColors):
+        * khtml/rendering/render_object.h:
+
 2003-02-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

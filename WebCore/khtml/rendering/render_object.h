@@ -487,7 +487,7 @@ public:
 	return s;
     }
 
-    void getTextDecorationColors(int& decorations, QColor& underline, QColor& overline,
+    void getTextDecorationColors(int decorations, QColor& underline, QColor& overline,
                                  QColor& linethrough, bool quirksMode=false);
 
     enum BorderSide {
