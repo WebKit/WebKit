@@ -1223,52 +1223,52 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)backgroundAttachment
 {
-    return [self getPropertyValue:@"backgroundAttachment"];
+    return [self getPropertyValue:@"background-attachment"];
 }
 
 - (void)setBackgroundAttachment:(NSString *)backgroundAttachment
 {
-    [self setProperty:@"backgroundAttachment" :backgroundAttachment :@""];
+    [self setProperty:@"background-attachment" :backgroundAttachment :@""];
 }
 
 - (NSString *)backgroundColor
 {
-    return [self getPropertyValue:@"backgroundColor"];
+    return [self getPropertyValue:@"background-color"];
 }
 
 - (void)setBackgroundColor:(NSString *)backgroundColor
 {
-    [self setProperty:@"backgroundColor" :backgroundColor :@""];
+    [self setProperty:@"background-color" :backgroundColor :@""];
 }
 
 - (NSString *)backgroundImage
 {
-    return [self getPropertyValue:@"backgroundImage"];
+    return [self getPropertyValue:@"background-image"];
 }
 
 - (void)setBackgroundImage:(NSString *)backgroundImage
 {
-    [self setProperty:@"backgroundImage" :backgroundImage :@""];
+    [self setProperty:@"background-image" :backgroundImage :@""];
 }
 
 - (NSString *)backgroundPosition
 {
-    return [self getPropertyValue:@"backgroundPosition"];
+    return [self getPropertyValue:@"background-position"];
 }
 
 - (void)setBackgroundPosition:(NSString *)backgroundPosition
 {
-    [self setProperty:@"backgroundPosition" :backgroundPosition :@""];
+    [self setProperty:@"background-position" :backgroundPosition :@""];
 }
 
 - (NSString *)backgroundRepeat
 {
-    return [self getPropertyValue:@"backgroundRepeat"];
+    return [self getPropertyValue:@"background-repeat"];
 }
 
 - (void)setBackgroundRepeat:(NSString *)backgroundRepeat
 {
-    [self setProperty:@"backgroundRepeat" :backgroundRepeat :@""];
+    [self setProperty:@"background-repeat" :backgroundRepeat :@""];
 }
 
 - (NSString *)border
@@ -1283,212 +1283,212 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)borderCollapse
 {
-    return [self getPropertyValue:@"borderCollapse"];
+    return [self getPropertyValue:@"border-collapse"];
 }
 
 - (void)setBorderCollapse:(NSString *)borderCollapse
 {
-    [self setProperty:@"borderCollapse" :borderCollapse :@""];
+    [self setProperty:@"border-collapse" :borderCollapse :@""];
 }
 
 - (NSString *)borderColor
 {
-    return [self getPropertyValue:@"borderColor"];
+    return [self getPropertyValue:@"border-color"];
 }
 
 - (void)setBorderColor:(NSString *)borderColor
 {
-    [self setProperty:@"borderColor" :borderColor :@""];
+    [self setProperty:@"border-color" :borderColor :@""];
 }
 
 - (NSString *)borderSpacing
 {
-    return [self getPropertyValue:@"borderSpacing"];
+    return [self getPropertyValue:@"border-spacing"];
 }
 
 - (void)setBorderSpacing:(NSString *)borderSpacing
 {
-    [self setProperty:@"borderSpacing" :borderSpacing :@""];
+    [self setProperty:@"border-spacing" :borderSpacing :@""];
 }
 
 - (NSString *)borderStyle
 {
-    return [self getPropertyValue:@"borderStyle"];
+    return [self getPropertyValue:@"border-style"];
 }
 
 - (void)setBorderStyle:(NSString *)borderStyle
 {
-    [self setProperty:@"borderStyle" :borderStyle :@""];
+    [self setProperty:@"border-style" :borderStyle :@""];
 }
 
 - (NSString *)borderTop
 {
-    return [self getPropertyValue:@"borderTop"];
+    return [self getPropertyValue:@"border-top"];
 }
 
 - (void)setBorderTop:(NSString *)borderTop
 {
-    [self setProperty:@"borderTop" :borderTop :@""];
+    [self setProperty:@"border-top" :borderTop :@""];
 }
 
 - (NSString *)borderRight
 {
-    return [self getPropertyValue:@"borderRight"];
+    return [self getPropertyValue:@"border-right"];
 }
 
 - (void)setBorderRight:(NSString *)borderRight
 {
-    [self setProperty:@"borderRight" :borderRight :@""];
+    [self setProperty:@"border-right" :borderRight :@""];
 }
 
 - (NSString *)borderBottom
 {
-    return [self getPropertyValue:@"borderBottom"];
+    return [self getPropertyValue:@"border-bottom"];
 }
 
 - (void)setBorderBottom:(NSString *)borderBottom
 {
-    [self setProperty:@"borderBottom" :borderBottom :@""];
+    [self setProperty:@"border-bottom" :borderBottom :@""];
 }
 
 - (NSString *)borderLeft
 {
-    return [self getPropertyValue:@"borderLeft"];
+    return [self getPropertyValue:@"border-left"];
 }
 
 - (void)setBorderLeft:(NSString *)borderLeft
 {
-    [self setProperty:@"borderLeft" :borderLeft :@""];
+    [self setProperty:@"border-left" :borderLeft :@""];
 }
 
 - (NSString *)borderTopColor
 {
-    return [self getPropertyValue:@"borderTopColor"];
+    return [self getPropertyValue:@"border-top-color"];
 }
 
 - (void)setBorderTopColor:(NSString *)borderTopColor
 {
-    [self setProperty:@"borderTopColor" :borderTopColor :@""];
+    [self setProperty:@"border-top-color" :borderTopColor :@""];
 }
 
 - (NSString *)borderRightColor
 {
-    return [self getPropertyValue:@"borderRightColor"];
+    return [self getPropertyValue:@"border-right-color"];
 }
 
 - (void)setBorderRightColor:(NSString *)borderRightColor
 {
-    [self setProperty:@"borderRightColor" :borderRightColor :@""];
+    [self setProperty:@"border-right-color" :borderRightColor :@""];
 }
 
 - (NSString *)borderBottomColor
 {
-    return [self getPropertyValue:@"borderBottomColor"];
+    return [self getPropertyValue:@"border-bottom-color"];
 }
 
 - (void)setBorderBottomColor:(NSString *)borderBottomColor
 {
-    [self setProperty:@"borderBottomColor" :borderBottomColor :@""];
+    [self setProperty:@"border-bottom-color" :borderBottomColor :@""];
 }
 
 - (NSString *)borderLeftColor
 {
-    return [self getPropertyValue:@"borderLeftColor"];
+    return [self getPropertyValue:@"border-left-color"];
 }
 
 - (void)setBorderLeftColor:(NSString *)borderLeftColor
 {
-    [self setProperty:@"borderLeftColor" :borderLeftColor :@""];
+    [self setProperty:@"border-left-color" :borderLeftColor :@""];
 }
 
 - (NSString *)borderTopStyle
 {
-    return [self getPropertyValue:@"borderTopStyle"];
+    return [self getPropertyValue:@"border-top-style"];
 }
 
 - (void)setBorderTopStyle:(NSString *)borderTopStyle
 {
-    [self setProperty:@"borderTopStyle" :borderTopStyle :@""];
+    [self setProperty:@"border-top-style" :borderTopStyle :@""];
 }
 
 - (NSString *)borderRightStyle
 {
-    return [self getPropertyValue:@"borderRightStyle"];
+    return [self getPropertyValue:@"border-right-style"];
 }
 
 - (void)setBorderRightStyle:(NSString *)borderRightStyle
 {
-    [self setProperty:@"borderRightStyle" :borderRightStyle :@""];
+    [self setProperty:@"border-right-style" :borderRightStyle :@""];
 }
 
 - (NSString *)borderBottomStyle
 {
-    return [self getPropertyValue:@"borderBottomStyle"];
+    return [self getPropertyValue:@"border-bottom-style"];
 }
 
 - (void)setBorderBottomStyle:(NSString *)borderBottomStyle
 {
-    [self setProperty:@"borderBottomStyle" :borderBottomStyle :@""];
+    [self setProperty:@"border-bottom-style" :borderBottomStyle :@""];
 }
 
 - (NSString *)borderLeftStyle
 {
-    return [self getPropertyValue:@"borderLeftStyle"];
+    return [self getPropertyValue:@"border-left-style"];
 }
 
 - (void)setBorderLeftStyle:(NSString *)borderLeftStyle
 {
-    [self setProperty:@"borderLeftStyle" :borderLeftStyle :@""];
+    [self setProperty:@"border-left-style" :borderLeftStyle :@""];
 }
 
 - (NSString *)borderTopWidth
 {
-    return [self getPropertyValue:@"borderTopWidth"];
+    return [self getPropertyValue:@"border-top-width"];
 }
 
 - (void)setBorderTopWidth:(NSString *)borderTopWidth
 {
-    [self setProperty:@"borderTopWidth" :borderTopWidth :@""];
+    [self setProperty:@"border-top-width" :borderTopWidth :@""];
 }
 
 - (NSString *)borderRightWidth
 {
-    return [self getPropertyValue:@"borderRightWidth"];
+    return [self getPropertyValue:@"border-right-width"];
 }
 
 - (void)setBorderRightWidth:(NSString *)borderRightWidth
 {
-    [self setProperty:@"borderRightWidth" :borderRightWidth :@""];
+    [self setProperty:@"border-right-width" :borderRightWidth :@""];
 }
 
 - (NSString *)borderBottomWidth
 {
-    return [self getPropertyValue:@"borderBottomWidth"];
+    return [self getPropertyValue:@"border-bottom-width"];
 }
 
 - (void)setBorderBottomWidth:(NSString *)borderBottomWidth
 {
-    [self setProperty:@"borderBottomWidth" :borderBottomWidth :@""];
+    [self setProperty:@"border-bottom-width" :borderBottomWidth :@""];
 }
 
 - (NSString *)borderLeftWidth
 {
-    return [self getPropertyValue:@"borderLeftWidth"];
+    return [self getPropertyValue:@"border-left-width"];
 }
 
 - (void)setBorderLeftWidth:(NSString *)borderLeftWidth
 {
-    [self setProperty:@"borderLeftWidth" :borderLeftWidth :@""];
+    [self setProperty:@"border-left-width" :borderLeftWidth :@""];
 }
 
 - (NSString *)borderWidth
 {
-    return [self getPropertyValue:@"borderWidth"];
+    return [self getPropertyValue:@"border-width"];
 }
 
 - (void)setBorderWidth:(NSString *)borderWidth
 {
-    [self setProperty:@"borderWidth" :borderWidth :@""];
+    [self setProperty:@"border-width" :borderWidth :@""];
 }
 
 - (NSString *)bottom
@@ -1503,12 +1503,12 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)captionSide
 {
-    return [self getPropertyValue:@"captionSide"];
+    return [self getPropertyValue:@"caption-side"];
 }
 
 - (void)setCaptionSide:(NSString *)captionSide
 {
-    [self setProperty:@"captionSide" :captionSide :@""];
+    [self setProperty:@"caption-side" :captionSide :@""];
 }
 
 - (NSString *)clear
@@ -1553,22 +1553,22 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)counterIncrement
 {
-    return [self getPropertyValue:@"counterIncrement"];
+    return [self getPropertyValue:@"counter-increment"];
 }
 
 - (void)setCounterIncrement:(NSString *)counterIncrement
 {
-    [self setProperty:@"counterIncrement" :counterIncrement :@""];
+    [self setProperty:@"counter-increment" :counterIncrement :@""];
 }
 
 - (NSString *)counterReset
 {
-    return [self getPropertyValue:@"counterReset"];
+    return [self getPropertyValue:@"counter-reset"];
 }
 
 - (void)setCounterReset:(NSString *)counterReset
 {
-    [self setProperty:@"counterReset" :counterReset :@""];
+    [self setProperty:@"counter-reset" :counterReset :@""];
 }
 
 - (NSString *)cue
@@ -1583,22 +1583,22 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)cueAfter
 {
-    return [self getPropertyValue:@"cueAfter"];
+    return [self getPropertyValue:@"cue-after"];
 }
 
 - (void)setCueAfter:(NSString *)cueAfter
 {
-    [self setProperty:@"cueAfter" :cueAfter :@""];
+    [self setProperty:@"cue-after" :cueAfter :@""];
 }
 
 - (NSString *)cueBefore
 {
-    return [self getPropertyValue:@"cueBefore"];
+    return [self getPropertyValue:@"cue-before"];
 }
 
 - (void)setCueBefore:(NSString *)cueBefore
 {
-    [self setProperty:@"cueBefore" :cueBefore :@""];
+    [self setProperty:@"cue-before" :cueBefore :@""];
 }
 
 - (NSString *)cursor
@@ -1643,22 +1643,22 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)emptyCells
 {
-    return [self getPropertyValue:@"emptyCells"];
+    return [self getPropertyValue:@"empty-cells"];
 }
 
 - (void)setEmptyCells:(NSString *)emptyCells
 {
-    [self setProperty:@"emptyCells" :emptyCells :@""];
+    [self setProperty:@"empty-cells" :emptyCells :@""];
 }
 
 - (NSString *)cssFloat
 {
-    return [self getPropertyValue:@"cssFloat"];
+    return [self getPropertyValue:@"css-float"];
 }
 
 - (void)setCssFloat:(NSString *)cssFloat
 {
-    [self setProperty:@"cssFloat" :cssFloat :@""];
+    [self setProperty:@"css-float" :cssFloat :@""];
 }
 
 - (NSString *)font
@@ -1673,72 +1673,72 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)fontFamily
 {
-    return [self getPropertyValue:@"fontFamily"];
+    return [self getPropertyValue:@"font-family"];
 }
 
 - (void)setFontFamily:(NSString *)fontFamily
 {
-    [self setProperty:@"fontFamily" :fontFamily :@""];
+    [self setProperty:@"font-family" :fontFamily :@""];
 }
 
 - (NSString *)fontSize
 {
-    return [self getPropertyValue:@"fontSize"];
+    return [self getPropertyValue:@"font-size"];
 }
 
 - (void)setFontSize:(NSString *)fontSize
 {
-    [self setProperty:@"fontSize" :fontSize :@""];
+    [self setProperty:@"font-size" :fontSize :@""];
 }
 
 - (NSString *)fontSizeAdjust
 {
-    return [self getPropertyValue:@"fontSizeAdjust"];
+    return [self getPropertyValue:@"font-size-adjust"];
 }
 
 - (void)setFontSizeAdjust:(NSString *)fontSizeAdjust
 {
-    [self setProperty:@"fontSizeAdjust" :fontSizeAdjust :@""];
+    [self setProperty:@"font-size-adjust" :fontSizeAdjust :@""];
 }
 
 - (NSString *)fontStretch
 {
-    return [self getPropertyValue:@"fontStretch"];
+    return [self getPropertyValue:@"font-stretch"];
 }
 
 - (void)setFontStretch:(NSString *)fontStretch
 {
-    [self setProperty:@"fontStretch" :fontStretch :@""];
+    [self setProperty:@"font-stretch" :fontStretch :@""];
 }
 
 - (NSString *)fontStyle
 {
-    return [self getPropertyValue:@"fontStyle"];
+    return [self getPropertyValue:@"font-style"];
 }
 
 - (void)setFontStyle:(NSString *)fontStyle
 {
-    [self setProperty:@"fontStyle" :fontStyle :@""];
+    [self setProperty:@"font-style" :fontStyle :@""];
 }
 
 - (NSString *)fontVariant
 {
-    return [self getPropertyValue:@"fontVariant"];
+    return [self getPropertyValue:@"font-variant"];
 }
 
 - (void)setFontVariant:(NSString *)fontVariant
 {
-    [self setProperty:@"fontVariant" :fontVariant :@""];
+    [self setProperty:@"font-variant" :fontVariant :@""];
 }
 
 - (NSString *)fontWeight
 {
-    return [self getPropertyValue:@"fontWeight"];
+    return [self getPropertyValue:@"font-weight"];
 }
 
 - (void)setFontWeight:(NSString *)fontWeight
 {
-    [self setProperty:@"fontWeight" :fontWeight :@""];
+    [self setProperty:@"font-weight" :fontWeight :@""];
 }
 
 - (NSString *)height
@@ -1763,62 +1763,62 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)letterSpacing
 {
-    return [self getPropertyValue:@"letterSpacing"];
+    return [self getPropertyValue:@"letter-spacing"];
 }
 
 - (void)setLetterSpacing:(NSString *)letterSpacing
 {
-    [self setProperty:@"letterSpacing" :letterSpacing :@""];
+    [self setProperty:@"letter-spacing" :letterSpacing :@""];
 }
 
 - (NSString *)lineHeight
 {
-    return [self getPropertyValue:@"lineHeight"];
+    return [self getPropertyValue:@"line-height"];
 }
 
 - (void)setLineHeight:(NSString *)lineHeight
 {
-    [self setProperty:@"lineHeight" :lineHeight :@""];
+    [self setProperty:@"line-height" :lineHeight :@""];
 }
 
 - (NSString *)listStyle
 {
-    return [self getPropertyValue:@"listStyle"];
+    return [self getPropertyValue:@"list-style"];
 }
 
 - (void)setListStyle:(NSString *)listStyle
 {
-    [self setProperty:@"listStyle" :listStyle :@""];
+    [self setProperty:@"list-style" :listStyle :@""];
 }
 
 - (NSString *)listStyleImage
 {
-    return [self getPropertyValue:@"listStyleImage"];
+    return [self getPropertyValue:@"list-style-image"];
 }
 
 - (void)setListStyleImage:(NSString *)listStyleImage
 {
-    [self setProperty:@"listStyleImage" :listStyleImage :@""];
+    [self setProperty:@"list-style-image" :listStyleImage :@""];
 }
 
 - (NSString *)listStylePosition
 {
-    return [self getPropertyValue:@"listStylePosition"];
+    return [self getPropertyValue:@"list-style-position"];
 }
 
 - (void)setListStylePosition:(NSString *)listStylePosition
 {
-    [self setProperty:@"listStylePosition" :listStylePosition :@""];
+    [self setProperty:@"list-style-position" :listStylePosition :@""];
 }
 
 - (NSString *)listStyleType
 {
-    return [self getPropertyValue:@"listStyleType"];
+    return [self getPropertyValue:@"list-style-type"];
 }
 
 - (void)setListStyleType:(NSString *)listStyleType
 {
-    [self setProperty:@"listStyleType" :listStyleType :@""];
+    [self setProperty:@"list-style-type" :listStyleType :@""];
 }
 
 - (NSString *)margin
@@ -1833,52 +1833,52 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)marginTop
 {
-    return [self getPropertyValue:@"marginTop"];
+    return [self getPropertyValue:@"margin-top"];
 }
 
 - (void)setMarginTop:(NSString *)marginTop
 {
-    [self setProperty:@"marginTop" :marginTop :@""];
+    [self setProperty:@"margin-top" :marginTop :@""];
 }
 
 - (NSString *)marginRight
 {
-    return [self getPropertyValue:@"marginRight"];
+    return [self getPropertyValue:@"margin-right"];
 }
 
 - (void)setMarginRight:(NSString *)marginRight
 {
-    [self setProperty:@"marginRight" :marginRight :@""];
+    [self setProperty:@"margin-right" :marginRight :@""];
 }
 
 - (NSString *)marginBottom
 {
-    return [self getPropertyValue:@"marginBottom"];
+    return [self getPropertyValue:@"margin-bottom"];
 }
 
 - (void)setMarginBottom:(NSString *)marginBottom
 {
-    [self setProperty:@"marginBottom" :marginBottom :@""];
+    [self setProperty:@"margin-bottom" :marginBottom :@""];
 }
 
 - (NSString *)marginLeft
 {
-    return [self getPropertyValue:@"marginLeft"];
+    return [self getPropertyValue:@"margin-left"];
 }
 
 - (void)setMarginLeft:(NSString *)marginLeft
 {
-    [self setProperty:@"marginLeft" :marginLeft :@""];
+    [self setProperty:@"margin-left" :marginLeft :@""];
 }
 
 - (NSString *)markerOffset
 {
-    return [self getPropertyValue:@"markerOffset"];
+    return [self getPropertyValue:@"marker-offset"];
 }
 
 - (void)setMarkerOffset:(NSString *)markerOffset
 {
-    [self setProperty:@"markerOffset" :markerOffset :@""];
+    [self setProperty:@"marker-offset" :markerOffset :@""];
 }
 
 - (NSString *)marks
@@ -1893,42 +1893,42 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)maxHeight
 {
-    return [self getPropertyValue:@"maxHeight"];
+    return [self getPropertyValue:@"max-height"];
 }
 
 - (void)setMaxHeight:(NSString *)maxHeight
 {
-    [self setProperty:@"maxHeight" :maxHeight :@""];
+    [self setProperty:@"max-height" :maxHeight :@""];
 }
 
 - (NSString *)maxWidth
 {
-    return [self getPropertyValue:@"maxWidth"];
+    return [self getPropertyValue:@"max-width"];
 }
 
 - (void)setMaxWidth:(NSString *)maxWidth
 {
-    [self setProperty:@"maxWidth" :maxWidth :@""];
+    [self setProperty:@"max-width" :maxWidth :@""];
 }
 
 - (NSString *)minHeight
 {
-    return [self getPropertyValue:@"minHeight"];
+    return [self getPropertyValue:@"min-height"];
 }
 
 - (void)setMinHeight:(NSString *)minHeight
 {
-    [self setProperty:@"minHeight" :minHeight :@""];
+    [self setProperty:@"min-height" :minHeight :@""];
 }
 
 - (NSString *)minWidth
 {
-    return [self getPropertyValue:@"minWidth"];
+    return [self getPropertyValue:@"min-width"];
 }
 
 - (void)setMinWidth:(NSString *)minWidth
 {
-    [self setProperty:@"minWidth" :minWidth :@""];
+    [self setProperty:@"min-width" :minWidth :@""];
 }
 
 - (NSString *)orphans
@@ -1953,32 +1953,32 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)outlineColor
 {
-    return [self getPropertyValue:@"outlineColor"];
+    return [self getPropertyValue:@"outline-color"];
 }
 
 - (void)setOutlineColor:(NSString *)outlineColor
 {
-    [self setProperty:@"outlineColor" :outlineColor :@""];
+    [self setProperty:@"outline-color" :outlineColor :@""];
 }
 
 - (NSString *)outlineStyle
 {
-    return [self getPropertyValue:@"outlineStyle"];
+    return [self getPropertyValue:@"outline-style"];
 }
 
 - (void)setOutlineStyle:(NSString *)outlineStyle
 {
-    [self setProperty:@"outlineStyle" :outlineStyle :@""];
+    [self setProperty:@"outline-style" :outlineStyle :@""];
 }
 
 - (NSString *)outlineWidth
 {
-    return [self getPropertyValue:@"outlineWidth"];
+    return [self getPropertyValue:@"outline-width"];
 }
 
 - (void)setOutlineWidth:(NSString *)outlineWidth
 {
-    [self setProperty:@"outlineWidth" :outlineWidth :@""];
+    [self setProperty:@"outline-width" :outlineWidth :@""];
 }
 
 - (NSString *)overflow
@@ -2003,42 +2003,42 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)paddingTop
 {
-    return [self getPropertyValue:@"paddingTop"];
+    return [self getPropertyValue:@"padding-top"];
 }
 
 - (void)setPaddingTop:(NSString *)paddingTop
 {
-    [self setProperty:@"paddingTop" :paddingTop :@""];
+    [self setProperty:@"padding-top" :paddingTop :@""];
 }
 
 - (NSString *)paddingRight
 {
-    return [self getPropertyValue:@"paddingRight"];
+    return [self getPropertyValue:@"padding-right"];
 }
 
 - (void)setPaddingRight:(NSString *)paddingRight
 {
-    [self setProperty:@"paddingRight" :paddingRight :@""];
+    [self setProperty:@"padding-right" :paddingRight :@""];
 }
 
 - (NSString *)paddingBottom
 {
-    return [self getPropertyValue:@"paddingBottom"];
+    return [self getPropertyValue:@"padding-bottom"];
 }
 
 - (void)setPaddingBottom:(NSString *)paddingBottom
 {
-    [self setProperty:@"paddingBottom" :paddingBottom :@""];
+    [self setProperty:@"padding-bottom" :paddingBottom :@""];
 }
 
 - (NSString *)paddingLeft
 {
-    return [self getPropertyValue:@"paddingLeft"];
+    return [self getPropertyValue:@"padding-left"];
 }
 
 - (void)setPaddingLeft:(NSString *)paddingLeft
 {
-    [self setProperty:@"paddingLeft" :paddingLeft :@""];
+    [self setProperty:@"padding-left" :paddingLeft :@""];
 }
 
 - (NSString *)page
@@ -2053,32 +2053,32 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)pageBreakAfter
 {
-    return [self getPropertyValue:@"pageBreakAfter"];
+    return [self getPropertyValue:@"page-break-after"];
 }
 
 - (void)setPageBreakAfter:(NSString *)pageBreakAfter
 {
-    [self setProperty:@"pageBreakAfter" :pageBreakAfter :@""];
+    [self setProperty:@"page-break-after" :pageBreakAfter :@""];
 }
 
 - (NSString *)pageBreakBefore
 {
-    return [self getPropertyValue:@"pageBreakBefore"];
+    return [self getPropertyValue:@"page-break-before"];
 }
 
 - (void)setPageBreakBefore:(NSString *)pageBreakBefore
 {
-    [self setProperty:@"pageBreakBefore" :pageBreakBefore :@""];
+    [self setProperty:@"page-break-before" :pageBreakBefore :@""];
 }
 
 - (NSString *)pageBreakInside
 {
-    return [self getPropertyValue:@"pageBreakInside"];
+    return [self getPropertyValue:@"page-break-inside"];
 }
 
 - (void)setPageBreakInside:(NSString *)pageBreakInside
 {
-    [self setProperty:@"pageBreakInside" :pageBreakInside :@""];
+    [self setProperty:@"page-break-inside" :pageBreakInside :@""];
 }
 
 - (NSString *)pause
@@ -2093,22 +2093,22 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)pauseAfter
 {
-    return [self getPropertyValue:@"pauseAfter"];
+    return [self getPropertyValue:@"pause-after"];
 }
 
 - (void)setPauseAfter:(NSString *)pauseAfter
 {
-    [self setProperty:@"pauseAfter" :pauseAfter :@""];
+    [self setProperty:@"pause-after" :pauseAfter :@""];
 }
 
 - (NSString *)pauseBefore
 {
-    return [self getPropertyValue:@"pauseBefore"];
+    return [self getPropertyValue:@"pause-before"];
 }
 
 - (void)setPauseBefore:(NSString *)pauseBefore
 {
-    [self setProperty:@"pauseBefore" :pauseBefore :@""];
+    [self setProperty:@"pause-before" :pauseBefore :@""];
 }
 
 - (NSString *)pitch
@@ -2123,22 +2123,22 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)pitchRange
 {
-    return [self getPropertyValue:@"pitchRange"];
+    return [self getPropertyValue:@"pitch-range"];
 }
 
 - (void)setPitchRange:(NSString *)pitchRange
 {
-    [self setProperty:@"pitchRange" :pitchRange :@""];
+    [self setProperty:@"pitch-range" :pitchRange :@""];
 }
 
 - (NSString *)playDuring
 {
-    return [self getPropertyValue:@"playDuring"];
+    return [self getPropertyValue:@"play-during"];
 }
 
 - (void)setPlayDuring:(NSString *)playDuring
 {
-    [self setProperty:@"playDuring" :playDuring :@""];
+    [self setProperty:@"play-during" :playDuring :@""];
 }
 
 - (NSString *)position
@@ -2203,42 +2203,42 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)speakHeader
 {
-    return [self getPropertyValue:@"speakHeader"];
+    return [self getPropertyValue:@"speak-header"];
 }
 
 - (void)setSpeakHeader:(NSString *)speakHeader
 {
-    [self setProperty:@"speakHeader" :speakHeader :@""];
+    [self setProperty:@"speak-header" :speakHeader :@""];
 }
 
 - (NSString *)speakNumeral
 {
-    return [self getPropertyValue:@"speakNumeral"];
+    return [self getPropertyValue:@"speak-numeral"];
 }
 
 - (void)setSpeakNumeral:(NSString *)speakNumeral
 {
-    [self setProperty:@"speakNumeral" :speakNumeral :@""];
+    [self setProperty:@"speak-numeral" :speakNumeral :@""];
 }
 
 - (NSString *)speakPunctuation
 {
-    return [self getPropertyValue:@"speakPunctuation"];
+    return [self getPropertyValue:@"speak-punctuation"];
 }
 
 - (void)setSpeakPunctuation:(NSString *)speakPunctuation
 {
-    [self setProperty:@"speakPunctuation" :speakPunctuation :@""];
+    [self setProperty:@"speak-punctuation" :speakPunctuation :@""];
 }
 
 - (NSString *)speechRate
 {
-    return [self getPropertyValue:@"speechRate"];
+    return [self getPropertyValue:@"speech-rate"];
 }
 
 - (void)setSpeechRate:(NSString *)speechRate
 {
-    [self setProperty:@"speechRate" :speechRate :@""];
+    [self setProperty:@"speech-rate" :speechRate :@""];
 }
 
 - (NSString *)stress
@@ -2253,62 +2253,62 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)tableLayout
 {
-    return [self getPropertyValue:@"tableLayout"];
+    return [self getPropertyValue:@"table-layout"];
 }
 
 - (void)setTableLayout:(NSString *)tableLayout
 {
-    [self setProperty:@"tableLayout" :tableLayout :@""];
+    [self setProperty:@"table-layout" :tableLayout :@""];
 }
 
 - (NSString *)textAlign
 {
-    return [self getPropertyValue:@"textAlign"];
+    return [self getPropertyValue:@"text-align"];
 }
 
 - (void)setTextAlign:(NSString *)textAlign
 {
-    [self setProperty:@"textAlign" :textAlign :@""];
+    [self setProperty:@"text-align" :textAlign :@""];
 }
 
 - (NSString *)textDecoration
 {
-    return [self getPropertyValue:@"textDecoration"];
+    return [self getPropertyValue:@"text-decoration"];
 }
 
 - (void)setTextDecoration:(NSString *)textDecoration
 {
-    [self setProperty:@"textDecoration" :textDecoration :@""];
+    [self setProperty:@"text-decoration" :textDecoration :@""];
 }
 
 - (NSString *)textIndent
 {
-    return [self getPropertyValue:@"textIndent"];
+    return [self getPropertyValue:@"text-indent"];
 }
 
 - (void)setTextIndent:(NSString *)textIndent
 {
-    [self setProperty:@"textIndent" :textIndent :@""];
+    [self setProperty:@"text-indent" :textIndent :@""];
 }
 
 - (NSString *)textShadow
 {
-    return [self getPropertyValue:@"textShadow"];
+    return [self getPropertyValue:@"text-shadow"];
 }
 
 - (void)setTextShadow:(NSString *)textShadow
 {
-    [self setProperty:@"textShadow" :textShadow :@""];
+    [self setProperty:@"text-shadow" :textShadow :@""];
 }
 
 - (NSString *)textTransform
 {
-    return [self getPropertyValue:@"textTransform"];
+    return [self getPropertyValue:@"text-transform"];
 }
 
 - (void)setTextTransform:(NSString *)textTransform
 {
-    [self setProperty:@"textTransform" :textTransform :@""];
+    [self setProperty:@"text-transform" :textTransform :@""];
 }
 
 - (NSString *)top
@@ -2323,22 +2323,22 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)unicodeBidi
 {
-    return [self getPropertyValue:@"unicodeBidi"];
+    return [self getPropertyValue:@"unicode-bidi"];
 }
 
 - (void)setUnicodeBidi:(NSString *)unicodeBidi
 {
-    [self setProperty:@"unicodeBidi" :unicodeBidi :@""];
+    [self setProperty:@"unicode-bidi" :unicodeBidi :@""];
 }
 
 - (NSString *)verticalAlign
 {
-    return [self getPropertyValue:@"verticalAlign"];
+    return [self getPropertyValue:@"vertical-align"];
 }
 
 - (void)setVerticalAlign:(NSString *)verticalAlign
 {
-    [self setProperty:@"verticalAlign" :verticalAlign :@""];
+    [self setProperty:@"vertical-align" :verticalAlign :@""];
 }
 
 - (NSString *)visibility
@@ -2353,12 +2353,12 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)voiceFamily
 {
-    return [self getPropertyValue:@"voiceFamily"];
+    return [self getPropertyValue:@"voice-family"];
 }
 
 - (void)setVoiceFamily:(NSString *)voiceFamily
 {
-    [self setProperty:@"voiceFamily" :voiceFamily :@""];
+    [self setProperty:@"voice-family" :voiceFamily :@""];
 }
 
 - (NSString *)volume
@@ -2373,12 +2373,12 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)whiteSpace
 {
-    return [self getPropertyValue:@"whiteSpace"];
+    return [self getPropertyValue:@"white-space"];
 }
 
 - (void)setWhiteSpace:(NSString *)whiteSpace
 {
-    [self setProperty:@"whiteSpace" :whiteSpace :@""];
+    [self setProperty:@"white-space" :whiteSpace :@""];
 }
 
 - (NSString *)widows
@@ -2403,22 +2403,22 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSString *)wordSpacing
 {
-    return [self getPropertyValue:@"wordSpacing"];
+    return [self getPropertyValue:@"word-spacing"];
 }
 
 - (void)setWordSpacing:(NSString *)wordSpacing
 {
-    [self setProperty:@"wordSpacing" :wordSpacing :@""];
+    [self setProperty:@"word-spacing" :wordSpacing :@""];
 }
 
 - (NSString *)zIndex
 {
-    return [self getPropertyValue:@"zIndex"];
+    return [self getPropertyValue:@"z-index"];
 }
 
 - (void)setZIndex:(NSString *)zIndex
 {
-    [self setProperty:@"zIndex" :zIndex :@""];
+    [self setProperty:@"z-index" :zIndex :@""];
 }
 
 @end

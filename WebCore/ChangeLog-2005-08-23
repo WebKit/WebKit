@@ -1,5 +1,12 @@
 2004-05-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        * kwq/DOM-CSS.mm: Change DOMCSSStyleDeclaration methods to use strings with dash-separators in them
+        rather than interCaps.
+
+2004-05-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed <rdar://problem/3090663>: (scroll to top of page when anchor is "#top" or "#")
