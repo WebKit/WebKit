@@ -22,6 +22,8 @@
 #define WEBKIT_LOG_EVENTS			0x00010000
 #define WEBKIT_LOG_VIEW				0x00020000
 
+#define WEBKIT_LOG_REDIRECT			0x00040000
+
 // ranges reserved for different uses to enable easy isolation of certain log messages
 #define WEBKIT_LOG_GENERIC_RANGE		0x000000FF
 #define WEBKIT_LOG_CORE_RANGE			0x0000FF00	

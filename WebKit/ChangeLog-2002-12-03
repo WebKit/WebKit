@@ -1,3 +1,16 @@
+2002-03-29  Richard Williamson  <rjw@apple.com>
+
+        Added stopLoading to startLoading to cancel any pending loads before
+        new loads start.  This doesn't work yet because of loader bugs, but will
+        once those are fixed.
+        
+        Adding logging for redirects.
+        
+	* Misc.subproj/WebKitDebug.h:
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandle:didRedirectToURL:]):
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame startLoading]):
+
 2002-03-29  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFramePrivate dealloc]): Deref the

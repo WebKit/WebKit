@@ -157,6 +157,9 @@
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     
+    // Stop loading any previous loads that may be currently active.
+    [self stopLoading];
+    
     // Force refresh is irrelevant, as this will always be the first load.
     // The controller will transition the provisional data source to the
     // committed data source.

@@ -84,6 +84,7 @@
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
 {
+    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_REDIRECT, "url = %s\n", [[url absoluteString] cString]);
 }
 
 @end
