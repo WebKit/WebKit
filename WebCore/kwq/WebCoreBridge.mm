@@ -127,11 +127,6 @@ using namespace khtml;
     bridgeOwnsKHTMLView = YES;
 }
 
-- (void)scrollToBaseAnchor
-{
-    part->impl->gotoBaseAnchor();
-}
-
 - (void)scrollToAnchor:(NSString *)a
 {
     part->gotoAnchor(QString::fromNSString(a));

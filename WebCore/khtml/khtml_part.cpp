@@ -1449,14 +1449,17 @@ void KHTMLPart::write( const QString &str )
 
 void KHTMLPart::end()
 {
-#ifdef APPLE_CHANGES
-  impl->end();
-#else
     // make sure nothing's left in there...
     if(d->m_decoder)
         write(d->m_decoder->flush());
     if (d->m_doc)
 	d->m_doc->finishParsing();
+#ifdef APPLE_CHANGES
+    KURL::clearCaches();
+
+    // FIXME: Would be better if we could just count on the signal
+    // instead of doing this.
+    slotFinishedParsing();
 #endif
 }
 

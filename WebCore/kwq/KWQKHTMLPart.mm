@@ -125,27 +125,6 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int lengt
     part->write(bytes, length);
 }
 
-// FIXME: Need to remerge this with code in khtml_part.cpp?
-void KWQKHTMLPartImpl::end()
-{
-    KWQ_ASSERT(d->m_doc != NULL);
-
-    d->m_doc->setParsing(false);
-
-    d->m_doc->close();
-    KURL::clearCaches();
-    
-    if (d->m_view)
-        d->m_view->complete();
-}
- 
-bool KWQKHTMLPartImpl::gotoBaseAnchor()
-{
-    if ( !part->m_url.ref().isEmpty() )
-        return part->gotoAnchor( part->m_url.ref() );
-    return false;
-}
-
 void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
 {
     KURL clickedURL(part->completeURL( url));

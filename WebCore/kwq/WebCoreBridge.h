@@ -87,7 +87,6 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)installInFrame:(NSView *)view;
 - (void)removeFromFrame;
 
-- (void)scrollToBaseAnchor;
 - (void)scrollToAnchor:(NSString *)anchor;
 
 - (void)createKHTMLViewWithNSView:(NSView *)view

@@ -1,5 +1,23 @@
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
+        Merged KHTMLPart::end method with khtml original.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::end): Remove call to impl. Use original version, but
+	clear KURL cache and call slotFinishedParsing as well.
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::end): Removed.
+	(KWQKHTMLPartImpl::gotoBaseAnchor): Removed. No longer needed.
+        * kwq/KWQKURL.mm:
+        (KURL::encodedHtmlRef): Implemented.
+        (KURL::htmlRef): Implemented.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+	(-[WebCoreBridge scrollToBaseAnchor]): Removed. No longer needed.
+	
+2002-08-05  Maciej Stachowiak  <mjs@apple.com>
+
         Merged KHTMLPart::openURL method with khtml original.
 
         * khtml/khtml_part.cpp:

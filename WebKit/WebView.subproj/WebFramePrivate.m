@@ -227,8 +227,7 @@ static const char * const stateNames[6] = {
         case WebFrameStateUninitialized:
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason: [NSString stringWithFormat: @"invalid state attempting to transition to WebFrameStateLayoutAcceptable from %s", stateNames[_private->state]] userInfo: nil] raise];
-            return;
+	    WEBKIT_ASSERT_NOT_REACHED();
         }
     }
 }
@@ -292,11 +291,8 @@ static const char * const stateNames[6] = {
                 // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
                 // if we're in the WebFrameLoadTypeUninitialized state.
                 case WebFrameLoadTypeUninitialized:
-                    break;
-                    
                 default:
-                    [[NSException exceptionWithName:NSGenericException reason:@"invalid load type during commit transition" userInfo: nil] raise];
-                    break;
+		    WEBKIT_ASSERT_NOT_REACHED();
                 }
             }
             
@@ -315,8 +311,7 @@ static const char * const stateNames[6] = {
         case WebFrameStateComplete:
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason:[NSString stringWithFormat: @"invalid state attempting to transition to WebFrameStateCommittedPage from %s", stateNames[_private->state]] userInfo: nil] raise];
-            return;
+	    WEBKIT_ASSERT_NOT_REACHED();
         }
     }
 }
@@ -363,8 +358,7 @@ static const char * const stateNames[6] = {
         // Shouldn't ever be in this state.
         case WebFrameStateUninitialized:
         {
-            [[NSException exceptionWithName:NSGenericException reason:@"invalid state WebFrameStateUninitialized during completion check with error" userInfo: nil] raise];
-            return;
+	    WEBKIT_ASSERT_NOT_REACHED();
         }
         
         case WebFrameStateProvisional:
@@ -441,9 +435,6 @@ static const char * const stateNames[6] = {
                 [thisDocumentView setNeedsDisplay: YES];
                 //[thisDocumentView display];
 
-                // Jump to anchor point, if necessary.
-                [[ds _bridge] scrollToBaseAnchor];
-
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.
@@ -511,8 +502,7 @@ static const char * const stateNames[6] = {
         // Yikes!  Serious horkage.
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason:@"invalid state during completion check with error" userInfo: nil] raise];
-            break;
+	    WEBKIT_ASSERT_NOT_REACHED();
         }
     }
 }

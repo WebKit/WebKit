@@ -67,11 +67,8 @@ public:
     KHTMLView *getView() const;
 
     bool openURLInFrame(const KURL &, const KParts::URLArgs &);
-    void end();
     
     void slotData(NSString *, const char *bytes, int length, bool complete = false);
-
-    bool gotoBaseAnchor();
 
     void setTitle(const DOM::DOMString &);
     void setStatusBarText(const QString &status);

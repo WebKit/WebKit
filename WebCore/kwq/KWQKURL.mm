@@ -700,14 +700,12 @@ NSURL *KURL::getNSURL() const
 
 QString KURL::encodedHtmlRef() const
 {
-    _logNotYetImplemented();
-    return 0;
+    return ref();
 }
 
 QString KURL::htmlRef() const
 {
-    _logNotYetImplemented();
-    return 0;
+    return decode_string(ref());
 }
 
 bool operator==(const KURL &a, const KURL &b)

@@ -1,3 +1,18 @@
+2002-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Some changes related to re-merging the KHTMLPart end() method:
+
+	* Misc.subproj/WebKitDebug.h: Added WEBKIT_ASSERT_NOT_REACHED().
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToLayoutAcceptable]): Replace NSException with
+	ASSERT_NOT_REACHED (this is an internal consistency check, not an
+	argument check on a public API, so an assert is more appropriate than
+	an exception).
+        (-[WebFrame _transitionToCommitted]): Likewise.
+        (-[WebFrame _isLoadComplete]): Likewise; also, remove bridge call
+	to scrollToBaseAnchor:, since that will now happen automatically
+	when calling end.
+
 2002-08-02  Darin Adler  <darin@apple.com>
 
 	WebKit support for feature where client redirects are treated as if the
