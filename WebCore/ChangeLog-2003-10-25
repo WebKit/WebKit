@@ -1,3 +1,14 @@
+2002-07-26  David Hyatt  <hyatt@apple.com>
+
+	Fix for 2944382, NOWRAP was being incorrectly applied in KHTML.
+	It was being ignored incorrectly if a fixed width was specified
+	on a cell.  This width on the cell is actually irrelevant and
+	should not have been checked, since NOWRAP will affect the
+	whole column and not just a specific cell.
+	
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::calcMinMaxWidth):
+
 2002-07-25  Darin Adler  <darin@apple.com>
 
         * WebCore.pbproj/project.pbxproj: Add DeploymentFat build style.

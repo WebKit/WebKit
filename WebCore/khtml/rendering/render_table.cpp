@@ -2031,9 +2031,20 @@ void RenderTableCell::calcMinMaxWidth()
 
     RenderFlow::calcMinMaxWidth();
 
-    if(nWrap && !(style()->width().type==Fixed))
+    // NOWRAP Should apply even in cases where the width is fixed.  Consider the following 
+    // test case.
+    // <table border="1">
+    // <tr>
+    // <td width="175">Check this text out. It shouldn't shrink below 300px.</td>
+    // <td width="100%"></td>
+    // </tr>
+    // <tr><td width="300" nowrap></tr>
+    // </table>
+    // The width of the cell should not be allowed to fall below the max width of the column when
+    // nowrap is enabled on any cell in the column.  - dwh
+    if(nWrap)
         m_minWidth = m_maxWidth;
-
+    
     if (m_minWidth!=oldMin || m_maxWidth!=oldMax) {
         m_table->addColInfo(this);
     }
