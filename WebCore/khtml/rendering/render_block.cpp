@@ -309,6 +309,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
     if (canDeleteAnonymousBlocks && prev && next) {
         // Take all the children out of the |next| block and put them in
         // the |prev| block.
+        prev->setNeedsLayoutAndMinMaxRecalc();
         RenderObject* o = next->firstChild();
         while (o) {
             RenderObject* no = o;
@@ -316,8 +317,6 @@ void RenderBlock::removeChild(RenderObject *oldChild)
             prev->appendChildNode(next->removeChildNode(no));
             no->setNeedsLayoutAndMinMaxRecalc();
         }
-        prev->setNeedsLayoutAndMinMaxRecalc();
-
         // Nuke the now-empty block.
         next->detach();
     }
@@ -329,6 +328,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         // The removal has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
+        setNeedsLayoutAndMinMaxRecalc();
         RenderObject* anonBlock = removeChildNode(child);
         m_childrenInline = true;
         RenderObject* o = anonBlock->firstChild();
@@ -338,7 +338,6 @@ void RenderBlock::removeChild(RenderObject *oldChild)
             appendChildNode(anonBlock->removeChildNode(no));
             no->setNeedsLayoutAndMinMaxRecalc();
         }
-        setNeedsLayoutAndMinMaxRecalc();
 
         // Nuke the now-empty block.
         anonBlock->detach();

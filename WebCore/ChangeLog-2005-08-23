@@ -1,5 +1,15 @@
 2005-02-10  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3980778, repro crash in RootInlineBox::paint.  Make sure that when merging blocks we dirty them for layout
+	up front. That way as we do the merge, we dont attempt to examine the lines in dirtyLinesForChangedChild.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::removeChild):
+
+2005-02-10  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3987010, fix a bug that caused the self-collapsing-block-cleared-float bit to never get set correctly.
 	
         Reviewed by mjs
