@@ -1,3 +1,16 @@
+2002-04-08  Chris Blumenberg  <cblu@apple.com>
+
+	* Plugins.subproj/IFNullPluginView.h:
+	* Plugins.subproj/IFNullPluginView.mm: (-[IFNullPluginView
+	initWithFrame:mimeType:arguments:]), (-[IFNullPluginView drawRect:]):
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	pluginNotFoundForMIMEType:pluginPageURL:]):
+	* WebView.subproj/IFWebController.h:
+
+	Added pluginNotFoundForMIMEType: pluginPageURL: to WebKit. This gets called
+	by IFNullPluginView when a plug-in for a certain mime type is requested but 
+	not installed.
+
 2002-04-08  Richard Williamson  <rjw@apple.com>
 
         Added frameForView:

@@ -295,5 +295,9 @@
     return data->mainFrame;
 }
 
+- (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url
+{
+    // Do nothing.  Subclasses typically override this method.
+}
 
 @end

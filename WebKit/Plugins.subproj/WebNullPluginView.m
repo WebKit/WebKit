@@ -8,6 +8,8 @@
 
 #import "IFNullPluginView.h"
 #import "WCPluginWidget.h"
+#import "IFWebView.h"
+#import "IFBaseWebController.h"
 
 @implementation IFNullPluginView
 
@@ -23,7 +25,7 @@ static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *argume
 
 - initWithFrame:(NSRect)frame mimeType:(NSString *)mime arguments:(NSDictionary *)arguments{
     NSBundle *bundle;
-    NSString *imagePath;
+    NSString *imagePath, *pluginPageString;
     
     self = [super initWithFrame:frame];
     if (self) {
@@ -31,6 +33,13 @@ static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *argume
         bundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
         imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
         [self setImage:[[NSImage alloc] initWithContentsOfFile:imagePath]];
+        
+        pluginPageString = [arguments objectForKey:@"pluginspage"];
+        if(pluginPageString)
+            pluginPage = [[NSURL URLWithString:pluginPageString] retain];
+        if(mime)
+            mimeType = [mime retain];
+        
         errorSent = false;
     }
     return self;
@@ -51,10 +60,15 @@ static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *argume
 }
 
 - (void)drawRect:(NSRect)rect {
+    IFWebView *webView;
+    IFBaseWebController *webController;
+    
     [super drawRect:rect];
     if(!errorSent){
-        //webView = [self findSuperview:@"IFWebView"];
-        //webController = [webView controller];
+        webView = [self findSuperview:@"IFWebView"];
+        webController = [webView controller];
+        [webController pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
+        errorSent = TRUE;
     }
 }
 

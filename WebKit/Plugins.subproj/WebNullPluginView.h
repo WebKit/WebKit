@@ -12,6 +12,8 @@
 @interface IFNullPluginView : NSImageView {
 
     BOOL errorSent;
+    NSString *mimeType;
+    NSURL *pluginPage;
 }
 
 - initWithFrame:(NSRect)frame mimeType:(NSString *)mime arguments:(NSDictionary *)arguments;
