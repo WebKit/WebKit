@@ -1,3 +1,34 @@
+2004-01-27  John Sullivan  <sullivan@apple.com>
+
+        WebKit part of fixes for:
+        <rdar://problem/3123975>: ER: please list the source URL in the header 
+        or footer when printing the contents of a page
+        <rdar://problem/3184091>: Safari - Configurable printing header/footer
+        <rdar://problem/3306826>: Please allow printing the date (as well as URL) 
+        in the header or footer
+
+        Reviewed by Dave.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _headerHeight]):
+        new method, gets result from WebView's UI delegate or returns 0
+        (-[WebHTMLView _footerHeight]):
+        new method, gets result from WebView's UI delegate or returns 0
+        (-[WebHTMLView _drawHeaderInRect:]):
+        new method, gives WebView's UI delegate a chance to draw header
+        (-[WebHTMLView _drawFooterInRect:]):
+        new method, gives WebView's UI delegate a chance to draw footer
+        (-[WebHTMLView _adjustPrintingMarginsForHeaderAndFooter]):
+        new method, adds header and footer heights into page margins so
+        AppKit printing code will compute and use the right area
+        (-[WebHTMLView _setPrinting:minimumPageWidth:maximumPageWidth:adjustViewSize:]):
+        now calls _adjustPrintingMarginsForHeaderAndFooter if starting to print
+        (-[WebHTMLView drawPageBorderWithSize:]):
+        new method, computes rects for header and footer and calls new drawing methods
+        
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        add header and footer-related delegate methods
+
 2004-01-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

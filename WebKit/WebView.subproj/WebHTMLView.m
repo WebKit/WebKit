@@ -22,6 +22,7 @@
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
+#import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebUnicode.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -82,6 +83,10 @@ static BOOL forceRealHitTest = NO;
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
 - (void)_updateTextSizeMultiplier;
 - (float)_calculatePrintHeight;
+- (float)_footerHeight;
+- (float)_headerHeight;
+- (float)_scaleFactorForPrintOperation:(NSPrintOperation *)printOperation;
+- (float)_userScaleFactorForPrintOperation:(NSPrintOperation *)printOperation;
 @end
 
 // Any non-zero value will do, but using somethign recognizable might help us debug some day.
@@ -1671,6 +1676,95 @@ static WebHTMLView *lastHitView = nil;
 {
 }
 
+//#define DEBUG_HEADER_AND_FOOTER
+
+- (float)_headerHeight
+{
+    // FIXME: headers and footers are only drawn for HTMLView, not for other views
+    // such as plain text or standalone images
+    if ([[[self _webView] UIDelegate] respondsToSelector:@selector(webViewHeaderHeight:)]) {
+        return [[[self _webView] UIDelegate] webViewHeaderHeight:[self _webView]];
+    }
+
+#ifdef DEBUG_HEADER_AND_FOOTER
+    return 25;
+#else
+    return 0;
+#endif
+}
+
+- (float)_footerHeight
+{
+    // FIXME: headers and footers are only drawn for HTMLView, not for other views
+    // such as plain text or standalone images
+    if ([[[self _webView] UIDelegate] respondsToSelector:@selector(webViewFooterHeight:)]) {
+        return [[[self _webView] UIDelegate] webViewFooterHeight:[self _webView]];
+    }
+    
+#ifdef DEBUG_HEADER_AND_FOOTER
+    return 50;
+#else
+    return 0;
+#endif
+}
+
+- (void)_drawHeaderInRect:(NSRect)rect
+{
+#ifdef DEBUG_HEADER_AND_FOOTER
+    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+    [currentContext saveGraphicsState];
+    [[NSColor yellowColor] set];
+    NSRectFill(rect);
+    [currentContext restoreGraphicsState];
+#endif
+    
+    // FIXME: headers and footers are only drawn for HTMLView, not for other views
+    // such as plain text or standalone images
+    if ([[[self _webView] UIDelegate] respondsToSelector:@selector(webView:drawHeaderInRect:forPage:of:)]) {
+        NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+        [currentContext saveGraphicsState];
+        NSRectClip(rect);
+        [[[self _webView] UIDelegate] webView:[self _webView] 
+                             drawHeaderInRect:rect 
+                                      forPage:[[NSPrintOperation currentOperation] currentPage] 
+                                           of:[_private->pageRects count]];
+        [currentContext restoreGraphicsState];
+    }
+}
+
+- (void)_drawFooterInRect:(NSRect)rect
+{
+#ifdef DEBUG_HEADER_AND_FOOTER
+    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+    [currentContext saveGraphicsState];
+    [[NSColor cyanColor] set];
+    NSRectFill(rect);
+    [currentContext restoreGraphicsState];
+#endif
+    
+    // FIXME: headers and footers are only drawn for HTMLView, not for other views
+    // such as plain text or standalone images
+    if ([[[self _webView] UIDelegate] respondsToSelector:@selector(webView:drawFooterInRect:forPage:of:)]) {
+        NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+        [currentContext saveGraphicsState];
+        NSRectClip(rect);
+        [[[self _webView] UIDelegate] webView:[self _webView] 
+                             drawFooterInRect:rect 
+                                      forPage:[[NSPrintOperation currentOperation] currentPage] 
+                                           of:[_private->pageRects count]];
+        [currentContext restoreGraphicsState];
+    }
+}
+
+- (void)_adjustPrintingMarginsForHeaderAndFooter
+{
+    NSPrintOperation *operation = [NSPrintOperation currentOperation];
+    NSPrintInfo *info = [[NSPrintOperation currentOperation] printInfo];
+    float userScale = [self _userScaleFactorForPrintOperation:operation];
+    [info setTopMargin:[info topMargin] + [self _headerHeight]*userScale];
+    [info setBottomMargin:[info bottomMargin] + [self _footerHeight]*userScale];
+}
+
 // Does setNeedsDisplay:NO as a side effect when printing is ending.
 // pageWidth != 0 implies we will relayout to a new width
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize
@@ -1694,7 +1788,9 @@ static WebHTMLView *lastHitView = nil;
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
         [self layoutToMinimumPageWidth:minPageWidth maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
-        if (!printing) {
+        if (printing) {
+            [self _adjustPrintingMarginsForHeaderAndFooter];
+        } else {
             // Can't do this when starting printing or nested printing won't work, see 3491427.
             [self setNeedsDisplay:NO];
         }
@@ -1797,6 +1893,25 @@ static WebHTMLView *lastHitView = nil;
     // Calculate the page height in points
     NSSize paperSize = [pi paperSize];
     return paperSize.height - [pi topMargin] - [pi bottomMargin];
+}
+
+- (void)drawPageBorderWithSize:(NSSize)borderSize
+{
+    ASSERT(NSEqualSizes(borderSize, [[[NSPrintOperation currentOperation] printInfo] paperSize]));
+    
+    // The header and footer rect height scales with the page, but the width is always
+    // all the way across the printed page (inset by printing margins).
+    float userScale = [self _userScaleFactorForPrintOperation:[NSPrintOperation currentOperation]];
+    NSPrintInfo *printInfo = [[NSPrintOperation currentOperation] printInfo];
+    float headerFooterLeft = [printInfo leftMargin]/userScale;
+    float headerFooterWidth = (borderSize.width - ([printInfo leftMargin] + [printInfo rightMargin]))/userScale;
+    NSRect footerRect = NSMakeRect(headerFooterLeft, [printInfo bottomMargin]/userScale - [self _footerHeight] , 
+                                   headerFooterWidth, [self _footerHeight]);
+    NSRect headerRect = NSMakeRect(headerFooterLeft, (borderSize.height - [printInfo topMargin])/userScale, 
+                                   headerFooterWidth, [self _headerHeight]);
+    
+    [self _drawHeaderInRect:headerRect];
+    [self _drawFooterInRect:footerRect];
 }
 
 - (void)endDocument
