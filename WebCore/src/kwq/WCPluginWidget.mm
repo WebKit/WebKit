@@ -53,7 +53,7 @@ void WCSetIFNullPluginMakeFunc(WCIFNullPluginMakeFunc func)
 
 
 
-WCPluginWidget::WCPluginWidget(const QString &url, const QString &serviceType, const QStringList &args)
+WCPluginWidget::WCPluginWidget(const QString &url, const QString &serviceType, const QStringList &args, const QString &baseURL)
 {
     NSMutableDictionary *arguments;
     NSString *arg, *mime=nil, *URL;
@@ -73,7 +73,9 @@ WCPluginWidget::WCPluginWidget(const QString &url, const QString &serviceType, c
             [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
         }
     }
-    
+    if(baseURL)
+        [arguments setObject:QSTRING_TO_NSSTRING(baseURL) forKey:@"WebKitBaseURL"];
+        
     if(serviceType.isNull()){
         plugin = [[WCPluginDatabase installedPlugins] getPluginForExtension:[URL pathExtension]];
         if(plugin != nil){

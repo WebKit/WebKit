@@ -1,3 +1,13 @@
+2002-04-08  Chris Blumenberg  <cblu@apple.com>
+
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	initWithFrame:plugin:url:mime:arguments:mode:]), (-[IFPluginView drawRect:]),
+	(-[IFPluginView newStream:mimeType:notifyData:]), (-[IFPluginView
+	getURLNotify:target:notifyData:]):
+
+	Support new stream requests from plug-ins that are relative URL's.
+
 2002-04-08  Darin Adler  <darin@apple.com>
 
 	* WebKit.pbproj/project.pbxproj: Re-added -Wno-format-y2k.

@@ -47,6 +47,7 @@ typedef struct _StreamData{
     bool isFlipped, transferred, hidden, stopped;
             
     NSString *URL, *mime;
+    NSURL *baseURL;
     NSTrackingRectTag trackingTag;
     NSMutableArray *filesToErase, *activeURLHandles;
 
@@ -71,7 +72,7 @@ typedef struct _StreamData{
 -(void)viewHasMoved:(NSNotification *)notification;
 -(NSView *)findSuperview:(NSString *) viewName;
 - (void) windowWillClose:(NSNotification *)notification;
--(void)newStream:(NSString *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData;
+-(void)newStream:(NSURL *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData;
 -(BOOL)acceptsFirstResponder;
 -(BOOL)becomeFirstResponder;
 -(BOOL)resignFirstResponder;

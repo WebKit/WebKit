@@ -71,7 +71,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     char *cMime, *s;
     NPSavedData saved;
     NSArray *attributes, *values;
-    NSString *attributeString;
+    NSString *attributeString, *baseURLString;
     uint i;
         
     [super initWithFrame: r];
@@ -106,6 +106,11 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     [mime getCString:cMime];
     
     if(arguments){
+    
+        baseURLString = [arguments objectForKey:@"WebKitBaseURL"];
+        if(baseURLString)
+            baseURL = [[NSURL URLWithString:baseURLString] retain];
+            
         attributes = [arguments allKeys];
         values = [arguments allValues];
         cAttributes = malloc(sizeof(char *) * [arguments count]);
@@ -160,7 +165,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         [notificationCenter addObserver:self selector:@selector(windowResignedKey:) name:@"NSWindowDidResignKeyNotification" object:theWindow];
         [self sendActivateEvent:[theWindow isKeyWindow]];
         if(URL)
-            [self newStream:URL mimeType:mime notifyData:NULL];
+            [self newStream:[NSURL URLWithString:URL] mimeType:mime notifyData:NULL];
         eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
         [eventSender sendNullEvents];
         transferred = TRUE;
@@ -249,7 +254,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 }
 
 
-- (void) newStream:(NSString *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
+- (void) newStream:(NSURL *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
 {
     char *cURL, *cMime;
     StreamData *streamData;
@@ -258,11 +263,13 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     uint16 transferMode;
     IFURLHandle *urlHandle;
     NSDictionary *attributes;
+    NSString *streamURLString;
     
+    streamURLString = [streamURL absoluteString];
     stream = malloc(sizeof(NPStream));
-    cURL   = malloc([streamURL length]+1);
+    cURL   = malloc([streamURLString length]+1);
     cMime  = malloc([mimeType length]+1);
-    [streamURL getCString:cURL];
+    [streamURLString getCString:cURL];
     [mimeType getCString:cMime];
     stream->url = cURL;
     stream->end = 0;
@@ -281,19 +288,19 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     if(transferMode == NP_NORMAL){
         WEBKITDEBUG("Stream type: NP_NORMAL\n");
         attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:streamData] forKey:IFURLHandleUserData];
-        urlHandle = [[IFURLHandle alloc] initWithURL:[NSURL URLWithString:streamURL] attributes:attributes flags:0];
+        urlHandle = [[IFURLHandle alloc] initWithURL:streamURL attributes:attributes flags:0];
         [urlHandle addClient:self];
         [activeURLHandles addObject:urlHandle];
         [urlHandle loadInBackground];
     }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
         if(transferMode == NP_ASFILEONLY) WEBKITDEBUG("Stream type: NP_ASFILEONLY\n");
         if(transferMode == NP_ASFILE) WEBKITDEBUG("Stream type: NP_ASFILE\n");
-        streamData->filename  = [NSString stringWithString:[streamURL lastPathComponent]];
+        streamData->filename  = [NSString stringWithString:[streamURLString lastPathComponent]];
         [streamData->filename retain];
         streamData->data = [NSMutableData dataWithCapacity:0];
         [streamData->data retain];
         attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:streamData] forKey:IFURLHandleUserData];
-        urlHandle = [[IFURLHandle alloc] initWithURL:[NSURL URLWithString:streamURL] attributes:attributes flags:0];
+        urlHandle = [[IFURLHandle alloc] initWithURL:streamURL attributes:attributes flags:0];
         [urlHandle addClient:self];
         if(urlHandle!=nil){
             [activeURLHandles addObject:urlHandle];
@@ -535,14 +542,20 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 {
     NSURL *newURL;
     IFWebDataSource *dataSource;
+    NSURL *requestedURL;
     
     WEBKITDEBUG("NPN_GetURLNotify: %s target: %s\n", url, target);
  
     if(!strcmp(url, "")){
         return NPERR_INVALID_URL;
+    }else if(strstr(url, "://")){ //check if this is an absolute URL
+        requestedURL = [NSURL URLWithString:[NSString stringWithCString:url]];
+    }else{
+        requestedURL = [NSURL URLWithString:[NSString stringWithCString:url] relativeToURL:baseURL];
     }
+    
     if(target == NULL){ // send data to plug-in if target is null
-        [self newStream:[NSString stringWithCString:url] mimeType:[plugin mimeTypeForURL:[NSString stringWithCString:url]] notifyData:(void *)notifyData];
+        [self newStream:requestedURL mimeType:[plugin mimeTypeForURL:[NSString stringWithCString:url]] notifyData:(void *)notifyData];
     }else if(!strcmp(target, "_self") || !strcmp(target, "_current") || !strcmp(target, "_parent") || !strcmp(target, "_top")){
         if(webController){
             newURL = [NSURL URLWithString:[NSString stringWithCString:url]];
