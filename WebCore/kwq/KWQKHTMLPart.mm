@@ -1011,11 +1011,14 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     d->m_bLoadEventEmitted = false;
     d->m_referrer = m_url.url();
     
+    // We have to change the view back before setting the document,
+    // so that we test whether the *previous* document is in the page
+    // cache when deciding whether to delete the previous view.
+    setView (doc->view(), true);
+    
     d->m_doc = doc;
     d->m_doc->ref();
 
-    setView (doc->view(), true);
-    
     updatePolicyBaseURL();
         
     restoreWindowProperties (windowProperties);

@@ -1,3 +1,19 @@
+2003-05-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3256997 - reproducible world leak (of 1 JavaScript interpreter) using google images 
+
+	This turned out to be a page cache bug, and nothing to do with
+	JavaScript. The part and view were also leaked.
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURLFromPageCache): Make sure to reset the view
+	before resetting the document, so that when we check if the
+	document is in the page cache to determine if we can delete the
+	old view, we'll be checking the old document instead of the new
+	one.
+
 2003-05-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
