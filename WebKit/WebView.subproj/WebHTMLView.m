@@ -3301,10 +3301,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     if (![self _isEditable])
         return NO;
     DOMRange *range;
-    BOOL prepend;
+    BOOL prepend = NO;
     if ([self _hasSelection]) {
         range = [self _selectedRange];
-        prepend = NO;
     } else {
         WebBridge *bridge = [self _bridge];
         range = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending direction:direction granularity:granularity];
@@ -3313,7 +3312,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         switch (direction) {
             case WebSelectForward:
             case WebSelectRight:
-                prepend = NO;
                 break;
             case WebSelectBackward:
             case WebSelectLeft:
@@ -3546,6 +3544,16 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 #if 0
 
+// CSS does not have a way to specify an outline font, which may make this difficult to implement.
+// Maybe a special case of text-shadow?
+- (void)outline:(id)sender;
+
+// This is part of table support, which may be in NSTextView for Tiger.
+// It's probably simple to do the equivalent thing for WebKit.
+- (void)insertTable:(id)sender;
+
+// === methods with standard key bindings
+
 - (void)transpose:(id)sender;
 
 // Implementing these requires motion by paragraph.
@@ -3558,6 +3566,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 - (void)pageUpAndModifySelection:(id)sender;
 - (void)pageDownAndModifySelection:(id)sender;
 
+// === key binding methods that NSTextView has that don't have standard key bindings
+
 // Implementing these four requires implementing a mark.
 // We can't just keep a DOM range on the WebKit side because the mark needs
 // to stay in the document as the document is edited.
@@ -3565,19 +3575,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 - (void)deleteToMark:(id)sender;
 - (void)selectToMark:(id)sender;
 - (void)swapWithMark:(id)sender;
-
-// This is part of table support, which may be in NSTextView for Tiger.
-// It's probably simple to do the equivalent thing for WebKit.
-- (void)insertTable:(id)sender;
-
-// These methods are not implemented in NSTextView yet, so perhaps there's no rush.
-- (void)changeCaseOfLetter:(id)sender;
-- (void)indent:(id)sender;
-- (void)transposeWords:(id)sender;
-
-// CSS does not have a way to specify an outline font, which may make this difficult to implement.
-// Maybe a special case of text-shadow?
-- (void)outline:(id)sender;
 
 // These could be important.
 - (void)toggleBaseWritingDirection:(id)sender;
@@ -3588,6 +3585,13 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 - (void)insertLineBreak:(id)sender;
 - (void)insertLineSeparator:(id)sender;
 - (void)insertPageBreak:(id)sender;
+
+// === methods not present in NSTextView
+
+// These methods are not implemented in NSTextView yet, so perhaps there's no rush.
+- (void)changeCaseOfLetter:(id)sender;
+- (void)indent:(id)sender;
+- (void)transposeWords:(id)sender;
 
 #endif
 

@@ -1,3 +1,10 @@
+2004-09-07  Darin Adler  <darin@apple.com>
+
+        - fixed deployment build
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _deleteWithDirection:granularity:killRing:]):
+        Initialize prepend variable.
+
 2004-09-06  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
