@@ -1,3 +1,14 @@
+2004-05-03  David Hyatt  <hyatt@apple.com>
+
+	Make sure that XML processing instructions set themselves as the parent node of the stylesheets they load,
+	so that they will get stylesheetLoaded() notifications when @imported stylesheets are contained inside the
+	sheet.
+	
+        Reviewed by cblu
+
+        * khtml/xml/dom_xmlimpl.cpp:
+        (ProcessingInstructionImpl::setStyleSheet):
+
 2004-04-30  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3543662>: HITLIST-137: REGRESSION: reproducible hang copying all text at Dave's blog, and other pages
