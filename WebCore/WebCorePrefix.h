@@ -61,6 +61,11 @@
 
 #define KHTML_NO_XBL 1
 
+#define KHTML_XSLT 1
+#if MAC_OS_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#undef KHTML_XSLT
+#endif
+
 #ifdef __OBJC__
 
 #import <Cocoa/Cocoa.h>
