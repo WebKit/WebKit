@@ -10,7 +10,7 @@
 #import <WebFoundation/NSURLAuthenticationChallenge.h>
 #import <WebFoundation/NSURLProtectionSpace.h>
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebLocalizableStrings.h>
+#import <WebKit/WebLocalizableStrings.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
 #import <WebKit/WebNSControlExtras.h>

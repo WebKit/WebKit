@@ -9,7 +9,7 @@
 #import "WebFileButton.h"
 
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebLocalizableStrings.h>
+#import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebStringTruncator.h>
 

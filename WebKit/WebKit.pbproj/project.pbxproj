@@ -293,6 +293,7 @@
 				515E27D10458CA4B00CA2D3A,
 				6578F5E0045F817400000128,
 				BEE18F940472A0CF00CA289C,
+				BEE18F9B0472B73200CA289C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -326,7 +327,6 @@
 				394460A7020F50ED0ECA1767,
 				F528E3ED031E91AD01CA2ACA,
 				F5934C8B02E894F50197FBCF,
-				9367C637034E9F00008635C5,
 				93AEB180032C1735008635CE,
 				7082F572038EADAA00A80180,
 				F53444D102E87CBA018635CA,
@@ -406,6 +406,7 @@
 				515E27D20458CA4B00CA2D3A,
 				6578F5E1045F817400000128,
 				BEE18F950472A0CF00CA289C,
+				BEE18F9C0472B73200CA289C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -483,10 +484,11 @@
 				F5927D4E02D26C5E01CA2DBB,
 				83730F9803FB1E660004736E,
 				84CA5F7E042685E800CA2ACA,
-				9367C636034E9F00008635C5,
 				7082F56F038EADAA00A80180,
 				7082F570038EADAA00A80180,
 				F5C283730284676D018635CA,
+				BEE18F990472B73200CA289C,
+				BEE18F9A0472B73200CA289C,
 				9345DDB20365FFD0008635CE,
 				9345DDB30365FFD0008635CE,
 				8398847A03426FB000BC5F5E,
@@ -2173,18 +2175,6 @@
 			settings = {
 			};
 		};
-		9367C636034E9F00008635C5 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebKitLocalizableStrings.m;
-			refType = 4;
-		};
-		9367C637034E9F00008635C5 = {
-			fileRef = 9367C636034E9F00008635C5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		93AEB17D032C1735008635CE = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -2406,6 +2396,33 @@
 		};
 		BEE18F950472A0CF00CA289C = {
 			fileRef = BEE18F930472A0CF00CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEE18F990472B73200CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebLocalizableStrings.h;
+			refType = 4;
+		};
+		BEE18F9A0472B73200CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebLocalizableStrings.m;
+			refType = 4;
+		};
+		BEE18F9B0472B73200CA289C = {
+			fileRef = BEE18F990472B73200CA289C;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		BEE18F9C0472B73200CA289C = {
+			fileRef = BEE18F9A0472B73200CA289C;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -14,7 +14,7 @@
 #import <WebKit/WebUIDelegate.h>
 
 
-#import <WebFoundation/WebLocalizableStrings.h>
+#import <WebKit/WebLocalizableStrings.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>

@@ -9,7 +9,7 @@
 
 #import <WebKit/WebKitErrors.h>
 
-#import <WebFoundation/WebLocalizableStrings.h>
+#import <WebKit/WebLocalizableStrings.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
 #import <pthread.h>

@@ -1,3 +1,24 @@
+2003-05-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Copied WebLocalizableStrings.[hm] from WebFoundation to WebKit
+
+        Updated all imports.
+
+        Added logging exported symbols to exports file.
+
+        * Misc.subproj/WebKitErrors.m:
+        * Misc.subproj/WebLocalizableStrings.h: Added.
+        * Misc.subproj/WebLocalizableStrings.m: Added.
+        * Panels.subproj/WebAuthenticationPanel.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebFileButton.m:
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+
 2003-05-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Don.

@@ -49,7 +49,7 @@
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebSystemBits.h>
 #import <WebFoundation/WebFileTypeMappings.h>
-#import <WebFoundation/WebLocalizableStrings.h>
+#import <WebKit/WebLocalizableStrings.h>
 
 
 @interface NSApplication (DeclarationStolenFromAppKit)
