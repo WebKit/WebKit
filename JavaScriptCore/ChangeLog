@@ -1,3 +1,5 @@
+=== Safari-146 ===
+
 2004-06-16  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3696112>: nil from an Objective-C class seems to get wrapped as a JavaScript proxy that will not print.
