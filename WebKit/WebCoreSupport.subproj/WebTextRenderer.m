@@ -572,7 +572,10 @@ static BOOL alwaysUseATSU = NO;
     }
 
 
-#if BUILDING_ON_PANTHER            
+    // With Q2DX turned on CGContextStrokeLineSegments sometimes fails to draw lines.  See 3952084.
+    // So, it has been requested that we turn off use of the new API until 3952084 is fixed.
+#if 1         
+//#if BUILDING_ON_PANTHER         
     CGContextMoveToPoint(cgContext, point.x, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
     // Subtract 1 to ensure that the line is always within bounds of element.
     CGContextAddLineToPoint(cgContext, point.x + width - 1.0, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);

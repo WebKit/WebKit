@@ -1,3 +1,15 @@
+2005-01-13  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3952084> REGRESSION: Links at projectseven.com now draw and update incorrectly during hover
+
+	Turn off use of new CGContextStrokeLineSegments API.  We should
+	turn back on when 3952944 is fixed.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawLineForCharacters:yOffset:width:color:thickness:]):
+
 2005-01-13  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3937663> repro assertion failure and crash dragging image that has PDF source
