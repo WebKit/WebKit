@@ -31,7 +31,6 @@
 #include "htmlattrs.h"
 #include "htmltags.h"
 #include "khtml_part.h"
-#include "khtml_selection.h"
 #include "khtmlview.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
@@ -40,6 +39,7 @@
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_edititerator.h"
 #include "xml/dom_nodeimpl.h"
+#include "xml/dom_selection.h"
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_rangeimpl.h"
@@ -51,7 +51,6 @@
 
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
-using DOM::DOMPosition;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
 using DOM::EditingTextImpl;
@@ -62,8 +61,10 @@ using DOM::HTMLImageElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
+using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
+using DOM::Selection;
 using DOM::TextImpl;
 
 using khtml::AppendNodeCommand;
@@ -132,7 +133,7 @@ static inline bool isWS(const DOMString &text)
     return isWS(text[0]);
 }
 
-static inline bool isWS(const DOMPosition &pos)
+static inline bool isWS(const Position &pos)
 {
     if (!pos.node())
         return false;
@@ -178,29 +179,29 @@ static bool shouldPruneNode(NodeImpl *node)
     return true;
 }
 
-static DOMPosition leadingWhitespacePosition(const DOMPosition &pos)
+static Position leadingWhitespacePosition(const Position &pos)
 {
     ASSERT(pos.notEmpty());
 
-    KHTMLSelection selection(pos);
-    DOMPosition prev = pos.previousCharacterPosition();
+    Selection selection(pos);
+    Position prev = pos.previousCharacterPosition();
     if (prev != pos && prev.node()->inSameContainingEditableBlock(pos.node()) && prev.node()->isTextNode()) {
         DOMString string = static_cast<TextImpl *>(prev.node())->data();
         if (isWS(string[prev.offset()]))
             return prev;
     }
 
-    return DOMPosition();
+    return Position();
 }
 
-static DOMPosition trailingWhitespacePosition(const DOMPosition &pos)
+static Position trailingWhitespacePosition(const Position &pos)
 {
     ASSERT(pos.notEmpty());
 
     if (pos.node()->isTextNode()) {
         TextImpl *textNode = static_cast<TextImpl *>(pos.node());
         if (pos.offset() >= (long)textNode->length()) {
-            DOMPosition next = pos.nextCharacterPosition();
+            Position next = pos.nextCharacterPosition();
             if (next != pos && next.node()->inSameContainingEditableBlock(pos.node()) && next.node()->isTextNode()) {
                 DOMString string = static_cast<TextImpl *>(next.node())->data();
                 if (isWS(string[0]))
@@ -214,7 +215,7 @@ static DOMPosition trailingWhitespacePosition(const DOMPosition &pos)
         }
     }
 
-    return DOMPosition();
+    return Position();
 }
 
 static bool textNodesAreJoinable(TextImpl *text1, TextImpl *text2)
@@ -231,7 +232,7 @@ static DOMString &nonBreakingSpaceString()
     return nonBreakingSpaceString;
 }
 
-static void debugPosition(const char *prefix, const DOMPosition &pos)
+static void debugPosition(const char *prefix, const Position &pos)
 {
     LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
 }
@@ -313,7 +314,7 @@ void EditCommandImpl::doReapply()
     doApply();
 }
 
-void EditCommandImpl::setStartingSelection(const KHTMLSelection &s)
+void EditCommandImpl::setStartingSelection(const Selection &s)
 {
     m_startingSelection = s;
     EditCommand cmd = parent();
@@ -324,7 +325,7 @@ void EditCommandImpl::setStartingSelection(const KHTMLSelection &s)
     moveToStartingSelection();
 }
 
-void EditCommandImpl::setEndingSelection(const KHTMLSelection &s)
+void EditCommandImpl::setEndingSelection(const Selection &s)
 {
     m_endingSelection = s;
     EditCommand cmd = parent();
@@ -513,15 +514,15 @@ void CompositeEditCommandImpl::replaceText(DOM::TextImpl *node, long offset, lon
 
 void CompositeEditCommandImpl::deleteSelection()
 {
-    if (endingSelection().state() == KHTMLSelection::RANGE) {
+    if (endingSelection().state() == Selection::RANGE) {
         DeleteSelectionCommand cmd(document());
         applyCommandToComposite(cmd);
     }
 }
 
-void CompositeEditCommandImpl::deleteSelection(const KHTMLSelection &selection)
+void CompositeEditCommandImpl::deleteSelection(const Selection &selection)
 {
-    if (selection.state() == KHTMLSelection::RANGE) {
+    if (selection.state() == Selection::RANGE) {
         DeleteSelectionCommand cmd(document(), selection);
         applyCommandToComposite(cmd);
     }
@@ -533,7 +534,7 @@ void CompositeEditCommandImpl::deleteCollapsibleWhitespace()
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::deleteCollapsibleWhitespace(const KHTMLSelection &selection)
+void CompositeEditCommandImpl::deleteCollapsibleWhitespace(const Selection &selection)
 {
     DeleteCollapsibleWhitespaceCommand cmd(document(), selection);
     applyCommandToComposite(cmd);
@@ -596,7 +597,7 @@ DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl(D
 {
 }
 
-DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl(DocumentImpl *document, const KHTMLSelection &selection)
+DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl(DocumentImpl *document, const Selection &selection)
     : CompositeEditCommandImpl(document), m_selectionToCollapse(selection), m_charactersDeleted(0)
 {
 }
@@ -610,7 +611,7 @@ int DeleteCollapsibleWhitespaceCommandImpl::commandID() const
     return DeleteCollapsibleWhitespaceCommandID;
 }
 
-static bool shouldDeleteUpstreamPosition(const DOMPosition &pos)
+static bool shouldDeleteUpstreamPosition(const Position &pos)
 {
     if (!pos.node()->isTextNode())
         return false;
@@ -642,10 +643,10 @@ static bool shouldDeleteUpstreamPosition(const DOMPosition &pos)
     return true;
 }
 
-DOMPosition DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const DOMPosition &pos)
+Position DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const Position &pos)
 {
-    DOMPosition upstream = pos.equivalentUpstreamPosition();
-    DOMPosition downstream = pos.equivalentDownstreamPosition();
+    Position upstream = pos.equivalentUpstreamPosition();
+    Position downstream = pos.equivalentDownstreamPosition();
     
     bool del = shouldDeleteUpstreamPosition(upstream);
 
@@ -669,18 +670,18 @@ DOMPosition DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const DOMPo
         return upstream;
         
     EditIterator it(upstream);
-    DOMPosition deleteStart = upstream;
+    Position deleteStart = upstream;
     if (!del) {
         deleteStart = it.peekNext();
         if (deleteStart == downstream)
             return upstream;
     }
     
-    DOMPosition endingPosition = upstream;
+    Position endingPosition = upstream;
     
     while (it.current() != downstream) {
 
-        DOMPosition next = it.peekNext();
+        Position next = it.peekNext();
         if (next.node() != deleteStart.node()) {
             ASSERT(deleteStart.node()->isTextNode());
             TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
@@ -688,7 +689,7 @@ DOMPosition DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const DOMPo
             if (count == textNode->length()) {
                 LOG(Editing, "   removeNodeAndPrune 1: [%p]\n", textNode);
                 if (textNode == endingPosition.node())
-                    endingPosition = DOMPosition(next.node(), next.node()->caretMinOffset());
+                    endingPosition = Position(next.node(), next.node()->caretMinOffset());
                 removeNodeAndPrune(textNode);
             }
             else {
@@ -711,7 +712,7 @@ DOMPosition DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const DOMPo
                 LOG(Editing, "   deleteText 2: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), count);
                 deleteText(textNode, deleteStart.offset(), count);
                 m_charactersDeleted = count;
-                endingPosition = DOMPosition(downstream.node(), downstream.offset() - m_charactersDeleted);
+                endingPosition = Position(downstream.node(), downstream.offset() - m_charactersDeleted);
             }
         }
         
@@ -724,21 +725,21 @@ DOMPosition DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const DOMPo
 void DeleteCollapsibleWhitespaceCommandImpl::doApply()
 {
     int state = m_selectionToCollapse.state();
-    if (state == KHTMLSelection::CARET) {
-        DOMPosition endPosition = deleteWhitespace(m_selectionToCollapse.startPosition());
+    if (state == Selection::CARET) {
+        Position endPosition = deleteWhitespace(m_selectionToCollapse.startPosition());
         setEndingSelection(endPosition);
         LOG(Editing, "-----------------------------------------------------\n");
     }
-    else if (state == KHTMLSelection::RANGE) {
-        DOMPosition startPosition = deleteWhitespace(m_selectionToCollapse.startPosition());
+    else if (state == Selection::RANGE) {
+        Position startPosition = deleteWhitespace(m_selectionToCollapse.startPosition());
         LOG(Editing, "-----------------------------------------------------\n");
-        DOMPosition endPosition = m_selectionToCollapse.endPosition();
+        Position endPosition = m_selectionToCollapse.endPosition();
         if (m_charactersDeleted > 0 && startPosition.node() == endPosition.node()) {
             LOG(Editing, "adjust end position by %d\n", m_charactersDeleted);
-            endPosition = DOMPosition(endPosition.node(), endPosition.offset() - m_charactersDeleted);
+            endPosition = Position(endPosition.node(), endPosition.offset() - m_charactersDeleted);
         }
         endPosition = deleteWhitespace(endPosition);
-        setEndingSelection(KHTMLSelection(startPosition, endPosition));
+        setEndingSelection(Selection(startPosition, endPosition));
         LOG(Editing, "=====================================================\n");
     }
 }
@@ -752,7 +753,7 @@ DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *docume
     m_selectionToDelete = endingSelection();
 }
 
-DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const KHTMLSelection &selection)
+DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const Selection &selection)
     : CompositeEditCommandImpl(document)
 {
     m_selectionToDelete = selection;
@@ -769,12 +770,12 @@ int DeleteSelectionCommandImpl::commandID() const
 
 void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
 {
-    KHTMLSelection selection = endingSelection();
+    Selection selection = endingSelection();
 
-    if (selection.state() != KHTMLSelection::CARET)
+    if (selection.state() != Selection::CARET)
         return;
 
-    DOMPosition pos = selection.startPosition();
+    Position pos = selection.startPosition();
     
     if (!pos.node()->isTextNode())
         return;
@@ -783,35 +784,35 @@ void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
     
     if (pos.offset() == 0) {
         EditIterator it(pos);
-        DOMPosition prev = it.previous();
+        Position prev = it.previous();
         if (prev == pos)
             return;
         if (prev.node()->isTextNode()) {
             TextImpl *prevTextNode = static_cast<TextImpl *>(prev.node());
             if (textNodesAreJoinable(prevTextNode, textNode)) {
                 joinTextNodes(prevTextNode, textNode);
-                setEndingSelection(DOMPosition(textNode, prevTextNode->length()));
+                setEndingSelection(Position(textNode, prevTextNode->length()));
                 LOG(Editing, "joinTextNodesWithSameStyle [1]\n");
             }
         }
     }
     else if (pos.offset() == (long)textNode->length()) {
         EditIterator it(pos);
-        DOMPosition next = it.next();
+        Position next = it.next();
         if (next == pos)
             return;
         if (next.node()->isTextNode()) {
             TextImpl *nextTextNode = static_cast<TextImpl *>(next.node());
             if (textNodesAreJoinable(textNode, nextTextNode)) {
                 joinTextNodes(textNode, nextTextNode);
-                setEndingSelection(DOMPosition(nextTextNode, pos.offset()));
+                setEndingSelection(Position(nextTextNode, pos.offset()));
                 LOG(Editing, "joinTextNodesWithSameStyle [2]\n");
             }
         }
     }
 }
 
-bool DeleteSelectionCommandImpl::containsOnlyWhitespace(const DOMPosition &start, const DOMPosition &end)
+bool DeleteSelectionCommandImpl::containsOnlyWhitespace(const Position &start, const Position &end)
 {
     // Returns whether the range contains only whitespace characters.
     // This is inclusive of the start, but not of the end.
@@ -834,19 +835,19 @@ bool DeleteSelectionCommandImpl::containsOnlyWhitespace(const DOMPosition &start
 
 void DeleteSelectionCommandImpl::doApply()
 {
-    if (m_selectionToDelete.state() != KHTMLSelection::RANGE)
+    if (m_selectionToDelete.state() != Selection::RANGE)
         return;
 
     deleteCollapsibleWhitespace(m_selectionToDelete);
-    KHTMLSelection selection = endingSelection();
+    Selection selection = endingSelection();
 
-    DOMPosition endingPosition;
+    Position endingPosition;
     bool adjustEndingPositionDownstream = false;
 
-    DOMPosition upstreamStart = selection.startPosition().equivalentUpstreamPosition();
-    DOMPosition downstreamStart = selection.startPosition().equivalentDownstreamPosition();
-    DOMPosition upstreamEnd = selection.endPosition().equivalentUpstreamPosition();
-    DOMPosition downstreamEnd = selection.endPosition().equivalentDownstreamPosition();
+    Position upstreamStart = selection.startPosition().equivalentUpstreamPosition();
+    Position downstreamStart = selection.startPosition().equivalentDownstreamPosition();
+    Position upstreamEnd = selection.endPosition().equivalentUpstreamPosition();
+    Position downstreamEnd = selection.endPosition().equivalentDownstreamPosition();
 
     bool onlyWhitespace = containsOnlyWhitespace(upstreamStart, downstreamEnd);
  
@@ -880,7 +881,7 @@ void DeleteSelectionCommandImpl::doApply()
     // Start is not completely selected
     if (startAtStartOfBlock) {
         LOG(Editing,  "ending position case 1");
-        endingPosition = DOMPosition(downstreamStart.node()->containingEditableBlock(), 1);
+        endingPosition = Position(downstreamStart.node()->containingEditableBlock(), 1);
         adjustEndingPositionDownstream = true;
     }
     else if (!startCompletelySelected) {
@@ -903,10 +904,10 @@ void DeleteSelectionCommandImpl::doApply()
     //
     if ((startAtStartOfBlock && !endAtEndOfBlock) || (!startCompletelySelected && adjustEndingPositionDownstream)) {
         // convert trailing whitespace
-        DOMPosition trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
+        Position trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
         if (trailing.notEmpty()) {
             debugPosition("convertTrailingWhitespace: ", trailing);
-            DOMPosition collapse = trailing.nextCharacterPosition();
+            Position collapse = trailing.nextCharacterPosition();
             if (collapse != trailing)
                 deleteCollapsibleWhitespace(collapse);
             TextImpl *textNode = static_cast<TextImpl *>(trailing.node());
@@ -915,7 +916,7 @@ void DeleteSelectionCommandImpl::doApply()
     }
     else if (!startAtStartOfBlock && endAtEndOfBlock) {
         // convert leading whitespace
-        DOMPosition leading = leadingWhitespacePosition(upstreamStart.equivalentUpstreamPosition());
+        Position leading = leadingWhitespacePosition(upstreamStart.equivalentUpstreamPosition());
         if (leading.notEmpty()) {
             debugPosition("convertLeadingWhitespace:  ", leading);
             TextImpl *textNode = static_cast<TextImpl *>(leading.node());
@@ -924,8 +925,8 @@ void DeleteSelectionCommandImpl::doApply()
     }
     else if (!startAtStartOfBlock && !endAtEndOfBlock) {
         // convert contiguous whitespace
-        DOMPosition leading = leadingWhitespacePosition(upstreamStart.equivalentUpstreamPosition());
-        DOMPosition trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
+        Position leading = leadingWhitespacePosition(upstreamStart.equivalentUpstreamPosition());
+        Position trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
         if (leading.notEmpty() && trailing.notEmpty()) {
             debugPosition("convertLeadingWhitespace [contiguous]:  ", leading);
             TextImpl *textNode = static_cast<TextImpl *>(leading.node());
@@ -1074,13 +1075,13 @@ int InputNewlineCommandImpl::commandID() const
 void InputNewlineCommandImpl::doApply()
 {
     deleteSelection();
-    KHTMLSelection selection = endingSelection();
+    Selection selection = endingSelection();
 
     int exceptionCode = 0;
     ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    DOMPosition pos = selection.startPosition().equivalentDownstreamPosition();
+    Position pos = selection.startPosition().equivalentDownstreamPosition();
     bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEndOfBlock = pos.isLastRenderedPositionInEditableBlock();
@@ -1092,18 +1093,18 @@ void InputNewlineCommandImpl::doApply()
         // But for right now, it gets the BR to render.
         TextImpl *editingTextNode = document()->createEditingTextNode(nonBreakingSpaceString());
         insertNodeAfter(editingTextNode, breakNode);
-        setEndingSelection(DOMPosition(editingTextNode, 1));
+        setEndingSelection(Position(editingTextNode, 1));
         editingTextNode->deref();
     }
     else if (atEnd) {
         LOG(Editing, "input newline case 2");
         insertNodeAfter(breakNode, pos.node());
-        setEndingSelection(DOMPosition(breakNode, 0));
+        setEndingSelection(Position(breakNode, 0));
     }
     else if (atStart) {
         LOG(Editing, "input newline case 3");
         insertNodeAt(breakNode, pos.node(), 0);
-        setEndingSelection(DOMPosition(pos.node(), 0));
+        setEndingSelection(Position(pos.node(), 0));
     }
     else {
         LOG(Editing, "input newline case 4");
@@ -1114,7 +1115,7 @@ void InputNewlineCommandImpl::doApply()
         insertNodeBefore(textBeforeNode, textNode);
         insertNodeBefore(breakNode, textNode);
         textBeforeNode->deref();
-        setEndingSelection(DOMPosition(textNode, 0));
+        setEndingSelection(Position(textNode, 0));
     }
         
     breakNode->deref();
@@ -1152,7 +1153,7 @@ void InputTextCommandImpl::deleteCharacter()
 {
     ASSERT(state() == Applied);
 
-    KHTMLSelection selection = endingSelection();
+    Selection selection = endingSelection();
 
     if (!selection.startNode()->isTextNode())
         return;
@@ -1163,20 +1164,20 @@ void InputTextCommandImpl::deleteCharacter()
         TextImpl *textNode = static_cast<TextImpl *>(selection.startNode());
         textNode->deleteData(offset, 1, exceptionCode);
         ASSERT(exceptionCode == 0);
-        selection = KHTMLSelection(textNode, offset);
+        selection = Selection(textNode, offset);
         setEndingSelection(selection);
         m_charactersAdded--;
     }
 }
 
-DOMPosition InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
+Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
 {
     // Prepare for text input by looking at the current position.
     // It may be necessary to insert a text node to receive characters.
-    KHTMLSelection selection = endingSelection();
-    ASSERT(selection.state() == KHTMLSelection::CARET);
+    Selection selection = endingSelection();
+    ASSERT(selection.state() == Selection::CARET);
     
-    DOMPosition pos = selection.startPosition();
+    Position pos = selection.startPosition();
     if (adjustDownstream)
         pos = pos.equivalentDownstreamPosition();
     else
@@ -1207,7 +1208,7 @@ DOMPosition InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
         else
             ASSERT_NOT_REACHED();
         
-        pos = DOMPosition(m_insertedTextNode, 0);
+        pos = Position(m_insertedTextNode, 0);
     }
     
     return pos;
@@ -1215,11 +1216,11 @@ DOMPosition InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
 
 void InputTextCommandImpl::execute(const DOMString &text)
 {
-    KHTMLSelection selection = endingSelection();
+    Selection selection = endingSelection();
     bool adjustDownstream = selection.startPosition().isFirstRenderedPositionOnLine();
 
     // Delete the current selection, or collapse whitespace, as needed
-    if (selection.state() == KHTMLSelection::RANGE)
+    if (selection.state() == Selection::RANGE)
         deleteSelection();
     else
         deleteCollapsibleWhitespace();
@@ -1227,7 +1228,7 @@ void InputTextCommandImpl::execute(const DOMString &text)
     // EDIT FIXME: Need to take typing style from upstream text, if any.
     
     // Make sure the document is set up to receive text
-    DOMPosition pos = prepareForTextInsertion(adjustDownstream);
+    Position pos = prepareForTextInsertion(adjustDownstream);
     
     TextImpl *textNode = static_cast<TextImpl *>(pos.node());
     long offset = pos.offset();
@@ -1250,7 +1251,7 @@ void InputTextCommandImpl::execute(const DOMString &text)
         }
         insertText(textNode, offset, text);
     }
-    setEndingSelection(DOMPosition(textNode, offset + text.length()));
+    setEndingSelection(Position(textNode, offset + text.length()));
     m_charactersAdded += text.length();
 }
 
@@ -1273,8 +1274,8 @@ void InputTextCommandImpl::insertSpace(TextImpl *textNode, unsigned long offset)
     if (count > 0) {
         // By checking the character at the downstream position, we can
         // check if there is a rendered WS at the caret
-        DOMPosition pos(textNode, offset);
-        DOMPosition downstream = pos.equivalentDownstreamPosition();
+        Position pos(textNode, offset);
+        Position downstream = pos.equivalentDownstreamPosition();
         if (downstream.offset() < (long)text.length() && isWS(text[downstream.offset()]))
             count--; // leave this WS in
         if (count > 0)
@@ -1486,10 +1487,10 @@ void PasteMarkupCommandImpl::doApply()
     ASSERT(firstChild);
     ASSERT(lastChild);
     
-    KHTMLSelection selection = endingSelection();
+    Selection selection = endingSelection();
 
     // Delete the current selection, or collapse whitespace, as needed
-    if (selection.state() == KHTMLSelection::RANGE)
+    if (selection.state() == Selection::RANGE)
         deleteSelection();
     else
         deleteCollapsibleWhitespace();
@@ -1526,7 +1527,7 @@ void PasteMarkupCommandImpl::doApply()
             leaf = nextChild;
         }
         
-        setEndingSelection(DOMPosition(leaf, leaf->caretMaxOffset()));
+        setEndingSelection(Position(leaf, leaf->caretMaxOffset()));
     }
 }
 
@@ -1750,11 +1751,11 @@ void TypingCommandImpl::insertNewline()
 
 void TypingCommandImpl::issueCommandForDeleteKey()
 {
-    KHTMLSelection selectionToDelete = endingSelection();
-    ASSERT(selectionToDelete.state() != KHTMLSelection::NONE);
+    Selection selectionToDelete = endingSelection();
+    ASSERT(selectionToDelete.state() != Selection::NONE);
     
-    if (selectionToDelete.state() == KHTMLSelection::CARET)
-        selectionToDelete = KHTMLSelection(selectionToDelete.startPosition().previousCharacterPosition(), selectionToDelete.startPosition());
+    if (selectionToDelete.state() == Selection::CARET)
+        selectionToDelete = Selection(selectionToDelete.startPosition().previousCharacterPosition(), selectionToDelete.startPosition());
     deleteSelection(selectionToDelete);
 }
 

@@ -38,12 +38,12 @@
 #include "khtml_events.h"
 #include "khtml_ext.h"
 #include "khtml_iface.h"
-#include "khtml_selection.h"
 #include "khtml_settings.h"
 #include "misc/decoder.h"
 #include "java/kjavaappletcontext.h"
 #include "ecma/kjs_proxy.h"
 #include "dom/dom_misc.h"
+#include "xml/dom_selection.h"
 
 namespace KIO
 {
@@ -345,13 +345,13 @@ public:
   DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
 
 #if APPLE_CHANGES
-  KHTMLSelection::ETextGranularity m_textElement;
+  DOM::Selection::ETextGranularity m_textElement;
   bool m_mouseMovedSinceLastMousePress:1;
 #endif
   QString m_overURL;
   QString m_overURLTarget;
 
-  KHTMLSelection m_selection;
+  DOM::Selection m_selection;
   int m_caretBlinkTimer;
 
   bool m_caretVisible:1;

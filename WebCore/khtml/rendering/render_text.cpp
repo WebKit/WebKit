@@ -439,10 +439,10 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     return inside;
 }
 
-DOMPosition RenderText::positionForCoordinates(int _x, int _y)
+Position RenderText::positionForCoordinates(int _x, int _y)
 {
     if (!firstTextBox() || stringLength() == 0)
-        return DOMPosition(element(), 0);
+        return Position(element(), 0);
 
     int absx, absy;
     containingBlock()->absolutePosition(absx, absy);
@@ -450,13 +450,13 @@ DOMPosition RenderText::positionForCoordinates(int _x, int _y)
     if (firstTextBox() && _y < absy + firstTextBox()->root()->bottomOverflow() && _x < absx + firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left than the first text box left edge
-        return DOMPosition(element(), firstTextBox()->m_start);
+        return Position(element(), firstTextBox()->m_start);
     }
 
     if (lastTextBox() && _y >= absy + lastTextBox()->root()->topOverflow() && _x >= absx + lastTextBox()->m_x + lastTextBox()->m_width) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right than the last text box right edge
-        return DOMPosition(element(), lastTextBox()->m_start + lastTextBox()->m_len);
+        return Position(element(), lastTextBox()->m_start + lastTextBox()->m_len);
     }
 
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
@@ -467,21 +467,21 @@ DOMPosition RenderText::positionForCoordinates(int _x, int _y)
                 const Font *f = htmlFont(box == firstTextBox());
                 int offset = box->offsetForPosition(_x, absx, f, this);
                 if (offset != -1) {
-                    return DOMPosition(element(), offset + box->m_start);
+                    return Position(element(), offset + box->m_start);
                 }
             }
             else if (!box->prevOnLine() && _x < absx + box->m_x)
                 // box is first on line
                 // and the x coordinate is to the left than the first text box left edge
-                return DOMPosition(element(), box->m_start);
+                return Position(element(), box->m_start);
             else if (!box->nextOnLine() && _x >= absx + box->m_x + box->m_width)
                 // box is last on line
                 // and the x coordinate is to the right than the last text box right edge
-                return DOMPosition(element(), box->m_start + box->m_len);
+                return Position(element(), box->m_start + box->m_len);
         }
     }
     
-    return DOMPosition(element(), 0);
+    return Position(element(), 0);
 }
 
 void RenderText::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)

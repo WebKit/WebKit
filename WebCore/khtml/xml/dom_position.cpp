@@ -41,9 +41,6 @@
 #include "KWQLogging.h"
 #endif
 
-using DOM::DOMPosition;
-using DOM::EditIterator;
-using DOM::NodeImpl;
 using khtml::InlineBox;
 using khtml::InlineFlowBox;
 using khtml::InlineTextBox;
@@ -59,6 +56,8 @@ using khtml::RootInlineBox;
 #define LOG(channel, formatAndArgs...) ((void)0)
 #define ERROR(formatAndArgs...) ((void)0)
 #endif
+
+namespace DOM {
 
 static InlineBox *inlineBoxForRenderer(RenderObject *renderer, long offset)
 {
@@ -124,7 +123,7 @@ static NodeImpl *previousRenderedEditable(NodeImpl *node)
 }
 
 
-DOMPosition::DOMPosition(NodeImpl *node, long offset) 
+Position::Position(NodeImpl *node, long offset) 
     : m_node(0), m_offset(offset) 
 { 
     if (node) {
@@ -133,7 +132,7 @@ DOMPosition::DOMPosition(NodeImpl *node, long offset)
     }
 };
 
-DOMPosition::DOMPosition(const DOMPosition &o)
+Position::Position(const Position &o)
     : m_node(0), m_offset(o.offset()) 
 {
     if (o.node()) {
@@ -142,13 +141,13 @@ DOMPosition::DOMPosition(const DOMPosition &o)
     }
 }
 
-DOMPosition::~DOMPosition() {
+Position::~Position() {
     if (m_node) {
         m_node->deref();
     }
 }
 
-DOMPosition &DOMPosition::operator=(const DOMPosition &o)
+Position &Position::operator=(const Position &o)
 {
     if (m_node) {
         m_node->deref();
@@ -163,7 +162,7 @@ DOMPosition &DOMPosition::operator=(const DOMPosition &o)
     return *this;
 }
 
-long DOMPosition::renderedOffset() const
+long Position::renderedOffset() const
 {
     if (!node()->isTextNode())
         return offset();
@@ -187,7 +186,7 @@ long DOMPosition::renderedOffset() const
     return result;
 }
 
-DOMPosition DOMPosition::equivalentLeafPosition() const
+Position Position::equivalentLeafPosition() const
 {
     if (node()->hasChildNodes() == false)
         return *this;
@@ -204,13 +203,13 @@ DOMPosition DOMPosition::equivalentLeafPosition() const
         }
         count += n->maxOffset();
     }
-    return DOMPosition(n, count);
+    return Position(n, count);
 }
 
-DOMPosition DOMPosition::previousRenderedEditablePosition() const
+Position Position::previousRenderedEditablePosition() const
 {
     if (isEmpty())
-        return DOMPosition();
+        return Position();
 
     if (node()->isContentEditable() && node()->hasChildNodes() == false && inRenderedContent())
         return *this;
@@ -219,18 +218,18 @@ DOMPosition DOMPosition::previousRenderedEditablePosition() const
     while (1) {
         n = n->previousEditable();
         if (!n)
-            return DOMPosition();
+            return Position();
         if (n->renderer() && n->renderer()->style()->visibility() == khtml::VISIBLE)
             break;
     }
     
-    return DOMPosition(n, 0);
+    return Position(n, 0);
 }
 
-DOMPosition DOMPosition::nextRenderedEditablePosition() const
+Position Position::nextRenderedEditablePosition() const
 {
     if (isEmpty())
-        return DOMPosition();
+        return Position();
 
     if (node()->isContentEditable() && node()->hasChildNodes() == false && inRenderedContent())
         return *this;
@@ -239,18 +238,18 @@ DOMPosition DOMPosition::nextRenderedEditablePosition() const
     while (1) {
         n = n->nextEditable();
         if (!n)
-            return DOMPosition();
+            return Position();
         if (n->renderer() && n->renderer()->style()->visibility() == khtml::VISIBLE)
             break;
     }
     
-    return DOMPosition(n, 0);
+    return Position(n, 0);
 }
 
-DOMPosition DOMPosition::previousCharacterPosition() const
+Position Position::previousCharacterPosition() const
 {
     if (isEmpty())
-        return DOMPosition();
+        return Position();
 
     NodeImpl *fromRootEditableBlock = node()->rootEditableBlock();
     EditIterator it(*this);
@@ -258,7 +257,7 @@ DOMPosition DOMPosition::previousCharacterPosition() const
     bool atStartOfLine = isFirstRenderedPositionOnLine();
     
     while (!it.atStart()) {
-        DOMPosition pos = it.previous();
+        Position pos = it.previous();
 
         if (pos.node()->rootEditableBlock() != fromRootEditableBlock)
             return *this;
@@ -274,10 +273,10 @@ DOMPosition DOMPosition::previousCharacterPosition() const
     return *this;
 }
 
-DOMPosition DOMPosition::nextCharacterPosition() const
+Position Position::nextCharacterPosition() const
 {
     if (isEmpty())
-        return DOMPosition();
+        return Position();
 
     NodeImpl *fromRootEditableBlock = node()->rootEditableBlock();
     EditIterator it(*this);
@@ -285,7 +284,7 @@ DOMPosition DOMPosition::nextCharacterPosition() const
     bool atEndOfLine = isLastRenderedPositionOnLine();
     
     while (!it.atEnd()) {
-        DOMPosition pos = it.next();
+        Position pos = it.next();
 
         if (pos.node()->rootEditableBlock() != fromRootEditableBlock)
             return *this;
@@ -301,12 +300,12 @@ DOMPosition DOMPosition::nextCharacterPosition() const
     return *this;
 }
 
-DOMPosition DOMPosition::previousWordPosition() const
+Position Position::previousWordPosition() const
 {
     if (isEmpty())
-        return DOMPosition();
+        return Position();
 
-    DOMPosition pos = *this;
+    Position pos = *this;
     for (EditIterator it(*this); !it.atStart(); it.previous()) {
         if (it.current().node()->nodeType() == Node::TEXT_NODE || it.current().node()->nodeType() == Node::CDATA_SECTION_NODE) {
             DOMString t = it.current().node()->nodeValue();
@@ -314,10 +313,10 @@ DOMPosition DOMPosition::previousWordPosition() const
             uint len = t.length();
             int start, end;
             khtml::findWordBoundary(chars, len, it.current().offset(), &start, &end);
-            pos = DOMPosition(it.current().node(), start);
+            pos = Position(it.current().node(), start);
         }
         else {
-            pos = DOMPosition(it.current().node(), it.current().node()->caretMinOffset());
+            pos = Position(it.current().node(), it.current().node()->caretMinOffset());
         }
         if (pos != *this)
             return pos;
@@ -327,12 +326,12 @@ DOMPosition DOMPosition::previousWordPosition() const
     return *this;
 }
 
-DOMPosition DOMPosition::nextWordPosition() const
+Position Position::nextWordPosition() const
 {
     if (isEmpty())
-        return DOMPosition();
+        return Position();
 
-    DOMPosition pos = *this;
+    Position pos = *this;
     for (EditIterator it(*this); !it.atEnd(); it.next()) {
         if (it.current().node()->nodeType() == Node::TEXT_NODE || it.current().node()->nodeType() == Node::CDATA_SECTION_NODE) {
             DOMString t = it.current().node()->nodeValue();
@@ -340,10 +339,10 @@ DOMPosition DOMPosition::nextWordPosition() const
             uint len = t.length();
             int start, end;
             khtml::findWordBoundary(chars, len, it.current().offset(), &start, &end);
-            pos = DOMPosition(it.current().node(), end);
+            pos = Position(it.current().node(), end);
         }
         else {
-            pos = DOMPosition(it.current().node(), it.current().node()->caretMaxOffset());
+            pos = Position(it.current().node(), it.current().node()->caretMaxOffset());
         }
         if (pos != *this)
             return pos;
@@ -353,10 +352,10 @@ DOMPosition DOMPosition::nextWordPosition() const
     return *this;
 }
 
-DOMPosition DOMPosition::previousLinePosition(int x) const
+Position Position::previousLinePosition(int x) const
 {
     if (!node())
-        return DOMPosition();
+        return Position();
 
     if (!node()->renderer())
         return *this;
@@ -379,7 +378,7 @@ DOMPosition DOMPosition::previousLinePosition(int x) const
         while (n && startBlock == n->containingEditableBlock())
             n = n->previousEditable();
         if (n) {
-            while (n && !DOMPosition(n, n->caretMaxOffset()).inRenderedContent())
+            while (n && !Position(n, n->caretMaxOffset()).inRenderedContent())
                 n = n->previousEditable();
             if (n && n->inSameRootEditableBlock(node())) {
                 box = inlineBoxForRenderer(n->renderer(), n->caretMaxOffset());
@@ -401,10 +400,10 @@ DOMPosition DOMPosition::previousLinePosition(int x) const
     return *this;
 }
 
-DOMPosition DOMPosition::nextLinePosition(int x) const
+Position Position::nextLinePosition(int x) const
 {
     if (!node())
-        return DOMPosition();
+        return Position();
 
     if (!node()->renderer())
         return *this;
@@ -427,7 +426,7 @@ DOMPosition DOMPosition::nextLinePosition(int x) const
         while (n && startBlock == n->containingEditableBlock())
             n = n->nextEditable();
         if (n) {
-            while (n && !DOMPosition(n, n->caretMinOffset()).inRenderedContent())
+            while (n && !Position(n, n->caretMinOffset()).inRenderedContent())
                 n = n->nextEditable();
             if (n && n->inSameRootEditableBlock(node())) {
                 box = inlineBoxForRenderer(n->renderer(), n->caretMinOffset());
@@ -449,10 +448,10 @@ DOMPosition DOMPosition::nextLinePosition(int x) const
     return *this;
 }
 
-DOMPosition DOMPosition::equivalentUpstreamPosition() const
+Position Position::equivalentUpstreamPosition() const
 {
     if (!node())
-        return DOMPosition();
+        return Position();
 
     NodeImpl *block = node()->containingEditableBlock();
     
@@ -473,14 +472,14 @@ DOMPosition DOMPosition::equivalentUpstreamPosition() const
 
         if (renderer->isBlockFlow() || renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() >= renderer->caretMaxOffset())
-                return DOMPosition(it.current().node(), renderer->caretMaxOffset());
+                return Position(it.current().node(), renderer->caretMaxOffset());
             else
                 continue;
         }
 
         if (renderer->isText() && static_cast<RenderText *>(renderer)->firstTextBox()) {
             if (it.current().node() != node())
-                return DOMPosition(it.current().node(), renderer->caretMaxOffset());
+                return Position(it.current().node(), renderer->caretMaxOffset());
 
             if (it.current().offset() < 0)
                 continue;
@@ -497,10 +496,10 @@ DOMPosition DOMPosition::equivalentUpstreamPosition() const
     return it.current();
 }
 
-DOMPosition DOMPosition::equivalentDownstreamPosition() const
+Position Position::equivalentDownstreamPosition() const
 {
     if (!node())
-        return DOMPosition();
+        return Position();
 
     NodeImpl *block = node()->containingEditableBlock();
     
@@ -521,14 +520,14 @@ DOMPosition DOMPosition::equivalentDownstreamPosition() const
 
         if (renderer->isBlockFlow() || renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() <= renderer->caretMinOffset())
-                return DOMPosition(it.current().node(), renderer->caretMinOffset());
+                return Position(it.current().node(), renderer->caretMinOffset());
             else
                 continue;
         }
 
         if (renderer->isText() && static_cast<RenderText *>(renderer)->firstTextBox()) {
             if (it.current().node() != node())
-                return DOMPosition(it.current().node(), renderer->caretMinOffset());
+                return Position(it.current().node(), renderer->caretMinOffset());
 
             if (it.current().offset() < 0)
                 continue;
@@ -545,17 +544,17 @@ DOMPosition DOMPosition::equivalentDownstreamPosition() const
     return it.current();
 }
 
-bool DOMPosition::atStartOfContainingEditableBlock() const
+bool Position::atStartOfContainingEditableBlock() const
 {
     return renderedOffset() == 0 && inFirstEditableInContainingEditableBlock();
 }
 
-bool DOMPosition::atStartOfRootEditableBlock() const
+bool Position::atStartOfRootEditableBlock() const
 {
     return renderedOffset() == 0 && inFirstEditableInRootEditableBlock();
 }
 
-bool DOMPosition::inRenderedContent() const
+bool Position::inRenderedContent() const
 {
     if (isEmpty())
         return false;
@@ -594,7 +593,7 @@ bool DOMPosition::inRenderedContent() const
     return false;
 }
 
-bool DOMPosition::inRenderedText() const
+bool Position::inRenderedText() const
 {
     if (!node()->isTextNode())
         return false;
@@ -618,7 +617,7 @@ bool DOMPosition::inRenderedText() const
     return false;
 }
 
-bool DOMPosition::rendersOnSameLine(const DOMPosition &pos) const
+bool Position::rendersOnSameLine(const Position &pos) const
 {
     if (isEmpty() || pos.isEmpty())
         return false;
@@ -644,7 +643,7 @@ bool DOMPosition::rendersOnSameLine(const DOMPosition &pos) const
     return renderersOnDifferentLine(renderer, offset(), posRenderer, pos.offset());
 }
 
-bool DOMPosition::rendersInDifferentPosition(const DOMPosition &pos) const
+bool Position::rendersInDifferentPosition(const Position &pos) const
 {
     if (isEmpty() || pos.isEmpty())
         return false;
@@ -728,7 +727,7 @@ bool DOMPosition::rendersInDifferentPosition(const DOMPosition &pos) const
     return true;
 }
 
-bool DOMPosition::isFirstRenderedPositionOnLine() const
+bool Position::isFirstRenderedPositionOnLine() const
 {
     if (isEmpty())
         return false;
@@ -740,7 +739,7 @@ bool DOMPosition::isFirstRenderedPositionOnLine() const
     if (renderer->style()->visibility() != khtml::VISIBLE)
         return false;
     
-    DOMPosition pos(node(), offset());
+    Position pos(node(), offset());
     EditIterator it(pos);
     while (!it.atStart()) {
         it.previous();
@@ -751,7 +750,7 @@ bool DOMPosition::isFirstRenderedPositionOnLine() const
     return true;
 }
 
-bool DOMPosition::isLastRenderedPositionOnLine() const
+bool Position::isLastRenderedPositionOnLine() const
 {
     if (isEmpty())
         return false;
@@ -766,7 +765,7 @@ bool DOMPosition::isLastRenderedPositionOnLine() const
     if (node()->id() == ID_BR)
         return true;
     
-    DOMPosition pos(node(), offset());
+    Position pos(node(), offset());
     EditIterator it(pos);
     while (!it.atEnd()) {
         it.next();
@@ -777,7 +776,7 @@ bool DOMPosition::isLastRenderedPositionOnLine() const
     return true;
 }
 
-bool DOMPosition::isLastRenderedPositionInEditableBlock() const
+bool Position::isLastRenderedPositionInEditableBlock() const
 {
     if (isEmpty())
         return false;
@@ -792,7 +791,7 @@ bool DOMPosition::isLastRenderedPositionInEditableBlock() const
     if (renderedOffset() != (long)node()->caretMaxRenderedOffset())
         return false;
 
-    DOMPosition pos(node(), offset());
+    Position pos(node(), offset());
     EditIterator it(pos);
     while (!it.atEnd()) {
         it.next();
@@ -804,7 +803,7 @@ bool DOMPosition::isLastRenderedPositionInEditableBlock() const
     return true;
 }
 
-bool DOMPosition::inFirstEditableInRootEditableBlock() const
+bool Position::inFirstEditableInRootEditableBlock() const
 {
     if (isEmpty() || !inRenderedContent())
         return false;
@@ -818,7 +817,7 @@ bool DOMPosition::inFirstEditableInRootEditableBlock() const
     return true;
 }
 
-bool DOMPosition::inLastEditableInRootEditableBlock() const
+bool Position::inLastEditableInRootEditableBlock() const
 {
     if (isEmpty() || !inRenderedContent())
         return false;
@@ -832,7 +831,7 @@ bool DOMPosition::inLastEditableInRootEditableBlock() const
     return true;
 }
 
-bool DOMPosition::inFirstEditableInContainingEditableBlock() const
+bool Position::inFirstEditableInContainingEditableBlock() const
 {
     if (isEmpty() || !inRenderedContent())
         return false;
@@ -850,7 +849,7 @@ bool DOMPosition::inFirstEditableInContainingEditableBlock() const
     return true;
 }
 
-bool DOMPosition::inLastEditableInContainingEditableBlock() const
+bool Position::inLastEditableInContainingEditableBlock() const
 {
     if (isEmpty() || !inRenderedContent())
         return false;
@@ -867,3 +866,5 @@ bool DOMPosition::inLastEditableInContainingEditableBlock() const
 
     return true;
 }
+
+} // namespace DOM

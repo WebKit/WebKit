@@ -31,7 +31,6 @@
 #include "xml/dom_elementimpl.h"
 
 #include "khtml_part.h"
-#include "khtml_selection.h"
 
 #include "html/dtd.h"
 #include "html/htmlparser.h"
@@ -41,6 +40,7 @@
 #include "css/css_valueimpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssstyleselector.h"
+#include "xml/dom_selection.h"
 #include "xml/dom_xmlimpl.h"
 
 #include <qtextstream.h>

@@ -25,7 +25,7 @@
 #include "render_text.h"
 
 namespace DOM {
-    class DOMPosition;
+    class Position;
 };
 
 /*
@@ -67,7 +67,7 @@ public:
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
     
-    virtual DOM::DOMPosition positionForCoordinates(int _x, int _y);
+    virtual DOM::Position positionForCoordinates(int _x, int _y);
     virtual void caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h);
 
 private:

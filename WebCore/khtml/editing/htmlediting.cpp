@@ -27,10 +27,10 @@
 #include "htmlediting_impl.h"
 
 #include "khtml_part.h"
-#include "khtml_selection.h"
 #include "dom/dom_position.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_nodeimpl.h"
+#include "xml/dom_selection.h"
 #include "xml/dom_textimpl.h"
 
 #if APPLE_CHANGES
@@ -39,9 +39,10 @@
 #endif
 
 using DOM::DocumentImpl;
-using DOM::DOMPosition;
+using DOM::Position;
 using DOM::DOMString;
 using DOM::NodeImpl;
+using DOM::Selection;
 using DOM::TextImpl;
 
 using khtml::AppendNodeCommand;
@@ -158,25 +159,25 @@ DocumentImpl * const EditCommand::document() const
     return get()->document();
 }
 
-KHTMLSelection EditCommand::startingSelection() const
+Selection EditCommand::startingSelection() const
 {
-    IF_IMPL_NULL_RETURN_ARG(KHTMLSelection());
+    IF_IMPL_NULL_RETURN_ARG(Selection());
     return get()->startingSelection();
 }
 
-KHTMLSelection EditCommand::endingSelection() const
+Selection EditCommand::endingSelection() const
 {
-    IF_IMPL_NULL_RETURN_ARG(KHTMLSelection());
+    IF_IMPL_NULL_RETURN_ARG(Selection());
     return get()->endingSelection();
 }
 
-void EditCommand::setStartingSelection(const KHTMLSelection &s)
+void EditCommand::setStartingSelection(const Selection &s)
 {
     IF_IMPL_NULL_RETURN;
     get()->setStartingSelection(s);
 }
 
-void EditCommand::setEndingSelection(const KHTMLSelection &s)
+void EditCommand::setEndingSelection(const Selection &s)
 {
     IF_IMPL_NULL_RETURN;
     get()->setEndingSelection(s);
@@ -281,7 +282,7 @@ DeleteCollapsibleWhitespaceCommand::DeleteCollapsibleWhitespaceCommand(DocumentI
 {
 }
 
-DeleteCollapsibleWhitespaceCommand::DeleteCollapsibleWhitespaceCommand(DocumentImpl *document, const KHTMLSelection &selection)
+DeleteCollapsibleWhitespaceCommand::DeleteCollapsibleWhitespaceCommand(DocumentImpl *document, const Selection &selection)
     : CompositeEditCommand(new DeleteCollapsibleWhitespaceCommandImpl(document, selection))
 {
 }
@@ -303,7 +304,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document)
 {
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const KHTMLSelection &selection)
+DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const Selection &selection)
     : CompositeEditCommand(new DeleteSelectionCommandImpl(document, selection))
 {
 }

@@ -29,19 +29,18 @@
 #include "htmlediting.h"
 
 #include "dom_position.h"
+#include "dom_selection.h"
 #include "dom_string.h"
-#include "khtml_selection.h"
 #include "qvaluelist.h"
 #include "shared.h"
 
-class KHTMLSelection;
-
 namespace DOM {
     class DocumentImpl;
-    class DOMPosition;
     class DOMString;
     class ElementImpl;
     class NodeImpl;
+    class Position;
+    class Selection;
     class TextImpl;
 };
 
@@ -73,14 +72,14 @@ public:
 
     virtual DOM::DocumentImpl * const document() const { return m_document; }
 
-    KHTMLSelection startingSelection() const { return m_startingSelection; }
-    KHTMLSelection endingSelection() const { return m_endingSelection; }
+    DOM::Selection startingSelection() const { return m_startingSelection; }
+    DOM::Selection endingSelection() const { return m_endingSelection; }
         
     ECommandState state() const { return m_state; }
     void setState(ECommandState state) { m_state = state; }
 
-    void setStartingSelection(const KHTMLSelection &s);
-    void setEndingSelection(const KHTMLSelection &s);
+    void setStartingSelection(const DOM::Selection &s);
+    void setEndingSelection(const DOM::Selection &s);
 
     void moveToStartingSelection();
     void moveToEndingSelection();
@@ -88,8 +87,8 @@ public:
 private:
     DOM::DocumentImpl *m_document;
     ECommandState m_state;
-    KHTMLSelection m_startingSelection;
-    KHTMLSelection m_endingSelection;
+    DOM::Selection m_startingSelection;
+    DOM::Selection m_endingSelection;
     EditCommand m_parent;
 };
 
@@ -126,10 +125,10 @@ protected:
     void deleteText(DOM::TextImpl *node, long offset, long count);
     void replaceText(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
     void deleteSelection();
-    void deleteSelection(const KHTMLSelection &selection);
+    void deleteSelection(const DOM::Selection &selection);
     void deleteKeyPressed();
     void deleteCollapsibleWhitespace();
-    void deleteCollapsibleWhitespace(const KHTMLSelection &selection);
+    void deleteCollapsibleWhitespace(const DOM::Selection &selection);
 
     QValueList<EditCommand> m_cmds;
 };
@@ -165,7 +164,7 @@ class DeleteCollapsibleWhitespaceCommandImpl : public CompositeEditCommandImpl
 { 
 public:
 	DeleteCollapsibleWhitespaceCommandImpl(DOM::DocumentImpl *document);
-	DeleteCollapsibleWhitespaceCommandImpl(DOM::DocumentImpl *document, const KHTMLSelection &selection);
+	DeleteCollapsibleWhitespaceCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection);
     
 	virtual ~DeleteCollapsibleWhitespaceCommandImpl();
 	
@@ -174,9 +173,9 @@ public:
 	virtual void doApply();
 
 private:
-    DOM::DOMPosition deleteWhitespace(const DOM::DOMPosition &pos);
+    DOM::Position deleteWhitespace(const DOM::Position &pos);
 
-    KHTMLSelection m_selectionToCollapse;
+    DOM::Selection m_selectionToCollapse;
     unsigned long m_charactersDeleted;
 };
 
@@ -187,7 +186,7 @@ class DeleteSelectionCommandImpl : public CompositeEditCommandImpl
 { 
 public:
 	DeleteSelectionCommandImpl(DOM::DocumentImpl *document);
-	DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const KHTMLSelection &selection);
+	DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection);
     
 	virtual ~DeleteSelectionCommandImpl();
 	
@@ -196,11 +195,11 @@ public:
 	virtual void doApply();
     
 private:
-    void deleteDownstreamWS(const DOM::DOMPosition &start);
-    bool containsOnlyWhitespace(const DOM::DOMPosition &start, const DOM::DOMPosition &end);
+    void deleteDownstreamWS(const DOM::Position &start);
+    bool containsOnlyWhitespace(const DOM::Position &start, const DOM::Position &end);
     void joinTextNodesWithSameStyle();
 
-    KHTMLSelection m_selectionToDelete;
+    DOM::Selection m_selectionToDelete;
 };
 
 //------------------------------------------------------------------------------------------
@@ -261,7 +260,7 @@ public:
     unsigned long charactersAdded() const { return m_charactersAdded; }
     
 private:
-    DOM::DOMPosition prepareForTextInsertion(bool adjustDownstream);
+    DOM::Position prepareForTextInsertion(bool adjustDownstream);
     void execute(const DOM::DOMString &text);
     void insertSpace(DOM::TextImpl *textNode, unsigned long offset);
 

@@ -28,6 +28,7 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom_xmlimpl.h"
 #include "xml/dom2_rangeimpl.h"
+#include "xml/dom_selection.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/xml_tokenizer.h"
 
@@ -53,7 +54,6 @@
 
 #include "khtmlview.h"
 #include "khtml_part.h"
-#include "khtml_selection.h"
 
 #include <kglobalsettings.h>
 #include <kstringhandler.h>
@@ -1207,8 +1207,8 @@ void DocumentImpl::updateSelection()
         return;
     
     RenderCanvas *canvas = static_cast<RenderCanvas*>(m_render);
-    KHTMLSelection s = part()->selection();
-    if (s.isEmpty() || s.state() == KHTMLSelection::CARET) {
+    Selection s = part()->selection();
+    if (s.isEmpty() || s.state() == Selection::CARET) {
         canvas->clearSelection();
     }
     else {
@@ -2691,13 +2691,13 @@ bool DocumentImpl::execCommand(const DOMString &command, bool userInterface, con
         return true;
     }
     else if (atom == cutCommand) {
-        if (!part() || part()->selection().state() != KHTMLSelection::RANGE)
+        if (!part() || part()->selection().state() != Selection::RANGE)
             return false;
         KWQ(part())->issueCutCommand();
         return true;
     }
     else if (atom == copyCommand) {
-        if (!part() || part()->selection().state() != KHTMLSelection::RANGE)
+        if (!part() || part()->selection().state() != Selection::RANGE)
             return false;
         KWQ(part())->issueCopyCommand();
         return true;

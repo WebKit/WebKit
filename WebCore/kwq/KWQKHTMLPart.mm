@@ -43,7 +43,6 @@
 #import "htmltokenizer.h"
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
-#import "khtml_selection.h"
 #import "kjs_binding.h"
 #import "kjs_window.h"
 #import "misc/htmlattrs.h"
@@ -55,6 +54,7 @@
 #import "render_style.h"
 #import "render_table.h"
 #import "render_text.h"
+#import "xml/dom_selection.h"
 #import "xml/dom2_eventsimpl.h"
 #import "xml/dom2_rangeimpl.h"
 #import <JavaScriptCore/identifier.h>
@@ -78,6 +78,7 @@ using DOM::HTMLTableCellElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::RangeImpl;
+using DOM::Selection;
 
 using khtml::Cache;
 using khtml::ChildFrame;
@@ -1847,7 +1848,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
         }
 
 	if (_mouseDownMayStartDrag && 
-        d->m_textElement == KHTMLSelection::CHARACTER &&
+        d->m_textElement == DOM::Selection::CHARACTER &&
         [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
             // We are starting a text/image/url drag, so the cursor should be an arrow
             d->m_view->resetCursor();

@@ -29,6 +29,7 @@
 #import "dom_node.h"
 #import "dom_docimpl.h"
 #import "dom_nodeimpl.h"
+#import "dom_selection.h"
 #import "dom2_rangeimpl.h"
 #import "htmlediting.h"
 #import "html_documentimpl.h"
@@ -37,7 +38,6 @@
 #import "htmlattrs.h"
 #import "htmltags.h"
 #import "khtml_part.h"
-#import "khtml_selection.h"
 #import "khtmlview.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
@@ -89,6 +89,7 @@ using DOM::HTMLInputElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Range;
+using DOM::Selection;
 
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
@@ -406,7 +407,7 @@ static bool initializedKJS = FALSE;
         return NO;
     }
         
-    KHTMLSelection selection(node->positionForCoordinates((int)point.x, (int)point.y));
+    Selection selection(node->positionForCoordinates((int)point.x, (int)point.y));
     _part->setSelection(selection);
     
     return YES;
@@ -414,7 +415,7 @@ static bool initializedKJS = FALSE;
 
 - (BOOL)haveSelection
 {
-    return _part->selection().state() == KHTMLSelection::RANGE;
+    return _part->selection().state() == Selection::RANGE;
 }
 
 - (DOMRange *)selectedRange
@@ -1080,7 +1081,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     DOMNode *startNode = start;
     DOMNode *endNode = end;
-    KHTMLSelection selection([startNode _nodeImpl], startOffset, [endNode _nodeImpl], endOffset);
+    Selection selection([startNode _nodeImpl], startOffset, [endNode _nodeImpl], endOffset);
     _part->setSelection(selection);
 }
 
@@ -1322,10 +1323,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return nil;
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
-    KHTMLSelection selection(_part->selection());
-    selection.modify(static_cast<KHTMLSelection::EAlter>(alteration), 
-                     static_cast<KHTMLSelection::EDirection>(direction), 
-                     static_cast<KHTMLSelection::ETextGranularity>(granularity));
+    Selection selection(_part->selection());
+    selection.modify(static_cast<Selection::EAlter>(alteration), 
+                     static_cast<Selection::EDirection>(direction), 
+                     static_cast<Selection::ETextGranularity>(granularity));
     return [DOMRange _rangeWithImpl:selection.toRange().handle()];
 }
 
@@ -1335,10 +1336,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
-    KHTMLSelection selection(_part->selection());
-    selection.modify(static_cast<KHTMLSelection::EAlter>(alteration), 
-                     static_cast<KHTMLSelection::EDirection>(direction), 
-                     static_cast<KHTMLSelection::ETextGranularity>(granularity));
+    Selection selection(_part->selection());
+    selection.modify(static_cast<Selection::EAlter>(alteration), 
+                     static_cast<Selection::EDirection>(direction), 
+                     static_cast<Selection::ETextGranularity>(granularity));
 
     // save vertical navigation x position if necessary
     int xPos = _part->xPosForVerticalArrowNavigation();
@@ -1364,7 +1365,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     DocumentImpl *doc = startContainer->getDocument();
     doc->updateLayout();
-    KHTMLSelection selection(startContainer, [range startOffset], endContainer, [range endOffset]);
+    Selection selection(startContainer, [range startOffset], endContainer, [range endOffset]);
     _part->setSelection(selection);
 }
 
@@ -1409,8 +1410,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part || !_part->xmlDocImpl())
         return;
     
-    KHTMLSelection selection(_part->selection());
-    if (selection.state() != KHTMLSelection::RANGE)
+    Selection selection(_part->selection());
+    if (selection.state() != Selection::RANGE)
         return;
     
     DeleteSelectionCommand cmd(_part->xmlDocImpl());

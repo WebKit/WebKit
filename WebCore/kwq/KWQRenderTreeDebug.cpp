@@ -27,7 +27,6 @@
 
 #include "htmltags.h"
 #include "khtmlview.h"
-#include "khtml_selection.h"
 #include "render_replaced.h"
 #include "render_table.h"
 #include "render_text.h"
@@ -35,13 +34,15 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_position.h"
+#include "xml/dom_selection.h"
 
 #include "KWQKHTMLPart.h"
 #include "KWQTextStream.h"
 
 using DOM::DocumentImpl;
-using DOM::DOMPosition;
 using DOM::NodeImpl;
+using DOM::Position;
+using DOM::Selection;
 using khtml::RenderLayer;
 using khtml::RenderObject;
 using khtml::RenderTableCell;
@@ -354,24 +355,24 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     if (!doc || !doc->part())
         return;
         
-    KHTMLSelection selection = doc->part()->selection();
-    if (selection.state() == KHTMLSelection::NONE)
+    Selection selection = doc->part()->selection();
+    if (selection.state() == Selection::NONE)
         return;
 
     if (!selection.startPosition().node()->isContentEditable() || !selection.endPosition().node()->isContentEditable())
         return;
 
-    DOMPosition startPosition = selection.startPosition();
-    DOMPosition endPosition = selection.endPosition();
+    Position startPosition = selection.startPosition();
+    Position endPosition = selection.endPosition();
 
     QString startNodeTagName(getTagName(startPosition.node()->id()).string());
     QString endNodeTagName(getTagName(endPosition.node()->id()).string());
     
     NodeImpl *rootNode = doc->getElementById("root");
     
-    if (selection.state() == KHTMLSelection::CARET) {
-        DOMPosition upstream = startPosition.equivalentUpstreamPosition();
-        DOMPosition downstream = startPosition.equivalentDownstreamPosition();
+    if (selection.state() == Selection::CARET) {
+        Position upstream = startPosition.equivalentUpstreamPosition();
+        Position downstream = startPosition.equivalentDownstreamPosition();
         QString positionString = nodePositionRelativeToRoot(startPosition.node(), rootNode);
         QString upstreamString = nodePositionRelativeToRoot(upstream.node(), rootNode);
         QString downstreamString = nodePositionRelativeToRoot(downstream.node(), rootNode);
@@ -380,16 +381,16 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
             "upstream:   position " << upstream.offset() << " of " << upstreamString << "\n"
             "downstream: position " << downstream.offset() << " of " << downstreamString << "\n"; 
     }
-    else if (selection.state() == KHTMLSelection::RANGE) {
+    else if (selection.state() == Selection::RANGE) {
         QString startString = nodePositionRelativeToRoot(startPosition.node(), rootNode);
-        DOMPosition upstreamStart = startPosition.equivalentUpstreamPosition();
+        Position upstreamStart = startPosition.equivalentUpstreamPosition();
         QString upstreamStartString = nodePositionRelativeToRoot(upstreamStart.node(), rootNode);
-        DOMPosition downstreamStart = startPosition.equivalentDownstreamPosition();
+        Position downstreamStart = startPosition.equivalentDownstreamPosition();
         QString downstreamStartString = nodePositionRelativeToRoot(downstreamStart.node(), rootNode);
         QString endString = nodePositionRelativeToRoot(endPosition.node(), rootNode);
-        DOMPosition upstreamEnd = endPosition.equivalentUpstreamPosition();
+        Position upstreamEnd = endPosition.equivalentUpstreamPosition();
         QString upstreamEndString = nodePositionRelativeToRoot(upstreamEnd.node(), rootNode);
-        DOMPosition downstreamEnd = endPosition.equivalentDownstreamPosition();
+        Position downstreamEnd = endPosition.equivalentDownstreamPosition();
         QString downstreamEndString = nodePositionRelativeToRoot(downstreamEnd.node(), rootNode);
         ts << "selection is RANGE:\n" <<
             "start:      position " << startPosition.offset() << " of " << startString << "\n" <<

@@ -30,30 +30,30 @@
 
 namespace DOM {
 
-class DOMPosition;
 class NodeImpl;
+class Position;
 
 class EditIterator
 {
 public:
     EditIterator() : m_current() {}
     EditIterator(NodeImpl *node, long offset) : m_current(node, offset) {}
-    EditIterator(const DOMPosition &o) : m_current(o) {}
+    EditIterator(const Position &o) : m_current(o) {}
 
-    DOMPosition current() const { return m_current; }
-    DOMPosition previous() { return m_current = peekPrevious(); }
-    DOMPosition next() { return m_current = peekNext(); }
-    DOMPosition peekPrevious() const;
-    DOMPosition peekNext() const;
+    Position current() const { return m_current; }
+    Position previous() { return m_current = peekPrevious(); }
+    Position next() { return m_current = peekNext(); }
+    Position peekPrevious() const;
+    Position peekNext() const;
 
-    void setPosition(const DOMPosition &pos) { m_current = pos; }
+    void setPosition(const Position &pos) { m_current = pos; }
 
     bool atStart() const;
     bool atEnd() const;
     bool isEmpty() const { return m_current.isEmpty(); }
 
 private:
-    DOMPosition m_current;
+    Position m_current;
 };
 
 } // namespace DOM

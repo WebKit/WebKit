@@ -53,12 +53,12 @@
 
 #include "khtmlview.h"
 #include "khtml_part.h"
-#include "khtml_selection.h"
 #include "dom/dom_string.h"
 #include "dom/dom_node.h"
 #include "editing/htmlediting.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_selection.h"
 #include "html/html_documentimpl.h"
 
 using DOM::DocumentImpl;
@@ -2168,14 +2168,14 @@ Value Selection::get(ExecState *exec, const Identifier &p) const
         case ExtentOffset:
             return Number(m_part->selection().extentOffset());
         case IsCollapsed:
-            return Boolean(m_part->selection().state() == KHTMLSelection::CARET);
+            return Boolean(m_part->selection().state() == DOM::Selection::CARET);
         case _Type: {
             switch (m_part->selection().state()) {
-                case KHTMLSelection::NONE:
+                case DOM::Selection::NONE:
                     return String("None");
-                case KHTMLSelection::CARET:
+                case DOM::Selection::CARET:
                     return String("Caret");
-                case KHTMLSelection::RANGE:
+                case DOM::Selection::RANGE:
                     return String("Range");
             }
         }
@@ -2214,7 +2214,7 @@ Value Selection::toPrimitive(ExecState *exec, Type) const
 
 UString Selection::toString(ExecState *) const
 {
-    if (m_part->selection().state() != KHTMLSelection::RANGE)
+    if (m_part->selection().state() != DOM::Selection::RANGE)
         return UString("");
     return UString(m_part->selection().toRange().toString());
 }
@@ -2236,15 +2236,15 @@ Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         switch (id) {
             case Selection::Collapse:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(KHTMLSelection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)));
+                part->setSelection(DOM::Selection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)));
                 break;
             case Selection::CollapseToEnd:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(KHTMLSelection(part->selection().endPosition()));
+                part->setSelection(DOM::Selection(part->selection().endPosition()));
                 break;
             case Selection::CollapseToStart:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(KHTMLSelection(part->selection().startPosition()));
+                part->setSelection(DOM::Selection(part->selection().startPosition()));
                 break;
             case Selection::Empty:
                 TypingCommand::closeTyping(part->lastEditCommand());
@@ -2252,32 +2252,32 @@ Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
                 break;
             case Selection::SetBaseAndExtent:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(KHTMLSelection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec), KJS::toNode(args[2]).handle(), args[3].toInt32(exec)));
+                part->setSelection(DOM::Selection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec), KJS::toNode(args[2]).handle(), args[3].toInt32(exec)));
                 break;
             case Selection::SetPosition:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(KHTMLSelection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)));
+                part->setSelection(DOM::Selection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)));
                 break;
             case Selection::Modify: {
                 TypingCommand::closeTyping(part->lastEditCommand());
-                KHTMLSelection s(part->selection());
-                KHTMLSelection::EAlter alter = KHTMLSelection::MOVE;
+                DOM::Selection s(part->selection());
+                DOM::Selection::EAlter alter = DOM::Selection::MOVE;
                 if (args[0].toString(exec).string().lower() == "extend")
-                    alter = KHTMLSelection::EXTEND;
+                    alter = DOM::Selection::EXTEND;
                 DOMString directionString = args[1].toString(exec).string().lower();
-                KHTMLSelection::EDirection direction = KHTMLSelection::FORWARD;
+                DOM::Selection::EDirection direction = DOM::Selection::FORWARD;
                 if (directionString == "backward")
-                    direction = KHTMLSelection::BACKWARD;
+                    direction = DOM::Selection::BACKWARD;
                 else if (directionString == "left")
-                    direction = KHTMLSelection::LEFT;
+                    direction = DOM::Selection::LEFT;
                 if (directionString == "right")
-                    direction = KHTMLSelection::RIGHT;
-                KHTMLSelection::ETextGranularity granularity = KHTMLSelection::CHARACTER;
+                    direction = DOM::Selection::RIGHT;
+                DOM::Selection::ETextGranularity granularity = DOM::Selection::CHARACTER;
                 DOMString granularityString = args[2].toString(exec).string().lower();
                 if (granularityString == "word")
-                    granularity = KHTMLSelection::WORD;
+                    granularity = DOM::Selection::WORD;
                 else if (granularityString == "line")
-                    granularity = KHTMLSelection::LINE;
+                    granularity = DOM::Selection::LINE;
                 s.modify(alter, direction, granularity);
                 part->setSelection(s);
             }

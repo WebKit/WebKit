@@ -37,7 +37,7 @@ class QPainter;
 class QFontMetrics;
 
 namespace DOM {
-    class DOMPosition;
+    class Position;
 };
 
 // Define a constant for soft hyphen's unicode value.
@@ -154,7 +154,7 @@ public:
 
     virtual void absoluteRects(QValueList<QRect>& rects, int _tx, int _ty);
 
-    virtual DOM::DOMPosition positionForCoordinates(int _x, int _y);
+    virtual DOM::Position positionForCoordinates(int _x, int _y);
 
     unsigned int length() const { return str->l; }
     QChar *text() const { return str->s; }

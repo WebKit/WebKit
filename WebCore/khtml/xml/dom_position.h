@@ -23,20 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef _DOM_Position_h_
-#define _DOM_Position_h_
+#ifndef __dom_position_h__
+#define __dom_position_h__
 
 namespace DOM {
 
 class NodeImpl;
 
-class DOMPosition
+class Position
 {
 public:
-    DOMPosition() : m_node(0), m_offset(0) {};
-    DOMPosition(NodeImpl *node, long offset);
-    DOMPosition(const DOMPosition &);
-    ~DOMPosition();
+    Position() : m_node(0), m_offset(0) {};
+    Position(NodeImpl *node, long offset);
+    Position(const Position &);
+    ~Position();
 
     NodeImpl *node() const { return m_node; }
     long offset() const { return m_offset; }
@@ -46,23 +46,23 @@ public:
     bool isEmpty() const { return m_node == 0; }
     bool notEmpty() const { return m_node != 0; }
     
-    DOMPosition equivalentLeafPosition() const;
-    DOMPosition previousRenderedEditablePosition() const;
-    DOMPosition nextRenderedEditablePosition() const;
-    DOMPosition previousCharacterPosition() const;
-    DOMPosition nextCharacterPosition() const;
-    DOMPosition previousWordPosition() const;
-    DOMPosition nextWordPosition() const;
-    DOMPosition previousLinePosition(int x) const;
-    DOMPosition nextLinePosition(int x) const;
-    DOMPosition equivalentUpstreamPosition() const;
-    DOMPosition equivalentDownstreamPosition() const;
+    Position equivalentLeafPosition() const;
+    Position previousRenderedEditablePosition() const;
+    Position nextRenderedEditablePosition() const;
+    Position previousCharacterPosition() const;
+    Position nextCharacterPosition() const;
+    Position previousWordPosition() const;
+    Position nextWordPosition() const;
+    Position previousLinePosition(int x) const;
+    Position nextLinePosition(int x) const;
+    Position equivalentUpstreamPosition() const;
+    Position equivalentDownstreamPosition() const;
     bool atStartOfContainingEditableBlock() const;
     bool atStartOfRootEditableBlock() const;
     bool inRenderedContent() const;
     bool inRenderedText() const;
-    bool rendersOnSameLine(const DOMPosition &pos) const;
-    bool rendersInDifferentPosition(const DOMPosition &pos) const;
+    bool rendersOnSameLine(const Position &pos) const;
+    bool rendersInDifferentPosition(const Position &pos) const;
     bool isFirstRenderedPositionOnLine() const;
     bool isLastRenderedPositionOnLine() const;
     bool isLastRenderedPositionInEditableBlock() const;
@@ -71,26 +71,26 @@ public:
     bool inFirstEditableInContainingEditableBlock() const;
     bool inLastEditableInContainingEditableBlock() const;
     
-    DOMPosition &operator=(const DOMPosition &o);
+    Position &operator=(const Position &o);
     
-    friend bool operator==(const DOMPosition &a, const DOMPosition &b);
-    friend bool operator!=(const DOMPosition &a, const DOMPosition &b);
+    friend bool operator==(const Position &a, const Position &b);
+    friend bool operator!=(const Position &a, const Position &b);
     
 private:
     NodeImpl *m_node;
     long m_offset;
 };
 
-inline bool operator==(const DOMPosition &a, const DOMPosition &b)
+inline bool operator==(const Position &a, const Position &b)
 {
     return a.node() == b.node() && a.offset() == b.offset();
 }
 
-inline bool operator!=(const DOMPosition &a, const DOMPosition &b)
+inline bool operator!=(const Position &a, const Position &b)
 {
     return !(a == b);
 }
 
-}; // namespace DOM
+} // namespace DOM
 
-#endif // _DOM_Position_h_
+#endif // __dom_position_h__

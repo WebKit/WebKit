@@ -31,6 +31,7 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
+#include "xml/dom_selection.h"
 #include "xml/dom2_rangeimpl.h"
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
@@ -45,7 +46,6 @@
 #include "ecma/kjs_proxy.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
-#include "khtml_selection.h"
 
 #include "html/dtd.h"
 
@@ -1424,12 +1424,12 @@ NodeImpl::Id NodeImpl::identifier() const
 }
 #endif
 
-DOMPosition NodeImpl::positionForCoordinates(int x, int y)
+Position NodeImpl::positionForCoordinates(int x, int y)
 {
     if (renderer())
         return renderer()->positionForCoordinates(x, y);
     
-    return DOMPosition(this, 0);
+    return Position(this, 0);
 }
 
 //-------------------------------------------------------------------------
@@ -2068,7 +2068,7 @@ void NodeBaseImpl::setFocus(bool received)
 
     if (received && isEditableBlock() && !hasChildNodes()) {
         KHTMLPart *part = getDocument()->part();
-        part->setSelection(KHTMLSelection(this, 0));
+        part->setSelection(Selection(this, 0));
     }
 
     // note that we need to recalc the style

@@ -128,11 +128,11 @@ unsigned long RenderReplaced::caretMaxRenderedOffset() const
     return 1; 
 }
 
-DOMPosition RenderReplaced::positionForCoordinates(int _x, int _y)
+Position RenderReplaced::positionForCoordinates(int _x, int _y)
 {
     InlineBox *box = inlineBoxWrapper();
     if (!box)
-        return DOMPosition(element(), 0);
+        return Position(element(), 0);
 
     RootInlineBox *root = box->root();
 
@@ -143,15 +143,15 @@ DOMPosition RenderReplaced::positionForCoordinates(int _x, int _y)
     int bottom = root->nextRootBox() ? absy + root->nextRootBox()->topOverflow() : absy + root->bottomOverflow();
 
     if (_y < top)
-        return DOMPosition(element(), caretMinOffset()); // coordinates are above
+        return Position(element(), caretMinOffset()); // coordinates are above
     
     if (_y >= bottom)
-        return DOMPosition(element(), caretMaxOffset()); // coordinates are below
+        return Position(element(), caretMaxOffset()); // coordinates are below
     
     if (element()) {
         if (_x <= absx + xPos() + (width() / 2))
-            return DOMPosition(element(), 0);
-        return DOMPosition(element(), 1);
+            return Position(element(), 0);
+        return Position(element(), 1);
     }
 
     return RenderBox::positionForCoordinates(_x, _y);

@@ -23,33 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __khtml_selection_h__
-#define __khtml_selection_h__
+#ifndef __dom_selection_h__
+#define __dom_selection_h__
 
 class KHTMLPart;
 class QPainter;
 class QRect;
 
-namespace DOM {
-    class DOMPosition;
-    class NodeImpl;
-    class Range;
-};
-
 namespace khtml {
     class RenderObject;
 }
 
-class KHTMLSelection
+namespace DOM {
+
+class NodeImpl;
+class Position;
+class Range;
+
+class Selection
 {
 public:
-    KHTMLSelection();
-    KHTMLSelection(DOM::NodeImpl *node, long offset);
-    KHTMLSelection(const DOM::DOMPosition &);
-    KHTMLSelection(const DOM::DOMPosition &, const DOM::DOMPosition &);
-    KHTMLSelection(DOM::NodeImpl *startNode, long startOffset, DOM::NodeImpl *endNode, long endOffset);
-    KHTMLSelection(const KHTMLSelection &);
-    ~KHTMLSelection();
+    Selection();
+    Selection(NodeImpl *node, long offset);
+    Selection(const Position &);
+    Selection(const Position &, const Position &);
+    Selection(NodeImpl *startNode, long startOffset, NodeImpl *endNode, long endOffset);
+    Selection(const Selection &);
+    ~Selection();
 
 	enum EState { NONE, CARET, RANGE };
 	enum EAlter { MOVE, EXTEND };
@@ -58,52 +58,52 @@ public:
 
 	EState state() const { return m_state; }
 
-    void moveTo(DOM::NodeImpl *node, long offset);
-    void moveTo(const DOM::Range &);
-    void moveTo(const DOM::DOMPosition &);
-    void moveTo(const KHTMLSelection &);
-    void moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset);
+    void moveTo(NodeImpl *node, long offset);
+    void moveTo(const Range &);
+    void moveTo(const Position &);
+    void moveTo(const Selection &);
+    void moveTo(NodeImpl *baseNode, long baseOffset, NodeImpl *extentNode, long extentOffset);
     bool modify(EAlter, EDirection, ETextGranularity);
     bool expandUsingGranularity(ETextGranularity);
     void clear();
 
     bool moveToRenderedContent();
     
-    void setBase(DOM::NodeImpl *node, long offset);
-    void setExtent(DOM::NodeImpl *node, long offset);
+    void setBase(NodeImpl *node, long offset);
+    void setExtent(NodeImpl *node, long offset);
 
-    DOM::NodeImpl *baseNode() const { return m_baseNode; }
+    NodeImpl *baseNode() const { return m_baseNode; }
     long baseOffset() const { return m_baseOffset; }
 
-    DOM::NodeImpl *extentNode() const { return m_extentNode; }
+    NodeImpl *extentNode() const { return m_extentNode; }
     long extentOffset() const { return m_extentOffset; }
 
-    DOM::NodeImpl *startNode() const { return m_startNode; }
+    NodeImpl *startNode() const { return m_startNode; }
     long startOffset() const { return m_startOffset; }
 
-    DOM::NodeImpl *endNode() const { return m_endNode; }
+    NodeImpl *endNode() const { return m_endNode; }
     long endOffset() const { return m_endOffset; }
 
-    DOM::DOMPosition basePosition() const;
-    DOM::DOMPosition extentPosition() const;
-    DOM::DOMPosition startPosition() const;
-    DOM::DOMPosition endPosition() const;
+    Position basePosition() const;
+    Position extentPosition() const;
+    Position startPosition() const;
+    Position endPosition() const;
 
     void setNeedsLayout(bool flag=true);
     void clearModifyBias() { m_modifyBiasSet = false; }
     
     bool isEmpty() const { return state() == NONE; }
     bool notEmpty() const { return !isEmpty(); }
-    DOM::Range toRange() const;
+    Range toRange() const;
 
     
     void debugPosition() const;
     void debugRenderer(khtml::RenderObject *r, bool selected) const;
 
-    KHTMLSelection &operator=(const KHTMLSelection &o);
+    Selection &operator=(const Selection &o);
     
-    friend bool operator==(const KHTMLSelection &a, const KHTMLSelection &b);
-    friend bool operator!=(const KHTMLSelection &a, const KHTMLSelection &b);
+    friend bool operator==(const Selection &a, const Selection &b);
+    friend bool operator!=(const Selection &a, const Selection &b);
     
     friend class KHTMLPart;
 
@@ -118,29 +118,29 @@ private:
     QRect getRepaintRect();
     void paintCaret(QPainter *p, const QRect &rect);
 
-	void setBaseNode(DOM::NodeImpl *);
+	void setBaseNode(NodeImpl *);
 	void setBaseOffset(long);
-	void setExtentNode(DOM::NodeImpl *);
+	void setExtentNode(NodeImpl *);
 	void setExtentOffset(long);
 
-	void setStartNode(DOM::NodeImpl *);
+	void setStartNode(NodeImpl *);
 	void setStartOffset(long);
-	void setEndNode(DOM::NodeImpl *);
+	void setEndNode(NodeImpl *);
 	void setEndOffset(long);
 
-    bool nodeIsBeforeNode(DOM::NodeImpl *n1, DOM::NodeImpl *n2);
+    bool nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2);
 
     void calculateStartAndEnd(ETextGranularity select=CHARACTER);
     int xPosForVerticalArrowNavigation(EPositionType, bool recalc=false) const;
     
-    DOM::NodeImpl *m_baseNode;    // base node for the selection
+    NodeImpl *m_baseNode;    // base node for the selection
     long m_baseOffset;            // offset into base node where selection is
-    DOM::NodeImpl *m_extentNode;  // extent node for the selection
+    NodeImpl *m_extentNode;  // extent node for the selection
     long m_extentOffset;          // offset into extent node where selection is
 
-    DOM::NodeImpl *m_startNode;   // start node for the selection (read-only)
+    NodeImpl *m_startNode;   // start node for the selection (read-only)
     long m_startOffset;           // offset into start node where selection is (read-only)
-    DOM::NodeImpl *m_endNode;     // end node for the selection (read-only)
+    NodeImpl *m_endNode;     // end node for the selection (read-only)
     long m_endOffset;             // offset into end node where selection is (read-only)
 
 	EState m_state;               // the state of the selection
@@ -155,15 +155,17 @@ private:
 };
 
 
-inline bool operator==(const KHTMLSelection &a, const KHTMLSelection &b)
+inline bool operator==(const Selection &a, const Selection &b)
 {
     return a.startNode() == b.startNode() && a.startOffset() == b.startOffset() &&
         a.endNode() == b.endNode() && a.endOffset() == b.endOffset();
 }
 
-inline bool operator!=(const KHTMLSelection &a, const KHTMLSelection &b)
+inline bool operator!=(const Selection &a, const Selection &b)
 {
     return !(a == b);
 }
 
-#endif
+} // namespace DOM
+
+#endif  // __dom_selection_h__

@@ -28,7 +28,7 @@ class KHTMLView;
 class QWidget;
 
 namespace DOM {
-    class DOMPosition;
+    class Position;
 }
 
 namespace khtml {
@@ -59,7 +59,7 @@ public:
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
-    virtual DOM::DOMPosition positionForCoordinates(int x, int y);
+    virtual DOM::Position positionForCoordinates(int x, int y);
     
 private:
     int m_intrinsicWidth;

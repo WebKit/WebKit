@@ -40,7 +40,6 @@
 class KHTMLPartPrivate;
 class KHTMLPartBrowserExtension;
 class KJSProxy;
-class KHTMLSelection;
 class KHTMLView;
 class KHTMLSettings;
 class KJavaAppletContext;
@@ -62,6 +61,7 @@ namespace DOM
   class Node;
   class HTMLEventListener;
   class EventListener;
+  class Selection;
 }
 
 using DOM::TristateFlag;
@@ -572,12 +572,12 @@ public:
   /**
    * Returns the selected part of the HTML.
    */
-  const KHTMLSelection &selection() const;
+  const DOM::Selection &selection() const;
 
   /**
    * Sets the current selection.
    */
-  void setSelection(const KHTMLSelection &);
+  void setSelection(const DOM::Selection &);
 
   /**
    * Sets the current selection, using the given edit command.
@@ -1101,7 +1101,7 @@ private:
   /**
    * @internal
    */
-  void setFocusNodeIfNeeded(const KHTMLSelection &);
+  void setFocusNodeIfNeeded(const DOM::Selection &);
 
   /**
    * @internal
@@ -1210,7 +1210,7 @@ private:
 
   KHTMLPartPrivate *d;
   friend class KHTMLPartPrivate;
-  friend class KHTMLSelection;
+  friend class DOM::Selection;
 
 #if APPLE_CHANGES
 public:  

@@ -37,7 +37,6 @@
 
 #include "khtmlview.h"
 #include "khtml_part.h"
-#include "khtml_selection.h"
 
 #include "rendering/render_object.h"
 #include "rendering/render_replaced.h"
@@ -46,6 +45,7 @@
 #include "css/cssproperties.h"
 #include "css/cssvalues.h"
 #include "css/css_ruleimpl.h"
+#include "xml/dom_selection.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
 

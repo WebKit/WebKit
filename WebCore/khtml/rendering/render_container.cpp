@@ -41,7 +41,7 @@
 #include "KWQAccObjectCache.h" 
 #endif
 
-using DOM::DOMPosition;
+using DOM::Position;
 using namespace khtml;
 
 RenderContainer::RenderContainer(DOM::NodeImpl* node)
@@ -475,11 +475,11 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
 	parent()->removeLeftoverAnonymousBoxes();
 }
 
-DOMPosition RenderContainer::positionForCoordinates(int _x, int _y)
+Position RenderContainer::positionForCoordinates(int _x, int _y)
 {
     // no children...return this render object's element, if there isn't one, and offset 0
     if (!firstChild())
-        return DOMPosition(element(), 0);
+        return Position(element(), 0);
 
     // look for the geometically-closest child and pass off to that child
     int min = INT_MAX;

@@ -1,6 +1,22 @@
 2004-04-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
+        
+        Renamed DOMPosition class to Position.
+        Renamed KHTMLSelection to Selection and moved to DOM namespace.
+
+        * ForwardingHeaders/xml/dom_selection.h: Added.
+        * WebCore.pbproj/project.pbxproj: Go Xcode!
+        * khtml/khtml_selection.cpp: Removed.
+        * khtml/khtml_selection.h: Removed.
+        * khtml/xml/dom_position.cpp: Renamed DOMPosition to Position
+        * khtml/xml/dom_position.h: Ditto.
+        * khtml/xml/dom_selection.cpp: New home for renamed Selection object.
+        * khtml/xml/dom_selection.h: Ditto.
+
+2004-04-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
 
         * WebCore.pbproj/project.pbxproj:
         * khtml/khtml_part.cpp:

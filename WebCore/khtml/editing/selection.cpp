@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
   
-#include "khtml_selection.h"
+#include "dom_selection.h"
 
 #include "htmltags.h"
 #include "khtml_part.h"
@@ -52,15 +52,8 @@
 #define EDIT_DEBUG 0
 #endif
 
-using DOM::DocumentImpl;
-using DOM::DOMPosition;
-using DOM::DOMString;
-using DOM::EditIterator;
-using DOM::ElementImpl;
-using DOM::Node;
-using DOM::NodeImpl;
-using DOM::Range;
-using DOM::TextImpl;
+namespace DOM {
+
 using khtml::InlineTextBox;
 using khtml::RenderObject;
 using khtml::RenderText;
@@ -68,16 +61,16 @@ using khtml::RenderText;
 #if APPLE_CHANGES
 static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset);
 static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset);
-static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, KHTMLSelection &selection);
+static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, Selection &selection);
 #endif
 
 
-KHTMLSelection::KHTMLSelection()
+Selection::Selection()
 {
     init();
 }
 
-KHTMLSelection::KHTMLSelection(NodeImpl *node, long offset)
+Selection::Selection(NodeImpl *node, long offset)
 {
     init();
 
@@ -89,7 +82,7 @@ KHTMLSelection::KHTMLSelection(NodeImpl *node, long offset)
     validate();
 }
 
-KHTMLSelection::KHTMLSelection(const DOMPosition &pos)
+Selection::Selection(const Position &pos)
 {
     init();
 
@@ -101,7 +94,7 @@ KHTMLSelection::KHTMLSelection(const DOMPosition &pos)
     validate();
 }
 
-KHTMLSelection::KHTMLSelection(const DOMPosition &base, const DOMPosition &extent)
+Selection::Selection(const Position &base, const Position &extent)
 {
     init();
 
@@ -113,7 +106,7 @@ KHTMLSelection::KHTMLSelection(const DOMPosition &base, const DOMPosition &exten
     validate();
 }
 
-KHTMLSelection::KHTMLSelection(NodeImpl *baseNode, long baseOffset, NodeImpl *endNode, long endOffset)
+Selection::Selection(NodeImpl *baseNode, long baseOffset, NodeImpl *endNode, long endOffset)
 {
     init();
 
@@ -125,7 +118,7 @@ KHTMLSelection::KHTMLSelection(NodeImpl *baseNode, long baseOffset, NodeImpl *en
     validate();
 }
 
-KHTMLSelection::KHTMLSelection(const KHTMLSelection &o)
+Selection::Selection(const Selection &o)
 {
     init();
     
@@ -157,7 +150,7 @@ KHTMLSelection::KHTMLSelection(const KHTMLSelection &o)
     }
 }
 
-void KHTMLSelection::init()
+void Selection::init()
 {
     m_baseNode = 0;
     m_baseOffset = 0;
@@ -176,7 +169,7 @@ void KHTMLSelection::init()
     m_modifyBiasSet = false;
 }
 
-KHTMLSelection::~KHTMLSelection()
+Selection::~Selection()
 {
     if (m_baseNode)
         m_baseNode->deref();
@@ -188,7 +181,7 @@ KHTMLSelection::~KHTMLSelection()
         m_endNode->deref();
 }
 
-KHTMLSelection &KHTMLSelection::operator=(const KHTMLSelection &o)
+Selection &Selection::operator=(const Selection &o)
 {
 	setBaseNode(o.baseNode());
 	setExtentNode(o.extentNode());
@@ -220,28 +213,28 @@ KHTMLSelection &KHTMLSelection::operator=(const KHTMLSelection &o)
     return *this;
 }
 
-void KHTMLSelection::moveTo(DOM::NodeImpl *node, long offset)
+void Selection::moveTo(DOM::NodeImpl *node, long offset)
 {
     moveTo(node, offset, node, offset);
 }
 
-void KHTMLSelection::moveTo(const DOM::Range &r)
+void Selection::moveTo(const DOM::Range &r)
 {
 	moveTo(r.startContainer().handle(), r.startOffset(), 
 		r.endContainer().handle(), r.endOffset());
 }
 
-void KHTMLSelection::moveTo(const DOM::DOMPosition &pos)
+void Selection::moveTo(const DOM::Position &pos)
 {
 	moveTo(pos.node(), pos.offset());
 }
 
-void KHTMLSelection::moveTo(const KHTMLSelection &o)
+void Selection::moveTo(const Selection &o)
 {
 	moveTo(o.baseNode(), o.baseOffset(), o.extentNode(), o.extentOffset());
 }
 
-void KHTMLSelection::moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset)
+void Selection::moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset)
 {
 	setBaseNode(baseNode);
 	setExtentNode(extentNode);
@@ -250,9 +243,9 @@ void KHTMLSelection::moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeI
 	validate();
 }
 
-bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextGranularity granularity)
+bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularity)
 {
-    DOMPosition pos;
+    Position pos;
     
     switch (dir) {
         // EDIT FIXME: This needs to handle bidi
@@ -364,7 +357,7 @@ bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextGranularity granu
     return true;
 }
 
-bool KHTMLSelection::expandUsingGranularity(ETextGranularity granularity)
+bool Selection::expandUsingGranularity(ETextGranularity granularity)
 {
     if (state() == NONE)
         return false;
@@ -373,14 +366,14 @@ bool KHTMLSelection::expandUsingGranularity(ETextGranularity granularity)
     return true;
 }
 
-int KHTMLSelection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) const
+int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) const
 {
     int x = 0;
 
     if (state() == NONE)
         return x;
 
-    DOMPosition pos;
+    Position pos;
     switch (type) {
         case START:
             pos = startPosition();
@@ -412,7 +405,7 @@ int KHTMLSelection::xPosForVerticalArrowNavigation(EPositionType type, bool reca
     return x;
 }
 
-void KHTMLSelection::clear()
+void Selection::clear()
 {
 	setBaseNode(0);
 	setExtentNode(0);
@@ -421,26 +414,26 @@ void KHTMLSelection::clear()
 	validate();
 }
 
-void KHTMLSelection::setBase(DOM::NodeImpl *node, long offset)
+void Selection::setBase(DOM::NodeImpl *node, long offset)
 {
 	setBaseNode(node);
 	setBaseOffset(offset);
 	validate();
 }
 
-void KHTMLSelection::setExtent(DOM::NodeImpl *node, long offset)
+void Selection::setExtent(DOM::NodeImpl *node, long offset)
 {
 	setExtentNode(node);
 	setExtentOffset(offset);
 	validate();
 }
 
-void KHTMLSelection::setNeedsLayout(bool flag)
+void Selection::setNeedsLayout(bool flag)
 {
     m_needsCaretLayout = flag;
 }
 
-Range KHTMLSelection::toRange() const
+Range Selection::toRange() const
 {
     if (isEmpty())
         return Range();
@@ -448,7 +441,7 @@ Range KHTMLSelection::toRange() const
     return Range(Node(startNode()), startOffset(), Node(endNode()), endOffset());
 }
 
-void KHTMLSelection::layoutCaret()
+void Selection::layoutCaret()
 {
     if (isEmpty() || !startNode()->renderer()) {
         m_caretX = m_caretY = m_caretSize = 0;
@@ -461,13 +454,13 @@ void KHTMLSelection::layoutCaret()
     m_needsCaretLayout = false;
 }
 
-QRect KHTMLSelection::getRepaintRect()
+QRect Selection::getRepaintRect()
 {
     // EDIT FIXME: fudge a bit to make sure we don't leave behind artifacts
     return QRect(m_caretX - 1, m_caretY - 1, 3, m_caretSize + 2);
 }
 
-void KHTMLSelection::needsCaretRepaint()
+void Selection::needsCaretRepaint()
 {
     if (isEmpty())
         return;
@@ -500,7 +493,7 @@ void KHTMLSelection::needsCaretRepaint()
     v->updateContents(getRepaintRect(), false);
 }
 
-void KHTMLSelection::paintCaret(QPainter *p, const QRect &rect)
+void Selection::paintCaret(QPainter *p, const QRect &rect)
 {
     if (isEmpty())
         return;
@@ -509,7 +502,7 @@ void KHTMLSelection::paintCaret(QPainter *p, const QRect &rect)
         return;
 
     if (m_needsCaretLayout) {
-        DOMPosition pos = DOMPosition(startNode(), startOffset());
+        Position pos = Position(startNode(), startOffset());
         if (!pos.inRenderedContent()) {
             moveToRenderedContent();
         }
@@ -527,7 +520,7 @@ void KHTMLSelection::paintCaret(QPainter *p, const QRect &rect)
     }
 }
 
-void KHTMLSelection::setBaseNode(DOM::NodeImpl *node)
+void Selection::setBaseNode(DOM::NodeImpl *node)
 {
 	if (m_baseNode == node)
 		return;
@@ -541,12 +534,12 @@ void KHTMLSelection::setBaseNode(DOM::NodeImpl *node)
 		m_baseNode->ref();
 }
 
-void KHTMLSelection::setBaseOffset(long offset)
+void Selection::setBaseOffset(long offset)
 {
 	m_baseOffset = offset;
 }
 
-void KHTMLSelection::setExtentNode(DOM::NodeImpl *node)
+void Selection::setExtentNode(DOM::NodeImpl *node)
 {
 	if (m_extentNode == node)
 		return;
@@ -560,12 +553,12 @@ void KHTMLSelection::setExtentNode(DOM::NodeImpl *node)
 		m_extentNode->ref();
 }
 	
-void KHTMLSelection::setExtentOffset(long offset)
+void Selection::setExtentOffset(long offset)
 {
 	m_extentOffset = offset;
 }
 
-void KHTMLSelection::setStartNode(DOM::NodeImpl *node)
+void Selection::setStartNode(DOM::NodeImpl *node)
 {
 	if (m_startNode == node)
 		return;
@@ -579,12 +572,12 @@ void KHTMLSelection::setStartNode(DOM::NodeImpl *node)
 		m_startNode->ref();
 }
 
-void KHTMLSelection::setStartOffset(long offset)
+void Selection::setStartOffset(long offset)
 {
 	m_startOffset = offset;
 }
 
-void KHTMLSelection::setEndNode(DOM::NodeImpl *node)
+void Selection::setEndNode(DOM::NodeImpl *node)
 {
 	if (m_endNode == node)
 		return;
@@ -598,17 +591,17 @@ void KHTMLSelection::setEndNode(DOM::NodeImpl *node)
 		m_endNode->ref();
 }
 	
-void KHTMLSelection::setEndOffset(long offset)
+void Selection::setEndOffset(long offset)
 {
 	m_endOffset = offset;
 }
 
-void KHTMLSelection::validate(ETextGranularity granularity)
+void Selection::validate(ETextGranularity granularity)
 {
     // move the base and extent nodes to their equivalent leaf positions
     bool baseAndExtentEqual = m_baseNode == m_extentNode && m_baseOffset == m_extentOffset;
     if (m_baseNode) {
-        DOMPosition pos = basePosition().equivalentLeafPosition();
+        Position pos = basePosition().equivalentLeafPosition();
         m_baseNode = pos.node();
         m_baseOffset = pos.offset();
         if (baseAndExtentEqual) {
@@ -617,7 +610,7 @@ void KHTMLSelection::validate(ETextGranularity granularity)
         }
     }
     if (m_extentNode && !baseAndExtentEqual) {
-        DOMPosition pos = extentPosition().equivalentLeafPosition();
+        Position pos = extentPosition().equivalentLeafPosition();
         m_extentNode = pos.node();
         m_extentOffset = pos.offset();
     }
@@ -712,8 +705,8 @@ void KHTMLSelection::validate(ETextGranularity granularity)
         }
     }
     else {  // granularity == LINE
-        KHTMLSelection baseSelection = *this;
-        KHTMLSelection extentSelection = *this;
+        Selection baseSelection = *this;
+        Selection extentSelection = *this;
         if (m_baseNode && (m_baseNode->nodeType() == Node::TEXT_NODE || m_baseNode->nodeType() == Node::CDATA_SECTION_NODE)) {
             if (startAndEndLineNodesIncludingNode(m_baseNode, m_baseOffset, baseSelection)) {
                 setStartNode(baseSelection.baseNode());
@@ -760,7 +753,7 @@ void KHTMLSelection::validate(ETextGranularity granularity)
 #endif
 }
 
-bool KHTMLSelection::moveToRenderedContent()
+bool Selection::moveToRenderedContent()
 {
     if (isEmpty())
         return false;
@@ -768,19 +761,19 @@ bool KHTMLSelection::moveToRenderedContent()
     if (m_state != CARET)
         return false;
 
-    DOMPosition pos = DOMPosition(startNode(), startOffset());
+    Position pos = Position(startNode(), startOffset());
     if (pos.inRenderedContent())
         return true;
         
     // not currently rendered, try moving to prev
-    DOMPosition prev = pos.previousCharacterPosition();
+    Position prev = pos.previousCharacterPosition();
     if (prev != pos && prev.node()->inSameContainingEditableBlock(pos.node())) {
         moveTo(prev);
         return true;
     }
 
     // could not be moved to prev, try next
-    DOMPosition next = pos.nextCharacterPosition();
+    Position next = pos.nextCharacterPosition();
     if (next != pos && next.node()->inSameContainingEditableBlock(pos.node())) {
         moveTo(next);
         return true;
@@ -789,27 +782,27 @@ bool KHTMLSelection::moveToRenderedContent()
     return false;
 }
 
-DOMPosition KHTMLSelection::basePosition() const
+Position Selection::basePosition() const
 {
-    return DOMPosition(baseNode(), baseOffset());
+    return Position(baseNode(), baseOffset());
 }
 
-DOMPosition KHTMLSelection::extentPosition() const
+Position Selection::extentPosition() const
 {
-    return DOMPosition(extentNode(), extentOffset());
+    return Position(extentNode(), extentOffset());
 }
 
-DOMPosition KHTMLSelection::startPosition() const
+Position Selection::startPosition() const
 {
-    return DOMPosition(startNode(), startOffset());
+    return Position(startNode(), startOffset());
 }
 
-DOMPosition KHTMLSelection::endPosition() const
+Position Selection::endPosition() const
 {
-    return DOMPosition(endNode(), endOffset());
+    return Position(endNode(), endOffset());
 }
 
-bool KHTMLSelection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) 
+bool Selection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) 
 {
 	if (!n1 || !n2) 
 		return true;
@@ -921,7 +914,7 @@ static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long 
     }
 }
 
-static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, KHTMLSelection &selection)
+static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, Selection &selection)
 {
     if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)) {
         int pos;
@@ -964,7 +957,7 @@ static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, K
     return false;
 }
 
-void KHTMLSelection::debugRenderer(RenderObject *r, bool selected) const
+void Selection::debugRenderer(RenderObject *r, bool selected) const
 {
     if (r->node()->isElementNode()) {
         ElementImpl *element = static_cast<ElementImpl *>(r->node());
@@ -1037,7 +1030,7 @@ void KHTMLSelection::debugRenderer(RenderObject *r, bool selected) const
     }
 }
 
-void KHTMLSelection::debugPosition() const
+void Selection::debugPosition() const
 {
     if (!startNode())
         return;
@@ -1046,20 +1039,20 @@ void KHTMLSelection::debugPosition() const
     
     //RenderObject *r = 0;
 
-    fprintf(stderr, "KHTMLSelection =================\n");
+    fprintf(stderr, "Selection =================\n");
 
     if (startPosition() == endPosition()) {
-        DOMPosition pos = startPosition();
-        DOMPosition upstream = pos.equivalentUpstreamPosition();
-        DOMPosition downstream = pos.equivalentDownstreamPosition();
+        Position pos = startPosition();
+        Position upstream = pos.equivalentUpstreamPosition();
+        Position downstream = pos.equivalentDownstreamPosition();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
         fprintf(stderr, "pos:        %s %p:%d\n", getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "downstream: %s %p:%d\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
     }
     else {
-        DOMPosition pos = startPosition();
-        DOMPosition upstream = pos.equivalentUpstreamPosition();
-        DOMPosition downstream = pos.equivalentDownstreamPosition();
+        Position pos = startPosition();
+        Position upstream = pos.equivalentUpstreamPosition();
+        Position downstream = pos.equivalentDownstreamPosition();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
         fprintf(stderr, "start:      %s %p:%d\n", getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "downstream: %s %p:%d\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
@@ -1113,3 +1106,5 @@ void KHTMLSelection::debugPosition() const
 }
 
 #endif
+
+} // namespace DOM

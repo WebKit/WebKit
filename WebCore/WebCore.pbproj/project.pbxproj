@@ -508,7 +508,6 @@
 				BC745A1D05955F390058C893,
 				BCBDB03A0597B36E00B83B92,
 				BCBDB096059A28B100B83B92,
-				BEB1DD3205C1980700DD1F43,
 				BC7FDE3405C1D9AB0070A902,
 				BC7E782205C5EB700088A50F,
 				BC3B364905C9D5E200E42902,
@@ -533,6 +532,7 @@
 				832556E5061DF155007B8054,
 				BC86FB8F061F5C23006BB822,
 				BE8BD8F506359F6000D3F20B,
+				BE8BD90B0635CC2F00D3F20B,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -799,7 +799,6 @@
 				BC745A1C05955F390058C893,
 				BCBDB0390597B36E00B83B92,
 				BCBDB095059A28B100B83B92,
-				BEB1DD3105C1980700DD1F43,
 				BC7FDE3305C1D9AB0070A902,
 				BC3B364805C9D5E200E42902,
 				BC433AD005D3046F003A5A14,
@@ -815,6 +814,7 @@
 				832556E7061DF161007B8054,
 				BC86FB90061F5C23006BB822,
 				BE8BD8F406359F6000D3F20B,
+				BE8BD90A0635CC2F00D3F20B,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -862,7 +862,7 @@
 			isa = PBXShellScriptBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
+			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 //250
 //251
@@ -2746,6 +2746,34 @@
 			settings = {
 			};
 		};
+		BE8BD9080635CC2F00D3F20B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dom_selection.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE8BD9090635CC2F00D3F20B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dom_selection.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE8BD90A0635CC2F00D3F20B = {
+			fileRef = BE8BD9080635CC2F00D3F20B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE8BD90B0635CC2F00D3F20B = {
+			fileRef = BE8BD9090635CC2F00D3F20B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BE9185DD05EE59B80081354D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2988,34 +3016,6 @@
 			name = editing;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		BEB1DD2F05C1980700DD1F43 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = khtml_selection.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		BEB1DD3005C1980700DD1F43 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = khtml_selection.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		BEB1DD3105C1980700DD1F43 = {
-			fileRef = BEB1DD2F05C1980700DD1F43;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		BEB1DD3205C1980700DD1F43 = {
-			fileRef = BEB1DD3005C1980700DD1F43;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		BEF7EEA005FF8F0D009717EE = {
 			fileEncoding = 30;
@@ -3292,8 +3292,6 @@
 				F523D15402DE42AD018635CA,
 				F523D15602DE42AD018635CA,
 				F523D15302DE42AD018635CA,
-				BEB1DD2F05C1980700DD1F43,
-				BEB1DD3005C1980700DD1F43,
 				F523D15702DE42AD018635CA,
 				F523D15802DE42AD018635CA,
 			);
@@ -6393,6 +6391,8 @@
 				F523D2FA02DE4476018635CA,
 				BE91FC8B06133666005E3790,
 				BE91FC8C06133666005E3790,
+				BE8BD9080635CC2F00D3F20B,
+				BE8BD9090635CC2F00D3F20B,
 				F523D2FB02DE4476018635CA,
 				F523D2FC02DE4476018635CA,
 				F523D2FD02DE4476018635CA,
