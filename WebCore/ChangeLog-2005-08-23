@@ -1,3 +1,32 @@
+2004-09-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Ken.
+
+	<rdar://problem/3655568> window.open fails when URL contains trailing space
+
+        * kwq/KWQKURL.mm:
+        (KURL::KURL): Strip trailing and leading space when resolving relative URLs in all
+	cases, instead of just leading in the non-absolute case as before.
+
+	- refactored KURL constructor to put more work in separate
+	functions and also to change static methods to static functions,
+	to avoid having to change the header when only changing helper
+	functions that do not affect the KURL API (since KURL.h is widely
+	included).
+	
+        * kwq/KWQKURL.mm:
+        (encodeHostname):
+        (findHostnamesInMailToURL):
+        (findHostnameInHierarchicalURL):
+        (encodeHostnames):
+        (encodeRelativeString):
+        (substituteBackslashes):
+	* kwq/KWQKURL.h:
+
+	- add missing include of qvaluelist.h
+
+        * khtml/ecma/kjs_dom.h:
+
 2004-09-06  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

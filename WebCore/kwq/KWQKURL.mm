@@ -28,6 +28,8 @@
 #import "KWQAssertions.h"
 #import "KWQRegExp.h"
 #import "KWQTextCodec.h"
+#import "KWQMemArray.h"
+#import "KWQValueList.h"
 
 // FIXME: Should get this from a header.
 extern "C" int malloc_good_size(int size);
@@ -38,6 +40,12 @@ extern "C" int malloc_good_size(int size);
 #if HAVE_ICU_LIBRARY
 #import <unicode/uidna.h>
 #endif
+
+struct KWQIntegerPair {
+    KWQIntegerPair(int s, int e) : start(s), end(e) { }
+    int start;
+    int end;
+};
 
 // The simple Cocoa calls to NSString, NSURL and NSData can't throw so
 // no need to block NSExceptions here.
@@ -204,6 +212,8 @@ static const unsigned char characterClassTable[256] = {
 };
 
 static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int srcEnd);
+static char *encodeRelativeString(const KURL &base, const QString &rel, const QTextCodec *codec);
+static QString substituteBackslashes(const QString &string);
 
 static inline bool isSchemeFirstChar(unsigned char c) { return characterClassTable[c] & SchemeFirstChar; }
 static inline bool isSchemeChar(unsigned char c) { return characterClassTable[c] & SchemeChar; }
@@ -220,23 +230,6 @@ static inline int hexDigitValue(unsigned char c)
     if (c < 'A')
         return c - '0';
     return (c - 'A' + 10) & 0xF; // handle both upper and lower case without a branch
-}
-
-static QString substituteBackslashes(const QString &string)
-{
-    int questionPos = string.find('?');
-    int hashPos = string.find('#');
-    unsigned pathEnd;
-    
-    if (hashPos > 0 && (questionPos < 0 || questionPos > hashPos)) {
-	pathEnd = hashPos;
-    } else if (questionPos > 0) {
-	pathEnd = questionPos;
-    } else {
-	pathEnd = string.length();
-    }
-
-    return string.left(pathEnd).replace('\\','/') + string.mid(pathEnd);
 }
 
 // KURL
@@ -358,67 +351,34 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
         strBuffer = 0;
         str = rel.ascii();
     } else {
-#if HAVE_ICU_LIBRARY
-        QString s = encodeHostnames(rel);
-#else
-        QString s = rel;
-#endif
-
-        static const QTextCodec UTF8Codec(kCFStringEncodingUTF8);
-
-        const QTextCodec *pathCodec = codec ? codec : &UTF8Codec;
-        const QTextCodec *otherCodec = pathCodec;
-
-        // Always use UTF-8 for mailto URLs because that's what mail applications expect.
-        // Always use UTF-8 for paths in file and help URLs, since they are local filesystem paths,
-        // and help content is often defined with this in mind, but use native encoding for the
-        // non-path parts of the URL.
-        if (*pathCodec != UTF8Codec) {
-            QString protocol;
-            if (rel.length() > 0 && isSchemeFirstChar(rel.at(0).latin1())) {
-                for (uint i = 1; i < rel.length(); i++) {
-                    char p = rel.at(i).latin1();
-                    if (p == ':') {
-                        protocol = rel.left(i);
-                        break;
-                    }
-                    if (!isSchemeChar(p)) {
-                        break;
-                    }
-                }
-            }
-            if (!protocol) {
-                protocol = base.protocol();
-            }
-            protocol = protocol.lower();
-            if (protocol == "file" || protocol == "help") {
-                pathCodec = &UTF8Codec;
-            } else if (protocol == "mailto") {
-                pathCodec = &UTF8Codec;
-                otherCodec = &UTF8Codec;
-            }
-        }
-
-        int pathEnd = -1;
-        if (*pathCodec != *otherCodec) {
-            pathEnd = s.find(QRegExp("[?#]"));
-        }
-        if (pathEnd == -1) {
-            QCString decoded = pathCodec->fromUnicode(s);
-            strBuffer = strdup(decoded);
-        } else {
-            QCString pathDecoded = pathCodec->fromUnicode(s.left(pathEnd));
-            QCString otherDecoded = otherCodec->fromUnicode(s.mid(pathEnd));
-            int pathDecodedLength = pathDecoded.length();
-            int otherDecodedLength = otherDecoded.length();
-            strBuffer = static_cast<char *>(malloc(pathDecodedLength + otherDecodedLength + 1));
-            memcpy(strBuffer, pathDecoded, pathDecodedLength);
-            memcpy(strBuffer + pathDecodedLength, otherDecoded, otherDecodedLength);
-            strBuffer[pathDecodedLength + otherDecodedLength] = 0;
-        }
+        strBuffer = encodeRelativeString(base, rel, codec);
         str = strBuffer;
     }
     
+    // workaround for sites that put leading whitespace whitespace on
+    // URL references
+    bool strippedStart = false;
+    while (*str == ' ') {
+        str++;
+        strippedStart = true;
+    }
+
+    // workaround for trailing whitespace - a bit more complicated cause we have to copy
+    // it would be even better to replace null-termination with a length parameter
+    int len = strlen(str);
+    int charsToChopOffEnd = 0;
+    for (int pos = len - 1; pos >= 0 && str[pos] == ' '; pos--) {
+        charsToChopOffEnd++;
+    }
+    if (charsToChopOffEnd > 0) {
+        char *newStrBuffer = (char *)malloc((len + 1) - charsToChopOffEnd);
+        strncpy(newStrBuffer, str, len - charsToChopOffEnd);
+        newStrBuffer[len - charsToChopOffEnd] = '\0';
+        free(strBuffer);
+        strBuffer = newStrBuffer;
+        str = strBuffer;
+    }
+
     // According to the RFC, the reference should be interpreted as an
     // absolute URI if possible, using the "leftmost, longest"
     // algorithm. If the URI reference is absolute it will have a
@@ -439,13 +399,8 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
     }
 
     if (absolute) {
-	parse(str, allASCII ? &rel : 0);
+	parse(str, (allASCII && !strippedStart && (charsToChopOffEnd == 0)) ? &rel : 0);
     } else {
-	// workaround for sites that put leading whitespace on relative URLs
-	while (*str == ' ') {
-	    str++;
-	}
-
 	// if the base is invalid, just append the relative
 	// portion. The RFC does not specify what to do in this case.
 	if (!base.m_isValid) {
@@ -1545,82 +1500,7 @@ NSData *KURL::getNSData() const
 
 #if HAVE_ICU_LIBRARY
 
-QString KURL::encodeHostnames(const QString &s)
-{
-    if (s.startsWith("mailto:", false)) {
-        const QMemArray<KWQIntegerPair> hostnameRanges = findHostnamesInMailToURL(s);
-        uint n = hostnameRanges.size();
-        if (n != 0) {
-            QString result;
-            uint p = 0;
-            for (uint i = 0; i < n; ++i) {
-                const KWQIntegerPair &r = hostnameRanges[i];
-                result += s.mid(p, r.start);
-                result += encodeHostname(s.mid(r.start, r.end - r.start));
-                p = r.end;
-            }
-            result += s.mid(p);
-            return result;
-        }
-    } else {
-        int hostStart, hostEnd;
-        if (findHostnameInHierarchicalURL(s, hostStart, hostEnd)) {
-            return s.left(hostStart) + encodeHostname(s.mid(hostStart, hostEnd - hostStart)) + s.mid(hostEnd); 
-        }
-    }
-    return s;
-}
-
-bool KURL::findHostnameInHierarchicalURL(const QString &s, int &startOffset, int &endOffset)
-{
-    // Find the host name in a hierarchical URL.
-    // It comes after a "://" sequence, with scheme characters preceding.
-    // If ends with the end of the string or a ":" or a path segment ending character.
-    // If there is a "@" character, the host part is just the part after the "@".
-    int separator = s.find("://");
-    if (separator <= 0) {
-        return false;
-    }
-
-    // Check that all characters before the :// are valid scheme characters.
-    if (!isSchemeFirstChar(s[0].latin1())) {
-        return false;
-    }
-    for (int i = 1; i < separator; ++i) {
-        if (!isSchemeChar(s[i].latin1())) {
-            return false;
-        }
-    }
-
-    // Start after the separator.
-    int authorityStart = separator + 3;
-
-    // Find terminating character.
-    int length = s.length();
-    int hostnameEnd = length;
-    for (int i = authorityStart; i < length; ++i) {
-        char c = s[i].latin1();
-        if (c == ':' || (isPathSegmentEndChar(c) && c != '\0')) {
-            hostnameEnd = i;
-            break;
-        }
-    }
-
-    // Find "@" for the start of the host name.
-    int userInfoTerminator = s.find('@', authorityStart);
-    int hostnameStart;
-    if (userInfoTerminator == -1 || userInfoTerminator > hostnameEnd) {
-        hostnameStart = authorityStart;
-    } else {
-        hostnameStart = userInfoTerminator + 1;
-    }
-
-    startOffset = hostnameStart;
-    endOffset = hostnameEnd;
-    return true;
-}
-
-QString KURL::encodeHostname(const QString &s)
+static QString encodeHostname(const QString &s)
 {
     // Needs to be big enough to hold an IDN-encoded name.
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
@@ -1640,7 +1520,7 @@ QString KURL::encodeHostname(const QString &s)
     return QString(reinterpret_cast<QChar *>(buffer), numCharactersConverted);
 }
 
-QMemArray<KWQIntegerPair> KURL::findHostnamesInMailToURL(const QString &s)
+static QMemArray<KWQIntegerPair> findHostnamesInMailToURL(const QString &s)
 {
     // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' or end of string character.
     // Skip quoted strings so that characters in them don't confuse us.
@@ -1709,4 +1589,162 @@ QMemArray<KWQIntegerPair> KURL::findHostnamesInMailToURL(const QString &s)
     }
 }
 
+static bool findHostnameInHierarchicalURL(const QString &s, int &startOffset, int &endOffset)
+{
+    // Find the host name in a hierarchical URL.
+    // It comes after a "://" sequence, with scheme characters preceding.
+    // If ends with the end of the string or a ":" or a path segment ending character.
+    // If there is a "@" character, the host part is just the part after the "@".
+    int separator = s.find("://");
+    if (separator <= 0) {
+        return false;
+    }
+
+    // Check that all characters before the :// are valid scheme characters.
+    if (!isSchemeFirstChar(s[0].latin1())) {
+        return false;
+    }
+    for (int i = 1; i < separator; ++i) {
+        if (!isSchemeChar(s[i].latin1())) {
+            return false;
+        }
+    }
+
+    // Start after the separator.
+    int authorityStart = separator + 3;
+
+    // Find terminating character.
+    int length = s.length();
+    int hostnameEnd = length;
+    for (int i = authorityStart; i < length; ++i) {
+        char c = s[i].latin1();
+        if (c == ':' || (isPathSegmentEndChar(c) && c != '\0')) {
+            hostnameEnd = i;
+            break;
+        }
+    }
+
+    // Find "@" for the start of the host name.
+    int userInfoTerminator = s.find('@', authorityStart);
+    int hostnameStart;
+    if (userInfoTerminator == -1 || userInfoTerminator > hostnameEnd) {
+        hostnameStart = authorityStart;
+    } else {
+        hostnameStart = userInfoTerminator + 1;
+    }
+
+    startOffset = hostnameStart;
+    endOffset = hostnameEnd;
+    return true;
+}
+
+static QString encodeHostnames(const QString &s)
+{
+    if (s.startsWith("mailto:", false)) {
+        const QMemArray<KWQIntegerPair> hostnameRanges = findHostnamesInMailToURL(s);
+        uint n = hostnameRanges.size();
+        if (n != 0) {
+            QString result;
+            uint p = 0;
+            for (uint i = 0; i < n; ++i) {
+                const KWQIntegerPair &r = hostnameRanges[i];
+                result += s.mid(p, r.start);
+                result += encodeHostname(s.mid(r.start, r.end - r.start));
+                p = r.end;
+            }
+            result += s.mid(p);
+            return result;
+        }
+    } else {
+        int hostStart, hostEnd;
+        if (findHostnameInHierarchicalURL(s, hostStart, hostEnd)) {
+            return s.left(hostStart) + encodeHostname(s.mid(hostStart, hostEnd - hostStart)) + s.mid(hostEnd); 
+        }
+    }
+    return s;
+}
+
 #endif // HAVE_ICU_LIBRARY
+
+static char *encodeRelativeString(const KURL &base, const QString &rel, const QTextCodec *codec)
+{
+#if HAVE_ICU_LIBRARY
+    QString s = encodeHostnames(rel);
+#else
+    QString s = rel;
+#endif
+
+    char *strBuffer;
+
+    static const QTextCodec UTF8Codec(kCFStringEncodingUTF8);
+
+    const QTextCodec *pathCodec = codec ? codec : &UTF8Codec;
+    const QTextCodec *otherCodec = pathCodec;
+    
+    // Always use UTF-8 for mailto URLs because that's what mail applications expect.
+    // Always use UTF-8 for paths in file and help URLs, since they are local filesystem paths,
+    // and help content is often defined with this in mind, but use native encoding for the
+    // non-path parts of the URL.
+    if (*pathCodec != UTF8Codec) {
+        QString protocol;
+        if (rel.length() > 0 && isSchemeFirstChar(rel.at(0).latin1())) {
+            for (uint i = 1; i < rel.length(); i++) {
+                char p = rel.at(i).latin1();
+                if (p == ':') {
+                    protocol = rel.left(i);
+                    break;
+                }
+                if (!isSchemeChar(p)) {
+                    break;
+                }
+            }
+        }
+        if (!protocol) {
+            protocol = base.protocol();
+        }
+        protocol = protocol.lower();
+        if (protocol == "file" || protocol == "help") {
+            pathCodec = &UTF8Codec;
+        } else if (protocol == "mailto") {
+            pathCodec = &UTF8Codec;
+            otherCodec = &UTF8Codec;
+        }
+    }
+    
+    int pathEnd = -1;
+    if (*pathCodec != *otherCodec) {
+        pathEnd = s.find(QRegExp("[?#]"));
+    }
+    if (pathEnd == -1) {
+        QCString decoded = pathCodec->fromUnicode(s);
+        strBuffer = strdup(decoded);
+    } else {
+        QCString pathDecoded = pathCodec->fromUnicode(s.left(pathEnd));
+        QCString otherDecoded = otherCodec->fromUnicode(s.mid(pathEnd));
+        int pathDecodedLength = pathDecoded.length();
+        int otherDecodedLength = otherDecoded.length();
+        strBuffer = static_cast<char *>(malloc(pathDecodedLength + otherDecodedLength + 1));
+        memcpy(strBuffer, pathDecoded, pathDecodedLength);
+        memcpy(strBuffer + pathDecodedLength, otherDecoded, otherDecodedLength);
+        strBuffer[pathDecodedLength + otherDecodedLength] = 0;
+    }
+
+    return strBuffer;
+}
+
+static QString substituteBackslashes(const QString &string)
+{
+    int questionPos = string.find('?');
+    int hashPos = string.find('#');
+    unsigned pathEnd;
+    
+    if (hashPos > 0 && (questionPos < 0 || questionPos > hashPos)) {
+	pathEnd = hashPos;
+    } else if (questionPos > 0) {
+	pathEnd = questionPos;
+    } else {
+	pathEnd = string.length();
+    }
+
+    return string.left(pathEnd).replace('\\','/') + string.mid(pathEnd);
+}

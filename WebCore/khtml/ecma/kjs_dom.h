@@ -29,6 +29,8 @@
 
 #include "ecma/kjs_binding.h"
 
+#include "qvaluelist.h"
+
 namespace KJS {
 
   class DOMNode : public DOMObject {
