@@ -1,5 +1,13 @@
 2003-01-16  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed comment.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+
+2003-01-16  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3125743 - right-click doesn't count as ctrl-click in Flash
 
 	AppKit doesn't call mouseDown or mouseUp on right-click. Simulate control-click mouseDown and mouseUp so plug-ins get the right-click event as they do in Carbon
