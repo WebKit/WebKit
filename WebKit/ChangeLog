@@ -1,5 +1,14 @@
 2003-07-03  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3206011>: Don't accepts drags when showing dialogs or sheets
+
+        Reviewed by john.
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragOperationForDraggingInfo:]):
+
+2003-07-03  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3291566>: Aborting standalone image load makes image directory page unusable
 
         Reviewed by john.
