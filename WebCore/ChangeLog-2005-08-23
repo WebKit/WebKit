@@ -1,3 +1,17 @@
+2004-06-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        * khtml/editing/jsediting.h: Elide some unnecessary namespace prefixes.
+        * khtml/editing/jsediting.cpp: Make typed constants instead of macros.
+        (DOM::JSEditor::commandDict): Elide unnecessary namespace prefix.
+        (DOM::JSEditor::execCommand): Remove xxxNotImplemented functions; just return false instead.
+        (DOM::JSEditor::queryCommandEnabled): Ditto.
+        (DOM::JSEditor::queryCommandIndeterm): Ditto.
+        (DOM::JSEditor::queryCommandState): Ditto.
+        (DOM::JSEditor::queryCommandSupported): Ditto.
+        (DOM::JSEditor::queryCommandValue): Ditto.
+
 2004-06-05  Trey Matteson  <trey@apple.com>
 
 	As agreed with Hyatt and Louch, do not post incoming dragging events
