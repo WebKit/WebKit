@@ -1,5 +1,9 @@
 2002-02-16  Richard Williamson  <rjw@apple.com>
 
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource controller]):
+
+2002-02-16  Richard Williamson  <rjw@apple.com>
+
         Reminders to change frame<->datasource ownership cycle.
         
 	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource setFrame:]),

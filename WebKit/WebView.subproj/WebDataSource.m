@@ -180,8 +180,9 @@
 
 - (id <IFWebController>)controller
 {
-    // All data source from a document (frameset) share the same
-    // controller.
+    // All data sources used in a document share the same
+    // controller.  A single document may have many datasource corresponding to
+    // frame or iframes.
     if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
         return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent controller];
     return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->controller;
