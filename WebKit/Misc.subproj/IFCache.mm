@@ -9,6 +9,7 @@
 #import "IFCache.h"
 
 #include "misc/loader.h"
+#include "kjs/collector.h"
 
 @implementation IFCache
 
@@ -45,6 +46,16 @@
 + (void)setDisabled:(BOOL)disabled
 {
     khtml::Cache::setCacheDisabled(disabled);
+}
+
++ (int)javaScriptObjectsCount
+{
+    return KJS::Collector::size();
+}
+
++ (void)garbageCollectJavaScriptObjects
+{
+    while (KJS::Collector::collect()) { }
 }
 
 @end

@@ -1,3 +1,13 @@
+2002-04-01  Darin Adler  <darin@apple.com>
+
+	Added operations for JavaScript objects. Not sure if this was the best
+	place for them, but it should be OK for now.
+
+	* Misc.subproj/IFCache.h:
+	* Misc.subproj/IFCache.mm: (+[IFCache setDisabled:]), (+[IFCache
+	javaScriptObjectsCount]), (+[IFCache garbageCollectJavaScriptObjects]):
+	* WebKit.pbproj/project.pbxproj:
+
 2002-03-30  Richard Williamson  <rjw@apple.com>
 
         Corrected comments describing the new 'acceptable to layout' state

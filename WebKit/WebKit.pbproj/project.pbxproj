@@ -127,7 +127,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = ../WebCore/include;
+				HEADER_SEARCH_PATHS = "../WebCore/include ../JavaScriptCore";
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-Werror -Wall -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_  -I.. -I../WebCore/src/kdelibs/khtml -I../WebCore/src/kwq -I../WebCore/src/kwq/kparts -I../WebCore/include -I../WebCore/include/private -F/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ -F/System/Library/Frameworks/CoreServices.framework/Frameworks/ -F/System/Library/Frameworks/Carbon.framework/Frameworks/";
