@@ -21,31 +21,13 @@
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSImageExtras.h>
-#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPreferences.h>
 #import <WebKit/WebPluginController.h>
-#import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewPrivate.h>
 
-// Needed for the mouse moved notification.
 #import <AppKit/NSResponder_Private.h>
-
-// These are a little larger than typical because dragging links is a fairly
-// advanced feature that can confuse non-power-users
-#define DragStartXHysteresis  		10.0
-#define DragStartYHysteresis  		10.0
-
-#define DRAG_LABEL_BORDER_X		4.0
-#define DRAG_LABEL_BORDER_Y		2.0
-#define DRAG_LABEL_RADIUS	5
-
-#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
-
-#import <CoreGraphics/CGStyle.h>
-#import <CoreGraphics/CGSTypes.h>
 #import <CoreGraphics/CGContextGState.h>
 
 @implementation WebHTMLView
@@ -618,7 +600,7 @@
     // drag hysteresis.
     [_private->mouseDownEvent release];
     _private->mouseDownEvent = [event retain];
-    
+
     // Let khtml get a chance to deal with the event.
     [[self _bridge] mouseDown:event];
 }
@@ -642,147 +624,7 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    // If the frame has a provisional data source, this view may be released.
-    // Don't allow drag because drag callbacks will reference this released view.
-    if([[self _frame] provisionalDataSource]){
-        return;
-    }
-    
-    // Ensure that we're visible wrt the event location.
-    BOOL didScroll = [self autoscroll:event];
-
-    NSPoint mouseDownPoint = [_private->mouseDownEvent locationInWindow];
-    if (didScroll){
-        mouseDownPoint.x = -FLT_MAX;
-        mouseDownPoint.y = -FLT_MAX;
-    }
-    
-    // Now do WebKit dragging.
-    float deltaX = ABS([event locationInWindow].x - mouseDownPoint.x);
-    float deltaY = ABS([event locationInWindow].y - mouseDownPoint.y);
-
-    NSPoint point = [self convertPoint:mouseDownPoint fromView:nil];
-    NSDictionary *element = [self _elementAtPoint: point];
-    NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
-    NSURL *imageURL = [element objectForKey: WebElementImageURLKey];
-
-    [_private->draggingImageURL release];
-    _private->draggingImageURL = nil;
-    
-    if ((deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis) && !didScroll){
-        if((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) || (!imageURL && linkURL)){
-            
-            if (imageURL){
-                _private->draggingImageURL = [imageURL retain];
-                
-                [self _web_dragPromisedImage:[element objectForKey:WebElementImageKey]
-                                      origin:[[element objectForKey:WebElementImageLocationKey] pointValue]
-                                         URL:linkURL ? linkURL : imageURL
-                                    fileType:[[imageURL path] pathExtension]
-                                       title:[element objectForKey:WebElementImageAltStringKey]
-                                       event:_private->mouseDownEvent];
-            }else if (linkURL) {
-                BOOL drawURLString = YES;
-                BOOL clipURLString = NO;
-                                                
-                NSString *label = [element objectForKey: WebElementLinkLabelKey];
-                NSString *urlString = [linkURL absoluteString];
-                
-                if (!label){
-                    drawURLString = NO;
-                    label = urlString;
-                }
-                
-                // FIXME: This mega-block of code needs to be cleaned-up or put into another method.
-                NSFont *labelFont = [NSFont systemFontOfSize: 12.0];
-                NSFont *urlFont = [NSFont systemFontOfSize: 8.0];
-                NSDictionary *labelAttributes = [NSDictionary dictionaryWithObjectsAndKeys: labelFont, NSFontAttributeName, [NSColor whiteColor], NSForegroundColorAttributeName, nil];
-                NSDictionary *urlAttributes = [NSDictionary dictionaryWithObjectsAndKeys: urlFont, NSFontAttributeName, [NSColor whiteColor], NSForegroundColorAttributeName, nil];
-                NSSize labelSize = [label sizeWithAttributes: labelAttributes];
-                NSSize imageSize, urlStringSize;
-                imageSize.width += labelSize.width + DRAG_LABEL_BORDER_X * 2;
-                imageSize.height += labelSize.height + DRAG_LABEL_BORDER_Y *2;
-                if (drawURLString){
-                    urlStringSize = [urlString sizeWithAttributes: urlAttributes];
-                    imageSize.height += urlStringSize.height;
-                    // Clip the url string to 2.5 times the width of the label.
-                    if (urlStringSize.width > MAX(2.5 * labelSize.width, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP)){
-                        imageSize.width = MAX((labelSize.width * 2.5) + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
-                        clipURLString = YES;
-                    }
-                    else
-                        imageSize.width = MAX(labelSize.width + DRAG_LABEL_BORDER_X * 2, urlStringSize.width + DRAG_LABEL_BORDER_X * 2);
-                }
-                NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
-                [dragImage lockFocus];
-
-                [[NSColor colorWithCalibratedRed: 0.5 green: 0.5 blue: 0.5 alpha: 0.8] set];
-
-                // Drag a rectangle with rounded corners/
-                NSBezierPath *path = [NSBezierPath bezierPath];
-                [path appendBezierPathWithOvalInRect: NSMakeRect(0,0, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
-                [path appendBezierPathWithOvalInRect: NSMakeRect(0,imageSize.height - DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
-                [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2, imageSize.height - DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
-                [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2,0, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
-            
-                [path appendBezierPathWithRect: NSMakeRect(DRAG_LABEL_RADIUS, 0, imageSize.width - DRAG_LABEL_RADIUS * 2, imageSize.height)];
-                [path appendBezierPathWithRect: NSMakeRect(0, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 10, imageSize.height - 2 * DRAG_LABEL_RADIUS)];
-                [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS - 20,DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 20, imageSize.height - 2 * DRAG_LABEL_RADIUS)];
-                [path fill];
-            
-                // Draw the label with a slight shadow.
-                CGShadowStyle shadow;
-                CGSGenericObj style;
-                
-                shadow.version    = 0;
-                shadow.elevation  = kCGShadowElevationDefault;
-                shadow.azimuth    = 136.869995;
-                shadow.ambient    = 0.317708;
-                shadow.height     = 2.187500;
-                shadow.radius     = 1.875000;
-                shadow.saturation = kCGShadowSaturationDefault;
-                style = CGStyleCreateShadow(&shadow);
-                [NSGraphicsContext saveGraphicsState];
-                CGContextSetStyle([[NSGraphicsContext currentContext] graphicsPort], style);
-
-                if (drawURLString){
-                    if (clipURLString) {
-                        urlString = [WebStringTruncator rightTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:urlFont];
-                    }
-                    [urlString drawAtPoint: NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y) withAttributes: urlAttributes];
-                }
-                [label drawAtPoint: NSMakePoint (DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y + urlStringSize.height) withAttributes: labelAttributes];
-
-                [NSGraphicsContext restoreGraphicsState];
-                CGStyleRelease(style);
-
-                [dragImage unlockFocus];
-
-                NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-                [pasteboard _web_writeURL:linkURL andTitle:label withOwner:self];
-
-                NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
-                NSSize centerOffset = NSMakeSize(imageSize.width / 2, -DRAG_LABEL_BORDER_Y);
-                NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
-
-                [self dragImage:dragImage
-                             at:imagePoint
-                         offset:centerOffset
-                          event:event
-                     pasteboard:pasteboard
-                         source:self
-                      slideBack:NO];
-            }
-            
-            return;
-        }
-    }
-
-    // Give khtml a crack at the event only if we haven't started,
-    // or potentially started, a drag
-    if (!linkURL && !imageURL){
-        [[self _bridge] mouseDragged:event];
-    }
+    [[self _bridge] mouseDragged:event];
 }
 
 - (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
@@ -794,7 +636,7 @@
 {
     // During a drag, we don't get any mouseMoved or flagsChanged events.
     // So after the drag we need to explicitly update the mouseover state.
-    [self _updateMouseoverWithEvent:[NSApp currentEvent]];
+    [self _updateMouseoverWithFakeEvent];
 
     // Reregister for drag types because they were unregistered before the drag.
     [[self _web_parentWebView] _reregisterDraggedTypes];

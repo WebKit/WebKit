@@ -1,3 +1,33 @@
+2002-12-31  Maciej Stachowiak  <mjs@apple.com>
+
+	Reviewed by Darin.
+
+	- fixed 3130831 - HOMEPAGE: JavaScript that tries to intercept onmousedown fails, image gets dragged instead
+	- fixed 3125554 - while dragging to select text in a nested frame, you can start dragging a link or image
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge handleMouseDragged:]): New method; call through the WebHTMLView.
+        (-[WebBridge mayStartDragWithMouseDown:]): Likewise.
+        (-[WebBridge handleAutoscrollForMouseDragged:]): Likewise.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): Instead of doing drag handling
+	here, just pass the event to WebCore.
+	(-[WebHTMLView draggedImage:endedAt:operation:]): Send a fake
+	mousemove event instead of sending the current event (likely a
+	mouse up as if it were a mouse move).
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLViewPrivate dealloc]): Release drag element if any.
+        (-[WebHTMLView _dragImageForElement:]): New method. Split out the
+	code to make the special drag image for links.
+	(-[WebHTMLView _handleMouseDragged:]): Move all the drag handling
+	here. This method will get called only if WebCore hasn't blocked
+	default drag handling.
+        (-[WebHTMLView _handleAutoscrollForMouseDragged:]): Do
+	autoscroll. Autoscroll is still lame, we need a timer.
+        (-[WebHTMLView _mayStartDragWithMouseDown:]): Determine if the element
+	is a link or image and so may be dragged; remember the drag element.
+
 2003-01-01  Richard Williamson   <rjw@apple.com>
 
         Correct fix for 3137430 that doesn't always effectively disable

@@ -123,6 +123,8 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _ownsView(false)
     , _mouseDownView(nil)
     , _sendingEventToSubview(false)
+    , _mouseDownMayStartDrag(false)
+    , _mouseDownMayStartSelect(false)
     , _formSubmittedFlag(false)
 {
     // Must init the cache before connecting to any signals
@@ -760,6 +762,14 @@ bool KWQKHTMLPart::closeURL()
 
 void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
 {
+    // If we got the event back, that must mean it wasn't prevented,
+    // so it's allowed to start a drag or selection.
+    if ([_bridge mayStartDragWithMouseDown:_currentEvent]) {
+	_mouseDownMayStartDrag = true;
+    } else {
+	_mouseDownMayStartSelect = true;
+    }
+
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
         // because we don't want to do it until we know we didn't hit a widget.
@@ -889,14 +899,33 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
     } else {
     	view = mouseDownViewIfStillGood();
     }
-    if (!view) {
-        KHTMLPart::khtmlMouseMoveEvent(event);
-        return;
+
+    if (view) {
+	_sendingEventToSubview = true;
+	[view mouseDragged:_currentEvent];
+	_sendingEventToSubview = false;
+	return;
     }
-    
-    _sendingEventToSubview = true;
-    [view mouseDragged:_currentEvent];
-    _sendingEventToSubview = false;
+
+    if ([_currentEvent type] == NSLeftMouseDragged) {
+	if (_mouseDownMayStartDrag) {
+	    [_bridge handleMouseDragged:_currentEvent];
+	    return;
+	} else if (_mouseDownMayStartSelect) {
+	    // we use khtml's selection but our own autoscrolling
+	    [_bridge handleAutoscrollForMouseDragged:_currentEvent];
+	} else {
+	    return;
+	}
+    } else {
+	// If we allowed the other side of the bridge to handle a drag
+	// last time, then m_bMousePressed might still be set. So we
+	// clear it now to make sure the next move after a drag
+	// doesn't look like a drag.
+	d->m_bMousePressed = false;
+    }
+
+    KHTMLPart::khtmlMouseMoveEvent(event);
 }
 
 void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
@@ -1027,6 +1056,8 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
 
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
         buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
+    _mouseDownMayStartDrag = false;
+    _mouseDownMayStartSelect = false;
     d->m_view->viewportMousePressEvent(&kEvent);
     
     [_firstResponderAtMouseDownTime release];

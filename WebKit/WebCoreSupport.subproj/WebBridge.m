@@ -565,4 +565,32 @@ static BOOL loggedObjectCacheSize = NO;
     return [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
 }
 
+- (void)handleMouseDragged:(NSEvent *)event
+{
+    WebHTMLView *docView = (WebHTMLView *)[[frame webView] documentView];
+
+    ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
+
+    [docView _handleMouseDragged:event];
+}
+
+- (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
+{
+    WebHTMLView *docView = (WebHTMLView *)[[frame webView] documentView];
+
+    ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
+
+    [docView _handleAutoscrollForMouseDragged:event];
+}
+
+- (BOOL)mayStartDragWithMouseDown:(NSEvent *)event
+{
+    WebHTMLView *docView = (WebHTMLView *)[[frame webView] documentView];
+
+    ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
+
+    return [docView _mayStartDragWithMouseDown:event];
+}
+
+
 @end

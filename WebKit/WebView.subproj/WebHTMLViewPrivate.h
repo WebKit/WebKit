@@ -27,6 +27,7 @@
     BOOL subviewsSetAside;
 
     NSEvent *mouseDownEvent;
+    NSDictionary *dragElement;
 
     NSURL *draggingImageURL;
     
@@ -44,6 +45,7 @@
 
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
+- (void)_updateMouseoverWithFakeEvent;
 
 - (NSDictionary *)_elementAtPoint:(NSPoint)point;
 
@@ -58,5 +60,10 @@
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
 
 - (void)_frameOrBoundsChanged;
+
+- (NSImage *)_dragImageForElement:(NSDictionary *)element;
+- (void)_handleMouseDragged:(NSEvent *)event;
+- (void)_handleAutoscrollForMouseDragged:(NSEvent *)event;
+- (BOOL)_mayStartDragWithMouseDown:(NSEvent *)event;
 
 @end

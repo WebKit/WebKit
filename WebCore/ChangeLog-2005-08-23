@@ -1,3 +1,25 @@
+2002-12-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3130831 - HOMEPAGE: JavaScript that tries to intercept onmousedown fails, image gets dragged instead
+	- fixed 3125554 - while dragging to select text in a nested frame, you can start dragging a link or image
+	
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPart::KWQKHTMLPart): Initialize new mouseDownMayStartDrag
+	and mouseDownMayStartSelect methods.
+        (KWQKHTMLPart::khtmlMousePressEvent): Make sure a mouse down
+	won't be used to start a drag or selection if the default action
+	is prevented on the mouse down event.
+	(KWQKHTMLPart::mouseDown): Since the default action wasn't
+	prevented, decide if this might be the start of a drag or
+	selection.
+        (KWQKHTMLPart::khtmlMouseMoveEvent): On a drag or selection, call
+	back to the bridge to handle selection or autoscrolling
+	appropriately.
+	* kwq/WebCoreBridge.h: Prototype new methods.
+
 2003-01-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.
