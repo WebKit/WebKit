@@ -1,3 +1,19 @@
+2004-09-24  Chris Blumenberg  <cblu@apple.com>
+
+	Made markup copying 5 times faster. Unfortunately, this still doesn't fix:
+	<rdar://problem/3794799> Tiger8A252: copying a bunch o' text is so slow it seems like a hang
+
+        Reviewed by rjw.
+
+        * khtml/dom/dom_string.h:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toHTML): serialize the range by iterating through the range
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::startMarkup): new, factored out from recursive_toString
+        (NodeImpl::endMarkup): ditto
+        (NodeImpl::recursive_toString): call factored out methods
+        * khtml/xml/dom_nodeimpl.h:
+
 === Safari-165 ===
 
 2004-09-24  Ken Kocienda  <kocienda@apple.com>

@@ -1,3 +1,10 @@
+2004-09-24  Chris Blumenberg  <cblu@apple.com>
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectedArchive]): added timing code for copying markup
+
 === Safari-165 ===
 
 2004-09-24  Chris Blumenberg  <cblu@apple.com>

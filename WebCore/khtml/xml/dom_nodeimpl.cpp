@@ -280,8 +280,47 @@ static QString escapeHTML( const QString& in )
     return s;
 }
 
-QString NodeImpl::recursive_toString(const NodeImpl *startNode, bool onlyIncludeChildren, bool includeSiblings, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes)
+QString NodeImpl::startMarkup(const DOM::RangeImpl *range) const
+{
+    if (nodeType() == Node::TEXT_NODE) {
+        DOMString str = nodeValue().copy();
+        if (range) {
+            int exceptionCode;
+            if (this == range->endContainer(exceptionCode)) {
+                str.truncate(range->endOffset(exceptionCode));
+            }
+            if (this == range->startContainer(exceptionCode)) {
+                str.remove(0, range->startOffset(exceptionCode));
+            }
+        }
+        Id parentID = parentNode()->id();
+        bool dontEscape = (parentID == ID_SCRIPT || parentID == ID_TEXTAREA || parentID == ID_STYLE);
+        return dontEscape ? str.string() : escapeHTML(str.string());        
+    } else {
+        QString markup = QChar('<') + nodeName().string();
+        if (nodeType() == Node::ELEMENT_NODE) {
+            const ElementImpl *el = static_cast<const ElementImpl *>(this);
+            NamedAttrMapImpl *attrs = el->attributes();
+            unsigned long length = attrs->length();
+            for (unsigned int i=0; i<length; i++) {
+                AttributeImpl *attr = attrs->attributeItem(i);
+                markup += " " + getDocument()->attrName(attr->id()).string() + "=\"" + attr->value().string() + "\"";
+            }
+        }
+        markup += isHTMLElement() ? ">" : "/>";
+        return markup;
+    }
+}
 
+QString NodeImpl::endMarkup(void) const
+{
+    if ((!isHTMLElement() || endTag[id()] != FORBIDDEN) && nodeType() != Node::TEXT_NODE && nodeType() != Node::DOCUMENT_NODE) {
+        return "</" + nodeName().string() + ">";
+    }
+    return "";
+}
+
+QString NodeImpl::recursive_toString(const NodeImpl *startNode, bool onlyIncludeChildren, bool includeSiblings, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes)
 {
     QString me = "";
 
@@ -311,35 +350,7 @@ QString NodeImpl::recursive_toString(const NodeImpl *startNode, bool onlyInclude
             if (nodes) {
                 nodes->append(current);
             }
-            // Copy who I am into the me string
-            if (current->nodeType() == Node::TEXT_NODE) {
-                DOMString str = current->nodeValue().copy();
-                if (range) {
-                    int exceptionCode;
-                    if (current == range->endContainer(exceptionCode)) {
-                        str.truncate(range->endOffset(exceptionCode));
-                    }
-                    if (current == range->startContainer(exceptionCode)) {
-                        str.remove(0, range->startOffset(exceptionCode));
-                    }
-                }
-                Id parentID = current->parentNode()->id();
-                bool dontEscape = (parentID == ID_SCRIPT || parentID == ID_TEXTAREA || parentID == ID_STYLE);
-                me += dontEscape ? str.string() : escapeHTML(str.string());
-            } else if (current->nodeType() != Node::DOCUMENT_NODE) {
-                // If I am an element, not a text
-                me += QChar('<') + current->nodeName().string();
-                if (current->nodeType() == Node::ELEMENT_NODE) {
-                    const ElementImpl *el = static_cast<const ElementImpl *>(current);
-                    NamedAttrMapImpl *attrs = el->attributes();
-                    unsigned long length = attrs->length();
-                    for (unsigned int i=0; i<length; i++) {
-                        AttributeImpl *attr = attrs->attributeItem(i);
-                        me += " " + current->getDocument()->attrName(attr->id()).string() + "=\"" + attr->value().string() + "\"";
-                    }
-                }
-                me += current->isHTMLElement() ? ">" : "/>";
-            }
+            me += current->startMarkup(range);
         }
         
         if (!current->isHTMLElement() || endTag[current->id()] != FORBIDDEN) {
@@ -348,8 +359,8 @@ QString NodeImpl::recursive_toString(const NodeImpl *startNode, bool onlyInclude
                 me += recursive_toString(n, false, true, range, nodes);
             }
             // Print my ending tag
-            if (include && current->nodeType() != Node::TEXT_NODE && current->nodeType() != Node::DOCUMENT_NODE) {
-                me += "</" + current->nodeName().string() + ">";
+            if (include) {
+                me += current->endMarkup();
             }
         }
         

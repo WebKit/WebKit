@@ -833,7 +833,15 @@ static WebHTMLView *lastHitView = nil;
 - (WebArchive *)_selectedArchive
 {
     NSArray *nodes;
+#if !LOG_DISABLED        
+    double start = CFAbsoluteTimeGetCurrent();
+#endif
     NSString *markupString = [[self _bridge] markupStringFromRange:[self _selectedRange] nodes:&nodes];
+#if !LOG_DISABLED
+    double duration = CFAbsoluteTimeGetCurrent() - start;
+    LOG(Timing, "copying markup took %f seconds.", duration);
+#endif
+    
     return [[self _dataSource] _archiveWithMarkupString:markupString nodes:nodes];
 }
 
