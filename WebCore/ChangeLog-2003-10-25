@@ -1,3 +1,14 @@
+2003-09-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3423404 -- REGRESSION: Japanese page appears blank due to unexpected kTECPartialCharErr
+
+        * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertOneChunkUsingTEC): In the case where we're already
+        going from the small buffer back to the large one, treat kTECPartialCharErr the same as noErr.
+        Otherwise we'll get confused and drop the contents of the big buffer.
+        (KWQTextDecoder::convert): Improve the debugging code a bit (still turned off).
+
 === WebCore-105 ===
 
 2003-09-15  Ken as Darin  <darin@apple.com>

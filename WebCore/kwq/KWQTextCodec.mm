@@ -381,6 +381,12 @@ OSStatus KWQTextDecoder::convertOneChunkUsingTEC(const unsigned char *inputBuffe
                 bytesRead = 0;
             }
             _numBufferedBytes = 0;
+            if (status == kTECPartialCharErr) {
+                // While there may be a partial character problem in the small buffer,
+                // we have to try again and not get confused and think there is a partial
+                // character problem in the large buffer.
+                status = noErr;
+            }
         }
     } else {
         status = TECConvertText(_converter, inputBuffer, inputBufferLength, &bytesRead,
@@ -474,10 +480,17 @@ QString KWQTextDecoder::convert(const unsigned char *chs, int len, bool flush)
         return convertUTF16(chs, len);
     }
 
-#if TEST_PARTIAL_CHARACTER_HANDLING
+//#define PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE 1000
+#if PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE
     QString result;
-    for (int i = 0; i != len; ++i)
-        result += convertUsingTEC(chs + i, 1, flush && i == len - 1);
+    int chunkSize;
+    for (int i = 0; i != len; i += chunkSize) {
+        chunkSize = len - i;
+        if (chunkSize > PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE) {
+            chunkSize = PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE;
+        }
+        result += convertUsingTEC(chs + i, chunkSize, flush && (i + chunkSize == len));
+    }
     return result;
 #else
     return convertUsingTEC(chs, len, flush);
