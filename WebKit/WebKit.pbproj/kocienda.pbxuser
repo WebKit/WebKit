@@ -91,7 +91,6 @@
 					};
 					TabCount = 5;
 				};
-				WindowLocation = "{53, 46}";
 			};
 		};
 		wantsIndex = 1;

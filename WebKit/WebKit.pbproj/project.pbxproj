@@ -184,7 +184,6 @@
 				25A8176F01B5B9180ECA149E,
 				25A8177301B698760ECA149E,
 				25A8177701B6A5240ECA149E,
-				25D5032F01BD74D70ECA149E,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -213,7 +212,6 @@
 				25A8177001B5B9180ECA149E,
 				25A8177401B698760ECA149E,
 				25A8177801B6A5240ECA149E,
-				25D5033001BD74D70ECA149E,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -355,8 +353,6 @@
 				2568C72B017491070ECA149E,
 				25A5593101A5996D0ECA149E,
 				25A5593201A5996D0ECA149E,
-				25D5032D01BD74D70ECA149E,
-				25D5032E01BD74D70ECA149E,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -625,30 +621,6 @@
 		};
 		25C29827016E29620ECA149E = {
 			fileRef = 25C29825016E29620ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		25D5032D01BD74D70ECA149E = {
-			isa = PBXFileReference;
-			name = InterThreadMessaging.h;
-			path = Misc.subproj/InterThreadMessaging.h;
-			refType = 4;
-		};
-		25D5032E01BD74D70ECA149E = {
-			isa = PBXFileReference;
-			name = InterThreadMessaging.m;
-			path = Misc.subproj/InterThreadMessaging.m;
-			refType = 4;
-		};
-		25D5032F01BD74D70ECA149E = {
-			fileRef = 25D5032D01BD74D70ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		25D5033001BD74D70ECA149E = {
-			fileRef = 25D5032E01BD74D70ECA149E;
 			isa = PBXBuildFile;
 			settings = {
 			};
