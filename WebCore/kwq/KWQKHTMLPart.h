@@ -67,6 +67,7 @@ typedef DOMElement ObjCDOMElement;
 @class NSColor;
 @class NSEvent;
 @class NSFileWrapper;
+@class NSFont;
 @class NSMutableDictionary;
 @class NSResponder;
 @class NSString;
@@ -85,6 +86,7 @@ class NSAttributedString;
 class NSColor;
 class NSEvent;
 class NSFileWrapper;
+class NSFont;
 class NSMutableDictionary;
 class NSResponder;
 class NSString;
@@ -206,6 +208,8 @@ public:
     int selectionEndOffset() const;
 
     QRect selectionRect() const;
+    
+    NSFont *fontForCurrentPosition() const;
 
     NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *);
     NSAttributedString *attributedString(DOM::NodeImpl *startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset);

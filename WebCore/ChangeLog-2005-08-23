@@ -1,6 +1,19 @@
 2004-05-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Gramps
+
+        * kwq/KWQKHTMLPart.h: Declare new fontForCurrentPosition helper.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fontForCurrentPosition): Determines the "current font" in the way that Cocoa
+        does. Either the font of the character before the caret, when the selection is a caret, or
+        the font of the first character selected, when the selection is a range.
+        * kwq/WebCoreBridge.h: Declare bridge method so this can be called from WebKit.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge fontForCurrentPosition]): Calls through to fontForCurrentPosition on KWQKHTMLPart.
+
+2004-05-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Gramps
         
         Adds a typing style member variable to khtml part.
         This patch adds basic life-cycle management and 

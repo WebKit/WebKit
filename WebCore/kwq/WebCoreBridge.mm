@@ -1526,6 +1526,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     cmd.apply();
 }
 
+- (NSFont *)fontForCurrentPosition
+{
+    return _part ? _part->fontForCurrentPosition() : nil;
+}
+
 - (void)ensureCaretVisible
 {
     if (!_part)

@@ -41,7 +41,9 @@
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
+#import "dom_position.h"
 #import "dom_selection.h"
+#import "dom_textimpl.h"
 #import "html_documentimpl.h"
 #import "html_misc.h"
 #import "htmlattrs.h"
@@ -79,9 +81,11 @@ using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLTableCellElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
+using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
 using DOM::Selection;
+using DOM::TextImpl;
 
 using khtml::Cache;
 using khtml::ChildFrame;
@@ -2755,6 +2759,53 @@ QRect KWQKHTMLPart::selectionRect() const
     }
 
     return root->selectionRect();
+}
+
+NSFont *KWQKHTMLPart::fontForCurrentPosition() const
+{
+    if (d->m_selection.state() == Selection::NONE)
+        return nil;
+    
+    Range range(d->m_selection.toRange());
+    Position pos(range.startContainer().handle(), range.startOffset());
+    ASSERT(pos.notEmpty());
+    ElementImpl *elem = pos.element();
+    if (d->m_typingStyle) {
+        if (!xmlDocImpl())
+            return nil;
+
+        int exceptionCode = 0;
+        ElementImpl *styleElement = xmlDocImpl()->createHTMLElement("SPAN", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        
+        styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+        
+        TextImpl *text = xmlDocImpl()->createEditingTextNode("");
+        styleElement->appendChild(text, exceptionCode);
+        ASSERT(exceptionCode == 0);
+
+        elem->appendChild(styleElement, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        
+        RenderObject *renderer = styleElement->renderer();
+        ASSERT(renderer);
+        NSFont *result = renderer->style()->font().getNSFont();
+        
+        styleElement->removeChild(text, exceptionCode);
+        ASSERT(exceptionCode == 0);
+
+        elem->removeChild(styleElement, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        
+        return result;
+    }
+    else {
+        RenderObject *renderer = elem->renderer();
+        if (renderer)
+            return renderer->style()->font().getNSFont();
+    }
+    return nil;
 }
 
 KWQWindowWidget *KWQKHTMLPart::topLevelWidget()
