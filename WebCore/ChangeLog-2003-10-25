@@ -1,5 +1,14 @@
 2002-09-24  David Hyatt  <hyatt@apple.com>
 
+	Better fix.  Clears the boolean when CLASS has no value.
+	This will keep the style system from thinking you have
+	a class when you don't.
+	
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseAttribute):
+
+2002-09-24  David Hyatt  <hyatt@apple.com>
+
 	Fix updating of the document's notion of the focused node
 	to happen on mouse down rather than click.  This matches
 	the behavior of all other browsers (IE, Gecko, etc.).
