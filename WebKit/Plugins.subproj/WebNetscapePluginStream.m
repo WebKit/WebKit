@@ -65,10 +65,10 @@
     _startingRequest = nil;
 }
 
-- (void)cancelWithReason:(NPReason)cancelWithReason
+- (void)cancelWithReason:(NPReason)theReason
 {
     [_loader cancel];
-    [super cancelWithReason:cancelWithReason];
+    [super cancelWithReason:theReason];
 }
 
 - (void)stop
@@ -104,7 +104,7 @@
 {
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
-    [self retain]; 
+    [self retain];
     [stream startStreamWithResponse:theResponse];
     [super connection:con didReceiveResponse:theResponse];
     if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
@@ -112,8 +112,8 @@
         NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                     code:NSURLErrorFileDoesNotExist
                                                      URL:[theResponse URL]];
+        [stream receivedError:error];
         [self cancelWithError:error];
-        [stream cancelWithReason:NPRES_NETWORK_ERR];
     }
     [self release];
 }
@@ -127,26 +127,26 @@
         [resourceData appendData:data];
     }
 
-    [super connection:con didReceiveData:data lengthReceived:lengthReceived];
     [stream receivedData:data];
+    [super connection:con didReceiveData:data lengthReceived:lengthReceived];
     [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
     [[view webView] _finishedLoadingResourceFromDataSource:[view dataSource]];
-    [super connectionDidFinishLoading:con];
     [stream finishedLoadingWithData:resourceData];
+    [super connectionDidFinishLoading:con];
 }
 
-- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)result
+- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
 {
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [[view webView] _receivedError:result fromDataSource:[view dataSource]];
-    [super connection:con didFailWithError:result];
-    [stream cancelWithReason:NPRES_NETWORK_ERR];
+    [[view webView] _receivedError:error fromDataSource:[view dataSource]];
+    [stream receivedError:error];
+    [super connection:con didFailWithError:error];
     [self release];
 }
 

@@ -90,7 +90,7 @@
     // FIXME: Need a way to check if stream is seekable
 
     NPError npErr = NPP_NewStream(instance, (char *)[MIMEType cString], &stream, NO, &transferMode);
-    LOG(Plugins, "NPP_NewStream: %d %@", npErr, URL);
+    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", URL, MIMEType, npErr);
 
     if (npErr != NPERR_NO_ERROR) {
         ERROR("NPP_NewStream failed with error: %d URLString: %s", npErr, [URL _web_URLCString]);
@@ -136,18 +136,18 @@
         ASSERT(path != NULL);
         NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithCString:path]];
         NPP_StreamAsFile(instance, &stream, [carbonPath cString]);
-        LOG(Plugins, "NPP_StreamAsFile: %@", carbonPath);
+        LOG(Plugins, "NPP_StreamAsFile URL=%@ path=%@", URL, carbonPath);
     }
     
     NPError npErr;
     npErr = NPP_DestroyStream(instance, &stream, reason);
-    LOG(Plugins, "NPP_DestroyStream: %d", npErr);
+    LOG(Plugins, "NPP_DestroyStream URL=%@ error=%d", URL, npErr);
     
     stream.ndata = nil;
         
     if (notifyData) {
         NPP_URLNotify(instance, [URL _web_URLCString], reason, notifyData);
-        LOG(Plugins, "NPP_URLNotify");
+        LOG(Plugins, "NPP_URLNotify URL=%@ reason=%d", URL, reason);
     }
 }
 
@@ -157,12 +157,27 @@
     [self destroyStream];
 }
 
-- (void)cancelWithReason:(NPReason)theReason
+- (void)destroyStreamWithFailingReason:(NPReason)theReason
 {
+    ASSERT(theReason != NPRES_DONE);
     // Stop any pending data from being streamed.
     [deliveryData setLength:0];
     [self destroyStreamWithReason:theReason];
     stream.ndata = nil;
+}
+
+- (void)receivedError:(NSError *)error
+{
+    if ([[error domain] isEqualToString:NSURLErrorDomain] && [error code] == NSURLErrorCancelled) {
+        [self destroyStreamWithFailingReason:NPRES_USER_BREAK];
+    } else {
+        [self destroyStreamWithFailingReason:NPRES_NETWORK_ERR];
+    }
+}
+
+- (void)cancelWithReason:(NPReason)theReason
+{
+    [self destroyStreamWithFailingReason:theReason];
 }
 
 - (void)finishedLoadingWithData:(NSData *)data
@@ -178,7 +193,7 @@
             // This should almost never happen.
             ERROR("can't make temporary file, almost certainly a problem with /tmp");
             // This is not a network error, but the only error codes are "network error" and "user break".
-            [self cancelWithReason:NPRES_NETWORK_ERR];
+            [self destroyStreamWithFailingReason:NPRES_NETWORK_ERR];
             free(path);
             path = NULL;
             return;
@@ -191,7 +206,7 @@
                 ERROR("error writing to temporary file, errno %d", errno);
                 close(fd);
                 // This is not a network error, but the only error codes are "network error" and "user break".
-                [self cancelWithReason:NPRES_NETWORK_ERR];
+                [self destroyStreamWithFailingReason:NPRES_NETWORK_ERR];
                 free(path);
                 path = NULL;
                 return;
@@ -214,7 +229,7 @@
     
     while (totalBytesDelivered < totalBytes) {
         int32 deliveryBytes = NPP_WriteReady(instance, &stream);
-        LOG(Plugins, "NPP_WriteReady bytes=%d", deliveryBytes);
+        LOG(Plugins, "NPP_WriteReady URL=%@ bytes=%d", URL, deliveryBytes);
         
         if (deliveryBytes <= 0) {
             // Plug-in can't receive anymore data right now. Send it later.
@@ -225,9 +240,9 @@
             NSData *subdata = [deliveryData subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
             deliveryBytes = NPP_Write(instance, &stream, offset, [subdata length], (void *)[subdata bytes]);
             deliveryBytes = MIN((unsigned)deliveryBytes, [subdata length]);
-            LOG(Plugins, "NPP_Write bytes=%d", deliveryBytes);
             offset += deliveryBytes;
             totalBytesDelivered += deliveryBytes;
+            LOG(Plugins, "NPP_Write URL=%@ bytes=%d total-delivered=%d/%d", URL, deliveryBytes, offset, stream.end);
         }
     }
     

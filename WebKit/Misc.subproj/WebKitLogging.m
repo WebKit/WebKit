@@ -29,4 +29,5 @@ WebLogChannel WebKitLogEncoding =               { 0x04000000, "WebKitLogLevel", 
 WebLogChannel WebKitLogLiveConnect =            { 0x08000000, "WebKitLogLevel", WebLogChannelUninitialized };
 WebLogChannel WebKitLogBackForward =            { 0x10000000, "WebKitLogLevel", WebLogChannelUninitialized };
 WebLogChannel WebKitLogProgress =               { 0x20000000, "WebKitLogLevel", WebLogChannelUninitialized };
+WebLogChannel WebKitLogPluginEvents =           { 0x40000000, "WebKitLogLevel", WebLogChannelUninitialized };
 

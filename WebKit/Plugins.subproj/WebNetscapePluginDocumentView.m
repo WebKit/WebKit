@@ -78,8 +78,7 @@
     WebNetscapePluginPackage *thePlugin;
     thePlugin = (WebNetscapePluginPackage *)[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
 
-    if (![thePlugin load]){
-        // FIXME: It would be nice to stop the load here.
+    if (![thePlugin load]) {
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorCannotLoadPlugin
                                                         contentURL:[[theDataSource request] URL]
                                                      pluginPageURL:nil

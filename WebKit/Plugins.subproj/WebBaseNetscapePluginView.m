@@ -359,7 +359,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
     
-    LOG(Plugins, "NPP_HandleEvent(activateEvent): %d  isActive: %d", acceptedEvent, activate);
+    LOG(PluginEvents, "NPP_HandleEvent(activateEvent): %d  isActive: %d", acceptedEvent, activate);
 }
 
 - (BOOL)sendUpdateEvent
@@ -373,7 +373,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     BOOL acceptedEvent = [self sendEvent:&event];
 
-    LOG(Plugins, "NPP_HandleEvent(updateEvt): %d", acceptedEvent);
+    LOG(PluginEvents, "NPP_HandleEvent(updateEvt): %d", acceptedEvent);
 
     return acceptedEvent;
 }
@@ -467,7 +467,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
     
-    LOG(Plugins, "NPP_HandleEvent(getFocusEvent): %d", acceptedEvent);
+    LOG(PluginEvents, "NPP_HandleEvent(getFocusEvent): %d", acceptedEvent);
     
     [self installKeyEventHandler];
         
@@ -484,7 +484,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
     
-    LOG(Plugins, "NPP_HandleEvent(loseFocusEvent): %d", acceptedEvent);
+    LOG(PluginEvents, "NPP_HandleEvent(loseFocusEvent): %d", acceptedEvent);
     
     [self removeKeyEventHandler];
     
@@ -513,7 +513,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
     
-    LOG(Plugins, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
+    LOG(PluginEvents, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
@@ -526,7 +526,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
     
-    LOG(Plugins, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
+    LOG(PluginEvents, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
@@ -539,7 +539,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
     
-    LOG(Plugins, "NPP_HandleEvent(mouseEntered): %d", acceptedEvent);
+    LOG(PluginEvents, "NPP_HandleEvent(mouseEntered): %d", acceptedEvent);
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
@@ -552,7 +552,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
     
-    LOG(Plugins, "NPP_HandleEvent(mouseExited): %d", acceptedEvent);
+    LOG(PluginEvents, "NPP_HandleEvent(mouseExited): %d", acceptedEvent);
     
     // Set cursor back to arrow cursor.
     [[NSCursor arrowCursor] set];
@@ -612,7 +612,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             BOOL acceptedEvent;
             acceptedEvent = [(WebBaseNetscapePluginView *)pluginView sendEvent:&eventRec];
             
-            LOG(Plugins, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu",
+            LOG(PluginEvents, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu",
                 acceptedEvent, (char) (eventRec.message & charCodeMask), (eventRec.message & keyCodeMask));
             
             // We originally thought that if the plug-in didn't accept this event,
@@ -1480,7 +1480,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!stream->ndata) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
-    [(WebNetscapePluginStream *)stream->ndata stop];
+    [(WebBaseNetscapePluginStream *)stream->ndata cancelWithReason:reason];
     return NPERR_NO_ERROR;
 }
 

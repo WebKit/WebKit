@@ -1,3 +1,45 @@
+2003-10-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3457627>: empty Flash plugin at tvguide.com
+	Fixed issues with plug-in stream error handling.
+	Improved plug-in logging.
+
+        Reviewed by kocienda.
+
+        * Misc.subproj/WebKitLogging.h: added WebKitLogPluginEvents
+        * Misc.subproj/WebKitLogging.m:
+        * Plugins.subproj/WebBaseNetscapePluginStream.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamWithURL:expectedContentLength:lastModifiedDate:MIMEType:]): improved logging
+        (-[WebBaseNetscapePluginStream destroyStream]): improved logging
+        (-[WebBaseNetscapePluginStream destroyStreamWithFailingReason:]): renamed from cancelWithReason to avoid confusion
+        (-[WebBaseNetscapePluginStream receivedError:]): calls destroyStreamWithFailingReason after determining a reason from the NSError
+        (-[WebBaseNetscapePluginStream cancelWithReason:]): calls destroyStreamWithFailingReason, this method is overriden by subclasses to cancel the actual load
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): call destroyStreamWithFailingReason, not cancelWithReason because the loaded has already ended here
+        (-[WebBaseNetscapePluginStream deliverData]): improved logging
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendActivateEvent:]): use even logging
+        (-[WebBaseNetscapePluginView sendUpdateEvent]): ditto
+        (-[WebBaseNetscapePluginView becomeFirstResponder]): ditto
+        (-[WebBaseNetscapePluginView resignFirstResponder]): ditto
+        (-[WebBaseNetscapePluginView mouseDown:]): ditto
+        (-[WebBaseNetscapePluginView mouseUp:]): ditto
+        (-[WebBaseNetscapePluginView mouseEntered:]): ditto
+        (-[WebBaseNetscapePluginView mouseExited:]): ditto
+        (TSMEventHandler): ditto
+        (-[WebBaseNetscapePluginView destroyStream:reason:]): call cancelWithReason so the reason is passed back to the plug-in
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]): tweak
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedError:withDataSource:]): call receivedError
+        (-[WebNetscapePluginRepresentation cancelWithReason:]): override, cancel the load, call super
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream cancelWithReason:]): override, cancel the load, call super
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]): be sure to call the stream before calling super because the stream can be cleared out when calling super 
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveData:lengthReceived:]): ditto
+        (-[WebNetscapePluginConnectionDelegate connectionDidFinishLoading:]): ditto
+        (-[WebNetscapePluginConnectionDelegate connection:didFailWithError:]): ditto
+
 2003-10-20  Richard Williamson   <rjw@apple.com>
 
 	Conditionally excluded fix for 3446192.  We'll enable the fix once 3446669

@@ -63,17 +63,13 @@
         return;
     }
     
-    if ([error code] == NSURLErrorCancelled) {
-        [self cancelWithReason:NPRES_USER_BREAK];
-    } else {
-        [self cancelWithReason:NPRES_NETWORK_ERR];
-    }
+    [self receivedError:error];
 }
 
-- (void)cancelWithReason:(NPReason)theReason;
+- (void)cancelWithReason:(NPReason)theReason
 {
     [[_dataSource webFrame] stopLoading];
-    [super cancelWithReason:NPRES_USER_BREAK];
+    [super cancelWithReason:theReason];
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)ds
