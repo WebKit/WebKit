@@ -874,8 +874,16 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
 WebCoreBridge *KWQKHTMLPart::bridgeForWidget(const QWidget *widget)
 {
     ASSERT_ARG(widget, widget);
+
     NodeImpl *node = nodeForWidget(widget);
-    return node ? partForNode(node)->bridge() : 0;
+    if (node) {
+	return partForNode(node)->bridge() ;
+    }
+    
+    // Assume all widgets are either form controls, or KHTMLViews.
+    const KHTMLView *view = dynamic_cast<const KHTMLView *>(widget);
+    ASSERT(view);
+    return KWQ(view->part())->bridge();
 }
 
 KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)

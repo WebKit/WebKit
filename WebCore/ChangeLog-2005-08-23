@@ -1,3 +1,14 @@
+2003-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- improved on Darin's fix for 3211289 - REGRESSION: nil-deref in bridgeForWidget 
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::bridgeForWidget): Special-case KHTMLView - this is
+	the only kind of widget in the program that's not a form control
+	(so nodeForWidget would return nil for it).
+
 2003-03-28  David Hyatt  <hyatt@apple.com>
 
 	Fix a regression caused by my addition of nearestFloatBottom
