@@ -1,3 +1,14 @@
+2003-03-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_widthWithFont:]):
+	(-[NSString _web_drawAtPoint:font:textColor:):
+	removed the unnecessary string parameter from these two
+	NSString methods.
+
 2003-03-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -10,17 +10,13 @@
 
 @implementation NSString (WebKitExtras)
 
-- (void)_web_drawString:(NSString *)string atPoint:(NSPoint)point font: (NSFont *)font textColor:(NSColor *)textColor;
+- (void)_web_drawAtPoint:(NSPoint)point font: (NSFont *)font textColor:(NSColor *)textColor;
 {
-    if (string == nil) {
-        return;
-    }
-    
     WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
-    unsigned length = [string length];
+    unsigned length = [self length];
     UniChar *buffer = (UniChar *)malloc(sizeof(UniChar) * length);
 
-    [string getCharacters:buffer];
+    [self getCharacters:buffer];
     [renderer drawCharacters:buffer
                 stringLength:length
        fromCharacterPosition:0
@@ -36,16 +32,13 @@
     free(buffer);
 }
 
-- (float)_web_widthForString:(NSString *)string font: (NSFont *)font
+- (float)_web_widthWithFont:(NSFont *)font
 {
-    if (string == nil)
-        return 0;
-        
-    unsigned length = [string length];
+    unsigned length = [self length];
     float width;
     UniChar *buffer = (UniChar *)malloc(sizeof(UniChar) * length);
 
-    [string getCharacters:buffer];
+    [self getCharacters:buffer];
     WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
     width = [renderer _floatWidthForCharacters:buffer
                 stringLength:length
