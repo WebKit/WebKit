@@ -1,3 +1,14 @@
+2003-07-21  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for 3182596, percentage height tables with cells that specify
+	tiny percentage heights used that height even if it was smaller
+	than the cell's minimum required height.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+
 2003-07-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -1030,7 +1030,7 @@ int RenderTableSection::layoutRows( int toAdd )
 	int totalHeight = rowPos[totalRows] + toAdd;
 // 	qDebug("layoutRows: totalHeight = %d",  totalHeight );
 
-        int dh = totalHeight-rowPos[totalRows];
+        int dh = toAdd;
 	int totalPercent = 0;
 	int numVariable = 0;
 	for ( int r = 0; r < totalRows; r++ ) {
@@ -1048,7 +1048,10 @@ int RenderTableSection::layoutRows( int toAdd )
 	    int rh = rowPos[1]-rowPos[0];
 	    for ( int r = 0; r < totalRows; r++ ) {
 		if ( totalPercent > 0 && grid[r].height.type == Percent ) {
-		    int toAdd = QMIN( dh, (totalHeight * grid[r].height.value / 100)-rh );
+		    int toAdd = QMIN(dh, (totalHeight * grid[r].height.value / 100)-rh);
+                    // If toAdd is negative, then we don't want to shrink the row (this bug
+                    // affected Outlook Web Access).
+                    toAdd = QMAX(0, toAdd);
 		    add += toAdd;
 		    dh -= toAdd;
 		    totalPercent -= grid[r].height.value;
