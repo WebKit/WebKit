@@ -33,7 +33,6 @@
 // USING_BORROWED_QSTRING ======================================================
 #ifdef USING_BORROWED_QSTRING
 
-#undef QT_NO_TEXTCODEC
 #include <_qtextcodec.h>
 
 #else

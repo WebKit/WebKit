@@ -32,7 +32,11 @@ libwebcorenmedited.dylib: libwebcoreunstripped.dylib libwebcore.exp
 	nmedit -s $(srcdir)/libwebcore.exp -o $@ - $<
 
 libwebcore.dylib: libwebcorenmedited.dylib
-	strip $(STRIP_FLAGS) -o $@ - $< 
+	if test -z "$(STRIP_FLAGS)"; then \
+	    ln -f $< $@; \
+	else \
+	    strip $(STRIP_FLAGS) -o $@ - $<; \
+	fi
 
 embed:
 	@if test -f "$(DYLIB_NAME)"; then \

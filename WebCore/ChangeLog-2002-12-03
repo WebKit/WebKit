@@ -1,3 +1,8 @@
+2002-04-03  Darin Adler  <darin@apple.com>
+
+	* src/Makefile.am: Don't strip at all if STRIP_FLAGS are empty.
+	* src/kwq/qt/qtextcodec.h: Remove stray undef.
+
 2002-04-03  Kenneth Kocienda  <kocienda@apple.com>
 
         Updated debugging log messages to use new varargs macros.
