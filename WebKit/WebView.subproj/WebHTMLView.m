@@ -917,15 +917,23 @@ static WebHTMLView *lastHitView = nil;
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint];
 
-    NSURL *imageURL = [mouseDownElement objectForKey: WebElementImageURLKey];
-
-    if (((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically] && (_private->dragSourceActionMask & WebDragSourceActionImage)) ||
-         (!imageURL && [mouseDownElement objectForKey: WebElementLinkURLKey] && (_private->dragSourceActionMask & WebDragSourceActionLink)) ||
-         ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue] && (_private->dragSourceActionMask & WebDragSourceActionSelection))) &&
-        (([mouseDraggedEvent timestamp] - [_private->mouseDownEvent timestamp]) > TextDragDelay)) {
+    if ([mouseDownElement objectForKey: WebElementImageURLKey] != nil && 
+        [[WebPreferences standardPreferences] loadsImagesAutomatically] && 
+        (_private->dragSourceActionMask & WebDragSourceActionImage)) {
         return YES;
     }
-
+    
+    if ([mouseDownElement objectForKey:WebElementLinkURLKey] != nil && 
+        (_private->dragSourceActionMask & WebDragSourceActionLink)) {
+        return YES;
+    }
+    
+    if ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue] &&
+        (([mouseDraggedEvent timestamp] - [_private->mouseDownEvent timestamp]) > TextDragDelay) &&
+        (_private->dragSourceActionMask & WebDragSourceActionSelection)) {
+        return YES;
+    }
+    
     return NO;
 }
 

@@ -1,3 +1,14 @@
+2004-06-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3692668> REGRESSION: delay when images and links
+	<rdar://problem/3692675> links should drag when dragging images that are links when drag source action is WebDragSourceActionLink
+
+        Reviewed by trey.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _mayStartDragWithMouseDragged:]): cleaned up, only use selection delay for selections, allow links to be dragged when image dragging is disabled 
+
 2004-06-12  Trey Matteson  <trey@apple.com>
 
 	Small rearrangement to support dynamic changing of the drag
