@@ -9,12 +9,11 @@
 
 @class WebImageRenderer;
 
-@interface WebImageRendererFactory : WebCoreImageRendererFactory
+@interface WebImageRendererFactory : WebCoreImageRendererFactory <WebCoreImageRendererFactory>
 {
 }
 
 + (void)createSharedFactory;
 + (WebImageRendererFactory *)sharedFactory;
-- (id <WebCoreImageRenderer>)imageRendererWithBytes: (const void *)bytes length:(unsigned)length;
 
 @end

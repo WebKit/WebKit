@@ -5,6 +5,7 @@
 
 #import <WebKit/WebImageRenderer.h>
 
+#import <WebCore/WebCoreImageRenderer.h>
 #import <WebFoundation/WebAssertions.h>
 
 extern NSString *NSImageLoopCount;
@@ -28,6 +29,71 @@ static NSMutableArray *activeImageRenderers;
     }
 }
 
+// Part of the workaround for bug 3090341.
+- (BOOL)blockHasGIFExtensionSignature:(const char *)block length:(int)length
+{
+    int i;
+    for (i = 0; i < length - 10; i++) {
+        if (block[i + 8] == '1' && block[i + 9] == '.' && block[i + 10] == '0') {
+            if (memcmp(block + i, "NETSCAPE", 8) == 0 || memcmp(block + i, "ANIMEXTS", 8) == 0) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
+// Part of the workaround for bug 3090341.
+- (void)checkDataForGIFExtensionSignature:(NSData *)data
+{
+    if (sawGIFExtensionSignature) {
+        return;
+    }
+    
+    const char *dataBytes = [data bytes];
+    int dataLength = [data length];
+    
+    if (GIFExtensionBufferLength) {
+        char leadingEdgeBuffer[20];
+        memcpy(leadingEdgeBuffer, GIFExtensionBuffer, GIFExtensionBufferLength);
+        int dataForLeadingEdgeBufferLength = dataLength;
+        if (dataForLeadingEdgeBufferLength > 10) {
+            dataForLeadingEdgeBufferLength = 10;
+        }
+        memcpy(leadingEdgeBuffer + GIFExtensionBufferLength, dataBytes, dataForLeadingEdgeBufferLength);
+        if ([self blockHasGIFExtensionSignature:leadingEdgeBuffer
+                length:GIFExtensionBufferLength + dataForLeadingEdgeBufferLength]) {
+            sawGIFExtensionSignature = YES;
+            return;
+        }
+    }
+    
+    if ([self blockHasGIFExtensionSignature:dataBytes length:dataLength]) {
+        sawGIFExtensionSignature = YES;
+        return;
+    }
+    
+    if (dataLength < 10) {
+        int keepLength = 10 - dataLength;
+        if (keepLength > GIFExtensionBufferLength) {
+            keepLength = GIFExtensionBufferLength;
+        }
+        memmove(GIFExtensionBuffer + GIFExtensionBufferLength - keepLength, GIFExtensionBuffer, keepLength);
+        memcpy(GIFExtensionBuffer + keepLength, dataBytes, dataLength);
+        GIFExtensionBufferLength = keepLength + dataLength;
+    } else {
+        memcpy(GIFExtensionBuffer, dataBytes + dataLength - 10, 10);
+        GIFExtensionBufferLength = 10;
+    }
+}
+
+// Part of the workaround for bug 3090341.
+- initWithData:(NSData *)data
+{
+    [self checkDataForGIFExtensionSignature:data];
+    return [super initWithData:data];
+}
+
 - copyWithZone:(NSZone *)zone
 {
     WebImageRenderer *copy = [super copyWithZone:zone];
@@ -46,6 +112,9 @@ static NSMutableArray *activeImageRenderers;
     NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
     NSSize size;
+    
+    // Part of the workaround for bug 3090341.
+    [self checkDataForGIFExtensionSignature:data];
     
     loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
     [data release];
@@ -142,7 +211,13 @@ static NSMutableArray *activeImageRenderers;
 - (int)repetitionCount
 {
     id property = [self firstRepProperty:NSImageLoopCount];
-    return property ? [property intValue] : 0;
+    int count = property ? [property intValue] : 0;
+    // This is a workaround for bug 3090341.
+    // If we see no extension, then the loop count is 1, not 0.
+    if (count == 0 && !sawGIFExtensionSignature) {
+        count = 1;
+    }
+    return count;
 }
 
 - (void)scheduleFrame
@@ -203,6 +278,7 @@ static NSMutableArray *activeImageRenderers;
         repetitionsComplete += 1;
         if ([self repetitionCount] && repetitionsComplete >= [self repetitionCount]) {
             animationFinished = YES;
+            return;
         }
 	// Don't repeat if the last frame has a duration of 0.  
         // IE doesn't repeat, so we don't.

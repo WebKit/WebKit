@@ -3,13 +3,14 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebImageView.h>
 
+#import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRepresentation.h>
-#import <WebKit/WebImageView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebView.h>
 

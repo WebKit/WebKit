@@ -1,3 +1,30 @@
+2002-11-01  Darin Adler  <darin@apple.com>
+
+	- fixed 3090239 -- crash on window close
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _detachFromParent]): Nil out the bridge and
+	release it so we don't close the URL twice.
+
+	- fixed 3058598 -- animated gif animates repeatedly in Alex, but only once in other browsers
+
+        * WebCoreSupport.subproj/WebImageRenderer.h: Added fields used by bug workaround.
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer blockHasGIFExtensionSignature:length:]): Helper method for bug workaround.
+        (-[WebImageRenderer checkDataForGIFExtensionSignature:]): Checks incoming data for the GIF
+	extension signatures.
+        (-[WebImageRenderer initWithData:]): Override to call checkDataForGIFExtensionSignature.
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]): Call checkDataForGIFExtensionSignature.
+        (-[WebImageRenderer repetitionCount]): Return 1 if we were going to return 0, but we didn't see a
+	GIF extension signature. This workaround can be removed once we require a system new enough to have
+	the bug fix for bug 3090341.
+        (-[WebImageRenderer nextFrame:]): Stop on last frame, don't wrap around to first.
+
+        * WebCoreSupport.subproj/WebImageRendererFactory.h: Update for changes to WebCore.
+        * WebCoreSupport.subproj/WebImageRendererFactory.m: Tweaks.
+
+        * WebView.subproj/WebImageRepresentation.m: Update imports.
+        * WebView.subproj/WebImageView.m: Update imports.
+
 2002-11-01  Richard Williamson   <rjw@apple.com>
 
         Implemented rendering of diacriticals.

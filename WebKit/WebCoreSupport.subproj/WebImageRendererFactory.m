@@ -48,35 +48,35 @@
     NSImage *imageRenderer = [[WebImageRenderer alloc] init];
 
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
-    [imageRenderer addRepresentation: rep];
+    [imageRenderer addRepresentation:rep];
     [rep release];
-    [imageRenderer setFlipped: YES];
+    [imageRenderer setFlipped:YES];
 
-    [imageRenderer setScalesWhenResized: NO];
+    [imageRenderer setScalesWhenResized:NO];
     return [imageRenderer autorelease];
 }
 
 
-- (id <WebCoreImageRenderer>)imageRendererWithBytes: (const void *)bytes length:(unsigned)length
+- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length
 {
-    // FIXME:  Why must we copy the data here?
-    //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
-    NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
-    WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData: data];
-    [imageRenderer setScalesWhenResized: NO];
+    // FIXME: Why must we copy the data here?
+    //NSData *data = [[NSData alloc] initWithBytesNoCopy:(void *)bytes length:length freeWhenDone:NO];
+    NSData *data = [[NSData alloc] initWithBytes:(void *)bytes length:length];
+    WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData:data];
+    [imageRenderer setScalesWhenResized:NO];
     NSArray *reps = [imageRenderer representations];
-    NSImageRep *rep = [reps objectAtIndex: 0];
+    NSImageRep *rep = [reps objectAtIndex:0];
     // Force the image to use the pixel size and ignore the dpi.
     [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
     [data release];
-    [imageRenderer setFlipped: YES];
+    [imageRenderer setFlipped:YES];
     return [imageRenderer autorelease];
 }
 
-- (id <WebCoreImageRenderer>)imageRendererWithSize: (NSSize)s
+- (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)s
 {
-    WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithSize: s] autorelease];
-    [imageRenderer setScalesWhenResized: NO];
+    WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithSize:s] autorelease];
+    [imageRenderer setScalesWhenResized:NO];
     return imageRenderer;
 }
 

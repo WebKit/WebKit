@@ -3,7 +3,8 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import <WebCore/WebCoreImageRenderer.h>
+
+@protocol WebCoreImageRenderer;
 
 @interface WebImageRenderer : NSImage <WebCoreImageRenderer>
 {
@@ -11,11 +12,18 @@
     NSView *frameView;
     NSRect imageRect;
     NSRect targetRect;
+
     int loadStatus;
+
     NSColor *patternColor;
     int patternColorLoadStatus;
+
     int repetitionsComplete;
     BOOL animationFinished;
+
+    BOOL sawGIFExtensionSignature;
+    char GIFExtensionBuffer[10];
+    int GIFExtensionBufferLength;
 }
 
 + (void)stopAnimationsInView:(NSView *)aView;

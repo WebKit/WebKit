@@ -4,6 +4,8 @@
 */
 
 #import "WebImageRepresentation.h"
+
+#import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>

@@ -151,7 +151,10 @@ static const char * const stateNames[] = {
 
 - (void)_detachFromParent
 {
-    [_private->bridge closeURL];
+    WebBridge *bridge = _private->bridge;
+    _private->bridge = nil;
+    
+    [bridge closeURL];
 
     [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
     
@@ -166,6 +169,8 @@ static const char * const stateNames[] = {
     [_private->scheduledLayoutTimer invalidate];
     [_private->scheduledLayoutTimer release];
     _private->scheduledLayoutTimer = nil;
+    
+    [bridge release];
 }
 
 - (void)_setController: (WebController *)controller
