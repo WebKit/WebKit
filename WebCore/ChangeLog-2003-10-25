@@ -1,3 +1,11 @@
+2002-09-02  David Hyatt  <hyatt@apple.com>
+
+	Tweak the damage rect testing to account for the fact that a child
+	layer may fall entirely outside the bounds of its parent layer.
+	
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::constructZTree):
+
 2002-08-31  Darin Adler  <darin@apple.com>
 
 	- fixed 3038336 -- repro crash in QTextDecoder trying to display UTF-16 file

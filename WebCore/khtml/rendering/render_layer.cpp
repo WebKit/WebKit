@@ -128,10 +128,13 @@ RenderLayer::constructZTree(const QRect& damageRect,
     
     // Compute this layer's absolute position, so that we can compare it with our
     // damage rect and avoid repainting the layer if it falls outside that rect.
+    // If we have overhanging contents, we can't just bail, since we may need to paint
+    // our child layers (they may fall outside our bounds and therefore might still
+    // intersect the damage rect).
     int x, y;
     convertToLayerCoords(rootLayer, x, y);
     QRect layerBounds(x, y, width(), height());
-    if (!layerBounds.intersects(damageRect))
+    if (!layerBounds.intersects(damageRect) && !m_object->overhangingContents())
         return 0;
     
     // Compute our coordinates relative to the layer being painted.
@@ -153,16 +156,18 @@ RenderLayer::constructZTree(const QRect& damageRect,
         }
     }
 
-    // Now add a leaf node for ourselves.
-    RenderLayerElement* layerElt = new RenderLayerElement(this, layerBounds, x, y);
-    if (returnNode->child) {
-        RenderZTreeNode* leaf = new RenderZTreeNode(layerElt);
-        leaf->next = returnNode->child;
-        returnNode->child = leaf;
+    // Now add a leaf node for ourselves, but only if we overlap the damage rect.
+    if (layerBounds.intersects(damageRect)) {
+        RenderLayerElement* layerElt = new RenderLayerElement(this, layerBounds, x, y);
+        if (returnNode->child) {
+            RenderZTreeNode* leaf = new RenderZTreeNode(layerElt);
+            leaf->next = returnNode->child;
+            returnNode->child = leaf;
+        }
+        else
+            returnNode->layerElement = layerElt;
     }
-    else
-        returnNode->layerElement = layerElt;
-
+    
     // Now look for children that have a negative z-index.
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         if (child->zIndex() >= 0)
