@@ -126,6 +126,7 @@
 				F5C2869402846DCD018635CA,
 				F5C2869502846DCD018635CA,
 				F8216299029F4FB501000131,
+				93F1D31A0558CC5C00821BC0,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -788,6 +789,7 @@
 				F5C287BC02846DCD018635CA,
 				F5C287BD02846DCD018635CA,
 				F82162D7029F4FB501000131,
+				93F1D31B0558CC5C00821BC0,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1871,6 +1873,20 @@
 		};
 		93F12CC803CD0AE60000011C = {
 			fileRef = 93F12CC703CD0AE60000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F1D31A0558CC5C00821BC0 = {
+			expectedFileType = "compiled.mach-o.dylib";
+			isa = PBXFileReference;
+			name = libicucore.A.dylib;
+			path = /usr/lib/libicucore.A.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		93F1D31B0558CC5C00821BC0 = {
+			fileRef = 93F1D31A0558CC5C00821BC0;
 			isa = PBXBuildFile;
 			settings = {
 			};

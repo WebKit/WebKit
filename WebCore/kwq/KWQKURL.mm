@@ -26,7 +26,15 @@
 #import "KWQKURL.h"
 
 #import "KWQAssertions.h"
+#import "KWQRegExp.h"
 #import "KWQTextCodec.h"
+
+// You may have to turn this to 0 to compile without the headers for ICU installed.
+#define HAVE_ICU_LIBRARY 1
+
+#if HAVE_ICU_LIBRARY
+#import <unicode/uidna.h>
+#endif
 
 // The simple Cocoa calls to NSString, NSURL and NSData can't throw so
 // no need to block NSExceptions here.
@@ -193,27 +201,23 @@ static const unsigned char characterClassTable[256] = {
 
 static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int srcEnd);
 
-// FIXME: convert to inline functions
-
-#define IS_SCHEME_FIRST_CHAR(c) (characterClassTable[(unsigned char)c] & SchemeFirstChar)
-#define IS_SCHEME_CHAR(c) (characterClassTable[(unsigned char)c] & SchemeChar)
-#define IS_USERINFO_CHAR(c) (characterClassTable[(unsigned char)c] & UserInfoChar)
-#define IS_HOSTNAME_CHAR(c) (characterClassTable[(unsigned char)c] & HostnameChar)
-#define IS_IPV6_CHAR(c) (characterClassTable[(unsigned char)c] & IPv6Char)
-#define IS_PATH_SEGMENT_END_CHAR(c) (characterClassTable[(unsigned char)c] & PathSegmentEndChar)
-#define IS_BAD_CHAR(c) (characterClassTable[(unsigned char)c] & BadChar)
-#define IS_HEX_DIGIT(c) (characterClassTable[(unsigned char)c] & HexDigitChar)
+static inline bool isSchemeFirstChar(unsigned char c) { return characterClassTable[c] & SchemeFirstChar; }
+static inline bool isSchemeChar(unsigned char c) { return characterClassTable[c] & SchemeChar; }
+static inline bool isUserInfoChar(unsigned char c) { return characterClassTable[c] & UserInfoChar; }
+static inline bool isHostnameChar(unsigned char c) { return characterClassTable[c] & HostnameChar; }
+static inline bool isIPv6Char(unsigned char c) { return characterClassTable[c] & IPv6Char; }
+static inline bool isPathSegmentEndChar(unsigned char c) { return characterClassTable[c] & PathSegmentEndChar; }
+static inline bool isBadChar(unsigned char c) { return characterClassTable[c] & BadChar; }
+static inline bool isHexDigit(unsigned char c) { return characterClassTable[c] & HexDigitChar; }
 
 
 // KURL
 
-KURL::KURL() :
-    m_isValid(false)
+KURL::KURL() : m_isValid(false)
 {
 }
 
-KURL::KURL(const char *url) :
-    m_isValid(true)
+KURL::KURL(const char *url)
 {
     if (url != NULL && url[0] == '/') {
 	QString qurl = QString("file:") + url;
@@ -223,9 +227,7 @@ KURL::KURL(const char *url) :
     }
 }
 
-KURL::KURL(const QString &url) :
-    m_isValid(true)
-
+KURL::KURL(const QString &url)
 {
     if (!url.isEmpty() && url[0] == '/') {
 	QString fileUrl = QString("file:") + url;
@@ -238,14 +240,16 @@ KURL::KURL(const QString &url) :
 KURL::KURL(NSURL *url)
 {
     if (url) {
-        // FIXME: Use new CF API to access URL bytes when that API is available
-        const char *bytes = [[url absoluteString] cString];
+        CFIndex bufferLength = CFURLGetBytes((CFURLRef)url, NULL, 0);
+        char *bytes = new char [bufferLength];
+        CFURLGetBytes((CFURLRef)url, (UInt8 *)bytes, bufferLength);
         if (bytes[0] == '/') {
             QString fileUrl = QString("file:") + bytes;
             parse(fileUrl.ascii(), &fileUrl);
         } else {
             parse(bytes, NULL);
         }
+        delete [] bytes;
     }
     else {
         parse("", NULL);
@@ -269,13 +273,19 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
         strBuffer = 0;
         str = relative.ascii();
     } else {
+#if HAVE_ICU_LIBRARY
+        QString s = encodeHostnames(relative);
+#else
+        QString s = relative;
+#endif
+
         // Always use UTF-8 if the protocol is file, mailto, or help because that's
         // what these protocols expect.
         if (codec) {
             QString protocol;
             for (uint i = 0; i < relative.length(); i++) {
                 char p = relative.at(i).latin1();
-                if (IS_PATH_SEGMENT_END_CHAR(p)) {
+                if (isPathSegmentEndChar(p)) {
                     break;
                 }
                 if (p == ':') {
@@ -291,8 +301,10 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
                 codec = NULL;
             }
         }
-        QCString decoded = codec ? codec->fromUnicode(relative)
-            : QTextCodec(kCFStringEncodingUTF8).fromUnicode(relative);
+
+        QCString decoded = codec
+            ? codec->fromUnicode(s)
+            : QTextCodec(kCFStringEncodingUTF8).fromUnicode(s);
         strBuffer = strdup(decoded);
         str = strBuffer;
     }
@@ -303,10 +315,10 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
     // scheme, meaning that it will have a colon before the first
     // non-scheme element. "/", "?" and "#" are used to detect the
     // start of a path segment, a query or a fragment ID, which would
-    // indicate no scheme had been found. IS_PATH_SEGMENT_END_CHAR
+    // indicate no scheme had been found. isPathSegmentEndChar
     // tests for those three characters or NULL.
 
-    for (const char *p = str; !IS_PATH_SEGMENT_END_CHAR(*p); ++p) {
+    for (const char *p = str; !isPathSegmentEndChar(*p); ++p) {
 	if (*p == ':') {
 	    absolute = true;
 	    break;
@@ -409,14 +421,14 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 		
 		while (*relStringPos != '\0' && *relStringPos != '?' && *relStringPos != '#') {
 		    if (relStringPos[0] == '.' && bufferPos[-1] == '/') {
-			if (IS_PATH_SEGMENT_END_CHAR(relStringPos[1])) {
+			if (isPathSegmentEndChar(relStringPos[1])) {
 			    // skip over "." segment
 			    relStringPos += 1;
 			    if (relStringPos[0] == '/') {
 				relStringPos++;
 			    }
 			    continue;
-			} else if (relStringPos[1] == '.' && IS_PATH_SEGMENT_END_CHAR(relStringPos[2])) {
+			} else if (relStringPos[1] == '.' && isPathSegmentEndChar(relStringPos[2])) {
 			    // skip over ".." segment and rewind the last segment
 			    // the RFC leaves it up to the app to decide what to do with excess
 			    // ".." segments - we choose to drop them since some web content
@@ -836,8 +848,8 @@ static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t l
     const char *strEnd = strStart + length;
     while (str < strEnd) {
 	unsigned char c = *str++;
-        if (IS_BAD_CHAR(c)) {
-            if (c == '%' && strEnd - str >= 2 && IS_HEX_DIGIT(str[0]) && IS_HEX_DIGIT(str[1])) {
+        if (isBadChar(c)) {
+            if (c == '%' && strEnd - str >= 2 && isHexDigit(str[0]) && isHexDigit(str[1])) {
                 *p++ = c;
                 *p++ = *str++;
                 *p++ = *str++;
@@ -922,7 +934,7 @@ void KURL::parse(const char *url, const QString *originalString)
 	return;
     }
 
-    if (!IS_SCHEME_FIRST_CHAR(url[0])) {
+    if (!isSchemeFirstChar(url[0])) {
 	// scheme must start with an alphabetic character
 	m_isValid = false;
 	urlString = url;
@@ -931,7 +943,7 @@ void KURL::parse(const char *url, const QString *originalString)
 
     int schemeEnd = 0;
  
-    while (IS_SCHEME_CHAR(url[schemeEnd])) {
+    while (isSchemeChar(url[schemeEnd])) {
 	schemeEnd++;
     }
 
@@ -960,7 +972,7 @@ void KURL::parse(const char *url, const QString *originalString)
 	userEnd = userStart;
 
 	int colonPos = 0;
-	while (IS_USERINFO_CHAR(url[userEnd])) {
+	while (isUserInfoChar(url[userEnd])) {
 	    if (url[userEnd] == ':' && colonPos == 0) {
 		colonPos = userEnd;
 	    }
@@ -977,7 +989,7 @@ void KURL::parse(const char *url, const QString *originalString)
 		passwordStart = passwordEnd = userEnd;
 	    }
 	    hostStart = passwordEnd + 1;
-	} else if (url[userEnd] == '\0' || url[userEnd] == '[' || IS_PATH_SEGMENT_END_CHAR(url[userEnd])) {
+	} else if (url[userEnd] == '\0' || url[userEnd] == '[' || isPathSegmentEndChar(url[userEnd])) {
 	    // hit the end of the authority, must have been no user
 	    // or looks like an IPv6 hostname
 	    // either way, try to parse it as a hostname
@@ -996,7 +1008,7 @@ void KURL::parse(const char *url, const QString *originalString)
 	// IPV6 IP address
 	if (url[hostEnd] == '[') {
 	    hostEnd++;
-	    while (IS_IPV6_CHAR(url[hostEnd])) {
+	    while (isIPv6Char(url[hostEnd])) {
 		hostEnd++;
 	    }
 	    if (url[hostEnd] == ']') {
@@ -1008,7 +1020,7 @@ void KURL::parse(const char *url, const QString *originalString)
 		return;
 	    }
 	} else {
-	    while (IS_HOSTNAME_CHAR(url[hostEnd])) {
+	    while (isHostnameChar(url[hostEnd])) {
 		hostEnd++;
 	    }
 	}
@@ -1025,7 +1037,7 @@ void KURL::parse(const char *url, const QString *originalString)
 	    portStart = portEnd = hostEnd;
 	}
 
-	if (url[portEnd] != '\0' && !IS_PATH_SEGMENT_END_CHAR(url[portEnd])) {
+	if (url[portEnd] != '\0' && !isPathSegmentEndChar(url[portEnd])) {
 	    // invalid character
 	    m_isValid = false;
 	    urlString = url;
@@ -1303,7 +1315,7 @@ QString KURL::encode_string(const QString& notEncodedString)
     const char *strEnd = str + asUTF8.length();
     while (str < strEnd) {
 	unsigned char c = *str++;
-        if (IS_BAD_CHAR(c)) {
+        if (isBadChar(c)) {
             *p++ = '%';
             *p++ = hexDigits[c >> 4];
             *p++ = hexDigits[c & 0xF];
@@ -1350,3 +1362,171 @@ NSData *KURL::getNSData() const
     const UInt8 *bytes = (const UInt8 *)(urlString.latin1());
     return [NSData dataWithBytes:bytes length:urlString.length()];
 }
+
+#if HAVE_ICU_LIBRARY
+
+QString KURL::encodeHostnames(const QString &s)
+{
+    if (s.startsWith("mailto:", false)) {
+        const QMemArray<KWQIntegerPair> hostnameRanges = findHostnamesInMailToURL(s);
+        uint n = hostnameRanges.size();
+        if (n != 0) {
+            QString result;
+            uint p = 0;
+            for (uint i = 0; i < n; ++i) {
+                const KWQIntegerPair &r = hostnameRanges[i];
+                result += s.mid(p, r.start);
+                result += encodeHostname(s.mid(r.start, r.end - r.start));
+                p = r.end;
+            }
+            result += s.mid(p);
+            return result;
+        }
+    } else {
+        int hostStart, hostEnd;
+        if (findHostnameInHierarchicalURL(s, hostStart, hostEnd)) {
+            return s.left(hostStart) + encodeHostname(s.mid(hostStart, hostEnd - hostStart)) + s.mid(hostEnd); 
+        }
+    }
+    return s;
+}
+
+bool KURL::findHostnameInHierarchicalURL(const QString &s, int &startOffset, int &endOffset)
+{
+    // Find the host name in a hierarchical URL.
+    // It comes after a "://" sequence, with scheme characters preceding.
+    // If ends with the end of the string or a ":" or a path segment ending character.
+    // If there is a "@" character, the host part is just the part after the "@".
+    int separator = s.find("://");
+    if (separator <= 0) {
+        return false;
+    }
+
+    // Check that all characters before the :// are valid scheme characters.
+    if (!isSchemeFirstChar(s[0].latin1())) {
+        return false;
+    }
+    for (int i = 1; i < separator; ++i) {
+        if (!isSchemeChar(s[i].latin1())) {
+            return false;
+        }
+    }
+
+    // Start after the separator.
+    int authorityStart = separator + 3;
+
+    // Find terminating character.
+    int length = s.length();
+    int hostnameEnd = length;
+    for (int i = authorityStart; i < length; ++i) {
+        char c = s[i].latin1();
+        if (c == ':' || isPathSegmentEndChar(c)) {
+            hostnameEnd = i;
+            break;
+        }
+    }
+
+    // Find "@" for the start of the host name.
+    int userInfoTerminator = s.find('@', authorityStart);
+    int hostnameStart;
+    if (userInfoTerminator == -1 || userInfoTerminator > hostnameEnd) {
+        hostnameStart = authorityStart;
+    } else {
+        hostnameStart = userInfoTerminator + 1;
+    }
+
+    startOffset = hostnameStart;
+    endOffset = hostnameEnd;
+    return true;
+}
+
+QString KURL::encodeHostname(const QString &s)
+{
+    // Needs to be big enough to hold an IDN-encoded name.
+    // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
+    const unsigned hostnameBufferLength = 2048;
+
+    if (s.isAllASCII() || s.length() > hostnameBufferLength) {
+        return s;
+    }
+
+    UChar buffer[hostnameBufferLength];    
+    UErrorCode error = U_ZERO_ERROR;
+    int32_t numCharactersConverted = uidna_IDNToASCII
+        (reinterpret_cast<const UChar *>(s.unicode()), s.length(), buffer, hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, NULL, &error);
+    if (error != U_ZERO_ERROR) {
+        return s;
+    }
+    return QString(reinterpret_cast<QChar *>(buffer), numCharactersConverted);
+}
+
+QMemArray<KWQIntegerPair> KURL::findHostnamesInMailToURL(const QString &s)
+{
+    // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or end of string character.
+    // Skip quoted strings so that characters in them don't confuse us.
+    // When we find a '?' character, we are past the part of the URL that contains host names.
+
+    QMemArray<KWQIntegerPair> a;
+
+    int p = 0;
+    while (1) {
+        // Find start of host name or of quoted string.
+        int hostnameOrStringStart = s.find(QRegExp("[\"@?]"), p);
+        if (hostnameOrStringStart == -1) {
+            return a;
+        }
+        QChar c = s[hostnameOrStringStart];
+        p = hostnameOrStringStart + 1;
+
+        if (c == '?') {
+            return a;
+        }
+        
+        if (c == '@') {
+            // Find end of host name.
+            int hostnameStart = p;
+            int hostnameEnd = s.find(QRegExp("[>,]"), p);
+            bool done;
+            if (hostnameEnd == -1) {
+                hostnameEnd = s.length();
+                done = true;
+            } else {
+                p = hostnameEnd + 1;
+                done = false;
+            }
+
+            int i = a.size();
+            a.resize(i + 1);
+            a[i] = KWQIntegerPair(hostnameStart, hostnameEnd);
+
+            if (done) {
+                return a;
+            }
+        } else {
+            // Skip quoted string.
+            ASSERT(c == '"');
+            while (1) {
+                int escapedCharacterOrStringEnd = s.find(QRegExp("[\"\\]"), p);
+                if (escapedCharacterOrStringEnd == -1) {
+                    return a;
+                }
+                c = s[escapedCharacterOrStringEnd];
+                p = escapedCharacterOrStringEnd + 1;
+                
+                // If we are the end of the string, then break from the string loop back to the host name loop.
+                if (c == '"') {
+                    break;
+                }
+                
+                // Skip escaped character.
+                ASSERT(c == '\\');
+                if (p == static_cast<int>(s.length())) {
+                    return a;
+                }                
+                ++p;
+            }
+        }
+    }
+}
+
+#endif // HAVE_ICU_LIBRARY

@@ -382,6 +382,8 @@ public:
     int compare(const char *) const;
 
     bool startsWith(const QString &) const;
+    bool startsWith(const char *) const;
+    bool startsWith(const char *, bool caseSensitive) const;
 
     int find(char, int index = 0) const;
     int find(QChar, int index = 0) const;

@@ -1,3 +1,35 @@
+2003-11-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3473872 -- encode domain names for IDN when creating URLs inside WebCore
+
+        * kwq/KWQKURL.h: Added KWQIntegerPair type, a number of private functions.
+        * kwq/KWQKURL.mm:
+        (isSchemeFirstChar): Make inline function from macro.
+        (isSchemeChar): Make inline function from macro.
+        (isUserInfoChar): Make inline function from macro.
+        (isHostnameChar): Make inline function from macro.
+        (isIPv6Char): Make inline function from macro.
+        (isPathSegmentEndChar): Make inline function from macro.
+        (isBadChar): Make inline function from macro.
+        (isHexDigit): Make inline function from macro.
+        (KURL::KURL): Remove unneeded initializations of m_isValid, since parse sets it.
+        Use CFURLGetBytes in one place a FIXME asked for it. Changed non-ASCII case to use
+        a separate function instead of code in line.
+        (KURL::encodeHostnames): Added. Finds host names and encodes them.
+        (KURL::findHostnameInHierarchicalURL): Added. Finds host name in a hierarchical URL.
+        (KURL::encodeHostname): Added. Encodes one host name.
+        (KURL::findHostnamesInMailToURL): Added. Finds host names in a mailto URL.
+
+        * kwq/KWQString.h: Added new overloads for startsWith.
+        * kwq/KWQString.mm:
+        (compareIgnoringCaseForASCIIOnly): Moved these functions up in the file so they can be
+        used by more methods of QString.
+        (QString::startsWith): Added new overloads.
+
+        * WebCore.pbproj/project.pbxproj: Add libicucore.A.dylib library.
+
 2003-11-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

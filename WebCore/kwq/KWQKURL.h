@@ -26,9 +26,9 @@
 #ifndef KURL_H_
 #define KURL_H_
 
+#include "KWQMemArray.h"
 #include "KWQString.h"
 #include "KWQValueList.h"
-#include "KWQRefPtr.h"
 
 class QTextCodec;
 
@@ -39,6 +39,12 @@ class QTextCodec;
 class NSData;
 class NSURL;
 #endif
+
+struct KWQIntegerPair {
+    KWQIntegerPair(int s, int e) : start(s), end(e) { }
+    int start;
+    int end;
+};
 
 class KURL {
 public:
@@ -90,6 +96,11 @@ public:
 
 private:
     void parse(const char *url, const QString *originalString);
+
+    static QString encodeHostname(const QString &);
+    static QString encodeHostnames(const QString &);
+    static bool findHostnameInHierarchicalURL(const QString &, int &startOffset, int &endOffset);
+    static QMemArray<KWQIntegerPair> findHostnamesInMailToURL(const QString &);
 
 #ifdef CONSTRUCT_CANONICAL_STRING
     QString _path() const;

@@ -599,6 +599,29 @@ QChar *KWQStringData::makeUnicode()
 // -------------------------------------------------------------------------
 
 
+static inline bool compareIgnoringCaseForASCIIOnly(char c1, char c2)
+{
+    if (c2 >= 'a' && c2 <= 'z') {
+        return c1 == c2 || c1 == c2 - caseDelta;
+    }
+    if (c2 >= 'A' && c2 <= 'Z') {
+        return c1 == c2 || c1 == c2 + caseDelta;
+    }
+    return c1 == c2;
+}
+
+static inline bool compareIgnoringCaseForASCIIOnly(QChar c1, char c2)
+{
+    if (c2 >= 'a' && c2 <= 'z') {
+        return c1 == c2 || c1.unicode() == c2 - caseDelta;
+    }
+    if (c2 >= 'A' && c2 <= 'Z') {
+        return c1 == c2 || c1.unicode() == c2 + caseDelta;
+    }
+    return c1 == c2;
+}
+
+
 QString QString::number(int n)
 {
     QString qs;
@@ -947,6 +970,53 @@ bool QString::startsWith( const QString& s ) const
     return TRUE;
 }
 
+bool QString::startsWith(const char *prefix) const
+{
+    int prefixLength = strlen(prefix);
+    if (dataHandle[0]->_isAsciiValid) {
+        return strncmp(prefix, ascii(), prefixLength) == 0;
+    } else if (dataHandle[0]->_isUnicodeValid) {
+        int l = dataHandle[0]->_length;
+        if (prefixLength > l) {
+            return false;
+        }
+        const QChar *uni = unicode();        
+        for (int i = 0; i < prefixLength; ++i) {
+            if (uni[i] != prefix[i]) {
+                return false;
+            }
+        }
+    } else {
+        FATAL("invalid character cache");
+    }
+    return true;
+}
+
+bool QString::startsWith(const char *prefix, bool caseSensitive) const
+{
+    if (caseSensitive) {
+        return startsWith(prefix);
+    }
+    int prefixLength = strlen(prefix);
+    if (dataHandle[0]->_isAsciiValid) {
+        return strncasecmp(prefix, ascii(), prefixLength) == 0;
+    } else if (dataHandle[0]->_isUnicodeValid) {
+        int l = dataHandle[0]->_length;
+        if (prefixLength > l) {
+            return false;
+        }
+        const QChar *uni = unicode();        
+        for (int i = 0; i < prefixLength; ++i) {
+            if (!compareIgnoringCaseForASCIIOnly(uni[i], prefix[i])) {
+                return false;
+            }
+        }
+    } else {
+        FATAL("invalid character cache");
+    }
+    return true;
+}
+
 bool QString::endsWith( const QString& s ) const
 {
     const QChar *uni = unicode();
@@ -1080,29 +1150,6 @@ int QString::find(const QString &str, int index, bool caseSensitive) const
     
     // Should never get here.
     return -1;
-}
-
-
-static inline bool compareIgnoringCaseForASCIIOnly(char c1, char c2)
-{
-    if (c2 >= 'a' && c2 <= 'z') {
-        return c1 == c2 || c1 == c2 - caseDelta;
-    }
-    if (c2 >= 'A' && c2 <= 'Z') {
-        return c1 == c2 || c1 == c2 + caseDelta;
-    }
-    return c1 == c2;
-}
-
-static inline bool compareIgnoringCaseForASCIIOnly(QChar c1, char c2)
-{
-    if (c2 >= 'a' && c2 <= 'z') {
-        return c1 == c2 || c1.unicode() == c2 - caseDelta;
-    }
-    if (c2 >= 'A' && c2 <= 'Z') {
-        return c1 == c2 || c1.unicode() == c2 + caseDelta;
-    }
-    return c1 == c2;
 }
 
 
