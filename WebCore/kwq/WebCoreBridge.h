@@ -64,10 +64,12 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebDOMElement;
 
 extern NSString *WebCoreElementFrameKey;
+extern NSString *WebCoreElementHTMLStringKey;
 extern NSString *WebCoreElementImageAltStringKey;
 extern NSString *WebCoreElementImageKey;
 extern NSString *WebCoreElementImageRectKey;
 extern NSString *WebCoreElementImageURLKey;
+extern NSString *WebCoreElementIsEditableKey;
 extern NSString *WebCoreElementIsSelectedKey;
 extern NSString *WebCoreElementLinkURLKey;
 extern NSString *WebCoreElementLinkTargetFrameKey;
@@ -200,7 +202,9 @@ typedef enum {
 
 - (void)setSelectionFrom:(id <WebDOMNode>)start startOffset:(int)startOffset to:(id <WebDOMNode>)end endOffset:(int) endOffset;
 
-- (BOOL)isEditable;
+- (BOOL)isSelectionEditable;
+- (BOOL)moveCaretToPoint:(NSPoint)point;
+
 - (void)pasteHTMLString:(NSString *)HTMLString;
 - (void)deleteSelection;
 

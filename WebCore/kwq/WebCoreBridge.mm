@@ -90,18 +90,20 @@ using KParts::URLArgs;
 
 using KJS::Bindings::RootObject;
 
-NSString *WebCoreElementFrameKey = 		@"WebElementFrame";
+NSString *WebCoreElementFrameKey =              @"WebElementFrame";
+NSString *WebCoreElementHTMLStringKey =         @"WebElementHTMLString";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
-NSString *WebCoreElementImageKey = 		@"WebElementImage";
-NSString *WebCoreElementImageRectKey = 		@"WebElementImageRect";
-NSString *WebCoreElementImageURLKey = 		@"WebElementImageURL";
-NSString *WebCoreElementIsSelectedKey = 	@"WebElementIsSelected";
-NSString *WebCoreElementLinkURLKey = 		@"WebElementLinkURL";
+NSString *WebCoreElementImageKey =              @"WebElementImage";
+NSString *WebCoreElementImageRectKey =          @"WebElementImageRect";
+NSString *WebCoreElementImageURLKey =           @"WebElementImageURL";
+NSString *WebCoreElementIsEditableKey =         @"WebElementIsEditable";
+NSString *WebCoreElementIsSelectedKey =         @"WebElementIsSelected";
+NSString *WebCoreElementLinkURLKey =            @"WebElementLinkURL";
 NSString *WebCoreElementLinkTargetFrameKey =	@"WebElementTargetFrame";
-NSString *WebCoreElementLinkLabelKey = 		@"WebElementLinkLabel";
-NSString *WebCoreElementLinkTitleKey = 		@"WebElementLinkTitle";
-NSString *WebCoreElementNameKey = 		@"WebElementName";
-NSString *WebCoreElementTitleKey = 		@"WebCoreElementTitle"; // not in WebKit API for now, could be in API some day
+NSString *WebCoreElementLinkLabelKey =          @"WebElementLinkLabel";
+NSString *WebCoreElementLinkTitleKey =          @"WebElementLinkTitle";
+NSString *WebCoreElementNameKey =               @"WebElementName";
+NSString *WebCoreElementTitleKey =              @"WebCoreElementTitle"; // not in WebKit API for now, could be in API some day
 
 NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
@@ -356,10 +358,40 @@ static bool initializedKJS = FALSE;
     _part->gotoAnchor(QString::fromNSString(a));
 }
 
-- (BOOL)isEditable
+- (BOOL)isSelectionEditable
 {
 	NodeImpl *startNode = _part->getKHTMLSelection().startNode();
 	return startNode ? startNode->isContentEditable() : NO;
+}
+
+- (BOOL)moveCaretToPoint:(NSPoint)point
+{
+    RenderObject *renderer = _part->renderer();
+    if (!renderer) {
+        return NO;
+    }
+    
+    RenderObject::NodeInfo nodeInfo(true, true);
+    renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
+    NodeImpl *node = nodeInfo.innerNode();
+
+    // FIXME: You should be move the caret to non-text nodes.
+    if (!node->isTextNode()) {
+        return NO;
+    }
+        
+    NodeImpl *tempNode;
+    int absX = 0;
+    int absY = 0;
+    int offset;
+    node->renderer()->absolutePosition(absX, absY);
+    node->renderer()->checkSelectionPoint((int)point.x, (int)point.y, absX, absY, tempNode, offset);
+    
+    KHTMLSelection &selection = _part->getKHTMLSelection();
+    selection.setSelection(node, offset);
+    _part->xmlDocImpl()->setSelection(selection);
+    
+    return YES;
 }
 
 - (void)pasteHTMLString:(NSString *)HTMLString
@@ -790,7 +822,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
     [element setObject:[NSNumber numberWithBool:_part->isPointInsideSelection((int)point.x, (int)point.y)]
                 forKey:WebCoreElementIsSelectedKey];
-
+    
     // Find the title in the nearest enclosing DOM node.
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
     for (NodeImpl *titleNode = nodeInfo.innerNode(); titleNode; titleNode = titleNode->parentNode()) {
@@ -842,44 +874,52 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     }
 
     NodeImpl *node = nodeInfo.innerNonSharedNode();
-    if (node && node->renderer() && node->renderer()->isImage()) {
-        
-        RenderImage *r = static_cast<RenderImage *>(node->renderer());
-        NSImage *image = r->pixmap().image();
-        // Only return image information if there is an image.
-        if (image && !r->isDisplayingError()) {
-            [element setObject:r->pixmap().image() forKey:WebCoreElementImageKey];
-            
-            int x, y;
-            if (r->absolutePosition(x, y)) {
-                NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
-                [element setObject:rect forKey:WebCoreElementImageRectKey];
-            }
-            
-            ElementImpl *i = static_cast<ElementImpl*>(node);
+    if (node) {
+        [element setObject:[NSNumber numberWithBool:node->isContentEditable()]
+                    forKey:WebCoreElementIsEditableKey];
+        NSString *HTMLString = node->recursive_toHTML(true).getNSString();
+        if ([HTMLString length] != 0) {
+            [element setObject:HTMLString forKey:WebCoreElementHTMLStringKey];
+        }
     
-            // FIXME: Code copied from RenderImage::updateFromElement; should share.
-            DOMString attr;
-            if (idFromNode(i) == ID_OBJECT) {
-                attr = i->getAttribute(ATTR_DATA);
-            } else {
-                attr = i->getAttribute(ATTR_SRC);
-            }
-            if (!attr.isEmpty()) {
-                QString URLString = parseURL(attr).string();
-                [element setObject:_part->xmlDocImpl()->completeURL(URLString).getNSString() forKey:WebCoreElementImageURLKey];
-            }
-            
-            // FIXME: Code copied from RenderImage::updateFromElement; should share.
-            DOMString alt;
-            if (idFromNode(i) == ID_INPUT)
-                alt = static_cast<HTMLInputElementImpl *>(i)->altText();
-            else if (idFromNode(i) == ID_IMG)
-                alt = static_cast<HTMLImageElementImpl *>(i)->altText();
-            if (!alt.isNull()) {
-                QString altText = alt.string();
-                altText.replace('\\', _part->backslashAsCurrencySymbol());
-                [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
+        if (node->renderer() && node->renderer()->isImage()) {
+            RenderImage *r = static_cast<RenderImage *>(node->renderer());
+            NSImage *image = r->pixmap().image();
+            // Only return image information if there is an image.
+            if (image && !r->isDisplayingError()) {
+                [element setObject:r->pixmap().image() forKey:WebCoreElementImageKey];
+                
+                int x, y;
+                if (r->absolutePosition(x, y)) {
+                    NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
+                    [element setObject:rect forKey:WebCoreElementImageRectKey];
+                }
+                
+                ElementImpl *i = static_cast<ElementImpl*>(node);
+        
+                // FIXME: Code copied from RenderImage::updateFromElement; should share.
+                DOMString attr;
+                if (idFromNode(i) == ID_OBJECT) {
+                    attr = i->getAttribute(ATTR_DATA);
+                } else {
+                    attr = i->getAttribute(ATTR_SRC);
+                }
+                if (!attr.isEmpty()) {
+                    QString URLString = parseURL(attr).string();
+                    [element setObject:_part->xmlDocImpl()->completeURL(URLString).getNSString() forKey:WebCoreElementImageURLKey];
+                }
+                
+                // FIXME: Code copied from RenderImage::updateFromElement; should share.
+                DOMString alt;
+                if (idFromNode(i) == ID_INPUT)
+                    alt = static_cast<HTMLInputElementImpl *>(i)->altText();
+                else if (idFromNode(i) == ID_IMG)
+                    alt = static_cast<HTMLImageElementImpl *>(i)->altText();
+                if (!alt.isNull()) {
+                    QString altText = alt.string();
+                    altText.replace('\\', _part->backslashAsCurrencySymbol());
+                    [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
+                }
             }
         }
     }

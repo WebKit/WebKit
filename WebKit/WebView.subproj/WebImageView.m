@@ -238,6 +238,7 @@
                     rect:[self drawingRect]
                      URL:[rep URL]
                    title:nil
+              HTMLString:nil
                    event:event];
 }
 

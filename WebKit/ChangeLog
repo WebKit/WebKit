@@ -1,3 +1,32 @@
+2004-02-02  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3546379>: support for editing via drag & drop
+
+        Reviewed by kocienda.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:fileWrapper:rect:URL:title:HTMLString:event:]): added a HTMLString argument so that we retain all attributes when dragging images
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _canDelete]): call renamed isSelectionEditable
+        (-[WebHTMLView _canPaste]): call renamed isSelectionEditable
+        (-[WebHTMLView _pasteHTMLFromPasteboard:]): new, factored out from paste:
+        (-[WebHTMLView _handleMouseDragged:]): removed code that returned early if we were loading, this kind of protection is no longer needed since we now retain the view while dragging, call renamed _web_dragImage
+        (-[WebHTMLView initWithFrame:]): register for drop types
+        (-[WebHTMLView paste:]): call _pasteHTMLFromPasteboard
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]): set new isDragging BOOL to YES
+        (-[WebHTMLView draggedImage:endedAt:operation:]): set new isDragging BOOL to NO
+        (-[WebHTMLView draggingEntered:]): new
+        (-[WebHTMLView draggingUpdated:]): new, handle caret movement during the drag
+        (-[WebHTMLView prepareForDragOperation:]): new
+        (-[WebHTMLView performDragOperation:]): new
+        (-[WebHTMLView concludeDragOperation:]): new, paste in the drag
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView mouseDragged:]): call renamed _web_dragImage
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+
 === Safari-126 ===
 
 2004-01-30  Chris Blumenberg  <cblu@apple.com>

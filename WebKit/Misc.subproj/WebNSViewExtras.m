@@ -182,6 +182,7 @@
                   rect:(NSRect)rect
                    URL:(NSURL *)URL
                  title:(NSString *)title
+            HTMLString:(NSString *)HTMLString
                  event:(NSEvent *)event
 {
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
@@ -230,9 +231,15 @@
     if (fileWrapper) {
         [types insertObject:NSRTFDPboardType atIndex:0];
     }
+    if (HTMLString) {
+        [types addObject:NSHTMLPboardType];
+    }
     [pboard _web_writeURL:URL andTitle:title withOwner:self types:types];
     if (fileWrapper) {
         [pboard _web_writeFileWrapperAsRTFDAttachment:fileWrapper];
+    }
+    if (HTMLString) {
+        [pboard setString:HTMLString forType:NSHTMLPboardType];
     }
     [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];

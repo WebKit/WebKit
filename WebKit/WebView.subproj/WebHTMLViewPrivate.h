@@ -22,6 +22,7 @@
     BOOL inNextValidKeyView;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
+    BOOL isDragging;
     
     id savedSubviews;
     BOOL subviewsSetAside;
@@ -73,6 +74,7 @@
 - (BOOL)_canDelete;
 - (BOOL)_canPaste;
 - (BOOL)_haveSelection;
+- (void)_pasteHTMLFromPasteboard:(NSPasteboard *)pasteboard;
 
 - (void)_frameOrBoundsChanged;
 

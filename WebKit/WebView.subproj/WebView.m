@@ -63,16 +63,18 @@ static const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const cha
 #include "WebUserAgentSpoofTable.c"
 #undef __inline
 
-NSString *WebElementFrameKey = 			@"WebElementFrame";
-NSString *WebElementImageKey = 			@"WebElementImage";
-NSString *WebElementImageAltStringKey = 	@"WebElementImageAltString";
-NSString *WebElementImageRectKey = 		@"WebElementImageRect";
-NSString *WebElementImageURLKey = 		@"WebElementImageURL";
-NSString *WebElementIsSelectedKey = 	        @"WebElementIsSelected";
-NSString *WebElementLinkURLKey = 		@"WebElementLinkURL";
-NSString *WebElementLinkTargetFrameKey =	@"WebElementTargetFrame";
-NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
-NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
+NSString *WebElementFrameKey =              @"WebElementFrame";
+NSString *WebElementHTMLStringKey =         @"WebElementHTMLString";
+NSString *WebElementImageKey =              @"WebElementImage";
+NSString *WebElementImageAltStringKey =     @"WebElementImageAltString";
+NSString *WebElementImageRectKey =          @"WebElementImageRect";
+NSString *WebElementImageURLKey =           @"WebElementImageURL";
+NSString *WebElementIsEditableKey =         @"WebElementIsEditable";
+NSString *WebElementIsSelectedKey =         @"WebElementIsSelected";
+NSString *WebElementLinkURLKey =            @"WebElementLinkURL";
+NSString *WebElementLinkTargetFrameKey =    @"WebElementTargetFrame";
+NSString *WebElementLinkLabelKey =          @"WebElementLinkLabel";
+NSString *WebElementLinkTitleKey =          @"WebElementLinkTitle";
 
 NSString *WebViewProgressStartedNotification =          @"WebProgressStartedNotification";
 NSString *WebViewProgressEstimateChangedNotification =  @"WebProgressEstimateChangedNotification";

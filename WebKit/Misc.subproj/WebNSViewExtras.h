@@ -45,5 +45,6 @@
                   rect:(NSRect)rect
                    URL:(NSURL *)URL
                  title:(NSString *)title
+            HTMLString:(NSString *)HTMLString
                  event:(NSEvent *)event;
 @end

@@ -540,12 +540,28 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_canDelete
 {
-	return [self _haveSelection] && [[self _bridge] isEditable];
+	return [self _haveSelection] && [[self _bridge] isSelectionEditable];
 }
 
 - (BOOL)_canPaste
 {
-	return [[self _bridge] isEditable];
+	return [[self _bridge] isSelectionEditable];
+}
+
+- (void)_pasteHTMLFromPasteboard:(NSPasteboard *)pasteboard
+{
+	NSArray *types = [pasteboard types];
+	NSString *HTMLString = nil;
+	
+	if ([types containsObject:NSHTMLPboardType]) {
+		HTMLString = [pasteboard stringForType:NSHTMLPboardType];
+	} else if ([types containsObject:NSStringPboardType]) {
+		HTMLString = [pasteboard stringForType:NSStringPboardType];
+	}
+	
+	if (HTMLString) {
+		[[self _bridge] pasteHTMLString:HTMLString];
+	}
 }
 
 -(NSImage *)_dragImageForLinkElement:(NSDictionary *)element
@@ -627,25 +643,19 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_handleMouseDragged:(NSEvent *)event
 {
-    // If the frame has a provisional data source, this view may be released.
-    // Don't allow drag because drag callbacks will reference this released view.
-    if ([[self _frame] provisionalDataSource]) {
-	return;
-    }
-
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     NSDictionary *element = [self _elementAtPoint:mouseDownPoint];
 
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
-    BOOL isSelectedText = [[element objectForKey:WebElementIsSelectedKey] boolValue];
+    BOOL isSelected = [[element objectForKey:WebElementIsSelectedKey] boolValue];
 
     [_private->draggingImageURL release];
     _private->draggingImageURL = nil;
 
     // We must have started over something draggable:
     ASSERT((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
-           (!imageURL && linkURL) || isSelectedText); 
+           (!imageURL && linkURL) || isSelected); 
 
     NSPoint mouseDraggedPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     float deltaX = ABS(mouseDraggedPoint.x - mouseDownPoint.x);
@@ -654,8 +664,8 @@ static WebHTMLView *lastHitView = nil;
     // Drag hysteresis hasn't been met yet but we don't want to do other drag actions like selection.
     if ((imageURL && deltaX < ImageDragHysteresis && deltaY < ImageDragHysteresis) ||
         (linkURL && deltaX < LinkDragHysteresis && deltaY < LinkDragHysteresis) ||
-        (isSelectedText && deltaX < TextDragHysteresis && deltaY < TextDragHysteresis)) {
-	return;
+        (isSelected && deltaX < TextDragHysteresis && deltaY < TextDragHysteresis)) {
+        return;
     }
     
     if (imageURL) {
@@ -667,6 +677,7 @@ static WebHTMLView *lastHitView = nil;
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                          URL:linkURL ? linkURL : imageURL
                        title:[element objectForKey:WebElementImageAltStringKey]
+                  HTMLString:[element objectForKey:WebElementHTMLStringKey]
                        event:_private->mouseDownEvent];
         
     } else if (linkURL) {
@@ -683,7 +694,7 @@ static WebHTMLView *lastHitView = nil;
                  source:self
               slideBack:NO];
         
-    } else if (isSelectedText) {
+    } else if (isSelected) {
         NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
         [self _writeSelectionToPasteboard:pasteboard];
         NSImage *selectionImage = [[self _bridge] selectionImage];
@@ -899,6 +910,8 @@ static WebHTMLView *lastHitView = nil;
 
     _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
     _private->needsLayout = YES;
+	
+	[self registerForDraggedTypes:[NSArray arrayWithObjects:NSHTMLPboardType, NSStringPboardType, nil]];
 
     return self;
 }
@@ -941,19 +954,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)paste:(id)sender
 {
-	NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-	NSArray *types = [pasteboard types];
-	NSString *HTMLString = nil;
-	
-	if ([types containsObject:NSHTMLPboardType]) {
-		HTMLString = [pasteboard stringForType:NSHTMLPboardType];
-	} else if ([types containsObject:NSStringPboardType]) {
-		HTMLString = [pasteboard stringForType:NSStringPboardType];
-	}
-	
-	if (HTMLString) {
-		[[self _bridge] pasteHTMLString:HTMLString];
-	}
+    [self _pasteHTMLFromPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
@@ -1504,7 +1505,9 @@ static WebHTMLView *lastHitView = nil;
        pasteboard:(NSPasteboard *)pasteboard
            source:(id)source
         slideBack:(BOOL)slideBack
-{    
+{   
+    _private->isDragging = YES;
+    
     [self _stopAutoscrollTimer];
 
     // Don't allow drags to be accepted by this WebFrameView.
@@ -1530,6 +1533,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
+    _private->isDragging = NO;
+    
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
     _private->ignoringMouseDraggedEvents = YES;
     
@@ -1576,6 +1581,41 @@ static WebHTMLView *lastHitView = nil;
     }
     
     return [NSArray arrayWithObject:filename];
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+	return _private->isDragging ? NSDragOperationMove : NSDragOperationCopy;
+}
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+{
+    NSPoint point = [self  convertPoint:[sender draggingLocation] fromView:nil];
+    NSDictionary *element = [self _elementAtPoint:point];
+    if ([[element objectForKey:WebElementIsEditableKey] boolValue] && [[self _bridge] moveCaretToPoint:point]) {
+        if (_private->isDragging) {
+            return [[element objectForKey:WebElementIsSelectedKey] boolValue] ? NSDragOperationNone : NSDragOperationMove;
+        } else {
+            return NSDragOperationCopy;
+        }
+    }
+    return NSDragOperationNone;
+}
+
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+{
+    return YES;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    return YES;
+}
+
+- (void)concludeDragOperation:(id <NSDraggingInfo>)sender
+{
+    // FIXME: We should delete the original selection if we're doing a move.
+    [self _pasteHTMLFromPasteboard:[sender draggingPasteboard]];
 }
 
 - (void)mouseUp:(NSEvent *)event
