@@ -218,8 +218,7 @@ THEAD {
 TBODY { 
 	display: table-row-group;
 	vertical-align: inherit; 
-        border: inherit;
-	padding: inherit; 
+    border: inherit;
 }
       
 TFOOT { 
@@ -238,15 +237,13 @@ COLGROUP {
 TR { 
 	display: table-row;
 	vertical-align: inherit; 
-        border-color: inherit; 
-	padding: inherit; 
+    border-color: inherit; 
 }
       
       
 TD, TH { 
 	display: table-cell;
 	vertical-align: inherit;
-	padding: inherit;
 }
       
 TH { 

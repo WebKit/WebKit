@@ -1,5 +1,17 @@
 2002-11-12  David Hyatt  <hyatt@apple.com>
 
+	Fix for 2953367, padding is incorrectly inherited into table cells
+	and also incorrectly overrides cellpadding on the table itself.
+	Fixes dailyf1.com.
+	
+        * khtml/css/html4.css:
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::parseAttribute):
+        (HTMLTableCellElementImpl::init):
+        * khtml/html/html_tableimpl.h:
+
+2002-11-12  David Hyatt  <hyatt@apple.com>
+
 	For now make text/xml files use HTML parsing/documents.
 	This avoids the infinite loop we get into when loading
 	text/xml.  If/when we finally support XML, we can undo

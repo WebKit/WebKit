@@ -414,18 +414,10 @@ void HTMLTableElementImpl::parseAttribute(AttributeImpl *attr)
             removeCSSProperty(CSS_PROP_BORDER_SPACING);
         break;
     case ATTR_CELLPADDING:
-        if (!attr->value().isEmpty()) {
-            addCSSLength(CSS_PROP_PADDING_TOP, attr->value());
-            addCSSLength(CSS_PROP_PADDING_LEFT, attr->value());
-            addCSSLength(CSS_PROP_PADDING_BOTTOM, attr->value());
-            addCSSLength(CSS_PROP_PADDING_RIGHT, attr->value());
-        }
-        else {
-            removeCSSProperty(CSS_PROP_PADDING_TOP);
-            removeCSSProperty(CSS_PROP_PADDING_LEFT);
-            removeCSSProperty(CSS_PROP_PADDING_BOTTOM);
-            removeCSSProperty(CSS_PROP_PADDING_RIGHT);
-        }
+        if (!attr->value().isEmpty())
+            cellPadding = attr->value();
+        else // XXXdwh Need to update all cells to remove the padding property.
+            cellPadding = "";
         break;
     case ATTR_COLS:
     {
@@ -751,6 +743,13 @@ void HTMLTableCellElementImpl::init()
 
             if (!m_solid)
                 addCSSProperty(CSS_PROP_BORDER_COLOR, "inherit");
+        }
+        
+        if (!table->cellPadding.isEmpty()) {
+            addCSSLength(CSS_PROP_PADDING_TOP, table->cellPadding);
+            addCSSLength(CSS_PROP_PADDING_LEFT, table->cellPadding);
+            addCSSLength(CSS_PROP_PADDING_BOTTOM, table->cellPadding);
+            addCSSLength(CSS_PROP_PADDING_RIGHT, table->cellPadding);
         }
     }
 }
