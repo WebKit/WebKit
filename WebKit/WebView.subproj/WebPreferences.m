@@ -516,7 +516,7 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 
 + (void)_removeReferenceForIdentifier:(NSString *)ident
 {
-    [webPreferencesInstances performSelector:@selector(_checkLastReferenceForIdentifier) withObject:ident afterDelay:.1];
+    [webPreferencesInstances performSelector:@selector(_web_checkLastReferenceForIdentifier:) withObject:ident afterDelay:.1];
 }
 
 - (void)_postPreferencesChangesNotification
@@ -530,7 +530,7 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 @end
 
 @implementation NSMutableDictionary (WebPrivate)
-- (void)_checkLastReferenceForIdentifier:(NSString *)identifier
+- (void)_web_checkLastReferenceForIdentifier:(NSString *)identifier
 {
     WebPreferences *instance = [webPreferencesInstances objectForKey:identifier];
     if ([instance retainCount] == 1)

@@ -1,3 +1,15 @@
+2003-05-22  Richard Williamson   <rjw@apple.com>
+
+	Add _web to method in category name.
+
+	Fixed 3266102.  @selector missing ":".
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences _removeReferenceForIdentifier:]):
+        (-[NSMutableDictionary _web_checkLastReferenceForIdentifier:]):
+
 2003-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
