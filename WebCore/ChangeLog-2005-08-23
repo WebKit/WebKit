@@ -25,8 +25,12 @@
 
 2004-05-27  Kevin Decker  <kdecker@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
+        Reviewed by Ken.
+        
+        - added support for the new JavaScript error console
+        - error messages are now wired directly to the bridge
+        - revised generated error message content
+        
         * khtml/ecma/kjs_events.cpp:
         (JSEventListener::handleEvent):
         * khtml/ecma/kjs_proxy.cpp:
