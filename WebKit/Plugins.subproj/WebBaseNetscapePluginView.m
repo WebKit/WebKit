@@ -21,6 +21,7 @@
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/NSURLRequestPrivate.h>
 
 #import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
@@ -1168,7 +1169,7 @@ typedef struct {
     }
 }
 
-- (NPError)loadRequest:(NSURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
+- (NPError)loadRequest:(NSMutableURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
 {
     if (![request URL]) {
         return NPERR_INVALID_URL;
@@ -1187,6 +1188,7 @@ typedef struct {
         // Find the frame given the target string.
         NSString *target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
 
+	[request HTTPSetReferrer:[[[[[self webFrame] dataSource] request] URL] absoluteString]];
         // Make a request, but don't do it right away because it could make the plugin view go away.
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc]
             initWithRequest:request frameName:target notifyData:notifyData];
@@ -1202,7 +1204,7 @@ typedef struct {
 {
     LOG(Plugins, "NPN_GetURLNotify: %s target: %s", URLCString, cTarget);
 
-    NSURLRequest *request = [self requestWithURLCString:URLCString];
+    NSMutableURLRequest *request = [self requestWithURLCString:URLCString];
     return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
 }
 
@@ -1210,7 +1212,7 @@ typedef struct {
 {
     LOG(Plugins, "NPN_GetURL: %s target: %s", URLCString, cTarget);
 
-    NSURLRequest *request = [self requestWithURLCString:URLCString];
+    NSMutableURLRequest *request = [self requestWithURLCString:URLCString];
     return [self loadRequest:request inTarget:cTarget withNotifyData:NULL];
 }
 
@@ -1265,12 +1267,25 @@ typedef struct {
             if (location != NSNotFound) {
                 // If the blank line is somewhere in the middle of postData, everything before is the header.
                 NSData *headerData = [postData subdataWithRange:NSMakeRange(0, location)];
-                NSDictionary *header = [headerData _web_parseRFC822HeaderFields];
+                NSMutableDictionary *header = [headerData _web_parseRFC822HeaderFields];
+		unsigned dataLength = [postData length] - location;
+
+		// Sometimes plugins like to set Content-Length themselves when they post,
+		// but WebFoundation does not like that. So we will remove the header
+		// and instead truncate the data to the requested length.
+		NSString *contentLength = [header objectForKey:@"Content-Length"];
+
+		if (contentLength != nil) {
+		    dataLength = MIN((unsigned)[contentLength intValue], dataLength);
+		}
+		[header removeObjectForKey:@"Content-Length"];
+
                 if ([header count] > 0) {
                     [request HTTPSetAllHeaderFields:header];
                 }
                 // Everything after the blank line is the actual content of the POST.
-                postData = [postData subdataWithRange:NSMakeRange(location, [postData length] - location)];
+                postData = [postData subdataWithRange:NSMakeRange(location, dataLength)];
+
             }
         }
         if ([postData length] == 0) {

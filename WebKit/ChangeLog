@@ -1,3 +1,19 @@
+2003-04-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3188914 - loop checking for Flash at http://www.scottsmind.com/celebrity_defacer/index.php
+	
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): Take a mutable request,
+	and make sure to set referrer to the frame URL (as other browsers do).
+        (-[WebBaseNetscapePluginView getURLNotify:target:notifyData:]): pass an NSMutableURLRequest.
+        (-[WebBaseNetscapePluginView getURL:target:]): Likewise.
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]):
+	If the plug-in passes a Content-Length header, take it out of the
+	headers and truncate the content appropriately to make
+	WebFoundation happy.
+
 2003-04-03  Richard Williamson  <rjw@apple.com>
 
         Fix checks for about: to avoid using our 'fake' request when
