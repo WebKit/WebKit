@@ -684,38 +684,43 @@ void RenderPartObject::updateWidget()
       params.append( QString::fromLatin1("__KHTML__CLASSID=\"%1\"").arg( o->classId ) );
       params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(ATTR_CODEBASE).string() ) );
 
-      if ( !embed )
-      {
+      if ( !embed ) {
           url = o->url;
           serviceType = o->serviceType;
-          if(serviceType.isEmpty() || serviceType.isNull()) {
-              if(!o->classId.isEmpty()) {
-                  // We have a clsid, means this is activex (Niko)
-                  serviceType = "application/x-activex-handler";
+      } else {
+          url = embed->url;
+          serviceType = embed->serviceType;
+      }
+      
+      if(serviceType.isEmpty()) {
+          if(!o->classId.isEmpty()) {
+              // We have a clsid, means this is activex (Niko)
+              serviceType = "application/x-activex-handler";
 #ifndef APPLE_CHANGES
-                  url = "dummy"; // Not needed, but KHTMLPart aborts the request if empty
+              url = "dummy"; // Not needed, but KHTMLPart aborts the request if empty
 #endif
-              }
-
-              if(o->classId.contains(QString::fromLatin1("D27CDB6E-AE6D-11cf-96B8-444553540000"))) {
-                  // It is ActiveX, but the nsplugin system handling
-                  // should also work, that's why we don't override the
-                  // serviceType with application/x-activex-handler
-                  // but let the KTrader in khtmlpart::createPart() detect
-                  // the user's preference: launch with activex viewer or
-                  // with nspluginviewer (Niko)
-                  serviceType = "application/x-shockwave-flash";
-              }
-              else if(o->classId.contains(QString::fromLatin1("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")))
-                  serviceType = "audio/x-pn-realaudio-plugin";
-              else if(o->classId.contains(QString::fromLatin1("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")))
-                  serviceType = "video/quicktime";
-              else if(o->classId.contains(QString::fromLatin1("166B1BCA-3F9C-11CF-8075-444553540000")))
-                  serviceType = "application/x-director";
-              
-              // TODO: add more plugins here
           }
 
+          if(o->classId.contains(QString::fromLatin1("D27CDB6E-AE6D-11cf-96B8-444553540000"))) {
+              // It is ActiveX, but the nsplugin system handling
+              // should also work, that's why we don't override the
+              // serviceType with application/x-activex-handler
+              // but let the KTrader in khtmlpart::createPart() detect
+              // the user's preference: launch with activex viewer or
+              // with nspluginviewer (Niko)
+              serviceType = "application/x-shockwave-flash";
+          }
+          else if(o->classId.contains(QString::fromLatin1("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")))
+              serviceType = "audio/x-pn-realaudio-plugin";
+          else if(o->classId.contains(QString::fromLatin1("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")))
+              serviceType = "video/quicktime";
+          else if(o->classId.contains(QString::fromLatin1("166B1BCA-3F9C-11CF-8075-444553540000")))
+              serviceType = "application/x-director";
+          
+          // TODO: add more plugins here
+      }
+
+      if ( !embed ) {
           if((url.isEmpty() || url.isNull())) {
               // look for a SRC attribute in the params
               NodeImpl *child = o->firstChild();
@@ -746,9 +751,6 @@ void RenderPartObject::updateWidget()
       }
       else {
           // render embed object
-          url = embed->url;
-          serviceType = embed->serviceType;
-
           if ( url.isEmpty() && serviceType.isEmpty() ) {
 #ifdef DEBUG_LAYOUT
               kdDebug() << "RenderPartObject::close - empty url and serverType" << endl;

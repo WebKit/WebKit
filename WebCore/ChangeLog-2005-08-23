@@ -2,6 +2,16 @@
 
         Reviewed by Don.
 
+	- fixed 3136262 -- Shockwave Flash at movies.yahoo.com does not work
+
+        * khtml/rendering/render_frames.cpp: (RenderPartObject::updateWidget):
+	Moved the class ID special case MIME types out of the if statement so they can be shared
+	in the case where we have an embed tag but no MIME type.
+
+2002-12-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
         * kwq/KWQAssertions.h: Fixed CRASH macro to use 0xbbadbeef instead of 0xbadbeef
 	to reduce the chance that the address will be valid once we have allocated a lot of memory.
 
