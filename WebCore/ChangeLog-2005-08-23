@@ -1,3 +1,13 @@
+2003-03-11  David Hyatt  <hyatt@apple.com>
+
+	Fix the 16000 pixel tall scrollbar on macromedia.com/software.
+	vertical-align position hints were being set to bad values.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::getVerticalPosition):
+
 2003-03-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for <pre> regression, bug #3193590, directory listings
