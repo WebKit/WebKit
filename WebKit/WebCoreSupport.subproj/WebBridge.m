@@ -81,6 +81,11 @@
 - (jobject)pollForAppletInWindow: (NSWindow *)window;
 @end
 
+// For compatibility only.
+@interface NSObject (OldPluginAPI)
++ (NSView <WebPlugin> *)pluginViewWithArguments:(NSDictionary *)arguments;
+@end
+
 @implementation WebBridge
 
 - (id)initWithWebFrame:(WebFrame *)webFrame
@@ -714,9 +719,9 @@
     return [[[self dataSource] request] HTTPReferrer];
 }
 
-- (NSView <WebPlugin> *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
-                                   attributes:(NSDictionary *)attributes
-                                      baseURL:(NSURL *)baseURL
+- (NSView *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
+                       attributes:(NSDictionary *)attributes
+                          baseURL:(NSURL *)baseURL
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
@@ -734,7 +739,14 @@
 
     [pluginPackage load];
     
-    return [[pluginPackage viewFactory] plugInViewWithArguments:arguments];
+    Class viewFactory = [pluginPackage viewFactory];
+    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
+        return [viewFactory plugInViewWithArguments:arguments];
+    } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
+        return [viewFactory pluginViewWithArguments:arguments];
+    } else {
+        return nil;
+    }
 }
 
 - (NSView *)viewForPluginWithURL:(NSURL *)URL
