@@ -1,3 +1,5 @@
+=== Safari-143 ===
+
 2004-06-04  Darin Adler  <darin@apple.com>
 
         * kjs/testkjs.cpp: (main): Fix build breakage by adding URL and line number parameters.
