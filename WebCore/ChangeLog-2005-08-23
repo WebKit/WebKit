@@ -1,3 +1,14 @@
+2003-12-16  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3510956, crash on mezzoblue.com.  Relax the float-list searching code that runs when
+	a float is removed.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_object.cpp:
+        (checkFloats):
+        (RenderObject::removeFromObjectLists):
+
 2003-12-16  John Sullivan  <sullivan@apple.com>
 
         fixed <rdar://problem/3482852>: oft-seen, non-repro, nil-deref in 

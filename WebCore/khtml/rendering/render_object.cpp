@@ -1482,15 +1482,35 @@ RenderObject *RenderObject::container() const
     return o;
 }
 
+#if 0
+static void checkFloats(RenderObject* o, RenderObject* f)
+{
+    if (o->isRenderBlock()) {
+        RenderBlock* b = static_cast<RenderBlock*>(o);
+        if (b->containsFloat(f))
+            assert(false);
+    }
+    
+    for (RenderObject* c = o->firstChild(); c; c = c->nextSibling())
+        checkFloats(c, f);
+}
+#endif
+
 void RenderObject::removeFromObjectLists()
 {
     if (isFloating()) {
         RenderBlock* outermostBlock = containingBlock();
-        for (RenderBlock* p = outermostBlock;
-             p && !p->isCanvas() && p->containsFloat(this);
-             outermostBlock = p, p = p->containingBlock());
+        for (RenderBlock* p = outermostBlock; p && !p->isCanvas(); p = p->containingBlock()) {
+            if (p->containsFloat(this))
+                outermostBlock = p;
+        }
+        
         if (outermostBlock)
             outermostBlock->markAllDescendantsWithFloatsForLayout(this);
+#if 0
+        // Debugging code for float checking.
+        checkFloats(canvas(), this);
+#endif
     }
 
     if (isPositioned()) {
