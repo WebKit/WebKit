@@ -419,7 +419,12 @@ static bool initializedKJS = FALSE;
 
 - (void)pasteMarkupString:(NSString *)markupString
 {
-    _part->pasteMarkupString(QString::fromNSString(markupString));
+    _part->pasteHTMLString(QString::fromNSString(markupString));
+}
+
+- (void)pasteImageWithURL:(NSURL *)URL
+{
+    _part->pasteImage(QString::fromNSString([URL absoluteString]));
 }
 
 - (void)deleteSelection

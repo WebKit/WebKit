@@ -338,22 +338,39 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
-// PasteMarkupCommandImpl
+// PasteHTMLCommandImpl
 
-class PasteMarkupCommandImpl : public CompositeEditCommandImpl
+class PasteHTMLCommandImpl : public CompositeEditCommandImpl
 {
 public:
-    PasteMarkupCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &markupString);
-    virtual ~PasteMarkupCommandImpl();
+    PasteHTMLCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &HTMLString);
+    virtual ~PasteHTMLCommandImpl();
     
     virtual int commandID() const;
 
     virtual void doApply();
 
-    DOM::DOMString markupString() const { return m_markupString; }
+    DOM::DOMString HTMLString() const { return m_HTMLString; }
 
 private:
-    DOM::DOMString m_markupString;
+    DOM::DOMString m_HTMLString;
+};
+
+//------------------------------------------------------------------------------------------
+// PasteImageCommandImpl
+
+class PasteImageCommandImpl : public CompositeEditCommandImpl
+{
+public:
+    PasteImageCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &src);
+    virtual ~PasteImageCommandImpl();
+    
+    virtual int commandID() const;
+
+    virtual void doApply();
+    
+private:
+    DOM::DOMString m_src;
 };
 
 //------------------------------------------------------------------------------------------

@@ -654,9 +654,14 @@ public:
   void reappliedEditing(khtml::EditCommand &);
 
   /**
-   * Pastes a markup string (such as an HTML string) at the current caret position.
+   * Pastes an HTML string at the current caret position.
    */
-  void pasteMarkupString(const QString &markupString);
+  void pasteHTMLString(const QString &HTMLString);
+  
+  /**
+   * Pastes a new image node at the current caret position.
+   */
+  void pasteImage(const QString &src);
 
   /**
    * Convenience method to show the document's view.

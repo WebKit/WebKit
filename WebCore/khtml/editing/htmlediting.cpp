@@ -70,8 +70,10 @@ using khtml::RemoveNodeCommand;
 using khtml::RemoveNodeCommandImpl;
 using khtml::RemoveNodeAndPruneCommand;
 using khtml::RemoveNodeAndPruneCommandImpl;
-using khtml::PasteMarkupCommand;
-using khtml::PasteMarkupCommandImpl;
+using khtml::PasteHTMLCommand;
+using khtml::PasteHTMLCommandImpl;
+using khtml::PasteImageCommand;
+using khtml::PasteImageCommandImpl;
 using khtml::SplitTextNodeCommand;
 using khtml::SplitTextNodeCommandImpl;
 using khtml::TypingCommand;
@@ -512,26 +514,43 @@ TextImpl *JoinTextNodesCommand::secondNode() const
 }
 
 //------------------------------------------------------------------------------------------
-// PasteMarkupCommand
+// PasteHTMLCommand
 
-PasteMarkupCommand::PasteMarkupCommand(DocumentImpl *document, const DOMString &markupString) 
-    : CompositeEditCommand(new PasteMarkupCommandImpl(document, markupString))
+PasteHTMLCommand::PasteHTMLCommand(DocumentImpl *document, const DOMString &HTMLString) 
+    : CompositeEditCommand(new PasteHTMLCommandImpl(document, HTMLString))
 {
 }
 
-PasteMarkupCommand::~PasteMarkupCommand() 
+PasteHTMLCommand::~PasteHTMLCommand() 
 {
 }
 
-PasteMarkupCommandImpl *PasteMarkupCommand::impl() const
+PasteHTMLCommandImpl *PasteHTMLCommand::impl() const
 {
-    return static_cast<PasteMarkupCommandImpl *>(get());
+    return static_cast<PasteHTMLCommandImpl *>(get());
 }
 
-DOMString PasteMarkupCommand::markupString() const
+DOMString PasteHTMLCommand::HTMLString() const
 {
     IF_IMPL_NULL_RETURN_ARG(DOMString());
-    return impl()->markupString();
+    return impl()->HTMLString();
+}
+
+//------------------------------------------------------------------------------------------
+// PasteImageCommand
+
+PasteImageCommand::PasteImageCommand(DocumentImpl *document, const DOMString &src) 
+    : CompositeEditCommand(new PasteImageCommandImpl(document, src))
+{
+}
+
+PasteImageCommand::~PasteImageCommand() 
+{
+}
+
+PasteImageCommandImpl *PasteImageCommand::impl() const
+{
+    return static_cast<PasteImageCommandImpl *>(get());
 }
 
 //------------------------------------------------------------------------------------------
