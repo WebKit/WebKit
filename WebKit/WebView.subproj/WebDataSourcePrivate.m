@@ -52,7 +52,6 @@
     [originalRequest release];
     [mainClient release];
     [subresourceClients release];
-    [pluginStreams release];
     [pageTitle release];
     [response release];
     [mainDocumentError release];
@@ -191,24 +190,6 @@
     [self _updateLoading];
 }
 
-// Plugin streams are like subresources except that they don't affect the loading state of the datasource.
-- (void)_addPluginStream:(WebNetscapePluginStream *)stream
-{
-    if (_private->pluginStreams == nil) {
-        _private->pluginStreams = [[NSMutableArray alloc] init];
-    }
-    if ([_private->controller _defersCallbacks]) {
-        [stream setDefersCallbacks:YES];
-    }
-    [_private->pluginStreams addObject:stream];
-}
-
-- (void)_removePluginStream:(WebNetscapePluginStream *)stream
-{
-    [_private->pluginStreams removeObject:stream];
-}
-
-
 - (BOOL)_isStopping
 {
     return _private->stopping;
@@ -227,10 +208,6 @@
     NSArray *clients = [_private->subresourceClients copy];
     [clients makeObjectsPerformSelector:@selector(cancel)];
     [clients release];
-
-    NSArray *streams = [_private->pluginStreams copy];
-    [streams makeObjectsPerformSelector:@selector(cancel)];
-    [streams release];
     
     if (_private->committed) {
 	[[self _bridge] closeURL];        
@@ -546,11 +523,7 @@
 
 - (void)_makeHandleDelegates:(NSArray *)handleDelegates deferCallbacks:(BOOL)deferCallbacks
 {
-    NSEnumerator *e = [handleDelegates objectEnumerator];
-    WebBaseResourceHandleDelegate *delegate;
-    while ((delegate = [e nextObject])) {
-        [delegate setDefersCallbacks:deferCallbacks];
-    }
+
 }
 
 - (void)_defersCallbacksChanged
@@ -564,8 +537,11 @@
     _private->defersCallbacks = defers;
     [_private->mainClient setDefersCallbacks:defers];
 
-    [self _makeHandleDelegates:_private->subresourceClients deferCallbacks:defers];
-    [self _makeHandleDelegates:_private->pluginStreams deferCallbacks:defers];
+    NSEnumerator *e = [_private->subresourceClients objectEnumerator];
+    WebSubresourceClient *client;
+    while ((client = [e nextObject])) {
+        [client setDefersCallbacks:defers];
+    }
 
     [[[self webFrame] children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }

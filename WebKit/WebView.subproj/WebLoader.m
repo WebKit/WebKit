@@ -35,6 +35,9 @@
     [handle release];
     handle = nil;
 
+    [controller release];
+    controller = nil;
+    
     [dataSource release];
     dataSource = nil;
     
@@ -84,12 +87,15 @@
     [d retain];
     [dataSource release];
     dataSource = d;
+
+    [controller release];
+    controller = [[dataSource controller] retain];
     
     [resourceLoadDelegate release];
-    resourceLoadDelegate = [[[dataSource controller] resourceLoadDelegate] retain];
+    resourceLoadDelegate = [[controller resourceLoadDelegate] retain];
 
     [downloadDelegate release];
-    downloadDelegate = [[[dataSource controller] downloadDelegate] retain];
+    downloadDelegate = [[controller downloadDelegate] retain];
 }
 
 - (WebDataSource *)dataSource
@@ -122,7 +128,7 @@
     ASSERT(handle == h);
     ASSERT(!reachedTerminalState);
     
-    [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
+    [newRequest setUserAgent:[controller userAgentForURL:[newRequest URL]]];
 
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
@@ -139,11 +145,11 @@
     request = [newRequest copy];
 
     if (currentURL) {
-        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
+        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
     }    
     [currentURL release];
     currentURL = [[request URL] retain];
-    [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:[dataSource controller]];
+    [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:controller];
 
     return request;
 }
@@ -184,7 +190,7 @@
     else
         [resourceLoadDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
 
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
+    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     [self _releaseResources];
 }
@@ -199,7 +205,7 @@
     else
         [resourceLoadDelegate resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
+    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     [self _releaseResources];
 }
@@ -210,7 +216,7 @@
 
     [handle cancel];
     
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
+    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     if (error) {
         [resourceLoadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];

@@ -47,9 +47,7 @@
 - (void)start
 {
     ASSERT(_startingRequest);
-    if([self loadWithRequest:_startingRequest]){
-        [[view dataSource] _addPluginStream:self];
-    }
+    [self loadWithRequest:_startingRequest];
     [_startingRequest release];
     _startingRequest = nil;
 }
@@ -63,7 +61,6 @@
 
 - (void)cancel
 {
-    [[view dataSource] _removePluginStream:self];
     [view release];
     view = nil;
 
@@ -94,12 +91,9 @@
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
-    WebController *controller = [view controller];
-
-    [controller _finishedLoadingResourceFromDataSource:[view dataSource]];
+    [[view controller] _finishedLoadingResourceFromDataSource:[view dataSource]];
     [self finishedLoadingWithData:resourceData];
 
-    [[view dataSource] _removePluginStream:self];
     [view release];
     view = nil;
     
@@ -108,13 +102,10 @@
 
 - (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)result
 {
-    WebController *controller = [view controller];
-
-    [controller _receivedError:result fromDataSource:[view dataSource]];
+    [[view controller] _receivedError:result fromDataSource:[view dataSource]];
 
     [self receivedError:NPRES_NETWORK_ERR];
 
-    [[view dataSource] _removePluginStream:self];
     [view release];
     view = nil;
     

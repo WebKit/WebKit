@@ -1,5 +1,31 @@
 2002-11-18  Chris Blumenberg  <cblu@apple.com>
 
+	Real fix for: 3104183 - Assert loading www.louisvuitton.com
+
+	Since we don't consider plug-in content as a subresource, attaching plug-in streams to the datasource has no affect on the loading state of the datasource. Both stopLoading on WebFrame and _stopLoading datasource, would not stop plug-ins streams after the data source was done loading. Because of this, I've decided to not keep a list of plug-in streams attached to the data source and pulled my previous change. To fix this bug, WebBaseResourceHandleDelegate now retains the controller.
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePluginStream cancel]):
+        (-[WebNetscapePluginStream handleDidFinishLoading:]):
+        (-[WebNetscapePluginStream handle:didFailLoadingWithError:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate _releaseResources]):
+        (-[WebBaseResourceHandleDelegate setDataSource:]):
+        (-[WebBaseResourceHandleDelegate handle:willSendRequest:]):
+        (-[WebBaseResourceHandleDelegate handleDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate handle:didFailLoadingWithError:]):
+        (-[WebBaseResourceHandleDelegate _cancelWithError:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _makeHandleDelegates:deferCallbacks:]):
+        (-[WebDataSource _defersCallbacksChanged]):
+
+2002-11-18  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3104183 - Assert loading www.louisvuitton.com
 
 	We need to treat plug-in streams like subresources except they don't change the loading state of the data source.
