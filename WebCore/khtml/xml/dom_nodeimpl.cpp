@@ -290,7 +290,7 @@ static QString escapeHTML( const QString& in )
     return s;
 }
 
-QString NodeImpl::startMarkup(const DOM::RangeImpl *range) const
+QString NodeImpl::startMarkup(const RangeImpl *range) const
 {
     unsigned short type = nodeType();
     if (type == Node::TEXT_NODE) {
@@ -702,7 +702,7 @@ bool NodeImpl::dispatchWindowEvent(int _id, bool canBubbleArg, bool cancelableAr
         // This is a DOM extension and is independent of bubbling/capturing rules of
         // the DOM.  You send the event only to the enclosing frame.  It does not
         // bubble through the parent document.
-        DOM::ElementImpl* elt = doc->document()->ownerElement();
+        ElementImpl* elt = doc->document()->ownerElement();
         if (elt && (elt->getDocument()->domain().isNull() ||
                     elt->getDocument()->domain() == doc->document()->domain())) {
             // We also do a security check, since we don't want to allow the enclosing
@@ -870,10 +870,11 @@ void NodeImpl::notifyNodeListsSubtreeModified()
     }
 }
 
-bool NodeImpl::dispatchSubtreeModifiedEvent()
+bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
 {
     notifyNodeListsSubtreeModified();
-    childrenChanged();
+    if (sendChildrenChanged)
+        childrenChanged();
     if (!getDocument()->hasListenerType(DocumentImpl::DOMSUBTREEMODIFIED_LISTENER))
 	return false;
     int exceptioncode = 0;

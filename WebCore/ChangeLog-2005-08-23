@@ -1,3 +1,21 @@
+2004-11-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3878489> REGRESSION: modifying attribute of <textarea> blows away edited text (breaks simplemachines.org forum)
+
+        * khtml/xml/dom_nodeimpl.h: Added boolean "children changed" parameter to
+        dispatchSubtreeModifiedEvent, so it can be called in cases where only the
+        node's attributes changed without sending a misleading childrenChanged call,
+        but the childrenChanged call can happen at the exact right moment.
+        * khtml/xml/dom_nodeimpl.cpp: Removed some uneeded "DOM::".
+        (NodeImpl::dispatchSubtreeModifiedEvent): Only call "children changed" if
+        the boolean true is passed in.
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::addAttribute): Pass false for "children changed".
+        (NamedAttrMapImpl::removeAttribute): Ditto.
+
 2004-11-15  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

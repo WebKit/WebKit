@@ -260,7 +260,7 @@ public:
     virtual bool isMouseFocusable() const;
     
     virtual bool isInline() const;
-    QString startMarkup(const DOM::RangeImpl *range) const;
+    QString startMarkup(const RangeImpl *range) const;
     QString endMarkup(void) const;
     virtual QString toHTML() const;
     QString recursive_toHTML(bool onlyIncludeChildren=false, QPtrList<NodeImpl> *nodes=NULL) const;
@@ -293,7 +293,7 @@ public:
     bool dispatchWindowEvent(int _id, bool canBubbleArg, bool cancelableArg);
     bool dispatchMouseEvent(QMouseEvent *e, int overrideId = 0, int overrideDetail = 0);
     bool dispatchUIEvent(int _id, int detail = 0);
-    bool dispatchSubtreeModifiedEvent();
+    bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
     bool dispatchKeyEvent(QKeyEvent *key);
 
     void handleLocalEvents(EventImpl *evt, bool useCapture);
@@ -439,7 +439,7 @@ public:
 
     /**
      * Notifies the node that it's list of children have changed (either by adding or removing child nodes), or a child
-     * node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed it's value.
+     * node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
      */
     virtual void childrenChanged();
 

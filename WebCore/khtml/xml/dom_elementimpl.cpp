@@ -942,7 +942,7 @@ void NamedAttrMapImpl::addAttribute(AttributeImpl *attr)
     if (element) {
         element->attributeChanged(attr);
         element->dispatchAttrAdditionEvent(attr);
-        element->dispatchSubtreeModifiedEvent();
+        element->dispatchSubtreeModifiedEvent(false);
     }
 }
 
@@ -988,7 +988,7 @@ void NamedAttrMapImpl::removeAttribute(NodeImpl::Id id)
     }
     if (element) {
         element->dispatchAttrRemovalEvent(attr);
-        element->dispatchSubtreeModifiedEvent();
+        element->dispatchSubtreeModifiedEvent(false);
     }
     attr->deref();
 }
