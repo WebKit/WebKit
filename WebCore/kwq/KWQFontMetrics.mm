@@ -166,31 +166,19 @@ NSRect QFontMetrics::_rectOfString(NSString *string) const
     if (data->textContainer == nil){
         data->textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
         data->layoutManager = [[NSLayoutManager alloc] init];
- //       data->textStorage = [[NSTextStorage alloc] initWithString:string attributes:[NSDictionary dictionaryWithObjectsAndKeys:data->font, NSFontAttributeName, nil]];
         [data->layoutManager addTextContainer: data->textContainer];
-//      [data->textStorage addLayoutManager: data->layoutManager];
         data->attributes = [[NSDictionary dictionaryWithObjectsAndKeys:data->font, NSFontAttributeName, nil] retain];
     }
-//    else {
-//        [data->textStorage beginEditing];
-//        [data->textStorage replaceCharactersInRange: NSMakeRange (0,[data->textStorage length]) withString: string];
-//        [data->textStorage endEditing];
-//    }
 
     textStorage = [[NSTextStorage alloc] initWithString:string attributes: data->attributes];
     [textStorage addLayoutManager: data->layoutManager];
     
-    //[data->layoutManager addTextContainer: data->textContainer];
-    //[data->textStorage addLayoutManager: data->layoutManager];
-
     unsigned numberOfGlyphs = [data->layoutManager numberOfGlyphs];
     NSRect glyphRect = [data->layoutManager boundingRectForGlyphRange: NSMakeRange (0, numberOfGlyphs) inTextContainer: data->textContainer];
 
     [textStorage removeLayoutManager: data->layoutManager];
     [textStorage release];
     
-    //[data->layoutManager removeTextContainerAtIndex: 0];
-
     [data->boundingRectCache setObject: [NSValue valueWithRect: glyphRect] forKey: string];
         
     return glyphRect;
