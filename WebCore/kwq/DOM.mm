@@ -23,7 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "DOM.h"
 #import "DOMInternal.h"
+
+#import <Foundation/Foundation.h>
+
+#include <objc/objc-class.h>
 
 #import <dom/dom_doc.h>
 #import <dom/dom_element.h>
@@ -42,11 +47,14 @@
 #import <xml/dom2_rangeimpl.h>
 
 #import "KWQAssertions.h"
+#import "KWQLogging.h"
 
 using DOM::Attr;
 using DOM::AttrImpl;
+using DOM::CDATASectionImpl;
 using DOM::CharacterData;
 using DOM::CharacterDataImpl;
+using DOM::CommentImpl;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentType;
 using DOM::DocumentTypeImpl;
@@ -59,6 +67,7 @@ using DOM::DOMStringImpl;
 using DOM::Element;
 using DOM::ElementImpl;
 using DOM::EntityImpl;
+using DOM::EntityReferenceImpl;
 using DOM::NamedNodeMap;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
@@ -73,156 +82,158 @@ using DOM::RangeImpl;
 using DOM::Text;
 using DOM::TextImpl;
 
-@interface DOMNamedNodeMap (WebCoreInternal)
-+ (DOMNamedNodeMap *)namedNodeMapWithImpl:(NamedNodeMapImpl *)impl;
-@end
-
-@interface DOMNodeList (WebCoreInternal)
-+ (DOMNodeList *)nodeListWithImpl:(NodeListImpl *)impl;
-@end
-
-@interface DOMImplementation (WebCoreInternal)
-+ (DOMImplementation *)DOMImplementationWithImpl:(DOMImplementationImpl *)impl;
-@end
-
-@interface DOMDocumentFragment (WebCoreInternal)
-+ (DOMDocumentFragment *)documentFragmentWithImpl:(DocumentFragmentImpl *)impl;
-@end
-
-@interface DOMAttr (WebCoreInternal)
-+ (DOMAttr *)attrWithImpl:(AttrImpl *)impl;
-- (AttrImpl *)attrImpl;
-@end
-
-@interface DOMRange (WebCoreInternal)
-+ (DOMRange *)rangeWithImpl:(RangeImpl *)impl;
-@end
+@class WebCoreDOMAttr;
+@class WebCoreDOMCDATASection;
+@class WebCoreDOMCharacterData;
+@class WebCoreDOMComment;
+@class WebCoreDOMDocumentFragment;
+@class WebCoreDOMDocumentType;
+@class WebCoreDOMDocument;
+@class WebCoreDOMImplementation;
+@class WebCoreDOMElement;
+@class WebCoreDOMEntity;
+@class WebCoreDOMEntityReference;
+@class WebCoreDOMNamedNodeMap;
+@class WebCoreDOMNode;
+@class WebCoreDOMNodeList;
+@class WebCoreDOMNotation;
+@class WebCoreDOMProcessingInstruction;
+@class WebCoreDOMRange;
+@class WebCoreDOMText;
 
 //------------------------------------------------------------------------------------------
 // Static functions and data
 
 NSString * const DOMErrorDomain = @"DOMErrorDomain";
 
-static CFMutableDictionaryRef wrapperCache = NULL;
+static CFMutableDictionaryRef wrapperCache(void)
+{
+    static CFMutableDictionaryRef wrapperCache = NULL;
+    if (!wrapperCache) {
+        // No need to retain/free either impl key, or id value.  Items will be removed
+        // from the cache in WebCoreDOMNode's dealloc method.
+        wrapperCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+    }
+    return wrapperCache;
+}
 
 static id wrapperForImpl(const void *impl)
 {
-    if (!wrapperCache)
-        return nil;
-    return (id)CFDictionaryGetValue(wrapperCache, impl);
+    return (id)CFDictionaryGetValue(wrapperCache(), impl);
 }
 
 static void setWrapperForImpl(id wrapper, const void *impl)
 {
-    if (!wrapperCache) {
-        // No need to retain/free either impl key, or id value.  Items will be removed
-        // from the cache in dealloc methods.
-        wrapperCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    }
-    CFDictionarySetValue(wrapperCache, impl, wrapper);
+    CFDictionarySetValue(wrapperCache(), impl, wrapper);
 }
 
 static void removeWrapperForImpl(const void *impl)
 {
-    if (!wrapperCache)
-        return;
-    CFDictionaryRemoveValue(wrapperCache, impl);
+    CFDictionaryRemoveValue(wrapperCache(), impl);
 }
 
 static NSString *DOMStringToNSString(const DOMString &aString)
 {
-    return [NSString stringWithCharacters:reinterpret_cast<const unichar *>(aString.unicode()) length:aString.length()];
+    return [NSString stringWithCharacters:(unichar *)aString.unicode() length:aString.length()];
 }
 
 static DOMString NSStringToDOMString(NSString *aString)
 {
-    ASSERT(aString);
-
-    CFIndex size = CFStringGetLength(reinterpret_cast<CFStringRef>(aString));
-    UniChar fixedSizeBuffer[1024];
-    UniChar *buffer;
-    if (size > static_cast<CFIndex>(sizeof(fixedSizeBuffer) / sizeof(UniChar))) {
-        buffer = static_cast<UniChar *>(malloc(size * sizeof(UniChar)));
-    } else {
-        buffer = fixedSizeBuffer;
-    }
-    CFStringGetCharacters(reinterpret_cast<CFStringRef>(aString), CFRangeMake(0, size), buffer);
-    DOMString ret(reinterpret_cast<const QChar *>(buffer), (uint)size);
-    if (buffer != fixedSizeBuffer) {
-        free(buffer);
-    }
+    QChar *chars = (QChar *)malloc([aString length] * sizeof(QChar));
+    [aString getCharacters:(unichar *)chars];
+    DOMString ret(chars, [aString length]);
+    free(chars);
     return ret;
 }
 
 static void fillInError(NSError **error, int code)
 {
-    if (!error)
+    if (!error || !code)
         return;
-    if (!code)
-        *error = nil;
-    else
-        *error = [NSError errorWithDomain:DOMErrorDomain code:code userInfo:nil];
+        
+    *error = [NSError errorWithDomain:DOMErrorDomain code:code userInfo:nil];
 }
+
+#define AbstractMethodCalled(absClass) do { \
+	if ([self class] == absClass) \
+		[NSException raise:NSInvalidArgumentException format:@"*** -%s cannot be sent to an abstract object of class %s: You must create a concrete instance.", sel_getName(_cmd), absClass->name]; \
+	else \
+		[NSException raise:NSInvalidArgumentException format:@"*** -%s only defined for abstract class. You must define -[%s %s]", sel_getName(_cmd), object_getClassName(self), sel_getName(_cmd)]; \
+	} while (0)
 
 //------------------------------------------------------------------------------------------
 // Factory methods
 
-inline NamedNodeMap NamedNodeMapImpl::createInstance(NamedNodeMapImpl *impl)
+NodeList NodeListImpl::createInstance(NodeListImpl *impl)
+{
+    return NodeList(impl);
+}
+
+NamedNodeMap NamedNodeMapImpl::createInstance(NamedNodeMapImpl *impl)
 {
     return NamedNodeMap(impl);
 }
 
-inline Attr AttrImpl::createInstance(AttrImpl *impl)
+Attr AttrImpl::createInstance(AttrImpl *impl)
 {
     return Attr(impl);
 }
 
-inline Element ElementImpl::createInstance(ElementImpl *impl)
+Element ElementImpl::createInstance(ElementImpl *impl)
 {
     return Element(impl);
 }
 
-inline DocumentType DocumentTypeImpl::createInstance(DocumentTypeImpl *impl)
+CharacterData CharacterDataImpl::createInstance(CharacterDataImpl *impl)
+{
+    return CharacterData(impl);
+}
+
+Text TextImpl::createInstance(TextImpl *impl)
+{
+    return Text(impl);
+}
+
+ProcessingInstruction ProcessingInstructionImpl::createInstance(ProcessingInstructionImpl *impl)
+{
+    return ProcessingInstruction(impl);
+}
+
+DocumentType DocumentTypeImpl::createInstance(DocumentTypeImpl *impl)
 {
     return DocumentType(impl);
 }
 
-inline Document DocumentImpl::createInstance(DocumentImpl *impl)
+Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     return Document(impl);
 }
 
-//------------------------------------------------------------------------------------------
-// DOMObject
-
-@implementation DOMObject
-
-- (void)dealloc
+Range RangeImpl::createInstance(RangeImpl *impl)
 {
-    if (_internal) {
-        removeWrapperForImpl(_internal);
-    }
-    [super dealloc];
+    return Range(impl);
 }
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-@end
 
 //------------------------------------------------------------------------------------------
 // DOMNode
 
 @implementation DOMNode
 
-- (void)dealloc
+- (NodeImpl *)nodeImpl
 {
-    if (_internal) {
-        reinterpret_cast<NodeImpl *>(_internal)->deref();
-    }
-    [super dealloc];
+	AbstractMethodCalled([DOMNode class]);
+    return nil;
+}
+
+- (Class)classForDOMDocument
+{
+	AbstractMethodCalled([DOMNode class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (NSString *)nodeName
@@ -290,7 +301,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMDocument *)ownerDocument
 {
-    return [DOMDocument documentWithImpl:[self nodeImpl]->getDocument()];
+    return [[self classForDOMDocument] documentWithImpl:[self nodeImpl]->getDocument()];
 }
 
 - (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild error:(NSError **)error
@@ -356,13 +367,15 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(version);
 
     // Method not reflected in DOM::NodeImpl interface
-    return Node([self nodeImpl]).isSupported(NSStringToDOMString(feature), NSStringToDOMString(version));
+    Node node([self nodeImpl]);
+    return node.isSupported(NSStringToDOMString(feature), NSStringToDOMString(version));
 }
 
 - (NSString *)namespaceURI
 {
     // Method not reflected in DOM::NodeImpl interface
-    return DOMStringToNSString(Node([self nodeImpl]).namespaceURI());
+    Node node([self nodeImpl]);
+    return DOMStringToNSString(node.namespaceURI());
 }
 
 - (NSString *)prefix
@@ -387,7 +400,8 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (BOOL)hasAttributes
 {
     // Method not reflected in DOM::NodeImpl interface
-    return Node([self nodeImpl]).hasAttributes();
+    Node node([self nodeImpl]);
+    return node.hasAttributes();
 }
 
 - (NSString *)HTMLString
@@ -397,16 +411,31 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
-@implementation DOMNode (WebCoreInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMNode
 
-- (id)initWithNodeImpl:(NodeImpl *)impl
+@implementation WebCoreDOMNode
+
+- (id)initWithNodeImpl:(NodeImpl *)impl checkCache:(BOOL)checkCache
 {
-    ASSERT(impl);
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
 
     [super init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    m_impl = impl;
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setWrapperForImpl(self, m_impl);
     return self;
 }
 
@@ -420,51 +449,31 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    Class wrapperClass = nil;
-    switch (impl->nodeType()) {
-    case Node::ELEMENT_NODE:
-        wrapperClass = [DOMElement class];
-        break;
-    case Node::ATTRIBUTE_NODE:
-        wrapperClass = [DOMAttr class];
-        break;
-    case Node::TEXT_NODE:
-        wrapperClass = [DOMText class];
-        break;
-    case Node::CDATA_SECTION_NODE:
-        wrapperClass = [DOMCDATASection class];
-        break;
-    case Node::ENTITY_REFERENCE_NODE:
-        wrapperClass = [DOMEntityReference class];
-        break;
-    case Node::ENTITY_NODE:
-        wrapperClass = [DOMEntity class];
-        break;
-    case Node::PROCESSING_INSTRUCTION_NODE:
-        wrapperClass = [DOMProcessingInstruction class];
-        break;
-    case Node::COMMENT_NODE:
-        wrapperClass = [DOMComment class];
-        break;
-    case Node::DOCUMENT_NODE:
-        wrapperClass = [DOMDocument class];
-        break;
-    case Node::DOCUMENT_TYPE_NODE:
-        wrapperClass = [DOMDocumentType class];
-        break;
-    case Node::DOCUMENT_FRAGMENT_NODE:
-        wrapperClass = [DOMDocumentFragment class];
-        break;
-    case Node::NOTATION_NODE:
-        wrapperClass = [DOMNotation class];
-        break;
-    }
-    return [[[wrapperClass alloc] initWithNodeImpl:impl] autorelease];
+    return [[[self alloc] initWithNodeImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithNodeImpl:(NodeImpl *)impl
+{
+    return [self initWithNodeImpl:impl checkCache:YES];
 }
 
 - (NodeImpl *)nodeImpl
 {
-    return reinterpret_cast<NodeImpl *>(_internal);
+	return m_impl;
+}
+
+- (Class)classForDOMDocument
+{
+	return [WebCoreDOMDocument class];
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -474,17 +483,21 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @implementation DOMNamedNodeMap
 
-- (void)dealloc
-{
-    if (_internal) {
-        reinterpret_cast<NamedNodeMapImpl *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
 - (NamedNodeMapImpl *)namedNodeMapImpl
 {
-    return reinterpret_cast<NamedNodeMapImpl *>(_internal);
+	AbstractMethodCalled([DOMNamedNodeMap class]);
+    return nil;
+}
+
+- (Class)classForDOMNode
+{
+	AbstractMethodCalled([DOMNamedNodeMap class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (DOMNode *)getNamedItem:(NSString *)name
@@ -494,7 +507,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     // Method not reflected in DOM::NamedNodeMapImpl interface
     NamedNodeMap map = NamedNodeMapImpl::createInstance([self namedNodeMapImpl]);
     Node result(map.getNamedItem(NSStringToDOMString(name)));
-    return [DOMNode nodeWithImpl:result.handle()];
+    return [[self classForDOMNode] nodeWithImpl:result.handle()];
 }
 
 - (DOMNode *)setNamedItem:(DOMNode *)arg error:(NSError **)error
@@ -505,10 +518,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         NamedNodeMap map = NamedNodeMapImpl::createInstance([self namedNodeMapImpl]);
         Node result(map.setNamedItem([arg nodeImpl]));
-        if (error) {
-            *error = nil;
-        }
-        return [DOMNode nodeWithImpl:result.handle()];
+        return [[self classForDOMNode] nodeWithImpl:result.handle()];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -524,10 +534,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         NamedNodeMap map = NamedNodeMapImpl::createInstance([self namedNodeMapImpl]);
         Node result(map.removeNamedItem(NSStringToDOMString(name)));
-        if (error) {
-            *error = nil;
-        }
-        return [DOMNode nodeWithImpl:result.handle()];
+        return [[self classForDOMNode] nodeWithImpl:result.handle()];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -537,7 +544,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMNode *)item:(unsigned long)index
 {
-    return [DOMNode nodeWithImpl:[self namedNodeMapImpl]->item(index)];
+    return [[self classForDOMNode] nodeWithImpl:[self namedNodeMapImpl]->item(index)];
 }
 
 - (unsigned long)length
@@ -554,7 +561,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     // Method not reflected in DOM::NamedNodeMapImpl interface
     NamedNodeMap map = NamedNodeMapImpl::createInstance([self namedNodeMapImpl]);
     Node result(map.getNamedItemNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(localName)));
-    return [DOMNode nodeWithImpl:result.handle()];
+    return [[self classForDOMNode] nodeWithImpl:result.handle()];
 }
 
 - (DOMNode *)setNamedItemNS:(DOMNode *)arg error:(NSError **)error
@@ -565,10 +572,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         NamedNodeMap map = NamedNodeMapImpl::createInstance([self namedNodeMapImpl]);
         Node result(map.setNamedItemNS([arg nodeImpl]));
-        if (error) {
-            *error = nil;
-        }
-        return [DOMNode nodeWithImpl:result.handle()];
+        return [[self classForDOMNode] nodeWithImpl:result.handle()];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -585,10 +589,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         NamedNodeMap map = NamedNodeMapImpl::createInstance([self namedNodeMapImpl]);
         Node result(map.removeNamedItemNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(localName)));
-        if (error) {
-            *error = nil;
-        }
-        return [DOMNode nodeWithImpl:result.handle()];
+        return [[self classForDOMNode] nodeWithImpl:result.handle()];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -598,16 +599,31 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
-@implementation DOMNamedNodeMap (WebCoreInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMNamedNodeMap
 
-- (id)initWithNamedNodeMapImpl:(NamedNodeMapImpl *)impl
+@implementation WebCoreDOMNamedNodeMap
+
+- (id)initWithNamedNodeMapImpl:(NamedNodeMapImpl *)impl checkCache:(BOOL)checkCache
 {
-    ASSERT(impl);
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
 
     [super init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    m_impl = impl;
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setWrapperForImpl(self, m_impl);
     return self;
 }
 
@@ -621,7 +637,31 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] initWithNamedNodeMapImpl:impl] autorelease];
+    return [[[self alloc] initWithNamedNodeMapImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithNamedNodeMapImpl:(NamedNodeMapImpl *)impl
+{
+    return [self initWithNamedNodeMapImpl:impl checkCache:YES];
+}
+
+- (NamedNodeMapImpl *)namedNodeMapImpl
+{
+	return m_impl;
+}
+
+- (Class)classForDOMNode
+{
+	return [WebCoreDOMNode class];
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -631,22 +671,26 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @implementation DOMNodeList
 
-- (void)dealloc
-{
-    if (_internal) {
-        reinterpret_cast<NodeListImpl *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
 - (NodeListImpl *)nodeListImpl
 {
-    return reinterpret_cast<NodeListImpl *>(_internal);
+	AbstractMethodCalled([DOMNodeList class]);
+    return nil;
+}
+
+- (Class)classForDOMNode
+{
+	AbstractMethodCalled([DOMNodeList class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (DOMNode *)item:(unsigned long)index
 {
-    return [DOMNode nodeWithImpl:[self nodeListImpl]->item(index)];
+    return [[self classForDOMNode] nodeWithImpl:[self nodeListImpl]->item(index)];
 }
 
 - (unsigned long)length
@@ -656,16 +700,31 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
-@implementation DOMNodeList (WebCoreInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMNodeList
 
-- (id)initWithNodeListImpl:(NodeListImpl *)impl
+@implementation WebCoreDOMNodeList
+
+- (id)initWithNodeListImpl:(NodeListImpl *)impl checkCache:(BOOL)checkCache
 {
-    ASSERT(impl);
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
 
     [super init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    m_impl = impl;
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setWrapperForImpl(self, m_impl);
     return self;
 }
 
@@ -679,7 +738,36 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] initWithNodeListImpl:impl] autorelease];
+    return [[[self alloc] initWithNodeListImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithNodeListImpl:(NodeListImpl *)impl
+{
+    return [self initWithNodeListImpl:impl checkCache:YES];
+}
+
+- (NodeListImpl *)nodeListImpl
+{
+	return m_impl;
+}
+
+- (Class)classForDOMNode
+{
+	return [WebCoreDOMNode class];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -689,17 +777,27 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @implementation DOMImplementation
 
-- (void)dealloc
-{
-    if (_internal) {
-        reinterpret_cast<DOMImplementationImpl *>(_internal)->deref();
-    }
-    [super dealloc];
-}
-
 - (DOMImplementationImpl *)DOMImplementationImpl
 {
-    return reinterpret_cast<DOMImplementationImpl *>(_internal);
+	AbstractMethodCalled([DOMImplementation class]);
+    return nil;
+}
+
+- (Class)classForDOMDocumentType
+{
+	AbstractMethodCalled([DOMImplementation class]);
+    return nil;
+}
+
+- (Class)classForDOMDocument
+{
+	AbstractMethodCalled([DOMImplementation class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (BOOL)hasFeature:(NSString *)feature :(NSString *)version
@@ -718,8 +816,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
     int code;
     DocumentTypeImpl *impl = [self DOMImplementationImpl]->createDocumentType(NSStringToDOMString(qualifiedName), NSStringToDOMString(publicId), NSStringToDOMString(systemId), code);
+    DOMDocumentType * result = [[self classForDOMDocumentType] documentTypeWithImpl:impl];
     fillInError(error, code);
-    return static_cast<DOMDocumentType *>([DOMNode nodeWithImpl:impl]);
+    return result;
 }
 
 - (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype error:(NSError **)error
@@ -728,24 +827,40 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(qualifiedName);
 
     int code;
-    DocumentType dt = DocumentTypeImpl::createInstance(static_cast<DocumentTypeImpl *>([doctype nodeImpl]));
+    DocumentType dt = DocumentTypeImpl::createInstance([doctype documentTypeImpl]);
     DocumentImpl *impl = [self DOMImplementationImpl]->createDocument(NSStringToDOMString(namespaceURI), NSStringToDOMString(qualifiedName), dt, code);
+    DOMDocument * result = [[self classForDOMDocument] documentWithImpl:impl];
     fillInError(error, code);
-    return static_cast<DOMDocument *>([DOMNode nodeWithImpl:impl]);
+    return result;
 }
 
 @end
  
-@implementation DOMImplementation (WebInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMImplementation
 
-- (id)initWithDOMImplementationImpl:(DOMImplementationImpl *)impl
+@implementation WebCoreDOMImplementation
+
+- (id)initWithDOMImplementationImpl:(DOMImplementationImpl *)impl checkCache:(BOOL)checkCache
 {
-    ASSERT(impl);
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
 
     [super init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    m_impl = impl;
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setWrapperForImpl(self, m_impl);
     return self;
 }
 
@@ -759,7 +874,36 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] initWithDOMImplementationImpl:impl] autorelease];
+    return [[[self alloc] initWithDOMImplementationImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithDOMImplementationImpl:(DOMImplementationImpl *)impl
+{
+    return [self initWithDOMImplementationImpl:impl checkCache:YES];
+}
+
+- (DOMImplementationImpl *)DOMImplementationImpl
+{
+	return m_impl;
+}
+
+- (Class)classForDOMDocumentType
+{
+	return [WebCoreDOMDocumentType class];
+}
+
+- (Class)classForDOMDocument
+{
+	return [WebCoreDOMDocument class];
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -769,13 +913,77 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @implementation DOMDocumentFragment
 
+- (DocumentFragmentImpl *)documentFragmentImpl
+{
+	AbstractMethodCalled([DOMDocumentFragment class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
 @end
 
-@implementation DOMDocumentFragment (WebCoreInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMDocumentFragment
+
+@implementation WebCoreDOMDocumentFragment
+
+- (id)initWithDocumentFragmentImpl:(DocumentFragmentImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
 
 + (DOMDocumentFragment *)documentFragmentWithImpl:(DocumentFragmentImpl *)impl
 {
-    return static_cast<DOMDocumentFragment *>([DOMNode nodeWithImpl:impl]);
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithDocumentFragmentImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithDocumentFragmentImpl:(DocumentFragmentImpl *)impl
+{
+    return [self initWithDocumentFragmentImpl:impl checkCache:YES];
+}
+
+- (DocumentFragmentImpl *)documentFragmentImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -787,22 +995,100 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DocumentImpl *)documentImpl
 {
-    return reinterpret_cast<DocumentImpl *>(_internal);
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMAttr
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMCDATASection
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMComment
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMDocumentFragment
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMDocumentType
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMElement
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMEntityReference
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMImplementation
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMNode
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMNodeList
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMProcessingInstruction
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (Class)classForDOMText
+{
+	AbstractMethodCalled([DOMDocument class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (DOMDocumentType *)doctype
 {
-    return static_cast<DOMDocumentType *>([DOMNode nodeWithImpl:[self documentImpl]->doctype()]);
+    return [[self classForDOMDocumentType] documentTypeWithImpl:[self documentImpl]->doctype()];
 }
 
 - (DOMImplementation *)implementation
 {
-    return [DOMImplementation DOMImplementationWithImpl:[self documentImpl]->implementation()];
+    return [[self classForDOMImplementation] DOMImplementationWithImpl:[self documentImpl]->implementation()];
 }
 
 - (DOMElement *)documentElement
 {
-    return static_cast<DOMElement *>([DOMNode nodeWithImpl:[self documentImpl]->documentElement()]);
+    return [[self classForDOMElement] elementWithImpl:[self documentImpl]->documentElement()];
 }
 
 - (DOMElement *)createElement:(NSString *)tagName error:(NSError **)error
@@ -810,26 +1096,28 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(tagName);
 
     int code;
-    DOMElement *result = static_cast<DOMElement *>([DOMNode nodeWithImpl:[self documentImpl]->createElement(NSStringToDOMString(tagName), code)]);
+    DOMElement *result = [[self classForDOMElement] elementWithImpl:[self documentImpl]->createElement(NSStringToDOMString(tagName), code)];
     fillInError(error, code);
     return result;
 }
 
 - (DOMDocumentFragment *)createDocumentFragment
 {
-    return static_cast<DOMDocumentFragment *>([DOMNode nodeWithImpl:[self documentImpl]->createDocumentFragment()]);
+    return [[self classForDOMDocumentFragment] documentFragmentWithImpl:[self documentImpl]->createDocumentFragment()];
 }
 
 - (DOMText *)createTextNode:(NSString *)data
 {
     ASSERT(data);
-    return static_cast<DOMText *>([DOMNode nodeWithImpl:[self documentImpl]->createTextNode(NSStringToDOMString(data))]);
+
+    return [[self classForDOMText] textWithImpl:[self documentImpl]->createTextNode(NSStringToDOMString(data))];
 }
 
 - (DOMComment *)createComment:(NSString *)data
 {
     ASSERT(data);
-    return static_cast<DOMComment *>([DOMNode nodeWithImpl:[self documentImpl]->createComment(NSStringToDOMString(data))]);
+
+    return [[self classForDOMComment] commentWithImpl:[self documentImpl]->createComment(NSStringToDOMString(data))];
 }
 
 - (DOMCDATASection *)createCDATASection:(NSString *)data error:(NSError **)error
@@ -838,10 +1126,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
     // Documentation says we can raise a NOT_SUPPORTED_ERR.
     // However, the lower layer does not report that error up to us.
-    if (error) {
-        *error = nil;
-    }
-    return static_cast<DOMCDATASection *>([DOMNode nodeWithImpl:[self documentImpl]->createCDATASection(NSStringToDOMString(data))]);
+    return [[self classForDOMCDATASection] CDATASectionWithImpl:[self documentImpl]->createCDATASection(NSStringToDOMString(data))];
 }
 
 - (DOMProcessingInstruction *)createProcessingInstruction:(NSString *)target :(NSString *)data error:(NSError **)error
@@ -851,10 +1136,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
     // Documentation says we can raise a INVALID_CHARACTER_ERR or a NOT_SUPPORTED_ERR.
     // However, the lower layer does not report these errors up to us.
-    if (error) {
-        *error = nil;
-    }
-    return static_cast<DOMProcessingInstruction *>([DOMNode nodeWithImpl:[self documentImpl]->createProcessingInstruction(NSStringToDOMString(target), NSStringToDOMString(data))]);
+    return [[self classForDOMProcessingInstruction] processingInstructionWithImpl:[self documentImpl]->createProcessingInstruction(NSStringToDOMString(target), NSStringToDOMString(data))];
 }
 
 - (DOMAttr *)createAttribute:(NSString *)name error:(NSError **)error
@@ -865,10 +1147,8 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         Document doc(DocumentImpl::createInstance([self documentImpl]));
         Attr result(doc.createAttribute(NSStringToDOMString(name)));
-        if (error) {
-            *error = nil;
-        }
-        return static_cast<DOMAttr *>([DOMNode nodeWithImpl:result.handle()]);
+        AttrImpl *impl = static_cast<AttrImpl *>(result.handle());
+        return [[self classForDOMAttr] attrWithImpl:impl];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -882,22 +1162,20 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
     // Documentation says we can raise a INVALID_CHARACTER_ERR or a NOT_SUPPORTED_ERR.
     // However, the lower layer does not report these errors up to us.
-    if (error) {
-        *error = nil;
-    }
-    return static_cast<DOMEntityReference *>([DOMNode nodeWithImpl:[self documentImpl]->createEntityReference(NSStringToDOMString(name))]);
+    return [WebCoreDOMEntityReference entityReferenceWithImpl:[self documentImpl]->createEntityReference(NSStringToDOMString(name))];
 }
 
 - (DOMNodeList *)getElementsByTagName:(NSString *)tagname
 {
     ASSERT(tagname);
-    return [DOMNodeList nodeListWithImpl:[self documentImpl]->getElementsByTagNameNS(0, NSStringToDOMString(tagname).implementation())];
+
+    return [[self classForDOMNodeList] nodeListWithImpl:[self documentImpl]->getElementsByTagNameNS(0, NSStringToDOMString(tagname).implementation())];
 }
 
 - (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep error:(NSError **)error
 {
     int code;
-    DOMNode *result = [DOMNode nodeWithImpl:[self documentImpl]->importNode([importedNode nodeImpl], deep, code)];
+    DOMNode *result = [WebCoreDOMNode nodeWithImpl:[self documentImpl]->importNode([importedNode nodeImpl], deep, code)];
     fillInError(error, code);
     return result;
 }
@@ -908,9 +1186,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(qualifiedName);
 
     int code;
-    DOMNode *result = [DOMNode nodeWithImpl:[self documentImpl]->createElementNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(qualifiedName), code)];
+    DOMElement *result = [[self classForDOMElement] elementWithImpl:[self documentImpl]->createElementNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(qualifiedName), code)];
     fillInError(error, code);
-    return static_cast<DOMElement *>(result);
+    return result;
 }
 
 - (DOMAttr *)createAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName error:(NSError **)error
@@ -922,10 +1200,8 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         Document doc(DocumentImpl::createInstance([self documentImpl]));
         Attr result(doc.createAttributeNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(qualifiedName)));
-        if (error) {
-            *error = nil;
-        }
-        return static_cast<DOMAttr *>([DOMNode nodeWithImpl:result.handle()]);
+        AttrImpl *impl = static_cast<AttrImpl *>(result.handle());
+        return [[self classForDOMAttr] attrWithImpl:impl];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -938,23 +1214,136 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [DOMNodeList nodeListWithImpl:[self documentImpl]->getElementsByTagNameNS(NSStringToDOMString(namespaceURI).implementation(), NSStringToDOMString(localName).implementation())];
+    return [[self classForDOMNodeList] nodeListWithImpl:[self documentImpl]->getElementsByTagNameNS(NSStringToDOMString(namespaceURI).implementation(), NSStringToDOMString(localName).implementation())];
 }
 
 - (DOMElement *)getElementById:(NSString *)elementId
 {
     ASSERT(elementId);
 
-    return static_cast<DOMElement *>([DOMNode nodeWithImpl:[self documentImpl]->getElementById(NSStringToDOMString(elementId))]);
+    return [[self classForDOMElement] elementWithImpl:[self documentImpl]->getElementById(NSStringToDOMString(elementId))];
 }
 
 @end
 
-@implementation DOMDocument (WebCoreInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMDocumentFragment
+
+@implementation WebCoreDOMDocument
+
+- (id)initWithDocumentImpl:(DocumentImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
 
 + (DOMDocument *)documentWithImpl:(DocumentImpl *)impl
 {
-    return static_cast<DOMDocument *>([DOMNode nodeWithImpl:impl]);
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithDocumentImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithDocumentImpl:(DocumentImpl *)impl
+{
+    return [self initWithDocumentImpl:impl checkCache:YES];
+}
+
+- (DocumentImpl *)documentImpl
+{
+	return m_impl;
+}
+
+- (Class)classForDOMAttr
+{
+	return [WebCoreDOMAttr class];
+}
+
+- (Class)classForDOMCDATASection
+{
+	return [WebCoreDOMCDATASection class];
+}
+
+- (Class)classForDOMComment
+{
+	return [WebCoreDOMComment class];
+}
+
+- (Class)classForDOMDocumentFragment
+{
+	return [WebCoreDOMDocumentFragment class];
+}
+
+- (Class)classForDOMDocumentType
+{
+	return [WebCoreDOMDocumentType class];
+}
+
+- (Class)classForDOMElement
+{
+	return [WebCoreDOMElement class];
+}
+
+- (Class)classForDOMEntityReference
+{
+	return [WebCoreDOMEntityReference class];
+}
+
+- (Class)classForDOMImplementation
+{
+	return [WebCoreDOMImplementation class];
+}
+
+- (Class)classForDOMNode
+{
+	return [WebCoreDOMNode class];
+}
+
+- (Class)classForDOMNodeList
+{
+	return [WebCoreDOMNodeList class];
+}
+
+- (Class)classForDOMProcessingInstruction
+{
+	return [WebCoreDOMProcessingInstruction class];
+}
+
+- (Class)classForDOMText
+{
+	return [WebCoreDOMText class];
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -966,7 +1355,13 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (CharacterDataImpl *)characterDataImpl
 {
-    return reinterpret_cast<CharacterDataImpl *>(_internal);
+	AbstractMethodCalled([DOMCharacterData class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (NSString *)data
@@ -1035,9 +1430,88 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 @end
 
 //------------------------------------------------------------------------------------------
+// WebCoreDOMCharacterData
+
+@implementation WebCoreDOMCharacterData
+
+- (id)initWithCharacterDataImpl:(CharacterDataImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMCharacterData *)characterDataWithImpl:(CharacterDataImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithCharacterDataImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithCharacterDataImpl:(CharacterDataImpl *)impl
+{
+    return [self initWithCharacterDataImpl:impl checkCache:YES];
+}
+
+- (CharacterDataImpl *)characterDataImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
 // DOMAttr
 
 @implementation DOMAttr
+
+- (AttrImpl *)attrImpl
+{
+	AbstractMethodCalled([DOMAttr class]);
+    return nil;
+}
+
+- (Class)classForDOMElement
+{
+	AbstractMethodCalled([DOMAttr class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
 
 - (NSString *)name
 {
@@ -1065,21 +1539,74 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMElement *)ownerElement
 {
-    return [DOMElement elementWithImpl:[self attrImpl]->ownerElement()];
+    return [[self classForDOMElement] elementWithImpl:[self attrImpl]->ownerElement()];
 }
 
 @end
 
-@implementation DOMAttr (WebCoreInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMAttr
+
+@implementation WebCoreDOMAttr
+
+- (id)initWithAttrImpl:(AttrImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
 
 + (DOMAttr *)attrWithImpl:(AttrImpl *)impl
 {
-    return static_cast<DOMAttr *>([DOMNode nodeWithImpl:impl]);
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithAttrImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithAttrImpl:(AttrImpl *)impl
+{
+    return [self initWithAttrImpl:impl checkCache:YES];
 }
 
 - (AttrImpl *)attrImpl
 {
-    return reinterpret_cast<AttrImpl *>(_internal);
+	return m_impl;
+}
+
+- (Class)classForDOMElement
+{
+	return [WebCoreDOMElement class];
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -1089,14 +1616,32 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @implementation DOMElement
 
+- (ElementImpl *)elementImpl
+{
+	AbstractMethodCalled([DOMElement class]);
+    return nil;
+}
+
+- (Class)classForDOMAttr
+{
+	AbstractMethodCalled([DOMElement class]);
+    return nil;
+}
+
+- (Class)classForDOMNodeList
+{
+	AbstractMethodCalled([DOMElement class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
 - (NSString *)tagName
 {
     return DOMStringToNSString([self elementImpl]->tagName());
-}
-
-- (DOMNamedNodeMap *)attributes
-{
-    return [DOMNamedNodeMap namedNodeMapWithImpl:[self elementImpl]->attributes()];
 }
 
 - (NSString *)getAttribute:(NSString *)name
@@ -1115,9 +1660,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         Element element(ElementImpl::createInstance([self elementImpl]));
         element.setAttribute(NSStringToDOMString(name), NSStringToDOMString(value));
-        if (error) {
-            *error = nil;
-        }
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -1132,9 +1674,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         Element element(ElementImpl::createInstance([self elementImpl]));
         element.removeAttribute(NSStringToDOMString(name));
-        if (error) {
-            *error = nil;
-        }
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -1148,7 +1687,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     // Method not reflected in DOM::ElementImpl interface
     Element element(ElementImpl::createInstance([self elementImpl]));
     Attr result(element.getAttributeNode(NSStringToDOMString(name)));
-    return [DOMAttr attrWithImpl:static_cast<AttrImpl *>(result.handle())];
+    return [[self classForDOMAttr] attrWithImpl:static_cast<AttrImpl *>(result.handle())];
 }
 
 - (DOMAttr *)setAttributeNode:(DOMAttr *)newAttr error:(NSError **)error
@@ -1160,10 +1699,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         Element element(ElementImpl::createInstance([self elementImpl]));
         Attr attr(AttrImpl::createInstance([newAttr attrImpl]));
         Attr result(element.setAttributeNode(attr));
-        if (error) {
-            *error = nil;
-        }
-        return [DOMAttr attrWithImpl:static_cast<AttrImpl *>(result.handle())];
+        return [[self classForDOMAttr] attrWithImpl:static_cast<AttrImpl *>(result.handle())];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -1180,10 +1716,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         Element element(ElementImpl::createInstance([self elementImpl]));
         Attr attr(AttrImpl::createInstance([oldAttr attrImpl]));
         Attr result(element.removeAttributeNode(attr));
-        if (error) {
-            *error = nil;
-        }
-        return [DOMAttr attrWithImpl:static_cast<AttrImpl *>(result.handle())];
+        return [[self classForDOMAttr] attrWithImpl:static_cast<AttrImpl *>(result.handle())];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -1195,7 +1728,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(name);
 
-    return [DOMNodeList nodeListWithImpl:[self elementImpl]->getElementsByTagNameNS(0, NSStringToDOMString(name).implementation())];
+    return [[self classForDOMNodeList] nodeListWithImpl:[self elementImpl]->getElementsByTagNameNS(0, NSStringToDOMString(name).implementation())];
 }
 
 - (NSString *)getAttributeNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1217,10 +1750,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         Element element(ElementImpl::createInstance([self elementImpl]));
         element.setAttributeNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(qualifiedName), NSStringToDOMString(value));
-        if (error) {
-            *error = nil;
-        }
-    }
+    } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
     }
@@ -1235,9 +1765,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     try {
         Element element(ElementImpl::createInstance([self elementImpl]));
         element.removeAttributeNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(localName));
-        if (error) {
-            *error = nil;
-        }
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -1252,7 +1779,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     // Method not reflected in DOM::ElementImpl interface
     Element element(ElementImpl::createInstance([self elementImpl]));
     Attr result(element.getAttributeNodeNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(localName)));
-    return [DOMAttr attrWithImpl:static_cast<AttrImpl *>(result.handle())];
+    return [[self classForDOMAttr] attrWithImpl:static_cast<AttrImpl *>(result.handle())];
 }
 
 - (DOMAttr *)setAttributeNodeNS:(DOMAttr *)newAttr error:(NSError **)error
@@ -1264,10 +1791,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         Element element(ElementImpl::createInstance([self elementImpl]));
         Attr attr(AttrImpl::createInstance([newAttr attrImpl]));
         Attr result(element.setAttributeNodeNS(attr));
-        if (error) {
-            *error = nil;
-        }
-        return [DOMAttr attrWithImpl:static_cast<AttrImpl *>(result.handle())];
+        return [[self classForDOMAttr] attrWithImpl:static_cast<AttrImpl *>(result.handle())];
     } 
     catch (const DOMException &e) {
         fillInError(error, e.code);
@@ -1280,7 +1804,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [DOMNodeList nodeListWithImpl:[self elementImpl]->getElementsByTagNameNS(NSStringToDOMString(namespaceURI).implementation(), NSStringToDOMString(localName).implementation())];
+    return [[self classForDOMNodeList] nodeListWithImpl:[self elementImpl]->getElementsByTagNameNS(NSStringToDOMString(namespaceURI).implementation(), NSStringToDOMString(localName).implementation())];
 }
 
 - (BOOL)hasAttribute:(NSString *)name
@@ -1304,16 +1828,74 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
-@implementation DOMElement (WebCoreInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMElement
+
+@implementation WebCoreDOMElement
+
+- (id)initWithElementImpl:(ElementImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
 
 + (DOMElement *)elementWithImpl:(ElementImpl *)impl
 {
-    return static_cast<DOMElement *>([DOMNode nodeWithImpl:impl]);
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithElementImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithElementImpl:(ElementImpl *)impl
+{
+    return [self initWithElementImpl:impl checkCache:YES];
 }
 
 - (ElementImpl *)elementImpl
 {
-    return reinterpret_cast<ElementImpl *>(_internal);
+	return m_impl;
+}
+
+- (Class)classForDOMAttr
+{
+	return [WebCoreDOMAttr class];
+}
+
+- (Class)classForDOMNodeList
+{
+	return [WebCoreDOMNodeList class];
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -1325,15 +1907,83 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (TextImpl *)textImpl
 {
-    return reinterpret_cast<TextImpl *>(_internal);
+	AbstractMethodCalled([DOMText class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (DOMText *)splitText:(unsigned long)offset error:(NSError **)error
 {
     int code;
-    DOMNode *result = [DOMNode nodeWithImpl:[self textImpl]->splitText(offset, code)];
+    DOMText *result = [[self class] textWithImpl:[self textImpl]->splitText(offset, code)];
     fillInError(error, code);
-    return static_cast<DOMText *>(result);
+    return result;
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
+// WebCoreDOMText
+
+@implementation WebCoreDOMText
+
+- (id)initWithTextImpl:(TextImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMText *)textWithImpl:(TextImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithTextImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithTextImpl:(TextImpl *)impl
+{
+    return [self initWithTextImpl:impl checkCache:YES];
+}
+
+- (TextImpl *)textImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end
@@ -1343,12 +1993,158 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @implementation DOMComment
 
+- (CommentImpl *)commentImpl
+{
+	AbstractMethodCalled([DOMComment class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
+// WebCoreDOMComment
+
+@implementation WebCoreDOMComment
+
+- (id)initWithCommentImpl:(CommentImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMComment *)commentWithImpl:(CommentImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithCommentImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithCommentImpl:(CommentImpl *)impl
+{
+    return [self initWithCommentImpl:impl checkCache:YES];
+}
+
+- (CommentImpl *)commentImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
+}
+
 @end
 
 //------------------------------------------------------------------------------------------
 // DOMCDATASection
 
 @implementation DOMCDATASection
+
+- (CDATASectionImpl *)CDATASectionImpl
+{
+	AbstractMethodCalled([DOMCDATASection class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
+// WebCoreDOMCDATASection
+
+@implementation WebCoreDOMCDATASection
+
+- (id)initWithCDATASectionImpl:(CDATASectionImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMCDATASection *)CDATASectionWithImpl:(CDATASectionImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithCDATASectionImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithCDATASectionImpl:(CDATASectionImpl *)impl
+{
+    return [self initWithCDATASectionImpl:impl checkCache:YES];
+}
+
+- (CDATASectionImpl *)CDATASectionImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
+}
 
 @end
 
@@ -1359,7 +2155,19 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DocumentTypeImpl *)documentTypeImpl
 {
-    return reinterpret_cast<DocumentTypeImpl *>(_internal);
+	AbstractMethodCalled([DOMDocumentType class]);
+    return nil;
+}
+
+- (Class)classForDOMNamedNodeMap
+{
+	AbstractMethodCalled([DOMDocumentType class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (NSString *)name
@@ -1369,12 +2177,12 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMNamedNodeMap *)entities
 {
-    return [DOMNamedNodeMap namedNodeMapWithImpl:[self documentTypeImpl]->entities()];
+    return [[self classForDOMNamedNodeMap] namedNodeMapWithImpl:[self documentTypeImpl]->entities()];
 }
 
 - (DOMNamedNodeMap *)notations
 {
-    return [DOMNamedNodeMap namedNodeMapWithImpl:[self documentTypeImpl]->notations()];
+    return [[self classForDOMNamedNodeMap] namedNodeMapWithImpl:[self documentTypeImpl]->notations()];
 }
 
 - (NSString *)publicId
@@ -1395,13 +2203,86 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 @end
 
 //------------------------------------------------------------------------------------------
+// WebCoreDOMDocumentType
+
+@implementation WebCoreDOMDocumentType
+
+- (id)initWithDocumentTypeImpl:(DocumentTypeImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMDocumentType *)documentTypeWithImpl:(DocumentTypeImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithDocumentTypeImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithDocumentTypeImpl:(DocumentTypeImpl *)impl
+{
+    return [self initWithDocumentTypeImpl:impl checkCache:YES];
+}
+
+- (DocumentTypeImpl *)documentTypeImpl
+{
+	return m_impl;
+}
+
+- (Class)classForDOMNamedNodeMap
+{
+	return [WebCoreDOMNamedNodeMap class];
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
 // DOMNotation
 
 @implementation DOMNotation
 
 - (NotationImpl *)notationImpl
 {
-    return reinterpret_cast<NotationImpl *>(_internal);
+	AbstractMethodCalled([DOMNotation class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (NSString *)publicId
@@ -1417,13 +2298,81 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 @end
 
 //------------------------------------------------------------------------------------------
+// WebCoreDOMNotation
+
+@implementation WebCoreDOMNotation
+
+- (id)initWithNotationImpl:(NotationImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMNotation *)notationWithImpl:(NotationImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithNotationImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithNotationImpl:(NotationImpl *)impl
+{
+	return [self initWithNotationImpl:impl checkCache:YES];
+}
+
+- (NotationImpl *)notationImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
 // DOMEntity
 
 @implementation DOMEntity
 
 - (EntityImpl *)entityImpl
 {
-    return reinterpret_cast<EntityImpl *>(_internal);
+	AbstractMethodCalled([DOMEntity class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (NSString *)publicId
@@ -1444,11 +2393,147 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 @end
 
 //------------------------------------------------------------------------------------------
+// WebCoreDOMEntity
+
+@implementation WebCoreDOMEntity
+
+- (id)initWithEntityImpl:(EntityImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMEntity *)entityWithImpl:(EntityImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithEntityImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithEntityImpl:(EntityImpl *)impl
+{
+	return [self initWithEntityImpl:impl checkCache:YES];
+}
+
+- (EntityImpl *)entityImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
+}
+
+@end
+
+//------------------------------------------------------------------------------------------
 // DOMEntityReference
 
 @implementation DOMEntityReference
 
+- (EntityReferenceImpl *)entityReferenceImpl
+{
+	AbstractMethodCalled([DOMEntityReference class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
 @end
+
+//------------------------------------------------------------------------------------------
+// WebCoreDOMEntityReference
+
+@implementation WebCoreDOMEntityReference
+
+- (id)initWithEntityReferenceImpl:(EntityReferenceImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMEntityReference *)entityReferenceWithImpl:(EntityReferenceImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithEntityReferenceImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithEntityReferenceImpl:(EntityReferenceImpl *)impl
+{
+    return [self initWithEntityReferenceImpl:impl checkCache:YES];
+}
+
+- (EntityReferenceImpl *)entityReferenceImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
+}
+
+@end
+
 
 //------------------------------------------------------------------------------------------
 // DOMProcessingInstruction
@@ -1457,7 +2542,13 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (ProcessingInstructionImpl *)processingInstructionImpl
 {
-    return reinterpret_cast<ProcessingInstructionImpl *>(_internal);
+	AbstractMethodCalled([DOMProcessingInstruction class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (NSString *)target
@@ -1482,27 +2573,99 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 @end
 
 //------------------------------------------------------------------------------------------
-// DOMRange
+// WebCoreDOMProcessingInstruction
 
-@implementation DOMRange
+@implementation WebCoreDOMProcessingInstruction
+
+- (id)initWithProcessingInstructionImpl:(ProcessingInstructionImpl *)impl checkCache:(BOOL)checkCache
+{
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
+
+    [super init];
+    m_impl = impl;
+    impl->ref();
+    setWrapperForImpl(self, m_impl);
+    return self;
+}
+
++ (DOMProcessingInstruction *)processingInstructionWithImpl:(ProcessingInstructionImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = wrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] initWithProcessingInstructionImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithProcessingInstructionImpl:(ProcessingInstructionImpl *)impl
+{
+	return [self initWithProcessingInstructionImpl:impl checkCache:YES];
+}
+
+- (ProcessingInstructionImpl *)processingInstructionImpl
+{
+	return m_impl;
+}
 
 - (void)dealloc
 {
-    if (_internal) {
-        reinterpret_cast<RangeImpl *>(_internal)->deref();
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
     }
     [super dealloc];
 }
 
+@end
+
+//------------------------------------------------------------------------------------------
+// DOMRange
+
+@implementation DOMRange
+
 - (RangeImpl *)rangeImpl
 {
-    return reinterpret_cast<RangeImpl *>(_internal);
+	AbstractMethodCalled([DOMRange class]);
+    return nil;
+}
+
+- (Class)classForDOMDocumentFragment
+{
+	AbstractMethodCalled([DOMRange class]);
+    return nil;
+}
+
+- (Class)classForDOMNode
+{
+	AbstractMethodCalled([DOMRange class]);
+    return nil;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (DOMNode *)startContainer:(NSError **)error
 {
     int code;
-    DOMNode *result = [DOMNode nodeWithImpl:[self rangeImpl]->startContainer(code)];
+    DOMNode *result = [[self classForDOMNode] nodeWithImpl:[self rangeImpl]->startContainer(code)];
     fillInError(error, code);
     return result;
 }
@@ -1518,7 +2681,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (DOMNode *)endContainer:(NSError **)error
 {
     int code;
-    DOMNode *result = [DOMNode nodeWithImpl:[self rangeImpl]->endContainer(code)];
+    DOMNode *result = [[self classForDOMNode] nodeWithImpl:[self rangeImpl]->endContainer(code)];
     fillInError(error, code);
     return result;
 }
@@ -1542,7 +2705,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (DOMNode *)commonAncestorContainer:(NSError **)error
 {
     int code;
-    DOMNode *result = [DOMNode nodeWithImpl:[self rangeImpl]->commonAncestorContainer(code)];
+    DOMNode *result = [[self classForDOMNode] nodeWithImpl:[self rangeImpl]->commonAncestorContainer(code)];
     fillInError(error, code);
     return result;
 }
@@ -1628,7 +2791,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (DOMDocumentFragment *)extractContents:(NSError **)error
 {
     int code;
-    DOMDocumentFragment *result = [DOMDocumentFragment documentFragmentWithImpl:[self rangeImpl]->extractContents(code)];
+    DOMDocumentFragment *result = [[self classForDOMDocumentFragment] documentFragmentWithImpl:[self rangeImpl]->extractContents(code)];
     fillInError(error, code);
     return result;
 }
@@ -1636,7 +2799,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (DOMDocumentFragment *)cloneContents:(NSError **)error
 {
     int code;
-    DOMDocumentFragment *result = [DOMDocumentFragment documentFragmentWithImpl:[self rangeImpl]->cloneContents(code)];
+    DOMDocumentFragment *result = [[self classForDOMDocumentFragment] documentFragmentWithImpl:[self rangeImpl]->cloneContents(code)];
     fillInError(error, code);
     return result;
 }
@@ -1658,7 +2821,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (DOMRange *)cloneRange:(NSError **)error
 {
     int code;
-    DOMRange *result = [DOMRange rangeWithImpl:[self rangeImpl]->cloneRange(code)];
+    DOMRange *result = [WebCoreDOMRange rangeWithImpl:[self rangeImpl]->cloneRange(code)];
     fillInError(error, code);
     return result;
 }
@@ -1680,16 +2843,31 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
-@implementation DOMRange (WebCoreInternal)
+//------------------------------------------------------------------------------------------
+// WebCoreDOMRange
 
-- (id)initWithRangeImpl:(RangeImpl *)impl
+@implementation WebCoreDOMRange
+
+- (id)initWithRangeImpl:(RangeImpl *)impl checkCache:(BOOL)checkCache
 {
-    ASSERT(impl);
+    if (!impl) {
+        [self release];
+        return nil;
+    }
+
+	if (checkCache) {
+		id cachedInstance;
+		cachedInstance = wrapperForImpl(impl);
+		if (cachedInstance) {
+			[self release];
+			return [cachedInstance retain];
+		}
+	}
 
     [super init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    m_impl = impl;
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setWrapperForImpl(self, m_impl);
     return self;
 }
 
@@ -1703,7 +2881,26 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] initWithRangeImpl:impl] autorelease];
+    return [[[self alloc] initWithRangeImpl:impl checkCache:NO] autorelease];
+}
+
+- (id)initWithRangeImpl:(RangeImpl *)impl
+{
+    return [self initWithRangeImpl:impl checkCache:YES];
+}
+
+- (RangeImpl *)rangeImpl
+{
+	return m_impl;
+}
+
+- (void)dealloc
+{
+    if (m_impl) {
+        removeWrapperForImpl(m_impl);
+    	m_impl->deref();
+    }
+    [super dealloc];
 }
 
 @end

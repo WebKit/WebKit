@@ -1,5 +1,17 @@
 2004-03-01  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Rollout last night's checkin. The tree was closed.
+
+        * kwq/DOM.h
+        * kwq/DOM.mm
+        * kwq/DOMInternal.h
+        * kwq/KWQKHTMLPart.mm
+        * kwq/WebCoreBridge.mm
+
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me, changes by Darin.
         
         Yet another pass at the DOM API, this one by 

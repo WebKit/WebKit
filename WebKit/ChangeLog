@@ -1,3 +1,10 @@
+2004-03-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * DOM.subproj/DOM.h: Rollout last night's checkin.
+        The tree was closed.
+
 2004-03-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3574979>: REGRESSION (129-TOT): crash loading macromedia.com

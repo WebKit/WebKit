@@ -35,6 +35,7 @@
 #import "KWQWindowWidget.h"
 #import "WebCoreBridge.h"
 #import "WebCoreViewFactory.h"
+#import "DOM.h"
 #import "DOMInternal.h"
 #import "csshelper.h"
 #import "html_documentimpl.h"
@@ -581,7 +582,7 @@ void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value, HT
     if (!_formValuesAboutToBeSubmitted) {
         _formValuesAboutToBeSubmitted = [[NSMutableDictionary alloc] init];
         ASSERT(!_formAboutToBeSubmitted);
-        _formAboutToBeSubmitted = [[DOMElement elementWithImpl:element] retain];
+        _formAboutToBeSubmitted = [[WebCoreDOMElement elementWithImpl:element] retain];
     } else {
         ASSERT([_formAboutToBeSubmitted elementImpl] == element);
     }
