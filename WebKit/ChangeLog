@@ -1,5 +1,20 @@
 2002-12-11  Richard Williamson   <rjw@apple.com>
 
+        Fixed 3125425.  Just call super if view isn't in view heirarchy,
+        rather than asserting.  The assert was firing because NSText 
+        was trying to perform a background layout on an item view that
+        was moved to the page cache.
+        
+        Reviewed by gramps.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView visibleRect]):
+
+2002-12-11  Richard Williamson   <rjw@apple.com>
+
         Fixed 3124121, 3124716 (and other dupes).  Regressions related to b/f crash.
         
         Reviewed by hyatt.

@@ -551,7 +551,9 @@
 // Turn off the additional clip while computing our visibleRect.
 - (NSRect)visibleRect
 {
-    ASSERT([[self superview] isKindOfClass:[WebClipView class]]);
+    if (!([[self superview] isKindOfClass:[WebClipView class]]))
+        return [super visibleRect];
+        
     WebClipView *clipView = (WebClipView *)[self superview];
 
     BOOL hasAdditionalClip = [clipView hasAdditionalClip];
