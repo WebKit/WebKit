@@ -1,3 +1,9 @@
+2004-04-24  Darin Adler  <darin@apple.com>
+
+        - fixed <rdar://problem/3570953>: "Update "Acknowledgements" to remove expat and possibly include libxml"
+
+        * WebCore.pbproj/project.pbxproj: Removed the part of the copyright notice that was for expat contributors.
+
 2004-04-23  David Hyatt  <hyatt@apple.com>
 
 	Fix the apple-line-clamp values to more closely match what is needed, an even split of the max lines between the possible
