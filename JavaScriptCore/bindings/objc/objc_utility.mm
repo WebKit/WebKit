@@ -26,6 +26,7 @@
 
 #include <JavascriptCore/internal.h>
 
+#include <runtime_array.h>
 #include <runtime_object.h>
 #include <objc_instance.h>
 #include <objc_utility.h>
@@ -101,9 +102,9 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, KJS::Val
             
             // First see if we have a ObjC instance.
             if (value.type() == KJS::ObjectType){
-                KJS::ObjectImp *objectImp = static_cast<KJS::ObjectImp*>(value.imp());
+                ObjectImp *objectImp = static_cast<ObjectImp*>(value.imp());
                 if (strcmp(objectImp->classInfo()->className, "RuntimeObject") == 0) {
-                    KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp *>(value.imp());
+                    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value.imp());
                     ObjcInstance *instance = static_cast<ObjcInstance*>(imp->getInternalInstance());
                     if (instance)
                         result.objectValue = instance->getObject();
@@ -112,14 +113,18 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, KJS::Val
             
             // Convert JavaScript String value to NSString?
             else if (value.type() == KJS::StringType) {
-                KJS::StringImp *s = static_cast<KJS::StringImp*>(value.imp());
+                StringImp *s = static_cast<KJS::StringImp*>(value.imp());
                 UString u = s->value();
                 
                 NSString *string = [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
                 result.objectValue = string;
             }
             
-            // FIXME:  Convert scalars to NSNumber.
+            // Convert JavaScript Number value to NSNumber?
+            else if (value.type() == KJS::NumberType) {
+                Number n = Number::dynamicCast(value);
+                result.objectValue = [NSNumber numberWithDouble:n.value()];
+            }
             
             // FIXME:  Deal with other Object types by creating a JavaScriptObjects
         }
@@ -183,9 +188,9 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, KJS::Val
     float
     double
     NSNumber        Number
-    NSString        string
-    NSArray         []
-    id              wrapper
+    NSString        String
+    NSArray         Array
+    id              Object wrapper
     other           should not happen
 
 */
@@ -197,7 +202,13 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
         case ObjcObjectType:
             {
                 ObjectStructPtr *obj = (ObjectStructPtr *)buffer;
-                
+
+                /*
+                    NSNumber to Number
+                    NSString to String
+                    NSArray  to Array
+                    id       to Object wrapper
+                */
                 if ([*obj isKindOfClass:[NSString class]]){
                     NSString *string = (NSString *)*obj;
                     unichar *chars;
@@ -208,11 +219,11 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                     aValue = String (u);
                     free((void *)chars);
                 }
-                else if ([*obj isKindOfClass:[NSArray class]]) {
-                    // FIXME:  Deal with NSArray to Array conversions.
-                }
                 else if ([*obj isKindOfClass:[NSNumber class]]) {
-                    // FIXME:  Deal with NSNumber to Number conversions.
+                    aValue = Number([*obj doubleValue]);
+                }
+                else if ([*obj isKindOfClass:[NSArray class]]) {
+                    aValue = Object(new RuntimeArrayImp(new ObjcArray (*obj)));
                 }
                 else {
                     aValue = Object(new RuntimeObjectImp(new ObjcInstance (*obj)));

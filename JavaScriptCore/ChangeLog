@@ -1,5 +1,18 @@
 2004-02-18  Richard Williamson   <rjw@apple.com>
 
+	Added NSNumber/Number conversion.
+
+	Removed some unnecessary KJS:: namespace specifiers.
+
+        Reviewed by Ken.
+
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/runtime_array.h:
+
+2004-02-18  Richard Williamson   <rjw@apple.com>
+
 	Added support for export NSArrays.
 
 	Updated valueAt() to take an ExecState so we can throw

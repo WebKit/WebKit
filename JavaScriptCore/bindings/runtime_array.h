@@ -26,6 +26,7 @@
 #define _RUNTIME_ARRAY_H_
 
 #include <object.h>
+#include <runtime.h>
 
 
 namespace KJS {
