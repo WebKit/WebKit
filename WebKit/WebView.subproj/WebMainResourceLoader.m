@@ -279,8 +279,9 @@
     ASSERT(![[dataSource _webView] defersCallbacks]);
 
     LOG(Loading, "main content type: %@", [r MIMEType]);
-    
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+
+    // FIXME: This is a workaround to make web archive files work with Foundations that
+    // are too old to know about web archive files. We should remove this before we ship.
     NSURL *URL = [r URL];
     if ([[[URL path] pathExtension] _web_isCaseInsensitiveEqualToString:@"webarchive"]) {
         r = [[[NSURLResponse alloc] initWithURL:URL 
@@ -288,7 +289,6 @@
                           expectedContentLength:[r expectedContentLength] 
                                textEncodingName:[r textEncodingName]] autorelease];
     }
-#endif
     
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216

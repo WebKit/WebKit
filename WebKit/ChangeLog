@@ -1,3 +1,17 @@
+2004-03-10  Chris Blumenberg  <cblu@apple.com>
+
+	Made dragging of web archives work.
+
+        Reviewed by rjw.
+
+        * English.lproj/StringsNotToBeLocalized.txt: updated
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:didReceiveResponse:]): added a FIXME about working around old Foundations that don't know about web archive files
+        * WebView.subproj/WebView.m:
+        (+[WebView canShowFile:]): tweak
+        (+[WebView suggestedFileExtensionForMIMEType:]): tweak
+        (+[WebView _MIMETypeForFile:]): handle web archive files since Foundation may be too old to know about them
+
 2004-03-09  Chris Blumenberg  <cblu@apple.com>
 
 	Made web archives use NSPropertyListBinaryFormat_v1_0 instead of NSPropertyListXMLFormat_v1_0 because NSPropertyListBinaryFormat_v1_0 is 3-5 times faster to serialize and parse.

@@ -47,14 +47,14 @@
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreSettings.h>
 
-#import <Foundation/NSUserDefaults_NSURLExtras.h>
-#import <Foundation/NSURLConnection.h>
-
 #import <Foundation/NSData_NSURLExtras.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 #import <Foundation/NSURLRequestPrivate.h>
+#import <Foundation/NSUserDefaults_NSURLExtras.h>
 
 NSString *WebElementFrameKey =              @"WebElementFrame";
 NSString *WebElementImageKey =              @"WebElementImage";
@@ -213,16 +213,12 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [WebTextRenderer _setAlwaysUseATSU:f];
 }
 
-
 + (BOOL)canShowFile:(NSString *)path
 {
-    NSString *MIMEType;
-
-    MIMEType = [WebView _MIMETypeForFile:path];
-    return [[self class] canShowMIMEType:MIMEType];
+    return [[self class] canShowMIMEType:[WebView _MIMETypeForFile:path]];
 }
 
-+ (NSString *)suggestedFileExtensionForMIMEType: (NSString *)type
++ (NSString *)suggestedFileExtensionForMIMEType:(NSString *)type
 {
     return [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
 }
@@ -302,7 +298,6 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     }
 }
 
-
 - (void)_receivedError: (NSError *)error fromDataSource: (WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
@@ -331,6 +326,12 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     NSString *extension = [path pathExtension];
     NSString *MIMEType = nil;
 
+    // FIXME: This is a workaround to make web archive files work with Foundations that
+    // are too old to know about web archive files. We should remove this before we ship.
+    if ([extension  _web_isCaseInsensitiveEqualToString:@"webarchive"]) {
+        return @"application/x-webarchive";
+    }
+    
     // Get the MIME type from the extension.
     if ([extension length] != 0) {
         MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
@@ -344,7 +345,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
         if ([data length] != 0) {
             MIMEType = [data _web_guessedMIMEType];
         }
-        if ([MIMEType length] == 0){
+        if ([MIMEType length] == 0) {
             MIMEType = @"application/octet-stream";
         }
     }
