@@ -141,9 +141,9 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
     paintDeviceMetrics = doc->paintDeviceMetrics();
 
     // FIXME: This sucks! The user sheet is reparsed every time!
-    if ( !userStyleSheet.isEmpty() ) {
+    if (!userStyleSheet.isEmpty()) {
         m_userSheet = new DOM::CSSStyleSheetImpl(doc);
-        m_userSheet->parseString( DOMString( userStyleSheet ) );
+        m_userSheet->parseString(DOMString(userStyleSheet), strictParsing);
 
         m_userStyle = new CSSRuleSet();
         m_userStyle->addRulesFromSheet( m_userSheet, m_medium );

@@ -1,3 +1,12 @@
+2004-07-20  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3714434, user stylesheet is always parsed in strict mode, when it should honor the document's setting.
+	
+        Reviewed by john
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+
 2004-07-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard
