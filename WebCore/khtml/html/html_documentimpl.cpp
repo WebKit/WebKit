@@ -510,6 +510,8 @@ void HTMLDocumentImpl::determineParseMode( const QString &str )
     int resultFlags = 0;
     if (parseDocTypeDeclaration(str, &resultFlags, publicID, systemID)) {
         m_doctype->setName("HTML");
+        m_doctype->setPublicId(publicID);
+        m_doctype->setSystemId(systemID);
         if (!(resultFlags & PARSEMODE_HAVE_DOCTYPE)) {
             // No doctype found at all.  Default to quirks mode and Html4.
             pMode = Compat;
