@@ -1,5 +1,21 @@
 2003-04-07  Richard Williamson  <rjw@apple.com>
 
+        API conveniences for IB.
+        
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView canGoBack]):
+        (-[WebView canGoForward]):
+        (-[WebView reload:]):
+        (-[WebView canMakeTextSmaller]):
+        (-[WebView canMakeTextLarger]):
+        (-[WebView makeTextSmaller:]):
+        (-[WebView makeTextLarger:]):
+
+2003-04-07  Richard Williamson  <rjw@apple.com>
+
         Fix for 3220988.  Cancel frame load if it's detached before
         finished loading.
 

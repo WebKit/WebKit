@@ -347,8 +347,15 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 
 @interface WebView (WebIBActions)
-- (IBAction)stopLoading:(id)sender;
-- (IBAction)goBack:(id)sender;
-- (IBAction)goForward:(id)sender;
 - (IBAction)takeStringURLFrom:(id)sender;
+- (IBAction)stopLoading:(id)sender;
+- (IBAction)reload:(id)sender;
+- (BOOL)canGoBack;
+- (IBAction)goBack:(id)sender;
+- (BOOL)canGoForward;
+- (IBAction)goForward:(id)sender;
+- (BOOL)canMakeTextLarger;
+- (IBAction)makeTextLarger:(id)sender;
+- (BOOL)canMakeTextSmaller;
+- (IBAction)makeTextSmaller:(id)sender;
 @end

@@ -496,6 +496,16 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL URLWithString: URLString]]];
 }
 
+- (BOOL)canGoBack
+{
+    return [[self backForwardList] backItem] != nil;
+}
+
+- (BOOL)canGoForward
+{
+    return [[self backForwardList] forwardItem] != nil;
+}
+
 - (IBAction)goBack:(id)sender
 {
     [self goBack];
@@ -511,6 +521,52 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     [[self mainFrame] stopLoading];
 }
 
+- (IBAction)reload:(id)sender
+{
+    [[self mainFrame] reload];
+}
+
+#define MinimumTextSizeMultiplier	0.5
+#define MaximumTextSizeMultiplier	3.0
+#define TextSizeMultiplierRatio		1.2
+
+- (BOOL)canMakeTextSmaller
+{
+    if ([[[[self mainFrame] dataSource] request] URL] == nil) {
+        return NO;
+    }
+    if ([self textSizeMultiplier]/TextSizeMultiplierRatio < MinimumTextSizeMultiplier) {
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)canMakeTextLarger
+{
+    if ([[[[self mainFrame] dataSource] request] URL] == nil) {
+        return NO;
+    }
+    if ([self textSizeMultiplier]*TextSizeMultiplierRatio > MaximumTextSizeMultiplier) {
+        return NO;
+    }
+    return YES;
+}
+
+- (IBAction)makeTextSmaller:(id)sender
+{
+    if (![self canMakeTextSmaller]) {
+        return;
+    }
+    [self setTextSizeMultiplier:[self textSizeMultiplier]/TextSizeMultiplierRatio];
+}
+
+- (IBAction)makeTextLarger:(id)sender
+{
+    if (![self canMakeTextLarger]) {
+        return;
+    }
+    [self setTextSizeMultiplier:[self textSizeMultiplier]*TextSizeMultiplierRatio];
+}
 
 @end
 
