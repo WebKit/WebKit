@@ -1,3 +1,27 @@
+2002-12-03  David Hyatt  <hyatt@apple.com>
+
+	Eliminate the KONQBLOCK hack.  Fixes ipodhacks.com (a mislayout
+	caused by malformed html... <table><br>...)
+
+	r=mjs
+	
+        * khtml/css/html4.css:
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isInline):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::reset):
+        (KHTMLParser::insertNode):
+        * khtml/html/htmlparser.h:
+        * khtml/misc/htmltags.c:
+        (hash_tag):
+        (findTag):
+        * khtml/misc/htmltags.h:
+        * khtml/misc/htmltags.in:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+
 2002-12-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3032557, wsj.com DHTML elements in the wrong position.

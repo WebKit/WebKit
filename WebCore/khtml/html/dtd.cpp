@@ -97,7 +97,6 @@ const unsigned short DOM::tagPriority[] = {
     0, // ID_ISINDEX
     1, // ID_KBD
     0, // ID_KEYGEN
-    5, // ID__KONQBLOCK
     1, // ID_LABEL
     1, // ID_LAYER
     1, // ID_LEGEND
@@ -204,7 +203,6 @@ const tagStatus DOM::endTag[] = {
     FORBIDDEN, // ID_ISINDEX
     REQUIRED,  // ID_KBD
     REQUIRED,  // ID_KEYGEN
-    REQUIRED,  // ID__KONQBLOCK
     REQUIRED,  // ID_LABEL
     REQUIRED,  // ID_LAYER
     REQUIRED,  // ID_LEGEND
@@ -378,7 +376,6 @@ static const ushort tag_list_1[] = {
     ID_COMMENT,
     ID_LI,
     ID_XMP,
-    ID__KONQBLOCK,
     ID_INS,
     ID_DEL,
     ID_NOBR,
@@ -423,7 +420,6 @@ static const ushort tag_list_3[] = {
     ID_COMMENT,
     ID_LI,
     ID_XMP,
-    ID__KONQBLOCK,
     ID_MARQUEE,
     0
 };
@@ -631,9 +627,6 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         // ADDRESS: ( _0 | P ) *
         if( check_array(childID, tag_list_0) ) return true;
         return (childID == ID_P);
-    case ID__KONQBLOCK:
-        if ( childID == ID__KONQBLOCK ) return false;
-        // Fall through!
     case ID_LI:
     case ID_DT:
     case ID_DIV:
@@ -727,6 +720,7 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         case ID_TEXT:
         case ID_FORM:
         case ID_COMMENT:
+        case ID_SCRIPT:
             return true;
         default:
             return false;
@@ -735,7 +729,9 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_TFOOT:
     case ID_TBODY:
         // THEAD: TR +
-        if(childID == ID_FORM || childID == ID_TR || childID == ID_TEXT || childID == ID_COMMENT) return true;
+        if(childID == ID_FORM || childID == ID_TR || childID == ID_TEXT || childID == ID_COMMENT ||
+           childID == ID_SCRIPT) 
+           return true;
         return false;
     case ID_COLGROUP:
         // COLGROUP: COL *
@@ -743,6 +739,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         return false;
     case ID_TR:
         // TR: _9 +
+        if (childID == ID_SCRIPT)
+            return true;
         return check_array(childID, tag_list_9);
     case ID_FRAMESET:
         // FRAMESET: ( _10 + & NOFRAMES ? )

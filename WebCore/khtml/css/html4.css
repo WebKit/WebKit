@@ -67,12 +67,6 @@ div {
 	display: block;
 }
 
-/* to force a block level context for some cases (broken HTML) */
-
--konqblock {
-	display: block;
-}
-
 layer {
 	display: block;
 }

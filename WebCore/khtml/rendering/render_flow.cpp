@@ -765,12 +765,6 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             m_bottomMarginQuirk = true;
     }
     
-    if (element() && element()->id() == ID__KONQBLOCK)
-        // Deal with the case where <forms> get wrapped in a KONQBLOCK.
-        // We want that form's bottom margin to actually disappear.
-        // Don't let any children affect a KONQBLOCK's margins.
-        m_maxBottomPosMargin = m_maxBottomNegMargin = m_maxTopPosMargin = m_maxTopNegMargin = 0;
-    
     setLayouted();
 
     // kdDebug( 6040 ) << "layouted = " << layouted_ << endl;
