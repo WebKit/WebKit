@@ -1,3 +1,16 @@
+2003-04-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed a bug caught by libgmalloc on Vicki's test machine
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::detach): Make sure we don't have a dangling paint device after
+        detaching from the KTHMLView.
+        (DocumentImpl::setPaintDevice): Allow a 0 parameter.
+        * kwq/WebCoreBridge.mm:
+        (nowPrinting): Handle the case of a 0 paint device.
+
 2003-04-15  David Hyatt  <hyatt@apple.com>
 
 	Missed a piece of the renaming on lowestPosition/rightmostPosition.

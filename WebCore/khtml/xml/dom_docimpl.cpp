@@ -1053,6 +1053,8 @@ void DocumentImpl::detach()
     if ( render )
         render->detach(m_renderArena);
 
+    if (m_paintDevice == m_view)
+        setPaintDevice(0);
     m_view = 0;
     
     if (m_renderArena){
@@ -1096,7 +1098,7 @@ void DocumentImpl::setPaintDevice( QPaintDevice *dev )
     }
     m_paintDevice = dev;
     delete m_paintDeviceMetrics;
-    m_paintDeviceMetrics = new QPaintDeviceMetrics( dev );
+    m_paintDeviceMetrics = dev ? new QPaintDeviceMetrics( dev ) : 0;
 }
 
 void DocumentImpl::open(  )

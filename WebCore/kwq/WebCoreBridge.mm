@@ -330,7 +330,7 @@ static bool initializedObjectCacheSize = FALSE;
 static BOOL nowPrinting(WebCoreBridge *self)
 {
     DocumentImpl *doc = self->_part->xmlDocImpl();
-    return doc && doc->paintDevice()->devType() == QInternal::Printer;
+    return doc && doc->paintDevice() && doc->paintDevice()->devType() == QInternal::Printer;
 }
 
 // Set or unset the printing mode in the view.  We only toy with this if we're printing.
