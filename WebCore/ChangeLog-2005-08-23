@@ -1,3 +1,16 @@
+2004-12-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3917956> REGRESSION (Mail): pasting can leave insertion point inside pasted text
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Fix coding mistake. Calculations of bool flag based on 
+        leading and trailing whitespace positions was reversed! I must have introduced this error recently
+        when changing around this code.
+
 2004-12-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3915787, macobserver doesn't paint.  floatRect() needed to be const in the base class.  Also hit-testing
@@ -10,10 +23,6 @@
         (khtml::RenderBlock::nodeAtPoint):
         * khtml/rendering/render_object.h:
         (khtml::RenderObject::floatRect):
-
-2004-12-13  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by John
 
 2004-12-13  Ken Kocienda  <kocienda@apple.com>
 

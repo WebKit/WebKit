@@ -3317,14 +3317,14 @@ void ReplaceSelectionCommand::doApply()
     bool addLeadingSpace = false;
     bool addTrailingSpace = false;
     if (m_smartReplace) {
-        addLeadingSpace = startPos.leadingWhitespacePosition().isNull();
+        addLeadingSpace = startPos.leadingWhitespacePosition().isNotNull();
         if (addLeadingSpace) {
             QChar previousChar = VisiblePosition(startPos).previous().character();
             if (!previousChar.isNull()) {
                 addLeadingSpace = !part->isCharacterSmartReplaceExempt(previousChar, true);
             }
         }
-        addTrailingSpace = endPos.trailingWhitespacePosition().isNull();
+        addTrailingSpace = endPos.trailingWhitespacePosition().isNotNull();
         if (addTrailingSpace) {
             QChar thisChar = VisiblePosition(endPos).character();
             if (!thisChar.isNull()) {
