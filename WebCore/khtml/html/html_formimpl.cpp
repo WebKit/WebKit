@@ -761,17 +761,18 @@ void HTMLGenericFormElementImpl::attach()
     // The call to updateFromElement() needs to go after the call through
     // to the base class's attach() because that can sometimes do a close
     // on the renderer.
-    if (m_render)
+    if (m_render) {
         m_render->updateFromElement();
     
-    // Delayed attachment in order to prevent FOUC can result in an object being
-    // programmatically focused before it has a render object.  If we have been focused
-    // (i.e., if we are the focusNode) then go ahead and focus our corresponding native widget.
-    // (Attach/detach can also happen as a result of display type changes, e.g., making a widget
-    // block instead of inline, and focus should be restored in that case as well.)
-    if (getDocument()->focusNode() == this && m_render->isWidget() && 
-        static_cast<RenderWidget*>(renderer())->widget())
-        static_cast<RenderWidget*>(renderer())->widget()->setFocus();
+        // Delayed attachment in order to prevent FOUC can result in an object being
+        // programmatically focused before it has a render object.  If we have been focused
+        // (i.e., if we are the focusNode) then go ahead and focus our corresponding native widget.
+        // (Attach/detach can also happen as a result of display type changes, e.g., making a widget
+        // block instead of inline, and focus should be restored in that case as well.)
+        if (getDocument()->focusNode() == this && m_render->isWidget() && 
+            static_cast<RenderWidget*>(renderer())->widget())
+            static_cast<RenderWidget*>(renderer())->widget()->setFocus();
+    }
 }
 
 HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const

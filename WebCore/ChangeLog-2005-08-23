@@ -1,5 +1,16 @@
 2003-12-12  John Sullivan  <sullivan@apple.com>
 
+        - fixed <rdar://problem/3508825>: REGRESSION (100-116): crash in 
+        HTMLGenericFormElementImpl::attach at sonyericsson.com
+
+        Reviewed by Maciej.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::attach):
+        Move a few lines inside an existing nil check to prevent nil dereference.
+
+2003-12-12  John Sullivan  <sullivan@apple.com>
+
         - fixed <rdar://problem/3508760>: tabbing to out-of-sight link behaves 
         differently than tabbing to out-of-sight form control
 
