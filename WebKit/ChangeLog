@@ -1,3 +1,10 @@
+2002-11-18  Richard Williamson   <rjw@apple.com>
+
+        Check for usesBackForwardList was excluding all load types.
+        
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+
 2002-11-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3098767 - REGRESSION: standalone quicktime content just shows blank window

@@ -435,57 +435,57 @@ static const char * const stateNames[] = {
             WebHistoryItem *entry = nil;
             NSString *ptitle = [ds pageTitle];
 
-            if ([[self controller] usesBackForwardList]) {
-                switch (loadType) {
-                case WebFrameLoadTypeForward:
-                case WebFrameLoadTypeBack:
-                case WebFrameLoadTypeIndexedBackForward:
+            switch (loadType) {
+            case WebFrameLoadTypeForward:
+            case WebFrameLoadTypeBack:
+            case WebFrameLoadTypeIndexedBackForward:
+                if ([[self controller] usesBackForwardList]) {
                     // Must grab the current scroll position before disturbing it
                     [self _saveScrollPositionToItem:[_private previousItem]];
                     [[self webView] _makeDocumentViewForDataSource:ds];
                     // FIXME - I'm not sure this call does anything.  Should be dealt with as
                     // part of 3024377
                     [self _restoreScrollPosition];
-                    break;
-                    
-                case WebFrameLoadTypeReload:
-                    [self _saveScrollPositionToItem:[_private currentItem]];
-                    [[self webView] _makeDocumentViewForDataSource:ds];
-                    break;
-    
-                case WebFrameLoadTypeStandard:
-                    // Add item to history.
-                    entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds _originalRequest] URL] _web_canonicalize]];
-                    if (ptitle)
-                        [entry setTitle: ptitle];
-
-                    if (![ds _isClientRedirect]) {
-                        [self _addBackForwardItemClippedAtTarget:YES];
-                    } else {
-                        // update the URL in the BF list that we made before the redirect
-                        [[[[self controller] backForwardList] currentEntry] setURL:[[ds request] URL]];
-                    }
-                    [[self webView] _makeDocumentViewForDataSource:ds];
-                    break;
-                    
-                case WebFrameLoadTypeInternal:
-                    {  // braces because the silly compiler lets you declare vars everywhere but here?!
-                    // Add an item to the item tree for this frame
-                    WebHistoryItem *item = [self _createItem];
-                    ASSERT([[self parent]->_private currentItem]);
-                    [[[self parent]->_private currentItem] addChildItem:item];
-                    [[self webView] _makeDocumentViewForDataSource:ds];
-                    }
-                    break;
-
-                case WebFrameLoadTypeReloadAllowingStaleData:
-                    break;
-                    
-                // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
-                // if we're in the WebFrameLoadTypeUninitialized state.
-                default:
-                    ASSERT_NOT_REACHED();
                 }
+                break;
+                
+            case WebFrameLoadTypeReload:
+                [self _saveScrollPositionToItem:[_private currentItem]];
+                [[self webView] _makeDocumentViewForDataSource:ds];
+                break;
+
+            case WebFrameLoadTypeStandard:
+                // Add item to history.
+                entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds _originalRequest] URL] _web_canonicalize]];
+                if (ptitle)
+                    [entry setTitle: ptitle];
+
+                if (![ds _isClientRedirect]) {
+                    [self _addBackForwardItemClippedAtTarget:YES];
+                } else {
+                    // update the URL in the BF list that we made before the redirect
+                    [[[[self controller] backForwardList] currentEntry] setURL:[[ds request] URL]];
+                }
+                [[self webView] _makeDocumentViewForDataSource:ds];
+                break;
+                
+            case WebFrameLoadTypeInternal:
+                {  // braces because the silly compiler lets you declare vars everywhere but here?!
+                // Add an item to the item tree for this frame
+                WebHistoryItem *item = [self _createItem];
+                ASSERT([[self parent]->_private currentItem]);
+                [[[self parent]->_private currentItem] addChildItem:item];
+                [[self webView] _makeDocumentViewForDataSource:ds];
+                }
+                break;
+
+            case WebFrameLoadTypeReloadAllowingStaleData:
+                break;
+                
+            // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
+            // if we're in the WebFrameLoadTypeUninitialized state.
+            default:
+                ASSERT_NOT_REACHED();
             }
 
             
