@@ -370,7 +370,7 @@ void HTMLStyleElementImpl::parseAttribute(AttributeImpl *attr)
     switch (attr->id())
     {
     case ATTR_TYPE:
-        m_type = attr->value();
+        m_type = attr->value().lower();
         break;
     case ATTR_MEDIA:
         m_media = attr->value().string().lower();

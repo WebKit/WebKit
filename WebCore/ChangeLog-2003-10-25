@@ -1,5 +1,13 @@
 2002-11-17  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3038168.  Duh.  Remember to be case-insensitive when
+	checking the type of the <style> attribute.
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLStyleElementImpl::parseAttribute):
+
+2002-11-17  David Hyatt  <hyatt@apple.com>
+
 	This is a fix for bug 3058470.  The bug was that replaced elements
 	were computing their min and max widths wrong.  Specifically they
 	were not adding in borders and padding!  This means that any image
