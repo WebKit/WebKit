@@ -52,8 +52,8 @@ public:
 
     KHTMLView *view() const { return m_view; }
 
-    virtual void repaint();
-    virtual void repaintRectangle(int x, int y, int w, int h, bool f=false);
+    virtual void repaint(bool immediate=false);
+    virtual void repaintRectangle(int x, int y, int w, int h, bool immediate = false, bool f=false);
     virtual void print( QPainter *, int x, int y, int w, int h, int tx, int ty);
     void printObject(QPainter *p, int _x, int _y,
                      int _w, int _h, int _tx, int _ty);

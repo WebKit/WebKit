@@ -325,7 +325,7 @@ public:
 
     virtual void close();
 
-    virtual void repaint();
+    virtual void repaint(bool immediate=false);
 
     virtual void layout();
 
@@ -379,7 +379,7 @@ public:
     virtual void calcWidth();
     virtual void setWidth( int width );
     virtual void setStyle( RenderStyle *style );
-    virtual void repaint();
+    virtual void repaint(bool immediate=false);
     
     virtual int paddingTop() const;
     virtual int paddingBottom() const;
@@ -414,7 +414,7 @@ public:
     // lie position to outside observers
     virtual int yPos() const { return m_y + _topExtra; }
 
-    virtual void repaintRectangle(int x, int y, int w, int h, bool f=false);
+    virtual void repaintRectangle(int x, int y, int w, int h, bool immediate = false, bool f=false);
     virtual bool absolutePosition(int &xPos, int &yPos, bool f = false);
 
     virtual short baselinePosition( bool = false ) const;

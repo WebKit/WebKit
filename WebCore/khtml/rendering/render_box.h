@@ -85,9 +85,9 @@ public:
     virtual int lowestPosition() const;
     virtual int rightmostPosition() const;
 
-    virtual void repaint();
+    virtual void repaint(bool immediate=false);
 
-    virtual void repaintRectangle(int x, int y, int w, int h, bool f=false);
+    virtual void repaintRectangle(int x, int y, int w, int h, bool immediate=false, bool f=false);
 
     virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *);
 

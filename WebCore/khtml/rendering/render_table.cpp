@@ -2012,9 +2012,9 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
 
 }
 
-void RenderTableRow::repaint()
+void RenderTableRow::repaint(bool immediate)
 {
-    if ( table ) table->repaint();
+    if ( table ) table->repaint(immediate);
 }
 
 #ifndef NDEBUG
@@ -2167,10 +2167,10 @@ int RenderTableCell::paddingRight() const
     return RenderFlow::paddingRight();
 }
 
-void RenderTableCell::repaintRectangle(int x, int y, int w, int h, bool f)
+void RenderTableCell::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
     y += _topExtra;
-    RenderFlow::repaintRectangle(x, y, w, h, f);
+    RenderFlow::repaintRectangle(x, y, w, h, immediate, f);
 }
 
 bool RenderTableCell::absolutePosition(int &xPos, int &yPos, bool f)
@@ -2275,9 +2275,9 @@ void RenderTableCell::printBoxDecorations(QPainter *p,int, int _y,
         printBorder(p, _tx, _ty, w, h, style());
 }
 
-void RenderTableCell::repaint()
+void RenderTableCell::repaint(bool immediate)
 {
-    if ( m_table ) m_table->repaint();
+    if ( m_table ) m_table->repaint(immediate);
 }
 
 #ifndef NDEBUG

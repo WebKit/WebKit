@@ -256,7 +256,8 @@ void RenderObject::setLayouted(bool b)
             if (clippedObj) {
                 gClipObject = clippedObj;
                 root->layout();
-                clippedObj->repaintRectangle(0,0,clippedObj->contentWidth(),clippedObj->contentHeight());
+                clippedObj->repaintRectangle(0, 0, clippedObj->contentWidth(), 
+                                             clippedObj->contentHeight(), true);
                 gClipObject = 0;
             }
             else
@@ -627,9 +628,9 @@ void RenderObject::print( QPainter *p, int x, int y, int w, int h, int tx, int t
     printObject(p, x, y, w, h, tx, ty);
 }
 
-void RenderObject::repaintRectangle(int x, int y, int w, int h, bool f)
+void RenderObject::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
-    if(parent()) parent()->repaintRectangle(x, y, w, h, f);
+    if(parent()) parent()->repaintRectangle(x, y, w, h, immediate, f);
 }
 
 #ifndef NDEBUG

@@ -401,14 +401,14 @@ void RenderBox::position(int x, int y, int, int, int, bool, bool, int)
     //m_width = width;
 }
 
-void RenderBox::repaint()
+void RenderBox::repaint(bool immediate)
 {
     //kdDebug( 6040 ) << "repaint!" << endl;
     int ow = style() ? style()->outlineWidth() : 0;
-    repaintRectangle(-ow, -ow, m_width+ow*2, m_height+ow*2);
+    repaintRectangle(-ow, -ow, m_width+ow*2, m_height+ow*2, immediate);
 }
 
-void RenderBox::repaintRectangle(int x, int y, int w, int h, bool f)
+void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
     x += m_x;
     y += m_y;
@@ -417,7 +417,7 @@ void RenderBox::repaintRectangle(int x, int y, int w, int h, bool f)
 
     // kdDebug( 6040 ) << "RenderBox(" << renderName() << ")::repaintRectangle (" << x << "/" << y << ") (" << w << "/" << h << ")" << endl;
     RenderObject *o = container();
-    if( o ) o->repaintRectangle(x, y, w, h, f);
+    if( o ) o->repaintRectangle(x, y, w, h, immediate, f);
 }
 
 void RenderBox::relativePositionOffset(int &tx, int &ty)

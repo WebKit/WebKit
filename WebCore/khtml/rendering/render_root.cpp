@@ -231,7 +231,7 @@ void RenderRoot::printObject(QPainter *p, int _x, int _y,
 }
 
 
-void RenderRoot::repaintRectangle(int x, int y, int w, int h, bool f)
+void RenderRoot::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
     if (m_printingMode) return;
 //    kdDebug( 6040 ) << "updating views contents (" << x << "/" << y << ") (" << w << "/" << h << ")" << endl;
@@ -244,17 +244,23 @@ void RenderRoot::repaintRectangle(int x, int y, int w, int h, bool f)
     QRect vr = viewRect();
     QRect ur(x, y, w, h);
 
-    if (ur.intersects(vr))
-        if (m_view)
-            //m_view->updateContents(ur);
+    if (m_view && ur.intersects(vr))
+        if (immediate)
+            m_view->updateContents(ur);
+        else
             m_view->scheduleRepaint(x, y, w, h);
 }
 
-void RenderRoot::repaint()
+void RenderRoot::repaint(bool immediate)
 {
-    if (m_view && !m_printingMode)
-        m_view->scheduleRepaint(m_view->contentsX(), m_view->contentsY(),
-                                m_view->visibleWidth(), m_view->visibleHeight());
+    if (m_view && !m_printingMode) {
+        if (immediate)
+            m_view->updateContents(m_view->contentsX(), m_view->contentsY(),
+                                   m_view->visibleWidth(), m_view->visibleHeight());
+        else
+            m_view->scheduleRepaint(m_view->contentsX(), m_view->contentsY(),
+                                    m_view->visibleWidth(), m_view->visibleHeight());
+    }
 }
 
 void RenderRoot::close()
