@@ -1,3 +1,10 @@
+2004-01-15  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Darin.
+
+        * WebKit.pbproj/project.pbxproj: Update copyright date to 2004.
+        * English.lproj/InfoPlist.strings: Update copyright date to 2004.
+
 === Safari-122 ===
 
 === Safari-121 ===
