@@ -672,6 +672,11 @@ static void databaseInit()
     filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
     attributes = [defaultManager fileAttributesAtPath:filePath traverseLink:YES];
 
+    // update usage and truncate before writing file
+    // this has the effect of _always_ keeping disk usage under sizeLimit by clearing away space in anticipation of the write.
+    usage += [data length];
+    [self truncateToSizeLimit:[self sizeLimit]];
+
     result = [defaultManager _IF_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
     if (result) {
@@ -683,9 +688,11 @@ static void databaseInit()
                 usage -= [oldSize unsignedIntValue];
             }
         }
-        usage += [data length];
         [self writeSizeFile:usage];
-        [self truncateToSizeLimit:[self sizeLimit]];
+    }
+    else {
+        // we failed to write the file. don't charge this against usage.
+        usage -= [data length];
     }
 
     [archiver release];
