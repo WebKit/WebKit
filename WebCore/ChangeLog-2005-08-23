@@ -1,3 +1,18 @@
+2002-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3103036 - REGRESSION: scripts dropped from DOM tree;
+	javascript text rendered to screen
+
+	The problem here is that we don't allow SCRIPT inside MAP, so the
+	script tag gets thrown away in the DOM and the text is added
+	directly to the MAP. I can't see a good reason not to allow SCRIPT
+	here, so I think the best thing to do is relax the DTD.
+	
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild): Relax the DTD to allow SCRIPT inside MAP.
+
 2002-12-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3007276, styles do not cascade properly through
