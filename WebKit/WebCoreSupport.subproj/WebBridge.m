@@ -997,9 +997,9 @@ static BOOL loggedObjectCacheSize = NO;
     vm_size_t memSize = WebSystemMainMemory();
     int cacheSize = [[WebPreferences standardPreferences] _objectCacheSize];
     int multiplier = 1;
-    if (memSize > 1024 * 1024 * 1024)
+    if (memSize >= 1024 * 1024 * 1024)
         multiplier = 4;
-    else if (memSize > 512 * 1024 * 1024)
+    else if (memSize >= 512 * 1024 * 1024)
         multiplier = 2;
 
 #ifndef NDEBUG
