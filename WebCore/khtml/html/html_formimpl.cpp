@@ -1206,7 +1206,11 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
             KIO::UDSEntry filestat;
 
             if (!KIO::NetAccess::stat(fileurl, filestat)) {
+#if APPLE_CHANGES
+                // FIXME: Figure out how to report this error.
+#else
                 KMessageBox::sorry(0L, i18n("Error fetching file for submission:\n%1").arg(KIO::NetAccess::lastErrorString()));
+#endif
                 return false;
             }
 
@@ -1235,7 +1239,11 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
                 return false;
             }
             else {
+#if APPLE_CHANGES
+                // FIXME: Figure out how to report this error.
+#else
                 KMessageBox::sorry(0L, i18n("Error fetching file for submission:\n%1").arg(KIO::NetAccess::lastErrorString()));
+#endif
                 return false;
             }
             break;

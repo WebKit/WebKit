@@ -6,12 +6,14 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/WebFileButton.h>
-#import <WebKit/WebJavaScriptTextInputPanel.h>
-#import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebViewFactory.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebLocalizableStrings.h>
+
+#import <WebKit/WebFileButton.h>
+#import <WebKit/WebJavaScriptTextInputPanel.h>
+#import <WebKit/WebPluginDatabase.h>
 
 @implementation WebViewFactory
 
@@ -21,6 +23,17 @@
         [[[self alloc] init] release];
     }
     ASSERT([[self sharedFactory] isKindOfClass:self]);
+}
+
+- (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
+{
+    NSRunAlertPanel(UI_STRING("JavaScript", "title of JavaScript alert panel"), @"%@", nil, nil, nil, message);
+}
+
+- (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
+{
+    return NSRunAlertPanel(UI_STRING("JavaScript", "title of JavaScript alert panel"), @"%@", nil,
+        UI_STRING("Cancel", "standard button label"), nil, message) == NSAlertDefaultReturn;
 }
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result

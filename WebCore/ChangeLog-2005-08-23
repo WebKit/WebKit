@@ -1,3 +1,33 @@
+2002-10-25  Darin Adler  <darin@apple.com>
+
+	Remove some user-visible strings. We can't have any strings that need
+	localization in WebCore, given our translation strategy.
+
+        * khtml/html/html_formimpl.cpp: (HTMLInputElementImpl::encoding):
+	Put APPLE_CHANGES around some i18n dialog code.
+        * khtml/khtml_part.cpp: (KHTMLPart::submitForm): Ditto.
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::slotPartLoadingErrorNotify): Ditto.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get): Ditto.
+        (Window::scheduleClose): Ditto.
+        (WindowFunc::tryCall): Put APPLE_CHANGES in to use JavaScript-specific methods
+        in the part of calling the generic ones from KMessageBox.
+
+        * ForwardingHeaders/kmessagebox.h: Added (empty file).
+
+        * kwq/KWQKHTMLPartImpl.h: Added new runJavaScript functions.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::runJavaScriptAlert): Added.
+        (KWQKHTMLPartImpl::runJavaScriptConfirm): Added.
+
+        * kwq/WebCoreViewFactory.h: Added runJavaScriptAlertPanelWithMessage and
+	runJavaScriptConfirmPanelWithMessage.
+
+        * kwq/kdeui/kmessagebox.h: Removed.
+        * kwq/KWQKMessageBox.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed the KMessageBox files.
+
 2002-10-25  Richard Williamson   <rjw@apple.com>
 
         Removed debug logging.

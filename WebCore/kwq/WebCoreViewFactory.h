@@ -34,6 +34,8 @@
 
 - (NSView <WebCoreFileButton> *)fileButton;
 
+- (void)runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;
 
 - (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>

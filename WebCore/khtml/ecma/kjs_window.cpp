@@ -388,8 +388,9 @@ Value Window::get(ExecState *exec, const UString &p) const
     case Document:
       if (isSafeScript(exec))
       {
-#ifndef APPLE_CHANGES
+#if APPLE_CHANGES
         // FIXME: need to figure out and emulate point of this code.
+#else
         if (m_part->document().isNull()) {
           kdDebug(6070) << "Document.write: adding <HTML><BODY> to create document" << endl;
           m_part->begin();
@@ -856,7 +857,7 @@ void Window::scheduleClose()
 {
   kdDebug(6070) << "Window::scheduleClose window.close() " << m_part << endl;
   Q_ASSERT(winq);
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
   m_part->impl->scheduleClose();
 #else
   QTimer::singleShot( 0, winq, SLOT( timeoutClose() ) );
@@ -986,12 +987,20 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   switch (id) {
   case Window::Alert:
     part->xmlDocImpl()->updateRendering();
+#if APPLE_CHANGES
+    part->impl->runJavaScriptAlert(str);
+#else
     KMessageBox::error(widget, QStyleSheet::convertFromPlainText(str), "JavaScript");
+#endif
     return Undefined();
   case Window::Confirm:
     part->xmlDocImpl()->updateRendering();
+#if APPLE_CHANGES
+    return Boolean(part->impl->runJavaScriptConfirm(str));
+#else
     return Boolean((KMessageBox::warningYesNo(widget, QStyleSheet::convertFromPlainText(str), "JavaScript",
                                                 i18n("OK"), i18n("Cancel")) == KMessageBox::Yes));
+#endif
   case Window::Prompt:
     part->xmlDocImpl()->updateRendering();
     bool ok;
@@ -1016,17 +1025,19 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     int policy = config->readUnsignedNumEntry( "WindowOpenPolicy", 0 ); // 0=allow, 1=ask, 2=deny, 3=smart
     delete config;
     if ( policy == 1 ) {
+#if !APPLE_CHANGES
       if ( KMessageBox::questionYesNo(widget,
                                       i18n( "This site is trying to open up a new browser "
                                             "window using Javascript.\n"
                                             "Do you want to allow this?" ),
                                       i18n( "Confirmation: Javascript Popup" ) ) == KMessageBox::Yes )
+#endif
         policy = 0;
     } else if ( policy == 3 ) // smart
     {
       // window.open disabled unless from a key/mouse event
       if (static_cast<ScriptInterpreter *>(exec->interpreter())->isWindowOpenAllowed())
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
         policy = 0;
 #else
       {
@@ -1051,7 +1062,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         winargs.menuBarVisible = false;
         winargs.toolBarsVisible = false;
         winargs.statusBarVisible = false;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 	winargs.scrollbarsVisible = false;
 #endif
         QStringList flist = QStringList::split(',', features);
@@ -1071,14 +1082,14 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
               winargs.x = val.toInt() + screen.x();
 	      if (winargs.x < screen.x() || winargs.x > screen.right())
 		  winargs.x = screen.x(); // only safe choice until size is determined
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 	      winargs.xSet = true;
 #endif
             } else if (key == "top" || key == "screeny") {
               winargs.y = val.toInt() + screen.y();
 	      if (winargs.y < screen.y() || winargs.y > screen.bottom())
 		  winargs.y = screen.y(); // only safe choice until size is determined
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 	      winargs.ySet = true;
 #endif
             } else if (key == "height") {
@@ -1087,7 +1098,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 		  winargs.height = screen.height();
               if (winargs.height < 100)
 		  winargs.height = 100;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 	      winargs.heightSet = true;
 #endif
             } else if (key == "width") {
@@ -1096,7 +1107,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 		  winargs.width = screen.width();
               if (winargs.width < 100)
 		  winargs.width = 100;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 	      winargs.widthSet = true;
 #endif
             } else {
@@ -1121,7 +1132,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
             winargs.resizable = (val == "1" || val == "yes");
           else if (key == "fullscreen")
             winargs.fullscreen = (val == "1" || val == "yes");
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
           else if (key == "scrollbars")
             winargs.scrollbarsVisible = (val == "1" || val == "yes");
 #endif
@@ -1166,8 +1177,9 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         khtmlpart->setOpener(part);
         khtmlpart->setOpenedByJS(true);
         if (khtmlpart->document().isNull()) {
-#ifndef APPLE_CHANGES
+#if APPLE_CHANGES
 	  // FIXME: need to figure out and emulate point of this code.
+#else
           khtmlpart->begin();
           khtmlpart->write("<HTML><BODY>");
           khtmlpart->end();
@@ -1309,7 +1321,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       widget->setActiveWindow();
     return Undefined();
   case Window::Blur:
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     part->impl->unfocusWindow();
 #else
     // TODO
@@ -1331,8 +1343,13 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       // To conform to the SPEC, we only ask if the window
       // has more than one entry in the history (NS does that too).
       History history(exec,part);
-      if ( history.get( exec, "length" ).toInt32(exec) <= 1 ||
-           KMessageBox::questionYesNo( window->part()->widget(), i18n("Close window?"), i18n("Confirmation Required") ) == KMessageBox::Yes )
+      if ( history.get( exec, "length" ).toInt32(exec) <= 1
+#if APPLE_CHANGES
+           // FIXME: How are we going to handle this?
+#else
+           || KMessageBox::questionYesNo( window->part()->widget(), i18n("Close window?"), i18n("Confirmation Required") ) == KMessageBox::Yes
+#endif
+           )
         (const_cast<Window*>(window))->scheduleClose();
     }
     else

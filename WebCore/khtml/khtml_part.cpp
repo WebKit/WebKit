@@ -3093,8 +3093,10 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
          }
       }
 
+#if !APPLE_CHANGES
       if (triedToAttach)
          KMessageBox::information(NULL, i18n("This site attempted to attach a file from your computer in the form submission. The attachment was removed for your protection."), i18n("KDE"), "WarnTriedAttach");
+#endif
 
       // 2)  Append body=
       QString bodyEnc;

@@ -23,19 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQKHTMLPartImpl.h>
+#import "KWQKHTMLPartImpl.h"
 
-#import <htmltokenizer.h>
-#import <html_documentimpl.h>
-#import <render_root.h>
-#import <render_frames.h>
-#import <render_text.h>
-#import <khtmlpart_p.h>
-#import <khtmlview.h>
+#import "htmltokenizer.h"
+#import "html_documentimpl.h"
+#import "render_root.h"
+#import "render_frames.h"
+#import "render_text.h"
+#import "khtmlpart_p.h"
+#import "khtmlview.h"
 
-#import <WebCoreBridge.h>
+#import "WebCoreBridge.h"
+#import "WebCoreViewFactory.h"
 
-#import <KWQLogging.h>
+#import "KWQLogging.h"
 
 #undef _KWQ_TIMING
 
@@ -489,3 +490,12 @@ QString KWQKHTMLPartImpl::referrer() const
     return d->m_referrer;
 }
 
+void KWQKHTMLPartImpl::runJavaScriptAlert(const QString &message)
+{
+    [[WebCoreViewFactory sharedFactory] runJavaScriptAlertPanelWithMessage:message.getNSString()];
+}
+
+bool KWQKHTMLPartImpl::runJavaScriptConfirm(const QString &message)
+{
+    return [[WebCoreViewFactory sharedFactory] runJavaScriptConfirmPanelWithMessage:message.getNSString()];
+}

@@ -845,6 +845,9 @@ bool RenderPartObject::partLoadingErrorNotify( khtml::ChildFrame *childFrame, co
 
 void RenderPartObject::slotPartLoadingErrorNotify()
 {
+#if APPLE_CHANGES
+    // FIXME: What are we going to do for this case?
+#else
     // First we need to find out the servicetype - again - this code is too duplicated !
     HTMLEmbedElementImpl *embed = 0;
     QString serviceType;
@@ -887,6 +890,7 @@ void RenderPartObject::slotPartLoadingErrorNotify()
           ext->createNewWindow( pluginPageURL );
 	}
     }
+#endif // APPLE_CHANGES
 }
 
 // duplication of RenderFormElement... FIX THIS!

@@ -241,7 +241,6 @@
 				F587862902DE398401EA4122,
 				F587862A02DE398401EA4122,
 				F587862B02DE398401EA4122,
-				F587862C02DE398401EA4122,
 				F587863102DE39E601EA4122,
 				F587863B02DE3A1401EA4122,
 				F587863C02DE3A1401EA4122,
@@ -536,7 +535,6 @@
 				F587859302DE375901EA4122,
 				F587859502DE375901EA4122,
 				F587859602DE375901EA4122,
-				F587859702DE375901EA4122,
 				F587859802DE375901EA4122,
 				F587859902DE375901EA4122,
 				F587859A02DE375901EA4122,
@@ -4517,12 +4515,6 @@
 			path = KWQKLocale.mm;
 			refType = 4;
 		};
-		F587850502DE375901EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = KWQKMessageBox.mm;
-			refType = 4;
-		};
 		F587850602DE375901EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -5319,12 +5311,6 @@
 		};
 		F587859602DE375901EA4122 = {
 			fileRef = F587850402DE375901EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587859702DE375901EA4122 = {
-			fileRef = F587850502DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6176,13 +6162,6 @@
 			path = kdeui/klistbox.h;
 			refType = 4;
 		};
-		F587862302DE398401EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = kmessagebox.h;
-			path = kdeui/kmessagebox.h;
-			refType = 4;
-		};
 		F587862602DE398401EA4122 = {
 			fileRef = F587861D02DE398401EA4122;
 			isa = PBXBuildFile;
@@ -6219,12 +6198,6 @@
 			settings = {
 			};
 		};
-		F587862C02DE398401EA4122 = {
-			fileRef = F587862302DE398401EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F587862F02DE398601EA4122 = {
 			children = (
 				F587861D02DE398401EA4122,
@@ -6234,8 +6207,6 @@
 				F58784F002DE375901EA4122,
 				F587862102DE398401EA4122,
 				F587862202DE398401EA4122,
-				F587862302DE398401EA4122,
-				F587850502DE375901EA4122,
 			);
 			isa = PBXGroup;
 			name = kdeui;
