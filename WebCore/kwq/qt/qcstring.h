@@ -26,6 +26,11 @@
 #ifndef QCSTRING_H_
 #define QCSTRING_H_
 
+// added to help in compilation of khtml/khtml_part.h:811
 #include "qarray.h"
+
+// added to help in compilation of khtml/dom/html_documnent.cpp:182
+class QCString {
+};
 
 #endif

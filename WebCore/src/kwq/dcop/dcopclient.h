@@ -26,4 +26,14 @@
 #ifndef DCOPCLIENT_H_
 #define DCOPCLIENT_H_
 
+class QCString;
+class QByteArray;
+
+// KApplication needs this
+class DCOPClient {
+public:
+	bool call(const QCString &remApp, const QCString &remObj, const QCString &remFun, const QByteArray &data,
+		QCString& replyType, QByteArray &replyData, bool useEventLoop=false, bool fast=false);
+};
+
 #endif

@@ -26,4 +26,24 @@
 #ifndef BROWSEREXTENSION_H_
 #define BROWSEREXTENSION_H_
 
+// Added for compilation of khtml/dom/html_document.cpp:184
+#include <qdatastream.h>
+
+// Added for compilation of khtml/khtml_part.h:734
+class QPoint;
+
+// Added for compilation of khtml/khtml_part.h:755
+class QEvent;
+
+namespace KParts {
+
+// Added for compilation of khtml/khtml_part.h:695
+struct URLArgs {
+};
+
+class BrowserExtension {
+};
+
+};
+
 #endif

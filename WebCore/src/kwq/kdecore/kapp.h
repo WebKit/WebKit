@@ -26,4 +26,17 @@
 #ifndef KAPP_H_
 #define KAPP_H_
 
+#include <dcopclient.h>
+
+#define kapp KApplication::kApplication()
+
+class KApplication {
+public:
+	static KApplication* kApplication() { return KApp; }
+	virtual DCOPClient *dcopClient();
+protected:
+	static KApplication *KApp;
+};
+
+
 #endif

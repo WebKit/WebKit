@@ -26,4 +26,13 @@
 #ifndef QEVENT_H_
 #define QEVENT_H_
 
+// all the following events added to support khtmlview.h 
+class QEvent {};
+class QFocusEvent : public QEvent {};
+class QHideEvent : public QEvent {};
+class QKeyEvent : public QEvent {};
+class QResizeEvent : public QEvent {};
+class QShowEvent : public QEvent {};
+class QWheelEvent : public QEvent {};
+
 #endif

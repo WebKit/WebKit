@@ -26,6 +26,10 @@
 #ifndef QOBJECT_H_
 #define QOBJECT_H_
 
+// includes added to help in compilation of khtml/khtmlview.h
+#include "qobjectdefs.h"
+#include "qevent.h"
+
 // FIXME: should these macros be in "kwq.h" or other header file?
 #define slots
 #define SLOT(x) x

@@ -26,4 +26,7 @@
 #ifndef QMAP_H_
 #define QMAP_H_
 
+template <class K, class T> class QMap {
+};
+
 #endif
