@@ -1,5 +1,12 @@
 2002-09-21  Darin Adler  <darin@apple.com>
 
+	Fix crashing part of 3057265 -- REGRESSION: Crash loading http://www.undetectables.co.uk/
+
+        * khtml/khtml_part.cpp: (KHTMLPart::processObjectRequest):
+	Remove special case for javascript and about:blank that was leading to a crash.
+
+2002-09-21  Darin Adler  <darin@apple.com>
+
 	WebCore part of the new approach to AppKit drawing control.
 	Works better than the previous try. Once we fix anomalies with focus rectangles
 	and a minor problems with subframes this should work perfectly.
