@@ -1,3 +1,38 @@
+2004-09-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+
+        - WebKit part of fix for <rdar://problem/3734466> ER: Support standard editing keystrokes 
+        like Cmd-B while editing rich text
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _toggleBold]):
+        new method, toggles font-weight from "bold" to "normal"
+        (-[WebHTMLView _toggleItalic]):
+        new method, toggles font-style from "italic" to "normal"
+        (-[WebHTMLView _handleStyleKeyEquivalent:]):
+        new method, if the new preference is set and we're in an editable state, check for standard
+        key equivalents for toggling styles (just command-B and command-I for now).
+        (-[WebHTMLView performKeyEquivalent:]):
+        Moved in file, now calls _handleStyleKeyEquivalent:
+        
+        * WebView.subproj/WebPreferenceKeysPrivate.h:
+        new preference key WebKitRespectStandardStyleKeyEquivalentsPreferenceKey
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        initial value of WebKitRespectStandardStyleKeyEquivalentsPreferenceKey is NO (maybe we'll
+        change our minds about this, but this is more guaranteed to be backward-compatible)
+        (-[WebPreferences respectStandardStyleKeyEquivalents]):
+        read WebKitRespectStandardStyleKeyEquivalentsPreferenceKey
+        (-[WebPreferences setRespectStandardStyleKeyEquivalents:]):
+        write WebKitRespectStandardStyleKeyEquivalentsPreferenceKey
+        
+        * WebView.subproj/WebPreferencesPrivate.h:
+        declare getter and setter
+        
+        * English.lproj/StringsNotToBeLocalized.txt:
+        updated for these and other recent changes
+
 2004-09-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3806649> assertion failure after control-click of webcam

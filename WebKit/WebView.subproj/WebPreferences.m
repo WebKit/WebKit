@@ -46,6 +46,13 @@ enum { WebPreferencesVersion = 1 };
 + (NSString *)_IBCreatorID;
 @end
 
+@interface WebPreferences (WebForwardDeclarations)
+// This pseudo-category is needed so these methods can be used from within other category implementations
+// without being in the public header file.
+- (BOOL)_boolValueForKey:(NSString *)key;
+- (void)_setBoolValue:(BOOL)value forKey:(NSString *)key;
+@end
+
 @implementation WebPreferences
 
 - init
@@ -192,6 +199,7 @@ NS_ENDHANDLER
         @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
         [NSNumber numberWithBool:NO],   WebKitTabToLinksPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitPrivateBrowsingEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitRespectStandardStyleKeyEquivalentsPreferenceKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -523,6 +531,16 @@ NS_ENDHANDLER
 @end
 
 @implementation WebPreferences (WebPrivate)
+
+- (BOOL)respectStandardStyleKeyEquivalents
+{
+    return [self _boolValueForKey:WebKitRespectStandardStyleKeyEquivalentsPreferenceKey];
+}
+
+- (void)setRespectStandardStyleKeyEquivalents:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitRespectStandardStyleKeyEquivalentsPreferenceKey];
+}
 
 - (int)_pageCacheSize
 {

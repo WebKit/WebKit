@@ -34,6 +34,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebTextRenderer.h>
@@ -2609,16 +2610,6 @@ static WebHTMLView *lastHitView = nil;
     [[self window] setAutodisplay:YES];
 }
 
-- (BOOL)performKeyEquivalent:(NSEvent *)event
-{
-    // Pass command-key combos through WebCore if there is a key binding available for
-    // this event. This lets web pages have a crack at intercepting command-modified keypresses.
-    if ([self _web_firstResponderIsSelfOrDescendantView] && [[self _bridge] interceptKeyEvent:event toView:self]) {
-        return YES;
-    }
-    return [super performKeyEquivalent:event];
-}
-
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
 {   
     // Work around this bug:
@@ -3071,6 +3062,60 @@ static WebHTMLView *lastHitView = nil;
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]]) {
         [bridge applyStyle:style];
     }
+}
+
+- (void)_toggleBold
+{
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+    [style setFontWeight:@"bold"];
+    if ([[self _bridge] selectionStartHasStyle:style])
+        [style setFontWeight:@"normal"];
+    [self _applyStyleToSelection:style];
+}
+
+- (void)_toggleItalic
+{
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+    [style setFontStyle:@"italic"];
+    if ([[self _bridge] selectionStartHasStyle:style])
+        [style setFontStyle:@"normal"];
+    [self _applyStyleToSelection:style];
+}
+
+- (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
+{
+    if (![[WebPreferences standardPreferences] respectStandardStyleKeyEquivalents]) {
+        return NO;
+    }
+    
+    if (![self _canEdit])
+        return NO;
+    
+    NSString *string = [event charactersIgnoringModifiers];
+    if ([string isEqualToString:@"b"]) {
+        [self _toggleBold];
+        return YES;
+    }
+    if ([string isEqualToString:@"i"]) {
+        [self _toggleItalic];
+        return YES;
+    }
+    
+    return NO;
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent *)event
+{
+    if ([self _handleStyleKeyEquivalent:event]) {
+        return YES;
+    }
+    
+    // Pass command-key combos through WebCore if there is a key binding available for
+    // this event. This lets web pages have a crack at intercepting command-modified keypresses.
+    if ([self _web_firstResponderIsSelfOrDescendantView] && [[self _bridge] interceptKeyEvent:event toView:self]) {
+        return YES;
+    }
+    return [super performKeyEquivalent:event];
 }
 
 - (void)copyFont:(id)sender

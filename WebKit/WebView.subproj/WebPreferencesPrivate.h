@@ -7,6 +7,11 @@
 
 @interface WebPreferences (WebPrivate)
 
+// Preferences that might be public in a future release
+- (BOOL)respectStandardStyleKeyEquivalents;
+- (void)setRespectStandardStyleKeyEquivalents:(BOOL)flag;
+
+// Other private methods
 - (int)_pageCacheSize;
 - (int)_objectCacheSize;
 - (void)_postPreferencesChangesNotification;
