@@ -25,6 +25,7 @@ static NSMutableArray *activeImageRenderers;
     
 }
 
+
 - copyWithZone:(NSZone *)zone
 {
     IFImageRenderer *copy = [super copyWithZone:zone];
@@ -114,25 +115,43 @@ static NSMutableArray *activeImageRenderers;
     [imageRep setProperty:NSImageCurrentFrame withValue:[NSNumber numberWithInt:frame]];
 }
 
+#define MINIMUM_DURATON  (1.0/30.0)
+
 - (float)frameDuration
 {
     id property = [self firstRepProperty:NSImageCurrentFrameDuration];
     float duration = (property != nil ? [property floatValue] : 0.0);
-    if (duration < 0.0167){
+    if (duration < MINIMUM_DURATON){
         /*
             Many annoying ads specify a 0 duration to make an image flash
             as quickly as possible.  However a zero duration is faster than
             the refresh rate.  We need to pick a minimum duration.
             
             Browsers handle the minimum time case differently.  IE seems to use something
-            close to 1/60th of a second.  Konqueror uses 0.  The ImageMagick library
+            close to 1/30th of a second.  Konqueror uses 0.  The ImageMagick library
             uses 1/100th.  The units in the GIF specification are 1/100th of second.
-            We will use 1/60th of second as the minimum time.
+            We will use 1/30th of second as the minimum time.
         */
-        duration = .0167;
+        duration = MINIMUM_DURATON;
     }
     return duration;
 }
+
+- (void)_scheduleFrame
+{   
+    if (!animationFinished){
+        frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
+                                                    target:self
+                                                    selector:@selector(nextFrame:)
+                                                    userInfo:nil
+                                                    repeats:NO] retain];
+        if (!activeImageRenderers)
+            activeImageRenderers = [[NSMutableArray alloc] init];
+            
+        [activeImageRenderers addObject: self];
+    }
+}
+
 
 - (void)nextFrame:(id)context
 {
@@ -145,7 +164,13 @@ static NSMutableArray *activeImageRenderers;
     
     currentFrame = [self currentFrame] + 1;
     if (currentFrame >= [self frameCount]) {
-        currentFrame = 0;
+        if ([self frameDuration] == 0) {
+            animationFinished = YES;	// Don't repeat if the last frame has a duration of 0.  
+                                // IE doesn't repeat, so we don't.
+            return;
+        }
+        else
+            currentFrame = 0;
     }
     [self setCurrentFrame:currentFrame];
     
@@ -162,13 +187,11 @@ static NSMutableArray *activeImageRenderers;
                     fraction:1.0];
             [frameView unlockFocus];
         }
-    
-        frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
-                                                    target:self
-                                                    selector:@selector(nextFrame:)
-                                                    userInfo:nil
-                                                    repeats:NO] retain];
+        [self _scheduleFrame];
     } else {
+        // No need to schedule the next frame in this case.  The display
+        // will eventually cause the image to be redrawn and the next frame
+        // will be scheduled in beginAnimationInRect:fromRect:
         [frameView displayRect:targetRect];
     }
     
@@ -179,26 +202,18 @@ static NSMutableArray *activeImageRenderers;
 {
     // The previous, if any, frameView, is released in stopAnimation.
     [self stopAnimation];
-    
-    if ([self frameCount] > 1) {
-        imageRect = fr;
-        targetRect = ir;
-        frameView = [[NSView focusView] retain];
-        frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
-                                                       target:self
-                                                     selector:@selector(nextFrame:)
-                                                     userInfo:nil
-                                                      repeats:NO] retain];
-        if (!activeImageRenderers)
-            activeImageRenderers = [[NSMutableArray alloc] init];
-            
-        [activeImageRenderers addObject: self];
-    }
 
     [self drawInRect: ir
             fromRect: fr
            operation: NSCompositeSourceOver	// Renders transparency correctly
             fraction: 1.0];
+    
+    if ([self frameCount] > 1 && animationFinished != YES) {
+        imageRect = fr;
+        targetRect = ir;
+        frameView = [[NSView focusView] retain];
+        [self _scheduleFrame];
+    }
 }
 
 - (void)stopAnimation

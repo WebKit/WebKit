@@ -1,3 +1,30 @@
+2002-07-15  Richard Williamson (Home)  <rjw@apple.com>
+
+        Removed dependence on window resize notification.  We now
+        use the IFWebView setFrame: method to trigger layouts.  Much
+        cleaner.
+        
+        Cleaned up image animation timer scheduler.
+        
+        Stop animation if last frame has zero duration, like IE.
+        
+        Change minimum duration to 1/30th (used if zero frame duration is
+        specified).  This is closer to what I see in IE empirically.
+        
+        * WebCoreSupport.subproj/IFImageRenderer.h:
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer frameDuration]):
+        (-[IFImageRenderer _scheduleFrame]):
+        (-[IFImageRenderer nextFrame:]):
+        (-[IFImageRenderer beginAnimationInRect:fromRect:]):
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView initWithFrame:]):
+        (-[IFHTMLView removeNotifications]):
+        * WebView.subproj/IFWebView.mm:
+        (-[IFWebView setFrame:]):
+        (-[IFWebView viewWillStartLiveResize]):
+        (-[IFWebView viewDidEndLiveResize]):
+
 2002-07-15  Maciej Stachowiak  <mjs@apple.com>
 
         Fixed Radar 2957209 - Change "JavaScript can open new windows

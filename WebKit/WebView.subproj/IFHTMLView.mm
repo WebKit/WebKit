@@ -41,11 +41,8 @@
     // when the window becomes/resigns main.
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
-
     return self;
 }
-
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
@@ -94,7 +91,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
     [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
     [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResizeNotification object: nil];
 }
 
 
@@ -334,16 +330,6 @@
 - (BOOL)isFlipped 
 {
     return YES;
-}
-
-
-- (void)windowResized: (NSNotification *)notification
-{
-    // FIXME: This is a hack. We should relayout when the width of our
-    // superview's bounds changes, not when the window is resized.
-    if ([notification object] == [self window]) {
-        [self setNeedsLayout: YES];
-    }
 }
 
 

@@ -15,6 +15,7 @@
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebKitErrors.h>
 #import <WebKit/IFTextRendererFactory.h>
+#import <WebKit/IFImageRenderer.h>
 #import <WebKit/IFImageRendererFactory.h>
 #import <WebKit/IFCookieAdapter.h>
 
@@ -77,6 +78,23 @@ enum {
 {
     [_private release];
     [super dealloc];
+}
+
+- (void)setFrame: (NSRect)f
+{
+    if ([self isDocumentHTML] && !NSEqualRects(f, [self frame]))
+        [(IFHTMLView *)[self documentView] setNeedsLayout: YES];
+    [super setFrame: f];
+}
+
+
+- (void)viewWillStartLiveResize
+{
+}
+
+- (void)viewDidEndLiveResize
+{
+    [self display];
 }
 
 - (void)setAllowsScrolling: (BOOL)flag
