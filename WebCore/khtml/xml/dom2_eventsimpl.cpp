@@ -500,6 +500,7 @@ void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
 
 //---------------------------------------------------------------------------------------------
 
+
 KeyEventImpl::KeyEventImpl()
 {
   qKeyEvent = 0;
@@ -674,7 +675,7 @@ KeyEventImpl::KeyEventImpl(QKeyEvent *key, AbstractViewImpl *view)
 
   // m_keyVal should contain the unicode value
   // of the pressed key if available.
-  if (m_virtKeyVal != DOM_VK_UNDEFINED && !key->text().isNull())
+  if (m_virtKeyVal == DOM_VK_UNDEFINED && !key->text().isNull())
       m_keyVal = key->text().unicode()[0];
 
   //  m_numPad = ???

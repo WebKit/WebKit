@@ -339,9 +339,10 @@ Value KJS::getEventExceptionConstructor(ExecState *exec)
 
 const ClassInfo DOMUIEvent::info = { "UIEvent", &DOMEvent::info, &DOMUIEventTable, 0 };
 /*
-@begin DOMUIEventTable 2
+@begin DOMUIEventTable 3
   view		DOMUIEvent::View	DontDelete|ReadOnly
   detail	DOMUIEvent::Detail	DontDelete|ReadOnly
+  keyCode	DOMUIEvent::KeyCode	DontDelete|ReadOnly
 @end
 @begin DOMUIEventProtoTable 1
   initUIEvent	DOMUIEvent::InitUIEvent	DontDelete|Function 5
@@ -367,6 +368,8 @@ Value DOMUIEvent::getValueProperty(ExecState *exec, int token) const
     return getDOMAbstractView(exec,static_cast<DOM::UIEvent>(event).view());
   case Detail:
     return Number(static_cast<DOM::UIEvent>(event).detail());
+  case KeyCode:
+    return Number(static_cast<DOM::UIEvent>(event).keyCode());
   default:
     kdWarning() << "Unhandled token in DOMUIEvent::getValueProperty : " << token << endl;
     return Value();

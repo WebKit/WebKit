@@ -321,6 +321,11 @@ public:
      */
     long detail() const;
 
+    /**
+     * Non-standard extension to support IE-style keyCode event property.
+     *
+     */
+    int keyCode() const;
 
     /**
      * The initUIEvent method is used to initialize the value of a UIEvent

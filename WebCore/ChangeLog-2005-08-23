@@ -1,3 +1,32 @@
+2002-12-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	Final fix for this bug:
+
+	Radar 3062858 (REGRESSION: failed login at www.usaa.com doesn't return error text)
+
+	We were down to a case where submitting the login form with the return key
+	failed since we did not implement either non-standard keyCode (IE-style) or
+	which (Netscape-style) UI event extension for getting the value of a key
+	press. The form submission code depended on sensing the value of the
+	key press by checking one of these properties.
+	
+	Since the "which" property also can be used for mouse events, and fixing
+	this bug could be done by implementing either keyCode or which, I chose
+	to implement keyCode only.
+
+        * khtml/dom/dom2_events.cpp: Added keyCode function definition.
+        * khtml/dom/dom2_events.h: Added keyCode function declaration.
+        * khtml/ecma/kjs_events.cpp:
+        (DOMUIEvent::getValueProperty): Added new KeyCode attribute.
+        * khtml/ecma/kjs_events.h: New generated file.
+        * khtml/ecma/kjs_events.lut.h: Ditto.
+        * khtml/xml/dom2_eventsimpl.cpp: 
+        (KeyEventImpl::KeyEventImpl): Fixed a bug in khtml that prevented the        
+        m_keyVal field on KeyEventImpl from ever being set correctly. 
+        I guess I am the first person ever to care about that value. :-)
+
 === Alexander-36 ===
 
 2002-12-12  Darin Adler  <darin@apple.com>

@@ -255,6 +255,18 @@ long UIEvent::detail() const
     return static_cast<UIEventImpl*>(impl)->detail();
 }
 
+int UIEvent::keyCode() const
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+    
+    KeyEventImpl *keyEvent = dynamic_cast<KeyEventImpl*>(impl);
+    if (keyEvent)
+        return keyEvent->keyVal();
+    else
+        return 0;
+}
+
 void UIEvent::initUIEvent(const DOMString &typeArg,
                                  bool canBubbleArg,
                                  bool cancelableArg,
