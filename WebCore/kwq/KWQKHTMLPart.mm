@@ -2762,7 +2762,7 @@ void KWQKHTMLPart::print()
     [_bridge print];
 }
 
-Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
+KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
 {
     // Get a pointer to the actual Java applet instance.
     jobject applet = [_bridge pollForAppletInView:aView];
@@ -2770,21 +2770,21 @@ Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
     if (applet)
         // Wrap the Java instance in a language neutral binding and hand
         // off ownership to the APPLET element.
-        return Bindings::Instance::createBindingForLanguageInstance (Bindings::Instance::JavaLanguage, applet);
+        return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::JavaLanguage, applet);
     
     return 0;
 }
 
-void KWQKHTMLPart::addPluginRootObject(const Bindings::RootObject *root)
+void KWQKHTMLPart::addPluginRootObject(const KJS::Bindings::RootObject *root)
 {
     rootObjects.append (root);
 }
 
 void KWQKHTMLPart::cleanupPluginRootObjects()
 {
-    Bindings::RootObject *root;
+    KJS::Bindings::RootObject *root;
     while ((root = rootObjects.getLast())) {
-        Bindings::RootObject::removeAllJavaReferencesForRoot (root);
+        KJS::Bindings::RootObject::removeAllJavaReferencesForRoot (root);
         rootObjects.removeLast();
     }
 }

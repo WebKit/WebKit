@@ -60,14 +60,14 @@ public:
     
 #if APPLE_CHANGES
     void setupApplet() const;
-    Bindings::Instance *getAppletInstance() const;
+    KJS::Bindings::Instance *getAppletInstance() const;
 #endif
 
 protected:
     khtml::VAlign valign;
 
 private:
-    mutable Bindings::Instance *appletInstance;
+    mutable KJS::Bindings::Instance *appletInstance;
 };
 
 // -------------------------------------------------------------------------

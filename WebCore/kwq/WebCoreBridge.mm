@@ -88,7 +88,7 @@ using KJS::SavedBuiltins;
 
 using KParts::URLArgs;
 
-using Bindings::RootObject;
+using KJS::Bindings::RootObject;
 
 NSString *WebCoreElementFrameKey = 		@"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
@@ -140,7 +140,7 @@ static bool initializedKJS = FALSE;
     }
     
     if (!initializedKJS) {
-        Bindings::RootObject::setFindRootObjectForNativeHandleFunction (rootForView);
+        KJS::Bindings::RootObject::setFindRootObjectForNativeHandleFunction (rootForView);
         initializedKJS = TRUE;
     }
     
