@@ -136,7 +136,10 @@ static bool shouldPruneNode(NodeImpl *node)
     if (node->hasChildNodes())
         return false;
         
-    if (renderer->isBR() || renderer->isBlockFlow() || renderer->isReplaced())
+    if (node->rootEditableElement() == node)
+        return false;
+        
+    if (renderer->isBR() || renderer->isReplaced())
         return false;
         
     if (node->isTextNode()) {
@@ -434,9 +437,9 @@ void CompositeEditCommandImpl::removeNode(NodeImpl *removeChild)
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::removeNodeAndPrune(NodeImpl *removeChild)
+void CompositeEditCommandImpl::removeNodeAndPrune(NodeImpl *pruneNode, NodeImpl *stopNode)
 {
-    RemoveNodeAndPruneCommand cmd(document(), removeChild);
+    RemoveNodeAndPruneCommand cmd(document(), pruneNode, stopNode);
     applyCommandToComposite(cmd);
 }
 
@@ -1412,6 +1415,10 @@ void DeleteSelectionCommandImpl::doApply()
         (startRenderedOffset == 0 && downstreamStart.inFirstEditableInContainingEditableBlock());
     bool endAtEndOfBlock = downstreamEnd.isLastRenderedPositionInEditableBlock();
 
+    NodeImpl *startBlock = upstreamStart.node()->enclosingBlockFlowElement();
+    NodeImpl *endBlock = downstreamEnd.node()->enclosingBlockFlowElement();
+    bool startBlockEndBlockAreSiblings = startBlock->parentNode() == endBlock->parentNode();
+
     debugPosition("upstreamStart:       ", upstreamStart);
     debugPosition("downstreamStart:     ", downstreamStart);
     debugPosition("upstreamEnd:         ", upstreamEnd);
@@ -1422,10 +1429,10 @@ void DeleteSelectionCommandImpl::doApply()
     LOG(Editing,  "at end block:        %s", endAtEndOfBlock ? "YES" : "NO");
     LOG(Editing,  "only whitespace:     %s", onlyWhitespace ? "YES" : "NO");
 
-    // Start is not completely selected
+    // Determine where to put the caret after the deletion
     if (startAtStartOfBlock) {
         LOG(Editing,  "ending position case 1");
-        endingPosition = Position(downstreamStart.node()->enclosingBlockFlowElement(), 1);
+        endingPosition = Position(startBlock, 0);
         adjustEndingPositionDownstream = true;
     }
     else if (!startCompletelySelected) {
@@ -1484,7 +1491,7 @@ void DeleteSelectionCommandImpl::doApply()
     // work on start node
     if (startCompletelySelected) {
         LOG(Editing,  "start node delete case 1");
-        removeNodeAndPrune(downstreamStart.node());
+        removeNodeAndPrune(downstreamStart.node(), startBlock);
     }
     else if (onlyWhitespace) {
         // Selection only contains whitespace. This is really a special-case to 
@@ -1521,13 +1528,13 @@ void DeleteSelectionCommandImpl::doApply()
             NodeImpl *d = n;
             n = n->traverseNextNode();
             if (d->renderer() && d->renderer()->isEditable())
-                removeNodeAndPrune(d);
+                removeNodeAndPrune(d, startBlock);
         }
         
         // work on end node
         ASSERT(n == upstreamEnd.node());
         if (endCompletelySelected) {
-            removeNodeAndPrune(upstreamEnd.node());
+            removeNodeAndPrune(upstreamEnd.node(), startBlock);
         }
         else if (upstreamEnd.node()->isTextNode()) {
             if (upstreamEnd.offset() > 0) {
@@ -1539,6 +1546,22 @@ void DeleteSelectionCommandImpl::doApply()
             // we have clipped the beginning of a non-text element
             // the offset must be 0 here. if it is, do nothing and move on.
             ASSERT(downstreamStart.offset() == 0);
+        }
+    }
+
+    // Do block merge if start and end of selection are in different blocks
+    // and the blocks are siblings. This is a first cut at this rule arrived
+    // at by doing a bunch of edits and settling on the behavior that made
+    // the most sense. This could change in the future as we get more
+    // experience with how this should behave.
+    if (startBlock != endBlock && startBlockEndBlockAreSiblings) {
+        LOG(Editing,  "merging content to start block");
+        NodeImpl *node = endBlock->firstChild();
+        while (node) {
+            NodeImpl *moveNode = node;
+            node = node->nextSibling();
+            removeNode(moveNode);
+            appendNode(startBlock, moveNode);
         }
     }
 
@@ -2318,17 +2341,20 @@ void RemoveNodeCommandImpl::doUnapply()
 //------------------------------------------------------------------------------------------
 // RemoveNodeAndPruneCommandImpl
 
-RemoveNodeAndPruneCommandImpl::RemoveNodeAndPruneCommandImpl(DocumentImpl *document, NodeImpl *removeChild)
-    : CompositeEditCommandImpl(document), m_removeChild(removeChild)
+RemoveNodeAndPruneCommandImpl::RemoveNodeAndPruneCommandImpl(DocumentImpl *document, NodeImpl *pruneNode, NodeImpl *stopNode)
+    : CompositeEditCommandImpl(document), m_pruneNode(pruneNode), m_stopNode(stopNode)
 {
-    ASSERT(m_removeChild);
-    m_removeChild->ref();
+    ASSERT(m_pruneNode);
+    m_pruneNode->ref();
+    if (m_stopNode)
+        m_stopNode->ref();
 }
 
 RemoveNodeAndPruneCommandImpl::~RemoveNodeAndPruneCommandImpl()
 {
-    if (m_removeChild)
-        m_removeChild->deref();
+    m_pruneNode->deref();
+    if (m_stopNode)
+        m_stopNode->deref();
 }
 
 int RemoveNodeAndPruneCommandImpl::commandID() const
@@ -2338,12 +2364,12 @@ int RemoveNodeAndPruneCommandImpl::commandID() const
 
 void RemoveNodeAndPruneCommandImpl::doApply()
 {
-    NodeImpl *editableBlock = m_removeChild->enclosingBlockFlowElement();
-    NodeImpl *pruneNode = m_removeChild;
+    NodeImpl *editableBlock = m_pruneNode->enclosingBlockFlowElement();
+    NodeImpl *pruneNode = m_pruneNode;
     NodeImpl *node = pruneNode->traversePreviousNode();
     removeNode(pruneNode);
     while (1) {
-        if (editableBlock != node->enclosingBlockFlowElement() || !shouldPruneNode(node))
+        if (node == m_stopNode || editableBlock != node->enclosingBlockFlowElement() || !shouldPruneNode(node))
             break;
         pruneNode = node;
         node = node->traversePreviousNode();

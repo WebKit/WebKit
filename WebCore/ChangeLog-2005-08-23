@@ -1,3 +1,44 @@
+2004-06-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+
+        <rdar://problem/3654841>: "Hitting delete key with start of block selected 
+        does not merge content with preceding block"
+
+        Selections that span blocks now work correctly for deleting the selection and inserting
+        over the selection. The largest part of the change is adding a new field to the 
+        RemoveNodeAndPruneCommand and its impl version. This was done since the starting block
+        for a multi-block selection should always be preserved when deleting, and this was
+        a convenient way to express this using the code structure already in place.
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::RemoveNodeAndPruneCommand::RemoveNodeAndPruneCommand): Modify this command to 
+        take two nodes: the node to remove and a node to stop at when pruning back up the tree.
+        (khtml::RemoveNodeAndPruneCommand::pruneNode): New accessor, replaces old node() accessor.
+        (khtml::RemoveNodeAndPruneCommand::stopNode): New accessor for additional feature described 
+        above.
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::shouldPruneNode): blow flow renderers can now be deleted, but not if they are a 
+        rootEditableElement.
+        (khtml::CompositeEditCommandImpl::removeNodeAndPrune): Pass new stopNode param and change the
+        name of the existing node argument to pruneNode to distinguish it.
+        (khtml::DeleteSelectionCommandImpl::doApply): Pass the block containing the start of the
+        selection to removeNodeAndPrune in each case. Also, add one little loop to move all
+        the content from the block containing the end of the selection if that block is different
+        than the start block.
+        (khtml::RemoveNodeAndPruneCommandImpl::RemoveNodeAndPruneCommandImpl): Implement the
+        pruneNode/stopNode design already described.
+        (khtml::RemoveNodeAndPruneCommandImpl::~RemoveNodeAndPruneCommandImpl): Manage the
+        lifecycle of stopNode.
+        (khtml::RemoveNodeAndPruneCommandImpl::doApply): Add a check to stop at the stop
+        node while pruning.
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::RemoveNodeAndPruneCommandImpl::pruneNode): New accessor.
+        (khtml::RemoveNodeAndPruneCommandImpl::stopNode): Ditto.
+
 2004-06-07  Trey Matteson  <trey@apple.com>
 
 	Clipboard access during DHTML dragging is made secure.

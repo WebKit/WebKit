@@ -133,7 +133,7 @@ protected:
     void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property);
     void removeNodeAttribute(DOM::ElementImpl *, int attribute);
     void removeNode(DOM::NodeImpl *removeChild);
-    void removeNodeAndPrune(DOM::NodeImpl *removeChild);
+    void removeNodeAndPrune(DOM::NodeImpl *pruneNode, DOM::NodeImpl *stopNode=0);
     void removeNodePreservingChildren(DOM::NodeImpl *node);
     void replaceText(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
     void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);
@@ -518,17 +518,19 @@ private:
 class RemoveNodeAndPruneCommandImpl : public CompositeEditCommandImpl
 {
 public:
-	RemoveNodeAndPruneCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
+	RemoveNodeAndPruneCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *pruneNode, DOM::NodeImpl *stopNode=0);
 	virtual ~RemoveNodeAndPruneCommandImpl();
 	
     virtual int commandID() const;
 
 	virtual void doApply();
 
-    DOM::NodeImpl *node() const { return m_removeChild; }
+    DOM::NodeImpl *pruneNode() const { return m_pruneNode; }
+    DOM::NodeImpl *stopNode() const { return m_stopNode; }
 
 private:
-    DOM::NodeImpl *m_removeChild;
+    DOM::NodeImpl *m_pruneNode;
+    DOM::NodeImpl *m_stopNode;
 };
 
 //------------------------------------------------------------------------------------------

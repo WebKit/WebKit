@@ -418,10 +418,11 @@ private:
 class RemoveNodeAndPruneCommand : public CompositeEditCommand
 {
 public:
-	RemoveNodeAndPruneCommand(DOM::DocumentImpl *, DOM::NodeImpl *);
+	RemoveNodeAndPruneCommand(DOM::DocumentImpl *, DOM::NodeImpl *pruneNode, DOM::NodeImpl *stopNode=0);
 	virtual ~RemoveNodeAndPruneCommand();
 
-    DOM::NodeImpl *node() const;
+    DOM::NodeImpl *pruneNode() const;
+    DOM::NodeImpl *stopNode() const;
     
 private:
     inline RemoveNodeAndPruneCommandImpl *impl() const;

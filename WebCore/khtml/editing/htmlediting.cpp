@@ -615,8 +615,8 @@ NodeImpl *RemoveNodeCommand::node() const
 //------------------------------------------------------------------------------------------
 // RemoveNodeAndPruneCommand
 
-RemoveNodeAndPruneCommand::RemoveNodeAndPruneCommand(DocumentImpl *document, NodeImpl *node)
-    : CompositeEditCommand(new RemoveNodeAndPruneCommandImpl(document, node))
+RemoveNodeAndPruneCommand::RemoveNodeAndPruneCommand(DocumentImpl *document, NodeImpl *pruneNode, NodeImpl *stopNode)
+    : CompositeEditCommand(new RemoveNodeAndPruneCommandImpl(document, pruneNode, stopNode))
 {
 }
 
@@ -629,10 +629,16 @@ RemoveNodeAndPruneCommandImpl *RemoveNodeAndPruneCommand::impl() const
     return static_cast<RemoveNodeAndPruneCommandImpl *>(get());
 }
 
-NodeImpl *RemoveNodeAndPruneCommand::node() const
+NodeImpl *RemoveNodeAndPruneCommand::pruneNode() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
-    return impl()->node();
+    return impl()->pruneNode();
+}
+
+NodeImpl *RemoveNodeAndPruneCommand::stopNode() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->stopNode();
 }
 
 //------------------------------------------------------------------------------------------
