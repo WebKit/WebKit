@@ -22,6 +22,8 @@
 
 #include "reference_list.h"
 
+#include "protect.h"
+
 namespace KJS {
   class ReferenceListNode {
     friend class ReferenceList;
@@ -31,7 +33,7 @@ namespace KJS {
     ReferenceListNode(const Reference &ref) : reference(ref), next(NULL) {}
 
   private:
-    Reference reference;
+    ProtectedReference reference;
     ReferenceListNode *next;
   };
 

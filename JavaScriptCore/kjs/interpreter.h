@@ -28,6 +28,7 @@
 #include "value.h"
 #include "object.h"
 #include "types.h"
+#include "protect.h"
 
 namespace KJS {
 
@@ -427,7 +428,7 @@ namespace KJS {
         : _interpreter(interp), _context(con) { }
     Interpreter *_interpreter;
     ContextImp *_context;
-    Value _exception;
+    ProtectedValue _exception;
   };
 
 }; // namespace

@@ -1,3 +1,21 @@
+2004-04-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Preliminary change for conservative GC. Create "protected"
+	subclasses to GC-protect objects when on heap, since we will soon
+	remove the built-in refcounting of the normal wrapper classes. Use
+	them where needed.
+	
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * kjs/context.h:
+        * kjs/internal.h:
+        (KJS::InterpreterImp::globalObject):
+        * kjs/interpreter.h:
+        * kjs/property_map.cpp:
+        * kjs/reference.h:
+        * kjs/reference_list.cpp:
+
 2004-04-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

@@ -29,6 +29,7 @@
 #include <qptrdict.h>
 #include <kurl.h>
 #include <kjs/lookup.h>
+#include <kjs/protect.h>
 
 class KHTMLPart;
 

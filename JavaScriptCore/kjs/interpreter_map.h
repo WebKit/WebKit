@@ -34,7 +34,7 @@ namespace KJS {
 	};
 
     public:
-	static InterpreterImp * InterpreterMap::getInterpreterForGlobalObject(ObjectImp *global);
+	static InterpreterImp * getInterpreterForGlobalObject(ObjectImp *global);
 	static void setInterpreterForGlobalObject(InterpreterImp *interpreter, ObjectImp *global);
 	static void removeInterpreterForGlobalObject(ObjectImp *global);
 

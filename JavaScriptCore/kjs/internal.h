@@ -214,39 +214,39 @@ namespace KJS {
   class SavedBuiltinsInternal {
     friend class InterpreterImp;
   private:
-    Object b_Object;
-    Object b_Function;
-    Object b_Array;
-    Object b_Boolean;
-    Object b_String;
-    Object b_Number;
-    Object b_Date;
-    Object b_RegExp;
-    Object b_Error;
+    ProtectedObject b_Object;
+    ProtectedObject b_Function;
+    ProtectedObject b_Array;
+    ProtectedObject b_Boolean;
+    ProtectedObject b_String;
+    ProtectedObject b_Number;
+    ProtectedObject b_Date;
+    ProtectedObject b_RegExp;
+    ProtectedObject b_Error;
 
-    Object b_ObjectPrototype;
-    Object b_FunctionPrototype;
-    Object b_ArrayPrototype;
-    Object b_BooleanPrototype;
-    Object b_StringPrototype;
-    Object b_NumberPrototype;
-    Object b_DatePrototype;
-    Object b_RegExpPrototype;
-    Object b_ErrorPrototype;
+    ProtectedObject b_ObjectPrototype;
+    ProtectedObject b_FunctionPrototype;
+    ProtectedObject b_ArrayPrototype;
+    ProtectedObject b_BooleanPrototype;
+    ProtectedObject b_StringPrototype;
+    ProtectedObject b_NumberPrototype;
+    ProtectedObject b_DatePrototype;
+    ProtectedObject b_RegExpPrototype;
+    ProtectedObject b_ErrorPrototype;
 
-    Object b_evalError;
-    Object b_rangeError;
-    Object b_referenceError;
-    Object b_syntaxError;
-    Object b_typeError;
-    Object b_uriError;
+    ProtectedObject b_evalError;
+    ProtectedObject b_rangeError;
+    ProtectedObject b_referenceError;
+    ProtectedObject b_syntaxError;
+    ProtectedObject b_typeError;
+    ProtectedObject b_uriError;
 
-    Object b_evalErrorPrototype;
-    Object b_rangeErrorPrototype;
-    Object b_referenceErrorPrototype;
-    Object b_syntaxErrorPrototype;
-    Object b_typeErrorPrototype;
-    Object b_uriErrorPrototype;
+    ProtectedObject b_evalErrorPrototype;
+    ProtectedObject b_rangeErrorPrototype;
+    ProtectedObject b_referenceErrorPrototype;
+    ProtectedObject b_syntaxErrorPrototype;
+    ProtectedObject b_typeErrorPrototype;
+    ProtectedObject b_uriErrorPrototype;
   };
 
   class InterpreterImp {
@@ -258,7 +258,7 @@ namespace KJS {
     InterpreterImp(Interpreter *interp, const Object &glob);
     ~InterpreterImp();
 
-    Object &globalObject() const { return const_cast<Object &>(global); }
+    ProtectedObject &globalObject() const { return const_cast<ProtectedObject &>(global); }
     Interpreter* interpreter() const { return m_interpreter; }
 
     void initGlobalObject();
@@ -326,46 +326,46 @@ namespace KJS {
   private:
     void clear();
     Interpreter *m_interpreter;
-    Object global;
+    ProtectedObject global;
     Debugger *dbg;
 
     // Built-in properties of the object prototype. These are accessible
     // from here even if they are replaced by js code (e.g. assigning to
     // Array.prototype)
 
-    Object b_Object;
-    Object b_Function;
-    Object b_Array;
-    Object b_Boolean;
-    Object b_String;
-    Object b_Number;
-    Object b_Date;
-    Object b_RegExp;
-    Object b_Error;
+    ProtectedObject b_Object;
+    ProtectedObject b_Function;
+    ProtectedObject b_Array;
+    ProtectedObject b_Boolean;
+    ProtectedObject b_String;
+    ProtectedObject b_Number;
+    ProtectedObject b_Date;
+    ProtectedObject b_RegExp;
+    ProtectedObject b_Error;
 
-    Object b_ObjectPrototype;
-    Object b_FunctionPrototype;
-    Object b_ArrayPrototype;
-    Object b_BooleanPrototype;
-    Object b_StringPrototype;
-    Object b_NumberPrototype;
-    Object b_DatePrototype;
-    Object b_RegExpPrototype;
-    Object b_ErrorPrototype;
+    ProtectedObject b_ObjectPrototype;
+    ProtectedObject b_FunctionPrototype;
+    ProtectedObject b_ArrayPrototype;
+    ProtectedObject b_BooleanPrototype;
+    ProtectedObject b_StringPrototype;
+    ProtectedObject b_NumberPrototype;
+    ProtectedObject b_DatePrototype;
+    ProtectedObject b_RegExpPrototype;
+    ProtectedObject b_ErrorPrototype;
 
-    Object b_evalError;
-    Object b_rangeError;
-    Object b_referenceError;
-    Object b_syntaxError;
-    Object b_typeError;
-    Object b_uriError;
+    ProtectedObject b_evalError;
+    ProtectedObject b_rangeError;
+    ProtectedObject b_referenceError;
+    ProtectedObject b_syntaxError;
+    ProtectedObject b_typeError;
+    ProtectedObject b_uriError;
 
-    Object b_evalErrorPrototype;
-    Object b_rangeErrorPrototype;
-    Object b_referenceErrorPrototype;
-    Object b_syntaxErrorPrototype;
-    Object b_typeErrorPrototype;
-    Object b_uriErrorPrototype;
+    ProtectedObject b_evalErrorPrototype;
+    ProtectedObject b_rangeErrorPrototype;
+    ProtectedObject b_referenceErrorPrototype;
+    ProtectedObject b_syntaxErrorPrototype;
+    ProtectedObject b_typeErrorPrototype;
+    ProtectedObject b_uriErrorPrototype;
 
     ExecState *globExec;
     Interpreter::CompatMode m_compatMode;

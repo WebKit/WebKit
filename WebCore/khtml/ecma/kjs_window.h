@@ -155,7 +155,7 @@ namespace KJS {
     ~ScheduledAction();
     void execute(Window *window);
 
-    Object func;
+    ProtectedObject func;
     List args;
     QString code;
     bool isFunction;

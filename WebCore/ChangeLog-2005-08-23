@@ -1,3 +1,17 @@
+2004-04-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Preliminary change for conservative GC. Use new "protected"
+	subclasses to GC-protect objects when on heap, since we will soon
+	remove the built-in refcounting of the normal wrapper classes.
+	
+        * ForwardingHeaders/kjs/protect.h: Added.
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_window.h:
+
 2004-04-22  Darin Adler  <darin@apple.com>
 
         * khtml/ecma/kjs_window.cpp: (Window::get): Removed code that gets properties from the parent.

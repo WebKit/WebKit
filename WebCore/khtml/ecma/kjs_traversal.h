@@ -100,7 +100,7 @@ namespace KJS {
     virtual ~JSNodeFilter();
     virtual short acceptNode (const DOM::Node &n);
   protected:
-    Object filter;
+    ProtectedObject filter;
   };
 
 }; // namespace
