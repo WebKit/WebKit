@@ -89,6 +89,8 @@ using XBL::XBLBindingManager;
 using namespace DOM;
 using namespace khtml;
 
+//#define INSTRUMENT_LAYOUT_SCHEDULING 1
+
 DOMImplementationImpl *DOMImplementationImpl::m_instance = 0;
 
 DOMImplementationImpl::DOMImplementationImpl()
@@ -270,6 +272,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     visuallyOrdered = false;
     m_loadingSheet = false;
     m_bParsing = false;
+    m_bAllDataReceived = false;
     m_docChanged = false;
     m_sheet = 0;
     m_elemSheet = 0;
@@ -1299,6 +1302,10 @@ void DocumentImpl::close()
         m_tokenizer = 0;
         dispatchImageLoadEventsNow();
         body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+        if (!ownerElement())
+            printf("onload fired at %d\n", elapsedTime());
+#endif
     }
     m_processingLoadEvent = false;
     
@@ -1353,32 +1360,35 @@ void DocumentImpl::closeInternal( bool checkTokenizer )
 
 void DocumentImpl::setParsing(bool b)
 {
-    if (m_bParsing != b) {
-        m_bParsing = b;
-        if (!b && haveStylesheetsLoaded() && !minimumLayoutDelay() &&
-            (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) && 
-            renderer() && renderer()->needsLayout())
-            updateLayout();
-    }
+    m_bParsing = b;
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+    if (!ownerElement() && !m_bParsing)
+        printf("Parsing turned off at %d\n", elapsedTime());
+#endif
 }
 
 bool DocumentImpl::shouldScheduleLayout()
 {
-    return renderer() && haveStylesheetsLoaded() && (!m_tokenizer || m_overMinimumLayoutThreshold || m_startTime.elapsed() > cLayoutScheduleThreshold);
+    return renderer() && haveStylesheetsLoaded();
 }
 
 int DocumentImpl::minimumLayoutDelay()
 {
-    if (!parsing() && m_overMinimumLayoutThreshold)
+    if (allDataReceived() && m_overMinimumLayoutThreshold)
         return 0;
     
     int elapsed = m_startTime.elapsed();
     m_overMinimumLayoutThreshold = elapsed > cLayoutScheduleThreshold;
     
-    if (parsing()) // Always want the nearest multiple of the timer delay.
+    if (!allDataReceived()) // Always want the nearest multiple of the timer delay.
         return cLayoutTimerDelay - elapsed % cLayoutTimerDelay;
     // We'll want to schedule the timer to fire at the minimum layout threshold.
     return kMax(0, cLayoutScheduleThreshold - elapsed);
+}
+
+int DocumentImpl::elapsedTime() const
+{
+    return m_startTime.elapsed();
 }
 
 void DocumentImpl::write( const DOMString &text )
@@ -1404,10 +1414,41 @@ void DocumentImpl::writeln( const DOMString &text )
     write(DOMString("\n"));
 }
 
-void DocumentImpl::finishParsing (  )
+void DocumentImpl::finishParsing()
 {
-    if(m_tokenizer)
+    // Let the tokenizer go through as much data as it can.  There will be three possible outcomes after
+    // finish() is called:
+    // (1) All remaining data is parsed, document isn't loaded yet
+    // (2) All remaining data is parsed, document is loaded, tokenizer gets deleted
+    // (3) Data is still remaining to be parsed.
+    if (m_tokenizer)
         m_tokenizer->finish();
+
+    // Don't say we've really received all the data until we've given the tokenizer
+    // a chance to try to eat as much of the data as it can.
+    m_bAllDataReceived = true;
+
+    if (m_tokenizer) {
+        // Update layout *now* if possible.  If we don't have a tokenizer any more, we already updated
+        // layout because of the onload firing.
+        
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+        if (!ownerElement())
+            printf("Received all data and parsed as much as possible at time: %d with delay until next layout of %d\n", elapsedTime(), minimumLayoutDelay());
+#endif
+
+        // We can update layout if:
+        // (a) we're an XML document or we're an HTML document and our body has been parsed (ensuring we'll have
+        // the background ready to paint)
+        // (b) our stylesheets are all loaded
+        // (c) we're over the minimum layout threshold
+        // (d) we are an iframe in a document that has flowed us already or we aren't an iframe at all
+        // (e) we actually need a layout
+        if ((!isHTMLDocument() || body()) && haveStylesheetsLoaded() && !minimumLayoutDelay() &&
+            (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) &&
+            renderer() && renderer()->needsLayout())
+            updateLayout();
+    }
 }
 
 void DocumentImpl::clear()
@@ -2085,8 +2126,19 @@ void DocumentImpl::updateStyleSelector()
 
     m_styleSelectorDirty = true;
 #endif
-    if (renderer())
+
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+    if (!ownerElement())
+        printf("Dirtying renderer from stylesheet load at time %d\n", elapsedTime());
+#endif
+
+    if (renderer()) {
         renderer()->setNeedsLayoutAndMinMaxRecalc();
+        if (allDataReceived() && view()->haveDelayedLayoutScheduled()) {
+            view()->unscheduleRelayout();
+            view()->scheduleRelayout();
+        }
+    }
 }
 
 

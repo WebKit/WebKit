@@ -514,8 +514,17 @@ void RenderWidget::updateWidgetPositions()
     width = m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
     height = m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
     QRect newBounds(x,y,width,height);
-    if (newBounds != m_widget->frameGeometry()) {
+    QRect oldBounds(m_widget->frameGeometry());
+    if (newBounds != oldBounds) {
         // The widget changed positions.  Update the frame geometry.
+        if (checkForRepaintDuringLayout()) {
+            RenderCanvas* c = canvas();
+            if (!c->printingMode()) {
+                c->repaintViewRectangle(oldBounds);
+                c->repaintViewRectangle(newBounds);
+            }
+        }
+
         RenderArena *arena = ref();
         element()->ref();
         m_widget->setFrameGeometry(newBounds);

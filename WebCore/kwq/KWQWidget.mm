@@ -424,9 +424,8 @@ void QWidget::setFrameGeometry(const QRect &rect)
     NSView *v = getOuterView();
     NSRect f = rect;
     if (!NSEqualRects(f, [v frame])) {
-        [v setNeedsDisplay:YES];
         [v setFrame:f];
-        [v setNeedsDisplay:YES];
+        [v setNeedsDisplay: NO];
     }
     KWQ_UNBLOCK_EXCEPTIONS;
 }

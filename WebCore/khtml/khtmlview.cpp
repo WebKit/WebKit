@@ -66,6 +66,8 @@
 
 #define PAINT_BUFFER_HEIGHT 128
 
+//#define INSTRUMENT_LAYOUT_SCHEDULING 1
+
 using namespace DOM;
 using namespace khtml;
 class KHTMLToolTip;
@@ -104,7 +106,7 @@ public:
         paintBuffer=0;
         formCompletions=0;
         layoutTimerId = 0;
-        complete = false;
+        layoutTimerParsing = false;
         mousePressed = false;
         tooltip = 0;
         doFullRepaint = true;
@@ -158,7 +160,7 @@ public:
 	isDoubleClick = false;
 	scrollingSelf = false;
 	layoutTimerId = 0;
-        complete = false;
+        layoutTimerParsing = false;
         mousePressed = false;
         doFullRepaint = true;
         layoutSchedulingEnabled = true;
@@ -200,8 +202,8 @@ public:
     int prevMouseX, prevMouseY;
     bool scrollingSelf;
     int layoutTimerId;
-
-    bool complete;
+    bool layoutTimerParsing;
+    
     bool layoutSchedulingEnabled;
     bool layoutSuppressed;
 #if APPLE_CHANGES
@@ -532,6 +534,7 @@ void KHTMLView::layout()
     d->layoutSchedulingEnabled=false;
     killTimer(d->layoutTimerId);
     d->layoutTimerId = 0;
+    d->layoutTimerParsing = false;
 
     if (!m_part) {
         // FIXME: Do we need to set _width here?
@@ -568,6 +571,11 @@ void KHTMLView::layout()
                 applyBodyScrollQuirk(body->renderer(), hMode, vMode); // Only applies to HTML UAs, not to XML/XHTML UAs
         }
     }
+
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+    if (d->firstLayout && !document->ownerElement())
+        printf("Elapsed time before first layout: %d\n", document->elapsedTime());
+#endif
 
     d->doFullRepaint = d->firstLayout || root->printingMode();
     if (d->repaintRects)
@@ -1827,7 +1835,19 @@ void KHTMLView::scheduleRelayout()
     if (d->layoutTimerId || (m_part->xmlDocImpl() && !m_part->xmlDocImpl()->shouldScheduleLayout()))
         return;
 
+    d->layoutTimerParsing = m_part->xmlDocImpl() && !m_part->xmlDocImpl()->allDataReceived();
+
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+    if (!m_part->xmlDocImpl()->ownerElement())
+        printf("Scheduling layout for %d\n", m_part->xmlDocImpl()->minimumLayoutDelay());
+#endif
+
     d->layoutTimerId = startTimer(m_part->xmlDocImpl() ? m_part->xmlDocImpl()->minimumLayoutDelay() : 0);
+}
+
+bool KHTMLView::haveDelayedLayoutScheduled()
+{
+    return d->layoutTimerId && d->layoutTimerParsing;
 }
 
 void KHTMLView::unscheduleRelayout()
@@ -1837,22 +1857,7 @@ void KHTMLView::unscheduleRelayout()
 
     killTimer(d->layoutTimerId);
     d->layoutTimerId = 0;
-}
-
-void KHTMLView::complete()
-{
-//     kdDebug() << "KHTMLView::complete()" << endl;
-
-    d->complete = true;
-
-    // is there a relayout pending?
-    if (d->layoutTimerId)
-    {
-//         kdDebug() << "requesting relayout now" << endl;
-        // do it now
-        killTimer(d->layoutTimerId);
-        d->layoutTimerId = startTimer( 0 );
-    }
+    d->layoutTimerParsing = false;
 }
 
 bool KHTMLView::isTransparent() const

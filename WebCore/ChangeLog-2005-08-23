@@ -1,3 +1,41 @@
+2004-05-18  David Hyatt  <hyatt@apple.com>
+
+	Improve layout scheduling and add instrumentation for debugging layout scheduling
+	
+        Reviewed by kocienda
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::slotFinishedParsing):
+        (KHTMLPart::checkCompleted):
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::KHTMLViewPrivate):
+        (KHTMLViewPrivate::reset):
+        (KHTMLView::layout):
+        (KHTMLView::scheduleRelayout):
+        (KHTMLView::haveDelayedLayoutScheduled):
+        (KHTMLView::unscheduleRelayout):
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::repaintAfterLayoutIfNeeded):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::updateWidgetPositions):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::close):
+        (DocumentImpl::setParsing):
+        (DocumentImpl::shouldScheduleLayout):
+        (DocumentImpl::minimumLayoutDelay):
+        (DocumentImpl::elapsedTime):
+        (DocumentImpl::finishParsing):
+        (DocumentImpl::updateStyleSelector):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::allDataReceived):
+        * kwq/KWQDateTime.h:
+        * kwq/KWQDateTime.mm:
+        (QTime::elapsed):
+        * kwq/KWQWidget.mm:
+        (QWidget::setFrameGeometry):
+
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
 	Finished implementing support for windowScriptObject.

@@ -41,7 +41,7 @@ public:
 
     int msec() const;
     void start() { timeInSeconds = CFAbsoluteTimeGetCurrent(); }
-    int elapsed();
+    int elapsed() const;
     int restart();
     
 private:

@@ -596,6 +596,16 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
         case WebFrameStateCommittedPage:
         {
             [self _setState: WebFrameStateLayoutAcceptable];
+            if (!([[self dataSource] _isDocumentHTML])) {
+                // Go ahead and lay out/display non-HTML the minute we have some data.  This makes
+                // more sense for text files (which can always be immediately displayed).
+                WebFrameView *thisView = [self frameView];
+                NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
+                ASSERT(thisDocumentView != nil);
+                [thisDocumentView setNeedsLayout:YES];
+                [thisDocumentView layout];
+                [thisDocumentView setNeedsDisplay:YES];
+            }
             return;
         }
 
@@ -1014,9 +1024,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // non-HTML content, or make a call to the document and let it deal with the bridge.
 
                 [self _setState:WebFrameStateComplete];
-                if ([ds _isDocumentHTML]) {
-                    [_private->bridge end];
-                }
 
                 // FIXME: Is this subsequent work important if we already navigated away?
                 // Maybe there are bugs because of that, or extra work we can skip because

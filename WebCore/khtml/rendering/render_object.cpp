@@ -1162,15 +1162,12 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRec
     QRect newBounds, newFullBounds;
     getAbsoluteRepaintRectIncludingFloats(newBounds, newFullBounds);
     if (newBounds != oldBounds || selfNeedsLayout()) {
-        RenderObject* c = canvas();
-        if (!c || !c->isCanvas())
-            return false;
-        RenderCanvas* canvasObj = static_cast<RenderCanvas*>(c);
-        if (canvasObj->printingMode())
+        RenderCanvas* c = canvas();
+        if (c->printingMode())
             return false; // Don't repaint if we're printing.
-        canvasObj->repaintViewRectangle(oldFullBounds);
+        c->repaintViewRectangle(oldFullBounds);
         if (newBounds != oldBounds)
-            canvasObj->repaintViewRectangle(newFullBounds);
+            c->repaintViewRectangle(newFullBounds);
         return true;
     }
     return false;

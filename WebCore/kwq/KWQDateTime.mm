@@ -51,7 +51,7 @@ int QTime::msec() const
     return (int)(seconds * 1000) % 1000;
 }
 
-int QTime::elapsed()
+int QTime::elapsed() const
 {
     CFTimeInterval elapsed = CFAbsoluteTimeGetCurrent() - timeInSeconds;
     return (int)(elapsed * 1000);

@@ -1671,18 +1671,18 @@ void KHTMLPart::gotoAnchor()
 void KHTMLPart::slotFinishedParsing()
 {
   d->m_doc->setParsing(false);
-  checkEmitLoadEvent();
   disconnect(d->m_doc,SIGNAL(finishedParsing()),this,SLOT(slotFinishedParsing()));
 
   if (!d->m_view)
     return; // We are probably being destructed.
+    
+  checkCompleted();
+
   // check if the scrollbars are really needed for the content
   // if not, remove them, relayout, and repaint
 
   d->m_view->restoreScrollBar();
   gotoAnchor();
-
-  checkCompleted();
 }
 
 void KHTMLPart::slotLoaderRequestStarted( khtml::DocLoader* dl, khtml::CachedObject *obj )
@@ -1802,8 +1802,6 @@ void KHTMLPart::checkCompleted()
       d->m_view->setContentsPos( d->m_extension->urlArgs().xOffset,
                                  d->m_extension->urlArgs().yOffset );
 #endif
-
-  d->m_view->complete();
 
 #if APPLE_CHANGES
   } // if (d->m_view)

@@ -229,6 +229,7 @@ private:
 
     void scheduleRelayout();
     void unscheduleRelayout();
+    bool haveDelayedLayoutScheduled();
 
     /**
      * Paints the HTML document to a QPainter.
@@ -273,8 +274,6 @@ private:
     bool dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool cancelable,
 			    int detail,QMouseEvent *_mouse, bool setUnder,
 			    int mouseEventType);
-
-    void complete();
 
     void applyBodyScrollQuirk(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
 
