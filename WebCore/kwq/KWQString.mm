@@ -943,17 +943,17 @@ void QString::fill(QChar, int)
 
 void QString::compose()
 {
-    // FIXME: not yet implemented
+    // FIXME: unimplemented because we don't do ligatures yet
     NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
             __LINE__);
 }
 
-QString QString::visual(int, int)
+QString QString::visual(int index, int len)
 {
-    // FIXME: not yet implemented
+    // FIXME: unimplemented because we don't do BIDI yet
     NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
             __LINE__);
-    return *this;
+    return mid(index, len);
 }
 
 // operators -------------------------------------------------------------------
