@@ -26,4 +26,6 @@
 #ifndef KLISTBOX_H_
 #define KLISTBOX_H_
 
+class KListBox;
+
 #endif

@@ -26,4 +26,18 @@
 #ifndef KEDITCL_H_
 #define KEDITCL_H_
 
+class QScrollBar;
+
+class QMultiLineEdit {
+public:
+    // FIXME: normally these two would be in QTableView
+    QScrollBar *verticalScrollBar() const;
+    QScrollBar *horizontalScrollBar() const;
+
+    bool hasMarkedText() const;
+};
+
+class KEdit : public QMultiLineEdit {
+};
+
 #endif

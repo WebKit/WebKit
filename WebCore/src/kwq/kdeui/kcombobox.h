@@ -26,4 +26,7 @@
 #ifndef KCOMBOBOX_H_
 #define KCOMBOBOX_H_
 
+class KComboBox {
+};
+
 #endif
