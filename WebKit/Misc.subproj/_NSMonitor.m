@@ -3,10 +3,7 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <Foundation/NSPrivateDecls.h>
 #import "_NSMonitor.h"
-#import <objc/objc-class.h>
-#import <objc/objc-runtime.h>
 
 #if defined(__MACH__)
     // moved to .h file #define F_STRUCT_MUTEX_T pthread_mutex_t
