@@ -1,3 +1,12 @@
+2002-11-20  Richard Williamson   <rjw@apple.com>
+
+        Fixed mono spaced fonts to always render with mono spacing! (3078065)
+        
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (widthForGlyph):
+        (-[WebTextRenderer initWithFont:]):
+
 2002-11-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3074926 - crash in BitsToPix() trying to print cnet page

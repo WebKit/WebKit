@@ -146,7 +146,7 @@ static double totalCGGetAdvancesTime = 0;
 
 static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
 {
-    WebGlyphWidth width;
+    WebGlyphWidth width = UNINITIALIZED_GLYPH_WIDTH;
     BOOL errorResult;
     
     if (map == 0){
@@ -169,12 +169,17 @@ static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, WidthMap *
             double thisTime = CFAbsoluteTimeGetCurrent() - startTime;
             totalCGGetAdvancesTime += thisTime;
 #endif
-            return ((WebGlyphWidth *)map->widths)[glyph-map->startRange];
+            width = ((WebGlyphWidth *)map->widths)[glyph-map->startRange];
         }
-        return width;
     }
 
-    return widthForGlyph (renderer, map->next, glyph);
+    if (width == UNINITIALIZED_GLYPH_WIDTH)
+        width = widthForGlyph (renderer, map->next, glyph);
+    
+    if (renderer->isFixedPitch && width != 0)
+        return renderer->fixedWidth;
+
+    return width;
 }
 
 
@@ -352,7 +357,11 @@ static BOOL bufferTextDrawing = NO;
     ATSUDisposeStyle(style);
 
     spaceGlyph = nonGlyphID;
-    
+
+    isFixedPitch = [font isFixedPitch];
+    if (isFixedPitch)
+        fixedWidth = CEIL_TO_INT([font widthOfString: @"X"]);
+        
     return self;
 }
 
