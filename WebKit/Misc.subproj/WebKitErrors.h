@@ -5,17 +5,16 @@
         Public header file.
 */
 
-// WebFoundation error codes < 10000
-// WebKit error codes >= 10000
-
 extern NSString *WebErrorDomainWebKit;
 
 /*!
     @enum
     @constant WebKitErrorCannotCreateFile
     @constant WebKitErrorCannotOpenFile
+    @constant WebKitErrorCannotCloseFile
     @constant WebKitErrorCannotWriteToFile
     @constant WebKitErrorCannotRemoveFile
+    @constant WebKitErrorCannotMoveFile
     @constant WebKitErrorCannotFindApplicationForFile
     @constant WebKitErrorFinderCannotOpenDirectory
     @constant WebKitErrorCannotShowDirectory
@@ -29,8 +28,10 @@ extern NSString *WebErrorDomainWebKit;
 enum {
     WebKitErrorCannotCreateFile,
     WebKitErrorCannotOpenFile,
+    WebKitErrorCannotCloseFile,
     WebKitErrorCannotWriteToFile,
     WebKitErrorCannotRemoveFile,
+    WebKitErrorCannotMoveFile,
     WebKitErrorCannotFindApplicationForFile,
     WebKitErrorFinderCannotOpenDirectory,
     WebKitErrorCannotShowDirectory,

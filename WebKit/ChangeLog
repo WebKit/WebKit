@@ -1,3 +1,18 @@
+2003-02-12  Chris Blumenberg  <cblu@apple.com>
+
+	- Moved the WebKit error registration out of WebView because apps that use WebKit but not WebView might need to use WebKit errors (like my test app for WebDownload).
+	- Added file close and file move errors (needed for WebDownload).
+
+        Reviewed by kocienda.
+
+        * English.lproj/Localizable.strings: Localize file close and file move errors.
+        * Misc.subproj/WebKitErrors.h: Added file close and file move errors.
+        * Misc.subproj/WebKitErrors.m: Added.
+        (+[WebError initialize]): register the errors here
+        * WebKit.exp: Export the WebDownload class (forgot to do this earlier).
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebView.m: don't register the errors here
+
 2003-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
