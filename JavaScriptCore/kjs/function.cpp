@@ -55,31 +55,21 @@ namespace KJS {
 FunctionImp::FunctionImp(ExecState *exec, const UString &n)
   : InternalFunctionImp(
       static_cast<FunctionPrototypeImp*>(exec->interpreter()->builtinFunctionPrototype().imp())
-      ), param(0L), ident(n), argStack(0)
+      ), param(0L), ident(n)
 {
   Value protect(this);
-  argStack = new ListImp();
-  Value protectArgStack( argStack ); // this also calls setGcAllowed on argStack
-  //fprintf(stderr,"FunctionImp::FunctionImp this=%p argStack=%p\n");
+  //fprintf(stderr,"FunctionImp::FunctionImp this=%p\n");
   put(exec,"arguments",Null(),ReadOnly|DontDelete|DontEnum);
 }
 
 FunctionImp::~FunctionImp()
 {
-  // The function shouldn't be deleted while it is still executed; argStack
-  // should be set to 0 by the last call to popArgs()
-  //assert(argStack->isEmpty());
-  // Accessing argStack from here is a problem though.
-  // When the function isn't used anymore, it's not marked, and neither is the
-  // argStack, so both can be deleted - in any order!
   delete param;
 }
 
 void FunctionImp::mark()
 {
   InternalFunctionImp::mark();
-  if (argStack && !argStack->marked())
-    argStack->mark();
 }
 
 bool FunctionImp::implementsCall() const
@@ -114,15 +104,16 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   ExecState newExec(exec->interpreter(), &ctx);
   newExec.setException(exec->exception()); // could be null
 
-  // In order to maintain our "arguments" property, we maintain a list of arguments
-  // properties from earlier in the execution stack. Upon return, we restore the
-  // previous arguments object using popArgs().
+  // In order to maintain our "arguments" property, we save the old
+  // value from a possible earlier call. Upon return, we restore the
+  // previous arguments object.
   // Note: this does not appear to be part of the spec
+  Value oldArgs = get(&newExec, "arguments");
+
   if (codeType() == FunctionCode) {
     assert(ctx.activationObject().inherits(&ActivationImp::info));
     Object argsObj = static_cast<ActivationImp*>(ctx.activationObject().imp())->argumentsObject();
     put(&newExec, "arguments", argsObj, DontDelete|DontEnum|ReadOnly);
-    pushArgs(&newExec, argsObj);
   }
 
   // assign user supplied arguments to parameters
@@ -136,7 +127,7 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   if (newExec.hadException())
     exec->setException(newExec.exception());
   if (codeType() == FunctionCode)
-    popArgs(&newExec);
+    put(&newExec, "arguments", oldArgs, DontDelete|DontEnum|ReadOnly);
 
 #ifdef KJS_VERBOSE
   if (comp.complType() == Throw)
@@ -227,22 +218,6 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
 
 void FunctionImp::processVarDecls(ExecState */*exec*/)
 {
-}
-
-void FunctionImp::pushArgs(ExecState *exec, const Object &args)
-{
-  argStack->append(args);
-  put(exec,"arguments",args,ReadOnly|DontDelete|DontEnum);
-}
-
-void FunctionImp::popArgs(ExecState *exec)
-{
-  argStack->removeLast();
-  if (argStack->isEmpty()) {
-    put(exec,"arguments",Null(),ReadOnly|DontDelete|DontEnum);
-  }
-  else
-    put(exec,"arguments",argStack->at(argStack->size()-1),ReadOnly|DontDelete|DontEnum);
 }
 
 // ------------------------------ DeclaredFunctionImp --------------------------
