@@ -1,3 +1,11 @@
+2002-04-05  Richard Williamson  <rjw@apple.com>
+
+        Implemented the same lazily deallocation scheme on frame as in controller
+        and data source.
+        
+	* WebView.subproj/IFWebFrame.mm: (-[_IFFrameHolder initWithObject:]),
+	(-[_IFFrameHolder _checkReadyToDealloc:]), (-[IFWebFrame release]):
+
 2002-04-04  Richard Williamson  <rjw@apple.com>
 
         Clear controller references from data source and view, as well as 

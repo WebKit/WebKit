@@ -1,3 +1,10 @@
+2002-04-05  Richard Williamson  <rjw@apple.com>
+
+        More bulletproofing to deal with cleanup during deallocation.
+        
+	* src/kdelibs/khtml/html/htmlparser.cpp: (KHTMLParser::popOneBlock):
+	* src/kdelibs/khtml/html/htmltokenizer.cpp: (HTMLTokenizer::processToken):
+
 2002-04-05  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kwq/qt/qmap.h (QMapNode::~QMapNode): Cast left() and right()

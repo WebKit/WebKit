@@ -1513,7 +1513,15 @@ void HTMLTokenizer::finish()
 
 void HTMLTokenizer::processToken()
 {
-    KJSProxy *jsProxy = view ? view->part()->jScript() : 0L;
+    KJSProxy *jsProxy;
+    
+#ifdef APPLE_CHANGES
+    if (view && view->part())
+        jsProxy = view->part()->jScript();
+    else
+        jsProxy = 0L;
+#endif
+    
     if (jsProxy)
         jsProxy->setEventHandlerLineno(tagStartLineno);
     if ( dest > buffer )

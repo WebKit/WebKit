@@ -1167,8 +1167,15 @@ void KHTMLParser::popOneBlock()
 #if SPEED_DEBUG < 1
     if((Elem->node != current)) {
         if (current->maintainsState()) {
+#ifdef APPLE_CHANGES
+            if (document->document()){
+                QString state(document->document()->nextState());
+                if (!state.isNull()) current->restoreState(state);
+            }
+#else
             QString state(document->document()->nextState());
             if (!state.isNull()) current->restoreState(state);
+#endif
         }
         if (current->renderer())
             current->renderer()->close();
