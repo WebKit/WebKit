@@ -1,5 +1,15 @@
 2003-11-17  David Hyatt  <hyatt@apple.com>
 
+	Fix for 2931829, lines with hyphens should break on the hyphens.  Match WinIE's behavior of
+	breaking on - and ?.
+	
+        Reviewed by john
+
+        * khtml/rendering/break_lines.cpp:
+        (khtml::isBreakable):
+
+2003-11-17  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3415771, Safari should use mini form controls when necessary.  This patch adds heuristics for
 	swapping in mini form controls and also drops intrinsic margins when mini form controls are used.
 

@@ -103,7 +103,11 @@ bool isBreakable( const QChar *s, int pos, int len)
         if (findStatus == 0)
             return ((int)end == pos) ? true : false;
     }
-    // What about hypenation?
+    
+    // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
+    if (lastCh == '-' || lastCh == '?')
+        return true;
+
     return c->direction() == QChar::DirWS;
 #endif    
 }
