@@ -42,6 +42,7 @@
     void *trackingRectUserData;
     
     NSTimer *autoscrollTimer;
+    NSEvent *autoscrollTriggerEvent;
 }
 @end
 
@@ -80,7 +81,7 @@
 
 - (NSRect)_selectionRect;
 
-- (void)_startAutoscrollTimer;
+- (void)_startAutoscrollTimer:(NSEvent *)event;
 - (void)_stopAutoscrollTimer;
 
 @end

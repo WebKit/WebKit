@@ -25,6 +25,7 @@
 #import <WebKit/WebUnicode.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <AppKit/NSGraphicsContextPrivate.h>
 #import <AppKit/NSResponder_Private.h>
 #import <CoreGraphics/CGContextGState.h>
 
@@ -90,6 +91,7 @@ static BOOL forceRealHitTest = NO;
 - (void)dealloc
 {
     ASSERT(autoscrollTimer == nil);
+    ASSERT(autoscrollTriggerEvent == nil);
     
     [pluginController destroyAllPlugins];
     
@@ -744,11 +746,12 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] selectionRect];
 }
 
-- (void)_startAutoscrollTimer
+- (void)_startAutoscrollTimer: (NSEvent *)triggerEvent
 {
     if (_private->autoscrollTimer == nil) {
         _private->autoscrollTimer = [[NSTimer scheduledTimerWithTimeInterval:AUTOSCROLL_INTERVAL
             target:self selector:@selector(_autoscroll) userInfo:nil repeats:YES] retain];
+        _private->autoscrollTriggerEvent = [triggerEvent retain];
     }
 }
 
@@ -756,14 +759,22 @@ static WebHTMLView *lastHitView = nil;
 {
     NSTimer *timer = _private->autoscrollTimer;
     _private->autoscrollTimer = nil;
+    [_private->autoscrollTriggerEvent release];
+    _private->autoscrollTriggerEvent = nil;
     [timer invalidate];
     [timer release];
 }
 
+
 - (void)_autoscroll
 {
-    NSEvent *mouseUpEvent = [NSApp nextEventMatchingMask:NSLeftMouseUpMask untilDate:nil inMode:NSEventTrackingRunLoopMode dequeue:NO];
-    if (mouseUpEvent) {
+    int isStillDown;
+    
+    // Guarantee that the autoscroll timer is invalidated, even if we don't receive
+    // a mouse up event.
+    PSstilldown([_private->autoscrollTriggerEvent eventNumber], &isStillDown);
+    if (!isStillDown){
+        [self _stopAutoscrollTimer];
         return;
     }
 
@@ -1410,7 +1421,7 @@ static WebHTMLView *lastHitView = nil;
     }
     
     _private->ignoringMouseDraggedEvents = NO;
-    [self _startAutoscrollTimer];
+    [self _startAutoscrollTimer:event];
     
     // Record the mouse down position so we can determine drag hysteresis.
     [_private->mouseDownEvent release];

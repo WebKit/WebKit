@@ -1,3 +1,17 @@
+2003-10-09  Richard Williamson   <rjw@apple.com>
+
+	Ensure that the autoscroll timer is always stopped if a mouse up event is lost.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLView _startAutoscrollTimer:]):
+        (-[WebHTMLView _stopAutoscrollTimer]):
+        (-[WebHTMLView _autoscroll]):
+        (-[WebHTMLView mouseDown:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2003-10-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3333897>: should support navigator.plugins.refresh as a way to add a plugin without restarting Safari
