@@ -458,9 +458,10 @@ static BOOL inNSTextViewDrawRect;
 - (void)_web_setObjectIfNotNil:(id)object forKey:(id)key
 {
     if (object == nil) {
-        return;
+        [self removeObjectForKey:key];
+    } else {
+        [self setObject:object forKey:key];
     }
-    [self setObject:object forKey:key];
 }
 
 @end

@@ -1,3 +1,16 @@
+2002-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3117611 -- REGRESSION: exception in mouseoverTextForElement with accented characters in status
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[NSMutableDictionary _web_setObjectIfNotNil:forKey:]):
+	Remove the object from the dictionary rather than just leaving the dictionary alone if it's nil.
+	This is needed since we now are reusing an already-existing dictionary.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2002-12-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3118430 - crash / loop trying to copy url of link to clipboard

@@ -57,7 +57,6 @@
 "DirectionS"
 "DirectionWS"
 "Entries"
-"GET"
 "HREF="
 "Helvetica"
 "JoiningCausing"
