@@ -1,5 +1,14 @@
 2002-07-30  David Hyatt  <hyatt@apple.com>
 
+	Back myself out. I seem to have stumbled onto another bug.
+	Until I figure it out, turn this back off.
+	
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addColumns):
+        (RenderTable::addColInfo):
+
+2002-07-30  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3000604, 2902173, 2921313.  Ensure that tables recalc their
 	column widths like they are supposed to.  This fixes livepage.apple.com,
 	applemuseum.com, and many other pages (that didn't have bugs filed).
