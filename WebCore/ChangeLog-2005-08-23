@@ -1,3 +1,37 @@
+2004-09-22  Richard Williamson   <rjw@apple.com>
+
+	More tweaks to dashboard regions.
+
+	Move dashboard regions list into css3NonInheritedData so it will be shared
+	by all styles that don't modify the empty region list.
+
+	Make the initial value for dashboard region list a static to minimize allocations
+	of empty lists.
+
+	Make marquee and flex style accessor functions const.
+
+        Reviewed by Hyatt.
+
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::opacity):
+        (khtml::RenderStyle::boxAlign):
+        (khtml::RenderStyle::boxDirection):
+        (khtml::RenderStyle::boxFlexGroup):
+        (khtml::RenderStyle::boxOrdinalGroup):
+        (khtml::RenderStyle::boxOrient):
+        (khtml::RenderStyle::boxPack):
+        (khtml::RenderStyle::marqueeIncrement):
+        (khtml::RenderStyle::marqueeSpeed):
+        (khtml::RenderStyle::marqueeLoopCount):
+        (khtml::RenderStyle::marqueeBehavior):
+        (khtml::RenderStyle::marqueeDirection):
+        (khtml::RenderStyle::dashboardRegions):
+        (khtml::RenderStyle::setDashboardRegions):
+        (khtml::RenderStyle::setDashboardRegion):
+        (khtml::RenderStyle::initialDashboardRegions):
+
 2004-09-22  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3802766, entire view redrawn in Blot while typing.  Don't needlessly create text nodes just to find

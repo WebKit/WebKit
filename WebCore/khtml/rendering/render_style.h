@@ -583,6 +583,7 @@ public:
     
 #if APPLE_CHANGES
     int lineClamp;         // An Apple extension.  Not really CSS3 but not worth making a new struct over.
+    QValueList<StyleDashboardRegion> m_dashboardRegions;
 #endif
     float opacity;         // Whether or not we're transparent.
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
@@ -880,10 +881,6 @@ protected:
     DataRef<StyleSurroundData> surround;
     DataRef<StyleCSS3NonInheritedData> css3NonInheritedData;
 
-#if APPLE_CHANGES
-    QValueList<StyleDashboardRegion> m_dashboardRegions;
-#endif
-
 // inherited attributes
     DataRef<StyleCSS3InheritedData> css3InheritedData;
     DataRef<StyleInheritedData> inherited;
@@ -1121,20 +1118,20 @@ public:
         if (background->outline.style == BNONE || background->outline.style == BHIDDEN) return 0; return background->outline._offset;
     }
     ShadowData* textShadow() const { return css3InheritedData->textShadow; }
-    float opacity() { return css3NonInheritedData->opacity; }
-    EBoxAlignment boxAlign() { return css3NonInheritedData->flexibleBox->align; }
-    EBoxDirection boxDirection() { return inherited_flags._box_direction; }
+    float opacity() const { return css3NonInheritedData->opacity; }
+    EBoxAlignment boxAlign() const { return css3NonInheritedData->flexibleBox->align; }
+    EBoxDirection boxDirection() const { return inherited_flags._box_direction; }
     float boxFlex() { return css3NonInheritedData->flexibleBox->flex; }
-    unsigned int boxFlexGroup() { return css3NonInheritedData->flexibleBox->flex_group; }
+    unsigned int boxFlexGroup() const { return css3NonInheritedData->flexibleBox->flex_group; }
     EBoxLines boxLines() { return css3NonInheritedData->flexibleBox->lines; }
-    unsigned int boxOrdinalGroup() { return css3NonInheritedData->flexibleBox->ordinal_group; }
-    EBoxOrient boxOrient() { return css3NonInheritedData->flexibleBox->orient; }
-    EBoxAlignment boxPack() { return css3NonInheritedData->flexibleBox->pack; }
-    Length marqueeIncrement() { return css3NonInheritedData->marquee->increment; }
-    int marqueeSpeed() { return css3NonInheritedData->marquee->speed; }
-    int marqueeLoopCount() { return css3NonInheritedData->marquee->loops; }
-    EMarqueeBehavior marqueeBehavior() { return css3NonInheritedData->marquee->behavior; }
-    EMarqueeDirection marqueeDirection() { return css3NonInheritedData->marquee->direction; }
+    unsigned int boxOrdinalGroup() const { return css3NonInheritedData->flexibleBox->ordinal_group; }
+    EBoxOrient boxOrient() const { return css3NonInheritedData->flexibleBox->orient; }
+    EBoxAlignment boxPack() const { return css3NonInheritedData->flexibleBox->pack; }
+    Length marqueeIncrement() const { return css3NonInheritedData->marquee->increment; }
+    int marqueeSpeed() const { return css3NonInheritedData->marquee->speed; }
+    int marqueeLoopCount() const { return css3NonInheritedData->marquee->loops; }
+    EMarqueeBehavior marqueeBehavior() const { return css3NonInheritedData->marquee->behavior; }
+    EMarqueeDirection marqueeDirection() const { return css3NonInheritedData->marquee->direction; }
     EUserModify userModify() const { return css3InheritedData->userModify; }
     EUserDrag userDrag() const { return css3NonInheritedData->userDrag; }
     EUserSelect userSelect() const { return css3NonInheritedData->userSelect; }
@@ -1170,8 +1167,8 @@ public:
     void setMaxHeight(Length v) { SET_VAR(box,max_height,v) }
 
 #if APPLE_CHANGES
-    QValueList<StyleDashboardRegion> dashboardRegions() const { return m_dashboardRegions; }
-    void setDashboardRegions(QValueList<StyleDashboardRegion> regions) { m_dashboardRegions = regions; }
+    QValueList<StyleDashboardRegion> dashboardRegions() const { return css3NonInheritedData->m_dashboardRegions; }
+    void setDashboardRegions(QValueList<StyleDashboardRegion> regions) { SET_VAR(css3NonInheritedData,m_dashboardRegions,regions); }
     void setDashboardRegion (int type, QString label, Length t, Length r, Length b, Length l, bool append) {
         StyleDashboardRegion region;
         region.label = label;
@@ -1181,9 +1178,9 @@ public:
         region.offset.left = l;
         region.type = type;
         if (!append) {
-            m_dashboardRegions.clear ();
+            css3NonInheritedData.access()->m_dashboardRegions.clear ();
         }
-        m_dashboardRegions.append (region);
+        css3NonInheritedData.access()->m_dashboardRegions.append (region);
     }
 #endif
 
@@ -1455,8 +1452,8 @@ public:
     // Keep these at the end.
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
-    static QValueList<StyleDashboardRegion> initialDashboardRegions() { 
-        QValueList<StyleDashboardRegion> emptyList;
+    static const QValueList<StyleDashboardRegion>& initialDashboardRegions() { 
+        static QValueList<StyleDashboardRegion> emptyList;
         return emptyList;
     }
 #endif

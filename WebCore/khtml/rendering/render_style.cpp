@@ -671,7 +671,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 
 #if APPLE_CHANGES
 // If regions change trigger a relayout to re-calc regions.
-    if (!(m_dashboardRegions == other->m_dashboardRegions))
+    if (!(css3NonInheritedData->m_dashboardRegions == other->css3NonInheritedData->m_dashboardRegions))
         return Layout;
 #endif
 
