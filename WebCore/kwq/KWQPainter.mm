@@ -50,7 +50,7 @@ QPainter::QPainter()
 
 QPainter::QPainter(const QPaintDevice *pdev)
 {
-    NSLog (@"ERROR (NOT IMPLEMENTED) QPainter::QPainter(const QPaintDevice *)\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
@@ -467,25 +467,25 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 
 void QPainter::setClipping(bool)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QPainter::setClipping(bool)\n");
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QPainter::setClipRegion(const QRegion &)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QPainter::setClipRegion(const QRegion &)\n");
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 const QRegion &QPainter::clipRegion() const
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) const QRegion &QPainter::clipRegion() const\n");
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 bool QPainter::hasClipping() const
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) bool QPainter::hasClipping() const\n");
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
@@ -498,7 +498,7 @@ Qt::RasterOp QPainter::rasterOp() const
         return XorROP;
     return CopyROP;
 #else
-    NSLog (@"ERROR (NOT IMPLEMENTED) QPainter::RasterOp QPainter::rasterOp() const\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 #endif
 }
 
@@ -513,8 +513,37 @@ void QPainter::setRasterOp(RasterOp op)
     else
         data->compositingOperation = NSCompositeCopy;
 #else
-    NSLog (@"ERROR (NOT IMPLEMENTED) void QPainter::setRasterOp(RasterOp op)\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 #endif
+}
+
+void QPainter::translate(double dx, double dy)
+{
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QPainter::scale(double dx, double dy)
+{
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+bool QPainter::begin(const QPaintDevice *)
+{
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+bool QPainter::end()
+{
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+QPaintDevice *QPainter::device() const
+{
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 void QPainter::_lockFocus(){

@@ -73,13 +73,13 @@ QPixmap::~QPixmap()
 
 void QPixmap::setMask(const QBitmap &)
 {
-    NSLog (@"ERROR (NOT IMPLEMENTED) void QPixmap::setMask(const QBitmap &) Not needed?\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 const QBitmap *QPixmap::mask() const
 {
-    NSLog (@"ERROR (NOT IMPLEMENTED) const QBitmap *QPixmap::mask() const Not needed?\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
@@ -133,7 +133,7 @@ QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
 
 QImage QPixmap::convertToImage() const
 {
-    NSLog (@"ERROR (NOT IMPLEMENTED) QImage QPixmap::convertToImage() This method should never be called.  It is only used by Qt drag and drop (I think!)\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 

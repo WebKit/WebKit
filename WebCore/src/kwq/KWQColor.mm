@@ -69,7 +69,7 @@ QColor::QColor(const char *)
 {
     if ( !globals_init )
 	initGlobalColors();
-    NSLog (@"WARNING (NOT YET IMPLEMENTED) QColor::QColor(const char *)\n");
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
@@ -103,13 +103,13 @@ QColor::QColor(const QColor &copyFrom)
 
 QString QColor::name() const
 {
-    NSLog (@"WARNING (NOT YET IMPLEMENTED) QString QColor::name() const\n");
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QColor::setNamedColor(const QString&)
 {
-    NSLog (@"WARNING (NOT YET IMPLEMENTED) void QColor::setNamedColor(const QString&)\n");
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
@@ -174,18 +174,18 @@ void QColor::setRgb(int rgb)
 
 void QColor::hsv(int *, int *, int *) const
 {
-    NSLog (@"WARNING (NOT YET IMPLEMENTED) void QColor::hsv(int *, int *, int *) const\n");
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 QColor QColor::light(int f = 150) const
 {
-    NSLog (@"WARNING (NOT YET IMPLEMENTED) QColor QColor::light(int f = 150) const\n");
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 QColor QColor::dark(int f = 200) const
 {
-    NSLog (@"WARNING (NOT YET IMPLEMENTED) QColor QColor::dark(int f = 200) const\n");
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 

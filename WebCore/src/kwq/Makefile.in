@@ -27,10 +27,19 @@ MMOBJECTS = \
 	KWQBrush.o \
         KWQColor.o \
         KWQColorGroup.o \
+        KWQComboBox.o \
         KWQCursor.o \
 	KWQFont.o \
 	KWQFontMetrics.o \
+	KWQFrame.o \
         KWQKHTMLPart.o \
+        KWQKComboBox.o \
+        KWQKCompletionBox.o \
+        KWQKCursor.o \
+        KWQKLineEdit.o \
+        KWQKMessageBox.o \
+        KWQListBox.o \
+        KWQLineEdit.o \
         KWQObject.o \
 	KWQPainter.o \
         KWQPaintDevice.o \
@@ -39,6 +48,8 @@ MMOBJECTS = \
 	KWQPen.o \
 	KWQPixmap.o \
 	KWQPointArray.o \
+	KWQScrollView.o \
+	KWQTextEdit.o \
 	KWQView.o \
 	KWQWMatrix.o \
 	KWQWidget.o \
@@ -69,6 +80,7 @@ CMMFLAGS = $(BASECMMFLAGS) \
     -I$(TOPSRCDIR)/src/kwq/qt \
     -I$(TOPSRCDIR)/src/kwq/kde \
     -I$(TOPSRCDIR)/src/kwq/kdecore \
+    -I$(TOPSRCDIR)/src/kwq/kdeui \
     -I. \
     $(NULL)
 

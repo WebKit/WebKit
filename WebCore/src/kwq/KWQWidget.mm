@@ -288,7 +288,7 @@ QSize QWidget::minimumSizeHint() const
     // Used by embedded java (KJavaEmbed::sizeHint().  Will be replaced.
     // Used by RenderSubmitButton::calcMinMaxWidth(), where it is called
     // on a button widget.  Will be replaced.
-    NSLog (@"ERROR:  QWidget::minimumSizeHint() called.  Should never be called.\n", nil);
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
     return QSize (0,0);
 }
 
@@ -301,7 +301,7 @@ bool QWidget::isVisible() const
 
 void QWidget::setCursor(const QCursor &cur)
 {
-    NSLog (@"WARNING(UNIMPLEMENTED):  QWidget::setCursor()\n", nil);
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
     if (data->cursor)
         delete data->cursor;
     data->cursor = new QCursor (cur);
@@ -312,21 +312,21 @@ bool QWidget::event(QEvent *)
 {
     // This will eventually not be called, or called from our implementation
     // of run loop, or something???
-    NSLog (@"WARNING(UNIMPLEMENTED):  QWidget::event(QEvent *)\n", nil);
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
     return TRUE;
 }
 
 
 bool QWidget::focusNextPrevChild(bool)
 {
-    NSLog (@"WARNING(UNIMPLEMENTED):  QWidget::focusNextPrevChild()\n", nil);
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
     return TRUE;
 }
 
 
 bool QWidget::hasMouseTracking() const
 {
-    NSLog (@"WARNING(UNIMPLEMENTED):  QWidget::hasMouseTracking()\n", nil);
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
     return true;
 }
 
@@ -379,6 +379,54 @@ void QWidget::internalSetGeometry( int x, int y, int w, int h, bool isMove )
     // FIXME!  First approximation.  May need to translate coordinates.
     [data->view setFrame: NSMakeRect (data->rect.x(), data->rect.y(), data->rect.width(), data->rect.height())];
 }
+
+void QWidget::showEvent(QShowEvent *)
+{
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QWidget::hideEvent(QHideEvent *)
+{
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QWidget::wheelEvent(QWheelEvent *)
+{
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QWidget::keyPressEvent(QKeyEvent *)
+{
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QWidget::keyReleaseEvent(QKeyEvent *)
+{
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QWidget::focusOutEvent(QFocusEvent *)
+{
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QWidget::setBackgroundMode(BackgroundMode)
+{
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QWidget::setAcceptDrops(bool)
+{
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
 
 #ifdef _KWQ_
 

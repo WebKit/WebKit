@@ -28,26 +28,26 @@
 bool QObject::connect(const QObject *, const char *, const QObject *, 
     const char *)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) bool QObject::connect\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 bool QObject::disconnect( const QObject *, const char *, const QObject *, 
     const char *)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) bool QObject::disconnect\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 QObject::QObject(QObject *parent=0, const char *name=0)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) QObject::QObject(QObject *parent=0, const char *name=0)\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 QObject::~QObject()
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) QObject::~QObject()\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
@@ -55,13 +55,13 @@ QObject::~QObject()
 
 const char *QObject::name() const
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) const char *QObject::name() const\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QObject::setName(const char *)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QObject::setName(const char *)\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 #ifdef DO_QVARIANT
@@ -72,48 +72,48 @@ QVariant QObject::property(const char *name) const
 
 bool QObject::inherits(const char *) const
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) bool QObject::inherits(const char *) const\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 bool QObject::connect(const QObject *, const char *, const char *) const
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) bool QObject::connect(const QObject *, const char *, const char *) const\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 int QObject:: startTimer(int)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) int QObject:: startTimer(int)\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QObject::killTimer(int)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QObject::killTimer(int)\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QObject::killTimers()
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QObject::killTimers()\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QObject::installEventFilter(const QObject *)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QObject::installEventFilter(const QObject *)\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QObject::removeEventFilter(const QObject *)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QObject::removeEventFilter(const QObject *)\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QObject::blockSignals(bool)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QObject::blockSignals(bool)\n");
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
