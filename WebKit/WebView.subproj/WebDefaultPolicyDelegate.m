@@ -52,7 +52,7 @@
 
 
 - (WebContentPolicy *)contentPolicyForResponse:(WebResourceResponse *)response
-                                        andURL:(NSURL *)URL
+				    andRequest:(WebResourceRequest *)request
                                        inFrame:(WebFrame *)frame
                              withContentPolicy:(WebContentPolicy *)contentPolicy;
 {

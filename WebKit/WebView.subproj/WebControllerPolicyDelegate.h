@@ -11,6 +11,7 @@
 @class WebFrame;
 @class WebPolicyPrivate;
 @class WebResourceResponse;
+@class WebResourceRequest;
 
 /*!
     @enum WebPolicyAction
@@ -234,17 +235,15 @@ typedef enum {
 - (WebFileURLPolicy *)fileURLPolicyForMIMEType: (NSString *)type inFrame:(WebFrame *)frame isDirectory: (BOOL)isDirectory;
 
 /*!
-    @method contentPolicyForResponse:andURL:inFrame:withContentPolicy:
+    @method contentPolicyForResponse:andRequest:inFrame:withContentPolicy:
     @discussion Returns the policy for content which has been partially loaded. Sent after locationChangeStarted. 
-    Implementations typically call haveContentPolicy:forLocationChangeHandler: on WebController
-    after determining the appropriate policy, perhaps by presenting a non-blocking dialog to the user.
-    @param response of the partially loaded content.
-    @param URL URL of the partially loaded content.
+    @param response The response for the partially loaded content.
+    @param request A WebResourceRequest for the partially loaded content.
     @param frame The frame which is loading the URL.
     @param content policy if one was determined before the load started. nil if none was predetermined.
 */
 - (WebContentPolicy *)contentPolicyForResponse:(WebResourceResponse *)response
-                                        andURL:(NSURL *)URL
+                                    andRequest:(WebResourceRequest *)request
                                        inFrame:(WebFrame *)frame
                              withContentPolicy:(WebContentPolicy *)contentPolicy;
 

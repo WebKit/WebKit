@@ -1,5 +1,15 @@
 2002-10-29  Maciej Stachowiak  <mjs@apple.com>
 
+	First step towards policy API change. Pass request instead of URL
+	to content policy delegate method.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+
+2002-10-29  Maciej Stachowiak  <mjs@apple.com>
+
 	- fixed 3087548 - REGRESSION: two windows open for netflix confirmation
 	
         * WebView.subproj/WebControllerPrivate.h:

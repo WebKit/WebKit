@@ -164,7 +164,7 @@
     // Figure out the content policy.
     WebContentPolicy *contentPolicy = [dataSource contentPolicy];
     contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForResponse:r
-                                                                                andURL:currentURL
+                                                                            andRequest:[dataSource request]
                                                                                inFrame:[dataSource webFrame]
                                                                      withContentPolicy:contentPolicy];
     [dataSource _setContentPolicy:contentPolicy];
