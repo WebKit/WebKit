@@ -2432,19 +2432,33 @@ static WebHTMLView *lastHitView = nil;
     return style;
 }
 
-- (void)_changeCSSColorUsingSelector:(SEL)selector
+- (void)_changeCSSColorUsingSelector:(SEL)selector inRange:(DOMRange *)range
 {
     DOMCSSStyleDeclaration *style = [self _colorPanelColorAsStyleUsingSelector:selector];
     WebView *webView = [self _webView];
-    WebBridge *bridge = [self _bridge];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[bridge selectedDOMRange]]) {
-        [bridge applyStyle:style];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range]) {
+        [[self _bridge] applyStyle:style];
     }
+}
+
+- (DOMRange *)_entireDOMRange
+{
+    DOMDocument *document = [[self _bridge] DOMDocument];
+    DOMRange *range = [document createRange];
+    [range selectNode:[document documentElement]];
+    return range;
 }
 
 - (void)changeDocumentBackgroundColor:(id)sender
 {
-    [self _changeCSSColorUsingSelector:@selector(setBackgroundColor:)];
+    // Mimicking NSTextView, this method sets the background color for the
+    // entire document. There is no NSTextView API for setting the background
+    // color on the selected range only. Note that this method is currently
+    // never called from the UI (see comment in changeColor:).
+    // FIXME: this actually has no effect when called, probably due to 3654850. _entireDOMRange seems
+    // to do the right thing because it works in startSpeaking:, and I know setBackgroundColor: does the
+    // right thing because I tested it with [[self _bridge] selectedDOMRange].
+    [self _changeCSSColorUsingSelector:@selector(setBackgroundColor:) inRange:[self _entireDOMRange]];
 }
 
 - (void)changeColor:(id)sender
@@ -2454,7 +2468,7 @@ static WebHTMLView *lastHitView = nil;
     // AppKit will have to be revised to allow this to work with anything that isn't an 
     // NSTextView. However, this might not be required for Tiger, since the background-color 
     // changing box in the font panel doesn't work in Mail (3674481), though it does in TextEdit.
-    [self _changeCSSColorUsingSelector:@selector(setColor:)];
+    [self _changeCSSColorUsingSelector:@selector(setColor:) inRange:[[self _bridge] selectedDOMRange]];
 }
 
 - (void)alignCenter:(id)sender
@@ -2788,9 +2802,7 @@ static WebHTMLView *lastHitView = nil;
     WebBridge *bridge = [self _bridge];
     DOMRange *range = [bridge selectedDOMRange];
     if (!range || [range collapsed]) {
-        DOMDocument *document = [bridge DOMDocument];
-        range = [document createRange];
-        [range selectNode:document];
+        range = [self _entireDOMRange];
     }
     [NSApp speakString:[bridge stringForRange:range]];
 }

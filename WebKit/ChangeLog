@@ -1,3 +1,23 @@
+2004-06-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3655378>: (Editing: -changeDocumentBackgroundColor: 
+        method unimplemented (WebKit editing API))
+        - made startSpeaking: actually work; previous implementation raised a DOMException
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _changeCSSColorUsingSelector:inRange:]):
+        added range parameter
+        (-[WebHTMLView _entireDOMRange]):
+        new convenience method
+        (-[WebHTMLView changeDocumentBackgroundColor:]):
+        now affects entire document, not just selected range, a la NSTextView
+        (-[WebHTMLView changeColor:]):
+        now passes in a range to _changeCSSColorUsingSelector:inRange:
+        (-[WebHTMLView startSpeaking:]):
+        now uses _entireDOMRange
+
 2004-06-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3661505>: (REGRESSION (Safari-140) can't drag standalone images more than once)
