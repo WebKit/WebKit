@@ -354,7 +354,11 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     // we're positioned, floating, or a table cell.
     bool canCollapseWithChildren = !isRoot() && !isHtml() && !isPositioned() && 
       !isFloating() && !isTableCell() && (m_height == 0);
-      
+    
+    // Whether or not we are a quirky container, i.e., do we collapse away top and bottom
+    // margins in our container.
+    bool quirkContainer = isTableCell();
+    
     // Sometimes an element will be shoved down away from a previous sibling, e.g., when
     // clearing to pass beyond a float.  In this case, you don't need to collapse.  This
     // boolean is updated with each iteration through our child list to reflect whether
@@ -382,7 +386,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     bool bottomChildQuirk = false;
     
     bool strictMode = (element()->getDocument()->parseMode() == DocumentImpl::Strict);
-    
+     
     //kdDebug() << "RenderFlow::layoutBlockChildren " << prevMargin << endl;
 
     // take care in case we inherited floats
@@ -451,9 +455,9 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             int negTop = child->maxTopMargin(false);
             
             // XXX A hack we have to put in to deal with the fact
-            // that KHTML incorrectly morphs inlines with blocks
-            // inside them into blocks themselves.
-            if (child->style()->display() == INLINE && child->marginTop())
+            // that KHTML morphs inlines with blocks
+            // inside them into blocks themselves. -dwh
+            if (!strictMode && child->style()->display() == INLINE && child->marginTop())
                 posTop = negTop = 0;
                 
             // See if the top margin is quirky. We only care if this child has
@@ -478,7 +482,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                     m_topMarginQuirk = false;
             }
             
-            if (isTableCell() && topMarginContributor && (posTop-negTop))
+            if (quirkContainer && topMarginContributor && (posTop-negTop))
                 topChildQuirk = topQuirk;
             
             int ypos = m_height;
@@ -500,7 +504,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             else {
                 if (!topMarginContributor || 
                     (!canCollapseWithChildren 
-                       && (strictMode || !isTableCell() || !topChildQuirk)
+                       && (strictMode || !quirkContainer || !topChildQuirk)
                     )) {
                     // We're collapsing with a previous sibling's margins and not
                     // with the top of the block.
@@ -514,9 +518,9 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 prevNegMargin = child->maxBottomMargin(false);
                 
                 // XXX A hack we have to put in to deal with the fact
-                // that KHTML incorrectly morphs inlines with blocks
+                // that KHTML morphs inlines with blocks
                 // inside them into blocks themselves.
-                if (child->style()->display() == INLINE && child->marginBottom())
+                if (!strictMode && child->style()->display() == INLINE && child->marginBottom())
                     prevPosMargin = prevNegMargin = 0;
                 
                 if (prevPosMargin-prevNegMargin)
@@ -606,7 +610,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     // If we can't collapse with children then go ahead and add in the bottom margins.
     if (!topMarginContributor && 
         (!canCollapseWithChildren 
-            && (strictMode || !isTableCell() || !bottomChildQuirk)
+            && (strictMode || !quirkContainer || !bottomChildQuirk)
         ))
         m_height += prevPosMargin - prevNegMargin;
         
@@ -629,6 +633,12 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         if (!bottomChildQuirk)
             m_bottomMarginQuirk = false;
     }
+    
+    if (element()->id() == ID__KONQBLOCK)
+        // Deal with the case where <forms> get wrapped in a KONQBLOCK.
+        // We want that form's bottom margin to actually disappear.
+        // Don't let any children affect a KONQBLOCK's margins.
+        m_maxBottomPosMargin = m_maxBottomNegMargin = m_maxTopPosMargin = m_maxTopNegMargin = 0;
     
     setLayouted();
 
