@@ -15,6 +15,7 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 @interface WebNetscapePluginStream (ClassInternal)
 - (void)receivedData:(NSData *)data withHandle:(WebResourceHandle *)handle;
@@ -119,7 +120,7 @@
 {    
     if(isFirstChunk){
 
-        NSString *mimeType = [handle contentType];
+        NSString *mimeType = [[handle response] contentType];
         NSString *URLString = [[handle URL] absoluteString];
         char *cURL = (char *)malloc([URLString cStringLength]+1);
         [URLString getCString:cURL];

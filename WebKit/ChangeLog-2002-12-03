@@ -1,3 +1,13 @@
+2002-09-09  Ken Kocienda  <kocienda@apple.com>
+
+	WebResourcehandle no longer has a contentType method.
+	Call through to WebResourceResponse object to get content type.
+
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream receivedData:withHandle:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidReceiveData:data:]):
+
 2002-09-09  Darin Adler  <darin@apple.com>
 
 	Fixed lifetime problems happening due to new cancel mechanism.

@@ -181,7 +181,7 @@
 - (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
 {
     WebController *controller = [dataSource controller];
-    NSString *contentType = [handle contentType];
+    NSString *contentType = [[handle response] contentType];
     WebFrame *frame = [dataSource webFrame];
     
     LOG(Loading, "URL = %@, data = %p, length %d", [handle URL], data, [data length]);
