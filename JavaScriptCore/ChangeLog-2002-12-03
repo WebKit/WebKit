@@ -1,3 +1,7 @@
+2002-04-03  Darin Adler  <darin@apple.com>
+
+	* kjs/Makefile.am: Gratuitous cleanup.
+
 2002-04-02  Darin Adler  <darin@apple.com>
 
 	* JavaScriptCore.pbproj/project.pbxproj: Update flags as I did for
