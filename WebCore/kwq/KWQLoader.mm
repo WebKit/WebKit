@@ -1466,7 +1466,9 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
         CachedImage *im = new CachedImage(dl, kurl.url(), reload, _expireDate);
         if ( dl && dl->autoloadImages() ) Cache::loader()->load(dl, im, true);
 #ifdef APPLE_CHANGES
-        if (!cacheDisabled) {
+        if (cacheDisabled)
+            im->setFree(true);
+        else {
 #endif
         cache->insert( kurl.url(), im );
         lru->prepend( kurl.url() );
@@ -1497,6 +1499,9 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
     lru->touch( kurl.url() );
     if ( dl ) {
         dl->m_docObjects.remove( o );
+#ifdef APPLE_CHANGES
+        if (!cacheDisabled)
+#endif
         dl->m_docObjects.append( o );
     }
     return static_cast<CachedImage *>(o);
@@ -1519,7 +1524,9 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const DOMString & 
 #endif
         CachedCSSStyleSheet *sheet = new CachedCSSStyleSheet(dl, kurl.url(), reload, _expireDate, charset);
 #ifdef APPLE_CHANGES
-        if (!cacheDisabled) {
+        if (cacheDisabled)
+            sheet->setFree(true);
+        else {
 #endif
         cache->insert( kurl.url(), sheet );
         lru->prepend( kurl.url() );
@@ -1550,6 +1557,9 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const DOMString & 
     lru->touch( kurl.url() );
     if ( dl ) {
         dl->m_docObjects.remove( o );
+#ifdef APPLE_CHANGES
+        if (!cacheDisabled)
+#endif
         dl->m_docObjects.append( o );
     }
     return static_cast<CachedCSSStyleSheet *>(o);
@@ -1572,7 +1582,9 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
 #endif
         CachedScript *script = new CachedScript(dl, kurl.url(), reload, _expireDate, charset);
 #ifdef APPLE_CHANGES
-        if (!cacheDisabled) {
+        if (cacheDisabled)
+            script->setFree(true);
+        else {
 #endif
         cache->insert( kurl.url(), script );
         lru->prepend( kurl.url() );
@@ -1603,6 +1615,9 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
     lru->touch( kurl.url() );
     if ( dl ) {
         dl->m_docObjects.remove( o );
+#ifdef APPLE_CHANGES
+        if (!cacheDisabled)
+#endif
         dl->m_docObjects.append( o );
     }
     return static_cast<CachedScript *>(o);
