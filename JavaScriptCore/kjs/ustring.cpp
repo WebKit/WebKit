@@ -138,8 +138,8 @@ bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
   return len == c2.size() && (len == 0 || memcmp(c1.c_str(), c2.c_str(), len) == 0);
 }
 
-UString::Rep UString::Rep::null = { 0, 1, 0, 0, 0, 0, 0, 0 };
-UString::Rep UString::Rep::empty = { 0, 1, 0, 0, 0, 0, 0, 0 };
+UString::Rep UString::Rep::null = { 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, 0, 0, 0, 0 };
 const int normalStatBufferSize = 4096;
 static char *statBuffer = 0;
 static int statBufferSize = 0;
@@ -183,6 +183,7 @@ UChar& UCharReference::ref() const
 UString::Rep *UString::Rep::create(UChar *d, int l)
 {
   Rep *r = new Rep;
+  r->offset = 0;
   r->len = l;
   r->rc = 1;
   r->_hash = 0;
@@ -194,16 +195,21 @@ UString::Rep *UString::Rep::create(UChar *d, int l)
   return r;
 }
 
-UString::Rep *UString::Rep::create(UString::Rep *base, int l)
+UString::Rep *UString::Rep::create(UString::Rep *base, int offset, int length)
 {
+  assert(base);
+
+  int baseOffset = base->offset;
+
   if (base->baseString) {
     base = base->baseString;
   }
 
-  assert(l <= base->usedCapacity);
+  assert(offset + length <= base->usedCapacity);
 
   Rep *r = new Rep;
-  r->len = l;
+  r->offset = baseOffset + offset;
+  r->len = length;
   r->rc = 1;
   r->_hash = 0;
   r->isIdentifier = 0;
@@ -388,6 +394,7 @@ UString::UString(UChar *c, int length, bool copy)
 UString::UString(const UString &a, const UString &b)
 {
   int aSize = a.size();
+  int aOffset = a.rep->offset;
   int bSize = b.size();
   int length = aSize + bSize;
 
@@ -399,12 +406,12 @@ UString::UString(const UString &a, const UString &b)
   } else if (bSize == 0) {
     // b is empty
     attach(a.rep);
-  } else if (aSize == a.usedCapacity()) {
-    // a is the full string
+  } else if (aOffset + aSize == a.usedCapacity()) {
+    // a reaches the end of the string
     UString x(a);
-    x.expandCapacity(length);
+    x.expandCapacity(aOffset + length);
     memcpy(const_cast<UChar *>(a.data() + aSize), b.data(), bSize * sizeof(UChar));
-    rep = Rep::create(a.rep, length);
+    rep = Rep::create(a.rep, 0, length);
   } else {
     // a is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize(length);
@@ -545,7 +552,8 @@ UString UString::from(double d)
 
 UString &UString::append(const UString &t)
 {
-  int thisSize = this->size();
+  int thisSize = size();
+  int thisOffset = rep->offset;
   int tSize = t.size();
   int length = thisSize + tSize;
 
@@ -557,15 +565,15 @@ UString &UString::append(const UString &t)
     // t is empty
   } else if (!rep->baseString && rep->rc == 1) {
     // this is direct and has refcount of 1 (so we can just alter it directly)
-    expandCapacity(length);
+    expandCapacity(thisOffset + length);
     memcpy(const_cast<UChar *>(data() + thisSize), t.data(), tSize * sizeof(UChar));
     rep->len = length;
     rep->_hash = 0;
-  } else if (thisSize == usedCapacity()) {
-    // this is the full string - extend it
+  } else if (thisOffset + thisSize == usedCapacity()) {
+    // this reaches the end of the buffer - extend it
     expandCapacity(length);
     memcpy(const_cast<UChar *>(data() + thisSize), t.data(), tSize * sizeof(UChar));
-    Rep *newRep = Rep::create(rep, length);
+    Rep *newRep = Rep::create(rep, 0, length);
     release();
     rep = newRep;
   } else {
@@ -584,7 +592,8 @@ UString &UString::append(const UString &t)
 
 UString &UString::append(const char *t)
 {
-  int thisSize = this->size();
+  int thisSize = size();
+  int thisOffset = rep->offset;
   int tSize = strlen(t);
   int length = thisSize + tSize;
 
@@ -596,19 +605,19 @@ UString &UString::append(const char *t)
     // t is empty, we'll just return *this below.
   } else if (!rep->baseString && rep->rc == 1) {
     // this is direct and has refcount of 1 (so we can just alter it directly)
-    expandCapacity(length);
+    expandCapacity(thisOffset + length);
     UChar *d = const_cast<UChar *>(data());
     for (int i = 0; i < tSize; ++i)
       d[thisSize+i] = t[i];
     rep->len = length;
     rep->_hash = 0;
-  } else if (thisSize == usedCapacity()) {
-    // this is the full string - extend it
-    expandCapacity(length);
+  } else if (thisOffset + thisSize == usedCapacity()) {
+    // this string reaches the end of the buffer - extend it
+    expandCapacity(thisOffset + length);
     UChar *d = const_cast<UChar *>(data());
     for (int i = 0; i < tSize; ++i)
       d[thisSize+i] = t[i];
-    Rep *newRep = Rep::create(rep, length);
+    Rep *newRep = Rep::create(rep, 0, length);
     release();
     rep = newRep;
   } else {
@@ -628,6 +637,7 @@ UString &UString::append(const char *t)
 
 UString &UString::append(unsigned short c)
 {
+  int thisOffset = rep->offset;
   int length = size();
 
   // possible cases:
@@ -641,17 +651,17 @@ UString &UString::append(unsigned short c)
     rep->capacity = newCapacity;
   } else if (!rep->baseString && rep->rc == 1) {
     // this is direct and has refcount of 1 (so we can just alter it directly)
-    expandCapacity(length + 1);
+    expandCapacity(thisOffset + length + 1);
     UChar *d = const_cast<UChar *>(data());
     d[length] = c;
     rep->len = length + 1;
     rep->_hash = 0;
-  } else if (length == usedCapacity()) {
-    // this is the full string - extend it and share
-    expandCapacity(length + 1);
+  } else if (thisOffset + length == usedCapacity()) {
+    // this reaches the end of the string - extend it and share
+    expandCapacity(thisOffset + length + 1);
     UChar *d = const_cast<UChar *>(data());
     d[length] = c;
-    Rep *newRep = Rep::create(rep, length + 1);
+    Rep *newRep = Rep::create(rep, 0, length + 1);
     release();
     rep = newRep;
   } else {
@@ -714,7 +724,7 @@ UString &UString::operator=(const char *c)
 {
   int l = c ? strlen(c) : 0;
   UChar *d;
-  if (rep->rc == 1 && l <= rep->capacity && !rep->baseString) {
+  if (rep->rc == 1 && l <= rep->capacity && !rep->baseString && rep->offset == 0) {
     d = rep->buf;
     rep->_hash = 0;
   } else {
@@ -1012,10 +1022,9 @@ UString UString::substr(int pos, int len) const
   if (pos + len >= (int) size())
     len = size() - pos;
 
-  UChar *tmp = new UChar[len];
-  memcpy(tmp, data()+pos, len * sizeof(UChar));
-  UString result(tmp, len);
-  delete [] tmp;
+  UString::Rep *newRep = Rep::create(rep, pos, len);
+  UString result(newRep);
+  newRep->deref();
 
   return result;
 }

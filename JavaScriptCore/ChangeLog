@@ -1,3 +1,23 @@
+2004-04-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	Another JavaScript speed improvement: use the mechanism from
+	string append optimization to make taking a substring fast, again
+	sharing the buffer.
+
+	A further 22% improvement on the 24fun string speed test.
+	
+        * kjs/ustring.cpp:
+        (KJS::):
+        (KJS::UString::Rep::create):
+        (KJS::UString::UString):
+        (KJS::UString::append):
+        (KJS::UString::operator=):
+        (KJS::UString::substr):
+        * kjs/ustring.h:
+        (KJS::UString::Rep::data):
+
 2004-04-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

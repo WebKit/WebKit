@@ -206,10 +206,10 @@ namespace KJS {
       friend bool operator==(const UString&, const UString&);
       
       static Rep *create(UChar *d, int l);
-      static Rep *create(Rep *base, int l);
+      static Rep *create(Rep *base, int offset, int length);
       void destroy();
       
-      UChar *data() const { return baseString ? baseString->buf : buf; }
+      UChar *data() const { return baseString ? (baseString->buf + offset) : (buf + offset); }
       int size() const { return len; }
       
       unsigned hash() const { if (_hash == 0) _hash = computeHash(data(), len); return _hash; }
@@ -220,6 +220,7 @@ namespace KJS {
       void deref() { if (--rc == 0) destroy(); }
 
       // unshared data
+      int offset;
       int len;
       int rc;
       mutable unsigned _hash;
