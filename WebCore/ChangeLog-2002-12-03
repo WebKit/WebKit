@@ -1,5 +1,13 @@
 2002-10-25  Maciej Stachowiak  <mjs@apple.com>
 
+	- fixed 3065638 - "undefined" output to screen on empty document.write()
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocFunction::tryCall): Don;t assume there is at least
+	one argument.
+
+2002-10-25  Maciej Stachowiak  <mjs@apple.com>
+
 	- fixed 3048031 - innerHTML is incorrectly null
 	
         * kwq/KWQString.mm:
