@@ -1,7 +1,7 @@
 all-am: previous-clean-timestamp
-	pbxbuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
+	xcodebuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
 clean-am:
-	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
+	xcodebuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
 	rm -rf $(SYMROOTS)/WebKit.build
 	rm -rf $(SYMROOTS)/WebKit.framework
 	rm -rf $(SYMROOTS)/Safari.app/Frameworks/WebKit.framework

@@ -1,5 +1,9 @@
 2004-01-26  Darin Adler  <darin@apple.com>
 
+        * Makefile.am: Switch from pbxbuild to xcodebuild.
+
+2004-01-26  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed <rdar://problem/3521379>: image dimensions uses lowercase x instead of multiplication sign

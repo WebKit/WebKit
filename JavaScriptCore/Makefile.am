@@ -10,9 +10,9 @@ kjs_testkjs_LDFLAGS = -F$(SYMROOTS) -framework JavaScriptCore
 
 all-am: JavaScriptCore-stamp
 JavaScriptCore-stamp: kjs/*.cpp kjs/*.h pcre/*.c pcre/*.h bindings/*.h bindings/*.cpp bindings/jni/*.cpp bindings/jni/*.h
-	pbxbuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) && touch $@
+	xcodebuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) && touch $@
 clean-am:
-	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS)
+	xcodebuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS)
 	rm -rf $(SYMROOTS)/JavaScriptCore.build
 	rm -rf $(SYMROOTS)/JavaScriptCore.framework
 	rm -rf $(SYMROOTS)/Safari.app/Frameworks/JavaScriptCore.framework
