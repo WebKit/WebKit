@@ -163,6 +163,10 @@
         [self _setState: IFWEBFRAMESTATE_COMPLETE];
         [[self view] setNeedsLayout: YES];
         [[self view] setNeedsDisplay: YES];
+        if ([[self controller] mainFrame] == self){
+            [[self view] layout];
+            [[self view] display];
+        }
         [[self controller] locationChangeDone: nil forFrame: self];
         return YES;
     }

@@ -29,6 +29,8 @@
     ((IFWebViewPrivate *)_viewPrivate)->isFlipped = YES;
     ((IFWebViewPrivate *)_viewPrivate)->needsLayout = YES;
 
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
+    
     return self;
 }
 
@@ -109,6 +111,7 @@
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (((IFWebViewPrivate *)_viewPrivate)->needsLayout){
+            //WEBKITDEBUGLEVEL (0x100, "doing layout\n");
             //double start = CFAbsoluteTimeGetCurrent();
             widget->layout(TRUE);
             //WebKitDebugAtLevel (0x200, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
@@ -272,9 +275,16 @@
 }
 #endif
 
+- (void)setNeedsDisplay:(BOOL)flag
+{
+    //WEBKITDEBUGLEVEL (0x100, "setNeedsDisplay:\n");
+    [super setNeedsDisplay: flag];
+}
+
 
 - (void)setNeedsLayout: (bool)flag
 {
+    //WEBKITDEBUGLEVEL (0x100, "setNeedsLayout:\n");
     ((IFWebViewPrivate *)_viewPrivate)->needsLayout = flag;
 }
 
@@ -283,7 +293,9 @@
 - (void)drawRect:(NSRect)rect {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
 
+    //WEBKITDEBUGLEVEL (0x100, "drawRect:\n");
     if (widget != 0l){        
+        //WEBKITDEBUGLEVEL (0x100, "drawRect: drawing\n");
         [self layout];
 
 #ifdef _KWQ_TIMING        
@@ -344,7 +356,13 @@
 - (void)setFrame:(NSRect)frameRect
 {
     [super setFrame:frameRect];
-    [self setNeedsLayout: YES];
+    //[self setNeedsLayout: YES];
+}
+
+- (void)windowResized: (NSNotification *)notification
+{
+    if ([notification object] == [self window])
+        [self setNeedsLayout: YES];
 }
 
 
