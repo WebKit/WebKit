@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// FIXME: Remove this entire file once we require AppKit-705 or newer.
+
 #import <Foundation/Foundation.h>
 
 // The WebCore client must arrange to call these methods after a text

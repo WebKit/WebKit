@@ -35,10 +35,11 @@ class QLineEdit;
     QLineEdit *widget;
     NSTextField *secureField;
     KWQTextFieldFormatter *formatter;
-    BOOL _hasFocus;
+    BOOL hasFocus;
     BOOL edited;
     BOOL inNextValidKeyView;
     NSRange lastSelectedRange;
+    BOOL inDrawingMachinery;
 }
 
 - initWithQLineEdit:(QLineEdit *)widget;

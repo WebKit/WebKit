@@ -419,10 +419,10 @@ void QWidget::paint(QPainter *p, const QRect &r)
         return;
     }
     NSView *view = getOuterView();
+    // KWQTextArea and KWQTextField both rely on the fact that we use this particular
+    // NSView display method. If you change this, be sure to update them as well.
     [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
 }
-
-
 
 void QWidget::sendConsumedMouseUp()
 {

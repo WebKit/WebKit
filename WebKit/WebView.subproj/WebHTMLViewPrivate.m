@@ -110,12 +110,20 @@ static BOOL forceRealHitTest = NO;
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    // Avoid indirect invocation of any class initializers.  This is a work-around to prevent
+    // Avoid indirect invocation of any class initializers by using function
+    // calls instead of methods here. This is a work-around to prevent
     // the +initializers being called before the REQUIRED AppKit initialization
     // that's done in +[NSApplication load].
+
     class_poseAs(objc_getClass("WebNSView"), objc_getClass("NSView"));
-    class_poseAs(objc_getClass("WebNSTextView"), objc_getClass("NSTextView"));
-    class_poseAs(objc_getClass("WebNSWindow"), objc_getClass("NSWindow"));
+
+    // Only do these two poses if we have an older AppKit.
+    // If AppKit is 705 or newer, this is handled over on the WebCore side,
+    // using the new NSTextView SPI.
+    if (NSAppKitVersionNumber < 705) {
+        class_poseAs(objc_getClass("WebNSTextView"), objc_getClass("NSTextView"));
+        class_poseAs(objc_getClass("WebNSWindow"), objc_getClass("NSWindow"));
+    }
 
     [pool release];
 }

@@ -1,3 +1,13 @@
+2003-07-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 2/3 of 3279864 -- remove class_poseAs calls from WebKit (will also remove init routine)
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (+[WebHTMLView load]):
+        Only pose as NSTextView and NSWindow if we have an older AppKit.
+        If we have a new enough AppKit, the code in WebCore now takes care of things.
+
 2003-07-23  Richard Williamson   <rjw@apple.com>
 
 	Fixed for 3259840.  Use ATSU for scripts we don't handle internally,

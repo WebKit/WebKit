@@ -9477,7 +9477,7 @@
 //F83
 //F84
 		F8216299029F4FB501000131 = {
-			expectedFileType = file;
+			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			path = JavaScriptCore.framework;

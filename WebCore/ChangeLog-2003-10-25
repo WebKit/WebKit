@@ -1,3 +1,43 @@
+2003-07-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 2/3 of 3279864 -- remove class_poseAs calls from WebKit (will also remove init routine)
+
+        * kwq/KWQTextArea.h: Add drawing state variable so we can tell the difference
+        between calls to draw the insertion point inside and calls to draw outside the
+        redraw machinery.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea displayRectIgnoringOpacity:]): Added. Set drawing flag while in here.
+        This is the method used by KWQWidget to draw.
+        (-[KWQTextArea textView:shouldDrawInsertionPointInRect:color:turnedOn:]): Added.
+        Calls setNeedsDisplay (the NSView version, not the NSTextView override) instead
+        of immediately drawing when asked to draw outside the normal redraw machinery.
+        (-[KWQTextAreaTextView keyDown:]): Call interceptKeyEvent before handling each
+        key down event.
+        * kwq/KWQTextField.h: Add drawing state variable so we can tell the difference
+        between calls to draw the insertion point inside and calls to draw outside the
+        redraw machinery.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField displayRectIgnoringOpacity:]): Added. Set drawing flag while in here.
+        This is the method used by KWQWidget to draw.
+        (-[KWQTextField textView:shouldDrawInsertionPointInRect:color:turnedOn:]): Added.
+        Calls setNeedsDisplay (the NSView version, not the NSTextView override) instead
+        of immediately drawing when asked to draw outside the normal redraw machinery.
+        (-[KWQTextField textView:shouldHandleEvent:]): Call interceptKeyEvent before
+        handling each key down event.
+        (-[KWQTextField textView:didHandleEvent:]): Call fieldEditorDidMouseDown: after
+        handling each mouse down event.
+
+        * kwq/KWQWidget.mm: (QWidget::paint): Add comment about dependency on
+        displayRectIgnoringOpacity: use in KWQTextArea and KWQTextField.
+
+        * kwq/WebCoreFirstResponderChanges.h: Added a comment about obsolescence.
+
+        - Xcode wanted to change this, because it now knows JavaScriptCore is a framework
+
+        * WebCore.pbproj/project.pbxproj: Munged by Xcode.
+
 2003-07-23  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for 3340885, invalid colors were being mapped to transparentColor,

@@ -35,6 +35,7 @@ class QTextEdit;
     QTextEdit *widget;
     BOOL wrap;
     BOOL inNextValidKeyView;
+    BOOL inDrawingMachinery;
 }
 
 - initWithQTextEdit:(QTextEdit *)w; 

@@ -355,6 +355,7 @@
     return widget;
 }
 
+// FIXME: We can remove this once we require AppKit-705 or newer.
 - (void)fieldEditorDidMouseDown:(NSEvent *)event
 {
     widget->sendConsumedMouseUp();
@@ -365,6 +366,62 @@
 {
     [secureField setAlignment:alignment];
     [super setAlignment:alignment];
+}
+
+// This is the only one of the display family of calls that we use, and the way we do
+// displaying in WebCore means this is called on this NSView explicitly, so this catches
+// all cases where we are inside the normal display machinery. (Used only by the insertion
+// point method below.)
+- (void)displayRectIgnoringOpacity:(NSRect)rect
+{
+    inDrawingMachinery = YES;
+    [super displayRectIgnoringOpacity:rect];
+    inDrawingMachinery = NO;
+}
+
+// Use the "needs display" mechanism to do all insertion point drawing in the web view.
+- (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
+{
+    // We only need to take control of the cases where we are being asked to draw by something
+    // outside the normal display machinery, and when we are being asked to draw the insertion
+    // point, not erase it.
+    if (inDrawingMachinery || !drawInsteadOfErase) {
+        return YES;
+    }
+
+    // NSTextView's insertion-point drawing code sets the rect width to 1.
+    // So we do the same thing, to affect exactly the same rectangle.
+    rect.size.width = 1;
+
+    // Call through to the setNeedsDisplayInRect implementation in NSView.
+    // If we call the one in NSTextView through the normal method dispatch
+    // we will reenter the caret blinking code and end up with a nasty crash
+    // (see Radar 3250608).
+    SEL selector = @selector(setNeedsDisplayInRect:);
+    typedef void (*IMPWithNSRect)(id, SEL, NSRect);
+    IMPWithNSRect implementation = (IMPWithNSRect)[NSView instanceMethodForSelector:selector];
+    implementation(view, selector, rect);
+
+    return NO;
+}
+
+- (BOOL)textView:(NSTextView *)view shouldHandleEvent:(NSEvent *)event
+{
+    if ([event type] == NSKeyDown) {
+        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+        [bridge interceptKeyEvent:event toView:view];
+        // FIXME: In theory, if the bridge intercepted the event we should return NO.
+        // But the code in the Web Kit that we moved in here did not do that.
+    }
+    return YES;
+}
+
+- (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
+{
+    if ([event type] == NSLeftMouseUp) {
+        widget->sendConsumedMouseUp();
+        widget->clicked();
+    }
 }
 
 @end
@@ -401,15 +458,15 @@
     }
 }
 
-- (void)setHasFocus:(BOOL)hasFocus
+- (void)setHasFocus:(BOOL)nowHasFocus
 {
-    if (hasFocus == _hasFocus) {
+    if (nowHasFocus == hasFocus) {
         return;
     }
 
-    _hasFocus = hasFocus;
+    hasFocus = nowHasFocus;
 
-    if (hasFocus) {
+    if (nowHasFocus) {
         // Select all the text if we are tabbing in, but otherwise preserve/remember
         // the selection from last time we had focus (to match WinIE).
         if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
@@ -606,6 +663,7 @@
     return [(KWQTextField *)[self delegate] widget];
 }
 
+// FIXME: We can remove this once we require AppKit-705 or newer.
 - (void)fieldEditorDidMouseDown:(NSEvent *)event
 {
     ASSERT([[self delegate] isKindOfClass:[KWQTextField class]]);

@@ -423,6 +423,43 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [textView setAlignment:alignment];
 }
 
+// This is the only one of the display family of calls that we use, and the way we do
+// displaying in WebCore means this is called on this NSView explicitly, so this catches
+// all cases where we are inside the normal display machinery. (Used only by the insertion
+// point method below.)
+- (void)displayRectIgnoringOpacity:(NSRect)rect
+{
+    inDrawingMachinery = YES;
+    [super displayRectIgnoringOpacity:rect];
+    inDrawingMachinery = NO;
+}
+
+// Use the "needs display" mechanism to do all insertion point drawing in the web view.
+- (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
+{
+    // We only need to take control of the cases where we are being asked to draw by something
+    // outside the normal display machinery, and when we are being asked to draw the insertion
+    // point, not erase it.
+    if (inDrawingMachinery || !drawInsteadOfErase) {
+        return YES;
+    }
+
+    // NSTextView's insertion-point drawing code sets the rect width to 1.
+    // So we do the same thing, to affect exactly the same rectangle.
+    rect.size.width = 1;
+
+    // Call through to the setNeedsDisplayInRect implementation in NSView.
+    // If we call the one in NSTextView through the normal method dispatch
+    // we will reenter the caret blinking code and end up with a nasty crash
+    // (see Radar 3250608).
+    SEL selector = @selector(setNeedsDisplayInRect:);
+    typedef void (*IMPWithNSRect)(id, SEL, NSRect);
+    IMPWithNSRect implementation = (IMPWithNSRect)[NSView instanceMethodForSelector:selector];
+    implementation(view, selector, rect);
+
+    return NO;
+}
+
 @end
 
 @implementation KWQTextAreaTextView
@@ -556,6 +593,22 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     [super mouseDown:event];
     widget->sendConsumedMouseUp();
     widget->clicked();
+}
+
+- (void)keyDown:(NSEvent *)event
+{
+    // FIXME: We only want this code when we are not posing in WebKit,
+    // so we do the same version number check here that we had there.
+    // Once we remove the posing from WebKit entirely, we can remove
+    // this version check as well.
+    if (NSAppKitVersionNumber >= 705) {
+        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+        [bridge interceptKeyEvent:event toView:self];
+        // FIXME: In theory, if the bridge intercepted the event we should return not call super.
+        // But the code in the Web Kit that this replaces did not do that, so lets not do it until
+        // we can do more testing to see if it works well.
+    }
+    [super keyDown:event];
 }
 
 @end
