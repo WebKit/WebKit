@@ -1,5 +1,18 @@
 2003-11-05  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3455910>: hitting up or down arrows when focus 
+	is on a pop-up menu should pop the menu
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView keyDown:]): Call super with the event if focus 
+	is on a pop up button.
+
+2003-11-05  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Maciej
 
         Fix for these bugs:

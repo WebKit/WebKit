@@ -610,7 +610,11 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSUpArrowFunctionKey:
-                if (![self allowsScrolling]) {
+                if (![self allowsScrolling] ||
+                    [[[self window] firstResponder] isKindOfClass:[NSPopUpButton class]]) {
+                    // Let arrow keys go through to pop up buttons
+                    // <rdar://problem/3455910>: hitting up or down arrows when focus is on a 
+                    // pop-up menu should pop the menu
                     callSuper = YES;
                     break;
                 }
@@ -624,7 +628,11 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSDownArrowFunctionKey:
-                if (![self allowsScrolling]) {
+                if (![self allowsScrolling] ||
+                    [[[self window] firstResponder] isKindOfClass:[NSPopUpButton class]]) {
+                    // Let arrow keys go through to pop up buttons
+                    // <rdar://problem/3455910>: hitting up or down arrows when focus is on a 
+                    // pop-up menu should pop the menu
                     callSuper = YES;
                     break;
                 }
