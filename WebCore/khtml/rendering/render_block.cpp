@@ -1447,13 +1447,13 @@ int
 RenderBlock::nearestFloatBottom(int height) const
 {
     if (!m_floatingObjects) return 0;
-    int bottom=0;
+    int bottom = 0;
     FloatingObject* r;
     QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
         if (r->endY>height && (r->endY<bottom || bottom==0))
             bottom=r->endY;
-    return bottom;
+    return QMAX(bottom, height);
 }
 
 int
