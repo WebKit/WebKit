@@ -1,3 +1,25 @@
+2003-07-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3304992 - REGRESSION: Every GET on an authenticated site requires a login (genentech)
+
+	I fixed this by adding a per-window queue of waiting
+	authentication requests. Before going to a later item in the
+	queue, the auth handler checks if there's already a credential
+	available to handle it, and if so uses that as the answer instead of
+	prompting.
+
+        * Panels.subproj/WebPanelAuthenticationHandler.h:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        (-[NSMutableDictionary _web_setObject:forUncopiedKey:]):
+        (-[WebPanelAuthenticationHandler init]):
+        (-[WebPanelAuthenticationHandler dealloc]):
+        (-[WebPanelAuthenticationHandler enqueueChallenge:forWindow:]):
+        (-[WebPanelAuthenticationHandler tryNextChallengeForWindow:]):
+        (-[WebPanelAuthenticationHandler startAuthentication:window:]):
+        (-[WebPanelAuthenticationHandler _authenticationDoneWithChallenge:result:]):
+
 2003-06-30  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3310716 -- Authentication dialog could be tweaked to 
