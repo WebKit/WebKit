@@ -76,7 +76,7 @@ public:
     friend bool operator==(const KURL &, const KURL &);
 
 private:
-    void parse(const char *url);
+    void parse(const char *url, const QString *originalString);
 
     QString urlString;
     bool m_isValid;

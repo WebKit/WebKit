@@ -205,9 +205,9 @@ KURL::KURL(const char *url, int encoding_hint) :
 {
     if (url != NULL && url[0] == '/') {
 	QString qurl = QString("file:") + url;
-	parse(qurl.ascii());
+	parse(qurl.ascii(), &qurl);
     } else {
-	parse(url);
+	parse(url, NULL);
     }
 }
 
@@ -217,9 +217,9 @@ KURL::KURL(const QString &url, int encoding_hint) :
 {
     if (!url.isEmpty() && url[0] == '/') {
 	QString fileUrl = QString("file:") + url;
-	parse(fileUrl.ascii());
+	parse(fileUrl.ascii(), &fileUrl);
     } else {
-	parse(url.ascii());
+	parse(url.ascii(), &url);
     }
 }
 
@@ -227,40 +227,51 @@ KURL::KURL(const KURL &base, const QString &relative)
 {
     bool absolute = false;
     const char *str = relative.ascii();
-    for (const char *p = str; *p != '\0'; ++p) {
+    
+    // According to the RFC, the reference should be interpreted as an
+    // absolute URI if possible, using the "leftmost, longest"
+    // algorithm. If the URI reference is absolute it will have a
+    // scheme, meaning that it will have a colon before the first
+    // non-scheme element. "/", "?" and "#" are used to detect the
+    // start of a path segment, a query or a fragment ID, which would
+    // indicate no scheme had been found. IS_PATH_SEGMENT_END_CHAR
+    // tests for those three characters or NULL.
+
+    for (const char *p = str; !IS_PATH_SEGMENT_END_CHAR(*p); ++p) {
 	if (*p == ':') {
 	    absolute = true;
-	    break;
-	} else if (*p == '/' || *p == '?' || *p == '#') {
 	    break;
 	}
     }
     
     if (absolute) {
-	parse(str);
+	parse(str, &relative);
     } else {
 	// workaround for sites that put leading whitespace on relative URLs
 	while (*str == ' ') {
 	    str++;
 	}
 
+	// if the base is invalid, just append the relative
+	// portion. The RFC does not specify what to do in this case.q
 	if (!base.m_isValid) {
 	    QString newURL = base.urlString + relative;
-	    parse(newURL.ascii());
+	    parse(newURL.ascii(), &newURL);
 	}
 
 	switch(str[0]) {
 	case '\0':
-	    // empty
+	    // the reference must be empty - the RFC says this is a
+	    // reference to the same document
 	    {
 		*this = base;
 		break;
 	    }
 	case '#':
-	    // must be fragment reference only
+	    // must be fragment-only reference
 	    {
 		QString newURL = base.urlString.left(base.queryEndPos) + relative;
-		parse(newURL.ascii());
+		parse(newURL.ascii(), &newURL);
 		break;
 	    }
 	case '/':
@@ -269,24 +280,26 @@ KURL::KURL(const KURL &base, const QString &relative)
 		if (str[1] == '/') {
 		    // net-path
 		    QString newURL = base.urlString.left(base.schemeEndPos + 1) + str;
-		    parse(newURL.ascii());
+		    parse(newURL.ascii(), &newURL);
 		} else {
 		    // abs-path
 		    QString newURL = base.urlString.left(base.portEndPos) + str;
-		    parse(newURL.ascii());
+		    parse(newURL.ascii(), &newURL);
 		}
 		break;
 	    }
 	default:
 	    {
 		// must be relative-path reference
-		QString newURL = base.urlString.left(base.portEndPos);
+
 		char static_buffer[2048];
 		char *buffer;
 		bool usingStaticBuffer;
 		
-		if ((base.pathEndPos - base.portEndPos) + relative.length() >= 2048) {
-		    buffer = (char *)malloc(((base.pathEndPos - base.portEndPos) + relative.length() + 1) * sizeof(char));
+		size_t bufferLength = base.portEndPos + relative.length() + 1;
+
+		if (bufferLength > 2048) {
+		    buffer = (char *)malloc(bufferLength * sizeof(char));
 		    usingStaticBuffer = false;
 		} else {
 		    buffer = static_buffer;
@@ -295,9 +308,15 @@ KURL::KURL(const KURL &base, const QString &relative)
 		
 		char *bufferPos = buffer;
 		
-		// first copy the base path 
+		// first copy everything before the path from the base
 		const char *baseString = base.urlString.ascii();
-		const char *baseStringStart = baseString + base.portEndPos;
+		const char *baseStringStart = baseString;
+		const char *pathStart = baseStringStart + base.portEndPos;
+		while (baseStringStart < pathStart) {
+		    *bufferPos++ = *baseStringStart++;
+		}
+
+		// now copy the base path 
 		const char *baseStringEnd = baseString + base.pathEndPos;
 		
 		// go back to the last slash
@@ -310,12 +329,15 @@ KURL::KURL(const KURL &base, const QString &relative)
 		while (baseStringPos < baseStringEnd) {
 		    if (baseStringPos[0] == '.' && bufferPos[-1] == '/') {
 			if (baseStringPos[1] == '/' || baseStringPos + 1 == baseStringEnd) {
-			    // skip over "." segments
+			    // skip over "." segment
 			    baseStringPos += 2;
 			    continue;
 			} else if (baseStringPos[1] == '.' && (baseStringPos[2] == '/' ||
 							       baseStringPos + 2 == baseStringEnd)) {
-			    // skip over ".." segments and rewind the last segment
+			    // skip over ".." segment and rewind the last segment
+			    // the RFC leaves it up to the app to decide what to do with excess
+			    // ".." segments - we choose to drop them since some web content
+			    // relies on this.
 			    baseStringPos += 3;
 			    if (bufferPos > buffer + 1) {
 				bufferPos--;
@@ -342,14 +364,17 @@ KURL::KURL(const KURL &base, const QString &relative)
 		while (*relStringPos != '\0' && *relStringPos != '?' && *relStringPos != '#') {
 		    if (relStringPos[0] == '.' && bufferPos[-1] == '/') {
 			if (IS_PATH_SEGMENT_END_CHAR(relStringPos[1])) {
-			    // skip over "." segments
+			    // skip over "." segment
 			    relStringPos += 1;
 			    if (relStringPos[0] == '/') {
 				relStringPos++;
 			    }
 			    continue;
 			} else if (relStringPos[1] == '.' && IS_PATH_SEGMENT_END_CHAR(relStringPos[2])) {
-			    // skip over ".." segments and rewind the last segment
+			    // skip over ".." segment and rewind the last segment
+			    // the RFC leaves it up to the app to decide what to do with excess
+			    // ".." segments - we choose to drop them since some web content
+			    // relies on this.
 			    relStringPos += 2;
 			    if (relStringPos[0] == '/') {
 				relStringPos++;
@@ -373,11 +398,7 @@ KURL::KURL(const KURL &base, const QString &relative)
 		// of the relative reference; this will also add a null terminator
 		strcpy(bufferPos, relStringPos);
 
-		// and parse the thing (throwing away the fact that we
-		// know the path bounds already, but what the heck)
-		newURL += buffer;
-		
-		parse(newURL.ascii());
+		parse(buffer, NULL);
 		
 		if (!usingStaticBuffer) {
 		    free(buffer);
@@ -488,12 +509,12 @@ void KURL::setProtocol(const QString &s)
 {
     if (!m_isValid) {
 	QString newURL = s + ":" + urlString;
-	parse(newURL.ascii());
+	parse(newURL.ascii(), &newURL);
 	return;
     }
 
     QString newURL = s + urlString.mid(schemeEndPos);
-    parse(newURL.ascii());
+    parse(newURL.ascii(), &newURL);
 }
 
 void KURL::setHost(const QString &s)
@@ -503,7 +524,7 @@ void KURL::setHost(const QString &s)
 	int hostStart = (passwordEndPos == userStartPos) ? passwordEndPos : passwordEndPos + 1;
 	
 	QString newURL = urlString.left(hostStart) + (slashSlashNeeded ? "//" : QString()) + s + urlString.mid(hostEndPos);
-	parse(newURL.ascii());
+	parse(newURL.ascii(), &newURL);
     }
 }
 
@@ -513,7 +534,7 @@ void KURL::setPort(unsigned short i)
 	bool colonNeeded = portEndPos == hostEndPos;
 	int portStart = (colonNeeded ? hostEndPos : hostEndPos + 1);
 	QString newURL = urlString.left(portStart) + (colonNeeded ? ":" : QString()) + QString::number(i) + urlString.mid(portEndPos);
-	parse(newURL.ascii());
+	parse(newURL.ascii(), &newURL);
     }
 }
 
@@ -521,7 +542,7 @@ void KURL::setRef(const QString &s)
 {
     if (m_isValid) {
 	QString newURL = urlString.left(queryEndPos) + (s.isEmpty() ? QString() : "#" + s);
-	parse(newURL.ascii());
+	parse(newURL.ascii(), &newURL);
     }
 }
 
@@ -536,7 +557,7 @@ void KURL::setQuery(const QString &query, int encoding_hint)
 	}
 
         QString newURL = urlString.left(pathEndPos) + q + urlString.mid(queryEndPos);
-	parse(newURL.ascii());
+	parse(newURL.ascii(), &newURL);
     }
 }
 
@@ -544,7 +565,7 @@ void KURL::setPath(const QString &s)
 {
     if (m_isValid) {
 	QString newURL = urlString.left(portEndPos) + s + urlString.mid(pathEndPos);
-	parse(newURL.ascii());
+	parse(newURL.ascii(), &newURL);
     }
 }
 
@@ -596,7 +617,7 @@ QString KURL::prettyURL(int trailing) const
     return result;
 }
 
-QString KURL::decode_string(const QString &urlString)
+QString KURL::decode_string(const QString& urlString)
 {
     // FIXME: do it yerself
 
@@ -607,26 +628,15 @@ QString KURL::decode_string(const QString &urlString)
     return qUnescaped;
 }
 
-const char *hexDigits="0123456789ABCDEF";
+const char * const hexDigits="0123456789ABCDEF";
 
-static QString escapeBadChars(const QString &strToEscape)
+static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t length)
 {
-    const char *str = strToEscape.ascii();
-    char static_buffer[4096];
-    bool usingStaticBuffer;
-    char *buffer; 
-
-    if (strToEscape.length() * 3 < 4096) {
-	buffer = static_buffer;
-	usingStaticBuffer = true;
-    } else {
-	buffer = (char *)malloc((strToEscape.length() * 3 + 1) * sizeof(char));
-	usingStaticBuffer = false;
-    }
-
     char *p = buffer;
+    const char *str = strStart;
+    const char *strEnd = strStart + length;
 
-    while (*str != '\0') {
+    while (str < strEnd) {
 	if (*str == '%' && IS_HEX_DIGIT(str[1]) && IS_HEX_DIGIT(str[2])) {
 	    *p++ = *str++;
 	    *p++ = *str++;
@@ -640,19 +650,12 @@ static QString escapeBadChars(const QString &strToEscape)
 	    *p++ = *str++;
 	}
     }
-    *p = '\0';
     
-    QString result(buffer);
-    if (!usingStaticBuffer) {
-	free(buffer);
-    }
-
-    return result;
+    buffer = p;
 }
 
 
-
-void KURL::parse(const char *url)
+void KURL::parse(const char *url, const QString *originalString)
 {
     m_isValid = true;
 
@@ -788,10 +791,11 @@ void KURL::parse(const char *url)
     int fragmentEnd;
 
     if (!hierarchical) {
-	// FIXME: could have a fragment
 	pathEnd = strlen(url);
+	while (url[pathEnd] != '\0' && url[pathEnd] != '#') {
+	    pathEnd++;
+	}
 	queryStart = queryEnd = pathEnd;
-	fragmentStart = fragmentEnd = queryEnd;
     } else {
 	pathEnd = pathStart;
 	while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
@@ -805,82 +809,124 @@ void KURL::parse(const char *url)
 		queryEnd++;
 	    }
 	}
+    }
 
-	fragmentStart = fragmentEnd = queryEnd;
-
-	if (url[fragmentStart] == '#') {
-	    fragmentStart++;
-	    // FIXME: don't use strlen, counting up should be faster
-	    fragmentEnd = fragmentStart + strlen(url + fragmentStart);
+    fragmentStart = fragmentEnd = queryEnd;
+    if (url[fragmentStart] == '#') {
+	fragmentStart++;
+	fragmentEnd = fragmentStart;
+	while(url[fragmentEnd] != '\0') {
+	    fragmentEnd++;
 	}
     }
 
     // assemble it all, remembering the real ranges
 
-    urlString = QString(url, schemeEnd + 1);
-    schemeEndPos = schemeEnd;
-
-    QString authority;
-    if (userEnd != userStart) {
-	authority += QString(url + userStart, userEnd - userStart);
-    }
-
-    userEndPos = authority.length();
-
-    if (passwordEnd != passwordStart) {
-	// start ahead one to include the colon
-	authority += QString(url + passwordStart - 1, passwordEnd - passwordStart + 1);
-    }
-
-    passwordEndPos = authority.length();
-
-    if (!authority.isEmpty()) {
-	authority += "@";
-    }
-
-    if (hostEnd != hostStart) {
-	authority += QString(url + hostStart, hostEnd - hostStart);
-    }
-
-    hostEndPos = authority.length();
-
-    if (portEnd != portStart) {
-	// start ahead one to include the colon
-	authority += QString(url + portStart -1, portEnd - portStart + 1);
-    }
-    
-    portEndPos = authority.length();
-
-    if (!authority.isEmpty() && authority != "localhost") {
-	userStartPos = urlString.length() + 2;
-	userEndPos += userStartPos;
-	passwordEndPos += userStartPos;
-	hostEndPos += userStartPos;
-	portEndPos += userStartPos;
-
-	urlString += "//" + authority;
+    char static_buffer[4096];
+    bool usingStaticBuffer;
+    char *buffer;
+    int bufferLength = fragmentEnd * 3 + 1;
+    if (bufferLength <= 4096) {
+	buffer = static_buffer;
+	usingStaticBuffer = true;
     } else {
-	userStartPos = userEndPos = urlString.length();
-	passwordEndPos = userStartPos;
-	hostEndPos = userStartPos;
-	portEndPos = userStartPos;
+	buffer = (char *)malloc(bufferLength * sizeof(char));
+	usingStaticBuffer = false;
     }
 
-    if (pathEnd != pathStart) {
-	QString path(url + pathStart, pathEnd - pathStart);
-	urlString += escapeBadChars(path);
+    char *p = buffer;
+    const char *strPtr = url;
+
+    // copy in the scheme
+    const char *schemeEndPtr = url + schemeEnd;
+    while (strPtr < schemeEndPtr) {
+	*p++ = *strPtr++;
     }
-    pathEndPos = urlString.length();
+    schemeEndPos = p - buffer;
+
+    // add ";"
+    *p++ = ':';
+
+    // we have at least one authority part - add "//"
+    if ((userStart != userEnd || passwordStart != passwordEnd || hostStart != hostEnd || portStart != portEnd) && !(portEnd - userStart == 9 && strncmp(url + userStart, "localhost", 9) == 0)) {
+	*p++ = '/';
+	*p++ = '/';
+
+	userStartPos = p - buffer;
+
+	// copy in the user
+	strPtr = url + userStart;
+	const char *userEndPtr = url + userEnd;
+	while (strPtr < userEndPtr) {
+	    *p++ = *strPtr++;
+	}
+	userEndPos = p - buffer;
+	
+	// copy in the password
+	if (passwordEnd != passwordStart) {
+	    *p++ = ':';
+	    strPtr = url + passwordStart;
+	    const char *passwordEndPtr = url + passwordEnd;
+	    while (strPtr < passwordEndPtr) {
+		*p++ = *strPtr++;
+	    }
+	}
+	passwordEndPos = p - buffer;
+	
+	// If we had any user info, add "@"
+	if (p - buffer != userStartPos) {
+	    *p++ = '@';
+	}
+	
+	// copy in the host
+	strPtr = url + hostStart;
+	const char *hostEndPtr = url + hostEnd;
+	while (strPtr < hostEndPtr) {
+	    *p++ = *strPtr++;
+	}
+	hostEndPos = p - buffer;
+	
+	// copy in the port
+	if (portEnd != portStart) {
+	    *p++ = ':';
+	    strPtr = url + portStart;
+	    const char *portEndPtr = url + portEnd;
+	    while (strPtr < portEndPtr) {
+		*p++ = *strPtr++;
+	    }
+	}
+	portEndPos = p - buffer;
+    } else {
+	userStartPos = userEndPos = passwordEndPos = hostEndPos = portEndPos = p - buffer;
+    }
+
+    // add path, escaping bad characters
+    appendEscapingBadChars(p, url + pathStart, pathEnd - pathStart);
+    pathEndPos = p - buffer;
+
+    // add query, escaping bad characters
+    appendEscapingBadChars(p, url + queryStart, queryEnd - queryStart);
+    queryEndPos = p - buffer;
     
-    if (queryEnd != queryStart) {
-	urlString += escapeBadChars(QString(url + queryStart, queryEnd - queryStart));
-    }
-    queryEndPos = urlString.length();
-
+    // add fragment, escaping bad characters
     if (fragmentEnd != fragmentStart) {
-	urlString += "#" + escapeBadChars(QString(url + fragmentStart, fragmentEnd - fragmentStart));
+	*p++ = '#';
+	appendEscapingBadChars(p, url + fragmentStart, fragmentEnd - fragmentStart);
     }
-    fragmentEndPos = urlString.length();
+    fragmentEndPos = p - buffer;
+
+    // If we didn't end up actually changing the original string and
+    // it started as a QString, just reuse it, to avoid extra
+    // allocation.
+    if (originalString != NULL && strncmp(buffer, url, fragmentEndPos) == 0) {
+	urlString = *originalString;
+    } else {
+	urlString = QString(buffer, fragmentEndPos);
+    }
+
+    if (!usingStaticBuffer) {
+	free(buffer);
+    }
 }
 
 NSURL *KURL::getNSURL() const
