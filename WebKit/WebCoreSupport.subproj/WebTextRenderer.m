@@ -446,7 +446,6 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     spaceWidth = _spaceWidth;
 }
 
-
 - initWithFont:(NSFont *)f
 {
     if ([f glyphPacking] != NSNativeShortGlyphPacking &&
@@ -456,9 +455,6 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     [super init];
     
     font = [f retain];
-    ascent = -1;
-    descent = -1;
-    lineSpacing = -1;
     
     OSStatus errCode;
     ATSUStyle style;
@@ -475,6 +471,44 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     ATSUDisposeStyle(style);
 
     [self _computeWidthForSpace];
+
+    // We emulate the appkit metrics by applying rounding as is done
+    // in the appkit.
+    CGFontRef cgFont = [f _backingCGSFont];
+    const CGFontHMetrics *metrics = CGFontGetHMetrics(cgFont);
+    unsigned int unitsPerEm = CGFontGetUnitsPerEm(cgFont);
+    float pointSize = [f pointSize];
+    float asc = (ScaleEmToUnits(metrics->ascent, unitsPerEm)*pointSize);
+    float dsc = (-ScaleEmToUnits(metrics->descent, unitsPerEm)*pointSize);
+    float lineGap = ScaleEmToUnits(metrics->lineGap, unitsPerEm)*pointSize;
+
+    ascent = ROUND_TO_INT(asc);
+    descent = ROUND_TO_INT(dsc);
+    lineSpacing =  ascent + descent + (int)(lineGap > 0.0 ? floor(lineGap + 0.5) : 0.0);
+
+#ifdef COMPARE_APPKIT_CG_METRICS
+    if ((int)ROUND_TO_INT([f ascender]) != ascent ||
+        (int)ROUND_TO_INT(-[f descender]) != descent ||
+        (int)ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing){
+        printf ("\nCG/Appkit mismatched metrics for font %s, %f (%s)\n", [[f displayName] cString], [f pointSize],
+                ([f screenFont] ? [[[f screenFont] displayName] cString] : "none"));
+        printf ("ascent(%s), descent(%s), lineSpacing(%s)\n",
+                ((int)ROUND_TO_INT([f ascender]) != ascent) ? "different" : "same",
+                ((int)ROUND_TO_INT(-[f descender]) != descent) ? "different" : "same",
+                ((int)ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing) ? "different" : "same");
+        printf ("CG:  ascent %f, ", asc);
+        printf ("descent %f, ", dsc);
+        printf ("lineGap %f, ", lineGap);
+        printf ("lineSpacing %d\n", lineSpacing);
+        
+        printf ("NSFont:  ascent %f, ", [f ascender]);
+        printf ("descent %f, ", [f descender]);
+        printf ("lineSpacing %f\n", [font defaultLineHeightForFont]);
+    }
+    else {
+        printf ("\nCG/Appkit matched metrics for font %s, %f\n", [[f displayName] cString], [f pointSize]);
+    }
+#endif
     
     return self;
 }
@@ -527,27 +561,18 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
 
 - (int)ascent
 {
-    if (ascent < 0)  {
-        ascent = ROUND_TO_INT([font ascender]);
-    }
     return ascent;
 }
 
 
 - (int)descent
 {
-    if (descent < 0)  {
-        descent = ROUND_TO_INT(-[font descender]);
-    }
     return descent;
 }
 
 
 - (int)lineSpacing
 {
-    if (lineSpacing < 0) {
-        lineSpacing = ROUND_TO_INT([font defaultLineHeightForFont]);
-    }
     return lineSpacing;
 }
 
@@ -748,8 +773,8 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         lineWidth = size.width;
     }
     CGContextSetLineWidth(cgContext, lineWidth);
-    CGContextMoveToPoint(cgContext, point.x, point.y + [font defaultLineHeightForFont] + 1.5 - [self descent] + yOffset);
-    CGContextAddLineToPoint(cgContext, point.x + width, point.y + [font defaultLineHeightForFont] + 1.5 - [self descent] + yOffset);
+    CGContextMoveToPoint(cgContext, point.x, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
+    CGContextAddLineToPoint(cgContext, point.x + width, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
     CGContextStrokePath(cgContext);
 
     [graphicsContext setShouldAntialias: flag];

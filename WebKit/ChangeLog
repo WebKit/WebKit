@@ -1,3 +1,16 @@
+2002-12-17  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3128794.  Use CG directy to get font metrics rather than the appkit.  The appkit
+        has a bug (3129490) that sometimes causes line height to be 20% too large.
+        
+        Reviewed by hyatt.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:]):
+        (-[WebTextRenderer ascent]):
+        (-[WebTextRenderer descent]):
+        (-[WebTextRenderer lineSpacing]):
+
 2002-12-17  Trey Matteson  <trey@apple.com>
 
 	Reworking the code to update the page icon led me to roll the WebIconDB API
