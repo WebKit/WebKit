@@ -1,3 +1,5 @@
+=== Safari-145 ===
+
 2004-06-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous

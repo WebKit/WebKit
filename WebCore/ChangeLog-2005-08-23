@@ -1,3 +1,5 @@
+=== Safari-145 ===
+
 2004-06-16  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3695730:  Added support for embeds[], much like
