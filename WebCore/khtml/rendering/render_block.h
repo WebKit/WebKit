@@ -104,9 +104,9 @@ public:
     virtual void setStyle(RenderStyle* _style);
 
     virtual void layout();
-    virtual void layoutBlock( bool relayoutChildren );
-    void layoutBlockChildren( bool relayoutChildren );
-    QRect layoutInlineChildren( bool relayoutChildren );
+    virtual void layoutBlock(bool relayoutChildren);
+    void layoutBlockChildren(bool relayoutChildren);
+    QRect layoutInlineChildren(bool relayoutChildren);
 
     void layoutPositionedObjects( bool relayoutChildren );
     void insertPositionedObject(RenderObject *o);
@@ -383,11 +383,10 @@ protected:
     void collapseMargins(RenderObject* child, MarginInfo& marginInfo, int yPosEstimate);
     void clearFloatsIfNeeded(RenderObject* child, MarginInfo& marginInfo, int oldTopPosMargin, int oldTopNegMargin);
     void insertCompactIfNeeded(RenderObject* child, CompactInfo& compactInfo);
-    int estimateVerticalPosition(RenderObject* child, const MarginInfo& info, RenderObject* prevBlock);
+    int estimateVerticalPosition(RenderObject* child, const MarginInfo& info);
     void determineHorizontalPosition(RenderObject* child);
     void handleBottomOfBlock(int top, int bottom, MarginInfo& marginInfo);
     void setCollapsedBottomMargin(const MarginInfo& marginInfo);
-    bool adjustChildIfOverhangingFloatsExist(RenderObject* child, MarginInfo& marginInfo, int& yPosEstimate);
     // End helper functions and structs used by layoutBlockChildren.
 
 protected:

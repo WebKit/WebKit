@@ -439,6 +439,8 @@ bool TextImpl::rendererIsNeeded(RenderStyle *style)
             return false;
         
         RenderObject *first = par->firstChild();
+        while (first && first->isFloatingOrPositioned())
+            first = first->nextSibling();
         RenderObject *next = nextRenderer();
         if (!first || next == first)
             // Whitespace at the start of a block just goes away.  Don't even

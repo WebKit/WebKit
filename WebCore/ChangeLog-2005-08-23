@@ -1,3 +1,34 @@
+2004-10-19  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by kocienda
+
+	More cleanup of block layout.  Eliminates the separate step for tables that dont fit on a line with a float
+	and consolidates it with clearing.
+
+	Also patch dom_textimpl.cpp to reduce further the # of RenderTexts created.
+	
+        * khtml/rendering/render_block.cpp:
+        (khtml::getInlineRun):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::adjustFloatingBlock):
+        (khtml::RenderBlock::collapseMargins):
+        (khtml::RenderBlock::clearFloatsIfNeeded):
+        (khtml::RenderBlock::estimateVerticalPosition):
+        (khtml::RenderBlock::layoutBlockChildren):
+        (khtml::RenderBlock::markAllDescendantsWithFloatsForLayout):
+        (khtml::RenderBlock::getClearDelta):
+        (khtml::RenderBlock::calcBlockMinMaxWidth):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::layout):
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded):
+
+        Fix for 3841060, regression with * in frames.  Reviewed by kocienda.
+	
+	* layout-tests/fast/frames/002-expected.txt: Added.
+        * layout-tests/fast/frames/002.html: Added.
+
  2004-10-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -172,10 +172,12 @@ void RenderFrameSet::layout( )
             }
 
             int currPercent = totalPercent;
+            int percentLen = (countRelative && currPercent < 100) ? currPercent * remainingLen[k] / 100 : remainingLen[k];
             for(int i = 0; i < gridLen; i++)
                 if (grid[i].isPercent() && grid[i].value >= 0 && currPercent) {
-                    gridLayout[i] = grid[i].value * remainingLen[k] / currPercent;
+                    gridLayout[i] = grid[i].value * percentLen / currPercent;
                     remainingLen[k] -= gridLayout[i];
+                    percentLen -= gridLayout[i];
                     currPercent -= grid[i].value;
                 }
 
