@@ -35,7 +35,6 @@
 
 -(void)addEntry:(WebHistoryItem *)entry
 {
-    printf ("addEntry %s\n", [[[entry URL] absoluteString] cString]);
     // If the last entry matches this new entry, then replace it rather than adding
     // a new one, since we are doing a reload.
     if ([uriList count] > index) {

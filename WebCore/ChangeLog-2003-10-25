@@ -1,4 +1,11 @@
 2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+    
+        Removed debugging.
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::closeURL):
+
+2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
 
         Always call KHTMLPart::closeURL when a new document is loaded.
         

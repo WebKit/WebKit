@@ -1,5 +1,12 @@
 2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
 
+        Removed debugging.
+        
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList addEntry:]):
+
+2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+
         Added support for saving/restoring document state
         in back/forward list.
         
