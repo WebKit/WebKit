@@ -1,5 +1,12 @@
 2004-05-13  Richard Williamson   <rjw@apple.com>
 
+	Backed out mistaken change that I didn't mean to checkin.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+
+2004-05-13  Richard Williamson   <rjw@apple.com>
+
 	Updated to reflect new API.
 
         Reviewed by Chris.

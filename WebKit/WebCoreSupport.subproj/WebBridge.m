@@ -460,7 +460,7 @@
     }
     
     // Never use cached data for these requests (xmlhttprequests).
-    [newRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    [newRequest setCachePolicy:[[[self dataSource] request] cachePolicy]];
     [newRequest setHTTPReferrer:[self referrer]];
     
     WebView *webView = [_frame webView];

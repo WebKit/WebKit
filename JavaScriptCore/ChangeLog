@@ -1,5 +1,14 @@
 2004-05-13  Richard Williamson   <rjw@apple.com>
 
+	Fixed indentation.
+
+        Reviewed by Chris.
+
+        * ChangeLog:
+        * bindings/objc/WebScriptObject.h:
+
+2004-05-13  Richard Williamson   <rjw@apple.com>
+
 	Approved API changes.  Currently unimplemented.
 
         Reviewed by Chris.

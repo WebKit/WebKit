@@ -60,8 +60,8 @@
 @interface NSObject (WebScriptMethods)
 
 /*!
-	@method webScriptNameForSelector:
-	@param aSelector The selector that will be exposed to the script environment.
+    @method webScriptNameForSelector:
+    @param aSelector The selector that will be exposed to the script environment.
     @discussion Use the returned string as the exported name for the selector
     in the script environment.  It is the responsibility of the class to ensure
     uniqueness of the returned name.  If nil is returned or this
@@ -92,7 +92,7 @@
 
 /*!
     @method webScriptNameForKey:
-	@param name The name of the instance variable that will be exposed to the
+    @param name The name of the instance variable that will be exposed to the
     script enviroment.  Only that properties that meet the export criteria will
     be exposed.
     @discussion Provide an alternate name for a property.
