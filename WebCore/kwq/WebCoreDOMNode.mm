@@ -64,15 +64,23 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 + (WebCoreDOMNode *)nodeWithImpl: (DOM::NodeImpl *)_impl
 {
+    if (!_impl) {
+        return nil;
+    }
     return [[(WebCoreDOMNode *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
 
 - initWithImpl:(DOM::NodeImpl *)coreImpl
 {
     [super init];
-    impl = coreImpl;
-    impl->ref();        
-    return self;
+    if (coreImpl) {
+        impl = coreImpl;
+        impl->ref();
+        return self;
+    } else {
+        [self release];
+        return nil;
+    }
 }
 
 - (BOOL)isEqual:(id)other

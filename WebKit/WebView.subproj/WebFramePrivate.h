@@ -179,4 +179,7 @@ typedef enum {
 // used to decide to use loadType=Same
 - (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
 
+- (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag;
+- (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag;
+
 @end

@@ -194,4 +194,14 @@
     return [controller _menuForElement:element];
 }
 
+// This approach could be relaxed when dealing with 3228554
+- (BOOL)resignFirstResponder
+{
+    BOOL resign = [super resignFirstResponder];
+    if (resign) {
+        [self setSelectedRange:NSMakeRange(0,0)];
+    }
+    return resign;
+}
+
 @end

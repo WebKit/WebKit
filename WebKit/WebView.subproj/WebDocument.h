@@ -72,7 +72,7 @@
     @param caseFlag YES to for case-sensitive search, NO for case-insensitive search.
     @result YES if found, NO if not found.
 */
-- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
+- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag wrap: (BOOL)wrapFlag;
 @end
 
 

@@ -2064,6 +2064,85 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _checkNewWindowPolicyForRequest:request action:(NSDictionary *)action frameName:frameName formState:nil andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 }
 
+// Returns the next frame in our parent's children array, or nil
+- (WebFrame *)_nextSibling
+{
+    if (_private->parent) {
+        NSArray *parentsKids = _private->parent->_private->children;
+        unsigned selfIndex = [parentsKids indexOfObjectIdenticalTo:self];
+        ASSERT(selfIndex != NSNotFound);
+        if (selfIndex < [parentsKids count]-1) {
+            return [parentsKids objectAtIndex:selfIndex+1];
+        }
+    }
+    return nil;		// no parent, or no more later siblings
+}
+
+// Returns the previous frame in our parent's children array, or nil
+- (WebFrame *)_previousSibling
+{
+    if (_private->parent) {
+        NSArray *parentsKids = _private->parent->_private->children;
+        unsigned selfIndex = [parentsKids indexOfObjectIdenticalTo:self];
+        ASSERT(selfIndex != NSNotFound);
+        if (selfIndex > 0) {
+            return [parentsKids objectAtIndex:selfIndex-1];
+        }
+    }
+    return nil;		// no parent, or no more earlier siblings
+}
+
+// Returns the last child of us and any children, or nil
+- (WebFrame *)_lastChild
+{
+    if (_private->children && [_private->children count]) {
+        WebFrame *ourLastKid = [_private->children lastObject];
+        WebFrame *kidsLastKid = [ourLastKid _lastChild];
+        return kidsLastKid ? kidsLastKid : ourLastKid;
+    }
+    return nil;		// no kids
+}
+
+// Return next frame to be traversed, visiting children after parent
+- (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag
+{
+    if (_private->children && [_private->children count]) {
+        return [_private->children objectAtIndex:0];
+    } else if (_private->parent) {
+        WebFrame *frame;
+        for (frame = self; frame->_private->parent; frame = frame->_private->parent) {
+            WebFrame *nextSibling = [frame _nextSibling];
+            if (nextSibling) {
+                return nextSibling;
+            }
+        }
+        return wrapFlag ? frame : nil;		// made it all the way to the top
+    } else {
+        return wrapFlag ? self : nil;		// self is the top and we have no kids
+    }
+}
+
+// Return previous frame to be traversed, exact reverse order of _nextFrame
+- (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag
+{
+    WebFrame *prevSibling = [self _previousSibling];
+    if (prevSibling) {
+        WebFrame *prevSiblingLastChild = [prevSibling _lastChild];
+        return prevSiblingLastChild ? prevSiblingLastChild : prevSibling;
+    } else if (_private->parent) {
+        return _private->parent;
+    } else {
+        // no siblings, no parent, self==top
+        if (wrapFlag) {
+            WebFrame *selfLastChild = [self _lastChild];
+            return selfLastChild ? selfLastChild : self;
+        } else {
+            // top view is always the last one in this ordering, so prev is nil without wrap
+            return nil;
+        }
+    }
+}
+
 @end
 
 @implementation WebFormState : NSObject

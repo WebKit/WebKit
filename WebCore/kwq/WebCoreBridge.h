@@ -175,7 +175,7 @@ enum FrameBorderStyle {
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <WebDOMElement>)element;
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(id <WebDOMElement>)element;
 
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag;
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
 - (void)jumpToSelection;
 
 - (void)setTextSizeMultiplier:(float)multiplier;

@@ -341,9 +341,9 @@
 
 // Search from the end of the currently selected location, or from the beginning of the
 // document if nothing is selected.
-- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
 {
-    return [[self _bridge] searchFor: string direction: forward caseSensitive: caseFlag];
+    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag];
 }
 
 - (NSString *)string
@@ -756,6 +756,16 @@
         [[self window] makeFirstResponder:view];
     } 
     return YES;
+}
+
+// This approach could be relaxed when dealing with 3228554
+- (BOOL)resignFirstResponder
+{
+    BOOL resign = [super resignFirstResponder];
+    if (resign) {
+        [self deselectAll];
+    }
+    return resign;
 }
 
 //------------------------------------------------------------------------------------

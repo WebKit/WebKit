@@ -15,7 +15,7 @@
 
 @implementation WebSearchableTextView
 
-- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
+- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag wrap: (BOOL)wrapFlag;
 {
     BOOL lastFindWasSuccessful = NO;
     NSString *textContents = [self string];
@@ -31,7 +31,7 @@
         if (!caseFlag)
             options |= NSCaseInsensitiveSearch;
 
-        range = [textContents findString:string selectedRange:[self selectedRange] options:options wrap:YES];
+        range = [textContents findString:string selectedRange:[self selectedRange] options:options wrap:wrapFlag];
         if (range.length) {
             [self setSelectedRange:range];
             [self scrollRangeToVisible:range];
@@ -68,7 +68,7 @@
     NSRange searchRange, range;
 
     if (forwards) {
-        searchRange.location = NSMaxRange(selectedRange);
+        searchRange.location = selectedRange.length > 0 ? NSMaxRange(selectedRange) : 0;
         searchRange.length = length - searchRange.location;
         range = [self rangeOfString:string options:options range:searchRange];
         if ((range.length == 0) && wrap) {	/* If not found look at the first part of the string */
@@ -78,7 +78,7 @@
         }
     } else {
         searchRange.location = 0;
-        searchRange.length = selectedRange.location;
+        searchRange.length = selectedRange.length > 0 ? selectedRange.location : length;
         range = [self rangeOfString:string options:options range:searchRange];
         if ((range.length == 0) && wrap) {
             searchRange.location = NSMaxRange(selectedRange);

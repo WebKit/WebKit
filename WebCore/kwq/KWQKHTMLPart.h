@@ -195,6 +195,8 @@ public:
     NSString *searchForLabelsBeforeElement(NSArray *labels, DOM::ElementImpl *element);
     NSString *matchLabelsAgainstElement(NSArray *labels, DOM::ElementImpl *element);
 
+    bool findString(NSString *str, bool forward, bool caseFlag, bool wrapFlag);
+
     void setSettings(KHTMLSettings *);
 
     KWQWindowWidget *topLevelWidget();

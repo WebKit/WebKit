@@ -307,7 +307,7 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (void)deselectAll
 {
-    _part->xmlDocImpl()->clearSelection();
+    _part->slotClearSelection();
 }
 
 - (BOOL)isFrameSet
@@ -708,9 +708,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return element;
 }
 
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
-    return _part->findTextNext(QString::fromNSString(string), forward, caseFlag, FALSE);
+    return _part->findString(string, forward, caseFlag, wrapFlag);
 }
 
 - (void)jumpToSelection

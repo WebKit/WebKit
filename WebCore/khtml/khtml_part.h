@@ -522,7 +522,7 @@ public:
   /**
    * Initiates a text search.
    */
-  void findTextBegin();
+  void findTextBegin(DOM::NodeImpl *startNode = 0, int startPos = -1);
 
   /**
    * Finds the next occurrence of the string or expression.

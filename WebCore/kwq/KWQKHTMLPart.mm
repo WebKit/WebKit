@@ -427,6 +427,51 @@ NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *
     }
 }
 
+// Search from the end of the currently selected location if we are first responder, or from
+// the beginning of the document if nothing is selected or we're not first responder.
+bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, bool wrapFlag)
+{
+    QString target = QString::fromNSString(string);
+    bool result;
+    // start on the correct edge of the selection, search to end
+    NodeImpl *selStart = selectionStart();
+    int selStartOffset = selectionStartOffset();
+    NodeImpl *selEnd = selectionEnd();
+    int selEndOffset = selectionEndOffset();
+    if (selStart) {
+        if (forward) {
+            // point to last char of selection, find will start right afterwards
+            findTextBegin(selEnd, selEndOffset-1);
+        } else {
+            // point to first char of selection, find will start right before
+            findTextBegin(selStart, selStartOffset);
+        }
+    } else {
+        findTextBegin();
+    }
+    result = findTextNext(target, forward, caseFlag, FALSE);
+    if (!result && wrapFlag) {
+        // start back at the other end, search the rest
+        findTextBegin();
+        result = findTextNext(target, forward, caseFlag, FALSE);
+        // if we got back to the same place we started, that doesn't count as success
+        if (result
+            && selStart == selectionStart()
+            && selStartOffset == selectionStartOffset())
+        {
+            result = false;
+        }
+    }
+
+    // khtml took care of moving the selection, but we need to move first responder too,
+    // so the selection is primary.  We also need to make the selection visible, since we
+    // cut the implementation of this in khtml_part.
+    if (result) {
+        jumpToSelection();
+    }
+    return result;
+}
+
 void KWQKHTMLPart::clearRecordedFormValues()
 {
     [_formValuesAboutToBeSubmitted release];
@@ -631,8 +676,24 @@ void KWQKHTMLPart::jumpToSelection()
             rt->posOfChar(d->m_startOffset, x, y);
             // The -50 offset is copied from KHTMLPart::findTextNext, which sets the contents position
             // after finding a matched text string.
-            d->m_view->setContentsPos(x - 50, y - 50);
+           d->m_view->setContentsPos(x - 50, y - 50);
         }
+/*
+        I think this would be a better way to do this, to avoid needless horizontal scrolling,
+        but it is not feasible until selectionRect() returns a tighter rect around the
+        selected text.  Right now it works at element granularity.
+ 
+        NSView *docView = d->m_view->getDocumentView();
+
+        NSRect selRect = NSRect(selectionRect());
+        NSRect visRect = [docView visibleRect];
+        if (!NSContainsRect(visRect, selRect)) {
+            // pad a bit so we overscroll slightly
+            selRect = NSInsetRect(selRect, -10.0, -10.0);
+            selRect = NSIntersectionRect(selRect, [docView bounds]);
+            [docView scrollRectToVisible:selRect];
+        }
+*/
     }
 }
 

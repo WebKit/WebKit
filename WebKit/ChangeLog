@@ -1,3 +1,43 @@
+2003-04-14  Trey Matteson  <trey@apple.com>
+
+	3009051 - Find on Page stops (once) at end of page, should wrap automatically	WebKit
+	3051546 - Find on Page doesn't work for frameset pages
+	3058437 - can have a selection in two frames at the same time (problem for finding in frames)
+	3097498 - Find Previous continues to "Find Next" until end of paragraph	
+	3097507 - Find Next searches from previous find hit instead of current selection	
+	Primary changes here:  I added a wrap flag to the searchFor method, which is needed to
+	control how we search as we traverse the frame tree.  A new method is added to WebView
+	that knows about traversing the frame tree as we search.  HTMLView and TextView both
+	clear their selections when they lose first responder (see 3228554 for possible
+	improvements to that change).
+
+        Reviewed by Maciej.
+
+        * Misc.subproj/WebSearchableTextView.m:
+	Added wrap flag, pass on to TextView.
+	Ensure we do some searching when we would previous get a zero range to search in.
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+	These are all basic methods to support forwards and backwards traversal of
+	the frame tree.  Modeled after same methods we have for traversing the DOM.
+        (-[WebFrame _nextSibling]):
+        (-[WebFrame _previousSibling]):
+        (-[WebFrame _lastChild]):
+        (-[WebFrame _nextFrameWithWrap:]):
+        (-[WebFrame _previousFrameWithWrap:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:]):  Added wrap flag,
+	pass it to bridge.
+        (-[WebHTMLView resignFirstResponder]):  Clear selection when we lose firstResp.
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView resignFirstResponder]):  Clear selection when we lose firstResp.
+        * WebView.subproj/WebView.m:
+        (-[WebView _currentFrame]):  Return the frame holding the first responder.
+        (-[WebView _searchFor:direction:caseSensitive:wrap:]):  Main work:  traverse the
+	frame tree and drive the overall find.
+        * WebView.subproj/WebViewPrivate.h:
+
 2003-04-14  Chris Blumenberg  <cblu@apple.com>
 
 	Log time spent loading each plug-in.

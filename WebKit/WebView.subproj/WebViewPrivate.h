@@ -70,6 +70,11 @@ typedef struct _WebResourceDelegateImplementationCache {
 }
 @end
 
+@interface WebView (WebPrivateToBePublic)
+// I think this should become public - see 3228520
+- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
+@end
+
 @interface WebView (WebPrivate)
 
 /*!
@@ -105,7 +110,6 @@ typedef struct _WebResourceDelegateImplementationCache {
      @result The frame that has the associated view.
      */
 - (WebFrame *)_frameForView: (WebFrameView *)aView;
-
 
 - (WebFrame *)_createFrameNamed:(NSString *)name inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling;
 

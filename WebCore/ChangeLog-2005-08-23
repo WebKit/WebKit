@@ -1,3 +1,43 @@
+2003-04-14  Trey Matteson  <trey@apple.com>
+
+	3009051 - Find on Page stops (once) at end of page, should wrap automatically	WebKit
+	3051546 - Find on Page doesn't work for frameset pages
+	3058437 - can have a selection in two frames at the same time (problem for finding in frames)
+	3097498 - Find Previous continues to "Find Next" until end of paragraph	
+	3097507 - Find Next searches from previous find hit instead of current selection
+
+	And a commented out fix for:
+
+	3121828 - scrollToVisible on find cuts off the left part of the view due to needless horiz. scroll
+
+	Various missing pieces are implemented to support better finding.  The fix for
+	3121828 is left out until 3228511 is dealt with.
+
+        Reviewed by Maciej.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::findTextBegin):  Added args to allow starting a find at an arbitrary
+	places, such as the current selection.
+        (KHTMLPart::findTextNext):  Implement reverse search - only the param was there.
+	Don't do lame scrolling selection to visible here, do better ourselves later.
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::jumpToSelection):  Make whole selection rect visible, and only scroll
+	anything if needed.  ***Commented out in lieu of 3228511.
+        (KWQKHTMLPart::findString):  Implement find starting at the right place relative to
+	the selection, forwards and backwards, and wraparound.  This is just setup around
+	calling findTextNext.  Also scroll the result to be visible.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+	(-[WebCoreBridge deselectAll]):  Call part instead of doc so its state isn't out of sync.
+        (-[WebCoreBridge searchFor:direction:caseSensitive:wrap:]):  Pass extra wrap arg.
+        * kwq/WebCoreDOMNode.mm:
+        (+[WebCoreDOMNode nodeWithImpl:DOM::]):
+	Return a nil for a null element instead of croaking.
+        (-[WebCoreDOMNode initWithImpl:DOM::]):  Ditto.
+
 2003-04-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

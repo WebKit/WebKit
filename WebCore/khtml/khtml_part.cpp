@@ -2016,10 +2016,10 @@ void KHTMLPart::setOnlyLocalReferences(bool enable)
   d->m_onlyLocalReferences = enable;
 }
 
-void KHTMLPart::findTextBegin()
+void KHTMLPart::findTextBegin(NodeImpl *startNode, int startPos)
 {
-  d->m_findPos = -1;
-  d->m_findNode = 0;
+    d->m_findPos = startPos;
+    d->m_findNode = startNode;
 }
 
 bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensitive, bool isRegExp )
@@ -2067,16 +2067,30 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
               matchLen = str.length();
             }
 #else
-            d->m_findPos = s.string().find(str, d->m_findPos+1, caseSensitive);
+            if (forward) {
+                d->m_findPos = s.string().find(str, d->m_findPos+1, caseSensitive);
+            } else {
+                if (d->m_findPos == -1) {
+                    // search from end of node
+                    d->m_findPos = s.string().findRev(str, -1, caseSensitive);
+                } else if (d->m_findPos != 0) {
+                    d->m_findPos = s.string().findRev(str, d->m_findPos-1, caseSensitive);
+                } else {
+                    // already at start of this node, on to the next node
+                    d->m_findPos = -1;
+                }
+            }
             matchLen = str.length();
 #endif
 
             if(d->m_findPos != -1)
             {
+#if !APPLE_CHANGES
                 int x = 0, y = 0;
                 static_cast<khtml::RenderText *>(d->m_findNode->renderer())
                   ->posOfChar(d->m_findPos, x, y);
                 d->m_view->setContentsPos(x-50, y-50);
+#endif
 
                 d->m_selectionStart = d->m_findNode;
                 d->m_startOffset = d->m_findPos;

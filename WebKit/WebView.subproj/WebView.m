@@ -16,8 +16,10 @@
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebHTMLView.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebPreferences.h>
@@ -472,6 +474,81 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
         [[self window] makeFirstResponder:[[self mainFrame] frameView]];
     }
     return YES;
+}
+
+// Return the frame holding first responder
+- (WebFrame *)_currentFrame
+{
+    // Find the frame holding the first responder, or holding the first form in the doc
+    NSResponder *resp = [[self window] firstResponder];
+    if (!resp || ![resp isKindOfClass:[NSView class]] || ![(NSView *)resp isDescendantOf:self]) {
+        return nil;	// first responder outside our view tree
+    } else {
+        WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
+        return [frameView webFrame];
+    }
+}
+
+static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
+{
+    return forward ? [curr _nextFrameWithWrap:wrapFlag]
+                   : [curr _previousFrameWithWrap:wrapFlag];
+}
+
+// I think this should become public - see 3228520
+
+// Search from the end of the currently selected location, or from the beginning of the
+// document if nothing is selected.  Deals with subframes.
+- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
+{
+    // Get the frame holding the selection, or start with the main frame
+    WebFrame *startFrame = [self _currentFrame];
+    if (!startFrame) {
+        startFrame = [self mainFrame];
+    }
+
+    // Search the first frame, then all the other frames, in order
+    id <WebDocumentSearching> startSearchView = nil;
+    BOOL startHasSelection = NO;
+    WebFrame *frame = startFrame;
+    do {
+        id <WebDocumentView> view = [[frame frameView] documentView];
+        if ([view conformsToProtocol:@protocol(WebDocumentSearching)]) {
+            id <WebDocumentSearching> searchView = (id <WebDocumentSearching>)view;
+
+            // first time through
+            if (frame == startFrame) {
+                // Remember if start even has a selection, to know if we need to search more later
+                if ([searchView isKindOfClass:[WebHTMLView class]]) {
+                    // optimization for the common case, to avoid making giant string for selection
+                    startHasSelection = [[startFrame _bridge] selectionStart] != nil;
+                } else if ([searchView conformsToProtocol:@protocol(WebDocumentText)]) {
+                    startHasSelection = [(id <WebDocumentText>)searchView selectedString] != nil;
+                }
+                startSearchView = (id <WebDocumentSearching>)searchView;
+            }
+            
+            // Note at this point we are assuming the search will be done top-to-bottom,
+            // not starting at any selection that exists.  See 3228554.
+            BOOL success = [searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO];
+            if (success) {
+                [[self window] makeFirstResponder:searchView];
+                return YES;
+            }
+        }
+        frame = incrementFrame(frame, forward, wrapFlag);
+    } while (frame != startFrame);
+
+    // Search contents of startFrame, on the other side of the selection that we did earlier.
+    // We cheat a bit and just research with wrap on
+    if (startHasSelection && startSearchView) {
+        BOOL success = [startSearchView searchFor:string direction:forward caseSensitive:caseFlag wrap:YES];
+        if (success) {
+            [[self window] makeFirstResponder:startSearchView];
+            return YES;
+        }
+    }
+    return NO;
 }
 
 @end
