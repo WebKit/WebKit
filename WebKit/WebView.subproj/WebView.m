@@ -1227,6 +1227,9 @@ NS_ENDHANDLER
     [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
     
     [_private release];
+    // [super dealloc] can end up dispatching against _private (3466082)
+    _private = nil;
+
     [super dealloc];
 }
 
@@ -1324,7 +1327,7 @@ NS_ENDHANDLER
 
 - (WebFrame *)mainFrame
 {
-    // This can be called in intialization, before _private has been set up (3465613)
+    // This can be called in initialization, before _private has been set up (3465613)
     if (_private != nil) {
         return _private->mainFrame;
     }

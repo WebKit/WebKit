@@ -1,3 +1,15 @@
+2003-10-28  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3466082>: 7B85/111: Crash viewing web page ([WebView setNextKeyView:])
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView dealloc]):
+        set _private to nil after releasing, because [super dealloc] can dispatch to it
+        (-[WebView mainFrame]):
+        fixed spelling error in comment
+
 2003-10-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3465383>: REGRESSION: Text field progress bar goes to 100% after error or stop
