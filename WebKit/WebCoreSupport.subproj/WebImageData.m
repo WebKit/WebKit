@@ -625,6 +625,11 @@ static NSMutableSet *activeAnimations;
     }
 }
 
+- (BOOL)shouldAnimate
+{
+    return [self numberOfImages] > 1 && ![self isAnimationFinished];
+}
+
 - (void)animate
 {
     if (frameTimer && [frameTimer isValid])

@@ -1,5 +1,23 @@
 2004-12-09  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3905789> Burn Disc image vibrates rapidly
+
+	Restrict our support for animated images to GIF.  We used to
+	use presence of more than one image in a resource to determine
+	if an image should be animated.  This caused us to animate icns!
+	If we ever support any other animated image formats we'll have
+	to extend.
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData shouldAnimate]):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer _startOrContinueAnimationIfNecessary]):
+
+2004-12-09  Richard Williamson   <rjw@apple.com>
+
 	Make WebPluginDatabase.h private (Dashboard needs SPI).
 
         * WebKit.pbproj/project.pbxproj:
@@ -83,7 +101,7 @@
 
 2004-12-07  Richard Williamson   <rjw@apple.com>
 
-	Support threaded image decoding on machines w/ > 2 CPUs.
+	Support threaded image decoding on machines w/ >= 2 CPUs.
 
         Reviewed by Maciej and Chris.
 

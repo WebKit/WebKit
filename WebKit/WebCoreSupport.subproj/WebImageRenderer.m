@@ -177,7 +177,7 @@
 
 - (void)_startOrContinueAnimationIfNecessary
 {
-    if ([imageData numberOfImages] > 1 && ![imageData isAnimationFinished]) {
+    if ([imageData shouldAnimate] && [MIMEType isEqual:@"image/gif"]) {
         [imageData addAnimatingRenderer:self inView:[NSView focusView]];
         [imageData animate];
     }

@@ -42,6 +42,7 @@
 - (BOOL)isNull;
 - (CGSize)size;
 - (void)animate;
+- (BOOL)shouldAnimate;
 + (void)stopAnimationsInView:(NSView *)aView;
 - (void)addAnimatingRenderer:(WebImageRenderer *)r inView:(NSView *)view;
 - (void)removeAnimatingRenderer:(WebImageRenderer *)self;
