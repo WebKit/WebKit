@@ -28,8 +28,8 @@
         Microseconds(&msecs);
         event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
         acceptedEvent = NPP_HandleEvent(instance, &event);
-        //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u %d\n", acceptedEvent, (unsigned)event.when, shouldStop);
-        [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.1];
+        //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(nullEvent): %d  when: %u %d\n", acceptedEvent, (unsigned)event.when, shouldStop);
+        [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.01];
     }
 }
 

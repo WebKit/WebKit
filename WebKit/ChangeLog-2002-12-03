@@ -1,3 +1,21 @@
+2002-05-06  Chris Blumenberg  <cblu@apple.com>
+
+	Made start and stop work cleaner. 
+
+	Now observe defaults changes so that plug-ins
+	are disabled or enabled immediately (2871725). 
+
+	* Plugins.subproj/IFPluginNullEventSender.m:
+	(-[IFPluginNullEventSender sendNullEvents]):
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:mode:]):
+	(-[IFPluginView start]):
+	(-[IFPluginView stop]):
+	(-[IFPluginView drawRect:]):
+	(-[IFPluginView windowWillClose:]):
+	(-[IFPluginView defaultsHaveChanged:]):
+
 2002-05-06  Richard J. Williamson  <rjw@apple.com>
 
         Fixed width measurement regression.  We lost the final ROUND_TO_INT

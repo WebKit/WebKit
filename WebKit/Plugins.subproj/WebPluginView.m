@@ -113,7 +113,7 @@ newCString(NSString *string)
     }
     
     // Initialize globals
-    transferred = NO;
+    canRestart = YES;
     isStarted = NO;
     filesToErase = [[NSMutableArray alloc] init];
     activeURLHandles = [[NSMutableArray alloc] init];
@@ -233,31 +233,59 @@ newCString(NSString *string)
 {
     NPSavedData saved;
     NPError npErr;
+    NSNotificationCenter *notificationCenter;
+    NSWindow *theWindow;
+    
+    if(isStarted || !canRestart)
+        return;
     
     isStarted = YES;
     
     npErr = NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, &saved);
-
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
     
     // Create a WindowRef is one doesn't already exist
     [[self window] _windowRef];
+        
+    [self setWindow];
+    
+    theWindow = [self window];
+    notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
+    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:@"NSWindowWillCloseNotification" object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowBecameKey:) name:@"NSWindowDidBecomeKeyNotification" object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowResignedKey:) name:@"NSWindowDidResignKeyNotification" object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) name:@"NSUserDefaultsDidChangeNotification" object:nil];
+    
+    [self sendActivateEvent:[theWindow isKeyWindow]];
+    if(URL)
+        [self newStream:[NSURL URLWithString:URL] mimeType:mime notifyData:NULL];
+    eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
+    [eventSender sendNullEvents];
+    trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
+    
+    id webView = [self findSuperview:@"IFWebView"];
+    webController = [webView controller];
+    webDataSource = [[webController frameForView:webView] dataSource];
 }
 
 - (void)stop
 {
     NPError npErr;
     
-    if (isStarted){
-        [activeURLHandles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];
-        [eventSender stop];
-        [eventSender release];
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-        [self removeTrackingRect:trackingTag];
-        npErr = NPP_Destroy(instance, NULL);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
-        isStarted = NO;
-    }
+    if (!isStarted)
+        return;
+        
+    isStarted = NO;
+        
+    [activeURLHandles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];
+    [eventSender stop];
+    [eventSender release];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self removeTrackingRect:trackingTag];
+    npErr = NPP_Destroy(instance, NULL);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
 }
 
 - (NSView *) findSuperview:(NSString *)viewName
@@ -310,32 +338,10 @@ newCString(NSString *string)
 
 - (void)drawRect:(NSRect)rect
 {
-    if(!transferred){
-        NSNotificationCenter *notificationCenter;
-        NSWindow *theWindow;
-        
+    if(!isStarted)
         [self start];
-        [self setWindow];
-        theWindow = [self window];
-        notificationCenter = [NSNotificationCenter defaultCenter];
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:theWindow];
-        [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:@"NSWindowWillCloseNotification" object:theWindow];
-        [notificationCenter addObserver:self selector:@selector(windowBecameKey:) name:@"NSWindowDidBecomeKeyNotification" object:theWindow];
-        [notificationCenter addObserver:self selector:@selector(windowResignedKey:) name:@"NSWindowDidResignKeyNotification" object:theWindow];
-        [self sendActivateEvent:[theWindow isKeyWindow]];
-        if(URL)
-            [self newStream:[NSURL URLWithString:URL] mimeType:mime notifyData:NULL];
-        eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
-        [eventSender sendNullEvents];
-        transferred = YES;
-        trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
-        
-        id webView = [self findSuperview:@"IFWebView"];
-        webController = [webView controller];
-        webDataSource = [[webController frameForView:webView] dataSource];
-    }
-    [self sendUpdateEvent];
+    if(isStarted)
+        [self sendUpdateEvent];
 }
 
 - (BOOL)isFlipped
@@ -483,6 +489,19 @@ newCString(NSString *string)
 - (void) windowWillClose:(NSNotification *)notification
 {
     [self stop];
+}
+
+- (void) defaultsHaveChanged:(NSNotification *)notification
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults boolForKey:@"WebKitPluginsEnabled"]){
+        canRestart = YES;
+        [self start];
+    }else{
+        canRestart = NO;
+        [self stop];
+        [self setNeedsDisplay:YES];
+    }
 }
 
 
