@@ -1,3 +1,13 @@
+2003-07-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed leak of WebDataRequestParameters objects
+
+        * WebView.subproj/WebDataProtocol.m:
+        (-[NSMutableURLRequest _webDataRequestParametersForWriting]):
+        Release the WebDataRequestParameters object after putting it in the dictionary.
+
 2003-07-28  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3236815 -- bitmap TIFFs at > 72 dpi are scaled incorrectly 

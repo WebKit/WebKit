@@ -120,6 +120,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     if (!result) {
         result = [[WebDataRequestParameters alloc] init];
         [NSURLProtocol setProperty:result forKey:WebDataRequestPropertyKey inRequest:self];
+        [result release];
     }
     return result;
 }
