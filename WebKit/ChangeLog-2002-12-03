@@ -2,6 +2,12 @@
 
 	* WebCoreSupport.subproj/IFTextRenderer.m:
 	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+	Fixed a possible uninitialized variable problem that the compiler and Don caught.
+
+2002-06-09  Darin Adler  <darin@apple.com>
+
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
 	Add code to handle drawing when are more than LOCAL_GLYPH_BUFFER_SIZE advances.
 	I ran into this loading <http://jersey.apple.com/data/20020606-074404M0.html>.
 	Also fix handling of advances for the obscure case where we hit a non-base character,

@@ -536,15 +536,16 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     CGContextShowGlyphsWithDeviceAdvances (cgContext, glyphs, advances, numGlyphs);
 #endif
     
-cleanup:
-    if (glyphs != localGlyphBuffer) {
-        free(glyphs);
-    }
 #ifndef DRAW_WITHOUT_ADVANCE
     if (advances != localAdvanceBuffer) {
         free(advances);
     }
 #endif
+
+cleanup:
+    if (glyphs != localGlyphBuffer) {
+        free(glyphs);
+    }
 }
 
 
