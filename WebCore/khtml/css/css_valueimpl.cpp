@@ -501,14 +501,25 @@ void CSSPrimitiveValueImpl::cleanup()
 int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics )
 {
     double result = computeLengthFloat( style, devMetrics );
-    int intResult = (int)result;
 #if APPLE_CHANGES
-    // This conversion is imprecise, often resulting in values of e.g., 44.99998.  We
+    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
-    double newResult = (intResult < 0) ? result-0.01 : result+0.01;
-    int secondIntResult = (int)newResult;
-    if (secondIntResult != intResult)
-        return secondIntResult;
+    int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
+#else
+    int intResult = (int)result;
+#endif
+    return intResult;
+}
+
+int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics, double multiplier )
+{
+    double result = multiplier * computeLengthFloat( style, devMetrics );
+#if APPLE_CHANGES
+    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
+    // need to go ahead and round if we're really close to the next integer value.
+    int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
+#else
+    int intResult = (int)result;
 #endif
     return intResult;
 }

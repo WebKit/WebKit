@@ -1,5 +1,23 @@
 2003-04-03  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3194468 -- ARCH: text zoom should scale line-height as well as font-size
+
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/css_valueimpl.cpp: (CSSPrimitiveValueImpl::computeLength): Add a new version that does
+        a multiply before rounding. Also simplify the rounding code.
+        
+        * khtml/css/cssstyleselector.cpp: (CSSStyleSelector::applyRule): For line height, multiply by the
+        text zoom factor in cases where the height isn't already relative to the font size.
+
+        - other changes
+
+        * khtml/rendering/render_replaced.cpp: (RenderWidget::paintObject): Disable code to work around
+        X11 widget size limit. It can only do harm for us.
+
+2003-04-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed bug 3216832 -- REGRESSION: scroll bar doesn't appear soon enough when shrinking excite.com horizontally

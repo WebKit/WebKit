@@ -178,7 +178,7 @@ public:
      * and some tool to calibrate.
      */
     int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
-
+    int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics, double multiplier );
     double computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
 
     // use with care!!!
