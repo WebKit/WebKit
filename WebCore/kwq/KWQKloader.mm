@@ -65,6 +65,10 @@ using namespace khtml;
 using namespace DOM;
 
 #ifdef APPLE_CHANGES
+static bool cacheDisabled;
+#endif
+
+#ifdef APPLE_CHANGES
 WCIFLoadProgressMakeFunc WCIFLoadProgressMake;
 
 void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
@@ -1461,9 +1465,15 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
 #endif
         CachedImage *im = new CachedImage(dl, kurl.url(), reload, _expireDate);
         if ( dl && dl->autoloadImages() ) Cache::loader()->load(dl, im, true);
+#ifdef APPLE_CHANGES
+        if (!cacheDisabled) {
+#endif
         cache->insert( kurl.url(), im );
         lru->prepend( kurl.url() );
         flush();
+#ifdef APPLE_CHANGES
+        }
+#endif
         o = im;
     }
 
@@ -1508,9 +1518,15 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const DOMString & 
         kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
 #endif
         CachedCSSStyleSheet *sheet = new CachedCSSStyleSheet(dl, kurl.url(), reload, _expireDate, charset);
+#ifdef APPLE_CHANGES
+        if (!cacheDisabled) {
+#endif
         cache->insert( kurl.url(), sheet );
         lru->prepend( kurl.url() );
         flush();
+#ifdef APPLE_CHANGES
+        }
+#endif
         o = sheet;
     }
 
@@ -1555,9 +1571,15 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
         kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
 #endif
         CachedScript *script = new CachedScript(dl, kurl.url(), reload, _expireDate, charset);
+#ifdef APPLE_CHANGES
+        if (!cacheDisabled) {
+#endif
         cache->insert( kurl.url(), script );
         lru->prepend( kurl.url() );
         flush();
+#ifdef APPLE_CHANGES
+        }
+#endif
         o = script;
     }
 
@@ -1610,17 +1632,15 @@ void Cache::flush(bool force)
         CachedObject *o = cache->find( url );
 
 #if APPLE_CHANGES
-        if( !o || !o->canDelete() || o->status() == CachedObject::Persistent ) {
-#else /* APPLE_CHANGES not defined */
+        if( !o ) {
+            continue;
+        }
+#endif
+
         if( !o->canDelete() || o->status() == CachedObject::Persistent ) {
-#endif /* APPLE_CHANGES not defined */
                continue; // image is still used or cached permanently
                // in this case don't count it for the size of the cache.
-#if APPLE_CHANGES 
-        } // extra brace to avoid confusing prepare-ChangeLog
-#else /* APPLE_CHANGES not defined */
-	}
-#endif /* APPLE_CHANGES not defined */
+        }
 
         if( o->status() != CachedObject::Uncacheable )
         {
@@ -1710,5 +1730,66 @@ void Cache::removeCacheEntry( CachedObject *object )
      delete object;
 }
 
+#ifdef APPLE_CHANGES
+
+Cache::Statistics Cache::getStatistics()
+{
+    Statistics stats;
+
+    init();
+    
+    QDictIterator<CachedObject> i(*cache);
+    for (i.toFirst(); i.current(); ++i) {
+        CachedObject *o = i.current();
+        switch (o->type()) {
+            case CachedObject::Image:
+                if (static_cast<CachedImage *>(o)->m) {
+                    stats.movies.count++;
+                    stats.movies.size += o->size();
+                } else {
+                    stats.images.count++;
+                    stats.images.size += o->size();
+                }
+                break;
+
+            case CachedObject::CSSStyleSheet:
+                stats.styleSheets.count++;
+                stats.styleSheets.size += o->size();
+                break;
+
+            case CachedObject::Script:
+                stats.scripts.count++;
+                stats.scripts.size += o->size();
+                break;
+
+            default:
+                stats.other.count++;
+                stats.other.size += o->size();
+        }
+    }
+    
+    return stats;
+}
+
+void Cache::flushAll()
+{
+    for (;;) {
+        QDictIterator<CachedObject> i(*cache);
+        CachedObject *o = i.toFirst();
+        if (!o)
+            break;
+        removeCacheEntry(o);
+    }
+    cacheSize = 0;
+}
+
+void Cache::setCacheDisabled(bool disabled)
+{
+    cacheDisabled = disabled;
+    if (disabled)
+        flushAll();
+}
+
+#endif
 
 #include "loader.moc"

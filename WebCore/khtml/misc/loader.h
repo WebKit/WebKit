@@ -513,6 +513,26 @@ namespace khtml
 
         static void removeCacheEntry( CachedObject *object );
 
+#ifdef APPLE_CHANGES
+        struct TypeStatistic {
+            int count;
+            int size;
+            TypeStatistic() : count(0), size(0) { }
+        };
+        
+        struct Statistics {
+            TypeStatistic images;
+            TypeStatistic movies;
+            TypeStatistic styleSheets;
+            TypeStatistic scripts;
+            TypeStatistic other;
+        };
+
+        static Statistics getStatistics();
+        static void flushAll();
+        static void setCacheDisabled(bool);
+#endif
+
         protected:
 	/*
 	 * @internal

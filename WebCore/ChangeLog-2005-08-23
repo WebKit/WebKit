@@ -1,3 +1,13 @@
+2002-03-28  Darin Adler  <darin@apple.com>
+
+	* src/kdelibs/khtml/misc/loader.h: Added API for looking at the contents of the
+        cache, flushing the cache, and disabling the cache.
+	* src/kwq/KWQKloader.mm: (Cache::requestImage): Don't cache if disabled.
+        (Cache::requestStyleSheet): Don't cache if disabled.
+	(Cache::requestScript): Don't cache if disabled.
+        (Cache::flush): Simplify ifdefs.
+        (Cache::getStatistics), (Cache::flushAll), (Cache::setCacheDisabled): New.
+
 2002-03-28  Richard Williamson  <rjw@apple.com>
 
         Fixed crasher.  Removed unnecessary cleanup to widget that was called after the
