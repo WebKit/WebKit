@@ -40,7 +40,7 @@ static BOOL shouldUseThreadedDecoding = NO;
 
 + (BOOL)shouldUseThreadedDecoding
 {
-    return !debuggingRenderTree && shouldUseThreadedDecoding;
+    return !debuggingRenderTree() && shouldUseThreadedDecoding;
 }
 
 + (void)setShouldUseThreadedDecoding:(BOOL)flag
