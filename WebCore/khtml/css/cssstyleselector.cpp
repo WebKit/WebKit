@@ -531,24 +531,24 @@ NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
 {
     // FIXME: Investigate the difference between elementsCanShareStyle and a pointer compare of renderstyles.
     if (parent && parent->renderer() && !parent->inlineStyleDecl() && !parent->hasID()) {
-        DOM::NodeImpl* n;
-        for (n = parent->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
+        DOM::NodeImpl* n = parent->previousSibling();
+        RenderStyle* st = parent->renderer()->style();
         int subcount = 0;
         while (n) {
-            if (n->renderer() && /*elementsCanShareStyle(static_cast<ElementImpl*>(n), parent)) //*/n->renderer()->style() == parent->renderer()->style())
+            if (n->renderer() && n->renderer()->style() == st)
                 return n->lastChild();
             if (subcount++ == siblingThreshold)
                 return 0;
-            n = n->previousSibling(); //for (n = n->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
+            n = n->previousSibling();
         }
         if (!n && parent->parentNode() && parent->parentNode()->isElementNode())
             n = locateCousinList(static_cast<ElementImpl*>(parent->parentNode()));
         while (n) {
-            if (n->renderer() && /*elementsCanShareStyle(static_cast<ElementImpl*>(n), parent)) //*/n->renderer()->style() == parent->renderer()->style())
+            if (n->renderer() && n->renderer()->style() == st)
                 return n->lastChild();
             if (subcount++ == siblingThreshold)
                 return 0;
-            for (n = n->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
+            n = n->previousSibling();
         }
     }
     return 0;
