@@ -2793,9 +2793,7 @@ static WebHTMLView *lastHitView = nil;
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
         [self layoutToMinimumPageWidth:minPageWidth maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
-        if (printing) {
-            [[self _webView] _adjustPrintingMarginsForHeaderAndFooter];
-        } else {
+        if (!printing) {
             // Can't do this when starting printing or nested printing won't work, see 3491427.
             [self setNeedsDisplay:NO];
         }
@@ -2853,6 +2851,7 @@ static WebHTMLView *lastHitView = nil;
     return [self _scaleFactorForPrintOperation:printOperation];
 }
 
+// This is used for Carbon printing. At some point we might want to make this public API.
 - (void)setPageWidthForPrinting:(float)pageWidth
 {
     [self _setPrinting:NO minimumPageWidth:0. maximumPageWidth:0. adjustViewSize:NO];
@@ -2877,6 +2876,7 @@ static WebHTMLView *lastHitView = nil;
         maxLayoutWidth = paperWidth*PrintingMaximumShrinkFactor;
     }
     [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES]; // will relayout
+    [[self _webView] _adjustPrintingMarginsForHeaderAndFooter];
     
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
     // if something caused setNeedsDisplay after this point. If so, it's not a big tragedy, because
@@ -2888,7 +2888,7 @@ static WebHTMLView *lastHitView = nil;
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     [_private->pageRects release];
     NSArray *newPageRects = [[self _bridge] computePageRectsWithPrintWidthScaleFactor:userScaleFactor
-                                                                          printHeight:[self _calculatePrintHeight]/totalScaleFactor];
+                                                                          printHeight:floorf([self _calculatePrintHeight]/totalScaleFactor)];
     // AppKit gets all messed up if you give it a zero-length page count (see 3576334), so if we
     // hit that case we'll pass along a degenerate 1 pixel square to print. This will print
     // a blank page (with correct-looking header and footer if that option is on), which matches
