@@ -160,7 +160,10 @@
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL referrer:(NSString *)referrer
 {
-    return [WebSubresourceClient startLoadingResource:resourceLoader withURL:URL referrer:referrer forDataSource:[self dataSource]];
+    return [WebSubresourceClient startLoadingResource:resourceLoader
+                                              withURL:URL
+                                             referrer:referrer
+                                        forDataSource:[self dataSource]];
 }
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes

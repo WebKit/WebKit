@@ -1,3 +1,12 @@
+2002-10-01  John Sullivan  <sullivan@apple.com>
+
+        * WebKit.exp: added .objc_class_name_WebTextRendererFactory
+	so I could use it from WebBrowser.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:referrer:]):
+	Just changed whitespace so the .exp change would be built.
+
 2002-10-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed build breakage.
