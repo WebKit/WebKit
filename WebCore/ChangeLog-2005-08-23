@@ -1,3 +1,8 @@
+2003-12-10  Chris Blumenberg  <cblu@apple.com>
+
+        * kwq/KWQKSSLKeyGen.mm:
+        (KSSLKeyGen::signedPublicKeyAndChallengeString): removed unnecessary includes
+
 2003-12-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3505846, overflow:auto region doesn't update when scrolled.  The child layers inside an overflow:auto

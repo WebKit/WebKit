@@ -25,11 +25,8 @@
 
 #import "KWQKSSLKeyGen.h"
 
-#import "KWQAssertions.h"
 #import "KWQString.h"
 #import "WebCoreKeyGenerator.h"
-
-#import <Security/Security.h>
 
 QStringList KSSLKeyGen::supportedKeySizes()
 { 
