@@ -1,3 +1,15 @@
+2002-12-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3134560 -- Lord of the Rings desktops don't load
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Removed the APPLE_CHANGES here.
+	The comment claims that we don't need the code because "JavaScript will do the work
+	below on demand", but that's not true for setting the base URL. Also, the comment
+	claims that this "adds an extra entry to the back/forward list", but testing does not
+	bear that out.
+
 === Alexander-46 ===
 
 2002-12-28  Ken Kocienda  <kocienda@apple.com>

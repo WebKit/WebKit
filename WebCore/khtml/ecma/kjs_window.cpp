@@ -1225,11 +1225,6 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         //qDebug("opener set to %p (this Window's part) in new Window %p  (this Window=%p)",part,win,window);
         khtmlpart->setOpener(part);
         khtmlpart->setOpenedByJS(true);
-#if APPLE_CHANGES
-	// We don't need this because accessing document from
-	// JavaScript will do the work below on demand, and having
-	// this in adds an extra entry to the back/forward list.
-#else
         if (khtmlpart->document().isNull()) {
           khtmlpart->begin();
           khtmlpart->write("<HTML><BODY>");
@@ -1240,7 +1235,6 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
             khtmlpart->docImpl()->setBaseURL( part->docImpl()->baseURL() );
           }
         }
-#endif
         uargs.serviceType = QString::null;
         if (uargs.frameName == "_blank")
           uargs.frameName = QString::null;
