@@ -281,14 +281,14 @@
     [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL] withType:type];
 }
 
-- (void)loadURL:(NSString *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
+- (void)loadURL:(NSString *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
 {
-    [frame _loadURL:[NSURL _web_URLWithString:URL] loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard)  triggeringEvent:event isFormSubmission:isFormSubmission];
+    [frame _loadURL:[NSURL _web_URLWithString:URL] loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard)  triggeringEvent:event formValues:values];
 }
 
-- (void)postWithURL:(NSString *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event
+- (void)postWithURL:(NSString *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
 {
-    [frame _postWithURL:[NSURL _web_URLWithString:URL] data:data contentType:contentType triggeringEvent:event];
+    [frame _postWithURL:[NSURL _web_URLWithString:URL] data:data contentType:contentType triggeringEvent:event formValues:values];
 }
 
 - (NSString *)generateFrameName

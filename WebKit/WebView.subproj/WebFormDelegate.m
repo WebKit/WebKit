@@ -43,4 +43,6 @@
     return NO;
 }
 
+- (void)frame:(WebFrame *)frame willSubmitFormWithValues:(NSDictionary *)values  { }
+
 @end

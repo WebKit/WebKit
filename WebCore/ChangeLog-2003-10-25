@@ -1,3 +1,26 @@
+2003-02-04  Trey Matteson  <trey@apple.com>
+
+	Pass formValues up through the bridge at submit time.
+
+        Reviewed by Maciej
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::submit):  Tell KWQPart about the form values, instead of
+	talking to the khtmlview.
+        * kwq/KWQKHTMLPart.h:  New ivar to store formValues.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):  Init ivar
+        (KWQKHTMLPart::~KWQKHTMLPart):  Free ivar
+        (KWQKHTMLPart::openURL):  Pass nil formValues
+        (KWQKHTMLPart::openURLRequest):    Pass nil formValues
+        (KWQKHTMLPart::clearRecordedFormValues):  Clear saved formValues
+        (KWQKHTMLPart::recordFormValue):  Record a name/value
+        (KWQKHTMLPart::submitForm):  Pass along recorded formValues
+        (KWQKHTMLPart::urlSelected):    Pass nil formValues
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow):    Pass nil formValues
+        * kwq/WebCoreBridge.h:  New params for formValues
+
 2003-02-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

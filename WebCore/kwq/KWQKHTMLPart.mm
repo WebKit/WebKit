@@ -127,6 +127,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _mouseDownMayStartDrag(false)
     , _mouseDownMayStartSelect(false)
     , _formSubmittedFlag(false)
+    , _formValues(nil)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -144,6 +145,7 @@ KWQKHTMLPart::~KWQKHTMLPart()
     if (_ownsView) {
         delete d->m_view;
     }
+    [_formValues release];
 }
 
 WebCoreBridge *KWQKHTMLPart::bridgeForFrameName(const QString &frameName)
@@ -173,13 +175,27 @@ bool KWQKHTMLPart::openURL(const KURL &url)
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
-    [_bridge loadURL:url.url().getNSString() reload:NO triggeringEvent:nil isFormSubmission:NO];
+    [_bridge loadURL:url.url().getNSString() reload:NO triggeringEvent:nil formValues:nil];
     return true;
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
-    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:nil isFormSubmission:NO];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:nil formValues:nil];
+}
+
+void KWQKHTMLPart::clearRecordedFormValues()
+{
+    [_formValues release];
+    _formValues = nil;
+}
+
+void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value)
+{
+    if (!_formValues) {
+        _formValues = [[NSMutableDictionary alloc] init];
+    }
+    [_formValues setObject:value.getNSString() forKey:name.getNSString()];
 }
 
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
@@ -207,17 +223,22 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         }
         _formSubmittedFlag = true;
     }
-    
+
     if (!args.doPost()) {
-        [target loadURL:url.url().getNSString() reload:args.reload
-            triggeringEvent:_currentEvent isFormSubmission:YES];
+        [target loadURL:url.url().getNSString()
+                 reload:args.reload
+        triggeringEvent:_currentEvent
+            formValues:_formValues];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
         [target postWithURL:url.url().getNSString()
-            data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
-            contentType:contentType.mid(14).getNSString() triggeringEvent:_currentEvent];
+                       data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
+                contentType:contentType.mid(14).getNSString()
+            triggeringEvent:_currentEvent
+                formValues:_formValues];
     }
+    clearRecordedFormValues();
 }
 
 void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
@@ -240,8 +261,7 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload
-        triggeringEvent:_currentEvent isFormSubmission:NO];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:_currentEvent formValues:nil];
 }
 
 class KWQPluginPart : public ReadOnlyPart

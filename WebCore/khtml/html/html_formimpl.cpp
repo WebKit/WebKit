@@ -447,6 +447,9 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
     bool needButtonActivation = activateSubmitButton;	// do we need to activate a submit button?
     
     KHTMLView *view = getDocument()->view();
+#if APPLE_CHANGES
+    KWQ(view->part())->clearRecordedFormValues();
+#endif
     for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {
         HTMLGenericFormElementImpl* current = it.current();
         if (current->id() == ID_INPUT &&
@@ -454,7 +457,11 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
             static_cast<HTMLInputElementImpl*>(current)->autoComplete() )
         {
             HTMLInputElementImpl *input = static_cast<HTMLInputElementImpl *>(current);
+#if APPLE_CHANGES
+            KWQ(view->part())->recordFormValue(input->name().string(), input->value().string());
+#else
             view->addFormCompletionItem(input->name().string(), input->value().string());
+#endif
         }
 
         if (needButtonActivation) {

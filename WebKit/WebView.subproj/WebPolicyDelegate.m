@@ -7,7 +7,7 @@
 #import <WebKit/WebControllerPolicyDelegatePrivate.h>
 
 NSString *WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";
-NSString *WebActionElementKey = @"WebActionNavigationTypeKey";
+NSString *WebActionElementKey = @"WebActionElementKey";
 NSString *WebActionButtonKey = @"WebActionButtonKey"; 
 NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";

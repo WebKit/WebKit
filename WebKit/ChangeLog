@@ -1,3 +1,59 @@
+2003-02-04  Trey Matteson  <trey@apple.com>
+
+	WC now tells us the form values being submitted with a get/post.
+	We forward this info to a new WebFormDelegate method.  Most of this
+	change is just glue passing the formValues through all our layers.
+
+        Reviewed by Maciej
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:reload:triggeringEvent:formValues:])
+	Pass along formValues.
+        (-[WebBridge postWithURL:data:contentType:triggeringEvent:formValues:]):
+	Pass along formValues.
+        * WebKit.pbproj/project.pbxproj:  Reorder previously added files.
+        * WebView.subproj/WebControllerPolicyDelegate.m:  Fix latent copy/paste error
+	where two keys had the same underlying string value!
+        * WebView.subproj/WebFormDelegate.h:  Declare new delegate method.
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate frame:willSubmitFormWithValues:]):   NOP impl of new method.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):  Pass nil formValues.
+        (-[WebFrame reload]):  Pass nil formValues.
+        * WebView.subproj/WebFramePrivate.h:  New ivar to hold form values
+	while waiting for the policy delegate response.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]):  ASSERT new ivar is nil.
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):   Pass nil formValues.
+        (-[WebFrame _loadRequest:triggeringAction:loadType:formValues:]):
+	Pass along formValues.
+	(-[WebFrame _invalidatePendingPolicyDecisionCallingDefaultAction:]):
+	Pass nil formValues to continuation method.
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formValues:andCall:withSelector:]):
+	Stash formValues before calling policy delegate.
+        (-[WebFrame _continueAfterNavigationPolicy:]):
+	Resurrect formValues after calling policy delegate, pass to continuation method.
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formValues:]):
+	Bail on nil request instead of shouldContinue=NO
+        (-[WebFrame _loadURL:loadType:triggeringEvent:formValues:]):
+	Pass formValues along.
+        (-[WebFrame _loadURL:intoChild:]): Pass nil formValues.
+        (-[WebFrame _postWithURL:data:contentType:triggeringEvent:formValues:]):
+	Pass formValues along.
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]):
+	Pass nil formValues.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formValues:]):
+	Bail on nil request instead of shouldContinue=NO.  Call new FormDelegate method.
+        (-[WebFrame _loadDataSource:withLoadType:formValues:]):
+	Pass formValues along.
+        (-[WebFrame _downloadRequest:toDirectory:]):
+	Pass nil formValues.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterNavigationPolicy:formValues:]):
+	Bail on nil request instead of shouldContinue=NO
+        (-[WebMainResourceClient handle:willSendRequest:]):
+	Pass nil formValues.
+
 2003-02-05  Richard Williamson   <rjw@apple.com>
 
         WebHistory* API clenaup.

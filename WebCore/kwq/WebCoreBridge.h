@@ -200,8 +200,8 @@ enum FrameBorderStyle {
 /* Creates a name for an frame unnamed in the HTML.  It should produce repeatable results for loads of the same frameset. */
 - (NSString *)generateFrameName;
 
-- (void)loadURL:(NSString *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission;
-- (void)postWithURL:(NSString *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event;
+- (void)loadURL:(NSString *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values;
+- (void)postWithURL:(NSString *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values;
 
 - (WebCoreBridge *)createWindowWithURL:(NSString *)URL frameName:(NSString *)name;
 - (void)showWindow;

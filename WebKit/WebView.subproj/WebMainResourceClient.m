@@ -131,10 +131,10 @@
     [self cancelQuietly];
 }
 
--(void)continueAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
+-(void)continueAfterNavigationPolicy:(WebResourceRequest *)_request formValues:(NSDictionary *)values
 {
     [[dataSource controller] _setDefersCallbacks:NO];
-    if (!shouldContinue) {
+    if (!_request) {
 	[self stopLoadingForPolicyChange];
     }
 }
@@ -163,7 +163,7 @@
     // Don't set this on the first request.  It is set
     // when the main load was started.
     [dataSource _setRequest:newRequest];
-    [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest dataSource:dataSource andCall:self withSelector:@selector(continueAfterNavigationPolicy:request:)];
+    [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest dataSource:dataSource formValues:nil andCall:self withSelector:@selector(continueAfterNavigationPolicy:formValues:)];
 
     return newRequest;
 }

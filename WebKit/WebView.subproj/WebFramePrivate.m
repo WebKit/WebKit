@@ -16,6 +16,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebFormDelegate.h>
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
@@ -90,7 +91,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 */
 
 @interface WebFrame (ForwardDecls)
-- (void)_loadRequest:(WebResourceRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType;
+- (void)_loadRequest:(WebResourceRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formValues:(NSDictionary *)values;
 
 - (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
@@ -139,6 +140,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     ASSERT(listener == nil);
     ASSERT(policyRequest == nil);
     ASSERT(policyTarget == nil);
+    ASSERT(policyFormValues == nil);
 
     [super dealloc];
 }
@@ -1025,7 +1027,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         WebDataSource *newDataSource;
         if ([item hasPageCache]){
             newDataSource = [[item pageCache] objectForKey: @"WebKitDataSource"];
-            [self _loadDataSource:newDataSource withLoadType:loadType];            
+            [self _loadDataSource:newDataSource withLoadType:loadType formValues:nil];            
         }
         else {
             WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:itemURL];
@@ -1080,7 +1082,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 action = [self _actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemURL];
             }
 
-            [self _loadRequest:request triggeringAction:action loadType:loadType];
+            [self _loadRequest:request triggeringAction:action loadType:loadType formValues:nil];
             [request release];
         }
     }
@@ -1152,14 +1154,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
 }
 
-- (void)_loadRequest:(WebResourceRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType
+- (void)_loadRequest:(WebResourceRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formValues:(NSDictionary *)values
 {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [newDataSource _setTriggeringAction:action];
 
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
 
-    [self _loadDataSource:newDataSource withLoadType:loadType];
+    [self _loadDataSource:newDataSource withLoadType:loadType formValues:values];
 
     [newDataSource release];
 }
@@ -1221,7 +1223,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return [self _actionInformationForNavigationType:navType event:event originalURL:URL];
 }
 
-- (void) _invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
+- (void)_invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
 {
     [_private->listener _invalidate];
     [_private->listener release];
@@ -1230,20 +1232,23 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebResourceRequest *request = _private->policyRequest;
     id target = _private->policyTarget;
     SEL selector = _private->policySelector;
+    NSDictionary *formValues = _private->policyFormValues;
 
     _private->policyRequest = nil;
     _private->policyTarget = nil;
     _private->policySelector = nil;
+    _private->policyFormValues = nil;
 
     if (call) {
-        [target performSelector:selector withObject:(id)NO withObject:request];
+        [target performSelector:selector withObject:nil withObject:nil];
     }
 
     [request release];
     [target release];
+    [formValues release];
 }
 
-- (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource andCall:(id)target withSelector:(SEL)selector
+- (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource formValues:(NSDictionary *)values andCall:(id)target withSelector:(SEL)selector
 {
     NSDictionary *action = [dataSource _triggeringAction];
     if (action == nil) {
@@ -1253,14 +1258,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     // Don't ask more than once for the same request
     if ([request isEqual:[dataSource _lastCheckedRequest]]) {
-        [target performSelector:selector withObject:(id)YES withObject:request];
+        [target performSelector:selector withObject:request withObject:nil];
         return;
     }
 
     // If we are loading the empty URL, don't bother to ask - clients
     // are likely to get confused.
     if ([[[request URL] absoluteString] length] == 0) {
-        [target performSelector:selector withObject:(id)YES withObject:request];
+        [target performSelector:selector withObject:request withObject:nil];
         return;
     }
 
@@ -1273,6 +1278,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->policyTarget = [target retain];
     _private->policySelector = selector;
     _private->listener = [listener retain];
+    _private->policyFormValues = [values retain];
 
     [[[self controller] policyDelegate] decideNavigationPolicyForAction:action
                                                              andRequest:request
@@ -1287,7 +1293,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebResourceRequest *request = [[_private->policyRequest retain] autorelease];
     id target = [[_private->policyTarget retain] autorelease];
     SEL selector = _private->policySelector;
+    NSDictionary *formValues = [[_private->policyFormValues retain] autorelease];
 
+    // will release _private->policy* objects, hence the above retains
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:NO];
 
     BOOL shouldContinue = NO;
@@ -1342,12 +1350,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
     }
 
-    [target performSelector:selector withObject:(id)(unsigned)shouldContinue withObject:request];
+    [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:formValues];
 }
 
--(void)_continueFragmentScrollAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
+-(void)_continueFragmentScrollAfterNavigationPolicy:(WebResourceRequest *)request formValues:(NSDictionary *)values
 {
-    if (!shouldContinue) {
+    if (!request) {
         return;
     }
 
@@ -1399,11 +1407,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
+- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
 {
+    BOOL isFormSubmission = (values != nil);
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:[_private->bridge referrer]];
-    [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission) ? YES : NO ];
+    [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission)];
     if (loadType == WebFrameLoadTypeReload) {
         [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     }
@@ -1442,10 +1451,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
         [oldDataSource _setTriggeringAction:action];
         [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
-        [self _checkNavigationPolicyForRequest:request dataSource:oldDataSource
-            andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:request:)];
+        [self _checkNavigationPolicyForRequest:request dataSource:oldDataSource formValues:values andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:formValues:)];
     } else {
-        [self _loadRequest:request triggeringAction:action loadType:loadType];
+        [self _loadRequest:request triggeringAction:action loadType:loadType formValues:values];
         if (_private->quickRedirectComing) {
             _private->quickRedirectComing = NO;
             
@@ -1502,10 +1510,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
     }
 
-    [childFrame _loadURL:URL loadType:childLoadType triggeringEvent:nil isFormSubmission:NO];
+    [childFrame _loadURL:URL loadType:childLoadType triggeringEvent:nil formValues:nil];
 }
 
-- (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event
+- (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
 {
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
@@ -1520,7 +1528,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
 
-    [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard];
+    [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formValues:values];
 
     [request release];
 }
@@ -1608,7 +1616,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     [newDataSource _setOverrideEncoding:encoding];
     
-    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData];
+    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData formValues:nil];
     
     [newDataSource release];
 }
@@ -1705,9 +1713,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return nil;
 }
 
--(void)_continueLoadRequestAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
+-(void)_continueLoadRequestAfterNavigationPolicy:(WebResourceRequest *)request formValues:(NSDictionary *)values
 {
-    if (!shouldContinue) {
+    if (!request) {
         [self _resetBackForwardListToCurrent];
         [self _setLoadType: WebFrameLoadTypeStandard];
         [_private setProvisionalDataSource:nil];
@@ -1732,12 +1740,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             LOG (PageCache, "Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
             [_private->provisionalDataSource _startLoading: pageCache];
         }
-    }
-    else 
+    } else {
+        if (values) {
+            [[[self controller] _formDelegate] frame:self willSubmitFormWithValues:values];
+        }
         [_private->provisionalDataSource startLoading];
+    }
 }
 
-- (void)_loadDataSource:(WebDataSource *)newDataSource withLoadType: (WebFrameLoadType)loadType
+- (void)_loadDataSource:(WebDataSource *)newDataSource withLoadType:(WebFrameLoadType)loadType formValues:(NSDictionary *)values
 {
     ASSERT([self controller] != nil);
 
@@ -1763,7 +1774,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     ASSERT([newDataSource webFrame] == self);
 
-    [self _checkNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource andCall:self withSelector:@selector(_continueLoadRequestAfterNavigationPolicy:request:)];
+    [self _checkNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource formValues:values andCall:self withSelector:@selector(_continueLoadRequestAfterNavigationPolicy:formValues:)];
 }
 
 - (void)_downloadRequest:(WebResourceRequest *)request toDirectory:(NSString *)directory
@@ -1775,7 +1786,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [dataSource _setDownloadDirectory:directory];
     }
 
-    [self _loadDataSource:dataSource withLoadType:WebFrameLoadTypeStandard];
+    [self _loadDataSource:dataSource withLoadType:WebFrameLoadTypeStandard formValues:nil];
 
     [dataSource release];
 }
