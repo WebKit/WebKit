@@ -1,3 +1,12 @@
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed nil-deref happening often in Mail when I delete
+
+        * khtml/rendering/render_br.cpp: (RenderBR::selectionRect): Check for nil lastLeafChild.
+        Dave may want to figure out why it's nil and do a different fix later.
+
 2004-09-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
