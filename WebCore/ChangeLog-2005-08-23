@@ -1,3 +1,14 @@
+2004-01-08  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3524359>: REGRESSSION (119-120): 
+        Double click to select text in form broken
+
+        Reviewed by Dave and Darin.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchMouseEvent):
+        Don't blur the focused node if that's the one you clicked on.
+
 2004-01-07  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3517550.  Named array lookup of applet failed, i.e.:
