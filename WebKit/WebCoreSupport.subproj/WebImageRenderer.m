@@ -151,7 +151,8 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)dealloc
 {
-    [self stopAnimation];
+    ASSERT(frameTimer == nil);
+    ASSERT(frameView == nil);
     [patternColor release];
     [super dealloc];
 }

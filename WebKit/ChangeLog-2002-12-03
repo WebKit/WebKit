@@ -1,3 +1,8 @@
+2002-11-04  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/WebImageRenderer.m: (-[WebImageRenderer dealloc]):
+	Replaced a useless call to stopAnimation with a couple of asserts.
+
 2002-11-04  John Sullivan  <sullivan@apple.com>
 
         * Resources/url_icon.tiff:
