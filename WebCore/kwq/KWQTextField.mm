@@ -463,7 +463,7 @@
 	return YES;
     }
 
-    if ([event type] == NSKeyDown) {
+    if ([event type] == NSKeyDown || [event type] == NSKeyUp) {
         WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
         [bridge interceptKeyEvent:event toView:view];
         // FIXME: In theory, if the bridge intercepted the event we should return NO.

@@ -1,3 +1,22 @@
+2003-09-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed - REGRESSION (85-92): Javascript on page isn't triggered by typed characters (onKeyUp)
+
+	(This actually also requires an AppKit fix to be a full fix.)
+
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView keyDown:]): Added. Send event through DOM.
+        (-[KWQTableView keyUp:]): Likewise.
+        (-[KWQTableView becomeFirstResponder]): Added. Report focus change
+	to DOM.
+	* kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView keyUp:]): Added. Send event through DOM.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField textView:shouldHandleEvent:]): Pass NSKeyUp events too
+	(not going to work until we get an AppKit fix).
+
 2003-09-04  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3399880 -- Repro crash when filling out a form to
