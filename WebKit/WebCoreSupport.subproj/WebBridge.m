@@ -204,6 +204,12 @@
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSString *)URL
 {
+    // If we are no longer attached to a controller, this must be an attempted load from an
+    // onUnload handler, so let's just block it.
+    if ([[self dataSource] controller] == nil) {
+	return nil;
+    }
+
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:[NSURL _web_URLWithString:URL]
                                              referrer:[self referrer]
