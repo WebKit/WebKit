@@ -111,7 +111,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     {
         // Drill into inlines looking for our first text child.
         RenderObject* textChild = newChild;
-        while (textChild && !textChild->isText())
+        while (textChild && !(textChild->isText() && !textChild->isBR()))
             textChild = textChild->firstChild();
         
         if (textChild) {

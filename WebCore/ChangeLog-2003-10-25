@@ -1,5 +1,14 @@
 2003-09-13  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed 3420547 -- REGRESSION: repro crash in khtml::RenderBlock::findNextLineBreak (wisdomtips.com)
+
+        * khtml/rendering/render_block.cpp: (RenderBlock::addChildToFlow): Exclude BR elements when looking for
+        an element to process first-letter style.
+
+2003-09-13  Darin Adler  <darin@apple.com>
+
         * layout-tests/fast/frames/empty-frame-src-expected.txt: Updated test results that changed
         due to the change in our handling of frame borders.
 
