@@ -36,6 +36,8 @@
 #define BIDI_DEBUG 0
 //#define DEBUG_LINEBREAKS
 
+using DOM::AtomicString;
+
 namespace khtml {
 
 
@@ -2259,6 +2261,7 @@ void RenderBlock::checkLinesForTextOverflow()
 {
     // Determine the width of the ellipsis using the current font.
     QChar ellipsis = 0x2026; // FIXME: CSS3 says this is configurable, also need to use 0x002E (FULL STOP) if 0x2026 not renderable
+    AtomicString ellipsisStr(ellipsis);
     const Font& firstLineFont = style(true)->htmlFont();
     const Font& font = style()->htmlFont();
     int firstLineEllipsisWidth = firstLineFont.width(&ellipsis, 1, 0);
@@ -2282,7 +2285,7 @@ void RenderBlock::checkLinesForTextOverflow()
             // space.
             int width = curr == firstRootBox() ? firstLineEllipsisWidth : ellipsisWidth;
             if (curr->canAccommodateEllipsis(ltr, lineBoxEdge, blockEdge, width))
-                curr->placeEllipsis(&ellipsis, blockEdge, ltr, width);
+                curr->placeEllipsis(ellipsisStr, blockEdge, ltr, width);
         }
     }
 }

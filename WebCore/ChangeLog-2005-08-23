@@ -1,5 +1,19 @@
 2004-06-15  David Hyatt  <hyatt@apple.com>
 
+	Initial impl of the EllipsisBox.  This code just gets the box created and gets it placed vertically.  The next
+	stage will be to position the box horizontally as well.
+	
+        Reviewed by trey
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * khtml/rendering/render_line.cpp:
+        (RootInlineBox::placeEllipsis):
+        * khtml/rendering/render_line.h:
+        (khtml::EllipsisBox::m_str):
+
+2004-06-15  David Hyatt  <hyatt@apple.com>
+
 	Implement canAccommodateEllipsis.  The basic idea is that everything on a line will allow an ellipsis to be
 	drawn on top of it unless it's a replaced element.  Then, if the replaced element overlaps, the ellipsis won't
 	be allowed.
