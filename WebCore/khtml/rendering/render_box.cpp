@@ -217,7 +217,7 @@ void RenderBox::printBackground(QPainter *p, const QColor &c, CachedImage *bg, i
         {
             //scroll
             int pw = m_width - vpab;
-            int h = m_height;
+            int h = isHtml() ? h : m_height;
             if (isTableCell()) {
                 // Table cells' m_height variable is wrong.  You have to take into
                 // account this hack extra stuff to get the right height. 

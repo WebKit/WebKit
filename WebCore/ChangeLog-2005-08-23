@@ -1,5 +1,16 @@
 2002-11-12  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3032869, the background image for the body was being
+	propagated up to the root properly but was not being tiled over
+	the whole canvas.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::printBackground):
+        * khtml/rendering/render_html.cpp:
+        (RenderHtml::printBoxDecorations):
+
+2002-11-12  David Hyatt  <hyatt@apple.com>
+
 	Fix the top of moveabletype.org.  The maxwidth/minwidth
 	calculation for blocks with inline content did not properly
 	deal with margins and padding on inline elements like <a>.
