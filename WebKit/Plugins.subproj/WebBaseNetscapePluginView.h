@@ -57,6 +57,8 @@
     NPP_URLNotifyProcPtr NPP_URLNotify;
     NPP_GetValueProcPtr NPP_GetValue;
     NPP_SetValueProcPtr NPP_SetValue;
+    
+    EventHandlerRef keyEventHandler;
 }
 
 + (WebBaseNetscapePluginView *)currentPluginView;

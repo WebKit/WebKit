@@ -5,6 +5,7 @@
 
 #import <WebKit/WebBaseNetscapePluginView.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultUIDelegate.h>
@@ -21,15 +22,14 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebKit/WebAssertions.h>
-#import <Foundation/NSURLRequestPrivate.h>
-
 #import <Foundation/NSData_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 #import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>
+#import <HIToolbox/TextServicesPriv.h>
 #import <QD/QuickdrawPriv.h>
 
 // This is not yet in QuickdrawPriv.h, although it's supposed to be.
@@ -70,6 +70,7 @@ typedef struct {
 - (unsigned)_web_locationAfterFirstBlankLine;
 @end
 
+static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView);
 
 @implementation WebBaseNetscapePluginView
 
@@ -134,18 +135,6 @@ typedef struct {
     carbonEvent->where.h = (short)where.x;
     carbonEvent->where.v = (short)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
     carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent];
-}
-
-- (UInt32)keyMessageForEvent:(NSEvent *)event
-{
-    NSData *data = [[event characters] dataUsingEncoding:CFStringConvertEncodingToNSStringEncoding(CFStringGetSystemEncoding())];
-    if (!data) {
-        return 0;
-    }
-    UInt8 characterCode;
-    [data getBytes:&characterCode length:1];
-    UInt16 keyCode = [event keyCode];
-    return keyCode << 8 | characterCode;
 }
 
 - (PortState)saveAndSetPortStateForUpdate:(BOOL)forUpdate
@@ -436,6 +425,31 @@ typedef struct {
     return YES;
 }
 
+- (void)installKeyEventHandler
+{
+    static const EventTypeSpec sTSMEvents[] =
+    {
+    { kEventClassTextInput, kEventTextInputUnicodeForKeyEvent }
+    };
+    
+    if (!keyEventHandler) {
+        InstallEventHandler(GetWindowEventTarget([[self window] windowRef]),
+                            NewEventHandlerUPP(TSMEventHandler),
+                            GetEventTypeCount(sTSMEvents),
+                            sTSMEvents,
+                            self,
+                            &keyEventHandler);
+    }
+}
+
+- (void)removeKeyEventHandler
+{
+    if (keyEventHandler) {
+        RemoveEventHandler(keyEventHandler);
+        keyEventHandler = NULL;
+    }
+}
+
 - (BOOL)becomeFirstResponder
 {
     EventRecord event;
@@ -447,6 +461,9 @@ typedef struct {
     acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(getFocusEvent): %d", acceptedEvent);
+    
+    [self installKeyEventHandler];
+        
     return YES;
 }
 
@@ -461,6 +478,9 @@ typedef struct {
     acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(loseFocusEvent): %d", acceptedEvent);
+    
+    [self removeKeyEventHandler];
+    
     return YES;
 }
 
@@ -538,98 +558,67 @@ typedef struct {
 
 - (void)keyUp:(NSEvent *)theEvent
 {
-    EventRecord event;
-
-    [self getCarbonEvent:&event withEvent:theEvent];
-    event.what = keyUp;
-
-    if (event.message == 0) {
-        event.message = [self keyMessageForEvent:theEvent];
-    }
-    
-    BOOL acceptedEvent;
-    acceptedEvent = [self sendEvent:&event];
-
-    LOG(Plugins, "NPP_HandleEvent(keyUp): %d charCode:%c keyCode:%lu",
-        acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
-    
-    // We originally thought that if the plug-in didn't accept this event,
-    // we should pass it along so that keyboard scrolling, for example, will work.
-    // In practice, this is not a good idea, because browsers tend to eat the event but return false.
-    // MacIE handles each key event twice because of this, but we will emulate the other browsers instead.
+    TSMProcessRawKeyEvent([theEvent _eventRef]);
 }
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-    EventRecord event;
-
-#if 0
-    // Some command keys are sent with both performKeyEquivalent and keyDown.
-    // We should send only 1 keyDown to the plug-in, so we'll ignore this one.
-    if ([theEvent modifierFlags] & NSCommandKeyMask) {
-        return;
-    }
-#endif
-    
-    [self getCarbonEvent:&event withEvent:theEvent];
-    event.what = keyDown;
-
-    if (event.message == 0) {
-        event.message = [self keyMessageForEvent:theEvent];
-    }
-    
-    BOOL acceptedEvent;
-    acceptedEvent = [self sendEvent:&event];
-
-    LOG(Plugins, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu",
-        acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
-    
-    // We originally thought that if the plug-in didn't accept this event,
-    // we should pass it along so that keyboard scrolling, for example, will work.
-    // In practice, this is not a good idea, because browsers tend to eat the event but return false.
-    // MacIE handles each key event twice because of this, but we will emulate the other browsers instead.
+    TSMProcessRawKeyEvent([theEvent _eventRef]);
 }
 
-- (BOOL)isInResponderChain
+static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView)
 {
-    NSResponder *responder = [[self window] firstResponder];
-
-    while (responder != nil) {
-        if (responder == self) {
-            return YES;
+    EventRef rawKeyEventRef;
+    OSStatus status = GetEventParameter(inEvent, kEventParamTextInputSendKeyboardEvent, typeEventRef, NULL, sizeof(EventRef), NULL, &rawKeyEventRef);
+    if (status != noErr) {
+        ERROR("GetEventParameter failed with error: %d", status);
+        return noErr;
+    }
+    
+    // Two-pass read to allocate/extract Mac charCodes
+    UInt32 numBytes;    
+    status = GetEventParameter(rawKeyEventRef, kEventParamKeyMacCharCodes, typeChar, NULL, 0, &numBytes, NULL);
+    if (status != noErr) {
+        ERROR("GetEventParameter failed with error: %d", status);
+        return noErr;
+    }
+    char *buffer = malloc(numBytes);
+    status = GetEventParameter(rawKeyEventRef, kEventParamKeyMacCharCodes, typeChar, NULL, numBytes, NULL, buffer);
+    if (status != noErr) {
+        ERROR("GetEventParameter failed with error: %d", status);
+        free(buffer);
+        return noErr;
+    }
+    
+    EventRef cloneEvent = CopyEvent(rawKeyEventRef);
+    unsigned i;
+    for (i = 0; i < numBytes; i++) {
+        status = SetEventParameter(cloneEvent, kEventParamKeyMacCharCodes, typeChar, 1 /* one char code */, &buffer[i]);
+        if (status != noErr) {
+            ERROR("SetEventParameter failed with error: %d", status);
+            free(buffer);
+            return noErr;
         }
-        responder = [responder nextResponder];
+        
+        EventRecord eventRec;
+        if (ConvertEventRefToEventRecord(cloneEvent, &eventRec)) {
+            BOOL acceptedEvent;
+            acceptedEvent = [(WebBaseNetscapePluginView *)pluginView sendEvent:&eventRec];
+            
+            LOG(Plugins, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu",
+                acceptedEvent, (char) (eventRec.message & charCodeMask), (eventRec.message & keyCodeMask));
+            
+            // We originally thought that if the plug-in didn't accept this event,
+            // we should pass it along so that keyboard scrolling, for example, will work.
+            // In practice, this is not a good idea, because plug-ins tend to eat the event but return false.
+            // MacIE handles each key event twice because of this, but we will emulate the other browsers instead.
+        }
     }
-    return NO;
-}
-
-// Stop overriding performKeyEquivalent because the gain is not worth the frustation.
-// Need to find a better way to pass command-modified keys to plug-ins. 3080103
-#if 0
-// Must subclass performKeyEquivalent: for command-modified keys to work.
-- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
-{
-    EventRecord event;
-
-    if (![self isInResponderChain]) {
-        return NO;
-    }
+    ReleaseEvent(cloneEvent);
     
-    [self getCarbonEvent:&event withEvent:theEvent];
-    event.what = keyDown;
-
-    if (event.message == 0) {
-        event.message = [self keyMessageForEvent:theEvent];
-    }
-
-    BOOL acceptedEvent = [self sendEvent:&event];
-
-    LOG(Plugins, "NPP_HandleEvent(performKeyEquivalent): %d charCode:%c keyCode:%lu",
-        acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
-    
-    return acceptedEvent;
+    free(buffer);
+    return noErr;
 }
-#endif
 
 #pragma mark WEB_NETSCAPE_PLUGIN
 
@@ -861,6 +850,10 @@ typedef struct {
     LOG(Plugins, "NPP_Destroy: %d", npErr);
 
     instance->pdata = NULL;
+    
+    // We usually remove the key event handler in resignFirstResponder but it is possible that resignFirstResponder 
+    // may never get called so we can't completely rely on it.
+    [self removeKeyEventHandler];
 }
 
 - (BOOL)isStarted

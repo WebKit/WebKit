@@ -1,3 +1,19 @@
+2003-08-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3163589>: Macromedia Flash 6 cannot take Asian text entry in Safari
+
+        Revidewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView installKeyEventHandler]): new
+        (-[WebBaseNetscapePluginView removeKeyEventHandler]): new
+        (-[WebBaseNetscapePluginView becomeFirstResponder]): call installKeyEventHandler
+        (-[WebBaseNetscapePluginView resignFirstResponder]): call removeKeyEventHandler
+        (-[WebBaseNetscapePluginView keyUp:]): call TSMProcessRawKeyEvent so key events go through the machinery and UI that plug-ins expect
+        (-[WebBaseNetscapePluginView keyDown:]): call TSMProcessRawKeyEvent so key events go through the machinery and UI that plug-ins expect
+        (TSMEventHandler): turn the TSM event into a series of EventRecords and pass them to the plug-in
+        (-[WebBaseNetscapePluginView stop]): call removeKeyEventHandler because resignFirstResponder may not get called
+
 2003-08-08  Richard Williamson  <rjw@apple.com>
 	
 	Lots of healthy cleanup.  Introduced width and shaping iterators
