@@ -2746,24 +2746,6 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     [[self nextResponder] tryToPerform:@selector(scrollLineUp:) with:sender];
 }
 
-- (void)scrollPageDown:(id)sender
-{
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
-}
-
-- (void)scrollPageUp:(id)sender
-{
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
-}
-
 
     /* Selections */
 

@@ -1,3 +1,17 @@
+2004-05-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Remove overrides in WebView for scrollPageDown and scrollPageUp.
+        NSView behavior gives us just what we want, and there is no
+        special behavior required for editing.
+
+        <rdar://problem/3655364>: "Editing: -scrollPageDown: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655365>: "Editing: -scrollPageUp: method unimplemented (WebKit editing API)"
+
+        * WebView.subproj/WebView.h: Comment methods out and add a note about why.
+        * WebView.subproj/WebView.m: Remove stubbed out implementation.
+
 2004-05-14  Vicki Murley  <vicki@apple.com>
 
         Reviewed by mjs.
