@@ -1,3 +1,10 @@
+2002-09-20  Darin Adler  <darin@apple.com>
+
+        * History.subproj/WebHistory.m: (-[WebHistory addEntryForURLString:]):
+	Use _web_URLWithString so we can handle unusual characters.
+
+        * WebView.subproj/WebDefaultPolicyHandler.m: Remove stray semicolon.
+
 2002-09-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed wasteful memory usage in the WebIconDatabase:

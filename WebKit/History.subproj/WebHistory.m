@@ -10,6 +10,7 @@
 #import <WebKit/WebHistoryItem.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
 NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotification";
 
@@ -54,7 +55,7 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
 
 - (void)addEntryForURLString: (NSString *)string
 {
-    WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:[NSURL URLWithString: string] title:nil];
+    WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:[NSURL _web_URLWithString: string] title:nil];
     [self addEntry: entry];
     [entry release];
 }

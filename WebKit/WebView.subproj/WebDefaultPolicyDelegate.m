@@ -29,7 +29,7 @@
         return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyIgnore];
     if([WebController canShowMIMEType:type])
         return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyUseContentPolicy];
-    return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyIgnore];;
+    return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyIgnore];
 }
 
 - (void)unableToImplementPolicy:(WebPolicy *)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame
