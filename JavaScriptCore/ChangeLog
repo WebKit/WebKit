@@ -1,5 +1,15 @@
 2002-12-14  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Ken.
+
+	- further corrections to number printing.
+
+        * kjs/ustring.cpp:
+        (UString::from): Make number printing match the ECMA standard
+	algorithm.
+
+2002-12-14  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dave.
 
 	- fix toString() conversion for numbers less than 1. Negative
