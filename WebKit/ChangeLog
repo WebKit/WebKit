@@ -1,3 +1,21 @@
+2003-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3193213 -- assert truncatedLength+1 < STRING_BUFFER_SIZE creating tab label for firstyearibs.com
+        - fixed 3194935 -- WebStringTruncator rightTruncateString: will break between composed characters
+        - fixed right truncator to use interpolation algorithm rather than linear search
+
+        * Misc.subproj/WebStringTruncator.m:
+        (centerTruncateToBuffer): Changed from a class method to a plain function, and tweaked the code a bit.
+        (rightTruncateToBuffer): Added. Like centerTruncateToBuffer, but does it on the right end instead.
+        (stringWidth): Added. Helper function that calls the TextRenderer method with the right parameters.
+        (truncateString): Moved all the code from centerTruncateString here, adding one new parameter, the
+        truncate to buffer function.
+        (+[WebStringTruncator centerTruncateString:toWidth:]): Call truncateString with the appropriate parameters.
+        (+[WebStringTruncator centerTruncateString:toWidth:withFont:]): Ditto.
+        (+[WebStringTruncator rightTruncateString:toWidth:withFont:]): Ditto.
+
 === Safari-66 ===
 
 2003-03-10  Maciej Stachowiak  <mjs@apple.com>

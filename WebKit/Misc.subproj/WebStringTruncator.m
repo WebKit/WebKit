@@ -20,27 +20,21 @@ static NSFont *currentFont;
 static WebTextRenderer *currentRenderer;
 static float currentEllipsisWidth;
 
-@implementation WebStringTruncator
+typedef unsigned TruncationFunction(NSString *string, unsigned length, unsigned keepCount, unichar *buffer);
 
-+ (unsigned)centerTruncateString:(NSString *)string length:(unsigned)length keepCount:(unsigned)keepCount toBuffer:(unichar *)buffer
+static unsigned centerTruncateToBuffer(NSString *string, unsigned length, unsigned keepCount, unichar *buffer)
 {
-    unsigned omitStart;
-    NSRange omitEndRange, beforeRange, afterRange;
-    unsigned truncatedLength;
-    
+    ASSERT(keepCount < length);
     ASSERT(keepCount < STRING_BUFFER_SIZE);
     
-    omitStart = (keepCount + 1) / 2;
+    unsigned omitStart = (keepCount + 1) / 2;
     
-    omitEndRange = [string rangeOfComposedCharacterSequenceAtIndex:omitStart + (length - keepCount) - 1];
+    NSRange beforeRange = NSMakeRange(0, [string rangeOfComposedCharacterSequenceAtIndex:omitStart].location);
+
+    NSRange omitEndRange = [string rangeOfComposedCharacterSequenceAtIndex:omitStart + (length - keepCount) - 1];
+    NSRange afterRange = NSMakeRange(NSMaxRange(omitEndRange), length - afterRange.location);
     
-    beforeRange.location = 0;
-    beforeRange.length = [string rangeOfComposedCharacterSequenceAtIndex:omitStart].location;
-    
-    afterRange.location = omitEndRange.location + omitEndRange.length;
-    afterRange.length = length - afterRange.location;
-    
-    truncatedLength = beforeRange.length + 1 + afterRange.length;
+    unsigned truncatedLength = beforeRange.length + 1 + afterRange.length;
     ASSERT(truncatedLength <= length);
 
     [string getCharacters:buffer range:beforeRange];
@@ -50,46 +44,35 @@ static float currentEllipsisWidth;
     return truncatedLength;
 }
 
-+ (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
+static unsigned rightTruncateToBuffer(NSString *string, unsigned length, unsigned keepCount, unichar *buffer)
 {
-    return [self centerTruncateString:string toWidth:maxWidth withFont:[NSFont menuFontOfSize:0]];
+    ASSERT(keepCount < length);
+    ASSERT(keepCount < STRING_BUFFER_SIZE);
+    
+    NSRange keepRange = NSMakeRange(0, [string rangeOfComposedCharacterSequenceAtIndex:keepCount].location);
+    
+    [string getCharacters:buffer range:keepRange];
+    buffer[keepRange.length] = ELLIPSIS_CHARACTER;
+    
+    return keepRange.length + 1;
 }
 
-+ (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
+static float stringWidth(WebTextRenderer *renderer, const unichar *characters, unsigned length)
 {
-    unichar stringBuffer[STRING_BUFFER_SIZE];
-    WebTextRenderer *renderer;
-    unichar ellipsis;
-    float ellipsisWidth;
-    float width;
-    unsigned truncatedLength = [string length];
-
-    ASSERT (truncatedLength+1 < STRING_BUFFER_SIZE);
-    // FIXME:  Allocate buffer is string doesn't fit in local buffer.
-    
-    [string getCharacters:stringBuffer];
-    renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
-    width = [renderer floatWidthForCharacters:stringBuffer
-                                 stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: 0];
-    if (width <= maxWidth)
-        return string;
-
-    ellipsis = ELLIPSIS_CHARACTER;
-    ellipsisWidth = [renderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: 0];
-
-    maxWidth -= ellipsisWidth;
-    while (width > maxWidth && truncatedLength){	
-        truncatedLength--;
-        width = [renderer floatWidthForCharacters:stringBuffer
-                                     stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: 0];
-    }
-
-    stringBuffer[truncatedLength++] = ELLIPSIS_CHARACTER; 
-    
-    return [NSString stringWithCharacters:stringBuffer length:truncatedLength];
+    return [renderer floatWidthForCharacters:characters
+                                stringLength:length
+                       fromCharacterPosition:0
+                          numberOfCharacters:length
+                                 withPadding:0
+                               applyRounding:NO
+                     attemptFontSubstitution:YES
+                                      widths:0
+                               letterSpacing:0
+                                 wordSpacing:0
+                                fontFamilies:0];
 }
 
-+ (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
+static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, TruncationFunction truncateToBuffer)
 {
     unichar stringBuffer[STRING_BUFFER_SIZE];
     unsigned length;
@@ -111,7 +94,7 @@ static float currentEllipsisWidth;
         [WebTextRendererFactory createSharedFactory];
         currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font] retain];
         ellipsis = ELLIPSIS_CHARACTER;
-        currentEllipsisWidth = [currentRenderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: 0];
+        currentEllipsisWidth = stringWidth(currentRenderer, &ellipsis, 1);
     }
     
     ASSERT(currentRenderer);
@@ -119,18 +102,14 @@ static float currentEllipsisWidth;
     length = [string length];
     if (length > STRING_BUFFER_SIZE) {
         keepCount = STRING_BUFFER_SIZE - 1; // need 1 character for the ellipsis
-        truncatedLength = [self centerTruncateString:string
-                                             length:length
-                                          keepCount:keepCount
-                                           toBuffer:stringBuffer];
+        truncatedLength = centerTruncateToBuffer(string, length, keepCount, stringBuffer);
     } else {
         keepCount = length;
         [string getCharacters:stringBuffer];
         truncatedLength = length;
     }
 
-    width = [currentRenderer floatWidthForCharacters:stringBuffer
-                                        stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: 0];
+    width = stringWidth(currentRenderer, stringBuffer, truncatedLength);
     if (width <= maxWidth) {
         return string;
     }
@@ -165,12 +144,9 @@ static float currentEllipsisWidth;
         ASSERT(keepCount < keepCountForSmallestKnownToNotFit);
         ASSERT(keepCount > keepCountForLargestKnownToFit);
         
-	truncatedLength = [self centerTruncateString:string
-                                              length:length
-                                           keepCount:keepCount
-                                            toBuffer:stringBuffer];
+	truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer);
 
-        width = [currentRenderer floatWidthForCharacters:stringBuffer stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: 0];
+        width = stringWidth(currentRenderer, stringBuffer, truncatedLength);
         if (width <= maxWidth) {
             keepCountForLargestKnownToFit = keepCount;
             widthForLargestKnownToFit = width;
@@ -186,13 +162,27 @@ static float currentEllipsisWidth;
     
     if (keepCount != keepCountForLargestKnownToFit) {
         keepCount = keepCountForLargestKnownToFit;
-	truncatedLength = [self centerTruncateString:string
-                                              length:length
-                                           keepCount:keepCount
-                                            toBuffer:stringBuffer];
+	truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer);
     }
-        
+    
     return [NSString stringWithCharacters:stringBuffer length:truncatedLength];
+}
+
+@implementation WebStringTruncator
+
++ (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
+{
+    return truncateString(string, maxWidth, [NSFont menuFontOfSize:0], centerTruncateToBuffer);
+}
+
++ (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
+{
+    return truncateString(string, maxWidth, font, centerTruncateToBuffer);
+}
+
++ (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
+{
+    return truncateString(string, maxWidth, font, rightTruncateToBuffer);
 }
 
 @end
