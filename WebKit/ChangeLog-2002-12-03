@@ -1,5 +1,11 @@
 2002-09-23  Richard Williamson   <rjw@apple.com>
 
+        Made WebIconLoader and WebIconDatabase SPI.
+        
+        * WebKit.pbproj/project.pbxproj:
+
+2002-09-23  Richard Williamson   <rjw@apple.com>
+
         WebContextMenuHandler becomes WebContextMenuDelegate
         WebControllerPolicyHandler becomes WebControllerPolicyDelegate
         WebLocationChangeHandler becomes WebLocationChangeDelegate
