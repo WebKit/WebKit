@@ -1,3 +1,30 @@
+2004-03-11  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3585056>: Assertion failure if error page is loaded from 
+        webView:unableToImplementPolicyWithError:
+        - also added HeaderDoc comments to could-be-API-soon methods and fixed a
+        conceptual problem with said methods
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+        added HeaderDoc comment for -unreachableURL
+        
+        * WebView.subproj/WebFramePrivate.h:
+        added HeaderDoc comment for -loadAlternateHTMLString:baseURL:forUnreachableURL:;
+        also added boolean delegateIsHandlingUnimplementablePolicy ivar to WebFramePrivate
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _shouldReloadToHandleUnreachableURLFromRequest:]):
+        treat delegateIsHandlingUnimplementablePolicy like delegateIsDecidingNavigationPolicy.
+        Safari serves up error pages during the latter but clients are equally or more likely
+        to do so during the former.
+        (-[WebFrame _handleUnimplementablePolicyWithErrorCode:forURL:]):
+        set delegateIsHandlingUnimplementablePolicy during delegate callback
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        tweaked assertion so it doesn't erroneously fire for clients that call
+        loadAlternateHTML:baseURL:forUnreachableURL: while processing
+        webView:unableToImplementPolicyWithError:
+
 2004-03-11  Chris Blumenberg  <cblu@apple.com>
 
 	Made WebArchive a class instead of a data object. This allows clients to easily get the main resource and subresources from a WebArchive.

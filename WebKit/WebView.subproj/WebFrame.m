@@ -307,7 +307,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     // case handles malformed URLs and unknown schemes. Loading alternate content
     // at other times behaves like a standard load.
     WebDataSource *compareDataSource = nil;
-    if (_private->delegateIsDecidingNavigationPolicy) {
+    if (_private->delegateIsDecidingNavigationPolicy || _private->delegateIsHandlingUnimplementablePolicy) {
         compareDataSource = _private->policyDataSource;
     } else if (_private->delegateIsHandlingProvisionalLoadError) {
         compareDataSource = [self provisionalDataSource];
@@ -1214,7 +1214,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     NSError *error = [NSError _webKitErrorWithDomain:WebKitErrorDomain code:code URL:URL];
     WebView *wv = [self webView];
+    _private->delegateIsHandlingUnimplementablePolicy = YES;
     [[wv _policyDelegateForwarder] webView:wv unableToImplementPolicyWithError:error frame:self];    
+    _private->delegateIsHandlingUnimplementablePolicy = NO;
 }
 
 - (void)_clearProvisionalDataSource
@@ -2217,13 +2219,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 -(void)_continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
 {
-    ASSERT(_private->policyDataSource);
-    
+    // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
+    // nil _private->policyDataSource because loading the alternate page will have passed
+    // through this method already, nested; otherwise, _private->policyDataSource should still be set.
+    ASSERT(_private->policyDataSource || [[self provisionalDataSource] unreachableURL] != nil);
+
     if (!request) {
         [self _setPolicyDataSource:nil];
         return;
     }
-
+    
     WebFrameLoadType loadType = _private->policyLoadType;
     WebDataSource *dataSource = [_private->policyDataSource retain];
     

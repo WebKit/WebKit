@@ -91,6 +91,7 @@ extern NSString *WebPageCacheDocumentViewKey;
     BOOL isStoppingLoad;
     BOOL delegateIsHandlingProvisionalLoadError;
     BOOL delegateIsDecidingNavigationPolicy;
+    BOOL delegateIsHandlingUnimplementablePolicy;
 }
 
 - (void)setName:(NSString *)name;
@@ -120,9 +121,22 @@ extern NSString *WebPageCacheDocumentViewKey;
 // API Considerations:
 - (void)loadWebArchive:(WebArchive *)webArchive;
 
-// unreachableURL represents a URL that couldn't be loaded; the HTML string acts as an error page for that URL
-- (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)URL forUnreachableURL:(NSURL *)unreachableURL;
+/*!
+    @method loadAlternateHTMLString:baseURL:forUnreachableURL:
+    @abstract Loads a page to display as a substitute for a URL that could not be reached.
+    @discussion This allows clients to display page-loading errors in the webview itself.
+    This is typically called while processing the WebFrameLoadDelegate method
+    -webView:didFailProvisionalLoadWithError:forFrame: or one of the the WebPolicyDelegate methods
+    -webView:decidePolicyForMIMEType:request:frame:decisionListener: or
+    -webView:unableToImplementPolicyWithError:frame:. If it is called from within one of those
+    three delegate methods then the back/forward list will be maintained appropriately.
+    @param string The string to use for the main page of the document.
+    @param baseURL The baseURL to apply to relative URLs within the document.
+    @param unreachableURL The URL for which this page will serve as alternate content.
+*/
+- (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
 
+// Other private methods
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources;
 
