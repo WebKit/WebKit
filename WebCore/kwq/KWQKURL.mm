@@ -861,9 +861,10 @@ static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int sr
     char *bufferPathStart = dst;
     const char *baseStringPos = baseStringStart;
 
-    // this code is unprepared for paths that do not begin with a slash 
-    // and we should always have one in the source string
-    ASSERT(baseStringPos[0] == '/');
+    // this code is unprepared for paths that do not begin with a
+    // slash and we should always have one in the source string (but a
+    // totally empty path is OK and does not need to start with a slash)
+    ASSERT(srcStart == srcEnd || baseStringPos[0] == '/');
 
     // copy the leading slash into the destination
     *dst = *baseStringPos;

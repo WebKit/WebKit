@@ -1,3 +1,12 @@
+2003-08-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3384963 - REGRESSION: assertion in copyPathRemovingDots, crash parsing URL in snippet editor
+	
+        * kwq/KWQKURL.mm:
+        (copyPathRemovingDots): It's OK if the path is entirely empty.
+
 2003-08-20  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3385211, <td>s should ignore the float property in quirks mode.  This
