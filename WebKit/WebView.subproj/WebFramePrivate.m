@@ -118,6 +118,15 @@ static const char * const stateNames[] = {
     loadType = t;
 }
 
+- (WebHistoryItem *)backForwardItem { return backForwardItem; }
+- (void)setBackForwardItem: (WebHistoryItem *)item
+{
+    if (backForwardItem != item) {
+        [backForwardItem release];
+        backForwardItem = [item retain];
+    }
+}
+
 
 @end
 
@@ -176,6 +185,16 @@ static const char * const stateNames[] = {
 - (WebFrameLoadType)_loadType
 {
     return [_private loadType];
+}
+
+- (void)_setBackForwardItem: (WebHistoryItem *)item
+{
+    [_private setBackForwardItem: item];
+}
+
+- (WebHistoryItem *)_backForwardItem
+{
+    return [_private backForwardItem];
 }
 
 - (void)_scheduleLayout:(NSTimeInterval)inSeconds
@@ -312,12 +331,15 @@ static const char * const stateNames[] = {
                     [backForwardList goForward];
                     [self _restoreScrollPosition];
                     break;
-    
-                case WebFrameLoadTypeIntermediateBack:
-                    break;
-                    
+
                 case WebFrameLoadTypeBack:
                     [backForwardList goBack];
+                    [self _restoreScrollPosition];
+                    break;
+                    
+                case WebFrameLoadTypeIndexedBackForward:
+                    [backForwardList goToEntry: [self _backForwardItem]];
+                    [self _setBackForwardItem: nil];
                     [self _restoreScrollPosition];
                     break;
                     
@@ -498,14 +520,8 @@ static const char * const stateNames[] = {
                 if ([[self controller] usesBackForwardList]){
                     switch ([self _loadType]) {
                     case WebFrameLoadTypeForward:
-                        [self _restoreScrollPosition];
-                        break;
-        
-                    case WebFrameLoadTypeIntermediateBack:
-                        [[self controller] goBack];
-                        break;
-                        
                     case WebFrameLoadTypeBack:
+                    case WebFrameLoadTypeIndexedBackForward:
                         [self _restoreScrollPosition];
                         break;
                         
@@ -686,14 +702,14 @@ static const char * const stateNames[] = {
     [_private setProvisionalDataSource:d];
 }
 
-
+// main funnel for navigating via back/forward
 - (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type
 {
     NSURL *itemURL = [item URL];
     WebResourceRequest *request;
-    WebDataSource *dataSource;
     NSURL *originalURL = [[[self dataSource] request] URL];
-    
+
+    // Are we navigating to an anchor within the page?
     if ([item anchor] && [[itemURL _web_URLByRemovingFragment] isEqual: [originalURL _web_URLByRemovingFragment]]) {
         WebBackForwardList *backForwardList = [[self controller] backForwardList];
 
@@ -701,9 +717,12 @@ static const char * const stateNames[] = {
             [backForwardList goForward];
         else if (type == WebFrameLoadTypeBack)
             [backForwardList goBack];
+        else if (type == WebFrameLoadTypeIndexedBackForward)
+            [backForwardList goToEntry:item];
         else 
             [NSException raise:NSInvalidArgumentException format:@"WebFrameLoadType incorrect"];
         [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
+        [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:_private->dataSource];
     }
     else {
         request = [[WebResourceRequest alloc] initWithURL:itemURL];
@@ -725,9 +744,7 @@ static const char * const stateNames[] = {
                     break;
                 case WebFrameLoadTypeBack:
                 case WebFrameLoadTypeForward:
-                case WebFrameLoadTypeIndexedBack:
-                case WebFrameLoadTypeIndexedForward:
-                case WebFrameLoadTypeIntermediateBack:
+                case WebFrameLoadTypeIndexedBackForward:
                     [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject];
                     break;
                 case WebFrameLoadTypeInternal:
@@ -736,13 +753,19 @@ static const char * const stateNames[] = {
                     break;
             }
         }
-        
-        dataSource = [[WebDataSource alloc] initWithRequest:request];
+
+        WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
         [request release];
-        [self setProvisionalDataSource: dataSource];
+        [self setProvisionalDataSource: newDataSource];
         [self _setLoadType: type];
+        // we need to remember this item in order to set the position in the BFList later
+        if (type == WebFrameLoadTypeIndexedBackForward) {
+            [self _setBackForwardItem: item];
+        } else {
+            [self _setBackForwardItem: nil];
+        }
         [self startLoading];
-        [dataSource release];
+        [newDataSource release];
     }
 }
 

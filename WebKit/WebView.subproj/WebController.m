@@ -315,6 +315,12 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     return NO;
 }
 
+- (BOOL)goBackOrForwardToItem:(WebHistoryItem *)item
+{
+    [self _goToItem: item withFrameLoadType: WebFrameLoadTypeIndexedBackForward];
+    return YES;
+}
+
 - (void)setTextSizeMultiplier:(float)m
 {
     if (_private->textSizeMultiplier == m) {

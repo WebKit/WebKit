@@ -251,8 +251,15 @@
     // The title doesn't get communicated to the controller until we are committed.
     if (_private->committed) {
         WebHistoryItem *entry;
-        entry = [[WebHistory sharedHistory] entryForURL: [[[self _originalRequest] URL] _web_canonicalize]];
+        NSURL *canonURL = [[[self _originalRequest] URL] _web_canonicalize];
+        entry = [[WebHistory sharedHistory] entryForURL: canonURL];
         [entry setTitle: _private->pageTitle];
+
+        // Must update the entry in the back-forward list too.
+        //WebBackForwardList *bfList = [_private->controller backForwardList];
+        //entry = [bfList entryForURL: canonURL];
+        //[entry setTitle: _private->pageTitle];
+
         [[_private->controller locationChangeDelegate] receivedPageTitle:_private->pageTitle forDataSource:self];
     }
 }

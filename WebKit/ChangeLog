@@ -1,3 +1,70 @@
+2002-10-25  Trey Matteson  <trey@apple.com>
+	
+	2919039 - Implement limit on back/forward history list
+	2998200 - access to most-recent in submenu of back & forward buttons
+	3022566 - need WebKit API for accessing and visiting back/forward list items
+	3084051 - forward button incorrectly enabled after going forward all the way
+
+	Remaining issues at this point are getting the title of the pages
+	into the menu items (instead of the URL), and saving document
+	state properly when you jump around in the list.  Solutions are
+	known and coming soon.
+
+        * History.subproj/WebBackForwardList.h:
+	Added doc comments to API.  Made ivars private.  Replaced index-
+	based API with item-based API.  Added a sizelimit to the overall
+	list.  Tweaked API to get back and forward lists.
+        * History.subproj/WebBackForwardList.m:
+	Straightforward impl of the above, with the note that I dumped
+	WebHistoryList from the API and impl in favor of an NSArray,
+	which is efficient for this sort of use (queue, stack).
+        (-[WebBackForwardList init]):
+        (-[WebBackForwardList dealloc]):
+        (-[WebBackForwardList goBack]):
+        (-[WebBackForwardList goForward]):
+        (-[WebBackForwardList goToEntry:]):
+        (-[WebBackForwardList backEntry]):
+        (-[WebBackForwardList forwardEntry]):
+        (-[WebBackForwardList maximumSize]):
+        (-[WebBackForwardList setMaximumSize:]):
+        (-[WebBackForwardList description]):
+        * History.subproj/WebHistoryList.h: Removed.
+	Nuked from API, per above.
+        * History.subproj/WebHistoryList.m: Removed.
+        * Misc.subproj/WebKit.h:
+	WebHistoryList gone from API.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:]):
+	Use if/else instead of buried "return;", so next person doesn;t
+	make the same mis-read I did.
+        (-[WebBridge saveDocumentState:]):
+	Site of future work.
+        * WebKit.pbproj/project.pbxproj:
+	Nuked WebHistoryList.
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController goBackOrForwardToItem:]):
+	New method to support random access nav in backforward list.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setTitle:]):
+	Site of future work (fixing title in items)
+        * WebView.subproj/WebFramePrivate.h:
+	WebFrameLoadTypeIndexedBack/WebFrameLoadTypeIndexedForward are
+	collapsed into WebFrameLoadTypeIndexedBackForward.  Vestigial
+	WebFrameLoadTypeIntermediateBack is nuked.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate setBackForwardItem:]):
+        (-[WebFrame _setBackForwardItem:]):
+        (-[WebFrame _backForwardItem]):
+	Must remember the BF item we're going to so we can update the
+	BF list on commit.
+        (-[WebFrame _transitionToCommitted]):
+	Update the BF list on commit.
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame _goToItem:withFrameLoadType:]):
+	Update BF list on within-page nav.
+	Remember BF item we are going to for later update on commit.
+
 2002-10-25  Chris Blumenberg  <cblu@apple.com>
 
 	Minor non-mentionable clean-up.

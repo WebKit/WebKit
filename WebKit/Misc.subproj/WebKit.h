@@ -15,7 +15,6 @@
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItem.h>
-#import <WebKit/WebHistoryList.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferences.h>

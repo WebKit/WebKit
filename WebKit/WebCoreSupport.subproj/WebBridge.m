@@ -296,13 +296,12 @@
         WebDataSource *dataSource = [frame dataSource];
         [dataSource _setURL:URL];        
         [[[frame controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSource];
-        return;
+    } else {
+        WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+        [request setReferrer:[self referrer]];
+        [self loadRequest:request];
+        [request release];
     }
-    
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    [request setReferrer:[self referrer]];
-    [self loadRequest:request];
-    [request release];
 }
 
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType
@@ -359,6 +358,7 @@
 
 - (void)saveDocumentState: (NSArray *)documentState
 {
+//??? does this need a case for WebFrameLoadTypeIndexedBackForward?
     WebHistoryItem *item;
     
     if ([frame _loadType] == WebFrameLoadTypeBack)

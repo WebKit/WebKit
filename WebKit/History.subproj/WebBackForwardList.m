@@ -7,157 +7,146 @@
 //
 
 #import "WebBackForwardList.h"
-
 #import "WebHistoryItem.h"
-#import "WebHistoryList.h"
+#import <WebFoundation/WebAssertions.h>
 
 @implementation WebBackForwardList
 
--(id)init
+- (id)init
 {
     self = [super init];
     if (!self) {
         return nil;
     }
     
-    uriList = [[WebHistoryList alloc] init];
-    [uriList setAllowsDuplicates:YES];
-    index = 0;
+    _entries = [[NSMutableArray alloc] init];
+    _current = -1;
+    _maximumSize = 100;		// typically set by browser app
 
     return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
-    [uriList release];
+    [_entries release];
     [super dealloc];
 }
 
--(void)addEntry:(WebHistoryItem *)entry
+- (void)addEntry:(WebHistoryItem *)entry;
 {
     // If the last entry matches this new entry, then replace it rather than adding
     // a new one, since we are doing a reload.
-    if ([uriList count] > index) {
-        WebHistoryItem *lastEntry = [uriList entryAtIndex:index];
-        if ([[lastEntry URL] isEqual:[entry URL]]
-            && ([lastEntry target] == [entry target] || [[lastEntry target] isEqual:[entry target]])
-            && ([lastEntry parent] == [entry parent] || [[lastEntry parent] isEqual:[entry parent]])) {
-            [uriList replaceEntryAtIndex:index withEntry:entry];
-            return;
+    if (_current >= 0) {
+        WebHistoryItem *curr = [_entries objectAtIndex:_current];
+        if ([[curr URL] isEqual:[entry URL]]
+            && [[curr target] isEqual:[entry target]]
+            && [[curr parent] isEqual:[entry parent]])
+        {
+            [_entries replaceObjectAtIndex:_current withObject:entry];
+            return;	// skip clearing the forward list
         }
     }
 
-    if (index > 0) {
-        [uriList removeEntriesToIndex:index];
-        index = 0;
+    // Toss anything in the forward list
+    int currSize = [_entries count];
+    if (_current != currSize-1 && _current != -1) {
+        NSRange forwardRange = NSMakeRange(_current+1, currSize-(_current+1));
+        [_entries removeObjectsInRange: forwardRange];
+        currSize -= forwardRange.length;
     }
-    [uriList addEntry:entry];
+
+    // Toss the first item if the list is getting too big, as long as we're not using it
+    if (currSize == _maximumSize && _current != 0) {
+       [_entries removeObjectAtIndex:0];
+       currSize--;
+       _current--;
+    }
+
+    [_entries addObject:entry];
+    _current++;
 }
 
--(void)goBack
+- (void)goBack
 {
-    index++;
+    ASSERT(_current > 0);
+    _current--;
 }
 
--(void)goBackToIndex: (int)pos
+- (void)goForward
 {
+    ASSERT(_current < (int)[_entries count]-1);
+    _current++;
 }
 
-- (WebHistoryItem *)backEntryAtIndex: (int)pos
+- (void)goToEntry:(WebHistoryItem *)entry
 {
-    WebHistoryItem *result;
-    int count;
-    
-    count = [uriList count];
-    if (count > 1 && index+pos < (count - 1)) {
-        result = [uriList entryAtIndex:index+1+pos];
+    int index = [_entries indexOfObjectIdenticalTo:entry];
+    ASSERT(index != NSNotFound);
+    _current = index;
+}
+
+- (WebHistoryItem *)backEntry
+{
+    if (_current > 0) {
+        return [_entries objectAtIndex:_current-1];
     } else {
-        result = nil;
+        return nil;
     }
-
-    return result;
 }
 
--(WebHistoryItem *)backEntry
+- (WebHistoryItem *)currentEntry;
 {
-    WebHistoryItem *result;
-    int count;
-    
-    count = [uriList count];
-    if (count > 1 && index < (count - 1)) {
-        result = [uriList entryAtIndex:index+1];
+    if (_current >= 0) {
+        return [_entries objectAtIndex:_current];
     } else {
-        result = nil;
+        return nil;
     }
-
-    return result;
 }
 
--(WebHistoryItem *)currentEntry
+- (WebHistoryItem *)forwardEntry
 {
-    WebHistoryItem *result;
-    
-    if (index < 0 || index >= [uriList count])
-        return  nil;
-        
-    result = [uriList entryAtIndex:index];
-
-    return result;
-}
-
--(WebHistoryItem *)forwardEntry
-{
-    WebHistoryItem *result;
-
-    if (index > 0) {
-        result = [uriList entryAtIndex:index-1];
+    if (_current < (int)[_entries count]-1) {
+        return [_entries objectAtIndex:_current+1];
     } else {
-        result = nil;
+        return nil;
     }
-
-    return result;
 }
 
--(void)goForward
+- (NSArray *)backListWithSizeLimit:(int)limit;
 {
-    index--;
+    if (_current > 0) {
+        NSRange r;
+        r.location = MAX(_current-limit, 0);
+        r.length = _current - r.location;
+        return [_entries subarrayWithRange:r];
+    } else {
+        return nil;
+    }
 }
 
--(void)goForwardToIndex: (int)pos
+- (NSArray *)forwardListWithSizeLimit:(int)limit;
 {
+    int lastEntry = (int)[_entries count]-1;
+    if (_current < lastEntry) {
+        NSRange r;
+        r.location = _current+1;
+        r.length =  MIN(_current+limit, lastEntry) - _current;
+        return [_entries subarrayWithRange:r];
+    } else {
+        return nil;
+    }
 }
 
--(BOOL)canGoBack
+- (int)maximumSize
 {
-    BOOL result;
-    int count;
-    
-    count = [uriList count];
-    result = (count > 1 && index < (count - 1));
-    
-    return result;
+    return _maximumSize;
 }
 
--(BOOL)canGoForward
+- (void)setMaximumSize:(int)size
 {
-    BOOL result;
-
-    result = (index > 0);
-    
-    return result;
+    _maximumSize = size;
 }
 
--(NSArray *)backList
-{
-    // FIXME: implement this some day
-    return nil;
-}
-
--(NSArray *)forwardList
-{
-    // FIXME: implement this some day
-    return nil;
-}
 
 -(NSString *)description
 {
@@ -169,15 +158,15 @@
     [result appendString:@"\n--------------------------------------------\n"];    
     [result appendString:@"WebBackForwardList:\n"];
     
-    for (i = 0; i < [uriList count]; i++) {
-        if (i == index) {
+    for (i = 0; i < (int)[_entries count]; i++) {
+        if (i == _current) {
             [result appendString:@" >>>"]; 
         }
         else {
             [result appendString:@"    "]; 
         }   
         [result appendFormat:@" %d) ", i]; 
-        [result appendString:[[uriList entryAtIndex:i] description]]; 
+        [result appendString:[[_entries objectAtIndex:i] description]]; 
         [result appendString:@"\n"]; 
     }
 
