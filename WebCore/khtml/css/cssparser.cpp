@@ -276,6 +276,17 @@ StyleBaseImpl::parseAtRule(const QChar *&curP, const QChar *endP)
         kdDebug( 6080 ) << "font rule = " << QString(startP, curP - startP) << endl;
 #endif
     }
+    else if (rule == "konq-quirks") {
+        startP = curP++;
+        curP = parseToChar(startP, endP, '{', false);
+        curP++;
+        startP = curP;
+        if (curP >= endP) return 0;
+        curP = parseToChar(curP, endP, '}', false);
+        if (!curP || startP >= curP)
+            return 0;
+        return new CSSQuirksRuleImpl(this, startP, curP);
+    }
     else if(rule == "media")
     {
         startP = curP++;

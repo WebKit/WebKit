@@ -133,6 +133,7 @@ public:
 	virtual bool isCharetRule() { return false; }
 	virtual bool isImportRule() { return false; }
 	virtual bool isMediaRule() { return false; }
+    virtual bool isQuirksRule() { return false; }
 	virtual bool isFontFaceRule() { return false; }
 	virtual bool isPageRule() { return false; }
 	virtual bool isUnknownRule() { return false; }

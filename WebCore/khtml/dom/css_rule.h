@@ -71,7 +71,8 @@ public:
         IMPORT_RULE = 3,
         MEDIA_RULE = 4,
         FONT_FACE_RULE = 5,
-        PAGE_RULE = 6
+        PAGE_RULE = 6,
+        QUIRKS_RULE = 100 // Not part of the official DOM
     };
 
     /**

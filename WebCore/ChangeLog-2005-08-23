@@ -1,3 +1,24 @@
+2002-10-21  David Hyatt  <hyatt@apple.com>
+
+	Implement support for a new @-rule called @konq-quirks.  This
+	will allow us to put style rules into html4.css that only
+	apply for pages in quirks mode.
+	
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSQuirksRuleImpl::CSSQuirksRuleImpl):
+        (CSSQuirksRuleImpl::~CSSQuirksRuleImpl):
+        (CSSQuirksRuleImpl::cssRules):
+        (CSSQuirksRuleImpl::appendRule):
+        (CSSQuirksRuleImpl::insertRule):
+        (CSSQuirksRuleImpl::deleteRule):
+        * khtml/css/css_ruleimpl.h:
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseAtRule):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/dom/css_rule.h:
+
 2002-10-21  Darin Adler  <darin@apple.com>
 
 	Remove closeEntireTree now that deferred close takes care of that case.

@@ -123,9 +123,31 @@ protected:
     bool m_loading;
 };
 
+class CSSRuleList;
+
+class CSSQuirksRuleImpl : public CSSRuleImpl
+{
+public:
+    CSSQuirksRuleImpl( StyleBaseImpl *parent );
+    CSSQuirksRuleImpl( StyleBaseImpl *parent, const QChar *&curP,
+                      const QChar * endP );
+
+    virtual ~CSSQuirksRuleImpl();
+
+    CSSRuleListImpl *cssRules();
+    unsigned long insertRule ( const DOM::DOMString &rule, unsigned long index );
+    void deleteRule ( unsigned long index );
+
+    virtual bool isQuirksRule() { return true; }
+    
+protected:
+    CSSRuleListImpl *m_lstCSSRules;
+
+    /* Not part of the DOM */
+    unsigned long appendRule( CSSRuleImpl *rule );
+};
 
 class MediaList;
-class CSSRuleList;
 
 class CSSMediaRuleImpl : public CSSRuleImpl
 {

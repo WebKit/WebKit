@@ -217,6 +217,70 @@ void CSSImportRuleImpl::init()
 // --------------------------------------------------------------------------
 
 
+CSSQuirksRuleImpl::CSSQuirksRuleImpl(StyleBaseImpl *parent)
+    :   CSSRuleImpl( parent )
+{
+    m_type = CSSRule::QUIRKS_RULE;
+    m_lstCSSRules = new CSSRuleListImpl();
+    m_lstCSSRules->ref();
+}
+
+CSSQuirksRuleImpl::CSSQuirksRuleImpl( StyleBaseImpl *parent, const QChar *&curP,
+                                      const QChar *endP )
+:   CSSRuleImpl( parent )
+{
+    m_type = CSSRule::QUIRKS_RULE;
+    m_lstCSSRules = new CSSRuleListImpl();
+    m_lstCSSRules->ref();
+
+    // Parse CSS data
+    while( curP < endP )
+    {
+//         kdDebug( 6080 ) << "Style rule: '" << QString( curP, endP - curP )
+//                         << "'" << endl;
+        CSSRuleImpl *rule = parseStyleRule( curP, endP );
+        if ( rule ) {
+            rule->ref();
+            appendRule( rule );
+        }
+        if (!curP) break;
+        while( curP < endP && *curP == QChar( ' ' ) )
+            curP++;
+    }
+}
+
+CSSQuirksRuleImpl::~CSSQuirksRuleImpl()
+{
+    m_lstCSSRules->deref();
+}
+
+CSSRuleListImpl *CSSQuirksRuleImpl::cssRules()
+{
+    return m_lstCSSRules;
+}
+
+unsigned long CSSQuirksRuleImpl::appendRule( CSSRuleImpl *rule )
+{
+    return rule ? m_lstCSSRules->insertRule( rule, m_lstCSSRules->length() ) : 0;
+}
+
+unsigned long CSSQuirksRuleImpl::insertRule( const DOMString &rule,
+                                            unsigned long index )
+{
+    const QChar *curP = rule.unicode();
+    CSSRuleImpl *newRule = parseRule( curP, curP + rule.length() );
+
+    return newRule ? m_lstCSSRules->insertRule( newRule, index ) : 0;
+}
+
+void CSSQuirksRuleImpl::deleteRule( unsigned long index )
+{
+    m_lstCSSRules->deleteRule( index );
+}
+
+// --------------------------------------------------------------------------
+
+
 CSSMediaRuleImpl::CSSMediaRuleImpl(StyleBaseImpl *parent)
     :   CSSRuleImpl( parent )
 {
