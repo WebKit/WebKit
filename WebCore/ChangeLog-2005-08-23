@@ -1,5 +1,16 @@
 2003-04-30  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3244157, giantrobot.com misrenders with a lot of
+	vertical space.  Overflow heights were being miscomputed for
+	overflow:auto blocks.
+	
+        Reviewed by gramps
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+
+2003-04-30  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3210725, invalid n/a selector treated as valid.  This
 	fix also makes the CSS1 test on the test suite for forward-compatible
 	parsing completely pass (yay!), which was an issue on

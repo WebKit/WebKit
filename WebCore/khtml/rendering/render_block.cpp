@@ -495,7 +495,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         // blocks that have overflowed content.
         // Check for an overhanging float first.
         // FIXME: This needs to look at the last flow, not the last child.
-        if (lastChild() && lastChild()->hasOverhangingFloats() ) {
+        if (lastChild() && lastChild()->hasOverhangingFloats()) {
             KHTMLAssert(lastChild()->isRenderBlock());
             m_height = lastChild()->yPos() + static_cast<RenderBlock*>(lastChild())->floatBottom();
             m_height += borderBottom() + paddingBottom();
@@ -945,16 +945,14 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         child->setPos(chPos, child->yPos());
 
         m_height += child->height();
-        if (m_overflowHeight < m_height) {
-            int overflowDelta = child->overflowHeight() - child->height();
-            if (m_height + overflowDelta > m_overflowHeight)
-                m_overflowHeight = m_height + overflowDelta;
-        }
+        int overflowDelta = child->effectiveHeight() - child->height();
+        if (m_height + overflowDelta > m_overflowHeight)
+            m_overflowHeight = m_height + overflowDelta;
 
         if (child->isRenderBlock())
             prevFlow = static_cast<RenderBlock*>(child); 
 
-        if ( child->hasOverhangingFloats() && !child->style()->hidesOverflow()) {
+        if (child->hasOverhangingFloats() && !child->style()->hidesOverflow()) {
             // need to add the child's floats to our floating objects list, but not in the case where
             // overflow is auto/scroll
             addOverHangingFloats( static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos(), true );
