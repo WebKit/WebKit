@@ -2141,30 +2141,38 @@ void RenderTableCell::close()
 
 int RenderTableCell::paddingTop() const
 {
+    if (style()->hasPadding())
+        return RenderFlow::paddingTop();
     if (m_table && m_table->cellPadding() != -1)
         return m_table->cellPadding();
-    return RenderFlow::paddingTop();
+    return 0;
 }
 
 int RenderTableCell::paddingBottom() const
 {
+    if (style()->hasPadding())
+        return RenderFlow::paddingBottom();
     if (m_table && m_table->cellPadding() != -1)
         return m_table->cellPadding();
-    return RenderFlow::paddingBottom();
+    return 0;
 }
 
 int RenderTableCell::paddingLeft() const
 {
+    if (style()->hasPadding())
+        return RenderFlow::paddingLeft();
     if (m_table && m_table->cellPadding() != -1)
         return m_table->cellPadding();
-    return RenderFlow::paddingLeft();
+    return 0;
 }
 
 int RenderTableCell::paddingRight() const
 {
+    if (style()->hasPadding())
+        return RenderFlow::paddingRight();
     if (m_table && m_table->cellPadding() != -1)
         return m_table->cellPadding();
-    return RenderFlow::paddingRight();
+    return 0;
 }
 
 void RenderTableCell::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
