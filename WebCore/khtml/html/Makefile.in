@@ -33,6 +33,7 @@ CLEAN_FILES = $(OBJECTS) \
 
 CXXFLAGS = $(BASECXXFLAGS) \
 	-I$(TOPSRCDIR)/src/kwq \
+	-I$(TOPSRCDIR)/src/kwq/kde \
 	-I$(TOPSRCDIR)/src/kwq/qt \
 	-I$(TOPSRCDIR)/src/kwq/dcop \
 	-I$(TOPSRCDIR)/src/kwq/kdecore \
