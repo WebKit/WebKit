@@ -30,27 +30,29 @@
 // Defining any of the symbols explicitly prevents this from having any effect.
 
 #ifdef NDEBUG
+#define KWQ_ASSERTIONS_DISABLED_DEFAULT 1
+#else
+#define KWQ_ASSERTIONS_DISABLED_DEFAULT 0
+#endif
 
 #ifndef ASSERT_DISABLED
-#define ASSERT_DISABLED 1
+#define ASSERT_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 #ifndef ASSERT_ARG_DISABLED
-#define ASSERT_ARG_DISABLED 1
+#define ASSERT_ARG_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 #ifndef FATAL_DISABLED
-#define FATAL_DISABLED 1
+#define FATAL_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 #ifndef ERROR_DISABLED
-#define ERROR_DISABLED 1
+#define ERROR_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 #ifndef LOG_DISABLED
-#define LOG_DISABLED 1
-#endif
-
+#define LOG_DISABLED KWQ_ASSERTIONS_DISABLED_DEFAULT
 #endif
 
 // These helper functions are always declared, but not necessarily always defined if the corresponding function is disabled.
@@ -81,7 +83,7 @@ void KWQLog(const char *file, int line, const char *function, KWQLogChannel *cha
 #if ASSERT_DISABLED
 
 #define ASSERT(assertion) ((void)0)
-#define ASSERT_WITH_MESSAGE(assertion, format, args...) ((void)0)
+#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) ((void)0)
 #define ASSERT_NOT_REACHED() ((void)0)
 
 #else
@@ -92,9 +94,9 @@ void KWQLog(const char *file, int line, const char *function, KWQLogChannel *cha
         raise(SIGQUIT); \
     } \
 while (0)
-#define ASSERT_WITH_MESSAGE(assertion, format, args...) do \
+#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) do \
     if (!(assertion)) { \
-        KWQReportAssertionFailureWithMessage(__FILE__, __LINE__, __PRETTY_FUNCTION__, #assertion, format, ## args); \
+        KWQReportAssertionFailureWithMessage(__FILE__, __LINE__, __PRETTY_FUNCTION__, #assertion, formatAndArgs); \
         raise(SIGQUIT); \
     } \
 while (0)
@@ -125,10 +127,10 @@ while (0)
 // FATAL
 
 #if FATAL_DISABLED
-#define FATAL(format, args...) ((void)0)
+#define FATAL(formatAndArgs...) ((void)0)
 #else
-#define FATAL(format, args...) do { \
-    KWQReportFatalError(__FILE__, __LINE__, __PRETTY_FUNCTION__, (format), ## args); \
+#define FATAL(formatAndArgs...) do { \
+    KWQReportFatalError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs); \
     raise(SIGQUIT); \
 } while (0)
 #endif
@@ -136,17 +138,17 @@ while (0)
 // ERROR
 
 #if ERROR_DISABLED
-#define ERROR(format, args...) ((void)0)
+#define ERROR(formatAndArgs...) ((void)0)
 #else
-#define ERROR(format, args...) KWQReportError(__FILE__, __LINE__, __PRETTY_FUNCTION__, (format), ## args)
+#define ERROR(formatAndArgs...) KWQReportError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs)
 #endif
 
 // LOG
 
 #if LOG_DISABLED
-#define LOG(channel, format, args...) ((void)0)
+#define LOG(channel, formatAndArgs...) ((void)0)
 #else
-#define LOG(channel, format, args...) KWQLog(__FILE__, __LINE__, __PRETTY_FUNCTION__, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), (format), ## args)
+#define LOG(channel, formatAndArgs...) KWQLog(__FILE__, __LINE__, __PRETTY_FUNCTION__, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), formatAndArgs)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX(prefix, channel) JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel) prefix ## channel
 #endif
