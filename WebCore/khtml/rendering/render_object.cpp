@@ -759,12 +759,12 @@ void RenderObject::setStyle(RenderStyle *style)
     m_hasFirstLine = (style->getPseudoStyle(RenderStyle::FIRST_LINE) != 0);
 
     if ( d >= RenderStyle::Position && m_parent ) {
-	//qDebug("triggering relayout");
-	setMinMaxKnown(false);
-	setLayouted(false);
+        //qDebug("triggering relayout");
+        setMinMaxKnown(false);
+        setLayouted(false);
     } else if ( m_parent ) {
-	//qDebug("triggering repaint");
-	repaint();
+        //qDebug("triggering repaint");
+    	repaint();
     }
 }
 

@@ -1,3 +1,20 @@
+2002-11-18  David Hyatt  <hyatt@apple.com>
+
+	Yay! Found the main cause of :hover feedback being so
+	slow on links.  The diff function for styles was
+	considering a color change as a containing block layout
+	instead of just a repaint.  With this fix, we will no
+	longer lay out when you hover over a link whose color
+	is different (remember that laying out causes the whole
+	page to repaint).
+
+	There's still some work to do to optimize this further,
+	since we do repaint the containing block still, but this
+	should be good enough for beta.
+	
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::diff):
+
 2002-11-17  David Hyatt  <hyatt@apple.com>
 
 	Don't use the immediate painting code for now.  Revert
