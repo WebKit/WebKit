@@ -1,3 +1,10 @@
+2004-06-14  Darin Adler  <darin@apple.com>
+
+        - fixed crash on boot
+
+        * kwq/KWQFoundationExtras.h: (KWQRetainNSRelease):
+        Fixed return value of this method; was uninitialized.
+
 2004-06-14  Trey Matteson  <trey@apple.com>
 
 	Dashboard wants access to pastboard data during the drag gesture.

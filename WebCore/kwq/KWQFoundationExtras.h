@@ -55,7 +55,9 @@ static inline void KWQRelease(id obj)
 
 static inline id KWQRetainNSRelease(id obj)
 {
-    return [KWQRetain(obj) release];
+    KWQRetain(obj);
+    [obj release];
+    return obj;
 }
 
 // Definitions for GC-specific methods for Panther.
