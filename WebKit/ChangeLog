@@ -1,3 +1,13 @@
+2004-12-02  Richard Williamson   <rjw@apple.com>
+
+	Fixed build problem on Tiger8A821.  Private macro and function
+	we were using have been deprecated,
+
+        Reviewed by Vicki.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+
 2004-12-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3879870> Flash Player unable to stop data stream from continuing to download by returning -1 from NPP_Write

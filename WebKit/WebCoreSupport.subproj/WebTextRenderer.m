@@ -73,6 +73,12 @@
 #define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7
 #define INVALID_WIDTH -(__FLT_MAX__)
 
+#if !defined(ScaleEmToUnits)
+#define CONTEXT_DPI	(72.0)
+
+#define ScaleEmToUnits(X, U_PER_EM)	(X * ((1.0 * CONTEXT_DPI) / (CONTEXT_DPI * U_PER_EM)))
+#endif
+
 // Datatypes
 typedef float WebGlyphWidth;
 typedef UInt32 UnicodeChar;
@@ -334,10 +340,9 @@ static BOOL alwaysUseATSU = NO;
         }
 
         // Report the problem.
-        ERROR ("Corrupt font detected, using %@ in place of %@ (%d glyphs) located at \"%@\".", 
+        ERROR ("Corrupt font detected, using %@ in place of %@ located at \"%@\".", 
                     [font familyName], 
                     [initialFont familyName],
-                    ATSFontGetGlyphCount(ATSFontRefFromNSFont(initialFont)),
                     filePath);
     }
 
