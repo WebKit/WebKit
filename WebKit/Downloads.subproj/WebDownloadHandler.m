@@ -18,6 +18,7 @@
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 @implementation WebDownloadHandler
 
@@ -171,7 +172,15 @@
 
     [[dataSource contentPolicy] _setPath:path];
 
-    if (![fileManager createFileAtPath:path contents:nil attributes:[lastDecoder fileAttributes]]) {
+    NSDictionary *fileAttributes = [lastDecoder fileAttributes];
+    if(!fileAttributes){
+        WebResourceResponse *response = [dataSource response];
+        fileAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+            [response createdDate], NSFileCreationDate,
+            [response lastModifiedDate], NSFileModificationDate, nil];
+    }
+    
+    if (![fileManager createFileAtPath:path contents:nil attributes:fileAttributes]) {
         ERROR("-[NSFileManager createFileAtPath:contents:attributes:] failed.");
         return [self errorWithCode:WebErrorCannotCreateFile];
     }

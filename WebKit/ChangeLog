@@ -1,3 +1,12 @@
+2002-11-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3021681 - downloaded files' creation and modification dates are not set
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler createFileIfNecessary]): call [response creationDate] and [response lastModifiedDate] when setting file attributes.
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]): call [response lastModifiedDate] when giving content to plug-ins.
+
 2002-11-10  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.

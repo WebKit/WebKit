@@ -56,23 +56,10 @@
     char *cURL = (char *)malloc([URLString cStringLength]+1);
     [URLString getCString:cURL];
 
-    uint32 lastModified = 0;
-
-    if ([r isKindOfClass:[WebHTTPResourceResponse class]]) {
-        NSNumber *timeInterval = [[(WebHTTPResourceResponse *)r headers] objectForKey:@"Last-Modified"];
-        if(timeInterval) {
-            NSTimeInterval lastModifiedInterval;
-            lastModifiedInterval = [[NSDate dateWithTimeIntervalSinceReferenceDate:[timeInterval doubleValue]] timeIntervalSince1970];
-            if(lastModifiedInterval > 0){
-                lastModified = (uint32)lastModifiedInterval;
-            }
-        }
-    }
-
     stream.ndata = self;
     stream.URL = cURL;
     stream.end = [r contentLength];
-    stream.lastmodified = lastModified;
+    stream.lastmodified = [[r lastModifiedDate] timeIntervalSince1970];
     stream.notifyData = notifyData;
 
     // FIXME: Need a way to check if stream is seekable
