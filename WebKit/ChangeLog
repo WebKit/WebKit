@@ -1,3 +1,16 @@
+2003-02-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Ken.
+
+	- fixed 3162581 - 56 debug: Assertion failure displaying pop-up menu while downloading
+	
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]): No need to assert that the controller is
+	not deferred if this is a handle being used for a download.
+        (-[WebMainResourceClient handle:didReceiveData:]): Likewise.
+        (-[WebMainResourceClient handleDidFinishLoading:]): Likewise.
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]): Likewise.
+
 2003-01-31  Trey Matteson  <trey@apple.com>
 
 	New plumbing for autofill/autocomplete.  WebBrowser receives controlText delegate

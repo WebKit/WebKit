@@ -267,7 +267,7 @@
 {
     ASSERT(![h _defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource controller] _defersCallbacks]);
+    ASSERT([dataSource isDownloading] || ![[dataSource controller] _defersCallbacks]);
     [dataSource _setResponse:r];
 
     LOG(Download, "main content type: %@", [r contentType]);
@@ -290,7 +290,7 @@
     ASSERT([data length] != 0);
     ASSERT(![h _defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource controller] _defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource controller] _defersCallbacks]);
  
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
 
@@ -321,7 +321,7 @@
 {
     ASSERT(![h _defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource controller] _defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource controller] _defersCallbacks]);
     LOG(Loading, "URL = %@", [dataSource URL]);
         
     // Calls in this method will most likely result in a call to release, so we must retain.
@@ -356,7 +356,7 @@
 {
     ASSERT(![h _defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource controller] _defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource controller] _defersCallbacks]);
     LOG(Loading, "URL = %@, error = %@", [error failingURL], [error errorDescription]);
 
     // Calling receivedError will likely result in a call to release, so we must retain.
