@@ -1,5 +1,11 @@
 2003-09-30  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * WebCore.pbproj/project.pbxproj: Made WebCoreKeyboardAccess.h a private header.
+
+2003-09-30  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Maciej
         
         Fix for this bug:

@@ -1900,6 +1900,9 @@
 			fileRef = BE983D95052A2E0A00892D85;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 //BE0
