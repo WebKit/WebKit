@@ -16,6 +16,19 @@
 
 #import <mach-o/dyld.h>
 
+#define IMPORTANT_FONT_TRAITS (0 \
+    | NSBoldFontMask \
+    | NSCompressedFontMask \
+    | NSCondensedFontMask \
+    | NSExpandedFontMask \
+    | NSItalicFontMask \
+    | NSNarrowFontMask \
+    | NSPosterFontMask \
+    | NSSmallCapsFontMask \
+)
+
+#define DESIRED_WEIGHT 5
+
 @interface NSFont (WebAppKitSecretAPI)
 - (BOOL)_isFakeFixedPitch;
 @end
@@ -311,52 +324,79 @@ static int getLCDScaleParameters(void)
     return font;
 }
 
-- (NSFont *)fontWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
+- (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
-    // FIXME:  For now do a simple case insensitive search for a matching font.
-    // The font manager requires exact name matches.  This will at least address the problem
-    // of matching arial to Arial, etc.
+    // Do a simple case insensitive search for a matching font family.
+    // NSFontManager requires exact name matches.
+    // This addresses the problem of matching arial to Arial, etc., but perhaps not all the issues.
     NSEnumerator *e = [[[NSFontManager sharedFontManager] availableFontFamilies] objectEnumerator];
     NSString *availableFamily;
     while ((availableFamily = [e nextObject])) {
-        if ([family caseInsensitiveCompare:availableFamily] == NSOrderedSame) {
-            NSArray *fonts = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:availableFamily];
-            NSArray *fontInfo;
-            NSFontTraitMask fontMask;
-            int fontWeight;
-            unsigned i;
+        if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame) {
+            break;
+        }
+    }
+    if (availableFamily == nil) {
+        return nil;
+    }
+    
+    // Found a family, now figure out what weight and traits to use.
+    bool choseFont = false;
+    int chosenWeight = 0;
+    NSFontTraitMask chosenTraits = 0;
+
+    NSArray *fonts = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:availableFamily];    
+    unsigned n = [fonts count];
+    unsigned i;
+    for (i = 0; i < n; i++) {
+        NSArray *fontInfo = [fonts objectAtIndex:i];
         
-            for (i = 0; i < [fonts count]; i++){
-                fontInfo = [fonts objectAtIndex: i];
+        // Array indices must be hard coded because of lame AppKit API.
+        int fontWeight = [[fontInfo objectAtIndex:2] intValue];
+        NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
+        
+        // If the traits match, then we might have a winner, depending on the weight.
+        if ((fontTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS)) {
+            bool newWinner;
+            
+            if (!choseFont) {
+                newWinner = true;
+            } else {
+                int chosenWeightDelta = chosenWeight - DESIRED_WEIGHT;
+                int fontWeightDelta = fontWeight - DESIRED_WEIGHT;
                 
-                // Hard coded positions depend on lame AppKit API.
-                fontWeight = [[fontInfo objectAtIndex: 2] intValue];
-                fontMask = [[fontInfo objectAtIndex: 3] unsignedIntValue];
+                int chosenWeightDeltaMagnitude = chosenWeightDelta < 0 ? - chosenWeightDelta : chosenWeightDelta;
+                int fontWeightDeltaMagnitude = fontWeightDelta < 0 ? - fontWeightDelta : fontWeightDelta;
                 
-                // First look for a 'normal' weight font.  Note that the 
-                // documentation indicates that the weight parameter is ignored if the 
-                // trait contains the bold mask.  This is odd as one would think that other
-                // traits could also indicate weight changes.  In fact, the weight parameter
-                // and the trait mask together make a conflicted API.
-                if (fontWeight == 5 && (fontMask & traits) == traits){
-                    NSFont *font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:5 size:size];
-                    if (font != nil) {
-                        return font;
-                    }
-                } 
+                // Smaller magnitude wins.
+                // If both have same magnitude, tie breaker is that the smaller weight wins.
+                // Otherwise, first font in the array wins (should almost never happen).
+                if (fontWeightDeltaMagnitude < chosenWeightDeltaMagnitude) {
+                    newWinner = true;
+                } else if (fontWeightDeltaMagnitude == chosenWeightDeltaMagnitude && fontWeight < chosenWeight) {
+                    newWinner = true;
+                } else {
+                    newWinner = false;
+                }
+            }
+
+            if (newWinner) {
+                choseFont = true;
+                chosenWeight = fontWeight;
+                chosenTraits = fontTraits;
                 
-                // Get a font with the correct traits but a weight we're told actually exists.
-                if ((fontMask & traits) == traits){
-                    NSFont *font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:fontWeight size:size];
-                    if (font != nil) {
-                        return font;
-                    }
-                } 
+                if (chosenWeight == DESIRED_WEIGHT) {
+                    break;
+                }
             }
         }
     }
     
-    return nil;
+    if (!choseFont) {
+        return nil;
+    }
+    
+    return [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
 }
 
 - (NSFont *)cachedFontFromFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size

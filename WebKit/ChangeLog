@@ -2,6 +2,19 @@
 
         Reviewed by Richard.
 
+        - fixed 3187143 -- when a font-family has many variants, Safari chooses the wrong one
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+        Changed the algorithm here in two ways. 1) Pick the family member with matching traits that has
+        a weight closest to 5, the standard weight; the old code picked the first family member with
+        matching traits. 2) Match traits based on a mask of which traits are the important ones. The old
+        code matched traits based on a rule of "if the trait bit is 1 it matters, otherwise don't care".
+
+2003-03-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
 	- fixed 3194756 -- REGRESSION: Geneva bold yields Geneva plain, used to yield Helvetica bold (apple.com)
 
         * WebCoreSupport.subproj/WebTextRendererFactory.m:
