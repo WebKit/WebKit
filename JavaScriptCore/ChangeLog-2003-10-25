@@ -1,5 +1,16 @@
 2002-11-20  Maciej Stachowiak  <mjs@apple.com>
 
+	Fixed the two most obvious problems with the new GC for another 6%
+	improvement.
+	
+        * kjs/collector.cpp:
+        (Collector::allocate): Don't bother doing the bit tests on a bitmap word if
+	all it's bits are on.
+        (Collector::collect): Track memoryFull boolean.
+        * kjs/collector.h: Inlined outOfMemory since it was showing up on profiles.
+
+2002-11-20  Maciej Stachowiak  <mjs@apple.com>
+
 	Rewrote garbage collector to make blocks of actual memory instead
 	of blocks of pointers. 7% improvement on JavaScript
 	iBench. There's still lots of room to tune the new GC, this is

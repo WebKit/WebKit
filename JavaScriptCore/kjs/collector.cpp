@@ -43,6 +43,7 @@ static const int LOW_WATER_FACTOR = 4;
 // derived constants
 static const int WORD_SIZE = sizeof(uint32_t);
 static const int BITS_PER_WORD = WORD_SIZE * 8;
+static const uint32_t ALL_BITS_ON = 0xffffffff;
 static const int CELLS_PER_BLOCK = ((BLOCK_SIZE * 8 - 32) / (CELL_SIZE * 8 + 1));
 static const int BITMAP_SIZE = (CELLS_PER_BLOCK / BITS_PER_WORD) + (CELLS_PER_BLOCK % BITS_PER_WORD != 0 ? 1 : 0);
 
@@ -76,6 +77,9 @@ struct CollectorHeap {
 
 static CollectorHeap heap = {NULL, 0, 0, NULL, 0, 0, 0, 0};
 
+bool Collector::memoryFull = false;
+
+
 void* Collector::allocate(size_t s)
 {
   if (s == 0)
@@ -85,13 +89,6 @@ void* Collector::allocate(size_t s)
   if (++heap.numAllocationsSinceLastCollect >= ALLOCATIONS_PER_COLLECTION)
     collect();
   
-  heap.numLiveObjects++;
-
-  if (heap.numLiveObjects >= KJS_MEM_LIMIT) {
-    // fprintf(stderr,"Out of memory");
-  }
-
-
   if (s > (unsigned)CELL_SIZE) {
     // oversize allocator
     if (heap.usedOversizeCells == heap.numOversizeCells) {
@@ -134,6 +131,9 @@ void* Collector::allocate(size_t s)
   // find a free spot in the block
   for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
     uint32_t word = targetBlock->bitmap[wordInBitmap];
+    if (word == ALL_BITS_ON) {
+      continue;
+    }
     for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
       if ((word & (1 << bitInWord)) == 0) {
 	int cellPos = BITS_PER_WORD * wordInBitmap + bitInWord;
@@ -275,17 +275,14 @@ bool Collector::collect()
   
   heap.numAllocationsSinceLastCollect = 0;
   
+  memoryFull = (heap.numLiveObjects >= KJS_MEM_LIMIT);
+
   return deleted;
 }
 
 int Collector::size() 
 {
   return heap.numLiveObjects; 
-}
-
-bool Collector::outOfMemory() 
-{
-  return heap.numLiveObjects >= KJS_MEM_LIMIT;
 }
 
 #ifdef KJS_DEBUG_MEM

@@ -57,7 +57,7 @@ namespace KJS {
      */
     static bool collect();
     static int size();
-    static bool outOfMemory();
+    static bool outOfMemory() { return memoryFull; }
 
 #ifdef KJS_DEBUG_MEM
     /**
@@ -72,6 +72,8 @@ namespace KJS {
     static int numReferencedObjects();
     static CFSetRef liveObjectClasses();
 #endif
+  private:
+    static bool memoryFull;
   };
 
 };
