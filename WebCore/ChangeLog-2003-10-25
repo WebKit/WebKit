@@ -1,3 +1,15 @@
+2002-05-09  Kenneth Kocienda  <kocienda@apple.com>
+
+        Fix for this bug:
+
+        Radar 2890624 (need to remove workaround for double free of image data from QPixmap)
+
+        The appropriate, bug-free AppKit code is now available to us on Jaguar. 
+        Rolling out the workaround.
+
+	* kwq/KWQPixmap.mm:
+	(QPixmap::QPixmap)
+
 === Alexander-3 ===
 
 2002-05-07  Darin Adler  <darin@apple.com>
