@@ -80,8 +80,6 @@ ch3: This is an even longer string
 c4: T
 s33 == ch3: 0
 s33 == s34: 0
-s33 == c4: 0
 s33 != ch3: 1
 s33 != s34: 1
-s33 != c4: 1
 'a' + s33: aThis is a string

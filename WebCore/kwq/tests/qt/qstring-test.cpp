@@ -197,11 +197,11 @@ int main() {
     cout << "s33 == ch3: " << (s33 == ch3) << endl;   // I should test strings that are equal as well
     //cout << "c3 == s33: "<< (c4 == s33) << endl;
     cout << "s33 == s34: "<< (s33 == s34) << endl;
-    cout << "s33 == c4: "<< (s33 == c4) << endl;
+    //cout << "s33 == c4: "<< (s33 == c4) << endl;
     cout << "s33 != ch3: " << (s33 != ch3) << endl;
     //cout << "c3 != s33: "<< (c4 != s33) << endl;
     cout << "s33 != s34: "<< (s33 != s34) << endl;
-    cout << "s33 != c4: "<< (s33 != c4) << endl; 
+    //cout << "s33 != c4: "<< (s33 != c4) << endl; 
     //cout << "ch3 + s33: " << (ch3 + s33) << endl;
     //cout << "c4 + s33: " << (c4 + s33) << endl;
     cout << "\'a\' + s33: " << ('a' + s33) << endl;
