@@ -2715,6 +2715,7 @@ void KWQKHTMLPart::setShowsFirstResponder(bool flag)
             if (node && node->renderer())
                 node->renderer()->repaint();
         }
+        getKHTMLSelection().setVisible(flag);
     }
 }
 

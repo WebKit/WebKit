@@ -997,7 +997,7 @@ static WebHTMLView *lastHitView = nil;
         name:NSMouseMovedNotification object:nil];
 }
 
-- (void)updateFocusRing
+- (void)updateShowsFirstResponder
 {
     [[self _bridge] setShowsFirstResponder:[[self window] isKeyWindow]];
 }
@@ -1397,7 +1397,7 @@ static WebHTMLView *lastHitView = nil;
     ASSERT([notification object] == [self window]);
     [self addMouseMovedObserver];
     [self updateTextBackgroundColor];
-    [self updateFocusRing];
+    [self updateShowsFirstResponder];
 }
 
 - (void)windowDidResignKey: (NSNotification *)notification
@@ -1405,7 +1405,7 @@ static WebHTMLView *lastHitView = nil;
     ASSERT([notification object] == [self window]);
     [self removeMouseMovedObserver];
     [self updateTextBackgroundColor];
-    [self updateFocusRing];
+    [self updateShowsFirstResponder];
 }
 
 - (void)windowWillClose:(NSNotification *)notification

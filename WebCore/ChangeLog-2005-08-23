@@ -1,3 +1,11 @@
+2004-01-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setShowsFirstResponder): Now adjusts caret visibility
+	apprpropriately.
+
 2004-01-23  David Hyatt  <hyatt@apple.com>
 
 	Stub out @namespace support.  Implement the callbacks into the stylesheet that will enable us to

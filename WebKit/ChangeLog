@@ -1,3 +1,14 @@
+2004-01-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateShowsFirstResponder]): Renamed from updateFocusRing:
+        since it is now used to kill caret blink timer.
+        (-[WebHTMLView windowDidBecomeKey:]): Now calls new updateShowsFirstResponder
+	method.
+        (-[WebHTMLView windowDidResignKey:]): Ditto.
+
 2004-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3537542>: support for copying HTML
