@@ -352,15 +352,15 @@ bool QWidget::isVisible() const
 void QWidget::setCursor(const QCursor &cur)
 {
     volatile id view = data->view;
+    KWQ_BLOCK_NS_EXCEPTIONS;
     while (view) {
-	KWQ_BLOCK_NS_EXCEPTIONS;
         if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
             [view setDocumentCursor:cur.handle()];
             break;
         }
         view = [view superview];
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 QCursor QWidget::cursor()

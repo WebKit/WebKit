@@ -1,5 +1,13 @@
 2003-10-09  Maciej Stachowiak  <mjs@apple.com>
 
+        - fixed crash I just added.
+
+        * kwq/KWQWidget.mm:
+        (QWidget::setCursor): Move BLOCK_NS_EXCEPTIONS macros so
+	you don't `break' out of the blocking code.
+
+2003-10-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Ken.
 
 	More Cocoa exception blocking work.
