@@ -1,3 +1,13 @@
+2005-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed <rdar://problem/4024786> REGRESSION (Mail): "Smart paste" plain-text word into Blot leaves insertion point misplaced
+
+        * khtml/editing/htmlediting.cpp: (khtml::ReplaceSelectionCommand::doApply):
+        Use the insertNodeAfterAndUpdateNodesInserted and insertNodeBeforeAndUpdateNodesInserted
+        functions to add the leading and trailing spaces for smart paste.
+
 2005-02-25  David Hyatt  <hyatt@apple.com>
 
 	Back out fix for 3382926, since it breaks LTR text inside RTL contexts.
