@@ -621,10 +621,8 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
         // bounds.  This is really disgusting (that paint only sets up the right paint
         // position after you call into it). -dwh
         //printf("Painting layer at %d %d\n", elt->absBounds.x(), elt->absBounds.y());
-    
-        // This is called to update our transparency state.
-        updateTransparentState(p, elt->layer, currentTransparentLayer);
-        
+
+        bool updatedTransparentState = false;
         if (elt->clipOriginator) {
             // We originated a clip (we're either positioned or an element with
             // overflow: hidden).  We need to paint our background and border, subject
@@ -632,7 +630,11 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
             if (elt->backgroundClipRect != currRect) {
                 if (currRect != paintRect)
                     p->restore(); // Pop the clip.
-                    
+
+                // This is called to update our transparency state.
+                updateTransparentState(p, elt->layer, currentTransparentLayer);
+                updatedTransparentState = true;
+                
                 currRect = elt->backgroundClipRect;
                 
                 // Now apply the clip rect.
@@ -671,6 +673,12 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
         if (elt->clipRect != currRect) {
             if (currRect != paintRect)
                 p->restore(); // Pop the clip.
+
+            if (!updatedTransparentState) {
+                // This is called to update our transparency state.
+                updateTransparentState(p, elt->layer, currentTransparentLayer);
+                updatedTransparentState = true;
+            }
             
             currRect = elt->clipRect;
             if (currRect != paintRect) {
@@ -692,6 +700,12 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
             }
         }
 
+        if (!updatedTransparentState) {
+            // This is called to update our transparency state.
+            updateTransparentState(p, elt->layer, currentTransparentLayer);
+            updatedTransparentState = true;
+        }
+        
         if (currRect.isEmpty())
             continue;
         

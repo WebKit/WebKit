@@ -1,3 +1,12 @@
+2003-07-23  Dave Hyatt  <hyatt@apple.com>
+
+	Fix opacity to respect clipping.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paint):
+
 2003-07-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
