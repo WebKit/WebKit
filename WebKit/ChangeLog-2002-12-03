@@ -1,5 +1,23 @@
 2002-07-24  Chris Blumenberg  <cblu@apple.com>
 
+	Renamed WebDefaultControllerPolicyHandler to WebDefaultPolicyHandler.
+
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDefaultControllerPolicyHandler.h: Removed.
+        * WebView.subproj/WebDefaultControllerPolicyHandler.m: Removed.
+        * WebView.subproj/WebDefaultPolicyHandler.h: Added.
+        * WebView.subproj/WebDefaultPolicyHandler.m: Added.
+        (-[WebDefaultControllerPolicyHandler initWithWebController:]):
+        (-[WebDefaultControllerPolicyHandler URLPolicyForURL:]):
+        (-[WebDefaultControllerPolicyHandler fileURLPolicyForMIMEType:dataSource:isDirectory:]):
+        (-[WebDefaultControllerPolicyHandler unableToImplementFileURLPolicy:forDataSource:]):
+        (-[WebDefaultControllerPolicyHandler requestContentPolicyForMIMEType:dataSource:]):
+        (-[WebDefaultControllerPolicyHandler unableToImplementURLPolicyForURL:error:]):
+        (-[WebDefaultControllerPolicyHandler unableToImplementContentPolicy:forDataSource:]):
+        (-[WebDefaultControllerPolicyHandler pluginNotFoundForMIMEType:pluginPageURL:]):
+
+2002-07-24  Chris Blumenberg  <cblu@apple.com>
+
 	More plumbing for contextual menu support.
 
         * WebKit.pbproj/project.pbxproj:

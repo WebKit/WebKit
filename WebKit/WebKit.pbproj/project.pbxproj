@@ -2279,12 +2279,12 @@
 //F64
 		F649E40402EE0D1901CA2ACD = {
 			isa = PBXFileReference;
-			path = WebDefaultControllerPolicyHandler.h;
+			path = WebDefaultPolicyHandler.h;
 			refType = 4;
 		};
 		F649E40502EE0D1901CA2ACD = {
 			isa = PBXFileReference;
-			path = WebDefaultControllerPolicyHandler.m;
+			path = WebDefaultPolicyHandler.m;
 			refType = 4;
 		};
 		F649E40602EE0D1901CA2ACD = {
