@@ -331,7 +331,8 @@
     
     if (!_private->printing) {
 	NSSize newLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
-	NSTimeInterval currentEventTime = [[NSApp currentEvent] timestamp];
+	NSEvent *event = [NSApp currentEvent];
+        NSTimeInterval currentEventTime = event == nil ? 0 : [event timestamp];
         if (_private->firstLayoutEventTime == 0) {
             _private->firstLayoutEventTime = currentEventTime;
         } else if (_private->firstLayoutEventTime != currentEventTime && !NSEqualSizes(_private->lastLayoutSize, newLayoutSize)) {

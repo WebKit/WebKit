@@ -1,3 +1,7 @@
+2003-05-11  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView layoutToPageWidth:]): Added a check for nil that I forgot.
+
 2003-05-10  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
