@@ -254,7 +254,7 @@
 	[[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
         break;
     default:
-        [NSException raise:NSInvalidArgumentException format:@"contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy."];
+        ERROR("contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy.");
     }
 
     [self receivedProgressWithHandle:handle complete:NO];
