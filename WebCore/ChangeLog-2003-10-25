@@ -1,5 +1,14 @@
 2003-02-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - rolled in table code fix from Dirk on the khtml-dev list
+
+        * khtml/rendering/render_table.cpp: (RenderTable::addChild):
+        Change return back to break.
+
+2003-02-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - we say goodbye to "MIB numbers"

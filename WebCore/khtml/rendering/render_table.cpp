@@ -145,7 +145,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
     case TABLE_COLUMN_GROUP:
 	RenderContainer::addChild(child,beforeChild);
 	has_col_elems = true;
-        return;
+        break;
     case TABLE_HEADER_GROUP:
 	if ( !head )
 	    head = static_cast<RenderTableSection *>(child);
