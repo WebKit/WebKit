@@ -1052,6 +1052,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return renderer ? renderer->needsLayout() : false;
 }
 
+- (void)setNeedsLayout
+{
+    RenderObject *renderer = _part->renderer();
+    if (renderer)
+        renderer->setNeedsLayout(true);
+}
+
 - (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
 {
     return _part->keyEvent(event);

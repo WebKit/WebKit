@@ -149,6 +149,7 @@ typedef enum {
 - (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)sendResizeEvent;
 - (BOOL)needsLayout;
+- (void)setNeedsLayout;
 - (void)drawRect:(NSRect)rect;
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit;
 - (NSArray*)computePageRectsWithPrintWidth:(float)printWidth printHeight:(float)printHeight;
@@ -315,7 +316,6 @@ typedef enum {
 - (NSArray *)documentState;
 
 - (void)setNeedsReapplyStyles;
-- (void)setNeedsLayout;
 
 // OK to be an NSString rather than an NSURL.
 // This URL is only used for coloring visited links.

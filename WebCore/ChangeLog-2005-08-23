@@ -1,3 +1,13 @@
+2004-01-09  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3510669 and 3515442, blank frame problems caused by WebKit's use of a separate needsLayout boolean.
+	
+        Reviewed by darin
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setNeedsLayout]):
+
 2004-01-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3524118, floats don't repaint when moved.
