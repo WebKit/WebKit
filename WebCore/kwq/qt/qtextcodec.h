@@ -30,6 +30,14 @@
 #include <config.h>
 #endif
 
+// USING_BORROWED_QSTRING ======================================================
+#ifdef USING_BORROWED_QSTRING
+
+#undef QT_NO_TEXTCODEC
+#include <_qtextcodec.h>
+
+#else
+
 #include "qstring.h"
 #include "qcstring.h"
 
@@ -98,5 +106,7 @@ private:
     CFStringEncoding encoding;
 
 }; // class QTextCodec =========================================================
+
+#endif // USING_BORROWED_QSTRING
 
 #endif

@@ -28,6 +28,9 @@
 #include <qtextcodec.h>
 #include <kwqdebug.h>
 
+// USING_BORROWED_QSTRING ======================================================
+#ifndef USING_BORROWED_QSTRING
+
 // FIXME: do we need this once we have a real implementation?
 static QTextCodec latin1TextCodec(kCFStringEncodingISOLatin1);
 
@@ -132,3 +135,8 @@ QString QTextCodec::toUnicode(const char *chs) const
 {
     return QString::fromStringWithEncoding(chs, -1, encoding);
 }
+
+#else // USING_BORROWED_QSTRING
+// This will help to keep the linker from complaining about empty archives
+void KWQtextcodec_Dummy() {}
+#endif // USING_BORROWED_QSTRING
