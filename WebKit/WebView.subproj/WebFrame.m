@@ -48,8 +48,10 @@
 
     [self _setName:n];
     
-    if (v)
-        [self setWebView:v];
+    if (v) {
+        [_private setWebView: v];
+        [v _setController: [self controller]];
+    }
     
     ++WebFrameCount;
     
@@ -68,12 +70,6 @@
 - (NSString *)name
 {
     return [_private name];
-}
-
-- (void)setWebView:(WebView *)v
-{
-    [_private setWebView: v];
-    [v _setController: [self controller]];
 }
 
 - (WebView *)webView

@@ -49,12 +49,6 @@
 - (WebController *)controller;
 
 /*!
-    @method setWebView:
-    @param view The view to assign to this frame.
-*/
-- (void)setWebView: (WebView *)view;
-
-/*!
     @method webView
     @result The WebView for this frame.
 */

@@ -1,5 +1,16 @@
 2003-03-06  Richard Williamson   <rjw@apple.com>
 
+        Remove setWebView: from WebFrame.
+        
+        Reviewed by chris.
+
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:controller:]):
+        (-[WebFrame name]):
+
+2003-03-06  Richard Williamson   <rjw@apple.com>
+
         API changes.  WebCapabilities -> WebContentTypes.
         Move fileExtension from WebDataSource to WebContentTypes
         
