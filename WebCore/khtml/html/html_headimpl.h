@@ -93,6 +93,9 @@ public:
     bool isAlternate() const { return m_disabledState == 0 && m_alternate; }
     bool isDisabled() const { return m_disabledState == 2; }
     bool isEnabledViaScript() const { return m_disabledState == 1; }
+
+    int disabledState() { return m_disabledState; }
+    void setDisabledState(bool _disabled);
     
 protected:
     khtml::CachedCSSStyleSheet *m_cachedSheet;
