@@ -34,6 +34,7 @@
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 
+#ifndef NDEBUG
 static const char * const stateNames[] = {
     "WebFrameStateProvisional",
     "WebFrameStateCommittedPage",
@@ -41,6 +42,17 @@ static const char * const stateNames[] = {
     "WebFrameStateCompleting",
     "WebFrameStateComplete"
 };
+
+static const char * const loadTypeNames[] = {
+    "WebFrameLoadTypeStandard",
+    "WebFrameLoadTypeBack",
+    "WebFrameLoadTypeForward",
+    "WebFrameLoadTypeIndexedBackForward",		// a multi-item hop in the backforward list
+    "WebFrameLoadTypeReload",
+    "WebFrameLoadTypeReloadAllowingStaleData",
+    "WebFrameLoadTypeInternal"
+};
+#endif
 
 @implementation WebFramePrivate
 
@@ -159,23 +171,36 @@ static const char * const stateNames[] = {
 - (WebHistoryItem *)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
     WebHistoryItem *bfItem = [[[self controller] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
-    [[[self controller] backForwardList] addEntry:bfItem];
+    if (bfItem != [[[self controller] backForwardList] currentEntry])
+        [[[self controller] backForwardList] addEntry:bfItem];
     return bfItem;
 }
 
-- (WebHistoryItem *)_createItem
+- (WebHistoryItem *)_createOrUpdateItem
 {
     WebDataSource *dataSrc = [self dataSource];
     NSURL *url = [[dataSrc request] URL];
-    WebHistoryItem *bfItem = [[WebHistoryItem alloc] initWithURL:url target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]];
-    [bfItem setAnchor:[url fragment]];
-    [dataSrc _addBackForwardItem:bfItem];
-
-    // Set the item for which we will save document state
-    [_private setPreviousItem:[_private currentItem]];
-    [_private setCurrentItem:bfItem];
-
-    return [bfItem autorelease];
+    WebHistoryItem *bfItem;
+    
+    if (!_private->shortRedirectComing){
+        bfItem = [[[WebHistoryItem alloc] initWithURL:url target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]] autorelease];
+        [bfItem setAnchor:[url fragment]];
+        [dataSrc _addBackForwardItem:bfItem];
+    
+        // Set the item for which we will save document state
+        [_private setPreviousItem:[_private currentItem]];
+        [_private setCurrentItem:bfItem];
+    }
+     else {
+        _private->shortRedirectComing = NO;
+        bfItem = [_private currentItem];
+        [bfItem setURL: url];
+        [bfItem setTitle: [dataSrc pageTitle]];
+        [bfItem setParent: [[self parent] name]];
+        [bfItem setAnchor:[url fragment]];
+    }
+    
+    return bfItem;
 }
 
 /*
@@ -183,7 +208,7 @@ static const char * const stateNames[] = {
 */
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip
 {
-    WebHistoryItem *bfItem = [self _createItem];
+    WebHistoryItem *bfItem = [self _createOrUpdateItem];
 
     [self _saveScrollPositionToItem:[_private previousItem]];
     if (!(doClip && self == targetFrame)) {
@@ -483,7 +508,7 @@ static const char * const stateNames[] = {
             case WebFrameLoadTypeInternal:
                 {  // braces because the silly compiler lets you declare vars everywhere but here?!
                 // Add an item to the item tree for this frame
-                WebHistoryItem *item = [self _createItem];
+                WebHistoryItem *item = [self _createOrUpdateItem];
                 ASSERT([[self parent]->_private currentItem]);
                 [[[self parent]->_private currentItem] addChildItem:item];
                 [[self webView] _makeDocumentViewForDataSource:ds];
@@ -1261,18 +1286,27 @@ static const char * const stateNames[] = {
 - (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
     LOG(Redirect, "Client redirect to: %@", URL);
+
     [[[self controller] locationChangeDelegate] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
     // If a zero-time redirect comes in and we're still finishing the previous page, we set
     // a special mode so we treat the next load as part of the same navigation.
     if (seconds == 0.0 && [self _state] != WebFrameStateComplete) {
         _private->instantRedirectComing = YES;
     }
+    
+    // We don't create new back/forward items if a redirect is expected to happen in
+    // less than 1 second.  This prevents getting 'stuck' in a back forward loop
+    // when going back.  Also it prevent the intermediate page from being cached in
+    // the back forward page cache.
+    if (seconds <= 1.0)
+        _private->shortRedirectComing = YES;
 }
 
 - (void)_clientRedirectCancelled
 {
     [[[self controller] locationChangeDelegate] clientRedirectCancelledForFrame:self];
     _private->instantRedirectComing = NO;
+    _private->shortRedirectComing = NO;
 }
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item

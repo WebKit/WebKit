@@ -1,5 +1,20 @@
 2002-11-27  Richard Williamson   <rjw@apple.com>
 
+        Fixed 3113393.  Client side redirects that happen <= 1 second
+        update the current back/forward item, rather than creating
+        a new one.
+
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):
+        (-[WebFrame _createOrUpdateItem]):
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:]):
+        (-[WebFrame _clientRedirectCancelled]):
+
+2002-11-27  Richard Williamson   <rjw@apple.com>
+
         Fixed measurement error for Ahem font (and any font that
         has a tiny fractional value). 3112745, 3112742
          
