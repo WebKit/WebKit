@@ -132,6 +132,7 @@ KHTMLParser::KHTMLParser( KHTMLView *_parent, DocumentPtr *doc)
 }
 
 KHTMLParser::KHTMLParser( DOM::DocumentFragmentImpl *i, DocumentPtr *doc )
+    : current(0)
 {
     HTMLWidget = 0;
     document = doc;

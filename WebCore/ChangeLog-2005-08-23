@@ -1,3 +1,19 @@
+2003-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+	Reviewed by Ken.
+
+	- fixed 3444255 - REGRESSION: www.aa.com crashes (innerHTML)
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment): Keep the fragment
+	ref'd since the tokenizer will ref and deref it. Then turn
+	TreeShared's evil against itself to get the fragment back in the
+	floating 0-ref state.
+        * khtml/html/html_elementimpl.h: Remove stray whitespace.
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::KHTMLParser): Initialize current to 0 in the other
+	constructor too.
+
 2003-10-06  Darin Adler  <darin@apple.com>
 
         * khtml/ecma/kjs_css.lut.h:

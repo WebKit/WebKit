@@ -30,7 +30,7 @@ namespace DOM {
 class DOMString;
 class CSSStyleDeclarationImpl;
 class HTMLFormElementImpl;
- class DocumentFragmentImpl;
+class DocumentFragmentImpl;
 
 class HTMLElementImpl : public ElementImpl
 {
