@@ -17,11 +17,12 @@
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebURLsWithTitles.h>
+#import <WebKit/WebViewPrivate.h>
 
 // Needed for the mouse moved notification.
 #import <AppKit/NSResponder_Private.h>
@@ -440,7 +441,8 @@
     NSURL *imageURL = [element objectForKey: WebContextMenuElementImageURLKey];
     
     if ((deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis) && !didScroll){
-        if(imageURL || linkURL){
+        if((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) ||
+            (!imageURL && linkURL)){
             [_private->draggedURL release];
             
             if (imageURL){
