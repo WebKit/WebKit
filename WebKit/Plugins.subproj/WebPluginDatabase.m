@@ -14,6 +14,7 @@
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
+#import <WebKit/WebPluginDocumentView.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -22,13 +23,10 @@
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
-#define QuickTimePluginIdentifier       @"com.apple.QuickTime Plugin.plugin"
 #define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
 #define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
 #define JavaCFMPluginFilename		@"Java Applet Plugin Enabler"
 #define JavaCarbonPluginBadVersion 	@"1.0.0"
-
-
 
 @implementation WebPluginDatabase
 
@@ -42,73 +40,15 @@ static WebPluginDatabase *database = nil;
     return database;
 }
 
-static BOOL sIsCocoaIsValid = FALSE;
-static BOOL sIsCocoa = FALSE;
-
-- (void)initIsCocoa
-{
-    const CPSProcessSerNum thisProcess = { 0, kCPSCurrentProcess };
-    
-    CPSProcessInfoRec *info = (CPSProcessInfoRec *) malloc(sizeof(CPSProcessInfoRec));
-    CPSGetProcessInfo((const CPSProcessSerNum*)&thisProcess, info, NULL, 0, NULL, NULL, 0);
-    
-    sIsCocoa = (info != NULL && info->Flavour == kCPSCocoaApp);
-    sIsCocoaIsValid = TRUE;
-    
-    free(info);
-}
-
-- (BOOL)isCocoa
-{
-    if (!sIsCocoaIsValid) {
-        [self initIsCocoa];
-    }
-    return sIsCocoa;
-}
-
-- (BOOL)canUsePlugin:(WebBasePluginPackage *)plugin
-{
-    // Current versions of the Java plug-ins will not work in a Carbon environment (3283210).
-    
-    if (!plugin) {
-        return NO;
-    }
-    
-    if ([self isCocoa]) {
-        return YES;
-    }
-    
-    NSBundle *bundle = [plugin bundle];
-    if (bundle) {
-        NSString *bundleIdentifier = [bundle bundleIdentifier];
-        if ([bundleIdentifier isEqualToString:JavaCocoaPluginIdentifier]) {
-            // The Cocoa version of the Java plug-in will never work.
-            return NO;
-        } else if ([bundleIdentifier isEqualToString:JavaCarbonPluginIdentifier] &&
-                   [[[bundle infoDictionary] objectForKey:@"CFBundleVersion"] isEqualToString:JavaCarbonPluginBadVersion]) {
-            // The current version of the mach-o Java plug-in won't work.
-            return NO;
-        }
-    } else {
-        if ([[plugin filename] isEqualToString:JavaCFMPluginFilename]) {
-            // Future versions of the CFM plug-in may work, but there is no way to check its version.
-            return NO;
-        }
-    }
-    return YES;
-}
-
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
-    WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil, *webPlugin=nil, *QTPlugin=nil;
+    WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil, *webPlugin=nil;
     NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
     key = [key lowercaseString];
 
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
         if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]) {
-            if ([[[plugin bundle] bundleIdentifier] _web_isCaseInsensitiveEqualToString:QuickTimePluginIdentifier]) {
-                QTPlugin = plugin;
-            } else if ([plugin isKindOfClass:[WebPluginPackage class]]) {
+            if ([plugin isKindOfClass:[WebPluginPackage class]]) {
                 if (webPlugin == nil) {
                     webPlugin = plugin;
                 }
@@ -118,7 +58,7 @@ static BOOL sIsCocoa = FALSE;
                     if (CFMPlugin == nil) {
                         CFMPlugin = plugin;
                     }
-                } else if(executableType == WebMachOExecutableType) {
+                } else if (executableType == WebMachOExecutableType) {
                     if (machoPlugin == nil) {
                         machoPlugin = plugin;
                     }
@@ -133,17 +73,20 @@ static BOOL sIsCocoa = FALSE;
 
     // Allow other plug-ins to win over QT because if the user has installed a plug-in that can handle a type
     // that the QT plug-in can handle, they probably intended to override QT.
-    if ([self canUsePlugin:webPlugin]) {
+    if (webPlugin && ![webPlugin isQuickTimePlugIn]) {
+        return webPlugin;
+    } else if (machoPlugin && ![machoPlugin isQuickTimePlugIn]) {
+        return machoPlugin;
+    } else if (CFMPlugin && ![CFMPlugin isQuickTimePlugIn]) {
+        return CFMPlugin;
+    } else if (webPlugin) {
         return webPlugin;
     } else if (machoPlugin) {
         return machoPlugin;
     } else if (CFMPlugin) {
         return CFMPlugin;
-    } else if (QTPlugin) {
-        return QTPlugin;
-    } else {
-        return nil;
     }
+    return nil;
 }
 
 - (WebBasePluginPackage *)pluginForMIMEType:(NSString *)MIMEType
@@ -182,7 +125,6 @@ static NSArray *extensionPlugInPaths;
         extensionPlugInPaths = [a copyWithZone:nil];
     }
 }
-
 
 static NSArray *pluginLocations(void)
 {
@@ -270,53 +212,46 @@ static NSArray *pluginLocations(void)
     NSEnumerator *keyEnumerator = [MIMEToViewClass keyEnumerator];
     NSString *MIMEType;
     while ((MIMEType = [keyEnumerator nextObject]) != nil) {
-        if ([MIMEToViewClass objectForKey:MIMEType] == [WebNetscapePluginDocumentView class]) {
+        Class class = [MIMEToViewClass objectForKey:MIMEType];
+        if (class == [WebNetscapePluginDocumentView class] || class == [WebPluginDocumentView class]) {
             [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
         }
     }
     
-    // Register netscape plug-in WebDocumentViews and WebDocumentRepresentations
+    // Build a list of MIME types.
+    NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
     NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
     WebBasePluginPackage *plugin;
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
-        if ([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
-            BOOL isQuickTime = [[[plugin bundle] bundleIdentifier] _web_isCaseInsensitiveEqualToString:QuickTimePluginIdentifier];
-            NSEnumerator *MIMEEnumerator = [plugin MIMETypeEnumerator];
-            while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
-                if ([WebView canShowMIMETypeAsHTML:MIMEType] || (isQuickTime && [MIMEToViewClass objectForKey:MIMEType] != nil)) {
-                    // Don't allow plug-ins to override our core HTML types and don't allow the QT plug-in to override any types 
-                    // because it claims many that we can handle ourselves.
-                    continue;
-                }
-                [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:MIMEType];
-            }
-        } else {
-            if (![plugin isLoaded]) {
-                if (!pendingPluginLoads) {
-                    pendingPluginLoads = [[NSMutableSet alloc] init];
-                }
-                [pendingPluginLoads addObject:plugin];
-            }
-        }
+        [MIMETypes addObjectsFromArray:[[plugin MIMETypeEnumerator] allObjects]];
     }
-}
-
-- (void)loadPluginIfNeededForMIMEType: (NSString *)MIMEType
-{
-    NSEnumerator *pluginEnumerator = [pendingPluginLoads objectEnumerator];
-    WebBasePluginPackage *plugin;
-    while ((plugin = [pluginEnumerator nextObject]) != nil) {
-        if ([[[plugin MIMETypeEnumerator] allObjects] containsObject:MIMEType]) {
-            [plugin load];
-            [pendingPluginLoads removeObject:plugin];
+    
+    // Register plug-in WebDocumentViews and WebDocumentRepresentations.
+    NSEnumerator *MIMEEnumerator = [[MIMETypes allObjects] objectEnumerator];
+    [MIMETypes release];
+    while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
+        if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
+            // Don't allow plug-ins to override our core HTML types.
+            continue;
         }
+        plugin = [self pluginForMIMEType:MIMEType];
+        if ([plugin isQuickTimePlugIn] && [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType] != nil) {
+            // Don't allow the QT plug-in to override any types because it claims many that we can handle ourselves.
+            continue;
+        }
+        if ([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
+            [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:MIMEType];
+        } else {
+            ASSERT([plugin isKindOfClass:[WebPluginPackage class]]);
+            [WebView registerViewClass:[WebPluginDocumentView class] representationClass:[WebPluginDocumentView class] forMIMEType:MIMEType];
+        }
+        
     }
 }
 
 - (void)dealloc
 {
     [plugins release];
-    [pendingPluginLoads release];
     [super dealloc];
 }
 

@@ -32,4 +32,3 @@
 - (NSArray *)pasteboardTypesForSelection;
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 @end
-

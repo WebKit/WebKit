@@ -8,6 +8,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebNSViewExtras.h>
 
 @interface WebKitDOMTreeCopier : NSObject <WebCoreDOMTreeCopier>
 @end

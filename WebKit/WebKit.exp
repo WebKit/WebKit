@@ -94,3 +94,24 @@ _HIWebViewCreate
 _WebConvertNSImageToCGImageRef
 _WebInitForCarbon
 
+## FIXME: These symbols are here so that the QT plug-in can use them. They should not be using them directly.
+_NPN_ReleaseVariantValue
+_NPN_GetStringIdentifier
+_NPN_GetStringIdentifiers
+_NPN_GetIntIdentifier
+_NPN_IdentifierIsString
+_NPN_UTF8FromIdentifier
+_NPN_IntFromIdentifier
+_NPN_CreateObject
+_NPN_RetainObject
+_NPN_ReleaseObject
+_NPN_Invoke
+_NPN_InvokeDefault
+_NPN_Evaluate
+_NPN_GetProperty
+_NPN_SetProperty
+_NPN_RemoveProperty
+_NPN_HasProperty
+_NPN_HasMethod
+_NPN_SetException
+_NPN_Call

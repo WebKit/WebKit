@@ -14,6 +14,7 @@
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
+#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 
 @interface NSMenu (WebViewFactoryAdditions)

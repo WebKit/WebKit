@@ -36,6 +36,7 @@
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPluginDocumentView.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
@@ -1018,8 +1019,8 @@ static BOOL loggedObjectCacheSize = NO;
     // If we're a supported type other than a plugin, we want to make a frame.
     // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
     // but for now we're burdened with making a distinction between the two.
-    return !([viewClass isSubclassOfClass:[WebNetscapePluginDocumentView class]] ||
-             [viewClass respondsToSelector:@selector(webPlugInInitialize)] || [viewClass respondsToSelector:@selector(pluginInitialize)] );
+    return !([viewClass isSubclassOfClass:[WebNetscapePluginDocumentView class]] || 
+             [viewClass isSubclassOfClass:[WebPluginDocumentView class]]);
 }
 
 - (void)loadEmptyDocumentSynchronously

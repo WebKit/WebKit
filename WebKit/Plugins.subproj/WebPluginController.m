@@ -13,6 +13,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginContainer.h>
 #import <WebKit/WebViewPrivate.h>
@@ -37,10 +38,10 @@
 
 @implementation WebPluginController
 
-- initWithHTMLView:(WebHTMLView *)HTMLView
+- (id)initWithDocumentView:(NSView *)view
 {
     [super init];
-    _HTMLView = HTMLView;
+    _documentView = view;
     _views = [[NSMutableArray alloc] init];
     return self;
 }
@@ -89,7 +90,7 @@
 
 - (void)addPlugin:(NSView *)view
 {
-    if (!_HTMLView) {
+    if (!_documentView) {
         ERROR("can't add a plug-in to a defunct WebPluginController");
         return;
     }
@@ -111,7 +112,7 @@
                 [view pluginStart];
             
             if ([view respondsToSelector:@selector(setContainingWindow:)])
-                [view setContainingWindow:[_HTMLView window]];
+                [view setContainingWindow:[_documentView window]];
         }
     }
 }
@@ -136,7 +137,7 @@
     [_views release];
     _views = nil;
 
-    _HTMLView = nil;
+    _documentView = nil;
 }
 
 - (void)webPlugInContainerLoadRequest:(NSURLRequest *)request inFrame:(NSString *)target
@@ -145,11 +146,11 @@
         ERROR("nil URL passed");
         return;
     }
-    if (!_HTMLView) {
+    if (!_documentView) {
         ERROR("could not load URL %@ because plug-in has already been destroyed", request);
         return;
     }
-    WebFrame *frame = [_HTMLView _frame];
+    WebFrame *frame = [_documentView _frame];
     if (!frame) {
         ERROR("could not load URL %@ because plug-in has already been stopped", request);
         return;
@@ -184,11 +185,11 @@
     if (!message) {
         message = @"";
     }
-    if (!_HTMLView) {
+    if (!_documentView) {
         ERROR("could not show status message (%@) because plug-in has already been destroyed", message);
         return;
     }
-    WebView *v = [_HTMLView _webView];
+    WebView *v = [_documentView _webView];
     [[v _UIDelegateForwarder] webView:v setStatusText:message];
 }
 
@@ -200,7 +201,7 @@
 
 - (NSColor *)webPlugInContainerSelectionColor
 {
-    return [[_HTMLView _bridge] selectionColor];
+    return [[_documentView _bridge] selectionColor];
 }
 
 // For compatibility only.
@@ -211,7 +212,7 @@
 
 - (WebFrame *)webFrame
 {
-    return [_HTMLView _frame];
+    return [_documentView _frame];
 }
 
 @end

@@ -1,3 +1,94 @@
+2004-09-29  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed:
+	<rdar://problem/3763832> Safari-155: Non-Embeded movies fail to open in Cocoa QT plug-in
+	<rdar://problem/3820517> "*** -[WebPluginPackage NPP_New]: selector not recognized [self = 0x5552c10]"
+
+        Reviewed by rjw.
+
+        * History.subproj/WebHistoryItem.m:
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_firstResponderCausesFocusDisplay]):
+        (-[NSView _webView]):
+        (-[NSView _frame]):
+        (-[NSView _bridge]):
+        (-[NSView _dataSource]):
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage hash]):
+        (-[WebBasePluginPackage isQuickTimePlugIn]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController initWithDocumentView:]):
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        (-[WebPluginController webPlugInContainerShowStatus:]):
+        (-[WebPluginController webPlugInContainerSelectionColor]):
+        (-[WebPluginController webFrame]):
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+        (-[WebPluginDatabase refresh]):
+        (WebPluginDocumentView::while):
+        * Plugins.subproj/WebPluginDocumentView.h: Added.
+        * Plugins.subproj/WebPluginDocumentView.m: Added.
+        (-[WebPluginDocumentView initWithFrame:]):
+        (-[WebPluginDocumentView dealloc]):
+        (-[WebPluginDocumentView drawRect:]):
+        (-[WebPluginDocumentView setDataSource:]):
+        (-[WebPluginDocumentView setNeedsLayout:]):
+        (-[WebPluginDocumentView layout]):
+        (-[WebPluginDocumentView currentWindow]):
+        (-[WebPluginDocumentView viewWillMoveToWindow:]):
+        (-[WebPluginDocumentView viewDidMoveToWindow]):
+        (-[WebPluginDocumentView viewWillMoveToHostWindow:]):
+        (-[WebPluginDocumentView viewDidMoveToHostWindow]):
+        (-[WebPluginDocumentView receivedData:withDataSource:]):
+        (-[WebPluginDocumentView receivedError:withDataSource:]):
+        (-[WebPluginDocumentView finishedLoadingWithDataSource:]):
+        (-[WebPluginDocumentView canProvideDocumentSource]):
+        (-[WebPluginDocumentView documentSource]):
+        (-[WebPluginDocumentView title]):
+        * Plugins.subproj/npapi.m:
+        (NPN_ReleaseVariantValue):
+        (NPN_GetStringIdentifier):
+        (NPN_GetStringIdentifiers):
+        (NPN_GetIntIdentifier):
+        (NPN_IdentifierIsString):
+        (NPN_UTF8FromIdentifier):
+        (NPN_IntFromIdentifier):
+        (NPN_CreateObject):
+        (NPN_RetainObject):
+        (NPN_ReleaseObject):
+        (NPN_Invoke):
+        (NPN_InvokeDefault):
+        (NPN_Evaluate):
+        (NPN_GetProperty):
+        (NPN_SetProperty):
+        (NPN_RemoveProperty):
+        (NPN_HasProperty):
+        (NPN_HasMethod):
+        (NPN_SetException):
+        (NPN_Call):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge frameRequiredForMIMEType:URL:]):
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDebugDOMNode.m:
+        * WebView.subproj/WebDocumentInternal.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView initWithFrame:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebRenderNode.m:
+        * WebView.subproj/WebView.m:
+
 2004-09-29  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3779998> bringing window to front or sending to back does not send focus/blur events to JavaScript window object

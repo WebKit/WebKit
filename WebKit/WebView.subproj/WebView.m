@@ -220,8 +220,8 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     }
     
     // Load the plug-in DB allowing plug-ins to install types.
-    [[WebPluginDatabase installedPlugins] loadPluginIfNeededForMIMEType:MIMEType];
-    
+    [WebPluginDatabase installedPlugins];
+        
     // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
     viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
     repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];

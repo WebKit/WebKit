@@ -5,6 +5,7 @@
 
 #import <WebKit/WebNSViewExtras.h>
 
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
@@ -26,7 +27,6 @@
 @interface NSObject (Foo)
 - (void*)_renderFramePart;
 - (id)_frameForView: (id)aView;
-- (id)_webView;
 @end
 #endif
 
@@ -244,6 +244,34 @@
 - (BOOL)_web_firstResponderCausesFocusDisplay
 {
     return [self _web_firstResponderIsSelfOrDescendantView] || [[self window] firstResponder] == [self _web_parentWebFrameView];
+}
+
+@end
+
+@implementation NSView (WebDocumentViewExtras)
+
+- (WebView *)_webView
+{
+    // We used to use the view hierarchy exclusively here, but that won't work
+    // right when the first viewDidMoveToSuperview call is done, and this wil.
+    return [[self _frame] webView];
+}
+
+- (WebFrame *)_frame
+{
+    WebFrameView *webFrameView = [self _web_parentWebFrameView];
+    return [webFrameView webFrame];
+}
+
+// Required so view can access the part's selection.
+- (WebBridge *)_bridge
+{
+    return [[self _frame] _bridge];
+}
+
+- (WebDataSource *)_dataSource
+{
+    return [[self _frame] dataSource];
 }
 
 @end

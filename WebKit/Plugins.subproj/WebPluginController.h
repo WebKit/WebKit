@@ -15,12 +15,12 @@
 
 @interface WebPluginController : NSObject
 {
-    WebHTMLView *_HTMLView;
+    NSView *_documentView;
     NSMutableArray *_views;
     BOOL _started;
 }
 
-- (id)initWithHTMLView:(WebHTMLView *)HTMLView;
+- (id)initWithDocumentView:(NSView *)view;
 
 - (void)addPlugin:(NSView *)view;
 

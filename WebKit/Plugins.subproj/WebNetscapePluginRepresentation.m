@@ -3,16 +3,17 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebNetscapePluginRepresentation.h>
+
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebNetscapePluginRepresentation.h>
 
 #import <Foundation/NSURLResponse.h>
-#import <WebKit/WebAssertions.h>
 #import <Foundation/NSError_NSURLExtras.h>
 
 @implementation WebNetscapePluginRepresentation

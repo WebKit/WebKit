@@ -62,4 +62,6 @@
 - (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary;
 - (void)setMIMEToExtensionsDictionary:(NSDictionary *)MIMEToExtensionsDictionary;
 
+- (BOOL)isQuickTimePlugIn;
+
 @end

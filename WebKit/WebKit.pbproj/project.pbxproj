@@ -361,6 +361,7 @@
 				EDE850CE06ECC79E005FAB05,
 				51C6513806EFCD9300969825,
 				9305892B070868B300E79D96,
+				832D7E050709D8FB00F49B61,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -485,6 +486,7 @@
 				83634A7306DA5ECD0026E290,
 				93B641FB06E292BC0055F610,
 				51C6513906EFCD9300969825,
+				832D7E060709D8FB00F49B61,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2172,6 +2174,34 @@
 				);
 			};
 		};
+		832D7E030709D8FB00F49B61 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebPluginDocumentView.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		832D7E040709D8FB00F49B61 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebPluginDocumentView.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		832D7E050709D8FB00F49B61 = {
+			fileRef = 832D7E030709D8FB00F49B61;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		832D7E060709D8FB00F49B61 = {
+			fileRef = 832D7E040709D8FB00F49B61;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		833987810543012D00EE146E = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -2578,6 +2608,8 @@
 				848DFF850365FE6A00CA2ACA,
 				8467275C0367158500CA2ACA,
 				8467275D0367158500CA2ACA,
+				832D7E030709D8FB00F49B61,
+				832D7E040709D8FB00F49B61,
 				83E4AF4B036659440000E506,
 				83E4AF4C036659440000E506,
 				848DFF860365FE6A00CA2ACA,
@@ -4581,8 +4613,8 @@
 			isa = PBXGroup;
 			name = "WebCore Support";
 			path = WebCoreSupport.subproj;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F5B36B410281DF55018635CB = {
 			fileEncoding = 4;

@@ -14,6 +14,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>

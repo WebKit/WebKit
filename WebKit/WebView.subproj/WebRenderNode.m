@@ -11,6 +11,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebNSViewExtras.h>
 
 @interface WebKitRenderTreeCopier : NSObject <WebCoreRenderTreeCopier>
 @end

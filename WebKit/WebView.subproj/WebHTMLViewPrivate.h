@@ -17,10 +17,6 @@
 @interface WebHTMLView (WebPrivate)
 
 - (void)_reset;
-- (WebView *)_webView;
-- (WebFrame *)_frame;
-- (WebBridge *)_bridge;
-- (WebDataSource *)_dataSource;
 
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;

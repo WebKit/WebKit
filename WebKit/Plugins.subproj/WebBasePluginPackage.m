@@ -12,6 +12,11 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPluginPackage.h>
 
+#import <Foundation/NSString_NSURLExtras.h>
+
+#define QuickTimeCarbonPluginIdentifier       @"com.apple.QuickTime Plugin.plugin"
+#define QuickTimeCocoaPluginIdentifier        @"com.apple.qtcocoaplugin"
+
 @interface NSArray (WebPluginExtensions)
 - (NSArray *)_web_lowercaseStrings;
 @end;
@@ -293,6 +298,13 @@
 - (unsigned)hash
 {
     return [[name stringByAppendingString:[lastModifiedDate description]] hash];
+}
+
+- (BOOL)isQuickTimePlugIn
+{
+    NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
+    return [bundleIdentifier _web_isCaseInsensitiveEqualToString:QuickTimeCarbonPluginIdentifier] || 
+        [bundleIdentifier _web_isCaseInsensitiveEqualToString:QuickTimeCocoaPluginIdentifier];
 }
 
 @end

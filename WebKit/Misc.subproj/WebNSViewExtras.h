@@ -1,6 +1,6 @@
 /*
     WebNSViewExtras.h
-	Copyright (c) 2002, Apple, Inc. All rights reserved.
+    Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
 #import <AppKit/AppKit.h>
@@ -8,6 +8,9 @@
 #define WebDragImageAlpha    0.75
 
 @class WebArchive;
+@class WebBridge;
+@class WebDataSource;
+@class WebFrame;
 @class WebFrameView;
 @class WebImageRenderer;
 @class WebView;
@@ -52,5 +55,14 @@
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView;
 - (BOOL)_web_firstResponderCausesFocusDisplay;
+
+@end
+
+@interface NSView (WebDocumentViewExtras)
+
+- (WebView *)_webView;
+- (WebFrame *)_frame;
+- (WebBridge *)_bridge;
+- (WebDataSource *)_dataSource;
 
 @end

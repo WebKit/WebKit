@@ -460,30 +460,6 @@ static BOOL forceRealHitTest = NO;
     [WebImageRenderer stopAnimationsInView:self];
 }
 
-- (WebView *)_webView
-{
-    // We used to use the view hierarchy exclusively here, but that won't work
-    // right when the first viewDidMoveToSuperview call is done, and this wil.
-    return [[self _frame] webView];
-}
-
-- (WebFrame *)_frame
-{
-    WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    return [webFrameView webFrame];
-}
-
-// Required so view can access the part's selection.
-- (WebBridge *)_bridge
-{
-    return [[self _frame] _bridge];
-}
-
-- (WebDataSource *)_dataSource
-{
-    return [[self _frame] dataSource];
-}
-
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
@@ -1375,7 +1351,7 @@ static WebHTMLView *lastHitView = nil;
     
     _private = [[WebHTMLViewPrivate alloc] init];
 
-    _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
+    _private->pluginController = [[WebPluginController alloc] initWithDocumentView:self];
     _private->needsLayout = YES;
 
     return self;
