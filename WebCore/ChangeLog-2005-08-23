@@ -1,3 +1,12 @@
+2004-09-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3799512> REGRESSION (Mail): caret flashes 1 pixel too far to the left
+
+        * khtml/rendering/render_text.cpp: (RenderText::caretRect): Added one to the horizontal position
+        of the caret rect.
+
 2004-09-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -712,6 +712,10 @@ QRect RenderText::caretRect(int offset, bool override)
     _x += absx;
     _y += absy;
 
+    // FIXME: Need the +1 to match caret position of other programs on Macintosh.
+    // Would be better to somehow derive it once we understand exactly why it's needed.
+    _x += 1;
+
     return QRect(_x, _y, 1, height);
 }
 
