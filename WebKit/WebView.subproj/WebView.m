@@ -2236,7 +2236,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if (pseudoElement == nil) {
         pseudoElement = @"";
     }
-    return [[self DOMDocument] getComputedStyle:element :pseudoElement];
+    return [[element ownerDocument] getComputedStyle:element :pseudoElement];
 }
 
 @end
@@ -2331,10 +2331,8 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
             // FIXME: The "&& NO" prevents createNodeIterator from being called, which is nice because
             // it's not actually defined yet.
             if (lastSelectedElement != firstSelectedElement && NO) {
-                DOMNodeIterator *iterator = [[self DOMDocument] createNodeIterator:firstSelectedElement
-                                                                                  :DOM_SHOW_ELEMENT
-                                                                                  :nil
-                                                                                  :NO];
+                DOMNodeIterator *iterator = [[[selection startContainer] ownerDocument]
+                    createNodeIterator:firstSelectedElement :DOM_SHOW_ELEMENT :nil :NO];
                 DOMNode *element = [iterator nextNode];
                 ASSERT(element == firstSelectedElement);
                 
@@ -2519,14 +2517,10 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     return _private->editingDelegate;
 }
 
-- (DOMDocument *)DOMDocument
-{
-    return [[self _bridgeForCurrentSelection] DOMDocument];
-}
-
 - (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text
 {
-    DOMCSSStyleDeclaration *decl = [[self DOMDocument] createCSSStyleDeclaration];
+    // FIXME: Should this really be attached to the document with the current selection?
+    DOMCSSStyleDeclaration *decl = [[[self _bridgeForCurrentSelection] DOMDocument] createCSSStyleDeclaration];
     [decl setCssText:text];
     return decl;
 }

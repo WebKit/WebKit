@@ -50,99 +50,88 @@ sub Say {
 }
 
 sub CheckInWebKit {
-	if (cwd() =~ /WebKit$/) {
-		# ok...we're in WebCore
-		$WebKitPath = cwd();
-	}
-	else {
-		Say("*** $ProgramName: not being run from WebKit directory. Cannot copy, exiting...");
+    if (cwd() =~ /WebKit$/) {
+        # ok...we're in WebCore
+        $WebKitPath = cwd();
+    }
+    else {
+        Say("*** $ProgramName: not being run from WebKit directory. Cannot copy, exiting...");
         exit(0);
-	}
+    }
 }
 
 sub CheckWebCoreFound {
-	my $path = cwd();
-	$path = dirname($path) . '/WebCore';
-	if (-d $path) {
-		# ok...WebCore is where we expect it
-		$WebCorePath = $path;
-	}
-	else {
-		Say("*** $ProgramName: WebCore is not a sibling directory to WebKit. Cannot copy, exiting...");
+    my $path = cwd();
+    $path = dirname($path) . '/WebCore';
+    if (-d $path) {
+        # ok...WebCore is where we expect it
+        $WebCorePath = $path;
+    }
+    else {
+        Say("*** $ProgramName: WebCore is not a sibling directory to WebKit. Cannot copy, exiting...");
         exit(0);
-	}
+    }
 }
 
 sub CheckJavaScriptCoreFound {
-	my $path = cwd();
-	$path = dirname($path) . '/JavaScriptCore';
-	if (-d $path) {
-		# ok...WebCore is where we expect it
-		$JavaScriptCorePath = $path;
-	}
-	else {
-		Say("*** $ProgramName: JavaScriptCore is not a sibling directory to WebKit. Cannot copy, exiting...");
+    my $path = cwd();
+    $path = dirname($path) . '/JavaScriptCore';
+    if (-d $path) {
+        # ok...WebCore is where we expect it
+        $JavaScriptCorePath = $path;
+    }
+    else {
+        Say("*** $ProgramName: JavaScriptCore is not a sibling directory to WebKit. Cannot copy, exiting...");
         exit(0);
-	}
+    }
 }
 
 sub CopyFilesIfNeeded {
-	# Only copy files if the dest file does not exist
-	# or the source file is different than the dest file
-	my $blab = 0;
-	
-	for my $file (keys(%WebCoreFiles)) {
-		my $source = "$WebCorePath/$file";
-		my $dest = "$WebKitPath/$WebCoreFiles{$file}";
-		if (! -f $source) {
-			Fail("$source is not a plain file");	
-		}
-		if (-e $dest && ! -f $dest) {
-			Fail("$dest is not a plain file");	
-		}
+    # Only copy files if the dest file does not exist
+    # or the source file is different than the dest file
+    my $blab = 0;
+    
+    for my $file (keys(%WebCoreFiles)) {
+        my $source = "$WebCorePath/$file";
+        my $dest = "$WebKitPath/$WebCoreFiles{$file}";
+        if (! -f $source) {
+            Fail("$source is not a plain file");    
+        }
+        if (-e $dest && ! -f $dest) {
+            Fail("$dest is not a plain file");    
+        }
 
-        Say("$ProgramName: comparing files...") if $blab == 0;
-        ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
-        ExecuteCommand("sed -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $dest-X > $dest-Y");
-        ExecuteCommand("rm $dest-X");
-        if (! -e $dest || system("cmp $dest $dest-Y > /dev/null 2>&1")){
-            Say("$ProgramName: copying files...") if $blab == 0;
-            $blab = 1;
-            ExecuteCommand("cp -f $dest-Y $dest");
+        ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
+        if (! -e $dest || system("cmp $dest $dest-X > /dev/null 2>&1")){
+            ExecuteCommand("cp -f $dest-X $dest");
        }
-       ExecuteCommand("rm $dest-Y");
+       ExecuteCommand("rm $dest-X");
 
-	}
+    }
 
-	for my $file (keys(%JavaScriptCoreFiles)) {
-		my $source = "$JavaScriptCorePath/$file";
-		my $dest = "$WebKitPath/$JavaScriptCoreFiles{$file}";
-		if (! -f $source) {
-			Fail("$source is not a plain file");	
-		}
-		if (-e $dest && ! -f $dest) {
-			Fail("$dest is not a plain file");	
-		}
-		
-        Say("$ProgramName: comparing files...") if $blab == 0;
-        ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
-        ExecuteCommand("sed -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $dest-X > $dest-Y");
-        ExecuteCommand("rm $dest-X");
-        if (! -e $dest || system("cmp $dest $dest-Y > /dev/null 2>&1")){
-            Say("$ProgramName: copying files...") if $blab == 0;
-            $blab = 1;
-            ExecuteCommand("cp -f $dest-Y $dest");
+    for my $file (keys(%JavaScriptCoreFiles)) {
+        my $source = "$JavaScriptCorePath/$file";
+        my $dest = "$WebKitPath/$JavaScriptCoreFiles{$file}";
+        if (! -f $source) {
+            Fail("$source is not a plain file");    
+        }
+        if (-e $dest && ! -f $dest) {
+            Fail("$dest is not a plain file");    
+        }
+        
+        ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%'  -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
+        if (! -e $dest || system("cmp $dest $dest-X > /dev/null 2>&1")){
+            ExecuteCommand("cp -f $dest-X $dest");
        }
-       ExecuteCommand("rm $dest-Y");
-       
-	}
+       ExecuteCommand("rm $dest-X");
+    }
 }
 
 sub ExecuteCommand {
     my ($cmd) = @_;
-    Say($cmd);
     my $result = system($cmd);
     if ($result != 0) {
+        Say($cmd);
         Fail("error: $result");
         exit($result);
     }

@@ -25,11 +25,16 @@
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewFactory.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebAssertions.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
+
+@interface NSClipView (AppKitSecretsIKnow)
+- (BOOL)_scrollTo:(const NSPoint *)newOrigin; // need the boolean result from this method
+@end
 
 enum {
     SpaceKey = 0x0020
@@ -132,11 +137,11 @@ enum {
     return [[self _scrollView] contentView];
 }
 
-- (void)_scrollVerticallyBy: (float)delta
+- (BOOL)_scrollVerticallyBy: (float)delta
 {
     NSPoint point = [[self _contentView] bounds].origin;
     point.y += delta;
-    [[self _contentView] scrollPoint: point];
+    return [[self _contentView] _scrollTo:&point];
 }
 
 - (void)_scrollHorizontallyBy: (float)delta
@@ -162,7 +167,7 @@ enum {
     return [[self _scrollView] horizontalLineScroll] * 4;
 }
 
-- (void)_pageVertically:(BOOL)up
+- (BOOL)_pageVertically:(BOOL)up
 {
     float pageOverlap = [self _verticalKeyboardScrollAmount];
     float delta = [[self _contentView] bounds].size.height;
@@ -173,7 +178,7 @@ enum {
         delta = -delta;
     }
 
-    [self _scrollVerticallyBy: delta];
+    return [self _scrollVerticallyBy: delta];
 }
 
 - (void)_pageHorizontally: (BOOL)left
@@ -214,21 +219,17 @@ enum {
 
 - (void)scrollPageUp:(id)sender
 {
-    // After hitting the top, tell our parent to scroll
-    float oldY = [[self _contentView] bounds].origin.y;
-    [self _pageVertically:YES];
-    if (oldY == [[self _contentView] bounds].origin.y) {
-        [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:nil];
+    if (![self _pageVertically:YES]) {
+        // If we were already at the top, tell the next responder to scroll if it can.
+        [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
     }
 }
 
 - (void)scrollPageDown:(id)sender
 {
-    // After hitting the bottom, tell our parent to scroll
-    float oldY = [[self _contentView] bounds].origin.y;
-    [self _pageVertically:NO];
-    if (oldY == [[self _contentView] bounds].origin.y) {
-        [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:nil];
+    if (![self _pageVertically:NO]) {
+        // If we were already at the bottom, tell the next responder to scroll if it can.
+        [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
     }
 }
 

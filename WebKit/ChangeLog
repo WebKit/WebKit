@@ -2,6 +2,40 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3667948>: (REGRESSION: Page Down key goes down two pages when smooth scrolling is on)
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _scrollVerticallyBy:]): Added return value to indicate if any scrolling was done.
+        This requires using secret AppKit methods; the public methods don't have a return value.
+        (-[WebFrameView _pageVertically:]): Added return value to indicate if any scrolling was done.
+        (-[WebFrameView scrollPageUp:]): Base call through to next responder on whether any scrolling was done,
+        using return value, rather than looking at new scroll position. This was the cause of the bug,
+        since with smooth scrolling no scrolling has happened yet when the function returns.
+        (-[WebFrameView scrollPageDown:]): Ditto.
+
+        - removed temporary DOMDocument method from WebView
+
+        * WebView.subproj/WebView.m:
+        (-[WebView computedStyleForElement:pseudoElement:]): Call getComputedStyle on the document that owns the
+        element rather than on the document that currently contains the selection.
+        (-[WebView _updateFontPanel]): Get the document from the DOM range rather than using the DOMDocument method.
+        (-[WebView styleDeclarationWithText:]): Change this method to not use the DOMDocument method, but do the same
+        job with inline code.
+
+        * WebView.subproj/WebViewPrivate.h: Moved a recently-added category that is not SPI out of here.
+        * WebView.subproj/WebViewInternal.h: Moved the category in here. And removed the DOMDocument method from it.
+
+        - other changes
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
+        * copy-webcore-files-to-webkit: Change tabs to spaces. Quiet the script down by
+        making it no longer echo each command or print messages about what it's doing by default.
+
+2004-05-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - moved to new symlink technique for embedding frameworks
 
         * WebKit.pbproj/project.pbxproj: Get rid of embed-frameworks build step
@@ -56,9 +90,9 @@
         - moved HTML editing operations from WebView to WebHTMLView, leaving only forwarding machinery
           at the WebView level
 
-        - fixed <rdar://problem/3655412>: (Editing: -startSpeaking: method unimplemented (WebKit editing API))
-        - fixed <rdar://problem/3655414>: (Editing: -stopSpeaking: method unimplemented (WebKit editing API))
-        - fixed <rdar://problem/3655375>: (Editing: -pasteAsRichText: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655412>: (Editing: -startSpeaking: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655414>: (Editing: -stopSpeaking: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655375>: (Editing: -pasteAsRichText: method unimplemented (WebKit editing API))
 
         * WebView.subproj/WebView.h: Added missing declaration of selectionAffinity. I think this
         omission was an editorial mistake.
