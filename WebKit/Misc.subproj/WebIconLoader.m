@@ -23,6 +23,7 @@
     WebResourceHandle *handle;
     id delegate;
     NSURL *URL;
+    NSMutableData *resourceData;
 }
 
 @end;
@@ -33,6 +34,7 @@
 {
     [URL release];
     [handle release];
+    [resourceData release];
     [super dealloc];
 }
 
@@ -50,6 +52,7 @@
     [super init];
     _private = [[WebIconLoaderPrivate alloc] init];
     _private->URL = [URL retain];
+    _private->resourceData = [[NSMutableData alloc] init];
     return self;
 }
 
@@ -114,9 +117,9 @@
 {
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)sender data:(NSData *)data
+- (void)handleDidFinishLoading:(WebResourceHandle *)sender
 {
-    NSImage *icon = [[NSImage alloc] initWithData:data];
+    NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
     if (icon) {
         [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:_private->URL];
         [_private->delegate iconLoader:self receivedPageIcon:icon];
@@ -126,6 +129,7 @@
 
 - (void)handleDidReceiveData:(WebResourceHandle *)sender data:(NSData *)data
 {
+    [_private->resourceData appendData:data];
 }
 
 - (void)handleDidFailLoading:(WebResourceHandle *)sender withError:(WebError *)result

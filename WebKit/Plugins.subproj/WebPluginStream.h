@@ -29,6 +29,7 @@
     BOOL isFirstChunk;
     
     WebResourceHandle *resource;
+    NSMutableData *resourceData;
     
     NPP_NewStreamProcPtr NPP_NewStream;
     NPP_DestroyStreamProcPtr NPP_DestroyStream;

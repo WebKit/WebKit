@@ -130,11 +130,10 @@
     [self didStopLoading];
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)handle data:(NSData *)data
+- (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {    
     WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
     WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
-    WEBKIT_ASSERT((int)[data length] == [handle contentLengthReceived]);
 
     [loader finish];
     

@@ -71,6 +71,7 @@
     attributes = [theAttributes retain];
     instance = thePluginPointer;
     notifyData = theNotifyData;
+    resourceData = [[NSMutableData alloc] init];
 
     [self getFunctionPointersFromPluginView:view];
     
@@ -91,6 +92,7 @@
     free((void *)npStream.URL);
     [URL release];
     [attributes release];
+    [resourceData release];
     [super dealloc];
 }
 
@@ -156,6 +158,11 @@
             [self stop];
             return;
         }
+    }
+
+    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
+        // only need to buffer data in this case
+        [resourceData appendData:data];
     }
 
     if(transferMode != NP_ASFILEONLY){
@@ -271,14 +278,14 @@
         forResourceHandle: handle fromDataSource: [view webDataSource] complete: NO];
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)handle data: (NSData *)data
+- (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {
     WebController *webController = [view webController];
     
     [webController _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
             forResourceHandle: handle fromDataSource: [view webDataSource] complete: YES];
  
-    [self finishedLoadingWithData:data];
+    [self finishedLoadingWithData:resourceData];
           
     [webController _didStopLoading:URL];
 }

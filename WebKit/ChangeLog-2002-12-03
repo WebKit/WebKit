@@ -1,3 +1,27 @@
+2002-09-04  Ken Kocienda  <kocienda@apple.com>
+
+	Made more adjustments for API and behavior change that occurred in WebFoundation, 
+	now that WebResourceHandle objects no buffer resource data as it is loaded. Where
+	necessary, the WebKit objects now do their own buffering, however, in many cases,
+	buffering is not necessary to maintain correct behavior.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoaderPrivate dealloc]): Release new buffered resource data object.
+        (-[WebIconLoader initWithURL:]): Allocate new buffered resource data object.
+        (-[WebIconLoader handleDidFinishLoading:]): Modify API to remove data parameter.
+        (-[WebIconLoader handleDidReceiveData:data:]): Buffer data as it is received.
+        * Plugins.subproj/WebPluginStream.h: Added new buffered resource data object.
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream initWithURL:pluginPointer:notifyData:attributes:]): Allocate new buffered resource data object.
+        (-[WebNetscapePluginStream dealloc]): Release new buffered resource data object.
+        (-[WebNetscapePluginStream receivedData:]): Buffer data as it is received (when necessary maintain correct behavior).
+        (-[WebNetscapePluginStream handleDidFinishLoading:]): Modify API to remove data parameter.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handleDidFinishLoading:]): Modify API to remove data parameter.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidFinishLoading:]): Modify API to remove data parameter.
+        (-[WebMainResourceClient handleDidReceiveData:data:]): Buffer data as it is received (when necessary maintain correct behavior).
+
 2002-09-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3043024 - Built-in icons should match on *whatever.com or *whatever.whatever

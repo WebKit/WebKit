@@ -139,19 +139,18 @@
     [self didStopLoading];
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)handle data: (NSData *)data
+- (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
     
     WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
     WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
-    WEBKIT_ASSERT((int)[data length] == [handle contentLengthReceived]);
 
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
     
     // Don't retain data for downloaded files
     if(contentAction != WebContentPolicySave && contentAction != WebContentPolicySaveAndOpenExternally){
-       [dataSource _setResourceData:data];
+       [dataSource _setResourceData:resourceData];
     }
 
     if(contentAction == WebContentPolicyShow){
@@ -210,10 +209,10 @@
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
 
-    [resourceData appendData:data];
-
     switch (policyAction) {
     case WebContentPolicyShow:
+        // only need to buffer data in this case
+        [resourceData appendData:data];
         [dataSource _receivedData:data];
         break;
     case WebContentPolicySave:
