@@ -93,6 +93,7 @@ static BOOL forceRealHitTest = NO;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
+- (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action;
 @end
 
 @interface WebHTMLView (WebHTMLViewPrivate)
@@ -103,6 +104,7 @@ static BOOL forceRealHitTest = NO;
 @end
 
 @interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
+- (void)_updateSelectionForInputManager;
 @end
 
 // Any non-zero value will do, but using somethign recognizable might help us debug some day.
@@ -291,6 +293,14 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
     } else {
         return [[webView _editingDelegateForwarder] webView:webView shouldInsertNode:fragment replacingDOMRange:range givenAction:action];
     }
+}
+
+- (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action
+{
+    WebView *webView = [self _webView];
+    DOMRange *selectedRange = [[self _bridge] selectedDOMRange];
+
+    return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:selectedRange givenAction:action];
 }
 
 @end
@@ -2621,9 +2631,8 @@ static WebHTMLView *lastHitView = nil;
 - (void)pasteAsPlainText:(id)sender
 {
     NSString *text = [[NSPasteboard generalPasteboard] stringForType:NSStringPboardType];
-    WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+    if ([self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionPasted]) {
         [bridge replaceSelectionWithText:text selectReplacement:NO];
     }
 }
@@ -2792,9 +2801,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)insertTab:(id)sender
 {
-    WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:@"\t" replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+    if ([self _shouldReplaceSelectionWithText:@"\t" givenAction:WebViewInsertActionPasted]) {
         [bridge insertText:@"\t"];
     }
 }
@@ -2808,9 +2816,8 @@ static WebHTMLView *lastHitView = nil;
 - (void)insertNewline:(id)sender
 {
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
-    WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:@"\n" replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
         [bridge insertNewline];
     }
 }
@@ -2828,12 +2835,11 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_changeWordCaseWithSelector:(SEL)selector
 {
-    WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
     [self selectWord:nil];
     NSString *word = [[bridge selectedString] performSelector:selector];
     // FIXME: Does this need a different action context other than "typed"?
-    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:word replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+    if ([self _shouldReplaceSelectionWithText:word givenAction:WebViewInsertActionTyped]) {
         [bridge replaceSelectionWithText:word selectReplacement:NO];
     }
 }
@@ -3025,8 +3031,7 @@ static WebHTMLView *lastHitView = nil;
         return;
     }
 
-    WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:newWord replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+    if ([self _shouldReplaceSelectionWithText:newWord givenAction:WebViewInsertActionPasted]) {
         [bridge replaceSelectionWithText:newWord selectReplacement:YES];
     }
 }
@@ -3209,9 +3214,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_selectionChanged
 {
-    // TEXTINPUT: if there is marked text, we need to tell the input
-    // manager that the selection changed
-
+    [self _updateSelectionForInputManager];
     [self _updateFontPanel];
 }
 
@@ -3325,8 +3328,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSRange)markedRange
 {
-    ERROR("TEXTINPUT: markedRange not yet implemented");
-    return NSMakeRange(0,0);
+    return _private->markedRangeInNode;
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
@@ -3337,37 +3339,118 @@ static WebHTMLView *lastHitView = nil;
 
 - (long)conversationIdentifier
 {
-    ERROR("TEXTINPUT: conversationIdentifier not yet implemented");
-    return 0;
+    return (long)self;
 }
 
 - (BOOL)hasMarkedText
 {
-    ERROR("TEXTINPUT: hasMarkedText not yet implemented");
-    return FALSE;
+    return _private->markedTextNode != nil;
 }
 
 - (void)unmarkText
 {
-    ERROR("TEXTINPUT: unmarkText not yet implemented");
+    [_private->markedTextNode release];
+    _private->markedTextNode = nil;
 }
 
-- (void)setMarkedText:(id)aString selectedRange:(NSRange)selRange
+- (void)_selectMarkedText
 {
-    ERROR("TEXTINPUT: setMarkedText:selectedRange: not yet implemented");
+    if ([self hasMarkedText]) {
+	WebBridge *bridge = [self _bridge];
+	DOMRange *markedTextRange = [[bridge DOMDocument] createRange];
+
+	[markedTextRange setStart:_private->markedTextNode :_private->markedRangeInNode.location];
+	[markedTextRange setEnd:_private->markedTextNode :(_private->markedRangeInNode.location + _private->markedRangeInNode.length)];
+
+	[bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityUpstream];
+    }
+}
+
+- (void)_setMarkedDOMRange:(DOMRange *)range
+{
+    ASSERT([range startContainer] == [range endContainer]);
+    ASSERT([[range startContainer] nodeType] == DOM_TEXT_NODE);
+
+    DOMNode *newMarkedTextNode = [[range startContainer] retain];
+    [_private->markedTextNode release];
+    _private->markedTextNode = [newMarkedTextNode retain];
+
+    long startOffset = [range startOffset];
+    long endOffset = [range endOffset];
+    _private->markedRangeInNode = NSMakeRange(startOffset, endOffset - startOffset);
+}
+
+- (void)_selectRangeInMarkedText:(NSRange)range
+{
+    WebBridge *bridge = [self _bridge];
+    DOMRange *selectedRange = [[bridge DOMDocument] createRange];
+    
+    unsigned selectionStart = _private->markedRangeInNode.location + range.location;
+    unsigned selectionEnd = selectionStart + range.length;
+
+    [selectedRange setStart:_private->markedTextNode :selectionStart];
+    [selectedRange setEnd:_private->markedTextNode :selectionEnd];
+
+    [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityUpstream];
+}
+
+- (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
+{
+    WebBridge *bridge = [self _bridge];
+
+    if (![bridge isSelectionEditable])
+	return;
+
+    _private->ignoreMarkedTextSelectionChange = YES;
+
+    // if we had marked text already, we need to make sure to replace
+    // that, instead of the selection/caret
+    [self _selectMarkedText];
+
+    NSString *text;
+    if ([string isKindOfClass:[NSAttributedString class]]) {
+	ERROR("TEXTINPUT: requested set marked text with attributed string");
+	text = [string string];
+    } else {
+	text = string;
+    }
+
+    [bridge replaceSelectionWithText:text selectReplacement:YES];
+    [self _setMarkedDOMRange:[bridge selectedDOMRange]];
+    [self _selectRangeInMarkedText:newSelRange];
+
+    _private->ignoreMarkedTextSelectionChange = NO;
 }
 
 - (void)doCommandBySelector:(SEL)aSelector
 {
     [super doCommandBySelector:aSelector];
 }
+
+- (void)_discardMarkedText
+{
+    if (![self hasMarkedText])
+	return;
+
+    _private->ignoreMarkedTextSelectionChange = YES;
+
+    [self _selectMarkedText];
+    [[NSInputManager currentInputManager] markedTextAbandoned:self];
+    [self unmarkText];
+    [[self _bridge] deleteSelection];
+
+    _private->ignoreMarkedTextSelectionChange = NO;
+}
 	
 - (void)insertText:(id)string
 {
     WebBridge *bridge = [self _bridge];
 
-    NSString *text;
+    if (![bridge isSelectionEditable] && ![self hasMarkedText]) {
+	return;
+    }
 
+    NSString *text;
     if ([string isKindOfClass:[NSAttributedString class]]) {
 	ERROR("TEXTINPUT: requested insert of attributed string");
 	text = [string string];
@@ -3375,16 +3458,60 @@ static WebHTMLView *lastHitView = nil;
 	text = string;
     }
 
-    // avoid entering empty strings because it confuses WebCore
-    if ([text length] == 0) {
+    if (![self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionTyped]) {
+	[self _discardMarkedText];
 	return;
     }
 
-    if ([bridge isSelectionEditable]) {
-        WebView *webView = [self _webView];
-        if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
-            [bridge insertText:text];
-        }
+    _private->ignoreMarkedTextSelectionChange = YES;
+
+    // if we had marked text, we need to make sure to replace
+    // that, instead of the selection/caret
+    [self _selectMarkedText];
+
+    [bridge insertText:text];
+
+    _private->ignoreMarkedTextSelectionChange = NO;
+
+    // inserting unmarks any marked text
+    [self unmarkText];
+}
+
+- (BOOL)_selectionIsInsideMarkedText
+{
+    DOMRange *selection = [[self _bridge] selectedDOMRange];
+
+    if ([selection startContainer] != _private->markedTextNode) 
+	return NO;
+
+    if ([selection endContainer] != _private->markedTextNode)
+	return NO;
+
+    if ((unsigned)[selection startOffset] < _private->markedRangeInNode.location)
+	return NO;
+
+    if ((unsigned)[selection endOffset] > _private->markedRangeInNode.location + _private->markedRangeInNode.length)
+	return NO;
+
+    return YES;
+}
+
+- (void)_updateSelectionForInputManager
+{
+    if (![self hasMarkedText] || _private->ignoreMarkedTextSelectionChange)
+	return;
+
+    if ([self _selectionIsInsideMarkedText]) {
+	DOMRange *selection = [[self _bridge] selectedDOMRange];
+	
+	unsigned markedSelectionStart = [selection startOffset] - _private->markedRangeInNode.location;
+	unsigned markedSelectionLength = [selection endOffset] - [selection startOffset];
+	NSRange newSelectionRange = NSMakeRange(markedSelectionStart, markedSelectionLength);
+	
+	[[NSInputManager currentInputManager] markedTextSelectionChanged:newSelectionRange client:self];
+    } else {
+	[[NSInputManager currentInputManager] markedTextAbandoned:self];
+	[self unmarkText];
     }
 }
 

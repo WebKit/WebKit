@@ -43,6 +43,10 @@
     NSArray* pageRects;
 
     BOOL resigningFirstResponder;
+
+    DOMNode *markedTextNode;
+    NSRange markedRangeInNode;
+    BOOL ignoreMarkedTextSelectionChange;
 }
 @end
 

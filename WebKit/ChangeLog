@@ -1,3 +1,41 @@
+2004-08-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- implemented enough of the NSTextInput protocol and added the
+	proper calls to NSInputManager to allow input methods to
+	work. However, the text is not marked yet.
+
+        * WebView.subproj/WebHTMLViewInternal.h: Added new fields to track
+	marked range.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView markedRange]): Implemented
+        (-[WebHTMLView conversationIdentifier]): Implemented
+        (-[WebHTMLView hasMarkedText]): Implemented
+        (-[WebHTMLView unmarkText]): Implemented
+        (-[WebHTMLView setMarkedText:selectedRange:]): Implemented - does
+	not yet handle attributes in attributed strings
+        (-[WebHTMLView insertText:]): Modified to handle replacing or abandoning
+	the marked text when set.
+        (-[WebHTMLView _selectMarkedText]): new helper method, self-explanatory
+        (-[WebHTMLView _setMarkedDOMRange:]): hitto.
+        (-[WebHTMLView _selectRangeInMarkedText:]): ditto
+        (-[WebHTMLView _discardMarkedText]): ditto
+        (-[WebHTMLView _selectionIsInsideMarkedText]): ditto
+        (-[WebHTMLView _updateSelectionForInputManager]): ditto
+
+	- did a bit of refactoring while I was in here.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _shouldReplaceSelectionWithText:givenAction:]): added this new
+	helper method to simplify the common case of calling the shouldInsertText: delegate
+        (-[WebHTMLView pasteAsPlainText:]): use it
+        (-[WebHTMLView insertTab:]): ditto
+        (-[WebHTMLView insertNewline:]): ditto
+        (-[WebHTMLView _changeWordCaseWithSelector:]): ditto
+        (-[WebHTMLView _changeSpellingToWord:]): ditto
+        (-[WebHTMLView _selectionChanged]): ditto
+
 2004-08-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3572737> Images not resizing at www.bmx-test.com (spoof nofix)
