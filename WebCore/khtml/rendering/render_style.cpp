@@ -228,7 +228,7 @@ void BackgroundLayer::cullEmptyLayers()
     BackgroundLayer *next;
     for (BackgroundLayer *p = this; p; p = next) {
         next = p->m_next;
-        if (!next->isBackgroundImageSet() &&
+        if (next && !next->isBackgroundImageSet() &&
             !next->isBackgroundXPositionSet() && !next->isBackgroundYPositionSet() &&
             !next->isBackgroundAttachmentSet() && !next->isBackgroundRepeatSet()) {
             delete next;
