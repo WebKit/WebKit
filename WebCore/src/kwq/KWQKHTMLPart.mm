@@ -22,61 +22,73 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
  
 #include <KWQKHTMLPart.h>
 
- 
+
 KHTMLPart::KHTMLPart()
 {
+    _logNotYetImplemented();
 }
 
 
 KHTMLPart::KHTMLPart(const KURL &url )
 {
+    _logNotYetImplemented();
 }
 
 
 KHTMLPart::~KHTMLPart()
 {
+    _logNotYetImplemented();
 }
 
 
 bool KHTMLPart::openURL( const KURL &url )
 {
+    _logNotYetImplemented();
 }
 
 bool KHTMLPart::closeURL()
 {
+    _logNotYetImplemented();
 }
 
 
 DOM::HTMLDocument KHTMLPart::htmlDocument() const
 {
+    _logNotYetImplemented();
 }
 
 
 DOM::Document KHTMLPart::document() const
 {
+    _logNotYetImplemented();
 }
 
 
 void KHTMLPart::setJScriptEnabled( bool enable )
 {
+    _logNotYetImplemented();
 }
 
 
 bool KHTMLPart::jScriptEnabled() const
 {
+    _logNotYetImplemented();
 }
 
 
 void KHTMLPart::enableMetaRefresh( bool enable )
 {
+    _logNotYetImplemented();
 }
 
 
 bool KHTMLPart::metaRefreshEnabled() const
 {
+    _logNotYetImplemented();
 }
 
 
@@ -84,6 +96,7 @@ bool KHTMLPart::metaRefreshEnabled() const
 // passed to the interpreter.
 QVariant KHTMLPart::executeScript( const QString &script )
 {
+    _logNotYetImplemented();
 }
 
 
@@ -91,362 +104,408 @@ QVariant KHTMLPart::executeScript( const QString &script )
 // passed to the interpreter.
 QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
 {
+    _logNotYetImplemented();
 }
 
 
 void KHTMLPart::setJavaEnabled( bool enable )
 {
+    _logNotYetImplemented();
 }
 
 
 bool KHTMLPart::javaEnabled() const
 {
+    _logNotYetImplemented();
 }
 
 
 KJavaAppletContext *KHTMLPart::javaContext()
 {
+    _logNotYetImplemented();
 }
 
 
 KJavaAppletContext *KHTMLPart::createJavaContext()
 {
+    _logNotYetImplemented();
 }
 
 
 void KHTMLPart::setPluginsEnabled( bool enable )
 {
+    _logNotYetImplemented();
 }
 
 
 bool KHTMLPart::pluginsEnabled() const
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setAutoloadImages( bool enable )
 {
+    _logNeverImplemented();
 }
 
 
 bool KHTMLPart::autoloadImages() const
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setOnlyLocalReferences(bool enable)
 {
+    _logNeverImplemented();
 }
 
 
 bool KHTMLPart::onlyLocalReferences() const
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::write( const char *str, int len)
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::write( const QString &str )
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::end()
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setBaseURL( const KURL &url )
 {
+    _logNeverImplemented();
 }
 
 
 KURL KHTMLPart::baseURL() const
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setBaseTarget( const QString &target )
 {
+    _logNeverImplemented();
 }
 
 
 QString KHTMLPart::baseTarget() const
 {
+    _logNeverImplemented();
 }
 
 
 bool KHTMLPart::setCharset( const QString &name, bool override = false )
 {
+    _logNeverImplemented();
 }
 
 
 bool KHTMLPart::setEncoding( const QString &name, bool override = false )
 {
+    _logNeverImplemented();
 }
 
 
 
 QString KHTMLPart::encoding()
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setUserStyleSheet(const KURL &url)
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setUserStyleSheet(const QString &styleSheet)
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setFontSizes(const QValueList<int> &newFontSizes )
 {
+    _logNeverImplemented();
 }
 
 
 QValueList<int> KHTMLPart::fontSizes() const
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::resetFontSizes()
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setStandardFont( const QString &name )
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setFixedFont( const QString &name )
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, this should be handled by the view, also isn't the anchor a node?
 bool KHTMLPart::gotoAnchor( const QString &name )
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setURLCursor( const QCursor &c )
 {
+    _logNeverImplemented();
 }
 
 
 const QCursor& KHTMLPart::urlCursor() const
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, perhaps searching should be handled externally
 void KHTMLPart::findTextBegin()
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, perhaps searching should be handled externally
 bool KHTMLPart::findTextNext( const QRegExp &exp, bool forward )
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, perhaps searching should be handled externally
 bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensitive )
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, perhaps selection should be managed externally
 QString KHTMLPart::selectedText() const
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, perhaps selection should be managed externally
 DOM::Range KHTMLPart::selection() const
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, perhaps selection should be managed externally
 void KHTMLPart::setSelection( const DOM::Range & )
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, perhaps selection should be managed externally
 bool KHTMLPart::hasSelection() const
 {
+    _logNeverImplemented();
 }
 
 
 // DUBIOUS, perhaps selection should be managed externally
 void KHTMLPart::selectAll()
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setJSStatusBarText( const QString &text )
 {
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setJSDefaultStatusBarText( const QString &text )
 {
+    _logNeverImplemented();
 }
 
 
 QString KHTMLPart::jsStatusBarText() const
 {
+    _logNeverImplemented();
 }
 
 
 QString KHTMLPart::jsDefaultStatusBarText() const
 {
+    _logNeverImplemented();
 }
 
 
 DOM::HTMLDocumentImpl *KHTMLPart::docImpl() const
 {
+    _logNeverImplemented();
 }
 
 
 DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
 {
+    _logNeverImplemented();
 }
 
 
 const KHTMLSettings *KHTMLPart::settings() const
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 KJSProxy *KHTMLPart::jScript()
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 KURL KHTMLPart::completeURL( const QString &url, const QString &target = QString::null )
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 const KURL & KHTMLPart::url() const
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 void KHTMLPart::scheduleRedirection( int delay, const QString &url )
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 KHTMLView *KHTMLPart::view() const
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 QWidget *KHTMLPart::widget()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 KHTMLPart *KHTMLPart::opener()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 KHTMLPart *KHTMLPart::parentPart()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 const QList<KParts::ReadOnlyPart> KHTMLPart::frames() const
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 KHTMLPart *KHTMLPart::findFrame( const QString &f )
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setOpener(KHTMLPart *_opener)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 bool KHTMLPart::openedByJS()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::setOpenedByJS(bool _openedByJS)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 KParts::BrowserExtension *KHTMLPart::browserExtension() const
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code )
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 QString KHTMLPart::requestFrameName()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 bool KHTMLPart::frameExists( const QString &frameName )
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
                     const QStringList &args, bool isIFrame)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::emitUnloadEvent()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
@@ -454,45 +513,45 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
                         const QString &target, const QString& contentType,
                         const QString& boundary )
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::urlSelected( const QString &url, int button = 0, int state = 0,
                         const QString &_target = QString::null )
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
                     const QStringList &args)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::nodeActivated(const DOM::Node &)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 QVariant KHTMLPart::executeScheduledScript()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::stopAutoScroll()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void KHTMLPart::overURL( const QString &url, const QString &target )
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 

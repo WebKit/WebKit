@@ -22,42 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <KWQFrame.h>
-
-#include <kwqdebug.h>
-
-QFrame::QFrame()
-{
-    _logNeverImplemented();
-}
-
-
-QFrame::QFrame(QWidget *parent)
-{
-    _logNeverImplemented();
-}
-
-
-void QFrame::setFrameStyle(int)
-{
-    _logNeverImplemented();
-}
-
-
-int QFrame::frameWidth() const
-{
-    _logNeverImplemented();
-}
-
-
-QFrame::QFrame(const QFrame &)
-{
-    _logNeverImplemented();
-}
-
-
-QFrame &QFrame::operator=(const QFrame &)
-{
-    _logNeverImplemented();
-}
+ 
+#define _logNeverImplemented()   NSLog (@"ERROR %s:%d  %s (NOT IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__)
+#define _logNotYetImplemented()   NSLog (@"WARNING %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__)
 

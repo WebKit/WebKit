@@ -25,156 +25,189 @@
 
 #include <qscrollview.h>
 
+#include <kwqdebug.h>
+
 QScrollView::QScrollView(QWidget *parent=0, const char *name=0, WFlags f=0)
 {
+    _logNeverImplemented();
 }
 
 
 QScrollView::~QScrollView()
 {
+    _logNeverImplemented();
 }
 
 
 QWidget* QScrollView::viewport() const
 {
+    return (QWidget *)this;
 }
 
 
 int QScrollView::visibleWidth() const
 {
+    _logNeverImplemented();
 }
 
 
 int QScrollView::visibleHeight() const
 {
+    _logNeverImplemented();
 }
 
 
 int QScrollView::contentsWidth() const
 {
+    _logNeverImplemented();
 }
 
 
 int QScrollView::contentsHeight() const
 {
+    _logNeverImplemented();
 }
 
 
 int QScrollView::contentsX() const
 {
+    _logNeverImplemented();
 }
 
 
 int QScrollView::contentsY() const
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::scrollBy(int dx, int dy)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::setContentsPos(int x, int y)
 {
+    _logNeverImplemented();
 }
 
 
 QScrollBar *QScrollView::horizontalScrollBar() const
 {
+    _logNeverImplemented();
 }
 
 
 QScrollBar *QScrollView::verticalScrollBar() const
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::setVScrollBarMode(ScrollBarMode)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::setHScrollBarMode(ScrollBarMode)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::addChild(QWidget* child, int x=0, int y=0)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::removeChild(QWidget* child)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::resizeContents(int w, int h)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase=TRUE)
 {
+    _logNeverImplemented();
 }
 
 QPoint QScrollView::contentsToViewport(const QPoint &)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::viewportWheelEvent(QWheelEvent *)
 {
+    _logNeverImplemented();
 }
 
 
 QWidget *QScrollView::clipper() const
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::enableClipper(bool)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::setStaticBackground(bool)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::resizeEvent(QResizeEvent *)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::ensureVisible(int,int)
 {
+    _logNeverImplemented();
 }
 
 
 void QScrollView::ensureVisible(int,int,int,int)
 {
+    _logNeverImplemented();
 }
 
 
 QScrollView::QScrollView(const QScrollView &)
 {
+    _logNeverImplemented();
 }
 
 
 QScrollView &QScrollView::operator=(const QScrollView &)
 {
+    _logNeverImplemented();
 }
 

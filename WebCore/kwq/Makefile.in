@@ -22,6 +22,7 @@ SOURCES = $(wildcard *.mm)
 HEADERS = $(wildcard *.h)
 
 MMOBJECTS = \
+	kwqdebug.o \
 	_KWQOwner.o \
 	KWQasyncimageio.o \
 	KWQasyncio.o \
@@ -68,6 +69,7 @@ MMOBJECTS = \
         KWQKHTMLPartBrowserExtension.o \
         KWQKHTMLFactory.o \
         KWQKHTMLSettings.o \
+        KWQKHTMLView.o \
         KWQKIconLoader.o \
         KWQKImageIO.o \
         KWQKInstance.o \

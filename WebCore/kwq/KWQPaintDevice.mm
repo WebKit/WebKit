@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include <qpaintdevice.h>
+#include <kwqdebug.h>
 
-    
+#include <Cocoa/Cocoa.h>
+
+
 QPaintDevice::~QPaintDevice()
 {
+    _logNeverImplemented();
 }
 
 

@@ -22,42 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <KWQFrame.h>
 
-#include <kwqdebug.h>
+#include <khtmlview.h>
 
-QFrame::QFrame()
-{
-    _logNeverImplemented();
-}
-
-
-QFrame::QFrame(QWidget *parent)
-{
-    _logNeverImplemented();
-}
-
-
-void QFrame::setFrameStyle(int)
-{
-    _logNeverImplemented();
-}
-
-
-int QFrame::frameWidth() const
-{
-    _logNeverImplemented();
-}
-
-
-QFrame::QFrame(const QFrame &)
-{
-    _logNeverImplemented();
-}
-
-
-QFrame &QFrame::operator=(const QFrame &)
-{
-    _logNeverImplemented();
-}
-
+/*
+    Currently this files just extends the kde implementation.
+    See src/kdelibs/khtml/khtmlview.cpp for the complete
+    implementation.
+*/

@@ -24,36 +24,40 @@
  */
 #include <KWQFrame.h>
 
+#include <kwqdebug.h>
+
 QFrame::QFrame()
 {
+    _logNeverImplemented();
 }
 
 
 QFrame::QFrame(QWidget *parent)
 {
+    _logNeverImplemented();
 }
 
 
 void QFrame::setFrameStyle(int)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 int QFrame::frameWidth() const
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 QFrame::QFrame(const QFrame &)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 QFrame &QFrame::operator=(const QFrame &)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 

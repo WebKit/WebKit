@@ -25,29 +25,31 @@
 
 #include <qobject.h>
 
+#include <kwqdebug.h>
+
 bool QObject::connect(const QObject *, const char *, const QObject *, 
     const char *)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 bool QObject::disconnect( const QObject *, const char *, const QObject *, 
     const char *)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 QObject::QObject(QObject *parent=0, const char *name=0)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 QObject::~QObject()
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
@@ -55,13 +57,13 @@ QObject::~QObject()
 
 const char *QObject::name() const
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QObject::setName(const char *)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 #ifdef DO_QVARIANT
@@ -72,48 +74,48 @@ QVariant QObject::property(const char *name) const
 
 bool QObject::inherits(const char *) const
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 bool QObject::connect(const QObject *, const char *, const char *) const
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 int QObject:: startTimer(int)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QObject::killTimer(int)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QObject::killTimers()
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QObject::installEventFilter(const QObject *)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QObject::removeEventFilter(const QObject *)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QObject::blockSignals(bool)
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 

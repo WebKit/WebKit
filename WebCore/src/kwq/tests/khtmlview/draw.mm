@@ -38,11 +38,43 @@
 // Create and display our widget.
 //
 
+/*
+    This program illustrates the canonical method for
+    creating a WebPageView.  It currently use kde and Qt
+    API to create a web page view.  Eventually it will
+    use WebPageView and WebKit API.
+    
+    The following methods will eventually create a
+    web page view.
+    
+    url = [NSURL URLWithString: @"http://www.apple.com"];
+    wpd = [[NSWebPageDocument alloc] initWithURL: url];
+    wpv = [[NSWebPageView alloc] initWithFrame: NSMakeRect (0,0,500,500) document: wpd]
+    
+*/
+
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    KHTMLView   *htmlView = new KHTMLView (0,0);
+
+    // This will eventually be replaced with a NSURL.
+    KURL url = "http://www.apple.com";
+    
+    // Use KHTMLPart as the model for the view.  This will eventually be covered
+    // by WebPageDocument.
+    // [[WebPageDocument alloc] initWithURL: (NSURL *)url];
+    KHTMLPart *w = new KHTMLPart();
+    w->openURL (url);
+
+    // Create the KHTMLView.  This will eventually be covered by the
+    // WebPageView. 
+    // [[WebPageView alloc] initWithFrame: (NSRect)rect document: (WebPageDocument *)doc]
+    KHTMLView   *htmlView = new KHTMLView (w, 0);
+    
+    htmlView->resize(500, 400);
+ 
     app.setMainWidget( htmlView );
     htmlView->show();
+
     return app.exec();
 }

@@ -25,7 +25,9 @@
 
 #include <qwidget.h>
 
-#import "KWQView.h"
+#include <kwqdebug.h>
+
+#import <KWQView.h>
 
 /*
     A QWidget rougly corresponds to an NSView.  In Qt a QFrame and QMainWindow inherit
@@ -76,6 +78,7 @@ QWidget::~QWidget()
 
 QSize QWidget::sizeHint() const 
 {
+    _logNeverImplemented();
 }
 
 void QWidget::resize(int w, int h) 
@@ -85,25 +88,25 @@ void QWidget::resize(int w, int h)
 
 void QWidget::setActiveWindow() 
 {
-    // Map onto [NSView window] equivalent.
+    _logNeverImplemented();
 }
 
 
 void QWidget::setEnabled(bool) 
 {
-    // Not relevant.
+    _logNeverImplemented();
 }
 
 
 void QWidget::setAutoMask(bool) 
 {
-    // Not relevant. ??
+    _logNeverImplemented();
 }
 
 
 void QWidget::setMouseTracking(bool) 
 {
-    // Not relevant. ??
+    _logNeverImplemented();
 }
 
 
@@ -201,13 +204,13 @@ QPoint QWidget::mapToGlobal(const QPoint &p) const
 
 void QWidget::setFocus()
 {
-    // TBD
+    _logNeverImplemented();
 }
 
 
 void QWidget::clearFocus()
 {
-    // TBD
+    _logNeverImplemented();
 }
 
 
@@ -225,7 +228,7 @@ void QWidget::setFocusPolicy(FocusPolicy fp)
 
 void QWidget::setFocusProxy( QWidget * )
 {
-    // TBD
+    _logNeverImplemented();
 }
 
 
@@ -245,6 +248,7 @@ void QWidget::unsetPalette()
 {
     // Only called by RenderFormElement::layout, which I suspect will
     // have to be rewritten.  Do nothing.
+    _logNeverImplemented();
 }
 
 
@@ -267,6 +271,7 @@ void QWidget::setStyle(QStyle *style)
 
 QFont QWidget::font() const
 {
+    _logNotYetImplemented();
 }
 
 
@@ -279,7 +284,7 @@ void QWidget::setFont(const QFont &font)
 
 void QWidget::constPolish() const
 {
-    // Is this necessary?
+    _logNeverImplemented();
 }
 
 
@@ -288,7 +293,7 @@ QSize QWidget::minimumSizeHint() const
     // Used by embedded java (KJavaEmbed::sizeHint().  Will be replaced.
     // Used by RenderSubmitButton::calcMinMaxWidth(), where it is called
     // on a button widget.  Will be replaced.
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
     return QSize (0,0);
 }
 
@@ -301,7 +306,7 @@ bool QWidget::isVisible() const
 
 void QWidget::setCursor(const QCursor &cur)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
     if (data->cursor)
         delete data->cursor;
     data->cursor = new QCursor (cur);
@@ -312,21 +317,21 @@ bool QWidget::event(QEvent *)
 {
     // This will eventually not be called, or called from our implementation
     // of run loop, or something???
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
     return TRUE;
 }
 
 
 bool QWidget::focusNextPrevChild(bool)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
     return TRUE;
 }
 
 
 bool QWidget::hasMouseTracking() const
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
     return true;
 }
 
@@ -382,67 +387,67 @@ void QWidget::internalSetGeometry( int x, int y, int w, int h, bool isMove )
 
 void QWidget::showEvent(QShowEvent *)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QWidget::hideEvent(QHideEvent *)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QWidget::wheelEvent(QWheelEvent *)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QWidget::keyPressEvent(QKeyEvent *)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QWidget::keyReleaseEvent(QKeyEvent *)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QWidget::focusOutEvent(QFocusEvent *)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QWidget::setBackgroundMode(BackgroundMode)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QWidget::setAcceptDrops(bool)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 void QWidget::erase()
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 QWidget *QWidget::focusWidget() const
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
 QPoint QWidget::mapFromGlobal(const QPoint &) const
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
@@ -451,6 +456,7 @@ QPoint QWidget::mapFromGlobal(const QPoint &) const
 
 void QWidget::paint (void *)
 {
+    _logNotYetImplemented();
 }
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
