@@ -55,6 +55,7 @@ namespace khtml {
     class RenderCanvas;
     class RenderStyle;
     class RenderLineEdit;
+    class RenderPart;
     class RenderPartObject;
     class RenderWidget;
     class CSSStyleSelector;
@@ -84,6 +85,7 @@ class KHTMLView : public QScrollView
     friend class khtml::RenderObject;
     friend class khtml::RenderBox;
     friend class khtml::RenderLineEdit;
+    friend class khtml::RenderPart;
     friend class khtml::RenderPartObject;
     friend class khtml::RenderWidget;
     friend class khtml::CSSStyleSelector;

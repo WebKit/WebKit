@@ -1,3 +1,9 @@
+2004-01-11  Darin Adler  <darin@apple.com>
+
+        - fixed Dave's check-in so it compiles; I assume he forgot to land one source file
+
+        * khtml/khtmlview.h: Add RenderPart to the friends of KHTMLView.
+
 2004-01-11  David Hyatt  <hyatt@apple.com>
 
 	Fix for frame repainting bugs (3510669, 3515442).  This is a narrower fix than the previous attempt.
