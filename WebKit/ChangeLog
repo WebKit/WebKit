@@ -1,3 +1,16 @@
+2004-09-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3818296> REGRESSION (Mail): centerSelectionInVisibleArea does not work correctly
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView centerSelectionInVisibleArea:]): Now calls new centerSelectionInVisibleArea
+        bridge function instead of ensureCaretVisible. Now handles caret selections and range
+        selections correctly.
+
 2004-09-28  Chris Blumenberg  <cblu@apple.com>
 
 	Added timing code so that Doug can time RTF conversion. 

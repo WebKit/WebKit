@@ -3261,6 +3261,25 @@ NSRect KWQKHTMLPart::visibleSelectionRect() const
     return NSIntersectionRect(selectionRect(), [documentView visibleRect]);     
 }
 
+void KWQKHTMLPart::centerSelectionInVisibleArea() const
+{
+    switch (selection().state()) {
+        case Selection::NONE:
+            break;
+        case Selection::CARET: {
+            if (view())
+                // passing true forces centering even if selection is already exposed
+                view()->ensureRectVisibleCentered(selection().caretRect(), true);
+            break;
+        }
+        case Selection::RANGE:
+            if (view())
+                // passing true forces centering even if selection is already exposed
+                view()->ensureRectVisibleCentered(selectionRect(), true);
+            break;
+    }
+}
+
 NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const
 {
     NSView *view = d->m_view->getDocumentView();

@@ -2697,8 +2697,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)centerSelectionInVisibleArea:(id)sender
 {
-    // FIXME: Does this do the right thing when the selection is not a caret?
-    [[self _bridge] ensureCaretVisible];
+    [[self _bridge] centerSelectionInVisibleArea];
 }
 
 - (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity

@@ -28,8 +28,8 @@
 @interface NSView (KWQNSViewExtras)
 
 - (void)_KWQ_scrollFrameToVisible;
-- (void)_KWQ_scrollRectToVisible:(NSRect)rect;
-- (void)_KWQ_scrollRectToVisible:(NSRect)rect inView:(NSView *)view;
+- (void)_KWQ_scrollRectToVisible:(NSRect)rect forceCentering:(BOOL)forceCentering;
+- (void)_KWQ_scrollRectToVisible:(NSRect)rect inView:(NSView *)view forceCentering:(BOOL)forceCentering;
 
 - (void)_KWQ_scrollPointRecursive:(NSPoint)p;
 - (void)_KWQ_scrollPointRecursive:(NSPoint)p inView:(NSView *)view;

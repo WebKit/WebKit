@@ -477,10 +477,10 @@ void QScrollView::ensureVisible(int x, int y, int xmargin, int ymargin)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::ensureRectVisibleCentered(const QRect &rect)
+void QScrollView::ensureRectVisibleCentered(const QRect &rect, bool forceCentering)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [getDocumentView() _KWQ_scrollRectToVisible:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height())];
+    [getDocumentView() _KWQ_scrollRectToVisible:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height()) forceCentering:forceCentering];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

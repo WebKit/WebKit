@@ -1182,6 +1182,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->visibleSelectionRect(); 
 }
 
+- (void)centerSelectionInVisibleArea
+{
+    _part->centerSelectionInVisibleArea(); 
+}
+
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset
 {
     return [node _nodeImpl]->renderer()->caretRect(offset, true);

@@ -1,3 +1,33 @@
+2004-09-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Fix for this bug:
+        
+        <rdar://problem/3818296> REGRESSION (Mail): centerSelectionInVisibleArea does not work correctly
+        
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::centerSelectionInVisibleArea): New function. Handles both caret
+        and range selections correctly.
+        * kwq/KWQNSViewExtras.h: Add forceCentering boolean to some methods in this file.
+        * kwq/KWQNSViewExtras.m: Ditto. This addition has been done since the AppKit 
+        method we use to do the centering, -[NSView scrollRectToVisible:],  does not alter 
+        the view if the rectangle passed to it is already in view. When forceCentering is
+        true, extra math is done to make scrollRectToVisible center the rectangle we want.
+        (-[NSView _KWQ_scrollFrameToVisible]): Pass NO for forceCentering in call through to 
+        _KWQ_scrollRectToVisible:forceCentering:
+        (-[NSView _KWQ_scrollRectToVisible:forceCentering:]): Add forceCentering argument.
+        (-[NSView _KWQ_scrollRectToVisible:inView:forceCentering:]): Ditto.
+        (-[NSClipView _KWQ_scrollRectToVisible:inView:forceCentering:]): Ditto. Do extra
+        math to implement the forceCentering effect.
+        * kwq/KWQScrollView.h: Add forceCentering default argument to ensureRectVisibleCentered.
+        * kwq/KWQScrollView.mm:
+        (QScrollView::ensureRectVisibleCentered): Ditto.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge centerSelectionInVisibleArea]): New function. Call through to KWQKHTMLPart. 
+
 2004-09-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: WebArchives begin with "<#document/>"
