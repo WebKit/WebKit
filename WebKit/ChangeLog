@@ -4,7 +4,7 @@
 
         Reviewed by darin.
 
-        * WebKit.pbproj/project.pbxproj: Use full patch instead of -L to get at WebKitSecurity.a
+        * WebKit.pbproj/project.pbxproj: Use full path instead of -L to get at WebKitSecurity.a
 
 2004-01-27  Chris Blumenberg  <cblu@apple.com>
 
