@@ -1,3 +1,26 @@
+2003-02-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed reproducible hang at http://asp.eltonsoft.dk/cast/get.asp?cat=Quicktime
+
+	This was a set of mutually recursive frameset pages. This allows
+	the number of frames to grow huge, which kills both WebCore and
+	WebKit, so I added a hard limit of 200 total frames per page.
+	
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::isURLAllowed):
+        (HTMLFrameElementImpl::attach):
+        (HTMLFrameElementImpl::detach):
+        (HTMLIFrameElementImpl::attach):
+        * khtml/html/html_baseimpl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::incrementFrameCount):
+        (KHTMLPart::decrementFrameCount):
+        (KHTMLPart::topLevelFrameCount):
+        * khtml/khtml_part.h:
+
 2003-02-26  David Hyatt  <hyatt@apple.com>
 
 	Fix numerous regressions with text-decoration in quirks mode and

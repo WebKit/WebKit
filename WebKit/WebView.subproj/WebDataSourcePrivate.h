@@ -105,6 +105,8 @@
 
     BOOL storedInPageCache;
     BOOL loadingFromPageCache;
+
+    WebFrame *webFrame;
 }
 
 @end
@@ -173,5 +175,7 @@
 - (NSArray *)_responses;
 
 - (void)_stopLoadingWithError:(WebError *)error;
+
+- (void)_setWebFrame:(WebFrame *)frame;
 
 @end

@@ -1,3 +1,30 @@
+2003-02-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed reproducible hang at http://asp.eltonsoft.dk/cast/get.asp?cat=Quicktime
+
+	WebKit's processing time was O(N^3) in the number of
+	frames. Improved it to O(N^2) by storing frame pointer directly in
+	WebDataSource instead of linear scan. Could still be improved more.
+	
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource webFrame]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _stopLoadingWithError:]):
+        (-[WebDataSource _setWebFrame:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _setDataSource:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame _clearProvisionalDataSource]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formValues:]):
+        (-[WebFrame _loadDataSource:withLoadType:formValues:]):
+        (-[WebFrame _setProvisionalDataSource:]):
+
 2003-02-26  Richard Williamson   <rjw@apple.com>
 
         Fixed 3102760.  Removed WebDocumentDragSettings from API.

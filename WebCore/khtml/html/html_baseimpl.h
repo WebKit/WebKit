@@ -86,6 +86,7 @@ public:
     virtual void parseAttribute(AttributeImpl *);
     virtual void init();
     virtual void attach();
+    virtual void detach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 

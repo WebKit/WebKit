@@ -69,6 +69,7 @@
     [downloadPath release];
     [downloadDirectory release];
     [responses release];
+    [webFrame release];
 
     [super dealloc];
 }
@@ -732,6 +733,13 @@
 - (void)_stopLoadingWithError:(WebError *)error
 {
     [_private->mainClient cancelWithError:error];
+}
+
+- (void)_setWebFrame:(WebFrame *)frame
+{
+    [frame retain];
+    [_private->webFrame release];
+    _private->webFrame = frame;
 }
 
 @end

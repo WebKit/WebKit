@@ -174,6 +174,8 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   else if ( prof == BrowserViewGUI )
     setXMLFile( "khtml_browser.rc" );
 
+  frameCount = 0;
+
   d = new KHTMLPartPrivate(parent());
 
   d->m_view = view;
@@ -5215,6 +5217,32 @@ bool KHTMLPart::restored() const
 {
   return d->m_restored;
 }
+
+void KHTMLPart::incrementFrameCount()
+{
+  frameCount++;
+  if (parentPart()) {
+    parentPart()->incrementFrameCount();
+  }
+}
+
+void KHTMLPart::decrementFrameCount()
+{
+  frameCount--;
+  if (parentPart()) {
+    parentPart()->decrementFrameCount();
+  }
+}
+
+int KHTMLPart::topLevelFrameCount()
+{
+  if (parentPart()) {
+    return parentPart()->topLevelFrameCount();
+  }
+
+  return frameCount;
+}
+
 
 using namespace KParts;
 #include "khtml_part.moc"

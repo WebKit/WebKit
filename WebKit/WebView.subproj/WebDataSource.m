@@ -82,7 +82,7 @@
 
 - (WebFrame *)webFrame
 {
-    return [_private->controller frameForDataSource: self];
+    return _private->webFrame;
 }
 
 // Returns the name of the frame containing this data source, or nil

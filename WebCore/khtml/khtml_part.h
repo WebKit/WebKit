@@ -721,6 +721,10 @@ public:
    */
   bool restored() const;
 
+  void incrementFrameCount();
+  void decrementFrameCount();
+  int topLevelFrameCount();
+
 signals:
   /**
    * Emitted if the cursor is moved over an URL.
@@ -1099,6 +1103,7 @@ public:
   void started(KIO::Job *);
 #endif
 
+  int frameCount;
 };
 
 #if APPLE_CHANGES

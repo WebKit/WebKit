@@ -348,7 +348,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     [_private->dataSource _setController:nil];
     [_private->provisionalDataSource _setController:nil];
 
-    [_private setDataSource:nil];
+    [self _setDataSource:nil];
     [_private setWebView:nil];
 
     [_private->scheduledLayoutTimer invalidate];
@@ -365,6 +365,10 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (void)_setDataSource:(WebDataSource *)ds
 {
+    if (ds == nil && _private->dataSource == nil) {
+	return;
+    }
+
     ASSERT(ds != _private->dataSource);
     
     if ([_private->dataSource isDocumentHTML] && ![ds isDocumentHTML]) {
@@ -373,8 +377,11 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
     [self _detachChildren];
     
+    [_private->dataSource _setWebFrame:nil];
+
     [_private setDataSource:ds];
     [ds _setController:[self controller]];
+    [ds _setWebFrame:self];
 }
 
 - (void)_setLoadType: (WebFrameLoadType)t
@@ -521,7 +528,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             // Set the committed data source on the frame.
             [self _setDataSource:_private->provisionalDataSource];
                 
-            [_private setProvisionalDataSource: nil];
+            [self _setProvisionalDataSource: nil];
 
             [self _setState: WebFrameStateCommittedPage];
         
@@ -796,8 +803,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
                     [[[self controller] locationChangeDelegate] locationChangeDone:[pd mainDocumentError] forDataSource:pd];
 
-                    // We know the provisional data source didn't cut the mustard, release it.
-                    [_private setProvisionalDataSource:nil];
+                    // We know the provisional data source didn't cut the muster, release it.
+                    [self _setProvisionalDataSource:nil];
                     
                     [self _setState:WebFrameStateComplete];
                     return;
@@ -948,7 +955,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_clearProvisionalDataSource
 {
-    [_private setProvisionalDataSource:nil];
+    [self _setProvisionalDataSource:nil];
 }
 
 // helper method that determines whether the subframes described by the item's subitems
@@ -1693,7 +1700,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!request) {
         [self _resetBackForwardListToCurrent];
         [self _setLoadType: WebFrameLoadTypeStandard];
-        [_private setProvisionalDataSource:nil];
+        [self _setProvisionalDataSource:nil];
         return;
     }
     
@@ -1745,7 +1752,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [newDataSource _setJustOpenedForTargetedLink:_private->justOpenedForTargetedLink];
     _private->justOpenedForTargetedLink = NO;
 
-    [_private setProvisionalDataSource:newDataSource];
+    [self _setProvisionalDataSource:newDataSource];
     
     ASSERT([newDataSource webFrame] == self);
 
@@ -1773,7 +1780,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_setProvisionalDataSource: (WebDataSource *)d
 {
+    if (_private->provisionalDataSource != _private->dataSource) {
+	[_private->provisionalDataSource _setWebFrame:nil];
+    }
     [_private setProvisionalDataSource: d];
+    [d _setWebFrame:self];
 }
 
 // used to decide to use loadType=Same
