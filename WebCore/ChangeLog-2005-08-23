@@ -1,3 +1,11 @@
+2003-11-03  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by kocienda.
+
+	- fixed <rdar://problem/3471096>: non-B&I builds should not use order files, because they cause false "regressions" in perf.
+
+        * WebCore.pbproj/project.pbxproj: added empty SECTORDER_FLAGS variables to the Development and Deployment build styles
+
 2003-11-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

@@ -19,6 +19,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				SECTORDER_FLAGS = "";
 				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
@@ -35,6 +36,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				SECTORDER_FLAGS = "";
 				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
