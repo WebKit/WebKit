@@ -14,16 +14,12 @@
 #import <CoreGraphics/CGFontPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
-#define DIRECT_TO_CG
-
 #define NON_BREAKING_SPACE 0xA0
 #define SPACE 0x20
 
-#define FLOOR_TO_INT(x) (int)(floor(x))
 //#define ROUND_TO_INT(x) (int)(((x) > (floor(x) + .5)) ? ceil(x) : floor(x))
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
-#define ROUND_TO_UINT(x) (unsigned int)((x)+.5)
-#define ROUND_TO_USHORT(x) (unsigned int)((x)+.5)
+
 #ifdef FOOOOFOOO
 static inline int ROUND_TO_INT (float x)
 {
@@ -35,14 +31,12 @@ static inline int ROUND_TO_INT (float x)
 }
 #endif
 
-#ifdef DIRECT_TO_CG
-
 #define LOCAL_GLYPH_BUFFER_SIZE 1024
 
 #define INITIAL_GLYPH_CACHE_MAX 512
 #define INCREMENTAL_GLYPH_CACHE_BLOCK 1024
 
-#define UNITIALIZED_GLYPH_WIDTH 65535
+#define UNINITIALIZED_GLYPH_WIDTH 65535
 
 // These definitions are used to bound the character-to-glyph mapping cache.  The
 // range is limited to LATIN1.  When accessing the cache a check must be made to
@@ -56,152 +50,11 @@ static inline int ROUND_TO_INT (float x)
 
 @interface NSFont (IFPrivate)
 - (ATSUFontID)_atsFontID;
-- (CGFontRef) _backingCGSFont;
+- (CGFontRef)_backingCGSFont;
 @end
 
-//typedef unsigned short IFGlyphWidth;
-
-#endif
-
-@protocol IFLayoutFragment <NSObject>
-- (void)setGlyphRange: (NSRange)r;
-- (NSRange)glyphRange;
-- (void)setBoundingRect: (NSRect)r;
-- (NSRect)boundingRect;
-
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (int)accessCount;
-#endif
-
-@end
-
-@interface IFSmallLayoutFragment : NSObject <IFLayoutFragment>
+static void InitATSGlyphVector(ATSGlyphVector *glyphVector, UInt32 numGlyphs)
 {
-    // Assumes 0,0 boundingRect origin and < UINT16_MAX width and height,
-    // and loss of precision for float to short is irrelevant.
-    unsigned short width;
-    unsigned short height;
-
-    // Assumes 0 location and < UINT16_MAX length.
-    unsigned short glyphRangeLength;
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-    int accessCount;
-#endif
-}
-@end
-
-@interface IFLargeLayoutFragment : NSObject <IFLayoutFragment>
-{
-    NSRect boundingRect;
-    NSRange glyphRange;
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-    int accessCount;
-#endif
-}
-@end
-
-@implementation IFSmallLayoutFragment
-- (NSRange)glyphRange
-{
-    NSRange glyphRange;
-    
-    glyphRange.location = 0;
-    glyphRange.length = glyphRangeLength;
-    
-    return glyphRange;
-}
-
-- (void)setGlyphRange: (NSRange)r
-{
-    glyphRangeLength = r.length;
-}
-
-- (void)setBoundingRect: (NSRect)r
-{
-    width = (unsigned short)r.size.width;
-    height = (unsigned short)r.size.height;
-}
-
-- (NSRect)boundingRect
-{
-    NSRect boundingRect;
-    
-    boundingRect.origin.x = 0;
-    boundingRect.origin.y = 0;
-    boundingRect.size.width = (float)width;
-    boundingRect.size.height = (float)height;
-    
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-    accessCount++;
-#endif
-
-    return boundingRect;
-}
-
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (int)accessCount { return accessCount; }
-#endif
-
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (NSComparisonResult)compare: (id)val
-{
-    if ([val accessCount] > accessCount)
-        return NSOrderedDescending;
-    else if ([val accessCount] < accessCount)
-        return NSOrderedAscending;
-    return NSOrderedSame;
-}
-
-#endif
-
-@end
-
-@implementation IFLargeLayoutFragment
-- (NSRange)glyphRange
-{
-    return glyphRange;
-}
-
-- (void)setGlyphRange: (NSRange)r
-{
-    glyphRange = r;
-}
-
-- (void)setBoundingRect: (NSRect)r
-{
-    boundingRect = r;
-}
-
-- (NSRect)boundingRect
-{
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-    accessCount++;
-#endif
-
-    return boundingRect;
-}
-
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (int)accessCount { return accessCount; }
-#endif
-
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (NSComparisonResult)compare: (id)val
-{
-    if ([val accessCount] > accessCount)
-        return NSOrderedDescending;
-    else if ([val accessCount] < accessCount)
-        return NSOrderedAscending;
-    return NSOrderedSame;
-}
-
-#endif
-
-@end
-
-#ifdef DIRECT_TO_CG
-
-static void __IFInitATSGlyphVector(ATSGlyphVector *glyphVector, UInt32 numGlyphs) {
     if (glyphVector->numAllocatedGlyphs == 0) {
         ATSInitializeGlyphVector(numGlyphs, 0, glyphVector);
 
@@ -213,7 +66,8 @@ static void __IFInitATSGlyphVector(ATSGlyphVector *glyphVector, UInt32 numGlyphs
     }
 }
 
-static void __IFResetATSGlyphVector(ATSGlyphVector *glyphVector) {
+static void ResetATSGlyphVector(ATSGlyphVector *glyphVector)
+{
     ATSGlyphVector tmpVector = *glyphVector;
 
     // Prevents glyph array & style settings from deallocated
@@ -231,7 +85,8 @@ static void __IFResetATSGlyphVector(ATSGlyphVector *glyphVector) {
 
 @class NSCGSFont;
 
-static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
+static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
+{
     if (theFont) {
         ATSUFontID fontId = (ATSUFontID)[theFont _atsFontID];
         ATSUAttributeTag tag = kATSUFontTag;
@@ -290,95 +145,8 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     }
 }
 
-#endif
-
-#if 0
-
-@implementation IFLayoutInfo
-
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-+ (void)_dumpLayoutCache: (NSDictionary *)fragCache
-{
-    int i, count;
-    NSArray *stringKeys;
-    NSString *string;
-    id <IFLayoutFragment>fragment;
-
-    if (fragCache == nil){
-        fprintf (stdout, "Fragment cache empty\n");
-        return;
-    }
-    fprintf (stdout, "  Hits   String\n");
-    
-    stringKeys = [fragCache keysSortedByValueUsingSelector:@selector(compare:)];
-    count = [stringKeys count];
-    for (i = 0; i < count; i++){
-        string = [stringKeys objectAtIndex: i];
-        fragment = [fragCache objectForKey: [stringKeys objectAtIndex: i]];
-        fprintf (stdout, "  %06d \"%s\"\n", [fragment accessCount], [string cString]);
-    }
-}
-
-+ (void)_dumpAllLayoutCaches
-{
-    int i, count;
-    NSFont *font;
-    NSArray *fontKeys;
-    IFLayoutInfo *layoutInfo;
-    int totalObjects = 0;
-    
-    fontKeys = [metricsCache allKeys];
-    count = [fontKeys count];
-    for (i = 0; i < count; i++){
-        font = [fontKeys objectAtIndex: i];
-        layoutInfo = [metricsCache objectForKey: [fontKeys objectAtIndex: i]];
-        fprintf (stdout, "Cache information for font %s %f (%d objects)\n", [[font displayName] cString],[font pointSize], [[[layoutInfo textStorage] fragmentCache] count]);
-        [IFLayoutInfo _dumpLayoutCache: [[layoutInfo textStorage] fragmentCache]];
-        totalObjects += [[[layoutInfo textStorage] fragmentCache] count];
-    }
-    fprintf (stdout, "Total cached objects %d\n", totalObjects);
-}
-
-#endif
-
-
-+ (IFLayoutInfo *)getMetricsForFont: (NSFont *)aFont
-{
-    IFLayoutInfo *info = (IFLayoutInfo *)[metricsCache objectForKey: aFont];
-    if (info == nil){
-        info = [[IFLayoutInfo alloc] initWithFont: aFont];
-        [IFLayoutInfo setMetric: info forFont: aFont];
-        [info release];
-    }
-    return info;
-}
-
-
-+ (void)setMetric: (IFLayoutInfo *)info forFont: (NSFont *)aFont
-{
-    if (metricsCache == nil)
-        metricsCache = [[NSMutableDictionary alloc] init];
-    [metricsCache setObject: info forKey: aFont];
-}
-
-
-- initWithFont: (NSFont *)aFont
-{
-    [super init];
-
-    font = [aFont retain];
-    lineHeight = ROUND_TO_INT([font ascender]) + ROUND_TO_INT(-[font descender]) + 1;
-
-    return self;
-}
-
-@end
-
-#endif
-
 @implementation IFCachedTextRenderer
 
-#ifdef DIRECT_TO_CG
 - (void)initializeCaches
 {
     unsigned int i, glyphsToCache;
@@ -405,7 +173,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     // Some glyphs can have zero width, so we have to use a non-zero value
     // in empty slots to indicate they are uninitialized.
     for (i = glyphsToCache; i < widthCacheSize; i++){
-        widthCache[i] = UNITIALIZED_GLYPH_WIDTH;
+        widthCache[i] = UNINITIALIZED_GLYPH_WIDTH;
     }
     
     CGContextRef cgContext;
@@ -445,8 +213,6 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
 #endif
 }
 
-#endif
-
 - initWithFont:(NSFont *)f
 {
     [super init];
@@ -456,29 +222,19 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     descent = -1;
     lineSpacing = -1;
     
-#ifdef DIRECT_TO_CG
     OSStatus errCode;
     ATSUStyle style;
     
     if ((errCode = ATSUCreateStyle(&style)) != noErr)
         [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to alloc ATSUStyle %d", self, errCode];
 
-    __IFFillStyleWithAttributes(style, font);
+    FillStyleWithAttributes(style, font);
 
     if ((errCode = ATSUGetStyleGroup(style, &styleGroup)) != noErr) {
         [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to create attribute group from ATSUStyle 0x%X %d", self, style, errCode];
     }
     
     ATSUDisposeStyle(style);
-#else
-    textStorage = [[KWQTextStorage alloc] initWithFontAttribute: attributes];
-    layoutManager = [[NSLayoutManager alloc] init];
-
-    [layoutManager addTextContainer: [KWQTextContainer sharedInstance]];
-    [textStorage addLayoutManager: layoutManager];    
-
-    attributes = [[NSMutableDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil] retain];
-#endif
 
     return self;
 }
@@ -499,13 +255,12 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
 
 - (int)widthForString:(NSString *)string
 {
-#ifdef DIRECT_TO_CG
     UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
     const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
     const UniChar *internalBuffer;
 
     if (!_internalBuffer) {
-        // FIXME: What if string is larger than LOCAL_GLYPH_BUFFER_SIZE?
+        // FIXME: Handle case where string is larger than LOCAL_GLYPH_BUFFER_SIZE?
         CFStringGetCharacters((CFStringRef)string, CFRangeMake(0, CFStringGetLength((CFStringRef)string)), &localBuffer[0]);
         internalBuffer = &localBuffer[0];
     }
@@ -513,13 +268,6 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
         internalBuffer = _internalBuffer;
 
     return [self widthForCharacters:internalBuffer length:[string length]];
-#else
-    id <IFLayoutFragment> cachedFragment;
-
-    cachedFragment = [textStorage getFragmentForString: string];
-    
-    return [cachedFragment boundingRect];
-#endif
 }
 
 - (int)ascent
@@ -553,7 +301,6 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     // Remember that descender is negative.
     point.y -= [self lineSpacing] - [self descent];
     
-#ifdef DIRECT_TO_CG
     UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
     const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
     const UniChar *internalBuffer;
@@ -568,7 +315,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
 
     CGContextRef cgContext;
 
-    __IFInitATSGlyphVector(&glyphVector, [string length]);
+    InitATSGlyphVector(&glyphVector, [string length]);
 
     ConvertCharactersToGlyphs(styleGroup, internalBuffer, [string length], &glyphVector);
 
@@ -604,16 +351,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
             free (glyphBuf);
     }
 
-    __IFResetATSGlyphVector(&glyphVector);
-#else
-    id <IFLayoutFragment> frag = [storage getFragmentForString: (NSString *)string];
-    NSLog (@"WARNING:  Unable to use CG for drawString:atPoint:withFont:color:\n");
-
-    [self setColor: color];
-    [textStorage setAttributes: [layoutInfo attributes]];
-    [textStorage setString: string];
-    [layoutManager drawGlyphsForGlyphRange:[frag glyphRange] atPoint:p];
-#endif
+    ResetATSGlyphVector(&glyphVector);
 }
 
 - (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
@@ -623,7 +361,6 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     // Remember that descender is negative.
     point.y -= [self lineSpacing] - [self descent];
     
-#ifdef DIRECT_TO_CG
     int width = [self widthForString: string];
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
     CGContextRef cgContext;
@@ -649,16 +386,6 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     CGContextStrokePath(cgContext);
 
     [graphicsContext setShouldAntialias: flag];
-    
-#else
-    id <IFLayoutFragment>frag = [storage getFragmentForString: (NSString *)string];
-
-    [self setColor: color];
-    [textStorage setAttributes: [self attributes]];
-    [textStorage setString: string];
-    NSRect lineRect = [self lineFragmentRectForGlyphAtIndex: 0 effectiveRange: 0];
-    [self underlineGlyphRange:[frag glyphRange] underlineType:NSSingleUnderlineStyle lineFragmentRect:lineRect lineFragmentGlyphRange:[frag glyphRange] containerOrigin:p];
-#endif
 }
 
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
@@ -711,7 +438,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     if (needCharToGlyphLookup){
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", characters[i], [[font displayName] lossyCString], [font pointSize]);
-        __IFInitATSGlyphVector(&glyphVector, length);
+        InitATSGlyphVector(&glyphVector, length);
         ConvertCharactersToGlyphs(styleGroup, characters, length, &glyphVector);
         glyphRecords = (ATSLayoutRecord *)glyphVector.firstRecord;
         numGlyphs = glyphVector.numGlyphs;
@@ -727,7 +454,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
             
             // Fill the block of glyphs for the glyph needed. If we're going to incur the overhead
             // of calling into CG, we may as well get a block of scaled glyph advances.
-            if (widthCache[glyphID] == UNITIALIZED_GLYPH_WIDTH){
+            if (widthCache[glyphID] == UNINITIALIZED_GLYPH_WIDTH) {
                 short unsigned int sequentialGlyphs[INCREMENTAL_GLYPH_CACHE_BLOCK];
                 unsigned int blockStart, blockEnd, blockID;
                 int errorResult;
@@ -746,7 +473,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
             }
         }
 
-        __IFResetATSGlyphVector(&glyphVector);
+        ResetATSGlyphVector(&glyphVector);
     }
     else {
         numGlyphs = length;
