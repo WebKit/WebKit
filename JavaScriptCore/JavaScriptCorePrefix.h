@@ -1,5 +1,7 @@
 #ifdef __cplusplus
 #define NULL __null
+#else
+#define NULL ((void *)0)
 #endif
 
 #include <config.h>

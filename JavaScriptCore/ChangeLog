@@ -1,5 +1,10 @@
 2003-10-26  Darin Adler  <darin@apple.com>
 
+        * JavaScriptCorePrefix.h: Added a C case to the NULL definition since we use C as well
+        as C++ in this project.
+
+2003-10-26  Darin Adler  <darin@apple.com>
+
         - rolled in some CString changes Harri Porten did on the KDE side
 
         * kjs/ustring.cpp:
