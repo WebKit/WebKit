@@ -1,3 +1,11 @@
+2004-06-15  Darin Adler  <darin@apple.com>
+
+        - fixed crash introduced by my earlier change
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageContext dealloc]): Set _cgsContext to 0 before calling super as before.
+        (-[WebImageContext finalize]): Ditto.
+
 2004-06-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

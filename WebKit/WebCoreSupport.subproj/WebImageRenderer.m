@@ -66,8 +66,9 @@ extern NSString *NSImageLoopCount;
     if (self != nil) {
 	_bounds     = b;
 	_isFlipped  = YES;
-        if (context)
+        if (context) {
             _cgsContext = CGContextRetain(context);
+        }
     }
     
     return self;
@@ -78,6 +79,7 @@ extern NSString *NSImageLoopCount;
     [_focusStack release];
     if (_cgsContext) {
         CGContextRelease(_cgsContext);
+        _cgsContext = 0; // super dealloc may also release
     }
     [super dealloc];
 }
@@ -86,6 +88,7 @@ extern NSString *NSImageLoopCount;
 {
     if (_cgsContext) {
         CGContextRelease(_cgsContext);
+        _cgsContext = 0; // super finalize may also release
     }
     [super finalize];
 }
@@ -381,7 +384,7 @@ static NSMutableSet *activeImageRenderers;
     [originalData release];
     
     if (context) {
-        CFRelease(context);
+        CGContextRelease(context);
     }
 
     [_PDFDoc release];
@@ -395,7 +398,7 @@ static NSMutableSet *activeImageRenderers;
     ASSERT(frameView == nil);
 
     if (context) {
-        CFRelease(context);
+        CGContextRelease(context);
     }
 
     [super finalize];
@@ -676,9 +679,9 @@ static NSMutableSet *activeImageRenderers;
     
     if (aContext != context) {
         if (aContext)
-            CFRetain(aContext);
+            CGContextRetain(aContext);
         if (context)
-            CFRelease(context);
+            CGContextRelease(context);
         context = aContext;
     }
         
