@@ -1091,6 +1091,7 @@ private:
 
 #ifdef APPLE_CHANGES
 public:
+  bool isFrameSet();
   void setTitle(const DOM::DOMString &);
   void detachView(); 
   void setStatusBarText(const QString &);

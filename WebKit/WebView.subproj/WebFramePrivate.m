@@ -342,9 +342,12 @@ static const char * const stateNames[6] = {
                 // Unfortunately we have to get our parent to adjust the frames in this
                 // frameset so this frame's geometry is set correctly.  This should
                 // be a reasonably inexpensive operation.
-                id parentWebView = [[[ds parent] webFrame] webView];
-                if ([parentWebView isDocumentHTML])
-                    [[parentWebView documentView] _adjustFrames];
+                id parentDS = [[[ds parent] webFrame] dataSource];
+                if ([[parentDS _bridge] isFrameSet]){
+                    id parentWebView = [[[ds parent] webFrame] webView];
+                    if ([parentWebView isDocumentHTML])
+                        [[parentWebView documentView] _adjustFrames];
+                }
 
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
@@ -355,7 +358,10 @@ static const char * const stateNames[6] = {
                 [thisDocumentView layout];
 
                 // Unfortunately if this frame has children we have to lay them
-                // out too.
+                // out too.  This could be an expensive operation.
+                // FIXME:  If we can figure out how to avoid the layout of children,
+                // (just need for iframe placement/sizing) we could get a few percent
+                // speed improvement.
                 [ds _layoutChildren];
 
                 [thisDocumentView setNeedsDisplay: YES];

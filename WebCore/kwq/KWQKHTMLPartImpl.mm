@@ -27,6 +27,7 @@
 
 #import <htmltokenizer.h>
 #import <html_documentimpl.h>
+#import <render_root.h>
 #import <render_frames.h>
 #import <khtmlpart_p.h>
 #import <khtmlview.h>
@@ -671,3 +672,4 @@ void KWQKHTMLPartImpl::unfocusWindow()
 {
     [bridge unfocusWindow];
 }
+

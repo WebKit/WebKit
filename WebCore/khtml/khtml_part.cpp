@@ -4727,6 +4727,11 @@ void KHTMLPart::setTitle(const DOMString &title)
     impl->setTitle(title);
 }
 
+bool KHTMLPart::isFrameSet()
+{
+    return impl->isFrameSet();
+}
+
 void KHTMLPart::setStatusBarText(const QString &status)
 {
     impl->setStatusBarText(status);

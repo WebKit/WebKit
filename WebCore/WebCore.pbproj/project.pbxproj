@@ -709,6 +709,7 @@
 				F550D71002E132BB018635CA,
 				F5B2A4FF02E2220F018635CB,
 				F5B2A52E02E22573018635CB,
+				F54A61D402E3523B01A80180,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -837,6 +838,7 @@
 				F587854102DE375901EA4122,
 				F587854302DE375901EA4122,
 				F587854402DE375901EA4122,
+				F54A61D302E3523B01A80180,
 			);
 			isa = PBXGroup;
 			name = other;
@@ -3776,6 +3778,18 @@
 		};
 		F52CA71002DFACBD018635CA = {
 			fileRef = F52CA70F02DFACBD018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F54A61D302E3523B01A80180 = {
+			isa = PBXFileReference;
+			name = KWQKHTMLPartImpl.cpp;
+			path = kwq/KWQKHTMLPartImpl.cpp;
+			refType = 2;
+		};
+		F54A61D402E3523B01A80180 = {
+			fileRef = F54A61D302E3523B01A80180;
 			isa = PBXBuildFile;
 			settings = {
 			};

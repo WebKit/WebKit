@@ -30,7 +30,10 @@
 #import <KWQKHTMLPartImpl.h>
 #import <khtmlview.h>
 #import <dom_docimpl.h>
+#import <render_root.h>
 #import <render_frames.h>
+#include <html/html_documentimpl.h>
+#include <xml/dom_nodeimpl.h>
 
 @implementation WebCoreBridge
 
@@ -126,6 +129,11 @@
 - (void)selectAll
 {
     part->selectAll();
+}
+
+- (BOOL)isFrameSet
+{
+    return part->isFrameSet();
 }
 
 - (void)reapplyStyles

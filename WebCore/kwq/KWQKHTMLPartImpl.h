@@ -81,6 +81,9 @@ public:
     void close();
 
     void unfocusWindow();
+
+    bool isFrameSet();
+
 private:
     KHTMLPart *part;
     KHTMLPartPrivate *d;

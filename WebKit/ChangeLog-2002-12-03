@@ -1,3 +1,14 @@
+2002-07-15  Richard Williamson (Home)  <rjw@apple.com>
+
+        Only adjustFrames in parent if parent is a frame set.
+        (Anywhere from 2% to 6% gain, depending on what you believe.)
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFrame _isLoadComplete]):
+        
+        * WebView.subproj/IFPreferences.mm:
+        (+[IFPreferences load]):
+        Increment initial layout from 1.5 seconds to 1.85 seconds.
+
 2002-07-15  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/IFMainURLHandleClient.mm:
