@@ -49,6 +49,10 @@
     to construct the text with inserted \n.
 */
 
+@interface NSView (KWQTextArea)
+- (void)_KWQ_setKeyboardFocusRingNeedsDisplay;
+@end
+
 @interface KWQTextAreaTextView : NSTextView
 {
 }
@@ -97,7 +101,7 @@ const float LargeNumberForText = 1.0e7;
     
     [self setHasVerticalScroller:YES];
     [self setHasHorizontalScroller:NO];
-    [self setBorderType:NSLineBorder];
+    [self setBorderType:NSBezelBorder];
     
     [self _createTextView];
     
@@ -163,7 +167,6 @@ const float LargeNumberForText = 1.0e7;
     wrap = f;
 }
 
-
 - (BOOL)wordWrap
 {
     return wrap;
@@ -171,7 +174,9 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)setText:(NSString *)s
 {
+    //NSLog(@"extraLineFragmentTextContainer before setString: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
     [textView setString:s];
+    //NSLog(@"extraLineFragmentTextContainer after setString: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
 }
 
 - (NSString *)text
@@ -187,7 +192,7 @@ const float LargeNumberForText = 1.0e7;
     unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
     
     while (NSMaxRange(glyphRange) < numberOfGlyphs) {
-        (void)[layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
+        [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
         characterRange = [layoutManager characterRangeForGlyphRange:glyphRange actualGlyphRange:NULL];
         if (line == lineCount) {
             return [[[textView textStorage] attributedSubstringFromRange:characterRange] string];
@@ -205,7 +210,7 @@ const float LargeNumberForText = 1.0e7;
     int lineCount = 0;
     
     while (NSMaxRange(glyphRange) < numberOfGlyphs) {
-        (void)[layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
+        [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
         lineCount++;
     }
     return lineCount;
@@ -228,21 +233,16 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)setFrame:(NSRect)frameRect
 {    
-    NSRect textFrame;
-    NSSize contentSize;
-    
     [super setFrame:frameRect];
 
-    if ([self wordWrap]){
-        contentSize = [NSScrollView contentSizeForFrameSize:frameRect.size hasHorizontalScroller:[self hasHorizontalScroller] hasVerticalScroller:[self hasVerticalScroller] borderType:[self borderType]];
-        textFrame = [textView frame];
+    if ([self wordWrap]) {
+        NSSize contentSize = [NSScrollView contentSizeForFrameSize:frameRect.size hasHorizontalScroller:[self hasHorizontalScroller] hasVerticalScroller:[self hasVerticalScroller] borderType:[self borderType]];
+        NSRect textFrame = [textView frame];
         textFrame.size.width = contentSize.width;
         contentSize.height = LargeNumberForText;
-        [textView setFrame: textFrame];
-        [[textView textContainer] setContainerSize: contentSize];
+        [textView setFrame:textFrame];
+        [[textView textContainer] setContainerSize:contentSize];
     }
-    //if (frameRect.size.width > 0 && frameRect.size.height > 0 && textView == nil)
-    //    [self _createTextView];
 }
 
 - (int)paragraphs
@@ -350,7 +350,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     int lineCount = 0;
 
     while (NSMaxRange(glyphRange) < numberOfGlyphs) {
-        (void)[layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
+        [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
         lineCount++;
     }
 
@@ -362,24 +362,30 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     NSString *text = [textView string];
     NSRange selectedRange = [textView selectedRange];
     
-    if (selectedRange.location == NSNotFound) {
-	*index = 0;
-	*paragraph = 0;
-    } else {
-	int num = [self paragraphs];
-	int i;
-	NSRange range;
-	
-	for (i = 0; i < num; i++) {
-	    range = RangeOfParagraph(text, i);
-	    if (range.location + range.length > selectedRange.location) {
-		break;
-	    }
-	}
+    *index = 0;
+    *paragraph = 0;
 
-	*paragraph = num;
-	*index = selectedRange.location - range.location;
+    if (selectedRange.location == NSNotFound) {
+        return;
     }
+    
+    int num = [self paragraphs];
+    if (num == 0) {
+        return;
+    }
+    
+    int i;
+    NSRange range;
+    
+    for (i = 0; i < num; i++) {
+        range = RangeOfParagraph(text, i);
+        if (range.location + range.length > selectedRange.location) {
+            break;
+        }
+    }
+
+    *paragraph = num;
+    *index = selectedRange.location - range.location;
 }
 
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph
@@ -387,15 +393,17 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     NSString *text = [textView string];
     NSRange range = RangeOfParagraph(text, paragraph);
     if (range.location == NSNotFound) {
-	[textView setMarkedText:@"" selectedRange:NSMakeRange([text length], 0)];
+	[textView setSelectedRange:NSMakeRange([text length], 0)];
     } else {
-	[textView setMarkedText:@"" selectedRange:NSMakeRange(range.location + index, 0)];
+	[textView setSelectedRange:NSMakeRange(range.location + index, 0)];
     }
 }
 
 - (void)setFont:(NSFont *)font
 {
+    //NSLog(@"extraLineFragmentTextContainer before setFont: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
     [textView setFont:font];
+    //NSLog(@"extraLineFragmentTextContainer after setFont: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
 }
 
 - (BOOL)becomeFirstResponder
@@ -440,6 +448,20 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     return YES;
 }
 
+- (void)drawRect:(NSRect)rect
+{
+    [super drawRect:rect];
+    if ([[self window] firstResponder] == textView) {
+        NSSetFocusRingStyle(NSFocusRingOnly);
+        NSRectFill([self bounds]);
+    }
+}
+
+- (void)_KWQ_setKeyboardFocusRingNeedsDisplay
+{
+    [self setKeyboardFocusRingNeedsDisplayInRect:[self bounds]];
+}
+
 @end
 
 @implementation KWQTextAreaTextView
@@ -464,6 +486,14 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 {
     [super becomeFirstResponder];
     [self selectAll:nil];
+    [self _KWQ_setKeyboardFocusRingNeedsDisplay];
+    return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+    [super resignFirstResponder];
+    [self _KWQ_setKeyboardFocusRingNeedsDisplay];
     return YES;
 }
 
@@ -495,6 +525,15 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     if (oldY == [[[self enclosingScrollView] contentView] bounds].origin.y) {
         [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:nil];
     }
+}
+
+@end
+
+@implementation NSView (KWQTextArea)
+
+- (void)_KWQ_setKeyboardFocusRingNeedsDisplay
+{
+    [[self superview] _KWQ_setKeyboardFocusRingNeedsDisplay];
 }
 
 @end

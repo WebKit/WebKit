@@ -1,3 +1,25 @@
+2002-11-15  Darin Adler  <darin@apple.com>
+
+	- fixed 3027460 -- text areas don't have focus rectangles
+	- fixed 2937204 -- text areas have solid black borders
+
+        * kwq/KWQSignal.mm: (KWQSignal::disconnect):
+	Add a special case so we don't hear about finishedParsing all the time.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea initWithFrame:]): Use a bezel border, not a line border.
+        (-[KWQTextArea getCursorPositionAsIndex:inParagraph:]): Fix bug where it would
+	return a bogus value for an empty text area.
+        (-[KWQTextArea setCursorPositionToIndex:inParagraph:]): Use setSelectedRange:
+	ratherr than setMarkedText:selectedRange:.
+        (-[KWQTextArea drawRect:]): Draw a focus ring if our text view is first responder.
+        (-[KWQTextArea _KWQ_setKeyboardFocusRingNeedsDisplay]): Added.
+        (-[KWQTextAreaTextView becomeFirstResponder]): Call _KWQ_setKeyboardFocusRingNeedsDisplay.
+        (-[KWQTextAreaTextView resignFirstResponder]): Call _KWQ_setKeyboardFocusRingNeedsDisplay.
+        (-[NSView _KWQ_setKeyboardFocusRingNeedsDisplay]): Calls the same thing on parent.
+
+        * WebCore.pbproj/project.pbxproj: PB is a cruel master.
+
 2002-11-15  Maciej Stachowiak  <mjs@apple.com>
 
         * khtml/html/html_formimpl.cpp:

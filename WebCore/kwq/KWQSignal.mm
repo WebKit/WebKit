@@ -65,7 +65,8 @@ void KWQSignal::connect(const KWQSlot &slot)
 void KWQSignal::disconnect(const KWQSlot &slot)
 {
 #if !ERROR_DISABLED
-    if (!_slots.contains(slot)) {
+    if (!_slots.contains(slot)
+            && !KWQNamesMatch(_name, SIGNAL(finishedParsing()))) {
         ERROR("disconnecting a signal that wasn't connected, %s", _name);
     }
 #endif
