@@ -4,7 +4,7 @@
 	I just had an "else" that shouldn't have been there, so that
 	min-width would get checked even if max-width was also checked.
 	
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by kocienda
 
         * khtml/rendering/render_box.cpp:
         (RenderBox::calcWidth):
