@@ -502,7 +502,7 @@ void *QWidget::getView() const
 void QWidget::setView(void *view)
 {
     if (data->view)
-        [data->view autorelease];
+        [data->view release];
     data->view = [view retain];
         
     NSRect frame = [data->view frame];
