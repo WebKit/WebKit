@@ -24,6 +24,7 @@
         @"text/x-calendar",
         @"text/vcard",		// vCard
         @"text/x-vcard",
+        @"text/directory",
         @"text/qif",		// Quicken
         @"text/x-qif",
         nil];
@@ -59,22 +60,16 @@
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
+    if ([[[dataSource response] MIMEType] isEqualToString:@"text/rtf"]) {
+        [self setRichText:YES];
+    } else {
+        [self setRichText:NO];
+        [self setFixedWidthFont];
+    }
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
-    // FIXME: This needs to be more efficient for progressively loading documents.
-    
-    if ([[[dataSource response] MIMEType] isEqualToString:@"text/rtf"]) {
-        [self setRichText:YES];
-        [self replaceCharactersInRange:NSMakeRange(0, [[self string] length]) withRTF:[dataSource data]];
-    } else {
-        [self setRichText:NO];
-        [self setFixedWidthFont];
-        [self setString:[dataSource _stringWithData:[dataSource data]]];
-    }
-    
-    
 }
 
 - (void)viewDidMoveToSuperview

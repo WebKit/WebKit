@@ -1,3 +1,18 @@
+2003-04-16  Chris Blumenberg  <cblu@apple.com>
+
+	- Progressively load plain text in our text view.
+	- Fixed: 3177603 - vCards appear in browser, not downloaded
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation setDataSource:]): added FIXME about document source of RTF not working
+        (-[WebTextRepresentation receivedData:withDataSource:]): feed data to the text view, progressively for plain text
+        * WebView.subproj/WebTextView.m:
+        (+[WebTextView unsupportedTextMIMETypes]): include text/directory, another vcard MIME type
+        (-[WebTextView setDataSource:]): do 1-time attribute settings
+        (-[WebTextView dataSourceUpdated:]): do nothing
+
 2003-04-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by David
