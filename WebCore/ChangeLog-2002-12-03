@@ -1,5 +1,18 @@
 2002-12-03  David Hyatt  <hyatt@apple.com>
 
+	Fix link feedback regression on aintitcool.com.  Observe
+	the wacky feedback we give now (yes, it matches MacIE and
+	Gecko).  Gotta love this malformed page.
+
+	<a><h4>...</h4></a>
+
+	r=mjs
+	
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::nodeAtPoint):
+
+2002-12-03  David Hyatt  <hyatt@apple.com>
+
 	Eliminate the KONQBLOCK hack.  Fixes ipodhacks.com (a mislayout
 	caused by malformed html... <table><br>...)
 
