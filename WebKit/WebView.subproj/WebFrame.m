@@ -111,8 +111,8 @@
 }
 
 
-// FIXME:  The name of this method is a little misleading, perhaps
-// we could call it prepareProvisionalDataSource?.
+//    Will return NO and not set the provisional data source if the controller
+//    disallows by returning a IFURLPolicyIgnore.
 - (BOOL)setProvisionalDataSource: (IFWebDataSource *)newDataSource
 {
     IFWebDataSource *oldDataSource;
@@ -164,13 +164,12 @@
     
         [self _setState: IFWEBFRAMESTATE_PROVISIONAL];
     }
-    
     else if(urlPolicy == IFURLPolicyOpenExternally){
         return [[NSWorkspace sharedWorkspace] openURL:[newDataSource inputURL]];
     }
-    
-    // Do nothing in the IFURLPolicyIgnore case.
-
+    else if (urlPolicy == IFURLPolicyIgnore)
+        return NO;
+        
     return YES;
 }
 

@@ -1,3 +1,11 @@
+2002-05-30  Richard Williamson  <rjw@apple.com>
+
+    API and comment cleanup.
+    
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame setProvisionalDataSource:]):
+
 2002-05-30  Maciej Stachowiak  <mjs@apple.com>
 
 	WebKit parts of fixes for:

@@ -35,7 +35,7 @@
     ~some~ data has been received.
     
     Will return NO and not set the provisional data source if the controller
-    disallows by return NO locationWillChangeTo:forFrame:.
+    disallows by returning a IFURLPolicyIgnore.
 */
 - (BOOL)setProvisionalDataSource: (IFWebDataSource *)ds;
 
