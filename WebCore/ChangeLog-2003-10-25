@@ -1,5 +1,45 @@
 2003-04-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+	- fixed 3158411 -- radio button groups are per-form in WebCore, per-page in other browsers (flyglobespan.com)
+
+        * khtml/html/html_formimpl.h: Removed radioClicked. Made setName virtual and make
+        HTMLInputElementImpl override it. Added isCheckedRadioButtonForDocument,
+        addCheckedRadioButtonToDocument, and removeCheckedRadioButtonFromDocument.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::~HTMLInputElementImpl): Call removeCheckedRadioButtonFromDocument.
+        (HTMLInputElementImpl::setType): Call removeCheckedRadioButtonFromDocument before changing
+        the type and addCheckedRadioButtonToDocument after.
+        (HTMLInputElementImpl::parseAttribute): Call removeCheckedRadioButtonFromDocument before changing
+        ATTR_NAME and addCheckedRadioButtonToDocument after.
+        (HTMLInputElementImpl::setChecked): Call removeCheckedRadioButtonFromDocument before changing
+        the checked state and addCheckedRadioButtonToDocument after.
+        (HTMLInputElementImpl::setName): Call removeCheckedRadioButtonFromDocument before changing
+        the name and addCheckedRadioButtonToDocument after.
+        (HTMLInputElementImpl::isCheckedRadioButtonForDocument): Added. Checks if this element should
+        be the one known to the document.
+        (HTMLInputElementImpl::addCheckedRadioButtonToDocument): Call addCheckedRadioButton on the
+        document if isCheckedRadioButtonForDocument returns true.
+        (HTMLInputElementImpl::removeCheckedRadioButtonFromDocument): Call
+        removeCheckedRadioButtonFromDocument on the document if isCheckedRadioButtonForDocument
+        returns true.
+        
+        * khtml/xml/dom_docimpl.h: Add addCheckedRadioButton, removeCheckedRadioButton, and
+        m_checkedRadioButtons.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::addCheckedRadioButton): Uncheck the old radio button with this name, if any.
+        Store the new radio button in the "checked radio buttons" map.
+        (DocumentImpl::removeCheckedRadioButton): Remove the radio button from the map.
+
+2003-04-22  Darin Adler  <darin@apple.com>
+
+        * khtml/html/html_formimpl.h: Remove radioClicked.
+        * khtml/html/html_formimpl.cpp: (HTMLInputElementImpl::setChecked): When unchecking other
+        input elements with the same name, traverse the entire document, not just the form.
+
+2003-04-22  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
 	- fixed 3144966 -- problems typing in form at http://www.mobile.att.net/messagecenter

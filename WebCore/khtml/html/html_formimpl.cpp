@@ -663,18 +663,6 @@ void HTMLFormElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLFormElementImpl::radioClicked( HTMLGenericFormElementImpl *caller )
-{
-    for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {
-        HTMLGenericFormElementImpl *current = it.current();
-        if (current->id() == ID_INPUT &&
-            static_cast<HTMLInputElementImpl*>(current)->inputType() == HTMLInputElementImpl::RADIO &&
-            current != caller && current->form() == caller->form() && current->name() == caller->name()) {
-            static_cast<HTMLInputElementImpl*>(current)->setChecked(false);
-        }
-    }
-}
-
 void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
 {
     formElements.append(e);
@@ -1107,6 +1095,7 @@ HTMLInputElementImpl::HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl
 
 HTMLInputElementImpl::~HTMLInputElementImpl()
 {
+    removeCheckedRadioButtonFromDocument();
     if (getDocument()) getDocument()->deregisterMaintainsState(this);
 }
 
@@ -1145,13 +1134,18 @@ void HTMLInputElementImpl::setType(const DOMString& t)
     // ### IMPORTANT: Don't allow the type to be changed to FILE after the first
     // type change, otherwise a JavaScript programmer would be able to set a text
     // field's value to something like /etc/passwd and then change it to a file field.
-    if (newType != FILE || !m_haveType) {
-        m_type = newType;
-        m_haveType = true;
+    if (m_type != newType) {
+        if (newType == FILE && m_haveType) {
+            // Set the attribute back to the old value.
+            // Useful in case we were called from inside parseAttribute.
+            setAttribute(ATTR_TYPE, type());
+        } else {
+            removeCheckedRadioButtonFromDocument();
+            m_type = newType;
+            addCheckedRadioButtonToDocument();
+        }
     }
-    else if (m_type != newType) {
-        setAttribute(ATTR_TYPE, type());
-    }
+    m_haveType = true;
 }
 
 DOMString HTMLInputElementImpl::type() const
@@ -1287,6 +1281,11 @@ void HTMLInputElementImpl::parseAttribute(AttributeImpl *attr)
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
             getDocument()->createHTMLEventListener(attr->value().string()));
         break;
+    case ATTR_NAME:
+	removeCheckedRadioButtonFromDocument();
+        HTMLGenericFormElementImpl::parseAttribute(attr);
+	addCheckedRadioButtonToDocument();
+	break;
     default:
         HTMLGenericFormElementImpl::parseAttribute(attr);
     }
@@ -1579,11 +1578,10 @@ void HTMLInputElementImpl::reset()
 
 void HTMLInputElementImpl::setChecked(bool _checked)
 {
-    if (m_form && m_type == RADIO && _checked && !name().isEmpty())
-        m_form->radioClicked(this);
-
     if (m_checked == _checked) return;
+    removeCheckedRadioButtonFromDocument();
     m_checked = _checked;
+    addCheckedRadioButtonToDocument();
     setChanged();
 }
 
@@ -1666,6 +1664,30 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 bool HTMLInputElementImpl::isEditable()
 {
     return ((m_type == TEXT) || (m_type == PASSWORD) || (m_type == ISINDEX) || (m_type == FILE));
+}
+
+void HTMLInputElementImpl::setName(const DOMString& name)
+{
+    removeCheckedRadioButtonFromDocument();
+    HTMLGenericFormElementImpl::setName(name);
+    addCheckedRadioButtonToDocument();
+}
+
+bool HTMLInputElementImpl::isCheckedRadioButtonForDocument() const
+{
+    return m_checked && m_type == RADIO && !name().isEmpty() && getDocument();
+}
+
+void HTMLInputElementImpl::addCheckedRadioButtonToDocument()
+{
+    if (isCheckedRadioButtonForDocument())
+        getDocument()->addCheckedRadioButton(this);
+}
+
+void HTMLInputElementImpl::removeCheckedRadioButtonFromDocument()
+{
+    if (isCheckedRadioButtonForDocument())
+        getDocument()->removeCheckedRadioButton(this);
 }
 
 // -------------------------------------------------------------------------

@@ -76,6 +76,7 @@ namespace DOM {
     class GenericRONamedNodeMapImpl;
     class HTMLDocumentImpl;
     class HTMLElementImpl;
+    class HTMLInputElementImpl;
     class NodeFilter;
     class NodeFilterImpl;
     class NodeIteratorImpl;
@@ -429,6 +430,9 @@ public:
     void dispatchImageLoadEventsNow();
     void removeImage(khtml::RenderImage *);
     virtual void timerEvent(QTimerEvent *);
+    
+    void addCheckedRadioButton(HTMLInputElementImpl *);
+    void removeCheckedRadioButton(HTMLInputElementImpl *);
 
 signals:
     void finishedParsing();
@@ -508,6 +512,8 @@ protected:
     QPtrList<khtml::RenderImage> m_imageLoadEventDispatchSoonList;
     QPtrList<khtml::RenderImage> m_imageLoadEventDispatchingList;
     int m_imageLoadEventTimer;
+
+    QMap<QString, HTMLInputElementImpl *> m_checkedRadioButtons;
 
     NodeImpl* m_cssTarget;
     
