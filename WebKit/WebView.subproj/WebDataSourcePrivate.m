@@ -133,17 +133,13 @@
 
 - (void)_setController: (WebController *)controller
 {
-    BOOL defers = [_private->controller _defersCallbacks];
-    
     if (_private->loading) {
         [controller retain];
         [_private->controller release];
     }
     _private->controller = controller;
     
-    if (defers != [_private->controller _defersCallbacks]) {
-        [self _defersCallbacksChanged];
-    }
+    [self _defersCallbacksChanged];
 }
 
 - (void)_setParent: (WebDataSource *)p
@@ -504,7 +500,12 @@
 - (void)_defersCallbacksChanged
 {
     BOOL defers = [_private->controller _defersCallbacks];
+    
+    if (defers == _private->defersCallbacks) {
+        return;
+    }
 
+    _private->defersCallbacks = defers;
     [_private->mainHandle setDefersCallbacks:defers];
     NSEnumerator *e = [_private->resourceHandles objectEnumerator];
     WebResourceHandle *handle;

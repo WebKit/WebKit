@@ -76,6 +76,8 @@
     
     NSURL *iconURL;
     WebIconLoader *iconLoader;
+    
+    BOOL defersCallbacks;
 }
 
 @end
