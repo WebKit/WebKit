@@ -119,7 +119,7 @@ void QScrollView::setHScrollBarMode(ScrollBarMode)
 
 void QScrollView::addChild(QWidget* child, int x=0, int y=0)
 {
-    _logNeverImplemented();
+    _logNotYetImplemented();
 }
 
 

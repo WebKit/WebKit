@@ -22,6 +22,7 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
+#include <kwqdebug.h>
 
 #include <qlabel.h>
 
@@ -29,26 +30,31 @@
 
 QLabel::QLabel(QWidget *parent)
 {
+    _logNotYetImplemented();
 }
 
 
 QLabel::QLabel(const QString &, QWidget *)
 {
+    _logNotYetImplemented();
 }
 
 
 QLabel::~QLabel()
 {
+    _logNotYetImplemented();
 }
 
 
 void QLabel::setText(const QString &)
 {
+    _logNotYetImplemented();
 }
 
 
 void QLabel::setAlignment(int)
 {
+    _logNotYetImplemented();
 }
 
 

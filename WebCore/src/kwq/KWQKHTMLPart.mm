@@ -23,19 +23,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include <kwqdebug.h>
- 
+
+#include <decoder.h>
+#include <qfont.h>
+#include <qtextcodec.h>
+
+#include <khtml_settings.h>
+#include <khtml_factory.h>
+#include <kcharsets.h>
+#include <kglobal.h>
+#include <html/htmltokenizer.h>
+#include <xml/dom_docimpl.h>
+
 #include <KWQKHTMLPart.h>
 
+// Class KHTMLPartPrivate ================================================================================
+
+class KHTMLPartPrivate
+{
+public:
+    DOM::DocumentImpl *m_doc;
+    khtml::Decoder *m_decoder;
+    QString m_encoding;
+    QFont::CharSet m_charset;
+    KHTMLSettings *m_settings;
+
+    bool m_bFirstData:1;
+    bool m_haveEncoding:1;
+    bool m_haveCharset:1;
+    
+    KHTMLPartPrivate()
+    {
+        m_doc = 0L;
+        m_decoder = 0L;
+        m_bFirstData = true;
+        m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
+        m_haveEncoding = false;
+    }
+};
+
+
+// Class KHTMLPart ======================================================================================
 
 KHTMLPart::KHTMLPart()
 {
-    _logNotYetImplemented();
+    init();
 }
 
 
 KHTMLPart::KHTMLPart(const KURL &url )
 {
-    _logNotYetImplemented();
+    init();
+}
+
+void KHTMLPart::init()
+{
+    d = new KHTMLPartPrivate();
 }
 
 
@@ -170,25 +213,79 @@ bool KHTMLPart::onlyLocalReferences() const
 
 void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
 {
-    _logNeverImplemented();
+    _logNotYetImplemented();
 }
 
 
 void KHTMLPart::write( const char *str, int len)
 {
-    _logNeverImplemented();
+    if ( !d->m_decoder ) {
+        d->m_decoder = new khtml::Decoder();
+        if(d->m_encoding != QString::null)
+            d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
+        else
+            d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
+    }
+    if ( len == 0 )
+        return;
+    
+    if ( len == -1 )
+        len = strlen( str );
+    
+    QString decoded = d->m_decoder->decode( str, len );
+    
+    if(decoded.isEmpty())
+        return;
+    
+    if(d->m_bFirstData) {
+        // determine the parse mode
+        d->m_doc->determineParseMode( decoded );
+        d->m_bFirstData = false;
+    
+    //kdDebug(6050) << "KHTMLPart::write haveEnc = " << d->m_haveEncoding << endl;
+        // ### this is still quite hacky, but should work a lot better than the old solution
+        if(d->m_decoder->visuallyOrdered())
+            d->m_doc->setVisuallyOrdered();
+        if (!d->m_haveCharset)
+        {
+            const QTextCodec *c = d->m_decoder->codec();
+            //kdDebug(6005) << "setting up charset to " << (int) KGlobal::charsets()->charsetForEncoding(c->name()) << endl;
+            d->m_charset = KGlobal::charsets()->charsetForEncoding(c->name());
+            d->m_settings->setCharset( d->m_charset );
+            d->m_settings->setScript( KGlobal::charsets()->charsetForEncoding(c->name(), true ));
+            //kdDebug(6005) << "charset is " << (int)d->m_settings->charset() << endl;
+        }
+        d->m_doc->applyChanges(true, true);
+    }
+    
+    Tokenizer* t = d->m_doc->tokenizer();
+    if(t)
+        t->write( decoded, true );
 }
 
 
 void KHTMLPart::write( const QString &str )
 {
-    _logNeverImplemented();
+    if ( str.isNull() )
+        return;
+    
+    if(d->m_bFirstData) {
+        // determine the parse mode
+        d->m_doc->setParseMode( DocumentImpl::Strict );
+        d->m_bFirstData = false;
+    }
+    Tokenizer* t = d->m_doc->tokenizer();
+    if(t)
+        t->write( str, true );
 }
 
 
 void KHTMLPart::end()
 {
-    _logNeverImplemented();
+    // make sure nothing's left in there...
+    if(d->m_decoder)
+        write(d->m_decoder->flush());
+    d->m_doc->finishParsing();
 }
 
 

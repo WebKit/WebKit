@@ -296,9 +296,9 @@ void HTMLTokenizer::parseSpecial(DOMStringIt &src, bool begin)
                 scriptHandler();
             else {
                 processListing(DOMStringIt(scriptCode, scriptCodeSize));
-                if ( style )         { currToken.id = ID_STYLE + ID_CLOSE_TAG; }
-                else if ( textarea ) { currToken.id = ID_TEXTAREA + ID_CLOSE_TAG; }
-                else if ( listing )  { currToken.id = ID_LISTING + ID_CLOSE_TAG; }
+                if ( style )         { currToken._id = ID_STYLE + ID_CLOSE_TAG; }
+                else if ( textarea ) { currToken._id = ID_TEXTAREA + ID_CLOSE_TAG; }
+                else if ( listing )  { currToken._id = ID_LISTING + ID_CLOSE_TAG; }
                 processToken();
                 style = script = style = textarea = listing = false;
                 scriptCodeSize = scriptCodeResync = 0;
@@ -354,7 +354,7 @@ void HTMLTokenizer::scriptHandler()
         doScriptExec = true;
     }
     processListing(DOMStringIt(scriptCode, scriptCodeSize));
-    currToken.id = ID_SCRIPT + ID_CLOSE_TAG;
+    currToken._id = ID_SCRIPT + ID_CLOSE_TAG;
     processToken();
 
     QString prependingSrc;
@@ -416,10 +416,10 @@ void HTMLTokenizer::parseComment(DOMStringIt &src)
                 checkScriptBuffer();
                 scriptCode[ scriptCodeSize ] = 0;
                 scriptCode[ scriptCodeSize + 1 ] = 0;
-                currToken.id = ID_COMMENT;
+                currToken._id = ID_COMMENT;
                 processListing(DOMStringIt(scriptCode, scriptCodeSize - 2));
                 processToken();
-                currToken.id = ID_COMMENT + ID_CLOSE_TAG;
+                currToken._id = ID_COMMENT + ID_CLOSE_TAG;
                 processToken();
 #endif
                 scriptCodeSize = 0;
@@ -743,7 +743,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                     QCString tmp(ptr, len+1);
                     kdDebug( 6036 ) << "found tag id=" << tagID << ": " << tmp.data() << endl;
 #endif
-                    currToken.id = beginTag ? tagID : tagID + ID_CLOSE_TAG;
+                    currToken._id = beginTag ? tagID : tagID + ID_CLOSE_TAG;
                     dest = buffer;
                 }
                 tag = SearchAttribute;
@@ -1000,10 +1000,10 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
             tquote = NoQuote;
             ++src;
 
-            if ( !currToken.id ) //stop if tag is unknown
+            if ( !currToken._id ) //stop if tag is unknown
                 return;
 
-            uint tagID = currToken.id;
+            uint tagID = currToken._id;
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 0
             kdDebug( 6036 ) << "appending Tag: " << tagID << endl;
 #endif
@@ -1444,8 +1444,8 @@ void HTMLTokenizer::processToken()
     if ( dest > buffer )
     {
 #ifdef TOKEN_DEBUG
-        if(currToken.id && currToken.id != ID_COMMENT) {
-            qDebug( "unexpected token id: %d, str: *%s*", currToken.id,QConstString( buffer,dest-buffer ).string().latin1() );
+        if(currToken._id && currToken._id != ID_COMMENT) {
+            qDebug( "unexpected token id: %d, str: *%s*", currToken._id,QConstString( buffer,dest-buffer ).string().latin1() );
             assert(0);
         }
 
@@ -1461,10 +1461,10 @@ void HTMLTokenizer::processToken()
             currToken.text = new DOMStringImpl( buffer, dest - buffer );
             currToken.text->ref();
         }
-        if (currToken.id != ID_COMMENT)
-            currToken.id = ID_TEXT;
+        if (currToken._id != ID_COMMENT)
+            currToken._id = ID_TEXT;
     }
-    else if(!currToken.id) {
+    else if(!currToken._id) {
         currToken.reset();
         return;
     }
@@ -1472,12 +1472,12 @@ void HTMLTokenizer::processToken()
     dest = buffer;
 
 #ifdef TOKEN_DEBUG
-    QString name = getTagName(currToken.id).string();
+    QString name = getTagName(currToken._id).string();
     QString text;
     if(currToken.text)
         text = QConstString(currToken.text->s, currToken.text->l).string();
 
-    kdDebug( 6036 ) << "Token --> " << name << "   id = " << currToken.id << endl;
+    kdDebug( 6036 ) << "Token --> " << name << "   id = " << currToken._id << endl;
     if(!text.isNull())
         kdDebug( 6036 ) << "text: \"" << text << "\"" << endl;
     int l = currToken.attrs ? currToken.attrs->length() : 0;

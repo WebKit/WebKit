@@ -40,3 +40,8 @@ KInstance *KHTMLFactory::instance()
 {
 }
 
+
+KHTMLSettings *KHTMLFactory::defaultHTMLSettings()
+{
+}
+

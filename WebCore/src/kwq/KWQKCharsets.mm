@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 #include <qstring.h>
 
@@ -29,48 +30,68 @@
 
 KCharsets::KCharsets()
 {
+    _logNotYetImplemented();
 }
 
 
 KCharsets::~KCharsets()
 {
+    _logNotYetImplemented();
 }
 
 
 QTextCodec *KCharsets::codecForName(const QString &) const
 {
+    _logNotYetImplemented();
 }
 
 
 QTextCodec *KCharsets::codecForName(const QString &, bool &) const
 {
+    _logNotYetImplemented();
 }
 
 
 void KCharsets::setQFont(QFont &, QFont::CharSet charset=QFont::Unicode) const
 {
+    _logNotYetImplemented();
 }
 
 
 void KCharsets::setQFont(QFont &, QString) const
 {
+    _logNotYetImplemented();
 }
 
 
 QString KCharsets::name(QFont::CharSet)
 {
+    _logNotYetImplemented();
 }
 
 
 QString KCharsets::xCharsetName(QFont::CharSet) const
 {
+    _logNotYetImplemented();
 }
 
 
 bool KCharsets::supportsScript(const QFont &, QFont::CharSet)
 {
+    _logNotYetImplemented();
 }
 
+
+QFont::CharSet KCharsets::charsetForEncoding(const QString &encoding) const
+{
+    _logNotYetImplemented();
+}
+
+
+QFont::CharSet KCharsets::charsetForEncoding(const QString &e, bool noUnicode) const
+{
+    _logNotYetImplemented();
+}
 
 
 

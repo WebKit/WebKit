@@ -27,10 +27,11 @@
 
 #include <kwqdebug.h>
 
-bool QObject::connect(const QObject *, const char *, const QObject *, 
-    const char *)
+bool QObject::connect(const QObject *src, const char *signal, const QObject *dest, 
+    const char *slot)
 {
-    _logNeverImplemented();
+    NSLog (@"QObject::connect() signal %s, slot %s\n", signal, slot);
+//    _logNeverImplemented();
 }
 
 

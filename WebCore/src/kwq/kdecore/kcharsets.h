@@ -61,6 +61,20 @@ public:
     QString xCharsetName(QFont::CharSet) const;
     bool supportsScript(const QFont &, QFont::CharSet);
 
+    /**
+     * @returns the charset that fits a given encoding best (that can display a
+     * file in the given encoding)
+     */
+    QFont::CharSet charsetForEncoding(const QString &encoding) const;
+
+    // ### BCI merge with above in 3.0
+    /**
+     * overloaded member function. Usually you don't mind getting unicode charsets, so
+     * this method should rarely be needed.
+     */
+    QFont::CharSet charsetForEncoding(const QString &e, bool noUnicode) const;
+
+
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------

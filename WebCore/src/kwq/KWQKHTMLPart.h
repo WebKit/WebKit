@@ -36,6 +36,7 @@
 class KHTMLSettings;
 class KJavaAppletContext;
 class KJSProxy;
+class KHTMLPartPrivate;
 
 namespace DOM
 {
@@ -552,10 +553,12 @@ public:
     void stopAutoScroll();
     virtual void overURL( const QString &url, const QString &target ); // ### KDE 3.0: make private (merge)
 
+#ifdef _KWQ_
+    void init();
+#endif
+
 private:
-    
-    
-    
+    KHTMLPartPrivate *d;
     
     // DUBIOUS, why are impls being referenced?
     DOM::HTMLDocumentImpl *docImpl() const;

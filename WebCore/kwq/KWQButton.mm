@@ -25,23 +25,28 @@
 
 #include <qbutton.h>
 
+#include <kwqdebug.h>
 
 QButton::QButton(QWidget *parent)
 {
+    _logNotYetImplemented();
 }
 
 
 QButton::~QButton()
 {
+    _logNotYetImplemented();
 }
 
 
 void QButton::setText(const QString &)
 {
+    _logNotYetImplemented();
 }
 
 
 QString QButton::text() const
 {
+    _logNotYetImplemented();
 }
 

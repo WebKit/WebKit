@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 
 #include <klineedit.h>
@@ -29,24 +30,29 @@
 
 KLineEdit::KLineEdit(QWidget *parent=0, const char *name=0)
 {
+    _logNotYetImplemented();
 }
 
 KLineEdit::~KLineEdit()
 {
+    _logNotYetImplemented();
 }
 
 
 void KLineEdit::setMouseTracking(bool)
 {
+    _logNotYetImplemented();
 }
 
 
 void KLineEdit::setContextMenuEnabled(bool showMenu)
 {
+    _logNotYetImplemented();
 }
 
 
 KCompletionBox *KLineEdit::completionBox(bool create)
 {
+    _logNotYetImplemented();
 }
 

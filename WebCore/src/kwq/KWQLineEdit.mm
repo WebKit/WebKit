@@ -22,77 +22,93 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 #include <qlineedit.h>
 
 QLineEdit::QLineEdit(QWidget *parent=0, const char *name=0)
 {
+    _logNotYetImplemented();
 }
 
 QLineEdit::~QLineEdit()
 {
+    _logNotYetImplemented();
 }
     
 void QLineEdit::setEchoMode(EchoMode)
 {
+    _logNotYetImplemented();
 }
 
 void QLineEdit::setCursorPosition(int)
 {
+    _logNotYetImplemented();
 }
 
 
 void QLineEdit::setText(const QString &)
 {
+    _logNotYetImplemented();
 }
 
 
 void QLineEdit::setMaxLength(int)
 {
+    _logNotYetImplemented();
 }
 
 
 bool QLineEdit::isReadOnly() const
 {
+    _logNotYetImplemented();
 }
 
 
 void QLineEdit::setReadOnly(bool)
 {
+    _logNotYetImplemented();
 }
 
 
 bool QLineEdit::event(QEvent *)
 {
+    _logNotYetImplemented();
 }
 
 
 bool QLineEdit::frame() const
 {
+    _logNotYetImplemented();
 }
 
 
 int QLineEdit::cursorPosition() const
 {
+    _logNotYetImplemented();
 }
 
 
 int QLineEdit::maxLength() const
 {
+    _logNotYetImplemented();
 }
 
 
 void QLineEdit::selectAll()
 {
+    _logNotYetImplemented();
 }
 
 
 QLineEdit::QLineEdit(const QLineEdit &)
 {
+    _logNotYetImplemented();
 }
 
 QLineEdit &QLineEdit::operator=(const QLineEdit &)
 {
+    _logNotYetImplemented();
 }
 
 

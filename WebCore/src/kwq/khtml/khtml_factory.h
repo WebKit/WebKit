@@ -38,6 +38,8 @@ public:
 
   static KInstance *instance();
 
+  static KHTMLSettings *defaultHTMLSettings();
+
   // list of visited URLs
   static KParts::HistoryProvider *vLinks() { 
     return KParts::HistoryProvider::self();

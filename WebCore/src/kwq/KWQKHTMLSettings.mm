@@ -22,81 +22,115 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
+#include <kwqdebug.h>
 
 
 #include <khtml_settings.h>
 
 QString KHTMLSettings::stdFontName() const
 {
+    _logNotYetImplemented();
 }
 
 
 QString KHTMLSettings::fixedFontName() const
 {
+    _logNotYetImplemented();
 }
 
 
 QString KHTMLSettings::serifFontName() const
 {
+    _logNotYetImplemented();
 }
 
 
 QString KHTMLSettings::sansSerifFontName() const
 {
+    _logNotYetImplemented();
 }
 
 
 QString KHTMLSettings::cursiveFontName() const
 {
+    _logNotYetImplemented();
 }
 
 
 QString KHTMLSettings::fantasyFontName() const
 {
+    _logNotYetImplemented();
 }
 
 
 QString KHTMLSettings::settingsToCSS() const
 {
+    _logNotYetImplemented();
 }
 
 QFont::CharSet KHTMLSettings::charset() const
 {
+    _logNotYetImplemented();
+}
+
+
+void KHTMLSettings::setCharset( QFont::CharSet c )
+{
+    _logNotYetImplemented();
+}
+
+
+const QString &KHTMLSettings::encoding() const
+{
+    _logNotYetImplemented();
 }
 
 
 int KHTMLSettings::minFontSize() const
 {
+    _logNotYetImplemented();
 }
 
 
 QString KHTMLSettings::availableFamilies() const
 {
+    _logNotYetImplemented();
 }
 
 
 QFont::CharSet KHTMLSettings::script() const
 {
+    _logNotYetImplemented();
+}
+
+
+void KHTMLSettings::setScript( QFont::CharSet c )
+{
+    _logNotYetImplemented();
 }
 
 
 const QValueList<int> &KHTMLSettings::fontSizes() const
 {
+    _logNotYetImplemented();
 }
 
 
 bool KHTMLSettings::changeCursor()
 {
+    _logNotYetImplemented();
 }
 
 
 bool KHTMLSettings::isFormCompletionEnabled() const
 {
+    _logNotYetImplemented();
 }
 
 
 int KHTMLSettings::maxFormCompletionItems() const
 {
+    _logNotYetImplemented();
 }
 
 

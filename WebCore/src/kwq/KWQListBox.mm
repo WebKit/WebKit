@@ -22,62 +22,74 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 #include <KWQListBox.h>
 
 
 QListBox::QListBox()
 {
+    _logNotYetImplemented();
 }
 
 
 QListBox::~QListBox()
 {
+    _logNotYetImplemented();
 }
 
 
 uint QListBox::count() const
 {
+    _logNotYetImplemented();
 }
 
 
 void QListBox::clear()
 {
+    _logNotYetImplemented();
 }
 
 
 void QListBox::setSelectionMode(SelectionMode)
 {
+    _logNotYetImplemented();
 }
 
 
 QListBoxItem *QListBox::firstItem() const
 {
+    _logNotYetImplemented();
 }
 
 
 int QListBox::currentItem() const
 {
+    _logNotYetImplemented();
 }
 
 
 void QListBox::insertItem(const QString &, int index=-1)
 {
+    _logNotYetImplemented();
 }
 
 
 void QListBox::insertItem(const QListBoxItem *, int index=-1)
 {
+    _logNotYetImplemented();
 }
 
 
 void QListBox::setSelected(int, bool)
 {
+    _logNotYetImplemented();
 }
 
 
 bool QListBox::isSelected(int)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -85,10 +97,12 @@ bool QListBox::isSelected(int)
 
 QListBoxItem::QListBoxItem()
 {
+    _logNotYetImplemented();
 }
 
 QListBoxItem::~QListBoxItem()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -99,26 +113,31 @@ void QListBoxItem::setSelectable(bool)
 
 QListBox *QListBoxItem::listBox() const
 {
+    _logNotYetImplemented();
 }
 
 
 int QListBoxItem::width(const QListBox *) const
 {
+    _logNotYetImplemented();
 }
 
 
 int QListBoxItem::height(const QListBox *) const
 {
+    _logNotYetImplemented();
 }
 
 
 QListBoxItem *QListBoxItem::next() const
 {
+    _logNotYetImplemented();
 }
 
 
 QListBoxItem *QListBoxItem::prev() const
 {
+    _logNotYetImplemented();
 }
 
 
@@ -127,10 +146,12 @@ QListBoxItem *QListBoxItem::prev() const
 
 QListBoxText::QListBoxText(const QString &text=QString::null)
 {
+    _logNotYetImplemented();
 }
 
 
 QListBoxText::~QListBoxText()
 {
+    _logNotYetImplemented();
 }
 

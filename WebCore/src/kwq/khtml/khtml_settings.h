@@ -49,11 +49,15 @@ public:
     QString settingsToCSS() const;
 
     QFont::CharSet charset() const;
+    void setCharset( QFont::CharSet c );
+
+    const QString &encoding() const;
 
     int minFontSize() const;
     QString availableFamilies() const;
 
     QFont::CharSet script() const;
+    void setScript( QFont::CharSet c );
 
     const QValueList<int> &fontSizes() const;
 

@@ -22,19 +22,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 #include <qpushbutton.h>
 
 QPushButton::QPushButton(QWidget *w) : QButton (w)
 {
+    _logNotYetImplemented();
 }
 
 
 QPushButton::QPushButton(const QString &text, QWidget *parent, const char* name)
 {
+    _logNotYetImplemented();
 }
 
 
 QPushButton::~QPushButton()
 {
+    _logNotYetImplemented();
 }

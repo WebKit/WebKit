@@ -25,7 +25,9 @@
 
 #include <kwin.h>
 
+#include <kwqdebug.h>
 
 KWin::Info KWin::info(int win)
 {
+    _logNotYetImplemented();
 }

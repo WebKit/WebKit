@@ -76,7 +76,7 @@ namespace khtml {
     {
     public:
         Token() {
-            id = 0;
+            _id = 0;
             complexText = false;
             attrs = 0;
             text = 0;
@@ -100,7 +100,7 @@ namespace khtml {
                 attrs->deref();
                 attrs = 0;
             }
-            id = 0;
+            _id = 0;
             complexText = false;
             if(text) {
                 text->deref();
@@ -108,7 +108,7 @@ namespace khtml {
             }
         }
         DOM::NamedAttrMapImpl* attrs;
-        ushort id;
+        ushort _id;
         DOMStringImpl* text;
         bool complexText;
     };

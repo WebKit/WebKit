@@ -22,39 +22,46 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
+#include <kwqdebug.h>
 
 #include <kglobal.h>
 
-
+#include <Cocoa/Cocoa.h>
 
 KInstance *KGlobal::instance()
 {
+    _logNotYetImplemented();
 }
 
 
 KCharsets *KGlobal::charsets()
 {
+    _logNotYetImplemented();
 }
 
 
 KLocale *KGlobal::locale()
 {
+    _logNotYetImplemented();
 }
 
 
 KStandardDirs *KGlobal::dirs()
 {
+    _logNotYetImplemented();
 }
 
 
 KConfig *KGlobal::config()
 {
+    _logNotYetImplemented();
 }
 
 
 
 const QString &KGlobal::staticQString(const QString &)
 {
+    _logNotYetImplemented();
 }
 
 

@@ -25,11 +25,15 @@
 
 #include <qcheckbox.h>
 
+#include <kwqdebug.h>
+
 QCheckBox::QCheckBox(QWidget *w) : QButton (w)
 {
+    _logNotYetImplemented();
 }
 
 
 void QCheckBox::setChecked(bool)
 {
+    _logNotYetImplemented();
 }

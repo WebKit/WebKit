@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 
 #include <qcombobox.h>
@@ -29,49 +30,59 @@
 
 QComboBox::QComboBox(QWidget *parent=0, const char *name=0)
 {
+    _logNotYetImplemented();
 }
 
 
 QComboBox::QComboBox(bool rw, QWidget *parent=0, const char *name=0)
 {
+    _logNotYetImplemented();
 }
 
 QComboBox::~QComboBox()
 {
+    _logNotYetImplemented();
 }
 
 
 int QComboBox::count() const
 {
+    _logNotYetImplemented();
 }
 
 
 QListBox *QComboBox::listBox() const
 {
+    _logNotYetImplemented();
 }
 
 
 void QComboBox::popup()
 {
+    _logNotYetImplemented();
 }
 
 
 bool QComboBox::eventFilter(QObject *object, QEvent *event)
 {
+    _logNotYetImplemented();
 }
 
 
 void QComboBox::insertItem(const QString &text, int index=-1)
 {
+    _logNotYetImplemented();
 }
 
 
 void QComboBox::clear()
 {
+    _logNotYetImplemented();
 }
 
 void QComboBox::setCurrentItem(int)
 {
+    _logNotYetImplemented();
 }
 
 
