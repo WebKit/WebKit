@@ -14,6 +14,13 @@
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 
+@interface WebPluginStream (ClassInternal)
+- (void)receivedData:(NSData *)data;
+- (void)receivedError:(NPError)error;
+- (void)finishedLoadingWithData:(NSData *)data;
+- (void)setUpGlobalsWithHandle:(WebResourceHandle *)handle;
+@end
+
 @interface WebPluginStream (WebResourceClient) <WebResourceClient>
 @end
 
@@ -232,14 +239,23 @@
     [self finishedLoadingWithData:[dataSource data]];
 }
 
+@end
+
 #pragma mark WebResourceHandle
 
-- (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
+@implementation WebPluginStream (WebResourceClient)
+
+- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)theURL
+{
+    return [[view webController] userAgentForURL:theURL];
+}
+
+- (void)handleDidBeginLoading:(WebResourceHandle *)handle
 {
     [[view webController] _didStartLoading:URL];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)data
+- (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
 {
     WebController *webController = [view webController];
 
@@ -252,7 +268,7 @@
         forResourceHandle: handle fromDataSource: [view webDataSource] complete: NO];
 }
 
-- (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)handle data: (NSData *)data
+- (void)handleDidFinishLoading:(WebResourceHandle *)handle data: (NSData *)data
 {
     WebController *webController = [view webController];
     
@@ -264,7 +280,7 @@
     [webController _didStopLoading:URL];
 }
 
-- (void)WebResourceHandleDidCancelLoading:(WebResourceHandle *)handle
+- (void)handleDidCancelLoading:(WebResourceHandle *)handle
 {
     WebController *webController = [view webController];
     
@@ -276,7 +292,7 @@
     [webController _didStopLoading:URL];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle didFailLoadingWithResult:(WebError *)result
+- (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)result
 {
     WebController *webController = [view webController];
     
@@ -291,7 +307,7 @@
     [webController _didStopLoading:URL];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle didRedirectToURL:(NSURL *)toURL
+- (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)toURL
 {
     WebController *webController = [view webController];
     

@@ -101,14 +101,19 @@
     }
 }
 
-- (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
+- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)URL
+{
+    return [[dataSource controller] userAgentForURL:URL];
+}
+
+- (void)handleDidBeginLoading:(WebResourceHandle *)handle
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
     
     [self didStartLoadingWithURL:[handle URL]];
 }
 
-- (void)WebResourceHandleDidCancelLoading:(WebResourceHandle *)handle
+- (void)handleDidCancelLoading:(WebResourceHandle *)handle
 {
     WebError *error;
     
@@ -126,7 +131,7 @@
     [self didStopLoading];
 }
 
-- (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)handle data: (NSData *)data
+- (void)handleDidFinishLoading:(WebResourceHandle *)handle data: (NSData *)data
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
     
@@ -161,7 +166,7 @@
     [self didStopLoading];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)data
+- (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
 {
     WebController *controller = [dataSource controller];
     NSString *contentType = [handle contentType];
@@ -226,7 +231,7 @@
     isFirstChunk = NO;
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle didFailLoadingWithResult:(WebError *)result
+- (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)result
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, result = %s\n", DEBUG_OBJECT([handle URL]), DEBUG_OBJECT([result errorDescription]));
 
@@ -242,7 +247,7 @@
 }
 
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle didRedirectToURL:(NSURL *)URL
+- (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_REDIRECT, "URL = %s\n", DEBUG_OBJECT(URL));
 

@@ -28,6 +28,7 @@
     backForwardList = [[WebBackForwardList alloc] init];
     defaultContextMenuHandler = [[WebDefaultContextMenuHandler alloc] init];
     textSizeMultiplier = 1;
+    userAgentLock = [[NSLock alloc] init];
     return self;
 }
 
@@ -63,6 +64,7 @@
     [defaultContextMenuHandler release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
+    [userAgentLock release];
     
     [super dealloc];
 }

@@ -208,8 +208,7 @@
 {
     NSArray *handles;
 
-    // Stop download here because we can't rely on WebResourceHandleDidCancelLoading
-    // as it isn't sent when the app quits.
+    // Stop download here because handleDidCancelLoading isn't sent when the app quits.
     [[_private->mainHandleClient downloadHandler] cancel];
 
     if (!_private->loading) {

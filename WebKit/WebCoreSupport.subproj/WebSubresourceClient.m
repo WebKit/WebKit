@@ -92,13 +92,18 @@
         partialProgress:[WebLoadProgress progressWithResourceHandle:handle] fromDataSource:dataSource];
 }
 
-- (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
+- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)URL
+{
+    return [[dataSource controller] userAgentForURL:URL];
+}
+
+- (void)handleDidBeginLoading:(WebResourceHandle *)handle
 {
     [self didStartLoadingWithURL:[handle URL]];
     [self receivedProgressWithHandle:handle complete: NO];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)data
+- (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
 {
     WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
 
@@ -106,7 +111,7 @@
     [loader addData:data];
 }
 
-- (void)WebResourceHandleDidCancelLoading:(WebResourceHandle *)handle
+- (void)handleDidCancelLoading:(WebResourceHandle *)handle
 {
     WebError *error;
     
@@ -122,7 +127,7 @@
     [self didStopLoading];
 }
 
-- (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)handle data:(NSData *)data
+- (void)handleDidFinishLoading:(WebResourceHandle *)handle data:(NSData *)data
 {    
     WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
     WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
@@ -142,7 +147,7 @@
     [self didStopLoading];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle didFailLoadingWithResult:(WebError *)error
+- (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)error
 {
     WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
 
@@ -155,7 +160,7 @@
     [self didStopLoading];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle didRedirectToURL:(NSURL *)URL
+- (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL
 {
     WEBKIT_ASSERT(currentURL != nil);
     WEBKIT_ASSERT([URL isEqual:[handle URL]]);

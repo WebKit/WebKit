@@ -18,7 +18,6 @@
     WebResourceHandle *handle;
     id delegate;
     NSURL *URL;
-    BOOL doingSyncLoad;
 }
 
 @end;
@@ -133,14 +132,12 @@
     }
     
     NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"" forKey:@"only-if-cached"];
-    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithClient:self
-                                                                      URL:_private->URL
-                                                               attributes:attributes
-                                                                    flags:WebResourceHandleFlagNone];
+    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithURL:_private->URL
+                                                             userAgent:nil
+                                                            attributes:attributes
+                                                                 flags:WebResourceHandleFlagNone];
     if (handle) {        
-        _private->doingSyncLoad = YES;
         NSData *data = [handle loadInForeground];
-        _private->doingSyncLoad = NO;
         if (data) {
             icon = [[[NSImage alloc] initWithData:data] autorelease];
             if (icon) {
@@ -179,19 +176,21 @@
     _private->handle = nil;
 }
 
-- (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)sender
+- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)URL
+{
+    return nil;
+}
+
+- (void)handleDidBeginLoading:(WebResourceHandle *)sender
 {
 }
 
-- (void)WebResourceHandleDidCancelLoading:(WebResourceHandle *)sender
+- (void)handleDidCancelLoading:(WebResourceHandle *)sender
 {
 }
 
-- (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)sender data:(NSData *)data
+- (void)handleDidFinishLoading:(WebResourceHandle *)sender data:(NSData *)data
 {
-    if (_private->doingSyncLoad) {
-        return;
-    }
     NSImage *icon = [[NSImage alloc] initWithData:data];
     if (icon) {
         [[self class] _resizeImage:icon];
@@ -201,15 +200,15 @@
     }
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)sender dataDidBecomeAvailable:(NSData *)data
+- (void)handleDidReceiveData:(WebResourceHandle *)sender data:(NSData *)data
 {
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)sender didFailLoadingWithResult:(WebError *)result
+- (void)handleDidFailLoading:(WebResourceHandle *)sender withError:(WebError *)result
 {
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)sender didRedirectToURL:(NSURL *)URL
+- (void)handleDidRedirect:(WebResourceHandle *)sender toURL:(NSURL *)URL
 {
 }
 

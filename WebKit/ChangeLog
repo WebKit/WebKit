@@ -1,5 +1,29 @@
 2002-08-18  Darin Adler  <darin@apple.com>
 
+	Update WebResourceClient instances for new API, including adding
+	the handleWillUseUserAgent:forURL: method.
+
+        * Misc.subproj/WebIconLoader.m:
+        * Plugins.subproj/WebPluginStream.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebView.subproj/WebMainResourceClient.m:
+	These were all the clients that needed updating.
+
+        * WebView.subproj/WebController.m:
+        (-[WebController setUserAgent:]): Lock so that we can set the user agent
+	even though another thread could be calling userAgentForURL:.
+        (-[WebController userAgentForURL:]): Ditto.
+
+        * WebView.subproj/WebControllerPrivate.h: Add lock.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate init]): Create lock.
+        (-[WebControllerPrivate dealloc]): Release lock.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoading]): Improve comment.
+
+2002-08-18  Darin Adler  <darin@apple.com>
+
         * Misc.subproj/WebIconLoader.m:
         (-[WebIconLoader iconFromCache]):
         (-[WebIconLoader WebResourceHandleDidFinishLoading:data:]):

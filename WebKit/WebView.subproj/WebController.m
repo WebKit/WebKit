@@ -384,15 +384,20 @@
 - (void)setUserAgent:(NSString *)userAgentString
 {
     NSString *override = [userAgentString copy];
+    [_private->userAgentLock lock];
     [_private->userAgentOverride release];
     _private->userAgentOverride = override;
+    [_private->userAgentLock unlock];
 }
 
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
-    if (_private->userAgentOverride) {
-        return _private->userAgentOverride;
+    [_private->userAgentLock lock];
+    NSString *result = [[_private->userAgentOverride copy] autorelease];
+    [_private->userAgentLock unlock];
+    if (result) {
+        return result;
     }
 
     // Note that we currently don't look at the URL.
