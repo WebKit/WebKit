@@ -1,3 +1,9 @@
+2002-06-10  Darin Adler  <darin@apple.com>
+
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+	Fix a typo where I left the S off of DRAW_WITHOUT_ADVANCES.
+
 2002-06-10  Richard Williamson  <rjw@apple.com>
 
     90% solution to round-off problem.  khtml breaks measures text on space

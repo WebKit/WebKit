@@ -519,7 +519,6 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
-    // Remember that descender is negative.
 #ifdef DRAW_WITHOUT_ADVANCES
     point.y -= [self lineSpacing] - [self descent];
 #else
@@ -540,9 +539,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     CGContextSetTextPosition (cgContext, point.x, point.y - [self descent] + 1);
     //CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
     CGContextShowGlyphsWithDeviceAdvances (cgContext, glyphs, advances, numGlyphs);
-#endif
-    
-#ifndef DRAW_WITHOUT_ADVANCE
+
     if (advances != localAdvanceBuffer) {
         free(advances);
     }
@@ -622,11 +619,11 @@ cleanup:
     ATSGlyphRef glyphID;
     
 
-    for (i = 0; i < length; i++){
+    for (i = 0; i < length; i++) {
         UniChar c = characters[i];
         
         if (c == NON_BREAKING_SPACE) {
-        	c = SPACE;
+            c = SPACE;
         }
         else if (IsNonBaseChar(c)){
             return [self slowFloatWidthForCharacters: characters length: length];
