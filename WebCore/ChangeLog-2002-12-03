@@ -1,5 +1,10 @@
 2002-11-11  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQWidget.mm: (QWidget::setCursor): Remove printf I left
+	in by accident.
+
+2002-11-11  Darin Adler  <darin@apple.com>
+
 	- tighten up cursor handling a bit more
 
         * kwq/KWQWidget.mm:

@@ -289,7 +289,6 @@ void QWidget::setCursor(const QCursor &cur)
     id view = data->view;
     while (view) {
         if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
-            printf("setting cursor to %p\n", cur.handle());
             [view setDocumentCursor:cur.handle()];
             break;
         }

@@ -3,13 +3,14 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+
+#import <WebKit/WebKitLogging.h>
 
 typedef void (* FunctionPointer) (void);
 typedef void (* TransitionVector) (void);
-FunctionPointer functionPointerForTVector(TransitionVector);
-TransitionVector tVectorForFunctionPointer(FunctionPointer);
+static FunctionPointer functionPointerForTVector(TransitionVector);
+static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 @implementation WebNetscapePluginPackage
 
@@ -264,7 +265,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         FSSpec spec;
         FSRef fref;
         
-        err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
+        err = FSPathMakeRef((UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:path], &fref, NULL);
         if(err != noErr){
             ERROR("FSPathMakeRef failed. Error=%d", err);
             return NO;

@@ -1,5 +1,13 @@
 2002-11-11  Darin Adler  <darin@apple.com>
 
+        * Plugins.subproj/WebNetscapePluginPackage.m: (-[WebNetscapePluginPackage load]):
+        Use fileSystemRepresentationWithPath, not cString, to turn a path into something
+        to pass to FSPathMakeRef.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update.
+
+2002-11-11  Darin Adler  <darin@apple.com>
+
 	- tighten up cursor handling a bit more
 
         * WebView.subproj/WebDynamicScrollBarsView.m:
