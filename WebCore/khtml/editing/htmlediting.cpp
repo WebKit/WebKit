@@ -1787,7 +1787,7 @@ void DeleteSelectionCommand::moveNodesAfterNode()
 
     // Do the move.
     NodeImpl *rootNode = refNode->rootEditableElement();
-    while (node && node->isAncestor(startBlock) && node->id() != ID_BR) {
+    while (node && node->isAncestor(startBlock)) {
         NodeImpl *moveNode = node;
         node = node->nextSibling();
         removeNode(moveNode);
