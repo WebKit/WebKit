@@ -1,10 +1,17 @@
+2004-06-07  Darin Adler  <darin@apple.com>
+
+        - fixed <rdar://problem/3682489>: (JavaScriptGlue no longer compiles because Interpreter::evaluate parameters changed)
+
+        * kjs/interpreter.h: Added an overload to make JavaScriptGlue compile.
+        * kjs/interpreter.cpp: (KJS::Interpreter::evaluate): Implemented the overload.
+
 === JavaScriptCore-143.1 ===
 
 2004-06-04  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin
-	
-	 - fixed <rdar://problem/3680594>
+        
+        - fixed <rdar://problem/3680594>
 
         * kjs/object.cpp:
         (KJS::Error::create):
@@ -88,8 +95,7 @@
 
 2004-05-27  Richard Williamson   <rjw@apple.com>
 
-	Renamed WebScriptMethods to WebScripting based on feedback
-	from Nancy.
+        Renamed WebScriptMethods to WebScripting based on feedback from Nancy.
 
         Reviewed by Chris.
 
@@ -106,10 +112,10 @@
 
 2004-05-24  Richard Williamson   <rjw@apple.com>
 
-	Changed RuntimeArrayImp to inherit from ArrayInstanceImp and
-	fixed ClassInfo to correctly reflect inheritance.  This is required
-	because of the runtime checks in JSC for arrays, i.e. in
-	the Function objects apply method.
+        Changed RuntimeArrayImp to inherit from ArrayInstanceImp and
+        fixed ClassInfo to correctly reflect inheritance.  This is required
+        because of the runtime checks in JSC for arrays, i.e. in
+        the Function objects apply method.
 
         Reviewed by Ken.
 
@@ -142,11 +148,11 @@
 
 2004-05-20  Richard Williamson   <rjw@apple.com>
 
-	Implemented WebScriptObject/DOM wrapper voodoo.  DOM wrappers
-	can now be referenced like any other WebScriptObject, meaning
-	you can do JS operations on them.
+        Implemented WebScriptObject/DOM wrapper voodoo.  DOM wrappers
+        can now be referenced like any other WebScriptObject, meaning
+        you can do JS operations on them.
 
-	All added implementation of finalizeForWebScript.
+        All added implementation of finalizeForWebScript.
 
         Reviewed by Ken.
 
@@ -167,7 +173,7 @@
 
 2004-05-19  Richard Williamson   <rjw@apple.com>
 
-	Removed extraneous tabs that were added (by XCode?).
+        Removed extraneous tabs that were added (by XCode?).
 
         * bindings/objc/WebScriptObject.h:
 
@@ -183,8 +189,8 @@
 
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
-	Added exception logging.  Also check for exception and
-	set results as appropriate.
+        Added exception logging.  Also check for exception and
+        set results as appropriate.
 
         Reviewed by Maciej (partially reviewed).
 
@@ -196,9 +202,9 @@
 
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
-	Finsished implementing support for windowScriptObject.
-	Had to make WebScriptObjectPrivate.h accessible from
-	WebCore.
+        Finsished implementing support for windowScriptObject.
+        Had to make WebScriptObjectPrivate.h accessible from
+        WebCore.
 
         Reviewed by Maciej.
 
@@ -207,8 +213,8 @@
 
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
-	Use KVC to set/get values instead of directly accessing
-	ivars.
+        Use KVC to set/get values instead of directly accessing
+        ivars.
 
         Reviewed by Maciej.
 
@@ -222,10 +228,10 @@
 
 2004-05-17  Richard Williamson   <rjw@apple.com>
 
-	Implemented new API for WebScriptObject.
+        Implemented new API for WebScriptObject.
 
-	Fixed <rdar://problem/3657145>: (objc to javascript method calls do not cause updates.)
-	Fixed <rdar://problem/3654887>: (Update to JSC to refer to new JSObject LiveConnect object)  (w/ help from Vicki)
+        Fixed <rdar://problem/3657145>: (objc to javascript method calls do not cause updates.)
+        Fixed <rdar://problem/3654887>: (Update to JSC to refer to new JSObject LiveConnect object)  (w/ help from Vicki)
 
         Reviewed by Hyatt.
 
@@ -289,7 +295,7 @@
 
         Reviewed by mjs.
  
-	<rdar://problem/3642427>: framework marketing number should be 2.0 for DoubleBarrel release
+        <rdar://problem/3642427>: framework marketing number should be 2.0 for DoubleBarrel release
 
         * JavaScriptCore.pbproj/project.pbxproj: change CFBundleShortVersionString to 2.0
 
@@ -297,7 +303,7 @@
 
 2004-05-13  Richard Williamson   <rjw@apple.com>
 
-	Fixed indentation.
+        Fixed indentation.
 
         Reviewed by Chris.
 
@@ -306,7 +312,7 @@
 
 2004-05-13  Richard Williamson   <rjw@apple.com>
 
-	Approved API changes.  Currently unimplemented.
+        Approved API changes.  Currently unimplemented.
 
         Reviewed by Chris.
 
@@ -327,8 +333,8 @@
 
         Reviewed by darin.
 
-	Turn off GC since it uses ppc only instructions (which breaks 
-	the B&I build).   
+        Turn off GC since it uses ppc only instructions (which breaks 
+        the B&I build).   
     
         * kjs/value.h: set USE_CONSERVATIVE_GC to 0
 
@@ -338,24 +344,24 @@
 
         Reviewed by Darin.
 
-	- add -funroll-loops=16 compiler option for approx .5% speedup on
-	HTML iBench and .5-1% speedup on JS iBench.
-	
+        - add -funroll-loops=16 compiler option for approx .5% speedup on
+        HTML iBench and .5-1% speedup on JS iBench.
+        
         * JavaScriptCore.pbproj/project.pbxproj:
 
 2004-04-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 
-	Enable full conservative GC mode in addition to test mode. When
-	conservative GC is enabled, we now get an 11% speed improvement on
-	the iBench. Also fix some spots I missed before.
+        Enable full conservative GC mode in addition to test mode. When
+        conservative GC is enabled, we now get an 11% speed improvement on
+        the iBench. Also fix some spots I missed before.
 
-	Specific noteworth changes:
-	
+        Specific noteworth changes:
+        
         * kjs/collector.cpp:
-	(KJS::Collector::markStackObjectsConservatively): Check possible
-	cell pointers for 8-byte aligment and verify they are not 0.
+        (KJS::Collector::markStackObjectsConservatively): Check possible
+        cell pointers for 8-byte aligment and verify they are not 0.
 
         * kjs/protected_values.cpp:
         (KJS::ProtectedValues::increaseProtectCount): Move null-tolerance from here...
@@ -363,11 +369,11 @@
         * kjs/protect.h:
         (KJS::gcProtectNullTolerant): ...to here...
         (KJS::gcUnprotectNullTolerant): ...and here, because not all callers need the null
-	tolerance, and doing the check is expensive.
+        tolerance, and doing the check is expensive.
 
         * kjs/protected_values.cpp:
         (KJS::ProtectedValues::computeHash): Replace hash function with a much faster one
-	that is still very good.
+        that is still very good.
 
         * kjs/protect.h:
         (KJS::gcProtect):
@@ -422,9 +428,9 @@
 
 2004-04-30  Richard Williamson   <rjw@apple.com>
 
-	Asking an NSInvocation for it's return value when return type
-	is void throws an exception.  Added check for void return types
-	to avoid this exception.
+        Asking an NSInvocation for it's return value when return type
+        is void throws an exception.  Added check for void return types
+        to avoid this exception.
 
         Reviewed by Ken.
 
@@ -433,8 +439,8 @@
 
 2004-04-29  Richard Williamson   <rjw@apple.com>
 
-	Fixed several bad problems with the ObjC bindings.  In particular, conversion
-	to/from JavaScriptObject (soon to be WebScriptObject) was completely broken.
+        Fixed several bad problems with the ObjC bindings.  In particular, conversion
+        to/from JavaScriptObject (soon to be WebScriptObject) was completely broken.
 
         Reviewed by Chris.
 
@@ -475,10 +481,10 @@
 
         Reviewed by Darin.
 
-	Implementation of conservative GC, based partly on code from
-	Darin. It's turned off for now, so it shouldn't have any effect on
-	the normal build.
-	
+        Implementation of conservative GC, based partly on code from
+        Darin. It's turned off for now, so it shouldn't have any effect on
+        the normal build.
+        
         * JavaScriptCore.pbproj/project.pbxproj:
         * kjs/collector.cpp:
         (KJS::Collector::markStackObjectsConservatively):
@@ -509,19 +515,19 @@
 
 2004-04-22  Richard Williamson   <rjw@apple.com>
 
-	Fixed build snafu (re-declaration of NPBool in npruntime.h and
-	npapi.h).
+        Fixed build snafu (re-declaration of NPBool in npruntime.h and
+        npapi.h).
 
         * bindings/npruntime.h:
 
 2004-04-22  Richard Williamson   <rjw@apple.com>
 
-	Updated plugin binding API to reflect latest revision from
-	working group.
-	
-	Biggest change is the introduction of NPVariant used to represent
-	value types.  NPVariant replaces the use of NPObject for the
-	exchange of values between scripting environment and native code.
+        Updated plugin binding API to reflect latest revision from
+        working group.
+        
+        Biggest change is the introduction of NPVariant used to represent
+        value types.  NPVariant replaces the use of NPObject for the
+        exchange of values between scripting environment and native code.
 
         Reviewed by John.
 
@@ -619,11 +625,11 @@
 
         Reviewed by Darin.
 
-	Preliminary change for conservative GC. Create "protected"
-	subclasses to GC-protect objects when on heap, since we will soon
-	remove the built-in refcounting of the normal wrapper classes. Use
-	them where needed.
-	
+        Preliminary change for conservative GC. Create "protected"
+        subclasses to GC-protect objects when on heap, since we will soon
+        remove the built-in refcounting of the normal wrapper classes. Use
+        them where needed.
+        
         * JavaScriptCore.pbproj/project.pbxproj:
         * kjs/context.h:
         * kjs/internal.h:
@@ -637,13 +643,13 @@
 
         Reviewed by Dave.
 
-	Optimize prepend using the shared substring optimization. Also,
-	limit the applicability of shared append and shared prepend. If
-	you overdo it, it does more harm than good, because you create a
-	bunch of strings that are disqualified from future shared
-	append/prepend, for not much immediate savings in allocate/copy
-	expense.
-	
+        Optimize prepend using the shared substring optimization. Also,
+        limit the applicability of shared append and shared prepend. If
+        you overdo it, it does more harm than good, because you create a
+        bunch of strings that are disqualified from future shared
+        append/prepend, for not much immediate savings in allocate/copy
+        expense.
+        
         * kjs/ustring.cpp:
         (KJS::):
         (KJS::UString::Rep::create):
@@ -660,8 +666,8 @@
 2004-04-16  Maciej Stachowiak  <mjs@apple.com>
         Reviewed by Richard.
 
-	No more need for Completion or Reference to privately inherit from
-	Value, none of the superclass functionality is used.
+        No more need for Completion or Reference to privately inherit from
+        Value, none of the superclass functionality is used.
 
         * kjs/completion.h:
         * kjs/reference.h:
@@ -670,7 +676,7 @@
 
 2004-04-16  Richard Williamson   <rjw@apple.com>
 
-	Added interpreter lock protection around object creation.
+        Added interpreter lock protection around object creation.
 
         Reviewed by Chris.
 
@@ -681,12 +687,12 @@
 
         Reviewed by Ken.
 
-	Another JavaScript speed improvement: use the mechanism from
-	string append optimization to make taking a substring fast, again
-	sharing the buffer.
+        Another JavaScript speed improvement: use the mechanism from
+        string append optimization to make taking a substring fast, again
+        sharing the buffer.
 
-	A further 22% improvement on the 24fun string speed test.
-	
+        A further 22% improvement on the 24fun string speed test.
+        
         * kjs/ustring.cpp:
         (KJS::):
         (KJS::UString::Rep::create):
@@ -701,30 +707,30 @@
 
         Reviewed by Darin.
 
-	- fixed <rdar://problem/3600695>: String manipulation in JavaScript 24fun test is very slow (slow)
-	- fixed <rdar://problem/3600691>: Table generation test is really slow
-	- fixed <rdar://problem/3600661>: 24fun date test is really slow
+        - fixed <rdar://problem/3600695>: String manipulation in JavaScript 24fun test is very slow (slow)
+        - fixed <rdar://problem/3600691>: Table generation test is really slow
+        - fixed <rdar://problem/3600661>: 24fun date test is really slow
 
-	80% speedup on the string test, lesser speedups on the other two.
-	
-	Two different optimizations here:
+        80% speedup on the string test, lesser speedups on the other two.
+        
+        Two different optimizations here:
 
-	1) Avoid large overhead of scanning strings to see if they are all
-	ASCII before numeric conversion.
-	
+        1) Avoid large overhead of scanning strings to see if they are all
+        ASCII before numeric conversion.
+        
         * kjs/nodes.cpp:
         (AssignNode::evaluate): Don't convert to integer until we know for
-	sure the operation will need it. Attempting to convert strings to
-	numbers is a waste when they are being appended with +=.
+        sure the operation will need it. Attempting to convert strings to
+        numbers is a waste when they are being appended with +=.
 
-	2) Avoid huge cost of appending strings.
+        2) Avoid huge cost of appending strings.
 
-	This is done by allowing multiple strings to share a buffer but
-	actually use different ranges of it. The first time a string is
-	appended to, we start leaving at least 10% extra space in the
-	buffer, so doing N appends to the same string takes O(log N)
-	mallocs instead of O(N).
-	
+        This is done by allowing multiple strings to share a buffer but
+        actually use different ranges of it. The first time a string is
+        appended to, we start leaving at least 10% extra space in the
+        buffer, so doing N appends to the same string takes O(log N)
+        mallocs instead of O(N).
+        
         * kjs/identifier.cpp:
         (KJS::Identifier::equal):
         (KJS::Identifier::add):
@@ -752,7 +758,7 @@
 
         Reviewed by John.
 
-	- fix deployment build by avoiding deployment-only warning.
+        - fix deployment build by avoiding deployment-only warning.
 
         * kjs/scope_chain.cpp:
         (KJS::ScopeChain::bottom):
@@ -761,14 +767,14 @@
 
         Reviewed by John.
 
-	Changed things so that newly created objects get a prototype based
-	on the scope chain of the current function, rather than the
-	interpreter that started execution. This fixes the following bugs:
-	
-	<rdar://problem/3368523>: ARCH: wrong prototype used to create new objects (hang on lookup.atomica.com)
+        Changed things so that newly created objects get a prototype based
+        on the scope chain of the current function, rather than the
+        interpreter that started execution. This fixes the following bugs:
+        
+        <rdar://problem/3368523>: ARCH: wrong prototype used to create new objects (hang on lookup.atomica.com)
         <rdar://problem/3559173>: ARCH: Cannot scan using a HP Jetdirect product (JS object prototypes bind incorrectly)
 
-	* JavaScriptCore.pbproj/project.pbxproj:
+        * JavaScriptCore.pbproj/project.pbxproj:
         * kjs/array_object.cpp:
         (CompareWithCompareFunctionArguments::CompareWithCompareFunctionArguments):
         (ArrayProtoFuncImp::ArrayProtoFuncImp):
@@ -844,12 +850,12 @@
 
 2004-03-31  Richard Williamson   <rjw@apple.com>
 
-	Tedious renames based on feedback from plugin-futures list.
-	NP_ functions are renamed with NPN_ prefix.
-	Types prefix renamed from NP_ to NP.
-	NPN_CreateStringWithUTF8 and NPN_SetExceptionWithUTF8 now take a length, optionally -1 if string is null terminated. 
-	
-	No review because this was just a renaming patch.
+        Tedious renames based on feedback from plugin-futures list.
+        NP_ functions are renamed with NPN_ prefix.
+        Types prefix renamed from NP_ to NP.
+        NPN_CreateStringWithUTF8 and NPN_SetExceptionWithUTF8 now take a length, optionally -1 if string is null terminated. 
+        
+        No review because this was just a renaming patch.
 
         * bindings/NP_jsobject.cpp:
         (listFromNPArray):
@@ -955,8 +961,8 @@
 
 2004-03-31  Richard Williamson   <rjw@apple.com>
 
-	Changed references to NP_runtime.h to npruntime.h
-	
+        Changed references to NP_runtime.h to npruntime.h
+        
         * JavaScriptCore.pbproj/project.pbxproj:
         * bindings/NP_jsobject.h:
         * bindings/c/c_class.h:
@@ -967,7 +973,7 @@
 
 2004-03-31  Richard Williamson   <rjw@apple.com>
 
-	Renamed NP_runtime.h to npruntime.h to match Netscape SDK.
+        Renamed NP_runtime.h to npruntime.h to match Netscape SDK.
 
         * JavaScriptCore.pbproj/project.pbxproj:
         * bindings/NP_jsobject.h:
@@ -977,9 +983,9 @@
 
 2004-03-23  Richard Williamson   <rjw@apple.com>
 
-	Added implementation of KJS::Value <-> NP_Object conversion functions.
-	Augmented test program for 'C' bindings.
-	Added asserts and parameter checking to all public API.	
+        Added implementation of KJS::Value <-> NP_Object conversion functions.
+        Augmented test program for 'C' bindings.
+        Added asserts and parameter checking to all public API.        
 
         Reviewed by Ken.
 
@@ -1043,7 +1049,7 @@
 
 2004-03-17  Richard Williamson   <rjw@apple.com>
 
-	Added a context parameter to result callbacks use by JavaScriptObject functions.  This was a change requested by Eric Carlson on the QT plugin team.
+        Added a context parameter to result callbacks use by JavaScriptObject functions.  This was a change requested by Eric Carlson on the QT plugin team.
 
         Reviewed by Ken.
 
@@ -1057,7 +1063,7 @@
 
 2004-03-16  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3590169.  Regression (crash) caused by the switch to MethodLists.  Crash when attempting to invoke a method from JavaScript to Java that is not implemented.
+        Fixed 3590169.  Regression (crash) caused by the switch to MethodLists.  Crash when attempting to invoke a method from JavaScript to Java that is not implemented.
 
         Reviewed by John.
 
@@ -1066,10 +1072,10 @@
 
 2004-03-15  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3570854.  Don't attempt to convert Null to strings.  We
-	were incorrectly converting to "Null".
+        Fixed 3570854.  Don't attempt to convert Null to strings.  We
+        were incorrectly converting to "Null".
 
-	Actually fixed by Scott Kovatch.
+        Actually fixed by Scott Kovatch.
 
         Reviewed by Richard.
 
@@ -1080,19 +1086,19 @@
 
 2004-03-11  Richard Williamson   <rjw@apple.com>
 
-	Stitched together the NP stuff to our language independent
-	JavaScript binding stuff.  Very close to being done.
-	
-	Added program to test C bindings (and NP stuff).  Just tests
-	properties.  Will add methods and JavaScript access, etc.
+        Stitched together the NP stuff to our language independent
+        JavaScript binding stuff.  Very close to being done.
+        
+        Added program to test C bindings (and NP stuff).  Just tests
+        properties.  Will add methods and JavaScript access, etc.
 
-	Updated Makefile.am to account for new bindings/c directory.
+        Updated Makefile.am to account for new bindings/c directory.
 
-	Change NP_UTF8 from "const char *" to "char" to allow for
-	declarations like "const NP_UTF8 *" and "NP_UTF8 *".  Ditto
-	for NP_UTF16.
+        Change NP_UTF8 from "const char *" to "char" to allow for
+        declarations like "const NP_UTF8 *" and "NP_UTF8 *".  Ditto
+        for NP_UTF16.
 
-	Added NP_IsValidIdentifier().
+        Added NP_IsValidIdentifier().
 
         Reviewed by Chris.
 
@@ -1180,8 +1186,8 @@
 
 2004-03-10  Richard Williamson   <rjw@apple.com>
 
-	Made changes to support new asychronous approach to calls from
-	plugin to JavaScript
+        Made changes to support new asychronous approach to calls from
+        plugin to JavaScript
 
         Reviewed by Chris.
 
@@ -1198,9 +1204,9 @@
 
 2004-03-10  Richard Williamson   <rjw@apple.com>
 
-	Updated header to include proposed changes from
-	plugin-futures list.  Calls from plugin to JavaScript
-	are now asynchronous.
+        Updated header to include proposed changes from
+        plugin-futures list.  Calls from plugin to JavaScript
+        are now asynchronous.
 
         Reviewed by Chris.
 
@@ -1210,8 +1216,8 @@
 
 2004-03-04  Richard Williamson   <rjw@apple.com>
 
-	Implementation of NP_JavaScriptObject.  This is the 'C' class
-	that wraps a JavaScript object.
+        Implementation of NP_JavaScriptObject.  This is the 'C' class
+        that wraps a JavaScript object.
 
         Reviewed by Chris.
 
@@ -1239,10 +1245,10 @@
 
 2004-03-04  Richard Williamson   <rjw@apple.com>
 
-	Added NP_Array implementation.  
+        Added NP_Array implementation.  
 
-	Changed NP_Boolean to just depend on two static instances, no
-	space is required for values.
+        Changed NP_Boolean to just depend on two static instances, no
+        space is required for values.
 
         Reviewed by Chris.
 
@@ -1266,8 +1272,8 @@
 
 2004-03-03  Richard Williamson   <rjw@apple.com>
 
-	More 'C' binding implementation.  Fleshed out all the
-	'primitive' data types.
+        More 'C' binding implementation.  Fleshed out all the
+        'primitive' data types.
 
         Reviewed by Chris.
 
@@ -1295,7 +1301,7 @@
 
 2004-03-03  Richard Williamson   <rjw@apple.com>
 
-	More 'C' binding implementation.
+        More 'C' binding implementation.
 
         Reviewed by Chris.
 
@@ -1319,8 +1325,8 @@
 
 2004-03-02  Richard Williamson   <rjw@apple.com>
 
-	Removed retain/release from NP_Class.  Classes will not be allowed to implement their
-	own customer retain/release scheme.
+        Removed retain/release from NP_Class.  Classes will not be allowed to implement their
+        own customer retain/release scheme.
 
         Reviewed by Chris.
 
@@ -1331,12 +1337,12 @@
 
 2004-03-02  Richard Williamson   <rjw@apple.com>
 
-	C binding API.  Partial implementation.
+        C binding API.  Partial implementation.
 
-	Completed ObjectiveC bindings (not based on the C API).  These will re-implemented over the C binding API, but I wanted to get this code in the tree.
+        Completed ObjectiveC bindings (not based on the C API).  These will re-implemented over the C binding API, but I wanted to get this code in the tree.
 
-	Factored root object reference counting scheme.  It is now useful independent
-	of LiveConnect.
+        Factored root object reference counting scheme.  It is now useful independent
+        of LiveConnect.
 
         Reviewed by Chris.
 
@@ -1432,9 +1438,9 @@
 
 2004-02-18  Richard Williamson   <rjw@apple.com>
 
-	Added NSNumber/Number conversion.
+        Added NSNumber/Number conversion.
 
-	Removed some unnecessary KJS:: namespace specifiers.
+        Removed some unnecessary KJS:: namespace specifiers.
 
         Reviewed by Ken.
 
@@ -1445,14 +1451,14 @@
 
 2004-02-18  Richard Williamson   <rjw@apple.com>
 
-	Added support for export NSArrays.
+        Added support for export NSArrays.
 
-	Updated valueAt() to take an ExecState so we can throw
-	JS exceptions.
+        Updated valueAt() to take an ExecState so we can throw
+        JS exceptions.
 
-	Implemented excludeSelectorFromJavaScript: in ObjcClass.  This allows
-	ObjectiveC classes to control the visibility of their methods in 
-	JavaScript.
+        Implemented excludeSelectorFromJavaScript: in ObjcClass.  This allows
+        ObjectiveC classes to control the visibility of their methods in 
+        JavaScript.
 
         Reviewed by Ken.
 
@@ -1486,8 +1492,8 @@
 
 2004-02-17  Richard Williamson   <rjw@apple.com>
 
-	Added String <-> NSString conversion.
-	Added tests of String <-> NSString conversion to test program.
+        Added String <-> NSString conversion.
+        Added tests of String <-> NSString conversion to test program.
 
         Reviewed by Chris.
 
@@ -1507,9 +1513,9 @@
 
 2004-02-13  Richard Williamson   <rjw@apple.com>
 
-	Work towards the JavaScript ObjC bindings.  The bindings now work for 
-	simple scalar types.  testbindings.mm is an illustration of how the 
-	bindings work.
+        Work towards the JavaScript ObjC bindings.  The bindings now work for 
+        simple scalar types.  testbindings.mm is an illustration of how the 
+        bindings work.
 
         Reviewed by Ken.
 
@@ -1640,7 +1646,7 @@
 
 2004-02-06  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3550242 and 3546977.  The first diff prevents an assert from firing.  The second diff prevents a JavaScript exception, caused be an invalid conversion, which has a downstream consequence of preventing a valid conversion.
+        Fixed 3550242 and 3546977.  The first diff prevents an assert from firing.  The second diff prevents a JavaScript exception, caused be an invalid conversion, which has a downstream consequence of preventing a valid conversion.
 
         Reviewed by John.
 
@@ -1696,7 +1702,7 @@
 
 2004-01-30  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3542044.  Create KJS::String using UString constructor instead of passing UTF8 string to char* constructor.
+        Fixed 3542044.  Create KJS::String using UString constructor instead of passing UTF8 string to char* constructor.
 
         Reviewed by Darin.
 
@@ -1709,7 +1715,7 @@
 
 2004-01-22  Richard Williamson   <rjw@apple.com>
 
-	Added stubs for ObjC language binding to JavaScript.
+        Added stubs for ObjC language binding to JavaScript.
 
         * JavaScriptCore.pbproj/project.pbxproj:
         * bindings/jni/jni_runtime.h:
@@ -1731,10 +1737,10 @@
 
 2004-01-22  Richard Williamson   <rjw@apple.com>
 
-	Simplified JavaString by using UString as backing store.  This
-	revealed a bug in CString's assignment operator which I fixed.
+        Simplified JavaString by using UString as backing store.  This
+        revealed a bug in CString's assignment operator which I fixed.
 
-	Removed some dead code.
+        Removed some dead code.
  
         Reviewed by John.
 
@@ -1758,10 +1764,10 @@
 
 2004-01-16  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3525853.  We weren't handling mapping to overloaded Java
-	methods very well.  Even though this is undefined the other
-	browsers support it.  Also fixed a bug with returning arrays
-	from Java functions.
+        Fixed 3525853.  We weren't handling mapping to overloaded Java
+        methods very well.  Even though this is undefined the other
+        browsers support it.  Also fixed a bug with returning arrays
+        from Java functions.
 
         Reviewed by John.
 
@@ -1799,8 +1805,8 @@
 
 2004-01-16  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3531229.  Another place that needs the  Push/PopLocalFrame
-	protection implemented for 3530401.
+        Fixed 3531229.  Another place that needs the  Push/PopLocalFrame
+        protection implemented for 3530401.
 
         Reviewed by John.
 
@@ -1809,13 +1815,13 @@
 
 2004-01-15  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3530401.  JNI doesn't cleanup local refs created on the
-	main thread.   IMO this is a bad bug in our JMI implementation.
+        Fixed 3530401.  JNI doesn't cleanup local refs created on the
+        main thread.   IMO this is a bad bug in our JMI implementation.
 
-	To work-around the problem I explicitly delete all local refs.
-	Further, I've added Push/PopLocalFrame calls to catch any refs
-	that I may have missed.  This will guarantee that we don't leak
-	any Java references.
+        To work-around the problem I explicitly delete all local refs.
+        Further, I've added Push/PopLocalFrame calls to catch any refs
+        that I may have missed.  This will guarantee that we don't leak
+        any Java references.
 
         Reviewed by John.
 
@@ -1848,9 +1854,9 @@
         * JavaScriptCore.pbproj/project.pbxproj: Update copyright date to 2004.
 
 2004-01-14  Richard Williamson   <rjw@apple.com>
-	
-	Fixed 3529466.  With recent changes to Java plugin we must no
-	longer call DeleteLocalRef().  Not a problem, it was an optimization anyway.
+        
+        Fixed 3529466.  With recent changes to Java plugin we must no
+        longer call DeleteLocalRef().  Not a problem, it was an optimization anyway.
 
         Reviewed by John.
 
@@ -1861,9 +1867,9 @@
 
 2004-01-14  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3529010.
+        Fixed 3529010.
 
-	Finalize may be called on an JSObject after we've already remove all our references.  The assert in this case is firing because we've received a finalize call from Java for an instance that we no longer know about.  The fix is to check in finalize that we're getting a call on an instance that we still care about.
+        Finalize may be called on an JSObject after we've already remove all our references.  The assert in this case is firing because we've received a finalize call from Java for an instance that we no longer know about.  The fix is to check in finalize that we're getting a call on an instance that we still care about.
 
         Reviewed by John.
 
@@ -1875,9 +1881,9 @@
 
 2004-01-13  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3528324. 
+        Fixed 3528324. 
 
-	The run loop that is used to execute JavaScript (in practice, always the main run loop) is held in a class variable.  It is set and retained once and should not be released.  Unfortunately is it being released when the 'root' object on a LiveConnect applet is released.  This has the symptom of eventually causing an deallocation of the main run loop!  Usually after about 5 instantiations/destructions of a LiveConnect applet.  The CFRelease of the run loop was removed.
+        The run loop that is used to execute JavaScript (in practice, always the main run loop) is held in a class variable.  It is set and retained once and should not be released.  Unfortunately is it being released when the 'root' object on a LiveConnect applet is released.  This has the symptom of eventually causing an deallocation of the main run loop!  Usually after about 5 instantiations/destructions of a LiveConnect applet.  The CFRelease of the run loop was removed.
 
         Reviewed by Hyatt.
 
@@ -1890,7 +1896,7 @@
 
 2004-01-06  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3521814.  Finalize messages weren't being dispatched!
+        Fixed 3521814.  Finalize messages weren't being dispatched!
 
         Reviewed by John.
 
@@ -1899,10 +1905,10 @@
 
 2004-01-05  Richard Williamson   <rjw@apple.com>
 
-	Added cache of JNI method IDs to minimize allocations.  This mitigates the problem
-	described by 3515579.
+        Added cache of JNI method IDs to minimize allocations.  This mitigates the problem
+        described by 3515579.
 
-	Also cleanup up logging of Java exceptions.
+        Also cleanup up logging of Java exceptions.
 
         Reviewed by John.
 
@@ -1957,10 +1963,10 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-19  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3515597.  When an error occurs we need
-	to make sure result values are zeroed.
+        Fixed 3515597.  When an error occurs we need
+        to make sure result values are zeroed.
 
-	Cleaned up logs by adding a newline.
+        Cleaned up logs by adding a newline.
 
         Reviewed by John.
 
@@ -1977,13 +1983,13 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-17  Richard Williamson   <rjw@apple.com>
 
-	Ensure that all the symbols we export are in the KJS
-	namespace (3512245).
+        Ensure that all the symbols we export are in the KJS
+        namespace (3512245).
 
-	Also renamed JavaString.characters() to JavaString.UTF8String()
-	for enhanced clarity.
+        Also renamed JavaString.characters() to JavaString.UTF8String()
+        for enhanced clarity.
 
-	Added some sanity checking to constructor of JObjectWrapper.
+        Added some sanity checking to constructor of JObjectWrapper.
 
         Reviewed by Dave.
 
@@ -2073,8 +2079,8 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-16  Richard Williamson   <rjw@apple.com>
 
-	Ack!  More assertions.  Lock ALL entry points into the interpreter!
-	(3511733).
+        Ack!  More assertions.  Lock ALL entry points into the interpreter!
+        (3511733).
 
         Reviewed by Ken.
 
@@ -2090,7 +2096,7 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-15  Richard Williamson   <rjw@apple.com>
 
-	Fixed a couple of snafus and removed some logging.
+        Fixed a couple of snafus and removed some logging.
 
         Reviewed by Maciej.
 
@@ -2098,22 +2104,22 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
         (Bindings::performJavaScriptAccess):
         (Bindings::completedJavaScriptAccess):
         (Bindings::dispatchToJavaScriptThread):
-	Removed some annoying JS_LOG clutter.
+        Removed some annoying JS_LOG clutter.
 
         (Bindings::RootObject::removeAllJavaReferencesForRoot):
-	Fixed allocation of key buffer that was called after it was needed.
+        Fixed allocation of key buffer that was called after it was needed.
 
         (Bindings::JSObject::invoke):
         (Bindings::JSObject::JSObject):
         (Bindings::JSObject::getMember):
         (Bindings::JSObject::getSlot):
-	Added additional interpreter locks around getMember and getSlot. 
-	These functions may cause allocation of JS impls.  
+        Added additional interpreter locks around getMember and getSlot. 
+        These functions may cause allocation of JS impls.  
 
 2003-12-15  Richard Williamson   <rjw@apple.com>
 
-	args weren't passed to 'call' invocation.  d'oh.
-	lock interpreter when we create instances of JS impls.	
+        args weren't passed to 'call' invocation.  d'oh.
+        lock interpreter when we create instances of JS impls.        
 
         Reviewed by Maciej.
 
@@ -2130,8 +2136,8 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-15  Richard Williamson   <rjw@apple.com>
 
-	Last piece of LiveConnect!  This checkin adds implementation
-	of the Java to JavaScript object conversion functions.
+        Last piece of LiveConnect!  This checkin adds implementation
+        of the Java to JavaScript object conversion functions.
 
         Reviewed by John.
 
@@ -2160,10 +2166,10 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-12  Richard Williamson   <rjw@apple.com>
 
-	Added implementation of stubs in JSObject.  All that
-	remains is a couple of simple conversion functions stubs and
-	we're done with LiveConnect.  Also, changed string passing to
-	JS to use uchars instead of chars.  
+        Added implementation of stubs in JSObject.  All that
+        remains is a couple of simple conversion functions stubs and
+        we're done with LiveConnect.  Also, changed string passing to
+        JS to use uchars instead of chars.  
 
         Reviewed by Maciej.
 
@@ -2196,8 +2202,8 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-12  Richard Williamson   <rjw@apple.com>
 
-	Ensure that all calls from Java into JavaScript are
-	performed on a designated thread (the main thread).
+        Ensure that all calls from Java into JavaScript are
+        performed on a designated thread (the main thread).
 
         Reviewed by Ken.
 
@@ -2233,19 +2239,19 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-11  Richard Williamson   <rjw@apple.com>
 
-	Added support for calling a JavaScript function from
-	Java.  Right now this only works for void func(void)
-	functions, but the conversion of args and return values
-	will come shortly.
+        Added support for calling a JavaScript function from
+        Java.  Right now this only works for void func(void)
+        functions, but the conversion of args and return values
+        will come shortly.
 
-	Cleaned up and verified reference counting scheme, and
-	dereferencing of vended JavaScript objects when applet is
-	destroyed (actually when part is destroyed).
-	
-	Removed link hack for testkjs now that the Java folks think
-	they have a solution for the 1.4.2 JavaVM link problem.  Although
-	Greg B. thinks his solution may cause problems for the 1.3.1
-	version of the VM!?!
+        Cleaned up and verified reference counting scheme, and
+        dereferencing of vended JavaScript objects when applet is
+        destroyed (actually when part is destroyed).
+        
+        Removed link hack for testkjs now that the Java folks think
+        they have a solution for the 1.4.2 JavaVM link problem.  Although
+        Greg B. thinks his solution may cause problems for the 1.3.1
+        version of the VM!?!
 
         Reviewed by Ken.
 
@@ -2295,10 +2301,10 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-10  Richard Williamson   <rjw@apple.com>
 
-	Added code to manage reference counting of JavaScript
-	objects passed to Java.   Also added implementation of
-	KJS_JSCreateNativeJSObject.  This is the function that
-	provides the root object to Java (KJS::Window).
+        Added code to manage reference counting of JavaScript
+        objects passed to Java.   Also added implementation of
+        KJS_JSCreateNativeJSObject.  This is the function that
+        provides the root object to Java (KJS::Window).
 
         Reviewed by Hyatt.
 
@@ -2316,16 +2322,16 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-09  Richard Williamson   <rjw@apple.com>
 
-	LiveConnect stubs that correspond to the native methods
-	on JSObject.  These will be called from the new Java plugin
-	when an instance of JSObject is instantiated and messaged.
-	When these are implemented the Java will be able to originate
-	calls into JavaScript.
+        LiveConnect stubs that correspond to the native methods
+        on JSObject.  These will be called from the new Java plugin
+        when an instance of JSObject is instantiated and messaged.
+        When these are implemented the Java will be able to originate
+        calls into JavaScript.
 
-	Also a temporary work-around added to Makefile.am to solve
-	a link problem.  The 1.4.2 JavaVM accidentally links against
-	libobjc.  This call a failure linking testkjs.  Mike Hay is
-	working with someone to fix the problem (3505587).
+        Also a temporary work-around added to Makefile.am to solve
+        a link problem.  The 1.4.2 JavaVM accidentally links against
+        libobjc.  This call a failure linking testkjs.  Mike Hay is
+        working with someone to fix the problem (3505587).
 
         Reviewed by Chris.
 
@@ -2348,7 +2354,7 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by John.
 
-	<rdar://problem/3505183>: JavaScriptCore should assert that interpreter is locked in collector
+        <rdar://problem/3505183>: JavaScriptCore should assert that interpreter is locked in collector
 
         * kjs/collector.cpp:
         (KJS::Collector::allocate): Assert that interpreter lock count is not 0.
@@ -2356,9 +2362,9 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-08  Richard Williamson   <rjw@apple.com>
 
-	LiveConnect:  The last piece of the JavaScript side of the
-	LiveConnect implementation.  This change adds support for
-	setting/getting values from Java arrays in JavaScript.
+        LiveConnect:  The last piece of the JavaScript side of the
+        LiveConnect implementation.  This change adds support for
+        setting/getting values from Java arrays in JavaScript.
 
         Reviewed by John.
 
@@ -2395,8 +2401,8 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-05  Richard Williamson   <rjw@apple.com>
 
-	LiveConnect:  Part 1 of supporting JS bindings to
-	native language arrays.
+        LiveConnect:  Part 1 of supporting JS bindings to
+        native language arrays.
 
         Reviewed by Chris.
 
@@ -2414,9 +2420,9 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-04  Richard Williamson   <rjw@apple.com>
 
-	LiveConnect:  Moved defaultValue into concrete implementation because
-	more intelligent conversion can be perform with knowledge
-	of the class of the original instance.
+        LiveConnect:  Moved defaultValue into concrete implementation because
+        more intelligent conversion can be perform with knowledge
+        of the class of the original instance.
 
         Reviewed by Chris.
 
@@ -2436,8 +2442,8 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-04  Richard Williamson   <rjw@apple.com>
 
-	LiveConnect:  Added support for setting the value of Java
-	fields.
+        LiveConnect:  Added support for setting the value of Java
+        fields.
 
         Reviewed by Chris.
 
@@ -2465,9 +2471,9 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-04  Richard Williamson   <rjw@apple.com>
 
-	Added support for string conversions.
-	Changed various JavaString member variables to be inline.
-	Implemented defaultValue for context relevant type coercion.
+        Added support for string conversions.
+        Changed various JavaString member variables to be inline.
+        Implemented defaultValue for context relevant type coercion.
 
         Reviewed by Chris.
 
@@ -2523,8 +2529,8 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-03  Richard Williamson   <rjw@apple.com>
 
-	LiveConnect:  Added support for parameter passing to Java and conversion
-	of return values.
+        LiveConnect:  Added support for parameter passing to Java and conversion
+        of return values.
 
         Reviewed by Chris.
 
@@ -2551,10 +2557,10 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-02  Richard Williamson   <rjw@apple.com>
 
-	Added support for calling simple methods in Java from JavaScript.
-	(void return and no parameters).  Yay, LiveConnect lives.
+        Added support for calling simple methods in Java from JavaScript.
+        (void return and no parameters).  Yay, LiveConnect lives.
 
-	Still need write argument and return value conversion code.
+        Still need write argument and return value conversion code.
 
         Reviewed by Chris.
 
@@ -2605,9 +2611,9 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
         Merged patches from Harri Porten and David Faure to fix:
 
-	<rdar://problem/3497643>: reproducible crash printing self-referential array
+        <rdar://problem/3497643>: reproducible crash printing self-referential array
         
-	* kjs/array_object.cpp:
+        * kjs/array_object.cpp:
         (ArrayProtoFuncImp::call): Break out of the loop if an exception was thrown.
         * kjs/nodes.cpp:
         (FunctionCallNode::evaluate): Move function call depth check from here...
@@ -2617,7 +2623,7 @@ l2003-12-23  John Sullivan  <sullivan@apple.com>
 
 2003-12-01  Richard Williamson   <rjw@apple.com>
 
-	Fixed mistake in method signatures used to get boolean and integer fields.
+        Fixed mistake in method signatures used to get boolean and integer fields.
 
         Reviewed by Chris.
 
@@ -2655,25 +2661,25 @@ Added support for getting at Java object fields.
 
         Patch from Harri Porten, reviewed by me.
 
-	- fixed 3491712 - String slice with negative arguments does not offset from end of string
+        - fixed 3491712 - String slice with negative arguments does not offset from end of string
         
-	* kjs/string_object.cpp:
+        * kjs/string_object.cpp:
         (StringProtoFuncImp::call): Handle negative arguments as offsets from end by
-	adding length and clamping to [0,length-1].
+        adding length and clamping to [0,length-1].
 
 2003-11-21  Maciej Stachowiak  <mjs@apple.com>
 
         Patch from Harri Porten, reviewed by me.
 
-	- fixed 3491709 - using Function.apply with a primitive type as the arg list causes crash
+        - fixed 3491709 - using Function.apply with a primitive type as the arg list causes crash
         
-	* kjs/function_object.cpp:
+        * kjs/function_object.cpp:
         (FunctionProtoFuncImp::call): Nest parentheses properly.
 
 2003-11-20  Richard Williamson   <rjw@apple.com>
 
-	More LiveConnect stuff.  Primitive Java fields are now
-	accessible from JavaScript!  Yay!
+        More LiveConnect stuff.  Primitive Java fields are now
+        accessible from JavaScript!  Yay!
 
         Reviewed by Maciej.
 
@@ -2730,7 +2736,7 @@ Added support for getting at Java object fields.
 
 2003-11-20  Richard Williamson   <rjw@apple.com>
 
-	More LiveConnect stuff.
+        More LiveConnect stuff.
 
         Reviewed by Chris.
 
@@ -2759,7 +2765,7 @@ Added support for getting at Java object fields.
 
 2003-11-19  Richard Williamson   <rjw@apple.com>
 
-	More LiveConnect stuff.
+        More LiveConnect stuff.
 
         Reviewed by Ken.
 
@@ -2812,7 +2818,7 @@ Added support for getting at Java object fields.
 
 2003-11-18  Richard Williamson   <rjw@apple.com>
 
-	More live connect stubs.  We're getting close.
+        More live connect stubs.  We're getting close.
 
         Reviewed by Chris.
 
@@ -2856,16 +2862,16 @@ Added support for getting at Java object fields.
 
         Patch from Harri, reviewed by me.
 
-	- fixed 3487375 - backwards array slice causes infinite loop
+        - fixed 3487375 - backwards array slice causes infinite loop
         
-	* kjs/array_object.cpp:
+        * kjs/array_object.cpp:
         (ArrayProtoFuncImp::call):
 
 2003-11-17  Maciej Stachowiak  <mjs@apple.com>
 
         Patch from Harri Porten reviewed by me.
 
-	- fixed 3487371 - operator precedence for bitwise or, xor and and is wrong
+        - fixed 3487371 - operator precedence for bitwise or, xor and and is wrong
 
         * kjs/grammar.y: Correct the precedence.
 
@@ -2873,16 +2879,16 @@ Added support for getting at Java object fields.
 
         Reviewed by John.
 
-	- fixed 3483829 - JavaScriptCore needs workaround to compile on Merlot
-	
+        - fixed 3483829 - JavaScriptCore needs workaround to compile on Merlot
+        
         * JavaScriptCore.pbproj/project.pbxproj: Add -Wno-long-double to
-	warning flags.
+        warning flags.
 
 === Safari-114 ===
 
 2003-11-13  Richard Williamson   <rjw@apple.com>
 
-	Factored common code between copy constructor and assignment operator.
+        Factored common code between copy constructor and assignment operator.
 
         Reviewed by Chris.
 
@@ -2896,9 +2902,9 @@ Added support for getting at Java object fields.
 
 2003-11-13  Richard Williamson   <rjw@apple.com>
 
-	More LiveConnect stuff.  This checkin adds abstract classes to model
-	language runtimes and a JNI based set of concrete implementations for
-	Java.
+        More LiveConnect stuff.  This checkin adds abstract classes to model
+        language runtimes and a JNI based set of concrete implementations for
+        Java.
 
         Reviewed by Chris.
 
@@ -2986,12 +2992,12 @@ Added support for getting at Java object fields.
 
         Reviewed by John.
 
-	- fixed 3472562 - Null or Undefined variables passed to IN operator cause javascript exceptions
-	
+        - fixed 3472562 - Null or Undefined variables passed to IN operator cause javascript exceptions
+        
         * kjs/nodes.cpp:
         (ForInNode::execute): If the in value is null or undefined, bail
-	out early, since attempting to iterate its properties will throw
-	an exception.
+        out early, since attempting to iterate its properties will throw
+        an exception.
 
 2003-11-12  Darin Adler  <darin@apple.com>
 
@@ -3003,7 +3009,7 @@ Added support for getting at Java object fields.
 
 2003-11-12  Richard Williamson   <rjw@apple.com>
 
-	Added utility functions for calling JNI methods.
+        Added utility functions for calling JNI methods.
 
         Reviewed by Chris.
 
@@ -3045,7 +3051,7 @@ Added support for getting at Java object fields.
 
         Reviewed by kocienda.
 
-	- fixed <rdar://problem/3471096>: non-B&I builds should not use order files, because they cause false "regressions" in perf.
+        - fixed <rdar://problem/3471096>: non-B&I builds should not use order files, because they cause false "regressions" in perf.
 
         * JavaScriptCore.pbproj/project.pbxproj: added empty SECTORDER_FLAGS variables to the Development and Deployment build styles
 
@@ -3124,30 +3130,30 @@ Added support for getting at Java object fields.
 
         Reviewed by Ken.
 
-	- fixed 3427069 - browsing mp3.com causes leaks (KJS)
-	
+        - fixed 3427069 - browsing mp3.com causes leaks (KJS)
+        
         * kjs/string_object.cpp:
         (StringProtoFuncImp::call): Don't do an early return, since that
-	could leak a temporary regexp.
+        could leak a temporary regexp.
 
 2003-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 
-	- fixed 3426076 - Leak of JS lexer data visiting http://www.ebay.com
-	
+        - fixed 3426076 - Leak of JS lexer data visiting http://www.ebay.com
+        
         * kjs/grammar.cpp:
         (yyerror): Updated the commented code.
         * kjs/grammar.y: Don't delete string and identifier tokens when done
-	with them any more, they'll get cleaned up by the lexer now.
+        with them any more, they'll get cleaned up by the lexer now.
         * kjs/internal.cpp:
         (Parser::parse): Tell lexer when done parsing.
         * kjs/lexer.cpp:
         (Lexer::Lexer): Initialize new data members.
         (Lexer::lex): Use new methods to make strings and identifiers, and
-	save them.
+        save them.
         (Lexer::makeIdentifier): Make a new Identifier and save it in an
-	auto-growing array.
+        auto-growing array.
         (Lexer::makeUString): Likewise for UStrings.
         (Lexer::doneParsing): Clean up arrays of Ifentifiers and UStrings.
         * kjs/lexer.h:
@@ -3156,12 +3162,12 @@ Added support for getting at Java object fields.
 
         Reviewed by Ken.
 
-	- fixed 3413962 -  malicious web pages can kill all future JavaScript execution by breaking recursion limit check
-	
+        - fixed 3413962 -  malicious web pages can kill all future JavaScript execution by breaking recursion limit check
+        
         * kjs/nodes.cpp:
         (FunctionCallNode::evaluate): If we're going to return early due
-	to breaking the recursion limit, make sure to lower it again, or
-	it will creep up by one each time it's exceeded.
+        to breaking the recursion limit, make sure to lower it again, or
+        it will creep up by one each time it's exceeded.
 
 2003-10-26  Darin Adler  <darin@apple.com>
 

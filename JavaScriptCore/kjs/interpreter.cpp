@@ -115,6 +115,11 @@ bool Interpreter::checkSyntax(const UString &code)
   return rep->checkSyntax(code);
 }
 
+Completion Interpreter::evaluate(const UString &code, const Value &thisV, const UString &)
+{
+  return evaluate(UString(), 0, code, thisV);
+}
+
 Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, const Value &thisV)
 {
   Completion comp = rep->evaluate(code,thisV, sourceURL, startingLineNumber);
