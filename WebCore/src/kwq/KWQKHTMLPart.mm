@@ -377,6 +377,11 @@ bool KHTMLPart::onlyLocalReferences() const
     return d->m_onlyLocalReferences;
 }
 
+#ifdef _KWQ_TIMING        
+    static long totalWriteTime = 0;
+#endif
+
+
 
 void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
 {
@@ -413,7 +418,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
     
     d->m_doc->open();    
 
-    _logNotYetImplemented();
+    totalWriteTime = 0;
 }
 
 
@@ -447,7 +452,6 @@ void KHTMLPart::write(const char *str, int len)
     */
 
     // begin lines added in lieu of big fixme    
-
     if ( !d->m_decoder ) {
         d->m_decoder = new khtml::Decoder();
         if(d->m_encoding != QString::null)
@@ -462,6 +466,8 @@ void KHTMLPart::write(const char *str, int len)
     if ( len == -1 )
         len = strlen( str );
     
+    long start = _GetMillisecondsSinceEpoch();
+    
     QString decoded = d->m_decoder->decode( str, len );
             
     if(decoded.isEmpty())
@@ -474,6 +480,12 @@ void KHTMLPart::write(const char *str, int len)
     Tokenizer* t = d->m_doc->tokenizer();
     if(t)
         t->write( decoded, true );
+
+#ifdef _KWQ_TIMING        
+    long thisTime = _GetMillisecondsSinceEpoch() - start;
+    totalWriteTime += thisTime;
+    KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %d, milliseconds = %d, total = %d\n", len, thisTime, totalWriteTime);
+#endif
 }
 
 

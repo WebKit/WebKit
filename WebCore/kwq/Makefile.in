@@ -109,7 +109,9 @@ MMOBJECTS = \
     KWQString.o \
     KWQStyle.o \
     KWQTextArea.o \
+    KWQTextContainer.o \
     KWQTextEdit.o \
+    KWQTextStorage.o \
     KWQTimer.o \
     KWQToolTip.o \
     KWQVariant.o \

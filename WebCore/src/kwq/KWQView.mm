@@ -31,6 +31,8 @@
 #include <qpainter.h>
 #include <html/html_documentimpl.h>
 
+
+
 @implementation KWQView
 
 - initWithFrame: (NSRect) r widget: (QWidget *)w 
@@ -105,7 +107,6 @@
     return self;
 }
 
-#define DELAY_LAYOUT
 #ifdef DELAY_LAYOUT
 - delayLayout: sender
 {
@@ -137,7 +138,9 @@
     if (((KHTMLView *)widget)->part()->xmlDocImpl() && 
         ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
         if (needsLayout){
+            long start = _GetMillisecondsSinceEpoch();
             ((KHTMLView *)widget)->layout(TRUE);
+            KWQDEBUGLEVEL1 (0x200, "layout time %d\n", _GetMillisecondsSinceEpoch() - start);
             needsLayout = NO;
         }
     }
@@ -159,10 +162,13 @@
         QPainter p(widget);    
         
         [self lockFocus];
+
+        long start = _GetMillisecondsSinceEpoch();
         ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x, 
                     (int)rect.origin.y, 
                     (int)rect.size.width, 
                     (int)rect.size.height );
+        KWQDEBUGLEVEL1 (0x200, "draw time %d\n", _GetMillisecondsSinceEpoch() - start);
         [self unlockFocus];
     }
 }

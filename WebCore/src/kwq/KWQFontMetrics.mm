@@ -27,39 +27,69 @@
 #include <kwqdebug.h>
 #include <qfontmetrics.h>
 
+#import <Cocoa/Cocoa.h>
+#import <KWQMetrics.h>
+#import <KWQTextStorage.h>
+#import <KWQTextContainer.h>
+
+
 #define ROUND_TO_INT(f) ((int)rint((f)))
 const float LargeNumberForText = 1.0e7;
 
-@interface WSMetricsInfo : NSObject
+
+@implementation KWQLayoutFragment
+- initWithString: (NSString *)str attributes: (NSDictionary *)attrs
 {
-    NSFont *font;
-    NSTextContainer *textContainer;
-    NSLayoutManager *layoutManager;
-    NSDictionary *attributes;
-    NSMutableDictionary *boundingRectCache;
+    [super init];
+
+    textStorage = [[KWQTextStorage alloc] initWithString:str attributes: attrs];
+    //textContainer = [[KWQTextContainer alloc] initWithContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
+    layoutManager = [[NSLayoutManager alloc] init];
+
+    [layoutManager addTextContainer: [KWQTextContainer sharedInstance]];
+    [textStorage addLayoutManager: layoutManager];    
+
+    //[textContainer setLineFragmentPadding:0.0f];
+
+    cachedRect = NO;
+    
+    return self;
 }
 
-+ (WSMetricsInfo *)getMetricsForFont: (NSFont *)aFont;
-+ (void)setMetric: (WSMetricsInfo *)info forFont: (NSFont *)aFont;
-- initWithFont: (NSFont *)aFont;
-- (NSRect)rectForString:(NSString *)string;
+- (NSRect)boundingRect
+{
+    if (!cachedRect){
+        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
+        boundingRect = [layoutManager boundingRectForGlyphRange: NSMakeRange (0, numberOfGlyphs) inTextContainer: [KWQTextContainer sharedInstance]];
+        cachedRect = YES;
+    }
+    return boundingRect;
+}
 
+- (void)dealloc
+{
+    [textStorage release];
+    //[textContainer release];
+    [layoutManager release];
+    [super dealloc];
+}
 @end
+
 
 static NSMutableDictionary *metricsCache = nil;
 
-@implementation WSMetricsInfo
-+ (WSMetricsInfo *)getMetricsForFont: (NSFont *)aFont
+@implementation KWQMetricsInfo
++ (KWQMetricsInfo *)getMetricsForFont: (NSFont *)aFont
 {
-    WSMetricsInfo *info = (WSMetricsInfo *)[metricsCache objectForKey: aFont];
+    KWQMetricsInfo *info = (KWQMetricsInfo *)[metricsCache objectForKey: aFont];
     if (info == nil){
-        info = [[WSMetricsInfo alloc] initWithFont: aFont];
-        [WSMetricsInfo setMetric: info forFont: aFont];
+        info = [[KWQMetricsInfo alloc] initWithFont: aFont];
+        [KWQMetricsInfo setMetric: info forFont: aFont];
         [info release];
     }
     return info;
 }
-+ (void)setMetric: (WSMetricsInfo *)info forFont: (NSFont *)aFont
++ (void)setMetric: (KWQMetricsInfo *)info forFont: (NSFont *)aFont
 {
     if (metricsCache == nil)
         metricsCache = [[NSMutableDictionary alloc] init];
@@ -69,54 +99,57 @@ static NSMutableDictionary *metricsCache = nil;
 - initWithFont: (NSFont *)aFont
 {
     [super init];
-    font = [aFont retain];
-    textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-    layoutManager = [[NSLayoutManager alloc] init];
-    [layoutManager addTextContainer: textContainer];
-    attributes = [[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil] retain];
+    attributes = [[NSMutableDictionary dictionaryWithObjectsAndKeys:aFont, NSFontAttributeName, nil] retain];
     return self;
 }
 
+
+- (NSLayoutManager *)layoutManagerForString: (NSString *)string
+{
+    KWQLayoutFragment *cachedValue;
+
+    if (fragmentCache == nil){
+        fragmentCache = [[NSMutableDictionary alloc] init];
+    }
+
+    cachedValue = [fragmentCache objectForKey: string];
+    if (cachedValue == nil){
+        return nil;
+    }
+
+    return cachedValue->layoutManager;
+}
+
+
 - (NSRect)rectForString:(NSString *)string
  {
-    NSValue *cachedValue;
+    KWQLayoutFragment *cachedFragment, *fragment;
     NSTextStorage *textStorage;
 
-    if (boundingRectCache == nil){
-        boundingRectCache = [[NSMutableDictionary alloc] init];
+    if (fragmentCache == nil){
+        fragmentCache = [[NSMutableDictionary alloc] init];
     }
 
-    cachedValue = [boundingRectCache objectForKey: string];
-    if (cachedValue != nil){
-        return [cachedValue rectValue];
-    }
-    
-    if (textContainer == nil){
-        textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-        layoutManager = [[NSLayoutManager alloc] init];
-        [layoutManager addTextContainer: textContainer];
-        attributes = [[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil] retain];
+    cachedFragment = [fragmentCache objectForKey: string];
+    if (cachedFragment != nil){
+        return cachedFragment->boundingRect;
     }
 
-    textStorage = [[NSTextStorage alloc] initWithString:string attributes: attributes];
-    [textStorage addLayoutManager: layoutManager];
-    
-    unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
-    NSRect glyphRect = [layoutManager boundingRectForGlyphRange: NSMakeRange (0, numberOfGlyphs) inTextContainer: textContainer];
+    fragment = [[KWQLayoutFragment alloc] initWithString: string attributes: attributes];
+    [fragmentCache setObject: fragment forKey: string];        
 
-    [textStorage removeLayoutManager: layoutManager];
-    [textStorage release];
-    
-    [boundingRectCache setObject: [NSValue valueWithRect: glyphRect] forKey: string];
-        
-    return glyphRect;
+    return [fragment boundingRect];
 }
  
+- (void)setColor: (NSColor *)color
+{
+    [attributes setObject: color forKey: NSForegroundColorAttributeName];
+}
+
 - (void)dealloc
 {
-    [textContainer release];
-    [layoutManager release];
     [attributes release];
+    [super dealloc];
 }
 
 @end
@@ -128,7 +161,7 @@ public:
     QFontMetricsPrivate(NSFont *aFont) 
     {
         font = [aFont retain];
-        info = [[WSMetricsInfo getMetricsForFont: aFont] retain];
+        info = [[KWQMetricsInfo getMetricsForFont: aFont] retain];
     }
     
     ~QFontMetricsPrivate()
@@ -144,7 +177,7 @@ public:
     }
     
 private:
-    WSMetricsInfo *info;
+    KWQMetricsInfo *info;
     NSFont *font;
 };
 

@@ -34,6 +34,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <KWQMetrics.h>
+
+
 struct QPainterPrivate {
 friend class QPainter;
 public:
@@ -453,6 +456,10 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     drawTile( this, x, y, w, h, pixmap, sx, sy );
 }
 
+@interface NSLayoutManager (Private)
+- (char *)_packedGlyphs:(NSMultibyteGlyphPacking)packing range:(NSRange)glyphRange length:(unsigned *)len;
+@end
+
 
 // y is the baseline
 void QPainter::drawText(int x, int y, const QString &qstring, int len)
@@ -474,7 +481,33 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
     y = y - (int)([font defaultLineHeightForFont] + [font descender]);
-    [string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, nil]];
+    //[string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, nil]];
+
+    KWQMetricsInfo *metricsCache = [KWQMetricsInfo getMetricsForFont: font];
+    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
+    if (layoutManager != nil){
+        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
+        [metricsCache setColor: data->qpen.color().color];
+        [layoutManager drawGlyphsForGlyphRange:NSMakeRange (0, numberOfGlyphs) atPoint:NSMakePoint(x, y)];
+
+/*
+        [font set];
+        [data->qpen.color().color set];
+        
+        unsigned glyphLen;
+        char *glyphBuf;
+
+        NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
+        BOOL flag = [graphicsContext shouldAntialias];
+        [graphicsContext setShouldAntialias: NO];
+        
+        glyphBuf = [layoutManager _packedGlyphs:[font glyphPacking] range:NSMakeRange (0, numberOfGlyphs) length:&glyphLen];
+        [layoutManager showPackedGlyphs:glyphBuf length:glyphLen glyphRange:NSMakeRange (0, numberOfGlyphs)  atPoint:NSMakePoint(x, y) font:font color:data->qpen.color().color printingAdjustment:NSMakeSize(0.0, 0.0)];
+
+        [graphicsContext setShouldAntialias: flag];
+*/
+    }
+
 
     _unlockFocus();
 }

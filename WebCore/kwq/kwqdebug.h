@@ -34,6 +34,11 @@
 #undef Rect
 #undef Boolean
 
+/*
+*/
+#define _KWQ_TIMING 1
+long _GetMillisecondsSinceEpoch();
+
 /*-----------------------------------------------------------------------------
  * Logging macros
  */
