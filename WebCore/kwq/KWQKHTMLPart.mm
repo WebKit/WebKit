@@ -913,6 +913,16 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
     // Remember which view we sent the event to, so we can direct the release event properly.
     _mouseDownView = view;
     _mouseDownWasInSubframe = false;
+
+    // Many AK widgets run their own event loops and consume events while the mouse is down.
+    // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
+    // the khtml state with this mouseUp, which khtml never saw.
+    // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
+    // is a hole here if the widget consumes the mouseUp and subsequent events.
+    NSEvent *lastEvent = [NSApp currentEvent];
+    if ([lastEvent type] == NSLeftMouseUp) {
+        mouseUp(lastEvent);
+    }
     
     return true;
 }

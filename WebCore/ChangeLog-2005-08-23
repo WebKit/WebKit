@@ -1,5 +1,20 @@
 2003-01-28  Trey Matteson  <trey@apple.com>
 
+	3158465 - REGRESSION: cursor turns into I-beam after clicking on most KWQ widgets
+
+	When we return from handing a mousedown to an AK widget, we check to see if currentEvent
+	is now a MouseUp, in which case we hand it to khtml.  This allows khtml to keep in
+	synch as to the state of the mouse.  This covers the case of AK widgets that
+	run their own event loop and consume events until a mouseup (but not ones that use
+	Carbon, such as PopUpList, since Carbon does not update currentEvent).
+
+        Reviewed by Darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):  Pass mouseup to khtml.
+
+2003-01-28  Trey Matteson  <trey@apple.com>
+
 	2940179 - Arrow cursor should change to link cursor after click of link in non-frontmost window
 
 	3158238 - cursor shape does not track after double-click to activate a window
