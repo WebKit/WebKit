@@ -245,11 +245,9 @@
     [[webView _UIDelegateForwarder] webView:webView makeFirstResponder:view];
 }
 
-- (void)closeWindow
+- (void)closeWindowSoon
 {
-    ASSERT(_frame != nil);
-    WebView *webView = [_frame webView];
-    [[webView _UIDelegateForwarder] webViewClose:webView];
+    [[_frame webView] performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
 }
 
 - (NSWindow *)window

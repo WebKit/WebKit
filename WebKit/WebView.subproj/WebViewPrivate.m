@@ -558,6 +558,11 @@
     [self registerForDraggedTypes:[NSPasteboard _web_dragTypesForURL]];
 }
 
+- (void)_closeWindow
+{
+    [[self _UIDelegateForwarder] webViewClose:self];
+}
+
 @end
 
 

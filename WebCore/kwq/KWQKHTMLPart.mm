@@ -657,7 +657,7 @@ void KWQKHTMLPart::setStatusBarText(const QString &status)
 
 void KWQKHTMLPart::scheduleClose()
 {
-    [_bridge performSelector:@selector(closeWindow) withObject:nil afterDelay:0.0];
+    [_bridge closeWindowSoon];
 }
 
 void KWQKHTMLPart::unfocusWindow()

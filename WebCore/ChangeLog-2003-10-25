@@ -1,3 +1,21 @@
+2003-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3236383 -- http://www.xy.com/ exception, crash loading main page
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::scheduleClose): Change to use closeWindowSoon, so that
+        the delay is on the WebKit side so it can be tied to the WebView as a whole, not a particular bridge.
+
+        * kwq/WebCoreBridge.h: Replaced closeWindow with closeWindowSoon.
+
+        - rolled in a couple of harmless and eventually-possibly-useful changes inspired by changes
+          OmniGroup made in their copy of WebCore
+
+        * kwq/KWQListBox.mm: Make KWQTableView a KWQWidgetHolder.
+        (-[KWQTableView widget]): Return the widget.
+        * kwq/KWQScrollView.mm: (QScrollView::ensureVisible): First cut at implementing these.
+
 2003-05-02  David Hyatt  <hyatt@apple.com>
 
 	Make sure that recalcSections always clears out the needSectionRecalc

@@ -289,14 +289,14 @@ void QScrollView::resizeEvent(QResizeEvent *)
 {
 }
 
-void QScrollView::ensureVisible(int,int)
+void QScrollView::ensureVisible(int x, int y)
 {
-    ERROR("not yet implemented");
+    [getDocumentView() scrollRectToVisible:NSMakeRect(x, y, 0, 0)];
 }
 
-void QScrollView::ensureVisible(int,int,int,int)
+void QScrollView::ensureVisible(int x, int y, int w, int h)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    [getDocumentView() scrollRectToVisible:NSMakeRect(x, y, w, h)];
 }
 
 NSView *QScrollView::getDocumentView() const

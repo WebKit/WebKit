@@ -2,6 +2,21 @@
 
         Reviewed by John.
 
+        - fixed 3236383 -- http://www.xy.com/ exception, crash loading main page
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge closeWindowSoon]): Replaces
+        closeWindow. Schedule a closeWindow operation in the WebView. Important to not have
+        the call's execution depend on whether this WebBridge or WebFrame is still around
+        after the delay.
+        
+        * WebView.subproj/WebViewPrivate.h: Added _closeWindow.
+        * WebView.subproj/WebViewPrivate.m: (-[WebView _closeWindow]): Make a webViewClose:
+        call on the UI delegate.
+
+2003-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
 	- first step in fixing 3236383 -- http://www.xy.com/ exception, crash loading main page
         
         Changed WebFrame to explicitly detach from the bridge so we don't have a stale pointer;

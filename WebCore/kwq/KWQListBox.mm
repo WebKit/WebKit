@@ -26,6 +26,7 @@
 #import "KWQListBox.h"
 
 #import "KWQAssertions.h"
+#import "KWQView.h"
 #import "WebCoreScrollView.h"
 
 #define MIN_LINES 4 /* ensures we have a scroll bar */
@@ -35,7 +36,7 @@
 }
 @end
 
-@interface KWQTableView : NSTableView
+@interface KWQTableView : NSTableView <KWQWidgetHolder>
 {
     QListBox *_box;
     NSArray *_items;
@@ -307,6 +308,11 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 {
     ASSERT([cell isKindOfClass:[NSCell class]]);
     [(NSCell *)cell setEnabled:_box->isEnabled()];
+}
+
+- (QWidget *)widget
+{
+    return _box;
 }
 
 @end

@@ -160,6 +160,8 @@ Could be worth adding to the API.
 - _policyDelegateForwarder;
 - _UIDelegateForwarder;
 
+- (void)_closeWindow;
+
 - (void)_registerDraggedTypes;
 
 - (void)_close;
