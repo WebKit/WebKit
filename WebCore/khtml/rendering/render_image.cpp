@@ -116,9 +116,13 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
 
     bool needlayout = false;
 
+    // In the case of generated image content using :before/:after, we aren't in the
+    // tree yet.  We don't need to worry about doing this check, since we'll get a
+    // layout when we get added in to the render tree hierarchy anyway.
     // Image dimensions have been changed, see what needs to be done
-    if( o->pixmap_size().width() != intrinsicWidth() ||
-       o->pixmap_size().height() != intrinsicHeight() || iwchanged )
+     if ( parent() &&
+         ( o->pixmap_size().width() != intrinsicWidth() ||
+           o->pixmap_size().height() != intrinsicHeight() || iwchanged) )
     {
 //          qDebug("image dimensions have been changed, old: %d/%d  new: %d/%d",
 //                 intrinsicWidth(), intrinsicHeight(),
