@@ -91,7 +91,7 @@ KWQLoaderImpl::KWQLoaderImpl(Loader *l)
 {
 }
 
-void KWQLoaderImpl::start(Request *req, KIO::TransferJob *job)
+void KWQLoaderImpl::serveRequest(Request *req, KIO::TransferJob *job)
 {
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "Serving request for base %s, url %s", 
           req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
