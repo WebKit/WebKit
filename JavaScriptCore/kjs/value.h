@@ -76,8 +76,7 @@ namespace KJS {
     BooleanType     = 3,
     StringType      = 4,
     NumberType      = 5,
-    ObjectType      = 6,
-    ListType        = 8
+    ObjectType      = 6
   };
 
   /**
@@ -184,8 +183,7 @@ namespace KJS {
 
     /**
      * Returns the type of value. This is one of UndefinedType, NullType,
-     * BooleanType, StringType NumberType, ObjectType or
-     * ListType.
+     * BooleanType, StringType, NumberType, or ObjectType.
      *
      * @return The type of value
      */

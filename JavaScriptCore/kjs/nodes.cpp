@@ -115,6 +115,8 @@ Reference Node::evaluateReference(ExecState *exec)
 void Node::finalCheck()
 {
   fprintf( stderr, "Node::finalCheck(): list count       : %d\n", (int)s_nodes.size() );
+  std::list<Node *>::iterator it = s_nodes->begin();
+  for ( uint i = 0; it != s_nodes->end() ; ++it, ++i )
     fprintf( stderr, "[%d] Still having node %p (%s) (refcount %d)\n", i, (void*)*it, typeid( **it ).name(), (*it)->refcount );
   delete s_nodes;
   s_nodes = 0L;
@@ -727,7 +729,6 @@ Value FunctionCallNode::evaluate(ExecState *exec)
 #endif
 
   Value thisVal;
-  // XXX - should check for constant reference
   if (ref.isMutable())
     thisVal = ref.getBase(exec);
   else
@@ -861,7 +862,6 @@ Value TypeOfNode::evaluate(ExecState *exec)
   const char *s = 0L;
   Reference ref = expr->evaluateReference(exec);
   KJS_CHECKEXCEPTIONVALUE
-  // XXX - Really should check if this is a constant reference
   if (ref.isMutable()) {
     Value b = ref.getBase(exec);
     if (b.type() == NullType)

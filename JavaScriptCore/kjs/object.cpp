@@ -163,7 +163,6 @@ void ObjectImp::put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr)
 {
   assert(!value.isNull());
-  assert(value.type() != ListType);
 
   // non-standard netscape extension
   if (propertyName == specialPrototypePropertyName) {

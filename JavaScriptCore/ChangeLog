@@ -1,3 +1,25 @@
+2003-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- changes inspired by things I noticed reviewing diffs vs. KDE when preparing the tarball
+
+        * kjs/function.cpp: (GlobalFuncImp::call): Use strtol when strtoll is
+	not available. Do #ifndef NDEBUG, not #if !NDEBUG.
+        * kjs/function.h: Do #ifndef NDEBUG, not #if !NDEBUG.
+        * kjs/internal.cpp:
+        (InterpreterImp::initGlobalObject): Do #ifndef NDEBUG, not #if !NDEBUG.
+        (KJS::printInfo): Remove case for ListType and remove default case that just
+	ends up suppressing the "missing case" warning and does no good.
+        * kjs/interpreter.cpp: (Interpreter::evaluate): Do #ifndef NDEBUG, not #if !NDEBUG.
+        * kjs/nodes.cpp:
+        (Node::finalCheck): Fix accidentally-deleted code in an ifdef we never compile.
+        (FunctionCallNode::evaluate): Remove bogus XXX comment. Maciej put this comment in,
+        and together we determined it's not needed.
+        (TypeOfNode::evaluate): Ditto.
+        * kjs/object.cpp: Remove assert that refers to ListType.
+        * kjs/value.h: Remove ListType.
+
 2003-01-09  Darin Adler  <darin@apple.com>
 
         * JavaScriptCore.pbproj/project.pbxproj: Add the year 2003, remove CFBundleIconFile,

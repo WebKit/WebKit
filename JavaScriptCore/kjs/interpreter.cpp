@@ -113,7 +113,7 @@ bool Interpreter::checkSyntax(const UString &code)
 Completion Interpreter::evaluate(const UString &code, const Value &thisV)
 {
   Completion comp = rep->evaluate(code,thisV);
-#if !NDEBUG
+#ifndef NDEBUG
   if (comp.complType() == Throw) {
     lock();
     ExecState *exec = rep->globalExec();

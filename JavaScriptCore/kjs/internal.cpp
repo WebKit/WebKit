@@ -648,7 +648,7 @@ void InterpreterImp::initGlobalObject()
   global.put(globExec,"isFinite",   Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::IsFinite,   1)), DontEnum);
   global.put(globExec,"escape",     Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::Escape,     1)), DontEnum);
   global.put(globExec,"unescape",   Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::UnEscape,   1)), DontEnum);
-#if !NDEBUG
+#ifndef NDEBUG
   global.put(globExec,"kjsprint",   Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::KJSPrint,   1)), DontEnum);
 #endif
 
@@ -895,11 +895,6 @@ void KJS::printInfo(ExecState *exec, const char *s, const Value &o, int lineno)
       name = Object::dynamicCast(v).className();
       if (name.isNull())
         name = "(unknown class)";
-      break;
-    case ListType:
-      name = "List";
-      break;
-    default:
       break;
     }
     UString vString = v.toString(exec);

@@ -128,7 +128,7 @@ namespace KJS {
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
     virtual CodeType codeType() const;
     enum { Eval, ParseInt, ParseFloat, IsNaN, IsFinite, Escape, UnEscape 
-#if !NDEBUG
+#ifndef NDEBUG
 	   , KJSPrint
 #endif
 };
