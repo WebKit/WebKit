@@ -2594,7 +2594,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
                         fontDef.setGenericFamily(FontDef::eSerif);
                         break;
                     case FontDef::eSansSerif:
-                        face = settings->serifFontName();
+                        face = settings->sansSerifFontName();
                         fontDef.setGenericFamily(FontDef::eSansSerif);
                         break;
                     case FontDef::eCursive:
