@@ -1,7 +1,0 @@
-d1: QDate: [yy/mm/dd: 1999/12/31]
-d2: QDate: [yy/mm/dd: 2001/10/23]
-d0 = d1: QDate: [yy/mm/dd: 1999/12/31]
-d0.year(): 1999
-d0.month(): 12
-d0.day(): 31
-d1.daysTo(d2): 662

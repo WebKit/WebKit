@@ -1,9 +1,0 @@
-d1: QMap: [size: 5; items: (1,10), (2,20), (3,30), (4,40), (5,50)]
-d1 count: 5
-d1 find 1: 10
-d1 remove 3: QMap: [size: 4; items: (1,10), (2,20), (4,40), (5,50)]
-d0 isEmpty: 1
-d1 isEmpty: 0
-d2 = d1, d2: QMap: [size: 4; items: (1,10), (2,20), (4,40), (5,50)]
-d2[1]: 10
-d1 clear: QMap: [size: 0; items: ]

@@ -1,6 +1,0 @@
-dt2: QDateTime: [yy/mm/dd hh:mm:ss:ms = 1999/12/31 23:59:0:0]
-dt3: QDateTime: [yy/mm/dd hh:mm:ss:ms = 2000/12/31 23:59:0:0]
-dt4: QDateTime: [yy/mm/dd hh:mm:ss:ms = 2000/12/31 23:59:0:0]
-dt0=dt2: QDateTime: [yy/mm/dd hh:mm:ss:ms = 1999/12/31 23:59:0:0]
-dt2 secsTo dt3: 31622400
-dt2 time: QTime: [hh:mm:ss:ms = 23:59:0:0]
