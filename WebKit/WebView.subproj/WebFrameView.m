@@ -55,7 +55,10 @@
     IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
     NSRect r = [self frame];
     
-    if (data->widget)
+    // Only delete the widget if we're the top level widget.  In other
+    // cases the widget is associated with a RenderFrame which will
+    // delete it's widget.
+    if ([dataSource isMainDocument] && data->widget)
         delete data->widget;
 
     // Nasty!  Setup the cross references between the KHTMLView and

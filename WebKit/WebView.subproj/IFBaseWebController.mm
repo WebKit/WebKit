@@ -230,12 +230,16 @@
 - (void)changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame
 {
     IFWebDataSource *dataSource = [[[IFWebDataSource alloc] initWithURL: url] autorelease];
+    IFWebDataSource *oldDataSource;
     
+    oldDataSource = [frame dataSource];
+    [dataSource _setParent: [oldDataSource parent]];
     [dataSource _setController: self];
     [frame setDataSource: dataSource];
+    
     [[frame view] dataSourceChanged: dataSource];
     
-    [dataSource startLoading: YES];
+    //[dataSource startLoading: YES];
 }
 
 

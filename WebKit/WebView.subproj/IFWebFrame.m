@@ -62,5 +62,14 @@
     [dataSource setFrame: self];
 }
 
+- (void)_setRenderFramePart: (void *)p
+{
+    renderFramePart = p;
+}
+
+- (void *)_renderFramePart
+{
+    return renderFramePart;
+}
 
 @end

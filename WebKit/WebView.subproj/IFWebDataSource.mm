@@ -120,6 +120,7 @@
 
     if (data->frames == nil)
         data->frames = [[NSMutableDictionary alloc] init];
+    [[frame dataSource] _setParent: self];   
     [data->frames setObject: frame forKey: [frame name]];    
 }
 

@@ -32,4 +32,5 @@
 @interface IFWebDataSource (IFPrivate)
 - (void)_setController: (id <IFWebController>)controller;
 - (KHTMLPart *)_part;
+- (void)_setParent: (IFWebDataSource *)p;
 @end

@@ -1,3 +1,19 @@
+2002-02-06  Richard Williamson  <rjw@apple.com>
+
+    Fixed allocation problems.  Implemented parent->child management
+    for datasource correctly.
+    
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	changeLocationTo:forFrame:]):
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource addFrame:]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource
+	_setController:]), (-[IFWebDataSource _part]), (-[IFWebDataSource _setParent:]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.m: (-[IFWebFrame _setRenderFramePart:]),
+	(-[IFWebFrame _renderFramePart]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView dataSourceChanged:]):
+
 2002-02-05  Richard Williamson  <rjw@apple.com>
 
     Updated controller API to reflect frames.

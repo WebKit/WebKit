@@ -42,8 +42,8 @@
 @implementation IFWebDataSource (IFPrivate)
 - (void)_setController: (id <IFWebController>)controller
 {
-    if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
-        [NSException raise:IFRuntimeError format:@"IFWebDataSource::_setController: called not called on main data source."];
+    //if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
+        //[NSException raise:IFRuntimeError format:@"IFWebDataSource::_setController: called not called on main data source."];
     ((IFWebDataSourcePrivate *)_dataSourcePrivate)->controller = controller;
     ((IFWebDataSourcePrivate *)_dataSourcePrivate)->part->setDataSource (self);
 }
@@ -52,6 +52,11 @@
 - (KHTMLPart *)_part
 {
     return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->part;
+}
+
+- (void)_setParent: (IFWebDataSource *)p
+{
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent = [p retain];
 }
 
 @end
