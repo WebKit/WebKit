@@ -90,9 +90,11 @@
 - (void)_setLoading:(BOOL)loading
 {
     ASSERT_ARG(loading, loading == NO || loading == YES);
-    
-    if (_private->loading == loading)
+
+    if (_private->loading == loading) {
         return;
+    }
+    
     _private->loading = loading;
     
     if (loading) {
@@ -100,6 +102,9 @@
         [_private->controller retain];
     } else {
         [_private->controller release];
+        // FIXME: It would be cleanest to set the controller to nil here.  Keeping a non-retained reference
+        // to the controller is dangerous. WebSubresourceClient actually depends on this non-retained reference
+        // when starting loads after the data source has stoppped loading.
         [self release];
     }
 }
@@ -237,8 +242,12 @@
 - (void)_recursiveStopLoading
 {
     [self retain];
-    [self _stopLoading];
+    
+    // We depend on the controller in webFrame and we release it in _stopLoading,
+    // so call webFrame first so we don't send a message the released controller (3129503).
     [[[self webFrame] children] makeObjectsPerformSelector:@selector(stopLoading)];
+    [self _stopLoading];
+    
     [self release];
 }
 

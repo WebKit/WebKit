@@ -1,6 +1,14 @@
-=== Alexander-37 ===
+2002-12-16  Chris Blumenberg  <cblu@apple.com>
 
-=== WebKit-37u3 ===
+	Fixed: 3129503 - Crash cancelling download after closing browser window that started download
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setLoading:]): Added comment about our tragic dependence on a non-retained reference to the controller.
+        (-[WebDataSource _recursiveStopLoading]): Call webFrame before calling _stopLoading because we release the controller in _stopLoading and we depend on it in webFrame.
+
+=== Alexander-37 ===
 
 2002-12-16  Maciej Stachowiak  <mjs@apple.com>
 
