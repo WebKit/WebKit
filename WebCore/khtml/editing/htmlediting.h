@@ -491,11 +491,13 @@ public:
     bool openForMoreTyping() const;
     void closeTyping();
 
+    enum ETypingCommand { DeleteKey, InsertText, InsertNewline };
+
 private:
-	TypingCommand(DOM::DocumentImpl *document);
-	TypingCommand(TypingCommand *);
-	TypingCommand(const TypingCommand &);
-	virtual ~TypingCommand();
+    TypingCommand(DOM::DocumentImpl *document, ETypingCommand, const DOM::DOMString &text="");
+    TypingCommand(TypingCommand *);
+    TypingCommand(const TypingCommand &);
+    virtual ~TypingCommand();
 
     void deleteKeyPressed();
     void insertText(const DOM::DOMString &text);

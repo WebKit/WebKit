@@ -1,3 +1,33 @@
+2004-07-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3716479> calling setInnerHTML during a webViewDidChange delegate call causes a crash
+        
+        The fix involves some rearrangement of code in TypingCommand and TypingCommandImpl.
+        Formerly, new TypingCommands would apply themselves (which was a no-op) and then
+        do their action in some code a way different than other commands. This type of command
+        application is different than for all other commands since TypingCommands can be coalesced.
+        The crash occurred as a result of the "no-op" TypingCommand having the unconsidered
+        consequence of causing editing delegate notifications to be sent before the command 
+        has actually run. This change takes a small step towards making TypingCommandImpl function like
+        other commands, where the command work is done in doApply. This makes the notification
+        happen in the right order.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::TypingCommand::TypingCommand):
+        (khtml::TypingCommand::insertText):
+        (khtml::TypingCommand::insertNewline):
+        (khtml::TypingCommand::deleteKeyPressed):
+        * khtml/editing/htmlediting.h:
+        (khtml::TypingCommand::):
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::TypingCommandImpl::TypingCommandImpl):
+        (khtml::TypingCommandImpl::doApply):
+        * khtml/editing/htmlediting_impl.h:
+
 2004-07-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
