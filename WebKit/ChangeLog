@@ -1,5 +1,11 @@
 2003-06-12  Richard Williamson   <rjw@apple.com>
 
+	Correct fix for 3288532.
+
+        * History.subproj/WebBackForwardList.m:
+
+2003-06-12  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3288532.  When setCapacity: shrinks capacity, trim
 	the back/forward list.  Setting to zero will effectively
 	flush the list.
