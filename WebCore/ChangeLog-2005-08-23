@@ -1,3 +1,18 @@
+2004-12-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3925317> Increase quote in email and with cursor below the quote the new line appears above the quote
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        * khtml/editing/visible_position.cpp: Refine rules for whether to use the starting node or the starting
+        block as the reference node for the insertion of the new block.
+        (khtml::isLastVisiblePositionInBlock): Tweak rules again. Descendants of following blocks should answer true.
+        I worked this all out on the whiteboard this time. This should be the last tweak.
+
 2004-12-17  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Ken.

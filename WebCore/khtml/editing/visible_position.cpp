@@ -585,10 +585,10 @@ bool isLastVisiblePositionInBlock(const VisiblePosition &pos)
         case NoBlockRelationship:
         case SameBlockRelationship:
         case AncestorBlockRelationship:
-        case DescendantBlockRelationship:
         case OtherBlockRelationship:
             return false;
         case PeerBlockRelationship:
+        case DescendantBlockRelationship:
             return true;
     }
     ASSERT_NOT_REACHED();
