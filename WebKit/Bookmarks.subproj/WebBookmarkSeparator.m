@@ -54,7 +54,7 @@
     return nil;
 }
 
-- (NSImage *)image
+- (NSImage *)icon
 {
     return nil;
 }

@@ -18,20 +18,15 @@
 
 -(id)init
 {
-    return [self initWithURL:nil title:nil image:nil];
+    return [self initWithURL:nil title:nil];
 }
 
 -(id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
-    return [self initWithURL:URL target: nil parent: nil title:title image:nil];
+    return [self initWithURL:URL target: nil parent: nil title:title];
 }
 
--(id)initWithURL:(NSURL *)URL title:(NSString *)title image:(NSImage *)image
-{
-    return [self initWithURL:URL target: nil parent: nil title:title image:image];
-}
-
--(id)initWithURL:(NSURL *)URL target: (NSString *)target parent: (NSString *)parent title:(NSString *)title image:(NSImage *)image
+-(id)initWithURL:(NSURL *)URL target: (NSString *)target parent: (NSString *)parent title:(NSString *)title
 {
     if (self != [super init])
     {
@@ -42,7 +37,6 @@
     _target = [target retain];
     _parent = [parent retain];
     _title = [title retain];
-    _image = [image retain];
     _lastVisitedDate = [[NSCalendarDate alloc] init];
     
     return self;
@@ -55,7 +49,8 @@
     [_parent release];
     [_title release];
     [_displayTitle release];
-    [_image release];
+    [_icon release];
+    [_iconURL release];
     [_lastVisitedDate release];
     
     [super dealloc];
@@ -64,6 +59,11 @@
 -(NSURL *)URL
 {
     return _URL;
+}
+
+- (NSURL *)iconURL
+{
+    return _iconURL;
 }
 
 -(NSString *)target
@@ -86,14 +86,21 @@
     return _displayTitle;
 }
 
--(NSImage *)image
-{    
-    if (_image != nil) {
-        return _image;
+-(NSImage *)icon
+{
+    if(!_icon && !_loadedIcon){
+        if(_iconURL){
+            _icon = [[WebIconLoader iconLoaderWithURL:_iconURL] iconFromCache];
+        }else if([_URL isFileURL]){
+            _icon = [WebIconLoader iconForFileAtPath:[_URL path]];
+        }
+        [_icon retain];
+        _loadedIcon = YES;
     }
 
-    return [WebIconLoader defaultIcon];
+    return _icon ? _icon : [WebIconLoader defaultIcon];
 }
+
 
 -(NSCalendarDate *)lastVisitedDate
 {
@@ -107,6 +114,16 @@
         _URL = [URL retain];
     }
 }
+
+- (void)setIconURL:(NSURL *)iconURL
+{
+    if (iconURL != _iconURL) {
+        [_iconURL release];
+        _iconURL = [iconURL retain];
+        _loadedIcon = NO;
+    }
+}
+
 
 -(void)setTitle:(NSString *)title
 {
@@ -137,14 +154,6 @@
     if (displayTitle != _displayTitle) {
         [_displayTitle release];
         _displayTitle = [displayTitle retain];
-    }
-}
-
--(void)setImage:(NSImage *)image
-{
-    if (image != _image) {
-        [_image release];
-        _image = [image retain];
     }
 }
 
@@ -207,7 +216,6 @@
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity: 6];
 
-    // FIXME: doesn't save/restore images yet
     if (_URL != nil) {
         [dict setObject: [_URL absoluteString] forKey: @""];
     }
@@ -221,26 +229,35 @@
         [dict setObject: [NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
                  forKey: @"lastVisitedDate"];
     }
+    if (_iconURL != nil) {
+        [dict setObject: [_iconURL absoluteString] forKey: @"iconURL"];
+    }
 
     return dict;
 }
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
-    NSString *storedURLString;
+    NSString *storedURLString, *iconURLString;
 
     [super init];
     
-    // FIXME: doesn't save/restore images yet
     storedURLString = [dict objectForKey: @""];
     if (storedURLString != nil) {
         _URL = [[NSURL _web_URLWithString:storedURLString] retain];
     }
+    
+    iconURLString = [dict objectForKey:@"iconURL"];
+    if(iconURLString){
+        _iconURL = [[NSURL _web_URLWithString:iconURLString] retain];
+    }
+    
     _title = [[dict objectForKey: @"title"] copy];
     _displayTitle = [[dict objectForKey: @"displayTitle"] copy];
     _lastVisitedDate = [[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
         [[dict objectForKey: @"lastVisitedDate"] doubleValue]];
-
+    
+    
     return self;
 }
     

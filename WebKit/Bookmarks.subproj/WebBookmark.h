@@ -31,8 +31,10 @@ typedef enum {
 - (NSString *)title;
 - (void)setTitle:(NSString *)title;
 
-- (NSImage *)image;
-- (void)setImage:(NSImage *)image;
+- (NSImage *)icon;
+
+- (NSURL *)iconURL;
+- (void)setIconURL:(NSURL *)iconURL;
 
 // The type of bookmark
 - (WebBookmarkType)bookmarkType;

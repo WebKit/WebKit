@@ -19,7 +19,6 @@
 @implementation WebBookmarkList
 
 - (id)initWithTitle:(NSString *)title
-              image:(NSImage *)image
               group:(WebBookmarkGroup *)group
 {
     WEBKIT_ASSERT_VALID_ARG (group, group != nil);
@@ -27,7 +26,6 @@
     [super init];
 
     _title = [title copy];
-    _image = [image retain];
     _list = [[NSMutableArray alloc] init];
     [self _setGroup:group];
     
@@ -101,7 +99,7 @@
 - (void)dealloc
 {
     [_title release];
-    [_image release];
+    [_icon release];
     [_list release];
     [super dealloc];
 }
@@ -112,8 +110,7 @@
     unsigned index, count;
     
     copy = [[WebBookmarkList alloc] initWithTitle:[self title]
-                                           image:[self image]
-                                           group:[self group]];
+                                            group:[self group]];
 
     count = [self numberOfChildren];
     for (index = 0; index < count; ++index) {
@@ -142,13 +139,13 @@
     [[self group] _bookmarkDidChange:self]; 
 }
 
-- (NSImage *)image
+- (NSImage *)icon
 {
     static NSImage *defaultImage = nil;
     static BOOL loadedDefaultImage = NO;
 
-    if (_image != nil) {
-        return _image;
+    if (_icon != nil) {
+        return _icon;
     }
     
     // Attempt to load default image only once, to avoid performance penalty of repeatedly
@@ -163,19 +160,6 @@
     }
 
     return defaultImage;
-}
-
-- (void)setImage:(NSImage *)image
-{
-    if ([image isEqual:_image]) {
-        return;
-    }
-    
-    [image retain];
-    [_image release];
-    _image = image;
-
-    [[self group] _bookmarkDidChange:self]; 
 }
 
 - (WebBookmarkType)bookmarkType

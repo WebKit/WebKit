@@ -24,10 +24,13 @@
 + (NSImage *)defaultIcon;
 + (NSImage *)iconForFileAtPath:(NSString *)path;
 
-- initWithURL:(NSURL *)iconURL;
++ iconLoaderWithURL:(NSURL *)URL;
+- initWithURL:(NSURL *)URL;
+- (NSURL *)URL;
+- (id)delegate;
 - (void)setDelegate:(id)delegate;
+- (NSImage *)iconFromCache;
 - (void)startLoading;
-- (void)startLoadingOnlyFromCache;
 - (void)stopLoading;
 @end
 

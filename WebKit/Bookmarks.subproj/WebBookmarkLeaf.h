@@ -17,7 +17,7 @@
 
 - (id)initWithURLString:(NSString *)URLString
                   title:(NSString *)title
-                  image:(NSImage *)image
+                iconURL:(NSURL *)iconURL
                   group:(WebBookmarkGroup *)group;
 
 @end

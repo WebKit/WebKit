@@ -1,3 +1,74 @@
+2002-08-14  Chris Blumenberg  <cblu@apple.com>
+
+	Support for showing favicons in bookmarks and history.
+
+	Renamed "image" to "icon" in all places.
+
+	Made history and bookmarks take and save an icon URL
+
+        * Bookmarks.subproj/WebBookmark.h:
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark icon]):
+        (-[WebBookmark iconURL]):
+        (-[WebBookmark setIconURL:]):
+        * Bookmarks.subproj/WebBookmarkGroup.h:
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup _setTopBookmark:]):
+        (-[WebBookmarkGroup addNewBookmarkToBookmark:withTitle:iconURL:URLString:type:]):
+        (-[WebBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:withTitle:iconURL:URLString:type:]):
+        * Bookmarks.subproj/WebBookmarkLeaf.h:
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        (-[WebBookmarkLeaf initFromDictionaryRepresentation:withGroup:]):
+        (-[WebBookmarkLeaf dictionaryRepresentation]):
+        (-[WebBookmarkLeaf copyWithZone:]):
+        (-[WebBookmarkLeaf icon]):
+        (-[WebBookmarkLeaf iconURL]):
+        (-[WebBookmarkLeaf setIconURL:]):
+        (-[WebBookmarkLeaf setURLString:]):
+        * Bookmarks.subproj/WebBookmarkList.h:
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList initWithTitle:group:]):
+        (-[WebBookmarkList dealloc]):
+        (-[WebBookmarkList copyWithZone:]):
+        (-[WebBookmarkList icon]):
+        * Bookmarks.subproj/WebBookmarkSeparator.m:
+        (-[WebBookmarkSeparator icon]):
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        (-[WebHistory updateURL:title:displayTitle:iconURL:forURL:]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem init]):
+        (-[WebHistoryItem initWithURL:title:]):
+        (-[WebHistoryItem initWithURL:target:parent:title:]):
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem iconURL]):
+        (-[WebHistoryItem icon]):
+        (-[WebHistoryItem setIconURL:]):
+        (-[WebHistoryItem dictionaryRepresentation]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate updateURL:title:displayTitle:iconURL:forURL:]):
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        (+[WebIconLoader iconLoaderWithURL:]):
+        (-[WebIconLoader initWithURL:]):
+        (-[WebIconLoader URL]):
+        (-[WebIconLoader _icons]):
+        (-[WebIconLoader delegate]):
+        (-[WebIconLoader iconFromCache]):
+        (-[WebIconLoader startLoading]):
+        (-[WebIconLoader WebResourceHandleDidFinishLoading:data:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadIcon]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+        * WebView.subproj/WebLocationChangeHandler.h:
+        * WebView.subproj/WebLocationChangeHandler.m:
+        (-[WebLocationChangeHandler receivedPageIcon:fromURL:forDataSource:]):
+
 2002-08-14  Darin Adler  <darin@apple.com>
 
 	Remove some unused things. Fix minor problems.

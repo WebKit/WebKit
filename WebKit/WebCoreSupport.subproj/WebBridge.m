@@ -303,7 +303,7 @@
     WebHistoryItem *backForwardItem;
     WebFrame *parentFrame = [[frame controller] frameForDataSource:[[frame dataSource] parent]]; 
 
-    backForwardItem = [[WebHistoryItem alloc] initWithURL:URL target:[frame name] parent:[parentFrame name] title:[[frame dataSource] pageTitle] image:nil];
+    backForwardItem = [[WebHistoryItem alloc] initWithURL:URL target:[frame name] parent:[parentFrame name] title:[[frame dataSource] pageTitle]];
     [backForwardItem setAnchor:anchor];
     [[[frame controller] backForwardList] addEntry:backForwardItem];
     [backForwardItem release];

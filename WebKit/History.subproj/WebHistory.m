@@ -76,9 +76,14 @@
 - (void)updateURL:(NSString *)newURLString
             title:(NSString *)newTitle
      displayTitle:(NSString *)newDisplayTitle
+          iconURL:(NSURL *)iconURL
            forURL:(NSString *)oldURLString
 {
-    if ([_historyPrivate updateURL:newURLString title:newTitle displayTitle:newDisplayTitle forURL:oldURLString] != nil) {
+    if ([_historyPrivate updateURL:newURLString
+                             title:newTitle
+                      displayTitle:newDisplayTitle
+                           iconURL:iconURL
+                            forURL:oldURLString] != nil) {
         // Consider passing changed entry as parameter to notification
         [self sendEntriesChangedNotification];
     }

@@ -439,7 +439,7 @@
 
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)image;
 {
-    [[_private->controller locationChangeHandler] receivedPageIcon:image forDataSource:self];
+    [[_private->controller locationChangeHandler] receivedPageIcon:image fromURL:[iconLoader URL] forDataSource:self];
 }
 
 - (void)_loadIcon
@@ -455,7 +455,7 @@
     
             if([dataSourceURL isFileURL]){
                 NSImage *icon = [WebIconLoader iconForFileAtPath:[dataSourceURL path]];
-                [[_private->controller locationChangeHandler] receivedPageIcon:icon forDataSource:self];
+                [[_private->controller locationChangeHandler] receivedPageIcon:icon fromURL:nil forDataSource:self];
             } else {
                 _private->iconURL = [[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] retain];
             }

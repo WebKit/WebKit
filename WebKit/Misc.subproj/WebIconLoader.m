@@ -10,6 +10,7 @@
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/WebResourceLoadManager.h>
 
 @interface WebIconLoaderPrivate : NSObject
 {
@@ -79,12 +80,16 @@
     return icon;
 }
 
++ iconLoaderWithURL:(NSURL *)URL
+{
+    return [[[self alloc] initWithURL:URL] autorelease];
+}
 
-- initWithURL:(NSURL *)iconURL
+- initWithURL:(NSURL *)URL
 {
     [super init];
     _private = [[WebIconLoaderPrivate alloc] init];
-    _private->URL = [iconURL retain];
+    _private->URL = [URL retain];
     return self;
 }
 
@@ -94,21 +99,75 @@
     [super dealloc];
 }
 
+- (NSURL *)URL
+{
+    return _private->URL;
+}
+
+- (NSMutableDictionary *)_icons{
+    static NSMutableDictionary *icons = nil;
+
+    if(!icons){
+        icons = [[NSMutableDictionary dictionary] retain];
+    }
+    
+    return icons;
+}
+
+- (id)delegate
+{
+    return _private->delegate;
+}
+
 - (void)setDelegate:(id)delegate
 {
     _private->delegate = delegate;
 }
 
-- (void)startLoading
+- (NSImage *)iconFromCache
 {
-    _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->URL];
-    [_private->resourceHandle addClient:self];
-    [_private->resourceHandle loadInBackground];
+    NSImage *icon=nil;
+
+    icon = [[self _icons] objectForKey:_private->URL];
+
+    if(icon){
+        return icon;
+    }
+    
+    NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"" forKey:@"only-if-cached"];
+    _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->URL
+                                                           attributes:attributes
+                                                                flags:WebResourceHandleFlagNone];
+    if(_private->resourceHandle){        
+        NSData *data = [_private->resourceHandle loadInForeground];
+        if(data){
+            icon = [[[NSImage alloc] initWithData:data] autorelease];
+            if(icon){
+                [[self class] _resizeImage:icon];
+                [[self _icons] setObject:icon forKey:_private->URL];
+            }
+        }
+    }
+    
+    return icon;
 }
 
-- (void)startLoadingOnlyFromCache
+- (void)startLoading
 {
-    [self startLoading];
+    NSImage *icon=nil;
+
+    icon = [[self _icons] objectForKey:_private->URL];
+
+    if(icon){
+        [_private->delegate iconLoader:self receivedPageIcon:icon];
+        return;
+    }
+    
+    _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->URL];
+    if(_private->resourceHandle){
+        [_private->resourceHandle addClient:self];
+        [_private->resourceHandle loadInBackground];
+    }
 }
 
 - (void)stopLoading
@@ -128,11 +187,12 @@
 
 - (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)sender data:(NSData *)data
 {
-    NSImage *image = [[NSImage alloc] initWithData:data];
-    if (image) {
-        [[self class] _resizeImage:image];
-        [_private->delegate iconLoader:self receivedPageIcon:image];
-        [image release];
+    NSImage *icon = [[NSImage alloc] initWithData:data];
+    if (icon) {
+        [[self class] _resizeImage:icon];
+        [[self _icons] setObject:icon forKey:_private->URL];
+        [_private->delegate iconLoader:self receivedPageIcon:icon];
+        [icon release];
     }
 }
 

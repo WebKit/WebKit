@@ -65,13 +65,19 @@ static unsigned _highestUsedID = 0;
     NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
-- (NSImage *)image
+- (NSImage *)icon
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
     return nil;
 }
 
-- (void)setImage:(NSImage *)image
+- (NSURL *)iconURL
+{
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
+    return nil;
+}
+
+- (void)setIconURL:(NSURL *)iconURL
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
 }

@@ -10,10 +10,10 @@
 
 @interface WebBookmarkList : WebBookmark {
     NSString *_title;
-    NSImage *_image;
+    NSImage *_icon;
     NSMutableArray *_list;
 }
 
-- (id)initWithTitle:(NSString *)title image:(NSImage *)image group:(WebBookmarkGroup *)group;
+- (id)initWithTitle:(NSString *)title group:(WebBookmarkGroup *)group;
 
 @end

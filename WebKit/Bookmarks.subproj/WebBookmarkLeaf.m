@@ -13,8 +13,11 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebKitDebug.h>
 
+#import <WebFoundation/WebNSURLExtras.h>
+
 #define URIDictionaryKey	@"URIDictionary"
 #define URLStringKey		@"URLString"
+#define IconURLStringKey	@"IconURLString"
 
 @implementation WebBookmarkLeaf
 
@@ -27,7 +30,7 @@
 
 - (id)initWithURLString:(NSString *)URLString
                   title:(NSString *)title
-                  image:(NSImage *)image
+                iconURL:(NSURL *)iconURL
                   group:(WebBookmarkGroup *)group;
 {
     WEBKIT_ASSERT_VALID_ARG (group, group != nil);
@@ -38,8 +41,8 @@
     // just hang onto the string separately and don't bother creating
     // an NSURL object for the WebHistoryItem.
     [self setTitle:title];
-    [self setImage:image];
-    _URLString = [URLString retain];
+    [self setIconURL:iconURL];
+    [self setURLString:URLString];
     [self _setGroup:group];
 
     return self;
@@ -57,6 +60,10 @@
         [dict objectForKey:URIDictionaryKey]] retain];
     _URLString = [[dict objectForKey:URLStringKey] retain];
 
+    NSString *iconURLString = [dict objectForKey:IconURLStringKey];
+    if(iconURLString){
+        [_entry setIconURL:[NSURL _web_URLWithString:iconURLString]];
+    }
     return self;
 }
 
@@ -71,7 +78,11 @@
     if (_URLString != nil) {
         [dict setObject:_URLString forKey:URLStringKey];
     }
-
+    
+    NSURL *iconURL = [_entry iconURL];
+    if(iconURL) {
+        [dict setObject:[iconURL absoluteString] forKey:IconURLStringKey];
+    }
     return dict;
 }
 
@@ -86,7 +97,7 @@
 {
     return [[WebBookmarkLeaf allocWithZone:zone] initWithURLString:_URLString
                                                             title:[self title]
-                                                            image:[self image]
+                                                          iconURL:[self iconURL]
                                                             group:[self group]];
 }
 
@@ -107,16 +118,20 @@
     [[self group] _bookmarkDidChange:self];    
 }
 
-- (NSImage *)image
+- (NSImage *)icon
 {
-    return [_entry image];
+    return [_entry icon];
 }
 
-- (void)setImage:(NSImage *)image
+- (NSURL *)iconURL
 {
-    [_entry setImage:image];
+    return [_entry iconURL];
+}
 
-    [[self group] _bookmarkDidChange:self];    
+- (void)setIconURL:(NSURL *)iconURL
+{
+    [_entry setIconURL:iconURL];
+    [[self group] _bookmarkDidChange:self];  
 }
 
 - (WebBookmarkType)bookmarkType
@@ -139,6 +154,8 @@
     [_URLString release];
     _URLString = [URLString copy];
 
+    [_entry setURL:[NSURL _web_URLWithString:_URLString]];
+    
     [[self group] _bookmarkDidChange:self];    
 }
 

@@ -286,7 +286,10 @@ static const char * const stateNames[] = {
     
                 case WebFrameLoadTypeStandard:
                     parentFrame = [[self controller] frameForDataSource: [[self dataSource] parent]]; 
-                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[self dataSource] originalURL] target: [self name] parent: [parentFrame name] title:[[self dataSource] pageTitle] image: nil];
+                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[self dataSource] originalURL]
+                                                                   target:[self name]
+                                                                   parent:[parentFrame name]
+                                                                    title:[[self dataSource] pageTitle]];
                     [[[self controller] backForwardList] addEntry: backForwardItem];
                     [backForwardItem release];
                     // Scroll to top.

@@ -42,12 +42,12 @@
 - (WebBookmark *)insertNewBookmarkAtIndex:(unsigned)index
                               ofBookmark:(WebBookmark *)parent
                                withTitle:(NSString *)newTitle
-                                   image:(NSImage *)newImage
+                                 iconURL:(NSURL *)iconURL
                                URLString:(NSString *)newURLString
                                     type:(WebBookmarkType)bookmarkType;
 - (WebBookmark *)addNewBookmarkToBookmark:(WebBookmark *)parent
                                withTitle:(NSString *)newTitle
-                                   image:(NSImage *)newImage
+                                 iconURL:(NSURL *)iconURL
                                URLString:(NSString *)newURLString
                                     type:(WebBookmarkType)bookmarkType;
 

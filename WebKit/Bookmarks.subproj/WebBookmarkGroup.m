@@ -90,7 +90,7 @@
     if (newTopBookmark) {
         _topBookmark = newTopBookmark;
     } else {
-        _topBookmark = [[WebBookmarkList alloc] initWithTitle:nil image:nil group:self];
+        _topBookmark = [[WebBookmarkList alloc] initWithTitle:nil group:self];
     }
 
     [self _sendChangeNotificationForBookmark:_topBookmark childrenChanged:YES];
@@ -140,14 +140,14 @@
 
 - (WebBookmark *)addNewBookmarkToBookmark:(WebBookmark *)parent
                                withTitle:(NSString *)newTitle
-                                   image:(NSImage *)newImage
+                                   iconURL:(NSURL *)iconURL
                                URLString:(NSString *)newURLString
                                     type:(WebBookmarkType)bookmarkType
 {
     return [self insertNewBookmarkAtIndex:[parent numberOfChildren]
                                ofBookmark:parent
                                 withTitle:newTitle
-                                    image:newImage
+                                  iconURL:iconURL
                                 URLString:newURLString
                                      type:bookmarkType];
 }
@@ -155,7 +155,7 @@
 - (WebBookmark *)insertNewBookmarkAtIndex:(unsigned)index
                               ofBookmark:(WebBookmark *)parent
                                withTitle:(NSString *)newTitle
-                                   image:(NSImage *)newImage
+                                  iconURL:(NSURL *)iconURL
                                URLString:(NSString *)newURLString
                                     type:(WebBookmarkType)bookmarkType
 {
@@ -168,14 +168,13 @@
     if (bookmarkType == WebBookmarkTypeLeaf) {
         bookmark = [[WebBookmarkLeaf alloc] initWithURLString:newURLString
                                                         title:newTitle
-                                                        image:newImage
+                                                      iconURL:iconURL
                                                         group:self];
     } else if (bookmarkType == WebBookmarkTypeSeparator) {
         bookmark = [[WebBookmarkSeparator alloc] initWithGroup:self];
     } else {
         WEBKIT_ASSERT (bookmarkType == WebBookmarkTypeList);
         bookmark = [[WebBookmarkList alloc] initWithTitle:newTitle
-                                                    image:newImage
                                                     group:self];
     }
 
