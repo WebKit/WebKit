@@ -1,7 +1,0 @@
-struct UserAgentSpoofTableEntry { const char *name; UserAgentStringType type; };
-%%
-# Entries in this table apply to all hosts with strings of "xxx.com" or "<anything>.xxx.com".
-# Entries must have either one dot or two dots in them.
-#
-# pretend to be Mac IE because these sites forbid unknown browsers
-jaguar.com, MacIE

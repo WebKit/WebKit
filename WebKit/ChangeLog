@@ -1,5 +1,36 @@
 2004-02-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by John and Don.
+
+        - discovered that jaguar.com doesn't need spoofing any more, so removed
+          the spoofing machinery entirely; if we ever have to bring it back we
+          can, but I doubt we will
+
+        * WebView.subproj/WebView.m: Removed include of WebUserAgentSpoofTable.c.
+        (-[WebViewPrivate dealloc]): Release the new single userAgent rather than
+        the array and userAgentOverride we used to.
+        (-[WebView _preferencesChangedNotification:]): Release the single user agent,
+        rather than the entire cache. Also only do it when the user agent is not
+        overridden.
+        (-[WebView setApplicationNameForUserAgent:]): Ditto.
+        (-[WebView setCustomUserAgent:]): Set the new userAgentOverridden boolean,
+        and also set userAgent itself.
+        (-[WebView customUserAgent]): Return userAgent, but only if userAgentOverridden
+        is true.
+        (-[WebView userAgentForURL:]): Simplify, now that there's no automatic spoofing
+        to do. Made even simpler by the fact that custom and computed user agents both
+        share the same field now.
+
+        * WebView.subproj/WebViewPrivate.h: Got rid of UserAgentStringType, turned the
+        userAgent field into a single item instead of an array, and replaced the
+        userAgentOverride field with a boolean userAgentOverridden field.
+
+        * Makefile.am: Removed the rule to build WebUserAgentSpoofTable.c.
+        * WebView.subproj/WebUserAgentSpoofTable.c: Removed.
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Removed.
+
+2004-02-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         * WebKit.pbproj/project.pbxproj: Tweak build styles a bit, fixing OptimizedWithSymbols,

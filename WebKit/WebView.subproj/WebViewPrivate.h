@@ -13,9 +13,6 @@
 @class WebCoreSettings;
 @protocol WebFormDelegate;
 
-typedef enum { Safari, MacIE, WinIE } UserAgentStringType;
-enum { NumUserAgentStringTypes = WinIE + 1 };
-
 #define NUM_LOCATION_CHANGE_DELEGATE_SELECTORS	10
 
 typedef struct _WebResourceDelegateImplementationCache {
@@ -58,8 +55,8 @@ extern NSString *_WebMainFrameURLKey;
     float textSizeMultiplier;
 
     NSString *applicationNameForUserAgent;
-    NSString *userAgentOverride;
-    NSString *userAgent[NumUserAgentStringTypes];
+    NSString *userAgent;
+    BOOL userAgentOverridden;
     
     BOOL defersCallbacks;
 

@@ -55,14 +55,6 @@
 #import <Foundation/NSURLFileTypeMappings.h>
 #import <Foundation/NSURLRequestPrivate.h>
 
-static const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const char *, unsigned);
-
-// Turn off inlining to avoid warning with newer gcc.
-#undef __inline
-#define __inline
-#include "WebUserAgentSpoofTable.c"
-#undef __inline
-
 NSString *WebElementFrameKey =              @"WebElementFrame";
 NSString *WebElementImageKey =              @"WebElementImage";
 NSString *WebElementImageAltStringKey =     @"WebElementImageAltString";
@@ -122,11 +114,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     
     [backForwardList release];
     [applicationNameForUserAgent release];
-    [userAgentOverride release];
-    int i;
-    for (i = 0; i != NumUserAgentStringTypes; ++i) {
-        [userAgent[i] release];
-    }
+    [userAgent release];
     
     [preferences release];
     [settings release];
@@ -574,22 +562,15 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [_private->settings setShouldPrintBackgrounds:[preferences shouldPrintBackgrounds]];
 }
 
-- (void)_releaseUserAgentStrings
-{
-    int i;
-    for (i = 0; i != NumUserAgentStringTypes; ++i) {
-        [_private->userAgent[i] release];
-        _private->userAgent[i] = nil;
-    }
-}
-
-
 - (void)_preferencesChangedNotification: (NSNotification *)notification
 {
     WebPreferences *preferences = (WebPreferences *)[notification object];
     
     ASSERT(preferences == [self preferences]);
-    [self _releaseUserAgentStrings];
+    if (!_private->userAgentOverridden) {
+        [_private->userAgent release];
+        _private->userAgent = nil;
+    }
     [self _updateWebCoreSettingsFromPreferences: preferences];
 }
 
@@ -1449,10 +1430,9 @@ NS_ENDHANDLER
     NSString *name = [applicationName copy];
     [_private->applicationNameForUserAgent release];
     _private->applicationNameForUserAgent = name;
-    int i;
-    for (i = 0; i != NumUserAgentStringTypes; ++i) {
-        [_private->userAgent[i] release];
-        _private->userAgent[i] = nil;
+    if (!_private->userAgentOverridden) {
+        [_private->userAgent release];
+        _private->userAgent = nil;
     }
 }
 
@@ -1464,13 +1444,14 @@ NS_ENDHANDLER
 - (void)setCustomUserAgent:(NSString *)userAgentString
 {
     NSString *override = [userAgentString copy];
-    [_private->userAgentOverride release];
-    _private->userAgentOverride = override;
+    [_private->userAgent release];
+    _private->userAgent = override;
+    _private->userAgentOverridden = override != nil;
 }
 
 - (NSString *)customUserAgent
 {
-    return [[_private->userAgentOverride retain] autorelease];
+    return _private->userAgentOverridden ? [[_private->userAgent retain] autorelease] : nil;
 }
 
 - (BOOL)supportsTextEncoding
@@ -1512,56 +1493,10 @@ NS_ENDHANDLER
 }
 
 // Get the appropriate user-agent string for a particular URL.
+// Since we no longer automatically spoof, this no longer requires looking at the URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
-    if (_private->userAgentOverride) {
-        return [[_private->userAgentOverride retain] autorelease];
-    }
-    
-    // Look to see if we need to spoof.
-    // First step is to get the host as a C-format string.
-    UserAgentStringType type = Safari;
-    NSString *host = [URL _web_hostString];
-    char hostBuffer[256];
-    if (host && CFStringGetCString((CFStringRef)host, hostBuffer, sizeof(hostBuffer), kCFStringEncodingASCII)) {
-        // Next step is to find the last part of the name.
-        // We get the part with only two dots, and the part with only one dot.
-        const char *thirdToLastPeriod = NULL;
-        const char *nextToLastPeriod = NULL;
-        const char *lastPeriod = NULL;
-        char c;
-        char *p = hostBuffer;
-        while ((c = *p)) {
-            if (c == '.') {
-                thirdToLastPeriod = nextToLastPeriod;
-                nextToLastPeriod = lastPeriod;
-                lastPeriod = p;
-            } else {
-                *p = tolower(c);
-            }
-            ++p;
-        }
-        // Now look up that last part in the gperf spoof table.
-        if (lastPeriod) {
-            const char *lastPart;
-            const struct UserAgentSpoofTableEntry *entry = NULL;
-            if (nextToLastPeriod) {
-                lastPart = thirdToLastPeriod ? thirdToLastPeriod + 1 : hostBuffer;
-                entry = _web_findSpoofTableEntry(lastPart, p - lastPart);
-            }
-            if (!entry) {
-                lastPart = nextToLastPeriod ? nextToLastPeriod + 1 : hostBuffer;
-                entry = _web_findSpoofTableEntry(lastPart, p - lastPart);
-            }
-            if (entry) {
-                type = entry->type;
-            }
-        }
-    }
-
-    NSString **userAgentStorage = &_private->userAgent[type];
-
-    NSString *userAgent = *userAgentStorage;
+    NSString *userAgent = _private->userAgent;
     if (userAgent) {
         return [[userAgent retain] autorelease];
     }
@@ -1573,37 +1508,15 @@ NS_ENDHANDLER
         objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
     NSString *applicationName = _private->applicationNameForUserAgent;
 
-    switch (type) {
-        case Safari:
-            if ([applicationName length]) {
-                userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
-                    language, sourceVersion, applicationName];
-            } else {
-                userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)",
-                    language, sourceVersion];
-            }
-            break;
-        case MacIE:
-            if ([applicationName length]) {
-                userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@ %@",
-                    language, sourceVersion, applicationName];
-            } else {
-                userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@",
-                    language, sourceVersion];
-            }
-            break;
-        case WinIE:
-            if ([applicationName length]) {
-                userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT) AppleWebKit/%@ %@",
-                    language, sourceVersion, applicationName];
-            } else {
-                userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT) AppleWebKit/%@",
-                    language, sourceVersion];
-            }
-            break;
+    if ([applicationName length]) {
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
+            language, sourceVersion, applicationName];
+    } else {
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)",
+            language, sourceVersion];
     }
 
-    *userAgentStorage = [userAgent retain];
+    _private->userAgent = [userAgent retain];
     return userAgent;
 }
 
@@ -2069,4 +1982,3 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 }
 
 @end
-
