@@ -68,8 +68,6 @@ public:
 
     void clicked();
     
-    bool hasMarkedText();
-    
     virtual bool checksDescendantsForFocus() const;
 
 private:

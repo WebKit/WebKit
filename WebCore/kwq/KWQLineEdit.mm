@@ -223,14 +223,6 @@ void QLineEdit::clicked()
     m_clicked.call();
 }
 
-bool QLineEdit::hasMarkedText()
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    return [[NSInputManager currentInputManager] hasMarkedText];
-    KWQ_UNBLOCK_EXCEPTIONS;
-    return false;
-}
-
 void QLineEdit::setAlignment(AlignmentFlags alignment)
 {
     KWQ_BLOCK_EXCEPTIONS;

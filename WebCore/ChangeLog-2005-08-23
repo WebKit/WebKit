@@ -1,3 +1,24 @@
+2004-02-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3537397>: REGRESSION (100-114): Return doesn't work in Japanese input method for some HomePage fields
+        
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView keyDown:]): Don't send events through DOM when there is marked
+	text.
+        (-[KWQTextAreaTextView keyUp:]): Ditto.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField textView:shouldHandleEvent:]): Ditto.
+        (-[KWQSecureTextField textView:shouldHandleEvent:]): Ditto.
+	* khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::defaultEventHandler): No need to check for
+	marked text on "return" any more, because we won't send key events
+	through the DOM at all when there is marked text.
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm: Removed haveMarkedText method, no longer
+	used by anything.
+
 2004-02-16  Chris Blumenberg  <cblu@apple.com>
 
 	WebCore side of pasting image data.

@@ -506,7 +506,8 @@
     }
 
     NSEventType type = [event type];
-    if (type == NSKeyDown || type == NSKeyUp) {
+    if ((type == NSKeyDown || type == NSKeyUp) && 
+	![[NSInputManager currentInputManager] hasMarkedText]) {
         WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
         BOOL intercepted = [bridge interceptKeyEvent:event toView:view];
         // Always return NO for key up events because we don't want them
@@ -843,7 +844,8 @@
 	return YES;
     }
 
-    if ([event type] == NSKeyDown || [event type] == NSKeyUp) {
+    if (([event type] == NSKeyDown || [event type] == NSKeyUp) &&
+	![[NSInputManager currentInputManager] hasMarkedText]) {
         WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
         return ![bridge interceptKeyEvent:event toView:view];
     }

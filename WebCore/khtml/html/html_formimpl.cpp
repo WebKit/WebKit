@@ -1835,12 +1835,8 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
             case TEXT:
             case PASSWORD: {
                 // For enter, find the first successful image or submit element 
-                // send it a simulated mouse click only if the text input manager has 
-                // no marked text. If it does, then return needs to work in the
-                // "accept" role for the input method.
-                QWidget *widget = static_cast<RenderWidget *>(m_render)->widget();
-                bool hasMarkedText = widget ? static_cast<QLineEdit *>(widget)->hasMarkedText() : false;
-                if (!hasMarkedText && key == "Enter") {
+                // send it a simulated mouse click.
+                if (key == "Enter") {
                     m_form->submitClick();
                     evt->setDefaultHandled();
                 }
