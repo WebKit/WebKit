@@ -35,8 +35,6 @@
 #define FLOOR_TO_INT(x) (int)(floor(x))
 #define ROUND_TO_INT(x) (int)(((x) > (floor(x) + .5)) ? ceil(x) : floor(x))
 //#define ROUND_TO_INT(f) ((int)(rint(f)))
-const float LargeNumberForText = 1.0e7;
-
 
 @implementation KWQSmallLayoutFragment
 - (NSRange)glyphRange
@@ -307,71 +305,51 @@ static NSMutableDictionary *metricsCache = nil;
 
 
 struct QFontMetricsPrivate {
-friend class QFontMetrics;
-public:
-    QFontMetricsPrivate(NSFont *aFont) 
+    QFontMetricsPrivate(NSFont *aFont)
     {
-        font = [aFont retain];
+        refCount = 0;
+        font = [aFont retain];	
         info = [[KWQLayoutInfo getMetricsForFont: aFont] retain];
+        spaceWidth = -1;
+        xWidth = -1;
     }
-    
     ~QFontMetricsPrivate()
     {
-        if (info){
-            [info release];
-            info = 0;
-        }
-        if (font){
-            [font release];
-            font = 0;
-        }
+        [info release];
+        [font release];
     }
-    
-private:
+    int refCount;
     KWQLayoutInfo *info;
     NSFont *font;
+    int spaceWidth;
+    int xWidth;
 };
-
 
 QFontMetrics::QFontMetrics()
 {
-    _initialize();
 }
-
 
 QFontMetrics::QFontMetrics(const QFont &withFont)
+: data(new QFontMetricsPrivate(const_cast<QFont&>(withFont).getFont()))
 {
-    _initializeWithFont (((QFont)withFont).getFont());
 }
 
-
-QFontMetrics::QFontMetrics(const QFontMetrics &copyFrom)
+QFontMetrics::QFontMetrics(const QFontMetrics &withFont)
+: data(withFont.data)
 {
-    _initializeWithFont(copyFrom.data->font);
 }
-
-void QFontMetrics::_initialize()
-{
-    _initializeWithFont (0);
-}
-
-void QFontMetrics::_initializeWithFont (NSFont *font)
-{
-    data = new QFontMetricsPrivate(font);
-}
-
-void QFontMetrics::_free(){
-    delete data;
-}
-
 
 QFontMetrics::~QFontMetrics()
 {
-    _free();
 }
 
+QFontMetrics &QFontMetrics::operator=(const QFontMetrics &withFont)
+{
+    data = withFont.data;
+    return *this;
+}
 
-int QFontMetrics::baselineOffset()
+int QFontMetrics::baselineOffset() const
 {
     return ascent();
 }
@@ -381,13 +359,10 @@ int QFontMetrics::ascent() const
     return ROUND_TO_INT([data->font ascender]);
 }
 
-
-
 int QFontMetrics::descent() const
 {
     return ROUND_TO_INT(-[data->font descender]);
 }
-
 
 int QFontMetrics::height() const
 {
@@ -396,16 +371,26 @@ int QFontMetrics::height() const
     return ascent() + descent() + 1;
 }
 
-
 int QFontMetrics::width(QChar qc) const
 {
     ushort c = qc.unicode();
+    switch (c) {
+        // cheesy, we use the char version of width to do the work here,
+        // and since it doesn't have the optimization, we don't get an
+        // infinite loop
+        case ' ':
+            if (data->spaceWidth < 0)
+                data->spaceWidth = width(' ');
+            return data->spaceWidth;
+        case 'x':
+            if (data->xWidth < 0)
+                data->xWidth = width('x');
+            return data->xWidth;
+    }
     NSString *string = [NSString stringWithCharacters: (const unichar *)&c length: 1];
     int stringWidth = ROUND_TO_INT([data->info rectForString: string].size.width);
     return stringWidth;
 }
-
-
 
 int QFontMetrics::width(char c) const
 {
@@ -413,7 +398,6 @@ int QFontMetrics::width(char c) const
     int stringWidth = ROUND_TO_INT([data->info rectForString: string].size.width);
     return stringWidth;
 }
-
 
 int QFontMetrics::width(const QString &qstring, int len) const
 {
@@ -429,10 +413,8 @@ int QFontMetrics::width(const QString &qstring, int len) const
 
 int QFontMetrics::_width(CFStringRef string) const
 {
-    int stringWidth = ROUND_TO_INT([data->info rectForString: (NSString *)string].size.width);
-    return stringWidth;
+    return ROUND_TO_INT([data->info rectForString: (NSString *)string].size.width);
 }
-
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
 {
@@ -450,7 +432,6 @@ QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
             ROUND_TO_INT(rect.size.height));
 }
 
-
 QRect QFontMetrics::boundingRect(QChar qc) const
 {
     ushort c = qc.unicode();
@@ -462,7 +443,6 @@ QRect QFontMetrics::boundingRect(QChar qc) const
             ROUND_TO_INT(rect.size.width),
             ROUND_TO_INT(rect.size.height));
 }
-
 
 QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops, 
     int *tabarray, char **intern ) const
@@ -483,26 +463,14 @@ QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops,
     return QSize (ROUND_TO_INT(rect.size.width),ROUND_TO_INT(rect.size.height));
 }
 
-
 int QFontMetrics::rightBearing(QChar) const
 {
     _logNotYetImplemented();
     return 0;
 }
 
-
 int QFontMetrics::leftBearing(QChar) const
 {
     _logNotYetImplemented();
     return 0;
 }
-
-
-QFontMetrics &QFontMetrics::operator=(const QFontMetrics &assignFrom)
-{
-    _free();
-    _initializeWithFont(assignFrom.data->font);
-    return *this;    
-}
-
-

@@ -1,3 +1,30 @@
+2002-03-15  Darin Adler  <darin@apple.com>
+
+	Optimizations for creating empty QFont objects, measuring certain single
+	characters, and copying QFontMetrics objects. Makes loading NSView.html about
+	18% faster.
+
+	* src/kwq/qt/qfontmetrics.h: Use a ref-counted pointer so QFontMetrics objects
+	for the same QFont can share data.
+
+	* src/kwq/KWQFont.mm: (loadDefaultFont): New, used to load the default
+	font used for default-initialized QFont objects.
+	(QFont::_initializeWithFont): Don't recompute theh family name, point size, or
+	traits.
+	(QFont::setFamily), (QFont::setPixelSizeFloat), (QFont::setWeight),
+	(QFont::setItalic),: autorelease the font, as we do in the destructor, since
+	someone could still be using the result of getFont.
+	(QFont::operator==): Add a comment about a problem with this function.
+
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::QFontMetrics): Add a refCount, and
+	a cached width for space and lower-case "x", the two single characters that
+	are often measured.
+	(QFontMetrics::~QFontMetrics): Simplify.
+	(QFontMetrics::operator=): Just copy the underlying data pointer rather than
+	making our own KWQLayoutInfo object.
+	(QFontMetrics::baselineOffset): Make const.
+	(QFontMetrics::width): Add the caching for space and "x".
+
 2002-03-15  Richard Williamson  <rjw@apple.com>
 
         Optimizations that remove unnecessary cfstring allocations of local scope

@@ -32,60 +32,59 @@
     For this implementation Qt pixelSize is interpreted as Cocoa pointSize.
 */
 
+static NSFont *defaultFont = 0;
+static NSString *defaultFontFamilyName;
+static float defaultFontSize;
+static int defaultFontTrait;
+
+static void
+loadDefaultFont()
+{
+    if (defaultFont)
+        return;
+    defaultFont = [[NSFont userFontOfSize: (float)12.0] retain];
+    defaultFontFamilyName = [[defaultFont familyName] retain];
+    defaultFontSize = [defaultFont pointSize];
+    defaultFontTrait = [[NSFontManager sharedFontManager] traitsOfFont:defaultFont] & (NSBoldFontMask | NSItalicFontMask);
+}
+
 QFont::QFont()
 {
-    _initialize();
+    _initializeWithFont(0);
 }
 
-
-void QFont::_initialize()
+void QFont::_initializeWithFont(const QFont *withFont)
 {
-    _initializeWithFont (0);
-}
-
-static NSFont *_defaultNSFont = 0;
-
-NSFont *QFont::defaultNSFont()
-{
-    if (_defaultNSFont == 0)
-    	_defaultNSFont = [[NSFont userFontOfSize: (float)12.0] retain];
-    return _defaultNSFont;
-}
-
-void QFont::_initializeWithFont (const QFont *withFont)
-{
-    if (withFont){
+    if (withFont) {
         font = [withFont->font retain];
         _family = [withFont->_family retain];
         _size = withFont->_size;
         _trait = withFont->_trait;
-    }
-    else {
-        font = [defaultNSFont() retain];
-        _family = [[font familyName] retain];
-        _size = [font pointSize];
-        _trait = [[NSFontManager sharedFontManager] traitsOfFont: font] & (NSBoldFontMask | NSItalicFontMask);
+    } else {
+        loadDefaultFont();
+        font = [defaultFont retain];
+        _family = [defaultFontFamilyName retain];
+        _size = defaultFontSize;
+        _trait = defaultFontTrait;
     }
 }
-
 
 QFont::QFont(const QFont &copyFrom)
 {
     _initializeWithFont(&copyFrom);
 }
 
-
 QFont::~QFont()
 {
     _free();
 }
 
-void QFont::_free(){
+void QFont::_free()
+{
     [_family release];
     [font autorelease];
-    font = 0;
+    font = nil;
 }
-
 
 // member functions --------------------------------------------------------
 
@@ -155,7 +154,7 @@ static NSMutableDictionary *fontCache = 0;
 
 NSFont *QFont::getFont()
 {
-    if (font == nil){
+    if (font == nil) {
         NSString *fontKey;
 #ifdef DEBUG_GETFONT
         getFontCount++;
@@ -192,7 +191,7 @@ void QFont::setFamily(const QString &qfamilyName)
 {
     [_family release];
     _family = [_FAST_QSTRING_TO_NSSTRING(qfamilyName) retain];
-    [font release];
+    [font autorelease];
     font = nil;
 }
 
@@ -201,7 +200,7 @@ void QFont::setPixelSizeFloat(float sz)
 {
     if (sz != _size){
         _size = sz;
-        [font release];
+        [font autorelease];
         font = nil;
     }
 }
@@ -210,15 +209,15 @@ void QFont::setPixelSizeFloat(float sz)
 void QFont::setWeight(int weight)
 {
     if (weight == Bold){
-        if (!bold()){
-            [font release];
+        if (!bold()) {
+            [font autorelease];
             font = nil;
         }
         _trait |= NSBoldFontMask;
     }
     else if (weight == Normal){
         if (bold()){
-            [font release];
+            [font autorelease];
             font = nil;
         }
         _trait = _trait & (~NSBoldFontMask);
@@ -238,7 +237,7 @@ bool QFont::setItalic(bool flag)
 {
     if (flag){
         if (!italic()){
-            [font release];
+            [font autorelease];
             font = nil;
         }
         _trait |= NSItalicFontMask;
@@ -246,7 +245,7 @@ bool QFont::setItalic(bool flag)
     }
     else{
         if (italic()){
-            [font release];
+            [font autorelease];
             font = nil;
         }
         _trait = _trait & (~NSItalicFontMask);
@@ -279,6 +278,7 @@ QFont &QFont::operator=(const QFont &assignFrom)
 
 bool QFont::operator==(const QFont &compareFont) const
 {
+    // FIXME: This does not do the right thing when the font is nil
     return [compareFont.font isEqual: font];
 }
 
