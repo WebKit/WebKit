@@ -521,6 +521,11 @@ bool CSSParser::parseValue( int propId, bool important )
 	    return parseShape( propId, important );
 	break;
 
+    case CSS_PROP__APPLE_DASHBOARD_REGION:                 // <dashboard-region-circle> | <dashboard-region-rectangle> 
+	if ( value->unit == Value::Function )
+	    return parseDashboardRegions( propId, important );
+	break;
+
     /* Start of supported CSS properties with validation. This is needed for parseShortHand to work
      * correctly and allows optimization in khtml::applyRule(..)
      */
@@ -1493,6 +1498,100 @@ bool CSSParser::parseContent( int propId, bool important )
     }
     delete values;
     return false;
+}
+
+static Value *skipCommaInDashboardRegion (ValueList *args)
+{
+    if ( args->numValues == 9 ) {
+        Value *current = args->current();
+        if (current->unit == Value::Operator && current->iValue == ',' )
+            return args->next();
+    }
+    return args->current();
+}
+
+bool CSSParser::parseDashboardRegions( int propId, bool important )
+{
+    bool valid = true;
+    
+    DashboardRegionImpl *firstRegion = new DashboardRegionImpl(), *region = 0;
+
+    Value *value = valueList->current();
+    while (value) {
+        if (region == 0) {
+            region = firstRegion;
+        }
+        else {
+            DashboardRegionImpl *nextRegion = new DashboardRegionImpl();
+            region->setNext (nextRegion);
+            region = nextRegion;
+        }
+        
+        if ( value->unit != Value::Function) {
+            valid = false;
+            break;
+        }
+            
+        // Commas count as values, so allow:
+        // dashbaord-region-rectangle( label, t, r, b, l ) or dashbaord-region-rectangle( label t r b l )
+        // dashbaord-region-circle( label, t, r, b, l ) or dashbaord-region-circle( label t r b l )
+        ValueList *args = value->function->args;
+        int numArgs = value->function->args->numValues;
+        if (numArgs != 5 && numArgs != 9) {
+            valid = false;
+            break;
+        }
+        
+        QString fname = qString( value->function->name ).lower();
+        if (fname == "dashboard-region-rectangle(" ) {
+            region->m_isRectangle = true;
+        }    
+        else if (fname == "dashboard-region-circle(" ) {
+            region->m_isCircle = true;
+        }
+        else {
+            valid = false;
+            break;
+        }
+            
+        // First arg should be a label.
+        Value *arg = args->current();
+        if (arg->unit != CSSPrimitiveValue::CSS_IDENT) {
+            valid = false;
+            break;
+        }
+            
+        region->setLabel (qString(arg->string));
+
+        // Next four arguments must be offset numbers
+        int i;
+        for (i = 0; i < 4; i++) {
+            arg = args->next();
+            arg = skipCommaInDashboardRegion (args);
+
+            CSSPrimitiveValueImpl *amount = arg->id == CSS_VAL_AUTO ?
+                new CSSPrimitiveValueImpl(CSS_VAL_AUTO) :
+                new CSSPrimitiveValueImpl(arg->fValue, (CSSPrimitiveValue::UnitTypes) arg->unit );
+                
+            if ( i == 0 )
+                region->setTop( amount );
+            else if ( i == 1 )
+                region->setRight( amount );
+            else if ( i == 2 )
+                region->setBottom( amount );
+            else
+                region->setLeft( amount );
+        }
+
+        value = valueList->next();
+    }
+
+    if (valid)
+        addProperty( propId, new CSSPrimitiveValueImpl( firstRegion ), important );
+    else
+        delete firstRegion;
+        
+    return valid;
 }
 
 bool CSSParser::parseShape( int propId, bool important )

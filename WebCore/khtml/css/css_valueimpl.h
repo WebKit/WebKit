@@ -158,6 +158,7 @@ protected:
 class Counter;
 class RGBColor;
 class Rect;
+class DashboardRegionImpl;
 
 class CSSPrimitiveValueImpl : public CSSValueImpl
 {
@@ -168,6 +169,7 @@ public:
     CSSPrimitiveValueImpl(const DOMString &str, CSSPrimitiveValue::UnitTypes type);
     CSSPrimitiveValueImpl(const Counter &c);
     CSSPrimitiveValueImpl( RectImpl *r);
+    CSSPrimitiveValueImpl( DashboardRegionImpl *r);
     CSSPrimitiveValueImpl(QRgb color);
 
     virtual ~CSSPrimitiveValueImpl();
@@ -238,6 +240,7 @@ protected:
 	CounterImpl *counter;
 	RectImpl *rect;
         QRgb rgbcolor;
+        DashboardRegionImpl *region;
     } m_value;
 };
 
@@ -287,6 +290,31 @@ protected:
     CSSPrimitiveValueImpl *m_right;
     CSSPrimitiveValueImpl *m_bottom;
     CSSPrimitiveValueImpl *m_left;
+};
+
+class DashboardRegionImpl : public RectImpl {
+public:
+    DashboardRegionImpl() : RectImpl(), m_next(0), m_isCircle(0), m_isRectangle(0) { };
+    ~DashboardRegionImpl() {
+        if (m_next)
+            m_next->deref();
+    };
+
+    void setNext (DashboardRegionImpl *next) {
+        if (m_next) m_next->deref();
+        if (next) next->ref();
+        m_next = next;
+    };
+    
+    void setLabel(const QString &label) {
+        m_label = label;
+    };
+
+public:
+    DashboardRegionImpl *m_next;
+    QString m_label;
+    unsigned int m_isCircle:1;
+    unsigned int m_isRectangle:1;
 };
 
 class CSSImageValueImpl : public CSSPrimitiveValueImpl, public khtml::CachedObjectClient

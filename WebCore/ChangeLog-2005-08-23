@@ -1,3 +1,46 @@
+2004-09-16  Richard Williamson   <rjw@apple.com>
+
+        Part 1 of the feature requested in
+        <rdar://problem/3752791> Dashboard: Need a better solution for control regions
+
+        This patch implements the CSS parsing necessary for dashboard regions.  
+        Here's an example of the syntax we support:
+
+        <style>
+        #aDiv {
+            -apple-dashboard-region:
+                dashboard-region-circle(control 0 0 80 0)
+                dashboard-region-rectangle(control,20,0,20,0)
+                dashboard-region-circle(control 80 0 0 0); 
+        }
+        </style>
+
+	Part 2 will determine the appropriate regions.
+
+        Reviewed by Chris.
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSPrimitiveValueImpl::):
+        (DOM::DashboardRegionImpl::DashboardRegionImpl):
+        (DOM::DashboardRegionImpl::~DashboardRegionImpl):
+        (DOM::DashboardRegionImpl::setNext):
+        (DOM::DashboardRegionImpl::setLabel):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseContent):
+        (skipCommaInDashboardRegion):
+        (CSSParser::parseDashboardRegions):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/dom/css_value.h:
+        (DOM::CSSPrimitiveValue::):
+
 2004-09-16  Darin Adler  <darin@apple.com>
 
         - fixed caret-drawing regression from my last patch
