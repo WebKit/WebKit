@@ -6,7 +6,7 @@
 
 #include <qstring.h>
 
-int main() {
+int main() {{
 
     char c_char = 'a';
     uchar c_uchar = 'b';
