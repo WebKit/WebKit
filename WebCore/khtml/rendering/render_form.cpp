@@ -1668,11 +1668,11 @@ void RenderSlider::updateFromElement()
     double val = value.isNull() ? (maxVal + minVal)/2.0 : value.string().toDouble();
     val = kMax(minVal, kMin(val, maxVal)); // Make sure val is within min/max.
     
+    // Force integer value if not float (strcasecmp returns confusingly backward boolean).
     if (strcasecmp(precision, "float"))
-        // Force integer value.
-        element()->m_value = DOMString(QString::number((int)(val+0.5)));
-    else
-        element()->m_value = DOMString(QString::number(val));
+        val = (int)(val + 0.5);
+
+    element()->setValue(QString::number(val));
 
     QSlider* slider = (QSlider*)widget();
      
@@ -1686,13 +1686,15 @@ void RenderSlider::updateFromElement()
 void RenderSlider::slotSliderValueChanged()
 {
     QSlider* slider = (QSlider*)widget();
+
     double val = slider->value();
     const DOMString& precision = element()->getAttribute(ATTR_PRECISION);
+
+    // Force integer value if not float (strcasecmp returns confusingly backward boolean).
     if (strcasecmp(precision, "float"))
-        // Force integer value.
-        element()->m_value = DOMString(QString::number((int)(val+0.5)));
-    else
-        element()->m_value = DOMString(QString::number(val));
+        val = (int)(val + 0.5);
+
+    element()->setValue(QString::number(val));
     
     // Fire the "input" DOM event.
     element()->dispatchHTMLEvent(EventImpl::INPUT_EVENT, true, false);

@@ -1,3 +1,15 @@
+2004-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3876093> REGRESSION (166-167): Setting slider control's value from JavaScript has no effect (breaks RSS)
+
+        * khtml/rendering/render_form.cpp:
+        (RenderSlider::updateFromElement): Call setValue to update the value of the DOM element rather than
+        modifying the m_value data member directly. We don't use m_value at all for sliders now, and in fact
+        the code relies on the fact that m_value is null. Setting m_value to a non-null value was causing the bug.
+        (RenderSlider::slotSliderValueChanged): Ditto.
+
 2004-12-03  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.
