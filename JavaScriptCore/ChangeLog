@@ -1,3 +1,12 @@
+2003-09-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3421107 -- some dates that other browsers can parse can't be parsed by KJS's Date.parse()
+
+        * kjs/date_object.cpp: (KJS::KRFCDate_parseDate): Added code to be more strict about month names,
+        to allow a time zone after date even if the date omits the time, and to understand AM and PM.
+
 2003-09-22  Darin Adler  <darin@apple.com>
 
         * JavaScriptCore.pbproj/project.pbxproj: Rename Mixed build style to OptimizedWithSymbols.

@@ -725,6 +725,11 @@ static const struct {
     { 0, 0 }
 };
 
+static inline bool isSpaceOrTab(char c)
+{
+    return c == ' ' || c == '\t';
+}
+
 time_t KJS::KRFCDate_parseDate(const UString &_date)
 {
      // This parse a date in the form:
@@ -754,14 +759,14 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
      errno = 0;
 
      // Skip leading space
-     while(*dateString && isspace(*dateString))
+     while (isSpaceOrTab(*dateString))
      	dateString++;
 
      const char *wordStart = dateString;
      // Check contents of first words if not number
      while(*dateString && !isdigit(*dateString))
      {
-        if ( isspace(*dateString) && dateString - wordStart >= 3 )
+        if ( isSpaceOrTab(*dateString) && dateString - wordStart >= 3 )
         {
           monthStr[0] = tolower(*wordStart++);
           monthStr[1] = tolower(*wordStart++);
@@ -775,7 +780,7 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
               month = position / 3; // Jan=00, Feb=01, Mar=02, ..
             }
           }
-          while(*dateString && isspace(*dateString))
+          while (isSpaceOrTab(*dateString))
              dateString++;
           wordStart = dateString;
         }
@@ -783,7 +788,7 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
            dateString++;
      }
 
-     while(*dateString && isspace(*dateString))
+     while (isSpaceOrTab(*dateString))
      	dateString++;
 
      if (!*dateString)
@@ -803,14 +808,14 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
      if (*dateString == '-' || *dateString == ',')
      	dateString++;
 
-     while(*dateString && isspace(*dateString))
+     while (isSpaceOrTab(*dateString))
      	dateString++;
 
      if ( month == -1 ) // not found yet
      {
         for(int i=0; i < 3;i++)
         {
-           if (!*dateString || (*dateString == '-') || isspace(*dateString))
+           if (!*dateString || (*dateString == '-') || isSpaceOrTab(*dateString))
               return invalidDate;
            monthStr[i] = tolower(*dateString++);
         }
@@ -818,7 +823,7 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
 
         newPosStr = (char*)strstr(haystack, monthStr);
 
-        if (!newPosStr)
+        if (!newPosStr || (newPosStr - haystack) % 3 != 0)
            return invalidDate;
 
         month = (newPosStr-haystack)/3; // Jan=00, Feb=01, Mar=02, ..
@@ -826,14 +831,14 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
         if ((month < 0) || (month > 11))
            return invalidDate;
 
-        while(*dateString && (*dateString != '-') && !isspace(*dateString))
+        while (*dateString && *dateString != '-' && !isSpaceOrTab(*dateString))
            dateString++;
 
         if (!*dateString)
            return invalidDate;
 
         // '-99 23:12:40 GMT'
-        if ((*dateString != '-') && !isspace(*dateString))
+        if (*dateString != '-' && !isSpaceOrTab(*dateString))
            return invalidDate;
         dateString++;
      }
@@ -849,15 +854,14 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
      dateString = newPosStr;
 
      // Don't fail if the time is missing.
-     if (*dateString)
+     if (*dateString == ':' || (isSpaceOrTab(*dateString) && isdigit(dateString[1])))
      {
         if (*dateString == ':') {
           hour = year;
           gotYear = false;
         } else {
           // ' 23:12:40 GMT'
-          if (!isspace(*dateString++))
-            return invalidDate;
+          ++dateString;
         
           hour = strtol(dateString, &newPosStr, 10);
           if (errno)
@@ -883,13 +887,6 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
         if ((minute < 0) || (minute > 59))
            return invalidDate;
 
-        if (!*dateString)
-           return invalidDate;
-
-        // ':40 GMT'
-        if (*dateString != ':' && !isspace(*dateString))
-           return invalidDate;
-
         // seconds are optional in rfc822 + rfc2822
         if (*dateString ==':') {
            dateString++;
@@ -901,19 +898,17 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
 
            if ((second < 0) || (second > 59))
               return invalidDate;
-        } else {
-           dateString++;
         }
-
-        while(*dateString && isspace(*dateString))
-           dateString++;
      }
      
+     while (isSpaceOrTab(*dateString))
+        dateString++;
+
      if (!gotYear) {
         year = strtol(dateString, &newPosStr, 10);
         if (errno)
           return invalidDate;
-        while(*dateString && isspace(*dateString))
+        while (isSpaceOrTab(*dateString))
            dateString++;
      }
 
@@ -926,6 +921,24 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
 
      if ((year < 1900) || (year > 2500))
      	return invalidDate;
+
+     if (strncasecmp(dateString, "AM", 2) == 0) {
+        if (hour < 1 || hour > 12)
+            return invalidDate;
+        if (hour == 12)
+            hour = 0;
+        dateString += 2;
+        while (isSpaceOrTab(*dateString))
+           dateString++;
+     } else if (strncasecmp(dateString, "PM", 2) == 0) {
+        if (hour < 1 || hour > 12)
+            return invalidDate;
+        if (hour != 12)
+            hour += 12;
+        dateString += 2;
+        while (isSpaceOrTab(*dateString))
+           dateString++;
+     }
 
      // don't fail if the time zone is missing, some
      // broken mail-/news-clients omit the time zone
