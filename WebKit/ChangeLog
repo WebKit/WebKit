@@ -1,3 +1,17 @@
+2005-02-11  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4002505> 8A378: Endlessly animating gif's on http://www.entropy.ch
+	
+	If animated images had no loop count property we were incorrectly
+	looping forver.  Note, that in the course of fixing this bug
+	I found that ImageIO is incorrectly NOT reporting the loop count
+	for a whole class of animated GIFs.
+
+        Reviewed by Ken Kocienda.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _repetitionCount]):
+
 === Safari-186 ===
 
 2005-02-11  Vicki Murley  <vicki@apple.com>

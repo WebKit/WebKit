@@ -649,9 +649,11 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     return value;
 }
 
-- (float)_floatFileProperty:(CFStringRef)property type:(CFStringRef)type 
+- (float)_floatFileProperty:(CFStringRef)property type:(CFStringRef)type hasProperty:(BOOL *)hasProperty;
 {
     [decodeLock lock];
+    
+    *hasProperty = NO;
     
     CFDictionaryRef properties = [self fileProperties];
     if (!properties) {
@@ -677,6 +679,8 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     CFNumberGetValue (num, kCFNumberFloat32Type, &value);
 
     [decodeLock unlock];
+
+    *hasProperty = YES;
     
     return value;
 }
@@ -729,7 +733,16 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (int)_repetitionCount
 {
-    return [self _floatFileProperty:kCGImagePropertyGIFLoopCount type:kCGImagePropertyGIFDictionary];
+    int count;
+    BOOL hasProperty;
+
+    // No property means loop once.
+    // A property with value 0 means loops forever.
+    count = [self _floatFileProperty:kCGImagePropertyGIFLoopCount type:kCGImagePropertyGIFDictionary hasProperty:&hasProperty];
+    if (!hasProperty)
+	count = -1;
+	
+    return count;
 }
 
 - (BOOL)isAnimationFinished
