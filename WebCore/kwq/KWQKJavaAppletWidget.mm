@@ -49,15 +49,8 @@ void KJavaAppletWidget::setParameter(const QString &name, const QString &value)
     // When putting strings into dictionaries, we should use an immutable copy.
     // That's not necessary for keys, because they are copied.
     NSString *immutableString = [value.getNSString() copy];
-    [_parameters setObject:immutableString forKey:name.getNSString()];
+    [_parameters setObject:immutableString forKey:name.lower().getNSString()];
     [immutableString release];
-}
-
-void KJavaAppletWidget::processArguments(const QMap<QString, QString> &arguments)
-{
-    for (QMap<QString, QString>::ConstIterator it = arguments.begin(); it != arguments.end(); ++it) {
-        setParameter(it.key(), it.data());
-    }
 }
 
 void KJavaAppletWidget::showApplet()

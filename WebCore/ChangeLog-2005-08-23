@@ -1,3 +1,20 @@
+2003-09-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed 3373654 -- REGRESSION: Yahoo chat applet reloads over and over due to "baseURL" param name conflict
+
+        After some research by the Java team, we discovered that there was no need to
+        pass in baseURL at all This patch gets rid of that by only passingindividual specified
+        arguments, rather than passing all the arguments, as applet parameters.
+
+        * khtml/rendering/render_applet.cpp: (RenderApplet::processArguments): Remove the
+        call to KJavaApplet::processArguments, because we only want the individual arguments.
+        * kwq/KWQKJavaAppletWidget.h: Implement setAppletClass, setAppletName, setArchives, and
+        setCodeBase. Remove processArguments.
+        * kwq/KWQKJavaAppletWidget.mm: (KJavaAppletWidget::setParameter): Lowercase all the
+        parameters as we put them in the dictionary, since this is the semantics required by Java.
+
 === Safari-99 ===
 
 2003-09-07  Darin Adler  <darin@apple.com>

@@ -131,11 +131,6 @@ void RenderApplet::processArguments(const QMap<QString, QString> &args)
     KJavaAppletWidget *w = static_cast<KJavaAppletWidget*>(m_widget);
     KJavaApplet* applet = w ? w->applet() : 0;
 
-#if APPLE_CHANGES
-    if (w)
-        w->processArguments(args);
-#endif
-
     if ( applet ) {
         applet->setBaseURL( args[QString::fromLatin1("baseURL") ] );
         applet->setAppletClass( args[QString::fromLatin1("code") ] );
