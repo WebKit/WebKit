@@ -23,6 +23,7 @@
 @end
 
 @implementation IFStandardPanelsPrivate
+
 -(id)init
 {
     self = [super init];
@@ -38,6 +39,10 @@
     [panelAuthenticationHandler release];
     [super dealloc];
 }
+
+@end
+
+@implementation IFStandardPanels
 
 // Private init method to implement the singleton pattern
 -(id)_init

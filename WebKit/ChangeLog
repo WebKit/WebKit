@@ -1,5 +1,9 @@
 2002-06-14  Darin Adler  <darin@apple.com>
 
+	* Panels.subproj/IFStandardPanels.m: Fix what I broke last time.
+
+2002-06-14  Darin Adler  <darin@apple.com>
+
 	* Panels.subproj/IFStandardPanels.m:
 	(-[IFStandardPanelsPrivate frontmostWindowLoadingURL:]): Change to call webView
 	instead of view. Not sure why anyone was able to compile this.
