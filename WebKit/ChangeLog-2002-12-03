@@ -1,3 +1,10 @@
+2002-09-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3048158 - Crash at google in _destroyInitializingClassList
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient didCancelWithHandle:]):
+
 2002-09-10  Richard Williamson (Local)  <rjw@apple.com>
 
         Renamed method.

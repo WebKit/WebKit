@@ -130,10 +130,9 @@
     [self retain];
     
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
-    WebError *error = [WebError errorWithCode:WebResultCancelled
-                                     inDomain:WebErrorDomainWebFoundation
-                                   failingURL:[[dataSource originalURL] absoluteString]];
-    
+    WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled
+                                                 inDomain:WebErrorDomainWebFoundation
+                                               failingURL:[[dataSource originalURL] absoluteString]];
     [self receivedError:error forHandle:handle];
     [error release];
 
