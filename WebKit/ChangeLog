@@ -1,3 +1,12 @@
+2002-04-16  John Sullivan  <sullivan@apple.com>
+
+	Fixed bug Chris noticed where Alexander wasn't putting up
+	an error sheet on failed page visits.
+
+	* WebView.subproj/IFWebFramePrivate.mm: 
+	(-[IFWebFrame _isLoadComplete]): Don't set provisionalDataSource
+	to nil until after sending it locationChangeDone.
+
 2002-04-16  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFBaseWebController.mm: Remove special release handling because

@@ -302,11 +302,14 @@ static const char * const stateNames[6] = {
                 WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_PROVISIONAL, %d errors\n", [[self name] cString], [[self errors] count]);
                 if (![[self provisionalDataSource] isLoading]) {
                     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL, load done\n", [[self name] cString]);
+
+                    [[[self provisionalDataSource] _locationChangeHandler] locationChangeDone: [self mainDocumentError]];
+
+
                     // We now the provisional data source didn't cut the mustard, release it.
                     [_private setProvisionalDataSource: nil];
                     
                     [self _setState: IFWEBFRAMESTATE_COMPLETE];
-                    [[[self provisionalDataSource] _locationChangeHandler] locationChangeDone: [self mainDocumentError]];
                     return;
                 }
             }
