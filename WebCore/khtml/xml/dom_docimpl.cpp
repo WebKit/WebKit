@@ -1858,9 +1858,9 @@ void DocumentImpl::recalcStyleSelector()
             if (n->id() == ID_LINK) {
                 // <LINK> element
                 HTMLLinkElementImpl* l = static_cast<HTMLLinkElementImpl*>(n);
-                // awful hack to ensure that we ignore the title attribute for non-stylesheets
-                // ### make that nicer!
-                if (!l->sheet() || l->isLoading())
+		if (l->isLoading())
+		  continue;
+		if (!l->sheet())
                     title = QString::null;
             }
 

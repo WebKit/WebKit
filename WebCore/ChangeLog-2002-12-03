@@ -1,3 +1,10 @@
+2002-09-23  David Hyatt  <hyatt@apple.com>
+
+	Found the problem with the CSS W3C page.
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyleSelector):
+
 2002-09-23  Darin Adler  <darin@apple.com>
 
 	WebCore part of fixes for proper layering when drawing subframes.
