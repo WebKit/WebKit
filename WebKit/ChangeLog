@@ -1,3 +1,12 @@
+2003-06-06  Richard Williamson  <rjw@apple.com>
+
+	Fixed 3283236.  Remove use of forward declarations in public header because
+	CodeWarrior pukes on 'em.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebDataSource.h:
+
 2003-06-06  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3156169>: cmd-click opens new win but stops loading in prev win
