@@ -143,7 +143,7 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
 
 NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
 {
-    NSMutableString *headerString = [[NSMutableString alloc] init];
+    NSMutableString *headerString = [[[NSMutableString alloc] init] autorelease];
     [headerString appendString:[NSString stringWithFormat:@"HTTP/1.0 %d OK\n", statusCode]];
     
     NSEnumerator *e = [headers keyEnumerator];

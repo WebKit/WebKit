@@ -1,3 +1,14 @@
+2005-03-01  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4027928> Tiger_8A394:Acrobat crashes while tried to remove the subscription errors by clicking on "Would you like to remove the subscription" from Tracker details view pane
+
+	The string objects created by KWQHeaderStringFromDictionary() leaked.
+
+        Reviewed by John Louch.
+
+        * kwq/KWQLoader.mm:
+        (KWQHeaderStringFromDictionary):
+
 2005-03-01  Jens Alfke  <jens@apple.com>
 
         Reviewed by Darin.
