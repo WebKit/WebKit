@@ -605,9 +605,9 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
         }
         
         KWQPluginPart *newPart = new KWQPluginPart;
-        newPart->setWidget(new QWidget([_bridge viewForPluginWithURLString:url.url().getNSString()
+        newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:url.getNSURL()
                                                           attributes:attributesArray
-                                                             baseURLString:d->m_doc->baseURL().getNSString()
+                                                             baseURL:KURL(d->m_doc->baseURL()).getNSURL()
                                                             MIMEType:child.m_args.serviceType.getNSString()]));
         return newPart;
     } else {
@@ -622,7 +622,7 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
             marginHeight = o->getMarginHeight();
         }
         WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
-                                                            withURL:url.url().getNSString()
+                                                            withURL:url.getNSURL()
                                                          renderPart:child.m_frame
                                                     allowsScrolling:allowsScrolling
                                                         marginWidth:marginWidth
@@ -724,7 +724,7 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
     }
     
     if (d->m_redirectionTimer.isActive()) {
-        [_bridge reportClientRedirectToURL:d->m_redirectURL.getNSString()
+        [_bridge reportClientRedirectToURL:KURL(d->m_redirectURL).getNSURL()
                                      delay:d->m_delayRedirect
                                   fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]
                                lockHistory:d->m_redirectLockHistory
@@ -787,7 +787,7 @@ RenderObject *KWQKHTMLPart::renderer()
 
 QString KWQKHTMLPart::userAgent() const
 {
-    NSString *us = [_bridge userAgentForURL:m_url.url().getNSString()];
+    NSString *us = [_bridge userAgentForURL:m_url.getNSURL()];
          
     if (us)
         return QString::fromNSString(us);
@@ -1160,7 +1160,7 @@ void KWQKHTMLPart::setPolicyBaseURL(const DOMString &s)
 
 QString KWQKHTMLPart::requestedURLString() const
 {
-    return QString::fromNSString([_bridge requestedURL]);
+    return QString::fromNSString([_bridge requestedURLString]);
 }
 
 QString KWQKHTMLPart::incomingReferrer() const

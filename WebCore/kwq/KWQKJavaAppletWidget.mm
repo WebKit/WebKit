@@ -68,7 +68,7 @@ void KJavaAppletWidget::showApplet()
         setView([KWQ(_context->part())->bridge()
             viewForJavaAppletWithFrame:NSMakeRect(x(), y(), width(), height())
                             attributes:_parameters
-                         baseURLString:_baseURL.getNSString()]);
+                               baseURL:KURL(_baseURL).getNSURL()]);
         // Add the view to the main view now so the applet starts immediately rather than until the first paint.
         _context->part()->view()->addChild(this, x(), y());
     }

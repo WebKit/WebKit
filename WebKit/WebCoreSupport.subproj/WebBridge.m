@@ -334,7 +334,7 @@
     [self addData:data];
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSString *)URL
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
 {
     // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
@@ -343,17 +343,17 @@
     }
 
     return [WebSubresourceClient startLoadingResource:resourceLoader
-                                              withURL:[NSURL _web_URLWithString:URL]
+                                              withURL:URL
                                              referrer:[self referrer]
                                         forDataSource:[self dataSource]];
 }
 
-- (void)objectLoadedFromCacheWithURL:(NSString *)URL response: response size:(unsigned)bytes
+- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response: response size:(unsigned)bytes
 {
     ASSERT(_frame != nil);
     ASSERT(response != nil);
 
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     WebView *wv = [_frame webView];
     id delegate = [wv resourceLoadDelegate];
     id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
@@ -391,9 +391,9 @@
     return [[[self dataSource] request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;
 }
 
-- (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
+- (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {
-    [_frame _clientRedirectedTo:[NSURL _web_URLWithString:URL] delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
+    [_frame _clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
 }
 
 - (void)reportClientRedirectCancelled
@@ -418,14 +418,14 @@
     }
 }
 
-- (void)setIconURL:(NSString *)URL
+- (void)setIconURL:(NSURL *)URL
 {
-    [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL]];
+    [[self dataSource] _setIconURL:URL];
 }
 
-- (void)setIconURL:(NSString *)URL withType:(NSString *)type
+- (void)setIconURL:(NSURL *)URL withType:(NSString *)type
 {
-    [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL] withType:type];
+    [[self dataSource] _setIconURL:URL withType:type];
 }
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
@@ -463,7 +463,7 @@
     return [_frame _generateFrameName];
 }
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSString *)URL
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
     renderPart:(KHTMLRenderPart *)childRenderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
@@ -478,7 +478,7 @@
     [[newFrame frameView] _setMarginWidth:width];
     [[newFrame frameView] _setMarginHeight:height];
 
-    [_frame _loadURL:[NSURL _web_URLWithString:URL] intoChild:newFrame];
+    [_frame _loadURL:URL intoChild:newFrame];
 
     return [newFrame _bridge];
 }
@@ -511,9 +511,9 @@
     return true;
 }
 
-- (NSString *)userAgentForURL:(NSString *)URL
+- (NSString *)userAgentForURL:(NSURL *)URL
 {
-    return [[_frame webView] userAgentForURL:[NSURL _web_URLWithString:URL]];
+    return [[_frame webView] userAgentForURL:URL];
 }
 
 - (NSView *)nextKeyViewOutsideWebFrameViews
@@ -565,9 +565,11 @@
     [view setNeedsDisplay:YES];
 }
 
-- (NSString *)requestedURL
+// OK to be an NSString rather than an NSURL.
+// This URL is only used for coloring visited links.
+- (NSString *)requestedURLString
 {
-    return [[[[self dataSource] request] URL] absoluteString];
+    return [[[[self dataSource] request] URL] _web_absoluteString];
 }
 
 - (NSString *)incomingReferrer
@@ -598,10 +600,10 @@
     return [[pluginPackage viewFactory] pluginViewWithArguments:arguments];
 }
 
-- (NSView *)viewForPluginWithURLString:(NSString *)URLString
-                            attributes:(NSArray *)attributesArray
-                         baseURLString:(NSString *)baseURLString
-                              MIMEType:(NSString *)MIMEType
+- (NSView *)viewForPluginWithURL:(NSURL *)URL
+                      attributes:(NSArray *)attributesArray
+                         baseURL:(NSURL *)baseURL
+                        MIMEType:(NSString *)MIMEType;
 {
     NSRange r1, r2, r3;
     uint i;
@@ -627,8 +629,6 @@
         }
     }
 
-    NSURL *URL = URLString ? [NSURL _web_URLWithString:URLString] : nil;
-    NSURL *baseURL = baseURLString ? [NSURL _web_URLWithString:baseURLString] : nil;
     WebBasePluginPackage *pluginPackage = nil;
     NSView *view = nil;
     int errorCode = 0;
@@ -672,7 +672,7 @@
 
     if (errorCode) {
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-                                                  contentURLString:URLString
+                                                  contentURLString:[URL _web_absoluteString]
                                                pluginPageURLString:[attributes objectForKey:@"pluginspage"]
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];
@@ -691,9 +691,8 @@
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame
                             attributes:(NSDictionary *)attributes
-                         baseURLString:(NSString *)baseURLString
+                               baseURL:(NSURL *)baseURL;
 {
-    NSURL *baseURL = baseURLString ? [NSURL _web_URLWithString:baseURLString] : nil;
     NSString *MIMEType = @"application/x-java-applet";
     WebBasePluginPackage *pluginPackage;
     NSView *view = nil;

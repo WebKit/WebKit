@@ -1,5 +1,28 @@
 2003-07-17  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart): Now uses NSURL instead of NSString
+        (KWQKHTMLPart::redirectionTimerStartedOrStopped): Ditto
+        (KWQKHTMLPart::userAgent): Ditto
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::setIconURL): Ditto
+        (KHTMLPartBrowserExtension::setTypedIconURL): Ditto
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::showApplet): Ditto
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest): Ditto
+        (KWQCheckCacheObjectStatus): Ditto
+        * kwq/WebCoreBridge.h: Changed quite a number of methods to use NSURL 
+	instead of NSString
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge didNotOpenURL:]): Now uses NSURL instead of NSString
+        (-[WebCoreBridge scrollToAnchorWithURL:]): Ditto
+        (-[WebCoreBridge URL]): Ditto
+
+2003-07-17  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         * kwq/KWQKHTMLPart.h: _submittedFormURL is now a KURL, not a QString

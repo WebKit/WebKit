@@ -887,7 +887,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         int i, count = [responses count];
         for (i = 0; i < count; i++){
             response = [responses objectAtIndex: i];
-            [_private->bridge objectLoadedFromCacheWithURL: [[response URL] absoluteString]
+            [_private->bridge objectLoadedFromCacheWithURL:[response URL]
                     response: response
                     size: [response expectedContentLength]];
         }
@@ -1598,7 +1598,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _addBackForwardItemClippedAtTarget:NO];
     }
     
-    [_private->bridge scrollToAnchorWithURL:[URL absoluteString]];
+    [_private->bridge scrollToAnchorWithURL:URL];
     
     if (!isRedirect) {
         // This will clear previousItem from the rest of the frame tree tree that didn't
@@ -1698,7 +1698,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!isFormSubmission
         && loadType != WebFrameLoadTypeReload
         && loadType != WebFrameLoadTypeSame
-        && ![self _shouldReloadForCurrent:URL andDestination:[NSURL _web_URLWithString:[_private->bridge URL]]]) {
+        && ![self _shouldReloadForCurrent:URL andDestination:[_private->bridge URL]]) {
         
         // Just do anchor navigation within the existing content.
         

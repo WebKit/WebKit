@@ -145,10 +145,10 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
-    [_part->bridge() setIconURL:url.url().getNSString()];
+    [_part->bridge() setIconURL:url.getNSURL()];
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
-    [_part->bridge() setIconURL:url.url().getNSString() withType:type.getNSString()];
+    [_part->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
 }

@@ -119,7 +119,7 @@ enum FrameBorderStyle {
 - (void)addData:(NSData *)data;
 - (void)closeURL;
 
-- (void)didNotOpenURL:(NSString *)URL;
+- (void)didNotOpenURL:(NSURL *)URL;
 
 - (void)saveDocumentState;
 - (void)restoreDocumentState;
@@ -129,14 +129,14 @@ enum FrameBorderStyle {
 
 - (void)end;
 
-- (NSString *)URL;
+- (NSURL *)URL;
 - (NSString *)referrer;
 
 - (void)installInFrame:(NSView *)view;
 - (void)removeFromFrame;
 
 - (void)scrollToAnchor:(NSString *)anchor;
-- (void)scrollToAnchorWithURL:(NSString *)URL;
+- (void)scrollToAnchorWithURL:(NSURL *)URL;
 
 - (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
 
@@ -240,15 +240,15 @@ enum FrameBorderStyle {
 - (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
 - (void)showWindow;
 
-- (NSString *)userAgentForURL:(NSString *)URL;
+- (NSString *)userAgentForURL:(NSURL *)URL;
 
 - (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;
 
-- (void)setIconURL:(NSString *)URL;
-- (void)setIconURL:(NSString *)URL withType:(NSString *)string;
+- (void)setIconURL:(NSURL *)URL;
+- (void)setIconURL:(NSURL *)URL withType:(NSString *)string;
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSString *)URL
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
     renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
@@ -276,11 +276,11 @@ enum FrameBorderStyle {
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSString *)URL;
-- (void)objectLoadedFromCacheWithURL:(NSString *)URL response:(id)response size:(unsigned)bytes;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
+- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(id)response size:(unsigned)bytes;
 - (BOOL)isReloading;
 
-- (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
+- (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
 - (void)reportClientRedirectCancelled;
 
 - (void)focusWindow;
@@ -297,16 +297,18 @@ enum FrameBorderStyle {
 - (void)setNeedsReapplyStyles;
 - (void)setNeedsLayout;
 
-- (NSString *)requestedURL;
+// OK to be an NSString rather than an NSURL.
+// This URL is only used for coloring visited links.
+- (NSString *)requestedURLString;
 - (NSString *)incomingReferrer;
 
-- (NSView *)viewForPluginWithURLString:(NSString *)URLString
-                            attributes:(NSArray *)attributesArray
-                         baseURLString:(NSString *)baseURLString
-                              MIMEType:(NSString *)MIMEType;
+- (NSView *)viewForPluginWithURL:(NSURL *)URL
+                      attributes:(NSArray *)attributesArray
+                         baseURL:(NSURL *)baseURL
+                        MIMEType:(NSString *)MIMEType;
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame
                             attributes:(NSDictionary *)attributes
-                         baseURLString:(NSString *)baseURLString;
+                               baseURL:(NSURL *)baseURL;
 
 - (BOOL)saveDocumentToPageCache:(id)documentInfo;
 

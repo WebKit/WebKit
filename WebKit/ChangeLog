@@ -1,5 +1,26 @@
 2003-07-17  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:]): Now uses NSURL instead of NSString
+        (-[WebBridge objectLoadedFromCacheWithURL:response:size:]): Ditto
+        (-[WebBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+	Ditto
+        (-[WebBridge setIconURL:]): Ditto
+        (-[WebBridge setIconURL:withType:]): Ditto
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]): Ditto
+        (-[WebBridge userAgentForURL:]): Ditto
+        (-[WebBridge requestedURL]): Now returns string using _web_absoluteString
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _receivedError:complete:]): Now uses NSURL instead of NSString
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _opened]): Ditto
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]): Ditto
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]): Ditto
+
+2003-07-17  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         * Misc.subproj/WebNSURLExtras.m:

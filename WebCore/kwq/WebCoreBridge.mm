@@ -214,9 +214,9 @@ static bool initializedObjectCacheSize = FALSE;
     _part->closeURL();
 }
 
-- (void)didNotOpenURL:(NSString *)URL
+- (void)didNotOpenURL:(NSURL *)URL
 {
-    _part->didNotOpenURL(QString::fromNSString(URL));
+    _part->didNotOpenURL(KURL(URL).url());
 }
 
 - (void)saveDocumentState
@@ -251,9 +251,9 @@ static bool initializedObjectCacheSize = FALSE;
     }
 }
 
-- (void)scrollToAnchorWithURL:(NSString *)URL
+- (void)scrollToAnchorWithURL:(NSURL *)URL
 {
-    _part->scrollToAnchor([URL cString]);
+    _part->scrollToAnchor(KURL(URL).url().latin1());
 }
 
 - (BOOL)saveDocumentToPageCache
@@ -896,9 +896,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return _part->name().getNSString();
 }
 
-- (NSString *)URL
+- (NSURL *)URL
 {
-    return _part->url().url().getNSString();
+    return _part->url().getNSURL();
 }
 
 - (NSString *)referrer
