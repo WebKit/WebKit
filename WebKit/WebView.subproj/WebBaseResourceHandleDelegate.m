@@ -210,7 +210,7 @@
     [self _releaseResources];
 }
 
-- (void)_cancelWithError:(WebError *)error
+- (void)cancelWithError:(WebError *)error
 {
     ASSERT(!reachedTerminalState);
 
@@ -219,7 +219,11 @@
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     if (error) {
-        [resourceLoadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+        if ([self isDownload]) {
+            [downloadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+        } else {
+            [resourceLoadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+        }
     }
 
     [self _releaseResources];
@@ -227,24 +231,30 @@
 
 - (void)cancel
 {
-    [self _cancelWithError:[self isDownload] ? nil : [self cancelledError]];
+    [self cancelWithError:[self cancelledError]];
 }
 
 - (void)cancelQuietly
 {
-    [self _cancelWithError:nil];
+    [self cancelWithError:nil];
 }
 
 - (WebError *)cancelledError
 {
-    return [WebError errorWithCode:WebErrorCodeCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]];
+    return [WebError errorWithCode:WebErrorCodeCancelled
+                          inDomain:WebErrorDomainWebFoundation
+                        failingURL:[[request URL] absoluteString]];
 }
 
 - (void)notifyDelegatesOfInterruptionByPolicyChange
 {
-    WebError *error = [WebError errorWithCode:WebErrorResourceLoadInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
-    [[self resourceLoadDelegate] resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+    WebError *error = [WebError errorWithCode:WebErrorResourceLoadInterruptedByPolicyChange
+                                     inDomain:WebErrorDomainWebKit
+                                   failingURL:nil];
+    
+    [[self resourceLoadDelegate] resource:identifier
+                  didFailLoadingWithError:error
+                           fromDataSource:dataSource];
 }
 
 @end

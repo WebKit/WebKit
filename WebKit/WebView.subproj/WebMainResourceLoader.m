@@ -65,9 +65,14 @@
 }
 
 - (void)receivedError:(WebError *)error
-{    
-    if (![dataSource isDownloading]) {
-        [[dataSource controller] _mainReceivedError:error fromDataSource:dataSource];
+{
+    if (downloadHandler) {
+        [downloadHandler cancel];
+        [downloadHandler release];
+        downloadHandler = nil;
+    } else {
+        [[dataSource controller] _mainReceivedError:error
+                                     fromDataSource:dataSource];
     }
 }
 
@@ -77,14 +82,8 @@
     
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
-    
-    [self receivedError:[self cancelledError]];
 
-    if (downloadHandler) {
-        [downloadHandler cancel];
-        [downloadHandler release];
-        downloadHandler = nil;
-    }
+    [self receivedError:[self cancelledError]];
         
     [super cancel];
 
@@ -233,8 +232,8 @@
 {
     WebPolicyAction contentPolicy = 
 	[[[dataSource controller] policyDelegate] contentPolicyForMIMEType:[r contentType]
-						  andRequest:[dataSource request]
-						  inFrame:[dataSource webFrame]];
+                                                                andRequest:[dataSource request]
+                                                                   inFrame:[dataSource webFrame]];
     [self performSelector:selector withObject:(id)contentPolicy withObject:r];
 }
 
@@ -266,14 +265,11 @@
     ASSERT([data length] != 0);
 
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
+
+    WebError *downloadError= nil;
     
     if (downloadHandler) {
-        WebError *downloadError = [downloadHandler receivedData:data];
-        if (downloadError) {
-            [self receivedError:downloadError];
-            [self cancel];
-            return;
-        }
+        downloadError = [downloadHandler receivedData:data];
     } else {
         [resourceData appendData:data];
         [dataSource _receivedData:data];
@@ -283,8 +279,12 @@
     }
     
     [super handle:h didReceiveData:data];
-    
     _bytesReceived += [data length];
+    
+    if(downloadError){
+        // Cancel download after calling didReceiveData to preserve ordering of calls.
+        [self cancelWithError:downloadError];
+    }
 
     LOG(Download, "%d of %d", _bytesReceived, _contentLength);
 }
@@ -293,53 +293,44 @@
 {
     LOG(Loading, "URL = %@", [dataSource URL]);
         
-    // Calling receivedError will likely result in a call to release, so we must retain.
+    // Calls in this method will most likely result in a call to release, so we must retain.
     [self retain];
 
-    if (![dataSource isDownloading]) {
-	// Don't retain data for downloaded files
-    	[dataSource _setResourceData:resourceData];
-
-        [[dataSource representation] finishedLoadingWithDataSource:dataSource];
-    }
+    WebError *downloadError = nil;
     
     if (downloadHandler) {
-        WebError *downloadError = [downloadHandler finishedLoading];
-        if (downloadError)
-            [self receivedError:downloadError];
-
+        downloadError = [downloadHandler finishedLoading];
         [dataSource _setPrimaryLoadComplete:YES];
         [downloadHandler release];
         downloadHandler = nil;
-    }
-    else {
+    } else {
+        [dataSource _setResourceData:resourceData];
+        [[dataSource representation] finishedLoadingWithDataSource:dataSource];
         [dataSource _finishedLoading];
         [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
                                           fromDataSource:dataSource
                                                 complete:YES];
     }
-    
-    [super handleDidFinishLoading:h];
+
+    if(downloadError){
+        [super handle:h didFailLoadingWithError:downloadError];
+    } else {
+        [super handleDidFinishLoading:h];
+    }
 
     [self release];
 }
 
-- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)result
+- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)error
 {
-    LOG(Loading, "URL = %@, result = %@", [result failingURL], [result errorDescription]);
+    LOG(Loading, "URL = %@, error = %@", [error failingURL], [error errorDescription]);
 
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
 
-    [self receivedError:result];
-
-    if (downloadHandler) {
-        [downloadHandler cancel];
-        [downloadHandler release];
-        downloadHandler = nil;
-    }
+    [self receivedError:error];
     
-    [super handle:h didFailLoadingWithError:result];
+    [super handle:h didFailLoadingWithError:error];
 
     [self release];
 }

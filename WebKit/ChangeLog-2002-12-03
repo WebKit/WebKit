@@ -1,3 +1,32 @@
+2002-11-23  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3109835 - Download errors aren't communicated to client
+
+	Cleaned-up WebMainResourceClient and WebBaseResourceHandleDelegate a little.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase defaultIconWithSize:]): tweak
+        (-[WebIconDatabase releaseIconForSiteURL:]): don't retain site URL here 
+        (-[WebIconDatabase _setIcon:forIconURL:]): tweak
+        (-[WebIconDatabase _setIconURL:forSiteURL:]): tweak
+        (-[WebIconDatabase _releaseIconForIconURLString:]): retain site URL here 
+        (-[WebIconDatabase _releaseFutureIconForSiteURL:]): tweak
+        (-[WebIconDatabase _sendNotificationForSiteURL:]): tweak
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate cancelWithError:]): made public
+        (-[WebBaseResourceHandleDelegate cancel]): cancel downloads too, call cancelWithError
+        (-[WebBaseResourceHandleDelegate cancelQuietly]): call cancelWithError
+        (-[WebBaseResourceHandleDelegate cancelledError]): tweak
+        (-[WebBaseResourceHandleDelegate notifyDelegatesOfInterruptionByPolicyChange]): tweak
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]): stop downloadHandler if downloading, else notify controller
+        (-[WebMainResourceClient cancel]): call receivedError
+        (-[WebMainResourceClient checkContentPolicyForResponse:andCallSelector:]): tweak
+        (-[WebMainResourceClient handle:didReceiveData:]): stop load for download errors, report error
+        (-[WebMainResourceClient handleDidFinishLoading:]): call didFailLoadingWithError is download error
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]): call receivedError
+
 2002-11-22  Darin Adler  <darin@apple.com>
 
         * Misc.subproj/WebCoreStatistics.h:

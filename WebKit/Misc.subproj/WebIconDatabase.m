@@ -139,7 +139,8 @@ NSSize WebIconLargeSize = {128, 128};
         NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
         if (path) {
             NSImage *icon = [[NSImage alloc] initByReferencingFile:path];
-            _private->defaultIcons = [[NSMutableDictionary dictionaryWithObject:icon forKey:[NSValue valueWithSize:[icon size]]] retain];
+            _private->defaultIcons = [[NSMutableDictionary dictionaryWithObject:icon
+                                            forKey:[NSValue valueWithSize:[icon size]]] retain];
             [icon release];
         }
     }
@@ -165,15 +166,12 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(siteURL);
     
     NSString *iconURLString = [_private->siteURLToIconURL objectForKey:[siteURL absoluteString]];
-    [iconURLString retain];
     
     if(iconURLString){
         [self _releaseIconForIconURLString:iconURLString];
     }else{
         [self _releaseFutureIconForSiteURL:siteURL];        
     }
-
-    [iconURLString release];
 }
 
 - (void)delayDatabaseCleanup
@@ -398,7 +396,6 @@ NSSize WebIconLargeSize = {128, 128};
     }
 
     NSString *iconURLString = [iconURL absoluteString];
-    [_private->iconURLToIcons removeObjectForKey:iconURLString];
     [_private->iconURLToIcons setObject:icons forKey:iconURLString];
 
     [self _retainIconForIconURLString:iconURLString];
@@ -418,7 +415,7 @@ NSSize WebIconLargeSize = {128, 128};
     NSString *iconURLString = [iconURL absoluteString];
 
     if([[_private->siteURLToIconURL objectForKey:siteURLString] isEqualToString:iconURLString]){
-        // Don't do any work if the iconURL is already bound to site URL
+        // Don't do any work if the iconURL is already bound to the site URL
         return;
     }
     
@@ -496,9 +493,11 @@ NSSize WebIconLargeSize = {128, 128};
         [_private->iconURLToRetainCount removeObjectForKey:iconURLString];
 
         // Remove the icon's associated site URLs
+        [iconURLString retain];
         NSSet *siteURLStrings = [_private->iconURLToSiteURLs objectForKey:iconURLString];
         [_private->siteURLToIconURL removeObjectsForKeys:[siteURLStrings allObjects]];
         [_private->iconURLToSiteURLs removeObjectForKey:iconURLString];
+        [iconURLString release];
     }
 }
 
@@ -531,6 +530,7 @@ NSSize WebIconLargeSize = {128, 128};
     if(!retainCount){
         [NSException raise:NSGenericException
                     format:@"Releasing a future icon that was not previously retained."];
+        return;
     }
 
     int newRetainCount = [retainCount intValue] - 1;
@@ -575,7 +575,8 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(siteURL);
     
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:siteURL forKey:WebIconNotificationUserInfoSiteURLKey];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:siteURL
+                                                         forKey:WebIconNotificationUserInfoSiteURLKey];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidAddIconNotification
                                                         object:self
                                                       userInfo:userInfo];
