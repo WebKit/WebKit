@@ -1,3 +1,27 @@
+2002-12-18  Trey Matteson  <trey@apple.com>
+
+	3105755 - can't log in to amex
+
+	The problem was on c/r khtml would not pick a submit button to add to the
+	form state that is sent.  We now "activate" the first submit button that meets the
+	criteria for being a "successful" form element, if no button was already
+	activated by being clicked on.
+
+        Reviewed by Darin.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::submit):  Pick a submit button to use, if none was already
+	chosen by virtue of being clicked.
+        (HTMLButtonElementImpl::isSuccessfulSubmitButton):  New getter to support
+	submit button selection.
+        (HTMLButtonElementImpl::isActivatedSubmit):  New getter on existing prop.
+        (HTMLButtonElementImpl::setActivatedSubmit):  New setter on existing prop.
+        (HTMLInputElementImpl::isSuccessfulSubmitButton):  New getter to support
+	submit button selection.
+        (HTMLInputElementImpl::isActivatedSubmit):  New getter on existing prop.
+        (HTMLInputElementImpl::setActivatedSubmit):  New setter on existing prop.
+        * khtml/html/html_formimpl.h:  Add new methods to common superclass.
+
 2002-12-17  Don Melton  <gramps@apple.com>
 
         Reviewed by Joyce Chow.
