@@ -64,16 +64,32 @@ QPixmap::QPixmap(const QByteArray&bytes)
      * Here we're using private API to get around the problem 
      * of image bytes being double freed.
      */
-    //NSData *nsdata = [[[NSData alloc] initWithBytesNoCopy: bytes.data() length: bytes.size()] autorelease];
-    NSData *nsdata = [[[NSData alloc] initWithBytes: bytes.data() length: bytes.size() copy:NO freeWhenDone:NO bytesAreVM:NO] autorelease];
+    NSData *nsdata = [[NSData alloc] initWithBytes: bytes.data() length: bytes.size() copy:NO freeWhenDone:NO bytesAreVM:NO];
     nsimage = [[NSImage alloc] initWithData: nsdata];
+    // FIXME: Workaround for Radar 2890624 (Double free of image data in QPixmap)
+    // This else if code block should be removed when we pick up changes from AppKit
+    // image code that are on HEAD now, but are not in Jaguar <= 6B63
+    // When we pick up the change from AppKit, uncomment the next line and release the data here
+    //[nsdata release];
     if (nsimage == nil){
         KWQDEBUG("unable to create image\n");
-    } else {
-        KWQDEBUG("image created\n");
+        // FIXME: delete next line when Radar 2890624
+        [nsdata release];
+    } 
+    else if ([[nsimage representations] count] == 0) {
+        KWQDEBUG("unable to create image [can't decode bytes]\n");
+        // leak the ns image pointer
+        // note that the data is freed erroneously by AppKit
+        // we're not leaking that, just the nsimage pointer
+        nsimage = nil;
     }
-    [nsimage setFlipped: YES];
-    [nsimage setScalesWhenResized: YES];
+    else {
+        KWQDEBUG("image created\n");
+        // FIXME: delete next line when Radar 2890624
+        [nsdata release];
+        [nsimage setFlipped: YES];
+        [nsimage setScalesWhenResized: YES];
+    }
 }
 
 

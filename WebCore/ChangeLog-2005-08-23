@@ -1,3 +1,11 @@
+2002-03-29  Kenneth Kocienda  <kocienda@apple.com>
+
+        Workaround for Radar 2890624 (Double free of image data in QPixmap)
+        This hack is necessary for the app to run on some Jaguar system. Otherwise
+        images that the GIF library cannot decode will cause a crash.
+        
+	* src/kwq/KWQPixmap.mm: (QPixmap::QPixmap):
+
 2002-03-28  Richard Williamson  <rjw@apple.com>
 
         Fixed basic font horkage caused by removal of KDE font matching code.  We
