@@ -16,11 +16,13 @@ typedef struct GlyphMap GlyphMap;
     ATSGlyphRef spaceGlyph;
     
     struct AttributeGroup *styleGroup;
-
+    
 @public
     NSFont *font;
     GlyphMap *characterToGlyphMap;
     WidthMap *glyphToWidthMap;
+    float fixedWidth;
+    BOOL isFixedPitch;
 }
 
 + (BOOL)shouldBufferTextDrawing;
