@@ -1,3 +1,19 @@
+2002-11-06  Richard Williamson  <rjw@apple.com>
+
+        More work on rendering scripts. Now most complex scripts render correctly.
+        Working new features include:
+        bidi, diacriticals, cursive forms, and arabic ligatures.
+        Selection of text rendered in these scripts, is however, not working. 
+        Also, line height is incorrect when renderering combined below glyphs.
+        ajami is, sadly, horrendously broken.
+
+        * Misc.subproj/WebUnicode.m:
+        (glyphVariantLogical):
+        (shapedString):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:rightToLeft:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+
 2002-11-06  John Sullivan  <sullivan@apple.com>
 
         * Bookmarks.subproj/WebBookmark.m:

@@ -43,12 +43,12 @@ const QChar QChar::null;
 
 bool QChar::isSpace() const
 {
-    // Without this first quick case, this function was showing up in profiles.
+    // Use isspace() for basic latin1.  This will include newlines, which
+    // aren't included in unicode DirWS.
     if (c <= 0x7F) {
         return isspace(c);
     }
-    static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline);
-    return CFCharacterSetIsCharacterMember(set, c);
+    return direction() == DirWS;
 }
 
 bool QChar::isDigit() const

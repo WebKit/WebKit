@@ -477,7 +477,6 @@ static int glyphVariantLogical( UniChar *str, int stringLength, int pos)
 {
     // ignores L1 - L3, ligatures are job of the codec
     int joining = _unicodeJoining(str[pos]);
-    //qDebug("checking %x, joining=%d", str[pos].unicode(), joining);
     switch ( joining ) {
 	case JoiningOther:
 	case JoiningCausing:
@@ -519,6 +518,7 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	num--;
 	len++;
     }
+
     ch = uc + from;
     while ( len > 0 && _unicodeCombiningClass(*ch) != 0 ) {
 	ch++;
@@ -539,6 +539,7 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
     UniChar *data = shapeBuffer;
     if ( dir == RTL )
 	ch += len - 1;
+
     int i;
     for (i = 0; i < len; i++ ) {
 	UniChar r = WK_ROW(*ch);
@@ -565,7 +566,7 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	    if ( dir == RTL )
 		pos = from + len - 1 - i;
 	    int shape = glyphVariantLogical( uc, stringLength, pos );
-	    //qDebug("mapping U+%x to shape %d glyph=0x%x", ch->unicode(), shape, arabicUnicodeMapping[ch->cell()][shape]);
+            //printf("mapping U+%04x to shape %d glyph=0x%04x\n", *ch, shape, getShape( c, shape ));
 	    // take care of lam-alef ligatures (lam right of alef)
 	    ushort map;
 	    switch ( c ) {
@@ -577,7 +578,7 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 			    case 0x23:
 			    case 0x25:
 			    case 0x27:
-				//qDebug(" lam of lam-alef ligature");
+				//printf("lam of lam-alef ligature");
 				map = arabicUnicodeLamAlefMapping[WK_CELL(*pch) - 0x22][shape];
 				goto next;
 			    default:

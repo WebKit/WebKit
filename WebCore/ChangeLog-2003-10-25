@@ -1,3 +1,12 @@
+2002-11-06  Richard Williamson  <rjw@apple.com>
+
+        Use our notion of unicode whitespace from lookup tables
+        and isspace for latin1.  This is more correct than CF.
+        Fixed issues Dave ran into with whitespace calculations.
+        
+        * kwq/KWQChar.mm:
+        (QChar::isSpace):
+
 2002-11-05  Darin Adler  <darin@apple.com>
 
 	- fixed 3092722 -- assertion failed

@@ -447,8 +447,8 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     if (length == 0)
         return;
                 
-    // FIXME:  the character to glyph translation must result in less than
-    // length glyphs.  This isn't always true.
+    // WARNING:  the character to glyph translation must result in less than
+    // length glyphs.  As of now this is always true.
     if (length > LOCAL_BUFFER_SIZE) {
         advances = (CGSize *)calloc(length, sizeof(CGSize));
         widthBuffer = (float *)calloc(length, sizeof(float));
@@ -460,22 +460,6 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         glyphBuffer = localGlyphBuffer;
         fontBuffer = localFontBuffer;
     }
-
-#ifdef CURSIVE_SHAPES
-    if (rtl){
-        UniChar *shaped;
-        int lengthOut;
-        shaped = shapedString ((UniChar *)&characters[from], length,
-                               (from == -1 ? 0 : from),
-                               (to == -1 ? (int)length : to),
-                               1, &lengthOut);
-        printf ("%d input, %d output\n", length, lengthOut);
-        for (i = 0; i < (int)length; i++){
-            printf ("0x%04x shaped to 0x%04x\n", characters[i], shaped[i]);
-        }
-        characters = shaped;
-    }
-#endif
 
     [self _floatWidthForCharacters:characters 
         stringLength:length 
@@ -516,7 +500,6 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         int lastFrom = from;
         int pos = from;
 
-#ifndef CURSIVE_SHAPES
         if (rtl && numGlyphs > 1){
             int i;
             int end = numGlyphs;
@@ -543,20 +526,27 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
                 fontBuffer[end] = fswap1;
             }
         }
-#endif        
+
         currentFont = fontBuffer[pos];
         nextX = startX;
-        while (pos < to){
-            if ((fontBuffer[pos] != 0 && fontBuffer[pos] != currentFont)){
-                _drawGlyphs(currentFont, textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, point.y, pos - lastFrom);
-                lastFrom = pos;
-                currentFont = fontBuffer[pos];
+        int nextGlyph = pos;
+        // FIXME:  Don't run over the end of the glyph buffer when the
+        // number of glyphs is less than the number of characters.  This
+        // happens when a ligature is included in the glyph run.  The code
+        // below will just stop drawing glyphs at the end of the glyph array
+        // as a temporary hack.  The appropriate fix need to map character
+        // ranges to glyph ranges.
+        while (nextGlyph < to && nextGlyph < numGlyphs){
+            if ((fontBuffer[nextGlyph] != 0 && fontBuffer[nextGlyph] != currentFont)){
+                _drawGlyphs(currentFont, textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, point.y, nextGlyph - lastFrom);
+                lastFrom = nextGlyph;
+                currentFont = fontBuffer[nextGlyph];
                 startX = nextX;
             }
-            nextX += advances[pos].width;
-            pos++;
+            nextX += advances[nextGlyph].width;
+            nextGlyph++;
         }
-        _drawGlyphs(currentFont, textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, point.y, pos - lastFrom);
+        _drawGlyphs(currentFont, textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, point.y, nextGlyph - lastFrom);
     }
 
     if (advances != localAdvanceBuffer) {
@@ -673,7 +663,36 @@ static const char *joiningNames[] = {
             *_numGlyphs = 0;
         return 0;
     }
-        
+
+#define SHAPE_STRINGS
+#ifdef SHAPE_STRINGS
+    UniChar munged[stringLength];
+    {
+        UniChar *shaped;
+        int lengthOut;
+        shaped = shapedString ((UniChar *)characters, stringLength,
+                               pos,
+                               len,
+                               0, &lengthOut);
+        if (shaped){
+            //printf ("%d input, %d output\n", len, lengthOut);
+            //for (i = 0; i < (int)len; i++){
+            //    printf ("0x%04x shaped to 0x%04x\n", characters[i], shaped[i]);
+            //}
+            // FIXME:  Hack-o-rific, copy shaped buffer into munged
+            // character buffer.
+            for (i = 0; i < (unsigned int)pos; i++){
+                munged[i] = characters[i];
+            }
+            for (i = pos; i < (unsigned int)pos+lengthOut; i++){
+                munged[i] = shaped[i-pos];
+            }
+            characters = munged;
+            len = lengthOut;
+        }
+    }
+#endif
+    
     // If the padding is non-zero, count the number of spaces in the string
     // and divide that by the padding for per space addition.
     if (padding > 0){
@@ -777,8 +796,9 @@ static const char *joiningNames[] = {
                 fontBuffer[numGlyphs] = font;
             if (glyphBuffer)
                 glyphBuffer[numGlyphs] = glyphID;
-            if (widthBuffer)
+            if (widthBuffer){
                 widthBuffer[numGlyphs] = lastWidth;
+            }
             numGlyphs++;
         }
 #ifdef DEBUG_COMBINING        
