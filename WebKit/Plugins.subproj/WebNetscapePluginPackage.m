@@ -8,6 +8,8 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 
+#import <JavaScriptCore/npruntime_impl.h>
+
 #import <CoreFoundation/CFBundlePriv.h>
 
 #import <Foundation/NSPrivateDecls.h>
@@ -446,22 +448,22 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.getJavaEnv = (NPN_GetJavaEnvProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaEnv);
         browserFuncs.getJavaPeer = (NPN_GetJavaPeerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaPeer);
 
-        browserFuncs.releasevariantvalue = (NPN_ReleaseVariantValueProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ReleaseVariantValue);
-        browserFuncs.getstringidentifier = (NPN_GetStringIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetStringIdentifier);
-        browserFuncs.getstringidentifiers = (NPN_GetStringIdentifiersProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetStringIdentifiers);
-        browserFuncs.getintidentifier = (NPN_GetIntIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetIntIdentifier);
-        browserFuncs.identifierisstring = (NPN_IdentifierIsStringProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_IdentifierIsString);
-        browserFuncs.utf8fromidentifier = (NPN_UTF8FromIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_UTF8FromIdentifier);
-        browserFuncs.createobject = (NPN_CreateObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_CreateObject);
-        browserFuncs.retainobject = (NPN_RetainObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_RetainObject);
-        browserFuncs.releaseobject = (NPN_ReleaseObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ReleaseObject);
-        browserFuncs.invoke = (NPN_InvokeProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_Invoke);
-        browserFuncs.invokeDefault = (NPN_InvokeDefaultProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_InvokeDefault);
-        browserFuncs.evaluate = (NPN_EvaluateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_Evaluate);
-        browserFuncs.getproperty = (NPN_GetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetProperty);
-        browserFuncs.setproperty = (NPN_SetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_SetProperty);
-        browserFuncs.removeproperty = (NPN_RemovePropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_RemoveProperty);
-        browserFuncs.setexception = (NPN_SetExceptionProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_SetException);
+        browserFuncs.releasevariantvalue = (NPN_ReleaseVariantValueProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_ReleaseVariantValue);
+        browserFuncs.getstringidentifier = (NPN_GetStringIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifier);
+        browserFuncs.getstringidentifiers = (NPN_GetStringIdentifiersProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifiers);
+        browserFuncs.getintidentifier = (NPN_GetIntIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetIntIdentifier);
+        browserFuncs.identifierisstring = (NPN_IdentifierIsStringProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_IdentifierIsString);
+        browserFuncs.utf8fromidentifier = (NPN_UTF8FromIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_UTF8FromIdentifier);
+        browserFuncs.createobject = (NPN_CreateObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_CreateObject);
+        browserFuncs.retainobject = (NPN_RetainObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_RetainObject);
+        browserFuncs.releaseobject = (NPN_ReleaseObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_ReleaseObject);
+        browserFuncs.invoke = (NPN_InvokeProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Invoke);
+        browserFuncs.invokeDefault = (NPN_InvokeDefaultProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_InvokeDefault);
+        browserFuncs.evaluate = (NPN_EvaluateProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Evaluate);
+        browserFuncs.getproperty = (NPN_GetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetProperty);
+        browserFuncs.setproperty = (NPN_SetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_SetProperty);
+        browserFuncs.removeproperty = (NPN_RemovePropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_RemoveProperty);
+        browserFuncs.setexception = (NPN_SetExceptionProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_SetException);
 
 #if !LOG_DISABLED
         CFAbsoluteTime mainStart = CFAbsoluteTimeGetCurrent();
@@ -541,22 +543,22 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.getJavaEnv = NPN_GetJavaEnv;
         browserFuncs.getJavaPeer = NPN_GetJavaPeer;
 
-        browserFuncs.releasevariantvalue = NPN_ReleaseVariantValue;
-        browserFuncs.getstringidentifier = NPN_GetStringIdentifier;
-        browserFuncs.getstringidentifiers = NPN_GetStringIdentifiers;
-        browserFuncs.getintidentifier = NPN_GetIntIdentifier;
-        browserFuncs.identifierisstring = NPN_IdentifierIsString;
-        browserFuncs.utf8fromidentifier = NPN_UTF8FromIdentifier;
-        browserFuncs.createobject = NPN_CreateObject;
-        browserFuncs.retainobject = NPN_RetainObject;
-        browserFuncs.releaseobject = NPN_ReleaseObject;
-        browserFuncs.invoke = NPN_Invoke;
-        browserFuncs.invokeDefault = NPN_InvokeDefault;
-        browserFuncs.evaluate = NPN_Evaluate;
-        browserFuncs.getproperty = NPN_GetProperty;
-        browserFuncs.setproperty = NPN_SetProperty;
-        browserFuncs.removeproperty = NPN_RemoveProperty;
-        browserFuncs.setexception = NPN_SetException;
+        browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
+        browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;
+        browserFuncs.getstringidentifiers = _NPN_GetStringIdentifiers;
+        browserFuncs.getintidentifier = _NPN_GetIntIdentifier;
+        browserFuncs.identifierisstring = _NPN_IdentifierIsString;
+        browserFuncs.utf8fromidentifier = _NPN_UTF8FromIdentifier;
+        browserFuncs.createobject = _NPN_CreateObject;
+        browserFuncs.retainobject = _NPN_RetainObject;
+        browserFuncs.releaseobject = _NPN_ReleaseObject;
+        browserFuncs.invoke = _NPN_Invoke;
+        browserFuncs.invokeDefault = _NPN_InvokeDefault;
+        browserFuncs.evaluate = _NPN_Evaluate;
+        browserFuncs.getproperty = _NPN_GetProperty;
+        browserFuncs.setproperty = _NPN_SetProperty;
+        browserFuncs.removeproperty = _NPN_RemoveProperty;
+        browserFuncs.setexception = _NPN_SetException;
 
 #if !LOG_DISABLED
         CFAbsoluteTime initializeStart = CFAbsoluteTimeGetCurrent();

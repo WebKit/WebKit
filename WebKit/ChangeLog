@@ -1,3 +1,15 @@
+2004-12-08  Chris Blumenberg  <cblu@apple.com>
+
+	Removed NPN wrappers since these no longer need to be defined to make the QT plug-in work
+	since 3828925 has been fixed.
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]): use under-bar symbols since non-under-bar wrappers have been removed
+        * Plugins.subproj/npapi.m: removed NPN wrappers
+        * WebKit.exp: removed symbols
+
 2004-12-08  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
