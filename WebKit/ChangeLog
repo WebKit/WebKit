@@ -1,5 +1,12 @@
 2004-09-13  Richard Williamson   <rjw@apple.com>
 
+        D'oh.  How many times can I screw up a simple fix!
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+
+2004-09-13  Richard Williamson   <rjw@apple.com>
+
         Fixed snafu from 3782533 checkin.
         
         Reviewed by John.

@@ -293,7 +293,7 @@ static BOOL alwaysUseATSU = NO;
         // This change fixes the many crashes reported in 3782533.  Most likely, the
         // problem is encountered when people upgrade from OS 9, or have OS 9
         // fonts installed on OS X.
-        NSLog (@"%s:%d  Unable to use deprecated font %@ %f, using system font instead", __FILE__, __LINE__, [f displayName], [font pointSize]);
+        NSLog (@"%s:%d  Unable to use deprecated font %@ %f, using system font instead", __FILE__, __LINE__, [f displayName], [f pointSize]);
         f = [NSFont systemFontOfSize:[f pointSize]];
     }
         
