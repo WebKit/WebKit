@@ -575,20 +575,16 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     
     while(!n.isNull()) {
         renderer = n.handle()->renderer();
-        if(n.nodeType() == DOM::Node::TEXT_NODE && renderer != 0) {
+        if (n.nodeType() == DOM::Node::TEXT_NODE && renderer) {
             QString text;
             QString str = n.nodeValue().string();
             khtml::RenderStyle *style = 0;
             
             font = nil;
-            if (renderer){
-                style = renderer->style();
-                if (style) {
-                    font = style->font().getNSFont();
-                }
+            style = renderer->style();
+            if (style) {
+                font = style->font().getNSFont();
             }
-            else
-                printf ("No renderer for %s\n", [text.getNSString() cString]);
             
             hasNewLine = false;            
             if(n == _startNode && n == endNode && startOffset >=0 && endOffset >= 0)

@@ -1,3 +1,7 @@
+2002-11-08  Darin Adler  <darin@apple.com>
+
+        * kwq/WebCoreBridge.mm: (attributedString): Remove some dead code.
+
 2002-11-07  Darin Adler  <darin@apple.com>
 
         * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::slotData):
