@@ -32,23 +32,3 @@ Completion::Completion(ComplType c, const Value& v, const UString &t)
     : comp(c), val(v), tar(t)
 {
 }
-
-ComplType Completion::complType() const
-{
-  return comp;
-}
-
-Value Completion::value() const
-{
-  return val;
-}
-
-UString Completion::target() const
-{
-  return tar;
-}
-
-bool Completion::isValueCompletion() const
-{
-  return val.isNull();
-}

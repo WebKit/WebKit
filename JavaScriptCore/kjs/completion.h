@@ -49,10 +49,10 @@ namespace KJS {
     Completion(ComplType c = Normal, const Value& v = Value(),
                const UString &t = UString::null);
 
-    ComplType complType() const;
-    Value value() const;
-    UString target() const;
-    bool isValueCompletion() const;
+    ComplType complType() const { return comp; }
+    Value value() const { return val; }
+    UString target() const { return tar; }
+    bool isValueCompletion() const { return !val.isNull(); }
   private:
     ComplType comp;
     Value val;

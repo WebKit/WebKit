@@ -1,5 +1,15 @@
 2002-08-19  Maciej Stachowiak  <mjs@apple.com>
 
+	Fixed the bug that made sony.com menus come out wrong and made
+	aa.com crash (Radar 3027762).
+	
+	Mode most methods inline.
+	
+        * kjs/completion.cpp:
+        * kjs/completion.h:
+
+2002-08-19  Maciej Stachowiak  <mjs@apple.com>
+
 	Maintain stack of old "arguments" property values for functions
 	implicitly on the system stack instead of explicitly in the
 	FunctionImp. This eliminates only a trivial number of GC
