@@ -900,7 +900,18 @@
 
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
 {
+    // This helps when we print as part of a larger print process.
+    // If the WebHTMLView itself is what we're printing, then we will never have to do this.
+    BOOL wasInPrintingMode = _private->printing;
+    if (!wasInPrintingMode) {
+        [self _setPrinting:YES pageWidth:0 adjustViewSize:NO];
+    }
+    
     [[self _bridge] adjustPageHeightNew:newBottom top:oldTop bottom:oldBottom limit:bottomLimit];
+
+    if (!wasInPrintingMode) {
+        [self _setPrinting:NO pageWidth:0 adjustViewSize:NO];
+    }
 }
 
 - (void)beginDocument

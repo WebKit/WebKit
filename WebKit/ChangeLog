@@ -1,3 +1,16 @@
+2003-09-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed 3412726 -- some HTML messages in Mail lose a line at page breaks when printed (multipart/alternative)
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]):
+        Go into printing mode when asked to adjust page height, if not already in it.
+        We already have code in drawRect that does this when actually printing, but it's
+        also important to lay out the same way when deciding where to break pages, otherwise
+        the difference between printer and screen fonts can lead to page breaks that split a line
+        of text across two pages, and that can lead to missing lines of text as well.
+
 2003-09-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
