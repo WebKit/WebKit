@@ -453,7 +453,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             // XXX A hack we have to put in to deal with the fact
             // that KHTML incorrectly morphs inlines with blocks
             // inside them into blocks themselves.
-            if (child->style()->display() == INLINE)
+            if (child->style()->display() == INLINE && child->marginTop())
                 posTop = negTop = 0;
                 
             // See if the top margin is quirky. We only care if this child has
@@ -516,7 +516,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 // XXX A hack we have to put in to deal with the fact
                 // that KHTML incorrectly morphs inlines with blocks
                 // inside them into blocks themselves.
-                if (child->style()->display() == INLINE)
+                if (child->style()->display() == INLINE && child->marginBottom())
                     prevPosMargin = prevNegMargin = 0;
                 
                 if (prevPosMargin-prevNegMargin)
