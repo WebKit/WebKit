@@ -436,7 +436,7 @@ static WebHTMLView *lastHitView = nil;
 
     if (clipLabelString)
 	    label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:labelFont];
-    [label _web_drawDoubledAtPoint:NSMakePoint (DRAG_LABEL_BORDER_X, imageSize.height - DRAG_LABEL_BORDER_Y_OFFSET - [labelFont ascender])
+    [label _web_drawDoubledAtPoint:NSMakePoint (DRAG_LABEL_BORDER_X, imageSize.height - DRAG_LABEL_BORDER_Y_OFFSET - [labelFont pointSize])
              withTopColor:topColor bottomColor:bottomColor font:labelFont];
     
     [dragImage unlockFocus];

@@ -11,6 +11,7 @@ typedef struct GlyphMap GlyphMap;
 typedef struct GlyphEntry GlyphEntry;
 typedef struct UnicodeGlyphMap UnicodeGlyphMap;
 typedef struct SubstituteFontWidthMap SubstituteFontWidthMap;
+typedef struct CharacterWidthIterator CharacterWidthIterator;
 
 /// Should be more than enough for normal usage.
 #define NUM_SUBSTITUTE_FONT_MAPS	10
@@ -37,12 +38,11 @@ typedef struct SubstituteFontWidthMap SubstituteFontWidthMap;
     int numSubstituteFontWidthMaps;
     int maxSubstituteFontWidthMaps;
     SubstituteFontWidthMap *substituteFontWidthMaps;
+    BOOL usingPrinterFont;
     
 @private
     ATSUStyle _ATSUSstyle;
     BOOL ATSUStyleInitialized;
-
-    BOOL usingPrinterFont;
 }
 
 + (BOOL)shouldBufferTextDrawing;

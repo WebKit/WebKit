@@ -433,10 +433,10 @@ enum CursiveShape {
 
 UniChar replacementUniChar = 0xfffd;
 
-static inline UniChar *prevChar( UniChar *str, int stringLength, int pos )
+static inline const UniChar *prevChar( const UniChar *str, int stringLength, int pos )
 {
     pos--;
-    UniChar *ch = str + pos;
+    const UniChar *ch = str + pos;
     while( pos > -1 ) {
 	if( !_unicodeIsMark(*ch) )
 	    return ch;
@@ -446,11 +446,11 @@ static inline UniChar *prevChar( UniChar *str, int stringLength, int pos )
     return &replacementUniChar;
 }
 
-static inline UniChar *nextChar( UniChar *str, int stringLength, int pos)
+static inline const UniChar *nextChar( const UniChar *str, int stringLength, int pos)
 {
     pos++;
     int len = stringLength;
-    UniChar *ch = str + pos;
+    const UniChar *ch = str + pos;
     while( pos < len ) {
 	if( !_unicodeIsMark(*ch) )
 	    return ch;
@@ -460,18 +460,18 @@ static inline UniChar *nextChar( UniChar *str, int stringLength, int pos)
     return &replacementUniChar;
 }
 
-static inline bool prevLogicalCharJoins( UniChar *str, int stringLength, int pos)
+static inline bool prevLogicalCharJoins( const UniChar *str, int stringLength, int pos)
 {
     return ( _unicodeJoining(*nextChar( str, stringLength, pos )) != JoiningOther );
 }
 
-static inline bool nextLogicalCharJoins( UniChar *str, int stringLength, int pos)
+static inline bool nextLogicalCharJoins( const UniChar *str, int stringLength, int pos)
 {
     int join = _unicodeJoining(*prevChar( str, stringLength, pos ));
     return ( join == JoiningDual || join == JoiningCausing );
 }
 
-static int glyphVariantLogical( UniChar *str, int stringLength, int pos)
+static int glyphVariantLogical( const UniChar *str, int stringLength, int pos)
 {
     int joining = _unicodeJoining(str[pos]);
     switch ( joining ) {
@@ -495,13 +495,93 @@ static int shapeBufSize = 0;
 #define LTR 0
 #define RTL 1
 
-
-UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir, int *lengthOut)
+bool hasShapeForNextCharacter (const CharacterShapeIterator *iterator)
 {
+    if (iterator->currentCharacter - iterator->run->characters >= iterator->run->to)
+        return false;
+    return true;
+}
+
+UniChar shapeForNextCharacter (CharacterShapeIterator *iterator)
+{
+    const WebCoreTextRun *run = iterator->run;
+    int stringLength = run->length;
+    UniChar shapedCharacter = 0;
+    int pos = iterator->currentCharacter - run->characters;
+    
+    if (!hasShapeForNextCharacter(iterator))
+        return 0;
+    
+    UniChar currentCharacter = *iterator->currentCharacter;
+    UniChar r = WK_ROW(currentCharacter);
+    UniChar c = WK_CELL(currentCharacter);
+    if ( r != 0x06 ) {
+        if ( r == 0x20 ) {
+            switch ( c ) {
+                case 0x0C:
+                case 0x0D:
+                    goto skip;
+                default:
+                    break;
+            }
+        }
+        if (_unicodeMirrored(currentCharacter))
+            shapedCharacter = _unicodeMirroredChar(currentCharacter);
+        else
+            shapedCharacter = currentCharacter;
+    } else {
+        int shape = glyphVariantLogical( run->characters, stringLength, pos );
+        ushort map;
+        switch ( c ) {
+            case 0x44: {
+                const UniChar *pch = nextChar( run->characters, stringLength, pos );
+                if ( WK_ROW(*pch) == 0x06 ) {
+                    switch ( WK_CELL(*pch) ) {
+                        case 0x22:
+                        case 0x23:
+                        case 0x25:
+                        case 0x27:
+                            map = arabicUnicodeLamAlefMapping[WK_CELL(*pch) - 0x22][shape];
+                            goto next;
+                        default:
+                            break;
+                    }
+                }
+                break;
+            }
+            case 0x22: 
+            case 0x23: 
+            case 0x25: 
+            case 0x27: 
+                if ( *prevChar( run->characters, stringLength, pos ) == 0x0644 ) {
+                    goto skip;
+                }
+            default:
+                break;
+        }
+        map = getShape( c, shape );
+    next:
+        shapedCharacter = map;
+    }
+    
+skip:
+    iterator->currentCharacter++;
+
+    return shapedCharacter;
+}
+
+// Assumes input characters are logically ordered.
+bool initializeCharacterShapeIterator (CharacterShapeIterator *iterator, const WebCoreTextRun *run)
+{
+    int len = run->to - run->from;
+    int from = run->from;
+    int stringLength = run->length;
+    const UniChar *uc = run->characters;
+    
     if( len < 0 ) {
 	len = stringLength - from;
     } else if( len == 0 ) {
-	return 0;
+	return false;
     }
 
     int i;
@@ -510,10 +590,60 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
             break;
     }
     if (i == from+len)
+        return false;
+    
+    int num = stringLength - from - len;
+    iterator->currentCharacter = uc + from + len;
+    while ( num > 0 && _unicodeCombiningClass(*iterator->currentCharacter) != 0 ) {
+	iterator->currentCharacter++;
+	num--;
+	len++;
+    }
+
+    iterator->currentCharacter = uc + from;
+    while ( len > 0 && _unicodeCombiningClass(*iterator->currentCharacter) != 0 ) {
+	iterator->currentCharacter++;
+	len--;
+	from++;
+    }
+    if ( len == 0 )
+        return false;
+
+    if( !shapeBuffer || len > shapeBufSize ) {
+        if( shapeBuffer )
+            free( (void *) shapeBuffer );
+        shapeBuffer = (UniChar *) malloc( len*sizeof( UniChar ) );
+        shapeBufSize = len;
+    }
+    
+    iterator->run = run;
+    
+    return true;
+}
+
+UniChar *shapedString(const WebCoreTextRun *run, int dir, int *lengthOut)
+{
+    int len = run->to - run->from;
+    int from = run->from;
+    int stringLength = run->length;
+    const UniChar *uc = run->characters;
+
+    if( len < 0 ) {
+	len = stringLength - from;
+    } else if( len == 0 ) {
+	return 0;
+    }
+
+    int i;
+    for (i = from; i < from+len; i++){
+        if (uc[i] >= 0x600 && uc[i] <= 0x700)
+            break;
+    }
+    if (i == from+len)
         return 0;
     
     int num = stringLength - from - len;
-    UniChar *ch = uc + from + len;
+    const UniChar *ch = uc + from + len;
     while ( num > 0 && _unicodeCombiningClass(*ch) != 0 ) {
 	ch++;
 	num--;
@@ -568,7 +698,7 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	    ushort map;
 	    switch ( c ) {
 		case 0x44: {
-		    UniChar *pch = nextChar( uc, stringLength, pos );
+		    const UniChar *pch = nextChar( uc, stringLength, pos );
 		    if ( WK_ROW(*pch) == 0x06 ) {
 			switch ( WK_CELL(*pch) ) {
 			    case 0x22:

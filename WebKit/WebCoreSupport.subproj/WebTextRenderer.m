@@ -93,6 +93,18 @@ struct SubstituteFontWidthMap {
     WidthMap *map;
 };
 
+struct CharacterWidthIterator
+{
+    WebTextRenderer *renderer;
+    const WebCoreTextRun *run;
+    const WebCoreTextStyle *style;
+    unsigned currentCharacter;
+    CharacterShapeIterator shapeIterator;
+    unsigned int needsShaping;
+};
+
+static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
+static float widthForNextCharacter (CharacterWidthIterator *iterator);
 
 // These somewhat cryptically named constants were 'borrowed' from
 // some example carbon code.
@@ -166,6 +178,9 @@ static CFCharacterSetRef nonBaseChars = NULL;
 
 
 @interface WebTextRenderer (WebPrivate)
+
+- (NSFont *)substituteFontForCharacters: (const unichar *)characters length: (int)numCharacters families: (NSString **)families;
+
 - (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID font:(NSFont *)font;
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c;
 - (ATSGlyphRef)extendUnicodeCharacterToGlyphMapToInclude: (UnicodeChar)c;
@@ -331,10 +346,96 @@ static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRe
     return widthFromMap (renderer, map, glyph, font);
 }
 
-static inline  WebGlyphWidth widthForCharacter (WebTextRenderer *renderer, UniChar c, NSFont **font)
+
+void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
 {
-    ATSGlyphRef glyphID = glyphForCharacter(renderer->characterToGlyphMap, c, font);
-    return widthForGlyph (renderer, glyphID, *font);
+    iterator->needsShaping = initializeCharacterShapeIterator (&iterator->shapeIterator, run);
+    iterator->renderer = renderer;
+    iterator->run = run;
+    iterator->style = style;
+    iterator->currentCharacter = run->from;
+}
+
+static float widthAndGlyphForSurrogate (WebTextRenderer *renderer, UniChar high, UniChar low, ATSGlyphRef *glyphID, NSString **families)
+{
+    UnicodeChar uc = UnicodeValueForSurrogatePair(high, low);
+    NSFont *font = renderer->font;
+
+    *glyphID = glyphForUnicodeCharacter(renderer->unicodeCharacterToGlyphMap, uc, &font);
+    if (*glyphID == nonGlyphID) {
+        *glyphID = [renderer extendUnicodeCharacterToGlyphMapToInclude: uc];
+    }
+
+    if (*glyphID == 0){
+        UniChar surrogates[2];
+        unsigned int clusterLength;
+        
+        clusterLength = 2;
+        surrogates[0] = high;
+        surrogates[1] = low;
+        NSFont *substituteFont = [renderer substituteFontForCharacters:&surrogates[0] length: clusterLength families: families];
+        if (substituteFont){
+            WebTextRenderer *substituteRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:substituteFont usingPrinterFont:renderer->usingPrinterFont];
+            *glyphID = glyphForUnicodeCharacter(substituteRenderer->unicodeCharacterToGlyphMap, uc, &font);
+            if (*glyphID == nonGlyphID)
+                *glyphID = [substituteRenderer extendUnicodeCharacterToGlyphMapToInclude: uc];
+            return widthForGlyph (substituteRenderer, *glyphID, substituteFont);
+       }
+    }
+    return widthForGlyph (renderer, *glyphID, font);
+}
+
+static float widthForNextCharacter (CharacterWidthIterator *iterator)
+{
+    WebTextRenderer *renderer = iterator->renderer;
+    const WebCoreTextRun *run = iterator->run;
+    NSFont *font = renderer->font;
+    UniChar c;
+    unsigned int offset = iterator->currentCharacter;
+
+    if (offset >= run->length)
+        // Error!  Offset specified beyond end of run.
+        return 0;
+        
+    // Determine if the string requires any shaping, i.e. Arabic.
+    if (iterator->needsShaping)
+        c = shapeForNextCharacter(&iterator->shapeIterator);
+    else
+        c = run->characters[offset];
+    iterator->currentCharacter++;
+    
+    // It's legit to sometimes get 0 from the shape iterator, return a zero width.
+    if (c == 0)
+        return 0;
+
+
+    // Get a glyph for the next characters.  Somewhat complicated by surrogate
+    // pairs.
+    ATSGlyphRef glyphID;
+
+    // Do we have a surrogate pair?  If so, determine the full Unicode (32bit)
+    // code point before glyph lookup.  We only provide a width when the offset
+    // specifies the first component of the surrogate pair.
+    if (c >= HighSurrogateRangeStart && c <= HighSurrogateRangeEnd) {
+        UniChar high = c, low;
+
+        // Make sure we have another character and it's a low surrogate.
+        if (offset+1 >= run->length || !IsLowSurrogatePair((low = run->characters[offset+1]))) {
+            // Error!  The second component of the surrogate pair is missing.
+            return 0;
+        }
+
+        return widthAndGlyphForSurrogate (renderer, high, low, &glyphID, iterator->style->families);
+    }
+    else if (c >= LowSurrogateRangeStart && c <= LowSurrogateRangeEnd) {
+        // Return 0 width for second component of the surrogate pair.
+        return 0;
+    }
+    else
+        glyphID = glyphForCharacter(renderer->characterToGlyphMap, c, &font);
+    
+    // Now that we have glyph get it's width.
+    return widthForGlyph (renderer, glyphID, font);
 }
 
 
@@ -910,7 +1011,6 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     }
 }
 
-
 - (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
 {
     if (shouldUseATSU(run))
@@ -1187,10 +1287,9 @@ static const char *joiningNames[] = {
     {
         UniChar *shaped;
         int lengthOut;
-        shaped = shapedString ((UniChar *)characters, stringLength,
-                               from,
-                               len,
-                               0, &lengthOut);
+
+        // FIXME:  Change to use the new CharacterShapeIterator internal API.
+        shaped = shapedString (run, 0, &lengthOut);        
         if (shaped){
              if (run->length < LOCAL_BUFFER_SIZE)
                  munged = &_localMunged[0];
@@ -1330,7 +1429,7 @@ static const char *joiningNames[] = {
                 
                 int j;
                 if (glyphBuffer){
-                    if (i == (unsigned int)run->from && startGlyph)
+                    if (i-1 == (unsigned int)run->from && startGlyph)
                         *startGlyph = numGlyphs;
                     for (j = 0; j < cNumGlyphs; j++){
                         glyphBuffer[numGlyphs+j] = localGlyphBuffer[j];
@@ -1429,7 +1528,7 @@ static const char *joiningNames[] = {
 #ifdef DEBUG_COMBINING        
         printf ("Character 0x%04x, joining attribute %d(%s), combining class %d, direction %d(%s)\n", c, WebCoreUnicodeJoiningFunction(c), joiningNames[WebCoreUnicodeJoiningFunction(c)], WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), directionNames[WebCoreUnicodeDirectionFunction(c)]);
 #endif
-
+        
         if (i >= (unsigned int)pos)
             totalWidth += lastWidth;       
     }
@@ -1899,53 +1998,48 @@ static const char *joiningNames[] = {
     return offset;
 }
 
-
 #define LOCAL_WIDTH_BUF_SIZE 1024
 
 - (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
 {
-    // FIXME.  This algorimth is the original KTHML algorithm.  We need to update it to
-    // be more savvy about unicode.
     float delta = (float)x;
-    float _widths[LOCAL_WIDTH_BUF_SIZE]; 
-    float *widths = 0, width;
-    unsigned int offset = 0;
+    float width;
+    unsigned int offset = run->from;
+    CharacterWidthIterator widthIterator;
+    
+    initializeCharacterWidthIterator(&widthIterator, self, run, style);
 
-    if (run->length > LOCAL_WIDTH_BUF_SIZE)
-        widths = (float *)malloc(run->length * sizeof(float));
-    else
-        widths = &_widths[0];
-    width = [self floatWidthForRun:run style:style widths:widths];
-
-    if ( reversed ) {
+    if (reversed) {
+        width = [self floatWidthForRun:run style:style widths:nil];
         delta -= width;
         while(offset < run->length) {
-            float w = widths[offset+run->from];
-            float w2 = w/2;
-            w -= w2;
-            delta += w2;
-            if(delta >= 0)
-                break;
+            float w = widthForNextCharacter(&widthIterator);
+            if (w){
+                float w2 = w/2;
+                w -= w2;
+                delta += w2;
+                if(delta >= 0)
+                    break;
+                delta += w;
+            }
             offset++;
-            delta += w;
         }
     } else {
         while(offset < run->length) {
-            float w = widths[offset+run->from];
-            float w2 = w/2;
-            w -= w2;
-            delta -= w2;
-            if(delta <= 0) 
-                break;
+            float w = widthForNextCharacter(&widthIterator);
+            if (w){
+                float w2 = w/2;
+                w -= w2;
+                delta -= w2;
+                if(delta <= 0) 
+                    break;
+                delta -= w;
+            }
             offset++;
-            delta -= w;
         }
     }
     
-    if (widths != _widths)
-        free (widths);
-        
-    return offset;
+    return offset - run->from;
 }
 
 @end

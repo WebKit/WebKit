@@ -1,3 +1,38 @@
+2003-08-08  Richard Williamson  <rjw@apple.com>
+	
+	Lots of healthy cleanup.  Introduced width and shaping iterators
+	to simplify code and remove allocations for large text runs.  Should
+	go further and make more use of these in the future (post panther).
+
+	Fixed 3369608.  Crash in -[WebTextRenderer _CG_drawRun:style:atPoint:] at lovepucca.net
+	Fixed 3118050.  Crash selecting text at http://www.faqs.org/rfcs/rfc2849.html (SELECTION)
+	Fixed 3371115.  Can't correctly select text that contains surrogate pairs
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebUnicode.h:
+        * Misc.subproj/WebUnicode.m:
+        (prevChar):
+        (nextChar):
+        (prevLogicalCharJoins):
+        (nextLogicalCharJoins):
+        (glyphVariantLogical):
+        (hasShapeForNextCharacter):
+        (shapeForNextCharacter):
+        (initializeCharacterShapeIterator):
+        (shapedString):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (initializeCharacterWidthIterator):
+        (widthAndGlyphForSurrogate):
+        (widthForNextCharacter):
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+        (-[WebTextRenderer _CG_pointToOffset:style:position:reversed:]):
+
+	Just formatting changed here
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _dragImageForLinkElement:]):
+
 2003-08-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
