@@ -1,5 +1,14 @@
 2002-07-30  David Hyatt  <hyatt@apple.com>
 
+	Backing myself out again.  No crashes, but now pages stall.
+	#*^&*#@^%*&!!!!
+	
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::recalcColInfo):
+        (RenderTable::addColInfo):
+
+2002-07-30  David Hyatt  <hyatt@apple.com>
+
 	Putting my table patch back in.  Also optimizing the code
 	to avoid deleting and recreating the same colinfo over
 	and over again.  Now colinfos can recalc their own

@@ -411,6 +411,10 @@ void RenderTable::recalcColInfo( ColInfo *col )
         }
     }
     
+    if (needRecalc)
+        // Null out and delete the column.
+        colInfos[col->span-1]->remove(col->start);
+
     setMinMaxKnown( false );
 
     //qDebug("------------- end recalcColinfo");
@@ -541,8 +545,11 @@ void RenderTable::addColInfo(int _startCol, int _colSpan,
 	}
     }
     
+#ifndef APPLE_CHANGES
+    // #*%^$&#@*^%*& -dwh
     if ( recalc )
         recalcColInfo( col );
+#endif
 
     if ( changed )
 	setMinMaxKnown(false);
