@@ -1,3 +1,10 @@
+2004-08-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave and Darin.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paint): Split apple and non-apple code paths to allow further cleanup.
+
 2004-08-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
