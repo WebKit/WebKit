@@ -162,13 +162,12 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     NSRect wFrame = [subView frame];
 
     if ([subView superview] == thisView){
-        //NSLog (@"Already added 0x%08x %@ at (%d,%d) w %d h %d\n", subView, [[subView class] className], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
         return;
     }
     
     [subView removeFromSuperview];
     
-    KWQDEBUG6 ("Adding 0x%08x %s at (%d,%d) w %d h %d\n", subView, [[[subView class] className] cString], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
+    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "Adding 0x%08x %s at (%d,%d) w %d h %d\n", subView, [[[subView class] className] cString], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
     [thisView addSubview: subView];
 }
 
@@ -188,12 +187,12 @@ void QScrollView::removeChild(QWidget* child)
 
 void QScrollView::resizeContents(int w, int h)
 {
-    KWQDEBUG4 ("0x%08x %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
+    KWQDEBUGLEVEL4 (KWQ_LOG_FRAMES, "0x%08x %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
     //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
     if ([getView() isKindOfClass: NSClassFromString(@"NSScrollView")]){
         IFWebView *wview = [(NSScrollView *)getView() documentView];
         
-        KWQDEBUG4 ("0x%08x %s at w %d h %d\n", wview, [[[wview class] className] cString], w, h);
+        KWQDEBUGLEVEL4 (KWQ_LOG_FRAMES, "0x%08x %s at w %d h %d\n", wview, [[[wview class] className] cString], w, h);
         //w -= (int)[NSScroller scrollerWidth];
         //w -= 1;
         if (w < 0)
@@ -213,7 +212,7 @@ void QScrollView::resizeContents(int w, int h)
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
-    KWQDEBUG6 ("0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
+    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }
 
 void QScrollView::updateContents(const QRect &rect)
@@ -224,7 +223,7 @@ void QScrollView::updateContents(const QRect &rect)
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase=TRUE)
 {
-    KWQDEBUG6 ("0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
+    KWQDEBUGLEVEL6 (KWQ_LOG_FRAMES, "0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }
 
 QPoint QScrollView::contentsToViewport(const QPoint &)

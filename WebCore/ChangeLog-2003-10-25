@@ -1,3 +1,17 @@
+2002-03-24  Richard Williamson  <rjw@apple.com>
+
+        Fixed big leak in QString assignment operator.
+        Updated comments.  Removed old fprintfs.
+        Added some frame debugging logs.
+        
+	* src/kwq/KWQFontMetrics.mm: (_rectForString):
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::openURL), (KHTMLPart::requestFrame):
+	* src/kwq/KWQScrollView.mm: (QScrollView::addChild),
+	(QScrollView::resizeContents), (QScrollView::updateContents),
+	(QScrollView::repaintContents):
+	* src/kwq/KWQString.mm: (QString::operator=):
+	* src/kwq/kwqdebug.h:
+
 2002-03-23  Darin Adler  <darin@apple.com>
 
         Fixed problem with extra empty items in menus.

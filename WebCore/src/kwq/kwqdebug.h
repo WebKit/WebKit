@@ -53,6 +53,7 @@ long _GetMillisecondsSinceEpoch();
 #define KWQ_LOG_MEMUSAGE		0x00000080
 #define KWQ_LOG_FONTCACHE		0x00000100
 #define KWQ_LOG_FONTCACHECHARMISS	0x00000200
+#define KWQ_LOG_FRAMES			0x00000400
 
 #define KWQ_LOG_NONE			0
 

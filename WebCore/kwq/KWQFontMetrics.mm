@@ -592,7 +592,8 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
             glyphID = glyphRecords[i].glyphID;
             usedCharacterToGlyph[i] = glyphID;
             
-            // Fill the block of glyphs for the glyph needed.
+            // Fill the block of glyphs for the glyph needed. If we're going to incur the overhead
+            // of calling into CG, we may as well get a block of scaled glyph advances.
             if (self->widthCache[glyphID] == UNITIALIZED_GLYPH_WIDTH){
                 short unsigned int sequentialGlyphs[INCREMENTAL_GLYPH_CACHE_BLOCK];
                 unsigned int blockStart, blockEnd, blockID;
@@ -621,9 +622,6 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
     
     // Pass 2:
     // Sum the widths for all the glyphs.
-    
-    // Optimization:  This loop could sum pre-rounded unsigned shorts.  Storing
-    // the glyph widths as shorts would cut space in half.
     if (needCharToGlyphLookup){
         for (i = 0; i < numGlyphs; i++){
             totalWidth += widthCache[usedCharacterToGlyph[i]];

@@ -257,6 +257,7 @@ QString &QString::operator=(const QString &qs)
     CFRetain(qs.s);
     CFRelease(s);
     s = qs.s;
+    flushCache();
     cache = NULL;
     return *this;
 }
