@@ -1,5 +1,11 @@
 2002-02-07  Richard Williamson  <rjw@apple.com>
 
+    More changes to IFLocationChangeHandler API.
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::khtmlMouseReleaseEvent):
+
+2002-02-07  Richard Williamson  <rjw@apple.com>
+
     Factored URL loading code out and moved to IFBaseWebController.
     
 	* ChangeLog:

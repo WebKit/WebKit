@@ -214,12 +214,7 @@
 // If forceRefresh is YES the document will load from the net, not the cache.
 - (void)startLoading: (BOOL)forceRefresh
 {
-    KURL url = [[[self inputURL] absoluteString] cString];
-    
-    WEBKITDEBUG1 ("url = %s\n", [[[self inputURL] absoluteString] cString]);
-    [self _part]->openURL (url);
-    
-    [[self controller] locationChangeStartedForFrame: [self frame]];
+    [self _startLoading: forceRefresh initiatedByMouseEvent: NO];
 }
 
 

@@ -102,8 +102,10 @@
 // handshake.
 - (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
 
-- (void)locationChangeStartedForFrame: (IFWebFrame *)frame;
+- (void)locationChangeStartedForFrame: (IFWebFrame *)frame initiatedByMouseEvent: (BOOL)flag;
+
 - (void)locationChangeCommittedForFrame: (IFWebFrame *)frame;
+
 - (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame;
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource;

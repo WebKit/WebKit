@@ -1,4 +1,16 @@
 2002-02-07  Richard Williamson  <rjw@apple.com>
+    
+    More changes to IFLocationChangeHandler API.
+
+	* WebView.subproj/IFBaseWebController.mm:
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource startLoading:]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource
+	_startLoading:initiatedByMouseEvent:]):
+	* WebView.subproj/IFWebFramePrivate.h:
+
+2002-02-07  Richard Williamson  <rjw@apple.com>
 
     Update IFLocationChangeHandler API.  Added factored code for
     URL loading.

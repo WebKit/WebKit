@@ -79,6 +79,7 @@
 - (IFWebFrame *)frame;
 - (id <IFWebController>)controller;
 - (void)startLoading: (BOOL)forceRefresh;
+- (void)_startLoading: (BOOL)forceRefresh initiatedByMouseEvent: (BOOL)byMouseEvent;
 - frameNamed: (NSString *)f;
 - (void)_setParent: (IFWebDataSource *)p;
 - (IFWebDataSource *)parent;
@@ -1304,7 +1305,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
         controller = [dataSource controller];
         
         if ([controller _changeLocationTo: url forFrame: frame parent: [[frame dataSource] parent]]){
-            [[frame dataSource] startLoading: YES];
+            [[frame dataSource] _startLoading: YES initiatedByMouseEvent: YES];
         }
 
 /*
