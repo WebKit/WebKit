@@ -8,7 +8,7 @@
 #import <WebKit/IFException.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/IFWebController.h>
-#import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebFramePrivate.h>
 #import <WebFoundation/WebFoundation.h>
 
 #import <xml/dom_docimpl.h>
@@ -205,6 +205,10 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 {
     int i, count;
     
+    // First check to see if the datasource's frame is in the complete state
+    if ([[self webFrame] _state] == IFWEBFRAMESTATE_COMPLETE)
+        return NO;
+        
     //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self webFrame] name] cString], (int)_private->primaryLoadComplete, [_private->urlHandles count], [[[self inputURL] absoluteString] cString]);
     if (_private->primaryLoadComplete == NO)
         return YES;

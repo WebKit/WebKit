@@ -1,3 +1,13 @@
+2002-05-22  Richard J. Williamson  <rjw@apple.com>
+
+    Changed semantics of isLoading to only return YES if
+    the datasource is loading resources related to the intial
+    load.  Other resources loaded later by JS will not be
+    accounted for by isLoading.
+    
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource isLoading]):
+
 2002-05-22  Chris Blumenberg  <cblu@apple.com>
 
 	- Removed obsolete MIME/download related code.
