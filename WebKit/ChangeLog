@@ -2,6 +2,14 @@
 
         Reviewed by John
 
+	Updated for recent changes.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+
+2003-05-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         Changed the names of some extras files in WebFoundation:
         Updated imports and usages in this project.
 
