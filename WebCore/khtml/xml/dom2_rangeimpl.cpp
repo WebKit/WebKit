@@ -844,7 +844,9 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes) const
     QPtrList<NodeImpl> ancestorsToClose;
     
     // Iterate through the nodes of the range.
-    for (NodeImpl *n = startNode(); n != pastEnd; n = n->traverseNextNode()) {
+    NodeImpl *next;
+    for (NodeImpl *n = startNode(); n != pastEnd; n = next) {
+        next = n->traverseNextNode();
         
         // Add the node to the markup.
         markups.append(n->startMarkup(this));
@@ -858,46 +860,31 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes) const
             lastClosed = n;
             
             // Check if the node is the last leaf of a tree.
-            NodeImpl *parent = n->parentNode();
-            if (parent != 0 && n == parent->lastChild()) {
+            if (n->nextSibling() == 0) {
                 if (!ancestorsToClose.isEmpty()) {
                     // Close up the ancestors.
-                    QPtrListIterator<NodeImpl> ancestorsToCloseIt(ancestorsToClose);
-                    NodeImpl *next = n->traverseNextNode();
-                    NodeImpl *ancestor;
-                    int removeCount = 0;
-                    for (ancestorsToCloseIt.toLast(); (ancestor = ancestorsToCloseIt.current()) != 0; --ancestorsToCloseIt) {
-                        if (next != pastEnd) {
-                            // Not at the end of the range, close ancestors up to sibling of next node.
-                            if (ancestor != next->parentNode()) {
-                                markups.append(ancestor->endMarkup());
-                                lastClosed = ancestor;
-                                removeCount++;
-                            } else {
-                                break;
-                            }
-                        } else {
-                            // At the end of the range, close all pending ancestors.
-                            markups.append(ancestor->endMarkup());
-                            lastClosed = ancestor;
-                            removeCount++;
+                    while (NodeImpl *ancestor = ancestorsToClose.last()) {
+                        if (next != pastEnd && ancestor == next->parentNode()) {
+                            break;
                         }
-                    }
-                    for (int i = removeCount; i > 0; i--) {
+                        // Not at the end of the range, close ancestors up to sibling of next node.
+                        markups.append(ancestor->endMarkup());
+                        lastClosed = ancestor;
                         ancestorsToClose.removeLast();
                     }
                 } else {
                     // No ancestors to close, but need to add ancestors not in range since next node is in another tree. 
-                    NodeImpl *next = n->traverseNextNode();
-                    if (next != pastEnd && n != next->parentNode()) {
-                        while (parent != 0 && parent != next->parentNode()) {
-                            markups.prepend(parent->startMarkup(this));
-                            markups.append(parent->endMarkup());
-                            if (nodes) {
-                                nodes->append(parent);
-                            }                            
-                            lastClosed = parent;
-                            parent = parent->parentNode();
+                    if (next != pastEnd) {
+                        NodeImpl *nextParent = next->parentNode();
+                        if (n != nextParent) {
+                            for (NodeImpl *parent = n->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
+                                markups.prepend(parent->startMarkup(this));
+                                markups.append(parent->endMarkup());
+                                if (nodes) {
+                                    nodes->append(parent);
+                                }                            
+                                lastClosed = parent;
+                            }
                         }
                     }
                 }
@@ -909,8 +896,7 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes) const
     }
     
     // Add ancestors up to the common ancestor block so inline ancestors such as FONT and B are part of the markup.
-    NodeImpl *ancestor = lastClosed->parentNode();
-    while (ancestor) {
+    for (NodeImpl *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
         bool breakAtEnd = false;
         if (commonAncestorBlock == ancestor) {
             NodeImpl::Id id = ancestor->id();
@@ -929,7 +915,6 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes) const
         if (breakAtEnd) {
             break;
         }
-        ancestor = ancestor->parentNode();
     }
     
     return markups.join("");

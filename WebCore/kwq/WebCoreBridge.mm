@@ -500,11 +500,10 @@ static bool initializedKJS = FALSE;
 
 - (NSArray *)nodesFromList:(QPtrList<NodeImpl> *)nodeList
 {
-    NSMutableArray *nodes = [NSMutableArray array];
-    unsigned int count = nodeList->count();
-    for (unsigned int i = 0; i < count; i++) {
-        [nodes addObject:[DOMNode _nodeWithImpl:nodeList->at(i)]];
-    }    
+    NSMutableArray *nodes = [NSMutableArray arrayWithCapacity:nodeList->count()];
+    for (QPtrListIterator<NodeImpl> i(*nodeList); i.current(); ++i) {
+        [nodes addObject:[DOMNode _nodeWithImpl:i.current()]];
+    }
     return nodes;
 }
 

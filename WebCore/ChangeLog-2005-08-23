@@ -1,3 +1,24 @@
+2004-09-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed n-squared issues with appending to KWQValueListImpl. This fixes the hang in 3794799.
+
+        Fixed by Darin, reviewed by me.
+
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toHTML): tweaks
+        * kwq/KWQValueListImpl.mm:
+        (KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate):
+        (KWQValueListImpl::KWQValueListPrivate::copyList):
+        (KWQValueListImpl::clear):
+        (KWQValueListImpl::appendNode):
+        (KWQValueListImpl::prependNode):
+        (KWQValueListImpl::removeEqualNodes):
+        (KWQValueListImpl::containsEqualNodes):
+        (KWQValueListImpl::removeIterator):
+        (KWQValueListImpl::lastNode):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge nodesFromList:]): use iterator, not at()
+
 2004-09-28  Richard Williamson   <rjw@apple.com>
 
 	More dashboard region changes for John.

@@ -99,10 +99,11 @@ public:
 
     ~KWQValueListPrivate();
 
-    KWQValueListNodeImpl *copyList(KWQValueListNodeImpl *l) const;
+    void copyList(KWQValueListNodeImpl *l, KWQValueListNodeImpl *&head, KWQValueListNodeImpl *&tail) const;
     void deleteList(KWQValueListNodeImpl *l);
 
     KWQValueListNodeImpl *head;
+    KWQValueListNodeImpl *tail;
 
     void (*deleteNode)(KWQValueListNodeImpl *);
     KWQValueListNodeImpl *(*copyNode)(KWQValueListNodeImpl *);
@@ -114,6 +115,7 @@ public:
 KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), 
 							   KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *)) : 
     head(NULL),
+    tail(NULL),
     deleteNode(deleteFunc),
     copyNode(copyFunc),
     count(0),
@@ -122,12 +124,12 @@ KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(KW
 }
 
 KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(const KWQValueListPrivate &other) :
-    head(other.copyList(other.head)),
     deleteNode(other.deleteNode),
     copyNode(other.copyNode),
     count(other.count),
     refCount(0)
 {
+    other.copyList(other.head, head, tail);
 }
 
 KWQValueListImpl::KWQValueListPrivate::~KWQValueListPrivate()
@@ -135,11 +137,12 @@ KWQValueListImpl::KWQValueListPrivate::~KWQValueListPrivate()
     deleteList(head);
 }
 
-KWQValueListNodeImpl *KWQValueListImpl::KWQValueListPrivate::copyList(KWQValueListNodeImpl *l) const
+void KWQValueListImpl::KWQValueListPrivate::copyList(KWQValueListNodeImpl *l, KWQValueListNodeImpl *&head, KWQValueListNodeImpl *&tail) const
 {
     KWQValueListNodeImpl *prev = NULL;
     KWQValueListNodeImpl *node = l;
-    KWQValueListNodeImpl *head = NULL;
+
+    head = NULL;
 
     while (node != NULL) {
 	KWQValueListNodeImpl *copy = copyNode(node);
@@ -156,7 +159,7 @@ KWQValueListNodeImpl *KWQValueListImpl::KWQValueListPrivate::copyList(KWQValueLi
 	node = node->next;
     }
 
-    return head;
+    tail = prev;
 }
 
 void KWQValueListImpl::KWQValueListPrivate::deleteList(KWQValueListNodeImpl *l)
@@ -190,6 +193,7 @@ void KWQValueListImpl::clear()
         copyOnWrite();
         d->deleteList(d->head);
         d->head = NULL;
+        d->tail = NULL;
         d->count = 0;
     }
 }
@@ -208,20 +212,14 @@ KWQValueListIteratorImpl KWQValueListImpl::appendNode(KWQValueListNodeImpl *node
 {
     copyOnWrite();
 
-    // FIXME: maintain tail pointer to make this fast
+    node->next = NULL;
+    node->prev = d->tail;
+    d->tail = node;
     
     if (d->head == NULL) {
-	d->head = node;
+        d->head = node;
     } else {
-	KWQValueListNodeImpl *p = d->head;
-
-	while (p->next != NULL) {
-	    p = p->next;
-	}
-
-	p->next = node;
-	node->prev = p;
-	node->next = NULL;
+        node->prev->next = node;
     }
 
     d->count++;
@@ -237,7 +235,9 @@ KWQValueListIteratorImpl KWQValueListImpl::prependNode(KWQValueListNodeImpl *nod
     node->prev = NULL;
     d->head = node;
 
-    if (node->next != NULL) {
+    if (d->tail == NULL) {
+        d->tail = node;
+    } else {
 	node->next->prev = node;
     }
 
@@ -250,14 +250,15 @@ void KWQValueListImpl::removeEqualNodes(KWQValueListNodeImpl *node, bool (*equal
 {
     copyOnWrite();
 
-    KWQValueListNodeImpl *p = d->head;
-    
-    while (p != NULL) {
-	KWQValueListNodeImpl *next = p->next;
+    KWQValueListNodeImpl *next;
+    for (KWQValueListNodeImpl *p = d->head; p != NULL; p = next) {
+	next = p->next;
 	if (equalFunc(node, p)) {
 	    if (p->next != NULL) {
 		p->next->prev = p->prev;
-	    }
+	    } else {
+                d->tail = p->prev;
+            }
 
 	    if (p->prev != NULL) {
 		p->prev->next = p->next;
@@ -269,20 +270,17 @@ void KWQValueListImpl::removeEqualNodes(KWQValueListNodeImpl *node, bool (*equal
 
 	    d->count--;
 	}
-	p = next;
     }
 }
 
 uint KWQValueListImpl::containsEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *)) const
 {
-    KWQValueListNodeImpl *p = d->head;
     unsigned contains = 0;
 
-    while (p != NULL) {
+    for (KWQValueListNodeImpl *p = d->head; p != NULL; p = p->next) {
 	if (equalFunc(node, p)) {
 	    ++contains;
 	}
-	p = p->next;
     }
     
     return contains;
@@ -325,6 +323,8 @@ KWQValueListIteratorImpl KWQValueListImpl::removeIterator(KWQValueListIteratorIm
     // detach node
     if (iterator.nodeImpl->next != NULL) {
 	iterator.nodeImpl->next->prev = iterator.nodeImpl->prev;
+    } else {
+        d->tail = iterator.nodeImpl->prev;
     }
     if (iterator.nodeImpl->prev != NULL) {
 	iterator.nodeImpl->prev->next = iterator.nodeImpl->next;
@@ -363,19 +363,7 @@ KWQValueListNodeImpl *KWQValueListImpl::firstNode() const
 
 KWQValueListNodeImpl *KWQValueListImpl::lastNode() const
 {
-    // FIXME: use tail pointer
-
-    KWQValueListNodeImpl *p = d->head;
-
-    if (p == NULL) {
-	return NULL;
-    }
-    
-    while (p->next != NULL) {
-	p = p->next;
-    }
-
-    return p;
+    return d->tail;
 }
 
 KWQValueListIteratorImpl KWQValueListImpl::begin()
