@@ -53,6 +53,7 @@
 
 - (IFWebFrame *)frame
 {
+    WEBKIT_ASSERT(dataSource);
     return [dataSource webFrame];
 }
 
@@ -73,19 +74,21 @@
 
 - (WebCoreBridge *)parent
 {
+    WEBKIT_ASSERT(dataSource);
     return [[dataSource parent] _bridge];
 }
 
 - (NSArray *)children
 {
+    WEBKIT_ASSERT(dataSource);
     NSArray *frames = [dataSource children];
     NSEnumerator *e = [frames objectEnumerator];
     NSMutableArray *children = [NSMutableArray arrayWithCapacity:[frames count]];
     IFWebFrame *frame;
     while ((frame = [e nextObject])) {
-        IFWebCoreBridge *aBridge = [frame _bridge];
-        if (aBridge)
-            [children addObject:aBridge];
+        IFWebCoreBridge *bridge = [frame _bridge];
+        if (bridge)
+            [children addObject:bridge];
     }
     return children;
 }
@@ -123,6 +126,8 @@
     withURL:(NSURL *)URL renderPart:(khtml::RenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
+    WEBKIT_ASSERT(dataSource);
+
     IFWebFrame *frame = [[self controller] createFrameNamed:frameName for:nil inParent:dataSource allowsScrolling:allowsScrolling];
     if (frame == nil) {
         return NO;
@@ -145,6 +150,7 @@
 
 - (void)setTitle:(NSString *)title
 {
+    WEBKIT_ASSERT(dataSource);
     [dataSource _setTitle:title];
 }
 
@@ -160,6 +166,7 @@
 
 - (KHTMLView *)widget
 {
+    WEBKIT_ASSERT([self HTMLView]);
     KHTMLView *widget = [[self HTMLView] _provisionalWidget];
     if (widget) {
         return widget;
@@ -181,11 +188,13 @@
 
 - (void)addHandle:(IFURLHandle *)handle
 {
+    WEBKIT_ASSERT(dataSource);
     [dataSource _addURLHandle:handle];
 }
 
 - (void)removeHandle:(IFURLHandle *)handle
 {
+    WEBKIT_ASSERT(dataSource);
     [dataSource _removeURLHandle:handle];
 }
 
@@ -197,6 +206,7 @@
 
 - (void)receivedProgressWithHandle:(IFURLHandle *)handle
 {
+    WEBKIT_ASSERT(dataSource);
     [[self controller] _receivedProgress:[IFLoadProgress progressWithURLHandle:handle]
         forResourceHandle:handle fromDataSource:dataSource];
 }
@@ -209,6 +219,7 @@
 
 - (void)didCancelLoadingWithHandle:(IFURLHandle *)handle
 {
+    WEBKIT_ASSERT(dataSource);
     [[self controller] _receivedProgress:[IFLoadProgress progress]
         forResourceHandle:handle fromDataSource:dataSource];
     [[self controller] _didStopLoading:[handle url]];
@@ -216,12 +227,14 @@
 
 - (void)didFailBeforeLoadingWithError:(IFError *)error
 {
+    WEBKIT_ASSERT(dataSource);
     [[self controller] _receivedError:error forResourceHandle:nil
         partialProgress:nil fromDataSource:dataSource];
 }
 
 - (void)didFailToLoadWithHandle:(IFURLHandle *)handle error:(IFError *)error
 {
+    WEBKIT_ASSERT(dataSource);
     [[self controller] _receivedError:error forResourceHandle:handle
         partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
     [[self controller] _didStopLoading:[handle url]];
@@ -229,6 +242,8 @@
 
 - (void)didRedirectWithHandle:(IFURLHandle *)handle fromURL:(NSURL *)fromURL
 {
+    WEBKIT_ASSERT(dataSource);
+
     NSURL *toURL = [handle redirectedURL];
     
     [[self controller] _didStopLoading:fromURL];
@@ -236,7 +251,7 @@
     [dataSource _setFinalURL:toURL];
     [self setURL:toURL];
 
-    [[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
+    //[[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
     
     [[self controller] _didStartLoading:toURL];
 }

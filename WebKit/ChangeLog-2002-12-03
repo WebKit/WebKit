@@ -1,11 +1,14 @@
-2002-06-15  Richard Williamson  <rjw@apple.com>
+2002-06-15  Darin Adler  <darin@apple.com>
 
-	* ChangeLog:
 	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
-	(-[IFWebFrame _bridge]):
-	(-[IFWebCoreBridge children]):
-	* WebView.subproj/IFWebFramePrivate.mm:
-	(-[IFWebFrame _isLoadComplete]):
+	Added a lot of assertions that I had used while debugging.
+	(-[IFWebCoreBridge didRedirectWithHandle:fromURL:]):
+	Commented out the line of code that calls [serverRedirectTo:forDataSource:].
+	Our old code was sending this to the web controller (that was a bug).
+	But if we send it to the location change handler, then we confuse Alexander.
+	We may return to this later, uncomment it, and change the interface so the
+	client can tell what is being redirected. We'll need to do that if we want
+	the activity window to show redirected URLs at the time of the redirect.
 
 2002-06-15  Richard Williamson  <rjw@apple.com>
 
