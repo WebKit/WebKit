@@ -66,7 +66,8 @@ NodeImpl::NodeImpl(DocumentPtr *doc)
       m_specified( false ),
       m_focused( false ),
       m_active( false ),
-      m_styleElement( false )
+      m_styleElement( false ),
+      m_rendererNeedsClose( false )
 {
     if (document)
         document->ref();
@@ -918,10 +919,28 @@ void NodeImpl::init()
 {
 }
 
+void NodeImpl::closeRenderer()
+{
+    // It's important that we close the renderer, even if it hasn't been
+    // created yet. This happens even more because of the FOUC fixes we did
+    // at Apple, which prevent renderers from being created until the stylesheets
+    // are all loaded. If the renderer is not here to be closed, we set a flag,
+    // then close it later when it's attached.
+    assert(!m_rendererNeedsClose);
+    if (m_render)
+        m_render->close();
+    else
+        m_rendererNeedsClose = true;
+}
+
 void NodeImpl::attach()
 {
     assert(!attached());
     assert(!m_render || (m_render->style() && m_render->parent()));
+    if (m_render && m_rendererNeedsClose) {
+        m_render->close();
+        m_rendererNeedsClose = false;
+    }
     m_attached = true;
 }
 

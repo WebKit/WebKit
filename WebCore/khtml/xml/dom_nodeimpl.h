@@ -297,6 +297,8 @@ public:
      */
     virtual void detach();
 
+    void closeRenderer();
+
     // -----------------------------------------------------------------------------
     // Methods for maintaining the state of the element between history navigation
 
@@ -382,8 +384,9 @@ protected:
     bool m_focused : 1;
     bool m_active : 1;
     bool m_styleElement : 1; // contains stylesheet text
+    bool m_rendererNeedsClose : 1;
 
-    // 3 bits unused
+    // 2 bits unused
 };
 
 // this is the full Node Implementation with parents and children.

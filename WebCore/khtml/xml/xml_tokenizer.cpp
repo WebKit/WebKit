@@ -113,8 +113,7 @@ bool XMLHandler::endElement( const QString& /*namespaceURI*/, const QString& /*l
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
     if (m_currentNode->parentNode() != 0) {
-        if (m_currentNode->renderer())
-            m_currentNode->renderer()->close();
+        m_currentNode->closeRenderer();
         m_currentNode = m_currentNode->parentNode();
     }
 // ###  else error
@@ -384,9 +383,9 @@ void XMLTokenizer::finish()
 
         // Close the renderers so that they update their display correctly
         // ### this should not be necessary, but requires changes in the rendering code...
-        h1->renderer()->close();
-        pre->renderer()->close();
-        body->renderer()->close();
+        h1->closeRenderer();
+        pre->closeRenderer();
+        body->closeRenderer();
 
         m_doc->document()->recalcStyle( NodeImpl::Inherit );
         m_doc->document()->updateRendering();

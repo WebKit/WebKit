@@ -562,10 +562,15 @@ void HTMLGenericFormElementImpl::attach()
     if (m_render) {
         assert(m_render->style());
         parentNode()->renderer()->addChild(m_render, nextRenderer());
-        m_render->updateFromElement();
     }
 
-    NodeBaseImpl::attach();
+    HTMLElementImpl::attach();
+
+    // The call to updateFromElement() needs to go after the call through
+    // to the base class's attach() because that can sometimes do a close
+    // on the renderer.
+    if (m_render)
+        m_render->updateFromElement();
 }
 
 HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const

@@ -346,8 +346,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 QString state(document->document()->nextState());
                 if (!state.isNull()) n->restoreState(state);
             }
-            if(n->renderer())
-                n->renderer()->close();
+            n->closeRenderer();
                 
             // if n is inline, then go ahead and treat as though we're
             // inline, since we know we're going to be wrapped anyway.
@@ -1229,8 +1228,7 @@ void KHTMLParser::popOneBlock()
             QString state(document->document()->nextState());
             if (!state.isNull()) current->restoreState(state);
         }
-        if (current->renderer())
-            current->renderer()->close();
+        current->closeRenderer();
     }
 #endif
 
