@@ -1,5 +1,22 @@
 2002-12-02  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3032557, wsj.com DHTML elements in the wrong position.
+	This patch adds support for img.x and img.y (a Mozilla extension
+	from NS4 days), which is used by the site to position the menus.
+
+	r=kocienda on the patch.
+	
+        * khtml/dom/html_image.cpp:
+        (HTMLImageElement::x):
+        (HTMLImageElement::y):
+        * khtml/dom/html_image.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_html.lut.h:
+
+2002-12-02  David Hyatt  <hyatt@apple.com>
+
 	Undo my changes to margin collapsing for blocks inside inlines.
 	Although they may be correct in a strict mode, they don't
 	work with the real-world Web.  For now, I'm just backing out

@@ -331,6 +331,28 @@ void HTMLImageElement::setWidth( long value )
     if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_WIDTH, QString::number(value));
 }
 
+long HTMLImageElement::x() const
+{
+    if (impl && impl->renderer()) {
+        int x = 0;
+        int y = 0;
+        impl->renderer()->absolutePosition(x,y);
+        return x;
+    }
+    return 0;
+}
+
+long HTMLImageElement::y() const
+{
+    if (impl && impl->renderer()) {
+        int x = 0;
+        int y = 0;
+        impl->renderer()->absolutePosition(x,y);
+        return y;
+    }
+    return 0;
+}
+
 // --------------------------------------------------------------------------
 
 HTMLMapElement::HTMLMapElement() : HTMLElement()

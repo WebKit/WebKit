@@ -818,7 +818,7 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
   blur		KJS::HTMLElement::AnchorBlur		DontDelete|Function 0
   focus		KJS::HTMLElement::AnchorFocus		DontDelete|Function 0
 @end
-@begin HTMLImageElementTable 12
+@begin HTMLImageElementTable 14
   name		KJS::HTMLElement::ImageName		DontDelete
   align		KJS::HTMLElement::ImageAlign		DontDelete
   alt		KJS::HTMLElement::ImageAlt		DontDelete
@@ -831,6 +831,8 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
   useMap	KJS::HTMLElement::ImageUseMap		DontDelete
   vspace	KJS::HTMLElement::ImageVspace		DontDelete
   width		KJS::HTMLElement::ImageWidth		DontDelete
+  x         KJS::HTMLElement::ImageX            DontDelete|ReadOnly
+  y         KJS::HTMLElement::ImageY            DontDelete|ReadOnly
 @end
 @begin HTMLObjectElementTable 20
   form		  KJS::HTMLElement::ObjectForm		  DontDelete|ReadOnly
@@ -1469,6 +1471,8 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     case ImageUseMap:          return getString(image.useMap());
     case ImageVspace:          return Number(image.vspace());
     case ImageWidth:           return Number(image.width());
+    case ImageX:               return Number(image.x());
+    case ImageY:               return Number(image.y());
     }
   }
   break;

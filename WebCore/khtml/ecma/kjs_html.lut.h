@@ -624,25 +624,26 @@ namespace KJS {
 const struct HashEntry HTMLImageElementTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "border", KJS::HTMLElement::ImageBorder, DontDelete, 0, &HTMLImageElementTableEntries[14] },
-   { 0, 0, 0, 0, 0 },
-   { "hspace", KJS::HTMLElement::ImageHspace, DontDelete, 0, &HTMLImageElementTableEntries[15] },
-   { 0, 0, 0, 0, 0 },
-   { "vspace", KJS::HTMLElement::ImageVspace, DontDelete, 0, 0 },
-   { "align", KJS::HTMLElement::ImageAlign, DontDelete, 0, &HTMLImageElementTableEntries[16] },
-   { 0, 0, 0, 0, 0 },
-   { "name", KJS::HTMLElement::ImageName, DontDelete, 0, &HTMLImageElementTableEntries[12] },
-   { 0, 0, 0, 0, 0 },
-   { "longDesc", KJS::HTMLElement::ImageLongDesc, DontDelete, 0, 0 },
-   { "alt", KJS::HTMLElement::ImageAlt, DontDelete, 0, &HTMLImageElementTableEntries[13] },
-   { "height", KJS::HTMLElement::ImageHeight, DontDelete, 0, 0 },
    { "isMap", KJS::HTMLElement::ImageIsMap, DontDelete, 0, 0 },
-   { "src", KJS::HTMLElement::ImageSrc, DontDelete, 0, &HTMLImageElementTableEntries[17] },
+   { "height", KJS::HTMLElement::ImageHeight, DontDelete, 0, &HTMLImageElementTableEntries[14] },
+   { 0, 0, 0, 0, 0 },
+   { "align", KJS::HTMLElement::ImageAlign, DontDelete, 0, 0 },
+   { "src", KJS::HTMLElement::ImageSrc, DontDelete, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "border", KJS::HTMLElement::ImageBorder, DontDelete, 0, &HTMLImageElementTableEntries[18] },
+   { "y", KJS::HTMLElement::ImageY, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "name", KJS::HTMLElement::ImageName, DontDelete, 0, 0 },
+   { "hspace", KJS::HTMLElement::ImageHspace, DontDelete, 0, &HTMLImageElementTableEntries[16] },
+   { "alt", KJS::HTMLElement::ImageAlt, DontDelete, 0, 0 },
+   { "longDesc", KJS::HTMLElement::ImageLongDesc, DontDelete, 0, &HTMLImageElementTableEntries[15] },
    { "useMap", KJS::HTMLElement::ImageUseMap, DontDelete, 0, 0 },
-   { "width", KJS::HTMLElement::ImageWidth, DontDelete, 0, 0 }
+   { "vspace", KJS::HTMLElement::ImageVspace, DontDelete, 0, &HTMLImageElementTableEntries[17] },
+   { "width", KJS::HTMLElement::ImageWidth, DontDelete, 0, 0 },
+   { "x", KJS::HTMLElement::ImageX, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable HTMLImageElementTable = { 2, 18, HTMLImageElementTableEntries, 12 };
+const struct HashTable HTMLImageElementTable = { 2, 19, HTMLImageElementTableEntries, 14 };
 
 }; // namespace
 
