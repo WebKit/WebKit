@@ -15,6 +15,7 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
+SOURCES = $(wildcard *.cpp)
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 OBJECTS = $(CXXOBJECTS)
@@ -29,6 +30,7 @@ CLEAN_FILES = *.o \
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
+    -I$(TOPSRCDIR) \
     -I.. \
     -I. \
     $(NULL)
@@ -43,8 +45,6 @@ all: $(OBJECTS) $(LIBRARY)
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
-
-depend:
 
 #----------------------------------------------------------------------
 # include make rules boilerplate
