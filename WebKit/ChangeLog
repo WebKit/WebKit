@@ -1,3 +1,17 @@
+2002-04-04  Richard Williamson  <rjw@apple.com>
+
+        Lazily dealloc controller and data source ONLY after all loads
+        have completed.
+        
+	* WebView.subproj/IFBaseWebController.mm: (-[_IFControllerHolder
+	initWithController:]), (-[_IFControllerHolder _checkReadyToDealloc:]),
+	(-[IFBaseWebController dealloc]), (-[IFBaseWebController release]):
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebControllerPrivate
+	_clearControllerReferences:]), (-[IFBaseWebControllerPrivate dealloc]):
+	* WebView.subproj/IFWebDataSource.mm: (-[_IFDataSourceHolder
+	initWithDataSource:]), (-[_IFDataSourceHolder _checkReadyToDealloc:]),
+	(-[IFWebDataSource release]):
+
 2002-04-04  Kenneth Kocienda  <kocienda@apple.com>
 
         Hack to handle displaying image URLs. The trick is to sense when

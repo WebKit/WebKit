@@ -1,3 +1,10 @@
+2002-04-04  Richard Williamson  <rjw@apple.com>
+
+        Extra bulletproofing to prevent script execution when in partially
+        dealloced state.
+        
+	* src/kdelibs/khtml/html/htmltokenizer.cpp: (HTMLTokenizer::scriptExecution):
+
 2002-04-04  Chris Blumenberg  <cblu@apple.com>
 
 	* src/kwq/WCPlugin.mm: (-[WCPlugin load]):

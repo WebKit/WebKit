@@ -23,10 +23,29 @@
     return self;
 }
 
+- (void)_clearControllerReferences: (IFWebFrame *)aFrame
+{
+    NSArray *frames;
+    IFWebFrame *nextFrame;
+    int i, count;
+        
+    [aFrame _setController: nil];
+
+    // Walk the frame tree, niling the controller.
+    frames = [[aFrame dataSource] children];
+    count = [frames count];
+    for (i = 0; i < count; i++){
+        nextFrame = [frames objectAtIndex: i];
+        [self _clearControllerReferences: nextFrame];
+    }
+}
+
 - (void)dealloc
 {
+    [self _clearControllerReferences: mainFrame];
+
     [mainFrame reset];
-    [mainFrame _setController: nil];
+    
     [mainFrame autorelease];
     [super dealloc];
 }

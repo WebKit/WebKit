@@ -452,9 +452,23 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
                                      int baseLine)
 {
     bool oldscript = script;
-    m_executingScript++;
     script = false;
     QString url;
+    
+#ifdef APPLE_CHANGES
+    if (view->part()){
+        m_executingScript++;
+        if (scriptURL.isNull())
+            url = static_cast<DocumentImpl*>(view->part()->document().handle())->URL();
+        else
+            url = scriptURL;
+    
+        view->part()->executeScript(url,baseLine,Node(),str);
+        m_executingScript--;
+        script = oldscript;
+    }
+#else
+    m_executingScript++;
     if (scriptURL.isNull())
       url = static_cast<DocumentImpl*>(view->part()->document().handle())->URL();
     else
@@ -463,6 +477,7 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
     view->part()->executeScript(url,baseLine,Node(),str);
     m_executingScript--;
     script = oldscript;
+#endif
 }
 
 void HTMLTokenizer::parseComment(DOMStringIt &src)

@@ -13,62 +13,30 @@
 
 #import <WebKit/WebKitDebug.h>
 
-
-// IFObjectHolder holds objects as keys in dictionaries without
-// copying.
-@interface IFObjectHolder : NSObject
+@interface _IFControllerHolder : NSObject
 {
-    id object;
+    IFBaseWebController *controller;
+}
+- initWithController: (IFBaseWebController *)c;
+- (void)_checkReadyToDealloc: userInfo;
+@end
+@implementation _IFControllerHolder
+- initWithController: (IFBaseWebController *)c
+{
+    controller = c;	// Non-retained
+    return [super init];
 }
 
-+ holderWithObject: o;
-- initWithObject: o;
-- (void)dealloc;
-- object;
-
+- (void)_checkReadyToDealloc: userInfo
+{
+    if (![[[controller mainFrame] dataSource] isLoading] && ![[[controller mainFrame] provisionalDataSource] isLoading])
+        [controller dealloc];
+    else {
+        [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
+    }
+}
 @end
 
-@implementation IFObjectHolder
-
-+ holderWithObject: o
-{
-    return [[[IFObjectHolder alloc] initWithObject: o] autorelease];
-}
-
-- initWithObject: o
-{
-    [super init];
-    object = [o retain];
-    return self;
-}
-
-- (void)dealloc
-{
-    [object release];
-    [super dealloc];
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-- (unsigned)hash
-{
-    return [object hash];
-}
-
-- object
-{
-    return object;
-}
-
-- (BOOL)isEqual:(id)anObject
-{
-    return object == [anObject object];
-}
-
-@end
 
 @implementation IFBaseWebController
 
@@ -93,8 +61,19 @@
 
 - (void)dealloc
 {
-    [_controllerPrivate release];
+    [_controllerPrivate autorelease];
     [super dealloc];
+}
+
+
+- (oneway void)release {
+    if ([self retainCount] == 1){
+        _IFControllerHolder *ch = [[[_IFControllerHolder alloc] initWithController: self] autorelease];
+        [[self mainFrame] stopLoading];
+        [NSTimer scheduledTimerWithTimeInterval:1.0 target:ch selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
+        return;
+    }
+    [super release];
 }
 
 - (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag
