@@ -27,6 +27,7 @@
 #define KWIN_H_
 
 #include <qobjectdefs.h>
+#include <qrect.h>
 #include <qstring.h>
 
 class KWin {

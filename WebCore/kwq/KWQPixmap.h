@@ -30,6 +30,7 @@
 #include "qcolor.h"
 #include "qstring.h"
 #include "qnamespace.h"
+#include "qimage.h"
 
 class QBitmap;
 
@@ -49,6 +50,7 @@ public:
     int height() const;
     bool isNull() const;
     void resize(const QSize &);
+    QImage convertToImage() const;
 };
 
 #endif

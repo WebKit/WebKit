@@ -26,9 +26,14 @@
 #ifndef QVECTOR_H_
 #define QVECTOR_H_
 
+#include <kwqdef.h>
+
 typedef void *Item;
 
-template<class type> class QVector {
+template<class T> class QVector {
+public:
+    QVector();
+    QVector(uint);
 };
 
 #endif

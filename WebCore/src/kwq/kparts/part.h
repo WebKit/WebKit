@@ -55,6 +55,7 @@ namespace KParts {
 class Part : public QObject {
 public:
     QWidget *widget();
+    void setWindowCaption(const QString &);
 };
 
 class ReadOnlyPart : public Part {

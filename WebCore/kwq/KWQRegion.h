@@ -26,10 +26,19 @@
 #ifndef QREGION_H_
 #define QREGION_H_
 
-#include "qobjectdefs.h"
+#include "qpoint.h"
+
+// FIXME: workaround for error on line 58 of khtml/html/html_imageimpl.h
+#include "qimage.h"
+
+// FIXME: workaround for error on line 62 of khtml/java/kjavaappletcontext.cpp
 #include "qrect.h"
 
 class QRegion {
+public:
+    QRegion();
+    QRegion(int, int, int, int);
+    bool contains(const QPoint &) const;
 };
 
 #endif

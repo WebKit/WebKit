@@ -26,4 +26,24 @@
 #ifndef NETACCESS_H_
 #define NETACCESS_H_
 
+#include <qvaluelist.h>
+#include <kurl.h>
+
+namespace KIO {
+
+class UDSAtom {
+};
+
+typedef QValueList<UDSAtom> UDSEntry;
+
+class NetAccess {
+public:
+    static bool stat(const KURL &, KIO::UDSEntry &);
+    static QString lastErrorString();
+    static bool download(const KURL &, QString &);
+    static void removeTempFile(const QString &);
+};
+
+}
+
 #endif

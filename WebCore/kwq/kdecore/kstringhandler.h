@@ -26,4 +26,11 @@
 #ifndef KSTRINGHANDLER_H_
 #define KSTRINGHANDLER_H_
 
+#include <qstring.h>
+
+class KStringHandler {
+public:
+    static QString csqueeze(const QString &, uint maxlen = 40);
+};
+
 #endif

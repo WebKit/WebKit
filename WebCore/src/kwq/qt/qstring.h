@@ -77,17 +77,19 @@ public:
     int toInt() const;
     int toInt(bool *, int base=10) const;
     uint toUInt(bool *ok = 0, int base = 10) const;
+    long toLong(bool *ok = 0, int base = 10) const;
     QString &setNum(int, int base = 10 );
     bool isNull() const;
     const QChar *unicode() const;
-    bool contains(const char *, bool) const;
+    int contains(const char *, bool) const;
+    int contains(const char *) const;
+    int contains(char) const;
     uint length() const;
     QString &sprintf(const char *, ...);
     QString lower() const;
     QString stripWhiteSpace() const;
     QString simplifyWhiteSpace() const;
     bool isEmpty() const;
-    int contains(const char *) const;
     int find(char, int index=0) const;
     int find(const char *, int index = 0, bool b = 0) const;
     int find(const QRegExp &, int index = 0, bool b = 0) const;
@@ -112,6 +114,7 @@ public:
     const char *ascii() const;
     // FIXME: is there a standard parameter type for overloaded operators?
     QChar operator[](int) const;
+    QString &operator+(char);
     QString &operator+(QChar);
     QString &operator+(const QString &);
     QString &operator+=(char);
@@ -126,6 +129,8 @@ public:
     QCString local8Bit() const;
     QString &setUnicode(const QChar *, uint);
     void compose();
+
+    QString visual(int index = 0, int len = -1);
 
     static const QString null;
 
