@@ -190,9 +190,9 @@ const float LargeNumberForText = 1.0e7;
         NSMutableString *mutableText = [[text mutableCopy] autorelease];
     
         [mutableText replaceOccurrencesOfString:@"\r\n" withString:@"\n"
-            options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+            options:NSLiteralSearch range:NSMakeRange(0, [mutableText length])];
         [mutableText replaceOccurrencesOfString:@"\r" withString:@"\n"
-            options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+            options:NSLiteralSearch range:NSMakeRange(0, [mutableText length])];
         
         text = mutableText;
     }

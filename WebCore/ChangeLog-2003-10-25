@@ -1,3 +1,11 @@
+2003-05-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed replaceOccurrencesOfString crash reported in bug 3247249 (not what the bug is about)
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea text]): Use the length of the replaced text.
+
 2003-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
