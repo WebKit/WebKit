@@ -32,6 +32,7 @@
 #include "rendering/table_layout.h"
 #include "html/html_tableimpl.h"
 #include "misc/htmltags.h"
+#include "misc/htmlattrs.h"
 
 #include <kglobal.h>
 
@@ -42,6 +43,7 @@
 #include <assert.h>
 
 using namespace khtml;
+using namespace DOM;
 
 RenderTable::RenderTable(DOM::NodeImpl* node)
     : RenderBlock(node)
@@ -1394,14 +1396,18 @@ void RenderTableCell::setCellPercentageHeight(int h)
     
 void RenderTableCell::calcMinMaxWidth()
 {
-    KHTMLAssert( !minMaxKnown() );
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(TableCell)::calcMinMaxWidth() known=" << minMaxKnown() << endl;
-#endif
-
     RenderBlock::calcMinMaxWidth();
-    
-    setMinMaxKnown();
+    if (element() && style()->whiteSpace() == NORMAL) {
+        // See if nowrap was set.
+        DOMString nowrap = static_cast<ElementImpl*>(element())->getAttribute(ATTR_NOWRAP);
+        if (!nowrap.isNull() && style()->width().isFixed())
+            // Nowrap is set, but we didn't actually use it because of the
+            // fixed width set on the cell.  Even so, it is a WinIE/Moz trait
+            // to make the minwidth of the cell into the fixed width.  They do this
+            // even in strict mode, so do not make this a quirk.  Affected the top
+            // of hiptop.com.
+            m_minWidth = style()->width().value;
+    }
 }
 
 void RenderTableCell::calcWidth()
@@ -1461,7 +1467,7 @@ void RenderTableCell::setStyle( RenderStyle *style )
     style->setDisplay(TABLE_CELL);
     RenderBlock::setStyle( style );
     setShouldPaintBackgroundOrBorder(true);
-    
+
     if (style->whiteSpace() == KONQ_NOWRAP) {
         // Figure out if we are really nowrapping or if we should just
         // use normal instead.  If the width of the cell is fixed, then

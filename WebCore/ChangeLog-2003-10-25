@@ -1,3 +1,15 @@
+2003-03-06  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3156125, regression on hiptop.com.  Caused by better
+	nowrap handling perversely enough.  Need another quirk from
+	Moz/WinIE to make this site behave.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::calcMinMaxWidth):
+        (RenderTableCell::setStyle):
+
 2003-03-06  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
