@@ -1,3 +1,30 @@
+2002-04-17  Chris Blumenberg  <cblu@apple.com>
+
+	Added a debug bit mask for plugins and downloads.
+
+	* MIME.subproj/IFDownloadHandlerPrivate.m: (-[IFDownloadHandlerPrivate
+	_openFile]), (-[IFDownloadHandlerPrivate _saveFile]), (-[IFDownloadHandler
+	_initWithURLHandle:mimeHandler:]):
+	* Misc.subproj/WebKitDebug.h:
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	initWithFrame:plugin:url:mime:arguments:mode:]), (-[IFPluginView setWindow]),
+	(-[IFPluginView newStream:mimeType:notifyData:]), (-[IFPluginView stop]),
+	(-[IFPluginView sendUpdateEvent]), (-[IFPluginView becomeFirstResponder]),
+	(-[IFPluginView resignFirstResponder]), (-[IFPluginView mouseDown:]),
+	(-[IFPluginView mouseUp:]), (-[IFPluginView mouseEntered:]), (-[IFPluginView
+	mouseExited:]), (-[IFPluginView keyUp:]), (-[IFPluginView keyDown:]),
+	(-[IFPluginView IFURLHandle:resourceDataDidBecomeAvailable:]), (-[IFPluginView
+	IFURLHandleResourceDidFinishLoading:data:]), (-[IFPluginView
+	getURLNotify:target:notifyData:]), (-[IFPluginView getURL:target:]),
+	(-[IFPluginView postURLNotify:target:len:buf:file:notifyData:]), (-[IFPluginView
+	postURL:target:len:buf:file:]), (-[IFPluginView newStream:target:stream:]),
+	(-[IFPluginView write:len:buffer:]), (-[IFPluginView destroyStream:reason:]),
+	(-[IFPluginView status:]), (-[IFPluginView getValue:value:]), (-[IFPluginView
+	setValue:value:]), (-[IFPluginView invalidateRect:]), (-[IFPluginView
+	invalidateRegion:]), (-[IFPluginView forceRedraw]):
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]):
+
 2002-04-17  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]):

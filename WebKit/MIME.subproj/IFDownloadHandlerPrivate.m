@@ -7,11 +7,13 @@
 //
 
 #import <WebKit/IFDownloadHandlerPrivate.h>
+#import <WebKit/IFMIMEHandler.h>
+#import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/IFURLHandle.h>
+
 #import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
-
-#import "IFMIMEHandler.h"
-#import <WebFoundation/IFURLHandle.h>
 
 @implementation IFDownloadHandlerPrivate
 
@@ -91,7 +93,7 @@
 {
     CFURLRef pathURL;
     pathURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (CFStringRef)path, kCFURLPOSIXPathStyle, FALSE);
-    NSLog(@"Opening: %@", path);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD,"Opening: %s", [path cString]);
     LSOpenCFURLRef(pathURL, NULL);
     CFRelease(pathURL);
 }
@@ -105,10 +107,10 @@
         // FIXME: Should report error if there is one
         fileManager = [NSFileManager defaultManager];
         [fileManager createFileAtPath:path contents:[urlHandle resourceData] attributes:nil];
-        NSLog(@"Download complete. Saved to: %@", path);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
         
         // Send Finder notification
-        NSLog(@"Notifying Finder");
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Notifying Finder");
         FNNotifyByPath([[path stringByDeletingLastPathComponent] cString], kFNDirectoryModifiedMessage, kNilOptions);
         
         if(shouldOpen)
@@ -126,7 +128,7 @@
     [_private _setURLHandle:uHandle];
     [_private _setMIMEHandler:mHandler];
     
-    NSLog(@"Downloading: %@", [uHandle url]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Downloading: %s", [[[uHandle url] absoluteString] cString]);
     
     return self;
 }

@@ -107,10 +107,11 @@
     IFMIMEDatabase *mimeDatabase;
     IFContentHandler *contentHandler;
     
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     
     // check the mime type
     if(!typeChecked){
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Main URL's contentType: %s", [[sender contentType] cString]);
         mimeDatabase = [IFMIMEDatabase sharedMIMEDatabase];
         mimeHandler = [[mimeDatabase MIMEHandlerForMIMEType:[sender contentType]] retain];
         handlerType = [mimeHandler handlerType];
@@ -159,7 +160,7 @@
     loadProgress->bytesSoFar = [sender contentLengthReceived];
     if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
         [[dataSource controller] receivedProgress:loadProgress forDownloadHandler:downloadHandler];
-        NSLog(@"%d of %d", loadProgress->bytesSoFar, loadProgress->totalToLoad);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download progress: %d of %d", loadProgress->bytesSoFar, loadProgress->totalToLoad);
     }else{
         [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
             forResource: [[sender url] absoluteString] fromDataSource: dataSource];

@@ -112,7 +112,7 @@ extern "C" {
         npErr = NPP_New(cMime, instance, NP_FULL, 0, NULL, NULL, &saved);
     }
 
-    WEBKITDEBUG("NPP_New: %d\n", npErr);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
     
     free(cMime);
     
@@ -181,7 +181,7 @@ extern "C" {
     window.type = NPWindowTypeWindow;
     
     npErr = NPP_SetWindow(instance, &window);
-    WEBKITDEBUG("NPP_SetWindow: %d, port=%d\n", npErr, (int)nPort.port);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=%d\n", npErr, (int)nPort.port);
 }
 
 - (void) newStream:(NSURL *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
@@ -201,20 +201,20 @@ extern "C" {
     [mimeType getCString:cMime];
     
     npErr = NPP_NewStream(instance, cMime, npStream, FALSE, &transferMode);
-    WEBKITDEBUG("NPP_NewStream: %d\n", npErr);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d\n", npErr);
     [stream setTransferMode:transferMode];
     free(cMime);
     
     if(transferMode == NP_NORMAL){
-        WEBKITDEBUG("Stream type: NP_NORMAL\n");
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_NORMAL\n");
     }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
         if(transferMode == NP_ASFILEONLY)
-            WEBKITDEBUG("Stream type: NP_ASFILEONLY\n");
+            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_ASFILEONLY\n");
         if(transferMode == NP_ASFILE)
-            WEBKITDEBUG("Stream type: NP_ASFILE\n");
+            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_ASFILE\n");
         [stream setFilename:[[streamURL path] lastPathComponent]];
     }else if(transferMode == NP_SEEK){
-        WEBKITDEBUG("Stream type: NP_SEEK not yet supported\n");
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_SEEK not yet supported\n");
         return;
     }
     attributes = [NSDictionary dictionaryWithObject:stream forKey:IFURLHandleUserData];
@@ -242,7 +242,7 @@ extern "C" {
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         [self removeTrackingRect:trackingTag];
         npErr = NPP_Destroy(instance, NULL);
-        WEBKITDEBUG("NPP_Destroy: %d\n", npErr);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
         stopped = TRUE;
     }
 }
@@ -275,7 +275,7 @@ extern "C" {
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     event.modifiers = isActive;
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUG("NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
 }
 
 -(void)sendUpdateEvent
@@ -289,7 +289,7 @@ extern "C" {
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUG("NPP_HandleEvent(updateEvt): %d  when: %lu\n", acceptedEvent, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(updateEvt): %d  when: %lu\n", acceptedEvent, event.when);
 }
 
 
@@ -346,7 +346,7 @@ extern "C" {
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUG("NPP_HandleEvent(getFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
     return YES;
 }
 
@@ -360,7 +360,7 @@ extern "C" {
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUG("NPP_HandleEvent(loseFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
     return YES;
 }
 
@@ -379,7 +379,7 @@ extern "C" {
     event.when = (uint32)([theEvent timestamp] * 60); // seconds to ticks
     event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUG("NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, pt.v, pt.h, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, pt.v, pt.h, event.when);
 }
 
 -(void)mouseUp:(NSEvent *)theEvent
@@ -396,7 +396,7 @@ extern "C" {
     event.when = (uint32)([theEvent timestamp] * 60); 
     event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUG("NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, pt.v, pt.h, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, pt.v, pt.h, event.when);
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
@@ -408,7 +408,7 @@ extern "C" {
     event.when = (uint32)([theEvent timestamp] * 60);
     event.modifiers = 1;
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUG("NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
@@ -420,7 +420,7 @@ extern "C" {
     event.when = (uint32)([theEvent timestamp] * 60);
     event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUG("NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
 }
 
 - (void)keyUp:(NSEvent *)theEvent
@@ -432,7 +432,7 @@ extern "C" {
     event.message = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
     event.when = (uint32)([theEvent timestamp] * 60);
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUG("NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
     //Note: QT Plug-in doesn't use keyUp's
 }
 
@@ -445,7 +445,7 @@ extern "C" {
     event.message = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
     event.when = (uint32)([theEvent timestamp] * 60);
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUG("NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
 }
 
 #pragma mark NOTIFICATIONS
@@ -492,9 +492,9 @@ extern "C" {
     
     if(transferMode != NP_ASFILEONLY){
         bytes = NPP_WriteReady(instance, npStream);
-        //WEBKITDEBUG("NPP_WriteReady bytes=%u\n", bytes);
+        //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_WriteReady bytes=%u\n", bytes);
         bytes = NPP_Write(instance, npStream, [stream offset], [data length], (void *)[data bytes]);
-        //WEBKITDEBUG("NPP_Write bytes=%u\n", bytes);
+        //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Write bytes=%u\n", bytes);
         [stream incrementOffset:[data length]];
     }
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
@@ -539,14 +539,14 @@ extern "C" {
         [filenameClassic getCString:cFilename];
         
         NPP_StreamAsFile(instance, npStream, cFilename);
-        WEBKITDEBUG("NPP_StreamAsFile: %s\n", cFilename);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s\n", cFilename);
     }
     npErr = NPP_DestroyStream(instance, npStream, NPRES_DONE);
-    WEBKITDEBUG("NPP_DestroyStream: %d\n", npErr);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);
     
     if(npStream->notifyData){
         NPP_URLNotify(instance, npStream->url, NPRES_DONE, npStream->notifyData);
-        WEBKITDEBUG("NPP_URLNotify\n");
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_URLNotify\n");
     }
     [stream release];
     [activeURLHandles removeObject:sender];
@@ -610,7 +610,7 @@ extern "C" {
     IFWebDataSource *dataSource;
     NSURL *requestedURL;
     
-    WEBKITDEBUG("NPN_GetURLNotify: %s target: %s\n", url, target);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s\n", url, target);
  
     if(!strcmp(url, "")){
         return NPERR_INVALID_URL;
@@ -637,37 +637,37 @@ extern "C" {
 
 -(NPError)getURL:(const char *)url target:(const char *)target
 {
-    WEBKITDEBUG("NPN_GetURL: %s target: %s\n", url, target);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURL: %s target: %s\n", url, target);
     return [self getURLNotify:url target:target notifyData:NULL];
 }
 
 -(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
 {
-    WEBKITDEBUG("NPN_PostURLNotify\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURLNotify\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)postURL:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file
 {
-    WEBKITDEBUG("NPN_PostURL\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURL\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream
 {
-    WEBKITDEBUG("NPN_NewStream\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_NewStream\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)write:(NPStream*)stream len:(SInt32)len buffer:(void *)buffer
 {
-    WEBKITDEBUG("NPN_Write\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_Write\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason
 {
-    WEBKITDEBUG("NPN_DestroyStream\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_DestroyStream\n");
     return NPERR_GENERIC_ERROR;
 }
 
@@ -675,7 +675,7 @@ extern "C" {
 {
     IFWebDataSource *dataSource;
     
-    WEBKITDEBUG("NPN_Status: %s\n", message);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_Status: %s\n", message);
     if(webController){
         dataSource = [[webController mainFrame] dataSource];
         [webController setStatusText:[NSString stringWithCString:message] forDataSource:dataSource];
@@ -684,29 +684,29 @@ extern "C" {
 
 -(NPError)getValue:(NPNVariable)variable value:(void *)value
 {
-    WEBKITDEBUG("NPN_GetValue\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetValue\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)setValue:(NPPVariable)variable value:(void *)value
 {
-    WEBKITDEBUG("NPN_SetValue\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_SetValue\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(void)invalidateRect:(NPRect *)invalidRect
 {
-    WEBKITDEBUG("NPN_InvalidateRect\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRect\n");
 }
 
 -(void)invalidateRegion:(NPRegion)invalidateRegion
 {
-    WEBKITDEBUG("NPN_InvalidateRegion\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRegion\n");
 }
 
 -(void)forceRedraw
 {
-    WEBKITDEBUG("forceRedraw\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "forceRedraw\n");
 }
 
 #pragma mark PREBINDING
