@@ -98,7 +98,6 @@
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
-				99FFFB92047B024800CA283D,
 			);
 			isa = PBXGroup;
 			name = JavaScriptCore;
@@ -239,7 +238,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				089C1668FE841158C02AAC07,
-				99FFFB93047B024800CA283D,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -790,30 +788,6 @@
 //932
 //933
 //934
-//990
-//991
-//992
-//993
-//994
-		99FFFB92047B024800CA283D = {
-			expectedFileType = text;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = JavaScriptCore.order;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		99FFFB93047B024800CA283D = {
-			fileRef = 99FFFB92047B024800CA283D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-//990
-//991
-//992
-//993
-//994
 //F50
 //F51
 //F52

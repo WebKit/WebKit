@@ -2,6 +2,12 @@
 
         Reviewed by John. 
 
+        * JavaScriptCore.pbproj/project.pbxproj: deleted JavaScriptCore.order from the project.
+
+2003-08-14  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John. 
+
         * JavaScriptCore.order: Removed.  We now link to the order file at /AppleInternal/OrderFiles.
         * JavaScriptCore.pbproj/project.pbxproj: change sectorder flag to point to /AppleInternal/OrderFiles/JavaScriptCore.order
 

@@ -2,6 +2,12 @@
 
         Reviewed by John. 
 
+        * WebKit.pbproj/project.pbxproj: deleted WebKit.order from the project.
+
+2003-08-14  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John. 
+
         * WebKit.order: Removed. We now point to the WebKit order file in /AppleInternal/OrderFiles.
         * WebKit.pbproj/project.pbxproj: set sectorder flag to point to /AppleInternal/OrderFiles/WebKit.order
 
