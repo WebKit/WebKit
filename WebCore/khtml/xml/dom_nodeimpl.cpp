@@ -1365,7 +1365,7 @@ ElementImpl *NodeImpl::enclosingBlockFlowElement() const
     return 0;
 }
 
-ElementImpl *NodeImpl::enclosingNonBlockFlowElement() const
+ElementImpl *NodeImpl::enclosingInlineElement() const
 {
     NodeImpl *n = const_cast<NodeImpl *>(this);
     NodeImpl *p;

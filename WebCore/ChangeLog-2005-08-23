@@ -1,3 +1,15 @@
+2004-11-08  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+        
+        Renamed NodeImpl::enclosingNonBlockFlowElement to NodeImpl::enclosingInlineElement, per Hyatt.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::enclosingInlineElement):
+        * khtml/xml/dom_nodeimpl.h:
+
 2004-11-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3838413> REGRESSION (Mail): "Smart" word paste adds spaces before/after special characters
