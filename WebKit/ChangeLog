@@ -1,5 +1,17 @@
 2002-07-20  Darin Adler  <darin@apple.com>
 
+	- fixed 2999643 -- Leak of NSSet in -[IFStandardPanels _didStartLoadingURL:inController:]
+
+	This is another case of the leak I fixed a month ago. I don't know how I managed to
+	overlook this other code path with the identical bug.
+
+        * Panels.subproj/WebStandardPanels.m:
+        (-[WebStandardPanels _didStopLoadingURL:inController:]): Fix a leak caused
+	by calling the wrong method. This was calling objectForKey: instead of
+	removeObjectForKey:.
+
+2002-07-20  Darin Adler  <darin@apple.com>
+
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge areToolbarsVisible]):
         (-[WebBridge isStatusBarVisible]):
@@ -535,7 +547,7 @@
 
         * WebView.subproj/IFPreferences.mm:
         (+[IFPreferences load]): Switch default for "Allow JavaScript to
-	open new windows automatically to FALSE.
+	open new windows automatically" to FALSE.
 
 2002-07-15  Darin Adler  <darin@apple.com>
 
