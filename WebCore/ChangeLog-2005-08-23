@@ -1,5 +1,12 @@
 2004-08-24  David Hyatt  <hyatt@apple.com>
 
+	Make sure the ifdef XSLT is present for Panther.
+	
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::insertErrorMessageBlock):
+
+2004-08-24  David Hyatt  <hyatt@apple.com>
+
 	Polish the XML error message so that it indicates when a document is the result of an XSL transformation
 	when reporting line/col #s.
 	
