@@ -5,7 +5,7 @@
               (C) 1997 Torben Weis (weis@kde.org)
               (C) 1999,2001 Lars Knoll (knoll@kde.org)
               (C) 2000,2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2003 Apple Computer, Inc.
+    Copyright (C) 2004 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -153,6 +153,8 @@ KHTMLParser::~KHTMLParser()
 #if SPEED_DEBUG > 0
     kdDebug( ) << "TIME: parsing time was = " << qt.elapsed() << endl;
 #endif
+
+    setCurrent(0);
 
     freeBlock();
 

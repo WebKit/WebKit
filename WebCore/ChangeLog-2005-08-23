@@ -1,3 +1,12 @@
+2004-09-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed a storage leak discovered by code inspection
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::~KHTMLParser): Call setCurrent(0) to deref
+        the parser's current node in the rare case where it still has one.
+
 2004-09-27  David Hyatt  <hyatt@apple.com>
 
 	Don't allow nested headers when only inlines are in between them.  Fixes a hang related to pathological nesting
