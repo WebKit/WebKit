@@ -29,6 +29,7 @@
 #include <jni_utility.h>
 #include <jni_runtime.h>
 
+#include <runtime_array.h>
 #include <runtime_object.h>
 
 using namespace KJS;
@@ -53,67 +54,15 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
     jstring fieldName = (jstring)callJNIObjectMethod (aField, "getName", "()Ljava/lang/String;");
     _name = JavaString(env, fieldName);
 
-    printf ("%s: %s (%d)\n", _name.characters(), _type.characters(), _JNIType);
-
     _field = new JavaInstance(aField);
 }
 
 KJS::Value convertJObjectToArray (KJS::ExecState *exec, jobject anObject, const char *type)
 {
-#if 0
     if (type[0] != '[')
         return Undefined();
-    
-    JNIType arrayType = JNITypeFromClassName(type+1);
-    switch (arrayType) {
-        case object_type: {
-            jobjectArray objectArray = (jObjectArray)anObject;
-            break;
-        }
-            
-        case boolean_type: {
-            jbooleanArray boolArray = (jbooleanArray)anObject;
-            break;
-        }
-            
-        case byte_type: {
-            jbyteArray byteArray = (jbyteArray)anObject;
-            break;
-        }
-            
-        case char_type: {
-            jcharArray charArray = (jcharArray)anObject;
-            break;
-        }
-            
-        case short_type: {
-            jshortArray shortArray = (jshortArray)anObject;
-            break;
-        }
-            
-        case int_type: {
-            jintArray intArray = (jintArray)anObject;
-            break;
-        }
-            
-        case long_type: {
-            jlongArray longArray = (jlongArray)anObject;
-            break;
-        }
-            
-        case float_type: {
-            jfloatArray floatArray = (jfloatArray)anObject;
-            break;
-        }
-            
-        case double_type: {
-            jdoubleArray doubleArray = (jdoubleArray)anObject;
-            break;
-        }
-        default:
-    }
-#endif
-    return Undefined();
+
+    return KJS::Object(new RuntimeArrayImp(new JavaArray ((jobject)anObject, type)));
 }
 
 KJS::Value JavaField::valueFromInstance(const Instance *i) const 
@@ -315,3 +264,182 @@ JNIType JavaMethod::JNIReturnType() const
 {
     return _JNIReturnType;
 }
+
+JavaArray::JavaArray (jobject a, const char *t) 
+{
+    _array = new JObjectWrapper (a);
+    // Java array are fixed length, so we can cache length.
+    JNIEnv *env = getJNIEnv();
+    _length = env->GetArrayLength((jarray)_array->_instance);
+
+    _type = strdup(t);
+};
+
+JavaArray::~JavaArray () 
+{
+    _array->deref();
+    free ((void *)_type);
+}
+
+
+JavaArray::JavaArray (const JavaArray &other) : Array() 
+{
+    _array = other._array;
+    _array->ref();
+    _type = strdup(other._type);
+};
+
+void JavaArray::setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const
+{
+    JNIEnv *env = getJNIEnv();
+    char *javaClassName = 0;
+    
+    JNIType arrayType = JNITypeFromPrimitiveType(_type[1]);
+    if (_type[1] == 'L'){
+        // The type of the array will be something like:
+        // "[Ljava.lang.string;".  This is guaranteed, so no need
+        // for extra sanity checks.
+        javaClassName = strdup(&_type[2]);
+        javaClassName[strchr(javaClassName, ';')-javaClassName] = 0;
+    }
+    jvalue aJValue = convertValueToJValue (exec, aValue, arrayType, javaClassName);
+    
+    switch (arrayType) {
+        case object_type: {
+            env->SetObjectArrayElement((jobjectArray)javaArray(), index, aJValue.l);
+            break;
+        }
+            
+        case boolean_type: {
+            env->SetBooleanArrayRegion((jbooleanArray)javaArray(), index, 1, &aJValue.z);
+            break;
+        }
+            
+        case byte_type: {
+            env->SetByteArrayRegion((jbyteArray)javaArray(), index, 1, &aJValue.b);
+            break;
+        }
+            
+        case char_type: {
+            env->SetCharArrayRegion((jcharArray)javaArray(), index, 1, &aJValue.c);
+            break;
+        }
+            
+        case short_type: {
+            env->SetShortArrayRegion((jshortArray)javaArray(), index, 1, &aJValue.s);
+            break;
+        }
+            
+        case int_type: {
+            env->SetIntArrayRegion((jintArray)javaArray(), index, 1, &aJValue.i);
+            break;
+        }
+            
+        case long_type: {
+            env->SetLongArrayRegion((jlongArray)javaArray(), index, 1, &aJValue.j);
+        }
+            
+        case float_type: {
+            env->SetFloatArrayRegion((jfloatArray)javaArray(), index, 1, &aJValue.f);
+            break;
+        }
+            
+        case double_type: {
+            env->SetDoubleArrayRegion((jdoubleArray)javaArray(), index, 1, &aJValue.d);
+            break;
+        }
+        default:
+        break;
+    }
+    
+    if (javaClassName)
+        free ((void *)javaClassName);
+}
+
+
+KJS::Value JavaArray::valueAt(unsigned int index) const
+{
+    JNIEnv *env = getJNIEnv();
+    JNIType arrayType = JNITypeFromPrimitiveType(_type[1]);
+    switch (arrayType) {
+        case object_type: {
+            jobjectArray objectArray = (jobjectArray)javaArray();
+            jobject anObject;
+            anObject = env->GetObjectArrayElement(objectArray, index);
+
+            // Nested array?
+            if (_type[1] == '[') {
+                return convertJObjectToArray (0, anObject, _type+1);
+            }
+            // or array of other object type?
+            return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject)));
+        }
+            
+        case boolean_type: {
+            jbooleanArray booleanArray = (jbooleanArray)javaArray();
+            jboolean aBoolean;
+            env->GetBooleanArrayRegion(booleanArray, index, 1, &aBoolean);
+            return KJS::Boolean (aBoolean);
+        }
+            
+        case byte_type: {
+            jbyteArray byteArray = (jbyteArray)javaArray();
+            jbyte aByte;
+            env->GetByteArrayRegion(byteArray, index, 1, &aByte);
+            return Number (aByte);
+        }
+            
+        case char_type: {
+            jcharArray charArray = (jcharArray)javaArray();
+            jchar aChar;
+            env->GetCharArrayRegion(charArray, index, 1, &aChar);
+            return Number (aChar);
+            break;
+        }
+            
+        case short_type: {
+            jshortArray shortArray = (jshortArray)javaArray();
+            jshort aShort;
+            env->GetShortArrayRegion(shortArray, index, 1, &aShort);
+            return Number (aShort);
+        }
+            
+        case int_type: {
+            jintArray intArray = (jintArray)javaArray();
+            jint anInt;
+            env->GetIntArrayRegion(intArray, index, 1, &anInt);
+            return Number (anInt);
+        }
+            
+        case long_type: {
+            jlongArray longArray = (jlongArray)javaArray();
+            jlong aLong;
+            env->GetLongArrayRegion(longArray, index, 1, &aLong);
+            return Number ((long int)aLong);
+        }
+            
+        case float_type: {
+            jfloatArray floatArray = (jfloatArray)javaArray();
+            jfloat aFloat;
+            env->GetFloatArrayRegion(floatArray, index, 1, &aFloat);
+            return Number (aFloat);
+        }
+            
+        case double_type: {
+            jdoubleArray doubleArray = (jdoubleArray)javaArray();
+            jdouble aDouble;
+            env->GetDoubleArrayRegion(doubleArray, index, 1, &aDouble);
+            return Number (aDouble);
+        }
+        default:
+        break;
+    }
+    return Undefined();
+}
+
+unsigned int JavaArray::getLength() const
+{
+    return _length;
+}
+
+

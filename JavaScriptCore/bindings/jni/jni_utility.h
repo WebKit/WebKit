@@ -55,6 +55,7 @@ const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString);
 void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s);
 
 JNIType JNITypeFromClassName(const char *name);
+JNIType JNITypeFromPrimitiveType(char type);
 const char *signatureFromPrimitiveType(JNIType type);
 
 jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JNIType, const char *javaClassName);

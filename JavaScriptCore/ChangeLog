@@ -1,3 +1,42 @@
+2003-12-08  Richard Williamson   <rjw@apple.com>
+
+	LiveConnect:  The last piece of the JavaScript side of the
+	LiveConnect implementation.  This change adds support for
+	setting/getting values from Java arrays in JavaScript.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::JavaField):
+        (convertJObjectToArray):
+        (JavaArray::JavaArray):
+        (JavaArray::~JavaArray):
+        (JavaArray::setValueAt):
+        (JavaArray::valueAt):
+        (JavaArray::getLength):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaArray::operator=):
+        (Bindings::JavaArray::javaArray):
+        * bindings/jni/jni_utility.cpp:
+        (JNITypeFromPrimitiveType):
+        (convertValueToJValue):
+        * bindings/jni/jni_utility.h:
+        * bindings/runtime.h:
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::RuntimeArrayImp):
+        (RuntimeArrayImp::~RuntimeArrayImp):
+        (RuntimeArrayImp::get):
+        (RuntimeArrayImp::put):
+        (RuntimeArrayImp::hasProperty):
+        * bindings/runtime_array.h:
+        (KJS::RuntimeArrayImp::getLength):
+        (KJS::RuntimeArrayImp::getConcreteArray):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::canPut):
+        (RuntimeObjectImp::hasProperty):
+
 2003-12-05  Richard Williamson   <rjw@apple.com>
 
 	LiveConnect:  Part 1 of supporting JS bindings to

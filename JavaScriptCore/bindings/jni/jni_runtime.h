@@ -263,6 +263,42 @@ private:
     JNIType _JNIReturnType;
 };
 
+class JavaArray : public Array
+{
+public:
+    JavaArray (jobject a, const char *type);
+
+    JavaArray (const JavaArray &other);
+
+    JavaArray &operator=(const JavaArray &other){
+        if (this == &other)
+            return *this;
+        
+        free ((void *)_type);
+        _type = strdup(other._type);
+
+        JObjectWrapper *_oldArray = _array;
+        _array = other._array;
+        _array->ref();
+        _oldArray->deref();
+        
+        return *this;
+    };
+
+    virtual void setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const;
+    virtual KJS::Value valueAt(unsigned int index) const;
+    virtual unsigned int getLength() const;
+    
+    virtual ~JavaArray();
+
+    jobject javaArray() const { return _array->_instance; }
+
+private:
+    JObjectWrapper *_array;
+    unsigned int _length;
+    const char *_type;
+};
+
 }
 
 #endif

@@ -34,24 +34,24 @@ const ClassInfo RuntimeArrayImp::info = {"RuntimeArray", 0, 0, 0};
 RuntimeArrayImp::RuntimeArrayImp(Bindings::Array *a)
 {
     // Always takes ownership of concrete array.
-    array = a;
+    _array = a;
 }
 
 RuntimeArrayImp::~RuntimeArrayImp()
 {
-    delete array;
+    delete _array;
 }
 
 
 Value RuntimeArrayImp::get(ExecState *exec, const Identifier &propertyName) const
 {
     if (propertyName == lengthPropertyName)
-        return Number(length);
+        return Number(getLength());
     
     bool ok;
     unsigned index = propertyName.toArrayIndex(&ok);
     if (ok) {
-        if (index >= length)
+        if (index >= getLength())
             return Undefined();
         return getConcreteArray()->valueAt(index);
     }
@@ -61,7 +61,7 @@ Value RuntimeArrayImp::get(ExecState *exec, const Identifier &propertyName) cons
 
 Value RuntimeArrayImp::get(ExecState *exec, unsigned index) const
 {
-    if (index >= length)
+    if (index >= getLength())
         return Undefined();
     return getConcreteArray()->valueAt(index);
 }
@@ -77,7 +77,7 @@ void RuntimeArrayImp::put(ExecState *exec, const Identifier &propertyName, const
     bool ok;
     unsigned index = propertyName.toArrayIndex(&ok);
     if (ok) {
-        getConcreteArray()->setValueAt(index, value);
+        getConcreteArray()->setValueAt(exec, index, value);
         return;
     }
     
@@ -86,13 +86,13 @@ void RuntimeArrayImp::put(ExecState *exec, const Identifier &propertyName, const
 
 void RuntimeArrayImp::put(ExecState *exec, unsigned index, const Value &value, int attr)
 {
-    if (index >= length) {
+    if (index >= getLength()) {
         Object err = Error::create(exec,RangeError);
         exec->setException(err);
         return;
     }
     
-    getConcreteArray()->setValueAt(index, value);
+    getConcreteArray()->setValueAt(exec, index, value);
 }
 
 
@@ -104,7 +104,7 @@ bool RuntimeArrayImp::hasProperty(ExecState *exec, const Identifier &propertyNam
     bool ok;
     unsigned index = propertyName.toArrayIndex(&ok);
     if (ok) {
-        if (index >= length)
+        if (index >= getLength())
             return false;
         return true;
     }
@@ -114,7 +114,7 @@ bool RuntimeArrayImp::hasProperty(ExecState *exec, const Identifier &propertyNam
 
 bool RuntimeArrayImp::hasProperty(ExecState *exec, unsigned index) const
 {
-    if (index >= length)
+    if (index >= getLength())
         return false;
     return true;
 }

@@ -26,6 +26,7 @@
 
 #include "jni_runtime.h"
 #include "jni_utility.h"
+#include "runtime_array.h"
 #include "runtime_object.h"
 
 static JavaVM *jvm;
@@ -412,6 +413,46 @@ const char *signatureFromPrimitiveType(JNIType type)
     return "";
 }
 
+JNIType JNITypeFromPrimitiveType(char type)
+{
+    switch (type){
+        case 'V': 
+            return void_type;
+        
+        case 'L':
+        case '[':
+            return object_type;
+        
+        case 'Z':
+            return boolean_type;
+        
+        case 'B':
+            return byte_type;
+            
+        case 'C':
+            return char_type;
+        
+        case 'S':
+            return short_type;
+        
+        case 'I':
+            return int_type;
+        
+        case 'J':
+            return long_type;
+        
+        case 'F':
+            return float_type;
+        
+        case 'D':
+            return double_type;
+
+        default:
+        break;
+    }
+    return invalid_type;
+}
+
 jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature)
 {
     JavaVM *jvm = getJavaVM();
@@ -489,6 +530,11 @@ jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JN
                     KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp *>(value.imp());
                     Bindings::JavaInstance *instance = static_cast<Bindings::JavaInstance*>(imp->getInternalInstance());
                     result.l = instance->javaInstance();
+                }
+                else if (strcmp(objectImp->classInfo()->className, "RuntimeArray") == 0) {
+                    KJS::RuntimeArrayImp *imp = static_cast<KJS::RuntimeArrayImp *>(value.imp());
+                    Bindings::JavaArray *array = static_cast<Bindings::JavaArray*>(imp->getConcreteArray());
+                    result.l = array->javaArray();
                 }
             }
             

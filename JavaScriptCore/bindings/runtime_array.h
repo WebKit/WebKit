@@ -47,15 +47,13 @@ public:
     
     virtual const ClassInfo *classInfo() const { return &info; }
     
-    unsigned getLength() const { return length; }
+    unsigned getLength() const { return getConcreteArray()->getLength(); }
     
-    Bindings::Array *getConcreteArray() const { return array; }
+    Bindings::Array *getConcreteArray() const { return _array; }
 
 private:
     static const ClassInfo info;
-    Bindings::Array *array;
-
-    unsigned length;
+    Bindings::Array *_array;
 };
     
 }; // namespace KJS

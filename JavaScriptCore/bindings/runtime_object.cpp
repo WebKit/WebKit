@@ -75,8 +75,6 @@ Value RuntimeObjectImp::get(ExecState *exec, const Identifier &propertyName) con
         return Object (new RuntimeMethodImp(exec, propertyName, aMethod));
     }
     
-    printf ("%s: %p: unable to find propertyName %s\n", __PRETTY_FUNCTION__, instance, propertyName.ascii());
-
     return Undefined();
 }
 
@@ -92,17 +90,21 @@ void RuntimeObjectImp::put(ExecState *exec, const Identifier &propertyName,
 
 bool RuntimeObjectImp::canPut(ExecState *exec, const Identifier &propertyName) const
 {
-    printf ("%s: NOT YET IMPLEMENTED %p: propertyName %s\n", __PRETTY_FUNCTION__, instance, propertyName.ascii());
-    // Returns true if the propertyName is a public ivar of the object.
-    return false;
+    Field *aField = instance->getClass()->fieldNamed(propertyName.ascii());
+    return aField ? true : false;
 }
 
 bool RuntimeObjectImp::hasProperty(ExecState *exec,
                             const Identifier &propertyName) const
 {
-    printf ("%s: NOT YET IMPLEMENTED %p: propertyName %s\n", __PRETTY_FUNCTION__, instance, propertyName.ascii());
-    // Returns true if the propertyName is a function or ivar of the instance
-    // represented by this RuntimeObject.
+    Field *aField = instance->getClass()->fieldNamed(propertyName.ascii());
+    if (aField)
+        return true;
+        
+    Method *aMethod = instance->getClass()->methodNamed(propertyName.ascii());
+    if (aMethod)
+        return true;
+        
     return false;
 }
 

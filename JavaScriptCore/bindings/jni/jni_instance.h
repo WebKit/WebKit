@@ -37,6 +37,7 @@ class JavaClass;
 
 class JObjectWrapper
 {
+friend class JavaArray;
 friend class JavaInstance;
 friend class JavaMethod;
 
