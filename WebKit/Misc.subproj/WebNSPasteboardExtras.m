@@ -70,13 +70,36 @@ NSString *WebURLNamePboardType = nil;
 - (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner
 {
     ASSERT(URL);
-    
-    NSArray *types = [NSArray arrayWithObjects:WebURLsWithTitlesPboardType, NSURLPboardType, NSStringPboardType, nil];
-    if([self types] && [[self types] count] > 0){
-        [self addTypes:types owner:owner];
+
+    NSArray *types;
+
+    if(title){
+        types = [NSArray arrayWithObjects:
+            WebURLsWithTitlesPboardType,
+            NSURLPboardType,
+            WebURLPboardType,
+            NSStringPboardType,
+            nil];
     }else{
-        [self declareTypes:types owner:owner];
+        types = [NSArray arrayWithObjects:
+            WebURLsWithTitlesPboardType,
+            NSURLPboardType,
+            WebURLPboardType,
+            WebURLNamePboardType,
+            NSStringPboardType,
+            nil];
     }
+    
+    NSArray *originalTypes = [self types];
+    
+    if([originalTypes count] > 0){
+        NSMutableArray *newTypes;
+        newTypes = [originalTypes mutableCopy];
+        [newTypes addObjectsFromArray:types];
+        types = newTypes;
+    }
+    
+    [self declareTypes:types owner:owner];
 
     [URL writeToPasteboard:self];
     [self setString:[URL absoluteString] forType:NSStringPboardType];

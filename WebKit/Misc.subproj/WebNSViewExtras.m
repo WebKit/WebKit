@@ -159,18 +159,19 @@
 #endif
 
 - (void)_web_dragPromisedImage:(NSImage *)image
-                    fromOrigin:(NSPoint)origin
-                       withURL:(NSURL *)URL
+                        origin:(NSPoint)origin
+                           URL:(NSURL *)URL
+                      fileType:(NSString *)fileType
                          title:(NSString *)title
                          event:(NSEvent *)event
 {
-    image = [[image copy] autorelease];
+    NSImage *dragImage = [[image copy] autorelease];
     
-    NSSize originalSize = [image size];
-    [image _web_scaleToMaxSize:WebMaxDragImageSize];
-    NSSize newSize = [image size];
+    NSSize originalSize = [dragImage size];
+    [dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
+    NSSize newSize = [dragImage size];
 
-    [image _web_dissolveToFraction:WebDragImageAlpha];
+    [dragImage _web_dissolveToFraction:WebDragImageAlpha];
 
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
@@ -182,39 +183,18 @@
 
     NSSize offset = NSMakeSize(currentPoint.x - mouseDownPoint.x, currentPoint.y - mouseDownPoint.y);
 
-    NSArray *filesTypes = [NSArray arrayWithObject:[[URL path] pathExtension]];
+    NSArray *filesTypes = [NSArray arrayWithObject:fileType];
     
     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     [pboard declareTypes:[NSArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil] owner:self];
+    [pboard _web_writeURL:URL andTitle:title withOwner:self];
     [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
-    [pboard _web_writeURL:URL andTitle:title withOwner:self];
-
+    
     id source = [[NSFilePromiseDragSource alloc] initWithSource:(id)self];
     [source setTypes:filesTypes onPasteboard:pboard];
     
-    [self dragImage:image at:origin offset:offset event:event pasteboard:pboard source:source slideBack:YES];
+    [self dragImage:dragImage at:origin offset:offset event:event pasteboard:pboard source:source slideBack:YES];
 }
 
 @end
-
-@implementation WebFilePromiseDragSource
-
-- initWithSource:(id)draggingSource
-{
-    [super initWithSource:draggingSource];
-    _draggingSource = draggingSource;
-    return self;
-}
-
-- (id)draggingSource
-{
-    return _draggingSource;
-}
-
-- (void)dealloc
-{
-    //[super dealloc];
-}
-
-@end;

@@ -1,3 +1,39 @@
+2002-12-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	3112477 - REGRESSION: dropping image within window loads image in current window
+	Fix: Unregister the parent webview for dragging when the drag starts, reregister after the drag ends.
+
+	3116423 - Dragged images sometimes have the wrong promised-file file type
+	Fix: Make the - [NSView_web_dragPromisedImage...] method take a file type rather than deriving the file type from the URL
+
+	3115768 - REGRESSION: contextual menu item "copy url to clipboard" doesn't work
+	Fix: In [NSPastboard _web_writeURL:andTitle:withOwner:] adding pboard types  doesn't work for the general pasteboard, have to redeclare.
+
+	3116594 - Image on the drag pasteboard shouldn't have applied transparency and scaling
+	Fix: In - [NSView_web_dragPromisedImage...] put the original image on the pboard
+
+	Reviewed by John.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:]): don't use addTypes as it doesn't work as I expected
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragPromisedImage:origin:URL:fileType:title:event:]): put the original image on the pboard, not the drag image
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        (-[WebHTMLView mouseDragged:]): call _web_dragPromisedImage
+        (-[WebHTMLView draggedImage:endedAt:operation:]): call -[WebView _reregisterDraggedTypes]
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView mouseDragged:]): call _web_dragPromisedImage
+        (-[WebImageView draggedImage:endedAt:operation:]): call -[WebView _reregisterDraggedTypes]
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithFrame:]): call _reregisterDraggedTypes
+        (-[WebView draggingEntered:]): simplified, don't need to check drag source
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _reregisterDraggedTypes]):
+
 2002-12-03  Darin Adler  <darin@apple.com>
 
 	- fixed 3114796 -- WORLD LEAKS: 1 WebFrame leaked on trivial source file with <html> tag only

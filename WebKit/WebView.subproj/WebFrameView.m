@@ -97,8 +97,8 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
     [scrollView setHasHorizontalScroller: NO];
     [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: scrollView];
-    
-    [self registerForDraggedTypes:[NSPasteboard _web_dragTypesForURL]];
+
+    [self _reregisterDraggedTypes];
     
     ++WebViewCount;
     
@@ -148,13 +148,7 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    id draggingSource = [sender draggingSource];
-    if([draggingSource isKindOfClass:[WebFilePromiseDragSource class]]){
-        draggingSource = [draggingSource draggingSource];
-    }
-    
-    if([[sender draggingPasteboard] _web_bestURL] &&
-       (![self documentView] || (draggingSource != [self documentView]))){
+    if([[sender draggingPasteboard] _web_bestURL]){
         return NSDragOperationCopy;
     }
 

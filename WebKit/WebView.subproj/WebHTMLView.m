@@ -598,6 +598,23 @@
     [[self _bridge] mouseDown:event];
 }
 
+- (void)dragImage:(NSImage *)dragImage
+               at:(NSPoint)at
+           offset:(NSSize)offset
+            event:(NSEvent *)event
+       pasteboard:(NSPasteboard *)pasteboard
+           source:(id)source
+        slideBack:(BOOL)slideBack
+{
+    // Don't allow drags to be accepted by this WebView.
+    [[self _web_parentWebView] unregisterDraggedTypes];
+    
+    // Retain this view during the drag because it may be released before the drag ends.
+    [self retain];
+
+    [super dragImage:dragImage at:at offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack];
+}
+
 - (void)mouseDragged:(NSEvent *)event
 {
     // If the frame has a provisional data source, this view may be released.
@@ -632,13 +649,11 @@
             
             if (imageURL){
                 _private->draggingImageElement = [element retain];
-
-                // Retain this view during the drag because it may be released before the drag ends.
-                [self retain];
                 
                 [self _web_dragPromisedImage:[element objectForKey:WebElementImageKey]
-                                  fromOrigin:[[element objectForKey:WebElementImageLocationKey] pointValue]
-                                     withURL:linkURL ? linkURL : imageURL
+                                      origin:[[element objectForKey:WebElementImageLocationKey] pointValue]
+                                         URL:linkURL ? linkURL : imageURL
+                                    fileType:[[imageURL path] pathExtension]
                                        title:[element objectForKey:WebElementImageAltStringKey]
                                        event:_private->mouseDownEvent];
             }else if (linkURL) {
@@ -725,8 +740,6 @@
                 NSSize centerOffset = NSMakeSize(imageSize.width / 2, -DRAG_LABEL_BORDER_Y);
                 NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
 
-                // Retain this view during the drag because it may be released before the drag ends.
-                [self retain];
                 [self dragImage:dragImage
                              at:imagePoint
                          offset:centerOffset
@@ -758,6 +771,9 @@
     // So after the drag we need to explicitly update the mouseover state.
     [self _updateMouseoverWithEvent:[NSApp currentEvent]];
 
+    // Reregister for drag types because they were unregistered before the drag.
+    [[self _web_parentWebView] _reregisterDraggedTypes];
+    
     // Balance the previous retain from when the drag started.
     [self release];
 }

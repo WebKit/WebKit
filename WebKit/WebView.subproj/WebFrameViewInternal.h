@@ -49,4 +49,5 @@
 + (NSMutableDictionary *)_viewTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 - (BOOL)_isMainFrame;
+- (void)_reregisterDraggedTypes;
 @end

@@ -13,6 +13,7 @@
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 
 @implementation WebImageView
 
@@ -161,12 +162,16 @@
 - (void)mouseDragged:(NSEvent *)event
 {
     if(acceptsDrags){
+        // Don't allow drags to be accepted by this WebView.
+        [[self _web_parentWebView] unregisterDraggedTypes];
+
         // Retain this view during the drag because it may be released before the drag ends.
         [self retain];
         
         [self _web_dragPromisedImage:[representation image]
-                          fromOrigin:NSZeroPoint
-                             withURL:[representation URL]
+                              origin:NSZeroPoint
+                                 URL:[representation URL]
+                            fileType:[[[representation URL] path] pathExtension]
                                title:nil
                                event:event];
     }
@@ -185,6 +190,9 @@
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
+    // Reregister for drag types because they were unregistered before the drag.
+    [[self _web_parentWebView] _reregisterDraggedTypes];
+
     // Balance the previous retain from when the drag started.
     [self release];
 }

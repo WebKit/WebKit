@@ -15,6 +15,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageView.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebTextView.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
@@ -269,6 +270,11 @@
 - (BOOL)_isMainFrame
 {
     return [_private->controller mainFrame] == [_private->controller frameForView:self];
+}
+
+- (void)_reregisterDraggedTypes
+{
+    [self registerForDraggedTypes:[NSPasteboard _web_dragTypesForURL]];
 }
 
 @end
