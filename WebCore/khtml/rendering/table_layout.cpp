@@ -525,6 +525,28 @@ void AutoTableLayout::fullRecalc()
 	recalcColumn( i );
 }
 
+static bool shouldScaleColumns(RenderTable* table)
+{
+    // A special case.  If this table is not fixed width and contained inside
+    // a cell, then don't bloat the maxwidth by examining percentage growth.
+    bool scale = true;
+    Length tw = table->style()->width();
+    if ((tw.isVariable() || tw.isPercent()) && !table->isPositioned()) {
+        RenderBlock* cb = table->containingBlock();
+        while (cb && !cb->isRoot() && !cb->isTableCell() &&
+               cb->style()->width().isVariable() && !cb->isFloatingOrPositioned())
+            cb = cb->containingBlock();
+
+        if (cb && cb->isTableCell() &&
+            (cb->style()->width().isVariable() || cb->style()->width().isPercent())) {
+            // The cell must be variable or percent.  The enclosing table *must* be auto.
+            RenderTableCell* cell = static_cast<RenderTableCell*>(cb);
+            if (cell->table()->style()->width().isVariable())
+                scale = false;
+        }
+    }
+    return scale;
+}
 
 void AutoTableLayout::calcMinMaxWidth()
 {
@@ -539,27 +561,28 @@ void AutoTableLayout::calcMinMaxWidth()
     int maxPercent = 0;
     int maxNonPercent = 0;
 
+    int remainingPercent = 100;
     for ( unsigned int i = 0; i < layoutStruct.size(); i++ ) {
 	minWidth += layoutStruct[i].effMinWidth;
 	maxWidth += layoutStruct[i].effMaxWidth;
 	if ( layoutStruct[i].effWidth.type == Percent ) {
-	    int pw = ( layoutStruct[i].effMaxWidth * 100) / layoutStruct[i].effWidth.value;
-	    maxPercent = kMax( pw,  maxPercent );
+            int percent = kMin(layoutStruct[i].effWidth.value, remainingPercent);
+            int pw = ( layoutStruct[i].effMaxWidth * 100) / kMax(percent, 1);
+            remainingPercent -= percent;
+            maxPercent = kMax( pw,  maxPercent );
 	} else {
 	    maxNonPercent += layoutStruct[i].effMaxWidth;
 	}
     }
 
-    int totalpct = totalPercent();
-    if (totalpct >= 100)
-        totalpct = 99;
-    
-    maxNonPercent = (maxNonPercent * 100 + 50) / (100-totalpct);
-    maxWidth = kMax( maxNonPercent,  maxWidth );
-   
-    maxWidth = kMax( maxWidth, maxPercent );
-    maxWidth = kMax( maxWidth, spanMaxWidth );
+    if (shouldScaleColumns(table)) {
+        maxNonPercent = (maxNonPercent * 100 + 50) / kMax(remainingPercent, 1);
+        maxWidth = kMax( maxNonPercent,  maxWidth );
+        maxWidth = kMax( maxWidth, maxPercent );
+    }
 
+    maxWidth = kMax( maxWidth, spanMaxWidth );
+    
     int bs = table->bordersAndSpacing();
     minWidth += bs;
     maxWidth += bs;
