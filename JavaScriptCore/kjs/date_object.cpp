@@ -57,6 +57,62 @@
 
 #include "date_object.lut.h"
 
+#if APPLE_CHANGES
+
+// Since gmtime and localtime hit the disk, we substitute our own implementation
+// that uses Core Foundation.
+
+#include <CoreFoundation/CoreFoundation.h>
+
+#define gmtime(x) gmtimeUsingCF(x)
+#define localtime(x) localtimeUsingCF(x)
+
+struct tm *tmUsingCF(time_t tv, CFTimeZoneRef timeZone)
+{
+    static struct tm result;
+    static char timeZoneCString[128];
+    
+    CFAbsoluteTime absoluteTime = tv - kCFAbsoluteTimeIntervalSince1970;
+    
+    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(absoluteTime, timeZone);
+    
+    CFStringRef abbreviation = CFTimeZoneCopyAbbreviation(timeZone, absoluteTime);
+    
+    CFStringGetCString(abbreviation, timeZoneCString, sizeof(timeZoneCString), kCFStringEncodingASCII);
+
+    result.tm_sec = (int)date.second;
+    result.tm_min = date.minute;
+    result.tm_hour = date.hour;
+    result.tm_mday = date.day;
+    result.tm_mon = date.month - 1;
+    result.tm_year = date.year - 1900;
+    result.tm_wday = CFAbsoluteTimeGetDayOfWeek(absoluteTime, timeZone) % 7;
+    result.tm_yday = CFAbsoluteTimeGetDayOfYear(absoluteTime, timeZone) - 1;
+    result.tm_isdst = CFTimeZoneIsDaylightSavingTime(timeZone, absoluteTime);
+    result.tm_gmtoff = (int)CFTimeZoneGetSecondsFromGMT(timeZone, absoluteTime);
+    result.tm_zone = timeZoneCString;
+    
+    CFRelease(abbreviation);
+    
+    return &result;
+}
+
+struct tm *gmtimeUsingCF(const time_t *tv)
+{
+    static CFTimeZoneRef timeZoneUTC = CFTimeZoneCreateWithName(NULL, CFSTR("UTC"), TRUE);
+    return tmUsingCF(*tv, timeZoneUTC);
+}
+
+struct tm *localtimeUsingCF(const time_t *tv)
+{
+    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
+    struct tm *result = tmUsingCF(*tv, timeZone);
+    CFRelease(timeZone);
+    return result;
+}
+
+#endif // APPLE_CHANGES
+
 using namespace KJS;
 
 // ------------------------------ DateInstanceImp ------------------------------

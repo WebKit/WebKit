@@ -1,3 +1,15 @@
+2002-10-30  Darin Adler  <darin@apple.com>
+
+	- fixed 3073230 -- Alex is doing file I/O when executing JavaScript by asking for localtime
+
+	I fixed this by using Core Foundation time functions instead.
+
+        * kjs/date_object.cpp:
+        (tmUsingCF): Function that uses Core Foundation to get the time and then puts it into
+	a tm struct.
+        (gmtimeUsingCF): Function used instead of gmtime (used a macro to make the substitution).
+        (localtimeUsingCF): Function used instead of localtime (used a macro to make the substitution).
+
 2002-10-26  Darin Adler  <darin@apple.com>
 
 	- changed to use #if APPLE_CHANGES and #if !APPLE_CHANGES consistently
