@@ -131,7 +131,7 @@
     _filename = copy;
     
     [_icon release];
-    if (![_filename length]) {
+    if ([_filename length] == 0 || [_filename characterAtIndex:0] != '/') {
         _icon = nil;
     } else {
         _icon = [[[NSWorkspace sharedWorkspace] iconForFile:_filename] retain];

@@ -1,3 +1,12 @@
+2003-09-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebFileButton.m: (-[WebFileButton setFilename:]):
+        Don't call -[NSWorkspace iconForFile:] on a path that does not start with a '/'.
+        This can happen if JavaScript or the web page sets the path explicitly, and
+        adding this check avoids an unpleasant warning on the console.
+
 === WebKit-106 ===
 
 2003-09-16  Richard Williamson   <rjw@apple.com>
