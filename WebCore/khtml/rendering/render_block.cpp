@@ -157,7 +157,6 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
 
         if (newChild->isInline()) {
             beforeChild->parent()->addChild(newChild,beforeChild);
-            newChild->setNeedsLayoutAndMinMaxRecalc();
             return;
         }
         else if (beforeChild->parent()->firstChild() != beforeChild)
@@ -198,14 +197,12 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             if (beforeChild) {
                 if (beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymous()) {
                     beforeChild->previousSibling()->addChild(newChild);
-                    newChild->setNeedsLayoutAndMinMaxRecalc();
                     return;
                 }
             }
             else {
                 if (m_last && m_last->isAnonymous()) {
                     m_last->addChild(newChild);
-                    newChild->setNeedsLayoutAndMinMaxRecalc();
                     return;
                 }
             }
@@ -215,24 +212,13 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             RenderBox::addChild(newBox,beforeChild);
             newBox->addChild(newChild);
             newBox->setPos(newBox->xPos(), -500000);
-            newChild->setNeedsLayoutAndMinMaxRecalc();
             return;
-        }
-        else {
-            // We are adding another block child... if the current last child is an anonymous box
-            // then it needs to be closed.
-            // ### get rid of the closing thing altogether this will only work during initial parsing
-            if (lastChild() && lastChild()->isAnonymous()) {
-                lastChild()->close();
-            }
         }
     }
 
     RenderBox::addChild(newChild,beforeChild);
     // ### care about aligned stuff
 
-    newChild->setNeedsLayoutAndMinMaxRecalc();
-    
     if ( madeBoxesNonInline )
         removeLeftoverAnonymousBoxes();
 }

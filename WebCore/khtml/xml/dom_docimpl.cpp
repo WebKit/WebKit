@@ -988,13 +988,8 @@ void DocumentImpl::recalcStyle( StyleChange change )
             n->recalcStyle( change );
     //kdDebug( 6020 ) << "TIME: recalcStyle() dt=" << qt.elapsed() << endl;
 
-    // ### should be done by the rendering tree itself,
-    // this way is rather crude and CPU intensive
-    if ( changed() ) {
-        renderer()->setNeedsLayoutAndMinMaxRecalc();
-	renderer()->layout();
-	renderer()->repaint();
-    }
+    if (changed() && m_view)
+	m_view->layout();
 
 bail_out:
     setChanged( false );

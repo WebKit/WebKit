@@ -351,12 +351,16 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
 
     setLastChild(newChild);
     
-    // Keep our layer hierarchy updated.
-    RenderLayer* layer = enclosingLayer();
-    newChild->addLayers(layer, newChild);
-
+    // Keep our layer hierarchy updated.  Optimize for the common case where we don't have any children
+    // and don't have a layer attached to ourselves.
+    if (newChild->firstChild() || newChild->layer()) {
+        RenderLayer* layer = enclosingLayer();
+        newChild->addLayers(layer, newChild);
+    }
+    
     newChild->setNeedsLayoutAndMinMaxRecalc(); // Goes up the containing block hierarchy.
-    setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
+    if (!normalChildNeedsLayout())
+        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
 }
 
 void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild)
@@ -387,7 +391,8 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     child->addLayers(layer, child);
 
     child->setNeedsLayoutAndMinMaxRecalc();
-    setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
+    if (!normalChildNeedsLayout())
+        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
 }
 
 
