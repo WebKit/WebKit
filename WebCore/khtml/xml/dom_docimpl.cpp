@@ -716,235 +716,179 @@ unsigned short DocumentImpl::nodeType() const
     return Node::DOCUMENT_NODE;
 }
 
-// FIXME: createHTMLElement looks like copied code of KHTMLParser::getElement or vice versa.
-// This has been the cause of bugs. They should share the same code.
 ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name, int &exceptioncode )
 {
     if (!isValidName(name)) {
         exceptioncode = DOMException::INVALID_CHARACTER_ERR;
         return 0;
     }
+    return createHTMLElement(tagId(0, name.implementation(), false));
+}
 
-    uint id = khtml::getTagID( name.string().lower().latin1(), name.string().length() );
-
-    ElementImpl *n = 0;
-    switch(id)
+ElementImpl *DocumentImpl::createHTMLElement(unsigned short tagID)
+{
+    switch (tagID)
     {
     case ID_HTML:
-        n = new HTMLHtmlElementImpl(docPtr());
-        break;
+        return new HTMLHtmlElementImpl(docPtr());
     case ID_HEAD:
-        n = new HTMLHeadElementImpl(docPtr());
-        break;
+        return new HTMLHeadElementImpl(docPtr());
     case ID_BODY:
-        n = new HTMLBodyElementImpl(docPtr());
-        break;
+        return new HTMLBodyElementImpl(docPtr());
 
 // head elements
     case ID_BASE:
-        n = new HTMLBaseElementImpl(docPtr());
-        break;
+        return new HTMLBaseElementImpl(docPtr());
     case ID_LINK:
-        n = new HTMLLinkElementImpl(docPtr());
-        break;
+        return new HTMLLinkElementImpl(docPtr());
     case ID_META:
-        n = new HTMLMetaElementImpl(docPtr());
-        break;
+        return new HTMLMetaElementImpl(docPtr());
     case ID_STYLE:
-        n = new HTMLStyleElementImpl(docPtr());
-        break;
+        return new HTMLStyleElementImpl(docPtr());
     case ID_TITLE:
-        n = new HTMLTitleElementImpl(docPtr());
-        break;
+        return new HTMLTitleElementImpl(docPtr());
 
 // frames
     case ID_FRAME:
-        n = new HTMLFrameElementImpl(docPtr());
-        break;
+        return new HTMLFrameElementImpl(docPtr());
     case ID_FRAMESET:
-        n = new HTMLFrameSetElementImpl(docPtr());
-        break;
+        return new HTMLFrameSetElementImpl(docPtr());
     case ID_IFRAME:
-        n = new HTMLIFrameElementImpl(docPtr());
-        break;
+        return new HTMLIFrameElementImpl(docPtr());
 
 // form elements
 // ### FIXME: we need a way to set form dependency after we have made the form elements
     case ID_FORM:
-            n = new HTMLFormElementImpl(docPtr());
-        break;
+        return new HTMLFormElementImpl(docPtr());
     case ID_BUTTON:
-            n = new HTMLButtonElementImpl(docPtr());
-        break;
+        return new HTMLButtonElementImpl(docPtr());
     case ID_FIELDSET:
-            n = new HTMLFieldSetElementImpl(docPtr());
-        break;
+        return new HTMLFieldSetElementImpl(docPtr());
     case ID_INPUT:
-            n = new HTMLInputElementImpl(docPtr());
-        break;
+        return new HTMLInputElementImpl(docPtr());
     case ID_ISINDEX:
-            n = new HTMLIsIndexElementImpl(docPtr());
-        break;
+        return new HTMLIsIndexElementImpl(docPtr());
     case ID_LABEL:
-            n = new HTMLLabelElementImpl(docPtr());
-        break;
+        return new HTMLLabelElementImpl(docPtr());
     case ID_LEGEND:
-            n = new HTMLLegendElementImpl(docPtr());
-        break;
+        return new HTMLLegendElementImpl(docPtr());
     case ID_OPTGROUP:
-            n = new HTMLOptGroupElementImpl(docPtr());
-        break;
+        return new HTMLOptGroupElementImpl(docPtr());
     case ID_OPTION:
-            n = new HTMLOptionElementImpl(docPtr());
-        break;
+        return new HTMLOptionElementImpl(docPtr());
     case ID_SELECT:
-            n = new HTMLSelectElementImpl(docPtr());
-        break;
+        return new HTMLSelectElementImpl(docPtr());
     case ID_TEXTAREA:
-            n = new HTMLTextAreaElementImpl(docPtr());
-        break;
+        return new HTMLTextAreaElementImpl(docPtr());
 
 // lists
     case ID_DL:
-        n = new HTMLDListElementImpl(docPtr());
-        break;
+        return new HTMLDListElementImpl(docPtr());
     case ID_DD:
-        n = new HTMLGenericElementImpl(docPtr(), id);
-        break;
+        return new HTMLGenericElementImpl(docPtr(), tagID);
     case ID_DT:
-        n = new HTMLGenericElementImpl(docPtr(), id);
-        break;
+        return new HTMLGenericElementImpl(docPtr(), tagID);
     case ID_UL:
-        n = new HTMLUListElementImpl(docPtr());
-        break;
+        return new HTMLUListElementImpl(docPtr());
     case ID_OL:
-        n = new HTMLOListElementImpl(docPtr());
-        break;
+        return new HTMLOListElementImpl(docPtr());
     case ID_DIR:
-        n = new HTMLDirectoryElementImpl(docPtr());
-        break;
+        return new HTMLDirectoryElementImpl(docPtr());
     case ID_MENU:
-        n = new HTMLMenuElementImpl(docPtr());
-        break;
+        return new HTMLMenuElementImpl(docPtr());
     case ID_LI:
-        n = new HTMLLIElementImpl(docPtr());
-        break;
+        return new HTMLLIElementImpl(docPtr());
 
 // formatting elements (block)
     case ID_BLOCKQUOTE:
-        n = new HTMLBlockquoteElementImpl(docPtr());
-        break;
+        return new HTMLBlockquoteElementImpl(docPtr());
     case ID_DIV:
-        n = new HTMLDivElementImpl(docPtr());
-        break;
+        return new HTMLDivElementImpl(docPtr());
     case ID_H1:
     case ID_H2:
     case ID_H3:
     case ID_H4:
     case ID_H5:
     case ID_H6:
-        n = new HTMLHeadingElementImpl(docPtr(), id);
-        break;
+        return new HTMLHeadingElementImpl(docPtr(), tagID);
     case ID_HR:
-        n = new HTMLHRElementImpl(docPtr());
-        break;
+        return new HTMLHRElementImpl(docPtr());
     case ID_P:
-        n = new HTMLParagraphElementImpl(docPtr());
-        break;
+        return new HTMLParagraphElementImpl(docPtr());
     case ID_PRE:
-        n = new HTMLPreElementImpl(docPtr(), id);
-        break;
+    case ID_XMP:
+    case ID_PLAINTEXT:
+        return new HTMLPreElementImpl(docPtr(), tagID);
+    case ID_LAYER:
+        return new HTMLLayerElementImpl(docPtr());
 
 // font stuff
     case ID_BASEFONT:
-        n = new HTMLBaseFontElementImpl(docPtr());
-        break;
+        return new HTMLBaseFontElementImpl(docPtr());
     case ID_FONT:
-        n = new HTMLFontElementImpl(docPtr());
-        break;
+        return new HTMLFontElementImpl(docPtr());
 
 // ins/del
     case ID_DEL:
     case ID_INS:
-        n = new HTMLGenericElementImpl(docPtr(), id);
-        break;
+        return new HTMLGenericElementImpl(docPtr(), tagID);
 
 // anchor
     case ID_A:
-        n = new HTMLAnchorElementImpl(docPtr());
-        break;
+        return new HTMLAnchorElementImpl(docPtr());
 
 // images
     case ID_IMG:
-        n = new HTMLImageElementImpl(docPtr());
-        break;
+        return new HTMLImageElementImpl(docPtr());
     case ID_MAP:
-        n = new HTMLMapElementImpl(docPtr());
-        /*n = map;*/
-        break;
+        return new HTMLMapElementImpl(docPtr());
     case ID_AREA:
-        n = new HTMLAreaElementImpl(docPtr());
-        break;
+        return new HTMLAreaElementImpl(docPtr());
     case ID_CANVAS:
-        n = new HTMLCanvasElementImpl(docPtr());
-        break;
+        return new HTMLCanvasElementImpl(docPtr());
 
 // objects, applets and scripts
     case ID_APPLET:
-        n = new HTMLAppletElementImpl(docPtr());
-        break;
+        return new HTMLAppletElementImpl(docPtr());
     case ID_EMBED:
-        n = new HTMLEmbedElementImpl(docPtr());
-        break;
+        return new HTMLEmbedElementImpl(docPtr());
     case ID_OBJECT:
-        n = new HTMLObjectElementImpl(docPtr());
-        break;
+        return new HTMLObjectElementImpl(docPtr());
     case ID_PARAM:
-        n = new HTMLParamElementImpl(docPtr());
-        break;
+        return new HTMLParamElementImpl(docPtr());
     case ID_SCRIPT:
-        n = new HTMLScriptElementImpl(docPtr());
-        break;
+        return new HTMLScriptElementImpl(docPtr());
 
 // tables
     case ID_TABLE:
-        n = new HTMLTableElementImpl(docPtr());
-        break;
+        return new HTMLTableElementImpl(docPtr());
     case ID_CAPTION:
-        n = new HTMLTableCaptionElementImpl(docPtr());
-        break;
+        return new HTMLTableCaptionElementImpl(docPtr());
     case ID_COLGROUP:
     case ID_COL:
-        n = new HTMLTableColElementImpl(docPtr(), id);
-        break;
+        return new HTMLTableColElementImpl(docPtr(), tagID);
     case ID_TR:
-        n = new HTMLTableRowElementImpl(docPtr());
-        break;
+        return new HTMLTableRowElementImpl(docPtr());
     case ID_TD:
     case ID_TH:
-        n = new HTMLTableCellElementImpl(docPtr(), id);
-        break;
+        return new HTMLTableCellElementImpl(docPtr(), tagID);
     case ID_THEAD:
     case ID_TBODY:
     case ID_TFOOT:
-        n = new HTMLTableSectionElementImpl(docPtr(), id, false);
-        break;
+        return new HTMLTableSectionElementImpl(docPtr(), tagID, false);
 
 // inline elements
     case ID_BR:
-        n = new HTMLBRElementImpl(docPtr());
-        break;
+        return new HTMLBRElementImpl(docPtr());
     case ID_Q:
-        n = new HTMLGenericElementImpl(docPtr(), id);
-        break;
+        return new HTMLGenericElementImpl(docPtr(), tagID);
 
 // elements with no special representation in the DOM
 
 // block:
     case ID_ADDRESS:
     case ID_CENTER:
-        n = new HTMLGenericElementImpl(docPtr(), id);
-        break;
+
 // inline
         // %fontstyle
     case ID_TT:
@@ -974,25 +918,21 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name, int &except
     case ID_SPAN:
     case ID_NOBR:
     case ID_WBR:
-        n = new HTMLGenericElementImpl(docPtr(), id);
-        break;
+
+    case ID_BDO:
+    default:
+        return new HTMLGenericElementImpl(docPtr(), tagID);
 
     case ID_MARQUEE:
-        n = new HTMLMarqueeElementImpl(docPtr());
-        break;
+        return new HTMLMarqueeElementImpl(docPtr());
         
-    case ID_BDO: // FIXME: make an element here. "bdo" with dir adds the CSS direction and unicode-bidi with override.
-        break;
-
 // text
     case ID_TEXT:
         kdDebug( 6020 ) << "Use document->createTextNode()" << endl;
-        break;
-
-    default:
-        break;
+        return 0;
     }
-    return n;
+
+    return 0;
 }
 
 QString DocumentImpl::nextState()
@@ -1971,7 +1911,6 @@ bool DocumentImpl::childTypeAllowed( unsigned short type )
         case Node::COMMENT_NODE:
         case Node::DOCUMENT_TYPE_NODE:
             return true;
-            break;
         default:
             return false;
     }
@@ -1997,10 +1936,10 @@ NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_
     if (!_namespaceURI || !strcasecmp(_namespaceURI, XHTML_NAMESPACE)) {
         // we're in HTML namespace if we know the tag.
         // xhtml is lower case - case sensitive, easy to implement
-        if ( htmlMode() == XHtml && (id = khtml::getAttrID(n.string().ascii(), _name->l)) )
+        if ( htmlMode() == XHtml && (id = getAttrID(n.string().ascii(), _name->l)) )
             return id;
         // compatibility: upper case - case insensitive
-        if ( htmlMode() != XHtml && (id = khtml::getAttrID(n.string().lower().ascii(), _name->l )) )
+        if ( htmlMode() != XHtml && (id = getAttrID(n.string().lower().ascii(), _name->l )) )
             return id;
 
         // ok, the fast path didn't work out, we need the full check
@@ -2077,10 +2016,10 @@ NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_n
     if (!_namespaceURI || !strcasecmp(_namespaceURI, XHTML_NAMESPACE)) {
         // we're in HTML namespace if we know the tag.
         // xhtml is lower case - case sensitive, easy to implement
-        if ( htmlMode() == XHtml && (id = khtml::getTagID(n.string().ascii(), _name->l)) )
+        if ( htmlMode() == XHtml && (id = getTagID(n.string().ascii(), _name->l)) )
             return id;
         // compatibility: upper case - case insensitive
-        if ( htmlMode() != XHtml && (id = khtml::getTagID(n.string().lower().ascii(), _name->l )) )
+        if ( htmlMode() != XHtml && (id = getTagID(n.string().lower().ascii(), _name->l )) )
             return id;
 
         // ok, the fast path didn't work out, we need the full check
@@ -3230,7 +3169,6 @@ bool DocumentFragmentImpl::childTypeAllowed( unsigned short type )
         case Node::CDATA_SECTION_NODE:
         case Node::ENTITY_REFERENCE_NODE:
             return true;
-            break;
         default:
             return false;
     }

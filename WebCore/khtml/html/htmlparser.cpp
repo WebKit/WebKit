@@ -126,9 +126,6 @@ KHTMLParser::KHTMLParser(KHTMLView *_parent, DocumentPtr *doc, bool includesComm
 
     blockStack = 0;
 
-    // ID_CLOSE_TAG == Num of tags
-    forbiddenTag = new ushort[ID_CLOSE_TAG+1];
-
     reset();
 }
 
@@ -138,8 +135,6 @@ KHTMLParser::KHTMLParser(DOM::DocumentFragmentImpl *i, DocumentPtr *doc, bool in
     HTMLWidget = 0;
     document = doc;
     document->ref();
-
-    forbiddenTag = new ushort[ID_CLOSE_TAG+1];
 
     blockStack = 0;
 
@@ -160,8 +155,8 @@ KHTMLParser::~KHTMLParser()
 
     document->deref();
 
-    delete [] forbiddenTag;
-    delete isindex;
+    if (isindex)
+        isindex->deref();
 }
 
 void KHTMLParser::reset()
@@ -170,8 +165,8 @@ void KHTMLParser::reset()
 
     freeBlock();
 
-    // before parsing no tags are forbidden...
-    memset(forbiddenTag, 0, (ID_CLOSE_TAG+1)*sizeof(ushort));
+    // before parsing, no tags are forbidden
+    memset(forbiddenTag, 0, sizeof(forbiddenTag));
 
     inBody = false;
     haveFrameSet = false;
@@ -201,11 +196,6 @@ void KHTMLParser::setCurrent(DOM::NodeImpl *newCurrent)
 
 void KHTMLParser::parseToken(Token *t)
 {
-    if (t->id > 2*ID_CLOSE_TAG)
-    {
-      kdDebug( 6035 ) << "Unknown tag!! tagID = " << t->id << endl;
-      return;
-    }
     if(discard_until) {
         if(t->id == discard_until)
             discard_until = 0;
@@ -223,10 +213,10 @@ void KHTMLParser::parseToken(Token *t)
 
     // holy shit. apparently some sites use </br> instead of <br>
     // be compatible with IE and NS
-    if(t->id == ID_BR+ID_CLOSE_TAG && doc()->inCompatMode())
-        t->id -= ID_CLOSE_TAG;
+    if (t->id == ID_BR + ID_CLOSE_TAG && doc()->inCompatMode())
+        t->id = ID_BR;
 
-    if(t->id > ID_CLOSE_TAG)
+    if (t->id > ID_CLOSE_TAG)
     {
         processCloseTag(t);
         return;
@@ -267,7 +257,7 @@ void KHTMLParser::parseToken(Token *t)
 
     // if this tag is forbidden inside the current context, pop
     // blocks until we are allowed to add it...
-    while(forbiddenTag[t->id]) {
+    while (t->id <= ID_LAST_TAG && forbiddenTag[t->id]) {
 #ifdef PARSER_DEBUG
         kdDebug( 6035 ) << "t->id: " << t->id << " is forbidden :-( " << endl;
 #endif
@@ -698,7 +688,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             } // end switch
             break;
         case ID_OBJECT:
-            discard_until = id + ID_CLOSE_TAG;
+            discard_until = ID_OBJECT + ID_CLOSE_TAG;
             return false;
         case ID_UL:
         case ID_OL:
@@ -789,56 +779,29 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
     }
 }
 
-// FIXME: getElement looks like copied code of DocumentImpl::createHTMLElement or vice versa.
-// This has been the cause of bugs. They should share the same code.
 NodeImpl *KHTMLParser::getElement(Token* t)
 {
-    NodeImpl *n = 0;
-
-    switch(t->id)
+    switch (t->id)
     {
-    case ID_HTML:
-        n = new HTMLHtmlElementImpl(document);
-        break;
     case ID_HEAD:
-        if(!head && current->id() == ID_HTML) {
+        if (!head && current->id() == ID_HTML) {
             head = new HTMLHeadElementImpl(document);
-            n = head;
+            return head;
         }
-        break;
+        return 0;
     case ID_BODY:
         // body no longer allowed if we have a frameset
-        if(haveFrameSet) break;
+        if (haveFrameSet)
+            return 0;
         popBlock(ID_HEAD);
-        n = new HTMLBodyElementImpl(document);
         startBody();
-        break;
-
-// head elements
-    case ID_BASE:
-        n = new HTMLBaseElementImpl(document);
-        break;
-    case ID_LINK:
-        n = new HTMLLinkElementImpl(document);
-        break;
-    case ID_META:
-        n = new HTMLMetaElementImpl(document);
-        break;
-    case ID_STYLE:
-        n = new HTMLStyleElementImpl(document);
-        break;
-    case ID_TITLE:
-        n = new HTMLTitleElementImpl(document);
-        break;
+        return new HTMLBodyElementImpl(document);
 
 // frames
-    case ID_FRAME:
-        n = new HTMLFrameElementImpl(document);
-        break;
     case ID_FRAMESET:
         popBlock(ID_HEAD);
-        if ( inBody && !haveFrameSet && !haveContent) {
-            popBlock( ID_BODY );
+        if (inBody && !haveFrameSet && !haveContent) {
+            popBlock(ID_BODY);
             // ### actually for IE document.body returns the now hidden "body" element
             // we can't implement that behaviour now because it could cause too many
             // regressions and the headaches are not worth the work as long as there is
@@ -847,236 +810,95 @@ NodeImpl *KHTMLParser::getElement(Token* t)
                 doc()->body()->setAttribute(ATTR_STYLE, "display:none");
             inBody = false;
         }
-        if ( (haveContent || haveFrameSet) && current->id() == ID_HTML)
-            break;
-        n = new HTMLFrameSetElementImpl(document);
+        if ((haveContent || haveFrameSet) && current->id() == ID_HTML)
+            return 0;
         haveFrameSet = true;
         startBody();
-        break;
-        // a bit a special case, since the frame is inlined...
+        return new HTMLFrameSetElementImpl(document);
+
+    // a bit of a special case, since the frame is inlined
     case ID_IFRAME:
-        n = new HTMLIFrameElementImpl(document);
-        discard_until = ID_IFRAME+ID_CLOSE_TAG;
+        discard_until = ID_IFRAME + ID_CLOSE_TAG;
         break;
 
 // form elements
     case ID_FORM:
-        if (!form) {
-            // Only create a new form if we're not already inside one.
-            // This is consistent with other browsers' behavior.
-            form = new HTMLFormElementImpl(document);
-            n = form;
-        }
-        break;
-    case ID_BUTTON:
-        n = new HTMLButtonElementImpl(document, form);
-        break;
-    case ID_FIELDSET:
-        n = new HTMLFieldSetElementImpl(document, form);
-        break;
-    case ID_INPUT:
-        n = new HTMLInputElementImpl(document, form);
-        break;
-    case ID_ISINDEX:
-        n = handleIsindex(t);
-        if( !inBody ) {
+        // Only create a new form if we're not already inside one.
+        // This is consistent with other browsers' behavior.
+        if (form)
+            return 0;
+        form = new HTMLFormElementImpl(document);
+        return form;
+    case ID_ISINDEX: {
+        NodeImpl *n = handleIsindex(t);
+        if (!inBody) {
+            if (isindex)
+                isindex->deref();
             isindex = n;
-            n = 0;
-        } else
-            t->flat = true;
-        break;
+            isindex->ref();
+            return 0;
+        }
+        t->flat = true;
+        return n;
+    }
     case ID_KEYGEN:
-        n = new HTMLKeygenElementImpl(document, form);
-        break;
-    case ID_LABEL:
-        n = new HTMLLabelElementImpl(document);
-        break;
+        return new HTMLKeygenElementImpl(document, form);
     case ID_LEGEND:
-        n = new HTMLLegendElementImpl(document, form);
-        break;
+        return new HTMLLegendElementImpl(document, form);
     case ID_OPTGROUP:
-        n = new HTMLOptGroupElementImpl(document, form);
-        break;
+        return new HTMLOptGroupElementImpl(document, form);
     case ID_OPTION:
-        n = new HTMLOptionElementImpl(document, form);
-        break;
+        return new HTMLOptionElementImpl(document, form);
     case ID_SELECT:
         inSelect = true;
-        n = new HTMLSelectElementImpl(document, form);
-        break;
+        return new HTMLSelectElementImpl(document, form);
     case ID_TEXTAREA:
-        n = new HTMLTextAreaElementImpl(document, form);
-        break;
+        return new HTMLTextAreaElementImpl(document, form);
 
 // lists
-    case ID_DL:
-        n = new HTMLDListElementImpl(document);
-        break;
     case ID_DD:
-        n = new HTMLGenericElementImpl(document, t->id);
         popBlock(ID_DT);
         popBlock(ID_DD);
         break;
     case ID_DT:
-        n = new HTMLGenericElementImpl(document, t->id);
         popBlock(ID_DD);
         popBlock(ID_DT);
         break;
-    case ID_UL:
-    {
-        n = new HTMLUListElementImpl(document);
-        break;
-    }
-    case ID_OL:
-    {
-        n = new HTMLOListElementImpl(document);
-        break;
-    }
-    case ID_DIR:
-        n = new HTMLDirectoryElementImpl(document);
-        break;
-    case ID_MENU:
-        n = new HTMLMenuElementImpl(document);
-        break;
     case ID_LI:
-    {
         popBlock(ID_LI);
-        n = new HTMLLIElementImpl(document);
-        break;
-    }
-// formatting elements (block)
-    case ID_BLOCKQUOTE:
-        n = new HTMLBlockquoteElementImpl(document);
-        break;
-    case ID_DIV:
-        n = new HTMLDivElementImpl(document);
-        break;
-    case ID_LAYER:
-        n = new HTMLLayerElementImpl(document);
-        break;
-    case ID_H1:
-    case ID_H2:
-    case ID_H3:
-    case ID_H4:
-    case ID_H5:
-    case ID_H6:
-        n = new HTMLHeadingElementImpl(document, t->id);
-        break;
-    case ID_HR:
-        n = new HTMLHRElementImpl(document);
-        break;
-    case ID_P:
-        n = new HTMLParagraphElementImpl(document);
-        break;
-    case ID_XMP:
-    case ID_PRE:
-    case ID_PLAINTEXT:
-        n = new HTMLPreElementImpl(document, t->id);
-        break;
-
-// font stuff
-    case ID_BASEFONT:
-        n = new HTMLBaseFontElementImpl(document);
-        break;
-    case ID_FONT:
-        n = new HTMLFontElementImpl(document);
-        break;
-
-// ins/del
-    case ID_DEL:
-    case ID_INS:
-        n = new HTMLGenericElementImpl(document, t->id);
         break;
 
 // anchor
     case ID_A:
         // Never allow nested <a>s.
         popBlock(ID_A);
-
-        n = new HTMLAnchorElementImpl(document);
-        break;
-
-// canvas
-    case ID_CANVAS:
-        n = new HTMLCanvasElementImpl(document);
         break;
 
 // images
     case ID_IMG:
-        n = new HTMLImageElementImpl(document, form);
-        break;
+        return new HTMLImageElementImpl(document, form);
     case ID_MAP:
         map = new HTMLMapElementImpl(document);
-        n = map;
-        break;
-    case ID_AREA:
-        n = new HTMLAreaElementImpl(document);
-        break;
-
-// objects, applets and scripts
-    case ID_APPLET:
-        n = new HTMLAppletElementImpl(document);
-        break;
-    case ID_EMBED:
-        n = new HTMLEmbedElementImpl(document);
-        break;
-    case ID_OBJECT:
-        n = new HTMLObjectElementImpl(document);
-        break;
-    case ID_PARAM:
-        n = new HTMLParamElementImpl(document);
-        break;
-    case ID_SCRIPT:
-        n = new HTMLScriptElementImpl(document);
-        break;
+        return map;
 
 // tables
-    case ID_TABLE:
-        n = new HTMLTableElementImpl(document);
-        break;
-    case ID_CAPTION:
-        n = new HTMLTableCaptionElementImpl(document);
-        break;
-    case ID_COLGROUP:
-    case ID_COL:
-        n = new HTMLTableColElementImpl(document, t->id);
-        break;
     case ID_TR:
         popBlock(ID_TR);
-        n = new HTMLTableRowElementImpl(document);
         break;
     case ID_TD:
     case ID_TH:
         popBlock(ID_TH);
         popBlock(ID_TD);
-        n = new HTMLTableCellElementImpl(document, t->id);
         break;
     case ID_TBODY:
     case ID_THEAD:
     case ID_TFOOT:
-        popBlock( ID_THEAD );
-        popBlock( ID_TBODY );
-        popBlock( ID_TFOOT );
-        n = new HTMLTableSectionElementImpl(document, t->id, false);
-        break;
-
-// inline elements
-    case ID_BR:
-        n = new HTMLBRElementImpl(document);
-        break;
-    case ID_Q:
-        n = new HTMLGenericElementImpl(document, t->id);
+        popBlock(ID_THEAD);
+        popBlock(ID_TBODY);
+        popBlock(ID_TFOOT);
         break;
 
 // elements with no special representation in the DOM
-
-// block:
-    case ID_ADDRESS:
-    case ID_CENTER:
-        n = new HTMLGenericElementImpl(document, t->id);
-        break;
-// inline
-        // %fontstyle
     case ID_TT:
     case ID_U:
     case ID_B:
@@ -1087,34 +909,14 @@ NodeImpl *KHTMLParser::getElement(Token* t)
     case ID_SMALL:
         if (!allowNestedRedundantTag(t->id))
             return 0;
-        // Fall through and get handled with the rest of the tags
-        // %phrase
-    case ID_EM:
-    case ID_STRONG:
-    case ID_DFN:
-    case ID_CODE:
-    case ID_SAMP:
-    case ID_KBD:
-    case ID_VAR:
-    case ID_CITE:
-    case ID_ABBR:
-    case ID_ACRONYM:
+        break;
 
-        // %special
-    case ID_SUB:
-    case ID_SUP:
-    case ID_SPAN:
     case ID_NOBR:
     case ID_WBR:
-        if (t->id == ID_NOBR || t->id == ID_WBR)
-            popBlock(t->id); // Don't allow nested <nobr> or <wbr>
-        n = new HTMLGenericElementImpl(document, t->id);
+        popBlock(t->id); // Don't allow nested <nobr> or <wbr>
         break;
 
-    case ID_BDO:
-        break;
-
-        // these are special, and normally not rendered
+// these are special, and normally not rendered
     case ID_NOEMBED:
         discard_until = ID_NOEMBED + ID_CLOSE_TAG;
         return 0;
@@ -1122,28 +924,21 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         discard_until = ID_NOFRAMES + ID_CLOSE_TAG;
         return 0;
     case ID_NOSCRIPT:
-        if(HTMLWidget && HTMLWidget->part()->jScriptEnabled())
+        if (HTMLWidget && HTMLWidget->part()->jScriptEnabled())
             discard_until = ID_NOSCRIPT + ID_CLOSE_TAG;
         return 0;
     case ID_NOLAYER:
-//        discard_until = ID_NOLAYER + ID_CLOSE_TAG;
+        //discard_until = ID_NOLAYER + ID_CLOSE_TAG;
         return 0;
-        break;
-    case ID_MARQUEE:
-        n = new HTMLMarqueeElementImpl(document);
-        break;
-// text
     case ID_TEXT:
-        n = new TextImpl(document, t->text);
-        break;
+        return new TextImpl(document, t->text);
     case ID_COMMENT:
-        if (includesCommentsInDOM)
-            n = new CommentImpl(document, t->text);
+        if (!includesCommentsInDOM)
+            return 0;
         break;
-    default:
-        kdDebug( 6035 ) << "Unknown tag " << t->id << "!" << endl;
     }
-    return n;
+
+    return document->document()->createHTMLElement(t->id);
 }
 
 #define MAX_REDUNDANT 20

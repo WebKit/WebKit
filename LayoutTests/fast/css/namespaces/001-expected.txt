@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x34
   RenderBlock {HTML} at (0,0) size 800x34
     RenderBody {BODY} at (8,8) size 784x18 [color=#FF0000]
-      RenderInline {COMMENT} at (0,0) size 136x18 [color=#008000]
+      RenderInline {test} at (0,0) size 136x18 [color=#008000]
         RenderText {TEXT} at (0,0) size 136x18
           text run at (0,0) width 136: "This should be green."
       RenderText {TEXT} at (0,0) size 0x0
