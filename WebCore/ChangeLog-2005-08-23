@@ -1,3 +1,8 @@
+2003-02-21  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQRenderTreeDebug.cpp: (write): Add missing spaces in render
+        tree dump format.
+
 2003-02-20  Maciej Stachowiak  <mjs@apple.com>
 
         Revert Dave's patch to these files, since it turned out to cause
