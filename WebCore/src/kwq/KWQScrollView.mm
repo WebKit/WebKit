@@ -201,7 +201,10 @@ QPoint QScrollView::contentsToViewport(const QPoint &)
 
 void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
-    _logNeverImplemented();
+    NSPoint p = NSMakePoint (vx, vy);
+    NSPoint np = [getView() convertPoint: NSMakePoint (vx, vy) fromView: nil];
+    x = (int)np.x;
+    y = (int)np.y;
 }
 
 

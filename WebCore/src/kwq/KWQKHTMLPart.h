@@ -33,6 +33,8 @@
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
 
+#include <khtml_events.h>
+
 #include <kjs_proxy.h>
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
@@ -562,6 +564,14 @@ public:
     QVariant executeScheduledScript();
     void stopAutoScroll();
     virtual void overURL( const QString &url, const QString &target ); // ### KDE 3.0: make private (merge)
+
+    bool event( QEvent *event );
+    void khtmlMousePressEvent( khtml::MousePressEvent *event );
+    void khtmlMouseDoubleClickEvent( khtml::MouseDoubleClickEvent * );
+    void khtmlMouseMoveEvent( khtml::MouseMoveEvent *event );
+    void khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event );
+    void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
+
 
 #ifdef _KWQ_
     void init();

@@ -64,7 +64,7 @@ public:
     QEvent() {}
 #endif
 
-    QEvent(Type);
+    QEvent( Type t ) : _type(t) {}
     virtual ~QEvent();
 
     // member functions --------------------------------------------------------
@@ -89,7 +89,7 @@ private:
 #ifdef _KWQ_PEDANTIC_
     QEvent &operator=(const QEvent &);
 #endif
-
+    Type  _type;
 }; // class QEvent =============================================================
 
 
@@ -146,6 +146,9 @@ private:
 #ifdef _KWQ_PEDANTIC_
     QMouseEvent &operator=(const QMouseEvent &);
 #endif
+    QPoint _position;
+    int	   _button; // ### Make ushort in 3.0? Here it's an int...
+    ushort _state; // ### ...and here an ushort. But both are ButtonState!
 
 }; // class QMouseEvent ========================================================
 
@@ -492,20 +495,11 @@ private:
 
 class QCustomEvent : public QEvent {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QCustomEvent() {}
-#endif
-
-    QCustomEvent(Type);
+    QCustomEvent( int type );
+    QCustomEvent( Type type, void *data )
+	: QEvent(type), d(data) {};
+    void       *data()	const	{ return d; }
+    void	setData( void* data )	{ d = data; }
 
 // add no-op destructor
 #ifdef _KWQ_PEDANTIC_
@@ -519,6 +513,7 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
+    void       *d;
 
 // add copy constructor
 // this private declaration prevents copying

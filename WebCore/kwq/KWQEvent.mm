@@ -31,11 +31,6 @@ static const QPoint ORIGIN(0,0);
 
 // class QEvent ================================================================
 
-QEvent::QEvent(Type)
-{
-    //_logNotYetImplemented();
-}
-
 
 QEvent::~QEvent()
 {
@@ -45,30 +40,25 @@ QEvent::~QEvent()
 
 QEvent::Type QEvent::type() const
 {
-    _logNotYetImplemented();
-    return MouseButtonPress;
+    return _type;
 }
 
 
 // class QMouseEvent ===========================================================
 
-QMouseEvent::QMouseEvent(Type type, const QPoint &pos, int button, int state)
-{
-    _logNotYetImplemented();
+QMouseEvent::QMouseEvent( Type t, const QPoint &pos, int b, int s )
+    : QEvent(t), _position(pos), _button(b), _state((ushort)s){
 }
-
 
 int QMouseEvent::x()
 {
-    _logNotYetImplemented();
-    return 0;
+    return (int)_position.x();
 }
 
 
 int QMouseEvent::y()
 {
-    _logNotYetImplemented();
-    return 0;
+    return (int)_position.y();
 }
 
 
@@ -88,30 +78,25 @@ int QMouseEvent::globalY()
 
 const QPoint &QMouseEvent::pos() const
 {
-    _logNotYetImplemented();
-    // FIXME: replace this hack
-    return ORIGIN;
+    return _position;
 }
 
 
 Qt::ButtonState QMouseEvent::button()
 {
-    _logNotYetImplemented();
-    return Qt::NoButton;
+    return Qt::ButtonState(_button);
 }
 
 
 Qt::ButtonState QMouseEvent::state()
 {
-    _logNotYetImplemented();
-    return Qt::NoButton;
+    return Qt::ButtonState(_state);
 }
 
 
 Qt::ButtonState QMouseEvent::stateAfter()
 {
-    _logNotYetImplemented();
-    return Qt::NoButton;
+    return Qt::ButtonState(_state);
 }
 
 
@@ -224,7 +209,7 @@ void QWheelEvent::ignore()
 
 // class QCustomEvent ===========================================================
 
-QCustomEvent::QCustomEvent(Type)
+QCustomEvent::QCustomEvent( int type )
+    : QEvent( (QEvent::Type)type ), d( 0 )
 {
-    _logNotYetImplemented();
 }

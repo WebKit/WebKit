@@ -22,6 +22,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+ /*
+    This class an it's companion KWQTextStorage are used to optimize 
+    our interaction with NSLayoutManager.  They do very little.
+    KWQTextContainer has a fixed geometry.  It only ever containers
+    a short run of text corresponding to a khtml TextSlave.
+    
+    Both KWQTextStorage and KWQTextContainer are used as singletons.  They
+    are set/reset for layout and rendering.
+ */
+ 
 
 #import <Cocoa/Cocoa.h>
 
@@ -73,28 +84,26 @@ static KWQTextContainer *sharedInstance = nil;
 
 - (void)setContainerSize:(NSSize)aSize
 {
-    KWQDEBUG ("not implemented\n");
+    [NSException raise:@"NOT IMPLEMENTED" format:@"- (void)setContainerSize:(NSSize)aSize"];
 }
 
 - (void)setHeightTracksTextView:(BOOL)flag
 {
-    KWQDEBUG ("not implemented\n");
+    [NSException raise:@"NOT IMPLEMENTED" format:@"- (void)setHeightTracksTextView:(BOOL)flag"];
 }
 
 - (BOOL)heightTracksTextView
 {
-    KWQDEBUG ("not implemented\n");
     return NO;
 }
 
 - (void)setWidthTracksTextView:(BOOL)flag
 {
-    KWQDEBUG ("not implemented\n");
+    [NSException raise:@"NOT IMPLEMENTED" format:@"- (void)setWidthTracksTextView:(BOOL)flag"];
 }
 
 - (BOOL)widthTracksTextView
 {
-    KWQDEBUG ("not implemented\n");
     return NO;
 }
 

@@ -28,24 +28,30 @@
 
 class QPainter;
 
+#define KPARTS_EVENT_MAGIC 42
+
 namespace KParts {
 
-bool Event::test(const QEvent *)
+bool Event::test(const QEvent *event)
 {
-    _logNotYetImplemented();
-    return FALSE;
+  if ( !event )
+    return false;
+  
+  return ( event->type() == (QEvent::Type)(1000 + KPARTS_EVENT_MAGIC ) );
 }
 
-bool Event::test(const QEvent *, const char *)
+bool Event::test(const QEvent *event, const char *name)
 {
-    _logNotYetImplemented();
-    return FALSE;
+  if ( !test( event ) )
+    return false;
+  
+  return ( strcmp( name, (const char *)((QCustomEvent *)event)->data() ) == 0 );
 }
 
 
-Event::Event(const char *)
+Event::Event(const char *eventName)
+ : QCustomEvent( (QEvent::Type)(1000 + KPARTS_EVENT_MAGIC), (void *)eventName )
 {
-    //_logNotYetImplemented();
 }
 
 } // namespace KParts

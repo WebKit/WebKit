@@ -29,7 +29,30 @@
 
 #import <KWQTextStorage.h>
 
+/*
+    This class is a dumb text storage implementation.  It is optimized for speed,
+    not flexibility.  It only support read-only text with font and color attributes.
+    
+    It is used, along with KWQTextContainer to spoof NSLayoutManager.  KWQTextStorage
+    and KWQTextContainer are both used as singletons.  They are set/reset to contain the
+    correct attributes (font and color only) during layout and rendering.
+*/
+
 @implementation KWQTextStorage
+
+static KWQTextStorage *sharedInstance = nil;
+
++ (KWQTextStorage *)sharedInstance
+{
+    if (sharedInstance == nil)
+        sharedInstance = [[KWQTextStorage alloc] init];
+    return sharedInstance;
+}
+
++ setString:(NSString *)str attributes:(NSDictionary *)attrs 
+{
+    [[KWQTextStorage sharedInstance] setString: str attributes: attrs];
+}
 
 - (id)initWithString:(NSString *)str attributes:(NSDictionary *)attrs 
 {
@@ -81,51 +104,77 @@
     return [attrString length];
 }
 
+- (void)setString: (NSString *)aString attributes: (NSDictionary *)at
+{
+    if (aString != attrString){
+        [attrString release];
+        attrString = [aString retain];
+    }
+
+    if (at != attributes){
+        [attributes release];
+        attributes = [at retain];
+    }
+}
+
+
 - (NSString *)string 
 {
     return attrString;
 }
 
+
 - (NSDictionary *)attributesAtIndex:(unsigned)location effectiveRange:(NSRangePointer)range 
 {
-    range->location = 0;
-    range->length = [self length];
+    if (range != 0){
+        range->location = 0;
+        range->length = [self length];
+    }
     return attributes;
 }
+
 
 - (NSDictionary *)attributesAtIndex:(unsigned)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit
 {
-    range->location = rangeLimit.location;
-    range->length = rangeLimit.length;
+    if (range != 0){
+        range->location = rangeLimit.location;
+        range->length = rangeLimit.length;
+    }
     return attributes;
 }
 
+
 - (id)attribute:(NSString *)attrName atIndex:(unsigned)location effectiveRange:(NSRangePointer)range 
 {
-    range->location = 0;
-    range->length = [self length];
+    if (range != 0){
+        range->location = 0;
+        range->length = [self length];
+    }
     return [attributes objectForKey: attrName];
 }
 
+
 - (void)setAttributes:(NSDictionary *)attrs range:(NSRange)range 
 {
-    KWQDEBUG ("not implemented");
+    [NSException raise:@"NOT IMPLEMENTED" format:@"- (void)setAttributes:(NSDictionary *)attrs range:(NSRange)range"];
 }
 
 
 - (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)str 
 {
-    KWQDEBUG ("not implemented");
+    [NSException raise:@"NOT IMPLEMENTED" format:@"- (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)str"];
 }
+
 
 - (void)addAttribute:(NSString *)name value:value range:(NSRange)range
 {
-    KWQDEBUG ("not implemented");
+    [NSException raise:@"NOT IMPLEMENTED" format:@"- (void)addAttribute:(NSString *)name value:value range:(NSRange)range"];
 }
+
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)aRange
 {
-    KWQDEBUG ("not implemented");
+    [NSException raise:@"NOT IMPLEMENTED" format:@"- (NSAttributedString *)attributedSubstringFromRange:(NSRange)aRange"];
     return nil;
 }
 

@@ -323,7 +323,11 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
     }
 
     khtml::DrawContentsEvent event( p, ex, ey, ew, eh );
+#ifdef _KWQ_
+    m_part->event (&event);
+#else
     QApplication::sendEvent( m_part, &event );
+#endif
 }
 
 void KHTMLView::layout(bool)
@@ -403,7 +407,11 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
     khtml::MousePressEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
     event.setNodePos( mev.nodeAbsX, mev.nodeAbsY );
+#ifdef _KWQ_
+    m_part->event (&event);
+#else
     QApplication::sendEvent( m_part, &event );
+#endif
 
     emit m_part->nodeActivated(mev.innerNode);
 }
@@ -441,7 +449,12 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
     khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
     event.setNodePos( mev.nodeAbsX, mev.nodeAbsY );
+#ifdef _KWQ_
+    m_part->event (&event);
+#else
     QApplication::sendEvent( m_part, &event );
+#endif
+
 
     // ###
     //if ( url.length() )
@@ -531,7 +544,12 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 
     khtml::MouseMoveEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
     event.setNodePos( mev.nodeAbsX, mev.nodeAbsY );
+#ifdef _KWQ_
+    m_part->event (&event);
+#else
     QApplication::sendEvent( m_part, &event );
+#endif
+
 }
 
 void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
@@ -559,7 +577,12 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
     khtml::MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
     event.setNodePos( mev.nodeAbsX, mev.nodeAbsY );
+#ifdef _KWQ_
+    m_part->event (&event);
+#else
     QApplication::sendEvent( m_part, &event );
+#endif
+
 }
 
 void KHTMLView::keyPressEvent( QKeyEvent *_ke )

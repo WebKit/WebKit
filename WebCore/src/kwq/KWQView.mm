@@ -29,6 +29,7 @@
 #include <khtmlview.h>
 #include <qwidget.h>
 #include <qpainter.h>
+#include <qevent.h>
 #include <html/html_documentimpl.h>
 
 
@@ -217,12 +218,46 @@
 
 - (void)mouseUp: (NSEvent *)event
 {
-    KWQDEBUGLEVEL1 (0x100, "mouseUp %s\n", DEBUG_OBJECT(event));
+    int button, state;
+     
+    if ([event type] == NSLeftMouseDown){
+        button = Qt::LeftButton;
+        state = Qt::LeftButton;
+    }
+    else if ([event type] == NSRightMouseDown){
+        button = Qt::RightButton;
+        state = Qt::RightButton;
+    }
+    else if ([event type] == NSOtherMouseDown){
+        button = Qt::MidButton;
+        state = Qt::MidButton;
+    }
+    NSPoint p = [event locationInWindow];
+    
+    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
+    ((KHTMLView *)widget)->viewportMouseReleaseEvent(kEvent);
 }
 
 - (void)mouseDown: (NSEvent *)event
 {
-    KWQDEBUGLEVEL1 (0x100, "mouseDown %s\n", DEBUG_OBJECT(event));
+    int button, state;
+     
+    if ([event type] == NSLeftMouseDown){
+        button = Qt::LeftButton;
+        state = Qt::LeftButton;
+    }
+    else if ([event type] == NSRightMouseDown){
+        button = Qt::RightButton;
+        state = Qt::RightButton;
+    }
+    else if ([event type] == NSOtherMouseDown){
+        button = Qt::MidButton;
+        state = Qt::MidButton;
+    }
+    NSPoint p = [event locationInWindow];
+    
+    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
+    ((KHTMLView *)widget)->viewportMousePressEvent(kEvent);
 }
 
 - (void)mouseDragged: (NSEvent *)event

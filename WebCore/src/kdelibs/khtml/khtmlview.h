@@ -174,12 +174,6 @@ public:
 
     virtual void drawContents ( QPainter * p, int clipx, int clipy, int clipw, int cliph );
 
-signals:
-    void cleared();
-
-protected:
-    void clear();
-
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void showEvent ( QShowEvent * );
     virtual void hideEvent ( QHideEvent *);
@@ -213,6 +207,13 @@ protected:
      * Scroll the view
      */
     void doAutoScroll();
+
+signals:
+    void cleared();
+
+    void clear();
+
+protected:
 
 protected slots:
     void slotPaletteChanged();

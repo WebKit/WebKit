@@ -78,35 +78,44 @@ const float LargeNumberForText = 1.0e7;
 
 static NSMutableDictionary *metricsCache = nil;
 
-@implementation KWQMetricsInfo
+/*
+    
+*/
+@implementation KWQLayoutInfo
 
 + (void)drawString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color
 {
-    KWQMetricsInfo *metricsCache = [KWQMetricsInfo getMetricsForFont: font];
+    KWQLayoutInfo *metricsCache = [KWQLayoutInfo getMetricsForFont: font];
     NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
     if (layoutManager != nil){
         unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
         [metricsCache setColor: color];
+        [metricsCache setFont: font];
+        [KWQTextStorage setString: string attributes: attributes];
         [layoutManager drawGlyphsForGlyphRange:NSMakeRange (0, numberOfGlyphs) atPoint:p];
     }
 }
 
-+ (KWQMetricsInfo *)getMetricsForFont: (NSFont *)aFont
+
++ (KWQLayoutInfo *)getMetricsForFont: (NSFont *)aFont
 {
-    KWQMetricsInfo *info = (KWQMetricsInfo *)[metricsCache objectForKey: aFont];
+    KWQLayoutInfo *info = (KWQLayoutInfo *)[metricsCache objectForKey: aFont];
     if (info == nil){
-        info = [[KWQMetricsInfo alloc] initWithFont: aFont];
-        [KWQMetricsInfo setMetric: info forFont: aFont];
+        info = [[KWQLayoutInfo alloc] initWithFont: aFont];
+        [KWQLayoutInfo setMetric: info forFont: aFont];
         [info release];
     }
     return info;
 }
-+ (void)setMetric: (KWQMetricsInfo *)info forFont: (NSFont *)aFont
+
+
++ (void)setMetric: (KWQLayoutInfo *)info forFont: (NSFont *)aFont
 {
     if (metricsCache == nil)
         metricsCache = [[NSMutableDictionary alloc] init];
     [metricsCache setObject: info forKey: aFont];
 }
+
 
 - initWithFont: (NSFont *)aFont
 {
@@ -158,6 +167,11 @@ static NSMutableDictionary *metricsCache = nil;
     [attributes setObject: color forKey: NSForegroundColorAttributeName];
 }
 
+- (void)setFont: (NSFont *)aFont
+{
+    [attributes setObject: aFont forKey: NSFontAttributeName];
+}
+
 - (void)dealloc
 {
     [attributes release];
@@ -173,7 +187,7 @@ public:
     QFontMetricsPrivate(NSFont *aFont) 
     {
         font = [aFont retain];
-        info = [[KWQMetricsInfo getMetricsForFont: aFont] retain];
+        info = [[KWQLayoutInfo getMetricsForFont: aFont] retain];
     }
     
     ~QFontMetricsPrivate()
@@ -189,7 +203,7 @@ public:
     }
     
 private:
-    KWQMetricsInfo *info;
+    KWQLayoutInfo *info;
     NSFont *font;
 };
 

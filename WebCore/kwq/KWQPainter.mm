@@ -457,10 +457,13 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     drawTile( this, x, y, w, h, pixmap, sx, sy );
 }
 
+#define FAST_CACHE_DRAWING 1
+
+#ifdef HACK_FAST_DRAWING
 @interface NSLayoutManager (Private)
 - (char *)_packedGlyphs:(NSMultibyteGlyphPacking)packing range:(NSRange)glyphRange length:(unsigned *)len;
 @end
-
+#endif
 
 // y is the baseline
 void QPainter::drawText(int x, int y, const QString &qstring, int len)
@@ -482,17 +485,21 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
     y = y - (int)([font defaultLineHeightForFont] + [font descender]);
-    //[string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, nil]];
 
-    [KWQMetricsInfo drawString: string atPoint: NSMakePoint(x, y) withFont: font color: data->qpen.color().color];
-//    KWQMetricsInfo *metricsCache = [KWQMetricsInfo getMetricsForFont: font];
-//    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
-//    if (layoutManager != nil){
-//        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
-//        [metricsCache setColor: data->qpen.color().color];
-//        [layoutManager drawGlyphsForGlyphRange:NSMakeRange (0, numberOfGlyphs) atPoint:NSMakePoint(x, y)];
+#ifdef SLOW_SAFE_DRAWING
 
-/*
+    [string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, nil]];
+
+#elif FAST_CACHE_DRAWING
+
+    [KWQLayoutInfo drawString: string atPoint: NSMakePoint(x, y) withFont: font color: data->qpen.color().color];
+
+#elif HACK_FAST_DRAWING
+
+    KWQLayoutInfo *metricsCache = [KWQLayoutInfo getMetricsForFont: font];
+    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
+    if (layoutManager != nil){
+
         [font set];
         [data->qpen.color().color set];
         
@@ -507,8 +514,9 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
         [layoutManager showPackedGlyphs:glyphBuf length:glyphLen glyphRange:NSMakeRange (0, numberOfGlyphs)  atPoint:NSMakePoint(x, y) font:font color:data->qpen.color().color printingAdjustment:NSMakeSize(0.0, 0.0)];
 
         [graphicsContext setShouldAntialias: flag];
-*/
-//    }
+    }
+
+#endif
 
 
     _unlockFocus();
