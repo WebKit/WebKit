@@ -385,9 +385,7 @@ KJS::Value ObjcInstance::defaultValue (KJS::Type hint) const
 
 KJS::Value ObjcInstance::stringValue() const
 {
-    // FIXME:  Implement something sensible, like calling toString...
-    KJS::String v("");
-    return v;
+    return convertNSStringToString ([getObject() description]);
 }
 
 KJS::Value ObjcInstance::numberValue() const

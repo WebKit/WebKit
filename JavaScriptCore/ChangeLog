@@ -1,3 +1,16 @@
+2004-11-15  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3880561> Default string value of ObjC object in JS should be [obj description].
+
+        Reviewed by Hyatt.
+
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::stringValue):
+        * bindings/objc/objc_utility.h:
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertNSStringToString):
+        (KJS::Bindings::convertObjcValueToValue):
+
 === Safari-171 ===
 
 2004-11-09  Chris Blumenberg  <cblu@apple.com>

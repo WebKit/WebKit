@@ -153,6 +153,18 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJ
     return result;
 }
 
+Value KJS::Bindings::convertNSStringToString(NSString *nsstring)
+{
+    unichar *chars;
+    unsigned int length = [nsstring length];
+    chars = (unichar *)malloc(sizeof(unichar)*length);
+    [nsstring getCharacters:chars];
+    UString u((const KJS::UChar*)chars, length);
+    Value aValue = String (u);
+    free((void *)chars);
+    return aValue;
+}
+
 /*
 
     ObjC      to    JavaScript
@@ -186,13 +198,7 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                 */
                 if ([*obj isKindOfClass:[NSString class]]){
                     NSString *string = (NSString *)*obj;
-                    unichar *chars;
-                    unsigned int length = [string length];
-                    chars = (unichar *)malloc(sizeof(unichar)*length);
-                    [string getCharacters:chars];
-                    UString u((const KJS::UChar*)chars, length);
-                    aValue = String (u);
-                    free((void *)chars);
+                    aValue = convertNSStringToString (string);
                 }
                 else if (*obj == [WebUndefined undefined]) {
                     return Undefined();
