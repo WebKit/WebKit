@@ -146,7 +146,7 @@
 
 - (void)removeMouseMovedObserver
 {
-    [[self _controller] _mouseDidMoveOverElement:nil modifierFlags:0];
+    [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
     [[NSNotificationCenter defaultCenter] removeObserver:self
         name:NSMouseMovedNotification object:nil];
 }
@@ -336,7 +336,7 @@
     NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     NSDictionary *element = [self _elementAtPoint:point];
 
-    return [[self _controller] _menuForElement:element];
+    return [[self _webView] _menuForElement:element];
 }
 
 // Search from the end of the currently selected location, or from the beginning of the
@@ -682,7 +682,7 @@
         return nil;
     }
 
-    [[self _controller] _downloadURL:_private->draggingImageURL toDirectory:[dropDestination path]];
+    [[self _webView] _downloadURL:_private->draggingImageURL toDirectory:[dropDestination path]];
 
     // FIXME: The file is supposed to be created at this point so the Finder places the file
     // where the drag ended. Since we can't create the file until the download starts,

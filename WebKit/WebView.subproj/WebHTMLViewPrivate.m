@@ -136,9 +136,9 @@ static BOOL forceRealHitTest = NO;
     [WebImageRenderer stopAnimationsInView:self];
 }
 
-- (WebView *)_controller
+- (WebView *)_webView
 {
-    return [[self _web_parentWebFrameView] _controller];
+    return (WebView *)[self _web_superviewOfClass:[WebView class]];
 }
 
 - (WebFrame *)_frame
@@ -370,11 +370,11 @@ static WebHTMLView *lastHitView = nil;
     lastHitView = view;
     
     if (view == nil) {
-        [[self _controller] _mouseDidMoveOverElement:nil modifierFlags:0];
+        [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
     } else {
         [[view _bridge] mouseMoved:event];
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
-        [[self _controller] _mouseDidMoveOverElement:[view _elementAtPoint:point] modifierFlags:[event modifierFlags]];
+        [[self _webView] _mouseDidMoveOverElement:[view _elementAtPoint:point] modifierFlags:[event modifierFlags]];
     }
 }
 
@@ -386,26 +386,29 @@ static WebHTMLView *lastHitView = nil;
 
 + (NSArray *)_pasteboardTypes
 {
-    return [NSArray arrayWithObjects:NSStringPboardType,
+    return [NSArray arrayWithObjects:
 #if SUPPORT_HTML_PBOARD
         NSHTMLPboardType,
 #endif
-        NSRTFPboardType, nil];
+        NSRTFPboardType, NSStringPboardType, nil];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
     [pasteboard declareTypes:[[self class] _pasteboardTypes] owner:nil];
-    [pasteboard setString:[self selectedString] forType:NSStringPboardType];
 
-    // Put attributed string on the pasteboard.
+#if SUPPORT_HTML_PBOARD
+    // Put HTML on the pasteboard.
+    [pasteboard setData:??? forType:NSHTMLPboardType];
+#endif
+
+    // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];
     NSData *attributedData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
     [pasteboard setData:attributedData forType:NSRTFPboardType];
 
-#if SUPPORT_HTML_PBOARD
-    // Put HTML on the pasteboard.
-#endif
+    // Put plain string on the pasteboard.
+    [pasteboard setString:[self selectedString] forType:NSStringPboardType];
 }
 
 

@@ -1,3 +1,27 @@
+2003-04-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3226281 -- REGRESSION: crash in WebHTMLView removeMouseMovedObserver closing gist.com
+
+        * Plugins.subproj/WebPluginController.m: (-[WebPluginController showStatus:]):
+        Use _webView instead of _controller.
+        
+        * WebCoreSupport.subproj/WebTextRendererFactory.m: Remove stray semicolon.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView removeMouseMovedObserver]): Use _webView instead of _controller.
+        (-[WebHTMLView menuForEvent:]): Ditto.
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Ditto.
+        * WebView.subproj/WebHTMLViewPrivate.h: Rename _controller to _webView.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _webView]): Use _web_superviewOfClass to find the WebView. This dodges possible
+        stale unretained pointer issues with getting the WebView through the WebFrame, which is what
+        fixes the bug.
+        (-[WebHTMLView _updateMouseoverWithEvent:]): Use _webView instead of _controller.
+        (+[WebHTMLView _pasteboardTypes]): Put the types in order from most preferred to least.
+        (-[WebHTMLView _writeSelectionToPasteboard:]): Ditto.
+
 2003-04-15  Richard Williamson   <rjw@apple.com>
 
         Create the dictionary for volatile values.  Without this fix

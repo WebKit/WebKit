@@ -225,7 +225,7 @@ static int getLCDScaleParameters(void)
 
 #define MINIMUM_GLYPH_CACHE_SIZE 1536 * 1024
 
-+ (void)createSharedFactory;
++ (void)createSharedFactory
 {
     if (![self sharedFactory]) {
         [[[self alloc] init] release];

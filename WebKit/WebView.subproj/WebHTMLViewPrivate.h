@@ -40,7 +40,7 @@
 @interface WebHTMLView (WebPrivate)
 
 - (void)_reset;
-- (WebView *)_controller;
+- (WebView *)_webView;
 - (WebFrame *)_frame;
 - (WebBridge *)_bridge;
 - (void)_adjustFrames;
