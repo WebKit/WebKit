@@ -24,6 +24,8 @@
 
 #include "property_map.h"
 
+#include <config.h>
+
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
@@ -126,6 +128,9 @@ PropertyMap::PropertyMap()
 
 PropertyMap::~PropertyMap()
 {
+#ifdef APPLE_CHANGES
+  clear();
+#endif
 }
 
 void PropertyMap::put(const UString &name, ValueImp *value, int attr)

@@ -1,5 +1,10 @@
 2002-04-02  Darin Adler  <darin@apple.com>
 
+	* kjs/property_map.cpp: (PropertyMap::~PropertyMap): Deallocate the
+        map by calling clear so we don't leak the entire map.
+
+2002-04-02  Darin Adler  <darin@apple.com>
+
 	* kjs/internal.cpp: (InterpreterImp::globalClear): Add code to
         deallocate and null out emptyList, because once the last interpreter
         is destroyed there's nothing to keep it from being garbage collected.
