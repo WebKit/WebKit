@@ -1,3 +1,10 @@
+2002-08-05  Darin Adler  <darin@apple.com>
+
+	- fixed 2986567 -- suppress return characters from title in title bar, status bar, menu items
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setTitle:]): Call _web_stringByCollapsingNonPrintingCharacters.
+
 2002-08-05  Richard Williamson (Home)  <rjw@apple.com>
 
         Added exported symbols file.

@@ -18,6 +18,7 @@
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 
 @interface NSApplication (DeclarationStolenFromAppKit)
@@ -149,7 +150,7 @@
 
 - (void)setTitle:(NSString *)title
 {
-    [[self dataSource] _setTitle:title];
+    [[self dataSource] _setTitle:[title _web_stringByCollapsingNonPrintingCharacters]];
 }
 
 - (void)setStatusText:(NSString *)status
