@@ -83,7 +83,7 @@ QMultiLineEdit::QMultiLineEdit()
 QMultiLineEdit::~QMultiLineEdit()
 {
     // Nothing needed.
-    _logNotYetImplemented();
+    _logNeverImplemented();
 }
 
 

@@ -20,6 +20,7 @@ SOURCES = $(wildcard *.cpp)
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 OBJECTS = $(CXXOBJECTS)
+EXPORT_OBJECTS = $(CXXOBJECTS)
 
 LIBRARY = lib_kde.a
 
@@ -43,7 +44,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: $(OBJECTS) export-objects
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
