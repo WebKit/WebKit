@@ -1,3 +1,16 @@
+2005-01-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3926522> Pressing return in a quoted block inserts too many newlines
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Call to insertBlockPlaceholderIfNeeded()
+        for the block we are adding was being done at the wrong time, which led to the placeholder remaining
+        in the document when it was not needed. This resulted in the extra space reported in the bug.
+
 2005-01-04  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Hyatt.
