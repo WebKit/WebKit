@@ -1,3 +1,13 @@
+2004-11-16  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3882034> REGRESSION: Context menu incorrect for PDF content
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView hitTest:]): return self if the current event is a context menu event
+        (-[WebPDFView menuForEvent:]): use the PDFView subview
+
 2004-11-15  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3880410> save 5 dirty pages by soft-linking against PDFKit framework

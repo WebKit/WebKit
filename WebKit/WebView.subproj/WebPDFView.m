@@ -126,9 +126,21 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     return path;
 }
 
+- (NSView *)hitTest:(NSPoint)point
+{
+    // Override hitTest so we can override menuForEvent.
+    NSEvent *event = [NSApp currentEvent];
+    NSEventType type = [event type];
+    if (type == NSRightMouseDown || (type == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask))) {
+        return self;
+    }
+    return [super hitTest:point];
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
-    NSMenu *menu = [super menuForEvent:theEvent];
+    NSMenu *menu = [PDFSubview menuForEvent:theEvent];
+    
     NSString *appName = nil;
     NSImage *appIcon = nil;
     
