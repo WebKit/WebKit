@@ -1,3 +1,22 @@
+2003-03-31  Richard Williamson  <rjw@apple.com>
+
+        Reviewed by darin.
+
+        * History.subproj/WebHistory.h:
+        Added use of WebHistoryItemsKey instead of @"Entries".
+        
+        * History.subproj/WebHistory.m:(-[WebHistory _sendNotification:entries:]):
+        Use WebHistoryItemsKey as key instead of @"Entries".
+        
+        * History.subproj/WebHistoryItem.m: (-[WebHistoryItem init]):
+        Fix double allocation of WebHistoryPrivate.
+
+        * WebKit/WebKit.exp
+        Added export for WebHistoryItemsKey
+        
+        * WebKit/API-Issues.rtf
+        Notes.
+        
 2003-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

@@ -9,18 +9,23 @@
 @class WebHistoryItem;
 @class WebHistoryPrivate;
 
-// Notifications sent when history is modified.
-// The first two come with a userInfo dictionary with a single key "Entries", which contains
-// an array of items that were added or removed.
-
-// posted from addItems:
+/*
+    @discussion Notifications sent when history is modified. 
+    @constant WebHistoryItemsAddedNotification Posted from addItems:.  This 
+    notification comes with a userInfo dictionary that contains the array of
+    items added.  The key for the array is WebHistoryItemsKey.
+    @constant WebHistoryItemsRemovedNotification Posted from and removeItems:.  
+    This notification comes with a userInfo dictionary that contains the array of
+    items removed.  The key for the array is WebHistoryItemsKey.
+    @constant WebHistoryAllItemsRemovedNotification Posted from removeAllItems
+    @constant WebHistoryLoadedNotification Posted from loadHistory.
+*/
 extern NSString *WebHistoryItemsAddedNotification;
-// posted from and removeItemss:
 extern NSString *WebHistoryItemsRemovedNotification;
-// posted from removeAllItems
 extern NSString *WebHistoryAllItemsRemovedNotification;
-// posted from loadHistory
 extern NSString *WebHistoryLoadedNotification;
+
+extern NSString *WebHistoryItemsKey;
 
 /*!
     @class WebHistory

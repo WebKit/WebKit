@@ -45,6 +45,7 @@ _WebElementLinkURLKey
 _WebErrorDomainWebKit
 _WebHistoryAllItemsRemovedNotification
 _WebHistoryItemsAddedNotification
+_WebHistoryItemsKey
 _WebHistoryItemsRemovedNotification
 _WebHistoryLoadedNotification
 _WebIconDatabaseDidAddIconNotification

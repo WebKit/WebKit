@@ -189,5 +189,21 @@ See NSArray, NSMutableArray, NSBundle, and NSSet for similar method names.\
 \
 - Nancy\
 \
-P.S. The WebHistory.h file you dropped a few days ago doesn't contain the file->URL changes you mentioned. Can't write the method descriptions for this class until I get the new headers.\cf2 \
+P.S. The WebHistory.h file you dropped a few days ago doesn't contain the file->URL changes you mentioned. Can't write the method descriptions for this class until I get the new headers.\
+\
+\
+From WebHistory.h:\
+\
+// Notifications sent when history is modified.\
+// The first two come with a userInfo dictionary with a single key "Entries", which contains\
+// an array of items that were added or removed.\
+\
+The API has been updated to always call the things items instead of entries, but this key is:\
+\
+    1) still "Entries"\
+    2) still a constant in a comment, rather than an NSString constant\
+\
+I think we should fix this.\
+\
+    -- Darin\
 }

@@ -66,7 +66,6 @@
 
 - (id)init
 {
-    _private = [[WebHistoryItemPrivate alloc] init];
     return [self initWithURL:nil title:nil];
 }
 
@@ -457,7 +456,6 @@
     NSString *URLString = [dict _web_stringForKey:@""];
     NSString *title = [dict _web_stringForKey:@"title"];
 
-    _private = [[WebHistoryItemPrivate alloc] init];
     [self initWithURL:(URLString ? [NSURL _web_URLWithString:URLString] : nil) title:title];
 
     [self setDisplayTitle:[dict _web_stringForKey:@"displayTitle"]];

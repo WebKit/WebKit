@@ -20,6 +20,7 @@ NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification"
 NSString *WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";
 NSString *WebHistoryAllItemsRemovedNotification = @"WebHistoryAllItemsRemovedNotification";
 NSString *WebHistoryLoadedNotification = @"WebHistoryLoadedNotification";
+NSString *WebHistoryItemsKey = @"WebHistoryItems";
 
 static WebHistory *_sharedHistory = nil;
 
@@ -88,7 +89,7 @@ static WebHistory *_sharedHistory = nil;
 
 - (void)_sendNotification:(NSString *)name entries:(NSArray *)entries
 {
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:entries, @"Entries", nil];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:entries, WebHistoryItemsKey, nil];
     [[NSNotificationCenter defaultCenter]
         postNotificationName: name object: self userInfo: userInfo];
 }
