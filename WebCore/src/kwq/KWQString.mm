@@ -563,39 +563,39 @@ int QString::contains(const char *chs, bool cs) const
 short QString::toShort(bool *ok, int base) const
 {
     bool neg;
-    short n = convertToNumber(ok, base, SHRT_MAX, &neg);
+    short n = convertToNumber(ok, base, &neg);
     return neg ? -n : n;
 }
 
 //#ifdef USING_BORROWED_KURL
 ushort QString::toUShort(bool *ok, int base) const
 {
-    return convertToNumber(ok, base, USHRT_MAX, NULL);
+    return convertToNumber(ok, base, NULL);
 }
 //#endif // USING_BORROWED_KURL
 
 int QString::toInt(bool *ok, int base) const
 {
     bool neg;
-    int n = convertToNumber(ok, base, INT_MAX, &neg);
+    int n = convertToNumber(ok, base, &neg);
     return neg ? -n : n;
 }
 
 uint QString::toUInt(bool *ok, int base) const
 {
-    return convertToNumber(ok, base, UINT_MAX, NULL);
+    return convertToNumber(ok, base, NULL);
 }
 
 long QString::toLong(bool *ok, int base) const
 {
     bool neg;
-    long n = convertToNumber(ok, base, LONG_MAX, &neg);
+    long n = convertToNumber(ok, base, &neg);
     return neg ? -n : n;
 }
 
 ulong QString::toULong(bool *ok, int base) const
 {
-    return convertToNumber(ok, base, ULONG_MAX, NULL);
+    return convertToNumber(ok, base, NULL);
 }
 
 float QString::toFloat(bool *ok) const
@@ -1193,7 +1193,7 @@ QCString QString::convertToQCString(CFStringEncoding enc) const
     return QCString();
 }
 
-ulong QString::convertToNumber(bool *ok, int base, ulong max, bool *neg) const
+ulong QString::convertToNumber(bool *ok, int base, bool *neg) const
 {
     ulong n = 0;
     bool valid = FALSE;
@@ -1227,6 +1227,7 @@ ulong QString::convertToNumber(bool *ok, int base, ulong max, bool *neg) const
                     }
                 }
             }
+            ulong max = negative ? LONG_MAX : ULONG_MAX;
             // is there a number?
             while (i < len) {
                 uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
@@ -1303,11 +1304,31 @@ QString QString::leftRight(uint width, bool left) const
     return qs;
 }
 
+int QString::compareToLatin1(const char *chs) const
+{
+    if (!s) {
+        return kCFCompareLessThan;
+    }
+    if (!chs) {
+        return kCFCompareGreaterThan;
+    }
+    CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+            kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
+            kCFAllocatorNull);
+    if (tmp) {
+        int result = CFStringCompare(s, tmp, 0);
+        CFRelease(tmp);
+        return result;
+    }
+    return kCFCompareGreaterThan;
+}
+
 
 // operators associated with QString ===========================================
 
 bool operator==(const QString &qs1, const QString &qs2)
 {
+#if 0
     if (qs1.s == qs2.s) {
         return TRUE;
     }
@@ -1315,10 +1336,14 @@ bool operator==(const QString &qs1, const QString &qs2)
         return CFStringCompare(qs1.s, qs2.s, 0) == kCFCompareEqualTo;
     }
     return FALSE;
+#else
+    return qs1.compare(qs2) == 0;
+#endif
 }
 
 bool operator==(const QString &qs, const char *chs)
 {
+#if 0
     bool result = FALSE;
     if (qs.s && chs) {
         CFStringRef tmp = CFStringCreateWithCStringNoCopy(
@@ -1330,26 +1355,105 @@ bool operator==(const QString &qs, const char *chs)
         }
     }
     return result;
+#else
+    return qs.compareToLatin1(chs) == 0;
+#endif
 }
 
 bool operator==(const char *chs, const QString &qs)
 {
+#if 0
     return qs == chs;
+#else
+    return qs.compareToLatin1(chs) == 0;
+#endif
 }
 
 bool operator!=(const QString &qs1, const QString &qs2)
 {
+#if 0
     return !(qs1 == qs2);
+#else
+    return qs1.compare(qs2) != 0;
+#endif
 }
 
 bool operator!=(const QString &qs, const char *chs)
 {
+#if 0
     return !(qs == chs);
+#else
+    return qs.compareToLatin1(chs) != 0;
+#endif
 }
 
 bool operator!=(const char *chs, const QString &qs)
 {
+#if 0
     return !(qs == chs);
+#else
+    return qs.compareToLatin1(chs) != 0;
+#endif
+}
+
+bool operator<(const QString &qs1, const QString &qs2)
+{
+    return qs1.compare(qs2) < 0;
+}
+
+bool operator<(const QString &qs, const char *chs)
+{
+    return qs.compareToLatin1(chs) < 0;
+}
+
+bool operator<(const char *chs, const QString &qs)
+{
+    return qs.compareToLatin1(chs) > 0;
+}
+
+bool operator<=(const QString &qs1, const QString &qs2)
+{
+    return qs1.compare(qs2) <= 0;
+}
+
+bool operator<=(const QString &qs, const char *chs)
+{
+    return qs.compareToLatin1(chs) <= 0;
+}
+
+bool operator<=(const char *chs, const QString &qs)
+{
+    return qs.compareToLatin1(chs) >= 0;
+}
+
+bool operator>(const QString &qs1, const QString &qs2)
+{
+    return qs1.compare(qs2) > 0;
+}
+
+bool operator>(const QString &qs, const char *chs)
+{
+    return qs.compareToLatin1(chs) > 0;
+}
+
+bool operator>(const char *chs, const QString &qs)
+{
+    return qs.compareToLatin1(chs) < 0;
+}
+
+bool operator>=(const QString &qs1, const QString &qs2)
+{
+    return qs1.compare(qs2) >= 0;
+}
+
+bool operator>=(const QString &qs, const char *chs)
+{
+    return qs.compareToLatin1(chs) >= 0;
+}
+
+bool operator>=(const char *chs, const QString &qs)
+{
+    return qs.compareToLatin1(chs) <= 0;
 }
 
 QString operator+(const QString &qs1, const QString &qs2)

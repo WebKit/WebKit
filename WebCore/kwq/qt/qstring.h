@@ -118,12 +118,30 @@ public:
     // operators ---------------------------------------------------------------
 
     operator char() const;
-    friend int operator==(QChar, QChar);
-    friend int operator==(QChar, char);
-    friend int operator==(char, QChar);
-    friend int operator!=(QChar, QChar);
-    friend int operator!=(QChar, char);
-    friend int operator!=(char, QChar);
+
+    friend bool operator==(QChar, QChar);
+    friend bool operator==(QChar, char);
+    friend bool operator==(char, QChar);
+
+    friend bool operator!=(QChar, QChar);
+    friend bool operator!=(QChar, char);
+    friend bool operator!=(char, QChar);
+
+    friend bool operator>(QChar, QChar);
+    friend bool operator>(QChar, char);
+    friend bool operator>(char, QChar);
+
+    friend bool operator>=(QChar, QChar);
+    friend bool operator>=(QChar, char);
+    friend bool operator>=(char, QChar);
+
+    friend bool operator<(QChar, QChar);
+    friend bool operator<(QChar, char);
+    friend bool operator<(char, QChar);
+
+    friend bool operator<=(QChar, QChar);
+    friend bool operator<=(QChar, char);
+    friend bool operator<=(char, QChar);
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
@@ -312,8 +330,9 @@ private:
 
     void flushCache() const;
     QCString convertToQCString(CFStringEncoding) const;
-    ulong convertToNumber(bool *ok, int base, ulong max, bool *neg) const;
+    ulong convertToNumber(bool *ok, int base, bool *neg) const;
     QString leftRight(uint width, bool left) const;
+    int compareToLatin1(const char *chs) const;
 
     // data members ------------------------------------------------------------
 
@@ -327,6 +346,26 @@ private:
     friend bool operator==(const QString &, const char *);
     friend bool operator==(const char *, const QString &);
 
+    friend bool operator!=(const QString &, const QString &);
+    friend bool operator!=(const QString &, const char *);
+    friend bool operator!=(const char *, const QString &);
+
+    friend bool operator>(const QString &, const QString &);
+    friend bool operator>(const QString &, const char *);
+    friend bool operator>(const char *, const QString &);
+
+    friend bool operator>=(const QString &, const QString &);
+    friend bool operator>=(const QString &, const char *);
+    friend bool operator>=(const char *, const QString &);
+
+    friend bool operator<=(const QString &, const QString &);
+    friend bool operator<=(const QString &, const char *);
+    friend bool operator<=(const char *, const QString &);
+
+    friend bool operator<(const QString &, const QString &);
+    friend bool operator<(const QString &, const char *);
+    friend bool operator<(const char *, const QString &);
+
     friend class QConstString;
     friend class QGDict;
 
@@ -334,14 +373,6 @@ private:
 
 
 // operators associated with QString ===========================================
-
-bool operator==(const QString &, const QString &);
-bool operator==(const QString &, const char *);
-bool operator==(const char *, const QString &);
-
-bool operator!=(const QString &, const QString &);
-bool operator!=(const QString &, const char *);
-bool operator!=(const char *, const QString &);
 
 QString operator+(const QString &, const QString &);
 QString operator+(const QString &, const char *);

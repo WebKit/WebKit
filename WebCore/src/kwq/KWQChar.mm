@@ -225,34 +225,94 @@ QChar QChar::mirroredChar() const
 
 // operators -------------------------------------------------------------------
 
-int operator==(QChar qc1, QChar qc2)
+bool operator==(QChar qc1, QChar qc2)
 {
     return qc1.c == qc2.c;
 }
 
-int operator==(QChar qc, char ch)
+bool operator==(QChar qc, char ch)
 {
     return qc.c == ch;
 }
 
-int operator==(char ch, QChar qc)
+bool operator==(char ch, QChar qc)
 {
     return ch == qc.c;
 }
 
-int operator!=(QChar qc1, QChar qc2)
+bool operator!=(QChar qc1, QChar qc2)
 {
     return qc1.c != qc2.c;
 }
 
-int operator!=(QChar qc, char ch)
+bool operator!=(QChar qc, char ch)
 {
     return qc.c != ch;
 }
 
-int operator!=(char ch, QChar qc)
+bool operator!=(char ch, QChar qc)
 {
     return ch != qc.c;
+}
+
+bool operator>=(QChar qc1, QChar qc2)
+{
+    return qc1.c >= qc2.c;
+}
+
+bool operator>=(QChar qc, char ch)
+{
+    return qc.c >= ch;
+}
+
+bool operator>=(char ch, QChar qc)
+{
+    return ch >= qc.c;
+}
+
+bool operator>(QChar qc1, QChar qc2)
+{
+    return qc1.c > qc2.c;
+}
+
+bool operator>(QChar qc, char ch)
+{
+    return qc.c > ch;
+}
+
+bool operator>(char ch, QChar qc)
+{
+    return ch > qc.c;
+}
+
+bool operator<=(QChar qc1, QChar qc2)
+{
+    return qc1.c <= qc2.c;
+}
+
+bool operator<=(QChar qc, char ch)
+{
+    return qc.c <= ch;
+}
+
+bool operator<=(char ch, QChar qc)
+{
+    return ch <= qc.c;
+}
+
+bool operator<(QChar qc1, QChar qc2)
+{
+    return qc1.c < qc2.c;
+}
+
+bool operator<(QChar qc, char ch)
+{
+    return qc.c < ch;
+}
+
+bool operator<(char ch, QChar qc)
+{
+    return ch < qc.c;
 }
 
 #else // USING_BORROWED_QSTRING
