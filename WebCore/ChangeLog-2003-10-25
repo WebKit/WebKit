@@ -1,3 +1,18 @@
+2003-06-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3281030, stylesheets can't be enabled properly via
+	script.  Test case from Dirk.  The fix is to make the setting
+	of the state happen independently of the attribute setting.
+	
+        Reviewed by john
+
+        * khtml/dom/html_head.cpp:
+        (HTMLLinkElement::setDisabled):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::setDisabledState):
+        (HTMLLinkElementImpl::parseAttribute):
+        * khtml/html/html_headimpl.h:
+
 2003-06-05  Chris Blumenberg  <cblu@apple.com>
 
         Fixed: <rdar://problem/3268751>: REGRESSION: crash in KWQValueListImpl selecting connection speed at news.com

@@ -115,11 +115,10 @@ bool HTMLLinkElement::disabled() const
 
 void HTMLLinkElement::setDisabled( bool _disabled )
 {
-    if (disabled() == _disabled)
-        return;
-        
-    if(impl)
+    if(impl) {
         ((ElementImpl *)impl)->setAttribute(ATTR_DISABLED, _disabled ? "" : 0);
+        ((HTMLLinkElementImpl*)impl)->setDisabledState(_disabled);
+    }
 }
 
 DOMString HTMLLinkElement::charset() const
