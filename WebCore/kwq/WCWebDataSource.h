@@ -29,7 +29,7 @@
 #import <Foundation/Foundation.h>
 
 
-typedef id (*WCIFWebDataSourceMakeFunc)(void *);
+typedef id (*WCIFWebDataSourceMakeFunc)(void *, void*, unsigned);
 void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func);
 
 extern WCIFWebDataSourceMakeFunc WCIFWebDataSourceMake;

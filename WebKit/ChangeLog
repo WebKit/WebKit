@@ -1,3 +1,15 @@
+2002-05-10  Chris Blumenberg  <cblu@apple.com>
+
+	Added support for non-html non-file URL data sources. 
+	Added the init methods below. Removed initWithHandle.
+
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	(IFWebDataSourceMake):
+	(-[IFWebDataSource initWithURL:]):
+	(-[IFWebDataSource initWithURL:attributes:]):
+	(-[IFWebDataSource startLoading:]):
+
 2002-05-10  Darin Adler  <darin@apple.com>
 
 	* WebCoreSupport.subproj/IFTextRenderer.h: Moved most of the

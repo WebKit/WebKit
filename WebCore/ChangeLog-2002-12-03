@@ -1,3 +1,14 @@
+2002-05-10  Chris Blumenberg  <cblu@apple.com>
+
+	Changed WCIFWebDataSourceMake to wrap around [IFWebDataSource initWithURL: attributes: flags:]
+	instead of initWithHandle. 
+
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::requestFrame):
+	(KHTMLPart::submitForm):
+	* kwq/WCWebDataSource.h:
+	* libwebcore.exp:
+
 2002-05-10  Darin Adler  <darin@apple.com>
 
 	* kwq/WebCoreTextRenderer.h:

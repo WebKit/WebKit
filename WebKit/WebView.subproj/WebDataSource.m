@@ -18,9 +18,9 @@
 
 @implementation IFWebDataSource
 
-static id IFWebDataSourceMake(void *handle) 
+static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags) 
 {
-    return [[[IFWebDataSource alloc] initWithHandle: (IFURLHandle *)handle] autorelease];
+    return [[[IFWebDataSource alloc] initWithURL:(NSURL *)url attributes:(NSDictionary *)attributes flags:flags] autorelease];
 }
 
 + (void)load
@@ -33,21 +33,22 @@ static id IFWebDataSourceMake(void *handle)
     _private = [[IFWebDataSourcePrivate alloc] init];
 }
 
-// Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
-- initWithURL: (NSURL *)inputURL 
+-(id)initWithURL:(NSURL *)theURL
 {
-    [super init];
-    [self _commonInitialization];
-    _private->inputURL = [inputURL retain];
-    return self;
+    return [self  initWithURL:theURL attributes:nil flags:0];
 }
 
-- initWithHandle: (IFURLHandle *)handle
+-(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes
+{
+    return [self  initWithURL:theURL attributes:theAttributes flags:0];
+}
+
+-(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
 {
     [super init];
     [self _commonInitialization];
-    _private->mainHandle = [handle retain];
-    _private->inputURL = [[handle url] retain];
+    _private->inputURL = [theURL retain];
+    _private->mainHandle = [[IFURLHandle alloc] initWithURL: _private->inputURL attributes:theAttributes flags:theFlags];
     return self;
 }
 
@@ -185,9 +186,6 @@ static id IFWebDataSourceMake(void *handle)
 // If forceRefresh is YES the document will load from the net, not the cache.
 - (void)startLoading: (BOOL)forceRefresh
 {
-    if(!_private->mainHandle){
-        _private->mainHandle = [[IFURLHandle alloc] initWithURL: _private->inputURL attributes: nil flags: 0];
-    }
     [self _startLoading: forceRefresh];
 }
 

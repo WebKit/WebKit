@@ -873,7 +873,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         }
         [newFrame _setRenderFramePart: frame];
         
-        newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: childURL attributes: nil flags: 0] autorelease]);
+        newDataSource = WCIFWebDataSourceMake(childURL, nil, 0);
         [newDataSource _setParent: oldDataSource];
         [newFrame setProvisionalDataSource: newDataSource];
     
@@ -1032,7 +1032,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     oldDataSource = getDataSource();
     frame = [oldDataSource webFrame];
     
-    newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: u.getNSURL() attributes: attributes flags: 0] autorelease]);
+    newDataSource = WCIFWebDataSourceMake(u.getNSURL(), attributes, 0);
     [newDataSource _setParent: [oldDataSource parent]];
     
     [frame setProvisionalDataSource: newDataSource];
@@ -1402,7 +1402,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
             oldDataSource = [frame dataSource];
         }
         
-        newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: clickedURL.getNSURL() attributes: nil flags: 0] autorelease]);
+        newDataSource = WCIFWebDataSourceMake(clickedURL.getNSURL(), nil, 0);
         [newDataSource _setParent: [oldDataSource parent]];
         
         [frame setProvisionalDataSource: newDataSource];

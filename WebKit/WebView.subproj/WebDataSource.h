@@ -33,8 +33,9 @@
 }
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
-- initWithURL: (NSURL *)inputURL;
-- initWithHandle: (IFURLHandle *)theHandle;
+-(id)initWithURL:(NSURL *)inputURL;
+-(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes;
+-(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
 
 #ifdef TENTATIVE_API
 - initWithData: (NSData *)data;
