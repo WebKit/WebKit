@@ -61,6 +61,9 @@ NSString *WebViewProgressFinishedNotification = @"WebProgressFinishedNotificatio
 
 enum { WebViewVersion = 2 };
 
+@interface WebView (WebInternal)
+- (BOOL)_isLoading;
+@end
 
 @implementation WebView
 
@@ -822,7 +825,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)isLoading
 {
-    return [[[self mainFrame] dataSource] isLoading];
+    LOG (Bindings, "isLoading = %d", (int)[self _isLoading]);
+    return [self _isLoading];
 }
 
 - (NSString *)mainFrameTitle

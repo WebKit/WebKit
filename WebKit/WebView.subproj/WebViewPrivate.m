@@ -819,7 +819,10 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 {
     [self _willChangeBackForwardKeys];
     if (frame == [self mainFrame]){
+        // Force an observer update by sending a will/did.
         [self _willChangeValueForKey: _WebIsLoadingKey];
+        [self _didChangeValueForKey: _WebIsLoadingKey];
+
         [self _willChangeValueForKey: _WebMainFrameURLKey];
     }
     [NSApp setWindowsNeedUpdate:YES];
@@ -827,24 +830,31 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
-    if (frame == [self mainFrame])
+    if (frame == [self mainFrame]){
         [self _didChangeValueForKey: _WebMainFrameURLKey];
+    }
     [NSApp setWindowsNeedUpdate:YES];
 }
 
 - (void)_didFinishLoadForFrame:(WebFrame *)frame
 {
     [self _didChangeBackForwardKeys];
-    if (frame == [self mainFrame])
+    if (frame == [self mainFrame]){
+        // Force an observer update by sending a will/did.
+        [self _willChangeValueForKey: _WebIsLoadingKey];
         [self _didChangeValueForKey: _WebIsLoadingKey];
+    }
     [NSApp setWindowsNeedUpdate:YES];
 }
 
 - (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
     [self _didChangeBackForwardKeys];
-    if (frame == [self mainFrame])
+    if (frame == [self mainFrame]){
+        // Force an observer update by sending a will/did.
+        [self _willChangeValueForKey: _WebIsLoadingKey];
         [self _didChangeValueForKey: _WebIsLoadingKey];
+    }
     [NSApp setWindowsNeedUpdate:YES];
 }
 
@@ -852,7 +862,10 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 {
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame]){
+        // Force an observer update by sending a will/did.
+        [self _willChangeValueForKey: _WebIsLoadingKey];
         [self _didChangeValueForKey: _WebIsLoadingKey];
+        
         [self _didChangeValueForKey: _WebMainFrameURLKey];
     }
     [NSApp setWindowsNeedUpdate:YES];
