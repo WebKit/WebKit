@@ -42,8 +42,8 @@ void CallDrawingNotifications(CGrafPtr port, Rect *mayDrawIntoThisRect, int draw
 #define NullEventIntervalActive 	0.01
 #define NullEventIntervalNotActive	0.25
 
-#define LoginWindowDidSwitchFromUserNotification    @"LoginWindowDidSwitchFromUserNotification"
-#define LoginWindowDidSwitchToUserNotification      @"LoginWindowDidSwitchToUserNotification"
+#define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
+#define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
@@ -863,9 +863,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                                name:NSWindowDidDeminiaturizeNotification object:theWindow];
     
     [notificationCenter addObserver:self selector:@selector(loginWindowDidSwitchFromUser:)
-                               name:LoginWindowDidSwitchFromUserNotification object:NSApp];
+                               name:LoginWindowDidSwitchFromUserNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(loginWindowDidSwitchToUser:)
-                               name:LoginWindowDidSwitchToUserNotification object:NSApp];
+                               name:LoginWindowDidSwitchToUserNotification object:nil];
 }
 
 - (void)removeWindowObservers
@@ -878,8 +878,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification     object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidMiniaturizeNotification   object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidDeminiaturizeNotification object:nil];
-    [notificationCenter removeObserver:self name:LoginWindowDidSwitchFromUserNotification   object:NSApp];
-    [notificationCenter removeObserver:self name:LoginWindowDidSwitchToUserNotification     object:NSApp];
+    [notificationCenter removeObserver:self name:LoginWindowDidSwitchFromUserNotification   object:nil];
+    [notificationCenter removeObserver:self name:LoginWindowDidSwitchToUserNotification     object:nil];
 }
 
 - (BOOL)start
@@ -1785,5 +1785,5 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
     } else {
         ASSERT_NOT_REACHED();
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:NSApp];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:nil];
 }

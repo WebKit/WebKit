@@ -1,3 +1,14 @@
+2004-10-25  Chris Blumenberg  <cblu@apple.com>
+
+	Darin made an internal notification have the Web prefix.
+
+        Reviewed by me.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView addWindowObservers]):
+        (-[WebBaseNetscapePluginView removeWindowObservers]):
+        (ConsoleConnectionChangeNotifyProc):
+
 2004-10-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.
