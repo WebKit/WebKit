@@ -1,3 +1,36 @@
+2002-11-04  Darin Adler  <darin@apple.com>
+
+	- fixed 3091714 -- reproducible assert cachedObject->response
+	in KWQCheckCacheObjectStatus
+
+        * khtml/misc/loader.cpp: (Loader::slotFinished):
+	For APPLE_CHANGES, don't finish the load if it's an error.
+
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader finishJobAndHandle]): Shared code for the
+	three following methods.
+        (-[KWQResourceLoader cancel]): Use setError(1) again instead of
+	just keeping the load around forever.
+        (-[KWQResourceLoader reportError]): Ditto.
+        (-[KWQResourceLoader finish]): Use finishJobAndHandle to share
+	code with the two above.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init): Put the slotLoaderRequestStarted and
+	slotLoaderRequestDone connect lines inside ifdefs.
+        (KHTMLPart::~KHTMLPart): Same for disconnect.
+
+        * kwq/KWQSignal.h: Remove code for the DocLoader signals.
+        * kwq/KWQSignal.mm: (KWQSignal::call): Ditto.
+        * kwq/KWQSignalStubs.mm:
+        (Loader::requestDone): Ditto.
+        (Loader::requestFailed): Ditto.
+        (Loader::requestStarted): Ditto.
+        * kwq/KWQSlot.h: Ditto.
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Ditto.
+        (KWQSlot::call): Ditto.
+
 2002-11-04  Maciej Stachowiak  <mjs@apple.com>
 
 	Changes to send NSEvents all the way through WebCore and then pass

@@ -42,7 +42,6 @@ public:
     void call(int) const;
     void call(const QString &) const;
     void call(KIO::Job *) const;
-    void call(khtml::DocLoader *, khtml::CachedObject *) const;
 
 private:
     // forbid copying and assignment

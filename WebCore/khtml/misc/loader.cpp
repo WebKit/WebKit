@@ -1223,6 +1223,10 @@ kdDebug(6060) << "Loader::slotFinished, url = " << j->url().url() << " expires "
       r->object->setExpireDate(expireDate, false);
   }
 
+#if APPLE_CHANGES
+  // We don't want to ever finish the load in the case of an error because we don't want them cached.
+  if (!j->error())
+#endif
   r->object->finish();
 
 #ifdef CACHE_DEBUG

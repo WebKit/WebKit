@@ -34,11 +34,6 @@ namespace KIO {
     class Job;
 }
 
-namespace khtml {
-    class CachedObject;
-    class DocLoader;
-}
-
 // Like strcmp, but ignores spaces.
 bool KWQNamesMatch(const char *a, const char *b);
 
@@ -55,7 +50,6 @@ public:
     void call(int) const;
     void call(const QString &) const;
     void call(KIO::Job *) const;
-    void call(khtml::DocLoader *, khtml::CachedObject *) const;
     
     friend bool operator==(const KWQSlot &, const KWQSlot &);
 

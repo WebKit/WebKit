@@ -39,17 +39,14 @@ void KHTMLView::cleared()
 
 void Loader::requestDone(DocLoader *l, CachedObject *o)
 {
-    kwq->_requestDone.call(l, o);
 }
 
 void Loader::requestFailed(DocLoader *l, CachedObject *o)
 {
-    kwq->_requestFailed.call(l, o);
 }
 
 void Loader::requestStarted(DocLoader *l, CachedObject *o)
 {
-    kwq->_requestStarted.call(l, o);
 }
 
 Tokenizer::Tokenizer()
