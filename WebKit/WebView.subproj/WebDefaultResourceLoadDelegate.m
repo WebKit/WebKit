@@ -10,7 +10,6 @@
 
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebPluginError.h>
 #import <WebKit/WebView.h>
 
 

@@ -6,12 +6,12 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebPlugInError.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/NSError.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
 static NSImage *image = nil;

@@ -16,7 +16,6 @@
 #import <WebKit/WebMacBinaryDecoder.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebNSWorkspaceExtras.h>
-#import <WebKit/WebNSURLResponseExtras.h>
 
 #import <WebFoundation/WebNSErrorExtras.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
@@ -445,7 +444,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
     NSString *filename = [[lastDecoder filename] _web_filenameByFixingIllegalCharacters];
     if ([filename length] == 0) {
-        filename = [_private->response suggestedFilenameForSaving];
+        filename = [_private->response suggestedFilename];
     }
 
     ASSERT(!_private->path);

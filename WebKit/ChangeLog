@@ -1,5 +1,20 @@
 2003-04-24  Chris Blumenberg  <cblu@apple.com>
 
+        Renamed - [NSURLResponse suggestedFilenameForSaving] to suggestedFilename and moved it to WebFoundation.
+
+        Reviewed by mjs.
+
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload _createFileIfNecessary]):
+        * English.lproj/Localizable.strings:
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebNSURLResponseExtras.h: Removed.
+        * Misc.subproj/WebNSURLResponseExtras.m: Removed.
+        * Plugins.subproj/WebNullPluginView.m: include NSError to unbreak build.
+        * WebKit.pbproj/project.pbxproj:
+
+2003-04-24  Chris Blumenberg  <cblu@apple.com>
+
 	Removed WebPluginError and instead added fields to the userInfo of NSError for plug-in specific errors.
 
         Reviewed by rjw.

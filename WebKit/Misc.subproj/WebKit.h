@@ -15,10 +15,8 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferences.h>
-#import <WebKit/WebPlugInError.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebNSURLResponseExtras.h>
 #import <WebKit/WebStandardPanels.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>

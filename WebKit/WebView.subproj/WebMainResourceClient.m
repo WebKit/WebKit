@@ -29,7 +29,6 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
-#import <WebKit/WebNSURLResponseExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
