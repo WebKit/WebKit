@@ -207,7 +207,9 @@ bool RenderBox::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     _tx += m_x;
     _ty += m_y;
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction)) {
+        // FIXME: We have to skip over inline flows, since they can show up inside table rows at the moment (a demoted inline <form> for example).  If we ever implement a
+        // table-specific hit-test method (which we should do for performance reasons anyway), then we can remove this check.
+        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction)) {
             setInnerNode(info);
             return true;
         }
