@@ -2,6 +2,15 @@
 
         Reviewed by John.
 
+	- fixed 3279206 -- REGRESSION: new page does not load after selecting item from list and hitting 'Go' button
+
+        * khtml/html/html_formimpl.cpp: (HTMLInputElementImpl::encoding): Use value() in a couple of places
+        that were still directly using m_value.
+
+2003-06-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
 	- fixed 3278079 -- REGRESSION: UTF-8 page claiming to be UTF-16 in XML header gives garbage characters
 
         * khtml/misc/decoder.cpp: (Decoder::setEncoding): Add EncodingFromXMLHeader as one of the
