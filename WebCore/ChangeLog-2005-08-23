@@ -1,3 +1,17 @@
+2003-10-24  David Hyatt  <hyatt@apple.com>
+
+	Two fixes to the computation of min/max width for text runs.
+	(1) Make sure that pre runs don't add in word-spacing to the last word on a line (e.g., when a newline explicitly
+	breaks a pre).
+	(2) Fix a bug where breakable characters weren't getting factored into minwidth properly.  When a word got broken
+	because of a breakable character, we were treating the breakable character like a space, and not including its
+	width as part of the minimum width of the text run.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::calcMinMaxWidth):
+
 2003-10-23  David Hyatt  <hyatt@apple.com>
 
 	This patch fixes the pseudo-elements ::first-line and ::first-letter to inherit styles properly.  More

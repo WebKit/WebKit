@@ -1065,7 +1065,8 @@ void RenderText::calcMinMaxWidth()
             continue;
         
         int wordlen = 0;
-        while( i+wordlen < len && !(isBreakable( str->s, i+wordlen, str->l )) )
+        while (i+wordlen < len && str->s[i+wordlen] != '\n' && str->s[i+wordlen] != ' ' &&
+               (wordlen == 0 || !isBreakable( str->s, i+wordlen, str->l)))
             wordlen++;
             
         if (wordlen)
@@ -1078,8 +1079,12 @@ void RenderText::calcMinMaxWidth()
             currMinWidth += w;
             currMaxWidth += w;
             
-            // Add in wordspacing to our maxwidth, but not if this is the last word.
-            if (wordSpacing && !containsOnlyWhitespace(i+wordlen, len-(i+wordlen)))
+            bool isBreakableCharSpace = (i+wordlen < len) ? ((!isPre && str->s[i+wordlen] == '\n') || 
+                                                             str->s[i+wordlen] == ' ') : false;
+
+            // Add in wordspacing to our maxwidth, but not if this is the last word on a line or the
+            // last word in the run.
+            if (wordSpacing && isBreakableCharSpace && !containsOnlyWhitespace(i+wordlen, len-(i+wordlen)))
                 currMaxWidth += wordSpacing;
 
             if (firstWord) {
@@ -1088,7 +1093,7 @@ void RenderText::calcMinMaxWidth()
             }
             m_endMinWidth = w;
             
-            if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
+            if (currMinWidth > m_minWidth) m_minWidth = currMinWidth;
             currMinWidth = 0;
                 
             i += wordlen-1;
@@ -1099,12 +1104,12 @@ void RenderText::calcMinMaxWidth()
             if (style()->whiteSpace() != NOWRAP)
                 m_hasBreakableChar = true;
 
-            if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
+            if (currMinWidth > m_minWidth) m_minWidth = currMinWidth;
             currMinWidth = 0;
-                
-            if (str->s[i] == '\n' && isPre)
+            
+            if (isNewline) // Only set if isPre was true and we saw a newline.
             {
-                if(currMaxWidth > m_maxWidth) m_maxWidth = currMaxWidth;
+                if (currMaxWidth > m_maxWidth) m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             }
             else
