@@ -34,6 +34,8 @@ public:
     bool isValid() const;
     int width() const;
     int height() const;
+    void setWidth(int);
+    void setHeight(int);
     QSize expandedTo(const QSize &) const;
 
     friend inline QSize operator+(const QSize &, const QSize &);
