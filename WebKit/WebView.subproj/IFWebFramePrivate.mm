@@ -313,7 +313,7 @@ static const char * const stateNames[6] = {
         {
             IFWebDataSource *ds = [self dataSource];
             
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
+            //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
             if (![ds isLoading]) {
                 id mainView = [[[self controller] mainFrame] view];
                 id thisView = [self view];

@@ -1,3 +1,13 @@
+2002-05-10  Richard J. Williamson  <rjw@apple.com>
+
+	Logging changes.
+	
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource isLoading]):
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _isLoadComplete]):
+
 2002-05-10  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for non-html non-file URL data sources. 

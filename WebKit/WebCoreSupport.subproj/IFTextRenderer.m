@@ -1,10 +1,8 @@
-//
-//  IFTextRenderer.m
-//  WebKit
-//
-//  Created by Darin Adler on Thu May 02 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+        IFTextRenderer.m
+	    
+	    Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import "IFTextRenderer.h"
 
@@ -24,9 +22,6 @@
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
 
 #define LOCAL_GLYPH_BUFFER_SIZE 1024
-
-#define INITIAL_GLYPH_CACHE_MAX 512
-#define INCREMENTAL_GLYPH_CACHE_BLOCK 1024
 
 // Covers most of latin1.
 #define INITIAL_BLOCK_SIZE 0x200
