@@ -1,3 +1,37 @@
+2004-02-27  John Sullivan  <sullivan@apple.com>
+
+        - WebKit changes to allow performance improvements to bookmarks 
+
+        Reviewed by Darin.
+
+        * History.subproj/WebHistoryItemPrivate.h:
+        added notificationsSuppressed/setNotificationsSuppressed, and setURLString
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem setNotificationsSuppressed:]):
+        setter for new flag. When this flag is set, making changes to the WebHistoryItem
+        will not cause WebHistoryChanged notifications to be sent. This is a big speedup
+        for reading bookmarks from disk, since currently each WebBookmarkLeaf object
+        keeps around a WebHistoryItem object that isn't really part of history and thus
+        doesn't need to send notifications about history changing.
+        (-[WebHistoryItem notificationsSuppressed]):
+        getter for new flag
+        (-[WebHistoryItem setURLString:]):
+        new method, extracted from guts of setURL:; this allows callers (though
+        currently only callers at Apple) that have a URL string in hand to set
+        it directly on the WebHistoryItem rather than converting to a URL and
+        back, both relatively slow operations. Also, doesn't sent a notification
+        if notifications are suppressed.
+        (-[WebHistoryItem setURL:]):
+        now calls extracted method
+        (-[WebHistoryItem setAlternateTitle:]):
+        doesn't send notification if notifications are suppressed
+        (-[WebHistoryItem setOriginalURLString:]):
+        ditto
+        (-[WebHistoryItem setTitle:]):
+        ditto
+        (-[WebHistoryItem _setLastVisitedTimeInterval:]):
+        ditto
+
 2004-02-26  Chris Blumenberg  <cblu@apple.com>
 
 	WebKit side of:

@@ -47,6 +47,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     NSMutableDictionary *pageCache;
     BOOL isTargetItem;
     BOOL alwaysAttemptToUsePageCache;
+    BOOL notificationsSuppressed;
     int visitCount;
     // info used to repost form data
     NSData *formData;
@@ -159,8 +160,10 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     [_private->displayTitle release];
     _private->displayTitle = newDisplayTitle;
 
-    [[NSNotificationCenter defaultCenter]
+    if (!_private->notificationsSuppressed) {
+        [[NSNotificationCenter defaultCenter]
         postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
+    }
 }
 
 
@@ -278,18 +281,24 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     return _private->parent;
 }
 
-- (void)setURL:(NSURL *)URL
+- (void)setURLString:(NSString *)string
 {
-    NSString *string = [URL _web_originalDataAsString];
     if (!(string == _private->URLString || [string isEqual:_private->URLString])) {
         [self _retainIconInDatabase:NO];
         [_private->URLString release];
         _private->URLString = [string copy];
         [self _retainIconInDatabase:YES];
     }
-
-    [[NSNotificationCenter defaultCenter]
+    
+    if (!_private->notificationsSuppressed) {
+        [[NSNotificationCenter defaultCenter]
         postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
+    }
+}
+
+- (void)setURL:(NSURL *)URL
+{
+    [self setURLString:[URL _web_originalDataAsString]];
 }
 
 // The first URL we loaded to get to where this history item points.  Includes both client
@@ -300,8 +309,10 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     [_private->originalURLString release];
     _private->originalURLString = newURL;
 
-    [[NSNotificationCenter defaultCenter]
+    if (!_private->notificationsSuppressed) {
+        [[NSNotificationCenter defaultCenter]
         postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
+    }
 }
 
 - (void)setTitle:(NSString *)title
@@ -315,8 +326,10 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     [_private->title release];
     _private->title = newTitle;
 
-    [[NSNotificationCenter defaultCenter]
+    if (!_private->notificationsSuppressed) {
+        [[NSNotificationCenter defaultCenter]
         postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
+    }
 }
 
 - (void)setTarget:(NSString *)target
@@ -342,8 +355,10 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
         _private->visitCount++;
     }
 
-    [[NSNotificationCenter defaultCenter]
+    if (!_private->notificationsSuppressed) {
+        [[NSNotificationCenter defaultCenter]
         postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
+    }
 }
 
 // FIXME:  Remove this accessor and related ivar.
@@ -566,6 +581,16 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 - (BOOL)alwaysAttemptToUsePageCache
 {
     return _private->alwaysAttemptToUsePageCache;
+}
+
+- (void)setNotificationsSuppressed:(BOOL)flag
+{
+    _private->notificationsSuppressed = flag;
+}
+
+- (BOOL)notificationsSuppressed
+{
+    return _private->notificationsSuppressed;
 }
 
 
