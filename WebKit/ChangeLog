@@ -1,5 +1,12 @@
 2002-05-14  Richard J. Williamson  <rjw@apple.com>
 
+    Fixed exception in log code.
+    
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(-[IFTextRenderer floatWidthForCharacters:length:]):
+
+2002-05-14  Richard J. Williamson  <rjw@apple.com>
+
     Fixed 2926153, not getting correct messages after cancel.
     Fixed leak of mouse events (Darin wanted this ASAP).
     
