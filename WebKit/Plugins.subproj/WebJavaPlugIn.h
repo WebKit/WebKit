@@ -49,8 +49,8 @@ typedef enum {
     @discussion Calls to Java from native code should not make direct
     use of JNI.  Instead they should use this method to dispatch calls to the 
     Java VM.  This is required to guarantee that the correct thread will receive
-    the call.  webPlugInCallJava:method:returnType:arguments: must always be called from
-    the AppKit main thread.  This method is only implemented by the Java plug-in.
+    the call.  webPlugInCallJava:isStatic:returnType:method:arguments:callingURL:exceptionDescription: must 
+    always be called from the AppKit main thread.  This method is only implemented by the Java plug-in.
     @result The result of the method invocation.
 */
 - (jvalue)webPlugInCallJava:(jobject)object
