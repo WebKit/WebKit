@@ -1,3 +1,5 @@
+=== Safari-126 ===
+
 2004-01-30  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3536126>: REGRESSION (Merlot): WebKit dragging is in strange location
