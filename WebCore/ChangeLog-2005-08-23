@@ -1,3 +1,13 @@
+2005-01-04  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3904562, make sure to clear the outline dictionary when drawing so that random focus rings dont get drawn
+	all over the place.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLines):
+
 2005-01-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for float painting regressions 3932524, 3931664, and 3933068.  Make the noPaint flag setting more

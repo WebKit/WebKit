@@ -401,6 +401,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
 #endif
                 objects.current()->paintOutlines(i.p, _tx, _ty);
         }
+        i.outlineObjects->clear();
     }
 }
 
