@@ -168,6 +168,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (void)_deleteSelection;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
+- (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString;
 @end
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -535,6 +536,80 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
     forceRealHitTest = NO;    
     return hitView;
+}
+
+// This method is copied from NSTextView
+- (NSAttributedString *)_stripAttachmentCharactersFromAttributedString:(NSAttributedString *)originalAttributedString
+{
+    NSRange attachmentRange;
+    NSString *originalString = [originalAttributedString string];
+    static NSString *attachmentCharString = nil;
+    
+    if (!attachmentCharString) {
+        unichar chars[2];
+        if (!attachmentCharString) {
+            chars[0] = NSAttachmentCharacter;
+            chars[1] = 0;
+            attachmentCharString = [[NSString alloc] initWithCharacters:chars length:1];
+        }
+    }
+    
+    attachmentRange = [originalString rangeOfString:attachmentCharString];
+    if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
+        NSMutableAttributedString *newAttributedString = [[originalAttributedString mutableCopyWithZone:NULL] autorelease];
+        
+        while (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
+            [newAttributedString replaceCharactersInRange:attachmentRange withString:@""];
+            attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString];
+        }
+        return newAttributedString;
+    } else {
+        return originalAttributedString;
+    }
+}
+
+- (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString
+{
+    // Put HTML on the pasteboard.
+    if ([types containsObject:WebArchivePboardType]) {
+        WebArchive *archive = [self _selectedArchive];
+        [pasteboard setData:[archive data] forType:WebArchivePboardType];
+    }
+    
+    // Put the attributed string on the pasteboard (RTF/RTFD format).
+    if ([types containsObject:NSRTFDPboardType]) {
+        if (attributedString == nil) {
+            attributedString = [self selectedAttributedString];
+        }        
+        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        [pasteboard setData:RTFDData forType:NSRTFDPboardType];
+    }        
+    if ([types containsObject:NSRTFPboardType]) {
+        if (attributedString == nil) {
+            attributedString = [self selectedAttributedString];
+        }
+        if ([attributedString containsAttachments]) {
+            attributedString = [self _stripAttachmentCharactersFromAttributedString:attributedString];
+        }
+        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        [pasteboard setData:RTFData forType:NSRTFPboardType];
+    }
+    
+    // Put plain string on the pasteboard.
+    if ([types containsObject:NSStringPboardType]) {
+        // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
+        // and because HTML forces you to do this any time you want two spaces in a row.
+        NSMutableString *s = [[self selectedString] mutableCopy];
+        const unichar NonBreakingSpaceCharacter = 0xA0;
+        NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&NonBreakingSpaceCharacter length:1];
+        [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
+        [pasteboard setString:s forType:NSStringPboardType];
+        [s release];
+    }
+    
+    if ([self _canSmartCopyOrDelete] && [types containsObject:WebSmartPastePboardType]) {
+        [pasteboard setData:nil forType:WebSmartPastePboardType];
+    }
 }
 
 @end
@@ -959,8 +1034,19 @@ static WebHTMLView *lastHitView = nil;
 {
     ASSERT([self _hasSelection]);
     NSArray *types = [self pasteboardTypesForSelection];
+    
+    // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
+    NSAttributedString *attributedString = [self selectedAttributedString];
+    NSMutableArray *mutableTypes = nil;
+    if (![attributedString containsAttachments]) {
+        mutableTypes = [types mutableCopy];
+        [mutableTypes removeObject:NSRTFDPboardType];
+        types = mutableTypes;
+    }
+    
     [pasteboard declareTypes:types owner:nil];
-    [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
+    [self _writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard cachedAttributedString:attributedString];
+    [mutableTypes release];
 }
 
 - (NSImage *)_dragImageForLinkElement:(NSDictionary *)element
@@ -1634,79 +1720,9 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
-// This method is copied from NSTextView
-- (NSAttributedString *)_stripAttachmentCharactersFromAttributedString:(NSAttributedString *)originalAttributedString
-{
-    NSRange attachmentRange;
-    NSString *originalString = [originalAttributedString string];
-    static NSString *attachmentCharString = nil;
-    
-    if (!attachmentCharString) {
-        unichar chars[2];
-        if (!attachmentCharString) {
-            chars[0] = NSAttachmentCharacter;
-            chars[1] = 0;
-            attachmentCharString = [[NSString alloc] initWithCharacters:chars length:1];
-        }
-    }
-    
-    attachmentRange = [originalString rangeOfString:attachmentCharString];
-    if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
-        NSMutableAttributedString *newAttributedString = [[originalAttributedString mutableCopyWithZone:NULL] autorelease];
-        
-        while (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
-            [newAttributedString replaceCharactersInRange:attachmentRange withString:@""];
-            attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString];
-        }
-        return newAttributedString;
-    } else {
-        return originalAttributedString;
-    }
-}
-
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
-    // Put HTML on the pasteboard.
-    if ([types containsObject:WebArchivePboardType]) {
-        WebArchive *archive = [self _selectedArchive];
-        [pasteboard setData:[archive data] forType:WebArchivePboardType];
-    }
-    
-    // Put the attributed string on the pasteboard (RTF/RTFD format).
-    NSAttributedString *attributedString = nil;
-    if ([types containsObject:NSRTFDPboardType]) {
-        attributedString = [self selectedAttributedString];
-        if ([attributedString containsAttachments]) {
-            NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-            [pasteboard setData:RTFDData forType:NSRTFDPboardType];
-        }
-    }        
-    if ([types containsObject:NSRTFPboardType]) {
-        if (attributedString == nil) {
-            attributedString = [self selectedAttributedString];
-        }
-        if ([attributedString containsAttachments]) {
-            attributedString = [self _stripAttachmentCharactersFromAttributedString:attributedString];
-        }
-        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        [pasteboard setData:RTFData forType:NSRTFPboardType];
-    }
-        
-    // Put plain string on the pasteboard.
-    if ([types containsObject:NSStringPboardType]) {
-        // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
-        // and because HTML forces you to do this any time you want two spaces in a row.
-        NSMutableString *s = [[self selectedString] mutableCopy];
-        const unichar NonBreakingSpaceCharacter = 0xA0;
-        NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&NonBreakingSpaceCharacter length:1];
-        [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
-        [pasteboard setString:s forType:NSStringPboardType];
-        [s release];
-    }
-    
-    if ([self _canSmartCopyOrDelete] && [types containsObject:WebSmartPastePboardType]) {
-        [pasteboard setData:nil forType:WebSmartPastePboardType];
-    }
+    [self _writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard cachedAttributedString:nil];
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
