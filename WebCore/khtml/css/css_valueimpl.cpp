@@ -54,6 +54,60 @@ using khtml::CSSStyleSelector;
 
 namespace DOM {
 
+#if 0
+
+// Too risky to quote all legal identifiers right now.
+// Post-Tiger we should use this function or something like it.
+
+// Return true if this string qualifies as an identifier (from the point of view of CSS syntax).
+static bool isLegalIdentifier(const DOMString &string)
+{
+    int len = string.length();
+    if (len == 0) {
+        return false;
+    }
+    QChar *p = string.unicode();
+    int i = 0;
+    if (p[0] == '-') {
+        ++i;
+    }
+    if (i == len) {
+        return false;
+    }
+    ushort code = p[i].unicode();
+    if (!(code >= 0x80 || code == '_' || isalpha(code))) {
+        return false;
+    }
+    ++i;
+    while (i != len) {
+        code = p[i].unicode();
+        if (!(code >= 0x80 || code == '-' || code == '_' || isalnum(code))) {
+            return false;
+        }
+        ++i;
+    }
+    return true;
+}
+
+#endif
+
+// Quotes the string if it needs quoting.
+// We use single quotes for now beause markup.cpp uses double quotes.
+static DOMString quoteStringIfNeeded(const DOMString &string)
+{
+    // For now, just do this for strings that start with "#" to fix Korean font names that start with "#".
+    // Post-Tiger, we should isLegalIdentifier instead after working out all the ancillary issues.
+    if (string[0] != '#') {
+        return string;
+    }
+
+    // FIXME: Also need to transform control characters into \ sequences.
+    QString s = string.string();
+    s.replace('\\', "\\\\");
+    s.replace('\'', "\\'");
+    return '\'' + s + '\'';
+}
+
 CSSStyleDeclarationImpl::CSSStyleDeclarationImpl(CSSRuleImpl *parent)
     : StyleBaseImpl(parent)
 {
@@ -912,7 +966,7 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 	    // ###
 	    break;
 	case CSSPrimitiveValue::CSS_STRING:
-	    text = DOMString(m_value.string);
+	    text = quoteStringIfNeeded(m_value.string);
 	    break;
 	case CSSPrimitiveValue::CSS_URI:
             text  = "url(";
@@ -1109,7 +1163,7 @@ FontFamilyValueImpl::FontFamilyValueImpl( const QString &string)
 
 DOM::DOMString FontFamilyValueImpl::cssText() const
 {
-    return parsedFontName;
+    return quoteStringIfNeeded(parsedFontName);
 }
 
 FontValueImpl::FontValueImpl()

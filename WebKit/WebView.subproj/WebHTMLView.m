@@ -3636,7 +3636,9 @@ static WebHTMLView *lastHitView = nil;
         [style setFontStyle:@"normal"];
     } else {
         NSFontManager *fm = [NSFontManager sharedFontManager];
-        [style setFontFamily:[font familyName]];
+        // FIXME: Need more sophisticated escaping code if we want to handle family names
+        // with characters like single quote or backslash in their names.
+        [style setFontFamily:[NSString stringWithFormat:@"'%@'", [font familyName]]];
         [style setFontSize:[NSString stringWithFormat:@"%0.fpx", [font pointSize]]];
         if ([fm weightOfFont:font] >= 9) {
             [style setFontWeight:@"bold"];
@@ -3815,7 +3817,9 @@ static WebHTMLView *lastHitView = nil;
     NSString *fa = [a familyName];
     NSString *fb = [b familyName];
     if ([fa isEqualToString:fb]) {
-        [style setFontFamily:fa];
+        // FIXME: Need more sophisticated escaping code if we want to handle family names
+        // with characters like single quote or backslash in their names.
+        [style setFontFamily:[NSString stringWithFormat:@"'%@'", fa]];
     }
 
     int sa = [a pointSize];

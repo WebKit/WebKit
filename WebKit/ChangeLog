@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/4020413> REGRESSION (Mail): can't use fonts with names that start with "#" in Mail (Korean fonts)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _styleFromFontAttributes:]): Quote font name when calling setFontFamily.
+        (-[WebHTMLView _addToStyle:fontA:fontB:]): Ditto.
+
+2005-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3965666> IDN spoofing vulnerability caused by Unicode characters that look like ASCII characters
 
         * Misc.subproj/WebNSURLExtras.m:

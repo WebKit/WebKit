@@ -1,3 +1,20 @@
+2005-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4020413> REGRESSION (Mail): can't use fonts with names that start with "#" in Mail (Korean fonts)
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::isLegalIdentifier): Added. Commented out and not used.
+        (DOM::quoteStringIfNeeded): Quotes the string if needed. For now only if it starts with "#".
+        (DOM::CSSPrimitiveValueImpl::cssText): Call quoteStringIfNeeded when asked for cssText for an arbitrary string, since we
+        need text you can re-parse.
+        (DOM::FontFamilyValueImpl::cssText): Ditto.
+
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup): Added comments about lack of quoting for attributes.
+        (khtml::createMarkup): Ditto.
+
 2005-03-04 Adele Amchan  <adele@apple.com>
  
        Reviewed by Maciej
