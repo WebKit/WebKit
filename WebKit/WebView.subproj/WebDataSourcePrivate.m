@@ -163,7 +163,7 @@
 - (void)_startLoading: (BOOL)forceRefresh
 {
     WEBKIT_ASSERT ([self _isStopping] == NO);
-    
+
     [self _setPrimaryLoadComplete: NO];
     
     WEBKIT_ASSERT ([self webFrame] != nil);

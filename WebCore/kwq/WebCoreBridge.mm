@@ -122,6 +122,38 @@ using khtml::RenderPart;
     part->closeURL();
 }
 
+- (void)saveDocumentState
+{
+    DocumentImpl *doc = part->impl->document();
+    if (doc != 0){
+        QStringList list = doc->docState();
+        NSMutableArray *documentState = [[[NSMutableArray alloc] init] autorelease];
+        
+        for (uint i = 0; i < list.count(); i++){
+            QString s = list[i];
+            [documentState addObject: [NSString stringWithCharacters: (const unichar *)s.unicode() length: s.length()]];
+        }
+        [self saveDocumentState: documentState];
+    }
+}
+
+- (void)restoreDocumentState
+{
+    DocumentImpl *doc = part->impl->document();
+    
+    if (doc != 0){
+        NSArray *documentState = [self documentState];
+        
+        QStringList s;
+        for (uint i = 0; i < [documentState count]; i++){
+            NSString *string = [documentState objectAtIndex: i];
+            s.append(QString::fromNSString(string));
+        }
+            
+        doc->setRestoreState(s);
+    }
+}
+
 - (void)end
 {
     part->end();

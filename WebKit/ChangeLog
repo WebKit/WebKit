@@ -1,3 +1,32 @@
+2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+
+        Added support for saving/restoring document state
+        in back/forward list.
+        
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList addEntry:]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem setLastVisitedDate:]):
+        (-[WebHistoryItem documentState]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge saveDocumentState:]):
+        (-[WebBridge documentState]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        
+        
+        Lookup post Jaguar CG SPI.  Can now run and build
+        w/o patched CG.
+        
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+            
+        Changed image links to drag file contents.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
 2002-09-05  Ken Kocienda  <kocienda@apple.com>
 
 	The WebError object has been removed from WebResourceHandle.

@@ -69,6 +69,7 @@
     [_displayTitle release];
     [_icon release];
     [_lastVisitedDate release];
+    [_documentState release];
     
     [super dealloc];
 }
@@ -171,6 +172,18 @@
         [_lastVisitedDate release];
         _lastVisitedDate = [date retain];
     }
+}
+
+- (void)setDocumentState: (NSArray *)state;
+{
+    [state retain];
+    [_documentState release];
+    _documentState = state;
+}
+
+- (NSArray *)documentState
+{
+    return _documentState;
 }
 
 -(NSPoint)scrollPoint

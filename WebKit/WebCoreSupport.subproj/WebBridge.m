@@ -300,6 +300,22 @@
                         fromDataSource:[self dataSource]];
 }
 
+- (void)saveDocumentState: (NSArray *)documentState
+{
+    WebHistoryItem *backItem;
+    
+    backItem = [[[frame controller] backForwardList] backEntry];
+    [backItem setDocumentState: documentState];
+}
+
+- (NSArray *)documentState
+{
+    WebHistoryItem *currentItem;
+    
+    currentItem = [[[frame controller] backForwardList] currentEntry];
+    return [currentItem documentState];
+}
+
 - (void)addBackForwardItemWithURL:(NSURL *)URL anchor:(NSString *)anchor;
 {
     WebHistoryItem *backForwardItem;

@@ -431,35 +431,35 @@
         if(imageURL || linkURL){
             [_private->draggedURL release];
             
-            if (imageURL)
+            if (imageURL){
                 _private->draggedURL = imageURL;
-            else if (linkURL)
+
+                NSArray *fileType = [NSArray arrayWithObject:[[_private->draggedURL path] pathExtension]];
+                NSRect rect = NSMakeRect(point.x + -16, point.y - 16, 32, 32);
+                [self dragPromisedFilesOfTypes: fileType fromRect: rect source: self slideBack: YES event: event];
+            }
+            else if (linkURL) {
                 _private->draggedURL = linkURL;
+                NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+                
+                [pasteboard declareTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
+                [_private->draggedURL writeToPasteboard: pasteboard];
+                NSSize offset = WebIconSmallSize;
+                offset.width /= 2;
+                offset.height /= 2;
+                [self dragImage:[[WebIconDatabase sharedIconDatabase] defaultIconWithSize:WebIconSmallSize]
+                            at:[self convertPoint:[event locationInWindow] fromView:nil]
+                        offset:offset
+                        event:event
+                    pasteboard:pasteboard
+                        source:self
+                    slideBack:NO];
+            }
             else
                 _private->draggedURL = nil;
             
             [_private->draggedURL retain];
             
-#ifdef DRAG_FILES
-            NSArray *fileType = [NSArray arrayWithObject:[[_private->draggedURL path] pathExtension]];
-            NSRect rect = NSMakeRect(point.x + -16, point.y - 16, 32, 32);
-            [self dragPromisedFilesOfTypes: fileType fromRect: rect source: self slideBack: YES event: event];
-#else
-            NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-            
-            [pasteboard declareTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
-            [_private->draggedURL writeToPasteboard: pasteboard];
-            NSSize offset = WebIconSmallSize;
-            offset.width /= 2;
-            offset.height /= 2;
-            [self dragImage:[[WebIconDatabase sharedIconDatabase] defaultIconWithSize:WebIconSmallSize]
-                         at:[self convertPoint:[event locationInWindow] fromView:nil]
-                     offset:offset
-                      event:event
-                 pasteboard:pasteboard
-                     source:self
-                  slideBack:NO];
-#endif
             return;
         }
     }

@@ -447,6 +447,10 @@ bool KHTMLPart::openURL( const KURL &url )
            SLOT( slotRedirection(KIO::Job*,const KURL&) ) );
 #endif // APPLE_CHANGES
 
+#ifdef APPLE_CHANGES
+  closeURL();
+#endif
+
   d->m_bComplete = false;
   d->m_bLoadEventEmitted = false;
 
@@ -492,6 +496,10 @@ bool KHTMLPart::openURL( const KURL &url )
 
 bool KHTMLPart::closeURL()
 {
+#ifdef APPLE_CHANGES
+  impl->saveDocumentState();
+#endif
+
   if ( d->m_job )
   {
     KHTMLPageCache::self()->cancelEntry(d->m_cacheId);
@@ -508,6 +516,15 @@ bool KHTMLPart::closeURL()
         d->m_doc->updateRendering();
       d->m_bLoadEventEmitted = false;
     }
+    
+#define DEBUG_FORM_STATE
+#ifdef DEBUG_FORM_STATE
+    QStringList list = d->m_doc->docState();
+    
+    printf ("URL:  %s\n", m_url.url().ascii());
+    for (uint i = 0; i < list.count(); i++)
+        printf ("%s\n", list[i].ascii());
+#endif    
   }
 
   d->m_bComplete = true; // to avoid emitting completed() in slotFinishedParsing() (David)
@@ -1378,6 +1395,11 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 #ifndef APPLE_CHANGES
   d->m_doc->setRestoreState(args.docState);
 #endif
+
+#ifdef APPLE_CHANGES
+  impl->restoreDocumentState();
+#endif
+
   d->m_doc->open();
   // clear widget
   d->m_view->resizeContents( 0, 0 );

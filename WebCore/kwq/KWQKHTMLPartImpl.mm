@@ -636,3 +636,14 @@ NodeImpl *KWQKHTMLPartImpl::nodeForWidget(QWidget *widget)
 {
     return static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
 }
+
+
+void KWQKHTMLPartImpl::saveDocumentState()
+{
+    [_bridge saveDocumentState];
+}
+
+void KWQKHTMLPartImpl::restoreDocumentState()
+{
+    [_bridge restoreDocumentState];
+}

@@ -85,6 +85,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding;
 - (void)addData:(NSData *)data withOverrideEncoding:(CFStringEncoding)encoding;
 - (void)closeURL;
+- (void)saveDocumentState;
+- (void)restoreDocumentState;
 - (void)end;
 
 - (void)installInFrame:(NSView *)view;
@@ -183,6 +185,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (BOOL)defersLoading;
 - (void)setDefersLoading:(BOOL)loading;
+- (void)saveDocumentState: (NSArray *)documentState;
+- (NSArray *)documentState;
 
 @end
 

@@ -16,6 +16,7 @@
     NSCalendarDate *_lastVisitedDate;
     NSPoint _scrollPoint;
     NSString *anchor;
+    NSArray *_documentState;
     BOOL _loadedIcon;
 }
 
@@ -43,6 +44,8 @@
 - (void)setDisplayTitle:(NSString *)displayTitle;
 - (void)setLastVisitedDate:(NSCalendarDate *)date;
 - (void)setScrollPoint: (NSPoint)p;
+- (void)setDocumentState: (NSArray *)state;
+- (NSArray *)documentState;
 - (NSPoint)scrollPoint;
 - (unsigned)hash;
 - (BOOL)isEqual:(id)anObject;

@@ -142,6 +142,9 @@
             functionPtr (fontCache, false);
             CGFontCacheRelease(fontCache);
         }
+        else {
+            NSLog (@"Unable to disabling glyph auto expiration in CG.  Performance will be degraded.\n");
+        }
     }
     WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
 }
