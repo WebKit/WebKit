@@ -133,11 +133,15 @@
 
 + (WebBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
-    NSString *typeString;
+    NSString *typeString = [dict objectForKey:WebBookmarkTypeKey];
+    
+    if (![typeString isKindOfClass:[NSString class]]) {
+        ERROR("bad dictionary");
+        return nil;
+    }
     
     Class class = nil;
     
-    typeString = [dict objectForKey:WebBookmarkTypeKey];
     if ([typeString isEqualToString:WebBookmarkTypeListValue]) {
         class = [WebBookmarkList class];
     } else if ([typeString isEqualToString:WebBookmarkTypeLeafValue]) {

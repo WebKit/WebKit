@@ -32,6 +32,14 @@
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
     ASSERT_ARG(dict, dict != nil);
+
+    if (![[dict objectForKey:WebBookmarkTypeKey] isKindOfClass:[NSString class]]
+        || ([dict objectForKey:TitleKey] && ![[dict objectForKey:TitleKey] isKindOfClass:[NSString class]])
+        || ([dict objectForKey:ChildrenKey] && ![[dict objectForKey:ChildrenKey] isKindOfClass:[NSArray class]])) {
+        ERROR("bad dictionary");
+        return nil;
+    }
+
     if (![[dict objectForKey:WebBookmarkTypeKey] isEqualToString:WebBookmarkTypeListValue]) {
         ERROR("Can't initialize Bookmark list from non-list type");
         return nil;
@@ -41,21 +49,18 @@
 
     [self _setGroup:group];
 
-    _title = [[dict objectForKey:TitleKey] retain];
+    _title = [[dict objectForKey:TitleKey] copy];
     _list = [[NSMutableArray alloc] init];
 
     NSArray *storedChildren = [dict objectForKey:ChildrenKey];
-    if (storedChildren != nil) {
-        unsigned count = [storedChildren count];
-        unsigned indexRead;
-        unsigned indexWritten = 0;
-        for (indexRead = 0; indexRead < count; ++indexRead) {
-            WebBookmark *child = [WebBookmark bookmarkFromDictionaryRepresentation:[storedChildren objectAtIndex:indexRead]
-                                                           withGroup:group];	
-
-            if (child != nil) {
-                [self insertChild:child atIndex:indexWritten++];
-            }
+    unsigned count = [storedChildren count];
+    unsigned indexRead;
+    unsigned indexWritten = 0;
+    for (indexRead = 0; indexRead < count; ++indexRead) {
+        WebBookmark *child = [WebBookmark bookmarkFromDictionaryRepresentation:[storedChildren objectAtIndex:indexRead]
+                                                                     withGroup:group];	
+        if (child != nil) {
+            [self insertChild:child atIndex:indexWritten++];
         }
     }
 

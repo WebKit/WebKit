@@ -27,6 +27,10 @@
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
+    if (![[dict objectForKey:WebBookmarkTypeKey] isKindOfClass:[NSString class]]) {
+        ERROR("bad dictionary");
+        return nil;
+    }
     if (![[dict objectForKey:WebBookmarkTypeKey] isEqualToString:WebBookmarkTypeProxyValue]) {
         ERROR("Can't initialize Bookmark proxy from non-proxy type");
         return nil;

@@ -31,9 +31,9 @@
         return nil;
     }
 
-    _bookmarksByID = [[NSMutableDictionary dictionary] retain];
+    _bookmarksByID = [[NSMutableDictionary alloc] init];
 
-    _file = [file retain];
+    _file = [file copy];
     [self _setTopBookmark:nil];
 
     // read history from disk
@@ -44,8 +44,8 @@
 
 - (void)dealloc
 {
-    [_topBookmark release];
     [_file release];
+    [_topBookmark release];
     [_bookmarksByID release];
     [super dealloc];
 }
@@ -209,7 +209,7 @@
     start = CFAbsoluteTimeGetCurrent();
     result = [self _loadBookmarkGroupGuts];
 
-    if (result == YES) {
+    if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         LOG(Timing, "loading %d bookmarks from %@ took %f seconds",
             [[self topBookmark] _numberOfDescendants], [self file], duration);
@@ -246,7 +246,7 @@
     start = CFAbsoluteTimeGetCurrent();
     result = [self _saveBookmarkGroupGuts];
     
-    if (result == YES) {
+    if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         LOG(Timing, "saving %d bookmarks to %@ took %f seconds",
             [[self topBookmark] _numberOfDescendants], [self file], duration);

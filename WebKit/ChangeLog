@@ -1,3 +1,28 @@
+2002-10-14  Darin Adler  <darin@apple.com>
+
+        * Bookmarks.subproj/WebBookmark.m:
+        (+[WebBookmark bookmarkFromDictionaryRepresentation:withGroup:]):
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        (-[WebBookmarkLeaf initFromDictionaryRepresentation:withGroup:]):
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList initFromDictionaryRepresentation:withGroup:]):
+        * Bookmarks.subproj/WebBookmarkProxy.m:
+        (-[WebBookmarkProxy initFromDictionaryRepresentation:withGroup:]):
+	Add checking since we don't "trust" the dictionary passed in.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+	Add FIXME about adding the checking.
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup initWithFile:]): Use copy, not retain.
+
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]): Fix storage leak by releasing
+	the default context menu delegate.
+
+        * WebView.subproj/WebControllerPrivate.h: Tweak.
+
 2002-10-14  Chris Blumenberg  <cblu@apple.com>
 
 	Made WebNetscapePluginStream retain a WebNetscapePluginEmbeddedView not a WebBaseNetscapePluginView.

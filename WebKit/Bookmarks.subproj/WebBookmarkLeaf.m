@@ -47,13 +47,19 @@
 {
     ASSERT_ARG(dict, dict != nil);
 
+    if (![[dict objectForKey:URIDictionaryKey] isKindOfClass:[NSDictionary class]]
+        || ![[dict objectForKey:URLStringKey] isKindOfClass:[NSString class]]) {
+        ERROR("bad dictionary");
+        return nil;
+    }
+
     [super init];
 
     [self _setGroup:group];
     
-    _entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation:
-        [dict objectForKey:URIDictionaryKey]] retain];
-    _URLString = [[dict objectForKey:URLStringKey] retain];
+    _entry = [[WebHistoryItem alloc] initFromDictionaryRepresentation:
+        [dict objectForKey:URIDictionaryKey]];
+    _URLString = [[dict objectForKey:URLStringKey] copy];
 
     return self;
 }

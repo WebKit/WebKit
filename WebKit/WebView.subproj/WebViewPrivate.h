@@ -17,10 +17,11 @@
     id <WebResourceLoadDelegate> resourceProgressDelegate;
     id <WebResourceLoadDelegate> downloadProgressDelegate;
     id <WebContextMenuDelegate> contextMenuDelegate;
-    id <WebContextMenuDelegate> defaultContextMenuDelegate;
     id <WebControllerPolicyDelegate> policyDelegate;
     id <WebLocationChangeDelegate> locationChangeDelegate;
     
+    id <WebContextMenuDelegate> defaultContextMenuDelegate;
+
     WebBackForwardList *backForwardList;
     BOOL useBackForwardList;
     

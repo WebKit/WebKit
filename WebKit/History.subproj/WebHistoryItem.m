@@ -251,6 +251,8 @@
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
+    // FIXME: Make robust against bad dictionary contents.
+
     [super init];
     
     NSString *storedURLString = [dict objectForKey: @""];
@@ -259,11 +261,10 @@
         [self _retainIconInDatabase:YES];
     }
     
-    _title = [[dict objectForKey: @"title"] copy];
-    _displayTitle = [[dict objectForKey: @"displayTitle"] copy];
+    _title = [[dict objectForKey:@"title"] copy];
+    _displayTitle = [[dict objectForKey:@"displayTitle"] copy];
     _lastVisitedDate = [[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
-        [[dict objectForKey: @"lastVisitedDate"] doubleValue]];
-    
+        [[dict objectForKey:@"lastVisitedDate"] doubleValue]];
     
     return self;
 }

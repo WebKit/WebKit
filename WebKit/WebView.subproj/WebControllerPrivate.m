@@ -62,6 +62,7 @@
     [mainFrame _controllerWillBeDeallocated];
     
     [mainFrame release];
+    [defaultContextMenuDelegate release];
     [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
@@ -95,7 +96,6 @@
         
     return newFrame;
 }
-
 
 - (id<WebContextMenuDelegate>)_defaultContextMenuDelegate
 {
