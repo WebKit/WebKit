@@ -2884,7 +2884,14 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
 	    }
         }
 
-	style->setTextDecoration(t);
+        // In quirks mode, we simply ignore text-decoration declarations on links with no href.
+        // People write lousy stylesheets (e.g., the articles on time.com) where they say:
+        // a { text-decoration: underline; }
+        // instead of:
+        // :link { text-decoration: underline; }
+        // So <a name="foo"> that wraps a bunch of content ends up causing underlines to be drawn.
+        if (strictParsing || element->id() != ID_A || element->hasAnchor())
+            style->setTextDecoration(t);
 	break;
     }
     case CSS_PROP__KONQ_FLOW_MODE:
