@@ -368,9 +368,10 @@ extern NSString *WebElementFrameKey;
 - (NSString *)customTextEncodingName;
 
 /*!
-    @method executeJavaScriptFromString:
+    @method stringByEvaluatingJavaScriptFromString:
     @param script The text of the JavaScript.
+    @result Returns the result of the script, converted to a string, or nil for failure.
 */
-- (void)executeJavaScriptFromString:(NSString *)string;
+- (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script;
 
 @end

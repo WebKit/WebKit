@@ -143,7 +143,7 @@ enum FrameBorderStyle {
 
 - (CFStringEncoding)textEncoding;
 
-- (void)executeJavaScriptFromString:(NSString *)string;
+- (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string;
 
 - (id <WebDOMDocument>)DOMDocument;
 

@@ -1,3 +1,10 @@
+2002-10-18  Darin Adler  <darin@apple.com>
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stringByEvaluatingJavaScriptFromString:]):
+	Changed to return a string and changed name.
+
 2002-10-18  David Hyatt  <hyatt@apple.com>
 
 	The collapsing margin rewrite. Also fixes a bug where

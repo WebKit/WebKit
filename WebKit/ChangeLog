@@ -1,5 +1,12 @@
 2002-10-18  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController stringByEvaluatingJavaScriptFromString:]):
+	Changed to return a string and changed name.
+
+2002-10-18  Darin Adler  <darin@apple.com>
+
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
 
 2002-10-18  Ken Kocienda  <kocienda@apple.com>
