@@ -34,7 +34,7 @@ QFontMetrics::QFontMetrics()
 
 QFontMetrics::QFontMetrics(const QFont &withFont)
 {
-    _initializeWithFont (withFont.data->font);
+    _initializeWithFont (withFont.font);
 }
 
 
@@ -54,7 +54,7 @@ void QFontMetrics::_initializeWithFont (NSFont *withFont)
 {
     data = (struct KWQFontMetricsData *)calloc (1, sizeof (struct KWQFontMetricsData));
     if (withFont == 0)
-        data->font = QFont::defaultNSFont();
+        data->font = [QFont::defaultNSFont() retain];
     else
         data->font = [withFont retain];
 }
@@ -66,8 +66,8 @@ void QFontMetrics::_free(){
 
 void QFontMetrics::_freeWithData(struct KWQFontMetricsData *freeData){
     if (freeData != 0){
-        [freeData->font release];
-        free (freeData);
+        //[freeData->font release];
+        //free (freeData);
     }
 }
 

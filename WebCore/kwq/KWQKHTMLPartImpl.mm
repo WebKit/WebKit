@@ -512,7 +512,7 @@ void KHTMLPart::setFontSizes(const QValueList<int> &newFontSizes )
 
 QValueList<int> KHTMLPart::fontSizes() const
 {
-    _logNeverImplemented();
+    return d->m_settings->fontSizes();
 }
 
 

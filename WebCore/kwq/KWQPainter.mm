@@ -45,6 +45,7 @@ typedef QStack<QPState> QPStateStack;
 
 QPainter::QPainter()
 {
+    _initialize(0);
 }
 
 

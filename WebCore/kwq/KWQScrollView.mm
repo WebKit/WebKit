@@ -56,37 +56,43 @@ QWidget* QScrollView::viewport() const
 
 int QScrollView::visibleWidth() const
 {
-    _logNeverImplemented();
+    //_logNeverImplemented();
+    return 0;
 }
 
 
 int QScrollView::visibleHeight() const
 {
-    _logNeverImplemented();
+    //_logNeverImplemented();
+    return 0;
 }
 
 
 int QScrollView::contentsWidth() const
 {
     _logNeverImplemented();
+    return 0;
 }
 
 
 int QScrollView::contentsHeight() const
 {
     _logNeverImplemented();
+    return 0;
 }
 
 
 int QScrollView::contentsX() const
 {
     _logNeverImplemented();
+    return 0;
 }
 
 
 int QScrollView::contentsY() const
 {
     _logNeverImplemented();
+    return 0;
 }
 
 
@@ -149,13 +155,13 @@ void QScrollView::removeChild(QWidget* child)
 
 void QScrollView::resizeContents(int w, int h)
 {
-    _logNeverImplemented();
+    //_logNeverImplemented();
 }
 
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
-    _logNeverImplemented();
+    //_logNeverImplemented();
 }
 
 
