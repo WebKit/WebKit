@@ -44,6 +44,7 @@
     if (OK) {
         *result = [panel text];
     }
+    [[panel window] close];
     [panel release];
     return OK;
 }

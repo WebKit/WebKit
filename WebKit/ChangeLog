@@ -1,5 +1,16 @@
 2002-12-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+	- probably fixed 3129395 -- Reproducible crash when running a javascript at www.scenespot.org
+
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:]):
+        Close the window. Before we relied on it being released which was bad. But it's not clear this
+        actually was the cause of the bug.
+
+2002-12-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris.
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
