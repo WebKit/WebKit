@@ -11,8 +11,8 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSString_NSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 #import <WebFoundation/WebFileDatabase.h>
 
 NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";

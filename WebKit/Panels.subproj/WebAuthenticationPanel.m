@@ -11,7 +11,7 @@
 #import <WebFoundation/NSURLProtectionSpace.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebLocalizableStrings.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 
 #import <WebKit/WebNSControlExtras.h>
 

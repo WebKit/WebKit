@@ -8,8 +8,8 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 
-#import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSString_NSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 
 #define WebDragStartHysteresisX			5.0
 #define WebDragStartHysteresisY			5.0

@@ -16,8 +16,8 @@
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 
-#import <WebFoundation/WebNSCalendarDateExtras.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSCalendarDate_NSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 
 NSString *FileVersionKey = @"WebHistoryFileVersion";
 NSString *DatesArrayKey = @"WebHistoryDates";

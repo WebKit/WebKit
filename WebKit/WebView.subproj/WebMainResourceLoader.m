@@ -6,10 +6,10 @@
 #import <WebKit/WebMainResourceClient.h>
 
 #import <WebFoundation/NSHTTPCookie.h>
-#import <WebFoundation/WebNSErrorExtras.h>
+#import <WebFoundation/NSError_NSURLExtras.h>
 
 #import <WebFoundation/NSURLFileTypeMappings.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLConnectionPrivate.h>
 #import <WebFoundation/NSURLDownloadPrivate.h>

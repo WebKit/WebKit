@@ -15,7 +15,7 @@
 
 #import "NSURLLogging.h"
 #import "NSLRUFileList.h"
-#import "WebNSFileManagerExtras.h"
+#import "NSFileManager_NSURLExtras.h"
 #import "WebSystemBits.h"
 
 #if NSURL_ERROR_DISABLED

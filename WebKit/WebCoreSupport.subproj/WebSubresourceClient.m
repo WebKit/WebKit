@@ -15,7 +15,7 @@
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebNSErrorExtras.h>
+#import <WebFoundation/NSError_NSURLExtras.h>
 
 #if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
 #import <WebFoundation/NSError.h>

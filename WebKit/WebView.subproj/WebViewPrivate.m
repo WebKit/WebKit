@@ -26,8 +26,8 @@
 #import <WebKit/WebAssertions.h>
 
 #import <WebFoundation/NSURLFileTypeMappings.h>
-#import <WebFoundation/WebNSDataExtras.h>
-#import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/NSData_NSURLExtras.h>
+#import <WebFoundation/NSString_NSURLExtras.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLDownloadPrivate.h>
 #import <WebFoundation/NSURLRequest.h>

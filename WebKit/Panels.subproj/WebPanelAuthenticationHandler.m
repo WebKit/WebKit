@@ -9,7 +9,7 @@
 #import <WebKit/WebAuthenticationPanel.h>
 #import <WebFoundation/NSURLAuthenticationChallenge.h>
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/NSDictionary_NSURLExtras.h>
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 

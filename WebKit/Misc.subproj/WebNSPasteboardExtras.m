@@ -11,8 +11,8 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSString_NSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 
 #import <ApplicationServices/ApplicationServicesPriv.h>
 

@@ -30,7 +30,7 @@
 #import <WebKit/WebUIDelegate.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebNSUserDefaultsExtras.h>
+#import <WebFoundation/NSUserDefaults_NSURLExtras.h>
 #import <WebFoundation/NSURLConnection.h>
 
 static const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const char *, unsigned);

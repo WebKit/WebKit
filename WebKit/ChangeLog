@@ -1,3 +1,53 @@
+2003-05-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Changed the names of some extras files in WebFoundation:
+        Updated imports and usages in this project.
+
+	WebNSCalendarDateExtras -> NSCalendarDate_NSURLExtras
+	WebNSDataExtras -> NSData_NSURLExtras
+	WebNSDictionaryExtras -> NSDictionary_NSURLExtras
+	WebNSErrorExtras -> NSError_NSURLExtras
+	WebNSFileManagerExtras -> NSFileManager_NSURLExtras
+	WebNSObjectExtras -> NSObject_NSURLExtras
+	WebNSStringExtras -> NSString_NSURLExtras
+	WebNSURLExtras -> NSURL_NSURLExtras
+	WebNSUserDefaultsExtras -> NSUserDefaults_NSURLExtras
+
+        * History.subproj/WebHistory.m:
+        * History.subproj/WebHistoryItem.m:
+        * History.subproj/WebHistoryPrivate.m:
+        * History.subproj/WebURLsWithTitles.m:
+        * Misc.subproj/WebIconDatabase.m:
+        * Misc.subproj/WebIconLoader.m:
+        * Misc.subproj/WebKitErrors.m:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        * Misc.subproj/WebNSViewExtras.m:
+        * Panels.subproj/WebAuthenticationPanel.m:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        * Plugins.subproj/WebNullPluginView.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        * WebView.subproj/WebDataProtocol.m:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebPreferences.m:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.m:
+
 2003-05-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris

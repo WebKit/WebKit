@@ -12,7 +12,7 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/NSError.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 
 static NSImage *image = nil;
 

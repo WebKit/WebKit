@@ -6,8 +6,8 @@
 
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
-#import <WebFoundation/WebNSErrorExtras.h>
-#import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/NSError_NSURLExtras.h>
+#import <WebFoundation/NSString_NSURLExtras.h>
 #import <WebKit/WebAssertions.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";

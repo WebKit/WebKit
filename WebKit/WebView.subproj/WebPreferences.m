@@ -5,7 +5,7 @@
 
 #import "WebPreferences.h"
 
-#import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/NSDictionary_NSURLExtras.h>
 
 #import <WebCore/WebCoreSettings.h>
 

@@ -10,7 +10,7 @@
 #import <WebKit/WebKitErrors.h>
 
 #import <WebKit/WebLocalizableStrings.h>
-#import <WebFoundation/WebNSErrorExtras.h>
+#import <WebFoundation/NSError_NSURLExtras.h>
 
 #import <pthread.h>
 

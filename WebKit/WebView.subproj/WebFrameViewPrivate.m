@@ -12,7 +12,7 @@
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/NSDictionary_NSURLExtras.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebKit/WebAssertions.h>
 

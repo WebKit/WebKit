@@ -22,9 +22,9 @@
 #import <WebKit/WebUIDelegate.h>
 
 #import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 
-#import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/NSString_NSURLExtras.h>
 
 @implementation WebFrame
 

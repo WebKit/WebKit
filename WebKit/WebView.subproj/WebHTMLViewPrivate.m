@@ -9,7 +9,7 @@
 #import <AppKit/NSResponder_Private.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 
 #import <WebCore/WebCoreFirstResponderChanges.h>
 

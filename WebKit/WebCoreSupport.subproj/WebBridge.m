@@ -42,9 +42,9 @@
 
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
-#import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebNSDictionaryExtras.h>
-#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/NSString_NSURLExtras.h>
+#import <WebFoundation/NSDictionary_NSURLExtras.h>
+#import <WebFoundation/NSURL_NSURLExtras.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLFileTypeMappings.h>

@@ -19,7 +19,7 @@
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/NSDictionary_NSURLExtras.h>
 
 @implementation WebDataSource
 

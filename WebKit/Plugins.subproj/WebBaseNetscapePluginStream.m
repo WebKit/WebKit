@@ -10,7 +10,7 @@
 
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
-#import <WebFoundation/WebNSFileManagerExtras.h>
+#import <WebFoundation/NSFileManager_NSURLExtras.h>
 
 @implementation WebBaseNetscapePluginStream
 

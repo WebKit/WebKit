@@ -13,7 +13,7 @@
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebNSErrorExtras.h>
+#import <WebFoundation/NSError_NSURLExtras.h>
 
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
