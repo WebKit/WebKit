@@ -21,17 +21,16 @@
     int repetitionsComplete;
     BOOL animationFinished;
 
-    BOOL sawGIFExtensionSignature;
-    char GIFExtensionBuffer[10];
-    int GIFExtensionBufferLength;
-    
     NSString *MIMEType;
     BOOL isNull;
+@public    
+    NSData *originalData;
 }
 
 - (id)initWithMIMEType:(NSString *)MIME;
 - (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME;
 + (void)stopAnimationsInView:(NSView *)aView;
+- (int)frameCount;
 
 - (NSString *)MIMEType;
 

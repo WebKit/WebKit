@@ -50,7 +50,7 @@
 
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
     [imageRenderer addRepresentation:rep];
-    [rep release];
+    [rep autorelease];
     [imageRenderer setFlipped:YES];
     
     // Turn the default caching mode back on when the image has completed load.
@@ -69,28 +69,37 @@
     return [self imageRendererWithMIMEType:nil];
 }
 
-- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType
+- (id <WebCoreImageRenderer>)imageRendererWithData:(NSData*)data MIMEType:(NSString *)MIMEType
 {
-    // FIXME: Why must we copy the data here?
-    //NSData *data = [[NSData alloc] initWithBytesNoCopy:(void *)bytes length:length freeWhenDone:NO];
-    NSData *data = [[NSData alloc] initWithBytes:(void *)bytes length:length];
     WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData:data MIMEType:MIMEType];
-    [data release];
-    
+
     NSArray *reps = [imageRenderer representations];
     if ([reps count] == 0){
         [imageRenderer release];
+        NSLog (@"Unable to allocate image renderer");
         return nil;
     }
-
+    
     // Force the image to use the pixel size and ignore the dpi.
     [imageRenderer setScalesWhenResized:NO];
-    NSImageRep *rep = [reps objectAtIndex:0];
-    [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
+    if ([reps count] > 0){
+        NSImageRep *rep = [reps objectAtIndex:0];
+        [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
+        if ([imageRenderer frameCount] > 1)
+            imageRenderer->originalData = [data retain];
+    }
     
     [imageRenderer setFlipped:YES];
-    
+
     return [imageRenderer autorelease];
+}
+
+- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType
+{
+    NSData *data = [[NSData alloc] initWithBytes:(void *)bytes length:length];
+    WebImageRenderer *imageRenderer = [self imageRendererWithData:data MIMEType:MIMEType];
+    [data autorelease];
+    return imageRenderer;
 }
 
 - (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length

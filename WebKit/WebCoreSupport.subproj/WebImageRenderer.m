@@ -3,7 +3,9 @@
 	Copyright (c) 2002, 2003, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebImageRendererFactory.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebAssertions.h>
@@ -14,19 +16,27 @@ extern NSString *NSImageLoopCount;
 
 @implementation WebImageRenderer
 
-static NSMutableArray *activeImageRenderers;
+static NSMutableSet *activeImageRenderers;
 
 + (void)stopAnimationsInView:(NSView *)aView
 {
-    int i, count;    
+    NSEnumerator *objectEnumerator = [activeImageRenderers objectEnumerator];
+    WebImageRenderer *renderer;
+    NSMutableSet *renderersToStop = [[NSMutableSet alloc] init];
 
-    count = [activeImageRenderers count];
-    for (i = count-1; i >= 0; i--) {
-        WebImageRenderer *renderer = [activeImageRenderers objectAtIndex:i];
+    while ((renderer = [objectEnumerator nextObject])) {
+        if (renderer->frameView == aView) {
+            [renderersToStop addObject: renderer];
+        }
+    }
+
+    objectEnumerator = [renderersToStop objectEnumerator];
+    while ((renderer = [objectEnumerator nextObject])) {
         if (renderer->frameView == aView) {
             [renderer stopAnimation];
         }
     }
+    [renderersToStop release];
 }
 
 - (id)initWithMIMEType:(NSString *)MIME
@@ -66,15 +76,31 @@ static NSMutableArray *activeImageRenderers;
     return self;
 }
 
+- (id <WebCoreImageRenderer>)retainOrCopyIfNeeded
+{
+    WebImageRenderer *copy;
+
+    if (originalData){
+        copy = [[[WebImageRendererFactory sharedFactory] imageRendererWithData:originalData MIMEType:MIMEType] retain];
+    }
+    else {
+        copy = [self retain];
+    }
+
+    return copy;
+}
+
 - copyWithZone:(NSZone *)zone
 {
-    WebImageRenderer *copy = [super copyWithZone:zone];
-    
     // FIXME: If we copy while doing an incremental load, it won't work.
+    WebImageRenderer *copy;
+
+    copy = [super copyWithZone:zone];
+    copy->MIMEType = [MIMEType copy];
+    copy->originalData = [originalData retain];
     copy->frameTimer = nil;
     copy->frameView = nil;
     copy->patternColor = nil;
-    copy->MIMEType = [MIMEType copy];
         
     return copy;
 }
@@ -101,7 +127,14 @@ static NSMutableArray *activeImageRenderers;
     NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
 
     loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
-    [data release];
+
+    // Hold onto the original data in case we need to copy this image.  (Workaround for appkit NSImage
+    // copy flaw).
+    if (isComplete && [self frameCount] > 1)
+        originalData = data;
+    else
+        [data release];
+
     switch (loadStatus) {
     case NSImageRepLoadStatusUnknownType:       // not enough data to determine image format. please feed me more data
         //printf ("NSImageRepLoadStatusUnknownType size %d, isComplete %d\n", length, isComplete);
@@ -140,6 +173,7 @@ static NSMutableArray *activeImageRenderers;
     ASSERT(frameView == nil);
     [patternColor release];
     [MIMEType release];
+    [originalData release];
     [super dealloc];
 }
 
@@ -199,16 +233,13 @@ static NSMutableArray *activeImageRenderers;
 {
     id property = [self firstRepProperty:NSImageLoopCount];
     int count = property ? [property intValue] : 0;
-    // This is a workaround for bug 3090341.
-    // If we see no extension, then the loop count is 1, not 0.
-    if (count == 0 && !sawGIFExtensionSignature) {
-        count = 1;
-    }
     return count;
 }
 
 - (void)scheduleFrame
-{   
+{
+    if (frameTimer && [frameTimer isValid])
+        return;
     frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
                                                     target:self
                                                   selector:@selector(nextFrame:)
@@ -294,20 +325,21 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)beginAnimationInRect:(NSRect)ir fromRect:(NSRect)fr
 {
-    // The previous, if any, frameView, is released in stopAnimation.
-    [self stopAnimation];
-
     [self drawClippedToValidInRect:ir fromRect:fr];
-    
+
     if ([self frameCount] > 1 && !animationFinished) {
         imageRect = fr;
         targetRect = ir;
-        frameView = [[NSView focusView] retain];
+        NSView *newView = [NSView focusView];
+        if (newView != frameView){
+            [frameView release];
+            frameView = [newView retain];
+        }
         [self scheduleFrame];
-	if (!activeImageRenderers) {
-	    activeImageRenderers = [[NSMutableArray alloc] init];
-	}
-	[activeImageRenderers addObject:self];
+        if (!activeImageRenderers) {
+            activeImageRenderers = [[NSMutableSet alloc] init];
+        }
+        [activeImageRenderers addObject:self];
     }
 }
 

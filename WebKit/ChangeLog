@@ -1,3 +1,26 @@
+2003-07-09  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3141257.  Animate multiple copies of the same
+	image on the same page.
+
+        Reviewed by hyatt.
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (+[WebImageRenderer stopAnimationsInView:]):
+        (-[WebImageRenderer retainOrCopyIfNeeded]):
+        (-[WebImageRenderer copyWithZone:]):
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageRenderer dealloc]):
+        (-[WebImageRenderer repetitionCount]):
+        (-[WebImageRenderer scheduleFrame]):
+        (-[WebImageRenderer beginAnimationInRect:fromRect:]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.h:
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithMIMEType:]):
+        (-[WebImageRendererFactory imageRendererWithData:MIMEType:]):
+        (-[WebImageRendererFactory imageRendererWithBytes:length:MIMEType:]):
+
 2003-07-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3229364>: user stylesheet path should be stored relative to home directory

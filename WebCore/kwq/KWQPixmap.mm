@@ -184,9 +184,9 @@ QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
 
 QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
 {
-    [assignFrom.imageRenderer retain];
-    [imageRenderer release];
-    imageRenderer = assignFrom.imageRenderer;
+    id <WebCoreImageRenderer> oldImageRenderer = imageRenderer;
+    imageRenderer = [assignFrom.imageRenderer retainOrCopyIfNeeded];
+    [oldImageRenderer release];
     NSString *newMIMEType = [assignFrom.MIMEType copy];
     [MIMEType release];
     MIMEType = newMIMEType;

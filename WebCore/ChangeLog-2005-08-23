@@ -1,3 +1,16 @@
+2003-07-09  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3141257.  Animate multiple copies of the same
+	image on the same page.
+
+        Reviewed by hyatt.
+
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::paint):
+        * kwq/KWQPixmap.mm:
+        (QPixmap::operator=):
+        * kwq/WebCoreImageRenderer.h:
+
 2003-07-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
