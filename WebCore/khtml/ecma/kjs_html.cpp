@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -60,8 +60,10 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
-
 using namespace KJS;
+
+using DOM::HTMLFrameElementImpl;
+using DOM::HTMLIFrameElementImpl;
 
 IMPLEMENT_PROTOFUNC(HTMLDocFunction)
 
@@ -1070,6 +1072,7 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
 @end
 @begin HTMLFrameElementTable 9
   contentDocument KJS::HTMLElement::FrameContentDocument        DontDelete|ReadOnly
+  contentWindow   KJS::HTMLElement::FrameContentWindow          DontDelete|ReadOnly
   frameBorder     KJS::HTMLElement::FrameFrameBorder		DontDelete
   longDesc	  KJS::HTMLElement::FrameLongDesc		DontDelete
   marginHeight	  KJS::HTMLElement::FrameMarginHeight		DontDelete
@@ -1083,6 +1086,7 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
 @begin HTMLIFrameElementTable 12
   align		  KJS::HTMLElement::IFrameAlign			DontDelete
   contentDocument KJS::HTMLElement::IFrameContentDocument       DontDelete|ReadOnly
+  contentWindow   KJS::HTMLElement::IFrameContentWindow         DontDelete|ReadOnly
   document	  KJS::HTMLElement::IFrameDocument		DontDelete|ReadOnly
   frameBorder	  KJS::HTMLElement::IFrameFrameBorder		DontDelete
   height	  KJS::HTMLElement::IFrameHeight		DontDelete
@@ -1795,6 +1799,9 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     switch (token) {
     case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
 				      getDOMNode(exec, frameElement.contentDocument()) : Undefined();
+    case FrameContentWindow:   return checkNodeSecurity(exec,frameElement.contentDocument())
+                                    ? Window::retrieve(static_cast<HTMLFrameElementImpl *>(frameElement.handle())->contentPart())
+                                    : Undefined();
     case FrameFrameBorder:     return String(frameElement.frameBorder());
     case FrameLongDesc:        return String(frameElement.longDesc());
     case FrameMarginHeight:    return String(frameElement.marginHeight());
@@ -1815,6 +1822,9 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     case IFrameDocument: // non-standard, mapped to contentDocument
     case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
 				  getDOMNode(exec, iFrame.contentDocument()) : Undefined();
+    case IFrameContentWindow:	return checkNodeSecurity(exec,iFrame.contentDocument()) 
+                                    ? Window::retrieve(static_cast<HTMLIFrameElementImpl *>(iFrame.handle())->contentPart())
+                                    : Undefined();
     case IFrameFrameBorder:     return String(iFrame.frameBorder());
     case IFrameHeight:          return String(iFrame.height());
     case IFrameLongDesc:        return String(iFrame.longDesc());

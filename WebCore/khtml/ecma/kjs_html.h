@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -143,10 +143,10 @@ namespace KJS {
            TableCellCh, TableCellVAlign, TableCellRowSpan, TableCellHeaders,
            TableCellAlign, TableCellAxis, TableCellScope, FrameSetCols,
            FrameSetRows, FrameSrc, FrameLocation, FrameFrameBorder, FrameScrolling,
-           FrameMarginWidth, FrameLongDesc, FrameMarginHeight, FrameName, FrameContentDocument,
+           FrameMarginWidth, FrameLongDesc, FrameMarginHeight, FrameName, FrameContentDocument, FrameContentWindow, 
            FrameNoResize, IFrameLongDesc, IFrameDocument, IFrameAlign,
            IFrameFrameBorder, IFrameSrc, IFrameName, IFrameHeight,
-           IFrameMarginHeight, IFrameMarginWidth, IFrameScrolling, IFrameWidth, IFrameContentDocument,
+           IFrameMarginHeight, IFrameMarginWidth, IFrameScrolling, IFrameWidth, IFrameContentDocument, IFrameContentWindow,
            MarqueeStart, MarqueeStop,
            GetContext,
            ElementInnerHTML, ElementTitle, ElementId, ElementDir, ElementLang,

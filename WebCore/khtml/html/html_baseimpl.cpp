@@ -5,7 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -485,18 +485,27 @@ void HTMLFrameElementImpl::setFocus(bool received)
 	renderFrame->widget()->clearFocus();
 }
 
-DocumentImpl* HTMLFrameElementImpl::contentDocument() const
+KHTMLPart* HTMLFrameElementImpl::contentPart() const
 {
-    KHTMLPart* p = getDocument()->part();
-
-    if (p) {
-        KHTMLPart *part = p->findFrame( name.string() );
-        if (part) {
-            return part->xmlDocImpl();
-        }
+    // Start with the part that contains this element, our ownerDocument.
+    KHTMLPart* ownerDocumentPart = getDocument()->part();
+    if (!ownerDocumentPart) {
+        return 0;
     }
 
-    return 0;
+    // Find the part for the subframe that this element represents.
+    return ownerDocumentPart->findFrame(name.string());
+}
+
+DocumentImpl* HTMLFrameElementImpl::contentDocument() const
+{
+    KHTMLPart* part = contentPart();
+    if (!part) {
+        return 0;
+    }
+
+    // Return the document for that part, which is our contentDocument.
+    return part->xmlDocImpl();
 }
 
 bool HTMLFrameElementImpl::isURLAttribute(AttributeImpl *attr) const

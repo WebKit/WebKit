@@ -943,7 +943,7 @@ const struct HashTable HTMLFrameSetElementTable = { 2, 3, HTMLFrameSetElementTab
 namespace KJS {
 
 const struct HashEntry HTMLFrameElementTableEntries[] = {
-   { 0, 0, 0, 0, 0 },
+   { "contentWindow", KJS::HTMLElement::FrameContentWindow, DontDelete|ReadOnly, 0, 0 },
    { "contentDocument", KJS::HTMLElement::FrameContentDocument, DontDelete|ReadOnly, 0, &HTMLFrameElementTableEntries[9] },
    { "location", KJS::HTMLElement::FrameLocation, DontDelete, 0, 0 },
    { "name", KJS::HTMLElement::FrameName, DontDelete, 0, 0 },
@@ -965,25 +965,26 @@ namespace KJS {
 
 const struct HashEntry HTMLIFrameElementTableEntries[] = {
    { 0, 0, 0, 0, 0 },
-   { "frameBorder", KJS::HTMLElement::IFrameFrameBorder, DontDelete, 0, &HTMLIFrameElementTableEntries[15] },
+   { "frameBorder", KJS::HTMLElement::IFrameFrameBorder, DontDelete, 0, &HTMLIFrameElementTableEntries[16] },
    { 0, 0, 0, 0, 0 },
-   { "marginHeight", KJS::HTMLElement::IFrameMarginHeight, DontDelete, 0, 0 },
-   { "src", KJS::HTMLElement::IFrameSrc, DontDelete, 0, &HTMLIFrameElementTableEntries[16] },
+   { "contentWindow", KJS::HTMLElement::IFrameContentWindow, DontDelete|ReadOnly, 0, &HTMLIFrameElementTableEntries[13] },
+   { "src", KJS::HTMLElement::IFrameSrc, DontDelete, 0, &HTMLIFrameElementTableEntries[17] },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "align", KJS::HTMLElement::IFrameAlign, DontDelete, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "height", KJS::HTMLElement::IFrameHeight, DontDelete, 0, &HTMLIFrameElementTableEntries[14] },
-   { "contentDocument", KJS::HTMLElement::IFrameContentDocument, DontDelete|ReadOnly, 0, &HTMLIFrameElementTableEntries[13] },
+   { "height", KJS::HTMLElement::IFrameHeight, DontDelete, 0, &HTMLIFrameElementTableEntries[15] },
+   { "contentDocument", KJS::HTMLElement::IFrameContentDocument, DontDelete|ReadOnly, 0, &HTMLIFrameElementTableEntries[14] },
    { "document", KJS::HTMLElement::IFrameDocument, DontDelete|ReadOnly, 0, &HTMLIFrameElementTableEntries[12] },
    { "longDesc", KJS::HTMLElement::IFrameLongDesc, DontDelete, 0, 0 },
+   { "marginHeight", KJS::HTMLElement::IFrameMarginHeight, DontDelete, 0, 0 },
    { "marginWidth", KJS::HTMLElement::IFrameMarginWidth, DontDelete, 0, 0 },
    { "name", KJS::HTMLElement::IFrameName, DontDelete, 0, 0 },
    { "scrolling", KJS::HTMLElement::IFrameScrolling, DontDelete, 0, 0 },
    { "width", KJS::HTMLElement::IFrameWidth, DontDelete, 0, 0 }
 };
 
-const struct HashTable HTMLIFrameElementTable = { 2, 17, HTMLIFrameElementTableEntries, 12 };
+const struct HashTable HTMLIFrameElementTable = { 2, 18, HTMLIFrameElementTableEntries, 12 };
 
 } // namespace
 

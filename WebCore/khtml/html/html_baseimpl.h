@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +32,7 @@
 
 #include <qscrollview.h>
 
+class KHTMLPart;
 class KHTMLView;
 
 namespace khtml {
@@ -95,6 +96,7 @@ public:
     virtual bool isFocusable() const;
     virtual void setFocus(bool);
 
+    KHTMLPart* contentPart() const;
     DocumentImpl* contentDocument() const;
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;

@@ -1,3 +1,19 @@
+2004-08-27  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Darin.
+
+	Fix for:
+	<rdar://problem/3689949> Provide contentWindow access on an iframe
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty): added cases for contentWindow for frames and iframes
+        * khtml/ecma/kjs_html.h: added contentWindow to the list of properties for frames and iframes
+        * khtml/ecma/kjs_html.lut.h: regenerated file
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::contentPart): factored out old contentDocument code to return KHTMLPart for frame
+        (HTMLFrameElementImpl::contentDocument): now just gets the contentDocument from contentPart
+        * khtml/html/html_baseimpl.h: added declaration for contentPart
+
 === Safari-161 ===
 
 2004-08-27  Ken Kocienda  <kocienda@apple.com>
