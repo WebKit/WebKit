@@ -1,3 +1,15 @@
+2002-11-21  Darin Adler  <darin@apple.com>
+
+	- fixed a null-dereference I ran into while trying to reproduce bug 3107351
+
+        * kjs/function.h: Change ActivationImp constructor to take context parameter.
+        * kjs/function.cpp: (ActivationImp::ActivationImp): Take context parameter,
+	not execution state parameter.
+
+        * kjs/internal.cpp: (ContextImp::ContextImp): Initialize activation object
+	from context, not execution state, because the new context is not yet in the
+	execution state.
+
 2002-11-20  Darin Adler  <darin@apple.com>
 
 	- added a feature for Richard to use in his back/forward cache

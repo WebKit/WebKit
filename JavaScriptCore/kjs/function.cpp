@@ -331,8 +331,8 @@ ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args)
 const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
 
 // ECMA 10.1.6
-ActivationImp::ActivationImp(ExecState *exec)
-    : _context(exec->context().imp()), _argumentsObject(0)
+ActivationImp::ActivationImp(ContextImp *context)
+    : _context(context), _argumentsObject(0)
 {
   // FIXME: Do we need to support enumerating the arguments property?
 }
