@@ -1,5 +1,12 @@
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * layout-tests/editing/editing.js: Modified typeCharacterCommand so it can accept a character
+        as an argument.
+
+2004-08-31  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         Fix for these bugs:

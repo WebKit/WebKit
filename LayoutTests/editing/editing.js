@@ -130,16 +130,18 @@ function insertNewlineCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
-function execTypeCharacterCommand() {
-    document.execCommand("InsertText", false, "x");
+function execTypeCharacterCommand(c) {
+    if (arguments.length == 0 || c == undefined || c.length == 0 || c.length > 1)
+        c = 'x';
+    document.execCommand("InsertText", false, c);
 }
-function typeCharacterCommand() {
+function typeCharacterCommand(c) {
     if (commandDelay > 0) {
         window.setTimeout(execTypeCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
-        execTypeCharacterCommand();
+        execTypeCharacterCommand(c);
     }
 }
 
