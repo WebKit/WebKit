@@ -1,3 +1,22 @@
+2002-12-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3098045.  
+
+	Do not treat XHTML-style tags e.g., <br/> or <table/> as
+	self-closing.  This is absolutely wrong, and it does not
+	match the behavior of other browsers.  According to the HTML4
+	spec for parsing, / is an erroneous character and should simply
+	be dropped, so <table/> should be treated like <table>.
+
+	Fixes for crashes on glazman's blog and on tantek's blog.  Both
+	still mis-render, but at least they don't crash.
+	
+        Reviewed by gramps (and darin too)
+
+        * khtml/html/htmltokenizer.cpp:
+	* khtml/rendering/render_container.cpp:
+	* khtml/rendering/render_style.cpp:
+	
 === Alexander-37u1 ===
 
 2002-12-13  David Hyatt  <hyatt@apple.com>

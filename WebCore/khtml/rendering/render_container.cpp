@@ -211,16 +211,18 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
         if (pseudo->contentType()==CONTENT_TEXT)
         {
             RenderObject* po = new (renderArena()) RenderFlow(0 /* anonymous box */);
+            po->setParent(this); // Set the parent now, so setStyle will be able to find a renderArena.
             po->setStyle(pseudo);
-
+            po->setParent(0); // Unset the parent to avoid asserting in addChild.
             addChild(po, beforeChild);
-
+            
             RenderText* t = new (renderArena()) RenderText(0 /*anonymous object */, pseudo->contentText());
+            t->setParent(po); // Set the parent now, so setStyle will be able to find a renderArena.
             t->setStyle(pseudo);
-
-//            kdDebug() << DOM::DOMString(pseudo->contentText()).string() << endl;
-
+            t->setParent(0); // Unset the parent to avoid asserting in addChild.
             po->addChild(t);
+            
+//            kdDebug() << DOM::DOMString(pseudo->contentText()).string() << endl;
 
             t->close();
             po->close();
@@ -228,7 +230,9 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
         else if (pseudo->contentType()==CONTENT_OBJECT)
         {
             RenderObject* po = new (renderArena()) RenderImage(0);
+            po->setParent(this); // Set the parent now, so setStyle will be able to find a renderArena.
             po->setStyle(pseudo);
+            po->setParent(0); // Unset the parent to avoid asserting in addChild.
             addChild(po, beforeChild);
             po->close();
         }

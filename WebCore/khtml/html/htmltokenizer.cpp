@@ -907,13 +907,10 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 else
                     // Start Tag
                     beginTag = true;
+                    
                 // Accept empty xml tags like <br/>
-                if(len > 1 && ptr[len-1] == '/' ) {
+                if(len > 1 && ptr[len-1] == '/' )
                     ptr[--len] = '\0';
-                    // if its like <br/> and not like <input/ value=foo>, take it as flat
-                    if (*src == '>')
-                        currToken.flat = true;
-                }
 
                 uint tagID = khtml::getTagID(ptr, len);
                 if (!tagID) {
@@ -992,9 +989,6 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         else
                             kdDebug( 6036 ) << "Known attribute: " << QCString(cBuffer, cBufferPos+1).data() << endl;
 #endif
-                        // did we just get />
-                        if (!a && cBufferPos == 1 && *cBuffer == '/' && curchar == '>')
-                            currToken.flat = true;
 
                         tag = SearchEqual;
                         break;
