@@ -1,5 +1,19 @@
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
+	Support for new plug-in API. This is about as much as I can do without the new java plug-in and java root.
+
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController initWithWebFrame:]): observe window close changes
+        (-[WebPluginController dealloc]): remove observer, assert if we're still tracking plug-ins
+        (-[WebPluginController didAddSubview:]): start the plug-in
+        (-[WebPluginController stopAllPlugins]): stop and destroy all plug-ins.
+        (-[WebPluginController windowWillClose:]): call stopAllPlugins if the window in question is closing
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]): call stopAllPlugins on WebPluginController
+
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
 	Changed the plug-in package API to return key enumerators instead dictionaries.
 
         * Plugins.subproj/WebBasePluginPackage.h:

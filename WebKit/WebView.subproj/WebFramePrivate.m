@@ -287,6 +287,9 @@ static const char * const stateNames[] = {
     
     documentView = [[self webView] documentView];
 
+    // Stop plug-ins before blowing away the view.
+    [_private->pluginController stopAllPlugins];
+        
     switch ([self _state]) {
     	case WebFrameStateProvisional:
         {

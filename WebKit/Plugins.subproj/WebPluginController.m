@@ -12,7 +12,9 @@
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebView.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResourceRequest.h>
 
 @implementation WebPluginController
@@ -25,13 +27,20 @@
     frame = theFrame;
     
     views = [[NSMutableArray array] retain];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowWillClose)
+                                                 name:NSWindowWillCloseNotification
+                                               object:nil];
     
     return self;
 }
 
 - (void)dealloc
 {
-    [views removeAllObjects];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    ASSERT([views count] == 0);
     [views release];
     [super dealloc];
 }
@@ -45,6 +54,20 @@
 - (void)didAddSubview:(NSView <WebPlugin> *)view
 {
     [view pluginStart];
+}
+
+- (void)stopAllPlugins
+{
+    [views makeObjectsPerformSelector:@selector(pluginStop)];
+    [views makeObjectsPerformSelector:@selector(pluginDestroy)];
+    [views removeAllObjects];
+}
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+    if([notification object] == [[frame webView] window]){
+        [self stopAllPlugins];
+    }
 }
 
 - (void)showURL:(NSURL *)URL inFrame:(NSString *)target

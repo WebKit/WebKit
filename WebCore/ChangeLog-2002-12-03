@@ -1,5 +1,15 @@
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
+	WebKit now gets called when render_frame subviews are added.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPart::setWidget): call didAddWidget on the part
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::didAddWidget): added, calls didAddSubview on the bridge
+
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
 	Change for plug-in package API changes.
 
         * kwq/KWQKConfigBase.mm:

@@ -22,9 +22,8 @@
 }
 
 - initWithWebFrame:(WebFrame *)theFrame;
-
 - (void)addPluginView:(NSView <WebPlugin> *)view;
-
 - (void)didAddSubview:(NSView <WebPlugin> *)view;
+- (void)stopAllPlugins;
 
 @end

@@ -575,6 +575,11 @@ void RenderPart::setWidget( QWidget *widget )
     // make sure the scrollbars are set correctly for restore
     // ### find better fix
     slotViewCleared();
+#ifdef APPLE_CHANGES
+    if(widget){
+        static_cast<KHTMLView *>(m_view)->part()->impl->didAddWidget(widget);
+    }
+#endif
 }
 
 bool RenderPart::partLoadingErrorNotify(khtml::ChildFrame *, const KURL& , const QString& )
