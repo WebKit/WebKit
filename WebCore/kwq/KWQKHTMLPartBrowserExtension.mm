@@ -121,8 +121,6 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	[bridge setWindowFrame:frame];
     }
     
-    [[[bridge window] windowController] showWindow:nil];
-
     *partResult = [bridge part];
 }
 

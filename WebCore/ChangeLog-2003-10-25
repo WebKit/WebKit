@@ -1,3 +1,11 @@
+2002-09-11  Maciej Stachowiak  <mjs@apple.com>
+
+	Don't show the window here any more, now that WebBrowser will set
+	it up to be shown properly itself.
+	
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow):
+
 2002-09-11  David Hyatt  <hyatt@apple.com>
 
 	Fix horizontal scrolling.  The HTML render object lies.  It lies, 
