@@ -1,9 +1,24 @@
-2001-12-18  Kenneth Kocienda  <kocienda@apple.com>
+2001-12-18  Richard Williamson  <rjw@apple.com>
 
-        Updated based on comments from John and Richard
-        
-	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
-	* Documentation/WebKit-White-Paper/images/webkit-cache-loader.jpg:
+        Restructing of headers in prepartion for implementation.  Added new WK*
+        headers to PB project description.
+
+	* ChangeLog:
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/NSWebPageDataSource.h:
+	* WebView.subproj/NSWebPageDataSource.mm:
+	* WebView.subproj/NSWebPageDataSourcePrivate.h:
+	* WebView.subproj/NSWebPageView.h:
+	* WebView.subproj/NSWebPageView.mm:
+	* WebView.subproj/NSWebPageViewPrivate.h:
+	* WebView.subproj/WKWebController.h:
+	* WebView.subproj/WKWebController.mm:
+	* WebView.subproj/WKWebDataSource.h:
+	* WebView.subproj/WKWebDataSource.mm: (+[WKWebDataSource initialize]):
+	* WebView.subproj/WKWebDataSourcePrivate.h:
+	* WebView.subproj/WKWebView.h:
+	* WebView.subproj/WKWebView.mm:
+	* WebView.subproj/WKWebViewPrivate.h:
 
 2001-12-18  Kenneth Kocienda  <kocienda@apple.com>
 

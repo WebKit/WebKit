@@ -176,15 +176,20 @@
 				25BECC9A017E0A0D0ECA149E,
 				25BECC9B017E0A0D0ECA149E,
 				25BECC9D017E0A0D0ECA149E,
-				9C7CABC00190A3E10ECA16EA,
-				9C7CABC10190A3E10ECA16EA,
-				9C93A48601920D0C0ECA16EA,
-				9C93A48A01920D3D0ECA16EA,
 				251E877A01A1EE570ECA149E,
 				25A5593301A5996D0ECA149E,
 				25A8176F01B5B9180ECA149E,
 				25A8177301B698760ECA149E,
 				25A8177701B6A5240ECA149E,
+				9C04852501CFF9CE0ECA16EA,
+				9C04852601CFF9CE0ECA16EA,
+				9C04852701CFF9CE0ECA16EA,
+				9C04852801CFF9CE0ECA16EA,
+				9C04852901CFF9CE0ECA16EA,
+				9C04853001CFFD060ECA16EA,
+				9C04853101CFFD060ECA16EA,
+				9C04853201CFFD060ECA16EA,
+				9C04853301CFFD060ECA16EA,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -206,13 +211,13 @@
 				2568C72A017490CF0ECA149E,
 				25BECC9E017E0A0D0ECA149E,
 				25BECC9F017E0A0D0ECA149E,
-				9C93A48701920D0C0ECA16EA,
-				9C93A48B01920D3D0ECA16EA,
 				251E877B01A1EE570ECA149E,
 				25A5593401A5996D0ECA149E,
 				25A8177001B5B9180ECA149E,
 				25A8177401B698760ECA149E,
 				25A8177801B6A5240ECA149E,
+				9C04852A01CFF9CE0ECA16EA,
+				9C04852B01CFF9CE0ECA16EA,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -371,6 +376,10 @@
 				2568C71F017490290ECA149E,
 				251E877801A1EE570ECA149E,
 				251E877901A1EE570ECA149E,
+				9C04852C01CFFD060ECA16EA,
+				9C04852D01CFFD060ECA16EA,
+				9C04852E01CFFD060ECA16EA,
+				9C04852F01CFFD060ECA16EA,
 			);
 			isa = PBXGroup;
 			name = Cache;
@@ -757,96 +766,178 @@
 //9C2
 //9C3
 //9C4
+		9C04851E01CFF9CE0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebController.h;
+			path = WebView.subproj/WKWebController.h;
+			refType = 2;
+		};
+		9C04851F01CFF9CE0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebDataSource.h;
+			path = WebView.subproj/WKWebDataSource.h;
+			refType = 2;
+		};
+		9C04852001CFF9CE0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebDataSource.mm;
+			path = WebView.subproj/WKWebDataSource.mm;
+			refType = 2;
+		};
+		9C04852101CFF9CE0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebDataSourcePrivate.h;
+			path = WebView.subproj/WKWebDataSourcePrivate.h;
+			refType = 2;
+		};
+		9C04852201CFF9CE0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebView.h;
+			path = WebView.subproj/WKWebView.h;
+			refType = 2;
+		};
+		9C04852301CFF9CE0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebController.mm;
+			path = WebView.subproj/WKWebController.mm;
+			refType = 2;
+		};
+		9C04852401CFF9CE0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebViewPrivate.h;
+			path = WebView.subproj/WKWebViewPrivate.h;
+			refType = 2;
+		};
+		9C04852501CFF9CE0ECA16EA = {
+			fileRef = 9C04851E01CFF9CE0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		9C04852601CFF9CE0ECA16EA = {
+			fileRef = 9C04851F01CFF9CE0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		9C04852701CFF9CE0ECA16EA = {
+			fileRef = 9C04852101CFF9CE0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9C04852801CFF9CE0ECA16EA = {
+			fileRef = 9C04852201CFF9CE0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		9C04852901CFF9CE0ECA16EA = {
+			fileRef = 9C04852401CFF9CE0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9C04852A01CFF9CE0ECA16EA = {
+			fileRef = 9C04852001CFF9CE0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C04852B01CFF9CE0ECA16EA = {
+			fileRef = 9C04852301CFF9CE0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C04852C01CFFD060ECA16EA = {
+			isa = PBXFileReference;
+			name = WKLoadChunk.h;
+			path = Cache.subproj/WKLoadChunk.h;
+			refType = 2;
+		};
+		9C04852D01CFFD060ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebCache.h;
+			path = Cache.subproj/WKWebCache.h;
+			refType = 2;
+		};
+		9C04852E01CFFD060ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebCacheClient.h;
+			path = Cache.subproj/WKWebCacheClient.h;
+			refType = 2;
+		};
+		9C04852F01CFFD060ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebContentType.h;
+			path = Cache.subproj/WKWebContentType.h;
+			refType = 2;
+		};
+		9C04853001CFFD060ECA16EA = {
+			fileRef = 9C04852C01CFFD060ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		9C04853101CFFD060ECA16EA = {
+			fileRef = 9C04852D01CFFD060ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		9C04853201CFFD060ECA16EA = {
+			fileRef = 9C04852E01CFFD060ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		9C04853301CFFD060ECA16EA = {
+			fileRef = 9C04852F01CFFD060ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
 		9C7CABBB0190A37C0ECA16EA = {
 			children = (
-				9C7CABBC0190A3E10ECA16EA,
-				9C7CABBE0190A3E10ECA16EA,
-				9C93A48401920D0C0ECA16EA,
-				9C93A48501920D0C0ECA16EA,
-				9C93A48801920D3D0ECA16EA,
-				9C93A48901920D3D0ECA16EA,
+				9C04851E01CFF9CE0ECA16EA,
+				9C04851F01CFF9CE0ECA16EA,
+				9C04852001CFF9CE0ECA16EA,
+				9C04852101CFF9CE0ECA16EA,
+				9C04852201CFF9CE0ECA16EA,
+				9C04852301CFF9CE0ECA16EA,
+				9C04852401CFF9CE0ECA16EA,
 			);
 			isa = PBXGroup;
 			name = WebView;
 			refType = 4;
-		};
-		9C7CABBC0190A3E10ECA16EA = {
-			isa = PBXFileReference;
-			name = NSWebPageDataSource.h;
-			path = WebView.subproj/NSWebPageDataSource.h;
-			refType = 2;
-		};
-		9C7CABBE0190A3E10ECA16EA = {
-			isa = PBXFileReference;
-			name = NSWebPageView.h;
-			path = WebView.subproj/NSWebPageView.h;
-			refType = 2;
-		};
-		9C7CABC00190A3E10ECA16EA = {
-			fileRef = 9C7CABBC0190A3E10ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C7CABC10190A3E10ECA16EA = {
-			fileRef = 9C7CABBE0190A3E10ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C93A48401920D0C0ECA16EA = {
-			isa = PBXFileReference;
-			name = NSWebPageView.mm;
-			path = WebView.subproj/NSWebPageView.mm;
-			refType = 2;
-		};
-		9C93A48501920D0C0ECA16EA = {
-			isa = PBXFileReference;
-			name = NSWebPageDataSourcePrivate.h;
-			path = WebView.subproj/NSWebPageDataSourcePrivate.h;
-			refType = 2;
-		};
-		9C93A48601920D0C0ECA16EA = {
-			fileRef = 9C93A48501920D0C0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C93A48701920D0C0ECA16EA = {
-			fileRef = 9C93A48401920D0C0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C93A48801920D3D0ECA16EA = {
-			isa = PBXFileReference;
-			name = NSWebPageDataSource.mm;
-			path = WebView.subproj/NSWebPageDataSource.mm;
-			refType = 2;
-		};
-		9C93A48901920D3D0ECA16EA = {
-			isa = PBXFileReference;
-			name = NSWebPageViewPrivate.h;
-			path = WebView.subproj/NSWebPageViewPrivate.h;
-			refType = 2;
-		};
-		9C93A48A01920D3D0ECA16EA = {
-			fileRef = 9C93A48901920D3D0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C93A48B01920D3D0ECA16EA = {
-			fileRef = 9C93A48801920D3D0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 	};
 	rootObject = 0867D690FE84028FC02AAC07;

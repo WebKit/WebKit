@@ -67,13 +67,14 @@
 
    ============================================================================= */
    
-#ifdef READY_FOR_PRIMETIME
 
-@interface WKWebDataSource : NSObject <WKWebDataSource>
+@interface WKWebDataSource : NSObject
 {
 @private
     id _dataSourcePrivate;
 }
+
+#ifdef READY_FOR_PRIMETIME
 
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
@@ -194,7 +195,8 @@
 // Returns nil or the page title.
 - (NSString *)pageTitle;
 
+#endif
+
 @end
 
-#endif
 

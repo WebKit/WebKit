@@ -1,8 +1,20 @@
+2001-12-18  Richard Williamson  <rjw@apple.com>
+
+	* ChangeLog:
+	* src/kdelibs/khtml/dom/html_element.cpp:
+
+<<<<<<< ChangeLog
+2001-12-18  Richard Williamson  <rjw@apple.com>
+
+	* src/kdelibs/khtml/dom/html_element.cpp:
+
+=======
 2001-12-18  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kwq/Makefile.in: Re-apply my changes, which accidentally got
 	clobbered.
 
+>>>>>>> 1.7
 2001-12-13  Maciej Stachowiak  <mjs@apple.com>
 
 	Changes for international character set support. Still needs work,

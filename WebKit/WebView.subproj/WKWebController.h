@@ -6,7 +6,6 @@
 */
 #import <Cocoa/Cocoa.h>
 
-#ifdef READY_FOR_PRIMETIME
 
 /*
    ============================================================================= 
@@ -101,19 +100,6 @@
 */
 
 
-/*
-   ============================================================================= 
-
-    WKWebController implements all the behavior that ties together WKWebView
-    and WKWebDataSource.  See each inherited protocol for a more complete
-    description.
-    
-    [Don and I both agree that all these little protocols are useful to cleanly
-     describe snippets of behavior, but do we explicity reference them anywhere,
-     or do we just use the umbrella protocol?]
-*/
-@protocol WKWebController <WKLoadHandler, WKScriptContextHandler, WKAuthenticationHandler, WKLocationChangeHandler>
-@end
 
 
 
@@ -124,6 +110,10 @@
     scheme used by Foundation, although Foundation's concrete classes
     typically aren't public.
 */
+#ifndef NEW_WEBKIT_API
+@interface WKDefaultWebController : NSObject
+@end
+#else
 @interface WKDefaultWebController : NSObject <WKWebController>
 
 - initWithView: (WKWebView *) dataSource: (WKWebDataSource *)dataSource;
@@ -143,6 +133,24 @@
 - (void)createViewForDataSource: (WKWebDataSource *)dataSource inIFrame: (id)iFrameIdentifier;
 
 @end
+
+
+
+/*
+   ============================================================================= 
+
+    WKWebController implements all the behavior that ties together WKWebView
+    and WKWebDataSource.  See each inherited protocol for a more complete
+    description.
+    
+    [Don and I both agree that all these little protocols are useful to cleanly
+     describe snippets of behavior, but do we explicity reference them anywhere,
+     or do we just use the umbrella protocol?]
+*/
+@protocol WKWebController <WKLoadHandler, WKScriptContextHandler, WKAuthenticationHandler, WKLocationChangeHandler>
+@end
+
+
 
 
 /*

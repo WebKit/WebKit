@@ -1,9 +1,10 @@
-/*	NSWebPageDataSource.h
+/*	
+        WKWebDataSource.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
-#import <WebKit/NSWebPageDataSource.h>
+#import <WebKit/WKWebDataSource.h>
 
-@implementation NSWebPageDataSource
+@implementation WKWebDataSource
 
 + (void)initialize {
 
