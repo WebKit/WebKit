@@ -4781,6 +4781,7 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
 	// Restart the selection if this is the first mouse move. This work is usually
 	// done in khtmlMousePressEvent, but not if the mouse press was on an existing selection.
 	KHTMLSelection sel = selection();
+    sel.clearModifyBias();
     if (!d->m_mouseMovedSinceLastMousePress) {
 		d->m_mouseMovedSinceLastMousePress = true;
         sel.moveTo(node, offset);

@@ -1276,16 +1276,30 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     cmd.reapply();
 }
 
-- (DOMRange *)rangeByModifyingRange:(DOMRange *)range alteration:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
+- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
 {
+    if (!_part)
+        return nil;
+        
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
-    NodeImpl *startContainer = [[range startContainer] _nodeImpl];
-    NodeImpl *endContainer = [[range endContainer] _nodeImpl];
-    KHTMLSelection selection(startContainer, [range startOffset], endContainer, [range endOffset]);
+    KHTMLSelection selection(_part->selection());
     selection.modify(static_cast<KHTMLSelection::EAlter>(alteration), 
                      static_cast<KHTMLSelection::EDirection>(direction), 
                      static_cast<KHTMLSelection::ETextGranularity>(granularity));
     return [DOMRange _rangeWithImpl:selection.toRange().handle()];
+}
+
+- (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
+{
+    if (!_part)
+        return;
+        
+    // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
+    KHTMLSelection selection(_part->selection());
+    selection.modify(static_cast<KHTMLSelection::EAlter>(alteration), 
+                     static_cast<KHTMLSelection::EDirection>(direction), 
+                     static_cast<KHTMLSelection::ETextGranularity>(granularity));
+    _part->setSelection(selection);
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range

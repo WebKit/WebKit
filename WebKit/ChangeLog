@@ -1,3 +1,17 @@
+2004-03-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _alterCurrentSelection:direction:granularity:]): Changed name from
+        _alterSelection:direction:granularity: to give a little extra clarity. Also, the
+        body calls through to renamed rangeByAlteringCurrentSelection:direction:granularity:
+        in WebCore.
+        (-[WebView moveRight:]): Now calls renamed _alterCurrentSelection:direction:granularity:.
+        (-[WebView moveRightAndModifySelection:]): Ditto.
+        (-[WebView moveLeft:]): Ditto.
+        (-[WebView moveLeftAndModifySelection:]): Ditto.
+
 2004-03-11  Richard Williamson   <rjw@apple.com>
 
 	Workaround for 3585644.  Force the window number of the

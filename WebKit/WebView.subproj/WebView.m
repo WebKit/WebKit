@@ -2046,15 +2046,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [self insertText:string replacingDOMRange:[self selectedDOMRange]];
 }
 
-- (void)_alterSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
+- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
 {
-    DOMRange *currentRange = [self selectedDOMRange];
-    DOMRange *proposedRange = [[self _bridgeForCurrentSelection] rangeByModifyingRange:currentRange
-        alteration:alteration 
-        direction:direction 
-        granularity:granularity];
-    if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange]) {
-        [self setSelectedDOMRange:proposedRange];
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
+    if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:[self selectedDOMRange] toDOMRange:proposedRange]) {
+        [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
     }
 }
 
@@ -2064,22 +2061,22 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)moveRight:(id)sender
 {
-    [self _alterSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByCharacter];
 }
 
 - (void)moveRightAndModifySelection:(id)sender
 {
-    [self _alterSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByCharacter];
 }
 
 - (void)moveLeft:(id)sender
 {
-    [self _alterSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByCharacter];
 }
 
 - (void)moveLeftAndModifySelection:(id)sender
 {
-    [self _alterSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByCharacter];
 }
 
 - (void)deleteBackward:(id)sender

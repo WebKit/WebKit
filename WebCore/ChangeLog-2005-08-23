@@ -1,3 +1,29 @@
+2004-03-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMouseMoveEventSelection): Clear the selection's
+        "modify bias" since the user clicked, and is therefore no longer
+        extending the selection with arrow keys.
+        * khtml/khtml_selection.cpp:
+        (KHTMLSelection::KHTMLSelection): Add new m_modifyBiasSet flag.
+        (KHTMLSelection::init): Set the flag to false by default.
+        (KHTMLSelection::operator=): Copy over the value of the new m_modifyBiasSet flag.
+        (KHTMLSelection::modify): Set the flag if extending the selection and set the 
+        base and extent nodes based on the movement direction requested.
+        * khtml/khtml_selection.h:
+        * kwq/WebCoreBridge.h: See below.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:direction:granularity:]): This
+        method is used by the WebKit side in response to requests to change the selection
+        using the arrow keys. It used to be called rangeByModifyingRange:alteration:direction:granularity:
+        but I changed it to this new format since I explicitly want to use the current selection, and
+        not some arbitrarily passed in selection. This helps to maintain the "modify bias" correctly.
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]): New method. A command to alter
+        the current selection as given. Again, applying the command to the current selection, rather
+        than just setting the selection to a new one, helps to maintain the "modify bias" correctly.
+
 2004-03-11  Chris Blumenberg  <cblu@apple.com>
 
 	Added stubs for the HTML DOM API.

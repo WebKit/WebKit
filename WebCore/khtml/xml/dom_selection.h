@@ -89,6 +89,7 @@ public:
     static DOM::DOMPosition nextCharacterPosition(const DOM::DOMPosition &from);
         
     void setNeedsLayout(bool flag=true);
+    void clearModifyBias() { m_modifyBiasSet = false; }
     
     bool isEmpty() const;
     DOM::Range toRange() const;
@@ -146,6 +147,7 @@ private:
 
 	bool m_baseIsStart : 1;       // true if base node is before the extent node
 	bool m_needsCaretLayout : 1;  // true if the caret position needs to be calculated
+	bool m_modifyBiasSet : 1;     // true if the selection has been modified with EAlter::EXTEND
 };
 
 
