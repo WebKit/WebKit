@@ -27,8 +27,12 @@
 #define QSTRING_H_
 
 #define Fixed MacFixed
+#define Rect MacRect
+#define Boolean MacBoolean
 #include <CoreFoundation/CFString.h>
 #undef Fixed
+#undef Rect
+#undef Boolean
 #include "qcstring.h"
 
 class QString;
