@@ -1,3 +1,14 @@
+2004-08-09  Richard Williamson   <rjw@apple.com>
+
+        Inspired by Trey we have a much better approach for conditionally
+        linking Quart.framework.  Instead of multiple targets we use 
+        `` to invoke some inline script to extend COMMON_LDFLAGS as
+        necessary.  Thanks Trey!
+        
+        Reviewed by Trey.
+
+        * WebKit.pbproj/project.pbxproj:
+
 2004-08-09  Trey Matteson  <trey@apple.com>
 
 	Hookup UI for "Continuous Spelling" menu item.
