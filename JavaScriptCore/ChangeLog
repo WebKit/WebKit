@@ -1,3 +1,5 @@
+=== Safari-161 ===
+
 2004-08-20  Richard Williamson   <rjw@apple.com>
 
         Implemented new JNI abstraction.  We no longer invoke Java methods
