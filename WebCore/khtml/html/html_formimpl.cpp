@@ -1731,8 +1731,6 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
                 break;
             case CHECKBOX:
             case RADIO:
-            case TEXT:
-            case PASSWORD:
                 // for return or enter, find the first successful image or submit element 
                 // send it a simulated mouse click
                 if (key == "U+00000d" || key == "Enter") {
@@ -1740,6 +1738,20 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
                     evt->setDefaultHandled();
                 }
                 break;
+            case TEXT:
+            case PASSWORD: {
+                // For enter or return, find the first successful image or submit element 
+                // send it a simulated mouse click only if the text input manager has 
+                // no marked text. If it does, then return needs to work in the
+                // "accept" role for the input method.
+                QWidget *widget = static_cast<RenderWidget *>(m_render)->widget();
+                bool hasMarkedText = widget ? static_cast<QLineEdit *>(widget)->hasMarkedText() : false;
+                if (!hasMarkedText && (key == "U+00000d" || key == "Enter")) {
+                    m_form->performSubmitClick();
+                    evt->setDefaultHandled();
+                }
+                break;
+            }
             default:
                 // not handled for the other widgets
                 break;

@@ -1,3 +1,30 @@
+2003-11-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
+	<rdar://problem/3477624>: REGRESSION (113): Using input method to 
+	enter non-ascii text submits the form
+
+	This regression has been in the tree for a couple of versions now, 
+	since we improved the way key events are processed. The solution
+	is to ask the text input manager if it has any marked text when
+	the return key (or enter key) is pressed, because if it does, the key
+	needs to work in the "accept" role for the input manager. Fixing
+	in this way has the pleasant effect of making return/enter key
+	behavior "do the right thing" based on context.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::defaultEventHandler): Add check to see
+	if text input manager has marked text before submitting text
+	and password fields. Broke out key handling for checkboxes and
+	radios, since the old code for these widgets worked fine.
+        * kwq/KWQLineEdit.h: Added hasMarkedText function.
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::hasMarkedText): Returns whether the current input
+	manager has marked text or not.
+
 2003-11-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
