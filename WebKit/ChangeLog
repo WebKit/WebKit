@@ -1,3 +1,14 @@
+2003-05-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris and Richard.
+
+	- fixed 3257296 -- REGRESSION: crash in WebImageRendererFactory (movietickets.com)
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer initWithMIMEType:]): Check for nil.
+        (-[WebImageRenderer initWithData:MIMEType:]): Check for nil, also don't check for GIF signature
+        until after the object is allocated.
+
 2003-05-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
