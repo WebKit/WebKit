@@ -96,8 +96,8 @@ enum {
 
 - (void)setFrame: (NSRect)f
 {
-    if ([self isDocumentHTML] && !NSEqualRects(f, [self frame]))
-        [(WebHTMLView *)[self documentView] setNeedsLayout: YES];
+    if (!NSEqualRects(f, [self frame]))
+        [[self documentView] setNeedsLayout: YES];
         
     [super setFrame: f];
     

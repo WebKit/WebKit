@@ -23,12 +23,6 @@
 }
 
 /*!
-    @method setNeedsLayout:
-    @param flag
-*/
-- (void)setNeedsLayout: (BOOL)flag;
-
-/*!
     @method setNeedsToApplyStyles:
     @param flag
 */

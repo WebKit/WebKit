@@ -1,5 +1,22 @@
 2002-09-24  Darin Adler  <darin@apple.com>
 
+	Cleaned up some loose ends from adding setNeedsLayout to the WebDocumentView
+	protocol. Was causing exceptions.
+
+        * Plugins.subproj/WebPluginView.m: (-[WebNetscapePluginView setNeedsLayout:]):
+        * WebView.subproj/WebTextView.m: (-[WebTextView setNeedsLayout:]):
+	Added missing stubs.
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge setNeedsReapplyStyles]):
+	Removed unneeded cast.
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _isLoadComplete]): Remove an
+	unneeded cast and call to isDocumentHTML.
+        * WebView.subproj/WebHTMLView.h: No need to re-declare setNeedsLayout.
+        * WebView.subproj/WebView.m: (-[WebView setFrame:]): Get rid of unneeded check
+	of isDocumentHTML.
+
+2002-09-24  Darin Adler  <darin@apple.com>
+
 	- fixed 3057383 -- focus rectangles are being drawn multiple times
 	- fixed 3051025 -- focus ring on password field gets darker and darker
 

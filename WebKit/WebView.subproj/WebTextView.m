@@ -65,6 +65,10 @@
     }
 }
 
+- (void)setNeedsLayout:(BOOL)flag
+{
+}
+
 - (void)layout
 {
     NSRect superFrame = [[self superview] frame];

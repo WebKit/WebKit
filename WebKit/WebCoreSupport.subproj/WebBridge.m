@@ -381,7 +381,7 @@
     NSView <WebDocumentView> *view = [[frame webView] documentView];
     if ([view isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)view setNeedsToApplyStyles:YES];
-        [(WebHTMLView *)view setNeedsLayout:YES];
+        [view setNeedsLayout:YES];
         [view setNeedsDisplay:YES];
     }
 }

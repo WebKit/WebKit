@@ -441,10 +441,7 @@ static const char * const stateNames[] = {
 
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
-                if ([thisView isDocumentHTML]){
-                    WebHTMLView *hview = (WebHTMLView *)thisDocumentView;
-                    [hview setNeedsLayout: YES];
-                }
+                [thisDocumentView setNeedsLayout: YES];
                 [thisDocumentView layout];
 
                 // Unfortunately if this frame has children we have to lay them

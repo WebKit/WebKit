@@ -689,6 +689,10 @@
 {
 }
  
+- (void)setNeedsLayout:(BOOL)flag
+{
+}
+
 - (void)layout
 {
     NSRect superFrame = [[self _web_superviewOfClass:[WebView class]] frame];
