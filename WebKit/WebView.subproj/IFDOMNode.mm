@@ -28,7 +28,7 @@
     value = [node->nodeValue().string().getNSString() copy];
     source = [node->recursive_toHTML(1).getNSString() copy];
    
-    for (DOM::NodeImpl *child = node->firstChild(); child; child->nextSibling())
+    for (DOM::NodeImpl *child = node->firstChild(); child; child = child->nextSibling())
         [collectChildren addObject:[[[IFDOMNode alloc] initWithDOMNode: child] autorelease]];
     
     children = [collectChildren copy];

@@ -1,5 +1,12 @@
 2002-06-27  Darin Adler  <darin@apple.com>
 
+	Fixed DOM tree viewer.
+
+        * WebView.subproj/IFDOMNode.mm: (-[IFDOMNode initWithDOMNode:DOM::]):
+	A typo got in here somehow, leading to an infinite loop.
+
+2002-06-27  Darin Adler  <darin@apple.com>
+
         - fixed 2973212 -- bad arg string != nil in _IF_URLWithString
 
         * WebView.subproj/IFWebDataSourcePrivate.mm:
