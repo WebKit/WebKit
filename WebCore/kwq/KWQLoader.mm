@@ -126,8 +126,8 @@ using khtml::Request;
 {
     KWQDEBUGLEVEL(KWQ_LOG_LOADING, "bridge = %p for URL %s", m_bridge, DEBUG_OBJECT([handle url]));
 
-    [m_bridge didCancelLoadingWithHandle:handle];
     [self doneWithHandle:handle error:YES];
+    [m_bridge didCancelLoadingWithHandle:handle];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)handle data:(NSData *)data
@@ -137,16 +137,16 @@ using khtml::Request;
     KWQ_ASSERT([handle statusCode] == IFURLHandleStatusLoadComplete);
     KWQ_ASSERT((int)[data length] == [handle contentLengthReceived]);
 
-    [m_bridge didFinishLoadingWithHandle:handle];
     [self doneWithHandle:handle error:NO];
+    [m_bridge didFinishLoadingWithHandle:handle];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)handle resourceDidFailLoadingWithResult:(IFError *)result
 {
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "bridge = %p, result = %s, URL = %s", m_bridge, DEBUG_OBJECT([result errorDescription]), DEBUG_OBJECT([handle url]));
 
-    [m_bridge didFailToLoadWithHandle:handle error:result];
     [self doneWithHandle:handle error:YES];
+    [m_bridge didFailToLoadWithHandle:handle error:result];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)handle didRedirectToURL:(NSURL *)URL
