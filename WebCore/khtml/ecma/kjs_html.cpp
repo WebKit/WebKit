@@ -2166,7 +2166,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
     }
     case ID_CANVAS: {
         if (id == KJS::HTMLElement::GetContext) {
-            if (args.size() == 0 || (args.size() == 1 && args[0].toString(exec).qstring().lower() == "context-2d")) {
+            if (args.size() == 0 || (args.size() == 1 && args[0].toString(exec).qstring().lower() == "2d")) {
                 return Object(new Context2D(element));
             }
             return Undefined();
@@ -3358,6 +3358,22 @@ Image::~Image()
 
 IMPLEMENT_PROTOFUNC(Context2DFunction)
 
+static bool isGradient(const Value &value)
+{
+    ObjectImp *o = static_cast<ObjectImp*>(value.imp());
+    if (o->type() == ObjectType && o->inherits(&Gradient::info))
+        return true;
+    return false;
+}
+
+static bool isImagePattern(const Value &value)
+{
+    ObjectImp *o = static_cast<ObjectImp*>(value.imp());
+    if (o->type() == ObjectType && o->inherits(&ImagePattern::info))
+        return true;
+    return false;
+}
+
 Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
     if (!thisObj.inherits(&Context2D::info)) {
@@ -3593,7 +3609,27 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 exec->setException(err);
                 return err;
             }
-            CGContextFillPath (drawingContext);
+            
+            if (isGradient(contextObject->_fillStyle)) {
+                CGContextSaveGState(drawingContext);
+                
+                // Set the clip from the current path because shading only
+                // operates on clippin regions!  Odd, but true.
+                CGContextClip(drawingContext);
+
+                ObjectImp *o = static_cast<ObjectImp*>(contextObject->_fillStyle.imp());
+                Gradient *gradient = static_cast<Gradient*>(o);
+                CGShadingRef shading = gradient->getShading();
+                CGContextDrawShading(drawingContext, shading);
+                
+                CGContextRestoreGState(drawingContext);
+            }
+            else if (isImagePattern(contextObject->_fillStyle)) {
+                // FIXME:  Implement filling patterns
+            }
+            else
+                CGContextFillPath (drawingContext);
+                
             renderer->setNeedsImageUpdate();
             break;
         }
@@ -3603,7 +3639,29 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 exec->setException(err);
                 return err;
             }
-            CGContextStrokePath (drawingContext);
+            if (isGradient(contextObject->_strokeStyle)) {
+                CGContextSaveGState(drawingContext);
+                
+                // Convert the stroke normally performed on the path
+                // into a path.  Then set the clip from that path 
+                // because shading only operates on clipping regions!  Odd, 
+                // but true.
+                CGContextReplacePathWithStrokedPath(drawingContext);
+                CGContextClip(drawingContext);
+
+                ObjectImp *o = static_cast<ObjectImp*>(contextObject->_strokeStyle.imp());
+                Gradient *gradient = static_cast<Gradient*>(o);
+                
+                CGShadingRef shading = gradient->getShading();
+                CGContextDrawShading(drawingContext, shading);
+                
+                CGContextRestoreGState(drawingContext);
+            }
+            else if (isImagePattern(contextObject->_fillStyle)) {
+                // FIXME:  Implement stroking patterns
+            }
+            else
+                CGContextStrokePath (drawingContext);
             renderer->setNeedsImageUpdate();
             break;
         }
@@ -4076,7 +4134,7 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   bezierCurveTo            Context2D::BezierCurveTo               DontDelete|Function 6
   arcTo                    Context2D::ArcTo                       DontDelete|Function 5
   arc                      Context2D::Arc                         DontDelete|Function 6
-  addRect                  Context2D::Rect                        DontDelete|Function 4
+  rect                     Context2D::Rect                        DontDelete|Function 4
   clip                     Context2D::Clip                        DontDelete|Function 0
   clearRect                Context2D::ClearRect                   DontDelete|Function 4
   fillRect                 Context2D::FillRect                    DontDelete|Function 4
@@ -4238,28 +4296,49 @@ void Context2D::putValue(ExecState *exec, int token, const Value& value, int /*a
             _strokeStyle = value;
             if (value.type() == StringType) {
                 QColor qc = Context2D::colorFromValue(exec, value);
-                CGContextSetRGBStrokeColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha());
+                CGContextSetRGBStrokeColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
             }
             else {
-                // FIXME Add support for gradients and patterns.
+                // _strokeStyle is used when stroke() is called on the context.
+                // CG doesn't have the notion of a setting a stroke gradient.
+                ObjectImp *o = static_cast<ObjectImp*>(value.imp());
+                
+                if (o->type() != ObjectType || 
+                    (o->type() == ObjectType && !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))) {
+                    Object err = Error::create(exec,TypeError);
+                    exec->setException(err);
+                    return;
+                }
             }
+            break;
         }
         
         case FillStyle: {
             _fillStyle = value;
             if (value.type() == StringType) {
                 QColor qc = colorFromValue(exec, value);
-                CGContextSetRGBStrokeColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha());
+                CGContextSetRGBFillColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
             }
             else {
-                // FIXME Add support for gradients and patterns.
+                // _fillStyle is checked when fill() is called on the context.
+                // CG doesn't have the notion of setting a fill gradient.
+                ObjectImp *o = static_cast<ObjectImp*>(value.imp());
+                
+                if (o->type() != ObjectType || 
+                    (o->type() == ObjectType && !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))) {
+                    Object err = Error::create(exec,TypeError);
+                    exec->setException(err);
+                    return;
+                }
             }
+            break;
         }
         
         case LineWidth: {
             _lineWidth = value;
             float w = (float)value.toNumber(exec);
             CGContextSetLineWidth (context, w);
+            break;
         }
         
         case LineCap: {
@@ -4272,6 +4351,7 @@ void Context2D::putValue(ExecState *exec, int token, const Value& value, int /*a
             else if (capString == "square")
                 cap = kCGLineCapSquare;
             CGContextSetLineCap (context, cap);
+            break;
         }
         
         case LineJoin: {
@@ -4284,6 +4364,7 @@ void Context2D::putValue(ExecState *exec, int token, const Value& value, int /*a
             else if (joinString == "bevel")
                 join = kCGLineJoinBevel;
             CGContextSetLineJoin (context, join);
+            break;
         }
         
         case MiterLimit: {
@@ -4291,38 +4372,45 @@ void Context2D::putValue(ExecState *exec, int token, const Value& value, int /*a
             
             float l = (float)value.toNumber(exec);
             CGContextSetMiterLimit (context, l);
+            break;
         }
         
         case ShadowOffsetX: {
             _shadowOffsetX = value;
             setShadow(exec);
+            break;
         }
         
         case ShadowOffsetY: {
             _shadowOffsetY = value;
             setShadow(exec);
+            break;
         }
         
         case ShadowBlur: {
             _shadowBlur = value;
             setShadow(exec);
+            break;
         }
         
         case ShadowColor: {
             _shadowColor = value;
             setShadow(exec);
+            break;
         }
         
         case GlobalAlpha: {
             _globalAlpha = value;
             float a =  (float)value.toNumber(exec);
             CGContextSetAlpha (context, a);
+            break;
         }
         
         case GlobalCompositeOperation: {
             _globalComposite = value;
             QString compositeOperator = value.toString(exec).qstring().lower();
             QPainter::setCompositeOperation (context, compositeOperator);
+            break;
         }
         
         default: {
@@ -4379,6 +4467,10 @@ void Context2D::restore()
 Context2D::Context2D(const DOM::HTMLElement &e)
   : _element(static_cast<DOM::HTMLElementImpl*>(e.handle())), _needsFlushRasterCache(0)
 {
+    _lineWidth = Number (1.);
+    _strokeStyle = String ("black");
+    _fillStyle = String ("black");
+    
     _lineCap = String("butt");
     _lineJoin = String("miter");
     _miterLimit = Number(10.0);
@@ -4416,13 +4508,89 @@ Value KJS::GradientFunction::tryCall(ExecState *exec, Object &thisObj, const Lis
         return err;
     }
 
+    Gradient *gradient = static_cast<KJS::Gradient *>(thisObj.imp());
+
     switch (id) {
         case Gradient::AddColorStop: {
-            // FIXME:  Implement
+            if (args.size() != 2) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+
+            QColor color = Context2D::colorFromValue(exec, args[1]);
+            gradient->addColorStop ((float)args[0].toNumber(exec), color.red()/255.f, color.green()/255.f, color.blue()/255.f, color.alpha()/255.f);
         }
     }
 
     return Undefined();
+}
+
+void gradientCallback (void *info, const float *in, float *out)
+{
+    Gradient *gradient = static_cast<Gradient*>(info);
+    int numStops;
+    const ColorStop *stops = gradient->colorStops(&numStops);
+    float current = *in;
+    
+    assert (numStops >= 2);
+    
+    if (current == 0) {
+        gradient->lastStop = 0;
+        gradient->nextStop = 1;
+
+        const ColorStop *thisStop = &stops[0];
+        *out++ = thisStop->red;
+        *out++ = thisStop->green;
+        *out++ = thisStop->blue;
+        *out = thisStop->alpha;
+    }
+    else if (current == 1) {
+        const ColorStop *thisStop = &stops[numStops-1];
+        *out++ = thisStop->red;
+        *out++ = thisStop->green;
+        *out++ = thisStop->blue;
+        *out = thisStop->alpha;
+    }
+    else {
+        if (current >= stops[gradient->nextStop].stop) {
+            gradient->lastStop = gradient->nextStop;
+            gradient->nextStop = gradient->lastStop+1;
+        }
+        
+        // Add an interpolation for each component between
+        // stops.
+        const ColorStop *nextStop = &stops[gradient->nextStop];
+        const ColorStop *lastStop = &stops[gradient->lastStop];
+        
+        float stopDelta = nextStop->stop - lastStop->stop;
+        float stopOffset = current - lastStop->stop;
+        float stopPercent = stopOffset/stopDelta;
+        
+        *out++ = lastStop->red + (nextStop->red - lastStop->red) * stopPercent;
+        *out++ = lastStop->green + (nextStop->green - lastStop->green) * stopPercent;
+        *out++ = lastStop->blue + (nextStop->blue - lastStop->blue) * stopPercent;
+        *out = lastStop->alpha + (nextStop->alpha - lastStop->alpha) * stopPercent;
+    }
+}
+
+static float intervalRangeDomin[] = { 0.f, 1.f };
+static float colorComponentRangeDomains[] = { 0.f, 1.f, 0.f, 1.f, 0.f, 1.f, 0.f, 1.f };
+CGFunctionCallbacks gradientCallbacks = {
+    0, gradientCallback, NULL
+};
+
+void Gradient::commonInit()
+{
+    stops = 0;
+    stopCount = 0;
+    maxStops = 0;
+    stopsNeedAdjusting = false;
+    adjustedStopCount = 0;
+    adjustedStops = 0;
+    
+    _shadingRef = 0;
+    regenerateShading = true;
 }
 
 Gradient::Gradient(float x0, float y0, float x1, float y1)
@@ -4432,6 +4600,8 @@ Gradient::Gradient(float x0, float y0, float x1, float y1)
     _y0 = y0;
     _x1 = x1;
     _y1 = y1;
+
+    commonInit();
 }
 
 Gradient::Gradient(float x0, float y0, float r0, float x1, float y1, float r1)
@@ -4443,6 +4613,8 @@ Gradient::Gradient(float x0, float y0, float r0, float x1, float y1, float r1)
     _x1 = x1;
     _y1 = y1;
     _r1 = r1;
+
+    commonInit();
 }
 
 Value Gradient::tryGet(ExecState *exec, const Identifier &propertyName) const
@@ -4474,6 +4646,118 @@ void Gradient::putValue(ExecState *exec, int token, const Value& value, int /*at
 
 Gradient::~Gradient()
 {
+    if (_shadingRef) {
+        CGShadingRelease(_shadingRef);
+        _shadingRef = 0;
+    }
+    
+    free (stops);
+    stops = 0;
+    
+    free (adjustedStops);
+    adjustedStops = 0;
+}
+
+CGShadingRef Gradient::getShading()
+{
+    if (!regenerateShading)
+        return _shadingRef;
+    
+    if (_shadingRef)
+        CGShadingRelease (_shadingRef);
+        
+    CGFunctionRef _colorFunction = CGFunctionCreate((void *)this, 1, intervalRangeDomin, 4, colorComponentRangeDomains, &gradientCallbacks);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    if (_gradientType == Gradient::Radial) {    
+        _shadingRef = CGShadingCreateRadial(colorSpace, CGPointMake(_x0,_y0), _r0, CGPointMake(_x1,_y1), _r1, _colorFunction, true, true);
+    }
+    else {    
+        _shadingRef = CGShadingCreateAxial(colorSpace, CGPointMake(_x0,_y0), CGPointMake(_x1,_y1), _colorFunction, true, true);
+    }
+    
+    CGColorSpaceRelease (colorSpace);
+    CGFunctionRelease (_colorFunction);
+    
+    regenerateShading = false;
+    
+    return _shadingRef;
+}
+
+void Gradient::addColorStop (float s, float r, float g, float b, float a)
+{
+    if (stopCount == 0) {
+        maxStops = 4;
+        stops = (ColorStop *)malloc(maxStops * sizeof(ColorStop));
+    }
+    else if (stopCount+1 > maxStops) {
+        maxStops *= 2;
+        stops = (ColorStop *)realloc(stops, maxStops * sizeof(ColorStop));
+    }
+    stops[stopCount++] = ColorStop (s, r, g, b, a);
+    stopsNeedAdjusting = true;
+}
+
+static int sortStops(const ColorStop *a, const ColorStop *b)
+{
+    if (a->stop > b->stop)
+        return 1;
+    else if (a->stop < b->stop)
+        return -1;
+    return 0;
+}
+
+// If not specified use default start (stop 0) and end (stop 1)
+// colors.  This color will be transparent black.
+static ColorStop defaultStartStop = ColorStop(0.f, 0.f, 0.f, 0.f, 1.f);
+static ColorStop defaultEndStop = ColorStop(1.f, 0.f, 0.f, 0.f, 1.f);
+
+// Return a sorted array of stops guaranteed to contain a 0 and 1 stop.
+const ColorStop *Gradient::colorStops(int *count) const
+{
+    if (stopsNeedAdjusting || !stops) {
+        stopsNeedAdjusting = false;
+        
+        bool haveZeroStop = false;
+        bool haveOneStop = false;
+        if (stops) {
+            qsort (stops, stopCount, sizeof(ColorStop), (int (*)(const void*, const void*))sortStops);
+    
+            // Is there a zero stop?
+            haveZeroStop = (stops[0].stop == 0.f);
+
+            // Is there a one stop.  If not add one at the end.
+            haveOneStop = (stopCount > 0 && stops[stopCount-1].stop == 1.f);
+        }
+        
+        adjustedStopCount = stopCount;
+        if (!haveZeroStop)
+            adjustedStopCount++;
+        if (!haveOneStop)
+            adjustedStopCount++;
+            
+        if (adjustedStopCount != stopCount) {
+            adjustedStops = (ColorStop *)malloc(adjustedStopCount * sizeof(ColorStop));
+            memcpy (haveZeroStop ? adjustedStops : adjustedStops+1,
+                stops, stopCount*sizeof(ColorStop));
+            if (!haveZeroStop) {
+                adjustedStops[0] = defaultStartStop;
+            }
+            if (!haveOneStop) {
+                adjustedStops[adjustedStopCount-1] = defaultEndStop;
+            }
+        }
+        
+        regenerateShading = true;
+    }
+            
+    if (adjustedStops) {
+        *count = adjustedStopCount;
+        return adjustedStops;
+    }
+        
+    *count = stopCount;
+    return stops;
 }
 
 const ClassInfo KJS::ImagePattern::info = { "ImagePattern", 0, &ImagePatternTable, 0 };

@@ -1,3 +1,30 @@
+2004-09-01  Richard Williamson   <rjw@apple.com>
+
+	Finished implementation of gradient support in <canvas>.
+
+        Reviewed by John.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElementFunction::tryCall):
+        (isGradient):
+        (isImagePattern):
+        (KJS::Context2DFunction::tryCall):
+        (Context2D::putValue):
+        (Context2D::Context2D):
+        (KJS::GradientFunction::tryCall):
+        (gradientCallback):
+        (Gradient::commonInit):
+        (Gradient::Gradient):
+        (Gradient::~Gradient):
+        (Gradient::getShading):
+        (Gradient::addColorStop):
+        (sortStops):
+        (Gradient::colorStops):
+        * khtml/ecma/kjs_html.h:
+        (KJS::ColorStop::ColorStop):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+
 2004-09-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3784686, hidden links still active.  Make sure text nodes exclude themselves from nodeAtPoint checks

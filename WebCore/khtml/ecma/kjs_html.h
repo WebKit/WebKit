@@ -282,9 +282,10 @@ namespace KJS {
         CreatePattern
     };
 
-private:
     static CGColorRef Context2D::colorRefFromValue(ExecState *exec, const Value &value);
     static QColor Context2D::colorFromValue(ExecState *exec, const Value &value);
+
+private:
     
     void save();
     void restore();
@@ -311,7 +312,19 @@ private:
     Value _globalComposite;
   };
 
+    struct ColorStop {
+        float stop;
+        float red;
+        float green;
+        float blue;
+        float alpha;
+        
+        ColorStop(float s, float r, float g, float b, float a) : stop(s), red(r), green(g), blue(b), alpha(a) {};
+    };
+
+
   class Gradient : public DOMObject {
+  friend class Context2DFunction;
   public:
     //Gradient(const DOM::HTMLElement &e);
     Gradient(float x0, float y0, float x1, float y1);
@@ -333,9 +346,28 @@ private:
         Radial, Linear
     };
 
+    CGShadingRef getShading();
+    
+    void addColorStop (float s, float r, float g, float b, float alpha);
+    const ColorStop *colorStops(int *count) const;
+    
+    int lastStop;
+    int nextStop;
+    
 private:    
+    void commonInit();
+    
     int _gradientType;
     float _x0, _y0, _r0, _x1, _y1, _r1;
+    CGShadingRef _shadingRef;
+    
+    int maxStops;
+    int stopCount;
+    ColorStop *stops;
+    mutable int adjustedStopCount;
+    mutable ColorStop *adjustedStops;
+    mutable unsigned int stopsNeedAdjusting:1;
+    mutable unsigned int regenerateShading:1;
   };
 
   class ImagePattern : public DOMObject {
@@ -355,7 +387,7 @@ private:
         Repeat, RepeatX, RepeatY, NoRepeat
     };
     
-private:    
+private:
     Value _image;
     int _repetitionType;
   };
