@@ -232,12 +232,11 @@
 
 - (void)_setTitle:(NSString *)title
 {
-    NSMutableString *trimmed;
+    NSString *trimmed;
     if (title == nil) {
         trimmed = nil;
     } else {
-        trimmed = [[title mutableCopy] autorelease];
-        CFStringTrimWhitespace((CFMutableStringRef) trimmed);
+        trimmed = [title _IF_stringByTrimmingWhitespace];
         if ([trimmed length] == 0)
             trimmed = nil;
     }

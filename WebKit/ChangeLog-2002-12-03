@@ -1,3 +1,8 @@
+2002-05-08  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _setTitle:]):
+	Use _IF_stringByTrimmingWhitespace.
+
 2002-05-07  Richard J. Williamson  <rjw@apple.com>
 
         First pass at font substitution.  Find a substitute font to
