@@ -104,7 +104,7 @@ static QString MIMETypeFromCocoaType(NSString *type)
         return QString("text/uri-list");
     } else if ([type isEqualToString:NSHTMLPboardType]) {
         return QString("text/html");
-    } else if ([type isEqualToString:NSHTMLPboardType]) {
+    } else if ([type isEqualToString:NSRTFPboardType]) {
         return QString("text/rtf");
     } else {
         // FIXME - Better fallback for Foo might be application/Foo
