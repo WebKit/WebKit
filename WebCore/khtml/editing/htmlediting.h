@@ -192,6 +192,7 @@ protected:
     void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
     void insertNodeAt(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset);
     void insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
+    void insertParagraphSeparator();
     void insertTextIntoNode(DOM::TextImpl *node, long offset, const DOM::DOMString &text);
     void joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2);
     void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property);

@@ -604,6 +604,12 @@ void CompositeEditCommand::applyCommandToComposite(EditCommandPtr &cmd)
     m_cmds.append(cmd);
 }
 
+void CompositeEditCommand::insertParagraphSeparator()
+{
+    EditCommandPtr cmd(new InsertParagraphSeparatorCommand(document()));
+    applyCommandToComposite(cmd);
+}
+
 void CompositeEditCommand::insertNodeBefore(NodeImpl *insertChild, NodeImpl *refChild)
 {
     EditCommandPtr cmd(new InsertNodeBeforeCommand(document(), insertChild, refChild));

@@ -1,3 +1,14 @@
+2004-11-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Add a new helper function to insert a paragraph separator. Will be used in my
+        upcoming paste improvments.
+
+        * khtml/editing/htmlediting.cpp: Added function
+        (khtml::CompositeEditCommand::insertParagraphSeparator)
+        * khtml/editing/htmlediting.h: Ditto.
+
 2004-11-23  David Harrison  <harrison@apple.com>
 
         Added various comments.
