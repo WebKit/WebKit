@@ -1,3 +1,22 @@
+2003-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3135388 -- encoding changes do not affect text in form elements
+
+        The problem was that form data was being saved and restored, and in the case of buttons,
+        the form data was the incorrectly decoded button label.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToLayoutAcceptable]): Remove the default: case so we get a warning if
+        we omit one of the enum values from this switch statement.
+        (-[WebFrame _transitionToCommitted:]): Move the WebFrameLoadTypeReloadAllowingStaleData
+        case up so it's right next to the case it should be merged with.
+        (-[WebFrame _isLoadComplete]): Remove the default: case so we get a warning if
+        we omit one of enum values from this switch statement.
+        (-[WebFrame _itemForRestoringDocState]): Replace the if statement with a switch statement.
+        Include WebFrameLoadTypeReloadAllowingStaleData, which fixes the bug.
+
 2003-02-03  Richard Williamson   <rjw@apple.com>
 
         Fixed headerdoc type.

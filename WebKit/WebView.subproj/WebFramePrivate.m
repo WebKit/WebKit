@@ -466,22 +466,16 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     [self _scheduleLayout: timedDelay];
                 }
             }
-            break;
+            return;
         }
 
         case WebFrameStateProvisional:
         case WebFrameStateComplete:
         case WebFrameStateCompleting:
         case WebFrameStateLayoutAcceptable:
-        {
-            break;
-        }
-        
-        default:
-        {
-            ASSERT_NOT_REACHED();
-        }
+            return;
     }
+    ASSERT_NOT_REACHED();
 }
 
 - (void)_makeDocumentView
@@ -573,6 +567,11 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 break;
             }
 
+            // FIXME - just get rid of this case, and merge WebFrameLoadTypeReloadAllowingStaleData with the above case
+            case WebFrameLoadTypeReloadAllowingStaleData:
+                [self _makeDocumentView];
+                break;
+                
             case WebFrameLoadTypeStandard:
                 if (![ds _isClientRedirect]) {
                     // Add item to history.
@@ -603,11 +602,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 [self _makeDocumentView];
                 break;
 
-            // FIXME - just get rid of this case, and merge WebFrameLoadTypeReloadAllowingStaleData with one of the other reload types
-            case WebFrameLoadTypeReloadAllowingStaleData:
-                [self _makeDocumentView];
-                break;
-                
             // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
             // if we're in the WebFrameLoadTypeUninitialized state.
             default:
@@ -919,13 +913,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [_private setPreviousItem:nil];
             return;
         }
-        
-        // Yikes!  Serious horkage.
-        default:
-        {
-            ASSERT_NOT_REACHED();
-        }
     }
+    
+    // Yikes!  Serious horkage.
+    ASSERT_NOT_REACHED();
 }
 
 + (void)_recursiveCheckCompleteFromFrame: (WebFrame *)fromFrame
@@ -1697,13 +1688,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebHistoryItem *)_itemForRestoringDocState
 {
-    WebFrameLoadType loadType = [self _loadType];
-    if (loadType == WebFrameLoadTypeReload || loadType == WebFrameLoadTypeSame) {
-        // Don't restore any form state on reload or loadSame
-        return nil;
-    } else {
-        return [_private currentItem];
+    switch ([self _loadType]) {
+        case WebFrameLoadTypeReload:
+        case WebFrameLoadTypeReloadAllowingStaleData:
+        case WebFrameLoadTypeSame:
+            // Don't restore any form state on reload or loadSame
+            return nil;
+        case WebFrameLoadTypeBack:
+        case WebFrameLoadTypeForward:
+        case WebFrameLoadTypeIndexedBackForward:
+        case WebFrameLoadTypeInternal:
+        case WebFrameLoadTypeStandard:
+            return [_private currentItem];
     }
+    ASSERT_NOT_REACHED();
+    return nil;
 }
 
 -(void)_continueLoadRequestAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
