@@ -1,3 +1,11 @@
+2002-10-10  Chris Blumenberg  <cblu@apple.com>
+
+	No need to send update event when activating/deactivating. This was as old workaround for the plug-in drawing problems.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView windowBecameKey:]):
+        (-[WebBaseNetscapePluginView windowResignedKey:]):
+
 === Alexander-27 ===
 
 2002-10-10  Darin Adler  <darin@apple.com>
