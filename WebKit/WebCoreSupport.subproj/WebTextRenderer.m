@@ -842,7 +842,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     float width = widthForGlyph(self, spaceGlyph, 0);
     spaceWidth = width;
 
-    treatAsFixedPitch = [font isFixedPitch] || [font _isFakeFixedPitch];
+    treatAsFixedPitch = [font isFixedPitch] || [font _isFakeFixedPitch] || [font _web_isFakeFixedPitch];
     adjustedSpaceWidth = treatAsFixedPitch ? CEIL_TO_INT(width) : ROUND_TO_INT(width);
     
     return YES;

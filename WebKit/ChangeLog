@@ -1,3 +1,21 @@
+2005-02-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3999467> when Osaka-Mono is specified as fixed width font, Osaka used instead
+
+	Lie about Osaka-Mono.  Treat it as fixed pitch, even though,
+	strictly speaking it isn't.  (Similar to what we do with
+	Courier New.)
+
+        Reviewed by David Harrison.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _computeWidthForSpace]):
+        * WebCoreSupport.subproj/WebTextRendererFactory.h:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[NSFont _web_isFakeFixedPitch]):
+        (-[WebTextRendererFactory isFontFixedPitch:]):
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+
 2005-02-14  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
