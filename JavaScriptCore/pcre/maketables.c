@@ -152,7 +152,7 @@ for (i = 0; i < ICHAR_COUNT; i++)
   if (isdigit(i)) x += ctype_digit;
   if (isxdigit(i)) x += ctype_xdigit;
   if (isalnum(i) || i == '_') x += ctype_word;
-  if (strchr("*+?{^.$|()[", i) != 0) x += ctype_meta;
+  if (i < 127 && strchr("*+?{^.$|()[", i) != 0) x += ctype_meta;
   *p++ = x;
   }
 

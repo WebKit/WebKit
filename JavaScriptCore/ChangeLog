@@ -1,3 +1,12 @@
+2004-08-11  Darin Adler  <darin@apple.com>
+
+        - fixed a tiny problem with the UTF-16 PCRE check-in
+
+        * pcre/maketables.c: (pcre_maketables): Fix mistake in table-generating code that sometimes caused
+        the ctype_meta flag to get set in items that should not have it.
+
+        * pcre/chartables.c: Regenerated.
+
 2004-08-10  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3674747> Need to implement invokeUndefinedMethodFromWebScript:withArguments:
