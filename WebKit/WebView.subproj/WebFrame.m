@@ -755,6 +755,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                         // clear out the form data so we don't repost it to the wrong place if we
                         // ever go back/forward to this item
                         [[_private currentItem] _setFormInfoFromRequest:request];
+
+                        // We must also clear out form data so we don't try to restore it into the incoming page,
+                        // see -_opened
                     }
                 }
                 [self _makeDocumentView];
@@ -951,6 +954,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // Called after we send an openURL:... down to WebCore.
 - (void)_opened
 {
+    if ([self _loadType] == WebFrameLoadTypeStandard && [[self dataSource] _isClientRedirect]) {
+        // Clear out form data so we don't try to restore it into the incoming page.  Must happen after
+        // khtml has closed the URL and saved away the form state.
+        WebHistoryItem *item = [_private currentItem];
+        [item setDocumentState:nil];
+        [item setScrollPoint:NSZeroPoint];
+    }
+
     if ([[self dataSource] _loadingFromPageCache]){
         // Force a layout to update view size and thereby update scrollbars.
         NSView <WebDocumentView> *view = [[self frameView] documentView];

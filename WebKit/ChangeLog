@@ -1,3 +1,18 @@
+2004-07-07  Trey Matteson  <trey@apple.com>
+
+	3719051 - Safari doesn't update form inputs when a page was refreshed by javascript window.location
+	... and at least 5 other cases in Radar
+
+	Very similar problem to the Harvard PIN bug.  We need to be sure
+	to not carry any state over when we are processing a client
+	redirect, which reuses the same WebHistoryItem.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):  Comment
+        (-[WebFrame _opened]):  Clear form and scroll state on client redirect.
+
 2004-07-06  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
