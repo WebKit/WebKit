@@ -2,6 +2,18 @@
 
         Reviewed by John.
 
+        - fixed 3478025 -- links with non-Latin-1 characters in the hostname are not getting IDN-encoded
+
+        * kwq/KWQKURL.mm:
+        (KURL::parse): Changed existing code to take advantage of the fact that a NUL character
+        is classified as a path segment end character.
+        (KURL::findHostnameInHierarchicalURL): Don't treat NUL characters as terminating characters
+        for hostnames, because QChar::latin1() turns all non-Latin-1 characters into NUL characters.
+
+2003-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed 3477509 -- REGRESSION (112-113): crash in KHTMLPart::processObjectRequest at espn.com, chosun.com
 
         * khtml/khtml_part.cpp: (KHTMLPart::processObjectRequest): Use a dynamic_cast to check the type of the

@@ -990,7 +990,7 @@ void KURL::parse(const char *url, const QString *originalString)
 		passwordStart = passwordEnd = userEnd;
 	    }
 	    hostStart = passwordEnd + 1;
-	} else if (url[userEnd] == '\0' || url[userEnd] == '[' || isPathSegmentEndChar(url[userEnd])) {
+	} else if (url[userEnd] == '[' || isPathSegmentEndChar(url[userEnd])) {
 	    // hit the end of the authority, must have been no user
 	    // or looks like an IPv6 hostname
 	    // either way, try to parse it as a hostname
@@ -1038,7 +1038,7 @@ void KURL::parse(const char *url, const QString *originalString)
 	    portStart = portEnd = hostEnd;
 	}
 
-	if (url[portEnd] != '\0' && !isPathSegmentEndChar(url[portEnd])) {
+	if (!isPathSegmentEndChar(url[portEnd])) {
 	    // invalid character
 	    m_isValid = false;
 	    urlString = url;
@@ -1421,7 +1421,7 @@ bool KURL::findHostnameInHierarchicalURL(const QString &s, int &startOffset, int
     int hostnameEnd = length;
     for (int i = authorityStart; i < length; ++i) {
         char c = s[i].latin1();
-        if (c == ':' || isPathSegmentEndChar(c)) {
+        if (c == ':' || (isPathSegmentEndChar(c) && c != '\0')) {
             hostnameEnd = i;
             break;
         }
