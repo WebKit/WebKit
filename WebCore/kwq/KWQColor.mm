@@ -95,8 +95,8 @@ QColor::QColor(const QColor &copyFrom)
 {
     if (color == copyFrom.color)
         return;
-    if (color != nil)
-        [color release];
+    //if (color != nil)
+    //    [color release];
     if (copyFrom.color != nil)
         color = [copyFrom.color retain];
     else
