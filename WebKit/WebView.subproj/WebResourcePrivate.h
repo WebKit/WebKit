@@ -9,11 +9,12 @@
 
 @interface WebResource (WebResourcePrivate)
 
+- (id)_initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName copyData:(BOOL)copyData;
+
 + (NSArray *)_resourcesFromPropertyLists:(NSArray *)propertyLists;
 + (NSArray *)_propertyListsFromResources:(NSArray *)resources;
 
 - (id)_initWithPropertyList:(id)propertyList;
-- (id)_initWithCachedResponse:(NSCachedURLResponse *)response originalURL:(NSURL *)originalURL;
 
 - (NSFileWrapper *)_fileWrapperRepresentation;
 - (id)_propertyListRepresentation;

@@ -64,6 +64,12 @@
     [super finalize];
 }
 
+- (void)releaseResources
+{
+    [dataSource _setData:[self resourceData]];
+    [super releaseResources];
+}
+
 - (void)receivedError:(NSError *)error
 {
     // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
@@ -138,13 +144,6 @@
 - (void)saveResource
 {
     // Override. We don't want to save the main resource as a subresource of the data source.
-}
-
-- (void)saveResourceWithCachedResponse:(NSCachedURLResponse *)cachedResponse
-{
-    // Override. We don't want to save the main resource as a subresource of the data source.
-    // Replace the data on the data source with the cache copy to save memory.
-    [dataSource _setData:[cachedResponse data]];
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
@@ -319,10 +318,10 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [[dataSource _webView] _mainReceivedBytesSoFar:[[dataSource data] length]
+    [[dataSource _webView] _mainReceivedBytesSoFar:_bytesReceived
                                        fromDataSource:dataSource
                                              complete:NO];
-
+    
     [super connection:con didReceiveData:data lengthReceived:lengthReceived];
     _bytesReceived += [data length];
 
@@ -342,7 +341,7 @@
     [self retain];
 
     [dataSource _finishedLoading];
-    [[dataSource _webView] _mainReceivedBytesSoFar:[[dataSource data] length]
+    [[dataSource _webView] _mainReceivedBytesSoFar:_bytesReceived
                                     fromDataSource:dataSource
                                             complete:YES];
     [super connectionDidFinishLoading:con];

@@ -770,13 +770,7 @@
 }
 
 -(void)_receivedData:(NSData *)data
-{
-    if (!_private->resourceData) {
-        _private->resourceData = [[NSMutableData alloc] init];
-    }
-    ASSERT([_private->resourceData isKindOfClass:[NSMutableData class]]);
-    [_private->resourceData appendData:data];
-    
+{    
     _private->gotFirstByte = YES;
     [self _commitIfReady];
 
@@ -791,9 +785,10 @@
 
 - (void)_setData:(NSData *)data
 {
+    ASSERT(_private->resourceData == nil);
     [data retain];
     [_private->resourceData release];
-    _private->resourceData = (NSMutableData *)data;
+    _private->resourceData = data;
 }
 
 - (void)_finishedLoading
@@ -1079,7 +1074,7 @@
 
 - (NSData *)data
 {
-    return _private->resourceData;
+    return _private->resourceData != nil ? _private->resourceData : [_private->mainClient resourceData];
 }
 
 - (id <WebDocumentRepresentation>) representation

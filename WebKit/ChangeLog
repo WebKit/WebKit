@@ -1,3 +1,32 @@
+2004-12-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3907381> NSURLConnection and WebKit buffer 2 copies of incoming data
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (+[WebBaseResourceHandleDelegate initialize]): cache check to see if Foundation supports access to its buffered data
+        (-[WebBaseResourceHandleDelegate addData:]): don't buffer data if Foundation is buffering it for us
+        (-[WebBaseResourceHandleDelegate saveResource]): when creating a WebResource, pass NO for copyData since we know it won't be mutated
+        (-[WebBaseResourceHandleDelegate resourceData]): return the buffered data from the connection if it supports it
+        (-[WebBaseResourceHandleDelegate willStopBufferingData:]): make a mutable copy of the data from NSURLConnection so we can continue buffering 
+        (-[WebBaseResourceHandleDelegate willCacheResponse:]): removed optimization that used the cached response data to save the resource since that is obsolete by this change
+        (-[WebBaseResourceHandleDelegate connection:willStopBufferingData:]): new callback from NSURLConnection, informs us that NSURLConnection has given up buffering
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _receivedData:]): removed buffering code since that's done by NSURLConnection and the main client
+        (-[WebDataSource _setData:]): removed unnecessary cast since the resourceData ivar is now an NSData instead of NSMutableData
+        (-[WebDataSource data]): return resourceData ivar, else return the resourceData from the main client
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient releaseResources]): store resourceData on the data source so it can continue to have data after the main client has gone away 
+        (-[WebMainResourceClient connection:didReceiveData:lengthReceived:]):don't call [dataSource data] just to get the length of data received since [dataSource data] can now cause data to be copied
+        (-[WebMainResourceClient connectionDidFinishLoading:]): ditto
+        * WebView.subproj/WebResource.m:
+        (-[WebResource initWithData:URL:MIMEType:textEncodingName:frameName:]): call following method with YES for copyData
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:copyData:]): new initializer, allows caller to choose whether or not the data is copied
+        * WebView.subproj/WebResourcePrivate.h:
+
 2004-12-06  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3903749> REGRESSION (8A321): WebKit gets incorrect glyph metrics due to change in how AppKit uses CGFont

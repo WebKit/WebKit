@@ -27,6 +27,12 @@
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
+static BOOL NSURLConnectionSupportsBufferedData;
+
+@interface NSURLConnection (NSURLConnectionTigerPrivate)
+- (NSData *)_bufferedData;
+@end
+
 @interface WebBaseResourceHandleDelegate (WebNSURLAuthenticationChallengeSender) <NSURLAuthenticationChallengeSender>
 @end
 
@@ -74,6 +80,11 @@
 @end
 
 @implementation WebBaseResourceHandleDelegate
+
++ (void)initialize
+{
+    NSURLConnectionSupportsBufferedData = [NSURLConnection instancesRespondToSelector:@selector(_bufferedData)];
+}
 
 - (void)releaseResources
 {
@@ -266,40 +277,53 @@
 
 - (void)addData:(NSData *)data
 {
-    if (!resource) {
-        if (!resourceData) {
-            resourceData = [[NSMutableData alloc] init];
+    // Don't buffer data if we're loading it from a WebResource.
+    if (resource == nil) {
+        if (NSURLConnectionSupportsBufferedData) {
+            // Buffer data only if the connection has handed us the data because is has stopped buffering it.
+            if (resourceData != nil) {
+                [resourceData appendData:data];
+            }
+        } else {
+            if (resourceData == nil) {
+                resourceData = [[NSMutableData alloc] init];
+            }
+            [resourceData appendData:data];
         }
-        [resourceData appendData:data];
     }
 }
 
 - (void)saveResource
 {
-    if (!resource && [resourceData length] > 0) {
-        WebResource *newResource = [[WebResource alloc] initWithData:resourceData
-                                                                 URL:originalURL
-                                                            MIMEType:[response MIMEType]
-                                                    textEncodingName:[response textEncodingName]
-                                                           frameName:nil];
-        [dataSource addSubresource:newResource];
-        [newResource release];
-    }
-}
-
-- (void)saveResourceWithCachedResponse:(NSCachedURLResponse *)cachedResponse
-{
-    if (!resource) {
-        // Overwrite the resource saved with saveResource with the cache version to save memory.
-        WebResource *newResource = [[WebResource alloc] _initWithCachedResponse:cachedResponse originalURL:originalURL];
-        [dataSource addSubresource:newResource];
-        [newResource release];
+    // Don't save data as a WebResource if it was loaded from a WebResource.
+    if (resource == nil) {
+        NSData *data = [self resourceData];
+        if ([data length] > 0) {
+            // Don't have WebResource copy the data since the data is a NSMutableData that we know won't get modified. 
+            WebResource *newResource = [[WebResource alloc] _initWithData:data
+                                                                      URL:originalURL
+                                                                 MIMEType:[response MIMEType]
+                                                         textEncodingName:[response textEncodingName]
+                                                                frameName:nil
+                                                                 copyData:NO];
+            [dataSource addSubresource:newResource];
+            [newResource release];
+        }
     }
 }
 
 - (NSData *)resourceData
 {
-    return resource ? [resource data] : resourceData;
+    if (resource != nil) {
+        return [resource data];
+    }
+    if (resourceData != nil) {
+        return resourceData;
+    }
+    if (NSURLConnectionSupportsBufferedData) {
+        return [connection _bufferedData];
+    }
+    return nil;
 }
 
 - (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
@@ -452,6 +476,12 @@
     [self release];
 }
 
+- (void)willStopBufferingData:(NSData *)data
+{
+    ASSERT(resourceData == nil);
+    resourceData = [data mutableCopy];
+}
+
 - (void)didFinishLoading
 {
     // If load has been cancelled after finishing (which could happen with a 
@@ -498,7 +528,6 @@
                                                                userInfo:[cachedResponse userInfo]
                                                           storagePolicy:NSURLCacheStorageAllowedInMemoryOnly] autorelease];
     }
-    [self saveResourceWithCachedResponse:cachedResponse];
     return cachedResponse;
 }
 
@@ -530,6 +559,12 @@
 {
     ASSERT(con == connection);
     [self didReceiveData:data lengthReceived:lengthReceived];
+}
+
+- (void)connection:(NSURLConnection *)con willStopBufferingData:(NSData *)data
+{
+    ASSERT(con == connection);
+    [self willStopBufferingData:data];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con

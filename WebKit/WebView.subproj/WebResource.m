@@ -53,30 +53,7 @@ NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
 
 - (id)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName
 {
-    [self init];    
-    
-    if (!data) {
-        [self release];
-        return nil;
-    }
-    _private->data = [data copy];
-    
-    if (!URL) {
-        [self release];
-        return nil;
-    }
-    _private->URL = [URL copy];
-    
-    if (!MIMEType) {
-        [self release];
-        return nil;
-    }
-    _private->MIMEType = [MIMEType copy];
-    
-    _private->textEncodingName = [textEncodingName copy];
-    _private->frameName = [frameName copy];
-    
-    return self;
+    return [self _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName copyData:YES];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -178,6 +155,34 @@ NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
     return propertyLists;
 }
 
+- (id)_initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName copyData:(BOOL)copyData
+{
+    [self init];    
+    
+    if (!data) {
+        [self release];
+        return nil;
+    }
+    _private->data = copyData ? [data copy] : [data retain];
+    
+    if (!URL) {
+        [self release];
+        return nil;
+    }
+    _private->URL = [URL copy];
+    
+    if (!MIMEType) {
+        [self release];
+        return nil;
+    }
+    _private->MIMEType = [MIMEType copy];
+    
+    _private->textEncodingName = [textEncodingName copy];
+    _private->frameName = [frameName copy];
+    
+    return self;
+}
+
 - (id)_initWithPropertyList:(id)propertyList
 {
     if (![propertyList isKindOfClass:[NSDictionary class]]) {
@@ -191,16 +196,6 @@ NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
                      MIMEType:[propertyList _web_stringForKey:WebResourceMIMETypeKey]
              textEncodingName:[propertyList _web_stringForKey:WebResourceTextEncodingNameKey]
                     frameName:[propertyList _web_stringForKey:WebResourceFrameNameKey]];
-}
-
-- (id)_initWithCachedResponse:(NSCachedURLResponse *)cachedResponse originalURL:(NSURL *)originalURL
-{
-    NSURLResponse *response = [cachedResponse response];
-    return [self initWithData:[cachedResponse data]
-                          URL:originalURL
-                     MIMEType:[response MIMEType]
-             textEncodingName:[response textEncodingName]
-                    frameName:nil];
 }
 
 - (NSFileWrapper *)_fileWrapperRepresentation

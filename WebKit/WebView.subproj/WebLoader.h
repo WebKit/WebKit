@@ -72,8 +72,10 @@
 - (void)didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 - (void)didReceiveResponse:(NSURLResponse *)r;
 - (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived;
+- (void)willStopBufferingData:(NSData *)data;
 - (void)didFinishLoading;
 - (void)didFailWithError:(NSError *)error;
+- (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse;
 
 @end
 

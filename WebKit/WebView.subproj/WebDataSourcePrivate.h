@@ -28,7 +28,7 @@
 @interface WebDataSourcePrivate : NSObject
 {
 @public
-    NSMutableData *resourceData;
+    NSData *resourceData;
 
     id <WebDocumentRepresentation> representation;
     
