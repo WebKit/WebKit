@@ -642,6 +642,8 @@ typedef struct {
 
 - (BOOL)start
 {
+    ASSERT([self window]);
+    
     if (isStarted) {
         return YES;
     }

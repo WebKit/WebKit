@@ -496,6 +496,10 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         marginWidth:[_private->webView _marginWidth]
         marginHeight:[_private->webView _marginHeight]];
     [_private->bridge installInFrame:[_private->webView frameScrollView]];
+
+    // Call setDataSource on the document view after it has been placed in the view hierarchy.
+    // This what we for the top-level view, so should do this for views in subframes as well.
+    [documentView setDataSource:_private->dataSource];
 }
 
 - (void)_transitionToCommitted: (NSDictionary *)pageCache

@@ -1,5 +1,20 @@
 2003-01-28  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3150856 - crash with full-size plugins in frame or iframe
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView start]): added assert
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]): added assert
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _makeDocumentView]): Don't call setDataSource here because the view is not in the view hierarchy at this point.
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _makeDocumentViewForDataSource:]): Call setDataSource on the document view after it has been placed in the view hierarchy. This what we for the top-level view, so should do this for views in subframes as well.
+
+2003-01-28  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3156172 - No filename correction when downloading images via drag & drop
 
         Reviewed by mjs, john, trey.

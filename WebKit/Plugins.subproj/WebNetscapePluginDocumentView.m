@@ -16,6 +16,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebView.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResourceResponse.h>
 
 @implementation WebNetscapePluginDocumentView
@@ -55,6 +56,8 @@
 
 - (void)setDataSource:(WebDataSource *)theDataSource
 {
+    ASSERT([self window]);
+    
     [dataSource release];
     dataSource = [theDataSource retain];
 

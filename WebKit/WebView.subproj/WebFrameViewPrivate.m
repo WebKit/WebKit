@@ -79,8 +79,6 @@
     id <WebDocumentView> documentView = viewClass ? [[viewClass alloc] init] : nil;
     [self _setDocumentView:documentView];
     [documentView release];
-
-    [documentView setDataSource:dataSource];
     
     return documentView;
 }
