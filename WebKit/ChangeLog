@@ -1,3 +1,11 @@
+2003-05-07  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by darin.
+
+	- modify the Mixed build style to build optimized with symbols
+
+        * WebKit.pbproj/project.pbxproj: removed OPTIMIZATION_CGLAGS
+
 2003-05-06  Richard Williamson   <rjw@apple.com>
 
         Fixed problem for HelpViewer.  HV calls stopLoading in 
@@ -4575,6 +4583,7 @@
 	Fixed: 3199951 - Standalone plug-in content that is cancelled doesn't restart when switching tabs
 
 	Instead of creating and managing resourceData in WebMainResourceClient then passing the ownership to WebDataSource, just manage it in WebDataSource. We had the prior behavior because we didn't buffer downloads. Now, we always buffer. The fix for the bug 
+
 is to retain the incomplete data even though the load ends in error.
 
         Reviewed by darin.
@@ -4636,6 +4645,7 @@ is to retain the incomplete data even though the load ends in error.
 	Fixed: 3189675 - assertion in plug-in code fails (nil window) with .swf page displaying standalone in a tab
 
 	We start plug-ins when they are added to the window and stop them when they are removed. To restart a plug-in, the data stream must be redelivered. This works in the embedded plug-in case, but in the standalone plug-in case, the stream is delivered by th
+
 e machinery in WebKit. The stream is only delivered once. This fix addresses that.
 
         Reviewed by trey.
@@ -5100,6 +5110,7 @@ e machinery in WebKit. The stream is only delivered once. This fix addresses tha
         * Downloads.subproj/WebDownload.m:
         (-[WebDownloadPrivate dealloc]): release the WebResourceDelegateProxy
         (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]): renamed, don't pass a datasource so WebDownload is completely disconnected from the that. Pass the proxy so it transfers ownership from WebMainResourceClient and it doesn'
+
 t leak when we cancel a download.
         (-[WebDownload _setRequest:]): added
         (-[WebDownload _setResponse:]): added
@@ -5236,6 +5247,7 @@ t leak when we cancel a download.
         Reviewed by trey.
 
         * Downloads.subproj/WebDownload.h: Changed the download delegate method from download:didStartFromDataSource: download:didStartFromRequest:. Passing the data source wasn't that helpful. It was also quirky that the data source would sometimes be ni
+
 l.
         * Downloads.subproj/WebDownload.m:
         (-[WebDownloadPrivate dealloc]): release directory path
@@ -7229,6 +7241,7 @@ l.
 
 
 
+
 nown reasons.
 
         Reviewed by darin.
@@ -7722,6 +7735,7 @@ nown reasons.
 2003-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed problem where we weren't stopping the Java plug-in. This problem was introduced on Jan. 1 when the ownership of the WebPluginController was moved from WebFrame to WebDataSource. This change moves the WebPluginController to the WebHTMLView. Why this
+
 
 
 
@@ -9043,6 +9057,7 @@ nown reasons.
 
 
 
+
 ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
 
 	We should:
@@ -9059,6 +9074,7 @@ ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
         * Misc.subproj/WebNSWorkspaceExtras.h: Added.
         * Misc.subproj/WebNSWorkspaceExtras.m: Added.
         (-[NSWorkspace _web_noteFileChangedAtPath:]): Notifies the Finder (or any other app that cares) that we added, removed or changed the attributes of a file. This method is better than calling noteFileSystemChanged: because noteFileSystemChanged: se
+
 
 
 
@@ -9689,6 +9705,7 @@ nds 2 apple events both with a 60 second timeout. This method returns immediatel
         Reviewed by john.
 
 	We were reusing the drag types from the previous drag pasteboard. For example, we would declare image types when dragging URLs. This would confuse the Finder, so location files weren't being created. This would occasional cause us to crash because we wer
+
 
 
 

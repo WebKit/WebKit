@@ -8113,8 +8113,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
-				EXPORTED_SYMBOLS_FILE = "WebCore-combined.exp";
-				OPTIMIZATION_CFLAGS = "-O";
+				EXPORTED_SYMBOLS_FILE = "WebCore.exp";
 				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;

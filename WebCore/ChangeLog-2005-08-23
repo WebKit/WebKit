@@ -1,3 +1,11 @@
+2003-05-07  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by darin.
+
+	- modify the Mixed build style to build optimized with symbols
+
+        * WebCore.pbproj/project.pbxproj: removed OPTIMIZATION_CFLAGS, use WebCore.exp
+
 2003-05-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
@@ -1450,7 +1458,9 @@
 
 	Fixed: 3162338 - Embedding SVG with <object type="image/svg+xml"> doesn't work
 
-	Whenever we encounter an OBJECT tag with a type that starts with "image/" we create a render image object instead of a render part object. The behavior is nice because this allows the render object to resize to the size of the image if no WIDTH and HEIGHT are supplied. For example, the image at the bottom of this page:
+	Whenever we encounter an OBJECT tag with a type that starts with "image/" we create a render image object instead of a render part object. The behavior is nice because this allows the render object to resize to the size of the image if no WIDTH and HEIGH
+
+T are supplied. For example, the image at the bottom of this page:
 
 	http://tantek.com/CSS/Examples/boxmodelhack.html
 
@@ -8255,7 +8265,9 @@
 	that if x,y aren't inside the clip rect, the layer doesn't get added to
 	the list.
 
-	This patch also makes the "clip" property apply to the element that specifies the clip instead of to the element's kids.  This is ambiguous in the spec, but it turns out other browsers do it this way, so there really is an interpretation that must be followed. :)
+	This patch also makes the "clip" property apply to the element that specifies the clip instead of to the element's kids.  This is ambiguous in the spec, but it turns out other browsers do it this way, so there really is an interpretation that must be fol
+
+lowed. :)
         
 	Reviewed by darin
 
@@ -9012,7 +9024,9 @@
 	Fixed: 3131267 - REGRESSION: Java 1.4.1 Applets Restarted When Window is Resized
 	Fixed: 3131244 - REGRESSION: Java 1.4.1 Multiple Copies of Applet Started When Window is Resized
 
-	Dave recently patched khtml with a fix for media content inside of table cells. The patch causes the java widget to get the layout call more than once. Calling layout more than once is perfectly allowed, but the java widget wasn't prepared for that and would create a new java view for each layout. We now only create a java view when the java view hasn't already been created.
+	Dave recently patched khtml with a fix for media content inside of table cells. The patch causes the java widget to get the layout call more than once. Calling layout more than once is perfectly allowed, but the java widget wasn't prepared for that and w
+
+ould create a new java view for each layout. We now only create a java view when the java view hasn't already been created.
 
         Reviewed by darin.
 
@@ -9084,9 +9098,13 @@
 	Fixed: 3052731 - qt file complains about lack of active-x handler
 	Fixed: 3025872 - Black square where lion should be on mgm.com
 
-	3052731: The page has a syntax error. Notice the missing ">"? He treat this as an OBJECT without an EMBED. khtml actually has a fallback for this. They check the classid and map a mime type to it. They currently map for  realaudio and flash, but not quicktime. I added a quicktime mapping as well as a mapping for shockwave.
+	3052731: The page has a syntax error. Notice the missing ">"? He treat this as an OBJECT without an EMBED. khtml actually has a fallback for this. They check the classid and map a mime type to it. They currently map for  realaudio and flash, but not quic
 
-	3025872: khtml was unable to parse the EMBED tag within the OBJECT tag (similar to 3052731). When this happens, it looks at the classid and maps it to a mime type. This part was successful because it has a classid->mime type mapping for flash. The strange thing was that it was setting the main URL of the plug-in to "dummy". The code has this comment:
+ktime. I added a quicktime mapping as well as a mapping for shockwave.
+
+	3025872: khtml was unable to parse the EMBED tag within the OBJECT tag (similar to 3052731). When this happens, it looks at the classid and maps it to a mime type. This part was successful because it has a classid->mime type mapping for flash. The strang
+
+e thing was that it was setting the main URL of the plug-in to "dummy". The code has this comment:
 
 	url = "dummy"; // Not needed, but KHTMLPart aborts the request if empty
 

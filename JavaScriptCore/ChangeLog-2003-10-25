@@ -1,3 +1,11 @@
+2003-05-07  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by darin.
+	
+	- modify the Mixed build style to build optimized with symbols
+        
+	* JavaScriptCore.pbproj/project.pbxproj:  removed OPTIMIZATION_CFLAGS
+
 2003-05-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Don.

@@ -827,7 +827,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
-				OPTIMIZATION_CFLAGS = "-O";
 				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
