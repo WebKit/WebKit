@@ -24,7 +24,7 @@
  */
 
 #import <qapplication.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 QPalette QApplication::palette(const QWidget *p)
 {
@@ -62,12 +62,12 @@ QSize QApplication::globalStrut()
 
 void QApplication::setOverrideCursor(const QCursor &c)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QApplication::restoreOverrideCursor()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 QStyle &QApplication::style()

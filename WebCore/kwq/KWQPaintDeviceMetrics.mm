@@ -25,7 +25,7 @@
 
 #import <qpaintdevicemetrics.h>
 
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 {
@@ -43,12 +43,12 @@ int QPaintDeviceMetrics::depth() const
 
 int QPaintDeviceMetrics::width() const
 {
-    _logPartiallyImplemented();
+    ERROR("returning 800 for paint device width");
     return 800;
 }
 
 int QPaintDeviceMetrics::height() const
 {
-    _logPartiallyImplemented();
+    ERROR("returning 800 for paint device height");
     return 800;
 }

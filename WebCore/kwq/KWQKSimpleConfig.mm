@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 #import <ksimpleconfig.h>
 
 
 KSimpleConfig::KSimpleConfig(const QString &s, bool bReadOnly) : KConfig (s, bReadOnly)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 

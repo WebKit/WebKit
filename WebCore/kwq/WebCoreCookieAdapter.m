@@ -24,7 +24,7 @@
  */
 
 #import "WebCoreCookieAdapter.h"
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 @implementation WebCoreCookieAdapter
 
@@ -39,7 +39,7 @@ static WebCoreCookieAdapter *sharedAdapter;
 {
     [super init];
 
-    KWQ_ASSERT(!sharedAdapter);
+    ASSERT(!sharedAdapter);
     sharedAdapter = [self retain];
 
     return self;

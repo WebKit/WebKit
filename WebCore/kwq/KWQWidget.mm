@@ -27,7 +27,7 @@
 
 #import <KWQView.h>
 #import <WebCoreFrameView.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 #import <KWQWindowWidget.h>
 
 #import <khtmlview.h>
@@ -206,7 +206,7 @@ void QWidget::setFocus()
 
 void QWidget::clearFocus()
 {
-    _logNeverImplemented();
+    LOG(NeverImplemented, "never implemented");
 }
 
 QWidget::FocusPolicy QWidget::focusPolicy() const
@@ -315,7 +315,7 @@ bool QWidget::event(QEvent *)
 
 bool QWidget::focusNextPrevChild(bool)
 {
-    _logNeverImplemented();
+    LOG(NeverImplemented, "never implemented");
     return TRUE;
 }
 
@@ -328,7 +328,7 @@ void QWidget::setFrameGeometry(const QRect &rect)
 {
     NSView *view = getView();
     
-    KWQ_ASSERT(view);
+    ASSERT(view);
     
     // A QScrollView is a widget only used to represent a frame.  If
     // this widget's view is a WebCoreFrameView the we resize it's containing
@@ -336,7 +336,7 @@ void QWidget::setFrameGeometry(const QRect &rect)
     // will be autosized.
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
-        KWQ_ASSERT(view);
+        ASSERT(view);
     }
     
     [view setFrame:rect];

@@ -25,37 +25,37 @@
 
 #import <qxml.h>
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 #import <qstring.h>
 
 QString QXmlAttributes::value(const QString &) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 
 int QXmlAttributes::length() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
 
 QString QXmlAttributes::localName(int index) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 
 QString QXmlAttributes::value(int index) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 
 QString QXmlAttributes::uri(int) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 
@@ -63,55 +63,55 @@ QString QXmlAttributes::uri(int) const
 
 void QXmlInputSource::setData(const QString& data)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QXmlSimpleReader::setContentHandler(QXmlContentHandler *handler)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 bool QXmlSimpleReader::parse(const QXmlInputSource &input)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return FALSE;
 }
 
 void QXmlSimpleReader::setLexicalHandler(QXmlLexicalHandler *handler)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QXmlSimpleReader::setDTDHandler(QXmlDTDHandler *handler)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QXmlSimpleReader::setDeclHandler(QXmlDeclHandler *handler)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QXmlSimpleReader::setErrorHandler(QXmlErrorHandler *handler)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 
 QString QXmlParseException::message() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 
 int QXmlParseException::columnNumber() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
 
 int QXmlParseException::lineNumber() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }

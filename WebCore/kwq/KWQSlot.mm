@@ -25,7 +25,7 @@
 
 #import "KWQSlot.h"
 
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 #import <dom_docimpl.h>
 #import <khtml_part.h>
@@ -56,37 +56,37 @@ enum FunctionNumber {
 KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
 {
     if (KWQNamesMatch(member, SIGNAL(finishedParsing()))) {
-        KWQ_ASSERT(dynamic_cast<DocumentImpl *>(object));
+        ASSERT(dynamic_cast<DocumentImpl *>(object));
         m_function = signalFinishedParsing;
     } else if (KWQNamesMatch(member, SLOT(slotAutoScroll()))) {
-        KWQ_ASSERT(dynamic_cast<KHTMLPart *>(object));
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotAutoScroll;
     } else if (KWQNamesMatch(member, SLOT(slotClicked()))) {
-        KWQ_ASSERT(dynamic_cast<RenderFormElement *>(object));
+        ASSERT(dynamic_cast<RenderFormElement *>(object));
         m_function = slotClicked;
     } else if (KWQNamesMatch(member, SLOT(slotFinishedParsing()))) {
-        KWQ_ASSERT(dynamic_cast<KHTMLPart *>(object));
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotFinishedParsing;
     } else if (KWQNamesMatch(member, SLOT(slotRedirect()))) {
-        KWQ_ASSERT(dynamic_cast<KHTMLPart *>(object));
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotRedirect;
     } else if (KWQNamesMatch(member, SLOT(slotReturnPressed()))) {
-        KWQ_ASSERT(dynamic_cast<RenderLineEdit *>(object) || dynamic_cast<RenderFileButton *>(object));
+        ASSERT(dynamic_cast<RenderLineEdit *>(object) || dynamic_cast<RenderFileButton *>(object));
         m_function = slotReturnPressed;
     } else if (KWQNamesMatch(member, SLOT(slotSelected(int)))) {
-        KWQ_ASSERT(dynamic_cast<RenderSelect *>(object));
+        ASSERT(dynamic_cast<RenderSelect *>(object));
         m_function = slotSelected;
     } else if (KWQNamesMatch(member, SLOT(slotSelectionChanged()))) {
-        KWQ_ASSERT(dynamic_cast<RenderSelect *>(object));
+        ASSERT(dynamic_cast<RenderSelect *>(object));
         m_function = slotSelectionChanged;
     } else if (KWQNamesMatch(member, SLOT(slotStateChanged(int)))) {
-        KWQ_ASSERT(dynamic_cast<RenderCheckBox *>(object));
+        ASSERT(dynamic_cast<RenderCheckBox *>(object));
         m_function = slotStateChanged;
     } else if (KWQNamesMatch(member, SLOT(slotTextChanged()))) {
-        KWQ_ASSERT(dynamic_cast<RenderTextArea *>(object));
+        ASSERT(dynamic_cast<RenderTextArea *>(object));
         m_function = slotTextChanged;
     } else if (KWQNamesMatch(member, SLOT(slotTextChanged(const QString &)))) {
-        KWQ_ASSERT(dynamic_cast<RenderLineEdit *>(object) || dynamic_cast<RenderFileButton *>(object));
+        ASSERT(dynamic_cast<RenderLineEdit *>(object) || dynamic_cast<RenderFileButton *>(object));
         m_function = slotTextChangedWithString;
     } else {
         NSLog(@"trying to create a slot for unknown member %s", member);

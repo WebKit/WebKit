@@ -25,7 +25,6 @@
 
 #import <KWQInvisibleButton.h>
 
-#import <kwqdebug.h>
 #import <qevent.h>
 #import <khtmlview.h>
 #import <render_form.h>

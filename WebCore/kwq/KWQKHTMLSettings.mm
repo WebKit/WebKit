@@ -24,7 +24,7 @@
  */
 
 #import <khtml_settings.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 QString KHTMLSettings::stdFontName() const
 {
@@ -114,7 +114,7 @@ bool KHTMLSettings::isJavaEnabled() const
 
 bool KHTMLSettings::autoLoadImages() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return true;
 }
 

@@ -24,7 +24,7 @@
  */
 
 #import <klocale.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 #import <qstring.h>
 
 @interface KWQKLocaleBundleDummy : NSObject { }
@@ -41,12 +41,12 @@ QString i18n(const char *text)
 
 QString KLocale::language() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return "en_US";
 }
 
 QStringList KLocale::languageList() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QStringList::split(",", "us");
 }

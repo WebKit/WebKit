@@ -24,8 +24,6 @@
  */
 
 #import <kurl.h>
-#import <kwqdebug.h>
-
 
 typedef enum {
     // alpha 

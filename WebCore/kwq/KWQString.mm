@@ -24,15 +24,12 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 #import <qstring.h>
 #import <qregexp.h>
 #import <stdio.h>
 
 #define CHECK_FOR_HANDLE_LEAKS 0
-
-// Oops. I jumped the gun. Here's a stopgap.
-#define FATAL(x) ((void)0)
 
 // Why can't I find this in a header anywhere?  It's too bad we have
 // to wire knowledge of allocation sizes, but it makes a huge diffence.
@@ -453,7 +450,7 @@ QStringData **QString::makeSharedNullHandle()
 
 QStringData::~QStringData()
 {
-    KWQ_ASSERT(refCount == 0);
+    ASSERT(refCount == 0);
         
     // Ack!  The destcructor will be called when the QString is deleted.
     if ( _unicode && !_isUnicodeInternal)
@@ -478,7 +475,7 @@ inline char *QStringData::ascii()
 
 void QStringData::increaseAsciiSize(uint size)
 {
-    KWQ_ASSERT(this != QString::shared_null);
+    ASSERT(this != QString::shared_null);
         
     uint newSize = (uint)ALLOC_CHAR_GOOD_SIZE(size);
     char *prev = 0;
@@ -532,7 +529,7 @@ inline QChar *QStringData::unicode()
 
 void QStringData::increaseUnicodeSize(uint size)
 {
-    KWQ_ASSERT(this != QString::shared_null);
+    ASSERT(this != QString::shared_null);
         
     uint newSize = (uint)ALLOC_QCHAR_GOOD_SIZE(size);
     QChar *prev = 0;
@@ -570,7 +567,7 @@ void QStringData::increaseUnicodeSize(uint size)
 
 char *QStringData::makeAscii()
 {
-    KWQ_ASSERT(this != QString::shared_null);
+    ASSERT(this != QString::shared_null);
         
     if (_isUnicodeValid){
         QChar copyBuf[QS_INTERNAL_BUFFER_CHARS];
@@ -618,7 +615,7 @@ char *QStringData::makeAscii()
 
 QChar *QStringData::makeUnicode()
 {
-    KWQ_ASSERT(this != QString::shared_null);
+    ASSERT(this != QString::shared_null);
         
     if (_isAsciiValid){
         char copyBuf[QS_INTERNAL_BUFFER_CHARS];
@@ -775,8 +772,8 @@ QString::~QString()
     QStringData **oldHandle = dataHandle;
     QStringData *oldData = *oldHandle;
     
-    KWQ_ASSERT(oldHandle);
-    KWQ_ASSERT(oldData->refCount != 0);
+    ASSERT(oldHandle);
+    ASSERT(oldData->refCount != 0);
 
     // Only free the handle if no other string has a reference to the
     // data.  The handle will be freed by the string that has the
@@ -790,7 +787,7 @@ QString::~QString()
     // if *dataHandle points to our internal QStringData.
     oldData->deref();
 
-    KWQ_ASSERT(oldData != &internalData || oldData->refCount == 0);
+    ASSERT(oldData != &internalData || oldData->refCount == 0);
     
     if (needToFreeHandle)
         freeHandle(oldHandle);
@@ -2387,7 +2384,7 @@ void QString::fill(QChar qc, int len)
         
     if (len == 0) {
         if (dataHandle != shared_null_handle) {
-            KWQ_ASSERT(dataHandle[0]->refCount == 1);
+            ASSERT(dataHandle[0]->refCount == 1);
             deref();
             freeHandle(dataHandle);
             dataHandle = makeSharedNullHandle();
@@ -2414,13 +2411,13 @@ void QString::fill(QChar qc, int len)
 void QString::compose()
 {
     // FIXME: unimplemented because we don't do ligatures yet
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 QString QString::visual()
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString(*this);
 }
 

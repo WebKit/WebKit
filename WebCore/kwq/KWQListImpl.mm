@@ -28,7 +28,7 @@
 #import <cstddef>
 #import <algorithm>
 #import <CoreFoundation/CFArray.h>
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 class KWQListNode
 {
@@ -479,8 +479,8 @@ void KWQListImpl::swap(KWQListImpl &other)
 {
     using std::swap;
     
-    KWQ_ASSERT(iterators == NULL);
-    KWQ_ASSERT(other.iterators == NULL);
+    ASSERT(iterators == NULL);
+    ASSERT(other.iterators == NULL);
     
     swap(head, other.head);
     swap(tail, other.tail);

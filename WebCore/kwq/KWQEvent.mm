@@ -24,7 +24,7 @@
  */
 
 #import <qevent.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 QEvent::~QEvent()
 {
@@ -57,57 +57,57 @@ QTimerEvent::QTimerEvent(int t)
 QKeyEvent::QKeyEvent(Type t, int, int, int, const QString &, bool, ushort)
     : QEvent(t)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 int QKeyEvent::key() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
 
 Qt::ButtonState QKeyEvent::state() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return Qt::NoButton;
 }
 
 void QKeyEvent::accept()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QKeyEvent::ignore()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 bool QKeyEvent::isAutoRepeat() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return false;
 }
 
 QString QKeyEvent::text(void) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 
 int QKeyEvent::ascii(void) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
 
 int QKeyEvent::count(void) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
 
 bool QKeyEvent::isAccepted(void) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return false;
 }

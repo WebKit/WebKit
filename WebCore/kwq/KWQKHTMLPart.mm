@@ -38,7 +38,7 @@
 
 #import <WebFoundation/WebNSURLExtras.h>
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 #undef _KWQ_TIMING
 
@@ -160,7 +160,7 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const ch
         part->setEncoding(QString::null, false);
     }
     
-    KWQ_ASSERT(d->m_doc != NULL);
+    ASSERT(d->m_doc != NULL);
 
     part->write(bytes, length);
 }
@@ -214,7 +214,7 @@ void KWQKHTMLPartImpl::urlSelected(const QString &url, int button, int state, co
 bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
                                      const QStringList &params, bool isIFrame )
 {
-    KWQ_ASSERT(!frameExists(frameName));
+    ASSERT(!frameExists(frameName));
 
     NSURL *childURL = part->completeURL(url).getNSURL();
     if (childURL == nil) {
@@ -222,7 +222,7 @@ bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, cons
         return false;
     }
     
-    KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", frameName.ascii());
+    LOG(Frames, "name %s", frameName.ascii());
     
     HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
     WebCoreBridge *childBridge = [_bridge createChildFrameNamed:frameName.getNSString() withURL:childURL

@@ -1,3 +1,74 @@
+2002-09-08  Darin Adler  <darin@apple.com>
+
+	Switch over to new assertion/logging scheme.
+
+        * kwq/KWQAssertions.h: Added.
+        * kwq/KWQAssertions.m: Added.
+        * kwq/KWQLogging.h: Added.
+        * kwq/KWQLogging.m: Added.
+        * kwq/kwqdebug.h: Removed.
+        * kwq/kwqdebug.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Update to reflect above changes.
+
+        * kwq/KWQApplication.mm:
+        * kwq/KWQChar.mm:
+        * kwq/KWQColor.mm:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQCompletion.mm:
+        * kwq/KWQCursor.mm:
+        * kwq/KWQDrawUtil.mm:
+        * kwq/KWQEvent.mm:
+        * kwq/KWQFontInfo.mm:
+        * kwq/KWQFontMetrics.mm:
+        * kwq/KWQFrame.mm:
+        * kwq/KWQHBox.mm:
+        * kwq/KWQInputDialog.mm:
+        * kwq/KWQInvisibleButton.mm:
+        * kwq/KWQKConfigBase.mm:
+        * kwq/KWQKFileDialog.mm:
+        * kwq/KWQKFileItem.mm:
+        * kwq/KWQKGlobalSettings.mm:
+        * kwq/KWQKHTMLPartImpl.mm:
+        * kwq/KWQKHTMLSettings.mm:
+        * kwq/KWQKIconLoader.mm:
+        * kwq/KWQKJob.mm:
+        * kwq/KWQKLocale.mm:
+        * kwq/KWQKMimeType.mm:
+        * kwq/KWQKPartsEvent.mm:
+        * kwq/KWQKSimpleConfig.mm:
+        * kwq/KWQKURL.mm:
+        * kwq/KWQKWin.mm:
+        * kwq/KWQKWinModule.mm:
+        * kwq/KWQKjobclasses.mm:
+        * kwq/KWQKnetaccess.mm:
+        * kwq/KWQLabel.mm:
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQListBox.mm:
+        * kwq/KWQListImpl.mm:
+        * kwq/KWQLoaderImpl.mm:
+        * kwq/KWQObject.mm:
+        * kwq/KWQPaintDeviceMetrics.mm:
+        * kwq/KWQPainter.mm:
+        * kwq/KWQPixmap.mm:
+        * kwq/KWQRegion.mm:
+        * kwq/KWQScrollView.mm:
+        * kwq/KWQSlot.mm:
+        * kwq/KWQString.mm:
+        * kwq/KWQTimer.mm:
+        * kwq/KWQWidget.mm:
+        * kwq/KWQbrowserinterface.mm:
+        * kwq/KWQtextcodec.mm:
+        * kwq/KWQtextstream.mm:
+        * kwq/KWQxml.mm:
+        * kwq/WebCoreBridge.mm:
+        * kwq/WebCoreCookieAdapter.m:
+        * kwq/WebCoreHistory.m:
+        * kwq/WebCoreImageRendererFactory.m:
+        * kwq/WebCoreTextRendererFactory.m:
+        * kwq/WebCoreViewFactory.m:
+	Update to use new assertions and logging macros.
+	In some cases, just removed unneeded includes.
+
 2002-09-08  David Hyatt  <hyatt@apple.com>
 
 	Landing the new layer system and turning it on for painting of

@@ -24,7 +24,7 @@
  */
 
 #import <qcursor.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 const QCursor Qt::sizeAllCursor;
 const QCursor Qt::splitHCursor;
@@ -45,7 +45,7 @@ QCursor::QCursor(NSCursor *cur)
 QCursor::QCursor(const QPixmap &pixmap)
     : cursor([[NSCursor arrowCursor] retain])
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 QCursor::QCursor(const QCursor &other)
@@ -60,7 +60,7 @@ QCursor::~QCursor()
       
 QPoint QCursor::pos()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QPoint();
 }
 

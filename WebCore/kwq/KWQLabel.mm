@@ -25,8 +25,6 @@
 
 #import <qlabel.h>
 
-#import <kwqdebug.h>
-
 QLabel::QLabel(const QString &, QWidget *)
 {
 }

@@ -24,7 +24,7 @@
  */
 
 #import <qfontinfo.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 QFontInfo::QFontInfo(const QFont &f)
     : font(f)
@@ -33,6 +33,6 @@ QFontInfo::QFontInfo(const QFont &f)
 
 bool QFontInfo::fixedPitch() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return FALSE;
 }

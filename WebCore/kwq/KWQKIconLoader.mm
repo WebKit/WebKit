@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 #import <kiconloader.h>
 
 QPixmap KIconLoader::loadIcon(const QString &name, int group, int size, int state) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QPixmap();
 }

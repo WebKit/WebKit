@@ -27,7 +27,7 @@
 
 #import <kglobalsettings.h>
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 QFont KGlobalSettings::generalFont()
 {
@@ -49,7 +49,7 @@ QFont KGlobalSettings::menuFont()
 
 int KGlobalSettings::contrast()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
 

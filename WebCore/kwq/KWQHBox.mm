@@ -25,7 +25,6 @@
 
 #import <qhbox.h>
 
-#import <kwqdebug.h>
 #import <KWQView.h>
 
 // This class is ONLY used by FORM <input type=file> elements.  It's used

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 #import <netaccess.h>
 
 //FIX ME:
@@ -33,14 +33,14 @@ namespace KIO {
 
 bool NetAccess::stat(const KURL &, KIO::UDSEntry &)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return FALSE;
 }
 
 
 QString NetAccess::lastErrorString()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     if (tempQString == NULL) {
 	tempQString = new QString();
     }
@@ -51,14 +51,14 @@ QString NetAccess::lastErrorString()
 
 bool NetAccess::download(const KURL &, QString &)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return FALSE;
 }
 
 
 void NetAccess::removeTempFile(const QString &)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 } // namespace KIO

@@ -24,7 +24,7 @@
  */
 
 #import "WebCoreTextRendererFactory.h"
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 @implementation WebCoreTextRendererFactory
 
@@ -40,7 +40,7 @@ static WebCoreTextRendererFactory *sharedFactory;
 {
     [super init];
     
-    KWQ_ASSERT(!sharedFactory);
+    ASSERT(!sharedFactory);
     sharedFactory = [self retain];
     
     return self;

@@ -25,16 +25,16 @@
 
 #import <kfileitem.h>
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 KFileItem::KFileItem(const KIO::UDSEntry &, const KURL &, bool, bool)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 bool KFileItem::isDir() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return FALSE;
 }
 

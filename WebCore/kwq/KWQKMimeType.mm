@@ -24,44 +24,44 @@
  */
 
 #import <kmimetype.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t, bool, bool)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return KMimeType::Ptr();
 }
 
 
 KMimeType::~KMimeType()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 
 QString KMimeType::name() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 
 QString KMimeType::comment() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 
 
 KMimeType::Ptr KMimeType::mimeType(QString serviceType)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return KMimeType::Ptr();
 }
 
 
 QString KMimeType::defaultMimeType()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }
 

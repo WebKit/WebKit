@@ -24,11 +24,11 @@
  */
 
 #import <kfiledialog.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 QString KFileDialog::getOpenFileName(const QString &startDir, 
     const QString &filter, QWidget *parent, const QString &caption)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return QString();
 }

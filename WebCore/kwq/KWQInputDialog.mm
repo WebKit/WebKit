@@ -24,10 +24,10 @@
  */
 
 #import <qinputdialog.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 QString QInputDialog::getText(const QString &, const QString &, QLineEdit::EchoMode, const QString &, bool *)
 {
-    _logNeverImplemented();
+    LOG(NeverImplemented, "never implemented");
     return QString();
 }

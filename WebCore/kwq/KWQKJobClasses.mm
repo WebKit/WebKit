@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 #import <qstring.h>
 #import <jobclasses.h>
@@ -85,7 +85,7 @@ void TransferJob::setError(int e)
 
 QString TransferJob::errorText() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
 

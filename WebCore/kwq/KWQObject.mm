@@ -27,7 +27,7 @@
 
 #import <qvariant.h>
 #import <qguardedptr.h>
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 #import <KWQSignal.h>
 #import <KWQSlot.h>
 
@@ -91,7 +91,7 @@ QObject::QObject(QObject *parent, const char *name)
 
 QObject::~QObject()
 {
-    KWQ_ASSERT(m_signalListHead == 0);
+    ASSERT(m_signalListHead == 0);
 }
 
 @interface KWQTimerCallback : NSObject

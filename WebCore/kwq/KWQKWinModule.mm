@@ -24,7 +24,6 @@
  */
 
 #import <kwinmodule.h>
-#import <kwqdebug.h>
 
 QRect KWinModule::workArea() const
 {

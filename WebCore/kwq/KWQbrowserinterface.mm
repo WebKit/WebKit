@@ -25,13 +25,13 @@
 
 #import <browserinterface.h>
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 namespace KParts {
 
 void BrowserInterface::callMethod(const char *name, const QVariant &argument)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 } // namespace KParts

@@ -27,8 +27,6 @@
 
 #import <WebCoreHistory.h>
 
-#import <kwqdebug.h>
-
 @implementation WebCoreHistory
 
 static WebCoreHistory *_sharedHistory = nil;

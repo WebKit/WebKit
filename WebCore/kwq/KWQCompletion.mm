@@ -24,15 +24,15 @@
  */
 
 #import <KWQCompletion.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 void KCompletion::setItems(const QStringList &)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 KCompletion *KCompletionBase::completionObject()
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }

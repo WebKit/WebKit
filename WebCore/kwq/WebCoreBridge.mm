@@ -32,7 +32,7 @@
 #import <render_object.h>
 #import <render_root.h>
 #import <render_frames.h>
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 #import <html/html_documentimpl.h>
 #import <xml/dom_nodeimpl.h>
 #import <htmlattrs.h>
@@ -314,7 +314,7 @@ using khtml::RenderPart;
 
     // If this isn't the main frame, it must have a render part set, or it
     // won't ever get installed in the view hierarchy.
-    KWQ_ASSERT(self == [self mainFrame] || renderPart != nil);
+    ASSERT(self == [self mainFrame] || renderPart != nil);
 
     if (renderPart) {
         renderPart->setWidget(part->impl->view());

@@ -25,8 +25,6 @@
 
 #import <qregion.h>
 
-#import <kwqdebug.h>
-
 QRegion::QRegion(const QRect &rect)
     : path([[NSBezierPath bezierPathWithRect:rect] retain])
 {

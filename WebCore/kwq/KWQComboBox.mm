@@ -25,7 +25,6 @@
 
 #import <qcombobox.h>
 
-#import <kwqdebug.h>
 #import <KWQKHTMLPartImpl.h>
 #import <WebCoreBridge.h>
 

@@ -24,13 +24,13 @@
  */
 
 #import <job.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 namespace KIO {
 
 void http_update_cache(const KURL &, bool, time_t)
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 } // namespace KIO

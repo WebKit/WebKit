@@ -24,7 +24,7 @@
  */
 
 #import "WebCoreViewFactory.h"
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 @implementation WebCoreViewFactory
 
@@ -39,7 +39,7 @@ static WebCoreViewFactory *sharedFactory;
 {
     [super init];
     
-    KWQ_ASSERT(!sharedFactory);
+    ASSERT(!sharedFactory);
     sharedFactory = [self retain];
     
     return self;

@@ -30,7 +30,7 @@
 #import <qstack.h>
 #import <qpoint.h>
 
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 #import <WebCoreTextRendererFactory.h>
 #import <WebCoreTextRenderer.h>
@@ -123,7 +123,7 @@ void QPainter::save()
 void QPainter::restore()
 {
     if (data->stack.isEmpty()) {
-        KWQDEBUG("ERROR void QPainter::restore() stack is empty\n");
+        ERROR("ERROR void QPainter::restore() stack is empty");
 	return;
     }
     QPState *ps = data->stack.pop();
@@ -240,7 +240,7 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
         
     if (data->state.pen.style() != NoPen) {
         if (w != h) {
-            KWQDEBUG("ERROR (INCOMPLETE IMPLEMENTATION) void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)\nOnly supports drawing arcs on a circle.\n");
+            ERROR("only supports drawing arcs on a circle");
         }
         
         NSBezierPath *path = [[NSBezierPath alloc] init];

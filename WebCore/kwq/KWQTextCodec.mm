@@ -25,7 +25,6 @@
 
 #import <qtextcodec.h>
 
-#import <kwqdebug.h>
 #import <KWQCharsets.h>
 
 static CFMutableDictionaryRef encodingToCodec = NULL;

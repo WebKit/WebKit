@@ -25,7 +25,7 @@
 
 #import <qtimer.h>
 
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 @interface KWQTimerTarget : NSObject
 {
@@ -92,7 +92,7 @@ void QTimer::stop()
 
 void QTimer::setMonitor(void (*monitorFunction)(void *context), void *context)
 {
-    KWQ_ASSERT(!m_monitorFunction);
+    ASSERT(!m_monitorFunction);
     m_monitorFunction = monitorFunction;
     m_monitorFunctionContext = context;
 }

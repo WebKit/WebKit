@@ -27,7 +27,7 @@
 
 #import <qnamespace.h>
 #import <qstring.h>
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 static void createStaticConstructorAutoreleasePool()
 {
@@ -347,7 +347,7 @@ void QColor::setNamedColor(const QString &name)
             setRgb(r, g, b);
         }
         else {
-            KWQDEBUG("couldn't create color using name %s", name.ascii());
+            ERROR("couldn't create color using name %s", name.ascii());
             [color release];
             color = nil;
         }

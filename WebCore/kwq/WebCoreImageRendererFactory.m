@@ -24,7 +24,7 @@
  */
 
 #import "WebCoreImageRendererFactory.h"
-#import <kwqdebug.h>
+#import <KWQAssertions.h>
 
 @implementation WebCoreImageRendererFactory
 
@@ -39,7 +39,7 @@ static WebCoreImageRendererFactory *sharedFactory;
 {
     [super init];
     
-    KWQ_ASSERT(!sharedFactory);
+    ASSERT(!sharedFactory);
     sharedFactory = [self retain];
     
     return self;

@@ -30,7 +30,7 @@
 #import <qfont.h>
 #import <WebCoreTextRendererFactory.h>
 #import <WebCoreTextRenderer.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 struct QFontMetricsPrivate
 {
@@ -164,12 +164,12 @@ QSize QFontMetrics::size(int, const QString &qstring) const
 
 int QFontMetrics::rightBearing(QChar) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
 
 int QFontMetrics::leftBearing(QChar) const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }

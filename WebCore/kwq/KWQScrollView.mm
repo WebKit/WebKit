@@ -27,7 +27,7 @@
 
 #import <WebCoreFrameView.h>
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.
@@ -174,19 +174,19 @@ void QScrollView::setContentsPos(int x, int y)
 
 void QScrollView::setVScrollBarMode(ScrollBarMode)
 {
-    _logNeverImplemented();
+    LOG(NeverImplemented, "never implemented");
 }
 
 void QScrollView::setHScrollBarMode(ScrollBarMode)
 {
-    _logNeverImplemented();
+    LOG(NeverImplemented, "never implemented");
 }
 
 void QScrollView::addChild(QWidget* child, int x, int y)
 {
     NSView *thisView, *thisDocView, *subview;
 
-    KWQ_ASSERT(child != this);
+    ASSERT(child != this);
     
     child->move(x, y);
     
@@ -204,7 +204,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
         subview = [subview superview];
     }
     
-    KWQ_ASSERT(subview != thisView);
+    ASSERT(subview != thisView);
 
     if ([subview superview] == thisView) {
         return;
@@ -212,7 +212,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     
     [subview removeFromSuperview];
     
-    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "Adding %p %s at (%d,%d) w %d h %d\n", subview, [[[subview class] className] cString], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
+    LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview, [[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
     [thisView addSubview:subview];
 }
 
@@ -223,12 +223,12 @@ void QScrollView::removeChild(QWidget* child)
 
 void QScrollView::resizeContents(int w, int h)
 {
-    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
+    LOG(Frames, "%p %@ at w %d h %d\n", getView(), [[getView() class] className], w, h);
     NSView *view = getView();
     if ([view _KWQ_isScrollView]){
         view = [view _KWQ_getDocumentView];
         
-        KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", view, [[[view class] className] cString], w, h);
+        LOG(Frames, "%p %@ at w %d h %d\n", view, [[view class] className], w, h);
         if (w < 0)
             w = 0;
         if (h < 0)
@@ -256,7 +256,7 @@ void QScrollView::updateContents(const QRect &rect)
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase)
 {
-    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
+    LOG(Frames, "%p %@ at (%d,%d) w %d h %d\n", getView(), [[getView() class] className], x, y, w, h);
 }
 
 QPoint QScrollView::contentsToViewport(const QPoint &p)
@@ -296,7 +296,7 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 
 void QScrollView::setStaticBackground(bool)
 {
-    _logNeverImplemented();
+    LOG(NeverImplemented, "never implemented");
 }
 
 void QScrollView::resizeEvent(QResizeEvent *)
@@ -305,10 +305,10 @@ void QScrollView::resizeEvent(QResizeEvent *)
 
 void QScrollView::ensureVisible(int,int)
 {
-    _logNeverImplemented();
+    LOG(NeverImplemented, "never implemented");
 }
 
 void QScrollView::ensureVisible(int,int,int,int)
 {
-    _logNeverImplemented();
+    LOG(NeverImplemented, "never implemented");
 }

@@ -25,8 +25,6 @@
 
 #import <qframe.h>
 
-#import <kwqdebug.h>
-
 void QFrame::setFrameStyle(int s)
 {
     _frameStyle = s;

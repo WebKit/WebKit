@@ -24,7 +24,7 @@
  */
 
 #import <kwin.h>
-#import <kwqdebug.h>
+
 #import <qwidget.h>
 
 KWin::Info KWin::info(long win)

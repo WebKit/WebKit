@@ -26,7 +26,7 @@
 #import <qlineedit.h>
 
 #import <KWQNSTextField.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 #import <WebCoreTextRendererFactory.h>
 
 // This replicates constants from [NSTextFieldCell drawingRectForBounds].
@@ -97,7 +97,7 @@ void QLineEdit::setReadOnly(bool flag)
 
 bool QLineEdit::frame() const
 {
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     return FALSE;
 }
 

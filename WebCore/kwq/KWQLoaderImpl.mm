@@ -36,7 +36,7 @@
 #import <WebCoreBridge.h>
 #import <WebCoreResourceLoader.h>
 
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 
 using khtml::CachedObject;
 using khtml::CachedImage;
@@ -94,7 +94,7 @@ using KIO::TransferJob;
 
 bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 {
-    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "Serving request for base %s, url %s", 
+    LOG(Loading, "Serving request for base %s, url %s", 
         request->m_docLoader->part()->baseURL().url().latin1(),
         request->object->url().string().latin1());
     
@@ -148,7 +148,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     // Notify the caller that we "loaded".
     WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->impl->bridge();
     NSURL *URL = [[NSURL alloc] initWithString:cachedObject->url().string().getNSString()];
-    KWQ_ASSERT(URL);
+    ASSERT(URL);
     CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
     [bridge objectLoadedFromCache:URL size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
     [URL release];

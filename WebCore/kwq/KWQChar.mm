@@ -24,7 +24,7 @@
  */
 
 #import <qstring.h>
-#import <kwqdebug.h>
+#import <KWQLogging.h>
 #import <Foundation/Foundation.h>
 
 static UniChar scratchUniChar;
@@ -91,7 +91,7 @@ QChar QChar::upper() const
 QChar::Direction QChar::direction() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     if (c == ' ')
         return DirWS;
     return DirL;
@@ -100,7 +100,7 @@ QChar::Direction QChar::direction() const
 bool QChar::mirrored() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     // return whether character should be reversed if text direction is reversed
     return false;
 }
@@ -108,7 +108,7 @@ bool QChar::mirrored() const
 QChar QChar::mirroredChar() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    _logNotYetImplemented();
+    LOG(NotYetImplemented, "not yet implemented");
     // return mirrored character if it is mirrored else return itself
     return *this;
 }

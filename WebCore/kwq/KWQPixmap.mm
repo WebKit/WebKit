@@ -25,7 +25,6 @@
 
 #import <qpixmap.h>
 
-#import <kwqdebug.h>
 #import <WebCoreImageRenderer.h>
 #import <WebCoreImageRendererFactory.h>
 
