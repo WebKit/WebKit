@@ -1,5 +1,19 @@
 2005-01-17  David Harrison  <harrison@apple.com>
 
+        Updated expected test results.
+        
+        <rdar://problem/3945880> line-ending space seems not to be present
+
+        * layout-tests/editing/deleting/delete-ws-fixup-001-expected.txt:
+        * layout-tests/editing/deleting/delete-ws-fixup-002-expected.txt:
+        * layout-tests/editing/inserting/insert-div-020-expected.txt:
+        * layout-tests/editing/inserting/insert-div-021-expected.txt:
+        * layout-tests/editing/inserting/insert-div-022-expected.txt:
+        * layout-tests/editing/inserting/insert-div-023-expected.txt:
+        * layout-tests/editing/inserting/insert-div-024-expected.txt:
+
+2005-01-17  David Harrison  <harrison@apple.com>
+
         Reviewed by Dave Hyatt (bidi.cpp) and Darin Adler (selection.cpp).
 
         <rdar://problem/3945880> line-ending space seems not to be present
