@@ -359,20 +359,10 @@ static char *newCString(NSString *string)
     NSRect contentViewFrame = [[[self window] contentView] frame];
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
-    float windowContentFrameHeight, toolbarHeight;
-        
-    if ([mime isEqualToString:@"application/x-java-applet"]) {
-        // The java plug-in assumes that the port is positioned 22 pixels down from the top-left corner of the window.
-        // This is incorrect if the window has a toolbar. Here's the workaround. 2973586
-        toolbarHeight = windowFrame.size.height - contentViewFrame.size.height - contentViewFrame.origin.y - 22;
-        windowContentFrameHeight = contentViewFrame.size.height + toolbarHeight;
-    } else {
-        windowContentFrameHeight = contentViewFrame.size.height;
-    }
     
     // flip Y coordinates
-    boundsInWindow.origin.y = windowContentFrameHeight - boundsInWindow.origin.y - boundsInWindow.size.height; 
-    visibleRectInWindow.origin.y = windowContentFrameHeight - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
+    boundsInWindow.origin.y = contentViewFrame.size.height - boundsInWindow.origin.y - boundsInWindow.size.height; 
+    visibleRectInWindow.origin.y = contentViewFrame.size.height - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
     
     nPort.port = port;
     

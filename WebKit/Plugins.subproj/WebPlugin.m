@@ -33,7 +33,33 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 @implementation IFPlugin
 
-- (void)_getPluginInfoForResourceFile:(SInt16)resRef
+- (SInt16)_openResourceFile
+{
+    FSRef fref;
+    OSErr err;
+    
+    if(isBundle){
+        return CFBundleOpenBundleResourceMap(bundle);
+    }else{
+        err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
+        if(err != noErr){
+            return -1;
+        }
+            
+        return FSOpenResFile(&fref, fsRdPerm);
+    }
+}
+
+- (void)_closeResourceFile:(SInt16)resRef
+{
+    if(isBundle){
+        CFBundleCloseBundleResourceMap(bundle, resRef);
+    }else{
+        CloseResFile(resRef);
+    }
+}
+
+- (BOOL)_getPluginInfo
 {
     Str255 theString;
     char temp[256], description[256];
@@ -41,8 +67,13 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSString *tempString;
     uint n, i;
     
-    mimeTypes = [NSMutableArray arrayWithCapacity:1];
+    SInt16 resRef = [self _openResourceFile];
+    if(resRef == -1)
+        return NO;
+    
     UseResFile(resRef);
+    
+    mimeTypes = [NSMutableArray arrayWithCapacity:1];
     for(n=1, i=0; 1; n+=2, i++){
         GetIndString(theString, 128, n);
         if (theString[0] == 0)
@@ -79,64 +110,49 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     CopyPascalStringToC(theString, temp);
     name = [[NSString stringWithCString:temp] retain]; // plugin's name
     [mimeTypes retain];
+    
+    [self _closeResourceFile:resRef];
+    
+    return YES;
 }
 
 - initWithPath:(NSString *)pluginPath
 {
     NSFileManager *fileManager;
     NSDictionary *fileInfo;
-    SInt16 resRef;
-    FSRef fref;
-    OSErr err;
     UInt32 type;
     CFURLRef pluginURL;
-        
+    
+    path = pluginPath;
     fileManager = [NSFileManager defaultManager];
     fileInfo = [fileManager fileAttributesAtPath:pluginPath traverseLink:YES];
     
     // single-file plug-in with resource fork
     if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){
-        if([[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == FOUR_CHAR_CODE('BRPL') ||
-           [[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == FOUR_CHAR_CODE('IEPL')){
-           
-            err = FSPathMakeRef((UInt8 *)[pluginPath cString], &fref, NULL);
-            if(err != noErr){
-                WEBKITDEBUG("IFPlugin: FSPathMakeRef failed. Error=%d\n", err);
-                return nil;
-            }
-            
-            resRef = FSOpenResFile(&fref, fsRdPerm);
-            if(resRef == -1) {
-                WEBKITDEBUG("IFPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
-                return nil;
-            }
-            
-            [self _getPluginInfoForResourceFile:resRef];
-            CloseResFile(resRef);
-            isBundle = NO;
-        }else return nil;
-        
-    //bundle plug-in
+        type = [[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue];
+        isBundle = NO;
+    
+    // bundle
     }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){
         pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)pluginPath, kCFURLPOSIXPathStyle, TRUE);
         bundle = CFBundleCreate(NULL, pluginURL);
-        CFBundleGetPackageInfo(bundle, &type, NULL);
-        
-        if(type == FOUR_CHAR_CODE('BRPL') || type == FOUR_CHAR_CODE('IEPL') ){
-            resRef = CFBundleOpenBundleResourceMap(bundle);
-            [self _getPluginInfoForResourceFile:resRef];
-            CFBundleCloseBundleResourceMap(bundle, resRef);
-            isBundle = YES;
-        }else{
-            return nil;
-        }
         CFRelease(pluginURL);
+        CFBundleGetPackageInfo(bundle, &type, NULL);
+        isBundle = YES;
     }else{
         return nil;
     }
     
-    filename = [[pluginPath lastPathComponent] retain];
-    path = [pluginPath retain];
+    if(type == FOUR_CHAR_CODE('BRPL') || type == FOUR_CHAR_CODE('IEPL') ){
+        if(![self _getPluginInfo]){
+            return nil;
+        }
+    }else{
+        return nil;
+    }
+    
+    filename = [[path lastPathComponent] retain];
+    [path retain];
     isLoaded = NO;
     return self;
 }
@@ -205,6 +221,14 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
             
         isCFM = TRUE;
     }
+    
+    // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
+    
+    resourceRef = [self _openResourceFile];
+    if(resourceRef == -1)
+        return NO;
+    
+    UseResFile(resourceRef);
     
     // swap function tables
     if(isCFM){
@@ -304,6 +328,9 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 - (void)unload
 {
     NPP_Shutdown();
+    
+    [self _closeResourceFile:resourceRef];
+    
     if(isBundle){
         CFBundleUnloadExecutable(bundle);
         CFRelease(bundle);

@@ -1,3 +1,19 @@
+2002-07-03  Chris Blumenberg  <cblu@apple.com>
+
+	- Fix for 2975750
+	- Removed Java workaround since that will be fixed soon.
+
+        * Plugins.subproj/IFPlugin.h:
+        * Plugins.subproj/IFPlugin.m:
+        (-[IFPlugin _openResourceFile]): added
+        (-[IFPlugin _closeResourceFile:]): added
+        (-[IFPlugin _getPluginInfo]): rename
+        (-[IFPlugin initWithPath:]): simplified
+        (-[IFPlugin load]): calls _openResourceFile
+        (-[IFPlugin unload]): calls _closeResourceFile
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView setUpWindowAndPort]): removed Java workaround
+
 2002-07-03  Darin Adler  <darin@apple.com>
 
         * Misc.subproj/IFException.h: Use Objective C header style rather than plain C.
