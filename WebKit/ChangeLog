@@ -1,3 +1,8 @@
+2004-08-05  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebHTMLView.m: Added a list of methods that NSTextView implements that we don't.
+        All inside #if 0.
+
 2004-08-05  Chris Blumenberg  <cblu@apple.com>
 
         Fixed unnecessary import of NSURLFileTypeMappings.

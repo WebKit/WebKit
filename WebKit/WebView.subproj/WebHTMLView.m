@@ -3168,6 +3168,26 @@ static WebHTMLView *lastHitView = nil;
     [NSApp stopSpeaking:sender];
 }
 
+#if 0
+
+- (void)transpose:(id)sender;
+- (void)transposeWords:(id)sender;
+- (void)insertNewlineIgnoringFieldEditor:(id)sender;
+- (void)insertTabIgnoringFieldEditor:(id)sender;
+- (void)yank:(id)sender;
+- (void)yankAndSelect:(id)sender;
+- (void)setMark:(id)sender;
+- (void)deleteToMark:(id)sender;
+- (void)selectToMark:(id)sender;
+- (void)swapWithMark:(id)sender;
+- (void)moveParagraphBackwardAndModifySelection:(id)sender;
+- (void)moveParagraphForwardAndModifySelection:(id)sender;
+- (void)pageUpAndModifySelection:(id)sender;
+- (void)pageDownAndModifySelection:(id)sender;
+- (void)insertTable:(id)sender;
+
+#endif
+
 @end
 
 @implementation WebHTMLView (WebTextSizing)
