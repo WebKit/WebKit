@@ -938,8 +938,8 @@ static const char * const stateNames[] = {
 	[target performSelector:selector withObject:(id)NO withObject:request];
     }
 
-    [_private->policyRequest release];
-    [_private->policyTarget release];
+    [request release];
+    [target release];
 }
 
 - (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource andCall:(id)target withSelector:(SEL)selector
@@ -953,6 +953,7 @@ static const char * const stateNames[] = {
     // Don't ask more than once for the same request
     if ([request isEqual:[dataSource _lastCheckedRequest]]) {
 	[target performSelector:selector withObject:(id)YES withObject:request];
+	return;
     }
 
     [dataSource _setLastCheckedRequest:request];

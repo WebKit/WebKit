@@ -1,5 +1,13 @@
 2002-11-15  Maciej Stachowiak  <mjs@apple.com>
 
+	Fix world leak I introduced, and also add an early return when needed.
+	
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _invalidatePendingPolicyDecisionCallingDefaultAction:]):
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:andCall:withSelector:]):
+
+2002-11-15  Maciej Stachowiak  <mjs@apple.com>
+
 	Make navigation policy asynchronous for real.
 	
         * WebKit.pbproj/project.pbxproj:
