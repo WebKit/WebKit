@@ -4097,14 +4097,18 @@ DOM::Range KWQKHTMLPart::markedTextRange() const
 void KWQKHTMLPart::setMarkedTextRange(const DOM::Range &range)
 {
     ASSERT(!range.handle() || range.startContainer() == range.endContainer());
-    ASSERT(!range.handle() || range.startOffset() == range.endOffset() || range.startContainer().nodeType() == Node::TEXT_NODE);
+    ASSERT(!range.handle() || range.collapsed() || range.startContainer().nodeType() == Node::TEXT_NODE);
 
     if (m_markedTextRange.handle() && xmlDocImpl() 
 	&& m_markedTextRange.startContainer().handle()->renderer()) {
 	m_markedTextRange.startContainer().handle()->renderer()->repaint();
     }
 
-    m_markedTextRange = range;
+    if ( range.handle() && range.collapsed() ) {
+        m_markedTextRange = DOM::Range(0);
+    } else {
+        m_markedTextRange = range;
+    }
 
     if (m_markedTextRange.handle() && xmlDocImpl() 
 	&& m_markedTextRange.startContainer().handle()->renderer()) {

@@ -1,3 +1,14 @@
+2004-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix by Yasuo Kida, reviewed by me.
+
+	<rdar://problem/3819004> REGRESSION (Mail): Can't move cursor / delete character after deleting the active input area
+        
+	* kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setMarkedTextRange): Treat a collapsed range the
+	same as a nil range - setting an empty marked range should clear
+	the marked range entirely.
+
 2004-11-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt (when I originally coded it).
