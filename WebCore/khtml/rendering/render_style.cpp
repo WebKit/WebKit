@@ -360,7 +360,7 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
            && bindingsEquivalent(o)
 #endif
 #if APPLE_CHANGES
-           && lineClamp == o.lineClamp
+           && lineClamp == o.lineClamp && m_dashboardRegions == o.m_dashboardRegions
 #endif
     ;
 }

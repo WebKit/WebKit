@@ -1,3 +1,14 @@
+2005-02-17  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4008163> dynamic support for -apple-dashboard-region is flakey
+
+	Style operator== wasn't including regions.
+
+        Reviewed by Darin.
+
+        * khtml/rendering/render_style.cpp:
+        (StyleCSS3NonInheritedData::operator==):
+
 2005-02-17  Adele Amchan  <adele@apple.com>
 
         Reviewed by Chris.
