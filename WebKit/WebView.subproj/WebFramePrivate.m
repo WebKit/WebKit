@@ -1574,8 +1574,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:formState];
-
-    [self _setPolicyDataSource:nil];
 }
 
 -(void)_continueFragmentScrollAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
@@ -2056,6 +2054,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT(_private->policyDataSource);
     
     if (!request) {
+        [self _setPolicyDataSource:nil];
         return;
     }
 
@@ -2064,6 +2063,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self stopLoading];
     [self _setLoadType:loadType];
     [self _setProvisionalDataSource:_private->policyDataSource];
+
+    [self _setPolicyDataSource:nil];
     
     // We tell the documentView provisionalDataSourceChanged:
     // once it has been created by the WebView.

@@ -1,5 +1,15 @@
 2003-06-11  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3289380>: REGRESSION: policyDataSource == nil assertion failure after closing particular window
+
+        Reviewed by john.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterNavigationPolicy:]): don't clear policyDataSource here because this method may not be called during navigation
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): clear policyDataSource here 
+
+2003-06-11  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3288097>: REGRESSION: assertion failure after hitting back while loading page after fragment scroll
 
         Fixed by darin, reviewed by me.
