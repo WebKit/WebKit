@@ -1,3 +1,19 @@
+2004-07-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3711264> difficult (impossible?) to get cursor in an editable webview containing only tags
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::positionForCoordinates): Don't assume you can pass off
+        the check to a first child if there is one, since the child can be an element
+        we do not want to place the caret in, like a table row with no cells (the case
+        in the bug above). So now, we iterate of the renderer's children looking for
+        the closest one, but only consider those renderers which either have children
+        themselves, or are render block flows or are render inlines. 
+
 2004-07-22  Darin Adler  <darin@apple.com>
 
         - remove a bunch of now-unused code

@@ -483,8 +483,11 @@ Position RenderContainer::positionForCoordinates(int _x, int _y)
 
     // look for the geometrically-closest child and pass off to that child
     int min = INT_MAX;
-    RenderObject *closestRenderer = firstChild();
+    RenderObject *closestRenderer = 0;
     for (RenderObject *renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
+        if (!renderer->firstChild() && !renderer->isInline() && !renderer->isBlockFlow())
+            continue;
+
         int absx, absy;
         renderer->absolutePosition(absx, absy);
         
@@ -499,8 +502,11 @@ Position RenderContainer::positionForCoordinates(int _x, int _y)
         cmp = abs(_x - left);   if (cmp < min) { closestRenderer = renderer; min = cmp; }
         cmp = abs(_x - right);  if (cmp < min) { closestRenderer = renderer; min = cmp; }
     }
-
-    return closestRenderer->positionForCoordinates(_x, _y);
+    
+    if (closestRenderer)
+        return closestRenderer->positionForCoordinates(_x, _y);
+    
+    return Position(element(), 0);
 }
     
 #undef DEBUG_LAYOUT
