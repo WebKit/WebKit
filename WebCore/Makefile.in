@@ -18,6 +18,7 @@ include $(TOPSRCDIR)/Makefile.vars
 
 SUBDIRS = \
 	src/kdelibs/kjs \
+	src/kdelibs/kdecore \
 	src/kdelibs/khtml/misc \
 	src/kdelibs/khtml/css \
 	src/kdelibs/khtml/dom \

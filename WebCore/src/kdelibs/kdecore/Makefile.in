@@ -1,0 +1,37 @@
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ../../..
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+CLEAN_FILES = kentities.c
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: kentities.c
+
+depend:
+
+kentities.c: kentities.gperf
+	$(GPERF) -a -L "ANSI-C" -C -G -c -o -t -k '*' -NfindEntity -D -s 2 $< > $@
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================

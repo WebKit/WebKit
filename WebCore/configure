@@ -2448,6 +2448,7 @@ trap 'rm -fr `echo "Makefile
 	Makefile.vars
 	Makefile.rules
 	src/kdelibs/kjs/Makefile 
+	src/kdelibs/kdecore/Makefile 
 	src/kdelibs/khtml/misc/Makefile
 	src/kdelibs/khtml/css/Makefile
 	src/kdelibs/khtml/dom/Makefile
@@ -2555,6 +2556,7 @@ CONFIG_FILES=\${CONFIG_FILES-"Makefile
 	Makefile.vars
 	Makefile.rules
 	src/kdelibs/kjs/Makefile 
+	src/kdelibs/kdecore/Makefile 
 	src/kdelibs/khtml/misc/Makefile
 	src/kdelibs/khtml/css/Makefile
 	src/kdelibs/khtml/dom/Makefile

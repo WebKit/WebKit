@@ -35,7 +35,13 @@ class QChar {
 public:
     QChar();
     QChar(char);
+    QChar(uchar);
     QChar(const QChar &);
+    QChar(ushort);
+    QChar(short);
+    QChar(uint);
+    QChar(int);
+
     QChar lower() const;
     QChar upper() const;
     char latin1() const;
@@ -46,6 +52,7 @@ public:
     bool isLetterOrNumber() const;
     uchar cell() const;
     uchar row() const;
+    friend inline int operator==(char, QChar);
     friend inline int operator==(QChar, char);
     friend inline int operator==(QChar, QChar);
     friend inline int operator!=(QChar, QChar);
@@ -69,10 +76,16 @@ public:
 
     QString();
     QString(QChar);
+    QString(const QString&);
+    QString(const QByteArray&);
     QString(const QChar *, uint);
     QString(const char *);
-    QString(const QByteArray&);
-    QString(const QString&);
+
+    QString &operator=(const QString&);
+    QString &operator=(const char *);
+    QString &operator=(const QCString&);
+    QString &operator=(QChar);
+    QString &operator=(char);
 
     int toInt() const;
     int toInt(bool *, int base=10) const;
@@ -113,6 +126,8 @@ public:
     const char* latin1() const;
     const char *ascii() const;
     // FIXME: is there a standard parameter type for overloaded operators?
+    bool operator!() const;
+    operator const char *() const;
     QChar operator[](int) const;
     QString &operator+(char);
     QString &operator+(QChar);
@@ -136,9 +151,7 @@ public:
 
     static QString number(long, int base = 10);
 
-    // FIXME: bogus constructor hack for "conversion from int to non-scalar
-    // type" error in "Node::toHTML()" function in "dom/dom_node.cpp"
-    QString(int);
+    operator QChar () const;
 };
 
 QString &operator+(const char *, const QString &);

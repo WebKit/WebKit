@@ -35,6 +35,7 @@ YACC = @YACC@
 RANLIB = @RANLIB@
 SED = @SED@
 INSTALL = @INSTALL@
+GPERF = gperf
 
 #----------------------------------------------------------------------
 # Flags
