@@ -184,7 +184,7 @@ static NSString* startupVolumeName(void);
 
     acceptedEvent = NPP_HandleEvent(instance, &event);
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, point.v, point.h, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, event.where.v, event.where.h, event.when);
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
