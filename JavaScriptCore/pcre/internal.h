@@ -1,5 +1,6 @@
 /*************************************************
 *      Perl-Compatible Regular Expressions       *
+*  extended to UTF-16 for use in JavaScriptCore  *
 *************************************************/
 
 
@@ -10,6 +11,7 @@ the file Tech.Notes for some information on the internals.
 Written by: Philip Hazel <ph10@cam.ac.uk>
 
            Copyright (c) 1997-2001 University of Cambridge
+           Copyright (C) 2004 Apple Computer, Inc.
 
 -----------------------------------------------------------------------------
 Permission is granted to anyone to use this software for any purpose on any
@@ -319,6 +321,22 @@ Unix, where it is defined in sys/types, so use "uschar" instead. */
 
 typedef unsigned char uschar;
 
+/* Use ichar to mean "internal character" for unsigned version of pcre_char. */
+#if PCRE_UTF16
+typedef uint16_t ichar;
+#else
+typedef unsigned char ichar;
+#endif
+
+#if PCRE_UTF16
+#define ICHAR_COUNT 65536
+#else
+#define ICHAR_COUNT 256
+#endif
+#define ICHAR_MAP_SIZE (ICHAR_COUNT * sizeof(ichar))
+#define ICHAR_BITMAP_SIZE (ICHAR_COUNT / 8)
+
+
 /* The real format of the start of the pcre block; the actual code vector
 runs on as long as necessary after the end. */
 
@@ -329,8 +347,8 @@ typedef struct real_pcre {
   unsigned long int options;
   unsigned short int top_bracket;
   unsigned short int top_backref;
-  uschar first_char;
-  uschar req_char;
+  ichar first_char;
+  ichar req_char;
   uschar code[1];
 } real_pcre;
 
@@ -338,7 +356,7 @@ typedef struct real_pcre {
 
 typedef struct real_pcre_extra {
   uschar options;
-  uschar start_bits[32];
+  uschar start_bits[ICHAR_BITMAP_SIZE];
 } real_pcre_extra;
 
 
@@ -346,8 +364,8 @@ typedef struct real_pcre_extra {
 doing the compiling, so that they are thread-safe. */
 
 typedef struct compile_data {
-  const uschar *lcc;            /* Points to lower casing table */
-  const uschar *fcc;            /* Points to case-flipping table */
+  const void *lcc;              /* Points to lower casing table */
+  const void *fcc;              /* Points to case-flipping table */
   const uschar *cbits;          /* Points to character type table */
   const uschar *ctypes;         /* Points to table of type maps */
 } compile_data;
@@ -360,7 +378,7 @@ typedef struct match_data {
   int   *offset_vector;         /* Offset vector */
   int    offset_end;            /* One past the end */
   int    offset_max;            /* The maximum usable for return data */
-  const uschar *lcc;            /* Points to lower casing table */
+  const void *lcc;              /* Points to lower casing table */
   const uschar *ctypes;         /* Points to table of type maps */
   BOOL   offset_overflow;       /* Set if too many extractions */
   BOOL   notbol;                /* NOTBOL flag */
@@ -369,10 +387,10 @@ typedef struct match_data {
   BOOL   endonly;               /* Dollar not before final \n */
   BOOL   notempty;              /* Empty string match not wanted */
   const uschar *start_pattern;  /* For use when recursing */
-  const uschar *start_subject;  /* Start of the subject string */
-  const uschar *end_subject;    /* End of the subject string */
-  const uschar *start_match;    /* Start of this match attempt */
-  const uschar *end_match_ptr;  /* Subject position at end match */
+  const ichar *start_subject;   /* Start of the subject string */
+  const ichar *end_subject;     /* End of the subject string */
+  const ichar *start_match;     /* Start of this match attempt */
+  const ichar *end_match_ptr;   /* Subject position at end match */
   int    end_offset_top;        /* Highwater mark at end of match */
 } match_data;
 
@@ -388,25 +406,32 @@ typedef struct match_data {
 /* Offsets for the bitmap tables in pcre_cbits. Each table contains a set
 of bits for a class map. Some classes are built by combining these tables. */
 
-#define cbit_space     0      /* [:space:] or \s */
-#define cbit_xdigit   32      /* [:xdigit:] */
-#define cbit_digit    64      /* [:digit:] or \d */
-#define cbit_upper    96      /* [:upper:] */
-#define cbit_lower   128      /* [:lower:] */
-#define cbit_word    160      /* [:word:] or \w */
-#define cbit_graph   192      /* [:graph:] */
-#define cbit_print   224      /* [:print:] */
-#define cbit_punct   256      /* [:punct:] */
-#define cbit_cntrl   288      /* [:cntrl:] */
-#define cbit_length  320      /* Length of the cbits table */
+#define cbit_space     0                        /* [:space:] or \s */
+#define cbit_xdigit   (1 * ICHAR_BITMAP_SIZE)   /* [:xdigit:] */
+#define cbit_digit    (2 * ICHAR_BITMAP_SIZE)   /* [:digit:] or \d */
+#define cbit_upper    (3 * ICHAR_BITMAP_SIZE)   /* [:upper:] */
+#define cbit_lower    (4 * ICHAR_BITMAP_SIZE)   /* [:lower:] */
+#define cbit_word     (5 * ICHAR_BITMAP_SIZE)   /* [:word:] or \w */
+#define cbit_graph    (6 * ICHAR_BITMAP_SIZE)   /* [:graph:] */
+#define cbit_print    (7 * ICHAR_BITMAP_SIZE)   /* [:print:] */
+#define cbit_punct    (8 * ICHAR_BITMAP_SIZE)   /* [:punct:] */
+#define cbit_cntrl    (9 * ICHAR_BITMAP_SIZE)   /* [:cntrl:] */
+#define cbit_length  (10 * ICHAR_BITMAP_SIZE)   /* Length of the cbits table */
 
 /* Offsets of the various tables from the base tables pointer, and
 total length. */
 
-#define lcc_offset      0
-#define fcc_offset    256
-#define cbits_offset  512
+#define lcc_offset    0
+#define fcc_offset    (1 * ICHAR_MAP_SIZE)
+#define cbits_offset  (2 * ICHAR_MAP_SIZE)
 #define ctypes_offset (cbits_offset + cbit_length)
-#define tables_length (ctypes_offset + 256)
+#define tables_length (ctypes_offset + ICHAR_COUNT)
+
+/* Macro to use for the lcc and fcc tables. Warning: Evaluates arguments more than once. */
+#if PCRE_UTF16
+#define MAPCHAR(table, c) (((((const uschar *)(table))[(ichar)(c) * 2]) << 8) | ((const uschar *)(table))[(ichar)(c) * 2 + 1])
+#else
+#define MAPCHAR(table, c) ((const uschar *)(table)[(uschar)(c)])
+#endif
 
 /* End of internal.h */

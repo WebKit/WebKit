@@ -42,7 +42,10 @@ RegExp::RegExp(const UString &p, int flags)
 
   const char *errorMessage;
   int errorOffset;
-  _regex = pcre_compile(p.UTF8String().c_str(), options, &errorMessage, &errorOffset, NULL);
+  UString nullTerminated(p);
+  char null(0);
+  nullTerminated.append(null);
+  _regex = pcre_compile(reinterpret_cast<const uint16_t *>(nullTerminated.data()), options, &errorMessage, &errorOffset, NULL);
   if (!_regex) {
 #ifndef NDEBUG
     fprintf(stderr, "KJS: pcre_compile() failed with '%s'\n", errorMessage);
@@ -119,9 +122,7 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
     offsetVector = new int [offsetVectorSize];
   }
 
-  const CString buffer(s.UTF8String());
-  convertUTF16OffsetsToUTF8Offsets(buffer.c_str(), &i, 1);
-  const int numMatches = pcre_exec(_regex, NULL, buffer.c_str(), buffer.size(), i, 0, offsetVector, offsetVectorSize);
+  const int numMatches = pcre_exec(_regex, NULL, reinterpret_cast<const uint16_t *>(s.data()), s.size(), i, 0, offsetVector, offsetVectorSize);
 
   if (numMatches < 0) {
 #ifndef NDEBUG
@@ -132,8 +133,6 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
       delete [] offsetVector;
     return UString::null();
   }
-
-  convertUTF8OffsetsToUTF16Offsets(buffer.c_str(), offsetVector, (numMatches == 0 ? 1 : numMatches) * 2);
 
   *pos = offsetVector[0];
   if (ovector)

@@ -1,5 +1,6 @@
 /*************************************************
 *      Perl-Compatible Regular Expressions       *
+*  extended to UTF-16 for use in JavaScriptCore  *
 *************************************************/
 
 /*
@@ -10,6 +11,7 @@ the file Tech.Notes for some information on the internals.
 Written by: Philip Hazel <ph10@cam.ac.uk>
 
            Copyright (c) 1997-2001 University of Cambridge
+           Copyright (C) 2004 Apple Computer, Inc.
 
 -----------------------------------------------------------------------------
 Permission is granted to anyone to use this software for any purpose on any
@@ -72,14 +74,14 @@ Returns:         if successful:
 */
 
 int
-pcre_copy_substring(const char *subject, int *ovector, int stringcount,
-  int stringnumber, char *buffer, int size)
+pcre_copy_substring(const pcre_char *subject, int *ovector, int stringcount,
+  int stringnumber, pcre_char *buffer, int size)
 {
 int yield;
 if (stringnumber < 0 || stringnumber >= stringcount)
   return PCRE_ERROR_NOSUBSTRING;
 stringnumber *= 2;
-yield = ovector[stringnumber+1] - ovector[stringnumber];
+yield = (ovector[stringnumber+1] - ovector[stringnumber]) * sizeof(pcre_char);
 if (size < yield + 1) return PCRE_ERROR_NOMEMORY;
 memcpy(buffer, subject + ovector[stringnumber], yield);
 buffer[yield] = 0;
@@ -110,27 +112,27 @@ Returns:         if successful: 0
 */
 
 int
-pcre_get_substring_list(const char *subject, int *ovector, int stringcount,
-  const char ***listptr)
+pcre_get_substring_list(const pcre_char *subject, int *ovector, int stringcount,
+  const pcre_char ***listptr)
 {
 int i;
-int size = sizeof(char *);
+int size = sizeof(pcre_char *);
 int double_count = stringcount * 2;
-char **stringlist;
-char *p;
+pcre_char **stringlist;
+pcre_char *p;
 
 for (i = 0; i < double_count; i += 2)
-  size += sizeof(char *) + ovector[i+1] - ovector[i] + 1;
+  size += sizeof(pcre_char *) + ovector[i+1] - ovector[i] + 1;
 
-stringlist = (char **)(pcre_malloc)(size);
+stringlist = (pcre_char **)(pcre_malloc)(size);
 if (stringlist == NULL) return PCRE_ERROR_NOMEMORY;
 
-*listptr = (const char **)stringlist;
-p = (char *)(stringlist + stringcount + 1);
+*listptr = (const pcre_char **)stringlist;
+p = (pcre_char *)(stringlist + stringcount + 1);
 
 for (i = 0; i < double_count; i += 2)
   {
-  int len = ovector[i+1] - ovector[i];
+  int len = (ovector[i+1] - ovector[i]) * sizeof(pcre_char);
   memcpy(p, subject + ovector[i], len);
   *stringlist++ = p;
   p += len;
@@ -155,7 +157,7 @@ Returns:    nothing
 */
 
 void
-pcre_free_substring_list(const char **pointer)
+pcre_free_substring_list(const pcre_char **pointer)
 {
 (pcre_free)((void *)pointer);
 }
@@ -188,16 +190,16 @@ Returns:         if successful:
 */
 
 int
-pcre_get_substring(const char *subject, int *ovector, int stringcount,
-  int stringnumber, const char **stringptr)
+pcre_get_substring(const pcre_char *subject, int *ovector, int stringcount,
+  int stringnumber, const pcre_char **stringptr)
 {
 int yield;
-char *substring;
+pcre_char *substring;
 if (stringnumber < 0 || stringnumber >= stringcount)
   return PCRE_ERROR_NOSUBSTRING;
 stringnumber *= 2;
-yield = ovector[stringnumber+1] - ovector[stringnumber];
-substring = (char *)(pcre_malloc)(yield + 1);
+yield = (ovector[stringnumber+1] - ovector[stringnumber]) * sizeof(pcre_char);
+substring = (pcre_char *)(pcre_malloc)(yield + 1);
 if (substring == NULL) return PCRE_ERROR_NOMEMORY;
 memcpy(substring, subject + ovector[stringnumber], yield);
 substring[yield] = 0;
@@ -219,7 +221,7 @@ Returns:    nothing
 */
 
 void
-pcre_free_substring(const char *pointer)
+pcre_free_substring(const pcre_char *pointer)
 {
 (pcre_free)((void *)pointer);
 }

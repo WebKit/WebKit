@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -142,8 +142,9 @@ bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
   return len == c2.size() && (len == 0 || memcmp(c1.c_str(), c2.c_str(), len) == 0);
 }
 
+static UChar dummy;
 UString::Rep UString::Rep::null = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
-UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, 0, &dummy, 0, 0, 0, 0 };
 const int normalStatBufferSize = 4096;
 static char *statBuffer = 0;
 static int statBufferSize = 0;
@@ -1315,172 +1316,6 @@ CString UString::UTF8String() const
     delete [] buffer;
   }
   return result;
-}
-
-struct StringOffset {
-    int offset;
-    int locationInOffsetsArray;
-};
-
-static int compareStringOffsets(const void *a, const void *b)
-{
-    const StringOffset *oa = static_cast<const StringOffset *>(a);
-    const StringOffset *ob = static_cast<const StringOffset *>(b);
-    
-    if (oa->offset < ob->offset) {
-        return -1;
-    }
-    if (oa->offset > ob->offset) {
-        return +1;
-    }
-    return 0;
-}
-
-const int sortedOffsetsFixedBufferSize = 128;
-
-static StringOffset *createSortedOffsetsArray(const int offsets[], int numOffsets,
-    StringOffset sortedOffsetsFixedBuffer[sortedOffsetsFixedBufferSize])
-{
-    // Allocate the sorted offsets.
-    StringOffset *sortedOffsets;
-    if (numOffsets <= sortedOffsetsFixedBufferSize) {
-        sortedOffsets = sortedOffsetsFixedBuffer;
-    } else {
-        sortedOffsets = new StringOffset [numOffsets];
-    }
-
-    // Copy offsets and sort them.
-    // (Since qsort showed up on profiles, hand code for numbers up to 3.)
-
-    switch (numOffsets) {
-        case 0:
-            break;
-        case 1:
-            sortedOffsets[0].offset = offsets[0];
-            sortedOffsets[0].locationInOffsetsArray = 0;
-            break;
-        case 2: {
-            if (offsets[0] <= offsets[1]) {
-                sortedOffsets[0].offset = offsets[0];
-                sortedOffsets[0].locationInOffsetsArray = 0;
-                sortedOffsets[1].offset = offsets[1];
-                sortedOffsets[1].locationInOffsetsArray = 1;
-            } else {
-                sortedOffsets[0].offset = offsets[1];
-                sortedOffsets[0].locationInOffsetsArray = 1;
-                sortedOffsets[1].offset = offsets[0];
-                sortedOffsets[1].locationInOffsetsArray = 0;
-            }
-            break;
-        }
-        case 3: {
-            int i0, i1, i2;
-            if (offsets[0] <= offsets[1]) {
-                if (offsets[0] <= offsets[2]) {
-                    i0 = 0;
-                    if (offsets[1] <= offsets[2]) {
-                        i1 = 1; i2 = 2;
-                    } else {
-                        i1 = 2; i2 = 1;
-                    }
-                } else {
-                    i0 = 2; i1 = 0; i2 = 1;
-                }
-            } else {
-                if (offsets[1] <= offsets[2]) {
-                    i0 = 1;
-                    if (offsets[0] <= offsets[2]) {
-                        i1 = 0; i2 = 2;
-                    } else {
-                        i1 = 2; i2 = 0;
-                    }
-                } else {
-                    i0 = 2; i1 = 1; i2 = 0;
-                }
-            }
-            sortedOffsets[0].offset = offsets[i0];
-            sortedOffsets[0].locationInOffsetsArray = i0;
-            sortedOffsets[1].offset = offsets[i1];
-            sortedOffsets[1].locationInOffsetsArray = i1;
-            sortedOffsets[2].offset = offsets[i2];
-            sortedOffsets[2].locationInOffsetsArray = i2;
-            break;
-        }
-        default:
-            for (int i = 0; i != numOffsets; ++i) {
-                sortedOffsets[i].offset = offsets[i];
-                sortedOffsets[i].locationInOffsetsArray = i;
-            }
-            qsort(sortedOffsets, numOffsets, sizeof(StringOffset), compareStringOffsets);
-    }
-
-    return sortedOffsets;
-}
-
-// Note: This function assumes valid UTF-8.
-// It can even go into an infinite loop if the passed in string is not valid UTF-8.
-void convertUTF16OffsetsToUTF8Offsets(const char *s, int *offsets, int numOffsets)
-{
-    // Allocate buffer.
-    StringOffset fixedBuffer[sortedOffsetsFixedBufferSize];
-    StringOffset *sortedOffsets = createSortedOffsetsArray(offsets, numOffsets, fixedBuffer);
-
-    // Walk through sorted offsets and string, adjusting all the offests.
-    // Offsets that are off the ends of the string map to the edges of the string.
-    int UTF16Offset = 0;
-    const char *p = s;
-    for (int oi = 0; oi != numOffsets; ++oi) {
-        const int nextOffset = sortedOffsets[oi].offset;
-        if (nextOffset >= 0) {
-            while (*p && UTF16Offset < nextOffset) {
-                // Skip to the next character.
-                const int sequenceLength = inlineUTF8SequenceLength(*p);
-                assert(sequenceLength >= 1 && sequenceLength <= 4);
-                p += sequenceLength;
-                // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
-                UTF16Offset += sequenceLength < 4 ? 1 : 2;
-            }
-            offsets[sortedOffsets[oi].locationInOffsetsArray] = p - s;
-        }
-    }
-
-    // Free buffer.
-    if (sortedOffsets != fixedBuffer) {
-        delete [] sortedOffsets;
-    }
-}
-
-// Note: This function assumes valid UTF-8.
-// It can even go into an infinite loop if the passed in string is not valid UTF-8.
-void convertUTF8OffsetsToUTF16Offsets(const char *s, int *offsets, int numOffsets)
-{
-    // Allocate buffer.
-    StringOffset fixedBuffer[sortedOffsetsFixedBufferSize];
-    StringOffset *sortedOffsets = createSortedOffsetsArray(offsets, numOffsets, fixedBuffer);
-
-    // Walk through sorted offsets and string, adjusting all the offests.
-    // Offsets that are off the end of the string map to the edges of the string.
-    int UTF16Offset = 0;
-    const char *p = s;
-    for (int oi = 0; oi != numOffsets; ++oi) {
-        const int nextOffset = sortedOffsets[oi].offset;
-        if (nextOffset >= 0) {
-            while (*p && (p - s) < nextOffset) {
-                // Skip to the next character.
-                const int sequenceLength = inlineUTF8SequenceLength(*p);
-                assert(sequenceLength >= 1 && sequenceLength <= 4);
-                p += sequenceLength;
-                // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
-                UTF16Offset += sequenceLength < 4 ? 1 : 2;
-            }
-            offsets[sortedOffsets[oi].locationInOffsetsArray] = UTF16Offset;
-        }
-    }
-
-    // Free buffer.
-    if (sortedOffsets != fixedBuffer) {
-        delete [] sortedOffsets;
-    }
 }
 
 } // namespace KJS

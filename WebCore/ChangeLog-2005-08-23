@@ -1,5 +1,15 @@
 2004-08-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - switch PCRE to do UTF-16 directly instead of converting to/from UTF-8 for speed
+
+        * kwq/KWQRegExp.mm:
+        (QRegExp::KWQRegExpPrivate::compile): Null-terminate the pattern and pass it.
+        (QRegExp::match): Use the 16-bit string directly, no need to convert to UTF-8.
+
+2004-08-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - minor cleanup

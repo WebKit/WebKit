@@ -1,3 +1,44 @@
+2004-08-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - switch PCRE to do UTF-16 directly instead of converting to/from UTF-8 for speed
+
+        * pcre/pcre.h: Added PCRE_UTF16 switch, set to 1. Added pcre_char typedef, which is char
+        or uint16_t depending on the mode, and used appropriate in the 7 public functions
+        that need to use it.
+        * pcre/pcre.c: Add UTF-16 support to all functions.
+        * pcre/study.c: Ditto.
+
+        * pcre/internal.h: Added ichar typedef, which is unsigned char or uint16_t depending on
+        the mode. Changed declarations to use symbolic constants and typedefs so we size
+        things to ichar when needed.
+
+        * pcre/maketables.c: (pcre_maketables): Change code to make tables that are
+        sized to 16-bit characters instead of 8-bit.
+
+        * pcre/get.c:
+        (pcre_copy_substring): Use pcre_char instead of char.
+        (pcre_get_substring_list): Ditto.
+        (pcre_free_substring_list): Ditto.
+        (pcre_get_substring): Ditto.
+        (pcre_free_substring): Ditto.
+
+        * pcre/dftables.c: (main): Used a bit more const, and use ICHAR sizes instead
+        of hard-coding 8-bit table sizes.
+
+        * pcre/chartables.c: Regenerated.
+
+        * kjs/ustring.h: Remove functions that convert UTF-16 to/from UTF-8 offsets.
+        * kjs/ustring.cpp: Change the shared empty string to have a unicode pointer that
+        is not null. The null string still has a null pointer. This prevents us from
+        passing a null through to the regular expression engine (which results in a null
+        error even when the string length is 0).
+
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp): Null-terminate the pattern and pass it.
+        (KJS::RegExp::match): Use the 16-bit string directly, no need to convert to UTF-8.
+
 2004-08-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

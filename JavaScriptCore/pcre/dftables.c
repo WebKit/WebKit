@@ -1,5 +1,6 @@
 /*************************************************
 *      Perl-Compatible Regular Expressions       *
+*  extended to UTF-16 for use in JavaScriptCore  *
 *************************************************/
 
 /*
@@ -9,6 +10,7 @@ and semantics are as close as possible to those of the Perl 5 language.
 Written by: Philip Hazel <ph10@cam.ac.uk>
 
            Copyright (c) 1997-2001 University of Cambridge
+           Copyright (C) 2004 Apple Computer, Inc.
 
 -----------------------------------------------------------------------------
 Permission is granted to anyone to use this software for any purpose on any
@@ -65,26 +67,26 @@ printf(
   "This file is #included in the compilation of pcre.c to build the default\n"
   "character tables which are used when no tables are passed to the compile\n"
   "function. */\n\n"
-  "static unsigned char pcre_default_tables[] = {\n\n"
+  "static const unsigned char pcre_default_tables[] = {\n\n"
   "/* This table is a lower casing table. */\n\n");
 
 printf("  ");
-for (i = 0; i < 256; i++)
+for (i = 0; i < (int)ICHAR_MAP_SIZE; i++)
   {
   if ((i & 7) == 0 && i != 0) printf("\n  ");
   printf("%3d", *tables++);
-  if (i != 255) printf(",");
+  if (i != ICHAR_MAP_SIZE - 1) printf(",");
   }
 printf(",\n\n");
 
 printf("/* This table is a case flipping table. */\n\n");
 
 printf("  ");
-for (i = 0; i < 256; i++)
+for (i = 0; i < (int)ICHAR_MAP_SIZE; i++)
   {
   if ((i & 7) == 0 && i != 0) printf("\n  ");
   printf("%3d", *tables++);
-  if (i != 255) printf(",");
+  if (i != ICHAR_MAP_SIZE - 1) printf(",");
   }
 printf(",\n\n");
 
@@ -120,7 +122,7 @@ printf(
   ctype_meta);
 
 printf("  ");
-for (i = 0; i < 256; i++)
+for (i = 0; i < ICHAR_COUNT; i++)
   {
   if ((i & 7) == 0 && i != 0)
     {
@@ -132,7 +134,7 @@ for (i = 0; i < 256; i++)
     printf(" */\n  ");
     }
   printf("0x%02x", *tables++);
-  if (i != 255) printf(",");
+  if (i != ICHAR_COUNT - 1) printf(",");
   }
 
 printf("};/* ");

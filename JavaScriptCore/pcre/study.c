@@ -1,5 +1,6 @@
 /*************************************************
 *      Perl-Compatible Regular Expressions       *
+*  extended to UTF-16 for use in JavaScriptCore  *
 *************************************************/
 
 /*
@@ -10,6 +11,7 @@ the file Tech.Notes for some information on the internals.
 Written by: Philip Hazel <ph10@cam.ac.uk>
 
            Copyright (c) 1997-2001 University of Cambridge
+           Copyright (C) 2004 Apple Computer, Inc.
 
 -----------------------------------------------------------------------------
 Permission is granted to anyone to use this software for any purpose on any
@@ -61,7 +63,10 @@ set_bit(uschar *start_bits, int c, BOOL caseless, compile_data *cd)
 {
 start_bits[c/8] |= (1 << (c&7));
 if (caseless && (cd->ctypes[c] & ctype_letter) != 0)
-  start_bits[cd->fcc[c]/8] |= (1 << (cd->fcc[c]&7));
+  {
+  ichar flipped = MAPCHAR(cd->fcc, c);
+  start_bits[flipped/8] |= (1 << (flipped&7));
+  }
 }
 
 
@@ -76,7 +81,7 @@ goes by, we may be able to get more clever at doing this.
 
 Arguments:
   code         points to an expression
-  start_bits   points to a 32-byte table, initialized to 0
+  start_bits   points to a table (32 bytes for 8 bit characters), initialized to 0
   caseless     the current state of the caseless flag
   cd           the block with char table pointers
 
@@ -158,16 +163,26 @@ do
       case OP_MINSTAR:
       case OP_QUERY:
       case OP_MINQUERY:
+#if PCRE_UTF16
+      if (tcode[1]) return FALSE;
+      set_bit(start_bits, tcode[2], caseless, cd);
+#else
       set_bit(start_bits, tcode[1], caseless, cd);
-      tcode += 2;
+#endif
+      tcode += sizeof(ichar) + 1;
       break;
 
       /* Single-char upto sets the bit and tries the next */
 
       case OP_UPTO:
       case OP_MINUPTO:
+#if PCRE_UTF16
+      if (tcode[3]) return FALSE;
+      set_bit(start_bits, tcode[4], caseless, cd);
+#else
       set_bit(start_bits, tcode[3], caseless, cd);
-      tcode += 4;
+#endif
+      tcode += sizeof(ichar) + 3;
       break;
 
       /* At least one single char sets the bit and stops */
@@ -180,7 +195,12 @@ do
 
       case OP_PLUS:
       case OP_MINPLUS:
+#if PCRE_UTF16
+      if (tcode[1]) return FALSE;
+      set_bit(start_bits, tcode[2], caseless, cd);
+#else
       set_bit(start_bits, tcode[1], caseless, cd);
+#endif
       try_next = FALSE;
       break;
 
@@ -371,8 +391,8 @@ if ((re->options & (PCRE_ANCHORED|PCRE_FIRSTSET|PCRE_STARTLINE)) != 0)
 
 /* Set the character tables in the block which is passed around */
 
-compile_block.lcc = re->tables + lcc_offset;
-compile_block.fcc = re->tables + fcc_offset;
+compile_block.lcc = (const ichar *)(re->tables + lcc_offset);
+compile_block.fcc = (const ichar *)(re->tables + fcc_offset);
 compile_block.cbits = re->tables + cbits_offset;
 compile_block.ctypes = re->tables + ctypes_offset;
 

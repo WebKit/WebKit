@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -499,16 +499,6 @@ namespace KJS {
   // Only allows Unicode characters (U-00000000 to U-0010FFFF).
   // Returns -1 if the sequence is not valid (including presence of extra bytes).
   int decodeUTF8Sequence(const char *);
-
-  // Given a UTF-8 string, converts offsets from the UTF-16 form of the string into offsets into the UTF-8 string.
-  // Note: This function can overrun the buffer if the string contains a partial UTF-8 sequence, so it should
-  // not be called with strings that might contain such sequences.
-  void convertUTF16OffsetsToUTF8Offsets(const char *UTF8String, int *offsets, int numOffsets);
-
-  // Given a UTF-8 string, converts offsets from the UTF-8 string into offsets into the UTF-16 form of the string.
-  // Note: This function can overrun the buffer if the string contains a partial UTF-8 sequence, so it should
-  // not be called with strings that might contain such sequences.
-  void convertUTF8OffsetsToUTF16Offsets(const char *UTF8String, int *offsets, int numOffsets);
 
 }; // namespace
 

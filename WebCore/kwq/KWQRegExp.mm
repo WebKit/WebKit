@@ -28,10 +28,6 @@
 
 #import <sys/types.h>
 #import <JavaScriptCore/pcre.h>
-#import <JavaScriptCore/ustring.h>
-
-using KJS::convertUTF16OffsetsToUTF8Offsets;
-using KJS::convertUTF8OffsetsToUTF16Offsets;
 
 class QRegExp::KWQRegExpPrivate
 {
@@ -97,19 +93,11 @@ void QRegExp::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
     // to a different underlying engine, we may need to change client code that relies
     // on the regex syntax (see KWQKHTMLPart.mm for a couple examples).
     
-    QCString asUTF8;
-    const char *cpattern;
-    
-    if (p.isAllASCII()) {
-        cpattern = p.ascii();
-    } else {
-        asUTF8 = p.utf8();
-        cpattern = asUTF8;
-    }
-        
     const char *errorMessage;
     int errorOffset;
-    regex = pcre_compile(cpattern, PCRE_UTF8 | (caseSensitive ? 0 : PCRE_CASELESS), &errorMessage, &errorOffset, NULL);
+    char null = 0;
+    p.append(null);
+    regex = pcre_compile(reinterpret_cast<const uint16_t *>(p.unicode()), caseSensitive ? 0 : PCRE_CASELESS, &errorMessage, &errorOffset, NULL);
     if (regex == NULL) {
         ERROR("KWQRegExp: pcre_compile failed with '%s'", errorMessage);
     }
@@ -162,22 +150,8 @@ int QRegExp::match(const QString &str, int startFrom, int *matchLength) const
 {
     // First 2 offsets are start and end offsets; 3rd entry is used internally by pcre
     int offsets[3];
-    int result;
-
-    if (str.isAllASCII()) {
-        result = pcre_exec(d->regex, NULL, str.ascii(), str.length(), startFrom, 
+    int result = pcre_exec(d->regex, NULL, reinterpret_cast<const uint16_t *>(str.unicode()), str.length(), startFrom, 
                            startFrom == 0 ? 0 : PCRE_NOTBOL, offsets, 3);
-    } else {
-        int length;
-        QCString asUTF8 = str.utf8(length);
-        convertUTF16OffsetsToUTF8Offsets(asUTF8, &startFrom, 1);
-        result = pcre_exec(d->regex, NULL, asUTF8, length, startFrom, 
-                           startFrom == 0 ? 0 : PCRE_NOTBOL, offsets, 3);
-        if (result >= 0) {
-            convertUTF8OffsetsToUTF16Offsets(asUTF8, offsets, 2);
-        }
-    }
-
     if (result < 0) {
         if (result != PCRE_ERROR_NOMATCH) {
             ERROR("KWQRegExp: pcre_exec() failed with result %d", result);

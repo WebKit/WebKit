@@ -1,5 +1,6 @@
 /*************************************************
 *      Perl-Compatible Regular Expressions       *
+*  extended to UTF-16 for use in JavaScriptCore  *
 *************************************************/
 
 /*
@@ -9,6 +10,7 @@ and semantics are as close as possible to those of the Perl 5 language.
 Written by: Philip Hazel <ph10@cam.ac.uk>
 
            Copyright (c) 1997-2001 University of Cambridge
+           Copyright (C) 2004 Apple Computer, Inc.
 
 -----------------------------------------------------------------------------
 Permission is granted to anyone to use this software for any purpose on any
@@ -75,17 +77,45 @@ p = yield;
 
 /* First comes the lower casing table */
 
+#if PCRE_UTF16
+for (i = 0; i < 128; i++)
+  {
+  int c = tolower(i);
+  *p++ = c >> 8;
+  *p++ = c;
+  }
+for (i = 128; i < ICHAR_COUNT; i++)
+  {
+  *p++ = i >> 8;
+  *p++ = i;
+  }
+#else
 for (i = 0; i < 256; i++) *p++ = tolower(i);
+#endif
 
 /* Next the case-flipping table */
 
+#if PCRE_UTF16
+for (i = 0; i < 128; i++)
+  {
+  int c = islower(i)? toupper(i) : tolower(i);
+  *p++ = c >> 8;
+  *p++ = c;
+  }
+for (i = 128; i < ICHAR_COUNT; i++)
+  {
+  *p++ = i >> 8;
+  *p++ = i;
+  }
+#else
 for (i = 0; i < 256; i++) *p++ = islower(i)? toupper(i) : tolower(i);
+#endif
 
 /* Then the character class tables. Don't try to be clever and save effort
 on exclusive ones - in some locales things may be different. */
 
 memset(p, 0, cbit_length);
-for (i = 0; i < 256; i++)
+for (i = 0; i < ICHAR_COUNT; i++)
   {
   if (isdigit(i))
     {
@@ -114,7 +144,7 @@ p += cbit_length;
 
 /* Finally, the character type table */
 
-for (i = 0; i < 256; i++)
+for (i = 0; i < ICHAR_COUNT; i++)
   {
   int x = 0;
   if (isspace(i)) x += ctype_space;

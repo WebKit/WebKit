@@ -1,8 +1,10 @@
 /*************************************************
 *       Perl-Compatible Regular Expressions      *
+*  extended to UTF-16 for use in JavaScriptCore  *
 *************************************************/
 
 /* Copyright (c) 1997-2001 University of Cambridge */
+/* Copyright (C) 2004 Apple Computer, Inc. */
 
 #ifndef _PCRE_H
 #define _PCRE_H
@@ -26,6 +28,7 @@
 #define PCRE_MINOR 9
 #define PCRE_DATE 02-Jan-2002
 #define PCRE_DL_IMPORT
+#define PCRE_UTF16 1
 
 /* Have to include stdlib.h in order to ensure that size_t is defined;
 it is needed here for malloc. */
@@ -81,6 +84,13 @@ struct real_pcre_extra;  /* declaration; the definition is private */
 typedef struct real_pcre pcre;
 typedef struct real_pcre_extra pcre_extra;
 
+#if PCRE_UTF16
+#include <stdint.h>
+typedef uint16_t pcre_char;
+#else
+typedef char pcre_char;
+#endif
+
 /* Store get and free functions. These can be set to alternative malloc/free
 functions if required. Some magic is required for Win32 DLL; it is null on
 other OS. */
@@ -92,15 +102,15 @@ PCRE_DL_IMPORT extern void  (*pcre_free)(void *);
 
 /* Functions */
 
-extern pcre *pcre_compile(const char *, int, const char **, int *,
+extern pcre *pcre_compile(const pcre_char *, int, const char **, int *,
               const unsigned char *);
-extern int  pcre_copy_substring(const char *, int *, int, int, char *, int);
-extern int  pcre_exec(const pcre *, const pcre_extra *, const char *,
+extern int  pcre_copy_substring(const pcre_char *, int *, int, int, pcre_char *, int);
+extern int  pcre_exec(const pcre *, const pcre_extra *, const pcre_char *,
               int, int, int, int *, int);
-extern void pcre_free_substring(const char *);
-extern void pcre_free_substring_list(const char **);
-extern int  pcre_get_substring(const char *, int *, int, int, const char **);
-extern int  pcre_get_substring_list(const char *, int *, int, const char ***);
+extern void pcre_free_substring(const pcre_char *);
+extern void pcre_free_substring_list(const pcre_char **);
+extern int  pcre_get_substring(const pcre_char *, int *, int, int, const pcre_char **);
+extern int  pcre_get_substring_list(const pcre_char *, int *, int, const pcre_char ***);
 extern int  pcre_info(const pcre *, int *, int *);
 extern int  pcre_fullinfo(const pcre *, const pcre_extra *, int, void *);
 extern const unsigned char *pcre_maketables(void);

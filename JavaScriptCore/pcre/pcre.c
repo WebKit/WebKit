@@ -1,5 +1,6 @@
 /*************************************************
 *      Perl-Compatible Regular Expressions       *
+*  extended to UTF-16 for use in JavaScriptCore  *
 *************************************************/
 
 /*
@@ -10,6 +11,7 @@ the file Tech.Notes for some information on the internals.
 Written by: Philip Hazel <ph10@cam.ac.uk>
 
            Copyright (c) 1997-2001 University of Cambridge
+           Copyright (C) 2004 Apple Computer, Inc.
 
 -----------------------------------------------------------------------------
 Permission is granted to anyone to use this software for any purpose on any
@@ -79,6 +81,9 @@ any more is different when UTF-8 characters may be encountered. */
 #endif
 
 
+#define CHAR_CLASS_SIZE 32
+
+
 /* Min and max values for the common repeats; for the maxima, 0 => infinity */
 
 static const char rep_min[] = { 0, 0, 1, 1, 0, 0 };
@@ -87,7 +92,7 @@ static const char rep_max[] = { 0, 0, 0, 0, 1, 1 };
 /* Text forms of OP_ values and things, for debugging (not all used) */
 
 #ifdef DEBUG
-static const char *OP_names[] = {
+static const char * const OP_names[] = {
   "End", "\\A", "\\B", "\\b", "\\D", "\\d",
   "\\S", "\\s", "\\W", "\\w", "\\Z", "\\z",
   "Opt", "^", "$", "Any", "chars", "not",
@@ -124,7 +129,7 @@ static const short int escapes[] = {
 terminated by a zero length entry. The first three must be alpha, upper, lower,
 as this is assumed for handling case independence. */
 
-static const char *posix_names[] = {
+static const char * const posix_names[] = {
   "alpha", "lower", "upper",
   "alnum", "ascii", "cntrl", "digit", "graph",
   "print", "punct", "space", "word",  "xdigit" };
@@ -155,7 +160,7 @@ static const int posix_class_maps[] = {
 /* Definition to allow mutual recursion */
 
 static BOOL
-  compile_regex(int, int, int *, uschar **, const uschar **, const char **,
+  compile_regex(int, int, int *, uschar **, const ichar **, const char **,
     BOOL, int, int *, int *, compile_data *);
 
 /* Structure for building a chain of data that actually lives on the
@@ -165,7 +170,7 @@ subpattern - to break infinite loops. */
 
 typedef struct eptrblock {
   struct eptrblock *prev;
-  const uschar *saved_eptr;
+  const ichar *saved_eptr;
 } eptrblock;
 
 /* Flag bits for the match() function */
@@ -204,6 +209,43 @@ byte-mode, and more complicated ones for UTF-8 characters. */
 
 #else   /* SUPPORT_UTF8 */
 
+#if PCRE_UTF16
+
+/* Get the next UTF-16 character, advancing the pointer */
+
+#define LEAD_OFFSET (0xd800 - (0x10000 >> 10))
+#define SURROGATE_OFFSET (0x10000 - (0xd800 << 10) - 0xdc00)
+
+#define IS_LEADING_SURROGATE(c) (((c) & ~0x3ff) == 0xd800)
+#define IS_TRAILING_SURROGATE(c) (((c) & ~0x3ff) == 0xdc00)
+
+#define DECODE_SURROGATE_PAIR(l, t) (((l) << 10) + (t) + SURROGATE_OFFSET)
+#define LEADING_SURROGATE(c) (LEAD_OFFSET + ((c) >> 10))
+#define TRAILING_SURROGATE(c) (0xdc00 + ((c) & 0x3FF))
+
+#define GETCHARINC(c, eptr) \
+  c = *eptr++; \
+  if (IS_LEADING_SURROGATE(c)) \
+    c = DECODE_SURROGATE_PAIR(c, *eptr++);
+
+/* Get the next UTF-16 character, not advancing the pointer, setting length */
+
+#define GETCHARLEN(c, eptr, len) \
+  c = *eptr; \
+  if (!IS_LEADING_SURROGATE(c)) \
+    len = 1; \
+  else \
+    { \
+    c = DECODE_SURROGATE_PAIR(c, eptr[1]); \
+    len = 2; \
+    }
+
+/* Return 1 if not the start of a character. */
+
+#define ISMIDCHAR(c) IS_TRAILING_SURROGATE(c)
+
+#else
+
 /* Get the next UTF-8 character, advancing the pointer */
 
 #define GETCHARINC(c, eptr) \
@@ -239,10 +281,16 @@ byte-mode, and more complicated ones for UTF-8 characters. */
     len += a; \
     }
 
+/* Return 1 if not the start of a character. */
+
+#define ISMIDCHAR(c) (((c) & 0xc0) == 0x80)
+
+#endif
+
 /* If the pointer is not at the start of a character, move it back until
 it is. */
 
-#define BACKCHAR(eptr) while((*eptr & 0xc0) == 0x80) eptr--;
+#define BACKCHAR(eptr) while(ISMIDCHAR(*eptr)) eptr--;
 
 #endif
 
@@ -262,6 +310,7 @@ tables. */
 
 
 
+#if !PCRE_UTF16
 #ifdef SUPPORT_UTF8
 /*************************************************
 *           Tables for UTF-8 support             *
@@ -318,6 +367,7 @@ for (j = i; j > 0; j--)
 *buffer = utf8_table2[i] | cvalue;
 return i + 1;
 }
+#endif
 #endif
 
 
@@ -462,12 +512,18 @@ Returns:     nothing
 */
 
 static void
-pchars(const uschar *p, int length, BOOL is_subject, match_data *md)
+pchars(const ichar *p, int length, BOOL is_subject, match_data *md)
 {
 int c;
 if (is_subject && length > md->end_subject - p) length = md->end_subject - p;
 while (length-- > 0)
-  if (isprint(c = *(p++))) printf("%c", c); else printf("\\x%02x", c);
+  if (isprint(c = *(p++))) printf("%c", c);
+#if PCRE_UTF16
+  else if (c < 256) printf("\\x%02x", c);
+  else printf("\\x{%x}", c);
+#else
+  else printf("\\x%02x", c);
+#endif
 }
 #endif
 
@@ -498,10 +554,10 @@ Returns:     zero or positive => a data character
 */
 
 static int
-check_escape(const uschar **ptrptr, const char **errorptr, int bracount,
+check_escape(const ichar **ptrptr, const char **errorptr, int bracount,
   int options, BOOL isclass, compile_data *cd)
 {
-const uschar *ptr = *ptrptr;
+const ichar *ptr = *ptrptr;
 int c, i;
 
 /* If backslash is at the end of the pattern, it's an error. */
@@ -522,7 +578,7 @@ else if ((i = escapes[c - '0']) != 0) c = i;
 
 else
   {
-  const uschar *oldptr;
+  const ichar *oldptr;
   switch (c)
     {
     /* The handling of escape sequences consisting of a string of digits
@@ -583,19 +639,19 @@ else
 #ifdef SUPPORT_UTF8
     if (ptr[1] == '{' && (options & PCRE_UTF8) != 0)
       {
-      const uschar *pt = ptr + 2;
+      const ichar *pt = ptr + 2;
       register int count = 0;
       c = 0;
       while ((cd->ctypes[*pt] & ctype_xdigit) != 0)
         {
         count++;
-        c = c * 16 + cd->lcc[*pt] -
-          (((cd->ctypes[*pt] & ctype_digit) != 0)? '0' : 'W');
+        c = c * 16 + MAPCHAR(cd->lcc, *pt) -
+          (((cd->ctypes[*pt] & ctype_digit) != 0)? '0' : ('a' - 10));
         pt++;
         }
       if (*pt == '}')
         {
-        if (c < 0 || count > 8) *errorptr = ERR34;
+        if (c < 0 || count > 8 || (c >= 0xd800 && c <= 0xdbff) || (c >= 0xfdd0 && c <= 0xfdef) || c == 0xfffe || c == 0xffff || c > 0x10FFFF) *errorptr = ERR34;
         ptr = pt;
         break;
         }
@@ -610,8 +666,8 @@ else
     while (i++ < 2 && (cd->ctypes[ptr[1]] & ctype_xdigit) != 0)
       {
       ptr++;
-      c = c * 16 + cd->lcc[*ptr] -
-        (((cd->ctypes[*ptr] & ctype_digit) != 0)? '0' : 'W');
+      c = c * 16 + MAPCHAR(cd->lcc, *ptr) -
+        (((cd->ctypes[*ptr] & ctype_digit) != 0)? '0' : ('a' - 10));
       }
     break;
 
@@ -627,7 +683,7 @@ else
 
     /* A letter is upper-cased; then the 0x40 bit is flipped */
 
-    if (c >= 'a' && c <= 'z') c = cd->fcc[c];
+    if (c >= 'a' && c <= 'z') c = MAPCHAR(cd->fcc, c);
     c ^= 0x40;
     break;
 
@@ -671,7 +727,7 @@ Returns:    TRUE or FALSE
 */
 
 static BOOL
-is_counted_repeat(const uschar *p, compile_data *cd)
+is_counted_repeat(const ichar *p, compile_data *cd)
 {
 if ((cd->ctypes[*p++] & ctype_digit) == 0) return FALSE;
 while ((cd->ctypes[*p] & ctype_digit) != 0) p++;
@@ -707,8 +763,8 @@ Returns:     pointer to '}' on success;
              current ptr on error, with errorptr set
 */
 
-static const uschar *
-read_repeat_counts(const uschar *p, int *minp, int *maxp,
+static const ichar *
+read_repeat_counts(const ichar *p, int *minp, int *maxp,
   const char **errorptr, compile_data *cd)
 {
 int min = 0;
@@ -845,9 +901,9 @@ for (;;)
     branchlength += *(++cc);
 #ifdef SUPPORT_UTF8
     for (d = 1; d <= *cc; d++)
-      if ((cc[d] & 0xc0) == 0x80) branchlength--;
+      if (ISMIDCHAR(cc[d])) branchlength--;
 #endif
-    cc += *cc + 1;
+    cc += 1 + *cc * sizeof(ichar);
     break;
 
     /* Handle exact repetitions */
@@ -855,7 +911,7 @@ for (;;)
     case OP_EXACT:
     case OP_TYPEEXACT:
     branchlength += (cc[1] << 8) + cc[2];
-    cc += 4;
+    cc += 3 + sizeof(ichar);
     break;
 
     /* Handle single-char matchers */
@@ -927,7 +983,7 @@ Returns:   TRUE or FALSE
 */
 
 static BOOL
-check_posix_syntax(const uschar *ptr, const uschar **endptr, compile_data *cd)
+check_posix_syntax(const ichar *ptr, const ichar **endptr, compile_data *cd)
 {
 int terminator;          /* Don't combine these lines; the Solaris cc */
 terminator = *(++ptr);   /* compiler warns about "non-constant" initializer. */
@@ -959,13 +1015,23 @@ Returns:     a value representing the name, or -1 if unknown
 */
 
 static int
-check_posix_name(const uschar *ptr, int len)
+check_posix_name(const ichar *ptr, int len)
 {
 register int yield = 0;
 while (posix_name_lengths[yield] != 0)
   {
+#if PCRE_UTF16
+  if (len == posix_name_lengths[yield]) {
+    int i;
+    const char *n = posix_names[yield];
+    for (i = 0; i < len; i++)
+      if (ptr[i] != n[i]) break;
+    if (i == len) return yield;
+  }
+#else
   if (len == posix_name_lengths[yield] &&
     strncmp((const char *)ptr, posix_names[yield], len) == 0) return yield;
+#endif
   yield++;
   }
 return -1;
@@ -997,7 +1063,7 @@ Returns:       TRUE on success
 
 static BOOL
 compile_branch(int options, int *brackets, uschar **codeptr,
-  const uschar **ptrptr, const char **errorptr, int *optchanged,
+  const ichar **ptrptr, const char **errorptr, int *optchanged,
   int *reqchar, int *countlits, compile_data *cd)
 {
 int repeat_type, op_type;
@@ -1010,10 +1076,10 @@ int subcountlits = 0;
 register int c;
 register uschar *code = *codeptr;
 uschar *tempcode;
-const uschar *ptr = *ptrptr;
-const uschar *tempptr;
+const ichar *ptr = *ptrptr;
+const ichar *tempptr;
 uschar *previous = NULL;
-uschar class[32];
+uschar class[CHAR_CLASS_SIZE];
 
 /* Set up the default and non-default settings for greediness */
 
@@ -1077,7 +1143,7 @@ for (;; ptr++)
     *code++ = OP_ANY;
     break;
 
-    /* Character classes. These always build a 32-byte bitmap of the permitted
+    /* Character classes. These always build a bitmap of the permitted
     characters, except in the special case where there is only one character.
     For negated classes, we build the map as usual, then invert it at the end.
     */
@@ -1101,12 +1167,12 @@ for (;; ptr++)
     class_charcount = 0;
     class_lastchar = -1;
 
-    /* Initialize the 32-char bit map to all zeros. We have to build the
+    /* Initialize the bit map to all zeros. We have to build the
     map in a temporary bit of store, in case the class contains only 1
     character, because in that case the compiled code doesn't use the
     bit map. */
 
-    memset(class, 0, 32 * sizeof(uschar));
+    memset(class, 0, sizeof(class));
 
     /* Process characters until ] is reached. By writing this as a "do" it
     means that an initial ] is taken as a data character. */
@@ -1169,9 +1235,9 @@ for (;; ptr++)
           int taboffset = posix_class_maps[posix_class + i];
           if (taboffset < 0) break;
           if (local_negate)
-            for (c = 0; c < 32; c++) class[c] |= ~cbits[c+taboffset];
+            for (c = 0; c < CHAR_CLASS_SIZE; c++) class[c] |= ~cbits[c+taboffset];
           else
-            for (c = 0; c < 32; c++) class[c] |= cbits[c+taboffset];
+            for (c = 0; c < CHAR_CLASS_SIZE; c++) class[c] |= cbits[c+taboffset];
           }
 
         ptr = tempptr + 1;
@@ -1198,27 +1264,27 @@ for (;; ptr++)
           switch (-c)
             {
             case ESC_d:
-            for (c = 0; c < 32; c++) class[c] |= cbits[c+cbit_digit];
+            for (c = 0; c < CHAR_CLASS_SIZE; c++) class[c] |= cbits[c+cbit_digit];
             continue;
 
             case ESC_D:
-            for (c = 0; c < 32; c++) class[c] |= ~cbits[c+cbit_digit];
+            for (c = 0; c < CHAR_CLASS_SIZE; c++) class[c] |= ~cbits[c+cbit_digit];
             continue;
 
             case ESC_w:
-            for (c = 0; c < 32; c++) class[c] |= cbits[c+cbit_word];
+            for (c = 0; c < CHAR_CLASS_SIZE; c++) class[c] |= cbits[c+cbit_word];
             continue;
 
             case ESC_W:
-            for (c = 0; c < 32; c++) class[c] |= ~cbits[c+cbit_word];
+            for (c = 0; c < CHAR_CLASS_SIZE; c++) class[c] |= ~cbits[c+cbit_word];
             continue;
 
             case ESC_s:
-            for (c = 0; c < 32; c++) class[c] |= cbits[c+cbit_space];
+            for (c = 0; c < CHAR_CLASS_SIZE; c++) class[c] |= cbits[c+cbit_space];
             continue;
 
             case ESC_S:
-            for (c = 0; c < 32; c++) class[c] |= ~cbits[c+cbit_space];
+            for (c = 0; c < CHAR_CLASS_SIZE; c++) class[c] |= ~cbits[c+cbit_space];
             continue;
 
             default:
@@ -1261,7 +1327,7 @@ for (;; ptr++)
 
         if (d == '\\')
           {
-          const uschar *oldptr = ptr;
+          const ichar *oldptr = ptr;
           d = check_escape(&ptr, errorptr, *brackets, options, TRUE, cd);
 
 #ifdef SUPPORT_UTF8
@@ -1294,7 +1360,7 @@ for (;; ptr++)
           class[c/8] |= (1 << (c&7));
           if ((options & PCRE_CASELESS) != 0)
             {
-            int uc = cd->fcc[c];           /* flip case */
+            int uc = MAPCHAR(cd->fcc, c);           /* flip case */
             class[uc/8] |= (1 << (uc&7));
             }
           class_charcount++;                /* in case a one-char range */
@@ -1311,7 +1377,7 @@ for (;; ptr++)
       class [c/8] |= (1 << (c&7));
       if ((options & PCRE_CASELESS) != 0)
         {
-        c = cd->fcc[c];   /* flip case */
+        c = MAPCHAR(cd->fcc, c);   /* flip case */
         class[c/8] |= (1 << (c&7));
         }
       class_charcount++;
@@ -1324,7 +1390,7 @@ for (;; ptr++)
     while ((c = *(++ptr)) != ']');
 
     /* If class_charcount is 1 and class_lastchar is not negative, we saw
-    precisely one character. This doesn't need the whole 32-byte bit map.
+    precisely one character. This doesn't need the whole bit map.
     We turn it into a 1-character OP_CHAR if it's positive, or OP_NOT if
     it's negative. */
 
@@ -1339,19 +1405,22 @@ for (;; ptr++)
         code[-1] = OP_CHARS;
         *code++ = 1;
         }
+#if PCRE_UTF16
+      *code++ = class_lastchar >> 8;
+#endif
       *code++ = class_lastchar;
       }
 
-    /* Otherwise, negate the 32-byte map if necessary, and copy it into
+    /* Otherwise, negate the map if necessary, and copy it into
     the code vector. */
 
     else
       {
       if (negate_class)
-        for (c = 0; c < 32; c++) code[c] = ~class[c];
+        for (c = 0; c < CHAR_CLASS_SIZE; c++) code[c] = ~class[c];
       else
-        memcpy(code, class, 32);
-      code += 32;
+        memcpy(code, class, CHAR_CLASS_SIZE);
+      code += CHAR_CLASS_SIZE;
       }
     break;
 
@@ -1407,14 +1476,22 @@ for (;; ptr++)
 
       if (len == 1)
         {
+#if PCRE_UTF16
+        c = (previous[2] << 8) | previous[3];
+#else
         c = previous[2];
+#endif
         code = previous;
         }
       else
         {
+#if PCRE_UTF16
+        c = (previous[len * 2] << 8) | previous[len * 2 + 1];
+#else
         c = previous[len+1];
+#endif
         previous[1]--;
-        code--;
+        code -= sizeof(ichar);
         }
       op_type = 0;                 /* Use single-char op codes */
       goto OUTPUT_SINGLE_REPEAT;   /* Code shared with single character types */
@@ -1427,7 +1504,11 @@ for (;; ptr++)
     else if ((int)*previous == OP_NOT)
       {
       op_type = OP_NOTSTAR - OP_STAR;  /* Use "not" opcodes */
+#if PCRE_UTF16
+      c = (previous[1] << 8) | previous[2];
+#else
       c = previous[1];
+#endif
       code = previous;
       goto OUTPUT_SINGLE_REPEAT;
       }
@@ -1500,12 +1581,15 @@ for (;; ptr++)
         /*  For a single negated character we also have to put back the
         item that got cancelled. */
 
-        else if (*previous == OP_NOT) code++;
+        else if (*previous == OP_NOT) code += sizeof(ichar);
 
         /* If the maximum is unlimited, insert an OP_STAR. */
 
         if (repeat_max < 0)
           {
+#if PCRE_UTF16
+          if (op_type != OP_TYPESTAR - OP_STAR) *code++ = c >> 8;
+#endif
           *code++ = c;
           *code++ = OP_STAR + repeat_type;
           }
@@ -1514,6 +1598,9 @@ for (;; ptr++)
 
         else if (repeat_max != repeat_min)
           {
+#if PCRE_UTF16
+          if (op_type != OP_TYPESTAR - OP_STAR) *code++ = c >> 8;
+#endif
           *code++ = c;
           repeat_max -= repeat_min;
           *code++ = OP_UPTO + repeat_type;
@@ -1524,6 +1611,9 @@ for (;; ptr++)
 
       /* The character or character type itself comes last in all cases. */
 
+#if PCRE_UTF16
+      if (op_type != OP_TYPESTAR - OP_STAR) *code++ = c >> 8;
+#endif
       *code++ = c;
       }
 
@@ -2042,6 +2132,21 @@ for (;; ptr++)
         c = check_escape(&ptr, errorptr, *brackets, options, FALSE, cd);
         if (c < 0) { ptr = tempptr; break; }
 
+#if PCRE_UTF16
+        /* If a character is > 65535, we have to turn it into a surrogate pair. */
+        if (c > 65535)
+          {
+          int c0 = LEADING_SURROGATE(c);
+          int c1 = TRAILING_SURROGATE(c);
+          code[0] = c0 >> 8;
+          code[1] = c0;
+          code[2] = c1 >> 8;
+          code[3] = c1;
+          code += 4;
+          length += 2;
+          continue;
+          }
+#else
         /* If a character is > 127 in UTF-8 mode, we have to turn it into
         two or more characters in the UTF-8 encoding. */
 
@@ -2055,10 +2160,14 @@ for (;; ptr++)
           continue;
           }
 #endif
+#endif
         }
 
       /* Ordinary character or single-char escape */
 
+#if PCRE_UTF16
+      *code++ = c >> 8;
+#endif
       *code++ = c;
       length++;
       }
@@ -2069,8 +2178,16 @@ for (;; ptr++)
 
     /* Update the last character and the count of literals */
 
+#if PCRE_UTF16
+    if (length > 1)
+      prevreqchar = (code[-4] << 8) | code[-3];
+    else
+      prevreqchar = *reqchar;
+    *reqchar = (code[-2] << 8) | code[-1];
+#else
     prevreqchar = (length > 1)? code[-2] : *reqchar;
     *reqchar = code[-1];
+#endif
     *countlits += length;
 
     /* Compute the length and set it in the data vector, and advance to
@@ -2125,10 +2242,10 @@ Returns:      TRUE on success
 
 static BOOL
 compile_regex(int options, int optchanged, int *brackets, uschar **codeptr,
-  const uschar **ptrptr, const char **errorptr, BOOL lookbehind, int skipbytes,
+  const ichar **ptrptr, const char **errorptr, BOOL lookbehind, int skipbytes,
   int *reqchar, int *countlits, compile_data *cd)
 {
-const uschar *ptr = *ptrptr;
+const ichar *ptr = *ptrptr;
 uschar *code = *codeptr;
 uschar *last_branch = code;
 uschar *start_bracket = code;
@@ -2442,7 +2559,14 @@ do {
 
      case OP_PLUS:
      case OP_MINPLUS:
-     if (c < 0) c = scode[1]; else if (c != scode[1]) return -1;
+     {
+#if PCRE_UTF16
+     int sc = (scode[1] << 8) | scode[2];
+#else
+     int sc = scode[1];
+#endif
+     if (c < 0) c = sc; else if (c != sc) return -1;
+     }
      break;
      }
 
@@ -2475,7 +2599,7 @@ Returns:       pointer to compiled data block, or NULL on error,
 */
 
 pcre *
-pcre_compile(const char *pattern, int options, const char **errorptr,
+pcre_compile(const ichar *pattern, int options, const char **errorptr,
   int *erroroffset, const unsigned char *tables)
 {
 real_pcre *re;
@@ -2489,7 +2613,7 @@ int branch_newextra;
 unsigned int brastackptr = 0;
 size_t size;
 uschar *code;
-const uschar *ptr;
+const ichar *ptr;
 compile_data compile_block;
 int brastack[BRASTACK_SIZE];
 uschar bralenstack[BRASTACK_SIZE];
@@ -2506,6 +2630,12 @@ if ((options & PCRE_UTF8) != 0)
   *errorptr = ERR32;
   return NULL;
   }
+#endif
+
+/* Always set the UTF-8 flag if we're compiled for UTF-16; saves on ifdefs. */
+
+#if PCRE_UTF16
+options |= PCRE_UTF8;
 #endif
 
 /* We can't pass back an error message if errorptr is NULL; I guess the best we
@@ -2549,7 +2679,7 @@ internal flag settings. Make an attempt to correct for any counted white space
 if an "extended" flag setting appears late in the pattern. We can't be so
 clever for #-comments. */
 
-ptr = (const uschar *)(pattern - 1);
+ptr = (const ichar *)(pattern - 1);
 while ((c = *(++ptr)) != 0)
   {
   int min, max;
@@ -2577,7 +2707,7 @@ while ((c = *(++ptr)) != 0)
 
     case '\\':
       {
-      const uschar *save_ptr = ptr;
+      const ichar *save_ptr = ptr;
       c = check_escape(&ptr, errorptr, bracount, options, FALSE, &compile_block);
       if (*errorptr != NULL) goto PCRE_ERROR_RETURN;
       if (c >= 0)
@@ -2672,7 +2802,7 @@ while ((c = *(++ptr)) != 0)
 
     /* Repeats for negated single chars are handled by the general code */
 
-    if (class_charcount == 1) length += 3; else
+    if (class_charcount == 1) length += sizeof(ichar) + 2; else
       {
       length += 33;
 
@@ -3004,12 +3134,15 @@ while ((c = *(++ptr)) != 0)
 
       if (c == '\\')
         {
-        const uschar *saveptr = ptr;
+        const ichar *saveptr = ptr;
         c = check_escape(&ptr, errorptr, bracount, options, FALSE,
           &compile_block);
         if (*errorptr != NULL) goto PCRE_ERROR_RETURN;
         if (c < 0) { ptr = saveptr; break; }
 
+#if PCRE_UTF16
+        if (IS_LEADING_SURROGATE(c)) runlength++;
+#else
 #ifdef SUPPORT_UTF8
         if (c > 127 && (options & PCRE_UTF8) != 0)
           {
@@ -3018,6 +3151,7 @@ while ((c = *(++ptr)) != 0)
             if (c <= utf8_table1[i]) break;
           runlength += i;
           }
+#endif
 #endif
         }
 
@@ -3032,7 +3166,7 @@ while ((c = *(++ptr)) != 0)
       (compile_block.ctypes[c = *(++ptr)] & ctype_meta) == 0);
 
     ptr--;
-    length += runlength;
+    length += runlength * sizeof(ichar);
     continue;
     }
   }
@@ -3071,7 +3205,7 @@ re->tables = tables;
 error, *errorptr will be set non-NULL, so we don't need to look at the result
 of the function here. */
 
-ptr = (const uschar *)pattern;
+ptr = (const ichar *)pattern;
 code = re->code;
 *code = OP_BRA;
 bracount = 0;
@@ -3104,7 +3238,7 @@ if (*errorptr != NULL)
   {
   (pcre_free)(re);
   PCRE_ERROR_RETURN:
-  *erroroffset = ptr - (const uschar *)pattern;
+  *erroroffset = ptr - (const ichar *)pattern;
   return NULL;
   }
 
@@ -3206,8 +3340,17 @@ while (code < code_end)
     case OP_CHARS:
     charlength = *(++code);
     printf("%3d ", charlength);
-    while (charlength-- > 0)
+    while (charlength-- > 0) {
+#if PCRE_UTF16
+      c = (code[1] << 8) | code[2];
+      code += 2;
+      if (isprint(c)) printf("%c", c);
+        else if (c < 256) printf("\\x%02x", c);
+        else printf("\\x{%x}", c);
+#else
       if (isprint(c = *(++code))) printf("%c", c); else printf("\\x%02x", c);
+#endif
+    }
     break;
 
     case OP_KETRMAX:
@@ -3233,28 +3376,45 @@ while (code < code_end)
     case OP_MINPLUS:
     case OP_QUERY:
     case OP_MINQUERY:
+#if PCRE_UTF16
+    c = (code[1] << 8) | code[2];
+    if (isprint(c)) printf("    %c", c);
+      else if (c < 256) printf("    \\x%02x", c);
+      else printf("    \\x{%x}", c);
+#else
+    if (isprint(c = code[1])) printf("    %c", c);
+      else printf("    \\x%02x", c);
+#endif
+    printf("%s", OP_names[*code]);
+    code += sizeof(ichar);
+    break;
+
     case OP_TYPESTAR:
     case OP_TYPEMINSTAR:
     case OP_TYPEPLUS:
     case OP_TYPEMINPLUS:
     case OP_TYPEQUERY:
     case OP_TYPEMINQUERY:
-    if (*code >= OP_TYPESTAR)
-      printf("    %s", OP_names[code[1]]);
-    else if (isprint(c = code[1])) printf("    %c", c);
-      else printf("    \\x%02x", c);
+    printf("    %s", OP_names[code[1]]);
     printf("%s", OP_names[*code++]);
     break;
 
     case OP_EXACT:
     case OP_UPTO:
     case OP_MINUPTO:
+#if PCRE_UTF16
+    c = (code[3] << 8) | code[4];
+    if (isprint(c)) printf("    %c{", c);
+      else if (c < 256) printf("    \\x%02x{", c);
+      else printf("    \\x{%x}{", c);
+#else
     if (isprint(c = code[3])) printf("    %c{", c);
       else printf("    \\x%02x{", c);
+#endif
     if (*code != OP_EXACT) printf("0,");
     printf("%d}", (code[1] << 8) + code[2]);
     if (*code == OP_MINUPTO) printf("?");
-    code += 3;
+    code += sizeof(ichar) + 2;
     break;
 
     case OP_TYPEEXACT:
@@ -3268,8 +3428,16 @@ while (code < code_end)
     break;
 
     case OP_NOT:
+#if PCRE_UTF16
+    c = (code[1] << 8) | code[2];
+    code += 2;
+    if (isprint(c)) printf("    [^%c]", c);
+      else if (c < 256) printf("    [^\\x%02x]", c);
+      else printf("    [^\\x{%x}]", c);
+#else
     if (isprint(c = *(++code))) printf("    [^%c]", c);
       else printf("    [^\\x%02x]", c);
+#endif
     break;
 
     case OP_NOTSTAR:
@@ -3278,20 +3446,35 @@ while (code < code_end)
     case OP_NOTMINPLUS:
     case OP_NOTQUERY:
     case OP_NOTMINQUERY:
+#if PCRE_UTF16
+    c = (code[1] << 8) | code[2];
+    if (isprint(c)) printf("    [^%c]", c);
+      else if (c < 256) printf("    [^\\x%02x]", c);
+      else printf("    [^\\x{%x}]", c);
+#else
     if (isprint(c = code[1])) printf("    [^%c]", c);
       else printf("    [^\\x%02x]", c);
-    printf("%s", OP_names[*code++]);
+#endif
+    printf("%s", OP_names[*code]);
+    code += sizeof(ichar);
     break;
 
     case OP_NOTEXACT:
     case OP_NOTUPTO:
     case OP_NOTMINUPTO:
+#if PCRE_UTF16
+    c = (code[3] << 8) | code[4];
+    if (isprint(c)) printf("    [^%c]{", c);
+      else if (c < 256) printf("    [^\\x%02x]{", c);
+      else printf("    [^\\x{%x}]{", c);
+#else
     if (isprint(c = code[3])) printf("    [^%c]{", c);
       else printf("    [^\\x%02x]{", c);
+#endif
     if (*code != OP_NOTEXACT) printf(",");
     printf("%d}", (code[1] << 8) + code[2]);
     if (*code == OP_NOTMINUPTO) printf("?");
-    code += 3;
+    code += sizeof(ichar) + 2;
     break;
 
     case OP_REF:
@@ -3305,12 +3488,12 @@ while (code < code_end)
       code++;
       printf("    [");
 
-      for (i = 0; i < 256; i++)
+      for (i = 0; i < ICHAR_LIMIT; i++)
         {
         if ((code[i/8] & (1 << (i&7))) != 0)
           {
           int j;
-          for (j = i+1; j < 256; j++)
+          for (j = i+1; j < ICHAR_LIMIT; j++)
             if ((code[j/8] & (1 << (j&7))) == 0) break;
           if (i == '-' || i == ']') printf("\\");
           if (isprint(i)) printf("%c", i); else printf("\\x%02x", i);
@@ -3324,7 +3507,7 @@ while (code < code_end)
           }
         }
       printf("]");
-      code += 32;
+      code += CHAR_CLASS_SIZE;
 
       CLASS_REF_REPEAT:
 
@@ -3374,7 +3557,7 @@ if (code - re->code > length)
   {
   *errorptr = ERR23;
   (pcre_free)(re);
-  *erroroffset = ptr - (uschar *)pattern;
+  *erroroffset = ptr - (ichar *)pattern;
   return NULL;
   }
 #endif
@@ -3402,10 +3585,10 @@ Returns:      TRUE if matched
 */
 
 static BOOL
-match_ref(int offset, register const uschar *eptr, int length, match_data *md,
+match_ref(int offset, register const ichar *eptr, int length, match_data *md,
   unsigned long int ims)
 {
-const uschar *p = md->start_subject + md->offset_vector[offset];
+const ichar *p = md->start_subject + md->offset_vector[offset];
 
 #ifdef DEBUG
 if (eptr >= md->end_subject)
@@ -3429,7 +3612,11 @@ if (length > md->end_subject - eptr) return FALSE;
 if ((ims & PCRE_CASELESS) != 0)
   {
   while (length-- > 0)
-    if (md->lcc[*p++] != md->lcc[*eptr++]) return FALSE;
+    {
+    ichar c1 = *p++;
+    ichar c2 = *eptr++;
+    if (MAPCHAR(md->lcc, c1) != MAPCHAR(md->lcc, c2)) return FALSE;
+    }
   }
 else
   { while (length-- > 0) if (*p++ != *eptr++) return FALSE; }
@@ -3464,7 +3651,7 @@ Returns:       TRUE if matched
 */
 
 static BOOL
-match(register const uschar *eptr, register const uschar *ecode,
+match(register const ichar *eptr, register const uschar *ecode,
   int offset_top, match_data *md, unsigned long int ims, eptrblock *eptrb,
   int flags)
 {
@@ -3752,7 +3939,7 @@ for (;;)
     case OP_ONCE:
       {
       const uschar *prev = ecode;
-      const uschar *saved_eptr = eptr;
+      const ichar *saved_eptr = eptr;
 
       do
         {
@@ -3854,7 +4041,7 @@ for (;;)
     case OP_KETRMAX:
       {
       const uschar *prev = ecode - (ecode[1] << 8) - ecode[2];
-      const uschar *saved_eptr = eptrb->saved_eptr;
+      const ichar *saved_eptr = eptrb->saved_eptr;
 
       eptrb = eptrb->prev;    /* Back up the stack of bracket start pointers */
 
@@ -4016,7 +4203,7 @@ for (;;)
     if (eptr++ >= md->end_subject) return FALSE;
 #ifdef SUPPORT_UTF8
     if (md->utf8)
-      while (eptr < md->end_subject && (*eptr & 0xc0) == 0x80) eptr++;
+      while (eptr < md->end_subject && ISMIDCHAR(*eptr)) eptr++;
 #endif
     ecode++;
     break;
@@ -4157,7 +4344,7 @@ for (;;)
 
       else
         {
-        const uschar *pp = eptr;
+        const ichar *pp = eptr;
         for (i = min; i < max; i++)
           {
           if (!match_ref(offset, eptr, length, md, ims)) break;
@@ -4261,7 +4448,7 @@ for (;;)
 
       else
         {
-        const uschar *pp = eptr;
+        const ichar *pp = eptr;
         int len = 1;
         for (i = min; i < max; i++)
           {
@@ -4314,12 +4501,30 @@ for (;;)
       if ((ims & PCRE_CASELESS) != 0)
         {
         while (length-- > 0)
-          if (md->lcc[*ecode++] != md->lcc[*eptr++])
+          {
+#if PCRE_UTF16
+          ichar c1 = (ecode[0] << 8) | ecode[1];
+          ecode += 2;
+#else
+          ichar c1 = *ecode++;
+#endif
+          ichar c2 = *eptr++;
+          if (MAPCHAR(md->lcc, c1) != MAPCHAR(md->lcc, c2))
             return FALSE;
+          }
         }
       else
         {
-        while (length-- > 0) if (*ecode++ != *eptr++) return FALSE;
+        while (length-- > 0)
+          {
+#if PCRE_UTF16
+          int c = (ecode[0] << 8) | ecode[1];
+          ecode += 2;
+#else
+          int c = *ecode++;
+#endif
+          if (c != *eptr++) return FALSE;
+          }
         }
       }
     break;
@@ -4357,7 +4562,12 @@ for (;;)
 
     REPEATCHAR:
     if (min > md->end_subject - eptr) return FALSE;
+#if PCRE_UTF16
+    c = (ecode[0] << 8) | ecode[1];
+    ecode += 2;
+#else
     c = *ecode++;
+#endif
 
     /* The code is duplicated for the caseless and caseful cases, for speed,
     since matching characters is likely to be quite common. First, ensure the
@@ -4372,9 +4582,12 @@ for (;;)
 
     if ((ims & PCRE_CASELESS) != 0)
       {
-      c = md->lcc[c];
+      c = MAPCHAR(md->lcc, c);
       for (i = 1; i <= min; i++)
-        if (c != md->lcc[*eptr++]) return FALSE;
+        {
+          ichar c2 = *eptr++;
+          if (c != MAPCHAR(md->lcc, c2)) return FALSE;
+        }
       if (min == max) continue;
       if (minimize)
         {
@@ -4382,18 +4595,20 @@ for (;;)
           {
           if (match(eptr, ecode, offset_top, md, ims, eptrb, 0))
             return TRUE;
-          if (i >= max || eptr >= md->end_subject ||
-              c != md->lcc[*eptr++])
+          if (i >= max || eptr >= md->end_subject)
+            return FALSE;
+          ichar c2 = *eptr++;
+          if (c != MAPCHAR(md->lcc, c2))
             return FALSE;
           }
         /* Control never gets here */
         }
       else
         {
-        const uschar *pp = eptr;
+        const ichar *pp = eptr;
         for (i = min; i < max; i++)
           {
-          if (eptr >= md->end_subject || c != md->lcc[*eptr]) break;
+          if (eptr >= md->end_subject || c != MAPCHAR(md->lcc, *eptr)) break;
           eptr++;
           }
         while (eptr >= pp)
@@ -4422,7 +4637,7 @@ for (;;)
         }
       else
         {
-        const uschar *pp = eptr;
+        const ichar *pp = eptr;
         for (i = min; i < max; i++)
           {
           if (eptr >= md->end_subject || c != *eptr) break;
@@ -4438,17 +4653,25 @@ for (;;)
 
     /* Match a negated single character */
 
-    case OP_NOT:
+    case OP_NOT: {
     if (eptr >= md->end_subject) return FALSE;
+#if PCRE_UTF16
+    int c = (ecode[1] << 8) | ecode[2];
+    ecode += 3;
+#else
     ecode++;
+    int c = *ecode++;
+#endif
     if ((ims & PCRE_CASELESS) != 0)
       {
-      if (md->lcc[*ecode++] == md->lcc[*eptr++]) return FALSE;
+      ichar c2 = *eptr++;
+      if (MAPCHAR(md->lcc, c) == MAPCHAR(md->lcc, c2)) return FALSE;
       }
     else
       {
-      if (*ecode++ == *eptr++) return FALSE;
+      if (c == *eptr++) return FALSE;
       }
+    }
     break;
 
     /* Match a negated single character repeatedly. This is almost a repeat of
@@ -4488,7 +4711,12 @@ for (;;)
 
     REPEATNOTCHAR:
     if (min > md->end_subject - eptr) return FALSE;
+#if PCRE_UTF16
+    c = (ecode[0] << 8) | ecode[1];
+    ecode += 2;
+#else
     c = *ecode++;
+#endif
 
     /* The code is duplicated for the caseless and caseful cases, for speed,
     since matching characters is likely to be quite common. First, ensure the
@@ -4503,9 +4731,12 @@ for (;;)
 
     if ((ims & PCRE_CASELESS) != 0)
       {
-      c = md->lcc[c];
+      c = MAPCHAR(md->lcc, c);
       for (i = 1; i <= min; i++)
-        if (c == md->lcc[*eptr++]) return FALSE;
+        {
+        ichar c2 = *eptr++;
+        if (c == MAPCHAR(md->lcc, c2)) return FALSE;
+        }
       if (min == max) continue;
       if (minimize)
         {
@@ -4513,18 +4744,20 @@ for (;;)
           {
           if (match(eptr, ecode, offset_top, md, ims, eptrb, 0))
             return TRUE;
-          if (i >= max || eptr >= md->end_subject ||
-              c == md->lcc[*eptr++])
+          if (i >= max || eptr >= md->end_subject)
+            return FALSE;
+          ichar c2 = *eptr++;
+          if (c == MAPCHAR(md->lcc, c2))
             return FALSE;
           }
         /* Control never gets here */
         }
       else
         {
-        const uschar *pp = eptr;
+        const ichar *pp = eptr;
         for (i = min; i < max; i++)
           {
-          if (eptr >= md->end_subject || c == md->lcc[*eptr]) break;
+          if (eptr >= md->end_subject || c == MAPCHAR(md->lcc, *eptr)) break;
           eptr++;
           }
         while (eptr >= pp)
@@ -4553,7 +4786,7 @@ for (;;)
         }
       else
         {
-        const uschar *pp = eptr;
+        const ichar *pp = eptr;
         for (i = min; i < max; i++)
           {
           if (eptr >= md->end_subject || c == *eptr) break;
@@ -4621,7 +4854,7 @@ for (;;)
           if (eptr >= md->end_subject ||
              (*eptr++ == NEWLINE && (ims & PCRE_DOTALL) == 0))
             return FALSE;
-          while (eptr < md->end_subject && (*eptr & 0xc0) == 0x80) eptr++;
+          while (eptr < md->end_subject && ISMIDCHAR(*eptr)) eptr++;
           }
         break;
         }
@@ -4686,7 +4919,7 @@ for (;;)
           if ((ims & PCRE_DOTALL) == 0 && c == NEWLINE) return FALSE;
 #ifdef SUPPORT_UTF8
           if (md->utf8)
-            while (eptr < md->end_subject && (*eptr & 0xc0) == 0x80) eptr++;
+            while (eptr < md->end_subject && ISMIDCHAR(*eptr)) eptr++;
 #endif
           break;
 
@@ -4723,7 +4956,7 @@ for (;;)
 
     else
       {
-      const uschar *pp = eptr;
+      const ichar *pp = eptr;
       switch(ctype)
         {
         case OP_ANY:
@@ -4739,7 +4972,7 @@ for (;;)
             for (i = min; i < max; i++)
               {
               if (eptr >= md->end_subject || *eptr++ == NEWLINE) break;
-              while (eptr < md->end_subject && (*eptr & 0xc0) == 0x80) eptr++;
+              while (eptr < md->end_subject && ISMIDCHAR(*eptr)) eptr++;
               }
             }
           else
@@ -4747,7 +4980,7 @@ for (;;)
             for (i = min; i < max; i++)
               {
               eptr++;
-              while (eptr < md->end_subject && (*eptr & 0xc0) == 0x80) eptr++;
+              while (eptr < md->end_subject && ISMIDCHAR(*eptr)) eptr++;
               }
             }
           break;
@@ -4831,7 +5064,7 @@ for (;;)
           return TRUE;
 #ifdef SUPPORT_UTF8
         if (md->utf8)
-          while (eptr > pp && (*eptr & 0xc0) == 0x80) eptr--;
+          while (eptr > pp && ISMIDCHAR(*eptr)) eptr--;
 #endif
         }
       return FALSE;
@@ -4883,7 +5116,7 @@ Returns:          > 0 => success; value is the number of elements filled in
 
 int
 pcre_exec(const pcre *external_re, const pcre_extra *external_extra,
-  const char *subject, int length, int start_offset, int options, int *offsets,
+  const pcre_char *subject, int length, int start_offset, int options, int *offsets,
   int offsetcount)
 {
 int resetcount, ocount;
@@ -4893,9 +5126,9 @@ int req_char2 = -1;
 unsigned long int ims = 0;
 match_data match_block;
 const uschar *start_bits = NULL;
-const uschar *start_match = (const uschar *)subject + start_offset;
-const uschar *end_subject;
-const uschar *req_char_ptr = start_match - 1;
+const ichar *start_match = (const ichar *)subject + start_offset;
+const ichar *end_subject;
+const ichar *req_char_ptr = start_match - 1;
 const real_pcre *re = (const real_pcre *)external_re;
 const real_pcre_extra *extra = (const real_pcre_extra *)external_extra;
 BOOL using_temporary_offsets = FALSE;
@@ -4912,7 +5145,7 @@ anchored = ((re->options | options) & PCRE_ANCHORED) != 0;
 startline = (re->options & PCRE_STARTLINE) != 0;
 
 match_block.start_pattern = re->code;
-match_block.start_subject = (const uschar *)subject;
+match_block.start_subject = (const ichar *)subject;
 match_block.end_subject = match_block.start_subject + length;
 end_subject = match_block.end_subject;
 
@@ -4984,7 +5217,7 @@ if (!anchored)
   if ((re->options & PCRE_FIRSTSET) != 0)
     {
     first_char = re->first_char;
-    if ((ims & PCRE_CASELESS) != 0) first_char = match_block.lcc[first_char];
+    if ((ims & PCRE_CASELESS) != 0) first_char = MAPCHAR(match_block.lcc, first_char);
     }
   else
     if (!startline && extra != NULL &&
@@ -5004,7 +5237,7 @@ if ((re->options & PCRE_REQCHSET) != 0)
   {
   req_char = re->req_char;
   req_char2 = ((re->options & (PCRE_CASELESS | PCRE_ICHANGED)) != 0)?
-    (re->tables + fcc_offset)[req_char] : req_char;
+    ((const ichar *)(re->tables + fcc_offset))[req_char] : req_char;
   }
 
 /* Loop for handling unanchored repeated matching attempts; for anchored regexs
@@ -5026,7 +5259,7 @@ do
     {
     if ((ims & PCRE_CASELESS) != 0)
       while (start_match < end_subject &&
-             match_block.lcc[*start_match] != first_char)
+             MAPCHAR(match_block.lcc, *start_match) != first_char)
         start_match++;
     else
       while (start_match < end_subject && *start_match != first_char)
@@ -5074,7 +5307,7 @@ do
 
   if (req_char >= 0)
     {
-    register const uschar *p = start_match + ((first_char >= 0)? 1 : 0);
+    register const ichar *p = start_match + ((first_char >= 0)? 1 : 0);
 
     /* We don't need to repeat the search if we haven't yet reached the
     place we found it at last time. */
