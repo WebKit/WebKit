@@ -44,6 +44,9 @@ public:
 				 const KParts::URLArgs &urlArgs, 
 				 const KParts::WindowArgs &winArgs, 
 				 KParts::ReadOnlyPart *&part);
+
+    virtual void setIconURL(const KURL &url);
+    virtual void setTypedIconURL(const KURL &url, const QString &type);
     
 private:
      void createNewWindow(const KURL &url, 

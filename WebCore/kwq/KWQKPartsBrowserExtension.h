@@ -85,7 +85,8 @@ public:
 				  const KParts::WindowArgs &winArgs, 
 				  KParts::ReadOnlyPart *&part) = 0;
 
-     void setIconURL(const KURL &) { }
+     virtual void setIconURL(const KURL &url) = 0;
+     virtual void setTypedIconURL(const KURL &url, const QString &type) = 0;
      
      void setURLArgs(const KParts::URLArgs &args) { m_args = args; }
      KParts::URLArgs urlArgs() const { return m_args; }

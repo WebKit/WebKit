@@ -72,6 +72,7 @@
     BOOL gotFirstByte; // got first byte
     BOOL committed; // This data source has been committed
     
+    NSURL *iconURL;
     WebIconLoader *iconLoader;
 }
 
@@ -106,7 +107,10 @@
 + (NSMutableDictionary *)_repTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 - (void)_removeFromFrame;
-- (void)_loadIcon:(NSURL *)url;
+- (void)_loadIcon;
+- (void)_setIconURL:(NSURL *)url;
+- (void)_setIconURL:(NSURL *)url withType:(NSString *)iconType;
+
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.

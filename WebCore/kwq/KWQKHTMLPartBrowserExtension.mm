@@ -114,3 +114,13 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     //}
     *partResult = [bridge part];
 }
+
+void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
+{
+    [m_part->impl->getBridge() setIconURL:url.getNSURL()];
+}
+
+void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
+{
+    [m_part->impl->getBridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+}

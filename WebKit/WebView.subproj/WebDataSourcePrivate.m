@@ -75,6 +75,7 @@
     [locationChangeHandler release];
     [iconLoader setDelegate:nil];
     [iconLoader release];
+    [iconURL release];
     
     [super dealloc];
 }
@@ -137,20 +138,18 @@
     _private->parent = p;
 }
 
-- (void)_loadPageIconIfNecessary
+- (void)_setDefaultIconURLIfUnset
 {
-    // Start loading the page icon from the server's root directory 
-    // since no page icon has already been requested with the LINK tag
-    if(!_private->iconLoader && !_private->mainDocumentError){
+    // Use the site icon from the server's root directory 
+    // since no site icon has already been requested with the LINK tag
+    if(_private->iconURL == nil && !_private->mainDocumentError){
         NSURL *dataSourceURL = [self wasRedirected] ? [self redirectedURL] : [self inputURL];
-        NSURL *iconURL;
         
         if([dataSourceURL isFileURL]){
-            iconURL = dataSourceURL;
+            _private->iconURL = [dataSourceURL retain];
         } else {
-            iconURL = [NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL];
+            _private->iconURL = [[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] retain];
         }
-        [self _loadIcon:iconURL];
     }
 }
 
@@ -159,7 +158,11 @@
     _private->primaryLoadComplete = flag;
     
     if (flag) {
-        [self _loadPageIconIfNecessary];
+	// FIXME: We could actually load it as soon as we've parsed
+	// the HEAD section, or determined there isn't one - but
+	// there's no callback for that.
+        [self _loadIcon];
+
         [_private->mainResourceHandleClient release];
         _private->mainResourceHandleClient = 0; 
         [_private->mainHandle release];
@@ -494,14 +497,35 @@
     [_private->locationChangeHandler receivedPageIcon:image forDataSource:self];
 }
 
-- (void)_loadIcon:(NSURL *)url
+- (void)_loadIcon
 {
     WEBKIT_ASSERT(!_private->iconLoader);
+
+    [self _setDefaultIconURLIfUnset];
     
-    if([self isMainDocument]){
-        _private->iconLoader = [[WebIconLoader alloc] initWithURL:url];
+    if([self isMainDocument] && _private->iconURL != nil) {
+        _private->iconLoader = [[WebIconLoader alloc] initWithURL:_private->iconURL];
         [_private->iconLoader setDelegate:self];
         [_private->iconLoader startLoading];
     }
 }
+
+- (void)_setIconURL:(NSURL *)url
+{
+    // Lower priority than typed icon, so ignore this if we
+    // already have an iconURL
+    if (_private->iconURL == nil) {
+	[_private->iconURL release];
+	_private->iconURL = [url retain];
+    }
+}
+
+- (void)_setIconURL:(NSURL *)url withType:(NSString *)iconType
+{
+    // FIXME: should check to make sure the type is one we know how to
+    // handle
+    [_private->iconURL release];
+    _private->iconURL = [url retain];
+}
+
 @end

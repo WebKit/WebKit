@@ -168,11 +168,16 @@ void HTMLLinkElementImpl::process()
 
     // IE extension: location of small icon for locationbar / bookmarks
 #ifdef APPLE_CHANGES
-    if ( part && rel.contains("icon") && !m_url.isEmpty() && !part->parentPart())
-        part->impl->loadIcon( KURL(m_url.string()) );
+    if ( part && rel == "shortcut icon" && !m_url.isEmpty() && !part->parentPart())
 #else
     if ( part && rel.contains("shortcut icon") && !m_url.isEmpty() && !part->parentPart())
+#endif
     	part->browserExtension()->setIconURL( KURL(m_url.string()) );
+
+#ifdef APPLE_CHANGES
+    // Mozilla extension to IE extension: icon specified with type
+    if ( part && rel == "icon" && !m_url.isEmpty() && !part->parentPart())
+    	part->browserExtension()->setTypedIconURL( KURL(m_url.string()), type );
 #endif
 
     // Stylesheet

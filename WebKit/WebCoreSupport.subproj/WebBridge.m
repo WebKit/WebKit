@@ -230,9 +230,14 @@
     return [WebHTMLView _modifierTrackingEnabled];
 }
 
-- (void)loadIcon:(NSURL *)url
+- (void)setIconURL:(NSURL *)url
 {
-    [dataSource _loadIcon:url];
+    [dataSource _setIconURL:url];
+}
+
+- (void)setIconURL:(NSURL *)url withType:(NSString *)type
+{
+    [dataSource _setIconURL:url withType:type];
 }
 
 @end

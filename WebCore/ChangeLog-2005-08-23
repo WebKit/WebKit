@@ -1,3 +1,27 @@
+2002-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+	Changed the code to handle "icon" and "SHORTCUT ICON" links
+	separately, and give higher priority to the former.
+
+	- fixed 3003672 - Assertion failure related to iconloader on metafilter
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::process): Changed to handle both "icon" and
+	"SHORTCUT ICON" links properly.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+	(KHTMLPartBrowserExtension::setIconURL): Moved here from
+	KWQKHTMLPartImpl to do it more the way KDE does.
+        (KHTMLPartBrowserExtension::setTypedIconURL): New method for
+	handling moz-style icon links, which include a type as well as a
+	URL.
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::loadIcon): Removed.
+        * kwq/WebCoreBridge.h: Prototype setIcon: and setIcon:withType: methods.
+        * kwq/khtml/khtml_ext.h: Prototype new methods.
+        * kwq/kparts/browserextension.h: Make setIcon pure virtual instead
+	of a no-op.
+
 2002-07-19  Chris Blumenberg  <cblu@apple.com>
 
 	Per darin, only define loadIcon in KWQKHTMLPartImpl

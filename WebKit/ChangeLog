@@ -1,3 +1,32 @@
+2002-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+	Changed the code to handle "icon" and "SHORTCUT ICON" links
+	separately, and give higher priority to the former. 
+
+	Also, we don't start loading the icon the moment khtml finds one
+	in the document any more, instead we wait until the document is
+	done loading, in case there are both "icon" and "SHORTCUT ICON"
+	link tags.
+
+	- fixed 3003672 - Assertion failure related to iconloader on metafilter
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setIconURL:]): Forward to the data source.
+        (-[WebBridge setIconURL:withType:]): Likewise.
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Release iconURL.
+        (-[WebDataSource _setDefaultIconURLIfUnset]): Renamed from
+	_loadPageIconIfNecessary, and changed to only set iconURL rather
+	than actually loading.
+        (-[WebDataSource _setPrimaryLoadComplete:]): Call _loadIcon
+	instead of _loadPageIconIfNecessary, since we defer all loads to
+	this point.
+        (-[WebDataSource _loadIcon]): Load current iconURL if set.
+        (-[WebDataSource _setIconURL:]): Set iconURL if not set already
+	(since typed icons are higher priority).
+        (-[WebDataSource _setIconURL:withType:]): Set the iconURL.
+
 2002-07-20  Darin Adler  <darin@apple.com>
 
 	- fixed 2999616 -- Possible leak in +[IFPluginDatabase installedPlugins]
