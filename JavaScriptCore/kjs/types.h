@@ -104,11 +104,11 @@ namespace KJS {
    * The list is explicitly shared. Note that while copy() returns a deep
    * copy of the list the referenced objects are still shared.
    */
-  class List : public Value {
+  class List : private Value {
     friend class ListIterator;
   public:
     List();
-    List(ListImp *v);
+    List(ListImp *);
 
     /**
      * Converts a Value into an List. If the value's type is not
@@ -191,6 +191,9 @@ namespace KJS {
      * Equivalent to @ref at.
      */
     Value operator[](int i) const;
+
+    ListImp *imp() const { return (ListImp *)Value::imp(); }
+
     /**
      * Returns a pointer to a static instance of an empty list. Useful if a
      * function has a @ref KJS::List parameter.
