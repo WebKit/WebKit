@@ -824,7 +824,7 @@ void RenderObject::setStyle(RenderStyle *style)
 
     RenderStyle::Diff d = m_style ? m_style->diff( style ) : RenderStyle::Layout;
 
-    if (m_style && m_parent && d >= RenderStyle::Visible)
+    if (m_style && m_parent && d == RenderStyle::Visible)
         // Do a repaint with the old style first, e.g., for example if we go from
         // having an outline to not having an outline.
         repaint();
