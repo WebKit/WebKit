@@ -211,6 +211,10 @@ protected:
     void replaceTextInNode(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
     void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);
     void splitTextNode(DOM::TextImpl *text, long offset);
+    void splitElement(DOM::ElementImpl *element, DOM::NodeImpl *atChild);
+    void mergeIdenticalElements(DOM::ElementImpl *first, DOM::ElementImpl *second);
+    void wrapContentsInDummySpan(DOM::ElementImpl *element);
+    void splitTextNodeContainingElement(DOM::TextImpl *text, long offset);
 
     void deleteInsignificantText(DOM::TextImpl *, int start, int end);
     void deleteInsignificantText(const DOM::Position &start, const DOM::Position &end);
@@ -280,8 +284,13 @@ private:
     void addInlineStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *start, DOM::NodeImpl *end);
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
     bool splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
+    bool splitTextElementAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
+    bool splitTextElementAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
+    bool mergeStartWithPreviousIfIdentical(const DOM::Position &start, const DOM::Position &end);
+    bool mergeEndWithNextIfIdentical(const DOM::Position &start, const DOM::Position &end);
+    void cleanUpEmptyStyleSpans(const DOM::Position &start, const DOM::Position &end);
+
     void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);
-    DOM::Position positionInsertionPoint(DOM::Position);
     float computedFontSize(const DOM::NodeImpl *);
     void joinChildTextNodes(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end);
     
@@ -737,6 +746,76 @@ private:
     DOM::TextImpl *m_text2;
     unsigned long m_offset;
 };
+
+//------------------------------------------------------------------------------------------
+// WrapContentsInDummySpanCommand
+
+class WrapContentsInDummySpanCommand : public EditCommand
+{
+public:
+    WrapContentsInDummySpanCommand(DOM::DocumentImpl *, DOM::ElementImpl *);
+    virtual ~WrapContentsInDummySpanCommand();
+	
+    virtual void doApply();
+    virtual void doUnapply();
+
+private:
+    DOM::ElementImpl *m_element;
+    DOM::ElementImpl *m_dummySpan;
+};
+
+//------------------------------------------------------------------------------------------
+// SplitElementCommand
+
+class SplitElementCommand : public EditCommand
+{
+public:
+    SplitElementCommand(DOM::DocumentImpl *, DOM::ElementImpl *element, DOM::NodeImpl *atChild);
+    virtual ~SplitElementCommand();
+	
+    virtual void doApply();
+    virtual void doUnapply();
+
+private:
+    DOM::ElementImpl *m_element1;
+    DOM::ElementImpl *m_element2;
+    DOM::NodeImpl *m_atChild;
+};
+
+//------------------------------------------------------------------------------------------
+// MergeIdenticalElementsCommand
+
+class MergeIdenticalElementsCommand : public EditCommand
+{
+public:
+    MergeIdenticalElementsCommand(DOM::DocumentImpl *, DOM::ElementImpl *first, DOM::ElementImpl *second);
+    virtual ~MergeIdenticalElementsCommand();
+	
+    virtual void doApply();
+    virtual void doUnapply();
+
+private:
+    DOM::ElementImpl *m_element1;
+    DOM::ElementImpl *m_element2;
+    DOM::NodeImpl *m_atChild;
+};
+
+//------------------------------------------------------------------------------------------
+// SplitTextNodeContainingElementCommand
+
+class SplitTextNodeContainingElementCommand : public CompositeEditCommand
+{
+public:
+    SplitTextNodeContainingElementCommand(DOM::DocumentImpl *, DOM::TextImpl *, long);
+    virtual ~SplitTextNodeContainingElementCommand();
+	
+    virtual void doApply();
+
+private:
+    DOM::TextImpl *m_text;
+    long m_offset;
+};
+
 
 //------------------------------------------------------------------------------------------
 // TypingCommand

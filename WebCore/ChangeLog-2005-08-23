@@ -1,3 +1,50 @@
+2005-01-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3967572> Editing should split elements before removing style
+	
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::splitElement):
+        (khtml::CompositeEditCommand::mergeIdenticalElements):
+        (khtml::CompositeEditCommand::wrapContentsInDummySpan):
+        (khtml::CompositeEditCommand::splitTextNodeContainingElement):
+        (khtml::ApplyStyleCommand::applyInlineStyle):
+        (khtml::ApplyStyleCommand::splitTextAtStartIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextAtEndIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextElementAtStartIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextElementAtEndIfNeeded):
+        (khtml::areIdenticalElements):
+        (khtml::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (khtml::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (khtml::ApplyStyleCommand::cleanUpEmptyStyleSpans):
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply):
+        (khtml::InsertTextCommand::prepareForTextInsertion):
+        (khtml::SplitTextNodeCommand::doUnapply):
+        (khtml::SplitElementCommand::SplitElementCommand):
+        (khtml::SplitElementCommand::~SplitElementCommand):
+        (khtml::SplitElementCommand::doApply):
+        (khtml::SplitElementCommand::doUnapply):
+        (khtml::MergeIdenticalElementsCommand::MergeIdenticalElementsCommand):
+        (khtml::MergeIdenticalElementsCommand::~MergeIdenticalElementsCommand):
+        (khtml::MergeIdenticalElementsCommand::doApply):
+        (khtml::MergeIdenticalElementsCommand::doUnapply):
+        (khtml::WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand):
+        (khtml::WrapContentsInDummySpanCommand::~WrapContentsInDummySpanCommand):
+        (khtml::WrapContentsInDummySpanCommand::doApply):
+        (khtml::WrapContentsInDummySpanCommand::doUnapply):
+        (khtml::SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand):
+        (khtml::SplitTextNodeContainingElementCommand::~SplitTextNodeContainingElementCommand):
+        (khtml::SplitTextNodeContainingElementCommand::doApply):
+        * khtml/editing/htmlediting.h:
+
+	New layout test that shows the side benefit of this.
+        
+	* layout-tests/editing/style/unbold-in-bold-expected.txt: Added.
+        * layout-tests/editing/style/unbold-in-bold.html: Added.
+
 2005-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -728,6 +728,30 @@ void CompositeEditCommand::splitTextNode(TextImpl *text, long offset)
     applyCommandToComposite(cmd);
 }
 
+void CompositeEditCommand::splitElement(ElementImpl *element, NodeImpl *atChild)
+{
+    EditCommandPtr cmd(new SplitElementCommand(document(), element, atChild));
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommand::mergeIdenticalElements(DOM::ElementImpl *first, DOM::ElementImpl *second)
+{
+    EditCommandPtr cmd(new MergeIdenticalElementsCommand(document(), first, second));
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommand::wrapContentsInDummySpan(DOM::ElementImpl *element)
+{
+    EditCommandPtr cmd(new WrapContentsInDummySpanCommand(document(), element));
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommand::splitTextNodeContainingElement(DOM::TextImpl *text, long offset)
+{
+    EditCommandPtr cmd(new SplitTextNodeContainingElementCommand(document(), text, offset));
+    applyCommandToComposite(cmd);
+}
+
 void CompositeEditCommand::joinTextNodes(TextImpl *text1, TextImpl *text2)
 {
     EditCommandPtr cmd(new JoinTextNodesCommand(document(), text1, text2));
@@ -1316,24 +1340,42 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
     // to check a computed style
     document()->updateLayout();
 
+    // split the start node and containingelement if the selection starts inside of it
+    bool splitStart = splitTextElementAtStartIfNeeded(start, end); 
+    if (splitStart) {
+        start = endingSelection().start();
+        end = endingSelection().end();
+    }
+
+    // split the end node and containing element if the selection ends inside of it
+    bool splitEnd = splitTextElementAtEndIfNeeded(start, end);
+    start = endingSelection().start();
+    end = endingSelection().end();
+
     // Remove style from the selection.
     // Use the upstream position of the start for removing style.
     // This will ensure we remove all traces of the relevant styles from the selection
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
     removeInlineStyle(style, start.upstream(), end);
-    
-    // split the start node if the selection starts inside of it
-    bool splitStart = splitTextAtStartIfNeeded(start, end); 
+
+    if (splitStart || splitEnd) {
+        cleanUpEmptyStyleSpans(start, end);
+    }
+
     if (splitStart) {
+        bool mergedStart = mergeStartWithPreviousIfIdentical(start, end);
+        if (mergedStart) {
+            start = endingSelection().start();
+            end = endingSelection().end();
+        }
+    }
+
+    if (splitEnd) {
+        mergeEndWithNextIfIdentical(start, end);
         start = endingSelection().start();
         end = endingSelection().end();
     }
-
-    // split the end node if the selection ends inside of it
-    splitTextAtEndIfNeeded(start, end);
-    start = endingSelection().start();
-    end = endingSelection().end();
 
     // update document layout once before running the rest of the function
     // so that we avoid the expense of updating before each and every call
@@ -1481,14 +1523,12 @@ bool ApplyStyleCommand::nodeFullySelected(NodeImpl *node, const Position &start,
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommand: style-application helpers
 
-
 bool ApplyStyleCommand::splitTextAtStartIfNeeded(const Position &start, const Position &end)
 {
     if (start.node()->isTextNode() && start.offset() > start.node()->caretMinOffset() && start.offset() < start.node()->caretMaxOffset()) {
         long endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
         TextImpl *text = static_cast<TextImpl *>(start.node());
-        EditCommandPtr cmd(new SplitTextNodeCommand(document(), text, start.offset()));
-        applyCommandToComposite(cmd);
+        splitTextNode(text, start.offset());
         setEndingSelection(Selection(Position(start.node(), 0), Position(end.node(), end.offset() - endOffsetAdjustment)));
         return true;
     }
@@ -1499,10 +1539,9 @@ bool ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Posi
 {
     if (end.node()->isTextNode() && end.offset() > end.node()->caretMinOffset() && end.offset() < end.node()->caretMaxOffset()) {
         TextImpl *text = static_cast<TextImpl *>(end.node());
-        SplitTextNodeCommand *impl = new SplitTextNodeCommand(document(), text, end.offset());
-        EditCommandPtr cmd(impl);
-        applyCommandToComposite(cmd);
-        NodeImpl *prevNode = impl->node()->previousSibling();
+        splitTextNode(text, end.offset());
+        
+        NodeImpl *prevNode = text->previousSibling();
         ASSERT(prevNode);
         NodeImpl *startNode = start.node() == end.node() ? prevNode : start.node();
         ASSERT(startNode);
@@ -1510,6 +1549,202 @@ bool ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Posi
         return true;
     }
     return false;
+}
+
+bool ApplyStyleCommand::splitTextElementAtStartIfNeeded(const Position &start, const Position &end)
+{
+    if (start.node()->isTextNode() && start.offset() > start.node()->caretMinOffset() && start.offset() < start.node()->caretMaxOffset()) {
+        long endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
+        TextImpl *text = static_cast<TextImpl *>(start.node());
+        splitTextNodeContainingElement(text, start.offset());
+
+        setEndingSelection(Selection(Position(start.node()->parentNode(), start.node()->nodeIndex()), Position(end.node(), end.offset() - endOffsetAdjustment)));
+        return true;
+    }
+    return false;
+}
+
+bool ApplyStyleCommand::splitTextElementAtEndIfNeeded(const Position &start, const Position &end)
+{
+    if (end.node()->isTextNode() && end.offset() > end.node()->caretMinOffset() && end.offset() < end.node()->caretMaxOffset()) {
+        TextImpl *text = static_cast<TextImpl *>(end.node());
+        splitTextNodeContainingElement(text, end.offset());
+
+        NodeImpl *prevNode = text->parent()->previousSibling()->lastChild();
+        ASSERT(prevNode);
+        NodeImpl *startNode = start.node() == end.node() ? prevNode : start.node();
+        ASSERT(startNode);
+        setEndingSelection(Selection(Position(startNode, start.offset()), Position(prevNode->parent(), prevNode->nodeIndex() + 1)));
+        return true;
+    }
+    return false;
+}
+
+static bool areIdenticalElements(NodeImpl *first, NodeImpl *second)
+{
+    // check that tag name and all attribute names and values are identical
+
+    if (!first->isElementNode())
+        return false;
+    
+    if (!second->isElementNode())
+        return false;
+
+    ElementImpl *firstElement = static_cast<ElementImpl *>(first);
+    ElementImpl *secondElement = static_cast<ElementImpl *>(second);
+    
+    if (firstElement->id() != secondElement->id())
+        return false;
+
+    NamedAttrMapImpl *firstMap = firstElement->attributes();
+    NamedAttrMapImpl *secondMap = secondElement->attributes();
+
+    unsigned firstLength = firstMap->length();
+
+    if (firstLength != secondMap->length())
+        return false;
+
+    for (unsigned i = 0; i < firstLength; i++) {
+        DOM::AttributeImpl *attribute = firstMap->attributeItem(i);
+        DOM::AttributeImpl *secondAttribute = secondMap->getAttributeItem(attribute->id());
+
+        if (!secondAttribute || attribute->value() != secondAttribute->value())
+            return false;
+    }
+    
+    return true;
+}
+
+bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start, const Position &end)
+{
+    NodeImpl *startNode = start.node();
+    long startOffset = start.offset();
+
+    if (start.node()->isAtomicNode()) {
+        if (start.offset() != 0)
+            return false;
+
+        if (start.node()->previousSibling())
+            return false;
+
+        startNode = start.node()->parent();
+        startOffset = 0;
+    }
+
+    if (!startNode->isElementNode())
+        return false;
+
+    if (startOffset != 0)
+        return false;
+
+    NodeImpl *previousSibling = startNode->previousSibling();
+
+    if (previousSibling && areIdenticalElements(startNode, previousSibling)) {
+        ElementImpl *previousElement = static_cast<ElementImpl *>(previousSibling);
+        ElementImpl *element = static_cast<ElementImpl *>(startNode);
+        NodeImpl *startChild = element->firstChild();
+        ASSERT(startChild);
+        mergeIdenticalElements(previousElement, element);
+
+        long startOffsetAdjustment = startChild->nodeIndex();
+        long endOffsetAdjustment = startNode == end.node() ? startOffsetAdjustment : 0;
+
+        setEndingSelection(Selection(Position(startNode, startOffsetAdjustment),
+                                     Position(end.node(), end.offset() + endOffsetAdjustment))); 
+
+        return true;
+    }
+
+    return false;
+}
+
+bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const Position &end)
+{
+    NodeImpl *endNode = end.node();
+    int endOffset = end.offset();
+
+    if (endNode->isAtomicNode()) {
+        if (endOffset < endNode->caretMaxOffset())
+            return false;
+
+        unsigned parentLastOffset = end.node()->parent()->childNodes()->length() - 1;
+        if (end.node()->nextSibling())
+            return false;
+
+        endNode = end.node()->parent();
+        endOffset = parentLastOffset;
+    }
+
+    if (!endNode->isElementNode() || endNode->id() == ID_BR)
+        return false;
+
+    NodeImpl *nextSibling = endNode->nextSibling();
+
+    if (nextSibling && areIdenticalElements(endNode, nextSibling)) {
+        ElementImpl *nextElement = static_cast<ElementImpl *>(nextSibling);
+        ElementImpl *element = static_cast<ElementImpl *>(endNode);
+        NodeImpl *nextChild = nextElement->firstChild();
+
+        mergeIdenticalElements(element, nextElement);
+
+        NodeImpl *startNode = start.node() == endNode ? nextElement : start.node();
+        ASSERT(startNode);
+
+        int endOffset = nextChild ? nextChild->nodeIndex() : nextElement->childNodes()->length();
+
+        setEndingSelection(Selection(Position(startNode, start.offset()), 
+                                     Position(nextElement, endOffset)));
+        return true;
+    }
+
+    return false;
+}
+
+void ApplyStyleCommand::cleanUpEmptyStyleSpans(const Position &start, const Position &end)
+{
+    NodeImpl *node;
+    for (node = start.node(); node && !node->previousSibling(); node = node->parentNode()) {
+    }
+
+    if (isEmptyStyleSpan(node->previousSibling())) {
+        removeNodePreservingChildren(node->previousSibling());
+    }
+
+    if (start.node() == end.node()) {
+        if (start.node()->isTextNode()) {
+            for (NodeImpl *last = start.node(), *cur = last->parentNode(); cur && !last->previousSibling() && !last->nextSibling(); last = cur, cur = cur->parentNode()) {
+                if (isEmptyStyleSpan(cur)) {
+                    removeNodePreservingChildren(cur);
+                    break;
+                }
+            }
+
+        }
+    } else {
+        if (start.node()->isTextNode()) {
+            for (NodeImpl *last = start.node(), *cur = last->parentNode(); cur && !last->previousSibling(); last = cur, cur = cur->parentNode()) {
+                if (isEmptyStyleSpan(cur)) {
+                    removeNodePreservingChildren(cur);
+                    break;
+                }
+            }
+        }
+
+        if (end.node()->isTextNode()) {
+            for (NodeImpl *last = end.node(), *cur = last->parentNode(); cur && !last->nextSibling(); last = cur, cur = cur->parentNode()) {
+                if (isEmptyStyleSpan(cur)) {
+                    removeNodePreservingChildren(cur);
+                    break;
+                }
+            }
+        }
+    }
+    
+    for (node = end.node(); node && !node->nextSibling(); node = node->parentNode()) {
+    }
+    if (isEmptyStyleSpan(node->nextSibling())) {
+        removeNodePreservingChildren(node->nextSibling());
+    }
 }
 
 void ApplyStyleCommand::surroundNodeRangeWithElement(NodeImpl *startNode, NodeImpl *endNode, ElementImpl *element)
@@ -1560,8 +1795,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
     int exceptionCode = 0;
     
     if (styleChange.cssStyle().length() > 0) {
-        ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
-        ASSERT(exceptionCode == 0);
+        ElementImpl *styleElement = createStyleSpanElement(document());
         styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle());
         styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
         insertNodeBefore(styleElement, startNode);
@@ -1581,48 +1815,6 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
         insertNodeBefore(italicElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, italicElement);
     }
-}
-
-Position ApplyStyleCommand::positionInsertionPoint(Position pos)
-{
-    if (pos.node()->isTextNode() && (pos.offset() > 0 && pos.offset() < pos.node()->maxOffset())) {
-        SplitTextNodeCommand *impl = new SplitTextNodeCommand(document(), static_cast<TextImpl *>(pos.node()), pos.offset());
-        EditCommandPtr split(impl);
-        split.apply();
-        pos = Position(impl->node(), 0);
-    }
-
-#if 0
-    // EDIT FIXME: If modified to work with the internals of applying style,
-    // this code can work to optimize cases where a style change is taking place on
-    // a boundary between nodes where one of the nodes has the desired style. In other
-    // words, it is possible for content to be merged into existing nodes rather than adding
-    // additional markup.
-    if (currentlyHasStyle(pos))
-        return pos;
-        
-    // try next node
-    if (pos.offset() >= pos.node()->caretMaxOffset()) {
-        NodeImpl *nextNode = pos.node()->traverseNextNode();
-        if (nextNode) {
-            Position next = Position(nextNode, 0);
-            if (currentlyHasStyle(next))
-                return next;
-        }
-    }
-
-    // try previous node
-    if (pos.offset() <= pos.node()->caretMinOffset()) {
-        NodeImpl *prevNode = pos.node()->traversePreviousNode();
-        if (prevNode) {
-            Position prev = Position(prevNode, prevNode->maxOffset());
-            if (currentlyHasStyle(prev))
-                return prev;
-        }
-    }
-#endif
-    
-    return pos;
 }
 
 float ApplyStyleCommand::computedFontSize(const NodeImpl *node)
@@ -2715,10 +2907,7 @@ void InsertParagraphSeparatorCommand::doApply()
         TextImpl *textNode = static_cast<TextImpl *>(startNode);
         bool atEnd = (unsigned long)pos.offset() >= textNode->length();
         if (pos.offset() > 0 && !atEnd) {
-            SplitTextNodeCommand *splitCommand = new SplitTextNodeCommand(document(), textNode, pos.offset());
-            EditCommandPtr cmd(splitCommand);
-            applyCommandToComposite(cmd);
-            startNode = splitCommand->node();
+            splitTextNode(textNode, pos.offset());
             pos = Position(startNode, 0);
             splitText = true;
         }
@@ -2842,10 +3031,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
             TextImpl *textNode = static_cast<TextImpl *>(startNode);
             bool atEnd = (unsigned long)pos.offset() >= textNode->length();
             if (pos.offset() > 0 && !atEnd) {
-                SplitTextNodeCommand *splitCommand = new SplitTextNodeCommand(document(), textNode, pos.offset());
-                EditCommandPtr cmd(splitCommand);
-                applyCommandToComposite(cmd);
-                startNode = splitCommand->node();
+                splitTextNode(textNode, pos.offset());
                 pos = Position(startNode, 0);
             }
             else if (atEnd) {
@@ -2993,30 +3179,7 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
         
         pos = Position(textNode, 0);
     }
-    else {
-        // Handle the case where there is a typing style.
-        // FIXME: Improve typing style.
-        // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-        CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
-        if (typingStyle && typingStyle->length() > 0) {
-            if (pos.node()->isTextNode() && pos.offset() > pos.node()->caretMinOffset() && pos.offset() < pos.node()->caretMaxOffset()) {
-                // Need to split current text node in order to insert a span.
-                TextImpl *text = static_cast<TextImpl *>(pos.node());
-                SplitTextNodeCommand *impl = new SplitTextNodeCommand(document(), text, pos.offset());
-                EditCommandPtr cmd(impl);
-                applyCommandToComposite(cmd);
-                setEndingSelection(Position(impl->node(), 0));
-            }
-            
-            TextImpl *editingTextNode = document()->createEditingTextNode("");
-            NodeImpl *node = endingSelection().start().upstream(StayInBlock).node();
-            if (node->isBlockFlow())
-                insertNodeAt(editingTextNode, node, 0);
-            else
-                insertNodeAfter(editingTextNode, node);
-            pos = Position(editingTextNode, 0);
-        }
-    }
+
     return pos;
 }
 
@@ -4145,6 +4308,231 @@ void SplitTextNodeCommand::doUnapply()
     ASSERT(exceptionCode == 0);
 
     m_offset = m_text1->length();
+}
+
+//------------------------------------------------------------------------------------------
+// SplitElementCommand
+
+SplitElementCommand::SplitElementCommand(DOM::DocumentImpl *document, DOM::ElementImpl *element, DOM::NodeImpl *atChild)
+    : EditCommand(document), m_element1(0), m_element2(element), m_atChild(atChild)
+{
+    ASSERT(m_element2);
+    ASSERT(m_atChild);
+
+    m_element2->ref();
+    m_atChild->ref();
+}
+
+SplitElementCommand::~SplitElementCommand()
+{
+    if (m_element1)
+        m_element1->deref();
+
+    ASSERT(m_element2);
+    m_element2->deref();
+    ASSERT(m_atChild);
+    m_atChild->deref();
+}
+
+void SplitElementCommand::doApply()
+{
+    ASSERT(m_element2);
+    ASSERT(m_atChild);
+
+    int exceptionCode = 0;
+
+    if (!m_element1) {
+        // create only if needed.
+        // if reapplying, this object will already exist.
+        m_element1 = static_cast<ElementImpl *>(m_element2->cloneNode(false));
+        ASSERT(m_element1);
+        m_element1->ref();
+    }
+
+    m_element2->parent()->insertBefore(m_element1, m_element2, exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    while (m_element2->firstChild() != m_atChild) {
+        ASSERT(m_element2->firstChild());
+        m_element1->appendChild(m_element2->firstChild(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+}
+
+void SplitElementCommand::doUnapply()
+{
+    ASSERT(m_element1);
+    ASSERT(m_element2);
+    ASSERT(m_atChild);
+
+    ASSERT(m_element1->nextSibling() == m_element2);
+    ASSERT(m_element2->firstChild() && m_element2->firstChild() == m_atChild);
+
+    int exceptionCode = 0;
+
+    while (m_element1->lastChild()) {
+        m_element2->insertBefore(m_element1->lastChild(), m_element2->firstChild(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+
+    m_element2->parentNode()->removeChild(m_element1, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// MergeIdenticalElementsCommand
+
+MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(DOM::DocumentImpl *document, DOM::ElementImpl *first, DOM::ElementImpl *second)
+    : EditCommand(document), m_element1(first), m_element2(second), m_atChild(0)
+{
+    ASSERT(m_element1);
+    ASSERT(m_element2);
+
+    m_element1->ref();
+    m_element2->ref();
+}
+
+MergeIdenticalElementsCommand::~MergeIdenticalElementsCommand()
+{
+    if (m_atChild)
+        m_atChild->deref();
+
+    ASSERT(m_element1);
+    m_element1->deref();
+    ASSERT(m_element2);
+    m_element2->deref();
+}
+
+void MergeIdenticalElementsCommand::doApply()
+{
+    ASSERT(m_element1);
+    ASSERT(m_element2);
+    ASSERT(m_element1->nextSibling() == m_element2);
+
+    int exceptionCode = 0;
+
+    if (!m_atChild) {
+        m_atChild = m_element2->firstChild();
+        m_atChild->ref();
+    }
+
+    while (m_element1->lastChild()) {
+        m_element2->insertBefore(m_element1->lastChild(), m_element2->firstChild(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+
+    m_element2->parentNode()->removeChild(m_element1, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void MergeIdenticalElementsCommand::doUnapply()
+{
+    ASSERT(m_element1);
+    ASSERT(m_element2);
+
+    int exceptionCode = 0;
+
+    m_element2->parent()->insertBefore(m_element1, m_element2, exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    while (m_element2->firstChild() != m_atChild) {
+        ASSERT(m_element2->firstChild());
+        m_element1->appendChild(m_element2->firstChild(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+}
+
+//------------------------------------------------------------------------------------------
+// WrapContentsInDummySpanCommand
+
+WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(DOM::DocumentImpl *document, DOM::ElementImpl *element)
+    : EditCommand(document), m_element(element), m_dummySpan(0)
+{
+    ASSERT(m_element);
+
+    m_element->ref();
+}
+
+WrapContentsInDummySpanCommand::~WrapContentsInDummySpanCommand()
+{
+    if (m_dummySpan)
+        m_dummySpan->deref();
+
+    ASSERT(m_element);
+    m_element->deref();
+}
+
+void WrapContentsInDummySpanCommand::doApply()
+{
+    ASSERT(m_element);
+
+    int exceptionCode = 0;
+
+    if (!m_dummySpan) {
+        m_dummySpan = createStyleSpanElement(document());
+        m_dummySpan->ref();
+    }
+
+    while (m_element->firstChild()) {
+        m_dummySpan->appendChild(m_element->firstChild(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+
+    m_element->appendChild(m_dummySpan, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void WrapContentsInDummySpanCommand::doUnapply()
+{
+    ASSERT(m_element);
+    ASSERT(m_dummySpan);
+
+    ASSERT(m_element->firstChild() == m_dummySpan);
+    ASSERT(!m_element->firstChild()->nextSibling());
+
+    int exceptionCode = 0;
+
+    while (m_dummySpan->firstChild()) {
+        m_element->appendChild(m_dummySpan->firstChild(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+
+    m_element->removeChild(m_dummySpan, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// SplitTextNodeContainingElementCommand
+
+SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(DocumentImpl *document, TextImpl *text, long offset)
+    : CompositeEditCommand(document), m_text(text), m_offset(offset)
+{
+    ASSERT(m_text);
+    ASSERT(m_text->length() > 0);
+
+    m_text->ref();
+}
+
+SplitTextNodeContainingElementCommand::~SplitTextNodeContainingElementCommand()
+{
+    ASSERT(m_text);
+    m_text->deref();
+}
+
+void SplitTextNodeContainingElementCommand::doApply()
+{
+    ASSERT(m_text);
+    ASSERT(m_offset > 0);
+
+    splitTextNode(m_text, m_offset);
+    
+    NodeImpl *parentNode = m_text->parentNode();
+    if (!parentNode->renderer() || !parentNode->renderer()->isInline()) {
+        wrapContentsInDummySpan(static_cast<ElementImpl *>(parentNode));
+        parentNode = parentNode->firstChild();
+    }
+
+    splitElement(static_cast<ElementImpl *>(parentNode), m_text);
 }
 
 //------------------------------------------------------------------------------------------
