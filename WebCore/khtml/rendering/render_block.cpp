@@ -649,13 +649,14 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         // FIXME: We only deal with one compact at a time.  It is unclear what should be
         // done if multiple contiguous compacts are encountered.  For now we assume that
         // compact A followed by another compact B should simply be treated as block A.
-        if (child->isCompact() && !compactChild) {
+        if (child->isCompact() && !compactChild && (child->childrenInline() || child->isReplaced())) {
             // Get the next non-positioned/non-floating RenderBlock.
             RenderObject* next = child->nextSibling();
             RenderObject* curr = next;
             while (curr && curr->isSpecial())
                 curr = curr->nextSibling();
-            if (curr && !curr->isCompact() && !curr->isRunIn()) {
+            if (curr && curr->isRenderBlock() && !curr->isAnonymousBox() &&
+                !curr->isCompact() && !curr->isRunIn()) {
                 curr->calcWidth(); // So that horizontal margins are correct.
                 // Need to compute margins for the child as though it is a block.
                 child->style()->setDisplay(BLOCK);
@@ -672,7 +673,18 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                 else {
                     blockForCompactChild = curr;
                     compactChild = child;
-                    child = child->nextSibling();
+                    child->setInline(true);
+                    child->setPos(0,0); // This position will be updated to reflect the compact's
+                                        // desired position and the line box for the compact will
+                                        // pick that position up.
+
+                    // Remove the child.
+                    RenderObject* next = child->nextSibling();
+                    removeChildNode(child);
+
+                    // Now insert the child under |curr|.
+                    curr->insertChildNode(child, curr->firstChild());
+                    child = next;
                     continue;
                 }
             }
@@ -686,7 +698,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             RenderObject* curr = child->nextSibling();
             while (curr && curr->isSpecial())
                 curr = curr->nextSibling();
-            if (curr && (curr->isRenderBlock() && curr->childrenInline() &&
+            if (curr && (curr->isRenderBlock() && !curr->isAnonymousBox() && curr->childrenInline() &&
                          !curr->isCompact() && !curr->isRunIn())) {
                 // The block acts like an inline, so just null out its
                 // position.
@@ -922,24 +934,14 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             blockForCompactChild = 0;
             if (compactChild) {
                 // We have a compact child to squeeze in.
-                // FIXME: Align the compact box vertically such that the baseline of its
-                // first line box and the baseline of the block child's first line box are aligned.
                 int compactXPos = xPos+compactChild->marginLeft();
                 if (style()->direction() == RTL) {
                     compactChild->calcWidth(); // have to do this because of the capped maxwidth
                     compactXPos = width() - borderRight() - paddingRight() - marginRight() -
                         compactChild->width() - compactChild->marginRight();
                 }
-                compactChild->setPos(compactXPos, child->yPos());
-                if (!compactChild->layouted())
-                    compactChild->layout();
-
-                // FIXME: Is this right? Do we grow the block to accommodate the compact child?
-                // It seems like we could be smart and keep looking for blocks that leave space
-                // for us.  For now just grow the block.
-                if (compactChild->yPos() + compactChild->height() > m_height)
-                    m_height = compactChild->yPos() + compactChild->height();
-                
+                compactXPos -= child->xPos(); // Put compactXPos into the child's coordinate space.
+                compactChild->setPos(compactXPos, compactChild->yPos()); // Set the x position.
                 compactChild = 0;
             }
         }
@@ -1028,7 +1030,7 @@ void RenderBlock::paint(QPainter* p, int _x, int _y, int _w, int _h, int _tx, in
     _ty += m_y;
 
     // check if we need to do anything at all...
-    if (!overhangingContents() && !isRelPositioned() && !isPositioned() )
+    if (!isInlineFlow() && !overhangingContents() && !isRelPositioned() && !isPositioned() )
     {
         int h = m_overflowHeight;
         int yPos = _ty;
@@ -1057,10 +1059,10 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
 #endif
 
     // If we're a repositioned run-in, don't paint background/borders.
-    bool inlineRunIn = (isRunIn() && isInline());
+    bool inlineFlow = isInlineFlow();
     
     // 1. paint background, borders etc
-    if (!inlineRunIn && paintAction == PaintActionBackground &&
+    if (!inlineFlow && paintAction == PaintActionBackground &&
         shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE )
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
@@ -1076,10 +1078,10 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
     paintLineBoxDecorations(p, _x, _y, _w, _h, _tx, _ty, paintAction);
     
     // 3. paint floats.
-    if (!inlineRunIn && (paintAction == PaintActionFloat || paintAction == PaintActionSelection))
+    if (!inlineFlow && (paintAction == PaintActionFloat || paintAction == PaintActionSelection))
         paintFloats(p, _x, _y, _w, _h, _tx, _ty, paintAction == PaintActionSelection);
 
-    if (!inlineRunIn && paintAction == PaintActionBackground &&
+    if (!inlineFlow && paintAction == PaintActionBackground &&
         !childrenInline() && style()->outlineWidth())
         paintOutline(p, _tx, _ty, width(), height(), style());
 
@@ -2140,6 +2142,40 @@ void RenderBlock::close()
     RenderFlow::close();
 }
 
+int RenderBlock::getBaselineOfFirstLineBox()
+{
+    if (m_firstLineBox)
+        return m_firstLineBox->yPos() + m_firstLineBox->baseline();
+
+    if (isInline())
+        return -1; // We're inline and had no line box, so we have no baseline we can return.
+
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        int result = curr->getBaselineOfFirstLineBox();
+        if (result != -1)
+            return curr->yPos() + result; // Translate to our coordinate space.
+    }
+
+    return -1;
+}
+
+InlineFlowBox* RenderBlock::getFirstLineBox()
+{
+    if (m_firstLineBox)
+        return m_firstLineBox;
+
+    if (isInline())
+        return 0; // We're inline and had no line box, so we have no baseline we can return.
+
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        InlineFlowBox* result = curr->getFirstLineBox();
+        if (result)
+            return result;
+    }
+
+    return 0;    
+}
+
 const char *RenderBlock::renderName() const
 {
     if (isFloating())
@@ -2150,6 +2186,10 @@ const char *RenderBlock::renderName() const
         return "RenderBlock (anonymous)";
     if (isRelPositioned())
         return "RenderBlock (relative positioned)";
+    if (isCompact())
+        return "RenderBlock (compact)";
+    if (isRunIn())
+        return "RenderBlock (run-in)";
     return "RenderBlock";
 }
 

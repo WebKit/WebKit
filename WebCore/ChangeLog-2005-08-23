@@ -1,3 +1,23 @@
+2003-03-09  David Hyatt  <hyatt@apple.com>
+
+	Fix compacts and run-ins to work a lot better than they did
+	before.  I had some huge misunderstandings with how compact
+	worked that have now been clarified.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/bidi.h:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::repaint):
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::placeBoxesHorizontally):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+
 2003-03-08  David Hyatt  <hyatt@apple.com>
 
 	Check in the patch I actually meant to land.  Somehow what I landed

@@ -142,6 +142,9 @@ public:
 
     virtual void close();
 
+    virtual int getBaselineOfFirstLineBox();
+    virtual InlineFlowBox* getFirstLineBox();
+    
     // overrides RenderObject
     virtual bool requiresLayer() { return !isTableCell() &&
         (isPositioned() || isRelPositioned() || style()->overflow()==OHIDDEN); }

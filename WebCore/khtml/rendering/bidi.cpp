@@ -47,6 +47,10 @@ static BidiStatus status;
 static BidiRun* sFirstBidiRun = 0;
 static BidiRun* sLastBidiRun = 0;
 static int sBidiRunCount = 0;
+static BidiRun* sCompactFirstBidiRun = 0;
+static BidiRun* sCompactLastBidiRun = 0;
+static int sCompactBidiRunCount = 0;
+static bool sBuildingCompactRuns = false;
 
 // Midpoint globals.  The goal is not to do any allocation when dealing with
 // these midpoints, so we just keep an array around and never clear it.  We track
@@ -362,6 +366,7 @@ static void addRun(BidiRun* bidiRun)
         sLastBidiRun = bidiRun;
     }
     sBidiRunCount++;
+    bidiRun->compact = sBuildingCompactRuns;
 }
 
 static void reverseRuns(int start, int end)
@@ -650,9 +655,13 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, Bidi
         else if (!r->obj->isInlineFlow()) {
             r->obj->calcWidth();
             r->box->setWidth(r->obj->width());
-            totWidth += r->obj->marginLeft() + r->obj->marginRight();
+            if (!r->compact)
+                totWidth += r->obj->marginLeft() + r->obj->marginRight();
         }
-        totWidth += r->box->width();
+
+        // Compacts don't contribute to the width of the line, since they are placed in the margin.
+        if (!r->compact)
+            totWidth += r->box->width();
     }
 
     // Armed with the total width of the line (without justification),
@@ -688,7 +697,7 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, Bidi
 
     for (r = sFirstBidiRun; r; r = r->nextRun) {
         int spaceAdd = 0;
-        if (numSpaces > 0 && r->obj->isText()) {
+        if (numSpaces > 0 && r->obj->isText() && !r->compact) {
             // get the number of spaces in the run
             int spaces = 0;
             for ( int i = r->start; i < r->stop; i++ )
@@ -1102,7 +1111,6 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
 	    appendRun();
     }
 
-    BidiContext *endEmbed = context;
     // both commands below together give a noop...
     //endEmbed->ref();
     //context->deref();
@@ -1168,21 +1176,42 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
     for (BidiRun* curr = sFirstRun; curr; curr = curr->nextRun)
         kdDebug(6041) << "    " << curr << endl;
 #endif
+}
 
-    // Now that the runs have been ordered, we create the line boxes.
-    // At the same time we figure out where border/padding/margin should be applied for
-    // inline flow boxes.
-    InlineFlowBox* lineBox = constructLine(start, end);
-    if (!lineBox)
-        return;
-
-    // Now we position all of our text runs horizontally.
-    computeHorizontalPositionsForLine(lineBox, endEmbed);
-
-    // Now position our text runs vertically.
-    computeVerticalPositionsForLine(lineBox);
+static void buildCompactRuns(RenderObject* compactObj)
+{
+    sBuildingCompactRuns = true;
+    if (!compactObj->isRenderBlock()) {
+        // Just append a run for our object.
+        isLineEmpty = false;
+        addRun(new (compactObj->renderArena()) BidiRun(0, compactObj->length(), compactObj, context, dir));
+    }
+    else {
+        // Format the compact like it is its own single line.  We build up all the runs for
+        // the little compact and then reorder them for bidi.
+        RenderBlock* compactBlock = static_cast<RenderBlock*>(compactObj);
+        adjustEmbeddding = true;
+        BidiIterator start(compactBlock);
+        adjustEmbeddding = false;
+        BidiIterator end(compactBlock);
     
-    deleteBidiRuns(renderArena());
+        betweenMidpoints = false;
+        isLineEmpty = true;
+    
+        end = compactBlock->findNextLineBreak(start);
+        if (!isLineEmpty)
+            compactBlock->bidiReorderLine(start, end);
+    }
+    
+    
+    sCompactFirstBidiRun = sFirstBidiRun;
+    sCompactLastBidiRun = sLastBidiRun;
+    sCompactBidiRunCount = sBidiRunCount;
+    
+    sNumMidpoints = 0;
+    sCurrMidpoint = 0;
+    betweenMidpoints = false;
+    sBuildingCompactRuns = false;
 }
 
 void RenderBlock::layoutInlineChildren(bool relayoutChildren)
@@ -1252,16 +1281,46 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
 
         sNumMidpoints = 0;
         sCurrMidpoint = 0;
-        
+        sCompactFirstBidiRun = sCompactLastBidiRun = 0;
+        sCompactBidiRunCount = 0;
+
         while( !end.atEnd() ) {
             start = end;
             betweenMidpoints = false;
             isLineEmpty = true;
+            if (m_firstLine && firstChild() && firstChild()->isCompact()) {
+                buildCompactRuns(firstChild());
+                start.obj = firstChild()->nextSibling();
+                end = start;
+            }
             end = findNextLineBreak(start);
             if( start.atEnd() ) break;
             if (!isLineEmpty) {
                 bidiReorderLine(start, end);
-    
+
+                // Now that the runs have been ordered, we create the line boxes.
+                // At the same time we figure out where border/padding/margin should be applied for
+                // inline flow boxes.
+                if (sCompactFirstBidiRun) {
+                    // We have a compact line sharing this line.  Link the compact runs
+                    // to our runs to create a single line of runs.
+                    sCompactLastBidiRun->nextRun = sFirstBidiRun;
+                    sFirstBidiRun = sCompactFirstBidiRun;
+                    sBidiRunCount += sCompactBidiRunCount;
+                }
+                
+                InlineFlowBox* lineBox = constructLine(start, end);
+                if (!lineBox)
+                    return;
+
+                // Now we position all of our text runs horizontally.
+                computeHorizontalPositionsForLine(lineBox, context);
+
+                // Now position our text runs vertically.
+                computeVerticalPositionsForLine(lineBox);
+
+                deleteBidiRuns(renderArena());
+                
                 if( end == start || (end.obj && end.obj->isBR() && !start.obj->isBR() ) ) {
                     adjustEmbeddding = true;
                     ++end;
@@ -1278,6 +1337,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
 
             sNumMidpoints = 0;
             sCurrMidpoint = 0;
+            sCompactFirstBidiRun = sCompactLastBidiRun = 0;
+            sCompactBidiRunCount = 0;
         }
         startEmbed->deref();
         //embed->deref();
@@ -1318,9 +1379,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
     // be skipped.
     while(!start.atEnd() && (start.obj->isInlineFlow() || (start.obj->style()->whiteSpace() != PRE &&
 #ifndef QT_NO_UNICODETABLES
-          ( start.direction() == QChar::DirWS || start.obj->isSpecial() )
+          ( start.direction() == QChar::DirWS || start.obj->isSpecial())
 #else
-          ( start.current() == ' ' || start.obj->isSpecial() )
+          ( start.current() == ' ' || start.obj->isSpecial())
 #endif
           ))) {
         if( start.obj->isSpecial() ) {
@@ -1339,7 +1400,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                 o->containingBlock()->insertSpecialObject(o);
             }
         }
-
+        
         adjustEmbeddding = true;
         ++start;
         adjustEmbeddding = false;

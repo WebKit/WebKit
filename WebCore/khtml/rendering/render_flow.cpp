@@ -248,6 +248,8 @@ void RenderFlow::repaint(bool immediate)
 
         // Now invalidate a rectangle.
         int ow = style() ? style()->outlineWidth() : 0;
+        if (isCompact())
+            left -= m_x;
         containingBlock()->repaintRectangle(-ow+left, -ow+top,
                                             width()+ow*2, height()+ow*2, immediate);
     }
