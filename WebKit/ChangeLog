@@ -1,3 +1,15 @@
+2002-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3087548 - REGRESSION: two windows open for netflix confirmation
+	
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _findFrameInThisWindowNamed:]): Added this function back,
+	and added check for top-level frame name.
+        (-[WebController _findFrameNamed:]): Use
+	_findFrameInThisWindowNamed: to make sure top-level frame names
+	get checked.
+
 2002-10-29  Chris Blumenberg  <cblu@apple.com>
 
 	Created Downloads.subproj to hold the to-be-implemented download decoders.

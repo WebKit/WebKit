@@ -222,10 +222,19 @@
     }
 }
 
+- (WebFrame *)_findFrameInThisWindowNamed: (NSString *)name
+{
+    if ([_private->topLevelFrameName isEqualToString:name]) {
+	return [self mainFrame];
+    } else {
+	return [[self mainFrame] _descendantFrameNamed:name];
+    }
+}
+
 - (WebFrame *)_findFrameNamed: (NSString *)name
 {
     // Try this controller first
-    WebFrame *frame = [[self mainFrame] _descendantFrameNamed:name];
+    WebFrame *frame = [self _findFrameInThisWindowNamed:name];
 
     if (frame != nil) {
         return frame;
@@ -236,7 +245,7 @@
         NSEnumerator *enumerator = [WebControllerSets controllersInSetNamed:_private->controllerSetName];
         WebController *controller;
         while ((controller = [enumerator nextObject]) != nil && frame == nil) {
-            frame = [[controller mainFrame] _descendantFrameNamed:name];
+	    frame = [controller _findFrameInThisWindowNamed:name];
         }
     }
 
