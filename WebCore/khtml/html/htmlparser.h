@@ -175,7 +175,8 @@ protected:
     int discard_until;
 
     bool headLoaded;
-
+    bool inStrayTableContent;
+    
 #if SPEED_DEBUG > 0
     QTime qt;
 #endif

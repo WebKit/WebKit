@@ -1,5 +1,22 @@
 2003-01-08  David Hyatt  <hyatt@apple.com>
 
+	Finish the KONQBLOCK removal and make sure that table rows and
+	cells encountered inside stray content cause the stray content to
+	close so that the rows and cells can be part of the table.
+
+	This fixes the versiontracker bug.  #3142319.
+	
+        Reviewed by darin.
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::reset):
+        (isTableRelatedTag):
+        (KHTMLParser::insertNode):
+        (KHTMLParser::popOneBlock):
+        * khtml/html/htmlparser.h:
+
+2003-01-08  David Hyatt  <hyatt@apple.com>
+
 	Revert the redundancy that dirk noticed.
 
 	Fixing issue #3 on diveintomark.org's list, which actually involved
