@@ -103,7 +103,6 @@ using KIO::TransferJob;
 - (void)reportError
 {
     ASSERT(_job);
-    ASSERT(_handle);
     _job->setError(1);
     [self finishJobAndHandle];
 }

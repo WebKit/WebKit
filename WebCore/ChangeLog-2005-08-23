@@ -1,5 +1,12 @@
 2002-11-05  Darin Adler  <darin@apple.com>
 
+	- fixed 3092722 -- assertion failed
+
+        * kwq/KWQResourceLoader.mm: (-[KWQResourceLoader reportError]):
+	Removed the assertion. It wasn't needed.
+
+2002-11-05  Darin Adler  <darin@apple.com>
+
 	- re-fixed 3070484 -- icon rollovers are very slow on Mac OS X website
 
 	Had to roll back some of the files I changed yesterday. I had missed the
