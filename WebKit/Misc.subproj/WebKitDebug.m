@@ -28,6 +28,7 @@ unsigned int WebKitGetLogLevel(){
     return WEBKIT_LOG_LEVEL;
 }
 
+#ifdef NEED_TIMESTAMP
 static const char *
 timestamp(void)
 {
@@ -36,12 +37,13 @@ timestamp(void)
                                                            locale:nil];
     return [date cString];
 }
+#endif
 
 void WebKitLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
 {    
     if (WebKitGetLogLevel() & level) {
         va_list args;
-        fprintf(stderr, "%s - [WEBKIT] - ", timestamp());
+        fprintf(stderr, "[WEBKIT] - %s:%d %s - ", file, line, function);
         va_start(args, format); 
         vfprintf(stderr, format, args);
         va_end(args);

@@ -1,3 +1,10 @@
+2002-04-29  Richard Williamson  <rjw@apple.com>
+
+        Restored file, line, and function to log messages.
+        
+	* Misc.subproj/WebKitDebug.m:
+	(WebKitLog):
+
 2002-04-25  Darin Adler  <darin@apple.com>
 
 	* History.subproj/IFWebHistoryPrivate.m:
