@@ -325,7 +325,7 @@
     return _private->pageTitle;
 }
 
-- (WebContentPolicy) contentPolicy
+- (WebContentPolicy *) contentPolicy
 {
     return _private->contentPolicy;
 }
@@ -338,11 +338,6 @@
 - (NSString *)fileType
 {
     return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[self contentType]];
-}
-
-- (NSString *)downloadPath
-{
-    return _private->downloadPath;
 }
 
 - (NSDictionary *)errors

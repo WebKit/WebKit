@@ -67,7 +67,6 @@
     [mainResourceHandleClient release];
     [urlHandles release];
     [pageTitle release];
-    [downloadPath release];
     [encoding release];
     [contentType release];
     [errors release];
@@ -308,15 +307,10 @@
     return [_private->controller locationChangeHandler];
 }
 
-- (void)_setDownloadPath:(NSString *)path
+- (void) _setContentPolicy:(WebContentPolicy *)policy
 {
-    [_private->downloadPath release];
-    _private->downloadPath = [path retain];
-}
-
-- (void) _setContentPolicy:(WebContentPolicy)policy
-{
-    _private->contentPolicy = policy;
+    [_private->contentPolicy release];
+    _private->contentPolicy = [policy retain];
     [self _commitIfReady];
 }
 
@@ -418,7 +412,7 @@
 
 -(void)_commitIfReady
 {
-    if (_private->contentPolicy == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {
+    if ([[self contentPolicy] policyAction] == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {
         WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s\n", [[[self inputURL] absoluteString] cString]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
@@ -448,8 +442,8 @@
     // determined, and if the policy is show, if it has been committed
     // (so that we know it's representation and such are ready).
 
-    return _private->contentPolicy != WebContentPolicyNone &&
-	(_private->committed || _private->contentPolicy != WebContentPolicyShow);
+    return [[self contentPolicy] policyAction] != WebContentPolicyNone &&
+	(_private->committed || [[self contentPolicy] policyAction] != WebContentPolicyShow);
 }
 
 -(void)_receivedData:(NSData *)data

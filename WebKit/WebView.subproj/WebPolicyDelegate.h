@@ -7,24 +7,31 @@
 
 #import <Cocoa/Cocoa.h>
 
-/*
-   ============================================================================= 
-
-   ============================================================================= 
-*/
+@class WebDataSource;
+@class WebError;
 
 typedef enum {
-    WebURLPolicyUseContentPolicy,
-    WebURLPolicyOpenExternally,
-    WebURLPolicyIgnore
-} WebURLPolicy;
+    WebPolicyNone,
+    WebPolicyUse,
+    WebPolicyRevealInFinder,
+    WebPolicySave,
+    WebPolicyOpenURL,
+    WebPolicySaveAndOpen,
+    WebPolicyIgnore
+} WebPolicyAction;
 
 typedef enum {
-    WebFileURLPolicyUseContentPolicy,
-    WebFileURLPolicyOpenExternally,
-    WebFileURLPolicyReveal,
-    WebFileURLPolicyIgnore
-} WebFileURLPolicy;
+    WebURLPolicyUseContentPolicy = WebPolicyUse,
+    WebURLPolicyOpenExternally = WebPolicyOpenURL,
+    WebURLPolicyIgnore = WebPolicyIgnore
+} WebURLAction;
+
+typedef enum {
+    WebFileURLPolicyUseContentPolicy = WebPolicyUse,
+    WebFileURLPolicyOpenExternally = WebPolicyOpenURL,
+    WebFileURLPolicyRevealInFinder = WebPolicyRevealInFinder,
+    WebFileURLPolicyIgnore = WebPolicyIgnore
+} WebFileAction;
 
 typedef enum {
     WebContentPolicyNone,
@@ -32,7 +39,50 @@ typedef enum {
     WebContentPolicySave,
     WebContentPolicySaveAndOpenExternally,
     WebContentPolicyIgnore
-} WebContentPolicy;
+} WebContentAction;
+
+typedef enum {
+    WebClickPolicyNone = WebPolicyNone,
+    WebClickPolicyShow,
+    WebClickPolicySave,
+    WebClickPolicySaveAndOpenExternally,
+    WebClickPolicyIgnore
+} WebClickAction;
+
+@interface WebPolicy : NSObject
+{
+    WebPolicyAction policyAction;
+}
+- initWithPolicyAction: (WebPolicyAction)action;
+- (WebPolicyAction)policyAction;
+@end
+
+@interface WebURLPolicy : WebPolicy
++ webPolicyWithURLAction: (WebURLAction)action;
+@end
+
+@interface WebFileURLPolicy : WebPolicy
++ webPolicyWithFileAction: (WebFileAction)action;
+@end
+
+@interface WebContentPolicy : WebPolicy
+{
+    NSString *path;
+}
++ webPolicyWithContentAction: (WebContentAction)action andPath: (NSString *)thePath;
+- initWithContentPolicyAction: (WebContentAction)action andPath: (NSString *)thePath;
+- (NSString *)path;
+@end
+
+@interface WebClickPolicy : WebPolicy
+{
+    NSString *path;
+}
++ webPolicyWithClickAction: (WebClickAction)action andPath: (NSString *)thePath;
+- initWithClickPolicyAction: (WebClickAction)action andPath: (NSString *)thePath;
+- (NSString *)path;
+@end
+
 
 @protocol WebControllerPolicyHandler <NSObject>
 
@@ -40,28 +90,31 @@ typedef enum {
 // before it is clicked or loaded via a URL bar.  Clients can choose to handle the
 // URL normally, hand the URL off to launch services, or
 // ignore the URL.  The default implementation could return +defaultURLPolicyForURL:.
-- (WebURLPolicy)URLPolicyForURL: (NSURL *)url;
-
-// We may have different errors that cause the the policy to be un-implementable, i.e.
-// launch services failure, etc.
-- (void)unableToImplementURLPolicyForURL: (NSURL *)url error: (WebError *)error;
-
-// Called when the response to URLPolicyForURL is WebURLPolicyUseContentPolicy and the URL is
-// a file URL. This allows clients to special-case WebKit's behavior for file URLs.
-- (WebFileURLPolicy)fileURLPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource isDirectory: (BOOL)isDirectory;
-
-// Called when a WebFileURLPolicy could not be completed. This is usually caused by files not
-// existing or not readable.
-- (void)unableToImplementFileURLPolicy: (WebError *)error forDataSource: (WebDataSource *)dataSource;
+- (WebURLPolicy *)URLPolicyForURL: (NSURL *)url;
 
 // Sent after locationChangeStarted.
 // Implementations typically call haveContentPolicy:forLocationChangeHandler: on WebController
 // after determining the appropriate policy, perhaps by presenting a non-blocking dialog to the user.
-- (void)requestContentPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource;
+- (WebContentPolicy *)contentPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource;
+
+// Called when the response to URLPolicyForURL is WebURLPolicyUseContentPolicy and the URL is
+// a file URL. This allows clients to special-case WebKit's behavior for file URLs.
+- (WebFileURLPolicy *)fileURLPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource isDirectory: (BOOL)isDirectory;
+
+- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask;
+
+// We may have different errors that cause the the policy to be un-implementable, i.e.
+// launch services failure, etc.
+- (void)unableToImplementURLPolicy: (WebPolicy *)policy error: (WebError *)error forURL: (NSURL *)url;
+
+// Called when a WebFileURLPolicy could not be completed. This is usually caused by files not
+// existing or not readable.
+- (void)unableToImplementFileURLPolicy: (WebPolicy *)policy error: (WebError *)error forDataSource: (WebDataSource *)dataSource;
+
 
 // Sent when errors are encountered with an un-implementable policy, i.e.
 // file i/o failure, launch services failure, type mismatches, etc.
-- (void)unableToImplementContentPolicy: (WebError *)error forDataSource: (WebDataSource *)dataSource;
+- (void)unableToImplementContentPolicy: (WebPolicy *)policy error: (WebError *)error forDataSource: (WebDataSource *)dataSource;
 
 // Called when a plug-in for a certain mime type is not installed
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url;

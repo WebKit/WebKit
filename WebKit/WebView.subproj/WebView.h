@@ -157,13 +157,13 @@
 - (void)setContextMenuHandler: (id<WebContextMenuHandler>)handler;
 - (id<WebContextMenuHandler>)contextMenuHandler;
 
-+ (WebURLPolicy)defaultURLPolicyForURL: (NSURL *)url;
+- (void)setLocationChangeHandler:(id <WebLocationChangeHandler>)handler;
+- (id <WebLocationChangeHandler>)locationChangeHandler;
 
 - (void)setPolicyHandler: (id<WebControllerPolicyHandler>)handler;
 - (id<WebControllerPolicyHandler>)policyHandler;
 
-- (void)setLocationChangeHandler:(id <WebLocationChangeHandler>)handler;
-- (id <WebLocationChangeHandler>)locationChangeHandler;
++ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)url;
 
 - (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag;
 - (BOOL)directsAllLinksToSystemBrowser;
@@ -187,13 +187,6 @@
 // Return the frame associated with the view.  Traverses the
 // frame tree to find the view. 
 - (WebFrame *)frameForView: (WebView *)aView;
-
-// Typically called after requestContentPolicyForContentMIMEType: is sent to a
-// locationChangeHander.  The content policy of HTML URLs should always be WebContentPolicyShow.
-// Setting the policy to WebContentPolicyIgnore will cancel the load of the URL if it is still
-// pending.  The path argument is only used when the policy is either WebContentPolicySave or
-// WebContentPolicySaveAndOpenExternally.
-- (void)haveContentPolicy: (WebContentPolicy)policy andPath: (NSString *)path  forDataSource: (WebDataSource *)dataSource;
 
 // API to manage animated images.
 - (void)stopAnimatedImages;

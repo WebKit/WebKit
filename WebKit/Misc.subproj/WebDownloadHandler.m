@@ -31,7 +31,7 @@
 
 - (void)receivedData:(NSData *)data
 {
-    NSString *path = [dataSource downloadPath];
+    NSString *path = [[dataSource contentPolicy] path];
     NSString *pathWithoutExtension, *newPathWithoutExtension, *extension;
     NSFileManager *fileManager;
     NSWorkspace *workspace;
@@ -48,7 +48,7 @@
                 newPathWithoutExtension = [NSString stringWithFormat:@"%@-%d", pathWithoutExtension, i];
                 path = [newPathWithoutExtension stringByAppendingPathExtension:extension];
                 if(![fileManager fileExistsAtPath:path]){
-                    [dataSource _setDownloadPath:path];
+                    //[dataSource _setDownloadPath:path];
                     break;
                 }
             }
@@ -71,13 +71,13 @@
 
 - (void)finishedLoading
 {
-    NSString *path = [dataSource downloadPath];
+    NSString *path = [[dataSource contentPolicy] path];
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
     
     [fileHandle closeFile];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
     
-    if([dataSource contentPolicy] == WebContentPolicySaveAndOpenExternally){
+    if([[dataSource contentPolicy] policyAction] == WebContentPolicySaveAndOpenExternally){
         [workspace openFile:path];
     }
 }
@@ -86,7 +86,7 @@
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-    NSString *path = [dataSource downloadPath];
+    NSString *path = [[dataSource contentPolicy] path];
     
     [fileHandle closeFile];
     [fileManager removeFileAtPath:path handler:nil];

@@ -73,8 +73,10 @@
 - (void)receivedProgressWithHandle:(WebResourceHandle *)handle complete:(BOOL)isComplete
 {
     WebLoadProgress *progress = [WebLoadProgress progressWithResourceHandle:handle];
+    WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
+
     
-    if ([dataSource contentPolicy] == WebContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == WebContentPolicySave) {
+    if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
         if (isComplete) {
             [dataSource _setPrimaryLoadComplete:YES];
         }
@@ -89,8 +91,9 @@
 - (void)receivedError:(WebError *)error forHandle:(WebResourceHandle *)handle
 {
     WebLoadProgress *progress = [WebLoadProgress progressWithResourceHandle:handle];
+    WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
-    if ([dataSource contentPolicy] == WebContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == WebContentPolicySave) {
+    if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
         [downloadProgressHandler receivedError:error forResourceHandle:handle 
             partialProgress:progress fromDataSource:dataSource];
     } else {
@@ -131,15 +134,17 @@
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
     WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
     WEBKIT_ASSERT((int)[data length] == [handle contentLengthReceived]);
+
+    WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
     
     // Don't retain data for downloaded files
-    if([dataSource contentPolicy] != WebContentPolicySave &&
-       [dataSource contentPolicy] != WebContentPolicySaveAndOpenExternally){
+    if(contentAction != WebContentPolicySave && contentAction != WebContentPolicySaveAndOpenExternally){
        [dataSource _setResourceData:data];
     }
-    
-    if([dataSource contentPolicy] == WebContentPolicyShow)
+
+    if(contentAction == WebContentPolicyShow){
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
+    }
     
     // Either send a final error message or a final progress message.
     WebError *nonTerminalError = [handle error];
@@ -157,15 +162,14 @@
     [self didStopLoading];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)incomingData
+- (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)data
 {
     WebController *controller = [dataSource controller];
     NSString *contentType = [handle contentType];
     WebFrame *frame = [dataSource webFrame];
-
-    NSData *data = nil;
+    WebContentPolicy *contentPolicy;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([handle url]), incomingData, [incomingData length]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([handle url]), data, [data length]);
     
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
     
@@ -184,46 +188,36 @@
         // Alexander releases the WebController if no window is created for it.
         // This happens in the cases mentioned in 2981866 and 2965312.
         downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
-        
-        [[controller policyHandler] requestContentPolicyForMIMEType:contentType dataSource:dataSource];
+
+        if([[dataSource contentPolicy] policyAction] == WebContentPolicyNone){
+            contentPolicy = [[controller policyHandler] contentPolicyForMIMEType: contentType dataSource: dataSource];
+            [dataSource _setContentPolicy:contentPolicy];
+        }
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
 
-    WebContentPolicy contentPolicy = [dataSource contentPolicy];
-
-    if (contentPolicy != WebContentPolicyNone) {
-        if (!processedBufferedData && !isFirstChunk) {
-            // Process all data that has been received now that we are ready for data
-	    data = [handle resourceData];
-        } else {
-            data = incomingData;
+    switch ([contentPolicy policyAction]) {
+    case WebContentPolicyShow:
+        [dataSource _receivedData:data];
+        break;
+    case WebContentPolicySave:
+    case WebContentPolicySaveAndOpenExternally:
+        if (!downloadHandler) {
+            [frame _setProvisionalDataSource:nil];
+            [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+            downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
         }
-	
-	processedBufferedData = YES;          
-
-	switch (contentPolicy) {
-	case WebContentPolicyShow:
-	    [dataSource _receivedData:data];
-	    break;
-	case WebContentPolicySave:
-	case WebContentPolicySaveAndOpenExternally:
-	    if (!downloadHandler) {
-		[frame _setProvisionalDataSource:nil];
-		[[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
-		downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
-	    }
-	    [downloadHandler receivedData:data];
-	    break;
-	case WebContentPolicyIgnore:
-	    [handle cancelLoadInBackground];
-	    [frame _setProvisionalDataSource:nil];
-	    [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
-	    break;
-	default:
-	    [NSException raise:NSInvalidArgumentException format:
-			     @"haveContentPolicy: andPath:path forDataSource: set an invalid content policy."];
-	}
+        [downloadHandler receivedData:data];
+        break;
+    case WebContentPolicyIgnore:
+        [handle cancelLoadInBackground];
+        [frame _setProvisionalDataSource:nil];
+        [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+        break;
+    default:
+        [NSException raise:NSInvalidArgumentException format:
+             @"contentPolicyForMIMEType: dataSource: returned an invalid content policy."];
     }
 
     [self receivedProgressWithHandle:handle complete:NO];

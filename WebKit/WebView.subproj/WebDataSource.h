@@ -157,15 +157,13 @@
 
 - (NSString *)frameName;
 
-- (WebContentPolicy)contentPolicy;
+- (WebContentPolicy *)contentPolicy;
 
 // MIME type
 - (NSString *)contentType;
 
 // extension based on the MIME type 
 - (NSString *)fileType;
-
-- (NSString *)downloadPath;
 
 - (NSDictionary *)errors;
 

@@ -1,3 +1,59 @@
+2002-07-25  Chris Blumenberg  <cblu@apple.com>
+
+	Made policy APIs return a WebPolicy object.
+	Added click policy.
+
+        * Misc.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler receivedData:]):
+        (-[WebDownloadHandler finishedLoading]):
+        (-[WebDownloadHandler cancel]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (+[WebController defaultURLPolicyForURL:]):
+        * WebView.subproj/WebControllerPolicyHandler.h:
+        * WebView.subproj/WebControllerPolicyHandler.m: Added.
+        (-[WebPolicy initWithPolicyAction:]):
+        (-[WebPolicy policyAction]):
+        (+[WebURLPolicy webPolicyWithURLAction:]):
+        (+[WebFileURLPolicy webPolicyWithFileAction:]):
+        (+[WebContentPolicy webPolicyWithContentAction:andPath:]):
+        (-[WebContentPolicy initWithContentPolicyAction:andPath:]):
+        (-[WebContentPolicy dealloc]):
+        (-[WebContentPolicy path]):
+        (-[WebClickPolicy initWithClickPolicyAction:andPath:]):
+        (+[WebClickPolicy webPolicyWithClickAction:andPath:]):
+        (-[WebClickPolicy dealloc]):
+        (-[WebClickPolicy path]):
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _receivedError:forResourceHandle:partialProgress:fromDataSource:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource contentPolicy]):
+        (-[WebDataSource fileType]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setContentPolicy:]):
+        (-[WebDataSource _commitIfReady]):
+        (-[WebDataSource _isReadyForData]):
+        * WebView.subproj/WebDefaultPolicyHandler.m:
+        (-[WebDefaultPolicyHandler URLPolicyForURL:]):
+        (-[WebDefaultPolicyHandler fileURLPolicyForMIMEType:dataSource:isDirectory:]):
+        (-[WebDefaultPolicyHandler unableToImplementFileURLPolicy:error:forDataSource:]):
+        (-[WebDefaultPolicyHandler unableToImplementURLPolicy:error:forURL:]):
+        (-[WebDefaultPolicyHandler pluginNotFoundForMIMEType:pluginPageURL:]):
+        (-[WebDefaultPolicyHandler clickPolicyForElement:button:modifierMask:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _shouldShowDataSource:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedProgressWithHandle:complete:]):
+        (-[WebMainResourceClient receivedError:forHandle:]):
+        (-[WebMainResourceClient WebResourceHandleDidFinishLoading:data:]):
+        (-[WebMainResourceClient WebResourceHandle:dataDidBecomeAvailable:]):
+
 2002-07-25  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Add DeploymentFat build style.

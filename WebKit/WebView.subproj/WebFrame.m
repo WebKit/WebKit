@@ -55,7 +55,7 @@
      
     [dummyDataSource _setIsDummy:YES];	// hack on hack!
     [dummyDataSource _setContentType:@"text/html"];
-    [dummyDataSource _setContentPolicy:WebContentPolicyShow];
+    [dummyDataSource _setContentPolicy:[WebContentPolicy webPolicyWithContentAction:WebContentPolicyShow andPath:nil]];
     [dummyDataSource _receivedData:[NSData data]];
 
     // We have to do the next two steps manually, because the above

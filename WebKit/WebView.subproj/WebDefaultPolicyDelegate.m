@@ -18,42 +18,42 @@
     return self;
 }
 
-- (WebURLPolicy)URLPolicyForURL: (NSURL *)url
+- (WebURLPolicy *)URLPolicyForURL: (NSURL *)url
 {
     return [WebController defaultURLPolicyForURL: url];
 }
 
-- (WebFileURLPolicy)fileURLPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource isDirectory:(BOOL)isDirectory
+- (WebFileURLPolicy *)fileURLPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource isDirectory:(BOOL)isDirectory
 {
     if(isDirectory)
-        return WebFileURLPolicyIgnore;
+        return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyIgnore];
     if([WebController canShowMIMEType:type])
-        return WebFileURLPolicyUseContentPolicy;
-    return WebFileURLPolicyIgnore;
+        return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyUseContentPolicy];
+    return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyIgnore];;
 }
 
-- (void)unableToImplementFileURLPolicy: (WebError *)error forDataSource: (WebDataSource *)dataSource
+- (void)unableToImplementFileURLPolicy: (WebPolicy *)policy error: (WebError *)error forDataSource: (WebDataSource *)dataSource
 {
     NSLog (@"unableToImplementFileURLPolicy:forDataSource: - error %@\n", error);
 }
 
-- (void)requestContentPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource
+- (WebContentPolicy *)contentPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource;
 {
     if([WebController canShowMIMEType:type]){
-        [webController haveContentPolicy:WebContentPolicyShow andPath:nil forDataSource:dataSource];
+        return [WebContentPolicy webPolicyWithContentAction: WebContentPolicyShow andPath:nil];
     }
     else{
-        [webController haveContentPolicy:WebContentPolicyIgnore andPath:nil forDataSource:dataSource];
+        return [WebContentPolicy webPolicyWithContentAction: WebContentPolicyIgnore andPath:nil];
     }
 }
 
-- (void)unableToImplementURLPolicyForURL: (NSURL *)url error: (WebError *)error
+- (void)unableToImplementURLPolicy: (WebPolicy *)policy error: (WebError *)error forURL: (NSURL *)url
 {
     NSLog (@"unableToImplementURLPolicyForURL:error: - URL %@, error %@\n", url, error);
 }
 
 
-- (void)unableToImplementContentPolicy: (WebError *)error forDataSource: (WebDataSource *)dataSource
+- (void)unableToImplementContentPolicy: (WebPolicy *)policy error: (WebError *)error forDataSource: (WebDataSource *)dataSource;
 {
     NSLog (@"unableToImplementContentPolicy:forDataSource: - error %@\n", error);
 }
@@ -61,6 +61,11 @@
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url
 {
     NSLog (@"pluginNotFoundForMIMEType:pluginPageURL: - MIME %@, URL \n", mime, url);
+}
+
+- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask
+{
+    return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow andPath:nil];
 }
 
 @end

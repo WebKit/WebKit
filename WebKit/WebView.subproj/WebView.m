@@ -253,35 +253,12 @@
 }
 
 
-+ (WebURLPolicy)defaultURLPolicyForURL: (NSURL *)url
++ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)url
 {
     if([WebResourceHandle canInitWithURL:url]){
-        return WebURLPolicyUseContentPolicy;
+        return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyUseContentPolicy];
     }else{
-        return WebURLPolicyOpenExternally;
-    }
-}
-
-
-- (void)haveContentPolicy: (WebContentPolicy)policy andPath: (NSString *)path forDataSource: (WebDataSource *)dataSource
-{
-    if (policy == WebContentPolicyNone) {
-        [NSException raise:NSInvalidArgumentException format:@"Can't set policy of WebContentPolicyNone. Use WebContentPolicyIgnore instead"];
-    }
-        
-    if ([dataSource contentPolicy] != WebContentPolicyNone) {
-        [NSException raise:NSGenericException format:@"Content policy can only be set once on for a dataSource."];
-    }
-    
-    if (policy == WebContentPolicyShow &&
-	![[self class] canShowMIMEType:[dataSource contentType]]) {
-
-	WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowMIMEType 
-			           inDomain:WebErrorDomainWebKit failingURL:[[dataSource inputURL] absoluteString]];
-	[[self policyHandler] unableToImplementContentPolicy:error forDataSource:dataSource];
-    } else {
-	[dataSource _setContentPolicy:policy];
-	[dataSource _setDownloadPath:path];
+        return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyOpenExternally];
     }
 }
 
