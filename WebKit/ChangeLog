@@ -2,6 +2,14 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3834130> nil-object-in-dictionary exception seen in -[WebView _elementAtWindowPoint:]
+
+        * WebView.subproj/WebView.m: (-[WebView _elementAtWindowPoint:]): Added a check for nil frame.
+
+2004-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3834166> <input type=file> sends onchange even when the same file is chosen twice
 
         * WebCoreSupport.subproj/WebFileButton.m: (-[WebFileButton chooseFilename:]):

@@ -1795,13 +1795,14 @@ NS_ENDHANDLER
 - (NSDictionary *)_elementAtWindowPoint:(NSPoint)windowPoint
 {
     WebFrameView *frameView = [self _frameViewAtWindowPoint:windowPoint];
+    if (!frameView)
+        return nil;
     NSView <WebDocumentView> *documentView = [frameView documentView];
     if ([documentView conformsToProtocol:@protocol(WebDocumentElement)]) {
         NSPoint point = [documentView convertPoint:windowPoint fromView:nil];
         return [(NSView <WebDocumentElement> *)documentView elementAtPoint:point];
-    } else {
-        return [NSDictionary dictionaryWithObject:[frameView webFrame] forKey:WebElementFrameKey];
     }
+    return [NSDictionary dictionaryWithObject:[frameView webFrame] forKey:WebElementFrameKey];
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
