@@ -167,4 +167,24 @@
     }
 }
 
+- (BOOL)canTakeFindStringFromSelection
+{
+    return [self isSelectable] && [self selectedRange].length && ![self hasMarkedText];
+}
+
+
+- (IBAction)takeFindStringFromSelection:(id)sender
+{
+    if (![self canTakeFindStringFromSelection]) {
+        NSBeep();
+        return;
+    }
+    
+    // Note: can't use writeSelectionToPasteboard:type: here, though it seems equivalent, because
+    // it doesn't declare the types to the pasteboard and thus doesn't bump the change count
+    [self writeSelectionToPasteboard:[NSPasteboard pasteboardWithName:NSFindPboard]
+                               types:[NSArray arrayWithObject:NSStringPboardType]];
+}
+
+
 @end

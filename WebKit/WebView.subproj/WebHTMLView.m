@@ -44,15 +44,28 @@
     return self;
 }
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
+- (BOOL)hasSelection
 {
-    SEL action = [item action];
-    if (action == @selector(copy:)) {
-        return [[[self _bridge] selectedText] length] != 0;
-    }
-    return YES;
+    return [[[self _bridge] selectedText] length] != 0;
 }
 
+
+
+- (IBAction)takeFindStringFromSelection:(id)sender
+{
+    NSPasteboard *findPasteboard;
+
+    if (![self hasSelection]) {
+        NSBeep();
+        return;
+    }
+    
+    // Note: can't use writeSelectionToPasteboard:type: here, though it seems equivalent, because
+    // it doesn't declare the types to the pasteboard and thus doesn't bump the change count
+    findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
+    [findPasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
+    [findPasteboard setString:[[self _bridge] selectedText] forType:NSStringPboardType];
+}
 
 - (void)copy:(id)sender
 {
@@ -68,6 +81,19 @@
 {
     WebBridge *bridge = [self _bridge];
     [bridge selectAll];
+}
+
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
+{
+    SEL action = [item action];
+    
+    if (action == @selector(copy:))
+        return [self hasSelection];
+    else if (action == @selector(takeFindStringFromSelection:))
+        return [self hasSelection];
+    
+    return YES;
 }
 
 
@@ -477,5 +503,6 @@
     [[self _controller] _downloadURL:_private->draggedURL toPath:path];
     return [NSArray arrayWithObject:filename];
 }
+
 
 @end

@@ -1,3 +1,16 @@
+2002-07-29  Richard Williamson  <rjw@apple.com>
+
+        Fixed 3009085.  Implemented takeFindStringFromSelection: on WebHTMLView and WebTextView.
+        Also added user interface item validation for that method.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView hasSelection]):
+        (-[WebHTMLView takeFindStringFromSelection:]):
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView canTakeFindStringFromSelection]):
+        (-[WebTextView takeFindStringFromSelection:]):
+
 2002-07-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
