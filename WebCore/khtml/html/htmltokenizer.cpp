@@ -1787,6 +1787,8 @@ bool HTMLTokenizer::processingData() const
 
 bool HTMLTokenizer::continueProcessing(int& processedCount, const QTime& startTime, const KWQUIEventTime& eventTime)
 {
+    return true;
+    /* Hurt PLT, so comment this out for now until we figure something out. 
     // FIXME: For now, we don't bother trying to break out of the middle of an executing script.
     // We don't want to be checking elapsed time with every character, so we only check after we've
     // processed a certain number of characters.
@@ -1802,7 +1804,7 @@ bool HTMLTokenizer::continueProcessing(int& processedCount, const QTime& startTi
     }
     
     processedCount++;
-    return true;
+    return true;*/
 }
 
 void HTMLTokenizer::timerEvent(QTimerEvent* e)
