@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -358,31 +358,51 @@ void QObject::setDefersTimers(bool defers)
 
 @end
 
-// special includes only for inherits
-
-#import "khtml_part.h"
-#import "khtmlview.h"
-
 bool QObject::inherits(const char *className) const
 {
     if (strcmp(className, "KHTMLPart") == 0) {
-        return dynamic_cast<const KHTMLPart *>(this);
+        return isKHTMLPart();
     }
     if (strcmp(className, "KHTMLView") == 0) {
-        return dynamic_cast<const KHTMLView *>(this);
+        return isKHTMLView();
     }
     if (strcmp(className, "KParts::Factory") == 0) {
         return false;
     }
     if (strcmp(className, "KParts::ReadOnlyPart") == 0) {
-        return dynamic_cast<const KParts::ReadOnlyPart *>(this);
+        return isKPartsReadOnlyPart();
     }
     if (strcmp(className, "QFrame") == 0) {
-        return dynamic_cast<const QFrame *>(this);
+        return isQFrame();
     }
     if (strcmp(className, "QScrollView") == 0) {
-        return dynamic_cast<const QScrollView *>(this);
+        return isQScrollView();
     }
     ERROR("class name %s not recognized", className);
+    return false;
+}
+
+bool QObject::isKHTMLPart() const
+{
+    return false;
+}
+
+bool QObject::isKHTMLView() const
+{
+    return false;
+}
+
+bool QObject::isKPartsReadOnlyPart() const
+{
+    return false;
+}
+
+bool QObject::isQFrame() const
+{
+    return false;
+}
+
+bool QObject::isQScrollView() const
+{
     return false;
 }

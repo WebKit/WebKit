@@ -44,6 +44,7 @@
 #include "dom/dom_string.h"
 #include "dom/dom_element.h"
 #include "dom/html_document.h"
+#include "editing/markup.h"
 #include "editing/selection.h"
 #include "editing/visible_position.h"
 #include "editing/visible_text.h"
@@ -921,7 +922,7 @@ void KHTMLPart::slotShowDocument( const QString &url, const QString &target )
 void KHTMLPart::slotDebugDOMTree()
 {
   if ( d->m_doc && d->m_doc->firstChild() )
-    qDebug("%s", d->m_doc->firstChild()->toHTML().latin1());
+    qDebug("%s", createMarkup(d->m_doc->firstChild()).latin1());
 }
 
 void KHTMLPart::slotDebugRenderTree()
@@ -3173,15 +3174,15 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
 #if APPLE_CHANGES
   if ( child->m_part )
   {
-    KHTMLPart *part = dynamic_cast<KHTMLPart *>(&*child->m_part);
-    if (part)
+    KHTMLPart *part = static_cast<KHTMLPart *>(&*child->m_part);
+    if (part && part->inherits("KHTMLPart"))
       part->openURL(url);
   }
   else
   {
     KParts::ReadOnlyPart *part = KWQ(this)->createPart(*child, url, mimetype);
-    KHTMLPart *khtml_part = dynamic_cast<KHTMLPart *>(part);
-    if (khtml_part)
+    KHTMLPart *khtml_part = static_cast<KHTMLPart *>(part);
+    if (khtml_part && khtml_part->inherits("KHTMLPart"))
       khtml_part->childBegin();
 #else
   if ( !child->m_services.contains( mimetype ) )
@@ -3293,8 +3294,8 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
     // completed() signal for the child by hand:
     if (url.isEmpty() || url.url() == "about:blank") {
       ReadOnlyPart *readOnlyPart = child->m_part;
-      KHTMLPart *part = dynamic_cast<KHTMLPart *>(readOnlyPart);
-      if (part) {
+      KHTMLPart *part = static_cast<KHTMLPart *>(readOnlyPart);
+      if (part && part->inherits("KHTMLPart")) {
         part->completed();
       }
     }

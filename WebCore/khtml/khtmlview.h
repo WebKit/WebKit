@@ -290,6 +290,10 @@ private:
 
     void applyBodyScrollQuirk(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
 
+#if APPLE_CHANGES
+    virtual bool isKHTMLView() const;
+#endif
+
     // ------------------------------------- member variables ------------------------------------
  private:
     unsigned _refCount;

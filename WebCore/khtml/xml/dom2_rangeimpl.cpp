@@ -30,12 +30,14 @@
 #include "dom_xmlimpl.h"
 #include "html/html_elementimpl.h"
 #include "misc/htmltags.h"
+#include "editing/markup.h"
 #include "editing/visible_position.h"
 #include "editing/visible_text.h"
 #include "xml/dom_position.h"
 
 #include "render_block.h"
 
+using khtml::createMarkup;
 using khtml::RenderBlock;
 using khtml::RenderObject;
 
@@ -834,126 +836,10 @@ DOMString RangeImpl::toString( int &exceptioncode ) const
     return text;
 }
 
-static QString interchangeNewlineMarkupString()
+DOMString RangeImpl::toHTML() const
 {
-    static QString interchangeNewlineString;
-    if (interchangeNewlineString.length() == 0) {
-        interchangeNewlineString = "<br class=\"";
-        interchangeNewlineString += AppleInterchangeNewline;
-        interchangeNewlineString += "\">";
-    }
-    return interchangeNewlineString;
+    return createMarkup(this);
 }
-
-DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes, EAnnotateForInterchange annotate) const
-{
-    int exceptionCode;
-    NodeImpl *commonAncestor = commonAncestorContainer(exceptionCode);
-    NodeImpl *commonAncestorBlock = 0;
-    if (commonAncestor != 0) {
-        commonAncestorBlock = commonAncestor->enclosingBlockFlowElement();
-    }
-    if (commonAncestorBlock == 0) {
-        return "";    
-    }
-        
-    QStringList markups;
-    NodeImpl *pastEnd = pastEndNode();
-    NodeImpl *lastClosed = 0;
-    QPtrList<NodeImpl> ancestorsToClose;
-    
-    // Iterate through the nodes of the range.
-    NodeImpl *next;
-    for (NodeImpl *n = startNode(); n != pastEnd; n = next) {
-        next = n->traverseNextNode();
-        if (!n->renderer())
-            continue;
-
-        if (n->isBlockFlow() && next == pastEnd) {
-            // Don't write out an empty block.
-            continue;
-        }
-        
-        // Add the node to the markup.
-        markups.append(n->startMarkup(this, annotate));
-        if (nodes) {
-            nodes->append(n);
-        }
-        
-        if (n->firstChild() == 0) {
-            // Node has no children, add its close tag now.
-            markups.append(n->endMarkup());
-            lastClosed = n;
-            
-            // Check if the node is the last leaf of a tree.
-            if (n->nextSibling() == 0 || next == pastEnd) {
-                if (!ancestorsToClose.isEmpty()) {
-                    // Close up the ancestors.
-                    while (NodeImpl *ancestor = ancestorsToClose.last()) {
-                        if (next != pastEnd && ancestor == next->parentNode()) {
-                            break;
-                        }
-                        // Not at the end of the range, close ancestors up to sibling of next node.
-                        markups.append(ancestor->endMarkup());
-                        lastClosed = ancestor;
-                        ancestorsToClose.removeLast();
-                    }
-                } else {
-                    // No ancestors to close, but need to add ancestors not in range since next node is in another tree. 
-                    if (next != pastEnd) {
-                        NodeImpl *nextParent = next->parentNode();
-                        if (n != nextParent) {
-                            for (NodeImpl *parent = n->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
-                                markups.prepend(parent->startMarkup(this, annotate));
-                                markups.append(parent->endMarkup());
-                                if (nodes) {
-                                    nodes->append(parent);
-                                }                            
-                                lastClosed = parent;
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            // Node is an ancestor, set it to close eventually.
-            ancestorsToClose.append(n);
-        }
-    }
-    
-    // Add ancestors up to the common ancestor block so inline ancestors such as FONT and B are part of the markup.
-    for (NodeImpl *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        bool breakAtEnd = false;
-        if (commonAncestorBlock == ancestor) {
-            NodeImpl::Id id = ancestor->id();
-            // Tables and lists must be part of the markup to avoid broken structures. 
-            if (id == ID_TABLE || id == ID_OL || id == ID_UL) {
-                breakAtEnd = true;
-            } else {
-                break;
-            }
-        }
-        markups.prepend(ancestor->startMarkup(this, annotate));
-        markups.append(ancestor->endMarkup());
-        if (nodes) {
-            nodes->append(ancestor);
-        }        
-        if (breakAtEnd) {
-            break;
-        }
-    }
-    
-    if (annotate) {
-        Position pos(m_endContainer, m_endOffset);
-        NodeImpl *block = pos.node()->enclosingBlockFlowElement();
-        NodeImpl *upstreamBlock = pos.upstream().node()->enclosingBlockFlowElement();
-        if (block != upstreamBlock)
-            markups.append(interchangeNewlineMarkupString());
-    }
-    
-    return markups.join("");
-}
-
 
 DOMString RangeImpl::text() const
 {

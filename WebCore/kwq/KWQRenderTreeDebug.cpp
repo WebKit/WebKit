@@ -269,8 +269,9 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
     }
     
     if (o.isWidget()) {
-        KHTMLView *view = dynamic_cast<KHTMLView *>(static_cast<const RenderWidget &>(o).widget());
-        if (view) {
+        QWidget *widget = static_cast<const RenderWidget &>(o).widget();
+        if (widget && widget->inherits("KHTMLView")) {
+            KHTMLView *view = static_cast<KHTMLView *>(widget);
             RenderObject *root = KWQ(view->part())->renderer();
             if (root) {
                 view->layout();
@@ -373,8 +374,12 @@ static QString nodePositionRelativeToRoot(NodeImpl *node, NodeImpl *root)
 
 static void writeSelection(QTextStream &ts, const RenderObject *o)
 {
-    DocumentImpl *doc = dynamic_cast<DocumentImpl *>(o->element());
-    if (!doc || !doc->part())
+    NodeImpl *n = o->element();
+    if (!n || !n->isDocumentNode())
+        return;
+
+    DocumentImpl *doc = static_cast<DocumentImpl *>(n);
+    if (!doc->part())
         return;
     
     Selection selection = doc->part()->selection();

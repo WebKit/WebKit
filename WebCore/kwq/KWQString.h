@@ -517,6 +517,9 @@ public:
     QString &prepend(const QString &);
     QString &remove(uint, uint);
     QString &replace(uint index, uint len, const QString &s);
+    QString &replace(char, const QString &);
+    QString &replace(QChar, const QString &);
+    QString &replace(const QString &, const QString &);
     QString &replace(const QRegExp &, const QString &);
     QString &replace(QChar, QChar);
 

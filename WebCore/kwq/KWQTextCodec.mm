@@ -147,7 +147,7 @@ QCString QTextCodec::fromUnicode(const QString &qcs) const
     // FIXME: Since there's no "force ASCII range" mode in CFString, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
     QString copy = qcs;
-    copy.replace('\\', backslashAsCurrencySymbol());
+    copy.replace(QChar('\\'), backslashAsCurrencySymbol());
     CFStringRef cfs = copy.getCFString();
 
     CFRange range = CFRangeMake(0, CFStringGetLength(cfs));

@@ -570,7 +570,7 @@ void RenderWidget::deref(RenderArena *arena)
 {
     if (_ref) _ref--; 
     if (!_ref)
-        arenaDelete(arena);
+        arenaDelete(arena, this);
 }
 
 #if APPLE_CHANGES

@@ -29,10 +29,7 @@
 
 #include <qptrlist.h>
 #include "dom/dom2_range.h"
-#include "editing/html_interchange.h"
 #include "misc/shared.h"
-
-class QStringList;
 
 namespace DOM {
 
@@ -72,7 +69,7 @@ public:
     DocumentFragmentImpl *cloneContents ( int &exceptioncode );
     void insertNode( NodeImpl *newNode, int &exceptioncode );
     DOMString toString ( int &exceptioncode ) const;
-    DOMString toHTML(QPtrList<NodeImpl> *nodes=NULL, EAnnotateForInterchange annotate=DoNotAnnotateForInterchange) const;
+    DOMString toHTML() const;
     DOMString text() const;
 
     DocumentFragmentImpl *createContextualFragment ( DOMString &html, int &exceptioncode ) const;
@@ -127,4 +124,3 @@ private:
 } // namespace
 
 #endif
-

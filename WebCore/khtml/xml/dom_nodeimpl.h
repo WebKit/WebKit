@@ -28,7 +28,6 @@
 #include "dom/dom_misc.h"
 #include "dom/dom_string.h"
 #include "dom/dom_node.h"
-#include "editing/html_interchange.h"
 #include "misc/helper.h"
 #include "misc/shared.h"
 #include "dom_atomicstring.h"
@@ -51,15 +50,10 @@ namespace khtml {
 
 namespace DOM {
 
-class CSSStyleDeclarationImpl;
 class DocumentImpl;
 class ElementImpl;
 class EventImpl;
-class NamedNodeMapImpl;
 class NodeListImpl;
-class Position;
-class Range;
-class RangeImpl;
 class RegisteredEventListener;
 
 // The namespace used for XHTML elements
@@ -261,14 +255,6 @@ public:
     virtual bool isMouseFocusable() const;
     
     virtual bool isInline() const;
-    QString stringValueForRange(const RangeImpl *range) const;
-    QString renderedText(const RangeImpl *range) const;
-    QString startMarkup(const RangeImpl *range, EAnnotateForInterchange annotate=DoNotAnnotateForInterchange) const;
-    QString endMarkup(void) const;
-    virtual QString toHTML() const;
-    QString recursive_toHTML(bool onlyIncludeChildren=false, QPtrList<NodeImpl> *nodes=NULL) const;
-    static QString recursive_toString(const NodeImpl *startNode, bool onlyIncludeChildren, bool includeSiblings, QPtrList<NodeImpl> *nodes);
-    void recursive_completeURLs(QString baseURL);
     
     virtual bool isContentEditable() const;
     virtual QRect getRect() const;

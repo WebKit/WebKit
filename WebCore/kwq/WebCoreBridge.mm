@@ -44,6 +44,7 @@
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "loader.h"
+#import "markup.h"
 #import "render_canvas.h"
 #import "render_frames.h"
 #import "render_image.h"
@@ -102,11 +103,14 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
 
+using khtml::ChildrenOnly;
+using khtml::createMarkup;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::EAffinity;
 using khtml::EditCommandPtr;
 using khtml::ETextGranularity;
+using khtml::IncludeNode;
 using khtml::MoveSelectionCommand;
 using khtml::parseURL;
 using khtml::RenderCanvas;
@@ -148,7 +152,7 @@ NSString *WebCoreElementTitleKey =              @"WebCoreElementTitle"; // not i
 
 NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
-@interface WebCoreBridge (WebCoreBridgePrivate)
+@interface WebCoreBridge (WebCoreBridgeInternal)
 - (RootObject *)executionContextForView:(NSView *)aView;
 @end
 
@@ -538,28 +542,22 @@ static bool initializedKJS = FALSE;
 
 - (NSString *)markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes
 {
-    QPtrList<NodeImpl> *nodeList = NULL;
+    // FIXME: This is never "for interchange". Is that right? See the next method.
+    QPtrList<NodeImpl> nodeList;
+    NSString *markupString = createMarkup([node _nodeImpl], IncludeNode, nodes ? &nodeList : 0).getNSString();
     if (nodes) {
-        nodeList = new QPtrList<NodeImpl>;
-    }
-    NSString *markupString = [node _nodeImpl]->recursive_toHTML(false, nodeList).getNSString();
-    if (nodes) {
-        *nodes = [self nodesFromList:nodeList];
-        delete nodeList;
+        *nodes = [self nodesFromList:&nodeList];
     }
     return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
 }
 
 - (NSString *)markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes
 {
-    QPtrList<NodeImpl> *nodeList = NULL;
+    // FIXME: This is always "for interchange". Is that right? See the previous method.
+    QPtrList<NodeImpl> nodeList;
+    NSString *markupString = createMarkup([range _rangeImpl], nodes ? &nodeList : 0, AnnotateForInterchange).getNSString();
     if (nodes) {
-        nodeList = new QPtrList<NodeImpl>;
-    }
-    NSString *markupString = [range _rangeImpl]->toHTML(nodeList, AnnotateForInterchange).string().getNSString();
-    if (nodes) {
-        *nodes = [self nodesFromList:nodeList];
-        delete nodeList;
+        *nodes = [self nodesFromList:&nodeList];
     }
     return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
 }
@@ -567,14 +565,14 @@ static bool initializedKJS = FALSE;
 - (NSString *)selectedString
 {
     QString text = _part->selectedText();
-    text.replace('\\', _part->backslashAsCurrencySymbol());
+    text.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
     return [[text.getNSString() copy] autorelease];
 }
 
 - (NSString *)stringForRange:(DOMRange *)range
 {
     QString text = _part->text([range _rangeImpl]);
-    text.replace('\\', _part->backslashAsCurrencySymbol());
+    text.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
     return [[text.getNSString() copy] autorelease];
 }
 
@@ -741,7 +739,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
     }
     NSObject *copiedNode = [copier nodeWithName:node->nodeName().string().getNSString()
                                           value:node->nodeValue().string().getNSString()
-                                         source:node->recursive_toHTML(true).getNSString()
+                                         source:createMarkup(node, ChildrenOnly).getNSString()
                                        children:children];
     [children release];
     return copiedNode;
@@ -990,7 +988,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             if (!title.isNull()) {
                 // We found a node with a title.
                 QString titleText = title.string();
-                titleText.replace('\\', _part->backslashAsCurrencySymbol());
+                titleText.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
                 [element setObject:titleText.getNSString() forKey:WebCoreElementTitleKey];
                 break;
             }
@@ -1004,7 +1002,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         const AtomicString& title = e->getAttribute(ATTR_TITLE);
         if (!title.isEmpty()) {
             QString titleText = title.string();
-            titleText.replace('\\', _part->backslashAsCurrencySymbol());
+            titleText.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
             [element setObject:titleText.getNSString() forKey:WebCoreElementLinkTitleKey];
         }
         
@@ -1072,7 +1070,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                 alt = static_cast<HTMLImageElementImpl *>(i)->altText();
             if (!alt.isNull()) {
                 QString altText = alt.string();
-                altText.replace('\\', _part->backslashAsCurrencySymbol());
+                altText.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
                 [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
             }
         }
@@ -1550,17 +1548,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
 {
-    DocumentImpl *document = _part->xmlDocImpl();
-    HTMLElementImpl *element = static_cast<HTMLElementImpl *>(document->documentElement());
-    DocumentFragmentImpl *fragment = element->createContextualFragment(markupString);
-    ASSERT(fragment);
-    
-    if ([baseURLString length] > 0) {
-        DOM::DOMString baseURL = baseURLString;
-        if (baseURL != document->baseURL()) {
-            fragment->recursive_completeURLs(baseURL.string());
-        }
-    }
+    if (!_part || !_part->xmlDocImpl())
+        return 0;
+
+    DocumentFragmentImpl *fragment = createFragmentFromMarkup(_part->xmlDocImpl(), QString::fromNSString(markupString), QString::fromNSString(baseURLString));
     return [DOMDocumentFragment _documentFragmentWithImpl:fragment];
 }
 
@@ -1569,7 +1560,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part || !_part->xmlDocImpl() || !text)
         return 0;
 
-    return [DOMDocumentFragment _documentFragmentWithImpl:_part->documentFragmentWithText(text)];
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(_part->xmlDocImpl(), QString::fromNSString(text))];
 }
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
@@ -1963,7 +1954,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 @end
 
-@implementation WebCoreBridge (WebCoreBridgePrivate)
+@implementation WebCoreBridge (WebCoreBridgeInternal)
 
 - (RootObject *)executionContextForView:(NSView *)aView
 {
@@ -1974,4 +1965,5 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     part->addPluginRootObject(root);
     return root;
 }
+
 @end

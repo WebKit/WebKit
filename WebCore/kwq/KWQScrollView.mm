@@ -491,3 +491,8 @@ NSView *QScrollView::getDocumentView() const
     
     return nil;
 }
+
+bool QScrollView::isQScrollView() const
+{
+    return true;
+}

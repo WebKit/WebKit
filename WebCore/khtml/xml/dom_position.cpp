@@ -33,6 +33,7 @@
 #include "dom_nodeimpl.h"
 #include "dom_positioniterator.h"
 #include "dom2_range.h"
+#include "dom2_rangeimpl.h"
 #include "dom2_viewsimpl.h"
 #include "helper.h"
 #include "htmltags.h"
@@ -808,12 +809,32 @@ void Position::formatForDebugger(char *buffer, unsigned length) const
 
 Position startPosition(const Range &r)
 {
+    if (r.isNull() || r.isDetached())
+        return Position();
     return Position(r.startContainer().handle(), r.startOffset());
+}
+
+Position startPosition(const RangeImpl *r)
+{
+    if (!r || r->isDetached())
+        return Position();
+    int exceptionCode;
+    return Position(r->startContainer(exceptionCode), r->startOffset(exceptionCode));
 }
 
 Position endPosition(const Range &r)
 {
+    if (r.isNull() || r.isDetached())
+        return Position();
     return Position(r.endContainer().handle(), r.endOffset());
+}
+
+Position endPosition(const RangeImpl *r)
+{
+    if (!r || r->isDetached())
+        return Position();
+    int exceptionCode;
+    return Position(r->endContainer(exceptionCode), r->endOffset(exceptionCode));
 }
 
 } // namespace DOM

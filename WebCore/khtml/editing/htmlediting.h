@@ -35,6 +35,7 @@
 namespace DOM {
     class CSSMutableStyleDeclarationImpl;
     class CSSProperty;
+    class CSSStyleDeclarationImpl;
     class DocumentFragmentImpl;
     class HTMLElementImpl;
     class TextImpl;

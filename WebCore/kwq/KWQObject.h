@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,6 +129,12 @@ private:
     const QObject *_eventFilterObject;
     
     static bool _defersTimers;
+
+    virtual bool isKHTMLPart() const;
+    virtual bool isKHTMLView() const;
+    virtual bool isKPartsReadOnlyPart() const;
+    virtual bool isQFrame() const;
+    virtual bool isQScrollView() const;
 
     friend class KWQGuardedPtrBase;
     friend class KWQSignal;

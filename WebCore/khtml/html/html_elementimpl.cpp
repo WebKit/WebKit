@@ -48,6 +48,7 @@
 #include "css/css_ruleimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "editing/markup.h"
 
 #include <kdebug.h>
 
@@ -701,12 +702,12 @@ void HTMLElementImpl::createMappedDecl(HTMLAttributeImpl* attr)
 
 DOMString HTMLElementImpl::innerHTML() const
 {
-    return toHTML();
+    return createMarkup(this, ChildrenOnly);
 }
 
 DOMString HTMLElementImpl::outerHTML() const
 {
-    return recursive_toHTML();
+    return createMarkup(this);
 }
 
 DOMString HTMLElementImpl::innerText() const

@@ -195,6 +195,11 @@ void KHTMLPart::started(Job *j)
     KWQ(this)->_started.call(j);
 }
 
+bool KHTMLView::isKHTMLView() const
+{
+    return true;
+}
+
 static void redirectionTimerMonitor(void *context)
 {
     KWQKHTMLPart *kwq = static_cast<KWQKHTMLPart *>(context);
@@ -839,7 +844,7 @@ KHTMLView *KWQKHTMLPart::view() const
 void KWQKHTMLPart::setTitle(const DOMString &title)
 {
     QString text = title.string();
-    text.replace('\\', backslashAsCurrencySymbol());
+    text.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     KWQ_BLOCK_EXCEPTIONS;
     [_bridge setTitle:text.getNSString()];
@@ -849,7 +854,7 @@ void KWQKHTMLPart::setTitle(const DOMString &title)
 void KWQKHTMLPart::setStatusBarText(const QString &status)
 {
     QString text = status;
-    text.replace('\\', backslashAsCurrencySymbol());
+    text.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     KWQ_BLOCK_EXCEPTIONS;
     [_bridge setStatusText:text.getNSString()];
@@ -1767,7 +1772,7 @@ void KWQKHTMLPart::sendScrollEvent()
 void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
 {
     QString text = message;
-    text.replace('\\', backslashAsCurrencySymbol());
+    text.replace(QChar('\\'), backslashAsCurrencySymbol());
     KWQ_BLOCK_EXCEPTIONS;
     [_bridge runJavaScriptAlertPanelWithMessage:text.getNSString()];
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -1776,7 +1781,7 @@ void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
 bool KWQKHTMLPart::runJavaScriptConfirm(const QString &message)
 {
     QString text = message;
-    text.replace('\\', backslashAsCurrencySymbol());
+    text.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     KWQ_BLOCK_EXCEPTIONS;
     return [_bridge runJavaScriptConfirmPanelWithMessage:text.getNSString()];
@@ -1788,9 +1793,9 @@ bool KWQKHTMLPart::runJavaScriptConfirm(const QString &message)
 bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &defaultValue, QString &result)
 {
     QString promptText = prompt;
-    promptText.replace('\\', backslashAsCurrencySymbol());
+    promptText.replace(QChar('\\'), backslashAsCurrencySymbol());
     QString defaultValueText = defaultValue;
-    defaultValueText.replace('\\', backslashAsCurrencySymbol());
+    defaultValueText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     KWQ_BLOCK_EXCEPTIONS;
     NSString *returnedText = nil;
@@ -1800,7 +1805,7 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
 
     if (ok) {
         result = QString::fromNSString(returnedText);
-        result.replace(backslashAsCurrencySymbol(), '\\');
+        result.replace(backslashAsCurrencySymbol(), QChar('\\'));
     }
 
     return ok;
@@ -2966,7 +2971,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     }
                 }
                 
-                text.replace('\\', renderer->backslashAsCurrencySymbol());
+                text.replace(QChar('\\'), renderer->backslashAsCurrencySymbol());
     
                 if (text.length() > 0 || needSpace) {
                     NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
@@ -3817,87 +3822,6 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
     }
 }
 
-static NSString *nbspSpaceString = 0;
-static NSString *nbspNBSPSpaceString = 0;
-
-DocumentFragmentImpl *KWQKHTMLPart::documentFragmentWithText(NSString *text)
-{
-    if (!xmlDocImpl())
-        return 0;
-
-    DocumentFragmentImpl *fragment = xmlDocImpl()->createDocumentFragment();
-    NSMutableString *string = [text mutableCopy];
-
-    // Replace tabs with four plain spaces.
-    // These spaces will get converted along with the other existing spaces below.
-    [string replaceOccurrencesOfString:@"\t" withString:@"    " options:0 range:NSMakeRange(0, [string length])];
-
-    if (!nbspSpaceString) {
-        unichar nbspSpace[] = { 0xa0, ' ' };
-        nbspSpaceString = [[NSString alloc] initWithCharacters:nbspSpace length:2];
-    }
-    
-    if (!nbspNBSPSpaceString) {
-        unichar nbspNBSPSpace[] = { 0xa0, 0xa0, ' ' };
-        nbspNBSPSpaceString = [[NSString alloc] initWithCharacters:nbspNBSPSpace length:3];
-    }
-
-    unsigned stringLength = [string length];
-    NSRange range = NSMakeRange(0, stringLength);
-    while (1) {
-        // FIXME: This only converts plain old spaces, and does not
-        // deal with more exotic whitespace. Note that we want to 
-        // leave newlines and returns alone at this point anyway, 
-        // since those are handled specially later.
-        NSRange replaceRange = [string rangeOfString:@"  " options:NSLiteralSearch range:range];
-        if (replaceRange.location == NSNotFound)
-            break;
-            
-        // Found two adjoining spaces.
-        // Now, lookahead to see if these two spaces are followed by:
-        //   1. another space and then a non-space
-        //   2. another space and then the end of the string
-        // If either 1 or 2 is true, replace the three spaces found with nbsp+nbsp+space, 
-        // otherwise, replace the first two spaces with nbsp+space.
-        unsigned lookahead = replaceRange.location + 2;
-        if ((lookahead + 2 < stringLength && [string characterAtIndex:lookahead] == ' ' && [string characterAtIndex:lookahead + 1] != ' ') ||
-            (lookahead + 1 == stringLength && [string characterAtIndex:lookahead] == ' ')) {
-            replaceRange.length = 3;
-            [string replaceCharactersInRange:replaceRange withString:nbspNBSPSpaceString];
-        }
-        else {
-            [string replaceCharactersInRange:replaceRange withString:nbspSpaceString];
-        }
-        range.location = replaceRange.location + 2;
-        range.length = stringLength - range.location;
-    }
-    
-    // Handle line endings, replacing them with BR elements.
-    [string replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
-    [string replaceOccurrencesOfString:@"\r" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
-    NSArray *array = [string componentsSeparatedByString:@"\n"];
-    [string release];
-    int count = [array count];
-    int i;
-    for (i = 0; i < count; i++) {
-        int exceptionCode = 0;
-        if (i != 0) {
-            ElementImpl *breakNode = xmlDocImpl()->createHTMLElement("br", exceptionCode);
-            ASSERT(exceptionCode == 0);
-            fragment->appendChild(breakNode, exceptionCode);
-            ASSERT(exceptionCode == 0);
-        }
-        NSString *component = (NSString *)[array objectAtIndex:i];
-        if ([component length] > 0) {
-            NodeImpl *textNode = xmlDocImpl()->createTextNode(component);
-            fragment->appendChild(textNode, exceptionCode);
-        }
-    }
-    
-
-    return fragment;
-}
-
 void KWQKHTMLPart::registerCommandForUndo(const EditCommandPtr &cmd)
 {
     ASSERT(cmd.get());
@@ -4182,4 +4106,9 @@ void KWQKHTMLPart::dashboardRegionsChanged()
 bool KWQKHTMLPart::isCharacterSmartReplaceExempt(const QChar &c, bool isPreviousChar)
 {
     return [_bridge isCharacterSmartReplaceExempt:c.unicode() isPreviousCharacter:isPreviousChar];
+}
+
+bool KWQKHTMLPart::isKHTMLPart() const
+{
+    return true;
 }

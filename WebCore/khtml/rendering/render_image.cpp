@@ -289,7 +289,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             
             if (!alt.isEmpty()) {
                 QString text = alt.string();
-                text.replace('\\', backslashAsCurrencySymbol());
+                text.replace(QChar('\\'), backslashAsCurrencySymbol());
                 p->setFont (style()->font());
                 p->setPen (style()->color());
                 int ax = _tx + leftBorder + leftPad;

@@ -318,12 +318,10 @@ public:
     void didTellBridgeAboutLoad(const QString &urlString);
     bool haveToldBridgeAboutLoad(const QString &urlString);
 
-    KJS::Bindings::Instance *getEmbedInstanceForView (NSView *aView);
-    KJS::Bindings::Instance *getAppletInstanceForView (NSView *aView);
+    KJS::Bindings::Instance *getEmbedInstanceForView(NSView *aView);
+    KJS::Bindings::Instance *getAppletInstanceForView(NSView *aView);
     void addPluginRootObject(const KJS::Bindings::RootObject *root);
     void cleanupPluginRootObjects();
-    
-    DOM::DocumentFragmentImpl *documentFragmentWithText(NSString *text);
     
     void registerCommandForUndo(const khtml::EditCommandPtr &);
     void registerCommandForRedo(const khtml::EditCommandPtr &);
@@ -392,6 +390,8 @@ private:
     void freeClipboard();
 
     khtml::RenderStyle *styleForSelectionStart(DOM::NodeImpl *&nodeToRemove) const;
+
+    virtual bool isKHTMLPart() const;
 
     WebCoreBridge *_bridge;
     

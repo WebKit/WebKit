@@ -1848,11 +1848,6 @@ void RenderObject::arenaDelete(RenderArena *arena, void *base)
     arena->free(*(size_t *)base, base);
 }
 
-void RenderObject::arenaDelete(RenderArena *arena)
-{
-    arenaDelete(arena, dynamic_cast<void *>(this));
-}
-
 Position RenderObject::positionForCoordinates(int x, int y, EAffinity *affinity)
 {
     if (affinity)

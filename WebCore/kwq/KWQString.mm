@@ -2488,6 +2488,45 @@ QString &QString::replace( uint index, uint len, const QString &str )
     return remove(index, len).insert(index, str);
 }
 
+QString &QString::replace(char pattern, const QString &str)
+{
+    int slen = str.dataHandle[0]->_length;
+    int index = 0;
+    while ((index = find(pattern, index)) >= 0) {
+        replace(index, 1, str);
+        index += slen;
+    }
+    return *this;
+}
+
+
+QString &QString::replace(QChar pattern, const QString &str)
+{
+    int slen = str.dataHandle[0]->_length;
+    int index = 0;
+    while ((index = find(pattern, index)) >= 0) {
+        replace(index, 1, str);
+        index += slen;
+    }
+    return *this;
+}
+
+
+QString &QString::replace(const QString &pattern, const QString &str)
+{
+    if (pattern.isEmpty())
+        return *this;
+    int plen = pattern.dataHandle[0]->_length;
+    int slen = str.dataHandle[0]->_length;
+    int index = 0;
+    while ((index = find(pattern, index)) >= 0) {
+        replace(index, plen, str);
+        index += slen;
+    }
+    return *this;
+}
+
+
 QString &QString::replace(const QRegExp &qre, const QString &str)
 {
     if ( isEmpty() )

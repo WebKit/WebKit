@@ -27,10 +27,13 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "editing/markup.h"
 
 #include <qrect.h>
 
 using namespace DOM;
+
+using khtml::createMarkup;
 
 NamedNodeMap::NamedNodeMap()
 {
@@ -394,8 +397,7 @@ unsigned long Node::index() const
 
 QString Node::toHTML()
 {
-    if (!impl) return QString::null;
-    return impl->toHTML();
+    return createMarkup(impl);
 }
 
 void Node::applyChanges()

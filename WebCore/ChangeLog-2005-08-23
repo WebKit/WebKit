@@ -1,3 +1,102 @@
+2004-12-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - moved markup-related functions into new sources files in the editing directory
+        - removed all of the uses of dynamic_cast, preparing to turn off RTTI to make our code smaller and slightly faster
+
+        * ForwardingHeaders/editing/markup.h: Added.
+        * khtml/editing/markup.h: Added.
+        * khtml/editing/markup.cpp: Added.
+
+        * WebCore.pbproj/project.pbxproj: Added markup.h/cpp.
+
+        * khtml/dom/dom_node.cpp: (Node::toHTML): Call createMarkup since there's no toHTML in NodeImpl any more.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::innerHTML): Changed to call createMarkup.
+        (HTMLElementImpl::outerHTML): Ditto.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::retrieveWindow): Comment out assert that uses dynamic_cast.
+        (Window::retrieveActive): Ditto.
+
+        * khtml/editing/htmlediting.h: Added forward class declaration needed now that I removed one elsewhere.
+        * khtml/xml/dom_docimpl.h: Ditto.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::slotDebugDOMTree): Use createMarkup instead of toHTML.
+        (KHTMLPart::processObjectRequest): Use inherits instead of dynamic_cast.
+
+        * khtml/rendering/render_image.cpp: (RenderImage::paint): Add an explicit QChar conversion so this code
+        still works even with the additional replace overloads added to QString.
+        * kwq/KWQTextCodec.mm: (QTextCodec::fromUnicode): Ditto.
+
+        * khtml/rendering/render_object.h: Removed the version of arenaDelete that does not take an object
+        base pointer, because it used dynamic_cast in its implementation. Made the other version public.
+        * khtml/rendering/render_object.cpp: Ditto.
+        * khtml/rendering/render_replaced.cpp: (RenderWidget::deref): Pass object base pointer to arenaDelete.
+
+        * khtml/xml/dom2_rangeimpl.h: Removed extra parameters from toHTML, and unneeded includes and declarations.
+        * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::toHTML): Changed to call createMarkup, and moved all
+        the support code into markup.cpp.
+
+        * khtml/xml/dom_nodeimpl.h: Moved toHTML and related functions into markup.cpp.
+        * khtml/xml/dom_nodeimpl.cpp: Ditto.
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::startPosition): Implemented the version of this that takes a RangeImpl. Also added null checks
+        so these return null positions rather than raising exceptions.
+        (DOM::endPosition): Ditto.
+
+        * khtml/khtmlview.h: Added an APPLE_CHANGES function so inherits can detect this class without dynamic_cast.
+        * kwq/KWQFrame.h: Ditto.
+        * kwq/KWQFrame.mm: (QFrame::isQFrame): Ditto.
+        * kwq/KWQKPartsPart.h: Ditto.
+        * kwq/KWQKPartsPart.mm: (KParts::ReadOnlyPart::isKPartsReadOnlyPart): Ditto.
+        * kwq/KWQScrollView.h: Ditto.
+        * kwq/KWQScrollView.mm: (QScrollView::isQScrollView): Ditto.
+        * kwq/KWQKHTMLPart.h: Ditto.
+        * kwq/KWQKHTMLPart.mm:
+        (KHTMLView::isKHTMLView): Ditto.
+        (KWQKHTMLPart::setTitle): Added an explicit QChar conversion so this code still works even with the additional
+        replace overloads added to QString.
+        (KWQKHTMLPart::setStatusBarText): Ditto.
+        (KWQKHTMLPart::runJavaScriptAlert): Ditto.
+        (KWQKHTMLPart::runJavaScriptConfirm): Ditto.
+        (KWQKHTMLPart::runJavaScriptPrompt): Ditto.
+        (KWQKHTMLPart::attributedString): Ditto.
+        (KWQKHTMLPart::isCharacterSmartReplaceExempt): Ditto.
+        (KWQKHTMLPart::isKHTMLPart): That dynamic_cast thing (see above).
+
+        * kwq/KWQObject.h: Added virtual methods for the few cases where we need dynamic_cast-like behavior.
+        * kwq/KWQObject.mm:
+        (QObject::inherits): Changed to not use dynamic cast.
+        (QObject::isKHTMLPart): Added. Returns false.
+        (QObject::isKHTMLView): Ditto.
+        (QObject::isKPartsReadOnlyPart): Ditto.
+        (QObject::isQFrame): Ditto.
+        (QObject::isQScrollView): Ditto.
+
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write): Changed to use inherits rather than dynamic_cast.
+        (writeSelection): Ditto.
+
+        * kwq/KWQSlot.mm: (KWQSlot::call): Call through to the version with just a job pointer parameter rather
+        than going straight on to the "no parameters at all" version.
+
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm: (QString::replace): Added overloads.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge markupStringFromNode:nodes:]): Changed to call functions in markup.h.
+        (-[WebCoreBridge markupStringFromRange:nodes:]): Ditto.
+        (-[WebCoreBridge selectedString]): Added an explicit QChar conversion so this code still works even with
+        the additional replace overloads added to QString.
+        (-[WebCoreBridge stringForRange:]): Ditto.
+        (-[WebCoreBridge copyDOMNode:copier:]): Changed to call functions in markup.h.
+        (-[WebCoreBridge elementAtPoint:]): QChar conversion.
+        (-[WebCoreBridge documentFragmentWithMarkupString:baseURLString:]): Changed to call functions in markup.h.
+        (-[WebCoreBridge documentFragmentWithText:]): Changed to call functions in markup.h.
+
 2004-12-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

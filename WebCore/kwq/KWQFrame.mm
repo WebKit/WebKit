@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,4 +56,9 @@ int QFrame::frameWidth() const
     if (_frameStyle == (StyledPanel | Sunken))
         return 3;
     return 0;
+}
+
+bool QFrame::isQFrame() const
+{
+    return true;
 }

@@ -329,7 +329,7 @@ void KWQSlot::call(KIO::Job *job, NSData *allData) const
             return;
     }
     
-    call();
+    call(job);
 }
 
 void KWQSlot::call(KIO::Job *job, NSURLResponse *response) const
