@@ -1,3 +1,34 @@
+2002-04-18  Richard Williamson  <rjw@apple.com>
+
+        New API stubs for content policy.
+        
+	* WebView.subproj/IFBaseLocationChangeHandler.h: Added.
+	* WebView.subproj/IFBaseLocationChangeHandler.m: Added.
+	 (+[IFBaseLocationChangeHandler setGlobalContentPolicy:forMIMEType:]),
+	(+[IFBaseLocationChangeHandler globaContentPolicyForContentType:]),
+	(+[IFBaseLocationChangeHandler globalContentPolicies]),
+	(+[IFBaseLocationChangeHandler suggestedFileanemForURL:andContentType:]),
+	(+[IFBaseLocationChangeHandler suggestedDirectoryForURL:andContentType:]),
+	(+[IFBaseLocationChangeHandler extensionForURL:]), (-[IFBaseLocationChangeHandler
+	extension]), (-[IFBaseLocationChangeHandler locationWillChangeTo:]),
+	(-[IFBaseLocationChangeHandler locationChangeStarted]),
+	(-[IFBaseLocationChangeHandler locationChangeCommitted]),
+	(-[IFBaseLocationChangeHandler locationChangeDone:]),
+	(-[IFBaseLocationChangeHandler receivedPageTitle:forDataSource:]),
+	(-[IFBaseLocationChangeHandler serverRedirectTo:forDataSource:]),
+	(-[IFBaseLocationChangeHandler downloadingWithHandler:]),
+	(-[IFBaseLocationChangeHandler requestContentPolicyForContentMIMEType:]),
+	(-[IFBaseLocationChangeHandler unableToImplementContentPolicy:]):
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	receivedError:forDownloadHandler:partialProgress:]), (-[IFBaseWebController
+	provideLocationChangeHandlerForFrame:andURL:]), (-[IFBaseWebController
+	URLPolicyForURL:]), (-[IFBaseWebController
+	unableToImplementURLPolicyForURL:error:]), (-[IFBaseWebController
+	haveContentPolicy:andPath:forLocationChangeHandler:]):
+	* WebView.subproj/IFLocationChangeHandler.h:
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _setState:]):
+
 2002-04-18  Darin Adler  <darin@apple.com>
 
 	* WebKit.pbproj/project.pbxproj: Oops. Take out -Wstrict-prototypes, put back

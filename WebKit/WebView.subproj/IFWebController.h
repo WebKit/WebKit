@@ -6,6 +6,9 @@
 */
 
 #import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+
+#import <WebKit/IFLocationChangeHandler.h>
 
 /*
    ============================================================================= 
@@ -30,8 +33,6 @@
 @class IFLoadProgress;
 @class IFWebDataSource;
 @class IFWebFrame;
-
-@protocol IFLocationChangeHandler;
 
 /*
    ============================================================================= 
@@ -99,6 +100,13 @@
    ============================================================================= 
 */
 
+typedef enum {
+    IFURLPolicyNone,
+    IFURLPolicyUseContentPolicy,
+    IFURLPolicyOpenExternally,
+    IFURLPolicyIgnore
+} IFURLPolicy;
+
 @protocol IFWebController <IFResourceProgressHandler, IFDownloadProgressHandler, IFScriptContextHandler>
 
 // Called when a data source needs to create a frame.  This method encapsulates the
@@ -121,10 +129,30 @@
 // an IFWebView.
 - (IFWebFrame *)frameForView: (NSView *)aView;
 
+// DEPRECATED
 - (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame;
+
+- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame andURL: (NSURL *)url;
+
+// URLPolicyForURL: is used to determine what to do BEFORE a URL is loaded, i.e.
+// before it is clicked or loaded via a URL bar.  Clients can choose to handle the
+// URL normally (i.e. Alexander), hand the URL off to launch services (i.e. Mail), or
+// ignore the URL (i.e. Help Viewer?).  This API could potentially be used by mac manager
+// to filter allowable URLs.
+- (IFURLPolicy)URLPolicyForURL: (NSURL *)url;
+
+// We may have different errors that cause the the policy to be un-implementable, i.e.
+// launch services failure, etc.
+- (void)unableToImplementURLPolicyForURL: (NSURL *)url error: (IFError *)error;
 
 // FIXME:  this method should be moved to a protocol
 // Called when a plug-in for a certain mime type is not installed
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url;
+
+// Typically called after requestContentPolicyForContentMIMEType: is sent to a locationChangeHander.
+// The content policy of HTML URLs should always be IFContentPolicyShow.  Setting the policy to 
+// IFContentPolicyIgnore will cancel the load of the URL if it is still pending.  The path argument 
+// is only used when the policy is either IFContentPolicySave or IFContentPolicyOpenExternally.
+- (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path forLocationChangeHandler: (id <IFLocationChangeHandler>)handler;
 
 @end

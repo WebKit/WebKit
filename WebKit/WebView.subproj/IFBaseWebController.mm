@@ -11,8 +11,9 @@
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFWebController.h>
-
 #import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/IFError.h>
 
 @implementation IFBaseWebController
 
@@ -251,6 +252,25 @@
 - (void) receivedError:(IFError *)error forDownloadHandler:(IFDownloadHandler *)downloadHandler partialProgress: (IFLoadProgress *)progress
 {
     // Do nothing.  Subclasses typically override this method.
+}
+
+- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame andURL: (NSURL *)url
+{
+    return nil;
+}
+
+- (IFURLPolicy)URLPolicyForURL: (NSURL *)url
+{
+    return IFURLPolicyNone;
+}
+
+- (void)unableToImplementURLPolicyForURL: (NSURL *)url error: (IFError *)error
+{
+}
+
+
+- (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path forLocationChangeHandler: (id <IFLocationChangeHandler>)handler
+{
 }
 
 @end
