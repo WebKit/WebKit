@@ -514,7 +514,11 @@ private:
     ReplacementFragment &operator=(const ReplacementFragment &);
 
     static bool isInterchangeNewlineComment(const DOM::NodeImpl *);
+    static bool isInterchangeConvertedSpaceSpan(const DOM::NodeImpl *);
+
+    // A couple simple DOM helpers
     void removeNode(DOM::NodeImpl *);
+    void insertNodeBefore(DOM::NodeImpl *node, DOM::NodeImpl *refNode);
 
     EFragmentType m_type;
     DOM::DocumentFragmentImpl *m_fragment;

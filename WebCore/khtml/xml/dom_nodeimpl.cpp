@@ -35,6 +35,7 @@
 #include "xml/dom2_rangeimpl.h"
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
+#include "editing/html_interchange.h"
 #include "editing/selection.h"
 
 #include <kglobal.h>
@@ -296,23 +297,71 @@ static QString escapeHTML( const QString& in )
     return s;
 }
 
-QString NodeImpl::startMarkup(const RangeImpl *range) const
+QString NodeImpl::stringValueForRange(const RangeImpl *range) const
+{
+    DOMString str = nodeValue().copy();
+    if (range) {
+        int exceptionCode;
+        if (this == range->endContainer(exceptionCode)) {
+            str.truncate(range->endOffset(exceptionCode));
+        }
+        if (this == range->startContainer(exceptionCode)) {
+            str.remove(0, range->startOffset(exceptionCode));
+        }
+    }
+    return str.string();
+}
+
+QString NodeImpl::renderedText(const RangeImpl *range) const
+{
+    QString result;
+
+    RenderObject *r = renderer();
+    if (!r)
+        return result;
+    
+    if (!isTextNode())
+        return result;
+
+    int exceptionCode;
+    const TextImpl *textNode = static_cast<const TextImpl *>(this);
+    unsigned startOffset = 0;
+    unsigned endOffset = textNode->length();
+
+    if (range && this == range->startContainer(exceptionCode))
+        startOffset = range->startOffset(exceptionCode);
+    if (range && this == range->endContainer(exceptionCode))
+        endOffset = range->endOffset(exceptionCode);
+    
+    RenderText *textRenderer = static_cast<RenderText *>(r);
+    QString str = nodeValue().string();
+    for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+        unsigned start = box->m_start;
+        unsigned end = box->m_start + box->m_len;
+        if (endOffset < start)
+            break;
+        if (startOffset <= end) {
+            unsigned s = kMax(start, startOffset);
+            unsigned e = kMin(end, endOffset);
+            result.append(str.mid(s, e-s));
+        }
+    }
+    
+    return result;
+}
+
+QString NodeImpl::startMarkup(const RangeImpl *range, EAnnotateForInterchange annotate) const
 {
     unsigned short type = nodeType();
     if (type == Node::TEXT_NODE) {
         DOMString str = nodeValue().copy();
-        if (range) {
-            int exceptionCode;
-            if (this == range->endContainer(exceptionCode)) {
-                str.truncate(range->endOffset(exceptionCode));
-            }
-            if (this == range->startContainer(exceptionCode)) {
-                str.remove(0, range->startOffset(exceptionCode));
-            }
-        }
         Id parentID = parentNode()->id();
         bool dontEscape = (parentID == ID_SCRIPT || parentID == ID_TEXTAREA || parentID == ID_STYLE);
-        return dontEscape ? str.string() : escapeHTML(str.string());        
+        if (dontEscape)
+            return stringValueForRange(range);
+        if (annotate)
+            return convertHTMLTextToInterchangeFormat(escapeHTML(renderedText(range))); 
+        return escapeHTML(stringValueForRange(range));
     } else if (type == Node::COMMENT_NODE) {
         return static_cast<const CommentImpl *>(this)->toString().string();
     } else if (type != Node::DOCUMENT_NODE) {

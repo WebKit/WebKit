@@ -26,8 +26,13 @@
 #ifndef KHTML_EDITING_HTML_INTERCHANGE_H
 #define KHTML_EDITING_HTML_INTERCHANGE_H
 
+class QString;
+
 #define KHTMLInterchangeNewline   "KHTMLInterchangeNewline"
+#define AppleConvertedSpace       "Apple-converted-space"
 
 enum EAnnotateForInterchange { DoNotAnnotateForInterchange, AnnotateForInterchange };
+
+QString convertHTMLTextToInterchangeFormat(const QString &);
 
 #endif

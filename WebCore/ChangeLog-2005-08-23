@@ -1,3 +1,40 @@
+2004-12-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Some improvements for paste, including some new code to annotate
+        whitespace when writing to the pasteboard to ensure that the meaning
+        of the markup on the pasteboard is unambiguous.
+        
+        There is also new code for reading this annotated markup from the pasteboard,
+        removing the nodes that were added only to prevent ambiguity.
+
+        * WebCore.pbproj/project.pbxproj: Added html_interchange.h and html_interchange.cpp files.
+        The header should have been added earlier, but I did not do so.
+        * khtml/editing/html_interchange.cpp: Added.
+        (convertHTMLTextToInterchangeFormat):
+        * khtml/editing/html_interchange.h: Added some new constants for use with whitespace annotations.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::ReplacementFragment): Now looks for and removes annotations added for whitespace.
+        Also fixed a bug in the code that counts blocks in a fragment.
+        (khtml::ReplacementFragment::isInterchangeConvertedSpaceSpan): New helper. Recognizes annotation spans.
+        (khtml::ReplacementFragment::insertNodeBefore): New helper.
+        (khtml::ReplaceSelectionCommand::doApply): Fixed a bug in the code that sets the start position
+        for the replacement after deleting. This was causing a bug when pasting at the end of a block.
+        * khtml/editing/htmlediting.h: Add some new declarations.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toHTML): Calls to startMarkup now pass true for the new annotate flag.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::stringValueForRange): New helper.
+        (NodeImpl::renderedText): New helper to return only the rendered text in a node.
+        (NodeImpl::startMarkup): Now takes an additional flag to control whether interchange annotations
+        should be added. Called by the paste code.
+        * khtml/xml/dom_nodeimpl.h: Added and modified function declarations.
+
+        New test to check the khtml::ReplaceSelectionCommand::doApply fix.
+        * layout-tests/editing/pasteboard/paste-text-010-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-010.html: Added.
+
 2004-11-30  Chris Blumenberg  <cblu@apple.com>
 
         * ChangeLog: removed conflict marker

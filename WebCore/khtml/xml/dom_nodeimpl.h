@@ -28,6 +28,7 @@
 #include "dom/dom_misc.h"
 #include "dom/dom_string.h"
 #include "dom/dom_node.h"
+#include "editing/html_interchange.h"
 #include "misc/helper.h"
 #include "misc/shared.h"
 #include "dom_atomicstring.h"
@@ -260,7 +261,9 @@ public:
     virtual bool isMouseFocusable() const;
     
     virtual bool isInline() const;
-    QString startMarkup(const RangeImpl *range) const;
+    QString stringValueForRange(const RangeImpl *range) const;
+    QString renderedText(const RangeImpl *range) const;
+    QString startMarkup(const RangeImpl *range, EAnnotateForInterchange annotate=DoNotAnnotateForInterchange) const;
     QString endMarkup(void) const;
     virtual QString toHTML() const;
     QString recursive_toHTML(bool onlyIncludeChildren=false, QPtrList<NodeImpl> *nodes=NULL) const;

@@ -2699,7 +2699,7 @@ ReplacementFragment::ReplacementFragment(DocumentFragmentImpl *fragment)
     m_type = TreeFragment;
 
     NodeImpl *node = firstChild;
-    int blockCount = 0;
+    int realBlockCount = 0;
     NodeImpl *commentToDelete = 0;
     while (node) {
         NodeImpl *next = node->traverseNextNode();
@@ -2707,19 +2707,32 @@ ReplacementFragment::ReplacementFragment(DocumentFragmentImpl *fragment)
             m_hasInterchangeNewlineComment = true;
             commentToDelete = node;
         }
+        else if (isInterchangeConvertedSpaceSpan(node)) {
+            NodeImpl *n = 0;
+            while ((n = node->firstChild())) {
+                n->ref();
+                removeNode(n);
+                insertNodeBefore(n, node);
+                n->deref();
+            }
+            removeNode(node);
+            if (n)
+                next = n->traverseNextNode();
+        }
         else if (isProbablyBlock(node))
-            blockCount++;    
+            realBlockCount++;    
         node = next;
-     }
+    }
 
-     if (commentToDelete)
+    if (commentToDelete)
         removeNode(commentToDelete);
 
+    int blockCount = realBlockCount;
     firstChild = m_fragment->firstChild();
     lastChild = m_fragment->lastChild();
     if (!isProbablyBlock(firstChild))
         blockCount++;
-    if (!isProbablyBlock(lastChild) && firstChild != lastChild)
+    if (!isProbablyBlock(lastChild) && realBlockCount > 0)
         blockCount++;
 
      if (blockCount > 1)
@@ -2801,6 +2814,12 @@ bool ReplacementFragment::isInterchangeNewlineComment(const NodeImpl *node)
     return isComment(node) && node->nodeValue() == KHTMLInterchangeNewline;
 }
 
+bool ReplacementFragment::isInterchangeConvertedSpaceSpan(const NodeImpl *node)
+{
+    static DOMString convertedSpaceSpanClass(AppleConvertedSpace);
+    return node->isHTMLElement() && static_cast<const HTMLElementImpl *>(node)->getAttribute(ATTR_CLASS) == convertedSpaceSpanClass;
+}
+
 void ReplacementFragment::removeNode(NodeImpl *node)
 {
     if (!node)
@@ -2813,7 +2832,22 @@ void ReplacementFragment::removeNode(NodeImpl *node)
     int exceptionCode = 0;
     parent->removeChild(node, exceptionCode);
     ASSERT(exceptionCode == 0);
+}
+
+void ReplacementFragment::insertNodeBefore(NodeImpl *node, NodeImpl *refNode)
+{
+    if (!node || !refNode)
+        return;
+        
+    NodeImpl *parent = refNode->parentNode();
+    if (!parent)
+        return;
+        
+    int exceptionCode = 0;
+    parent->insertBefore(node, refNode, exceptionCode);
+    ASSERT(exceptionCode == 0);
  }
+
 
 bool isComment(const NodeImpl *node)
 {
@@ -2844,7 +2878,6 @@ bool isProbablyBlock(const NodeImpl *node)
         case ID_PRE:
         case ID_TD:
         case ID_TH:
-        case ID_TR:
         case ID_UL:
             return true;
     }
@@ -2894,7 +2927,11 @@ void ReplaceSelectionCommand::doApply()
     }
     
     selection = endingSelection();
-    if (!startAtBlockBoundary || !startPos.node()->inDocument())
+    if (startAtStartOfBlock && startBlock->inDocument())
+        startPos = Position(startBlock, 0);
+    else if (startAtEndOfBlock)
+        startPos = selection.start().downstream(StayInBlock);
+    else
         startPos = selection.start().upstream(upstreamStayInBlock);
     endPos = selection.end().downstream(); 
     

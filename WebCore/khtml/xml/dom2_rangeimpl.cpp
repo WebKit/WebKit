@@ -875,7 +875,7 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes, EAnnotateForInterchange a
         }
         
         // Add the node to the markup.
-        markups.append(n->startMarkup(this));
+        markups.append(n->startMarkup(this, annotate));
         if (nodes) {
             nodes->append(n);
         }
@@ -904,7 +904,7 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes, EAnnotateForInterchange a
                         NodeImpl *nextParent = next->parentNode();
                         if (n != nextParent) {
                             for (NodeImpl *parent = n->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
-                                markups.prepend(parent->startMarkup(this));
+                                markups.prepend(parent->startMarkup(this, annotate));
                                 markups.append(parent->endMarkup());
                                 if (nodes) {
                                     nodes->append(parent);
@@ -933,7 +933,7 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes, EAnnotateForInterchange a
                 break;
             }
         }
-        markups.prepend(ancestor->startMarkup(this));
+        markups.prepend(ancestor->startMarkup(this, annotate));
         markups.append(ancestor->endMarkup());
         if (nodes) {
             nodes->append(ancestor);
@@ -951,8 +951,8 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes, EAnnotateForInterchange a
             addCommentToHTMLMarkup(KHTMLInterchangeNewline, markups, AppendToMarkup);    
         }
     }
-        
-    return markups.join("");
+    
+    return markups.join("");;
 }
 
 

@@ -539,6 +539,7 @@
 				932B9835070297DC0032804F,
 				939FF8EF0702B1B100979E5E,
 				BECE67BE07087B250007C14B,
+				BEA5E01E075CEDAC0098A432,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -826,6 +827,7 @@
 				93ABE072070285F600BD91F9,
 				93ABE074070285F600BD91F9,
 				939FF8EE0702B1B100979E5E,
+				BEA5DBDB075CEDA00098A432,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3390,10 +3392,42 @@
 			settings = {
 			};
 		};
+		BEA5DBDA075CEDA00098A432 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = html_interchange.cpp;
+			path = editing/html_interchange.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEA5DBDB075CEDA00098A432 = {
+			fileRef = BEA5DBDA075CEDA00098A432;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEA5E01D075CEDAC0098A432 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = html_interchange.h;
+			path = editing/html_interchange.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEA5E01E075CEDAC0098A432 = {
+			fileRef = BEA5E01D075CEDAC0098A432;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BEB1DD0805C197DF00DD1F43 = {
 			children = (
 				BE9185DD05EE59B80081354D,
 				BE9185E005EE59B80081354D,
+				BEA5DBDA075CEDA00098A432,
+				BEA5E01D075CEDAC0098A432,
 				BE02D4E6066F908A0076809F,
 				BE02D4E7066F908A0076809F,
 				93ABE067070285F600BD91F9,
