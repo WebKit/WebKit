@@ -59,6 +59,7 @@ public:
 
     virtual void calcWidth();
 
+    virtual short lineHeight(bool b) const;
     virtual short baselinePosition(bool b) const;
     
     virtual bool isListMarker() const { return true; }

@@ -184,7 +184,6 @@ H6 {
 TABLE { 
 	display: table;
 	border-collapse: separate;
-	vertical-align: middle;
 	text-align: -konq-auto;
 	border-spacing: 2px;
 	border-color: gray;
@@ -207,17 +206,19 @@ TABLE[align="center"] {
 
 THEAD { 
 	display: table-header-group; 
+    vertical-align: middle;
 	border: inherit;
 }
       
 TBODY { 
 	display: table-row-group;
-	vertical-align: inherit; 
+    vertical-align: middle; 
     border: inherit;
 }
       
 TFOOT { 
 	display: table-footer-group; 
+    vertical-align: middle;
 	border: inherit; 
 }
 

@@ -133,14 +133,38 @@ RenderTable::~RenderTable()
     delete [] cells;
 }
 
+short RenderTable::lineHeight(bool b) const
+{
+    // Inline tables are replaced elements. Otherwise, just pass off to
+    // the base class.
+    if (isReplaced())
+        return height()+marginTop()+marginBottom();
+    return RenderFlow::lineHeight(b);
+}
+
+short RenderTable::baselinePosition(bool b) const
+{
+    // Inline tables are replaced elements. Otherwise, just pass off to
+    // the base class.
+    if (isReplaced())
+        return height()+marginTop()+marginBottom();
+    return RenderFlow::baselinePosition(b);
+}
+
 void RenderTable::setStyle(RenderStyle *_style)
 {
     RenderFlow::setStyle(_style);
 
     // init RenderObject attributes
-    setInline(style()->display()==INLINE_TABLE && !isPositioned());
-    setReplaced(style()->display()==INLINE_TABLE);
-
+    // In quirks mode, we will accept display: inline and block as valid
+    // display types for a table object (see www.sundancecatalog.com).
+    // A table therefore should go ahead and check if it's inline as well
+    // as inline-table.
+    bool isTableInline = style()->display() == INLINE_TABLE ||
+                         style()->display() == INLINE;
+    setInline(isTableInline && !isPositioned());
+    setReplaced(isTableInline);
+   
     spacing = style()->borderSpacing();
     collapseBorders = style()->borderCollapse();
 }

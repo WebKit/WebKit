@@ -80,7 +80,8 @@ public:
     
     void splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock, RenderFlow* middleBlock,
                       RenderObject* beforeChild, RenderFlow* oldCont);
-    void splitFlow(RenderObject* beforeChild, RenderFlow* newBlockBox, RenderFlow* oldCont);
+    void splitFlow(RenderObject* beforeChild, RenderFlow* newBlockBox, 
+                   RenderObject* newChild, RenderFlow* oldCont);
     void addChildWithContinuation(RenderObject* newChild, RenderObject* beforeChild);
     void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
     void removeChild(RenderObject *oldChild);

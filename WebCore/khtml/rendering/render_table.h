@@ -115,6 +115,9 @@ public:
     virtual void calcMinMaxWidth();
     virtual void close();
 
+    virtual short lineHeight(bool b) const;
+    virtual short baselinePosition(bool b) const;
+    
     virtual void setCellWidths( );
 
     int cellPadding() { return m_cellPadding; }

@@ -606,6 +606,13 @@ void RenderListMarker::calcWidth()
     RenderBox::calcWidth();
 }
 
+short RenderListMarker::lineHeight(bool b) const
+{
+    if (m_listImage)
+        return height()+marginTop()+marginBottom();
+    return RenderBox::lineHeight(b);
+}
+
 short RenderListMarker::baselinePosition(bool b) const
 {
     if (m_listImage)
