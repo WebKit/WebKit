@@ -245,8 +245,10 @@
 {
     // Do this here in case the text size multiplier changed when a non-HTML
     // view was installed.
-    [self _updateTextSizeMultiplier];
-    [self addSuperviewObservers];
+    if ([self superview] != nil) {
+        [self _updateTextSizeMultiplier];
+        [self addSuperviewObservers];
+    }
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window

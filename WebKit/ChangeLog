@@ -1,5 +1,15 @@
 2003-10-01  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView viewDidMoveToSuperview]):
+	skip some work when when we've been removed. This wasn't
+	causing any trouble before, but was at least conceptually
+	inefficient.
+
+2003-10-01  John Sullivan  <sullivan@apple.com>
+
 	- fixed 3441372: REGRESSION (107+): Plain text document is 
 	initially drawn with proportional font
 
