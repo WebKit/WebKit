@@ -3404,7 +3404,6 @@ void ReplaceSelectionCommand::doApply()
     Selection selection = endingSelection();
     VisiblePosition visibleStart(selection.start());
     VisiblePosition visibleEnd(selection.end());
-    bool startAtStartOfLine = isFirstVisiblePositionOnLine(visibleStart);
     bool startAtStartOfBlock = isFirstVisiblePositionInBlock(visibleStart);
     bool startAtEndOfBlock = isLastVisiblePositionInBlock(visibleStart);
     bool startAtBlockBoundary = startAtStartOfBlock || startAtEndOfBlock;
@@ -3416,13 +3415,9 @@ void ReplaceSelectionCommand::doApply()
         // Empty document. Merge neither start nor end.
         mergeStart = mergeEnd = false;
     }
-    else if (startBlock == endBlock && startAtStartOfBlock && startAtEndOfBlock) {
-        // Merge start only if insertion point is in an empty block.
-        mergeStart = true;
-    }
     else {
-        mergeStart = !(startAtStartOfLine && (m_fragment.hasInterchangeNewline() || m_fragment.hasMoreThanOneBlock()));
-        mergeEnd = !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock();
+        mergeStart = (m_fragment.hasInterchangeNewline() || m_fragment.hasMoreThanOneBlock()) && !isStartOfParagraph(visibleStart);
+        mergeEnd = !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock() && !isEndOfParagraph(visibleEnd);
     }
     
     Position startPos = Position(selection.start().node()->enclosingBlockFlowElement(), 0);
@@ -3463,7 +3458,9 @@ void ReplaceSelectionCommand::doApply()
     // Now that we are about to add content, check to see if a placeholder element
     // can be removed.
     NodeImpl *block = startPos.node()->enclosingBlockFlowElement();
+    NodeImpl *placeholderBlock = 0;
     if (removeBlockPlaceholderIfNeeded(block)) {
+        placeholderBlock = block;
         Position pos = Position(block, 0);
         if (!endPos.node()->inDocument()) // endPos might have been in the placeholder just removed.
             endPos = pos;
@@ -3491,10 +3488,7 @@ void ReplaceSelectionCommand::doApply()
 
     document()->updateLayout();
 
-    NodeImpl *refBlock = startPos.node()->enclosingBlockFlowElement();
     Position insertionPos = startPos;
-    bool insertBlocksBefore = true;
-
     NodeImpl *firstNodeInserted = 0;
     NodeImpl *lastNodeInserted = 0;
     bool lastNodeInsertedInMergeEnd = false;
@@ -3555,7 +3549,6 @@ void ReplaceSelectionCommand::doApply()
             else
                 insertionPos = Position(insertionNode->parentNode(), insertionNode->nodeIndex() + 1);
         }
-        insertBlocksBefore = false;
     }
 
     // prune empty nodes from fragment
@@ -3566,21 +3559,18 @@ void ReplaceSelectionCommand::doApply()
     if (node) {
         NodeImpl *refNode = node;
         NodeImpl *node = refNode ? refNode->nextSibling() : 0;
-        if (isProbablyBlock(refNode) && (insertBlocksBefore || startAtStartOfBlock) && !mergeStart) {
-            if (refBlock->id() == ID_BODY)
-                insertNodeAt(refNode, refBlock, 0);
-            else
-                insertNodeBefore(refNode, refBlock);
+        VisiblePosition visiblePos(insertionPos);
+        bool insertionNodeIsBody = insertionPos.node()->id() == ID_BODY;
+        if (!mergeStart && !insertionNodeIsBody && isProbablyBlock(refNode) && isStartOfParagraph(visiblePos)) {
+            Position pos = insertionPos;
+            if (!insertionPos.node()->isTextNode() && !insertionPos.node()->isBlockFlow() && insertionPos.offset() > 0)
+                pos = insertionPos.downstream(StayInBlock);
+            insertNodeBefore(refNode, pos.node());
         }
-        else if (isProbablyBlock(refNode) && startAtEndOfBlock && !mergeEnd) {
-            if (refBlock->id() == ID_BODY)
-                appendNode(refNode, refBlock);
-            else
-                insertNodeAfter(refNode, refBlock);
-        }
-        else {
+        else if (!mergeEnd && !insertionNodeIsBody && isProbablyBlock(refNode) && isEndOfParagraph(visiblePos))
+            insertNodeAfter(refNode, insertionPos.node());
+        else
             insertNodeAt(refNode, insertionPos.node(), insertionPos.offset());
-        }
         if (!firstNodeInserted)
             firstNodeInserted = refNode;
         if (!lastNodeInsertedInMergeEnd)
@@ -3651,6 +3641,10 @@ void ReplaceSelectionCommand::doApply()
             }
         }
         completeHTMLReplacement(firstNodeInserted, lastNodeInserted);
+    }
+    
+    if (placeholderBlock && placeholderBlock->childNodeCount() == 0) {
+        removeNode(placeholderBlock);
     }
 }
 

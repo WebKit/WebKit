@@ -53,6 +53,8 @@ VisiblePosition endOfParagraph(const VisiblePosition &, EIncludeLineBreak = DoNo
 VisiblePosition previousParagraphPosition(const VisiblePosition &, EAffinity, int x);
 VisiblePosition nextParagraphPosition(const VisiblePosition &, EAffinity, int x);
 bool inSameParagraph(const VisiblePosition &, const VisiblePosition &);
+bool isStartOfParagraph(const VisiblePosition &);
+bool isEndOfParagraph(const VisiblePosition &);
 
 } // namespace DOM
 

@@ -535,23 +535,9 @@ bool isFirstVisiblePositionInBlock(const VisiblePosition &pos)
 {
     if (pos.isNull())
         return false;
-        
-    VisiblePosition previous = pos.previous();
-    if (previous.isNull())
-        return true;
-    
-    switch (blockRelationship(pos, previous)) {
-        case NoBlockRelationship:
-        case SameBlockRelationship:
-        case AncestorBlockRelationship:
-        case OtherBlockRelationship:
-            return false;
-        case PeerBlockRelationship:
-        case DescendantBlockRelationship:
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+
+    Position upstream = pos.deepEquivalent().upstream(StayInBlock);
+    return upstream.node()->isBlockFlow() && upstream.offset() == 0;
 }
 
 bool isFirstVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node)

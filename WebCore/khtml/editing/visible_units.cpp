@@ -343,6 +343,16 @@ bool inSameParagraph(const VisiblePosition &a, const VisiblePosition &b)
     return a == b || startOfParagraph(a) == startOfParagraph(b);
 }
 
+bool isStartOfParagraph(const VisiblePosition &pos)
+{
+    return pos == startOfParagraph(pos);
+}
+
+bool isEndOfParagraph(const VisiblePosition &pos)
+{
+    return pos == endOfParagraph(pos, DoNotIncludeLineBreak);
+}
+
 VisiblePosition previousParagraphPosition(const VisiblePosition &p, EAffinity affinity, int x)
 {
     VisiblePosition pos = p;

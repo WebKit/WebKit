@@ -1,3 +1,22 @@
+2005-01-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3941203> REGRESSION (Mail): Paste inserts content in wrong place
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Some cleanup and refinement of the concepts used to make
+        this operation work correctly, particularly in the logic to figure out whether to merge content, and
+        also performing merges.
+        * khtml/editing/visible_position.cpp:
+        (khtml::isFirstVisiblePositionInBlock): Simplification of test used to make this determination.
+        * khtml/editing/visible_units.cpp:
+        (khtml::isStartOfParagraph): New helper, used in khtml::ReplaceSelectionCommand::doApply().
+        (khtml::isEndOfParagraph): Ditto.
+        * khtml/editing/visible_units.h: Declare new functions.
+
 2005-01-04  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
