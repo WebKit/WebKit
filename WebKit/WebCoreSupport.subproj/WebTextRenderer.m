@@ -869,85 +869,46 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
 - (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
 {
-    float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
-    CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
-    NSFont **fontBuffer, *localFontBuffer[LOCAL_BUFFER_SIZE];
-    CGSize *advances, localAdvanceBuffer[LOCAL_BUFFER_SIZE];
-    int numGlyphs = 0, i;
-    float startX, startPosition;
-    unsigned length = run->length;
-    
     if (run->length == 0)
         return;
 
-    if (length*MAX_GLYPH_EXPANSION > LOCAL_BUFFER_SIZE) {
-        advances = (CGSize *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(CGSize));
-        widthBuffer = (float *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(float));
-        glyphBuffer = (CGGlyph *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(ATSGlyphRef));
-        fontBuffer = (NSFont **)calloc(length*MAX_GLYPH_EXPANSION, sizeof(NSFont *));
-    } else {
-        advances = localAdvanceBuffer;
-        widthBuffer = localWidthBuffer;
-        glyphBuffer = localGlyphBuffer;
-        fontBuffer = localFontBuffer;
+    CharacterWidthIterator widthIterator;
+    WebCoreTextRun completeRun = *run;
+    completeRun.from = 0;
+    completeRun.to = run->length;
+    initializeCharacterWidthIterator(&widthIterator, self, &completeRun, style);
+            
+    float startPosition = 0;
+    while (widthIterator.currentCharacter < (unsigned)run->from) {
+        startPosition += widthForNextCharacter(&widthIterator, 0, 0);
     }
 
-    [self _floatWidthForRun:run
-        style:style
-        widths:widthBuffer 
-        fonts:fontBuffer
-        glyphs:glyphBuffer
-        startPosition:&startPosition
-        numGlyphs: &numGlyphs];
-        
-    // Eek.  We couldn't generate ANY glyphs for the run.
-    if (numGlyphs <= 0)
-        return;
-        
-    // Fill the advances array.
-    for (i = 0; i <= numGlyphs; i++){
-        advances[i].width = widthBuffer[i];
-        advances[i].height = 0;
+    float backgroundWidth = 0.0;
+    while (widthIterator.currentCharacter < (unsigned)run->to) {
+        backgroundWidth += widthForNextCharacter(&widthIterator, 0, 0);
     }
 
     // The starting point needs to be adjusted to account for the width of
     // the glyphs at the start of the run.
-    startX = startPosition + point.x;
+    float startX = startPosition + point.x;
 
     if (style->backgroundColor != nil){
         // Calculate the width of the selection background by adding
         // up the advances of all the glyphs in the selection.
-        float backgroundWidth = 0.0;
         
-        for (i = 0; i < numGlyphs; i++)
-            backgroundWidth += advances[i].width;
-
         [style->backgroundColor set];
 
         float yPos = point.y - [self ascent] - (lineGap/2);
         if (style->rtl){
-            WebCoreTextRun completeRun = *run;
-            completeRun.from = 0;
-            completeRun.to = run->length;
-            float completeRunWidth = [self _floatWidthForRun:&completeRun
-                        style:style
-                        widths:nil 
-                        fonts:nil
-                        glyphs:nil
-                        startPosition:nil
-                        numGlyphs: &numGlyphs];
+            float completeRunWidth = startPosition + backgroundWidth;
+            while (widthIterator.currentCharacter < run->length) {
+                completeRunWidth += widthForNextCharacter(&widthIterator, 0, 0);
+            }
 
             [NSBezierPath fillRect:NSMakeRect(point.x + completeRunWidth - startPosition - backgroundWidth, yPos, backgroundWidth, [self lineSpacing])];
         }
         else
             [NSBezierPath fillRect:NSMakeRect(startX, yPos, backgroundWidth, [self lineSpacing])];
-    }
-    
-    if (advances != localAdvanceBuffer) {
-        free(advances);
-        free(widthBuffer);
-        free(glyphBuffer);
-        free(fontBuffer);
     }
 }
 

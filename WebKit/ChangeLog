@@ -1,5 +1,15 @@
 2003-12-16  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3512348:  Rewrote _CG_drawHighlightForRun:style:atPoint: to use width
+	iterators.  Much faster, better cheaper, etc.
+
+        Reviewed by Dave.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:atPoint:]):
+
+2003-12-16  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3503011.  Added '-' and '?' to rounding hack.
 
         Reviewed by John.
