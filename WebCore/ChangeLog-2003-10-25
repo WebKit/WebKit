@@ -1,3 +1,17 @@
+2003-01-01  David Hyatt  <hyatt@apple.com>
+
+	Fix tables so that malformations inside them are properly pulled
+	out of the table without being flattened. 
+
+	Fixes 3131480.
+	
+        Reviewed by gramps
+
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+
 === Alexander-47 ===
 
 2002-12-30  Darin Adler  <darin@apple.com>

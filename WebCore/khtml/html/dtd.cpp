@@ -727,7 +727,7 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_TFOOT:
     case ID_TBODY:
         // THEAD: TR +
-        if(childID == ID_FORM || childID == ID_TR || childID == ID_TEXT || childID == ID_COMMENT ||
+        if(childID == ID_FORM || childID == ID_TR || childID == ID_COMMENT ||
            childID == ID_SCRIPT) 
            return true;
         return false;
