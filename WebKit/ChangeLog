@@ -1,5 +1,11 @@
 2003-05-06  Darin Adler  <darin@apple.com>
 
+        - removed obsolete file that's still around for some reason
+
+        * Downloads.subproj/WebDownload.m: Removed.
+
+2003-05-06  Darin Adler  <darin@apple.com>
+
         - fixed crash on startup
 
         * History.subproj/WebHistoryItem.m:
