@@ -1,5 +1,13 @@
 2002-04-04  Richard Williamson  <rjw@apple.com>
 
+        Clear controller references from data source and view, as well as 
+        frame.
+        
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebControllerPrivate
+	_clearControllerReferences:]):
+
+2002-04-04  Richard Williamson  <rjw@apple.com>
+
         Lazily dealloc controller and data source ONLY after all loads
         have completed.
         
