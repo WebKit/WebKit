@@ -3542,11 +3542,34 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         }
         break;
     }
+    case CSS_PROP__KHTML_USER_DRAG: {
+        HANDLE_INHERIT_AND_INITIAL(userDrag, UserDrag)      
+        if (!primitiveValue || !primitiveValue->getIdent())
+            return;
+        switch (primitiveValue->getIdent()) {
+            case CSS_VAL_AUTO:
+                style->setUserDrag(DRAG_AUTO);
+                break;
+            case CSS_VAL_NONE:
+                style->setUserDrag(DRAG_NONE);
+                break;
+            default:
+                style->setUserDrag(DRAG_ELEMENT);
+        }
+        break;
+    }
     case CSS_PROP__KHTML_USER_MODIFY: {
         HANDLE_INHERIT_AND_INITIAL(userModify, UserModify)      
         if (!primitiveValue || !primitiveValue->getIdent())
             return;
         style->setUserModify(EUserModify(primitiveValue->getIdent() - CSS_VAL_READ_ONLY));
+        break;
+    }
+    case CSS_PROP__KHTML_USER_SELECT: {
+        HANDLE_INHERIT_AND_INITIAL(userSelect, UserSelect)      
+        if (!primitiveValue || !primitiveValue->getIdent())
+            return;
+        style->setUserSelect(primitiveValue->getIdent() == CSS_VAL_AUTO);
         break;
     }
         

@@ -1090,10 +1090,18 @@ bool CSSParser::parseValue( int propId, bool important )
         else
             valid_primitive = validUnit(value, FTime|FInteger|FNonNeg, strict);
         break;
+    case CSS_PROP__KHTML_USER_DRAG: // auto | none | element
+        if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE || id == CSS_VAL_ELEMENT)
+            valid_primitive = true;
+        break;
     case CSS_PROP__KHTML_USER_MODIFY:	// read-only | read-write
         if (id == CSS_VAL_READ_ONLY || id == CSS_VAL_READ_WRITE)
             valid_primitive = true;
-            break;
+        break;
+    case CSS_PROP__KHTML_USER_SELECT: // auto | none
+        if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE)
+            valid_primitive = true;
+        break;
     // End of CSS3 properties
 
 #if APPLE_CHANGES

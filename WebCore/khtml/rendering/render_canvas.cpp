@@ -379,7 +379,7 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
     while (os && os != oldEnd)
     {
         RenderObject* no;
-        if ( !(no = os->firstChild()) ){
+        if (!(no = os->firstChild())) {
             if ( !(no = os->nextSibling()) )
             {
                 no = os->parent();
@@ -425,10 +425,11 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
     
     while (o && o!=e)
     {
-        o->setSelectionState(SelectionInside);
+        if (o->style()->userSelect())
+            o->setSelectionState(SelectionInside);
 //      kdDebug( 6040 ) << "setting selected " << o << ", " << o->isText() << endl;
-        RenderObject* no;
-        if ( !(no = o->firstChild()) )
+        RenderObject* no = 0;
+        if (!(no = o->firstChild()))
             if ( !(no = o->nextSibling()) )
             {
                 no = o->parent();
@@ -444,9 +445,13 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
             
         o=no;
     }
-    s->setSelectionState(SelectionStart);
-    e->setSelectionState(SelectionEnd);
-    if(s == e) s->setSelectionState(SelectionBoth);
+    
+    if (s->style()->userSelect())
+        s->setSelectionState(SelectionStart);
+    if (e->style()->userSelect())
+        e->setSelectionState(SelectionEnd);
+    if (s == e && s->style()->userSelect())
+        s->setSelectionState(SelectionBoth);
 
 #if APPLE_CHANGES
     if (!m_view)

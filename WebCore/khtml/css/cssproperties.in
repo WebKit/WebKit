@@ -82,7 +82,6 @@ margin-left
 -khtml-marquee-repetition
 -khtml-marquee-speed
 -khtml-marquee-style
--khtml-user-modify
 max-height
 max-width
 min-height
@@ -115,6 +114,9 @@ text-shadow
 text-transform
 top
 unicode-bidi
+-khtml-user-drag
+-khtml-user-modify
+-khtml-user-select
 vertical-align
 visibility
 white-space

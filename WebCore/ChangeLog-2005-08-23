@@ -1,3 +1,47 @@
+2004-05-28  David Hyatt  <hyatt@apple.com>
+
+	Implement -khtml-user-select and add support for the property -khtml-user-drag (although someone will still
+	need to wire it up).
+	
+        Reviewed by rjw
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventDoubleClick):
+        (KHTMLPart::handleMousePressEventTripleClick):
+        (KHTMLPart::handleMousePressEventSingleClick):
+        (KHTMLPart::handleMouseMoveEventSelection):
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::setSelection):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::shouldSelect):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.cpp:
+        (userSelect):
+        (StyleCSS3NonInheritedData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::RenderStyle::userDrag):
+        (khtml::RenderStyle::userSelect):
+        (khtml::RenderStyle::setUserDrag):
+        (khtml::RenderStyle::setUserSelect):
+        (khtml::RenderStyle::initialUserDrag):
+        (khtml::RenderStyle::initialUserSelect):
+
 2004-05-28  John Louch  <set EMAIL_ADDRESS environment variable>
 	added addArc and clip path routines.
 
