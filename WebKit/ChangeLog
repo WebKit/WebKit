@@ -1,3 +1,14 @@
+2003-04-07  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3206018 - REGRESSION: Clicks on the BBC news ticker applet don't open story in new window
+
+	MSIE and Netscape for Windows treat a nil target as _top. Since this is usually the target audience of applet developers, we will mimic this. This makes 3206018 behave as expected.
+
+        Reviewed by gramps.
+
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showURL:inFrame:]): treat nil as _top.
+
 2003-04-07  Richard Williamson  <rjw@apple.com>
 
         API conveniences for IB.

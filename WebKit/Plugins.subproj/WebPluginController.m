@@ -108,6 +108,9 @@
         ERROR("could not load URL %@", URL);
         return;
     }
+    if (!target) {
+        target = @"_top";
+    }
     [frame _loadRequest:request inFrameNamed:target];
 }
 
