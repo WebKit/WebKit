@@ -157,7 +157,7 @@ public:
       RenderZTreeNode(RenderLayerElement* layerElt)
           :layer(layerElt->layer), next(0), child(0), layerElement(layerElt) {}
       
-      ~RenderZTreeNode() { delete next; delete child; }
+      ~RenderZTreeNode() { delete next; delete child; delete layerElement; }
 
       void constructLayerList(QPtrVector<RenderLayerElement>* mergeTmpBuffer,
                               QPtrVector<RenderLayerElement>* finalBuffer);

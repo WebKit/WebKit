@@ -1,5 +1,9 @@
 2002-09-09  Darin Adler  <darin@apple.com>
 
+        * khtml/rendering/render_layer.h: Add a call to delete to fix a storage leak.
+
+2002-09-09  Darin Adler  <darin@apple.com>
+
         * khtml/misc/helper.cpp: (khtml::setNamedColor): Add a missing return I spotted.
 
         * kwq/KWQApplication.mm:
