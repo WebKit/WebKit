@@ -1,3 +1,18 @@
+2003-06-12  Darin Adler  <darin@apple.com>
+
+        Fixed by Richard, reviewed by me.
+
+	- fixed 3289047 -- REGRESSION: can't go back after using form at attwireless.com
+
+        * khtml/khtmlpart_p.h: Add an "executing JavaScript form action" flag.
+        * kwq/WebCoreBridge.h: Add an "executing JavaScript form action" flag parameter to
+        the reportClientRedirectToURL method.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::submitForm): In the JavaScript case, set a
+        flag to say we are executing a JavaScript form action.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::redirectionTimerStartedOrStopped): Pass the
+        isJavaScriptFormAction state over the bridge.
+
 2003-06-11  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3288875, :after/:before content not getting destroyed

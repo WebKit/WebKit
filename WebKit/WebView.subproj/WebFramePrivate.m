@@ -1829,7 +1829,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [formState release];
 }
 
-- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory
+- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {
     LOG(Redirect, "Client redirect to: %@", URL);
 
@@ -1841,7 +1841,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // If a "quick" redirect comes in an, we set a special mode so we treat the next
     // load as part of the same navigation.
 
-    if (![self dataSource]) {
+    if (![self dataSource] || isJavaScriptFormAction) {
         // If we don't have a dataSource, we have no "original" load on which to base a redirect,
         // so we better just treat the redirect as a normal load.
         _private->quickRedirectComing = NO;

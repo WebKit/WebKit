@@ -1,3 +1,19 @@
+2003-06-12  Darin Adler  <darin@apple.com>
+
+        Fixed by Richard, reviewed by me.
+
+	- fixed 3289047 -- REGRESSION: can't go back after using form at attwireless.com
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportClientRedirectToURL:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        Added isJavaScriptFormAction parameter, passed on to frame.
+
+        * WebView.subproj/WebFramePrivate.h: Added isJavaScriptFormAction parameter.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        If isJavaScriptFormAction is YES, then don't treat this is a "quick redirect" which is
+        merged with the previous page for purposes of back/forward.
+
 2003-06-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3289577>: Reenable Carbon Java plug-ins when in Carbon app

@@ -725,7 +725,8 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
         [_bridge reportClientRedirectToURL:d->m_redirectURL.getNSString()
                                      delay:d->m_delayRedirect
                                   fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]
-                               lockHistory:d->m_redirectLockHistory];
+                               lockHistory:d->m_redirectLockHistory
+                               isJavaScriptFormAction:d->m_executingJavaScriptFormAction];
     } else {
         [_bridge reportClientRedirectCancelled];
     }
