@@ -70,6 +70,7 @@ using khtml::RenderPart;
     if (renderPart) {
         renderPart->deref();
     }
+    part->impl->setBridge(nil);
     part->deref();
     
     [super dealloc];

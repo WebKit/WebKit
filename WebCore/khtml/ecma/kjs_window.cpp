@@ -1397,14 +1397,7 @@ WindowQObject::~WindowQObject()
 void WindowQObject::parentDestroyed()
 {
   //kdDebug(6070) << "WindowQObject::parentDestroyed " << this << " we have " << scheduledActions.count() << " actions in the map" << endl;
-#ifdef APPLE_CHANGES
-  QMapIterator<int,ScheduledAction*> myit;
-  for (myit = scheduledActions.begin(); myit != scheduledActions.end(); ++myit) {
-    killTimer(myit.key());
-  }
-#else
   killTimers();
-#endif
   QMapIterator<int,ScheduledAction*> it;
   for (it = scheduledActions.begin(); it != scheduledActions.end(); ++it) {
     ScheduledAction *action = *it;

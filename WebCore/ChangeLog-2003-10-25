@@ -1,5 +1,34 @@
 2002-09-17  Darin Adler  <darin@apple.com>
 
+	- fixed 3025022 -- Crash in KWQKHTMLPartImpl::redirectionTimerStartedOrStopped()
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge dealloc]): Set the bridge on the part to
+	nil just in case someone else is holding a reference, so we won't try to dispatch
+	methods to an already-deallocated bridge.
+
+	- fixed 3028476 -- illegal instruction crash in KWQTimerCallback timerFired
+
+        * khtml/ecma/kjs_window.cpp: (WindowQObject::parentDestroyed):
+	Remove APPLE_CHANGES to avoid calling killTimers(); we can call it
+	now that we have a working implementation.
+        * khtml/khtmlview.cpp:
+        (KHTMLView::~KHTMLView): Remove APPLE_CHANGES that kills timers.
+	All timers are killed by ~QObject now, just as in Qt.
+        (KHTMLView::clear): Remove APPLE_CHANGES to avoid calling killTimers();
+	we can call it now that we have a working implementation.
+
+        * kwq/KWQObject.mm:
+        (QObject::~QObject): Call killTimers().
+        (QObject::startTimer): Keep a dictionary keyed by QObject, with a dictionary
+	of timers for each, rather than one global dictionary. This makes it efficient
+	to kill all the timers for an object.
+        (QObject::killTimer): Update for new level of dictionary.
+        (QObject::killTimers): Kill all the timers in this object's timer dictionary
+	rather than all timers in the world.
+        (QObject::inherits): Add an ERROR for the case where the class name is unknown.
+
+2002-09-17  Darin Adler  <darin@apple.com>
+
 	- fixed 3050818 -- Crash in relative-KURL constructor at site with _ in host name
 
         * kwq/KWQKURL.mm: Change _ so that it's allowed in host names.

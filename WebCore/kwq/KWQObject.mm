@@ -33,6 +33,19 @@
 
 const QObject *QObject::m_sender;
 
+static CFMutableDictionaryRef timerDictionaries;
+
+@interface KWQObjectTimerTarget : NSObject
+{
+    QObject *target;
+    int timerId;
+}
+
+- initWithQObject:(QObject *)object timerId:(int)timerId;
+- (void)timerFired;
+
+@end
+
 KWQSignal *QObject::findSignal(const char *signalName) const
 {
     for (KWQSignal *signal = m_signalListHead; signal; signal = signal->m_next) {
@@ -109,91 +122,99 @@ QObject::QObject(QObject *parent, const char *name)
 QObject::~QObject()
 {
     ASSERT(m_signalListHead == 0);
+    killTimers();
 }
-
-@interface KWQTimerCallback : NSObject
-{
-    QObject *target;
-    int timerId;
-}
-- initWithQObject: (QObject *)object timerId: (int)timerId;
-- (void)timerFired: (id)context;
-@end
-
-@implementation KWQTimerCallback
-- initWithQObject: (QObject *)qo timerId: (int)t
-{
-    [super init];
-    timerId = t;
-    target = qo;
-    return self;
-}
-
-- (void)timerFired: (id)context
-{
-    QTimerEvent te(timerId);
-    target->timerEvent (&te);
-}
-@end
-
-static NSMutableDictionary *timers;
 
 void QObject::timerEvent(QTimerEvent *te)
 {
-}
-
-int QObject::startTimer(int milliseconds)
-{
-    static int timerCount = 1;
-
-    NSNumber *timerId = [NSNumber numberWithInt: timerCount];
-    
-    if (timers == nil) {
-        // The global timers dictionary itself leaks, but the contents are removed
-        // when a timer expires or is killed.
-        timers = [[NSMutableDictionary alloc] init];
-    }
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: ((NSTimeInterval)milliseconds)/1000
-                target: [[[KWQTimerCallback alloc] initWithQObject: this timerId: timerCount] autorelease]
-                selector: @selector(timerFired:)
-                userInfo: timerId
-                repeats: NO];
-    [timers setObject: timer forKey: timerId];
-        
-    return timerCount++;    
-}
-
-void QObject::killTimer(int _timerId)
-{
-    NSNumber *timerId = [NSNumber numberWithInt: _timerId];
-    NSTimer *timer;
-    
-    timer = (NSTimer *)[timers objectForKey: timerId];
-    [timer invalidate];
-    [timers removeObjectForKey: timerId];
-}
-
-void QObject::killTimers()
-{
-    NSArray *contexts;
-    NSNumber *key;
-    NSTimer *timer;
-    int i, count;
-    
-    contexts = [timers allKeys];
-    count = [contexts count];
-    for (i = 0; i < count; i++){
-        key = (NSNumber *)[contexts objectAtIndex: i];
-        timer = (NSTimer *)[timers objectForKey: key];
-        [timer invalidate];
-        [timers removeObjectForKey: key];
-    }
 }
 
 bool QObject::event(QEvent *)
 {
     return false;
 }
+
+int QObject::startTimer(int milliseconds)
+{
+    static int timerCount = 1;
+
+    if (timerDictionaries == NULL) {
+        // The global timers dictionary itself leaks, but the contents are removed
+        // when each timer fires or is killed.
+        timerDictionaries = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+    }
+    
+    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
+    if (timers == nil) {
+        timers = [[NSMutableDictionary alloc] init];
+        CFDictionarySetValue(timerDictionaries, this, timers);
+        [timers release];
+    }
+
+    NSNumber *timerId = [NSNumber numberWithInt:timerCount];
+    KWQObjectTimerTarget *target = [[KWQObjectTimerTarget alloc] initWithQObject:this timerId:timerCount];
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:milliseconds / 1000.0
+          target:target
+        selector:@selector(timerFired)
+        userInfo:target
+         repeats:NO];
+    [target release];
+    [timers setObject:timer forKey:timerId];
+    
+    return timerCount++;    
+}
+
+void QObject::killTimer(int _timerId)
+{
+    if (_timerId == 0) {
+        return;
+    }
+    if (timerDictionaries == NULL) {
+        return;
+    }
+    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
+    NSNumber *timerId = [NSNumber numberWithInt:_timerId];
+    NSTimer *timer = (NSTimer *)[timers objectForKey:timerId];
+    [timer invalidate];
+    [timers removeObjectForKey:timerId];
+}
+
+void QObject::killTimers()
+{
+    if (timerDictionaries == NULL) {
+        return;
+    }
+    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
+    if (timers == nil) {
+        return;
+    }
+    NSArray *keys = [timers allKeys];
+    int count = [keys count];
+    for (int i = 0; i < count; i++) {
+        NSNumber *key = (NSNumber *)[keys objectAtIndex:i];
+        NSTimer *timer = (NSTimer *)[timers objectForKey:key];
+        [timer invalidate];
+    }
+    CFDictionaryRemoveValue(timerDictionaries, this);
+}
+
+@implementation KWQObjectTimerTarget
+
+- initWithQObject:(QObject *)qo timerId:(int)t
+{
+    [super init];
+    target = qo;
+    timerId = t;
+    return self;
+}
+
+- (void)timerFired
+{
+    QTimerEvent event(timerId);
+    target->timerEvent(&event);
+}
+
+@end
 
 // special includes only for inherits
 
@@ -220,6 +241,6 @@ bool QObject::inherits(const char *className) const
     if (strcmp(className, "QScrollView") == 0) {
         return dynamic_cast<const QScrollView *>(this);
     }
-    // FIXME: ERROR here because we don't know the class name.
+    ERROR("class name %s not recognized", className);
     return false;
 }
