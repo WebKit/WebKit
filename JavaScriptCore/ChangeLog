@@ -1,3 +1,11 @@
+2004-03-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        * English.lproj/InfoPlist.strings: Removed. No need to localize the version and
+        copyright string, and that's all that was in here.
+        * JavaScriptCore.pbproj/project.pbxproj: Removed InfoPlist.strings from build.
+
 2004-03-03  Richard Williamson   <rjw@apple.com>
 
 	More 'C' binding implementation.  Fleshed out all the

@@ -1,3 +1,11 @@
+2004-03-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        * English.lproj/InfoPlist.strings: Removed. No need to localize the version and
+        copyright string, and that's all that was in here.
+        * WebCore.pbproj/project.pbxproj: Removed InfoPlist.strings from build.
+
 2004-03-03  David Hyatt  <hyatt@apple.com>
 
 	Speed up access to the children arrays of accessibility objects by caching mutable arrays of children

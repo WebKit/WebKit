@@ -526,7 +526,6 @@
 		0867D69EFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
 			files = (
-				089C1668FE841158C02AAC07,
 				F5A1B04A02DE8ABA018635CA,
 				F5A1B05402DE8B46018635CA,
 				BC8F629A0405F45600A80004,
@@ -816,7 +815,6 @@
 		089C1665FE841158C02AAC07 = {
 			children = (
 				84C0FA1E052B9652000440A1,
-				089C1666FE841158C02AAC07,
 				F5A1B05302DE8B46018635CA,
 				BC8F62990405F45600A80004,
 			);
@@ -824,31 +822,6 @@
 			name = Resources;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		089C1666FE841158C02AAC07 = {
-			children = (
-				089C1667FE841158C02AAC07,
-			);
-			isa = PBXVariantGroup;
-			name = InfoPlist.strings;
-			path = "";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		089C1667FE841158C02AAC07 = {
-			fileEncoding = 10;
-			isa = PBXFileReference;
-			lastKnownFileType = text.plist.strings;
-			name = English;
-			path = English.lproj/InfoPlist.strings;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		089C1668FE841158C02AAC07 = {
-			fileRef = 089C1666FE841158C02AAC07;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 //080
 //081
