@@ -1,5 +1,14 @@
 2002-11-05  Darin Adler  <darin@apple.com>
 
+	- fixed 3084704 -- crash in HTMLTokenizer on page with JavaScript
+	HTMLDocument::Close inside a <script>
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _detachFromParent]):
+	We need to stop loading here. Otherwise we might do loading after closeURL,
+	which could lead to a problem like the one above.
+
+2002-11-05  Darin Adler  <darin@apple.com>
+
 	- changed our MacBinary decoding to not pay any attention to the comment
 
 	Before we would "fail to decode" if the comment was truncated, now we just

@@ -152,6 +152,7 @@ static const char * const stateNames[] = {
     WebBridge *bridge = _private->bridge;
     _private->bridge = nil;
     
+    [self stopLoading];
     [bridge closeURL];
 
     [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
