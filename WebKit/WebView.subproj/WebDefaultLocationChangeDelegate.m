@@ -22,22 +22,22 @@ static WebDefaultLocationChangeDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (void)locationChangeStartedForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)controller locationChangeStartedForDataSource:(WebDataSource *)dataSource { }
 
-- (void)serverRedirectedForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)controller serverRedirectedForDataSource:(WebDataSource *)dataSource { }
 
-- (void)locationChangeCommittedForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)controller locationChangeCommittedForDataSource:(WebDataSource *)dataSource { }
 
-- (void)receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource { }
-- (void)receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)controller receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)controller receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource { }
 
-- (void)locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)controller locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource { }
 
-- (void)willCloseLocationForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)controller willCloseLocationForDataSource:(WebDataSource *)dataSource { }
 
-- (void)locationChangedWithinPageForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)controller locationChangedWithinPageForDataSource:(WebDataSource *)dataSource { }
 
-- (void)clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame { }
-- (void)clientRedirectCancelledForFrame:(WebFrame *)frame { }
+- (void)controller: (WebController *)controller clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame { }
+- (void)controller: (WebController *)controller clientRedirectCancelledForFrame:(WebFrame *)frame { }
 
 @end

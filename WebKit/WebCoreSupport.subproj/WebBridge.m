@@ -12,6 +12,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
+#import <WebKit/WebDefaultWindowOperationsDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
@@ -110,33 +111,39 @@
 	[request setReferrer:[self referrer]];
     }
 
-    id wd = [[frame controller] windowOperationsDelegate];
+    WebController *currentController = [frame controller];
+    id wd = [currentController windowOperationsDelegate];
     WebController *newController = nil;
     
-    if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
-        newController = [wd createWindowWithRequest:request];
+    if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
+        newController = [wd controller:currentController createWindowWithRequest:request];
+    else
+        newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:currentController createWindowWithRequest:request];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
 }
 
 - (void)showWindow
 {
-    [[[frame controller] _windowOperationsDelegateForwarder] showWindow];
+    WebController *c = [frame controller];
+    [[c _windowOperationsDelegateForwarder] controllerShowWindow: c];
 }
 
 - (BOOL)areToolbarsVisible
 {
     ASSERT(frame != nil);
-    id wd = [[frame controller] windowOperationsDelegate];
-    if ([wd respondsToSelector: @selector(areToolbarsVisible)])
-        return [[[frame controller] windowOperationsDelegate] areToolbarsVisible];
-    return NO;
+    WebController *c = [frame controller];
+    id wd = [c windowOperationsDelegate];
+    if ([wd respondsToSelector: @selector(controllerAreToolbarsVisible:)])
+        return [wd controllerAreToolbarsVisible: c];
+    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controllerAreToolbarsVisible:c];
 }
 
 - (void)setToolbarsVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    [[[frame controller] _windowOperationsDelegateForwarder] setToolbarsVisible:visible];
+    WebController *c = [frame controller];
+    [[c _windowOperationsDelegateForwarder] controller:c setToolbarsVisible:visible];
 }
 
 - (BOOL)areScrollbarsVisible
@@ -154,22 +161,25 @@
 - (BOOL)isStatusBarVisible
 {
     ASSERT(frame != nil);
-    id wd = [[frame controller] windowOperationsDelegate];
-    if ([wd respondsToSelector: @selector(isStatusBarVisible)])
-        return [[[frame controller] windowOperationsDelegate] isStatusBarVisible];
-    return NO;
+    WebController *c = [frame controller];
+    id wd = [c windowOperationsDelegate];
+    if ([wd respondsToSelector: @selector(controllerIsStatusBarVisible:)])
+        return [wd controllerIsStatusBarVisible:c];
+    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controllerIsStatusBarVisible:c];
 }
 
 - (void)setStatusBarVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    [[[frame controller] _windowOperationsDelegateForwarder] setStatusBarVisible:visible];
+    WebController *c = [frame controller];
+    [[c _windowOperationsDelegateForwarder] controller:c setStatusBarVisible:visible];
 }
 
 - (void)setWindowFrame:(NSRect)frameRect
 {
     ASSERT(frame != nil);
-    [[[frame controller] _windowOperationsDelegateForwarder] setFrame:frameRect];
+    WebController *c = [frame controller];
+    [[c _windowOperationsDelegateForwarder] controller:c setFrame:frameRect];
 }
 
 - (NSWindow *)window
@@ -180,18 +190,27 @@
 
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
-    [[[frame controller] windowOperationsDelegate] runJavaScriptAlertPanelWithMessage:message];
+    WebController *c = [frame controller];
+    [[c _windowOperationsDelegateForwarder] controller:c runJavaScriptAlertPanelWithMessage:message];
 }
 
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
 {
-    return [[[frame controller] windowOperationsDelegate] runJavaScriptConfirmPanelWithMessage:message];
+    WebController *c = [frame controller];
+    id wd = [c windowOperationsDelegate];
+    if ([wd respondsToSelector: @selector(controller:runJavaScriptConfirmPanelWithMessage:)])
+        return [wd controller:c runJavaScriptConfirmPanelWithMessage:message];
+    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:c runJavaScriptConfirmPanelWithMessage:message];
 }
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
 {
-    *result = [[[frame controller] windowOperationsDelegate] runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
-
+    WebController *c = [frame controller];
+    id wd = [c windowOperationsDelegate];
+    if ([wd respondsToSelector: @selector(controller:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
+        *result = [wd controller:c runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
+    else
+        *result = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:c runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
     return *result != nil;
 }
 
@@ -202,7 +221,8 @@
 
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
 {
-    [[[frame controller] windowOperationsDelegate] runOpenPanelForFileButtonWithResultListener:resultListener];
+    WebController *c = [frame controller];
+    [[c _windowOperationsDelegateForwarder] controller:c runOpenPanelForFileButtonWithResultListener:resultListener];
 }
 
 
@@ -225,7 +245,8 @@
 - (void)setStatusText:(NSString *)status
 {
     ASSERT(frame != nil);
-    [[[frame controller] _windowOperationsDelegateForwarder] setStatusText:status];
+    WebController *c = [frame controller];
+    [[c _windowOperationsDelegateForwarder] controller:c setStatusText:status];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
@@ -261,18 +282,19 @@
     ASSERT(response != nil);
 
     WebRequest *request = [[WebRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
-    id delegate = [[frame controller] resourceLoadDelegate];
-    id _delegate = [[frame controller] _resourceLoadDelegateForwarder];
+    WebController *c = [frame controller];
+    id delegate = [c resourceLoadDelegate];
+    id _delegate = [c _resourceLoadDelegateForwarder];
     id identifier;
     
     // No chance for delegate to modify request, so we don't send a willSendRequest: message.
-    if ([delegate respondsToSelector:@selector(identifierForInitialRequest:fromDataSource:)])
-        identifier = [delegate identifierForInitialRequest: request fromDataSource: [self dataSource]];
+    if ([delegate respondsToSelector:@selector(controller:identifierForInitialRequest:fromDataSource:)])
+        identifier = [delegate controller:c identifierForInitialRequest: request fromDataSource: [self dataSource]];
     else
-        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] identifierForInitialRequest:request fromDataSource:[self dataSource]];
-    [_delegate resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
-    [_delegate resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
-    [_delegate resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
+        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] controller:c identifierForInitialRequest:request fromDataSource:[self dataSource]];
+    [_delegate controller:c resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
+    [_delegate controller:c resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+    [_delegate controller:c resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
     
     [[frame controller] _finishedLoadingResourceFromDataSource:[self dataSource]];
     [request release];

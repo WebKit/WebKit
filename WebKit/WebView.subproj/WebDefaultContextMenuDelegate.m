@@ -94,7 +94,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
     return [menuItem autorelease];
 }
 
-- (NSArray *)contextMenuItemsForElement: (NSDictionary *)theElement  defaultMenuItems: (NSArray *)defaultMenuItems
+- (NSArray *)controller:(WebController *)c contextMenuItemsForElement: (NSDictionary *)theElement  defaultMenuItems: (NSArray *)defaultMenuItems
 {
     NSMutableArray *menuItems = [NSMutableArray array];
     NSURL *linkURL, *imageURL;

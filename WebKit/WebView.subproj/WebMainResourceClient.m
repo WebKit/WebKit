@@ -28,7 +28,6 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
-#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourceResponseExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebView.h>
@@ -213,8 +212,9 @@
 		   _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
     policyResponse = [r retain];
 
-    [[dataSource _controller] setDefersCallbacks:YES];
-    [[[dataSource _controller] _policyDelegateForwarder] decideContentPolicyForMIMEType:[r contentType]
+    WebController *c = [dataSource _controller];
+    [c setDefersCallbacks:YES];
+    [[c _policyDelegateForwarder] controller:c decideContentPolicyForMIMEType:[r contentType]
 						                      andRequest:[dataSource request]
 						                         inFrame:[dataSource webFrame]
 						                decisionListener:listener];

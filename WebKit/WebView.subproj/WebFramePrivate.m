@@ -14,6 +14,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultWindowOperationsDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebFormDelegate.h>
@@ -388,7 +389,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         }
     }
     if (_private->dataSource) {
-        [[[self controller] _locationChangeDelegateForwarder] willCloseLocationForDataSource:_private->dataSource];
+        [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller willCloseLocationForDataSource:_private->dataSource];
     }
 }
 
@@ -679,12 +680,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             
             // Tell the client we've committed this URL.
             ASSERT([[self webView] documentView] != nil);
-            [[[self controller] _locationChangeDelegateForwarder] locationChangeCommittedForDataSource:ds];
+            [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangeCommittedForDataSource:ds];
             
             // If we have a title let the controller know about it.
             if (ptitle) {
                 [entry setTitle:ptitle];
-                [[[self controller] _locationChangeDelegateForwarder] receivedPageTitle:ptitle forDataSource:ds];
+                [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller receivedPageTitle:ptitle forDataSource:ds];
             }
             break;
         }
@@ -862,7 +863,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
-                    [[[self controller] _locationChangeDelegateForwarder] locationChangeDone:[pd _mainDocumentError] forDataSource:pd];
+                    [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangeDone:[pd _mainDocumentError] forDataSource:pd];
 
                     // We know the provisional data source didn't cut the muster, release it.
                     [self _setProvisionalDataSource:nil];
@@ -941,7 +942,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     }
                 }
 
-                [[[self controller] _locationChangeDelegateForwarder] locationChangeDone:[ds _mainDocumentError] forDataSource:ds];
+                [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangeDone:[ds _mainDocumentError] forDataSource:ds];
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
@@ -1011,7 +1012,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebError *error = [WebError errorWithCode:code
                                      inDomain:WebErrorDomainWebKit
                                    failingURL:[URL absoluteString]];
-    [[[self controller] _policyDelegateForwarder] unableToImplementPolicyWithError:error inFrame:self];    
+    WebController *c;
+    [[c _policyDelegateForwarder] controller:c unableToImplementPolicyWithError:error inFrame:self];    
 }
 
 - (void)_clearProvisionalDataSource
@@ -1073,7 +1075,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [_private setCurrentItem:item];
         [self _restoreScrollPosition];
 
-        [[[self controller] _locationChangeDelegateForwarder] locationChangedWithinPageForDataSource:_private->dataSource];
+        [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangedWithinPageForDataSource:_private->dataSource];
     } else {
         // Remember this item so we can traverse any child items as child frames load
         [_private setProvisionalItem:item];
@@ -1327,7 +1329,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->listener = [listener retain];
     _private->policyFormState = [formState retain];
 
-    [[[self controller] _policyDelegateForwarder] decideNewWindowPolicyForAction:action
+    WebController *c = [self controller];
+    [[c _policyDelegateForwarder] controller:c decideNewWindowPolicyForAction:action
 						                      andRequest:request
 						                    newFrameName:frameName
 						                decisionListener:listener];
@@ -1398,7 +1401,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->listener = [listener retain];
     _private->policyFormState = [formState retain];
 
-    [[[self controller] _policyDelegateForwarder] decideNavigationPolicyForAction:action
+    WebController *c = [self controller];
+    [[c _policyDelegateForwarder] controller:c decideNavigationPolicyForAction:action
                                                              andRequest:request
                                                                 inFrame:self
                                                        decisionListener:listener];
@@ -1475,7 +1479,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _checkLoadComplete];
     }
 
-    [[[self controller] _locationChangeDelegateForwarder] locationChangedWithinPageForDataSource:dataSrc];
+    [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangedWithinPageForDataSource:dataSrc];
 }
 
 - (void)_addExtraFieldsToRequest:(WebRequest *)request alwaysFromRequest: (BOOL)f
@@ -1501,12 +1505,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     
     WebController *controller = nil;
-    id wd = [[self controller] windowOperationsDelegate];
-    if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
-	controller = [wd createWindowWithRequest:nil];
+    WebController *currentController = [self controller];
+    id wd = [currentController windowOperationsDelegate];
+    if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
+	controller = [wd controller:currentController createWindowWithRequest:nil];
+    else
+        controller = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:currentController createWindowWithRequest:nil];
         
     [controller _setTopLevelFrameName:frameName];
-    [[controller _windowOperationsDelegateForwarder] showWindow];
+    [[controller _windowOperationsDelegateForwarder] controllerShowWindow:controller];
     WebFrame *frame = [controller mainFrame];
 
     [frame _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
@@ -1677,7 +1684,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     LOG(Redirect, "Client redirect to: %@", URL);
 
-    [[[self controller] _locationChangeDelegateForwarder] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
+    [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
     // If a "quick" redirect comes in an, we set a special mode so we treat the next
     // load as part of the same navigation.
 
@@ -1692,7 +1699,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_clientRedirectCancelled
 {
-    [[[self controller] _locationChangeDelegateForwarder] clientRedirectCancelledForFrame:self];
+    [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller clientRedirectCancelledForFrame:self];
     _private->quickRedirectComing = NO;
 }
 

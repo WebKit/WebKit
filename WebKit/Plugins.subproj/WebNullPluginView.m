@@ -51,7 +51,7 @@ static NSImage *image = nil;
         WebController *controller = [webFrame controller];
         WebDataSource *dataSource = [webFrame dataSource];
         
-        [[controller _resourceLoadDelegateForwarder] pluginFailedWithError:error dataSource:dataSource];
+        [[controller _resourceLoadDelegateForwarder] controller:controller pluginFailedWithError:error dataSource:dataSource];
     }
 }
 

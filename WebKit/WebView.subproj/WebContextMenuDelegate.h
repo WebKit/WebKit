@@ -5,6 +5,8 @@
         Public header file.
 */
 
+@class WebController;
+
 /*!
     @category WebContextMenuDelegate
     @discussion WebContextMenuDelegate determine what context menu items are visible over
@@ -34,11 +36,12 @@ enum {
 /*!
     @method contextMenuItemsForElement:defaultMenuItems:
     @abstract Returns the menu items to display in an element's contextual menu.
+    @param controller The WebController requesting the context menus.
     @param element A dictionary representation of the clicked element.
     @param defaultMenuItems An array of default NSMenuItems to include in all contextual menus.
     @result An array of NSMenuItems to include in the contextual menu.
 */
-- (NSArray *)contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
+- (NSArray *)controller:(WebController *)controller contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
 
 @end
 

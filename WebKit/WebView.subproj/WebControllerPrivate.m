@@ -297,36 +297,31 @@
 {
     id wd = [self windowOperationsDelegate];
     WebController *newWindowController = nil;
-    if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
-        newWindowController = [wd createWindowWithRequest:request];
+    if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
+        newWindowController = [wd controller:self createWindowWithRequest:request];
     else {
-        [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] createWindowWithRequest: request];
+        newWindowController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:self createWindowWithRequest: request];
     }
 
-    [[newWindowController _windowOperationsDelegateForwarder] showWindow];
+    [[newWindowController _windowOperationsDelegateForwarder] controllerShowWindow: self];
 
     return newWindowController;
 }
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element
 {
-    NSArray *defaultMenuItems = [_private->defaultContextMenuDelegate contextMenuItemsForElement:element
-                                                                                defaultMenuItems:nil];
-    NSArray *menuItems = nil;
+    NSArray *defaultMenuItems = [_private->defaultContextMenuDelegate
+          controller:self contextMenuItemsForElement:element defaultMenuItems:nil];
+    NSArray *menuItems = defaultMenuItems;
     NSMenu *menu = nil;
     unsigned i;
 
     if (_private->contextMenuDelegate) {
         id cd = _private->contextMenuDelegate;
         
-        if ([cd respondsToSelector:@selector(contextMenuItemsForElement:defaultMenuItems:)])
-            menuItems = [cd contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
-        else
-            menuItems = [[WebDefaultContextMenuDelegate sharedContextMenuDelegate] contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
+        if ([cd respondsToSelector:@selector(controller:contextMenuItemsForElement:defaultMenuItems:)])
+            menuItems = [cd controller:self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
     } 
-    else {
-        menuItems = defaultMenuItems;
-    }
 
     if (menuItems && [menuItems count] > 0) {
         menu = [[[NSMenu alloc] init] autorelease];
@@ -346,7 +341,7 @@
     // for that case.
     
     if (dictionary && _private->lastElementWasNonNil) {
-        [[self _windowOperationsDelegateForwarder] mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
+        [[self _windowOperationsDelegateForwarder] controller:self mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
     }
     _private->lastElementWasNonNil = dictionary != nil;
 }

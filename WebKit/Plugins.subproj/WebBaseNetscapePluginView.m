@@ -9,6 +9,7 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
+#import <WebKit/WebDefaultWindowOperationsDelegate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -1018,14 +1019,17 @@ typedef struct {
 
     // FIXME - need to get rid of this window creation which
     // bypasses normal targeted link handling
-    WebController *controller = nil;
-    id wd = [[self controller] windowOperationsDelegate];
-    if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
-	controller = [wd createWindowWithRequest:nil];
+    WebController *newController = nil;
+    WebController *currentController = [self controller];
+    id wd = [currentController windowOperationsDelegate];
+    if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
+	newController = [wd controller:currentController createWindowWithRequest:nil];
+    else
+        newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:currentController createWindowWithRequest:nil];
         
-    [controller _setTopLevelFrameName:frameName];
-    [[controller _windowOperationsDelegateForwarder] showWindow];
-    WebFrame *frame = [controller mainFrame];
+    [newController _setTopLevelFrameName:frameName];
+    [[newController _windowOperationsDelegateForwarder] controllerShowWindow:newController];
+    WebFrame *frame = [newController mainFrame];
 
     NSURL *URL = [request URL];
     NSString *JSString = [URL _web_scriptIfJavaScriptURL];

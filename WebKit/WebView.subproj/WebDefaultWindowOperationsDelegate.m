@@ -29,104 +29,104 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 }
 
 
-- (WebController *)createWindowWithRequest:(WebRequest *)request;
+- (WebController *)controller:(WebController *)c createWindowWithRequest:(WebRequest *)request;
 {
     return nil;
 }
 
-- (void)showWindow;
+- (void)controllerShowWindow:(WebController *)c;
 {
 }
 
-- (void)showWindowBehindFrontmost;
+- (void)controllerShowWindowBehindFrontmost:(WebController *)c;
 {
 }
 
-- (void)closeWindow;
+- (void)controllerCloseWindow:(WebController *)c;
 {
 }
 
-- (void)focusWindow;
+- (void)controllerFocusWindow:(WebController *)c;
 {
 }
 
-- (void)unfocusWindow;
+- (void)controllerUnfocusWindow:(WebController *)c;
 {
 }
 
-- (NSResponder *)firstResponderInWindow;
-{
-    return nil;
-}
-
-- (void)makeFirstResponderInWindow:(NSResponder *)responder;
-{
-}
-
-- (void)setStatusText:(NSString *)text;
-{
-}
-
-- (NSString *)statusText;
+- (NSResponder *)controllerFirstResponderInWindow:(WebController *)c;
 {
     return nil;
 }
 
-- (void)mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
+- (void)controller:(WebController *)c makeFirstResponderInWindow:(NSResponder *)responder;
 {
 }
 
-- (BOOL)areToolbarsVisible;
-{
-    return NO;
-}
-
-- (void)setToolbarsVisible:(BOOL)visible;
+- (void)controller:(WebController *)c setStatusText:(NSString *)text;
 {
 }
 
-- (BOOL)isStatusBarVisible;
+- (NSString *)controllerStatusText:(WebController *)c;
 {
-    return NO;
+    return nil;
 }
 
-- (void)setStatusBarVisible:(BOOL)visible;
+- (void)controller:(WebController *)c mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
 {
 }
 
-- (BOOL)isResizable;
+- (BOOL)controllerAreToolbarsVisible:(WebController *)c;
 {
     return NO;
 }
 
-- (void)setResizable:(BOOL)resizable;
+- (void)controller:(WebController *)c setToolbarsVisible:(BOOL)visible;
 {
 }
 
-- (void)setFrame:(NSRect)frame;
+- (BOOL)controllerIsStatusBarVisible:(WebController *)c;
+{
+    return NO;
+}
+
+- (void)controller:(WebController *)c setStatusBarVisible:(BOOL)visible;
 {
 }
 
-- (NSRect)frame;
+- (BOOL)controllerIsResizable:(WebController *)c;
+{
+    return NO;
+}
+
+- (void)controller:(WebController *)c setResizable:(BOOL)resizable;
+{
+}
+
+- (void)controller:(WebController *)c setFrame:(NSRect)frame;
+{
+}
+
+- (NSRect)controllerFrame:(WebController *)c;
 {
     return NSMakeRect (0,0,0,0);
 }
 
-- (void)runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (void)controller:(WebController *)c runJavaScriptAlertPanelWithMessage:(NSString *)message;
 {
 }
 
-- (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
+- (BOOL)controller:(WebController *)c runJavaScriptConfirmPanelWithMessage:(NSString *)message
 {
     return NO;
 }
 
-- (NSString *)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText
+- (NSString *)controller:(WebController *)c runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText
 {
     return nil;
 }
 
-- (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
+- (void)controller:(WebController *)c runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
 {
 }
 

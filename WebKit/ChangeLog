@@ -1,3 +1,88 @@
+2003-03-11  Richard Williamson   <rjw@apple.com>
+
+        Added controller: parameter to all WebControllers delegates.
+        
+        Reviewed by chris.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showStatus:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        (-[WebBridge showWindow]):
+        (-[WebBridge areToolbarsVisible]):
+        (-[WebBridge setToolbarsVisible:]):
+        (-[WebBridge isStatusBarVisible]):
+        (-[WebBridge setStatusBarVisible:]):
+        (-[WebBridge setWindowFrame:]):
+        (-[WebBridge runJavaScriptAlertPanelWithMessage:]):
+        (-[WebBridge runJavaScriptConfirmPanelWithMessage:]):
+        (-[WebBridge runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:]):
+        (-[WebBridge runOpenPanelForFileButtonWithResultListener:]):
+        (-[WebBridge setStatusText:]):
+        (-[WebBridge objectLoadedFromCacheWithURL:response:size:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate resource:willSendRequest:]):
+        (-[WebBaseResourceHandleDelegate resource:didReceiveResponse:]):
+        (-[WebBaseResourceHandleDelegate resource:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate resourceDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate resource:didFailLoadingWithError:]):
+        (-[WebBaseResourceHandleDelegate cancelWithError:]):
+        * WebView.subproj/WebContextMenuDelegate.h:
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _openNewWindowWithRequest:]):
+        (-[WebController _menuForElement:]):
+        (-[WebController _mouseDidMoveOverElement:modifierFlags:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _setRequest:]):
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate controller:contextMenuItemsForElement:defaultMenuItems:]):
+        * WebView.subproj/WebDefaultLocationChangeDelegate.m:
+        (-[WebDefaultLocationChangeDelegate controller:locationChangeStartedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:serverRedirectedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:locationChangeCommittedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:receivedPageTitle:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:receivedPageIcon:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:locationChangeDone:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:willCloseLocationForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:locationChangedWithinPageForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:clientWillRedirectTo:delay:fireDate:forFrame:]):
+        (-[WebDefaultLocationChangeDelegate controller:clientRedirectCancelledForFrame:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate controller:unableToImplementPolicy:error:forURL:inFrame:]):
+        (-[WebDefaultPolicyDelegate controller:decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:]):
+        (-[WebDefaultPolicyDelegate controller:decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate controller:identifierForInitialRequest:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:willSendRequest:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:didReceiveResponse:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:didReceiveContentLength:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:didFinishLoadingFromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:didFailLoadingWithError:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:pluginFailedWithError:dataSource:]):
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m:
+        (-[WebDefaultWindowOperationsDelegate controller:runJavaScriptConfirmPanelWithMessage:]):
+        (-[WebDefaultWindowOperationsDelegate controller:runJavaScriptTextInputPanelWithPrompt:defaultText:]):
+        (-[WebDefaultWindowOperationsDelegate controller:runOpenPanelForFileButtonWithResultListener:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (if):
+        (switch):
+        * WebView.subproj/WebLocationChangeDelegate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient checkContentPolicyForResponse:andCallSelector:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2003-03-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

@@ -27,33 +27,33 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource
+- controller:(WebController *)c identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
     return [[[NSObject alloc] init] autorelease];
 }
 
--(WebRequest *)resource:identifier willSendRequest: (WebRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
+-(WebRequest *)controller:(WebController *)c resource:identifier willSendRequest: (WebRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
 {
     return newRequest;
 }
 
--(void)resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource
+-(void)controller:(WebController *)c resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource
 {
 }
 
--(void)resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource
+-(void)controller:(WebController *)c resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource
 {
 }
 
--(void)resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource
+-(void)controller:(WebController *)c resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource
 {
 }
 
--(void)resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource
+-(void)controller:(WebController *)c resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource
 {
 }
 
-- (void)pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource
+- (void)controller:(WebController *)c pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource
 {
 }
 

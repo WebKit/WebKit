@@ -185,7 +185,7 @@
     
     [self _setLoading:YES];
     
-    [[_private->controller _locationChangeDelegateForwarder] locationChangeStartedForDataSource:self];
+    [[_private->controller _locationChangeDelegateForwarder] controller: _private->controller locationChangeStartedForDataSource:self];
 
     if (pageCache){
         _private->loadingFromPageCache = YES;
@@ -194,7 +194,7 @@
         _private->loadingFromPageCache = NO;
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
         id identifier;
-        identifier = [[_private->controller resourceLoadDelegate] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+        identifier = [[_private->controller resourceLoadDelegate] controller:_private->controller identifierForInitialRequest:_private->originalRequest fromDataSource:self];
         [_private->mainClient setIdentifier: identifier];
         [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         if (![_private->mainClient loadWithRequest:_private->request]) {
@@ -311,7 +311,7 @@
         // Must update the entries in the back-forward list too.
         [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
 
-        [[_private->controller _locationChangeDelegateForwarder] receivedPageTitle:_private->pageTitle forDataSource:self];
+        [[_private->controller _locationChangeDelegateForwarder] controller: _private->controller receivedPageTitle:_private->pageTitle forDataSource:self];
     }
 }
 
@@ -337,7 +337,7 @@
     // Only send serverRedirectedForDataSource: if URL changed.
     if (![[oldRequest URL] isEqual: [request URL]]) {
         LOG(Redirect, "Server redirect to: %@", [request URL]);
-        [[_private->controller _locationChangeDelegateForwarder] serverRedirectedForDataSource:self];
+        [[_private->controller _locationChangeDelegateForwarder] controller: _private->controller serverRedirectedForDataSource:self];
     }
         
     [oldRequest release];
@@ -568,7 +568,7 @@
     [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
 
     NSImage *icon = [iconDB iconForURL:[[self _URL] absoluteString] withSize:WebIconSmallSize];
-    [[_private->controller _locationChangeDelegateForwarder] receivedPageIcon:icon forDataSource:self];
+    [[_private->controller _locationChangeDelegateForwarder] controller: _private->controller receivedPageIcon:icon forDataSource:self];
 }
 
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;

@@ -4,6 +4,7 @@
         
         Public header file.
 */
+@class WebController;
 @class WebDataSource;
 @class WebPluginError;
 @class WebResponse;
@@ -24,6 +25,9 @@
 
 /*!
     @method identifierForInitialRequest:fromDataSource:
+    @param controller The WebController sending the message.
+    @param request The request about to be sent.
+    @param dataSource The datasource that initiated the load.
     @discussion An implementor of WebResourceLoadDelegate should provide an identifier
     that can be used to track the load of a single resource.  This identifier will be
     passed as the first argument for all of the other WebResourceLoadDelegate methods.  The
@@ -32,12 +36,13 @@
     @result An identifier that will be passed back to the implementor for each callback.
     The identifier will be retained.
 */
-- identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource;
+- controller: (WebController *)controller identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource;
 
 /*!
     @method resource:willSendRequest:fromDataSource:
     @discussion This message is sent before a load is initiated.  The request may be modified
     as necessary by the receiver.
+    @param controller The WebController sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param request The request about to be sent.
@@ -45,54 +50,59 @@
     @result Returns the request, which may be mutated by the implementor, although typically
     will be request.
 */
--(WebRequest *)resource:identifier willSendRequest: (WebRequest *)request fromDataSource:(WebDataSource *)dataSource;
+-(WebRequest *)controller: (WebController *)controller resource:identifier willSendRequest: (WebRequest *)request fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didReceiveResponse:fromDataSource:
     @discussion This message is sent after a response has been received for this load.
+    @param controller The WebController sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param response The response for the request.
     @param dataSource The dataSource that initiated the load.
 */
--(void)resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource;
+-(void)controller: (WebController *)controller resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didReceiveContentLength:fromDataSource:
     @discussion Multiple of these messages may be sent as data arrives.
+    @param controller The WebController sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param length The amount of new data received.  This is not the total amount, just the new amount received.
     @param dataSource The dataSource that initiated the load.
 */
--(void)resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource;
+-(void)controller: (WebController *)controller resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didFinishLoadingFromDataSource:
     @discussion This message is sent after a load has successfully completed.
+    @param controller The WebController sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param dataSource The dataSource that initiated the load.
 */
--(void)resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource;
+-(void)controller: (WebController *)controller resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didFailLoadingWithError:fromDataSource:
     @discussion This message is sent after a load has failed to load due to an error.
+    @param controller The WebController sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param error The error associated with this load.
     @param dataSource The dataSource that initiated the load.
 */
--(void)resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
+-(void)controller: (WebController *)controller resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
 
 /*!
      @method pluginFailedWithError:dataSource:
      @discussion Called when a plug-in is not found, fails to load or is not available for some reason.
+     @param controller The WebController sending the message.
      @param error The plug-in error.
      @param dataSource The dataSource that contains the plug-in.
 */
-- (void)pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)controller pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource;
 
 @end
 
