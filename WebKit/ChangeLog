@@ -1,3 +1,13 @@
+2004-04-14  Richard Williamson   <rjw@apple.com>
+
+	Updated fix for 3576315.  Don't hardcode 22 as the titlebar
+	height.  (Note, other places in CarbonWindowFrame DO hardcode
+	window geometry information, yuck!).
+
+        Reviewed by Hyatt.
+
+        * Carbon.subproj/CarbonWindowFrame.m:
+
 2004-04-14  John Sullivan  <sullivan@apple.com>
 
         - changed stealth mode preference name from "historyIsFrozen"

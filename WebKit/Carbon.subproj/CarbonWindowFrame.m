@@ -48,9 +48,15 @@ The class of objects that are meant to be used as _borderViews of NSCarbonWindow
 
     boundsRect = [self bounds];
 
+    CarbonWindowAdapter *carbonWindow;
+    carbonWindow = (CarbonWindowAdapter *)[self window];
+    WindowRef windowRef = [carbonWindow windowRef];
+    Rect globalBounds;
+    GetWindowBounds (windowRef, kWindowTitleBarRgn, &globalBounds);
+    
     titlebarRect.origin.x    = boundsRect.origin.x;
     titlebarRect.size.width  = boundsRect.size.width;
-    titlebarRect.size.height = 22;
+    titlebarRect.size.height = globalBounds.bottom - globalBounds.top;
     titlebarRect.origin.y    = NSMaxY(boundsRect) - titlebarRect.size.height;
 
     return titlebarRect;
