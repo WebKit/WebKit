@@ -2389,7 +2389,11 @@ bool DocumentImpl::hasWindowEventListener(int id)
 
 EventListener *DocumentImpl::createHTMLEventListener(QString code)
 {
-    return view()->part()->createHTMLEventListener(code);
+    if (part()) {
+	return part()->createHTMLEventListener(code);
+    } else {
+	return NULL;
+    }
 }
 
 void DocumentImpl::dispatchImageLoadEventSoon(RenderImage *image)

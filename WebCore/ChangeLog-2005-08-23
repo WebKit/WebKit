@@ -1,3 +1,15 @@
+2004-02-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3514733>: nil-deref in createHTMLEventListener at skiset.com
+	<rdar://problem/3510676>: nil-deref of view in DocumentImpl::createHTMLEventListener at kirotv.com
+	
+	* khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createHTMLEventListener): Don't create the listener if there is no
+	part. Also, get the part when going through the view. This prevents problems when
+	handlers are set or removed from the onUnload handler.
+
 2004-02-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
