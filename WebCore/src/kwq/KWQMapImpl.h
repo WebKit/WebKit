@@ -33,6 +33,7 @@
 
 #ifndef USING_BORROWED_QMAP
 
+#include <KWQRefPtr.h>
 
 class KWQMapNodeImpl
 {
@@ -76,15 +77,16 @@ protected:
 
 class KWQMapImpl {
  private:
-    // disallow default construction, copy construction and assignment
-    KWQMapImpl();
-    KWQMapImpl(const KWQMapImpl &);
+    // disallow assignment
     KWQMapImpl &operator=(const KWQMapImpl &);
 
  protected:
     typedef enum { Less = -1, Equal = 0, Greater = 1 } CompareResult;
 
-    KWQMapImpl(KWQMapNodeImpl *node, uint count);
+    KWQMapImpl(KWQMapNodeImpl *guard, void (*deleteNode)(KWQMapNodeImpl *));
+    KWQMapImpl(const KWQMapImpl &impl);
+    KWQMapImpl();
+    virtual ~KWQMapImpl();
 
     KWQMapNodeImpl *findInternal(KWQMapNodeImpl *target) const;
     KWQMapNodeImpl *insertInternal(KWQMapNodeImpl *nodeToInsert, bool replaceExisting);
@@ -92,26 +94,32 @@ class KWQMapImpl {
     uint countInternal() const;
     void clearInternal();
     void swap(KWQMapImpl &map);
-    KWQMapNodeImpl *beginInternal() const;
-    KWQMapNodeImpl *endInternal() const;
+    const KWQMapNodeImpl *beginInternal() const;
+    const KWQMapNodeImpl *endInternal() const;
+    KWQMapNodeImpl *beginInternal();
+    KWQMapNodeImpl *endInternal();
 
-    virtual CompareResult compareNodes(KWQMapNodeImpl *a, KWQMapNodeImpl *b) const = 0;
-    virtual void copyNode(KWQMapNodeImpl *src, KWQMapNodeImpl *dst) = 0;
-    virtual KWQMapNodeImpl *duplicateNode(KWQMapNodeImpl *src) = 0;
-    virtual void swapNodes(KWQMapNodeImpl *a, KWQMapNodeImpl *b) = 0;
-    virtual void deleteNode(KWQMapNodeImpl *node) = 0;
+    virtual CompareResult compareNodes(const KWQMapNodeImpl *a, const KWQMapNodeImpl *b) const = 0;
+    virtual void copyNode(const KWQMapNodeImpl *src, KWQMapNodeImpl *dst) const = 0;
+    virtual KWQMapNodeImpl *duplicateNode(const KWQMapNodeImpl *src) const = 0;
+    virtual void swapNodes(KWQMapNodeImpl *a, KWQMapNodeImpl *b) const = 0;
 
  private:
     // can't possibly have a bigger height than this in a balanced tree
     static const int MAX_STACK = 64;
 
+    void copyOnWrite();
+    KWQMapNodeImpl *copyTree(const KWQMapNodeImpl *node, 
+			     KWQMapNodeImpl *subtreePredecessor, 
+			     KWQMapNodeImpl *subtreeSuccessor) const;
     void rebalanceAfterInsert(KWQMapNodeImpl **nodes, bool *wentLeft, int height);
     void rebalanceAfterRemove(KWQMapNodeImpl *nodeToRemove, KWQMapNodeImpl **nodes, bool *wentLeft, int height);
     void rotateRight(KWQMapNodeImpl *node, KWQMapNodeImpl *parent, bool leftParent);
     void rotateLeft(KWQMapNodeImpl *node, KWQMapNodeImpl *parent, bool leftParent);
 
-    KWQMapNodeImpl *guard;
-    uint numNodes;
+    class KWQMapPrivate;
+
+    KWQRefPtr<KWQMapPrivate> d;
 
 #ifdef QMAP_TESTING
     friend bool CheckRedBlackRules(KWQMapImpl *impl);

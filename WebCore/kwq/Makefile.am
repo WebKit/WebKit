@@ -20,6 +20,7 @@ libkwq_o_SOURCES = \
 	KWQChar.mm \
 	KWQCharsets.mm \
 	KWQCheckBox.mm \
+	KWQCollection.mm \
 	KWQColor.mm \
 	KWQColorGroup.mm \
 	KWQComboBox.mm \
@@ -87,6 +88,7 @@ libkwq_o_SOURCES = \
 	KWQLabel.mm \
 	KWQLineEdit.mm \
 	KWQListBox.mm \
+	KWQListImpl.mm \
 	KWQMapImpl.mm \
 	KWQMovie.mm \
 	KWQNSTextField.mm \
@@ -113,6 +115,7 @@ libkwq_o_SOURCES = \
 	KWQTimer.mm \
 	KWQToolTip.mm \
 	KWQVariant.mm \
+	KWQVectorImpl.mm \
 	KWQView.mm \
 	KWQWMatrix.mm \
 	KWQWidget.mm \

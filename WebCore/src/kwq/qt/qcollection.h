@@ -35,40 +35,35 @@
 **
 **********************************************************************/
 
-#ifndef _QCOLLECTION_H
-#define _QCOLLECTION_H
+#ifndef QCOLLECTION_H
+#define QCOLLECTION_H
 
-// KWQ hacks ---------------------------------------------------------------
+#include <config.h>
 
 #include <KWQDef.h>
 
-// -------------------------------------------------------------------------
+#ifdef USING_BORROWED_QCOLLECTION
 
-class QGVector;
-class QGList;
-class QGDict;
+#include <_qcollection.h>
 
-class Q_EXPORT QCollection			// inherited by all collections
-{
-public:
-    bool autoDelete()	const	       { return del_item; }
-    void setAutoDelete( bool enable )  { del_item = enable; }
+#else
 
-    virtual uint  count() const = 0;
-    virtual void  clear() = 0;			// delete all objects
+class QCollection {
+ public:
+    typedef void *Item;
 
-    typedef void *Item;				// generic collection item
-
-protected:
-    QCollection() { del_item = FALSE; }		// no deletion of objects
-    QCollection(const QCollection &) { del_item = FALSE; }
-    virtual ~QCollection() {}
+    bool autoDelete();
+    void setAutoDelete(bool autoDelete);
+ protected:
+    QCollection();
+    QCollection(const QCollection &);
+    QCollection &operator=(const QCollection &);
+    virtual ~QCollection();
 
     bool del_item;				// default FALSE
-
-    virtual Item     newItem( Item );		// create object
-    virtual void     deleteItem( Item );	// delete object
 };
 
+#endif /* USING_BORROWED_QCOLLECTION */
 
-#endif // _QCOLLECTION_H
+#endif /* QCOLLECTION_H */
+

@@ -265,7 +265,7 @@ int TextSlaveArray::findFirstMatching(Item d) const
 	if ( (*this)[mid] == 0 )			// null item greater
 	    res = -1;
 	else
-	    res = ((QGVector*)this)->compareItems( d, (*this)[mid] );
+	    res = ((TextSlaveArray*)this)->compareItems( d, (*this)[mid] );
 	if ( res < 0 )
 	    n2 = mid - 1;
 	else if ( res > 0 )
@@ -278,7 +278,7 @@ int TextSlaveArray::findFirstMatching(Item d) const
     /* if ( !found )
 	return -1; */
     // search to first one equal or bigger
-    while ( found && (mid > 0) && !((QGVector*)this)->compareItems(d, (*this)[mid-1]) )
+    while ( found && (mid > 0) && !((TextSlaveArray*)this)->compareItems(d, (*this)[mid-1]) )
 	mid--;
     return mid;
 }

@@ -1,3 +1,73 @@
+2002-02-12  Maciej Stachowiak  <mjs@apple.com>
+
+	Reimplemented QList, QVector and QCollection from
+	scratch. Implemented copy-on-write optimization for QMap.
+
+	Minimally reimplement QCollection.
+
+	* src/kwq/qt/qcollection.h:
+	* src/kwq/KWQCollection.mm: (QCollection::QCollection), (QCollection::operator=),
+	(QCollection::~QCollection), (QCollection::autoDelete),
+	(QCollection::setAutoDelete):
+
+	* src/kwq/qt/qdict.h, src/kwq/qt/qptrdict.h: Include
+	qcollection.h, not _qcollection.h
+
+	Reimplement QList as a doubly-linked list.
+	
+	* src/kwq/qt/qlist.h:
+	* src/kwq/KWQListImpl.h:
+	* src/kwq/KWQListImpl.mm: (KWQListImpl::KWQListPrivate::copyList),
+	(KWQListImpl::KWQListPrivate::KWQListPrivate),
+	(KWQListImpl::KWQListPrivate::~KWQListPrivate),
+	(KWQListIteratorImpl::KWQListIteratorPrivate::KWQListIteratorPrivate),
+	(KWQListImpl::KWQListImpl), (KWQListImpl::~KWQListImpl), (KWQListImpl::isEmpty),
+	(KWQListImpl::count), (KWQListImpl::clear), (KWQListImpl::sort),
+	(KWQListImpl::at), (KWQListImpl::insert), (KWQListImpl::remove),
+	(KWQListImpl::removeFirst), (KWQListImpl::removeLast), (KWQListImpl::removeRef),
+	(KWQListImpl::getLast), (KWQListImpl::current), (KWQListImpl::first),
+	(KWQListImpl::last), (KWQListImpl::next), (KWQListImpl::prev),
+	(KWQListImpl::take), (KWQListImpl::append), (KWQListImpl::prepend),
+	(KWQListImpl::containsRef), (KWQListImpl::assign), (KWQListImpl::addIterator),
+	(KWQListImpl::removeIterator), (KWQListIteratorImpl::KWQListIteratorImpl),
+	(KWQListIteratorImpl::~KWQListIteratorImpl), (KWQListIteratorImpl::count),
+	(KWQListIteratorImpl::toFirst), (KWQListIteratorImpl::toLast),
+	(KWQListIteratorImpl::current), (KWQListIteratorImpl::operator--),
+	(KWQListIteratorImpl::operator++), (KWQListIteratorImpl::operator=):
+
+	Reimplement QVector in terms of CFArray.
+	
+	* src/kwq/qt/qvector.h:
+	* src/kwq/KWQVectorImpl.h:
+	* src/kwq/KWQVectorImpl.mm: (KWQVectorImpl::KWQVectorPrivate::KWQVectorPrivate),
+	(KWQVectorImpl::KWQVectorPrivate::~KWQVectorPrivate),
+	(KWQVectorImpl::KWQVectorImpl), (KWQVectorImpl::~KWQVectorImpl),
+	(KWQVectorImpl::clear), (KWQVectorImpl::isEmpty), (KWQVectorImpl::count),
+	(KWQVectorImpl::size), (KWQVectorImpl::remove), (KWQVectorImpl::resize),
+	(KWQVectorImpl::insert), (KWQVectorImpl::at), (KWQVectorImpl::assign),
+	(KWQVectorImpl::KWQVectorImpl::swap):
+
+	Implemented copy-on-write optimization for QMap. This had the
+	pleasant side effect of improving the separation between pointer
+	manipulation and key/value manipulation.
+
+	* src/kwq/qt/qmap.h:
+	* src/kwq/KWQMapImpl.h:
+	* src/kwq/KWQMapImpl.mm: (KWQMapImpl::KWQMapPrivate::KWQMapPrivate),
+	(KWQMapImpl::KWQMapPrivate::~KWQMapPrivate), (KWQMapImpl::KWQMapImpl),
+	(KWQMapImpl::~KWQMapImpl), (KWQMapImpl::copyOnWrite), (KWQMapImpl::copyTree),
+	(KWQMapImpl::rebalanceAfterInsert), (KWQMapImpl::rebalanceAfterRemove),
+	(KWQMapImpl::findInternal), (KWQMapImpl::insertInternal),
+	(KWQMapImpl::removeInternal), (KWQMapImpl::swap), (KWQMapImpl::countInternal),
+	(KWQMapImpl::clearInternal), (KWQMapImpl::beginInternal),
+	(KWQMapImpl::endInternal):
+
+	* src/kwq/Makefile.am: Add new files to build.
+
+	* src/kdelibs/khtml/rendering/render_text.cpp
+	(TextSlaveArray::findFirstMatching): Fix two places where the KDE
+	code was depending on implementation details of QVector.
+
 2002-02-07  Richard Williamson  <rjw@apple.com>
 
     More changes to IFLocationChangeHandler API.

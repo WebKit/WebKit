@@ -58,37 +58,6 @@ template <class K, class V> class QMapNode : private KWQMapNodeImpl
     // intentionally not defined
     QMapNode(const QMapNode<K,V>&node);
 
-    static QMapNode<K,V> *copyTree(const QMapNode<K,V> *node, 
-				   QMapNode<K,V> *subtreePredecessor, 
-				   QMapNode<K,V> *subtreeSuccessor)
-    {
-	if (node == NULL) {
-	    return NULL;
-	}
-
-	// FIXME: not exception-safe - use auto_ptr?
-	QMapNode<K,V> *copy = new QMapNode<K,V>(node->key, node->value);
-	copy->color = node->color;
-
-	if (node->prevIsChild) {
-	    copy->prevIsChild = true;
-	    copy->prev = copyTree((QMapNode<K,V> *)node->prev, subtreePredecessor, copy);
-	} else {
-	    copy->prevIsChild = false;
-	    copy->prev = subtreePredecessor;
-	}
-
-	if (node->nextIsChild) {
-	    copy->nextIsChild = true;
-	    copy->next = copyTree((QMapNode<K,V> *)node->next, copy, subtreeSuccessor);
-	} else {
-	    copy->nextIsChild = false;
-	    copy->next = subtreeSuccessor;
-	}
-
-	return copy;
-    }
-
     ~QMapNode()
     {
 	delete left();
@@ -230,9 +199,9 @@ public:
     }
 
 private:
-    QMapConstIterator(QMapNode<K,V> *n)
+    QMapConstIterator(const QMapNode<K,V> *n)
     {
-	node = n;
+	node = (KWQMapNodeImpl *)n;
     }
 
     friend class QMap<K,V>;
@@ -257,19 +226,17 @@ public:
 
 
     QMap() : 
-	KWQMapImpl(new QMapNode<K,V>(K(),V()), 0)
+	KWQMapImpl(new QMapNode<K,V>(K(),V()), deleteNode)
     {
     }
 
     QMap(const QMap<K,V>& m) :
-	KWQMapImpl(QMapNode<K,V>::copyTree((QMapNode<K,V> *)m.endInternal(), NULL, NULL), m.count())
+	KWQMapImpl(m)
     {
     }
 
     virtual ~QMap() 
     { 
-	clear();
-	delete endInternal();
     }
     
     // member functions --------------------------------------------------------
@@ -347,21 +314,21 @@ public:
 
 
 protected:
-    virtual void copyNode(KWQMapNodeImpl *isrc, KWQMapNodeImpl *idst) 
+    virtual void copyNode(const KWQMapNodeImpl *isrc, KWQMapNodeImpl *idst) const
     {
  	QMapNode<K,V> *src = (QMapNode<K,V> *)isrc;
  	QMapNode<K,V> *dst = (QMapNode<K,V> *)idst;
 	dst->key = src->key;
 	dst->value = src->value;
     }
-
-    virtual KWQMapNodeImpl *duplicateNode(KWQMapNodeImpl *isrc) 
+    
+    virtual KWQMapNodeImpl *duplicateNode(const KWQMapNodeImpl *isrc) const
     {
  	QMapNode<K,V> *src = (QMapNode<K,V> *)isrc;
 	return new QMapNode<K,V>(src->key, src->value);
     }
 
-    virtual CompareResult compareNodes(KWQMapNodeImpl *ia, KWQMapNodeImpl *ib) const
+    virtual CompareResult compareNodes(const KWQMapNodeImpl *ia, const KWQMapNodeImpl *ib) const
     {
  	QMapNode<K,V> *a = (QMapNode<K,V> *)ia;
  	QMapNode<K,V> *b = (QMapNode<K,V> *)ib;
@@ -375,7 +342,7 @@ protected:
 	}
     }
 
-    virtual void swapNodes(KWQMapNodeImpl *ia, KWQMapNodeImpl *ib)
+    virtual void swapNodes(KWQMapNodeImpl *ia, KWQMapNodeImpl *ib) const
     {
 	QMapNode<K,V> *a = (QMapNode<K,V> *)ia;
 	QMapNode<K,V> *b = (QMapNode<K,V> *)ib;
@@ -388,7 +355,7 @@ protected:
 	b->value = tmpValue;
     }
 
-    virtual void deleteNode(KWQMapNodeImpl *inode)
+    static void deleteNode(KWQMapNodeImpl *inode)
     {
 	delete (QMapNode<K,V> *)inode;
     }

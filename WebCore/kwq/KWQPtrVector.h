@@ -36,79 +36,67 @@
 #include <_qvector.h>
 #else
 
+#include <iostream>
+
 #include <KWQDef.h>
-#include <_qcollection.h>
+#include <qcollection.h>
 
-typedef void *Item;
-
-// class QGVector ==============================================================
-
-class QGVector : public QCollection {
-public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
-    virtual int compareItems(Item, Item);
-
-    // constructors, copy constructors, and destructors ------------------------
-    
-    QGVector();
-    QGVector(const QGVector &);
-    ~QGVector();
-    
-    // member functions --------------------------------------------------------
-    
-    // operators ---------------------------------------------------------------
-
-    QGVector &operator=(const QGVector &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QGVector ===========================================================
-
+#include <KWQVectorImpl.h>
 
 // class QVector ===============================================================
-
-template<class T> class QVector : public QGVector  {
+template<class T> class QVector : public QCollection  {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QVector();
-    QVector(uint);
-    QVector(const QVector &);
-    ~QVector();
+    QVector() : impl(deleteFunc) {}
+    QVector(uint size) : impl(size, deleteFunc) {}
+    QVector(const QVector<T> &v) : impl(v.impl) {}
+    ~QVector() { if (del_item) { impl.clear(del_item); } }
 
     // member functions --------------------------------------------------------
 
-    void clear();
-    bool isEmpty() const;
-    uint count() const;
-    uint size() const;
-    bool remove(uint);
-    bool resize(uint);
-    bool insert(uint, const T *);
-    T *at(int) const;
+    void clear() { impl.clear(del_item); }
+    bool isEmpty() const { return impl.isEmpty(); }
+    uint count() const { return impl.count(); }
+    uint size() const { return impl.size(); }
+    bool remove(uint n) { return impl.remove(n, del_item); }
+    bool resize(uint size) { return impl.resize(size, del_item); }
+    bool insert(uint n, const T *item) {return impl.insert(n, item, del_item); }
+    T *at(int n) const {return (T *)impl.at(n); }
+
+    virtual int compareItems(void *a, void *b) { return a != b; }
 
     // operators ---------------------------------------------------------------
 
-    T *operator[](int) const;
-    QVector &operator=(const QVector &);
+    T *operator[](int n) const {return (T *)impl.at(n); }
+    QVector &operator=(const QVector &v) 
+    { impl.assign(v.impl,del_item); QCollection::operator=(v); return *this; }
+ private:
+    static void deleteFunc(void *item) {
+	delete (T *)item;
+    }
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
+    KWQVectorImpl impl;
 }; // class QVector ============================================================
+
+
+
+template<class T>
+inline ostream &operator<<(ostream &stream, const QVector<T> &v)
+{
+    uint i = 0;
+    uint count = v.count();
+
+    stream << "QVector: [size: " << count << "; items: ";
+
+    while(i < count ) {
+	stream << *v[i] << ", ";
+	++i;
+    }
+
+    return stream << "]";
+}
 
 #endif // USING_BORROWED_QVECTOR
 

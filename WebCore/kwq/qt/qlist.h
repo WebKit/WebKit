@@ -36,62 +36,77 @@
 #include <_qlist.h>
 #else
 
+#include <iostream>
+
 #include <KWQDef.h>
-#include <_qcollection.h>
+#include <qcollection.h>
+
+#include <KWQListImpl.h>
 
 // class QList =================================================================
+
+template <class T> class QListIterator;
 
 template <class T> class QList : public QCollection {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
     // constructors, copy constructors, and destructors ------------------------
     
-    QList();
-    QList(const QList<T> &);
-    ~QList(); 
+    QList() : impl(deleteFunc) {}
+    QList(const QList<T> &l) : impl(l.impl) {}
+    ~QList() { if (del_item) { impl.clear(del_item); } }
      
     // member functions --------------------------------------------------------
 
-    bool isEmpty() const;
-    uint count() const;
-    void clear();
-    void sort();
+    bool isEmpty() const { return impl.isEmpty(); }
+    uint count() const { return impl.count(); }
+    void clear() { impl.clear(del_item); }
+    void sort() { impl.sort(compareFunc, this); }
 
-    T *at(uint);
+    T *at(uint n) { return (T *)impl.at(n); }
 
-    void setAutoDelete(bool);
+    bool insert(uint n, const T *item) { return impl.insert(n, item); }
+    bool remove() {return impl.remove(del_item); }
+    bool remove(uint n) {return impl.remove(n, del_item); }
+    bool remove(const T *item) { return impl.remove(item, del_item, compareFunc, this); }
+    bool removeFirst() { return impl.removeFirst(del_item); }
+    bool removeLast() { return impl.removeLast(del_item); }
+    bool removeRef(const T *item) { return impl.removeRef(item, del_item); }
 
-    bool insert(uint i, const T *);
-    bool remove();
-    bool remove(const T *);
-    bool removeFirst();
-    bool removeLast();
-    bool removeRef(const T *);
+    T *getLast() const { return (T *)impl.getLast(); }
+    T *current() const { return (T *)impl.current(); }
+    T *first() { return (T *)impl.first(); }
+    T *last() { return (T *)impl.last(); }
+    T *next() { return (T *)impl.next(); }
+    T *prev() { return (T *)impl.prev(); }
+    T *take(uint n) { return (T *)impl.take(n); }
 
-    T *getLast() const;
-    T *current() const;
-    T *first();
-    T *last();
-    T *next();
-    T *prev();
-    T *take(uint i);
+    void append(const T *item) { impl.append(item); }
+    void prepend(const T *item) { impl.prepend(item); }
 
-    void append(const T *);
-    void prepend(const T *);
+    uint containsRef(const T *item) const { return impl.containsRef(item); }
 
-    uint containsRef(const T *) const;
+    virtual int compareItems(void *a, void *b) { return a != b; }
 
     // operators ---------------------------------------------------------------
 
-    QList<T> &operator=(const QList<T> &);
+    QList<T> &operator=(const QList<T> &l)
+    { impl.assign(l.impl,del_item); QCollection::operator=(l); return *this; }
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+ private:
+    static void deleteFunc(void *item) {
+	delete (T *)item;
+    }
 
+    static int compareFunc(void *a, void *b, void *data)
+    {
+	QList<T> *l = (QList<T> *)data;
+	return l->compareItems(a, b);
+    }
+
+    friend class QListIterator<T>;
+
+    KWQListImpl impl;
 }; // class QList ==============================================================
 
 
@@ -100,47 +115,57 @@ public:
 template <class T> class QListIterator {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
     // constructors, copy constructors, and destructors ------------------------
 
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
     QListIterator() {}
-#endif
-
-    QListIterator(const QList<T> &);
-    ~QListIterator();
+    QListIterator(const QList<T> &l) : impl(l.impl) {}
+    ~QListIterator() {}
 
     // member functions --------------------------------------------------------
 
-    uint count() const;
-    T *toFirst();
-    T *toLast();
-    T *current() const;
+    uint count() const { return impl.count(); }
+    T *toFirst() { return (T *)impl.toFirst(); }
+    T *toLast() { return (T *)impl.toLast(); }
+    T *current() const { return (T *)impl.current(); }
 
     // operators ---------------------------------------------------------------
 
-    operator T *() const;
-    T *operator--();
-    T *operator++();
-    QListIterator<T> &operator=(const QListIterator<T> &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+    operator T *() const { return (T *)impl.current(); }
+    T *operator--() { return (T *)(--impl); }
+    T *operator++()  { return (T *)(++impl); }
+    QListIterator<T> &operator=(const QListIterator<T> &li) { impl = li.impl; return *this; }
 
 private:
+    QListIterator<T>(const QListIterator<T> &li) {}
 
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QListIterator<T>(const QListIterator<T> &);
-#endif
-
+    KWQListIteratorImpl impl;
 }; // class QListIterator ======================================================
+
+
+template<class T>
+inline ostream &operator<<(ostream &stream, const QList<T> &l)
+{
+    QListIterator<T> iter(l);
+    unsigned count = l.count();
+
+    stream << "QList: [size: " << l.count() << "; items: ";
+
+    // print first
+    if (count != 0) {
+	stream << *iter.current();
+	++iter;
+	--count;
+    }
+    
+    // print rest
+    while(count != 0) {
+	stream << ", " << *iter.current();
+	++iter;
+	--count;
+    }
+
+    return stream << "]";
+}
 
 #endif // USING_BORROWED_QLIST
 

@@ -121,13 +121,91 @@ void KWQMapIteratorImpl::incrementInternal()
 }
 
 
+// KWQMapImplPrivate
+
+class KWQMapImpl::KWQMapPrivate
+{
+public:
+    KWQMapPrivate(KWQMapNodeImpl *node,
+		  uint count,
+		  void (*deleteFunc)(KWQMapNodeImpl *));
+
+    ~KWQMapPrivate();
+
+    KWQMapNodeImpl *guard;
+    uint numNodes;
+    int refCount;
+    void (*deleteNode)(KWQMapNodeImpl *);
+    friend class KWQRefPtr<KWQMapImpl::KWQMapPrivate>;
+};
+
+KWQMapImpl::KWQMapPrivate::KWQMapPrivate(KWQMapNodeImpl *node,
+					 uint count,
+					 void (*deleteFunc)(KWQMapNodeImpl *)) :
+    guard(node),
+    numNodes(count),
+    refCount(0),
+    deleteNode(deleteFunc)
+{
+}
+
+KWQMapImpl::KWQMapPrivate::~KWQMapPrivate()
+{
+    deleteNode(guard);
+}
+
 // KWQMapImpl
 
-
-KWQMapImpl::KWQMapImpl(KWQMapNodeImpl *node, uint count) :
-    guard(node),
-    numNodes(count)
+KWQMapImpl::KWQMapImpl(KWQMapNodeImpl *guard, void (*deleteNode)(KWQMapNodeImpl *)) :
+    d(new KWQMapImpl::KWQMapPrivate(guard,0, deleteNode))
 {
+}
+
+KWQMapImpl::KWQMapImpl(const KWQMapImpl &impl) :
+    d(impl.d)
+{
+}
+
+KWQMapImpl::~KWQMapImpl()
+{
+}
+
+void KWQMapImpl::copyOnWrite()
+{
+    if (d->refCount > 1) {
+	d = KWQRefPtr<KWQMapImpl::KWQMapPrivate>(new KWQMapImpl::KWQMapPrivate(copyTree(d->guard, NULL, NULL), d->numNodes, d->deleteNode));
+    }
+}
+
+KWQMapNodeImpl *KWQMapImpl::copyTree(const KWQMapNodeImpl *node, 
+				     KWQMapNodeImpl *subtreePredecessor, 
+				     KWQMapNodeImpl *subtreeSuccessor) const
+{
+    if (node == NULL) {
+	return NULL;
+    }
+    
+    // FIXME: not exception-safe - use auto_ptr?
+    KWQMapNodeImpl *copy = duplicateNode(node);
+    copy->color = node->color;
+    
+    if (node->prevIsChild) {
+	copy->prevIsChild = true;
+	copy->prev = copyTree(node->prev, subtreePredecessor, copy);
+    } else {
+	copy->prevIsChild = false;
+	copy->prev = subtreePredecessor;
+    }
+    
+    if (node->nextIsChild) {
+	copy->nextIsChild = true;
+	copy->next = copyTree(node->next, copy, subtreeSuccessor);
+    } else {
+	copy->nextIsChild = false;
+	copy->next = subtreeSuccessor;
+    }
+    
+    return copy;
 }
 
 void KWQMapImpl::rotateRight(KWQMapNodeImpl *node, KWQMapNodeImpl *parent, bool leftParent)
@@ -178,7 +256,7 @@ void KWQMapImpl::rebalanceAfterInsert(KWQMapNodeImpl **nodes, bool *wentLeft, in
 {
     nodes[height]->color = KWQMapNodeImpl::Red;
     
-    while (nodes[height] != guard->prev && nodes[height-1]->color == KWQMapNodeImpl::Red) {
+    while (nodes[height] != d->guard->prev && nodes[height-1]->color == KWQMapNodeImpl::Red) {
 	if (wentLeft[height-2]) {
 	    KWQMapNodeImpl *uncle = nodes[height-2]->right();
 	    if (uncle != NULL && uncle->color == KWQMapNodeImpl::Red) {
@@ -229,13 +307,13 @@ void KWQMapImpl::rebalanceAfterInsert(KWQMapNodeImpl **nodes, bool *wentLeft, in
 	}
     }
     
-    guard->prev->color = KWQMapNodeImpl::Black;
+    d->guard->prev->color = KWQMapNodeImpl::Black;
 }
 
 void KWQMapImpl::rebalanceAfterRemove(KWQMapNodeImpl *nodeToRemove, KWQMapNodeImpl **nodes, bool *wentLeft, int height) 
 {
     if (nodeToRemove->color == KWQMapNodeImpl::Black) {
-	while (nodes[height] != guard->prev && (nodes[height]==NULL || nodes[height]->color==KWQMapNodeImpl::Black)) {
+	while (nodes[height] != d->guard->prev && (nodes[height]==NULL || nodes[height]->color==KWQMapNodeImpl::Black)) {
 	    if (wentLeft[height-1]) {
 		KWQMapNodeImpl *sibling = nodes[height-1]->right();
 		if (sibling != NULL && sibling->color == KWQMapNodeImpl::Red) {
@@ -267,7 +345,7 @@ void KWQMapImpl::rebalanceAfterRemove(KWQMapNodeImpl *nodeToRemove, KWQMapNodeIm
 		    sibling->right()->color = KWQMapNodeImpl::Black;
 		    rotateLeft(nodes[height-1], nodes[height-2], wentLeft[height-2]);
 		    
-		    nodes[height] = guard->prev;
+		    nodes[height] = d->guard->prev;
 		}
 	    } else {
 		// same as the other branch, but with left and right swapped
@@ -302,7 +380,7 @@ void KWQMapImpl::rebalanceAfterRemove(KWQMapNodeImpl *nodeToRemove, KWQMapNodeIm
 		    sibling->left()->color = KWQMapNodeImpl::Black;
 		    rotateRight(nodes[height-1], nodes[height-2], wentLeft[height-2]);
 		    
-		    nodes[height] = guard->prev;
+		    nodes[height] = d->guard->prev;
 		}
 	    }
 	}
@@ -315,7 +393,7 @@ void KWQMapImpl::rebalanceAfterRemove(KWQMapNodeImpl *nodeToRemove, KWQMapNodeIm
 
 KWQMapNodeImpl *KWQMapImpl::findInternal(KWQMapNodeImpl *target) const
 {
-    KWQMapNodeImpl *node = guard->left();
+    KWQMapNodeImpl *node = d->guard->left();
     
     while (node != NULL) {
 	CompareResult compare = compareNodes(target,node);
@@ -338,11 +416,13 @@ KWQMapNodeImpl *KWQMapImpl::insertInternal(KWQMapNodeImpl *nodeToInsert, bool re
     bool wentLeftStack[MAX_STACK];
     int height = 0;
     
-    nodeStack[height] = guard;
+    copyOnWrite();
+
+    nodeStack[height] = d->guard;
     wentLeftStack[height] = true;
     height++;
     
-    KWQMapNodeImpl *node = guard->left();
+    KWQMapNodeImpl *node = d->guard->left();
     
     while (node != NULL) {
 	CompareResult compare = compareNodes(nodeToInsert, node);
@@ -395,7 +475,7 @@ KWQMapNodeImpl *KWQMapImpl::insertInternal(KWQMapNodeImpl *nodeToInsert, bool re
     }
     
     rebalanceAfterInsert(nodeStack, wentLeftStack, height);
-    numNodes++;
+    d->numNodes++;
 
     return node;
 }
@@ -406,11 +486,13 @@ void KWQMapImpl::removeInternal(KWQMapNodeImpl *nodeToDelete)
     bool wentLeftStack[MAX_STACK];
     int height = 0;
     
-    nodeStack[height] = guard;
+    copyOnWrite();
+
+    nodeStack[height] = d->guard;
     wentLeftStack[height] = true;
     height++;
     
-    KWQMapNodeImpl *node = guard->left();
+    KWQMapNodeImpl *node = d->guard->left();
     
     while (node != NULL) {
 	CompareResult compare = compareNodes(nodeToDelete, node);
@@ -509,38 +591,36 @@ void KWQMapImpl::removeInternal(KWQMapNodeImpl *nodeToDelete)
     nodeToRemove->next = NULL;
     nodeToRemove->prev = NULL;
     
-    numNodes--;
-    deleteNode(nodeToRemove);
+    d->numNodes--;
+    d->deleteNode(nodeToRemove);
 }
 
 void KWQMapImpl::swap(KWQMapImpl &map)
 {
-    KWQMapNodeImpl *tmp = guard;
-    guard = map.guard;
-    map.guard = tmp;
-    
-    uint tmpNumNodes = numNodes;
-    numNodes = map.numNodes;
-    map.numNodes = tmpNumNodes;
+    KWQRefPtr<KWQMapImpl::KWQMapPrivate> tmp = d;
+    d = map.d;
+    map.d = d;
 }
 
 uint KWQMapImpl::countInternal() const
 {
-    return numNodes;
+    return d->numNodes;
 }
 
 void KWQMapImpl::clearInternal()
 {
-    deleteNode(guard->prev);
-    guard->prev = NULL;
-    numNodes = 0;
+    copyOnWrite();
+
+    d->deleteNode(d->guard->prev);
+    d->guard->prev = NULL;
+    d->numNodes = 0;
 }
 
-KWQMapNodeImpl *KWQMapImpl::beginInternal() const
+const KWQMapNodeImpl *KWQMapImpl::beginInternal() const
 {
     KWQMapNodeImpl *node;
     
-    node = guard;
+    node = d->guard;
     while (node->left() != NULL) {
 	node = node->left();
     }
@@ -548,9 +628,31 @@ KWQMapNodeImpl *KWQMapImpl::beginInternal() const
     return node;
 }
 
-KWQMapNodeImpl *KWQMapImpl::endInternal() const
+const KWQMapNodeImpl *KWQMapImpl::endInternal() const
 {
-    return guard;
+    return d->guard;
 }
+
+KWQMapNodeImpl *KWQMapImpl::beginInternal()
+{
+    KWQMapNodeImpl *node;
+    
+    copyOnWrite();
+
+    node = d->guard;
+    while (node->left() != NULL) {
+	node = node->left();
+    }
+    
+    return node;
+}
+
+KWQMapNodeImpl *KWQMapImpl::endInternal()
+{
+    copyOnWrite();
+    return d->guard;
+}
+
+
 
 #endif
