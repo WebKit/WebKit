@@ -1207,13 +1207,12 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
     
-    // make a caret selection for the position after marker position (to make sure
-    // we move off of a line end)
+    // make sure we move off of a line end
     VisiblePosition nextVisiblePos = visiblePos.next();
     if (nextVisiblePos.isNull())
         return nil;
         
-    // extend selection to the line
+    // make a caret selection and extend it to the line
     // NOTE: ignores results of sel.modify because it returns false when
     // starting at an empty line.  The resulting selection in that case
     // will be a caret at nextVisiblePos. 
@@ -1253,6 +1252,11 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
 
+    // make sure we move off of a word end
+    visiblePos = visiblePos.next();
+    if (visiblePos.isNull())
+        return nil;
+
     VisiblePosition endPosition = endOfWord(visiblePos, khtml::RightWordIfOnBoundary);
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
@@ -1263,6 +1267,11 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
 
+    // make sure we move off of a word start
+    visiblePos = visiblePos.previous();
+    if (visiblePos.isNull())
+        return nil;
+    
     VisiblePosition startPosition = startOfWord(visiblePos, khtml::LeftWordIfOnBoundary);
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
@@ -1275,7 +1284,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
     
-    // to make sure we move off of a line end)
+    // to make sure we move off of a line end
     VisiblePosition nextVisiblePos = visiblePos.next();
     if (nextVisiblePos.isNull())
         return nil;
@@ -1300,13 +1309,12 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
     
-    // make a caret selection for the position before marker position (to make sure
-    // we move off of a line start)
+    // make sure we move off of a line start
     VisiblePosition prevVisiblePos = visiblePos.previous();
     if (prevVisiblePos.isNull())
         return nil;
         
-    // extend selection to the line
+    // make a caret selection and extend it to the line
     // NOTE: ignores results of sel.modify because it returns false when
     // starting at an empty line.  The resulting selection in that case
     // will be a caret at prevVisiblePos. 
@@ -1345,6 +1353,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 
     // make sure we move off of a sentence start
     visiblePos = visiblePos.previous();
+    if (visiblePos.isNull())
+        return nil;
 
     VisiblePosition startPosition = startOfSentence(visiblePos);
     return (id) [self textMarkerForVisiblePosition: startPosition];
@@ -1373,6 +1383,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 
     // make sure we move off of a paragraph start
     visiblePos = visiblePos.previous();
+    if (visiblePos.isNull())
+        return nil;
 
     VisiblePosition startPosition = startOfParagraph(visiblePos);
     return (id) [self textMarkerForVisiblePosition: startPosition];
