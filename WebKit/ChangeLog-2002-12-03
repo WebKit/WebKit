@@ -1,3 +1,11 @@
+2002-10-25  Chris Blumenberg  <cblu@apple.com>
+
+	Cleaned up the plug-in API headers so they can be sent to other groups.
+
+        * Plugins.subproj/WebPlugin.h:
+        * Plugins.subproj/WebPluginContainer.h:
+        * Plugins.subproj/WebPluginViewFactory.h:
+
 2002-10-24  Richard Williamson   <rjw@apple.com>
 
         Fixed many font substitution related bugs, at least including:
