@@ -65,8 +65,6 @@
     IFWebFrame *frame = [dataSource frame];
     
     WEBKIT_ASSERT (dataSource != nil);
-
-    [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
     
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
@@ -76,8 +74,11 @@
         }
         return;
     }
+
+    [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
+
     // This resouce has completed, so check if the load is complete for all frames.
-    else if (progress->bytesSoFar == progress->totalToLoad){
+    if (progress->bytesSoFar == progress->totalToLoad){
         if (frame != nil){
             [frame _transitionProvisionalToLayoutAcceptable];
             [frame _checkLoadCompleteResource: resourceDescription error: nil isMainDocument: NO];
@@ -91,8 +92,6 @@
     
     WEBKIT_ASSERT (dataSource != nil);
 
-    [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
-
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [dataSource _setPrimaryLoadComplete: YES];
@@ -102,6 +101,8 @@
         }
         return;
     }
+
+    [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
 
     // The frame may be nil if a previously cancelled load is still making progress callbacks.
     if (frame == nil)
@@ -130,7 +131,6 @@
         if (progress->bytesSoFar > timedLayoutSize)
             [frame _transitionProvisionalToLayoutAcceptable];
     }
-    
 }
 
 

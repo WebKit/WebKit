@@ -1,3 +1,12 @@
+2002-04-24  Richard Williamson  <rjw@apple.com>
+
+        Changed ordering of messages so activity viewer doesn't get -1 bytesSoFar
+        for cancelled messages.
+        
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _receivedProgress:forResource:fromDataSource:]):
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+
 === Alexander 0.3c2 (v1) ===
 
 2002-04-23  Chris Blumenberg  <cblu@apple.com>

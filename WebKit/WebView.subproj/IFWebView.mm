@@ -297,6 +297,9 @@
     //    return;
     //}
 
+    // Ensure that we will receive mouse move events.  Is this the best place to put this?
+    [[self window] setAcceptsMouseMovedEvents: YES];
+    
     // Draw plain white bg in empty case, to avoid redraw weirdness when
     // no page is yet loaded (2890818). We may need to modify this to always
     // draw the background color, in which case we'll have to make sure the
@@ -428,6 +431,35 @@
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
         widget->viewportMousePressEvent(kEvent);
+    }
+}
+
+- (void)mouseMoved: (NSEvent *)event
+{
+    int button, state;
+     
+    if ([event type] == NSLeftMouseDown){
+        button = Qt::LeftButton;
+        state = Qt::LeftButton;
+    }
+    else if ([event type] == NSRightMouseDown){
+        button = Qt::RightButton;
+        state = Qt::RightButton;
+    }
+    else if ([event type] == NSOtherMouseDown){
+        button = Qt::MidButton;
+        state = Qt::MidButton;
+    }
+    else {
+        [NSException raise:IFRuntimeError format:@"IFWebView::mouseUp: unknown button type"];
+        button = 0; state = 0; // Shutup the compiler.
+    }
+    NSPoint p = [event locationInWindow];
+    
+    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
+    KHTMLView *widget = _private->widget;
+    if (widget != 0l) {
+        widget->viewportMouseMoveEvent(kEvent);
     }
 }
 
