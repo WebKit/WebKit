@@ -1,3 +1,15 @@
+2002-04-21  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix a plugins memory trasher that was making Alexander crash on
+	the abcnews.com test page in cvs-torture-test:
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:mode:]):
+	Use a new maxArguments variable to size the argument and value
+	arrays - with the old code argsCount would end up twice the size
+	it should be, and the arguments would all get written past the end
+	of the argument array.
+
 2002-04-19  Kenneth Kocienda  <kocienda@apple.com>
 
         Changes to support submission of forms using HTTP POST.

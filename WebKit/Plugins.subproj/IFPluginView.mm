@@ -48,7 +48,8 @@ newCString(NSString *string)
 - initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
 {
     NSString *baseURLString;
-    
+    unsigned maxArguments;
+
     [super initWithFrame: r];
     
     // The following line doesn't work for Flash, so I have create a NPP_t struct and point to it
@@ -95,10 +96,10 @@ newCString(NSString *string)
         // These arrays are passed to NPP_New, but the strings need to be
         // modifiable and live the entire life of the plugin.
         
-        argsCount = [arguments count];
+        maxArguments = [arguments count];
         
-        cAttributes = new char * [argsCount];
-        cValues = new char * [argsCount];
+        cAttributes = new char * [maxArguments];
+        cValues = new char * [maxArguments];
         
         NSEnumerator *e = [arguments keyEnumerator];
         NSString *key;
@@ -106,8 +107,8 @@ newCString(NSString *string)
             if (![key isEqualToString:@"wkfullmode"]) {
                 cAttributes[argsCount] = newCString(key);
                 cValues[argsCount] = newCString([arguments objectForKey:key]);
-                argsCount++;
             }
+	    argsCount++;
         }
     }
     
