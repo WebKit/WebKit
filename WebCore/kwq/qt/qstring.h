@@ -30,6 +30,9 @@
 #include <config.h>
 #endif
 
+// USING_BORROWED_QSTRING ======================================================
+#ifdef USING_BORROWED_QSTRING
+
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
 // These macros are TEMPORARY hacks to convert between NSString and QString.
 // They should be replaced with correct implementations.  They should only be
@@ -42,8 +45,6 @@
     QString([aString cString])
 #endif
 
-// USING_BORROWED_QSTRING ======================================================
-#ifdef USING_BORROWED_QSTRING
 #include <_qstring.h>
 
 #else
@@ -57,6 +58,15 @@
 #undef Boolean
 
 #include "qcstring.h"
+
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#define QSTRING_TO_NSSTRING(aString) \
+    (NSString *)(aString.getCFMutableString())
+#define QSTRING_TO_NSSTRING_LENGTH(aString,l) \
+    [(NSString *)(aString.getCFMutableString()) substringToIndex: l]
+#define NSSTRING_TO_QSTRING(aString) \
+    QString::fromCFMutableString((CFMutableStringRef)aString)
+#endif
 
 class QString;
 class QRegExp;
@@ -183,6 +193,7 @@ public:
 #ifdef USING_BORROWED_KURL
     static QString fromLocal8Bit(const char *, int len=-1);
 #endif
+    static QString fromCFMutableString(CFMutableStringRef);
 
     // constructors, copy constructors, and destructors ------------------------
 
@@ -302,6 +313,8 @@ public:
 
     void compose();
     QString visual();
+
+    CFMutableStringRef getCFMutableString() const;
 
     // operators ---------------------------------------------------------------
 

@@ -118,6 +118,17 @@ QString QString::fromLocal8Bit(const char *chs, int len)
 }
 #endif // USING_BORROWED_KURL
 
+QString QString::fromCFMutableString(CFMutableStringRef cfs)
+{
+    QString qs;
+    // shared copy
+    if (cfs) {
+        CFRetain(cfs);
+        qs.s = cfs;
+    }
+    return qs;
+}
+
 // constructors, copy constructors, and destructors ----------------------------
 
 QString::QString()
@@ -1124,6 +1135,11 @@ QString QString::visual()
     NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
             __LINE__);
     return QString(*this);
+}
+
+CFMutableStringRef QString::getCFMutableString() const
+{
+    return s;
 }
 
 // operators -------------------------------------------------------------------
