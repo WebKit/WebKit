@@ -8,3 +8,6 @@
 #ifdef __ppc__
 #define WORDS_BIGENDIAN 1
 #endif
+
+/* define to debug garbage collection */
+#undef DEBUG_COLLECTOR

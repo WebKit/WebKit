@@ -89,6 +89,8 @@ namespace KJS {
    */
   class ValueImp {
     friend class Collector;
+    friend class Value;
+    friend class ContextImp;
   public:
     ValueImp();
     virtual ~ValueImp();

@@ -412,8 +412,12 @@ ContextImp::~ContextImp()
 
 void ContextImp::mark()
 {
-  for (ContextImp *context = this; context; context = context->_callingContext)
+  for (ContextImp *context = this; context; context = context->_callingContext) {
     context->_activationImp.mark();
+#if DEBUG_COLLECTOR
+    context->_activationImp._flags &= ~ValueImp::VI_MARKED;
+#endif
+  }
 }
 
 // ------------------------------ Parser ---------------------------------------

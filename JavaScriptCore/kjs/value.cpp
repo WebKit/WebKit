@@ -201,6 +201,10 @@ bool ValueImp::dispatchToUInt32(unsigned& result) const
 Value::Value(ValueImp *v)
 {
   rep = v;
+#if DEBUG_COLLECTOR
+  assert (!(rep && !SimpleNumber::is(rep) && *((uint32_t *)rep) == 0 ));
+  assert (!(rep && !SimpleNumber::is(rep) && rep->_flags & VI_MARKED));
+#endif
   if (v)
   {
     v->ref();
@@ -212,6 +216,10 @@ Value::Value(ValueImp *v)
 Value::Value(const Value &v)
 {
   rep = v.imp();
+#if DEBUG_COLLECTOR
+  assert (!(rep && !SimpleNumber::is(rep) && *((uint32_t *)rep) == 0 ));
+  assert (!(rep && !SimpleNumber::is(rep) && rep->_flags & VI_MARKED));
+#endif
   if (rep)
   {
     rep->ref();

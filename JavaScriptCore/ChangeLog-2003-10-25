@@ -1,3 +1,31 @@
+2002-11-23  Maciej Stachowiak  <mjs@apple.com>
+
+	Numerous collector changes for a net gain of 3% on JS ibench:
+
+	- Replaced per-block bitmap with free list.
+	- Increased number of empty blocks kept around to 2.
+	- Doubled block size.
+	- When scanning heap in collector, skip scanning the rest of a
+	block as soon as we see as many live cells as the the number of
+	used cells it had originally.
+
+	Also the following collector changes unrelated to performance:
+
+	- Made constants `const int' instead of `static const int'.
+	- Miscellaneous code cleanup.
+		
+        * kjs/collector.cpp:
+
+	- Added debugging mode enabled by defining DEBUG_GC which asserts
+	when a destroyed ValueImp
+
+        * kjs/internal.cpp:
+        (ContextImp::mark):
+        * kjs/value.cpp:
+        (Value::Value):
+        * kjs/value.h:
+	* kjs/config.h:
+	
 2002-11-22  Darin Adler  <darin@apple.com>
 
 	- replaced List class with a vector rather than a linked list, changed it

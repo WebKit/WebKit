@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2002 Apple Computer, Inc.
+ *  Copyright (C) 2002 Apple Computer, Inc
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,42 +29,50 @@
 #include <cxxabi.h>
 #endif
 
+#include <collector.h>
+#include <value.h>
+#include <internal.h>
+
 namespace KJS {
 
 // tunable parameters
-static const int CELL_SIZE = 56;
-static const int BLOCK_SIZE = (4 * 4096);
-static const int SPARE_EMPTY_BLOCKS = 1;
-static const int MIN_ARRAY_SIZE = 14;
-static const int GROWTH_FACTOR = 2;
-static const int LOW_WATER_FACTOR = 4;
+const int MINIMUM_CELL_SIZE = 56;
+const int BLOCK_SIZE = (8 * 4096);
+const int SPARE_EMPTY_BLOCKS = 2;
+const int MIN_ARRAY_SIZE = 14;
+const int GROWTH_FACTOR = 2;
+const int LOW_WATER_FACTOR = 4;
+const int ALLOCATIONS_PER_COLLECTION = 1000;
 
 // derived constants
-static const int WORD_SIZE = sizeof(uint32_t);
-static const int BITS_PER_WORD = WORD_SIZE * 8;
-static const uint32_t ALL_BITS_ON = 0xffffffff;
-static const int CELLS_PER_BLOCK = ((BLOCK_SIZE * 8 - 32) / (CELL_SIZE * 8 + 1));
-static const int BITMAP_SIZE = (CELLS_PER_BLOCK / BITS_PER_WORD) + (CELLS_PER_BLOCK % BITS_PER_WORD != 0 ? 1 : 0);
+const int CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
+const int CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
+const int CELLS_PER_BLOCK = ((BLOCK_SIZE * 8 - sizeof(int32_t) * 8 - sizeof(void *) * 8) / (CELL_SIZE * 8));
+
 
 
 struct CollectorCell {
-  char memory[CELL_SIZE];
+  union {
+    double memory[CELL_ARRAY_LENGTH];
+    struct {
+      void *zeroIfFree;
+      CollectorCell *next;
+    } freeCell;
+  } u;
 };
 
-static const int ALLOCATIONS_PER_COLLECTION = 1000;
 
 struct CollectorBlock {
-  CollectorBlock() : usedCells(0) { memset(bitmap, 0, BITMAP_SIZE * WORD_SIZE); }
-  
-  uint32_t bitmap[BITMAP_SIZE];
-  int32_t usedCells;
   CollectorCell cells[CELLS_PER_BLOCK];
+  int32_t usedCells;
+  CollectorCell *freeList;
 };
 
 struct CollectorHeap {
   CollectorBlock **blocks;
   int numBlocks;
   int usedBlocks;
+  int firstBlockWithPossibleSpace;
   
   CollectorCell **oversizeCells;
   int numOversizeCells;
@@ -74,10 +82,9 @@ struct CollectorHeap {
   int numAllocationsSinceLastCollect;
 };
 
-static CollectorHeap heap = {NULL, 0, 0, NULL, 0, 0, 0, 0};
+static CollectorHeap heap = {NULL, 0, 0, 0, NULL, 0, 0, 0, 0};
 
 bool Collector::memoryFull = false;
-
 
 void* Collector::allocate(size_t s)
 {
@@ -85,8 +92,9 @@ void* Collector::allocate(size_t s)
     return 0L;
   
   // collect if needed
-  if (++heap.numAllocationsSinceLastCollect >= ALLOCATIONS_PER_COLLECTION)
+  if (++heap.numAllocationsSinceLastCollect >= ALLOCATIONS_PER_COLLECTION) {
     collect();
+  }
   
   if (s > (unsigned)CELL_SIZE) {
     // oversize allocator
@@ -108,13 +116,15 @@ void* Collector::allocate(size_t s)
   
   CollectorBlock *targetBlock = NULL;
   
-  // try to find free space in an existing block
-  for (int i = 0; i < heap.usedBlocks; i++) {
+  int i;
+  for (i = heap.firstBlockWithPossibleSpace; i < heap.usedBlocks; i++) {
     if (heap.blocks[i]->usedCells < CELLS_PER_BLOCK) {
       targetBlock = heap.blocks[i];
       break;
     }
   }
+
+  heap.firstBlockWithPossibleSpace = i;
   
   if (targetBlock == NULL) {
     // didn't find one, need to allocate a new block
@@ -124,36 +134,30 @@ void* Collector::allocate(size_t s)
       heap.blocks = (CollectorBlock **)realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
     }
     
-    targetBlock = new CollectorBlock();
+    targetBlock = (CollectorBlock *)calloc(1, sizeof(CollectorBlock));
+    targetBlock->freeList = targetBlock->cells;
     heap.blocks[heap.usedBlocks] = targetBlock;
     heap.usedBlocks++;
   }
   
-  // find a free spot in the block
-  for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
-    uint32_t word = targetBlock->bitmap[wordInBitmap];
-    if (word == ALL_BITS_ON) {
-      continue;
-    }
-    for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
-      if ((word & (1 << bitInWord)) == 0) {
-	int cellPos = BITS_PER_WORD * wordInBitmap + bitInWord;
-	if (cellPos < CELLS_PER_BLOCK) {
-	  targetBlock->bitmap[wordInBitmap] |= (1 << bitInWord);
-	  targetBlock->usedCells++;
-          heap.numLiveObjects++;
+  // find a free spot in the block and detach it from the free list
+  CollectorCell *newCell = targetBlock->freeList;
 
-	  ((ValueImp *)(targetBlock->cells + cellPos))->_flags = 0;
-	  return (void *)(targetBlock->cells + cellPos);
-	}
-      }
-    }
+  if (newCell->u.freeCell.next != NULL) {
+    targetBlock->freeList = newCell->u.freeCell.next;
+  } else if (targetBlock->usedCells == (CELLS_PER_BLOCK - 1)) {
+    // last cell in this block
+    targetBlock->freeList = NULL;
+  } else {
+    // all next pointers are initially 0, meaning "next cell"
+    targetBlock->freeList = newCell + 1;
   }
-  // unreachable, if the free count wasn't 0 there has to be a free
-  // cell in the block
-  assert(false);
 
-  return false;
+  targetBlock->usedCells++;
+  heap.numLiveObjects++;
+
+  ((ValueImp *)(newCell))->_flags = 0;
+  return (void *)(newCell);
 }
 
 bool Collector::collect()
@@ -173,18 +177,28 @@ bool Collector::collect()
   
   // mark any other objects that we wouldn't delete anyway
   for (int block = 0; block < heap.usedBlocks; block++) {
-    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
-      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
-      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
-	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
+
+    int minimumCellsToProcess = heap.blocks[block]->usedCells;
+    CollectorBlock *curBlock = heap.blocks[block];
+
+    for (int cell = 0; cell < CELLS_PER_BLOCK; cell++) {
+      if (minimumCellsToProcess < cell) {
+	goto skip_block_mark;
+      }
 	
-	if ((word & (1 << bitInWord)) &&
-	    (imp->_flags & (ValueImp::VI_CREATED|ValueImp::VI_MARKED)) == ValueImp::VI_CREATED &&
+      ValueImp *imp = (ValueImp *)(curBlock->cells + cell);
+
+      if (((CollectorCell *)imp)->u.freeCell.zeroIfFree != 0) {
+	
+	if ((imp->_flags & (ValueImp::VI_CREATED|ValueImp::VI_MARKED)) == ValueImp::VI_CREATED &&
 	    ((imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount != 0)) {
 	  imp->mark();
 	}
+      } else {
+	minimumCellsToProcess++;
       }
     }
+  skip_block_mark: ;
   }
   
   for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
@@ -200,26 +214,40 @@ bool Collector::collect()
   int emptyBlocks = 0;
 
   for (int block = 0; block < heap.usedBlocks; block++) {
-    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
-      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
-      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
-	
-	if (word & (1 << bitInWord)) {
-	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
-	  if (!imp->refcount && imp->_flags == (ValueImp::VI_GCALLOWED | ValueImp::VI_CREATED)) {
-	    //fprintf( stderr, "Collector::deleting ValueImp %p (%s)\n", (void*)imp, typeid(*imp).name());
-	    // emulate destructing part of 'operator delete()'
-	    imp->~ValueImp();
-	    heap.blocks[block]->bitmap[wordInBitmap] &= ~(1 << bitInWord);
-	    heap.blocks[block]->usedCells--;
-	    heap.numLiveObjects--;
-	    deleted = true;
-	  } else {
-	    imp->_flags &= ~ValueImp::VI_MARKED;
-	  }
+    CollectorBlock *curBlock = heap.blocks[block];
+
+    int minimumCellsToProcess = curBlock->usedCells;
+
+    for (int cell = 0; cell < CELLS_PER_BLOCK; cell++) {
+      if (minimumCellsToProcess < cell) {
+	goto skip_block_sweep;
+      }
+
+      ValueImp *imp = (ValueImp *)(curBlock->cells + cell);
+
+      if (((CollectorCell *)imp)->u.freeCell.zeroIfFree != 0) {
+	if (!imp->refcount && imp->_flags == (ValueImp::VI_GCALLOWED | ValueImp::VI_CREATED)) {
+	  //fprintf( stderr, "Collector::deleting ValueImp %p (%s)\n", (void*)imp, typeid(*imp).name());
+	  // emulate destructing part of 'operator delete()'
+	  imp->~ValueImp();
+	  curBlock->usedCells--;
+	  heap.numLiveObjects--;
+	  deleted = true;
+
+	  // put it on the free list
+	  ((CollectorCell *)imp)->u.freeCell.zeroIfFree = 0;
+	  ((CollectorCell *)imp)->u.freeCell.next = curBlock->freeList;
+	  curBlock->freeList = (CollectorCell *)imp;
+
+	} else {
+	  imp->_flags &= ~ValueImp::VI_MARKED;
 	}
+      } else {
+	minimumCellsToProcess++;
       }
     }
+
+  skip_block_sweep:
 
     if (heap.blocks[block]->usedCells == 0) {
       emptyBlocks++;
@@ -239,6 +267,9 @@ bool Collector::collect()
     }
   }
 
+  if (deleted) {
+    heap.firstBlockWithPossibleSpace = 0;
+  }
   
   int cell = 0;
   while (cell < heap.usedOversizeCells) {
@@ -267,9 +298,6 @@ bool Collector::collect()
       cell++;
     }
   }
-  
-  // possibly free some completely empty collector blocks ?
-  // compact array of collector blocks
   
   heap.numAllocationsSinceLastCollect = 0;
   
@@ -308,24 +336,23 @@ int Collector::numGCNotAllowedObjects()
 {
   int count = 0;
   for (int block = 0; block < heap.usedBlocks; block++) {
-    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
-      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
-      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
-	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
-	
-	if ((word & (1 << bitInWord)) &&
-	    (imp->_flags & ValueImp::VI_GCALLOWED) == 0) {
-	  ++count;
-	}
+    CollectorBlock *curBlock = heap.blocks[block];
+
+    for (int cell = 0; cell < CELLS_PER_BLOCK; cell++) {
+      ValueImp *imp = (ValueImp *)(curBlock->cells + cell);
+      
+      if (((CollectorCell *)imp)->u.freeCell.zeroIfFree != 0 &&
+	  (imp->_flags & ValueImp::VI_GCALLOWED) == 0) {
+	++count;
       }
     }
   }
   
   for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
     ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
-      if ((imp->_flags & ValueImp::VI_GCALLOWED) == 0) {
-        ++count;
-      }
+    if ((imp->_flags & ValueImp::VI_GCALLOWED) == 0) {
+      ++count;
+    }
   }
 
   return count;
@@ -335,15 +362,14 @@ int Collector::numReferencedObjects()
 {
   int count = 0;
   for (int block = 0; block < heap.usedBlocks; block++) {
-    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
-      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
-      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
-	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
-	
-	if ((word & (1 << bitInWord)) &&
-	    imp->refcount != 0) {
-	  ++count;
-	}
+    CollectorBlock *curBlock = heap.blocks[block];
+
+    for (int cell = 0; cell < CELLS_PER_BLOCK; cell++) {
+      ValueImp *imp = (ValueImp *)(curBlock->cells + cell);
+      
+      if (((CollectorCell *)imp)->u.freeCell.zeroIfFree != 0 &&
+	  imp->refcount != 0) {
+	++count;
       }
     }
   }
@@ -361,24 +387,22 @@ int Collector::numReferencedObjects()
 const void *Collector::rootObjectClasses()
 {
   CFMutableSetRef classes = CFSetCreateMutable(NULL, 0, &kCFTypeSetCallBacks);
-
+  
   for (int block = 0; block < heap.usedBlocks; block++) {
-    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
-      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
-      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
-	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
+    CollectorBlock *curBlock = heap.blocks[block];
+    for (int cell = 0; cell < CELLS_PER_BLOCK; cell++) {
+      ValueImp *imp = (ValueImp *)(curBlock->cells + cell);
+      
+      if (((CollectorCell *)imp)->u.freeCell.zeroIfFree != 0 &&
+	  ((imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount != 0)) {
+	const char *mangled_name = typeid(*imp).name();
+	int status;
+	char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
 	
-	if (word & (1 << bitInWord)
-                && ((imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount != 0)) {
-	  const char *mangled_name = typeid(*imp).name();
-	  int status;
-	  char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
-	  
-	  CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
-	  free(demangled_name);
-	  CFSetAddValue(classes, className);
-	  CFRelease(className);
-	}
+	CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
+	free(demangled_name);
+	CFSetAddValue(classes, className);
+	CFRelease(className);
       }
     }
   }
@@ -387,17 +411,17 @@ const void *Collector::rootObjectClasses()
     ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
     
     if ((imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount != 0) {
-        const char *mangled_name = typeid(*imp).name();
-        int status;
-        char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
-        
-        CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
-        free(demangled_name);
-        CFSetAddValue(classes, className);
-        CFRelease(className);
+      const char *mangled_name = typeid(*imp).name();
+      int status;
+      char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
+      
+      CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
+      free(demangled_name);
+      CFSetAddValue(classes, className);
+      CFRelease(className);
     }
   }
-
+  
   return classes;
 }
 
