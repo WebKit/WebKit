@@ -1,3 +1,14 @@
+2002-07-23  Chris Blumenberg  <cblu@apple.com>
+
+	Initial plumbing for contextual menu support.
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge elementInfoForMouseEvent:]): added
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]): added
+
 2002-07-23  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Fix paths for newly added files.

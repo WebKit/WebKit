@@ -28,11 +28,21 @@
 #import <khtml_part.h>
 #import <khtmlview.h>
 #import <dom_docimpl.h>
+#import <render_object.h>
 #import <render_root.h>
 #import <render_frames.h>
 #import <kwqdebug.h>
 #include <html/html_documentimpl.h>
 #include <xml/dom_nodeimpl.h>
+#include <htmlattrs.h>
+#include <htmltags.h>
+#include <csshelper.h>
+#include <KWQDOMNode.h>
+
+#include <WebFoundation/WebNSURLExtras.h>
+
+using namespace DOM;
+using namespace khtml;
 
 @implementation WebCoreBridge
 
@@ -381,5 +391,54 @@
         part->impl->getView()->viewportMouseMoveEvent(&kEvent);
     }
 }
+
+- (NSURL *)_URLForDOMString:(DOMString &)s
+{
+    NSString *URLString = part->xmlDocImpl()->completeURL(s.string()).getNSString();
+    return [NSURL _web_URLWithString:URLString];
+}
+
+- (NSDictionary *)_elementInfoForMouseEvent:(NSEvent *)event
+{
+    NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
+    RenderObject::NodeInfo nodeInfo(true, true);
+    NodeImpl *node, *URLNode;
+    NSPoint pointInWindow;
+    DOMString domURL;
+    NSURL *URL;
+    int x, y;
+
+    pointInWindow = [event locationInWindow];
+    part->impl->getView()->viewportToContents((int)pointInWindow.x, (int)pointInWindow.y, x, y);
+    part->xmlDocImpl()->renderer()->nodeAtPoint(nodeInfo, x, y, 0, 0);
+    
+    node = nodeInfo.innerNode();
+    URLNode = nodeInfo.URLElement();
+    
+    if(URLNode){
+        ElementImpl* e =  static_cast<ElementImpl*>(URLNode);
+        domURL = khtml::parseURL(e->getAttribute(ATTR_HREF));
+        URL = [self _URLForDOMString:domURL];
+        if(URL){
+            [elementInfo setObject: URL forKey: WebCoreContextLinkURL];
+        }
+    }
+
+    if(isImage(node)){
+        ElementImpl* i =  static_cast<ElementImpl*>(node);
+        domURL = khtml::parseURL(i->getAttribute(ATTR_SRC));
+        URL = [self _URLForDOMString:domURL];
+        if(URL){
+            [elementInfo setObject: URL forKey: WebCoreContextImageURL];
+        }
+    }
+
+    //FIXME: THIS IS STILL A WORK IN PROGRESS
+    
+    //NSLog([elementInfo description]);
+    
+    return elementInfo;
+}
+
 
 @end

@@ -218,6 +218,16 @@
 }
 #endif
 
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+    //FIXME: THIS IS STILL A WORK IN PROGRESS
+    [[self _bridge] elementInfoForMouseEvent:theEvent];
+    NSMenu *menu = [[NSMenu alloc] init];
+    [menu addItemWithTitle:@"Copy" action:@selector(copy:) keyEquivalent:@""];
+    return menu;
+    
+}
+
 - (void)setContextMenusEnabled: (BOOL)flag
 {
     [NSException raise:WebMethodNotYetImplemented format:@"WebView::setContextMenusEnabled: is not implemented"];

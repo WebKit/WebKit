@@ -23,5 +23,6 @@
 
 - (void)loadURL:(NSURL *)URL attributes:(NSDictionary *)attributes flags:(unsigned)flags withParent:(WebDataSource *)parent;
 
+- (NSDictionary *)elementInfoForMouseEvent:(NSEvent *)event;
 @end
 

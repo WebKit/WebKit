@@ -32,6 +32,7 @@ class KHTMLView;
 
 namespace khtml {
     class RenderPart;
+    class RenderObject;
 }
 
 typedef khtml::RenderPart KHTMLRenderPart;
@@ -50,6 +51,12 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebCoreDOMTreeCopier;
 @protocol WebCoreRenderTreeCopier;
 @protocol WebCoreResourceLoader;
+
+#define WebCoreContextLinkURL  @"WebCoreContextLinkURL"
+#define WebCoreContextImageURL @"WebCoreContextImageURL"
+#define WebCoreContextString   @"WebCoreContextString"
+#define WebCoreContextImage    @"WebCoreContextImage"
+#define WebCoreContextFrame    @"WebCoreContextFrame"
 
 // WebCoreBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also
@@ -107,6 +114,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier;
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
+
+- (NSDictionary *)_elementInfoForMouseEvent:(NSEvent *)event;
 
 @end
 

@@ -295,4 +295,18 @@
     [attributes release];
 }
 
+- (NSDictionary *)elementInfoForMouseEvent:(NSEvent *)event
+{
+    NSDictionary *elementInfo, *elementInfoWC = [self _elementInfoForMouseEvent:event];
+
+    elementInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+        [elementInfoWC objectForKey:WebCoreContextLinkURL],  WebContextLinkURL,
+        [elementInfoWC objectForKey:WebCoreContextImageURL], WebContextImageURL,
+        [elementInfoWC objectForKey:WebCoreContextString],   WebContextString,
+        [elementInfoWC objectForKey:WebCoreContextImage],    WebContextImage,
+        [elementInfoWC objectForKey:WebCoreContextFrame],    WebContextFrame, nil];
+
+    return elementInfo;
+}
+
 @end

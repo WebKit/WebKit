@@ -1,3 +1,16 @@
+2002-07-23  Chris Blumenberg  <cblu@apple.com>
+
+	Initial plumbing for contextual menu support.
+
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQDOMNode.cpp: Added.
+        (isImage):
+        * kwq/KWQDOMNode.h: Added.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _URLForDOMString:]): added
+        (-[WebCoreBridge _elementInfoForMouseEvent:]): added
+
 2002-07-23  Richard Williamson (Local)  <rjw@apple.com>
 
         Turn on find related code in part in preparation for
