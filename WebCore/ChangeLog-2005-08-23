@@ -1,5 +1,13 @@
 2004-07-06  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::addChild): Added a better comment in the
+        code I just checked in a few minutes ago.
+
+2004-07-06  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
         
         Fix for this bug:

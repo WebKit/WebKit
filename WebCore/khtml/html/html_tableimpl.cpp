@@ -316,7 +316,13 @@ NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
         return this;
     }
     
-    // check node allowed
+    // We do not want this check-node-allowed test here, however the code to
+    // build up tables relies on childAllowed failing to make sure that the
+    // table is well-formed, the primary work being to add a tbody element.
+    // As 99.9999% of tables on the weeb do not have tbody elements, it seems
+    // odd to traverse an "error" case for the most common table markup.
+    // See <rdar://problem/3719373> Table parsing and construction relies on 
+    // childAllowed failures to build up proper DOM
     if (child->nodeType() == Node::DOCUMENT_FRAGMENT_NODE) {
         // child is a DocumentFragment... check all its children instead of child itself
         for (NodeImpl *c = child->firstChild(); c; c = c->nextSibling())
