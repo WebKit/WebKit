@@ -1,3 +1,10 @@
+2002-11-07  Richard Williamson  <rjw@apple.com>
+
+        Don't stop animating unless we're the last referee. (3083281)
+        
+        * kwq/KWQPixmap.mm:
+        (QPixmap::~QPixmap):
+
 === Alexander-31 ===
 
 2002-11-06  Richard Williamson  <rjw@apple.com>
