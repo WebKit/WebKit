@@ -1,3 +1,19 @@
+2005-02-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4023566> Stickies: Crash in ReplacementFragment::insertFragmentForTestRendering on paste
+
+        Reviewed by darin.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
+        (khtml::ReplacementFragment::insertFragmentForTestRendering):
+        (khtml::floatRefdElement):
+        (khtml::createDefaultParagraphElement):
+        (khtml::createBlockPlaceholderElement):
+        (khtml::createFontElement):
+        (khtml::createStyleSpanElement):
+        * khtml/editing/htmlediting.h:
+
 2005-02-25  Darin Adler  <darin@apple.com>
 
         * kwq/character-sets.txt: Checked in updated file. This new file has no effect, because none of the
