@@ -45,7 +45,7 @@ static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
 
 -(void)startAuthentication:(IFAuthenticationRequest *)request
 {
-   id window = [[IFStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[IFStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
 
     if (window == nil) {
         window = IFModalDialogPretendWindow;

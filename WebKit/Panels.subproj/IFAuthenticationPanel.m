@@ -7,6 +7,7 @@
 
 #import <WebKit/IFAuthenticationPanel.h>
 #import <WebKit/IFStandardPanelsPrivate.h>
+#import <WebKit/WebKitDebug.h>
 
 
 #define IFAuthenticationPanelNibName @"IFAuthenticationPanel"
@@ -113,6 +114,8 @@
 
 - (void)runAsSheetOnWindow:(NSWindow *)window withRequest:(IFAuthenticationRequest *)req
 {
+    WEBKIT_ASSERT(!usingSheet);
+
     [self setUpForRequest:req];
 
     usingSheet = TRUE;
@@ -124,12 +127,21 @@
 - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo
 {
     IFAuthenticationResult *result = nil;
+    IFAuthenticationRequest *req;
+
+    WEBKIT_ASSERT(usingSheet);
+    WEBKIT_ASSERT(request != nil);
+
     if (returnCode == 0) {
         result = [IFAuthenticationResult authenticationResultWithUsername:[username stringValue] password:[password stringValue]];
     }
 
-    [callback performSelector:selector withObject:request withObject:result];
-    [request release];
+    // We take this tricky approach to nilling out and releasing the request,
+    // because the callback below might remove our last ref.
+    req = request;
+    request = nil;
+    [callback performSelector:selector withObject:req withObject:result];
+    [req release];
 }
 
 @end

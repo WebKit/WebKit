@@ -1,3 +1,19 @@
+2002-06-05  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixed Radar 2936155 - crash in IFAuthenticationPanel
+	
+	* Panels.subproj/IFAuthenticationPanel.m:
+	(-[IFAuthenticationPanel runAsSheetOnWindow:withRequest:]): Add
+	some assertions.
+	
+	(-[IFAuthenticationPanel sheetDidEnd:returnCode:contextInfo:]):
+	Avoid referencing instance variables after performing a selector
+	that might release this object. Also, add some assertions.
+
+	* Panels.subproj/IFPanelAuthenticationHandler.m:
+	(-[IFPanelAuthenticationHandler startAuthentication:]): Tweak
+	whitespace.
+
 2002-06-05  Richard Williamson  <rjw@apple.com>
 
     Fixed snafu in recursion over frame tree.
