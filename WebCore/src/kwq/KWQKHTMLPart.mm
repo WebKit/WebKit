@@ -67,6 +67,7 @@
 #include <html/htmltokenizer.h>
 #include <html/html_imageimpl.h>
 #include <xml/dom_docimpl.h>
+#include <html/html_miscimpl.h>
 #include <html/html_documentimpl.h>
 #include <rendering/render_image.h>
 #include <loader.h>
@@ -75,6 +76,7 @@
 #include <dom_doc.h>
 #include <qcursor.h>
 #include <kurl.h>
+#include <khtmlview.h>
 
 #include <KWQKHTMLPart.h>
 
@@ -627,11 +629,41 @@ void KHTMLPart::end()
     d->m_doc->finishParsing();
 #endif /* not APPLE_CHANGES */
 
-    //QString str = d->m_doc->recursive_toHTML(1);
-    
     d->m_doc->close();
     KURL::clearCaches();
 }
+
+bool KHTMLPart::gotoBaseAnchor()
+{
+    if ( !d->m_url.ref().isEmpty() )
+        return gotoAnchor( d->m_url.ref() );
+    return false;
+}
+
+bool KHTMLPart::gotoAnchor( const QString &name )
+{
+    if (!d->m_doc)
+        return false;
+    
+    HTMLCollectionImpl *anchors =
+        new HTMLCollectionImpl( d->m_doc, HTMLCollectionImpl::DOC_ANCHORS);
+    anchors->ref();
+    NodeImpl *n = anchors->namedItem(name);
+    anchors->deref();
+    
+    if(!n) {
+        //kdDebug(6050) << "KHTMLPart::gotoAnchor node '" << name << "' not found" << endl;
+        return false;
+    }
+    
+    int x = 0, y = 0;
+    HTMLElementImpl *a = static_cast<HTMLElementImpl *>(n);
+    a->getUpperLeftCorner(x, y);
+    d->m_view->setContentsPos(x, y);
+    
+    return true;
+}
+
 
 KHTMLSettings *KHTMLPart::settings()
 {
@@ -701,13 +733,6 @@ void KHTMLPart::setUserStyleSheet(const KURL &url)
 void KHTMLPart::setUserStyleSheet(const QString &styleSheet)
 {
     _logNeverImplemented();
-}
-
-bool KHTMLPart::gotoAnchor( const QString &name )
-{
-// DUBIOUS, this should be handled by the view, also isn't the anchor a node?
-    _logNeverImplemented();
-    return FALSE;
 }
 
 void KHTMLPart::setFontSizes( const QValueList<int> &newFontSizes )

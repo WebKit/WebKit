@@ -1,5 +1,16 @@
 2002-03-30  Richard Williamson  <rjw@apple.com>
 
+        Added support for scrolling to anchor points.
+        Optimization:  we always load the page, even if the URL that contains
+        the anchor is the current page.
+        
+	* src/kwq/KWQKHTMLPart.h:
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::end), (KHTMLPart::gotoBaseAnchor),
+	(KHTMLPart::gotoAnchor), (KHTMLPart::setUserStyleSheet):
+	* src/kwq/KWQScrollView.mm: (QScrollView::setContentsPos):
+
+2002-03-30  Richard Williamson  <rjw@apple.com>
+
         Added log to note cases of NSURL (CFURL) being unable to
         correctly initialize from URLs.  This log will likely indicate
         bugs in CFURL.

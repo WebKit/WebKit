@@ -330,6 +330,9 @@ char *stateNames[6] = {
                 
                 if ([[self controller] mainFrame] == self){
                     [mainView layout];
+                        
+                    [[self dataSource] _part]->gotoBaseAnchor();
+                    
                     [mainView display];
                 }
                 

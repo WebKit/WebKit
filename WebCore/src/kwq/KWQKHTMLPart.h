@@ -425,8 +425,8 @@ public:
    * scrolls to the closest position. Returns @p if the anchor has
    * been found.
    */
-    // DUBIOUS, this should be handled by the view, also isn't the anchor a node?
   bool gotoAnchor( const QString &name );
+  bool gotoBaseAnchor();
 
   /**
    * Set the cursor to use when the cursor is on a link.
