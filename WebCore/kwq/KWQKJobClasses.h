@@ -33,8 +33,12 @@
 
 #ifdef __OBJC__
 @class KWQResourceLoader;
+@class NSData;
+@class NSURLResponse;
 #else
 class KWQResourceLoader;
+class NSData;
+class NSURLResponse;
 #endif
 
 namespace khtml {
@@ -74,7 +78,8 @@ public:
     void emitData(const char *, int);
     void emitRedirection(const KURL &);
     void emitResult();
-    void emitReceivedResponse(void *);
+    void emitResult(NSData *);
+    void emitReceivedResponse(NSURLResponse *);
 
     khtml::FormData postData() const;
     QString method() const;
@@ -87,7 +92,8 @@ private:
 
     KWQSignal m_data;
     KWQSignal m_redirection;
-    KWQSignal m_result;
+    KWQSignal m_result1;
+    KWQSignal m_result2;
     KWQSignal m_receivedResponse;
 };
 

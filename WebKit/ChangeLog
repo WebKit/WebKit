@@ -1,3 +1,24 @@
+2004-12-04  Chris Blumenberg  <cblu@apple.com>
+
+	New fixes for:
+	<rdar://problem/3685766> WebDataSource is missing subresources when they use cached WebCore data
+	<rdar://problem/3722434> REGRESSION?: Assertion failure trying to drag image in iframe (itapema.sc.gov.br)
+	<rdar://problem/3903173> REGRESSION (172-TOT): assertion failure and crash in slotAllData logging into hotmail account
+	<rdar://problem/3902749> REGRESSION (Tiger): missing image symbol does not appear
+
+        Reviewed by darin, rjw, kocienda.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:data:]):
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient didFinishLoading]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _opened]):
+        (-[WebFrame _internalLoadDelegate]):
+        (-[WebFrame _sendResourceLoadDelegateMessagesForURL:response:length:]):
+        * WebView.subproj/WebFrameInternal.h:
+
 2004-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

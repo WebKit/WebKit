@@ -26,6 +26,16 @@
 #include "KWQCString.h"
 #include "KWQSignal.h"
 
+#if __OBJC__
+@class NSDictionary;
+@class NSString;
+@class NSURLResponse;
+#else
+class NSDictionary;
+class NSString;
+class NSURLResponse;
+#endif
+
 namespace khtml {
     class CachedObject;
     class DocLoader;
@@ -48,15 +58,12 @@ QByteArray KWQServeSynchronousRequest(khtml::Loader *, khtml::DocLoader *, KIO::
 
 void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);
 bool KWQCheckIfReloading(khtml::DocLoader *loader);
-void KWQRetainResponse(void *response);
-void KWQReleaseResponse(void *response);
-bool KWQIsResponseURLEqualToURL(void *response, const DOM::DOMString &m_url);
-QString KWQResponseURL(void *response);
-void *KWQResponseMIMEType(void *response);
-void *KWQResponseTextEncodingName(void *response);
-void *KWQResponseHeaderString(void *response);
+bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m_url);
+QString KWQResponseURL(NSURLResponse *response);
+NSString *KWQResponseMIMEType(NSURLResponse *response);
 int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl);
-time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, void *response);
+time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *response);
+NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode);
 
 class KWQLoader
 {

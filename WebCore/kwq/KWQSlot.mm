@@ -83,7 +83,7 @@ enum FunctionNumber {
     slotFinished_KHTMLPart,
     slotFinished_Loader,
     slotFinished_XMLHttpRequest,
-    slotReceivedResponse
+    slotReceivedResponse,
 };
 
 KWQSlot::KWQSlot(QObject *object, const char *member)
@@ -148,16 +148,17 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
 	} else {
 	    m_function = slotRedirection_XMLHttpRequest;
 	}
+    } else if (KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *, NSData *)))) {
+	ASSERT(dynamic_cast<khtml::Loader *>(object));
+	m_function = slotFinished_Loader;        
     } else if (KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *)))) {
-	ASSERT(dynamic_cast<khtml::Loader *>(object) || dynamic_cast<KHTMLPart *>(object) || dynamic_cast<XMLHttpRequestQObject *>(object));
-	if (dynamic_cast<khtml::Loader *>(object)) {
-	    m_function = slotFinished_Loader;
-	} else if (dynamic_cast<KHTMLPart *>(object)) {
+	ASSERT(dynamic_cast<KHTMLPart *>(object) || dynamic_cast<XMLHttpRequestQObject *>(object));
+	if (dynamic_cast<KHTMLPart *>(object)) {
 	    m_function = slotFinished_KHTMLPart;
 	} else {
 	    m_function = slotFinished_XMLHttpRequest;
 	}
-    } else if (KWQNamesMatch(member, SLOT(slotReceivedResponse(KIO::Job *, void *)))) {
+    } else if (KWQNamesMatch(member, SLOT(slotReceivedResponse(KIO::Job *, NSURLResponse *)))) {
 	ASSERT(dynamic_cast<khtml::Loader *>(object));
 	m_function = slotReceivedResponse;
     } else {
@@ -272,9 +273,6 @@ void KWQSlot::call(Job *job) const
         case slotFinished_KHTMLPart:
             static_cast<KHTMLPart *>(m_object.pointer())->slotFinished(job);
             return;
-        case slotFinished_Loader:
-            static_cast<Loader *>(m_object.pointer())->slotFinished(job);
-            return;
         case slotFinished_XMLHttpRequest:
             static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotFinished(job);
             return;
@@ -319,7 +317,22 @@ void KWQSlot::call(Job *job, const KURL &url) const
     call();
 }
 
-void KWQSlot::call(KIO::Job *job, void *response) const
+void KWQSlot::call(KIO::Job *job, NSData *allData) const
+{
+    if (m_object.isNull()) {
+        return;
+    }
+    
+    switch (m_function) {
+        case slotFinished_Loader:
+            static_cast<Loader *>(m_object.pointer())->slotFinished(job, allData);
+            return;
+    }
+    
+    call();
+}
+
+void KWQSlot::call(KIO::Job *job, NSURLResponse *response) const
 {
     if (m_object.isNull()) {
         return;
@@ -330,7 +343,7 @@ void KWQSlot::call(KIO::Job *job, void *response) const
 	    static_cast<Loader *>(m_object.pointer())->slotReceivedResponse(job, response);
 	    return;
     }
-
+    
     call();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,14 @@
 #define KWQSLOT_H
 
 #include "KWQGuardedPtr.h"
+
+#if __OBJC__
+@class NSData;
+@class NSURLResponse;
+#else
+class NSData;
+class NSURLResponse;
+#endif
 
 class QString;
 class KURL;
@@ -59,7 +67,8 @@ public:
     void call(khtml::DocLoader *, khtml::CachedObject *) const;
     void call(KIO::Job *, const char *, int) const;
     void call(KIO::Job *, const KURL &) const;
-    void call(KIO::Job *, void *) const;
+    void call(KIO::Job *, NSData *) const;
+    void call(KIO::Job *, NSURLResponse *) const;
 
     friend bool operator==(const KWQSlot &, const KWQSlot &);
 

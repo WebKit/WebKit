@@ -1,3 +1,62 @@
+2004-12-03  Chris Blumenberg  <cblu@apple.com>
+
+	New fixes for:
+	<rdar://problem/3685766> WebDataSource is missing subresources when they use cached WebCore data
+	<rdar://problem/3722434> REGRESSION?: Assertion failure trying to drag image in iframe (itapema.sc.gov.br)
+	<rdar://problem/3903173> REGRESSION (172-TOT): assertion failure and crash in slotAllData logging into hotmail account
+	<rdar://problem/3902749> REGRESSION (Tiger): missing image symbol does not appear
+
+        Reviewed by darin, rjw, kocienda.
+
+        * khtml/misc/loader.cpp:
+        (CachedObject::~CachedObject):
+        (CachedCSSStyleSheet::checkNotify):
+        (Loader::servePendingRequests):
+        (Loader::slotFinished):
+        (Loader::slotReceivedResponse):
+        (Cache::requestImage):
+        (Cache::requestScript):
+        * khtml/misc/loader.h:
+        (khtml::CachedObject::CachedObject):
+        (khtml::CachedObject::response):
+        (khtml::CachedObject::allData):
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJobPrivate::TransferJobPrivate):
+        (KIO::TransferJobPrivate::~TransferJobPrivate):
+        (KIO::TransferJob::TransferJob):
+        (KIO::TransferJob::assembleResponseHeaders):
+        (KIO::TransferJob::retrieveCharset):
+        (KIO::TransferJob::emitResult):
+        (KIO::TransferJob::emitReceivedResponse):
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQHeaderStringFromDictionary):
+        (KWQCheckCacheObjectStatus):
+        (KWQIsResponseURLEqualToURL):
+        (KWQResponseURL):
+        (KWQResponseMIMEType):
+        (KWQCacheObjectExpiresTime):
+        (khtml::CachedObject::setResponse):
+        (khtml::CachedObject::setAllData):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap):
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader finishJobAndHandle:]):
+        (-[KWQResourceLoader cancel]):
+        (-[KWQResourceLoader reportError]):
+        (-[KWQResourceLoader finishWithData:]):
+        * kwq/KWQSignal.h:
+        * kwq/KWQSignal.mm:
+        (KWQSignal::call):
+        * kwq/KWQSlot.h:
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreResourceLoader.h:
+
 2004-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

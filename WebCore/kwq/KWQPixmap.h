@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,10 +56,10 @@ public:
     QPixmap(void *MIMEType);
     QPixmap(const QSize&);
     QPixmap(const QByteArray&);
-    QPixmap(const QByteArray&, void *MIMEType);
+    QPixmap(const QByteArray&, NSString *MIMEType);
     QPixmap(int, int);
-    QPixmap(const QPixmap &);
     QPixmap(WebCoreImageRendererPtr);
+    QPixmap(const QPixmap &);
     ~QPixmap();
     
     bool isNull() const;

@@ -52,7 +52,7 @@ public:
 	, URL(kurl)
 	, loader(nil)
 	, method("GET")
-	, response(0)
+	, response(nil)
         , assembledResponseHeaders(true)
         , retrievedCharset(true)
     {
@@ -65,7 +65,7 @@ public:
 	, loader(nil)
 	, method("POST")
 	, postData(_postData)
-	, response(0)
+	, response(nil)
 	, assembledResponseHeaders(true)
         , retrievedCharset(true)
     {
@@ -73,7 +73,7 @@ public:
 
     ~TransferJobPrivate()
     {
-	KWQReleaseResponse(response);
+	KWQRelease(response);
         KWQRelease(metaData);
         KWQRelease(loader);
     }
@@ -85,7 +85,7 @@ public:
     QString method;
     FormData postData;
 
-    void *response;
+    NSURLResponse *response;
     bool assembledResponseHeaders;
     bool retrievedCharset;
     QString responseHeaders;
@@ -95,8 +95,9 @@ TransferJob::TransferJob(const KURL &url, bool reload)
     : d(new TransferJobPrivate(url)),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
-      m_result(this, SIGNAL(result(KIO::Job*))),
-      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, void *)))
+      m_result1(this, SIGNAL(result(KIO::Job*))),
+      m_result2(this, SIGNAL(result(KIO::Job*, NSData *))),
+      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *)))
 {
 }
 
@@ -104,8 +105,9 @@ TransferJob::TransferJob(const KURL &url, const FormData &postData)
     : d(new TransferJobPrivate(url, postData)),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
-      m_result(this, SIGNAL(result(KIO::Job*))),
-      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, void *)))
+      m_result1(this, SIGNAL(result(KIO::Job*))),
+      m_result2(this, SIGNAL(result(KIO::Job*, NSData *))),
+      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *)))
 {
 }
 
@@ -142,7 +144,11 @@ QString TransferJob::errorText() const
 void TransferJob::assembleResponseHeaders() const
 {
     if (!d->assembledResponseHeaders) {
-	d->responseHeaders = QString::fromNSString((NSString *)KWQResponseHeaderString(d->response));
+        if ([d->response isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)d->response;
+            NSDictionary *headers = [httpResponse allHeaderFields];
+            d->responseHeaders = QString::fromNSString(KWQHeaderStringFromDictionary(headers, [httpResponse statusCode]));
+        }
 	d->assembledResponseHeaders = true;
     }
 }
@@ -150,7 +156,7 @@ void TransferJob::assembleResponseHeaders() const
 void TransferJob::retrieveCharset() const
 {
     if (!d->retrievedCharset) {
-        NSString *charset = (NSString *)KWQResponseTextEncodingName(d->response);
+        NSString *charset = [d->response textEncodingName];
         if (charset) {
             [d->metaData setObject:charset forKey:@"charset"];
         }
@@ -228,15 +234,20 @@ void TransferJob::emitRedirection(const KURL &url)
 
 void TransferJob::emitResult()
 {
-    m_result.call(this);
+    m_result1.call(this);
 }
 
-void TransferJob::emitReceivedResponse(void *response)
+void TransferJob::emitResult(NSData *allData)
+{
+    m_result2.call(this, allData);
+}
+
+void TransferJob::emitReceivedResponse(NSURLResponse *response)
 {
     d->assembledResponseHeaders = false;
     d->retrievedCharset = false;
     d->response = response;
-    KWQRetainResponse(d->response);
+    KWQRetain(d->response);
 
     m_receivedResponse.call(this, response);
 }

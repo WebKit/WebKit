@@ -11,13 +11,12 @@
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFileButton.h>
 #import <WebKit/WebFormDelegate.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
@@ -41,7 +40,7 @@
 #import <WebKit/WebPluginViewFactoryPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebResource.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
@@ -443,42 +442,18 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                         forDataSource:[self dataSource]];
 }
 
-- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response: response size:(unsigned)bytes
+- (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
 {
-    ASSERT(_frame != nil);
-    ASSERT(response != nil);
-
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    WebView *wv = [_frame webView];
-    id delegate = [wv resourceLoadDelegate];
-    id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
-    id identifier;
-    WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
+    WebResource *resource = [[WebResource alloc] initWithData:data
+                                                          URL:URL
+                                                     MIMEType:[response MIMEType]
+                                             textEncodingName:[response textEncodingName]
+                                                    frameName:nil];
+    ASSERT(resource != nil);
+    [[self dataSource] addSubresource:resource];
+    [resource release];
     
-    // No chance for delegate to modify request, so we don't send a willSendRequest:redirectResponse: message.
-    if (implementations.delegateImplementsIdentifierForRequest)
-        identifier = [delegate webView:wv identifierForInitialRequest: request fromDataSource: [self dataSource]];
-    else
-        identifier = [sharedDelegate webView:wv identifierForInitialRequest:request fromDataSource:[self dataSource]];
-    
-    if (implementations.delegateImplementsDidReceiveResponse)
-        [delegate webView:wv resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
-    else
-        [sharedDelegate webView:wv resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
-
-    if (implementations.delegateImplementsDidReceiveContentLength)
-        [delegate webView:wv resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
-    else
-        [sharedDelegate webView:wv resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
-
-    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
-        [delegate webView:wv resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
-    else
-        [sharedDelegate webView:wv resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
-    
-    [[_frame webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
-
-    [request release];
+    [_frame _sendResourceLoadDelegateMessagesForURL:URL response:response length:[data length]];    
 }
 
 - (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
@@ -529,7 +504,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     // notify the delegates
-    [self objectLoadedFromCacheWithURL:URL response:response size:[result length]];
+    [self objectLoadedFromCacheWithURL:URL response:response data:result];
 
     return result;
 }

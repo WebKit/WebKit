@@ -139,7 +139,7 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
     return true;
 }
 
-static NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
+NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
 {
     NSMutableString *headerString = [[NSMutableString alloc] init];
     [headerString appendString:[NSString stringWithFormat:@"HTTP/1.0 %d OK\n", statusCode]];
@@ -246,35 +246,20 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
 
     if (!part->haveToldBridgeAboutLoad(urlString)) {
 	WebCoreBridge *bridge = part->bridge();
-	CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
 
 	KWQ_BLOCK_EXCEPTIONS;
 	[bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().string()).getNSURL()
-	        response:(id)cachedObject->response()
-	        size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
+                                    response:(NSURLResponse *)cachedObject->response()
+                                        data:(NSData *)cachedObject->allData()];
 	KWQ_UNBLOCK_EXCEPTIONS;
 
 	part->didTellBridgeAboutLoad(urlString);
     }
 }
 
-void KWQRetainResponse(void *response)
-{
-    // There's no way a retain can raise
-    KWQRetain((id)response);
-}
-
-void KWQReleaseResponse(void *response)
-{
-    // A release could raise if it deallocs.
-    KWQ_BLOCK_EXCEPTIONS;
-    KWQRelease((id)response);
-    KWQ_UNBLOCK_EXCEPTIONS;
-}
-
 #define LOCAL_STRING_BUFFER_SIZE 1024
 
-bool KWQIsResponseURLEqualToURL(void *response, const DOM::DOMString &m_url)
+bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m_url)
 {
     unichar _buffer[LOCAL_STRING_BUFFER_SIZE];
     unichar *urlStringCharacters;
@@ -305,7 +290,7 @@ bool KWQIsResponseURLEqualToURL(void *response, const DOM::DOMString &m_url)
     return ret;
 }
 
-QString KWQResponseURL(void *response)
+QString KWQResponseURL(NSURLResponse *response)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -321,7 +306,7 @@ QString KWQResponseURL(void *response)
     return NULL;
 }
 
-void *KWQResponseMIMEType(void *response)
+NSString *KWQResponseMIMEType(NSURLResponse *response)
 {
     KWQ_BLOCK_EXCEPTIONS;
     return [(NSURLResponse *)response MIMEType];
@@ -330,32 +315,7 @@ void *KWQResponseMIMEType(void *response)
     return NULL;
 }
 
-void *KWQResponseTextEncodingName(void *response)
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    return [(NSURLResponse *)response textEncodingName];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return NULL;
-}
-
-void *KWQResponseHeaderString(void *response)
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    NSURLResponse *nsResponse = (NSURLResponse *)response;
-    if ([nsResponse isKindOfClass:[NSHTTPURLResponse class]]) {
-	NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)nsResponse;
-	NSDictionary *headers = [httpResponse allHeaderFields];
-
-	return KWQHeaderStringFromDictionary(headers, [httpResponse statusCode]);
-    }
-
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return NULL;
-}
-
-time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, void *response)
+time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *response)
 {
     KWQ_BLOCK_EXCEPTIONS;
     
@@ -374,3 +334,27 @@ KWQLoader::KWQLoader(Loader *loader)
     , _requestFailed(loader, SIGNAL(requestFailed(khtml::DocLoader *, khtml::CachedObject *)))
 {
 }
+
+namespace khtml {
+    
+void CachedObject::setResponse(NSURLResponse *response)
+{
+    KWQRetain(response);
+    KWQ_BLOCK_EXCEPTIONS;
+    KWQRelease(m_response);
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    m_response = response;
+}
+
+void CachedObject::setAllData(NSData *allData)
+{
+    KWQRetain(allData);
+    KWQ_BLOCK_EXCEPTIONS;
+    KWQRelease(m_allData);
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    m_allData = allData;
+}
+
+} // namespace
