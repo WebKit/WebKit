@@ -13,7 +13,8 @@
 #import "WebFileDatabase.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebCacheLoaderConstantsPrivate.h"
-#import "WebFoundationDebug.h"
+#import "WebAssertions.h"
+#import "WebFoundationLogging.h"
 
 #define SIZE_FILE_NAME @".size"
 #define SIZE_FILE_NAME_CSTRING ".size"
@@ -195,15 +196,15 @@ static void URLFileReaderInit(void)
     
     if (data) {
         if (mappedBytes) {
-            WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "mmaped disk cache file - %s", [path lossyCString]);
+            LOG(DiskCacheActivity, "mmaped disk cache file - %s", [path lossyCString]);
         }
         else {
-            WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "fs read disk cache file - %s", [path lossyCString]);
+            LOG(DiskCacheActivity, "fs read disk cache file - %s", [path lossyCString]);
         }
         return self;
     }
     else {
-        WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "no disk cache file - %s", [path lossyCString]);
+        LOG(DiskCacheActivity, "no disk cache file - %s", [path lossyCString]);
         [self dealloc];
         return nil;
     }
@@ -258,7 +259,7 @@ static void URLFileReaderInit(void)
 
 -(id)initWithCode:(WebFileDatabaseOpcode)theOpcode key:(id)theKey object:(id)theObject
 {
-    WEBFOUNDATION_ASSERT_NOT_NIL(theKey);
+    ASSERT(theKey);
 
     if ((self = [super init])) {
         
@@ -290,7 +291,7 @@ static void URLFileReaderInit(void)
 
 -(void)perform:(WebFileDatabase *)target
 {
-    WEBFOUNDATION_ASSERT_NOT_NIL(target);
+    ASSERT(target);
 
     switch (opcode) {
         case WebFileDatabaseSetObjectOp:
@@ -300,7 +301,7 @@ static void URLFileReaderInit(void)
             [target performRemoveObjectForKey:key];
             break;
         default:
-            WEBFOUNDATION_ASSERT_NOT_NIL(nil);
+            ASSERT(nil);
             break;
     }
 }
@@ -376,7 +377,7 @@ static void URLFileReaderInit(void)
         close(fd);
     }
 
-    WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "writing size file - %u", value);
+    LOG(DiskCacheActivity, "writing size file - %u", value);
     
     [mutex unlock];
 }
@@ -434,7 +435,7 @@ static void URLFileReaderInit(void)
                 fileSize = [attributes objectForKey:NSFileSize];
                 if (fileSize) {
                     usage -= [fileSize unsignedIntValue];
-                    WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "truncateToSizeLimit - %u - %u - %u, %s", size, usage, [fileSize unsignedIntValue], DEBUG_OBJECT(spec->path));
+                    LOG(DiskCacheActivity, "truncateToSizeLimit - %u - %u - %u, %@", size, usage, [fileSize unsignedIntValue], spec->path);
                     [defaultManager removeFileAtPath:spec->path handler:nil];
                 }
             }
@@ -515,8 +516,8 @@ static void databaseInit()
 {
     WebFileDatabaseOp *op;
 
-    WEBFOUNDATION_ASSERT_NOT_NIL(object);
-    WEBFOUNDATION_ASSERT_NOT_NIL(key);
+    ASSERT(object);
+    ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
     
@@ -534,7 +535,7 @@ static void databaseInit()
 {
     WebFileDatabaseOp *op;
 
-    WEBFOUNDATION_ASSERT_NOT_NIL(key);
+    ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
     
@@ -563,7 +564,7 @@ static void databaseInit()
     usage = 0;
     [mutex unlock];
 
-    WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "removeAllObjects");
+    LOG(DiskCacheActivity, "removeAllObjects");
 }
 
 -(id)objectForKey:(id)key
@@ -581,7 +582,7 @@ static void databaseInit()
     data = nil;
     unarchiver = nil;
 
-    WEBFOUNDATION_ASSERT_NOT_NIL(key);
+    ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
 
@@ -615,7 +616,7 @@ static void databaseInit()
             }
         }
     NS_HANDLER
-        WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "cannot unarchive cache file - %s", DEBUG_OBJECT(key));
+        LOG(DiskCacheActivity, "cannot unarchive cache file - %@", key);
         result = nil;
     NS_ENDHANDLER
 
@@ -644,11 +645,10 @@ static void databaseInit()
     NSNumber *oldSize;
     BOOL result;
 
-    WEBFOUNDATION_ASSERT_NOT_NIL(object);
-    WEBFOUNDATION_ASSERT_NOT_NIL(key);
+    ASSERT(object);
+    ASSERT(key);
 
-    WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "performSetObject - %s - %s",
-        DEBUG_OBJECT(key), DEBUG_OBJECT([WebFileDatabase uniqueFilePathForKey:key]));
+    LOG(DiskCacheActivity, "performSetObject - %@ - %@", key, [WebFileDatabase uniqueFilePathForKey:key]);
 
     data = [NSMutableData data];
     archiver = [[NSArchiver alloc] initForWritingWithMutableData:data];
@@ -706,9 +706,9 @@ static void databaseInit()
     NSNumber *size;
     BOOL result;
     
-    WEBFOUNDATION_ASSERT_NOT_NIL(key);
+    ASSERT(key);
     
-    WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "performRemoveObjectForKey - %s", DEBUG_OBJECT(key));
+    LOG(DiskCacheActivity, "performRemoveObjectForKey - %@", key);
 
     filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
     attributes = [[NSFileManager defaultManager] fileAttributesAtPath:filePath traverseLink:YES];
@@ -782,7 +782,7 @@ static void databaseInit()
 {
     WebFileDatabaseOp *op;
 
-    WEBFOUNDATION_ASSERT_NOT_NIL(theTimer);
+    ASSERT(theTimer);
 
     while (touch + SYNC_IDLE_THRESHOLD < CFAbsoluteTimeGetCurrent() && [ops count] > 0) {
         [mutex lock];
