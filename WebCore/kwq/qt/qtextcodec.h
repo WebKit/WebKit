@@ -68,7 +68,6 @@ public:
     // static member functions -------------------------------------------------
 
     static QTextCodec *codecForMib(int);
-    //static QTextCodec *codecForName(const char *, int accuracy=0);
     static QTextCodec *codecForName(const char *);
     static QTextCodec *codecForLocale();
 
@@ -79,24 +78,20 @@ public:
 
     // member functions --------------------------------------------------------
 
-    //virtual const char* name() const=0;
     const char* name() const;
-    //virtual int mibEnum() const=0;
     int mibEnum() const;
 
-    //virtual QTextDecoder *makeDecoder() const;
     QTextDecoder *makeDecoder() const;
 
     QCString fromUnicode(const QString &) const;
 
-    //virtual QString toUnicode(const char *, int) const;
     QString toUnicode(const char *, int) const;
     QString toUnicode(const QByteArray &, int) const;
     QString toUnicode(const char *) const;
 
 // private ---------------------------------------------------------------------
 
-//private:
+private:
 
     // data members ------------------------------------------------------------
 
