@@ -112,8 +112,6 @@
 
 2003-12-16  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-
         * WebCoreSupport.subproj/WebBridge.m: ObjC runtime needs a declaration for new
 	_calculatedExpiration SPI in NSURLResponse in Foundation
 
@@ -5291,14 +5289,12 @@ Source::
 
 	Fixed: <rdar://problem/3282881>: Java plugin fails in carbon WebKit apps
 
-
         Fixed by Mike Hay, reviewed by me.
 
         * Plugins.subproj/WebPluginDatabase.m:
         (-[WebPluginDatabase initIsCocoa]):
         (-[WebPluginDatabase isCocoa]):
         (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]): don't load cocoa plug-ins if isCocoa.
-
 
 2003-06-05  John Sullivan  <sullivan@apple.com>
 
@@ -7677,8 +7673,6 @@ Source::
 	from earlier today.  Otherwise many layout tests are hosed.  But this
 	change, or something like it, will arrive soon.
 
-        Reviewed by me.
-
         * WebCoreSupport.subproj/WebTextRenderer.m:
         (-[WebTextRenderer initWithFont:usingPrinterFont:]):
 
@@ -8495,8 +8489,6 @@ Source::
         (-[WebDataProtocol startLoading]):
 
 2003-04-16  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
 	Fix deployment build breaker caused by uninitialized variable.
 
@@ -9708,8 +9700,6 @@ Source::
 
         Fix typo in comments that broke headerdoc.
         
-        Reviewed by me.
-
         * WebView.subproj/WebWindowOperationsDelegate.h:
 
 2003-03-28  Ken Kocienda  <kocienda@apple.com>
@@ -11067,8 +11057,6 @@ Source::
 
         Renamed WebView*.[hm] to WebFrameView*.[hm]
         
-        Reviewed by me (I'm bad, it's just a file rename).
-
         * Misc.subproj/WebKit.h:
         * Misc.subproj/WebNSViewExtras.m:
         * Panels.subproj/WebStandardPanels.m:
@@ -11748,8 +11736,6 @@ e machinery in WebKit. The stream is only delivered once. This fix addresses tha
 2003-03-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed deployment build failure.
-
-        Reviewed by me.
 
         * WebView.subproj/WebFramePrivate.m:
 
@@ -12851,8 +12837,6 @@ l.
         was made before but the project file must have been accidentally
         overwritten.  Make the WebPlugin* classes private.
         
-        Reviewed by me.
-
         * WebKit.pbproj/project.pbxproj:
 
 7003-02-28  Trey Matteson  <trey@apple.com>
@@ -13455,8 +13439,6 @@ l.
 
         Update API issues document.
         
-        Reviewed by me.
-
         * API-Issues.rtf:
 
 2003-02-10  Chris Blumenberg  <cblu@apple.com>
@@ -13905,8 +13887,6 @@ l.
 
         Fixed headerdoc type.
         
-        Reviewed by me.
-
         * WebView.subproj/WebDocument.h:
 
 2003-02-03  Richard Williamson   <rjw@apple.com>
@@ -14722,8 +14702,6 @@ l.
 2003-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Removed comment that I added by mistake.
-
-        Reviewed by me.
 
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView draggingSourceOperationMaskForLocal:]):

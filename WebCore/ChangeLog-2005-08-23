@@ -610,8 +610,6 @@
 
 2003-12-11  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-
         * kwq/KWQLoader.mm:
         (KWQCacheObjectExpiresTime): Fixed deployment build bustage.
 
@@ -3043,8 +3041,6 @@ Added support for getting at Java object fields.
 
 2003-11-12  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-	
 	I am an idiot for just assuming that these elements implement a focus()
 	function, without actually compiling and testing. I will have to add 
 	this function to these elements so I can make this work.
@@ -4943,8 +4939,6 @@ Added support for getting at Java object fields.
 === Safari-112 ===
 
 2003-10-30  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
 	Rolling out this code since it caused a big performance 
 	regression.
