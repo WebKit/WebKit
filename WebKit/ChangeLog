@@ -1,3 +1,14 @@
+2004-08-24  David Hyatt  <hyatt@apple.com>
+
+	Add Atom and RSS MIME types to set of supported XML types.
+	
+        Reviewed by rjw
+
+        * WebView.subproj/WebDataSource.m:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+
 2004-08-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.

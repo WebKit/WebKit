@@ -664,6 +664,8 @@
 	    [WebHTMLRepresentation class], @"text/xsl",
 	    [WebHTMLRepresentation class], @"application/xml",
 	    [WebHTMLRepresentation class], @"application/xhtml+xml",
+            [WebHTMLRepresentation class], @"application/rss+xml",
+            [WebHTMLRepresentation class], @"application/atom+xml",
             [WebHTMLRepresentation class], @"application/x-webarchive",
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
