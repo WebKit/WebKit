@@ -1,3 +1,14 @@
+2004-07-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+        
+        - bulletproofed array.slice() against NAN arguments. Harri noticed this
+        vulnerability in my patch for 3714644
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFuncImp::call):
+        handle NAN parameters passed to slice() by clamping to 0 and length.
+
 2004-07-19  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3733349.  Prevent Java applet callbacks into JavaScript after applet

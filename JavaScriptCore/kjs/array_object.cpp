@@ -583,6 +583,9 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     double begin = 0;
     if (args[0].type() != UndefinedType) {
         begin = args[0].toInteger(exec);
+        if (isnan(begin)) {
+            begin = 0;
+        }
         if (begin < 0) {
             begin += length;
             if (begin < 0)
@@ -595,7 +598,9 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     double end = length;
     if (args[1].type() != UndefinedType) {
       end = args[1].toInteger(exec);
-      if (end < 0) {
+      if (isnan(end)) {
+        end = length;
+      } else if (end < 0) {
         end += length;
         if (end < 0)
           end = 0;
