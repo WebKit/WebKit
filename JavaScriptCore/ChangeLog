@@ -1,3 +1,27 @@
+2003-07-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3272777 -- array object indices treated as integers by Safari, but as strings in other web browsers
+
+        JavaScriptCore did not implement the proper rule for what an array index is.
+
+        * kjs/array_object.cpp:
+        (getArrayIndex): Added. Implements the rule from the specification, which also provides a handy
+        "not an array index" value of 2^32-1.
+        (ArrayInstanceImp::get): Use getArrayIndex.
+        (ArrayInstanceImp::put): Ditto.
+        (ArrayInstanceImp::hasProperty): Ditto.
+        (ArrayInstanceImp::setLength): Ditto.
+
+        * kjs/identifier.h: Removed now-unused toULong, and added toStrictUInt32, in both cases forwarding
+        functions that forward to UString.
+
+        * kjs/ustring.h: Added toStringUInt32.
+        * kjs/ustring.cpp: (UString::toStrictUInt32): Added. Converts a string to a 32-bit unsigned integer,
+        and rejects any string that does not exactly match the way the integer would be formatted on output.
+        This is the rule documented in the ECMA language standard.
+
 === Safari-89 ===
 
 2003-07-10  Maciej Stachowiak  <mjs@apple.com>

@@ -658,6 +658,54 @@ uint32_t UString::toUInt32(bool *ok) const
   return static_cast<uint32_t>(d);
 }
 
+uint32_t UString::toStrictUInt32(bool *ok) const
+{
+  if (ok)
+    *ok = false;
+
+  // Empty string is not OK.
+  int len = rep->len;
+  if (len == 0)
+    return 0;
+  const UChar *p = rep->dat;
+  unsigned short c = p->unicode();
+
+  // If the first digit is 0, only 0 itself is OK.
+  if (c == '0') {
+    if (len == 1 && ok)
+      *ok = true;
+    return 0;
+  }
+  
+  // Convert to UInt32, checking for overflow.
+  uint32_t i = 0;
+  while (1) {
+    // Process character, turning it into a digit.
+    if (c < '0' || c > '9')
+      return 0;
+    const unsigned d = c - '0';
+    
+    // Check for overflow.
+    const unsigned maxProduct = 0xFFFFFFFFU - d;
+    if (i > maxProduct / 10)
+      return 0;
+    
+    // Add in another digit.
+    i *= 10;
+    i += d;
+    
+    // Handle end of string.
+    if (--len == 0) {
+      if (ok)
+        *ok = true;
+      return i;
+    }
+    
+    // Get next character.
+    c = (++p)->unicode();
+  }
+}
+
 int UString::find(const UString &f, int pos) const
 {
   int sz = size();
