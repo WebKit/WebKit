@@ -1,3 +1,11 @@
+2004-10-29  Darin Adler  <darin@apple.com>
+
+        - fixed <rdar://problem/3855573> Remove reference to "WebScriptMethods" from WebScriptObject.h comments
+
+        * Plugins.subproj/WebScriptObject.h: Removed unneeded #ifdef protection for multiple includes (since
+        this is an Objective-C header and we use #import for those). Fixed comments as requested in the bug
+        report to match the contents of the file.
+
 2004-10-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
@@ -888,12 +896,6 @@
 
 2004-09-27  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed previous reviewer line.
-
-        * ChangeLog:
-
-2004-09-27  Chris Blumenberg  <cblu@apple.com>
-
 	Fixed: <rdar://problem/3502138> text files don't remember scroll position when going back or reloading
 
         Reviewed by john.
@@ -1478,12 +1480,6 @@
         * WebView.subproj/WebFramePrivate.h:
         declare new method
 
-2004-09-10  Chris Blumenberg  <cblu@apple.com>
-
-	Fixed previous "Reviewed by" line.
-
-        * ChangeLog:
-
 2004-09-09  Chris Blumenberg  <cblu@apple.com>
 
 	Support for: <rdar://problem/3795485> debug menu item to enable RSS animation on first layout
@@ -1643,12 +1639,6 @@
         added this placeholder method whose purpose is to hold localizable strings for all the Undo
         action names that NSTextView uses. Later we will use some or all of these, but we can do
         that part after the localization freeze.
-
-2004-09-08  Chris Blumenberg  <cblu@apple.com>
-
-	Fixed previous "Reviewed by" line.
-
-        * ChangeLog:
 
 2004-09-08  Chris Blumenberg  <cblu@apple.com>
 
