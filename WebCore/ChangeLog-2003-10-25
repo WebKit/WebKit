@@ -1,3 +1,19 @@
+2003-03-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3180364 -- infinite loop in JavaScript at www.vw.dk (due to document.anchors problem) leads to hang
+
+        The underlying problem was that our document.anchors had all the anchors in it.
+        But here's what the Gecko DOM reference documentation says about document.anchors:
+        "For reasons of backwards compatibility, the returned set of anchors only contains
+        those anchors created with the name attribute, not those created with the id attribute."
+
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::calcLength): Include only A elements with NAME attributes in the DOC_ANCHORS case.
+        (HTMLCollectionImpl::getItem): Ditto.
+        (HTMLCollectionImpl::getNamedItem): Ditto.
+
 2003-03-02  Trey Matteson  <trey@apple.com>
 
 	Use a KWQPopUpButton in place of NSPopUpButton.  The only addition is that
