@@ -234,6 +234,7 @@
 "\nDict data: %ld items\n"
 "\nHeap data: %ld items\n"
 "\nList root path: %s\n"
+"\r"
 "\r\n"
 "__KHTML__"
 "_blank"

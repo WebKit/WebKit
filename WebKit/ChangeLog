@@ -1,5 +1,16 @@
 2003-11-19  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3489935>: Mentioning "to Disk" in context menus such as "Download Linked File To Disk..." is redundant
+
+        Reviewed by john.
+
+        * English.lproj/Localizable.strings:
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:]): use "Download Linked File" and "Download Image"
+
+2003-11-19  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3488783>: Flash at http://www.sjwilson.net/reef/ does not load photos
 	
         Reviewed by rjw.

@@ -36,7 +36,7 @@
             action = @selector(openLinkInNewWindow:);
             break;
         case WebMenuItemTagDownloadLinkToDisk:
-            title = UI_STRING("Download Linked File to Disk", "Download Linked File to Disk context menu item");
+            title = UI_STRING("Download Linked File", "Download Linked File context menu item");
             action = @selector(downloadLinkToDisk:);
             break;
         case WebMenuItemTagCopyLinkToClipboard:
@@ -48,7 +48,7 @@
             action = @selector(openImageInNewWindow:);
             break;
         case WebMenuItemTagDownloadImageToDisk:
-            title = UI_STRING("Download Image to Disk", "Download Image To Disk context menu item");
+            title = UI_STRING("Download Image", "Download Image context menu item");
             action = @selector(downloadImageToDisk:);
             break;
         case WebMenuItemTagCopyImageToClipboard:
