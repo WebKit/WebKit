@@ -1453,12 +1453,13 @@ void KHTMLPart::end()
         write(d->m_decoder->flush());
     if (d->m_doc)
 	d->m_doc->finishParsing();
+
 #ifdef APPLE_CHANGES
     KURL::clearCaches();
 
-    // FIXME: Would be better if we could just count on the signal
-    // instead of doing this.
-    slotFinishedParsing();
+    // FIXME: Would be better if we could just count on the signal instead of doing this.
+    if (d->m_doc)
+        slotFinishedParsing();
 #endif
 }
 
