@@ -1,3 +1,15 @@
+2003-11-06  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3476717, inline blocks should expand to encompass floats; 3476718, inline blocks should not
+	collapse margins with children; and 3476721, run-ins and compacts can flow into anonymous blocks, even
+	ones that they caused to be created by failing to run in/compact in the first place.
+	
+        Reviewed by darin (inline block fixes only).
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::layoutBlockChildren):
+
 2003-11-06  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3476563.  Remove unnecessary call to set view position after load completes.
