@@ -1,3 +1,12 @@
+2003-11-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3490260: allow &sup1 to be misspelled &supl (lowercase l instead of numeral 1) because WinIE does
+
+        * khtml/html/kentities.gperf: Added supl to the list. Maps to U+00B9, just as sup1 does.
+        * khtml/html/kentities.c: Regenerated.
+
 2003-11-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
