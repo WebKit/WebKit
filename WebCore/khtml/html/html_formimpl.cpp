@@ -819,6 +819,15 @@ NodeImpl::Id HTMLFieldSetElementImpl::id() const
     return ID_FIELDSET;
 }
 
+void HTMLFieldSetElementImpl::attach()
+{
+    // Fieldsets need to at least get a render object so that the
+    // children will be rendered. Eventually we need to create a
+    // custom object that can draw the label within the grooved
+    // border. -dwh
+    return HTMLElementImpl::attach();
+}
+
 // -------------------------------------------------------------------------
 
 HTMLInputElementImpl::HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)

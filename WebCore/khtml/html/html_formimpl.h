@@ -208,6 +208,8 @@ public:
     virtual ~HTMLFieldSetElementImpl();
 
     virtual Id id() const;
+
+    virtual void attach();
 };
 
 // -------------------------------------------------------------------------
