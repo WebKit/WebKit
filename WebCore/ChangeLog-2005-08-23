@@ -1,3 +1,22 @@
+2004-05-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3090663>: (scroll to top of page when anchor is "#top" or "#")
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor): Detect anchor by checking for non-null, not non-empty, because an
+        empty anchor is not the same as no anchor.
+        (KHTMLPart::gotoAnchor): Add special case for anchors named "" and "top" (case insensitive),
+        to scroll to the top left of the frame to match what WinIE and Mozilla do.
+        (KHTMLPart::checkCompleted): Check for non-null here too for consistency.
+
+        * kwq/KWQKURL.mm:
+        (KURL::ref): Change check so that we return empty, not null, if there's an empty ref,
+        as opposed to no ref.
+        (KURL::hasRef): Return true if there's an empty ref, as opposed to no ref.
+        (KURL::parse): Preserve an empty fragment when parsing.
+
 2004-05-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -627,11 +627,7 @@ QString KURL::user() const
 
 QString KURL::ref() const
 {
-    if (!m_isValid) {
-	return QString();
-    }
-    
-    if (fragmentEndPos <= queryEndPos + 1) {
+    if (!m_isValid || fragmentEndPos == queryEndPos) {
 	return QString();
     }
 
@@ -640,7 +636,7 @@ QString KURL::ref() const
 
 bool KURL::hasRef() const
 {
-    return m_isValid && fragmentEndPos > queryEndPos + 1;
+    return m_isValid && fragmentEndPos != queryEndPos;
 }
 
 QString KURL::query() const
@@ -1409,7 +1405,7 @@ void KURL::parse(const char *url, const QString *originalString)
     queryEndPos = p - buffer;
     
     // add fragment, escaping bad characters
-    if (fragmentEnd != fragmentStart) {
+    if (fragmentEnd != queryEnd) {
 	*p++ = '#';
 	appendEscapingBadChars(p, url + fragmentStart, fragmentEnd - fragmentStart);
     }
