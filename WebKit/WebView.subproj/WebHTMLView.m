@@ -659,6 +659,8 @@
            source:(id)source
         slideBack:(BOOL)slideBack
 {    
+    [self _stopAutoscrollTimer];
+
     // Don't allow drags to be accepted by this WebFrameView.
     [[self _webView] unregisterDraggedTypes];
     

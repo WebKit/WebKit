@@ -1,3 +1,9 @@
+2003-09-24  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        Added one more call to _stopAutoscrollTimer for when drags begin.
+
 2003-09-24  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3420736.  Clear renderer caches when get an ATS font changed notification.  This fix may be moot depending on progress toward fixing 2695906.  Also 3428451 needs to should be resolved.
