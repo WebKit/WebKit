@@ -727,7 +727,10 @@ OwningWindowChanged(
             { kEventClassMouse, kEventMouseMoved },
             { kEventClassMouse, kEventMouseUp },
             { kEventClassMouse, kEventMouseDragged },
-            { kEventClassMouse, kEventMouseWheelMoved }
+            { kEventClassMouse, kEventMouseWheelMoved },
+            { kEventClassKeyboard, kEventRawKeyDown },
+            { kEventClassKeyboard, kEventRawKeyRepeat },
+            { kEventClassKeyboard, kEventRawKeyUp }
             };
             
             view->fKitWindow = [[CarbonWindowAdapter alloc] initWithCarbonWindowRef: newWindow takingOwnership: NO disableOrdering:NO carbon:YES];
@@ -768,6 +771,38 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
 
     switch( GetEventClass( inEvent ) )
     {
+    	case kEventClassKeyboard:
+    		{
+                NSWindow*		kitWindow;
+                OSStatus		err;
+    			CGSEventRecord	eventRec;
+   				NSEvent*		kitEvent;
+   				
+   				// if the first responder in the kit window is something other than the
+   				// window, we assume a subview of the webview is focused. we must send
+   				// the event to the window so that it goes through the kit's normal TSM
+   				// logic, and -- more importantly -- allows any delegates associated
+   				// with the first responder to have a chance at the event.
+   				
+				err = GetWindowProperty( window, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), NULL, &kitWindow);
+				if ( err == noErr )
+				{
+					NSResponder* responder = [kitWindow firstResponder];
+					if ( responder != kitWindow )
+					{
+						GetEventPlatformEventRecord( inEvent, &eventRec );
+						RetainEvent( inEvent );
+						kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
+						
+						[kitWindow sendEvent:kitEvent];
+						[kitEvent release];
+						
+						result = noErr;
+					}
+				}
+    		}
+    		break;
+
         case kEventClassWindow:
             {
                 NSWindow*	kitWindow;

@@ -59,7 +59,7 @@
 /*----------------------------------------------------------------------*/
 
 #define NP_VERSION_MAJOR 0
-#define NP_VERSION_MINOR 11
+#define NP_VERSION_MINOR 12
 
 
 

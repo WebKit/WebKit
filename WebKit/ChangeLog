@@ -1,3 +1,21 @@
+2004-07-20  Richard Williamson   <rjw@apple.com>
+
+		Fix for 3728558.  Fixed the key event handling in the carbon/cocoa
+		integration code.  This does not fix the arrow keys not working on
+		initial focus problem also mentioned in the bug.
+		
+		Bumped the version of the NP function structures.
+		
+        Reviewed by John.
+
+        * Carbon.subproj/CarbonUtils.m:
+        (WebInitForCarbon):
+        (PoolCleaner):
+        * Carbon.subproj/HIWebView.m:
+        (OwningWindowChanged):
+        (WindowHandler):
+        * Plugins.subproj/npapi.h:
+
 2004-07-20  Trey Matteson  <trey@apple.com>
 
 	3733698	REGRESSION: sometimes dragging photos on homepage.mac.com leads to an assertion

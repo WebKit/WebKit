@@ -17,6 +17,7 @@ static void				PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage
 
 static NSAutoreleasePool*	sPool;
 static unsigned numPools;
+static EventLoopRef poolLoop;
 
 static unsigned getNumPools()
 {
@@ -44,6 +45,8 @@ WebInitForCarbon()
         sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
         numPools = getNumPools();
         
+        poolLoop = GetCurrentEventLoop ();
+
         InstallEventLoopIdleTimer( GetMainEventLoop(), 1.0, 0, PoolCleaner, 0, NULL );
         
         sAppKitLoaded = true;     
@@ -53,24 +56,30 @@ WebInitForCarbon()
 }
 
 
+/*
+    The pool cleaner is required because Carbon applications do not have
+    an autorelease pool provided by their event loops.  Importantly,
+    carbon applications that nest event loops, using any of the various
+    techniques available to Carbon apps, MUST create their our pools around
+    their nested event loops.
+*/
 static void
 PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData )
 {
-	if ( inState == kEventLoopIdleTimerStarted )
-	{
+    if ( inState == kEventLoopIdleTimerStarted ) {
         CFStringRef mode = CFRunLoopCopyCurrentMode( (CFRunLoopRef)GetCFRunLoopFromEventLoop( GetCurrentEventLoop() ));
-        if ( CFEqual( mode, kCFRunLoopDefaultMode ) )
-        {
+        EventLoopRef thisLoop = GetCurrentEventLoop ();
+        if ( CFEqual( mode, kCFRunLoopDefaultMode ) && thisLoop == poolLoop) {
             unsigned currentNumPools = getNumPools()-1;            
             if (currentNumPools == numPools){
                 [sPool release];
+                
                 sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
                 numPools = getNumPools();
             }
-
         }
         CFRelease( mode );
-	}
+    }
 }
 
 CGImageRef
