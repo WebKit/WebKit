@@ -281,7 +281,10 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
     doc.setTitle(value.toString(exec).string());
     break;
   case Body:
-    doc.setBody((new DOMNode(exec, KJS::toNode(value)))->toNode());
+    DOMNode node = new DOMNode(exec, KJS::toNode(value));
+    // This is required to avoid leaking the node.
+    Value nodeValue(node);
+    doc.setBody(()->toNode());
     break;
   case Domain: { // not part of the DOM
     DOM::HTMLDocumentImpl* docimpl = static_cast<DOM::HTMLDocumentImpl*>(doc.handle());
@@ -1945,7 +1948,10 @@ void KJS::HTMLElement::tryPut(ExecState *exec, const UString &propertyName, cons
 void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, int)
 {
   DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
-  DOM::Node n = (new DOMNode(exec, KJS::toNode(value)))->toNode();
+  DOMNode *kjsNode = new DOMNode(exec, KJS::toNode(value));
+  // Need to create a Value wrapper to avoid leaking the KJS::DOMNode
+  Value nodeValue(kjsNode);
+  DOM::Node n = kjsNode->toNode();
   DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLElement::putValue "
