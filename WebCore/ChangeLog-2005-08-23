@@ -1,3 +1,19 @@
+2005-02-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4023566> Stickies: Crash in ReplacementFragment::insertFragmentForTestRendering on paste
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded): ref and deref the element while it is "floating"
+        (khtml::ReplacementFragment::insertFragmentForTestRendering): ditto
+        (khtml::floatRefdElement): new, keeps an element alive while its ref count is 0
+        (khtml::createDefaultParagraphElement): removed commented out code
+        (khtml::createBlockPlaceholderElement): ref the element and return it as "floating"
+        (khtml::createFontElement): ditto
+        (khtml::createStyleSpanElement): ditto
+        * khtml/editing/htmlediting.h:
+
 2005-02-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.
