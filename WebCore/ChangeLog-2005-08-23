@@ -1,3 +1,19 @@
+2004-12-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave.
+        
+        - fixed <rdar://problem/3731099> Move AXTitle string for image elements to AXDescription
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject title]): moved image alt tag code out of here
+        (-[KWQAccObject accessibilityDescription]): moved image alt tag code into this new method
+        (-[KWQAccObject accessibilityAttributeNames]): include AXDescription in the set of attributes
+        that ordinary elements return; this means that ordinary elements that aren't images will return
+        a nil description, which isn't ideal, but is in keeping with the way the rest of these attributes
+        work here.
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        call accessibilityDescription when asked for AXDescription
+
 2004-12-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison

@@ -68,6 +68,13 @@ using khtml::RenderBlock;
 using khtml::RenderListMarker;
 using khtml::RenderImage;
 
+/* NSAccessibilityDescriptionAttribute is only defined on 10.4 and newer */
+#if BUILDING_ON_PANTHER
+#define ACCESSIBILITY_DESCRIPTION_ATTRIBUTE @"AXDescription"
+#else
+#define ACCESSIBILITY_DESCRIPTION_ATTRIBUTE NSAccessibilityDescriptionAttribute
+#endif
+
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])
 
@@ -379,19 +386,28 @@ using khtml::RenderImage;
 {
     if (!m_renderer || m_areaElement)
         return nil;
+    
+    if (m_renderer->element() && m_renderer->element()->isHTMLElement() &&
+             Node(m_renderer->element()).elementId() == ID_BUTTON)
+        return [self textUnderElement];
+    else if (m_renderer->element() && m_renderer->element()->hasAnchor())
+        return [self textUnderElement];
+    
+    return nil;
+}
 
+-(NSString*)accessibilityDescription
+{
+    if (!m_renderer || m_areaElement)
+        return nil;
+    
     if (m_renderer->isImage()) {
         if (m_renderer->element() && m_renderer->element()->isHTMLElement()) {
             QString alt = static_cast<ElementImpl*>(m_renderer->element())->getAttribute(ATTR_ALT).string();
             return !alt.isEmpty() ? alt.getNSString() : nil;
         }
     }
-    else if (m_renderer->element() && m_renderer->element()->isHTMLElement() &&
-             Node(m_renderer->element()).elementId() == ID_BUTTON)
-        return [self textUnderElement];
-    else if (m_renderer->element() && m_renderer->element()->hasAnchor())
-        return [self textUnderElement];
-
+    
     return nil;
 }
 
@@ -471,6 +487,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             NSAccessibilityPositionAttribute,
             NSAccessibilitySizeAttribute,
             NSAccessibilityTitleAttribute,
+            ACCESSIBILITY_DESCRIPTION_ATTRIBUTE,
             NSAccessibilityValueAttribute,
             NSAccessibilityFocusedAttribute,
             NSAccessibilityEnabledAttribute,
@@ -628,6 +645,9 @@ static QRect boundingBoxRect(RenderObject* obj)
     
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute])
         return [self title];
+    
+    if ([attributeName isEqualToString: ACCESSIBILITY_DESCRIPTION_ATTRIBUTE])
+        return [self accessibilityDescription];
     
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute])
         return [self value];
