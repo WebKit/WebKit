@@ -1,3 +1,19 @@
+2003-05-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3109258 -- Unicode above U+FFFF not handled correctly when expressed as numeric entities
+
+        * khtml/html/htmltokenizer.cpp: (HTMLTokenizer::parseEntity): Keep track of the entity in
+        an unsigned integer that can hold 32 bits rather than a QChar. Convert to a pair of Unicode
+        surrogate code points if necessary.
+        
+        * khtml/misc/stringit.h: Add a second pushed character, used for the case where we have a pair of
+        surrogate characters for a single numeric entity.
+
+        * khtml/html/htmltokenizer.h: Add missing DOM:: that was compiling only due to "using namespace DOM"
+        in stringit.h. Replace EntityChar with EntityUnicodeValue.
+
 2003-05-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

@@ -694,6 +694,7 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
     {
         cBufferPos = 0;
         Entity = SearchEntity;
+        EntityUnicodeValue = 0;
     }
 
     while( src.length() )
@@ -701,9 +702,9 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
         ushort cc = src->unicode();
         switch(Entity) {
         case NoEntity:
+            assert(Entity != NoEntity);
             return;
-
-            break;
+        
         case SearchEntity:
             if(cc == '#') {
                 cBuffer[cBufferPos++] = cc;
@@ -730,7 +731,6 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
 
         case Hexadecimal:
         {
-            int uc = EntityChar.unicode();
             int ll = kMin(src.length(), 9-cBufferPos);
             while(ll--) {
                 QChar csrc(src->lower());
@@ -740,17 +740,15 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
                     Entity = SearchSemicolon;
                     break;
                 }
-                uc = uc*16 + (cc - ( cc < 'a' ? '0' : 'a' - 10));
+                EntityUnicodeValue = EntityUnicodeValue*16 + (cc - ( cc < 'a' ? '0' : 'a' - 10));
                 cBuffer[cBufferPos++] = cc;
                 ++src;
             }
-            EntityChar = QChar(uc);
             if(cBufferPos == 9) Entity = SearchSemicolon;
             break;
         }
         case Decimal:
         {
-            int uc = EntityChar.unicode();
             int ll = kMin(src.length(), 9-cBufferPos);
             while(ll--) {
                 cc = src->cell();
@@ -760,11 +758,10 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
                     break;
                 }
 
-                uc = uc * 10 + (cc - '0');
+                EntityUnicodeValue = EntityUnicodeValue * 10 + (cc - '0');
                 cBuffer[cBufferPos++] = cc;
                 ++src;
             }
-            EntityChar = QChar(uc);
             if(cBufferPos == 9)  Entity = SearchSemicolon;
             break;
         }
@@ -789,11 +786,11 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
                 if(cBufferPos > 1) {
                     const entity *e = findEntity(cBuffer, cBufferPos);
                     if(e)
-                        EntityChar = e->code;
+                        EntityUnicodeValue = e->code;
 
                     // be IE compatible
-                    if(tag && EntityChar.unicode() > 255 && *src != ';')
-                        EntityChar = QChar::null;
+                    if(tag && EntityUnicodeValue > 255 && *src != ';')
+                        EntityUnicodeValue = 0;
                 }
             }
             else
@@ -801,17 +798,29 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
         }
         case SearchSemicolon:
 
-            //kdDebug( 6036 ) << "ENTITY " << EntityChar.unicode() << ", " << res << endl;
+            //kdDebug( 6036 ) << "ENTITY " << EntityUnicodeValue << ", " << res << endl;
 
-            fixUpChar(EntityChar);
-
-            if ( EntityChar != QChar::null ) {
-                checkBuffer();
-                // Just insert it
+            // Don't allow surrogate code points, or values that are more than 21 bits.
+            if ((EntityUnicodeValue > 0 && EntityUnicodeValue < 0xD800)
+                    || (EntityUnicodeValue >= 0xE000 && EntityUnicodeValue <= 0x1FFFFF)) {
+            
                 if (*src == ';')
                     ++src;
 
-                src.push( EntityChar );
+                if (EntityUnicodeValue <= 0xFFFF) {
+                    QChar c(EntityUnicodeValue);
+                    fixUpChar(c);
+                    checkBuffer();
+                    src.push(c);
+                } else {
+                    // Convert to UTF-16, using surrogate code points.
+                    QChar c1(0xD800 | (((EntityUnicodeValue >> 16) - 1) << 6) | ((EntityUnicodeValue >> 10) & 0x3F));
+                    QChar c2(0xDC00 | (EntityUnicodeValue & 0x3FF));
+                    checkBuffer(2);
+                    src.push(c1);
+                    src.push(c2);
+                }
+
             } else {
 #ifdef TOKEN_DEBUG
                 kdDebug( 6036 ) << "unknown entity!" << endl;
@@ -822,15 +831,13 @@ void HTMLTokenizer::parseEntity(DOMStringIt &src, QChar *&dest, bool start)
                 for(unsigned int i = 0; i < cBufferPos; i++)
                     dest[i] = cBuffer[i];
                 dest += cBufferPos;
-                Entity = NoEntity;
                 if (pre)
                     prePos += cBufferPos+1;
             }
 
             Entity = NoEntity;
-            EntityChar = QChar::null;
             return;
-        };
+        }
     }
 }
 
