@@ -1,5 +1,27 @@
 2002-09-06  Richard Williamson (Home)  <rjw@apple.com>
 
+        Added support for khtml's justified text drawing.  Additional padding is distributed
+        to space widths.  (Sites like www.osnews.com now render correctly.)
+        
+        Change word end rounding hack to use ceil of word width.  I'm still noticing a spacing anomaly
+        that is fixed by a reload.  Occasionally text runs are still crammed together, but a reload uses
+        correct spacing.  This anomaly is often visible on www.arstechnica.com.  Still investigating.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawGlyphs:numGlyphs:fromGlyphPosition:toGlyphPosition:atPoint:withPadding:withTextColor:backgroundColor:]):
+        (-[WebTextRenderer slowDrawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:attemptFontSubstitution:]):
+        (-[WebTextRenderer _drawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:]):
+        (-[WebTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:]):
+        (-[WebTextRenderer slowFloatWidthForCharacters:stringLength:fromCharacterPostion:numberOfCharacters:applyRounding:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:applyRounding:attemptFontSubstitution:]):
+        
+        Tweaks to dragged image.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
+2002-09-06  Richard Williamson (Home)  <rjw@apple.com>
+
         Fixed symbol lookup problem.  NSLookupAndBindSymbol() dies horribly
         if symbol is missing.  Use NSIsSymbolNameDefined() first to check if
         symbol is present.

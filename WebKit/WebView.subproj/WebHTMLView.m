@@ -420,6 +420,8 @@
 #define DRAG_LABEL_BORDER_X		4.0
 #define DRAG_LABEL_BORDER_Y		2.0
 
+#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
+
 - (void)mouseDragged:(NSEvent *)event
 {
     // Ensure that we're visible wrt the event location.
@@ -471,8 +473,8 @@
                     urlStringSize = [urlString sizeWithAttributes: urlAttributes];
                     imageSize.height += urlStringSize.height;
                     // Clip the url string to 2.5 times the width of the label.
-                    if (urlStringSize.width > 2.5 * labelSize.width){
-                        imageSize.width = (labelSize.width * 2.5) + DRAG_LABEL_BORDER_X * 2;
+                    if (urlStringSize.width > MAX(2.5 * labelSize.width, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP)){
+                        imageSize.width = MAX((labelSize.width * 2.5) + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
                         clipURLString = YES;
                     }
                     else
@@ -496,7 +498,7 @@
                 [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:linkURL] andTitles:[NSArray arrayWithObject:label] toPasteboard:pasteboard];
 
                 NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
-                NSSize centerOffset = NSMakeSize(imageSize.width / 2, -imageSize.height / 2);
+                NSSize centerOffset = NSMakeSize(imageSize.width / 2, 0);
                 NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
 
                 [self dragImage:dragImage

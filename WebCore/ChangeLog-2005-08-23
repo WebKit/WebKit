@@ -1,3 +1,29 @@
+2002-09-06  Richard Williamson (Home)  <rjw@apple.com>
+
+        Start using khtml's 'toAdd' parameter to justify text.
+        
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+        
+        Normalize all calls to get width to minimize use of
+        ObjC.  Will make it easier to use IMPL cache later.
+        
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidth):
+        
+        Pass additional 'toAdd' parameter.
+        
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        * kwq/qt/qpainter.h:
+        
+        Remove methods now that width calls are normalized to single
+        method.
+        * kwq/WebCoreTextRenderer.h:
+
+
 === Alexander-22 ===
 
 2002-09-05  Richard Williamson (Local)  <rjw@apple.com>

@@ -359,14 +359,18 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
 
     const UniChar* str = (const UniChar*)qstring.unicode();
     if (alignmentFlags & Qt::AlignRight)
-	x -= [renderer widthForCharacters: str length: qstring.length()];
+    	x -= ROUND_TO_INT([renderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() applyRounding:YES attemptFontSubstitution: YES]);
      
     [renderer drawCharacters:str stringLength:qstring.length()
-        fromCharacterPosition:0 toCharacterPosition:qstring.length() atPoint:NSMakePoint(x, y)
-        withTextColor:data->state.pen.color().getNSColor() backgroundColor:nil];
+        fromCharacterPosition:0 
+        toCharacterPosition:qstring.length() 
+        atPoint:NSMakePoint(x, y)
+        withPadding: 0
+        withTextColor:data->state.pen.color().getNSColor() 
+        backgroundColor:nil];
 }
 
-void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, const QColor &backgroundColor)
+void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor)
 {
     if (data->state.paintingDisabled || len <= 0)
         return;
@@ -374,8 +378,12 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
     	drawCharacters:(const UniChar *)str stringLength:len
-        fromCharacterPosition:from toCharacterPosition:to atPoint:NSMakePoint(x, y)
-        withTextColor:data->state.pen.color().getNSColor() backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil];
+        fromCharacterPosition:from 
+        toCharacterPosition:to 
+        atPoint:NSMakePoint(x, y)
+        withPadding: toAdd
+        withTextColor:data->state.pen.color().getNSColor() 
+        backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil];
 }
 
 void QPainter::drawUnderlineForText(int x, int y, const QChar *str, int len)

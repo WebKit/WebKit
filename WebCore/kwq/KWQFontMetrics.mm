@@ -112,7 +112,7 @@ float QFontMetrics::xHeight() const
 int QFontMetrics::width(QChar qc) const
 {
     UniChar c = qc.unicode();
-    return [data->getRenderer() widthForCharacters:&c length:1];
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:&c stringLength:1 fromCharacterPosition:0 numberOfCharacters:1 applyRounding:YES attemptFontSubstitution: YES]);
 }
 
 int QFontMetrics::charWidth(const QString &s, int pos) const
@@ -123,32 +123,27 @@ int QFontMetrics::charWidth(const QString &s, int pos) const
 int QFontMetrics::width(char c) const
 {
     UniChar ch = (uchar) c;
-    return [data->getRenderer() widthForCharacters:&ch length:1];
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:&ch stringLength:1 fromCharacterPosition:0 numberOfCharacters:1 applyRounding:YES attemptFontSubstitution: YES]);
 }
 
 int QFontMetrics::width(const QString &qstring, int len) const
 {
-    NSString *string;
-
-    string = qstring.getNSString();
-    if (len != -1)
-        string = [string substringToIndex:len];
-    return [data->getRenderer() widthForString:string];
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)qstring.unicode() stringLength:len fromCharacterPosition:0 numberOfCharacters:len applyRounding:YES attemptFontSubstitution: YES]);
 }
 
 int QFontMetrics::width(const QChar *uchars, int len) const
 {
-    return [data->getRenderer() widthForCharacters:(const UniChar *)uchars length:len];
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:len fromCharacterPosition:0 numberOfCharacters:len applyRounding:YES attemptFontSubstitution: YES]);
 }
 
 float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len) const
 {
-    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len];
+    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len applyRounding: YES attemptFontSubstitution: YES];
 }
 
 float QFontMetrics::floatCharacterWidth(const QChar *uchars, int slen, int pos) const
 {
-    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen characterPosition:pos];
+    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:1 applyRounding: YES attemptFontSubstitution: YES];
 }
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const

@@ -41,7 +41,7 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
         int toAdd, QPainter::TextDirection d, int from, int to, QColor bg ) const
 {
 #ifdef APPLE_CHANGES
-    p->drawText(x, y, str + pos, std::min(slen - pos, len), from, to, bg);
+    p->drawText(x, y, str + pos, std::min(slen - pos, len), from, to, toAdd, bg);
 #else
     QString qstr = QConstString(str, slen).string();
 
