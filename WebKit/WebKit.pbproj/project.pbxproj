@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 35;
+	objectVersion = 34;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (

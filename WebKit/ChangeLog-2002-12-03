@@ -1,4 +1,16 @@
-2002-03-04  John Sullivan (local)  <sullivan@apple.com>
+2002-03-04  John Sullivan  <sullivan@apple.com>
+
+	Changed default fonts.
+
+	* WebView.subproj/IFWebDataSource.mm: 
+	(+[IFWebDataSource initialize]): Changed default fonts to ones
+	that actually exist (this was listing "Times-Roman" where it
+	meant either "Times" or "Times New Roman"). I'm about to check
+	in working font preferences, so it won't matter too much if you
+	don't like the defaults (although we should of course make sure
+	that the defaults are sensible, which I think they are).
+
+2002-03-04  John Sullivan  <sullivan@apple.com>
 
 	* WebView.subproj/IFWebDataSource.mm: (+[IFWebDataSource initialize]):
 	Reverted default fonts to what they were before I accidentally
