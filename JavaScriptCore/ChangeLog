@@ -1,3 +1,5 @@
+=== Safari-180 ===
+
 2005-01-19  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3853676> Browser Crash when accessing CCWeb Progress Page - KJS::Bindings::convertValueToJValue
