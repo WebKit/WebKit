@@ -51,6 +51,8 @@
 
 #import <WCURLHandle.h>
 
+#import <WCPluginWidget.h>
+
 #include <rendering/render_frames.h>
 
 #import <KWQView.h>
@@ -299,7 +301,6 @@ KHTMLPart::KHTMLPart(const KURL &url )
 void KHTMLPart::init()
 {
     d = new KHTMLPartPrivate(this);
-    pluginWidget = NULL;
 }
 
 
@@ -1737,9 +1738,13 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
     if(url.isEmpty()){
         return FALSE;
     }
-    if(pluginWidget == NULL){
-        pluginWidget = new WCPluginWidget(0, url, serviceType, args);
+    // requestObject can be called multiple times for a single plug-in.
+    // The plugins array is an attempt to avoid multiple creations of the same plug-in.
+    // FIXME: Can't have multiple plug-ins with the same URL on a page
+    if(!plugins.contains(url)){
+        WCPluginWidget *pluginWidget = new WCPluginWidget(0, url, serviceType, args);
         frame->setWidget(pluginWidget);
+        plugins.append(url);
     }
     return TRUE;
 #else
