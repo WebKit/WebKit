@@ -176,10 +176,10 @@ static time_t timetUsingCF(struct tm *tm, CFTimeZoneRef timeZone)
     }
 
     CFAbsoluteTime absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone);
-       CFTimeInterval interval = absoluteTime + kCFAbsoluteTimeIntervalSince1970;
-       if (interval > LONG_MAX) {
-               interval = LONG_MAX;
-       }
+    CFTimeInterval interval = absoluteTime + kCFAbsoluteTimeIntervalSince1970;
+    if (interval > LONG_MAX) {
+        interval = LONG_MAX;
+    }
 
     return (time_t) interval;
 }
