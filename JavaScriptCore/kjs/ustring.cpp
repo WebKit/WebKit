@@ -974,13 +974,8 @@ int KJS::compare(const UString& s1, const UString& s2)
   return (l1 < l2) ? 1 : -1;
 }
 
-// Given a first byte, gives the length of the UTF-8 sequence it begins.
-// Returns 0 for bytes that are not legal starts of UTF-8 sequences.
-// Only allows sequences of up to 4 bytes, since that works for all Unicode characters (U-00000000 to U-0010FFFF).
-int UTF8SequenceLength(char b0)
+inline int inlineUTF8SequenceLengthNonASCII(char b0)
 {
-  if ((b0 & 0x80) == 0)
-    return 1;
   if ((b0 & 0xC0) != 0xC0)
     return 0;
   if ((b0 & 0xE0) == 0xC0)
@@ -992,6 +987,24 @@ int UTF8SequenceLength(char b0)
   return 0;
 }
 
+int UTF8SequenceLengthNonASCII(char b0)
+{
+  return inlineUTF8SequenceLengthNonASCII(b0);
+}
+
+inline int inlineUTF8SequenceLength(char b0)
+{
+  return (b0 & 0x80) == 0 ? 1 : UTF8SequenceLengthNonASCII(b0);
+}
+
+// Given a first byte, gives the length of the UTF-8 sequence it begins.
+// Returns 0 for bytes that are not legal starts of UTF-8 sequences.
+// Only allows sequences of up to 4 bytes, since that works for all Unicode characters (U-00000000 to U-0010FFFF).
+int UTF8SequenceLength(char b0)
+{
+  return (b0 & 0x80) == 0 ? 1 : inlineUTF8SequenceLengthNonASCII(b0);
+}
+
 // Takes a null-terminated C-style string with a UTF-8 sequence in it and converts it to a character.
 // Only allows Unicode characters (U-00000000 to U-0010FFFF).
 // Returns -1 if the sequence is not valid (including presence of extra bytes).
@@ -999,7 +1012,7 @@ int decodeUTF8Sequence(const char *sequence)
 {
   // Handle 0-byte sequences (never valid).
   const unsigned char b0 = sequence[0];
-  const int length = UTF8SequenceLength(b0);
+  const int length = inlineUTF8SequenceLength(b0);
   if (length == 0)
     return -1;
 
@@ -1136,14 +1149,70 @@ static StringOffset *createSortedOffsetsArray(const int offsets[], int numOffset
         sortedOffsets = new StringOffset [numOffsets];
     }
 
-    // Copy offsets.
-    for (int i = 0; i != numOffsets; ++i) {
-        sortedOffsets[i].offset = offsets[i];
-        sortedOffsets[i].locationInOffsetsArray = i;
-    }
+    // Copy offsets and sort them.
+    // (Since qsort showed up on profiles, hand code for numbers up to 3.)
 
-    // Sort them.
-    qsort(sortedOffsets, numOffsets, sizeof(StringOffset), compareStringOffsets);
+    switch (numOffsets) {
+        case 0:
+            break;
+        case 1:
+            sortedOffsets[0].offset = offsets[0];
+            sortedOffsets[0].locationInOffsetsArray = 0;
+            break;
+        case 2: {
+            if (offsets[0] <= offsets[1]) {
+                sortedOffsets[0].offset = offsets[0];
+                sortedOffsets[0].locationInOffsetsArray = 0;
+                sortedOffsets[1].offset = offsets[1];
+                sortedOffsets[1].locationInOffsetsArray = 1;
+            } else {
+                sortedOffsets[0].offset = offsets[1];
+                sortedOffsets[0].locationInOffsetsArray = 1;
+                sortedOffsets[1].offset = offsets[0];
+                sortedOffsets[1].locationInOffsetsArray = 0;
+            }
+            break;
+        }
+        case 3: {
+            int i0, i1, i2;
+            if (offsets[0] <= offsets[1]) {
+                if (offsets[0] <= offsets[2]) {
+                    i0 = 0;
+                    if (offsets[1] <= offsets[2]) {
+                        i1 = 1; i2 = 2;
+                    } else {
+                        i1 = 2; i2 = 1;
+                    }
+                } else {
+                    i0 = 2; i1 = 0; i2 = 1;
+                }
+            } else {
+                if (offsets[1] <= offsets[2]) {
+                    i0 = 1;
+                    if (offsets[0] <= offsets[2]) {
+                        i1 = 0; i2 = 2;
+                    } else {
+                        i1 = 2; i2 = 0;
+                    }
+                } else {
+                    i0 = 2; i1 = 1; i2 = 0;
+                }
+            }
+            sortedOffsets[0].offset = offsets[i0];
+            sortedOffsets[0].locationInOffsetsArray = i0;
+            sortedOffsets[1].offset = offsets[i1];
+            sortedOffsets[1].locationInOffsetsArray = i1;
+            sortedOffsets[2].offset = offsets[i2];
+            sortedOffsets[2].locationInOffsetsArray = i2;
+            break;
+        }
+        default:
+            for (int i = 0; i != numOffsets; ++i) {
+                sortedOffsets[i].offset = offsets[i];
+                sortedOffsets[i].locationInOffsetsArray = i;
+            }
+            qsort(sortedOffsets, numOffsets, sizeof(StringOffset), compareStringOffsets);
+    }
 
     return sortedOffsets;
 }
@@ -1164,7 +1233,7 @@ void convertUTF16OffsetsToUTF8Offsets(const char *s, int *offsets, int numOffset
         const int nextOffset = sortedOffsets[oi].offset;
         while (*p && UTF16Offset < nextOffset) {
             // Skip to the next character.
-            const int sequenceLength = UTF8SequenceLength(*p);
+            const int sequenceLength = inlineUTF8SequenceLength(*p);
             assert(sequenceLength >= 1 && sequenceLength <= 4);
             p += sequenceLength;
             // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
@@ -1195,7 +1264,7 @@ void convertUTF8OffsetsToUTF16Offsets(const char *s, int *offsets, int numOffset
         const int nextOffset = sortedOffsets[oi].offset;
         while (*p && (p - s) < nextOffset) {
             // Skip to the next character.
-            const int sequenceLength = UTF8SequenceLength(*p);
+            const int sequenceLength = inlineUTF8SequenceLength(*p);
             assert(sequenceLength >= 1 && sequenceLength <= 4);
             p += sequenceLength;
             // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.

@@ -72,6 +72,8 @@ int main(int argc, char **argv)
 
   bool ret = true;
   {
+    Interpreter::lock();
+
     Object global(new GlobalImp());
 
     // create interpreter
@@ -127,6 +129,7 @@ int main(int argc, char **argv)
       }
     }
 
+    Interpreter::unlock();
   } // end block, so that Interpreter and global get deleted
 
   if (ret)

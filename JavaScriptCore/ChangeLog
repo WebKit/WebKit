@@ -1,3 +1,26 @@
+2004-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed things seen in the profile, for a total speedup of 4% on cvs-base (including changes across all projects)
+
+        * JavaScriptCorePrefix.h: Add a workaround for a bug in our system headers that prevents the <ctype.h>
+        macros from working right in C++ code that uses the <cctype> header.
+
+        * kjs/ustring.cpp:
+        (KJS::inlineUTF8SequenceLengthNonASCII): Added.
+        (KJS::UTF8SequenceLengthNonASCII): Added.
+        (KJS::inlineUTF8SequenceLength): Added.
+        (KJS::UTF8SequenceLength): Calls inlineUTF8SequenceLengthNonASCII now.
+        (KJS::decodeUTF8Sequence): Use new inlineUTF8SequenceLengthNonASCII; faster for ASCII.
+        (KJS::createSortedOffsetsArray): Add special case for 1, 2, and 3 offsets, so we don't do qsort for those.
+        (KJS::convertUTF16OffsetsToUTF8Offsets): Use new inlineUTF8SequenceLengthNonASCII; faster for ASCII.
+        (KJS::convertUTF8OffsetsToUTF16Offsets): Use new inlineUTF8SequenceLengthNonASCII; faster for ASCII.
+
+        - fixed the test program so it won't hit the interpreter lock assertion
+
+        * kjs/testkjs.cpp: (main): Just lock around the whole thing, since the test is singly threaded.
+
 === Safari-127 ===
 
 2004-02-06  Richard Williamson   <rjw@apple.com>
