@@ -1,3 +1,18 @@
+2003-07-24  Richard Williamson   <rjw@apple.com>
+
+	Removed unnecessary log.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithData:MIMEType:]):
+	
+	Add another check to use ATSU for Limbu (Unicode 4.0) script.
+	Also made shouldUseATSU inline.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (shouldUseATSU):
+
 === Safari-90 ===
 
 2003-07-23  Maciej Stachowiak  <mjs@apple.com>

@@ -76,7 +76,6 @@
     NSArray *reps = [imageRenderer representations];
     if ([reps count] == 0){
         [imageRenderer release];
-        NSLog (@"Unable to allocate image renderer");
         return nil;
     }
     

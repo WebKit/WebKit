@@ -98,7 +98,7 @@ struct SubstituteFontWidthMap {
 #define FixToFloat(f) ((float)((f)  * (1./(float)kFixedOne)))
 #define FloatToFixed(a) ((Fixed)((float)(a) * fixed1))
 
-static BOOL shouldUseATSU(WebCoreTextRun run)
+static inline BOOL shouldUseATSU(WebCoreTextRun run)
 {
     UniChar c;
     const UniChar *characters = run.characters;
@@ -120,6 +120,8 @@ static BOOL shouldUseATSU(WebCoreTextRun run)
         if (c >= 0x1100 && c <= 0x11FF)     // U+1100 through U+11FF Hangul Jamo (only Ancient Korean should be left here if you precompose; Modern Korean will be precomposed as a result of step A)
             return YES;
         if (c >= 0x1780 && c <= 0x18AF)     // U+1780 through U+18AF Khmer, Mongolian
+            return YES;
+        if (c >= 0x1900 && c <= 0x194F)     // U+1900 through U+194F Limbu (Unicode 4.0)
             return YES;
     }
     
