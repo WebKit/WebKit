@@ -1,3 +1,12 @@
+2005-01-19  David Hyatt  <hyatt@apple.com>
+
+	Dont null-check the renderer before submitting, since a script can set it to display:none and still expect the
+	submission to occur.  Fixes bug #3477282.
+	
+        Reviewed by kdecker
+
+        (DOM::HTMLInputElementImpl::defaultEventHandler):
+
 2005-01-18  Richard Williamson   <rjw@apple.com>
 	
 	Fixed several issues all arising from analysis of plugin detection code at ifilm.com:

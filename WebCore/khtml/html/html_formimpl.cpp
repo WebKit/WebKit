@@ -1981,7 +1981,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
     if ((evt->id() == EventImpl::DOMACTIVATE_EVENT) &&
         (m_type == IMAGE || m_type == SUBMIT || m_type == RESET)){
 
-        if (!m_form || !m_render)
+        if (!m_form)
             return;
 
         if (m_type == RESET) {
