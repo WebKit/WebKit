@@ -207,6 +207,8 @@
 				F692A8C40255597D01FF60F7,
 				F692A8CC02555BA201FF60F7,
 				F692A8CD02555BA201FF60F7,
+				F68EBB8E0255D4C601FF60F7,
+				F68EBB8F0255D4C601FF60F7,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -357,6 +359,8 @@
 				F692A8860255597D01FF60F7,
 				F692A8870255597D01FF60F7,
 				F692A8880255597D01FF60F7,
+				F68EBB8C0255D4C601FF60F7,
+				F68EBB8D0255D4C601FF60F7,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -411,6 +415,36 @@
 //F62
 //F63
 //F64
+		F68EBB8C0255D4C601FF60F7 = {
+			isa = PBXFileReference;
+			name = config.h;
+			path = kjs/config.h;
+			refType = 4;
+		};
+		F68EBB8D0255D4C601FF60F7 = {
+			isa = PBXFileReference;
+			name = KWQDef.h;
+			path = kjs/KWQDef.h;
+			refType = 4;
+		};
+		F68EBB8E0255D4C601FF60F7 = {
+			fileRef = F68EBB8C0255D4C601FF60F7;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		F68EBB8F0255D4C601FF60F7 = {
+			fileRef = F68EBB8D0255D4C601FF60F7;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
 		F692A84D0255597D01FF60F7 = {
 			isa = PBXFileReference;
 			name = array_object.cpp;
@@ -763,6 +797,9 @@
 			fileRef = F692A84E0255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A88B0255597D01FF60F7 = {
@@ -781,6 +818,9 @@
 			fileRef = F692A8510255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A88E0255597D01FF60F7 = {
@@ -793,6 +833,9 @@
 			fileRef = F692A8530255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8900255597D01FF60F7 = {
@@ -811,6 +854,9 @@
 			fileRef = F692A8560255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8930255597D01FF60F7 = {
@@ -841,6 +887,9 @@
 			fileRef = F692A85B0255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8980255597D01FF60F7 = {
@@ -853,6 +902,9 @@
 			fileRef = F692A85D0255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A89A0255597D01FF60F7 = {
@@ -865,6 +917,9 @@
 			fileRef = F692A85F0255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A89D0255597D01FF60F7 = {
@@ -877,6 +932,9 @@
 			fileRef = F692A8620255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A89F0255597D01FF60F7 = {
@@ -889,6 +947,9 @@
 			fileRef = F692A8640255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F692A8A10255597D01FF60F7 = {
@@ -931,6 +992,9 @@
 			fileRef = F692A86B0255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8A80255597D01FF60F7 = {
@@ -961,6 +1025,9 @@
 			fileRef = F692A8710255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8AE0255597D01FF60F7 = {
@@ -979,6 +1046,9 @@
 			fileRef = F692A8740255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8B10255597D01FF60F7 = {
@@ -991,6 +1061,9 @@
 			fileRef = F692A8760255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F692A8B30255597D01FF60F7 = {
@@ -1027,6 +1100,9 @@
 			fileRef = F692A87C0255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8B90255597D01FF60F7 = {
@@ -1039,6 +1115,9 @@
 			fileRef = F692A87E0255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8BB0255597D01FF60F7 = {
@@ -1051,6 +1130,9 @@
 			fileRef = F692A8800255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8BD0255597D01FF60F7 = {
@@ -1069,6 +1151,9 @@
 			fileRef = F692A8840255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F692A8C10255597D01FF60F7 = {
@@ -1081,6 +1166,9 @@
 			fileRef = F692A8860255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F692A8C30255597D01FF60F7 = {
@@ -1093,6 +1181,9 @@
 			fileRef = F692A8880255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F692A8C802555BA201FF60F7 = {

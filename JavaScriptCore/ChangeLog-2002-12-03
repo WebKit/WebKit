@@ -1,5 +1,10 @@
 2002-03-30  Maciej Stachowiak  <mjs@apple.com>
 
+	* JavaScriptCore.pbproj/project.pbxproj: Install some of the
+	headers.
+
+2002-03-30  Maciej Stachowiak  <mjs@apple.com>
+
 	Converted JavaScriptCore to build with Project Builder, in
 	preparation for B&I submission.
 
