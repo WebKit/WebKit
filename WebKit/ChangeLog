@@ -1,3 +1,12 @@
+2003-10-03  Richard Williamson (Home0  <rjw@apple.com>
+
+	Fixed some edge case issue (control characters after end of word) with our rounding hack.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+
 2003-10-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin, with much help from Maciej and Hyatt

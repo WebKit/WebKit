@@ -1435,6 +1435,44 @@ static const char *joiningNames[] = {
             c = SPACE;
         }
         
+        // Drop out early if we've measured to the end of the requested
+        // fragment.
+        if ((int)i - pos >= len) {
+            if (style->applyRounding) {
+                BOOL needsRounding = NO;
+                
+                // Check if next character is a space. If so, we have to apply rounding.
+                if (c == SPACE) {
+                    needsRounding = YES;
+                }
+                // Also check if we have a run of control characters followed by a space
+                // or end of string.  If so, we have to apply rounding.
+                else {
+                    i++;
+                    while (isControlCharacter(c) && i < stringLength){
+                        c = characters[i];
+                        i++;
+                    }
+                    if (i == stringLength || c == SPACE) {
+                        needsRounding = YES;
+                    }
+                }
+                
+                if (needsRounding) {
+                    float delta = CEIL_TO_INT(widthFromStart) - widthFromStart;
+                    if (i >= (unsigned)pos)
+                        totalWidth += delta;
+                    widthFromStart += delta;
+                    if (widthBuffer && numGlyphs > 0)
+                        widthBuffer[numGlyphs - 1] += delta;
+                }
+            }
+            if (glyphBuffer && i < (unsigned)to && endGlyph)
+                *endGlyph = numGlyphs-1;
+
+            break;
+        }
+
         // Skip control characters.
         if (isControlCharacter(c)) {
             if (glyphBuffer && i < (unsigned)to && endGlyph)
@@ -1442,24 +1480,6 @@ static const char *joiningNames[] = {
             continue;
         }
         
-        // Drop out early if we've measured to the end of the requested
-        // fragment.
-        if ((int)i - pos >= len) {
-            // Check if next character is a space. If so, we have to apply rounding.
-            if (c == SPACE && style->applyRounding) {
-                float delta = CEIL_TO_INT(widthFromStart) - widthFromStart;
-                if (i >= (unsigned)pos)
-                    totalWidth += delta;
-                widthFromStart += delta;
-                if (widthBuffer && numGlyphs > 0)
-                    widthBuffer[numGlyphs - 1] += delta;
-            }
-
-            if (glyphBuffer && i < (unsigned)to && endGlyph)
-                *endGlyph = numGlyphs-1;
-
-            break;
-        }
         // Deal with surrogate pairs
         if (c >= HighSurrogateRangeStart && c <= HighSurrogateRangeEnd){
             high = c;
