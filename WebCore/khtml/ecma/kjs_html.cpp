@@ -32,7 +32,9 @@
 
 // ### HACK
 #include "html/html_baseimpl.h"
+#include "html/html_canvasimpl.h"
 #include "html/html_documentimpl.h"
+#include "html/html_imageimpl.h"
 #include "html/html_objectimpl.h"
 
 #include "khtml_part.h"
@@ -3380,6 +3382,9 @@ extern void CGContextReplacePathWithStrokedPath(CGContextRef c);
 
 }
 
+#define BITS_PER_COMPONENT 8
+#define BYTES_PER_ROW(width,bitsPerComponent,numComponents) ((width * bitsPerComponent * numComponents + 7)/8)
+
 Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
     if (!thisObj.inherits(&Context2D::info)) {
@@ -3951,36 +3956,147 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             CGContextSetShadowWithColor (drawingContext, CGSizeMake(0, 0), 0, nil);
             break;
         }
+
+        // DrawImage has three variants:
+        // drawImage (img, dx, dy)
+        // drawImage (img, dx, dy, dw, dh)
+        // drawImage (img, sx, sy, sw, sh, dx, dy, dw, dh)
+        // composite operation is specified with globalCompositeOperation
+        // img parameter can be a JavaScript Image, <img>, or a <canvas>
         case Context2D::DrawImage: {
-            // FIXME:  Add support for other variants of arguments.
-            if (args.size() != 6) {
+            if (args.size() < 3) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
+            
+            // Make sure first argument is an object.
             ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
-            if (o->type() != ObjectType || !o->inherits(&Image::info)) {
+            if (o->type() != ObjectType) {
                 Object err = Error::create(exec,TypeError);
                 exec->setException(err);
                 return err;
             }
-            Image *i = static_cast<Image*>(o);
-            float x = args[1].toNumber(exec);
-            float y = args[2].toNumber(exec);
-            float w = args[3].toNumber(exec);
-            float h = args[4].toNumber(exec);
-            QString compositeOperator = args[5].toString(exec).qstring().lower();
-            khtml::CachedImage *ci = i->image();
-            if (ci) {
-                QPixmap pixmap = ci->pixmap();
-                QPainter p;
-                p.drawFloatPixmap (x, y, w, h, pixmap, 0.f, 0.f, w, h, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
-                
-                if (contextObject->_needsFlushRasterCache)
-                    pixmap.flushRasterCache();
 
-                renderer->setNeedsImageUpdate();
+            float w;
+            float h;
+            QPixmap pixmap;
+            CGContextRef sourceContext = 0;
+            
+            // Check for JavaScript Image, <img> or <canvas>.
+            if (o->inherits(&Image::info)) {
+                Image *i = static_cast<Image*>(o);
+                khtml::CachedImage *ci = i->image();
+                if (ci) {
+                    pixmap = ci->pixmap();
+                }
+                else {
+                    // No image.
+                    return Undefined();
+                }
+                w = pixmap.width();
+                h = pixmap.height();
             }
+            else if (o->inherits(&KJS::HTMLElement::img_info)){
+                DOM::HTMLElement element = static_cast<KJS::HTMLElement *>(args[0].imp())->toElement();
+                DOM::HTMLImageElementImpl *e = static_cast<DOM::HTMLImageElementImpl*>(element.handle());
+                pixmap = e->pixmap();
+                w = pixmap.width();
+                h = pixmap.height();
+            }
+            else if (o->inherits(&KJS::HTMLElement::canvas_info)){
+                DOM::HTMLElement element = static_cast<KJS::HTMLElement *>(args[0].imp())->toElement();
+                DOM::HTMLCanvasElementImpl *e = static_cast<DOM::HTMLCanvasElementImpl*>(element.handle());
+                khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(e->renderer());
+                if (!renderer) {
+                    // No renderer, nothing to draw.
+                    return Undefined();
+                }
+
+                sourceContext = renderer->drawingContext();
+                w = (float)CGBitmapContextGetWidth(sourceContext);
+                h = (float)CGBitmapContextGetHeight(sourceContext);
+            }
+            else {
+                Object err = Error::create(exec,TypeError);
+                exec->setException(err);
+                return err;
+            }
+            
+            float dx, dy, dw = w, dh = h;
+            float sx = 0.f, sy = 0.f, sw = w, sh = h;
+            
+            if (args.size() <= 3) {
+                dx = args[1].toNumber(exec);
+                dy = args[2].toNumber(exec);
+            }
+            else if (args.size() <= 5) {
+                dx = args[1].toNumber(exec);
+                dy = args[2].toNumber(exec);
+                dw = args[3].toNumber(exec);
+                dh = args[4].toNumber(exec);
+            }
+            else if (args.size() <= 9) {
+                sx = args[1].toNumber(exec);
+                sy = args[2].toNumber(exec);
+                sw = args[3].toNumber(exec);
+                sh = args[4].toNumber(exec);
+                dx = args[5].toNumber(exec);
+                dy = args[6].toNumber(exec);
+                dw = args[7].toNumber(exec);
+                dh = args[8].toNumber(exec);
+            }
+            else {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+
+            if (!sourceContext) {
+                QPainter p;
+                p.drawFloatPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, 
+                    QPainter::compositeOperatorFromString(contextObject->_globalComposite.toString(exec).qstring().lower()), drawingContext);
+            }
+            else {
+                // Cheap, because the image is backed by copy-on-write memory, and we're
+                // guaranteed to release before doing any more drawing in the source context.
+                CGImageRef sourceImage = CGBitmapContextCreateImage(sourceContext);
+                if (sx == 0 && sy == 0 && sw == w && sh == h) {
+                    // Fast path, yay!
+                    CGContextDrawImage (drawingContext, CGRectMake(dx, dy, dw, dh), sourceImage);
+                }
+                else {
+                    // Create a new bitmap of the appropriate size and then draw that into our context.
+                    // Slow path, boo!
+                    CGContextRef clippedSourceContext;
+                    CGImageRef clippedSourceImage;
+                    size_t csw = (size_t)sw;
+                    size_t csh = (size_t)sh;
+                                        
+                    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+                    size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
+                    size_t bytesPerRow = BYTES_PER_ROW(csw,BITS_PER_COMPONENT,(numComponents+1)); // + 1 for alpha
+                    void *_drawingContextData = malloc(csh * bytesPerRow);
+                    
+                    clippedSourceContext = CGBitmapContextCreate(_drawingContextData, csw, csh, BITS_PER_COMPONENT, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
+                    CGContextTranslateCTM (clippedSourceContext, -sx, -sy);
+                    CGContextDrawImage (clippedSourceContext, CGRectMake(0,0,w,h), sourceImage);
+                    clippedSourceImage = CGBitmapContextCreateImage(clippedSourceContext);
+                    CGContextDrawImage (drawingContext, CGRectMake(dx, dy, dw, dh), clippedSourceImage);
+                    
+                    CGImageRelease (clippedSourceImage);
+                    CGContextRelease (clippedSourceContext);
+                    free (_drawingContextData);
+                }
+                
+                CGImageRelease (sourceImage);
+            }
+            
+            if (contextObject->_needsFlushRasterCache)
+                pixmap.flushRasterCache();
+
+            renderer->setNeedsImageUpdate();
+
             break;
         }
         case Context2D::DrawImageFromRect: {

@@ -28,6 +28,8 @@
 #include "misc/khtmllayout.h"
 #include "rendering/render_object.h"
 
+#include <loader.h>
+
 #include <qregion.h>
 #include <qmap.h>
 #include <qpixmap.h>
@@ -95,6 +97,7 @@ public:
 
 #if APPLE_CHANGES
     QString compositeOperator() const { return _compositeOperator; }
+    const QPixmap &pixmap() { return m_imageLoader.image()->pixmap(); }
 #endif
     
 protected:
