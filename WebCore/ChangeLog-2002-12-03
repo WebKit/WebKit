@@ -1,5 +1,13 @@
 2002-11-21  David Hyatt  <hyatt@apple.com>
 
+	Nested <a>s are never allowed.  Make sure to always pop the
+	<a> blocks.
+	
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::getElement):
+
+2002-11-21  David Hyatt  <hyatt@apple.com>
+
 	Stop table cells from repainting the whole table when they
 	get a repaint.  Gives another big boost to link rollover
 	performance when links' containing blocks are table cells.

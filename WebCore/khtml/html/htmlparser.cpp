@@ -986,8 +986,8 @@ NodeImpl *KHTMLParser::getElement(Token* t)
 
 // anchor
     case ID_A:
-        if (blockStack && blockStack->id == ID_A)
-            popBlock(ID_A);
+        // Never allow nested <a>s.
+        popBlock(ID_A);
 
         n = new HTMLAnchorElementImpl(document);
         break;
