@@ -110,6 +110,7 @@ namespace KJS {
      */
     void setCurrentEvent( DOM::Event *evt ) { m_evt = evt; }
     void setInlineCode( bool inlineCode ) { m_inlineCode = inlineCode; }
+    void setProcessingTimerCallback( bool timerCallback ) { m_timerCallback = timerCallback; }
     /**
      * "Smart" window.open policy
      */
@@ -120,6 +121,7 @@ namespace KJS {
     QPtrDict<DOMObject> m_domObjects;
     DOM::Event *m_evt;
     bool m_inlineCode;
+    bool m_timerCallback;
   };
   /**
    * Retrieve from cache, or create, a KJS object around a DOM object

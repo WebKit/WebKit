@@ -1,3 +1,15 @@
+2002-11-05  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3027404 - pop-up ads not always suppressed
+	
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::isWindowOpenAllowed): Don't allow opening if
+	we are in a timer callback - for reasons unexplained this will
+	always show up as an inline script.
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_window.cpp:
+        (ScheduledAction::execute): Note that we're in a timer callback.
+
 2002-11-04  Richard Williamson  <rjw@apple.com>
 
         Changes to support cursive letter forms.
