@@ -1,3 +1,39 @@
+2005-02-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for these bugs:
+        
+        <rdar://problem/4014228> REGRESSION (186-187) extra, uneditable lines inserted above and below a line of pasted quoted text
+        <rdar://problem/4014393> REGRESSION (186-187) pasted quoted text gets extra <cr>s when pasted at top of document
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::ReplacementFragment): Part of a general refactoring of how
+        the fragment is inserted into the document, rendered, and then tested for certain
+        important pieces of information that are required for pasting.
+        (khtml::ReplacementFragment::insertFragmentForTestRendering): New helper. Handles inserting
+        the fragment nodes into the document.
+        (khtml::ReplacementFragment::restoreTestRenderingNodesToFragment): Removes nodes from the
+        document, and restores them to the fragment.
+        (khtml::ReplacementFragment::computeStylesUsingTestRendering): Factored out code that
+        did this before into its own function.
+        (khtml::ReplacementFragment::removeUnrenderedNodesUsingTestRendering): Ditto.
+        (khtml::ReplacementFragment::countRenderedBlocks): This is a real improvement, as it
+        eliminates a major use of the isProbablyBlock() function. Now, the blocks that are
+        counted are real, rendered blocks.
+        (khtml::ReplacementFragment::removeStyleNodes): Made this function retain margin-zeroing
+        CSS properties on paragraphs. This does two things: 1) It helps us to maintain good behavior
+        in the short term while there are still versions of Mail out there that use <p> elements
+        instead of <div> elements for new paragraphs; and 2) It will help to maintain the compatibility
+        with other mail clients that use <p> elements for their paragraphs but render them themselves
+        with no margins as the result of quirks.
+        (khtml::ReplaceSelectionCommand::doApply): Do some work to fix up and improve the handling
+        of blank lines, be they <p> elements or <br> elements, that can be removed after pasting. This, 
+        coupled with the refactoring, fixes 4014393.
+        * khtml/editing/htmlediting.h: Updated for new functions.
+        * layout-tests/editing/pasteboard/paste-text-010-expected.txt: Updated results, actually improved with this change.
+        * layout-tests/editing/pasteboard/paste-text-011-expected.txt: Ditto.
+
 2005-02-19  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Chris.

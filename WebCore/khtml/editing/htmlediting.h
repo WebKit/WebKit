@@ -690,7 +690,11 @@ private:
     static bool isInterchangeNewlineNode(const DOM::NodeImpl *);
     static bool isInterchangeConvertedSpaceSpan(const DOM::NodeImpl *);
 
-    void computeStylesAndRemoveUnrendered();
+    DOM::NodeImpl *insertFragmentForTestRendering();
+    void restoreTestRenderingNodesToFragment(DOM::NodeImpl *);
+    void computeStylesUsingTestRendering(DOM::NodeImpl *);
+    void removeUnrenderedNodesUsingTestRendering(DOM::NodeImpl *);
+    int countRenderedBlocks(DOM::NodeImpl *holder);
     void removeStyleNodes();
     void removeBlockquoteColorsIfNeeded(DOM::NodeImpl *, DOM::CSSMutableStyleDeclarationImpl *);
 

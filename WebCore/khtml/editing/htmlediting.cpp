@@ -3969,7 +3969,6 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
     m_type = TreeFragment;
 
     NodeImpl *node = m_fragment->firstChild();
-    int realBlockCount = 0;
     NodeImpl *nodeToDelete = 0;
     while (node) {
         NodeImpl *next = node->traverseNextNode();
@@ -3989,30 +3988,24 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
             if (n)
                 next = n->traverseNextNode();
         }
-        else if (isProbablyBlock(node))
-            realBlockCount++;    
         node = next;
     }
 
     if (nodeToDelete)
         removeNode(nodeToDelete);
 
-    // Prepare this fragment to merge styles correctly into the destination.
+    
+    NodeImpl *holder = insertFragmentForTestRendering();
+    holder->ref();
     if (!m_matchStyle) {
-        computeStylesAndRemoveUnrendered();
+        computeStylesUsingTestRendering(holder);
     }
+    removeUnrenderedNodesUsingTestRendering(holder);
+    m_hasMoreThanOneBlock = countRenderedBlocks(holder) > 1;
+    restoreTestRenderingNodesToFragment(holder);
+    removeNode(holder);
+    holder->deref();
     removeStyleNodes();
-
-    int blockCount = realBlockCount;
-    firstChild = m_fragment->firstChild();
-    lastChild = m_fragment->lastChild();
-    if (!isProbablyBlock(firstChild))
-        blockCount++;
-    if (!isProbablyBlock(lastChild) && realBlockCount > 0)
-        blockCount++;
-
-    if (blockCount > 1)
-        m_hasMoreThanOneBlock = true;
 }
 
 ReplacementFragment::~ReplacementFragment()
@@ -4136,45 +4129,32 @@ void ReplacementFragment::insertNodeBefore(NodeImpl *node, NodeImpl *refNode)
     ASSERT(exceptionCode == 0);
 }
 
-void ReplacementFragment::computeStylesAndRemoveUnrendered()
+NodeImpl *ReplacementFragment::insertFragmentForTestRendering()
 {
-    // This function inserts the nodes from the fragment into the destination
-    // document and computes the style for each. This information will be
-    // used later to apply the necessary styles to the nodes after placing
-    // them in their intended location.
     NodeImpl *body = m_document->body();
     if (!body)
-        return;
+        return 0;
 
     ElementImpl *holder = createDefaultParagraphElement(m_document);
-    holder->ref();
-
-    QPtrList<NodeImpl> unrendered;
+    
     int exceptionCode = 0;
     holder->appendChild(m_fragment, exceptionCode);
     ASSERT(exceptionCode == 0);
+    
     body->appendChild(holder, exceptionCode);
     ASSERT(exceptionCode == 0);
+    
     m_document->updateLayout();
-    for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode()) {
-        if (!isNodeRendered(node)) {
-            unrendered.append(node);
-        }
-        else {
-            CSSComputedStyleDeclarationImpl *computedStyle = Position(node, 0).computedStyle();
-            computedStyle->ref();
-            CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
-            style->ref();
-            node->ref();
-            removeBlockquoteColorsIfNeeded(node, style);
-            m_styles[node] = style;
-            computedStyle->deref();
-        }
-    }
-    body->removeChild(holder, exceptionCode);
-    ASSERT(exceptionCode == 0);
-    m_document->updateLayout();
+    
+    return holder;
+}
 
+void ReplacementFragment::restoreTestRenderingNodesToFragment(NodeImpl *holder)
+{
+    if (!holder)
+        return;
+
+    int exceptionCode = 0;
     while (NodeImpl *node = holder->firstChild()) {
         node->ref();
         holder->removeChild(node, exceptionCode);
@@ -4183,11 +4163,67 @@ void ReplacementFragment::computeStylesAndRemoveUnrendered()
         ASSERT(exceptionCode == 0);
         node->deref();
     }
+}
+
+void ReplacementFragment::computeStylesUsingTestRendering(NodeImpl *holder)
+{
+    if (!holder)
+        return;
+
+    m_document->updateLayout();
+
+    for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
+        CSSComputedStyleDeclarationImpl *computedStyle = Position(node, 0).computedStyle();
+        computedStyle->ref();
+        CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
+        style->ref();
+        node->ref();
+        removeBlockquoteColorsIfNeeded(node, style);
+        m_styles[node] = style;
+        computedStyle->deref();
+    }
+}
+
+void ReplacementFragment::removeUnrenderedNodesUsingTestRendering(NodeImpl *holder)
+{
+    if (!holder)
+        return;
+
+    QPtrList<NodeImpl> unrendered;
+
+    for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
+        if (!isNodeRendered(node))
+            unrendered.append(node);
+    }
 
     for (QPtrListIterator<NodeImpl> it(unrendered); it.current(); ++it)
         removeNode(it.current());
+}
 
-    holder->deref();
+int ReplacementFragment::countRenderedBlocks(NodeImpl *holder)
+{
+    if (!holder)
+        return 0;
+    
+    int count = 0;
+    NodeImpl *prev = 0;
+    for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
+        if (node->isBlockFlow()) {
+            if (!prev) {
+                count++;
+                prev = node;
+            }
+        }
+        else {
+            NodeImpl *block = node->enclosingBlockFlowElement();
+            if (block != prev) {
+                count++;
+                prev = block;
+            }
+        }
+    }
+    
+    return count;
 }
 
 void ReplacementFragment::removeStyleNodes()
@@ -4217,8 +4253,22 @@ void ReplacementFragment::removeStyleNodes()
         else if (node->isHTMLElement()) {
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
             CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->inlineStyleDecl();
-            if (inlineStyleDecl)
-                inlineStyleDecl->clear();
+            if (inlineStyleDecl) {
+                if (elem->id() == ID_P) {
+                    // For <p> elements, we want to retain any margin-cancelling properties
+                    // that have been added by our old editing code or by current Mail.app code.
+                    DOMString marginTop = inlineStyleDecl->getPropertyValue(CSS_PROP_MARGIN_TOP);                        
+                    DOMString marginBottom = inlineStyleDecl->getPropertyValue(CSS_PROP_MARGIN_BOTTOM);
+                    inlineStyleDecl->clear();
+                    if (!marginTop.isEmpty())
+                        inlineStyleDecl->setProperty(CSS_PROP_MARGIN_TOP, marginTop);
+                    if (!marginBottom.isEmpty())
+                        inlineStyleDecl->setProperty(CSS_PROP_MARGIN_BOTTOM, marginBottom);
+                }
+                else {
+                    inlineStyleDecl->clear();
+                }
+            }
         }
         node = next;
     }
@@ -4295,7 +4345,11 @@ void ReplaceSelectionCommand::doApply()
     }
     
     // decide whether to later append nodes to the end
-    bool moveNodesAfterEnd = !m_fragment.hasInterchangeNewline() && (startBlock != endBlock || m_fragment.hasMoreThanOneBlock());
+    NodeImpl *beyondEndNode = 0;
+    if (!isEndOfParagraph(visibleEnd)) {
+        beyondEndNode = selection.end().downstream(StayInBlock).node();
+    }
+    bool moveNodesAfterEnd = beyondEndNode && !m_fragment.hasInterchangeNewline() && (startBlock != endBlock || m_fragment.hasMoreThanOneBlock());
     
     Position startPos = Position(selection.start().node()->enclosingBlockFlowElement(), 0);
     Position endPos; 
@@ -4341,7 +4395,12 @@ void ReplaceSelectionCommand::doApply()
     // now that we are about to add content, check whether a placeholder element can be removed
     // if so, do it and update startPos and endPos
     NodeImpl *block = startPos.node()->enclosingBlockFlowElement();
-    NodeImpl *placeholderBlock = findBlockPlaceholder(block);
+    NodeImpl *linePlaceholder = findBlockPlaceholder(block);
+    if (!linePlaceholder) {
+        Position downstream = startPos.downstream(StayInBlock);
+        if (downstream.node()->id() == ID_BR && downstream.offset() == 0)
+            linePlaceholder = downstream.node();
+    }
     
     // check whether to "smart replace" needs to add leading and/or trailing space
     bool addLeadingSpace = false;
@@ -4482,19 +4541,16 @@ void ReplaceSelectionCommand::doApply()
 
         if (moveNodesAfterEnd) {
             QPtrList<NodeImpl> blocks;
-            NodeImpl *node = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset()).downstream().node();
-            if (node != m_lastNodeInserted) {
-                NodeImpl *refNode = m_lastNodeInserted;
-                while (node) {
-                    NodeImpl *next = node->nextSibling();
-                    blocks.append(node->enclosingBlockFlowElement());
-                    removeNode(node);
-                    // Call the base class insert after code here.
-                    // No need to update inserted node variables.
-                    insertNodeAfter(node, refNode);
-                    refNode = node;
-                    node = next;
-                }
+            NodeImpl *node = beyondEndNode;
+            NodeImpl *refNode = m_lastNodeInserted;
+            while (node) {
+                NodeImpl *next = node->nextSibling();
+                blocks.append(node->enclosingBlockFlowElement());
+                removeNode(node);
+                // No need to update inserted node variables.
+                insertNodeAfter(node, refNode);
+                refNode = node;
+                node = next;
             }
             document()->updateLayout();
             for (QPtrListIterator<NodeImpl> it(blocks); it.current(); ++it) {
@@ -4518,10 +4574,20 @@ void ReplaceSelectionCommand::doApply()
     }
     
     // step 5 : mop up
-    if (placeholderBlock) {
+    if (linePlaceholder) {
         document()->updateLayout();
-        if (placeholderBlock->inDocument() && (!placeholderBlock->renderer() || placeholderBlock->renderer()->height() == 0))
-            removeNode(placeholderBlock);
+        if (linePlaceholder->inDocument()) {
+            if (!linePlaceholder->renderer() || linePlaceholder->renderer()->height() == 0) {
+                removeNode(linePlaceholder);
+            }
+            else if (!mergeStart && !m_fragment.hasInterchangeNewline()) {
+                NodeImpl *block = linePlaceholder->enclosingBlockFlowElement();
+                removeNode(linePlaceholder);
+                document()->updateLayout();
+                if (!block->renderer() || block->renderer()->height() == 0)
+                    removeNode(block);
+            }
+        }
     }
 }
 
