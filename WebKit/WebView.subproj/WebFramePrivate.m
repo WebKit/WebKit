@@ -687,7 +687,8 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
                 if (![ds _isClientRedirect]) {
                     // Add item to history.
 		    NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
-		    if (![URL _web_isEmpty] && ![WebDataProtocol _webIsDataProtocolURL:URL]) {
+		    if (![URL _web_isEmpty] && ![WebDataProtocol _webIsDataProtocolURL:URL] &&
+                        ![self _shouldTreatURLAsSameAsCurrent:URL]) {
 			entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
 			if (ptitle)
 			    [entry setTitle: ptitle];
