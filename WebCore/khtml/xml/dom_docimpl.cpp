@@ -3042,7 +3042,7 @@ void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta)
     for (it = markers->begin(); it != markers->end(); ++it) {
         DocumentMarker &marker = *it;
         if (marker.startOffset >= startOffset) {
-            ASSERT(marker.startOffset + delta > 0);
+            assert((int)marker.startOffset + delta >= 0);
             marker.startOffset += delta;
             marker.endOffset += delta;
             docDirty = true;

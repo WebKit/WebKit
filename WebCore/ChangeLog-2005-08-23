@@ -1,5 +1,15 @@
 2004-08-17  Trey Matteson  <trey@apple.com>
 
+	Fix ASSERT in spelling marker management.
+
+        Reviewed by John.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::shiftMarkers):  Use assert instead of ASSERT.
+	Tweak test to allow for a start position of 0.
+
+2004-08-17  Trey Matteson  <trey@apple.com>
+
 	3764147 - failure of subframe to load leaves links in parent doc broken
 
         Reviewed by Maciej.
