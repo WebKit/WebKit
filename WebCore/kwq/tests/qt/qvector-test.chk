@@ -1,0 +1,15 @@
+v1: QVector: [size: 7; items: 0, 1, 2, 3, 4, 5, 6, ]
+v2 = v1: QVector: [size: 0; items: ]
+v1 find 2: 2
+v1 contains 3: 1
+v1 contains 0: 1
+v1 count: 7
+v1 size: 10
+v1 remove 6: QVector: [size: 6; items: 0, 1, 2, 3, 4, 5, ]
+v1 resize 15: 15
+v1 at 2: 2
+v1[3]: 3
+v2 clear: QVector: [size: 0; items: ]
+v0: 1
+v1: 0
+v2: 1

@@ -28,7 +28,7 @@ int main() {
     cout << "d2 msec: " << d2.msec() << endl;
     
     
-    elapsedTime = d3.elapsed();
+    elapsedTime = d3.elapsed(); // nothing is printed because output will never match .chk file
     elapsedTime = d3.restart();
     
     
