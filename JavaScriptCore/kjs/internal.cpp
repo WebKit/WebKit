@@ -236,7 +236,9 @@ ValueImp *NumberImp::create(int i)
     if (SimpleNumber::fits(i))
         return SimpleNumber::make(i);
     NumberImp *imp = new NumberImp(static_cast<double>(i));
+#if !USE_CONSERVATIVE_GC
     imp->setGcAllowedFast();
+#endif
     return imp;
 }
 
@@ -247,7 +249,9 @@ ValueImp *NumberImp::create(double d)
     if (isNaN(d))
         return staticNaN;
     NumberImp *imp = new NumberImp(d);
+#if !USE_CONSERVATIVE_GC
     imp->setGcAllowedFast();
+#endif
     return imp;
 }
 
@@ -479,34 +483,54 @@ void InterpreterImp::globalInit()
 {
   //fprintf( stderr, "InterpreterImp::globalInit()\n" );
   UndefinedImp::staticUndefined = new UndefinedImp();
+#if !USE_CONSERVATIVE_GC
   UndefinedImp::staticUndefined->ref();
+#endif
   NullImp::staticNull = new NullImp();
+#if !USE_CONSERVATIVE_GC
   NullImp::staticNull->ref();
+#endif
   BooleanImp::staticTrue = new BooleanImp(true);
+#if !USE_CONSERVATIVE_GC
   BooleanImp::staticTrue->ref();
+#endif
   BooleanImp::staticFalse = new BooleanImp(false);
+#if !USE_CONSERVATIVE_GC
   BooleanImp::staticFalse->ref();
+#endif
   NumberImp::staticNaN = new NumberImp(NaN);
+#if !USE_CONSERVATIVE_GC
   NumberImp::staticNaN->ref();
+#endif
 }
 
 void InterpreterImp::globalClear()
 {
   //fprintf( stderr, "InterpreterImp::globalClear()\n" );
+#if !USE_CONSERVATIVE_GC
   UndefinedImp::staticUndefined->deref();
   UndefinedImp::staticUndefined->setGcAllowed();
+#endif
   UndefinedImp::staticUndefined = 0L;
+#if !USE_CONSERVATIVE_GC
   NullImp::staticNull->deref();
   NullImp::staticNull->setGcAllowed();
+#endif
   NullImp::staticNull = 0L;
+#if !USE_CONSERVATIVE_GC
   BooleanImp::staticTrue->deref();
   BooleanImp::staticTrue->setGcAllowed();
+#endif
   BooleanImp::staticTrue = 0L;
+#if !USE_CONSERVATIVE_GC
   BooleanImp::staticFalse->deref();
   BooleanImp::staticFalse->setGcAllowed();
+#endif
   BooleanImp::staticFalse = 0L;
+#if !USE_CONSERVATIVE_GC
   NumberImp::staticNaN->deref();
   NumberImp::staticNaN->setGcAllowed();
+#endif
   NumberImp::staticNaN = 0;
 }
 
@@ -729,8 +753,6 @@ void InterpreterImp::mark()
   if (BooleanImp::staticFalse && !BooleanImp::staticFalse->marked())
     BooleanImp::staticFalse->mark();
   //fprintf( stderr, "InterpreterImp::mark this=%p global.imp()=%p\n", this, global.imp() );
-  if (global.imp())
-    global.imp()->mark();
   if (m_interpreter)
     m_interpreter->mark();
   if (_context)

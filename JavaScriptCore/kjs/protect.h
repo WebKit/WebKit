@@ -33,28 +33,39 @@ namespace KJS {
 
     inline void gcProtect(ValueImp *val) 
       { 
-#if TEST_CONSERVATIVE_GC
+#if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
 	ProtectedValues::increaseProtectCount(val);
 #endif
       }
     inline void gcUnprotect(ValueImp *val)
       { 
-#if TEST_CONSERVATIVE_GC
+#if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
 	ProtectedValues::decreaseProtectCount(val);
 #endif
       }
+
+    inline void gcProtectNullTolerant(ValueImp *val) 
+      {
+	if (val) gcProtect(val);
+      }
+
+    inline void gcUnprotectNullTolerant(ValueImp *val) 
+      {
+	if (val) gcUnprotect(val);
+      }
+
     
     class ProtectedValue : public Value {
     public:
       ProtectedValue() : Value() {}
-      ProtectedValue(const Value&v)  : Value(v) { gcProtect(v.imp()); };
-      ~ProtectedValue() { gcUnprotect(imp());}
+      ProtectedValue(const Value&v)  : Value(v) { gcProtectNullTolerant(v.imp()); };
+      ~ProtectedValue() { gcUnprotectNullTolerant(imp());}
       ProtectedValue& operator=(const Value &v)
 	{ 
 	  ValueImp *old = imp();
 	  Value::operator=(v); 
-	  gcProtect(v.imp());
-	  gcUnprotect(old); 
+	  gcProtectNullTolerant(v.imp());
+	  gcUnprotectNullTolerant(old); 
 	  return *this;
 	}
     private:
@@ -65,14 +76,14 @@ namespace KJS {
     class ProtectedObject : public Object {
     public:
       ProtectedObject() : Object() {}
-      ProtectedObject(const Object&o)  : Object(o) { gcProtect(o.imp()); };
-      ~ProtectedObject() { gcUnprotect(imp());}
+      ProtectedObject(const Object&o)  : Object(o) { gcProtectNullTolerant(o.imp()); };
+      ~ProtectedObject() { gcUnprotectNullTolerant(imp());}
       ProtectedObject& operator=(const Object &o)
 	{ 
 	  ValueImp *old = imp();
 	  Object::operator=(o); 
-	  gcProtect(o.imp());
-	  gcUnprotect(old); 
+	  gcProtectNullTolerant(o.imp());
+	  gcUnprotectNullTolerant(old); 
 	  return *this;
 	}
     private:
@@ -82,14 +93,14 @@ namespace KJS {
 
     class ProtectedReference : public Reference {
     public:
-      ProtectedReference(const Reference&r)  : Reference(r) { gcProtect(r.base.imp()); };
-      ~ProtectedReference() { gcUnprotect(base.imp());}
+      ProtectedReference(const Reference&r)  : Reference(r) { gcProtectNullTolerant(r.base.imp()); };
+      ~ProtectedReference() { gcUnprotectNullTolerant(base.imp());}
       ProtectedReference& operator=(const Reference &r)
 	{ 
 	  ValueImp *old = base.imp();
 	  Reference::operator=(r); 
-	  gcProtect(r.base.imp());
-	  gcUnprotect(old); 
+	  gcProtectNullTolerant(r.base.imp());
+	  gcUnprotectNullTolerant(old); 
 	  return *this;
 	}
     private:

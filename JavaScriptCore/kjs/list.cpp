@@ -158,13 +158,27 @@ void List::derefValues()
     int size = imp->size;
     
     int inlineSize = MIN(size, inlineValuesSize);
+#if !USE_CONSERVATIVE_GC
     for (int i = 0; i != inlineSize; ++i)
         imp->values[i]->deref();
+#endif
+
+#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
+    for (int i = 0; i != inlineSize; ++i)
+        gcUnprotect(imp->values[i]);
+#endif
     
     int overflowSize = size - inlineSize;
     ValueImp **overflow = imp->overflow;
+#if !USE_CONSERVATIVE_GC
     for (int i = 0; i != overflowSize; ++i)
         overflow[i]->deref();
+#endif
+
+#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
+    for (int i = 0; i != overflowSize; ++i)
+        gcUnprotect(overflow[i]);
+#endif
 }
 
 void List::refValues()
@@ -174,13 +188,25 @@ void List::refValues()
     int size = imp->size;
     
     int inlineSize = MIN(size, inlineValuesSize);
+#if !USE_CONSERVATIVE_GC
     for (int i = 0; i != inlineSize; ++i)
         imp->values[i]->ref();
+#endif
+#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
+    for (int i = 0; i != inlineSize; ++i)
+        gcProtect(imp->values[i]);
+#endif
     
     int overflowSize = size - inlineSize;
     ValueImp **overflow = imp->overflow;
+#if !USE_CONSERVATIVE_GC
     for (int i = 0; i != overflowSize; ++i)
         overflow[i]->ref();
+#endif
+#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
+    for (int i = 0; i != overflowSize; ++i)
+        gcProtect(overflow[i]);
+#endif
 }
 
 void List::markValues()
@@ -251,7 +277,12 @@ void List::append(ValueImp *v)
 #endif
 
     if (imp->valueRefCount > 0) {
+#if !USE_CONSERVATIVE_GC
 	v->ref();
+#endif
+#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
+	gcProtect(v);
+#endif
     }
     
     if (i < inlineValuesSize) {

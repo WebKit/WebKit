@@ -49,12 +49,23 @@ friend class JSObject;
 public:
     RootObject (const void *nativeHandle) : _nativeHandle(nativeHandle), _imp(0), _interpreter(0) {}
     ~RootObject (){
+#if !USE_CONSERVATIVE_GC
         _imp->deref();
+#endif
+#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
+	gcUnprotect(_imp);
+#endif
     }
     
     void setRootObjectImp (KJS::ObjectImp *i) { 
         _imp = i;
+#if !USE_CONSERVATIVE_GC
         _imp->ref();
+
+#endif
+#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
+	gcProtect(_imp);
+#endif
     }
     
     KJS::ObjectImp *rootObjectImp() const { return _imp; }

@@ -71,7 +71,7 @@ namespace KJS {
 #endif
   private:
 
-#if TEST_CONSERVATIVE_GC
+#if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
     static void markProtectedObjects();
     static void markStackObjectsConservatively();
     static void markStackObjectsConservatively(void *start, void *end);

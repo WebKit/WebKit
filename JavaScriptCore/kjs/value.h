@@ -25,6 +25,7 @@
 #ifndef _KJS_VALUE_H_
 #define _KJS_VALUE_H_
 
+#define USE_CONSERVATIVE_GC 0
 #define TEST_CONSERVATIVE_GC 0
 
 #ifndef NDEBUG // protection against problems if committing with KJS_VERBOSE on
@@ -94,17 +95,25 @@ namespace KJS {
     friend class Value;
     friend class ContextImp;
   public:
+#if USE_CONSERVATIVE_GC
+    ValueImp() : _marked(0) {}
+    virtual ~ValueImp() {}
+#else
     ValueImp();
     virtual ~ValueImp();
+#endif
 
+#if !USE_CONSERVATIVE_GC
     ValueImp* ref() { if (!SimpleNumber::is(this)) refcount++; return this; }
     bool deref() { if (SimpleNumber::is(this)) return false; else return (!--refcount); }
+#endif
 
     virtual void mark();
     bool marked() const;
     void* operator new(size_t);
     void operator delete(void*);
 
+#if !USE_CONSERVATIVE_GC
     /**
      * @internal
      *
@@ -114,6 +123,7 @@ namespace KJS {
     
     // Will crash if called on a simple number.
     void setGcAllowedFast() { _flags |= VI_GCALLOWED; }
+#endif
 
     double toInteger(ExecState *exec) const;
     int32_t toInt32(ExecState *exec) const;
@@ -130,11 +140,11 @@ namespace KJS {
     bool dispatchToUInt32(uint32_t&) const;
     Object dispatchToObject(ExecState *exec) const;
 
+#if !USE_CONSERVATIVE_GC
     unsigned short int refcount;
+#endif
 
   private:
-    unsigned short int _flags;
-
     virtual Type type() const = 0;
 
     // The conversion operations
@@ -146,14 +156,20 @@ namespace KJS {
     virtual Object toObject(ExecState *exec) const = 0;
     virtual bool toUInt32(unsigned&) const;
 
+#if USE_CONSERVATIVE_GC
+    bool _marked;
+#else
+    unsigned short int _flags;
+
     enum {
       VI_MARKED = 1,
       VI_GCALLOWED = 2,
       VI_CREATED = 4
 #if TEST_CONSERVATIVE_GC
       , VI_CONSERVATIVE_MARKED = 8
-#endif
+#endif // TEST_CONSERVATIVE_GC
     }; // VI means VALUEIMPL
+#endif // USE_CONSERVATIVE_GC
 
     // Give a compile time error if we try to copy one of these.
     ValueImp(const ValueImp&);
@@ -182,11 +198,18 @@ namespace KJS {
   class Value {
   public:
     Value() : rep(0) { }
+#if USE_CONSERVATIVE_GC
+    explicit Value(ValueImp *v) : rep(v) {}
+    Value(const Value &v) : rep (v.rep) {}
+    ~Value() {}
+    Value& operator=(const Value &v) { rep = v.rep; return *this; } 
+#else
     explicit Value(ValueImp *v);
     Value(const Value &v);
     ~Value();
-
     Value& operator=(const Value &v);
+#endif
+
     bool isNull() const { return rep == 0; }
     ValueImp *imp() const { return rep; }
 

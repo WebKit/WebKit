@@ -1,3 +1,80 @@
+2004-04-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Enable full conservative GC mode in addition to test mode. When
+	conservative GC is enabled, we now get an 11% speed improvement on
+	the iBench. Also fix some spots I missed before.
+
+	Specific noteworth changes:
+	
+        * kjs/collector.cpp:
+	(KJS::Collector::markStackObjectsConservatively): Check possible
+	cell pointers for 8-byte aligment and verify they are not 0.
+
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::increaseProtectCount): Move null-tolerance from here...
+        (KJS::ProtectedValues::decreaseProtectCount): ...and here...
+        * kjs/protect.h:
+        (KJS::gcProtectNullTolerant): ...to here...
+        (KJS::gcUnprotectNullTolerant): ...and here, because not all callers need the null
+	tolerance, and doing the check is expensive.
+
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::computeHash): Replace hash function with a much faster one
+	that is still very good.
+
+        * kjs/protect.h:
+        (KJS::gcProtect):
+        (KJS::gcUnprotect):
+        (KJS::ProtectedValue::ProtectedValue):
+        (KJS::ProtectedValue::~ProtectedValue):
+        (KJS::ProtectedValue::operator=):
+        (KJS::ProtectedObject::ProtectedObject):
+        (KJS::ProtectedObject::~ProtectedObject):
+        (KJS::ProtectedObject::operator=):
+        (KJS::ProtectedReference::ProtectedReference):
+        (KJS::ProtectedReference::~ProtectedReference):
+        (KJS::ProtectedReference::operator=):
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::getProtectCount):
+        (KJS::ProtectedValues::increaseProtectCount):
+        (KJS::ProtectedValues::decreaseProtectCount):
+        (KJS::ProtectedValues::computeHash):
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::addNativeReference):
+        (KJS::Bindings::removeNativeReference):
+        (RootObject::removeAllNativeReferences):
+        * bindings/runtime_root.h:
+        (KJS::Bindings::RootObject::~RootObject):
+        (KJS::Bindings::RootObject::setRootObjectImp):
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+        (KJS::Collector::collect):
+        * kjs/collector.h:
+        * kjs/internal.cpp:
+        (NumberImp::create):
+        (InterpreterImp::globalInit):
+        (InterpreterImp::globalClear):
+        (InterpreterImp::mark):
+        * kjs/list.cpp:
+        (KJS::List::derefValues):
+        (KJS::List::refValues):
+        (KJS::List::append):
+        * kjs/object.cpp:
+        (KJS::ObjectImp::setInternalValue):
+        (KJS::ObjectImp::putDirect):
+        * kjs/value.cpp:
+        (ValueImp::mark):
+        (ValueImp::marked):
+        * kjs/value.h:
+        (KJS::ValueImp::ValueImp):
+        (KJS::ValueImp::~ValueImp):
+        (KJS::ValueImp::):
+        (KJS::Value::Value):
+        (KJS::Value::~Value):
+        (KJS::Value::operator=):
+
 2004-04-30  Richard Williamson   <rjw@apple.com>
 
 	Asking an NSInvocation for it's return value when return type

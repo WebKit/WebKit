@@ -427,7 +427,9 @@ void ObjectImp::setInternalValue(const Value &v)
 
 void ObjectImp::setInternalValue(ValueImp *v)
 {
+#if !USE_CONSERVATIVE_GC
   v->setGcAllowed();
+#endif
   _internalValue = v;
 }
 
@@ -464,7 +466,9 @@ Object ObjectImp::toObject(ExecState */*exec*/) const
 
 void ObjectImp::putDirect(const Identifier &propertyName, ValueImp *value, int attr)
 {
+#if !USE_CONSERVATIVE_GC
     value->setGcAllowed();
+#endif
     _prop.put(propertyName, value, attr);
 }
 

@@ -33,9 +33,6 @@ int ProtectedValues::_keyCount;
 
 int ProtectedValues::getProtectCount(ValueImp *k)
 {
-    if (!k)
-	return 0;
-
     if (!_table)
 	return 0;
 
@@ -59,8 +56,7 @@ int ProtectedValues::getProtectCount(ValueImp *k)
 
 void ProtectedValues::increaseProtectCount(ValueImp *k)
 {
-    if (!k)
-	return;
+    assert(k);
 
     if (!_table)
         expand();
@@ -106,8 +102,7 @@ inline void ProtectedValues::insert(ValueImp *k, int v)
 
 void ProtectedValues::decreaseProtectCount(ValueImp *k)
 {
-    if (!k)
-	return;
+    assert(k);
 
     unsigned hash = computeHash(k);
     
@@ -182,36 +177,53 @@ void ProtectedValues::rehash(int newTableSize)
 // or anything like that.
 const unsigned PHI = 0x9e3779b9U;
 
+template <int size> static unsigned hash(ValueImp *pointer);
+
+template <> static inline unsigned hash<4>(ValueImp *pointer) 
+{
+  int a = (int)PHI;
+  int b = (int)pointer;
+  int c = 0;
+
+  a -= b; a -= c; a ^= (c>>13);
+  b -= c; b -= a; b ^= (a<<8); 
+  c -= a; c -= b; c ^= (b>>13);
+  a -= b; a -= c; a ^= (c>>12);
+  b -= c; b -= a; b ^= (a<<16);
+  c -= a; c -= b; c ^= (b>>5);
+  a -= b; a -= c; a ^= (c>>3);
+  b -= c; b -= a; b ^= (a<<10);
+  c -= a; c -= b; c ^= (b>>15);
+  
+  return (unsigned)c;
+}
+
+template <> static inline unsigned hash<8>(ValueImp *pointer)
+{
+  int a = (int)PHI;
+  int b = (int)(long)pointer;
+  int c = (int)(((long)pointer >> 16) >> 16);
+
+  a -= b; a -= c; a ^= (c>>13);
+  b -= c; b -= a; b ^= (a<<8); 
+  c -= a; c -= b; c ^= (b>>13);
+  a -= b; a -= c; a ^= (c>>12);
+  b -= c; b -= a; b ^= (a<<16);
+  c -= a; c -= b; c ^= (b>>5);
+  a -= b; a -= c; a ^= (c>>3);
+  b -= c; b -= a; b ^= (a<<10);
+  c -= a; c -= b; c ^= (b>>15);
+  
+  return (unsigned)c;
+}
+
+
 // This hash algorithm comes from:
 // http://burtleburtle.net/bob/hash/hashfaq.html
 // http://burtleburtle.net/bob/hash/doobs.html
 unsigned ProtectedValues::computeHash(ValueImp *pointer)
 {
-    int length = sizeof(ValueImp *);
-    char s[sizeof(ValueImp *)];
-		
-    memcpy((void *)s, (void *)&pointer, sizeof(ValueImp *));
-
-    unsigned h = PHI;
-    h += length;
-    h += (h << 10); 
-    h ^= (h << 6); 
-
-    for (int i = 0; i < length; i++) {
-        h += (unsigned char)s[i];
-	h += (h << 10); 
-	h ^= (h << 6); 
-    }
-
-    h += (h << 3);
-    h ^= (h >> 11);
-    h += (h << 15);
-
-    if (h == 0)
-        h = 0x80000000;
-
-    return h;
+  return hash<sizeof(ValueImp *)>(pointer);
 }
-
 
 } // namespace
