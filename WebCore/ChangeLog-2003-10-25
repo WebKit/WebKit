@@ -1,3 +1,14 @@
+2002-08-05  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::openURLInFrame):
+        (KWQKHTMLPartImpl::urlSelected):
+        (KWQKHTMLPartImpl::requestFrame):
+        (KWQKHTMLPartImpl::requestObject):
+	Add some nil checks before making calls with nil NSURL objects.
+	But we also have to figure out how to report some kind of error
+	in these cases, because the current behavior is not so good.
+
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3007072 - need to be able to build fat

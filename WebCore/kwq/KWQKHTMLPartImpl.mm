@@ -79,8 +79,13 @@ KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 
 bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
 {
-    WebCoreBridge *frame;
+    NSURL *cocoaURL = url.getNSURL();
+    if (cocoaURL == nil) {
+        // FIXME: Do we need to report an error to someone?
+        return false;
+    }
 
+    WebCoreBridge *frame;
     if (!urlArgs.frameName.isEmpty()) {
         frame = [bridge frameNamed:urlArgs.frameName.getNSString()];
         if (frame == nil) {
@@ -90,8 +95,7 @@ bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &u
         frame = bridge;
     }
 
-    [frame loadURL:url.getNSURL()];
-
+    [frame loadURL:cocoaURL];
     return true;
 }
 
@@ -117,32 +121,37 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int lengt
 
 void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
 {
-    KURL clickedURL(part->completeURL( url));
-    KURL refLess(clickedURL);
-    WebCoreBridge *frame;
-	
     if ( url.find( "javascript:", 0, false ) == 0 )
     {
         part->executeScript( url.right( url.length() - 11) );
         return;
     }
 
-    // Open new window on command-click
-    if (state & MetaButton) {
-        [bridge openNewWindowWithURL:clickedURL.getNSURL()];
-        return;
-    }
-
-    part->m_url.setRef ("");
-    refLess.setRef ("");
-    if (refLess.url() == part->m_url.url()){
-        part->m_url = clickedURL;
-        part->gotoAnchor (clickedURL.ref());
-        // This URL needs to be added to the back/forward list.
-        [bridge addBackForwardItemWithURL: clickedURL.getNSURL() anchor:clickedURL.ref().getNSString()];
+    KURL clickedURL(part->completeURL(url));
+    NSURL *cocoaURL = clickedURL.getNSURL();
+    if (cocoaURL == nil) {
+        // FIXME: Do we need to report an error to someone?
         return;
     }
     
+    // Open new window on command-click
+    if (state & MetaButton) {
+        [bridge openNewWindowWithURL:cocoaURL];
+        return;
+    }
+
+    KURL refLess(clickedURL);
+    part->m_url.setRef("");
+    refLess.setRef("");
+    if (refLess.url() == part->m_url.url()) {
+        part->m_url = clickedURL;
+        part->gotoAnchor (clickedURL.ref());
+        // This URL needs to be added to the back/forward list.
+        [bridge addBackForwardItemWithURL:cocoaURL anchor:clickedURL.ref().getNSString()];
+        return;
+    }
+    
+    WebCoreBridge *frame;
     if (_target.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
         if ([[[bridge parent] childFrames] count] == 1) {
@@ -158,7 +167,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
         }
     }
     
-    [frame loadURL:clickedURL.getNSURL()];
+    [frame loadURL:cocoaURL];
 }
 
 bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
@@ -168,7 +177,7 @@ bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, cons
 
     NSURL *childURL = part->completeURL(url).getNSURL();
     if (childURL == nil) {
-        NSLog (@"ERROR (probably need to fix CFURL): unable to create URL with path (base URL %s, relative URL %s)", d->m_doc->baseURL().ascii(), url.ascii());
+        // FIXME: Do we need to report an error to someone?
         return false;
     }
     
@@ -207,6 +216,12 @@ bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, cons
     if (url.isEmpty()) {
         return false;
     }
+    NSURL *cocoaURL = part->completeURL(url).getNSURL();
+    if (cocoaURL == nil) {
+        // FIXME: Do we need to report an error to someone?
+        return false;
+    }
+
     if (frame->widget()) {
         return true;
     }
@@ -218,12 +233,11 @@ bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, cons
     
     QWidget *widget = new QWidget();
     widget->setView([[WebCoreViewFactory sharedFactory]
-        viewForPluginWithURL:part->completeURL(url).getNSURL()
+        viewForPluginWithURL:cocoaURL
                  serviceType:serviceType.getNSString()
                    arguments:argsArray
                      baseURL:KURL(d->m_doc->baseURL()).getNSURL()]);
     frame->setWidget(widget);
-    
     return true;
 }
 
