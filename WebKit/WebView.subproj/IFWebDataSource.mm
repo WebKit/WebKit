@@ -165,17 +165,17 @@ static id IFWebDataSourceMake(void *url)
 // may be different than the inputURL if the server redirects.
 // <IFLocationChangedHandler> includes a message that is sent when
 // a redirect is processed
-- (NSURL *)finalURL
+- (NSURL *)redirectedURL
 {
     return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->finalURL;
 }
 
 
 // Returns true if the inputURL has been redirected by the server,
-// i.e. inputURL != finalURL.
+// i.e. inputURL != redirectedURL.
 - (BOOL)wasRedirected
 {
-    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL isEqual: [self finalURL]];
+    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL isEqual: [self redirectedURL]];
 }
 
 

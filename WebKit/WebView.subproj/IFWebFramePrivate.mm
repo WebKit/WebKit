@@ -367,7 +367,7 @@ char *stateNames[6] = {
                 
                 return;
             }
-            // A resource was loaded, but not the entire frame isn't complete.  Schedule a
+            // A resource was loaded, but the entire frame isn't complete.  Schedule a
             // layout.
             else {
                 if ([self _state] == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE){

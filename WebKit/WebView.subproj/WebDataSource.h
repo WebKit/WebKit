@@ -98,11 +98,12 @@
 - (NSURL *)inputURL;
 
 
-// finalURL returns the URL that was actually used.  The final URL
-// may be different than the inputURL if the server redirects.
-// <IFLocationChangedHandler> includes a message that is sent when
-// a redirect is processed
-- (NSURL *)finalURL;
+// redirectedURL returns the URL that was actually used if there was a redirect.
+// The value of redirectedURL will change if more than one redirect occurs.  If no
+// redirect occurs the value of redirectedURL will be nil.  To monitor change in
+// the value of the redirected URL override the <IFLocationChangeHandler> 
+// serverRedirectTo:forDataSource: method.
+- (NSURL *)redirectedURL;
 
 
 // Returns true if the inputURL has been redirected by the server,

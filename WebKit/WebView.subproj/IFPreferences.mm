@@ -48,7 +48,7 @@ static IFPreferences *_standardPreferences = nil;
     NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
     NSNumber *jScriptEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *timedLayoutEnabled = [NSNumber numberWithBool:TRUE];
-    NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:TRUE];
+    NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:FALSE];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0", 			WebKitLogLevelPreferenceKey,

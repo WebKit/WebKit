@@ -145,15 +145,6 @@
 /*
    ============================================================================= 
 
-*/
-@protocol IFWebDataSourceErrorHandler
-- receivedError: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
-@end
-
-
-/*
-   ============================================================================= 
-
     A class that implements IFScriptContextHandler provides all the state information
     that may be used by Javascript (AppleScript?).
     

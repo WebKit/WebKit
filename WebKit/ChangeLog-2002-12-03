@@ -1,5 +1,17 @@
 2002-04-03  Richard Williamson  <rjw@apple.com>
 
+        Changed name of finalURL to redirectedURL.
+        Disabled layout after resource load.  It appears to really slow us down.
+        
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource redirectedURL]),
+	(-[IFWebDataSource wasRedirected]):
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _isLoadComplete]):
+
+2002-04-03  Richard Williamson  <rjw@apple.com>
+
         Added support for finalURL and wasRedirected to datasource.
         Added additional layouts on resource loads.
         Added more implementations of frame related methods in data source.
