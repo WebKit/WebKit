@@ -9,8 +9,10 @@
 
 #import <WebKit/WebKitErrors.h>
 
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSURLExtras.h>
+
 #import <Foundation/NSError_NSURLExtras.h>
 
 #import <pthread.h>
@@ -42,18 +44,15 @@ static void registerErrors(void);
     pthread_once(&registerErrorsControl, registerErrors);
 }
 
-+ (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL
++ (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URLString
 {
-    [self _registerWebKitErrors];
-
-    return [self _web_errorWithDomain:WebKitErrorDomain code:code failingURL:URL];
+    return [self _webKitErrorWithDomain:WebKitErrorDomain code:code URL:[NSURL _web_URLWithUserTypedString:URLString]];
 }
 
 + (NSError *)_webKitErrorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
     [self _registerWebKitErrors];
-
-    return [self _web_errorWithDomain:domain code:code failingURL:[URL _web_userVisibleString]];
+    return [self _web_errorWithDomain:domain code:code URL:URL];
 }
 
 - (id)_initWithPluginErrorCode:(int)code
@@ -62,28 +61,12 @@ static void registerErrors(void);
                     pluginName:(NSString *)pluginName
                       MIMEType:(NSString *)MIMEType
 {
-    [[self class] _registerWebKitErrors];
-    
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-    if (contentURLString) {
-        [userInfo setObject:contentURLString forKey:NSErrorFailingURLStringKey];
-    }
-    if (pluginPageURLString) {
-        [userInfo setObject:pluginPageURLString forKey:WebKitErrorPlugInPageURLStringKey];
-    }	
-    if (pluginName) {
-        [userInfo setObject:pluginName forKey:WebKitErrorPlugInNameKey];
-    }
-    if (MIMEType) {
-        [userInfo setObject:MIMEType forKey:WebKitErrorMIMETypeKey];
-    }
-
-    NSDictionary *userInfoCopy = [userInfo count] > 0  ? [[NSDictionary alloc] initWithDictionary:userInfo] : nil;
-    [userInfo release];
-    NSError *error = [self initWithDomain:WebKitErrorDomain code:code userInfo:userInfoCopy];
-    [userInfoCopy release];
-    
-    return error;
+    return [self _initWithPluginErrorCode:code 
+                               contentURL:[NSURL _web_URLWithUserTypedString:contentURLString]
+                            pluginPageURL:[NSURL _web_URLWithUserTypedString:pluginPageURLString]
+                               pluginName:pluginName
+                                 MIMEType:MIMEType
+           ];
 }
 
 - (id)_initWithPluginErrorCode:(int)code
@@ -92,12 +75,29 @@ static void registerErrors(void);
                     pluginName:(NSString *)pluginName
                       MIMEType:(NSString *)MIMEType
 {
-    return [self _initWithPluginErrorCode:code 
-                         contentURLString:[contentURL _web_userVisibleString]
-                      pluginPageURLString:[pluginPageURL _web_userVisibleString]
-                               pluginName:pluginName
-                                 MIMEType:MIMEType
-           ];
+    [[self class] _registerWebKitErrors];
+    
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    if (contentURL) {
+        [userInfo setObject:contentURL forKey:@"NSErrorFailingURLKey"];
+        [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSErrorFailingURLStringKey];
+    }
+    if (pluginPageURL) {
+        [userInfo setObject:[pluginPageURL _web_userVisibleString] forKey:WebKitErrorPlugInPageURLStringKey];
+    }	
+    if (pluginName) {
+        [userInfo setObject:pluginName forKey:WebKitErrorPlugInNameKey];
+    }
+    if (MIMEType) {
+        [userInfo setObject:MIMEType forKey:WebKitErrorMIMETypeKey];
+    }
+
+    NSDictionary *userInfoCopy = [userInfo count] > 0 ? [[NSDictionary alloc] initWithDictionary:userInfo] : nil;
+    [userInfo release];
+    NSError *error = [self initWithDomain:WebKitErrorDomain code:code userInfo:userInfoCopy];
+    [userInfoCopy release];
+    
+    return error;
 }
 
 @end

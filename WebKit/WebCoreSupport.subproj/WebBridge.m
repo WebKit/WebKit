@@ -705,8 +705,8 @@
 
     if (errorCode) {
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-                                                  contentURLString:[URL _web_userVisibleString]
-                                               pluginPageURLString:[attributes objectForKey:@"pluginspage"]
+                                                        contentURL:URL
+                                                     pluginPageURL:[NSURL _web_URLWithUserTypedString:[attributes objectForKey:@"pluginspage"]]
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];
         view = [[[WebNullPluginView alloc] initWithFrame:NSZeroRect error:error] autorelease];

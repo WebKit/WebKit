@@ -1,3 +1,24 @@
+2003-11-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3487335: REGRESSION (112-113): "a:b" error message does not cite the URL properly
+
+        * Misc.subproj/WebKitErrors.m:
+        (+[NSError _webKitErrorWithCode:failingURL:]): Call _webKitErrorWithDomain:code:URL:.
+        (+[NSError _webKitErrorWithDomain:code:URL:]): Call _web_errorWithDomain:code:URL:, instead of using
+        the deprecated failingURL: flavor.
+        (-[NSError _initWithPluginErrorCode:contentURLString:pluginPageURLString:pluginName:MIMEType:]):
+        Change this method to call the other one.
+        (-[NSError _initWithPluginErrorCode:contentURL:pluginPageURL:pluginName:MIMEType:]): Implement this one,
+        and put in the NSErrorFailingURLKey, as well as the NSErrorFailingURLStringKey, to match what Foundation
+        now does for other errors.
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]):
+        Change to use the non-deprecated flavor of the NSError call above.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for above changes and other recent changes.
+
 2003-11-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
