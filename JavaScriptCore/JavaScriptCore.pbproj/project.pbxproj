@@ -147,7 +147,7 @@
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = "-sectorder __TEXT __text /AppleInternal/OrderFiles/JavaScriptCore.order";
 				USE_GCC3_PFE_SUPPORT = YES;
-				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
+				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wno-long-double";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (

@@ -1,3 +1,12 @@
+2003-11-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3483829 - JavaScriptCore needs workaround to compile on Merlot
+	
+        * JavaScriptCore.pbproj/project.pbxproj: Add -Wno-long-double to
+	warning flags.
+
 === Safari-114 ===
 
 2003-11-13  Richard Williamson   <rjw@apple.com>
