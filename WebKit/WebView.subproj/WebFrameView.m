@@ -545,4 +545,44 @@
     //WebKitDebugAtLevel (WEBKIT_LOG_EVENTS, "mouseDragged %f, %f\n", p.x, p.y);
 }
 
+- (void)keyDown: (NSEvent *)event
+{
+    NSLog (@"keyDown: %@\n", event);
+    int state = 0;
+    
+    if ([event modifierFlags] & NSControlKeyMask)
+        state |= Qt::ControlButton;
+    if ([event modifierFlags] & NSShiftKeyMask)
+        state |= Qt::ShiftButton;
+    if ([event modifierFlags] & NSAlternateKeyMask)
+        state |= Qt::AltButton;
+    QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
+
+    
+    KHTMLView *widget = _private->widget;
+    if (widget != 0l)
+        widget->keyPressEvent(&kEvent);
+}
+
+
+- (void)keyUp: (NSEvent *)event
+{
+    NSLog (@"keyUp: %@\n", event);
+    int state = 0;
+    
+    if ([event modifierFlags] & NSControlKeyMask)
+        state |= Qt::ControlButton;
+    if ([event modifierFlags] & NSShiftKeyMask)
+        state |= Qt::ShiftButton;
+    if ([event modifierFlags] & NSAlternateKeyMask)
+        state |= Qt::AltButton;
+    QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
+
+    
+    KHTMLView *widget = _private->widget;
+    if (widget != 0l)
+        widget->keyReleaseEvent(&kEvent);
+}
+
+
 @end

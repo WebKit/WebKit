@@ -1,3 +1,13 @@
+2002-05-21  Richard J. Williamson  <rjw@apple.com>
+
+    Changes to support additional DHTML events.
+    
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView keyDown:]):
+	(-[IFWebView keyUp:]):
+	* WebView.subproj/IFWebViewPrivate.mm:
+	(+[IFWebView _nodeHTML:DOM::]):
+
 2002-05-21  Chris Blumenberg  <cblu@apple.com>
 
 	Content policy can now be sent at a later time to avoid blocking.

@@ -411,6 +411,12 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 	IFWebFrame *frame;
 	KURL refLess(clickedURL);
 	
+    if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
+    {
+        executeScript( url.right( url.length() - 11) );
+        return;
+    }
+
 	m_url.setRef ("");
 	refLess.setRef ("");
 	if (refLess.url() == m_url.url()){
@@ -919,28 +925,28 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 }
 
 void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
-{
-  DOM::Node innerNode = event->innerNode();
-  d->m_mousePressNode = DOM::Node();
-
-  if ( d->m_bMousePressed )
+    {
+    DOM::Node innerNode = event->innerNode();
+    d->m_mousePressNode = DOM::Node();
+    
+    if ( d->m_bMousePressed )
     stopAutoScroll();
-
-  // Used to prevent mouseMoveEvent from initiating a drag before
-  // the mouse is pressed again.
-  d->m_bMousePressed = false;
-
+    
+    // Used to prevent mouseMoveEvent from initiating a drag before
+    // the mouse is pressed again.
+    d->m_bMousePressed = false;
+    
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
-      	urlSelected(d->m_strSelectedURL, 0,0, event->target().string());
+        urlSelected(d->m_strSelectedURL, 0,0, event->target().string());
     }
     
-#ifndef _KWQ_
-#define QT_NO_CLIPBOARD 1
-#ifndef QT_NO_CLIPBOARD
-  QMouseEvent *_mouse = event->qmouseEvent();
-  if ((_mouse->button() == MidButton) && (event->url().isNull()))
-  {
+    #ifndef _KWQ_
+    #define QT_NO_CLIPBOARD 1
+    #ifndef QT_NO_CLIPBOARD
+    QMouseEvent *_mouse = event->qmouseEvent();
+    if ((_mouse->button() == MidButton) && (event->url().isNull()))
+    {
     QClipboard *cb = QApplication::clipboard();
     cb->setSelectionMode( true );
     QCString plain("plain");
@@ -967,18 +973,18 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
       urlSelected(url, 0,0, "_top");
       d->m_referrer = savedReferrer; // Restore original referrer.
     }
-  }
-#endif
-
-#ifndef KHTML_NO_SELECTION
-  // delete selection in case start and end position are at the same point
-  if(d->m_selectionStart == d->m_selectionEnd && d->m_startOffset == d->m_endOffset) {
+    }
+    #endif
+    
+    #ifndef KHTML_NO_SELECTION
+    // delete selection in case start and end position are at the same point
+    if(d->m_selectionStart == d->m_selectionEnd && d->m_startOffset == d->m_endOffset) {
     d->m_selectionStart = 0;
     d->m_selectionEnd = 0;
     d->m_startOffset = 0;
     d->m_endOffset = 0;
     //emitSelectionChanged();
-  } else {
+    } else {
     // we have to get to know if end is before start or not...
     DOM::Node n = d->m_selectionStart;
     d->m_startBeforeEnd = false;
@@ -1011,21 +1017,21 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
       d->m_startBeforeEnd = true;
     }
     // get selected text and paste to the clipboard
-#ifndef QT_NO_CLIPBOARD
+    #ifndef QT_NO_CLIPBOARD
     QString text = selectedText();
     text.replace(QRegExp(QChar(0xa0)), " ");
     QClipboard *cb = QApplication::clipboard();
     cb->setSelectionMode( true );
     cb->setText(text);
     cb->setSelectionMode( false );
-#endif
+    #endif
     //kdDebug( 6000 ) << "selectedText = " << text << endl;
     //emitSelectionChanged();
-  }
-#endif
-#endif
-
-}
+    }
+    #endif
+    #endif
+    
+    }
 
 void KHTMLPart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * )
 {

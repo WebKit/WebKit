@@ -1,3 +1,21 @@
+2002-05-21  Richard J. Williamson  <rjw@apple.com>
+
+    Lots of changes for DHTML.
+    Bugs fixes, and fixes to regressions.
+    
+	* khtml/misc/decoder.cpp:
+	(Decoder::decode):
+	* khtml/rendering/render_flow.cpp:
+	(RenderFlow::print):
+	(RenderFlow::layout):
+	* khtml/rendering/render_text.cpp:
+	(RenderText::print):
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::urlSelected):
+	* kwq/qt/qevent.h:
+	* kwq/qt/qstring.h:
+	* libwebcore.exp:
+
 2002-05-21  Kenneth Kocienda  <kocienda@apple.com>
 
         Fix for this bug:

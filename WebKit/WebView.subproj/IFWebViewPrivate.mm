@@ -92,7 +92,8 @@
 
 + (NSString *)_nodeHTML: (DOM::NodeImpl *)node
 {
-    return QSTRING_TO_NSSTRING(node->recursive_toHTML(1));
+    NSString *string =  QSTRING_TO_NSSTRING(node->recursive_toHTML(1));
+    return string;
 }
 
 - (khtml::RenderObject *)_renderRoot

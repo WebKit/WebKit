@@ -522,9 +522,15 @@ QString Decoder::decode(const char *data, int len)
         out = m_decoder->toUnicode(data, len);
     }
 
+    if (out.isNull()){
+        fprintf (stderr, "ERROR:  decoded string is null\n");
+    }
+    else if (out.length() == 0){
+        fprintf (stderr, "ERROR:  decoded string length == 0\n");
+    }
     // the hell knows, why the output does sometimes have a QChar::null at
     // the end...
-    if(out[out.length()-1] == QChar::null)
+    else if(out[out.length()-1] == QChar::null)
         out.truncate(out.length() - 1);
     return out;
 }

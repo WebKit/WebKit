@@ -207,7 +207,7 @@ public:
     QKeyEvent() {}
 #endif
 
-    QKeyEvent(Type, int, int, int, const QString &textVal = QString::null, bool autoRepeat = FALSE, ushort countVal = 1);
+    QKeyEvent(Type type, int key, int ascii, int buttonState, const QString &textVal = QString::null, bool autoRepeat = FALSE, ushort countVal = 1);
 
 // add no-op destructor
 #ifdef _KWQ_PEDANTIC_
