@@ -1,3 +1,5 @@
+=== Safari-163 ===
+
 2004-09-09  Maciej Stachowiak  <mjs@apple.com>
 
         - roll out the last change, it appears to cause a performance regression
