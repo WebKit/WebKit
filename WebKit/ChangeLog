@@ -1,5 +1,14 @@
 2002-12-20  Trey Matteson  <trey@apple.com>
 
+        Do not add empty URLs to the back forward list.
+
+	Reviewed by Richard, Darin
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+
+2002-12-20  Trey Matteson  <trey@apple.com>
+
 	3133829 - crash leaving page with a running applet
 
 	This fixes some holes in how we teardown plugins.  An additional fix is expected

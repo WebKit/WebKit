@@ -571,9 +571,9 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 			entry = [[WebHistory sharedHistory] addEntryForURL:URL];
 			if (ptitle)
 			    [entry setTitle: ptitle];
+                        [self _addBackForwardItemClippedAtTarget:YES];
 		    }
 
-                    [self _addBackForwardItemClippedAtTarget:YES];
                 } else {
                     // update the URL in the BF list that we made before the redirect
                     [[_private currentItem] setURL:[[ds request] URL]];
