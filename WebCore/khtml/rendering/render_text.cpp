@@ -986,6 +986,29 @@ static RenderObject *firstRendererOnNextLine(InlineBox *box)
     return firstChild->object();
 }
 
+static RenderObject *lastRendererOnPrevLine(InlineBox *box)
+{
+    if (!box)
+        return 0;
+    
+    RootInlineBox *root = box->root();
+    if (!root)
+        return 0;
+    
+    if (root->endsWithBreak())
+        return 0;
+    
+    RootInlineBox *prevRoot = root->prevRootBox();
+    if (!prevRoot)
+        return 0;
+    
+    InlineBox *lastChild = prevRoot->lastChild();
+    if (!lastChild)
+        return 0;
+    
+    return lastChild->object();
+}
+
 QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
     if (!firstTextBox() || stringLength() == 0) {
@@ -995,24 +1018,35 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     // Find the text box for the given offset
     InlineTextBox *box = 0;
     for (box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (offset <= box->m_start + box->m_len) {
+        if ((offset >= box->m_start) && (offset <= box->m_start + box->m_len)) {
             // Check if downstream affinity would make us move to the next line.
             InlineTextBox *nextBox = box->nextTextBox();
-            if (affinity == DOWNSTREAM && nextBox && !box->nextOnLine() && offset == box->m_start + box->m_len) {
+            if (offset == box->m_start + box->m_len && affinity == DOWNSTREAM  && nextBox &&  !box->nextOnLine()) {
                 // We're at the end of a line broken on a word boundary and affinity is downstream.
                 // Try to jump down to the next line.
                 if (nextBox) {
                     // Use the next text box
                     box = nextBox;
                     offset = box->m_start;
-                }
-                else {
+                } else {
                     // Look on the next line
                     RenderObject *object = firstRendererOnNextLine(box);
                     if (object)
                         return object->caretRect(0, affinity);
                 }
-            }
+            } else {
+		InlineTextBox *prevBox = box->prevTextBox();
+		if (offset == box->m_start && affinity == UPSTREAM && prevBox && !box->prevOnLine()) {
+		    if (prevBox) {
+			box = prevBox;
+			offset = box->m_start + box->m_len;
+		    } else {
+			RenderObject *object = lastRendererOnPrevLine(box);
+			if (object)
+			    return object->caretRect(0, affinity);
+		    }
+		}
+	    }
             break;
         }
     }

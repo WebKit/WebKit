@@ -1,3 +1,11 @@
+2005-03-06  Christy Warren  kali@appple.com
+
+        Reviewed by Ken
+
+        * khtml/rendering/render_text.cpp:
+        (lastRendererOnPrevLine): helper for RenderText::caretRect
+        (RenderText::caretRect): added code to properly handle bidi ordered text boxes
+
 2005-03-06  Christy Warren  <set EMAIL_ADDRESS environment variable>
 
         Reviewed by Darin.
