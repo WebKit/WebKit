@@ -199,12 +199,12 @@
     [self _scrollLineHorizontally: NO];
 }
 
-+ (NSDictionary *)_viewTypes
++ (NSMutableDictionary *)_viewTypes
 {
-    static NSDictionary *viewTypes;
+    static NSMutableDictionary *viewTypes;
 
     if (!viewTypes) {
-        viewTypes = [[NSDictionary alloc] initWithObjectsAndKeys:
+        viewTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [IFHTMLView class], @"text/html",
             [IFTextView class], @"text/",
             [IFImageView class], @"image/jpeg",
@@ -219,7 +219,7 @@
 
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    NSMutableDictionary *viewTypes = [[self class] _viewTypes];
+    NSDictionary *viewTypes = [[self class] _viewTypes];
     NSArray *keys;
     unsigned i;
     
