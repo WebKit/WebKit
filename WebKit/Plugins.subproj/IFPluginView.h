@@ -9,6 +9,7 @@
 #include <qwidget.h>
 #include <npapi.h>
 #import <WebFoundation/WebFoundation.h>
+#import <IFWebView.h>
 
 typedef struct _StreamData{
     uint16 transferMode;
@@ -29,7 +30,7 @@ typedef struct _StreamData{
 -(void)stop;
 @end
 
-@interface IFPluginView : IFCarbonWindowView {
+@interface IFPluginView : NSView {
     QWidget *widget;
     WCPlugin *plugin;
     IFPluginViewNullEventSender *eventSender;
@@ -45,7 +46,7 @@ typedef struct _StreamData{
     NSString *URL, *mime;
     NSTrackingRectTag trackingTag;
     NSMutableArray *filesToErase, *activeURLHandles;
-    
+
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
     NPP_SetWindowProcPtr NPP_SetWindow;
@@ -63,8 +64,10 @@ typedef struct _StreamData{
 
 - initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments;
 -(void)drawRect:(NSRect)rect;
--(void)setWindow:(NSRect)rect;
-- (void) newStream:(NSString *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData;
+-(void)setWindow;
+-(void)viewHasMoved:(NSNotification *)note;
+-(NSView *)findSuperview:(NSString *) viewName;
+-(void)newStream:(NSString *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData;
 -(BOOL)acceptsFirstResponder;
 -(BOOL)becomeFirstResponder;
 -(BOOL)resignFirstResponder;
@@ -72,7 +75,6 @@ typedef struct _StreamData{
 -(void)sendUpdateEvent;
 -(void)mouseDown:(NSEvent *)theEvent;
 -(void)mouseUp:(NSEvent *)theEvent;
--(void)mouseDragged:(NSEvent *)theEvent;
 -(void)mouseEntered:(NSEvent *)theEvent;
 -(void)mouseExited:(NSEvent *)theEvent;
 -(void)keyDown:(NSEvent *)theEvent;

@@ -2,11 +2,25 @@
     IFPluginView.mm
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
+#define USE_CARBON 1
 
 #import "IFPluginView.h"
+#import <AppKit/NSWindow_Private.h>
+
 #include <Carbon/Carbon.h> 
 #include "kwqdebug.h"
 #include <WCURLHandle.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <CoreGraphics/CoreGraphics.h>
+#include <CoreGraphics/CoreGraphicsPrivate.h>
+
+#ifdef __cplusplus
+}
+#endif
 
 @implementation IFPluginViewNullEventSender
 
@@ -27,7 +41,7 @@
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u\n", acceptedEvent, event.when);
+    //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u\n", acceptedEvent, (unsigned)event.when);
     [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.1];
 }
 
@@ -104,10 +118,10 @@
     transferred = FALSE;
     stopped = FALSE;
     filesToErase = [NSMutableArray arrayWithCapacity:2];
-    activeURLHandles = [NSMutableArray arrayWithCapacity:1];
     [filesToErase retain];
+    activeURLHandles = [NSMutableArray arrayWithCapacity:1];
     [activeURLHandles retain];
-    //trackingTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
+    [[self window] _windowRef];
     eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
     [eventSender sendNullEvents];
     return self;
@@ -115,10 +129,10 @@
 
 - (void)drawRect:(NSRect)rect
 {
-    //MoveTo(0,0); // diagnol line test
-    //LineTo((short)rect.size.width, (short)rect.size.height);
-    [self setWindow:rect];
     if(!transferred){
+        [self setWindow];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:[self window]];
         [self sendActivateEvent];
         [self newStream:URL mimeType:mime notifyData:NULL];
         transferred = TRUE;
@@ -126,37 +140,69 @@
     [self sendUpdateEvent];
 }
 
-- (void) setWindow:(NSRect)rect
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
+-(void) viewHasMoved:(NSNotification *)note
+{
+    [self setWindow];
+    //[self sendUpdateEvent];
+    [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.1];
+}
+
+- (void) setWindow
 {
     NPError npErr;
-    NSRect frame, frameInWindow;
+    NSRect windowFrame, frameInWindow, visibleRectInWindow;
     
-    frame = [self frame];
-    frameInWindow = [self convertRect:rect toView:nil];
+    windowFrame = [[self window] frame];
+    frameInWindow = [self convertRect:[self bounds] toView:nil];
+    visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
+    frameInWindow.origin.y =  windowFrame.size.height - frameInWindow.origin.y - frameInWindow.size.height; // flip y coord
+    visibleRectInWindow.origin.y =  windowFrame.size.height - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
     
-    nPort.port = [self qdPort];
-    nPort.portx = 0;
-    nPort.porty = 0;   
+    nPort.port = GetWindowPort([[self window] _windowRef]);
+    nPort.portx = -(int32)frameInWindow.origin.x; // these values are ignored by QT
+    nPort.porty = -(int32)frameInWindow.origin.y;   
     window.window = &nPort;
     
-    window.x = 0; 
-    window.y = 0;
+    window.x = (int32)frameInWindow.origin.x; 
+    window.y = (int32)frameInWindow.origin.y;
 
-    window.width = (uint32)frame.size.width;
-    window.height = (uint32)frame.size.height;
+    window.width = (uint32)frameInWindow.size.width;
+    window.height = (uint32)frameInWindow.size.height;
 
-    window.clipRect.top = (uint16)rect.origin.y; // clip rect
-    window.clipRect.left = (uint16)rect.origin.x;
-    window.clipRect.bottom = (uint16)rect.size.height;
-    window.clipRect.right = (uint16)rect.size.width;
+    window.clipRect.top = (uint16)visibleRectInWindow.origin.y; // clip rect
+    window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
+    window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
+    window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
     
-    window.type = NPWindowTypeDrawable;
+    window.type = NPWindowTypeWindow;
     
     npErr = NPP_SetWindow(instance, &window);
-    KWQDebug("NPP_SetWindow: %d rect.size.height=%d rect.size.width=%d port=%d rect.origin.x=%f rect.origin.y=%f\n", npErr, (int)rect.size.height, (int)rect.size.width, (int)nPort.port, rect.origin.x, rect.origin.y);
-    //KWQDebug("frame.size.height=%d frame.size.width=%d frame.origin.x=%f frame.origin.y=%f\n", (int)frame.size.height, (int)frame.size.width, frame.origin.x, frame.origin.y);
-    //KWQDebug("frameInWindow.size.height=%d frameInWindow.size.width=%d frameInWindow.origin.x=%f frameInWindow.origin.y=%f\n", (int)frameInWindow.size.height, (int)frameInWindow.size.width, frameInWindow.origin.x, frameInWindow.origin.y);
+    KWQDebug("NPP_SetWindow: %d, port=%d\n", npErr, (int)nPort.port);
+    KWQDebug("frameInWindow.origin.x=%f, frameInWindow.origin.y=%f, frameInWindow.size.height=%d, frameInWindow.size.width=%d\n", 
+        frameInWindow.origin.x, frameInWindow.origin.y, (int)frameInWindow.size.height, (int)frameInWindow.size.width);
+    KWQDebug("visibleRectInWindow.origin.x=%f, visibleRectInWindow.origin.y=%f, visibleRectInWindow.size.height=%d, visibleRectInWindow.size.width=%d\n", 
+        visibleRectInWindow.origin.x, visibleRectInWindow.origin.y, (int)visibleRectInWindow.size.height, (int)visibleRectInWindow.size.width);
 }
+
+- (NSView *) findSuperview:(NSString *) viewName
+{
+    NSView *view;
+    
+    view = self;
+    while(view){
+        view = [view superview];
+        if([[view className] isEqualToString:viewName]){
+            return view;
+        }
+    }
+    return nil;
+}
+
 
 - (void) newStream:(NSString *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
 {
@@ -321,7 +367,7 @@
     UnsignedWide msecs;
     
     event.what = activateEvt;
-    event.message = (UInt32)[self qdPort];
+    event.message = (uint32)GetWindowPort([[self window] _windowRef]);
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event); 
@@ -335,7 +381,7 @@
     UnsignedWide msecs;
     
     event.what = updateEvt;
-    event.message = (UInt32)[self qdPort];
+    event.message = (uint32)GetWindowPort([[self window] _windowRef]);
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event); 
@@ -347,17 +393,15 @@
     EventRecord event;
     bool acceptedEvent;
     Point pt;
-    NSPoint viewPoint;
-    NSRect frame;
+    CGPoint mousePoint = CGSCurrentInputPointerPosition();
     
-    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    frame = [self frame];
-    
-    pt.v = (short)viewPoint.y; 
-    pt.h = (short)viewPoint.x;
+    pt.v = (short)mousePoint.y;
+    pt.h = (short)mousePoint.x;
     event.what = mouseDown;
     event.where = pt;
     event.when = (uint32)([theEvent timestamp] * 60); // seconds to ticks
+    event.message = NULL;
+    event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
     KWQDebug("NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%u\n", acceptedEvent, pt.v, pt.h, event.when);
 }
@@ -367,43 +411,19 @@
     EventRecord event;
     bool acceptedEvent;
     Point pt;
-    NSPoint viewPoint;
-    NSRect frame;
+    CGPoint mousePoint = CGSCurrentInputPointerPosition();
     
-    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    frame = [self frame];
-    
-    pt.v = (short)viewPoint.y; 
-    pt.h = (short)viewPoint.x;
+    pt.v = (short)mousePoint.y;
+    pt.h = (short)mousePoint.x;
     event.what = mouseUp;
     event.where = pt;
     event.when = (uint32)([theEvent timestamp] * 60); 
+    event.message = NULL;
+    event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
     KWQDebug("NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%u\n", acceptedEvent, pt.v, pt.h, event.when);
 }
 
-- (void)mouseDragged:(NSEvent *)theEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point pt;
-    NSPoint viewPoint;
-    NSRect frame;
-    
-    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    frame = [self frame];
-    
-    pt.v = (short)viewPoint.y; 
-    pt.h = (short)viewPoint.x;
-    event.what = osEvt;
-    event.where = pt;
-    event.when = (uint32)([theEvent timestamp] * 60); // seconds to ticks
-    event.message = mouseMovedMessage;
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    KWQDebug("NPP_HandleEvent(mouseDragged): %d pt.v=%d, pt.h=%d ticks=%u\n", acceptedEvent, pt.v, pt.h, event.when);
-}
-
-//FIXME: mouseEntered and mouseExited are not being called for some reason
 - (void)mouseEntered:(NSEvent *)theEvent
 {
     EventRecord event;
@@ -545,6 +565,8 @@
         }
         [eventSender stop];
         [eventSender release];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        [self removeTrackingRect:trackingTag];
         npErr = NPP_Destroy(instance, NULL);
         KWQDebug("NPP_Destroy: %d\n", npErr);
         stopped = TRUE;
