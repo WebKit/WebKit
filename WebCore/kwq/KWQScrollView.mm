@@ -162,13 +162,13 @@ void QScrollView::removeChild(QWidget* child)
 
 void QScrollView::resizeContents(int w, int h)
 {
-    //_logNeverImplemented();
+    resize (w, h);
 }
 
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
-    //_logNeverImplemented();
+    _logNotYetImplemented();
 }
 
 

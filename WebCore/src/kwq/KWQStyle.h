@@ -51,8 +51,8 @@ public:
     // member functions --------------------------------------------------------
 
     GUIStyle guiStyle() const;
-    virtual QSize indicatorSize() const = 0;
-    virtual QSize exclusiveIndicatorSize() const = 0;
+    virtual QSize indicatorSize() { return QSize(0,0); };
+    virtual QSize exclusiveIndicatorSize() { return QSize(0,0); };
 
     // operators ---------------------------------------------------------------
 
@@ -63,7 +63,7 @@ private:
     // note that these are "standard" (no pendantic stuff needed)
     QStyle(const QStyle &);
     QStyle &operator=(const QStyle &);
-
+    
 }; // class QStyle =============================================================
 
 #endif

@@ -58,7 +58,8 @@ public:
     QWidgetPrivate(QWidget *widget) : pos(0,0), rect(0,0,0,0), pal()
     {
         view = [[KWQView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: widget];
-        style = 0L;
+        // FIXME!  We really don't care about widget styles.
+        style = new QStyle();
         font = 0L;
         cursor = 0L;
     }

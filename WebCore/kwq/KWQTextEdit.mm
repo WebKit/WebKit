@@ -49,6 +49,7 @@ QScrollBar *QTableView::verticalScrollBar() const
 {
     // Nothing needed.
     _logNeverImplemented();
+    return 0L;
 }
 
 
@@ -56,6 +57,7 @@ QScrollBar *QTableView::horizontalScrollBar() const
 {
     // Nothing needed.
     _logNeverImplemented();
+    return 0L;
 }
 
 

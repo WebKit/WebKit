@@ -918,17 +918,29 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 -(void)cacheDataAvailable:(NSNotification *)notification
 {
-    id <WCURICacheData> data = [notification object];
-    KIO::Job *job = static_cast<KIO::Job *>([data userData]);
-    m_loader->slotData(job, (const char *)[data cacheData], [data cacheDataSize]);
+    NSString *notificationName = [notification name];
+    if ([notificationName rangeOfString: @"uri"].location != 0){
+        NSLog (@"cacheDataAvailable: Received invalid notication, %@", notificationName);
+    }
+    else {
+        id <WCURICacheData> data = [notification object];
+        KIO::Job *job = static_cast<KIO::Job *>([data userData]);
+        m_loader->slotData(job, (const char *)[data cacheData], [data cacheDataSize]);
+    }
 }
 
 -(void)cacheFinished:(NSNotification *)notification
 {
-    // FIXME: need an implementation for this
-    id <WCURICacheData> data = [notification object];
-    KIO::Job *job = static_cast<KIO::Job *>([data userData]);
-    m_loader->slotFinished(job);
+    NSString *notificationName = [notification name];
+    if ([notificationName rangeOfString: @"uri"].location != 0){
+        NSLog (@"cacheFinished: Received invalid notication, %@", notificationName);
+    }
+    else {
+        // FIXME: need an implementation for this
+        id <WCURICacheData> data = [notification object];
+        KIO::Job *job = static_cast<KIO::Job *>([data userData]);
+        m_loader->slotFinished(job);
+    }
 }
 
 @end
