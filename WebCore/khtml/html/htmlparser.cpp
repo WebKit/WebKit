@@ -389,7 +389,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             break;
         case ID_HEAD:
             // ### alllow not having <HTML> in at all, as per HTML spec
-            if (!current->isDocumentNode() && !current->id() == ID_HTML )
+            if (!current->isDocumentNode() && current->id() != ID_HTML )
                 return false;
             break;
             // We can deal with a base, meta and link element in the body, by just adding the element to head.

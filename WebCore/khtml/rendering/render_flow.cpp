@@ -76,7 +76,7 @@ void RenderFlow::setStyle(RenderStyle *_style)
     if (!isTableCell() && (isPositioned() || isRelPositioned() || style()->overflow()==OHIDDEN) && !m_layer)
         m_layer = new (renderArena()) RenderLayer(this);
     
-    if(isFloating() || !style()->display() == INLINE)
+    if(isFloating() || style()->display() != INLINE)
         setInline(false);
 
     if (isInline() && !m_childrenInline)

@@ -1,3 +1,16 @@
+2003-01-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed a bunch of places where KHTML did !x == y instead of !(x == y) or x != y.
+
+        * khtml/css/cssstyleselector.cpp: (CSSStyleSelector::applyRule):
+        * khtml/html/htmlparser.cpp: (KHTMLParser::insertNode):
+        * khtml/misc/loader.cpp: (Cache::requestImage), (Cache::requestStyleSheet):
+        * khtml/rendering/render_flow.cpp: (RenderFlow::setStyle):
+	Changed !x == y to x != y. In each case, there's a reason that this does not create
+	any problem in practice, which is why we didn't rush to get this in for beta 1.
+
 2003-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

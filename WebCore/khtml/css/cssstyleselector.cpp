@@ -2212,7 +2212,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
     case CSS_PROP_HEIGHT:
     case CSS_PROP_MIN_HEIGHT:
         // +inherit +auto !can be calculted directly!
-        if(!prop->m_id == CSS_PROP_MAX_HEIGHT && primitiveValue &&
+        if(prop->m_id != CSS_PROP_MAX_HEIGHT && primitiveValue &&
            primitiveValue->getIdent() == CSS_VAL_AUTO)
             apply = true;
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
