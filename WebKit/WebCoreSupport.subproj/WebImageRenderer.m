@@ -5,7 +5,6 @@
 
 #import <WebKit/WebImageRenderer.h>
 
-#import <WebKit/WebException.h>
 #import <WebFoundation/WebAssertions.h>
 
 #define MINIMUM_DURATION (1.0/30.0)
@@ -72,7 +71,7 @@ static NSMutableArray *activeImageRenderers;
         [self setSize:size];
         return YES;
     default:
-        // We have some data.  Return YES so we can attempt a to draw what we've got.
+        // We have some data.  Return YES so we can attempt to draw what we've got.
         return YES;
     }
     
@@ -143,9 +142,42 @@ static NSMutableArray *activeImageRenderers;
 {   
     frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
                                                     target:self
-                                                    selector:@selector(nextFrame:)
-                                                    userInfo:nil
-                                                    repeats:NO] retain];
+                                                  selector:@selector(nextFrame:)
+                                                  userInfo:nil
+                                                   repeats:NO] retain];
+}
+
+- (void)drawClippedToValidInRect:(NSRect)ir fromRect:(NSRect)fr
+{
+    if (loadStatus >= 0) {
+        int pixelsHigh = [[[self representations] objectAtIndex:0] pixelsHigh];
+        if (pixelsHigh > loadStatus) {
+            // Figure out how much of the image is OK to draw.
+            float clippedImageHeight = floor([self size].height * loadStatus / pixelsHigh);
+            
+            // Figure out how much of the source is OK to draw from.
+            float clippedSourceHeight = clippedImageHeight - fr.origin.y;
+            if (clippedSourceHeight < 1) {
+                return;
+            }
+            
+            // Figure out how much of the destination we are going to draw to.
+            float clippedDestinationHeight = ir.size.height * clippedSourceHeight / fr.size.height;
+
+            // Reduce heights of both rectangles without changing their positions.
+            // In the non-flipped case, this means moving the origins up from the bottom left.
+            // In the flipped case, just adjusting the height is sufficient.
+            if (![[NSView focusView] isFlipped]) {
+                ir.origin.y += ir.size.height - clippedDestinationHeight;
+            }
+            ir.size.height = clippedDestinationHeight;
+            fr.origin.y += fr.size.height - clippedSourceHeight;
+            fr.size.height = clippedSourceHeight;
+        }
+    }
+    
+    // This is the operation that handles transparent portions of the source image correctly.
+    [self drawInRect:ir fromRect:fr operation:NSCompositeSourceOver fraction:1.0];
 }
 
 - (void)nextFrame:(id)context
@@ -176,10 +208,7 @@ static NSMutableArray *activeImageRenderers;
      if (![[[self representations] objectAtIndex:0] hasAlpha]) {
         if ([frameView canDraw]) {
             [frameView lockFocus];
-            [self drawInRect:targetRect
-                    fromRect:imageRect
-                operation:NSCompositeSourceOver	// Renders transparency correctly
-                    fraction:1.0];
+            [self drawClippedToValidInRect:imageRect fromRect:targetRect];
             [frameView unlockFocus];
         }
         if (!animationFinished) {
@@ -200,10 +229,7 @@ static NSMutableArray *activeImageRenderers;
     // The previous, if any, frameView, is released in stopAnimation.
     [self stopAnimation];
 
-    [self drawInRect:ir
-            fromRect:fr
-           operation:NSCompositeSourceOver	// Renders transparency correctly
-            fraction:1.0];
+    [self drawClippedToValidInRect:ir fromRect:fr];
     
     if ([self frameCount] > 1 && !animationFinished) {
         imageRect = fr;
@@ -237,15 +263,12 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point
 {
-    // If it's too early to draw, just do nothing.
-    if (loadStatus <= 0 && loadStatus != NSImageRepLoadStatusCompleted) {
-        return;
-    }
-    
+    // These calculations are only correct for the flipped case.
+    ASSERT([[NSView focusView] isFlipped]);
+
     NSSize size = [self size];
 
-    // Check and see if a single draw of the image can convert the entire area we are supposed to tile.
-    ASSERT([[NSView focusView] isFlipped]);
+    // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
     NSRect oneTileRect;
     oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, size.width) - size.width, size.width);
     oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, size.height) - size.height, size.height);
@@ -258,11 +281,14 @@ static NSMutableArray *activeImageRenderers;
         fromRect.origin.y = (oneTileRect.origin.y + oneTileRect.size.height) - (rect.origin.y + rect.size.height);
         fromRect.size = rect.size;
         
-        [self drawInRect:rect
-                fromRect:fromRect
-               operation:NSCompositeSourceOver
-                fraction:1.0];
-        
+        [self drawClippedToValidInRect:rect fromRect:fromRect];
+        return;
+    }
+    
+    // If we only have a partial image, just do nothing, because CoreGraphics will not help us tile
+    // with a partial image. But maybe later we can fix this by constructing a pattern image that's
+    // transparent where needed.
+    if (loadStatus != NSImageRepLoadStatusCompleted) {
         return;
     }
     

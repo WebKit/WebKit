@@ -1,3 +1,16 @@
+2002-09-16  Darin Adler  <darin@apple.com>
+
+	- fixed 3050810 -- while an image is loading progressively, it draws
+	white rather then page background	
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]): Added. Used instead
+	of a direct call to drawInRect:fromRect:operation:fraction:, this only draws
+	the part of the image that is valid according to loadStatus.
+        (-[WebImageRenderer nextFrame:]): Use drawClippedToValidInRect:fromRect:.
+        (-[WebImageRenderer beginAnimationInRect:fromRect:]): Ditto.
+        (-[WebImageRenderer tileInRect:fromPoint:]): Ditto.
+
 2002-09-13  Richard Williamson (Home)  <rjw@apple.com>
 
        Fixed 3051288.  URLs were not being canonicalized, so matching failed.
