@@ -1,3 +1,16 @@
+2005-01-13  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3937663> repro assertion failure and crash dragging image that has PDF source
+
+        Reviewed by adele.
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:rect:event:pasteboard:source:offset:]): if [WebImageRenderer image] returns nil, fallback to code that uses a file icon as the drag image
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory supportedMIMETypes]): removed code that omits PDF and PostScript from the list since this omission is only needed in WebImageView
+        * WebView.subproj/WebImageView.m:
+        (+[WebImageView supportedImageMIMETypes]): added code that omits PDF and PostScript since we don't want WebImageView to render these types
+
 2005-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

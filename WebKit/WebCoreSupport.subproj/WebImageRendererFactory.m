@@ -196,12 +196,7 @@ struct CompositeOperator CGCompositeOperations[NUM_COMPOSITE_OPERATORS] = {
 {
     static NSArray *imageMIMETypes = nil;
 
-    if(!imageMIMETypes){
-        NSArray *unsupportedTypes = [NSArray arrayWithObjects:
-            @"application/pdf",
-            @"application/postscript",
-            nil];
-        
+    if (imageMIMETypes == nil) {
         NSEnumerator *enumerator = [[NSImage imageFileTypes] objectEnumerator];
         NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
         NSMutableSet *mimes = [NSMutableSet set];
@@ -209,8 +204,7 @@ struct CompositeOperator CGCompositeOperations[NUM_COMPOSITE_OPERATORS] = {
 
         while ((type = [enumerator nextObject]) != nil) {
             NSString *mime = [mappings MIMETypeForExtension:type];
-            if(mime && ![mime isEqualToString:@"application/octet-stream"] &&
-               ![unsupportedTypes containsObject:mime]){
+            if (mime != nil && ![mime isEqualToString:@"application/octet-stream"]) {
                 [mimes addObject:mime];
             }
         }

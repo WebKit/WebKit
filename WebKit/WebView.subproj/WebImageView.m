@@ -31,7 +31,13 @@
 
 + (NSArray *)supportedImageMIMETypes
 {
-    return [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
+    static NSMutableArray *imageMIMETypes = nil;
+    if (imageMIMETypes == nil) {
+        imageMIMETypes = [[[WebImageRendererFactory sharedFactory] supportedMIMETypes] mutableCopy];
+        [imageMIMETypes removeObject:@"application/pdf"];
+        [imageMIMETypes removeObject:@"application/postscript"];
+    }
+    return imageMIMETypes;
 }
 
 - (id)initWithFrame:(NSRect)frame

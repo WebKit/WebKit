@@ -192,7 +192,7 @@
     NSImage *image;
     
     image = [wir image];
-    if ([image size].height * [image size].width <= WebMaxOriginalImageArea) {
+    if (image != nil && [image size].height * [image size].width <= WebMaxOriginalImageArea) {
         NSSize originalSize = rect.size;
         origin = rect.origin;
         
