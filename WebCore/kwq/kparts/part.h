@@ -33,39 +33,116 @@
 #include <qstringlist.h>
 #include <qvaluelist.h>
 
-// added to help in compilation of khtml/khtml_part.h:867
 namespace KIO {
 class Job;
 } // namespace KIO
  
-// forward declaration hack to help in compilation of khtml/khtml_part.h:166
 class QWidget;
-
-// forward declaration hack to help in compilation of khtml/khtml_part.h:552
 class QCursor;
-
-// forward declaration hack to help in compilation of khtml/khtml_part.h:631
 class QDataStream;
-
-// forward declaration hack to help in compilation of khtml/ecma/kjs_binding.cpp:28
 class QPainter;
 
 namespace KParts {
 
+// class Part ==================================================================
+
 class Part : public QObject {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    Part();
+    
+    ~Part();
+
+    // member functions --------------------------------------------------------
+
     QWidget *widget();
     void setWindowCaption(const QString &);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    Part(const Part &);
+    Part &operator=(const Part &);
+
+}; // class Part ===============================================================
+
+
+// class ReadOnlyPart ==========================================================
 
 class ReadOnlyPart : public Part {
 public:
-    virtual const KURL & url() const;
-};
 
-// hack to help in compilation of khtml/khtml_part.h:785
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
+    ReadOnlyPart();
+    
+    ~ReadOnlyPart();
+
+    // member functions --------------------------------------------------------
+
+    virtual const KURL &url() const;
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    ReadOnlyPart(const ReadOnlyPart &);
+    ReadOnlyPart &operator=(const ReadOnlyPart &);
+
+}; // class ReadOnlyPart =======================================================
+
+
+// class GUIActivateEvent ======================================================
+
 class GUIActivateEvent {
-};
+public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    GUIActivateEvent();
+    
+    ~GUIActivateEvent();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    GUIActivateEvent(const GUIActivateEvent &);
+    GUIActivateEvent &operator=(const GUIActivateEvent &);
+
+}; // class GUIActivateEvent ===================================================
+
 
 } // namespace KParts
 

@@ -30,16 +30,75 @@
 #include <qstring.h>
 #include <kinstance.h>
 
+// class KIcon =================================================================
+
 class KIcon {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
     enum Context { Any, Action, Application, Device, FileSystem, MimeType };
     enum States { DefaultState, ActiveState, DisabledState, LastState };
-};
+
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KIcon();
+    
+    ~KIcon();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KIcon(const KIcon &);
+    KIcon &operator=(const KIcon &);
+
+}; // class KIcon ==============================================================
+
+
+// class KIconLoader ===========================================================
 
 class KIconLoader {
 public:
-    QPixmap loadIcon(const QString &name, int group, int size=0, int state=KIcon::DefaultState, 
-    QString *path_store=0L, bool canReturnNull=false) const;
-};
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KIconLoader();
+    
+    ~KIconLoader();
+    
+    // member functions --------------------------------------------------------
+    
+    QPixmap loadIcon(const QString &name, int group, int size=0, 
+        int state=KIcon::DefaultState, QString *path_store=0L, 
+        bool canReturnNull=false) const;
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KIconLoader(const KIconLoader &);
+    KIconLoader &operator=(const KIconLoader &);
+
+}; // class KIconLoader ========================================================
 
 #endif

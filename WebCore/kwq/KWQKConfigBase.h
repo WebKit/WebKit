@@ -37,19 +37,80 @@
 #include <qcolor.h>
 #include <KWQStrList.h>
 
+// class KConfigBase ===========================================================
+
 class KConfigBase {
 public:
-    void setGroup(const QString& pGroup);
-    QString readEntry(const char *pKey, const QString& aDefault = QString::null) const;
-    int readNumEntry(const char *pKey, int nDefault = 0) const;
-    unsigned int readUnsignedNumEntry(const char *pKey, unsigned int nDefault = 0) const;
-    bool readBoolEntry(const char *pKey, bool nDefault = 0) const;
-    QColor readColorEntry(const char *pKey, const QColor* pDefault = 0L) const;
-};
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
+    KConfigBase();
+    
+    ~KConfigBase();
+
+    // member functions --------------------------------------------------------
+
+    void setGroup(const QString &pGroup);
+    
+    QString readEntry(const char *pKey, 
+        const QString& aDefault=QString::null) const;
+    
+    int readNumEntry(const char *pKey, int nDefault=0) const;
+    
+    unsigned int readUnsignedNumEntry(const char *pKey, 
+        unsigned int nDefault=0) const;
+    
+    bool readBoolEntry(const char *pKey, bool nDefault=0) const;
+    
+    QColor readColorEntry(const char *pKey, const QColor *pDefault=0L) const;
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KConfigBase(const KConfigBase &);
+    KConfigBase &operator=(const KConfigBase &);
+
+}; // class KConfigBase ========================================================
+
+
+// class KConfig ===============================================================
 
 class KConfig : public KConfigBase {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     KConfig(const QString &, bool bReadOnly=false);
-};
+
+    ~KConfig();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KConfig(const KConfig &);
+    KConfig &operator=(const KConfig &);
+
+}; // class KConfig ============================================================
 
 #endif

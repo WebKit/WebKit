@@ -28,31 +28,59 @@
 
 class QString;
 
+// class KURL ==================================================================
+
 class KURL {
 public:
-        KURL();
-        KURL(const char *url, int encoding_hint = 0);
-        KURL(const KURL& url, const QString &);
-        KURL(const QString& url, int encoding_hint = 0);
-        bool hasPath() const;
-	unsigned short int port() const;
-	QString path() const;
-	QString query() const;
-	QString ref() const;
-	QString user() const;
-	QString pass() const;
-	QString url() const;
-	QString host() const;
-	QString protocol() const;
-        void setQuery(const QString& _txt, int encoding_hint = 0);
-        void setProtocol(const QString&);
-        void setHost(const QString&);
-        void setRef(const QString& _txt);
-        void setPath(const QString& path);
-        void setPort(unsigned short int);
-	bool isEmpty() const;
-	bool isMalformed() const;
-        QString prettyURL(int _trailing = 0) const;
-};
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    KURL();
+    KURL(const char *url, int encoding_hint=0);
+    KURL(const KURL &, const QString &);
+    KURL(const QString &, int encoding_hint=0);
+    KURL(const KURL &);
+    
+    ~KURL();
+
+    // member functions --------------------------------------------------------
+
+    bool isEmpty() const;
+    bool isMalformed() const;
+    bool hasPath() const;
+
+    QString url() const;
+    QString protocol() const;
+    QString host() const;
+    unsigned short int port() const;
+    QString pass() const;
+    QString user() const;
+    QString ref() const;
+    QString query() const;
+    QString path() const;
+
+    void setProtocol(const QString &);
+    void setHost(const QString &);
+    void setPort(unsigned short int);
+    void setRef(const QString &);
+    void setQuery(const QString &, int encoding_hint=0);
+    void setPath(const QString &);
+
+    QString prettyURL(int trailing=0) const;
+
+    // operators ---------------------------------------------------------------
+
+    KURL &operator=(const KURL &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class KURL ===============================================================
 
 #endif

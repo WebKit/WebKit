@@ -26,11 +26,40 @@
 #ifndef KINSTANCE_H_
 #define KINSTANCE_H_
 
+#include <qcstring.h>
+
 class KIconLoader;
+
+// class KInstance =============================================================
 
 class KInstance {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+
+    KInstance(const QCString &);
+    
+    virtual ~KInstance();
+
+    // member functions --------------------------------------------------------
+
     KIconLoader *iconLoader() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KInstance(const KInstance &);
+    KInstance &operator=(const KInstance &);
+
+}; // class KInstance ==========================================================
 
 #endif

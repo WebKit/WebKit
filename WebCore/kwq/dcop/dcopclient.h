@@ -26,21 +26,52 @@
 #ifndef DCOPCLIENT_H_
 #define DCOPCLIENT_H_
 
+#include <qobject.h>
 #include <qcstring.h>
 
-// KApplication needs this
-class DCOPClient {
+// class DCOPClient ============================================================
+
+class DCOPClient : public QObject {
 public:
-	bool call(const char *remApp, const char *remObj, const char *remFun, const QByteArray &data,
-		QCString& replyType, QByteArray &replyData, bool useEventLoop=false, bool fast=false);
-	bool call(const QCString &remApp, const QCString &remObj, const QCString &remFun, const QByteArray &data,
-		QCString& replyType, QByteArray &replyData, bool useEventLoop=false, bool fast=false);
 
-	bool send(const char *remApp, const char *remObj, const char *remFun, const QByteArray &data, bool fast=false);
-	bool send(const QCString &remApp, const QCString &remObj, const QCString &remFun, const QByteArray &data, 
-		bool fast=false);
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    DCOPClient();
+    
+    virtual ~DCOPClient();
+    
+    // member functions --------------------------------------------------------
 
+	bool call(const char *remApp, const char *remObj, const char *remFun, 
+	    const QByteArray &data, QCString& replyType, QByteArray &replyData, 
+	    bool useEventLoop=false, bool fast=false);
+	
+	bool call(const QCString &remApp, const QCString &remObj, 
+	    const QCString &remFun, const QByteArray &data, QCString& replyType, 
+	    QByteArray &replyData, bool useEventLoop=false, bool fast=false);
 
-};
+	bool send(const char *remApp, const char *remObj, const char *remFun, 
+	    const QByteArray &data, bool fast=false);
+		
+	bool send(const QCString &remApp, const QCString &remObj, 
+	    const QCString &remFun, const QByteArray &data, bool fast=false);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    DCOPClient(const DCOPClient &);
+    DCOPClient &operator=(const DCOPClient &);
+
+}; // class DCOPClient =========================================================
 
 #endif

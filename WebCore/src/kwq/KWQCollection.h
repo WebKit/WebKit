@@ -26,12 +26,44 @@
 #ifndef KWQCOLLECTION_H_
 #define KWQCOLLECTION_H_
 
+// class QCollection ===========================================================
+
 class QCollection {
 public:
+
+    // structs -----------------------------------------------------------------
+
+    // typedefs ----------------------------------------------------------------
+
     typedef void *Item;
+
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+
+    QCollection();
+    
+    ~QCollection();    
+
+    // member functions --------------------------------------------------------
+
     void setAutoDelete(bool);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+
 protected:
     virtual Item newItem(Item);
-};
+
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QCollection(const QCollection &);
+    QCollection &operator=(const QCollection &);
+
+}; // class QCollection ========================================================
 
 #endif

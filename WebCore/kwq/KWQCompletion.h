@@ -29,16 +29,72 @@
 #include <qobject.h>
 #include <qstringlist.h>
 
+// class QCompletion ===========================================================
+
 class QCompletion : public QObject {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
     QCompletion();
+
+    ~QCompletion();
+
+    // member functions --------------------------------------------------------
+
     void setItems(const QStringList &);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QCompletion(const QCompletion &);
+    QCompletion &operator=(const QCompletion &);
+
+}; // class QCompletion ========================================================
+
+
+// class QCompletionBase =======================================================
 
 class QCompletionBase {
 public:
-     QCompletionBase();
-     QCompletion *completionObject(bool hsig = true);
-};
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QCompletionBase();
+        
+    ~QCompletionBase();
+
+    // member functions --------------------------------------------------------
+
+    QCompletion *completionObject(bool hsig = true);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QCompletionBase(const QCompletionBase &);
+    QCompletionBase &operator=(const QCompletionBase &);
+
+}; // class QCompletionBase ====================================================
+
 
 #endif

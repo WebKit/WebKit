@@ -26,24 +26,83 @@
 #ifndef KMIMETYPE_H_
 #define KMIMETYPE_H_
 
-// FIXME: grotesque hack to get khtml/html/html_formimpl.cpp:198 to compile
 #include <kdecore/kglobal.h>
 
 #include <kdecore/kurl.h>
 #include <sys/types.h>
 #include <qstring.h>
 
-template<class T> class KSharedPtr
-{
+// class KSharedPtr ============================================================
+
+template<class T> class KSharedPtr {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    KSharedPtr();
+
+    KSharedPtr(const KSharedPtr &);
+    
+    virtual ~KSharedPtr();
+
+    // member functions --------------------------------------------------------
+
+    // operators ---------------------------------------------------------------
+
+    KSharedPtr &operator=(const KSharedPtr &);
     T *operator->();
-};
+
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class KSharedPtr =========================================================
+
+
+// class KMimeType =============================================================
 
 class KMimeType {
 public:
+
+    // structs -----------------------------------------------------------------
+
+    // typedefs ----------------------------------------------------------------
+
     typedef KSharedPtr<KMimeType> Ptr;
-    static Ptr findByURL(const KURL &, mode_t = 0, bool = false, bool = false);
+
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    static Ptr findByURL(const KURL &, mode_t=0, bool=false, bool=false);
+    
+    // constructors, copy constructors, and destructors ------------------------
+
+    KMimeType();
+    
+    ~KMimeType();
+
+    // member functions --------------------------------------------------------
+
     QString name() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KMimeType(const KMimeType &);
+    KMimeType &operator=(const KMimeType &);
+
+}; // class KMimeType ==========================================================
+
 
 #endif

@@ -33,9 +33,36 @@ namespace KParts {
 
 class BrowserInterface : public QObject {
 public:
+
+// class BrowserInterface ======================================================
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     BrowserInterface(QObject *parent, const char *name = 0);
+
+    ~BrowserInterface();
+
+    // member functions --------------------------------------------------------
+
     void callMethod(const char *name, const QVariant &argument);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    BrowserInterface(const BrowserInterface &);
+    BrowserInterface &operator=(const BrowserInterface &);
+
+}; // class BrowserInterface ===================================================
 
 } // namespace KParts
 

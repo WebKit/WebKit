@@ -29,19 +29,56 @@
 #include <qwidget.h>
 #include <qstring.h>
 
+// class KMessageBox ===========================================================
+
 class KMessageBox {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
     enum { Ok = 1, Cancel = 2, Yes = 3, No = 4, Continue = 5 };
-    static void error(QWidget *, const QString &, const QString &caption =
-            QString::null, bool notify = true);
-    static int warningYesNo(QWidget *, const QString &, const QString &caption
-            = QString::null, const QString &buttonYes = QString::null, const
-            QString &buttonNo = QString::null, bool notify = true);
-    static int questionYesNo(QWidget *, const QString &, const QString &caption
-            = QString::null, const QString &buttonYes = QString::null, const
-            QString &buttonNo = QString::null, bool notify = true);
-    static void sorry(QWidget *, const QString &, const QString &caption =
-            QString::null, bool notify = true);
-};
+
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
+    static void error(QWidget *, const QString &, 
+        const QString &caption=QString::null, bool notify=true);
+   
+    static int warningYesNo(QWidget *, const QString &, 
+        const QString &caption=QString::null, 
+        const QString &buttonYes=QString::null, 
+        const QString &buttonNo=QString::null, 
+        bool notify=true);
+   
+    static int questionYesNo(QWidget *, const QString &, 
+        const QString &caption=QString::null, 
+        const QString &buttonYes=QString::null, 
+        const QString &buttonNo=QString::null, bool notify=true);
+   
+    static void sorry(QWidget *, const QString &, 
+        const QString &caption=QString::null, bool notify=true);
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KMessageBox();
+    
+    ~KMessageBox();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KMessageBox(const KMessageBox &);
+    KMessageBox &operator=(const KMessageBox &);
+
+}; // class KMessageBox ========================================================
 
 #endif

@@ -28,11 +28,41 @@
 
 #include <qstringlist.h>
 
+// class KImageIO ==============================================================
+
 class KImageIO {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
     enum Mode { Reading, Writing };
 
-    static QStringList mimeTypes(Mode _mode = Writing);
-};
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
+    static QStringList mimeTypes(Mode mode=Writing);
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KImageIO();
+    
+    ~KImageIO();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KImageIO(const KImageIO &);
+    KImageIO &operator=(const KImageIO &);
+
+}; // class KImageIO ===========================================================
 
 #endif

@@ -28,11 +28,39 @@
 
 class QString;
 
+// class KProtocolManager ======================================================
+
 class KProtocolManager {
 public:
-    static QString userAgentForHost(const QString&);
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
+    static QString userAgentForHost(const QString &);
     static bool useProxy();
     static QString httpProxy();
-};
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KProtocolManager();
+    
+    ~KProtocolManager();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KProtocolManager(const KProtocolManager &);
+    KProtocolManager &operator=(const KProtocolManager &);
+
+}; // class KProtocolManager ===================================================
 
 #endif

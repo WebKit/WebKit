@@ -28,9 +28,37 @@
 
 #include <qstring.h>
 
+// class KStringHandler ========================================================
+
 class KStringHandler {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
     static QString csqueeze(const QString &, uint maxlen = 40);
-};
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    KStringHandler();
+    
+    ~KStringHandler();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KStringHandler(const KStringHandler &);
+    KStringHandler &operator=(const KStringHandler &);
+
+}; // class KStringHandler =====================================================
 
 #endif

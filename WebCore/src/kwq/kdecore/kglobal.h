@@ -37,8 +37,18 @@ class KConfig;
 #define kMin(a, b) ((a) < (b) ? (a) : (b))
 #define kMax(a, b) ((a) > (b) ? (a) : (b))
 
+// class KGlobal ===============================================================
+
 class KGlobal {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
     static KInstance *instance();
     static KCharsets *charsets();
     static KLocale *locale();
@@ -46,6 +56,24 @@ public:
     static KConfig *config();
 
     static const QString &staticQString(const QString &);
-};
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KGlobal();
+    
+    ~KGlobal();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KGlobal(const KGlobal &);
+    KGlobal &operator=(const KGlobal &);
+
+}; // class KGlobal ============================================================
 
 #endif

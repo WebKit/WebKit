@@ -28,7 +28,34 @@
 
 #include "klistbox.h"
 
+// class KCompletionBox ========================================================
+
 class KCompletionBox : public KListBox {
-};
+public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KCompletionBox();
+    
+    ~KCompletionBox();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KCompletionBox(const KCompletionBox &);
+    KCompletionBox &operator=(const KCompletionBox &);
+
+}; // class KCompletionBox =====================================================
 
 #endif

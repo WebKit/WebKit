@@ -29,10 +29,39 @@
 #include <qstring.h>
 #include <qwidget.h>
 
+// class KFileDialog ===========================================================
+
 class KFileDialog {
 public:
-    static QString getOpenFileName(const QString& startDir= QString::null, const QString& filter= QString::null,
-        QWidget *parent= 0, const QString& caption = QString::null);
-};
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
+    static QString getOpenFileName(const QString &startDir=QString::null, 
+        const QString &filter=QString::null, QWidget *parent=0, 
+        const QString &caption=QString::null);
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KFileDialog();
+    
+    ~KFileDialog();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KFileDialog(const KFileDialog &);
+    KFileDialog &operator=(const KFileDialog &);
+
+}; // class KFileDialog ========================================================
 
 #endif

@@ -35,13 +35,44 @@
 
 #define kapp KApplication::kApplication()
 
+// class KApplication ==========================================================
+
 class KApplication : public QApplication {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
 	static KApplication* kApplication() { return KApp; }
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    KApplication();
+    
+    ~KApplication();
+
+    // member functions --------------------------------------------------------
+
 	virtual DCOPClient *dcopClient();
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+
 protected:
 	static KApplication *KApp;
-};
 
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KApplication(const KApplication &);
+    KApplication &operator=(const KApplication &);
+
+}; // class KApplication =======================================================
 
 #endif

@@ -28,23 +28,42 @@
 
 #include <qwidget.h>
 
+// class QFrame ================================================================
+
 class QFrame : public QWidget {
 public:
 
-    enum Shape {
-        NoFrame,
-        Box,
-        StyledPanel,
-    };
-    enum Shadow {
-        Sunken,
-    };
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
+    enum Shape { NoFrame, Box, StyledPanel };
+    enum Shadow { Sunken };
+
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
 
     QFrame();
     QFrame(QWidget *parent);
 
+    // member functions --------------------------------------------------------
+
     virtual void setFrameStyle(int);
     int frameWidth() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QFrame(const QFrame &);
+    QFrame &operator=(const QFrame &);
+
+}; // class QFrame =============================================================
 
 #endif

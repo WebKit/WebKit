@@ -28,13 +28,41 @@
 
 class QFont;
 
+// class KGlobalSettings =======================================================
+
 class KGlobalSettings {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
     static QFont generalFont();
     static QFont windowTitleFont();
     static QFont menuFont();
 
     static int contrast();
-};
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    KGlobalSettings();
+    
+    ~KGlobalSettings();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KGlobalSettings(const KGlobalSettings &);
+    KGlobalSettings &operator=(const KGlobalSettings &);
+
+}; // class KGlobalSettings ====================================================
 
 #endif

@@ -32,9 +32,28 @@
 class QListBoxItem;
 class QListBoxText;
 
+// class QListBox ==============================================================
+
 class QListBox : public QScrollView {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
     enum SelectionMode { Single, Multi, Extended, NoSelection };
+
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
+    QListBox();
+    
+    ~QListBox();
+
+    // member functions --------------------------------------------------------
 
     uint count() const;
     void clear();
@@ -45,21 +64,87 @@ public:
     void insertItem(const QListBoxItem *, int index=-1);
     void setSelected(int, bool);
     bool isSelected(int);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QListBox(const QListBox &);
+    QListBox &operator=(const QListBox &);
+
+}; // class QListBox ===========================================================
+
+
+// class QListBoxItem ==========================================================
 
 class QListBoxItem {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QListBoxItem();
+
+    ~QListBoxItem();
+
+    // member functions --------------------------------------------------------
+
     void setSelectable(bool);
     QListBox *listBox() const;
     virtual int width(const QListBox *) const;
     virtual int height(const QListBox *) const;
     QListBoxItem *next() const;
     QListBoxItem *prev() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QListBoxItem(const QListBoxItem &);
+    QListBoxItem &operator=(const QListBoxItem &);
+
+}; // class QListBoxItem =======================================================
+
+
+// class QListBoxText ==========================================================
 
 class QListBoxText : public QListBoxItem {
 public:
-     QListBoxText(const QString & text=QString::null);
-};
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QListBoxText(const QString & text=QString::null);
+
+    ~QListBoxText();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QListBoxText(const QListBoxText &);
+    QListBoxText &operator=(const QListBoxText &);
+
+}; // class QListBoxText =======================================================
 
 #endif

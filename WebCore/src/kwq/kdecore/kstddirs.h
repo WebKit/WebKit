@@ -29,11 +29,41 @@
 #include <qstring.h>
 #include "kglobal.h"
 
-class KStandardDirs {
-public:
-    QString saveLocation(const char *, const QString &suffix = QString::null, bool create = true) const;
-};
 
 QString locate(const char *type, const QString& filename, const KInstance* instance = KGlobal::instance());
+
+
+// class KStandardDirs =========================================================
+
+class KStandardDirs {
+public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+
+    KStandardDirs();
+    
+    ~KStandardDirs();
+
+    // member functions --------------------------------------------------------
+
+    QString saveLocation(const char *, const QString &suffix = QString::null, 
+        bool create = true) const;
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KStandardDirs(const KStandardDirs &);
+    KStandardDirs &operator=(const KStandardDirs &);
+
+}; // class KStandardDirs ======================================================
 
 #endif

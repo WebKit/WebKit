@@ -31,19 +31,79 @@
 
 namespace KIO {
 
-class UDSAtom {
-};
+class UDSAtom;
 
 typedef QValueList<UDSAtom> UDSEntry;
 
+
+// class UDSAtom ===============================================================
+
+class UDSAtom {
+public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    UDSAtom();
+    
+    ~UDSAtom();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    UDSAtom(const UDSAtom &);
+    UDSAtom &operator=(const UDSAtom &);
+
+}; // class UDSAtom ============================================================
+
+
+// class NetAccess =============================================================
+
 class NetAccess {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
     static bool stat(const KURL &, KIO::UDSEntry &);
     static QString lastErrorString();
     static bool download(const KURL &, QString &);
     static void removeTempFile(const QString &);
-};
 
-}
+    // constructors, copy constructors, and destructors ------------------------
+    
+    NetAccess();
+    
+    ~NetAccess();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    NetAccess(const NetAccess &);
+    NetAccess &operator=(const NetAccess &);
+
+}; // class NetAccess ==========================================================
+
+
+} // namespace KIO
 
 #endif

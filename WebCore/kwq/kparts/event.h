@@ -28,19 +28,43 @@
 
 #include <qevent.h>
 
-// FIXME: pre-declare here for parse error workaround at line 129 of
-// khtml/khtml_events.h
 class QPainter;
 
 namespace KParts {
 
+// class Event =================================================================
+
 class Event {
 public:
-    Event(const char *);
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
     static bool test(const QEvent *);
     static bool test(const QEvent *, const char *);
-};
 
-}
+    // constructors, copy constructors, and destructors ------------------------
+
+    Event(const char *);
+    
+    virtual ~Event();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    Event(const Event &);
+    Event &operator=(const Event &);
+
+}; // class Event ==============================================================
+
+} // namespace KParts
 
 #endif

@@ -26,10 +26,38 @@
 #ifndef KWQICON_H_
 #define KWQICON_H_
 
+// class KIcon =================================================================
+
 class KIcon {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
     enum Context { Any, Action, Application, Device, FileSystem, MimeType };
     enum States { DefaultState, ActiveState, DisabledState, LastState };
-};
+
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+
+    KIcon();
+    
+    ~KIcon();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KIcon(const KIcon &);
+    KIcon &operator=(const KIcon &);
+
+}; // class KIcon ==============================================================
 
 #endif

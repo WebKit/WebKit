@@ -30,12 +30,36 @@
 
 class QRect;
 
+// class KWinModule ============================================================
+
 class KWinModule : public QObject {
 public:
-    KWinModule(QObject* parent = 0);
 
-    QRect workArea(int desktop = - 1) const;
-    void doNotManage(const QString&);
-};
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    KWinModule(QObject* parent=0);
+
+    // member functions --------------------------------------------------------
+
+    QRect workArea(int desktop=-1) const;
+    void doNotManage(const QString &);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KWinModule(const KWinModule &);
+    KWinModule &operator=(const KWinModule &);
+
+}; // class KWinModule =========================================================
 
 #endif

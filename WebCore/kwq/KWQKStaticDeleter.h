@@ -26,9 +26,37 @@
 #ifndef KSTATICDELETER_H_
 #define KSTATICDELETER_H_
 
+// class KStaticDeleter ========================================================
+
 template <class T> class KStaticDeleter {
 public:
-     T *setObject(T *obj, bool isArray = false);
-};
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    KStaticDeleter();
+    
+    ~KStaticDeleter();
+
+    // member functions --------------------------------------------------------
+
+     T *setObject(T *, bool isArray=false);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KStaticDeleter(const KStaticDeleter &);
+    KStaticDeleter &operator=(const KStaticDeleter &);
+
+}; // class KStaticDeleter =====================================================
 
 #endif

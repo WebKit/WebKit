@@ -31,14 +31,6 @@
 #include <KWQScrollBar.h>
 #include <qstring.h>
 
-class QTableView : public QFrame {
-public:
-    QScrollBar *verticalScrollBar() const;
-    QScrollBar *horizontalScrollBar() const;
-
-    virtual void setTableFlags(uint);
-    void clearTableFlags(uint f = ~0);
-};
 
 const uint Tbl_vScrollBar       = 0x00000001;
 const uint Tbl_hScrollBar       = 0x00000002;
@@ -47,8 +39,50 @@ const uint Tbl_autoHScrollBar   = 0x00000008;
 const uint Tbl_autoScrollBars   = 0x0000000C;
 
 
+// class QTableView ============================================================
+
+class QTableView : public QFrame {
+public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QTableView();
+    
+    ~QTableView();
+
+    // member functions --------------------------------------------------------
+
+    QScrollBar *verticalScrollBar() const;
+    QScrollBar *horizontalScrollBar() const;
+
+    virtual void setTableFlags(uint);
+    void clearTableFlags(uint f = ~0);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QTableView(const QTableView &);
+    QTableView &operator=(const QTableView &);
+
+}; // class QTableView =========================================================
+
+
+// class QMultiLineEdit ========================================================
+
 class QMultiLineEdit : public QTableView {
 public:
+
+    // structs -----------------------------------------------------------------
 
     enum WordWrap {
         NoWrap,
@@ -56,6 +90,18 @@ public:
         FixedPixelWidth,
         FixedColumnWidth
     };    
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+
+    QMultiLineEdit();
+    
+    ~QMultiLineEdit();
+
+    // member functions --------------------------------------------------------
 
     void setWordWrap(WordWrap);
     WordWrap wordWrap() const;
@@ -69,13 +115,49 @@ public:
     QString textLine(int line) const;
     int numLines() const;
     void selectAll();
-};
 
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QMultiLineEdit(const QMultiLineEdit &);
+    QMultiLineEdit &operator=(const QMultiLineEdit &);
+
+}; // class QMultiLineEdit =====================================================
+
+
+// class KEdit =================================================================
 
 class KEdit : public QMultiLineEdit {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     KEdit();
     KEdit(QWidget *);
-};
+
+    ~KEdit();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KEdit(const KEdit &);
+    KEdit &operator=(const KEdit &);
+
+}; // class KEdit ==============================================================
 
 #endif

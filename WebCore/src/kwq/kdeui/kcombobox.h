@@ -30,10 +30,33 @@
 
 #include <KWQCompletion.h>
 
+// class KComboBox =============================================================
+
 class KComboBox : public QComboBox, public QCompletionBase {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     KComboBox(QWidget *parent=0, const char *name=0);
     KComboBox(bool rw, QWidget *parent=0, const char *name=0);
-};
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KComboBox(const KComboBox &);
+    KComboBox &operator=(const KComboBox &);
+
+}; // class KComboBox ==========================================================
 
 #endif

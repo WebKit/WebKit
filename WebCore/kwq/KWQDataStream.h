@@ -38,16 +38,40 @@
 #define IO_Translate            0x0010          // translate CR+LF
 #define IO_ModeMask             0x00ff
 
+// class QDataStream ===========================================================
+
 class QDataStream {
 public:
-    QDataStream( QByteArray, int mode );
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QDataStream(QByteArray, int);
     virtual ~QDataStream();
+
+    // member functions --------------------------------------------------------
+
+    // operators ---------------------------------------------------------------
 
     QDataStream &operator<<(long int);
     QDataStream &operator<<(const char *);
     QDataStream &operator<<(const QString &);
     QDataStream &operator<<(const QCString &);
     QDataStream &operator>>(const QString &);
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QDataStream(const QDataStream &);
+    QDataStream &operator=(const QDataStream &);
+
+}; // class QDataStream ========================================================
 
 #endif

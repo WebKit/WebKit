@@ -32,13 +32,39 @@
 
 #include "kcompletionbox.h"
 
+// class __class_name__ ========================================================
+
 class KLineEdit : public QLineEdit, public QCompletionBase {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     KLineEdit(QWidget *parent=0, const char *name=0);
+    
+    ~KLineEdit();
+
+    // member functions --------------------------------------------------------
 
     void setMouseTracking(bool);
     virtual void setContextMenuEnabled(bool showMenu);
     KCompletionBox *completionBox(bool create);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KLineEdit(const KLineEdit &);
+    KLineEdit &operator=(const KLineEdit &);
+
+}; // class __class_name__ =====================================================
 
 #endif

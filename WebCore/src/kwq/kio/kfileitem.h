@@ -28,11 +28,36 @@
 
 #include <netaccess.h>
 
+// class KFileItem =============================================================
+
 class KFileItem {
 public:
-    KFileItem(const KIO::UDSEntry &, const KURL &, bool foo = false, bool bar =
-            false);
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    KFileItem(const KIO::UDSEntry &, const KURL &, bool foo=false, 
+        bool bar=false);
+
+    // member functions --------------------------------------------------------
+
     bool isDir() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    KFileItem(const KFileItem &);
+    KFileItem &operator=(const KFileItem &);
+
+}; // class KFileItem ==========================================================
 
 #endif

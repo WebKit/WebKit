@@ -26,19 +26,50 @@
 #ifndef HISTORYPROVIDER_H_
 #define HISTORYPROVIDER_H_
 
-// FIXME: do we still need "part.h"?
-//#include "part.h"
 #include <qobject.h>
 
-// added to help in compilation of khtml/khtml_factory.h:34
 namespace KParts {
+
+// class HistoryProvider =======================================================
 
 class HistoryProvider : public QObject {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
     static HistoryProvider *self();
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    HistoryProvider();
+    
+    ~HistoryProvider();
+
+    // member functions --------------------------------------------------------
+
     bool contains(const QString &) const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    HistoryProvider(const HistoryProvider &);
+    HistoryProvider &operator=(const HistoryProvider &);
+
+}; // class HistoryProvider ====================================================
+
 
 } // namespace KParts
  
 #endif
+
+
+

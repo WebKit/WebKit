@@ -29,13 +29,39 @@
 #include <qwidget.h>
 #include <qstring.h>
 
+// class QButton ===============================================================
+
 class QButton : public QWidget {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QButton();
     QButton(QWidget *);
     
+    ~QButton();
+
+    // member functions --------------------------------------------------------
+
     virtual void setText(const QString &);
     QString text() const;
-};
 
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QButton(const QButton &);
+    QButton &operator=(const QButton &);
+
+}; // class QButton ============================================================
+    
 #endif

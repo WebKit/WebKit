@@ -29,9 +29,37 @@
 #include <qwidget.h>
 #include <qpalette.h>
 
+// class QScrollBar ============================================================
+
 class QScrollBar : public QWidget {
 public:
+
+    // structs -----------------------------------------------------------------
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
+    QScrollBar();
+    
+    ~QScrollBar();
+
+    // member functions --------------------------------------------------------
+
     virtual void setPalette(const QPalette &);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QScrollBar(const QScrollBar &);
+    QScrollBar &operator=(const QScrollBar &);
+
+}; // class QScrollBar =========================================================
 
 #endif
