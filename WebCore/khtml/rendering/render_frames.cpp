@@ -218,7 +218,7 @@ void RenderFrameSet::layout( )
 
     RenderObject *child = firstChild();
     if ( !child )
-      return;
+	goto end2;
 
     if(!m_hSplitVar && !m_vSplitVar)
     {

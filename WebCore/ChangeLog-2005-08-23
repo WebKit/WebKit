@@ -1,3 +1,18 @@
+2004-07-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	<rdar://problem/3725467> REGRESSION(140-142) nothing displayed at http://Ye-Olde-Movies.tripod.com
+	<rdar://problem/3599494> REGRESSION (100-125): Frame does not refresh until user clicks on browser.
+	
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::layout): When returning early because there are
+	no children, make sure to mark self as no longer needing
+	layout. Otherwise, when children are added, we'll fail to
+	propagate childrenNeedLayout to our own parent! This is almost
+	certainly a long-standing bug that was just masked by our old
+	layout tomfoolery.
+
 2004-07-22  Kevin Decker  <kdecker@apple.com>
 
 	Reviewed by Darin
