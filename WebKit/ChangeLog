@@ -1,3 +1,13 @@
+2002-12-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard and Don.
+
+	- fixed 3132192 -- HOMEPAGE: Quicktime plug in with AVI content brings Plug-ins not found panel
+
+        * Plugins.subproj/WebPluginDatabase.m: (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+	Lower-case the key before searching for it. This is needed for both MIME types and extensions,
+	since we want case insensitive comparison in both cases.
+
 === Alexander-45 ===
 
 2002-12-23  Ken Kocienda  <kocienda@apple.com>

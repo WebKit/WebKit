@@ -32,10 +32,11 @@ static WebPluginDatabase *database = nil;
 {
     WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil, *webPlugin=nil;
     uint i;
+    NSString *lowercaseKey = [key lowercaseString];
 
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
-        if([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]){
+        if([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:lowercaseKey]){
             if([plugin isKindOfClass:[WebPluginPackage class]]){
                 if(webPlugin == nil){
                     webPlugin = plugin;
