@@ -72,7 +72,7 @@ void HTMLDivElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ALIGN:
     {
         DOMString v = attr->value();
-        if ( strcasecmp( attr->value(), "center" ) == 0 )
+	if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
             v = "-konq-center";
         addCSSProperty(CSS_PROP_TEXT_ALIGN, v);
         break;

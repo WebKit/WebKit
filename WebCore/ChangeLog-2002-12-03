@@ -1,5 +1,13 @@
 2002-10-07  Darin Adler  <darin@apple.com>
 
+	- fixed 3037353 -- align="middle" elements not horizontally centered
+
+        * khtml/html/html_blockimpl.cpp: (HTMLDivElementImpl::parseAttribute):
+        * khtml/html/html_tableimpl.cpp: (HTMLTablePartElementImpl::parseAttribute):
+	Handle "middle" same as center in these two places.
+
+2002-10-07  Darin Adler  <darin@apple.com>
+
 	WebCore part of implementation of multipart forms posting.
 
         * kwq/WebCoreBridge.h: Add a contentType parameter to the bridge's
