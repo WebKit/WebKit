@@ -214,4 +214,13 @@
     return [super _initWithRequest:request delegate:_webInternal directory:directory];
 }
 
+- (void)connection:(NSURLConnection *)connection willStopBufferingData:(NSData *)data
+{
+    // NSURLConnection calls this method even if it is not implemented.
+    // This happens because NSURLConnection caches the results of respondsToSelector.
+    // Those results become invalid when the delegate of NSURLConnectionDelegateProxy is changed.
+    // This is a workaround since this problem needs to be fixed in NSURLConnectionDelegateProxy.
+    // <rdar://problem/3913270> NSURLConnection calls unimplemented delegate method in WebDownload
+}
+
 @end

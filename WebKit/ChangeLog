@@ -1,3 +1,13 @@
+2004-12-09  Chris Blumenberg  <cblu@apple.com>
+
+	Workaround for this exception being raised during download:
+	[WebDownload connection:willStopBufferingData:]: selector not recognized
+
+        Reviewed by john.
+
+        * Misc.subproj/WebDownload.m:
+        (-[WebDownload connection:willStopBufferingData:]): implement this method so no exception is raised. It is a bug in Foundation that this method is being called, but it's too late to fix Foundation since it has already been submitted this week. This workaround will prevent any problems from affecting users.
+
 2004-12-08  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3911719> REGRESSION: Images no longer scale vertically
