@@ -1,3 +1,14 @@
+2002-12-06  David Hyatt  <hyatt@apple.com>
+
+	Hack to make i-bench paint every fourth page.  We can tune
+	this # as needed. 
+	
+        Reviewed by: darin
+
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::close):
+        * khtml/rendering/render_flow.h:
+
 2002-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

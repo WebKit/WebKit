@@ -310,13 +310,17 @@ void HTMLDocumentImpl::close()
     if (doload && wasNotRedirecting
             && view() && !view()->part()->d->m_redirectURL.isEmpty() && view()->part()->d->m_delayRedirect == 0
             && m_startTime.elapsed() < 1000) {
-
-        // Just bail out. During the onload we were shifted to another page.
-        // i-Bench does this. When this happens don't bother painting or laying out.        
-        delete m_tokenizer;
-        m_tokenizer = 0;
-        view()->unscheduleRelayout();
-        return;
+        static int redirectCount = 0;
+        if (redirectCount++ % 4) {
+            // When redirecting over and over (e.g., i-bench), to avoid the appearance of complete inactivity,
+            // paint every fourth page.
+            // Just bail out. During the onload we were shifted to another page.
+            // i-Bench does this. When this happens don't bother painting or laying out.        
+            delete m_tokenizer;
+            m_tokenizer = 0;
+            view()->unscheduleRelayout();
+            return;
+        }
     }
                 
     // The initial layout happens here.

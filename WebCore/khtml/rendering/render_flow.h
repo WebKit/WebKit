@@ -48,11 +48,20 @@ public:
     virtual ~RenderFlow();
 
     virtual const char *renderName() const 
-    { 
+    {
+        if (isFloating())
+            return "Block (Floating)";
+        if (isPositioned())
+            return "Block (Positioned)";
         if (isAnonymousBox()) 
             return "Block (Anonymous)";
-        if (isInline())
+        if (isInline()) {
+            if (isRelPositioned())
+                return "Inline (Rel Positioned)";
             return "Inline";
+        }
+        if (isRelPositioned())
+            return "Block (Rel Positioned)";
         return "Block";
     };
     
