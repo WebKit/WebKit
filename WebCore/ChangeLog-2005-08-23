@@ -1,3 +1,33 @@
+2005-02-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4015499> REGRESSION (186-187): pasted quoted text starting with a blank line increases quote level of pasted text when pasted
+
+        * khtml/editing/markup.cpp:
+        (khtml::markup): Changed over to ASSERT instead of assert.
+        (khtml::createMarkup): The issue was that the code to add parents all the way back to the common ancestor
+        block did not check for blocks whose markup had already been added, and could result in adding markup for
+        nodes twice (hence the additional and erroneous quote level). Now there is a new check that will
+        only add markup for those nodes before the start of the selection range. This fixes the bug.
+        (khtml::createFragmentFromMarkup): Changed over to ASSERT instead of assert.
+        (khtml::createFragmentFromText): Ditto.
+
+2005-02-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4015494> REGRESSION (186-187) <cr> removed if quoted word is copy/pasted on line immediately above quoted text
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Relatively new check designed to remove a <br> element when
+        that element was on a line by itself did not do an adequate check for this condition, causing the
+        failure described in the bug. Fixed.
+
 2005-02-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

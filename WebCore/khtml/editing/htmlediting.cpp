@@ -4412,7 +4412,8 @@ void ReplaceSelectionCommand::doApply()
     NodeImpl *linePlaceholder = findBlockPlaceholder(block);
     if (!linePlaceholder) {
         Position downstream = startPos.downstream(StayInBlock);
-        if (downstream.node()->id() == ID_BR && downstream.offset() == 0)
+        if (downstream.node()->id() == ID_BR && downstream.offset() == 0 && 
+            isFirstVisiblePositionOnLine(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
             linePlaceholder = downstream.node();
     }
     
