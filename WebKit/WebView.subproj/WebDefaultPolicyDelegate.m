@@ -9,6 +9,7 @@
 #import <WebKit/WebFrame.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 
 @implementation WebDefaultPolicyDelegate
@@ -50,12 +51,12 @@
 }
 
 
-- (WebContentPolicy *)contentPolicyForMIMEType:(NSString *)type
+- (WebContentPolicy *)contentPolicyForResponse:(WebResourceResponse *)response
                                         andURL:(NSURL *)URL
                                        inFrame:(WebFrame *)frame
                              withContentPolicy:(WebContentPolicy *)contentPolicy;
 {
-    if([WebController canShowMIMEType:type]){
+    if([WebController canShowMIMEType:[response contentType]]){
         return [WebContentPolicy webPolicyWithContentAction: WebContentPolicyShow andPath:nil];
     }
     else{

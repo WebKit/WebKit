@@ -221,15 +221,13 @@
 
 -(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)r
 {
-    NSString *contentType = [r contentType];
-
     ASSERT (response == nil);
     
     response = [r retain];
     
     [dataSource _setResponse:response];
 
-    LOG(Download, "main content type: %@", contentType);
+    LOG(Download, "main content type: %@", [response contentType]);
 
     // Retain the downloadProgressDelegate just in case this is a download.
     // Alexander releases the WebController if no window is created for it.
@@ -238,7 +236,7 @@
 
     // Figure out the content policy.
     WebContentPolicy *contentPolicy = [dataSource contentPolicy];
-    contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForMIMEType:contentType
+    contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForResponse:response
                                                                                 andURL:currentURL
                                                                                inFrame:[dataSource webFrame]
                                                                      withContentPolicy:contentPolicy];
