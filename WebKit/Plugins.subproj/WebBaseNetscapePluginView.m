@@ -700,11 +700,13 @@
 -(void)windowBecameKey:(NSNotification *)notification
 {
     [self sendActivateEvent:YES];
+    [self sendUpdateEvent];
 }
 
 -(void)windowResignedKey:(NSNotification *)notification
 {
     [self sendActivateEvent:NO];
+    [self sendUpdateEvent];
 }
 
 -(void)windowDidMiniaturize:(NSNotification *)notification

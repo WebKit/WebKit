@@ -1,5 +1,15 @@
 2002-11-19  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3092588 - redraw errors in QT controller if window is in background
+
+	We need to send update events after we activate/deactivate after all.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView windowBecameKey:]):
+        (-[WebBaseNetscapePluginView windowResignedKey:]):
+
+2002-11-19  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3020720 - dropping a folder in the page address makes the folder open in Finder, empties the field
 
         * Misc.subproj/WebNSPasteboardExtras.m:
