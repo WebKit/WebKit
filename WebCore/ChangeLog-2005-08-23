@@ -1,3 +1,9 @@
+2002-12-03  David Hyatt  <hyatt@apple.com>
+
+	Backing out a file that I did not intend to check in.
+
+        * khtml/misc/loader.cpp:
+
 2002-12-03  Richard Williamson   <rjw@apple.com>
 
         D'oh.  Fixed last minute change that broke the build.
