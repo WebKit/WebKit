@@ -40,17 +40,17 @@
             ofBookmark:(IFBookmark *)parent;
 - (void)removeBookmark:(IFBookmark *)bookmark;
 
-- (void)insertNewBookmarkAtIndex:(unsigned)index
-                      ofBookmark:(IFBookmark *)parent
-                       withTitle:(NSString *)newTitle
-                           image:(NSImage *)newImage
-                       URLString:(NSString *)newURLString
-                          isLeaf:(BOOL)flag;
-- (void)addNewBookmarkToBookmark:(IFBookmark *)parent
-                       withTitle:(NSString *)newTitle
-                           image:(NSImage *)newImage
-                       URLString:(NSString *)newURLString
-                          isLeaf:(BOOL)flag;
+- (IFBookmark *)insertNewBookmarkAtIndex:(unsigned)index
+                              ofBookmark:(IFBookmark *)parent
+                               withTitle:(NSString *)newTitle
+                                   image:(NSImage *)newImage
+                               URLString:(NSString *)newURLString
+                                  isLeaf:(BOOL)flag;
+- (IFBookmark *)addNewBookmarkToBookmark:(IFBookmark *)parent
+                               withTitle:(NSString *)newTitle
+                                   image:(NSImage *)newImage
+                               URLString:(NSString *)newURLString
+                                  isLeaf:(BOOL)flag;
 
 // storing contents on disk
 

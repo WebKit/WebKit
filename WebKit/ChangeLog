@@ -1,3 +1,12 @@
+2002-05-09  John Sullivan  <sullivan@apple.com>
+
+	* Bookmarks.subproj/IFBookmarkGroup.h:
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup addNewBookmarkToBookmark:withTitle:image:URLString:isLeaf:]):
+	(-[IFBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:withTitle:image:URLString:isLeaf:]):
+	Gave these two methods return values of the new bookmark created, to make callers'
+	lives easier.
+
 === Alexander-3 ===
 
 2002-05-08  Richard J. Williamson  <rjw@apple.com>

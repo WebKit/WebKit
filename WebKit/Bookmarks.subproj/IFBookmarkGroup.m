@@ -133,26 +133,26 @@
     }
 }
 
-- (void)addNewBookmarkToBookmark:(IFBookmark *)parent
-                       withTitle:(NSString *)newTitle
-                           image:(NSImage *)newImage
-                       URLString:(NSString *)newURLString
-                          isLeaf:(BOOL)flag
+- (IFBookmark *)addNewBookmarkToBookmark:(IFBookmark *)parent
+                               withTitle:(NSString *)newTitle
+                                   image:(NSImage *)newImage
+                               URLString:(NSString *)newURLString
+                                  isLeaf:(BOOL)flag
 {
-    [self insertNewBookmarkAtIndex:[parent numberOfChildren]
-                        ofBookmark:parent
-                         withTitle:newTitle
-                             image:newImage
-                         URLString:newURLString
-                            isLeaf:flag];
+    return [self insertNewBookmarkAtIndex:[parent numberOfChildren]
+                               ofBookmark:parent
+                                withTitle:newTitle
+                                    image:newImage
+                                URLString:newURLString
+                                   isLeaf:flag];
 }
 
-- (void)insertNewBookmarkAtIndex:(unsigned)index
-                      ofBookmark:(IFBookmark *)parent
-                       withTitle:(NSString *)newTitle
-                           image:(NSImage *)newImage
-                       URLString:(NSString *)newURLString
-                          isLeaf:(BOOL)flag
+- (IFBookmark *)insertNewBookmarkAtIndex:(unsigned)index
+                              ofBookmark:(IFBookmark *)parent
+                               withTitle:(NSString *)newTitle
+                                   image:(NSImage *)newImage
+                               URLString:(NSString *)newURLString
+                                  isLeaf:(BOOL)flag
 {
     IFBookmark *bookmark;
 
@@ -172,6 +172,8 @@
     }
 
     [parent insertChild:bookmark atIndex:index];
+
+    return bookmark;
 }
 
 - (NSString *)file
