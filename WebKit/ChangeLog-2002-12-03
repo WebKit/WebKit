@@ -1,3 +1,11 @@
+2002-03-28  John Sullivan  <sullivan@apple.com>
+
+	* History.subproj/IFWebHistoryPrivate.m: 
+	(-[IFWebHistoryPrivate _loadHistoryGuts:]):
+	Made this more robust about bad data from the disk file. I
+	don't know how bad data could get into the disk file in normal
+	use, but it seems to have happened to Richard.
+
 2002-03-27  Richard Williamson  <rjw@apple.com>
 
         Added initial-layout-after-delay-if-not-layed-out-yet feature.

@@ -350,6 +350,11 @@
 
         entry = [[IFURIEntry alloc] initFromDictionaryRepresentation: (NSDictionary *)object];
 
+        if ([entry url] == nil) {
+            // entry without url is useless; data on disk must have been bad; ignore this one
+            continue;
+        }
+
         // test against date limit
         if (!ageLimitPassed) {
             if ([[entry lastVisitedDate] compareDay:ageLimitDate] != NSOrderedDescending) {
