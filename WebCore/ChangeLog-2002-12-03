@@ -1,5 +1,11 @@
 2002-05-20  Darin Adler  <darin@apple.com>
 
+	Forgot one file.
+
+	* khtml/khtml_part.moc: Added.
+
+2002-05-20  Darin Adler  <darin@apple.com>
+
 	Use more of the original khtml_part.cpp; a step in the direction of factoring
 	our code out so more of it can go in WebKit and we don't need external.h.
 
