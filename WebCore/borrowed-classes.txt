@@ -17,7 +17,7 @@ QRegion
 QSize
 QSortedList
 QStack
-QString
+#QString
 QStringList
 QTextStream
 QValueList
