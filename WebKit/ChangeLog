@@ -1,3 +1,37 @@
+2002-05-15  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed Flash mouse-down, mouse-over Flash bug.
+	Added support for modifiers (control-click etc) (2884451).
+	A lot of events clean-up.
+
+	* Plugins.subproj/IFPluginNullEventSender.m:
+	(-[IFPluginNullEventSender sendNullEvents]):
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm:
+	(newCString):
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:mode:]):
+	(-[IFPluginView start]):
+	(-[IFPluginView drawRect:]):
+	(-[IFPluginView isFlipped]):
+	(-[IFPluginView currentModifiers]):
+	(-[IFPluginView modifiersForEvent:isMouseDown:]):
+	(-[IFPluginView sendActivateEvent]):
+	(-[IFPluginView sendUpdateEvent]):
+	(-[IFPluginView becomeFirstResponder]):
+	(-[IFPluginView resignFirstResponder]):
+	(-[IFPluginView mouseDown:]):
+	(-[IFPluginView mouseUp:]):
+	(-[IFPluginView mouseEntered:]):
+	(-[IFPluginView mouseExited:]):
+	(-[IFPluginView keyUp:]):
+	(-[IFPluginView keyDown:]):
+	(-[IFPluginView windowBecameKey:]):
+	(-[IFPluginView windowResignedKey:]):
+
+	Case-sensitivity issue with an include.
+
+	* WebView.subproj/IFWebView.mm:
+
 2002-05-15  Darin Adler  <darin@apple.com>
 
 	* Makefile.am:

@@ -13,7 +13,7 @@
 #import <WebKit/WebKitDebug.h>
 
 // Needed for the mouse move notification.
-#import <Appkit/NSResponder_Private.h>
+#import <AppKit/NSResponder_Private.h>
 
 // KDE related includes
 #import <khtmlview.h>

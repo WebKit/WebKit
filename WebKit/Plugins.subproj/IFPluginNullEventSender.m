@@ -21,12 +21,16 @@
 {
     EventRecord event;
     bool acceptedEvent;
-    UnsignedWide msecs;
+    Point point;
+    
+    GetGlobalMouse(&point);
     
     if(!shouldStop){
         event.what = nullEvent;
-        Microseconds(&msecs);
-        event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
+        event.message = 0;
+        event.when = TickCount();
+        event.where = point;
+        event.modifiers = GetCurrentKeyModifiers();
         acceptedEvent = NPP_HandleEvent(instance, &event);
         //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(nullEvent): %d  when: %u %d\n", acceptedEvent, (unsigned)event.when, shouldStop);
         [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.01];

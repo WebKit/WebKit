@@ -49,16 +49,21 @@
 }
 
 - initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
+-(void)stop;
+-(void)start;
+
 -(void)drawRect:(NSRect)rect;
 -(void)setWindow;
 -(void)viewHasMoved:(NSNotification *)notification;
--(void) windowWillClose:(NSNotification *)notification;
+-(void)windowWillClose:(NSNotification *)notification;
 -(void)newStream:(NSURL *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData;
 -(NSView *) findSuperview:(NSString *)viewName;
+
+// Events
 -(BOOL)acceptsFirstResponder;
 -(BOOL)becomeFirstResponder;
 -(BOOL)resignFirstResponder;
--(void)sendActivateEvent:(BOOL)isActive;
+-(void)sendActivateEvent;
 -(void)sendUpdateEvent;
 -(void)mouseDown:(NSEvent *)theEvent;
 -(void)mouseUp:(NSEvent *)theEvent;
@@ -66,8 +71,6 @@
 -(void)mouseExited:(NSEvent *)theEvent;
 -(void)keyDown:(NSEvent *)theEvent;
 -(void)keyUp:(NSEvent *)theEvent;
--(void)stop;
--(void)start;
 
 // plug-in to browser calls
 -(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData;
