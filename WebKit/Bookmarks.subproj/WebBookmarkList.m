@@ -32,7 +32,11 @@
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
     ASSERT_ARG(dict, dict != nil);
-
+    if (![[dict objectForKey:WebBookmarkTypeKey] isEqualToString:WebBookmarkTypeListValue]) {
+        ERROR("Can't initialize Bookmark list from non-list type");
+        return nil;
+    }
+    
     [super init];
 
     [self _setGroup:group];
@@ -66,7 +70,6 @@
 
     dict = [NSMutableDictionary dictionaryWithCapacity: 3];
 
-    // FIXME: doesn't save images
     if (_title != nil) {
         [dict setObject:_title forKey:TitleKey];
     }

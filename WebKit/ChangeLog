@@ -1,3 +1,39 @@
+2002-10-11  John Sullivan  <sullivan@apple.com>
+
+	Added the concept of bookmark proxies; items that can be
+	stored and displayed with other bookmarks but represent
+	a source of bookmark-like items (e.g. Rendezvous, History)
+
+        * Bookmarks.subproj/WebBookmarkProxy.h: Added.
+        * Bookmarks.subproj/WebBookmarkProxy.m: Added.
+        (-[WebBookmarkProxy initFromDictionaryRepresentation:withGroup:]):
+        (-[WebBookmarkProxy dictionaryRepresentation]):
+        (-[WebBookmarkProxy bookmarkType]):
+        (-[WebBookmarkProxy copyWithZone:]):
+        (-[WebBookmarkProxy title]):
+        (-[WebBookmarkProxy setTitle:]):
+        (-[WebBookmarkProxy icon]):
+	New class, has a title and that's about it
+
+        * Bookmarks.subproj/WebBookmark.h:
+        * Bookmarks.subproj/WebBookmark.m:
+        (+[WebBookmark bookmarkFromDictionaryRepresentation:withGroup:]):
+	Handle proxy case
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:withTitle:URLString:type:]):
+	Handle proxy case
+
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList initFromDictionaryRepresentation:withGroup:]),
+        (-[WebBookmarkList dictionaryRepresentation]):
+	Handle proxy case
+
+        * Bookmarks.subproj/WebBookmarkPrivate.h:
+	Add #define for proxy
+
+        * WebKit.pbproj/project.pbxproj: updated for new files
+
 2002-10-11  Chris Blumenberg  <cblu@apple.com>
 
 	Thought I has checking for nil enough, but not enough as I raised an exception on Avie's machine.

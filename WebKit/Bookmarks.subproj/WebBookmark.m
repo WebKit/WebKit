@@ -12,6 +12,7 @@
 #import <WebKit/WebBookmarkGroupPrivate.h>
 #import <WebKit/WebBookmarkLeaf.h>
 #import <WebKit/WebBookmarkList.h>
+#import <WebKit/WebBookmarkProxy.h>
 #import <WebFoundation/WebAssertions.h>
 
 // to get NSRequestConcreteImplementation
@@ -141,6 +142,8 @@
         class = [WebBookmarkList class];
     } else if ([typeString isEqualToString:WebBookmarkTypeLeafValue]) {
         class = [WebBookmarkLeaf class];
+    } else if ([typeString isEqualToString:WebBookmarkTypeProxyValue]) {
+        class = [WebBookmarkProxy class];
     }
     
     if (class) {

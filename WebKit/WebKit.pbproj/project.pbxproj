@@ -282,6 +282,7 @@
 				F57D1953034E734901A80180,
 				F57D1955034E734901A80180,
 				F57D1959034E734901A80180,
+				EDD9133E03576ADA00C1A526,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -376,6 +377,7 @@
 				F57D1956034E734901A80180,
 				F57D195A034E734901A80180,
 				9367C637034E9F00008635C5,
+				EDD9134003576AFF00C1A526,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1669,6 +1671,30 @@
 			settings = {
 			};
 		};
+		EDD9133D03576ADA00C1A526 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebBookmarkProxy.h;
+			refType = 4;
+		};
+		EDD9133E03576ADA00C1A526 = {
+			fileRef = EDD9133D03576ADA00C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		EDD9133F03576AFF00C1A526 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebBookmarkProxy.m;
+			refType = 4;
+		};
+		EDD9134003576AFF00C1A526 = {
+			fileRef = EDD9133F03576AFF00C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //ED0
 //ED1
 //ED2
@@ -1718,6 +1744,8 @@
 				F506521E027F557E01C1A526,
 				F506521F027F557E01C1A526,
 				F5065220027F557E01C1A526,
+				EDD9133D03576ADA00C1A526,
+				EDD9133F03576AFF00C1A526,
 			);
 			isa = PBXGroup;
 			name = Bookmarks;

@@ -11,6 +11,7 @@
 #import <WebKit/WebBookmarkPrivate.h>
 #import <WebKit/WebBookmarkList.h>
 #import <WebKit/WebBookmarkLeaf.h>
+#import <WebKit/WebBookmarkProxy.h>
 #import <WebKit/WebKitLogging.h>
 
 @interface WebBookmarkGroup (WebForwardDeclarations)
@@ -143,15 +144,21 @@
     ASSERT_ARG(parent, [parent group] == self);
     ASSERT_ARG(parent, [parent bookmarkType] == WebBookmarkTypeList);
     ASSERT_ARG(newURLString, bookmarkType == WebBookmarkTypeLeaf || (newURLString == nil));
-    
-    if (bookmarkType == WebBookmarkTypeLeaf) {
-        bookmark = [[WebBookmarkLeaf alloc] initWithURLString:newURLString
-                                                        title:newTitle
+
+    switch (bookmarkType) {
+        case WebBookmarkTypeLeaf:
+            bookmark = [[WebBookmarkLeaf alloc] initWithURLString:newURLString
+                                                            title:newTitle
+                                                            group:self];
+            break;
+        case WebBookmarkTypeList:
+            bookmark = [[WebBookmarkList alloc] initWithTitle:newTitle
                                                         group:self];
-    } else {
-        ASSERT(bookmarkType == WebBookmarkTypeList);
-        bookmark = [[WebBookmarkList alloc] initWithTitle:newTitle
-                                                    group:self];
+            break;
+        case WebBookmarkTypeProxy:
+            bookmark = [[WebBookmarkProxy alloc] initWithTitle:newTitle
+                                                         group:self];
+            break;
     }
 
     [parent insertChild:bookmark atIndex:index];
