@@ -1,3 +1,13 @@
+2002-09-12  David Hyatt  <hyatt@apple.com>
+
+	Fix a bug in KHTML that leads it to claim cached @imported stylesheets
+	are not loaded (when in fact they are).
+
+	This fixes the W3C CSS page.
+	
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSImportRuleImpl::init):
+
 2002-09-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed livepage crash on Marklar. It is naughty to divide by 0 on marklar so we now check before doing that.

@@ -204,7 +204,13 @@ void CSSImportRuleImpl::init()
     if (m_cachedSheet)
     {
       m_cachedSheet->ref(this);
-      m_loading = true;
+      
+      // If the imported sheet is in the cache, then setStyleSheet gets called,
+      // and the sheet even gets parsed (via parseString).  In this case we have
+      // loaded (even if our subresources haven't), so if we have stylesheet after
+      // checking the cache, then we've clearly loaded. -dwh
+      if (!m_styleSheet)
+          m_loading = true;
     }
 }
 
