@@ -516,7 +516,7 @@ ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, cons
         // (elements not in this namespace are treated as normal XML elements)
         e = createHTMLElement(qName.mid(colonPos+1));
         int exceptioncode = 0;
-        if (colonPos >= 0)
+        if (e && colonPos >= 0)
             e->setPrefix(qName.left(colonPos),  exceptioncode);
     }
     if (!e)

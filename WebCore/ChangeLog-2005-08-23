@@ -1,3 +1,13 @@
+2003-12-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3488220>: namespaces test from David Faure causes Safari to crash in DOM::DocumentImpl::createElementNS
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createElementNS): Check if new element is NULL
+	before messing with it, to avoid a crash.
+
 2003-12-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3497999, null check the text() of RenderTexts to avoid a crash in current().
