@@ -1,3 +1,45 @@
+2004-08-20  Trey Matteson  <trey@apple.com>
+
+	3655407 - Editing: -complete: method unimplemented (WebKit editing API)
+
+	This feature is mostly implemented.  The only loose ends I know of are:
+
+	3769654 - text insertions done via complete: should preserve case of full replacement string
+	3769652 - positioning of complete: popup window wrong for right-to-left languages
+
+        Reviewed by John
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLViewPrivate dealloc]):  Free new object.
+        (-[WebHTMLView menuForEvent:]):  Bail on completion session.
+        (-[WebHTMLView windowDidResignKey:]):  Ditto.
+        (-[WebHTMLView windowWillClose:]):  Ditto.
+        (-[WebHTMLView mouseDown:]):  Ditto.
+        (-[WebHTMLView resignFirstResponder]):  Ditto.
+        (-[WebHTMLView keyDown:]):  Bail on completion session if WebCore takes the event.
+	Give the CompleteController a crack at the key event.
+        (-[WebHTMLView _expandSelectionToGranularity:]):  Adopt method rename
+        (-[WebHTMLView complete:]):  Make CompleteController, tell it to do its thing.
+        (-[WebHTMLView checkSpelling:]):  Add ERROR().
+        (-[WebHTMLView showGuessPanel:]): Add ERROR().
+        (-[WebHTMLView _changeSpellingToWord:]): Add ERROR().
+        (-[WebHTMLView ignoreSpelling:]): Add ERROR().
+
+        (-[WebTextCompleteController initWithHTMLView:]):
+        (-[WebTextCompleteController dealloc]):
+        (-[WebTextCompleteController _insertMatch:]): Stick the new string into the doc.
+        (-[WebTextCompleteController _buildUI]):  Make popup window.
+        (-[WebTextCompleteController _placePopupWindow:]):  Position popup window.
+        (-[WebTextCompleteController doCompletion]):  Lookup matches, display window.
+        (-[WebTextCompleteController endRevertingChange:moveLeft:]):  Bail on complete: session.
+        (-[WebTextCompleteController filterKeyDown:]):  Process keys while popup is up.
+        (-[WebTextCompleteController _reflectSelection]):  Handle choice in popup.
+        (-[WebTextCompleteController tableAction:]):  Handle double click in popup
+        (-[WebTextCompleteController numberOfRowsInTableView:]):  Fill table with matches.
+        (-[WebTextCompleteController tableView:objectValueForTableColumn:row:]):  Ditto.
+        (-[WebTextCompleteController tableViewSelectionDidChange:]):  Handle selection change.
+        * WebView.subproj/WebHTMLViewInternal.h:
+
 2004-08-20  John Sullivan  <sullivan@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt:

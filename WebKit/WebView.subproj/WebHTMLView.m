@@ -141,6 +141,24 @@ static BOOL forceRealHitTest = NO;
 
 static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 
+// Handles the complete: text command
+@interface WebTextCompleteController : NSObject
+{
+@private
+    WebHTMLView *_view;
+    NSWindow *_popupWindow;
+    NSTableView *_tableView;
+    NSArray *_completions;
+    NSString *_originalString;
+    int prefixLength;
+}
+- (id)initWithHTMLView:(WebHTMLView *)view;
+- (void)doCompletion;
+- (void)endRevertingChange:(BOOL)revertChange moveLeft:(BOOL)goLeft;
+- (BOOL)filterKeyDown:(NSEvent *)event;
+- (void)_reflectSelection;
+@end
+
 @implementation WebHTMLViewPrivate
 
 - (void)dealloc
@@ -152,7 +170,8 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
     [draggingImageURL release];
     [pluginController release];
     [toolTip release];
-    
+    [compController release];
+
     [super dealloc];
 }
 
@@ -370,11 +389,14 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
     if (!NSEqualSizes(_private->lastLayoutSize, [(NSClipView *)[self superview] documentVisibleRect].size)) {
         [self setNeedsLayout:YES];
         [self setNeedsDisplay:YES];
+        [_private->compController endRevertingChange:NO moveLeft:NO];
     }
 
     NSPoint origin = [[self superview] bounds].origin;
-    if (!NSEqualPoints(_private->lastScrollPosition, origin))
+    if (!NSEqualPoints(_private->lastScrollPosition, origin)) {
         [[self _bridge] sendScrollEvent];
+        [_private->compController endRevertingChange:NO moveLeft:NO];
+    }
     _private->lastScrollPosition = origin;
 
     SEL selector = @selector(_updateMouseoverWithFakeEvent);
@@ -1552,6 +1574,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {
+    [_private->compController endRevertingChange:NO moveLeft:NO];
+
     if ([[self _bridge] sendContextMenuEvent:event]) {
         return nil;
     }
@@ -1745,12 +1769,14 @@ static WebHTMLView *lastHitView = nil;
 - (void)windowDidResignKey: (NSNotification *)notification
 {
     ASSERT([notification object] == [self window]);
+    [_private->compController endRevertingChange:NO moveLeft:NO];
     [self removeMouseMovedObserver];
     [self updateFocusDisplay];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    [_private->compController endRevertingChange:NO moveLeft:NO];
     [[self _pluginController] destroyAllPlugins];
 }
 
@@ -1794,6 +1820,8 @@ static WebHTMLView *lastHitView = nil;
     // pass it to them. If not, then we need to notify the input
     // manager when the marked text is abandoned (user clicks outside
     // the marked area)
+
+    [_private->compController endRevertingChange:NO moveLeft:NO];
 
     // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
     // We don't want to pass them along to KHTML a second time.
@@ -2100,6 +2128,7 @@ static WebHTMLView *lastHitView = nil;
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
+        [_private->compController endRevertingChange:NO moveLeft:NO];
         _private->resigningFirstResponder = YES;
         if (![self maintainsInactiveSelection]) { 
             if ([[self _webView] _isPerformingProgrammaticFocus]) {
@@ -2321,9 +2350,18 @@ static WebHTMLView *lastHitView = nil;
 - (void)keyDown:(NSEvent *)event
 {
     WebBridge *bridge = [self _bridge];
-    if ([bridge interceptKeyEvent:event toView:self])
+    if ([bridge interceptKeyEvent:event toView:self]) {
+        // WebCore processed a key event, bail on any outstanding complete: UI
+        [_private->compController endRevertingChange:YES moveLeft:NO];
         return;
-        
+    }
+
+    if (_private->compController && [_private->compController filterKeyDown:event])
+        return;     // consumed by complete: popup window
+
+    // We're going to process a key event, bail on any outstanding complete: UI
+    [_private->compController endRevertingChange:YES moveLeft:NO];
+    
     if (([[self _webView] isEditable] || [bridge isSelectionEditable]) && [self _interceptEditingKeyEvent:event]) 
         return;
     
@@ -2550,7 +2588,7 @@ static WebHTMLView *lastHitView = nil;
 - (void)_expandSelectionToGranularity:(WebSelectionGranularity)granularity
 {
     WebBridge *bridge = [self _bridge];
-    DOMRange *range = [bridge selectedDOMRangeWithGranularity:granularity];
+    DOMRange *range = [bridge rangeByExpandingSelectionWithGranularity:granularity];
     if (range && ![range collapsed]) {
         WebView *webView = [self _webView];
         if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[bridge selectedDOMRange] toDOMRange:range affinity:[bridge selectionAffinity] stillSelecting:NO]) {
@@ -2924,7 +2962,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)complete:(id)sender
 {
-    ERROR("unimplemented");
+    if (!_private->compController) {
+        _private->compController = [[WebTextCompleteController alloc] initWithHTMLView:self];
+    }
+    [_private->compController doCompletion];
 }
 
 - (void)checkSpelling:(id)sender
@@ -2932,6 +2973,7 @@ static WebHTMLView *lastHitView = nil;
     // WebCore does everything but update the spelling panel
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
+        ERROR("No NSSpellChecker");
         return;
     }
     NSString *badWord = [[self _bridge] advanceToNextMisspelling];
@@ -2990,6 +3032,7 @@ static WebHTMLView *lastHitView = nil;
     // WebCore does everything but update the spelling panel
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
+        ERROR("No NSSpellChecker");
         return;
     }
 
@@ -3033,7 +3076,12 @@ static WebHTMLView *lastHitView = nil;
     }
     
     // Don't correct to empty string.  (AppKit checked this, we might as well too.)
-    if (![NSSpellChecker sharedSpellChecker] || [newWord isEqualToString:@""]) {
+    if (![NSSpellChecker sharedSpellChecker]) {
+        ERROR("No NSSpellChecker");
+        return;
+    }
+    
+    if ([newWord isEqualToString:@""]) {
         return;
     }
 
@@ -3071,6 +3119,7 @@ static WebHTMLView *lastHitView = nil;
     
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
+        ERROR("No NSSpellChecker");
         return;
     }
     
@@ -3539,6 +3588,267 @@ static WebHTMLView *lastHitView = nil;
 	[[NSInputManager currentInputManager] markedTextAbandoned:self];
 	[self unmarkText];
     }
+}
+
+@end
+
+/*
+    This class runs the show for handing the complete: NSTextView operation.  It counts on its HTML view
+    to call endRevertingChange: whenever the current completion needs to be aborted.
+ 
+    The class is in one of two modes:  PopupWindow showing, or not.  It is shown when a completion yields
+    more than one match.  If a completion yields one or zero matches, it is not shown, and **there is no
+    state carried across to the next completion**.
+ */
+@implementation WebTextCompleteController
+
+- (id)initWithHTMLView:(WebHTMLView *)view
+{
+    [super init];
+    _view = view;
+    return self;
+}
+
+- (void)dealloc
+{
+    [_popupWindow release];
+    [_completions release];
+    [_originalString release];
+    [super dealloc];
+}
+
+- (void)_insertMatch:(NSString *)match
+{
+    //FIXME: 3769654 - We should preserve case of string being inserted, even in prefix (but then also be
+    // able to revert that).  Mimic NSText.
+    WebBridge *bridge = [_view _bridge];
+    NSString *newText = [match substringFromIndex:prefixLength];
+    [bridge replaceSelectionWithText:newText selectReplacement:YES];
+}
+
+// mostly lifted from NSTextView_KeyBinding.m
+- (void)_buildUI
+{
+    NSRect scrollFrame = NSMakeRect(0, 0, 100, 100);
+    NSRect tableFrame = NSZeroRect;    
+    tableFrame.size = [NSScrollView contentSizeForFrameSize:scrollFrame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder];
+    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:[NSNumber numberWithInt:0]];
+    [column setWidth:tableFrame.size.width];
+    [column setEditable:NO];
+    
+    _tableView = [[NSTableView alloc] initWithFrame:tableFrame];
+    [_tableView setAutoresizingMask:NSViewWidthSizable];
+    [_tableView addTableColumn:column];
+    [column release];
+    [_tableView setDrawsGrid:NO];
+    [_tableView setCornerView:nil];
+    [_tableView setHeaderView:nil];
+    [_tableView setAutoresizesAllColumnsToFit:YES];
+    [_tableView setDelegate:self];
+    [_tableView setDataSource:self];
+    [_tableView setTarget:self];
+    [_tableView setDoubleAction:@selector(tableAction:)];
+    
+    NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:scrollFrame];
+    [scrollView setBorderType:NSNoBorder];
+    [scrollView setHasVerticalScroller:YES];
+    [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [scrollView setDocumentView:_tableView];
+    [_tableView release];
+    
+    _popupWindow = [[NSWindow alloc] initWithContentRect:scrollFrame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+    [_popupWindow setAlphaValue:0.88];
+    [_popupWindow setContentView:scrollView];
+    [scrollView release];
+    [_popupWindow setHasShadow:YES];
+    [_popupWindow setOneShot:YES];
+    //[_popupWindow _setForceActiveControls:YES];   // AK secret - no known problem from leaving this out
+    [_popupWindow setReleasedWhenClosed:NO];
+}
+
+// mostly lifted from NSTextView_KeyBinding.m
+- (void)_placePopupWindow:(NSPoint)topLeft
+{
+    int numberToShow = [_completions count];
+    if (numberToShow > 20) {
+        numberToShow = 20;
+    }
+
+    NSRect windowFrame;
+    NSPoint wordStart = topLeft;
+    windowFrame.origin = [[_view window] convertBaseToScreen:[_view convertPoint:wordStart toView:nil]];
+    windowFrame.size.height = numberToShow * [_tableView rowHeight] + (numberToShow + 1) * [_tableView intercellSpacing].height;
+    windowFrame.origin.y -= windowFrame.size.height;
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont systemFontOfSize:12.0], NSFontAttributeName, nil];
+    float maxWidth = 0.0;
+    int maxIndex = -1;
+    int i;
+    for (i = 0; i < numberToShow; i++) {
+        float width = ceil([[_completions objectAtIndex:i] sizeWithAttributes:attributes].width);
+        if (width > maxWidth) {
+            maxWidth = width;
+            maxIndex = i;
+        }
+    }
+    windowFrame.size.width = 100;
+    if (maxIndex >= 0) {
+        maxWidth = ceil([NSScrollView frameSizeForContentSize:NSMakeSize(maxWidth, 100) hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder].width);
+        maxWidth = ceil([NSWindow frameRectForContentRect:NSMakeRect(0, 0, maxWidth, 100) styleMask:NSBorderlessWindowMask].size.width);
+        maxWidth += 5.0;
+        windowFrame.size.width = MAX(maxWidth, windowFrame.size.width);
+        maxWidth = MIN(400.0, windowFrame.size.width);
+    }
+    [_popupWindow setFrame:windowFrame display:NO];
+    
+    [_tableView reloadData];
+    [_tableView selectRow:0 byExtendingSelection:NO];
+    [_tableView scrollRowToVisible:0];
+    [self _reflectSelection];
+    [_popupWindow setLevel:NSPopUpMenuWindowLevel];
+    [_popupWindow orderFront:nil];    
+    [[_view window] addChildWindow:_popupWindow ordered:NSWindowAbove];
+}
+
+- (void)doCompletion
+{
+    if (!_popupWindow) {
+        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+        if (!checker) {
+            ERROR("No NSSpellChecker");
+            return;
+        }
+
+        // Get preceeding word stem
+        WebBridge *bridge = [_view _bridge];
+        DOMRange *selection = [bridge selectedDOMRange];
+        DOMRange *wholeWord = [bridge rangeByExpandingSelectionWithGranularity:WebSelectByWord];
+        DOMRange *prefix = [wholeWord cloneRange];
+        [prefix setEnd:[selection startContainer] :[selection startOffset]];
+
+        // Reject some NOP cases
+        if ([prefix collapsed]) {
+            NSBeep();
+            return;
+        }
+        NSString *prefixStr = [bridge stringForRange:prefix];
+        NSString *trimmedPrefix = [prefixStr stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        if ([trimmedPrefix length] == 0) {
+            NSBeep();
+            return;
+        }
+        prefixLength = [prefixStr length];
+
+        // Lookup matches
+        [_completions release];
+        _completions = [checker completionsForPartialWordRange:NSMakeRange(0, [prefixStr length]) inString:prefixStr language:nil inSpellDocumentWithTag:[[_view _webView] spellCheckerDocumentTag]];
+        [_completions retain];
+    
+        if (!_completions || [_completions count] == 0) {
+            NSBeep();
+        } else if ([_completions count] == 1) {
+            [self _insertMatch:[_completions objectAtIndex:0]];
+        } else {
+            ASSERT(!_originalString);       // this should only be set IFF we have a popup window
+            _originalString = [[bridge stringForRange:selection] retain];
+            [self _buildUI];
+            NSRect wordRect = [bridge caretRectAtNode:[wholeWord startContainer] offset:[wholeWord startOffset]];
+            // +1 to be under the word, not the caret
+            // FIXME - 3769652 - Wrong positioning for right to left languages.  We should line up the upper
+            // right corner with the caret instead of upper left, and the +1 would be a -1.
+            NSPoint wordLowerLeft = { NSMinX(wordRect)+1, NSMaxY(wordRect) };
+            [self _placePopupWindow:wordLowerLeft];
+        }
+    } else {
+        [self endRevertingChange:YES moveLeft:NO];
+    }
+}
+
+- (void)endRevertingChange:(BOOL)revertChange moveLeft:(BOOL)goLeft
+{
+    if (_popupWindow) {
+        // tear down UI
+        [[_view window] removeChildWindow:_popupWindow];
+        [_popupWindow orderOut:self];
+        // Must autorelease because event tracking code may be on the stack touching UI
+        [_popupWindow autorelease];
+        _popupWindow = nil;
+
+        if (revertChange) {
+            WebBridge *bridge = [_view _bridge];
+            [bridge replaceSelectionWithText:_originalString selectReplacement:YES];
+        } else if (goLeft) {
+            [_view moveBackward:nil];
+        } else {
+            [_view moveForward:nil];
+        }
+        [_originalString release];
+        _originalString = nil;
+    }
+    // else there is no state to abort if the window was not up
+}
+
+// WebHTMLView gives us a crack at key events it sees.  Return whether we consumed the event.
+// The features for the various keys mimic NSTextView.
+- (BOOL)filterKeyDown:(NSEvent *)event {
+    if (_popupWindow) {
+        NSString *string = [event charactersIgnoringModifiers];
+        unichar c = [string characterAtIndex:0];
+        if (c == NSUpArrowFunctionKey) {
+            int selectedRow = [_tableView selectedRow];
+            if (0 < selectedRow) {
+                [_tableView selectRow:selectedRow-1 byExtendingSelection:NO];
+                [_tableView scrollRowToVisible:selectedRow-1];
+            }
+            return YES;
+        } else if (c == NSDownArrowFunctionKey) {
+            int selectedRow = [_tableView selectedRow];
+            if (selectedRow < (int)[_completions count]-1) {
+                [_tableView selectRow:selectedRow+1 byExtendingSelection:NO];
+                [_tableView scrollRowToVisible:selectedRow+1];
+            }
+            return YES;
+        } else if (c == NSRightArrowFunctionKey || c == '\n' || c == '\r' || c == '\t') {
+            [self endRevertingChange:NO moveLeft:NO];
+            return YES;
+        } else if (c == NSLeftArrowFunctionKey) {
+            [self endRevertingChange:NO moveLeft:YES];
+            return YES;
+        } else if (c == 0x1b || c == NSF5FunctionKey) {
+            [self endRevertingChange:YES moveLeft:NO];
+            return YES;
+        } else if (c == ' ' || ispunct(c)) {
+            [self endRevertingChange:NO moveLeft:NO];
+            return NO;  // let the char get inserted
+        }
+    }
+    return NO;
+}
+
+- (void)_reflectSelection
+{
+    int selectedRow = [_tableView selectedRow];
+    ASSERT(selectedRow >= 0 && selectedRow < (int)[_completions count]);
+    [self _insertMatch:[_completions objectAtIndex:selectedRow]];
+}
+
+- (void)tableAction:(id)sender {
+    [self _reflectSelection];
+    [self endRevertingChange:NO moveLeft:NO];
+}
+
+- (int)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return [_completions count];
+}
+
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(int)row
+{
+    return [_completions objectAtIndex:row];
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    [self _reflectSelection];
 }
 
 @end

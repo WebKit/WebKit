@@ -1200,6 +1200,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->visibleSelectionRect(); 
 }
 
+- (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset
+{
+    int x, y, w, h;
+    [node _nodeImpl]->renderer()->caretPos(offset, true, x, y, w, h);
+    return NSMakeRect(x, y, w, h);
+}
+
 - (NSImage *)selectionImage
 {
     return _part->selectionImage();
@@ -1358,7 +1365,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     cmd.reapply();
 }
 
-- (DOMRange *)selectedDOMRangeWithGranularity:(WebSelectionGranularity)granularity
+- (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebSelectionGranularity)granularity
 {
     if (!_part)
         return nil;

@@ -1,3 +1,17 @@
+2004-08-20  Trey Matteson  <trey@apple.com>
+
+	3655407 - Editing: -complete: method unimplemented (WebKit editing API)
+
+	One new support routine here.
+
+        Reviewed by John
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge caretRectAtNode:offset:]):  New routine.
+        (-[WebCoreBridge rangeByExpandingSelectionWithGranularity:]):
+	Fixed former misleading method name.
+
 2004-08-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Trey

@@ -2,6 +2,8 @@
 
 #import <WebKit/WebHTMLViewPrivate.h>
 
+@class WebTextCompleteController;
+
 @interface WebHTMLViewPrivate : NSObject
 {
 @public
@@ -45,6 +47,8 @@
     BOOL resigningFirstResponder;
 
     BOOL ignoreMarkedTextSelectionChange;
+    
+    WebTextCompleteController *compController;
 }
 @end
 
