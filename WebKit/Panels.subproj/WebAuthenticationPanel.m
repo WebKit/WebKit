@@ -78,19 +78,21 @@
 {
     [self loadNib];
 
+    WebAuthenticatingResource *resource = [req resource];
+
     // FIXME Radar 2876448: we should display a different dialog depending on the
     // failure count (if the user tried and failed, the dialog should
     // explain possible reasons)
     // FIXME Radar 2876446: need to automatically adjust height of main label
-    [mainLabel setStringValue:[NSString stringWithFormat:@"To view this page, you need to log in to area \"%@\" on %@.", [req realm], [[req URL] host]]];
-    if ([req willPasswordBeSentInClear]) {
-        [smallLabel setStringValue:@"Your password will be sent in the clear."];
-    } else {
+    [mainLabel setStringValue:[NSString stringWithFormat:@"To view this page, you need to log in to area \"%@\" on %@.", [resource realm], [[resource URL] host]]];
+    if ([resource receivesCredentialSecurely]) {
         [smallLabel setStringValue:@"Your log-in information will be sent securely."];
+    } else {
+        [smallLabel setStringValue:@"Your password will be sent in the clear."];
     }
 
-    if ([req username] != nil) {
-        [username setStringValue:[req username]];
+    if ([resource username] != nil) {
+        [username setStringValue:[resource username]];
         [panel setInitialFirstResponder:password];
     } else {
         [username setStringValue:@""];
@@ -103,13 +105,13 @@
 {
     [self setUpForRequest:req];
     usingSheet = FALSE;
-    WebAuthenticationResult *result = nil;
+    WebCredential *credential = nil;
 
     if ([[NSApplication sharedApplication] runModalForWindow:panel] == 0) {
-        result = [WebAuthenticationResult authenticationResultWithUsername:[username stringValue] password:[password stringValue]];
+        credential = [WebCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:NO];
     }
 
-    [callback performSelector:selector withObject:req withObject:result];
+    [callback performSelector:selector withObject:req withObject:credential];
 }
 
 - (void)runAsSheetOnWindow:(NSWindow *)window withRequest:(WebAuthenticationRequest *)req
@@ -126,21 +128,21 @@
 
 - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo
 {
-    WebAuthenticationResult *result = nil;
+    WebCredential *credential = nil;
     WebAuthenticationRequest *req;
 
     ASSERT(usingSheet);
     ASSERT(request != nil);
 
     if (returnCode == 0) {
-        result = [WebAuthenticationResult authenticationResultWithUsername:[username stringValue] password:[password stringValue]];
+        credential = [WebCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:NO];
     }
 
     // We take this tricky approach to nilling out and releasing the request,
     // because the callback below might remove our last ref.
     req = request;
     request = nil;
-    [callback performSelector:selector withObject:req withObject:result];
+    [callback performSelector:selector withObject:req withObject:credential];
     [req release];
 }
 

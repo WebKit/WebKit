@@ -32,9 +32,9 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 }
 
 // WebAuthenticationHandler methods
--(BOOL)readyToStartAuthentication:(WebAuthenticationRequest *)request
+-(BOOL)isReadyToStartAuthentication:(WebAuthenticationRequest *)request
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request URL]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[[request resource] URL]];
 
     if (window == nil) {
         window = WebModalDialogPretendWindow;
@@ -45,14 +45,14 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
 -(void)startAuthentication:(WebAuthenticationRequest *)request
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request URL]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[[request resource] URL]];
 
     if (window == nil) {
         window = WebModalDialogPretendWindow;
     }
 
     if ([windowToPanel objectForKey:window] != nil) {
-        [request authenticationDone:nil];
+        [request cancel];
         return;
     }
 
@@ -77,7 +77,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
     }
 }
 
--(void)_authenticationDoneWithRequest:(WebAuthenticationRequest *)request result:(WebAuthenticationResult *)result
+-(void)_authenticationDoneWithRequest:(WebAuthenticationRequest *)request result:(WebCredential *)credential
 {
     id window = [requestToWindow objectForKey:request];
     if (window != nil) {
@@ -85,7 +85,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
         [requestToWindow removeObjectForKey:request];
     }
 
-    [request authenticationDone:result];
+    [request useCredential:credential];
 }
 
 @end

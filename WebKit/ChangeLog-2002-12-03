@@ -1,3 +1,15 @@
+2002-09-27  Maciej Stachowiak  <mjs@apple.com>
+
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForRequest:]):
+        (-[WebAuthenticationPanel runAsModalDialogWithRequest:]):
+        (-[WebAuthenticationPanel sheetDidEnd:returnCode:contextInfo:]):
+        * Panels.subproj/WebPanelAuthenticationHandler.h:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        (-[WebPanelAuthenticationHandler isReadyToStartAuthentication:]):
+        (-[WebPanelAuthenticationHandler startAuthentication:]):
+        (-[WebPanelAuthenticationHandler _authenticationDoneWithRequest:result:]):
+
 2002-09-26  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/WebBridge.m:
