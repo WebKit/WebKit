@@ -7,6 +7,7 @@
 #include <qstring.h>
 
 int main() {
+
     char c_char = 'a';
     uchar c_uchar = 'b';
     ushort c_ushort = 'D';
