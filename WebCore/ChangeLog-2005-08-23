@@ -1,5 +1,35 @@
 2004-05-04  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Added layout tests for DOM traversal objects.
+
+        * layout-tests/traversal/node-iterator-001-expected.txt: Added.
+        * layout-tests/traversal/node-iterator-001.html: Added.
+        * layout-tests/traversal/node-iterator-002-expected.txt: Added.
+        * layout-tests/traversal/node-iterator-002.html: Added.
+        * layout-tests/traversal/node-iterator-003-expected.txt: Added.
+        * layout-tests/traversal/node-iterator-003.html: Added.
+        * layout-tests/traversal/node-iterator-004-expected.txt: Added.
+        * layout-tests/traversal/node-iterator-004.html: Added.
+        * layout-tests/traversal/node-iterator-005-expected.txt: Added.
+        * layout-tests/traversal/node-iterator-005.html: Added.
+        * layout-tests/traversal/node-iterator-006-expected.txt: Added.
+        * layout-tests/traversal/node-iterator-006.html: Added.
+        * layout-tests/traversal/node-iterator-007-expected.txt: Added.
+        * layout-tests/traversal/node-iterator-007.html: Added.
+        * layout-tests/traversal/traversal.js: Added.
+        * layout-tests/traversal/tree-walker-001-expected.txt: Added.
+        * layout-tests/traversal/tree-walker-001.html: Added.
+        * layout-tests/traversal/tree-walker-002-expected.txt: Added.
+        * layout-tests/traversal/tree-walker-002.html: Added.
+        * layout-tests/traversal/tree-walker-003-expected.txt: Added.
+        * layout-tests/traversal/tree-walker-003.html: Added.
+        * layout-tests/traversal/tree-walker-004-expected.txt: Added.
+        * layout-tests/traversal/tree-walker-004.html: Added.
+
+2004-05-04  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         * khtml/xml/dom2_traversalimpl.cpp:
