@@ -106,14 +106,14 @@ static inline int getPropertyID(NSString *string)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<StyleSheetImpl *>(_internal)->deref();
+        DOM_cast<StyleSheetImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (StyleSheetImpl *)_DOMStyleSheetImpl
 {
-    return reinterpret_cast<StyleSheetImpl *>(_internal);
+    return DOM_cast<StyleSheetImpl *>(_internal);
 }
 
 - (NSString *)type
@@ -163,9 +163,9 @@ static inline int getPropertyID(NSString *string)
 - (id)_initWithDOMStyleSheetImpl:(StyleSheetImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -175,7 +175,7 @@ static inline int getPropertyID(NSString *string)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -192,14 +192,14 @@ static inline int getPropertyID(NSString *string)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<StyleSheetListImpl *>(_internal)->deref();
+        DOM_cast<StyleSheetListImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (StyleSheetListImpl *)_styleSheetListImpl
 {
-    return reinterpret_cast<StyleSheetListImpl *>(_internal);
+    return DOM_cast<StyleSheetListImpl *>(_internal);
 }
 
 - (unsigned long)length
@@ -219,9 +219,9 @@ static inline int getPropertyID(NSString *string)
 - (id)_initWithStyleSheetListImpl:(StyleSheetListImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -231,7 +231,7 @@ static inline int getPropertyID(NSString *string)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -245,9 +245,17 @@ static inline int getPropertyID(NSString *string)
 
 @implementation DOMCSSStyleSheet
 
+- (void)dealloc
+{
+    if (_internal) {
+        DOM_cast<CSSStyleSheetImpl *>(_internal)->deref();
+    }
+    [super dealloc];
+}
+
 - (CSSStyleSheetImpl *)_CSSStyleSheetImpl
 {
-    return reinterpret_cast<CSSStyleSheetImpl *>(_internal);
+    return DOM_cast<CSSStyleSheetImpl *>(_internal);
 }
 
 - (DOMCSSRule *)ownerRule
@@ -282,9 +290,9 @@ static inline int getPropertyID(NSString *string)
 - (id)_initWithCSSStyleSheetImpl:(CSSStyleSheetImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -294,7 +302,7 @@ static inline int getPropertyID(NSString *string)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -311,14 +319,14 @@ static inline int getPropertyID(NSString *string)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<MediaListImpl *>(_internal)->deref();
+        DOM_cast<MediaListImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (MediaListImpl *)_mediaListImpl
 {
-    return reinterpret_cast<MediaListImpl *>(_internal);
+    return DOM_cast<MediaListImpl *>(_internal);
 }
 
 - (NSString *)mediaText
@@ -358,9 +366,9 @@ static inline int getPropertyID(NSString *string)
 - (id)_initWithMediaListImpl:(MediaListImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -370,7 +378,7 @@ static inline int getPropertyID(NSString *string)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -387,14 +395,14 @@ static inline int getPropertyID(NSString *string)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<CSSRuleListImpl *>(_internal)->deref();
+        DOM_cast<CSSRuleListImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (CSSRuleListImpl *)_ruleListImpl
 {
-    return reinterpret_cast<CSSRuleListImpl *>(_internal);
+    return DOM_cast<CSSRuleListImpl *>(_internal);
 }
 
 - (unsigned long)length
@@ -414,9 +422,9 @@ static inline int getPropertyID(NSString *string)
 - (id)_initWithRuleListImpl:(CSSRuleListImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -426,7 +434,7 @@ static inline int getPropertyID(NSString *string)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -443,14 +451,14 @@ static inline int getPropertyID(NSString *string)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<CSSRuleImpl *>(_internal)->deref();
+        DOM_cast<CSSRuleImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (CSSRuleImpl *)_ruleImpl
 {
-    return reinterpret_cast<CSSRuleImpl *>(_internal);
+    return DOM_cast<CSSRuleImpl *>(_internal);
 }
 
 - (unsigned short)type
@@ -485,9 +493,9 @@ static inline int getPropertyID(NSString *string)
 - (id)_initWithRuleImpl:(CSSRuleImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -497,7 +505,7 @@ static inline int getPropertyID(NSString *string)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
 
@@ -537,7 +545,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSStyleRuleImpl *)_styleRuleImpl
 {
-    return static_cast<CSSStyleRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
+    return static_cast<CSSStyleRuleImpl *>(DOM_cast<CSSRuleImpl *>(_internal));
 }
 
 - (NSString *)selectorText
@@ -564,7 +572,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSMediaRuleImpl *)_mediaRuleImpl
 {
-    return static_cast<CSSMediaRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
+    return static_cast<CSSMediaRuleImpl *>(DOM_cast<CSSRuleImpl *>(_internal));
 }
 
 - (DOMMediaList *)media
@@ -596,7 +604,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSFontFaceRuleImpl *)_fontFaceRuleImpl
 {
-    return static_cast<CSSFontFaceRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
+    return static_cast<CSSFontFaceRuleImpl *>(DOM_cast<CSSRuleImpl *>(_internal));
 }
 
 - (DOMCSSStyleDeclaration *)style
@@ -613,7 +621,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSPageRuleImpl *)_pageRuleImpl
 {
-    return static_cast<CSSPageRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
+    return static_cast<CSSPageRuleImpl *>(DOM_cast<CSSRuleImpl *>(_internal));
 }
 
 - (NSString *)selectorText
@@ -640,7 +648,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSImportRuleImpl *)_importRuleImpl
 {
-    return static_cast<CSSImportRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
+    return static_cast<CSSImportRuleImpl *>(DOM_cast<CSSRuleImpl *>(_internal));
 }
 
 - (DOMMediaList *)media
@@ -667,7 +675,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSCharsetRuleImpl *)_importRuleImpl
 {
-    return static_cast<CSSCharsetRuleImpl *>(reinterpret_cast<CSSRuleImpl *>(_internal));
+    return static_cast<CSSCharsetRuleImpl *>(DOM_cast<CSSRuleImpl *>(_internal));
 }
 
 - (NSString *)encoding
@@ -692,7 +700,7 @@ static inline int getPropertyID(NSString *string)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<CSSStyleDeclarationImpl *>(_internal)->deref();
+        DOM_cast<CSSStyleDeclarationImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -772,9 +780,9 @@ static inline int getPropertyID(NSString *string)
 - (id)_initWithStyleDeclarationImpl:(CSSStyleDeclarationImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -784,7 +792,7 @@ static inline int getPropertyID(NSString *string)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -793,7 +801,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSStyleDeclarationImpl *)_styleDeclarationImpl
 {
-    return reinterpret_cast<CSSStyleDeclarationImpl *>(_internal);
+    return DOM_cast<CSSStyleDeclarationImpl *>(_internal);
 }
 
 @end
@@ -806,14 +814,14 @@ static inline int getPropertyID(NSString *string)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<CSSValueImpl *>(_internal)->deref();
+        DOM_cast<CSSValueImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (CSSValueImpl *)_valueImpl
 {
-    return reinterpret_cast<CSSValueImpl *>(_internal);
+    return DOM_cast<CSSValueImpl *>(_internal);
 }
 
 - (NSString *)cssText
@@ -838,9 +846,9 @@ static inline int getPropertyID(NSString *string)
 - (id)_initWithValueImpl:(CSSValueImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -850,7 +858,7 @@ static inline int getPropertyID(NSString *string)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -881,7 +889,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSPrimitiveValueImpl *)_primitiveValueImpl
 {
-    return static_cast<CSSPrimitiveValueImpl *>(reinterpret_cast<CSSValueImpl *>(_internal));
+    return static_cast<CSSPrimitiveValueImpl *>(DOM_cast<CSSValueImpl *>(_internal));
 }
 
 - (unsigned short)primitiveType
@@ -938,7 +946,7 @@ static inline int getPropertyID(NSString *string)
 
 - (CSSValueListImpl *)_valueListImpl
 {
-    return static_cast<CSSValueListImpl *>(reinterpret_cast<CSSValueImpl *>(_internal));
+    return static_cast<CSSValueListImpl *>(DOM_cast<CSSValueImpl *>(_internal));
 }
 
 - (unsigned long)length
@@ -1048,14 +1056,14 @@ void removeWrapperForRGB(QRgb value)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<RectImpl *>(_internal)->deref();
+        DOM_cast<RectImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (RectImpl *)_rectImpl
 {
-    return reinterpret_cast<RectImpl *>(_internal);
+    return DOM_cast<RectImpl *>(_internal);
 }
 
 - (DOMCSSPrimitiveValue *)top
@@ -1090,9 +1098,9 @@ void removeWrapperForRGB(QRgb value)
 - (id)_initWithRectImpl:(RectImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -1102,7 +1110,7 @@ void removeWrapperForRGB(QRgb value)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -1119,14 +1127,14 @@ void removeWrapperForRGB(QRgb value)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<CounterImpl *>(_internal)->deref();
+        DOM_cast<CounterImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (CounterImpl *)_counterImpl
 {
-    return reinterpret_cast<CounterImpl *>(_internal);
+    return DOM_cast<CounterImpl *>(_internal);
 }
 
 - (NSString *)identifier
@@ -1156,9 +1164,9 @@ void removeWrapperForRGB(QRgb value)
 - (id)_initWithCounterImpl:(CounterImpl *)impl
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -1168,7 +1176,7 @@ void removeWrapperForRGB(QRgb value)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     

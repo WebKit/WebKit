@@ -41,14 +41,14 @@ using DOM::RangeException;
 
 static CFMutableDictionaryRef wrapperCache = NULL;
 
-id getDOMWrapperForImpl(const void *impl)
+id getDOMWrapperImpl(DOMObjectInternal *impl)
 {
     if (!wrapperCache)
         return nil;
     return (id)CFDictionaryGetValue(wrapperCache, impl);
 }
 
-void setDOMWrapperForImpl(id wrapper, const void *impl)
+void addDOMWrapperImpl(id wrapper, DOMObjectInternal *impl)
 {
     if (!wrapperCache) {
         // No need to retain/free either impl key, or id value.  Items will be removed
@@ -58,7 +58,7 @@ void setDOMWrapperForImpl(id wrapper, const void *impl)
     CFDictionarySetValue(wrapperCache, impl, wrapper);
 }
 
-void removeDOMWrapperForImpl(const void *impl)
+void removeDOMWrapper(DOMObjectInternal *impl)
 {
     if (!wrapperCache)
         return;

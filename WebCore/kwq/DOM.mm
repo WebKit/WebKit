@@ -139,7 +139,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (void)dealloc
 {
     if (_internal) {
-        removeDOMWrapperForImpl(_internal);
+        removeDOMWrapper(_internal);
     }
     [super dealloc];
 }
@@ -168,7 +168,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<NodeImpl *>(_internal)->deref();
+        DOM_cast<NodeImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -347,9 +347,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(impl);
 
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -359,7 +359,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -562,7 +562,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (NodeImpl *)_nodeImpl
 {
-    return reinterpret_cast<NodeImpl *>(_internal);
+    return DOM_cast<NodeImpl *>(_internal);
 }
 
 - (BOOL)isContentEditable
@@ -580,14 +580,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<NamedNodeMapImpl *>(_internal)->deref();
+        DOM_cast<NamedNodeMapImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (NamedNodeMapImpl *)_namedNodeMapImpl
 {
-    return reinterpret_cast<NamedNodeMapImpl *>(_internal);
+    return DOM_cast<NamedNodeMapImpl *>(_internal);
 }
 
 - (DOMNode *)getNamedItem:(NSString *)name
@@ -696,9 +696,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(impl);
 
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -708,7 +708,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -725,14 +725,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<NodeListImpl *>(_internal)->deref();
+        DOM_cast<NodeListImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
 
 - (NodeListImpl *)_nodeListImpl
 {
-    return reinterpret_cast<NodeListImpl *>(_internal);
+    return DOM_cast<NodeListImpl *>(_internal);
 }
 
 - (DOMNode *)item:(unsigned long)index
@@ -754,9 +754,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(impl);
 
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -766,7 +766,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -783,7 +783,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<DOMImplementationImpl *>(_internal)->deref();
+        DOM_cast<DOMImplementationImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -846,9 +846,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(impl);
 
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -858,7 +858,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -867,7 +867,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMImplementationImpl *)_DOMImplementationImpl
 {
-    return reinterpret_cast<DOMImplementationImpl *>(_internal);
+    return DOM_cast<DOMImplementationImpl *>(_internal);
 }
 
 @end
@@ -1092,7 +1092,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DocumentImpl *)_documentImpl
 {
-    return static_cast<DocumentImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<DocumentImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -1104,7 +1104,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (CharacterDataImpl *)_characterDataImpl
 {
-    return static_cast<CharacterDataImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<CharacterDataImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)data
@@ -1217,7 +1217,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (AttrImpl *)_attrImpl
 {
-    return static_cast<AttrImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<AttrImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -1441,7 +1441,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (ElementImpl *)_elementImpl
 {
-    return static_cast<ElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<ElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -1453,7 +1453,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (TextImpl *)_textImpl
 {
-    return static_cast<TextImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<TextImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMText *)splitText:(unsigned long)offset
@@ -1487,7 +1487,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DocumentTypeImpl *)_documentTypeImpl
 {
-    return static_cast<DocumentTypeImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<DocumentTypeImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)name
@@ -1529,7 +1529,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (NotationImpl *)_notationImpl
 {
-    return static_cast<NotationImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<NotationImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)publicId
@@ -1551,7 +1551,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (EntityImpl *)_entityImpl
 {
-    return static_cast<EntityImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<EntityImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)publicId
@@ -1585,7 +1585,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (ProcessingInstructionImpl *)_processingInstructionImpl
 {
-    return static_cast<ProcessingInstructionImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<ProcessingInstructionImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)target
@@ -1617,7 +1617,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (void)dealloc
 {
     if (_internal) {
-        reinterpret_cast<RangeImpl *>(_internal)->deref();
+        DOM_cast<RangeImpl *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -1810,9 +1810,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(impl);
 
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -1822,7 +1822,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -1831,7 +1831,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (RangeImpl *)_rangeImpl
 {
-    return reinterpret_cast<RangeImpl *>(_internal);
+    return DOM_cast<RangeImpl *>(_internal);
 }
 
 @end

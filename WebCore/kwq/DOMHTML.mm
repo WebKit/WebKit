@@ -149,9 +149,17 @@ using DOM::NodeImpl;
 
 @implementation DOMHTMLCollection
 
+- (void)dealloc
+{
+    if (_internal) {
+        DOM_cast<HTMLCollectionImpl *>(_internal)->deref();
+    }
+    [super dealloc];
+}
+
 - (HTMLCollectionImpl *)_collectionImpl
 {
-    return reinterpret_cast<HTMLCollectionImpl *>(_internal);
+    return DOM_cast<HTMLCollectionImpl *>(_internal);
 }
 
 - (unsigned long)length
@@ -178,9 +186,9 @@ using DOM::NodeImpl;
     ASSERT(impl);
     
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -190,7 +198,7 @@ using DOM::NodeImpl;
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -202,17 +210,27 @@ using DOM::NodeImpl;
 @implementation DOMHTMLOptionsCollection
 
 #if 0
+
 //
 // We need to implement a KHTML element to back this object 
 //
+
+- (void)dealloc
+{
+    if (_internal) {
+        DOM_cast<HTMLOptionsCollectionImpl *>(_internal)->deref();
+    }
+    [super dealloc];
+}
+
 - (id)_initWithOptionsCollectionImpl:(HTMLOptionsCollectionImpl *)impl
 {
     ASSERT(impl);
     
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setDOMWrapperForImpl(self, impl);
+    addDOMWrapper(self, impl);
     return self;
 }
 
@@ -222,7 +240,7 @@ using DOM::NodeImpl;
         return nil;
     
     id cachedInstance;
-    cachedInstance = getDOMWrapperForImpl(impl);
+    cachedInstance = getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -231,7 +249,7 @@ using DOM::NodeImpl;
 
 - (HTMLOptionsCollectionImpl *)_optionsCollectionImpl
 {
-    return reinterpret_cast<HTMLOptionsCollectionImpl *>(_internal);
+    return DOM_cast<HTMLOptionsCollectionImpl *>(_internal);
 }
 
 #endif
@@ -327,7 +345,7 @@ using DOM::NodeImpl;
 
 - (HTMLElementImpl *)_HTMLElementImpl
 {
-    return static_cast<HTMLElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -336,7 +354,7 @@ using DOM::NodeImpl;
 
 - (HTMLDocumentImpl *)_HTMLDocumentImpl
 {
-    return static_cast<HTMLDocumentImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLDocumentImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)title
@@ -453,7 +471,7 @@ using DOM::NodeImpl;
 
 - (HTMLHtmlElementImpl *)_HTMLHtmlElementImpl
 {
-    return static_cast<HTMLHtmlElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLHtmlElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)version
@@ -472,7 +490,7 @@ using DOM::NodeImpl;
 
 - (HTMLHeadElementImpl *)_headElementImpl
 {
-    return static_cast<HTMLHeadElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLHeadElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)profile
@@ -491,7 +509,7 @@ using DOM::NodeImpl;
 
 - (HTMLLinkElementImpl *)_linkElementImpl
 {
-    return static_cast<HTMLLinkElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLLinkElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)disabled
@@ -596,7 +614,7 @@ using DOM::NodeImpl;
 
 - (HTMLTitleElementImpl *)_titleElementImpl
 {
-    return static_cast<HTMLTitleElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTitleElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)text
@@ -615,7 +633,7 @@ using DOM::NodeImpl;
 
 - (HTMLMetaElementImpl *)_metaElementImpl
 {
-    return static_cast<HTMLMetaElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLMetaElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)content
@@ -664,7 +682,7 @@ using DOM::NodeImpl;
 
 - (HTMLBaseElementImpl *)_baseElementImpl
 {
-    return static_cast<HTMLBaseElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLBaseElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)href
@@ -698,7 +716,7 @@ using DOM::NodeImpl;
 
 - (HTMLStyleElementImpl *)_styleElementImpl
 {
-    return static_cast<HTMLStyleElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLStyleElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)disabled
@@ -737,7 +755,7 @@ using DOM::NodeImpl;
 
 - (HTMLBodyElementImpl *)_bodyElementImpl
 {
-    return static_cast<HTMLBodyElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLBodyElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)aLink
@@ -806,7 +824,7 @@ using DOM::NodeImpl;
 
 - (HTMLFormElementImpl *)_formElementImpl
 {
-    return static_cast<HTMLFormElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFormElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLCollection *)elements
@@ -905,7 +923,7 @@ using DOM::NodeImpl;
 
 - (HTMLIsIndexElementImpl *)_isIndexElementImpl
 {
-    return static_cast<HTMLIsIndexElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLIsIndexElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -929,7 +947,7 @@ using DOM::NodeImpl;
 
 - (HTMLSelectElementImpl *)_selectElementImpl
 {
-    return static_cast<HTMLSelectElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLSelectElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)type
@@ -1057,7 +1075,7 @@ using DOM::NodeImpl;
 
 - (HTMLOptGroupElementImpl *)_optGroupElementImpl
 {
-    return static_cast<HTMLOptGroupElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLOptGroupElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)disabled
@@ -1086,7 +1104,7 @@ using DOM::NodeImpl;
 
 - (HTMLOptionElementImpl *)_optionElementImpl
 {
-    return static_cast<HTMLOptionElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLOptionElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1161,7 +1179,7 @@ using DOM::NodeImpl;
 
 - (HTMLInputElementImpl *)_inputElementImpl
 {
-    return static_cast<HTMLInputElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLInputElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)defaultValue
@@ -1371,7 +1389,7 @@ using DOM::NodeImpl;
 
 - (HTMLTextAreaElementImpl *)_textAreaElementImpl
 {
-    return static_cast<HTMLTextAreaElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTextAreaElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)defaultValue
@@ -1502,7 +1520,7 @@ using DOM::NodeImpl;
 
 - (HTMLButtonElementImpl *)_buttonElementImpl
 {
-    return static_cast<HTMLButtonElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLButtonElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1571,7 +1589,7 @@ using DOM::NodeImpl;
 
 - (HTMLLabelElementImpl *)_labelElementImpl
 {
-    return static_cast<HTMLLabelElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLLabelElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1608,7 +1626,7 @@ using DOM::NodeImpl;
 
 - (HTMLFieldSetElementImpl *)_fieldSetElementImpl
 {
-    return static_cast<HTMLFieldSetElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFieldSetElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1622,7 +1640,7 @@ using DOM::NodeImpl;
 
 - (HTMLLegendElementImpl *)_legendElementImpl
 {
-    return static_cast<HTMLLegendElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLLegendElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1656,7 +1674,7 @@ using DOM::NodeImpl;
 
 - (HTMLUListElementImpl *)_uListElementImpl
 {
-    return static_cast<HTMLUListElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLUListElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1685,7 +1703,7 @@ using DOM::NodeImpl;
 
 - (HTMLOListElementImpl *)_oListElementImpl
 {
-    return static_cast<HTMLOListElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLOListElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1725,7 +1743,7 @@ using DOM::NodeImpl;
 
 - (HTMLDListElementImpl *)_dListElementImpl
 {
-    return static_cast<HTMLDListElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLDListElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1744,7 +1762,7 @@ using DOM::NodeImpl;
 
 - (HTMLDirectoryElementImpl *)_directoryListElementImpl
 {
-    return static_cast<HTMLDirectoryElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLDirectoryElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1763,7 +1781,7 @@ using DOM::NodeImpl;
 
 - (HTMLMenuElementImpl *)_menuListElementImpl
 {
-    return static_cast<HTMLMenuElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLMenuElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (BOOL)compact
@@ -1782,7 +1800,7 @@ using DOM::NodeImpl;
 
 - (HTMLLIElementImpl *)_liElementImpl
 {
-    return static_cast<HTMLLIElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLLIElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)type
@@ -1812,7 +1830,7 @@ using DOM::NodeImpl;
 
 - (HTMLGenericElementImpl *)_quoteElementImpl
 {
-    return static_cast<HTMLGenericElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLGenericElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)cite
@@ -1831,7 +1849,7 @@ using DOM::NodeImpl;
 
 - (HTMLDivElementImpl *)_divElementImpl
 {
-    return static_cast<HTMLDivElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLDivElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -1850,7 +1868,7 @@ using DOM::NodeImpl;
 
 - (HTMLParagraphElementImpl *)_paragraphElementImpl
 {
-    return static_cast<HTMLParagraphElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLParagraphElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -1869,7 +1887,7 @@ using DOM::NodeImpl;
 
 - (HTMLHeadingElementImpl *)_headingElementImpl
 {
-    return static_cast<HTMLHeadingElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLHeadingElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -1888,7 +1906,7 @@ using DOM::NodeImpl;
 
 - (HTMLPreElementImpl *)_preElementImpl
 {
-    return static_cast<HTMLPreElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLPreElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (long)width
@@ -1908,7 +1926,7 @@ using DOM::NodeImpl;
 
 - (HTMLBRElementImpl *)_BRElementImpl
 {
-    return static_cast<HTMLBRElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLBRElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)clear
@@ -1927,7 +1945,7 @@ using DOM::NodeImpl;
 
 - (HTMLBaseFontElementImpl *)_baseFontElementImpl
 {
-    return static_cast<HTMLBaseFontElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLBaseFontElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)color
@@ -1966,7 +1984,7 @@ using DOM::NodeImpl;
 
 - (HTMLFontElementImpl *)_fontElementImpl
 {
-    return static_cast<HTMLFontElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFontElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)color
@@ -2005,7 +2023,7 @@ using DOM::NodeImpl;
 
 - (HTMLHRElementImpl *)_HRElementImpl
 {
-    return static_cast<HTMLHRElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLHRElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -2054,7 +2072,7 @@ using DOM::NodeImpl;
 
 - (HTMLElementImpl *)_modElementImpl
 {
-    return static_cast<HTMLElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)cite
@@ -2083,7 +2101,7 @@ using DOM::NodeImpl;
 
 - (HTMLAnchorElementImpl *)_anchorElementImpl
 {
-    return static_cast<HTMLAnchorElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLAnchorElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)accessKey
@@ -2231,7 +2249,7 @@ using DOM::NodeImpl;
 
 - (HTMLImageElementImpl *)_imageElementImpl
 {
-    return static_cast<HTMLImageElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLImageElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)name
@@ -2369,7 +2387,7 @@ using DOM::NodeImpl;
 
 - (HTMLObjectElementImpl *)_objectElementImpl
 {
-    return static_cast<HTMLObjectElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLObjectElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -2561,7 +2579,7 @@ using DOM::NodeImpl;
 
 - (HTMLParamElementImpl *)_paramElementImpl
 {
-    return static_cast<HTMLParamElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLParamElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)name
@@ -2610,7 +2628,7 @@ using DOM::NodeImpl;
 
 - (HTMLAppletElementImpl *)_appletElementImpl
 {
-    return static_cast<HTMLAppletElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLAppletElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -2731,7 +2749,7 @@ using DOM::NodeImpl;
 
 - (HTMLMapElementImpl *)_mapElementImpl
 {
-    return static_cast<HTMLMapElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLMapElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (DOMHTMLCollection *)areas
@@ -2756,7 +2774,7 @@ using DOM::NodeImpl;
 
 - (HTMLAreaElementImpl *)_areaElementImpl
 {
-    return static_cast<HTMLAreaElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLAreaElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)accessKey
@@ -2851,7 +2869,7 @@ using DOM::NodeImpl;
 
 - (HTMLScriptElementImpl *)_scriptElementImpl
 {
-    return static_cast<HTMLScriptElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLScriptElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)text
@@ -2951,7 +2969,7 @@ using DOM::NodeImpl;
 
 - (HTMLTableCaptionElementImpl *)_tableCaptionElementImpl
 {
-    return static_cast<HTMLTableCaptionElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableCaptionElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -3030,7 +3048,7 @@ using DOM::NodeImpl;
 
 - (HTMLTableSectionElementImpl *)_tableSectionElementImpl
 {
-    return static_cast<HTMLTableSectionElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableSectionElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -3228,7 +3246,7 @@ using DOM::NodeImpl;
 
 - (HTMLTableElementImpl *)_tableElementImpl
 {
-    return static_cast<HTMLTableElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -3237,7 +3255,7 @@ using DOM::NodeImpl;
 
 - (HTMLTableColElementImpl *)_tableColElementImpl
 {
-    return static_cast<HTMLTableColElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableColElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -3307,7 +3325,7 @@ using DOM::NodeImpl;
 
 - (HTMLTableRowElementImpl *)_tableRowElementImpl
 {
-    return static_cast<HTMLTableRowElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableRowElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (long)rowIndex
@@ -3553,7 +3571,7 @@ using DOM::NodeImpl;
 
 - (HTMLTableCellElementImpl *)_tableCellElementImpl
 {
-    return static_cast<HTMLTableCellElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableCellElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -3562,7 +3580,7 @@ using DOM::NodeImpl;
 
 - (HTMLFrameSetElementImpl *)_frameSetElementImpl
 {
-    return static_cast<HTMLFrameSetElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFrameSetElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)rows
@@ -3591,7 +3609,7 @@ using DOM::NodeImpl;
 
 - (HTMLFrameElementImpl *)_frameElementImpl
 {
-    return static_cast<HTMLFrameElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFrameElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)frameBorder
@@ -3685,7 +3703,7 @@ using DOM::NodeImpl;
 
 - (HTMLIFrameElementImpl *)_IFrameElementImpl
 {
-    return static_cast<HTMLIFrameElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLIFrameElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align
@@ -3811,7 +3829,7 @@ using DOM::NodeImpl;
 
 - (HTMLEmbedElementImpl *)_embedElementImpl
 {
-    return static_cast<HTMLEmbedElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLEmbedElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)align

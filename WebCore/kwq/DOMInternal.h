@@ -79,9 +79,18 @@ namespace DOM {
 
 // Helper functions for DOM wrappers and gluing to Objective-C
 
-id getDOMWrapperForImpl(const void *impl);
-void setDOMWrapperForImpl(id wrapper, const void *impl);
-void removeDOMWrapperForImpl(const void *impl);
+// Like reinterpret_cast, but a compiler error if you use it on the wrong type.
+template <class Target, class Source> Target DOM_cast(Source) { failToCompile(); }
+
+// Type safe DOM wrapper access.
+
+id getDOMWrapperImpl(DOMObjectInternal *impl);
+void addDOMWrapperImpl(id wrapper, DOMObjectInternal *impl);
+
+template <class Source> inline id getDOMWrapper(Source impl) { return getDOMWrapperImpl(DOM_cast<DOMObjectInternal *>(impl)); }
+template <class Source> inline void addDOMWrapper(id wrapper, Source impl) { addDOMWrapperImpl(wrapper, DOM_cast<DOMObjectInternal *>(impl)); }
+void removeDOMWrapper(DOMObjectInternal *impl);
+
 void raiseDOMException(int code);
 
 inline void raiseOnDOMError(int code) 
@@ -89,3 +98,31 @@ inline void raiseOnDOMError(int code)
     if (code) 
         raiseDOMException(code);
 }
+
+// Implementation details for the above.
+
+#define ALLOW_DOM_CAST(type) \
+    namespace DOM { class type; } \
+    template <> inline DOMObjectInternal *DOM_cast<DOMObjectInternal *, DOM::type *>(DOM::type *p) \
+        { return reinterpret_cast<DOMObjectInternal *>(p); } \
+    template <> inline DOM::type *DOM_cast<DOM::type *, DOMObjectInternal *>(DOMObjectInternal *p) \
+        { return reinterpret_cast<DOM::type *>(p); }
+
+// No class should appear in this list if it's base class is already here.
+ALLOW_DOM_CAST(CounterImpl)
+ALLOW_DOM_CAST(CSSRuleImpl)
+ALLOW_DOM_CAST(CSSRuleListImpl)
+ALLOW_DOM_CAST(CSSStyleDeclarationImpl)
+ALLOW_DOM_CAST(CSSStyleSheetImpl)
+ALLOW_DOM_CAST(CSSValueImpl)
+ALLOW_DOM_CAST(DOMImplementationImpl)
+ALLOW_DOM_CAST(HTMLCollectionImpl)
+ALLOW_DOM_CAST(HTMLOptionsCollectionImpl)
+ALLOW_DOM_CAST(MediaListImpl)
+ALLOW_DOM_CAST(NamedNodeMapImpl)
+ALLOW_DOM_CAST(NodeImpl)
+ALLOW_DOM_CAST(NodeListImpl)
+ALLOW_DOM_CAST(RangeImpl)
+ALLOW_DOM_CAST(RectImpl)
+ALLOW_DOM_CAST(StyleSheetImpl)
+ALLOW_DOM_CAST(StyleSheetListImpl)

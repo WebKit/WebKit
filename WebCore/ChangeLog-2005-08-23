@@ -2,6 +2,30 @@
 
         Reviewed by Chris.
 
+        - another step of refinement on the reinterpret_cast stuff; now it's a compile-time
+          error if you do it wrong
+        - fixed a couple of storage leaks
+
+        * kwq/DOMInternal.h: Added new DOM_cast template function. Like reinterpret_cast, but a
+        compile-time error if you use it with the wrong parameters. Also added type-safe versions
+        of the wrapper functions that do the DOM_cast automatically.
+        * kwq/DOMInternal.mm:
+        (getDOMWrapperImpl): Changed name and parameter type as part of above change.
+        (addDOMWrapperImpl): Ditto.
+        (removeDOMWrapper): Ditto.
+
+        * kwq/DOM.mm: Use the new DOM_cast instead of reinterpret_cast, and the new
+        DOM wrapper calls that do the cast automatically.
+        * kwq/DOM-CSS.mm: More of the same.
+        (-[DOMCSSStyleSheet dealloc]): Added override to deref, fixes leak.
+        * kwq/DOMHTML.mm: More of the same.
+        (-[DOMHTMLCollection dealloc]): Added override to deref, fixes leak.
+        (-[DOMHTMLOptionsCollection dealloc]): Added override to deref, fixes theoretical leak.
+
+2004-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
         - fixed reinterpret_cast mistakes and some style issues in DOM implementation
 
         * kwq/DOM-CSS.mm:
