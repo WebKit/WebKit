@@ -1,5 +1,14 @@
 2004-01-21  David Hyatt  <hyatt@apple.com>
 
+	Fix for two margin collapsing edge cases.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+
+2004-01-21  David Hyatt  <hyatt@apple.com>
+
 	Switch from expat to libxml and implement namespace support in the simplereader.
 	
         Reviewed by darin
