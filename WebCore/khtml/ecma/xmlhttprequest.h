@@ -60,7 +60,7 @@ namespace KJS {
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { Onreadystatechange, ReadyState, ResponseText, ResponseXML, Status, StatusText, Abort, GetAllResponseHeaders, GetResponseHeader, Open, Send, SetRequestHeader };
+    enum { Onload, Onreadystatechange, ReadyState, ResponseText, ResponseXML, Status, StatusText, Abort, GetAllResponseHeaders, GetResponseHeader, Open, Send, SetRequestHeader };
 
   private:
     friend class XMLHttpRequestProtoFunc;
@@ -100,6 +100,7 @@ namespace KJS {
 
     XMLHttpRequestState state;
     JSEventListener *onReadyStateChangeListener;
+    JSEventListener *onLoadListener;
 
     khtml::Decoder *decoder;
     QString encoding;

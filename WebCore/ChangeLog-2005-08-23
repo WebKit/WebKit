@@ -1,3 +1,17 @@
+2003-12-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3504047>: XMLHttpRequest object needs onload event
+        
+	* khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty): Implemented onload property.
+        (KJS::XMLHttpRequest::putValue): Ditto.
+        (KJS::XMLHttpRequest::XMLHttpRequest): Ditto.
+        (KJS::XMLHttpRequest::changeState): Ditto.
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/ecma/xmlhttprequest.lut.h: Regenerated.
+
 2003-12-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3503022, asahi.com is too wide.  Bugs in line breaking of breakable Japanese characters caused

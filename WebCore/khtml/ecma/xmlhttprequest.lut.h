@@ -20,17 +20,17 @@ const struct HashTable XMLHttpRequestProtoTable = { 2, 8, XMLHttpRequestProtoTab
 namespace KJS {
 
 const struct HashEntry XMLHttpRequestTableEntries[] = {
+   { "responseXML", XMLHttpRequest::ResponseXML, DontDelete|ReadOnly, 0, &XMLHttpRequestTableEntries[8] },
    { 0, 0, 0, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "onreadystatechange", XMLHttpRequest::Onreadystatechange, DontDelete, 0, 0 },
    { "readyState", XMLHttpRequest::ReadyState, DontDelete|ReadOnly, 0, 0 },
-   { 0, 0, 0, 0, 0 },
-   { "responseText", XMLHttpRequest::ResponseText, DontDelete|ReadOnly, 0, &XMLHttpRequestTableEntries[6] },
-   { "statusText", XMLHttpRequest::StatusText, DontDelete|ReadOnly, 0, &XMLHttpRequestTableEntries[8] },
-   { "responseXML", XMLHttpRequest::ResponseXML, DontDelete|ReadOnly, 0, &XMLHttpRequestTableEntries[7] },
    { "status", XMLHttpRequest::Status, DontDelete|ReadOnly, 0, 0 },
-   { "onreadystatechange", XMLHttpRequest::Onreadystatechange, DontDelete, 0, 0 }
+   { "responseText", XMLHttpRequest::ResponseText, DontDelete|ReadOnly, 0, &XMLHttpRequestTableEntries[7] },
+   { 0, 0, 0, 0, 0 },
+   { "statusText", XMLHttpRequest::StatusText, DontDelete|ReadOnly, 0, 0 },
+   { "onload", XMLHttpRequest::Onload, DontDelete, 0, 0 }
 };
 
-const struct HashTable XMLHttpRequestTable = { 2, 9, XMLHttpRequestTableEntries, 6 };
+const struct HashTable XMLHttpRequestTable = { 2, 9, XMLHttpRequestTableEntries, 7 };
 
 } // namespace
