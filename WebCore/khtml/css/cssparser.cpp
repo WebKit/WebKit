@@ -526,8 +526,8 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_DISPLAY:
         // inline | block | list-item | run-in | inline-block | -konq-ruler | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
-        // table-column-group | table-column | table-cell | table-caption | none | inherit
-	if ((id >= CSS_VAL_INLINE && id <= CSS_VAL_TABLE_CAPTION) || id == CSS_VAL_NONE)
+        // table-column-group | table-column | table-cell | table-caption | box | inline-box | none | inherit
+	if ((id >= CSS_VAL_INLINE && id <= CSS_VAL_INLINE_BOX) || id == CSS_VAL_NONE)
 	    valid_primitive = true;
 	break;
 
@@ -971,6 +971,38 @@ bool CSSParser::parseValue( int propId, bool important )
 	    valid_primitive = true;
 	break;
 
+    /* CSS3 properties */
+    case CSS_PROP_BOX_ALIGN:
+        if (id == CSS_VAL_STRETCH || id == CSS_VAL_START || id == CSS_VAL_END ||
+            id == CSS_VAL_CENTER || id == CSS_VAL_BASELINE)
+            valid_primitive = true;
+        break;
+    case CSS_PROP_BOX_DIRECTION:
+        if (id == CSS_VAL_NORMAL || id == CSS_VAL_REVERSE)
+            valid_primitive = true;
+        break;
+    case CSS_PROP_BOX_LINES:
+        if (id == CSS_VAL_SINGLE || id == CSS_VAL_MULTIPLE)
+            valid_primitive = true;
+        break;
+    case CSS_PROP_BOX_ORIENT:
+        if (id == CSS_VAL_HORIZONTAL || id == CSS_VAL_VERTICAL ||
+            id == CSS_VAL_INLINE_AXIS || id == CSS_VAL_BLOCK_AXIS)
+            valid_primitive = true;
+        break;
+    case CSS_PROP_BOX_PACK:
+        if (id == CSS_VAL_START || id == CSS_VAL_END ||
+            id == CSS_VAL_CENTER || id == CSS_VAL_JUSTIFY)
+            valid_primitive = true;
+        break;
+    case CSS_PROP_BOX_FLEX:
+        valid_primitive = validUnit(value, FNumber, strict);
+        break;
+    case CSS_PROP_BOX_FLEX_GROUP:
+    case CSS_PROP_BOX_ORDINAL_GROUP:
+        valid_primitive = validUnit(value, FInteger|FNonNeg, true);
+        break;
+    
 	/* shorthand properties */
     case CSS_PROP_BACKGROUND:
     	// ['background-color' || 'background-image' ||'background-repeat' ||

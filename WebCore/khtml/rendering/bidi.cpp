@@ -1477,10 +1477,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                 }
             }
             else if (o->isPositioned()) {
-                // If our original display wasn't an INLINE type, then we can
+                // If our original display wasn't an inline type, then we can
                 // go ahead and determine our static x position now.
-                bool isInlineType = o->style()->originalDisplay() == INLINE ||
-                                    o->style()->originalDisplay() == INLINE_TABLE;
+                bool isInlineType = o->style()->isOriginalDisplayInlineType();
                 bool needToSetStaticX = o->hasStaticX();
                 if (o->hasStaticX() && !isInlineType) {
                     o->setStaticX(o->parent()->style()->direction() == LTR ?
@@ -1507,7 +1506,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                         addMidpoint(startMid); // Stop ignoring spaces.
                         addMidpoint(stopMid); // Start ignoring again.
                     }
-                }                
+                }
             }
         } else if (o->isInlineFlow()) {
             // Only empty inlines matter.  We treat those similarly to replaced elements.

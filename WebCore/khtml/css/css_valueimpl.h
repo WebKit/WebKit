@@ -35,6 +35,7 @@
 namespace khtml {
     class RenderStyle;
     class CachedImage;
+    class CSSStyleSelector;
 }
 
 namespace DOM {
@@ -43,7 +44,6 @@ class CSSRuleImpl;
 class CSSValueImpl;
 class NodeImpl;
 class CounterImpl;
-
 
 class CSSStyleDeclarationImpl : public StyleBaseImpl
 {
@@ -177,9 +177,12 @@ public:
      * this is screen/printer dependent, so we probably need a config option for this,
      * and some tool to calibrate.
      */
-    int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
-    int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics, double multiplier );
-    double computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
+    int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics,
+                       khtml::CSSStyleSelector* selector );
+    int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics, 
+                       khtml::CSSStyleSelector* selector, double multiplier );
+    double computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics,
+                               khtml::CSSStyleSelector* selector, bool applyZoomFactor = true );
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }

@@ -128,8 +128,7 @@ namespace khtml
 	RenderStyle *styleForElement(DOM::ElementImpl *e);
 
         QValueList<int> fontSizes() const { return m_fontSizes; }
-	QValueList<int> fixedFontSizes() const { return m_fixedFontSizes; }
-
+	
 	bool strictParsing;
 	struct Encodedurl {
 	    QString host; //also contains protocol
@@ -137,9 +136,10 @@ namespace khtml
 	    QString file;
 	} encodedurl;
 
-        void computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics, int zoomFactor);
-	void computeFontSizesFor(QPaintDeviceMetrics* paintDeviceMetrics, int zoomFactor, QValueList<int>& fontSizes, bool isFixed);
-
+        void computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics);
+        void setFontSize(FontDef& fontDef, float size);
+        float getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, float specifiedSize);
+        
     protected:
 
 	/* checks if the complete selector (which can be build up from a few CSSSelector's
@@ -156,9 +156,9 @@ namespace khtml
 	void buildLists();
 	void clearLists();
 
-        unsigned int addInlineDeclarations(DOM::ElementImpl* e, DOM::CSSStyleDeclarationImpl *decl,
-				   unsigned int numProps);
-
+    unsigned int addInlineDeclarations(DOM::ElementImpl* e, DOM::CSSStyleDeclarationImpl *decl,
+                                       unsigned int numProps);
+    
 	static DOM::CSSStyleSheetImpl *defaultSheet;
         static DOM::CSSStyleSheetImpl *quirksSheet;
 	static CSSStyleSelectorList *defaultStyle;
@@ -225,8 +225,8 @@ public:
 	const KHTMLSettings *settings;
 	QPaintDeviceMetrics *paintDeviceMetrics;
         QValueList<int>     m_fontSizes;
-	QValueList<int>     m_fixedFontSizes;
-
+        float m_fixedScaleFactor; // Used when converting from proportional to fixed and vice
+                                  // versa.
 	bool fontDirty;
         bool isXMLDoc;
         

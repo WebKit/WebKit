@@ -42,25 +42,25 @@ class FontDef
 {
 public:
     FontDef()
-        : size( 0.0f ), italic( false ), smallCaps( false ), sizeSpecified(false), weight( 50 ), 
+        : specifiedSize(0), computedSize(0), 
+          italic( false ), smallCaps( false ), isAbsoluteSize(false), weight( 50 ), 
           genericFamily(0), hasNbsp( true )
 #if APPLE_CHANGES
           , usePrinterFont( false )
 #endif
-          , logicalSize(3)
           {}
     
     bool operator == ( const FontDef &other ) const {
         return ( family == other.family &&
-                 size == other.size &&
+                 specifiedSize == other.specifiedSize &&
+                 computedSize == other.computedSize &&
                  italic == other.italic &&
                  smallCaps == other.smallCaps &&
                  weight == other.weight &&
-                 sizeSpecified == other.sizeSpecified
+                 isAbsoluteSize == other.isAbsoluteSize
 #if APPLE_CHANGES
                  && usePrinterFont == other.usePrinterFont
 #endif
-                 && logicalSize == other.logicalSize
                  );
     }
 
@@ -72,18 +72,16 @@ public:
     
     KWQFontFamily family;
 
-    int pixelSize() const { return int(size + 0.5f); }
-    float floatSize() const { return size; }
-    void setSize(float s) { size = s; }
+    int computedPixelSize() const { return int(computedSize+0.5); }
     
-private:
-    float size; // Making this private forces people to think about what value they want,
-                // either the floatSize or the pixelSize.
-
-public:
+    float specifiedSize; // This is the specified CSS value.  It is independent of rendering issues such as
+                         // integer rounding, minimum font sizes, and zooming.
+    float computedSize; // This is the computed size adjusted for the minimum font size and the zoom
+                        // factor.  
+    
     bool italic 		: 1;
     bool smallCaps 		: 1;
-    bool sizeSpecified		: 1;  // Whether or not CSS specified an explicit size
+    bool isAbsoluteSize    : 1;  // Whether or not CSS specified an explicit size
                                       // (logical sizes like "medium" don't count).
     unsigned int weight 	: 8;
     unsigned int genericFamily	: 3;
@@ -91,9 +89,6 @@ public:
 #if APPLE_CHANGES
     bool usePrinterFont		: 1;
 #endif
-    short logicalSize;   	       // If a logical size is in effect, then we need to
-                                       // cache this value for family changes (e.g., medium
-                                       // monospace may be different than medium serif).
 };
 
 

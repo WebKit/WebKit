@@ -36,6 +36,7 @@
 #include "render_arena.h"
 #include "render_inline.h"
 #include "render_block.h"
+#include "render_flexbox.h"
 
 #include <assert.h>
 using namespace DOM;
@@ -83,14 +84,15 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         else
             o = new (arena) RenderBlock(node);
         break;
+    case INLINE_BLOCK:
+        o = new (arena) RenderBlock(node);
+        break;
     case LIST_ITEM:
         o = new (arena) RenderListItem(node);
         break;
     case RUN_IN:
     case COMPACT:
         o = new (arena) RenderBlock(node);
-        break;
-    case MARKER:
         break;
     case TABLE:
     case INLINE_TABLE:
@@ -114,6 +116,10 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         break;
     case TABLE_CAPTION:
         o = new (arena) RenderBlock(node);
+        break;
+    case BOX:
+    case INLINE_BOX:
+        o = new (arena) RenderFlexibleBox(node);
         break;
     }
     if(o) o->setStyle(style);
@@ -474,8 +480,17 @@ int RenderObject::containingBlockHeight() const
 
 bool RenderObject::sizesToMaxWidth() const
 {
-    return isFloating() || isCompact() ||
-      (element() && (element()->id() == ID_BUTTON || element()->id() == ID_LEGEND));
+    if (isFloating() || isCompact() ||
+        (element() && (element()->id() == ID_BUTTON || element()->id() == ID_LEGEND)))
+        return true;
+
+    // Flexible horizontal boxes lay out children at their maxwidths.  Also vertical boxes
+    // that don't stretch their kids lay out their children at their maxwidths.
+    if (parent()->isFlexibleBox() &&
+        (parent()->style()->boxOrient() == HORIZONTAL || parent()->style()->boxAlign() != BSTRETCH))
+        return true;
+
+    return false;
 }
 
 void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
@@ -927,8 +942,7 @@ void RenderObject::handleDynamicFloatPositionChange()
     // We have gone from not affecting the inline status of the parent flow to suddenly
     // having an impact.  See if there is a mismatch between the parent flow's
     // childrenInline() state and our state.
-    setInline(m_style->display() == INLINE || // m_style->display() == INLINE_BLOCK ||
-              m_style->display() == INLINE_TABLE);
+    setInline(style()->isDisplayInlineType());
     if (isInline() != parent()->childrenInline()) {
         if (!isInline()) {
             if (parent()->isRenderInline()) {

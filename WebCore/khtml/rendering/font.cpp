@@ -186,7 +186,7 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
 	f.setFirstFamily(fontDef.family);
     f.setItalic(fontDef.italic);
     f.setWeight(fontDef.weight);
-    f.setPixelSize(fontDef.pixelSize());
+    f.setPixelSize(fontDef.computedPixelSize());
     f.setPrinterFont(fontDef.usePrinterFont);
 
     fm.setFont(f);

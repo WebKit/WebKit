@@ -82,7 +82,7 @@ void RenderBox::setStyle(RenderStyle *_style)
     //if(!_style->backgroundXPosition().isVariable() && _style->backgroundYPosition().isVariable())
     //style()->setBackgroundYPosition(Length(50, Percent));
 
-    setInline(style()->display()==INLINE);
+    setInline(_style->isDisplayInlineType());
     
     switch(_style->position())
     {
@@ -153,6 +153,9 @@ int RenderBox::contentHeight() const
 {
     int h = m_height - borderTop() - borderBottom();
     h -= paddingTop() + paddingBottom();
+
+    if (style()->scrollsOverflow() && m_layer)
+        h -= m_layer->horizontalScrollbarHeight();
 
     return h;
 }
@@ -489,7 +492,8 @@ short RenderBox::containingBlockWidth() const
         return canvas()->view()->visibleWidth();
     
     RenderBlock* cb = containingBlock();
-    if ((style()->hidesOverflow() || ((style()->htmlHacks() || isTable()) && style()->flowAroundFloats()))
+    if ((style()->hidesOverflow() || isFlexibleBox() ||
+         ((style()->htmlHacks() || isTable()) && style()->flowAroundFloats()))
             && style()->width().isVariable())
         return cb->lineWidth(m_y);
     else
@@ -625,8 +629,17 @@ void RenderBox::calcWidth()
     }
     else
     {
+        // The parent box is flexing us, so it has increased or decreased our width.  We just bail
+        // and leave our width unchanged in this case.
+        if (parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
+            && parent()->isFlexingChildren())
+            return;
+
+        bool inVerticalBox = parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL;
+        bool stretching = parent()->style()->boxAlign() == BSTRETCH;
+        bool treatAsReplaced = isReplaced() && (!inVerticalBox || !stretching);
         Length w;
-        if ( isReplaced () )
+        if (treatAsReplaced)
             w = Length( calcReplacedWidth(), Fixed );
         else
             w = style()->width();
@@ -636,7 +649,7 @@ void RenderBox::calcWidth()
 
         int cw;
         RenderBlock *cb = containingBlock();
-        if (style()->hidesOverflow() || style()->flowAroundFloats())
+        if (style()->hidesOverflow() || isFlexibleBox() || style()->flowAroundFloats())
             cw = cb->lineWidth( m_y );
         else
             cw = cb->contentWidth();
@@ -651,7 +664,7 @@ void RenderBox::calcWidth()
             // just calculate margins
             m_marginLeft = ml.minWidth(cw);
             m_marginRight = mr.minWidth(cw);
-            if (isReplaced())
+            if (treatAsReplaced)
             {
                 m_width = w.width(cw);
                 m_width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
@@ -662,7 +675,7 @@ void RenderBox::calcWidth()
         }
         else {
             LengthType widthType, minWidthType, maxWidthType;
-            if (isReplaced()) {
+            if (treatAsReplaced) {
                 m_width = w.width(cw);
                 m_width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
                 widthType = w.type;
@@ -694,7 +707,8 @@ void RenderBox::calcWidth()
             }
         }
 
-        if (cw && cw != m_width + m_marginLeft + m_marginRight && !isFloating() && !isInline())
+        if (cw && cw != m_width + m_marginLeft + m_marginRight && !isFloating() && !isInline() &&
+            !cb->isFlexibleBox())
         {
             if (style()->direction()==LTR)
                 m_marginRight = cw - m_width - m_marginLeft;
@@ -794,7 +808,16 @@ void RenderBox::calcHeight()
     else
     {
         Length h;
-        if ( isReplaced() ) {
+        bool inHorizontalBox = parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL;
+        bool stretching = parent()->style()->boxAlign() == BSTRETCH;
+        
+        // The parent box is flexing us, so it has increased or decreased our height.  We have to
+        // grab our cached flexible height.
+        if (parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
+            && parent()->isFlexingChildren() && style()->boxFlexedHeight() != -1)
+            h = Length(style()->boxFlexedHeight() - borderTop() - borderBottom() -
+                       paddingTop() - paddingBottom(), Fixed);
+        else if ( isReplaced() && (!inHorizontalBox || !stretching )) {
             h = Length( calcReplacedHeight(), Fixed );
         }
         else
@@ -805,6 +828,19 @@ void RenderBox::calcHeight()
         // for tables, calculate margins only
         if (isTable())
             return;
+
+        // The parent box is flexing us, so it has increased or decreased our height.  We have to
+        // grab our cached flexible height.
+        if (parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
+            && parent()->isFlexingChildren() && style()->boxFlexedHeight() != -1)
+            h = Length(style()->boxFlexedHeight() - borderTop() - borderBottom() -
+                       paddingTop() - paddingBottom(), Fixed);
+        
+        // Block children of horizontal flexible boxes fill the height of the box.
+        if (h.isVariable() && parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
+            && parent()->isStretchingChildren())
+            h = Length(parent()->contentHeight() - marginTop() - marginBottom() -
+                       borderTop() - paddingTop() - borderBottom() - paddingBottom(), Fixed);
 
         if (!h.isVariable())
         {

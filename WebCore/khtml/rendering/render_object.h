@@ -599,6 +599,11 @@ public:
 	return style( firstLine )->fontMetrics();
     }
 
+    // Virtual function helpers for CSS3 Flexible Box Layout
+    virtual bool isFlexibleBox() const { return false; }
+    virtual bool isFlexingChildren() const { return false; }
+    virtual bool isStretchingChildren() const { return false; }
+
     // Convenience, to avoid repeating the code to dig down to get this.
     QChar backslashAsCurrencySymbol() const;
 

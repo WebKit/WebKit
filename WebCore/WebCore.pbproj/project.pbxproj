@@ -506,6 +506,7 @@
 				F587871502DE3B8601EA4122,
 				BC7B2AFA0450824100A8000F,
 				BC80A6960468B78100DBCC9C,
+				BC32C2EF048BF95C00A8000B,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -753,6 +754,7 @@
 				9325AABA041D0E9A00A9CAC5,
 				BC7B2AFB0450824100A8000F,
 				BC80A6950468B78100DBCC9C,
+				BC32C2EE048BF95C00A8000B,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1600,6 +1602,30 @@
 //BC2
 //BC3
 //BC4
+		BC32C2EC048BF95C00A8000B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = render_flexbox.cpp;
+			refType = 4;
+		};
+		BC32C2ED048BF95C00A8000B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = render_flexbox.h;
+			refType = 4;
+		};
+		BC32C2EE048BF95C00A8000B = {
+			fileRef = BC32C2EC048BF95C00A8000B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC32C2EF048BF95C00A8000B = {
+			fileRef = BC32C2ED048BF95C00A8000B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BC7294F703804B3C00A80166 = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -4932,6 +4958,8 @@
 				BC7294FC03804B5600A80166,
 				BCF0192403D3802200B2D04D,
 				BCF0192503D3802200B2D04D,
+				BC32C2EC048BF95C00A8000B,
+				BC32C2ED048BF95C00A8000B,
 			);
 			isa = PBXGroup;
 			path = rendering;

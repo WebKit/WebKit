@@ -37,6 +37,14 @@ border-right-width
 border-bottom-width
 border-left-width
 bottom
+box-align
+box-direction
+box-flex
+box-flex-group
+box-lines
+box-ordinal-group
+box-orient
+box-pack
 caption-side
 clear
 clip

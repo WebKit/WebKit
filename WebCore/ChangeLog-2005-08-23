@@ -1,3 +1,79 @@
+2003-07-08  Dave Hyatt  <hyatt@apple.com>
+
+	Implementation of inline-block and a prototype of the XUL
+	box model.
+
+	Fix for min-font size issues that prevented us from having
+	a min font size.  The primary fix is to store the original
+	specified CSS size as a separate value (distinct from the
+	computed rendering size).  This allows that size to be computed
+	without the application of integer rounding or zoom factors
+	or minimum font size corrections.
+
+	Fix for table crasher, bug #3296552.
+
+        Reviewed by john (table crasher, inline-block, XUL box model) and
+	darin (font size fixes).
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::computeLength):
+        (CSSPrimitiveValueImpl::computeLengthFloat):
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setZoomFactor):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::print):
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/font.cpp:
+        (Font::update):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::contentHeight):
+        (RenderBox::containingBlockWidth):
+        (RenderBox::calcWidth):
+        (RenderBox::calcHeight):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::addChild):
+        * khtml/rendering/render_flexbox.cpp: Added.
+        * khtml/rendering/render_flexbox.h: Added.
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+        (RenderObject::sizesToMaxWidth):
+        (RenderObject::handleDynamicFloatPositionChange):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::paint):
+        * khtml/rendering/render_style.cpp:
+        (StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (StyleFlexibleBoxData::operator==):
+        (RenderStyle::RenderStyle):
+        (RenderStyle::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::calcWidthArray):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyle):
+        (DocumentImpl::attach):
+
 2003-07-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -128,7 +128,39 @@ bool StyleBackgroundData::operator==(const StyleBackgroundData& o) const
 	outline == o.outline;
 }
 
+StyleFlexibleBoxData::StyleFlexibleBoxData()
+: Shared<StyleFlexibleBoxData>()
+{
+    flex = 0.0f;
+    flex_group = 1;
+    ordinal_group = 1;
+    align = BSTRETCH;
+    pack = BSTART;
+    orient = HORIZONTAL;
+    lines = SINGLE;
+    flexed_height = -1;
+}
 
+StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
+: Shared<StyleFlexibleBoxData>()
+{
+    flex = o.flex;
+    flex_group = o.flex_group;
+    ordinal_group = o.ordinal_group;
+    align = o.align;
+    pack = o.pack;
+    orient = o.orient;
+    lines = o.lines;
+    flexed_height = o.flexed_height;
+}
+
+bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
+{
+    return flex == o.flex && flex_group == o.flex_group &&
+           ordinal_group == o.ordinal_group && align == o.align &&
+           pack == o.pack && orient == o.orient && lines == o.lines &&
+           flexed_height == o.flexed_height;
+}
 
 StyleInheritedData::StyleInheritedData()
     : indent( Fixed ), line_height( -100, Percent ), style_image( 0 ),
@@ -174,7 +206,8 @@ RenderStyle::RenderStyle()
     visual = _default->visual;
     background = _default->background;
     surround = _default->surround;
-
+    flexible_box = _default->flexible_box;
+    
     inherited = _default->inherited;
 
     setBitDefaults();
@@ -191,7 +224,8 @@ RenderStyle::RenderStyle(bool)
     visual.init();
     background.init();
     surround.init();
-
+    flexible_box.init();
+    
     inherited.init();
 
     pseudoStyle = 0;
@@ -202,6 +236,7 @@ RenderStyle::RenderStyle(const RenderStyle& o)
     : Shared<RenderStyle>(),
       inherited_flags( o.inherited_flags ), noninherited_flags( o.noninherited_flags ),
       box( o.box ), visual( o.visual ), background( o.background ), surround( o.surround ),
+      flexible_box( o.flexible_box ),
       inherited( o.inherited ), pseudoStyle( 0 ), content( o.content )
 {
 }
@@ -238,6 +273,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
             visual == o.visual &&
             background == o.background &&
             surround == o.surround &&
+            flexible_box == o.flexible_box &&
             inherited == o.inherited);
 }
 
@@ -340,12 +376,14 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 
     if ( *box.get() != *other->box.get() ||
         *surround.get() != *other->surround.get() ||
+         *flexible_box.get() != *other->flexible_box.get() ||
         !(inherited->indent == other->inherited->indent) ||
         !(inherited->line_height == other->inherited->line_height) ||
         !(inherited->style_image == other->inherited->style_image) ||
         !(inherited->cursor_image == other->inherited->cursor_image) ||
         !(inherited->font == other->inherited->font) ||
         !(inherited->border_spacing == other->inherited->border_spacing) ||
+        !(inherited_flags._box_direction == other->inherited_flags._box_direction) ||
         !(inherited_flags._visuallyOrdered == other->inherited_flags._visuallyOrdered) ||
         !(inherited_flags._htmlHacks == other->inherited_flags._htmlHacks) ||
         !(noninherited_flags._position == other->noninherited_flags._position) ||
