@@ -1,3 +1,12 @@
+2003-04-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3172389 - Safari doesn't parse attributes within the OBJECT tag
+
+        Reviewed by dave.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget): add attributes from within the OBJECT tag to params, the list of attributes we pass to plug-ins. Don't override attributes that are already in params.
+
 2003-04-18  David Hyatt  <hyatt@apple.com>
 
 	Make sure display:none is ignored and not accidentally mutated

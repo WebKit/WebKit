@@ -682,8 +682,25 @@ void RenderPartObject::updateWidget()
 
   if(element()->id() == ID_OBJECT) {
 
-      // check for embed child object
       HTMLObjectElementImpl *o = static_cast<HTMLObjectElementImpl *>(element());
+
+      // Add attributes within the OBJECT tag to params for attributes that params doesn't already contains.
+      NamedAttrMapImpl* attributes = o->attributes();
+      for (unsigned long index = 0; index < attributes->length(); ++index) {
+          AttributeImpl* attribute = attributes->attributeItem(index);
+          QString attributeName = o->getDocument()->attrName(attribute->id()).string();
+          unsigned long n;
+          for (n = 0; n < params.count(); ++n) {
+              if (params[n].lower().startsWith(attributeName.lower() + "=\"")) {
+                  break;
+              }
+          }
+          if (n == params.count()) {
+              params.append(attributeName + "=\"" + attribute->value().string() + "\"");
+          }
+      }
+
+      // check for embed child object
       HTMLEmbedElementImpl *embed = 0;
       for (NodeImpl *child = o->firstChild(); child; child = child->nextSibling())
           if ( child->id() == ID_EMBED ) {
@@ -767,21 +784,20 @@ void RenderPartObject::updateWidget()
 #endif
               return;
           }
-#if APPLE_CHANGES
-          // Fix for 2894742
-          // The EMBED attributes must override the PARAM attributes.
-          // This mimics IE's behavior.
+
+          // The EMBED attributes must override the PARAM attributes. This mimics IE's behavior.
           NamedAttrMapImpl* attributes = embed->attributes();
           for (unsigned long index = 0; index < attributes->length(); ++index) {
               AttributeImpl* attribute = attributes->attributeItem(index);
+              QString attributeName = embed->getDocument()->attrName(attribute->id()).string();
               for (unsigned long n = 0; n < params.count(); ++n) {
-                  if(params[n].lower().startsWith(embed->getDocument()->attrName(attribute->id()).string().lower())){
+                  if (params[n].lower().startsWith(attributeName.lower() + "=\"")) {
                       params.remove(params[n]);
                   }
               }
-              params.append(embed->getDocument()->attrName(attribute->id()).string() + "=\"" + attribute->value().string() + "\"");
+              params.append(attributeName + "=\"" + attribute->value().string() + "\"");
           }
-#endif
+
           part->requestObject( this, url, serviceType, params );
       }
   }
