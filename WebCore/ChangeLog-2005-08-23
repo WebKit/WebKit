@@ -1,3 +1,14 @@
+2003-10-18  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3443502, generated content sometimes doesn't generate.  The bug is caused by an
+	uninitialized variable.  m_isContinuation needed to be set to false in the RenderInline
+	constructor.
+	
+        Reviewed by NOBODY (it's a simple obvious fix)
+
+        * khtml/rendering/render_inline.cpp:
+        (m_isContinuation):
+
 2003-10-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
