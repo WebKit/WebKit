@@ -2,6 +2,35 @@
 
         Reviewed by John
 
+        Did some clean up in the Position class as a result of trying to write some new layout
+        tests and discovering a bug along the way.
+
+        I removed these three functions from the Position class:
+        
+        1. bool isFirstRenderedPositionOnLine() const;
+        2. bool isLastRenderedPositionOnLine() const;
+        3. static bool renderersOnDifferentLine(RenderObject *r1, long o1, RenderObject *r2, long o2);
+        4. bool inFirstEditableInRootEditableElement() const;
+
+        The first two have replacements in the VisiblePosition class, and some code has been
+        moved to use these new variants. The third function was a helper used only by these
+        first two function, and can be removed as well. The fourth function was not used by anyone.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertTextCommand::input): Change over to use VisiblePosition isFirstVisiblePositionOnLine().
+        * khtml/editing/visible_position.cpp:
+        (khtml::visiblePositionsOnDifferentLines): Added an additional check for blocks to this function.
+        Incorrect results were being returned when asking about positions at the starts of blocks.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousCharacterPosition): Change over to use VisiblePosition isFirstVisiblePositionOnLine().
+        (DOM::Position::nextCharacterPosition): Change over to use VisiblePosition isLastVisiblePositionOnLine().
+        (DOM::Position::rendersInDifferentPosition): Removed use of #3 helper in a log message. We can live without it.
+        * khtml/xml/dom_position.h: Update header for deletions.
+
+2004-12-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         Terminology change in execCommand command identifiers. Specifically, the name of 
         "InsertNewline" command has been changed to "InsertLineBreak". This matches the 
         terminology used by AppKit. It is also more accurate, since the insertion of a

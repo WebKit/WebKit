@@ -37,6 +37,7 @@
 #include "helper.h"
 #include "htmltags.h"
 #include "text_affinity.h"
+#include "visible_position.h"
 #include "rendering/render_block.h"
 #include "rendering/render_flow.h"
 #include "rendering/render_line.h"
@@ -60,15 +61,9 @@ using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::RootInlineBox;
 using khtml::VISIBLE;
+using khtml::VisiblePosition;
 
 namespace DOM {
-
-static bool renderersOnDifferentLine(RenderObject *r1, long o1, RenderObject *r2, long o2)
-{
-    InlineBox *b1 = r1 ? r1->inlineBox(o1) : 0;
-    InlineBox *b2 = r2 ? r2->inlineBox(o2) : 0;
-    return (b1 && b2 && b1->root() != b2->root());
-}
 
 static NodeImpl *nextRenderedEditable(NodeImpl *node)
 {
@@ -194,7 +189,7 @@ Position Position::previousCharacterPosition() const
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
     PositionIterator it(*this);
 
-    bool atStartOfLine = isFirstRenderedPositionOnLine();
+    bool atStartOfLine = isFirstVisiblePositionOnLine(VisiblePosition(*this));
     bool rendered = inRenderedContent();
     
     while (!it.atStart()) {
@@ -222,7 +217,7 @@ Position Position::nextCharacterPosition() const
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
     PositionIterator it(*this);
 
-    bool atEndOfLine = isLastRenderedPositionOnLine();
+    bool atEndOfLine = isLastVisiblePositionOnLine(VisiblePosition(*this));
     bool rendered = inRenderedContent();
     
     while (!it.atEnd()) {
@@ -689,7 +684,6 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (renderer == posRenderer && thisRenderedOffset == posRenderedOffset)
         return false;
 
-    LOG(Editing, "onDifferentLine:        %s\n", renderersOnDifferentLine(renderer, offset(), posRenderer, pos.offset()) ? "YES" : "NO");
     LOG(Editing, "renderer:               %p [%p]\n", renderer, renderer ? renderer->inlineBox(offset()) : 0);
     LOG(Editing, "thisRenderedOffset:         %d\n", thisRenderedOffset);
     LOG(Editing, "posRenderer:            %p [%p]\n", posRenderer, posRenderer ? posRenderer->inlineBox(offset()) : 0);
@@ -717,86 +711,6 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (previousRenderedEditable(node()) == pos.node() && 
         thisRenderedOffset == 0 && posRenderedOffset == (long)pos.node()->caretMaxRenderedOffset()) {
         return false;
-    }
-
-    return true;
-}
-
-bool Position::isFirstRenderedPositionOnLine() const
-{
-    if (isNull())
-        return false;
-
-    RenderObject *renderer = node()->renderer();
-    if (!renderer)
-        return false;
-
-    if (renderer->style()->visibility() != VISIBLE)
-        return false;
-    
-    if (!inRenderedContent())
-        return false;
-
-    PositionIterator it(*this);
-    while (!it.atStart()) {
-        it.previous();
-        RenderObject *currentRenderer = it.current().node()->renderer();
-        if (!currentRenderer || currentRenderer->firstChild())
-            // we want a leaf for this check
-            continue;
-        if (it.current().inRenderedContent())
-            return renderersOnDifferentLine(renderer, offset(), currentRenderer, it.current().offset());
-    }
-    
-    return true;
-}
-
-bool Position::isLastRenderedPositionOnLine() const
-{
-    if (isNull())
-        return false;
-
-    RenderObject *renderer = node()->renderer();
-    if (!renderer)
-        return false;
-
-    if (renderer->style()->visibility() != VISIBLE)
-        return false;
-    
-    if (!inRenderedContent())
-        return false;
-    
-    if (node()->id() == ID_BR)
-        return true;
-    
-    PositionIterator it(*this);
-    while (!it.atEnd()) {
-        it.next();
-        RenderObject *currentRenderer = it.current().node()->renderer();
-        if (!currentRenderer || currentRenderer->firstChild())
-            // we want a leaf for this check
-            continue;
-        if (it.current().inRenderedContent())
-            return renderersOnDifferentLine(renderer, offset(), currentRenderer, it.current().offset());
-    }
-    
-    return true;
-}
-
-bool Position::inFirstEditableInRootEditableElement() const
-{
-    if (isNull() || !inRenderedContent())
-        return false;
-
-    PositionIterator it(*this);
-    while (!it.atStart()) {
-        it.previous();
-        RenderObject *currentRenderer = it.current().node()->renderer();
-        if (!currentRenderer || currentRenderer->firstChild())
-            // we want a leaf for this check
-            continue;
-        if (it.current().inRenderedContent())
-            return false;
     }
 
     return true;
