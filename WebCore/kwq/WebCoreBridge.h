@@ -107,7 +107,8 @@ typedef enum {
     WebSelectByWord,
     WebSelectByLine,
     WebSelectByParagraph,
-    WebSelectToLineBoundary,
+    WebSelectByDocument,
+    WebSelectToLineBoundary
 } WebSelectionGranularity;
 
 

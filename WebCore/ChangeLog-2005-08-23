@@ -1,3 +1,21 @@
+2004-07-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - added constants for motion across entire document for use in operations like
+          move to beginning of document
+
+        * khtml/xml/dom_selection.h: Added DOCUMENT to ETextGranularity.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::modifyExtendingRightForward): Added case for DOCUMENT.
+        (DOM::Selection::modifyMovingRightForward): Added case for DOCUMENT.
+        (DOM::Selection::modifyExtendingLeftBackward): Added case for DOCUMENT.
+        (DOM::Selection::modifyMovingLeftBackward): Added case for DOCUMENT.
+        (DOM::Selection::validate): Changed if statements into switch statement,
+        added case for DOCUMENT.
+
+        * kwq/WebCoreBridge.h: Added WebCoreBridge to WebSelectionGranularity.
+
 2004-07-28  Trey Matteson  <trey@apple.com>
 
 	Small refinement of last checkin.  The text iterators now return reasonable values

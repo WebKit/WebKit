@@ -211,15 +211,18 @@ Position Selection::modifyExtendingRightForward(ETextGranularity granularity)
         case LINE:
             pos = pos.nextLinePosition(xPosForVerticalArrowNavigation(EXTENT));
             break;
+        case PARAGRAPH:
+            // not implemented
+            break;
+        case DOCUMENT:
+            pos = Position(start().node()->getDocument()->documentElement(), 1);
+            break;
         case LINE_BOUNDARY: {
             Selection selection;
             startAndEndLineNodesIncludingNode(end().node(), end().offset(), selection);
             pos = selection.end();
             break;
         }
-        case PARAGRAPH:
-            // not implemented
-            break;
     }
     return pos;
 }
@@ -241,15 +244,18 @@ Position Selection::modifyMovingRightForward(ETextGranularity granularity)
         case LINE:
             pos = end().nextLinePosition(xPosForVerticalArrowNavigation(END, state() == RANGE));
             break;
+        case PARAGRAPH:
+            // not implemented
+            break;
+        case DOCUMENT:
+            pos = Position(start().node()->getDocument()->documentElement(), 1);
+            break;
         case LINE_BOUNDARY: {
             Selection selection;
             startAndEndLineNodesIncludingNode(end().node(), end().offset(), selection);
             pos = selection.end();
             break;
         }
-        case PARAGRAPH:
-            // not implemented
-            break;
     }
     return pos;
 }
@@ -271,15 +277,18 @@ Position Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
         case LINE:
             pos = pos.previousLinePosition(xPosForVerticalArrowNavigation(EXTENT));
             break;
+        case PARAGRAPH:
+            // not implemented
+            break;
+        case DOCUMENT:
+            pos = Position(start().node()->getDocument()->documentElement(), 0);
+            break;
         case LINE_BOUNDARY: {
             Selection selection;
             startAndEndLineNodesIncludingNode(start().node(), start().offset(), selection);
             pos = selection.start();
             break;
         }
-        case PARAGRAPH:
-            // not implemented
-            break;
     }
     return pos;
 }
@@ -301,15 +310,18 @@ Position Selection::modifyMovingLeftBackward(ETextGranularity granularity)
         case LINE:
             pos = start().previousLinePosition(xPosForVerticalArrowNavigation(START, state() == RANGE));
             break;
+        case PARAGRAPH:
+            // not implemented
+            break;
+        case DOCUMENT:
+            pos = Position(start().node()->getDocument()->documentElement(), 0);
+            break;
         case LINE_BOUNDARY: {
             Selection selection;
             startAndEndLineNodesIncludingNode(start().node(), start().offset(), selection);
             pos = selection.start();
             break;
         }
-        case PARAGRAPH:
-            // not implemented
-            break;
     }
     return pos;
 }
@@ -620,60 +632,73 @@ void Selection::validate(ETextGranularity granularity)
     }
 
     // calculate the correct start and end positions
-    if (granularity == CHARACTER) {
-        if (m_baseIsStart)
-            assignStartAndEnd(base(), extent());
-        else
-            assignStartAndEnd(extent(), base());
-    }
-    else if (granularity == WORD) {
-        int baseStartOffset = base().offset();
-        int baseEndOffset = base().offset();
-        int extentStartOffset = extent().offset();
-        int extentEndOffset = extent().offset();
-        if (base().notEmpty() && (base().node()->nodeType() == Node::TEXT_NODE || base().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
-            DOMString t = base().node()->nodeValue();
-            QChar *chars = t.unicode();
-            uint len = t.length();
-            findWordBoundary(chars, len, base().offset(), &baseStartOffset, &baseEndOffset);
+    switch (granularity) {
+        case CHARACTER:
+            if (m_baseIsStart)
+                assignStartAndEnd(base(), extent());
+            else
+                assignStartAndEnd(extent(), base());
+            break;
+        case WORD: {
+            int baseStartOffset = base().offset();
+            int baseEndOffset = base().offset();
+            int extentStartOffset = extent().offset();
+            int extentEndOffset = extent().offset();
+            if (base().notEmpty() && (base().node()->nodeType() == Node::TEXT_NODE || base().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
+                DOMString t = base().node()->nodeValue();
+                QChar *chars = t.unicode();
+                uint len = t.length();
+                findWordBoundary(chars, len, base().offset(), &baseStartOffset, &baseEndOffset);
+            }
+            if (extent().notEmpty() && (extent().node()->nodeType() == Node::TEXT_NODE || extent().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
+                DOMString t = extent().node()->nodeValue();
+                QChar *chars = t.unicode();
+                uint len = t.length();
+                findWordBoundary(chars, len, extent().offset(), &extentStartOffset, &extentEndOffset);
+            }
+            if (m_baseIsStart) {
+                assignStart(Position(base().node(), baseStartOffset));
+                assignEnd(Position(extent().node(), extentEndOffset));
+            }
+            else {
+                assignStart(Position(extent().node(), extentStartOffset));
+                assignEnd(Position(base().node(), baseEndOffset));
+            }
+            break;
         }
-        if (extent().notEmpty() && (extent().node()->nodeType() == Node::TEXT_NODE || extent().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
-            DOMString t = extent().node()->nodeValue();
-            QChar *chars = t.unicode();
-            uint len = t.length();
-            findWordBoundary(chars, len, extent().offset(), &extentStartOffset, &extentEndOffset);
-        }
-        if (m_baseIsStart) {
-            assignStart(Position(base().node(), baseStartOffset));
-            assignEnd(Position(extent().node(), extentEndOffset));
-        }
-        else {
-            assignStart(Position(extent().node(), extentStartOffset));
-            assignEnd(Position(base().node(), baseEndOffset));
-        }
-    }
-    else {  // granularity == LINE 
-        Selection baseSelection = *this;
-        Selection extentSelection = *this;
-        if (base().notEmpty() && (base().node()->nodeType() == Node::TEXT_NODE || base().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
-            if (startAndEndLineNodesIncludingNode(base().node(), base().offset(), baseSelection)) {
-                assignStart(Position(baseSelection.base().node(), baseSelection.base().offset()));
-                assignEnd(Position(baseSelection.extent().node(), baseSelection.extent().offset()));
+        case LINE:
+        case LINE_BOUNDARY: {
+            Selection baseSelection = *this;
+            Selection extentSelection = *this;
+            if (base().notEmpty() && (base().node()->nodeType() == Node::TEXT_NODE || base().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
+                if (startAndEndLineNodesIncludingNode(base().node(), base().offset(), baseSelection)) {
+                    assignStart(Position(baseSelection.base().node(), baseSelection.base().offset()));
+                    assignEnd(Position(baseSelection.extent().node(), baseSelection.extent().offset()));
+                }
+            }
+            if (extent().notEmpty() && (extent().node()->nodeType() == Node::TEXT_NODE || extent().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
+                if (startAndEndLineNodesIncludingNode(extent().node(), extent().offset(), extentSelection)) {
+                    assignStart(Position(extentSelection.base().node(), extentSelection.base().offset()));
+                    assignEnd(Position(extentSelection.extent().node(), extentSelection.extent().offset()));
+                }
+            }
+            if (m_baseIsStart) {
+                assignStart(baseSelection.start());
+                assignEnd(extentSelection.end());
+            }
+            else {
+                assignStart(extentSelection.start());
+                assignEnd(baseSelection.end());
             }
         }
-        if (extent().notEmpty() && (extent().node()->nodeType() == Node::TEXT_NODE || extent().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
-            if (startAndEndLineNodesIncludingNode(extent().node(), extent().offset(), extentSelection)) {
-                assignStart(Position(extentSelection.base().node(), extentSelection.base().offset()));
-                assignEnd(Position(extentSelection.extent().node(), extentSelection.extent().offset()));
-            }
-        }
-        if (m_baseIsStart) {
-            assignStart(baseSelection.start());
-            assignEnd(extentSelection.end());
-        }
-        else {
-            assignStart(extentSelection.start());
-            assignEnd(baseSelection.end());
+        case PARAGRAPH:
+            // not implemented
+            break;
+        case DOCUMENT: {
+            NodeImpl *topNode = start().node()->getDocument()->documentElement();
+            assignStart(Position(topNode, 0));
+            assignEnd(Position(topNode, 1));
+            break;
         }
     }
 
