@@ -582,11 +582,15 @@ public:
 #endif
 #endif
 
+    // this function checks to see whether a base URI and all its
+    // associated sub-URIs have loaded
+    void checkCompleted();
+
 private:
 
     KHTMLPartPrivate *d;
     // DUBIOUS, why are impls being referenced?
-    DOM::HTMLDocumentImpl *docImpl() const;
+    DOM::HTMLDocumentImpl *docImpl() const;    
 
 };
 

@@ -962,7 +962,7 @@ public:
     
     ~LoaderPrivate()
     {
-        [m_recv release];
+        [m_recv autorelease];
     }       
 
 private:
@@ -1044,6 +1044,13 @@ void Loader::slotFinished( KIO::Job* job )
       r->object->data(r->m_buffer, true);
       emit requestDone( r->m_baseURL, r->object );
   }
+    
+    NSString *urlString;
+    urlString = [NSString stringWithCString:r->m_baseURL.string().latin1()];
+    if ([urlString hasSuffix:@"/"]) {
+        urlString = [urlString substringToIndex:([urlString length] - 1)];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:urlString object:nil];
 
   r->object->finish();
 
@@ -1096,7 +1103,7 @@ void Loader::slotData( KIO::Job*job, const QByteArray &data )
 int Loader::numRequests( const DOMString &baseURL ) const
 {
     int res = 0;
-
+    
     QListIterator<Request> pIt( m_requestsPending );
     for (; pIt.current(); ++pIt )
         if ( pIt.current()->m_baseURL == baseURL )

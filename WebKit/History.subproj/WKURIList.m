@@ -90,6 +90,7 @@ static void freeNode(WKURIListNode *node)
 
 -(void)setMaximumSize:(int)size
 {
+    WEBKIT_ASSERT(size > 0 || size == -1);
     _maximumSize = size;
 }
 
@@ -120,11 +121,15 @@ static void freeNode(WKURIListNode *node)
                 _count--;
                 if (node == _head) {
                     _head = node->next;
-                    _head->prev = nil;
+                    if (_head) {
+                        _head->prev = nil;
+                    }
                 }
                 else if (node == _tail) {
                     _tail = node->prev;
-                    _tail->next = nil;
+                    if (_tail) {
+                        _tail->next = nil;
+                    }
                 }
                 else {
                     node->prev->next = node->next;
@@ -145,7 +150,7 @@ static void freeNode(WKURIListNode *node)
         _tail = _head;
     }
     
-    if (_count > _maximumSize) {
+    if (_maximumSize != -1 && _count > _maximumSize) {
         // drop off the tail
         node = _tail;
         _tail = _tail->prev;
@@ -170,11 +175,15 @@ static void freeNode(WKURIListNode *node)
             removedEntry = node->entry;
             if (node == _head) {
                 _head = node->next;
-                _head->prev = nil;
+                if (_head) {
+                    _head->prev = nil;
+                }
             }
             else if (node == _tail) {
                 _tail = node->prev;
-                _tail->next = nil;
+                if (_tail) {
+                    _tail->next = nil;
+                }
             }
             else {
                 node->prev->next = node->next;
@@ -203,11 +212,15 @@ static void freeNode(WKURIListNode *node)
             removed = YES;
             if (node == _head) {
                 _head = node->next;
-                _head->prev = nil;
+                if (_head) {
+                    _head->prev = nil;
+                }
             }
             else if (node == _tail) {
                 _tail = node->prev;
-                _tail->next = nil;
+                if (_tail) {
+                    _tail->next = nil;
+                }
             }
             else {
                 node->prev->next = node->next;
@@ -245,7 +258,7 @@ static void freeNode(WKURIListNode *node)
     int i;
     WKURIListNode *node;
 
-    WEBKIT_ASSERT(index > 0 && index < _count);
+    WEBKIT_ASSERT(index >= 0 && index < _count);
 
     node = _head;
 
@@ -274,11 +287,15 @@ static void freeNode(WKURIListNode *node)
     removedEntry = node->entry;
     if (node == _head) {
         _head = node->next;
-        _head->prev = nil;
+        if (_head) {
+            _head->prev = nil;
+        }
     }
     else if (node == _tail) {
         _tail = node->prev;
-        _tail->next = nil;
+        if (_tail) {
+            _tail->next = nil;
+        }
     }
     else {
         node->prev->next = node->next;
@@ -303,11 +320,10 @@ static void freeNode(WKURIListNode *node)
         delNode = node;
         node = node->next;
         freeNode(delNode);
+        _count--;
     }
     
     _head = node;
 }
-
-
 
 @end

@@ -88,6 +88,11 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     m_part->closeURL();
 }
 
+-(void)checkCompleted:(NSNotification *)notification
+{
+    m_part->checkCompleted();
+}
+
 @end
 
 
@@ -106,6 +111,7 @@ public:
     KHTMLSettings *m_settings;
     
     KURL m_workingURL;
+    KURL m_url;
     KURL m_baseURL;
     
     KHTMLPart *m_part;
@@ -229,14 +235,26 @@ bool KHTMLPart::openURL( const KURL &url )
     
     // Keep a reference to the current working URL.
     d->m_workingURL = url;
+    d->m_url = url;
 
     id <WCURICache> cache;
-    NSString *nsurl;
-    
+
     cache = WCGetDefaultURICache();
-    nsurl = [NSString stringWithCString:url.url().latin1()];
+
+    NSString *urlString;
     
-    [cache requestWithString:nsurl requestor:d->m_recv userData:nil];
+    urlString = [NSString stringWithCString:d->m_workingURL.url().latin1()];
+    if ([urlString hasSuffix:@"/"]) {
+        urlString = [urlString substringToIndex:([urlString length] - 1)];
+    }
+    
+    [cache requestWithString:urlString requestor:d->m_recv userData:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:d->m_recv
+        selector:@selector(checkCompleted:) name:urlString object:nil];
+    
+    // tell anyone who's interested that we've started to load a uri
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-start" object:urlString];
     
     return true;
 }
@@ -248,9 +266,18 @@ bool KHTMLPart::closeURL()
     //}
 
     // Cancel any pending loads.
+    NSString *urlString;
+    
+    urlString = [NSString stringWithCString:d->m_url.url().latin1()];
+    if ([urlString hasSuffix:@"/"]) {
+        urlString = [urlString substringToIndex:([urlString length] - 1)];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:urlString object:nil];
     
     // Reset the the current working URL to the default URL.
     d->m_workingURL = KURL();
+    
+
     //d->m_doc = 0;
 }
 
@@ -1054,7 +1081,13 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
         [((QWidget *)view())->getView() resetView];
-        openURL (KURL(completeURL( splitUrlTarget(d->m_strSelectedURL))));
+        KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
+        openURL (clickedURL);
+        // [kocienda]: shield your eyes!
+        // this hack is to get link clicks to show up in the history list of the test app
+        // this should be removed and replaced by something better
+        NSString *urlString = [NSString stringWithCString:clickedURL.url().latin1()];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-click" object:urlString];
     }
     
 #define QT_NO_CLIPBOARD 1
@@ -1320,3 +1353,29 @@ void KHTMLPart::overURL( const QString &url, const QString &target )
     _logNeverImplemented();
 }
 
+void KHTMLPart::checkCompleted()
+{
+    int requests;
+    
+    
+    // Still waiting for images/scripts from the loader ?
+    requests = khtml::Cache::loader()->numRequests(d->m_url.url().latin1());
+    if (requests == 0) {
+        // FIXME: check for same URL with slash appended
+        // We should not have to do this
+        QString urlString = d->m_url.url();
+        urlString += '/';
+        requests = khtml::Cache::loader()->numRequests(urlString);
+    }
+    if (requests == 0) {
+        NSString *urlString;
+        urlString = [NSString stringWithCString:d->m_url.url().latin1()];
+        if ([urlString hasSuffix:@"/"]) {
+            urlString = [urlString substringToIndex:([urlString length] - 1)];
+        }
+        // remove us from the notification center that checks for the end of a load
+        [[NSNotificationCenter defaultCenter] removeObserver:d->m_recv name:urlString object:nil];
+        // tell anyone who's interested that we're done
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-done" object:urlString];
+    }
+}

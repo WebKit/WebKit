@@ -99,6 +99,11 @@
 	0867D69CFE84028FC02AAC07 = {
 		activeExec = 0;
 	};
+	25A5593101A5996D0ECA149E = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{728, 20}, {750, 502}}";
+		};
+	};
 	25A5593201A5996D0ECA149E = {
 		uiCtxt = {
 			sepNavWindowFrame = "{{38, 650}, {750, 502}}";
@@ -112,6 +117,11 @@
 	25A8176E01B5B9180ECA149E = {
 		uiCtxt = {
 			sepNavWindowFrame = "{{672, 74}, {790, 1081}}";
+		};
+	};
+	25BECC94017E0A0D0ECA149E = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{130, 100}, {1058, 968}}";
 		};
 	};
 	25C29825016E29620ECA149E = {

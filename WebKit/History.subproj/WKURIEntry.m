@@ -9,8 +9,20 @@
 #import "WKURIEntry.h"
 #import "WebKitReallyPrivate.h"
 
+// *** Function to access WCURICache singleton
+
+id <WCURIEntry> WCCreateURIEntry()
+{
+    return [[WKURIEntry alloc] init];
+}
+
 
 @implementation WKURIEntry
+
+-(id)init
+{
+    return [self initWithURL:nil title:nil image:nil comment:nil];
+}
 
 -(id)initWithURL:(NSURL *)url title:(NSString *)title
 {
@@ -24,9 +36,6 @@
 
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image comment:(NSString *)comment
 {
-    WEBKIT_ASSERT_NOT_NIL(url);
-    WEBKIT_ASSERT_NOT_NIL(title);
-
     if (self != [super init])
     {
         return nil;
@@ -144,6 +153,10 @@
     return result;
 }
 
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"WKURIEntry %@", _url];
+}
     
 @end
 

@@ -119,7 +119,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = /symroots;
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = ../WebCore/include;
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -522,6 +522,9 @@
 			fileRef = 25A8177101B698760ECA149E;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		25A8177401B698760ECA149E = {
@@ -544,6 +547,9 @@
 			fileRef = 25A8177501B6A5240ECA149E;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		25A8177801B6A5240ECA149E = {

@@ -1,27 +1,13 @@
-//
-//  WKURIEntry.h
-//  WebKit
-//
-//  Created by Kenneth Kocienda on Thu Nov 29 2001.
-//  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
-//
+/*	WCURIEntry.h
+	Copyright 2001, Apple, Inc. All rights reserved.
+*/
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#import <WCURIEntry.h>
 
-@interface WKURIEntry : NSObject <WCURIEntry>
-{
-    NSURL *_url;
-    NSString *_title;
-    NSImage *_image;
-    NSString *_comment;
-    NSDate *_creationDate;
-    NSDate *_modificationDate;
-    NSDate *_lastVisitedDate;
-}
 
--(id)init;
+@protocol WCURIEntry
+
 -(id)initWithURL:(NSURL *)url title:(NSString *)title;
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image;
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image comment:(NSString *)comment;
@@ -46,3 +32,14 @@
 
 @end
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+// *** Factory method for WCURIEntry objects
+
+id <WCURIEntry> WCCreateURIEntry(); 
+
+#if defined(__cplusplus)
+} // extern "C"
+#endif

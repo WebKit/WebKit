@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <WCURIEntry.h>
 
-
-@interface WKURIEntry : NSObject 
+@interface WKURIEntry : NSObject <WCURIEntry>
 {
     NSURL *_url;
     NSString *_title;
@@ -21,6 +21,7 @@
     NSDate *_lastVisitedDate;
 }
 
+-(id)init;
 -(id)initWithURL:(NSURL *)url title:(NSString *)title;
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image;
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image comment:(NSString *)comment;

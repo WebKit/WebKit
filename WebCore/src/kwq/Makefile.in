@@ -180,6 +180,7 @@ DEPFLAGS = $(CMMFLAGS)
 
 CMFLAGS = $(BASECMFLAGS) \
     -I$(TOPSRCDIR) \
+    -I$(TOPSRCDIR)/WebCore/include \
     -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml \
     -I$(TOPSRCDIR)/WebCore/src/kwq \
     -I$(TOPSRCDIR)/WebCore/src/kwq/qt \

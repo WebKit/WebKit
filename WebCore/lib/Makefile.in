@@ -47,7 +47,7 @@ all: $(LIBRARY)
 
 $(LIBRARY): $(OBJECTS)
 	rm -f $(LIBRARY_BASE_NAME).*.dylib; \
-	$(CC) -flat_namespace -undefined suppress -compatibility_version $(LIBRARY_COMPAT_VERSION) -current_version $(LIBRARY_VERSION) $(DYLIBFLAGS) -o $(LIBRARY) $(OBJECTS) -lstdc++ -ljpeg
+	$(CC) -flat_namespace -undefined suppress -compatibility_version $(LIBRARY_COMPAT_VERSION) -current_version $(LIBRARY_VERSION) $(DYLIBFLAGS) -o $(LIBRARY) $(OBJECTS) -lstdc++ -ljpeg -install_name "`echo "@executable_path/../Frameworks/libwebcore.1.0.0.dylib" | /usr/bin/sed 's!//*!/!g'`"
 	ln -fs $(LIBRARY) $(LIBRARY_DYNAMIC_LINK)
 	ln -fs $(LIBRARY) $(LIBRARY_STATIC_LINK)
 	if [ -d "/symroots" ]; then \
