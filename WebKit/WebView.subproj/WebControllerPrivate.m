@@ -14,6 +14,7 @@
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/IFError.h>
+#import <WebFoundation/IFFileTypeMappings.h>
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
 #import <WebFoundation/IFURLHandle.h>
 
@@ -124,7 +125,7 @@
         fromDataSource: dataSource complete:isComplete];
 
     if(isComplete){
-        if(contentPolicy == IFContentPolicyOpenExternally || contentPolicy == IFContentPolicySave)
+        if(contentPolicy == IFContentPolicySaveAndOpenExternally || contentPolicy == IFContentPolicySave)
             [dataSource _setPrimaryLoadComplete: YES];
     }
     
@@ -202,6 +203,13 @@
 - (void)_didStopLoading: (NSURL *)url
 {
     [[IFStandardPanels sharedStandardPanels] _didStopLoadingURL:url inController:self];
+}
+
++ (NSString *)_MIMETypeForFile: (NSString *)path
+{
+    NSString *extension = [path pathExtension];
+    
+    return [[IFFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
 }
 
 @end

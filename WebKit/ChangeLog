@@ -1,3 +1,37 @@
+2002-07-02  Chris Blumenberg  <cblu@apple.com>
+
+        - Moved all policy methods to IFWebControllerPolicyHandler.h
+        - Moved all file URL error checking to WebKit
+        - Implemented file URL policy methods
+        - Renamed IFContentPolicyOpenExternally to IFContentPolicySaveAndOpenExternally
+
+        * Misc.subproj/IFWebKitErrors.h: Added.
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/IFLocationChangeHandler.h: removed content policy stuff
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]): IFContentPolicySaveAndOpenExternally rename
+        (-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]): call the policy handler for content policy stuff
+        * WebView.subproj/IFWebController.h:
+        * WebView.subproj/IFWebController.mm:
+        (-[IFWebController haveContentPolicy:andPath:forDataSource:]): sends a unableToImplementContentPolicy:
+        (+[IFWebController canShowFile:]): now calls _MIMETypeForFile
+        * WebView.subproj/IFWebControllerPolicyHandler.h: Added.
+        * WebView.subproj/IFWebControllerPrivate.h:
+        * WebView.subproj/IFWebControllerPrivate.mm:
+        (-[IFWebController _mainReceivedProgress:forResourceHandle:fromDataSource:complete:]): IFContentPolicySaveAndOpenExternally 
+rename
+        (-[IFWebController _didStopLoading:]): no changes
+        (+[IFWebController _MIMETypeForFile:]): added
+        * WebView.subproj/IFWebDataSource.h:
+        * WebView.subproj/IFWebFrame.mm:
+        (-[IFWebFrame setProvisionalDataSource:]): calls _shouldShowDataSource
+        * WebView.subproj/IFWebFramePrivate.h:
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFrame _bridgeFrame]): no changes
+        (-[IFWebFrame _shouldShowDataSource:]): does the error handling
+        * WebView.subproj/IFWebView.mm:
+        (+[IFWebView initialize]): registers WebKit errors
+
 2002-07-02  Richard Williamson  <rjw@apple.com>
 
         * WebView.subproj/IFRenderNode.mm:

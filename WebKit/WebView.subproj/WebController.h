@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/IFWebControllerPolicyHandler.h>
 
 /*
    ============================================================================= 
@@ -66,38 +67,6 @@
 
 @end
 
-
-/*
-   ============================================================================= 
-
-   ============================================================================= 
-*/
-
-typedef enum {
-    IFURLPolicyUseContentPolicy,
-    IFURLPolicyOpenExternally,
-    IFURLPolicyIgnore
-} IFURLPolicy;
-
-
-@protocol IFWebControllerPolicyHandler <NSObject>
-
-- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForDataSource: (IFWebDataSource *)dataSource;
-
-// URLPolicyForURL: is used to determine what to do BEFORE a URL is loaded, i.e.
-// before it is clicked or loaded via a URL bar.  Clients can choose to handle the
-// URL normally, hand the URL off to launch services, or
-// ignore the URL.  The default implementation could return +defaultURLPolicyForURL:.
-- (IFURLPolicy)URLPolicyForURL: (NSURL *)url;
-
-// We may have different errors that cause the the policy to be un-implementable, i.e.
-// launch services failure, etc.
-- (void)unableToImplementURLPolicyForURL: (NSURL *)url error: (IFError *)error;
-
-// Called when a plug-in for a certain mime type is not installed
-- (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url;
-
-@end
 
 /*
    ============================================================================= 

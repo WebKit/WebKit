@@ -14,10 +14,11 @@
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebController.h>
+#import <WebKit/IFWebControllerPolicyHandler.h>
+#import <WebKit/IFWebKitErrors.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
-#import <WebFoundation/IFFileTypeMappings.h>
 
 @implementation IFWebController
 
@@ -241,7 +242,9 @@
                 [webView _setDocumentView: documentView];
                 [documentView provisionalDataSourceChanged: dataSource];
             }else{
-                // return error with unableToImplementContentPolicy
+                IFError *error = [[IFError alloc] initWithErrorCode:IFErrorCodeCantShowMIMEType 
+                                    inDomain:IFErrorCodeDomainWebKit failingURL: [dataSource inputURL]];
+                [[self policyHandler] unableToImplementContentPolicy:error forDataSource:dataSource];
             }
         }
     }
@@ -277,11 +280,10 @@
 }
 
 + (BOOL)canShowFile:(NSString *)path
-{
-    NSString *MIMEType, *extension = [path pathExtension];
+{    
+    NSString *MIMEType;
     
-    MIMEType = [[IFFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
-    
+    MIMEType = [[self class] _MIMETypeForFile:path];   
     return [[self class] canShowMIMEType:MIMEType];
 }
 

@@ -11,14 +11,33 @@
 #import <WebKit/IFWebCoreViewFactory.h>
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebKitErrors.h>
 #import <WebKit/IFTextRendererFactory.h>
 #import <WebKit/IFImageRendererFactory.h>
 #import <WebKit/IFCookieAdapter.h>
 
 #import <WebFoundation/IFNSStringExtensions.h>
 #import <WebFoundation/IFNSURLExtensions.h>
+#import <WebFoundation/WebFoundation.h>
 
 @implementation IFWebView
+
++ (void)initialize
+{
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+    
+    IFErrorDescriptionCantShowMIMEType, [NSNumber numberWithInt: IFErrorCodeCantShowMIMEType],
+    IFErrorDescriptionCouldntFindApplicationForFile, [NSNumber numberWithInt: IFErrorCodeCouldntFindApplicationForFile],
+    IFErrorDescriptionCouldntFindApplicationForURL, [NSNumber numberWithInt: IFErrorCodeCouldntFindApplicationForURL],
+    IFErrorDescriptionFileDoesntExist, [NSNumber numberWithInt: IFErrorCodeFileDoesntExist],
+    IFErrorDescriptionFileNotReadable, [NSNumber numberWithInt: IFErrorCodeFileNotReadable],
+    IFErrorDescriptionFinderCouldntOpenDirectory, [NSNumber numberWithInt: IFErrorCodeFinderCouldntOpenDirectory],
+    IFErrorDescriptionCantShowDirectory, [NSNumber numberWithInt: IFErrorCodeCantShowDirectory],
+    IFErrorDescriptionCantShowURL, [NSNumber numberWithInt: IFErrorCodeCantShowURL],
+    nil];
+
+    [IFError addErrorsFromDictionary:dict];
+}
 
 - initWithFrame: (NSRect) frame
 {

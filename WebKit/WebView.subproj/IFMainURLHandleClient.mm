@@ -9,6 +9,7 @@
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFMainURLHandleClient.h>
 #import <WebKit/IFWebController.h>
+#import <WebKit/IFWebControllerPolicyHandler.h>
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
@@ -85,7 +86,7 @@
     
     // Don't retain download data
     if([dataSource contentPolicy] != IFContentPolicySave &&
-       [dataSource contentPolicy] != IFContentPolicyOpenExternally){
+       [dataSource contentPolicy] != IFContentPolicySaveAndOpenExternally){
        [dataSource _setResourceData:data];
     }
     
@@ -115,6 +116,7 @@
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)incomingData
 {
+    IFWebController *controller = [dataSource controller];
     NSString *contentType = [sender contentType];
     IFWebFrame *frame = [dataSource webFrame];
     IFWebView *view = [frame webView];
@@ -132,12 +134,12 @@
         // and there is no extension, this is text/html
         if([contentType isEqualToString:IFDefaultMIMEType] && [[[url path] pathExtension] isEqualToString:@""])
             contentType = @"text/html";
-            
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
         
         [dataSource _setContentType:contentType];
         [dataSource _setEncoding:[sender characterSet]];
-        [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:contentType dataSource:dataSource];
+        [[controller policyHandler] requestContentPolicyForMIMEType:contentType dataSource:dataSource];
+        
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
     
     contentPolicy = [dataSource contentPolicy];
@@ -161,7 +163,7 @@
         [[dataSource representation] receivedData:data withDataSource:dataSource];
         [[view documentView] dataSourceUpdated:dataSource];
         
-    }else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicyOpenExternally){
+    }else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicySaveAndOpenExternally){
         if(!downloadHandler){
             [frame->_private setProvisionalDataSource:nil];
             [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];

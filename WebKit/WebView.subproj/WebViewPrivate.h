@@ -25,4 +25,5 @@
 - (void)_mainReceivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
 - (void)_didStartLoading: (NSURL *)url;
 - (void)_didStopLoading: (NSURL *)url;
++ (NSString *)_MIMETypeForFile: (NSString *)path;
 @end

@@ -9,15 +9,17 @@
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFPreferencesPrivate.h>
 #import <WebKit/IFWebController.h>
+#import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebCoreFrame.h>
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFWebKitErrors.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
-#import <WebFoundation/IFError.h>
+#import <WebFoundation/WebFoundation.h>
 
 // includes from kde
 #import <khtmlview.h>
@@ -467,6 +469,115 @@ static const char * const stateNames[6] = {
 - (IFWebCoreFrame *)_bridgeFrame
 {
     return _private->bridgeFrame;
+}
+
+- (BOOL)_shouldShowDataSource:(IFWebDataSource *)dataSource
+{
+    id <IFWebControllerPolicyHandler> policyHandler = [[self controller] policyHandler];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    NSURL *url = [dataSource inputURL];
+    IFFileURLPolicy fileURLPolicy;
+    NSString *path = [url path];
+    BOOL isDirectory, fileExists;
+    IFError *error;
+    
+    IFURLPolicy urlPolicy = [policyHandler URLPolicyForURL:url];
+    
+    if(urlPolicy == IFURLPolicyUseContentPolicy){
+                    
+        if([url isFileURL]){
+        
+            fileExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
+            
+            NSString *type = [IFWebController _MIMETypeForFile: path];
+                
+            if(isDirectory){
+                fileURLPolicy = [policyHandler fileURLPolicyForMIMEType: nil dataSource: dataSource isDirectory:YES];
+            }else{
+                fileURLPolicy = [policyHandler fileURLPolicyForMIMEType: type dataSource: dataSource isDirectory:NO];
+            }
+            
+            if(fileURLPolicy == IFFileURLPolicyIgnore)
+                return NO;
+            
+            if(!fileExists){
+                error = [[IFError alloc] initWithErrorCode:IFErrorCodeFileDoesntExist 
+                            inDomain:IFErrorCodeDomainWebKit failingURL:url];
+                [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
+                return NO;
+            }
+            
+            if(![fileManager isReadableFileAtPath:path]){
+                error = [[IFError alloc] initWithErrorCode:IFErrorCodeFileNotReadable 
+                            inDomain:IFErrorCodeDomainWebKit failingURL:url];
+                [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
+                return NO;
+            }
+            
+            if(fileURLPolicy == IFFileURLPolicyUseContentPolicy){
+                if(isDirectory){
+                    error = [[IFError alloc] initWithErrorCode:IFErrorCodeCantShowDirectory 
+                                inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                    [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
+                    return NO;
+                }
+                else if(![IFWebController canShowMIMEType: type]){
+                    error = [[IFError alloc] initWithErrorCode:IFErrorCodeCantShowMIMEType 
+                                inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                    [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
+                    return NO;
+                }else{
+                    // File exists, its readable, we can show it
+                    return YES;
+                }
+            }else if(fileURLPolicy == IFFileURLPolicyOpenExternally){
+                if(isDirectory){
+                    if(![workspace selectFile:path inFileViewerRootedAtPath:@""]){
+                        error = [[IFError alloc] initWithErrorCode:IFErrorCodeFinderCouldntOpenDirectory 
+                                    inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                        [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
+                    }
+                    return NO;
+                }else{
+                    if(![workspace openFile:path]){
+                        error = [[IFError alloc] initWithErrorCode:IFErrorCodeCouldntFindApplicationForFile 
+                                    inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                        [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
+                    }
+                    return NO;
+                }
+            }else{
+                [NSException raise:NSInvalidArgumentException format:
+                    @"fileURLPolicyForMIMEType:dataSource:isDirectory: returned an invalid IFFileURLPolicy"];
+                return NO;
+            }
+        }else{
+            if(![IFURLHandle canInitWithURL:url]){
+            	error = [[IFError alloc] initWithErrorCode:IFErrorCodeCantShowURL 
+                        inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                [policyHandler unableToImplementURLPolicyForURL: url error: error];
+                return NO;
+            }
+            // we can handle this URL
+            return YES;
+        }
+    }
+    else if(urlPolicy == IFURLPolicyOpenExternally){
+        if(![workspace openURL:url]){
+            error = [[IFError alloc] initWithErrorCode:IFErrorCodeCouldntFindApplicationForURL 
+                        inDomain:IFErrorCodeDomainWebKit failingURL: url];
+            [policyHandler unableToImplementURLPolicyForURL: url error: error];
+        }
+        return NO;
+    }
+    else if(urlPolicy == IFURLPolicyIgnore){
+        return NO;
+    }
+    else{
+        [NSException raise:NSInvalidArgumentException format:@"URLPolicyForURL: returned an invalid IFURLPolicy"];
+        return NO;
+    }
 }
 
 @end

@@ -9,7 +9,7 @@
 
 #import <WebKit/IFHTMLRepresentationPrivate.h>
 #import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFWebControllerPrivate.h>
+#import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebCoreFrame.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
@@ -129,9 +129,8 @@
 //    disallows by returning a IFURLPolicyIgnore.
 - (BOOL)setProvisionalDataSource: (IFWebDataSource *)newDataSource
 {
-    IFWebDataSource *oldDataSource;
     id <IFLocationChangeHandler>locationChangeHandler;
-    IFURLPolicy urlPolicy;
+    IFWebDataSource *oldDataSource;
     
     WEBKIT_ASSERT ([self controller] != nil);
 
@@ -140,13 +139,13 @@
     // KDE drop we should fix this dependency.
     WEBKIT_ASSERT ([self webView] != nil);
 
-    urlPolicy = [[[self controller] policyHandler] URLPolicyForURL:[newDataSource inputURL]];
+    if ([self _state] != IFWEBFRAMESTATE_COMPLETE){
+        [self stopLoading];
+    }
 
-    if(urlPolicy == IFURLPolicyUseContentPolicy){
-            
-        if ([self _state] != IFWEBFRAMESTATE_COMPLETE){
-            [self stopLoading];
-        }
+    // _shouldShowDataSource asks the client for the URL policies and reports errors if there are any
+    // returns YES if we should show the data source
+    if([self _shouldShowDataSource:newDataSource]){
         
         locationChangeHandler = [[[self controller] policyHandler] provideLocationChangeHandlerForDataSource: newDataSource];
     
@@ -170,14 +169,11 @@
         // once it has been created by the controller.
             
         [self _setState: IFWEBFRAMESTATE_PROVISIONAL];
-    }
-    else if(urlPolicy == IFURLPolicyOpenExternally){
-        return [[NSWorkspace sharedWorkspace] openURL:[newDataSource inputURL]];
-    }
-    else if (urlPolicy == IFURLPolicyIgnore)
-        return NO;
         
-    return YES;
+        return YES;
+    }
+    
+    return NO;
 }
 
 

@@ -7,7 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/IFWebController.h>
 
 /* 
     =============================================================================
