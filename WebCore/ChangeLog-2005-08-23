@@ -1,3 +1,18 @@
+2004-09-28  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed <rdar://problem/3818558> REGRESSION: "Installed Plug-ins" is blank 
+        because of <script type="application/x-javascript">
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag):
+        add "application/x-javascript" to the list of legal scripting types. Mozilla
+        accepts this, but WinIE doesn't.
+        
+        * layout-tests/fast/tokenizer/004.html:
+        updated layout test to test some application/xxxx types
+
 2004-09-27  David Hyatt  <hyatt@apple.com>
 
 	Reworked lists to work well with RTL text.  Specifically the following bugs have been fixed:
