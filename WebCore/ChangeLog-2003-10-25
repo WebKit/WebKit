@@ -1,3 +1,12 @@
+2003-04-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3220490 -- REGRESSION: MALLORY horiz scrollbar incorrectly appears with abs positioned content
+
+        * khtml/rendering/render_block.cpp: (RenderBlock::rightmostPosition):
+        Fix a place where I had xPos instead of yPos.
+
 === Safari-71 ===
 
 2003-04-04  Darin Adler  <darin@apple.com>

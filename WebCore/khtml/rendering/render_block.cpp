@@ -1552,7 +1552,7 @@ int RenderBlock::rightmostPosition() const
         RenderObject* r;
         QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            int rp = r->yPos() + r->rightmostPosition();
+            int rp = r->xPos() + r->rightmostPosition();
             right = QMAX(right, rp);
         }
     }
