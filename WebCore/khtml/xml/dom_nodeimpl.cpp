@@ -617,7 +617,7 @@ bool NodeImpl::dispatchWindowEvent(int _id, bool canBubbleArg, bool cancelableAr
     if (!evt->defaultPrevented() && doc->document())
 	doc->document()->defaultEventHandler(evt);
     
-    if (_id == EventImpl::LOAD_EVENT && !evt->propagationStopped()) {
+    if (_id == EventImpl::LOAD_EVENT && !evt->propagationStopped() && doc->document()) {
         // For onload events, send them to the enclosing frame only.
         // This is a DOM extension and is independent of bubbling/capturing rules of
         // the DOM.  You send the event only to the enclosing frame.  It does not

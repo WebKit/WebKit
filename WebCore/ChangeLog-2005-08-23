@@ -1,5 +1,13 @@
 2003-12-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - fixed 3505277: nil-deref in ownerElement after choosing item from menu at projectnissan.com
+
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::dispatchWindowEvent): Add check for nil.
+
+2003-12-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         * kwq/KWQKHTMLPart.mm:
