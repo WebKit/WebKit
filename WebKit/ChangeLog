@@ -1,3 +1,33 @@
+2002-04-11  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+
+	Added support for non-html content. Non-html content is embedded in a
+	contrived HTML document.
+
+	* English.lproj/IFError.strings:
+	* MIME.subproj/IFContentHandler.h: Added.
+	* MIME.subproj/IFContentHandler.m: Added.
+	 (-[IFContentHandler initWithMIMEHandler:URL:]), (-[IFContentHandler
+	HTMLDocument]), (-[IFContentHandler dealloc]):
+	* MIME.subproj/IFMIMEDatabase.h:
+	* MIME.subproj/IFMIMEDatabase.m: (-[IFMIMEDatabase MIMEHandlerForMIMEType:]),
+	(setMimeHandlers):
+	* MIME.subproj/IFMIMEHandler.h:
+	* MIME.subproj/IFMIMEHandler.m: (-[IFMIMEHandler
+	initWithMIMEType:handlerType:handlerName:]), (-[IFMIMEHandler description]):
+	* Misc.subproj/IFError.h:
+	* Misc.subproj/IFError.m: (+[IFError initialize]):
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	initWithFrame:plugin:url:mime:arguments:mode:]), (-[IFPluginView dealloc]),
+	(-[IFPluginView stop]):
+	* Resources/plugin_document_template.html: Added.
+	* Resources/text_document_template.html: Added.
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	initWithDataSource:part:]), (-[IFMainURLHandleClient dealloc]),
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]),
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+
 2002-04-10  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
 
 	Cleaned up stream deallocations.

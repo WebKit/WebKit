@@ -14,15 +14,9 @@
 
 - initWithMIMEType:(NSString *)MIME handlerType:(IFMIMEHandlerType)hType handlerName:(NSString *)handler
 {
-    NSRange r;
-    
-    MIMEType = MIME;
-    handlerType = hType;
-    handlerName = handler;
-    
-    r = [MIMEType rangeOfString:@"/"];
-    MIMESupertype = [MIMEType substringToIndex:r.location];
-    MIMESubtype =   [MIMEType substringFromIndex:r.location];
+    MIMEType = [MIME retain];
+    handlerName = [handler retain];
+    handlerType = hType; 
     
     return self;
 }
@@ -34,24 +28,10 @@
     return MIMEType;
 }
 
-
-- (NSString *)MIMESupertype
-{
-    return MIMESupertype;
-}
-
-
-- (NSString *)MIMESubtype
-{
-    return MIMESubtype;
-}
-
-
 - (NSString *)handlerName
 {
     return handlerName;
 }
-
 
 - (IFMIMEHandlerType)handlerType
 {
@@ -67,11 +47,12 @@
         handlerTypeString = @"IFMIMEHANDLERTYPE_IMAGE";
     else if(handlerType == IFMIMEHANDLERTYPE_TEXT)
         handlerTypeString = @"IFMIMEHANDLERTYPE_TEXT";
-    else if(handlerType == IFMIMEHANDLERTYPE_PLUG_IN)
-        handlerTypeString = @"IFMIMEHANDLERTYPE_PLUG_IN";
+    else if(handlerType == IFMIMEHANDLERTYPE_PLUGIN)
+        handlerTypeString = @"IFMIMEHANDLERTYPE_PLUGIN";
     else if(handlerType == IFMIMEHANDLERTYPE_APPLICATION)
         handlerTypeString = @"IFMIMEHANDLERTYPE_APPLICATION";
-    return [NSString stringWithFormat:@"MIME TYPE: %@, HANDLER TYPE: %@, HANDLER NAME: %@", MIMEType, handlerTypeString, handlerName];
+    return [NSString stringWithFormat:@"MIME TYPE: %@, HANDLER TYPE: %@, HANDLER NAME: %@", 
+                MIMEType, handlerTypeString, handlerName];
 }
 
 @end

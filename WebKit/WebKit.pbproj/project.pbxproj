@@ -216,6 +216,7 @@
 				F5883BE2025E5E9D01000102,
 				F5A672BB0263866E01000102,
 				F5A672BD0263866E01000102,
+				F5A357540265E57A01000102,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -229,6 +230,8 @@
 				F5B67131023EDF8901C1A525,
 				25B2A7C5025D0A880ECA149E,
 				F5883BDF025E5C6A01000102,
+				F5E638640265FC0D01000102,
+				F5E638650265FC0D01000102,
 			);
 			isa = PBXResourcesBuildPhase;
 		};
@@ -262,6 +265,7 @@
 				F5883BE3025E5E9D01000102,
 				F5A672BC0263866E01000102,
 				F5A672BE0263866E01000102,
+				F5A357530265E57A01000102,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -293,6 +297,8 @@
 				F5B67130023EDF8901C1A525,
 				F5883BDE025E5C6A01000102,
 				25B2A7C4025D0A880ECA149E,
+				F5E638620265FC0D01000102,
+				F5E638630265FC0D01000102,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -1227,6 +1233,30 @@
 			settings = {
 			};
 		};
+		F5A357510265E57A01000102 = {
+			isa = PBXFileReference;
+			name = IFContentHandler.m;
+			path = MIME.subproj/IFContentHandler.m;
+			refType = 4;
+		};
+		F5A357520265E57A01000102 = {
+			isa = PBXFileReference;
+			name = IFContentHandler.h;
+			path = MIME.subproj/IFContentHandler.h;
+			refType = 4;
+		};
+		F5A357530265E57A01000102 = {
+			fileRef = F5A357510265E57A01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A357540265E57A01000102 = {
+			fileRef = F5A357520265E57A01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5A672B70263866E01000102 = {
 			isa = PBXFileReference;
 			name = IFPluginNullEventSender.h;
@@ -1372,6 +1402,30 @@
 			settings = {
 			};
 		};
+		F5E638620265FC0D01000102 = {
+			isa = PBXFileReference;
+			name = plugin_document_template.html;
+			path = Resources/plugin_document_template.html;
+			refType = 4;
+		};
+		F5E638630265FC0D01000102 = {
+			isa = PBXFileReference;
+			name = text_document_template.html;
+			path = Resources/text_document_template.html;
+			refType = 4;
+		};
+		F5E638640265FC0D01000102 = {
+			fileRef = F5E638620265FC0D01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5E638650265FC0D01000102 = {
+			fileRef = F5E638630265FC0D01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5EBC45202134BB601CA1520 = {
 			children = (
 				F5EBC45502134BC301CA1520,
@@ -1429,6 +1483,8 @@
 				F5F084BA024BDC8E01CA1520,
 				F5F084BD024BDCA701CA1520,
 				F5F084BE024BDCA701CA1520,
+				F5A357510265E57A01000102,
+				F5A357520265E57A01000102,
 			);
 			isa = PBXGroup;
 			name = MIME;

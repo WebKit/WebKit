@@ -111,6 +111,8 @@ static id IFErrorMake(int code)
         
         NSLocalizedStringFromTable (@"non-HTML content not currently supported", @"IFError", @"IFNonHTMLContentNotSupportedError description"),
         [NSNumber numberWithInt: IFNonHTMLContentNotSupportedError],
+        NSLocalizedStringFromTable (@"file download not currently supported", @"IFError", @"IFFileDownloadNotSupportedError description"),
+        [NSNumber numberWithInt: IFFileDownloadNotSupportedError],
         nil];
 
     if (descriptions == nil) {

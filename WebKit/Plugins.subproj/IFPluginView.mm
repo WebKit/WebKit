@@ -66,25 +66,26 @@ extern "C" {
     
     cMime = malloc([mime length]+1);
     [mime getCString:cMime];
-    
-    if(arguments){
-    
-        baseURLString = [arguments objectForKey:@"WebKitBaseURL"];
-        if(baseURLString)
-            baseURL = [[NSURL URLWithString:baseURLString] retain];
+
+    // get base URL which was added in the args in the part
+    baseURLString = [arguments objectForKey:@"WebKitBaseURL"];
+    if(baseURLString)
+        baseURL = [[NSURL URLWithString:baseURLString] retain];
             
-        attributes = [arguments allKeys];
-        values = [arguments allValues];
+    attributes = [arguments allKeys];
+    values = 	 [arguments allValues];
+        
+    if([attributes containsObject:@"hidden"])
+        hidden = TRUE;
+    else
+        hidden = FALSE;
+    
+    if(![attributes containsObject:@"wkfullmode"]){
+        // convert arugments dictionary to 2 string arrays
+        
         cAttributes = malloc(sizeof(char *) * [arguments count]);
         cValues = malloc(sizeof(char *) * [arguments count]);
         
-        if([attributes containsObject:@"HIDDEN"]){
-            hidden = TRUE;
-        }else{
-            hidden = FALSE;
-        }
-        
-        // convert arugments dictionary to 2 string arrays
         for(i=0; i<[arguments count]; i++){ 
             attributeString = [attributes objectAtIndex:i];
             s = malloc([attributeString length]+1);
@@ -96,10 +97,11 @@ extern "C" {
             [attributeString getCString:s];
             cValues[i] = s;
         }
-        npErr = NPP_New(cMime, instance, mode, [arguments count], cAttributes, cValues, &saved);
+        npErr = NPP_New(cMime, instance, NP_EMBED, [arguments count], cAttributes, cValues, &saved);
     }else{
-        npErr = NPP_New(cMime, instance, mode, 0, NULL, NULL, &saved);
+        npErr = NPP_New(cMime, instance, NP_FULL, 0, NULL, NULL, &saved);
     }
+
     WEBKITDEBUG("NPP_New: %d\n", npErr);
     
     free(cMime);
@@ -116,6 +118,28 @@ extern "C" {
     return self;
 }
 
+-(void)dealloc
+{
+    unsigned i;
+    NSFileManager *fileManager;
+    
+    [self stop];
+    
+    // remove downloaded files
+    fileManager = [NSFileManager defaultManager];
+    for(i=0; i<[filesToErase count]; i++){  
+        [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
+    }
+    
+    [filesToErase release];
+    [activeURLHandles release];
+    [mime release];
+    [URL release];
+    [plugin release];
+    free(cAttributes);
+    free(cValues);
+    [super dealloc];
+}
 
 - (void) setWindow
 {
@@ -214,29 +238,6 @@ extern "C" {
         WEBKITDEBUG("NPP_Destroy: %d\n", npErr);
         stopped = TRUE;
     }
-}
-
--(void)dealloc
-{
-    unsigned i;
-    NSFileManager *fileManager;
-    
-    [self stop];
-    
-    // remove downloaded files
-    fileManager = [NSFileManager defaultManager];
-    for(i=0; i<[filesToErase count]; i++){  
-        [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
-    }
-    
-    [filesToErase release];
-    [activeURLHandles release];
-    [mime release];
-    [URL release];
-    [plugin release];
-    free(cAttributes);
-    free(cValues);
-    [super dealloc];
 }
 
 - (NSView *) findSuperview:(NSString *)viewName
