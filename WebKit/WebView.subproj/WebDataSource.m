@@ -48,9 +48,6 @@
     // The WebView is only retained while loading, but this object is also
     // retained while loading, so no need to release here
     ASSERT(!loading);
-    
-    // FIXME: We don't know why this is needed, but without it we leak icon loaders.
-    [iconLoader stopLoading];
 
     [resourceData release];
     [representation release];
@@ -309,6 +306,10 @@
 
 - (void)_stopLoadingInternal
 {
+    // Always attempt to stop the icon loader because it may still be loading after the data source
+    // is done loading and not stopping it can cause a world leak.
+    [_private->iconLoader stopLoading];
+
     if (!_private->loading) {
 	return;
     }
@@ -333,8 +334,6 @@
     if (_private->committed) {
 	[[self _bridge] closeURL];        
     }
-
-    [_private->iconLoader stopLoading];
 }
 
 - (void)_recursiveStopLoading
