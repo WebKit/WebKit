@@ -23,11 +23,13 @@
         scrollsHorizontally = NO;
     } else {
         // Force a layout before checking if scrollbars are needed.
-        // This fixes 2969367, although may introduce a slowdown in
-        // live resize performance.
-        [((id<WebDocumentView>)[self documentView]) layout];
+        // This fixes 2969367, although may introduce a slowdown in live resize performance.
+        NSView *documentView = [self documentView];
+        if ([documentView conformsToProtocol:@protocol(WebDocumentView)]) {
+            [(id <WebDocumentView>)documentView layout];
+        }
         
-        NSSize documentSize = [[self documentView] frame].size;
+        NSSize documentSize = [documentView frame].size;
         NSSize frameSize = [self frame].size;
         
         scrollsVertically = documentSize.height > frameSize.height;

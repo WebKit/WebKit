@@ -1,3 +1,13 @@
+2002-10-17  Darin Adler  <darin@apple.com>
+
+	- fixed 3077910 -- REGRESSION: download window open at startup time -> no scrollbars
+
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+	Check for WebDocumentView protocol before making the layout method
+	call. Prevents exception when WebDynamicScrollBarsView is used with
+	a document that is not a WebDocumentView.
+
 2002-10-16  Richard Williamson  <rjw@apple.com>
 
         Added some drawing debug code (ifdef excluded).
