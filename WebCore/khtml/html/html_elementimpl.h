@@ -171,7 +171,8 @@ public:
     virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
     CSSMutableStyleDeclarationImpl* getInlineStyleDecl();
     void createInlineStyleDecl();
-     
+    void destroyInlineStyleDecl();
+
     virtual AttributeImpl* createAttribute(NodeImpl::Id id, DOMStringImpl* value);
 
 #if APPLE_CHANGES
@@ -186,13 +187,16 @@ public:
     static QPtrDict<QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> > >* m_mappedAttributeDecls;
 
     void invalidateStyleAttribute();
-    void updateStyleAttribute();
+    virtual void updateStyleAttributeIfNeeded() const;
+
 protected:
 
     // for IMG, OBJECT and APPLET
     void addHTMLAlignment(HTMLAttributeImpl* htmlAttr);
 
     CSSMutableStyleDeclarationImpl* m_inlineStyleDecl;
+    mutable bool m_isStyleAttributeValid : 1;
+    mutable bool m_synchronizingStyleAttribute : 1;
 };
 
 class HTMLGenericElementImpl : public HTMLElementImpl

@@ -1,3 +1,29 @@
+2005-02-21  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4017033, CSS is being parsed twice.  Make sure to always validate the style attribute when it is
+	initially parsed.  Add code to clean up decls when the style attribute is completely removed.  Add a new
+	synchronizing boolean that avoids reparsing the style declaration when the attribute is simply
+	being synced up to the declaration.
+
+        Reviewed by John
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::setChanged):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::invalidateStyleAttribute):
+        (HTMLElementImpl::updateStyleAttributeIfNeeded):
+        (HTMLElementImpl::HTMLElementImpl):
+        (HTMLElementImpl::~HTMLElementImpl):
+        (HTMLElementImpl::destroyInlineStyleDecl):
+        (HTMLElementImpl::mapToEntry):
+        (HTMLElementImpl::parseHTMLAttribute):
+        * khtml/html/html_elementimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::ElementImpl):
+        (ElementImpl::setAttribute):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::updateStyleAttributeIfNeeded):
+
 === Safari-188 ===
 
 2005-02-21  Darin Adler  <darin@apple.com>

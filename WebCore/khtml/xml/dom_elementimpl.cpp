@@ -194,7 +194,6 @@ ElementImpl::ElementImpl(DocumentPtr *doc)
 {
     namedAttrMap = 0;
     m_prefix = 0;
-    m_isStyleAttributeValid = true;
 }
 
 ElementImpl::~ElementImpl()
@@ -222,13 +221,6 @@ void ElementImpl::setAttribute(NodeImpl::Id id, const DOMString &value)
 {
     int exceptioncode = 0;
     setAttribute(id,value.implementation(),exceptioncode);
-}
-
-void ElementImpl::updateStyleAttributeIfNeeded() const
-{
-    if (!m_isStyleAttributeValid && isHTMLElement()) {
-        static_cast<HTMLElementImpl *>(const_cast<ElementImpl *>(this))->updateStyleAttribute();
-    }
 }
 
 NamedAttrMapImpl* ElementImpl::attributes(bool readonly) const

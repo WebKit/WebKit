@@ -908,9 +908,11 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
         }
 
         // Frames and framesets never honor position:relative or position:absolute.  This is necessary to
-        // fix a crash where a site tries to position these objects.
-        if (e && (e->id() == ID_FRAME || e->id() == ID_FRAMESET))
+        // fix a crash where a site tries to position these objects.  They also never honor display.
+        if (e && (e->id() == ID_FRAME || e->id() == ID_FRAMESET)) {
             style->setPosition(STATIC);
+            style->setDisplay(BLOCK);
+        }
 
         // Table headers with a text-align of auto will change the text-align to center.
         if (e && e->id() == ID_TH && style->textAlign() == TAAUTO)
