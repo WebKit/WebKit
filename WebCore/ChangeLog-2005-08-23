@@ -2,6 +2,23 @@
 
         Reviewed by John
 
+        Fix for these bugs:
+
+        <rdar://problem/3875618> REGRESSION (Mail): Hitting down arrow with full line selected skips line (br case)
+        <rdar://problem/3875641> REGRESSION (Mail): Hitting down arrow with full line selected skips line (div case)
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::modifyMovingRightForward): Fixed by juggling the position as the starting point for
+        the next line position when necessary.
+        * layout-tests/editing/selection/move-3875618-fix-expected.txt: Added.
+        * layout-tests/editing/selection/move-3875618-fix.html: Added.
+        * layout-tests/editing/selection/move-3875641-fix-expected.txt: Added.
+        * layout-tests/editing/selection/move-3875641-fix.html: Added.
+
+2004-11-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         Improved some function names, at John's urging. No changes to the
         functions themselves.
         

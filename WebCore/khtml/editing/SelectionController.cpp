@@ -306,9 +306,28 @@ VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity
         case PARAGRAPH:
             pos = nextParagraphPosition(VisiblePosition(m_end), m_affinity, xPosForVerticalArrowNavigation(END, isRange()));
             break;
-        case LINE:
-            pos = nextLinePosition(VisiblePosition(m_end), m_affinity, xPosForVerticalArrowNavigation(END, isRange()));
+        case LINE: {
+            // This somewhat complicated code is needed to handle the case where there is a
+            // whole line selected (like when the user clicks at the start of a line and hits shift+down-arrow),
+            // and then hits an (unshifted) down arrow. Since the whole-line selection considers its
+            // ending point to be the start of the next line, it may be necessary to juggle the 
+            // position to use as the VisiblePosition to pass to nextLinePosition(). If this juggling
+            // is not done, you can wind up skipping a line. See these two bugs for more information:
+            // <rdar://problem/3875618> REGRESSION (Mail): Hitting down arrow with full line selected skips line (br case)
+            // <rdar://problem/3875641> REGRESSION (Mail): Hitting down arrow with full line selected skips line (div case)
+            if (isCaret()) {
+                pos = VisiblePosition(m_end);
+            }
+            else if (isRange()) {
+                Position p(m_end.upstream());
+                if (p.node()->id() == ID_BR)
+                    pos = VisiblePosition(Position(p.node(), 0));
+                else
+                    pos = VisiblePosition(p);
+            }
+            pos = nextLinePosition(pos, m_affinity, xPosForVerticalArrowNavigation(END, isRange()));
             break;
+        }
         case LINE_BOUNDARY:
             pos = VisiblePosition(selectionForLine(m_end, m_affinity).end());
             break;
