@@ -20,7 +20,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>
 
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebNSURLExtras.h>

@@ -17,7 +17,7 @@
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginContainer.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>
 
 #import <WebFoundation/NSURLRequest.h>
 
@@ -131,7 +131,7 @@
         return;
     }
     WebView *v = [_HTMLView _webView];
-    [[v _windowOperationsDelegateForwarder] webView:v setStatusText:message];
+    [[v _UIDelegateForwarder] webView:v setStatusText:message];
 }
 
 @end

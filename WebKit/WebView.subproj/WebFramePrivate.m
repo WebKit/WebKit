@@ -11,7 +11,7 @@
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebFormDelegate.h>
@@ -1557,14 +1557,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     WebView *controller = nil;
     WebView *currentController = [self webView];
-    id wd = [currentController windowOperationsDelegate];
+    id wd = [currentController UIDelegate];
     if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
 	controller = [wd webView:currentController createWindowWithRequest:nil];
     else
-        controller = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:currentController createWindowWithRequest:nil];
+        controller = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWindowWithRequest:nil];
         
     [controller _setTopLevelFrameName:frameName];
-    [[controller _windowOperationsDelegateForwarder] webViewShowWindow:controller];
+    [[controller _UIDelegateForwarder] webViewShowWindow:controller];
     WebFrame *frame = [controller mainFrame];
 
     [frame _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];

@@ -1,6 +1,80 @@
 2003-04-24  Richard Williamson   <rjw@apple.com>
 
         Final API review changes.
+        
+        Renamed WebWindowOperationsDelegate to WebUIDelegate.
+        Merged WebContextMenuDelegate into WebUIDelegate.
+        Fixed crasher if history file doesn't exist.
+        
+        Reviewed by Ken.
+
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate _loadHistoryGuts:URL:error:]):
+        * Misc.subproj/WebKit.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView status:]):
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showStatus:]):
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        (-[WebBridge showWindow]):
+        (-[WebBridge areToolbarsVisible]):
+        (-[WebBridge setToolbarsVisible:]):
+        (-[WebBridge isStatusBarVisible]):
+        (-[WebBridge setStatusBarVisible:]):
+        (-[WebBridge setWindowFrame:]):
+        (-[WebBridge windowFrame]):
+        (-[WebBridge setWindowContentRect:]):
+        (-[WebBridge windowContentRect]):
+        (-[WebBridge setWindowIsResizable:]):
+        (-[WebBridge windowIsResizable]):
+        (-[WebBridge firstResponder]):
+        (-[WebBridge makeFirstResponder:]):
+        (-[WebBridge closeWindow]):
+        (-[WebBridge runJavaScriptAlertPanelWithMessage:]):
+        (-[WebBridge runJavaScriptConfirmPanelWithMessage:]):
+        (-[WebBridge runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:]):
+        (-[WebBridge runOpenPanelForFileButtonWithResultListener:]):
+        (-[WebBridge setStatusText:]):
+        (-[WebBridge focusWindow]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebContextMenuDelegate.h: Removed.
+        * WebView.subproj/WebDefaultContextMenuDelegate.h:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebDefaultUIDelegate.h:
+        * WebView.subproj/WebDefaultUIDelegate.m:
+        (+[WebDefaultUIDelegate sharedUIDelegate]):
+        (-[WebDefaultUIDelegate dealloc]):
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.h: Removed.
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m: Removed.
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebUIDelegate.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView setUIDelegate:]):
+        (-[WebView UIDelegate]):
+        (-[WebView downloadDelegate]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        (-[WebView _openNewWindowWithRequest:]):
+        (-[WebView _menuForElement:]):
+        (-[WebView _mouseDidMoveOverElement:modifierFlags:]):
+        (-[WebView _UIDelegateForwarder]):
+        * WebView.subproj/WebWindowOperationsDelegate.h: Removed.
+
+2003-04-24  Richard Williamson   <rjw@apple.com>
+
+        Final API review changes.
 
         * History.subproj/WebHistoryItem.h:
         * History.subproj/WebHistoryItem.m:

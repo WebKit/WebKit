@@ -1,5 +1,5 @@
 /*
-        WebWindowOperationsDelegate.h
+        WebUIDelegate.h
         Copyright 2001, 2002, Apple Computer, Inc.
         
         Public header file.
@@ -9,11 +9,28 @@
 #import <WebFoundation/NSURLRequest.h>
 
 /*!
+@enum WebMenuItemTag
+ @discussion Each menu item in the default menu items array passed in
+ contextMenuItemsForElement:defaultMenuItems: has its tag set to one of the WebMenuItemTags.
+ When iterating through the default menu items array, use the tag to differentiate between them.
+ */
+
+enum {
+    WebMenuItemTagOpenLinkInNewWindow=1,
+    WebMenuItemTagDownloadLinkToDisk,
+    WebMenuItemTagCopyLinkToClipboard,
+    WebMenuItemTagOpenImageInNewWindow,
+    WebMenuItemTagDownloadImageToDisk,
+    WebMenuItemTagCopyImageToClipboard,
+    WebMenuItemTagOpenFrameInNewWindow,
+    WebMenuItemTagCopy
+};
+
+/*!
     @protocol WebOpenPanelResultListener
     @discussion This protocol is used to call back with the results of
     the file open panel requested by runOpenPanelForFileButtonWithResultListener:
 */
-
 @protocol WebOpenPanelResultListener <NSObject>
 
 /*!
@@ -34,19 +51,19 @@
 @class WebView;
 
 /*!
-    @category WebWindowOperationsDelegate
-    @discussion A class that implements WebWindowOperationsDelegate provides
+    @category WebUIDelegate
+    @discussion A class that implements WebUIDelegate provides
     window-related methods that may be used by Javascript, plugins and
     other aspects of web pages. These methods are used to open new
     windows and control aspects of existing windows.
 */
-@interface NSObject (WebWindowOperationsDelegate)
+@interface NSObject (WebUIDelegate)
 
 /*!
     @method createWindowWithRequest:
     @abstract Create a new window and begin to load the specified request.
     @discussion The newly created window is hidden, and the window operations delegate on the
-    new controllers will get a showWindow call.
+    new WebViews will get a showWindow call.
     @param request The request to load.
     @result The WebView for the new window.
 */
@@ -54,7 +71,7 @@
 
 /*!
     @method showWindow
-    @abstract Show the window that contains the top level view of the controller,
+    @abstract Show the window that contains the top level view of the WebView,
     ordering it frontmost.
     @discussion This will only be called just after createWindowWithRequest:
     is used to create a new window.
@@ -66,7 +83,7 @@
     @abstract Close the current window. 
     @discussion Clients showing multiple views in one window may
     choose to close only the one corresponding to this
-    controller. Other clients may choose to ignore this method
+    WebView. Other clients may choose to ignore this method
     entirely.
 */
 - (void)webViewCloseWindow:(WebView *)webView;
@@ -75,7 +92,7 @@
     @method focusWindow
     @abstract Focus the current window (i.e. makeKeyAndOrderFront:).
     @discussion Clients showing multiple views in one window may want to
-    also do something to focus the one corresponding to this controller.
+    also do something to focus the one corresponding to this WebView.
 */
 - (void)webViewFocusWindow:(WebView *)webView;
 
@@ -83,7 +100,7 @@
     @method unfocusWindow
     @abstract Unfocus the current window.
     @discussion Clients showing multiple views in one window may want to
-    also do something to unfocus the one corresponding to this controller.
+    also do something to unfocus the one corresponding to this WebView.
 */
 - (void)webViewUnfocusWindow:(WebView *)webView;
 
@@ -91,7 +108,7 @@
     @method firstResponderInWindow
     @abstract Get the first responder for this window.
     @discussion This method should return the focused control in the
-    controller's view, if any. If the view is out of the window
+    WebView's view, if any. If the view is out of the window
     hierarchy, this might return something than calling firstResponder
     on the real NSWindow would. It's OK to return either nil or the
     real first responder if some control not in the window has focus.
@@ -103,8 +120,8 @@
     @abstract Set the first responder for this window.
     @param responder The responder to make first (will always be a view)
     @discussion responder will always be a view that is in the view
-    subhierarchy of the top-level web view for this controller. If the
-    controller's top level view is currently out of the view
+    subhierarchy of the top-level web view for this WebView. If the
+    WebView's top level view is currently out of the view
     hierarchy, it may be desirable to save the first responder
     elsewhere, or possibly ignore this call.
 */
@@ -124,15 +141,6 @@
     @result The status text
 */
 - (NSString *)webViewStatusText:(WebView *)webView ;
-
-/*!
-    @method mouseDidMoveOverElement:modifierFlags:
-    @abstract Update the window's feedback for mousing over links to reflect a new item the mouse is over
-    or new modifier flags.
-    @param elementInformation Dictionary that describes the element that the mouse is over, or nil.
-    @param modifierFlags The modifier flags as in NSEvent.
-*/
-- (void)webView: (WebView *)webView mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
 
 /*!
     @method areToolbarsVisible
@@ -267,5 +275,25 @@
     value so that it can be handled with a sheet.
 */
 - (void)webView: (WebView *)webView runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
-   
+
+/*!
+    @method mouseDidMoveOverElement:modifierFlags:
+    @abstract Update the window's feedback for mousing over links to reflect a new item the mouse is over
+    or new modifier flags.
+    @param elementInformation Dictionary that describes the element that the mouse is over, or nil.
+    @param modifierFlags The modifier flags as in NSEvent.
+*/
+- (void)webView: (WebView *)webView mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
+
+/*!
+    @method contextMenuItemsForElement:defaultMenuItems:
+    @abstract Returns the menu items to display in an element's contextual menu.
+    @param WebView The WebWebView requesting the context menus.
+    @param element A dictionary representation of the clicked element.
+    @param defaultMenuItems An array of default NSMenuItems to include in all contextual menus.
+    @result An array of NSMenuItems to include in the contextual menu.
+*/
+- (NSArray *)webView:(WebView *)webView contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
+
+
 @end

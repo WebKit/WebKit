@@ -31,21 +31,17 @@ typedef struct _WebResourceDelegateImplementationCache {
 @public
     WebFrame *mainFrame;
     
-    id windowContext;
-    id windowOperationsDelegateForwarder;
+    id UIDelegate;
+    id UIDelegateForwarder;
     id resourceProgressDelegate;
     id resourceProgressDelegateForwarder;
     id downloadDelegate;
-    id contextMenuDelegate;
-    id contextMenuDelegateForwarder;
     id policyDelegate;
     id policyDelegateForwarder;
     id locationChangeDelegate;
     id locationChangeDelegateForwarder;
     id <WebFormDelegate> formDelegate;
     
-    id defaultContextMenuDelegate;
-
     WebBackForwardList *backForwardList;
     BOOL useBackForwardList;
     
@@ -165,8 +161,7 @@ Could be worth adding to the API.
 - (void)_cacheResourceLoadDelegateImplementations;
 - (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations;
 - _policyDelegateForwarder;
-- _contextMenuDelegateForwarder;
-- _windowOperationsDelegateForwarder;
+- _UIDelegateForwarder;
 
 - (void)_registerDraggedTypes;
 @end

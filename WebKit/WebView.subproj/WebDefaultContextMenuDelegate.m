@@ -2,18 +2,16 @@
       WebDefaultContextMenuDelegate.m
       Copyright 2002, Apple, Inc. All rights reserved.
 */
-
-#import <WebKit/WebContextMenuDelegate.h>
-
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
+#import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>
 
 
 #import <WebFoundation/WebLocalizableStrings.h>
@@ -21,25 +19,7 @@
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 
-@implementation WebDefaultContextMenuDelegate
-
-static WebDefaultContextMenuDelegate *sharedDelegate = nil;
-
-// Return a object with vanilla implementations of the protocol's methods
-// Note this feature relies on our default delegate being stateless
-+ (WebDefaultContextMenuDelegate *)sharedContextMenuDelegate
-{
-    if (!sharedDelegate) {
-        sharedDelegate = [[WebDefaultContextMenuDelegate alloc] init];
-    }
-    return sharedDelegate;
-}
-
-- (void)dealloc
-{
-    [element release];
-    [super dealloc];
-}
+@implementation WebDefaultUIDelegate (WebContextMenu)
 
 - (NSMenuItem *)menuItemWithTag:(int)tag
 {

@@ -4,7 +4,6 @@
 */
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
@@ -28,7 +27,7 @@
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSUserDefaultsExtras.h>
@@ -154,16 +153,16 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return _private->preferences ? _private->preferences : [WebPreferences standardPreferences];
 }
 
-- (void)setWindowOperationsDelegate:delegate
+- (void)setUIDelegate:delegate
 {
-    _private->windowContext = delegate;
-    [_private->windowOperationsDelegateForwarder release];
-    _private->windowOperationsDelegateForwarder = nil;
+    _private->UIDelegate = delegate;
+    [_private->UIDelegateForwarder release];
+    _private->UIDelegateForwarder = nil;
 }
 
-- windowOperationsDelegate
+- UIDelegate
 {
-    return _private->windowContext;
+    return _private->UIDelegate;
 }
 
 - (void)setResourceLoadDelegate: delegate
@@ -190,18 +189,6 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - downloadDelegate
 {
     return _private->downloadDelegate;
-}
-
-- (void)setContextMenuDelegate: delegate
-{
-    _private->contextMenuDelegate = delegate;
-    [_private->contextMenuDelegateForwarder release];
-    _private->contextMenuDelegateForwarder = nil;
-}
-
-- contextMenuDelegate
-{
-    return _private->contextMenuDelegate;
 }
 
 - (void)setPolicyDelegate:delegate

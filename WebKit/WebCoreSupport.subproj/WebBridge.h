@@ -9,7 +9,7 @@
 #import <WebCore/WebCoreBridge.h>
 
 #import <WebKit/WebDataSource.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>
 
 @interface WebBridge : WebCoreBridge <WebCoreBridge>
 {

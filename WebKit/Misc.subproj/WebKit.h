@@ -4,7 +4,6 @@
 */
 
 #import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
@@ -19,4 +18,4 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanels.h>
 #import <WebKit/WebView.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>

@@ -7,7 +7,7 @@
 
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSource.h>
-#import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h> 
 #import <WebKit/WebFrameView.h>
@@ -18,7 +18,7 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
@@ -1135,14 +1135,14 @@ typedef struct {
     if (frame == nil) {
 	WebView *newController = nil;
 	WebView *currentController = [self controller];
-	id wd = [currentController windowOperationsDelegate];
+	id wd = [currentController UIDelegate];
 	if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
 	    newController = [wd webView:currentController createWindowWithRequest:nil];
 	else
-	    newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:currentController createWindowWithRequest:nil];
+	    newController = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWindowWithRequest:nil];
         
 	[newController _setTopLevelFrameName:frameName];
-	[[newController _windowOperationsDelegateForwarder] webViewShowWindow:newController];
+	[[newController _UIDelegateForwarder] webViewShowWindow:newController];
 	frame = [newController mainFrame];
     }
 
@@ -1361,7 +1361,7 @@ typedef struct {
     NSString *status = (NSString *)CFStringCreateWithCString(NULL, message, kCFStringEncodingWindowsLatin1);
     LOG(Plugins, "NPN_Status: %@", status);
     WebView *wv = [self controller];
-    [[wv _windowOperationsDelegateForwarder] webView:wv setStatusText:status];
+    [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
     [status release];
 }
 

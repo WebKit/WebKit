@@ -6,32 +6,37 @@
 
 #import <WebFoundation/NSURLRequest.h>
 
-#import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebView.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
 
-@implementation WebDefaultWindowOperationsDelegate
+@implementation WebDefaultUIDelegate
 
-static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
+static WebDefaultUIDelegate *sharedDelegate = nil;
 
 // Return a object with vanilla implementations of the protocol's methods
 // Note this feature relies on our default delegate being stateless.  This
-// is probably an invalid assumption for the WebWindowOperationsDelegate.
+// is probably an invalid assumption for the WebUIDelegate.
 // If we add any real functionality to this default delegate we probably
 // won't be able to use a singleton.
-+ (WebDefaultWindowOperationsDelegate *)sharedWindowOperationsDelegate
++ (WebDefaultUIDelegate *)sharedUIDelegate
 {
     if (!sharedDelegate) {
-        sharedDelegate = [[WebDefaultWindowOperationsDelegate alloc] init];
+        sharedDelegate = [[WebDefaultUIDelegate alloc] init];
     }
     return sharedDelegate;
 }
 
+- (void)dealloc
+{
+    [element release];
+    [super dealloc];
+}
 
 - (WebView *)webView: (WebView *)wv createWindowWithRequest:(NSURLRequest *)request
 {

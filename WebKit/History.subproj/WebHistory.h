@@ -56,6 +56,7 @@ extern NSString *WebHistoryItemsKey;
 /*!
     @method loadFromURL:error:
     @param URL The URL to use to initialize the WebHistory.
+    @param error Set to nil or an NSError instance if an error occurred.
     @abstract The designated initializer for WebHistory.
     @result Returns an initialized WebHistory.
 */
@@ -64,6 +65,8 @@ extern NSString *WebHistoryItemsKey;
 /*!
     @method saveToURL:error:
     @discussion Save history to URL. It is the client's responsibility to call this at appropriate times.
+    @param URL The URL to use to save the WebHistory.
+    @param error Set to nil or an NSError instance if an error occurred.
     @result Returns YES if successful, NO otherwise.
 */
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error;

@@ -23,7 +23,6 @@
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewFactory.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>

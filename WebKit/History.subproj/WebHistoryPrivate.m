@@ -351,13 +351,14 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     int index;
     int limit;
     NSCalendarDate *ageLimitDate;
-    NSDictionary *fileAsDictionary;
+    NSDictionary *fileAsDictionary = nil;
     BOOL ageLimitPassed;
 
     *numberOfItemsLoaded = 0;
 
     NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:URL] returningResponse:nil error:error];
-    fileAsDictionary = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:NSPropertyListImmutable format:nil errorDescription:nil];
+    if (data && [data length] > 0)
+        fileAsDictionary = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:NSPropertyListImmutable format:nil errorDescription:nil];
     if (fileAsDictionary == nil) {
         // Couldn't read a dictionary; let's see if we can read an old-style array instead
         NSArray *fileAsArray = [NSArray arrayWithContentsOfURL:URL];

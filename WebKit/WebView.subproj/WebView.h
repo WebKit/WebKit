@@ -19,7 +19,7 @@
 
 
 // These strings are keys into the element dictionary provided in
-// the WebContextMenuDelegate's contextMenuItemsForElement and the WebControllerPolicyDelegate's clickPolicyForElement.
+// the WebContextMenuDelegate's contextMenuItemsForElement and the WebwebViewPolicyDelegate's clickPolicyForElement.
 
 extern NSString *WebElementFrameKey;		// WebFrame of the element
 extern NSString *WebElementImageAltStringKey;	// NSString of the ALT attribute of the image element
@@ -50,21 +50,17 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     [mainFrame loadRequest:request];
     </pre>
     
-    WebViews have the following delegates:  WebWindowOperationsDelegate,
-    WebResourceLoadDelegate, WebContextMenuDelegate, WebLocationChangeDelegate,
-    and WebPolicyDelegate.
+    WebViews have the following delegates:  WebUIDelegate, WebResourceLoadDelegate,
+    WebFrameLoadDelegate, and WebPolicyDelegate.
     
-    WebKit depends on the WebView's WebWindowOperationsDelegate for all window
+    WebKit depends on the WebView's WebUIDelegate for all window
     related management, including opening new windows and controlling the user interface
     elements in those windows.
     
     WebResourceLoadDelegate is used to monitor the progress of resources as they are
     loaded.  This delegate may be used to present users with a progress monitor.
     
-    WebView's WebContextMenuDelegate can customize the context menus that appear
-    over content managed by the WebKit.
-    
-    The WebLocationChangeDelegate receives messages when the URL in a WebFrame is
+    The WebFrameLoadDelegate receives messages when the URL in a WebFrame is
     changed.
     
     WebView's WebPolicyDelegate can make determinations about how
@@ -93,41 +89,41 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     way that still ends up creating a new WebView.
     @param frame The frame used to create the view.
     @param frameName The name to use for the top level frame. May be nil.
-    @param groupName The name of the controller set to which this controller will be added.  May be nil.
+    @param groupName The name of the webView set to which this webView will be added.  May be nil.
     @result Returns an initialized WebView.
 */
 - initWithFrame: (NSRect)frame frameName: (NSString *)frameName groupName: (NSString *)groupName;
 
 /*!
-    @method setWindowOperationsDelegate:
-    @abstract Set the controller's WebWindowOperationsDelegate.
-    @param delegate The WebWindowOperationsDelegate to set as the delegate.
+    @method setUIDelegate:
+    @abstract Set the WebView's WebUIDelegate.
+    @param delegate The WebUIDelegate to set as the delegate.
 */    
-- (void)setWindowOperationsDelegate: (id)delegate;
+- (void)setUIDelegate: (id)delegate;
 
 /*!
-    @method windowOperationsDelegate
-    @abstract Return the controller's WebWindowOperationsDelegate.
-    @result The controller's WebWindowOperationsDelegate.
+    @method UIDelegate
+    @abstract Return the WebView's WebUIDelegate.
+    @result The WebView's WebUIDelegate.
 */
-- (id)windowOperationsDelegate;
+- (id)UIDelegate;
 
 /*!
     @method setResourceLoadDelegate:
-    @abstract Set the controller's WebResourceLoadDelegate load delegate.
+    @abstract Set the WebView's WebResourceLoadDelegate load delegate.
     @param delegate The WebResourceLoadDelegate to set as the load delegate.
 */
 - (void)setResourceLoadDelegate: (id)delegate;
 
 /*!
     @method resourceLoadDelegate
-    @result Return the controller's WebResourceLoadDelegate.
+    @result Return the WebView's WebResourceLoadDelegate.
 */    
 - (id)resourceLoadDelegate;
 
 /*!
     @method setDownloadDelegate:
-    @abstract Set the controller's WebDownloadDelegate.
+    @abstract Set the WebView's WebDownloadDelegate.
     @discussion The download delegate is retained by WebDownload when any downloads are in progress.
     @param delegate The WebDownloadDelegate to set as the download delegate.
 */    
@@ -135,50 +131,36 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method downloadDelegate
-    @abstract Return the controller's WebDownloadDelegate.
-    @result The controller's WebDownloadDelegate.
+    @abstract Return the WebView's WebDownloadDelegate.
+    @result The WebView's WebDownloadDelegate.
 */    
 - (id)downloadDelegate;
 
 /*!
-    @method setContextMenuDelegate:
-    @abstract Set the controller's WebContextMenuDelegate.
-    @param delegate The WebContextMenuDelegate to set as the delegate.
-*/    
-- (void)setContextMenuDelegate: (id)delegate;
-
-/*!
-    @method contextMenuDelegate
-    @abstract Return the controller's WebContextMenuDelegate.
-    @result The controller's WebContextMenuDelegate.
-*/    
-- (id)contextMenuDelegate;
-
-/*!
     @method setLocationChangeDelegate:
-    @abstract Set the controller's WebLocationChangeDelegate delegate.
+    @abstract Set the WebView's WebLocationChangeDelegate delegate.
     @param delegate The WebLocationChangeDelegate to set as the delegate.
 */    
 - (void)setLocationChangeDelegate: (id)delegate;
 
 /*!
     @method locationChangeDelegate
-    @abstract Return the controller's WebLocationChangeDelegate delegate.
-    @result The controller's WebLocationChangeDelegate delegate.
+    @abstract Return the WebView's WebLocationChangeDelegate delegate.
+    @result The WebView's WebLocationChangeDelegate delegate.
 */    
 - (id)locationChangeDelegate;
 
 /*!
     @method setPolicyDelegate:
-    @abstract Set the controller's WebPolicyDelegate delegate.
+    @abstract Set the WebView's WebPolicyDelegate delegate.
     @param delegate The WebPolicyDelegate to set as the delegate.
 */    
 - (void)setPolicyDelegate: (id)delegate;
 
 /*!
     @method policyDelegate
-    @abstract Return the controller's WebPolicyDelegate.
-    @result The controller's WebPolicyDelegate.
+    @abstract Return the WebView's WebPolicyDelegate.
+    @result The WebView's WebPolicyDelegate.
 */    
 - (id)policyDelegate;
 
@@ -193,13 +175,13 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method backForwardList
-    @result The backforward list for this controller.
+    @result The backforward list for this webView.
 */    
 - (WebBackForwardList *)backForwardList;
 
 /*!
     @method setUseBackForwardList:
-    @abstract Enable or disable the use of a backforward list for this controller.
+    @abstract Enable or disable the use of a backforward list for this webView.
     @param flag Turns use of the back forward list on or off
 */    
 - (void)setMaintainsBackForwardList: (BOOL)flag;
@@ -227,7 +209,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method setTextSizeMultiplier:
-    @abstract Change the size of the text rendering in views managed by this controller.
+    @abstract Change the size of the text rendering in views managed by this webView.
     @param multiplier A fractional percentage value, 1.0 is 100%.
 */    
 - (void)setTextSizeMultiplier:(float)multiplier;
@@ -256,9 +238,9 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 /*!
     @method setCustomUserAgent:
     @abstract Set the user agent. 
-    @discussion Setting this means that the controller should use this user-agent string
+    @discussion Setting this means that the webView should use this user-agent string
     instead of constructing a user-agent string for each URL. Setting it to nil
-    causes the controller to construct the user-agent string for each URL
+    causes the webView to construct the user-agent string for each URL
     for best results rendering web pages.
     @param userAgentString The user agent description
 */
@@ -294,7 +276,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     what's specified in a web page's header or HTTP response.
     The text encoding automatically goes back to the default when the top level frame
     changes to a new location.
-    Setting the text encoding name to nil makes the controller use default encoding rules.
+    Setting the text encoding name to nil makes the webView use default encoding rules.
     @param encoding The text encoding name to use to display a page or nil.
 */
 - (void)setCustomTextEncodingName:(NSString *)encodingName;
@@ -314,14 +296,14 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method setPreferences:
-    @param preferences The preferences to use for the controller.
-    @abstract Override the standard setting for the controller. 
+    @param preferences The preferences to use for the webView.
+    @abstract Override the standard setting for the webView. 
 */
 - (void)setPreferences: (WebPreferences *)prefs;
 
 /*!
     @method preferences
-    @result Returns the preferences used by this controller.
+    @result Returns the preferences used by this webView.
     @discussion This method will return [WebPreferences standardPreferences] if no
     other instance of WebPreferences has been set.
 */

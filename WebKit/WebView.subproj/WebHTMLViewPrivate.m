@@ -14,7 +14,6 @@
 #import <WebCore/WebCoreFirstResponderChanges.h>
 
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
@@ -28,8 +27,8 @@
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebStringTruncator.h>
+#import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
 
 // Imported for direct call to class_poseAs.  Should be removed
 // if we ever drop posing hacks.

@@ -4,14 +4,12 @@
 */
 
 #import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebDefaultLocationChangeDelegate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFramePrivate.h>
@@ -23,7 +21,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebUIDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
 
@@ -40,7 +38,6 @@
 - init 
 {
     backForwardList = [[WebBackForwardList alloc] init];
-    defaultContextMenuDelegate = [[WebDefaultContextMenuDelegate alloc] init];
     textSizeMultiplier = 1;
 
     settings = [[WebCoreSettings alloc] init];
@@ -73,7 +70,6 @@
     [mainFrame _controllerWillBeDeallocated];
     
     [mainFrame release];
-    [defaultContextMenuDelegate release];
     [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
@@ -89,9 +85,8 @@
     [hostWindow release];
     
     [policyDelegateForwarder release];
-    [contextMenuDelegateForwarder release];
     [resourceProgressDelegateForwarder release];
-    [windowOperationsDelegateForwarder release];
+    [UIDelegateForwarder release];
     [locationChangeDelegateForwarder release];
     
     [super dealloc];
@@ -294,29 +289,29 @@
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
-    id wd = [self windowOperationsDelegate];
+    id wd = [self UIDelegate];
     WebView *newWindowController = nil;
     if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
         newWindowController = [wd webView:self createWindowWithRequest:request];
     else {
-        newWindowController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:self createWindowWithRequest: request];
+        newWindowController = [[WebDefaultUIDelegate sharedUIDelegate] webView:self createWindowWithRequest: request];
     }
 
-    [[newWindowController _windowOperationsDelegateForwarder] webViewShowWindow: self];
+    [[newWindowController _UIDelegateForwarder] webViewShowWindow: self];
 
     return newWindowController;
 }
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element
 {
-    NSArray *defaultMenuItems = [_private->defaultContextMenuDelegate
+    NSArray *defaultMenuItems = [[WebDefaultUIDelegate sharedUIDelegate]
           webView:self contextMenuItemsForElement:element defaultMenuItems:nil];
     NSArray *menuItems = defaultMenuItems;
     NSMenu *menu = nil;
     unsigned i;
 
-    if (_private->contextMenuDelegate) {
-        id cd = _private->contextMenuDelegate;
+    if (_private->UIDelegate) {
+        id cd = _private->UIDelegate;
         
         if ([cd respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
             menuItems = [cd webView:self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
@@ -340,7 +335,7 @@
     // for that case.
     
     if (dictionary && _private->lastElementWasNonNil) {
-        [[self _windowOperationsDelegateForwarder] webView:self mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
+        [[self _UIDelegateForwarder] webView:self mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
     }
     _private->lastElementWasNonNil = dictionary != nil;
 }
@@ -500,18 +495,11 @@
     return _private->policyDelegateForwarder;
 }
 
-- _contextMenuDelegateForwarder
+- _UIDelegateForwarder
 {
-    if (!_private->contextMenuDelegateForwarder)
-        _private->contextMenuDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self contextMenuDelegate] defaultTarget: [WebDefaultContextMenuDelegate sharedContextMenuDelegate] templateClass: [WebDefaultContextMenuDelegate class]];
-    return _private->contextMenuDelegateForwarder;
-}
-
-- _windowOperationsDelegateForwarder
-{
-    if (!_private->windowOperationsDelegateForwarder)
-        _private->windowOperationsDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self windowOperationsDelegate] defaultTarget: [WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] templateClass: [WebDefaultWindowOperationsDelegate class]];
-    return _private->windowOperationsDelegateForwarder;
+    if (!_private->UIDelegateForwarder)
+        _private->UIDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self UIDelegate] defaultTarget: [WebDefaultUIDelegate sharedUIDelegate] templateClass: [WebDefaultUIDelegate class]];
+    return _private->UIDelegateForwarder;
 }
 
 
