@@ -136,7 +136,11 @@
     }
     
     NSString *filename = [[URL path] lastPathComponent];
-    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
+    if ([filename length] == 0 || [filename isEqualToString:@"."] || [filename isEqualToString:@".."]) {
+        return;
+    }
+    
+    if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         // FIXME: Need to use something like mkstemp?
         path = [[NSString stringWithFormat:@"/tmp/%@", filename] retain];        
         NSFileManager *fileManager = [NSFileManager defaultManager];

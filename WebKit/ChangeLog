@@ -1,3 +1,13 @@
+2003-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+        
+        - fixed 3143332 -- if path returned is empty string (or "." or "..") it will trash the /tmp symlink
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+        Check for empty string, ".", and "..", and don't create files by those names.
+
 2003-01-09  Trey Matteson  <trey@apple.com>
 
 	3143294 - need short-term bulletproofing of download code against bad filenames
