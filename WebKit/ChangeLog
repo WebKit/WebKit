@@ -1,3 +1,7 @@
+2002-10-24  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2002-10-24  Chris Blumenberg  <cblu@apple.com>
 
 	Changed some method names in WebPluginController.
