@@ -32,6 +32,7 @@ namespace khtml {
     class CachedObject;
     
     enum WidthType { Width, MinWidth, MaxWidth };
+    enum HeightType { Height, MinHeight, MaxHeight };
     
 class RenderBox : public RenderContainer
 {
@@ -101,11 +102,14 @@ public:
     virtual void calcHeight();
 
     int calcWidthUsing(WidthType widthType, int cw, LengthType& lengthType);
+    int calcReplacedWidthUsing(WidthType widthType) const;
+    int calcReplacedHeightUsing(HeightType heightType) const;
     
     virtual short calcReplacedWidth() const;
     virtual int   calcReplacedHeight() const;
 
     virtual int availableHeight() const;
+    int availableHeightUsing(const Length& h) const;
     
     void calcVerticalMargins();
 

@@ -930,9 +930,30 @@ void RenderBox::calcHeight()
 
 short RenderBox::calcReplacedWidth() const
 {
-   Length w = style()->width();
+    int width = calcReplacedWidthUsing(Width);
+    int minW = calcReplacedWidthUsing(MinWidth);
+    int maxW = style()->maxWidth().value == UNDEFINED ? width : calcReplacedWidthUsing(MaxWidth);
 
-   switch( w.type ) {
+    if (width > maxW)
+        width = maxW;
+    
+    if (width < minW)
+        width = minW;
+
+    return width;
+}
+
+int RenderBox::calcReplacedWidthUsing(WidthType widthType) const
+{
+    Length w;
+    if (widthType == Width)
+        w = style()->width();
+    else if (widthType == MinWidth)
+        w = style()->minWidth();
+    else
+        w = style()->maxWidth();
+    
+    switch (w.type) {
     case Fixed:
         return w.value;
     case Percent:
@@ -951,12 +972,31 @@ short RenderBox::calcReplacedWidth() const
 
 int RenderBox::calcReplacedHeight() const
 {
-    const Length& h = style()->height();
+    int height = calcReplacedHeightUsing(Height);
+    int minH = calcReplacedHeightUsing(MinHeight);
+    int maxH = style()->maxHeight().value == UNDEFINED ? height : calcReplacedHeightUsing(MaxHeight);
+
+    if (height > maxH)
+        height = maxH;
+
+    if (height < minH)
+        height = minH;
+
+    return height;
+}
+
+int RenderBox::calcReplacedHeightUsing(HeightType heightType) const
+{
+    Length h;
+    if (heightType == Height)
+        h = style()->height();
+    else if (heightType == MinHeight)
+        h = style()->minHeight();
+    else
+        h = style()->maxHeight();
     switch( h.type ) {
-    case Percent: {
-        int ah = availableHeight();
-        return ah;
-    }
+    case Percent:
+        return availableHeightUsing(h);
     case Fixed:
         return h.value;
     default:
@@ -966,8 +1006,11 @@ int RenderBox::calcReplacedHeight() const
 
 int RenderBox::availableHeight() const
 {
-    Length h = style()->height();
+    return availableHeightUsing(style()->height());
+}
 
+int RenderBox::availableHeightUsing(const Length& h) const
+{
     if (h.isFixed())
         return h.value;
 
