@@ -1,3 +1,33 @@
+2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
+
+        More back/forward word.  Support for restoring scroll position.
+        We still have a big remaining issue.  We don't record the entire
+        frame tree in back/forward items.  This means going back or forward
+        to a frame will looose the context of the containing frameset,
+        see 3014555.
+        
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList currentEntry]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem anchor]):
+        (-[WebHistoryItem setAnchor:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportError:]):
+        * WebView.subproj/WebController.m:
+        (-[WebController _goToItem:withFrameLoadType:]):
+        (-[WebController goBack]):
+        (-[WebController goForward]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame _goToItem:withFrameLoadType:]):
+        (-[WebFrame _restoreScrollPosition]):
+        (-[WebFrame _scrollToTop]):
+
 2002-08-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

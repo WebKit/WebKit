@@ -156,6 +156,19 @@
     return [_url hash];
 }
 
+- (NSString *)anchor
+{
+    return anchor;
+}
+
+- (void)setAnchor: (NSString *)a
+{
+    [a retain];
+    [anchor release];
+    anchor = a;
+}
+
+
 -(BOOL)isEqual:(id)anObject
 {
     BOOL result;

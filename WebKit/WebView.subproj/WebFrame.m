@@ -7,16 +7,20 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WebHTMLRepresentationPrivate.h>
-#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHTMLRepresentationPrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitDebug.h>
+#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebViewPrivate.h>
+
+#import <WebFoundation/WebNSURLExtras.h>
 
 @implementation WebFrame
 
@@ -124,6 +128,17 @@
     // KDE drop we should fix this dependency.
     WEBKIT_ASSERT ([self webView] != nil);
 
+    // Record the current scroll position if this frame is associated with the
+    // current entry in the back/forward list.
+    {
+        WebHistoryItem *entry;
+    
+        entry = (WebHistoryItem *)[[[self controller] backForwardList] currentEntry];
+        if ([[[entry url] _web_URLWithoutFragment] isEqual: [[[self dataSource] inputURL] _web_URLWithoutFragment]]){
+            NSPoint point = [[[[self webView] documentView] superview] bounds].origin;
+            [entry setScrollPoint: point];
+        }
+    }
     if ([self _state] != WebFrameStateComplete){
         [self stopLoading];
     }

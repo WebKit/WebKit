@@ -265,6 +265,8 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     if (refLess.url() == part->m_url.url()){
         part->m_url = clickedURL;
         part->gotoAnchor (clickedURL.ref());
+        // This URL needs to be added to the back/forward list.
+        [bridge addBackForwardItemWithURL: clickedURL.getNSURL() anchor:clickedURL.ref().getNSString()];
         return;
     }
     

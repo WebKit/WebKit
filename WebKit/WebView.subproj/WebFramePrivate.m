@@ -23,6 +23,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFoundation.h>
 
 static const char * const stateNames[6] = {
@@ -260,16 +261,16 @@ static const char * const stateNames[6] = {
                 switch ([self _loadType]) {
                 case WebFrameLoadTypeForward:
                     [backForwardList goForward];
-                    // restore scroll position.
+                    [self _restoreScrollPosition];
                     break;
     
                 case WebFrameLoadTypeBack:
                     [backForwardList goBack];
-                    // restore scroll position.
+                    [self _restoreScrollPosition];
                     break;
                     
                 case WebFrameLoadTypeRefresh:
-                    // restore scroll position.
+                    [self _scrollToTop];
                     break;
     
                 case WebFrameLoadTypeStandard:
@@ -437,6 +438,39 @@ static const char * const stateNames[6] = {
 
                 // Jump to anchor point, if necessary.
                 [[ds _bridge] scrollToBaseAnchor];
+
+                // If the user had a scroll point scroll to it.  This will override
+                // the anchor point.  After much discussion it was decided by folks
+                // that the user scroll point should override the anchor point.
+                if ([[self controller] useBackForwardList]){
+                    switch ([self _loadType]) {
+                    case WebFrameLoadTypeForward:
+                        [self _restoreScrollPosition];
+                        break;
+        
+                    case WebFrameLoadTypeBack:
+                        [self _restoreScrollPosition];
+                        break;
+                        
+                    case WebFrameLoadTypeRefresh:
+                        [self _scrollToTop];
+                        break;
+        
+                    case WebFrameLoadTypeStandard:
+                    case WebFrameLoadTypeInternal:
+                        // Do nothing.
+                        break;
+                        
+                    // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
+                    // if we're in the WebFrameLoadTypeUninitialized state.
+                    case WebFrameLoadTypeUninitialized:
+                        break;
+                        
+                    default:
+                        [[NSException exceptionWithName:NSGenericException reason:@"invalid load type during commit transition" userInfo: nil] raise];
+                        break;
+                    }
+                }
 
                 [[[self controller] locationChangeHandler] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
  
@@ -625,13 +659,48 @@ static const char * const stateNames[6] = {
 }
 
 
-- (void)_goToURL: (NSURL *)url withFrameLoadType: (WebFrameLoadType)type
+- (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type
 {
-    WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:url];
-    [self setProvisionalDataSource: dataSource];
-    [self _setLoadType: type];
-    [self startLoading];
-    [dataSource release];
+    NSURL *itemURL = [item url];
+    WebDataSource *dataSource;
+    NSURL *inputURL = [[self dataSource] inputURL];
+    
+    if ([item anchor] && [[itemURL _web_URLWithoutFragment] isEqual: [inputURL _web_URLWithoutFragment]]){
+        WebBackForwardList *backForwardList = [[self controller] backForwardList];
+
+        if (type == WebFrameLoadTypeForward)
+            [backForwardList goForward];
+        else if (type == WebFrameLoadTypeBack)
+            [backForwardList goBack];
+        else 
+            [NSException raise:NSInvalidArgumentException format:@"WebFrameLoadType incorrect"];
+        [[_private->dataSource _bridge] gotoAnchor: [item anchor]];
+    }
+    else {
+        dataSource = [[WebDataSource alloc] initWithURL:itemURL];
+        [self setProvisionalDataSource: dataSource];
+        [self _setLoadType: type];
+        [self startLoading];
+        [dataSource release];
+    }
 }
+
+- (void)_restoreScrollPosition
+{
+    WebHistoryItem *entry;
+
+    entry = (WebHistoryItem *)[[[self controller] backForwardList] currentEntry];
+    [[[self webView] documentView] scrollPoint: [entry scrollPoint]];
+}
+
+- (void)_scrollToTop
+{
+    NSPoint origin;
+
+    origin.x = origin.y = 0.0;
+    [[[self webView] documentView] scrollPoint: origin];
+}
+
+
 
 @end

@@ -1,20 +1,22 @@
 /*	
     WebBridge.mm
-	Copyright (c) 2002, Apple, Inc. All rights reserved.
+    Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebBridge.h>
 
-#import <WebKit/WebHTMLRepresentationPrivate.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebSubresourceClient.h>
+#import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebLoadProgress.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHTMLRepresentationPrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebLoadProgress.h>
+#import <WebKit/WebSubresourceClient.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebResourceHandle.h>
 
@@ -304,6 +306,16 @@
                      forResourceHandle:nil
                        partialProgress:nil
                         fromDataSource:[self dataSource]];
+}
+
+- (void)addBackForwardItemWithURL: (NSURL *)url anchor: (NSString *)anchor;
+{
+    WebHistoryItem *backForwardItem;
+
+    backForwardItem = [[WebHistoryItem alloc] initWithURL:url target: [frame name] title:[[frame dataSource] pageTitle] image: nil];
+    [backForwardItem setAnchor: anchor];
+    [[[frame controller] backForwardList] addEntry: backForwardItem];
+    [backForwardItem release];
 }
 
 @end

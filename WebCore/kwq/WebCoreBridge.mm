@@ -132,6 +132,11 @@ using namespace khtml;
     part->impl->gotoBaseAnchor();
 }
 
+- (void)gotoAnchor: (NSString *)a
+{
+    part->gotoAnchor(QString::fromCFString((CFStringRef)a));
+}
+
 - (NSString *)selectedText
 {
     return [[part->selectedText().getNSString() copy] autorelease];

@@ -1,3 +1,14 @@
+2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
+
+        Added method to allow WebKit to direct khtml to
+        goto to an anchor point.  Need for back/forward.
+        
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::urlSelected):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge gotoAnchor:]):
+
 2002-08-01  Ken Kocienda  <kocienda@apple.com>
 
 	Tweaked WebCore cache settings. The WebCore cache will now grow

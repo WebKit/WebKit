@@ -1,7 +1,7 @@
 /*	
         WebFramePrivate.h
 	    
-	    Copyright 2001, Apple, Inc. All rights reserved.
+        Copyright 2001, Apple, Inc. All rights reserved.
 
         Private header file.
 */
@@ -10,7 +10,9 @@
 
 @class WebBridge;
 @class WebFrameBridge;
+@class WebHistoryItem;
 @class WebView;
+
 @protocol WebDocumentLoading;
 
 typedef enum {
@@ -92,5 +94,7 @@ typedef enum {
 - (void)_setProvisionalDataSource:(WebDataSource *)d;
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
-- (void)_goToURL: (NSURL *)url withFrameLoadType: (WebFrameLoadType)type;
+- (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type;
+- (void)_restoreScrollPosition;
+- (void)_scrollToTop;
 @end

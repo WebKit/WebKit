@@ -308,15 +308,23 @@
     return _private->useBackForwardList;
 }
 
+- (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type
+{
+    WebFrame *targetFrame;
+    targetFrame = [self frameNamed: [item target]];
+    if (targetFrame == nil){
+        NSLog (@"Target frame not found, using main frame instead, will be fixed soon.\n");
+        targetFrame = [self mainFrame];
+    }
+    [targetFrame _goToItem: item withFrameLoadType: type];
+}
 
 - (BOOL)goBack
 {
     WebHistoryItem *item = [[self backForwardList] backEntry];
-    WebFrame *targetFrame;
     
     if (item){
-        targetFrame = [self frameNamed: [item target]];
-        [targetFrame _goToURL: [item url] withFrameLoadType: WebFrameLoadTypeBack];
+        [self _goToItem: item withFrameLoadType: WebFrameLoadTypeBack];
         return YES;
     }
     return NO;
@@ -325,11 +333,9 @@
 - (BOOL)goForward
 {
     WebHistoryItem *item = [[self backForwardList] forwardEntry];
-    WebFrame *targetFrame;
     
     if (item){
-        targetFrame = [self frameNamed: [item target]];
-        [targetFrame _goToURL: [item url] withFrameLoadType: WebFrameLoadTypeForward];
+        [self _goToItem: item withFrameLoadType: WebFrameLoadTypeForward];
         return YES;
     }
     return NO;

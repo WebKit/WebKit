@@ -70,6 +70,9 @@
 {
     WebHistoryItem *result;
     
+    if (index < 0 || index >= [uriList count])
+        return  nil;
+        
     result = [uriList entryAtIndex:index];
 
     return result;
