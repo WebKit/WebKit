@@ -1,5 +1,19 @@
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3784840> REGRESSION (Mail): Text is inserted in the wrong place after changing typing style
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputTextCommandImpl::prepareForTextInsertion): Code to handle typing style did not
+        check to see if the reference node used for the DOM node insertion operation was a block.
+        If it is, then the new node containing the new editing style now is inserted at the start of the block,
+        instead of after it.
+
+2004-09-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
         
         Added a couple new layout tests to cover recent changes.

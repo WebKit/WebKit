@@ -1544,7 +1544,10 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
             
             TextImpl *editingTextNode = document()->createEditingTextNode("");
             NodeImpl *node = endingSelection().start().upstream(StayInBlock).node();
-            insertNodeAfter(applyTypingStyle(editingTextNode), node);
+            if (node->isBlockFlow())
+                insertNodeAt(applyTypingStyle(editingTextNode), node, 0);
+            else
+                insertNodeAfter(applyTypingStyle(editingTextNode), node);
             pos = Position(editingTextNode, 0);
         }
     }
