@@ -20,6 +20,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 @implementation WebControllerPrivate
 
@@ -135,7 +136,7 @@
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
-    NSString *resourceIdentifier = [[resourceHandle originalURL] absoluteString];
+    NSString *resourceIdentifier = [[[resourceHandle request] URL] absoluteString];
     if (resourceIdentifier == nil) {
         resourceIdentifier = [error failingURL];
     }

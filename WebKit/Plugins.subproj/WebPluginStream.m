@@ -13,6 +13,7 @@
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 @interface WebNetscapePluginStream (ClassInternal)
 - (void)receivedData:(NSData *)data;
@@ -95,8 +96,10 @@
 
 - (void)startLoad
 {
-    resource = [[WebResourceHandle alloc] initWithClient:self URL:URL attributes:attributes flags:0];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:self URL:URL attributes:attributes flags:0];
+    resource = [[WebResourceHandle alloc] initWithRequest:request];
     [resource loadInBackground];
+    [request release];
 }
 
 - (void)stop

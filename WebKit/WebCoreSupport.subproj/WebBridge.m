@@ -20,6 +20,7 @@
 
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -186,11 +187,13 @@
 {
     WEBKIT_ASSERT(frame != nil);
 
-    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithClient:nil URL:URL];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:nil URL:URL];
+    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithRequest:request];
     WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
     [[frame controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource:[self dataSource] complete:YES];
     [loadProgress release];
     [handle release];
+    [request release];
 }
 
 - (BOOL)isReloading

@@ -10,6 +10,7 @@
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
 
@@ -60,8 +61,10 @@
     withURL:(NSURL *)URL dataSource:(WebDataSource *)source
 {
     WebSubresourceClient *client = [[self alloc] initWithLoader:rLoader dataSource:source];
-    WebResourceHandle *handle = [[[WebResourceHandle alloc] initWithClient:client URL:URL attributes:nil flags:[source flags]] autorelease];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:client URL:URL attributes:nil flags:[source flags]];
+    WebResourceHandle *handle = [[[WebResourceHandle alloc] initWithRequest:request] autorelease];
     [client release];
+    [request release];
 
     if (handle == nil) {
         [rLoader cancel];

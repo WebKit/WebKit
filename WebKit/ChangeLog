@@ -1,3 +1,26 @@
+2002-09-03  Ken Kocienda  <kocienda@apple.com>
+
+	Modify calls into WebFoundation to use the new WebResourceRequest class,
+	and the modified API that kicks off load requests using WebResourceHandle. 
+	More changes are planned for this code as the WebFoundation API modifications 
+	progress.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _iconForFileURL:withSize:])
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading])
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream startLoad])
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:size:])
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:dataSource:])
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _receivedError:forResourceHandle:partialProgress:fromDataSource:])
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:])
+
 2002-09-03  Darin Adler  <darin@apple.com>
 
 	Fix a reproducible crash pulling down the Go menu.

@@ -33,6 +33,7 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 #import <WebCore/WebCoreEncodings.h>
 
@@ -189,7 +190,9 @@
     // Fire this guy up.
     if (!_private->mainHandle) {
         _private->mainHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
-        _private->mainHandle = [[WebResourceHandle alloc] initWithClient:_private->mainHandleClient URL:_private->inputURL attributes:_private->attributes flags:_private->flags];
+        WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:_private->mainHandleClient URL:_private->inputURL attributes:_private->attributes flags:_private->flags];
+        _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:request];
+        [request release];
     }
     [_private->mainHandle loadInBackground];
 }

@@ -1563,16 +1563,19 @@
 			};
 		};
 		F528E3E9031E91AD01CA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebIconDatabase.h;
 			refType = 4;
 		};
 		F528E3EA031E91AD01CA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebIconDatabase.m;
 			refType = 4;
 		};
 		F528E3EB031E91AD01CA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebIconDatabasePrivate.h;
 			refType = 4;

@@ -14,6 +14,8 @@
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceLoadManager.h>
+#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 @interface WebIconLoaderPrivate : NSObject
 {
@@ -129,7 +131,9 @@
         return;
     }
     
-    _private->handle = [[WebResourceHandle alloc] initWithClient:self URL:_private->URL];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:self URL:_private->URL];
+    _private->handle = [[WebResourceHandle alloc] initWithRequest:request];
+    [request release];
     if (_private->handle) {
         [_private->handle loadInBackground];
     }
