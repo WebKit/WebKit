@@ -1,3 +1,22 @@
+2003-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+        
+        - fixed 3177139 -- REGRESSION: tiny buttons with no text on dbaron test page
+        
+        This is actually a shortcoming in XML support. The reason it seemed like a regression
+        is that this page was parsed as HTML before we had the XML support.
+        
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLHandler::startElement): As the HTML tokenizer/parser does, call init() on all DOM
+        tree elements before calling attach(). The KHTML guys want to get rid of init(), but until
+        they do, we need the same thing here as in the HTML version.
+        (XMLHandler::startCDATA): Ditto.
+        (XMLHandler::enterText): Ditto.
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::insertNode): Fix an obvious editing error that
+        would lead to a second attach.
+
 2003-02-25  David Hyatt  <hyatt@apple.com>
 
 	Revert one of my optimizations.  It was bogus.  You can't use
