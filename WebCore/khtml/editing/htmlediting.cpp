@@ -2034,9 +2034,9 @@ void InsertLineBreakCommand::doApply()
             if (hasTrailingBR) {
                 setEndingSelection(Position(next, 0));
             }
-            else {
+            else if (!document()->inStrictMode()) {
                 // Insert an "extra" BR at the end of the block. 
-                ElementImpl *extraBreakNode = document()->createHTMLElement("BR", exceptionCode);
+                ElementImpl *extraBreakNode = document()->createHTMLElement("br", exceptionCode);
                 ASSERT(exceptionCode == 0);
                 insertNodeAfter(extraBreakNode, nodeToInsert);
                 setEndingSelection(Position(extraBreakNode, 0));
@@ -3298,6 +3298,21 @@ void ReplaceSelectionCommand::doApply()
         completeHTMLReplacement(startPos, endPos);
     }
     else {
+        if (lastNodeInserted->id() == ID_BR && !document()->inStrictMode()) {
+            document()->updateLayout();
+            VisiblePosition pos(Position(lastNodeInserted, 0));
+            if (isLastVisiblePositionInBlock(pos)) {
+                NodeImpl *next = lastNodeInserted->traverseNextNode();
+                bool hasTrailingBR = next && next->id() == ID_BR && lastNodeInserted->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
+                if (!hasTrailingBR) {
+                    // Insert an "extra" BR at the end of the block. 
+                    int exceptionCode = 0;
+                    ElementImpl *extraBreakNode = document()->createHTMLElement("br", exceptionCode);
+                    ASSERT(exceptionCode == 0);
+                    insertNodeBefore(extraBreakNode, lastNodeInserted);
+                }
+            }
+        }
         completeHTMLReplacement(firstNodeInserted, lastNodeInserted);
     }
 }

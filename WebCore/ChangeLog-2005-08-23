@@ -1,3 +1,20 @@
+2004-12-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3786362> REGRESSION (Mail): pasted text loses one newline
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertLineBreakCommand::doApply): Added check for strict mode before adding an extra br element
+        at the end of a block. This is only necessary in quirks mode. Also, lower-case "br" used to make element.
+        (khtml::ReplaceSelectionCommand::doApply): If the replacement adds a br element as the last element
+        in a block and the document is in quirks mode, add an additional br to make the one in the 
+        replacement content show up. This turns out to be much the same logic as is done in InsertLineBreakCommand.
+        * layout-tests/editing/inserting/insert-3786362-fix-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-3786362-fix.html: Added.
+
 2004-12-02  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3841332> REGRESSION (125.9-167u): repro crash in -[KWQPageState invalidate] involving .Mac images
