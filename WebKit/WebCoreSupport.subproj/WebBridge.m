@@ -8,8 +8,10 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBasePluginPackage.h>
+#import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
@@ -114,26 +116,33 @@
 	[request setReferrer:[self referrer]];
     }
 
-    WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithRequest:request];
+    id wd = [[frame controller] windowOperationsDelegate];
+    WebController *newController = nil;
+    
+    if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
+        newController = [wd createWindowWithRequest:request];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
 }
 
 - (void)showWindow
 {
-    [[[frame controller] windowOperationsDelegate] showWindow];
+    [[[frame controller] _windowOperationsDelegateForwarder] showWindow];
 }
 
 - (BOOL)areToolbarsVisible
 {
     ASSERT(frame != nil);
-    return [[[frame controller] windowOperationsDelegate] areToolbarsVisible];
+    id wd = [[frame controller] windowOperationsDelegate];
+    if ([wd respondsToSelector: @selector(areToolbarsVisible)])
+        return [[[frame controller] windowOperationsDelegate] areToolbarsVisible];
+    return NO;
 }
 
 - (void)setToolbarsVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    [[[frame controller] windowOperationsDelegate] setToolbarsVisible:visible];
+    [[[frame controller] _windowOperationsDelegateForwarder] setToolbarsVisible:visible];
 }
 
 - (BOOL)areScrollbarsVisible
@@ -151,19 +160,22 @@
 - (BOOL)isStatusBarVisible
 {
     ASSERT(frame != nil);
-    return [[[frame controller] windowOperationsDelegate] isStatusBarVisible];
+    id wd = [[frame controller] windowOperationsDelegate];
+    if ([wd respondsToSelector: @selector(isStatusBarVisible)])
+        return [[[frame controller] windowOperationsDelegate] isStatusBarVisible];
+    return NO;
 }
 
 - (void)setStatusBarVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    [[[frame controller] windowOperationsDelegate] setStatusBarVisible:visible];
+    [[[frame controller] _windowOperationsDelegateForwarder] setStatusBarVisible:visible];
 }
 
 - (void)setWindowFrame:(NSRect)frameRect
 {
     ASSERT(frame != nil);
-    [[[frame controller] windowOperationsDelegate] setFrame:frameRect];
+    [[[frame controller] _windowOperationsDelegateForwarder] setFrame:frameRect];
 }
 
 - (NSWindow *)window
@@ -219,7 +231,7 @@
 - (void)setStatusText:(NSString *)status
 {
     ASSERT(frame != nil);
-    [[[frame controller] windowOperationsDelegate] setStatusText:status];
+    [[[frame controller] _windowOperationsDelegateForwarder] setStatusText:status];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
@@ -255,14 +267,18 @@
     ASSERT(response != nil);
 
     WebRequest *request = [[WebRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
-    id <WebResourceLoadDelegate> delegate = [[frame controller] resourceLoadDelegate];
+    id delegate = [[frame controller] resourceLoadDelegate];
+    id _delegate = [[frame controller] _resourceLoadDelegateForwarder];
     id identifier;
     
     // No chance for delegate to modify request, so we don't send a willSendRequest: message.
-    identifier = [delegate identifierForInitialRequest: request fromDataSource: [self dataSource]];
-    [delegate resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
-    [delegate resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
-    [delegate resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
+    if ([delegate respondsToSelector:@selector(identifierForInitialRequest:fromDataSource:)])
+        identifier = [delegate identifierForInitialRequest: request fromDataSource: [self dataSource]];
+    else
+        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] identifierForInitialRequest:request fromDataSource:[self dataSource]];
+    [_delegate resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
+    [_delegate resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+    [_delegate resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
     
     [[frame controller] _finishedLoadingResourceFromDataSource:[self dataSource]];
     [request release];
@@ -283,7 +299,7 @@
     [frame _clientRedirectCancelled];
 }
 
-- (void)setFrame:(WebFrame *)webFrame
+- (void)setWebFrame:(WebFrame *)webFrame
 {
     ASSERT(webFrame != nil);
 

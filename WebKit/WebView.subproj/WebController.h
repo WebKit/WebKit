@@ -19,12 +19,6 @@
 @class WebPreferences;
 @class WebView;
 
-@protocol WebContextMenuDelegate;
-@protocol WebControllerPolicyDelegate;
-@protocol WebLocationChangeDelegate;
-@protocol WebResourceLoadDelegate;
-@protocol WebWindowOperationsDelegate;
-
 // These strings are keys into the element dictionary provided in
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebControllerPolicyDelegate's clickPolicyForElement.
 
@@ -115,83 +109,83 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @abstract Set the controller's WebWindowOperationsDelegate.
     @param delegate The WebWindowOperationsDelegate to set as the delegate.
 */    
-- (void)setWindowOperationsDelegate: (id<WebWindowOperationsDelegate>)delegate;
+- (void)setWindowOperationsDelegate: (id)delegate;
 
 /*!
     @method windowOperationsDelegate
     @abstract Return the controller's WebWindowOperationsDelegate.
     @result The controller's WebWindowOperationsDelegate.
 */
-- (id<WebWindowOperationsDelegate>)windowOperationsDelegate;
+- (id)windowOperationsDelegate;
 
 /*!
     @method setResourceLoadDelegate:
     @abstract Set the controller's WebResourceLoadDelegate load delegate.
     @param delegate The WebResourceLoadDelegate to set as the load delegate.
 */
-- (void)setResourceLoadDelegate: (id<WebResourceLoadDelegate>)delegate;
+- (void)setResourceLoadDelegate: (id)delegate;
 
 /*!
     @method resourceLoadDelegate
     @result Return the controller's WebResourceLoadDelegate.
 */    
-- (id<WebResourceLoadDelegate>)resourceLoadDelegate;
+- (id)resourceLoadDelegate;
 
 /*!
     @method setDownloadDelegate:
     @abstract Set the controller's WebResourceLoadDelegate download delegate.
     @param delegate The WebResourceLoadDelegate to set as the download delegate.
 */    
-- (void)setDownloadDelegate: (id<WebResourceLoadDelegate>)delegate;
+- (void)setDownloadDelegate: (id)delegate;
 
 /*!
     @method downloadDelegate
     @abstract Return the controller's WebResourceLoadDelegate download delegate.
     @result The controller's WebResourceLoadDelegate download delegate.
 */    
-- (id<WebResourceLoadDelegate>)downloadDelegate;
+- (id)downloadDelegate;
 
 /*!
     @method setContextMenuDelegate:
     @abstract Set the controller's WebContextMenuDelegate.
     @param delegate The WebContextMenuDelegate to set as the delegate.
 */    
-- (void)setContextMenuDelegate: (id<WebContextMenuDelegate>)delegate;
+- (void)setContextMenuDelegate: (id)delegate;
 
 /*!
     @method contextMenuDelegate
     @abstract Return the controller's WebContextMenuDelegate.
     @result The controller's WebContextMenuDelegate.
 */    
-- (id<WebContextMenuDelegate>)contextMenuDelegate;
+- (id)contextMenuDelegate;
 
 /*!
     @method setLocationChangeDelegate:
     @abstract Set the controller's WebLocationChangeDelegate delegate.
     @param delegate The WebLocationChangeDelegate to set as the delegate.
 */    
-- (void)setLocationChangeDelegate:(id <WebLocationChangeDelegate>)delegate;
+- (void)setLocationChangeDelegate: (id)delegate;
 
 /*!
     @method locationChangeDelegate
     @abstract Return the controller's WebLocationChangeDelegate delegate.
     @result The controller's WebLocationChangeDelegate delegate.
 */    
-- (id <WebLocationChangeDelegate>)locationChangeDelegate;
+- (id)locationChangeDelegate;
 
 /*!
     @method setPolicyDelegate:
     @abstract Set the controller's WebControllerPolicyDelegate delegate.
     @param delegate The WebControllerPolicyDelegate to set as the delegate.
 */    
-- (void)setPolicyDelegate: (id<WebControllerPolicyDelegate>)delegate;
+- (void)setPolicyDelegate: (id)delegate;
 
 /*!
     @method policyDelegate
     @abstract Return the controller's WebControllerPolicyDelegate.
     @result The controller's WebControllerPolicyDelegate.
 */    
-- (id<WebControllerPolicyDelegate>)policyDelegate;
+- (id)policyDelegate;
 
 /*!
     @method mainFrame

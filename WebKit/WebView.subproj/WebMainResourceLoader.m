@@ -7,11 +7,11 @@
 
 #import <WebFoundation/WebCookieConstants.h>
 #import <WebFoundation/WebError.h>
+#import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/WebRequest.h>
-#import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebMutableResponse.h>
 
@@ -19,6 +19,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFrame.h>
@@ -114,7 +115,7 @@
     // is cleared so the delegate will get false if they ask the frame if it's loading.
     // There's probably a better way to do this, but this should do for now.
     if (keepLoading) {
-        [[[dataSource controller] locationChangeDelegate]
+        [[[dataSource controller] _locationChangeDelegateForwarder]
             locationChangeDone:interruptError forDataSource:dataSource];
     }
 	
@@ -187,7 +188,10 @@
             if (directory != nil && [directory isAbsolutePath]) {
                 path = [directory stringByAppendingPathComponent:[r suggestedFilenameForSaving]];
             } else {
-                path = [[[dataSource controller] policyDelegate] savePathForResponse:r andRequest:req];
+                id pd = [[dataSource controller] policyDelegate];
+                
+                if ([pd respondsToSelector: @selector(savePathForResponse:andRequest:)])
+                    path = [pd savePathForResponse:r andRequest:req];
                 // FIXME: Maybe there a cleaner way handle the bad filename case?
                 if (path == nil || ![path isAbsolutePath]) {
                     ERROR("Nil or non-absolute path returned from savePathForResponse:andRequest:.");
@@ -251,8 +255,15 @@
 
 -(void)checkContentPolicyForResponse:(WebResponse *)r andCallSelector:(SEL)selector
 {
-    WebPolicyAction contentPolicy = 
-	[[[dataSource controller] policyDelegate] contentPolicyForMIMEType:[r contentType]
+    id pd = [[dataSource controller] policyDelegate];
+    WebPolicyAction contentPolicy;
+    
+    if ([pd respondsToSelector:@selector(contentPolicyForMIMEType:andRequest:inFrame:)])
+        contentPolicy = [pd contentPolicyForMIMEType:[r contentType]
+                                                                andRequest:[dataSource request]
+                                                                   inFrame:[dataSource webFrame]];
+    else
+        contentPolicy = [[WebDefaultPolicyDelegate sharedPolicyDelegate] contentPolicyForMIMEType:[r contentType]
                                                                 andRequest:[dataSource request]
                                                                    inFrame:[dataSource webFrame]];
     [self performSelector:selector withObject:(id)contentPolicy withObject:r];

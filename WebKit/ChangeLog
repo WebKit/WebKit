@@ -1,3 +1,130 @@
+2003-03-03  Richard Williamson   <rjw@apple.com>
+
+        Switch all WebController's delegate to use informal protocols.
+        
+        Reviewed by trey.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView status:]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showStatus:]):
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        (-[WebBridge showWindow]):
+        (-[WebBridge areToolbarsVisible]):
+        (-[WebBridge setToolbarsVisible:]):
+        (-[WebBridge isStatusBarVisible]):
+        (-[WebBridge setStatusBarVisible:]):
+        (-[WebBridge setWindowFrame:]):
+        (-[WebBridge setStatusText:]):
+        (-[WebBridge objectLoadedFromCacheWithURL:response:size:]):
+        (-[WebBridge setWebFrame:]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate resourceLoadDelegate]):
+        (-[WebBaseResourceHandleDelegate downloadDelegate]):
+        (-[WebBaseResourceHandleDelegate resource:willSendRequest:]):
+        (-[WebBaseResourceHandleDelegate resource:didReceiveResponse:]):
+        (-[WebBaseResourceHandleDelegate resource:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate resourceDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate resource:didFailLoadingWithError:]):
+        (-[WebBaseResourceHandleDelegate cancelWithError:]):
+        (-[WebBaseResourceHandleDelegate notifyDelegatesOfInterruptionByPolicyChange]):
+        * WebView.subproj/WebContextMenuDelegate.h:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController setWindowOperationsDelegate:]):
+        (-[WebController windowOperationsDelegate]):
+        (-[WebController setResourceLoadDelegate:]):
+        (-[WebController resourceLoadDelegate]):
+        (-[WebController setDownloadDelegate:]):
+        (-[WebController downloadDelegate]):
+        (-[WebController setContextMenuDelegate:]):
+        (-[WebController contextMenuDelegate]):
+        (-[WebController setPolicyDelegate:]):
+        (-[WebController policyDelegate]):
+        (-[WebController setLocationChangeDelegate:]):
+        (-[WebController locationChangeDelegate]):
+        (-[WebController stringByEvaluatingJavaScriptFromString:]):
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _openNewWindowWithRequest:behind:]):
+        (-[WebController _menuForElement:]):
+        (-[WebController _mouseDidMoveOverElement:modifierFlags:]):
+        (-[WebController _locationChangeDelegateForwarder]):
+        (-[WebController _resourceLoadDelegateForwarder]):
+        (-[WebController _policyDelegateForwarder]):
+        (-[WebController _contextMenuDelegateForwarder]):
+        (-[WebController _windowOperationsDelegateForwarder]):
+        (-[_WebSafeForwarder initWithTarget:defaultTarget:templateClass:]):
+        (-[_WebSafeForwarder forwardInvocation:]):
+        (-[_WebSafeForwarder methodSignatureForSelector:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _setRequest:]):
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.h:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (+[WebDefaultContextMenuDelegate sharedContextMenuDelegate]):
+        * WebView.subproj/WebDefaultLocationChangeDelegate.h: Added.
+        * WebView.subproj/WebDefaultLocationChangeDelegate.m: Added.
+        (+[WebDefaultLocationChangeDelegate sharedLocationChangeDelegate]):
+        (-[WebDefaultLocationChangeDelegate locationChangeStartedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate serverRedirectedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate locationChangeCommittedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate receivedPageTitle:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate receivedPageIcon:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate locationChangeDone:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate willCloseLocationForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate locationChangedWithinPageForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate clientWillRedirectTo:delay:fireDate:forFrame:]):
+        (-[WebDefaultLocationChangeDelegate clientRedirectCancelledForFrame:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (+[WebDefaultPolicyDelegate sharedPolicyDelegate]):
+        * WebView.subproj/WebDefaultPolicyDelegatePrivate.h: Removed.
+        * WebView.subproj/WebDefaultResourceLoadDelegate.h: Added.
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m: Added.
+        (+[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate]):
+        (-[WebDefaultResourceLoadDelegate identifierForInitialRequest:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate resource:willSendRequest:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate resource:didReceiveResponse:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate resource:didReceiveContentLength:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate resource:didFinishLoadingFromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate resource:didFailLoadingWithError:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate pluginFailedWithError:dataSource:]):
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.h: Added.
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m: Added.
+        (+[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate]):
+        (-[WebDefaultWindowOperationsDelegate runJavaScriptConfirmPanelWithMessage:]):
+        (-[WebDefaultWindowOperationsDelegate runJavaScriptTextInputPanelWithPrompt:defaultText:]):
+        (-[WebDefaultWindowOperationsDelegate runOpenPanelForFileButtonWithResultListener:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:controller:]):
+        (-[WebFrame findOrCreateFrameNamed:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (if):
+        (switch):
+        * WebView.subproj/WebLocationChangeDelegate.h:
+        * WebView.subproj/WebLocationChangeDelegate.m: Removed.
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeAndKeepLoading:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient checkContentPolicyForResponse:andCallSelector:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2003-03-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

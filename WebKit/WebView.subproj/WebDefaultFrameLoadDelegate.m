@@ -2,10 +2,25 @@
         WebLocationChangeDelegate.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
+#import <WebFoundation/WebError.h>
 
-#import "WebLocationChangeDelegate.h"
+#import <WebKit/WebDefaultLocationChangeDelegate.h>
+#import <WebKit/WebDataSource.h>
+#import <WebKit/WebFrame.h>
 
-@implementation WebLocationChangeDelegate
+@implementation WebDefaultLocationChangeDelegate
+
+static WebDefaultLocationChangeDelegate *sharedDelegate = nil;
+
+// Return a object with vanilla implementations of the protocol's methods
+// Note this feature relies on our default delegate being stateless
++ (WebDefaultLocationChangeDelegate *)sharedLocationChangeDelegate
+{
+    if (!sharedDelegate) {
+        sharedDelegate = [[WebDefaultLocationChangeDelegate alloc] init];
+    }
+    return sharedDelegate;
+}
 
 - (void)locationChangeStartedForDataSource:(WebDataSource *)dataSource { }
 

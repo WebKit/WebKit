@@ -12,8 +12,9 @@
 #import <WebFoundation/WebRequest.h>
 #import <WebFoundation/WebResponse.h>
 
-#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
@@ -118,12 +119,12 @@
     return dataSource;
 }
 
-- (id <WebResourceLoadDelegate>)resourceLoadDelegate
+- resourceLoadDelegate
 {
     return resourceLoadDelegate;
 }
 
-- (id <WebResourceLoadDelegate>)downloadDelegate
+- downloadDelegate
 {
     return downloadDelegate;
 }
@@ -143,11 +144,17 @@
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.
-        identifier = [[resourceLoadDelegate identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
+        if ([resourceLoadDelegate respondsToSelector: @selector(identifierForInitialRequest:fromDataSource:)])
+            identifier = [[resourceLoadDelegate identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
+        else
+            identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
     }
 
     if (resourceLoadDelegate) {
-        newRequest = [resourceLoadDelegate resource:identifier willSendRequest:newRequest fromDataSource:dataSource];
+        if ([resourceLoadDelegate respondsToSelector: @selector(resource:willSendRequest:fromDataSource:)])
+            newRequest = [resourceLoadDelegate resource:identifier willSendRequest:newRequest fromDataSource:dataSource];
+        else
+            newRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] resource:identifier willSendRequest:newRequest fromDataSource:dataSource];
     }
 
     // Store a copy of the request.
@@ -186,7 +193,7 @@
         [downloadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];
     else {
         [dataSource _addResponse: r];
-        [resourceLoadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];
+        [[controller _resourceLoadDelegateForwarder] resource:identifier didReceiveResponse:r fromDataSource:dataSource];
     }
 }
 
@@ -198,7 +205,7 @@
     if ([self isDownload])
         [downloadDelegate resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
     else
-        [resourceLoadDelegate resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+        [[controller _resourceLoadDelegateForwarder] resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
 - (void)resourceDidFinishLoading:(WebResource *)h
@@ -209,7 +216,7 @@
     if ([self isDownload])
         [downloadDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
     else
-        [resourceLoadDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
+        [[controller _resourceLoadDelegateForwarder] resource:identifier didFinishLoadingFromDataSource:dataSource];
 
     ASSERT(currentURL);
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
@@ -225,7 +232,7 @@
     if ([self isDownload])
         [downloadDelegate resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
     else
-        [resourceLoadDelegate resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
+        [[controller _resourceLoadDelegateForwarder] resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
     // currentURL may be nil if the request was aborted
     if (currentURL)
@@ -248,7 +255,7 @@
         if ([self isDownload]) {
             [downloadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
         } else {
-            [resourceLoadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+            [[controller _resourceLoadDelegateForwarder] resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
         }
     }
 
@@ -278,7 +285,7 @@
                                      inDomain:WebErrorDomainWebKit
                                    failingURL:nil];
     
-    [[self resourceLoadDelegate] resource:identifier
+    [[controller _resourceLoadDelegateForwarder] resource:identifier
                   didFailLoadingWithError:error
                            fromDataSource:dataSource];
 }

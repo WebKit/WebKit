@@ -6,7 +6,7 @@
 */
 
 /*!
-    @protocol WebContextMenuDelegate
+    @category WebContextMenuDelegate
     @discussion WebContextMenuDelegate determine what context menu items are visible over
     a clicked element.
 */
@@ -29,7 +29,7 @@ enum {
     WebMenuItemTagCopy
 };
 
-@protocol WebContextMenuDelegate <NSObject>
+@interface NSObject (WebContextMenuDelegate)
 
 /*!
     @method contextMenuItemsForElement:defaultMenuItems:

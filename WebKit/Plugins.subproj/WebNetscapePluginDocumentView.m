@@ -3,7 +3,7 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
@@ -78,7 +78,7 @@
                                                          pluginName:[thePlugin name]
                                                            MIMEType:MIME];
         
-        [[[theDataSource controller] resourceLoadDelegate] pluginFailedWithError:error dataSource:theDataSource];
+        [[[theDataSource controller] _resourceLoadDelegateForwarder] pluginFailedWithError:error dataSource:theDataSource];
         
         return;
     }

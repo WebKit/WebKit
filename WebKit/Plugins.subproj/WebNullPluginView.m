@@ -3,7 +3,7 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebPluginError.h>
@@ -50,7 +50,7 @@ static NSImage *image = nil;
         WebController *controller = [view controller];
         WebDataSource *dataSource = [[controller frameForView:view] dataSource];
         
-        [[controller resourceLoadDelegate] pluginFailedWithError:error dataSource:dataSource];
+        [[controller _resourceLoadDelegateForwarder] pluginFailedWithError:error dataSource:dataSource];
     }
 }
 

@@ -5,12 +5,17 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebContextMenuDelegate.h>
-#import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
+#import <WebKit/WebDefaultLocationChangeDelegate.h>
+#import <WebKit/WebDefaultPolicyDelegate.h>
+#import <WebKit/WebDefaultResourceLoadDelegate.h>
+#import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
@@ -105,11 +110,6 @@
     [newFrame release];
         
     return newFrame;
-}
-
-- (id<WebContextMenuDelegate>)_defaultContextMenuDelegate
-{
-    return _private->defaultContextMenuDelegate;
 }
 
 - (void)_finishedLoadingResourceFromDataSource: (WebDataSource *)dataSource
@@ -298,11 +298,17 @@
 
 - (WebController *)_openNewWindowWithRequest:(WebRequest *)request behind:(BOOL)behind
 {
-    WebController *newWindowController = [[self windowOperationsDelegate] createWindowWithRequest:request];
+    id wd = [self windowOperationsDelegate];
+    WebController *newWindowController = nil;
+    if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
+        newWindowController = [wd createWindowWithRequest:request];
+    else {
+        [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] createWindowWithRequest: request];
+    }
     if (behind) {
-        [[newWindowController windowOperationsDelegate] showWindowBehindFrontmost];
+        [[newWindowController _windowOperationsDelegateForwarder] showWindowBehindFrontmost];
     } else {
-        [[newWindowController windowOperationsDelegate] showWindow];
+        [[newWindowController _windowOperationsDelegateForwarder] showWindow];
     }
     return newWindowController;
 }
@@ -316,9 +322,14 @@
     unsigned i;
 
     if (_private->contextMenuDelegate) {
-        menuItems = [_private->contextMenuDelegate contextMenuItemsForElement:element
-                                                             defaultMenuItems:defaultMenuItems];
-    } else {
+        id cd = _private->contextMenuDelegate;
+        
+        if ([cd respondsToSelector:@selector(contextMenuItemsForElement:defaultMenuItems:)])
+            menuItems = [cd contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
+        else
+            menuItems = [[WebDefaultContextMenuDelegate sharedContextMenuDelegate] contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
+    } 
+    else {
         menuItems = defaultMenuItems;
     }
 
@@ -340,7 +351,7 @@
     // for that case.
     
     if (dictionary && _private->lastElementWasNonNil) {
-        [[self windowOperationsDelegate] mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
+        [[self _windowOperationsDelegateForwarder] mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
     }
     _private->lastElementWasNonNil = dictionary != nil;
 }
@@ -407,4 +418,65 @@
     [self _updateWebCoreSettingsFromPreferences: preferences];
 }
 
+- _locationChangeDelegateForwarder
+{
+    return [_WebSafeForwarder safeForwarderWithTarget: [self locationChangeDelegate]  defaultTarget: [WebDefaultLocationChangeDelegate sharedLocationChangeDelegate] templateClass: [WebDefaultLocationChangeDelegate class]];
+}
+
+- _resourceLoadDelegateForwarder
+{
+    return [_WebSafeForwarder safeForwarderWithTarget: [self resourceLoadDelegate] defaultTarget: [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] templateClass: [WebDefaultResourceLoadDelegate class]];
+}
+
+- _policyDelegateForwarder
+{
+    return [_WebSafeForwarder safeForwarderWithTarget: [self policyDelegate] defaultTarget: [WebDefaultPolicyDelegate sharedPolicyDelegate] templateClass: [WebDefaultPolicyDelegate class]];
+}
+
+- _contextMenuDelegateForwarder
+{
+    return [_WebSafeForwarder safeForwarderWithTarget: [self contextMenuDelegate] defaultTarget: [WebDefaultContextMenuDelegate sharedContextMenuDelegate] templateClass: [WebDefaultContextMenuDelegate class]];
+}
+
+- _windowOperationsDelegateForwarder
+{
+    return [_WebSafeForwarder safeForwarderWithTarget: [self windowOperationsDelegate] defaultTarget: [WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] templateClass: [WebDefaultWindowOperationsDelegate class]];
+}
+
 @end
+
+
+@implementation _WebSafeForwarder
+
+- initWithTarget: t defaultTarget: dt templateClass: (Class)aClass
+{
+    [super init];
+    target = t;		// Non retained.
+    defaultTarget = dt;
+    templateClass = aClass;
+    return self;
+}
+
+
+// Used to send messages to delegates that implement informal protocols.
++ safeForwarderWithTarget: t defaultTarget: dt templateClass: (Class)aClass;
+{
+    return [[[_WebSafeForwarder alloc] initWithTarget: t defaultTarget: dt templateClass: aClass] autorelease];
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation
+{
+    if ([target respondsToSelector: [anInvocation selector]])
+        [anInvocation invokeWithTarget: target];
+    else if ([defaultTarget respondsToSelector: [anInvocation selector]])
+        [anInvocation invokeWithTarget: defaultTarget];
+    // Do nothing quietly if method not implemented.
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
+    return [templateClass instanceMethodSignatureForSelector: aSelector];
+}
+
+@end
+

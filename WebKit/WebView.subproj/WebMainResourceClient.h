@@ -17,9 +17,6 @@
 @class WebRequest;
 @class WebResponse;
 
-@protocol WebResourceDelegate;
-@protocol WebResourceLoadDelegate;
-
 @interface WebMainResourceClient : WebBaseResourceHandleDelegate
 {
     WebDownload *download;

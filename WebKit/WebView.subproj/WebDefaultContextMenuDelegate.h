@@ -8,12 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol WebContextMenuDelegate;
 
 
-@interface WebDefaultContextMenuDelegate : NSObject <WebContextMenuDelegate>
+@interface WebDefaultContextMenuDelegate : NSObject
 {
     NSDictionary *element;
 }
-
++ (WebDefaultContextMenuDelegate *)sharedContextMenuDelegate;
 @end

@@ -22,6 +22,18 @@
 
 @implementation WebDefaultContextMenuDelegate
 
+static WebDefaultContextMenuDelegate *sharedDelegate = nil;
+
+// Return a object with vanilla implementations of the protocol's methods
+// Note this feature relies on our default delegate being stateless
++ (WebDefaultContextMenuDelegate *)sharedContextMenuDelegate
+{
+    if (!sharedDelegate) {
+        sharedDelegate = [[WebDefaultContextMenuDelegate alloc] init];
+    }
+    return sharedDelegate;
+}
+
 - (void)dealloc
 {
     [element release];

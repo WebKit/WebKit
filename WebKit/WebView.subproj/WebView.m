@@ -13,7 +13,7 @@
 #import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultPolicyDelegatePrivate.h>
+#import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
@@ -51,6 +51,9 @@ NSString *WebElementLinkURLKey = 		@"WebElementLinkURL";
 NSString *WebElementLinkTargetFrameKey =	@"WebElementTargetFrame";
 NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
+
+
+
 
 @implementation WebController
 
@@ -111,67 +114,65 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return _private->preferences ? _private->preferences : [WebPreferences standardPreferences];
 }
 
-- (void)setWindowOperationsDelegate:(id <WebWindowOperationsDelegate>)delegate
+- (void)setWindowOperationsDelegate:delegate
 {
     _private->windowContext = delegate;
 }
 
-- (id <WebWindowOperationsDelegate>)windowOperationsDelegate
+- windowOperationsDelegate
 {
     return _private->windowContext;
 }
 
-- (void)setResourceLoadDelegate: (id <WebResourceLoadDelegate>)delegate
+- (void)setResourceLoadDelegate: delegate
 {
     _private->resourceProgressDelegate = delegate;
 }
 
 
-- (id<WebResourceLoadDelegate>)resourceLoadDelegate
+- resourceLoadDelegate
 {
     return _private->resourceProgressDelegate;
 }
 
 
-- (void)setDownloadDelegate: (id<WebResourceLoadDelegate>)delegate
+- (void)setDownloadDelegate: delegate
 {
     _private->downloadProgressDelegate = delegate;
 }
 
 
-- (id<WebResourceLoadDelegate>)downloadDelegate
+- downloadDelegate
 {
     return _private->downloadProgressDelegate;
 }
 
-- (void)setContextMenuDelegate: (id<WebContextMenuDelegate>)delegate
+- (void)setContextMenuDelegate: delegate
 {
     _private->contextMenuDelegate = delegate;
 }
 
-- (id<WebContextMenuDelegate>)contextMenuDelegate
+- contextMenuDelegate
 {
     return _private->contextMenuDelegate;
 }
 
-- (void)setPolicyDelegate:(id <WebControllerPolicyDelegate>)delegate
+- (void)setPolicyDelegate:delegate
 {
     _private->policyDelegate = delegate;
 }
 
-- (id<WebControllerPolicyDelegate>)policyDelegate
+- policyDelegate
 {
-    if (!_private->policyDelegate)
-        _private->policyDelegate = [WebDefaultPolicyDelegate _sharedWebPolicyDelegate];
     return _private->policyDelegate;
 }
 
-- (void)setLocationChangeDelegate:(id <WebLocationChangeDelegate>)delegate
+- (void)setLocationChangeDelegate:delegate
 {
     _private->locationChangeDelegate = delegate;
 }
 
-- (id <WebLocationChangeDelegate>)locationChangeDelegate
+- locationChangeDelegate
 {
     return _private->locationChangeDelegate;
 }
@@ -493,40 +494,6 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script
 {
     return [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
-}
-
-@end
-
-@implementation WebResourceLoadDelegate
-
-- identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource
-{
-    return [[[NSObject alloc] init] autorelease];
-}
-
--(WebRequest *)resource:identifier willSendRequest: (WebRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
-{
-    return newRequest;
-}
-
--(void)resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource
-{
-}
-
--(void)resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource
-{
-}
-
--(void)resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource
-{
-}
-
--(void)resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource
-{
-}
-
-- (void)pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource
-{
 }
 
 @end

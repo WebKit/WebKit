@@ -165,7 +165,7 @@
     
     [self _setLoading:YES];
     
-    [[_private->controller locationChangeDelegate] locationChangeStartedForDataSource:self];
+    [[_private->controller _locationChangeDelegateForwarder] locationChangeStartedForDataSource:self];
 
     if (pageCache){
         _private->loadingFromPageCache = YES;
@@ -296,7 +296,7 @@
         // Must update the entries in the back-forward list too.
         [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
 
-        [[_private->controller locationChangeDelegate] receivedPageTitle:_private->pageTitle forDataSource:self];
+        [[_private->controller _locationChangeDelegateForwarder] receivedPageTitle:_private->pageTitle forDataSource:self];
     }
 }
 
@@ -322,7 +322,7 @@
     // Only send serverRedirectedForDataSource: if URL changed.
     if (![[oldRequest URL] isEqual: [request URL]]) {
         LOG(Redirect, "Server redirect to: %@", [request URL]);
-        [[_private->controller locationChangeDelegate] serverRedirectedForDataSource:self];
+        [[_private->controller _locationChangeDelegateForwarder] serverRedirectedForDataSource:self];
     }
         
     [oldRequest release];
@@ -553,7 +553,7 @@
     [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
 
     NSImage *icon = [iconDB iconForURL:[[self URL] absoluteString] withSize:WebIconSmallSize];
-    [[_private->controller locationChangeDelegate] receivedPageIcon:icon forDataSource:self];
+    [[_private->controller _locationChangeDelegateForwarder] receivedPageIcon:icon forDataSource:self];
 }
 
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;

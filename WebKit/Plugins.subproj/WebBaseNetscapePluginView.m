@@ -1184,7 +1184,7 @@ typedef struct {
 
     NSString *status = (NSString *)CFStringCreateWithCString(NULL, message, kCFStringEncodingWindowsLatin1);
     LOG(Plugins, "NPN_Status: %@", status);
-    [[[self controller] windowOperationsDelegate] setStatusText:status];
+    [[[self controller] _windowOperationsDelegateForwarder] setStatusText:status];
     [status release];
 }
 

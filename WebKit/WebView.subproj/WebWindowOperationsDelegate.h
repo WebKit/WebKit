@@ -34,13 +34,13 @@
 @class WebController;
 
 /*!
-    @protocol WebWindowOperationsDelegate
+    @category WebWindowOperationsDelegate
     @discussion A class that implements WebWindowOperationsDelegate provides
     window-related methods that may be used by Javascript, plugins and
     other aspects of web pages. These methods are used to open new
     windows and control aspects of existing windows.
 */
-@protocol WebWindowOperationsDelegate <NSObject>
+@interface NSObject (WebWindowOperationsDelegate)
 
 /*!
     @method createWindowWithRequest:

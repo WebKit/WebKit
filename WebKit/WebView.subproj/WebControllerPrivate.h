@@ -15,20 +15,22 @@
 typedef enum { Safari, MacIE, WinIE } UserAgentStringType;
 enum { NumUserAgentStringTypes = WinIE + 1 };
 
+#define NUM_LOCATION_CHANGE_DELEGATE_SELECTORS	10
+
 @interface WebControllerPrivate : NSObject
 {
 @public
     WebFrame *mainFrame;
     
-    id <WebWindowOperationsDelegate> windowContext;
-    id <WebResourceLoadDelegate> resourceProgressDelegate;
-    id <WebResourceLoadDelegate> downloadProgressDelegate;
-    id <WebContextMenuDelegate> contextMenuDelegate;
-    id <WebControllerPolicyDelegate> policyDelegate;
-    id <WebLocationChangeDelegate> locationChangeDelegate;
+    id windowContext;
+    id resourceProgressDelegate;
+    id downloadProgressDelegate;
+    id contextMenuDelegate;
+    id policyDelegate;
+    id locationChangeDelegate;
     id <WebFormDelegate> formDelegate;
     
-    id <WebContextMenuDelegate> defaultContextMenuDelegate;
+    id defaultContextMenuDelegate;
 
     WebBackForwardList *backForwardList;
     BOOL useBackForwardList;
@@ -46,7 +48,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 
     WebPreferences *preferences;
     WebCoreSettings *settings;
-    
+        
     BOOL lastElementWasNonNil;
 }
 @end
@@ -55,7 +57,6 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 
 - (WebFrame *)_createFrameNamed:(NSString *)name inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling;
 
-- (id <WebContextMenuDelegate>)_defaultContextMenuDelegate;
 - (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource;
 - (void)_receivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
 - (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
@@ -85,4 +86,19 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 - (WebCoreSettings *)_settings;
 - (void)_updateWebCoreSettingsFromPreferences: (WebPreferences *)prefs;
 
+- _locationChangeDelegateForwarder;
+- _resourceLoadDelegateForwarder;
+- _policyDelegateForwarder;
+- _contextMenuDelegateForwarder;
+- _windowOperationsDelegateForwarder;
 @end
+
+@interface _WebSafeForwarder : NSObject
+{
+    id target;	// Non-retainted.  Don't retain delegates;
+    id defaultTarget;
+    Class templateClass;
+}
++ safeForwarderWithTarget: t defaultTarget: dt templateClass: (Class)aClass;
+@end
+

@@ -43,7 +43,7 @@
 
     _private->bridge = [[WebBridge alloc] init];
     [_private->bridge initializeSettings: [c _settings]];
-    [_private->bridge setFrame:self];
+    [_private->bridge setWebFrame:self];
     [_private->bridge setName:n];
 
     [_private setName:n];
@@ -201,11 +201,14 @@
     WebFrame *frame = [self findFrameNamed:name];
 
     if(!frame){
-        WebController *controller = [[[self controller] windowOperationsDelegate]
-                                        createWindowWithRequest:nil];
+        id wd = [[self controller] windowOperationsDelegate];
+        WebController *controller = nil;
+        
+        if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
+            controller = [wd createWindowWithRequest:nil];
         
         [controller _setTopLevelFrameName:name];
-        [[controller windowOperationsDelegate] showWindow];
+        [[controller _windowOperationsDelegateForwarder] showWindow];
         frame = [controller mainFrame];
 	[frame _setJustOpenedForTargetedLink:YES];
     }

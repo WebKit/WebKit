@@ -7,11 +7,11 @@
 #import <Foundation/Foundation.h>
 
 /*!
-    @class WebDefaultPolicyDelegate
+    @class WebDefaultResourceLoadDelegate
     @discussion WebDefaultPolicyDelegate will be used as a WebController's
     default policy delegate.  It can be subclassed to modify policies. 
 */
-@interface WebDefaultPolicyDelegate : NSObject
-+ (WebDefaultPolicyDelegate *)sharedPolicyDelegate;
+@interface WebDefaultResourceLoadDelegate : NSObject
++ (WebDefaultResourceLoadDelegate *)sharedResourceLoadDelegate;
 @end
 

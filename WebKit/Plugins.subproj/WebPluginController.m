@@ -8,7 +8,7 @@
 
 #import <WebKit/WebPluginController.h>
 
-#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
@@ -119,7 +119,7 @@
         ERROR("could not show status message (%@) because plug-in has already been destroyed", message);
         return;
     }
-    [[[_HTMLView _controller] windowOperationsDelegate] setStatusText:message];
+    [[[_HTMLView _controller] _windowOperationsDelegateForwarder] setStatusText:message];
 }
 
 @end
