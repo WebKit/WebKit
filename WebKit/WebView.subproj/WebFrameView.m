@@ -146,7 +146,7 @@ enum {
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    if([sender draggingSource] != [self documentView] && [self _web_bestURLForDraggingInfo:sender]) {
+    if([sender draggingSource] != [self documentView] && [NSView _web_bestURLFromPasteboard:[sender draggingPasteboard]]) {
         return NSDragOperationCopy;
     } else {
         return NSDragOperationNone;
@@ -165,7 +165,7 @@ enum {
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    NSURL *URL = [self _web_bestURLForDraggingInfo:sender];
+    NSURL *URL = [NSView _web_bestURLFromPasteboard:[sender draggingPasteboard]];
 
     if(URL){
         WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];

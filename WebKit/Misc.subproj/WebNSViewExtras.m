@@ -110,19 +110,15 @@
     return [NSArray arrayWithObjects:NSURLPboardType, NSStringPboardType, NSFilenamesPboardType, nil];
 }
 
-- (NSURL *)_web_bestURLForDraggingInfo:(id <NSDraggingInfo>)sender
++ (NSURL *)_web_bestURLFromPasteboard:(NSPasteboard *)pasteboard
 {
-    NSPasteboard *draggingPasteboard;
-    NSArray *types;
-
-    draggingPasteboard = [sender draggingPasteboard];
-    types = [draggingPasteboard types];
+    NSArray *types = [pasteboard types];
 
     if ([types containsObject:NSURLPboardType]) {
         NSURL *URLFromPasteboard;
         NSString *scheme;
 
-        URLFromPasteboard = [NSURL URLFromPasteboard:draggingPasteboard];
+        URLFromPasteboard = [NSURL URLFromPasteboard:pasteboard];
         scheme = [URLFromPasteboard scheme];
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
             return URLFromPasteboard;
@@ -132,7 +128,7 @@
     if ([types containsObject:NSStringPboardType]) {
         NSString *URLString;
 
-        URLString = [[draggingPasteboard stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
+        URLString = [[pasteboard stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
         if ([URLString _web_looksLikeAbsoluteURL]) {
             return [NSURL _web_URLWithString:URLString];
         }        
@@ -141,7 +137,7 @@
     if ([types containsObject:NSFilenamesPboardType]) {
         NSArray *files;
 
-        files = [draggingPasteboard propertyListForType:NSFilenamesPboardType];
+        files = [pasteboard propertyListForType:NSFilenamesPboardType];
         if ([files count] == 1) {
             NSString *file;
 
@@ -157,7 +153,7 @@
 
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
-    if([sender draggingSource] != self && [self _web_bestURLForDraggingInfo:sender]) {
+    if([sender draggingSource] != self && [NSView _web_bestURLFromPasteboard:[sender draggingPasteboard]]) {
         return NSDragOperationCopy;
     } else {
         return NSDragOperationNone;

@@ -1,3 +1,26 @@
+2002-09-18  John Sullivan  <sullivan@apple.com>
+
+	WebKit part of fix for 
+	
+	- 3000823 -- special-case drag of webloc file to bookmarks
+	- 3004466 -- favorites bar doesn't accept drops of URL strings
+	or webloc files
+
+        * Misc.subproj/WebNSViewExtras.h:
+	- make _web_bestURLForDraggingInfo: a class method and have it
+	take an NSPasteboard * instead of an NSDraggingInfo *; change
+	name to _web_bestURLFromPasteboard:
+        * Misc.subproj/WebNSViewExtras.m:
+        (+[NSView _web_bestURLFromPasteboard:]):
+	- make this a class method and have it take an NSPasteboard * 
+	instead of an NSDraggingInfo *
+        (-[NSView _web_dragOperationForDraggingInfo:]): Updated for
+	SPI change.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView draggingEntered:]),
+        (-[WebView concludeDragOperation:]): Updated for SPI change.
+
 2002-09-18  Richard Williamson   <rjw@apple.com>
 
         Added documentation keywords to header.

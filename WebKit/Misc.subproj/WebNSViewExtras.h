@@ -24,9 +24,10 @@
 
 // Finds the best URL from the NSURLPboardType, NSStringPboardType and NSFilenamesPboardType pasteboard types
 // and gives priority to http and https URLs
-- (NSURL *)_web_bestURLForDraggingInfo:(id <NSDraggingInfo>)sender;
+// FIXME: This method is in an awkward place. It has nothing to do with NSView.
++ (NSURL *)_web_bestURLFromPasteboard:(NSPasteboard *)pasteboard;
 
-// Convenience method. Returns NSDragOperationCopy if _web_bestURLForDraggingInfo doesn't return nil.
+// Convenience method. Returns NSDragOperationCopy if _web_bestURLFromPasteboard doesn't return nil.
 // Returns NSDragOperationNone otherwise.
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender;
 @end
