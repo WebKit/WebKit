@@ -64,26 +64,6 @@
         was done since the iterator must be rooted at the document root, but start iterating 
         at the start of the selection. TreeWalker's setCurrentNode allows this to be done.
 
-2004-05-27  Kevin Decker  <kdecker@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        * ChangeLog:
-        * Plugins.subproj/WebScriptObject.h:
-
-2004-05-27  Kevin Decker  <kdecker@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        * ChangeLog:
-        * Plugins.subproj/WebScriptObject.h:
-
-2004-05-27  Kevin Decker  <kdecker@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        * ChangeLog:
-        * Plugins.subproj/WebScriptObject.h:
 
 2004-05-27  Kevin Decker  <kdecker@apple.com>
 
@@ -93,8 +73,11 @@
 
 2004-05-27  Kevin Decker  <kdecker@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
+        Reviewed by Ken.
+        
+        - error messages (eg, from JavaScriptCore) sent to the bridge are 
+          get delievered to a new delegate method.  
+    
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge addMessageToConsole:]):
         * WebKit.pbproj/project.pbxproj:
