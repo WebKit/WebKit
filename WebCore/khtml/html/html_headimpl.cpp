@@ -112,6 +112,7 @@ HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentPtr *doc)
     m_loading = false;
     m_cachedSheet = 0;
     m_alternate = false;
+    m_disabledState = 0;
 }
 
 HTMLLinkElementImpl::~HTMLLinkElementImpl()
@@ -131,7 +132,7 @@ void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
     {
     case ATTR_REL:
         m_rel = attr->value();
-	process();
+        process();
         break;
     case ATTR_HREF:
         m_url = getDocument()->completeURL( khtml::parseURL(attr->value()).string() );
@@ -143,11 +144,15 @@ void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_MEDIA:
         m_media = attr->value().string().lower();
-	process();
+        process();
         break;
-    case ATTR_DISABLED:
-        // ###
+    case ATTR_DISABLED: {
+        int oldDisabledState = m_disabledState;
+        m_disabledState = (attr->val() != 0) ? 2 : 1;
+        if (oldDisabledState != m_disabledState)
+            process();
         break;
+    }
     default:
         HTMLElementImpl::parseAttribute(attr);
     }
@@ -156,7 +161,7 @@ void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
 void HTMLLinkElementImpl::process()
 {
     if (!inDocument())
-	return;
+        return;
 
     QString type = m_type.string().lower();
     QString rel = m_rel.string().lower();
@@ -180,7 +185,7 @@ void HTMLLinkElementImpl::process()
 
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
-    if(type.contains("text/css") || rel == "stylesheet" || (rel.contains("alternate") && rel.contains("stylesheet"))) {
+    if(m_disabledState != 2 && (type.contains("text/css") || rel == "stylesheet" || (rel.contains("alternate") && rel.contains("stylesheet")))) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
         if( m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print") ) {

@@ -1859,17 +1859,19 @@ void DocumentImpl::recalcStyleSelector()
         else if (n->id() == ID_LINK || n->id() == ID_STYLE) {
             ElementImpl *e = static_cast<ElementImpl *>(n);
             QString title = e->getAttribute( ATTR_TITLE ).string();
+            bool enabledViaScript = false;
             if (n->id() == ID_LINK) {
                 // <LINK> element
                 HTMLLinkElementImpl* l = static_cast<HTMLLinkElementImpl*>(n);
-		if (l->isLoading())
-		  continue;
-		if (!l->sheet())
+                if (l->isLoading() || l->isDisabled())
+                    continue;
+                if (!l->sheet())
                     title = QString::null;
+                enabledViaScript = l->isEnabledViaScript();
             }
 
-	    // Get the current preferred styleset.  This is the
-	    // set of sheets that will be enabled.
+            // Get the current preferred styleset.  This is the
+            // set of sheets that will be enabled.
             QString sheetUsed = view()->part()->d->m_sheetUsed;
             if ( n->id() == ID_LINK )
                 sheet = static_cast<HTMLLinkElementImpl*>(n)->sheet();
@@ -1877,40 +1879,41 @@ void DocumentImpl::recalcStyleSelector()
                 // <STYLE> element
                 sheet = static_cast<HTMLStyleElementImpl*>(n)->sheet();
 
-	    // Check to see if this sheet belongs to a styleset
-	    // (thus making it PREFERRED or ALTERNATE rather than
-	    // PERSISTENT).
-            if ( !title.isEmpty() ) {
-	        // Yes, we have a title.
-	      if ( sheetUsed.isEmpty() ) {
-		  // No preferred set has been established.  If
-		  // we are NOT an alternate sheet, then establish
-		  // us as the preferred set.  Otherwise, just ignore
-		  // this sheet.
-		  QString rel = e->getAttribute( ATTR_REL ).string();
-		  if (n->id() == ID_STYLE || !rel.contains("alternate")) {
-                      sheetUsed = view()->part()->d->m_sheetUsed = title;
-                      m_preferredStylesheetSet = sheetUsed;
-                  }
-              }
+            // Check to see if this sheet belongs to a styleset
+            // (thus making it PREFERRED or ALTERNATE rather than
+            // PERSISTENT).
+            if (!enabledViaScript && !title.isEmpty()) {
+                // Yes, we have a title.
+                if (sheetUsed.isEmpty()) {
+                    // No preferred set has been established.  If
+                    // we are NOT an alternate sheet, then establish
+                    // us as the preferred set.  Otherwise, just ignore
+                    // this sheet.
+                    QString rel = e->getAttribute( ATTR_REL ).string();
+                    if (n->id() == ID_STYLE || !rel.contains("alternate")) {
+                        sheetUsed = view()->part()->d->m_sheetUsed = title;
+                        m_preferredStylesheetSet = sheetUsed;
+                    }
+                }
                       
-              if ( !m_availableSheets.contains( title ) )
-                  m_availableSheets.append( title );
-		      
-              if (title != sheetUsed)
-                  sheet = 0;
+                if (!m_availableSheets.contains( title ) )
+                    m_availableSheets.append( title );
+                
+                if (title != sheetUsed)
+                    sheet = 0;
             }
         }
-	else if (n->id() == ID_BODY) {
-            // <BODY> element (doesn't contain styles as such but vlink="..." and friends
-            // are treated as style declarations)
-	    sheet = static_cast<HTMLBodyElementImpl*>(n)->sheet();
+        else if (n->id() == ID_BODY) {
+                // <BODY> element (doesn't contain styles as such but vlink="..." and friends
+                // are treated as style declarations)
+            sheet = static_cast<HTMLBodyElementImpl*>(n)->sheet();
         }
+            
         if (sheet) {
             sheet->ref();
             m_styleSheets->styleSheets.append(sheet);
         }
-
+    
         // For HTML documents, stylesheets are not allowed within/after the <BODY> tag. So we
         // can stop searching here.
         if (isHTMLDocument() && n->id() == ID_BODY)

@@ -1,3 +1,22 @@
+2002-10-14  David Hyatt  <hyatt@apple.com>
+
+	Implementing the ability to individually enable/disable
+	both preferred and alternate stylesheets.  Enabling/disabling
+	sheets via the disabled property of the <link> element overrides
+	whether or not a sheet happens to be alternate or preferred.
+
+	This new implementation of sheet disabling/enabling was a missing
+	piece of our HTML4 compliance, and was used by the Wired 
+	site to implement its text sizing mechanism.
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::HTMLLinkElementImpl):
+        (HTMLLinkElementImpl::parseAttribute):
+        (HTMLLinkElementImpl::process):
+        * khtml/html/html_headimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyleSelector):
+
 2002-10-11  Richard Williamson   <rjw@apple.com>
 
         Remove debugging.
