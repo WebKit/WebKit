@@ -80,14 +80,14 @@
 
 - (void)beginAnimationInView: (NSView *)view inRect: (NSRect)ir fromRect: (NSRect)fr
 {
-    WEBKIT_ASSERT(frameView == nil);
-    
     [self stopAnimation];
     
     if ([self frameCount] > 1) {
         imageRect = fr;
         targetRect = ir;
-        frameView = [view retain];
+        [view retain];
+        [frameView release];
+        frameView = view;
         frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
                                                        target:self
                                                      selector:@selector(nextFrame:)

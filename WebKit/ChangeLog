@@ -1,3 +1,10 @@
+2002-06-01  Darin Adler  <darin@apple.com>
+
+	* WebCoreSupport.subproj/IFImageRenderer.m:
+	(-[IFImageRenderer beginAnimationInView:inRect:fromRect:]):
+	Remove an assert I added, since it is firing, and instead fixed the storage leak
+	that inspired me to put the assert in.
+
 2002-05-31  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFWebViewPrivate.mm: Add include to prepare for change to WebCore
