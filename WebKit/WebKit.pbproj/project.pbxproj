@@ -185,6 +185,7 @@
 </dict>
 </plist>
 ";
+			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -299,6 +300,7 @@
 				39446092020F50ED0ECA1767,
 				39446093020F50ED0ECA1767,
 				511D5554033FD51000CA2ACD,
+				516F297003A6C45A00CA2D3A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -554,6 +556,7 @@
 				39446080020F50ED0ECA1767,
 				F5E0A76E02B8FEE401C1A525,
 				F5E0A76F02B8FEE401C1A525,
+				516F296F03A6C45A00CA2D3A,
 			);
 			isa = PBXGroup;
 			name = History;
@@ -1250,6 +1253,21 @@
 			fileRef = 5152FAE6033FC52200CA2ACD;
 			isa = PBXBuildFile;
 			settings = {
+			};
+		};
+		516F296F03A6C45A00CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebHistoryItemPrivate.h;
+			refType = 4;
+		};
+		516F297003A6C45A00CA2D3A = {
+			fileRef = 516F296F03A6C45A00CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		517FA6A903709FCE00CA2D3A = {

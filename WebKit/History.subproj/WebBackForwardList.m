@@ -1,13 +1,9 @@
-//
-//  WebBackForwardList.m
-//  WebKit
-//
-//  Created by Kenneth Kocienda on Thu Nov 29 2001.
-//  Copyright (c) 2001 Apple Computer, Inc. All rights reserved.
-//
-
+/*
+    WebBackForwardList.m
+    Copyright 2001, 2002, Apple, Inc. All rights reserved.
+*/
 #import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>

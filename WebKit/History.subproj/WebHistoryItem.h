@@ -83,10 +83,3 @@
 - (BOOL)alwaysAttemptToUsePageCache;
 
 @end
-
-@interface WebHistoryItem (WebPrivate)
-+ (void)_releaseAllPendingPageCaches;
-- (BOOL)hasPageCache;
-- (void)setHasPageCache: (BOOL)f;
-- (NSMutableDictionary *)pageCache;
-@end

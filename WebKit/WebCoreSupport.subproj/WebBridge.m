@@ -11,7 +11,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitErrors.h>

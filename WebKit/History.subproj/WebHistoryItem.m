@@ -3,7 +3,7 @@
     Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebIconDatabase.h>
