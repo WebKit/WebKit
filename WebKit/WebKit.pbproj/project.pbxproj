@@ -101,6 +101,7 @@
 				F7EBEE5903F9DB2203CA0DE6,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
+				99FFFB9C047B036600CA283D,
 			);
 			isa = PBXGroup;
 			name = WebKit;
@@ -147,7 +148,7 @@
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
-				SECTORDER_FLAGS = "";
+				SECTORDER_FLAGS = "-sectorder __TEXT __text WebKit.order";
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wbad-function-cast -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-declarations -Wmissing-format-attribute -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;
@@ -182,7 +183,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -313,6 +313,7 @@
 				F5883BDF025E5C6A01000102,
 				F5B67131023EDF8901C1A525,
 				5128F1FA04719A4200CA2D3A,
+				99FFFB9D047B036600CA283D,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2210,6 +2211,28 @@
 //932
 //933
 //934
+//990
+//991
+//992
+//993
+//994
+		99FFFB9C047B036600CA283D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebKit.order;
+			refType = 4;
+		};
+		99FFFB9D047B036600CA283D = {
+			fileRef = 99FFFB9C047B036600CA283D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//990
+//991
+//992
+//993
+//994
 //9C0
 //9C1
 //9C2

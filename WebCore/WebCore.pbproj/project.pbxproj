@@ -97,6 +97,7 @@
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
+				99FFFB99047B032200CA283D,
 			);
 			isa = PBXGroup;
 			name = WebKit;
@@ -141,7 +142,7 @@
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebCorePrefix.h;
 				PRODUCT_NAME = WebCore;
-				SECTORDER_FLAGS = "";
+				SECTORDER_FLAGS = "-sectorder __TEXT __text WebCore.order";
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "$(WARNING_COMMONFLAGS)";
 				WARNING_COMMONFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
@@ -178,7 +179,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -504,6 +504,7 @@
 				F5A1B04A02DE8ABA018635CA,
 				F5A1B05402DE8B46018635CA,
 				BC8F629A0405F45600A80004,
+				99FFFB9A047B032200CA283D,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1456,6 +1457,28 @@
 //932
 //933
 //934
+//990
+//991
+//992
+//993
+//994
+		99FFFB99047B032200CA283D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCore.order;
+			refType = 4;
+		};
+		99FFFB9A047B032200CA283D = {
+			fileRef = 99FFFB99047B032200CA283D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//990
+//991
+//992
+//993
+//994
 //BC0
 //BC1
 //BC2

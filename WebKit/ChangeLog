@@ -1,3 +1,11 @@
+2003-05-21  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by john 
+	- fixed 3234553: Safari and its frameworks should link using order files
+
+        * WebKit.order: Added.
+        * WebKit.pbproj/project.pbxproj: set SECTORDER_FLAGS = -sectorder __TEXT __text WebKit.order;
+
 2003-05-20  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3262825.
