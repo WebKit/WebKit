@@ -2170,8 +2170,10 @@ void DocumentImpl::dispatchImageLoadEventSoon(RenderImage *image)
 
 void DocumentImpl::removeImage(RenderImage *image)
 {
-    m_imageLoadEventDispatchSoonList.remove(image);
-    m_imageLoadEventDispatchingList.remove(image);
+    // Remove instances of this image from both lists.
+    // Use loops because we allow multiple instances to get into the lists.
+    while (m_imageLoadEventDispatchSoonList.removeRef(image)) { }
+    while (m_imageLoadEventDispatchingList.removeRef(image)) { }
     if (m_imageLoadEventDispatchSoonList.isEmpty() && m_imageLoadEventTimer) {
         killTimer(m_imageLoadEventTimer);
         m_imageLoadEventTimer = 0;

@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+        - fixed 3203212 -- nil-deref in khtml::CachedImage::isErrorImage at turbotax.com
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::removeImage): Remove all occurrences
+        of the image from the list. We don't try to prevent multiple occurrences from getting
+        in there. Also use removeRef instead of remove, for speed.
+
+2003-03-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed 3204660 -- EUC decoding not used for japanese yahoo page
 
         * khtml/misc/decoder.cpp: (Decoder::decode):
