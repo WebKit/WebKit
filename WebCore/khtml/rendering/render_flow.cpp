@@ -157,9 +157,12 @@ short RenderFlow::lineHeight(bool firstLine, bool isRootLineBox) const
         RenderStyle* s = style(firstLine);
         Length lh = s->lineHeight();
         if (lh.value < 0) {
-	    if (m_lineHeight == -1)
-	      m_lineHeight = RenderObject::lineHeight(false);
-	    return m_lineHeight;
+            if (s == style()) {
+                if (m_lineHeight == -1)
+                    m_lineHeight = RenderObject::lineHeight(false);
+                return m_lineHeight;
+            }
+            return s->fontMetrics().lineSpacing();
 	}
         if (lh.isPercent())
             return lh.minWidth(s->font().pixelSize());
