@@ -24,7 +24,7 @@
 {
     [super initWithFrame:frame];
 
-    [self setFrame:NSMakeRect(0, 0, 1, 1)];
+    [self setFrame:NSZeroRect];
 
     [self setMode:NP_FULL];
 

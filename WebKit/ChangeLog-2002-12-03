@@ -1,5 +1,14 @@
 2002-11-22  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3104693 - QT movie doesn't show video while still downloading
+
+	The initial size of plug-in should be 0,0 instead of 1,1 or else we don't get the layout
+
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView initWithFrame:]):
+
+2002-11-22  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3078737 - Crash in -[WebHistoryItem dealloc] after closing last window
 
         * Misc.subproj/WebIconDatabase.m:
