@@ -275,14 +275,35 @@ public:
 private:
     virtual bool preservesTypingStyle() const;
 
-    void moveNodesAfterNode(DOM::NodeImpl *startNode, DOM::NodeImpl *dstNode);
+    void initializePositionData();
     DOM::Position startPositionForDelete() const;
     DOM::Position endPositionForDelete() const;
+    void saveTypingStyleState();
+    void performDelete();
+    void fixupWhitespace();
+    void moveNodesAfterNode(DOM::NodeImpl *startNode, DOM::NodeImpl *dstNode);
+    void calculateEndingPosition();
+    void calculateTypingStyleAfterDelete();
+    void clearTransientState();
 
-    khtml::Selection m_selectionToDelete;
     bool m_hasSelectionToDelete;
     bool m_smartDelete;
     bool m_mergeBlocksAfterDelete;
+    bool m_trailingWhitespaceValid;
+
+    // This data is transient and should be cleared at the end of the doApply function.
+    khtml::Selection m_selectionToDelete;
+    DOM::Position m_upstreamStart;
+    DOM::Position m_downstreamStart;
+    DOM::Position m_upstreamEnd;
+    DOM::Position m_downstreamEnd;
+    DOM::Position m_endingPosition;
+    DOM::Position m_leadingWhitespace;
+    DOM::Position m_trailingWhitespace;
+    DOM::NodeImpl *m_startBlock;
+    DOM::NodeImpl *m_endBlock;
+    DOM::NodeImpl *m_startNode;
+    DOM::CSSStyleDeclarationImpl *m_typingStyle;
 };
 
 //------------------------------------------------------------------------------------------

@@ -1,5 +1,26 @@
 2004-10-28  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Harrison
+
+        Reorganization of delete command functionality so that doApply is not
+        several hundred lines long. This is not a squeaky-clean cleanup, but
+        it is a step in the right direction. No functionality changes.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::DeleteSelectionCommand):
+        (khtml::DeleteSelectionCommand::initializePositionData): New helper.
+        (khtml::DeleteSelectionCommand::saveTypingStyleState): Ditto.
+        (khtml::DeleteSelectionCommand::performDelete): Ditto.
+        (khtml::DeleteSelectionCommand::fixupWhitespace): Ditto.
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Ditto.
+        (khtml::DeleteSelectionCommand::calculateEndingPosition): Ditto.
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete): Ditto.
+        (khtml::DeleteSelectionCommand::clearTransientState): Ditto.
+        (khtml::DeleteSelectionCommand::doApply): Factor out code into new helpers.
+        * khtml/editing/htmlediting.h:
+
+2004-10-28  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         * khtml/editing/htmlediting.cpp:
