@@ -201,6 +201,17 @@ static void derefNodesInList(QPtrList<NodeImpl> &list)
         it.current()->deref();
 }
 
+static int maxRangeOffset(NodeImpl *n)
+{
+    if (DOM::offsetInCharacters(n->nodeType()))
+        return n->maxOffset();
+
+    if (n->isElementNode())
+        return n->childNodeCount();
+
+    return 1;
+}
+
 static void debugPosition(const char *prefix, const Position &pos)
 {
     if (!prefix)
@@ -1522,6 +1533,8 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
     removeInlineStyle(style, start.upstream(StayInBlock), end);
+    start = endingSelection().start();
+    end = endingSelection().end();
 
     if (splitStart) {
         bool mergedStart = mergeStartWithPreviousIfIdentical(start, end);
@@ -1868,17 +1881,40 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
         style->setProperty(CSS_PROP_TEXT_DECORATION, textDecorationSpecialProperty->cssText(), style->getPropertyPriority(CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT));
     }
 
+    // The s and e variables store the positions used to set the ending selection after style removal
+    // takes place. This will help callers to recognize when either the start node or the end node
+    // are removed from the document during the work of this function.
+    Position s = start;
+    Position e = end;
+
     NodeImpl *node = start.node();
     while (node) {
         NodeImpl *next = node->traverseNextNode();
         if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
+            NodeImpl *prev = elem->traversePreviousNodePostOrder();
+            NodeImpl *next = elem->traverseNextNode();
             if (isHTMLStyleNode(style, elem)) {
                 removeHTMLStyleNode(elem);
             }
             else {
                 removeHTMLFontStyle(style, elem);
                 removeCSSStyle(style, elem);
+            }
+            if (!elem->inDocument()) {
+                if (s.node() == elem) {
+                    // Since elem must have been fully selected, and it is at the start
+                    // of the selection, it is clear we can set the new s offset to 0.
+                    ASSERT(s.offset() <= s.node()->caretMinOffset());
+                    s = Position(next, 0);
+                }
+                if (e.node() == elem) {
+                    // Since elem must have been fully selected, and it is at the end
+                    // of the selection, it is clear we can set the new e offset to
+                    // the max range offset of prev.
+                    ASSERT(e.offset() >= maxRangeOffset(e.node()));
+                    e = Position(prev, maxRangeOffset(prev));
+                }
             }
         }
         if (node == end.node())
@@ -1890,6 +1926,10 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
     if (textDecorationSpecialProperty) {
         style->deref();
     }
+    
+    ASSERT(s.node()->inDocument());
+    ASSERT(e.node()->inDocument());
+    setEndingSelection(Selection(s, VP_DEFAULT_AFFINITY, e, VP_DEFAULT_AFFINITY));
 }
 
 bool ApplyStyleCommand::nodeFullySelected(NodeImpl *node, const Position &start, const Position &end) const
@@ -3586,17 +3626,6 @@ Position positionBeforeContainingSpecialElement(const Position& pos)
     ASSERT(outermostSpecialElement);
 
     return positionBeforeNode(outermostSpecialElement);
-}
-
-static int maxRangeOffset(NodeImpl *n)
-{
-    if (DOM::offsetInCharacters(n->nodeType()))
-        return n->maxOffset();
-
-    if (n->isElementNode())
-        return n->childNodeCount();
-
-    return 1;
 }
 
 static bool isLastVisiblePositionInSpecialElement(const Position& pos)

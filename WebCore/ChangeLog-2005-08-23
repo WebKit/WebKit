@@ -1,3 +1,24 @@
+2005-03-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/4029632> Mail crashes in DOM::NodeImpl::isBlockFlow() after pasting text with alignment style and BR element from Safari
+        
+        The problem is that removeInlineStyle() can remove nodes, and if either the start or end node of the
+        selection at the time of the call to removeInlineStyle() was in a node that got removed, bad things
+        would happen. The fix is described below.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::maxRangeOffset): Moved this static function to a different place in the file so the code below can use it.
+        (khtml::ApplyStyleCommand::applyInlineStyle): Calling removeInlineStyle() now has the side effect of 
+        setting the command's ending selection. Now resets start and end using the ending selection after the call to
+        removeInlineStyle() as it is done elsewhere in this function.
+        (khtml::ApplyStyleCommand::removeInlineStyle): Track the removal of the start or end node based on
+        the positions passed in. If either the start or the end node is removed as part of style removal, 
+        set an appropriate replacement start or end that is still in the document.
+
 === Safari-406 ===
 
 2005-03-14  Ken Kocienda  <kocienda@apple.com>
