@@ -38,4 +38,5 @@
 
 @end
 
+NSArray *pluginLocations(void);
 NSArray *findPlugins(void);

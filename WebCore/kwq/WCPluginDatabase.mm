@@ -99,31 +99,52 @@ static WCPluginDatabase *__WCPluginDatabase = nil;
 
 @end
 
-NSArray *findPlugins(void){
+NSArray *pluginLocations(void)
+{
+    NSMutableArray *locations;
+    NSBundle *applicationBundle;
+    
+    // Plug-ins are found in order of precedence.
+    // If there are duplicates, the first found plug-in is used.
+    // For example, if there is a QuickTime.plugin in the users's home directory
+    // that is used instead of the /Library/Internet Plug-ins version.
+    // The purpose is to allow non-admin user's to update their plug-ins.
+    
+    locations = [NSMutableArray arrayWithCapacity:3];
+    [locations addObject:[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"]];
+    [locations addObject:@"/Library/Internet Plug-Ins"];
+
+    applicationBundle = [NSBundle mainBundle];
+    [locations addObject:[applicationBundle builtInPlugInsPath]];
+    
+    return locations;
+}
+
+NSArray *findPlugins(void)
+{
     NSFileManager *fileManager;
-    NSArray *libraryPlugins, *homePlugins;
-    NSString *homePluginDir, *libPluginDir;
-    NSMutableArray *pluginPaths, *pluginArray;
+    NSArray *pluginDirectories, *files;
+    NSString *file;
+    NSMutableArray *pluginPaths, *pluginArray, *filenames;
     WCPlugin *plugin;
-    uint i;
+    uint i, n;
     
+    pluginDirectories = pluginLocations();    
     fileManager = [NSFileManager defaultManager];
-    homePluginDir = [[NSString stringWithString:NSHomeDirectory()] stringByAppendingPathComponent:@"Library/Internet Plug-Ins"];
-    libPluginDir = [NSString stringWithString:@"/Library/Internet Plug-Ins"];
+    pluginPaths = [NSMutableArray arrayWithCapacity:10];
+    filenames = [NSMutableArray arrayWithCapacity:10];
     
-    homePlugins = [fileManager directoryContentsAtPath:homePluginDir];
-    libraryPlugins = [fileManager directoryContentsAtPath:libPluginDir];
-
-    pluginPaths = [NSMutableArray arrayWithCapacity:[homePlugins count]+[libraryPlugins count]];
-
-    for(i=0; i<[homePlugins count]; i++){
-        [pluginPaths addObject:[homePluginDir stringByAppendingPathComponent:[homePlugins objectAtIndex:i]]];
-    }
-    for(i=0; i<[libraryPlugins count]; i++){
-        if(![homePlugins containsObject:[libraryPlugins objectAtIndex:i]]){ // avoid dups, give precedense to home dir
-            [pluginPaths addObject:[libPluginDir stringByAppendingPathComponent:[libraryPlugins objectAtIndex:i]]];
+    for(i=0; i<[pluginDirectories count]; i++){
+        files = [fileManager directoryContentsAtPath:[pluginDirectories objectAtIndex:i]];
+        for(n=0; n<[files count]; n++){
+            file = [files objectAtIndex:n];
+            if(![filenames containsObject:file]){ // avoid duplicates
+                [filenames addObject:file];
+                [pluginPaths addObject:[[pluginDirectories objectAtIndex:i] stringByAppendingPathComponent:file]];
+            }
         }
     }
+    
     pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
     
     for(i=0; i<[pluginPaths count]; i++){
