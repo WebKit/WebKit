@@ -64,7 +64,9 @@ static inline id KWQRetainNSRelease(id obj)
 // properly in GC
 static inline id KWQCFAutorelease(CFTypeRef obj)
 {
+#ifndef BUILDING_ON_PANTHER
     CFMakeCollectable(obj);
+#endif
     [(id) obj autorelease];
     return (id) obj;
 }
