@@ -13,6 +13,7 @@
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
 #import <Foundation/NSError_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataProtocol.h>
@@ -146,6 +147,33 @@
     }
 }
 
+// This is copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
+// FIXME: It would be nice to eventually to share this code somehow.
+- (BOOL)_canUseResourceForRequest:(NSURLRequest *)theRequest
+{
+    NSURLRequestCachePolicy policy = [theRequest cachePolicy];
+        
+    if (policy == NSURLRequestReturnCacheDataElseLoad) {
+        return YES;
+    } else if (policy == NSURLRequestReturnCacheDataDontLoad) {
+        return YES;
+    } else if (policy == NSURLRequestReloadIgnoringCacheData) {
+        return NO;
+    } else if ([theRequest valueForHTTPHeaderField:@"must-revalidate"] != nil) {
+        return NO;
+    } else if ([theRequest valueForHTTPHeaderField:@"proxy-revalidate"] != nil) {
+        return NO;
+    } else if ([theRequest valueForHTTPHeaderField:@"If-Modified-Since"] != nil) {
+        return NO;
+    } else if ([theRequest valueForHTTPHeaderField:@"Cache-Control"] != nil) {
+	return NO;
+    } else if ([[theRequest HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
 - (BOOL)loadWithRequest:(NSURLRequest *)r
 {
     ASSERT(connection == nil);
@@ -160,7 +188,7 @@
 
     r = [self connection:connection willSendRequest:r redirectResponse:nil];
     
-    if ([[r URL] isEqual:originalURL]) {
+    if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
         resource = [dataSource subresourceForURL:originalURL];
         if (resource) {
             [resource retain];
