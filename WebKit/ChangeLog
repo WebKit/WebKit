@@ -1,3 +1,22 @@
+2004-03-26  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3576334>: Printing "empty" page gives print error, 
+        leaves browser window UI broken
+
+        Reviewed by Dave.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView knowsPageRange:]):
+        AppKit printing mechanism can't handle the case where you tell it there is
+        nothing at all to print, so when we hit that case we give it a degenerate
+        1-pixel rect to print. This prints a blank page (with correctly-placed
+        header & footer if so configured), which matches other browsers' behavior for
+        this page.
+
+        * Plugins.subproj/npruntime.h:
+        cvs keeps thinking I've removed a blank line from this auto-copied file.
+        Richard said to just check it in to see if it stops doing this.
+        
 === Safari-134 ===
 
 2004-03-26  John Sullivan  <sullivan@apple.com>

@@ -1870,9 +1870,19 @@ static WebHTMLView *lastHitView = nil;
     float totalScaleFactor = [self _scaleFactorForPrintOperation:printOperation];
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     [_private->pageRects release];
-    _private->pageRects = [[[self _bridge] computePageRectsWithPrintWidthScaleFactor:userScaleFactor
-                                                                         printHeight:[self _calculatePrintHeight]/totalScaleFactor] retain];
+    NSArray *newPageRects = [[self _bridge] computePageRectsWithPrintWidthScaleFactor:userScaleFactor
+                                                                          printHeight:[self _calculatePrintHeight]/totalScaleFactor];
+    // AppKit gets all messed up if you give it a zero-length page count (see 3576334), so if we
+    // hit that case we'll pass along a degenerate 1 pixel square to print. This will print
+    // a blank page (with correct-looking header and footer if that option is on), which matches
+    // the behavior of IE and Camino at least.
+    if ([newPageRects count] == 0) {
+        newPageRects = [NSArray arrayWithObject:[NSValue valueWithRect: NSMakeRect(0, 0, 1, 1)]];
+    }
+    _private->pageRects = [newPageRects retain];
+    
     range->length = [_private->pageRects count];
+    
     return YES;
 }
 

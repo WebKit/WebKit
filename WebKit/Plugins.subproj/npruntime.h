@@ -48,7 +48,6 @@
 extern "C" {
 #endif
 
-
 /*
     This API is used to facilitate binding code written in 'C' to JavaScript
     objects.  In particular it is used to support the extended Netscape 
