@@ -22,37 +22,68 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#import <Cocoa/Cocoa.h>
 
 #include <kmessagebox.h>
 
-void KMessageBox::error(QWidget *, const QString &, 
+void KMessageBox::error(QWidget *, const QString &message, 
     const QString &caption=QString::null, bool notify=true)
 {
+    if (caption.isNull())
+        NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), nil, nil, nil);
+    else
+        NSRunAlertPanel (QSTRING_TO_NSSTRING(caption), QSTRING_TO_NSSTRING(message), nil, nil, nil);
 }
 
 
-int KMessageBox::warningYesNo(QWidget *, const QString &, 
+int KMessageBox::warningYesNo(QWidget *, const QString &message, 
     const QString &caption=QString::null, 
     const QString &buttonYes=QString::null, 
     const QString &buttonNo=QString::null, 
     bool notify=true)
 {
-return 0;
+    NSString *yes = buttonYes.isNull() ? nil : @"OK";
+    NSString *no = buttonNo.isNull() ? nil : @"Cancel";
+    int result;
+    
+    if (caption.isNull())
+        result = NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), yes, no, nil);
+    else
+        result = NSRunAlertPanel (QSTRING_TO_NSSTRING(caption), QSTRING_TO_NSSTRING(message), yes, no, nil);
+
+    if (result == NSAlertDefaultReturn)
+        return 1;
+    return 0;
 }
 
 
-int KMessageBox::questionYesNo(QWidget *, const QString &, 
+int KMessageBox::questionYesNo(QWidget *, const QString &message, 
     const QString &caption=QString::null, 
     const QString &buttonYes=QString::null, 
     const QString &buttonNo=QString::null, bool notify=true)
 {
-return 0;
+    NSString *yes = buttonYes.isNull() ? nil : @"OK";
+    NSString *no = buttonNo.isNull() ? nil : @"Cancel";
+    int result;
+    
+    if (caption.isNull())
+        result = NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), yes, no, nil);
+    else
+        result = NSRunAlertPanel (QSTRING_TO_NSSTRING(caption), QSTRING_TO_NSSTRING(message), yes, no, nil);
+
+    if (result == NSAlertDefaultReturn)
+        return 1;
+    return 0;
 }
 
 
-void KMessageBox::sorry(QWidget *, const QString &, 
+void KMessageBox::sorry(QWidget *, const QString &message, 
     const QString &caption=QString::null, bool notify=true)
 {
+    if (caption.isNull())
+        NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), nil, nil, nil);
+    else
+        NSRunAlertPanel (QSTRING_TO_NSSTRING(caption), QSTRING_TO_NSSTRING(message), nil, nil, nil);
 }
 
 

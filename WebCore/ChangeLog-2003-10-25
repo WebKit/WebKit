@@ -1,3 +1,14 @@
+2002-05-15  Richard J. Williamson  <rjw@apple.com>
+    
+    Alerts, useful for validating that js handlers work.
+    Validated that onsubmit is working.
+    
+	* kwq/KWQKMessageBox.mm:
+	(KMessageBox::error):
+	(KMessageBox::warningYesNo):
+	(KMessageBox::questionYesNo):
+	(KMessageBox::sorry):
+
 2002-05-15  Darin Adler  <darin@apple.com>
 
 	* kwq/qt/qguardedptr.h: Fix reversed sense of check in isNull. Fixes
