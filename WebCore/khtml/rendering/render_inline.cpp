@@ -90,19 +90,19 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
     insertPseudoChild(RenderStyle::AFTER, newChild, beforeChild);
 }
 
-static RenderFlow* cloneInline(RenderFlow* src)
+static RenderInline* cloneInline(RenderFlow* src)
 {
     RenderInline *o = new (src->renderArena()) RenderInline(src->element());
     o->setStyle(src->style());
     return o;
 }
 
-void RenderInline::splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock,
-                                RenderFlow* middleBlock,
+void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
+                                RenderBlock* middleBlock,
                                 RenderObject* beforeChild, RenderFlow* oldCont)
 {
     // Create a clone of this inline.
-    RenderFlow* clone = cloneInline(this);
+    RenderInline* clone = cloneInline(this);
     clone->setContinuation(oldCont);
 
     // Now take all of the children from beforeChild to the end and remove
@@ -126,7 +126,7 @@ void RenderInline::splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock,
     RenderFlow* currChild = this;
     while (curr && curr != fromBlock) {
         // Create a new clone.
-        RenderFlow* cloneChild = clone;
+        RenderInline* cloneChild = clone;
         clone = cloneInline(curr);
 
         // Insert our child clone as the first child.
@@ -166,17 +166,15 @@ void RenderInline::splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock,
     }
 }
 
-void RenderInline::splitFlow(RenderObject* beforeChild, RenderFlow* newBlockBox,
+void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                              RenderObject* newChild, RenderFlow* oldCont)
 {
     RenderBlock* block = containingBlock();
-    RenderFlow* pre = 0;
-    RenderFlow* post = 0;
 
     RenderStyle* newStyle = new RenderStyle();
     newStyle->inheritFrom(block->style());
     newStyle->setDisplay(BLOCK);
-    pre = new (renderArena()) RenderBlock(0 /* anonymous box */);
+    RenderBlock *pre = new (renderArena()) RenderBlock(0 /* anonymous box */);
     pre->setStyle(newStyle);
     pre->setIsAnonymousBox(true);
     pre->setChildrenInline(true);
@@ -184,7 +182,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderFlow* newBlockBox,
     newStyle = new RenderStyle();
     newStyle->inheritFrom(block->style());
     newStyle->setDisplay(BLOCK);
-    post = new (renderArena()) RenderBlock(0 /* anonymous box */);
+    RenderBlock *post = new (renderArena()) RenderBlock(0 /* anonymous box */);
     post->setStyle(newStyle);
     post->setIsAnonymousBox(true);
     post->setChildrenInline(true);

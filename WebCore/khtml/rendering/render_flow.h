@@ -24,8 +24,6 @@
 #ifndef RENDER_FLOW_H
 #define RENDER_FLOW_H
 
-#include <qsortedlist.h>
-
 #include "render_box.h"
 #include "bidi.h"
 
@@ -55,7 +53,7 @@ public:
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild) = 0;
     virtual void addChild(RenderObject *newChild, RenderObject *beforeChild = 0);
 
-    static RenderObject* createFlow(DOM::NodeImpl* node, RenderStyle* style, RenderArena* arena);
+    static RenderFlow* createFlow(DOM::NodeImpl* node, RenderStyle* style, RenderArena* arena);
 
 protected:
     // An inline can be split with blocks occurring in between the inline content.

@@ -323,7 +323,6 @@ public:
     class NodeInfo
     {
         friend class RenderImage;
-        friend class RenderFlow;
         friend class RenderText;
         friend class RenderObject;
         friend class RenderFrameSet;

@@ -52,7 +52,6 @@
 #include <qvector.h>
 
 namespace khtml {
-    class RenderFlow;
     class RenderStyle;
     class RenderTable;
     class CachedObject;

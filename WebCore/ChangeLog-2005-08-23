@@ -1,3 +1,38 @@
+2003-01-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - reduced the amount of RenderFlow in the world by about 1/2
+
+        * khtml/rendering/bidi.h: Take RenderBlock * instead of RenderFlow *.
+        * khtml/rendering/bidi.cpp:
+        (BidiIterator::BidiIterator): Take RenderBlock * instead of RenderFlow *.
+        (RenderBlock::layoutInlineChildren): Fix debug message to say RenderBlock instead of RenderFlow.
+        (RenderBlock::findNextLineBreak): Fix debug message to say RenderBlock instead of RenderFlow.
+
+        * khtml/rendering/render_block.cpp:
+        (RenderBlock::addChildToFlow): Make RenderBlock * instead of RenderFlow *.
+        (RenderBlock::layout): Fix debug message to say RenderBlock instead of RenderFlow.
+        (RenderBlock::layoutBlockChildren): Fix debug message to say RenderBlock instead of RenderFlow.
+        (RenderBlock::clearFloats): Fix debug message to say RenderBlock instead of RenderFlow.
+
+        * khtml/rendering/render_flow.h: Return a RenderFlow * instead of a RenderObject * from createFlow.
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::createFlow): Use an if statement instead of ? : to get rid of typecasting.
+
+        * khtml/rendering/render_html.cpp: (RenderHtml::containingBlockWidth):
+        Fix parent call to call RenderBlock. Calling RenderFlow was a mistake, but one that didn't matter
+        since the actual method isn't implemented until up in RenderBox anyway.
+
+        * khtml/rendering/render_inline.h: Change some parameters to RenderBlock *.
+        * khtml/rendering/render_inline.cpp:
+        (cloneInline): Make this return a RenderInline * instead of a RenderFlow *.
+        (RenderInline::splitInlines): Change some parameters to RenderBlock * and locals to RenderInline *.
+        (RenderInline::splitFlow): Change some parameters and locals to RenderBlock *.
+
+        * khtml/rendering/render_layer.h: Remove forward declaration of class RenderFlow.
+        * khtml/rendering/render_object.h: Remove forward declaration and friend declaration of class RenderFlow.
+
 2003-01-31  Trey Matteson  <trey@apple.com>
 
 	New plumbing for autofill/autocomplete.  WebBrowser receives controlText delegate
