@@ -1,3 +1,9 @@
+2002-10-04  Darin Adler  <darin@apple.com>
+
+        * Misc.subproj/WebKitLocalizableStrings.m: Added.
+	Contains the definition of the WebKitLocalizableStringsBundle.
+        * WebKit.pbproj/project.pbxproj: Add -DFRAMEWORK_NAME=WebKit.
+
 2002-10-04  Richard Williamson   <rjw@apple.com>
 
         Stubs for DOM level 2 core API.

@@ -72,6 +72,7 @@
 				F58C8A07025BD3BC018635CA,
 				F531DDFF02F0C36F018635CA,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			knownRegions = (
 				English,
@@ -143,7 +144,7 @@
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
-				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
+				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H -DFRAMEWORK_NAME=WebKit";
 				OTHER_LDFLAGS = "-seg1addr 0x7000000 -no-c++filt";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
@@ -378,6 +379,7 @@
 				F57D1956034E734901A80180,
 				F57D1958034E734901A80180,
 				F57D195A034E734901A80180,
+				9367C637034E9F00008635C5,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -463,6 +465,7 @@
 				F560BEBD030DAF4401C1A526,
 				F59668C802AD2923018635CA,
 				F59668C902AD2923018635CA,
+				9367C636034E9F00008635C5,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -1447,6 +1450,18 @@
 			settings = {
 			};
 		};
+		9367C636034E9F00008635C5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebKitLocalizableStrings.m;
+			refType = 4;
+		};
+		9367C637034E9F00008635C5 = {
+			fileRef = 9367C636034E9F00008635C5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		93AEB17D032C1735008635CE = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -2132,48 +2147,56 @@
 			refType = 4;
 		};
 		F57D194B034E734901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMDocument.h;
 			path = DOM.subproj/WebDOMDocument.h;
 			refType = 2;
 		};
 		F57D194C034E734901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMDocument.m;
 			path = DOM.subproj/WebDOMDocument.m;
 			refType = 2;
 		};
 		F57D194D034E734901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMElement.h;
 			path = DOM.subproj/WebDOMElement.h;
 			refType = 2;
 		};
 		F57D194E034E734901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMElement.m;
 			path = DOM.subproj/WebDOMElement.m;
 			refType = 2;
 		};
 		F57D194F034E734901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMNamedNodeMap.h;
 			path = DOM.subproj/WebDOMNamedNodeMap.h;
 			refType = 2;
 		};
 		F57D1950034E734901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMNamedNodeMap.m;
 			path = DOM.subproj/WebDOMNamedNodeMap.m;
 			refType = 2;
 		};
 		F57D1951034E734901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMNode.h;
 			path = DOM.subproj/WebDOMNode.h;
 			refType = 2;
 		};
 		F57D1952034E734901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMNode.m;
 			path = DOM.subproj/WebDOMNode.m;
