@@ -117,5 +117,9 @@ void QButton::clicked()
     
     KWQButton *button = (KWQButton *)getView();
     [button sendConsumedMouseUpIfNeeded];
-    m_clicked.call();
+
+    // Don't call clicked if the button was destroyed inside of sendConsumedMouseUpIfNeeded.
+    if ([button target]) {
+        m_clicked.call();
+    }
 }

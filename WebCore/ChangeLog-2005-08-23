@@ -1,3 +1,12 @@
+2003-06-05  Chris Blumenberg  <cblu@apple.com>
+
+        Fixed: <rdar://problem/3268751>: REGRESSION: crash in KWQValueListImpl selecting connection speed at news.com
+
+        Reviewed by darin.
+
+        * kwq/KWQButton.mm:
+        (QButton::clicked): Don't call clicked if the button was destroyed inside of sendConsumedMouseUpIfNeeded.
+
 2003-06-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
