@@ -2142,12 +2142,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         || [[mainFrame provisionalDataSource] isLoading];
 }
 
-static NSDictionary *_textAttributesFromStyle(DOMCSSStyleDeclaration *style)
-{
-    ERROR("unimplemented");
-    return nil;
-}
-
 static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 {
     // FIXME: can't get at CSS_PROP_FONT_FAMILY and such from cssproperties.h in WebCore
@@ -2219,7 +2213,6 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
                 for (; element != lastSelectedElement; element = [iterator nextNode]) {
                     ASSERT([element isKindOfClass:[DOMElement class]]);
                     
-                    DOMCSSStyleDeclaration *otherStyle = [self computedStyleForElement:(DOMElement *)element pseudoElement:nil];
                     NSFont *otherFont = [[self _bridgeForCurrentSelection] renderedFontForNode:element];
                     if (![font isEqual:otherFont]) {
                         onlyOneFontInSelection = NO;

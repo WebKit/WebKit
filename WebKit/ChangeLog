@@ -1,5 +1,10 @@
 2004-04-30  John Sullivan  <sullivan@apple.com>
 
+        * WebView.subproj/WebView.m:
+        fixed deployment build breakage
+        
+2004-04-30  John Sullivan  <sullivan@apple.com>
+
         - more work on getting the font panel to work with editable HTML.
         The font panel in Blot now correctly reflects the first selected font when the
         selection is at least one character long.
