@@ -34,10 +34,16 @@
 
 struct QFontMetricsPrivate
 {
+    friend class QFontMetrics;
+    
     QFontMetricsPrivate(const QFont &font)
     {
         refCount = 0;
-        renderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFamily:font.getNSFamily() traits:font.getNSTraits() size:font.getNSSize()] retain];
+
+        CREATE_FAMILY_ARRAY(font, families);
+
+        renderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFamilies:families traits:font.getNSTraits() size:font.getNSSize()] retain];
+        _font = font;
     }
     ~QFontMetricsPrivate()
     {
@@ -52,7 +58,7 @@ struct QFontMetricsPrivate
     
 private:
     id <WebCoreTextRenderer> renderer;
-    
+    QFont _font;
     QFontMetricsPrivate(const QFontMetricsPrivate&);
     QFontMetricsPrivate& operator=(const QFontMetricsPrivate&);
 };
@@ -112,7 +118,10 @@ float QFontMetrics::xHeight() const
 int QFontMetrics::width(QChar qc) const
 {
     UniChar c = qc.unicode();
-    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:&c stringLength:1 fromCharacterPosition:0 numberOfCharacters:1 withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths:0 letterSpacing:0 wordSpacing:0]);
+
+    CREATE_FAMILY_ARRAY(data->_font, families);
+    
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:&c stringLength:1 fromCharacterPosition:0 numberOfCharacters:1 withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths:0 letterSpacing:0 wordSpacing:0 fontFamilies: families]);
 }
 
 int QFontMetrics::charWidth(const QString &s, int pos) const
@@ -123,27 +132,38 @@ int QFontMetrics::charWidth(const QString &s, int pos) const
 int QFontMetrics::width(char c) const
 {
     UniChar ch = (uchar) c;
-    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:&ch stringLength:1 fromCharacterPosition:0 numberOfCharacters:1 withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths:0  letterSpacing:0 wordSpacing:0]);
+
+    CREATE_FAMILY_ARRAY(data->_font, families);
+
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:&ch stringLength:1 fromCharacterPosition:0 numberOfCharacters:1 withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths:0  letterSpacing:0 wordSpacing:0 fontFamilies: families]);
 }
 
 int QFontMetrics::width(const QString &qstring, int len) const
 {
-    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)qstring.unicode() stringLength:len fromCharacterPosition:0 numberOfCharacters:len withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing:0 wordSpacing:0]);
+    CREATE_FAMILY_ARRAY(data->_font, families);
+
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)qstring.unicode() stringLength:len fromCharacterPosition:0 numberOfCharacters:len withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing:0 wordSpacing:0 fontFamilies: families]);
 }
 
 int QFontMetrics::width(const QChar *uchars, int len) const
 {
-    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:len fromCharacterPosition:0 numberOfCharacters:len withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing:0 wordSpacing:0]);
+    CREATE_FAMILY_ARRAY(data->_font, families);
+
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:len fromCharacterPosition:0 numberOfCharacters:len withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing:0 wordSpacing:0 fontFamilies: families]);
 }
 
 float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, int letterSpacing, int wordSpacing) const
 {
-    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: 0 letterSpacing:letterSpacing wordSpacing:wordSpacing];
+    CREATE_FAMILY_ARRAY(data->_font, families);
+
+    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: 0 letterSpacing:letterSpacing wordSpacing:wordSpacing fontFamilies: families];
 }
 
 float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos, int len, int toAdd, float *buffer, int letterSpacing, int wordSpacing) const
 {
-    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len withPadding: toAdd applyRounding: YES attemptFontSubstitution: YES widths: (float *)buffer letterSpacing:letterSpacing wordSpacing: wordSpacing];
+    CREATE_FAMILY_ARRAY(data->_font, families);
+    
+    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len withPadding: toAdd applyRounding: YES attemptFontSubstitution: YES widths: (float *)buffer letterSpacing:letterSpacing wordSpacing: wordSpacing fontFamilies: families];
 }
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const

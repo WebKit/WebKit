@@ -354,13 +354,17 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
     if (data->state.paintingDisabled)
         return;
         
+    // Avoid allocations, use stack array to pass font families.  Normally these
+    // css fallback lists are small <= 3.
+    CREATE_FAMILY_ARRAY(data->state.font, families);
+
     id<WebCoreTextRenderer> renderer = 
       [[WebCoreTextRendererFactory sharedFactory]
-          rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()];
+          rendererWithFamilies:families traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()];
 
     const UniChar* str = (const UniChar*)qstring.unicode();
     if (alignmentFlags & Qt::AlignRight)
-        x -= ROUND_TO_INT([renderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0]);
+        x -= ROUND_TO_INT([renderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: families]);
      
     [renderer drawCharacters:str stringLength:qstring.length()
         fromCharacterPosition:0 
@@ -371,16 +375,21 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
         backgroundColor:nil
         rightToLeft: false
         letterSpacing: 0
-        wordSpacing: 0];
+        wordSpacing: 0
+        fontFamilies: families];
 }
 
 void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, int letterSpacing, int wordSpacing)
 {
     if (data->state.paintingDisabled || len <= 0)
         return;
-        
+
+    // Avoid allocations, use stack array to pass font families.  Normally these
+    // css fallback lists are small <= 3.
+    CREATE_FAMILY_ARRAY(data->state.font, families);
+    
     [[[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
+        rendererWithFamilies:families traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
     	drawCharacters:(const UniChar *)str stringLength:len
         fromCharacterPosition:from 
         toCharacterPosition:to 
@@ -390,16 +399,19 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
         backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil
         rightToLeft: d == RTL ? true : false
         letterSpacing: letterSpacing
-        wordSpacing: wordSpacing];
+        wordSpacing: wordSpacing
+        fontFamilies: families];
 }
 
 void QPainter::drawUnderlineForText(int x, int y, const QChar *str, int len)
 {
     if (data->state.paintingDisabled)
         return;
+
+    CREATE_FAMILY_ARRAY(data->state.font, families);
         
     [[[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
+        rendererWithFamilies:families traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
         drawUnderlineForCharacters:(const UniChar *)str stringLength:len
         atPoint:NSMakePoint(x,y) withColor:data->state.pen.color().getNSColor()];
 }

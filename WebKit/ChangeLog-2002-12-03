@@ -1,3 +1,33 @@
+2002-12-03  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3019986.  Use an array of font families instead of a single
+        font family to support CSS family lists.
+        r=hyatt
+        
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_widthForString:font:]):
+        * Misc.subproj/WebStringTruncator.m:
+        (+[WebStringTruncator rightTruncateString:toWidth:withFont:]):
+        (+[WebStringTruncator centerTruncateString:toWidth:withFont:]):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer substituteFontForString:families:]):
+        (-[WebTextRenderer substituteFontForCharacters:length:families:]):
+        (-[WebTextRenderer widthForCharacters:length:]):
+        (-[WebTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:rightToLeft:letterSpacing:wordSpacing:fontFamilies:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:characterPosition:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:letterSpacing:wordSpacing:fontFamilies:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:fontFamilies:]):
+        * WebCoreSupport.subproj/WebTextRendererFactory.h:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamilies:traits:size:]):
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+        (+[WebTextRendererFactory fallbackFontWithTraits:size:]):
+        (-[WebTextRendererFactory cachedFontFromFamily:traits:size:]):
+        (-[WebTextRendererFactory cachedFontFromFamilies:traits:size:]):
+        (-[WebTextRendererFactory rendererWithFamilies:traits:size:]):
+
 2002-12-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3115073 - REGRESSION: plants.com is crashing in WebIconDB with bad retain count

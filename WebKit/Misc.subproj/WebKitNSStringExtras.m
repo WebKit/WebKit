@@ -31,7 +31,8 @@
              backgroundColor:nil
                  rightToLeft:NO
                letterSpacing:0
-                 wordSpacing:0];
+                 wordSpacing:0
+                 fontFamilies:0];
     free(buffer);
 }
 
@@ -58,7 +59,8 @@
                 glyphs: 0
                 numGlyphs: 0
                 letterSpacing: 0
-                wordSpacing: 0];
+                wordSpacing: 0
+                fontFamilies: 0];
     free(buffer);
     
     return width;

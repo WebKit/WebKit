@@ -101,12 +101,39 @@ public:
     float getNSSize() const { return _size; }
     
     NSFont *getNSFont() const;
-    NSFont* getNSFontWithFamily(QFontFamily* fontFamily) const;
     
 private:
     QFontFamily _family;
     int _trait;
     float _size;
 };
+
+// Macro to create a stack array containing non-retained NSString names
+// of CSS font families.  This can be used to avoid allocations in
+// performance critical code.  Create a NSSString ** name families
+// and populates with a NSString * for each family name.  Null terminates
+// the array.
+#define CREATE_FAMILY_ARRAY(font,families)\
+int __numFamilies = 0;\
+{\
+    QFontFamily *__ff = ((QFont)font).firstFamily();\
+    while (__ff)\
+    {\
+        __numFamilies++;\
+            __ff = __ff->next();\
+    }\
+}\
+NSString *families[__numFamilies+1];\
+{\
+    int __i = 0;\
+    QFontFamily *__ff = ((QFont)font).firstFamily();\
+    while (__ff)\
+    {\
+        families[__i++] = __ff->getNSFamily();\
+            __ff = __ff->next();\
+    }\
+    families[__i] = 0;\
+}
+
 
 #endif
