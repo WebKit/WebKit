@@ -2051,7 +2051,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
         // In the case where we just became first responder, we should send the mouseDown:
         // to the NSTextField, not the NSTextField's editor. This code makes sure that happens.
         // If we don't do this, we see a flash of selected text when clicking in a text field.
-        if (_firstResponderAtMouseDownTime != view && [view isKindOfClass:[NSTextView class]]) {
+        if (![_bridge wasFirstResponderAtMouseDownTime:view] && [view isKindOfClass:[NSTextView class]]) {
             NSView *superview = view;
             while (superview != nodeView) {
                 superview = [superview superview];
@@ -2583,22 +2583,12 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     d->m_view->viewportToContents(_mouseDownWinX, _mouseDownWinY, _mouseDownX, _mouseDownY);
     _mouseDownTimestamp = [event timestamp];
 
-    NSResponder *oldFirstResponderAtMouseDownTime = _firstResponderAtMouseDownTime;
-    // Unlike other places in WebCore where we get the first
-    // responder, in this case we must be talking about the real first
-    // responder, so we could just ask the bridge's window, instead of
-    // the bridge. It's unclear which is better.
-    _firstResponderAtMouseDownTime = KWQRetain([_bridge firstResponder]);
-
     _mouseDownMayStartDrag = false;
     _mouseDownMayStartSelect = false;
 
     QMouseEvent kEvent(QEvent::MouseButtonPress, event);
     v->viewportMousePressEvent(&kEvent);
     
-    KWQRelease(_firstResponderAtMouseDownTime);
-    _firstResponderAtMouseDownTime = oldFirstResponderAtMouseDownTime;
-
     ASSERT(_currentEvent == event);
     KWQRelease(event);
     _currentEvent = oldCurrentEvent;

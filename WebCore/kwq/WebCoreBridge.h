@@ -429,7 +429,9 @@ typedef enum {
 - (BOOL)windowIsResizable;
 
 - (NSResponder *)firstResponder;
-- (void)makeFirstResponder:(NSResponder *)view;
+- (void)makeFirstResponder:(NSResponder *)responder;
+
+- (BOOL)wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
 
 - (void)closeWindowSoon;
 

@@ -1,3 +1,19 @@
+2004-11-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3846152> REGRESSION (125-166): can't drag text out of <input type=text> fields
+
+        * kwq/WebCoreBridge.h: Added wasFirstResponderAtMouseDownTime: method.
+
+        * kwq/KWQKHTMLPart.h: Removed _firstResponderAtMouseDownTime.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Use the new wasFirstResponderAtMouseDownTime:
+        method on the bridge instead of _firstResponderAtMouseDownTime. This will return YES for the case where
+        we started with the NSTextField as first responder, and then took focus away and gave it back, which
+        makes dragging text work again.
+        (KWQKHTMLPart::mouseDown): Removed code to set _firstResponderAtMouseDownTime.
+
 2004-11-11  David Hyatt  <hyatt@apple.com>
 
 	Disable the tokenizer deferral, since it hurts the PLT by 3% or so.
