@@ -1,3 +1,14 @@
+2003-06-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3276099.  value() was wrong for radio buttons.  Needed
+	to get it from the attribute since I was no longer caching
+	anything in m_value.
+	
+        Reviewed by kocienda
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::value):
+
 2003-06-02  Ken Kocienda  <kocienda@apple.com>
 
         Code written by darin
