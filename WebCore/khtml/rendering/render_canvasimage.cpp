@@ -183,7 +183,7 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
     }
     
     if (drawnImage()) {
-        HTMLCanvasElementImpl* i = (element() && element()->id() == ID_IMG) ? static_cast<HTMLCanvasElementImpl*>(element()) : 0;
+        HTMLCanvasElementImpl* i = (element() && element()->id() == ID_CANVAS) ? static_cast<HTMLCanvasElementImpl*>(element()) : 0;
         int oldOperation = 0;
         if (i && !i->compositeOperator().isNull()){
             oldOperation = QPainter::getCompositeOperation(p->currentContext());

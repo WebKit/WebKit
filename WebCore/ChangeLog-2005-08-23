@@ -1,5 +1,15 @@
 2004-06-02  Richard Williamson   <rjw@apple.com>
 
+	Corrected typo ID_IMG should have been ID_CANVAS when
+	checking for the canvas composite operator.
+
+        Reviewed by Ken.
+
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::paint):
+
+2004-06-02  Richard Williamson   <rjw@apple.com>
+
 	Correctly size the <CANVAS> if margins, borders, or
 	padding is added.
 
