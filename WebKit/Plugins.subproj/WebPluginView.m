@@ -158,6 +158,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:[self window]];
+        [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:@"NSWindowWillCloseNotification" object:[self window]];
         [self sendActivateEvent];
         if(URL)
             [self newStream:URL mimeType:mime notifyData:NULL];
@@ -176,7 +177,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     return YES;
 }
 
--(void) viewHasMoved:(NSNotification *)note
+-(void) viewHasMoved:(NSNotification *)notification
 {
     [self setWindow];
     [self sendUpdateEvent];
@@ -231,6 +232,11 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         }
     }
     return nil;
+}
+
+- (void) windowWillClose:(NSNotification *)notification
+{
+    [self stop];
 }
 
 
@@ -598,6 +604,11 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 -(void)invalidateRegion:(NPRegion)invalidateRegion
 {
     KWQDebug("NPN_InvalidateRegion\n");
+}
+
+-(void)start
+{
+
 }
 
 - (void)stop
