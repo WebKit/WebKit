@@ -92,7 +92,7 @@
     }
 }
 
-- (void)_mainReceivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource
+- (void)_mainReceivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource complete: (BOOL)isComplete
 {
     IFWebFrame *frame = [dataSource webFrame];
     IFContentPolicy contentPolicy = [dataSource contentPolicy];
@@ -112,7 +112,7 @@
 
     [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle fromDataSource: dataSource];
 
-    if(progress->bytesSoFar == progress->totalToLoad){
+    if(isComplete){
         if(contentPolicy == IFContentPolicyOpenExternally || contentPolicy == IFContentPolicySave)
             [dataSource _setPrimaryLoadComplete: YES];
     }
@@ -130,7 +130,7 @@
     }
 
     // This resouce has completed, so check if the load is complete for all frames.
-    if (progress->bytesSoFar == progress->totalToLoad){
+    if (isComplete){
         // If the load is complete, mark the primary load as done.  The primary load is the load
         // of the main document.  Other resources may still be arriving.
         [dataSource _setPrimaryLoadComplete: YES];

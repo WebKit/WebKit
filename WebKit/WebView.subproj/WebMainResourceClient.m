@@ -74,7 +74,7 @@
 #endif    
     
     [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progress]
-        forResourceHandle:sender fromDataSource: dataSource];
+        forResourceHandle:sender fromDataSource: dataSource complete: YES];
     [[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
@@ -97,12 +97,12 @@
        [dataSource _setResourceData:data];
     }
     
-    if(IFContentPolicyShow)
+    if([dataSource contentPolicy] == IFContentPolicyShow)
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     
     // update progress
     [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle:sender fromDataSource:dataSource];
+        forResourceHandle:sender fromDataSource:dataSource complete:YES];
     [[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
@@ -181,7 +181,7 @@
     
     // update progress
     [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle:sender fromDataSource:dataSource];
+        forResourceHandle:sender fromDataSource:dataSource complete: NO];
     
     isFirstChunk = NO;
 }
