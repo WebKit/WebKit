@@ -1782,8 +1782,19 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
 
     Position extent = _part->selection().extent();
-    QRect extentRect = extent.node()->renderer()->caretRect(extent.offset(), _part->selection().affinity());
-    if (!NSContainsRect([v->getDocumentView() visibleRect], NSRect(extentRect))) {
+    if (extent.isNull())
+        return;
+    
+    RenderObject *renderer = extent.node()->renderer();
+    if (!renderer)
+        return;
+    
+    NSView *documentView = v->getDocumentView();
+    if (!documentView)
+        return;
+    
+    QRect extentRect = renderer->caretRect(extent.offset(), _part->selection().affinity());
+    if (!NSContainsRect([documentView visibleRect], NSRect(extentRect))) {
         v->ensureRectVisibleCentered(extentRect, true);
     }
 }

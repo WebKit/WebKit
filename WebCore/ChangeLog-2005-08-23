@@ -1,3 +1,14 @@
+2005-01-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3933926> Tiger8A341: Mail crashes while forwarding embedded HTML message in -[WebCoreBridge ensureSelectionVisible]
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge ensureSelectionVisible]): Put in some null checks to prevent crash experienced in bug.
+
 2005-01-03  David Hyatt  <hyatt@apple.com>
 
         Reviewed by NOBODY (OOPS!).
