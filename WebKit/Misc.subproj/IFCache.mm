@@ -53,6 +53,21 @@
     return KJS::Collector::size();
 }
 
++ (int)javaScriptInterpretersCount
+{
+    return KJS::Collector::numInterpreters();
+}
+
++ (int)javaScriptNoGCAllowedObjectsCount
+{
+    return KJS::Collector::numGCNotAllowedObjects();
+}
+
++ (int)javaScriptReferencedObjectsCount
+{
+    return KJS::Collector::numReferencedObjects();
+}
+
 + (void)garbageCollectJavaScriptObjects
 {
     while (KJS::Collector::collect()) { }

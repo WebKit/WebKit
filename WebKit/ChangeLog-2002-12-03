@@ -1,3 +1,13 @@
+2002-05-08  Darin Adler  <darin@apple.com>
+
+	* Misc.subproj/IFCache.h: Add more JavaScript object statistics.
+	* Misc.subproj/IFCache.mm:
+	(+[IFCache javaScriptInterpretersCount]): New.
+	(+[IFCache javaScriptNoGCAllowedObjectsCount]): New.
+	(+[IFCache javaScriptReferencedObjectsCount]): New.
+
+	* WebKit.pbproj/project.pbxproj: Rearranged two files, dunno why.
+
 2002-05-08  Chris Blumenberg  <cblu@apple.com>
 
 	Cleaned up mach-o plug-in support.
