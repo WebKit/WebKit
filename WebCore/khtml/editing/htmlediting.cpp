@@ -32,7 +32,6 @@
 #include "cssproperties.h"
 #include "dom_doc.h"
 #include "dom_docimpl.h"
-#include "dom_docimpl.h"
 #include "dom_elementimpl.h"
 #include "dom_nodeimpl.h"
 #include "dom_position.h"
@@ -54,6 +53,7 @@
 #include "render_style.h"
 #include "render_text.h"
 #include "visible_position.h"
+#include "visible_text.h"
 #include "visible_units.h"
 
 using DOM::AttrImpl;
@@ -120,44 +120,20 @@ namespace khtml {
 
 static inline bool isNBSP(const QChar &c)
 {
-    return c == QChar(0xa0);
+    return c.unicode() == 0xa0;
 }
 
-static inline bool isWS(const QChar &c)
-{
-    return c.isSpace() && c != QChar(0xa0);
-}
-
-static inline bool isWS(const DOMString &text)
-{
-    if (text.length() != 1)
-        return false;
-    
-    return isWS(text[0]);
-}
-
-static inline bool isWS(const Position &pos)
+// FIXME: Can't really determine this without taking white-space mode into account.
+static inline bool nextCharacterIsCollapsibleWhitespace(const Position &pos)
 {
     if (!pos.node())
         return false;
-        
     if (!pos.node()->isTextNode())
         return false;
-
-    const DOMString &string = static_cast<TextImpl *>(pos.node())->data();
-    return isWS(string[pos.offset()]);
+    return isCollapsibleWhitespace(static_cast<TextImpl *>(pos.node())->data()[pos.offset()]);
 }
 
 static const int spacesPerTab = 4;
-
-static inline bool isTab(const DOMString &text)
-{
-    static QChar tabCharacter = QChar(0x9);
-    if (text.length() != 1)
-        return false;
-    
-    return text[0] == tabCharacter;
-}
 
 static inline bool isTableStructureNode(const NodeImpl *node)
 {
@@ -2668,7 +2644,7 @@ void DeleteSelectionCommand::fixupWhitespace()
         else {
             Position pos = m_endingPosition.downstream(StayInBlock);
             pos = Position(pos.node(), pos.offset() - 1);
-            if (isWS(pos) && !pos.isRenderedCharacter()) {
+            if (nextCharacterIsCollapsibleWhitespace(pos) && !pos.isRenderedCharacter()) {
                 LOG(Editing, "replace trailing [invalid]");
                 TextImpl *textNode = static_cast<TextImpl *>(pos.node());
                 replaceTextInNode(textNode, pos.offset(), 1, nonBreakingSpaceString());
@@ -3647,7 +3623,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
     // These are temporary implementations for inserting adjoining spaces
     // into a document. We are working on a CSS-related whitespace solution
     // that will replace this some day. We hope.
-    if (isTab(text)) {
+    if (text == "\t") {
         // Treat a tab like a number of spaces. This seems to be the HTML editing convention,
         // although the number of spaces varies (we choose four spaces). 
         // Note that there is no attempt to make this work like a real tab stop, it is merely 
@@ -3662,7 +3638,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
 
         m_charactersAdded += spacesPerTab;
     }
-    else if (isWS(text)) {
+    else if (text == " ") {
         insertSpace(textNode, offset);
         endPosition = Position(textNode, offset + 1);
 
@@ -3671,7 +3647,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
     }
     else {
         const DOMString &existingText = textNode->data();
-        if (textNode->length() >= 2 && offset >= 2 && isNBSP(existingText[offset - 1]) && !isWS(existingText[offset - 2])) {
+        if (textNode->length() >= 2 && offset >= 2 && isNBSP(existingText[offset - 1]) && !isCollapsibleWhitespace(existingText[offset - 2])) {
             // DOM looks like this:
             // character nbsp caret
             // As we are about to insert a non-whitespace character at the caret
@@ -3710,7 +3686,7 @@ void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
     // this will work out OK since the offset we have been passed has been upstream-ized 
     int count = 0;
     for (unsigned int i = offset; i < text.length(); i++) {
-        if (isWS(text[i]))
+        if (isCollapsibleWhitespace(text[i]))
             count++;
         else 
             break;
@@ -3720,13 +3696,13 @@ void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
         // check if there is a rendered WS at the caret
         Position pos(textNode, offset);
         Position downstream = pos.downstream();
-        if (downstream.offset() < (long)text.length() && isWS(text[downstream.offset()]))
+        if (downstream.offset() < (long)text.length() && isCollapsibleWhitespace(text[downstream.offset()]))
             count--; // leave this WS in
         if (count > 0)
             deleteTextFromNode(textNode, offset, count);
     }
 
-    if (offset > 0 && offset <= text.length() - 1 && !isWS(text[offset]) && !isWS(text[offset - 1])) {
+    if (offset > 0 && offset <= text.length() - 1 && !isCollapsibleWhitespace(text[offset]) && !isCollapsibleWhitespace(text[offset - 1])) {
         // insert a "regular" space
         insertTextIntoNode(textNode, offset, " ");
         return;
@@ -3888,14 +3864,14 @@ void RebalanceWhitespaceCommand::doApply()
     
     // find upstream offset
     long upstream = m_position.offset();
-    while (upstream > 0 && isWS(text[upstream - 1]) || isNBSP(text[upstream - 1])) {
+    while (upstream > 0 && isCollapsibleWhitespace(text[upstream - 1]) || isNBSP(text[upstream - 1])) {
         upstream--;
         m_upstreamOffset = upstream;
     }
 
     // find downstream offset
     long downstream = m_position.offset();
-    while ((unsigned)downstream < text.length() && isWS(text[downstream]) || isNBSP(text[downstream])) {
+    while ((unsigned)downstream < text.length() && isCollapsibleWhitespace(text[downstream]) || isNBSP(text[downstream])) {
         downstream++;
         m_downstreamOffset = downstream;
     }

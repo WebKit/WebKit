@@ -59,8 +59,10 @@ public:
     ElementImpl *element() const;
     CSSComputedStyleDeclarationImpl *computedStyle() const;
 
-    Position leadingWhitespacePosition(khtml::EAffinity affinity, bool treatNBSPAsWhiteSpace=false) const;
-    Position trailingWhitespacePosition(khtml::EAffinity affinity, bool treatNBSPAsWhiteSpace=false) const;
+    // FIXME: Make these non-member functions and put them somewhere in the editing directory.
+    // These aren't really basic "position" operations. More high level editing helper functions.
+    Position leadingWhitespacePosition(khtml::EAffinity affinity, bool considerNonCollapsibleWhitespace = false) const;
+    Position trailingWhitespacePosition(khtml::EAffinity affinity, bool considerNonCollapsibleWhitespace = false) const;
 
     // These functions only consider leaf nodes, and if stayInBlock is true, blocks.
     // Hence, the results from these functions are idiosyncratic, and until you

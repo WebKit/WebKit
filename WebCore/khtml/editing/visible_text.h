@@ -32,9 +32,19 @@ namespace khtml {
 
 class InlineTextBox;
 
-// General utility functions
-
-enum IteratorKind { CONTENT = 0, RUNFINDER = 1 };
+// FIXME: Can't really answer this question without knowing the white-space mode.
+// FIXME: Move this along with the white-space position functions above
+// somewhere in the editing directory. It doesn't belong here.
+inline bool isCollapsibleWhitespace(const QChar &c)
+{
+    switch (c.unicode()) {
+        case ' ':
+        case '\n':
+            return true;
+        default:
+            return false;
+    }
+}
 
 QString plainText(const DOM::Range &);
 DOM::Range findPlainText(const DOM::Range &, const QString &, bool forward, bool caseSensitive);
@@ -42,6 +52,9 @@ DOM::Range findPlainText(const DOM::Range &, const QString &, bool forward, bool
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
 // at points where replaced elements break up the text flow.  The text comes back in
 // chunks so as to optimize for performance of the iteration.
+
+enum IteratorKind { CONTENT = 0, RUNFINDER = 1 };
+
 class TextIterator
 {
 public:

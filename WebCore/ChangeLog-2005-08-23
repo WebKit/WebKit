@@ -1,3 +1,43 @@
+2005-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Maciej.
+
+        - fixed <rdar://problem/3988809> REGRESSION (Mail): wide space characters are turned into plain old spaces when typed or pasted
+
+        Changed the few places where it matters to use a "collapsible whitespace" concept instead of
+        the general whitespace concept. This means treating only ' ' and '\n' specially instead of
+        including other space characters, which matches what the space-collapsing logic does in RenderText,
+        although it really needs to behave differently based on whitespace mode.
+
+        * khtml/editing/visible_text.h: (khtml::isCollapsibleWhitespace): Added. This returns true only for
+        ' ' and '\n' since they are the only characters collapsed once text is in the DOM. But really it
+        can't do the job ignoring white-space mode, so some day it must go.
+
+        * khtml/editing/html_interchange.cpp: (convertHTMLTextToInterchangeFormat): Changed to use
+        isCollapsibleWhitespace and removed unnecessary calls to latin1().
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isNBSP): Removed unnecessary creation/destruction of QChar each time this is called.
+        (khtml::nextCharacterIsCollapsibleWhitespace): Renamed from isWS and changed to use isCollapsibleWhitespace.
+        (khtml::DeleteSelectionCommand::fixupWhitespace): Use isCollapsibleWhitespace instead of isWS,
+        since we only want to do our NBSP tricks for collapsible whitespace.
+        (khtml::InsertTextCommand::input): Changed use of isTab to instead say == "\t" since that does the
+        same thing and is arguably just as clear. Changed use of isWS to == " " since the input text can't
+        include any "\n" characters, and really a plain old space is the only collapsible thing that can
+        be passed in. Use isCollapsibleWhitespace instead of isWS since we want to do NBSP tricks only for
+        collapsible whitespace, not all whitespace.
+        (khtml::InsertTextCommand::insertSpace): Use isCollapsibleWhitespace instead of isWS since we want
+        to do NBSP tricks only for collapsible whitespace, not all whitespace.
+        (khtml::RebalanceWhitespaceCommand::doApply): Ditto.
+
+        * khtml/xml/dom_position.h: Changed treatNBSPAsWhiteSpace parameters to considerNonCollapsibleWhitespace
+        parameters. The most common callers are only interested in collapsible whitespace, and the smart copy
+        and paste callers want to include all whitespace, including non-breaking spaces and all the Unicode spaces.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::leadingWhitespacePosition): Rename the parameter, and use either QChar::isSpace or
+        isCollapsibleWhitespace depending on the boolean passed in.
+        (DOM::Position::trailingWhitespacePosition): Ditto.
+
 2005-03-07  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.
@@ -50,7 +90,7 @@
         * khtml/rendering/render_layer.cpp:
         (RenderLayer::updateLayerPosition):
 
-2005-03-07  Christy Warren  <set EMAIL_ADDRESS environment variable>
+2005-03-07  Christy Warren  <kali@apple.com>
 
         Reviewed by Darin
 
@@ -139,7 +179,7 @@
         * layout-tests/editing/pasteboard/paste-4035648-fix-expected.txt: Added.
         * layout-tests/editing/pasteboard/paste-4035648-fix.html: Added.
 
-2005-03-06  Christy Warren  kali@appple.com
+2005-03-06  Christy Warren  <kali@appple.com>
 
         Reviewed by Ken
 
@@ -147,7 +187,7 @@
         (lastRendererOnPrevLine): helper for RenderText::caretRect
         (RenderText::caretRect): added code to properly handle bidi ordered text boxes
 
-2005-03-06  Christy Warren  <set EMAIL_ADDRESS environment variable>
+2005-03-06  Christy Warren  <kali@apple.com>
 
         Reviewed by Darin.
 

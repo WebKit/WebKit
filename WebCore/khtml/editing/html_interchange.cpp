@@ -25,7 +25,10 @@
 
 #include "html_interchange.h"
 
-#include "qstring.h"
+#include <qstring.h>
+#include "visible_text.h"
+
+using khtml::isCollapsibleWhitespace;
 
 namespace {
 
@@ -42,14 +45,13 @@ QString convertedSpaceString()
     return convertedSpaceString;
 }
 
-bool isWSTreatedAsSpace(const QChar &c)
-{
-    static QChar nbsp = QChar(0xa0);
-    return c.isSpace() && c != nbsp;
-}
-
 } // end anonymous namespace
 
+// FIXME: convertHTMLTextToInterchangeFormat should probably be in the khtml namespace.
+// FIXME: Can't really do this work without taking whitespace mode into account.
+// This means that eventually this function needs to be eliminated or at least have
+// its parameters changed because it can't do its work on the string without knowing
+// what parts are in what whitespace mode.
 QString convertHTMLTextToInterchangeFormat(const QString &in)
 {
     QString s;
@@ -58,11 +60,10 @@ QString convertHTMLTextToInterchangeFormat(const QString &in)
     unsigned int consumed = 0;
     while (i < in.length()) {
         consumed = 1;
-        const QChar &c(in[i].latin1());
-        if (isWSTreatedAsSpace(c)) {
+        if (isCollapsibleWhitespace(in[i])) {
             // count number of adjoining spaces
             unsigned int j = i + 1;
-            while (j < in.length() && isWSTreatedAsSpace(in[j].latin1()))
+            while (j < in.length() && isCollapsibleWhitespace(in[j]))
                 j++;
             unsigned int count = j - i;
             consumed = count;
