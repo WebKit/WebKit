@@ -1,3 +1,15 @@
+2003-01-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- made minor tweaks to work better with Mozilla's JavaScript tests.
+
+        * kjs/testkjs.cpp:
+        (VersionFunctionImp::call): Implemented 
+        (main): Ignore files named -f (hack to match -f <filename syntax
+	that moz JavaScript tests expect). Also use return code 3 instead
+	of 1 for uncaught exception.
+
 2003-01-16  Darin Adler  <darin@apple.com>
 
         * kjs/number_object.cpp: (NumberObjectImp::construct):
