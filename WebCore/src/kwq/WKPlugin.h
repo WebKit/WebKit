@@ -41,6 +41,7 @@
 - (void)unload;
 
 - (NPP_NewProcPtr)NPP_New;
+- (NPP_DestroyProcPtr)NPP_Destroy;
 - (NPP_SetWindowProcPtr)NPP_SetWindow;
 - (NPP_NewStreamProcPtr)NPP_NewStream;
 - (NPP_WriteReadyProcPtr)NPP_WriteReady;

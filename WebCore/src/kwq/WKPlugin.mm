@@ -144,8 +144,8 @@
 }
 
 - (void)unload{
-    // unload library here
     NPP_Shutdown();
+    // unload library here
 }
 
 - (NPP_SetWindowProcPtr)NPP_SetWindow{
@@ -154,6 +154,10 @@
 
 - (NPP_NewProcPtr)NPP_New{
     return NPP_New;
+}
+
+- (NPP_DestroyProcPtr)NPP_Destroy{
+    return NPP_Destroy;
 }
 
 - (NPP_NewStreamProcPtr)NPP_NewStream{

@@ -28,13 +28,14 @@
     url = location;
     plugin = plug;
     NPP_New = 		[plugin NPP_New]; // copy function pointers
+    NPP_Destroy = 	[plugin NPP_Destroy];
     NPP_SetWindow = 	[plugin NPP_SetWindow];
     NPP_NewStream = 	[plugin NPP_NewStream];
     NPP_WriteReady = 	[plugin NPP_WriteReady];
     NPP_Write = 	[plugin NPP_Write];
     NPP_DestroyStream = [plugin NPP_DestroyStream];
     NPP_HandleEvent = 	[plugin NPP_HandleEvent];
-    
+
     [mime getCString:cMime];
     npErr = NPP_New(cMime, instance, NP_EMBED, 0, NULL, NULL, &saved); //need to pass parameters to plug-in
     KWQDebug("NPP_New: %d\n", npErr);
@@ -52,11 +53,13 @@
     frame = [self frame];
     
     nPort.port = [self qdPort];
-    nPort.portx = 0;
-    nPort.porty = 0;
+    nPort.portx = (int32)rect.origin.x;
+    nPort.porty = (int32)rect.origin.y;
     window.window = &nPort;
-    window.x = (uint32)frame.origin.x; //top-left corner of the plug-in relative to page
-    window.y = (uint32)frame.origin.y;
+    window.x = 0; 
+    window.y = 0;
+    //window.x = (uint32)frame.origin.x; //top-left corner of the plug-in relative to page
+    //window.y = (uint32)frame.origin.y;
     window.width = (uint32)frame.size.width;
     window.height = (uint32)frame.size.height;
     window.clipRect.top = (uint16)rect.origin.y; // clip rect
@@ -64,6 +67,10 @@
     window.clipRect.bottom = (uint16)rect.size.height;
     window.clipRect.right = (uint16)rect.size.width;
     window.type = NPWindowTypeDrawable;
+    
+    //SetPort(nPort.port);
+    //LineTo((int)frame.size.width, (int)frame.size.height);
+    //MoveTo(0,0);
     
     npErr = NPP_SetWindow(instance, &window);
     KWQDebug("NPP_SetWindow: %d rect.size.height=%d rect.size.width=%d port=%d rect.origin.x=%f rect.origin.y=%f\n", npErr, (int)rect.size.height, (int)rect.size.width, (int)nPort.port, rect.origin.x, rect.origin.y);
@@ -129,6 +136,15 @@
     
     event.what = 0;
     KWQDebug("NPP_HandleEvent: %d\n", NPP_HandleEvent(instance, &event));
+}
+
+-(void)dealloc
+{
+    NPError npErr;
+    
+    npErr = NPP_Destroy(instance, NULL);
+    KWQDebug("NPP_Destroy: %d\n", npErr);
+    [super dealloc];
 }
 
 @end
