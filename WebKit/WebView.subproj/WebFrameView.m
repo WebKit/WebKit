@@ -151,6 +151,10 @@ enum {
                 callSuper = NO;
                 break;
             case SpaceKey:
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
                 if ([event modifierFlags] & NSShiftKeyMask) {
                     [self scrollPageUp:nil];
                 } else {
@@ -159,22 +163,42 @@ enum {
                 callSuper = NO;
                 break;
             case NSPageUpFunctionKey:
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
                 [self scrollPageUp:nil];
                 callSuper = NO;
                 break;
             case NSPageDownFunctionKey:
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
                 [self scrollPageDown:nil];
                 callSuper = NO;
                 break;
             case NSHomeFunctionKey:
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
                 [self _scrollToTopLeft];
                 callSuper = NO;
                 break;
             case NSEndFunctionKey:
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
                 [self _scrollToBottomLeft];
                 callSuper = NO;
                 break;
             case NSUpArrowFunctionKey:
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
                 if ([event modifierFlags] & NSCommandKeyMask) {
                     [self _scrollToTopLeft];
                 } else if ([event modifierFlags] & NSAlternateKeyMask) {
@@ -185,6 +209,10 @@ enum {
                 callSuper = NO;
                 break;
             case NSDownArrowFunctionKey:
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
                 if ([event modifierFlags] & NSCommandKeyMask) {
                     [self _scrollToBottomLeft];
                 } else if ([event modifierFlags] & NSAlternateKeyMask) {

@@ -1,3 +1,12 @@
+2003-08-04  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3223989.  Pass key down events to super if scrolling is disabled.
+
+        Reviewed by Chris (Welcome back!).
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView keyDown:]):
+
 2003-08-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3095376.  Implemented correct selection behavior for rtl scripts.
