@@ -1,3 +1,39 @@
+2002-04-15  Richard Williamson  <rjw@apple.com>
+
+        Changes to IFLocationChangeHandler.
+        
+        Experimental allocator code, not to be used, not thread safe.!
+        
+	* Misc.subproj/WebKitDebug.h:
+	* Misc.subproj/WebKitDebug.m: (if_check_zone), (_debugAllocate),
+	(_debugAllocatorInitialize), (printDebugMallocCounters), (if_cf_retain),
+	(if_cf_release), (if_cf_alloc), (if_cf_realloc), (if_cf_dealloc),
+	(if_cf_preferredSize), (setupDebugMalloc), (clearDebugMalloc),
+	(resetDebugMallocCounters), (public_mALLOc), (public_fREe), (public_rEALLOc),
+	(public_mEMALIGn), (public_vALLOc), (public_pVALLOc), (public_cALLOc),
+	(public_iCALLOc), (public_iCOMALLOc), (public_cFREe), (public_mTRIm),
+	(public_mUSABLe), (public_mSTATs), (public_mALLINFo), (public_mALLOPt),
+	(do_check_malloc_state), (mALLINFo), (mSTATs), (if_size), (if_valloc),
+	(if_malloc), (if_realloc), (if_calloc), (if_free):
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebController.h:
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	provideLocationChangeHandlerForFrame:]):
+	* WebView.subproj/IFLocationChangeHandler.h: Added.
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[IFMainURLHandleClient
+	IFURLHandle:didRedirectToURL:]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.mm: (+[IFWebDataSource load]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate dealloc]),
+	(-[IFWebDataSource _startLoading:]), (-[IFWebDataSource _setTitle:]),
+	(-[IFWebDataSource _locationChangeHandler]), (-[IFWebDataSource
+	_setLocationChangeHandler:]):
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame setProvisionalDataSource:]):
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame
+	_transitionProvisionalToCommitted]), (-[IFWebFrame _isLoadComplete]):
+
 2002-04-15  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
 
 	* MIME.subproj/IFContentHandler.m: (-[IFContentHandler HTMLDocument]):

@@ -137,7 +137,7 @@
     else if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
         if(!downloadStarted){
             downloadHandler = [[IFDownloadHandler alloc] _initWithURLHandle:sender mimeHandler:mimeHandler];
-            [[dataSource controller] startedDownloadWithHandler:downloadHandler];
+            [[dataSource _locationChangeHandler] downloadingWithHandler:downloadHandler];
             downloadStarted = YES;
         }
         [downloadHandler _receivedData:data];
@@ -184,7 +184,7 @@
     
     [dataSource _setFinalURL: url];
     
-    [[dataSource controller] serverRedirectTo: url forDataSource: dataSource];
+    [[dataSource _locationChangeHandler] serverRedirectTo: url forDataSource: dataSource];
 }
 
 

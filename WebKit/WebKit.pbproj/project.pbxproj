@@ -219,6 +219,7 @@
 				F5A357540265E57A01000102,
 				F5E6396B0266996101000102,
 				F544394F02674FD501FF6181,
+				F567433F026B5B7B01A80181,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -1020,6 +1021,7 @@
 				F5D538E802441F2601A80181,
 				F5D538EC02441FDD01A80181,
 				9CAE9D070252A4130ECA16EA,
+				F567433E026B5B7B01A80181,
 			);
 			isa = PBXGroup;
 			name = WebView;
@@ -1157,6 +1159,21 @@
 			fileRef = F544394E02674FD501FF6181;
 			isa = PBXBuildFile;
 			settings = {
+			};
+		};
+		F567433E026B5B7B01A80181 = {
+			isa = PBXFileReference;
+			name = IFLocationChangeHandler.h;
+			path = WebView.subproj/IFLocationChangeHandler.h;
+			refType = 2;
+		};
+		F567433F026B5B7B01A80181 = {
+			fileRef = F567433E026B5B7B01A80181;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F5883BDE025E5C6A01000102 = {

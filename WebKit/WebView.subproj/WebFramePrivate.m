@@ -250,11 +250,11 @@ char *stateNames[6] = {
         
             [self _setState: IFWEBFRAMESTATE_COMMITTED_PAGE];
         
-            [[self controller] locationChangeCommittedForFrame: self];
+            [[[self dataSource] _locationChangeHandler] locationChangeCommitted];
             
             // If we have a title let the controller know about it.
             if ([[self dataSource] pageTitle])
-                [[self controller] receivedPageTitle:[[self dataSource] pageTitle] forDataSource:[self dataSource]];
+                [[[self dataSource] _locationChangeHandler] receivedPageTitle:[[self dataSource] pageTitle] forDataSource:[self dataSource]];
 
             break;
         }
@@ -330,7 +330,7 @@ char *stateNames[6] = {
                     [data setProvisionalDataSource: nil];
                     
                     [self _setState: IFWEBFRAMESTATE_COMPLETE];
-                    [[self controller] locationChangeDone: [self mainDocumentError] forFrame: self];
+                    [[[self provisionalDataSource] _locationChangeHandler] locationChangeDone: [self mainDocumentError]];
                     return;
                 }
             }
@@ -373,7 +373,7 @@ char *stateNames[6] = {
                 // Jump to anchor point, if necessary.
                 [[self dataSource] _part]->gotoBaseAnchor();
                    
-                [[self controller] locationChangeDone: [self mainDocumentError] forFrame: self];
+                [[[self dataSource] _locationChangeHandler] locationChangeDone: [self mainDocumentError]];
                 
                 return;
             }

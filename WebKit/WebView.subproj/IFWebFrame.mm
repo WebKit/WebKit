@@ -147,6 +147,7 @@
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     IFWebDataSource *oldDataSource;
+    id <IFLocationChangeHandler>locationChangeHandler;
 
     WEBKIT_ASSERT ([self controller] != nil);
 
@@ -159,10 +160,12 @@
         [self stopLoading];
     }
     
-    if (newDataSource != nil){
-        if (![[self controller] locationWillChangeTo: [newDataSource inputURL] forFrame: self])
+    locationChangeHandler = [[self controller] provideLocationChangeHandlerForFrame: self];
+    if (newDataSource != nil && locationChangeHandler != nil){
+        if (![locationChangeHandler locationWillChangeTo: [newDataSource inputURL]])
             return NO;
     }
+    [newDataSource _setLocationChangeHandler: locationChangeHandler];
 
     oldDataSource = [self dataSource];
     

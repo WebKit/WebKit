@@ -149,28 +149,11 @@
 // ---------------------------------------------------------------------
 // IFLocationChangeHandler
 // ---------------------------------------------------------------------
-- (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
+- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame
 {
-    return YES;
+    return nil;
 }
 
-
-- (void)locationChangeStartedForFrame: (IFWebFrame *)frame;
-{
-    // Do nothing.  Subclasses typically override this method.
-}
-
-
-- (void)locationChangeCommittedForFrame: (IFWebFrame *)frame
-{
-    // Do nothing.  Subclasses typically override this method.
-}
-
-
-- (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame
-{    
-    // Do nothing.  Subclasses typically override this method.
-}
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource
 {

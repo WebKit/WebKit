@@ -101,3 +101,21 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
    WEBKITDEBUGLEVEL (WEBKIT_LOG_NOT_YET_IMPLEMENTED, "WARNING (NOT YET IMPLEMENTED)\n")
 
 #define WEBKITDEBUG(format...) WEBKITDEBUGLEVEL(WEBKIT_LOG_GENERIC_DEBUG, format)
+
+#define IF_MALLOC_TESTING
+#ifdef IF_MALLOC_TESTING
+#ifdef __cplusplus
+extern "C" {
+void setupDebugMalloc(void);
+void clearDebugMalloc(void);
+void resetDebugMallocCounters(void);
+void printDebugMallocCounters(void);
+}
+#else
+void setupDebugMalloc(void);
+void clearDebugMalloc(void);
+void resetDebugMallocCounters(void);
+void printDebugMallocCounters(void);
+#endif
+#endif
+

@@ -51,6 +51,7 @@
     [mainHandle release];
     [mainURLHandleClient release];
     [pageTitle autorelease];
+    [locationChangeHandler release];
     
     part->deref();
     part = 0;
@@ -135,7 +136,7 @@
     // We should move any code needed out of KWQ.
     [self _part]->openURL (url);
     
-    [[self controller] locationChangeStartedForFrame: [self frame]];
+    [[self _locationChangeHandler] locationChangeStarted];
 }
 
 
@@ -230,7 +231,7 @@
     // The title doesn't get communicated to the controller until
     // we reach the committed state for this data source's frame.
     if ([[self frame] _state] >= IFWEBFRAMESTATE_COMMITTED_PAGE)
-        [[self controller] receivedPageTitle:data->pageTitle forDataSource:self];
+        [[self _locationChangeHandler] receivedPageTitle:data->pageTitle forDataSource:self];
 }
 
 - (void)_setFinalURL: (NSURL *)url
@@ -240,5 +241,23 @@
     [data->finalURL release];
     data->finalURL = [url retain];
 }
+
+- (id <IFLocationChangeHandler>)_locationChangeHandler
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    
+    return data->locationChangeHandler;
+}
+
+- (void)_setLocationChangeHandler: (id <IFLocationChangeHandler>)l
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    
+    if (l != data->locationChangeHandler){
+        [data->locationChangeHandler release];
+        data->locationChangeHandler = [l retain];
+    }
+}
+
 
 @end

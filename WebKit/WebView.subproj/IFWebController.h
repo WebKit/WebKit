@@ -7,6 +7,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import <WebKit/IFLoadProgress.h>
+#import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFDownloadHandler.h>
 
 /*
@@ -30,29 +31,7 @@
 
 @class IFWebDataSource;
 @class IFError;
-@class IFWebView;
 @class IFWebFrame;
-
-
-/*
-   ============================================================================= 
-   ============================================================================= 
-*/
-@protocol IFLocationChangeHandler
-
-- (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
-
-- (void)locationChangeStartedForFrame: (IFWebFrame *)frame;
-
-- (void)locationChangeCommittedForFrame: (IFWebFrame *)frame;
-
-- (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame;
-
-- (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource;
-
-- (void)serverRedirectTo: (NSURL *)url forDataSource: (IFWebDataSource *)dataSource;
-
-@end
 
 
 /*
@@ -66,7 +45,7 @@
 
    ============================================================================= 
 */
-@protocol  IFLoadHandler
+@protocol  IFResourceProgressHandler
 
 /*
     A new chunk of data has been received.  This could be a partial load
@@ -80,6 +59,15 @@
 
 @end
 
+
+@protocol IFDownloadProgressHandler
+// Called when progress of a download has been made
+- (void) receivedProgress:(IFLoadProgress *)progress forDownloadHandler:(IFDownloadHandler *)downloadHandler;
+
+// Called when the download has had an error
+- (void) receivedError:(IFError *)error forDownloadHandler:(IFDownloadHandler *)downloadHandler partialProgress: (IFLoadProgress *)progress;
+
+@end
 
 
 /*
@@ -115,7 +103,7 @@
     
    ============================================================================= 
 */
-@protocol IFWebController <IFLoadHandler, IFScriptContextHandler, IFLocationChangeHandler>
+@protocol IFWebController <IFResourceProgressHandler, IFDownloadProgressHandler, IFScriptContextHandler>
 
 
 // Called when a data source needs to create a frame.  This method encapsulates the
@@ -142,17 +130,14 @@
 // an IFWebView.
 - (IFWebFrame *)frameForView: (NSView *)aView;
 
+
+- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame;
+
+
+// FIXME:  this method should be moved to a protocol
 // Called when a plug-in for a certain mime type is not installed
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url;
 
-// Called when a file download has started
-- (void) startedDownloadWithHandler:(IFDownloadHandler *)downloadHandler;
-
-// Called when progress of a download has been made
-- (void) receivedProgress:(IFLoadProgress *)progress forDownloadHandler:(IFDownloadHandler *)downloadHandler;
-
-// Called when the download has had an error
-- (void) receivedError:(IFError *)error forDownloadHandler:(IFDownloadHandler *)downloadHandler partialProgress: (IFLoadProgress *)progress;
 
 @end
 

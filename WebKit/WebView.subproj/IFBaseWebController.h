@@ -1,10 +1,12 @@
 /*	
-    IFBaseWebController.mm
-	Copyright 2001, 2002 Apple, Inc. All rights reserved.
+    IFBaseWebController.h
+    
+    Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
 #import <WebKit/IFWebController.h>
-#import <WebKit/IFWebFrame.h>
 
+@class IFWebDataSource;
+@class IFWebView;
 
 /*
 */
