@@ -247,6 +247,8 @@ enum
         
     result = nil;
     fileKey = nil;
+    data = nil;
+    unarchiver = nil;
 
     touch = CFAbsoluteTimeGetCurrent();
 
@@ -265,22 +267,32 @@ enum
     // go to disk
     filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
 
-    data = [[NSData alloc] initWithContentsOfMappedFile:filePath];
-    if (!data) {
-        data = [[NSData alloc] initWithContentsOfFile:filePath];
-    }
-    if (data) {
-        unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
-        fileKey = [unarchiver decodeObject];
-        object = [unarchiver decodeObject];
-        if (object && [fileKey isEqual:key]) {
-            // make sure this object stays around until client has had a chance at it
-            result = [object retain];
-            [result autorelease];
+    NS_DURING
+        data = [[NSData alloc] initWithContentsOfMappedFile:filePath];
+        if (!data) {
+            data = [[NSData alloc] initWithContentsOfFile:filePath];
         }
-        [unarchiver release];
-        [data release];
-    }
+        if (data) {
+            unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
+        }
+        if (unarchiver) {
+            fileKey = [unarchiver decodeObject];
+            object = [unarchiver decodeObject];
+            if (object && [fileKey isEqual:key]) {
+                // make sure this object stays around until client has had a chance at it
+                result = [object retain];
+                [result autorelease];
+            }
+        }
+    NS_HANDLER
+#ifdef WEBFOUNDATION_DEBUG
+        WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - cannot unarchive cache file - %@", key);
+#endif
+        result = nil;
+    NS_ENDHANDLER
+
+    [unarchiver release];
+    [data release];
 
     return result;
 }
