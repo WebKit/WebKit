@@ -2,6 +2,13 @@
 
         * WebView.subproj/IFMainURLHandleClient.mm:
         (-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+        Ensure that _didStopLoading is called for both error case and
+        non-error case.
+
+2002-07-01  Richard Williamson  <rjw@apple.com>
+
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
         A completion message was being sent, as well as an error message.
         This, no doubt confused Alexander.  No only send either the final
         error message or the completion message.

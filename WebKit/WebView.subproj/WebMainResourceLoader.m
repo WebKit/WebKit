@@ -93,6 +93,7 @@
     if([dataSource contentPolicy] == IFContentPolicyShow)
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     
+    // Either send a final error message or a final progress message.
     IFError *nonTerminalError = [sender error];
     if (nonTerminalError){
         [[dataSource controller] _mainReceivedError:nonTerminalError forResourceHandle:sender partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
@@ -101,8 +102,8 @@
         // update progress
         [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
                 forResourceHandle:sender fromDataSource:dataSource complete:YES];
-        [[dataSource controller] _didStopLoading:url];
     }
+    [[dataSource controller] _didStopLoading:url];
 
     [url release];
     url = nil;    
