@@ -26,20 +26,16 @@
 #ifndef QFILE_H_
 #define QFILE_H_
 
-class QString;
-
-QString locate(const char *type, const QString& filename, const KInstance* instance = KGlobal::instance());
+#include "qstring.h"
 
 class QFile {
 public:
     QFile();
-    QFile(const QString &name);
-
+    QFile(const QString &);
     bool open(int);
     void close();
     uint size() const;
-
-    int readBlock(char *data, uint len);
+    int readBlock(char *, uint);
 };
 
 #endif

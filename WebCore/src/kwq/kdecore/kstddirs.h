@@ -26,9 +26,14 @@
 #ifndef KSTDDIRS_H_
 #define KSTDDIRS_H_
 
+#include <qstring.h>
+#include "kglobal.h"
+
 class KStandardDirs {
 public:
-    QString saveLocation(const char *type, const QString& suffix = QString::null, bool create = true) const;
+    QString saveLocation(const char *, const QString &suffix = QString::null, bool create = true) const;
 };
+
+QString locate(const char *type, const QString& filename, const KInstance* instance = KGlobal::instance());
 
 #endif
