@@ -1,3 +1,17 @@
+2002-09-22  Darin Adler  <darin@apple.com>
+
+	- fixed 3057380 -- insertion point shows through elements in front of text fields
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (+[WebHTMLView initialize]): Make WebNSTextView pose as NSTextView.
+        (-[WebNSTextView _web_inHTMLView]): Helper method.
+        (-[WebNSTextView isOpaque]): Override to return NO for all text views that are inside
+	an WebHTMLView, so they don't try to do insertion point caching.
+        (-[WebNSTextView drawInsertionPointInRect:color:turnedOn:]): Use setNeedsDisplayInRect
+	to trigger insertion point drawing outside drawRect instead of drawing right away.
+        (-[WebNSTextView _drawRect:clip:]): Set flag so the above can know when it's inside
+	drawRect and when it's not.
+
 2002-09-21  Darin Adler  <darin@apple.com>
 
 	WebKit part of the new approach to AppKit drawing control.

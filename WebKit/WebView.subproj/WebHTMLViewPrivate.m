@@ -28,12 +28,18 @@
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
 - (NSRect)_dirtyRect;
-- (NSRect)_convertRectToSuperview:(NSRect)aRect;
+- (NSRect)_convertRectToSuperview:(NSRect)rect;
+- (void)_drawRect:(NSRect)rect clip:(BOOL)clip;
 @end
 
 @interface NSView (WebNSViewDisplayExtras)
 - (void)_web_stopIfPluginView;
 - (void)_web_propagateDirtyRectToAncestor;
+@end
+
+@interface WebNSTextView : NSTextView
+{
+}
 @end
 
 @implementation WebHTMLViewPrivate
@@ -47,6 +53,11 @@
 @end
 
 @implementation WebHTMLView (WebPrivate)
+
++ (void)initialize
+{
+    [[WebNSTextView class] poseAsClass:[NSTextView class]];
+}
 
 - (void)_adjustFrames
 {
@@ -225,6 +236,72 @@ BOOL _modifierTrackingEnabled = FALSE;
     if ([self needsDisplay]) {
         [[self superview] setNeedsDisplayInRect:[self _convertRectToSuperview:[self _dirtyRect]]];
     }
+}
+
+@end
+
+@implementation WebNSTextView
+
+static BOOL inDrawRect;
+
+// This code is here to make insertion point drawing work in a way that respects the
+// HTML view layering. If we can find a way to make it work without poseAsClass, we
+// should do that.
+
+- (BOOL)_web_inHTMLView
+{
+    NSView *view = self;
+    for (;;) {
+        NSView *superview = [view superview];
+        if (!superview) {
+            return NO;
+        }
+        view = superview;
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            return YES;
+        }
+    }
+}
+
+- (BOOL)isOpaque
+{
+    if (![self _web_inHTMLView]) {
+        return [super isOpaque];
+    }
+
+    // Text views in the HTML view all say they are not opaque.
+    // This prevents the insertion point rect cache from being used,
+    // and all the side effects are good since we want the view to act
+    // opaque anyway. This could go in NSView instead of NSTextView,
+    // but we need to pose as NSTextView anyway for the other override.
+    // If we did this in NSView, we wouldn't need to call _web_propagateDirtyRectToAncestor.
+    return NO;
+}
+
+- (void)drawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)turnedOn
+{
+    if (![self _web_inHTMLView]) {
+        [super drawInsertionPointInRect:rect color:color turnedOn:turnedOn];
+        return;
+    }
+    
+    // Use the display mechanism to do all insertion point drawing in the web view.
+    if (inDrawRect) {
+        [super drawInsertionPointInRect:rect color:color turnedOn:turnedOn];
+        return;
+    }
+    [super drawInsertionPointInRect:rect color:color turnedOn:NO];
+    if (turnedOn) {
+        rect.size.width = 1;
+        [self setNeedsDisplayInRect:rect];
+    }
+}
+
+- (void)_drawRect:(NSRect)rect clip:(BOOL)clip
+{
+    inDrawRect = YES;
+    [super _drawRect:rect clip:clip];
+    inDrawRect = NO;
 }
 
 @end
