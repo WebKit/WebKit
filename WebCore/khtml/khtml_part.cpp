@@ -3016,7 +3016,15 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
   if ( child->m_extension )
     child->m_extension->setURLArgs( child->m_args );
 
-#if !APPLE_CHANGES
+#if APPLE_CHANGES
+    // In these cases, the synchronous load would have finished
+    // before we could connect the signals, so make sure to send the
+    // completed() signal for the child by hand:
+    if (url.isEmpty() || url.url() == "about:blank") {
+      KParts::ReadOnlyPart *part = child->m_part;
+      static_cast<KHTMLPart *>(part)->completed();
+    }
+#else
   if(url.protocol() == "javascript" || url.url() == "about:blank") {
       if (!child->m_part->inherits("KHTMLPart"))
           return false;

@@ -283,8 +283,17 @@ void HTMLFrameElementImpl::updateForNewURL()
     // Load the frame contents.
     KHTMLPart *part = w->part();
     KHTMLPart *framePart = part->findFrame(name.string());
+    KURL kurl = getDocument()->completeURL(url.string());
+
+    // Temporarily treat javascript: URLs as about:blank, until we can
+    // properly support them as frame sources.
+    if (kurl.protocol() == "javascript") {
+	url = "about:blank";
+	kurl = "about:blank";
+    }
+
     if (framePart) {
-        framePart->openURL(getDocument()->completeURL(url.string()));
+        framePart->openURL(kurl);
     } else {
         part->requestFrame(static_cast<RenderFrame *>(m_render), url.string(), name.string());
     }
@@ -388,6 +397,13 @@ void HTMLFrameElementImpl::attach()
     KHTMLView* w = getDocument()->view();
 
     w->part()->incrementFrameCount();
+
+    // Temporarily treat javascript: URLs as about:blank, until we can
+    // properly support them as frame sources.
+    KURL kurl = getDocument()->completeURL(url.string());
+    if (kurl.protocol() == "javascript") {
+	url = "about:blank";
+    }
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
     if(name.isEmpty() || w->part()->frameExists( name.string() ) )

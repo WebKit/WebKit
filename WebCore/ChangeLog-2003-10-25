@@ -1,3 +1,17 @@
+2003-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	- fixed 3190846 - REGRESSION: can't use Fidelity NetBenefits account
+	
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::updateForNewURL): Treat javascript: URLs as
+	about:blank for now.
+        (HTMLFrameElementImpl::attach): Likewise.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::processObjectRequest): Make sure to send completed() signal
+	after signals are connectd in synchronous load case.
+
 2003-03-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for ew.com, hrweb and arstechnica forums.  A <br> should
