@@ -150,11 +150,12 @@
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
 {
     ASSERT(handle == h);
+    ASSERT(r);
 
     [r retain];
     [response release];
     response = r;
-    [resourceProgressDelegate resource: identifier didReceiveResponse: r fromDataSource: dataSource];
+    [resourceProgressDelegate resource:identifier didReceiveResponse:r fromDataSource: dataSource];
 
     [loader receivedResponse:r];
 }

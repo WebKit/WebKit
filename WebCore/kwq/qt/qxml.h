@@ -28,6 +28,18 @@
 
 class QString;
 
+class QXmlInputSource {
+public:
+    void setData(const QString &);
+};
+
+class QXmlParseException {
+public:
+    QString message() const;
+    int columnNumber() const;
+    int lineNumber() const;
+};
+
 class QXmlAttributes {
 public:
     QString value(const QString &) const;
@@ -37,16 +49,54 @@ public:
     QString uri(int index) const;
 };
 
-class QXmlInputSource {
+class QXmlContentHandler {
 public:
-    void setData(const QString &);
+    virtual bool startDocument() = 0;
+    virtual bool endDocument() = 0;
+    virtual bool startPrefixMapping(const QString &prefix, const QString &URI) = 0;
+    virtual bool endPrefixMapping(const QString &prefix) = 0;
+    virtual bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &attributes) = 0;
+    virtual bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName) = 0;
+    virtual bool characters(const QString &characters) = 0;
+    virtual bool ignorableWhitespace(const QString &characters) = 0;
+    virtual bool processingInstruction(const QString &target, const QString &data) = 0;
+    virtual bool skippedEntity(const QString &name) = 0;
+    virtual QString errorString() = 0;
 };
 
-class QXmlDTDHandler { };
-class QXmlDeclHandler { };
-class QXmlErrorHandler { };
-class QXmlLexicalHandler { };
-class QXmlContentHandler { };
+class QXmlLexicalHandler {
+public:
+    virtual bool startDTD(const QString &name, const QString &publicId, const QString &systemId) = 0;
+    virtual bool endDTD() = 0;
+    virtual bool startEntity(const QString &name) = 0;
+    virtual bool endEntity(const QString &name) = 0;
+    virtual bool startCDATA() = 0;
+    virtual bool endCDATA() = 0;
+    virtual bool comment(const QString &characters) = 0;
+    virtual QString errorString() = 0;
+};
+
+class QXmlErrorHandler {
+public:
+    virtual bool warning(const QXmlParseException &exception) = 0;
+    virtual bool error(const QXmlParseException &exception) = 0;
+    virtual bool fatalError(const QXmlParseException &exception) = 0;
+    virtual QString errorString() = 0;
+};
+
+class QXmlDeclHandler {
+public:
+    virtual bool attributeDecl(const QString &entityName, const QString &attributeName, const QString &type, const QString &valueDefault, const QString &value) = 0;
+    virtual bool externalEntityDecl(const QString &name, const QString &publicId, const QString &systemId) = 0;
+    virtual bool internalEntityDecl(const QString &name, const QString &value) = 0;
+};
+
+class QXmlDTDHandler {
+public:
+    virtual bool notationDecl(const QString& name, const QString& publicId, const QString& systemId) = 0;
+    virtual bool unparsedEntityDecl(const QString& name, const QString& publicId, const QString& systemId, const QString& notationName) = 0;
+    virtual QString errorString() = 0;
+};
 
 class QXmlDefaultHandler :
     public QXmlContentHandler, 
@@ -55,23 +105,48 @@ class QXmlDefaultHandler :
     public QXmlDeclHandler, 
     public QXmlDTDHandler
 {
+    virtual bool startDocument();
+    virtual bool endDocument();
+    virtual bool startPrefixMapping(const QString &prefix, const QString &URI);
+    virtual bool endPrefixMapping(const QString &prefix);
+    virtual bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &attributes);
+    virtual bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName);
+    virtual bool characters(const QString &characters);
+    virtual bool ignorableWhitespace(const QString &characters);
+    virtual bool processingInstruction(const QString &target, const QString &data);
+    virtual bool skippedEntity(const QString &name);
+
+    virtual bool startDTD(const QString &name, const QString &publicId, const QString &systemId);
+    virtual bool endDTD();
+    virtual bool startEntity(const QString &name);
+    virtual bool endEntity(const QString &name);
+    virtual bool startCDATA();
+    virtual bool endCDATA();
+    virtual bool comment(const QString &characters);
+
+    virtual bool warning(const QXmlParseException &exception);
+    virtual bool error(const QXmlParseException &exception);
+    virtual bool fatalError(const QXmlParseException &exception);
+
+    virtual bool attributeDecl(const QString &entityName, const QString &attributeName, const QString &type, const QString &valueDefault, const QString &value);
+    virtual bool externalEntityDecl(const QString &name, const QString &publicId, const QString &systemId);
+    virtual bool internalEntityDecl(const QString &name, const QString &value);
+
+    virtual bool notationDecl(const QString& name, const QString& publicId, const QString& systemId);
+    virtual bool unparsedEntityDecl(const QString& name, const QString& publicId, const QString& systemId, const QString& notationName);
+
+    virtual QString errorString();
 };
 
 class QXmlSimpleReader {
 public:
     void setContentHandler(QXmlContentHandler *handler);
-    bool parse(const QXmlInputSource &input);
     void setLexicalHandler(QXmlLexicalHandler *handler);
     void setDTDHandler(QXmlDTDHandler *handler);
     void setDeclHandler(QXmlDeclHandler *handler);
     void setErrorHandler(QXmlErrorHandler *handler);
-};
 
-class QXmlParseException {
-public:
-    QString message() const;
-    int columnNumber() const;
-    int lineNumber() const;
+    bool parse(const QXmlInputSource &input);
 };
 
 #endif

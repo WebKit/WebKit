@@ -57,6 +57,7 @@
 #include "xml/dom_docimpl.h"
 
 #ifdef APPLE_CHANGES
+#include <KWQAssertions.h>
 #include <KWQLoaderImpl.h>
 #endif
 
@@ -72,7 +73,9 @@ CachedObject::~CachedObject()
     if(m_deleted) abort();
     Cache::removeFromLRUList(this);
     m_deleted = true;
-    KWQReleaseResponse (m_response);
+#if APPLE_CHANGES
+    KWQReleaseResponse(m_response);
+#endif
 }
 
 void CachedObject::finish()
@@ -116,14 +119,16 @@ bool CachedObject::isExpired() const
     return (difftime(now, m_expireDate) >= 0);
 }
 
-void CachedObject::setResponse (void *response)
+#if APPLE_CHANGES
+
+void CachedObject::setResponse(void *response)
 {
-    if (m_response != response){
-        KWQReleaseResponse (m_response);
-        m_response = response;
-        KWQRetainResponse (m_response);
-    }
+    KWQRetainResponse(response);
+    KWQReleaseResponse(m_response);
+    m_response = response;
 }
+
+#endif
 
 void CachedObject::setRequest(Request *_request)
 {
@@ -1221,15 +1226,13 @@ kdDebug(6060) << "Loader::slotFinished, url = " << j->url().url() << " expires "
   servePendingRequests();
 }
 
-#ifdef APPLE_CHANGES
-void Loader::receivedResponse (KIO::Job*job,void *response)
+#if APPLE_CHANGES
+void Loader::receivedResponse(KIO::Job* job, void *response)
 {
     Request *r = m_requestsLoading[job];
-    if(!r) {
-        kdDebug( 6060 ) << "got response for unknown request!" << endl;
-        return;
-    }
-    r->object->setResponse( response );
+    ASSERT(r);
+    ASSERT(response);
+    r->object->setResponse(response);
 }
 #endif
 

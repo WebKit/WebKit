@@ -25,7 +25,7 @@
 
 #import <qxml.h>
 
-#import <KWQLogging.h>
+#import <KWQAssertions.h>
 
 #import <qstring.h>
 
@@ -58,8 +58,6 @@ QString QXmlAttributes::uri(int) const
     ERROR("not yet implemented");
     return QString();
 }
-
-
 
 void QXmlInputSource::setData(const QString& data)
 {
@@ -114,4 +112,134 @@ int QXmlParseException::lineNumber() const
 {
     ERROR("not yet implemented");
     return 0;
+}
+
+bool QXmlDefaultHandler::startDocument()
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::endDocument()
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::startPrefixMapping(const QString &prefix, const QString &URI)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::endPrefixMapping(const QString &prefix)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &attributes)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::endElement(const QString &namespaceURI, const QString &localName, const QString &qName)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::characters(const QString &characters)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::ignorableWhitespace(const QString &characters)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::processingInstruction(const QString &target, const QString &data)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::skippedEntity(const QString &name)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::startDTD(const QString &name, const QString &publicId, const QString &systemId)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::endDTD()
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::startEntity(const QString &name)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::endEntity(const QString &name)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::startCDATA()
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::endCDATA()
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::comment(const QString &characters)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::warning(const QXmlParseException &exception)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::error(const QXmlParseException &exception)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::fatalError(const QXmlParseException &exception)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::attributeDecl(const QString &entityName, const QString &attributeName, const QString &type, const QString &valueDefault, const QString &value)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::externalEntityDecl(const QString &name, const QString &publicId, const QString &systemId)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::internalEntityDecl(const QString &name, const QString &value)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::notationDecl(const QString& name, const QString& publicId, const QString& systemId)
+{
+    return true;
+}
+
+bool QXmlDefaultHandler::unparsedEntityDecl(const QString& name, const QString& publicId, const QString& systemId, const QString& notationName)
+{
+    return true;
+}
+
+QString QXmlDefaultHandler::errorString()
+{
+    return QString();
 }

@@ -6,15 +6,17 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
+#import <WebKit/WebViewFactory.h>
+
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBasePluginPackage.h>
+#import <WebKit/WebFileButton.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginPackage.h>
-#import <WebKit/WebViewFactory.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -121,6 +123,11 @@
     }
     [panel release];
     return OK;
+}
+
+- (NSView <WebCoreFileButton> *)fileButton
+{
+    return [[WebFileButton alloc] init];
 }
 
 @end

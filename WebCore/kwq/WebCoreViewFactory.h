@@ -28,15 +28,7 @@
 @class NSString;
 @class NSView;
 
-@protocol WebCorePluginInfo <NSObject>
-
-- (NSString *)name;
-- (NSString *)filename;
-- (NSString *)pluginDescription;
-- (NSDictionary *)MIMEToExtensionsDictionary;
-- (NSDictionary *)MIMEToDescriptionDictionary;
-
-@end
+@protocol WebCoreFileButton;
 
 @protocol WebCoreViewFactory
 
@@ -44,6 +36,8 @@
 - (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)URL parameters:(NSDictionary *)parameters;
+
+- (NSView <WebCoreFileButton> *)fileButton;
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;
 
@@ -59,3 +53,20 @@
 
 @interface WebCoreViewFactory (SubclassResponsibility) <WebCoreViewFactory>
 @end
+
+@protocol WebCorePluginInfo <NSObject>
+- (NSString *)name;
+- (NSString *)filename;
+- (NSString *)pluginDescription;
+- (NSDictionary *)MIMEToExtensionsDictionary;
+- (NSDictionary *)MIMEToDescriptionDictionary;
+@end
+
+@protocol WebCoreFileButton <NSObject>
+- (void)setFilename:(NSString *)filename;
+- (NSString *)filename;
+- (NSSize)bestSize;
+- (float)baseline;
+@end
+
+extern NSString *WebCoreFileButtonFilenameChanged;

@@ -1,3 +1,17 @@
+2002-10-23  Darin Adler  <darin@apple.com>
+
+	Add WebFileButton, to be used by WebCore soon. It's about 1/2
+	done right now. Compiles but not used yet.
+
+        * WebCoreSupport.subproj/WebViewFactory.m: (-[WebViewFactory fileButton]): Added.
+
+        * WebCoreSupport.subproj/WebFileButton.h: Added.
+        * WebCoreSupport.subproj/WebFileButton.m: Added.
+        * WebKit.pbproj/project.pbxproj: Added WebFileButton files.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handle:didReceiveResponse:]): Add an assertion.
+
 2002-10-23  Maciej Stachowiak  <mjs@apple.com>
 
         - fixed 2876448 - The authentication panel should give a note when

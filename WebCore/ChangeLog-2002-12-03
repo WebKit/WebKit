@@ -1,3 +1,31 @@
+2002-10-23  Darin Adler  <darin@apple.com>
+
+	- fixed 3080478 -- reproducible incomplete load on apple.com
+
+        * kwq/KWQLoaderImpl.mm:
+        (-[WebCoreResourceLoader receivedResponse:]): Add an assert.
+        (-[WebCoreResourceLoader cancel]): Don't finish here, just disconnect the handle
+	from the job, and disconnect the job from the WebCoreResourceLoader, and let the
+	KHTML code finish the cleanup later. This is the bug fix.
+        (KWQCheckCacheObjectStatus): Add an assertion.
+
+        * kwq/KWQKjobclasses.mm:
+	(TransferJob::~TransferJob): Don't call kill(); do the work here instead.
+	(TransferJob::kill): Self-destruct. Need this to avoid a storage leak.
+
+        * khtml/misc/loader.cpp:
+        (CachedObject::~CachedObject): Put some Apple-specific code inside APPLE_CHANGES.
+        (CachedObject::setResponse): Streamlined this function.
+        (Loader::receivedResponse): Added assertions.
+
+        * kwq/qt/qxml.h: Add more stubs.
+        * kwq/KWQxml.mm: Ditto.
+
+        * kwq/WebCoreViewFactory.h: Add [WebCoreViewFactory fileButton], the
+	WebCoreFileButton protocol, and WebCoreFileButtonFilenameChanged.
+        * kwq/WebCoreViewFactory.m: Add WebCoreFileButtonFilenameChanged.
+        * WebCore.exp: Export _WebCoreFileButtonFilenameChanged.
+
 2002-10-22  Maciej Stachowiak  <mjs@apple.com>
 
 	Forgot to check this in earlier:

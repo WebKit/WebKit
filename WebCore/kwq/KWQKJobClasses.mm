@@ -69,7 +69,7 @@ TransferJob::TransferJob(const KURL &url, const QByteArray &postData, bool showP
 
 TransferJob::~TransferJob()
 {
-    kill();
+    [d->handle cancel];
     delete d;
 }
 
@@ -117,7 +117,7 @@ void TransferJob::addMetaData(const QMap<QString, QString> &keysAndValues)
 
 void TransferJob::kill()
 {
-    [d->handle cancel];
+    delete this;
 }
 
 void TransferJob::setHandle(id <WebCoreResourceHandle> handle)
