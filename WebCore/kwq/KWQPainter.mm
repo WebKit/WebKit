@@ -477,18 +477,14 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
 // y is the baseline
 void QPainter::drawText(int x, int y, const QString &qstring, int len)
 {
-    NSString *string;
-    
     _lockFocus();
     
     if (len == -1)
-        string = QSTRING_TO_NSSTRING(qstring);
-    else
-        string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
+        len = qstring.length();
 
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
-        drawString:string atPoint:NSMakePoint(x,y) withColor:data->qpen.color().color];
+        drawCharacters:(const UniChar *)qstring.unicode() length: len atPoint:NSMakePoint(x,y) withColor:data->qpen.color().color];
 
     _unlockFocus();
 }

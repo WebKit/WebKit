@@ -33,6 +33,7 @@
 - (int)lineSpacing;
 
 - (void)drawString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color;
+- (void)drawCharacters:(const UniChar *)characters length: (unsigned)length atPoint:(NSPoint)point withColor:(NSColor *)color;
 - (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color;
 
 - (void)drawString:(NSString *)string inRect:(NSRect)rect withColor:(NSColor *)color paragraphStyle:(NSParagraphStyle *)style;

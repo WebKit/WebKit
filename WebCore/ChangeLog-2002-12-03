@@ -1,3 +1,13 @@
+2002-05-09  Richard J. Williamson  <rjw@apple.com>
+
+    Added new method to avoid creation of NSString.
+    
+        - (void)drawCharacters:(const UniChar *)characters length: (unsigned)length atPoint:(NSPoint)point withColor:(NSColor *)color;
+
+	* kwq/KWQPainter.mm:
+	(QPainter::drawText):
+	* kwq/WebCoreTextRenderer.h:
+
 2002-05-09  Kenneth Kocienda  <kocienda@apple.com>
 
         Fix for this bug:
