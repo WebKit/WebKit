@@ -87,6 +87,11 @@
     return nil;
 }
 
+- (NSArray *)rawChildren
+{
+    return nil;
+}
+
 - (unsigned)numberOfChildren
 {
     return 0;
@@ -220,8 +225,8 @@
 
     unsigned childIndex;
     for (childIndex = 0; childIndex < thisCount; ++childIndex) {
-        NSArray *theseChildren = [self children];
-        NSArray *thoseChildren = [otherBookmark children];
+        NSArray *theseChildren = [self rawChildren];
+        NSArray *thoseChildren = [otherBookmark rawChildren];
         if (![[theseChildren objectAtIndex:childIndex] contentMatches:[thoseChildren objectAtIndex:childIndex]]) {
             return NO;
         }

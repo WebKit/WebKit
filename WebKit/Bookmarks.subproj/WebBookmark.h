@@ -52,7 +52,14 @@ typedef enum {
 - (void)setIdentifier:(NSString *)identifier;
 
 // Array of child WebBookmarks. Returns nil if bookmarkType is not WebBookmarkTypeList.
+// This creates a copy of the internal data structure, and thus is safe to (for example),
+// iterate through, removing items from their parent as you go.
 - (NSArray *)children;
+
+// Array of child WebBookmarks. Returns nil if bookmarkType is not WebBookmarkTypeList.
+// This returns the internal data structure itself. This array should not be modified,
+// and operations that alter the children of this bookmark will affect the contents of this array.
+- (NSArray *)rawChildren;
 
 // Number of children. Returns 0 if bookmarkType is not WebBookmarkTypeList.
 - (unsigned)numberOfChildren;

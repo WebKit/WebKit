@@ -172,6 +172,11 @@
     return [NSArray arrayWithArray:_list];
 }
 
+- (NSArray *)rawChildren
+{
+    return _list;
+}
+
 - (unsigned)numberOfChildren
 {
     return [_list count];

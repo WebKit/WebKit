@@ -1,3 +1,23 @@
+2002-12-17  John Sullivan  <sullivan@apple.com>
+
+	- to help with performance of various bookmark operations,
+	added a call that returns the internal array of children,
+	to complement the safer call that returns a copy.
+
+        Reviewed by Darin
+
+        * Bookmarks.subproj/WebBookmark.h:
+	commented -children and new -rawChildren
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark rawChildren]):
+	new method, returns nil at this level.
+        (-[WebBookmark contentMatches:]):
+	use -rawChildren instead of -children
+
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList rawChildren]):
+	new method, returns internal array without copying
+
 2002-12-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Don and Maciej.
