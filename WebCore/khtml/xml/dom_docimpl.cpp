@@ -2820,9 +2820,11 @@ void DocumentTypeImpl::copyFrom(const DocumentTypeImpl& other)
 
 DOMString DocumentTypeImpl::toString() const
 {
-    DOMString result = "<!DOCTYPE";
-    if (!m_qualifiedName.isEmpty()) {
-        result += " ";
+    DOMString result;
+    if (m_qualifiedName.isEmpty()) {
+        return "";
+    } else {
+        result = "<!DOCTYPE ";
         result += m_qualifiedName;
     }
     if (!m_publicId.isEmpty()) {

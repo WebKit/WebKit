@@ -1,3 +1,18 @@
+2004-04-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3631431>: web archive of .Mac welcome page renders has gaps in layout
+	<rdar://problem/3631470>: news.google.com web archive has a different font than the live site
+
+        Reviewed by kocienda.
+
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::determineParseMode): don't set a name on the doc type when there is no doc type in the source
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentTypeImpl::toString): don't return "<!DOCTYPE>" when there is no doc type in the source
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithOptions): don't escape STYLE text, don't include the end tags for document nodes just as we don't for start tags
+
 2004-04-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
