@@ -1,3 +1,20 @@
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me, changes by Darin.
+        
+        Yet another pass at the DOM API, this one by 
+        Darin to simplify the internal structure of the
+        implementation. Little has changed in the API;
+        much has changed in the implementation, particularly
+        with regard to object creation and data storage and
+        the class hierarchy.
+
+        * kwq/DOM.h
+        * kwq/DOM.mm
+        * kwq/DOMInternal.h
+        * kwq/KWQKHTMLPart.mm
+        * kwq/WebCoreBridge.mm
+
 2004-03-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by NOBODY (OOPS!).

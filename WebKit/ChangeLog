@@ -2,6 +2,13 @@
 
         Reviewed by me
 
+        * DOM.subproj/DOM.h: Checked in header copied over
+        from WebCore.
+
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
         * DOM.subproj/DOM.h: Oh, it's like the Keystone Cops this afternoon...
 	Backed out an unintended change to thsi file.
 
