@@ -1,0 +1,31 @@
+<html>
+
+<head>
+
+	<title>Testing contentWindow on an iFrame</title>
+
+	<script>
+		function putText()
+		{
+			var w = document.getElementById("my_iframe").contentWindow;
+			var d = document.getElementById("my_div");
+			d.innerText = w.location;
+		}
+	</script>
+
+</head>
+
+<body onload="putText()">
+
+	<div>
+	Here is the iFrame:
+	<iframe id="my_iframe" src="about:blank" width=200 height=200 frameborder=1></iframe>
+	</div>
+
+	<div id="my_div">
+	div text will be replaced
+	</div>
+
+</body>
+
+</html>
