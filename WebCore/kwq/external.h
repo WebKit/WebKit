@@ -60,6 +60,7 @@
 - controller;
 - (KHTMLPart *)_part;
 - (void)_setTitle: (NSString *)title;
+- (void)_setFinalURL: (NSURL *)url;
 @end
 
 // This should not be allowed here.  data source should not reference view

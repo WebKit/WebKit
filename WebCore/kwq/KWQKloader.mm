@@ -1134,6 +1134,8 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "url = %s\n", [[url absoluteString] cString]);
     [m_dataSource _part]->setBaseURL([[url absoluteString] cString]);
     
+    [m_dataSource _setFinalURL: url];
+    
     [[m_dataSource controller] serverRedirectTo: url forDataSource: m_dataSource];
 }
 

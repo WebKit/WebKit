@@ -10,62 +10,11 @@
 #import <WebKit/IFWebFrame.h>
 
 /* 
-   =============================================================================
+    =============================================================================
    
-    A IFWebDataSource represents all the state associated
-    with a web page.  It is typicallly initialized with a URL, but
-    may also be initialized with an NSString or NSData that hold
-    HTML (?also other, i.e. image data?) content.
-    
-    Typical usage of a IFWebDataSource.
-    
-    IFWebDataSource *dataSource = [[IFWebDataSource alloc] initWithURL: url];
-    id <IFWebController>myController = [[MyControllerClass alloc] init];
-    [myController setDataSource: dataSource];
+    A IFWebDataSource represents the data associated with a web page.
 
-   Changes:
-   
-   2001-12-12
-    
-    After group discussion we decided to classify API as :
-        Tier 1:  Needed by our browser (or Sherlock).
-        Tier 2:  Nedded by Apple internal clients (Mail, Help, PB, other TBD).
-        Tier 3:  Third party software vendors.
-    
-    Added finalURL and isRedirected.
-   
-    2001-12-13
-    
-        Remove setBase: and setBaseTarget:
-        
-        Changed return type of baseTarget to (NSString *)
-        
-        Added the following two methods:
-            - (IFDataSource *)parent;
-            - (NSArry *)children;
-            - (BOOL)isMainDocument;
-  
-        Added the following methods:
-        
-            - (NSArray *)frameNames;
-            - (IFWebDataSource) findDataSourceForFrameNamed: (NSString *)name;
-            - (BOOL)frameExists: (NSString *)name;
-            - (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName;
-            - (void)openURL: (NSURL *)url inIFrame: (id)iFrameIdentifier;
-
-  2001-12-14
-
-        Removed all mentions of resolved URLs, because browsers don't
-        actuall treat DNS aliases specially.
-        
-        Moved search API to IFWebView.
-        
-        Moved IFPreferences to a new file, IFPreferences.h.  We are still discussing
-        this item and it will not make it into the white paper.
-                    
-	Minor naming changes.
-
-   ============================================================================= */
+    ============================================================================= */
 
 #ifdef TENTATIVE_API
 @class IFLoader;
@@ -135,8 +84,6 @@
 
 - (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName;
 
-
-- (void)openURL: (NSURL *)url inIFrame: (id)iFrameIdentifier;
 
 
 // Set the controller for this data source.  NOTE:  The controller is not retained by the

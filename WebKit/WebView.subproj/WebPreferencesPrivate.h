@@ -13,6 +13,8 @@
 - (NSTimeInterval)_initialTimedLayoutDelay;
 - (int)_initialTimedLayoutSize;
 - (BOOL)_initialTimedLayoutEnabled;
+- (BOOL)_resourceTimedLayoutEnabled;
+- (NSTimeInterval)_resourceTimedLayoutDelay;
 
 @end
 

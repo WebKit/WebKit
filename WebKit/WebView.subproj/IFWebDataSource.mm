@@ -119,8 +119,7 @@ static id IFWebDataSourceMake(void *url)
 // frames then frameNames will return nil.
 - (NSArray *)frameNames
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::frameNames is not implemented"];
-    return nil;
+    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frames allKeys];
 }
 
 
@@ -128,27 +127,19 @@ static id IFWebDataSourceMake(void *url)
 // the frame named 'name', or nil. 
 - (IFWebDataSource *) findDataSourceForFrameNamed: (NSString *)name
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::findDataSourceForFrameNamed: is not implemented"];
-    return nil;
+    return [[self frameNamed: name] dataSource];
 }
 
 
 - (BOOL)frameExists: (NSString *)name
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::frameExists: is not implemented"];
-    return NO;
+    return [self frameNamed: name] == 0 ? NO : YES;
 }
 
 
 - (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName
 {
     [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::openURL:inFrameNamed: is not implemented"];
-}
-
-
-- (void)openURL: (NSURL *)url inIFrame: (id)iFrameIdentifier
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::openURL:inIFrame: is not implemented"];
 }
 
 
@@ -176,8 +167,7 @@ static id IFWebDataSourceMake(void *url)
 // a redirect is processed
 - (NSURL *)finalURL
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::finalURL is not implemented"];
-    return nil;
+    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->finalURL;
 }
 
 
@@ -185,8 +175,7 @@ static id IFWebDataSourceMake(void *url)
 // i.e. inputURL != finalURL.
 - (BOOL)wasRedirected
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::wasRedirected is not implemented"];
-    return NO;
+    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL isEqual: [self finalURL]];
 }
 
 

@@ -46,6 +46,7 @@
     }
     [frames release];
     [inputURL release];
+    [finalURL release];
     [urlHandles release];
     [mainHandle release];
     [mainURLHandleClient release];
@@ -230,6 +231,14 @@
     // we reach the committed state for this data source's frame.
     if ([[self frame] _state] >= IFWEBFRAMESTATE_COMMITTED_PAGE)
         [[self controller] receivedPageTitle:data->pageTitle forDataSource:self];
+}
+
+- (void)_setFinalURL: (NSURL *)url
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+
+    [data->finalURL release];
+    data->finalURL = [url retain];
 }
 
 @end

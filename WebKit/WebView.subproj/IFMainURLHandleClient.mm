@@ -101,6 +101,8 @@
     WEBKITDEBUGLEVEL (WEBKIT_LOG_REDIRECT, "url = %s\n", [[url absoluteString] cString]);
     part->setBaseURL([[url absoluteString] cString]);
     
+    [dataSource _setFinalURL: url];
+    
     [[dataSource controller] serverRedirectTo: url forDataSource: dataSource];
 }
 

@@ -26,6 +26,9 @@
     // The original URL as requested during initialization.
     NSURL *inputURL;
     
+    // The original URL we may have been redirected to.
+    NSURL *finalURL;
+    
     KHTMLPart *part;
     
     // Child frames of this frame.
@@ -71,4 +74,5 @@
 - (void)_setPrimaryLoadComplete: (BOOL)flag;
 - (double)_loadingStartedTime;
 - (void)_setTitle: (NSString *)title;
+- (void)_setFinalURL: (NSURL *)url;
 @end

@@ -129,6 +129,11 @@ char *stateNames[6] = {
     "IFWEBFRAMESTATE_COMPLETE" };
 
 
+- (void)_scheduleLayout: (NSTimeInterval)inSeconds
+{
+    [NSTimer scheduledTimerWithTimeInterval:inSeconds target:self selector: @selector(_timedLayout:) userInfo: nil repeats:FALSE];
+}
+
 - (void)_transitionProvisionalToLayoutAcceptable
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
@@ -157,7 +162,7 @@ char *stateNames[6] = {
                     NSTimeInterval timedDelay = defaultTimedDelay - timeSinceStart;
                     
                     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
-                    [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_timedLayout:) userInfo: nil repeats:FALSE];
+                    [self _scheduleLayout: timedDelay];
                 }
             }
             break;
@@ -361,6 +366,17 @@ char *stateNames[6] = {
                 [[self controller] locationChangeDone: [self mainDocumentError] forFrame: self];
                 
                 return;
+            }
+            // A resource was loaded, but not the entire frame isn't complete.  Schedule a
+            // layout.
+            else {
+                if ([self _state] == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE){
+                    BOOL resourceTimedDelayEnabled = [[IFPreferences standardPreferences] _resourceTimedLayoutEnabled];
+                    if (resourceTimedDelayEnabled){
+                        NSTimeInterval timedDelay = [[IFPreferences standardPreferences] _resourceTimedLayoutDelay];
+                        [self _scheduleLayout: timedDelay];
+                    }
+                }
             }
             return;
         }

@@ -22,6 +22,8 @@
 #define	WebKitInitialTimedLayoutDelayPreferenceKey	@"WebKitInitialTimedLayoutDelay"
 #define	WebKitInitialTimedLayoutSizePreferenceKey	@"WebKitInitialTimedLayoutSize"
 #define	WebKitInitialTimedLayoutEnabledPreferenceKey	@"WebKitInitialTimedLayoutEnabled"
+#define	WebKitResourceTimedLayoutEnabledPreferenceKey	@"WebKitResourceTimedLayoutEnabled"
+#define	WebKitResourceTimedLayoutDelayPreferenceKey	@"WebKitResourceTimedLayoutDelay"
 
 @implementation IFPreferences
 
@@ -46,23 +48,26 @@ static IFPreferences *_standardPreferences = nil;
     NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
     NSNumber *jScriptEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *timedLayoutEnabled = [NSNumber numberWithBool:TRUE];
+    NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:TRUE];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        @"0x0", 		WebKitLogLevelPreferenceKey,
-        @"Georgia", 		WebKitStandardFontPreferenceKey,
-        @"Monaco",	  	WebKitFixedFontPreferenceKey,
-        @"Georgia", 		WebKitSerifFontPreferenceKey,
-        @"Arial", 		WebKitSansSerifFontPreferenceKey,
-        @"Apple Chancery", 	WebKitCursiveFontPreferenceKey,
-        @"Papyrus", 		WebKitFantasyFontPreferenceKey,
-        @"6", 			WebKitMinimumFontSizePreferenceKey,
-        @"1.5", 		WebKitInitialTimedLayoutDelayPreferenceKey,
-        @"4096", 		WebKitInitialTimedLayoutSizePreferenceKey,
-        timedLayoutEnabled,	WebKitInitialTimedLayoutEnabledPreferenceKey,
-        fontSizeArray,		WebKitFontSizesPreferenceKey,
-        javaEnabled,		WebKitJavaEnabledPreferenceKey,
-        jScriptEnabled,		WebKitJScriptEnabledPreferenceKey,
-        pluginsEnabled,		WebKitPluginsEnabledPreferenceKey,
+        @"0x0", 			WebKitLogLevelPreferenceKey,
+        @"Georgia", 			WebKitStandardFontPreferenceKey,
+        @"Monaco",	  		WebKitFixedFontPreferenceKey,
+        @"Georgia", 			WebKitSerifFontPreferenceKey,
+        @"Arial", 			WebKitSansSerifFontPreferenceKey,
+        @"Apple Chancery", 		WebKitCursiveFontPreferenceKey,
+        @"Papyrus", 			WebKitFantasyFontPreferenceKey,
+        @"6", 				WebKitMinimumFontSizePreferenceKey,
+        @"1.5",		 		WebKitInitialTimedLayoutDelayPreferenceKey,
+        @"4096", 			WebKitInitialTimedLayoutSizePreferenceKey,
+        @"1.0", 			WebKitResourceTimedLayoutDelayPreferenceKey,
+        timedLayoutEnabled,		WebKitInitialTimedLayoutEnabledPreferenceKey,
+        resourceTimedLayoutEnabled,	WebKitResourceTimedLayoutEnabledPreferenceKey,
+        fontSizeArray,			WebKitFontSizesPreferenceKey,
+        javaEnabled,			WebKitJavaEnabledPreferenceKey,
+        jScriptEnabled,			WebKitJScriptEnabledPreferenceKey,
+        pluginsEnabled,			WebKitPluginsEnabledPreferenceKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -197,6 +202,18 @@ static IFPreferences *_standardPreferences = nil;
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitInitialTimedLayoutEnabledPreferenceKey];
 }
+
+
+- (NSTimeInterval)_resourceTimedLayoutDelay
+{
+    return [[NSUserDefaults standardUserDefaults] floatForKey:WebKitResourceTimedLayoutDelayPreferenceKey];
+}
+
+- (BOOL)_resourceTimedLayoutEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitResourceTimedLayoutEnabledPreferenceKey];
+}
+
 
 
 @end
