@@ -1,3 +1,12 @@
+2002-11-20  Maciej Stachowiak  <mjs@apple.com>
+
+	Reduced the size of ValueImp by 8 bytes for a .5% speedup.
+	
+        * kjs/value.h: Removed destructed flag. Made refcount and flag 16
+	bits each.
+        * kjs/value.cpp:
+        (ValueImp::~ValueImp): Don't set destructed flag.
+
 2002-11-20  Darin Adler  <darin@apple.com>
 
         * kjs/types.cpp: Keep ref count for the whole lists of nodes.

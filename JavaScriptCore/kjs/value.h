@@ -95,7 +95,6 @@ namespace KJS {
 
     ValueImp* ref() { if (!SimpleNumber::is(this)) refcount++; return this; }
     bool deref() { if (SimpleNumber::is(this)) return false; else return (!--refcount); }
-    unsigned int refcount;
 
     virtual void mark();
     bool marked() const;
@@ -127,7 +126,11 @@ namespace KJS {
     bool dispatchToUInt32(unsigned&) const;
     Object dispatchToObject(ExecState *exec) const;
 
+    unsigned short int refcount;
+
   private:
+    unsigned short int _flags;
+
     virtual Type type() const = 0;
 
     // The conversion operations
@@ -142,13 +145,9 @@ namespace KJS {
     enum {
       VI_MARKED = 1,
       VI_GCALLOWED = 2,
-      VI_CREATED = 4,
-      VI_DESTRUCTED = 8
+      VI_CREATED = 4
     }; // VI means VALUEIMPL
 
-    ValueImpPrivate *_vd;
-    unsigned int _flags;
-    
     // Give a compile time error if we try to copy one of these.
     ValueImp(const ValueImp&);
     ValueImp& operator=(const ValueImp&);
