@@ -1,3 +1,58 @@
+2005-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3933435> -[DOMRange cloneContents] sometimes alters the original DOMRange
+
+        * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::processContents): Fixed code that was collapsing
+        the range after processing the contents. That's right for extract and delete, but not clone.
+
+        - fixed <rdar://problem/3714184> inline input works incorrectly when I type Korean slowly in textfield in form on www.google.co.kr
+        - fixed <rdar://problem/3193848> Can't enter SSN to sign up for Chase visa online account (changing focus inside key press handler)
+        - fixed <rdar://problem/3874683> REGRESSION (161-162): Crash after typing command-Z to undo after pasting text with newline in it into a text field <input type=text>
+
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::text): Changed to call a new string method on the controller instead of calling
+        stringValue, since stringValue has a bad side effect of ending inline input.
+        (QLineEdit::selectAll): Changed to only call selectText: when the field is already selected.
+        When you are giving the field focus, it automatically gets all selected, and this change
+        is required in the case where we defer the focus change.
+
+        * kwq/KWQTextField.h: Added a new string method to the controller.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController setMaximumLength:]): Call the new string method instead of using stringValue.
+        (-[KWQTextFieldController controlTextDidChange:]): Removed the code to truncate at the first CR or LF.
+        That's now handled in the shouldChangeTextInRange method instead.
+        (-[KWQTextFieldController textView:shouldHandleEvent:]): Add new logic to defer responder changes until
+        after the event is handled. This makes sure the key gets into the field that's already handling it at
+        rather than ending up in the newly-focused field if the key press handler focuses a different element.
+        (-[KWQTextFieldController textView:didHandleEvent:]): Turn off deferral here, now that the key press
+        has been handled.
+        (-[KWQTextFieldController string]): Added. Calls stringValue only if there's no editor. If there is
+        an editor, calls string on that instead.
+        (-[KWQTextFieldController textView:shouldChangeTextInRange:replacementString:]): Added. Called by
+        the three field subclasses. Truncates incoming strings at the first CR or LF character. This works
+        properly with Undo, and the old technique did not.
+        (-[KWQTextFieldController preprocessString:]): Added. Helper used for all the setStringValue methods
+        so they all truncate at the first CR or LF as well as truncating to the appropriate length.
+        (-[KWQTextField setStringValue:]): Changed to call the controller.
+        (-[KWQTextField textView:shouldChangeTextInRange:replacementString:]): Added. Calls the controller.
+        (-[KWQSecureTextField setStringValue:]): More of the same.
+        (-[KWQSecureTextField textView:shouldChangeTextInRange:replacementString:]): Ditto.
+        (-[KWQSearchField setStringValue:]): Ditto.
+        (-[KWQSearchField textView:shouldChangeTextInRange:replacementString:]): Ditto.
+
+        * kwq/KWQWidget.h: Added the new setDeferFirstResponderChanges function.
+        * kwq/KWQWidget.mm:
+        (QWidget::~QWidget): Clear out the deferredFirstResponder global just in case we are destroyed
+        while we "have the ball".
+        (QWidget::hasFocus): If we are in the deferred mode, use the global to decide who to say is focused.
+        (QWidget::setFocus): If we are in the deferred mode, set the global instead of making something be
+        the first responder.
+        (QWidget::setDeferFirstResponderChanges): Set the boolean. If the boolean is being cleared, then
+        get the deferred first responder and call setFocus on it again, which will do the work we didn't
+        want to do earlier.
+
 2005-01-24  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

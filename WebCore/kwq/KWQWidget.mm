@@ -41,6 +41,9 @@
 
 using khtml::RenderWidget;
 
+static bool deferFirstResponderChanges;
+static QWidget *deferredFirstResponder;
+
 /*
     A QWidget roughly corresponds to an NSView.  In Qt a QFrame and QMainWindow inherit
     from a QWidget.  In Cocoa a NSWindow does not inherit from NSView.  We
@@ -84,6 +87,9 @@ QWidget::~QWidget()
     KWQ_BLOCK_EXCEPTIONS;
     KWQRelease(data->view);
     KWQ_UNBLOCK_EXCEPTIONS;
+
+    if (deferredFirstResponder == this)
+        deferredFirstResponder = 0;
 
     delete data;
 }
@@ -197,9 +203,14 @@ int QWidget::baselinePosition(int height) const
 
 bool QWidget::hasFocus() const
 {
-    NSView *view = [getView() _webcore_effectiveFirstResponder];
+    if (deferFirstResponderChanges && deferredFirstResponder) {
+        return this == deferredFirstResponder;
+    }
 
     KWQ_BLOCK_EXCEPTIONS;
+
+    NSView *view = [getView() _webcore_effectiveFirstResponder];
+
     NSView *firstResponder = [KWQKHTMLPart::bridgeForWidget(this) firstResponder];
 
     if (!firstResponder) {
@@ -220,6 +231,7 @@ bool QWidget::hasFocus() const
         // Return true when the first responder is a subview of this widget's view
         return true;
     }
+
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return false;
@@ -230,17 +242,21 @@ void QWidget::setFocus()
     if (hasFocus()) {
         return;
     }
-    
-    NSView *view = [getView() _webcore_effectiveFirstResponder];
+
+    if (deferFirstResponderChanges) {
+        deferredFirstResponder = this;
+        return;
+    }
 
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view acceptsFirstResponder]) {
+    NSView *view = [getView() _webcore_effectiveFirstResponder];
+    if ([view superview] && [view acceptsFirstResponder]) {
         WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
         NSResponder *oldFirstResponder = [bridge firstResponder];
 
         [bridge makeFirstResponder:view];
 
-        // setting focus can actually cause a style change which might
+        // Setting focus can actually cause a style change which might
         // remove the view from its superview while it's being made
         // first responder. This confuses AppKit so we must restore
         // the old first responder.
@@ -585,5 +601,17 @@ void QWidget::afterMouseDown(NSView *view)
         widget->data->mustStayInWindow = false;
         if (widget->data->removeFromSuperviewSoon)
             widget->removeFromSuperview();
+    }
+}
+
+void QWidget::setDeferFirstResponderChanges(bool defer)
+{
+    deferFirstResponderChanges = defer;
+    if (!defer) {
+        QWidget *r = deferredFirstResponder;
+        deferredFirstResponder = 0;
+        if (r) {
+            r->setFocus();
+        }
     }
 }

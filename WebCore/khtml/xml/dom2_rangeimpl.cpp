@@ -483,7 +483,8 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
                 i++;
             }
         }
-        collapse(true,exceptioncode);
+        if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS)
+            collapse(true,exceptioncode);
         return fragment;
     }
 

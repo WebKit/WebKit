@@ -161,6 +161,8 @@ public:
     void addToSuperview(NSView *superview);
     void removeFromSuperview();
 
+    static void setDeferFirstResponderChanges(bool);
+
 private:
     KWQWidgetPrivate *data;
 };

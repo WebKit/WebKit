@@ -136,15 +136,9 @@ void QLineEdit::setText(const QString &s)
 
 QString QLineEdit::text() const
 {
-    NSTextField *textField = (NSTextField *)getView();
-
     KWQ_BLOCK_EXCEPTIONS;
-    NSMutableString *text = [[[textField stringValue] mutableCopy] autorelease];
-    [text replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
-    [text replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
-    return QString::fromNSString(text);
+    return QString::fromNSString([m_controller string]);
     KWQ_UNBLOCK_EXCEPTIONS;
-
     return QString();
 }
 
@@ -179,16 +173,16 @@ int QLineEdit::maxLength() const
 
 void QLineEdit::selectAll()
 {
-    KWQ_BLOCK_EXCEPTIONS;
-
-    // Do the makeFirstResponder ourselves explicitly (by calling setFocus)
-    // so WebHTMLView will know it's programmatic and not the user clicking.
-    setFocus();
-
-    NSTextField *textField = (NSTextField *)getView();
-    [textField selectText:nil];
-
-    KWQ_UNBLOCK_EXCEPTIONS;
+    if (!hasFocus()) {
+        // Do the makeFirstResponder ourselves explicitly (by calling setFocus)
+        // so WebHTMLView will know it's programmatic and not the user clicking.
+        setFocus();
+    } else {
+        KWQ_BLOCK_EXCEPTIONS;
+        NSTextField *textField = (NSTextField *)getView();
+        [textField selectText:nil];
+        KWQ_UNBLOCK_EXCEPTIONS;
+    }
 }
 
 bool QLineEdit::edited() const

@@ -71,7 +71,9 @@
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase;
 - (BOOL)textView:(NSTextView *)view shouldHandleEvent:(NSEvent *)event;
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event;
+- (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string;
 - (void)updateTextAttributes:(NSMutableDictionary *)attributes;
+- (NSString *)preprocessString:(NSString *)string;
 @end
 
 @implementation KWQTextFieldController
@@ -128,7 +130,7 @@
 
 - (void)setMaximumLength:(int)len
 {
-    NSString *oldValue = [field stringValue];
+    NSString *oldValue = [self string];
     if ([oldValue _KWQ_numComposedCharacterSequences] > len) {
         [field setStringValue:[oldValue _KWQ_truncateToNumComposedCharacterSequences:len]];
     }
@@ -181,12 +183,6 @@
     if (KWQKHTMLPart::handleKeyboardOptionTabInView(field))
         return;
     
-    // If someone puts a CR or LF in, truncate up to that character.
-    NSString *string = [field stringValue];
-    NSRange newline = [string rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\r\n"]];
-    if (newline.location != NSNotFound)
-        [field setStringValue:[string substringToIndex:newline.location]];
-
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidChange:notification];
     
@@ -303,23 +299,36 @@
 	return YES;
     
     NSEventType type = [event type];
-    if ((type == NSKeyDown || type == NSKeyUp) && 
-	![[NSInputManager currentInputManager] hasMarkedText]) {
+    if ((type == NSKeyDown || type == NSKeyUp) && ![[NSInputManager currentInputManager] hasMarkedText]) {
         WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+
+        QWidget::setDeferFirstResponderChanges(true);
+
         BOOL intercepted = [bridge control:field textView:view shouldHandleEvent:event];
         if (!intercepted) {
             intercepted = [bridge interceptKeyEvent:event toView:view];
         }
-        // Always return NO for key up events because we don't want them
+
+        // Always intercept key up events because we don't want them
         // passed along the responder chain. This is arguably a bug in
         // NSTextView; see Radar 3507083.
-        return type != NSKeyUp && !intercepted;
+        if (type == NSKeyUp) {
+            intercepted = YES;
+        }
+
+        if (intercepted || !widget) {
+            QWidget::setDeferFirstResponderChanges(false);
+            return NO;
+        }
     }
+
     return YES;
 }
 
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
 {
+    QWidget::setDeferFirstResponderChanges(false);
+
     if (!widget)
 	return;
 
@@ -412,6 +421,40 @@
     }
 }
 
+- (NSString *)string
+{
+    // Calling stringValue can have a side effect of ending International inline input.
+    // So don't call it unless there's no editor.
+    NSText *editor = [field _KWQ_currentEditor];
+    if (editor == nil) {
+        return [field stringValue];
+    }
+    return [editor string];
+}
+
+- (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
+{
+    NSRange newline = [string rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\r\n"]];
+    if (newline.location == NSNotFound) {
+        return YES;
+    }
+    NSString *truncatedString = [string substringToIndex:newline.location];
+    if ([textView shouldChangeTextInRange:range replacementString:truncatedString]) {
+        [textView replaceCharactersInRange:range withString:truncatedString];
+        [textView didChangeText];
+    }
+    return NO;
+}
+
+- (NSString *)preprocessString:(NSString *)string
+{
+    NSString *result = string;
+    NSRange newline = [result rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\r\n"]];
+    if (newline.location != NSNotFound)
+        result = [result substringToIndex:newline.location];
+    return [result _KWQ_truncateToNumComposedCharacterSequences:[formatter maximumLength]];
+}
+
 @end
 
 @implementation KWQTextField
@@ -460,9 +503,7 @@
 
 - (void)setStringValue:(NSString *)string
 {
-    int maxLength = [controller maximumLength];
-    string = [string _KWQ_truncateToNumComposedCharacterSequences:maxLength];
-    [super setStringValue:string];
+    [super setStringValue:[controller preprocessString:string]];
     [controller textChanged];
 }
 
@@ -525,7 +566,6 @@
     [controller setInDrawingMachinery:NO];
 }
 
-// Use the "needs display" mechanism to do all insertion point drawing in the web view.
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
 {
     return [controller textView:view shouldDrawInsertionPointInRect:rect color:color turnedOn:drawInsteadOfErase];
@@ -539,6 +579,11 @@
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
 {
     [controller textView:view didHandleEvent:event];
+}
+
+- (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
+{
+    return [controller textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
 @end
@@ -609,9 +654,7 @@
 
 - (void)setStringValue:(NSString *)string
 {
-    int maxLength = [controller maximumLength];
-    string = [string _KWQ_truncateToNumComposedCharacterSequences:maxLength];
-    [super setStringValue:string];
+    [super setStringValue:[controller preprocessString:string]];
     [controller textChanged];
 }
 
@@ -674,7 +717,6 @@
     [controller setInDrawingMachinery:NO];
 }
 
-// Use the "needs display" mechanism to do all insertion point drawing in the web view.
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
 {
     return [controller textView:view shouldDrawInsertionPointInRect:rect color:color turnedOn:drawInsteadOfErase];
@@ -688,6 +730,11 @@
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
 {
     [controller textView:view didHandleEvent:event];
+}
+
+- (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
+{
+    return [controller textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
 // These next two methods are the workaround for bug 3024443.
@@ -825,9 +872,7 @@
 
 - (void)setStringValue:(NSString *)string
 {
-    int maxLength = [controller maximumLength];
-    string = [string _KWQ_truncateToNumComposedCharacterSequences:maxLength];
-    [super setStringValue:string];
+    [super setStringValue:[controller preprocessString:string]];
     [controller textChanged];
 }
 
@@ -890,7 +935,6 @@
     [controller setInDrawingMachinery:NO];
 }
 
-// Use the "needs display" mechanism to do all insertion point drawing in the web view.
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase
 {
     return [controller textView:view shouldDrawInsertionPointInRect:rect color:color turnedOn:drawInsteadOfErase];
@@ -904,6 +948,11 @@
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
 {
     [controller textView:view didHandleEvent:event];
+}
+
+- (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
+{
+    return [controller textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
 @end
