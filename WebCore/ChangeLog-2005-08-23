@@ -1,5 +1,14 @@
 2004-09-16  Darin Adler  <darin@apple.com>
 
+        - fixed caret-drawing regression from my last patch
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::xPosForVerticalArrowNavigation): Pass false, meaning "vertical line caret"
+        rather than true meaning "big box for overtyping".
+        (DOM::Selection::layoutCaret): Ditto.
+
+2004-09-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed <rdar://problem/3803280> crash in selectAll on page with no contents
