@@ -139,7 +139,7 @@
     if (activate)
         event.modifiers |= activeFlag;
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     BOOL acceptedEvent =
 #endif
     [self sendEvent:&event]; 
@@ -175,7 +175,7 @@
     [self getCarbonEvent:&event];
     event.what = getFocusEvent;
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     BOOL acceptedEvent =
 #endif
     [self sendEvent:&event]; 
@@ -191,7 +191,7 @@
     [self getCarbonEvent:&event];
     event.what = loseFocusEvent;
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     BOOL acceptedEvent =
 #endif
     [self sendEvent:&event]; 
@@ -207,7 +207,7 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseDown;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     BOOL acceptedEvent =
 #endif
     [self sendEvent:&event]; 
@@ -222,7 +222,7 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseUp;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     BOOL acceptedEvent =
 #endif
     [self sendEvent:&event]; 
@@ -237,7 +237,7 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     BOOL acceptedEvent =
 #endif
     [self sendEvent:&event]; 
@@ -252,7 +252,7 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     BOOL acceptedEvent =
 #endif
     [self sendEvent:&event]; 
@@ -358,7 +358,7 @@
     EventRecord event;
     
     [self getCarbonEvent:&event withEvent:theEvent];
-#ifndef NDEBUG
+#if !LOG_DISABLED
     BOOL acceptedEvent =
 #endif
     [self sendEvent:&event];
@@ -493,7 +493,7 @@
 {
     [self setUpWindowAndPort];
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     NPError npErr =
 #endif
     NPP_SetWindow(instance, &window);
@@ -541,7 +541,7 @@
     
     isStarted = YES;
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     NPError npErr =
 #endif
     NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, NULL);
@@ -618,7 +618,7 @@
     [webFrame release];
     [webDataSource release];
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     NPError npErr =
 #endif
     NPP_Destroy(instance, NULL);

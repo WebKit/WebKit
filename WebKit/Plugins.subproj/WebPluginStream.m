@@ -191,7 +191,7 @@
 {
     // Don't report error before we've called NPP_NewStream
     if(!isFirstChunk){
-#ifndef NDEBUG
+#if !LOG_DISABLED
         NPError npErr =
 #endif
         NPP_DestroyStream(instance, &npStream, error);

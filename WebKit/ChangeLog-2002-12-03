@@ -1,5 +1,12 @@
 2002-09-08  Darin Adler  <darin@apple.com>
 
+        * Plugins.subproj/WebPluginStream.m:
+        * Plugins.subproj/WebPluginView.m:
+	Use #if ! rather than #ifndef with LOG_DISABLED, since it
+	is set to 0 rather than not defined when LOG is enabled.
+
+2002-09-08  Darin Adler  <darin@apple.com>
+
         * Bookmarks.subproj/WebBookmarkGroup.m:
         * History.subproj/WebHistoryPrivate.m:
         * History.subproj/WebURLsWithTitles.m:
