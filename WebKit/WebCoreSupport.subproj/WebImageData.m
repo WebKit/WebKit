@@ -139,6 +139,12 @@ static CFDictionaryRef imageSourceOptions;
         }
         free (images);
         images = 0;
+        
+        isSolidColor = NO;
+        if( solidColor ) {
+            CFRelease(solidColor);
+            solidColor = NULL;
+        }
     }
 }
 
@@ -253,6 +259,37 @@ static CFDictionaryRef imageSourceOptions;
     return 0;
 }
 
+- (void)_checkSolidColor: (CGImageRef)image
+{
+    isSolidColor = NO;
+    if( solidColor ) {
+        CFRelease(solidColor);
+        solidColor = NULL;
+    }
+    
+    // Currently we only check for solid color in the important special case of a 1x1 image
+    if( image && CGImageGetWidth(image)==1 && CGImageGetHeight(image)==1 ) {
+        float pixel[4]; // RGBA
+        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+        CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
+                                                  kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents);
+        if( bmap ) {
+            CGContextSetCompositeOperation(bmap, kCGCompositeCopy);
+            CGRect dst = {{0,0},{1,1}};
+            CGContextDrawImage(bmap,dst,image);
+            if( pixel[3] > 0 )
+                solidColor = CGColorCreate(space,pixel);
+            isSolidColor = YES;
+            CFRelease(bmap);
+            /*NSLog(@"WebImageData %p: 1x1 image has color {%f,%f,%f,%f} => %p",
+                  self,pixel[0],pixel[1],pixel[2],pixel[3],solidColor);*/
+        } else {
+            ERROR("Couldn't create CGBitmapContext");
+        }
+        CFRelease(space);
+    }
+}
+
 - (void)_cacheImages:(size_t)optionalIndex allImages:(BOOL)allImages
 {
     size_t i;
@@ -274,6 +311,11 @@ static CFDictionaryRef imageSourceOptions;
         }
 
         images[i] = CGImageSourceCreateImageAtIndex (imageSource, i, [self _imageSourceOptions]);
+    }
+    
+    if (from==0 && to>0) {
+        // Loaded image 0. Check whether it's a solid color:
+        [self _checkSolidColor: images[0]];
     }
 }
 
@@ -349,6 +391,19 @@ static CFDictionaryRef imageSourceOptions;
     return YES;
 }
 
+- (void)_fillSolidColorInRect:(CGRect)rect compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext
+{
+    /*NSLog(@"WebImageData %p: filling with color %p, in {%.0f,%.0f, %.0f x %.0f}",
+          self,solidColor,rect.origin.x,rect.origin.y,rect.size.width,rect.size.height);*/
+    if( solidColor ) {
+        CGContextSaveGState (aContext);
+        CGContextSetFillColorWithColor(aContext, solidColor);
+        CGContextSetCompositeOperation (aContext, op);
+        CGContextFillRect (aContext, rect);
+        CGContextRestoreGState (aContext);
+    }
+}
+
 - (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)adjustedSize compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
 {
     if (isPDF) {
@@ -368,50 +423,55 @@ static CFDictionaryRef imageSourceOptions;
             [decodeLock unlock];
             return;
         }
-
-        CGContextSaveGState (aContext);
-
-        // Get the height of the portion of the image that is currently decoded.  This
-        // could be less that the actual height.
-        float h = CGImageGetHeight(image);
-
-        // Is the amount of available bands less than what we need to draw?  If so,
-        // clip.
-        BOOL clipped = NO;
-        CGSize actualSize = [self size];
-        if (h != actualSize.height) {
-            float proportionLoaded = h/actualSize.height;
-            fr.size.height = fr.size.height * proportionLoaded;
-            ir.size.height = ir.size.height * proportionLoaded;
-            clipped = YES;
-        }
         
-        // Flip the coords.
-        CGContextSetCompositeOperation (aContext, op);
-        CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
-        CGContextScaleCTM (aContext, 1, -1);
-        CGContextTranslateCTM (aContext, 0, -ir.size.height);
-        
-        // Translated to origin, now draw at 0,0.
-        ir.origin.x = ir.origin.y = 0;
-        
-        // If we're drawing a sub portion of the image then create
-        // a image for the sub portion and draw that.
-        // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-        if (clipped == NO && (fr.size.width != adjustedSize.width || fr.size.height != adjustedSize.height)) {
-            image = CGImageCreateWithImageInRect (image, fr);
-            if (image) {
-            CGContextDrawImage (aContext, ir, image);
-            CFRelease (image);
+        if( isSolidColor && index==0 ) {
+            [self _fillSolidColorInRect: ir compositeOperation: op context: aContext];
+
+        } else {
+            CGContextSaveGState (aContext);
+
+            // Get the height of the portion of the image that is currently decoded.  This
+            // could be less that the actual height.
+            float h = CGImageGetHeight(image);
+
+            // Is the amount of available bands less than what we need to draw?  If so,
+            // clip.
+            BOOL clipped = NO;
+            CGSize actualSize = [self size];
+            if (h != actualSize.height) {
+                float proportionLoaded = h/actualSize.height;
+                fr.size.height = fr.size.height * proportionLoaded;
+                ir.size.height = ir.size.height * proportionLoaded;
+                clipped = YES;
             }
-        }
-        // otherwise draw the whole image.
-        else { 
-            CGContextDrawImage (aContext, ir, image);
-        }
+            
+            // Flip the coords.
+            CGContextSetCompositeOperation (aContext, op);
+            CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
+            CGContextScaleCTM (aContext, 1, -1);
+            CGContextTranslateCTM (aContext, 0, -ir.size.height);
+            
+            // Translated to origin, now draw at 0,0.
+            ir.origin.x = ir.origin.y = 0;
+            
+            // If we're drawing a sub portion of the image then create
+            // a image for the sub portion and draw that.
+            // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
+            if (clipped == NO && (fr.size.width != adjustedSize.width || fr.size.height != adjustedSize.height)) {
+                image = CGImageCreateWithImageInRect (image, fr);
+                if (image) {
+                CGContextDrawImage (aContext, ir, image);
+                CFRelease (image);
+                }
+            }
+            // otherwise draw the whole image.
+            else { 
+                CGContextDrawImage (aContext, ir, image);
+            }
 
-        CGContextRestoreGState (aContext);
-
+            CGContextRestoreGState (aContext);
+        }
+        
         [decodeLock unlock];
     }
 }
@@ -439,75 +499,81 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
     [decodeLock lock];
     
-    CGImageRef image = [self imageAtIndex:[self currentFrame]];
+    size_t frame = [self currentFrame];
+    CGImageRef image = [self imageAtIndex:frame];
     if (!image) {
         ERROR ("unable to find image");
         [decodeLock unlock];
         return;
     }
 
-    float w = CGImageGetWidth(image);
-    float h = CGImageGetHeight(image);
-
-    // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
-    NSRect oneTileRect;
-    oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, w) - w, w);
-    oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, h) - h, h);
-    oneTileRect.size.width = w;
-    oneTileRect.size.height = h;
-
-    // If the single image draw covers the whole area, then just draw once.
-    if (NSContainsRect(oneTileRect, NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height))) {
-        CGRect fromRect;
-
-        fromRect.origin.x = rect.origin.x - oneTileRect.origin.x;
-        fromRect.origin.y = rect.origin.y - oneTileRect.origin.y;
-        fromRect.size = rect.size;
-
-        [decodeLock unlock];
+    if( frame == 0 && isSolidColor ) {
+        [self _fillSolidColorInRect: rect compositeOperation: kCGCompositeSover context: aContext];
         
-        [self drawImageAtIndex:[self currentFrame] inRect:rect fromRect:fromRect compositeOperation:kCGCompositeSover context:aContext];
+    } else {
+        float w = CGImageGetWidth(image);
+        float h = CGImageGetHeight(image);
+        
+        // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
+        NSRect oneTileRect;
+        oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, w) - w, w);
+        oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, h) - h, h);
+        oneTileRect.size.width = w;
+        oneTileRect.size.height = h;
 
-        return;
+        // If the single image draw covers the whole area, then just draw once.
+        if (NSContainsRect(oneTileRect, NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height))) {
+            CGRect fromRect;
+
+            fromRect.origin.x = rect.origin.x - oneTileRect.origin.x;
+            fromRect.origin.y = rect.origin.y - oneTileRect.origin.y;
+            fromRect.size = rect.size;
+
+            [decodeLock unlock];
+            
+            [self drawImageAtIndex:[self currentFrame] inRect:rect fromRect:fromRect compositeOperation:kCGCompositeSover context:aContext];
+
+            return;
+        }
+
+        // Compute the appropriate phase relative to the top level view in the window.
+        // Conveniently, the oneTileRect we computed above has the appropriate origin.
+        NSPoint originInWindow = [[NSView focusView] convertPoint:oneTileRect.origin toView:nil];
+
+        // WebCore may translate the focus, and thus need an extra phase correction
+        NSPoint extraPhase = [[WebGraphicsBridge sharedBridge] additionalPatternPhase];
+        originInWindow.x += extraPhase.x;
+        originInWindow.y += extraPhase.y;
+        CGSize phase = CGSizeMake(fmodf(originInWindow.x, w), fmodf(originInWindow.y, h));
+
+        // Possible optimization:  We may want to cache the CGPatternRef    
+        CGPatternRef pattern = CGPatternCreate(self, CGRectMake (0, 0, w, h), CGAffineTransformIdentity, w, h, 
+            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
+        if (pattern) {
+            CGContextSaveGState (aContext);
+
+            CGContextSetPatternPhase(aContext, phase);
+
+            CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
+            CGContextSetFillColorSpace(aContext, patternSpace);
+            CGColorSpaceRelease(patternSpace);
+
+            float patternAlpha = 1;
+            CGContextSetFillPattern(aContext, pattern, &patternAlpha);
+
+            CGContextSetCompositeOperation (aContext, kCGCompositeSover);
+
+            CGContextFillRect (aContext, rect);
+
+            CGPatternRelease (pattern);
+
+            CGContextRestoreGState (aContext);
+        }
+        else {
+            ERROR ("unable to create pattern");
+        }
     }
-
-    // Compute the appropriate phase relative to the top level view in the window.
-    // Conveniently, the oneTileRect we computed above has the appropriate origin.
-    NSPoint originInWindow = [[NSView focusView] convertPoint:oneTileRect.origin toView:nil];
-
-    // WebCore may translate the focus, and thus need an extra phase correction
-    NSPoint extraPhase = [[WebGraphicsBridge sharedBridge] additionalPatternPhase];
-    originInWindow.x += extraPhase.x;
-    originInWindow.y += extraPhase.y;
-    CGSize phase = CGSizeMake(fmodf(originInWindow.x, w), fmodf(originInWindow.y, h));
-
-    // Possible optimization:  We may want to cache the CGPatternRef    
-    CGPatternRef pattern = CGPatternCreate(self, CGRectMake (0, 0, w, h), CGAffineTransformIdentity, w, h, 
-        kCGPatternTilingConstantSpacing, true, &patternCallbacks);
-    if (pattern) {
-        CGContextSaveGState (aContext);
-
-        CGContextSetPatternPhase(aContext, phase);
-
-        CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
-        CGContextSetFillColorSpace(aContext, patternSpace);
-        CGColorSpaceRelease(patternSpace);
-
-        float patternAlpha = 1;
-        CGContextSetFillPattern(aContext, pattern, &patternAlpha);
-
-        CGContextSetCompositeOperation (aContext, kCGCompositeSover);
-
-        CGContextFillRect (aContext, rect);
-
-        CGPatternRelease (pattern);
-
-        CGContextRestoreGState (aContext);
-    }
-    else {
-        ERROR ("unable to create pattern");
-    }
-
+    
     [decodeLock unlock];
 }
 

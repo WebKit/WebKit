@@ -1,3 +1,19 @@
+2005-01-28  Jens Alfke  <jens@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3727680> printing some page with WebKit generates a PDF with a 1x1 image with soft mask (causes Acrobat to hang during print spooling)
+
+	Detect 1x1 images, extract and cache color of single pixel, reduce draw and tile operations to a color fill (or to a no-op if the pixel is clear.)
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _invalidateImages]):
+        (-[WebImageData _checkSolidColor:]):
+        (-[WebImageData _cacheImages:allImages:]):
+        (-[WebImageData _fillSolidColorInRect:compositeOperation:context:]):
+        (-[WebImageData tileInRect:fromPoint:context:]):
+
 2005-01-28  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
