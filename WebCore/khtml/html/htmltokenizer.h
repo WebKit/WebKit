@@ -352,6 +352,10 @@ protected:
     KHTMLParser *parser;
 
     KHTMLView *view;
+
+#ifndef NDEBUG
+    bool inWrite;
+#endif
 };
 
 #if APPLE_CHANGES

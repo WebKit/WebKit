@@ -216,6 +216,9 @@ inline bool tagMatch(const char *s1, const QChar *s2, uint length)
 // ----------------------------------------------------------------------------
 
 HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view)
+#ifndef NDEBUG
+    : inWrite(false)
+#endif
 {
     view = _view;
     buffer = 0;
@@ -232,6 +235,9 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view)
 }
 
 HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, DOM::DocumentFragmentImpl *i)
+#ifndef NDEBUG
+    : inWrite(false)
+#endif
 {
     view = 0;
     buffer = 0;
@@ -1393,6 +1399,10 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
     else
         setSrc(str);
 
+#ifndef NDEBUG
+    inWrite = true;
+#endif
+    
 //     if (Entity)
 //         parseEntity(src, dest);
 
@@ -1606,6 +1616,10 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
         }
     }
     _src = QString::null;
+    
+#ifndef NDEBUG
+    inWrite = false;
+#endif
 
     if (noMoreData && !loadingExtScript && !m_executingScript )
         end(); // this actually causes us to be deleted
@@ -1733,9 +1747,9 @@ void HTMLTokenizer::processToken()
         jsProxy->setEventHandlerLineno(0);
 }
 
-
 HTMLTokenizer::~HTMLTokenizer()
 {
+    assert(!inWrite);
     reset();
     delete parser;
 }

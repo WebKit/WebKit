@@ -61,6 +61,7 @@ public:
     void setSelected(int, bool);
     bool isSelected(int) const;
     
+    bool changingSelection() { return _changingSelection; }
     void clicked() { _clicked.call(); }
     void selectionChanged() { _selectionChanged.call(); }
 
@@ -69,6 +70,7 @@ private:
 
     NSMutableArray *_items;
     bool _insertingItems;
+    bool _changingSelection;
     mutable float _width;
     mutable bool _widthGood;
     

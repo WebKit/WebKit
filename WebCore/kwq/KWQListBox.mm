@@ -46,6 +46,7 @@ QListBox::QListBox(QWidget *parent)
     : QScrollView(parent)
     , _items([[NSMutableArray alloc] init])
     , _insertingItems(false)
+    , _changingSelection(false)
     , _widthGood(false)
     , _clicked(this, SIGNAL(clicked(QListBoxItem *)))
     , _selectionChanged(this, SIGNAL(selectionChanged()))
@@ -170,11 +171,13 @@ void QListBox::setSelected(int index, bool selectIt)
 {
     ASSERT(!_insertingItems);
     NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    _changingSelection = true;
     if (selectIt) {
         [tableView selectRow:index byExtendingSelection:[tableView allowsMultipleSelection]];
     } else {
         [tableView deselectRow:index];
     }
+    _changingSelection = false;
 }
 
 bool QListBox::isSelected(int index) const
@@ -252,7 +255,9 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
     _box->selectionChanged();
-    _box->clicked();
+    if (!_box->changingSelection()) {
+        _box->clicked();
+    }
 }
 
 - (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(int)row

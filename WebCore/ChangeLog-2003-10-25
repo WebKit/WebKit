@@ -1,5 +1,32 @@
 2003-01-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3144789 -- reproducible crash in KHTMLParser::freeBlock on a page at www.library.arizona.edu
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::finished): Call freeBlock here rather than
+	waiting until the parser is destroyed. This fixes the bug because when the parser is
+        destroyed, the document is already destroyed, so we have a dangling current pointer to an
+	already-destroyed node.
+
+	- fixed 3142024 -- crash/hang/assert on java.sun.com in HTMLTokenizer
+
+	The bug was caused by an erroneous clicked signal that was being emitted by
+	QListBox at just the wrong time.
+
+        * kwq/KWQListBox.h: Added _changingSelection boolean.
+        * kwq/KWQListBox.mm: (QListBox::QListBox): Set _changingSelection to false.
+        (QListBox::setSelected): Set _changingSelection to true.
+        (-[KWQListBoxTableViewDelegate tableViewSelectionDidChange:]): Only emit the "clicked"
+	signal if _changingSelection is false.
+
+        * khtml/html/htmltokenizer.h: Add debug-only boolean inWrite.
+        * khtml/html/htmltokenizer.cpp: (HTMLTokenizer::HTMLTokenizer): Set inWrite to false.
+	(HTMLTokenizer::write): Set inWrite to true.
+	(HTMLTokenizer::~HTMLTokenizer): Assert that inWrite is not true.
+
+2003-01-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
 	- fixed 3136944 -- mouseover feedback over non-mapped part of image map claims
