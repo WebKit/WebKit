@@ -179,6 +179,7 @@
                  event:(NSEvent *)event
             pasteboard:(NSPasteboard *)pasteboard 
                 source:(id)source
+                offset:(NSPoint *)dragImageOffset
 {
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSImage *dragImage;
@@ -211,6 +212,13 @@
         origin = NSMakePoint(mouseDownPoint.x - offset.width, mouseDownPoint.y - offset.height);
     }
 
+    // This is the offset from the lower left corner of the image to the mouse location.  Because we
+    // are a flipped view the calculation of Y is inverted.
+    if (dragImageOffset) {
+        dragImageOffset->x = mouseDownPoint.x - origin.x;
+        dragImageOffset->y = origin.y - mouseDownPoint.y;
+    }
+    
     // Per kwebster, offset arg is ignored
     [self dragImage:dragImage at:origin offset:NSZeroSize event:event pasteboard:pasteboard source:source slideBack:YES];
 }

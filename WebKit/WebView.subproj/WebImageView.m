@@ -261,7 +261,8 @@
                     rect:[self drawingRect]
                    event:mouseDraggedEvent
               pasteboard:pasteboard
-                  source:source];
+                  source:source
+                  offset:NULL];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination

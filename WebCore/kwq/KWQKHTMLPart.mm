@@ -2001,7 +2001,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                         _dragClipboard->setDragImageElement(_dragSrc, QPoint(_mouseDownX - srcX, _mouseDownY - srcY));
                     }
                     
-                    _mouseDownMayStartDrag = dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(_mouseDownX, _mouseDownY));
+                    _mouseDownMayStartDrag = dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(_mouseDownWinX, _mouseDownWinY));
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
                     _dragClipboard->setAccessPolicy(KWQClipboard::ImageWritable);
@@ -2242,7 +2242,9 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
     NSPoint loc = [event locationInWindow];
-    d->m_view->viewportToContents((int)loc.x, (int)loc.y, _mouseDownX, _mouseDownY);
+    _mouseDownWinX = (int)loc.x;
+    _mouseDownWinY = (int)loc.y;
+    d->m_view->viewportToContents(_mouseDownWinX, _mouseDownWinY, _mouseDownX, _mouseDownY);
 
     NSResponder *oldFirstResponderAtMouseDownTime = _firstResponderAtMouseDownTime;
     // Unlike other places in WebCore where we get the first

@@ -812,6 +812,7 @@ static WebHTMLView *lastHitView = nil;
         } else {
             dragLoc = NSMakePoint(mouseDownPoint.x - wcDragLoc.x, mouseDownPoint.y + wcDragLoc.y);
         }
+        _private->dragOffset = wcDragLoc;
     }
     
     WebView *webView = [self _webView];
@@ -834,7 +835,8 @@ static WebHTMLView *lastHitView = nil;
                             rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                            event:_private->mouseDownEvent
                       pasteboard:pasteboard
-                          source:source];
+                          source:source
+                          offset:&_private->dragOffset];
         } else {
             [self dragImage:dragImage
                          at:dragLoc
@@ -855,6 +857,8 @@ static WebHTMLView *lastHitView = nil;
             dragImage = [self _dragImageForLinkElement:element];
             NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
             dragLoc = NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height);
+            _private->dragOffset.x = offset.width;
+            _private->dragOffset.y = -offset.height;        // inverted because we are flipped
         }
         // HACK:  We should pass the mouseDown event instead of the mouseDragged!  This hack gets rid of
         // a flash of the image at the mouseDown location when the drag starts.
@@ -875,6 +879,8 @@ static WebHTMLView *lastHitView = nil;
             [dragImage _web_dissolveToFraction:WebDragImageAlpha];
             NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
             dragLoc = NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect));
+            _private->dragOffset.x = mouseDownPoint.x - dragLoc.x;
+            _private->dragOffset.y = dragLoc.y - mouseDownPoint.y;        // inverted because we are flipped
         }
         [self dragImage:dragImage
                      at:dragLoc
@@ -893,6 +899,8 @@ static WebHTMLView *lastHitView = nil;
             dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
             NSSize imageSize = [dragImage size];
             dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width/2, mouseDownPoint.y + imageSize.height/2);
+            _private->dragOffset.x = imageSize.width/2;
+            _private->dragOffset.y = imageSize.height/2;        // inverted because we are flipped
         }
         [self dragImage:dragImage
                      at:dragLoc
@@ -1807,14 +1815,16 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)draggedImage:(NSImage *)image movedTo:(NSPoint)screenLoc
 {
-    NSPoint windowLoc = [[self window] convertScreenToBase:screenLoc];
-    [[self _bridge] dragSourceMovedTo:windowLoc];
+    NSPoint windowImageLoc = [[self window] convertScreenToBase:screenLoc];
+    NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + _private->dragOffset.x, windowImageLoc.y + _private->dragOffset.y);
+    [[self _bridge] dragSourceMovedTo:windowMouseLoc];
 }
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
-    NSPoint windowLoc = [[self window] convertScreenToBase:aPoint];
-    [[self _bridge] dragSourceEndedAt:windowLoc operation:operation];
+    NSPoint windowImageLoc = [[self window] convertScreenToBase:aPoint];
+    NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + _private->dragOffset.x, windowImageLoc.y + _private->dragOffset.y);
+    [[self _bridge] dragSourceEndedAt:windowMouseLoc operation:operation];
 
     _private->initiatedDrag = NO;
     [[self _webView] _setInitiatedDrag:NO];
@@ -1825,7 +1835,7 @@ static WebHTMLView *lastHitView = nil;
     // Once the dragging machinery kicks in, we no longer get mouse drags or the up event.
     // khtml expects to get balanced down/up's, so we must fake up a mouseup.
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
-                                            location:windowLoc
+                                            location:windowMouseLoc
                                        modifierFlags:[[NSApp currentEvent] modifierFlags]
                                            timestamp:[NSDate timeIntervalSinceReferenceDate]
                                         windowNumber:[[self window] windowNumber]

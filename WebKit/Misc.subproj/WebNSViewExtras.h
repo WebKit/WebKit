@@ -45,5 +45,7 @@
                   rect:(NSRect)rect
                  event:(NSEvent *)event
             pasteboard:(NSPasteboard *)pasteboard 
-                source:(id)source;
+                source:(id)source
+                offset:(NSPoint *)dragImageOffset;
+
 @end

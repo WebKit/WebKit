@@ -1,3 +1,30 @@
+2004-06-17  Trey Matteson  <trey@apple.com>
+
+	3698514 - coordinates in ondragstart and ondrag events are wrong
+
+	This part fixes the ondrag coords.  I thought Cocoa passed us the mouse location
+	in draggedImage:movedTo:, but no, it's the position of the dragged image.
+	WebCore needs the mouse location, so to calc that we must save away the
+	offset of the mouse relative to the image when we kick off the drag.
+
+        Reviewed by Maciej.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:rect:event:pasteboard:source:offset:]): Add the ability
+	to return the offset of the cursor wrt to the drag image, since this routine
+	generates its own drag image and positions it.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+	Calc the offset of the cursor wrt to the drag image in the myriad of ways
+	that we kick off the drag.	
+        (-[WebHTMLView draggedImage:movedTo:]):  Adjust the location by the
+	offset we save when we kicked off the drag.
+        (-[WebHTMLView draggedImage:endedAt:operation:]):  Ditto.
+        * WebView.subproj/WebHTMLViewInternal.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView mouseDragged:]):  Pass nil for new arg, we don't care.
+
 2004-06-16  David Hyatt  <hyatt@apple.com>
 
 	In order to support truncation in Emerson, enhance pointToOffset so that it needn't include partial

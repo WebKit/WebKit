@@ -1,3 +1,19 @@
+2004-06-17  Trey Matteson  <trey@apple.com>
+
+	3698514 - coordinates in ondragstart and ondrag events are wrong
+
+	This part fixes the ondragstart coords.  We salt away the window-based mouseDown
+	location, since we need that when we dispatch the ondragstart event.  Previously
+	we were errantly using a mouseDown point that had already been converted to view
+	coords, and then the dispatch converted it again.
+
+        Reviewed by Maciej.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Use window based mouse event coords to dispatch event.
+        (KWQKHTMLPart::mouseDown):  Save window based mouse event coords .
+
 2004-06-16  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3596620, implement a subset of CSS3 text truncation for Emerson.
