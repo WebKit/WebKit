@@ -1442,26 +1442,30 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	    return Undefined();
 	
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
-        DOM::Document doc = part->document();
-        if (doc.isHTMLDocument()) {
-            DOM::HTMLDocument htmlDoc = doc;
-            htmlDoc.body().addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+        if (listener) {
+            DOM::Document doc = part->document();
+            if (doc.isHTMLDocument()) {
+                DOM::HTMLDocument htmlDoc = doc;
+                htmlDoc.body().addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+            }
+            else
+                doc.addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
         }
-        else
-            doc.addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
         return Undefined();
     }
   case Window::RemoveEventListener: {
         if (!window->isSafeScript(exec))
 	    return Undefined();
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
-        DOM::Document doc = part->document();
-        if (doc.isHTMLDocument()) {
-            DOM::HTMLDocument htmlDoc = doc;
-            htmlDoc.body().removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));       
+        if (listener) {
+            DOM::Document doc = part->document();
+            if (doc.isHTMLDocument()) {
+                DOM::HTMLDocument htmlDoc = doc;
+                htmlDoc.body().removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));       
+            }
+            else
+                doc.removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
         }
-        else
-            doc.removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
         return Undefined();
     }
 

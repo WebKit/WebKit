@@ -437,12 +437,14 @@ Value DOMNodeProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &ar
       return Boolean(node.isSupported(args[0].toString(exec).string(),args[1].toString(exec).string()));
     case DOMNode::AddEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
-        node.addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+        if (listener)
+            node.addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
         return Undefined();
     }
     case DOMNode::RemoveEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
-        node.removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+        if (listener)
+            node.removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
         return Undefined();
     }
     case DOMNode::DispatchEvent:
