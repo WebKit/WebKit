@@ -1,3 +1,16 @@
+2003-06-09  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3284312 -- repro nil-deref in 
+	khtml::RenderTable::cellAbove at pi.nersc.gov
+
+        Reviewed by Darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::cellAbove):
+	When the section had 0 rows, we were trying to index the -1st
+	row. Fixed by falling into the "didn't find anything" case when
+	the row we're going to look in is < 0.
+
 2003-06-09  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

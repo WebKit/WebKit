@@ -650,7 +650,7 @@ RenderTableCell* RenderTable::cellAbove(RenderTableCell* cell) const
     }
 
     // Look up the cell in the section's grid, which required effective col index
-    if (section) {
+    if (section && rAbove >= 0) {
         int effCol = colToEffCol(cell->col());
         RenderTableCell* aboveCell;
         // If we hit a span back up to a real cell.
