@@ -63,6 +63,17 @@ QListBox::QListBox(QWidget *parent)
     [scrollView setBorderType:NSBezelBorder];
     [scrollView setHasVerticalScroller:YES];
     [[scrollView verticalScroller] setControlSize:NSSmallControlSize];
+
+    // In WebHTMLView, we set a clip. This is not typical to do in an
+    // NSView, and while correct for any one invocation of drawRect:,
+    // it causes some bad problems if that clip is cached between calls.
+    // The cached graphics state, which clip views keep around, does
+    // cache the clip in this undesirable way. Consequently, we want to 
+    // release the GState for all clip views for all views contained in 
+    // a WebHTMLView. Here we do it for list boxes used in forms.
+    // See these bugs for more information:
+    // <rdar://problem/3226083>: REGRESSION (Panther): white box overlaying select lists at nvidia.com drivers page
+    [[scrollView contentView] releaseGState];
     
     KWQTableView *tableView = [[KWQTableView alloc] initWithListBox:this items:_items];
 
@@ -70,7 +81,6 @@ QListBox::QListBox(QWidget *parent)
     [scrollView setVerticalLineScroll:[tableView rowHeight]];
     
     [tableView release];
-
     setView(scrollView);
     
     [scrollView release];

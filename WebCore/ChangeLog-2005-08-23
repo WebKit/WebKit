@@ -1,3 +1,25 @@
+2003-09-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3226083>: REGRESSION (Panther): white box 
+	overlaying select lists at nvidia.com drivers page
+
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox): Re-add releaseGState fix that Darin
+	added, but then removed. It turns out that we do need 
+	this workaround in place to get proper drawing.
+
+	Fix for this bug:
+
+	<rdar://problem/3310943>: REGRESSION (Panther): textareas 
+	in forms sometimes draw blank (bugreporter)
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea initWithFrame:]): Same fix as above.
+
 2003-09-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

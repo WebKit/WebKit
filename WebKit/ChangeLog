@@ -1,3 +1,22 @@
+2003-09-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Incorporate releaseGState fix that Darin developed for 
+	textareas and list boxes in WebCore. It turns out that 
+	we this workaround in WebClipView as well to get proper 
+	drawing of subframes.
+
+	In addition, removed some tests that which performed 
+	runtime checks for code in AppKit. AppKit will have
+	the checked-for code in all versions that will be used
+	with the version of WebKit.
+
+        * WebView.subproj/WebClipView.m:
+        (-[WebClipView initWithFrame:])
+        (-[WebClipView resetAdditionalClip])
+        (-[WebClipView setAdditionalClip:])
+
 2003-09-04  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3409011 -- the graphics views palette does not open

@@ -18,26 +18,30 @@
 
 // FIXME: Change terminology from "additional clip" to "focus ring clip".
 
-@interface NSView (WebClipViewAdditions)
-- (void)_web_renewGStateDeep;
-@end
-
 @implementation WebClipView
 
-static BOOL NSViewHasFocusRingVisibleRect;
-
-+ (void)initialize
+- (id)initWithFrame:(NSRect)frame
 {
-    NSViewHasFocusRingVisibleRect = [NSView instancesRespondToSelector:@selector(_focusRingVisibleRect)];
+    [super initWithFrame:frame];
+    
+    // In WebHTMLView, we set a clip. This is not typical to do in an
+    // NSView, and while correct for any one invocation of drawRect:,
+    // it causes some bad problems if that clip is cached between calls.
+    // The cached graphics state, which clip views keep around, does
+    // cache the clip in this undesirable way. Consequently, we want to 
+    // release the GState for all clip views for all views contained in 
+    // a WebHTMLView. Here we do it for subframes, which use WebClipView.
+    // See these bugs for more information:
+    // <rdar://problem/3409315>: REGRESSSION (7B58-7B60)?: Safari draws blank frames on macosx.apple.com perf page
+    [self releaseGState];
+    
+    return self;
 }
 
 - (void)resetAdditionalClip
 {
     ASSERT(_haveAdditionalClip);
     _haveAdditionalClip = NO;
-    if (!NSViewHasFocusRingVisibleRect) {
-        [self _web_renewGStateDeep];
-    }
 }
 
 - (void)setAdditionalClip:(NSRect)additionalClip
@@ -45,9 +49,6 @@ static BOOL NSViewHasFocusRingVisibleRect;
     ASSERT(!_haveAdditionalClip);
     _haveAdditionalClip = YES;
     _additionalClip = additionalClip;
-    if (!NSViewHasFocusRingVisibleRect) {
-        [self _web_renewGStateDeep];
-    }
 }
 
 - (BOOL)hasAdditionalClip
@@ -61,15 +62,6 @@ static BOOL NSViewHasFocusRingVisibleRect;
     return _additionalClip;
 }
 
-- (NSRect)visibleRect
-{
-    NSRect rect = [super visibleRect];
-    if (_haveAdditionalClip && !NSViewHasFocusRingVisibleRect) {
-        rect = NSIntersectionRect(rect, _additionalClip);
-    }
-    return rect;
-}
-
 - (NSRect)_focusRingVisibleRect
 {
     NSRect rect = [self visibleRect];
@@ -79,14 +71,4 @@ static BOOL NSViewHasFocusRingVisibleRect;
     return rect;
 }
 
-@end
-
-@implementation NSView (WebClipViewAdditions)
-
-- (void)_web_renewGStateDeep
-{
-    [[self subviews] makeObjectsPerformSelector:@selector(_web_renewGStateDeep)];
-    [self renewGState];
-}
- 
 @end

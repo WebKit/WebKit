@@ -103,6 +103,17 @@ const float LargeNumberForText = 1.0e7;
     
     [self _createTextView];
     
+    // In WebHTMLView, we set a clip. This is not typical to do in an
+    // NSView, and while correct for any one invocation of drawRect:,
+    // it causes some bad problems if that clip is cached between calls.
+    // The cached graphics state, which clip views keep around, does
+    // cache the clip in this undesirable way. Consequently, we want to 
+    // release the GState for all clip views for all views contained in 
+    // a WebHTMLView. Here we do it for textareas used in forms.
+    // See these bugs for more information:
+    // <rdar://problem/3310943>: REGRESSION (Panther): textareas in forms sometimes draw blank (bugreporter)
+    [[self contentView] releaseGState];
+    
     return self;
 }
 
