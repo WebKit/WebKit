@@ -1,3 +1,12 @@
+2003-12-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin. 
+
+	<rdar://problem/3507863>: XMLHttpRequest should not parse response if HTML
+        
+	* khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty):
+
 2003-12-11  Richard Williamson   <rjw@apple.com>
 
 	Cleaned up and verified reference counting scheme, and

@@ -112,6 +112,7 @@ namespace KJS {
 
     QString response;
     mutable bool createdDocument;
+    mutable bool typeIsXML;
     mutable DOM::Document responseXML;
 
     bool aborted;
