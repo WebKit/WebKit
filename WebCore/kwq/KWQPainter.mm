@@ -452,7 +452,7 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
     NSRect fromRect = NSMakeRect(sx, sy, sw, sh);
     
     KWQ_BLOCK_EXCEPTIONS;
-    [pixmap.imageRenderer beginAnimationInRect:inRect
+    [pixmap.imageRenderer drawImageInRect:inRect
                                       fromRect:fromRect];
     KWQ_UNBLOCK_EXCEPTIONS;
 }

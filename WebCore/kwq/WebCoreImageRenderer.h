@@ -31,7 +31,7 @@
 
 - (NSSize)size;
 - (void)resize:(NSSize)s;
-- (void)beginAnimationInRect:(NSRect)ir fromRect:(NSRect)fr;
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr;
 - (void)stopAnimation;
 - (void)tileInRect:(NSRect)r fromPoint:(NSPoint)p;
 - (BOOL)isNull;

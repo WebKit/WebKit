@@ -20,6 +20,9 @@
 
     int repetitionsComplete;
     BOOL animationFinished;
+    
+    NSPoint tilePoint;
+    BOOL animatedTile;
 
     NSString *MIMEType;
     BOOL isNull;

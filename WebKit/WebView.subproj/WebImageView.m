@@ -80,7 +80,7 @@
     NSRectFill(rect);
     
     NSRect drawingRect = [self drawingRect];
-    [[rep image] beginAnimationInRect:drawingRect fromRect:drawingRect];
+    [[rep image] drawImageInRect:drawingRect fromRect:drawingRect];
 }
 
 - (void)adjustFrameSize

@@ -1,3 +1,19 @@
+2003-11-05  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3474957.  Changed name of image rendering method to better reflect it's actual function.
+
+	- (void)beginAnimationInRect:(NSRect)ir fromRect:(NSRect)fr;
+
+	renamed to
+
+	- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr;
+
+        Reviewed by Chris.
+
+        * kwq/KWQPainter.mm:
+        (QPainter::drawPixmap):
+        * kwq/WebCoreImageRenderer.h:
+
 2003-11-05  Darin Adler  <darin@apple.com>
 
         * WebCore-tests.exp: Added missing symbol so tests will link.

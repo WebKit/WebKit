@@ -14,6 +14,11 @@ extern NSString *NSImageLoopCount;
 
 #define MINIMUM_DURATION (1.0/30.0)
 
+// Forward declarations
+@interface WebImageRenderer (WebInternal)
+- (void)startAnimationIfNecessary;
+@end
+
 @implementation WebImageRenderer
 
 static NSMutableSet *activeImageRenderers;
@@ -336,16 +341,35 @@ static NSMutableSet *activeImageRenderers;
         currentFrame = 0;
     }
     [self setCurrentFrame:currentFrame];
+    
+    // Release the tiling pattern so next frame will update the pattern if we're tiling.
+    [patternColor release];
+    patternColor = nil;
+    
     [frameView setNeedsDisplayInRect:targetRect];
 }
 
-- (void)beginAnimationInRect:(NSRect)ir fromRect:(NSRect)fr
+// Will be called when the containing view is displayed by WebCore RenderImage (via QPainter).
+// If the image is an animated image it will begin animating.  If the image is already animating,
+// it's frame will have been advanced by nextFrame:.
+//
+// Also used to draw the image by WebImageView.
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr
 {
-    [self drawClippedToValidInRect:ir fromRect:fr];
-
-    if ([self frameCount] > 1 && !animationFinished) {
+    if (animatedTile){
+        [self tileInRect:ir fromPoint:tilePoint];
+    }
+    else {
+        [self drawClippedToValidInRect:ir fromRect:fr];
         imageRect = fr;
         targetRect = ir;
+        [self startAnimationIfNecessary];
+    }
+}
+
+- (void)startAnimationIfNecessary
+{
+    if ([self frameCount] > 1 && !animationFinished) {
         NSView *newView = [NSView focusView];
         if (newView != frameView){
             [frameView release];
@@ -426,6 +450,11 @@ static NSMutableSet *activeImageRenderers;
     [NSBezierPath fillRect:rect];
     
     [NSGraphicsContext restoreGraphicsState];
+
+    animatedTile = YES;
+    tilePoint = point;
+    targetRect = rect;
+    [self startAnimationIfNecessary];
 }
 
 - (void)resize:(NSSize)s

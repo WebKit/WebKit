@@ -1,3 +1,20 @@
+2003-11-05  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3029966.  Animated backgrounds specified in <BODY> don't animate
+	Fixed 3474824.  Tiled animated GIFs don't animate.
+	Fixed 3029966.  Animated backgrounds specified with CSS don't animate.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer nextFrame:]):
+        (-[WebImageRenderer drawImageInRect:fromRect:]):
+        (-[WebImageRenderer startAnimationIfNecessary]):
+        (-[WebImageRenderer tileInRect:fromPoint:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView drawRect:]):
+
 2003-11-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3201364>: Safari crashes when hosting carbon plug-in using drag and drop
