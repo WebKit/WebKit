@@ -1,3 +1,15 @@
+2003-06-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3282881>: Java plugin fails in carbon WebKit apps
+
+        Fixed by Mike Hay, reviewed by me.
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase initIsCocoa]):
+        (-[WebPluginDatabase isCocoa]):
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]): don't load cocoa plug-ins if isCocoa.
+
+
 2003-06-05  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3266216 -- repro crash in 

@@ -15,6 +15,7 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginPackage.h>
 
+#import <CoreGraphics/CPSProcesses.h>
 
 @implementation WebPluginDatabase
 
@@ -26,6 +27,30 @@ static WebPluginDatabase *database = nil;
         database = [[WebPluginDatabase alloc] init];
     }
     return database;
+}
+
+static BOOL sIsCocoaIsValid = FALSE;
+static BOOL sIsCocoa = FALSE;
+
+- (void)initIsCocoa
+{
+    const CPSProcessSerNum thisProcess = { 0, kCPSCurrentProcess };
+    
+    CPSProcessInfoRec *info = (CPSProcessInfoRec *) malloc(sizeof(CPSProcessInfoRec));
+    CPSGetProcessInfo((const CPSProcessSerNum*)&thisProcess, info, NULL, 0, NULL, NULL, 0);
+    
+    sIsCocoa = (info != NULL && info->Flavour == kCPSCocoaApp);
+    sIsCocoaIsValid = TRUE;
+    
+    free(info);
+}
+
+- (BOOL)isCocoa
+{
+    if (!sIsCocoaIsValid) {
+        [self initIsCocoa];
+    }
+    return sIsCocoa;
 }
 
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
@@ -62,7 +87,7 @@ static WebPluginDatabase *database = nil;
         }
     }
     
-    if(webPlugin){
+    if(webPlugin && [self isCocoa]){
         return webPlugin;
     }else if(machoPlugin){
         return machoPlugin;
