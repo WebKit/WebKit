@@ -1,3 +1,16 @@
+2003-09-30  Richard Williamson   <rjw@apple.com>
+
+	Attempt to find a reasonable font using a simple string matching heuristic if 
+	none of the fonts actually specified are found.  In particular we will use
+	Geeza Pro if "arabic", "urdu", or "pashto" is contained (case-insensitive) in
+	any of the requested font family names.  Geeza Pro is a much better fallback
+	font for Arabic (and variant languages) than Helvetica.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamilies:traits:size:]):
+
 2003-09-30  John Sullivan  <sullivan@apple.com>
 
         - fixed 3045617 -- Make Text Bigger/Smaller doesn't affect non-html documents.

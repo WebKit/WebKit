@@ -294,6 +294,8 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     return font;
 }
 
+        
+
 - (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
 {
     NSFont *font = nil;
@@ -305,8 +307,35 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
         if ([family length] != 0)
             font = [self cachedFontFromFamily: family traits:traits size:size];
     }
-    if (font == nil)
-        font = [self fallbackFontWithTraits:traits size:size];
+    if (font == nil) {
+        // We didn't find a font.  Use a fallback font.
+        static int matchCount = 3;
+        static NSString *matchWords[] = { @"Arabic", @"Pashto", @"Urdu" };
+        static NSString *matchFamilies[] = { @"Geeza Pro", @"Geeza Pro", @"Geeza Pro" };
+        
+        // First we'll attempt to find an appropriate font using a match based on 
+        // the presence of keywords in the the requested names.  For example, we'll
+        // match any name that contains "Arabic" to Geeza Pro.
+        int j;
+        i = 0;
+        while (families && families[i] != 0 && font == nil) {
+            family = families[i++];
+            if ([family length] != 0) {
+                j = 0;
+                while (j < matchCount && font == nil) {
+                    if ([family rangeOfString:matchWords[j] options:NSCaseInsensitiveSearch].location != NSNotFound) {
+                        font = [self cachedFontFromFamily:matchFamilies[j] traits:traits size:size];
+                    }
+                    j++;
+                }
+            }
+        }
+        
+        // Still nothing found, use the final fallback.
+        if (font == nil) {
+            font = [self fallbackFontWithTraits:traits size:size];
+        }
+    }
 
     return font;
 }
