@@ -1,3 +1,10 @@
+2002-08-19  Maciej Stachowiak  <mjs@apple.com>
+
+        * Makefile.am: Added new mechanism to clean only the objects that
+	depend on JavaScript.
+	* force-js-clean-timestamp: Touched since I changed JSC just now.
+        * .cvsignore: Ignore previous-js-clean-timestamp.
+	
 2002-08-19  Darin Adler  <darin@apple.com>
 
 	Fixed tab cycle on slashdot.org and elsewhere by being stricter about what is

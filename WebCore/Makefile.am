@@ -15,6 +15,9 @@ noinst_DATA = WebCore-combined.exp
 BUILT_SOURCES = $(noinst_DATA)
 CLEANFILES = $(BUILT_SOURCES)
 
-all: previous-clean-timestamp
+all: previous-clean-timestamp previous-js-clean-timestamp
 previous-clean-timestamp: force-clean-timestamp
-	make clean && touch $@
+	make clean && touch $@ && touch previous-js-clean-timestamp
+
+previous-js-clean-timestamp: force-js-clean-timestamp
+	../Tools/Scripts/clean-webcore-js && touch $@
