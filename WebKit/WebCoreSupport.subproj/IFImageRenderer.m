@@ -134,6 +134,7 @@ static NSMutableArray *activeImageRenderers;
 - (void)nextFrame:(id)context
 {
     int currentFrame;
+    NSWindow *window;
     
     // Release the timer that just fired.
     [frameTimer release];
@@ -145,25 +146,28 @@ static NSMutableArray *activeImageRenderers;
     }
     [self setCurrentFrame:currentFrame];
     
-    [frameView displayRect:targetRect];
-    [[frameView window] flushWindow];
-
-#if 0 // The following would be more efficient than using displayRect if we knew the image was opaque.
-    if ([frameView canDraw]) {
-        [frameView lockFocus];
-        [self drawInRect:targetRect
-                fromRect:imageRect
-               operation:NSCompositeSourceOver	// Renders transparency correctly
-                fraction:1.0];
-        [frameView unlockFocus];
+    window = [frameView window];
+    
+    if ([[[self representations] objectAtIndex:0] isOpaque]) {
+        if ([frameView canDraw]) {
+            [frameView lockFocus];
+            [self drawInRect:targetRect
+                    fromRect:imageRect
+                operation:NSCompositeSourceOver	// Renders transparency correctly
+                    fraction:1.0];
+            [frameView unlockFocus];
+        }
+    
+        frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
+                                                    target:self
+                                                    selector:@selector(nextFrame:)
+                                                    userInfo:nil
+                                                    repeats:NO] retain];
+    } else {
+        [frameView displayRect:targetRect];
     }
-
-    frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
-                                                   target:self
-                                                 selector:@selector(nextFrame:)
-                                                 userInfo:nil
-                                                  repeats:NO] retain];
-#endif
+    
+    [window flushWindow];
 }
 
 - (void)beginAnimationInRect: (NSRect)ir fromRect: (NSRect)fr
