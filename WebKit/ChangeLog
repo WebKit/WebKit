@@ -1,3 +1,19 @@
+2002-06-19  Richard Williamson (local)  <rjw@apple.com>
+
+    Break image renderer reference cycle.  When a view is removed from the view
+    hierarchy active image renderers are told to stop animating,
+    which will, in turn, cause them to release their view.  We leverage
+    the existing _stopPlugins mechanism.
+    
+	* WebCoreSupport.subproj/IFImageRenderer.h:
+	* WebCoreSupport.subproj/IFImageRenderer.m:
+	(+[IFImageRenderer stopAnimationsInView:]):
+	(-[IFImageRenderer beginAnimationInView:inRect:fromRect:]):
+	(-[IFImageRenderer frameView]):
+	(-[IFImageRenderer stopAnimation]):
+	* WebView.subproj/IFHTMLViewPrivate.mm:
+	(-[IFHTMLView _stopPlugins]):
+
 2002-06-19  John Sullivan  <sullivan@apple.com>
 
 	- fixed 2960677 -- attempt to insert nil key; content policy set twice on particular page.

@@ -141,6 +141,11 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
         m_height = oldheight;
     }
 
+#ifdef APPLE_CHANGES
+    // Stop the previous image, if it may be animating.
+    pix.stopAnimations();
+#endif
+    
     pix = p;
 
     if(needlayout)

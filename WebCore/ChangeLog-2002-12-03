@@ -1,3 +1,17 @@
+2002-06-19  Richard Williamson (local)  <rjw@apple.com>
+
+	* khtml/khtmlview.cpp: (KHTMLView::~KHTMLView): 
+	    Tweak
+	* khtml/rendering/render_image.cpp:
+	(RenderImage::setPixmap):
+	    Call stopAnimations when a image changes, i.e. may be changed
+	    by JS.
+	* kwq/KWQPixmap.mm:
+	(QPixmap::stopAnimations):
+	    Call image renderer's stopAnimation.
+	* kwq/qt/qpixmap.h:
+        Added stopAnimations.
+        
 2002-06-19  Darin Adler  <darin@apple.com>
 
 	- fixed 2956444 -- mac os x feedback form missing textarea

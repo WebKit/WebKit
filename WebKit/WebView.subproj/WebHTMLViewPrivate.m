@@ -7,6 +7,7 @@
 */
 #import <WebKit/WebKitDebug.h>
 
+#import <WebKit/IFImageRenderer.h>
 #import <WebKit/IFHTMLViewPrivate.h>
 #import <WebKit/IFPluginView.h>
 
@@ -39,6 +40,9 @@
 - (void)_stopPlugins 
 {
     NSArray *subviews = [[self subviews] copy];
+
+    [IFImageRenderer stopAnimationsInView: self];
+    
     int count = [subviews count];
     while (count--) {
         id view = [subviews objectAtIndex:count];

@@ -149,3 +149,10 @@ QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
     needCopyOnWrite = true;
     return *this;
 }
+
+
+void QPixmap::stopAnimations()
+{
+    [imageRenderer stopAnimation];
+}
+ 

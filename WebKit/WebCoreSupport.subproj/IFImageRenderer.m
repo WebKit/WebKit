@@ -8,6 +8,22 @@
 
 @implementation IFImageRenderer
 
+static NSMutableArray *activeImageRenderers;
+
++ (void)stopAnimationsInView: (NSView *)aView
+{
+    int i, count;    
+
+    count = [activeImageRenderers count];
+    for (i = count-1; i >= 0; i--){
+        IFImageRenderer *renderer = [activeImageRenderers objectAtIndex: i];
+        if ([renderer frameView] == aView){
+            [renderer stopAnimation];
+        }
+    }
+    
+}
+
 - init
 {
     lastStatus = -9999;
@@ -145,12 +161,21 @@
                                                      selector:@selector(nextFrame:)
                                                      userInfo:nil
                                                       repeats:NO] retain];
+        if (!activeImageRenderers)
+            activeImageRenderers = [[NSMutableArray alloc] init];
+            
+        [activeImageRenderers addObject: self];
     }
 
     [self drawInRect: ir 
             fromRect: fr
            operation: NSCompositeSourceOver	// Renders transparency correctly
             fraction: 1.0];
+}
+
+- (NSView *)frameView
+{
+    return frameView;
 }
 
 - (void)stopAnimation
@@ -161,6 +186,8 @@
     
     [frameView release];
     frameView = nil;
+
+    [activeImageRenderers removeObject: self];
 }
 
 - (void)resize:(NSSize)s
