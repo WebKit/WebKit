@@ -6,3 +6,4 @@ testkjs
 .libs
 kjs-test.diff
 kjs-test.out
+.dirstamp

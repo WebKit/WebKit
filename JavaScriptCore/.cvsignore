@@ -1,3 +1,5 @@
 Makefile.in
 Makefile
 JavaScriptCore-stamp
+JavaScriptCore-install-stamp
+libJavaScriptCore.dylib
