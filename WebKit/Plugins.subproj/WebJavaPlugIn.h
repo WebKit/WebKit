@@ -37,7 +37,7 @@ typedef enum {
 - (jobject)webPlugInGetApplet;
 
 /*!
-    @method webPlugInCallJava:method:returnType:arguments:
+    @method webPlugInCallJava:isStatic:returnType:method:arguments:callingURL:exceptionDescription:
     @param object The Java instance that will receive the method call.
     @param isStatic A flag that indicated whether the method is a class method.
     @param returnType The return type of the Java method.

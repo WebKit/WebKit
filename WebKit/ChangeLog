@@ -1,3 +1,11 @@
+2005-01-13  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3952809> WebJavaPlugIn.h comments need method name corrected (webPlugInCallJava)
+
+        Reviewed by Maciej.
+
+        * Plugins.subproj/WebJavaPlugIn.h:
+
 === Safari-179 ===
 
 2005-01-13  Vicki Murley <vicki@apple.com>
