@@ -1,5 +1,20 @@
 2004-05-24  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+        
+        Fixed some life-cycle issues with node iterators and detaching. Big deal is
+        to detach in DOMNodeIterator dealloc. Otherwise, NodeIterators created from
+        obj-c leak.
+
+        * khtml/xml/dom2_traversalimpl.cpp:
+        (DOM::NodeIteratorImpl::detach): Only detach if not yet detached.
+        * khtml/xml/dom2_traversalimpl.h:
+        (DOM::NodeIteratorImpl::setDetached): New convenience.
+        * kwq/DOM.mm:
+        (-[DOMNodeIterator dealloc]): Detach here, if not yet detached; fixes leak.
+
+2004-05-24  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         * khtml/css/css_computedstyle.cpp:

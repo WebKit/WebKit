@@ -306,9 +306,9 @@ NodeImpl *NodeIteratorImpl::previousNode(int &exceptioncode)
 
 void NodeIteratorImpl::detach(int &/*exceptioncode*/)
 {
-    if (document())
+    if (!detached() && document())
         document()->detachNodeIterator(this);
-    m_detached = true;
+    setDetached();
 }
 
 void NodeIteratorImpl::setReferenceNode(NodeImpl *node)

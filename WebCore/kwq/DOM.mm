@@ -1942,8 +1942,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     if (m_filter)
         [m_filter release];
-    if (_internal)
+    if (_internal) {
+        [self detach];
         DOM_cast<NodeIteratorImpl *>(_internal)->deref();
+    }
     [super dealloc];
 }
 
