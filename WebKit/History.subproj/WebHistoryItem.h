@@ -10,6 +10,14 @@
 @class WebHistoryItemPrivate;
 @class NSURL;
 
+/*
+    @discussion Notification sent when history item is modified.
+    @constant WebHistoryItemChanged Posted from whenever the value of
+    either the item's title, alternate title, url strings, or last visited interval
+    changes.  The userInfo will be nil.
+*/
+extern NSString *WebHistoryItemChangedNotification;
+
 /*!
     @class WebHistoryItem
     @discussion  WebHistoryItems are created by WebKit to represent pages visited.

@@ -24,6 +24,9 @@ static NSString *WebTitleKey = @"title";
 static NSString *WebChildrenKey = @"children";
 static NSString *WebDisplayTitleKey = @"displayTitle";
 
+// Notification strings.
+NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
+
 @interface WebHistoryItemPrivate : NSObject
 {
 @public
@@ -152,6 +155,9 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
     }
     [_private->displayTitle release];
     _private->displayTitle = newDisplayTitle;
+
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
 }
 
 
@@ -278,6 +284,9 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
         _private->URLString = [string copy];
         [self _retainIconInDatabase:YES];
     }
+
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
 }
 
 // The first URL we loaded to get to where this history item points.  Includes both client
@@ -287,6 +296,9 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
     NSString *newURL = [URL copy];
     [_private->originalURLString release];
     _private->originalURLString = newURL;
+
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
 }
 
 - (void)setTitle:(NSString *)title
@@ -299,6 +311,9 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
     }
     [_private->title release];
     _private->title = newTitle;
+
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
 }
 
 - (void)setTarget:(NSString *)target
@@ -323,6 +338,9 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
         _private->lastVisitedDate = nil;
         _private->visitCount++;
     }
+
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName: WebHistoryItemChangedNotification object: self userInfo: nil];
 }
 
 // FIXME:  Remove this accessor and related ivar.

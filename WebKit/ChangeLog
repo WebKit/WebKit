@@ -1,5 +1,22 @@
 2003-05-22  Richard Williamson   <rjw@apple.com>
 
+	*** Public API change ***
+	100% compatible.  Added notification when history items
+	change values.
+
+	Fixed 3265672
+        Reviewed by John.
+
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem setAlternateTitle:]):
+        (-[WebHistoryItem setURL:]):
+        (-[WebHistoryItem setOriginalURLString:]):
+        (-[WebHistoryItem setTitle:]):
+        (-[WebHistoryItem _setLastVisitedTimeInterval:]):
+
+2003-05-22  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3266464.  Build problem on panther caused by overly
 	pedantic gcc.
 
