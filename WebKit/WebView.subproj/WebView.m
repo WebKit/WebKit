@@ -141,6 +141,63 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 
 @implementation WebView (WebPrivate)
 
++ (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
+{
+    MIMEType = [MIMEType lowercaseString];
+    Class viewClass;
+    Class repClass;
+    
+    // Simple optimization that avoids loading the plug-in DB and image types for the HTML case.
+    if ([self canShowMIMETypeAsHTML:MIMEType]) {
+        viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] objectForKey:MIMEType];
+        repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] objectForKey:MIMEType];
+        if (viewClass && repClass) {
+            if (vClass) {
+                *vClass = viewClass;
+            }
+            if (rClass) {
+                *rClass = repClass;
+            }
+            return YES;
+        }
+    }
+    
+    // Load the plug-in DB allowing plug-ins to install types.
+    [[WebPluginDatabase installedPlugins] loadPluginIfNeededForMIMEType:MIMEType];
+    viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] objectForKey:MIMEType];
+    repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] objectForKey:MIMEType];
+    if (viewClass && repClass) {
+        if (vClass) {
+            *vClass = viewClass;
+        }
+        if (rClass) {
+            *rClass = repClass;
+        }
+        return YES;
+    }
+    
+    // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
+    viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType];
+    repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] objectForKey:MIMEType];
+    if (viewClass && repClass) {
+        // Special-case WebTextView for text types that shouldn't be shown.
+        if (viewClass == [WebTextView class] &&
+            repClass == [WebTextRepresentation class] &&
+            [[WebTextView unsupportedTextMIMETypes] containsObject:MIMEType]) {
+            return NO;
+        }
+        if (vClass) {
+            *vClass = viewClass;
+        }
+        if (rClass) {
+            *rClass = repClass;
+        }
+        return YES;
+    }
+    
+    return NO;
+}
+
 + (void)_setAlwaysUseATSU:(BOOL)f
 {
     [WebTextRenderer _setAlwaysUseATSU:f];
@@ -1038,26 +1095,7 @@ NSMutableDictionary *countInvocations;
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
-    Class viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
-    Class repClass = [WebDataSource _representationClassForMIMEType:MIMEType];
-
-    if (!viewClass || !repClass) {
-	[[WebPluginDatabase installedPlugins] loadPluginIfNeededForMIMEType: MIMEType];
-        viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
-        repClass = [WebDataSource _representationClassForMIMEType:MIMEType];
-    }
-    
-    // Special-case WebTextView for text types that shouldn't be shown.
-    if (viewClass && repClass) {
-        if (viewClass == [WebTextView class] &&
-            repClass == [WebTextRepresentation class] &&
-            [[WebTextView unsupportedTextMIMETypes] containsObject:MIMEType]) {
-            return NO;
-        }
-        return YES;
-    }
-    
-    return NO;
+    return [self _viewClass:nil andRepresentationClass:nil forMIMEType:MIMEType];
 }
 
 + (BOOL)canShowMIMETypeAsHTML:(NSString *)MIMEType
@@ -1676,7 +1714,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return NO;
 }
 
-+ (void) registerViewClass:(Class)viewClass representationClass: (Class)representationClass forMIMEType:(NSString *)MIMEType
++ (void)registerViewClass:(Class)viewClass representationClass:(Class)representationClass forMIMEType:(NSString *)MIMEType
 {
     [[WebFrameView _viewTypesAllowImageTypeOmission:YES] setObject:viewClass forKey:MIMEType];
     [[WebDataSource _repTypesAllowImageTypeOmission:YES] setObject:representationClass forKey:MIMEType];

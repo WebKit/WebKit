@@ -17,14 +17,16 @@
 
 #import <CoreGraphics/CPSProcesses.h>
 
+#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
+#define QuickTimePluginIdentifier       @"com.apple.QuickTime Plugin.plugin"
 #define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
-
 #define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
+#define JavaCFMPluginFilename		@"Java Applet Plugin Enabler"
 #define JavaCarbonPluginBadVersion 	@"1.0.0"
 
-#define JavaCFMPluginFilename		@"Java Applet Plugin Enabler"
+
 
 @implementation WebPluginDatabase
 
@@ -96,13 +98,15 @@ static BOOL sIsCocoa = FALSE;
 
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
-    WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil, *webPlugin=nil;
+    WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil, *webPlugin=nil, *QTPlugin=nil;
     NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
     key = [key lowercaseString];
 
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
         if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]) {
-            if ([plugin isKindOfClass:[WebPluginPackage class]]) {
+            if ([[[plugin bundle] bundleIdentifier] _web_isCaseInsensitiveEqualToString:QuickTimePluginIdentifier]) {
+                QTPlugin = plugin;
+            } else if ([plugin isKindOfClass:[WebPluginPackage class]]) {
                 if (webPlugin == nil) {
                     webPlugin = plugin;
                 }
@@ -125,12 +129,16 @@ static BOOL sIsCocoa = FALSE;
         }
     }
 
+    // Allow other plug-ins to win over QT because if the user has installed a plug-in that can handle a type
+    // that the QT plug-in can handle, they probably intended to override QT.
     if ([self canUsePlugin:webPlugin]) {
         return webPlugin;
     } else if (machoPlugin) {
         return machoPlugin;
     } else if (CFMPlugin) {
         return CFMPlugin;
+    } else if (QTPlugin) {
+        return QTPlugin;
     } else {
         return nil;
     }
@@ -250,16 +258,19 @@ static NSArray *pluginLocations(void)
     }
     
     // Register netscape plug-in WebDocumentViews and WebDocumentRepresentations
-    // but do not override other document views and representations.
     NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
     WebBasePluginPackage *plugin;
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
         if ([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
+            BOOL isQuickTime = [[[plugin bundle] bundleIdentifier] _web_isCaseInsensitiveEqualToString:QuickTimePluginIdentifier];
             NSEnumerator *MIMEEnumerator = [plugin MIMETypeEnumerator];
             while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
-                if ([MIMEToViewClass objectForKey:MIMEType] == nil) {
-                    [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:MIMEType];
+                if ([WebView canShowMIMETypeAsHTML:MIMEType] || (isQuickTime && [MIMEToViewClass objectForKey:MIMEType] != nil)) {
+                    // Don't allow plug-ins to override our core HTML types and don't allow the QT plug-in to override any types 
+                    // because it claims many that we can handle ourselves.
+                    continue;
                 }
+                [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:MIMEType];
             }
         } else {
             if (![plugin isLoaded]) {

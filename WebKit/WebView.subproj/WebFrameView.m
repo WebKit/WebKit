@@ -99,10 +99,8 @@ enum {
 }
 
 -(NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
-{
-    NSString *MIMEType = [[dataSource response] MIMEType];
-    
-    Class viewClass = [[self class] _viewClassForMIMEType:MIMEType];
+{    
+    Class viewClass = [[self class] _viewClassForMIMEType:[[dataSource response] MIMEType]];
     NSView <WebDocumentView> *documentView = viewClass ? [[viewClass alloc] init] : nil;
     [self _setDocumentView:documentView];
     [documentView release];
@@ -294,7 +292,7 @@ static NSMutableDictionary *viewTypes;
         ASSERT(enumerator != nil);
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
-            // Don't clobber previously-registered user image types
+            // Don't clobber previously-registered view classes.
             if ([viewTypes objectForKey:mime] == nil) {
                 [viewTypes setObject:[WebImageView class] forKey:mime];
             }
@@ -310,15 +308,10 @@ static NSMutableDictionary *viewTypes;
     return ([viewTypes objectForKey:MIMEType] == [WebHTMLView class]);
 }
 
-
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType
 {
-    // Getting the image types is slow, so don't do it until we have to.
-    Class c = [[self _viewTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
-    if (c == nil) {
-        c = [[self _viewTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
-    }
-    return c;
+    Class viewClass;
+    return [WebView _viewClass:&viewClass andRepresentationClass:nil forMIMEType:MIMEType] ? viewClass : nil;
 }
 
 - (void)_goBack

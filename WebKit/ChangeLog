@@ -1,3 +1,27 @@
+2003-10-23  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3364036>: ER: Allow plug-ins to override built-in types such as image/jpeg
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase refresh]): Allow plug-ins to override built-in types except for our core HTML types and don't allow the QT plug-in to override any types because it handles many types that we already handle
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:): instead of asserting, handle the case where we ask a plug-in to map from an extension to a MIME type, but nil is returned 
+        (-[WebBridge frameRequiredForMIMEType:URL:]): no need to start up the plug-in DB because this is now handled by [WebView _viewClass:andRepresentationClass:forMIMEType:]
+        * WebView.subproj/WebDataSource.m:
+        (+[WebDataSource _representationClassForMIMEType:]): call [WebView _viewClass:andRepresentationClass:forMIMEType:]
+        (-[WebDataSource _makeRepresentation]): call _representationClassForMIMEType
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _makeDocumentViewForDataSource:]): tweak
+        (+[WebFrameView _viewClassForMIMEType:]): call [WebView _viewClass:andRepresentationClass:forMIMEType:]
+        * WebView.subproj/WebView.m:
+	(+[WebView _viewClass:andRepresentationClass:forMIMEType:]): new, central place for mapping from a MIME to the document classes. We now load the plug-in DB when a non-HTML MIME type is encountered instead of loading the plug-in DB when the class for the MIME type is not found. This is required to fully fix 3364036.
+        (+[WebView canShowMIMEType:]): call [WebView _viewClass:andRepresentationClass:forMIMEType:]
+        (+[WebView registerViewClass:representationClass:forMIMEType:]): tweak
+        * WebView.subproj/WebViewPrivate.h:
+
 2003-10-23  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3459272 -- Can't set up keyboard loop inside a 

@@ -654,7 +654,7 @@
     NSView *view = nil;
     int errorCode = 0;
     
-    if ([MIMEType length] > 0) {
+    if ([MIMEType length] != 0) {
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
     } else {
         MIMEType = nil;
@@ -664,8 +664,10 @@
     if (!pluginPackage && [extension length] != 0) {
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
         if (pluginPackage) {
-            MIMEType = [pluginPackage MIMETypeForExtension:extension];
-            ASSERT(MIMEType);
+            NSString *newMIMEType = [pluginPackage MIMETypeForExtension:extension];
+            if ([newMIMEType length] != 0) {
+                MIMEType = newMIMEType;
+            }
         }
     }
 
@@ -810,11 +812,8 @@ static BOOL loggedObjectCacheSize = NO;
         }
     }
     
-    // Have the plug-in DB register document views.
-    [[WebPluginDatabase installedPlugins] loadPluginIfNeededForMIMEType:MIMEType];
-    
-    Class result = [WebFrameView _viewClassForMIMEType:MIMEType];
-    if (!result) {
+    Class viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
+    if (!viewClass) {
         // Want to display a "plugin not found" dialog/image, so let a plugin get made.
         return NO;
     }
@@ -822,8 +821,8 @@ static BOOL loggedObjectCacheSize = NO;
     // If we're a supported type other than a plugin, we want to make a frame.
     // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
     // but for now we're burdened with making a distinction between the two.
-    return !([result isSubclassOfClass:[WebNetscapePluginDocumentView class]] ||
-            [result conformsToProtocol:@protocol(WebPlugin)]);
+    return !([viewClass isSubclassOfClass:[WebNetscapePluginDocumentView class]] ||
+             [viewClass conformsToProtocol:@protocol(WebPlugin)]);
 }
 
 - (void)loadEmptyDocumentSynchronously

@@ -89,11 +89,6 @@
     _private->representation = [representation retain];
 }
 
-- (Class)_representationClass
-{
-    return [[self class] _representationClassForMIMEType:[[self response] MIMEType]];
-}
-
 - (void)_setLoading:(BOOL)loading
 {
     ASSERT_ARG(loading, loading == NO || loading == YES);
@@ -458,6 +453,7 @@
         NSEnumerator *enumerator = [[WebImageView supportedImageMIMETypes] objectEnumerator];
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
+            // Don't clobber previously-registered rep classes.
             [repTypes setObject:[WebImageRepresentation class] forKey:mime];
         }
         addedImageTypes = YES;
@@ -468,12 +464,8 @@
 
 + (Class)_representationClassForMIMEType:(NSString *)MIMEType
 {
-    // Getting the image types is slow, so don't do it until we have to.
-    Class c = [[self _repTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
-    if (c == nil) {
-        c = [[self _repTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
-    }
-    return c;
+    Class repClass;
+    return [WebView _viewClass:nil andRepresentationClass:&repClass forMIMEType:MIMEType] ? repClass : nil;
 }
 
 - (WebBridge *)_bridge
@@ -538,8 +530,8 @@
 
 -(void)_makeRepresentation
 {
-    Class repClass = [self _representationClass];
-
+    Class repClass = [[self class] _representationClassForMIMEType:[[self response] MIMEType]];
+    
     // Check if the data source was already bound?
     if (![[self representation] isKindOfClass:repClass]) {
         id newRep = repClass != nil ? [[repClass alloc] init] : nil;

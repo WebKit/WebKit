@@ -117,7 +117,6 @@
 - (void)_stopLoading;
 - (NSURL *)_URL;
 - (WebView *)_webView;
-- (Class)_representationClass;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
 - (void)_setWebView:(WebView *)webView;
 - (void)_startLoading:(NSDictionary *)pageCache;

@@ -105,6 +105,8 @@ extern NSString *_WebMainFrameURLKey;
 
 @interface WebView (WebPrivate)
 
++ (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
+
 /*!
     @method canShowFile:
     @abstract Checks if the WebKit can show the content of the file at the specified path.
