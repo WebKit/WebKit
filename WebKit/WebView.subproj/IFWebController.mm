@@ -223,47 +223,37 @@
 }
 
 
-- (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path forLocationChangeHandler: (id <IFLocationChangeHandler>)handler
+- (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path forDataSource: (IFWebDataSource *)dataSource
 {
-    IFWebDataSource *mainDataSource, *mainProvisionalDataSource, *dataSource;
     NSString *MIMEType;
     
     if(policy == IFContentPolicyNone)
         [NSException raise:NSInvalidArgumentException format:@"Can't set policy of IFContentPolicyNone. Use IFContentPolicyIgnore instead"];
         
-    mainProvisionalDataSource = [_private->mainFrame provisionalDataSource];
-    mainDataSource = [_private->mainFrame dataSource];
-    
-    dataSource = [mainDataSource _recursiveDataSourceForLocationChangeHandler:handler];
-    if(!dataSource)
-        dataSource = [mainProvisionalDataSource _recursiveDataSourceForLocationChangeHandler:handler];
+    if([dataSource contentPolicy] != IFContentPolicyNone){
+        [NSException raise:NSGenericException format:@"Content policy can only be set once on for a dataSource."];
+    }else{
+        [dataSource _setContentPolicy:policy];
+        [dataSource _setDownloadPath:path];
         
-    if(dataSource){
-        if([dataSource contentPolicy] != IFContentPolicyNone){
-            [NSException raise:NSGenericException format:@"Content policy can only be set once on a location change handler."];
-        }else{
-            [dataSource _setContentPolicy:policy];
-            [dataSource _setDownloadPath:path];
-            
-            if(policy == IFContentPolicyShow){
-                MIMEType = [dataSource contentType];
-                if([[self class] canShowMIMEType:MIMEType]){
-                    id documentView;
-                    IFWebView *webView;
-                    id <IFDocumentRepresentation> dataRepresentation, oldRepresentation;
-                    
-                    // Check if the data source was already bound?
-                    oldRepresentation = [dataSource representation];
-                    dataRepresentation = [IFWebDataSource createRepresentationForMIMEType:MIMEType];
-                    if (!oldRepresentation || ![oldRepresentation isKindOfClass: [dataRepresentation class]])
-                        [dataSource _setRepresentation:dataRepresentation];
-                    webView = [[dataSource webFrame] webView];
-                    documentView = [IFWebView createViewForMIMEType:MIMEType];
-                    [webView _setDocumentView: documentView];
-                    [documentView provisionalDataSourceChanged: dataSource];
-                }else{
-                    // return error with unableToImplementContentPolicy
-                }
+        if(policy == IFContentPolicyShow){
+            MIMEType = [dataSource contentType];
+            if([[self class] canShowMIMEType:MIMEType]){
+                id documentView;
+                IFWebView *webView;
+                id <IFDocumentRepresentation> dataRepresentation, oldRepresentation;
+                
+                // Check if the data source was already bound?
+                oldRepresentation = [dataSource representation];
+                dataRepresentation = [IFWebDataSource createRepresentationForMIMEType:MIMEType];
+                if (!oldRepresentation || ![oldRepresentation isKindOfClass: [dataRepresentation class]])
+                    [dataSource _setRepresentation:dataRepresentation];
+                webView = [[dataSource webFrame] webView];
+                documentView = [IFWebView createViewForMIMEType:MIMEType];
+                [webView _setDocumentView: documentView];
+                [documentView provisionalDataSourceChanged: dataSource];
+            }else{
+                // return error with unableToImplementContentPolicy
             }
         }
     }

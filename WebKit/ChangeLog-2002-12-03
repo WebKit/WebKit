@@ -1,3 +1,57 @@
+2002-06-18  Chris Blumenberg  <cblu@apple.com>
+
+	Enabled the viewing of plug-in content inline
+	(aka direct links to plugin media). Made IFPluginView a
+	IFDocumentView and IFPluginStream a IFDocumentRespresentation.
+
+	Renamed content policy API's to include the data source.
+
+	* Plugins.subproj/IFPluginDatabase.h:
+	* Plugins.subproj/IFPluginDatabase.m:
+	(+[IFPluginDatabase installedPlugins]): registers plugins as IFDocument*
+	* Plugins.subproj/IFPluginStream.h:
+	* Plugins.subproj/IFPluginStream.mm:
+	(-[IFPluginStream init]): added for IFDocumentRepresentation
+	(-[IFPluginStream initWithURL:pluginPointer:notifyData:attributes:]): removed load initiliazatoin
+	(-[IFPluginStream dealloc]):
+	(-[IFPluginStream startLoad]): added
+	(-[IFPluginStream stop]):
+	(-[IFPluginStream receivedData:]): added as the base implementation
+	(-[IFPluginStream receivedError]): added as the base implementation
+	(-[IFPluginStream finishedLoadingWithData:]): added as the base implementation
+	(-[IFPluginStream receivedData:withDataSource:]): added for IFDocumentRepresentation
+	(-[IFPluginStream receivedError:withDataSource:]): added for IFDocumentRepresentation
+	(-[IFPluginStream finishedLoadingWithDataSource:]): added for IFDocumentRepresentation
+	(-[IFPluginStream IFURLHandleResourceDidBeginLoading:]): 
+	(-[IFPluginStream IFURLHandle:resourceDataDidBecomeAvailable:]): call receivedData
+	(-[IFPluginStream IFURLHandleResourceDidFinishLoading:data:]): call finishedLoadingWithData
+	(-[IFPluginStream IFURLHandleResourceDidCancelLoading:]): call receivedError
+	(-[IFPluginStream IFURLHandle:resourceDidFailLoadingWithResult:]): call receivedError
+	(-[IFPluginStream IFURLHandle:didRedirectToURL:]):
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:]): removed special-case code for NP_FULL mose
+	(-[IFPluginView start]):
+	(-[IFPluginView initWithFrame:]): added for IFDocumentView 
+ 	(-[IFPluginView provisionalDataSourceChanged:]): added for IFDocumentView
+	(-[IFPluginView provisionalDataSourceCommitted:]): added for IFDocumentView
+	(-[IFPluginView dataSourceUpdated:]): added for IFDocumentView
+	(-[IFPluginView layout]): added for IFDocumentView
+	(-[IFPluginView removeFromSuperview]): call stop
+	(-[IFPluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]):
+	(-[IFPluginView pluginInstance]): added 
+	* WebCoreSupport.subproj/IFWebCoreViewFactory.m:
+	(-[IFWebCoreViewFactory viewForPluginWithURL:serviceType:arguments:baseURL:]): call new init method
+	(-[IFWebCoreViewFactory viewForJavaAppletWithArguments:]): call new init method
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFLocationChangeHandler.h: content policy method name changes
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]): content policy method name changes
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebController.mm:
+	(-[IFWebController haveContentPolicy:andPath:forDataSource:]): content policy method name changes
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+
 2002-06-18  Kenneth Kocienda  <kocienda@apple.com>
 
         Fix for this bug:

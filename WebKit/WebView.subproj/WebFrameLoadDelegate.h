@@ -50,7 +50,7 @@ typedef enum {
 // Sent after locationChangeStarted.
 // Implementations typically call haveContentPolicy:forLocationChangeHandler: on IFWebController
 // after determining the appropriate policy, perhaps by presenting a non-blocking dialog to the user.
-- (void)requestContentPolicyForMIMEType: (NSString *)type;
+- (void)requestContentPolicyForMIMEType: (NSString *)type dataSource: (IFWebDataSource *)dataSource;
 
 - (void)locationChangeCommitted;
 
@@ -62,6 +62,6 @@ typedef enum {
 
 // Sent when errors are encountered with an un-implementable policy, i.e.
 // file i/o failure, launch services failure, type mismatches, etc.
-- (void)unableToImplementContentPolicy: (IFError *)error;
+- (void)unableToImplementContentPolicy: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
 
 @end

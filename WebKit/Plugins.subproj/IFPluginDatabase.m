@@ -23,9 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "IFPluginDatabase.h"
-#import "WebKitDebug.h"
-
+#import <WebKit/IFPlugin.h>
+#import <WebKit/IFPluginStream.h>
+#import <WebKit/IFPluginView.h>
+#import <WebKit/IFPluginDatabase.h>
+#import <WebKit/IFWebView.h>
+#import <WebKit/IFWebDataSource.h>
+#import <WebKit/WebKitDebug.h>
 
 NSArray *_pluginLocations(void);
 NSArray *_findPlugins(void);
@@ -39,6 +43,17 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
     if(!__IFPluginDatabase){
         __IFPluginDatabase  = [IFPluginDatabase alloc];
         __IFPluginDatabase->plugins = _findPlugins();
+        
+        // register plug-in IFDocumentViews and IFDocumentRepresentations
+        NSArray *mimes = [__IFPluginDatabase MIMETypes];
+        NSString *mime;
+        unsigned i;
+        
+        for(i=0; i<[mimes count]; i++){
+            mime = [mimes objectAtIndex:i];
+            [IFWebView registerViewClass:[IFPluginView class] forMIMEType:mime];
+            [IFWebDataSource registerRepresentationClass:[IFPluginStream class] forMIMEType:mime];
+        }
     }
     return __IFPluginDatabase;
 }

@@ -261,14 +261,12 @@ static char *newCString(NSString *string)
     return cString;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
+- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
 {
     NSString *baseURLString;
 
     [super initWithFrame: r];
     
-    // The following line doesn't work for Flash, so I have create a NPP_t struct and point to it
-    //instance = malloc(sizeof(NPP_t));
     instance = &instanceStruct;
     instance->ndata = self;
 
@@ -300,37 +298,30 @@ static char *newCString(NSString *string)
         baseURL = [[NSURL URLWithString:baseURLString] retain];
             
     isHidden = [arguments objectForKey:@"hidden"] != nil;
-    fullMode = [arguments objectForKey:@"wkfullmode"] != nil;
     
     argsCount = 0;
-    if (fullMode) {
-        cAttributes = 0;
-        cValues = 0;
-    } else {
-        // Convert arguments dictionary to 2 string arrays.
-        // These arrays are passed to NPP_New, but the strings need to be
-        // modifiable and live the entire life of the plugin.
-        
-        cAttributes = new char * [[arguments count]];
-        cValues = new char * [[arguments count]];
-        
-        NSEnumerator *e = [arguments keyEnumerator];
-        NSString *key;
-        while ((key = [e nextObject])) {
-            if (![key isEqualToString:@"wkfullmode"]) {
-                cAttributes[argsCount] = newCString(key);
-                cValues[argsCount] = newCString([arguments objectForKey:key]);
-                argsCount++;
-            }
-        }
-    }
+
+    // Convert arguments dictionary to 2 string arrays.
+    // These arrays are passed to NPP_New, but the strings need to be
+    // modifiable and live the entire life of the plugin.
     
+    cAttributes = new char * [[arguments count]];
+    cValues = new char * [[arguments count]];
+    
+    NSEnumerator *e = [arguments keyEnumerator];
+    NSString *key;
+    while ((key = [e nextObject])) {
+        cAttributes[argsCount] = newCString(key);
+        cValues[argsCount] = newCString([arguments objectForKey:key]);
+        argsCount++;
+    }
     streams = [[NSMutableArray alloc] init];
     notificationData = [[NSMutableDictionary dictionaryWithCapacity:1] retain];
     
     // Initialize globals
     canRestart = YES;
     isStarted = NO;
+    fullMode = NO;
     
     return self;
 }
@@ -394,7 +385,6 @@ static char *newCString(NSString *string)
 
 -(void)start
 {
-    NPSavedData saved;
     NPError npErr;
     NSNotificationCenter *notificationCenter;
     NSWindow *theWindow;
@@ -405,7 +395,7 @@ static char *newCString(NSString *string)
     
     isStarted = YES;
     
-    npErr = NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, &saved);
+    npErr = NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, NULL);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
     
     // Create a WindowRef is one doesn't already exist
@@ -434,6 +424,7 @@ static char *newCString(NSString *string)
     if(srcURL){
         stream = [[IFPluginStream alloc] initWithURL:srcURL pluginPointer:instance];
         if(stream){
+            [stream startLoad];
             [streams addObject:stream];
             [stream release];
         }
@@ -491,6 +482,76 @@ static char *newCString(NSString *string)
     return webController;
 }
 
+#pragma mark IFDOCUMENTVIEW
+
+- initWithFrame:(NSRect)frame
+{
+    [super initWithFrame:frame];
+    
+    instance = &instanceStruct;
+    instance->ndata = self;
+    
+    argsCount = 0;
+    cAttributes = 0;
+    cValues = 0;
+    
+    canRestart = YES;
+    isStarted = NO;
+    fullMode = YES;
+    
+    [self setFrame:NSMakeRect(0, 0, 1, 1)];
+    
+    return self;
+}
+
+- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
+{
+    IFPlugin *plugin;
+    
+    mime = [[dataSource contentType] retain];
+    plugin = [[IFPluginDatabase installedPlugins] pluginForMimeType:mime];
+    
+    if(![plugin load])
+        return;
+    
+    // copy function pointers
+    NPP_New = 		[plugin NPP_New];
+    NPP_Destroy = 	[plugin NPP_Destroy];
+    NPP_SetWindow = 	[plugin NPP_SetWindow];
+    NPP_NewStream = 	[plugin NPP_NewStream];
+    NPP_WriteReady = 	[plugin NPP_WriteReady];
+    NPP_Write = 	[plugin NPP_Write];
+    NPP_StreamAsFile = 	[plugin NPP_StreamAsFile];
+    NPP_DestroyStream = [plugin NPP_DestroyStream];
+    NPP_HandleEvent = 	[plugin NPP_HandleEvent];
+    NPP_URLNotify = 	[plugin NPP_URLNotify];
+    NPP_GetValue = 	[plugin NPP_GetValue];
+    NPP_SetValue = 	[plugin NPP_SetValue];
+    NPP_Print = 	[plugin NPP_Print];
+    
+    [self start];
+}
+
+- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource
+{
+    
+}
+
+- (void)dataSourceUpdated:(IFWebDataSource *)dataSource
+{
+
+}
+ 
+- (void)layout
+{
+    NSRect superFrame = [[self _IF_parentWebView] frame];
+    
+    [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
+    [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+}
+
+
+
 #pragma mark NSVIEW
 
 - (void)drawRect:(NSRect)rect
@@ -504,6 +565,12 @@ static char *newCString(NSString *string)
 - (BOOL)isFlipped
 {
     return YES;
+}
+
+- (void)removeFromSuperview
+{
+    [self stop];
+    [super removeFromSuperview];
 }
 
 #pragma mark NOTIFICATIONS
@@ -591,6 +658,7 @@ static char *newCString(NSString *string)
     if(!target){
         stream = [[IFPluginStream alloc] initWithURL:url pluginPointer:instance notifyData:notifyData attributes:attributes];
         if(stream){
+            [stream startLoad];
             [streams addObject:stream];
             [stream release];
         }else{
@@ -753,6 +821,10 @@ static char *newCString(NSString *string)
     [self sendUpdateEvent];
 }
 
+- (NPP)pluginInstance
+{
+    return instance;
+}
 
 - (NPP_NewStreamProcPtr)NPP_NewStream
 {

@@ -13,8 +13,9 @@
 @class IFWebDataSource;
 @class IFPlugin;
 @class IFWebController;
+@protocol IFDocumentView;
 
-@interface IFPluginView : NSView
+@interface IFPluginView : NSView <IFDocumentView>
 {
     IFPluginNullEventSender *eventSender;
     unsigned argsCount;
@@ -28,7 +29,7 @@
     NPWindow window;
     NP_Port nPort;
     NPP_t instanceStruct;
-
+        
     BOOL canRestart, isHidden, isStarted, fullMode;
             
     NSString *mime;
@@ -52,12 +53,13 @@
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode;
+- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments;
 -(void)stop;
 - (IFWebDataSource *)webDataSource;
 - (IFWebController *)webController;
 +(void)getCarbonEvent:(EventRecord *)carbonEvent;
 
+- (NPP)pluginInstance;
 - (NPP_NewStreamProcPtr)NPP_NewStream;
 - (NPP_WriteReadyProcPtr)NPP_WriteReady;
 - (NPP_WriteProcPtr)NPP_Write;

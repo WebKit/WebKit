@@ -91,7 +91,6 @@
 - (void)_setContentPolicy:(IFContentPolicy)policy;
 - (void)_setContentType:(NSString *)type;
 - (void)_setEncoding:(NSString *)encoding;
-- (IFWebDataSource *) _recursiveDataSourceForLocationChangeHandler:(id <IFLocationChangeHandler>)handler;
 
 - (void)_clearErrors;
 - (void)_setMainDocumentError: (IFError *)error;

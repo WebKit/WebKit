@@ -178,7 +178,7 @@ typedef enum {
 // Setting the policy to IFContentPolicyIgnore will cancel the load of the URL if it is still
 // pending.  The path argument is only used when the policy is either IFContentPolicySave or
 // IFContentPolicyOpenExternally.
-- (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path forLocationChangeHandler: (id <IFLocationChangeHandler>)handler;
+- (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path  forDataSource: (IFWebDataSource *)dataSource;
 
 // API to manage animated images.
 - (void)stopAnimatedImages;

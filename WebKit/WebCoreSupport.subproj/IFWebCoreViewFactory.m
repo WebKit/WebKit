@@ -6,11 +6,13 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFWebCoreViewFactory.h"
-#import "IFPluginDatabase.h"
-#import "IFPluginView.h"
-#import "IFNullPluginView.h"
-#import "WebKitDebug.h"
+
+#import <WebKit/IFNullPluginView.h>
+#import <WebKit/IFPlugin.h>
+#import <WebKit/IFPluginDatabase.h>
+#import <WebKit/IFPluginView.h>
+#import <WebKit/IFWebCoreViewFactory.h>
+#import <WebKit/WebKitDebug.h>
 
 @implementation IFWebCoreViewFactory
 
@@ -57,7 +59,7 @@
     if (plugin == nil) {
         return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
     }
-    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:[NSURL URLWithString:pluginURL] mime:mimeType arguments:arguments mode:NP_EMBED] autorelease];
+    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:[NSURL URLWithString:pluginURL] mime:mimeType arguments:arguments] autorelease];
 }
 
 - (NSArray *)pluginsInfo
@@ -82,7 +84,7 @@
     if (plugin == nil) {
         return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:@"application/x-java-applet" arguments:argsCopy] autorelease];
     }
-    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:nil mime:@"application/x-java-applet" arguments:argsCopy mode:NP_EMBED] autorelease];
+    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:nil mime:@"application/x-java-applet" arguments:argsCopy] autorelease];
 }
 
 @end

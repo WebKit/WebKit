@@ -132,15 +132,17 @@
     
     // Check the mime type and ask the client for the content policy.
     if(isFirstChunk){
-        // Make assumption here that if the contentType is the default 
+    
+        // Make assumption that if the contentType is the default 
         // and there is no extension, this is text/html
         if([contentType isEqualToString:IFDefaultMIMEType] && [[[url path] pathExtension] isEqualToString:@""])
             contentType = @"text/html";
+            
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
         
         [dataSource _setContentType:contentType];
         [dataSource _setEncoding:[sender characterSet]];
-        [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:contentType];
+        [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:contentType dataSource:dataSource];
     }
     
     contentPolicy = [dataSource contentPolicy];

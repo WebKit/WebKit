@@ -5,6 +5,8 @@
 
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFPluginStream.h>
+#import <WebKit/IFWebView.h>
+#import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKitDebug.h>
 
@@ -14,6 +16,16 @@
 static NSString *getCarbonPath(NSString *posixPath);
 
 @implementation IFPluginStream
+
+- init
+{
+    [super init];
+
+    isFirstChunk = YES;
+    stopped = YES;
+    
+    return self;
+}
 
 - initWithURL:(NSURL *)theURL pluginPointer:(NPP)thePluginPointer
 {        
@@ -26,10 +38,7 @@ static NSString *getCarbonPath(NSString *posixPath);
 }
 
 - initWithURL:(NSURL *)theURL pluginPointer:(NPP)thePluginPointer notifyData:(void *)theNotifyData attributes:(NSDictionary *)theAttributes
-{
-    NSString *URLString;
-    char * cURL;
-    
+{    
     [super init];
     
     if(!theURL)
@@ -40,6 +49,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     
     view = [(IFPluginView *)thePluginPointer->ndata retain];
     URL = [theURL retain];
+    attributes = [theAttributes retain];
     instance = thePluginPointer;
     notifyData = theNotifyData;
     
@@ -50,27 +60,8 @@ static NSString *getCarbonPath(NSString *posixPath);
     NPP_DestroyStream = [view NPP_DestroyStream];
     NPP_URLNotify = 	[view NPP_URLNotify];
     
-    URLString = [theURL absoluteString];
-    cURL = (char *)malloc([URLString cStringLength]+1);
-    [URLString getCString:cURL];
-    
-    npStream.ndata = self;
-    npStream.url = cURL;
-    npStream.end = 0;
-    npStream.lastmodified = 0;
-    npStream.notifyData = notifyData;
-    offset = 0;
-    
-    receivedFirstChunk = NO;
-    stopped = NO;
-    
-    URLHandle = [[IFURLHandle alloc] initWithURL:URL attributes:theAttributes flags:0];
-    if(URLHandle){
-        [URLHandle addClient:self];
-        [URLHandle loadInBackground];
-    }else{
-        return nil;
-    }
+    isFirstChunk = YES;
+    stopped = YES;
     
     return self;
 }
@@ -86,25 +77,43 @@ static NSString *getCarbonPath(NSString *posixPath);
     }
     free((void *)npStream.url);
     [URL release];
+    [attributes release];
     [super dealloc];
 }
 
-- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
+- (void)startLoad
 {
-    [[view webController] _didStartLoading:URL];
+    URLHandle = [[IFURLHandle alloc] initWithURL:URL attributes:attributes flags:0];
+    if(URLHandle){
+        [URLHandle addClient:self];
+        [URLHandle loadInBackground];
+    }
 }
 
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
+- (void)stop
+{
+    if(!stopped){
+        stopped = YES;
+        if([URLHandle statusCode] == IFURLHandleStatusLoading)
+            [URLHandle cancelLoadInBackground];
+        [URLHandle removeClient:self];
+        [URLHandle release];
+    }
+    [view release];
+    view = nil;
+}
+
+- (void)receivedData:(NSData *)data
 {
     int32 numBytes;
     NPError npErr;
     
-    if(!receivedFirstChunk){
-        receivedFirstChunk = YES;
+    if(isFirstChunk){
+        isFirstChunk = NO;
         
         //FIXME: Need a way to check if stream is seekable
         
-        npErr = NPP_NewStream(instance, (char *)[[sender contentType] cString], &npStream, NO, &transferMode);
+        npErr = NPP_NewStream(instance, (char *)[mimeType cString], &npStream, NO, &transferMode);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d %s\n", npErr, [[URL absoluteString] cString]);
         
         if(npErr != NPERR_NO_ERROR){
@@ -134,19 +143,23 @@ static NSString *getCarbonPath(NSString *posixPath);
         
         offset += [data length];
     }
-     
-    [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle: sender fromDataSource: [view webDataSource] complete: NO];
 }
 
-- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
+- (void)receivedError
+{
+    NPError npErr;
+    
+    npErr = NPP_DestroyStream(instance, &npStream, NPRES_NETWORK_ERR);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);
+}
+
+- (void)finishedLoadingWithData:(NSData *)data
 {
     NPError npErr;
     NSFileManager *fileManager;
     NSString *filename;
     
-    // FIXME: Need a better way to get a file name from a URL
-    filename = [[URL absoluteString] lastPathComponent];
+    filename = [[URL path] lastPathComponent];
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         // FIXME: Need to use something like mkstemp?
         path = [[NSString stringWithFormat:@"/tmp/%@", filename] retain];        
@@ -166,10 +179,83 @@ static NSString *getCarbonPath(NSString *posixPath);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_URLNotify\n");
     }
     
-    [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
-    
     [self stop];
+}
+
+- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource
+{
+    if(isFirstChunk){
+        URL = [[dataSource inputURL] retain];
+        NSString *URLString = [URL absoluteString];
+        char *cURL = (char *)malloc([URLString cStringLength]+1);
+        [URLString getCString:cURL];
+        
+        npStream.ndata = self;
+        npStream.url = cURL;
+        npStream.end = 0;
+        npStream.lastmodified = 0;
+        npStream.notifyData = 0;
+        offset = 0;
+        mimeType = [[dataSource contentType] retain];
+        
+        IFWebFrame *frame = [dataSource webFrame];
+        IFWebView *webView = [frame webView];
+        view = [[webView documentView] retain];
+        instance = [view pluginInstance];
+        
+        NPP_NewStream = 	[view NPP_NewStream];
+        NPP_WriteReady = 	[view NPP_WriteReady];
+        NPP_Write = 		[view NPP_Write];
+        NPP_StreamAsFile = 	[view NPP_StreamAsFile];
+        NPP_DestroyStream = 	[view NPP_DestroyStream];
+        NPP_URLNotify = 	[view NPP_URLNotify];
+    }
+    [self receivedData:data];
+}
+
+- (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource
+{
+    [self receivedError];
+}
+
+- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource
+{
+    [self finishedLoadingWithData:[dataSource data]];
+}
+
+- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
+{
+    [[view webController] _didStartLoading:URL];
+}
+
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
+{
+    if(isFirstChunk){
+        NSString *URLString = [[sender url] absoluteString];
+        char *cURL = (char *)malloc([URLString cStringLength]+1);
+        [URLString getCString:cURL];
+        
+        npStream.ndata = self;
+        npStream.url = cURL;
+        npStream.end = 0;
+        npStream.lastmodified = 0;
+        npStream.notifyData = notifyData;
+        offset = 0;
+        mimeType = [[sender contentType] retain];
+    }
+    [self receivedData:data];
+    
+    [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+        forResourceHandle: sender fromDataSource: [view webDataSource] complete: NO];
+}
+
+- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
+{
+    [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+            forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
+ 
+    [self finishedLoadingWithData:data];
+          
     [[view webController] _didStopLoading:URL];
 }
 
@@ -177,8 +263,9 @@ static NSString *getCarbonPath(NSString *posixPath);
 {
     [[view webController] _receivedProgress:[IFLoadProgress progress]
         forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
+            
+    [self receivedError];
     
-    [self stop];
     [[view webController] _didStopLoading:URL];
 }
 
@@ -192,7 +279,8 @@ static NSString *getCarbonPath(NSString *posixPath);
         partialProgress: loadProgress fromDataSource: [view webDataSource]];
     [loadProgress release];
     
-    [self stop];
+    [self receivedError];
+    
     [[view webController] _didStopLoading:URL];
 }
 
@@ -201,19 +289,6 @@ static NSString *getCarbonPath(NSString *posixPath);
     [[view webController] _didStopLoading:URL];
     // FIXME: This next line is not sufficient. We don't do anything to remember the new URL.
     [[view webController] _didStartLoading:toURL];
-}
-
-
-- (void)stop
-{
-    if(!stopped){
-        stopped = YES;
-        if([URLHandle statusCode] == IFURLHandleStatusLoading)
-            [URLHandle cancelLoadInBackground];
-        [URLHandle removeClient:self];
-        [URLHandle release];
-        [view release];
-    }
 }
 
 @end

@@ -24,7 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <IFPlugin.h>
+
+@class IFPlugin;
 
 @interface IFPluginDatabase : NSObject {
     NSArray *plugins;
