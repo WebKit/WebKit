@@ -769,7 +769,9 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 
 -(void)viewHasMoved:(NSNotification *)notification
 {
-    [self setUpWindowAndPort];
+    if (isStarted) {
+        [self setWindow];
+    }
     [self resetTrackingRect];
 }
 

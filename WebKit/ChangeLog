@@ -1,3 +1,13 @@
+2002-12-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3133611 -- Java "ticker" applet renders badly when scrolling page
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m: (-[WebBaseNetscapePluginView viewHasMoved:]):
+	Call setWindow so we make a call to the plugin each time it moves, rather than just adjusting
+	the data structure we had passed to it earlier.
+
 2002-12-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard and Don.
