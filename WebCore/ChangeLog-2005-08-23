@@ -1,0 +1,6 @@
+2001-12-07  Kenneth Kocienda  <kocienda@apple.com>
+
+        Fixed small bug in a comparison that was making -Wall complain
+
+	* src/kwq/KWQString.mm:
+

@@ -308,10 +308,11 @@ bool QString::isEmpty() const
 
 QChar QString::at(uint index) const
 {
+    int signedIndex = (int)index;
     if (s) {
         CFIndex len = CFStringGetLength(s);
-        if (index < len) {
-            return QChar(CFStringGetCharacterAtIndex(s, index));
+        if (signedIndex < len) {
+            return QChar(CFStringGetCharacterAtIndex(s, signedIndex));
         }
     }
     return QChar(0);
