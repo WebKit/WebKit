@@ -728,20 +728,17 @@ void QString::setBufferFromCFString(CFStringRef cfs)
     }
 }
 
-// This function is used by the decoder.  It will be replace with TEC eventually.
+// This function is used by the decoder. It will be replaced with TEC eventually.
 QString QString::fromStringWithEncoding(const char *chs, int len, CFStringEncoding encoding)
 {
     QString qs;
     
-    if (chs && *chs) {
-        CFMutableStringRef s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-        CFStringRef decoderString = CFStringCreateWithBytes (kCFAllocatorDefault, (const UInt8 *)chs, len, encoding, false);
-        CFStringAppend (s, decoderString);
-
-        qs.setBufferFromCFString(s);
-
-        CFRelease (s);
-        CFRelease (decoderString);
+    if (chs && len > 0) {
+        CFStringRef s = CFStringCreateWithBytes (kCFAllocatorDefault, (const UInt8 *)chs, len, encoding, false);
+        if (s) {
+            qs.setBufferFromCFString(s);
+            CFRelease(s);
+        }
     }
     
     return qs;

@@ -1,3 +1,11 @@
+2002-08-30  Ken Kocienda  <kocienda@apple.com>
+
+	Fixed a problem in this function where broken UTF-8 would cause a crash.
+
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQString.mm:
+        (QString::fromStringWithEncoding)
+
 2002-08-30  Richard Williamson (Home)  <rjw@apple.com>
 
         Removed debugging log.
