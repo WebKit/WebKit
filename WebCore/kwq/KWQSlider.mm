@@ -30,6 +30,7 @@
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
 #import "KWQView.h"
+#import "WebCoreBridge.h"
 
 @interface KWQSlider : NSSlider <KWQWidgetHolder>
 {
@@ -210,6 +211,20 @@ void QSlider::setFont(const QFont &f)
     [slider setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
     
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+QWidget::FocusPolicy QSlider::focusPolicy() const
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
+    if (!bridge || ![bridge part] || ![bridge part]->tabsToAllControls()) {
+        return NoFocus;
+    }
+    
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return QWidget::focusPolicy();
 }
 
 QSize QSlider::sizeHint() const 

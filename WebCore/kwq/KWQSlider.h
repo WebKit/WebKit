@@ -50,6 +50,9 @@ public:
     const int* dimensions() const;
 
     void clicked();
+    
+    virtual FocusPolicy focusPolicy() const;
+
 
 private:
     KWQSignal m_sliderValueChanged;

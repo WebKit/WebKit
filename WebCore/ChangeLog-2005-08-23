@@ -1,3 +1,18 @@
+2005-01-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        - fixed <rdar://problem/3983097> Tabbing on RSS pages gets stuck in search field 
+        with "full keyboard navigation" off
+
+        * kwq/KWQSlider.h:
+        * kwq/KWQSlider.mm:
+        (QSlider::focusPolicy):
+        Implemented this method for KWQSlider. It is needed for our widget subclasses that
+        can become focused in some situations. I missed this when fixing 3949203 because
+        it only comes into play when tab-to-controls is on, and because the other relevant
+        methods are objective-C methods.
+
 2005-01-31  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
