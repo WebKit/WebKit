@@ -35,6 +35,7 @@
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "misc/helper.h"
+#include "xml/dom_docimpl.h"
 #include "csshelper.h"
 using namespace DOM;
 
@@ -95,6 +96,7 @@ CSSParser::CSSParser( bool strictParsing )
     numParsedProperties = 0;
     maxParsedProperties = 32;
 
+    data = 0;
     valueList = 0;
     rule = 0;
     id = 0;
@@ -133,21 +135,36 @@ void ParseString::lower()
         string[i] = QChar(string[i]).lower().unicode();
 }
 
+void CSSParser::setupParser(const char *prefix, const DOMString &string, const char *suffix)
+{
+    int length = string.length() + strlen(prefix) + strlen(suffix) + 2;
+    
+    data = (unsigned short *)malloc( length *sizeof( unsigned short ) );
+    for ( unsigned int i = 0; i < strlen(prefix); i++ )
+	data[i] = prefix[i];
+    
+    memcpy( data + strlen( prefix ), string.unicode(), string.length()*sizeof( unsigned short) );
+
+    unsigned int start = strlen( prefix ) + string.length();
+    unsigned int end = start + strlen(suffix);
+    for ( unsigned int i = start; i < end; i++ )
+        data[i] = suffix[i-start];
+
+    data[length-1] = 0;
+    data[length-2] = 0;
+
+    yy_hold_char = 0;
+    yyleng = 0;
+    yytext = yy_c_buf_p = data;
+    yy_hold_char = *yy_c_buf_p;
+}
+
 void CSSParser::parseSheet( CSSStyleSheetImpl *sheet, const DOMString &string )
 {
     styleElement = sheet;
     defaultNamespace = anyNamespace; // Reset the default namespace.
     
-    int length = string.length() + 3;
-    data = (unsigned short *)malloc( length *sizeof( unsigned short ) );
-    memcpy( data, string.unicode(), string.length()*sizeof( unsigned short) );
-    data[length-1] = 0;
-    data[length-2] = 0;
-    data[length-3] = ' ';
-    yy_hold_char = 0;
-    yyleng = 0;
-    yytext = yy_c_buf_p = data;
-    yy_hold_char = *yy_c_buf_p;
+    setupParser ("", string, "");
 
 #ifdef CSS_DEBUG
     kdDebug( 6080 ) << ">>>>>>> start parsing style sheet" << endl;
@@ -168,21 +185,7 @@ CSSRuleImpl *CSSParser::parseRule( DOM::CSSStyleSheetImpl *sheet, const DOM::DOM
 {
     styleElement = sheet;
     
-    const char khtml_rule[] = "@-khtml-rule{";
-    int length = string.length() + 4 + strlen(khtml_rule);
-    data = (unsigned short *)malloc( length *sizeof( unsigned short ) );
-    for ( unsigned int i = 0; i < strlen(khtml_rule); i++ )
-	data[i] = khtml_rule[i];
-    memcpy( data + strlen( khtml_rule ), string.unicode(), string.length()*sizeof( unsigned short) );
-    // qDebug("parse string = '%s'", QConstString( (const QChar *)data, length ).string().latin1() );
-    data[length-1] = 0;
-    data[length-2] = 0;
-    data[length-3] = ' ';
-    data[length-4] = '}';
-    yy_hold_char = 0;
-    yyleng = 0;
-    yytext = yy_c_buf_p = data;
-    yy_hold_char = *yy_c_buf_p;
+    setupParser ("@-khtml-rule{", string, "} ");
 
     CSSParser *old = currentParser;
     currentParser = this;
@@ -205,21 +208,7 @@ bool CSSParser::parseValue( DOM::CSSStyleDeclarationImpl *declaration, int _id, 
 
     styleElement = declaration->stylesheet();
 
-    const char khtml_value[] = "@-khtml-value{";
-    int length = string.length() + 4 + strlen(khtml_value);
-    data = (unsigned short *)malloc( length *sizeof( unsigned short ) );
-    for ( unsigned int i = 0; i < strlen(khtml_value); i++ )
-	data[i] = khtml_value[i];
-    memcpy( data + strlen( khtml_value ), string.unicode(), string.length()*sizeof( unsigned short) );
-    data[length-1] = 0;
-    data[length-2] = 0;
-    data[length-3] = ' ';
-    data[length-4] = '}';
-    // qDebug("parse string = '%s'", QConstString( (const QChar *)data, length ).string().latin1() );
-    yy_hold_char = 0;
-    yyleng = 0;
-    yytext = yy_c_buf_p = data;
-    yy_hold_char = *yy_c_buf_p;
+    setupParser ("@-khtml-value{", string, "} ");
 
     id = _id;
     important = _important;
@@ -245,6 +234,57 @@ bool CSSParser::parseValue( DOM::CSSStyleDeclarationImpl *declaration, int _id, 
     return ok;
 }
 
+QRgb CSSParser::parseColor( const DOM::DOMString &string )
+{
+    QRgb color = 0;
+    DOM::CSSStyleDeclarationImpl *dummyStyleDeclaration = new DOM::CSSStyleDeclarationImpl(0);
+    
+    dummyStyleDeclaration->ref();
+
+    DOM::CSSParser parser(true);
+
+    // First try creating a color specified by name or the "#" syntax.
+    if (!parser.parseColor(string.string(), color)) {
+    
+        // Now try to create a color from the rgb() or rgba() syntax.
+        bool ok = parser.parseColor(dummyStyleDeclaration, string);
+        if ( ok ) {
+            CSSValueImpl *value = parser.parsedProperties[0]->value();
+            if (value->cssValueType() == DOM::CSSValue::CSS_PRIMITIVE_VALUE) {
+                DOM::CSSPrimitiveValueImpl *primitiveValue = static_cast<DOM::CSSPrimitiveValueImpl *>(value);
+                color = primitiveValue->getRGBColorValue();
+            }
+        }
+    
+    }
+    
+    dummyStyleDeclaration->deref();
+    
+    return color;
+}
+
+bool CSSParser::parseColor( DOM::CSSStyleDeclarationImpl *declaration, const DOM::DOMString &string )
+{
+    styleElement = declaration->stylesheet();
+
+    setupParser ( "@-khtml-decls{color:", string, "} ");
+
+    CSSParser *old = currentParser;
+    currentParser = this;
+    cssyyparse( this );
+    currentParser = old;
+
+    delete rule;
+    rule = 0;
+
+    bool ok = false;
+    if ( numParsedProperties && parsedProperties[0]->m_id == CSS_PROP_COLOR) {
+	ok = true;
+    }
+
+    return ok;
+}
+
 bool CSSParser::parseDeclaration( DOM::CSSStyleDeclarationImpl *declaration, const DOM::DOMString &string )
 {
 #ifdef CSS_DEBUG
@@ -253,21 +293,7 @@ bool CSSParser::parseDeclaration( DOM::CSSStyleDeclarationImpl *declaration, con
 
     styleElement = declaration->stylesheet();
 
-    const char khtml_decls[] = "@-khtml-decls{";
-    int length = string.length() + 4 + strlen(khtml_decls);
-    data = (unsigned short *)malloc( length *sizeof( unsigned short ) );
-    for ( unsigned int i = 0; i < strlen(khtml_decls); i++ )
-	data[i] = khtml_decls[i];
-    memcpy( data + strlen( khtml_decls ), string.unicode(), string.length()*sizeof( unsigned short) );
-    data[length-1] = 0;
-    data[length-2] = 0;
-    data[length-3] = ' ';
-    data[length-4] = '}';
-    // qDebug("parse string = '%s'", QConstString( (const QChar *)data, length ).string().latin1() );
-    yy_hold_char = 0;
-    yyleng = 0;
-    yytext = yy_c_buf_p = data;
-    yy_hold_char = *yy_c_buf_p;
+    setupParser ( "@-khtml-decls{", string, "} ");
 
     CSSParser *old = currentParser;
     currentParser = this;
@@ -289,6 +315,7 @@ bool CSSParser::parseDeclaration( DOM::CSSStyleDeclarationImpl *declaration, con
 
     return ok;
 }
+
 
 void CSSParser::addProperty( int propId, CSSValueImpl *value, bool important )
 {

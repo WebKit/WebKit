@@ -53,6 +53,7 @@
 #include <kdebug.h>
 
 #include "cssparser.h"
+#include "css_stylesheetimpl.h"
 
 #include "qcolor.h"
 #include "qpixmap.h"
@@ -3411,11 +3412,11 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             int numArgs = args.size();
             switch (numArgs) {
                 case 1: {
-                    if (args[0].type() == StringType) {
-                        QRgb rgb = 0;
-                        DOM::CSSParser::parseColor(args[0].toString(exec).qstring(), rgb);
-                        QColor color(rgb);
-                        CGContextSetRGBStrokeColor(drawingContext, color.red(), color.green(), color.blue(), 1.);
+                    if (args[0].type() == StringType) {                    
+                        QRgb color = DOM::CSSParser::parseColor(args[0].toString(exec).string());
+                        QColor qc(color);
+                        CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
+
                     }
                     else {
                         float g = (float)args[0].toNumber(exec);
@@ -3426,10 +3427,9 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 case 2: {
                     float a = args[1].toNumber(exec);
                     if (args[0].type() == StringType) {
-                        QRgb rgb = 0;
-                        DOM::CSSParser::parseColor(args[0].toString(exec).qstring(), rgb);
-                        QColor color(rgb);
-                        CGContextSetRGBStrokeColor(drawingContext, color.red(), color.green(), color.blue(), a);
+                        QRgb color = DOM::CSSParser::parseColor(args[0].toString(exec).string());
+                        QColor qc(color);
+                        CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
                     }
                     else {
                         float g = (float)args[0].toNumber(exec);
@@ -3473,10 +3473,9 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             switch (numArgs) {
                 case 1: {
                     if (args[0].type() == StringType) {
-                        QRgb rgb = 0;
-                        DOM::CSSParser::parseColor(args[0].toString(exec).qstring(), rgb);
-                        QColor color(rgb);
-                        CGContextSetRGBFillColor(drawingContext, color.red(), color.green(), color.blue(), 1.);
+                        QRgb color = DOM::CSSParser::parseColor(args[0].toString(exec).string());
+                        QColor qc(color);
+                        CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
                     }
                     else {
                         float g = (float)args[0].toNumber(exec);
@@ -3487,10 +3486,9 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 case 2: {
                     float a = args[1].toNumber(exec);
                     if (args[0].type() == StringType) {
-                        QRgb rgb = 0;
-                        DOM::CSSParser::parseColor(args[0].toString(exec).qstring(), rgb);
-                        QColor color(rgb);
-                        CGContextSetRGBFillColor(drawingContext, color.red(), color.green(), color.blue(), a);
+                        QRgb color = DOM::CSSParser::parseColor(args[0].toString(exec).string());
+                        QColor qc(color);
+                        CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
                     }
                     else {
                         float g = (float)args[0].toNumber(exec);
@@ -3805,12 +3803,11 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 switch (numArgs - 3) {
                     case 1: {
                         if (args[3].type() == StringType) {
-                            QRgb rgb = 0;
-                            DOM::CSSParser::parseColor(args[3].toString(exec).qstring(), rgb);
-                            QColor color(rgb);
-                            components[0] = color.red();
-                            components[1] = color.green();
-                            components[2] = color.blue();
+                            QRgb color = DOM::CSSParser::parseColor(args[3].toString(exec).string());
+                            QColor qc(color);
+                            components[0] = qc.red()/255.;
+                            components[1] = qc.green()/255.;
+                            components[2] = qc.blue()/255.;
                             components[3] = 1.0f;
                             colorSpace = CGColorSpaceCreateDeviceRGB();
                         }
@@ -3824,12 +3821,11 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                     case 2: {
                         float a = args[4].toNumber(exec);
                         if (args[3].type() == StringType) {
-                            QRgb rgb = 0;
-                            DOM::CSSParser::parseColor(args[3].toString(exec).qstring(), rgb);
-                            QColor color(rgb);
-                            components[0] = color.red();
-                            components[1] = color.green();
-                            components[2] = color.blue();
+                            QRgb color = DOM::CSSParser::parseColor(args[3].toString(exec).string());
+                            QColor qc(color);
+                            components[0] = qc.red()/255.;
+                            components[1] = qc.green()/255.;
+                            components[2] = qc.blue()/255.;
                             components[3] = a;
                             colorSpace = CGColorSpaceCreateDeviceRGB();
                         }

@@ -55,6 +55,7 @@ public:
     int red() const { return (color >> 16) & 0xFF; }
     int green() const { return (color >> 8) & 0xFF; }
     int blue() const { return color & 0xFF; }
+    int alpha() const { return (color >> 24) & 0xFF; }
     QRgb rgb() const { return color & 0xFFFFFFFF; } // Preserve the alpha.
     void setRgb(int r, int g, int b) { color = qRgb(r, g, b); valid = true; }
     void setRgb(int rgb) { color = rgb; valid = true; /* Alpha may be set. Preserve it. */ }

@@ -1,3 +1,34 @@
+2004-07-28  Richard Williamson   <rjw@apple.com>
+
+        We're changing the way color is specified as a parameter in the
+        <canvas> API.  Colors are now specified using the CSS color
+        functions (or old style names or "#").  For example
+        'context.setStrokeColor ("rgba(128,128,128,0.5)")'.  Most of the
+        patch is cleanup of duplicated code in cssparser.cpp and a new
+        static function that'll crank up the CSS parser to parse the
+        color. This patch leaves the old mechanisms in place for now, so
+        we don't break any existing gadgets.
+
+        Reviewed by John.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/cssparser.cpp:
+        (CSSParser::CSSParser):
+        (CSSParser::setupParser):
+        (CSSParser::parseSheet):
+        (CSSParser::parseRule):
+        (CSSParser::parseValue):
+        (CSSParser::parseColor):
+        (CSSParser::parseDeclaration):
+        * khtml/css/cssparser.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+
+        * kwq/KWQColor.h:
+        (QColor::alpha):
+	Added alpha() function to QColor, use instead of quirky
+	qAlpha() global function.
+
 2004-07-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Trey
