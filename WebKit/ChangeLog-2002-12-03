@@ -1,3 +1,16 @@
+2002-08-06  John Sullivan  <sullivan@apple.com>
+
+	WebKit part of fix for 3017539 -- Replace Serif and Sans-serif
+	font preferences with Default preference; let fixed width font
+	size be independent.
+
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]): Add default value for fixed width size
+        (-[WebPreferences fixedFontSize]),
+        (-[WebPreferences setFixedFontSize:]): New methods.
+
 2002-08-06  Darin Adler  <darin@apple.com>
 
 	- fixed 3017536 -- Change default font to Lucida Grande 14 pt.

@@ -32,6 +32,9 @@
 - (int)defaultFontSize;
 - (void)setDefaultFontSize:(int)size;
 
+- (int)fixedFontSize;
+- (void)setFixedFontSize:(int)size;
+
 - (int)minimumFontSize;
 - (void)setMinimumFontSize:(int)size;
 

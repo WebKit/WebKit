@@ -16,6 +16,7 @@
 #define        WebKitFantasyFontPreferenceKey                @"WebKitFantasyFont"
 #define        WebKitMinimumFontSizePreferenceKey        @"WebKitMinimumFontSize"
 #define        WebKitDefaultFontSizePreferenceKey        @"WebKitDefaultFontSize"
+#define	       WebKitFixedFontSizePreferenceKey		 @"WebKitFixedFontSize"
 #define        WebKitJavaEnabledPreferenceKey                @"WebKitJavaEnabled"
 #define        WebKitJavaScriptEnabledPreferenceKey        @"WebKitJavaScriptEnabled"
 #define        WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey        @"WebKitJavaScriptCanOpenWindowsAutomatically"
@@ -65,6 +66,7 @@ static WebPreferences *_standardPreferences = nil;
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
         @"6",                           WebKitMinimumFontSizePreferenceKey,
         @"14",                          WebKitDefaultFontSizePreferenceKey,
+        @"14", 				WebKitFixedFontSizePreferenceKey,
         @"1.85",                        WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
         @"1.85",                        WebKitResourceTimedLayoutDelayPreferenceKey,
@@ -151,6 +153,16 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setDefaultFontSize:(int)size
 {
     [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitDefaultFontSizePreferenceKey];
+}
+
+- (int)fixedFontSize
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitFixedFontSizePreferenceKey];
+}
+
+- (void)setFixedFontSize:(int)size
+{
+    [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitFixedFontSizePreferenceKey];
 }
 
 - (int)minimumFontSize
