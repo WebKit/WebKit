@@ -22,20 +22,20 @@
 - (void) reflectScrolledClipView: (NSClipView*)clipView
 {
     id cview = [self documentView];
-    
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "\n");
-    
+        
     // Do nothing if the web view is in the provisional state.
     if ([cview isKindOfClass: NSClassFromString (@"IFWebView")]){
         if ([cview _provisionalWidget] != 0){
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not changing scrollview, content in provisional state.\n");
             return;
         }
     }
     
     if( clipView == [self contentView] ) {
-        BOOL scrollsVertically = [[self documentView] bounds].size.height > [self contentSize].height;
-        BOOL scrollsHorizontally = [[self documentView] bounds].size.width > [self contentSize].width;
+        BOOL scrollsVertically;
+        BOOL scrollsHorizontally;
+
+        scrollsVertically = [[self documentView] bounds].size.height > [self frame].size.height;
+        scrollsHorizontally = [[self documentView] bounds].size.width > [self frame].size.width;
 
         [self setHasVerticalScroller: scrollsVertically];
         [self setHasHorizontalScroller: scrollsHorizontally];

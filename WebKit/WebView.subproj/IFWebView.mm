@@ -299,12 +299,12 @@
 // This should eventually be removed.
 - (void)drawRect:(NSRect)rect {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
-    IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
+    //IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
 
-    if (data->provisionalWidget != 0){
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not drawing, frame in provisional state.\n");
-        return;
-    }
+    //if (data->provisionalWidget != 0){
+    //    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not drawing, frame in provisional state.\n");
+    //    return;
+    //}
     
     if (widget != 0l){        
         WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "drawing\n");

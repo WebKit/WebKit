@@ -172,6 +172,10 @@
         [[self dataSource] _part]->end();
         
         if ([[self controller] mainFrame] == self){
+            if ([[[[self view] superview] superview] isKindOfClass: NSClassFromString (@"NSScrollView")]){
+                [[[[self view] superview] superview] reflectScrolledClipView: [[self view] superview]];
+            }
+
             [[self view] setNeedsLayout: YES];
             [[self view] layout];
             [[self view] display];
