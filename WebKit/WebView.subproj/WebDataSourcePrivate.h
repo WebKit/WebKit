@@ -98,7 +98,6 @@
 - (void)_clearErrors;
 - (void)_setMainDocumentError: (IFError *)error;
 - (void)_addError: (IFError *)error forResource: (NSString *)resourceDescription;
-- (BOOL)_isDocumentHTML;
 + (NSMutableDictionary *)_repTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 @end

@@ -1,3 +1,22 @@
+2002-06-14  Chris Blumenberg  <cblu@apple.com>
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	If content type is the default type and there is no extension, assume HTML.
+
+	(-[IFMainURLHandleClient IFURLHandle:didRedirectToURL:]):
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm: Made isDocumentHTML public
+	(-[IFWebDataSource isDocumentHTML]):
+	(-[IFWebDataSource documentSource]):
+	(-[IFWebDataSource documentTextFromDOM]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSource _stopLoading]):
+	(-[IFWebDataSource _addError:forResource:]):
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _isLoadComplete]):
+
 2002-06-14  Darin Adler  <darin@apple.com>
 
 	* Panels.subproj/IFStandardPanels.m: Fix what I broke last time.

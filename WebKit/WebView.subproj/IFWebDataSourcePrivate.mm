@@ -209,7 +209,7 @@ static NSMutableDictionary *_repTypes=nil;
         [[_private->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 
-    if ([self _isDocumentHTML])
+    if ([self isDocumentHTML])
         [[self representation] part]->closeURL();        
 }
 
@@ -354,11 +354,6 @@ static NSMutableDictionary *_repTypes=nil;
         _private->errors = [[NSMutableDictionary alloc] init];
         
     [_private->errors setObject: error forKey: resourceDescription];
-}
-
-- (BOOL)_isDocumentHTML
-{
-    return [[[self representation] className] isEqualToString:@"IFHTMLRepresentation"];
 }
 
 + (NSMutableDictionary *)_repTypes

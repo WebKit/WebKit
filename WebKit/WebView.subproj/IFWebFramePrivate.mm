@@ -348,7 +348,7 @@ static const char * const stateNames[6] = {
 
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
-                if([ds _isDocumentHTML])
+                if([ds isDocumentHTML])
                     [[ds representation] part]->end();
                 
                 // We have to layout the main document as
@@ -366,7 +366,7 @@ static const char * const stateNames[6] = {
                 [[thisView documentView] layout];
 
                 // Jump to anchor point, if necessary.
-                if ([ds _isDocumentHTML])
+                if ([ds isDocumentHTML])
                     [[ds representation] part]->impl->gotoBaseAnchor();
                                    
                 // FIXME:  We have to draw the whole document hierarchy.  We should be 
@@ -380,7 +380,7 @@ static const char * const stateNames[6] = {
                 
                 [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError]];
  
-                //if ([ds _isDocumentHTML])
+                //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
                
                 return;

@@ -22,7 +22,7 @@
 #import <KWQKHTMLPartImpl.h>
 
 #import <WebFoundation/IFError.h>
-
+#import <WebFoundation/IFFileTypeMappings.h>
 
 
 @implementation IFMainURLHandleClient
@@ -128,7 +128,12 @@
     
     // Check the mime type and ask the client for the content policy.
     if(isFirstChunk){
+        // Make assumption here that if the contentType is the default 
+        // and there is no extension, this is text/html
+        if([contentType isEqualToString:IFDefaultMIMEType] && [[[url path] pathExtension] isEqualToString:@""])
+            contentType = @"text/html";
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
+        
         [dataSource _setContentType:contentType];
         [dataSource _setEncoding:[sender characterSet]];
         [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:contentType];
@@ -222,7 +227,7 @@
     url = newURL;
     [(IFWebController *)[dataSource controller] _didStartLoading:url];
 
-    if([dataSource _isDocumentHTML]) 
+    if([dataSource isDocumentHTML]) 
         [[dataSource representation] part]->impl->setBaseURL([[url absoluteString] cString]);
     [dataSource _setFinalURL:url];
     

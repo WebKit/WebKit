@@ -239,18 +239,26 @@
 - (IFDOMDocument *)document;
 #endif
 
+- (BOOL)isDocumentHTML
+{
+    return [[[self representation] className] isEqualToString:@"IFHTMLRepresentation"];
+}
 
 // Get the actual source of the docment.
-- (NSString *)documentText
+// FIXME: Move to IFHTMLRepresentation
+- (NSString *)documentSource
 {
     // FIMXE: other encodings
-    return [[[NSString alloc] initWithData:[self data] encoding:NSASCIIStringEncoding] autorelease];
+    if([self isDocumentHTML]){
+        return [[[NSString alloc] initWithData:[self data] encoding:NSASCIIStringEncoding] autorelease];
+    }
+    return nil;
 }
 
 // FIXME: Move to representation
 - (NSString *)documentTextFromDOM
 {
-    if([self _isDocumentHTML]){
+    if([self isDocumentHTML]){
         DOM::DocumentImpl *doc;
         NSString *string = nil;
         KHTMLPart *part = [[self representation] part];
