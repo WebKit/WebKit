@@ -137,6 +137,7 @@ NSSize WebIconMediumSize = {32, 32};
         if (pathForDefaultImage != nil) {
             NSImage *icon = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
             _private->defaultIcons = [[NSMutableArray arrayWithObject:icon] retain];
+            [icon release];
         }
     }
 

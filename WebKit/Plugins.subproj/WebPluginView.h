@@ -54,10 +54,14 @@
 }
 
 - (id)initWithFrame:(NSRect)r plugin:(WebNetscapePlugin *)plugin URL:(NSURL *)URL baseURL:(NSURL *)baseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments;
--(void)stop;
+- (void)stop;
+
 - (WebDataSource *)webDataSource;
 - (WebController *)webController;
-+(void)getCarbonEvent:(EventRecord *)carbonEvent;
+
++ (void)getCarbonEvent:(EventRecord *)carbonEvent;
+- (BOOL)sendEvent:(EventRecord *)event;
+- (BOOL)sendUpdateEvent;
 
 - (NPP)pluginInstance;
 - (NPP_NewStreamProcPtr)NPP_NewStream;
@@ -66,6 +70,5 @@
 - (NPP_StreamAsFileProcPtr)NPP_StreamAsFile;
 - (NPP_DestroyStreamProcPtr)NPP_DestroyStream;
 - (NPP_URLNotifyProcPtr)NPP_URLNotify;
-- (NPP_HandleEventProcPtr) NPP_HandleEvent;
 
 @end

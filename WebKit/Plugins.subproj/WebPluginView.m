@@ -7,6 +7,7 @@
 
 #import <WebKit/WebPluginView.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebDataSource.h>
@@ -110,10 +111,25 @@
     return message;
 }
 
--(void)sendActivateEvent:(BOOL)activate
+- (BOOL)sendEvent:(EventRecord *)event
+{
+    BOOL defers = [webController _defersCallbacks];
+    if (!defers) {
+        [webController _setDefersCallbacks:YES];
+    }
+
+    BOOL acceptedEvent = NPP_HandleEvent(instance, event);
+
+    if (!defers) {
+        [webController _setDefersCallbacks:NO];
+    }
+    
+    return acceptedEvent;
+}
+
+- (void)sendActivateEvent:(BOOL)activate
 {
     EventRecord event;
-    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event];
     event.what = activateEvt;
@@ -122,27 +138,28 @@
     if (activate)
         event.modifiers |= activeFlag;
     
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
+    BOOL acceptedEvent = [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
 }
 
-- (void)sendUpdateEvent
+- (BOOL)sendUpdateEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event];
     event.what = updateEvt;
     WindowRef windowRef = [[self window] _windowRef];
     event.message = (UInt32)windowRef;
 
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
+    BOOL acceptedEvent = [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(updateEvt): %d\n", acceptedEvent);
+    
+    return acceptedEvent;
 }
 
--(BOOL)acceptsFirstResponder
+- (BOOL)acceptsFirstResponder
 {
     return YES;
 }
@@ -150,12 +167,11 @@
 - (BOOL)becomeFirstResponder
 {
     EventRecord event;
-    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event];
     event.what = getFocusEvent;
     
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
+    BOOL acceptedEvent = [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d\n", acceptedEvent);
     return YES;
@@ -164,40 +180,36 @@
 - (BOOL)resignFirstResponder
 {
     EventRecord event;
-    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event];
     event.what = loseFocusEvent;
     
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d\n", acceptedEvent);
     return YES;
 }
 
-
--(void)mouseDown:(NSEvent *)theEvent
+- (void)mouseDown:(NSEvent *)theEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
 
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseDown;
 
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
 }
 
--(void)mouseUp:(NSEvent *)theEvent
+- (void)mouseUp:(NSEvent *)theEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseUp;
 
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
 }
@@ -205,12 +217,11 @@
 - (void)mouseEntered:(NSEvent *)theEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
 }
@@ -218,12 +229,11 @@
 - (void)mouseExited:(NSEvent *)theEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
         
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
     
@@ -234,7 +244,6 @@
 - (void)keyUp:(NSEvent *)theEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
 
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyUp;
@@ -243,7 +252,7 @@
         event.message = [self keyMessageForEvent:theEvent];
     }
     
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
 
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d charCode:%c keyCode:%lu\n",
                      acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
@@ -258,7 +267,6 @@
 - (void)keyDown:(NSEvent *)theEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
 
     // Some command keys are sent with both performKeyEquivalent and keyDown.
     // We should send only 1 keyDown to the plug-in, so we'll ignore this one.
@@ -273,7 +281,7 @@
         event.message = [self keyMessageForEvent:theEvent];
     }
     
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
 
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu\n",
                      acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
@@ -298,10 +306,10 @@
     return NO;
 }
 
+// Must subclass performKeyEquivalent: for command-modified keys to work.
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
 
     if(![self isInResponderChain]){
         return NO;
@@ -314,7 +322,7 @@
         event.message = [self keyMessageForEvent:theEvent];
     }
 
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
 
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(performKeyEquivalent): %d charCode:%c keyCode:%lu\n",
                      acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
@@ -326,10 +334,10 @@
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     EventRecord event;
-    BOOL acceptedEvent;
     
     [self getCarbonEvent:&event withEvent:theEvent];
-    acceptedEvent = NPP_HandleEvent(instance, &event);
+    BOOL acceptedEvent = [self sendEvent:&event];
+    
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(menuForEvent): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
 
     return nil;
@@ -649,12 +657,10 @@
 
 - (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource
 {
-    
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
-
 }
  
 - (void)layout
@@ -665,8 +671,6 @@
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [self setUpWindowAndPort];
 }
-
-
 
 #pragma mark NSVIEW
 
@@ -763,6 +767,50 @@
 }
 
 #pragma mark PLUGIN-TO-BROWSER
+
+- (NPP)pluginInstance
+{
+    return instance;
+}
+
+- (NPP_NewStreamProcPtr)NPP_NewStream
+{
+    return NPP_NewStream;
+}
+
+- (NPP_WriteReadyProcPtr)NPP_WriteReady
+{
+    return NPP_WriteReady;
+}
+
+- (NPP_WriteProcPtr)NPP_Write
+{
+    return NPP_Write;
+}
+
+- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile
+{
+    return NPP_StreamAsFile;
+}
+
+- (NPP_DestroyStreamProcPtr)NPP_DestroyStream
+{
+    return NPP_DestroyStream;
+}
+
+- (NPP_URLNotifyProcPtr)NPP_URLNotify
+{
+    return NPP_URLNotify;
+}
+
+- (NPP_HandleEventProcPtr)NPP_HandleEvent
+{
+    return NPP_HandleEvent;
+}
+
+@end
+
+@implementation WebNetscapePluginView (WebNPPCallbacks)
 
 - (NPError) loadURL:(NSString *)URLString inTarget:(NSString *)target withNotifyData:(void *)notifyData andHandleAttributes:(NSDictionary *)attributes
 {
@@ -945,50 +993,6 @@
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "forceRedraw\n");
     [self sendUpdateEvent];
-}
-
-- (NPP)pluginInstance
-{
-    return instance;
-}
-
-- (NPP_NewStreamProcPtr)NPP_NewStream
-{
-    return NPP_NewStream;
-}
-
-- (NPP_WriteReadyProcPtr)NPP_WriteReady
-{
-    return NPP_WriteReady;
-}
-
-
-- (NPP_WriteProcPtr)NPP_Write
-{
-    return NPP_Write;
-}
-
-
-- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile
-{
-    return NPP_StreamAsFile;
-}
-
-
-- (NPP_DestroyStreamProcPtr)NPP_DestroyStream
-{
-    return NPP_DestroyStream;
-}
-
-
-- (NPP_URLNotifyProcPtr)NPP_URLNotify
-{
-    return NPP_URLNotify;
-}
-
-- (NPP_HandleEventProcPtr) NPP_HandleEvent
-{
-    return NPP_HandleEvent;
 }
 
 @end

@@ -22,7 +22,7 @@
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
 
-// FIXME: This is quite similar WebSubresourceClient; they should share code.
+// FIXME: This is quite similar to WebSubresourceClient; they should share code.
 
 @implementation WebMainResourceClient
 
@@ -81,7 +81,6 @@
     WebLoadProgress *progress = [WebLoadProgress progressWithResourceHandle:handle];
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
-    
     if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
         if (isComplete) {
             [dataSource _setPrimaryLoadComplete:YES];
@@ -153,16 +152,15 @@
        [dataSource _setResourceData:resourceData];
     }
 
-    if(contentAction == WebContentPolicyShow){
+    if (contentAction == WebContentPolicyShow) {
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     }
     
     // Either send a final error message or a final progress message.
     WebError *nonTerminalError = [handle error];
-    if (nonTerminalError){
+    if (nonTerminalError) {
         [self receivedError:nonTerminalError forHandle:handle];
-    }
-    else {
+    } else {
         [self receivedProgressWithHandle:handle complete:YES];
     }
     
@@ -185,7 +183,6 @@
     
     // Check the mime type and ask the client for the content policy.
     if(isFirstChunk){
-    
         // Make assumption that if the contentType is the default 
         // and there is no extension, this is text/html
         if([contentType isEqualToString:@"application/octet-stream"] && [[[currentURL path] pathExtension] isEqualToString:@""])
@@ -230,8 +227,7 @@
 	[[[dataSource controller] locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
         break;
     default:
-        [NSException raise:NSInvalidArgumentException format:
-@"contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy."];
+        [NSException raise:NSInvalidArgumentException format:@"contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy."];
     }
 
     [self receivedProgressWithHandle:handle complete:NO];
@@ -254,7 +250,6 @@
 
     [self didStopLoading];
 }
-
 
 - (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL
 {

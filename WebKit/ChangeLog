@@ -1,3 +1,45 @@
+2002-09-04  Darin Adler  <darin@apple.com>
+
+	Did some minor plugin cleanup, mostly to make sure we don't
+	change pages while a plugin is tracking.
+
+        * Plugins.subproj/WebPluginView.h: Add sendEvent and sendUpdateEvent.
+	Remove the NPP_HandleEvent method.
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView sendEvent:]): Sets up the "defersCallbacks"
+	state, then sends the event.
+
+        * Plugins.subproj/WebNetscapePluginViewPrivate.h: Added.
+	This stuff was shared in a different way before, and it
+	hadn't even been renamed.
+        * WebKit.pbproj/project.pbxproj: Added file.
+        * Plugins.subproj/npapi.m: Use the new private header.
+
+        * Plugins.subproj/WebPluginNullEventSender.h: Hold a reference
+	to the view.
+        * Plugins.subproj/WebPluginNullEventSender.m:
+        (-[WebNetscapePluginNullEventSender initWithPluginView:]):
+	Retain the view.
+        (-[WebNetscapePluginNullEventSender dealloc]): Release the view.
+        (-[WebNetscapePluginNullEventSender sendNullEvents]): Use sendEvent:.
+        (-[WebNetscapePluginNullEventSender stop]): No need for shouldStop.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate init]): Don't set contentPolicy to an enum value,
+	when it's an object reference.
+        (-[WebDataSourcePrivate dealloc]): Release contentPolicy to fix a leak.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): Set draggedURL to nil in the else case,
+	it was uninitialized before. Also center the icon better when dragging,
+	but shouldn't we be dragging something more than the icon here?
+
+        * Misc.subproj/WebIconDatabase.m: (-[WebIconDatabase defaultIconWithSize:]):
+	Add a call to release. Doesn't really plug a leak, but cleaner this way.
+
+        * Plugins.subproj/WebPlugin.m: Tweaks.
+        * WebView.subproj/WebMainResourceClient.m: Tweaks only.
+
 2002-09-04  Ken Kocienda  <kocienda@apple.com>
 
 	Made more adjustments for API and behavior change that occurred in WebFoundation, 

@@ -24,24 +24,9 @@
  */
 
 #import "npapi.h"
+
 #import "WebKitDebug.h"
-
-@interface WebPluginView : NSObject
--(NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData;
--(NPError)getURL:(const char *)URL target:(const char *)target;
--(NPError)postURLNotify:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData;
--(NPError)postURL:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file;
--(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream;
--(NPError)write:(NPStream*)stream len:(SInt32)len buffer:(void *)buffer;
--(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason;
--(void)status:(const char *)message;
--(NPError)getValue:(NPNVariable)variable value:(void *)value;
--(NPError)setValue:(NPPVariable)variable value:(void *)value;
--(void)invalidateRect:(NPRect *)invalidRect;
--(void)invalidateRegion:(NPRegion)invalidateRegion;
--(void)forceRedraw;
-@end
-
+#import "WebNetscapePluginViewPrivate.h"
 
 // general plug-in to browser functions
 
@@ -86,49 +71,49 @@ NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
 
 NPError NPN_GetURLNotify(NPP instance, const char* URL, const char* target, void* notifyData)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     return [plugin getURLNotify:URL target:target notifyData:notifyData];
 }
 
 NPError NPN_GetURL(NPP instance, const char* URL, const char* target)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     return [plugin getURL:URL target:target];
 }
 
 NPError NPN_PostURLNotify(NPP instance, const char* URL, const char* target, UInt32 len, const char* buf, NPBool file, void* notifyData)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     return [plugin postURLNotify:URL target:target len:len buf:buf file:file notifyData:notifyData];
 }
 
 NPError NPN_PostURL(NPP instance, const char* URL, const char* target, UInt32 len, const char* buf, NPBool file)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     return [plugin postURL:URL target:target len:len buf:buf file:file];
 }
 
 NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     return [plugin newStream:type target:target stream:stream];
 }
 
 SInt32	NPN_Write(NPP instance, NPStream* stream, SInt32 len, void* buffer)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     return [plugin write:stream len:len buffer:buffer];
 }
 
 NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPReason reason)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     return [plugin destroyStream:stream reason:reason];
 }
 
 void NPN_Status(NPP instance, const char* message)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     [plugin status:message];
 }
 
@@ -147,19 +132,19 @@ NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)
 
 void NPN_InvalidateRect(NPP instance, NPRect *invalidRect)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     [plugin invalidateRect:invalidRect];
 }
 
 void NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     [plugin invalidateRegion:invalidRegion];
 }
 
 void NPN_ForceRedraw(NPP instance)
 {
-    WebPluginView *plugin = (WebPluginView *)instance->ndata;
+    WebNetscapePluginView *plugin = (WebNetscapePluginView *)instance->ndata;
     [plugin forceRedraw];
 }
 

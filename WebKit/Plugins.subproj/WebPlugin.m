@@ -440,7 +440,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 FunctionPointer functionPointerForTVector(TransitionVector tvp)
 {
-    uint32 temp[6] = {0x3D800000, 0x618C0000, 0x800C0000, 0x804C0004, 0x7C0903A6, 0x4E800420};
+    const uint32 temp[6] = {0x3D800000, 0x618C0000, 0x800C0000, 0x804C0004, 0x7C0903A6, 0x4E800420};
     uint32 *newGlue = NULL;
 
     if (tvp != NULL) {
@@ -469,8 +469,3 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
     }
     return (TransitionVector)newGlue;
 }
-
-
-
-
-

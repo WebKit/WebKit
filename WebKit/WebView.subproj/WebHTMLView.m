@@ -431,10 +431,12 @@
         if(imageURL || linkURL){
             [_private->draggedURL release];
             
-            if(imageURL)
+            if (imageURL)
                 _private->draggedURL = imageURL;
             else if (linkURL)
                 _private->draggedURL = linkURL;
+            else
+                _private->draggedURL = nil;
             
             [_private->draggedURL retain];
             
@@ -444,16 +446,19 @@
             [self dragPromisedFilesOfTypes: fileType fromRect: rect source: self slideBack: YES event: event];
 #else
             NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-        
+            
             [pasteboard declareTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
             [_private->draggedURL writeToPasteboard: pasteboard];
+            NSSize offset = WebIconSmallSize;
+            offset.width /= 2;
+            offset.height /= 2;
             [self dragImage:[[WebIconDatabase sharedIconDatabase] defaultIconWithSize:WebIconSmallSize]
-                        at:[self convertPoint:[event locationInWindow] fromView:nil]
-                    offset:NSMakeSize(0.0,0.0)
-                    event:event
-                pasteboard:pasteboard
-                    source:self
-                slideBack:NO];
+                         at:[self convertPoint:[event locationInWindow] fromView:nil]
+                     offset:offset
+                      event:event
+                 pasteboard:pasteboard
+                     source:self
+                  slideBack:NO];
 #endif
             return;
         }

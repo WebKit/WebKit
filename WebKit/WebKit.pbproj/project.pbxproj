@@ -272,6 +272,7 @@
 				F560BEBE030DAF4401C1A526,
 				F528E3EC031E91AD01CA2ACA,
 				F528E3EE031E91AD01CA2ACA,
+				931A72D303265920008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1137,6 +1138,28 @@
 //392
 //393
 //394
+//930
+//931
+//932
+//933
+//934
+		931A72D203265920008635CE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebNetscapePluginViewPrivate.h;
+			refType = 4;
+		};
+		931A72D303265920008635CE = {
+			fileRef = 931A72D203265920008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//930
+//931
+//932
+//933
+//934
 //9C0
 //9C1
 //9C2
@@ -2350,6 +2373,7 @@
 		F5EBC45202134BB601CA1520 = {
 			children = (
 				F5EBC45502134BC301CA1520,
+				931A72D203265920008635CE,
 				F5EBC45602134BC301CA1520,
 				F5883BE0025E5E9D01000102,
 				F5883BE1025E5E9D01000102,

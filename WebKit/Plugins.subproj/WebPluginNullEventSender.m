@@ -13,48 +13,41 @@
 -(id)initWithPluginView:(WebNetscapePluginView *)pluginView
 {
     [super init];
-    
-    instance = [pluginView pluginInstance];
-    NPP_HandleEvent = [pluginView NPP_HandleEvent];
-    window = [[pluginView window] retain];
-    
+    view = [pluginView retain];
     return self;
 }
 
--(void) dealloc
+-(void)dealloc
 {
-    [window release];
-    
+    [view release];
     [super dealloc];
 }
 
 -(void)sendNullEvents
 {
-    if (!shouldStop) {
-        EventRecord event;
-        BOOL acceptedEvent;
-        
-        [WebNetscapePluginView getCarbonEvent:&event];
-        
-        // plug-in should not react to cursor position when not active.
-        if(![window isKeyWindow]){
-            event.where.v = 0;
-            event.where.h = 0;
-        }
-        acceptedEvent = NPP_HandleEvent(instance, &event);
-        
-        //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(nullEvent): %d  when: %u %d\n", acceptedEvent, (unsigned)event.when, shouldStop);
-        
-        [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.01];
+    EventRecord event;
+    
+    [WebNetscapePluginView getCarbonEvent:&event];
+    
+    // plug-in should not react to cursor position when not active.
+    // FIXME: How does passing a v and h of 0 prevent it from reacting to the cursor position?
+    if (![[view window] isKeyWindow]) {
+        event.where.v = 0;
+        event.where.h = 0;
     }
+    
+    [view sendEvent:&event];
+    
+    //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(nullEvent): %d  when: %u %d\n", acceptedEvent, (unsigned)event.when, shouldStop);
+    
+    // FIXME: Why .01? Why not 0? Why not a larger number?
+    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.01];
 }
 
--(void) stop
+-(void)stop
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stopping null events\n");
-    shouldStop = TRUE;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil];
 }
 
 @end
-

@@ -41,16 +41,6 @@
 
 - init
 {
-    // Unnecessary, but I like to know that these ivars should be nil.
-    parent = nil;
-    frames = nil;
-    controller = nil;
-    inputURL = nil;
-    
-    primaryLoadComplete = NO;
-    
-    contentPolicy = WebContentPolicyNone;
-    
     encoding = [[WebCoreEncodings charsetNameForEncoding:[[WebPreferences standardPreferences] defaultTextEncoding]] retain];
     overrideEncoding = kCFStringEncodingInvalidId;
 
@@ -83,10 +73,10 @@
     [contentType release];
     [errors release];
     [mainDocumentError release];
+    [contentPolicy release];
     [iconLoader setDelegate:nil];
     [iconLoader release];
     [iconURL release];
-    
 
     [super dealloc];
 }
