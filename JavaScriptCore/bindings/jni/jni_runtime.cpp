@@ -33,6 +33,15 @@
 #include <runtime_object.h>
 #include <runtime_root.h>
 
+#ifdef NDEBUG
+#define JS_LOG(formatAndArgs...) ((void)0)
+#else
+#define JS_LOG(formatAndArgs...) { \
+    fprintf (stderr, "%s:%d -- %s:  ", __FILE__, __LINE__, __FUNCTION__); \
+    fprintf(stderr, formatAndArgs); \
+}
+#endif
+
 using namespace KJS;
 using namespace KJS::Bindings;
 
@@ -100,6 +109,8 @@ KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i)
 {
     const JavaInstance *instance = static_cast<const JavaInstance *>(i);
 
+    Value jsresult = Undefined();
+    
     switch (_JNIType) {
         case object_type: {
 	    jvalue result = dispatchValueFromInstance (exec, instance, "get", "(Ljava/lang/Object;)Ljava/lang/Object;", object_type);
@@ -107,10 +118,10 @@ KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i)
 
             const char *arrayType = type();
             if (arrayType[0] == '[') {
-                return JavaArray::convertJObjectToArray (exec, anObject, arrayType, instance->executionContext());
+                jsresult = JavaArray::convertJObjectToArray (exec, anObject, arrayType, instance->executionContext());
             }
             else {
-                return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject, instance->executionContext())));
+                jsresult = KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject, instance->executionContext())));
             }
         }
         break;
@@ -118,7 +129,7 @@ KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i)
         case boolean_type: {
 	    jvalue result = dispatchValueFromInstance (exec, instance, "getBoolean", "(Ljava/lang/Object;)Z", boolean_type);
 	    jboolean value = result.z;
-            return KJS::Boolean((bool)value);
+            jsresult = KJS::Boolean((bool)value);
         }
         break;
             
@@ -126,11 +137,13 @@ KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i)
         case char_type:
         case short_type:
         
-        case int_type:
+        case int_type: {
             jint value;
 	    jvalue result = dispatchValueFromInstance (exec, instance, "getInt", "(Ljava/lang/Object;)I", int_type);
 	    value = result.i;
-            return Number((int)value);
+            jsresult = Number((int)value);
+	}
+	break;
 
         case long_type:
         case float_type:
@@ -138,13 +151,16 @@ KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i)
             jdouble value;
 	    jvalue result = dispatchValueFromInstance (exec, instance, "getDouble", "(Ljava/lang/Object;)D", double_type);
 	    value = result.i;
-            return Number((double)value);
+            jsresult = Number((double)value);
         }
         break;
         default:
         break;
     }
-    return Undefined();
+
+    JS_LOG ("getting %s = %s\n", name(), jsresult.toString(exec).ascii());
+    
+    return jsresult;
 }
 
 void JavaField::dispatchSetValueToInstance(KJS::ExecState *exec, const JavaInstance *instance, jvalue javaValue, const char *name, const char *sig) const
@@ -180,6 +196,8 @@ void JavaField::setValueToInstance(KJS::ExecState *exec, const Instance *i, cons
 {
     const JavaInstance *instance = static_cast<const JavaInstance *>(i);
     jvalue javaValue = convertValueToJValue (exec, aValue, _JNIType, type());
+
+    JS_LOG ("setting value %s to %s\n", name(), aValue.toString(exec).ascii());
 
     switch (_JNIType) {
         case object_type: {

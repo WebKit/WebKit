@@ -279,6 +279,13 @@ jmethodID KJS::Bindings::getMethodID (jobject obj, const char *name, const char 
     jclass cls = env->GetObjectClass(obj);
     if ( cls != NULL ) {
             mid = env->GetMethodID(cls, name, sig);
+	    if (!mid) {
+                env->ExceptionClear();
+		mid = env->GetStaticMethodID(cls, name, sig);
+		if (!mid) {
+		    env->ExceptionClear();
+		}
+	    }
         }
         env->DeleteLocalRef(cls);
     }
@@ -710,16 +717,16 @@ jvalue KJS::Bindings::convertValueToJValue (KJS::ExecState *exec, KJS::Value val
             // First see if we have a Java instance.
             if (value.type() == KJS::ObjectType){
                 KJS::ObjectImp *objectImp = static_cast<KJS::ObjectImp*>(value.imp());
-                if (strcmp(objectImp->classInfo()->className, "RuntimeObject") == 0) {
-                    KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp *>(value.imp());
-                    JavaInstance *instance = static_cast<JavaInstance*>(imp->getInternalInstance());
-                    result.l = instance->javaInstance();
-                }
-                else if (strcmp(objectImp->classInfo()->className, "RuntimeArray") == 0) {
-                    KJS::RuntimeArrayImp *imp = static_cast<KJS::RuntimeArrayImp *>(value.imp());
-                    JavaArray *array = static_cast<JavaArray*>(imp->getConcreteArray());
-                    result.l = array->javaArray();
-                }
+		if (objectImp->classInfo() == &KJS::RuntimeObjectImp::info) {
+		    KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp *>(value.imp());
+		    JavaInstance *instance = static_cast<JavaInstance*>(imp->getInternalInstance());
+		    result.l = instance->javaInstance();
+		}
+		else if (objectImp->classInfo() == &KJS::RuntimeArrayImp::info) {
+		    KJS::RuntimeArrayImp *imp = static_cast<KJS::RuntimeArrayImp *>(value.imp());
+		    JavaArray *array = static_cast<JavaArray*>(imp->getConcreteArray());
+		    result.l = array->javaArray();
+		}
             }
             
             // Now convert value to a string if the target type is a java.lang.string, and we're not

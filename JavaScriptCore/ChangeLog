@@ -1,3 +1,27 @@
+2005-01-19  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3853676> Browser Crash when accessing CCWeb Progress Page - KJS::Bindings::convertValueToJValue
+
+	Fixed the following problems with LiveConnect that are demonstrated by the application
+	described in 3853676.
+
+	1.  If a nil object is passed in an array from Java to JavaScript we will crash.
+	2.  We sometimes will incorrectly attempt to access a generic JavaScript as a Java runtime object wrapper.
+	3.  We will sometimes fail to find the correct static method ID.
+
+        Reviewed by Maciej.
+
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::convertJObjectToValue):
+        (JSObject::listFromJArray):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::valueFromInstance):
+        (JavaField::setValueToInstance):
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::getMethodID):
+        (KJS::Bindings::convertValueToJValue):
+        * bindings/runtime_array.h:
+
 2005-01-18  Richard Williamson   <rjw@apple.com>
 
 	Fixed several issues all arising from analysis of plugin detection code at ifilm.com:
