@@ -1,3 +1,33 @@
+2003-05-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - used ObjectAlloc to find large numbers of allocations on startup and get rid of some
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        Use the init method that takes a URL string so we don't have to create and then
+        destroy a URL for each item we decode.
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate addItem:]): Use URLString instead of making and destroying
+        a URL each time this is called.
+        (-[WebHistoryPrivate removeItem:]): Ditto.
+        (-[WebHistoryPrivate _loadHistoryGuts:URL:error:]): Check URLString for nil; no reason
+        to construct and then destroy a URL just to check validity.
+        
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (FontCacheKeyCopy): Added.
+        (FontCacheKeyFree): Added.
+        (FontCacheKeyEqual): Added.
+        (FontCacheKeyHash): Added.
+        (FontCacheValueRetain): Added.
+        (FontCacheValueRelease): Added.
+        (-[WebTextRendererFactory cachedFontFromFamily:traits:size:]): Use a C struct for the
+        font cache key instead of using an Objective-C object. This saves us an object
+        allocation and deallocation when doing a lookup. Also took advantage of the CFDictionary
+        ability to store NULL and distinguish it from "not found" so we don't need a separate set
+        for cache misses.
+
 2003-05-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

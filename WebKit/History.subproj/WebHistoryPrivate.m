@@ -150,7 +150,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 #ifdef FIX_VISITED
     URLString = [[[entry URL] _web_canonicalize] absoluteString];
 #else
-    URLString = [[entry URL] absoluteString];
+    URLString = [entry URLString];
 #endif
 
     // If we already have an item with this URL, we need to merge info that drives the
@@ -182,7 +182,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 #ifdef FIX_VISITED
     URLString = [[[entry URL] _web_canonicalize] absoluteString];
 #else
-    URLString = [[entry URL] absoluteString];
+    URLString = [entry URLString];
 #endif
 
     // If this exact object isn't stored, then make no change.
@@ -405,9 +405,8 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
         entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary] autorelease];
 
-        if ([entry URL] == nil) {
-            // entry without URL is useless; data on disk must have been bad; ignore this one
-            // entry without lastVisitDate should never happen; ignore that one
+        if ([entry URLString] == nil) {
+            // entry without URL is useless; data on disk must have been bad; ignore
             continue;
         }
 

@@ -33,55 +33,6 @@
 - (BOOL)_isFakeFixedPitch;
 @end
 
-@interface WebFontCacheKey : NSObject
-{
-    NSString *family;
-    NSFontTraitMask traits;
-    float size;
-}
-
-- initWithFamily:(NSString *)f traits:(NSFontTraitMask)t size:(float)s;
-
-@end
-
-@implementation WebFontCacheKey
-
-- initWithFamily:(NSString *)f traits:(NSFontTraitMask)t size:(float)s;
-{
-    [super init];
-    family = [f copy];
-    traits = t;
-    size = s;
-    return self;
-}
-
-- (void)dealloc
-{
-    [family release];
-    [super dealloc];
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-- (unsigned)hash
-{
-    return [family hash] ^ traits ^ (int)size;
-}
-
-- (BOOL)isEqual:(id)o
-{
-    WebFontCacheKey *other = o;
-    return [self class] == [other class]
-        && [family isEqualToString:other->family]
-        && traits == other->traits
-        && size == other->size;
-}
-
-@end
-
 @implementation WebTextRendererFactory
 
 - (BOOL)coalesceTextDrawing
@@ -450,42 +401,88 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     return [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
 }
 
+typedef struct {
+    NSString *family;
+    NSFontTraitMask traits;
+    float size;
+} FontCacheKey;
+
+static const void *FontCacheKeyCopy(CFAllocatorRef allocator, const void *value)
+{
+    const FontCacheKey *key = (const FontCacheKey *)value;
+    FontCacheKey *result = malloc(sizeof(FontCacheKey));
+    result->family = [key->family copy];
+    result->traits = key->traits;
+    result->size = key->size;
+    return result;
+}
+
+static void FontCacheKeyFree(CFAllocatorRef allocator, const void *value)
+{
+    const FontCacheKey *key = (const FontCacheKey *)value;
+    [key->family release];
+    free((void *)key);
+}
+
+static Boolean FontCacheKeyEqual(const void *value1, const void *value2)
+{
+    const FontCacheKey *key1 = (const FontCacheKey *)value1;
+    const FontCacheKey *key2 = (const FontCacheKey *)value2;
+    return key1->size == key2->size && key1->traits == key2->traits && [key1->family isEqualToString:key2->family];
+}
+
+static CFHashCode FontCacheKeyHash(const void *value)
+{
+    const FontCacheKey *key = (const FontCacheKey *)value;
+    return [key->family hash] ^ key->traits ^ (int)key->size;
+}
+
+static const void *FontCacheValueRetain(CFAllocatorRef allocator, const void *value)
+{
+    if (value != NULL) {
+        CFRetain(value);
+    }
+    return value;
+}
+
+static void FontCacheValueRelease(CFAllocatorRef allocator, const void *value)
+{
+    if (value != NULL) {
+        CFRelease(value);
+    }
+}
+
 - (NSFont *)cachedFontFromFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
 {
-    static NSMutableDictionary *fontCache = nil;
-    static NSMutableSet *missingFonts = nil;
-    WebFontCacheKey *fontKey;
-    NSFont *font = nil;
+    ASSERT(family);
     
-    if ([family length] == 0)
-        return nil;
-    
+    static CFMutableDictionaryRef fontCache = NULL;
     if (!fontCache) {
-        fontCache = [[NSMutableDictionary alloc] init];
+        static const CFDictionaryKeyCallBacks fontCacheKeyCallBacks = { 0, FontCacheKeyCopy, FontCacheKeyFree, NULL, FontCacheKeyEqual, FontCacheKeyHash };
+        static const CFDictionaryValueCallBacks fontCacheValueCallBacks = { 0, FontCacheValueRetain, FontCacheValueRelease, NULL, NULL };
+        fontCache = CFDictionaryCreateMutable(NULL, 0, &fontCacheKeyCallBacks, &fontCacheValueCallBacks);
     }
 
-    fontKey = [[WebFontCacheKey alloc] initWithFamily:family traits:traits size:size];
-    font = [fontCache objectForKey:fontKey];
-    if (!font){
-        if (![missingFonts containsObject:fontKey]){
-            font = [self fontWithFamily:family traits:traits size:size];
-            if (font)
-                [fontCache setObject:font forKey:fontKey];
-            else{
-                if (!missingFonts)
-                    missingFonts = [[NSMutableSet alloc] init];
-                [missingFonts addObject:fontKey];
-            }
+    const FontCacheKey fontKey = { family, traits, size };
+    const void *value;
+    NSFont *font;
+    if (CFDictionaryGetValueIfPresent(fontCache, &fontKey, &value)) {
+        font = (NSFont *)value;
+    } else {
+        if ([family length] == 0) {
+            return nil;
         }
+        font = [self fontWithFamily:family traits:traits size:size];
+        CFDictionaryAddValue(fontCache, &fontKey, font);
     }
+    
 #ifdef DEBUG_MISSING_FONT
     static int unableToFindFontCount = 0;
-    if (font == nil){
+    if (font == nil) {
         unableToFindFontCount++;
-        NSLog (@"unableToFindFontCount %@, traits 0x%08x, size %f, %d\n", family, traits, size, unableToFindFontCount);
+        NSLog(@"unableToFindFontCount %@, traits 0x%08x, size %f, %d\n", family, traits, size, unableToFindFontCount);
     }
 #endif
-    [fontKey release];
     
     return font;
 }
