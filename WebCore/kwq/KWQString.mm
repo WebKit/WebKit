@@ -411,7 +411,7 @@ int QString::find(const char *chs, int index, bool cs) const
             // FIXME: is ISO Latin-1 the correct encoding?
             CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                     kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
-                    kCFAllocatorDefault);
+                    kCFAllocatorNull);
             if (tmp) {
                 CFRange r;
                 if (CFStringFindWithOptions(s, tmp,
@@ -472,7 +472,7 @@ int QString::findRev(const char *chs, int index) const
             // FIXME: is ISO Latin-1 the correct encoding?
             CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                     kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
-                    kCFAllocatorDefault);
+                    kCFAllocatorNull);
             if (tmp) {
                 CFRange r;
                 // FIXME: is this the right way to specifiy a range for a
@@ -513,7 +513,7 @@ int QString::contains(const char *chs, bool cs) const
         // FIXME: is ISO Latin-1 the correct encoding?
         CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                 kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
-                kCFAllocatorDefault);
+                kCFAllocatorNull);
         if (tmp) {
             CFIndex pos = 0;
             CFIndex len = CFStringGetLength(s);
@@ -933,7 +933,7 @@ QString &QString::setNum(int n)
         // FIXME: is ISO Latin-1 the correct encoding?
         CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                 kCFAllocatorDefault, buf, kCFStringEncodingISOLatin1,
-                kCFAllocatorDefault);
+                kCFAllocatorNull);
         if (tmp) {
             CFStringReplaceAll(s, tmp);
             CFRelease(tmp);
@@ -953,7 +953,7 @@ QString &QString::sprintf(const char *format, ...)
         }
         if (s) {
             CFStringRef f = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
-                    format, kCFStringEncodingISOLatin1, kCFAllocatorDefault);
+                    format, kCFStringEncodingISOLatin1, kCFAllocatorNull);
             if (f) {
                 CFStringRef tmp = CFStringCreateWithFormatAndArguments(
                         kCFAllocatorDefault, NULL, f, args);
@@ -1222,7 +1222,7 @@ bool operator==(const QString &qs, const char *chs)
         // FIXME: is ISO Latin-1 the correct encoding?
         CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                 kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
-                kCFAllocatorDefault);
+                kCFAllocatorNull);
         if (tmp) {
             result = CFStringCompare(qs.s, tmp, 0) == kCFCompareEqualTo;
             CFRelease(tmp);
