@@ -1,3 +1,18 @@
+2004-05-14  David Hyatt  <hyatt@apple.com>
+
+	Eliminate timedLayout.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _transitionToLayoutAcceptable]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame stopLoading]):
+        * WebView.subproj/WebFramePrivate.h:
+
 === Safari-140 ===
 
 2004-05-14  Chris Blumenberg  <cblu@apple.com>

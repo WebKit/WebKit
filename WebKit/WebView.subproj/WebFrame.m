@@ -83,8 +83,6 @@ NSString *WebPageCacheEntryDateKey = @"WebPageCacheEntryDateKey";
 NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
 NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
-#define timedLayoutDelay 1.00
-
 @interface NSObject (WebExtraPerformMethod)
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2 withObject:(id)object3;
@@ -178,8 +176,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)dealloc
 {
-    ASSERT(scheduledLayoutTimer == nil);
-
     [webFrameView _setWebView:nil];
     [dataSource _setWebView:nil];
     [provisionalDataSource _setWebView:nil];
@@ -522,9 +518,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebBridge *bridge = _private->bridge;
     _private->bridge = nil;
 
-    NSTimer *timer = _private->scheduledLayoutTimer;
-    _private->scheduledLayoutTimer = nil;
-    
     [self stopLoading];
     [self _saveScrollPositionToItem:[_private currentItem]];
 
@@ -543,9 +536,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [bridge close];
     
     [bridge release];
-
-    [timer invalidate];
-    [timer release];
 }
 
 - (void)_setDataSource:(WebDataSource *)ds
@@ -600,84 +590,12 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     return [_private loadType];
 }
 
-- (void)_scheduleLayout:(NSTimeInterval)inSeconds
-{
-    // FIXME: Maybe this should have the code to move up the deadline if the new interval brings the time even closer.
-    if (_private->scheduledLayoutTimer == nil) {
-        _private->scheduledLayoutTimer = [[NSTimer scheduledTimerWithTimeInterval:inSeconds target:self selector:@selector(_timedLayout:) userInfo:nil repeats:FALSE] retain];
-    }
-}
-
-- (void)_timedLayout:(id)userInfo
-{
-    LOG(Timing, "%@:  state = %s", [self name], stateNames[_private->state]);
-
-    NSTimer *timer = _private->scheduledLayoutTimer;
-    _private->scheduledLayoutTimer = nil;
-    
-    if (_private->state >= WebFrameStateLayoutAcceptable) {
-        NSView <WebDocumentView> *documentView = [[self frameView] documentView];
-        
-        if ([self webView])
-            LOG(Timing, "%@:  performing timed layout, %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self webView] mainFrame] dataSource] _loadingStartedTime]);
-            
-        [documentView setNeedsLayout: YES];
-
-        if ([documentView isKindOfClass: [NSView class]]) {
-            NSView *dview = (NSView *)documentView;
-            
-            NSRect frame = [dview frame];
-            
-            if (frame.size.width == 0 || frame.size.height == 0){
-                // We must do the layout now, rather than depend on
-                // display to do a lazy layout because the view
-                // may be recently initialized with a zero size
-                // and the AppKit will optimize out any drawing.
-                
-                // Force a layout now.  At this point we could
-                // check to see if any CSS is pending and delay
-                // the layout further to avoid the flash of unstyled
-                // content.             
-                [documentView layout];
-            }
-        }
-          
-        [documentView setNeedsDisplay: YES];
-    }
-    else {
-        if ([self webView])
-            LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self webView] mainFrame] dataSource] _loadingStartedTime]);
-    }
-
-    [timer release];
-}
-
-
 - (void)_transitionToLayoutAcceptable
 {
     switch ([self _state]) {
         case WebFrameStateCommittedPage:
         {
             [self _setState: WebFrameStateLayoutAcceptable];
-                    
-            // Start a timer to guarantee that we get an initial layout after
-            // X interval, even if the document and resources are not completely
-            // loaded.
-            double timeSinceStart;
-
-            // If the delay getting to the commited state exceeds the initial layout delay, go
-            // ahead and schedule a layout.
-            timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
-            if (timeSinceStart > timedLayoutDelay) {
-                LOG(Timing, "performing early layout because commit time, %f, exceeded initial layout interval %f", timeSinceStart, timedLayoutDelay);
-                [self _timedLayout: nil];
-            }
-            else {
-                NSTimeInterval timedDelay = timedLayoutDelay - timeSinceStart;
-                
-                LOG(Timing, "registering delayed layout after %f seconds, time since start %f", timedDelay, timeSinceStart);
-                [self _scheduleLayout: timedDelay];
-            }
             return;
         }
 
@@ -994,12 +912,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         NSScrollView *sv = [[self frameView] _scrollView];
         if ([[self webView] drawsBackground])
             [sv setDrawsBackground:YES];
-        NSTimer *timer = _private->scheduledLayoutTimer;
-        _private->scheduledLayoutTimer = nil;
         [_private setPreviousItem:nil];
-        _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
-        [timer invalidate];
-        [timer release];
     }
 }
 
@@ -1157,12 +1070,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 [[self webView] _progressCompleted: self];
  
                 return;
-            }
-            // A resource was loaded, but the entire frame isn't complete.  Schedule a
-            // layout.
-            else {
-                if ([self _state] == WebFrameStateLayoutAcceptable)
-                    [self _scheduleLayout:timedLayoutDelay];
             }
             return;
         }
@@ -2682,9 +2589,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     [_private->provisionalDataSource _stopLoading];
     [_private->dataSource _stopLoading];
-    [_private->scheduledLayoutTimer invalidate];
-    [_private->scheduledLayoutTimer release];
-    _private->scheduledLayoutTimer = nil;
 
     // Release the provisional data source because there's no point in keeping it around since it is unused in this case.
     [self _setProvisionalDataSource:nil];
