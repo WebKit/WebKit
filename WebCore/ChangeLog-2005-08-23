@@ -1,5 +1,18 @@
 2004-02-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Don.
+
+        - fixed an assertion failure when putting up Java applets caused by my last change
+
+        * kwq/KWQKJavaAppletWidget.mm: (KJavaAppletWidget::KJavaAppletWidget):
+        Don't try to get x() and y(). They are always zero because the widget is just being
+        created at this point and has not yet been positioned; trying to get them
+        leads to an assertion because there is no NSView until we call setView().
+        Before my change, there was a KWQView object at 0,0 that was released when we called
+        setView, which is why the problem is new.
+
+2004-02-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed things seen in the profile, for a total speedup of 4% on cvs-base

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,7 @@
 
 #import "KHTMLView.h"
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
 #import "KWQKJavaAppletContext.h"
-#import "KWQKURL.h"
-#import "KWQView.h"
 #import "WebCoreBridge.h"
 
 KJavaAppletWidget::KJavaAppletWidget(const QSize &size, KJavaAppletContext *c, const QMap<QString, QString> &args)
@@ -40,7 +37,7 @@ KJavaAppletWidget::KJavaAppletWidget(const QSize &size, KJavaAppletContext *c, c
     NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
     QMapConstIterator<QString, QString> it = args.begin();
     QMapConstIterator<QString, QString> end = args.end();
-    QString baseURLString = NULL;
+    QString baseURLString;
     while (it != end) {
         if (it.key().lower() == "baseurl") {
             baseURLString = it.data();
@@ -50,14 +47,13 @@ KJavaAppletWidget::KJavaAppletWidget(const QSize &size, KJavaAppletContext *c, c
     }
     
     KHTMLPart *part = c->part();
-    KURL baseURL = baseURLString != NULL ? KURL(baseURLString) : part->baseURL();
+    KURL baseURL = baseURLString.isNull() ? part->baseURL() : KURL(baseURLString);
     
-    setView([KWQ(part)->bridge() viewForJavaAppletWithFrame:NSMakeRect(x(), y(), size.width(), size.height())
+    setView([KWQ(part)->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                                                  attributes:attributes
                                                     baseURL:baseURL.getNSURL()]);
     [attributes release];
-    part->view()->addChild(this, x(), y());
+    part->view()->addChild(this);
     
     KWQ_UNBLOCK_EXCEPTIONS;
 }
-
