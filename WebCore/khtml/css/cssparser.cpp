@@ -1409,10 +1409,11 @@ bool CSSParser::parseShape( int propId, bool important )
     int i = 0;
     Value *a = args->current();
     while ( a ) {
-	valid = validUnit( a, FLength, strict );
+	valid = a->id == CSS_VAL_AUTO || validUnit( a, FLength, strict );
 	if ( !valid )
 	    break;
-	CSSPrimitiveValueImpl *length =
+	CSSPrimitiveValueImpl *length = a->id == CSS_VAL_AUTO ?
+            new CSSPrimitiveValueImpl(CSS_VAL_AUTO) :
 	    new CSSPrimitiveValueImpl( a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit );
 	if ( i == 0 )
 	    rect->setTop( length );

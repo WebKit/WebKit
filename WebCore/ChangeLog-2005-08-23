@@ -1,5 +1,14 @@
 2004-03-29  David Hyatt  <hyatt@apple.com>
 
+	Make sure "auto" is allowed as a valid value when parsing rect shapes (e.g., for the clip property).
+	
+        Reviewed by rjw
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseShape):
+
+2004-03-29  David Hyatt  <hyatt@apple.com>
+
 	Followup fix.  Handle the case where a hard line break occurs right after a soft hyphen.  In this
 	case we were losing a letter of the word in addition to not rendering the soft hyphen.
 	
