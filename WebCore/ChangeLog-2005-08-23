@@ -1,5 +1,16 @@
 2005-03-16  David Harrison  <harrison@apple.com>
 
+        Reviewed by me (written by Patti Yeh).
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject doAXNextWordEndTextMarkerForTextMarker:]):
+        Use LeftWordIfOnBoundary instead of RightWordIfOnBoundary.
+
+        (-[KWQAccObject doAXPreviousWordStartTextMarkerForTextMarker:]):
+        Use RightWordIfOnBoundary instead of LeftWordIfOnBoundary.
+
+2005-03-16  David Harrison  <harrison@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/4054590> AX: Dictionary panel does not work when page is scrolled on Safari

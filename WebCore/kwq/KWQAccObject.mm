@@ -1592,7 +1592,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (visiblePos.isNull())
         return nil;
 
-    VisiblePosition endPosition = endOfWord(visiblePos, khtml::RightWordIfOnBoundary);
+    VisiblePosition endPosition = endOfWord(visiblePos, khtml::LeftWordIfOnBoundary);
     return (id) [self textMarkerForVisiblePosition:endPosition];
 }
 
@@ -1607,7 +1607,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (visiblePos.isNull())
         return nil;
     
-    VisiblePosition startPosition = startOfWord(visiblePos, khtml::LeftWordIfOnBoundary);
+    VisiblePosition startPosition = startOfWord(visiblePos, khtml::RightWordIfOnBoundary);
     return (id) [self textMarkerForVisiblePosition:startPosition];
 }
 
