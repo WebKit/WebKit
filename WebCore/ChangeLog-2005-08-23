@@ -1,3 +1,15 @@
+2004-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - added a bunch of missing nil checks; our old version of inherits used to work for nil (by accident)
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPart::~RenderPart): Check widget for nil.
+        (RenderPart::setWidget): Ditto.
+        (RenderFrame::slotViewCleared): Ditto.
+        (RenderPartObject::slotViewCleared): Ditto.
+
 2004-12-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -574,7 +574,7 @@ RenderPart::RenderPart(DOM::HTMLElementImpl* node)
 
 RenderPart::~RenderPart()
 {
-    if(m_widget->inherits("KHTMLView")) {
+    if (m_widget && m_widget->inherits("KHTMLView")) {
 	static_cast<KHTMLView *>(m_widget)->deref();
     }
 }
@@ -589,11 +589,11 @@ void RenderPart::setWidget( QWidget *widget )
 	return;
     }
 
-    if(m_widget->inherits("KHTMLView")) {
+    if (m_widget && m_widget->inherits("KHTMLView")) {
 	static_cast<KHTMLView *>(m_widget)->deref();
     }
     
-    if(widget->inherits("KHTMLView")) {	
+    if (widget && widget->inherits("KHTMLView")) {	
 	static_cast<KHTMLView *>(widget)->ref();
 	setQWidget( widget, false );
 	connect( widget, SIGNAL( cleared() ), this, SLOT( slotViewCleared() ) );
@@ -646,7 +646,7 @@ RenderFrame::RenderFrame( DOM::HTMLFrameElementImpl *frame )
 
 void RenderFrame::slotViewCleared()
 {
-    if(element() && m_widget->inherits("QScrollView")) {
+    if (element() && m_widget && m_widget->inherits("QScrollView")) {
 #ifdef DEBUG_LAYOUT
         kdDebug(6031) << "frame is a scrollview!" << endl;
 #endif
@@ -966,7 +966,7 @@ void RenderPartObject::layout( )
 
 void RenderPartObject::slotViewCleared()
 {
-  if(element() && m_widget->inherits("QScrollView") ) {
+  if(element() && m_widget && m_widget->inherits("QScrollView") ) {
 #ifdef DEBUG_LAYOUT
       kdDebug(6031) << "iframe is a scrollview!" << endl;
 #endif
