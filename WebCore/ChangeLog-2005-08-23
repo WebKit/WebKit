@@ -1,3 +1,13 @@
+2003-06-09  John Sullivan  <sullivan@apple.com>
+
+	- finished fixing crash in 3275675 -- REGRESSION: crash when replacing <div> which contains iframe (at www.kbs.co.kr)
+
+        Reviewed by Darin
+
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::resizeWidget):
+	check for nil element() before ref/deref'ing
+
 2003-06-09  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

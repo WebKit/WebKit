@@ -164,7 +164,7 @@ void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
     w = QMIN( w, 2000 );
 #endif
 
-    if (widget->width() != w || widget->height() != h) {
+    if (element() && (widget->width() != w || widget->height() != h)) {
         RenderArena *arena = ref();
         element()->ref();
         widget->resize( w, h );
