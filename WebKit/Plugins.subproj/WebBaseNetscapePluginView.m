@@ -157,9 +157,21 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
     carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent];
 }
 
+- (BOOL)superviewsHaveSuperviews
+{
+    NSView *contentView = [[self window] contentView];
+    NSView *view;
+    for (view = self; view != nil; view = [view superview]) { 
+        if (view == contentView) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (PortState)saveAndSetPortStateForUpdate:(BOOL)forUpdate
 {
-    ASSERT([self currentWindow]);
+    ASSERT([self currentWindow] != nil);
     
     WindowRef windowRef = [[self currentWindow] windowRef];
     CGrafPtr port = GetWindowPort(windowRef);
@@ -168,18 +180,15 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
     GetPortBounds(port, &portBounds);
 
     // Use AppKit to convert view coordinates to NSWindow coordinates.
-
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
     
     // Flip Y to convert NSWindow coordinates to top-left-based window coordinates.
-
     float borderViewHeight = [[self currentWindow] frame].size.height;
     boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
     visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
     
     // Look at the Carbon port to convert top-left-based window coordinates into top-left-based content coordinates.
-
     PixMap *pix = *GetPortPixMap(port);
     boundsInWindow.origin.x += pix->bounds.left - portBounds.left;
     boundsInWindow.origin.y += pix->bounds.top - portBounds.top;
@@ -187,29 +196,26 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
     visibleRectInWindow.origin.y += pix->bounds.top - portBounds.top;
     
     // Set up NS_Port.
-    
     nPort.port = port;
     nPort.portx = (int32)-boundsInWindow.origin.x;
     nPort.porty = (int32)-boundsInWindow.origin.y;
     
     // Set up NPWindow.
-    
     window.window = &nPort;
     
     window.x = (int32)boundsInWindow.origin.x; 
     window.y = (int32)boundsInWindow.origin.y;
     window.width = NSWidth(boundsInWindow);
     window.height = NSHeight(boundsInWindow);
-
-    window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
-    window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
-    window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
-    window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
-
-    // Clip out the plug-in when it's not really in a window or off screen or has no height or width.
-    // The "big negative number" technique is how WebCore expresses off-screen widgets.
+    
+    // "Clip-out" the plug-in when:
+    // 1) it's not really in a window or off-screen or has no height or width.
+    // 2) window.x is a "big negative number" which is how WebCore expresses off-screen widgets.
+    // 3) the window is miniaturized or the app is hidden
+    // 4) we're inside of viewWillMoveToWindow: with a nil window. In this case, superviews may already have nil 
+    // superviews and nil windows and results from convertRect:toView: are incorrect.
     NSWindow *realWindow = [self window];
-    if (window.width <= 0 || window.height <= 0 || window.x < -100000 || realWindow == nil || [realWindow isMiniaturized] || [NSApp isHidden]) {
+    if (window.width <= 0 || window.height <= 0 || window.x < -100000 || realWindow == nil || [realWindow isMiniaturized] || [NSApp isHidden] || ![self superviewsHaveSuperviews]) {
         // The following code tries to give plug-ins the same size they will eventually have.
         // The specifiedWidth and specifiedHeight variables are used to predict the size that
         // WebCore will eventually resize us to.
@@ -227,12 +233,16 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
 
         window.clipRect.bottom = window.clipRect.top;
         window.clipRect.left = window.clipRect.right;
+    } else {
+        window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
+        window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
+        window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
+        window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);        
     }
 
     window.type = NPWindowTypeWindow;
     
     // Save the port state.
-
     PortState portState;
     
     GetPort(&portState.oldPort);    
@@ -256,7 +266,6 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
     portState.forUpdate = forUpdate;
     
     // Switch to the port and set it up.
-
     SetPort(port);
 
     PenNormal();
@@ -789,7 +798,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
         LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
             npErr, (int)nPort.port, (int)window.x, (int)window.y);
-
+        
         lastSetWindow = window;
         lastSetPort = nPort;
     }

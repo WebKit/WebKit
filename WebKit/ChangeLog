@@ -1,5 +1,17 @@
 2005-02-03  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3555137> REGRESSION (125-173): Flash animation can erase parts of chrome (bookmarks bar & tab bar)
+
+	convertRect:toView: returns incorrect results inside of viewWillMoveToWindow: with a nil window. Workaround this by catching this case.
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView superviewsHaveSuperviews]): new
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]): clip out the plug-in view when superviewsHaveSuperviews returns NO
+
+2005-02-03  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3893513> Sun iPlanet app: when saving to a file it brings up a window with the thing to be saved instead
 
         Reviewed by adele.
