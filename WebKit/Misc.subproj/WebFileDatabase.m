@@ -567,6 +567,7 @@ static void databaseInit()
     [setCache setObject:object forKey:key];
     op = [[WebFileDatabaseOp alloc] initWithCode:WebFileDatabaseSetObjectOp key:key object:object];
     [ops addObject:op];
+    [op release];
     [self setTimer];
     
     [mutex unlock];
@@ -585,6 +586,7 @@ static void databaseInit()
     [removeCache addObject:key];
     op = [[WebFileDatabaseOp alloc] initWithCode:WebFileDatabaseRemoveObjectOp key:key object:nil];
     [ops addObject:op];
+    [op release];
     [self setTimer];
     
     [mutex unlock];
@@ -830,6 +832,7 @@ static void databaseInit()
         
         op = [ops lastObject];
         if (op) {
+            [op retain];
             [ops removeLastObject];
             [op perform:self];
             [setCache removeObjectForKey:[op key]];

@@ -1,5 +1,19 @@
 2002-10-28  Darin Adler  <darin@apple.com>
 
+	- fixed storage leak of WebNetscapePluginPackage objects
+
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (+[WebBasePluginPackage pluginWithPath:]): Add missing autorelease.
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        * Plugins.subproj/WebPluginPackage.h:
+        * Plugins.subproj/WebPluginPackage.m:
+	Not __MyCompanyName__, but rather Apple Computer.
+
+2002-10-28  Darin Adler  <darin@apple.com>
+
 	- fixed bug that caused us to leak all WebResourceHandles used for subresources
 
         * WebCoreSupport.subproj/WebSubresourceClient.m:

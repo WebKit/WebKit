@@ -3,10 +3,11 @@
 //  WebKit
 //
 //  Created by Chris Blumenberg on Tue Oct 22 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
 #import <WebKit/WebBasePluginPackage.h>
+
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginPackage.h>
 
@@ -20,7 +21,7 @@
         pluginPackage = [[WebNetscapePluginPackage alloc] initWithPath:pluginPath];
     }
 
-    return pluginPackage;
+    return [pluginPackage autorelease];
 }
 
 - initWithPath:(NSString *)pluginPath
@@ -51,16 +52,18 @@
     [super dealloc];
 }
 
-
-- (NSString *)name{
+- (NSString *)name
+{
     return name;
 }
 
-- (NSString *)path{
+- (NSString *)path
+{
     return path;
 }
 
-- (NSString *)filename{
+- (NSString *)filename
+{
     return [path lastPathComponent];
 }
 

@@ -59,6 +59,8 @@ public:
     void selectionChanged() { _selectionChanged.call(); }
 
 private:
+    void deleteItems();
+    
     QListBoxItem *_head;
     bool _insertingItems;
     

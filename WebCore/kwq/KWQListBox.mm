@@ -109,6 +109,7 @@ QListBox::~QListBox()
     KWQBrowserDelegate *delegate = [browser delegate];
     [browser setDelegate:nil];
     [delegate release];
+    deleteItems();
 }
 
 uint QListBox::count() const
@@ -120,7 +121,7 @@ uint QListBox::count() const
     return count;
 }
 
-void QListBox::clear()
+void QListBox::deleteItems()
 {
     QListBoxItem *next;
     for (QListBoxItem *item = _head; item; item = next) {
@@ -128,7 +129,11 @@ void QListBox::clear()
         delete item;
     }
     _head = 0;
-    
+}
+
+void QListBox::clear()
+{
+    deleteItems();
     NSBrowser *browser = (NSBrowser *)getView();
     [browser loadColumnZero];
 }

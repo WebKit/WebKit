@@ -1,3 +1,14 @@
+2002-10-28  Darin Adler  <darin@apple.com>
+
+	- fixed storage leak of items in QListBox
+
+        * kwq/KWQListBox.h: Added private deleteItems method.
+        * kwq/KWQListBox.mm:
+        (QListBox::~QListBox): Call deleteItems().
+        (QListBox::deleteItems): Move the code to delete all the items
+	here from clear(), since clear() is not called on destruction.
+        (QListBox::clear): Call deleteItems().
+
 2002-10-28  Chris Blumenberg  <cblu@apple.com>
 
 	Lowercase the text encoding name.
