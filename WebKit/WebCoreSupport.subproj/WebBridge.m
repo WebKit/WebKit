@@ -326,12 +326,10 @@
 {
     WebHistoryItem *item = [frame _itemForSavingDocState];
     if (![item hasPageCache]){
-        printf ("WebBridge saveDocumentToPageCache:  not saving\n");
         return false;
     }
     ASSERT ([[item pageCache] objectForKey: @"WebCorePageState"] == nil);
     [[item pageCache] setObject: documentInfo forKey: @"WebCorePageState"];
-    printf ("WebBridge saveDocumentToPageCache:  saving\n");
     return true;
 }
 

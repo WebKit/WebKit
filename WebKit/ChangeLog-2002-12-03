@@ -1,3 +1,25 @@
+2002-11-26  Richard Williamson   <rjw@apple.com>
+
+        More work on back/forward cache.  It's ready for
+        more general testing.  Although, to be safe I've
+        left it disabled by default for tomorrow's release.
+        It will log when a page is save and restored from
+        the page cache.
+                
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge saveDocumentToPageCache:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _commitIfReady:]):
+        (-[WebDataSource _loadIcon]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:request:]):
+        (-[WebFrame _setProvisionalDataSource:]):
+
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
         Cleanup leaking objects in page cache.

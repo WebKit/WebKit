@@ -159,7 +159,7 @@
         [self _commitIfReady: pageCache];
     }
     else if (!_private->mainClient) {
-	if ([self webFrame] == [[self controller] mainFrame]) {
+        if ([self webFrame] == [[self controller] mainFrame]) {
 	    [_private->request setCookiePolicyBaseURL:[self URL]];
 	} else {
 	    [_private->request setCookiePolicyBaseURL:[[[_private->controller mainFrame] dataSource] URL]];
@@ -457,12 +457,11 @@
             
         [[self webFrame] _transitionToCommitted: pageCache];
 	
-        if (pageCache){
-            WebDataSource *ds = [pageCache objectForKey: @"WebKitDataSource"];
-            [[ds _bridge] openURL:[[_private->response URL] absoluteString] reload:reload headers:headers lastModified:nil pageCache: pageCache];
-        }
-        else
-            [[self _bridge] openURL:[[_private->response URL] absoluteString] reload:reload headers:headers lastModified:[_private->response lastModifiedDate] pageCache: pageCache];
+        [[self _bridge] openURL:[[_private->response URL] absoluteString] 
+                reload:reload 
+                headers:headers 
+                lastModified: (pageCache ? nil : [_private->response lastModifiedDate])
+                pageCache: pageCache];
     }
 }
 
@@ -517,9 +516,7 @@
 
 - (void)_loadIcon
 {
-    ASSERT(!_private->iconLoader);
-
-    if([self webFrame] != [[self controller] mainFrame] || _private->mainDocumentError){
+    if([self webFrame] != [[self controller] mainFrame] || _private->mainDocumentError || _private->iconLoader){
         return;
     }
                 

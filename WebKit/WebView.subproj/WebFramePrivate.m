@@ -426,15 +426,7 @@ static const char * const stateNames[] = {
             }
 
             // Set the committed data source on the frame.
-            // Use the datasource from the pageCache if present, otherwise
-            // the provisional becomes the committed datasource.
-            if (pageCache){
-                WebDataSource *cachedDataSource = [pageCache objectForKey: @"WebKitDataSource"];
-                ASSERT (cachedDataSource != nil);
-                [self _setDataSource: cachedDataSource];
-            }
-            else
-                [self _setDataSource:_private->provisionalDataSource];
+            [self _setDataSource:_private->provisionalDataSource];
                 
             [_private setProvisionalDataSource: nil];
 
@@ -529,6 +521,12 @@ static const char * const stateNames[] = {
             ASSERT_NOT_REACHED();
         }
     }
+
+
+    if (pageCache){
+        [[self dataSource] _setPrimaryLoadComplete: YES];
+        [self _isLoadComplete];
+    }
 }
 
 - (BOOL)_canCachePage
@@ -592,16 +590,13 @@ static const char * const stateNames[] = {
         // Cache the page, if possible.
         if ([self _canCachePage] && [_private->bridge canCachePage] && [_private currentItem]){
             if (![[_private currentItem] pageCache]){
-                NSLog (@"saving page cache for %@, %@", [self name], [[self dataSource] URL]);
+                printf ("Saving page to back/forward cache, %s\n", [[[[self dataSource] URL] absoluteString] cString]);
                 [[_private currentItem] setHasPageCache: YES];
                 [[self dataSource] _setStoredInPageCache: YES];
                 [[[_private currentItem] pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
                 [[[_private currentItem] pageCache] setObject: [[self webView] documentView] forKey: @"WebKitDocumentView"];
                 [_private->bridge saveDocumentToPageCache];
                 [self _purgePageCache];
-            }
-            else {
-                NSLog (@"already have page cache for %@, %@", [self name], [[self dataSource] URL]);
             }
         }
     }
@@ -856,44 +851,51 @@ static const char * const stateNames[] = {
 
         [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:_private->dataSource];
     } else {
-        request = [[WebResourceRequest alloc] initWithURL:itemURL];
-    
-        // set the request cache policy based on the type of request we have
-        // however, allow any previously set value to take precendence
-        if ([request requestCachePolicy] == WebRequestCachePolicyUseProtocolDefault) {
-            switch (type) {
-                case WebFrameLoadTypeStandard:
-                    // if it's not a GET, reload from origin
-                    // unsure whether this is the best policy
-                    // other methods might be OK to get from the cache
-                    if (![[request method] _web_isCaseInsensitiveEqualToString:@"GET"]) {
-                        [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
-                    }
-                    break;
-                case WebFrameLoadTypeReload:
-                    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
-                    break;
-                case WebFrameLoadTypeBack:
-                case WebFrameLoadTypeForward:
-                case WebFrameLoadTypeIndexedBackForward:
-                    [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject];
-                    break;
-                case WebFrameLoadTypeInternal:
-                case WebFrameLoadTypeReloadAllowingStaleData:
-                    // no-op: leave as protocol default
-                    break;
-                default:
-                    ASSERT_NOT_REACHED();
-            }
-        }
-
         // Remember this item so we can traverse any child items as child frames load
         [_private setProvisionalItem:item];
 
-        WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-        [request release];
-        [self _loadDataSource:newDataSource withLoadType:type];
-        [newDataSource release];
+        WebDataSource *newDataSource;
+        if ([item hasPageCache]){
+            newDataSource = [[item pageCache] objectForKey: @"WebKitDataSource"];
+            [self _loadDataSource:newDataSource withLoadType:type];            
+        }
+        else {
+            request = [[WebResourceRequest alloc] initWithURL:itemURL];
+        
+            // set the request cache policy based on the type of request we have
+            // however, allow any previously set value to take precendence
+            if ([request requestCachePolicy] == WebRequestCachePolicyUseProtocolDefault) {
+                switch (type) {
+                    case WebFrameLoadTypeStandard:
+                        // if it's not a GET, reload from origin
+                        // unsure whether this is the best policy
+                        // other methods might be OK to get from the cache
+                        if (![[request method] _web_isCaseInsensitiveEqualToString:@"GET"]) {
+                            [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+                        }
+                        break;
+                    case WebFrameLoadTypeReload:
+                        [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+                        break;
+                    case WebFrameLoadTypeBack:
+                    case WebFrameLoadTypeForward:
+                    case WebFrameLoadTypeIndexedBackForward:
+                        [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject];
+                        break;
+                    case WebFrameLoadTypeInternal:
+                    case WebFrameLoadTypeReloadAllowingStaleData:
+                        // no-op: leave as protocol default
+                        break;
+                    default:
+                        ASSERT_NOT_REACHED();
+                }
+            }
+    
+            newDataSource = [[WebDataSource alloc] initWithRequest:request];
+            [request release];
+            [self _loadDataSource:newDataSource withLoadType:type];            
+            [newDataSource release];
+        }
     }
 }
 
@@ -1423,7 +1425,7 @@ static const char * const stateNames[] = {
         loadType == WebFrameLoadTypeBack ||
         loadType == WebFrameLoadTypeIndexedBackForward) &&
         [[_private provisionalItem] hasPageCache]){
-        printf ("Restoring page from state, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
+        printf ("Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
         [_private->provisionalDataSource _startLoading: [[_private provisionalItem] pageCache]];
     }
     else 
@@ -1472,5 +1474,11 @@ static const char * const stateNames[] = {
 {
     _private->justOpenedForTargetedLink = justOpened;
 }
+
+- (void)_setProvisionalDataSource: (WebDataSource *)d
+{
+    [_private setProvisionalDataSource: d];
+}
+
 
 @end

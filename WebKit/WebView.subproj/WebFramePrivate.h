@@ -156,6 +156,8 @@ typedef enum {
 
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
 
+- (void)_setProvisionalDataSource: (WebDataSource *)d;
+
 - (BOOL)_canCachePage;
 - (void)_purgePageCache;
 
