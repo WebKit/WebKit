@@ -1,3 +1,37 @@
+2005-02-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3975039, scrolling is slow in huge RSS views.  Optimize the calculation of clip rects for overflow:hidden
+	layers.  Also optimize layer movement when scrolling overflow sections.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_layer.cpp:
+        (throw):
+        (ClipRects::operator delete):
+        (ClipRects::detach):
+        (RenderLayer::RenderLayer):
+        (RenderLayer::~RenderLayer):
+        (RenderLayer::updateLayerPosition):
+        (RenderLayer::removeOnlyThisLayer):
+        (RenderLayer::insertOnlyThisLayer):
+        (RenderLayer::scrollToOffset):
+        (RenderLayer::hitTest):
+        (RenderLayer::calculateClipRects):
+        (RenderLayer::calculateRects):
+        (RenderLayer::containsPoint):
+        (RenderLayer::clearClipRects):
+        (RenderLayer::clearClipRect):
+        * khtml/rendering/render_layer.h:
+        (khtml::ClipRects::m_refCnt):
+        (khtml::ClipRects::overflowClipRect):
+        (khtml::ClipRects::fixedClipRect):
+        (khtml::ClipRects::posClipRect):
+        (khtml::ClipRects::ref):
+        (khtml::ClipRects::deref):
+        (khtml::RenderLayer::clipRects):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+
 2005-02-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Dave a while ago.

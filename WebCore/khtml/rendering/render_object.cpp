@@ -1555,8 +1555,11 @@ void RenderObject::setStyle(RenderStyle *style)
         else if (m_parent && !isText()) {
             // Do a repaint with the old style first, e.g., for example if we go from
             // having an outline to not having an outline.
-            if (d == RenderStyle::RepaintLayer)
+            if (d == RenderStyle::RepaintLayer) {
                 layer()->repaintIncludingDescendants();
+                if (!(m_style->clip() == style->clip()))
+                    layer()->clearClipRects();
+            }
             else if (d == RenderStyle::Repaint)
                 repaint();
         }

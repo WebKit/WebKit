@@ -75,6 +75,39 @@ private:
     RenderLayer* m_layer;
 };
 
+class ClipRects
+{
+public:
+    ClipRects(const QRect& r) :m_overflowClipRect(r), m_fixedClipRect(r), m_posClipRect(r), m_refCnt(0) {}
+    ClipRects(const QRect& o, const QRect& f, const QRect& p)
+      :m_overflowClipRect(o), m_fixedClipRect(f), m_posClipRect(p), m_refCnt(0) {}
+
+    const QRect& overflowClipRect() { return m_overflowClipRect; }
+    const QRect& fixedClipRect() { return m_fixedClipRect; }
+    const QRect& posClipRect() { return m_posClipRect; }
+
+    void ref() { m_refCnt++; }
+    void deref(RenderArena* renderArena) { if (--m_refCnt == 0) detach(renderArena); }
+    
+    void detach(RenderArena* renderArena);
+
+    // Overloaded new operator.
+    void* operator new(size_t sz, RenderArena* renderArena) throw();    
+
+    // Overridden to prevent the normal delete from being called.
+    void operator delete(void* ptr, size_t sz);
+        
+private:
+    // The normal operator new is disallowed on all render objects.
+    void* operator new(size_t sz) throw();
+
+private:
+    QRect m_overflowClipRect;
+    QRect m_fixedClipRect;
+    QRect m_posClipRect;
+    uint m_refCnt;
+};
+
 // This class handles the auto-scrolling of layers with overflow: marquee.
 class Marquee: public QObject
 {
@@ -211,6 +244,9 @@ public:
     void relativePositionOffset(int& relX, int& relY) {
         relX += m_relX; relY += m_relY;
     }
+     
+    void clearClipRects();
+    void clearClipRect();
 
     // Get the enclosing stacking context for this layer.  A stacking context is a layer
     // that has a non-auto z-index.
@@ -243,8 +279,8 @@ public:
     // for painting/event handling.
     void calculateRects(const RenderLayer* rootLayer, const QRect& paintDirtyRect, QRect& layerBounds,
                         QRect& backgroundRect, QRect& foregroundRect);
-    void calculateClipRects(const RenderLayer* rootLayer, QRect& overflowClipRect,
-                            QRect& posClipRect, QRect& fixedClipRect);
+    void calculateClipRects(const RenderLayer* rootLayer);
+    ClipRects* clipRects() const { return m_clipRects; }
 
     bool intersectsDamageRect(const QRect& layerBounds, const QRect& damageRect) const;
     bool containsPoint(int x, int y, const QRect& damageRect) const;
@@ -280,7 +316,7 @@ private:
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
                               int x, int y, const QRect& hitTestRect);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
-    
+
 protected:   
     RenderObject* m_object;
     
@@ -326,8 +362,11 @@ protected:
     QPtrVector<RenderLayer>* m_posZOrderList;
     QPtrVector<RenderLayer>* m_negZOrderList;
     
+    ClipRects* m_clipRects;      // Cached clip rects used when painting and hit testing.
+
     bool m_scrollDimensionsDirty : 1;
     bool m_zOrderListsDirty : 1;
+
 #if APPLE_CHANGES
     bool m_usedTransparency : 1; // Tracks whether we need to close a transparent layer, i.e., whether
                                  // we ended up painting this layer or any descendants (and therefore need to

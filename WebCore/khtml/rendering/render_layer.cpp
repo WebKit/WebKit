@@ -70,6 +70,25 @@ QScrollBar* RenderLayer::gScrollBar = 0;
 static bool inRenderLayerDetach;
 #endif
 
+void* ClipRects::operator new(size_t sz, RenderArena* renderArena) throw()
+{
+    return renderArena->allocate(sz);
+}
+
+void ClipRects::operator delete(void* ptr, size_t sz)
+{
+    // Stash size where detach can find it.
+    *(size_t *)ptr = sz;
+}
+
+void ClipRects::detach(RenderArena* renderArena)
+{
+    delete this;
+    
+    // Recover the size left there for us by operator delete and free the memory.
+    renderArena->free(*(size_t *)this, this);
+}
+
 void
 RenderScrollMediator::slotValueChanged(int val)
 {
@@ -98,6 +117,7 @@ m_vBar( 0 ),
 m_scrollMediator( 0 ),
 m_posZOrderList( 0 ),
 m_negZOrderList( 0 ),
+m_clipRects( 0 ) ,
 m_scrollDimensionsDirty( true ),
 m_zOrderListsDirty( true ),
 m_usedTransparency( false ),
@@ -115,6 +135,9 @@ RenderLayer::~RenderLayer()
     delete m_posZOrderList;
     delete m_negZOrderList;
     delete m_marquee;
+    
+    // Make sure we have no lingering clip rects.
+    clearClipRect();
 }
 
 void RenderLayer::computeRepaintRects()
@@ -160,6 +183,9 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
 
 void RenderLayer::updateLayerPosition()
 {
+    // Clear our cached clip rect information.
+    clearClipRect();
+
     // The canvas is sized to the docWidth/Height over in RenderCanvas::layout, so we
     // don't need to ever update our layer position here.
     if (renderer()->isCanvas())
@@ -378,6 +404,9 @@ void RenderLayer::removeOnlyThisLayer()
     if (!m_parent)
         return;
     
+    // Dirty the clip rects.
+    clearClipRects();
+
     // Remove us from the parent.
     RenderLayer* parent = m_parent;
     RenderLayer* nextSib = nextSibling();
@@ -409,6 +438,9 @@ void RenderLayer::insertOnlyThisLayer()
     // Remove all descendant layers from the hierarchy and add them to the new position.
     for (RenderObject* curr = renderer()->firstChild(); curr; curr = curr->nextSibling())
         curr->moveLayers(m_parent, this);
+        
+    // Clear out all the clip rects.
+    clearClipRects();
 }
 
 void 
@@ -481,7 +513,7 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
 
     // Update the positions of our child layers.
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->updateLayerPositions();
+        child->updateLayerPositions(false, false);
     
 #if APPLE_CHANGES
     // Move our widgets.
@@ -959,7 +991,7 @@ RenderLayer::hitTest(RenderObject::NodeInfo& info, int x, int y)
 
     // Next set up the correct :hover/:active state along the new chain.
     updateHoverActiveState(info);
-
+    
     // Now return whether we were inside this layer (this will always be true for the root
     // layer).
     return insideLayer;
@@ -1044,11 +1076,25 @@ RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
     return 0;
 }
 
-void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, QRect& overflowClipRect,
-                                     QRect& posClipRect, QRect& fixedClipRect)
+void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
 {
-    if (parent())
-        parent()->calculateClipRects(rootLayer, overflowClipRect, posClipRect, fixedClipRect);
+    if (m_clipRects)
+        return; // We have the correct cached value.
+
+    if (!parent()) {
+        // The root layer's clip rect is always just its dimensions.
+        m_clipRects = new (m_object->renderArena()) ClipRects(QRect(0,0,width(),height()));
+        m_clipRects->ref();
+        return;
+    }
+
+    // Ensure that our parent's clip has been calculated so that we can examine the values.
+    parent()->calculateClipRects(rootLayer);
+
+    // Set up our three rects to initially match the parent rects.
+    QRect posClipRect(parent()->clipRects()->posClipRect());
+    QRect overflowClipRect(parent()->clipRects()->overflowClipRect());
+    QRect fixedClipRect(parent()->clipRects()->fixedClipRect());
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
@@ -1079,25 +1125,35 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, QRect& overfl
             fixedClipRect = fixedClipRect.intersect(newPosClip);
         }
     }
+    
+    // If our clip rects match our parent's clip, then we can just share its data structure and
+    // ref count.
+    if (posClipRect == parent()->clipRects()->posClipRect() &&
+        overflowClipRect == parent()->clipRects()->overflowClipRect() &&
+        fixedClipRect == parent()->clipRects()->fixedClipRect())
+        m_clipRects = parent()->clipRects();
+    else
+        m_clipRects = new (m_object->renderArena()) ClipRects(overflowClipRect, fixedClipRect, posClipRect);
+    m_clipRects->ref();
 }
 
 void RenderLayer::calculateRects(const RenderLayer* rootLayer, const QRect& paintDirtyRect, QRect& layerBounds,
                                  QRect& backgroundRect, QRect& foregroundRect)
 {
-    QRect overflowClipRect = paintDirtyRect;
-    QRect posClipRect = paintDirtyRect;
-    QRect fixedClipRect = paintDirtyRect;
-    if (parent())
-        parent()->calculateClipRects(rootLayer, overflowClipRect, posClipRect, fixedClipRect);
-
+    if (parent()) {
+        parent()->calculateClipRects(rootLayer);
+        backgroundRect = m_object->style()->position() == FIXED ? parent()->clipRects()->fixedClipRect() :
+                         (m_object->isPositioned() ? parent()->clipRects()->posClipRect() : 
+                                                     parent()->clipRects()->overflowClipRect());
+        backgroundRect = backgroundRect.intersect(paintDirtyRect);
+    } else
+        backgroundRect = paintDirtyRect;
+    foregroundRect = backgroundRect;
+    
     int x = 0;
     int y = 0;
     convertToLayerCoords(rootLayer, x, y);
     layerBounds = QRect(x,y,width(),height());
-
-    backgroundRect = m_object->style()->position() == FIXED ? fixedClipRect :
-        (m_object->isPositioned() ? posClipRect : overflowClipRect);
-    foregroundRect = backgroundRect;
     
     // Update the clip rects that will be passed to child layers.
     if (m_object->hasOverflowClip() || m_object->hasClip()) {
@@ -1141,6 +1197,25 @@ bool RenderLayer::intersectsDamageRect(const QRect& layerBounds, const QRect& da
 bool RenderLayer::containsPoint(int x, int y, const QRect& damageRect) const
 {
     return mustExamineRenderer(renderer()) || damageRect.contains(x, y);
+}
+
+void RenderLayer::clearClipRects()
+{
+    if (!m_clipRects)
+        return;
+
+    clearClipRect();
+    
+    for (RenderLayer* l = firstChild(); l; l = l->nextSibling())
+        l->clearClipRects();
+}
+
+void RenderLayer::clearClipRect()
+{
+    if (m_clipRects) {
+        m_clipRects->deref(m_object->renderArena());
+        m_clipRects = 0;
+    }
 }
 
 // This code has been written to anticipate the addition of CSS3-::outside and ::inside generated
