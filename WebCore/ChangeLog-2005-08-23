@@ -1,3 +1,19 @@
+2003-09-29  David Hyatt  <hyatt@apple.com>
+
+	Make sure that timeouts updateRendering after they execute the scheduled timer
+	action.  
+
+	Also fixing 3429455, maxwidth of pres miscomputed when two blank lines occur at
+	the end of a pre text run.
+	
+        Reviewed by darin, mjs (setTimeout fix), darin (pre fix)
+
+        * khtml/ecma/kjs_window.cpp:
+        (ScheduledAction::execute):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+
 2003-09-29  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

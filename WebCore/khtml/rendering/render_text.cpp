@@ -965,10 +965,10 @@ void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS,
         const Font *f = htmlFont( false );
         bool firstLine = true;
         beginMaxW = endMaxW = maxW;
-        for(int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++)
         {
             int linelen = 0;
-            while( i+linelen < len && str->s[i+linelen] != '\n')
+            while (i+linelen < len && str->s[i+linelen] != '\n')
                 linelen++;
                 
             if (linelen)
@@ -983,13 +983,16 @@ void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS,
                     beginMaxW = endMaxW;
                 }
                 i += linelen;
-                if (i == len-1)
-                    endMaxW = 0;
             }
             else if (firstLine) {
                 beginMaxW = 0;
                 firstLine = false;
             }
+	    
+	    if (i == len-1)
+	        // A <pre> run that ends with a newline, as in, e.g.,
+	        // <pre>Some text\n\n<span>More text</pre>
+	        endMaxW = 0;
         }
     }
 }
@@ -1086,7 +1089,7 @@ void RenderText::calcMinMaxWidth()
             if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
             currMinWidth = 0;
                 
-            if (str->s[i] == '\n')
+            if (str->s[i] == '\n' && isPre)
             {
                 if(currMaxWidth > m_maxWidth) m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
