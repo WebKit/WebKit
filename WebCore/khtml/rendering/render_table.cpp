@@ -1604,7 +1604,7 @@ void RenderTableCell::updateFromElement()
         cSpan = tc->colSpan();
         rSpan = tc->rowSpan();
     }
-    if (parent() && style() && (oldRSpan != rSpan || oldCSpan != cSpan))
+    if ((oldRSpan != rSpan || oldCSpan != cSpan) && style() && parent())
         setNeedsLayoutAndMinMaxRecalc();
 }
     
@@ -2277,12 +2277,16 @@ RenderTableCol::RenderTableCol(DOM::NodeImpl* node)
 
 void RenderTableCol::updateFromElement()
 {
-  DOM::NodeImpl *node = element();
-  if ( node && (node->id() == ID_COL || node->id() == ID_COLGROUP) ) {
-      DOM::HTMLTableColElementImpl *tc = static_cast<DOM::HTMLTableColElementImpl *>(node);
-      _span = tc->span();
-  } else
-      _span = ! ( style() && style()->display() == TABLE_COLUMN_GROUP );
+    int oldSpan = _span;
+    DOM::NodeImpl *node = element();
+    if (node && (node->id() == ID_COL || node->id() == ID_COLGROUP)) {
+        DOM::HTMLTableColElementImpl *tc = static_cast<DOM::HTMLTableColElementImpl *>(node);
+        _span = tc->span();
+    } 
+    else
+      _span = !(style() && style()->display() == TABLE_COLUMN_GROUP);
+    if (_span != oldSpan && style() && parent())
+        setNeedsLayoutAndMinMaxRecalc();
 }
 
 bool RenderTableCol::canHaveChildren() const

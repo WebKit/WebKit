@@ -1,5 +1,17 @@
 2004-12-14  David Hyatt  <hyatt@apple.com>
 
+	Make sure <col> and <colgroup> can have spans updated dynamically as well.
+	
+        Reviewed by rjw
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableColElementImpl::parseHTMLAttribute):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::updateFromElement):
+        (RenderTableCol::updateFromElement):
+
+2004-12-14  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3833123, setting a cell's colspan does not update rendering like it should.
 	
         Reviewed by rjw
