@@ -819,11 +819,11 @@ void KWQKHTMLPart::jumpToSelection()
 {
     // Assumes that selection will only ever be text nodes. This is currently
     // true, but will it always be so?
-    if (d->m_selection.startNode()) {
-        RenderText *rt = dynamic_cast<RenderText *>(d->m_selection.startNode()->renderer());
+    if (d->m_selection.start().notEmpty()) {
+        RenderText *rt = dynamic_cast<RenderText *>(d->m_selection.start().node()->renderer());
         if (rt) {
             int x = 0, y = 0;
-            rt->posOfChar(d->m_selection.startOffset(), x, y);
+            rt->posOfChar(d->m_selection.start().offset(), x, y);
             // The -50 offset is copied from KHTMLPart::findTextNext, which sets the contents position
             // after finding a matched text string.
            d->m_view->setContentsPos(x - 50, y - 50);
@@ -2727,22 +2727,22 @@ KWQWindowWidget *KWQKHTMLPart::topLevelWidget()
 
 int KWQKHTMLPart::selectionStartOffset() const
 {
-    return d->m_selection.startOffset();
+    return d->m_selection.start().offset();
 }
 
 int KWQKHTMLPart::selectionEndOffset() const
 {
-    return d->m_selection.endOffset();
+    return d->m_selection.end().offset();
 }
 
 NodeImpl *KWQKHTMLPart::selectionStart() const
 {
-    return d->m_selection.startNode();
+    return d->m_selection.start().node();
 }
 
 NodeImpl *KWQKHTMLPart::selectionEnd() const
 {
-    return d->m_selection.endNode();
+    return d->m_selection.end().node();
 }
 
 void KWQKHTMLPart::setBridge(WebCoreBridge *p)

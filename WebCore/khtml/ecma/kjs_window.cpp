@@ -58,12 +58,14 @@
 #include "editing/htmlediting.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_position.h"
 #include "xml/dom_selection.h"
 #include "html/html_documentimpl.h"
 
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::Node;
+using DOM::Position;
 using khtml::TypingCommand;
 
 using namespace KJS;
@@ -2157,16 +2159,16 @@ Value Selection::get(ExecState *exec, const Identifier &p) const
     switch (entry->value) {
         case AnchorNode:
         case BaseNode:
-            return getDOMNode(exec, Node(m_part->selection().baseNode()));
+            return getDOMNode(exec, Node(m_part->selection().base().node()));
         case AnchorOffset:
         case BaseOffset:
-            return Number(m_part->selection().baseOffset());
+            return Number(m_part->selection().base().offset());
         case FocusNode:
         case ExtentNode:
-            return getDOMNode(exec, Node(m_part->selection().extentNode()));
+            return getDOMNode(exec, Node(m_part->selection().extent().node()));
         case FocusOffset:
         case ExtentOffset:
-            return Number(m_part->selection().extentOffset());
+            return Number(m_part->selection().extent().offset());
         case IsCollapsed:
             return Boolean(m_part->selection().state() == DOM::Selection::CARET);
         case _Type: {
@@ -2236,27 +2238,30 @@ Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         switch (id) {
             case Selection::Collapse:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(DOM::Selection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)));
+                part->setSelection(DOM::Selection(Position(KJS::toNode(args[0]).handle(), args[1].toInt32(exec))));
                 break;
             case Selection::CollapseToEnd:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(DOM::Selection(part->selection().endPosition()));
+                part->setSelection(DOM::Selection(part->selection().end()));
                 break;
             case Selection::CollapseToStart:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(DOM::Selection(part->selection().startPosition()));
+                part->setSelection(DOM::Selection(part->selection().start()));
                 break;
             case Selection::Empty:
                 TypingCommand::closeTyping(part->lastEditCommand());
                 part->clearSelection();
                 break;
-            case Selection::SetBaseAndExtent:
+            case Selection::SetBaseAndExtent: {
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(DOM::Selection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec), KJS::toNode(args[2]).handle(), args[3].toInt32(exec)));
+                Position base(KJS::toNode(args[0]).handle(), args[1].toInt32(exec));
+                Position extent(KJS::toNode(args[2]).handle(), args[3].toInt32(exec));
+                part->setSelection(DOM::Selection(base, extent));
                 break;
+            }
             case Selection::SetPosition:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(DOM::Selection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)));
+                part->setSelection(DOM::Selection(Position(KJS::toNode(args[0]).handle(), args[1].toInt32(exec))));
                 break;
             case Selection::Modify: {
                 TypingCommand::closeTyping(part->lastEditCommand());

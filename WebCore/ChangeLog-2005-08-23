@@ -1,3 +1,89 @@
+2004-04-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        The Selection class now uses the Position class throughout its public and
+        private interface. This replaces the inconsistent use of the Position
+        class here and node/offset pairs there. There are no functional changes, only
+        updates to the new Selection class API.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Selection::get):
+        (SelectionFunc::tryCall):
+        * khtml/editing/htmlediting_impl.cpp:
+        (DeleteCollapsibleWhitespaceCommandImpl::doApply):
+        (DeleteSelectionCommandImpl::joinTextNodesWithSameStyle):
+        (DeleteSelectionCommandImpl::doApply):
+        (InputNewlineCommandImpl::doApply):
+        (InputTextCommandImpl::deleteCharacter):
+        (InputTextCommandImpl::prepareForTextInsertion):
+        (InputTextCommandImpl::execute):
+        (PasteMarkupCommandImpl::doApply):
+        (TypingCommandImpl::issueCommandForDeleteKey):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::findTextNext):
+        (KHTMLPart::setFocusNodeIfNeeded):
+        (KHTMLPart::notifySelectionChanged):
+        (KHTMLPart::isPointInsideSelection):
+        (KHTMLPart::handleMouseMoveEventSelection):
+        (KHTMLPart::khtmlMouseReleaseEvent):
+        (KHTMLPart::selectAll):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection):
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_selection.cpp:
+        (DOM::emptyPosition):
+        (DOM::Selection::Selection):
+        (DOM::Selection::init):
+        (DOM::Selection::operator=):
+        (DOM::Selection::moveTo):
+        (DOM::Selection::modify):
+        (DOM::Selection::xPosForVerticalArrowNavigation):
+        (DOM::Selection::clear):
+        (DOM::Selection::setBase):
+        (DOM::Selection::setExtent):
+        (DOM::Selection::setBaseAndExtent):
+        (DOM::Selection::setStart):
+        (DOM::Selection::setEnd):
+        (DOM::Selection::setStartAndEnd):
+        (DOM::Selection::toRange):
+        (DOM::Selection::layoutCaret):
+        (DOM::Selection::needsCaretRepaint):
+        (DOM::Selection::paintCaret):
+        (DOM::Selection::validate):
+        (DOM::Selection::moveToRenderedContent):
+        (DOM::Selection::nodeIsBeforeNode):
+        (DOM::startAndEndLineNodesIncludingNode):
+        (DOM::Selection::debugRenderer):
+        (DOM::Selection::debugPosition):
+        * khtml/xml/dom_selection.h:
+        (DOM::Selection::~Selection):
+        (DOM::Selection::base):
+        (DOM::Selection::extent):
+        (DOM::Selection::start):
+        (DOM::Selection::end):
+        (DOM::Selection::assignBase):
+        (DOM::Selection::assignExtent):
+        (DOM::Selection::assignBaseAndExtent):
+        (DOM::Selection::assignStart):
+        (DOM::Selection::assignEnd):
+        (DOM::Selection::assignStartAndEnd):
+        (DOM::operator==):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::jumpToSelection):
+        (KWQKHTMLPart::selectionStartOffset):
+        (KWQKHTMLPart::selectionEndOffset):
+        (KWQKHTMLPart::selectionStart):
+        (KWQKHTMLPart::selectionEnd):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (writeSelection):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge isSelectionEditable]):
+        (-[WebCoreBridge setSelectionFrom:startOffset:to:endOffset:]):
+        (-[WebCoreBridge setSelectedDOMRange:]):
+
 2004-04-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -26,6 +26,8 @@
 #ifndef __dom_selection_h__
 #define __dom_selection_h__
 
+#include "xml/dom_position.h"
+
 class KHTMLPart;
 class QPainter;
 class QRect;
@@ -44,12 +46,10 @@ class Selection
 {
 public:
     Selection();
-    Selection(NodeImpl *node, long offset);
     Selection(const Position &);
     Selection(const Position &, const Position &);
-    Selection(NodeImpl *startNode, long startOffset, NodeImpl *endNode, long endOffset);
     Selection(const Selection &);
-    ~Selection();
+    ~Selection() {}
 
 	enum EState { NONE, CARET, RANGE };
 	enum EAlter { MOVE, EXTEND };
@@ -58,36 +58,27 @@ public:
 
 	EState state() const { return m_state; }
 
-    void moveTo(NodeImpl *node, long offset);
     void moveTo(const Range &);
-    void moveTo(const Position &);
     void moveTo(const Selection &);
-    void moveTo(NodeImpl *baseNode, long baseOffset, NodeImpl *extentNode, long extentOffset);
+    void moveTo(const Position &);
+    void moveTo(const Position &, const Position &);
     bool modify(EAlter, EDirection, ETextGranularity);
     bool expandUsingGranularity(ETextGranularity);
     void clear();
 
     bool moveToRenderedContent();
     
-    void setBase(NodeImpl *node, long offset);
-    void setExtent(NodeImpl *node, long offset);
+    void setBase(const Position &pos);
+    void setExtent(const Position &pos);
+    void setBaseAndExtent(const Position &base, const Position &extent);
+    void setStart(const Position &pos);
+    void setEnd(const Position &pos);
+    void setStartAndEnd(const Position &start, const Position &end);
 
-    NodeImpl *baseNode() const { return m_baseNode; }
-    long baseOffset() const { return m_baseOffset; }
-
-    NodeImpl *extentNode() const { return m_extentNode; }
-    long extentOffset() const { return m_extentOffset; }
-
-    NodeImpl *startNode() const { return m_startNode; }
-    long startOffset() const { return m_startOffset; }
-
-    NodeImpl *endNode() const { return m_endNode; }
-    long endOffset() const { return m_endOffset; }
-
-    Position basePosition() const;
-    Position extentPosition() const;
-    Position startPosition() const;
-    Position endPosition() const;
+    Position base() const { return m_base; }
+    Position extent() const { return m_extent; }
+    Position start() const { return m_start; }
+    Position end() const { return m_end; }
 
     void setNeedsLayout(bool flag=true);
     void clearModifyBias() { m_modifyBiasSet = false; }
@@ -96,7 +87,6 @@ public:
     bool notEmpty() const { return !isEmpty(); }
     Range toRange() const;
 
-    
     void debugPosition() const;
     void debugRenderer(khtml::RenderObject *r, bool selected) const;
 
@@ -112,53 +102,42 @@ private:
 
     void init();
     void validate(ETextGranularity granularity=CHARACTER);
+    void assignBase(const Position &pos) { m_base = pos; }
+    void assignExtent(const Position &pos) { m_extent = pos; }
+    void assignBaseAndExtent(const Position &base, const Position &extent) { m_base = base; m_extent = extent; }
+    void assignStart(const Position &pos) { m_start = pos; }
+    void assignEnd(const Position &pos) { m_end = pos; }
+    void assignStartAndEnd(const Position &start, const Position &end) { m_start = start; m_end = end; }
 
     void layoutCaret();
     void needsCaretRepaint();
     QRect getRepaintRect();
     void paintCaret(QPainter *p, const QRect &rect);
 
-	void setBaseNode(NodeImpl *);
-	void setBaseOffset(long);
-	void setExtentNode(NodeImpl *);
-	void setExtentOffset(long);
-
-	void setStartNode(NodeImpl *);
-	void setStartOffset(long);
-	void setEndNode(NodeImpl *);
-	void setEndOffset(long);
-
     bool nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2);
-
-    void calculateStartAndEnd(ETextGranularity select=CHARACTER);
     int xPosForVerticalArrowNavigation(EPositionType, bool recalc=false) const;
-    
-    NodeImpl *m_baseNode;    // base node for the selection
-    long m_baseOffset;            // offset into base node where selection is
-    NodeImpl *m_extentNode;  // extent node for the selection
-    long m_extentOffset;          // offset into extent node where selection is
 
-    NodeImpl *m_startNode;   // start node for the selection (read-only)
-    long m_startOffset;           // offset into start node where selection is (read-only)
-    NodeImpl *m_endNode;     // end node for the selection (read-only)
-    long m_endOffset;             // offset into end node where selection is (read-only)
+    Position m_base;              // base position for the selection
+    Position m_extent;            // extent position for the selection
+    Position m_start;             // start position for the selection
+    Position m_end;               // end position for the selection
 
 	EState m_state;               // the state of the selection
 
-	int m_caretX;
+	int m_caretX;                 // caret coordinates and size
 	int m_caretY;
 	int m_caretSize;
 
 	bool m_baseIsStart : 1;       // true if base node is before the extent node
 	bool m_needsCaretLayout : 1;  // true if the caret position needs to be calculated
-	bool m_modifyBiasSet : 1;     // true if the selection has been modified with EAlter::EXTEND
+	bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
+                                  // modified with EAlter::EXTEND
 };
 
 
 inline bool operator==(const Selection &a, const Selection &b)
 {
-    return a.startNode() == b.startNode() && a.startOffset() == b.startOffset() &&
-        a.endNode() == b.endNode() && a.endOffset() == b.endOffset();
+    return a.start() == b.start() && a.end() == b.end();
 }
 
 inline bool operator!=(const Selection &a, const Selection &b)

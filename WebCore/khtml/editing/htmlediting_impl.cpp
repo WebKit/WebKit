@@ -726,14 +726,14 @@ void DeleteCollapsibleWhitespaceCommandImpl::doApply()
 {
     int state = m_selectionToCollapse.state();
     if (state == Selection::CARET) {
-        Position endPosition = deleteWhitespace(m_selectionToCollapse.startPosition());
+        Position endPosition = deleteWhitespace(m_selectionToCollapse.start());
         setEndingSelection(endPosition);
         LOG(Editing, "-----------------------------------------------------\n");
     }
     else if (state == Selection::RANGE) {
-        Position startPosition = deleteWhitespace(m_selectionToCollapse.startPosition());
+        Position startPosition = deleteWhitespace(m_selectionToCollapse.start());
         LOG(Editing, "-----------------------------------------------------\n");
-        Position endPosition = m_selectionToCollapse.endPosition();
+        Position endPosition = m_selectionToCollapse.end();
         if (m_charactersDeleted > 0 && startPosition.node() == endPosition.node()) {
             LOG(Editing, "adjust end position by %d\n", m_charactersDeleted);
             endPosition = Position(endPosition.node(), endPosition.offset() - m_charactersDeleted);
@@ -775,7 +775,7 @@ void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
     if (selection.state() != Selection::CARET)
         return;
 
-    Position pos = selection.startPosition();
+    Position pos(selection.start());
     
     if (!pos.node()->isTextNode())
         return;
@@ -844,10 +844,10 @@ void DeleteSelectionCommandImpl::doApply()
     Position endingPosition;
     bool adjustEndingPositionDownstream = false;
 
-    Position upstreamStart = selection.startPosition().equivalentUpstreamPosition();
-    Position downstreamStart = selection.startPosition().equivalentDownstreamPosition();
-    Position upstreamEnd = selection.endPosition().equivalentUpstreamPosition();
-    Position downstreamEnd = selection.endPosition().equivalentDownstreamPosition();
+    Position upstreamStart(selection.start().equivalentUpstreamPosition());
+    Position downstreamStart(selection.start().equivalentDownstreamPosition());
+    Position upstreamEnd(selection.end().equivalentUpstreamPosition());
+    Position downstreamEnd(selection.end().equivalentDownstreamPosition());
 
     bool onlyWhitespace = containsOnlyWhitespace(upstreamStart, downstreamEnd);
  
@@ -1081,7 +1081,7 @@ void InputNewlineCommandImpl::doApply()
     ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    Position pos = selection.startPosition().equivalentDownstreamPosition();
+    Position pos(selection.start().equivalentDownstreamPosition());
     bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEndOfBlock = pos.isLastRenderedPositionInEditableBlock();
@@ -1110,8 +1110,8 @@ void InputNewlineCommandImpl::doApply()
         LOG(Editing, "input newline case 4");
         ASSERT(pos.node()->isTextNode());
         TextImpl *textNode = static_cast<TextImpl *>(pos.node());
-        TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.startOffset(), exceptionCode));
-        deleteText(textNode, 0, selection.startOffset());
+        TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), exceptionCode));
+        deleteText(textNode, 0, selection.start().offset());
         insertNodeBefore(textBeforeNode, textNode);
         insertNodeBefore(breakNode, textNode);
         textBeforeNode->deref();
@@ -1155,16 +1155,16 @@ void InputTextCommandImpl::deleteCharacter()
 
     Selection selection = endingSelection();
 
-    if (!selection.startNode()->isTextNode())
+    if (!selection.start().node()->isTextNode())
         return;
 
     int exceptionCode = 0;
-    int offset = selection.startOffset() - 1;
-    if (offset >= selection.startNode()->caretMinOffset()) {
-        TextImpl *textNode = static_cast<TextImpl *>(selection.startNode());
+    int offset = selection.start().offset() - 1;
+    if (offset >= selection.start().node()->caretMinOffset()) {
+        TextImpl *textNode = static_cast<TextImpl *>(selection.start().node());
         textNode->deleteData(offset, 1, exceptionCode);
         ASSERT(exceptionCode == 0);
-        selection = Selection(textNode, offset);
+        selection = Selection(Position(textNode, offset));
         setEndingSelection(selection);
         m_charactersAdded--;
     }
@@ -1177,7 +1177,7 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
     Selection selection = endingSelection();
     ASSERT(selection.state() == Selection::CARET);
     
-    Position pos = selection.startPosition();
+    Position pos = selection.start();
     if (adjustDownstream)
         pos = pos.equivalentDownstreamPosition();
     else
@@ -1217,7 +1217,7 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
 void InputTextCommandImpl::execute(const DOMString &text)
 {
     Selection selection = endingSelection();
-    bool adjustDownstream = selection.startPosition().isFirstRenderedPositionOnLine();
+    bool adjustDownstream = selection.start().isFirstRenderedPositionOnLine();
 
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.state() == Selection::RANGE)
@@ -1507,7 +1507,7 @@ void PasteMarkupCommandImpl::doApply()
         NodeImpl *beforeNode = firstChild;
         NodeImpl *node = firstChild->nextSibling();
 
-        insertNodeAt(firstChild, selection.startNode(), selection.startOffset());
+        insertNodeAt(firstChild, selection.start().node(), selection.start().offset());
         
         // Insert the nodes from the fragment
         while (node) {
@@ -1755,7 +1755,7 @@ void TypingCommandImpl::issueCommandForDeleteKey()
     ASSERT(selectionToDelete.state() != Selection::NONE);
     
     if (selectionToDelete.state() == Selection::CARET)
-        selectionToDelete = Selection(selectionToDelete.startPosition().previousCharacterPosition(), selectionToDelete.startPosition());
+        selectionToDelete = Selection(selectionToDelete.start().previousCharacterPosition(), selectionToDelete.start());
     deleteSelection(selectionToDelete);
 }
 

@@ -359,11 +359,11 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     if (selection.state() == Selection::NONE)
         return;
 
-    if (!selection.startPosition().node()->isContentEditable() || !selection.endPosition().node()->isContentEditable())
+    if (!selection.start().node()->isContentEditable() || !selection.end().node()->isContentEditable())
         return;
 
-    Position startPosition = selection.startPosition();
-    Position endPosition = selection.endPosition();
+    Position startPosition = selection.start();
+    Position endPosition = selection.end();
 
     QString startNodeTagName(getTagName(startPosition.node()->id()).string());
     QString endNodeTagName(getTagName(endPosition.node()->id()).string());

@@ -33,7 +33,6 @@
 #include "qrect.h"
 #include "dom/dom2_range.h"
 #include "dom/dom_node.h"
-#include "dom/dom_position.h"
 #include "dom/dom_string.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
@@ -52,69 +51,40 @@
 #define EDIT_DEBUG 0
 #endif
 
-namespace DOM {
-
 using khtml::InlineTextBox;
 using khtml::RenderObject;
 using khtml::RenderText;
 
+namespace DOM {
+
 #if APPLE_CHANGES
 static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset);
 static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset);
-static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, Selection &selection);
+static bool startAndEndLineNodesIncludingNode(NodeImpl *node, int offset, Selection &selection);
 #endif
 
+static inline Position &emptyPosition()
+{
+    static Position EmptyPosition = Position();
+    return EmptyPosition;
+}
 
 Selection::Selection()
 {
     init();
 }
 
-Selection::Selection(NodeImpl *node, long offset)
-{
-    init();
-
-	setBaseNode(node);
-	setExtentNode(node);
-	setBaseOffset(offset);
-	setExtentOffset(offset);
-
-    validate();
-}
-
 Selection::Selection(const Position &pos)
 {
     init();
-
-	setBaseNode(pos.node());
-	setExtentNode(pos.node());
-	setBaseOffset(pos.offset());
-	setExtentOffset(pos.offset());
-
+	assignBaseAndExtent(pos, pos);
     validate();
 }
 
 Selection::Selection(const Position &base, const Position &extent)
 {
     init();
-
-	setBaseNode(base.node());
-	setExtentNode(extent.node());
-	setBaseOffset(base.offset());
-	setExtentOffset(extent.offset());
-
-    validate();
-}
-
-Selection::Selection(NodeImpl *baseNode, long baseOffset, NodeImpl *endNode, long endOffset)
-{
-    init();
-
-	setBaseNode(baseNode);
-	setExtentNode(endNode);
-	setBaseOffset(baseOffset);
-	setExtentOffset(endOffset);
-
+	assignBaseAndExtent(base, extent);
     validate();
 }
 
@@ -122,15 +92,8 @@ Selection::Selection(const Selection &o)
 {
     init();
     
-	setBaseNode(o.baseNode());
-	setExtentNode(o.extentNode());
-	setBaseOffset(o.baseOffset());
-	setExtentOffset(o.extentOffset());
-
-	setStartNode(o.startNode());
-	setEndNode(o.endNode());
-	setStartOffset(o.startOffset());
-	setEndOffset(o.endOffset());
+	assignBaseAndExtent(o.base(), o.extent());
+	assignStartAndEnd(o.start(), o.end());
 
     m_state = o.m_state;
 
@@ -152,14 +115,7 @@ Selection::Selection(const Selection &o)
 
 void Selection::init()
 {
-    m_baseNode = 0;
-    m_baseOffset = 0;
-    m_extentNode = 0; 
-    m_extentOffset = 0;
-    m_startNode = 0;
-    m_startOffset = 0;
-    m_endNode = 0;
-    m_endOffset = 0;
+    m_base = m_extent = m_start = m_end = emptyPosition();
     m_state = NONE; 
     m_caretX = 0;
     m_caretY = 0;
@@ -169,29 +125,10 @@ void Selection::init()
     m_modifyBiasSet = false;
 }
 
-Selection::~Selection()
-{
-    if (m_baseNode)
-        m_baseNode->deref();
-    if (m_extentNode)
-        m_extentNode->deref();
-    if (m_startNode)
-        m_startNode->deref();
-    if (m_endNode)
-        m_endNode->deref();
-}
-
 Selection &Selection::operator=(const Selection &o)
 {
-	setBaseNode(o.baseNode());
-	setExtentNode(o.extentNode());
-	setBaseOffset(o.baseOffset());
-	setExtentOffset(o.extentOffset());
-
-	setStartNode(o.startNode());
-	setEndNode(o.endNode());
-	setStartOffset(o.startOffset());
-	setEndOffset(o.endOffset());
+	assignBaseAndExtent(o.base(), o.extent());
+	assignStartAndEnd(o.start(), o.end());
 
     m_state = o.m_state;
 
@@ -213,34 +150,27 @@ Selection &Selection::operator=(const Selection &o)
     return *this;
 }
 
-void Selection::moveTo(DOM::NodeImpl *node, long offset)
+void Selection::moveTo(const Range &r)
 {
-    moveTo(node, offset, node, offset);
-}
-
-void Selection::moveTo(const DOM::Range &r)
-{
-	moveTo(r.startContainer().handle(), r.startOffset(), 
-		r.endContainer().handle(), r.endOffset());
-}
-
-void Selection::moveTo(const DOM::Position &pos)
-{
-	moveTo(pos.node(), pos.offset());
+    Position start(r.startContainer().handle(), r.startOffset());
+    Position end(r.endContainer().handle(), r.endOffset());
+	moveTo(start, end);
 }
 
 void Selection::moveTo(const Selection &o)
 {
-	moveTo(o.baseNode(), o.baseOffset(), o.extentNode(), o.extentOffset());
+	moveTo(o.start(), o.end());
 }
 
-void Selection::moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset)
+void Selection::moveTo(const Position &pos)
 {
-	setBaseNode(baseNode);
-	setExtentNode(extentNode);
-	setBaseOffset(baseOffset);
-	setExtentOffset(extentOffset);
-	validate();
+	moveTo(pos, pos);
+}
+
+void Selection::moveTo(const Position &base, const Position &extent)
+{
+	assignBaseAndExtent(base, extent);
+    validate();
 }
 
 bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularity)
@@ -254,29 +184,26 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
             if (alter == EXTEND) {
                 if (!m_modifyBiasSet) {
                     m_modifyBiasSet = true;
-                    setBaseNode(startNode());
-                    setBaseOffset(startOffset());
-                    setExtentNode(endNode());
-                    setExtentOffset(endOffset());
+                    assignBaseAndExtent(start(), end());
                 }
                 if (granularity == CHARACTER)
-                    pos = extentPosition().nextCharacterPosition();
+                    pos = extent().nextCharacterPosition();
                 else if (granularity == WORD)
-                    pos = extentPosition().nextWordPosition();
+                    pos = extent().nextWordPosition();
             }
             else {
                 m_modifyBiasSet = false;
                 if (state() == RANGE) {
                     if (granularity == CHARACTER)
-                        pos = endPosition();
+                        pos = end();
                     else if (granularity == WORD)
-                        pos = extentPosition().nextWordPosition();
+                        pos = extent().nextWordPosition();
                 }
                 else {
                     if (granularity == CHARACTER)
-                        pos = extentPosition().nextCharacterPosition();
+                        pos = extent().nextCharacterPosition();
                     else if (granularity == WORD)
-                        pos = extentPosition().nextWordPosition();
+                        pos = extent().nextWordPosition();
                 }
             }
             break;
@@ -286,29 +213,26 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
             if (alter == EXTEND) {
                 if (!m_modifyBiasSet) {
                     m_modifyBiasSet = true;
-                    setBaseNode(endNode());
-                    setBaseOffset(endOffset());
-                    setExtentNode(startNode());
-                    setExtentOffset(startOffset());
+                    assignBaseAndExtent(end(), start());
                 }
                 if (granularity == CHARACTER)
-                    pos = extentPosition().previousCharacterPosition();
+                    pos = extent().previousCharacterPosition();
                 else if (granularity == WORD)
-                    pos = extentPosition().previousWordPosition();
+                    pos = extent().previousWordPosition();
             }
             else {
                 m_modifyBiasSet = false;
                 if (state() == RANGE) {
                     if (granularity == CHARACTER)
-                        pos = startPosition();
+                        pos = start();
                     else if (granularity == WORD)
-                        pos = extentPosition().previousWordPosition();
+                        pos = extent().previousWordPosition();
                 }
                 else {
                     if (granularity == CHARACTER)
-                        pos = extentPosition().previousCharacterPosition();
+                        pos = extent().previousCharacterPosition();
                     else if (granularity == WORD)
-                        pos = extentPosition().previousWordPosition();
+                        pos = extent().previousWordPosition();
                 }
             }
             break;
@@ -316,32 +240,26 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
             if (alter == EXTEND) {
                 if (!m_modifyBiasSet) {
                     m_modifyBiasSet = true;
-                    setBaseNode(endNode());
-                    setBaseOffset(endOffset());
-                    setExtentNode(startNode());
-                    setExtentOffset(startOffset());
+                    assignBaseAndExtent(end(), start());
                 }
-                pos = extentPosition().previousLinePosition(xPosForVerticalArrowNavigation(EXTENT));
+                pos = extent().previousLinePosition(xPosForVerticalArrowNavigation(EXTENT));
             }
             else {
                 m_modifyBiasSet = false;
-                pos = startPosition().previousLinePosition(xPosForVerticalArrowNavigation(START, state()==RANGE));
+                pos = start().previousLinePosition(xPosForVerticalArrowNavigation(START, state()==RANGE));
             }
             break;
         case DOWN:
             if (alter == EXTEND) {
                 if (!m_modifyBiasSet) {
                     m_modifyBiasSet = true;
-                    setBaseNode(startNode());
-                    setBaseOffset(startOffset());
-                    setExtentNode(endNode());
-                    setExtentOffset(endOffset());
+                    assignBaseAndExtent(start(), end());
                 }
-                pos = extentPosition().nextLinePosition(xPosForVerticalArrowNavigation(EXTENT));
+                pos = extent().nextLinePosition(xPosForVerticalArrowNavigation(EXTENT));
             }
             else {
                 m_modifyBiasSet = false;
-                pos = endPosition().nextLinePosition(xPosForVerticalArrowNavigation(END, state()==RANGE));
+                pos = end().nextLinePosition(xPosForVerticalArrowNavigation(END, state()==RANGE));
             }
             break;
     }
@@ -350,9 +268,9 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
         return false;
     
     if (alter == MOVE)
-        moveTo(pos.node(), pos.offset());
+        moveTo(pos);
     else // alter == EXTEND
-        setExtent(pos.node(), pos.offset());
+        setExtent(pos);
     
     return true;
 }
@@ -376,16 +294,16 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
     Position pos;
     switch (type) {
         case START:
-            pos = startPosition();
+            pos = start();
             break;
         case END:
-            pos = endPosition();
+            pos = end();
             break;
         case BASE:
-            pos = basePosition();
+            pos = base();
             break;
         case EXTENT:
-            pos = extentPosition();
+            pos = extent();
             break;
     }
 
@@ -407,25 +325,44 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
 
 void Selection::clear()
 {
-	setBaseNode(0);
-	setExtentNode(0);
-	setBaseOffset(0);
-	setExtentOffset(0);
+	assignBaseAndExtent(emptyPosition(), emptyPosition());
 	validate();
 }
 
-void Selection::setBase(DOM::NodeImpl *node, long offset)
+void Selection::setBase(const Position &pos)
 {
-	setBaseNode(node);
-	setBaseOffset(offset);
-	validate();
+    assignBase(pos);
+    validate();
 }
 
-void Selection::setExtent(DOM::NodeImpl *node, long offset)
+void Selection::setExtent(const Position &pos)
 {
-	setExtentNode(node);
-	setExtentOffset(offset);
-	validate();
+    assignExtent(pos);
+    validate();
+}
+
+void Selection::setBaseAndExtent(const Position &base, const Position &extent)
+{
+    assignBaseAndExtent(base, extent);
+    validate();
+}
+
+void Selection::setStart(const Position &pos)
+{
+    assignStart(pos);
+    validate();
+}
+
+void Selection::setEnd(const Position &pos)
+{
+    assignEnd(pos);
+    validate();
+}
+
+void Selection::setStartAndEnd(const Position &start, const Position &end)
+{
+    assignStartAndEnd(start, end);
+    validate();
 }
 
 void Selection::setNeedsLayout(bool flag)
@@ -438,17 +375,17 @@ Range Selection::toRange() const
     if (isEmpty())
         return Range();
 
-    return Range(Node(startNode()), startOffset(), Node(endNode()), endOffset());
+    return Range(Node(start().node()), start().offset(), Node(end().node()), end().offset());
 }
 
 void Selection::layoutCaret()
 {
-    if (isEmpty() || !startNode()->renderer()) {
+    if (isEmpty() || !start().node()->renderer()) {
         m_caretX = m_caretY = m_caretSize = 0;
     }
     else {
         int w;
-        startNode()->renderer()->caretPos(startOffset(), true, m_caretX, m_caretY, w, m_caretSize);
+        start().node()->renderer()->caretPos(start().offset(), true, m_caretX, m_caretY, w, m_caretSize);
     }
 
     m_needsCaretLayout = false;
@@ -465,10 +402,10 @@ void Selection::needsCaretRepaint()
     if (isEmpty())
         return;
 
-    if (!startNode()->getDocument())
+    if (!start().node()->getDocument())
         return;
 
-    KHTMLView *v = startNode()->getDocument()->view();
+    KHTMLView *v = start().node()->getDocument()->view();
     if (!v)
         return;
 
@@ -502,7 +439,7 @@ void Selection::paintCaret(QPainter *p, const QRect &rect)
         return;
 
     if (m_needsCaretLayout) {
-        Position pos = Position(startNode(), startOffset());
+        Position pos = start();
         if (!pos.inRenderedContent()) {
             moveToRenderedContent();
         }
@@ -520,126 +457,37 @@ void Selection::paintCaret(QPainter *p, const QRect &rect)
     }
 }
 
-void Selection::setBaseNode(DOM::NodeImpl *node)
-{
-	if (m_baseNode == node)
-		return;
-
-	if (m_baseNode)
-		m_baseNode->deref();
-	
-	m_baseNode = node;
-	
-	if (m_baseNode)
-		m_baseNode->ref();
-}
-
-void Selection::setBaseOffset(long offset)
-{
-	m_baseOffset = offset;
-}
-
-void Selection::setExtentNode(DOM::NodeImpl *node)
-{
-	if (m_extentNode == node)
-		return;
-
-	if (m_extentNode)
-		m_extentNode->deref();
-	
-	m_extentNode = node;
-	
-	if (m_extentNode)
-		m_extentNode->ref();
-}
-	
-void Selection::setExtentOffset(long offset)
-{
-	m_extentOffset = offset;
-}
-
-void Selection::setStartNode(DOM::NodeImpl *node)
-{
-	if (m_startNode == node)
-		return;
-
-	if (m_startNode)
-		m_startNode->deref();
-	
-	m_startNode = node;
-	
-	if (m_startNode)
-		m_startNode->ref();
-}
-
-void Selection::setStartOffset(long offset)
-{
-	m_startOffset = offset;
-}
-
-void Selection::setEndNode(DOM::NodeImpl *node)
-{
-	if (m_endNode == node)
-		return;
-
-	if (m_endNode)
-		m_endNode->deref();
-	
-	m_endNode = node;
-	
-	if (m_endNode)
-		m_endNode->ref();
-}
-	
-void Selection::setEndOffset(long offset)
-{
-	m_endOffset = offset;
-}
-
 void Selection::validate(ETextGranularity granularity)
 {
     // move the base and extent nodes to their equivalent leaf positions
-    bool baseAndExtentEqual = m_baseNode == m_extentNode && m_baseOffset == m_extentOffset;
-    if (m_baseNode) {
-        Position pos = basePosition().equivalentLeafPosition();
-        m_baseNode = pos.node();
-        m_baseOffset = pos.offset();
-        if (baseAndExtentEqual) {
-            m_extentNode = pos.node();
-            m_extentOffset = pos.offset();
-        }
+    bool baseAndExtentEqual = base() == extent();
+    if (base().notEmpty()) {
+        Position pos = base().equivalentLeafPosition();
+        assignBase(pos);
+        if (baseAndExtentEqual)
+            assignExtent(pos);
     }
-    if (m_extentNode && !baseAndExtentEqual) {
-        Position pos = extentPosition().equivalentLeafPosition();
-        m_extentNode = pos.node();
-        m_extentOffset = pos.offset();
+    if (extent().notEmpty() && !baseAndExtentEqual) {
+        assignExtent(extent().equivalentLeafPosition());
     }
 
     // make sure we do not have a dangling start or end
-	if (!m_baseNode && !m_extentNode) {
-        setBaseOffset(0);
-        setExtentOffset(0);
+	if (base().isEmpty() && extent().isEmpty()) {
+        assignStartAndEnd(emptyPosition(), emptyPosition());
         m_baseIsStart = true;
     }
-	else if (!m_baseNode) {
-		setBaseNode(m_extentNode);
-		setBaseOffset(m_extentOffset);
-        m_baseIsStart = true;
-	}
-	else if (!m_extentNode) {
-		setExtentNode(m_baseNode);
-		setExtentOffset(m_baseOffset);
+	else if (base().isEmpty() || extent().isEmpty()) {
         m_baseIsStart = true;
 	}
     else {
         // adjust m_baseIsStart as needed
-        if (m_baseNode == m_extentNode) {
-            if (m_baseOffset > m_extentOffset)
+        if (base().node() == extent().node()) {
+            if (base().offset() > extent().offset())
                 m_baseIsStart = false;
             else 
                 m_baseIsStart = true;
         }
-        else if (nodeIsBeforeNode(m_baseNode, m_extentNode))
+        else if (nodeIsBeforeNode(base().node(), extent().node()))
             m_baseIsStart = true;
         else
             m_baseIsStart = false;
@@ -647,101 +495,73 @@ void Selection::validate(ETextGranularity granularity)
 
     // calculate the correct start and end positions
 #if !APPLE_CHANGES
-    if (m_baseIsStart) {
-        setStartNode(m_baseNode);
-        setStartOffset(m_baseOffset);
-        setEndNode(m_extentNode);
-        setEndOffset(m_extentOffset);
-    }
-    else {
-        setStartNode(m_extentNode);
-        setStartOffset(m_extentOffset);
-        setEndNode(m_baseNode);
-        setEndOffset(m_baseOffset);
-    }
+    if (m_baseIsStart)
+        assignStartAndEnd(base(), extent());
+    else
+        assignStartAndEnd(extent(), base());
 #else
     if (granularity == CHARACTER) {
-        if (m_baseIsStart) {
-            setStartNode(m_baseNode);
-            setStartOffset(m_baseOffset);
-            setEndNode(m_extentNode);
-            setEndOffset(m_extentOffset);
-        }
-        else {
-            setStartNode(m_extentNode);
-            setStartOffset(m_extentOffset);
-            setEndNode(m_baseNode);
-            setEndOffset(m_baseOffset);
-        }
+        if (m_baseIsStart)
+            assignStartAndEnd(base(), extent());
+        else
+            assignStartAndEnd(extent(), base());
     }
     else if (granularity == WORD) {
-        int baseStartOffset = m_baseOffset;
-        int baseEndOffset = m_baseOffset;
-        int extentStartOffset = m_extentOffset;
-        int extentEndOffset = m_extentOffset;
-        if (m_baseNode && (m_baseNode->nodeType() == Node::TEXT_NODE || m_baseNode->nodeType() == Node::CDATA_SECTION_NODE)) {
-            DOMString t = m_baseNode->nodeValue();
+        int baseStartOffset = base().offset();
+        int baseEndOffset = base().offset();
+        int extentStartOffset = extent().offset();
+        int extentEndOffset = extent().offset();
+        if (base().notEmpty() && (base().node()->nodeType() == Node::TEXT_NODE || base().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
+            DOMString t = base().node()->nodeValue();
             QChar *chars = t.unicode();
             uint len = t.length();
-            KWQFindWordBoundary(chars, len, m_baseOffset, &baseStartOffset, &baseEndOffset);
+            KWQFindWordBoundary(chars, len, base().offset(), &baseStartOffset, &baseEndOffset);
         }
-        if (m_extentNode && (m_extentNode->nodeType() == Node::TEXT_NODE || m_extentNode->nodeType() == Node::CDATA_SECTION_NODE)) {
-            DOMString t = m_extentNode->nodeValue();
+        if (extent().notEmpty() && (extent().node()->nodeType() == Node::TEXT_NODE || extent().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
+            DOMString t = extent().node()->nodeValue();
             QChar *chars = t.unicode();
             uint len = t.length();
-            KWQFindWordBoundary(chars, len, m_extentOffset, &extentStartOffset, &extentEndOffset);
+            KWQFindWordBoundary(chars, len, extent().offset(), &extentStartOffset, &extentEndOffset);
         }
         if (m_baseIsStart) {
-            setStartNode(m_baseNode);
-            setStartOffset(baseStartOffset);
-            setEndNode(m_extentNode);
-            setEndOffset(extentEndOffset);
+            assignStart(Position(base().node(), baseStartOffset));
+            assignEnd(Position(extent().node(), extentEndOffset));
         }
         else {
-            setStartNode(m_extentNode);
-            setStartOffset(extentStartOffset);
-            setEndNode(m_baseNode);
-            setEndOffset(baseEndOffset);
+            assignStart(Position(extent().node(), extentStartOffset));
+            assignEnd(Position(base().node(), baseEndOffset));
         }
     }
-    else {  // granularity == LINE
+    else {  // granularity == LINE 
         Selection baseSelection = *this;
         Selection extentSelection = *this;
-        if (m_baseNode && (m_baseNode->nodeType() == Node::TEXT_NODE || m_baseNode->nodeType() == Node::CDATA_SECTION_NODE)) {
-            if (startAndEndLineNodesIncludingNode(m_baseNode, m_baseOffset, baseSelection)) {
-                setStartNode(baseSelection.baseNode());
-                setStartOffset(baseSelection.baseOffset());
-                setEndNode(baseSelection.extentNode());
-                setEndOffset(baseSelection.extentOffset());
+        if (base().notEmpty() && (base().node()->nodeType() == Node::TEXT_NODE || base().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
+            if (startAndEndLineNodesIncludingNode(base().node(), base().offset(), baseSelection)) {
+                assignStart(Position(baseSelection.base().node(), baseSelection.base().offset()));
+                assignEnd(Position(baseSelection.extent().node(), baseSelection.extent().offset()));
             }
         }
-        if (m_extentNode && (m_extentNode->nodeType() == Node::TEXT_NODE || m_extentNode->nodeType() == Node::CDATA_SECTION_NODE)) {
-            if (startAndEndLineNodesIncludingNode(m_extentNode, m_extentOffset, extentSelection)) {
-                setStartNode(extentSelection.baseNode());
-                setStartOffset(extentSelection.baseOffset());
-                setEndNode(extentSelection.extentNode());
-                setEndOffset(extentSelection.extentOffset());
+        if (extent().notEmpty() && (extent().node()->nodeType() == Node::TEXT_NODE || extent().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
+            if (startAndEndLineNodesIncludingNode(extent().node(), extent().offset(), extentSelection)) {
+                assignStart(Position(extentSelection.base().node(), extentSelection.base().offset()));
+                assignEnd(Position(extentSelection.extent().node(), extentSelection.extent().offset()));
             }
         }
         if (m_baseIsStart) {
-            setStartNode(baseSelection.startNode());
-            setStartOffset(baseSelection.startOffset());
-            setEndNode(extentSelection.endNode());
-            setEndOffset(extentSelection.endOffset());
+            assignStart(baseSelection.start());
+            assignEnd(extentSelection.end());
         }
         else {
-            setStartNode(extentSelection.startNode());
-            setStartOffset(extentSelection.startOffset());
-            setEndNode(baseSelection.endNode());
-            setEndOffset(baseSelection.endOffset());
+            assignStart(extentSelection.start());
+            assignEnd(baseSelection.end());
         }
     }
 #endif  // APPLE_CHANGES
 
 	// adjust the state
-	if (!m_startNode && !m_endNode)
+	if (start().isEmpty() && end().isEmpty())
 		m_state = NONE;
-	else if (m_startNode == m_endNode && m_startOffset == m_endOffset)
+	else if (start() == end())
 		m_state = CARET;
 	else
 		m_state = RANGE;
@@ -761,7 +581,7 @@ bool Selection::moveToRenderedContent()
     if (m_state != CARET)
         return false;
 
-    Position pos = Position(startNode(), startOffset());
+    Position pos = start();
     if (pos.inRenderedContent())
         return true;
         
@@ -782,26 +602,6 @@ bool Selection::moveToRenderedContent()
     return false;
 }
 
-Position Selection::basePosition() const
-{
-    return Position(baseNode(), baseOffset());
-}
-
-Position Selection::extentPosition() const
-{
-    return Position(extentNode(), extentOffset());
-}
-
-Position Selection::startPosition() const
-{
-    return Position(startNode(), startOffset());
-}
-
-Position Selection::endPosition() const
-{
-    return Position(endNode(), endOffset());
-}
-
 bool Selection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) 
 {
 	if (!n1 || !n2) 
@@ -815,7 +615,7 @@ bool Selection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2)
     int n2Depth = 0;
 
     // First we find the depths of the two nodes in the tree (n1Depth, n2Depth)
-    DOM::NodeImpl *n = n1;
+    NodeImpl *n = n1;
     while (n->parentNode()) {
         n = n->parentNode();
         n1Depth++;
@@ -914,7 +714,7 @@ static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long 
     }
 }
 
-static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, Selection &selection)
+static bool startAndEndLineNodesIncludingNode(NodeImpl *node, int offset, Selection &selection)
 {
     if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)) {
         int pos;
@@ -935,8 +735,8 @@ static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, S
         
         renderNode = renderNode->firstChild();
         
-        DOM::NodeImpl *startNode = 0;
-        DOM::NodeImpl *endNode = 0;
+        NodeImpl *startNode = 0;
+        NodeImpl *endNode = 0;
         long startOffset;
         long endOffset;
         
@@ -950,7 +750,7 @@ static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, S
         if (!lastRunAt (renderNode, selectionPointY, endNode, endOffset))
             return false;
         
-        selection.moveTo(startNode, startOffset, endNode, endOffset);
+        selection.moveTo(Position(startNode, startOffset), Position(endNode, endOffset));
         
         return true;
     }
@@ -975,10 +775,10 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
         int textLength = text.length();
         if (selected) {
             int offset = 0;
-            if (r->node() == startNode())
-                offset = startOffset();
-            else if (r->node() == endNode())
-                offset = endOffset();
+            if (r->node() == start().node())
+                offset = start().offset();
+            else if (r->node() == end().node())
+                offset = end().offset();
                 
             int pos;
             InlineTextBox *box = textRenderer->findNextInlineTextBox(offset, pos);
@@ -1032,7 +832,7 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
 
 void Selection::debugPosition() const
 {
-    if (!startNode())
+    if (!start().node())
         return;
 
     //static int context = 5;
@@ -1041,8 +841,8 @@ void Selection::debugPosition() const
 
     fprintf(stderr, "Selection =================\n");
 
-    if (startPosition() == endPosition()) {
-        Position pos = startPosition();
+    if (start() == end()) {
+        Position pos = start();
         Position upstream = pos.equivalentUpstreamPosition();
         Position downstream = pos.equivalentDownstreamPosition();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
@@ -1050,14 +850,14 @@ void Selection::debugPosition() const
         fprintf(stderr, "downstream: %s %p:%d\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
     }
     else {
-        Position pos = startPosition();
+        Position pos = start();
         Position upstream = pos.equivalentUpstreamPosition();
         Position downstream = pos.equivalentDownstreamPosition();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
         fprintf(stderr, "start:      %s %p:%d\n", getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "downstream: %s %p:%d\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
         fprintf(stderr, "-----------------------------------\n");
-        pos = endPosition();
+        pos = end();
         upstream = pos.equivalentUpstreamPosition();
         downstream = pos.equivalentDownstreamPosition();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
@@ -1068,7 +868,7 @@ void Selection::debugPosition() const
           
 #if 0
     int back = 0;
-    r = startNode()->renderer();
+    r = start().node()->renderer();
     for (int i = 0; i < context; i++, back++) {
         if (r->previousRenderer())
             r = r->previousRenderer();
@@ -1083,15 +883,15 @@ void Selection::debugPosition() const
 
     fprintf(stderr, "\n");
 
-    if (startNode() == endNode())
-        debugRenderer(startNode()->renderer(), true);
+    if (start().node() == end().node())
+        debugRenderer(start().node()->renderer(), true);
     else
-        for (r = startNode()->renderer(); r && r != endNode()->renderer(); r = r->nextRenderer())
+        for (r = start().node()->renderer(); r && r != end().node()->renderer(); r = r->nextRenderer())
             debugRenderer(r, true);
     
     fprintf(stderr, "\n");
     
-    r = endNode()->renderer();
+    r = end().node()->renderer();
     for (int i = 0; i < context; i++) {
         if (r->nextRenderer()) {
             r = r->nextRenderer();

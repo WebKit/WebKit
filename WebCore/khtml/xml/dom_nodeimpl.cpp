@@ -2068,7 +2068,7 @@ void NodeBaseImpl::setFocus(bool received)
 
     if (received && isEditableBlock() && !hasChildNodes()) {
         KHTMLPart *part = getDocument()->part();
-        part->setSelection(Selection(this, 0));
+        part->setSelection(Selection(Position(this, 0)));
     }
 
     // note that we need to recalc the style

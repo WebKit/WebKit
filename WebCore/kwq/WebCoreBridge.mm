@@ -29,6 +29,7 @@
 #import "dom_node.h"
 #import "dom_docimpl.h"
 #import "dom_nodeimpl.h"
+#import "dom_position.h"
 #import "dom_selection.h"
 #import "dom2_rangeimpl.h"
 #import "htmlediting.h"
@@ -88,6 +89,7 @@ using DOM::HTMLImageElementImpl;
 using DOM::HTMLInputElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
+using DOM::Position;
 using DOM::Range;
 using DOM::Selection;
 
@@ -387,7 +389,7 @@ static bool initializedKJS = FALSE;
 - (BOOL)isSelectionEditable
 {
     // EDIT FIXME: This needs to consider the entire selected range
-	NodeImpl *startNode = _part->selection().startNode();
+	NodeImpl *startNode = _part->selection().start().node();
 	return startNode ? startNode->isContentEditable() : NO;
 }
 
@@ -1079,10 +1081,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset
 {
-    DOMNode *startNode = start;
-    DOMNode *endNode = end;
-    Selection selection([startNode _nodeImpl], startOffset, [endNode _nodeImpl], endOffset);
-    _part->setSelection(selection);
+    Position s([start _nodeImpl], startOffset);
+    Position e([end _nodeImpl], endOffset);
+    _part->setSelection(Selection(s, e));
 }
 
 - (NSAttributedString *)selectedAttributedString
@@ -1365,7 +1366,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     DocumentImpl *doc = startContainer->getDocument();
     doc->updateLayout();
-    Selection selection(startContainer, [range startOffset], endContainer, [range endOffset]);
+    Selection selection(Position(startContainer, [range startOffset]), Position(endContainer, [range endOffset]));
     _part->setSelection(selection);
 }
 

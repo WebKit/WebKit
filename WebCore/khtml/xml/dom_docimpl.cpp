@@ -1212,9 +1212,9 @@ void DocumentImpl::updateSelection()
         canvas->clearSelection();
     }
     else {
-        RenderObject *startRenderer = s.startNode() ? s.startNode()->renderer() : 0;
-        RenderObject *endRenderer = s.endNode() ? s.endNode()->renderer() : 0;
-        static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, s.startOffset(), endRenderer, s.endOffset());
+        RenderObject *startRenderer = s.start().node() ? s.start().node()->renderer() : 0;
+        RenderObject *endRenderer = s.end().node() ? s.end().node()->renderer() : 0;
+        static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, s.start().offset(), endRenderer, s.end().offset());
     }
 }
 
