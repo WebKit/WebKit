@@ -871,9 +871,6 @@ cleanup:
         totalWidth += lastWidth;       
     }
 
-    if (applyRounding)
-        totalWidth += ceil(totalWidth) - totalWidth;
-        
     return totalWidth;
 }
 

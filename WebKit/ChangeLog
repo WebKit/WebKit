@@ -1,3 +1,17 @@
+2002-09-11  Richard Williamson (Local)  <rjw@apple.com>
+
+        Remove ceiling of text width at end of fragment.  This was screwing up
+        intra fragment text measurements.
+        
+        Selection of justified text is still screwed up.  This is a fundamental problem
+        in khtml and will require  a rewrite of their justification code.  Konq has the
+        same problems selecting justified text.  The drawing of code applies the justification
+        factor, but checking the selection doesn't add the justification factor, so selection
+        will be incorrect by the justification amount.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:applyRounding:attemptFontSubstitution:]):
+
 2002-09-11  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebFrame.m: (-[WebFrame reload:]): Use the current
