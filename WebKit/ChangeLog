@@ -1,3 +1,20 @@
+2004-09-02  Richard Williamson   <rjw@apple.com>
+
+        Support for patterns in <canvas>.  
+        (These changes attempt to create a CGImageRef from a WebImageRenderer that
+        is used by the pattern drawing function.)
+        
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer dealloc]):
+        (-[WebImageRenderer finalize]):
+        (-[WebImageRenderer imageRef]):
+        (_createImageRef):
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+
 2004-09-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed deployment build failure.

@@ -104,6 +104,11 @@ QPixmap::~QPixmap()
     KWQRelease(imageRenderer);
 }
 
+CGImageRef QPixmap::imageRef()
+{
+    return [imageRenderer imageRef];
+}
+
 bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete)
 {
     if (imageRenderer == nil) {

@@ -149,6 +149,16 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     }
 }
 
+- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag wrap: (BOOL)wrapFlag;
+{
+    BOOL lastFindWasSuccessful = NO;
+    
+    // FIXME:  Insert find code here when ready.
+    
+    return lastFindWasSuccessful;
+}
+
+
 @end
 
 #endif //MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3

@@ -1,3 +1,23 @@
+2004-09-02  Richard Williamson   <rjw@apple.com>
+
+	Support for patterns in <canvas>
+
+        Reviewed by Hyatt.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+        (Context2D::putValue):
+        (drawPattern):
+        (ImagePattern::ImagePattern):
+        (ImagePattern::~ImagePattern):
+        * khtml/ecma/kjs_html.h:
+        (KJS::ImagePattern::getPattern):
+        (KJS::ImagePattern::pixmap):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (QPixmap::imageRef):
+        * kwq/WebCoreImageRenderer.h:
+
 2004-09-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3769409, a regression from 10.3.4 to 10.3.5 involving <colgroup>s in malformed HTML.

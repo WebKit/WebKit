@@ -40,4 +40,5 @@
 - (void)increaseUseCount;
 - (void)decreaseUseCount;
 - (void)flushRasterCache;
+- (CGImageRef)imageRef;
 @end

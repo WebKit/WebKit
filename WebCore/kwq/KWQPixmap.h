@@ -88,6 +88,8 @@ public:
     
     void flushRasterCache();
     
+    CGImageRef imageRef();
+    
 private:
 
     WebCoreImageRendererPtr imageRenderer;

@@ -28,6 +28,12 @@ extern NSString *NSImageLoopCount;
 }
 @end
 
+static CGImageRef _createImageRef(NSBitmapImageRep *rep);
+
+@interface NSBitmapImageRep (AppKitInternals)
+- (CGImageRef)_CGImageRef;
+@end
+
 @interface NSFocusStack : NSObject
 @end
 
@@ -390,6 +396,11 @@ static NSMutableSet *activeImageRenderers;
         context = 0;
     }
 
+    if (cachedImageRef) {
+        CGImageRelease (cachedImageRef);
+        cachedImageRef = 0;
+    }
+    
     [_PDFDoc release];
 
     [super dealloc];
@@ -404,6 +415,11 @@ static NSMutableSet *activeImageRenderers;
         CGContextRelease(context);
     }
 
+    if (cachedImageRef) {
+        CGImageRelease (cachedImageRef);
+        cachedImageRef = 0;
+    }
+    
     [super finalize];
 }
 
@@ -816,6 +832,31 @@ static NSMutableSet *activeImageRenderers;
     return MIMEType;
 }
 
+// Try hard to get a CGImageRef.  First try to snag one from the
+// NSBitmapImageRep, then try to create one.  In some cases we may
+// not be able to create one.
+- (CGImageRef)imageRef
+{
+    CGImageRef ref = 0;
+    
+    if (cachedImageRef)
+        return cachedImageRef;
+        
+    if ([[self representations] count] > 0) {
+        NSBitmapImageRep *rep = [[self representations] objectAtIndex:0];
+        
+        if ([rep respondsToSelector:@selector(_CGImageRef)])
+            ref =  [rep _CGImageRef];
+            
+        if (!ref) {
+            cachedImageRef = _createImageRef(rep);
+            ref = cachedImageRef;
+        }
+    }
+    return ref;
+}
+
+
 @end
 
 
@@ -945,3 +986,31 @@ static void ReleasePDFDocumentData(void *info, const void *data, size_t size) {
 }
 
 @end
+
+static CGImageRef _createImageRef(NSBitmapImageRep *rep) {
+    BOOL isPlanar = [rep isPlanar];
+    if (isPlanar)
+        return 0;
+        
+    const unsigned char *bitmapData = [rep bitmapData];
+    int pixelsWide = [rep pixelsWide];
+    int pixelsHigh = [rep pixelsHigh];
+    int bitsPerSample = [rep bitsPerSample];
+    int bitsPerPixel = [rep bitsPerPixel];
+    int bytesPerRow = [rep bytesPerRow];
+    BOOL hasAlpha = [rep hasAlpha];
+    CGImageRef image;
+    CGDataProviderRef dataProvider;
+
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    dataProvider = CGDataProviderCreateWithData(NULL, bitmapData, pixelsHigh * bytesPerRow, NULL);
+
+    image = CGImageCreate(pixelsWide, pixelsHigh, bitsPerSample, bitsPerPixel, bytesPerRow, colorSpace,
+                          hasAlpha ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone,
+                          dataProvider, NULL, false /*shouldInterpolate*/, kCGRenderingIntentDefault);
+
+    CGDataProviderRelease(dataProvider);
+    CGColorSpaceRelease(colorSpace);	
+
+    return image;
+}

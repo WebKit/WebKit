@@ -10,7 +10,7 @@
 
 @class WebDataSource;
 
-@interface WebPDFView : PDFView <WebDocumentView>
+@interface WebPDFView : PDFView <WebDocumentView, WebDocumentSearching>
 {
     WebDataSource *dataSource;
     NSString *path;

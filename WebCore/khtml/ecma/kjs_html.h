@@ -372,8 +372,7 @@ private:
 
   class ImagePattern : public DOMObject {
   public:
-    //ImagePattern(const DOM::HTMLElement &e);
-    ImagePattern(Value i, int type);
+    ImagePattern(Image *i, int type);
     ~ImagePattern();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -383,13 +382,18 @@ private:
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     
+    CGPatternRef getPattern() { return _patternRef; }
+    
+    QPixmap pixmap() { return _pixmap; }
+    
     enum {
         Repeat, RepeatX, RepeatY, NoRepeat
     };
     
 private:
-    Value _image;
     int _repetitionType;
+    QPixmap _pixmap;
+    CGPatternRef _patternRef;
   };
 
   Value getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);
