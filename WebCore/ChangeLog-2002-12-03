@@ -1,3 +1,13 @@
+2002-11-22  David Hyatt  <hyatt@apple.com>
+
+	Make <select>s and <button>s ignore a CSS-specified width if that
+	width is smaller than their intrinsic width.
+
+	Fixes the <select> at the top of livepage.apple.com.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcReplacedWidth):
+
 2002-11-22  Darin Adler  <darin@apple.com>
 
 	- started checking in all our generated source files for the benefit of B&I
