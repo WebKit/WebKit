@@ -904,14 +904,16 @@ DOM::Node next = n.firstChild();
     windowProperties = wp;
     locationProperties =lp;
     return self;
-
 }
 
 - (void)dealloc
 {
+    KHTMLView *view = document->view();
     document->setInPageCache(NO);
+    document->detach();
     document->deref();
     document = 0;
+    delete view;
     delete URL;
     URL = 0;
     delete windowProperties;

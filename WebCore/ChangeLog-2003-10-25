@@ -1,5 +1,15 @@
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
+        Cleanup up leaking objects in page cache.
+        
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURLFromPageCache):
+        * kwq/WebCoreBridge.mm:
+        (-[KWQPageState initWithDocument:DOM::URL:windowProperties:KJS::locationProperties:KJS::]):
+        (-[KWQPageState dealloc]):
+
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
         Added check for non-nil doc.
         
         * kwq/KWQKHTMLPart.mm:

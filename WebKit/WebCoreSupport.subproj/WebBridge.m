@@ -325,7 +325,7 @@
 - (BOOL)saveDocumentToPageCache: documentInfo
 {
     WebHistoryItem *item = [frame _itemForSavingDocState];
-    if (![item pageCacheEnabled]){
+    if (![item hasPageCache]){
         printf ("WebBridge saveDocumentToPageCache:  not saving\n");
         return false;
     }

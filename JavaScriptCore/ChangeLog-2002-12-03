@@ -1,5 +1,11 @@
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
+        Use delete[] (not delete) operator to delete array.
+        
+        * kjs/property_map.cpp:
+
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
         Added debugging info.  Fixed property map save function.
         
         * kjs/nodes.cpp:

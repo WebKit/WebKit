@@ -1,5 +1,29 @@
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
+        Cleanup leaking objects in page cache.
+        Cleaned up API a bit.
+        
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList dealloc]):
+        (+[WebBackForwardList setUsesPageCache:]):
+        (+[WebBackForwardList usesPageCache]):
+        (+[WebBackForwardList setPageCacheSize:]):
+        (+[WebBackForwardList pageCacheSize]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem setHasPageCache:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge saveDocumentToPageCache:]):
+        * WebKit.exp:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _canCachePage]):
+        (-[WebFrame _purgePageCache]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:request:]):
+
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
         Changed ordering of cachability check.
         
         * WebView.subproj/WebFramePrivate.m:

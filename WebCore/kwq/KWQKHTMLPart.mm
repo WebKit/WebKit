@@ -463,8 +463,6 @@ void KWQKHTMLPart::restoreLocationProperties(KJS::SavedProperties *locationPrope
 
 void KWQKHTMLPart::openURLFromPageCache(DOM::DocumentImpl *doc, KURL *url, KJS::SavedProperties *windowProperties, KJS::SavedProperties *locationProperties)
 {
-    printf ("KWQKHTMLPart::openURLFromPageCache\n");
-
     d->m_redirectionTimer.stop();
 
     // We still have to close the previous part page.

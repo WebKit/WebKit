@@ -533,12 +533,31 @@ static const char * const stateNames[] = {
 
 - (BOOL)_canCachePage
 {
-    return [WebHistoryItem usePageCache];
+    return [WebBackForwardList usesPageCache];
 }
 
 - (void)_purgePageCache
 {
     // This method implements the rule for purging the page cache.
+    unsigned sizeLimit = [WebBackForwardList pageCacheSize];
+    unsigned pagesCached = 0;
+    WebBackForwardList *backForwardList = [[self controller] backForwardList];
+    NSArray *backList = [backForwardList backListWithSizeLimit: 999999];
+    WebHistoryItem *oldestItem = nil;
+    
+    unsigned i;
+    for (i = 0; i < [backList count]; i++){
+        WebHistoryItem *item = [backList objectAtIndex: i];
+        if ([item hasPageCache]){
+            if (oldestItem == nil)
+                oldestItem = item;
+            pagesCached++;
+        }
+    }
+    
+    if (pagesCached > sizeLimit){
+        [oldestItem setHasPageCache: NO];
+    }
 }
 
 - (WebFrameState)_state
@@ -574,7 +593,7 @@ static const char * const stateNames[] = {
         if ([self _canCachePage] && [_private->bridge canCachePage] && [_private currentItem]){
             if (![[_private currentItem] pageCache]){
                 NSLog (@"saving page cache for %@, %@", [self name], [[self dataSource] URL]);
-                [[_private currentItem] setPageCacheEnabled: YES];
+                [[_private currentItem] setHasPageCache: YES];
                 [[self dataSource] _setStoredInPageCache: YES];
                 [[[_private currentItem] pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
                 [[[_private currentItem] pageCache] setObject: [[self webView] documentView] forKey: @"WebKitDocumentView"];
@@ -1403,7 +1422,7 @@ static const char * const stateNames[] = {
     if ((loadType == WebFrameLoadTypeForward ||
         loadType == WebFrameLoadTypeBack ||
         loadType == WebFrameLoadTypeIndexedBackForward) &&
-        [[_private provisionalItem] pageCacheEnabled]){
+        [[_private provisionalItem] hasPageCache]){
         printf ("Restoring page from state, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
         [_private->provisionalDataSource _startLoading: [[_private provisionalItem] pageCache]];
     }

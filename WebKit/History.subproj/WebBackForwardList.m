@@ -28,6 +28,11 @@
 
 - (void)dealloc
 {
+    unsigned i;
+    for (i = 0; i < [_entries count]; i++){
+        WebHistoryItem *item = [_entries objectAtIndex: i];
+        [item setHasPageCache: NO]; 
+    }
     [_entries release];
     [super dealloc];
 }
@@ -38,15 +43,24 @@
     int currSize = [_entries count];
     if (_current != currSize-1 && _current != -1) {
         NSRange forwardRange = NSMakeRange(_current+1, currSize-(_current+1));
+        NSArray *subarray;
+        subarray = [_entries subarrayWithRange:forwardRange];
+        unsigned i;
+        for (i = 0; i < [subarray count]; i++){
+            WebHistoryItem *item = [subarray objectAtIndex: i];
+            [item setHasPageCache: NO];            
+        }
         [_entries removeObjectsInRange: forwardRange];
         currSize -= forwardRange.length;
     }
 
     // Toss the first item if the list is getting too big, as long as we're not using it
     if (currSize == _maximumSize && _current != 0) {
-       [_entries removeObjectAtIndex:0];
-       currSize--;
-       _current--;
+        WebHistoryItem *item = [_entries objectAtIndex: 0];
+        [item setHasPageCache: NO];
+        [_entries removeObjectAtIndex:0];
+        currSize--;
+        _current--;
     }
 
     [_entries addObject:entry];
@@ -172,5 +186,32 @@
 
     return result;
 }
+
+// Off be default for now.
+static BOOL usesPageCache = 0;
+
++ (void)setUsesPageCache: (BOOL)f
+{
+    usesPageCache = f ? YES : NO;
+}
+
++ (BOOL)usesPageCache
+{
+    return usesPageCache;
+}
+
+static unsigned pageCacheSize = 10;
+
++ (void)setPageCacheSize: (unsigned)size
+{
+    pageCacheSize = size;
+}
+
+
++ (unsigned)pageCacheSize
+{
+    return pageCacheSize;
+}
+
 
 @end

@@ -72,8 +72,9 @@ SavedProperties::SavedProperties() : _count(0), _properties(0) { }
 
 SavedProperties::~SavedProperties()
 {
-    if (_properties)
-        delete _properties;
+    if (_properties){
+        delete [] _properties;
+    }
 }
 
 // Algorithm concepts from Algorithms in C++, Sedgewick.

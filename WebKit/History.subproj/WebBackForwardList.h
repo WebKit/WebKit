@@ -23,6 +23,33 @@
 }
 
 /*!
+    @method setUsesPageCache:
+    @param flag set to true if pages should be cached
+    @abstract Pages in the back/forward list may be cached.  Pages in this cache
+    will load much more quickly, however they may not always be up-to-date.  The
+    page cache may not apply to all pages.
+*/
++ (void)setUsesPageCache: (BOOL)flag;
+
+/*!
+    @method usesPageCache
+    @result Returns YES if the page cache is enabled.
+*/
++ (BOOL)usesPageCache;
+
+/*!
+    @method setPageCacheSize:
+    @param size The number of pages to allow in the page cache.
+*/
++ (void)setPageCacheSize: (unsigned)size;
+
+/*!
+    @method pageCacheSize
+    @result Returns the number of pages that may be cached.
+*/
++ (unsigned)pageCacheSize;
+
+/*!
     @method addEntry:
     @abstract Adds an entry to the list.
     @discussion Add an entry to the back-forward list, immediately after the current entry.

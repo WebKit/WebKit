@@ -394,12 +394,12 @@
 
 @implementation WebHistoryItem (WebPrivate)
 
-- (BOOL)pageCacheEnabled;
+- (BOOL)hasPageCache;
 {
     return pageCache != nil;
 }
 
-- (void)setPageCacheEnabled: (BOOL)f
+- (void)setHasPageCache: (BOOL)f
 {
     if (f && !pageCache)
         pageCache = [[NSMutableDictionary alloc] init];
@@ -414,17 +414,5 @@
     return pageCache;
 }
 
-// Off be default for now.
-static BOOL usePageCache = 0;
-
-+ (void)setUsePageCache: (BOOL)f
-{
-    usePageCache = f;
-}
-
-+ (BOOL)usePageCache
-{
-    return usePageCache;
-}
 
 @end
