@@ -616,6 +616,44 @@ RenderObject* RenderTable::removeChildNode(RenderObject* child)
     return RenderContainer::removeChildNode( child );
 }
 
+#if APPLE_CHANGES
+RenderTableCell* RenderTable::cellAbove(RenderTableCell* cell) const
+{
+    // Find the section and row to look in
+    int r = cell->row();
+    RenderTableSection *section;
+    int rAbove;
+    if (r > 0) {
+        // cell is not in the first row, so use the above row in its own section
+        section = cell->section();
+        rAbove = r-1;
+    } else {
+        // cell is at top of a section, use last row in previous section
+        RenderObject *prevSection = cell->section()->previousSibling();
+        while (prevSection && !prevSection->isTableSection()) {
+            prevSection = prevSection->previousSibling();
+        }
+        section = static_cast<RenderTableSection *>(prevSection);
+        if (section) {
+            rAbove = section->numRows()-1;
+        }
+    }
+
+    // Look up the cell in the section's grid, which required effective col index
+    if (section) {
+        int effCol = colToEffCol(cell->col());
+        RenderTableCell* aboveCell;
+        // If we hit a span back up to a real cell.
+        do {
+            aboveCell = section->cellAt(rAbove, effCol);
+            effCol--;
+        } while (aboveCell == (RenderTableCell *)-1 && effCol >=0);
+        return (aboveCell == (RenderTableCell *)-1) ? 0 : aboveCell;
+    } else {
+        return 0;
+    }
+}
+#endif
 
 #ifndef NDEBUG
 void RenderTable::dump(QTextStream *stream, QString ind) const

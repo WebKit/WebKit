@@ -1,3 +1,23 @@
+2003-04-13  Trey Matteson  <trey@apple.com>
+
+	3219720 - autofill mapping confused by tables, worse than MacIE (at store.apple.com)
+
+	If in scanning backwards we get to the end of a table row, we take a diversion
+	and scan the cell that is above the cell we started at.
+	Big improvement for store.apple.com.
+
+        Reviewed by Maciej
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::cellAbove):  New support routine to find the cell above another
+        * khtml/rendering/render_table.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::searchForLabelsAboveCell):
+	Get the cell above, scan its tree for matching text.
+        (KWQKHTMLPart::searchForLabelsBeforeElement):
+	Call above routine if we are working within a table
+
 2003-04-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3188070 - 6I32 EMBED tag with no SRC attribute doesn't load the plugin

@@ -29,6 +29,7 @@
 #import "html_documentimpl.h"
 #import "render_root.h"
 #import "render_frames.h"
+#import "render_table.h"
 #import "render_text.h"
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
@@ -72,6 +73,7 @@ using khtml::RenderRoot;
 using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::RenderWidget;
+using khtml::RenderTableCell;
 using khtml::VISIBLE;
 
 using KIO::Job;
@@ -304,17 +306,46 @@ QRegExp *regExpForLabels(NSArray *labels)
     }
     return result;
 }
-    
+
+NSString *KWQKHTMLPart::searchForLabelsAboveCell(QRegExp *regExp, HTMLTableCellElementImpl *cell)
+{
+    RenderTableCell *cellRenderer = static_cast<RenderTableCell *>(cell->renderer());
+    RenderTableCell *cellAboveRenderer = cellRenderer->table()->cellAbove(cellRenderer);
+
+    if (cellAboveRenderer) {
+        HTMLTableCellElementImpl *aboveCell =
+            static_cast<HTMLTableCellElementImpl *>(cellAboveRenderer->element());
+
+        // search within the above cell we found for a match
+        for (NodeImpl *n = aboveCell->firstChild(); n; n = n->traverseNextNode(aboveCell)) {
+            if (idFromNode(n) == ID_TEXT
+                && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
+            {
+                // For each text chunk, run the regexp
+                QString nodeString = n->nodeValue().string();
+                int pos = regExp->searchRev(nodeString);
+                if (pos >= 0) {
+                    return nodeString.mid(pos, regExp->matchedLength()).getNSString();
+                }
+            }
+        }
+    }
+    // Any reason in practice to search all cells in that are above cell?
+    return nil;
+}
 
 NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImpl *element)
 {
     QRegExp *regExp = regExpForLabels(labels);
     // We stop searching after we've seen this many chars
     const unsigned int charsSearchedThreshold = 500;
-    // This is the absolute max we search.  We allow a little more slop, to
-    // make it more likely that we'll search whole nodes
+    // This is the absolute max we search.  We allow a little more slop than
+    // charsSearchedThreshold, to make it more likely that we'll search whole nodes.
     const unsigned int maxCharsSearched = 600;
-    
+    // If the starting element is within a table, the cell that contains it
+    HTMLTableCellElementImpl *startingTableCell = 0;
+    bool searchedCellAbove = false;
+
     // walk backwards in the node tree, until another element, or form, or end of tree
     int unsigned lengthSearched = 0;
     NodeImpl *n;
@@ -329,6 +360,14 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
         {
             // We hit another form element or the start of the form - bail out
             break;
+        } else if (nodeID == ID_TD && !startingTableCell) {
+            startingTableCell = static_cast<HTMLTableCellElementImpl *>(n);
+        } else if (nodeID == ID_TR && startingTableCell) {
+            NSString *result = searchForLabelsAboveCell(regExp, startingTableCell);
+            if (result) {
+                return result;
+            }
+            searchedCellAbove = true;
         } else if (nodeID == ID_TEXT
                    && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
         {
@@ -346,7 +385,14 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
             }
         }
     }
-    return nil;
+
+    // If we started in a cell, but bailed because we found the start of the form or the
+    // previous element, we still might need to search the row above us for a label.
+    if (startingTableCell && !searchedCellAbove) {
+         return searchForLabelsAboveCell(regExp, startingTableCell);
+    } else {
+        return nil;
+    }
 }
 
 NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *element)
