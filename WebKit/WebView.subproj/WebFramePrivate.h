@@ -87,6 +87,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 
     BOOL justOpenedForTargetedLink;
     BOOL quickRedirectComing;
+    BOOL isStoppingLoad;
 }
 
 - (void)setName:(NSString *)name;

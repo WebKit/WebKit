@@ -2474,6 +2474,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)stopLoading
 {
+    // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
+    if (_private->isStoppingLoad) {
+        return;
+    }
+    _private->isStoppingLoad = YES;
+    
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
     [_private->provisionalDataSource _stopLoading];
@@ -2484,6 +2490,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     // Release the provisional data source because there's no point in keeping it around since it is unused in this case.
     [self _setProvisionalDataSource:nil];
+    
+    _private->isStoppingLoad = NO;
 }
 
 

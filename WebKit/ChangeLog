@@ -1,3 +1,13 @@
+2003-10-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3442218>: crash due to infinite recursion trying to load standalone plug-in content
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame stopLoading]): manage the isStoppingLoad ivar, return if isStoppingLoad is YES
+        * WebView.subproj/WebFramePrivate.h: added the isStoppingLoad ivar
+
 2003-10-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave and Ken.
