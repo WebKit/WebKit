@@ -6,6 +6,8 @@
         NSWebPageDataSource.
 */
 
+#import <WebKit/IFWebDataSourcePrivate.h>
+
 #import <WebKit/IFDocument.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFHTMLRepresentation.h>
@@ -15,18 +17,16 @@
 #import <WebKit/IFTextRepresentation.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/IFError.h>
+#import <WebFoundation/IFNSDictionaryExtensions.h>
 #import <WebFoundation/IFNSStringExtensions.h>
 #import <WebFoundation/IFNSURLExtensions.h>
 #import <WebFoundation/IFURLHandle.h>
 
 #import <kurl.h>
-
-static NSMutableDictionary *_repTypes=nil;
 
 @implementation IFWebDataSourcePrivate 
 
@@ -348,39 +348,26 @@ static NSMutableDictionary *_repTypes=nil;
     [_private->errors setObject: error forKey: resourceDescription];
 }
 
-
 + (NSMutableDictionary *)_repTypes
 {
-    if(!_repTypes){
-        _repTypes = [[NSMutableDictionary dictionary] retain];
-        [_repTypes setObject:[IFHTMLRepresentation class]  forKey:@"text/html"];
-        [_repTypes setObject:[IFImageRepresentation class] forKey:@"image/jpeg"];
-        [_repTypes setObject:[IFImageRepresentation class] forKey:@"image/gif"];
-        [_repTypes setObject:[IFImageRepresentation class] forKey:@"image/png"];
-        [_repTypes setObject:[IFTextRepresentation class] forKey:@"text/"];
+    static NSMutableDictionary *repTypes = nil;
+
+    if (!repTypes) {
+        repTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+            [IFHTMLRepresentation class], @"text/html",
+            [IFImageRepresentation class], @"image/jpeg",
+            [IFImageRepresentation class], @"image/gif",
+            [IFImageRepresentation class], @"image/png",
+            [IFTextRepresentation class], @"text/",
+            nil];
     }
-    return _repTypes;
+    
+    return repTypes;
 }
 
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    NSMutableDictionary *repTypes = [[self class] _repTypes];
-    NSArray *keys;
-    unsigned i;
-    
-    if([repTypes objectForKey:MIMEType]){
-        return YES;
-    }else{
-        keys = [repTypes allKeys];
-        for(i=0; i<[keys count]; i++){
-            if([[keys objectAtIndex:i] hasSuffix:@"/"] && [MIMEType hasPrefix:[keys objectAtIndex:i]]){
-                if([repTypes objectForKey:[keys objectAtIndex:i]]){
-                    return YES;
-                }
-            }
-        }
-    }
-    return NO;
+    return [[self _repTypes] _IF_objectForMIMEType:MIMEType] != nil;
 }
 
 @end

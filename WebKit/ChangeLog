@@ -1,5 +1,30 @@
 2002-07-12  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/IFWebDataSource.mm:
+        (+[IFWebDataSource registerRepresentationClass:forMIMEType:]):
+	Use self instead of [self class].
+        (+[IFWebDataSource createRepresentationForMIMEType:]):
+	Use the new _IF_objectForMIMEType to simplify and use hash table
+	instead of linear search.
+        * WebView.subproj/IFWebDataSourcePrivate.mm:
+        (+[IFWebDataSource _repTypes]): Use initWithObjectsAndKeys for
+	brevity and a tiny tiny bit of efficiency.
+        (+[IFWebDataSource _canShowMIMEType:]):
+	Use the new _IF_objectForMIMEType to simplify and use hash table
+	instead of linear search.
+        * WebView.subproj/IFWebView.mm:
+        (+[IFWebView registerViewClass:forMIMEType:]):
+	Use self instead of [self class].
+        (+[IFWebView createViewForMIMEType:]):
+	Use the new _IF_objectForMIMEType to simplify and use hash table
+	instead of linear search.
+        * WebView.subproj/IFWebViewPrivate.mm:
+        (+[IFWebView _canShowMIMEType:]):
+	Use the new _IF_objectForMIMEType to simplify and use hash table
+	instead of linear search.
+
+2002-07-12  Darin Adler  <darin@apple.com>
+
         * WebKit.pbproj/project.pbxproj: Re-added JavaScriptCore, which
 	I removed by accident.
 

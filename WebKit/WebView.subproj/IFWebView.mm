@@ -1,11 +1,13 @@
 /*	IFWebView.mm
-	Copyright 2001, Apple, Inc. All rights reserved.
+	Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
+
+#import <WebKit/IFWebView.h>
+
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFHTMLView.h>
 #import <WebKit/IFImageView.h>
 #import <WebKit/IFTextView.h>
-#import <WebKit/IFWebView.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreViewFactory.h>
@@ -16,6 +18,7 @@
 #import <WebKit/IFImageRendererFactory.h>
 #import <WebKit/IFCookieAdapter.h>
 
+#import <WebFoundation/IFNSDictionaryExtensions.h>
 #import <WebFoundation/IFNSStringExtensions.h>
 #import <WebFoundation/IFNSURLExtensions.h>
 #import <WebFoundation/WebFoundation.h>
@@ -175,32 +178,14 @@
 
 + (void) registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType
 {
-    NSMutableDictionary *viewTypes = [[self class] _viewTypes];
-        
     // FIXME: OK to allow developers to override built-in views?
-    [viewTypes setObject:viewClass forKey:MIMEType];
+    [[self _viewTypes] setObject:viewClass forKey:MIMEType];
 }
 
 + (id <IFDocumentLoading>) createViewForMIMEType:(NSString *)MIMEType
 {
-    NSMutableDictionary *viewTypes = [[self class] _viewTypes];
-    Class viewClass;
-    NSArray *keys;
-    unsigned i;
-    
-    viewClass = [viewTypes objectForKey:MIMEType];
-    if(viewClass){
-        return [[[viewClass alloc] initWithFrame:NSMakeRect(0,0,0,0)] autorelease];
-    }else{
-        keys = [viewTypes allKeys];
-        for(i=0; i<[keys count]; i++){
-            if([[keys objectAtIndex:i] hasSuffix:@"/"] && [MIMEType hasPrefix:[keys objectAtIndex:i]]){
-                viewClass = [viewTypes objectForKey:[keys objectAtIndex:i]];
-                return [[[viewClass alloc] initWithFrame:NSMakeRect(0,0,0,0)] autorelease];
-            }
-        }
-    }
-    return nil;
+    Class viewClass = [[self _viewTypes] _IF_objectForMIMEType:MIMEType];
+    return viewClass ? [[[viewClass alloc] init] autorelease] : nil;
 }
 
 -(BOOL)acceptsFirstResponder

@@ -16,6 +16,7 @@
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/IFFileTypeMappings.h>
+#import <WebFoundation/IFNSDictionaryExtensions.h>
 
 #import <xml/dom_docimpl.h>
 
@@ -342,34 +343,14 @@
 
 + (void)registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType
 {
-    NSMutableDictionary *repTypes = [[self class] _repTypes];
-        
     // FIXME: OK to allow developers to override built-in reps?
-    [repTypes setObject:repClass forKey:MIMEType];
+    [[self _repTypes] setObject:repClass forKey:MIMEType];
 }
 
 + (id <IFDocumentRepresentation>) createRepresentationForMIMEType:(NSString *)MIMEType
 {
-    NSMutableDictionary *repTypes = [[self class] _repTypes];
-    Class repClass;
-    NSArray *keys;
-    unsigned i;
-    
-    repClass = [repTypes objectForKey:MIMEType];
-    if(repClass){
-        return [[[repClass alloc] init] autorelease];
-    }else{
-        keys = [repTypes allKeys];
-        for(i=0; i<[keys count]; i++){
-            if([[keys objectAtIndex:i] hasSuffix:@"/"] && [MIMEType hasPrefix:[keys objectAtIndex:i]]){
-                repClass = [repTypes objectForKey:[keys objectAtIndex:i]];
-                return [[[repClass alloc] init] autorelease];
-            }
-        }
-    }
-    return nil;
+    Class repClass = [[self _repTypes] _IF_objectForMIMEType:MIMEType];
+    return repClass ? [[[repClass alloc] init] autorelease] : nil;
 }
-
-
 
 @end

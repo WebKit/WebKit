@@ -5,13 +5,17 @@
         in WebCore.  Instances of this class are referenced by _private in 
         NSWebPageView.
 */
+
+#import <WebKit/IFWebViewPrivate.h>
+
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFHTMLView.h>
 #import <WebKit/IFImageView.h>
 #import <WebKit/IFTextView.h>
+
+#import <WebFoundation/IFNSDictionaryExtensions.h>
 
 @implementation IFWebViewPrivate
 
@@ -216,26 +220,9 @@
     return viewTypes;
 }
 
-
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    NSDictionary *viewTypes = [[self class] _viewTypes];
-    NSArray *keys;
-    unsigned i;
-    
-    if([viewTypes objectForKey:MIMEType]){
-        return YES;
-    }else{
-        keys = [viewTypes allKeys];
-        for(i=0; i<[keys count]; i++){
-            if([[keys objectAtIndex:i] hasSuffix:@"/"] && [MIMEType hasPrefix:[keys objectAtIndex:i]]){
-                if([viewTypes objectForKey:[keys objectAtIndex:i]]){
-                    return YES;
-                }
-            }
-        }
-    }
-    return NO;
+    return [[self _viewTypes] _IF_objectForMIMEType:MIMEType] != nil;
 }
 
 - (void)_goBack
