@@ -40,6 +40,8 @@
     NSToolTipTag toolTipTag;
     id trackingRectOwner;
     void *trackingRectUserData;
+    
+    NSTimer *autoscrollTimer;
 }
 @end
 
@@ -78,5 +80,8 @@
 - (WebPluginController *)_pluginController;
 
 - (NSRect)_selectionRect;
+
+- (void)_startAutoscrollTimer;
+- (void)_stopAutoscrollTimer;
 
 @end

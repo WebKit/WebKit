@@ -28,6 +28,8 @@
 #define TextDragHysteresis  		3.0
 #define TextDragDelay			0.15
 
+#define AUTOSCROLL_INTERVAL             0.1
+
 #define DRAG_LABEL_BORDER_X		4.0
 #define DRAG_LABEL_BORDER_Y		2.0
 #define DRAG_LABEL_RADIUS		5.0
@@ -62,6 +64,8 @@ static BOOL forceRealHitTest = NO;
 
 - (void)dealloc
 {
+    ASSERT(autoscrollTimer == nil);
+    
     [pluginController destroyAllPlugins];
     
     [mouseDownEvent release];
@@ -649,6 +653,39 @@ static WebHTMLView *lastHitView = nil;
 - (NSRect)_selectionRect
 {
     return [[self _bridge] selectionRect];
+}
+
+- (void)_startAutoscrollTimer
+{
+    if (_private->autoscrollTimer == nil) {
+        _private->autoscrollTimer = [[NSTimer scheduledTimerWithTimeInterval:AUTOSCROLL_INTERVAL
+            target:self selector:@selector(_autoscroll) userInfo:nil repeats:YES] retain];
+    }
+}
+
+- (void)_stopAutoscrollTimer
+{
+    NSTimer *timer = _private->autoscrollTimer;
+    _private->autoscrollTimer = nil;
+    [timer invalidate];
+    [timer release];
+}
+
+- (void)_autoscroll
+{
+    NSEvent *mouseUpEvent = [NSApp nextEventMatchingMask:NSLeftMouseUpMask untilDate:nil inMode:NSEventTrackingRunLoopMode dequeue:NO];
+    if (mouseUpEvent) {
+        return;
+    }
+
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseDragged
+        location:[[self window] convertScreenToBase:[NSEvent mouseLocation]]
+        modifierFlags:[[NSApp currentEvent] modifierFlags]
+        timestamp:[NSDate timeIntervalSinceReferenceDate]
+        windowNumber:[[self window] windowNumber]
+        context:[[NSApp currentEvent] context]
+        eventNumber:0 clickCount:0 pressure:0];
+    [self mouseDragged:fakeEvent];
 }
 
 @end

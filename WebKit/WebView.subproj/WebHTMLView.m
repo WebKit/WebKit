@@ -264,7 +264,8 @@
     // when decoding a WebView.  When WebViews are decoded their subviews
     // are created by initWithCoder: and so won't be normally
     // initialized.  The stub views are discarded by WebView.
-    if (_private){
+    if (_private) {
+        [self _stopAutoscrollTimer];
         if ([self window]) {
             [self addWindowObservers];
             [self addSuperviewObservers];
@@ -637,6 +638,7 @@
     }
     
     _private->ignoringMouseDraggedEvents = NO;
+    [self _startAutoscrollTimer];
     
     // Record the mouse down position so we can determine drag hysteresis.
     [_private->mouseDownEvent release];
@@ -718,8 +720,9 @@
     return [NSArray arrayWithObject:[[_private->draggingImageURL path] lastPathComponent]];
 }
 
-- (void)mouseUp: (NSEvent *)event
+- (void)mouseUp:(NSEvent *)event
 {
+    [self _stopAutoscrollTimer];
     [[self _bridge] mouseUp:event];
     [self _updateMouseoverWithFakeEvent];
 }

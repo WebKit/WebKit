@@ -1,3 +1,24 @@
+2003-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John and Richard.
+
+        - fixed 3367377 -- autoscroll only works when mouse is moving
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView viewDidMoveToWindow]): Stop the auto-scroll timer. This covers
+        the case where a view is removed from the view hierarchy while the mouse is down.
+        (-[WebHTMLView mouseDown:]): Start the auto-scroll timer.
+        (-[WebHTMLView mouseUp:]): Stop the auto-scroll timer.
+        * WebView.subproj/WebHTMLViewPrivate.h: Add an auto-scroll timer, and methods
+        to start and stop it.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _startAutoscrollTimer]): Create and schedule a timer. It uses the
+        same 1/10 second interval that NSTextView uses for its scrolling timer.
+        (-[WebHTMLView _stopAutoscrollTimer]): Invalidate and release the timer.
+        (-[WebHTMLView _autoscroll]): Check for a mouse up event in the queue; if one is
+        there, then no autoscrlling. But if not, then create a fake mouse dragged event
+        and dispatch it; that will lead to autoscrolling.
+
 2003-09-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
