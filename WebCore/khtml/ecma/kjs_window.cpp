@@ -976,12 +976,6 @@ bool Window::isSafeScript(ExecState *exec) const
   if ( activePart == m_part ) // Not calling from another frame, no problem.
     return true;
 
-  // allow access from the window that opened this one if it made an initially empty document
-  if ( ( activePart == m_part->opener() || activePart == m_part->parentPart() ) && 
-       shouldLoadAsEmptyDocument(m_part->url()) ) {
-    return true;
-  }
-
   // JS may be attempting to access the "window" object, which should be valid,
   // even if the document hasn't been constructed yet.  If the document doesn't
   // exist yet allow JS to access the window object.
@@ -1003,9 +997,24 @@ bool Window::isSafeScript(ExecState *exec) const
     return true;
   
   DOM::DOMString thisDomain = thisDocument->domain();
+
+  // if this document is being initially loaded as empty by its parent
+  // or opener, allow access from any document in the same domain as
+  // the parent or opener.
+  if (shouldLoadAsEmptyDocument(m_part->url())) {
+    KHTMLPart *ancestorPart = m_part->opener() ? m_part->opener() : m_part->parentPart();
+    while (ancestorPart && shouldLoadAsEmptyDocument(ancestorPart->url())) {
+      ancestorPart = ancestorPart->parentPart();
+    }
+    
+    if (ancestorPart)
+      thisDomain = ancestorPart->docImpl()->domain();
+  }
+
   //kdDebug(6070) << "current domain:" << actDomain.string() << ", frame domain:" << thisDomain.string() << endl;
   if ( actDomain == thisDomain )
     return true;
+
 #if APPLE_CHANGES
   if (Interpreter::shouldPrintExceptions()) {
       printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 

@@ -1,3 +1,15 @@
+2003-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3507885>: REGRESSION (100-116): frames missing due to cross-domain check (derstandard.at)
+        
+	* khtml/ecma/kjs_window.cpp:
+        (Window::isSafeScript): Loosen the frame access rules a bit. We already allowed access to
+	a document loaded as empty from the parent or opener. Now also allow access from any document
+	in the same domain as the parent or opener, so that, for instance, a sibling frame can access it
+	so long as it is in the same domain as the parent.
+
 2003-12-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
