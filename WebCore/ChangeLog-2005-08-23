@@ -1,3 +1,20 @@
+2005-03-15  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John
+	
+	Fixed: <rdar://problem/4041374> REGRESSION (185-186): unload handlers (at least those added with addEventListener) are broken
+
+	The reason why UNLOAD_EVENT wouldn't dispatch was because the code would delete all event listeners at the detach() phase which is prior to closeURL(). 
+
+	This fixes a recent regression from:
+
+ <rdar://problem/3977973> pages on ebay leak referenced JavaScript objects -- over time browsing becomes super-slow
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::closeURL): After dispatching event handlers, go ahead and remove them from the DOM. 
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::detach): Took out the call to removeAllEventListenersFromAllNodes(). If we remove all event listeners here then when KHTMLPart::closeURL() checks for even listeners, it will never have any because they'll already be gone. 
+
 2005-03-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Vicki

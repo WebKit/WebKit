@@ -600,7 +600,11 @@ bool KHTMLPart::closeURL()
       d->m_bUnloadEventEmitted = true;
     }
   }
-
+    
+    if (d->m_doc) {
+        d->m_doc->removeAllEventListenersFromAllNodes();
+    }
+    
   d->m_bComplete = true; // to avoid emitting completed() in slotFinishedParsing() (David)
   d->m_bLoadingMainResource = false;
   d->m_bLoadEventEmitted = true; // don't want that one either
