@@ -26,8 +26,11 @@
 #include "xml/dom_stringimpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "misc/loader.h"
+#include "xml/xml_tokenizer.h"
 
-using namespace DOM;
+using khtml::parseAttributes;
+
+namespace DOM {
 
 EntityImpl::EntityImpl(DocumentPtr *doc) : NodeBaseImpl(doc)
 {
@@ -396,23 +399,30 @@ void ProcessingInstructionImpl::checkStyleSheet()
         // ### check that this occurs only in the prolog
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
-        XMLAttributeReader attrReader(DOMString(m_data).string());
         bool attrsOk;
-        QXmlAttributes attrs = attrReader.readAttrs(attrsOk);
+        const QMap<QString, QString> attrs = parseAttributes(m_data, attrsOk);
         if (!attrsOk)
             return;
-        if (attrs.value("type") != "text/css" && !attrs.value("type").isEmpty())
+        QMap<QString, QString>::ConstIterator i = attrs.find("type");
+        QString type;
+        if (i != attrs.end())
+            type = *i;
+        if (type != "text/css" && !type.isEmpty())
             return;
 
-        DOMString href = attrs.value("href");
+        i = attrs.find("href");
+        QString href;
+        if (i != attrs.end())
+            href = *i;
 
         if (href.length()>1)
         {
             if (href[0]=='#')
             {
+                DOMString newLocalHref = href.mid(1);
                 if (m_localHref)
                     m_localHref->deref();
-                m_localHref=href.implementation()->split(1);
+                m_localHref = newLocalHref.implementation();
                 if (m_localHref)
                     m_localHref->ref();
             }
@@ -424,7 +434,7 @@ void ProcessingInstructionImpl::checkStyleSheet()
 		    m_loading = true;
 		    getDocument()->addPendingSheet();
 		    if (m_cachedSheet) m_cachedSheet->deref(this);
-		    m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href.string()), QString::null);
+		    m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href), QString::null);
 		    if (m_cachedSheet)
 			m_cachedSheet->ref( this );
 		}
@@ -489,35 +499,4 @@ DOMString ProcessingInstructionImpl::toString() const
     return result;
 }
 
-// -------------------------------------------------------------------------
-
-XMLAttributeReader::XMLAttributeReader(QString _attrString)
-{
-    m_attrString = _attrString;
-}
-
-XMLAttributeReader::~XMLAttributeReader()
-{
-}
-
-QXmlAttributes XMLAttributeReader::readAttrs(bool &ok)
-{
-    // parse xml file
-    QXmlInputSource source;
-    source.setData("<?xml version=\"1.0\"?><attrs "+m_attrString+" />");
-    QXmlSimpleReader reader;
-    reader.setContentHandler( this );
-    ok = reader.parse( source );
-    return attrs;
-}
-
-bool XMLAttributeReader::startElement(const QString& /*namespaceURI*/, const QString& localName,
-                                      const QString& /*qName*/, const QXmlAttributes& atts)
-{
-    if (localName == "attrs") {
-        attrs = atts;
-        return true;
-    }
-    else
-        return false; // we shouldn't have any other elements
-}
+} // namespace

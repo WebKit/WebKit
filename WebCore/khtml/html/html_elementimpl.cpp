@@ -758,9 +758,8 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment( const DOMString
     fragment->ref();
     {
         HTMLTokenizer tok( docPtr(), fragment );
-        tok.begin();
         tok.write( html.string(), true );
-        tok.end();
+        tok.finish();
     }
 
     // Exceptions are ignored because none ought to happen here.

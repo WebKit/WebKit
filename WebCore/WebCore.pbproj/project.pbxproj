@@ -450,9 +450,6 @@
 				F58785D202DE375901EA4122,
 				F587871602DE3B8601EA4122,
 				F58785D502DE375901EA4122,
-				931BFCD403D4AEE5008635CE,
-				931BFCD803D4AEFD008635CE,
-				931BFCD003D4AEDA008635CE,
 				F58785D902DE375901EA4122,
 				F5B2A4FE02E2220F018635CB,
 				F58785DB02DE375901EA4122,
@@ -762,9 +759,6 @@
 				9394E0A703AA5BBE008635CE,
 				9394E0AC03AA60FB008635CE,
 				BCF0192603D3802200B2D04D,
-				931BFCD103D4AEDA008635CE,
-				931BFCD503D4AEE5008635CE,
-				931BFCD903D4AEFD008635CE,
 				93955A4403D72932008635CE,
 				BC7C965203E9EE7000A80004,
 				BC7C965403E9EE7000A80004,
@@ -1570,90 +1564,6 @@
 //932
 //933
 //934
-		931BFCCE03D4AEDA008635CE = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = KWQXmlSimpleReader.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		931BFCCF03D4AEDA008635CE = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.objcpp;
-			path = KWQXmlSimpleReader.mm;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		931BFCD003D4AEDA008635CE = {
-			fileRef = 931BFCCE03D4AEDA008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		931BFCD103D4AEDA008635CE = {
-			fileRef = 931BFCCF03D4AEDA008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		931BFCD203D4AEE5008635CE = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = KWQXmlAttributes.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		931BFCD303D4AEE5008635CE = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.objcpp;
-			path = KWQXmlAttributes.mm;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		931BFCD403D4AEE5008635CE = {
-			fileRef = 931BFCD203D4AEE5008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		931BFCD503D4AEE5008635CE = {
-			fileRef = 931BFCD303D4AEE5008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		931BFCD603D4AEFD008635CE = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = KWQXmlDefaultHandler.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		931BFCD703D4AEFD008635CE = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.objcpp;
-			path = KWQXmlDefaultHandler.mm;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		931BFCD803D4AEFD008635CE = {
-			fileRef = 931BFCD603D4AEFD008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		931BFCD903D4AEFD008635CE = {
-			fileRef = 931BFCD703D4AEFD008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		931C8A160380288B008635CE = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -10311,12 +10221,6 @@
 				F587853F02DE375901EA4122,
 				F58786C502DE3B8601EA4122,
 				F587854202DE375901EA4122,
-				931BFCD203D4AEE5008635CE,
-				931BFCD303D4AEE5008635CE,
-				931BFCD603D4AEFD008635CE,
-				931BFCD703D4AEFD008635CE,
-				931BFCCE03D4AEDA008635CE,
-				931BFCCF03D4AEDA008635CE,
 			);
 			isa = PBXGroup;
 			name = qt;

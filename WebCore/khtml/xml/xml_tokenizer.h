@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,10 +24,8 @@
 #ifndef _XML_Tokenizer_h_
 #define _XML_Tokenizer_h_
 
-#include <qxml.h>
-#include <qptrlist.h>
 #include <qobject.h>
-#include "misc/loader_client.h"
+#include <qmap.h>
 #include "misc/stringit.h"
 
 #if APPLE_CHANGES
@@ -37,91 +35,26 @@
 class KHTMLView;
 
 namespace DOM {
-    class DocumentImpl;
-    class NodeImpl;
-    class HTMLScriptElementImpl;
     class DocumentPtr;
-    class HTMLScriptElementImpl;
+    class NodeImpl;
 };
 
 namespace khtml {
-    
-class CachedObject;
-class CachedScript;
 
-class XMLHandler : public QXmlDefaultHandler
-{
-public:
-    XMLHandler(DOM::DocumentPtr *_doc, KHTMLView *_view);
-    virtual ~XMLHandler();
-
-    // return the error protocol if parsing failed
-    QString errorProtocol();
-
-    // overloaded handler functions
-    bool startDocument();
-    bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts);
-    bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName);
-    bool startCDATA();
-    bool endCDATA();
-    bool characters(const QString& ch);
-    bool comment(const QString & ch);
-    bool processingInstruction(const QString &target, const QString &data);
-
-
-    // from QXmlDeclHandler
-    bool attributeDecl(const QString &eName, const QString &aName, const QString &type, const QString &valueDefault, const QString &value);
-    bool externalEntityDecl(const QString &name, const QString &publicId, const QString &systemId);
-    bool internalEntityDecl(const QString &name, const QString &value);
-
-    // from QXmlDTDHandler
-    bool notationDecl(const QString &name, const QString &publicId, const QString &systemId);
-    bool unparsedEntityDecl(const QString &name, const QString &publicId, const QString &systemId, const QString &notationName);
-
-    bool enterText();
-    void exitText();
-
-    QString errorString();
-
-    bool error( const QXmlParseException& exception );
-    bool fatalError( const QXmlParseException& exception );
-    bool warning( const QXmlParseException& exception );
-    
-    int errorLine;
-    int errorCol;
-
-protected:
-    QString errorProt;
-    int m_errorCount;
-    DOM::DocumentPtr *m_doc;
-    KHTMLView *m_view;
-    DOM::NodeImpl *m_currentNode;
-    DOM::NodeImpl *m_rootNode;
-
-    enum State {
-        StateInit,
-        StateDocument,
-        StateQuote,
-        StateLine,
-        StateHeading,
-        StateP
-    };
-    State state;
-};
+class TokenizerString;
 
 class Tokenizer : public QObject
 {
     Q_OBJECT
+
 public:
-    virtual void begin() = 0;
     // script output must be prepended, while new data
     // received during executing a script must be appended, hence the
     // extra bool to be able to distinguish between both cases. document.write()
     // always uses false, while khtmlpart uses true
     virtual void write(const TokenizerString &str, bool appendData) = 0;
-    virtual void end() = 0;
     virtual void finish() = 0;
-    virtual void setOnHold(bool /*_onHold*/) {}
+    virtual void setOnHold(bool onHold) = 0;
     virtual bool isWaitingForScripts() = 0;
 
 signals:
@@ -135,32 +68,8 @@ private:
 #endif
 };
 
-class XMLTokenizer : public Tokenizer, public CachedObjectClient
-{
-public:
-    XMLTokenizer(DOM::DocumentPtr *, KHTMLView * = 0);
-    virtual ~XMLTokenizer();
-    virtual void begin();
-    virtual void write(const TokenizerString &str, bool);
-    virtual void end();
-    virtual void finish();
-
-    // from CachedObjectClient
-    void notifyFinished(CachedObject *finishedObj);
-
-    virtual bool isWaitingForScripts();
-protected:
-    DOM::DocumentPtr *m_doc;
-    KHTMLView *m_view;
-
-    void executeScripts();
-    void addScripts(DOM::NodeImpl *n);
-
-    QString m_xmlCode;
-    QPtrList<DOM::HTMLScriptElementImpl> m_scripts;
-    QPtrListIterator<DOM::HTMLScriptElementImpl> *m_scriptsIt;
-    CachedScript *m_cachedScript;
-};
+Tokenizer *newXMLTokenizer(DOM::DocumentPtr *, KHTMLView * = 0);
+QMap<QString, QString> parseAttributes(const DOM::DOMString &, bool &attrsOK);
 
 }
 

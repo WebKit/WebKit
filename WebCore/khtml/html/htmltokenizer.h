@@ -128,13 +128,14 @@ public:
     HTMLTokenizer(DOM::DocumentPtr *, DOM::DocumentFragmentImpl *frag);
     virtual ~HTMLTokenizer();
 
-    void begin();
-    void write(const TokenizerString &str, bool appendData);
-    void end();
-    void finish();
+    virtual void write(const TokenizerString &str, bool appendData);
+    virtual void finish();
     virtual void setOnHold(bool _onHold);
 
 protected:
+    void begin();
+    void end();
+
     void reset();
     void addPending();
     void processToken();

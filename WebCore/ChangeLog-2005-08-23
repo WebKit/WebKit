@@ -1,3 +1,31 @@
+2004-07-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - got rid of QXml classes and changed XML parsing to use libxml directly
+
+        This is the first step toward more direct use of libxml and libxslt.
+        Dave is planning to build on this to implement XSLT and to improve our handling
+        of XML documents (faster and more feature complete, including DTDs).
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer):
+        * khtml/html/htmltokenizer.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createTokenizer):
+        (DocumentImpl::open):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::tokenizer):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::ProcessingInstructionImpl::checkStyleSheet):
+        * khtml/xml/dom_xmlimpl.h:
+        * khtml/xml/xml_tokenizer.h:
+        * khtml/xml/xml_tokenizer.cpp: Redid this all to use libxml directly.
+
+        * WebCore.pbproj/project.pbxproj: Removed a bunch of files.
+
 2004-07-21  Trey Matteson  <trey@apple.com>
 
 	DHTML dragging should use UTI for MIME-pboard type conversion

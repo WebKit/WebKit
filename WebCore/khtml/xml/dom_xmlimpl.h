@@ -26,8 +26,6 @@
 #include "xml/dom_nodeimpl.h"
 #include "misc/loader_client.h"
 
-#include <qxml.h>
-
 namespace khtml {
 class CachedCSSStyleSheet;
 };
@@ -172,19 +170,6 @@ protected:
     khtml::CachedCSSStyleSheet *m_cachedSheet;
     CSSStyleSheetImpl *m_sheet;
     bool m_loading;
-};
-
-class XMLAttributeReader : public QXmlDefaultHandler
-{
-public:
-    XMLAttributeReader(QString _attrString);
-    virtual ~XMLAttributeReader();
-    QXmlAttributes readAttrs(bool &ok);
-    bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts);
-
-protected:
-    QXmlAttributes attrs;
-    QString m_attrString;
 };
 
 }; //namespace
