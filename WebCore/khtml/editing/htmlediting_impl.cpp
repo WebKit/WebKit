@@ -628,8 +628,13 @@ void ApplyStyleCommandImpl::doApply()
     Position start(endingSelection().start().equivalentDownstreamPosition().equivalentRangeCompliantPosition());
     Position end(endingSelection().end().equivalentUpstreamPosition());
 
-    // remove style from the selection
-    removeStyle(start, end);
+    // Remove style from the selection.
+    // Use the upstream position of the start for removing style.
+    // This will ensure we remove all traces of the relevant styles from the selection
+    // and prevent us from adding redundant ones, as described in:
+    // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
+    removeStyle(start.equivalentUpstreamPosition(), end);
+    
     bool splitStart = splitTextAtStartIfNeeded(start, end); 
     if (splitStart) {
         start = endingSelection().start();

@@ -679,12 +679,23 @@ void Selection::validate(ETextGranularity granularity)
     }
 
     // adjust the state
-    if (start().isEmpty() && end().isEmpty())
+    if (start().isEmpty() && end().isEmpty()) {
         m_state = NONE;
-    else if (start() == end() || start().equivalentUpstreamPosition() == end().equivalentUpstreamPosition())
+    }
+    else if (start() == end() || start().equivalentUpstreamPosition() == end().equivalentUpstreamPosition()) {
         m_state = CARET;
-    else
+    }
+    else {
         m_state = RANGE;
+        // "Constrain" the selection to be the smallest equivalent range of nodes.
+        // This is a somewhat arbitrary choice, but experience shows that it is
+        // useful to make to make the selection "canonical" (if only for
+        // purposes of comparing selections). This is an ideal point of the code
+        // to do this operation, since all selection changes that result in a RANGE 
+        // come through here before anyone uses it.
+        assignStart(start().equivalentDownstreamPosition());
+        assignEnd(end().equivalentUpstreamPosition());
+    }
 
     m_needsCaretLayout = true;
     

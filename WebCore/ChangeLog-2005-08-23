@@ -3,6 +3,26 @@
         Reviewed by Hyatt
 
         Fix for this bug:
+
+        <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ApplyStyleCommandImpl::doApply): Move the start of the selection upstream
+        before calling removeStyle. This makes sure we remove all styles that could apply to the 
+        selection, and not just ones in from the start position of the selection passed to us. 
+        This fixes the bug.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::validate): Related fix to "constrain" the selection to be the 
+        smallest equivalent range of nodes, in effect making a "canonical" version of the
+        selection. While this is not strictly necessary to fix the bug, it is a step I have been 
+        wanting to take this step for a long time, and some recent improvements made it 
+        possible for me to do now in just two lines of code.
+
+2004-07-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
         
         <rdar://problem/3711264> difficult (impossible?) to get cursor in an editable webview containing only tags
 
