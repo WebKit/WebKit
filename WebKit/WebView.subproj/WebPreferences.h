@@ -151,9 +151,9 @@ extern NSString *WebPreferencesChangedNotification;
 
 /*!
     @method setUserStyleSheetLocation:
-    @param string
+    @param URL The location of the user style sheet.
 */
-- (void)setUserStyleSheetLocation:(NSURL *)string;
+- (void)setUserStyleSheetLocation:(NSURL *)URL;
 
 /*!
     @method JavaEnabled

@@ -1,5 +1,12 @@
 2003-04-02  Richard Williamson  <rjw@apple.com>
 
+        Reviewed by john.
+
+        * WebView.subproj/WebPreferences.h:
+        (-[WebPreferences setUserStyleSheetLocation:]): Cleaned up arg and comment.
+
+2003-04-02  Richard Williamson  <rjw@apple.com>
+
         Fix for 3200447.  Use class_pose to pose so as to avoid
         indirect invocation of appkit class initializers.
         
