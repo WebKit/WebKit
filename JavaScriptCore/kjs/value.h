@@ -77,7 +77,6 @@ namespace KJS {
     StringType      = 4,
     NumberType      = 5,
     ObjectType      = 6,
-    ReferenceType   = 7,
     ListType        = 8,
     CompletionType  = 9
   };
@@ -125,11 +124,6 @@ namespace KJS {
     double dispatchToNumber(ExecState *exec) const;
     UString dispatchToString(ExecState *exec) const;
     bool dispatchToUInt32(unsigned&) const;
-    Value dispatchGetBase(ExecState *exec) const;
-    UString dispatchGetPropertyName(ExecState *exec) const;
-    void dispatchPutValue(ExecState *exec, const Value& w);
-    bool dispatchDeleteValue(ExecState *exec);
-    Value dispatchGetValue(ExecState *exec) const;
     Object dispatchToObject(ExecState *exec) const;
 
   private:
@@ -144,14 +138,6 @@ namespace KJS {
     virtual Object toObject(ExecState *exec) const = 0;
     virtual bool toUInt32(unsigned&) const;
 
-    // Reference operations
-
-    virtual Value getBase(ExecState *exec) const;
-    virtual UString getPropertyName(ExecState *exec) const;
-    virtual Value getValue(ExecState *exec) const;
-    virtual void putValue(ExecState *exec, const Value& w);
-    virtual bool deleteValue(ExecState *exec);
-    
     enum {
       VI_MARKED = 1,
       VI_GCALLOWED = 2,
@@ -401,13 +387,6 @@ namespace KJS {
     friend class NumberImp;
     explicit Number(NumberImp *v);
   };
-
-  inline Value ValueImp::dispatchGetValue(ExecState *exec) const
-  {
-    if (SimpleNumber::is(this))
-        return Value(const_cast<ValueImp*>(this));
-    return getValue(exec);
-  }
 
 }; // namespace
 

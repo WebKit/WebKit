@@ -140,42 +140,6 @@ unsigned short ValueImp::toUInt16(ExecState *exec) const
   return static_cast<unsigned short>(d16);
 }
 
-// ECMA 8.7.1
-Value ValueImp::getBase(ExecState *exec) const
-{
-  Object err = Error::create(exec, ReferenceError, I18N_NOOP("Invalid reference base"));
-  exec->setException(err);
-  return err;
-}
-
-// ECMA 8.7.2
-UString ValueImp::getPropertyName(ExecState * /*exec*/) const
-{
-  // the spec wants a runtime error here. But getValue() and putValue()
-  // will catch this case on their own earlier. When returning a Null
-  // string we should be on the safe side.
-  return UString();
-}
-
-// ECMA 8.7.1
-Value ValueImp::getValue(ExecState *exec) const
-{
-  return Value(const_cast<ValueImp*>(this));
-}
-
-void ValueImp::putValue(ExecState *exec, const Value& w)
-{
-  Object err = Error::create(exec,ReferenceError);
-  exec->setException(err);
-}
-
-bool ValueImp::deleteValue(ExecState *exec)
-{
-  Object err = Error::create(exec,ReferenceError);
-  exec->setException(err);
-  return false;
-}
-
 // Dispatchers for virtual functions, to special-case simple numbers which
 // won't be real pointers.
 
@@ -232,35 +196,6 @@ bool ValueImp::dispatchToUInt32(unsigned& result) const
   }
   return toUInt32(result);
 }
-
-Value ValueImp::dispatchGetBase(ExecState *exec) const
-{
-  if (SimpleNumber::is(this))
-    return ValueImp::getBase(exec);
-  return getBase(exec);
-}
-
-UString ValueImp::dispatchGetPropertyName(ExecState *exec) const
-{
-  if (SimpleNumber::is(this))
-    return ValueImp::getPropertyName(exec);
-  return getPropertyName(exec);
-}
-
-void ValueImp::dispatchPutValue(ExecState *exec, const Value& w)
-{
-  if (SimpleNumber::is(this))
-    ValueImp::putValue(exec, w);
-  putValue(exec, w);
-}
-
-bool ValueImp::dispatchDeleteValue(ExecState *exec)
-{
-  if (SimpleNumber::is(this))
-    return ValueImp::deleteValue(exec);
-  return deleteValue(exec);
-}
-
 
 // ------------------------------ Value ----------------------------------------
 

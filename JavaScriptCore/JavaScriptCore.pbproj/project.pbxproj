@@ -474,6 +474,9 @@
 			fileRef = F5341390030CEEB1018BE7F3;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F5341393030CEEB1018BE7F3 = {
@@ -495,6 +498,9 @@
 			fileRef = F5341394030CF5F8018BE7F3;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F54F0800030CD22001B5C2EB = {

@@ -142,35 +142,6 @@ namespace KJS {
   //                            Internal type impls
   // ---------------------------------------------------------------------------
 
-  class ReferenceImp : public ValueImp {
-  public:
-    ReferenceImp(const Value& v, const UString& p);
-    ReferenceImp(const Value& v, unsigned p);
-    virtual void mark();
-
-    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
-    bool toBoolean(ExecState *exec) const;
-    double toNumber(ExecState *exec) const;
-    UString toString(ExecState *exec) const;
-    Object toObject(ExecState *exec) const;
-
-    Value getBase(ExecState *) const { return Value(base); }
-    UString getPropertyName(ExecState *) const;
-    Value getValue(ExecState *exec) const;
-    void putValue(ExecState *exec, const Value& w);
-    bool deleteValue(ExecState *exec);
-
-    Type type() const { return ReferenceType; }
-
-  private:
-    ValueImp *base;
-    bool propertyNameIsNumber;
-    unsigned propertyNameAsNumber;
-    mutable UString prop;
-  };
-  
-  inline Reference::Reference(ReferenceImp *imp) : Value(imp) { }
-
   class CompletionImp : public ValueImp {
   public:
     Type type() const { return CompletionType; }

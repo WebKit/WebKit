@@ -1,3 +1,34 @@
+2002-08-16  Maciej Stachowiak  <mjs@apple.com>
+
+	Final step of the Reference change. Completely separate Reference
+	from Value, and eliminate ReferenceImp.
+
+	18% speedup on cvs-js-performance test.
+
+        * kjs/internal.cpp, kjs/internal.h: Remove ReferenceImp.
+        * kjs/nodes.cpp:
+        (Node::evaluateReference): Use Reference::makeValueReference(),
+	not ConstReference.
+        * kjs/reference.cpp:
+        (Reference::Reference): New implementation, handles both regular
+	and value references.
+        (Reference::makeValueReference): Incorporate functionality of ConstReference
+	into this class.
+        (Reference::getBase): New implementation (incorporates error vase
+	for value references).
+	(Reference::getPropertyName): New implementation (incorporates error case
+	for value references).
+        (Reference::putValue): New implementation (incorporates error case
+	for value references).
+        (Reference::deleteValue): New implementation (incorporates error case
+	for value references).
+        (Reference::getValue): New implementation (incorporates special case
+	for value references).
+        (Reference::isMutable): New implementation.
+	* kjs/reference.h: New implementation that merges ReferenceImp
+	into the stack object.
+        * kjs/value.h, kjs/value.cpp: Removed all reference-related method.
+
 2002-08-16  Darin Adler  <darin@apple.com>
 
 	- fixed 3026184 -- Hang going to http://aa.com/ while executing JavaScript
@@ -15,6 +46,28 @@
 
         * JavaScriptCore.pbproj/project.pbxproj: Install reference.h and
 	reference_list.h so WebCore compiles (duh).
+
+2002-08-16  Maciej Stachowiak  <mjs@apple.com>
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/nodes.cpp:
+        (Node::evaluateReference):
+        * kjs/reference.cpp:
+        (Reference::Reference):
+        (Reference::makeValueReference):
+        (Reference::getBase):
+        (Reference::getPropertyName):
+        (Reference::getValue):
+        (Reference::putValue):
+        (Reference::deleteValue):
+        (Reference::isMutable):
+        * kjs/reference.h:
+        * kjs/reference_list.h:
+        * kjs/value.cpp:
+        (ValueImp::dispatchToUInt32):
+        * kjs/value.h:
 
 2002-08-16  Maciej Stachowiak  <mjs@apple.com>
 
