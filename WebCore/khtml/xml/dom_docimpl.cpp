@@ -1331,16 +1331,20 @@ void DocumentImpl::open(  )
 {
     if (parsing()) return;
 
-    openInternal();
+    implicitOpen();
+
+    if (part()) {
+        part()->didExplicitOpen();
+    }
 
     // This is work that we should probably do in clear(), but we can't have it
-    // happen when openInternal() is called unless we reorganize KHTMLPart code.
+    // happen when implicitOpen() is called unless we reorganize KHTMLPart code.
     setURL(QString());
     DocumentImpl *parent = parentDocument();
     setBaseURL(parent ? parent->baseURL() : QString());
 }
 
-void DocumentImpl::openInternal()
+void DocumentImpl::implicitOpen()
 {
     if (m_tokenizer)
         close();
@@ -1348,6 +1352,7 @@ void DocumentImpl::openInternal()
     clear();
     m_tokenizer = createTokenizer();
     connect(m_tokenizer,SIGNAL(finishedParsing()),this,SIGNAL(finishedParsing()));
+    setParsing(true);
 
     if (m_view && m_view->part()->jScript()) {
         m_view->part()->jScript()->setSourceFile(m_url,""); //fixme
@@ -1373,6 +1378,13 @@ HTMLElementImpl* DocumentImpl::body()
 }
 
 void DocumentImpl::close()
+{
+    if (part())
+        part()->endIfNotLoading();
+    implicitClose();
+}
+
+void DocumentImpl::implicitClose()
 {
     // First fire the onload.
     
@@ -1430,9 +1442,21 @@ void DocumentImpl::close()
 	return;
     }
     
-    // The initial layout happens here.
-    DocumentImpl::closeInternal(!doload);
-    
+    if (doload) {
+        // on an explicit document.close(), the tokenizer might still be waiting on scripts,
+        // and in that case we don't want to destroy it because that will prevent the
+        // scripts from getting processed.
+        // FIXME: this check may no longer be necessary, since now it should be impossible
+        // for parsing to be false while stil waiting for scripts
+        if (m_tokenizer && !m_tokenizer->isWaitingForScripts()) {
+            delete m_tokenizer;
+            m_tokenizer = 0;
+        }
+
+        if (m_view)
+            m_view->part()->checkEmitLoadEvent();
+    }
+
     // Now do our painting/layout, but only if we aren't in a subframe or if we're in a subframe
     // that has been sized already.  Otherwise, our view size would be incorrect, so doing any 
     // layout/painting now would be pointless.
@@ -1449,22 +1473,6 @@ void DocumentImpl::close()
             getAccObjectCache()->postNotification(renderer(), "AXLoadComplete");
 #endif
     }
-}
-
-void DocumentImpl::closeInternal( bool checkTokenizer )
-{
-    if (parsing() || (checkTokenizer && !m_tokenizer)) return;
-
-    // on an explicit document.close(), the tokenizer might still be waiting on scripts,
-    // and in that case we don't want to destroy it because that will prevent the
-    // scripts from getting processed.
-    if (m_tokenizer && !m_tokenizer->isWaitingForScripts()) {
-	delete m_tokenizer;
-	m_tokenizer = 0;
-    }
-
-    if (m_view)
-        m_view->part()->checkEmitLoadEvent();
 }
 
 void DocumentImpl::setParsing(bool b)

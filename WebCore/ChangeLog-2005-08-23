@@ -1,3 +1,33 @@
+2005-02-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3942428> reproducible crash loading cbs.sportsline.com
+	
+	This change reverts the fix for <rdar://problem/3805311>, and
+	re-fixes it in a different (better) way. Instead of preventing
+	programmatic open from setting the parsing flag, instead make sure
+	that programmatic close resets it.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::openURL):
+        (KHTMLPart::didExplicitOpen):
+        (KHTMLPart::closeURL):
+        (KHTMLPart::begin):
+        (KHTMLPart::end):
+        (KHTMLPart::endIfNotLoading):
+        (KHTMLPart::slotFinishedParsing):
+        (KHTMLPart::checkEmitLoadEvent):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::open):
+        (DocumentImpl::implicitOpen):
+        (DocumentImpl::close):
+        (DocumentImpl::implicitClose):
+        * khtml/xml/dom_docimpl.h:
+
 2005-02-15  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.

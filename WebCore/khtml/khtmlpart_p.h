@@ -119,6 +119,7 @@ public:
     m_kjs_lib = 0;
     m_job = 0L;
     m_bComplete = true;
+    m_bLoadingMainResource = false;
     m_bLoadEventEmitted = true;
     m_bUnloadEventEmitted = true;
     m_cachePolicy = KIO::CC_Verify;
@@ -289,6 +290,7 @@ public:
 #endif
 
   bool m_bComplete:1;
+  bool m_bLoadingMainResource:1;
   bool m_bLoadEventEmitted:1;
   bool m_bUnloadEventEmitted:1;
   bool m_haveEncoding:1;
