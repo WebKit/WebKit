@@ -4,6 +4,8 @@
 
         Fix for this bug:
         
+        <rdar://problem/3998892> REGRESSION (Mail): bolding a selection from end of line changes unselected text on starting line.
+        
         The styling code did not move to the next node when the starting position was 
         at the last offset of a node. Instead, it styled it. Clearly wrong. Solution 
         is to borrow a check from the delete algorithm. Though I call caretMaxOffset(),
