@@ -54,6 +54,7 @@
 - (WebView *)_webView;
 - (WebFrame *)_frame;
 - (WebBridge *)_bridge;
+- (WebDataSource *)_dataSource;
 
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
@@ -68,7 +69,7 @@
 - (void)_clearLastHitViewIfSelf;
 - (void)_updateMouseoverWithEvent:(NSEvent *)event;
 
-+ (NSArray *)_pasteboardTypes;
++ (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
 
 - (BOOL)_canDelete;

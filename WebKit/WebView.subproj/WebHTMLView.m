@@ -21,6 +21,7 @@
 #import "WebNSPrintOperationExtras.h"
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
+#import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUIDelegatePrivate.h>
@@ -152,6 +153,11 @@ static BOOL forceRealHitTest = NO;
 - (WebBridge *)_bridge
 {
     return [[self _frame] _bridge];
+}
+
+- (WebDataSource *)_dataSource
+{
+    return [[self _frame] dataSource];
 }
 
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent
@@ -508,17 +514,57 @@ static WebHTMLView *lastHitView = nil;
     [self _setToolTip:[element objectForKey:WebCoreElementTitleKey]];
 }
 
-+ (NSArray *)_pasteboardTypes
++ (NSArray *)_selectionPasteboardTypes
 {
-    return [NSArray arrayWithObjects:NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
+    return [NSArray arrayWithObjects:WebHTMLPboardType, NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
+}
+
+- (NSDictionary *)_selectedHTMLPropertyList:(NSString **)HTMLString
+{
+    NSArray *subresourceURLStrings;
+    *HTMLString = [[self _bridge] selectedHTMLString:&subresourceURLStrings];
+    NSMutableDictionary *HTMLPropertyList = [NSMutableDictionary dictionary];
+
+    WebDataSource *dataSource = [self _dataSource];
+    NSURLResponse *response = [dataSource response];
+    WebResource *resource = [[WebResource alloc] initWithData:[*HTMLString dataUsingEncoding:NSUTF8StringEncoding] 
+                                                          URL:[response URL] 
+                                                     MIMEType:[response MIMEType]
+                                             textEncodingName:[response textEncodingName]];
+    [HTMLPropertyList setObject:[resource _propertyListRepresentation] forKey:WebMainResourceKey];
+    [resource release];
+    
+    NSEnumerator *enumerator = [subresourceURLStrings objectEnumerator];
+    NSMutableArray *subresources = [[NSMutableArray alloc] init];
+    NSString *URLString;
+    while ((URLString = [enumerator nextObject]) != nil) {
+        NSURL *URL = [NSURL _web_URLWithDataAsString:URLString];
+        resource = [dataSource subresourceForURL:URL];
+        if (resource) {
+            [subresources addObject:[resource _propertyListRepresentation]];
+        } else {
+            ERROR("Failed to copy subresource because data source does not have subresource for %@", URLString);
+        }
+    }
+    
+    if ([subresources count] > 0) {
+        [HTMLPropertyList setObject:subresources forKey:WebSubresourcesKey];
+    }
+    
+    [subresources release];
+    
+    return HTMLPropertyList;
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
-    [pasteboard declareTypes:[[self class] _pasteboardTypes] owner:nil];
+    [pasteboard declareTypes:[[self class] _selectionPasteboardTypes] owner:nil];
 
     // Put HTML on the pasteboard.
-    [pasteboard setString:[[self _bridge] selectedHTMLString:nil] forType:NSHTMLPboardType];
+    NSString *HTMLString;
+    NSDictionary *HTMLPropertyList = [self _selectedHTMLPropertyList:&HTMLString];
+    [pasteboard setString:HTMLString forType:NSHTMLPboardType];
+    [pasteboard setPropertyList:HTMLPropertyList forType:WebHTMLPboardType];
     
     // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];
@@ -553,12 +599,28 @@ static WebHTMLView *lastHitView = nil;
 	NSArray *types = [pasteboard types];
 	NSString *HTMLString = nil;
 	
-	if ([types containsObject:NSHTMLPboardType]) {
-		HTMLString = [pasteboard stringForType:NSHTMLPboardType];
-	} else if ([types containsObject:NSStringPboardType]) {
-		HTMLString = [pasteboard stringForType:NSStringPboardType];
-	}
-	
+    if ([types containsObject:WebHTMLPboardType]) {
+        NSDictionary *HTMLPropertyList = [pasteboard propertyListForType:WebHTMLPboardType];
+        if ([HTMLPropertyList isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *resourcePropertyList = [HTMLPropertyList objectForKey:WebMainResourceKey];
+            WebResource *resource = [[WebResource alloc] _initWithPropertyList:resourcePropertyList];
+            if (resource && [WebView canShowMIMETypeAsHTML:[resource MIMEType]]) {
+                HTMLString = [[[NSString alloc] initWithData:[resource data] encoding:NSUTF8StringEncoding] autorelease];
+                [resource release];
+                NSArray *propertyLists = [HTMLPropertyList objectForKey:WebSubresourcesKey];
+                if (propertyLists) {
+                    [[self _dataSource] addSubresources:[WebResource _resourcesFromPropertyLists:propertyLists]];
+                }
+            }
+        }
+    }
+    
+    if (!HTMLString && [types containsObject:NSHTMLPboardType]) {
+        HTMLString = [pasteboard stringForType:NSHTMLPboardType];
+    }
+    if (!HTMLString && [types containsObject:NSStringPboardType]) {
+        HTMLString = [pasteboard stringForType:NSStringPboardType];
+    }
 	if (HTMLString) {
 		[[self _bridge] pasteHTMLString:HTMLString];
 	}
@@ -893,7 +955,7 @@ static WebHTMLView *lastHitView = nil;
 + (void)initialize
 {
     WebKitInitializeUnicode();
-    [NSApp registerServicesMenuSendTypes:[[self class] _pasteboardTypes] returnTypes:nil];
+    [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] returnTypes:nil];
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -911,7 +973,7 @@ static WebHTMLView *lastHitView = nil;
     _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
     _private->needsLayout = YES;
 	
-	[self registerForDraggedTypes:[NSArray arrayWithObjects:NSHTMLPboardType, NSStringPboardType, nil]];
+	[self registerForDraggedTypes:[NSArray arrayWithObjects:WebHTMLPboardType, NSHTMLPboardType, NSStringPboardType, nil]];
 
     return self;
 }
@@ -996,7 +1058,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
-    if (sendType && ([[[self class] _pasteboardTypes] containsObject:sendType]) && [self _haveSelection]){
+    if (sendType && ([[[self class] _selectionPasteboardTypes] containsObject:sendType]) && [self _haveSelection]){
         return self;
     }
 

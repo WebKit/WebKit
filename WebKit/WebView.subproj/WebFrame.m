@@ -22,11 +22,12 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPlugin.h>
+#import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
+#import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
-
 #import <Foundation/NSString_NSURLExtras.h>
 
 #import <objc/objc-runtime.h>
@@ -254,6 +255,57 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 @end
 
 @implementation WebFrame (WebPrivate)
+
+- (void)loadHTMLPropertyList:(id)HTMLPropertyList
+{
+    if ([HTMLPropertyList isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *resourcePropertyList = [HTMLPropertyList objectForKey:WebMainResourceKey];
+        if (resourcePropertyList) {
+            WebResource *resource = [[WebResource alloc] _initWithPropertyList:resourcePropertyList];
+            if (resource) {
+                NSURLRequest *request = [self _webDataRequestForData:[resource data] 
+                                                            MIMEType:[resource MIMEType]
+                                                    textEncodingName:[resource textEncodingName]
+                                                             baseURL:[resource URL]];
+                NSArray *subresourcePropertyLists = [HTMLPropertyList objectForKey:WebSubresourcesKey];
+                [self _loadRequest:request subresources:subresourcePropertyLists ? [WebResource _resourcesFromPropertyLists:subresourcePropertyLists] : nil];
+            }
+        }
+    }
+}
+
+- (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL
+{
+    NSURL *fakeURL = [NSURLRequest _webDataRequestURLForData: data];
+    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL: fakeURL] autorelease];
+    [request _webDataRequestSetData:data];
+    [request _webDataRequestSetEncoding:encodingName];
+    [request _webDataRequestSetBaseURL:URL];
+    [request _webDataRequestSetMIMEType:MIMEType?MIMEType:@"text/html"];
+    return request;
+}
+
+- (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources
+{
+    WebFrameLoadType loadType;
+    
+    // note this copies request
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    NSMutableURLRequest *r = [newDataSource request];
+    [self _addExtraFieldsToRequest:r alwaysFromRequest: NO];
+    if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
+        [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+        loadType = WebFrameLoadTypeSame;
+    } else {
+        loadType = WebFrameLoadTypeStandard;
+    }
+    
+    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
+    [newDataSource addSubresources:subresources];
+    
+    [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];
+    [newDataSource release];
+}
 
 - (void)_setWebView:(WebView *)v
 {
@@ -2440,33 +2492,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    WebFrameLoadType loadType;
-
-    // note this copies request
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    NSMutableURLRequest *r = [newDataSource request];
-    [self _addExtraFieldsToRequest:r alwaysFromRequest: NO];
-    if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
-        [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-        loadType = WebFrameLoadTypeSame;
-    } else {
-        loadType = WebFrameLoadTypeStandard;
-    }
-
-    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
-
-    [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];
-    [newDataSource release];
+    [self _loadRequest:request subresources:nil];
 }
 
-- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
+- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL;
 {
-    NSURL *fakeURL = [NSURLRequest _webDataRequestURLForData: data];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL: fakeURL] autorelease];
-    [request _webDataRequestSetData:data];
-    [request _webDataRequestSetEncoding:encodingName];
-    [request _webDataRequestSetBaseURL:URL];
-    [request _webDataRequestSetMIMEType:MIMEType?MIMEType:@"text/html"];
+    NSURLRequest *request = [self _webDataRequestForData:data 
+                                                MIMEType:MIMEType 
+                                        textEncodingName:encodingName 
+                                                 baseURL:URL];
     [self loadRequest:request];
 }
 

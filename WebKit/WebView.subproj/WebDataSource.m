@@ -13,6 +13,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebView.h>
 
 #import <WebKit/WebAssertions.h>
@@ -70,6 +71,7 @@
     [lastCheckedRequest release];
     [responses release];
     [webFrame release];
+    [subresources release];
 
     [super dealloc];
 }
@@ -77,6 +79,30 @@
 @end
 
 @implementation WebDataSource (WebPrivate)
+
+- (NSArray *)subresources
+{
+    return [_private->subresources allValues];
+}
+
+- (WebResource *)subresourceForURL:(NSURL *)URL
+{
+    return [_private->subresources objectForKey:[URL _web_originalDataAsString]];
+}
+
+- (void)addSubresource:(WebResource *)subresource
+{
+    [_private->subresources setObject:subresource forKey:[[subresource URL] _web_originalDataAsString]];
+}
+
+- (void)addSubresources:(NSArray *)subresources
+{
+    NSEnumerator *enumerator = [subresources objectEnumerator];
+    WebResource *subresource;
+    while ((subresource = [enumerator nextObject]) != nil) {
+        [self addSubresource:subresource];
+    }
+}
 
 - (WebView *)_webView
 {
@@ -566,6 +592,7 @@
     if (!_private->resourceData) {
         _private->resourceData = [[NSMutableData alloc] init];
     }
+    ASSERT([_private->resourceData isKindOfClass:[NSMutableData class]]);
     [_private->resourceData appendData:data];
     
     _private->gotFirstByte = YES;
@@ -578,6 +605,13 @@
     [[self representation] receivedData:data withDataSource:self];
     [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
     [self release];
+}
+
+- (void)_setData:(NSData *)data
+{
+    [data retain];
+    [_private->resourceData release];
+    _private->resourceData = (NSMutableData *)data;
 }
 
 - (void)_finishedLoading
@@ -825,6 +859,8 @@
     _private = [[WebDataSourcePrivate alloc] init];
     _private->originalRequest = [request retain];
     _private->originalRequestCopy = [request copy];
+    
+    _private->subresources = [[NSMutableDictionary alloc] init];
     
     LOG(Loading, "creating datasource for %@", [request URL]);
     _private->request = [_private->originalRequest mutableCopy];

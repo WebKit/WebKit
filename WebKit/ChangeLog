@@ -1,3 +1,77 @@
+2004-02-24  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3565476>: design/implement new pasteboard type for HTML that includes subresources
+
+        Reviewed by rjw.
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate initWithStream:view:]): don't manage buffer, WebBaseResourceHandleDelegate does this now
+        (-[WebNetscapePluginConnectionDelegate releaseResources]): ditto
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveData:lengthReceived:]): ditto
+        (-[WebNetscapePluginConnectionDelegate connectionDidFinishLoading:]): ditto
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate releaseResources]): release resourceData and resource
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]): check the dataSource for a resource, load that if we have one
+        (-[WebBaseResourceHandleDelegate addData:]): new, adds data to resourceData
+        (-[WebBaseResourceHandleDelegate saveResource]): new, saves data as a resource on the dataSource
+        (-[WebBaseResourceHandleDelegate saveResourceWithCachedResponse:]): new, replaces the resource on the dataSource to save memory
+        (-[WebBaseResourceHandleDelegate resourceData]): new
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:lengthReceived:]): call addData:
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]): call saveResource
+        (-[WebBaseResourceHandleDelegate connection:willCacheResponse:]): new, calls saveResourceWithCachedResponse:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]): release subresources
+        (-[WebDataSource subresources]): new, returns the subresources of the data source
+        (-[WebDataSource subresourceForURL:]): new, returns a resource for a URL
+        (-[WebDataSource addSubresource:]): new
+        (-[WebDataSource addSubresources:]): new
+        (-[WebDataSource _receivedData:]): added an assert
+        (-[WebDataSource _setData:]): replaces the data of the data source
+        (-[WebDataSource initWithRequest:]): create subresources
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadHTMLPropertyList:]): new, loads a frame from an HTML plist
+        (-[WebFrame _webDataRequestForData:MIMEType:textEncodingName:baseURL:]): new, factored out from loadData:MIMEType:textEncodingName:baseURL:
+        (-[WebFrame _loadRequest:subresources:]): new, factored out from loadRequest:, handles subresources
+        (-[WebFrame loadRequest:]): now just calls _loadRequest:subresources:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _dataSource]): new internal convenience
+        (+[WebHTMLView _selectionPasteboardTypes]): renamed from _pasteboardTypes to be more precise
+        (-[WebHTMLView _selectedHTMLPropertyList:]): new, constructs an HTML plist from the selection
+        (-[WebHTMLView _writeSelectionToPasteboard:]): calls _selectedHTMLPropertyList to support WebHTMLPboardType
+        (-[WebHTMLView _pasteHTMLFromPasteboard:]): added support for pasting WebHTMLPboardType
+        (+[WebHTMLView initialize]): call renamed _selectionPasteboardTypes 
+        (-[WebHTMLView initWithFrame:]): allow WebHTMLPboardType to be dragged in
+        (-[WebHTMLView validRequestorForSendType:returnType:]): call renamed _selectionPasteboardTypes 
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient addData:]): override since the main resource does it's own buffering
+        (-[WebMainResourceClient saveResource]): override to do nothing since the main resource is not saved as a subresource
+        (-[WebMainResourceClient saveResourceWithCachedResponse:]): override, calls _setData on the data source to 
+        (-[WebMainResourceClient connection:didReceiveData:lengthReceived:]):
+        * WebView.subproj/WebResource.h: Added.
+        * WebView.subproj/WebResource.m: Added. New class the represents the data, URL, MIME type and textEncodingName of a resource.
+        (-[WebResourcePrivate dealloc]):
+        (-[WebResource initWithData:URL:MIMEType:textEncodingName:]):
+        (-[WebResource dealloc]):
+        (-[WebResource data]):
+        (-[WebResource URL]):
+        (-[WebResource MIMEType]):
+        (-[WebResource textEncodingName]):
+        (-[WebResource description]):
+        (+[WebResource _resourcesFromPropertyLists:]):
+        (+[WebResource _propertyListsFromResources:]):
+        (-[WebResource _initWithPropertyList:]):
+        (-[WebResource _propertyListRepresentation]):
+        (-[WebResource _initWithCachedResponse:originalURL:]):
+        (-[WebResource _cachedResponseRepresentation]):
+        * WebView.subproj/WebResourcePrivate.h: Added.
+        * WebView.subproj/WebView.m:
+
 === Safari-129 ===
 
 2004-02-20  Darin Adler <darin@apple.com>

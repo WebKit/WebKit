@@ -12,15 +12,16 @@
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
-#import <WebKit/WebAssertions.h>
 #import <Foundation/NSError_NSURLExtras.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
 @interface WebBaseResourceHandleDelegate (WebNSURLAuthenticationChallengeSender) <NSURLAuthenticationChallengeSender>
@@ -100,6 +101,12 @@
     [downloadDelegate release];
     downloadDelegate = nil;
     
+    [resource release];
+    resource = nil;
+    
+    [resourceData release];
+    resourceData = nil;
+    
     reachedTerminalState = YES;
     
     [self release];
@@ -110,14 +117,30 @@
     ASSERT(reachedTerminalState);
     [request release];
     [response release];
+    [originalURL release];
     [super dealloc];
 }
 
 - (BOOL)loadWithRequest:(NSURLRequest *)r
 {
     ASSERT(connection == nil);
+    ASSERT(resource == nil);
     
+    NSURL *URL = [[r URL] retain];
+    [originalURL release];
+    originalURL = URL;
+
     r = [self connection:connection willSendRequest:r redirectResponse:nil];
+    
+    if ([[r URL] isEqual:originalURL]) {
+        resource = [dataSource subresourceForURL:originalURL];
+        if (resource) {
+            // FIXME: This is a hack to make Foundation hand us back the data that we're caching. We need something more direct.
+            [resource retain];
+            [[NSURLCache sharedURLCache] storeCachedResponse:[resource _cachedResponseRepresentation] forRequest:r];
+        }
+    }
+
     connection = [[NSURLConnection alloc] initWithRequest:r delegate:self];
     if (defersCallbacks) {
         [connection setDefersCallbacks:YES];
@@ -172,6 +195,43 @@
 - downloadDelegate
 {
     return downloadDelegate;
+}
+
+- (void)addData:(NSData *)data
+{
+    if (!resource) {
+        if (!resourceData) {
+            resourceData = [[NSMutableData alloc] init];
+        }
+        [resourceData appendData:data];
+    }
+}
+
+- (void)saveResource
+{
+    if (!resource && [resourceData length] > 0) {
+        WebResource *newResource = [[WebResource alloc] initWithData:resourceData
+                                                                 URL:originalURL
+                                                            MIMEType:[response MIMEType]
+                                                    textEncodingName:[response textEncodingName]];
+        [dataSource addSubresource:newResource];
+        [newResource release];
+    }
+}
+
+- (void)saveResourceWithCachedResponse:(NSCachedURLResponse *)cachedResponse
+{
+    if (!resource) {
+        // Overwrite the resource saved with saveResource with the cache version to save memory.
+        WebResource *newResource = [[WebResource alloc] _initWithCachedResponse:cachedResponse originalURL:originalURL];
+        [dataSource addSubresource:newResource];
+        [newResource release];
+    }
+}
+
+- (NSData *)resourceData
+{
+    return resource ? [resource data] : resourceData;
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
@@ -327,6 +387,9 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
+    
+    [self addData:data];
+    
     [webView _incrementProgressForConnection:con data:data];
 
     if (implementations.delegateImplementsDidReceiveContentLength)
@@ -347,6 +410,8 @@
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
+    [self saveResource];
+    
     [webView _completeProgressForConnection:con];
 
     if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
@@ -371,6 +436,12 @@
 
     [self releaseResources];
     [self release];
+}
+
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
+{
+    [self saveResourceWithCachedResponse:cachedResponse];
+    return cachedResponse;
 }
 
 - (void)cancelWithError:(NSError *)error

@@ -124,6 +124,24 @@
     return result;
 }
 
+- (void)addData:(NSData *)data
+{
+    // Override. We don't want to save the main resource as a subresource of the data source.
+    [dataSource _receivedData:data];
+}
+
+- (void)saveResource
+{
+    // Override. We don't want to save the main resource as a subresource of the data source.
+}
+
+- (void)saveResourceWithCachedResponse:(NSCachedURLResponse *)cachedResponse
+{
+    // Override. We don't want to save the main resource as a subresource of the data source.
+    // Replace the data on the data source with the cache copy to save memory.
+    [dataSource _setData:[cachedResponse data]];
+}
+
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
@@ -285,7 +303,6 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [dataSource _receivedData:data];
     [[dataSource _webView] _mainReceivedBytesSoFar:[[dataSource data] length]
                                        fromDataSource:dataSource
                                              complete:NO];

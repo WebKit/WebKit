@@ -16,6 +16,7 @@
 @class WebHistoryItem;
 @class WebIconLoader;
 @class WebMainResourceClient;
+@class WebResource;
 @class WebView;
 
 @protocol WebDocumentRepresentation;
@@ -106,11 +107,19 @@
     BOOL loadingFromPageCache;
 
     WebFrame *webFrame;
+    
+    NSMutableDictionary *subresources;
 }
 
 @end
 
 @interface WebDataSource (WebPrivate)
+
+// API Considerations:
+- (NSArray *)subresources;
+- (WebResource *)subresourceForURL:(NSURL *)URL;
+- (void)addSubresource:(WebResource *)subresource;
+- (void)addSubresources:(NSArray *)subresources;
 
 - (NSError *)_mainDocumentError;
 - (NSString *)_stringWithData:(NSData *)data;
@@ -158,6 +167,7 @@
 - (void)_commitIfReady:(NSDictionary *)pageCache;
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
+- (void)_setData:(NSData *)data;
 - (void)_finishedLoading;
 - (void)_receivedError:(NSError *)error complete:(BOOL)isComplete;
 - (void)_defersCallbacksChanged;

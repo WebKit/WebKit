@@ -21,7 +21,6 @@
 {
     WebNetscapePluginStream *stream;
     WebBaseNetscapePluginView *view;
-    NSMutableData *resourceData;
 }
 - initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView;
 @end
@@ -93,7 +92,6 @@
     [super init];
     stream = [theStream retain];
     view = [theView retain];
-    resourceData = [[NSMutableData alloc] init];
     return self;
 }
 
@@ -103,8 +101,6 @@
     stream = nil;
     [view release];
     view = nil;
-    [resourceData release];
-    resourceData = nil;
     [super releaseResources];
 }
 
@@ -137,10 +133,6 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    if ([stream transferMode] == NP_ASFILE || [stream transferMode] == NP_ASFILEONLY) {
-        [resourceData appendData:data];
-    }
-
     [stream receivedData:data];
     [super connection:con didReceiveData:data lengthReceived:lengthReceived];
     [self release];
@@ -153,7 +145,7 @@
 
     [[self dataSource] _removePlugInStreamClient:self];
     [[view webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
-    [stream finishedLoadingWithData:resourceData];
+    [stream finishedLoadingWithData:[self resourceData]];
     [super connectionDidFinishLoading:con];
 
     [self release];
