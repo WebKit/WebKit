@@ -3,8 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x176
   RenderBlock {HTML} at (0,0) size 800x176
     RenderBody {BODY} at (8,8) size 784x152
-      RenderBlock (anonymous) at (0,0) size 784x0
-        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,0) size 784x100
       RenderBlock (anonymous) at (0,100) size 784x18
         RenderText {TEXT} at (0,0) size 489x18

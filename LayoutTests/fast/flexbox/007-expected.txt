@@ -17,4 +17,3 @@ layer at (0,0) size 800x600
         RenderFlexibleBox {DIV} at (0,0) size 100x100 [border: (4px solid #808000)]
           RenderBlock {DIV} at (4,4) size 92x92
             RenderBlock (floating) {DIV} at (0,0) size 92x92 [bgcolor=#008000]
-            RenderText {TEXT} at (0,0) size 0x0

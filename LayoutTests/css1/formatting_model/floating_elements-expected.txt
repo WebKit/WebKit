@@ -36,7 +36,6 @@ layer at (0,0) size 800x6267
             text run at (17,17) width 130: "This is a left-floating"
             text run at (17,35) width 112: "paragraph (first in"
             text run at (17,53) width 50: "source)."
-        RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {P} at (581,5) size 194x88 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
           RenderText {TEXT} at (17,17) size 139x54
             text run at (17,17) width 139: "This is a right-floating"
@@ -52,7 +51,6 @@ layer at (0,0) size 800x6267
       RenderBlock {HR} at (371,394) size 41x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (2,404) size 780x46 [border: (5px solid #800080)]
         RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-        RenderText {TEXT} at (0,0) size 0x0
         RenderImage {IMG} at (760,5) size 15x36 [border: (3px solid #000000)]
         RenderText {TEXT} at (20,5) size 730x36
           text run at (20,5) width 177: "This is text within the DIV. "
@@ -64,12 +62,10 @@ layer at (0,0) size 800x6267
           RenderText {TEXT} at (17,17) size 122x36
             text run at (17,17) width 122: "This is the first left-"
             text run at (17,35) width 119: "floating paragraph."
-        RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {P} at (199,5) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
           RenderText {TEXT} at (17,17) size 142x36
             text run at (17,17) width 142: "This is the second left-"
             text run at (17,35) width 119: "floating paragraph."
-        RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {P} at (5,75) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
           RenderText {TEXT} at (17,17) size 127x36
             text run at (17,17) width 127: "This is the third left-"
@@ -92,9 +88,7 @@ layer at (0,0) size 800x6267
       RenderBlock {HR} at (371,734) size 41x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (2,744) size 360x190 [border: (5px solid #800080)]
         RenderImage {IMG} at (5,5) size 156x36 [border: (3px solid #000000)]
-        RenderText {TEXT} at (0,0) size 0x0
         RenderImage {IMG} at (161,5) size 156x36 [border: (3px solid #000000)]
-        RenderText {TEXT} at (0,0) size 0x0
         RenderImage {IMG} at (5,41) size 156x36 [border: (3px solid #000000)]
         RenderText {TEXT} at (317,5) size 350x180
           text run at (317,5) width 28: "This"
@@ -117,7 +111,6 @@ layer at (0,0) size 800x6267
             text run at (17,17) width 130: "This is a left-floating"
             text run at (17,35) width 112: "paragraph (first in"
             text run at (17,53) width 50: "source)."
-        RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {P} at (115,93) size 194x88 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
           RenderText {TEXT} at (17,17) size 139x54
             text run at (17,17) width 139: "This is a right-floating"
@@ -148,7 +141,6 @@ layer at (0,0) size 800x6267
       RenderBlock {HR} at (371,1344) size 41x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (2,1354) size 410x226 [border: (5px solid #800080)]
         RenderImage {IMG} at (5,5) size 256x36 [border: (3px solid #000000)]
-        RenderText {TEXT} at (0,0) size 0x0
         RenderImage {IMG} at (149,41) size 256x36 [border: (3px solid #000000)]
         RenderText {TEXT} at (261,5) size 392x216
           text run at (261,5) width 136: "This is text within the"
@@ -173,7 +165,6 @@ layer at (0,0) size 800x6267
             text run at (17,17) width 139: "This is a right-floating"
             text run at (17,35) width 112: "paragraph (first in"
             text run at (17,53) width 50: "source)."
-        RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {P} at (5,5) size 194x88 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
           RenderText {TEXT} at (17,17) size 132x54
             text run at (17,17) width 130: "This is a left-floating"
@@ -190,7 +181,6 @@ layer at (0,0) size 800x6267
       RenderBlock {HR} at (371,1756) size 41x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (2,1766) size 780x64 [border: (5px solid #800080)]
         RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-        RenderText {TEXT} at (0,0) size 0x0
         RenderImage {IMG} at (760,5) size 15x36 [border: (3px solid #000000)]
         RenderText {TEXT} at (20,5) size 755x54
           text run at (20,5) width 177: "This is text within the DIV. "
@@ -396,7 +386,6 @@ layer at (0,0) size 800x6267
                     text run at (17,17) width 130: "This is a left-floating"
                     text run at (17,35) width 112: "paragraph (first in"
                     text run at (17,53) width 50: "source)."
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock (floating) {P} at (559,5) size 194x88 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
                   RenderText {TEXT} at (17,17) size 139x54
                     text run at (17,17) width 139: "This is a right-floating"
@@ -412,7 +401,6 @@ layer at (0,0) size 800x6267
               RenderBlock {HR} at (365,198) size 40x2 [border: (1px inset #000000)]
               RenderBlock {DIV} at (6,208) size 758x64 [border: (5px solid #800080)]
                 RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderImage {IMG} at (738,5) size 15x36 [border: (3px solid #000000)]
                 RenderText {TEXT} at (20,5) size 728x54
                   text run at (20,5) width 177: "This is text within the DIV. "
@@ -425,12 +413,10 @@ layer at (0,0) size 800x6267
                   RenderText {TEXT} at (17,17) size 122x36
                     text run at (17,17) width 122: "This is the first left-"
                     text run at (17,35) width 119: "floating paragraph."
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock (floating) {P} at (199,5) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
                   RenderText {TEXT} at (17,17) size 142x36
                     text run at (17,17) width 142: "This is the second left-"
                     text run at (17,35) width 119: "floating paragraph."
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock (floating) {P} at (5,75) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
                   RenderText {TEXT} at (17,17) size 127x36
                     text run at (17,17) width 127: "This is the third left-"
@@ -453,9 +439,7 @@ layer at (0,0) size 800x6267
               RenderBlock {HR} at (365,556) size 40x2 [border: (1px inset #000000)]
               RenderBlock {DIV} at (6,566) size 360x190 [border: (5px solid #800080)]
                 RenderImage {IMG} at (5,5) size 156x36 [border: (3px solid #000000)]
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderImage {IMG} at (161,5) size 156x36 [border: (3px solid #000000)]
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderImage {IMG} at (5,41) size 156x36 [border: (3px solid #000000)]
                 RenderText {TEXT} at (317,5) size 350x180
                   text run at (317,5) width 28: "This"
@@ -478,7 +462,6 @@ layer at (0,0) size 800x6267
                     text run at (17,17) width 130: "This is a left-floating"
                     text run at (17,35) width 112: "paragraph (first in"
                     text run at (17,53) width 50: "source)."
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock (floating) {P} at (115,93) size 194x88 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
                   RenderText {TEXT} at (17,17) size 139x54
                     text run at (17,17) width 139: "This is a right-floating"
@@ -509,7 +492,6 @@ layer at (0,0) size 800x6267
               RenderBlock {HR} at (365,1166) size 40x2 [border: (1px inset #000000)]
               RenderBlock {DIV} at (6,1176) size 410x226 [border: (5px solid #800080)]
                 RenderImage {IMG} at (5,5) size 256x36 [border: (3px solid #000000)]
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderImage {IMG} at (149,41) size 256x36 [border: (3px solid #000000)]
                 RenderText {TEXT} at (261,5) size 392x216
                   text run at (261,5) width 136: "This is text within the"
@@ -534,7 +516,6 @@ layer at (0,0) size 800x6267
                     text run at (17,17) width 139: "This is a right-floating"
                     text run at (17,35) width 112: "paragraph (first in"
                     text run at (17,53) width 50: "source)."
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock (floating) {P} at (5,5) size 194x88 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
                   RenderText {TEXT} at (17,17) size 132x54
                     text run at (17,17) width 130: "This is a left-floating"
@@ -552,7 +533,6 @@ layer at (0,0) size 800x6267
               RenderBlock {HR} at (365,1578) size 40x2 [border: (1px inset #000000)]
               RenderBlock {DIV} at (6,1588) size 758x64 [border: (5px solid #800080)]
                 RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderImage {IMG} at (738,5) size 15x36 [border: (3px solid #000000)]
                 RenderText {TEXT} at (20,5) size 720x54
                   text run at (20,5) width 177: "This is text within the DIV. "

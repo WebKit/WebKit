@@ -11,12 +11,10 @@ layer at (0,0) size 800x600
           text run at (0,54) width 766: "in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et"
           text run at (0,72) width 651: "iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi."
       RenderBlock {DIV} at (0,106) size 784x266
-        RenderBlock (anonymous) at (0,0) size 784x0
-          RenderBlock (floating) {H2} at (0,0) size 112x36
-            RenderText {TEXT} at (4,0) size 108x36
-              text run at (4,0) width 108: "H2: This should"
-              text run at (57,18) width 55: "float left"
-          RenderText {TEXT} at (0,0) size 0x0
+        RenderBlock (floating) {H2} at (0,0) size 112x36
+          RenderText {TEXT} at (4,0) size 108x36
+            text run at (4,0) width 108: "H2: This should"
+            text run at (57,18) width 55: "float left"
         RenderBlock {DIV} at (0,0) size 784x266
           RenderBlock {H3} at (128,0) size 656x18
             RenderText {TEXT} at (0,0) size 262x18

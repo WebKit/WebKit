@@ -7,7 +7,6 @@ layer at (0,0) size 800x600
         RenderBlock (floating) {DIV} at (0,0) size 76x500 [bgcolor=#008000]
           RenderText {TEXT} at (0,0) size 76x18
             text run at (0,0) width 76: "Hello world"
-        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,204) size 784x36
         RenderText {TEXT} at (76,0) size 693x36
           text run at (76,0) width 286: "This text should not overlap the purple float? "

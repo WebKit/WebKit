@@ -8,4 +8,3 @@ layer at (8,8) size 35x18
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {TEXT} at (0,0) size 0x0

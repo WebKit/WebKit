@@ -4,9 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 784x106 [border: (3px solid #FFA500)]
-        RenderBlock (anonymous) at (11,11) size 762x0
-          RenderBlock (floating) {DIV} at (0,0) size 122x122 [bgcolor=#FFA500] [border: (3px solid #FFA500)]
-          RenderText {TEXT} at (0,0) size 0x0
+        RenderBlock (floating) {DIV} at (11,11) size 122x122 [bgcolor=#FFA500] [border: (3px solid #FFA500)]
         RenderListItem {DIV} at (11,11) size 762x84 [border: (3px solid #FFA500)]
           RenderListItem {DIV} at (11,11) size 740x62 [border: (3px solid #FFA500)]
             RenderListItem {DIV} at (11,11) size 718x40 [border: (3px solid #FFA500)]

@@ -4,13 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x300
       RenderBlock (floating) {DIV} at (0,0) size 392x100 [bgcolor=#008000]
-      RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (392,0) size 100x100 [bgcolor=#800080]
-      RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (584,0) size 200x500 [bgcolor=#FFA500]
-      RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (484,100) size 100x50 [bgcolor=#0000FF]
-      RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (0,100) size 160x200 [bgcolor=#FF0000]
-      RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (384,100) size 100x100 [bgcolor=#808000]

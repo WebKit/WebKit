@@ -5,8 +5,6 @@ layer at (0,0) size 800x388
     RenderBody {BODY} at (32,32) size 736x324 [bgcolor=#CCCCCC]
 layer at (143,32) size 514x146 clip at (144,33) size 497x144
   RenderBlock {DIV} at (111,0) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
-    RenderBlock (anonymous) at (17,17) size 465x0
-      RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {P} at (17,17) size 465x72
       RenderText {TEXT} at (0,0) size 220x18
         text run at (0,0) width 220: "This page is to test the behavior of "
@@ -52,8 +50,6 @@ layer at (0,0) size 40x34
       text run at (8,8) width 24: "hi 1"
 layer at (143,210) size 514x146 clip at (144,211) size 497x144
   RenderBlock (relative positioned) {DIV} at (111,178) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
-    RenderBlock (anonymous) at (17,17) size 465x0
-      RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {P} at (17,17) size 465x36
       RenderText {TEXT} at (0,0) size 462x36
         text run at (0,0) width 462: "Safari v1.2.2 incorrectly scrolls the 'hi 1' div when its parent is scrolled. If"

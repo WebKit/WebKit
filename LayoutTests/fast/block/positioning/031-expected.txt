@@ -6,5 +6,3 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600 [bgcolor=#008000]
-      RenderText {TEXT} at (0,0) size 0x0
-      RenderText {TEXT} at (0,0) size 0x0

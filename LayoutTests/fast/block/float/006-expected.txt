@@ -15,9 +15,7 @@ layer at (0,0) size 800x232
         RenderBlock (floating) {DIV} at (3,3) size 96x32 [color=#008000]
           RenderText {TEXT} at (0,0) size 96x32
             text run at (0,0) width 96: "x x"
-        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (32,154) size 102x38 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
         RenderBlock (floating) {DIV} at (3,3) size 96x32 [color=#008000]
           RenderText {TEXT} at (0,0) size 96x32
             text run at (0,0) width 96: "x x"
-        RenderText {TEXT} at (0,0) size 0x0

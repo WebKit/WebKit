@@ -3,22 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x54
   RenderBlock {HTML} at (0,0) size 800x54
     RenderBody {BODY} at (8,8) size 784x38
-      RenderBlock (anonymous) at (0,0) size 784x0
-        RenderBlock (floating) {DIV} at (532,0) size 252x102 [border: (1px solid #FF0000)]
-          RenderText {TEXT} at (1,1) size 86x18
-            text run at (1,1) width 86: "TOP-RIGHT"
-          RenderBR {BR} at (87,1) size 0x18
-          RenderText {TEXT} at (1,19) size 65x18
-            text run at (1,19) width 65: "float:right;"
-          RenderBR {BR} at (66,19) size 0x18
-          RenderText {TEXT} at (1,37) size 88x18
-            text run at (1,37) width 68: "width: 250"
-            text run at (69,37) width 20: "px;"
-          RenderBR {BR} at (89,37) size 0x18
-          RenderText {TEXT} at (1,55) size 87x18
-            text run at (1,55) width 67: "height:100"
-            text run at (68,55) width 20: "px;"
-        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock (floating) {DIV} at (532,0) size 252x102 [border: (1px solid #FF0000)]
+        RenderText {TEXT} at (1,1) size 86x18
+          text run at (1,1) width 86: "TOP-RIGHT"
+        RenderBR {BR} at (87,1) size 0x18
+        RenderText {TEXT} at (1,19) size 65x18
+          text run at (1,19) width 65: "float:right;"
+        RenderBR {BR} at (66,19) size 0x18
+        RenderText {TEXT} at (1,37) size 88x18
+          text run at (1,37) width 68: "width: 250"
+          text run at (69,37) width 20: "px;"
+        RenderBR {BR} at (89,37) size 0x18
+        RenderText {TEXT} at (1,55) size 87x18
+          text run at (1,55) width 67: "height:100"
+          text run at (68,55) width 20: "px;"
       RenderBlock {DIV} at (0,0) size 394x38 [border: (1px solid #FF0000)]
         RenderText {TEXT} at (1,1) size 31x18
           text run at (1,1) width 31: "TOP"

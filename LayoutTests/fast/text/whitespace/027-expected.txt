@@ -20,7 +20,6 @@ layer at (0,0) size 800x600
                   text run at (2,146) width 75: "department-"
                   text run at (2,164) width 68: "some-info-"
                   text run at (2,182) width 54: "from-the"
-              RenderText {TEXT} at (0,0) size 0x0
             RenderTableCell {TD} at (85,103) size 697x2 [r=0 c=1 rs=1 cs=1]
       RenderTable {TABLE} at (0,208) size 784x208
         RenderTableSection {TBODY} at (0,0) size 0x208
@@ -39,7 +38,6 @@ layer at (0,0) size 800x600
                   text run at (2,146) width 70: "department"
                   text run at (2,164) width 62: "some info"
                   text run at (2,182) width 53: "from the"
-              RenderText {TEXT} at (0,0) size 0x0
             RenderTableCell {TD} at (80,103) size 702x2 [r=0 c=1 rs=1 cs=1]
       RenderTable {TABLE} at (0,416) size 784x66 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 0x62

@@ -7,5 +7,3 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (2,2) size 714x18
           text run at (2,2) width 338: "There should be 12"
           text run at (340,2) width 376: "px of letter spacing."
-      RenderText {TEXT} at (0,0) size 0x0
-      RenderText {TEXT} at (0,0) size 0x0

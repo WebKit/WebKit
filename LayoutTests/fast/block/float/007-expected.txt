@@ -6,6 +6,3 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (0,8) size 402x20 [border: (1px solid #000000)]
         RenderText {TEXT} at (1,1) size 173x18
           text run at (1,1) width 173: "this div disappears in Safari"
-      RenderText {TEXT} at (0,0) size 0x0
-      RenderText {TEXT} at (0,0) size 0x0
-      RenderText {TEXT} at (0,0) size 0x0

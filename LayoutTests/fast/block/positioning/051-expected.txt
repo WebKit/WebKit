@@ -99,14 +99,6 @@ layer at (0,0) size 800x5269 layerType: foreground only
           text run at (0,0) width 349: "Using assumed default value of z-index (may not pass):"
 layer at (24,147) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,126) size 620x620 [border: (10px solid #000000)]
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (84,207) size 519x200
   RenderBlock (positioned) {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText {TEXT} at (50,42) size 469x80
@@ -141,43 +133,18 @@ layer at (234,157) size 200x200
       text run at (71,42) width 57: "1"
 layer at (24,783) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,762) size 620x620 [border: (10px solid #000000)]
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (234,1193) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "5"
 layer at (24,1419) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,1398) size 620x620 [border: (10px solid #000000)]
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (234,1829) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "5"
 layer at (24,2055) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,2034) size 620x620 [border: (10px solid #000000)]
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (384,2415) size 200x200
   RenderBlock (positioned) {P} at (360,360) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
     RenderText {TEXT} at (71,42) size 57x80
@@ -188,14 +155,6 @@ layer at (434,2265) size 200x200
       text run at (71,42) width 57: "3"
 layer at (24,2691) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,2670) size 620x620 [border: (10px solid #000000)]
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (84,3051) size 200x200
   RenderBlock (positioned) {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
     RenderText {TEXT} at (71,42) size 57x80
@@ -210,12 +169,6 @@ layer at (384,3051) size 200x200
       text run at (71,42) width 57: "4"
 layer at (24,3327) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,3306) size 620x620 [border: (10px solid #000000)]
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (34,3337) size 600x600 layerType: background only
 layer at (84,3687) size 200x200
   RenderBlock (positioned) zI: -9 {P} at (50,350) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
@@ -223,9 +176,6 @@ layer at (84,3687) size 200x200
       text run at (71,42) width 57: "6"
 layer at (34,3337) size 600x600 layerType: foreground only
   RenderBlock (positioned) {DIV} at (10,10) size 600x600
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (234,3737) size 200x200
   RenderBlock (positioned) {P} at (200,400) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
     RenderText {TEXT} at (71,42) size 57x80
@@ -236,34 +186,16 @@ layer at (384,3687) size 200x200
       text run at (71,42) width 57: "4"
 layer at (24,3963) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,3942) size 620x620 [border: (10px solid #000000)]
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (34,3973) size 600x600
   RenderBlock (positioned) {DIV} at (10,10) size 600x600
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (234,4373) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "5"
 layer at (24,4633) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,4612) size 620x620 [border: (10px solid #000000)]
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (34,4643) size 600x600
   RenderBlock (positioned) {DIV} at (10,10) size 600x600
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (234,5043) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
     RenderText {TEXT} at (71,42) size 57x80
