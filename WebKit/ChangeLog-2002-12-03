@@ -1,3 +1,11 @@
+in 2002-04-16  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm:
+	* WebView.subproj/IFWebFramePrivate.h:
+	Change view/setView back to be id, rather than IFWebView.
+	In the future, the view may be some other kind of object.
+
 2002-04-16  John Sullivan  <sullivan@apple.com>
 
 	Fixed bug Chris noticed where Alexander wasn't putting up

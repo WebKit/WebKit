@@ -48,8 +48,8 @@ typedef enum {
 - (NSString *)name;
 - (void)setController: (id <IFWebController>)c;
 - (id <IFWebController>)controller;
-- (void)setView: (IFWebView *)v;
-- (IFWebView *)view;
+- (void)setView: v;
+- view;
 - (void)setDataSource: (IFWebDataSource *)d;
 - (IFWebDataSource *)dataSource;
 - (void)setProvisionalDataSource: (IFWebDataSource *)d;

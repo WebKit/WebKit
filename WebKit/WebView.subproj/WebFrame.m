@@ -61,13 +61,13 @@
 }
 
 
-- (void)setView: (IFWebView *)v
+- (void)setView: v
 {
     [_private setView: v];
     [v _setController: [self controller]];
 }
 
-- (IFWebView *)view
+- view
 {
     return [_private view];
 }
