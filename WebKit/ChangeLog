@@ -1,5 +1,19 @@
 2002-06-25  Darin Adler  <darin@apple.com>
 
+        * WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+        (-[IFResourceURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+        (-[IFResourceURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+        (-[IFResourceURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	Don't remove the URL handle from the data source until we've finished the
+	loading process in KDE code. This may fix 2968527.
+
+        * WebCoreSupport.subproj/IFTextRenderer.m: Keep around commented printfs so
+	I can do the "dump all strings as they are rendered" again.
+
+        * WebKit.pbproj/project.pbxproj: Re-add -Wmissing-format-attribute.
+
+2002-06-25  Darin Adler  <darin@apple.com>
+
         * WebCoreSupport.subproj/IFImageRenderer.m:
         (-[IFImageRenderer tileInRect:fromPoint:]): Remove stray NSLog.
 

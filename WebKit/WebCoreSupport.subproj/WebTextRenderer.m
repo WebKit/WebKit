@@ -189,31 +189,19 @@ static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 
 static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsigned int length)
 {
-    unsigned int clusterLength = 1, k;
-    UniChar nextC;
+    unsigned int k;
 
-    if (length == 0)
-        return 0;
-            
-    if (length == 1)
-        return 1;
+    if (length <= 1)
+        return length;
     
     if (IsNonBaseChar(characters[0]))
         return 1;
                 
-    nextC = characters[1];
-    if (IsNonBaseChar(nextC)){
-        // Find all the non base characters after the current character.
-        for (k = 2; k < length; k++){
-            if (!IsNonBaseChar(characters[k]))
-                break;
-        }
-        clusterLength = k;
-    }
-    else
-        clusterLength = 1;
-
-    return clusterLength;
+    // Find all the non base characters after the current character.
+    for (k = 1; k < length; k++)
+        if (!IsNonBaseChar(characters[k]))
+            break;
+    return k;
 }
 
 
@@ -591,6 +579,8 @@ cleanup:
 
 - (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
 {
+    //printf("draw: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
+
     NSFont *substituteFont;
     _IFFailedDrawReason reason = [self _drawCharacters: characters length: length atPoint: point withColor: color];
     
@@ -684,7 +674,8 @@ cleanup:
     NSFont *substituteFont;
     ATSGlyphRef glyphID;
     
-
+    //printf("width: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
+    
     for (i = 0; i < length; i++) {
         UniChar c = characters[i];
         

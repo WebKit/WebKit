@@ -74,7 +74,8 @@
 
         IFError *badURLError = [IFError errorWithCode:IFURLHandleResultBadURLError
                                              inDomain:IFErrorCodeDomainWebFoundation
-                                           failingURL:URL isTerminal:YES];        
+                                           failingURL:URL
+                                           isTerminal:YES];        
         [[source controller] _receivedError:badURLError forResourceHandle:nil
             partialProgress:nil fromDataSource:source];
         
@@ -122,10 +123,10 @@
     WEBKIT_ASSERT(currentURL == nil || [currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 #endif    
 
-    [dataSource _removeURLHandle:handle];
-        
     [loader cancel];
     
+    [dataSource _removeURLHandle:handle];
+        
     [[dataSource controller] _receivedProgress:[IFLoadProgress progress]
         forResourceHandle:handle fromDataSource:dataSource complete: YES];
 
@@ -138,9 +139,9 @@
     WEBKIT_ASSERT([handle statusCode] == IFURLHandleStatusLoadComplete);
     WEBKIT_ASSERT((int)[data length] == [handle contentLengthReceived]);
 
-    [dataSource _removeURLHandle:handle];
-    
     [loader finish];
+    
+    [dataSource _removeURLHandle:handle];
     
     IFError *nonTerminalError = [handle error];
     if (nonTerminalError) {
@@ -163,9 +164,9 @@
     WEBKIT_ASSERT(currentURL == nil || [currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 #endif    
 
-    [dataSource _removeURLHandle:handle];
-    
     [loader cancel];
+    
+    [dataSource _removeURLHandle:handle];
     
     [[dataSource controller] _receivedError:error forResourceHandle:handle
         partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
