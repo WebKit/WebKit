@@ -29,6 +29,8 @@
 #include <kwq.h>
 #include <string.h>
 
+#include "qcstring.h"
+
 class QChar {
 public:
     QChar(char);
@@ -48,6 +50,7 @@ public:
     bool isNull() const;
     const QChar *unicode() const;
     uint length() const;
+    QString &sprintf(const char *format, ...);
 
     static const QString null;
 

@@ -27,6 +27,9 @@
 #define QVALUELIST_H_
 
 template <class T> class QValueList {
+public:
+	void append(const T& x);
+	void remove(const T& x);
 };
 
 #endif

@@ -26,4 +26,10 @@
 #ifndef QFONT_H_
 #define QFONT_H_
 
+class QFont {
+public:
+	bool operator==(const QFont &x) const;
+	bool operator!=(const QFont &x) const;
+};
+
 #endif

@@ -29,4 +29,7 @@
 class QTime {
 };
 
+class QDateTime {
+};
+
 #endif

@@ -26,4 +26,7 @@
 #ifndef KURL_H_
 #define KURL_H_
 
+class KURL {
+};
+
 #endif

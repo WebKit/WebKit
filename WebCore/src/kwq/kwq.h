@@ -26,6 +26,9 @@
 #ifndef KWQDEF_H_
 #define KWQDEF_H_
 
+#include <qsize.h>
+#include <qcolor.h>
+
 typedef unsigned short ushort;
 typedef unsigned uint;
 

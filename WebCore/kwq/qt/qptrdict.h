@@ -26,4 +26,11 @@
 #ifndef QPTRDICT_H_
 #define QPTRDICT_H_
 
+template <class T> class QPtrDict {
+public:
+    uint count() const;
+    T *at(uint);
+    void append(const T *);
+};
+
 #endif

@@ -26,4 +26,7 @@
 #ifndef QSIZE_H_
 #define QSIZE_H_
 
+class QSize {
+};
+
 #endif

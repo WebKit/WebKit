@@ -26,4 +26,8 @@
 #ifndef QSCROLLVIEW_H_
 #define QSCROLLVIEW_H_
 
+class QScrollView {
+	typedef int ScrollBarMode;
+};
+
 #endif

@@ -26,4 +26,16 @@
 #ifndef QPALETTE_H_
 #define QPALETTE_H_
 
+class QColorGroup {
+public:
+	enum ColorRole {};
+	void setColor(ColorRole role, const QColor &color);
+};
+
+class QPalette {
+public:
+	enum ColorGroup {};
+	void setColor(ColorGroup, QColorGroup::ColorRole role, const QColor &color);
+}; 
+
 #endif

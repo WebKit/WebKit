@@ -26,4 +26,10 @@
 #ifndef QXML_H_
 #define QXML_H_
 
+class QXmlDefaultHandler {
+};
+
+class QXmlAttributes {
+};
+
 #endif

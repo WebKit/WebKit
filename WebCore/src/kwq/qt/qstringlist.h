@@ -26,7 +26,11 @@
 #ifndef QSTRINGLIST_H_
 #define QSTRINGLIST_H_
 
-class QStringList {
+#include "qstring.h"
+#include "qvaluelist.h"
+
+class QStringList : public QValueList<QString> {
+	
 };
 
 #endif

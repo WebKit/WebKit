@@ -26,4 +26,6 @@
 #ifndef QCSTRING_H_
 #define QCSTRING_H_
 
+#include "qarray.h"
+
 #endif

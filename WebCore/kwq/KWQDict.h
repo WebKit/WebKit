@@ -26,4 +26,7 @@
 #ifndef QDICT_H_
 #define QDICT_H_
 
+template <class T> class QDict {
+};
+
 #endif
