@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class WebArchivePrivate;
 @class WebResourcePrivate;
 
 extern NSString *WebArchivePboardType;
@@ -23,5 +24,22 @@ extern NSString *WebArchivePboardType;
 - (NSURL *)URL;
 - (NSString *)MIMEType;
 - (NSString *)textEncodingName;
+
+@end
+
+
+@interface WebArchive : NSObject 
+{
+@private
+    WebArchivePrivate *_private;
+}
+
+- (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources;
+- (id)initWithData:(NSData *)data;
+
+- (WebResource *)mainResource;
+- (NSArray *)subresources;
+
+- (NSData *)dataRepresentation;
 
 @end

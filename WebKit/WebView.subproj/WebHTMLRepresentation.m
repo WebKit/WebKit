@@ -87,9 +87,11 @@
 
 - (void)loadWebArchive
 {
-    WebResource *mainResource;
-    NSArray *subresources;
-    if (![WebResource _parseWebArchive:[_private->dataSource data] mainResource:&mainResource subresources:&subresources]) {
+    WebArchive *webArchive = [[WebArchive alloc] initWithData:[_private->dataSource data]];
+    WebResource *mainResource = [webArchive mainResource];
+    NSArray *subresources = [webArchive subresources];
+    [webArchive release];
+    if (!mainResource) {
         return;
     }
     
@@ -206,7 +208,7 @@
     return [_private->bridge matchLabels:labels againstElement:element];
 }
 
-- (NSData *)_webArchiveWithMarkupString:(NSString *)markupString subresourceURLStrings:(NSArray *)subresourceURLStrings
+- (WebArchive *)_webArchiveWithMarkupString:(NSString *)markupString subresourceURLStrings:(NSArray *)subresourceURLStrings
 { 
     NSURLResponse *response = [_private->dataSource response];
     WebResource *mainResource = [[WebResource alloc] initWithData:[markupString dataUsingEncoding:NSUTF8StringEncoding]
@@ -227,7 +229,7 @@
         }
     }
     
-    NSData *webArchive = [WebResource _webArchiveWithMainResource:mainResource subresources:subresources];
+    WebArchive *webArchive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:subresources] autorelease];
     [mainResource release];
     [subresources release];
     
@@ -244,14 +246,14 @@
     return [_private->bridge markupStringFromRange:range subresourceURLStrings:nil];
 }
 
-- (NSData *)webArchiveFromNode:(DOMNode *)node
+- (WebArchive *)webArchiveFromNode:(DOMNode *)node
 {
     NSArray *subresourceURLStrings;
     NSString *markupString = [_private->bridge markupStringFromNode:node subresourceURLStrings:&subresourceURLStrings];
     return [self _webArchiveWithMarkupString:markupString subresourceURLStrings:subresourceURLStrings];
 }
 
-- (NSData *)webArchiveFromRange:(DOMRange *)range
+- (WebArchive *)webArchiveFromRange:(DOMRange *)range
 {
     NSArray *subresourceURLStrings;
     NSString *markupString = [_private->bridge markupStringFromRange:range subresourceURLStrings:&subresourceURLStrings];

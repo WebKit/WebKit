@@ -520,7 +520,7 @@ static WebHTMLView *lastHitView = nil;
     return [NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
 }
 
-- (NSData *)_selectedWebArchive:(NSString **)markupString
+- (WebArchive *)_selectedWebArchive:(NSString **)markupString
 {
     NSArray *subresourceURLStrings;
     WebHTMLRepresentation *rep = [[self _dataSource] representation];
@@ -534,9 +534,9 @@ static WebHTMLView *lastHitView = nil;
 
     // Put HTML on the pasteboard.
     NSString *markupString;
-    NSData *webArchive = [self _selectedWebArchive:&markupString];
+    WebArchive *webArchive = [self _selectedWebArchive:&markupString];
     [pasteboard setString:markupString forType:NSHTMLPboardType];
-    [pasteboard setData:webArchive forType:WebArchivePboardType];
+    [pasteboard setData:[webArchive dataRepresentation] forType:WebArchivePboardType];
     
     // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];
@@ -572,13 +572,13 @@ static WebHTMLView *lastHitView = nil;
     NSString *markupString = nil;
 	
     if ([types containsObject:WebArchivePboardType]) {
-        NSData *webArchive = [pasteboard dataForType:WebArchivePboardType];
-        WebResource *mainResource;
-        NSArray *subresources;
-        if ([WebResource _parseWebArchive:webArchive mainResource:&mainResource subresources:&subresources]) {
+        WebArchive *webArchive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
+        WebResource *mainResource = [webArchive mainResource];
+        if (mainResource) {
             markupString = [[[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding] autorelease];
-            [[self _dataSource] addSubresources:subresources];
+            [[self _dataSource] addSubresources:[webArchive subresources]];
         }
+        [webArchive release];
     }
     
     if (!markupString && [types containsObject:NSHTMLPboardType]) {

@@ -12,6 +12,7 @@
 @class DOMElement;
 @class NSMutableURLRequest;
 @class NSURLRequest;
+@class WebArchive;
 @class WebBridge;
 @class WebFormState;
 @class WebFrameBridge;
@@ -117,7 +118,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 @interface WebFrame (WebPrivate)
 
 // API Considerations:
-- (void)loadWebArchive:(NSData *)webArchive;
+- (void)loadWebArchive:(WebArchive *)webArchive;
 
 // unreachableURL represents a URL that couldn't be loaded; the HTML string acts as an error page for that URL
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)URL forUnreachableURL:(NSURL *)unreachableURL;

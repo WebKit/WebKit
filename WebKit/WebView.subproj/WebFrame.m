@@ -262,17 +262,16 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [self _loadHTMLString:string baseURL:URL unreachableURL:unreachableURL];
 }
 
-- (void)loadWebArchive:(NSData *)webArchive
+- (void)loadWebArchive:(WebArchive *)webArchive
 {
-    WebResource *mainResource;
-    NSArray *subresources;
-    if ([WebResource _parseWebArchive:webArchive mainResource:&mainResource subresources:&subresources]) {
+    WebResource *mainResource = [webArchive mainResource];
+    if (mainResource) {
         NSURLRequest *request = [self _webDataRequestForData:[mainResource data] 
                                                     MIMEType:[mainResource MIMEType]
                                             textEncodingName:[mainResource textEncodingName]
                                                      baseURL:[mainResource URL]
                                               unreachableURL:nil];
-        [self _loadRequest:request subresources:subresources];
+        [self _loadRequest:request subresources:[webArchive subresources]];
     }
 }
 

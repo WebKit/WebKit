@@ -8,6 +8,7 @@
 @class DOMDocument;
 @class DOMNode;
 @class DOMRange;
+@class WebArchive;
 
 @protocol WebDocumentImage <NSObject>
 - (NSImage *)image;
@@ -20,7 +21,7 @@
 - (NSString *)markupStringFromNode:(DOMNode *)node;
 - (NSString *)markupStringFromRange:(DOMRange *)range;
 
-- (NSData *)webArchiveFromNode:(DOMNode *)node;
-- (NSData *)webArchiveFromRange:(DOMRange *)range;
+- (WebArchive *)webArchiveFromNode:(DOMNode *)node;
+- (WebArchive *)webArchiveFromRange:(DOMRange *)range;
 
 @end

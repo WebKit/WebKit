@@ -1,3 +1,37 @@
+2004-03-11  Chris Blumenberg  <cblu@apple.com>
+
+	Made WebArchive a class instead of a data object. This allows clients to easily get the main resource and subresources from a WebArchive.
+
+        Reviewed by kocienda.
+
+        * WebKit.exp:
+        * WebView.subproj/WebDocumentPrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadWebArchive:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation loadWebArchive]):
+        (-[WebHTMLRepresentation _webArchiveWithMarkupString:subresourceURLStrings:]):
+        (-[WebHTMLRepresentation webArchiveFromNode:]):
+        (-[WebHTMLRepresentation webArchiveFromRange:]):
+        * WebView.subproj/WebHTMLRepresentationPrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectedWebArchive:]):
+        (-[WebHTMLView _writeSelectionToPasteboard:]):
+        (-[WebHTMLView _pasteMarkupFromPasteboard:]):
+        * WebView.subproj/WebResource.h:
+        * WebView.subproj/WebResource.m:
+        (-[WebArchivePrivate dealloc]):
+        (-[WebResource _response]):
+        (-[WebArchive init]):
+        (-[WebArchive initWithMainResource:subresources:]):
+        (-[WebArchive initWithData:]):
+        (-[WebArchive dealloc]):
+        (-[WebArchive mainResource]):
+        (-[WebArchive subresources]):
+        (-[WebArchive dataRepresentation]):
+        * WebView.subproj/WebResourcePrivate.h:
+
 2004-03-10  Chris Blumenberg  <cblu@apple.com>
 
 	Made dragging of web archives work.
