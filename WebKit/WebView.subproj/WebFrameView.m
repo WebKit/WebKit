@@ -6,6 +6,7 @@
 #import <WebKit/WKWebDataSource.h>
 #import <WebKit/WKWebDataSourcePrivate.h>
 #import <WebKit/WKDefaultWebController.h>
+#import <WebKit/WKDynamicScrollBarsView.h>
 #import <WebKit/WKException.h>
 #import <WebKit/WebKitDebug.h>
 
@@ -63,8 +64,12 @@
 
     data->widget = new KHTMLView (part, 0);
     part->setView (data->widget);
-    
-    data->widget->setView (self);
+
+    // Check to see if we're a frame.
+    //if ([self _frameScrollView])
+    //    data->widget->setView ([self _frameScrollView]);
+    //else
+        data->widget->setView (self);
     
     data->widget->resize (r.size.width,r.size.height);
 

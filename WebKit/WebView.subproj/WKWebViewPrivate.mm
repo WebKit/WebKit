@@ -28,6 +28,8 @@
     // controller is not retained!  WKWebControllers maintain
     // a reference to their view and main data source.
 
+    [frameScrollView release];
+
     if (widget)
         delete widget;
 }
@@ -62,6 +64,18 @@
 - (KHTMLView *)_widget
 {
     return ((WKWebViewPrivate *)_viewPrivate)->widget;    
+}
+
+- (void)_setFrameScrollView: (WKDynamicScrollBarsView *)sv
+{
+    ((WKWebViewPrivate *)_viewPrivate)->frameScrollView = [sv retain];    
+    [self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [sv setDocumentView: self];
+}
+
+- (WKDynamicScrollBarsView *)_frameScrollView
+{
+    return ((WKWebViewPrivate *)_viewPrivate)->frameScrollView;    
 }
 
 @end

@@ -10,36 +10,14 @@
 /*
    ============================================================================= 
 
-    WKWebController manages the interaction between WKWebView and WKWebDataSource.
-    Intances of WKWebController retain their view and data source.
-    
-    [As in the appkit classes NSWindow and NSWindowController, it will be necessary 
-     to have non-retained back pointers from WKWebView and WKWebDataSource to their
-     controller.  Not retaining the controller will prevent cycles.  Of course, not
-     retaining is bad, as it can lead to dangling references.  We could invert the reference
-     graph and add ...inView: and ...inDataSource: to the API, but that's ugly.  If it's
-     good enough for the appkit, it's good enough for us.  Ugh.]
-     
-                                 .--(p)WKWebController --.
-                                 |      .    .           |
-                                 |     .      .          |
-                                \|/   .        .        \|/
-    (p)WKWebViewDelegate <-- (c)WKWebView     (c)WKWebDataSource --> (p)WKWebDataSourceDelegate
-    
-    (c) indicates a class, (p) indicates a protocol.  The solid lines indicate an 
-    retained reference.  The dotted lines indicate a non-retained reference.
-    
+    WKWebController manages the interaction between WKWebView(s) and WKWebDataSource(s).
+
     The WKWebController implements required behavior.  WKWebView and WKWebDataSource
     cannot function without a controller.  
     
-    Delegates implement optional behavior.  WKWebView doesn't require a WKWebViewDelegate,
-    nor does WKWebDataSource require a WKWebDataSourceDelegate.
-    
     It it expected that alternate implementations of WKWebController will be written for
-    alternate views of the web page described by WKWebDataSource.  For example, a 
-    view that draws the DOM tree would require both a subclass of NSView and an
-    implementation of WKWebController.  It is also possible that a web crawler
-    may implement a WKWebController with no corresponding view.
+    alternate views of the web pages described by WKWebDataSources.  For example, a web
+    crawler may implement a WKWebController with no corresponding view.
     
     WKDefaultWebController may be subclassed to modify the behavior of the standard
     WKWebView and WKWebDataSource.

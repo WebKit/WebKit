@@ -56,6 +56,42 @@
 
 #import <KWQView.h>
 
+@class WKWebDataSource;
+@class WKWebView;
+@class WKWebFrame;
+@class WKError;
+
+@protocol WKWebController
+- (WKWebFrame *)createFrameNamed: (NSString *)name for: (WKWebDataSource *)dataSource inParent: (WKWebDataSource *)dataSource;
+- (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource;
+@end
+
+@protocol WKLocationChangeHandler
+- (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource;
+@end
+
+@interface WKWebDataSource : NSObject
+- initWithURL: (NSURL *)url;
+- (void)_setFrameName: (NSString *)fName;
+- (id <WKWebController>)controller;
+- (void)startLoading: (BOOL)forceRefresh;
+- frameNamed: (NSString *)f;
+@end
+
+// This should not be allowed here.  data source should not reference view
+// API.
+@interface WKWebView: NSObject
+- (QWidget *)_widget;
+- (void)_resetView;
+- documentView;
+@end
+
+@interface WKWebFrame: NSObject
+- initWithName: (NSString *)n view: v dataSource: (WKWebDataSource *)d;
+- view;
+@end
+
+
 static bool cache_init = false;
 
 static void recursive(const DOM::Node &pNode, const DOM::Node &node)
@@ -691,7 +727,7 @@ void KHTMLPart::end()
     //    write(d->m_decoder->flush());
     //d->m_doc->finishParsing();
 
-    QString str = d->m_doc->recursive_toHTML(1);
+    //QString str = d->m_doc->recursive_toHTML(1);
     
     d->m_doc->close();
 }
@@ -1237,11 +1273,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 
 }
 
-// [rjw]:  hack-o-rama.  This will all have to change once we
-// implement this correctly.
-@interface WKWebView : NSObject
-- (void)_resetView;
-@end
+
 
 void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 {
@@ -1257,7 +1289,11 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
-        [((WKWebView *)((QWidget *)view())->getView()) _resetView];
+        id nsview = ((WKWebView *)((QWidget *)view())->getView());
+        
+        if ([nsview isKindOfClass: NSClassFromString(@"WKDynamicScrollBarsView")])
+            nsview = [nsview documentView];
+        [nsview _resetView];
         KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
         openURL (clickedURL);
         // [kocienda]: shield your eyes!
@@ -1487,34 +1523,6 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
     _logNeverImplemented();
 }
 
-@class WKWebDataSource;
-@class WKWebView;
-@class WKWebFrame;
-
-@protocol WKWebController
-- (WKWebFrame *)createFrameNamed: (NSString *)name for: (WKWebDataSource *)dataSource inParent: (WKWebDataSource *)dataSource;
-@end
-
-@interface WKWebDataSource : NSObject
-- initWithURL: (NSURL *)url;
-- (void)_setFrameName: (NSString *)fName;
-- (id <WKWebController>)controller;
-- (void)startLoading: (BOOL)forceRefresh;
-- frameNamed: (NSString *)f;
-@end
-
-// This should not be allowed here.  data source should not reference view
-// API.
-@interface WKWebView (Foo)
-- (QWidget *)_widget;
-@end
-
-@interface WKWebFrame: NSObject
-- initWithName: (NSString *)n view: v dataSource: (WKWebDataSource *)d;
-- view;
-@end
-
-
 bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
                     const QStringList &params, bool isIFrame)
 {
@@ -1658,6 +1666,13 @@ void KHTMLPart::checkCompleted()
         // tell anyone who's interested that we're done
         [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-done" object:urlString];
 
+        WKWebDataSource *dataSource;
+        id <WKWebController> controller;
+        
+        dataSource = getDataSource();
+        controller = [dataSource controller];
+        [controller locationChangeDone: nil forDataSource: dataSource];
+        
         end();
     }
 }

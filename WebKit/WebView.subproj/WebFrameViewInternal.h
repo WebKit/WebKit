@@ -8,6 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import <WebKit/WKWebController.h>
+#import <WebKit/WKDynamicScrollBarsView.h>
 #import <WebKit/WKWebView.h>
 
 class QWidget;
@@ -18,6 +19,7 @@ class KHTMLView;
 {
     id <WKWebController>controller;
     KHTMLView *widget;
+    WKDynamicScrollBarsView *frameScrollView;
     bool isFlipped;
     bool needsLayout;
 }
@@ -28,4 +30,6 @@ class KHTMLView;
 - (void)_setController: (id <WKWebController>)controller;
 - (void)_resetView;
 - (KHTMLView *)_widget;
+- (void)_setFrameScrollView: (WKDynamicScrollBarsView *)sv;
+- (WKDynamicScrollBarsView *)_frameScrollView;
 @end

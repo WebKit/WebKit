@@ -137,6 +137,7 @@
     WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
     WKWebView *childView;
     WKWebFrame *newFrame;
+    //WKDynamicScrollBarsView *scrollView;
 
     childView = [[WKWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
 
@@ -149,6 +150,10 @@
     [data->dataSourceMap setObject: childDataSource forKey: [WKObjectHolder holderWithObject:childView]];
     [childDataSource _setController: self];
 
+    
+    //scrollView  = [[[WKDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
+    //[childView _setFrameScrollView: scrollView];
+        
     [childView dataSourceChanged];
         
     return newFrame;
@@ -263,9 +268,13 @@
 
 - (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::locationChangeDone:forDataSource: is not implemented"];
+    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    
+    // FIXME:  Should be smart about only laying out necessary views.  This is
+    // important for frames and iframes.
+    [data->mainView setNeedsLayout: YES];
+    [data->mainView setNeedsDisplay: YES];
 }
-
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (WKWebDataSource *)dataSource
 {

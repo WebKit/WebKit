@@ -1,3 +1,18 @@
+2002-02-01  Richard Williamson  <rjw@apple.com>
+
+    Changes for dynamic scrolling frames.  Added notification of complete
+    load.
+    
+	* WebView.subproj/WKDefaultWebController.mm: (-[WKDefaultWebController
+	createFrameNamed:for:inParent:]), (-[WKDefaultWebController
+	locationChangeDone:forDataSource:]):
+	* WebView.subproj/WKWebController.h:
+	* WebView.subproj/WKWebView.mm: (-[WKWebView dataSourceChanged]):
+	* WebView.subproj/WKWebViewPrivate.h:
+	* WebView.subproj/WKWebViewPrivate.mm: (-[WKWebViewPrivate dealloc]),
+	(-[WKWebView _widget]), (-[WKWebView _setFrameScrollView:]), (-[WKWebView
+	_frameScrollView]):
+
 2002-02-01  John Sullivan  <sullivan@apple.com>
 
 	Added call to examine the entry at the current index in

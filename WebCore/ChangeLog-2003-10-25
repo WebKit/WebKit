@@ -1,3 +1,11 @@
+2002-02-01  Richard Williamson  <rjw@apple.com>
+
+    Added support for dynamic scrolling frames.  Also added first callback for
+    WKLocationChangeHandler.
+    
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::end), (KHTMLPart::khtmlMouseReleaseEvent),
+	(KHTMLPart::checkCompleted):
+
 2002-02-01  Kenneth Kocienda  <kocienda@apple.com>
 
         Made some cleanups to the no-copy NSData API, and those changes
