@@ -1061,16 +1061,10 @@ Loader::Loader() : QObject()
 {
     m_requestsPending.setAutoDelete( true );
     m_requestsLoading.setAutoDelete( true );
-#ifdef APPLE_CHANGES
-    d = new KWQLoaderImpl(this);
-#endif
 }
 
 Loader::~Loader()
 {
-#ifdef APPLE_CHANGES
-    delete d;
-#endif
 }
 
 void Loader::load(DocLoader* dl, CachedObject *object, bool incremental)
@@ -1101,7 +1095,7 @@ void Loader::servePendingRequests()
   KIO::TransferJob* job = KIO::get( u, false, false /*no GUI*/);
 
 #ifdef APPLE_CHANGES
-  d->serveRequest(req, job);
+  KWQServeRequest(this, req, job);
 #else
   job->addMetaData("cache", getCacheControlString(req->object->cachePolicy()));
   if (!req->object->accept().isEmpty())
@@ -1155,9 +1149,6 @@ kdDebug(6060) << "Loader::slotFinished, url = " << j->url().url() << " expires "
       r->object->setExpireDate(expireDate, false);
   }
 
-#ifdef APPLE_CHANGES
-  d->objectFinished(r->object);
-#endif
   r->object->finish();
 
 #ifdef CACHE_DEBUG

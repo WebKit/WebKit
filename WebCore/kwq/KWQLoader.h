@@ -24,7 +24,6 @@
  */
 
 namespace khtml {
-    class CachedObject;
     class Loader;
     class Request;
 }
@@ -33,17 +32,4 @@ namespace KIO {
     class TransferJob;
 }
 
-class KWQLoaderImpl
-{
-public:
-    KWQLoaderImpl(khtml::Loader *);
-    
-    void serveRequest(khtml::Request *, KIO::TransferJob *);
-    void objectFinished(khtml::CachedObject *);
-
-private:
-    KWQLoaderImpl(const KWQLoaderImpl&);
-    KWQLoaderImpl& operator=(const KWQLoaderImpl&);
-    
-    khtml::Loader *loader;
-};
+void KWQServeRequest(khtml::Loader *, khtml::Request *, KIO::TransferJob *);

@@ -35,23 +35,23 @@
 
 #import <kwqdebug.h>
 
-using khtml::DocLoader;
 using khtml::Loader;
 using khtml::Request;
+using KIO::TransferJob;
 
 @interface WebCoreResourceLoader : NSObject <WebCoreResourceLoader>
 {
-    khtml::Loader *loader;
-    KIO::TransferJob *job;
+    Loader *loader;
+    TransferJob *job;
 }
 
--(id)initWithLoader:(khtml::Loader *)loader job:(KIO::TransferJob *)job;
+-(id)initWithLoader:(Loader *)loader job:(TransferJob *)job;
 
 @end
 
 @implementation WebCoreResourceLoader
 
--(id)initWithLoader:(khtml::Loader *)l job:(KIO::TransferJob *)j;
+-(id)initWithLoader:(Loader *)l job:(TransferJob *)j;
 {
     [super init];
     
@@ -86,35 +86,16 @@ using khtml::Request;
 
 @end
 
-KWQLoaderImpl::KWQLoaderImpl(Loader *l)
-    : loader(l)
+void KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 {
-}
-
-void KWQLoaderImpl::serveRequest(Request *req, KIO::TransferJob *job)
-{
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "Serving request for base %s, url %s", 
-          req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
+    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "Serving request for base %s, url %s", 
+        request->m_docLoader->part()->baseURL().url().latin1(),
+        request->object->url().string().latin1());
     
     WebCoreResourceLoader *resourceLoader = [[WebCoreResourceLoader alloc] initWithLoader:loader job:job];
     
-    WebCoreBridge *bridge = ((KHTMLPart *)req->m_docLoader->part())->impl->getBridge();
+    WebCoreBridge *bridge = ((KHTMLPart *)request->m_docLoader->part())->impl->getBridge();
     job->setHandle([bridge startLoadingResource:resourceLoader withURL:job->url()]);
     
     [resourceLoader release];
-}
-
-void KWQLoaderImpl::objectFinished(khtml::CachedObject *object)
-{
-    NSString *urlString;
-    
-    urlString = [NSString stringWithCString:object->url().string().latin1()];
-    if ([urlString hasSuffix:@"/"]) {
-        urlString = [urlString substringToIndex:([urlString length] - 1)];
-    }
-    
-    // FIXME: Are we sure that we can globally notify with the URL as the notification
-    // name without conflicting with other frameworks? No "IF" prefix needed?
-    // Perhaps the notification should have a distinctive name, and the URL should be the object.
-    [[NSNotificationCenter defaultCenter] postNotificationName:urlString object:nil];
 }

@@ -1,3 +1,22 @@
+2002-06-17  Darin Adler  <darin@apple.com>
+
+	Fixed a storage leak.
+
+	* kwq/WebCoreBridge.mm: (-[WebCoreBridge documentTextFromDOM]): Add a missing autorelease.
+
+	Remove a bunch of loader-related APPLE_CHANGES.
+
+	* khtml/misc/loader.h: Remove KWQURLLoadClient and KWQLoaderImpl.
+	* khtml/misc/loader.cpp:
+	(Loader::Loader): Remove unneeded KWQLoaderImpl object.
+	(Loader::~Loader): Remove unneeded KWQLoaderImpl object.
+	(Loader::servePendingRequests): Call KWQServeRequest instead of KWQLoaderImpl::serveRequest.
+	(Loader::slotFinished): Remove unneeded KWQLoaderImpl::objectFinished.
+
+	* kwq/KWQLoaderImpl.h:
+	* kwq/KWQKloader.mm: (KWQServeRequest): Replaces the KWQLoaderImpl class. The rest of what
+	was in this class was obsolete.
+
 2002-06-17  Richard Williamson  <rjw@apple.com>
 
     Fixed www.2cpu.com regression.  QWidget::_displayRect was displaying the wrong

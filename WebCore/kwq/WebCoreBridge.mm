@@ -102,7 +102,7 @@
     if (part) {
         DOM::DocumentImpl *doc = part->xmlDocImpl();
         if (doc) {
-            string = [doc->recursive_toHTML(1).getNSString() copy];
+            string = [[doc->recursive_toHTML(1).getNSString() copy] autorelease];
         }
     }
     if (string == nil) {
