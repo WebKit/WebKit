@@ -1,3 +1,13 @@
+2003-12-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3475767, hang at saabnet.com.  Fix h1-h6 to be more tolerant regarding allowed child elements, to avoid
+	deeply nested pages.
+	
+        Reviewed by darin
+
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+
 2003-12-03  John Sullivan  <sullivan@apple.com>
 
         - fixed these two design issues after Dave and I talked to HI:

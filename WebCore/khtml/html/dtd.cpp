@@ -588,15 +588,15 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_WBR:
         return check_array(childID, tag_list_1);
     case ID_P:
+        // P: ( _0 | TABLE ) *
+        return check_array(childID, tag_list_0) || childID == ID_TABLE;
     case ID_H1:
     case ID_H2:
     case ID_H3:
     case ID_H4:
     case ID_H5:
     case ID_H6:
-        if (childID == ID_TABLE || (tagID != ID_P && (childID == ID_FORM || childID == ID_CENTER || childID == ID_HR)))
-            return true;
-        return check_array(childID, tag_list_0);
+        return check_array(childID, tag_list_1) && (childID < ID_H1 || childID > ID_H6);
     case ID_BASEFONT:
     case ID_BR:
     case ID_AREA:
@@ -615,12 +615,10 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         return false;
     case ID_BODY:
         // BODY: _1 * + _2
-        if( check_array(childID, tag_list_1) ) return true;
-        return check_array(childID, tag_list_2);
+        return check_array(childID, tag_list_1) || check_array(childID, tag_list_2);
     case ID_ADDRESS:
         // ADDRESS: ( _0 | P ) *
-        if( check_array(childID, tag_list_0) ) return true;
-        return (childID == ID_P);
+        return check_array(childID, tag_list_0) || childID == ID_P;
     case ID_LI:
     case ID_DT:
     case ID_DIV:
