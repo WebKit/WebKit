@@ -92,8 +92,6 @@ void KWQKHTMLPartImpl::openURL(const KURL &url)
 {
     d->m_workingURL = url;
     part->m_url = url;
-
-    m_decodingStarted = false;
 }
 
 void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int length, bool complete)
@@ -200,81 +198,6 @@ void KWQKHTMLPartImpl::begin( const KURL &url, int xOffset, int yOffset )
 
 #ifdef _KWQ_TIMING        
     d->totalWriteTime = 0;
-#endif
-}
-
-// FIXME: Need to remerge this with code in khtml_part.cpp?
-void KWQKHTMLPartImpl::write( const char *str, int len )
-{
-    /* FIXME: hook this code back when we have decoders completely working */
-#if 0
-  if(d->m_bFirstData) {
-      // determine the parse mode
-      d->m_doc->determineParseMode( decoded );
-      d->m_bFirstData = false;
-    
-  //kdDebug(6050) << "KHTMLPart::write haveEnc = " << d->m_haveEncoding << endl;
-      // ### this is still quite hacky, but should work a lot better than the old solution
-      if(d->m_decoder->visuallyOrdered()) d->m_doc->setVisuallyOrdered();
-
-      if (!d->m_haveCharset)
-        {
-            const QTextCodec *c = d->m_decoder->codec();
-            //kdDebug(6005) << "setting up charset to " << (int) KGlobal::charsets()->charsetForEncoding(c->name()) << endl;
-            d->m_charset = KGlobal::charsets()->charsetForEncoding(c->name());
-            d->m_settings->setCharset( d->m_charset );
-            d->m_settings->setScript( KGlobal::charsets()->charsetForEncoding(c->name(), true ));
-            //kdDebug(6005) << "charset is " << (int)d->m_settings->charset() << endl;
-        }
-        d->m_doc->applyChanges(true, true);
-    }
-#endif
-
-    // begin lines added in lieu of big fixme    
-    if ( !d->m_decoder ) {
-        d->m_decoder = new Decoder();
-        if(!d->m_encoding.isNull())
-            d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
-        else {
-            //FIXME: d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
-        }
-    }
-    if ( len == 0 )
-        return;
-    
-    if ( len == -1 )
-        len = strlen( str );
-    
-#ifdef _KWQ_TIMING        
-    double start = CFAbsoluteTimeGetCurrent();
-#endif
-    
-    QString decoded = d->m_decoder->decode(str, len);
-    if (decoded.isEmpty()) {
-	return;
-    }
-    
-    if (!m_decodingStarted) {
-	d->m_doc->determineParseMode(decoded);
-        m_decodingStarted = true;
-    }
-    
-#if FIGURE_OUT_WHAT_APPLY_CHANGES_DOES
-    d->m_doc->applyChanges();
-#endif    
-
-    // end lines added in lieu of big fixme
-    
-    if (part->jScript())
-	part->jScript()->appendSourceFile(part->m_url.url(),decoded);
-    Tokenizer* t = d->m_doc->tokenizer();
-    if(t)
-        t->write( decoded, true );
-
-#ifdef _KWQ_TIMING        
-    double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    d->totalWriteTime += thisTime;
-    KWQDEBUGLEVEL (0x200, "%s bytes = %d, seconds = %f, total = %f\n", part->m_url.url().latin1(), len, thisTime, d->totalWriteTime);
 #endif
 }
 

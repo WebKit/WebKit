@@ -1392,9 +1392,6 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 
 void KHTMLPart::write( const char *str, int len )
 {
-#ifdef APPLE_CHANGES
-  impl->write(str, len);
-#else
     if ( !d->m_decoder ) {
         d->m_decoder = new khtml::Decoder();
         if(d->m_encoding != QString::null)
@@ -1428,7 +1425,6 @@ void KHTMLPart::write( const char *str, int len )
   Tokenizer* t = d->m_doc->tokenizer();
   if(t)
     t->write( decoded, true );
-#endif // APPLE_CHANGES
 }
 
 void KHTMLPart::write( const QString &str )

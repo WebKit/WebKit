@@ -118,7 +118,6 @@ private:
     int m_redirectionTimer;
     
     KURL m_baseURL;
-    bool m_decodingStarted;
     
     friend class KHTMLPart;
 };

@@ -1,5 +1,19 @@
 2002-08-01  Maciej Stachowiak  <mjs@apple.com>
 
+        Restored the original KHTMLPart::write() now that none of our
+	changes in the impl version are beneficial in any way.
+
+	* khtml/khtml_part.cpp:
+        (KHTMLPart::write): Restore original code in lieue of calling impl
+	version.
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::openURL): Remove initialization of
+	m_decodingStarted, since it is now gone.
+	(KWQKHTMLPartImpl::write): Removed.
+
+2002-08-01  Maciej Stachowiak  <mjs@apple.com>
+
 	Removed m_documentSource and remaining ill-conceived uses thereof.
 	
         * kwq/KWQKHTMLPartImpl.h:
