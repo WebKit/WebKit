@@ -1,3 +1,12 @@
+2005-03-10  Darin Adler  <darin@apple.com>
+
+        Change written by Steve Peters, reviewed by me.
+
+        - fixed <rdar://problem/4045924> improve compareBoundaryPoints to make style changes faster
+
+        * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::compareBoundaryPoints):
+        Do early outs in a couple of the loops to make things faster.
+
 2005-03-10  Jens Alfke  <jens@apple.com>
 
         Reviewed by rjw.
