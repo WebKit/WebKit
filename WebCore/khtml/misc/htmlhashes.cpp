@@ -19,7 +19,6 @@
     Boston, MA 02111-1307, USA.
 */
 #include "htmlhashes.h"
-
 #include "htmltags.c"
 #include "htmlattrs.c"
 

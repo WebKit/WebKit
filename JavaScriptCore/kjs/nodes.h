@@ -101,7 +101,7 @@ namespace KJS {
   private:
 #ifdef KJS_DEBUG_MEM
     // List of all nodes, for debugging purposes. Don't remove!
-    static std::list<Node *> s_nodes;
+    static std::list<Node *> *s_nodes;
 #endif
     // disallow assignment
     Node& operator=(const Node&);

@@ -169,7 +169,7 @@ DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString sourceUrl, QStr
   args.append(KJS::String("event"));
   args.append(KJS::String(code));
   Object handlerFunc = constr.construct(m_script->globalExec(), args); // ### is globalExec ok ?
-    
+
   return KJS::Window::retrieveWindow(m_part)->getJSEventListener(handlerFunc,true);
 }
 

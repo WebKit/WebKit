@@ -23,7 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <khtml_part.h>
+#ifndef KWQKHTMLPARTIMPL_H
+#define KWQKHTMLPARTIMPL_H
+
+#include <qobject.h>
+#include <kurl.h>
+
+class KHTMLPart;
+class KHTMLPartPrivate;
+class KHTMLView;
+
+namespace KParts {
+    class ReadOnlyPart;
+    class URLArgs;
+}
+
+namespace DOM {
+    class DOMString;
+}
+
+namespace khtml {
+    class RenderPart;
+}
 
 #ifdef __OBJC__
 @class WebCoreBridge;
@@ -99,3 +120,5 @@ private:
     
     friend class KHTMLPart;
 };
+
+#endif

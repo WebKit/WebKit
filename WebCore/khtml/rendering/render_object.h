@@ -42,6 +42,7 @@ class KHTMLView;
 #define KHTMLAssert( x ) if( !(x) ) { \
     const RenderObject *o = this; while( o->parent() ) o = o->parent(); \
     o->printTree(); \
+    qDebug(" this object = %p", this ); \
     assert( false ); \
 }
 #else
@@ -228,7 +229,7 @@ public:
     virtual short baselinePosition( bool firstLine ) const;
 
     /*
-     * Print the object and it's children, clipped by (x|y|w|h).
+     * Print the object and its children, clipped by (x|y|w|h).
      * (tx|ty) is the calculated position of the parent
      */
     virtual void print( QPainter *p, int x, int y, int w, int h, int tx, int ty);
@@ -267,7 +268,7 @@ public:
 
     /*
      * This function should cause the Element to calculate its
-     * width and height and the layout of it's content
+     * width and height and the layout of its content
      *
      * when the Element calls setLayouted(true), layout() is no
      * longer called during relayouts, as long as there is no
@@ -439,7 +440,6 @@ public:
     const QFontMetrics &fontMetrics(bool firstLine) const {
 	return style( firstLine )->fontMetrics();
     }
-
 protected:
     virtual void selectionStartEnd(int& spos, int& epos);
 
@@ -458,6 +458,8 @@ protected:
     void invalidateVerticalPositions();
     short getVerticalPosition( bool firstLine ) const;
 
+    virtual void removeLeftoverAnonymousBoxes();
+    
 private:
     RenderStyle* m_style;
     DOM::NodeImpl* m_node;

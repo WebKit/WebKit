@@ -216,8 +216,12 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
             size = (int)((bestSize*lDpiY) / 72);
     }
 
+    // make sure we don't bust up X11
+    size = KMAX(0, KMIN(255, size));
+
 //      qDebug("setting font to %s, italic=%d, weight=%d, size=%d", fontDef.family.latin1(), fontDef.italic,
 //   	   fontDef.weight, size );
+
 
     f.setPixelSize( size );
 #endif

@@ -1,3 +1,46 @@
+2002-07-21  Darin Adler  <darin@apple.com>
+
+	* khtml/*: Roll KDE 3.0.2 changes in. Also switch to not using APPLE_CHANGES
+	for some of the changes that we definitely want to contribute upstream.
+
+        * WebCore.pbproj/project.pbxproj: Add KWQStyle.mm, remove KWQStyle.h, moving contents
+	into qstyle.h.
+
+        * kwq/KWQApplication.mm: (QApplication::globalStrut): Remove _logNotYetImplemented().
+
+        * kwq/KWQButton.mm: (QButton::QButton): Use plain release, not autorelease.
+        * kwq/KWQComboBox.mm: (QComboBox::init): Use plain release, not autorelease.
+        * kwq/KWQListBox.mm: (QListBox::QListBox): Use plain release, not autorelease.
+        * kwq/KWQPainter.mm: (QPainter::drawArc): Use plain release, not autorelease.
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm: Remove import of KWQKHTMLPartImpl.h, now that
+	it's always part of khtml_part.h.
+        * kwq/KWQKHTMLPartImpl.cpp: Simplify.
+        * kwq/KWQKHTMLPartImpl.h: Add wrapper to allow multiple inclusion. Don't include
+	khtml_part.h any more, since that file now includes this one to minimize changes to
+	KDE code that needs to get to functions in here.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KHTMLPart::onURL), (KHTMLPart::nodeActivated), (KHTMLPart::setStatusBarText):
+	Moved here from khtml_part.cpp.
+        * kwq/KWQLoaderImpl.mm: Include khtml_part.h instead of KWQKHTMLPartImpl.h.
+
+        * kwq/KWQPushButton.mm:
+        (buttonFontMetrics), (QPushButton::fontMetrics): Added. Used by the form code to size buttons.
+        * kwq/KWQStyle.mm: Added.
+        (QStyle::sizeFromContents): Added. Used by the form code to size buttons.
+
+        * kwq/KWQStyle.h: Removed.
+        * kwq/qt/qstyle.h: Moved contents of KWQStyle.h in here.
+        * kwq/qt/qwidget.h: Include <qstyle.h> rather than KWQStyle.h.
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge isFrameSet]): Call straight to impl.
+
+        * kwq/kdeui/klineedit.h: Add KLineEdit::frameWidth().
+        * kwq/qt/qnamespace.h: Remove GUIStyle, MacStyle, and WindowsStyle.
+        * kwq/qt/qpaintdevice.h: Add QInternal, QInternal::Printer, and QPaintDevice::devType().
+        * kwq/qt/qpainter.h: Add QPainter::device().
+        * kwq/qt/qpushbutton.h: Add QPushButton::fontMetrics().
+
 2002-07-21  Maciej Stachowiak  <mjs@apple.com>
 
 	Fix a recent regression that made JavaScript window closing

@@ -24,10 +24,7 @@
 #include "dom/dom_text.h"
 #include "xml/dom_textimpl.h"
 
-using namespace DOM;
-#ifdef APPLE_CHANGES
 namespace DOM {
-#endif
 
 CharacterData::CharacterData() : Node()
 {
@@ -239,6 +236,4 @@ Text::Text(TextImpl *i) : CharacterData(i)
 {
 }
 
-#ifdef APPLE_CHANGES
 } // namespace DOM
-#endif

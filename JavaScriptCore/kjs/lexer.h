@@ -111,6 +111,12 @@ namespace KJS {
     static bool isIdentLetter(unsigned short c);
     static bool isDecimalDigit(unsigned short c);
 
+#ifdef KJS_DEBUG_MEM
+    /**
+     * Clear statically allocated resources
+     */
+    static void globalClear();
+#endif
   private:
 
     void record8(unsigned short c);

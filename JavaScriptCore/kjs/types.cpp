@@ -269,6 +269,15 @@ const List List::empty()
   return ListImp::empty();
 }
 
+#ifdef KJS_DEBUG_MEM
+void List::globalClear()
+{
+  delete ListImp::emptyList;
+  ListImp::emptyList = 0L;
+}
+#endif
+
+
 // ------------------------------ Completion -----------------------------------
 
 Completion::Completion(ComplType c, const Value& v, const UString &t)

@@ -461,10 +461,9 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
         return;
 #endif
     bool oldscript = script;
-    script = false;
-    QString url;
-    
     m_executingScript++;
+    script = false;
+    QString url;    
     if (scriptURL.isNull())
       url = static_cast<DocumentImpl*>(view->part()->document().handle())->URL();
     else
@@ -1549,12 +1548,7 @@ void HTMLTokenizer::finish()
 
 void HTMLTokenizer::processToken()
 {
-#ifdef APPLE_CHANGES
-    KJSProxy *jsProxy = (view && view->part()) ? view->part()->jScript() : 0L;
-#else
-    KJSProxy *jsProxy = view ? view->part()->jScript() : 0L;
-#endif
-    
+    KJSProxy *jsProxy = (view && view->part()) ? view->part()->jScript() : 0L;    
     if (jsProxy)
         jsProxy->setEventHandlerLineno(tagStartLineno);
     if ( dest > buffer )

@@ -41,6 +41,7 @@
 #include "html/dtd.h"
 #include "xml/dom2_eventsimpl.h"
 #include "html/html_documentimpl.h"
+#include <math.h>
 
 using namespace DOM;
 using namespace khtml;
@@ -314,6 +315,19 @@ void RenderImage::layout()
     calcWidth();
     calcHeight();
 
+    // if they are variable width and we calculate a huge height or width, we assume they
+    // actually wanted the intrinsic width.
+    if ( m_width > 2048 && !style()->width().isFixed() )
+	m_width = intrinsicWidth();
+    if ( m_height > 2048 && !style()->height().isFixed() )
+	m_height = intrinsicHeight();
+    // limit total size to not run out of memory when doing the xform call.
+    if ( m_width * m_height > 2048*2048 ) {
+	float scale = sqrt( m_width*m_height / ( 2048.*2048. ) );
+	m_width = (int) (m_width/scale);
+	m_height = (int) (m_height/scale);
+    }
+    
     if ( m_width != oldwidth || m_height != oldheight )
         resizeCache = QPixmap();
 

@@ -48,9 +48,6 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "html/html_documentimpl.h"
-#ifdef APPLE_CHANGES
-#include "KWQKHTMLPartImpl.h"
-#endif
 
 using namespace KJS;
 
@@ -204,10 +201,8 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   personalbar	Window::Personalbar	DontDelete|ReadOnly
   screenX	Window::ScreenX		DontDelete|ReadOnly
   screenY	Window::ScreenY		DontDelete|ReadOnly
-#ifdef APPLE_CHANGES
   screenLeft	Window::ScreenLeft	DontDelete|ReadOnly
   screenTop	Window::ScreenTop	DontDelete|ReadOnly
-#endif
   scrollbars	Window::Scrollbars	DontDelete|ReadOnly
   scroll	Window::Scroll		DontDelete|Function 2
   scrollBy	Window::ScrollBy	DontDelete|Function 2
@@ -473,16 +468,12 @@ Value Window::get(ExecState *exec, const UString &p) const
       return Value(retrieve(m_part->parentPart() ? m_part->parentPart() : (KHTMLPart*)m_part));
     case Personalbar:
       return Undefined(); // ###
-#ifdef APPLE_CHANGES
     case ScreenLeft:
-#endif
     case ScreenX: {
 	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
       return Number(m_part->view()->mapToGlobal(QPoint(0,0)).x() + sg.x());
     }
-#ifdef APPLE_CHANGES
     case ScreenTop:
-#endif
     case ScreenY: {
 	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
       return Number(m_part->view()->mapToGlobal(QPoint(0,0)).y() + sg.y());
@@ -858,6 +849,10 @@ void Window::scheduleClose()
 
 bool Window::isSafeScript(ExecState *exec) const
 {
+  if (m_part.isNull()) { // part deleted ? can't grant access
+    kdDebug(6070) << "Window::isSafeScript: accessing deleted part !" << endl;
+    return false;
+  }
   KHTMLPart *activePart = static_cast<KJS::ScriptInterpreter *>( exec->interpreter() )->part();
   if (!activePart) {
     kdDebug(6070) << "Window::isSafeScript: current interpreter's part is 0L!" << endl;
@@ -1140,7 +1135,6 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       // request window (new or existing if framename is set)
       KParts::ReadOnlyPart *newPart = 0L;
       emit part->browserExtension()->createNewWindow("", uargs,winargs,newPart);
-
       if (newPart && newPart->inherits("KHTMLPart")) {
         KHTMLPart *khtmlpart = static_cast<KHTMLPart*>(newPart);
         //qDebug("opener set to %p (this Window's part) in new Window %p  (this Window=%p)",part,win,window);
@@ -1169,9 +1163,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         return Undefined();
     }
   }
-#ifdef APPLE_CHANGES
   case Window::Scroll:
-#endif
   case Window::ScrollBy:
     if(args.size() == 2 && widget)
       widget->scrollBy(args[0].toInt32(exec), args[1].toInt32(exec));

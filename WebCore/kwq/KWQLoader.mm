@@ -28,7 +28,7 @@
 #import <jobclasses.h>
 #import <loader.h>
 
-#import <KWQKHTMLPartImpl.h>
+#import <khtml_part.h>
 
 #import <WebCoreBridge.h>
 #import <WebCoreResourceLoader.h>

@@ -28,6 +28,13 @@
 
 class QPaintDeviceMetrics;
 
-class QPaintDevice { };
+struct QInternal {
+    enum DeviceType { NotPrinter, Printer };
+};
+
+class QPaintDevice {
+public:
+    static QInternal::DeviceType devType() { return QInternal::NotPrinter; }
+};
 
 #endif

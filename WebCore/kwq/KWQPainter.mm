@@ -239,7 +239,7 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
             KWQDEBUG("ERROR (INCOMPLETE IMPLEMENTATION) void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)\nOnly supports drawing arcs on a circle.\n");
         }
         
-        NSBezierPath *path = [[[NSBezierPath alloc] init] autorelease];
+        NSBezierPath *path = [[NSBezierPath alloc] init];
         float fa = (float)a / 16;
         float falen =  fa + (float)alen / 16;
         [path appendBezierPathWithArcWithCenter:NSMakePoint(x + w / 2, y + h / 2) 
@@ -250,6 +250,7 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
     
         _setColorFromPen();
         [path stroke];
+        [path release];
     }
 }
 

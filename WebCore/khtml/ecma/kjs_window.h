@@ -107,9 +107,7 @@ namespace KJS {
            InnerWidth, Length, _Location, Name, _Navigator, _Konqueror, ClientInformation,
            OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,
-#ifdef APPLE_CHANGES
            ScreenTop, ScreenLeft,
-#endif
            ScrollTo, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, _Window, Top, _Screen,
            Image, Option, Alert, Confirm, Prompt, Open, SetTimeout, ClearTimeout,
            Focus, Blur, Close, SetInterval, ClearInterval, CaptureEvents, Onabort, Onblur,

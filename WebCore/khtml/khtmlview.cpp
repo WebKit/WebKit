@@ -245,7 +245,7 @@ KHTMLView::~KHTMLView()
         killTimer(d->repaintTimerId);
         d->timerId = 0;
         d->repaintTimerId = 0;
-        m_part->detachView();
+        m_part->impl->setView(0);
         m_part->deref();
 #endif
     }
@@ -397,7 +397,7 @@ void KHTMLView::layout()
 
          if (document->isHTMLDocument()) {
              NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
-            if(body && body->renderer() && body->id() == ID_FRAMESET) {
+             if(body && body->renderer() && body->id() == ID_FRAMESET) {
                  QScrollView::setVScrollBarMode(AlwaysOff);
                  QScrollView::setHScrollBarMode(AlwaysOff);
                  body->renderer()->setLayouted(false);
@@ -456,7 +456,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
     if (!swallowEvent) {
 	khtml::MousePressEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
-        QApplication::sendEvent( m_part, &event );
+	QApplication::sendEvent( m_part, &event );
 
 	emit m_part->nodeActivated(mev.innerNode);
     }
@@ -764,9 +764,7 @@ void KHTMLView::contentsContextMenuEvent ( QContextMenuEvent *_ce )
         targetNode->renderer()->absolutePosition(absx,absy);
         QPoint pos(xm-absx,ym-absy);
 
-#ifndef APPLE_CHANGES
         QWidget *w = static_cast<RenderWidget*>(targetNode->renderer())->widget();
-#endif
         QContextMenuEvent cme(_ce->reason(),pos,_ce->globalPos(),_ce->state());
         setIgnoreEvents(true);
         QApplication::sendEvent(w,&cme);
@@ -1008,7 +1006,7 @@ void KHTMLView::print()
     if(printer->setup(this)) {
         viewport()->setCursor( waitCursor ); // only viewport(), no QApplication::, otherwise we get the busy cursor in kdeprint's dialogs
         // set up KPrinter
-        printer->setFullPage(true);
+        printer->setFullPage(false);
         printer->setCreator("KDE 3.0 HTML Library");
         QString docname = m_part->xmlDocImpl()->URL();
         if ( !docname.isEmpty() )
@@ -1021,10 +1019,19 @@ void KHTMLView::print()
         m_part->xmlDocImpl()->setPaintDevice( printer );
         QString oldMediaType = mediaType();
         setMediaType( "print" );
+        // We ignore margin settings for html and body when printing
+        // and use the default margins from the print-system
+        // (In Qt 3.0.x the default margins are hardcoded in Qt)
         m_part->xmlDocImpl()->setPrintStyleSheet( printer->option("kde-khtml-printfriendly") == "true" ?
                                                   "* { background-image: none !important;"
-                                                  "    background-color: transparent !important;"
-                                                  "    color: black !important }" : "" );
+                                                  "    background-color: white !important;"
+                                                  "    color: black !important; }"
+                                                  "body { margin: 0px !important; }"
+                                                  "html { margin: 0px !important; }" :
+                                                  "body { margin: 0px !important; }"
+                                                  "html { margin: 0px !important; }"
+                                                  );
+
 
         QPaintDeviceMetrics metrics( printer );
 
@@ -1056,8 +1063,6 @@ void KHTMLView::print()
         // the whole thing.
         int pageHeight = metrics.height();
         int pageWidth = metrics.width();
-        // We print the bottom 'overlap' units again at the top of the next page.
-        int overlap = 30;
         p->setClipRect(0,0, pageWidth, pageHeight);
         if(root->docWidth() > metrics.width()) {
             double scale = ((double) metrics.width())/((double) root->docWidth());
@@ -1066,19 +1071,20 @@ void KHTMLView::print()
 #endif
             pageHeight = (int) (pageHeight/scale);
             pageWidth = (int) (pageWidth/scale);
-            overlap = (int) (overlap/scale);
         }
         kdDebug(6000) << "printing: scaled html width = " << pageWidth
                       << " height = " << pageHeight << endl;
         int top = 0;
         while(top < root->docHeight()) {
             if(top > 0) printer->newPage();
+            root->setTruncatedAt(top+pageHeight);
 
             root->print(p, 0, top, pageWidth, pageHeight, 0, 0);
-            p->translate(0,-(pageHeight-overlap));
             if (top + pageHeight >= root->docHeight())
                 break; // Stop if we have printed everything
-            top += (pageHeight-overlap);
+
+            p->translate(0, top - root->truncatedAt());
+            top = root->truncatedAt();
         }
 
         p->end();
@@ -1461,7 +1467,6 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
 
 //        kdDebug() << "scheduled repaint "<< d->repaintTimerId  << endl;
     killTimer(d->repaintTimerId);
-
     updateContents( d->updateRect );
 
     d->repaintTimerId = 0;

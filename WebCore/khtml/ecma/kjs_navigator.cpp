@@ -280,31 +280,25 @@ PluginBase::PluginBase(ExecState *exec)
                 QStringList::Iterator token;
 
                 token = tokens.begin();
-#ifdef APPLE_CHANGES
                 if (token == tokens.end()) {
                     delete mime;
                     continue;
                 }
-#endif
                 mime->type = (*token).lower();
                 //kdDebug(6070) << "mime->type=" << mime->type << endl;
                 ++token;
 
-#ifdef APPLE_CHANGES
                 if (token == tokens.end()) {
                     delete mime;
                     continue;
                 }
-#endif
                 mime->suffixes = *token;
                 ++token;
 
-#ifdef APPLE_CHANGES
                 if (token == tokens.end()) {
                     delete mime;
                     continue;
                 }
-#endif
                 mime->desc = *token;
                 ++token;
 

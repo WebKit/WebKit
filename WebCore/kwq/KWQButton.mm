@@ -29,7 +29,9 @@
 
 QButton::QButton(QWidget *parent)
 {
-    setView ([[[KWQNSButton alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease]);
+    KWQNSButton *button = [[KWQNSButton alloc] initWithFrame:NSMakeRect (0,0,0,0) widget:this];
+    setView(button);
+    [button release];
 }
 
 void QButton::setText(const QString &s)

@@ -44,6 +44,7 @@ namespace KJS {
     enum { None = 0, Global = 1, IgnoreCase = 2, Multiline = 4 };
     RegExp(const UString &p, int f = None);
     ~RegExp();
+    int flags() const { return flgs; }
     UString match(const UString &s, int i = -1, int *pos = 0L, int **ovector = 0L);
     // test is unused. The JS spec says that RegExp.test should use
     // RegExp.exec, so it has to store $1 etc.
@@ -51,7 +52,7 @@ namespace KJS {
     uint subPatterns() const { return nrSubPatterns; }
   private:
     const UString &pattern;
-    int flags;
+    int flgs;
 
 #ifndef HAVE_PCREPOSIX
     regex_t preg;

@@ -20,7 +20,7 @@
 
 #include <khtmlview.h>
 #include "xml/dom2_eventsimpl.h"
-#include "rendering/render_object.h"
+#include "rendering/render_root.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include <kdebug.h>
@@ -235,14 +235,12 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     // make sure our rendering is up to date before
     // we allow a query on these attributes.
     DOM::DocumentImpl* docimpl = node.handle()->getDocument();
-    if ( docimpl )
-    {
+    KHTMLView* v = 0;
+    if ( docimpl ) {
+      v = docimpl->view();
       docimpl->updateRendering();
-#ifdef APPLE_CHANGES
       // Only do a layout if changes have occurred that make it necessary.
-      if ( docimpl->renderer() && !docimpl->renderer()->layouted() )
-#endif
-      if ( docimpl->view() )
+      if ( v && docimpl->renderer() && !docimpl->renderer()->layouted() )
         docimpl->view()->layout();
     }
 
@@ -270,15 +268,13 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
         // "Width of the object including padding, but not including margin, border, or scroll bar."
         return Number(rend->height() - rend->borderTop() - rend->borderBottom() );
     case ScrollLeft:
-      if (!rend)
+      if (!rend || !v)
         return Undefined();
-      else
-        return Number(-rend->xPos() + node.ownerDocument().view()->contentsX());
+      return Number(-rend->xPos() + v->contentsX());
     case ScrollTop:
-      if (!rend)
+      if (!rend || !v)
         return Undefined();
-      else
-        return Number(-rend->yPos() + node.ownerDocument().view()->contentsY());
+      return Number(-rend->yPos() + v->contentsY());
     default:
       kdWarning() << "Unhandled token in DOMNode::getValueProperty : " << token << endl;
       break;
@@ -396,11 +392,7 @@ UString DOMNode::toString(ExecState *) const
 
   DOM::Element e = node;
   if ( !e.isNull() ) {
-#ifdef APPLE_CHANGES
     s = UString(e.nodeName().string());
-#else
-    s = e.nodeName().string();
-#endif
   } else
     s = className(); // fallback
 

@@ -23,7 +23,9 @@
 //#define DEBUG_LAYOUT
 //#define BIDI_DEBUG
 
+#include "rendering/render_root.h"
 #include "rendering/render_text.h"
+#include "rendering/render_root.h"
 #include "rendering/break_lines.h"
 #include "xml/dom_nodeimpl.h"
 
@@ -511,20 +513,17 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
     TextSlave f(0, y-ty);
     int si = m_lines.findFirstMatching(&f);
     // something matching found, find the first one to print
+    bool isPrinting = (p->device()->devType() == QInternal::Printer);
     if(si >= 0)
     {
         // Move up until out of area to be printed
         while(si > 0 && m_lines[si-1]->checkVerticalPoint(y, ty, h, m_lineHeight))
             si--;
 
-        //QConstString cstr(str->s, str->l);
-        //kdDebug(6040) << this << " RenderText text '" << (const char *)cstr.string().utf8() << "'" << endl;
-        //kdDebug(6040) << this << " RenderText::printObject y=" << y << " ty=" << ty << " h=" << h << " first line is " << si << endl;
-
         // Now calculate startPos and endPos, for printing selection.
         // We print selection while endPos > 0
         int endPos, startPos;
-        if (selectionState() != SelectionNone) {
+        if (!isPrinting && (selectionState() != SelectionNone)) {
             if (selectionState() == SelectionInside) {
                 //kdDebug(6040) << this << " SelectionInside -> 0 to end" << endl;
                 startPos = 0;
@@ -555,12 +554,33 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
         // know we can stop
         do {
             s = m_lines[si];
+
+	    if (isPrinting)
+	    {
+                int lh = lineHeight( false ) + paddingBottom() + borderBottom();
+                if (ty+s->m_y < y)
+                {
+                   // This has been printed already we suppose.
+                   continue;
+                }
+
+                if (ty+lh+s->m_y > y+h)
+                {
+                   RenderRoot *rootObj = root();
+                   if (ty+s->m_y < rootObj->truncatedAt())
+                      rootObj->setTruncatedAt(ty+s->m_y);
+                   // Let's stop here.
+                   break;
+                }
+            }
+
             RenderStyle* _style = pseudoStyle && s->m_firstLine ? pseudoStyle : style();
 
             if(_style->font() != p->font()) {
                 p->setFont(_style->font());
 		font = &_style->htmlFont();
 	    }
+
             if((hasSpecialObjects()  &&
                 (parent()->isInline() || pseudoStyle)) &&
                (!pseudoStyle || s->m_firstLine))
@@ -580,7 +600,7 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
                 s->printDecoration(p, this, tx, ty, d, si == 0, si == ( int ) m_lines.count()-1);
             }
 
-            if (selectionState() != SelectionNone ) {
+            if (!isPrinting && (selectionState() != SelectionNone)) {
 		int offset = s->m_start;
 		int sPos = QMAX( startPos - offset, 0 );
 		int ePos = QMIN( endPos - offset, s->m_len );
@@ -812,7 +832,7 @@ short RenderText::baselinePosition( bool firstLine ) const
 void RenderText::position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int spaceAdd)
 {
     // ### should not be needed!!!
-    if(len == 0 || (len == 1 && *(str->s+from) == '\n') ) return;
+    assert(!(len == 0 || (str->l && len == 1 && *(str->s+from) == '\n') ));
 
     reverse = reverse && !style()->visuallyOrdered();
 
@@ -823,7 +843,7 @@ void RenderText::position(int x, int y, int from, int len, int width, bool rever
         width -= marginLeft();
     }
 
-    if(from + len == int(str->l) && parent()->isInline() && parent()->lastChild()==this)
+    if(from + len >= int(str->l) && parent()->isInline() && parent()->lastChild()==this)
         width -= marginRight();
 
 #ifdef DEBUG_LAYOUT

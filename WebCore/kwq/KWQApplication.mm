@@ -57,7 +57,6 @@ QRect QDesktopWidget::screenGeometry(int screenNumber)
 
 QSize QApplication::globalStrut()
 {
-    _logNotYetImplemented();
     return QSize(0,0);
 }
 

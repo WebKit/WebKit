@@ -27,7 +27,7 @@
 
 #import <WebCoreFrameBridge.h>
 
-#import <KWQKHTMLPartImpl.h>
+#import <khtml_part.h>
 #import <khtmlview.h>
 #import <dom_docimpl.h>
 #import <render_root.h>
@@ -134,7 +134,7 @@
 
 - (BOOL)isFrameSet
 {
-    return part->isFrameSet();
+    return part->impl->isFrameSet();
 }
 
 - (void)reapplyStyles

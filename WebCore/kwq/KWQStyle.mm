@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qpushbutton.h>
+#include <qstyle.h>
 
-QPushButton::QPushButton(const QString &text, QWidget *parent) : QButton(parent)
-{
-    setText(text);
-}
+#include <qwidget.h>
 
-static QFontMetrics buttonFontMetrics()
+QSize QStyle::sizeFromContents(ContentType, QWidget *, const QSize &s) const
 {
-    NSFont *nsfont = [NSFont systemFontOfSize:13];
-    QFont font;
-    font.setFamily(QString::fromNSString([nsfont familyName]));
-    font.setPixelSize(13);
-    return font;
-}
-
-QFontMetrics QPushButton::fontMetrics() const
-{
-    // Buttons use the system font at 13 point, not the font from the widget.
-    static QFontMetrics metrics = buttonFontMetrics();
-    return metrics;
+    return QSize(s.width() + 28, 32);
 }

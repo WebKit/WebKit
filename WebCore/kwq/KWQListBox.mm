@@ -93,7 +93,7 @@
 QListBox::QListBox(QWidget *parent)
     : QScrollView(parent), m_insertingItems(false)
 {
-    NSBrowser *browser =  [[[NSBrowser alloc] initWithFrame: NSMakeRect (0,0,1,1)] autorelease];
+    NSBrowser *browser =  [[NSBrowser alloc] initWithFrame: NSMakeRect (0,0,1,1)];
     KWQBrowserDelegate *delegate = [[KWQBrowserDelegate alloc] initWithListBox: this];
 
     head = 0L;
@@ -108,6 +108,8 @@ QListBox::QListBox(QWidget *parent)
     [browser addColumn];
     
     setView (browser);
+    
+    [browser release];
 }
 
 

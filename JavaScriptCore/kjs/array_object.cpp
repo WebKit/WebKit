@@ -360,16 +360,19 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
           {
             Value jObj = thisObj.get(exec,UString::from(j));
             int cmp;
-            if ( useSortFunction )
-              {
+            if (jObj.type() == UndefinedType) {
+              cmp = 1;
+            } else if (minObj.type() == UndefinedType) {
+              cmp = -1;
+            } else if (useSortFunction) {
                 List l;
                 l.append(jObj);
                 l.append(minObj);
                 Object thisObj = exec->interpreter()->globalObject();
                 cmp = sortFunction.call(exec,thisObj, l ).toInt32(exec);
-              }
-            else
+            } else {
               cmp = (jObj.toString(exec) < minObj.toString(exec)) ? -1 : 1;
+            }
             if ( cmp < 0 )
               {
                 themin = j;

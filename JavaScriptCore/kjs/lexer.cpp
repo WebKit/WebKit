@@ -91,6 +91,14 @@ Lexer *Lexer::curr()
   return currLexer;
 }
 
+#ifdef KJS_DEBUG_MEM
+void Lexer::globalClear()
+{
+  delete currLexer;
+  currLexer = 0L;
+}
+#endif
+
 void Lexer::setCode(const UChar *c, unsigned int len)
 {
   yylineno = 1;

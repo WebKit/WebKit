@@ -299,6 +299,7 @@ Interpreter::CompatMode Interpreter::compatMode() const
 }
 
 #ifdef KJS_DEBUG_MEM
+#include "lexer.h"
 void Interpreter::finalCheck()
 {
   fprintf(stderr,"Interpreter::finalCheck()\n");
@@ -311,6 +312,9 @@ void Interpreter::finalCheck()
   fprintf(stderr,"ListImp::count = %d\n", KJS::ListImp::count);
   Node::finalCheck();
   Collector::finalCheck();
+  Lexer::globalClear();
+  List::globalClear();
+  UString::globalClear();
 }
 #endif
 

@@ -144,6 +144,7 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(const DOMString &url, const QString &st
     m_sheet = DOMString(stylesheet_data);
 }
 
+
 CachedCSSStyleSheet::~CachedCSSStyleSheet()
 {
 }
@@ -675,7 +676,11 @@ void CachedImage::movieStatus(int status)
     {
         const QImage& im = m->frameImage();
         monochrome = ( ( im.depth() <= 8 ) && ( im.numColors() - int( im.hasAlphaBuffer() ) <= 2 ) );
-        if(im.width() < 5 && im.height() < 5 && im.hasAlphaBuffer()) // only evaluate for small images
+        for (int i = 0; monochrome && i < im.numColors(); ++i)
+            if (im.colorTable()[i] != qRgb(0xff, 0xff, 0xff) &&
+                im.colorTable()[i] != qRgb(0x00, 0x00, 0x00))
+                monochrome = false;
+        if((im.width() < 5 || im.height() < 5) && im.hasAlphaBuffer()) // only evaluate for small images
         {
             QImage am = im.createAlphaMask();
             if(am.depth() == 1)
@@ -709,7 +714,7 @@ void CachedImage::movieStatus(int status)
 
             // monochrome alphamasked images are usually about 10000 times
             // faster to draw, so this is worth the hack
-            if ( p && monochrome && p->depth() > 1 )
+            if (p && monochrome && p->depth() > 1 )
             {
                 QPixmap* pix = new QPixmap;
                 pix->convertFromImage( p->convertToImage().convertDepth( 1 ), MonoOnly|AvoidDither );
@@ -791,7 +796,7 @@ void CachedImage::clear()
 }
 
 void CachedImage::data ( QBuffer &_buffer, bool eof )
-{    
+{
 #ifdef CACHE_DEBUG
     kdDebug( 6060 ) << this << "in CachedImage::data(buffersize " << _buffer.buffer().size() <<", eof=" << eof << endl;
 #endif
@@ -846,10 +851,7 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
         QSize s = pixmap_size();
         m_size = s.width() * s.height() * 2;
     }
-#endif // !APPLE_CHANGES
-
-#ifdef APPLE_CHANGES
-
+#else // APPLE_CHANGES
     bool canDraw = false;
     if (!eof) {
         // If we didn't get all the data for the image we will always
@@ -982,7 +984,7 @@ CachedImage *DocLoader::requestImage( const DOM::DOMString &url)
 
     bool reload = needReload(fullURL);
 
-#if APPLE_CHANGES
+#ifdef APPLE_CHANGES
     CachedImage *cachedObject = Cache::requestImage(this, url, reload, m_expireDate);
     KWQCheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
@@ -998,7 +1000,7 @@ CachedCSSStyleSheet *DocLoader::requestStyleSheet( const DOM::DOMString &url, co
 
     bool reload = needReload(fullURL);
 
-#if APPLE_CHANGES
+#ifdef APPLE_CHANGES
     CachedCSSStyleSheet *cachedObject = Cache::requestStyleSheet(this, url, reload, m_expireDate, charset);
     KWQCheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
@@ -1014,7 +1016,7 @@ CachedScript *DocLoader::requestScript( const DOM::DOMString &url, const QString
 
     bool reload = needReload(fullURL);
 
-#if APPLE_CHANGES
+#ifdef APPLE_CHANGES
     CachedScript *cachedObject = Cache::requestScript(this, url, reload, m_expireDate, charset);
     KWQCheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
@@ -1595,8 +1597,8 @@ void Cache::flush(bool force)
         --it; // Update iterator, we might delete the current entry later on.
         CachedObject *o = cache->find( url );
 
-#if APPLE_CHANGES
-        if( !o ) {
+#ifdef APPLE_CHANGES
+        if (!o) {
             continue;
         }
 #endif

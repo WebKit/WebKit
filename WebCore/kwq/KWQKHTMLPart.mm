@@ -53,6 +53,19 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     }
 }
 
+void KHTMLPart::onURL(const QString &)
+{
+}
+
+void KHTMLPart::nodeActivated(const DOM::Node &aNode)
+{
+}
+
+void KHTMLPart::setStatusBarText(const QString &status)
+{
+    impl->setStatusBarText(status);
+}
+
 KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     : part(p)
     , d(part->d)

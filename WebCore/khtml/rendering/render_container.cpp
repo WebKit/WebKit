@@ -286,4 +286,54 @@ void RenderContainer::layout()
     setLayouted();
 }
 
+void RenderContainer::removeLeftoverAnonymousBoxes()
+{
+    // we have to go over all child nodes and remove anonymous boxes, that do _not_
+    // have inline children to keep the tree flat
+    RenderObject *child = firstChild();
+    while( child ) {
+	RenderObject *next = child->nextSibling();
+	
+	if ( child->isFlow() && child->isAnonymousBox() && !child->childrenInline() ) {
+	    RenderObject *firstAnChild = child->firstChild();
+	    RenderObject *lastAnChild = child->lastChild();
+	    if ( firstAnChild ) {
+		RenderObject *o = firstAnChild;
+		while( o ) {
+		    o->setParent( this );
+		    o = o->nextSibling();
+		}
+		firstAnChild->setPreviousSibling( child->previousSibling() );
+		lastAnChild->setNextSibling( child->nextSibling() );
+		if ( child->previousSibling() )
+		    child->previousSibling()->setNextSibling( firstAnChild );
+		if ( child->nextSibling() )
+		    child->nextSibling()->setPreviousSibling( lastAnChild );
+	    } else {
+		if ( child->previousSibling() )
+		    child->previousSibling()->setNextSibling( child->nextSibling() );
+		if ( child->nextSibling() )
+		    child->nextSibling()->setPreviousSibling( child->previousSibling() );
+		
+	    }
+	    if ( child == firstChild() )
+		m_first = firstAnChild;
+	    if ( child == lastChild() )
+		m_last = lastAnChild;
+	    child->setParent( 0 );
+	    child->setPreviousSibling( 0 );
+	    child->setNextSibling( 0 );
+	    if ( !child->isText() ) {
+		RenderContainer *c = static_cast<RenderContainer *>(child);
+		c->m_first = 0;
+		c->m_next = 0;
+	    }
+	    delete child;
+	}
+	child = next;
+    }
+    if ( parent() )
+	parent()->removeLeftoverAnonymousBoxes();
+}
+    
 #undef DEBUG_LAYOUT

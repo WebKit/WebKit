@@ -22,32 +22,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <KWQKHTMLPartImpl.h>
-#include <khtmlpart_p.h>
 
-#include <dom_nodeimpl.h>
-#include <htmltokenizer.h>
+#include <KWQKHTMLPartImpl.h>
+
 #include <html_documentimpl.h>
 #include <html_elementimpl.h>
-#include <render_root.h>
+#include <htmltokenizer.h>
+#include <khtmlpart_p.h>
 
-using namespace DOM;
-using namespace khtml;
+using DOM::DocumentImpl;
+using DOM::HTMLDocumentImpl;
+using DOM::NodeImpl;
 
 bool KWQKHTMLPartImpl::isFrameSet()
 {
-    DOM::DocumentImpl *document = d->m_doc;
-    khtml::RenderRoot* root = static_cast<khtml::RenderRoot *>(document->renderer());
-
-    if ( !root )
-        return 0;
-
-    if (document->isHTMLDocument()) {
-        NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
-        if(body && body->renderer() && body->id() == ID_FRAMESET) {
-            return 1;
-        }
-    }
-    
-    return 0;
+    DocumentImpl *document = d->m_doc;
+    if (!document->isHTMLDocument())
+        return false;
+    NodeImpl *body = static_cast<HTMLDocumentImpl *>(document)->body();
+    return body && body->renderer() && body->id() == ID_FRAMESET;
 }

@@ -168,18 +168,10 @@ HTMLCollection HTMLElement::children() const
 
 void HTMLElement::assignOther( const Node &other, int elementId )
 {
-#ifdef APPLE_CHANGES
     if((int)other.elementId() != elementId) {
-#else
-    if(other.elementId() != elementId) {
-#endif
 	if ( impl ) impl->deref();
 	impl = 0;
     } else {
 	Node::operator = (other);
-#ifdef APPLE_CHANGES
-    } // keep prepare-ChangeLog happy
-#else
     }   
-#endif
 }

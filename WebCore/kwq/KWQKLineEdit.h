@@ -38,6 +38,8 @@ public:
 
     void setContextMenuEnabled(bool showMenu);
     KCompletionBox *completionBox(bool create);
+    
+    int frameWidth() const { return 2; }
 };
 
 #endif

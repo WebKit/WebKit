@@ -341,7 +341,7 @@ void HTMLObjectElementImpl::attach()
     // it was in KDE 3.0.1.
 #else
     KURL u = getDocument()->completeURL(url);
-    for (KHTMLPart* part = w->part(); part; part = part->parentPart())
+    for (KHTMLPart* part = w->part()->parentPart(); part; part = part->parentPart())
         if (part->url() == u) {
             loadplugin = false;
             break;

@@ -27,6 +27,10 @@
 
 // Objects
 
+// maximum global call stack size. Protects against accidental or
+// malicious infinite recursions. Define to -1 if you want no limit.
+#define KJS_MAX_STACK 1000
+
 #include "value.h"
 #include "types.h"
 

@@ -1169,10 +1169,8 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start)
             // IMPORTANT: pos is > length here!
             tmpW += t->width(lastSpace, pos - lastSpace, f);
             }
-#ifdef APPLE_CHANGES
 #if 0
             }
-#endif
 #endif
         } else
             KHTMLAssert( false );

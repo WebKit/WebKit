@@ -35,7 +35,7 @@
 #include <qfont.h>
 #include <qcursor.h>
 #include <qevent.h>
-#include <KWQStyle.h>
+#include <qstyle.h>
 
 #ifdef __OBJC__
 @class NSView;

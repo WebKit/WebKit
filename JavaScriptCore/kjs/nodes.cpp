@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
+ *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -73,7 +73,7 @@ using namespace KJS;
     return List(); // will be picked up by KJS_CHECKEXCEPTION
 
 #ifdef KJS_DEBUG_MEM
-std::list<Node *> Node::s_nodes;
+std::list<Node *> * Node::s_nodes = 0L;
 #endif
 // ------------------------------ Node -----------------------------------------
 
@@ -82,28 +82,26 @@ Node::Node()
   line = Lexer::curr()->lineNo();
   refcount = 0;
 #ifdef KJS_DEBUG_MEM
-  s_nodes.push_back( this );
+  if (!s_nodes)
+    s_nodes = new std::list<Node *>;
+  s_nodes->push_back(this);
 #endif
 }
 
 Node::~Node()
 {
 #ifdef KJS_DEBUG_MEM
-  s_nodes.remove( this );
+  s_nodes->remove( this );
 #endif
 }
 
 #ifdef KJS_DEBUG_MEM
 void Node::finalCheck()
 {
-#ifdef APPLE_CHANGES
   fprintf( stderr, "Node::finalCheck(): list count       : %d\n", (int)s_nodes.size() );
-#else
-  fprintf( stderr, "Node::finalCheck(): list count       : %d\n", s_nodes.size() );
-#endif
-  std::list<Node *>::iterator it = s_nodes.begin();
-  for ( uint i = 0; it != s_nodes.end() ; ++it, ++i )
     fprintf( stderr, "[%d] Still having node %p (%s) (refcount %d)\n", i, (void*)*it, typeid( **it ).name(), (*it)->refcount );
+  delete s_nodes;
+  s_nodes = 0L;
 }
 #endif
 
@@ -746,6 +744,16 @@ Value FunctionCallNode::evaluate(ExecState *exec)
     return throwError(exec, TypeError, "Expression does not allow calls.");
   }
 
+#if KJS_MAX_STACK > 0
+  static int depth = 0; // sum of all concurrent interpreters
+  if (++depth > KJS_MAX_STACK) {
+#ifndef NDEBUG
+    printInfo(exec, "Exceeded maximum function call depth", v, line);
+#endif
+    return throwError(exec, RangeError, "Exceeded maximum call stack size.");
+  }
+#endif
+
   Value thisVal;
   if (e.type() == ReferenceType)
     thisVal = e.getBase(exec);
@@ -769,6 +777,10 @@ Value FunctionCallNode::evaluate(ExecState *exec)
 
   Object thisObj = Object::dynamicCast(thisVal);
   Value result = func.call(exec,thisObj, argList);
+
+#if KJS_MAX_STACK > 0
+  --depth;
+#endif
 
   return result;
 }
@@ -3139,7 +3151,6 @@ Completion SourceElementsNode::execute(ExecState *exec)
 {
   KJS_CHECKEXCEPTION
 
-#ifdef APPLE_CHANGES
   Completion c1 = element->execute(exec);
   KJS_CHECKEXCEPTION;
   if (c1.complType() != Normal)
@@ -3156,54 +3167,21 @@ Completion SourceElementsNode::execute(ExecState *exec)
   }
   
   return c1;
-#else
-  if (!elements)
-    return element->execute(exec);
-
-  Completion c1 = elements->execute(exec);
-  KJS_CHECKEXCEPTION
-  if (c1.complType() != Normal)
-    return c1;
-
-  Completion c2 = element->execute(exec);
-  KJS_CHECKEXCEPTION
-
-  // The spec says to return c2 here, but it seems that mozilla returns c1 if
-  // c2 doesn't have a value
-  if (c2.complType() == Normal && c2.value().isNull())
-    return c1;
-  else
-    return c2;
-#endif
 }
 
 // ECMA 14
 void SourceElementsNode::processFuncDecl(ExecState *exec)
 {
-#ifdef APPLE_CHANGES
   for (SourceElementsNode *node = this; node; node = node->elements) {
     node->element->processFuncDecl(exec);
   }
-#else
-  if (elements)
-    elements->processFuncDecl(exec);
-
-  element->processFuncDecl(exec);
-#endif
 }
 
 void SourceElementsNode::processVarDecls(ExecState *exec)
 {
-#ifdef APPLE_CHANGES
   for (SourceElementsNode *node = this; node; node = node->elements) {
     node->element->processVarDecls(exec);
   }
-#else
-  if (elements)
-    elements->processVarDecls(exec);
-
-  element->processVarDecls(exec);
-#endif
 }
 
 ProgramNode::ProgramNode(SourceElementsNode *s): FunctionBodyNode(s) {

@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -31,12 +31,14 @@
 #include "debugger.h"
 
 #include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 
 using namespace KJS;
 
-// ------------------------------ FunctionImp ----------------------------------
+// ----------------------------- FunctionImp ----------------------------------
 
 const ClassInfo FunctionImp::info = {"Function", &InternalFunctionImp::info, 0, 0};
 
@@ -99,7 +101,7 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
     }
 
     Object func(this);
-    int cont = dbg->callEvent(exec,sid,lineno,func,args);
+    bool cont = dbg->callEvent(exec,sid,lineno,func,args);
     if (!cont) {
       dbg->imp()->abort();
       return Undefined();
@@ -107,36 +109,34 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   }
 
   // enter a new execution context
-  ContextImp *ctx = new ContextImp(globalObj, exec, thisObj,
-                                   codeType(), exec->context().imp(), this, args);
-  ExecState *newExec = new ExecState(exec->interpreter(),ctx);
-  newExec->setException(exec->exception()); // could be null
+  ContextImp ctx(globalObj, exec, thisObj, codeType(),
+                 exec->context().imp(), this, args);
+  ExecState newExec(exec->interpreter(), &ctx);
+  newExec.setException(exec->exception()); // could be null
 
   // In order to maintain our "arguments" property, we maintain a list of arguments
   // properties from earlier in the execution stack. Upon return, we restore the
   // previous arguments object using popArgs().
   // Note: this does not appear to be part of the spec
   if (codeType() == FunctionCode) {
-    assert(ctx->activationObject().inherits(&ActivationImp::info));
-    Object argsObj = static_cast<ActivationImp*>(ctx->activationObject().imp())->argumentsObject();
-    put(newExec,"arguments", argsObj, DontDelete|DontEnum|ReadOnly);
-    pushArgs(newExec,argsObj);
+    assert(ctx.activationObject().inherits(&ActivationImp::info));
+    Object argsObj = static_cast<ActivationImp*>(ctx.activationObject().imp())->argumentsObject();
+    put(&newExec, "arguments", argsObj, DontDelete|DontEnum|ReadOnly);
+    pushArgs(&newExec, argsObj);
   }
 
   // assign user supplied arguments to parameters
-  processParameters(newExec,args);
+  processParameters(&newExec, args);
   // add variable declarations (initialized to undefined)
-  processVarDecls(newExec);
+  processVarDecls(&newExec);
 
-  Completion comp = execute(newExec);
+  Completion comp = execute(&newExec);
 
   // if an exception occured, propogate it back to the previous execution object
-  if (newExec->hadException())
-    exec->setException(newExec->exception());
+  if (newExec.hadException())
+    exec->setException(newExec.exception());
   if (codeType() == FunctionCode)
-    popArgs(newExec);
-  delete newExec;
-  delete ctx;
+    popArgs(&newExec);
 
 #ifdef KJS_VERBOSE
   if (comp.complType() == Throw)
@@ -430,34 +430,27 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     break;
   }
   case ParseInt: {
-    String str = args[0].toString(exec);
+    CString cstr = args[0].toString(exec).cstring();
     int radix = args[1].toInt32(exec);
-    if (radix == 0)
-      radix = 10;
-    else if (radix < 2 || radix > 36) {
+
+    char* endptr;
+    errno = 0;
+    long value = strtol(cstr.c_str(), &endptr, radix);
+    if (errno != 0 || endptr == cstr.c_str())
       res = Number(NaN);
-      return res;
-    }
-    /* TODO: use radix */
-    // Can't use toULong(), we want to accept floating point values too
-    double value = str.value().toDouble( true /*tolerant*/ );
-    if ( isNaN(value) )
-        res = Number(NaN);
     else
-        res = Number(static_cast<long>(value)); // remove floating-point part
+      res = Number(value);
     break;
   }
-  case ParseFloat: {
-    String str = args[0].toString(exec);
-    res = Number(str.value().toDouble( true /*tolerant*/ ));
+  case ParseFloat:
+    res = Number(args[0].toString(exec).toDouble( true /*tolerant*/ ));
     break;
-  }
   case IsNaN:
     res = Boolean(isNaN(args[0].toNumber(exec)));
     break;
   case IsFinite: {
-    Number n = args[0].toNumber(exec);
-    res = Boolean(!n.isNaN() && !n.isInf());
+    double n = args[0].toNumber(exec);
+    res = Boolean(!isNaN(n) && !isInf(n));
     break;
   }
   case Escape: {
@@ -484,9 +477,9 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
   case UnEscape: {
     UString s, str = args[0].toString(exec);
     int k = 0, len = str.size();
+    UChar u;
     while (k < len) {
       const UChar *c = str.data() + k;
-      UChar u;
       if (*c == UChar('%') && k <= len - 6 && *(c+1) == UChar('u')) {
 	u = Lexer::convertUnicode((c+2)->unicode(), (c+3)->unicode(),
 				  (c+4)->unicode(), (c+5)->unicode());

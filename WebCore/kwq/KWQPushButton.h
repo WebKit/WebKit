@@ -34,6 +34,10 @@ class QPushButton : public QButton {
 public:
     QPushButton(QWidget *w) : QButton(w) { }
     QPushButton(const QString &text, QWidget *parent);
+    
+    // This could be in QWidget, but if we put it here we don't need a
+    // fully general implementation, and it's currently used only for this case.
+    QFontMetrics fontMetrics() const;
 };
 
 #endif

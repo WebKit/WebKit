@@ -229,6 +229,9 @@ namespace KJS {
      * function has a @ref KJS::List parameter.
      */
     static const List empty();
+#ifdef KJS_DEBUG_MEM
+    static void globalClear();
+#endif
   };
 
   /**

@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
+ *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -836,25 +836,15 @@ void InterpreterImp::initGlobalObject()
   static_cast<ObjectImp*>(global.imp())->setPrototype(b_ObjectPrototype);
 
   // Constructors (Object, Array, etc.)
-
-  ObjectObjectImp *objectObj = new ObjectObjectImp(globExec,objProto,funcProto);
-  b_Object = Object(objectObj);
-  FunctionObjectImp *funcObj = new FunctionObjectImp(globExec,funcProto);
-  b_Function = Object(funcObj);
-  ArrayObjectImp *arrayObj = new ArrayObjectImp(globExec,funcProto,arrayProto);
-  b_Array = Object(arrayObj);
-  StringObjectImp *stringObj = new StringObjectImp(globExec,funcProto,stringProto);
-  b_String = Object(stringObj);
-  BooleanObjectImp *booleanObj = new BooleanObjectImp(globExec,funcProto,booleanProto);
-  b_Boolean = Object(booleanObj);
-  NumberObjectImp *numberObj = new NumberObjectImp(globExec,funcProto,numberProto);
-  b_Number = Object(numberObj);
-  DateObjectImp *dateObj = new DateObjectImp(globExec,funcProto,dateProto);
-  b_Date = Object(dateObj);
-  RegExpObjectImp *regexpObj = new RegExpObjectImp(globExec,regexpProto,funcProto);
-  b_RegExp = Object(regexpObj);
-  ErrorObjectImp *errorObj = new ErrorObjectImp(globExec,funcProto,errorProto);
-  b_Error = Object(errorObj);
+  b_Object = Object(new ObjectObjectImp(globExec, objProto, funcProto));
+  b_Function = Object(new FunctionObjectImp(globExec, funcProto));
+  b_Array = Object(new ArrayObjectImp(globExec, funcProto, arrayProto));
+  b_String = Object(new StringObjectImp(globExec, funcProto, stringProto));
+  b_Boolean = Object(new BooleanObjectImp(globExec, funcProto, booleanProto));
+  b_Number = Object(new NumberObjectImp(globExec, funcProto, numberProto));
+  b_Date = Object(new DateObjectImp(globExec, funcProto, dateProto));
+  b_RegExp = Object(new RegExpObjectImp(globExec, funcProto, regexpProto));
+  b_Error = Object(new ErrorObjectImp(globExec, funcProto, errorProto));
 
   // Error object prototypes
   b_evalErrorPrototype = Object(new NativeErrorPrototypeImp(globExec,errorProto,EvalError,
@@ -1016,7 +1006,7 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
       return Completion(Break);
   }
 
-  // no program node means a syntax occurred
+  // no program node means a syntax error occurred
   if (!progNode) {
     Object err = Error::create(globExec,SyntaxError,errMsg.ascii(),errLine);
     err.put(globExec,"sid",Number(sid));

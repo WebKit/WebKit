@@ -244,17 +244,17 @@ Value KJS::add(ExecState *exec, const Value &v1, const Value &v2, char oper)
 // ECMA 11.5
 Value KJS::mult(ExecState *exec, const Value &v1, const Value &v2, char oper)
 {
-  Number n1 = v1.toNumber(exec);
-  Number n2 = v2.toNumber(exec);
+  double n1 = v1.toNumber(exec);
+  double n2 = v2.toNumber(exec);
 
   double result;
 
   if (oper == '*')
-    result = n1.value() * n2.value();
+    result = n1 * n2;
   else if (oper == '/')
-    result = n1.value() / n2.value();
+    result = n1 / n2;
   else
-    result = fmod(n1.value(), n2.value());
+    result = fmod(n1, n2);
 
   return Number(result);
 }

@@ -54,7 +54,7 @@ StyleBoxData::StyleBoxData()
 StyleBoxData::StyleBoxData(const StyleBoxData& o )
     : Shared<StyleBoxData>(),
       width( o.width ), height( o.height ),
-      min_width( o.min_width ), max_width( o.max_width ), 
+      min_width( o.min_width ), max_width( o.max_width ),
       min_height ( o.min_height ), max_height( o.max_height ),
       z_index( o.z_index )
 {
@@ -81,7 +81,7 @@ StyleVisualData::StyleVisualData()
 StyleVisualData::~StyleVisualData() {
 }
 
-StyleVisualData::StyleVisualData(const StyleVisualData& o ) 
+StyleVisualData::StyleVisualData(const StyleVisualData& o )
     : Shared<StyleVisualData>(),
       clip( o.clip ), colspan( o.colspan ),
       counter_increment( o.counter_increment ), counter_reset( o.counter_reset ),
@@ -96,7 +96,7 @@ StyleBackgroundData::StyleBackgroundData()
 {
 }
 
-StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o ) 
+StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o )
     : Shared<StyleBackgroundData>(),
       color( o.color ), image( o.image ),
       x_position( o.x_position ), y_position( o.y_position ),
@@ -122,14 +122,14 @@ StyleInheritedData::StyleInheritedData()
 {
 }
 
-StyleInheritedData::~StyleInheritedData() 
-{ 
+StyleInheritedData::~StyleInheritedData()
+{
 }
 
 StyleInheritedData::StyleInheritedData(const StyleInheritedData& o )
     : Shared<StyleInheritedData>(),
       indent( o.indent ), line_height( o.line_height ), style_image( o.style_image ),
-      cursor_image( o.cursor_image ), font( o.font ), 
+      cursor_image( o.cursor_image ), font( o.font ),
       color( o.color ), decoration_color( o.decoration_color ),
       border_spacing( o.border_spacing )
 {
@@ -137,7 +137,7 @@ StyleInheritedData::StyleInheritedData(const StyleInheritedData& o )
 
 bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 {
-    return 
+    return
 	indent == o.indent &&
 	line_height == o.line_height &&
 	border_spacing == o.border_spacing &&
@@ -213,8 +213,7 @@ RenderStyle::~RenderStyle()
         prev->pseudoStyle = 0;
         prev->deref();
     }
-    if ( content )
-	delete content;
+    delete content;
 }
 
 bool RenderStyle::operator==(const RenderStyle& o) const
@@ -433,7 +432,7 @@ void RenderStyle::cleanup()
 
 void RenderStyle::setContent(CachedObject* o)
 {
-    if ( !content ) 
+    if ( !content )
 	content = new ContentData;
     else
 	content->clearContent();
@@ -459,7 +458,7 @@ void RenderStyle::setClip( Length top, Length right, Length bottom, Length left 
 
 void RenderStyle::setContent(DOM::DOMStringImpl* s)
 {
-    if ( !content ) 
+    if ( !content )
 	content = new ContentData;
     else
 	content->clearContent();

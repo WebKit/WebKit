@@ -45,10 +45,11 @@ void QComboBox::init(bool isEditable)
 {
     KWQNSComboBox *comboBox;
     
-    comboBox = [[[KWQNSComboBox alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease];
+    comboBox = [[KWQNSComboBox alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
     //if (isEditable == FALSE)
     //    [comboBox setEditable: NO];
-    setView (comboBox);
+    setView(comboBox);
+    [comboBox release];
     
     items = [[NSMutableArray alloc] init];
 }

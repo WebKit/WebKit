@@ -34,10 +34,7 @@
 
 #include <kdebug.h>
 
-using namespace DOM;
-#ifdef APPLE_CHANGES
 namespace DOM {
-#endif
 
 DOMImplementation::DOMImplementation()
 {
@@ -404,7 +401,9 @@ StyleSheetList Document::styleSheets() const
 
 KHTMLView *Document::view() const
 {
-    return ((DocumentImpl*)impl)->view();
+    if (!impl) return 0;
+
+    return static_cast<DocumentImpl*>(impl)->view();
 }
 
 DOMString Document::completeURL(const DOMString& url)
@@ -551,6 +550,4 @@ DOMString DocumentType::internalSubset() const
     return static_cast<DocumentTypeImpl*>(impl)->internalSubset();
 }
 
-#ifdef APPLE_CHANGES
 } // namespace DOM
-#endif

@@ -136,12 +136,19 @@ DOMString HTMLDocumentImpl::cookie() const
 #ifdef APPLE_CHANGES
     return KWQKCookieJar::cookie(URL());
 #else
+    long windowId = 0;
+    KHTMLView *v = view ();
+    
+    if ( v && v->topLevelWidget() )
+      windowId = v->topLevelWidget()->winId();
+
     QCString replyType;
     QByteArray params, reply;
     QDataStream stream(params, IO_WriteOnly);
-    stream << URL();
+    stream << URL() << windowId;
     if (!kapp->dcopClient()->call("kcookiejar", "kcookiejar",
-                                  "findDOMCookies(QString)", params, replyType, reply)) {
+                                  "findDOMCookies(QString, int)", params, 
+                                  replyType, reply)) {
          // Maybe it wasn't running (e.g. we're opening local html files)
          KApplication::startServiceByDesktopName( "kcookiejar");
          if (!kapp->dcopClient()->call("kcookiejar", "kcookiejar",
@@ -169,7 +176,12 @@ void HTMLDocumentImpl::setCookie( const DOMString & value )
 #ifdef APPLE_CHANGES
     return KWQKCookieJar::setCookie(URL(), value.string());
 #else
-    long windowId = view() ? view()->winId() : 0;
+    long windowId = 0;
+    KHTMLView *v = view ();
+    
+    if ( v && v->topLevelWidget() )
+      windowId = v->topLevelWidget()->winId();
+     
     QByteArray params;
     QDataStream stream(params, IO_WriteOnly);
     QString fake_header("Set-Cookie: ");
