@@ -14,6 +14,7 @@
     IFWebFrame *mainFrame;
     id<IFWindowContext> windowContext;
     id<IFResourceProgressHandler> resourceProgressHandler;
+    id<IFResourceProgressHandler> downloadProgressHandler;
     id<IFWebControllerPolicyHandler> policyHandler;
     BOOL openedByScript;
 }

@@ -106,7 +106,6 @@
 - (void)_mainReceivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource complete: (BOOL)isComplete
 {
     IFWebFrame *frame = [dataSource webFrame];
-    IFContentPolicy contentPolicy = [dataSource contentPolicy];
     
     WEBKIT_ASSERT (dataSource != nil);
 
@@ -123,11 +122,6 @@
 
     [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
         fromDataSource: dataSource complete:isComplete];
-
-    if(isComplete){
-        if(contentPolicy == IFContentPolicySaveAndOpenExternally || contentPolicy == IFContentPolicySave)
-            [dataSource _setPrimaryLoadComplete: YES];
-    }
     
     // The frame may be nil if a previously cancelled load is still making progress callbacks.
     if (frame == nil)

@@ -41,6 +41,7 @@
 - (void)dealloc
 {
     WEBKIT_ASSERT(url == nil);
+    [downloadProgressHandler release];
     [dataSource release];
     [super dealloc];
 }
@@ -49,6 +50,40 @@
 {
     return downloadHandler;
 }
+
+- (void)_receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)theDataSource complete: (BOOL)isComplete
+{
+    if([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == IFContentPolicySave){
+        if(isComplete)
+            [dataSource _setPrimaryLoadComplete: YES];
+            
+        if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){  
+            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled 
+                inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
+            [dataSource _setMainDocumentError: error];
+            [downloadProgressHandler receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
+            [error release];
+        }
+        
+        [downloadProgressHandler receivedProgress:progress forResourceHandle:resourceHandle 
+            fromDataSource:theDataSource complete:isComplete];
+    }else{
+        [[dataSource controller] _mainReceivedProgress:progress forResourceHandle:resourceHandle 
+            fromDataSource:theDataSource complete:isComplete];
+    }
+}
+
+- (void)_receivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)theDataSource
+{
+    if([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == IFContentPolicySave){
+        [downloadProgressHandler receivedError:error forResourceHandle:resourceHandle 
+            partialProgress:progress fromDataSource:theDataSource];
+    }else{
+        [[dataSource controller] _mainReceivedError:error forResourceHandle:resourceHandle 
+            partialProgress:progress fromDataSource:theDataSource];
+    }
+}
+
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
@@ -67,9 +102,10 @@
 
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
     
-    [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progress]
-        forResourceHandle:sender fromDataSource: dataSource complete: YES];
+    [self _receivedProgress:[IFLoadProgress progress] forResourceHandle:sender fromDataSource: dataSource complete: YES];
+    
     [[dataSource controller] _didStopLoading:url];
+    
     [url release];
     url = nil;
     
@@ -84,7 +120,7 @@
     
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
     
-    // Don't retain download data
+    // Don't retain data for downloaded files
     if([dataSource contentPolicy] != IFContentPolicySave &&
        [dataSource contentPolicy] != IFContentPolicySaveAndOpenExternally){
        [dataSource _setResourceData:data];
@@ -96,13 +132,15 @@
     // Either send a final error message or a final progress message.
     IFError *nonTerminalError = [sender error];
     if (nonTerminalError){
-        [[dataSource controller] _mainReceivedError:nonTerminalError forResourceHandle:sender partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
+        [self _receivedError:nonTerminalError forResourceHandle:sender 
+            partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
     }
     else {
         // update progress
-        [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-                forResourceHandle:sender fromDataSource:dataSource complete:YES];
+        [self _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+            forResourceHandle:sender fromDataSource: dataSource complete: YES];
     }
+    
     [[dataSource controller] _didStopLoading:url];
 
     [url release];
@@ -120,7 +158,7 @@
     NSString *contentType = [sender contentType];
     IFWebFrame *frame = [dataSource webFrame];
     IFWebView *view = [frame webView];
-    IFContentPolicy contentPolicy;
+
     NSData *data = nil;
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([sender url]), incomingData, [incomingData length]);
@@ -142,7 +180,7 @@
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
     
-    contentPolicy = [dataSource contentPolicy];
+    IFContentPolicy contentPolicy = [dataSource contentPolicy];
 
     if(contentPolicy != IFContentPolicyNone){
         if(!processedBufferedData){
@@ -162,26 +200,31 @@
     if(contentPolicy == IFContentPolicyShow){
         [[dataSource representation] receivedData:data withDataSource:dataSource];
         [[view documentView] dataSourceUpdated:dataSource];
-        
-    }else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicySaveAndOpenExternally){
+    }
+    else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicySaveAndOpenExternally){
         if(!downloadHandler){
+            downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
             [frame->_private setProvisionalDataSource:nil];
             [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
             downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
         }
         [downloadHandler receivedData:data];
-        
-    }else if(contentPolicy == IFContentPolicyIgnore){
+    }
+    else if(contentPolicy == IFContentPolicyIgnore){
         [sender cancelLoadInBackground];
-        return;
+        [frame->_private setProvisionalDataSource:nil];
+        [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+    }
+    else{
+        [NSException raise:NSInvalidArgumentException format:
+            @"haveContentPolicy: andPath:path forDataSource: set an invalid content policy."];
     }
     
+    //update progress
+    [self _receivedProgress:[IFLoadProgress progressWithURLHandle:sender] 
+        forResourceHandle:sender fromDataSource: dataSource complete: NO];
+    
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [sender contentLengthReceived], [sender contentLength]);
-    
-    // update progress
-    [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle:sender fromDataSource:dataSource complete: NO];
-    
     isFirstChunk = NO;
 }
 
@@ -192,7 +235,9 @@
 
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
 
-    [[dataSource controller] _mainReceivedError:result forResourceHandle:sender partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
+    [self _receivedError:result forResourceHandle:sender 
+        partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
+    
     [[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;

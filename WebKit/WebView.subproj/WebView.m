@@ -98,6 +98,19 @@
 }
 
 
+- (void)setDownloadProgressHandler: (id<IFResourceProgressHandler>)handler
+{
+    [_private->downloadProgressHandler autorelease];
+    _private->downloadProgressHandler = [handler retain];
+}
+
+
+- (id<IFResourceProgressHandler>)downloadProgressHandler
+{
+    return _private->downloadProgressHandler;
+}
+
+
 - (void)setPolicyHandler: (id<IFWebControllerPolicyHandler>)handler
 {
     [_private->policyHandler autorelease];

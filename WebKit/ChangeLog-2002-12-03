@@ -1,3 +1,26 @@
+2002-07-10  Chris Blumenberg  <cblu@apple.com>
+
+        Fix for:
+        2976311 - Download fails if you close the window that started the download
+        2976308 - Can't navigate in window while download started in that window is in progress
+
+        * WebView.subproj/IFMainURLHandleClient.h:
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient dealloc]):
+        (-[IFMainURLHandleClient _receivedProgress:forResourceHandle:fromDataSource:complete:]): added, sends progress to correct handler
+        (-[IFMainURLHandleClient _receivedError:forResourceHandle:partialProgress:fromDataSource:]): added, sends progress to correct handler
+        (-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]): calls _receivedProgress
+        (-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]): calls _receivedProgress
+        (-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]): calls _receivedProgress
+        (-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]): calls _receivedError
+        * WebView.subproj/IFWebController.h:
+        * WebView.subproj/IFWebController.mm:
+        (-[IFWebController setDownloadProgressHandler:]): added
+        (-[IFWebController downloadProgressHandler]): added
+        * WebView.subproj/IFWebControllerPrivate.h:
+        * WebView.subproj/IFWebControllerPrivate.mm:
+        (-[IFWebController _mainReceivedProgress:forResourceHandle:fromDataSource:complete:]): removed download special-casing
+
 2002-07-10  Maciej Stachowiak  <mjs@apple.com>
 
         * WebView.subproj/IFGrabBag.h: Removed.
