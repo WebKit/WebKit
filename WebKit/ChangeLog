@@ -1,3 +1,14 @@
+2005-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3963166> PDFView SPI print method is being deprecated, moving to PDFDocument; please update WebKit
+
+        * WebView.subproj/WebPDFView.m: (-[WebPDFView printOperationWithPrintInfo:]): Target the document instead of the view.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes and also moved one translation to be a file-specific
+        item rather than a file-independent one.
+
 2005-02-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3991974> REGRESSION: www.jabra.com world location screen does not work
