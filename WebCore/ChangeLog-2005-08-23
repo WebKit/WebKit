@@ -1,3 +1,19 @@
+2003-10-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by David
+
+	<rdar://problem/3468910>: REGRESSION: other than focus rings, outlines styles are broken
+
+	Outlines now draw like they used to.
+
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paintObject): Now branches to call focus ring or "regular" outlines.
+        (RenderInline::paintFocusRing): Broke out drawing aqua focus rings into its
+	own function.
+        (RenderInline::paintOutlines): New function to draw "regular outlines.
+        (RenderInline::paintOutline): Removed code which special-cased aqua outlines.
+        * khtml/rendering/render_inline.h: Added paintOutlines declaration.
+
 2003-10-31  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3467419, highlighted text in "search in books" Amazon feature is obscured.  The
