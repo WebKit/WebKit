@@ -578,7 +578,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [[WebDataSource _repTypes] setObject:representationClass forKey:MIMEType];
 }
 
-
 @end
 
 
@@ -627,7 +626,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)canMakeTextSmaller
 {
-    if ([[[[self mainFrame] dataSource] request] URL] == nil) {
+    if ([[self mainFrame] dataSource] == nil) {
         return NO;
     }
     if ([self textSizeMultiplier]/TextSizeMultiplierRatio < MinimumTextSizeMultiplier) {
@@ -638,7 +637,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)canMakeTextLarger
 {
-    if ([[[[self mainFrame] dataSource] request] URL] == nil) {
+    if ([[self mainFrame] dataSource] == nil) {
         return NO;
     }
     if ([self textSizeMultiplier]*TextSizeMultiplierRatio > MaximumTextSizeMultiplier) {
@@ -663,5 +662,32 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [self setTextSizeMultiplier:[self textSizeMultiplier]*TextSizeMultiplierRatio];
 }
 
-@end
+- (BOOL)_isLoading
+{
+    WebFrame *mainFrame = [self mainFrame];
+    return [[mainFrame dataSource] isLoading]
+        || [[mainFrame provisionalDataSource] isLoading];
+}
 
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    SEL action = [item action];
+
+    if (action == @selector(goBack:)) {
+	return [self canGoBack];
+    } else if (action == @selector(goForward:)) {
+	return [self canGoForward];
+    } else if (action == @selector(makeTextLarger:)) {
+	return [self canMakeTextLarger];
+    } else if (action == @selector(makeTextSmaller:)) {
+	return [self canMakeTextSmaller];
+    } else if (action == @selector(reload:)) {
+	return [[self mainFrame] dataSource] != nil;
+    } else if (action == @selector(stopLoading:)) {
+	return [self _isLoading];
+    }
+
+    return YES;
+}
+
+@end

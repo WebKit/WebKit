@@ -1,3 +1,18 @@
+2003-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - added validation to "Interface Builder" methods on WebView
+
+        * WebView.subproj/WebView.h: Add NSUserInterfaceValidations protocol so that subclassers
+        know that they can call [super validateUserInterfaceItem:].
+        * WebView.subproj/WebView.m:
+        (-[WebView canMakeTextSmaller]): Simplify.
+        (-[WebView canMakeTextLarger]): Simplify.
+        (-[WebView _isLoading]): Added.
+        (-[WebView validateUserInterfaceItem:]): Added. Checks for the six actions we implement,
+        and returns NO if they are not valid.
+
 2003-05-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

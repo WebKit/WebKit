@@ -359,7 +359,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 @end
 
 
-@interface WebView (WebIBActions)
+@interface WebView (WebIBActions) <NSUserInterfaceValidations>
 - (IBAction)takeStringURLFrom:(id)sender;
 - (IBAction)stopLoading:(id)sender;
 - (IBAction)reload:(id)sender;
