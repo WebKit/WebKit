@@ -176,8 +176,16 @@ static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, WidthMap *
     if (width == UNINITIALIZED_GLYPH_WIDTH)
         width = widthForGlyph (renderer, map->next, glyph);
     
-    if (renderer->isFixedPitch && width != 0)
-        return renderer->fixedWidth;
+    // Hack to ensure that characters that match the width of the space character
+    // have the same integer width as the space character.  This is necessary so
+    // glyphs in fixed pitch fonts all have the same integer width.  We can't depend
+    // on the fixed pitch property of NSFont because that isn't set for all
+    // monospaced fonts, in particular Courier!  This has the downside of inappropriately
+    // adjusting the widths of characters in non-monospaced fonts that are coincidentally
+    // the same width as a space in that font.  In practice this is not an issue as the
+    // adjustment is always as the sub-pixel level.
+    if (width == renderer->spaceWidth)
+        return renderer->adjustedSpaceWidth;
 
     return width;
 }
@@ -356,12 +364,11 @@ static BOOL bufferTextDrawing = NO;
     
     ATSUDisposeStyle(style);
 
-    spaceGlyph = nonGlyphID;
-
-    isFixedPitch = [font isFixedPitch];
-    if (isFixedPitch)
-        fixedWidth = CEIL_TO_INT([font widthOfString: @"X"]);
-        
+    UniChar c = ' ';
+    spaceGlyph = [self extendCharacterToGlyphMapToInclude: c];
+    spaceWidth = widthForGlyph(self, glyphToWidthMap, spaceGlyph);
+    adjustedSpaceWidth = (float)ceil(spaceWidth);
+    
     return self;
 }
 
@@ -738,6 +745,7 @@ static const char *joiningNames[] = {
     }
 
     for (i = 0; i < stringLength; i++) {
+
         UniChar c = characters[i];
         
         // Skip control characters.
@@ -819,7 +827,7 @@ static const char *joiningNames[] = {
                     if (widthBuffer)
                         widthBuffer[numGlyphs - 1] += delta;
                 }   
-                lastWidth = CEIL_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
+                lastWidth = adjustedSpaceWidth;
                 if (padding > 0){
                     // Only use left over padding if note evenly divisible by 
                     // number of spaces.

@@ -1,3 +1,25 @@
+2002-11-21  Richard Williamson   <rjw@apple.com>
+
+        A different fix to 3078065 that doesn't depend on the appkit's idea of
+        fixed pitch font.
+        
+        The fix is to adjust the width of all characters that have the same width
+        as the space character to match the adjustment of the space character.
+        This has the slight downside that non-monospace fonts that contain glyphs
+        with the same width as the space character will have an extra adjustment.
+        In practice this is not noticeable as the adjustment is always sub-pixel.
+        Nor of course does this cause any mislayout, as it's done at the lowest
+        level for both measurement and drawing.
+        
+        Until we move kthml internals to floats this will be just fine.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (widthForGlyph):
+        (-[WebTextRenderer initWithFont:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:]):
+tAfterNavigationPolicy:request:]):
+
 2002-11-21  Maciej Stachowiak  <mjs@apple.com>
 
         * Makefile.am: Pass symroots for this tree to pbxbuild.
