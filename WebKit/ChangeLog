@@ -1,5 +1,19 @@
 2002-12-30  Trey Matteson  <trey@apple.com>
 
+	3135025 - Assertion failure in _transitionToCommitted on espn nba scoreboard
+
+	For blank pages we decided that there would be no b/f entry.  This means that
+	subframes within such pages (created via doc.write()), should not try to make
+	WebHistoryItems, since they have no parent items to attach them to.
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):  Don't make a history item for a subframe
+	it the parent frame has no item.
+
+2002-12-30  Trey Matteson  <trey@apple.com>
+
 	3135779 - REGRESSION: reproducible assertion failure, going back from ~orubin to the main spies.com page	
 	3136218 - REGRESSION: Assertion failure in _restoreScrollPosition running browser buster	
 

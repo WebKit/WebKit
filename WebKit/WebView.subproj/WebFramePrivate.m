@@ -597,8 +597,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             case WebFrameLoadTypeInternal:
                 // Add an item to the item tree for this frame
                 ASSERT(![ds _isClientRedirect]);
-                ASSERT([[self parent]->_private currentItem]);
-                [[[self parent]->_private currentItem] addChildItem:[self _createItem]];
+                WebHistoryItem *parentItem = [[self parent]->_private currentItem];
+                // The only case where parentItem==nil should be when a parent frame loaded an
+                // empty URL, which doesn't set up a current item in that parent.
+                if (parentItem) {
+                    [parentItem addChildItem:[self _createItem]];
+                }
                 [self _makeDocumentView];
                 break;
 
