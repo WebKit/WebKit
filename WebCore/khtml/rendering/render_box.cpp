@@ -407,7 +407,7 @@ void RenderBox::close()
 short RenderBox::containingBlockWidth() const
 {
     RenderBlock* cb = containingBlock();
-    if (( style()->htmlHacks() || isTable() ) && style()->flowAroundFloats() 
+    if ((style()->hidesOverflow() || ((style()->htmlHacks() || isTable()) && style()->flowAroundFloats()))
             && style()->width().isVariable())
         return cb->lineWidth(m_y);
     else
@@ -450,14 +450,15 @@ void RenderBox::repaint(bool immediate)
 {
     //kdDebug( 6040 ) << "repaint!" << endl;
     int ow = style() ? style()->outlineWidth() : 0;
-    repaintRectangle(-ow, -ow, overflowWidth()+ow*2, overflowHeight()+ow*2, immediate);
+    repaintRectangle(-ow, -ow, effectiveWidth()+ow*2, effectiveHeight()+ow*2, immediate);
 }
 
 void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
-    if (style()->overflow() == OHIDDEN) {
+    if (style()->hidesOverflow()) {
         int ow = style() ? style()->outlineWidth() : 0;
-        QRect boxRect(-ow, -ow, overflowWidth()+ow*2, overflowHeight()+ow*2);
+        QRect boxRect(-ow, -ow, width()+ow*2, height()+ow*2);
+        m_layer->scrollOffset(x,y); // For overflow:auto/scroll.
         QRect repaintRect(x, y, w, h);
         if (!repaintRect.intersects(boxRect))
             return;
@@ -527,7 +528,7 @@ void RenderBox::calcWidth()
 
         int cw;
         RenderBlock *cb = containingBlock();
-        if (style()->flowAroundFloats())
+        if (style()->hidesOverflow() || style()->flowAroundFloats())
             cw = cb->lineWidth( m_y );
         else
             cw = cb->contentWidth();
@@ -1134,9 +1135,7 @@ void RenderBox::calcAbsoluteVertical()
     if (m_height<h+pab) //content must still fit
         m_height = h+pab;
 
-    // This is a hack. The block shouldn't be getting stretched anyway.
-    // At least make overflow: hidden work. -dwh
-    if (style()->overflow() == OHIDDEN && m_height > h+pab)
+    if (style()->hidesOverflow() && m_height > h+pab)
         m_height = h+pab;
     
     m_marginTop = mt;
@@ -1148,12 +1147,12 @@ void RenderBox::calcAbsoluteVertical()
 }
 
 
-int RenderBox::lowestPosition() const
+int RenderBox::lowestPosition(bool checkScroll) const
 {
     return m_height + marginBottom();
 }
 
-int RenderBox::rightmostPosition() const
+int RenderBox::rightmostPosition(bool checkScroll) const
 {
     return m_width;
 }

@@ -99,11 +99,13 @@ void RenderLayer::updateLayerPosition()
         static_cast<RenderBox*>(m_object)->relativePositionOffset(x, y);
     
     setPos(x,y);
-    
-    if (m_object->overflowWidth() > m_object->width())
-        setWidth(m_object->overflowWidth());
-    if (m_object->overflowHeight() > m_object->height())
-        setHeight(m_object->overflowHeight());
+
+    if (!m_object->style()->hidesOverflow()) {
+        if (m_object->overflowWidth() > m_object->width())
+            setWidth(m_object->overflowWidth());
+        if (m_object->overflowHeight() > m_object->height())
+            setHeight(m_object->overflowHeight());
+    }
 }
 
 RenderLayer*
@@ -250,6 +252,12 @@ RenderLayer::convertToLayerCoords(RenderLayer* ancestorLayer, int& x, int& y)
 
     x += xPos();
     y += yPos();
+}
+
+void
+RenderLayer::scrollOffset(int& x, int& y)
+{
+    // FIXME: Implement for overflow:auto/scroll
 }
 
 void

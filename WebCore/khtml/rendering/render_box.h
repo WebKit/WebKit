@@ -85,8 +85,8 @@ public:
 
     virtual void position(InlineBox* box, int from, int len, bool reverse);
     
-    virtual int lowestPosition() const;
-    virtual int rightmostPosition() const;
+    virtual int lowestPosition(bool includeOverflowInterior=true) const;
+    virtual int rightmostPosition(bool includeOverflowInterior=true) const;
 
     virtual void repaint(bool immediate=false);
 

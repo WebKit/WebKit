@@ -1893,12 +1893,11 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         case CSS_VAL_VISIBLE:
             o = OVISIBLE; break;
         case CSS_VAL_HIDDEN:
-        case CSS_VAL_SCROLL:
-        case CSS_VAL_AUTO:
-            // For now we map overflow:auto and overflow:scroll to overflow:hidden.
-            // This at least keeps the layout of the surrounding page correct until
-            // we provide support for auto and scroll values. -dwh
             o = OHIDDEN; break;
+        case CSS_VAL_SCROLL:
+            o = OSCROLL; break;
+        case CSS_VAL_AUTO:
+            o = OAUTO; break;
         default:
             return;
         }

@@ -257,7 +257,7 @@ void RenderFlow::repaint(bool immediate)
         if (firstLineBox() && firstLineBox()->topOverflow() < 0) {
             int ow = style() ? style()->outlineWidth() : 0;
             repaintRectangle(-ow, -ow+firstLineBox()->topOverflow(),
-                             overflowWidth()+ow*2, overflowHeight()+ow*2, immediate);
+                             effectiveWidth()+ow*2, effectiveHeight()+ow*2, immediate);
         }
         else
             return RenderBox::repaint();
@@ -265,10 +265,12 @@ void RenderFlow::repaint(bool immediate)
 }
 
 int
-RenderFlow::lowestPosition() const
+RenderFlow::lowestPosition(bool includeOverflowInterior) const
 {
-    int bottom = RenderBox::lowestPosition();
-
+    int bottom = RenderBox::lowestPosition(includeOverflowInterior);
+    if (!includeOverflowInterior && style()->hidesOverflow())
+        return bottom;
+    
     // FIXME: It's not OK to look only at the last non-floating
     // non-positioned child (e.g., negative margins, or a child that itself has
     // overflow that goes beyond the last child).  We want to switch over to using overflow,
@@ -278,7 +280,7 @@ RenderFlow::lowestPosition() const
     if (isRenderBlock() || checkOverhangsOnly) {
         for (RenderObject *c = lastChild(); c; c = c->previousSibling()) {
             if (!c->isFloatingOrPositioned() && (!checkOverhangsOnly || c->overhangingContents())) {
-                int lp = c->yPos() + c->lowestPosition();
+                int lp = c->yPos() + c->lowestPosition(false);
                 bottom = QMAX(bottom, lp);
                 break;
             }
@@ -288,16 +290,18 @@ RenderFlow::lowestPosition() const
     return bottom;
 }
 
-int RenderFlow::rightmostPosition() const
+int RenderFlow::rightmostPosition(bool includeOverflowInterior) const
 {
-    int right = RenderBox::rightmostPosition();
-
+    int right = RenderBox::rightmostPosition(includeOverflowInterior);
+    if (!includeOverflowInterior && style()->hidesOverflow())
+        return right;
+    
     // FIXME: We want to switch over to using overflow,
     // but we tried it and it didn't work, so there must be some issues with overflow that
     // still need to be worked out.
     for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
         if (!c->isFloatingOrPositioned()) {
-            int rp = c->xPos() + c->rightmostPosition();
+            int rp = c->xPos() + c->rightmostPosition(false);
             right = QMAX(right, rp);
         }
     }

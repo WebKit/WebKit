@@ -133,8 +133,8 @@ public:
     inline int rightBottom();
 
     virtual unsigned short lineWidth(int y) const;
-    virtual int lowestPosition() const;
-    virtual int rightmostPosition() const;
+    virtual int lowestPosition(bool includeOverflowInterior=true) const;
+    virtual int rightmostPosition(bool includeOverflowInterior=true) const;
 
     int rightOffset() const;
     int rightRelOffset(int y, int fixedOffset, int *heightRemaining = 0) const;
@@ -157,7 +157,7 @@ public:
     
     // overrides RenderObject
     virtual bool requiresLayer() { return !isTableCell() &&
-        (isPositioned() || isRelPositioned() || style()->overflow()==OHIDDEN); }
+        (isPositioned() || isRelPositioned() || style()->hidesOverflow()); }
     
 #ifndef NDEBUG
     virtual void printTree(int indent=0) const;

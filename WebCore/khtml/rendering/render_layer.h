@@ -101,6 +101,8 @@ public:
         m_x = xPos;
         m_y = yPos;
     }
+
+    void scrollOffset(int& x, int& y);
     
     void updateLayerPosition();
     

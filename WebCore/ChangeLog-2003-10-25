@@ -1,3 +1,45 @@
+2003-04-15  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3220809, overflow values other than visible should not
+	affect the document's height (or document scrollbars).  This
+	fixes squidfingers.com and briefcase.yahoo.com
+
+	Also laying a bunch of groundwork for overflow:auto and scroll
+	by adding them as supported values now.
+
+	Fixed overflow so that overflow objects now dodge floats and
+	don't let them intrude into their space.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::containingBlockWidth):
+        (RenderBox::repaint):
+        (RenderBox::repaintRectangle):
+        (RenderBox::calcWidth):
+        (RenderBox::calcAbsoluteVertical):
+        (RenderBox::lowestPosition):
+        (RenderBox::rightmostPosition):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::repaint):
+        (RenderFlow::lowestPosition):
+        (RenderFlow::rightmostPosition):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+        (RenderLayer::convertToLayerCoords):
+        (RenderLayer::scrollOffset):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setLayouted):
+        (RenderObject::detach):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.h:
+
 2003-04-15  Trey Matteson  <trey@apple.com>
 
 	3229318 - no back entry created when searching at lonelyplanet.com

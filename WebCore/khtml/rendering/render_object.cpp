@@ -377,12 +377,12 @@ void RenderObject::setLayouted(bool b)
         // shouldn't be needed, and it's unfortunate that it is necessary.  -dwh
 
         RenderObject* clippedObj = 
-            (style()->overflow() == OHIDDEN && !isText()) ? this : 0;
+            (style()->hidesOverflow() && !isText()) ? this : 0;
         
         while( o ) {
             root = o;
             o->m_layouted = false;
-            if (o->style()->overflow() == OHIDDEN && !clippedObj)
+            if (o->style()->hidesOverflow() && !clippedObj)
                 clippedObj = o;
             o = o->container();
         }
@@ -1146,7 +1146,7 @@ void RenderObject::detach(RenderArena* renderArena)
 {
     // If we're an overflow:hidden object that currently needs layout, we need
     // to make sure the view isn't holding on to us.
-    if (!layouted() && style()->overflow() == OHIDDEN) {
+    if (!layouted() && style()->hidesOverflow()) {
         RenderRoot* r = root();
         if (r && r->view()->layoutObject() == this)
             r->view()->unscheduleRelayout();

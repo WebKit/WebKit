@@ -481,7 +481,7 @@ void RenderBlock::layout()
             m_height += borderBottom() + paddingBottom();
         }
 
-        if (m_overflowHeight > m_height)
+        if (m_overflowHeight > m_height && !style()->hidesOverflow())
             m_height = m_overflowHeight + borderBottom() + paddingBottom();
     }
 
@@ -720,7 +720,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         // Note this occurs after the test for positioning and floating above, since
         // we want to ensure that we don't artificially increase our height because of
         // a positioned or floating child.
-        if ( child->style()->flowAroundFloats() && !child->isFloating() &&
+        if ( (child->style()->hidesOverflow() || child->style()->flowAroundFloats())
+             && !child->isFloating() &&
              style()->width().isFixed() && child->minWidth() > lineWidth( m_height ) ) {
             m_height = QMAX( m_height, floatBottom() );
             shouldCollapseChild = false;
@@ -905,9 +906,11 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
         int chPos = xPos + child->marginLeft();
 
-        if(style()->direction() == LTR) {
+        if (style()->direction() == LTR) {
             // html blocks flow around floats
-            if ( ( style()->htmlHacks() || child->isTable() ) && child->style()->flowAroundFloats() ) 			{
+            if (child->style()->hidesOverflow() ||
+                 (( style()->htmlHacks() || child->isTable() ) && child->style()->flowAroundFloats()))
+            {
                 int leftOff = leftOffset(m_height);
                 if (leftOff != xPos) {
                     // The object is shifting right. The object might be centered, so we need to
@@ -924,7 +927,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             }
         } else {
             chPos -= child->width() + child->marginLeft() + child->marginRight();
-            if ( ( style()->htmlHacks() || child->isTable() ) && child->style()->flowAroundFloats() )
+            if (child->style()->hidesOverflow() ||
+                ((style()->htmlHacks() || child->isTable()) && child->style()->flowAroundFloats()))
                 chPos -= leftOffset(m_height);
         }
 
@@ -940,8 +944,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         if (child->isRenderBlock())
             prevFlow = static_cast<RenderBlock*>(child); 
 
-        if ( child->hasOverhangingFloats() ) {
-            // need to add the float to our special objects
+        if ( child->hasOverhangingFloats() && !child->style()->hidesOverflow()) {
+            // need to add the child's floats to our floating objects list, but not in the case where
+            // overflow is auto/scroll
             addOverHangingFloats( static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos(), true );
         }
 
@@ -1470,7 +1475,7 @@ RenderBlock::floatBottom() const
 }
 
 int
-RenderBlock::lowestPosition() const
+RenderBlock::lowestPosition(bool includeOverflowInterior) const
 {
     // We don't make any attempt to have this be correct for
     // any single object, since this is only done for the entire
@@ -1480,14 +1485,16 @@ RenderBlock::lowestPosition() const
     
     // FIXME: Maybe we can use m_overflowHeight instead?
 
-    int bottom = RenderFlow::lowestPosition();
-
+    int bottom = RenderFlow::lowestPosition(includeOverflowInterior);
+    if (!includeOverflowInterior && style()->hidesOverflow())
+        return bottom;
+    
     if (m_floatingObjects) {
         FloatingObject* r;
         QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
             if (!r->noPaint) {
-                int lp = r->startY + r->node->lowestPosition();
+                int lp = r->startY + r->node->lowestPosition(false);
                 bottom = QMAX(bottom, lp);
             }
         }
@@ -1497,7 +1504,7 @@ RenderBlock::lowestPosition() const
         RenderObject* r;
         QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            int lp = r->yPos() + r->lowestPosition();
+            int lp = r->yPos() + r->lowestPosition(false);
             bottom = QMAX(bottom, lp);
         }
     }
@@ -1505,7 +1512,7 @@ RenderBlock::lowestPosition() const
     return bottom;
 }
 
-int RenderBlock::rightmostPosition() const
+int RenderBlock::rightmostPosition(bool checkScroll) const
 {
     // We don't make any attempt to have this be correct for
     // any single object, since this is only done for the entire
@@ -1515,14 +1522,16 @@ int RenderBlock::rightmostPosition() const
     
     // FIXME: Maybe we can use m_overflowWidth instead?
 
-    int right = RenderFlow::rightmostPosition();
-
+    int right = RenderFlow::rightmostPosition(checkScroll);
+    if (!checkScroll && style()->hidesOverflow())
+        return right;
+    
     if (m_floatingObjects) {
         FloatingObject* r;
         QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
             if (!r->noPaint) {
-                int rp = r->left + r->node->rightmostPosition();
+                int rp = r->left + r->node->rightmostPosition(false);
            	right = QMAX(right, rp);
             }
         }
@@ -1532,7 +1541,7 @@ int RenderBlock::rightmostPosition() const
         RenderObject* r;
         QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            int rp = r->xPos() + r->rightmostPosition();
+            int rp = r->xPos() + r->rightmostPosition(false);
             right = QMAX(right, rp);
         }
     }
@@ -1584,7 +1593,7 @@ RenderBlock::clearFloats()
     // pass fAF's unless they contain overhanging stuff
     bool parentHasFloats = false;
     while (prev) {
-        if (!prev->isRenderBlock() || prev->isFloating() ||
+        if (!prev->isRenderBlock() || prev->isFloating() || prev->style()->hidesOverflow() ||
             (prev->style()->flowAroundFloats() &&
              // A <table> or <ul> can have a height of 0, so its ypos may be the same
              // as m_y.  That's why we have a <= and not a < here. -dwh
@@ -1617,8 +1626,8 @@ RenderBlock::clearFloats()
     if(!prev->isRenderBlock()) return;
     RenderBlock * flow = static_cast<RenderBlock *>(prev);
     if(!flow->m_floatingObjects) return;
-    if( ( style()->htmlHacks() || isTable() ) && style()->flowAroundFloats())
-        return; //html tables and lists flow as blocks
+    if (style()->hidesOverflow() || (( style()->htmlHacks() || isTable() ) && style()->flowAroundFloats()))
+        return; // these elements don't allow floats from previous blocks to intrude into their space.
 
     if(flow->floatBottom() > offset)
         addOverHangingFloats( flow, 0, offset );
@@ -1802,7 +1811,7 @@ void RenderBlock::calcMinMaxWidth()
     // We need to sanity-check our m_minWidth, and not let it exceed our clipped boundary. -dwh
     // FIXME: For now, punt on trying to apply this fix to table cells.  We don't know an accurate
     // width for the cell here, so we can't do a comparison.
-    if (style()->overflow() == OHIDDEN && m_minWidth > m_width && !isTableCell())
+    if (style()->hidesOverflow() && m_minWidth > m_width && !isTableCell())
         m_minWidth = m_width;
 
     setMinMaxKnown();

@@ -298,7 +298,7 @@ public:
 // Random visual rendering model attributes. Not inherited.
 
 enum EOverflow {
-    OVISIBLE, OHIDDEN, SCROLL, AUTO
+    OVISIBLE, OHIDDEN, OSCROLL, OAUTO
 };
 
 enum EVerticalAlign {
@@ -606,7 +606,7 @@ protected:
 
 	noninherited_flags._display = INLINE;
 	noninherited_flags._bg_repeat = REPEAT;
-	noninherited_flags._bg_attachment = SCROLL;
+	noninherited_flags._bg_attachment = true;
 	noninherited_flags._overflow = OVISIBLE;
 	noninherited_flags._vertical_align = BASELINE;
 	noninherited_flags._clear = CNONE;
@@ -701,6 +701,9 @@ public:
     const QColor &  	    outlineColor() const {  return background->outline.color; }
 
     EOverflow overflow() const { return  noninherited_flags._overflow; }
+    bool hidesOverflow() const { return overflow() != OVISIBLE; }
+    bool scrollsOverflow() const { return overflow() == OSCROLL || overflow() == OAUTO; }
+
     EVisibility visibility() const { return inherited_flags._visibility; }
     EVerticalAlign verticalAlign() const { return  noninherited_flags._vertical_align; }
     Length verticalAlignLength() const { return box->vertical_align; }
