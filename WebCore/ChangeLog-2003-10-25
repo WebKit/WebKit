@@ -1,3 +1,24 @@
+2002-03-24  Darin Adler  <darin@apple.com>
+
+        Add tail pointer to KWQListImpl, since that shows up on so many profiles.
+
+	* src/kwq/KWQListImpl.mm: (KWQListImpl::KWQListPrivate::copyList): Return
+        a tail pointer too.
+	(KWQListImpl::KWQListPrivate::KWQListPrivate): Set up tail pointer.
+        (KWQListImpl::clear): Clean tail pointer too.
+	(KWQListImpl::at): Special case the tail so we don't walk the whole list
+        when we ask for the last element.
+        (KWQListImpl::insert): Update the tail node to when inserting. Also add
+        a special case for adding at the end so we don't walk the whole list.
+        (KWQListImpl::remove): Update the tail node. Also, use at() in the index-
+        based remove so we don't ahve to replicate the logic about finding a
+        node with the special case for the tail.
+	(KWQListImpl::getLast): Trivial now.
+        (KWQListImpl::last): Trivial now.
+	(KWQListIteratorImpl::toLast): Trivial now.
+        
+	* src/kwq/KWQString.mm: (QString::operator=): Remove unneeded line of code.
+
 2002-03-24  Richard Williamson  <rjw@apple.com>
 
         A number of fixes to support non-latin1 decoding 

@@ -53,9 +53,7 @@ public:
 
 KWQListNode::~KWQListNode()
 {
-    if (next != NULL) {
-	delete next;
-    }
+    delete next;
 }
 
 // KWQListImpl::KWQListPrivate
@@ -67,17 +65,17 @@ public:
     KWQListPrivate(KWQListPrivate &vp);
     ~KWQListPrivate();
     
-    static KWQListNode *copyList(KWQListNode *l);
+    static KWQListNode * copyList(KWQListNode *, KWQListNode *&tail);
 
     KWQListNode *head;
-    // KWQListNode *tail;
+    KWQListNode *tail;
     KWQListNode *current;
     uint count;
     void (*deleteItem)(void *);
     KWQListNode *iterators;
 };
 
-KWQListNode *KWQListImpl::KWQListPrivate::copyList(KWQListNode *l)
+KWQListNode *KWQListImpl::KWQListPrivate::copyList(KWQListNode *l, KWQListNode *&tail)
 {
     KWQListNode *node = l;
     KWQListNode *copyHead = NULL;
@@ -99,11 +97,13 @@ KWQListNode *KWQListImpl::KWQListPrivate::copyList(KWQListNode *l)
 	node = node->next;
     }
 
+    tail = last;
     return copyHead;
 }
 
 KWQListImpl::KWQListPrivate::KWQListPrivate(void (*deleteFunc)(void *)) :
     head(NULL),
+    tail(NULL),
     current(NULL),
     count(0),
     deleteItem(deleteFunc),
@@ -112,12 +112,12 @@ KWQListImpl::KWQListPrivate::KWQListPrivate(void (*deleteFunc)(void *)) :
 }
 
 KWQListImpl::KWQListPrivate::KWQListPrivate(KWQListPrivate &vp) :
-    head(copyList(vp.head)),
     current(NULL),
     count(vp.count),
     deleteItem(vp.deleteItem),
     iterators(NULL)
 {
+    head = copyList(vp.head, tail);
 }
 
 KWQListImpl::KWQListPrivate::~KWQListPrivate()
@@ -191,6 +191,7 @@ void KWQListImpl::clear(bool deleteItems)
 
     delete d->head;
     d->head = NULL;
+    d->tail = NULL;
     d->current = NULL;
     d->count = 0;
 }
@@ -275,15 +276,18 @@ void KWQListImpl::sort(int (*compareFunc)(void *a, void *b, void *data), void *d
 
 void *KWQListImpl::at(uint n)
 {
-    d->current = d->head;
-    uint i = 0; 
-
-    while (i < n && d->current != NULL) {
-	d->current = d->current->next;
-	i++;
+    KWQListNode *node;
+    if (n >= d->count - 1) {
+        node = d->tail;
+    } else {
+        node = d->head;
+        for (uint i = 0; i < n && node != NULL; i++) {
+            node = node->next;
+        }
     }
 
-    return d->current->data;
+    d->current = node;
+    return node->data;
 }
 
 bool KWQListImpl::insert(uint n, const void *item)
@@ -292,74 +296,86 @@ bool KWQListImpl::insert(uint n, const void *item)
 	return false;
     }
 
-    d->current = new KWQListNode;
-    d->current->data = (void *)item;
+    KWQListNode *node = new KWQListNode;
+    node->data = (void *)item;
 
     if (n == 0) {
 	// inserting at head
-	d->current->next = d->head;
+	node->next = d->head;
 	if (d->head != NULL) {
-	    d->head->prev = d->current;
+	    d->head->prev = node;
 	}
-	d->head = d->current;
+	d->head = node;
+        if (d->tail == NULL) {
+            d->tail = node;
+        }
+    } else if (n == d->count) {
+        // inserting at tail
+        node->prev = d->tail;
+        if (d->tail != NULL) {
+            d->tail->next = node;
+        }
+        d->tail = node;
     } else {
 	// general insertion
 	
 	// iterate to one node before the insertion point, can't be null
-	// since we know n > 0 and n <= d->count
+	// since we know n > 0 and n < d->count
 	KWQListNode *node = d->head;
 
-	for (unsigned i = 0; i < n - 1; i++) {
+	for (uint i = 0; i < n - 1; i++) {
 	    node = node->next;
 	}
-	d->current->prev = node;
-	d->current->next = node->next;
+	node->prev = node;
+	node->next = node->next;
 	if (node->next != NULL) {
-	    node->next->prev = d->current;
+	    node->next->prev = node;
 	}
-	node->next = d->current;
+	node->next = node;
     }
 
     d->count++;
+    d->current = node;
     return true;
 }
 
 bool KWQListImpl::remove(bool deleteItem)
 {
-    if (d->current == NULL) {
+    KWQListNode *node = d->current;
+    if (node == NULL) {
 	return false;
     }
 
-    if (d->head == d->current) {
-	d->head = d->current->next;
+    if (node->prev == NULL) {
+	d->head = node->next;
     } else {
-	d->current->prev->next = d->current->next;
+	node->prev->next = node->next;
     }
 
-    if (d->current->next != NULL) {
-	d->current->next->prev = d->current->prev;
-    }
-
-    KWQListNode *detached = d->current;
-    if (detached->next != NULL) {
-	d->current = detached->next;
+    if (node->next == NULL) {
+        d->tail = node->prev;
     } else {
-	d->current = detached->prev;
+	node->next->prev = node->prev;
     }
 
-    detached->next = NULL;
+    if (node->next != NULL) {
+	d->current = node->next;
+    } else {
+	d->current = node->prev;
+    }
 
     if (deleteItem) {
-	d->deleteItem(detached->data);
+	d->deleteItem(node->data);
     }
 
     for (KWQListNode *iterator = d->iterators; iterator != NULL; iterator = iterator->next) {
-	if (((KWQListIteratorImpl *)iterator->data)->d->node == detached) {
+	if (((KWQListIteratorImpl *)iterator->data)->d->node == node) {
 	    ((KWQListIteratorImpl *)iterator->data)->d->node = d->current;
 	}
     }
-    
-    delete detached;
+
+    node->next = NULL;
+    delete node;
     d->count--;
 
     return true;
@@ -370,19 +386,14 @@ bool KWQListImpl::remove(uint n, bool deleteItem)
     if (n >= d->count) {
 	return false;
     }
-    
-    d->current = d->head;
 
-    for (uint i = 0; i < n; i++) {
-	d->current = d->current->next;
-    }
-
+    at(n);
     return remove(deleteItem);
 }
 
 bool KWQListImpl::removeFirst(bool deleteItem)
 {
-    return remove((unsigned)0, deleteItem);
+    return remove(0, deleteItem);
 }
 
 bool KWQListImpl::removeLast(bool deleteItem)
@@ -435,16 +446,7 @@ void *KWQListImpl::getFirst() const
 
 void *KWQListImpl::getLast() const
 {
-    KWQListNode *node = d->head;
-
-    if (node == NULL) {
-	return NULL;
-    } 
-    
-    while (node->next != NULL) {
-	node = node->next;
-    }
-    return node->data;
+    return d->tail->data;
 }
 
 void *KWQListImpl::current() const
@@ -464,12 +466,7 @@ void *KWQListImpl::first()
 
 void *KWQListImpl::last()
 {
-    if (d->head != NULL) {
-	d->current = d->head;
-	while (d->current->next != NULL) {
-	    d->current = d->current->next;
-	}
-    }
+    d->current = d->tail;
     return current();
 }
 
@@ -527,6 +524,8 @@ uint KWQListImpl::containsRef(const void *item) const
 
 KWQListImpl &KWQListImpl::assign(const KWQListImpl &impl, bool deleteItems)
 {
+    // FIXME: this doesn't respect the deleteItems flag
+    
     KWQListImpl tmp(impl);
     KWQListImpl::KWQListPrivate *tmpD = tmp.d;
 
@@ -535,7 +534,6 @@ KWQListImpl &KWQListImpl::assign(const KWQListImpl &impl, bool deleteItems)
 
     return *this;
 }
-
 
 void KWQListImpl::addIterator(KWQListIteratorImpl *iter) const
 {
@@ -616,10 +614,7 @@ void *KWQListIteratorImpl::toFirst()
 
 void *KWQListIteratorImpl::toLast()
 {
-    d->node = d->list->d->head;
-    while (d->node != NULL && d->node->next != NULL) {
-	d->node = d->node->next;
-    }
+    d->node = d->list->d->tail;
     return current();
 }
 
