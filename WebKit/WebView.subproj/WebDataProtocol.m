@@ -79,6 +79,11 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
 @implementation NSURLRequest (WebDataRequest)
 
++ (NSString *)_webDataRequestPropertyKey
+{
+    return WebDataRequestPropertyKey;
+}
+
 - (WebDataRequestParameters *)_webDataRequestParametersForReading
 {
     return [NSURLProtocol propertyForKey:WebDataRequestPropertyKey inRequest:self];

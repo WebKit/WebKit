@@ -1,3 +1,17 @@
+2005-03-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4040321> Exception: Someone's trying to encode a WebDataRequestParameters instance
+
+	If client mutates request use new Foundation SPI to address remove applewebdata properties	from request.
+
+        Reviewed by Ken Kocienda.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate willSendRequest:redirectResponse:]):
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        (+[NSURLRequest _webDataRequestPropertyKey]):
+
 2005-03-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Vicki

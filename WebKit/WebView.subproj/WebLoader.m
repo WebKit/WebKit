@@ -79,6 +79,12 @@ static BOOL NSURLConnectionSupportsBufferedData;
 
 @end
 
+// This declaration is only needed to ease the transition to a new SPI.  It can be removed
+// moving forward beyond Tiger 8A416.
+@interface NSURLProtocol (WebFoundationSecret) 
++ (void)_removePropertyForKey:(NSString *)key inRequest:(NSMutableURLRequest *)request;
+@end
+
 @implementation WebBaseResourceHandleDelegate
 
 + (void)initialize
@@ -373,8 +379,17 @@ static BOOL NSURLConnectionSupportsBufferedData;
         // If the delegate modified the request use that instead of
         // our applewebdata request, otherwise use the original
         // applewebdata request.
-        if (![updatedRequest isEqual:clientRequest])
+        if (![updatedRequest isEqual:clientRequest]) {
             newRequest = updatedRequest;
+        
+            // The respondsToSelector: check is only necessary for people building/running prior to Tier 8A416.
+            if ([NSURLProtocol respondsToSelector:@selector(_removePropertyForKey:inRequest:)] &&
+                [newRequest isKindOfClass:[NSMutableURLRequest class]]) {
+                NSMutableURLRequest *mr = (NSMutableURLRequest *)newRequest;
+                [NSURLProtocol _removePropertyForKey:[NSURLRequest _webDataRequestPropertyKey] inRequest:mr];
+            }
+
+        }
     }
 
     // Store a copy of the request.

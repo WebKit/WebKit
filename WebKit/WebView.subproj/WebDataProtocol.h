@@ -23,6 +23,7 @@
 @end
 
 @interface NSURLRequest (WebDataRequest)
++ (NSString *)_webDataRequestPropertyKey;
 - (NSURL *)_webDataRequestBaseURL;
 - (NSURL *)_webDataRequestUnreachableURL;
 - (NSURL *)_webDataRequestExternalURL;
