@@ -531,6 +531,14 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
         borderType:[self borderType]];
 }
 
+- (void)viewWillMoveToWindow:(NSWindow *)window
+{
+    if ([self window] != window) {
+        [[textView undoManager] removeAllActionsWithTarget:[textView textStorage]];
+    }
+    [super viewWillMoveToWindow:window];
+}
+
 @end
 
 @implementation KWQTextAreaTextView

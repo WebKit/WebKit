@@ -1,3 +1,13 @@
+2005-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3986639> Crash occurs after choosing Undo Typing from the Edit menu
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea viewWillMoveToWindow:]): Remove actions from undo manager when the view is
+        removed from the window. Unfortunately, to do this the code has to know that the target of NSTextView actions
+        will be the text storage object, but given the NSText architecture, that's pretty clear.
+
 2005-02-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3991974> REGRESSION: www.jabra.com world location screen does not work
