@@ -52,6 +52,11 @@ public:
     virtual ~KComboBox();
 
     // member functions --------------------------------------------------------
+#ifdef APPLE_CHANGES
+    void doneLoading();
+    void setSize(int size);
+#endif
+
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------

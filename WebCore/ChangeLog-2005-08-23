@@ -1,4 +1,15 @@
 2002-03-19  Richard Williamson  <rjw@apple.com>
+
+        Fixed NSPopupButton performance bottleneck.
+        
+	* src/kdelibs/khtml/rendering/render_form.cpp: (RenderSelect::layout):
+	* src/kwq/KWQComboBox.mm: (QComboBox::insertItem):
+	* src/kwq/KWQKComboBox.mm: (KComboBox::~KComboBox), (KComboBox::doneLoading),
+	(KComboBox::setSize):
+	* src/kwq/kdeui/kcombobox.h:
+	* src/kwq/qt/qcombobox.h:
+
+2002-03-19  Richard Williamson  <rjw@apple.com>
     
         Changed float width cache to use shorts.
 

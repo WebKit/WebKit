@@ -25,6 +25,8 @@
 #include <kwqdebug.h>
 #include <kcombobox.h>
 
+#include <KWQView.h>
+
 KComboBox::KComboBox(QWidget *parent=0, const char *name=0)
 {
     _logNotYetImplemented();
@@ -39,5 +41,44 @@ KComboBox::KComboBox(bool rw, QWidget *parent=0, const char *name=0)
 KComboBox::~KComboBox()
 {
     _logNotYetImplemented();
+}
+
+void KComboBox::doneLoading()
+{
+    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
+    NSMutableArray *numberedItems;
+    int i, _count = [items count];
+    
+    [comboBox removeAllItems];
+
+    // Hack to allow multiple items with same name.   Ugh.
+    // NSPopupButton is really stupid.  It doesn't allow
+    // entries with the same title, unless you explicitly
+    // set the title with setTitle: after all the entries
+    // have been added.
+    numberedItems = [[NSMutableArray alloc] init];
+    for (i = 0; i < _count; i++)
+        [numberedItems addObject: [NSString stringWithFormat: @"%d", i]];
+
+    [comboBox addItemsWithTitles: numberedItems];
+
+    for (i = 0; i < _count; i++){
+        [[comboBox itemAtIndex: i] setTitle: [items objectAtIndex: i]];
+    }
+    
+    [numberedItems release];
+}
+
+void KComboBox::setSize(int size)
+{
+    int i; 
+    NSMutableArray *newItems = [[NSMutableArray alloc] initWithCapacity: size];
+    
+    for (i = 0; i < size; i++){
+        [newItems addObject: @""];
+    }
+    
+    [items release];
+    items = newItems;
 }
 

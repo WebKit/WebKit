@@ -90,6 +90,7 @@ bool QComboBox::eventFilter(QObject *object, QEvent *event)
 
 void QComboBox::insertItem(const QString &text, int index)
 {
+#ifdef SLOW_AS_POOP
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
     
     if (index < 0)
@@ -116,6 +117,9 @@ void QComboBox::insertItem(const QString &text, int index)
     }
     [items release];
     items = newItems;
+#else
+    [items insertObject: QSTRING_TO_NSSTRING (text) atIndex: index];
+#endif
 }
 
 
