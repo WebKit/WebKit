@@ -1919,19 +1919,30 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             width += iterator->style->wordSpacing;
     }
 
+    // Force characters that are used to determine word boundaries for the rounding hack
+    // to be integer width, so following words will start on an integer boundary.
+    if (isRoundingHackCharacter(c)) {
+        width = CEIL_TO_INT(width);
+    }
+    
     iterator->runWidthSoFar += width;
 
     // Advance past the character we just dealt with.
     currentCharacter += clusterLength;
     iterator->currentCharacter = currentCharacter;
 
+    int len = run->to - run->from;
+
     // Account for float/integer impedance mismatch between CG and khtml.  "Words" (characters 
     // followed by a character defined by isSpace()) are always an integer width.  We adjust the 
     // width of the last character of a "word" to ensure an integer width.  When we move khtml to
     // floats we can remove this (and related) hacks.
     //
-    // Check to see if the next character is a space, if so, adjust.
+    // Check to see if the next character is a "RoundingHackCharacter", if so, adjust.
     if (currentCharacter < run->length && isRoundingHackCharacter(cp[clusterLength])) {
+        width += ceilCurrentWidth(iterator);
+    }
+    else if (currentCharacter >= (unsigned)run->to && (len > 1 || run->length == 1) && iterator->style->applyRounding) {
         width += ceilCurrentWidth(iterator);
     }
     

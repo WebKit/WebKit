@@ -1,3 +1,12 @@
+2003-12-17  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3503011 (really, this time).  Always use integer width for '-' and '?', as we do for spaces, to ensure that 'words' (as defined by out rounding hack) start on integer boundaries.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (widthForNextCharacter):
+
 2003-12-17  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
