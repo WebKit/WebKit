@@ -1,3 +1,18 @@
+2002-07-23  Darin Adler  <darin@apple.com>
+
+	- fixed 3004818 -- relative urls are assembled incorrectly at ticketmaster
+	- fixed 2999279 -- Invalid URI in request at subpage of swatch.com
+
+	The issue here is URLs with paths that start with "/../". RFC 2396 says one
+	thing, and that's what CFURL does. But real web browsers do another thing.
+
+        * kwq/KWQKURL.mm:
+        (KURL::KWQKURLPrivate::KWQKURLPrivate): Clean up a bit by removing unneeded init().
+        (escapeQString): Don't make a copy of the passed-in QString.
+        (pathEndsWithSlash): Don't make a copy of the passed-in QString.
+        (copyEscapedPath): Make this a static function instead of extern.
+        (KURL::KWQKURLPrivate::decompose): Add the new "../" and "./" logic.
+
 2002-07-23  David Hyatt  <hyatt@apple.com>
 
         * khtml/rendering/font.cpp:

@@ -35,7 +35,6 @@ public:
     KWQKURLPrivate(const KWQKURLPrivate &other);
     ~KWQKURLPrivate();
 
-    void init(const QString &);
     void makeRef();
     void decompose();
     void compose();
@@ -59,11 +58,12 @@ public:
 
 KURL::KWQKURLPrivate::KWQKURLPrivate(const QString &url) :
     urlRef(NULL),
+    sURL(url),
     iPort(0),
     addedSlash(false),
     refCount(0)
 {
-    init(url);
+    decompose();
 }
 
 KURL::KWQKURLPrivate::KWQKURLPrivate(const KWQKURLPrivate &other) :
@@ -90,14 +90,6 @@ KURL::KWQKURLPrivate::~KWQKURLPrivate()
     }
 }
 
-void KURL::KWQKURLPrivate::init(const QString &s)
-{
-    // Save original string
-    sURL = s;
-
-    decompose();
-}
-
 void KURL::KWQKURLPrivate::makeRef()
 {
     // Not a path and no scheme, so bail out, because CFURL considers such
@@ -109,9 +101,9 @@ void KURL::KWQKURLPrivate::makeRef()
 
     // Create CFURLRef object
     if (sURL.length() > 0 && sURL[0] == '/') {
-        sURL = (QString("file://")) + sURL;
+        sURL = "file://" + sURL;
     } else if (sURL.startsWith("file:/") && !sURL.startsWith("file://")) {
-        sURL = (QString("file:///") + sURL.mid(6));
+        sURL = "file:///" + sURL.mid(6);
     }
 
     QString sURLMaybeAddSlash;
@@ -149,12 +141,12 @@ static inline QString CFStringToQString(CFStringRef cfs)
     return qs;
 }
 
-static inline QString escapeQString(QString str)
+static inline QString escapeQString(const QString &str)
 {
     return CFStringToQString(CFURLCreateStringByAddingPercentEscapes(NULL, str.getCFMutableString(), NULL, NULL, kCFStringEncodingUTF8));
 }
 
-static bool pathEndsWithSlash(QString sURL)
+static bool pathEndsWithSlash(const QString &sURL)
 {
     int endOfPath = sURL.findRev('?', sURL.findRev('#'));
     if (endOfPath == -1) {
@@ -167,8 +159,7 @@ static bool pathEndsWithSlash(QString sURL)
     }
 }
 
-
-CFStringRef KWQCFURLCopyEscapedPath(CFURLRef anURL)
+static CFStringRef copyEscapedPath(CFURLRef anURL)
 {
     NSRange path;
     CFStringRef urlString = CFURLGetString(anURL);
@@ -209,7 +200,7 @@ void KURL::KWQKURLPrivate::decompose()
 
     sQuery = CFStringToQString(CFURLCopyQueryString(urlRef, NULL));
     if (!sQuery.isEmpty()) {
-        sQuery = QString("?") + sQuery;
+        sQuery = "?" + sQuery;
     }
 
     if (CFURLCanBeDecomposed(urlRef)) {
@@ -218,14 +209,36 @@ void KURL::KWQKURLPrivate::decompose()
 	    escapedPath = "";
 	} else {
 	    sPath = CFStringToQString(CFURLCopyFileSystemPath(urlRef, kCFURLPOSIXPathStyle));
-	    escapedPath = CFStringToQString(KWQCFURLCopyEscapedPath(urlRef));
+	    escapedPath = CFStringToQString(copyEscapedPath(urlRef));
 	}
+        
+        // Remove "../" or "./" from the start of the path.
+        // This is not what RFC 2396 says to do, but it's what other browsers do.
+        if (sPath.startsWith("/.")) {
+            for (;;) {
+                if (sPath.startsWith("/./")) {
+                    sPath.remove(0, 2);
+                } else if (sPath.startsWith("/../")) {
+                    sPath.remove(0, 3);
+                } else {
+                    break;
+                }
+            }
+            for (;;) {
+                if (escapedPath.startsWith("/./")) {
+                    escapedPath.remove(0, 2);
+                } else if (escapedPath.startsWith("/../")) {
+                    escapedPath.remove(0, 3);
+                } else {
+                    break;
+                }
+            }
+        }
+        
 	QString param = CFStringToQString(CFURLCopyParameterString(urlRef, CFSTR("")));
 	if (!param.isEmpty()) {
 	    sPath += ";" + param;
-	    QString escapedParam = CFStringToQString(CFURLCopyParameterString(urlRef, NULL));
-
-	    escapedPath += ";" + escapedParam;
+	    escapedPath += ";" + CFStringToQString(CFURLCopyParameterString(urlRef, NULL));
 	}
 
 	if (pathEndsWithSlash(sURL) && sPath.right(1) != "/") {
@@ -237,8 +250,8 @@ void KURL::KWQKURLPrivate::decompose()
     }
 
     if (sProtocol == "file" && !hostName.isEmpty() && hostName != "localhost") {
-        sPath = QString("//") + hostName + sPath;
-	escapedPath = QString("//") + hostName + escapedPath;
+        sPath = "//" + hostName + sPath;
+	escapedPath = "//" + hostName + escapedPath;
     }
 
     // could lead to poor performance - perhaps compose manually in ::url?
@@ -367,7 +380,7 @@ QString KURL::normalizeURLString(const QString &s)
 
     // Special handling for paths
     if (!qurl.isEmpty() && qurl[0] == '/') {
-        qurl = QString("file:") + qurl;
+        qurl = "file:" + qurl;
     }
 
     // FIXME: Do we really have to parse even the simplest URLs into pieces just to normalize them?
@@ -378,11 +391,11 @@ QString KURL::normalizeURLString(const QString &s)
     qurl = d->sURL;
 
     if (qurl.startsWith("file:///")) {
-        qurl = QString("file:/") + qurl.mid(8);
+        qurl = "file:/" + qurl.mid(8);
     } else if (qurl == "file://localhost") {
-        qurl = QString("file:");
+        qurl = "file:";
     } else if (qurl.startsWith("file://localhost/")) {
-        qurl = QString("file:/") + qurl.mid(17);
+        qurl = "file:/" + qurl.mid(17);
     }
 
     CFDictionarySetValue(NormalizedURLCache, s.getCFMutableString(), qurl.getCFMutableString());
@@ -591,7 +604,7 @@ QString KURL::prettyURL(int trailing) const
         return d->sURL;
     }
 
-    QString result =  d->sProtocol + ":";
+    QString result = d->sProtocol + ":";
 
     if (!d->sHost.isEmpty()) {
         result += "//";
@@ -633,7 +646,6 @@ void KURL::swap(KURL &other)
 {
     KWQRefPtr<KWQKURLPrivate> tmpD = other.d;
     QString tmpString = other.urlString;
-    
     other.d = d;
     d = tmpD;
     other.urlString = urlString;
