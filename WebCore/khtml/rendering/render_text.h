@@ -43,6 +43,9 @@ namespace DOM {
 // Define a constant for soft hyphen's unicode value.
 #define SOFT_HYPHEN 173
 
+const int cNoTruncation = -1;
+const int cFullTruncation = -2;
+
 namespace khtml
 {
     class RenderText;
@@ -58,6 +61,7 @@ public:
         m_len = 0;
         m_reversed = false;
         m_toAdd = 0;
+        m_truncation = cNoTruncation;
     }
     
     InlineTextBox* nextTextBox() const { return static_cast<InlineTextBox*>(nextLineBox()); }
@@ -74,6 +78,8 @@ public:
     virtual void deleteLine(RenderArena* arena);
     virtual void extractLine();
     virtual void attachLine();
+
+    void clearTruncation() { m_truncation = cNoTruncation; }
 
     // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.
@@ -112,6 +118,9 @@ public:
     int m_start;
     unsigned short m_len;
     
+    int m_truncation; // Where to truncate when text overflow is applied.  We use special constants to
+                      // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
+
     bool m_reversed : 1;
     int m_toAdd : 14; // for justified text
 private:
@@ -217,7 +226,7 @@ public:
     virtual InlineBox *inlineBox(long offset);
     
     void clearTextOverflowTruncation();
-
+    
 #if APPLE_CHANGES
     int widthFromCache(const Font *, int start, int len) const;
     bool shouldUseMonospaceCache(const Font *) const;
