@@ -1,3 +1,26 @@
+2002-03-30  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController receivedPageTitle:forDataSource:]):
+	Remove the exception from here. This is really a "do nothing,
+	subclasses override me" method.
+
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource pageTitle]): Implement.
+
+	* WebView.subproj/IFWebDataSourcePrivate.h: Add pageTitle
+	and [IFWebDataSource _setTitle].
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSourcePrivate dealloc]): autorelease pageTitle.
+	(-[IFWebDataSource _setTitle:]): Update the title, trimming
+	whitespace and using nil, rather than empty string, to mean
+	no title at all. Call [receivedPageTitle: forDataSource:]
+	as necessary too.
+
+	* WebView.subproj/IFMainURLHandleClient.mm: Did a gratuitious
+	whitespace edit to force this file to recompile so everyone
+	doesn't have to "make clean".
+
 2002-03-30  Richard Williamson  <rjw@apple.com>
 
         Added support for scrolling to anchor points.

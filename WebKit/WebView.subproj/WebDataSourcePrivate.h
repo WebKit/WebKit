@@ -48,6 +48,8 @@
     bool primaryLoadComplete;
     
     bool stopping;
+    
+    NSString *pageTitle;
 }
 
 - init;
@@ -68,4 +70,5 @@
 - (void)_removeURLHandle: (IFURLHandle *)handle;
 - (void)_setPrimaryLoadComplete: (BOOL)flag;
 - (double)_loadingStartedTime;
+- (void)_setTitle: (NSString *)title;
 @end

@@ -426,7 +426,7 @@ DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
     return 0;
 }
 
-void KHTMLPart::slotData(id handle, const char *bytes, int length)
+void KHTMLPart::slotData(IFURLHandle *handle, const char *bytes, int length)
 {
 // NOTE: This code emulates the interface used by the original khtml part  
     NSString *encoding;
@@ -1584,4 +1584,9 @@ void KHTMLPart::nodeActivated(const DOM::Node &aNode)
 void KHTMLPart::stopAutoScroll()
 {
     _logNeverImplemented();
+}
+
+void KHTMLPart::setTitle(const DOMString &title)
+{
+    [dataSource _setTitle:(NSString *)title.string().getCFMutableString()];
 }

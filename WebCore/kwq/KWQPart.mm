@@ -55,12 +55,6 @@ QWidget *KParts::Part::widget()
 }
 
 
-void KParts::Part::setWindowCaption(const QString &)
-{
-    _logNotYetImplemented();
-}
-
-
 // class ReadOnlyPart ==================================================================
 
 KParts::ReadOnlyPart::ReadOnlyPart()

@@ -40,6 +40,7 @@
     [urlHandles release];
     [mainHandle release];
     [mainURLHandleClient release];
+    [pageTitle autorelease];
     
     delete part;
 
@@ -191,5 +192,24 @@
     return data->loadingStartedTime;
 }
 
+- (void)_setTitle:(NSString *)title
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    
+    NSMutableString *trimmed = [title mutableCopy];
+    CFStringTrimWhitespace((CFMutableStringRef) trimmed);
+    if ([trimmed length] == 0) {
+        trimmed = nil;
+        if (data->pageTitle == nil)
+            return;
+    } else {
+        if ([data->pageTitle isEqualToString:trimmed])
+            return;
+    }
+    
+    [data->pageTitle autorelease];
+    data->pageTitle = [[NSString stringWithString:trimmed] retain];
+    [data->controller receivedPageTitle:data->pageTitle forDataSource:self];
+}
 
 @end

@@ -330,8 +330,7 @@ static id IFWebDataSourceMake(void *url)
 // Returns nil or the page title.
 - (NSString *)pageTitle
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::pageTitle is not implemented"];
-    return nil;
+    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->pageTitle;
 }
 
 

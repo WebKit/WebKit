@@ -58,6 +58,7 @@
 - (void)_removeURLHandle: (IFURLHandle *)handle;
 - controller;
 - (KHTMLPart *)_part;
+- (void)_setTitle: (NSString *)title;
 @end
 
 // This should not be allowed here.  data source should not reference view

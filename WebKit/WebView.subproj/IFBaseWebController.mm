@@ -193,7 +193,7 @@
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::receivedPageTitle:forDataSource: is not implemented"];
+    // Do nothing.  Subclasses typically override this method.
 }
 
 

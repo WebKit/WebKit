@@ -44,8 +44,14 @@ class KJavaAppletContext;
 class KJSProxy;
 class KHTMLPartPrivate;
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#ifdef APPLE_CHANGES
+#ifdef __OBJC__
+@class IFURLHandle;
 @class IFWebDataSource;
+#else
+typedef void IFURLHandle;
+typedef void IFWebDataSource;
+#endif
 #endif
 
 namespace DOM
@@ -591,31 +597,23 @@ public:
     void khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event );
     void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
 
-
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     QString documentSource();
     
     void init();
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    void slotData(id handle, const char *bytes, int length);  
-#else
-    void slotData(void *handle, const char *bytes, int length);  
-#endif
+    void slotData(IFURLHandle *handle, const char *bytes, int length);  
 #endif
 
     // this function checks to see whether a base URI and all its
     // associated sub-URIs have loaded
     void checkCompleted();
 
-#ifdef _KWQ_
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#ifdef APPLE_CHANGES
     // Not retained.
     void setDataSource(IFWebDataSource *d) { dataSource = d; }
     IFWebDataSource *getDataSource() { return dataSource; }
-#else
-    void setDataSource(void *d) { dataSource = d; }
-    void *getDataSource() { return dataSource; }
-#endif
+    
+    void setTitle(const DOM::DOMString &);
 #endif
 
 private:
@@ -624,13 +622,9 @@ private:
     // DUBIOUS, why are impls being referenced?
     DOM::HTMLDocumentImpl *docImpl() const;    
 
-#ifdef _KWQ_
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#ifdef APPLE_CHANGES
     IFWebDataSource *dataSource;
     QValueList<QString> plugins;
-#else    
-    void *dataSource;
-#endif
 #endif
 };
 

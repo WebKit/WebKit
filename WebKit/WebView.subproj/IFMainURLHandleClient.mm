@@ -54,6 +54,7 @@
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
     WEBKITDEBUGLEVEL3 (WEBKIT_LOG_LOADING, "url = %s, data = 0x%08x, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
+    
     part->slotData(sender, (const char *)[data bytes], [data length]);
     
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];

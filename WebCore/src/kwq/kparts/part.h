@@ -67,7 +67,6 @@ public:
     // member functions --------------------------------------------------------
 
     QWidget *widget();
-    void setWindowCaption(const QString &);
 
     // operators ---------------------------------------------------------------
 
