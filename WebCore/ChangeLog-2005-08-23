@@ -1,3 +1,19 @@
+2004-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3889655> HTMLCollectionImpl should use traverseNextNode to improve speed and save recursion
+        
+	* khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::calcLength):
+        (HTMLCollectionImpl::getItem):
+        (HTMLCollectionImpl::item):
+        (HTMLCollectionImpl::nextItem):
+        (HTMLCollectionImpl::getNamedItem):
+        (HTMLCollectionImpl::namedItem):
+        (HTMLCollectionImpl::nextNamedItemInternal):
+        (HTMLFormCollectionImpl::nextNamedItemInternal):
+
 2004-11-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
