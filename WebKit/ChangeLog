@@ -1,3 +1,13 @@
+2003-11-05  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3413067, 3405797, 3456877
+	Use ATSUI to render Arabic and Hebrew.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (shouldUseATSU):
+
 2003-11-05  John Sullivan  <sullivan@apple.com>
 
 	- fixed <rdar://problem/3469791>: Bigger/Smaller commands are 
