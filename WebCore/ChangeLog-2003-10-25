@@ -1,3 +1,13 @@
+2003-06-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3263679, color: # doesn't parse.  Fix is to add an
+	error-handling case for # by itself to parser.y.
+	
+        Reviewed by gramps/ken
+
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+
 === Safari-81 ===
 
 2003-06-02  Darin Adler  <darin@apple.com>
