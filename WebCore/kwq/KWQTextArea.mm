@@ -112,7 +112,9 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)_updateTextViewWidth
 {
-    [textView setFrameSize:NSMakeSize([self contentSize].width, [textView frame].size.height)];
+    if (wrap) {
+        [textView setFrameSize:NSMakeSize([self contentSize].width, [textView frame].size.height)];
+    }
 }
 
 - initWithFrame:(NSRect)frame

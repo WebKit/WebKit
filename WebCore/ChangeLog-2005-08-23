@@ -1,3 +1,12 @@
+2005-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - re-fixed <rdar://problem/3665430> horizontal scroll bar of text area does not show, even when text is wide in "no wrap" mode
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea _updateTextViewWidth]): Don't change the text view width
+        to match the text area's width in the "wrap" case.
+
 2005-02-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
