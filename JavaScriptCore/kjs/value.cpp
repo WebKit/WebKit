@@ -82,14 +82,26 @@ void ValueImp::operator delete(void*)
   // Do nothing. So far.
 }
 
+bool ValueImp::toUInt32(unsigned&) const
+{
+  return false;
+}
+
 // ECMA 9.4
 int ValueImp::toInteger(ExecState *exec) const
 {
+  unsigned i;
+  if (toUInt32(i))
+    return (int)i;
   return int(roundValue(exec, Value(const_cast<ValueImp*>(this))));
 }
 
 int ValueImp::toInt32(ExecState *exec) const
 {
+  unsigned i;
+  if (toUInt32(i))
+    return (int)i;
+
   double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
   double d32 = fmod(d, D32);
 
@@ -101,6 +113,10 @@ int ValueImp::toInt32(ExecState *exec) const
 
 unsigned int ValueImp::toUInt32(ExecState *exec) const
 {
+  unsigned i;
+  if (toUInt32(i))
+    return i;
+
   double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
   double d32 = fmod(d, D32);
 
@@ -109,6 +125,10 @@ unsigned int ValueImp::toUInt32(ExecState *exec) const
 
 unsigned short ValueImp::toUInt16(ExecState *exec) const
 {
+  unsigned i;
+  if (toUInt32(i))
+    return (unsigned short)i;
+
   double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
   double d16 = fmod(d, D16);
 
@@ -118,92 +138,40 @@ unsigned short ValueImp::toUInt16(ExecState *exec) const
 // ECMA 8.7.1
 Value ValueImp::getBase(ExecState *exec) const
 {
-  if (type() != ReferenceType) {
-    Object err = Error::create(exec, ReferenceError, I18N_NOOP("Invalid reference base"));
-    exec->setException(err);
-    return err;
-  }
-
-  return (static_cast<const ReferenceImp*>(this))->getBase();
+  Object err = Error::create(exec, ReferenceError, I18N_NOOP("Invalid reference base"));
+  exec->setException(err);
+  return err;
 }
 
 // ECMA 8.7.2
 UString ValueImp::getPropertyName(ExecState * /*exec*/) const
 {
-  if (type() != ReferenceType)
-    // the spec wants a runtime error here. But getValue() and putValue()
-    // will catch this case on their own earlier. When returning a Null
-    // string we should be on the safe side.
-    return UString();
-
-  return (static_cast<const ReferenceImp*>(this))->getPropertyName();
+  // the spec wants a runtime error here. But getValue() and putValue()
+  // will catch this case on their own earlier. When returning a Null
+  // string we should be on the safe side.
+  return UString();
 }
 
 // ECMA 8.7.1
 Value ValueImp::getValue(ExecState *exec) const
 {
-  if (type() != ReferenceType)
-    return Value(const_cast<ValueImp*>(this));
-
-  Value o = getBase(exec);
-
-  if (o.isNull() || o.type() == NullType) {
-    UString m = I18N_NOOP("Can't find variable: ") + getPropertyName(exec);
-    Object err = Error::create(exec, ReferenceError, m.ascii());
-    exec->setException(err);
-    return err;
-  }
-
-  if (o.type() != ObjectType) {
-    UString m = I18N_NOOP("Base is not an object");
-    Object err = Error::create(exec, ReferenceError, m.ascii());
-    exec->setException(err);
-    return err;
-  }
-
-  return static_cast<ObjectImp*>(o.imp())->get(exec,getPropertyName(exec));
+  return Value(const_cast<ValueImp*>(this));
 }
 
-void ValueImp::putValue(ExecState *exec, const Value w)
+void ValueImp::putValue(ExecState *exec, const Value& w)
 {
-  if (type() != ReferenceType) {
-    Object err = Error::create(exec,ReferenceError);
-    exec->setException(err);
-    return;
-  }
-
-#ifdef KJS_VERBOSE
-  printInfo(exec,(UString("setting property ")+getPropertyName(exec)).cstring().c_str(),w);
-#endif
-  Value o = getBase(exec);
-  if (o.type() == NullType)
-    exec->interpreter()->globalObject().put(exec,getPropertyName(exec), w);
-  else {
-    static_cast<ObjectImp*>(o.imp())->put(exec,getPropertyName(exec), w);
-  }
-
-  return;
+  Object err = Error::create(exec,ReferenceError);
+  exec->setException(err);
 }
 
-bool KJS::operator==(const Value &v1, const Value &v2)
+bool ValueImp::deleteValue(ExecState *exec)
 {
-  return (v1.imp() == v2.imp());
+  Object err = Error::create(exec,ReferenceError);
+  exec->setException(err);
+  return false;
 }
-
-bool KJS::operator!=(const Value &v1, const Value &v2)
-{
-  return (v1.imp() != v2.imp());
-}
-
-
-
 
 // ------------------------------ Value ----------------------------------------
-
-Value::Value()
-{
-  rep = 0;
-}
 
 Value::Value(ValueImp *v)
 {
@@ -250,112 +218,10 @@ Value& Value::operator=(const Value &v)
   return *this;
 }
 
-bool Value::isNull() const
-{
-  return (rep == 0);
-}
-
-ValueImp *Value::imp() const
-{
-  return rep;
-}
-
-Type Value::type() const
-{
-  return rep->type();
-}
-
-bool Value::isA(Type t) const
-{
-  return (type() == t);
-}
-
-Value Value::toPrimitive(ExecState *exec, Type preferredType) const
-{
-  return rep->toPrimitive(exec,preferredType);
-}
-
-bool Value::toBoolean(ExecState *exec) const
-{
-  return rep->toBoolean(exec);
-}
-
-double Value::toNumber(ExecState *exec) const
-{
-  return rep->toNumber(exec);
-}
-
-int Value::toInteger(ExecState *exec) const
-{
-  return rep->toInteger(exec);
-}
-
-int Value::toInt32(ExecState *exec) const
-{
-  return rep->toInt32(exec);
-}
-
-unsigned int Value::toUInt32(ExecState *exec) const
-{
-  return rep->toUInt32(exec);
-}
-
-unsigned short Value::toUInt16(ExecState *exec) const
-{
-  return rep->toUInt16(exec);
-}
-
-UString Value::toString(ExecState *exec) const
-{
-  return rep->toString(exec);
-}
-
-Object Value::toObject(ExecState *exec) const
-{
-  return rep->toObject(exec);
-}
-
-Value Value::getBase(ExecState *exec) const
-{
-  return rep->getBase(exec);
-}
-
-UString Value::getPropertyName(ExecState *exec) const
-{
-  return rep->getPropertyName(exec);
-}
-
-Value Value::getValue(ExecState *exec) const
-{
-  return rep->getValue(exec);
-}
-
-void Value::putValue(ExecState *exec, const Value w)
-{
-  rep->putValue(exec,w);
-}
-
 // ------------------------------ Undefined ------------------------------------
 
 Undefined::Undefined() : Value(UndefinedImp::staticUndefined)
 {
-}
-
-Undefined::~Undefined() {
-}
-
-Undefined::Undefined(UndefinedImp *v) : Value(v)
-{
-}
-
-Undefined::Undefined(const Undefined &v) : Value(v)
-{
-}
-
-Undefined& Undefined::operator=(const Undefined &v)
-{
-  Value::operator=(v);
-  return *this;
 }
 
 Undefined Undefined::dynamicCast(const Value &v)
@@ -372,24 +238,6 @@ Null::Null() : Value(NullImp::staticNull)
 {
 }
 
-Null::~Null() {
-}
-
-
-Null::Null(NullImp *v) : Value(v)
-{
-}
-
-Null::Null(const Null &v) : Value(v)
-{
-}
-
-Null& Null::operator=(const Null &v)
-{
-  Value::operator=(v);
-  return *this;
-}
-
 Null Null::dynamicCast(const Value &v)
 {
   if (v.isNull() || v.type() != NullType)
@@ -404,25 +252,6 @@ Boolean::Boolean(bool b)
   : Value(b ? BooleanImp::staticTrue : BooleanImp::staticFalse)
 {
 }
-
-Boolean::~Boolean() { }
-
-
-
-Boolean::Boolean(BooleanImp *v) : Value(v)
-{
-}
-
-Boolean::Boolean(const Boolean &v) : Value(v)
-{
-}
-
-Boolean& Boolean::operator=(const Boolean &v)
-{
-  Value::operator=(v);
-  return *this;
-}
-
 
 bool Boolean::value() const
 {
@@ -442,22 +271,6 @@ Boolean Boolean::dynamicCast(const Value &v)
 
 String::String(const UString &s) : Value(new StringImp(UString(s)))
 {
-}
-
-String::~String() { }
-
-String::String(StringImp *v) : Value(v)
-{
-}
-
-String::String(const String &v) : Value(v)
-{
-}
-
-String& String::operator=(const String &v)
-{
-  Value::operator=(v);
-  return *this;
 }
 
 UString String::value() const
@@ -491,22 +304,6 @@ Number::Number(long int l)
 Number::Number(long unsigned int l)
   : Value(new NumberImp(static_cast<double>(l))) { }
 
-Number::~Number() { }
-
-Number::Number(NumberImp *v) : Value(v)
-{
-}
-
-Number::Number(const Number &v) : Value(v)
-{
-}
-
-Number& Number::operator=(const Number &v)
-{
-  Value::operator=(v);
-  return *this;
-}
-
 Number Number::dynamicCast(const Value &v)
 {
   if (v.isNull() || v.type() != NumberType)
@@ -535,4 +332,3 @@ bool Number::isInf() const
 {
   return KJS::isInf(value());
 }
-

@@ -89,7 +89,7 @@ StringPrototypeImp::StringPrototypeImp(ExecState *exec,
 {
   Value protect(this);
   // The constructor will be added later, after StringObjectImp has been built
-  put(exec,"length",Number(0),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(0),DontDelete|ReadOnly|DontEnum);
 
 }
 
@@ -106,7 +106,7 @@ StringProtoFuncImp::StringProtoFuncImp(ExecState *exec, int i, int len)
     ), id(i)
 {
   Value protect(this);
-  put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
 bool StringProtoFuncImp::implementsCall() const
@@ -342,7 +342,7 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
       RegExp reg(obj0.get(exec,"source").toString(exec));
       if (u.isEmpty() && !reg.match(u, 0).isNull()) {
 	// empty string matched by regexp -> empty array
-	res.put(exec,"length", Number(0));
+	res.put(exec,lengthPropertyName, Number(0));
 	break;
       }
       pos = 0;
@@ -356,7 +356,7 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
 	  break;
 	pos = mpos + (mstr.isEmpty() ? 1 : mstr.size());
 	if (mpos != p0 || !mstr.isEmpty()) {
-	  res.put(exec,UString::from(i), String(u.substr(p0, mpos-p0)));
+	  res.put(exec,i, String(u.substr(p0, mpos-p0)));
 	  p0 = mpos + mstr.size();
 	  i++;
 	}
@@ -366,15 +366,15 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
       if (u2.isEmpty()) {
 	if (u.isEmpty()) {
 	  // empty separator matches empty string -> empty array
-	  put(exec,"length", Number(0));
+	  put(exec,lengthPropertyName, Number(0));
 	  break;
 	} else {
 	  while (i != d && i < u.size()-1)
-	    res.put(exec,UString::from(i++), String(u.substr(p0++, 1)));
+	    res.put(exec, i++, String(u.substr(p0++, 1)));
 	}
       } else {
 	while (i != d && (pos = u.find(u2, p0)) >= 0) {
-	  res.put(exec,UString::from(i), String(u.substr(p0, pos-p0)));
+	  res.put(exec, i, String(u.substr(p0, pos-p0)));
 	  p0 = pos + u2.size();
 	  i++;
 	}
@@ -382,8 +382,8 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     }
     // add remaining string, if any
     if (i != d)
-      res.put(exec,UString::from(i++), String(u.substr(p0)));
-    res.put(exec,"length", Number(i));
+      res.put(exec, i++, String(u.substr(p0)));
+    res.put(exec,lengthPropertyName, Number(i));
     }
     break;
   case Substr: {
@@ -497,12 +497,13 @@ StringObjectImp::StringObjectImp(ExecState *exec,
 {
   Value protect(this);
   // ECMA 15.5.3.1 String.prototype
-  put(exec,"prototype", Object(stringProto), DontEnum|DontDelete|ReadOnly);
+  put(exec,prototypePropertyName, Object(stringProto), DontEnum|DontDelete|ReadOnly);
 
-  put(exec,"fromCharCode", Object(new StringObjectFuncImp(exec,funcProto)), DontEnum);
+  static UString fromCharCode("fromCharCode");
+  put(exec,fromCharCode, Object(new StringObjectFuncImp(exec,funcProto)), DontEnum);
 
   // no. of arguments for constructor
-  put(exec,"length", Number(1), ReadOnly|DontDelete|DontEnum);
+  put(exec,lengthPropertyName, Number(1), ReadOnly|DontDelete|DontEnum);
 }
 
 
@@ -524,7 +525,7 @@ Object StringObjectImp::construct(ExecState *exec, const List &args)
     s = UString("");
 
   obj.setInternalValue(String(s));
-  obj.put(exec, "length", Number(s.size()), ReadOnly|DontEnum|DontDelete);
+  obj.put(exec, lengthPropertyName, Number(s.size()), ReadOnly|DontEnum|DontDelete);
 
   return obj;
 }
@@ -552,7 +553,7 @@ StringObjectFuncImp::StringObjectFuncImp(ExecState *exec, FunctionPrototypeImp *
   : InternalFunctionImp(funcProto)
 {
   Value protect(this);
-  put(exec,"length",Number(1),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(1),DontDelete|ReadOnly|DontEnum);
 }
 
 bool StringObjectFuncImp::implementsCall() const

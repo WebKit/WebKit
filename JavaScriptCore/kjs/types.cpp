@@ -45,27 +45,19 @@ Reference::Reference(const Object& b, const UString& p)
 {
 }
 
+Reference::Reference(const Object& b, unsigned p)
+  : Value(new ReferenceImp(b,p))
+{
+}
+
 Reference::Reference(const Null& b, const UString& p)
   : Value(new ReferenceImp(b,p))
 {
 }
 
-Reference::Reference(ReferenceImp *v) : Value(v)
+Reference::Reference(const Null& b, unsigned p)
+  : Value(new ReferenceImp(b,p))
 {
-}
-
-Reference::Reference(const Reference &v) : Value(v)
-{
-}
-
-Reference::~Reference()
-{
-}
-
-Reference& Reference::operator=(const Reference &v)
-{
-  Value::operator=(v);
-  return *this;
 }
 
 Reference Reference::dynamicCast(const Value &v)
@@ -86,20 +78,6 @@ ListIterator::ListIterator(ListNode *n) : node(n)
 
 ListIterator::ListIterator(const List &l)
   : node(static_cast<ListImp*>(l.imp())->hook->next)
-{
-}
-
-ListIterator& ListIterator::operator=(const ListIterator &iterator)
-{
-  node=iterator.node;
-  return *this;
-}
-
-ListIterator::ListIterator(const ListIterator &i) : node(i.node)
-{
-}
-
-ListIterator::~ListIterator()
 {
 }
 
@@ -157,28 +135,6 @@ List::List()
   : Value(new ListImp())
 {
   //fprintf(stderr,"List::List() this=%p imp=%p refcount=%d\n",this,rep,rep->refcount);
-}
-
-List::List(ListImp *v) : Value(v)
-{
-  //fprintf(stderr,"List::List(imp) this=%p imp=%p refcount=%d\n",this,v,v?v->refcount:0);
-}
-
-List::List(const List &v) : Value(v)
-{
-  //fprintf(stderr,"List::List(List) this=%p imp=%p refcount=%d\n",this,rep,rep?rep->refcount:0);
-}
-
-List::~List()
-{
-  //fprintf(stderr,"List::~List() this=%p imp=%p refcount=%d\n",this,rep,rep->refcount-1);
-}
-
-List& List::operator=(const List &v)
-{
-  //fprintf(stderr,"List::operator=() this=%p\n",this);
-  Value::operator=(v);
-  return *this;
 }
 
 List List::dynamicCast(const Value &v)
@@ -283,24 +239,6 @@ void List::globalClear()
 Completion::Completion(ComplType c, const Value& v, const UString &t)
   : Value(new CompletionImp(c,v,t))
 {
-}
-
-Completion::Completion(CompletionImp *v) : Value(v)
-{
-}
-
-Completion::Completion(const Completion &v) : Value(v)
-{
-}
-
-Completion::~Completion()
-{
-}
-
-Completion& Completion::operator=(const Completion &v)
-{
-  Value::operator=(v);
-  return *this;
 }
 
 Completion Completion::dynamicCast(const Value &v)

@@ -54,9 +54,9 @@ NumberPrototypeImp::NumberPrototypeImp(ExecState *exec,
 
   // The constructor will be added later, after NumberObjectImp has been constructed
 
-  put(exec,"toString",       Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToString,       1)), DontEnum);
+  put(exec,toStringPropertyName,       Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToString,       1)), DontEnum);
   put(exec,"toLocaleString", Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToLocaleString, 0)), DontEnum);
-  put(exec,"valueOf",        Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ValueOf,        0)), DontEnum);
+  put(exec,valueOfPropertyName,        Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ValueOf,        0)), DontEnum);
 }
 
 
@@ -67,7 +67,7 @@ NumberProtoFuncImp::NumberProtoFuncImp(ExecState *exec,
   : InternalFunctionImp(funcProto), id(i)
 {
   Value protect(this);
-  put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
 
@@ -124,10 +124,10 @@ NumberObjectImp::NumberObjectImp(ExecState *exec,
 {
   Value protect(this);
   // Number.Prototype
-  put(exec,"prototype", Value(numberProto),DontEnum|DontDelete|ReadOnly);
+  put(exec,prototypePropertyName, Value(numberProto),DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  put(exec,"length", Number(1), ReadOnly|DontDelete|DontEnum);
+  put(exec,lengthPropertyName, Number(1), ReadOnly|DontDelete|DontEnum);
 }
 
 Value NumberObjectImp::get(ExecState *exec, const UString &propertyName) const

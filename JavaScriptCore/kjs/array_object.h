@@ -29,18 +29,32 @@ namespace KJS {
 
   class ArrayInstanceImp : public ObjectImp {
   public:
-    ArrayInstanceImp(const Object &proto);
+    ArrayInstanceImp(const Object &proto, unsigned initialLength);
+    ArrayInstanceImp(const Object &proto, const List &initialValues);
+    ~ArrayInstanceImp();
 
+    virtual Value get(ExecState *exec, const UString &propertyName) const;
+    virtual Value get(ExecState *exec, unsigned propertyName) const;
     virtual void put(ExecState *exec, const UString &propertyName, const Value &value, int attr = None);
-    virtual void putDirect(ExecState *exec, const UString &propertyName, const Value &value, int attr = None);
-    /**
-     * A shallow hasProperty() variant that doesn't look at the prototype's
-     * properties.
-     */
-    virtual bool hasOwnProperty(ExecState *exec, const UString &propertyName);
+    virtual void put(ExecState *exec, unsigned propertyName, const Value &value, int attr = None);
+    virtual bool hasProperty(ExecState *exec, const UString &propertyName) const;
+    virtual bool hasProperty(ExecState *exec, unsigned propertyName) const;
+    virtual bool deleteProperty(ExecState *exec, const UString &propertyName);
+    virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
+
+    virtual void mark();
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
+    
+    unsigned getLength() const { return length; }
+    
+  private:
+    void setLength(unsigned newLength);
+    
+    unsigned length;
+    unsigned capacity;
+    Value *storage;
   };
 
  class ArrayPrototypeImp : public ArrayInstanceImp {

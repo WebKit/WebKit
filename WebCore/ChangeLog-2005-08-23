@@ -1,5 +1,11 @@
 2002-08-12  Darin Adler  <darin@apple.com>
 
+        * force-clean-timestamp: Need a full build because of KJS changes.
+        * khtml/ecma/kjs_window.h: Need to store an Object, not an ObjectImp, because there's no way
+	to copy an ObjectImp. KJS changes caught this mistake.
+
+2002-08-12  Darin Adler  <darin@apple.com>
+
 	- re-fixed 2948387 -- stop button flashes to "go" two extra times while loading citibank.com
 
 	It turns out Maciej and I rebroke this when we made the "completed" code run.

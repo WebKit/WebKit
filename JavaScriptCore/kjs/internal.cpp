@@ -192,11 +192,6 @@ Object BooleanImp::toObject(ExecState *exec) const
 
 // ------------------------------ StringImp ------------------------------------
 
-StringImp::StringImp(const UString& v)
-  : val(v)
-{
-}
-
 Value StringImp::toPrimitive(ExecState */*exec*/, Type) const
 {
   return Value((ValueImp*)this);
@@ -220,16 +215,11 @@ UString StringImp::toString(ExecState */*exec*/) const
 Object StringImp::toObject(ExecState *exec) const
 {
   List args;
-  args.append(String(const_cast<StringImp*>(this)));
+  args.append(Value(const_cast<StringImp*>(this)));
   return Object::dynamicCast(exec->interpreter()->builtinString().construct(exec,args));
 }
 
 // ------------------------------ NumberImp ------------------------------------
-
-NumberImp::NumberImp(double v)
-  : val(v)
-{
-}
 
 Value NumberImp::toPrimitive(ExecState *, Type) const
 {
@@ -258,10 +248,21 @@ Object NumberImp::toObject(ExecState *exec) const
   return Object::dynamicCast(exec->interpreter()->builtinNumber().construct(exec,args));
 }
 
+bool NumberImp::toUInt32(unsigned& uint32) const
+{
+  uint32 = (unsigned)val;
+  return (double)uint32 == val;
+}
+
 // ------------------------------ ReferenceImp ---------------------------------
 
+ReferenceImp::ReferenceImp(const Value& v, unsigned p)
+  : base(v.imp()), propertyNameIsNumber(true), propertyNameAsNumber(p)
+{
+}
+
 ReferenceImp::ReferenceImp(const Value& v, const UString& p)
-  : base(v.imp()), prop(p)
+  : base(v.imp()), propertyNameIsNumber(false), prop(p)
 {
 }
 
@@ -305,6 +306,65 @@ Object ReferenceImp::toObject(ExecState */*exec*/) const
   // invalid for Reference
   assert(false);
   return Object();
+}
+
+UString ReferenceImp::getPropertyName(ExecState *) const
+{
+  if (propertyNameIsNumber && prop.isNull())
+    prop = UString::from(propertyNameAsNumber);
+  return prop;
+}
+
+Value ReferenceImp::getValue(ExecState *exec) const
+{
+  Value o = getBase(exec);
+
+  if (o.isNull() || o.type() == NullType) {
+    UString m = I18N_NOOP("Can't find variable: ") + getPropertyName(exec);
+    Object err = Error::create(exec, ReferenceError, m.ascii());
+    exec->setException(err);
+    return err;
+  }
+
+  if (o.type() != ObjectType) {
+    UString m = I18N_NOOP("Base is not an object");
+    Object err = Error::create(exec, ReferenceError, m.ascii());
+    exec->setException(err);
+    return err;
+  }
+
+  if (propertyNameIsNumber)
+    return static_cast<ObjectImp*>(o.imp())->get(exec,propertyNameAsNumber);
+  return static_cast<ObjectImp*>(o.imp())->get(exec,prop);
+}
+
+void ReferenceImp::putValue(ExecState *exec, const Value& w)
+{
+#ifdef KJS_VERBOSE
+  printInfo(exec,(UString("setting property ")+getPropertyName(exec)).cstring().c_str(),w);
+#endif
+  Value o = getBase(exec);
+  if (o.type() == NullType)
+    o = exec->interpreter()->globalObject();
+
+  if (propertyNameIsNumber)
+    return static_cast<ObjectImp*>(o.imp())->put(exec,propertyNameAsNumber, w);
+  return static_cast<ObjectImp*>(o.imp())->put(exec,prop, w);
+}
+
+bool ReferenceImp::deleteValue(ExecState *exec)
+{
+  Value b = getBase(exec);
+
+  // The spec doesn't mention what to do if the base is null... just return true
+  if (b.type() != ObjectType) {
+    assert(b.type() == NullType);
+    return true;
+  }
+
+  if (propertyNameIsNumber)
+    return static_cast<ObjectImp*>(b.imp())->deleteProperty(exec,propertyNameAsNumber);
+  return static_cast<ObjectImp*>(b.imp())->deleteProperty(exec,prop);
 }
 
 // ------------------------------ LabelStack -----------------------------------
@@ -1119,7 +1179,7 @@ Boolean InternalFunctionImp::hasInstance(ExecState *exec, const Value &value)
   if (value.type() != ObjectType)
     return Boolean(false);
 
-  Value prot = get(exec,"prototype");
+  Value prot = get(exec,prototypePropertyName);
   if (prot.type() != ObjectType && prot.type() != NullType) {
     Object err = Error::create(exec, TypeError, "Invalid prototype encountered "
                                "in instanceof operation.");

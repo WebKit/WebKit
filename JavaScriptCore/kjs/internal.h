@@ -49,9 +49,6 @@ namespace KJS {
 
   class UndefinedImp : public ValueImp {
   public:
-    UndefinedImp() {}
-    virtual ~UndefinedImp() { }
-
     Type type() const { return UndefinedType; }
 
     Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
@@ -63,11 +60,10 @@ namespace KJS {
     static UndefinedImp *staticUndefined;
   };
 
+  inline Undefined::Undefined(UndefinedImp *imp) : Value(imp) { }
+
   class NullImp : public ValueImp {
   public:
-    NullImp() {}
-    virtual ~NullImp() { }
-
     Type type() const { return NullType; }
 
     Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
@@ -79,9 +75,10 @@ namespace KJS {
     static NullImp *staticNull;
   };
 
+  inline Null::Null(NullImp *imp) : Value(imp) { }
+
   class BooleanImp : public ValueImp {
   public:
-    virtual ~BooleanImp() { }
     BooleanImp(bool v = false) : val(v) { }
     bool value() const { return val; }
 
@@ -98,11 +95,12 @@ namespace KJS {
   private:
     bool val;
   };
+  
+  inline Boolean::Boolean(BooleanImp *imp) : Value(imp) { }
 
   class StringImp : public ValueImp {
   public:
-    StringImp(const UString& v);
-    virtual ~StringImp() { }
+    StringImp(const UString& v) : val(v) { }
     UString value() const { return val; }
 
     Type type() const { return StringType; }
@@ -117,10 +115,11 @@ namespace KJS {
     UString val;
   };
 
+  inline String::String(StringImp *imp) : Value(imp) { }
+
   class NumberImp : public ValueImp {
   public:
-    NumberImp(double v);
-    virtual ~NumberImp() { }
+    NumberImp(double v) : val(v) { }
     double value() const { return val; }
 
     Type type() const { return NumberType; }
@@ -131,9 +130,13 @@ namespace KJS {
     UString toString(ExecState *exec) const;
     Object toObject(ExecState *exec) const;
 
+    virtual bool toUInt32(unsigned&) const;
+
   private:
     double val;
   };
+
+  inline Number::Number(NumberImp *imp) : Value(imp) { }
 
   // ---------------------------------------------------------------------------
   //                            Internal type impls
@@ -141,9 +144,8 @@ namespace KJS {
 
   class ReferenceImp : public ValueImp {
   public:
-
     ReferenceImp(const Value& v, const UString& p);
-    virtual ~ReferenceImp() { }
+    ReferenceImp(const Value& v, unsigned p);
     virtual void mark();
 
     Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
@@ -152,15 +154,22 @@ namespace KJS {
     UString toString(ExecState *exec) const;
     Object toObject(ExecState *exec) const;
 
-    Value getBase() const { return Value(base); }
-    UString getPropertyName() const { return prop; }
+    Value getBase(ExecState *) const { return Value(base); }
+    UString getPropertyName(ExecState *) const;
+    Value getValue(ExecState *exec) const;
+    void putValue(ExecState *exec, const Value& w);
+    bool deleteValue(ExecState *exec);
 
     Type type() const { return ReferenceType; }
 
   private:
     ValueImp *base;
-    UString prop;
+    bool propertyNameIsNumber;
+    unsigned propertyNameAsNumber;
+    mutable UString prop;
   };
+  
+  inline Reference::Reference(ReferenceImp *imp) : Value(imp) { }
 
   class CompletionImp : public ValueImp {
   public:
@@ -185,6 +194,8 @@ namespace KJS {
     ValueImp * val;
     UString tar;
   };
+
+  inline Completion::Completion(CompletionImp *imp) : Value(imp) { }
 
   /**
    * @internal
@@ -243,6 +254,8 @@ namespace KJS {
     ListNode *hook;
     static ListImp *emptyList;
   };
+  
+  inline List::List(ListImp *imp) : Value(imp) { }
 
   /**
    * @short The "label set" in Ecma-262 spec

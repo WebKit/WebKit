@@ -40,7 +40,7 @@ FunctionPrototypeImp::FunctionPrototypeImp(ExecState *exec)
   : InternalFunctionImp(0)
 {
   Value protect(this);
-  put(exec, "toString", Object(new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::ToString, 0)), DontEnum);
+  put(exec, toStringPropertyName, Object(new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::ToString, 0)), DontEnum);
   put(exec, "apply",    Object(new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Apply,    2)), DontEnum);
   put(exec, "call",     Object(new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Call,     1)), DontEnum);
 }
@@ -67,7 +67,7 @@ FunctionProtoFuncImp::FunctionProtoFuncImp(ExecState *exec,
   : InternalFunctionImp(funcProto), id(i)
 {
   Value protect(this);
-  put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
 
@@ -129,9 +129,9 @@ Value FunctionProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &a
            Object::dynamicCast(argArray).inherits(&ArgumentsImp::info)) {
 
         Object argArrayObj = Object::dynamicCast(argArray);
-        unsigned int length = argArrayObj.get(exec,"length").toUInt32(exec);
+        unsigned int length = argArrayObj.get(exec,lengthPropertyName).toUInt32(exec);
         for (unsigned int i = 0; i < length; i++)
-          applyArgs.append(argArrayObj.get(exec,UString::from(i)));
+          applyArgs.append(argArrayObj.get(exec,i));
       }
       else {
         Object err = Error::create(exec,TypeError);
@@ -174,10 +174,10 @@ FunctionObjectImp::FunctionObjectImp(ExecState *exec, FunctionPrototypeImp *func
   : InternalFunctionImp(funcProto)
 {
   Value protect(this);
-  put(exec,"prototype", Object(funcProto), DontEnum|DontDelete|ReadOnly);
+  put(exec,prototypePropertyName, Object(funcProto), DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  put(exec,"length", Number(1), ReadOnly|DontDelete|DontEnum);
+  put(exec,lengthPropertyName, Number(1), ReadOnly|DontDelete|DontEnum);
 }
 
 FunctionObjectImp::~FunctionObjectImp()
@@ -275,14 +275,14 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
       return err;
   }
 
-  fimp->put(exec,"length", Number(params),ReadOnly|DontDelete|DontEnum);
+  fimp->put(exec,lengthPropertyName, Number(params),ReadOnly|DontDelete|DontEnum);
   List consArgs;
 
   Object objCons = exec->interpreter()->builtinObject();
   Object prototype = objCons.construct(exec,List::empty());
   prototype.put(exec, "constructor",
 		Object(fimp), DontEnum|DontDelete|ReadOnly);
-  fimp->put(exec,"prototype",prototype,DontEnum|DontDelete|ReadOnly);
+  fimp->put(exec,prototypePropertyName,prototype,DontEnum|DontDelete|ReadOnly);
   fimp->put(exec,"arguments",Null(),DontEnum|DontDelete|ReadOnly);
   return ret;
 }

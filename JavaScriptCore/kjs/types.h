@@ -33,12 +33,10 @@ namespace KJS {
   class Reference : public Value {
   public:
     Reference(const Object& b, const UString& p);
+    Reference(const Object& b, unsigned p);
     Reference(const Null& b, const UString& p);
+    Reference(const Null& b, unsigned p);
     Reference(ReferenceImp *v);
-    Reference(const Reference &v);
-    virtual ~Reference();
-
-    Reference& operator=(const Reference &v);
 
     /**
      * Converts a Value into an Reference. If the value's type is not
@@ -70,15 +68,6 @@ namespace KJS {
      * @param l The list the iterator will operate on.
      */
     ListIterator(const List &l);
-    /**
-     * Assignment constructor.
-     */
-    ListIterator& operator=(const ListIterator &iterator);
-    /**
-     * Copy constructor.
-     */
-    ListIterator(const ListIterator &i);
-    ~ListIterator();
     /**
      * Dereference the iterator.
      * @return A pointer to the element the iterator operates on.
@@ -138,10 +127,6 @@ namespace KJS {
   public:
     List();
     List(ListImp *v);
-    List(const List &v);
-    virtual ~List();
-
-    List& operator=(const List &v);
 
     /**
      * Converts a Value into an List. If the value's type is not
@@ -254,10 +239,6 @@ namespace KJS {
     Completion(ComplType c = Normal, const Value& v = Value(),
                const UString &t = UString::null);
     Completion(CompletionImp *v);
-    Completion(const Completion &v);
-    virtual ~Completion();
-
-    Completion& operator=(const Completion &v);
 
     /**
      * Converts a Value into an Completion. If the value's type is not

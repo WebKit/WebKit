@@ -130,7 +130,7 @@ MathFuncImp::MathFuncImp(ExecState *exec, int i, int l)
     ), id(i)
 {
   Value protect(this);
-  put(exec,"length",Number(l),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(l),DontDelete|ReadOnly|DontEnum);
 }
 
 bool MathFuncImp::implementsCall() const

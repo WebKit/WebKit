@@ -215,6 +215,7 @@ namespace KJS {
       int capacity;
       int rc;
       static Rep null;
+      static Rep empty;
     };
 
   public:
@@ -225,7 +226,7 @@ namespace KJS {
     /**
      * Constructs a string from the single character c.
      */
-    UString(char c);
+    explicit UString(char c);
     /**
      * Constructs a string from a classical zero determined char string.
      */
@@ -315,9 +316,6 @@ namespace KJS {
      * Assignment operator.
      */
     UString &operator=(const char *c);
-    /**
-     * Assignment operator.
-     */
     UString &operator=(const UString &);
     /**
      * Appends the specified string.
@@ -375,12 +373,14 @@ namespace KJS {
      * -1 if the search was not successful.
      */
     int find(const UString &f, int pos = 0) const;
+    int find(UChar, int pos = 0) const;
     /**
      * @return Position of first occurence of f searching backwards from
      * position pos.
      * -1 if the search was not successful.
      */
     int rfind(const UString &f, int pos) const;
+    int rfind(UChar, int pos) const;
     /**
      * @return The sub string starting at position pos and length len.
      */

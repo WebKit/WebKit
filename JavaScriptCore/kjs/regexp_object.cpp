@@ -49,7 +49,7 @@ RegExpPrototypeImp::RegExpPrototypeImp(ExecState *exec,
 
   put(exec, "exec",     Object(new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::Exec,     0)), DontEnum);
   put(exec, "test",     Object(new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::Test,     0)), DontEnum);
-  put(exec, "toString", Object(new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::ToString, 0)), DontEnum);
+  put(exec, toStringPropertyName, Object(new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::ToString, 0)), DontEnum);
 }
 
 // ------------------------------ RegExpProtoFuncImp ---------------------------
@@ -59,7 +59,7 @@ RegExpProtoFuncImp::RegExpProtoFuncImp(ExecState *exec,
   : InternalFunctionImp(funcProto), id(i)
 {
   Value protect(this);
-  put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
 bool RegExpProtoFuncImp::implementsCall() const
@@ -156,10 +156,10 @@ RegExpObjectImp::RegExpObjectImp(ExecState *exec,
 {
   Value protect(this);
   // ECMA 15.10.5.1 RegExp.prototype
-  put(exec,"prototype", Object(regProto), DontEnum|DontDelete|ReadOnly);
+  put(exec,prototypePropertyName, Object(regProto), DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  put(exec,"length", Number(2), ReadOnly|DontDelete|DontEnum);
+  put(exec,lengthPropertyName, Number(2), ReadOnly|DontDelete|DontEnum);
 }
 
 RegExpObjectImp::~RegExpObjectImp()

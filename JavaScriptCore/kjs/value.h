@@ -114,23 +114,26 @@ namespace KJS {
 
     // The conversion operations
 
-    virtual Value toPrimitive(ExecState *exec,
-                              Type preferredType = UnspecifiedType) const = 0;
+    virtual Value toPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const = 0;
     virtual bool toBoolean(ExecState *exec) const = 0;
     virtual double toNumber(ExecState *exec) const = 0;
-    virtual int toInteger(ExecState *exec) const;
-    virtual int toInt32(ExecState *exec) const;
-    virtual unsigned int toUInt32(ExecState *exec) const;
-    virtual unsigned short toUInt16(ExecState *exec) const;
     virtual UString toString(ExecState *exec) const = 0;
     virtual Object toObject(ExecState *exec) const = 0;
+
+    virtual bool toUInt32(unsigned&) const;
+    
+    int toInteger(ExecState *exec) const;
+    int toInt32(ExecState *exec) const;
+    unsigned int toUInt32(ExecState *exec) const;
+    unsigned short toUInt16(ExecState *exec) const;
 
     // Reference operations
 
     virtual Value getBase(ExecState *exec) const;
     virtual UString getPropertyName(ExecState *exec) const;
     virtual Value getValue(ExecState *exec) const;
-    virtual void putValue(ExecState *exec, const Value w);
+    virtual void putValue(ExecState *exec, const Value& w);
+    virtual bool deleteValue(ExecState *exec);
 
   private:
     enum {
@@ -142,6 +145,10 @@ namespace KJS {
 
     ValueImpPrivate *_vd;
     unsigned int _flags;
+    
+    // Give a compile time error if we try to copy one of these.
+    ValueImp(const ValueImp&);
+    ValueImp& operator=(const ValueImp&);
   };
 
   /**
@@ -161,14 +168,14 @@ namespace KJS {
    */
   class Value {
   public:
-    Value();
+    Value() : rep(0) { }
     explicit Value(ValueImp *v);
     Value(const Value &v);
-    virtual ~Value();
+    ~Value();
 
     Value& operator=(const Value &v);
-    bool isNull() const;
-    ValueImp *imp() const;
+    bool isNull() const { return rep == 0; }
+    ValueImp *imp() const { return rep; }
 
     /**
      * Returns the type of value. This is one of UndefinedType, NullType,
@@ -177,7 +184,7 @@ namespace KJS {
      *
      * @return The type of value
      */
-    Type type() const;
+    Type type() const { return rep->type(); }
 
     /**
      * Checks whether or not the value is of a particular tpye
@@ -185,49 +192,50 @@ namespace KJS {
      * @param The type to compare with
      * @return true if the value is of the specified type, otherwise false
      */
-    bool isA(Type t) const;
+    bool isA(Type t) const { return rep->type() == t; }
 
     /**
      * Performs the ToPrimitive type conversion operation on this value
      * (ECMA 9.1)
      */
     Value toPrimitive(ExecState *exec,
-                      Type preferredType = UnspecifiedType) const;
+                      Type preferredType = UnspecifiedType) const
+      { return rep->toPrimitive(exec, preferredType); }
 
     /**
      * Performs the ToBoolean type conversion operation on this value (ECMA 9.2)
      */
-    bool toBoolean(ExecState *exec) const;
+    bool toBoolean(ExecState *exec) const { return rep->toBoolean(exec); }
 
     /**
      * Performs the ToNumber type conversion operation on this value (ECMA 9.3)
      */
-    double toNumber(ExecState *exec) const;
+    double toNumber(ExecState *exec) const { return rep->toNumber(exec); }
 
     /**
      * Performs the ToInteger type conversion operation on this value (ECMA 9.4)
      */
-    int toInteger(ExecState *exec) const;
+    int toInteger(ExecState *exec) const { return rep->toInteger(exec); }
 
     /**
      * Performs the ToInt32 type conversion operation on this value (ECMA 9.5)
      */
-    int toInt32(ExecState *exec) const;
+    int toInt32(ExecState *exec) const { return rep->toInt32(exec); }
 
     /**
      * Performs the ToUint32 type conversion operation on this value (ECMA 9.6)
      */
-    unsigned int toUInt32(ExecState *exec) const;
+    unsigned int toUInt32(ExecState *exec) const { return rep->toUInt32(exec); }
 
     /**
      * Performs the ToUint16 type conversion operation on this value (ECMA 9.7)
      */
-    unsigned short toUInt16(ExecState *exec) const;
+    unsigned short toUInt16(ExecState *exec) const { return rep->toUInt16(exec); }
 
     /**
      * Performs the ToString type conversion operation on this value (ECMA 9.8)
      */
-    UString toString(ExecState *exec) const;
+    UString toString(ExecState *exec) const { return rep->toString(exec); }
 
     /**
      * Performs the ToObject type conversion operation on this value (ECMA 9.9)
@@ -240,32 +248,35 @@ namespace KJS {
      * Since references are supposed to have an Object or null as their base,
      * this method is guaranteed to return either Null() or an Object value.
      */
-    Value getBase(ExecState *exec) const;
+    Value getBase(ExecState *exec) const { return rep->getBase(exec); }
 
     /**
      * Performs the GetPropertyName type conversion operation on this value
      * (ECMA 8.7)
      */
-    UString getPropertyName(ExecState *exec) const;
+    UString getPropertyName(ExecState *exec) const { return rep->getPropertyName(exec); }
 
     /**
      * Performs the GetValue type conversion operation on this value
      * (ECMA 8.7.1)
      */
-    Value getValue(ExecState *exec) const;
+    Value getValue(ExecState *exec) const { return rep->getValue(exec); }
 
     /**
      * Performs the PutValue type conversion operation on this value
      * (ECMA 8.7.1)
      */
-    void putValue(ExecState *exec, const Value w);
+    void putValue(ExecState *exec, const Value &w) { rep->putValue(exec, w); }
+    bool deleteValue(ExecState *exec) { return rep->deleteValue(exec); }
+
+    /**
+     * Checks if we can do a lossless conversion to UInt32.
+     */
+    bool toUInt32(unsigned& i) const { return rep->toUInt32(i); }
 
   protected:
     ValueImp *rep;
   };
-
-  bool operator==(const Value &v1, const Value &v2);
-  bool operator!=(const Value &v1, const Value &v2);
 
   // Primitive types
 
@@ -277,10 +288,6 @@ namespace KJS {
   class Undefined : public Value {
   public:
     Undefined();
-    Undefined(const Undefined &v);
-    virtual ~Undefined();
-
-    Undefined& operator=(const Undefined &v);
 
     /**
      * Converts a Value into an Undefined. If the value's type is not
@@ -306,10 +313,6 @@ namespace KJS {
   class Null : public Value {
   public:
     Null();
-    Null(const Null &v);
-    virtual ~Null();
-
-    Null& operator=(const Null &v);
 
     /**
      * Converts a Value into an Null. If the value's type is not NullType,
@@ -332,10 +335,6 @@ namespace KJS {
   class Boolean : public Value {
   public:
     Boolean(bool b = false);
-    Boolean(const Boolean &v);
-    virtual ~Boolean();
-
-    Boolean& operator=(const Boolean &v);
 
     /**
      * Converts a Value into an Boolean. If the value's type is not BooleanType,
@@ -360,10 +359,6 @@ namespace KJS {
   class String : public Value {
   public:
     String(const UString &s = "");
-    String(const String &v);
-    virtual ~String();
-
-    String& operator=(const String &v);
 
     /**
      * Converts a Value into an String. If the value's type is not StringType,
@@ -395,10 +390,6 @@ namespace KJS {
     Number(double d = 0.0);
     Number(long int l);
     Number(long unsigned int l);
-    Number(const Number &v);
-    virtual ~Number();
-
-    Number& operator=(const Number &v);
 
     double value() const;
     int intValue() const;

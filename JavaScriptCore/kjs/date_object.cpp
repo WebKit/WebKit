@@ -147,7 +147,7 @@ DateProtoFuncImp::DateProtoFuncImp(ExecState *exec, int i, int len)
   // We use a negative ID to denote the "UTC" variant.
 {
   Value protect(this);
-  put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
 bool DateProtoFuncImp::implementsCall() const
@@ -321,13 +321,13 @@ DateObjectImp::DateObjectImp(ExecState *exec,
 {
   Value protect(this);
   // ECMA 15.9.4.1 Date.prototype
-  put(exec,"prototype", Object(dateProto), DontEnum|DontDelete|ReadOnly);
+  put(exec,prototypePropertyName, Object(dateProto), DontEnum|DontDelete|ReadOnly);
 
   put(exec,"parse", Object(new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::Parse, 1)), DontEnum);
   put(exec,"UTC",   Object(new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::UTC,   7)),   DontEnum);
 
   // no. of arguments for constructor
-  put(exec,"length", Number(7), ReadOnly|DontDelete|DontEnum);
+  put(exec,lengthPropertyName, Number(7), ReadOnly|DontDelete|DontEnum);
 }
 
 bool DateObjectImp::implementsConstruct() const
@@ -416,7 +416,7 @@ DateObjectFuncImp::DateObjectFuncImp(ExecState *exec, FunctionPrototypeImp *func
   : InternalFunctionImp(funcProto), id(i)
 {
   Value protect(this);
-  put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
 bool DateObjectFuncImp::implementsCall() const

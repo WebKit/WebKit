@@ -38,41 +38,14 @@
 #include "nodes.h"
 #include "property_map.h"
 
-using namespace KJS;
+namespace KJS {
+
+extern const UString lengthPropertyName("length");
+extern const UString prototypePropertyName("prototype");
+extern const UString toStringPropertyName("toString");
+extern const UString valueOfPropertyName("valueOf");
 
 // ------------------------------ Object ---------------------------------------
-
-Object::Object() : Value()
-{
-}
-
-Object::Object(ObjectImp *v) : Value(v)
-{
-}
-
-Object::Object(const Object &v) : Value(v)
-{
-}
-
-Object::~Object()
-{
-}
-
-Object& Object::operator=(const Object &v)
-{
-  Value::operator=(v);
-  return *this;
-}
-
-const ClassInfo *Object::classInfo() const
-{
-  return static_cast<ObjectImp*>(rep)->classInfo();
-}
-
-bool Object::inherits(const ClassInfo *cinfo) const
-{
-  return static_cast<ObjectImp*>(rep)->inherits(cinfo);
-}
 
 Object Object::dynamicCast(const Value &v)
 {
@@ -80,101 +53,6 @@ Object Object::dynamicCast(const Value &v)
     return Object(0);
 
   return Object(static_cast<ObjectImp*>(v.imp()));
-}
-
-Value Object::prototype() const
-{
-  return Value(static_cast<ObjectImp*>(rep)->prototype());
-}
-
-UString Object::className() const
-{
-  return static_cast<ObjectImp*>(rep)->className();
-}
-
-Value Object::get(ExecState *exec, const UString &propertyName) const
-{
-  return static_cast<ObjectImp*>(rep)->get(exec,propertyName);
-}
-
-void Object::put(ExecState *exec, const UString &propertyName, const Value &value, int attr)
-{
-  static_cast<ObjectImp*>(rep)->put(exec,propertyName,value,attr);
-}
-
-bool Object::canPut(ExecState *exec, const UString &propertyName) const
-{
-  return static_cast<ObjectImp*>(rep)->canPut(exec,propertyName);
-}
-
-bool Object::hasProperty(ExecState *exec, const UString &propertyName) const
-{
-  return static_cast<ObjectImp*>(rep)->hasProperty(exec, propertyName);
-}
-
-bool Object::deleteProperty(ExecState *exec, const UString &propertyName)
-{
-  return static_cast<ObjectImp*>(rep)->deleteProperty(exec,propertyName);
-}
-
-Value Object::defaultValue(ExecState *exec, Type hint) const
-{
-  return static_cast<ObjectImp*>(rep)->defaultValue(exec,hint);
-}
-
-bool Object::implementsConstruct() const
-{
-  return static_cast<ObjectImp*>(rep)->implementsConstruct();
-}
-
-Object Object::construct(ExecState *exec, const List &args)
-{
-  return static_cast<ObjectImp*>(rep)->construct(exec,args);
-}
-
-bool Object::implementsCall() const
-{
-  return static_cast<ObjectImp*>(rep)->implementsCall();
-}
-
-Value Object::call(ExecState *exec, Object &thisObj, const List &args)
-{
-  return static_cast<ObjectImp*>(rep)->call(exec,thisObj,args);
-}
-
-bool Object::implementsHasInstance() const
-{
-  return static_cast<ObjectImp*>(rep)->implementsHasInstance();
-}
-
-Boolean Object::hasInstance(ExecState *exec, const Value &value)
-{
-  return static_cast<ObjectImp*>(rep)->hasInstance(exec,value);
-}
-
-const List Object::scope() const
-{
-  return static_cast<ObjectImp*>(rep)->scope();
-}
-
-void Object::setScope(const List &s)
-{
-  static_cast<ObjectImp*>(rep)->setScope(s);
-}
-
-List Object::propList(ExecState *exec, bool recursive)
-{
-  return static_cast<ObjectImp*>(rep)->propList(exec,recursive);
-}
-
-Value Object::internalValue() const
-{
-  return static_cast<ObjectImp*>(rep)->internalValue();
-}
-
-void Object::setInternalValue(const Value &v)
-{
-  static_cast<ObjectImp*>(rep)->setInternalValue(v);
 }
 
 // ------------------------------ ObjectImp ------------------------------------
@@ -295,6 +173,11 @@ Value ObjectImp::get(ExecState *exec, const UString &propertyName) const
   return proto.get(exec,propertyName);
 }
 
+Value ObjectImp::get(ExecState *exec, unsigned propertyName) const
+{
+  return get(exec, UString::from(propertyName));
+}
+
 // This get method only looks at the property map.
 // A bit like hasProperty(recursive=false), this doesn't go to the prototype.
 // This is used e.g. by lookupOrCreateFunction (to cache a function, we don't want
@@ -334,6 +217,12 @@ void ObjectImp::put(ExecState *exec, const UString &propertyName,
   _prop->put(propertyName,value.imp(),attr);
 }
 
+void ObjectImp::put(ExecState *exec, unsigned propertyName,
+                     const Value &value, int attr)
+{
+  put(exec, UString::from(propertyName), value, attr);
+}
+
 // ECMA 8.6.2.3
 bool ObjectImp::canPut(ExecState *, const UString &propertyName) const
 {
@@ -368,6 +257,11 @@ bool ObjectImp::hasProperty(ExecState *exec, const UString &propertyName) const
   return !proto.isNull() && proto.hasProperty(exec,propertyName);
 }
 
+bool ObjectImp::hasProperty(ExecState *exec, unsigned propertyName) const
+{
+  return hasProperty(exec, UString::from(propertyName));
+}
+
 // ECMA 8.6.2.5
 bool ObjectImp::deleteProperty(ExecState */*exec*/, const UString &propertyName)
 {
@@ -384,6 +278,11 @@ bool ObjectImp::deleteProperty(ExecState */*exec*/, const UString &propertyName)
   if (entry && entry->attr & DontDelete)
     return false; // this builtin property can't be deleted
   return true;
+}
+
+bool ObjectImp::deleteProperty(ExecState *exec, unsigned propertyName)
+{
+  return deleteProperty(exec, UString::from(propertyName));
 }
 
 void ObjectImp::deleteAllProperties( ExecState * )
@@ -404,9 +303,9 @@ Value ObjectImp::defaultValue(ExecState *exec, Type hint) const
 
   Value v;
   if (hint == StringType)
-    v = get(exec,"toString");
+    v = get(exec,toStringPropertyName);
   else
-    v = get(exec,"valueOf");
+    v = get(exec,valueOfPropertyName);
 
   if (v.type() == ObjectType) {
     Object o = Object(static_cast<ObjectImp*>(v.imp()));
@@ -423,9 +322,9 @@ Value ObjectImp::defaultValue(ExecState *exec, Type hint) const
   }
 
   if (hint == StringType)
-    v = get(exec,"valueOf");
+    v = get(exec,valueOfPropertyName);
   else
-    v = get(exec,"toString");
+    v = get(exec,toStringPropertyName);
 
   if (v.type() == ObjectType) {
     Object o = Object(static_cast<ObjectImp*>(v.imp()));
@@ -545,9 +444,6 @@ void ObjectImp::setInternalValue(const Value &v)
   _internalValue = v.imp();
 }
 
-// The following functions simply call the corresponding functions in ValueImp
-// but are overridden in case of future needs
-
 Value ObjectImp::toPrimitive(ExecState *exec, Type preferredType) const
 {
   return defaultValue(exec,preferredType);
@@ -564,26 +460,6 @@ double ObjectImp::toNumber(ExecState *exec) const
   if (exec->hadException()) // should be picked up soon in nodes.cpp
     return 0.0;
   return prim.toNumber(exec);
-}
-
-int ObjectImp::toInteger(ExecState *exec) const
-{
-  return ValueImp::toInteger(exec);
-}
-
-int ObjectImp::toInt32(ExecState *exec) const
-{
-  return ValueImp::toInt32(exec);
-}
-
-unsigned int ObjectImp::toUInt32(ExecState *exec) const
-{
-  return ValueImp::toUInt32(exec);
-}
-
-unsigned short ObjectImp::toUInt16(ExecState *exec) const
-{
-  return ValueImp::toUInt16(exec);
 }
 
 UString ObjectImp::toString(ExecState *exec) const
@@ -669,3 +545,4 @@ Object Error::create(ExecState *exec, ErrorType errtype, const char *message,
 */
 }
 
+} // namespace KJS
