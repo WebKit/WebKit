@@ -53,6 +53,67 @@
 using namespace DOM;
 using namespace khtml;
 
+HTMLNamedAttrMapImpl::HTMLNamedAttrMapImpl(ElementImpl *e)
+:NamedAttrMapImpl(e)
+{}
+
+void HTMLNamedAttrMapImpl::clearAttributes()
+{
+    m_classList.clear();
+}
+
+bool HTMLNamedAttrMapImpl::isHTMLAttributeMap() const
+{
+    return true;
+}
+
+void HTMLNamedAttrMapImpl::parseClassAttribute(const DOMString& classAttr)
+{
+    m_classList.clear();
+    if (!element->hasClass())
+        return;
+    
+    if (classAttr.find(' ') == -1)
+        m_classList.setString(AtomicString(classAttr));
+    else {
+        QString val = classAttr.string();
+        QStringList list = QStringList::split(' ', val);
+        
+        AtomicStringList* curr = 0;
+        for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
+        {
+            const QString& singleClass = *it;
+            if (!singleClass.isEmpty()) {
+                if (curr) {
+                    curr->setNext(new AtomicStringList(AtomicString(singleClass)));
+                    curr = curr->next();
+                }
+                else {
+                    m_classList.setString(AtomicString(singleClass));
+                    curr = &m_classList;
+                }
+            }
+        }
+    }
+}
+
+bool HTMLNamedAttrMapImpl::matchesCSSClass(const AtomicString& c, bool caseSensitive) const
+{
+    for (const AtomicStringList* curr = &m_classList; curr; curr = curr->next()) {
+        if (caseSensitive) {
+            if (c == curr->string())
+                return true;
+        }
+        else {
+            if (equalsIgnoreCase(c, curr->string()))
+                return true;
+        }
+    }
+    return false;
+}
+
+// ------------------------------------------------------------------
+
 HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
     : ElementImpl(doc)
 {
@@ -128,6 +189,7 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_CLASS:
         // class
         setHasClass(attr->val());
+        if (namedAttrMap) static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->parseClassAttribute(attr->value());
         setChanged();
         break;
     case ATTR_CONTENTEDITABLE:
@@ -215,6 +277,17 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
 #endif
         break;
     }
+}
+
+void HTMLElementImpl::createAttributeMap() const
+{
+    namedAttrMap = new HTMLNamedAttrMapImpl(const_cast<HTMLElementImpl*>(this));
+    namedAttrMap->ref();
+}
+
+bool HTMLElementImpl::matchesCSSClass(const AtomicString& c, bool cs) const
+{
+    return namedAttrMap ? static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->matchesCSSClass(c, cs) : false;
 }
 
 void HTMLElementImpl::addCSSProperty(int id, const DOMString &value)

@@ -436,7 +436,7 @@ void HTMLObjectElementImpl::detach()
 void HTMLObjectElementImpl::recalcStyle( StyleChange ch )
 {
     if (needWidgetUpdate) {
-        if(m_render && strcmp( m_render->renderName(),  "RenderPartObject" ) == 0 )
+        if(m_render && std::strcmp( m_render->renderName(),  "RenderPartObject" ) == 0 )
             static_cast<RenderPartObject*>(m_render)->updateWidget();
         needWidgetUpdate = false;
     }

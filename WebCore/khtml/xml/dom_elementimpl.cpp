@@ -229,6 +229,13 @@ unsigned short ElementImpl::nodeType() const
     return Node::ELEMENT_NODE;
 }
 
+bool ElementImpl::matchesCSSClass(const AtomicString& c, bool caseSensitive) const
+{
+    // Class is not supported on random XML elements.  A language (e.g., HTML, SVG) should indicate
+    // support using a subclass override.
+    return false;
+}
+
 DOMString ElementImpl::getAttribute(NodeImpl::Id id) const
 {
     if (!namedAttrMap) return DOMString();
@@ -737,6 +744,10 @@ NamedAttrMapImpl::~NamedAttrMapImpl()
     clearAttributes();
 }
 
+bool NamedAttrMapImpl::isHTMLAttributeMap() const
+{
+    return false;
+}
 
 AttrImpl *NamedAttrMapImpl::getNamedItem ( NodeImpl::Id id ) const
 {
@@ -920,6 +931,8 @@ NamedAttrMapImpl& NamedAttrMapImpl::operator=(const NamedAttrMapImpl& other)
         attrs[i]->ref();
     }
 
+    // The derived class, HTMLNamedAttrMapImpl, which manages a parsed class list for the CLASS attribute,
+    // will update its member variable when parse attribute is called.
     for(uint i = 0; i < len; i++)
         element->parseAttribute(attrs[i]);
 

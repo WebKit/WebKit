@@ -869,20 +869,23 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             return false;
     }
 
-    if(sel->attr)
-    {
+    if (sel->attr) {
+        if (sel->match == CSSSelector::Class && e->hasClass())
+            return e->matchesCSSClass(sel->value, strictParsing);
+        
         DOMString value = e->getAttribute(sel->attr);
-        if(value.isNull()) return false; // attribute is not set
+        if (value.isNull()) return false; // attribute is not set
 
-        switch(sel->match)
-        {
-        case CSSSelector::Exact:
+        switch(sel->match) {
         case CSSSelector::Id:
-	    if( (isXMLDoc && strcmp(sel->value, value) ) ||
-                (!isXMLDoc && strcasecmp(sel->value, value)))
+            if ((strictParsing && sel->value != value) ||
+                (!strictParsing && !equalsIgnoreCase(sel->value, value)))
                 return false;
             break;
-        case CSSSelector::Set:
+        case CSSSelector::Exact:
+	    if ((isXMLDoc && sel->value != value) ||
+                (!isXMLDoc && !equalsIgnoreCase(sel->value, value)))
+                return false;
             break;
         case CSSSelector::List:
         {
@@ -891,19 +894,19 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 // There is no list, just a single item.  We can avoid
                 // allocing QStrings and just treat this as an exact
                 // match check.
-                if( (isXMLDoc && strcmp(sel->value, value) ) ||
-                     (!isXMLDoc && strcasecmp(sel->value, value)))
+                if ((isXMLDoc && sel->value != value) ||
+                    (!isXMLDoc && !equalsIgnoreCase(sel->value, value)))
                     return false;
                 break;
             }
 
             // The selector's value can't contain a space, or it's totally bogus.
-            spacePos = sel->value.find(' ');
+            spacePos = sel->value.ustring().find(' ');
             if (spacePos != -1)
                 return false;
-            
+
             QString str = value.string();
-            QString selStr = sel->value.string();
+            QString selStr = sel->value.qstring();
             int startSearchAt = 0;
             while (true) {
                 int foundPos = str.find(selStr, startSearchAt, isXMLDoc);
@@ -924,7 +927,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         {
             //kdDebug( 6080 ) << "checking for contains match" << endl;
             QString str = value.string();
-            QString selStr = sel->value.string();
+            QString selStr = sel->value.qstring();
             int pos = str.find(selStr, 0, isXMLDoc);
             if(pos == -1) return false;
             break;
@@ -933,7 +936,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         {
             //kdDebug( 6080 ) << "checking for beginswith match" << endl;
             QString str = value.string();
-            QString selStr = sel->value.string();
+            QString selStr = sel->value.qstring();
             int pos = str.find(selStr, 0, isXMLDoc);
             if(pos != 0) return false;
             break;
@@ -942,7 +945,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         {
             //kdDebug( 6080 ) << "checking for endswith match" << endl;
             QString str = value.string();
-            QString selStr = sel->value.string();
+            QString selStr = sel->value.qstring();
 	    if (isXMLDoc && !str.endsWith(selStr)) return false;
 	    if (!isXMLDoc) {
 	        int pos = str.length() - selStr.length();
@@ -955,7 +958,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         {
             //kdDebug( 6080 ) << "checking for hyphen match" << endl;
             QString str = value.string();
-            QString selStr = sel->value.string();
+            QString selStr = sel->value.qstring();
             if(str.length() < selStr.length()) return false;
             // Check if str begins with selStr:
             if(str.find(selStr, 0, isXMLDoc) != 0) return false;
@@ -966,6 +969,8 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         }
         case CSSSelector::Pseudo:
         case CSSSelector::None:
+        case CSSSelector::Class:
+        case CSSSelector::Set:
             break;
         }
     }

@@ -123,7 +123,7 @@ StyleListImpl::~StyleListImpl()
 void CSSSelector::print(void)
 {
     kdDebug( 6080 ) << "[Selector: tag = " <<       tag << ", attr = \"" << attr << "\", match = \"" << match
-		    << "\" value = \"" << value.string().latin1() << "\" relation = " << (int)relation
+		    << "\" value = \"" << value.qstring().latin1() << "\" relation = " << (int)relation
 		    << "]" << endl;
     if ( tagHistory )
         tagHistory->print();
@@ -142,6 +142,7 @@ unsigned int CSSSelector::specificity()
 	s += 0x10000;
 	break;
     case Exact:
+    case Class:
     case Set:
     case List:
     case Hyphen:
@@ -163,74 +164,65 @@ void CSSSelector::extractPseudoType() const
 {
     if (match != Pseudo)
         return;
+    
+    static AtomicString active("active");
+    static AtomicString after("after");
+    static AtomicString before("before");
+    static AtomicString empty("empty");
+    static AtomicString firstChild("first-child");
+    static AtomicString firstLetter("first-letter");
+    static AtomicString firstLine("first-line");
+    static AtomicString focus("focus");
+    static AtomicString hover("hover");
+    static AtomicString link("link");
+    static AtomicString lang("lang(");
+    static AtomicString lastChild("last-child");
+    static AtomicString notStr("not(");
+    static AtomicString onlyChild("only-child");
+    static AtomicString root("root");
+    static AtomicString selection("selection");
+    static AtomicString target("target");
+    static AtomicString visited("visited");
+    
     _pseudoType = PseudoOther;
-    if (!value.isEmpty()) {
-        value = value.lower();
-        switch (value[0]) {
-            case 'a':
-                if (value == "active")
-                    _pseudoType = PseudoActive;
-                else if (value == "after")
-                    _pseudoType = PseudoAfter;
-                break;
-            case 'b':
-                if (value == "before")
-                    _pseudoType = PseudoBefore;
-                break;
-            case 'e':
-                if (value == "empty")
-                    _pseudoType = PseudoEmpty;
-                break;
-            case 'f':
-                if (value == "first-child")
-                    _pseudoType = PseudoFirstChild;
-                else if (value == "first-letter")
-                    _pseudoType = PseudoFirstLetter;
-                else if (value == "first-line")
-                    _pseudoType = PseudoFirstLine;
-                else if (value == "focus")
-                    _pseudoType = PseudoFocus;
-                break;
-            case 'h':
-                if (value == "hover")
-                    _pseudoType = PseudoHover;
-                break;
-            case 'l':
-                if (value == "link")
-                    _pseudoType = PseudoLink;
-                else if (value == "lang(")
-                    _pseudoType = PseudoLang;
-                else if (value == "last-child")
-                    _pseudoType = PseudoLastChild;
-                break;
-            case 'n':
-                if (value == "not(")
-                    _pseudoType = PseudoNot;
-                break;
-            case 'o':
-                if (value == "only-child")
-                    _pseudoType = PseudoOnlyChild;
-                break;
-            case 'r':
-                if (value == "root")
-                    _pseudoType = PseudoRoot;
-                break;
-            case 's':
-                if (value == "selection")
-                    _pseudoType = PseudoSelection;
-                break;
-            case 't':
-                if (value == "target")
-                    _pseudoType = PseudoTarget;
-                break;
-            case 'v':
-                if (value == "visited")
-                    _pseudoType = PseudoVisited;
-                break;
-        }
-    }
-
-    value = DOMString();
+    if (value == active)
+        _pseudoType = PseudoActive;
+    else if (value == after)
+        _pseudoType = PseudoAfter;
+    else if (value == before)
+        _pseudoType = PseudoBefore;
+    else if (value == empty)
+        _pseudoType = PseudoEmpty;
+    else if (value == firstChild)
+        _pseudoType = PseudoFirstChild;
+    else if (value == firstLetter)
+        _pseudoType = PseudoFirstLetter;
+    else if (value == firstLine)
+        _pseudoType = PseudoFirstLine;
+    else if (value == focus)
+        _pseudoType = PseudoFocus;
+    else if (value == hover)
+        _pseudoType = PseudoHover;
+    else if (value == link)
+        _pseudoType = PseudoLink;
+    else if (value == lang)
+        _pseudoType = PseudoLang;
+    else if (value == lastChild)
+        _pseudoType = PseudoLastChild;
+    else if (value == notStr)
+        _pseudoType = PseudoNot;
+    else if (value == onlyChild)
+        _pseudoType = PseudoOnlyChild;
+    else if (value == root)
+        _pseudoType = PseudoRoot;
+    else if (value == selection)
+        _pseudoType = PseudoSelection;
+    else if (value == target)
+        _pseudoType = PseudoTarget;
+    else if (value == visited)
+        _pseudoType = PseudoVisited;
+    
+    value = AtomicString::null();
 }
 
 
@@ -264,17 +256,17 @@ DOMString CSSSelector::selectorText() const
     if ( tag == anyLocalName && cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
     {
         str = "#";
-        str += cs->value;
+        str += cs->value.qstring();
     }
     else if ( tag == anyLocalName && cs->attr == ATTR_CLASS && cs->match == CSSSelector::List )
     {
         str = ".";
-        str += cs->value;
+        str += cs->value.qstring();
     }
     else if ( tag == anyLocalName && cs->match == CSSSelector::Pseudo )
     {
         str = ":";
-        str += cs->value;
+        str += cs->value.qstring();
     }
     else
     {
@@ -285,17 +277,17 @@ DOMString CSSSelector::selectorText() const
         if ( cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
         {
             str += "#";
-            str += cs->value;
+            str += cs->value.qstring();
         }
         else if ( cs->attr == ATTR_CLASS && cs->match == CSSSelector::List )
         {
             str += ".";
-            str += cs->value;
+            str += cs->value.qstring();
         }
         else if ( cs->match == CSSSelector::Pseudo )
         {
             str += ":";
-            str += cs->value;
+            str += cs->value.qstring();
         }
         // optional attribute
         if ( cs->attr ) {
@@ -328,7 +320,7 @@ DOMString CSSSelector::selectorText() const
                 kdWarning(6080) << "Unhandled case in CSSStyleRuleImpl::selectorText : match=" << cs->match << endl;
             }
             str += "\"";
-            str += cs->value;
+            str += cs->value.qstring();
             str += "\"]";
         }
     }

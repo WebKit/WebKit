@@ -1,3 +1,70 @@
+2004-01-27  David Hyatt  <hyatt@apple.com>
+
+	Add a new AtomicString type (that is really just a KJS::Identifier).  Define a Name class that will eventually
+	be used for element and attribute names.
+
+	Atomize the CSS selector's "value" field, used to hold class names, identifier names, attribute values, and
+	pseudo-element names.
+	
+        Reviewed by rjw
+
+        * ForwardingHeaders/kjs/identifier.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/css_base.cpp:
+        (CSSSelector::print):
+        (CSSSelector::specificity):
+        (CSSSelector::extractPseudoType):
+        (CSSSelector::selectorText):
+        * khtml/css/css_base.h:
+        (DOM::CSSSelector::):
+        * khtml/css/cssparser.cpp:
+        (ParseString::lower):
+        * khtml/css/cssparser.h:
+        (DOM::atomicString):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+        * khtml/html/html_elementimpl.cpp:
+        (:NamedAttrMapImpl):
+        (HTMLNamedAttrMapImpl::clearAttributes):
+        (HTMLNamedAttrMapImpl::isHTMLAttributeMap):
+        (HTMLNamedAttrMapImpl::parseClassAttribute):
+        (HTMLNamedAttrMapImpl::matchesCSSClass):
+        (HTMLElementImpl::parseAttribute):
+        (HTMLElementImpl::createAttributeMap):
+        (HTMLElementImpl::matchesCSSClass):
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::recalcStyle):
+        * khtml/html/htmltokenizer.h:
+        (khtml::Token::addAttribute):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::matchesCSSClass):
+        (NamedAttrMapImpl::isHTMLAttributeMap):
+        (NamedAttrMapImpl::operator=):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nameimpl.cpp: Added.
+        (DOM::AtomicStringList::clone):
+        (DOM::operator==):
+        (DOM::equalsIgnoreCase):
+        * khtml/xml/dom_nameimpl.h: Added.
+        (DOM::AtomicStringList:::m_next):
+        (DOM::AtomicStringList::m_next):
+        (DOM::AtomicStringList::~AtomicStringList):
+        (DOM::AtomicStringList::next):
+        (DOM::AtomicStringList::setNext):
+        (DOM::AtomicStringList::string):
+        (DOM::AtomicStringList::setString):
+        (DOM::AtomicStringList::clear):
+        (DOM::Name::Name):
+        (DOM::Name::m_localName):
+        (DOM::Name::namespaceURI):
+        (DOM::Name::localName):
+        (DOM::operator==):
+        (DOM::operator!=):
+        * khtml/xml/dom_nodeimpl.h:
+
 2004-01-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

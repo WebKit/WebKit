@@ -42,7 +42,7 @@ class HTMLTokenizer;
 #include "misc/stringit.h"
 #include "xml/dom_stringimpl.h"
 #include "xml/xml_tokenizer.h"
-#include "xml/dom_elementimpl.h"
+#include "html/html_elementimpl.h"
 #include "xml/dom_docimpl.h"
 
 #if APPLE_CHANGES
@@ -94,7 +94,7 @@ namespace khtml {
 
             if (a) {
                 if(!attrs) {
-                    attrs = new DOM::NamedAttrMapImpl(0);
+                    attrs = new DOM::HTMLNamedAttrMapImpl(0);
                     attrs->ref();
                 }
                 attrs->insertAttribute(a);
@@ -113,7 +113,7 @@ namespace khtml {
             }
             flat = false;
         }
-        DOM::NamedAttrMapImpl* attrs;
+        DOM::HTMLNamedAttrMapImpl* attrs;
         DOM::DOMStringImpl* text;
         ushort id;
         bool flat;

@@ -30,6 +30,7 @@
 #include "dom/dom_node.h"
 #include "misc/helper.h"
 #include "misc/shared.h"
+#include "dom_nameimpl.h"
 
 class QPainter;
 template <class type> class QPtrList;

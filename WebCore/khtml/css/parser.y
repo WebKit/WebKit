@@ -669,7 +669,7 @@ specifier:
 	$$ = new CSSSelector();
 	$$->match = CSSSelector::Id;
 	$$->attr = ATTR_ID;
-	$$->value = domString($1);
+	$$->value = atomicString($1);
     }
   | class
   | attrib
@@ -679,9 +679,9 @@ specifier:
 class:
     '.' IDENT {
 	$$ = new CSSSelector();
-	$$->match = CSSSelector::List;
+	$$->match = CSSSelector::Class;
 	$$->attr = ATTR_CLASS;
-	$$->value = domString($2);
+	$$->value = atomicString($2);
     }
   ;
 
@@ -715,7 +715,7 @@ attrib:
 	$$ = new CSSSelector();
 	$$->attr = $3;
 	$$->match = (CSSSelector::Match)$4;
-	$$->value = domString($6);
+	$$->value = atomicString($6);
     }
     | '[' maybe_space namespace_selector '|' attrib_id ']' {
         $$ = new CSSSelector();
@@ -729,7 +729,7 @@ attrib:
         $$ = new CSSSelector();
         $$->attr = $5;
         $$->match = (CSSSelector::Match)$6;
-        $$->value = domString($8);
+        $$->value = atomicString($8);
         CSSParser *p = static_cast<CSSParser *>(parser);
         if (p->styleElement && p->styleElement->isCSSStyleSheet())
             static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->attr, domString($3));
@@ -766,19 +766,22 @@ pseudo:
     ':' IDENT {
         $$ = new CSSSelector();
         $$->match = CSSSelector::Pseudo;
-        $$->value = domString($2);
+        $2.lower();
+        $$->value = atomicString($2);
     }
     |
     ':' ':' IDENT {
         $$ = new CSSSelector();
         $$->match = CSSSelector::Pseudo;
-        $$->value = domString($3);
+        $3.lower();
+        $$->value = atomicString($3);
     }
     | ':' FUNCTION maybe_space simple_selector maybe_space ')' {
         $$ = new CSSSelector();
         $$->match = CSSSelector::Pseudo;
         $$->simpleSelector = $4;
-        $$->value = domString($2);
+        $2.lower();
+        $$->value = atomicString($2);
     }
   ;
 
