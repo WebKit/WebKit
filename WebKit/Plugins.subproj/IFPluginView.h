@@ -5,38 +5,21 @@
 
 #import <AppKit/AppKit.h>
 #import <WCPlugin.h>
-#include <qwidget.h>
-#include <npapi.h>
+#import <qwidget.h>
+#import <npapi.h>
 #import <WebFoundation/WebFoundation.h>
 #import <IFWebView.h>
 #import <IFBaseWebController.h>
-
-typedef struct _StreamData{
-    uint16 transferMode;
-    int32 offset;
-    NPStream *stream;
-    char *mimeType;
-    NSString *filename;
-    NSMutableData *data;
-} StreamData;
-
-@interface IFPluginViewNullEventSender : NSObject{
-    NPP instance;
-    NPP_HandleEventProcPtr NPP_HandleEvent;
-    bool shouldStop;
-}
-
--(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)HandleEventFunction;
--(void)sendNullEvents;
--(void)stop;
-@end
+#import <IFPluginNullEventSender.h>
 
 @interface IFPluginView : NSView {
     WCPlugin *plugin;
-    IFPluginViewNullEventSender *eventSender;
+    IFPluginNullEventSender *eventSender;
     
     IFBaseWebController *webController;
     IFWebView *webView;
+    IFWebFrame *webFrame;
+    IFWebDataSource *webDataSource;
     
     NPP instance;
     NPWindow window;
@@ -70,9 +53,9 @@ typedef struct _StreamData{
 -(void)drawRect:(NSRect)rect;
 -(void)setWindow;
 -(void)viewHasMoved:(NSNotification *)notification;
--(NSView *)findSuperview:(NSString *) viewName;
-- (void) windowWillClose:(NSNotification *)notification;
+-(void) windowWillClose:(NSNotification *)notification;
 -(void)newStream:(NSURL *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData;
+-(NSView *) findSuperview:(NSString *)viewName;
 -(BOOL)acceptsFirstResponder;
 -(BOOL)becomeFirstResponder;
 -(BOOL)resignFirstResponder;

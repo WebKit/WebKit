@@ -11,7 +11,8 @@ typedef enum {
     IF_LOAD_TYPE_CSS    = 1,
     IF_LOAD_TYPE_IMAGE  = 2,
     IF_LOAD_TYPE_SCRIPT = 3,
-    IF_LOAD_TYPE_HTML = 4
+    IF_LOAD_TYPE_HTML = 4,
+    IF_LOAD_TYPE_PLUGIN = 5
 } IF_LOAD_TYPE;
 
 

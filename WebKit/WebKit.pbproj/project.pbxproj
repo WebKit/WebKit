@@ -214,6 +214,8 @@
 				9CAE9D080252A4130ECA16EA,
 				F59EAE400253C7EE018635CA,
 				F5883BE2025E5E9D01000102,
+				F5A672BB0263866E01000102,
+				F5A672BD0263866E01000102,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -258,6 +260,8 @@
 				F58BAB390250363E01C1A526,
 				F59EAE420253C8DE018635CA,
 				F5883BE3025E5E9D01000102,
+				F5A672BC0263866E01000102,
+				F5A672BE0263866E01000102,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -1223,6 +1227,54 @@
 			settings = {
 			};
 		};
+		F5A672B70263866E01000102 = {
+			isa = PBXFileReference;
+			name = IFPluginNullEventSender.h;
+			path = Plugins.subproj/IFPluginNullEventSender.h;
+			refType = 4;
+		};
+		F5A672B80263866E01000102 = {
+			isa = PBXFileReference;
+			name = IFPluginNullEventSender.m;
+			path = Plugins.subproj/IFPluginNullEventSender.m;
+			refType = 4;
+		};
+		F5A672B90263866E01000102 = {
+			isa = PBXFileReference;
+			name = IFPluginStream.h;
+			path = Plugins.subproj/IFPluginStream.h;
+			refType = 4;
+		};
+		F5A672BA0263866E01000102 = {
+			isa = PBXFileReference;
+			name = IFPluginStream.m;
+			path = Plugins.subproj/IFPluginStream.m;
+			refType = 4;
+		};
+		F5A672BB0263866E01000102 = {
+			fileRef = F5A672B70263866E01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A672BC0263866E01000102 = {
+			fileRef = F5A672B80263866E01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A672BD0263866E01000102 = {
+			fileRef = F5A672B90263866E01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A672BE0263866E01000102 = {
+			fileRef = F5A672BA0263866E01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5AEBB3D024A527601C1A526 = {
 			isa = PBXFileReference;
 			name = IFPreferences.mm;
@@ -1326,6 +1378,10 @@
 				F5EBC45602134BC301CA1520,
 				F5883BE0025E5E9D01000102,
 				F5883BE1025E5E9D01000102,
+				F5A672B70263866E01000102,
+				F5A672B80263866E01000102,
+				F5A672B90263866E01000102,
+				F5A672BA0263866E01000102,
 			);
 			isa = PBXGroup;
 			name = Plugins;

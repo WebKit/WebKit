@@ -2,68 +2,29 @@
     IFPluginView.mm
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
+
 #define USE_CARBON 1
 
 #import "IFPluginView.h"
-#import <AppKit/NSWindow_Private.h>
-#import "WebKitDebug.h"
 
-#include <Carbon/Carbon.h> 
-#include <WebFoundation/IFURLHandle.h>
+#import <AppKit/NSWindow_Private.h>
+#import <Carbon/Carbon.h>
+
+#import <WCPluginWidget.h>
+#import <WebFoundation/IFURLHandle.h>
+#import <IFPluginStream.h>
 #import <IFWebDataSource.h>
-#include <WCPluginWidget.h>
+#import <IFError.h>
+#import <WebKitDebug.h>
 
 extern "C" {
-#include <CoreGraphics/CoreGraphics.h>
-#include <CoreGraphics/CoreGraphicsPrivate.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <CoreGraphics/CoreGraphicsPrivate.h>
 }
-
-@implementation IFPluginViewNullEventSender
-
--(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)HandleEventFunction;
-{
-    instance = pluginInstance;
-    NPP_HandleEvent = HandleEventFunction;
-    shouldStop = FALSE;
-    return self;
-}
-
--(void)sendNullEvents
-{
-    EventRecord event;
-    bool acceptedEvent;
-    UnsignedWide msecs;
-    
-    if(!shouldStop){
-        event.what = nullEvent;
-        Microseconds(&msecs);
-        event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
-        acceptedEvent = NPP_HandleEvent(instance, &event);
-        //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u %d\n", acceptedEvent, (unsigned)event.when, shouldStop);
-        [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.1];
-    }
-}
-
--(void) stop
-{
-    WEBKITDEBUG("Stopping null events\n");
-    shouldStop = TRUE;
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil];
-}
-
-@end
 
 @implementation IFPluginView
 
-static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments, uint16 mode) 
-{
-    return [[[IFPluginView alloc] initWithFrame:rect plugin:plugin url:url mime:mimeType arguments:arguments mode:mode] autorelease];
-}
-
-+(void) load
-{
-    WCSetIFPluginMakeFunc(IFPluginMake);
-}
+#pragma mark IFPLUGINVIEW
 
 - initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
 {
@@ -75,20 +36,21 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     uint i;
         
     [super initWithFrame: r];
-    //instance = malloc(sizeof(NPP_t)); // this doesn't work for Flash, so I have create a NPP_t and point to it
+    
+    // The following line doesn't work for Flash, so I have create a NPP_t struct and point to it
+    //instance = malloc(sizeof(NPP_t));
     instance = &instanceStruct;
     instance->ndata = self;
 
-    mime = mimeType;
-    URL = location;
-    plugin = plug;
-    [mime retain];
-    [URL retain];
-    [plugin retain];
+    mime = [mimeType retain];
+    URL = [location retain];
+    plugin = [plug retain];
     
+    // load the plug-in if it is not already loaded
     [plugin load];
     
-    NPP_New = 		[plugin NPP_New]; // copy function pointers
+    // copy function pointers
+    NPP_New = 		[plugin NPP_New];
     NPP_Destroy = 	[plugin NPP_Destroy];
     NPP_SetWindow = 	[plugin NPP_SetWindow];
     NPP_NewStream = 	[plugin NPP_NewStream];
@@ -122,7 +84,8 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
             hidden = FALSE;
         }
         
-        for(i=0; i<[arguments count]; i++){ // convert dictionary to 2 string arrays
+        // convert arugments dictionary to 2 string arrays
+        for(i=0; i<[arguments count]; i++){ 
             attributeString = [attributes objectAtIndex:i];
             s = malloc([attributeString length]+1);
             [attributeString getCString:s];
@@ -139,63 +102,20 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     }
     WEBKITDEBUG("NPP_New: %d\n", npErr);
     
+    free(cMime);
+    
+    // Initialize globals
     transferred = FALSE;
     stopped = FALSE;
-    filesToErase = [NSMutableArray arrayWithCapacity:2];
-    [filesToErase retain];
-    activeURLHandles = [NSMutableArray arrayWithCapacity:1];
-    [activeURLHandles retain];
+    filesToErase = [[NSMutableArray arrayWithCapacity:2] retain];
+    activeURLHandles = [[NSMutableArray arrayWithCapacity:1] retain];
+    
+    // Create a WindowRef is one doesn't already exist
     [[self window] _windowRef];
+    
     return self;
 }
 
-- (void)drawRect:(NSRect)rect
-{
-    if(!transferred){
-        NSNotificationCenter *notificationCenter;
-        NSWindow *theWindow;
-        
-        [self setWindow];
-        theWindow = [self window];
-        notificationCenter = [NSNotificationCenter defaultCenter];
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:theWindow];
-        [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:@"NSWindowWillCloseNotification" object:theWindow];
-        [notificationCenter addObserver:self selector:@selector(windowBecameKey:) name:@"NSWindowDidBecomeKeyNotification" object:theWindow];
-        [notificationCenter addObserver:self selector:@selector(windowResignedKey:) name:@"NSWindowDidResignKeyNotification" object:theWindow];
-        [self sendActivateEvent:[theWindow isKeyWindow]];
-        if(URL)
-            [self newStream:[NSURL URLWithString:URL] mimeType:mime notifyData:NULL];
-        eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
-        [eventSender sendNullEvents];
-        transferred = TRUE;
-        webView = [self findSuperview:@"IFWebView"];
-        webController = [webView controller];
-        trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
-    }
-    [self sendUpdateEvent];
-}
-
-- (BOOL)isFlipped
-{
-    return YES;
-}
-
--(void) viewHasMoved:(NSNotification *)notification
-{
-    [self sendUpdateEvent];
-    [self setWindow];
-}
-
--(void) windowBecameKey:(NSNotification *)notification
-{
-    [self sendActivateEvent:TRUE];
-}
-
--(void) windowResignedKey:(NSNotification *)notification
-{
-    [self sendActivateEvent:FALSE];
-}
 
 - (void) setWindow
 {
@@ -228,13 +148,96 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     
     npErr = NPP_SetWindow(instance, &window);
     WEBKITDEBUG("NPP_SetWindow: %d, port=%d\n", npErr, (int)nPort.port);
-    WEBKITDEBUG("frameInWindow.origin.x=%f, frameInWindow.origin.y=%f, frameInWindow.size.height=%d, frameInWindow.size.width=%d\n", 
-        frameInWindow.origin.x, frameInWindow.origin.y, (int)frameInWindow.size.height, (int)frameInWindow.size.width);
-    WEBKITDEBUG("visibleRectInWindow.origin.x=%f, visibleRectInWindow.origin.y=%f, visibleRectInWindow.size.height=%d, visibleRectInWindow.size.width=%d\n", 
-        visibleRectInWindow.origin.x, visibleRectInWindow.origin.y, (int)visibleRectInWindow.size.height, (int)visibleRectInWindow.size.width);
 }
 
-- (NSView *) findSuperview:(NSString *) viewName
+- (void) newStream:(NSURL *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
+{
+    IFPluginStream *stream;
+    NPStream *npStream;
+    NPError npErr;    
+    uint16 transferMode;
+    IFURLHandle *urlHandle;
+    NSDictionary *attributes;
+    char *cMime;
+    
+    stream = [[IFPluginStream alloc] initWithURL:streamURL mimeType:mimeType notifyData:notifyData];
+    npStream = [stream npStream];
+    
+    cMime = malloc([mimeType length]+1);
+    [mimeType getCString:cMime];
+    
+    npErr = NPP_NewStream(instance, cMime, npStream, FALSE, &transferMode);
+    WEBKITDEBUG("NPP_NewStream: %d\n", npErr);
+    [stream setTransferMode:transferMode];
+    free(cMime);
+    
+    if(transferMode == NP_NORMAL){
+        WEBKITDEBUG("Stream type: NP_NORMAL\n");
+    }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
+        if(transferMode == NP_ASFILEONLY)
+            WEBKITDEBUG("Stream type: NP_ASFILEONLY\n");
+        if(transferMode == NP_ASFILE)
+            WEBKITDEBUG("Stream type: NP_ASFILE\n");
+        [stream setFilename:[[streamURL path] lastPathComponent]];
+        [stream setData:[NSMutableData dataWithCapacity:0]];
+    }else if(transferMode == NP_SEEK){
+        WEBKITDEBUG("Stream type: NP_SEEK not yet supported\n");
+        return;
+    }
+    attributes = [NSDictionary dictionaryWithObject:stream forKey:IFURLHandleUserData];
+    urlHandle = [[IFURLHandle alloc] initWithURL:streamURL attributes:attributes flags:0];
+    if(urlHandle!=nil){
+        [urlHandle addClient:self];
+        [activeURLHandles addObject:urlHandle];
+        [urlHandle loadInBackground];
+    }
+}
+
+-(void)start
+{
+
+}
+
+- (void)stop
+{
+    NPError npErr;
+    unsigned i;
+    
+    if (!stopped){
+        for(i=0; i<[activeURLHandles count]; i++){
+            [[activeURLHandles objectAtIndex:i] cancelLoadInBackground];
+        }
+        [eventSender stop];
+        [eventSender release];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        [self removeTrackingRect:trackingTag];
+        npErr = NPP_Destroy(instance, NULL);
+        WEBKITDEBUG("NPP_Destroy: %d\n", npErr);
+        stopped = TRUE;
+    }
+}
+
+-(void)dealloc
+{
+    unsigned i;
+    NSFileManager *fileManager;
+    
+    [self stop];
+    fileManager = [NSFileManager defaultManager];
+    for(i=0; i<[filesToErase count]; i++){  // remove downloaded files
+        [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
+    }
+    [filesToErase release];
+    [activeURLHandles release];
+    [mime release];
+    [URL release];
+    [plugin release];
+    free(cAttributes);
+    free(cValues);
+    [super dealloc];
+}
+
+- (NSView *) findSuperview:(NSString *)viewName
 {
     NSView *view;
     
@@ -248,148 +251,76 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     return nil;
 }
 
-- (void) windowWillClose:(NSNotification *)notification
+#pragma mark EVENTS
+
+-(void)sendActivateEvent:(BOOL)isActive;
 {
-    [self stop];
+    EventRecord event;
+    bool acceptedEvent;
+    UnsignedWide msecs;
+    
+    event.what = activateEvt;
+    event.message = (uint32)GetWindowPort([[self window] _windowRef]);
+    Microseconds(&msecs);
+    event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
+    event.modifiers = isActive;
+    acceptedEvent = NPP_HandleEvent(instance, &event); 
+    WEBKITDEBUG("NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
+}
+
+-(void)sendUpdateEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    UnsignedWide msecs;
+    
+    event.what = updateEvt;
+    event.message = (uint32)GetWindowPort([[self window] _windowRef]);
+    Microseconds(&msecs);
+    event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
+    acceptedEvent = NPP_HandleEvent(instance, &event); 
+    WEBKITDEBUG("NPP_HandleEvent(updateEvt): %d  when: %lu\n", acceptedEvent, event.when);
 }
 
 
-- (void) newStream:(NSURL *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
+#pragma mark NSVIEW
+
+- (void)drawRect:(NSRect)rect
 {
-    char *cURL, *cMime;
-    StreamData *streamData;
-    NPStream *stream;
-    NPError npErr;    
-    uint16 transferMode;
-    IFURLHandle *urlHandle;
-    NSDictionary *attributes;
-    NSString *streamURLString;
-    
-    streamURLString = [streamURL absoluteString];
-    stream = malloc(sizeof(NPStream));
-    cURL   = malloc([streamURLString length]+1);
-    cMime  = malloc([mimeType length]+1);
-    [streamURLString getCString:cURL];
-    [mimeType getCString:cMime];
-    stream->url = cURL;
-    stream->end = 0;
-    stream->lastmodified = 0;
-    stream->notifyData = notifyData;
-    
-    streamData = malloc(sizeof(StreamData));
-    streamData->stream = stream;
-    streamData->offset = 0;
-    streamData->mimeType = cMime;
-    
-    npErr = NPP_NewStream(instance, cMime, stream, FALSE, &transferMode);
-    WEBKITDEBUG("NPP_NewStream: %d\n", npErr);
-    streamData->transferMode = transferMode;
-    
-    if(transferMode == NP_NORMAL){
-        WEBKITDEBUG("Stream type: NP_NORMAL\n");
-        attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:streamData] forKey:IFURLHandleUserData];
-        urlHandle = [[IFURLHandle alloc] initWithURL:streamURL attributes:attributes flags:0];
-        [urlHandle addClient:self];
-        [activeURLHandles addObject:urlHandle];
-        [urlHandle loadInBackground];
-    }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
-        if(transferMode == NP_ASFILEONLY) WEBKITDEBUG("Stream type: NP_ASFILEONLY\n");
-        if(transferMode == NP_ASFILE) WEBKITDEBUG("Stream type: NP_ASFILE\n");
-        streamData->filename  = [NSString stringWithString:[streamURLString lastPathComponent]];
-        [streamData->filename retain];
-        streamData->data = [NSMutableData dataWithCapacity:0];
-        [streamData->data retain];
-        attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:streamData] forKey:IFURLHandleUserData];
-        urlHandle = [[IFURLHandle alloc] initWithURL:streamURL attributes:attributes flags:0];
-        [urlHandle addClient:self];
-        if(urlHandle!=nil){
-            [activeURLHandles addObject:urlHandle];
-            [urlHandle loadInBackground];
-        }
-    }else if(transferMode == NP_SEEK){
-        WEBKITDEBUG("Stream type: NP_SEEK not yet supported\n");
+    if(!transferred){
+        NSNotificationCenter *notificationCenter;
+        NSWindow *theWindow;
+        
+        [self setWindow];
+        theWindow = [self window];
+        notificationCenter = [NSNotificationCenter defaultCenter];
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:theWindow];
+        [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:@"NSWindowWillCloseNotification" object:theWindow];
+        [notificationCenter addObserver:self selector:@selector(windowBecameKey:) name:@"NSWindowDidBecomeKeyNotification" object:theWindow];
+        [notificationCenter addObserver:self selector:@selector(windowResignedKey:) name:@"NSWindowDidResignKeyNotification" object:theWindow];
+        [self sendActivateEvent:[theWindow isKeyWindow]];
+        if(URL)
+            [self newStream:[NSURL URLWithString:URL] mimeType:mime notifyData:NULL];
+        eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
+        [eventSender sendNullEvents];
+        transferred = TRUE;
+        trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
+        
+        webView = [self findSuperview:@"IFWebView"];
+        webController = [webView controller];
+        webFrame = [webController frameForView:webView];
+        webDataSource = [webFrame dataSource];
     }
+    [self sendUpdateEvent];
 }
 
-// cache methods
-
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
+- (BOOL)isFlipped
 {
-    int32 bytes;
-    StreamData *streamData;
-    
-    streamData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
-    if(streamData->transferMode != NP_ASFILEONLY){
-        bytes = NPP_WriteReady(instance, streamData->stream);
-        //WEBKITDEBUG("NPP_WriteReady bytes=%u\n", bytes);
-        bytes = NPP_Write(instance, streamData->stream, streamData->offset, [data length], (void *)[data bytes]);
-        //WEBKITDEBUG("NPP_Write bytes=%u\n", bytes);
-        streamData->offset += [data length];
-    }
-    if(streamData->transferMode == NP_ASFILE || streamData->transferMode == NP_ASFILEONLY){
-        [streamData->data appendData:data];
-    }
+    return YES;
 }
 
-- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
-{
-    NPError npErr;
-    char *cFilename;
-    NSMutableString *filenameClassic, *filename;
-    StreamData *streamData;
-    NSFileManager *fileManager;
-    
-    streamData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
-    if(streamData->transferMode == NP_ASFILE || streamData->transferMode == NP_ASFILEONLY){
-        filenameClassic = [NSMutableString stringWithCapacity:200];
-        filename = [NSMutableString stringWithCapacity:200];
-        [filenameClassic appendString:startupVolumeName()];
-        [filenameClassic appendString:@":private:tmp:"];  //FIXME: This should be the user's cache directory or somewhere else
-        [filenameClassic appendString:streamData->filename];
-        [filename appendString:@"/tmp/"];
-        [filename appendString:streamData->filename];
-        [filesToErase addObject:filename];
-        fileManager = [NSFileManager defaultManager];
-        WEBKITDEBUG("Writing plugin file out to: %s %s size: %u\n", [filenameClassic cString], [filename cString], [streamData->data length]);
-        [fileManager removeFileAtPath:filename handler:nil];
-        [fileManager createFileAtPath:filename contents:streamData->data attributes:nil];
-        cFilename = malloc([filenameClassic length]+1);
-        [filenameClassic getCString:cFilename];
-        NPP_StreamAsFile(instance, streamData->stream, cFilename);
-        WEBKITDEBUG("NPP_StreamAsFile: %s\n", cFilename);
-        [streamData->data release];
-        [streamData->filename release];
-    }
-    npErr = NPP_DestroyStream(instance, streamData->stream, NPRES_DONE);
-    WEBKITDEBUG("NPP_DestroyStream: %d\n", npErr);
-    if(streamData->stream->notifyData){
-        NPP_URLNotify(instance, streamData->stream->url, NPRES_DONE, streamData->stream->notifyData);
-        WEBKITDEBUG("NPP_URLNotify\n");
-    }
-    free(streamData);
-    [activeURLHandles removeObject:sender];
-}
-
-- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
-{
-}
-
-- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
-{
-    [self stop];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
-{
-    [self stop];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
-{
-    
-}
-
-// event methods
+#pragma mark NSRESPONDER
 
 -(BOOL)acceptsFirstResponder
 {
@@ -424,34 +355,6 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     return YES;
 }
 
--(void)sendActivateEvent:(BOOL)isActive;
-{
-    EventRecord event;
-    bool acceptedEvent;
-    UnsignedWide msecs;
-    
-    event.what = activateEvt;
-    event.message = (uint32)GetWindowPort([[self window] _windowRef]);
-    Microseconds(&msecs);
-    event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
-    event.modifiers = isActive;
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUG("NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
-}
-
--(void)sendUpdateEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    UnsignedWide msecs;
-    
-    event.what = updateEvt;
-    event.message = (uint32)GetWindowPort([[self window] _windowRef]);
-    Microseconds(&msecs);
-    event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUG("NPP_HandleEvent(updateEvt): %d  when: %lu\n", acceptedEvent, event.when);
-}
 
 -(void)mouseDown:(NSEvent *)theEvent
 {
@@ -536,7 +439,153 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     WEBKITDEBUG("NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
 }
 
-// plug-in to browser calls
+#pragma mark NOTIFICATIONS
+
+-(void) viewHasMoved:(NSNotification *)notification
+{
+    [self sendUpdateEvent];
+    [self setWindow];
+}
+
+-(void) windowBecameKey:(NSNotification *)notification
+{
+    [self sendActivateEvent:TRUE];
+}
+
+-(void) windowResignedKey:(NSNotification *)notification
+{
+    [self sendActivateEvent:FALSE];
+}
+
+- (void) windowWillClose:(NSNotification *)notification
+{
+    [self stop];
+}
+
+
+#pragma mark IFURLHANDLE
+
+- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
+{
+
+}
+
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
+{
+    int32 bytes;
+    IFPluginStream *stream;
+    uint16 transferMode;
+    NPStream *npStream;
+    
+    stream = [[sender attributes] objectForKey:IFURLHandleUserData];
+    transferMode = [stream transferMode];
+    npStream = [stream npStream];
+    
+    if(transferMode != NP_ASFILEONLY){
+        bytes = NPP_WriteReady(instance, npStream);
+        //WEBKITDEBUG("NPP_WriteReady bytes=%u\n", bytes);
+        bytes = NPP_Write(instance, npStream, [stream offset], [data length], (void *)[data bytes]);
+        //WEBKITDEBUG("NPP_Write bytes=%u\n", bytes);
+        [stream incrementOffset:[data length]];
+    }
+    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
+        [[stream data] appendData:data];
+    }
+        
+    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
+    loadProgress->totalToLoad = [sender contentLength];
+    loadProgress->bytesSoFar = [sender contentLengthReceived];
+    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
+    [webController receivedProgress: (IFLoadProgress *)loadProgress
+        forResource: [[sender url] absoluteString] fromDataSource: webDataSource];
+    [loadProgress release];
+    
+}
+
+- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
+{
+    NPError npErr;
+    char *cFilename;
+    NSMutableString *filenameClassic, *path;
+    IFPluginStream *stream;
+    NSFileManager *fileManager;
+    uint16 transferMode;
+    NPStream *npStream;
+    NSString *filename;
+    
+    stream = [[sender attributes] objectForKey:IFURLHandleUserData];
+    transferMode = [stream transferMode];
+    npStream = [stream npStream];
+    filename = [stream filename];
+    
+    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
+        path = [NSString stringWithFormat:@"%@%@", @"/tmp/", filename];        
+        [filesToErase addObject:path];
+        
+        fileManager = [NSFileManager defaultManager];
+        [fileManager removeFileAtPath:path handler:nil];
+        [fileManager createFileAtPath:path contents:[stream data] attributes:nil];
+        
+        filenameClassic = [NSString stringWithFormat:@"%@%@%@", startupVolumeName(), @":private:tmp:", filename];        	cFilename = malloc([filenameClassic length]+1);
+        [filenameClassic getCString:cFilename];
+        
+        NPP_StreamAsFile(instance, npStream, cFilename);
+        WEBKITDEBUG("NPP_StreamAsFile: %s\n", cFilename);
+    }
+    npErr = NPP_DestroyStream(instance, npStream, NPRES_DONE);
+    WEBKITDEBUG("NPP_DestroyStream: %d\n", npErr);
+    
+    if(npStream->notifyData){
+        NPP_URLNotify(instance, npStream->url, NPRES_DONE, npStream->notifyData);
+        WEBKITDEBUG("NPP_URLNotify\n");
+    }
+    [stream release];
+    [activeURLHandles removeObject:sender];
+    
+    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
+    loadProgress->totalToLoad = [data length];
+    loadProgress->bytesSoFar = [data length];
+    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
+    [webController receivedProgress: (IFLoadProgress *)loadProgress 
+        forResource: [[sender url] absoluteString] fromDataSource: webDataSource];
+    [loadProgress release];
+}
+
+- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
+{
+    [self stop];
+    
+    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
+    loadProgress->totalToLoad = -1;
+    loadProgress->bytesSoFar = -1;
+    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
+    [webController receivedProgress: (IFLoadProgress *)loadProgress 
+        forResource: [[sender url] absoluteString] fromDataSource: webDataSource];
+    [loadProgress release];
+}
+
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
+{
+    [self stop];
+    
+    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
+    loadProgress->totalToLoad = [sender contentLength];
+    loadProgress->bytesSoFar = [sender contentLengthReceived];
+    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
+    
+    IFError *error = [[IFError alloc] initWithErrorCode: result failingURL: [sender url]];
+    [webController receivedError: error forResource: [[sender url] absoluteString] 
+        partialProgress: loadProgress fromDataSource: webDataSource];
+    [error release];
+    [loadProgress release];
+}
+
+- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
+{
+    
+}
+
+#pragma mark PLUGIN-TO-BROWSER
 
 -(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData
 {
@@ -638,53 +687,21 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     WEBKITDEBUG("NPN_InvalidateRegion\n");
 }
 
--(void)start
-{
-
-}
-
-- (void)stop
-{
-    NPError npErr;
-    unsigned i;
-    
-    if (!stopped){
-        for(i=0; i<[activeURLHandles count]; i++){
-            [[activeURLHandles objectAtIndex:i] cancelLoadInBackground];
-        }
-        [eventSender stop];
-        [eventSender release];
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-        [self removeTrackingRect:trackingTag];
-        npErr = NPP_Destroy(instance, NULL);
-        WEBKITDEBUG("NPP_Destroy: %d\n", npErr);
-        stopped = TRUE;
-    }
-}
-
 -(void)forceRedraw
 {
     WEBKITDEBUG("forceRedraw\n");
 }
 
--(void)dealloc
+#pragma mark PREBINDING
+
+static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments, uint16 mode) 
 {
-    unsigned i;
-    NSFileManager *fileManager;
-    
-    [self stop];
-    fileManager = [NSFileManager defaultManager];
-    for(i=0; i<[filesToErase count]; i++){  // remove downloaded files
-        [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
-    }
-    [filesToErase release];
-    [activeURLHandles release];
-    [mime release];
-    [URL release];
-    [plugin release];
-    free(cAttributes);
-    free(cValues);
-    [super dealloc];
+    return [[[IFPluginView alloc] initWithFrame:rect plugin:plugin url:url mime:mimeType arguments:arguments mode:mode] autorelease];
+}
+
++(void) load
+{
+    WCSetIFPluginMakeFunc(IFPluginMake);
 }
 
 @end

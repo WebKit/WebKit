@@ -1,3 +1,27 @@
+2002-04-09  Chris Blumenberg  <cblu@apple.com>
+
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	initWithFrame:plugin:url:mime:arguments:mode:]), (-[IFPluginView setWindow]),
+	(-[IFPluginView newStream:mimeType:notifyData:]), (-[IFPluginView start]),
+	(-[IFPluginView stop]), (-[IFPluginView dealloc]), (-[IFPluginView
+	findSuperview:]), (-[IFPluginView sendUpdateEvent]), (-[IFPluginView drawRect:]),
+	(-[IFPluginView isFlipped]), (-[IFPluginView viewHasMoved:]), (-[IFPluginView
+	windowBecameKey:]), (-[IFPluginView windowResignedKey:]), (-[IFPluginView
+	windowWillClose:]), (-[IFPluginView IFURLHandleResourceDidBeginLoading:]),
+	(-[IFPluginView IFURLHandle:resourceDataDidBecomeAvailable:]), (-[IFPluginView
+	IFURLHandleResourceDidFinishLoading:data:]), (-[IFPluginView
+	IFURLHandleResourceDidCancelLoading:]), (-[IFPluginView
+	IFURLHandle:resourceDidFailLoadingWithResult:]), (-[IFPluginView
+	IFURLHandle:didRedirectToURL:]), (-[IFPluginView forceRedraw]), (IFPluginMake),
+	(+[IFPluginView load]):
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFLoadProgress.h:
+
+	Cleaned up the IFPluginView code. Moved a lot of things around. 
+
+	Added support for plug-in file download progress.
+
 2002-04-08  Chris Blumenberg  <cblu@apple.com>
 
 	* Plugins.subproj/IFPluginView.h:
