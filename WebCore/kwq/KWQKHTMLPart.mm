@@ -2826,16 +2826,13 @@ QChar KWQKHTMLPart::backslashAsCurrencySymbol() const
     return codec->backslashAsCurrencySymbol();
 }
 
-NSColor *KWQKHTMLPart::bodyBackgroundColor(void) const
+NSColor *KWQKHTMLPart::bodyBackgroundColor() const
 {
-    HTMLDocumentImpl *doc = docImpl();
-    
-    if (doc){
-        HTMLElementImpl *body = doc->body();
-        QColor bgColor =  body->renderer()->style()->backgroundColor();
-        
-        if (bgColor.isValid())
+    if (docImpl() && docImpl()->body() && docImpl()->body()->renderer()) {
+        QColor bgColor = docImpl()->body()->renderer()->style()->backgroundColor();
+        if (bgColor.isValid()) {
             return bgColor.getNSColor();
+        }
     }
     return nil;
 }

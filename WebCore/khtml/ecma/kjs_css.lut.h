@@ -89,12 +89,13 @@ const struct HashTable DOMMediaListProtoTable = { 2, 4, DOMMediaListProtoTableEn
 namespace KJS {
 
 const struct HashEntry DOMCSSStyleSheetTableEntries[] = {
+   { "rules", DOMCSSStyleSheet::Rules, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
    { "cssRules", DOMCSSStyleSheet::CssRules, DontDelete|ReadOnly, 0, 0 },
-   { "ownerRule", DOMCSSStyleSheet::OwnerRule, DontDelete|ReadOnly, 0, &DOMCSSStyleSheetTableEntries[2] },
-   { "rules", DOMCSSStyleSheet::Rules, DontDelete|ReadOnly, 0, 0 }
+   { "ownerRule", DOMCSSStyleSheet::OwnerRule, DontDelete|ReadOnly, 0, 0 },
 };
 
-const struct HashTable DOMCSSStyleSheetTable = { 2, 3, DOMCSSStyleSheetTableEntries, 2 };
+const struct HashTable DOMCSSStyleSheetTable = { 2, 5, DOMCSSStyleSheetTableEntries, 5 };
 
 } // namespace
 
@@ -102,11 +103,15 @@ namespace KJS {
 
 const struct HashEntry DOMCSSStyleSheetProtoTableEntries[] = {
    { 0, 0, 0, 0, 0 },
-   { "insertRule", DOMCSSStyleSheet::InsertRule, DontDelete|Function, 2, &DOMCSSStyleSheetProtoTableEntries[2] },
-   { "deleteRule", DOMCSSStyleSheet::DeleteRule, DontDelete|Function, 1, 0 }
+   { "insertRule", DOMCSSStyleSheet::InsertRule, DontDelete|Function, 2, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "deleteRule", DOMCSSStyleSheet::DeleteRule, DontDelete|Function, 1, &DOMCSSStyleSheetProtoTableEntries[6] },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "addRule", DOMCSSStyleSheet::AddRule, DontDelete|Function, 2, 0 }
 };
 
-const struct HashTable DOMCSSStyleSheetProtoTable = { 2, 3, DOMCSSStyleSheetProtoTableEntries, 2 };
+const struct HashTable DOMCSSStyleSheetProtoTable = { 2, 7, DOMCSSStyleSheetProtoTableEntries, 6 };
 
 } // namespace
 

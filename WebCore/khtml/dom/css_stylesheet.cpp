@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -199,6 +199,18 @@ void CSSStyleSheet::deleteRule( unsigned long index )
     int exceptioncode = 0;
     if(impl)
         ((CSSStyleSheetImpl *)impl)->deleteRule( index, exceptioncode );
+    if ( exceptioncode >= CSSException::_EXCEPTION_OFFSET )
+        throw CSSException( exceptioncode - CSSException::_EXCEPTION_OFFSET );
+    if ( exceptioncode )
+        throw DOMException( exceptioncode );
+}
+
+void CSSStyleSheet::addRule( const DOMString &selector, const DOMString &style, long index )
+{
+    if (!impl)
+        return;
+    int exceptioncode = 0;
+    static_cast<CSSStyleSheetImpl *>(impl)->addRule( selector, style, index, exceptioncode );
     if ( exceptioncode >= CSSException::_EXCEPTION_OFFSET )
         throw CSSException( exceptioncode - CSSException::_EXCEPTION_OFFSET );
     if ( exceptioncode )

@@ -2,6 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -184,6 +185,13 @@ unsigned long CSSStyleSheetImpl::insertRule( const DOMString &rule, unsigned lon
     //@import rule is inserted after a standard rule set or other at-rule.
     m_lstChildren->insert(index, r);
     return index;
+}
+
+unsigned long CSSStyleSheetImpl::addRule( const DOMString &selector, const DOMString &style, long index, int &exceptioncode )
+{
+    if (index == -1)
+        index = m_lstChildren->count();
+    return insertRule(selector + " { " + style + " }", index, exceptioncode);
 }
 
 CSSRuleList CSSStyleSheetImpl::cssRules()

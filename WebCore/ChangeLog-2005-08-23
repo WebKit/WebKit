@@ -1,3 +1,35 @@
+2004-05-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3661918>: "repro nil-deref in RenderImage::paint (www.codepoetry.net)"
+
+        * khtml/rendering/render_image.cpp: (RenderImage::paint): Check renderer pointer to see if it's
+        nil before dereferencing it.
+
+        - fixed <rdar://problem/3658455>: "readFromData:options:documentAttributes: crashes when passed page without a body (in WebKit mode)"
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::bodyBackgroundColor): Check renderer pointer to see if it's
+        nil before dereferencing it.
+
+        - fixed <rdar://problem/2948112>: "implement addRule for JavaScript for style sheets"
+
+        * khtml/dom/css_stylesheet.h: Added addRule.
+        * khtml/dom/css_stylesheet.cpp: (CSSStyleSheet::addRule): Added.
+        * khtml/css/css_stylesheetimpl.h: Added addRule.
+        * khtml/css/css_stylesheetimpl.cpp: (CSSStyleSheetImpl::addRule): Added an implementation
+        based on the Microsoft documentation. An index of -1 means "at the end of the list".
+
+        * khtml/dom/dom_string.h: Changed the string-append operator to be a non-member function
+        so it works even if the left side has to undergo type conversion.
+        * khtml/dom/dom_string.cpp: (DOM::operator+): Changed implementation to match above.
+        Also changed to not use anything private or protected so it doesn't have to be a friend.
+
+        * khtml/ecma/kjs_css.h: Added addRule to the list of functions for CSS style sheets.
+        * khtml/ecma/kjs_css.cpp: (DOMCSSStyleSheetProtoFunc::tryCall): Add support for addRule,
+        based on the Microsoft documentation; always returns -1. Also removed unused string conversions.
+        * khtml/ecma/kjs_css.lut.h: Regenerated.
+
 2004-05-19  David Hyatt  <hyatt@apple.com>
 
 	Implement support for notification posting to accessibility clients for layouts and loads.

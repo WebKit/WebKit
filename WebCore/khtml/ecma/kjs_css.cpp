@@ -3,7 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -481,15 +481,17 @@ Value KJS::DOMMediaListProtoFunc::tryCall(ExecState *exec, Object &thisObj, cons
 const ClassInfo DOMCSSStyleSheet::info = { "CSSStyleSheet", 0, &DOMCSSStyleSheetTable, 0 };
 
 /*
-@begin DOMCSSStyleSheetTable 2
+@begin DOMCSSStyleSheetTable 5
   ownerRule	DOMCSSStyleSheet::OwnerRule	DontDelete|ReadOnly
   cssRules	DOMCSSStyleSheet::CssRules	DontDelete|ReadOnly
 # MSIE extension
   rules		DOMCSSStyleSheet::Rules		DontDelete|ReadOnly
 @end
-@begin DOMCSSStyleSheetProtoTable 2
+@begin DOMCSSStyleSheetProtoTable 6
   insertRule	DOMCSSStyleSheet::InsertRule	DontDelete|Function 2
   deleteRule	DOMCSSStyleSheet::DeleteRule	DontDelete|Function 1
+# MSIE extension
+  addRule	DOMCSSStyleSheet::AddRule	DontDelete|Function 2
 @end
 */
 DEFINE_PROTOTYPE("DOMCSSStyleSheet",DOMCSSStyleSheetProto)
@@ -522,20 +524,21 @@ Value DOMCSSStyleSheetProtoFunc::tryCall(ExecState *exec, Object &thisObj, const
   }
   DOM::CSSStyleSheet styleSheet = static_cast<DOMCSSStyleSheet *>(thisObj.imp())->toCSSStyleSheet();
   Value result;
-  UString str = args[0].toString(exec);
-  DOM::DOMString s = str.string();
-
   switch (id) {
     case DOMCSSStyleSheet::InsertRule:
-      result = Number(styleSheet.insertRule(args[0].toString(exec).string(),(long unsigned int)args[1].toInt32(exec)));
+      return Number(styleSheet.insertRule(args[0].toString(exec).string(),(long unsigned int)args[1].toInt32(exec)));
       break;
     case DOMCSSStyleSheet::DeleteRule:
       styleSheet.deleteRule(args[0].toInt32(exec));
-      break;
-    default:
-      result = Undefined();
+      return Undefined();
+    case DOMCSSStyleSheet::AddRule: {
+      long index = args.size() >= 3 ? args[2].toInt32(exec) : -1;
+      styleSheet.addRule(args[0].toString(exec).string(), args[1].toString(exec).string(), index);
+      // As per Microsoft documentation, always return -1.
+      return Number(-1);
+    }
   }
-  return result;
+  return Undefined();
 }
 
 // -------------------------------------------------------------------------
