@@ -1,3 +1,14 @@
+2002-07-11  Chris Blumenberg  <cblu@apple.com>
+
+Fix for:
+        2986548 - Crash if you drop URL of frameset page onto frame
+        2953421 - document dragged into frame should replace frameset
+        
+        * WebView.subproj/IFWebView.mm: 
+        (-[IFWebView draggingEntered:]): removed obsolute comment
+        (-[IFWebView performDragOperation:]): moved implementation from here
+        (-[IFWebView concludeDragOperation:]): to here, added support for NSURL drags 
+
 2002-07-11  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/IFWebViewPrivate.mm:

@@ -124,7 +124,6 @@
             return NSDragOperationCopy;
             
     }else if([dragType isEqualToString:@"NSURLPboardType"]){
-        //use URLFromPasteboard:
         return NSDragOperationCopy;
     }else if([dragType isEqualToString:@"NSStringPboardType"]){
         URLString = [[sender draggingPasteboard] stringForType:@"NSStringPboardType"];
@@ -141,36 +140,38 @@
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
 {
+    return YES;
+}
+
+- (void)concludeDragOperation:(id <NSDraggingInfo>)sender
+{
     IFWebDataSource *dataSource;
     IFWebFrame *frame;
     NSArray *files;
     NSString *file, *dragType;
     NSURL *URL=nil;
-    
+
     dragType = [[sender draggingPasteboard] availableTypeFromArray:_private->draggingTypes];
     if([dragType isEqualToString:@"NSFilenamesPboardType"]){
         files = [[sender draggingPasteboard] propertyListForType:@"NSFilenamesPboardType"];
         file = [files objectAtIndex:0];
         URL = [NSURL fileURLWithPath:file];
     }else if([dragType isEqualToString:@"NSURLPboardType"]){
-        // FIXME: Is this the right way to get the URL? How to test?
-        URL = [NSURL _IF_URLWithString:[[sender draggingPasteboard] stringForType:@"NSURLPboardType"]];
+        URL = [NSURL URLFromPasteboard:[sender draggingPasteboard]];
     }else if([dragType isEqualToString:@"NSStringPboardType"]){
         URL = [NSURL _IF_URLWithString:[[sender draggingPasteboard] stringForType:@"NSStringPboardType"]];
     }
+
+    if(!URL){
+        return;
+    }
     
-    if(!URL)
-        return NO;
-        
     dataSource = [[[IFWebDataSource alloc] initWithURL:URL] autorelease];
     frame = nil;
     frame = [[self controller] mainFrame];
     if([frame setProvisionalDataSource:dataSource])
         [frame startLoading];
-    
-    return YES;
 }
-
 
 + (void) registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType
 {
