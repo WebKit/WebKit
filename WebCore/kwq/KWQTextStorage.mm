@@ -79,7 +79,7 @@
     [fragment setBoundingRect: boundingRect];
 
     [fragmentCache setObject: fragment forKey: [self string]];
-    [(NSObject *)fragment release];
+    [fragment release];
 
     return fragment;
 }

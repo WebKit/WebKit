@@ -1,3 +1,11 @@
+2002-04-25  Darin Adler  <darin@apple.com>
+
+	* kwq/KWQMetrics.h: Add NSObject to required protocols for
+	the KWQLayoutFragment protocol so we can retain and release.
+
+	* kwq/KWQTextStorage.mm: (-[KWQTextStorage _buildFragmentForString:]):
+	Removed a cast to NSObject * that worked around the lack of the above.
+
 2002-04-25  Richard Williamson  <rjw@apple.com>
 
         Little changes in preparation for events.

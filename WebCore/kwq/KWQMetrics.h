@@ -102,7 +102,7 @@ typedef float _IFGlyphWidth;
 - (NSFont *)font;
 @end
 
-@protocol KWQLayoutFragment
+@protocol KWQLayoutFragment <NSObject>
 - (void)setGlyphRange: (NSRange)r;
 - (NSRange)glyphRange;
 - (void)setBoundingRect: (NSRect)r;
