@@ -15,5 +15,6 @@
 
 + (void)createSharedFactory;
 - init;
+- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font;
 
 @end

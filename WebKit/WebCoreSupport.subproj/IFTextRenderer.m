@@ -12,24 +12,14 @@
 
 #import <ApplicationServices/ApplicationServices.h>
 #import <CoreGraphics/CoreGraphicsPrivate.h>
+
+#import <WebKit/IFTextRendererFactory.h>
 #import <WebKit/WebKitDebug.h>
 
 #define NON_BREAKING_SPACE 0xA0
 #define SPACE 0x20
 
-//#define ROUND_TO_INT(x) (int)(((x) > (floor(x) + .5)) ? ceil(x) : floor(x))
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
-
-#ifdef FOOOOFOOO
-static inline int ROUND_TO_INT (float x)
-{
-    int floored = (int)(x);
-    
-    if (((float)x) > ((float)(floored) + .5))
-        return (int)ceil(x);
-    return floored;
-}
-#endif
 
 #define LOCAL_GLYPH_BUFFER_SIZE 1024
 
@@ -37,6 +27,15 @@ static inline int ROUND_TO_INT (float x)
 #define INCREMENTAL_GLYPH_CACHE_BLOCK 1024
 
 #define UNINITIALIZED_GLYPH_WIDTH 65535
+
+static CFCharacterSetRef nonBaseChars = NULL;
+
+// combining char, hangul jamo, or Apple corporate variant tag
+#define JunseongStart 0x1160
+#define JonseongEnd 0x11F9
+#define IsHangulConjoiningJamo(X) (X >= JunseongStart && X <= JonseongEnd)
+#define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (X & 0x1FFFF0) == 0xF870))
+
 
 // These definitions are used to bound the character-to-glyph mapping cache.  The
 // range is limited to LATIN1.  When accessing the cache a check must be made to
@@ -48,9 +47,19 @@ static inline int ROUND_TO_INT (float x)
 // The last character in latin1 extended A. (LATIN SMALL LETTER LONG S)
 #define LAST_CACHE_CHARACTER (0x17F)
 
+@interface NSLanguage : NSObject 
+{
+}
++ (NSLanguage *)defaultLanguage;
+@end
+
+
 @interface NSFont (IFPrivate)
 - (ATSUFontID)_atsFontID;
 - (CGFontRef)_backingCGSFont;
+// Private method to find a font for a character.
++ (NSFont *) findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(NSLanguage *) language;
++ (NSFont *) findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(NSLanguage *) language;
 @end
 
 static void InitATSGlyphVector(ATSGlyphVector *glyphVector, UInt32 numGlyphs)
@@ -109,12 +118,36 @@ static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
     }
 }
 
+
+static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
+{
+    unsigned int i, numGlyphs = glyphs->numGlyphs;
+    ATSLayoutRecord *glyphRecords;
+
+    glyphRecords = (ATSLayoutRecord *)glyphs->firstRecord;
+    for (i = 0; i < numGlyphs; i++){
+        if (glyphRecords[i].glyphID == 0){
+            return YES;
+        }
+    }
+    return NO;
+}
+
+
+@implementation IFTextRenderer
+
++ (void)initialize
+{
+    nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
+}
+
 /* Convert non-breaking spaces into spaces. */
-static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar *characters, int numCharacters, ATSGlyphVector *glyphs)
+- (NSFont *)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs
 {
     int i;
     UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
     UniChar *buffer = localBuffer;
+    NSFont *fontToBeUsed = nil;
     
     for (i = 0; i < numCharacters; i++) {
         if (characters[i] == NON_BREAKING_SPACE) {
@@ -138,14 +171,21 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
         characters = buffer;
     }
     
-    ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
-    
     if (buffer != localBuffer) {
         free(buffer);
     }
-}
+    
+    (void)ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
+    
+    if (hasMissingGlyphs(glyphs) == YES){
+        NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
 
-@implementation IFTextRenderer
+        fontToBeUsed = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,numCharacters) inLanguage:[NSLanguage defaultLanguage]];
+        [string release];
+    }
+    
+    return fontToBeUsed;
+}
 
 - (void)initializeCaches
 {
@@ -154,6 +194,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     size_t numGlyphsInFont = CGFontGetNumberOfGlyphs([font _backingCGSFont]);
     short unsigned int sequentialGlyphs[INITIAL_GLYPH_CACHE_MAX];
     ATSLayoutRecord *glyphRecords;
+    NSFont *fontToUse;
 
     WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "Caching %s %.0f (%ld glyphs) ascent = %f, descent = %f, defaultLineHeightForFont = %f\n", [[font displayName] cString], [font pointSize], numGlyphsInFont, [font ascender], [font descender], [font defaultLineHeightForFont]); 
 
@@ -192,7 +233,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
 
     ATSGlyphVector latinGlyphVector;
     ATSInitializeGlyphVector(latinCount, 0, &latinGlyphVector);
-    ConvertCharactersToGlyphs(styleGroup, &latinBuffer[FIRST_CACHE_CHARACTER], latinCount, &latinGlyphVector);
+    fontToUse = [self convertCharacters: &latinBuffer[FIRST_CACHE_CHARACTER] length: latinCount glyphs: &latinGlyphVector];
     if (latinGlyphVector.numGlyphs != latinCount)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  ascii and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
         
@@ -296,11 +337,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
 
 - (void)drawString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
 {
-    // This will draw the text from the top of the bounding box down.
-    // Qt expects to draw from the baseline.
-    // Remember that descender is negative.
-    point.y -= [self lineSpacing] - [self descent];
-    
+    NSFont *substituteFont;
     UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
     const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
     const UniChar *internalBuffer;
@@ -317,7 +354,17 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
 
     InitATSGlyphVector(&glyphVector, [string length]);
 
-    ConvertCharactersToGlyphs(styleGroup, internalBuffer, [string length], &glyphVector);
+    substituteFont = [self convertCharacters: internalBuffer length: [string length] glyphs: &glyphVector];
+    if (substituteFont){
+        ResetATSGlyphVector(&glyphVector);
+        [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawString: string atPoint: point withColor: color];
+        return;
+    }
+    
+    // This will draw the text from the top of the bounding box down.
+    // Qt expects to draw from the baseline.
+    // Remember that descender is negative.
+    point.y -= [self lineSpacing] - [self descent];
 
     [color set];
     [font set];
@@ -356,6 +403,27 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
 
 - (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
 {
+    NSFont *substituteFont;
+    UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
+    const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
+    const UniChar *internalBuffer;
+
+    if (!_internalBuffer){
+        // FIXME: Handle case where length > LOCAL_GLYPH_BUFFER_SIZE
+        CFStringGetCharacters((CFStringRef)string, CFRangeMake(0, CFStringGetLength((CFStringRef)string)), &localBuffer[0]);
+        internalBuffer = &localBuffer[0];
+    }
+    else
+        internalBuffer = _internalBuffer;
+
+    InitATSGlyphVector(&glyphVector, [string length]);
+    substituteFont = [self convertCharacters: internalBuffer length: [string length] glyphs: &glyphVector];
+    ResetATSGlyphVector(&glyphVector);
+    if (substituteFont){
+        [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawUnderlineForString: string atPoint: point withColor: color];
+        return;
+    }
+    
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
     // Remember that descender is negative.
@@ -395,6 +463,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
     int glyphID;
     ATSLayoutRecord *glyphRecords;
     unsigned int numGlyphs;
+    NSFont *substituteFont;
     
     ATSGlyphRef localCharacterToGlyph[LOCAL_GLYPH_BUFFER_SIZE];
     ATSGlyphRef *usedCharacterToGlyph, *allocateCharacterToGlyph = 0;
@@ -434,12 +503,22 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
         }
     }
 
+    // 1.  Check if the string contains only base characters.
+    //     If it does check to see that our cache contains that character.
+    
     // If we can't use the cached map, then calculate a map for this string.   Expensive.
     if (needCharToGlyphLookup){
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", characters[i], [[font displayName] lossyCString], [font pointSize]);
         InitATSGlyphVector(&glyphVector, length);
-        ConvertCharactersToGlyphs(styleGroup, characters, length, &glyphVector);
+        
+        // Do the character to glyph conversion.
+        substituteFont = [self convertCharacters: characters length: length glyphs: &glyphVector];
+        if (substituteFont){
+            ResetATSGlyphVector(&glyphVector);
+            return [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] widthForCharacters: characters length: length];
+        }
+        
         glyphRecords = (ATSLayoutRecord *)glyphVector.firstRecord;
         numGlyphs = glyphVector.numGlyphs;
 

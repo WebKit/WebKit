@@ -23,8 +23,12 @@ typedef float IFGlyphWidth;
     unsigned int widthCacheSize;
     IFGlyphWidth *widthCache;
     ATSGlyphRef *characterToGlyph;
+    
+    NSArray *substituteFontRenderers;
 }
 
 - initWithFont:(NSFont *)font;
+- (NSFont *)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs;
+
 
 @end

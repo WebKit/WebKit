@@ -1,3 +1,23 @@
+2002-05-07  Richard J. Williamson  <rjw@apple.com>
+
+        First pass at font substitution.  Find a substitute font to
+        use when the specified font doesn't have glyphs for the characters that
+        need to be drawn.
+        
+        Works correctly but hasn't been optimized yet, VERY slow.
+        Will optimize this evening and tomorrow.  Try www.yahoo.co.jp,
+        it will take a long time to render be eventually will draw correctly.
+        
+	* WebCoreSupport.subproj/IFTextRenderer.h:
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(hasMissingGlyphs):
+	(+[IFTextRenderer initialize]):
+	(-[IFTextRenderer convertCharacters:length:glyphs:]):
+	(-[IFTextRenderer initializeCaches]):
+	(-[IFTextRenderer drawString:atPoint:withColor:]):
+	(-[IFTextRenderer drawUnderlineForString:atPoint:withColor:]):
+	(-[IFTextRenderer widthForCharacters:length:]):
+
 2002-05-07  Darin Adler  <darin@apple.com>
 
 	Oops. These files don't belong at the top level.
