@@ -1,5 +1,13 @@
 2004-09-01  Richard Williamson   <rjw@apple.com>
 
+	Fixed panther build glitch.
+
+        Reviewed by Ken.
+
+        * khtml/ecma/kjs_html.cpp:
+
+2004-09-01  Richard Williamson   <rjw@apple.com>
+
 	Finished implementation of gradient support in <canvas>.
 
         Reviewed by John.
