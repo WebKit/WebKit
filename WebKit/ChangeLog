@@ -1,3 +1,30 @@
+2003-02-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3125067 - Investigate performance implications of writing download file data
+	
+        Reviewed by trey, rjw, darin.
+
+        * Downloads.subproj/WebDownloadHandler.h:
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler closeFileAndDelete:]): close the file asynchronously
+        (-[WebDownloadHandler closeFile]): call closeFileAndDelete:NO
+        (-[WebDownloadHandler cleanUpAfterFailure]): call closeFileAndDelete:YES
+        (-[WebDownloadHandler writeDataForkData:resourceForkData:]): call writeForkData:isDataFork:
+        (-[WebDownloadHandler path]): new
+        (-[WebDownloadHandler writeForkData:isDataFork:]): writes file asynchronously
+        (-[WebDownloadHandler errorWithCode:]): moved
+        (-[WebDownloadHandler cancelWithError:]): new, stops load with error
+        (-[WebDownloadHandler dataForkReferenceNumber]): new 
+        (-[WebDownloadHandler setDataForkReferenceNumber:]): new
+        (-[WebDownloadHandler resourceForkReferenceNumber]): new
+        (-[WebDownloadHandler setResourceForkReferenceNumber:]): new
+        (WriteCompletionCallback): new
+        (CloseCompletionCallback): new, removes file if necessary
+        (DeleteCompletionCallback): new,
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoadingWithError:]): new
+
 2003-02-06  Trey Matteson  <trey@apple.com>
 
 	3137647 - ad frames get their own history entries at channels.netscape.com	

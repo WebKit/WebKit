@@ -171,4 +171,6 @@
 - (void)_addResponse: (WebResourceResponse *)r;
 - (NSArray *)_responses;
 
+- (void)_stopLoadingWithError:(WebError *)error;
+
 @end

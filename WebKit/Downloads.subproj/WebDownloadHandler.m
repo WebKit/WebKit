@@ -23,6 +23,37 @@
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
+typedef struct WebFSForkIOParam
+{
+    FSForkIOParam paramBlock;
+    WebDownloadHandler *downloadHandler;
+    BOOL deleteFile;
+    NSData *data;
+} WebFSForkIOParam;
+
+typedef struct WebFSRefParam
+{
+    FSRefParam paramBlock;
+    WebDownloadHandler *downloadHandler;
+} WebFSRefParam;
+
+static void WriteCompletionCallback(ParmBlkPtr paramBlock);
+static void CloseCompletionCallback(ParmBlkPtr paramBlock);
+static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
+
+@interface WebDownloadHandler (WebPrivate)
+- (NSString *)path;
+- (WebError *)errorWithCode:(int)code;
+- (void)cancelWithError:(WebError *)error;
+- (SInt16)dataForkReferenceNumber;
+- (void)setDataForkReferenceNumber:(SInt16)forkRefNum;
+- (SInt16)resourceForkReferenceNumber;
+- (void)setResourceForkReferenceNumber:(SInt16)forkRefNum;
+- (BOOL)writeForkData:(NSData *)data isDataFork:(BOOL)isDataFork;
+- (BOOL)areWritesCancelled;
+- (void)setWritesCancelled:(BOOL)cancelled;
+@end
+
 @implementation WebDownloadHandler
 
 - initWithDataSource:(WebDataSource *)dSource
@@ -48,11 +79,6 @@
     [decoderClasses release];
     [decoderSequence release];
     [super dealloc];
-}
-
-- (WebError *)errorWithCode:(int)code
-{
-    return [WebError errorWithCode:code inDomain:WebErrorDomainWebKit failingURL:[[dataSource URL] absoluteString]];
 }
 
 - (void)decodeHeaderData:(NSData *)headerData
@@ -120,42 +146,33 @@
     return YES;
 }
 
+- (void)closeFork:(SInt16)forkRefNum deleteFile:(BOOL)deleteFile
+{
+    if (forkRefNum) {
+        WebFSForkIOParam *block = malloc(sizeof(WebFSForkIOParam));
+        block->paramBlock.ioCompletion = CloseCompletionCallback;
+        block->paramBlock.forkRefNum = forkRefNum;
+        block->paramBlock.ref = fileRefPtr;
+        block->downloadHandler = [self retain];
+        block->deleteFile = deleteFile;
+        PBCloseForkAsync(&block->paramBlock);
+    }
+}
+
+- (void)closeFileAndDelete:(BOOL)deleteFile
+{
+    [self closeFork:dataForkRefNum deleteFile:deleteFile];
+    [self closeFork:resourceForkRefNum deleteFile:deleteFile];
+}
+
 - (void)closeFile
 {
-    if (dataForkRefNum) {
-        FSCloseFork(dataForkRefNum);
-        dataForkRefNum = 0;
-    }
-    if (resourceForkRefNum) {
-        FSCloseFork(resourceForkRefNum);
-        resourceForkRefNum = 0;
-    }
+    [self closeFileAndDelete:NO];
 }
 
 - (void)cleanUpAfterFailure
 {
-    // VERY IMPORTANT TEST.  Only cleanup if we have opened a file, since the downloadPath
-    // might be an existing file that we haven't discovered that we conflict with.  This can
-    // happen if we're cleaning up after we received the first response, but before the first
-    // data was processed.
-    if (fileRefPtr) {
-        NSString *path = [dataSource downloadPath];
-
-        [self closeFile];
-
-        NSFileManager *fileMgr = [NSFileManager defaultManager];
-        BOOL isDirectory;
-        BOOL fileExists = [fileMgr fileExistsAtPath:path isDirectory:&isDirectory];
-        if (fileExists && !isDirectory) {
-            [fileMgr _web_removeFileOnlyAtPath:path];
-            [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:path];
-        } else if (!fileExists) {
-            ERROR("Download file disappeared in the middle of download");
-        } else {
-            // Note we currently don't support downloading directories, so we know this is wrong
-            ERROR("Download file is a directory - will not be removed");
-        }
-    }
+    [self closeFileAndDelete:YES];
 }
 
 - (WebError *)createFileIfNecessary
@@ -224,39 +241,6 @@
     return nil;
 }
 
-- (BOOL)writeData:(NSData *)data toFork:(SInt16 *)forkRefNum
-{
-    OSErr result;
-    
-    if (*forkRefNum == 0) {
-        HFSUniStr255 forkName;
-        if (forkRefNum == &dataForkRefNum) {
-            result = FSGetDataForkName(&forkName);
-        } else {
-            result = FSGetResourceForkName(&forkName);
-        }
-                
-        if (result != noErr) {
-            ERROR("Couldn't get fork name of download file.");
-            return NO;
-        }
-
-        result = FSOpenFork(fileRefPtr, forkName.length, forkName.unicode, fsWrPerm, forkRefNum);
-        if (result != noErr) {
-            ERROR("Couldn't open fork of download file.");
-            return NO;
-        }
-    }
-
-    result = FSWriteFork(*forkRefNum, fsAtMark, 0, [data length], [data bytes], NULL);
-    if (result != noErr) {
-        ERROR("Couldn't write to fork of download file.");
-        return NO;
-    }
-
-    return YES;
-}
-
 - (WebError *)writeDataForkData:(NSData *)dataForkData resourceForkData:(NSData *)resourceForkData
 {
     WebError *error = [self createFileIfNecessary];
@@ -267,15 +251,14 @@
     BOOL didWrite = YES;
     
     if ([dataForkData length]) {
-        didWrite = [self writeData:dataForkData toFork:&dataForkRefNum];
+        didWrite = [self writeForkData:dataForkData isDataFork:YES];
     }
 
     if (didWrite && [resourceForkData length]) {
-        didWrite = [self writeData:resourceForkData toFork:&resourceForkRefNum];
+        didWrite = [self writeForkData:resourceForkData isDataFork:NO];
     }
 
     if (!didWrite) {
-        ERROR("Writing to download file failed.");
         [self cleanUpAfterFailure];
         return [self errorWithCode:WebKitErrorCannotWriteToFile];
     }
@@ -369,8 +352,6 @@
 
     [self closeFile];
 
-    [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:[dataSource downloadPath]];
-
     LOG(Download, "Download complete. Saved to: %@", [dataSource downloadPath]);
 
     return nil;
@@ -378,7 +359,176 @@
 
 - (void)cancel
 {
+    isCancelled = YES;
     [self cleanUpAfterFailure];
 }
 
 @end
+
+
+@implementation WebDownloadHandler (WebPrivate)
+
+- (NSString *)path
+{
+    return [dataSource downloadPath];
+}
+
+- (BOOL)writeForkData:(NSData *)data isDataFork:(BOOL)isDataFork
+{
+    ASSERT(!isCancelled);
+    
+    OSErr result;
+    SInt16 *forkRefNum = isDataFork ? &dataForkRefNum : &resourceForkRefNum;
+    
+    if (*forkRefNum == 0) {
+        HFSUniStr255 forkName;
+        if (isDataFork) {
+            result = FSGetDataForkName(&forkName);
+        } else {
+            result = FSGetResourceForkName(&forkName);
+        }
+
+        if (result != noErr) {
+            ERROR("Couldn't get fork name of download file.");
+            return NO;
+        }
+
+        result = FSOpenFork(fileRefPtr, forkName.length, forkName.unicode, fsWrPerm, forkRefNum);
+        if (result != noErr) {
+            ERROR("Couldn't open fork of download file.");
+            return NO;
+        }
+    }
+    
+    WebFSForkIOParam *block = malloc(sizeof(WebFSForkIOParam));
+    block->paramBlock.ioCompletion = WriteCompletionCallback;
+    block->paramBlock.forkRefNum = *forkRefNum;
+    block->paramBlock.positionMode = fsAtMark;
+    block->paramBlock.positionOffset = 0;
+    block->paramBlock.requestCount = [data length];
+    block->paramBlock.buffer = (Ptr)[data bytes];
+    block->downloadHandler = [self retain];
+    block->data = [data copy];
+    PBWriteForkAsync(&block->paramBlock);
+
+    return YES;
+}
+
+- (WebError *)errorWithCode:(int)code
+{
+    return [WebError errorWithCode:code inDomain:WebErrorDomainWebKit failingURL:[[dataSource URL] absoluteString]];
+}
+
+- (void)cancelWithError:(WebError *)error
+{
+    [dataSource _stopLoadingWithError:error];
+}
+
+- (SInt16)dataForkReferenceNumber
+{
+    return dataForkRefNum;
+}
+
+- (void)setDataForkReferenceNumber:(SInt16)forkRefNum
+{
+    dataForkRefNum = forkRefNum;
+}
+
+- (SInt16)resourceForkReferenceNumber
+{
+    return resourceForkRefNum;
+}
+
+- (void)setResourceForkReferenceNumber:(SInt16)forkRefNum
+{
+    resourceForkRefNum = forkRefNum;
+}
+
+- (BOOL)areWritesCancelled
+{
+    return areWritesCancelled;
+}
+
+- (void)setWritesCancelled:(BOOL)cancelled
+{
+    areWritesCancelled = cancelled;
+}
+
+@end
+
+static void WriteCompletionCallback(ParmBlkPtr paramBlock)
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    WebFSForkIOParam *block = (WebFSForkIOParam *)paramBlock;
+    WebDownloadHandler *downloadHandler = block->downloadHandler;
+    
+    if (block->paramBlock.ioResult != noErr && ![downloadHandler areWritesCancelled]) {
+        ERROR("Writing to fork of download file failed with error: %d", block->paramBlock.ioResult);
+        [downloadHandler setWritesCancelled:YES];
+        [downloadHandler performSelectorOnMainThread:@selector(cancelWithError:)
+                                          withObject:[downloadHandler errorWithCode:WebKitErrorCannotWriteToFile]
+                                       waitUntilDone:NO];
+    }
+
+    [downloadHandler release];
+    [block->data release];
+    [pool release];
+    free(block);
+}
+
+static void CloseCompletionCallback(ParmBlkPtr paramBlock)
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    WebFSForkIOParam *block = (WebFSForkIOParam *)paramBlock;
+    WebDownloadHandler *downloadHandler = block->downloadHandler;
+    
+    if (block->paramBlock.ioResult != noErr) {
+        ERROR("Closing fork of download file failed with error: %d", block->paramBlock.ioResult);
+        // FIXME: Need to report close errors.
+    }
+
+    if (block->paramBlock.forkRefNum == [downloadHandler dataForkReferenceNumber]) {
+        [downloadHandler setDataForkReferenceNumber:0];
+    } else {
+        [downloadHandler setResourceForkReferenceNumber:0];
+    }
+
+    // Check if both the data fork and resource fork are now closed.
+    if ([downloadHandler dataForkReferenceNumber] == 0 && [downloadHandler resourceForkReferenceNumber] == 0) {
+        if (block->deleteFile && block->paramBlock.ref) {
+            WebFSRefParam *deleteBlock = malloc(sizeof(WebFSRefParam));
+            deleteBlock->paramBlock.ioCompletion = DeleteCompletionCallback;
+            deleteBlock->paramBlock.ref = block->paramBlock.ref;
+            deleteBlock->downloadHandler = [downloadHandler retain];                
+            PBDeleteObjectAsync(&deleteBlock->paramBlock);
+        } else {
+            [[NSWorkspace sharedWorkspace] performSelectorOnMainThread:@selector(_web_noteFileChangedAtPath:)
+                                                            withObject:[downloadHandler path]
+                                                         waitUntilDone:NO];
+        }
+    }
+    
+    [downloadHandler release];
+    [pool release];
+    free(block);
+}
+
+static void DeleteCompletionCallback(ParmBlkPtr paramBlock)
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    WebFSRefParam *block = (WebFSRefParam *)paramBlock;
+    WebDownloadHandler *downloadHandler = block->downloadHandler;
+    
+    if (block->paramBlock.ioResult != noErr) {
+        ERROR("Removal of download file failed with error: %d", block->paramBlock.ioResult);
+    } else {
+        [[NSWorkspace sharedWorkspace] performSelectorOnMainThread:@selector(_web_noteFileChangedAtPath:)
+                                                        withObject:[downloadHandler path]
+                                                     waitUntilDone:NO];
+    }
+    
+    [downloadHandler release];
+    [pool release];
+    free(block);
+}
+

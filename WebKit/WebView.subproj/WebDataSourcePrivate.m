@@ -719,6 +719,9 @@
     return _private->responses;
 }
 
-
+- (void)_stopLoadingWithError:(WebError *)error
+{
+    [_private->mainClient cancelWithError:error];
+}
 
 @end

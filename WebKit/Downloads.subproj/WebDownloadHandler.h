@@ -25,6 +25,13 @@
     
     SInt16 dataForkRefNum;
     SInt16 resourceForkRefNum;
+
+    // isCancelled is used to make sure we don't write after cancelling the load.
+    BOOL isCancelled;
+
+    // areWritesCancelled is only used by WriteCompletionCallback to make
+    // sure that only 1 write failure cancels the load.
+    BOOL areWritesCancelled;
 }
 
 - initWithDataSource:(WebDataSource *)dSource;
