@@ -308,6 +308,17 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [webView _popPerformingProgrammaticFocus];
 }
 
+- (BOOL)wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
+{
+    ASSERT(_frame != nil);
+    NSView *documentView = [[_frame frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]]) {
+        return NO;
+    }
+    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
+    return [webHTMLView _wasFirstResponderAtMouseDownTime:responder];
+}
+
 - (void)closeWindowSoon
 {
     [[_frame webView] performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
@@ -1456,10 +1467,10 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 // MF:!!! Another difference in both of these sets from the old text object is we include all the whitespace in whitespaceAndNewlineCharacterSet.
 #define _preSmartString @"([\"\'#$/-`{"
 #define _postSmartString @")].,;:?\'!\"%*-/}"
-static NSMutableCharacterSet *_preSmartSet = nil;
-static NSMutableCharacterSet *_postSmartSet = nil;
 
-static NSCharacterSet *_getPreSmartSet() {
+static NSCharacterSet *_getPreSmartSet(void)
+{
+    static NSMutableCharacterSet *_preSmartSet = nil;
     if (!_preSmartSet) {
         _preSmartSet = [[NSMutableCharacterSet characterSetWithCharactersInString:_preSmartString] retain];
         [_preSmartSet formUnionWithCharacterSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -1478,7 +1489,9 @@ static NSCharacterSet *_getPreSmartSet() {
     return _preSmartSet;
 }
 
-static NSCharacterSet *_getPostSmartSet() {
+static NSCharacterSet *_getPostSmartSet(void)
+{
+    static NSMutableCharacterSet *_postSmartSet = nil;
     if (!_postSmartSet) {
         _postSmartSet = [[NSMutableCharacterSet characterSetWithCharactersInString:_postSmartString] retain];
         [_postSmartSet formUnionWithCharacterSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];

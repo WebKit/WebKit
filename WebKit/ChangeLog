@@ -1,3 +1,30 @@
+2004-11-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - added _wasFirstResponderAtMouseDownTime method to bridge so we can fix
+          <rdar://problem/3846152> REGRESSION (125-166): can't drag text out of <input type=text> fields
+          with a subsequent change to WebCore.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (wasFirstResponderAtMouseDownTime:): Added. Calls _wasFirstResponderAtMouseDownTime
+        on the WebHTMLView.
+        (_getPreSmartSet): Move global inside the function, add (void) for cleanliness.
+        (_getPostSmartSet): Ditto.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLViewPrivate dealloc]): Release firstResponderAtMouseDownTime.
+        (-[WebHTMLView _setMouseDownEvent:]): Early exit if event is not changing.
+        Set firstResponderAtMouseDownTime to the first responder.
+        (-[WebHTMLView mouseDown:]): Release firstResponderAtMouseDownTime after handling
+        the mouseDown event.
+        (-[WebHTMLView _wasFirstResponderAtMouseDownTime:]): Added. Uses the
+        firstResponderAtMouseDownTime field.
+        * WebView.subproj/WebHTMLViewInternal.h: Added firstResponderAtMouseDownTime field
+        and _wasFirstResponderAtMouseDownTime method.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2004-11-11  Richard Williamson   <rjw@apple.com>
 
         Reviewed by Chris.

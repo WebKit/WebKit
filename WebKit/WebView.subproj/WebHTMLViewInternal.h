@@ -53,6 +53,8 @@
     WebTextCompleteController *compController;
     
     BOOL transparentBackground;
+
+    NSResponder *firstResponderAtMouseDownTime;
 }
 @end
 
@@ -61,4 +63,5 @@
 - (void)_updateFontPanel;
 - (unsigned int)_delegateDragSourceActionMask;
 - (BOOL)_canSmartCopyOrDelete;
+- (BOOL)_wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
 @end

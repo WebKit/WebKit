@@ -206,6 +206,7 @@ static BOOL forceRealHitTest = NO;
     [pluginController release];
     [toolTip release];
     [compController release];
+    [firstResponderAtMouseDownTime release];
 
     [super dealloc];
 }
@@ -2132,9 +2133,17 @@ static WebHTMLView *lastHitView = nil;
 - (void)_setMouseDownEvent:(NSEvent *)event
 {
     ASSERT([event type] == NSLeftMouseDown || [event type] == NSRightMouseDown || [event type] == NSOtherMouseDown);
+
+    if (event == _private->mouseDownEvent) {
+        return;
+    }
+
     [event retain];
     [_private->mouseDownEvent release];
     _private->mouseDownEvent = event;
+
+    [_private->firstResponderAtMouseDownTime release];
+    _private->firstResponderAtMouseDownTime = [[[self window] firstResponder] retain];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
@@ -2192,18 +2201,19 @@ static WebHTMLView *lastHitView = nil;
 
     // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
     // We don't want to pass them along to KHTML a second time.
-    if ([event modifierFlags] & NSControlKeyMask) {
-        return;
-    }
-    
-    _private->ignoringMouseDraggedEvents = NO;
-    
-    // Don't do any mouseover while the mouse is down.
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
+    if (!([event modifierFlags] & NSControlKeyMask)) {
+        _private->ignoringMouseDraggedEvents = NO;
 
-    // Let KHTML get a chance to deal with the event. This will call back to us
-    // to start the autoscroll timer if appropriate.
-    [[self _bridge] mouseDown:event];
+        // Don't do any mouseover while the mouse is down.
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
+
+        // Let KHTML get a chance to deal with the event. This will call back to us
+        // to start the autoscroll timer if appropriate.
+        [[self _bridge] mouseDown:event];
+    }
+
+    [_private->firstResponderAtMouseDownTime release];
+    _private->firstResponderAtMouseDownTime = nil;
 }
 
 - (void)dragImage:(NSImage *)dragImage
@@ -4164,6 +4174,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (BOOL)_canSmartCopyOrDelete
 {
     return [[self _webView] smartInsertDeleteEnabled] && [[self _bridge] selectionGranularity] == WebSelectByWord;
+}
+
+- (BOOL)_wasFirstResponderAtMouseDownTime:(NSResponder *)responder
+{
+    return responder == _private->firstResponderAtMouseDownTime;
 }
 
 @end
