@@ -83,7 +83,6 @@ public:
 
     void setTitle(const DOM::DOMString &);
     void setStatusBarText(const QString &status);
-    QString documentSource() const;
 
     bool frameExists(const QString &frameName);
     KHTMLPart *findFrame(const QString &frameName);

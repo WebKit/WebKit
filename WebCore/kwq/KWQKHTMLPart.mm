@@ -556,12 +556,6 @@ QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
     return parts;
 }
 
-// FIXME: We should remove this; it's only used by the doomed "View Reconstructed Source" command.
-QString KWQKHTMLPartImpl::documentSource() const
-{
-    return m_documentSource;
-}
-
 void KWQKHTMLPartImpl::setBaseURL(const KURL &url)
 {
     m_baseURL = url;

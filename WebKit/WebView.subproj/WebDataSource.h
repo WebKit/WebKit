@@ -126,13 +126,8 @@
 
 - (BOOL)isDocumentHTML;
 
-// Get the source of the document by reconstructing it from the DOM.
-- (NSString *)documentTextFromDOM;
-
-
 // Get the actual source of the document.
 - (NSString *)documentSource;
-
 
 // URL reference point, these should probably not be public for 1.0.
 - (NSURL *)base;

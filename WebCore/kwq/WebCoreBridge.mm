@@ -127,19 +127,6 @@ using namespace khtml;
     bridgeOwnsKHTMLView = YES;
 }
 
-- (NSString *)documentTextFromDOM
-{
-    NSString *string = nil;
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
-    if (doc) {
-        string = [[doc->recursive_toHTML(1).getNSString() copy] autorelease];
-    }
-    if (string == nil) {
-        string = @"";
-    }
-    return string;
-}
-
 - (void)scrollToBaseAnchor
 {
     part->impl->gotoBaseAnchor();

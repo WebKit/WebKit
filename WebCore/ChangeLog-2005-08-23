@@ -1,3 +1,15 @@
+2002-08-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Remove stuff formerly useful for "View Reconstructed Source"
+	feature but now useless.
+
+	* kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+	(KWQKHTMLPartImpl::documentSource): Removed.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+	(-[WebCoreBridge documentTextFromDOM]): Removed.
+
 2002-07-31  Darin Adler  <darin@apple.com>
 
         * kwq/qt/qptrvector.h:

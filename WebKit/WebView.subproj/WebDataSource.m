@@ -261,17 +261,6 @@
     return nil;
 }
 
-// FIXME: Move to representation
-- (NSString *)documentTextFromDOM
-{
-    if (_private->committed) {
-	return nil;
-    }
-
-    return [[self _bridge] documentTextFromDOM];
-}
-
-
 // URL reference point, these should probably not be public for 1.0.
 - (NSURL *)base
 {
