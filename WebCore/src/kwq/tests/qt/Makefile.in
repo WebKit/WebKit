@@ -35,6 +35,7 @@ PROGRAMS = \
     qstack-test \
     qregexp-test \
     qchar-test \
+    qstring-test \
     qdate-test \
     qtime-test \
     qdatetime-test \
@@ -114,6 +115,9 @@ qregexp-test: qregexp-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 qchar-test: qchar-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qstring-test: qstring-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 qdate-test: qdate-test.o

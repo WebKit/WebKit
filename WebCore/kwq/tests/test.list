@@ -16,3 +16,4 @@ qt/qchar-test
 qt/qdate-test
 qt/qtime-test
 qt/qdatetime-test
+qt/qstring-test
