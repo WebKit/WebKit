@@ -1,3 +1,17 @@
+2003-01-21  Trey Matteson  <trey@apple.com>
+
+	3032718 - I-beam cursor behavior different between web view and text view
+
+	Now that the innerNode is the real text element instead of an enclosing
+	tag element, it's a piece of cake to test for a text node and set the ibeam cursor.
+
+        Reviewed by Chris
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMouseMoveEvent):  Set iBeam if over text.
+        * kwq/KWQKCursor.mm:
+        (KCursor::ibeamCursor):  Make this cursor have the Cocoa ibeam instead of arrow.
+
 2003-01-21  David Hyatt  <hyatt@apple.com>
 
 	Fix selection so that it will go up to the parent node

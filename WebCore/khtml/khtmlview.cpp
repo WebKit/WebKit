@@ -575,6 +575,9 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     case CURSOR_AUTO:
         if ( mev.url.length() && m_part->settings()->changeCursor() )
             c = m_part->urlCursor();
+        else if ( mev.innerNode.nodeType() == Node::TEXT_NODE
+                  || mev.innerNode.nodeType() == Node::CDATA_SECTION_NODE )
+            c = KCursor::ibeamCursor();
         break;
     case CURSOR_CROSS:
         c = KCursor::crossCursor();
