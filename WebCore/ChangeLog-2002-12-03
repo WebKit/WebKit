@@ -1,5 +1,9 @@
 2002-07-21  Maciej Stachowiak  <mjs@apple.com>
 
+        * Makefile.am: Remove products from symroots on `make clean'.
+
+2002-07-21  Maciej Stachowiak  <mjs@apple.com>
+
         * WebCore.pbproj/project.pbxproj: Set directories for the group
 	folders, so that creating new files in them will put them in the
 	right directory by default.

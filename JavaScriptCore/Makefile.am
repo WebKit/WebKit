@@ -13,4 +13,8 @@ JavaScriptCore-stamp: kjs/*.cpp kjs/*.h
 	pbxbuild -buildstyle $(BUILDSTYLE) && touch $@
 clean-am:
 	pbxbuild clean
+	rm -rf $(SYMROOTS)/JavaScriptCore.build
+	rm -rf $(SYMROOTS)/JavaScriptCore.framework
+	rm -rf $(SYMROOTS)/Alexander.app/Frameworks/JavaScriptCore.framework
+
 CLEANFILES = JavaScriptCore-stamp
