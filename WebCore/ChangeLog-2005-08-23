@@ -1,6 +1,15 @@
 2004-05-21  Darin Adler  <darin@apple.com>
 
-        Reviewed by Ken.
+        Reviewed by Ken and Chris.
+
+        - fixed <rdar://problem/3656948>: (markup strings that contain <html> and <body> elements don't work, producing nothing)
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::createContextualFragment):
+        Changed things around so that nodes are removed from their parent node before 
+
+2004-05-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Chris.
 
         - fixed part of <rdar://problem/3656948>: (HTML Editing: -[WebView replaceSelectionWithMarkupString:] doesn't seem to work)
 

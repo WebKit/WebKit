@@ -714,34 +714,27 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment( const DOMString
     // accomadate folks passing complete HTML documents to make the
     // child of an element.
 
-    NodeImpl *node = fragment->firstChild(); 
-    while (node != NULL) {
+    NodeImpl *nextNode;
+    for (NodeImpl *node = fragment->firstChild(); node != NULL; node = nextNode) {
+        nextNode = node->nextSibling();
 	if (node->id() == ID_HTML || node->id() == ID_BODY) {
 	    NodeImpl *firstChild = node->firstChild();
-	    NodeImpl *child = firstChild; 
-	    while (child != NULL) {
-		NodeImpl *nextChild = child->nextSibling();
+            if (firstChild != NULL) {
+                nextNode = firstChild;
+            }
+	    NodeImpl *nextChild;
+            for (NodeImpl *child = firstChild; child != NULL; child = nextChild) {
+		nextChild = child->nextSibling();
+                child->ref();
+                node->removeChild(child, ignoredExceptionCode);
 		fragment->insertBefore(child, node, ignoredExceptionCode);
-                // FIXME: Does node leak here?
-		child = nextChild;
+                child->deref();
 	    }
-	    if (firstChild == NULL) {
-		NodeImpl *nextNode = node->nextSibling();
-		fragment->removeChild(node, ignoredExceptionCode);
-                // FIXME: Does node leak here?
-                node = nextNode;
-	    } else {
-		fragment->removeChild(node, ignoredExceptionCode);
-                // FIXME: Does node leak here?
-		node = firstChild;
-	    }
+            fragment->removeChild(node, ignoredExceptionCode);
+            // FIXME: Does node leak here?
 	} else if (node->id() == ID_HEAD) {
-	    NodeImpl *nextNode = node->nextSibling();
 	    fragment->removeChild(node, ignoredExceptionCode);
             // FIXME: Does node leak here?
-	    node = nextNode;
-	} else {
-	    node = node->nextSibling();
 	}
     }
 
