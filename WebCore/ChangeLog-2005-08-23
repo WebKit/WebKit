@@ -1,3 +1,24 @@
+2002-08-22  Darin Adler  <darin@apple.com>
+
+	Some small QString improvements.
+
+        * kwq/qt/qstring.h: Add printf attribute to sprintf member function.
+        * kwq/KWQString.mm:
+	Remove extra \n characters from QSTRING_FAILURE calls. Change some
+	fprintf to QSTRING_FAILURE. Change some QSTRING_FAILURE to KWQ_ASSERT.
+        (QStringData::makeAscii): Fix bug where it would update _maxAscii
+	with a new size even when it didn't allocate a new buffer.
+        (QStringData::makeUnicode): Fix bug where it would update _maxUnicode
+	with a new size even when it didn't allocate a new buffer.
+        (QString::utf8): Fix bug where it assumed the UTF-8 form of a string
+	has the same length as the Unicode version. Also save one allocation
+	by doing it right into the QCString.
+        (QString::local8Bit): Just call utf8().
+        (QString::setNum): Have all these call our sprintf.
+        (QString::sprintf): Format once to get the length. Then do the second
+	format right into the string buffer. This way we don't have to do
+	any allocation at all, nor use CFString.
+
 === Alexander-20 ===
 
 2002-08-22  Darin Adler  <darin@apple.com>

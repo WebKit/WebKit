@@ -210,19 +210,19 @@ void _printQStringAllocationStatistics()
 static void *allocateHandle();
 static void freeHandle(void *free);
 
-#define IS_ASCII_QCHAR(C) (C > (QChar)0 && C < (QChar)0xff)
+#define IS_ASCII_QCHAR(c) ((c).unicode() > 0 && (c).unicode() <= 0xff)
 
 static const int caseDelta = ('a' - 'A');
-#define ASCII_TO_LOWER (p)  ((p >= 'A' && p <= 'Z') ? (p + caseDelta) : p)
+#define ASCII_TO_LOWER (p) ((p >= 'A' && p <= 'Z') ? (p + caseDelta) : p)
 
 #ifdef NDEBUG
-#define QSTRING_FAILURE(str_expr) {}
+#define QSTRING_FAILURE(str_expr) ((void)0)
 #else
 #define QSTRING_FAILURE(str_expr) \
     do { \
         struct rlimit _rlimit = {RLIM_INFINITY, RLIM_INFINITY}; \
         setrlimit(RLIMIT_CORE, &_rlimit); \
-            fprintf(stderr, "QSTRING FAILURE: (%s:%d %s) %s \n", __FILE__, __LINE__, __PRETTY_FUNCTION__, str_expr); \
+        fprintf(stderr, "QSTRING FAILURE: (%s:%d %s) %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, str_expr); \
         raise(SIGQUIT); \
     } while (0)
 #endif //NDEBUG
@@ -318,7 +318,7 @@ void QStringData::initialize()
     _isHeapAllocated = 0;
 }
 
-// Dont' copy data.
+// Don't copy data.
 QStringData::QStringData(QChar *u, uint l, uint m) :
 	refCount(1), _length(l), _unicode(u), _ascii(0), _maxUnicode(m), _isUnicodeInternal(0), _isUnicodeValid(1), _isHeapAllocated(0), _maxAscii(QS_INTERNAL_BUFFER_CHARS), _isAsciiInternal(0), _isAsciiValid(0)
 {
@@ -362,7 +362,6 @@ void QStringData::operator delete(void*p)
 {
     return free(p);
 }
-
 #endif
 
 // Copy data
@@ -463,8 +462,7 @@ QStringData* QString::makeSharedNull()
 
 QStringData::~QStringData()
 {
-    if (refCount != 0)
-        QSTRING_FAILURE ("deleting when refCount != 0\n");
+    KWQ_ASSERT(refCount == 0);
         
     // Ack!  The destcructor will be called when the QString is deleted.
     if ( _unicode && !_isUnicodeInternal )
@@ -489,8 +487,7 @@ inline char *QStringData::ascii()
 
 void QStringData::increaseAsciiSize(uint size)
 {
-    if (this == QString::shared_null)
-        fprintf (stderr, "increaseAsciiSize!\n");
+    KWQ_ASSERT(this != QString::shared_null);
         
     uint newSize = (uint)ALLOC_CHAR_GOOD_SIZE(size);
     char *prev = 0;
@@ -517,7 +514,7 @@ void QStringData::increaseAsciiSize(uint size)
         }
     }
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
     
     if (prev)
         DELETE_CHAR(prev);
@@ -544,8 +541,7 @@ inline QChar *QStringData::unicode()
 
 void QStringData::increaseUnicodeSize(uint size)
 {
-    if (this == QString::shared_null)
-        fprintf (stderr, "increaseUnicodeSize!\n");
+    KWQ_ASSERT(this != QString::shared_null);
         
     uint newSize = (uint)ALLOC_QCHAR_GOOD_SIZE(size);
     QChar *prev = 0;
@@ -569,7 +565,7 @@ void QStringData::increaseUnicodeSize(uint size)
         }
     }
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
     
     if (prev)
         DELETE_QCHAR(prev);
@@ -583,11 +579,8 @@ void QStringData::increaseUnicodeSize(uint size)
 
 char *QStringData::makeAscii()
 {
-    if (this == QString::shared_null)
-        fprintf (stderr, "makeAscii!\n");
+    KWQ_ASSERT(this != QString::shared_null);
         
-    uint newSize = ALLOC_CHAR_GOOD_SIZE(_length+1);
-
     if (_isUnicodeValid){
         QChar copyBuf[QS_INTERNAL_BUFFER_CHARS];
         QChar *str;
@@ -609,7 +602,9 @@ char *QStringData::makeAscii()
             _isAsciiInternal = 1;
         }
         else {
+            uint newSize = ALLOC_CHAR_GOOD_SIZE(_length+1);
             _ascii = ALLOC_CHAR(newSize);
+            _maxAscii = newSize;
             str = _unicode;
             _isAsciiInternal = 0;
         }
@@ -619,24 +614,21 @@ char *QStringData::makeAscii()
         while ( i-- )
             *cp++ = *str++;
         *cp = 0;
+        
+        _isUnicodeValid = 0;
+        _isAsciiValid = 1;
     }
     else if (!_isAsciiValid)
-        QSTRING_FAILURE("unicode character cache not valid\n");
+        QSTRING_FAILURE("ASCII character cache not valid");
         
-    _maxAscii = newSize;
-    _isAsciiValid = 1;
-    _isUnicodeValid = 0;
     return _ascii;
 }
 
 
 QChar *QStringData::makeUnicode()
 {
-    if (this == QString::shared_null)
-        fprintf (stderr, "makeUnicode!\n");
+    KWQ_ASSERT(this != QString::shared_null);
         
-    uint newSize = ALLOC_QCHAR_GOOD_SIZE(_length);
-    
     if (_isAsciiValid){
         char copyBuf[QS_INTERNAL_BUFFER_CHARS];
         char *str;
@@ -658,7 +650,9 @@ QChar *QStringData::makeUnicode()
             _isUnicodeInternal = 1;
         }
         else {
+            uint newSize = ALLOC_QCHAR_GOOD_SIZE(_length);
             _unicode = ALLOC_QCHAR(newSize);
+            _maxUnicode = newSize;
             str = _ascii;
             _isUnicodeInternal = 0;
         }
@@ -666,13 +660,13 @@ QChar *QStringData::makeUnicode()
         QChar *cp = _unicode;
         while ( i-- )
             *cp++ = *str++;
+        
+        _isUnicodeValid = 1;
+        _isAsciiValid = 0;
     }
     else if (!_isUnicodeValid)
-        QSTRING_FAILURE("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
 
-    _maxUnicode = newSize;
-    _isUnicodeValid = 1;
-    _isAsciiValid = 0;
     return _unicode;
 }
 
@@ -745,7 +739,6 @@ QString QString::fromStringWithEncoding(const char *chs, int len, CFStringEncodi
                 CFStringAppendCString(s, chs, encoding);
             } else {
                 // append length-specified string
-                // FIXME: can we find some way of not using this temporary?
                 char *buf = (char *)CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
                 strncpy(buf, chs, len);
                 *(buf + len) = '\0';
@@ -787,7 +780,7 @@ NSString *QString::getNSString() const
         return [NSString stringWithCString:(const char *)ascii()];
     }
     
-    QSTRING_FAILURE("invalid character cache\n");
+    QSTRING_FAILURE("invalid character cache");
     return nil;
 }
 
@@ -796,14 +789,11 @@ const QString QString::null;
 QString::~QString()
 {
     bool needToFreeHandle = false;
-    struct QStringData *oldData = (*dataHandle);
-    struct QStringData **oldHandle = dataHandle;
+    QStringData *oldData = (*dataHandle);
+    QStringData **oldHandle = dataHandle;
     
-    if (!oldHandle)
-        QSTRING_FAILURE ("QStringData == nil\n");
-        
-    if (oldData->refCount == 0)
-        QSTRING_FAILURE ("QStringData refCount == 0\n");
+    KWQ_ASSERT(oldHandle);
+    KWQ_ASSERT(oldData->refCount != 0);
 
     // Only free the handle if no other string has a reference to the
     // data.  The handle will be freed by the string that has the
@@ -818,8 +808,7 @@ QString::~QString()
     // if *dataHandle points to our internal QStringData.
     oldData->deref();
 
-    if (oldData == &internalData && oldData->refCount != 0)
-        QSTRING_FAILURE ("QStringData refCount != 0\n");
+    KWQ_ASSERT(oldData != &internalData || oldData->refCount == 0);
     
     if (needToFreeHandle)
         freeHandle (oldHandle);
@@ -843,7 +832,7 @@ QString::QString()
 QString::QString(QStringData *constData, bool /*dummy*/) 
 {
     internalData.deref();
-    dataHandle = (struct QStringData **)allocateHandle();
+    dataHandle = (QStringData **)allocateHandle();
     *dataHandle = constData;
     
     // The QConstString constructor allocated the QStringData.
@@ -856,10 +845,10 @@ QString::QString(QChar qc)
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     countInstance (&dataHandle);
 #endif
-    dataHandle = (struct QStringData **)allocateHandle();
+    dataHandle = (QStringData **)allocateHandle();
 
     // Copy the QChar.
-    if (IS_ASCII_QCHAR(qc)){
+    if (IS_ASCII_QCHAR(qc)) {
         char c = (char)qc; 
         *dataHandle = &internalData;
         internalData.initialize( &c, 1 );
@@ -875,7 +864,7 @@ QString::QString(const QByteArray &qba)
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     countInstance (&dataHandle);
 #endif
-    dataHandle = (struct QStringData **)allocateHandle();
+    dataHandle = (QStringData **)allocateHandle();
 
     // Copy data
     *dataHandle = &internalData;
@@ -892,7 +881,7 @@ QString::QString(const QChar *unicode, uint length)
         dataHandle = makeSharedNullHandle();
 	dataHandle[0]->ref();
     } else {
-        dataHandle = (struct QStringData **)allocateHandle();
+        dataHandle = (QStringData **)allocateHandle();
 
         // Copy the QChar *
         *dataHandle = &internalData;
@@ -905,7 +894,7 @@ QString::QString(const char *chs)
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     countInstance (&dataHandle);
 #endif
-    dataHandle = (struct QStringData **)allocateHandle();
+    dataHandle = (QStringData **)allocateHandle();
     *dataHandle = &internalData;
 
     if (chs)
@@ -919,7 +908,7 @@ QString::QString(const char *chs, int len)
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     countInstance (&dataHandle);
 #endif
-    dataHandle = (struct QStringData **)allocateHandle();
+    dataHandle = (QStringData **)allocateHandle();
     *dataHandle = &internalData;
     internalData.initialize(chs,len);
 }
@@ -997,9 +986,9 @@ inline QChar QString::at(uint i) const
             return thisData->_unicode[i];
     }
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
         
-    return (QChar)0;
+    return QChar::null;
 }
 
 const QChar *QString::unicode() const
@@ -1031,7 +1020,7 @@ bool QString::startsWith( const QString& s ) const
         }
     }
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
         
     return TRUE;
 }
@@ -1057,12 +1046,21 @@ const char *QString::latin1() const
 
 QCString QString::utf8() const
 {
-    return convertToQCString(kCFStringEncodingUTF8);
+    uint len = dataHandle[0]->_length;
+    if (len == 0) {
+        return QCString();
+    }
+    CFStringRef s = getCFString();
+    CFIndex utf8Size;
+    CFStringGetBytes(s, CFRangeMake(0, len), kCFStringEncodingUTF8, '?', false, 0, 0, &utf8Size);
+    QCString qcs(utf8Size + 1);
+    CFStringGetCString(s, qcs.data(), utf8Size + 1, kCFStringEncodingUTF8);
+    return qcs;
 }
 
 QCString QString::local8Bit() const
 {
-    return convertToQCString(kCFStringEncodingMacRoman);
+    return utf8();
 }
 
 bool QString::isNull() const
@@ -1077,7 +1075,7 @@ int QString::find(QChar qc, int index) const
     else if (dataHandle[0]->_isUnicodeValid)
         return find(QString(qc), index, TRUE);
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
 
     // Should never get here.  Needed for compiler.
     return -1;
@@ -1101,7 +1099,7 @@ int QString::find(char ch, int index) const
     else if (dataHandle[0]->_isUnicodeValid)
         return find(QChar(ch), index, TRUE);
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
 
     return -1;
 }
@@ -1295,7 +1293,7 @@ int QString::findRev(char ch, int index) const
     else if (dataHandle[0]->_isUnicodeValid)
         return findRev(QString(QChar(ch)), index);
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
 
     return -1;
 }
@@ -1414,7 +1412,7 @@ int QString::contains( QChar c, bool cs ) const
         }
     } 
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
     return count;
 }
 
@@ -1449,7 +1447,7 @@ int QString::contains(const char *str, bool caseSensitive) const
     else if (dataHandle[0]->_isUnicodeValid)
         return contains(QString(str),caseSensitive);
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
 
     return 0;
 }
@@ -1784,7 +1782,7 @@ QString QString::lower() const
             }
         }
         else
-            QSTRING_FAILURE ("invalid character cache\n");
+            QSTRING_FAILURE("invalid character cache");
     }
     return s;
 }
@@ -1821,7 +1819,7 @@ QString QString::stripWhiteSpace() const
             memcpy( (QChar *)result.data()->unicode(), &unicode()[start], sizeof(QChar)*l );
     }
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
     return result;
 }
 
@@ -1876,7 +1874,7 @@ QString QString::simplifyWhiteSpace() const
         result.truncate( outc );
     }
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
     
     return result;
 }
@@ -1909,8 +1907,8 @@ QString &QString::setUnicode(const QChar *uni, uint len)
         deref();
         if (needToFreeHandle)
             freeHandle (dataHandle);
-        dataHandle = (struct QStringData **)allocateHandle();
-	*dataHandle = new QStringData( uni, len );
+        dataHandle = (QStringData **)allocateHandle();
+	*dataHandle = new QStringData(uni, len);
         dataHandle[0]->_isHeapAllocated = 1;
     } else {
 	if ( uni )
@@ -1940,7 +1938,7 @@ QString &QString::setLatin1(const char *str, int len)
     if (dataHandle != makeSharedNullHandle() && dataHandle[0]->refCount == 1)
         needToFreeHandle = true;
         
-    if ( len == 0 ) {
+    if (len == 0) {
         deref();
         if (needToFreeHandle)
             freeHandle (dataHandle);
@@ -1950,7 +1948,7 @@ QString &QString::setLatin1(const char *str, int len)
         deref();
         if (needToFreeHandle)
             freeHandle (dataHandle);
-        dataHandle = (struct QStringData **)allocateHandle();
+        dataHandle = (QStringData **)allocateHandle();
         *dataHandle = new QStringData(str,len);
         dataHandle[0]->_isHeapAllocated = 1;
     } else {
@@ -1963,72 +1961,72 @@ QString &QString::setLatin1(const char *str, int len)
 
 QString &QString::setNum(short n)
 {
-    return setNum((long)n);
+    return sprintf("%d", n);
 }
 
 QString &QString::setNum(ushort n)
 {
-    return setNum((ulong)n);
+    return sprintf("%u", n);
 }
 
 QString &QString::setNum(int n)
 {
-    const int capacity = 64;
-    char buf[capacity];
-    buf[snprintf(buf, capacity - 1, "%d", n)] = '\0';
-    return setLatin1(buf);
+    return sprintf("%d", n);
 }
 
 QString &QString::setNum(uint n)
 {
-    const int capacity = 64;
-    char buf[capacity];
-    buf[snprintf(buf, capacity - 1, "%u", n)] = '\0';
-    return setLatin1(buf);
+    return sprintf("%u", n);
 }
 
 QString &QString::setNum(long n)
 {
-    const int capacity = 64;
-    char buf[capacity];
-    buf[snprintf(buf, capacity - 1, "%ld", n)] = '\0';
-    return setLatin1(buf);
+    return sprintf("%ld", n);
 }
 
 QString &QString::setNum(ulong n)
 {
-    const int capacity = 64;
-    char buf[capacity];
-    buf[snprintf(buf, capacity - 1, "%lu", n)] = '\0';
-    return setLatin1(buf);
+    return sprintf("%lu", n);
 }
 
 QString &QString::setNum(double n)
 {
-    const int capacity = 64;
-    char buf[capacity];
-    buf[snprintf(buf, capacity - 1, "%.6lg", n)] = '\0';
-    return setLatin1(buf);
+    return sprintf("%.6lg", n);
 }
 
 QString &QString::sprintf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    if (format && *format) {
-        CFStringRef tmp, f = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
-                format, kCFStringEncodingISOLatin1, kCFAllocatorNull);
-        if (f) {
-            tmp = CFStringCreateWithFormatAndArguments(
-                    kCFAllocatorDefault, NULL, f, args);
-            CFRelease(f);
-            setBufferFromCFString(tmp);
-            CFRelease (tmp);
-        }
-    } else {
-        setLength(0);
+    
+    // Do the format once to get the length.
+    char ch;
+    size_t len = vsnprintf(&ch, 1, format, args);
+    
+    // Handle the empty string case to simplify the code below.
+    if (len == 0) {
+        setUnicode(0, 0);
+        return *this;
     }
-    va_end(args);
+    
+    // Arrange for storage for the resulting string.
+    detach();
+    if (len >= dataHandle[0]->_maxAscii || dataHandle[0]->refCount != 1 || !dataHandle[0]->_isAsciiValid) {
+        bool needToFreeHandle = dataHandle != makeSharedNullHandle() && dataHandle[0]->refCount == 1;
+        deref();
+        if (needToFreeHandle)
+            freeHandle(dataHandle);
+        dataHandle = (QStringData **)allocateHandle();
+        *dataHandle = new QStringData((char *)0, len);
+        dataHandle[0]->_isHeapAllocated = 1;
+    } else {
+        dataHandle[0]->_length = len;
+        dataHandle[0]->_isUnicodeValid = 0;
+    }
+
+    // Now do the formatting again, guaranteed to fit.
+    vsprintf((char *)ascii(), format, args);
+
     return *this;
 }
 
@@ -2041,7 +2039,6 @@ QString &QString::append(const QString &qs)
 {
     return insert(dataHandle[0]->_length, qs);
 }
-
 
 QString &QString::insert(uint index, const QString &qs)
 {
@@ -2174,7 +2171,7 @@ QString &QString::insert(uint index, char ch)
         targetChars[index] = (QChar)ch;
     }
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
     
     return *this;
 }
@@ -2182,7 +2179,7 @@ QString &QString::insert(uint index, char ch)
 
 void QString::detachInternal()
 {
-    struct QStringData *oldData = (*dataHandle), *newData = 0;
+    QStringData *oldData = (*dataHandle), *newData = 0;
     
     if (oldData->refCount > 1 && oldData == &internalData){
         if (oldData->_isAsciiValid)
@@ -2198,7 +2195,7 @@ void QString::detachInternal()
                 newData = new QStringData (oldData->unicode(), oldData->_length);
         }
         else
-            QSTRING_FAILURE ("invalid character cache");
+            QSTRING_FAILURE("invalid character cache");
         newData->_isHeapAllocated = 1;
         newData->refCount = oldData->refCount - 1;
         *dataHandle = newData;
@@ -2217,7 +2214,7 @@ void QString::detach()
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     stringDataDetachments++;
 #endif
-    struct QStringData *oldData = (*dataHandle), *newData = 0;
+    QStringData *oldData = (*dataHandle), *newData = 0;
     
     // Copy data for this string so we can safely mutate it,
     // and put it in a new handle.
@@ -2229,14 +2226,14 @@ void QString::detach()
         newData = new QStringData ();
     }
     else
-        QSTRING_FAILURE ("invalid character cache");
+        QSTRING_FAILURE("invalid character cache");
 
     // We must copy our internal data so other strings
     // can still safely reference it.
     detachInternal();
     
     newData->_isHeapAllocated = 1;
-    dataHandle = (struct QStringData **)allocateHandle();
+    dataHandle = (QStringData **)allocateHandle();
     *dataHandle = newData;
     
     // Release the old data.
@@ -2267,7 +2264,7 @@ QString &QString::remove(uint index, uint len)
             setLength( olen-len );
         }
         else
-            QSTRING_FAILURE ("invalid character cache\n");
+            QSTRING_FAILURE("invalid character cache");
     }
     return *this;
 }
@@ -2329,7 +2326,7 @@ void QString::setLength( uint newLen )
     // own data.
     if (dataHandle == makeSharedNullHandle()){
         deref();
-        dataHandle = (struct QStringData **)allocateHandle();
+        dataHandle = (QStringData **)allocateHandle();
         *dataHandle = new QStringData();
         dataHandle[0]->_isHeapAllocated = 1;
     }
@@ -2352,7 +2349,7 @@ void QString::setLength( uint newLen )
         }
     }
     else
-        QSTRING_FAILURE ("invalid character cache\n");
+        QSTRING_FAILURE("invalid character cache");
 
     dataHandle[0]->_length = newLen;
 }
@@ -2427,7 +2424,7 @@ QString &QString::operator+=(const QString &qs)
                 *tp++ = *fp++;
         }
         else 
-            QSTRING_FAILURE ("invalid character cache\n");
+            QSTRING_FAILURE("invalid character cache");
         dataHandle[0]->_length += qs.data()->_length;
         return *this;
     }
@@ -2486,100 +2483,65 @@ QString &QString::operator+=(char ch)
     return insert(thisData->_length, ch);
 }
 
-QCString QString::convertToQCString(CFStringEncoding enc) const
-{
-    uint len = dataHandle[0]->_length;
-    if (len) {
-        char *chs = (char *)CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
-        if (chs) {
-            CFStringRef s = getCFString();
-            if (!CFStringGetCString(s, chs, len + 1, enc)) {
-                *reinterpret_cast<char *>(chs) = '\0';
-            }
-            QCString qcs = QCString(chs);
-            CFAllocatorDeallocate(kCFAllocatorDefault, chs);
-            return qcs;
-        }
-    }
-    return QCString();
-}
-
-
 bool operator==(const QString &s1, const QString &s2)
 {
-    if (s1.data()->_isAsciiValid && s2.data()->_isAsciiValid){
-        return ((s1.data()->_length == s2.data()->_length) && (strcmp (s1.ascii(), s2.ascii()) == 0));
+    if (s1.data()->_isAsciiValid && s2.data()->_isAsciiValid) {
+        return strcmp(s1.ascii(), s2.ascii()) == 0;
     }
-    return (s1.data()->_length == s2.data()->_length) && s1.isNull() == s2.isNull() &&
-	   (memcmp((char*)s1.unicode(),(char*)s2.unicode(),
-		   s1.data()->_length*sizeof(QChar)) ==0);
+    return s1.data()->_length == s2.data()->_length
+        && memcmp(s1.unicode(), s2.unicode(), s1.data()->_length * sizeof(QChar)) == 0;
 }
 
 bool operator==(const QString &s1, const char *chs)
 {
     if (s1.data()->_isAsciiValid)
-        return (strcmp(s1.ascii(), chs) == 0);
-    return s1==QString(chs);
+        return strcmp(s1.ascii(), chs) == 0;
+    return s1 == QString(chs);
 }
 
 QString operator+(const QString &qs1, const QString &qs2)
 {
-    QString tmp(qs1);
-    tmp += qs2;
-    return tmp;
+    return QString(qs1) += qs2;
 }
 
 QString operator+(const QString &qs, const char *chs)
 {
-    QString tmp(qs);
-    tmp += chs;
-    return tmp;
+    return QString(qs) += chs;
 }
 
 QString operator+(const QString &qs, QChar qc)
 {
-    QString tmp(qs);
-    tmp += qc;
-    return tmp;
+    return QString(qs) += qc;
 }
 
 QString operator+(const QString &qs, char ch)
 {
-    QString tmp(qs);
-    tmp += ch;
-    return tmp;
+    return QString(qs) += ch;
 }
 
 QString operator+(const char *chs, const QString &qs)
 {
-    QString tmp(chs);
-    tmp += qs;
-    return tmp;
+    return QString(chs) += qs;
 }
 
 QString operator+(QChar qc, const QString &qs)
 {
-    QString tmp = qc;
-    tmp += qs;
-    return tmp;
+    return QString(qc) += qs;
 }
 
 QString operator+(char ch, const QString &qs)
 {
-    QString tmp = QChar(ch);
-    tmp += qs;
-    return tmp;
+    return QString(QChar(ch)) += qs;
 }
 
-QConstString::QConstString(const QChar* unicode, uint length ) :
-    QString(new QStringData((QChar *)unicode, length, length),TRUE)
+QConstString::QConstString(const QChar* unicode, uint length) :
+    QString(new QStringData((QChar *)unicode, length, length), true)
 {
 }
-
 
 QConstString::~QConstString()
 {
-    if ( dataHandle[0]->refCount > 1 ) {
+    if (dataHandle[0]->refCount > 1) {
         QChar *tp, *fp = (QChar *)unicode();
         if (dataHandle[0]->_length <= QS_INTERNAL_BUFFER_UCHARS){
             dataHandle[0]->_maxUnicode = QS_INTERNAL_BUFFER_UCHARS;
@@ -2605,32 +2567,30 @@ QConstString::~QConstString()
 #define TO_NODE_OFFSET(ptr)   ((uint)(((uint)ptr - (uint)base)/sizeof(HandleNode)))
 #define TO_NODE_ADDRESS(offset,base) ((HandleNode *)(offset*sizeof(HandleNode) + (uint)base))
 
-typedef struct _HandlePageNode
+struct HandlePageNode
 {
-    struct _HandlePageNode *next;
-    struct _HandlePageNode *previous;
+    HandlePageNode *next;
+    HandlePageNode *previous;
     void *nodes;
-} HandlePageNode;
+};
 
-typedef struct _HandleNode {
+struct HandleNode {
     union {
         struct {
             uint next:16;
             uint previous:16;
         } internalNode;
         
-        struct _HandleNode *freeNodes;  // Always at block[0] in page.
+        HandleNode *freeNodes;  // Always at block[0] in page.
         
         HandlePageNode *pageNode;	// Always at block[1] in page
         
         void *handle;
     } type;
-} HandleNode;
+};
 
-
-HandleNode *firstBlock;
-HandlePageNode *usedNodeAllocationPages = 0;
-HandlePageNode *freeNodeAllocationPages = 0;
+static HandlePageNode *usedNodeAllocationPages = 0;
+static HandlePageNode *freeNodeAllocationPages = 0;
 
 static HandleNode *_initializeHandleNodeBlock(HandlePageNode *pageNode)
 {
@@ -2667,7 +2627,6 @@ HandlePageNode *_allocatePageNode()
     return node;
 }
 
-
 void _initializeHandleNodes()
 {
     if (freeNodeAllocationPages == 0)
@@ -2682,7 +2641,7 @@ HandleNode *_allocateNode(HandlePageNode *pageNode)
     
     // Check to see if we're out of nodes.
     if (freeNodes == 0) {
-        printf ("error!\n");
+        QSTRING_FAILURE("out of nodes");
         return 0;
     }
     
