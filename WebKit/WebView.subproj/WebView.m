@@ -66,6 +66,8 @@
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSUserDefaults_NSURLExtras.h>
 
+#include <CoreGraphics/CGSConnection.h>
+
 #define FOR_EACH_RESPONDER_SELECTOR(macro) \
 macro(alignCenter) \
 macro(alignJustified) \
@@ -167,6 +169,10 @@ macro(yankAndSelect) \
 - (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types;
 - (void)_autoscrollForDraggingInfo:(id)dragInfo timeDelta:(NSTimeInterval)repeatDelta;
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
+@end
+
+@interface NSApplication (AppKitSecrectsIKnow)
+- (CGSConnectionID)contextID;
 @end
 
 @interface WebView (WebFileInternal)
@@ -1473,8 +1479,16 @@ NSMutableDictionary *countInvocations;
     [types release];
 }
 
+static bool CGContextInitialized = false;
+
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    if (!CGContextInitialized) {
+	CFStringRef key = CFSTR(kCGSDisableDeferredUpdates);
+	CGSSetConnectionProperty([NSApp contextID], [NSApp contextID], (CGSValueObj)key, (CGSValueObj)kCFBooleanTrue);
+	CGContextInitialized = true;
+    }
+
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
 

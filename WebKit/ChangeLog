@@ -1,3 +1,15 @@
+2005-03-04  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3968753> REGRESSION: Poor performance with differing multiple animated GIFs (was fast in Panther)
+
+	Disable coalesced updates (in CG).  This restores the
+	panther behavior.
+
+        Reviewed by David Harrison.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2005-03-04  Adele Amchan  <adele@apple.com>
 
         Reviewed by Darin.
