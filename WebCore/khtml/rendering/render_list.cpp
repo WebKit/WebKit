@@ -371,14 +371,15 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
         }
         
         // Now that we have our xoffset within the listbox, we need to adjust ourselves by the delta
-        // between our current xoffset and our desired position.
+        // between our current xoffset and our desired position (which is just outside the border box
+        // of the list item).
         if (style()->direction() == LTR) {
             leftLineOffset = m_listItem->leftRelOffset(yOffset, m_listItem->leftOffset(yOffset));
-            _tx -= (xOffset - leftLineOffset);
+            _tx -= (xOffset - leftLineOffset) + m_listItem->paddingLeft() + m_listItem->borderLeft();
         }
         else {
             rightLineOffset = m_listItem->rightRelOffset(yOffset, m_listItem->rightOffset(yOffset));
-            _tx += (rightLineOffset-xOffset);
+            _tx += (rightLineOffset-xOffset) + m_listItem->paddingRight() + m_listItem->borderRight();
         }
     }
 

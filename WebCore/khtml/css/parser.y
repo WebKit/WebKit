@@ -317,7 +317,7 @@ rule_list:
 	 delete $2;
      }
  }
-    ;
+ ;
 
 rule:
     ruleset
@@ -795,6 +795,11 @@ declaration:
     }
     |
     property error {
+        $$ = false;
+    }
+    |
+    prio {
+        /* Handle this case: div { text-align: center; !important } Just reduce away the stray !important. */
         $$ = false;
     }
   ;

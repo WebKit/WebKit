@@ -2464,7 +2464,12 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
                 l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_HTML_RELATIVE)), Relative);
             else
                 return;
-            apply = true;
+            if (id == CSS_PROP_PADDING_LEFT || id == CSS_PROP_PADDING_RIGHT ||
+                id == CSS_PROP_PADDING_TOP || id == CSS_PROP_PADDING_BOTTOM)
+                // Padding can't be negative
+                apply = !((l.isFixed() || l.isPercent()) && l.width(100) < 0);
+            else
+                apply = true;
         }
         if(!apply) return;
         switch(id)

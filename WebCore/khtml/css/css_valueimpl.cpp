@@ -704,9 +704,15 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 	case CSSPrimitiveValue::CSS_COUNTER:
 	    // ###
 	    break;
-	case CSSPrimitiveValue::CSS_RECT:
-	    // ###
+        case CSSPrimitiveValue::CSS_RECT: {
+	    RectImpl* rectVal = getRectValue();
+            text = "rect(";
+            text += rectVal->top()->cssText() + " ";
+            text += rectVal->right()->cssText() + " ";
+            text += rectVal->bottom()->cssText() + " ";
+            text += rectVal->left()->cssText() + ")";
 	    break;
+        }
 	case CSSPrimitiveValue::CSS_RGBCOLOR:
 	    text = QColor(m_value.rgbcolor).name();
 	    break;

@@ -1,5 +1,46 @@
 2003-04-29  David Hyatt  <hyatt@apple.com>
 
+	This patch fixes the following bugs:
+
+	(1) 3186174 - padding-left improperly applied to list items.
+	The fix is in render_list.cpp and involves adding in the
+	list item's border and padding so that outside markers end up
+	outside the border box instead of just inside the padding box.
+
+	(2) 3239571 - a stray !important after a ; causes the CSS parser
+	to choke.  This patch adds a rule to parser.y to deal with
+	!importants found in between property values and to just ignore
+	them.
+
+	(3) 3170647 - positioned boxes with auto widths ended up adding
+	in their border/padding twice!  Make sure that when 
+	calcAbsoluteHorizontal in render_box.cpp examines m_maxWidth that
+	it subtracts out the border and padding and looks at content width.
+
+	(4) 3186165 - Negative padding values were being incorrectly
+	honored by Safari.  A patch to css_styleselector.cpp checks to
+	see if the value specified by the rule is negative, and if so
+	the rule is not applied.
+
+	(5) 3132172 - The clip property could not be accessed via script
+	because the cssText routine for CSS_RECT primitive values had
+	not been implemented.  In css_valueimpl.cpp this code has now been
+	filled in.
+	
+        Reviewed by mjs
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::cssText):
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteHorizontal):
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paintObject):
+
+2003-04-29  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3226138, crash on canada.gc.ca.  Make sure a failed
 	@media parse doesn't crash by adding a null check.
 	
