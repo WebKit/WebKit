@@ -128,9 +128,11 @@ static NSNumber *IFURLFilePosixPermissions;
 
 -(void)removeAllObjects
 {
+    [mutex lock];
     [self close];
-    [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+    [[NSFileManager defaultManager] backgroundRemoveFileAtPath:path];
     [self open];
+    [mutex unlock];
 }
 
 -(id)objectForKey:(id)key

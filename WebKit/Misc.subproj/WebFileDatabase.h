@@ -8,4 +8,7 @@
 
 
 @interface IFURLFileDatabase : IFDatabase 
+{
+    NSLock *mutex;
+}
 @end
