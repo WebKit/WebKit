@@ -203,7 +203,6 @@ HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
     marginHeight = -1;
     scrolling = QScrollView::Auto;
     noresize = false;
-    url = "about:blank";
 }
 
 HTMLFrameElementImpl::~HTMLFrameElementImpl()
@@ -217,6 +216,10 @@ NodeImpl::Id HTMLFrameElementImpl::id() const
 
 bool HTMLFrameElementImpl::isURLAllowed(const DOMString &URLString) const
 {
+    if (URLString.isEmpty()) {
+        return true;
+    }
+    
     KHTMLView *w = getDocument()->view();
 
     KURL newURL(getDocument()->completeURL(URLString.string()));
@@ -256,7 +259,6 @@ bool HTMLFrameElementImpl::isURLAllowed(const DOMString &URLString) const
     return true;
 }
 
-// FIXME: Why is this different from setLocation?
 void HTMLFrameElementImpl::updateForNewURL()
 {
     if (!attached()) {
@@ -270,8 +272,13 @@ void HTMLFrameElementImpl::updateForNewURL()
         attach();
         return;
     }
+    
+    DOMString relativeURL = url;
+    if (relativeURL.isEmpty()) {
+        relativeURL = "about:blank";
+    }
 
-    if (!isURLAllowed(url)) {
+    if (!isURLAllowed(relativeURL)) {
         return;
     }
 
@@ -283,19 +290,19 @@ void HTMLFrameElementImpl::updateForNewURL()
     // Load the frame contents.
     KHTMLPart *part = w->part();
     KHTMLPart *framePart = part->findFrame(name.string());
-    KURL kurl = getDocument()->completeURL(url.string());
+    KURL kurl = getDocument()->completeURL(relativeURL.string());
 
     // Temporarily treat javascript: URLs as about:blank, until we can
     // properly support them as frame sources.
     if (kurl.protocol() == "javascript") {
-	url = "about:blank";
+	relativeURL = "about:blank";
 	kurl = "about:blank";
     }
 
     if (framePart) {
         framePart->openURL(kurl);
     } else {
-        part->requestFrame(static_cast<RenderFrame *>(m_render), url.string(), name.string());
+        part->requestFrame(static_cast<RenderFrame *>(m_render), relativeURL.string(), name.string());
     }
 }
 
@@ -397,12 +404,16 @@ void HTMLFrameElementImpl::attach()
     KHTMLView* w = getDocument()->view();
 
     w->part()->incrementFrameCount();
+    
+    DOMString relativeURL = url;
+    if (relativeURL.isEmpty()) {
+        relativeURL = "about:blank";
+    }
 
     // Temporarily treat javascript: URLs as about:blank, until we can
     // properly support them as frame sources.
-    KURL kurl = getDocument()->completeURL(url.string());
-    if (kurl.protocol() == "javascript") {
-	url = "about:blank";
+    if (KURL(getDocument()->completeURL(relativeURL.string())).protocol() == "javascript") {
+	relativeURL = "about:blank";
     }
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
@@ -410,7 +421,7 @@ void HTMLFrameElementImpl::attach()
       name = DOMString(w->part()->requestFrameName());
 
     // load the frame contents
-    w->part()->requestFrame( static_cast<RenderFrame*>(m_render), url.string(), name.string() );
+    w->part()->requestFrame( static_cast<RenderFrame*>(m_render), relativeURL.string(), name.string() );
 }
 
 void HTMLFrameElementImpl::detach()
@@ -423,14 +434,10 @@ void HTMLFrameElementImpl::detach()
     HTMLElementImpl::detach();
 }
 
-// FIXME: Why is this different from updateForNewURL?
 void HTMLFrameElementImpl::setLocation( const DOMString& str )
 {
     url = str;
-    KHTMLView* w = getDocument()->view();
-    if ( m_render && w && w->part() )
-        // don't call this for an iframe
-        w->part()->requestFrame( static_cast<khtml::RenderFrame *>(m_render), url.string(), name.string() );
+    updateForNewURL();
 }
 
 bool HTMLFrameElementImpl::isSelectable() const

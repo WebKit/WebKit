@@ -1,3 +1,32 @@
+2003-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3156509 -- Safari fills src="" frame with current contents of frameset instead of leaving it empty
+
+        The trick here is to always use "about:blank" when the frame URL is empty string.
+        If we pass the empty string elsewhere, it's going to get passed to completeURL and
+        turned into a reference to the current document, and we have to avoid doing that
+        ourselves explicitly too.
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::HTMLFrameElementImpl): Let the URL default to null rather
+        than "about:blank". We do want to treat the frame as "about:blank", but that's not
+        something people should see when inspecting the frame via the DOM.
+        (HTMLFrameElementImpl::isURLAllowed): Allow empty URLs explicitly, so we don't
+        call completeURL on them.
+        (HTMLFrameElementImpl::updateForNewURL): Map empty URLs to "about:blank" at this level.
+        (HTMLFrameElementImpl::attach): Do the same thing here. At some point we can share more
+        code between these two.
+        (HTMLFrameElementImpl::setLocation): Change this to call updateForNewURL. Not only does
+        this make us handle the empty URL case properly, it also gets the benefit of other things
+        we do in updateForNewURL, like handling the "isURLAllowed" rule, and properly handling
+        the case where we already have a suitable frame.
+
+        - other changes
+
+        * kwq/KWQKHTMLView.mm: Improved a comment.
+
 === Safari-69 ===
 
 2003-03-26  Maciej Stachowiak  <mjs@apple.com>

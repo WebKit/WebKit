@@ -24,13 +24,13 @@
  */
 
 #import "khtmlview.h"
+
 #import "KWQKHTMLPart.h"
 #import "KWQWindowWidget.h"
 
 /*
-    Currently this files just extends the kde implementation.
-    See src/kdelibs/khtml/khtmlview.cpp for the complete
-    implementation.
+    Currently this file just extends the KDE implementation.
+    See khtml/khtmlview.cpp for the rest of the implementation.
 */
 
 QWidget *KHTMLView::topLevelWidget() const 
@@ -43,6 +43,5 @@ QPoint KHTMLView::mapToGlobal(const QPoint &p) const
     // This is only used by JavaScript to implement the getting
     // the screenX and screen Y coordinates.
 
-    return (static_cast<KWQWindowWidget *>(topLevelWidget()))->mapToGlobal(p);
+    return static_cast<KWQWindowWidget *>(topLevelWidget())->mapToGlobal(p);
 }
-
