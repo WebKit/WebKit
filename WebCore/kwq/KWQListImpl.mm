@@ -93,6 +93,7 @@ KWQListImpl::~KWQListImpl()
     for (KWQListIteratorImpl *it = iterators; it != NULL; it = next) {
         next = it->next;
         it->list = NULL;
+        it->node = NULL;
         it->next = NULL;
         it->prev = NULL;
     }
@@ -526,13 +527,17 @@ uint KWQListIteratorImpl::count() const
 
 void *KWQListIteratorImpl::toFirst()
 {
-    node = list->head;
+    if (list != NULL) {
+        node = list->head;
+    }
     return current();
 }
 
 void *KWQListIteratorImpl::toLast()
 {
-    node = list->tail;
+    if (list != NULL) {
+        node = list->tail;
+    }
     return current();
 }
 

@@ -1,3 +1,16 @@
+2002-11-12  Darin Adler  <darin@apple.com>
+
+	- fixed 3080250 -- Hands-free crash at wired.com in
+	KHTMLPart::slotChildStarted
+
+        * kwq/KWQListImpl.mm:
+        (KWQListImpl::~KWQListImpl): Set the node of each iterator to NULL too,
+	not just the list. This is the bug fix for the bug above.
+        (KWQListIteratorImpl::toFirst): Check for list of NULL.
+        (KWQListIteratorImpl::toLast): ditto.
+
+        * kwq/KWQSlot.mm: Tweaks.
+
 2002-11-12  David Hyatt  <hyatt@apple.com>
 
 	This patch lands a rewrite of whitespace-handling in the

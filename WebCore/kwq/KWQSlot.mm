@@ -68,7 +68,7 @@ enum FunctionNumber {
     slotWidgetDestructed
 };
 
-KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
+KWQSlot::KWQSlot(QObject *object, const char *member)
 {
     if (KWQNamesMatch(member, SIGNAL(finishedParsing()))) {
         ASSERT(dynamic_cast<DocumentImpl *>(object));
@@ -139,7 +139,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
     
 void KWQSlot::call() const
 {
-    if (!m_object) {
+    if (m_object.isNull()) {
         return;
     }
     
@@ -169,7 +169,7 @@ void KWQSlot::call() const
 
 void KWQSlot::call(bool b) const
 {
-    if (!m_object) {
+    if (m_object.isNull()) {
         return;
     }
     
@@ -189,7 +189,7 @@ void KWQSlot::call(bool b) const
 
 void KWQSlot::call(int i) const
 {
-    if (!m_object) {
+    if (m_object.isNull()) {
         return;
     }
     
@@ -207,7 +207,7 @@ void KWQSlot::call(int i) const
 
 void KWQSlot::call(const QString &string) const
 {
-    if (!m_object) {
+    if (m_object.isNull()) {
         return;
     }
     
@@ -230,7 +230,7 @@ void KWQSlot::call(const QString &string) const
 
 void KWQSlot::call(Job *job) const
 {
-    if (!m_object) {
+    if (m_object.isNull()) {
         return;
     }
     
@@ -245,7 +245,7 @@ void KWQSlot::call(Job *job) const
 
 void KWQSlot::call(DocLoader *loader, CachedObject *cachedObject) const
 {
-    if (!m_object) {
+    if (m_object.isNull()) {
         return;
     }
     
