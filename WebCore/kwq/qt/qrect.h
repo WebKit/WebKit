@@ -63,8 +63,8 @@ public:
 
     bool contains(int x, int y, bool proper = false) {
         if (proper)
-            return x > xp && x < (xp + w - 1) && y > yp && y < (yp + h - 1);
-        return x >= xp && x < xp + w && y >= yp && y < yp + h;
+            return x > xp && (x < (xp + w - 1)) && y > yp && y < (yp + h - 1);
+        return x >= xp && x < (xp + w) && y >= yp && y < (yp + h);
     }
     
     inline QRect operator&(const QRect &r) const { return intersect(r); }

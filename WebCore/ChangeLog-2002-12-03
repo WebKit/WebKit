@@ -1,3 +1,14 @@
+2002-10-09  David Hyatt  <hyatt@apple.com>
+
+	Fix a bug in my event handling code for layers.   This makes
+	the links on ESPN.com work again (bug 3051636).  Yay!
+	
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::constructZTree):
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::removeNamedItem):
+        * kwq/qt/qrect.h:
+
 2002-10-07  Darin Adler  <darin@apple.com>
 
 	- fixed 3037353 -- align="middle" elements not horizontally centered

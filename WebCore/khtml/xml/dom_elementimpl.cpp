@@ -629,7 +629,7 @@ Node NamedAttrMapImpl::removeNamedItem ( NodeImpl::Id id, int &exceptioncode )
     if (!a) return Node();
 
     if (!a->attrImpl())  a->allocateImpl(element);
-    Node r(a->attrImpl());
+    Attr r(a->attrImpl());
     removeAttribute(id);
     return r;
 }

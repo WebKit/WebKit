@@ -272,9 +272,13 @@ RenderLayer::constructZTree(QRect damageRect,
     // with the damage rect to form a new damage rect.
     if (m_object->style()->overflow() == OHIDDEN || m_object->style()->hasClip()) {
         QRect clipRect = m_object->getClipRect(x, y);
-        if (!clipRect.intersects(damageRect))
-            return 0; // We don't overlap at all. 
-        damageRect = damageRect.intersect(clipRect);
+        if ((eventProcessing && !clipRect.contains(damageRect.x(),
+                                                  damageRect.y())) ||
+            (!eventProcessing && !clipRect.intersects(damageRect)))
+            return 0; // We don't overlap at all.
+
+	if (!eventProcessing)
+	  damageRect = damageRect.intersect(clipRect);
     }
     
     // Walk our list of child layers looking only for those layers that have a 
@@ -302,7 +306,8 @@ RenderLayer::constructZTree(QRect damageRect,
     // the HTML can be much taller than the root (because of scrolling).
     if (renderer()->isRoot() || renderer()->isHtml() || renderer()->isBody() || 
         (renderer()->isInline() && !renderer()->isReplaced()) ||
-        (eventProcessing && layerBounds.contains(x,y)) ||
+        (eventProcessing && layerBounds.contains(damageRect.x(),
+						 damageRect.y())) ||
         (!eventProcessing && layerBounds.intersects(damageRect))) {
         RenderLayerElement* layerElt = new RenderLayerElement(this, layerBounds, 
                                                               damageRect, x, y);
