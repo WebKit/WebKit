@@ -80,7 +80,7 @@ extern "C" {
     
     // Initialize globals
     transferred = NO;
-    stopped = NO;
+    isStarted = NO;
     filesToErase = [[NSMutableArray alloc] init];
     activeURLHandles = [[NSMutableArray alloc] init];
     
@@ -117,11 +117,15 @@ extern "C" {
     windowFrame = [[self window] frame];
     frameInWindow = [self convertRect:[self bounds] toView:nil];
     visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
-    frameInWindow.origin.y =  windowFrame.size.height - frameInWindow.origin.y - frameInWindow.size.height; // flip y coord
+    
+    // flip Y coordinates
+    frameInWindow.origin.y =  windowFrame.size.height - frameInWindow.origin.y - frameInWindow.size.height; 
     visibleRectInWindow.origin.y =  windowFrame.size.height - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
     
     nPort.port = GetWindowPort([[self window] _windowRef]);
-    nPort.portx = -(int32)frameInWindow.origin.x; // these values are ignored by QT
+    
+    // FIXME: Are these values important?
+    nPort.portx = -(int32)frameInWindow.origin.x;
     nPort.porty = -(int32)frameInWindow.origin.y;   
     window.window = &nPort;
     
@@ -131,7 +135,7 @@ extern "C" {
     window.width = (uint32)frameInWindow.size.width;
     window.height = (uint32)frameInWindow.size.height;
 
-    window.clipRect.top = (uint16)visibleRectInWindow.origin.y; // clip rect
+    window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
     window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
     window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
     window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
@@ -190,7 +194,9 @@ extern "C" {
     NPSavedData saved;
     NPError npErr;
     
-    if ([arguments objectForKey:@"wkfullmode"]) {
+    isStarted = YES;
+    
+    if (![arguments objectForKey:@"wkfullmode"]) {
         // convert arguments dictionary to 2 string arrays
         
         int argsCount = [arguments count];
@@ -225,7 +231,7 @@ extern "C" {
 {
     NPError npErr;
     
-    if (!stopped){
+    if (isStarted){
         [activeURLHandles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];
         [eventSender stop];
         [eventSender release];
@@ -233,7 +239,7 @@ extern "C" {
         [self removeTrackingRect:trackingTag];
         npErr = NPP_Destroy(instance, NULL);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
-        stopped = YES;
+        isStarted = NO;
     }
 }
 

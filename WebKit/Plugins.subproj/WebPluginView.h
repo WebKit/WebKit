@@ -25,7 +25,7 @@
     NP_Port nPort;
     NPP_t instanceStruct;
 
-    BOOL isFlipped, transferred, isHidden, stopped;
+    BOOL isFlipped, transferred, isHidden, isStarted;
             
     NSString *URL, *mime;
     NSURL *baseURL;

@@ -1,3 +1,12 @@
+2002-04-18  Chris Blumenberg  <cblu@apple.com>
+
+	Made stop and start to work better. Fixed a bug darin made.
+	
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	initWithFrame:plugin:url:mime:arguments:mode:]), (-[IFPluginView setWindow]),
+	(-[IFPluginView start]), (-[IFPluginView stop]):
+
 2002-04-18  Richard Williamson  <rjw@apple.com>
 
         Fixed typo.
