@@ -22,6 +22,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebLocationChangeDelegate.h>
+#import <WebKit/WebPluginController.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -68,6 +69,7 @@ static const char * const stateNames[] = {
     [dataSource release];
     [provisionalDataSource release];
     [children release];
+    [pluginController release];
     
     [super dealloc];
 }
@@ -800,6 +802,15 @@ static const char * const stateNames[] = {
     child->_private->parent = self;
     [[child _bridge] setParent:_private->bridge];
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];   
+}
+
+- (WebPluginController *)pluginController
+{
+    if(!_private->pluginController){
+        _private->pluginController = [[WebPluginController alloc] initWithWebFrame:self];
+    }
+
+    return _private->pluginController;
 }
 
 @end

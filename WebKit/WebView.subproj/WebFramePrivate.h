@@ -11,6 +11,7 @@
 @class WebBridge;
 @class WebFrameBridge;
 @class WebHistoryItem;
+@class WebPluginController;
 @class WebView;
 
 typedef enum {
@@ -57,6 +58,7 @@ typedef enum {
     WebFrameLoadType loadType;
     WebFrame *parent;
     NSMutableArray *children;
+    WebPluginController *pluginController;
 }
 
 - (void)setName:(NSString *)name;
@@ -104,5 +106,7 @@ typedef enum {
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
 
 - (void)_addChild:(WebFrame *)child;
+
+- (WebPluginController *)pluginController;
 
 @end

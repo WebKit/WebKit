@@ -1,3 +1,17 @@
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
+	Added WebPluginController which controls and reacts to plug-in requests. Its owned by the WebFrame.
+
+        * Plugins.subproj/WebPluginController.h: Added.
+        * Plugins.subproj/WebPluginController.m: Added.
+        (-[WebPluginController initWithWebFrame:]):
+        (-[WebPluginController showURL:inFrame:]):
+        (-[WebPluginController showStatus:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame pluginController]):
+
 2002-10-23  Darin Adler  <darin@apple.com>
 
 	Add WebFileButton, to be used by WebCore soon. It's about 1/2
