@@ -105,6 +105,7 @@
     return self;
 }
 
+#define DELAY_LAYOUT
 #ifdef DELAY_LAYOUT
 - delayLayout: sender
 {

@@ -288,9 +288,9 @@ QCString &QCString::operator=(const QCString &s)
     return (QCString &)assign(s); 
 }
 
-QCString &QCString::operator=(const char *s)
-{ 
-    return (QCString &)duplicate(s, strlen(s) + 1); 
+QCString &QCString::operator=(const char *assignFrom)
+{
+    return (QCString &)duplicate(assignFrom, (assignFrom ? (strlen(assignFrom) + 1) : 1));
 }
 
 QCString& QCString::operator+=(const char *s)
@@ -324,21 +324,45 @@ QCString &QCString::operator+=(char c)
 
 bool operator==(const char *s1, const QCString &s2)
 {
+    if (s2.size() == 0 && !s1) {
+        return FALSE;
+    }
+    else if (s2.size() == 0 && s1) {
+        return TRUE;
+    }
     return (strcmp(s1, s2) == 0);
 }
 
 bool operator==(const QCString &s1, const char *s2)
 {
+    if (s1.size() == 0 && !s2) {
+        return FALSE;
+    }
+    else if (s1.size() == 0 && s2) {
+        return TRUE;
+    }
     return (strcmp(s1, s2) == 0);
 }
 
 bool operator!=(const char *s1, const QCString &s2)
 {
+    if (s2.size() == 0 && !s1) {
+        return TRUE;
+    }
+    else if (s2.size() == 0 && s1) {
+        return FALSE;
+    }
     return (strcmp(s1, s2) != 0);
 }
 
 bool operator!=(const QCString &s1, const char *s2)
 {
+    if (s1.size() == 0 && !s2) {
+        return TRUE;
+    }
+    else if (s1.size() == 0 && s2) {
+        return FALSE;
+    }
     return (strcmp(s1, s2) != 0);
 }
 

@@ -417,30 +417,10 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
 }
 
 
-void KHTMLPart::write( const char *str, int len)
+void KHTMLPart::write(const char *str, int len)
 {
     /* 
-    FIXME: hook this code back when we have decoders working
-    
-    if ( !d->m_decoder ) {
-        d->m_decoder = new khtml::Decoder();
-        if(d->m_encoding != QString::null)
-            d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
-        else {
-            //FIXME: d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
-        }
-    }
-    if ( len == 0 )
-        return;
-    
-    if ( len == -1 )
-        len = strlen( str );
-    
-    QString decoded = d->m_decoder->decode( str, len );
-        
-    
-    if(decoded.isEmpty())
-        return;
+    FIXME: hook this code back when we have decoders completely working
     
     if(d->m_bFirstData) {
         // determine the parse mode
@@ -466,9 +446,27 @@ void KHTMLPart::write( const char *str, int len)
     // End FIXME 
     */
 
-    // begin lines added in lieu of big fixme
+    // begin lines added in lieu of big fixme    
+
+    if ( !d->m_decoder ) {
+        d->m_decoder = new khtml::Decoder();
+        if(d->m_encoding != QString::null)
+            d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
+        else {
+            //FIXME: d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
+        }
+    }
+    if ( len == 0 )
+        return;
     
-    QString decoded = QString(str);
+    if ( len == -1 )
+        len = strlen( str );
+    
+    QString decoded = d->m_decoder->decode( str, len );
+            
+    if(decoded.isEmpty())
+        return;
+    
     d->m_doc->applyChanges(true, true);
     
     // end lines added in lieu of big fixme
