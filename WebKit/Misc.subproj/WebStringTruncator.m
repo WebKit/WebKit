@@ -70,18 +70,18 @@ static float currentEllipsisWidth;
     [string getCharacters:stringBuffer];
     renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
     width = [renderer floatWidthForCharacters:stringBuffer
-                                              stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength applyRounding: NO attemptFontSubstitution: YES];
+                                              stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0];
     if (width <= maxWidth)
         return string;
 
     ellipsis = ELLIPSIS_CHARACTER;
-    ellipsisWidth = [renderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 applyRounding: NO attemptFontSubstitution: YES];
+    ellipsisWidth = [renderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0];
 
     maxWidth -= ellipsisWidth;
     while (width > maxWidth && truncatedLength){	
         truncatedLength--;
         width = [renderer floatWidthForCharacters:stringBuffer
-                                              stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength applyRounding: NO attemptFontSubstitution: YES];
+                                              stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0];
     }
 
     stringBuffer[truncatedLength++] = ELLIPSIS_CHARACTER; 
@@ -111,7 +111,7 @@ static float currentEllipsisWidth;
         [WebTextRendererFactory createSharedFactory];
         currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font] retain];
         ellipsis = ELLIPSIS_CHARACTER;
-        currentEllipsisWidth = [currentRenderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 applyRounding: NO attemptFontSubstitution: YES];
+        currentEllipsisWidth = [currentRenderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0];
     }
     
     ASSERT(currentRenderer);
@@ -130,7 +130,7 @@ static float currentEllipsisWidth;
     }
 
     width = [currentRenderer floatWidthForCharacters:stringBuffer
-                                              stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength applyRounding: NO attemptFontSubstitution: YES];
+                                              stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0];
     if (width <= maxWidth) {
         return string;
     }
@@ -170,7 +170,7 @@ static float currentEllipsisWidth;
                                            keepCount:keepCount
                                             toBuffer:stringBuffer];
         
-        width = [currentRenderer floatWidthForCharacters:stringBuffer stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength applyRounding: NO attemptFontSubstitution: YES];
+        width = [currentRenderer floatWidthForCharacters:stringBuffer stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength withPadding: 0 applyRounding: NO attemptFontSubstitution: YES widths: 0];
         if (width <= maxWidth) {
             keepCountForLargestKnownToFit = keepCount;
             widthForLargestKnownToFit = width;

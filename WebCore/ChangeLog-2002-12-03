@@ -1,3 +1,24 @@
+2002-09-13  Richard Williamson (Home)  <rjw@apple.com>
+
+        Made justified text work correctly in khtml for rendering
+        and selection.  Optimized selection point calculation by
+        only doing characters measurements once.
+        
+        * khtml/rendering/font.cpp:
+        (Font::floatCharacterWidths):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::checkSelectionPoint):
+        (RenderText::position):
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidths):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/qt/qfontmetrics.h:
+
 2002-09-13  Darin Adler  <darin@apple.com>
 
 	Quiet error messages related to the slot/signal changes.

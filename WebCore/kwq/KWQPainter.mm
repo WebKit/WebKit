@@ -359,7 +359,7 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
 
     const UniChar* str = (const UniChar*)qstring.unicode();
     if (alignmentFlags & Qt::AlignRight)
-    	x -= ROUND_TO_INT([renderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() applyRounding:YES attemptFontSubstitution: YES]);
+    	x -= ROUND_TO_INT([renderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0]);
      
     [renderer drawCharacters:str stringLength:qstring.length()
         fromCharacterPosition:0 

@@ -89,7 +89,7 @@ public:
 
 #ifdef APPLE_CHANGES
     float floatWidth( QChar *str, int slen, int pos, int len ) const;
-    float floatCharacterWidth( QChar *str, int slen, int pos ) const;
+    void floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, float *buffer) const;
 #endif
     int width( QChar *str, int slen, int pos, int len ) const;
     int width( QChar *str, int slen, int pos ) const;

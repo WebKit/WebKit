@@ -54,7 +54,7 @@ public:
     int charWidth(const QString &, int pos) const;
     int width(const QChar *, int len) const;
     float floatWidth(const QChar *, int slen, int pos, int len) const;
-    float floatCharacterWidth(const QChar *, int slen, int pos) const;
+    float floatCharacterWidths(const QChar *, int slen, int pos, int len, int toAdd, float *buffer) const;
 
     QRect boundingRect(const QString &, int len=-1) const;
     QRect boundingRect(int, int, int, int, int, const QString &) const;

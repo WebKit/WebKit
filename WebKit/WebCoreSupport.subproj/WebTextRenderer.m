@@ -340,7 +340,7 @@ static BOOL bufferTextDrawing = NO;
 
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)stringLength
 {
-    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength applyRounding:YES attemptFontSubstitution: YES]);
+    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0]);
 }
 
 - (int)widthForString:(NSString *)string
@@ -458,6 +458,7 @@ static BOOL bufferTextDrawing = NO;
     // Calculate advances for the entire string taking into account.
     // 1.  Rounding of spaces.
     // 2.  Ceil word widths to guarantee integer word widths.
+    // 3.  Any justification padding.
     for (i = 0; i < numGlyphs; i++) {
         advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
         if (glyphs[i] == spaceGlyph){
@@ -466,8 +467,16 @@ static BOOL bufferTextDrawing = NO;
                 advances[i-1].width += ceil (wordWidth) - wordWidth;
             }
             if (padding > 0){
-                advances[i].width = ROUND_TO_INT(advances[i].width) + padPerSpace;
-                padding -= padPerSpace;
+                // Only use left over padding if note evenly divisible by 
+                // number of spaces.
+                if (padding < padPerSpace){
+                    advances[i].width = ROUND_TO_INT(advances[i].width) + padding;
+                    padding = 0;
+                }
+                else {
+                    advances[i].width = ROUND_TO_INT(advances[i].width) + padPerSpace;
+                    padding -= padPerSpace;
+                }
             }
             else
                 advances[i].width = ROUND_TO_INT(advances[i].width);
@@ -790,24 +799,39 @@ cleanup:
     // Return the width of the first complete character at the specified position.  Even though
     // the first 'character' may contain more than one unicode characters this method will
     // work correctly.
-    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:1 applyRounding: YES attemptFontSubstitution: YES];
+    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:1 withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: nil];
 }
 
 
 - (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len
 {
-    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len applyRounding: YES attemptFontSubstitution: YES];
+    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: nil];
 }
 
 
-- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer;
 {
     float totalWidth = 0;
     unsigned int i, clusterLength;
     NSFont *substituteFont = nil;
     ATSGlyphRef glyphID;
     float lastWidth = 0;
-    
+    uint numSpaces = 0;
+    int padPerSpace = 0;
+
+    if (len <= 0)
+        return 0;
+        
+    // If the padding is non-zero, count the number of spaces in the string
+    // and divide that by the padding for per space addition.
+    if (padding > 0){
+        for (i = pos; i < (uint)pos+len; i++){
+            if (characters[i] == NON_BREAKING_SPACE || characters[i] == SPACE)
+                numSpaces++;
+        }
+        padPerSpace = ceil ((((float)padding) / ((float)numSpaces)));
+    }
+
     //printf("width: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
     for (i = pos; i < stringLength; i++) {
         UniChar c = characters[i];
@@ -826,9 +850,10 @@ cleanup:
         if ((int)i - pos >= len) {
             // Check if next character is a space. If so, we have to apply rounding.
             if (c == SPACE && applyRounding) {
-                //totalWidth -= lastWidth;
-                //totalWidth += ROUND_TO_INT(lastWidth);
-                totalWidth += ceil(totalWidth) - totalWidth;
+                float delta = ceil(totalWidth) - totalWidth;
+                totalWidth += delta;
+                if (widthBuffer)
+                    widthBuffer[i - pos - 1] += delta;
             }
             break;
         }
@@ -851,30 +876,48 @@ cleanup:
             clusterLength = findLengthOfCharacterCluster (&characters[i], stringLength - i);
             substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
             if (substituteFont) {
-                lastWidth = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] stringLength: clusterLength fromCharacterPosition: pos numberOfCharacters: len applyRounding: YES attemptFontSubstitution: NO];
+                lastWidth = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] stringLength: clusterLength fromCharacterPosition: pos numberOfCharacters: len withPadding: 0 applyRounding: YES attemptFontSubstitution: NO widths: 0];
             }
         }
 
         if (glyphID > 0 || ((glyphID == 0) && substituteFont == nil)) {
             if (glyphID == spaceGlyph && applyRounding) {
                 if (lastWidth > 0){
-                    //totalWidth -= lastWidth;
-                    //totalWidth += ROUND_TO_INT(lastWidth);
-                    totalWidth += ceil(totalWidth) - totalWidth;
+                    float delta = ceil(totalWidth) - totalWidth;
+                    totalWidth += delta;
+                    if (widthBuffer)
+                        widthBuffer[i - pos - 1] += delta;
                 }   
                 lastWidth = ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
+                if (padding > 0){
+                    // Only use left over padding if note evenly divisible by 
+                    // number of spaces.
+                    if (padding < padPerSpace){
+                        lastWidth += padding;
+                        padding = 0;
+                    }
+                    else {
+                        lastWidth += padPerSpace;
+                        padding -= padPerSpace;
+                    }
+                }
             }
             else
                 lastWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
         }
-
+        if (widthBuffer)
+            widthBuffer[i - pos] = lastWidth;
         totalWidth += lastWidth;       
     }
 
     // Don't ever apply rounding for single character.  Single character measurement
     // intra word needs to be non-ceiled.
-    if ((len > 1 || stringLength == 1) && applyRounding)
-        totalWidth += ceil(totalWidth) - totalWidth;
+    if ((len > 1 || stringLength == 1) && applyRounding){
+        float delta = ceil(totalWidth) - totalWidth;
+        totalWidth += delta;
+        if (widthBuffer)
+            widthBuffer[len-1] += delta;
+    }
 
     return totalWidth;
 }

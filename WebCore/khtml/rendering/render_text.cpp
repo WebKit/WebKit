@@ -161,12 +161,15 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 #ifdef APPLE_CHANGES
     // Floating point version needed for best results with Mac OS X text.
     float delta = _x - (_tx + m_x);
-    //kdDebug(6040) << "TextSlave::checkSelectionPoint delta=" << delta << endl;
+    float widths[m_len]; 
+    
+    // Do width calculations for whole run once.
+    f->floatCharacterWidths( text->str->s, text->str->l, m_start, m_len, m_toAdd, &widths[0]);
     int pos = 0;
     if ( m_reversed ) {
 	delta -= m_width;
 	while(pos < m_len) {
-	    float w = f->floatCharacterWidth( text->str->s, text->str->l, m_start + pos);
+	    float w = widths[pos];
 	    float w2 = w/2;
 	    w -= w2;
 	    delta += w2;
@@ -177,7 +180,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 	}
     } else {
 	while(pos < m_len) {
-	    float w = f->floatCharacterWidth( text->str->s, text->str->l, m_start + pos);
+	    float w = widths[pos];
 	    float w2 = w/2;
 	    w -= w2;
 	    delta -= w2;
@@ -854,7 +857,7 @@ void RenderText::position(int x, int y, int from, int len, int width, bool rever
 
     TextSlave *s = new TextSlave(x, y, from, len,
                                  baselinePosition( firstLine ),
-                                 width, reverse, spaceAdd, firstLine);
+                                 width+spaceAdd, reverse, spaceAdd, firstLine);
 
     if(m_lines.count() == m_lines.size())
         m_lines.resize(m_lines.size()*2+1);
