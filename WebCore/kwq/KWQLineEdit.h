@@ -69,17 +69,24 @@ public:
     
     void returnPressed() { m_returnPressed.call(); }
     void textChanged() { m_textChanged.call(text()); }
+    void performSearch() { m_performSearch.call(); }
 
     void clicked();
     
     virtual bool checksDescendantsForFocus() const;
 
+    Type type() const { return m_type; }
+    
     void setLiveSearch(bool liveSearch);
+    void setAutoSaveName(const QString& name);
+    void setMaxResults(int maxResults);
+    void setPlaceholderString(const QString& placeholder);
 
 private:
     KWQSignal m_returnPressed;
     KWQSignal m_textChanged;
     KWQSignal m_clicked;
+    KWQSignal m_performSearch;
     Type m_type;
     KWQTextFieldController *m_controller;
 };

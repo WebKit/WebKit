@@ -337,6 +337,10 @@ public:
     
     virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
 
+#if APPLE_CHANGES
+    long maxResults() const { return m_maxResults; }
+#endif
+    
 protected:
 
     DOMString m_value;
@@ -344,6 +348,10 @@ protected:
     short     m_maxLen;
     short     m_size;
     short     yPos;
+
+#if APPLE_CHANGES
+    short     m_maxResults;
+#endif
 
     typeEnum m_type : 4;
     bool m_checked : 1;

@@ -1,5 +1,73 @@
 2004-03-22  David Hyatt  <hyatt@apple.com>
 
+	Wire up NSSearchField to WebCore.  Add support for placeholder strings, autosaving of recent items, the ability to show/hide
+	the magnifying glass search button, the ability to specify the maximum number of results, the ability to specify an incremental
+	search or not, etc.  Added a DOM event that fires when the search field indicates that search results should be updated.
+	
+        Reviewed by darin
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::getValueProperty):
+        (DOMNode::putValue):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):
+        * khtml/ecma/kjs_dom.lut.h:
+        (KJS::):
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        (Window::put):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Window::):
+        * khtml/ecma/kjs_window.lut.h:
+        (KJS::):
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::parseHTMLAttribute):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLInputElementImpl::maxResults):
+        * khtml/misc/htmlattrs.c:
+        (hash_attr):
+        (findAttr):
+        * khtml/misc/htmlattrs.h:
+        * khtml/misc/htmlattrs.in:
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::RenderLineEdit):
+        (RenderLineEdit::slotPerformSearch):
+        (RenderLineEdit::updateFromElement):
+        * khtml/rendering/render_form.h:
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId):
+        (EventImpl::idToType):
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::):
+        * kwq/KWQLineEdit.h:
+        (QLineEdit::performSearch):
+        (QLineEdit::type):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::QLineEdit):
+        (QLineEdit::setLiveSearch):
+        (QLineEdit::setAutoSaveName):
+        (QLineEdit::setMaxResults):
+        (QLineEdit::setPlaceholderString):
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController initWithTextField:QLineEdit:]):
+        (-[KWQTextFieldController invalidate]):
+        (-[KWQTextFieldController action:]):
+        (-[KWQTextFieldController controlTextDidBeginEditing:]):
+        (-[KWQTextFieldController controlTextDidEndEditing:]):
+        (-[KWQTextFieldController controlTextDidChange:]):
+        (-[KWQTextFieldController control:textShouldBeginEditing:]):
+        (-[KWQTextFieldController control:textShouldEndEditing:]):
+        (-[KWQTextFieldController control:didFailToFormatString:errorDescription:]):
+        (-[KWQTextFieldController control:didFailToValidatePartialString:errorDescription:]):
+        (-[KWQTextFieldController control:isValidObject:]):
+        (-[KWQTextFieldController control:textView:doCommandBySelector:]):
+        (-[KWQTextFieldController textChanged]):
+
+2004-03-22  David Hyatt  <hyatt@apple.com>
+
 	Factoring of form control code to enable sharing between three types of text fields: normal, password, and
 	the new search field.  Also made search field creatable using <input type="search">.  There are still many
 	bugs with the field, but you can at least type in it and submit it with a form.

@@ -553,6 +553,10 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
     connect(edit,SIGNAL(textChanged(const QString &)),this,SLOT(slotTextChanged(const QString &)));
     connect(edit,SIGNAL(clicked()),this,SLOT(slotClicked()));
 
+#if APPLE_CHANGES
+    connect(edit,SIGNAL(performSearch()), this, SLOT(slotPerformSearch()));
+#endif
+
 #if !APPLE_CHANGES
     if(element->inputType() == HTMLInputElementImpl::PASSWORD)
         edit->setEchoMode( QLineEdit::Password );
@@ -587,6 +591,14 @@ void RenderLineEdit::slotReturnPressed()
     if ( fe )
         fe->submitClick();
 }
+
+#if APPLE_CHANGES
+void RenderLineEdit::slotPerformSearch()
+{
+    // Fire the "search" DOM event.
+    element()->dispatchHTMLEvent(EventImpl::SEARCH_EVENT, true, false);
+}
+#endif
 
 void RenderLineEdit::handleFocusOut()
 {
@@ -668,6 +680,16 @@ void RenderLineEdit::updateFromElement()
     }
     w->setReadOnly(element()->readOnly());
     
+#if APPLE_CHANGES
+    // Handle updating the search attributes.
+    if (w->type() == QLineEdit::Search) {
+        w->setLiveSearch(!element()->getAttribute(ATTR_INCREMENTAL).isNull());
+        w->setAutoSaveName(element()->getAttribute(ATTR_AUTOSAVE).string());
+        w->setMaxResults(element()->maxResults());
+        w->setPlaceholderString(element()->getAttribute(ATTR_PLACEHOLDER).string());
+    }
+#endif
+
     RenderFormElement::updateFromElement();
 }
 

@@ -263,6 +263,9 @@ public:
 public slots:
     void slotReturnPressed();
     void slotTextChanged(const QString &string);
+#if APPLE_CHANGES
+    void slotPerformSearch();
+#endif
 
 protected:
     virtual void handleFocusOut();

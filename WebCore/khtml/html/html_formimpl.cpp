@@ -1448,6 +1448,22 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
             getDocument()->createHTMLEventListener(attr->value().string()));
         break;
+#if APPLE_CHANGES
+    // Search field attributes all just cause updateFromElement to be called through style
+    // recalcing.
+    case ATTR_ONSEARCH:
+        setHTMLEventListener(EventImpl::SEARCH_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_RESULTS:
+        m_maxResults = !attr->isNull() ? attr->value().toInt() : 0;
+        /* Fall through */
+    case ATTR_AUTOSAVE:
+    case ATTR_INCREMENTAL:
+    case ATTR_PLACEHOLDER:
+        setChanged();
+        break;
+#endif
     default:
         HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
     }

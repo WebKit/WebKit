@@ -93,7 +93,7 @@ bool DOMNode::toBoolean(ExecState *) const
 }
 
 /* Source for DOMNodeTable. Use "make hashtables" to regenerate.
-@begin DOMNodeTable 55
+@begin DOMNodeTable 56
   nodeName	DOMNode::NodeName	DontDelete|ReadOnly
   nodeValue	DOMNode::NodeValue	DontDelete
   nodeType	DOMNode::NodeType	DontDelete|ReadOnly
@@ -132,6 +132,7 @@ bool DOMNode::toBoolean(ExecState *) const
   onmove	DOMNode::OnMove			DontDelete
   onreset	DOMNode::OnReset		DontDelete
   onresize	DOMNode::OnResize		DontDelete
+  onsearch      DOMNode::OnSearch               DontDelete
   onselect	DOMNode::OnSelect		DontDelete
   onsubmit	DOMNode::OnSubmit		DontDelete
   onunload	DOMNode::OnUnload		DontDelete
@@ -232,6 +233,10 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     return getListener(DOM::EventImpl::RESET_EVENT);
   case OnResize:
     return getListener(DOM::EventImpl::RESIZE_EVENT);
+#if APPLE_CHANGES
+  case OnSearch:
+    return getListener(DOM::EventImpl::SEARCH_EVENT);
+#endif
   case OnSelect:
     return getListener(DOM::EventImpl::SELECT_EVENT);
   case OnSubmit:
@@ -364,6 +369,11 @@ void DOMNode::putValue(ExecState *exec, int token, const Value& value, int /*att
   case OnResize:
     setListener(exec,DOM::EventImpl::RESIZE_EVENT,value);
     break;
+#if APPLE_CHANGES
+  case OnSearch:
+    setListener(exec,DOM::EventImpl::SEARCH_EVENT,value);
+    break;
+#endif
   case OnSelect:
     setListener(exec,DOM::EventImpl::SELECT_EVENT,value);
     break;

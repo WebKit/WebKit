@@ -79,6 +79,9 @@ public:
 	RESIZE_EVENT,
 	SCROLL_EVENT,
         CONTEXTMENU_EVENT,
+#if APPLE_CHANGES
+        SEARCH_EVENT,
+#endif
         // Keyboard events
 	KEYDOWN_EVENT,
 	KEYUP_EVENT,

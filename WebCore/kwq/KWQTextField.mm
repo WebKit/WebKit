@@ -88,22 +88,26 @@
     [[field cell] setScrollable:YES];
     [field setFormatter:formatter];
     [field setDelegate:self];
-    [field setTarget:self];
-    [field setAction:@selector(action:)];
+    
+    if (widget->type() == QLineEdit::Search) {
+        [field setTarget:self];
+        [field setAction:@selector(action:)];
+    }
     
     return self;
 }
 
--(void)invalidate
+- (void)invalidate
 {
     widget = NULL;
 }
 
-- (void)action:sender
+- (void)action:(id)sender
 {
     if (!widget)
 	return;
-    widget->returnPressed();
+    widget->textChanged();
+    widget->performSearch();
 }
 
 - (void)dealloc
@@ -141,7 +145,7 @@
     edited = ed;
 }
 
--(void)controlTextDidBeginEditing:(NSNotification *)notification
+- (void)controlTextDidBeginEditing:(NSNotification *)notification
 {
     if (!widget)
 	return;
@@ -150,7 +154,7 @@
     [bridge controlTextDidBeginEditing:notification];
 }
 
--(void)controlTextDidEndEditing:(NSNotification *)notification
+- (void)controlTextDidEndEditing:(NSNotification *)notification
 {
     if (!widget)
 	return;
@@ -159,9 +163,13 @@
     [bridge controlTextDidEndEditing:notification];
     
     [self setHasFocus:NO];
+
+    if ([[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement) {
+        widget->returnPressed();
+    }
 }
 
--(void)controlTextDidChange:(NSNotification *)notification
+- (void)controlTextDidChange:(NSNotification *)notification
 {
     if (!widget)
 	return;
@@ -176,7 +184,7 @@
     widget->textChanged();
 }
 
--(BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
     if (!widget)
         return NO;
@@ -198,7 +206,7 @@
     return [bridge control:control textShouldBeginEditing:fieldEditor];
 }
 
--(BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
 {
     if (!widget)
 	return NO;
@@ -207,7 +215,7 @@
     return [bridge control:control textShouldEndEditing:fieldEditor];
 }
 
--(BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
+- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
 {
     if (!widget)
 	return NO;
@@ -216,7 +224,7 @@
     return [bridge control:control didFailToFormatString:string errorDescription:error];
 }
 
--(void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
+- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
 {
     if (!widget)
 	return;
@@ -225,7 +233,7 @@
     [bridge control:control didFailToValidatePartialString:string errorDescription:error];
 }
 
--(BOOL)control:(NSControl *)control isValidObject:(id)obj
+- (BOOL)control:(NSControl *)control isValidObject:(id)obj
 {
     if (!widget)
 	return NO;
@@ -234,7 +242,7 @@
     return [bridge control:control isValidObject:obj];
 }
 
--(BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
     if (!widget)
 	return NO;
@@ -243,7 +251,7 @@
     return [bridge control:control textView:textView doCommandBySelector:commandSelector];
 }
 
--(void)textChanged
+- (void)textChanged
 {
     if (widget)
         widget->textChanged();

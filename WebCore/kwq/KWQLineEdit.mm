@@ -35,7 +35,9 @@
 QLineEdit::QLineEdit(Type type)
     : m_returnPressed(this, SIGNAL(returnPressed()))
     , m_textChanged(this, SIGNAL(textChanged(const QString &)))
-    , m_clicked(this, SIGNAL(clicked())), m_type(type)
+    , m_clicked(this, SIGNAL(clicked()))
+    , m_performSearch(this, SIGNAL(performSearch()))
+    , m_type(type)
 {
     id view = nil;
 
@@ -261,5 +263,42 @@ void QLineEdit::setLiveSearch(bool liveSearch)
         return;
     
     NSSearchField *searchField = (NSSearchField *)getView();
-    [[searchField cell] setSendsWholeSearchString: !liveSearch];
+    [[searchField cell] setSendsWholeSearchString:!liveSearch];
 }
+
+void QLineEdit::setAutoSaveName(const QString& name)
+{
+    if (m_type != Search)
+        return;
+    
+    QString autosave;
+    if (!name.isEmpty())
+        autosave = "com.apple.WebKit.searchField:" + name;
+    
+    NSSearchField *searchField = (NSSearchField *)getView();
+    [searchField setRecentsAutosaveName:autosave.getNSString()];
+}
+
+void QLineEdit::setMaxResults(int maxResults)
+{
+    if (m_type != Search)
+        return;
+    
+    NSSearchField *searchField = (NSSearchField *)getView();
+    if (!maxResults)
+        [[searchField cell] setSearchButtonCell:nil];
+    else
+        [[searchField cell] resetSearchButtonCell];
+
+    [[searchField cell] setMaximumRecents:maxResults];
+}
+
+void QLineEdit::setPlaceholderString(const QString& placeholder)
+{
+    if (m_type != Search)
+        return;
+    
+    NSSearchField *searchField = (NSSearchField *)getView();
+    [[searchField cell] setPlaceholderString:placeholder.getNSString()];
+}
+

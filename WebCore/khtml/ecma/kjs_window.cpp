@@ -177,7 +177,7 @@ Value Screen::getValueProperty(ExecState *exec, int token) const
 const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 
 /*
-@begin WindowTable 90
+@begin WindowTable 91
   closed	Window::Closed		DontDelete|ReadOnly
   crypto	Window::Crypto		DontDelete|ReadOnly
   defaultStatus	Window::DefaultStatus	DontDelete
@@ -269,6 +269,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   onmove	Window::Onmove		DontDelete
   onreset	Window::Onreset		DontDelete
   onresize	Window::Onresize	DontDelete
+  onsearch      Window::Onsearch        DontDelete
   onselect	Window::Onselect	DontDelete
   onsubmit	Window::Onsubmit	DontDelete
   onunload	Window::Onunload	DontDelete
@@ -680,6 +681,13 @@ Value Window::get(ExecState *exec, const Identifier &p) const
         return getListener(exec,DOM::EventImpl::RESIZE_EVENT);
       else
         return Undefined();
+#if APPLE_CHANGES
+    case Onsearch:
+        if (isSafeScript(exec))
+            return getListener(exec,DOM::EventImpl::SEARCH_EVENT);
+        else
+            return Undefined();
+#endif
     case Onselect:
       if (isSafeScript(exec))
         return getListener(exec,DOM::EventImpl::SELECT_EVENT);
@@ -879,6 +887,12 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
       if (isSafeScript(exec))
         setListener(exec,DOM::EventImpl::RESIZE_EVENT,value);
       return;
+#if APPLE_CHANGES
+    case Onsearch:
+        if (isSafeScript(exec))
+            setListener(exec,DOM::EventImpl::SEARCH_EVENT,value);
+        return;
+#endif
     case Onselect:
       if (isSafeScript(exec))
         setListener(exec,DOM::EventImpl::SELECT_EVENT,value);

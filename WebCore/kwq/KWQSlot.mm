@@ -62,6 +62,7 @@ enum FunctionNumber {
     slotLoaderRequestStarted,
     slotParentCompleted,
     slotParentDestroyed,
+    slotPerformSearch,
     slotRedirect,
     slotReturnPressed,
     slotSelected,
@@ -99,6 +100,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotLoaderRequestDone, (khtml::DocLoader *, khtml::CachedObject *), KHTMLPart)
     CASE(slotLoaderRequestStarted, (khtml::DocLoader *, khtml::CachedObject *), KHTMLPart)
     CASE(slotParentCompleted, (), KHTMLPart)
+    CASE(slotPerformSearch, (), RenderLineEdit)
     CASE(slotRedirect, (), KHTMLPart)
     CASE(slotReturnPressed, (), RenderLineEdit)
     CASE(slotSelected, (int), RenderSelect)
@@ -182,6 +184,7 @@ void KWQSlot::call() const
         CASE(slotFinishedParsing, KHTMLPart, slotFinishedParsing)
         CASE(slotParentCompleted, KHTMLPart, slotParentCompleted)
         CASE(slotParentDestroyed, WindowQObject, parentDestroyed)
+        CASE(slotPerformSearch, RenderLineEdit, slotPerformSearch)
         CASE(slotRedirect, KHTMLPart, slotRedirect)
         CASE(slotReturnPressed, RenderLineEdit, slotReturnPressed)
         CASE(slotSelectionChanged, RenderSelect, slotSelectionChanged)

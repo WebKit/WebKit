@@ -8,6 +8,7 @@ alink
 alt
 archive
 autocomplete
+autosave
 axis
 background
 behavior
@@ -58,6 +59,7 @@ hspace
 html
 http-equiv
 id
+incremental
 ismap
 keytype
 label
@@ -101,12 +103,14 @@ onmouseover
 onmouseup
 onreset
 onresize
+onsearch
 onselect
 onsubmit
 onunload
 oversrc
 pagex
 pagey
+placeholder
 plain
 pluginpage
 pluginspage
@@ -115,6 +119,7 @@ profile
 prompt
 readonly
 rel
+results
 rev
 rows
 rowspan
