@@ -1,3 +1,8 @@
+l2003-12-23  John Sullivan  <sullivan@apple.com>
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        Xcode version wars, harmless
+
 2003-12-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John (concept, not code, which is just the old code coming back).

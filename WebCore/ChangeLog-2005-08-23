@@ -1,3 +1,17 @@
+2003-12-23  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3451306>: address book search fails at Airborne 
+        Express Corporate site (Apple Shipping wants to use it)
+
+        Reviewed by Darin.
+
+        * khtml/ecma/kjs_html.cpp:
+        commented out definition of document.all; now sites like this one that
+        set document.all to a value will work.
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+        regenerated this file
+
 2003-12-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

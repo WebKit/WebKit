@@ -10,8 +10,8 @@ const struct HashEntry HTMLDocumentTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "writeln", HTMLDocument::WriteLn, DontDelete|Function, 1, 0 },
    { 0, 0, 0, 0, 0 },
-   { "forms", HTMLDocument::Forms, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[35] },
-   { "scripts", HTMLDocument::Scripts, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[39] },
+   { "forms", HTMLDocument::Forms, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[34] },
+   { "scripts", HTMLDocument::Scripts, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[38] },
    { "captureEvents", HTMLDocument::CaptureEvents, DontDelete|Function, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "write", HTMLDocument::Write, DontDelete|Function, 1, 0 },
@@ -25,7 +25,7 @@ const struct HashEntry HTMLDocumentTableEntries[] = {
    { "URL", HTMLDocument::URL, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "lastModified", HTMLDocument::LastModified, DontDelete|ReadOnly, 0, 0 },
-   { "images", HTMLDocument::Images, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[36] },
+   { "images", HTMLDocument::Images, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[35] },
    { 0, 0, 0, 0, 0 },
    { "domain", HTMLDocument::Domain, DontDelete, 0, 0 },
    { "location", HTMLDocument::Location, DontDelete, 0, &HTMLDocumentTableEntries[32] },
@@ -34,13 +34,12 @@ const struct HashEntry HTMLDocumentTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "referrer", HTMLDocument::Referrer, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "dir", HTMLDocument::Dir, DontDelete, 0, &HTMLDocumentTableEntries[42] },
-   { "applets", HTMLDocument::Applets, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[34] },
-   { "anchors", HTMLDocument::Anchors, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[40] },
-   { "all", HTMLDocument::All, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[37] },
+   { "dir", HTMLDocument::Dir, DontDelete, 0, &HTMLDocumentTableEntries[41] },
+   { "applets", HTMLDocument::Applets, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[36] },
+   { "anchors", HTMLDocument::Anchors, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[39] },
    { "clear", HTMLDocument::Clear, DontDelete|Function, 0, 0 },
-   { "close", HTMLDocument::Close, DontDelete|Function, 0, &HTMLDocumentTableEntries[38] },
-   { "getElementsByName", HTMLDocument::GetElementsByName, DontDelete|Function, 1, &HTMLDocumentTableEntries[41] },
+   { "close", HTMLDocument::Close, DontDelete|Function, 0, &HTMLDocumentTableEntries[37] },
+   { "getElementsByName", HTMLDocument::GetElementsByName, DontDelete|Function, 1, &HTMLDocumentTableEntries[40] },
    { "releaseEvents", HTMLDocument::ReleaseEvents, DontDelete|Function, 0, 0 },
    { "bgColor", HTMLDocument::BgColor, DontDelete, 0, 0 },
    { "alinkColor", HTMLDocument::AlinkColor, DontDelete, 0, 0 },
@@ -48,7 +47,7 @@ const struct HashEntry HTMLDocumentTableEntries[] = {
    { "designMode", HTMLDocument::DesignMode, DontDelete, 0, 0 }
 };
 
-const struct HashTable HTMLDocumentTable = { 2, 43, HTMLDocumentTableEntries, 32 };
+const struct HashTable HTMLDocumentTable = { 2, 42, HTMLDocumentTableEntries, 32 };
 
 } // namespace
 
