@@ -21,6 +21,7 @@
 #import <WebFoundation/WebCacheLoaderConstants.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
@@ -169,29 +170,30 @@
     }
 }
 
-+ (NSString *)_MIMETypeForFile: (NSString *)path
++ (NSString *)_MIMETypeForFile:(NSString *)path
 {
-    NSString *result;
     NSString *extension = [path pathExtension];
-    
-    if ([extension isEqualToString:@""]) {
-        result = @"text/html";
+    NSString *MIMEType = nil;
+
+    // Get the MIME type from the extension.
+    if ([extension length] != 0) {
+        MIMEType = [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
     }
-    else {
-        result = [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
-        if (!result || [result isEqualToString:@"application/octet-stream"]) {
-            NSString *contents = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:path]
-                                                       encoding:NSASCIIStringEncoding];
-            if([contents _web_looksLikeHTMLDocument]){
-                result = @"text/html";
-            }else{
-                result = @"application/octet-stream";
-            }
-            [contents release];
+
+    // If we can't get a known MIME type from the extension, sniff.
+    if ([MIMEType length] == 0 || [MIMEType isEqualToString:@"application/octet-stream"]) {
+        NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
+        NSData *data = [handle readDataOfLength:GUESS_MIME_TYPE_PEEK_LENGTH];
+        [handle closeFile];
+        if ([data length] != 0) {
+            MIMEType = [data _web_guessedMIMEType];
+        }
+        if ([MIMEType length] == 0){
+            MIMEType = @"application/octet-stream";
         }
     }
-    
-    return result;
+
+    return MIMEType;
 }
 
 + (NSArray *)_supportedImageMIMETypes
