@@ -1,3 +1,12 @@
+2004-06-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3697602> REGRESSION (144.2-TOT) Selection highlight does not draw
+
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::setSelection):
+
 === Safari-145 ===
 
 2004-06-16  Richard Williamson   <rjw@apple.com>
