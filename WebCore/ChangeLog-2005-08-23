@@ -4,7 +4,7 @@
 
 	Simple fix - don't try to send the event to the body element if we have no body element.
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by John
 
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::dispatchCPPEvent):
