@@ -1,3 +1,43 @@
+2003-04-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3237301 -- REGRESSION: text fields with size greater than maxlength are sized according to maxlength
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth): Override the maximum length
+        for this operation.
+
+	- fixed 3236961 -- setting innerHTML with input elements doesn't set up value properly
+
+        To fix this, I rolled in the changes from the trunk of KHTML development that get rid of
+        the init() function and do the work in either attach() or insertedIntoDocument() instead.
+
+        * khtml/html/html_baseimpl.h: Removed init overrides, added insertedIntoDocument override.
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::insertedIntoDocument): Moved HTMLBodyElementImpl::init code here.
+        (HTMLFrameElementImpl::attach): Moved HTMLFrameElementImpl::init code here.
+        (HTMLFrameSetElementImpl::attach): Moved HTMLFrameSetElementImpl::init code here.
+
+        * khtml/html/html_formimpl.h: Added m_inited flag, removed init overrides, removed unused
+        m_encCharset field.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::formData): Removed code that set m_encCharset.
+        (HTMLFormElementImpl::setEnctype): Removed code that set m_encCharset.
+        (HTMLInputElementImpl::HTMLInputElementImpl): Initialize m_inited to false.
+        (HTMLInputElementImpl::attach): Moved HTMLInputElementImpl::init code here, guarded by
+        m_inited.
+        (HTMLSelectElementImpl::attach): Moved HTMLSelectElementImpl::init code here.
+        (HTMLTextAreaElementImpl::attach): Moved HTMLTextAreaElementImpl::init code here.
+
+        * khtml/xml/dom_nodeimpl.h: Removed init.
+        * khtml/xml/dom_nodeimpl.cpp: Removed init.
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::insertNode): Removed calls to init.
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLHandler::startElement): Removed call to init.
+        (XMLHandler::startCDATA): Removed call to init.
+        (XMLHandler::exitText): Removed call to init.
+
 2003-04-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -314,18 +314,6 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
     if(!codec)
         codec = QTextCodec::codecForLocale();
 
-#if APPLE_CHANGES
-    QString encCharset = codec->name();
-    QChar encChars[encCharset.length()];
-    for(unsigned int i=0; i < encCharset.length(); i++)
-        encChars[i] = encCharset[i].latin1() == ' ' ? QChar('-') : encCharset[i].lower();
-    QString m_encCharset(encChars,  encCharset.length());
-#else /* APPLE_CHANGES not defined */
-    m_encCharset = codec->name();
-    for(unsigned int i=0; i < m_encCharset.length(); i++)
-        m_encCharset[i] = m_encCharset[i].latin1() == ' ' ? QChar('-') : m_encCharset[i].lower();
-#endif /* APPLE_CHANGES not defined */
-
     QStringList fileUploads;
 
     for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {
@@ -452,7 +440,6 @@ void HTMLFormElementImpl::setEnctype( const DOMString& type )
         m_enctype = "application/x-www-form-urlencoded";
         m_multipart = false;
     }
-    m_encCharset = QString::null;
 }
 
 void HTMLFormElementImpl::setBoundary( const DOMString& bound )
@@ -1085,6 +1072,7 @@ HTMLInputElementImpl::HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl
     m_haveType = false;
     m_activeSubmit = false;
     m_autocomplete = true;
+    m_inited = false;
 
     xPos = 0;
     yPos = 0;
@@ -1174,7 +1162,7 @@ QString HTMLInputElementImpl::state( )
     switch (m_type) {
     case CHECKBOX:
     case RADIO:
-        return state + QString::fromLatin1(m_checked ? "on" : "off");
+        return state + (m_checked ? "on" : "off");
     default:
         return state + value().string()+'.'; // Make sure the string is not empty!
     }
@@ -1190,7 +1178,7 @@ void HTMLInputElementImpl::restoreState(QStringList &states)
     switch (m_type) {
     case CHECKBOX:
     case RADIO:
-        setChecked((state == QString::fromLatin1("on")));
+        setChecked((state == "on"));
         break;
     default:
         setValue(DOMString(state.left(state.length()-1)));
@@ -1291,44 +1279,6 @@ void HTMLInputElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLInputElementImpl::init()
-{
-    HTMLGenericFormElementImpl::init();
-
-    // make sure we don't inherit a color to the form elements
-    // by adding a non-CSS color property. this his higher
-    // priority than inherited color, but lesser priority than
-    // any color specified by CSS for the elements.
-    switch( m_type ) {
-    case TEXT:
-    case PASSWORD:
-    case ISINDEX:
-    case FILE:
-        addCSSProperty(CSS_PROP_COLOR, "text");
-        break;
-    case SUBMIT:
-    case RESET:
-    case BUTTON:
-    case CHECKBOX:
-    case RADIO:
-        addCSSProperty(CSS_PROP_COLOR, "buttontext" );
-    case HIDDEN:
-    case IMAGE:
-        break;
-    };
-    if (m_type != FILE) m_value = getAttribute(ATTR_VALUE);
-    if ((uint) m_type <= ISINDEX && !m_value.isEmpty()) {
-        QString value = m_value.string();
-        // remove newline stuff..
-        QString nvalue;
-        for (unsigned int i = 0; i < value.length(); ++i)
-            if (value[i] >= ' ')
-                nvalue += value[i];
-        m_value = nvalue;
-    }
-    m_checked = (getAttribute(ATTR_CHECKED) != 0);
-}
-
 bool HTMLInputElementImpl::rendererIsNeeded(RenderStyle *style)
 {
     switch(m_type)
@@ -1371,16 +1321,57 @@ RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderSty
 
 void HTMLInputElementImpl::attach()
 {
-    // We had to wait until the attach call to do this, because we don't yet know
-    // our type in parseAttribute.  This also has to be done *before* we do
-    // styleForElement, or the width info will not get used.  This fixes
-    // spinner.com on the PLT -dwh. 
-    if (m_type == IMAGE && parentNode()->renderer()) {
-        DOMString width = getAttribute( ATTR_WIDTH );
-        if (!width.isEmpty())
-            addCSSLength(CSS_PROP_WIDTH, width);
+    if (!m_inited) {
+        setType(getAttribute(ATTR_TYPE));
+
+        if (m_type != FILE) m_value = getAttribute(ATTR_VALUE);
+        if ((uint) m_type <= ISINDEX && !m_value.isEmpty()) {
+            QString value = m_value.string();
+            // remove newline stuff..
+            QString nvalue;
+            for (unsigned int i = 0; i < value.length(); ++i)
+                if (value[i] >= ' ')
+                    nvalue += value[i];
+            m_value = nvalue;
+        }
+
+        removeCheckedRadioButtonFromDocument();
+        m_checked = (getAttribute(ATTR_CHECKED) != 0);
+        addCheckedRadioButtonToDocument();
+
+        m_inited = true;
     }
-    
+
+    // make sure we don't inherit a color to the form elements
+    // by adding a non-CSS color property. this his higher
+    // priority than inherited color, but lesser priority than
+    // any color specified by CSS for the elements.
+    switch( m_type ) {
+    case TEXT:
+    case PASSWORD:
+#if !APPLE_CHANGES
+        addCSSProperty(CSS_PROP_FONT_FAMILY, CSS_VAL_MONOSPACE);
+#endif
+        /* nobreak */
+    case ISINDEX:
+    case FILE:
+        addCSSProperty(CSS_PROP_COLOR, "text");
+        break;
+    case SUBMIT:
+    case RESET:
+    case BUTTON:
+    case CHECKBOX:
+    case RADIO:
+        addCSSProperty(CSS_PROP_COLOR, "buttontext");
+        // FIXME: There was no break here in the original KHTML. Was that intentional?
+        break;
+    case HIDDEN:
+    case IMAGE:
+        if (!getAttribute(ATTR_WIDTH).isEmpty())
+            addCSSLength(CSS_PROP_WIDTH, getAttribute(ATTR_WIDTH));
+        break;
+    }
+
     createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
 
@@ -2030,13 +2021,6 @@ void HTMLSelectElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLSelectElementImpl::init()
-{
-    HTMLGenericFormElementImpl::init();
-
-    addCSSProperty(CSS_PROP_COLOR, "text");
-}
-
 RenderObject *HTMLSelectElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderSelect(this);
@@ -2044,6 +2028,8 @@ RenderObject *HTMLSelectElementImpl::createRenderer(RenderArena *arena, RenderSt
 
 void HTMLSelectElementImpl::attach()
 {
+    addCSSProperty(CSS_PROP_COLOR, "text");
+
     createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
 }
@@ -2532,13 +2518,6 @@ void HTMLTextAreaElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLTextAreaElementImpl::init()
-{
-    HTMLGenericFormElementImpl::init();
-
-    addCSSProperty(CSS_PROP_COLOR, "text");
-}
-
 RenderObject *HTMLTextAreaElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderTextArea(this);
@@ -2546,6 +2525,8 @@ RenderObject *HTMLTextAreaElementImpl::createRenderer(RenderArena *arena, Render
 
 void HTMLTextAreaElementImpl::attach()
 {
+    addCSSProperty(CSS_PROP_COLOR, "text");
+
     createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
 }

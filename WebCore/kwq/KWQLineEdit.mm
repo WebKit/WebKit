@@ -125,19 +125,27 @@ void QLineEdit::setEdited(bool flag)
 
 QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 {
+    // Figure out how big a text field needs to be for a given number of characters
+    // by installing a string with that number of characters (using "0" as the nominal
+    // character) and then asking the field's cell what the size should be.
+
+    KWQTextField *textField = (KWQTextField *)getView();
+
     ASSERT(numCharacters > 0);
-    
+
     NSMutableString *nominalWidthString = [NSMutableString stringWithCapacity:numCharacters];
     for (int i = 0; i < numCharacters; ++i) {
         [nominalWidthString appendString:@"0"];
     }
-        
-    KWQTextField *textField = (KWQTextField *)getView();
+
     NSString *value = [textField stringValue];
+    int maximumLength = [textField maximumLength];
+    [textField setMaximumLength:numCharacters];
     [textField setStringValue:nominalWidthString];
     NSSize size = [[textField cell] cellSize];
+    [textField setMaximumLength:maximumLength];
     [textField setStringValue:value];
-    
+
     return QSize(size);
 }
 

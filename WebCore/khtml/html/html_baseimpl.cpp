@@ -157,9 +157,9 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLBodyElementImpl::init()
+void HTMLBodyElementImpl::insertedIntoDocument()
 {
-    HTMLElementImpl::init();
+    HTMLElementImpl::insertedIntoDocument();
 
     KHTMLView* w = getDocument()->view();
     if(w->marginWidth() != -1) {
@@ -357,10 +357,19 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLFrameElementImpl::init()
+bool HTMLFrameElementImpl::rendererIsNeeded(RenderStyle *style)
 {
-    HTMLElementImpl::init();
+    // Ignore display: none.
+    return isURLAllowed(url);
+}
 
+RenderObject *HTMLFrameElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderFrame(this);
+}
+
+void HTMLFrameElementImpl::attach()
+{
     // we should first look up via id, then via name.
     // this shortterm hack fixes the ugly case. ### rewrite needed for next release
     name = getAttribute(ATTR_NAME);
@@ -380,21 +389,7 @@ void HTMLFrameElementImpl::init()
         }
         node = static_cast<HTMLElementImpl*>(node->parentNode());
     }
-}
 
-bool HTMLFrameElementImpl::rendererIsNeeded(RenderStyle *style)
-{
-    // Ignore display: none.
-    return isURLAllowed(url);
-}
-
-RenderObject *HTMLFrameElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
-{
-    return new (arena) RenderFrame(this);
-}
-
-void HTMLFrameElementImpl::attach()
-{
     createRendererIfNeeded();
     NodeBaseImpl::attach();
 
@@ -551,25 +546,6 @@ void HTMLFrameSetElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLFrameSetElementImpl::init()
-{
-    HTMLElementImpl::init();
-
-    // inherit default settings from parent frameset
-    HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
-    while(node)
-    {
-        if(node->id() == ID_FRAMESET)
-        {
-            HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
-            if(!frameBorderSet)  frameborder = frameset->frameBorder();
-            if(!noresize)  noresize = frameset->noResize();
-            break;
-        }
-        node = static_cast<HTMLElementImpl*>(node->parentNode());
-    }
-}
-
 bool HTMLFrameSetElementImpl::rendererIsNeeded(RenderStyle *style)
 {
     // Ignore display: none but do pay attention if a stylesheet has caused us to delay our loading.
@@ -583,6 +559,20 @@ RenderObject *HTMLFrameSetElementImpl::createRenderer(RenderArena *arena, Render
 
 void HTMLFrameSetElementImpl::attach()
 {
+    // inherit default settings from parent frameset
+    HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
+    while(node)
+    {
+        if(node->id() == ID_FRAMESET)
+        {
+            HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
+            if(!frameBorderSet)  frameborder = frameset->frameBorder();
+            if(!noresize)  noresize = frameset->noResize();
+            break;
+        }
+        node = static_cast<HTMLElementImpl*>(node->parentNode());
+    }
+
     createRendererIfNeeded();
     NodeBaseImpl::attach();
 }

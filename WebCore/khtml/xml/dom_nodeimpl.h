@@ -283,16 +283,6 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
-    /**
-     * Performs any necessary initialization of the element based on attributes that have been set during parsing. This
-     * method is called after the parser has finished parsing the element and inserted it into the tree, but before it
-     * is attached to the rendering tree.
-     *
-     * This method will eventually be removed once all of the initialization that currently only works during parsing is
-     * fixed to work with dynamic changes.
-     */
-    virtual void init();
-
     // -----------------------------------------------------------------------------
     // Integration with rendering tree
 

@@ -106,7 +106,6 @@ public:
     DOMString m_enctype;
     DOMString m_boundary;
     DOMString m_acceptcharset;
-    QString m_encCharset;
     bool m_post : 1;
     bool m_multipart : 1;
     bool m_autocomplete : 1;
@@ -185,6 +184,8 @@ protected:
     DOMStringImpl* m_name;
     HTMLFormElementImpl *m_form;
     bool m_disabled, m_readOnly;
+
+    bool m_inited : 1;
 };
 
 // -------------------------------------------------------------------------
@@ -293,7 +294,6 @@ public:
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void setName(const DOMString& name);
 
-    virtual void init();
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
@@ -419,7 +419,6 @@ public:
 
     virtual void parseAttribute(AttributeImpl *attr);
 
-    virtual void init();
     virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
@@ -561,7 +560,6 @@ public:
     void select (  );
 
     virtual void parseAttribute(AttributeImpl *attr);
-    virtual void init();
     virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);

@@ -332,26 +332,14 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             else
                 current = newNode;
 #if SPEED_DEBUG < 2
-            if(!n->attached() && HTMLWidget ) {
-                // ### get rid of init. it has no reason for existance.
-                // those that do not support multiple attach() have to block it
-                // (it only happens upon display: change on those elments, and those
-                // are so special it won't be supported anyway. (think of <select> changed
-                // into a <input> element. not possible.
-                n->init();
-                //
-                if (!n->attached())
-                    n->attach();
-            }
+            if(!n->attached() && HTMLWidget)
+                n->attach();
 #endif
         }
         else {
 #if SPEED_DEBUG < 2
-            if(!n->attached() && HTMLWidget) {
-                n->init();
-                if (!n->attached())
-                    n->attach();
-            }
+            if(!n->attached() && HTMLWidget)
+                n->attach();
             if (n->maintainsState()) {
                 document->document()->registerMaintainsState(n);
                 QStringList &states = document->document()->restoreState();
@@ -401,13 +389,10 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             if( head ) {
                 if ( head->addChild(n) ) {
 #if SPEED_DEBUG < 2
-		if(!n->attached() && HTMLWidget) {
-                    n->init();
-                    if (!n->attached())
+                    if(!n->attached() && HTMLWidget)
                         n->attach();
-		}
 #endif
-                return true;
+                    return true;
 		} else {
 		    return false;
 		}
@@ -442,11 +427,8 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                     pushBlock(id, tagPriority[id]);
                     current = newNode;
 #if SPEED_DEBUG < 2
-		    if(!n->attached() && HTMLWidget) {
-                        n->init();
-                        if (!n->attached())
-                            n->attach();
-		    }
+		    if(!n->attached() && HTMLWidget)
+                        n->attach();
 #endif
                 } else {
 #ifdef PARSER_DEBUG
@@ -493,11 +475,8 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             if ( strcasecmp( type, "hidden" ) == 0 && form) {
                 form->addChild(n);
 #if SPEED_DEBUG < 2
-                if(!n->attached() && HTMLWidget) {
-                    n->init();
-                    if (!n->attached())
-                        n->attach();
-                }
+                if(!n->attached() && HTMLWidget)
+                    n->attach();
 #endif
                 return true;
             }
@@ -528,11 +507,8 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             {
                 map->addChild(n);
 #if SPEED_DEBUG < 2
-                if(!n->attached() && HTMLWidget) {
-		    n->init();
-                    if (!n->attached())
-                        n->attach();
-		}
+                if(!n->attached() && HTMLWidget)
+                    n->attach();
 #endif
                 handled = true;
             }
