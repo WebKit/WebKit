@@ -1,3 +1,14 @@
+2003-06-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3286006>: Carbon Java plug-in problems may require workaround in WebKit
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase canUsePlugin:]): if in a carbon app, only use the mach-o java plug-in when its version is anything but 1.0.0
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]): call canUsePlugin on all the plug-ins
+
+
 2003-06-10  Vicki Murley  <vicki@apple.com>
 
         Reviewed by john. 

@@ -19,6 +19,11 @@
 
 #define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
 
+#define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
+#define JavaCarbonPluginBadVersion 	@"1.0.0"
+
+#define JavaCFMPluginFilename		@"Java Applet Plugin Enabler"
+
 @implementation WebPluginDatabase
 
 static WebPluginDatabase *database = nil;
@@ -55,6 +60,38 @@ static BOOL sIsCocoa = FALSE;
     return sIsCocoa;
 }
 
+- (BOOL)canUsePlugin:(WebBasePluginPackage *)plugin
+{
+    // Current versions of the Java plug-ins will not work in a Carbon environment (3283210).
+    
+    if (!plugin) {
+        return NO;
+    }
+    
+    if ([self isCocoa]) {
+        return YES;
+    }
+    
+    NSBundle *bundle = [plugin bundle];
+    if (bundle) {
+        NSString *bundleIdentifier = [bundle bundleIdentifier];
+        if ([bundleIdentifier isEqualToString:JavaCocoaPluginIdentifier]) {
+            // The Cocoa version of the Java plug-in will never work.
+            return NO;
+        } else if ([bundleIdentifier isEqualToString:JavaCarbonPluginIdentifier] &&
+                   [[[bundle infoDictionary] objectForKey:@"CFBundleVersion"] isEqualToString:JavaCarbonPluginBadVersion]) {
+            // The current version of the mach-o Java plug-in won't work.
+            return NO;
+        }
+    } else {
+        if ([[plugin filename] isEqualToString:JavaCFMPluginFilename]) {
+            // Future versions of the CFM plug-in may work, but there is no way to check its version.
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
     WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil, *webPlugin=nil;
@@ -87,17 +124,14 @@ static BOOL sIsCocoa = FALSE;
         }
     }
 
-    // The Cocoa Java plug-in won't work in a Carbon app.
-    if (webPlugin && ![self isCocoa] && [[[webPlugin bundle] bundleIdentifier] isEqualToString:JavaCocoaPluginIdentifier]) {
-        webPlugin = nil;
-    }
-    
-    if (webPlugin) {
+    if ([self canUsePlugin:webPlugin]) {
         return webPlugin;
-    } else if (machoPlugin) {
+    } else if ([self canUsePlugin:machoPlugin]) {
         return machoPlugin;
-    } else {
+    } else if ([self canUsePlugin:CFMPlugin]) {
         return CFMPlugin;
+    } else {
+        return nil;
     }
 }
 
