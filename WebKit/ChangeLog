@@ -1,5 +1,13 @@
 2003-02-03  Richard Williamson   <rjw@apple.com>
 
+        Fixed headerdoc type.
+        
+        Reviewed by me.
+
+        * WebView.subproj/WebDocument.h:
+
+2003-02-03  Richard Williamson   <rjw@apple.com>
+
         Support for new canProvideDocumentSource and documentSource API.
         Updated all the representations.  Added support to show for RTF source.  
         Moved WebKitInitializeUnicode to to early class.  This was necessary
