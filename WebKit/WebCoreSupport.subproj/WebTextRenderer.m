@@ -184,17 +184,28 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 }
 
 
+- (NSFont *)substituteFontForString: (NSString *)string
+{
+    NSFont *substituteFont;
+
+    substituteFont = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,[string length]) inLanguage:[NSLanguage defaultLanguage]];
+
+    if ([substituteFont isEqual: font])
+        return nil;
+        
+    return substituteFont;
+}
+
+
 - (NSFont *)substituteFontForCharacters: (const unichar *)characters length: (int)numCharacters
 {
     NSFont *substituteFont;
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
 
-    substituteFont = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,numCharacters) inLanguage:[NSLanguage defaultLanguage]];
+    substituteFont = [self substituteFontForString: string];
+
     [string release];
     
-    if ([substituteFont isEqual: font])
-        return nil;
-        
     return substituteFont;
 }
 
@@ -239,6 +250,10 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
 - initWithFont:(NSFont *)f
 {
+    if ([f glyphPacking] != NSNativeShortGlyphPacking &&
+        [f glyphPacking] != NSTwoByteGlyphPacking)
+        [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to pack glyphs for font %@ %f", self, [f displayName], [f pointSize]];
+        
     [super init];
     
     font = [f retain];
@@ -271,7 +286,6 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     if (styleGroup)
         ATSUDisposeStyleGroup(styleGroup);
 
-    free(widthCache);
     freeWidthMap (glyphToWidthMap);
     freeGlyphMap (characterToGlyphMap);
     
@@ -324,118 +338,185 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 }
 
 
+- (bool) slowPackGlyphsForCharacters:(const UniChar *)characters numCharacters: (unsigned int)numCharacters glyphBuffer:(CGGlyph **)glyphBuffer numGlyphs:(unsigned int *)numGlyphs
+{
+    ATSGlyphVector _glyphVector;
+    unsigned int j;
+    CGGlyph *glyphBufPtr;
+    ATSLayoutRecord *glyphRecords;
+
+    ATSInitializeGlyphVector(numCharacters, 0, &_glyphVector);
+    [self convertCharacters: characters length: numCharacters glyphs: &_glyphVector];
+    if (hasMissingGlyphs (&_glyphVector))
+        return NO;
+
+    *numGlyphs = _glyphVector.numGlyphs;
+    *glyphBuffer = glyphBufPtr = (CGGlyph *)malloc (*numGlyphs * sizeof(CGGlyph));
+    glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
+    for (j = 0; j < *numGlyphs; j++){
+        *glyphBufPtr++ = glyphRecords->glyphID;
+        glyphRecords++;
+    }
+    
+    ATSClearGlyphVector(&_glyphVector);
+
+    return YES;
+}
+
+
 - (void)drawString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
 {
-    NSFont *substituteFont;
-    UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
-    const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
-    const UniChar *internalBuffer;
-    ATSGlyphVector _glyphVector;
+    UniChar localCharacterBuffer[LOCAL_GLYPH_BUFFER_SIZE];
+    UniChar *characterBuffer = 0, *_usedCharacterBuffer;
+    const UniChar *usedCharacterBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
+    unsigned int length;
+
+    // Get the unichar buffer from the string.
+    length = [string length];
+    if (!usedCharacterBuffer){
+        if (length > LOCAL_GLYPH_BUFFER_SIZE)
+            _usedCharacterBuffer = characterBuffer = (UniChar *)malloc(length * sizeof(UniChar));
+        else
+            _usedCharacterBuffer = &localCharacterBuffer[0];
+        CFStringGetCharacters((CFStringRef)string, CFRangeMake(0, length), _usedCharacterBuffer);
+        usedCharacterBuffer = _usedCharacterBuffer;
+    }
+
+    [self drawCharacters: usedCharacterBuffer length: length atPoint: point withColor: color];
+    
+    if (characterBuffer)
+        free (characterBuffer);
+}
+
+
+- (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
+{
+    unsigned int i;
+    CGGlyph localGlyphBuf[LOCAL_GLYPH_BUFFER_SIZE];
+#ifndef DRAW_WITHOUT_ADVANCES
+    CGSize *advancePtr, advances[LOCAL_GLYPH_BUFFER_SIZE];
+#endif
+    CGGlyph *usedGlyphBuffer, *glyphBufPtr, *glyphBuffer = 0, *slowGlyphBuffer = 0;
+    ATSGlyphRef glyphID;
     CGContextRef cgContext;
-
-    if (!_internalBuffer){
-        // FIXME: Handle case where length > LOCAL_GLYPH_BUFFER_SIZE
-        CFStringGetCharacters((CFStringRef)string, CFRangeMake(0, CFStringGetLength((CFStringRef)string)), &localBuffer[0]);
-        internalBuffer = &localBuffer[0];
-    }
-    else
-        internalBuffer = _internalBuffer;
-
-    ATSInitializeGlyphVector([string length], 0, &_glyphVector);
-    [self convertCharacters: internalBuffer length: [string length] glyphs: &_glyphVector];
-    if (hasMissingGlyphs (&_glyphVector)){
-        substituteFont = [self substituteFontForCharacters: internalBuffer length: [string length]];
-        ATSClearGlyphVector(&_glyphVector);
-        if (substituteFont){
-            [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawString: string atPoint: point withColor: color];
-            return;
-        }
-    }
+    int numGlyphs;
+    NSFont *substituteFont;
     
-    // This will draw the text from the top of the bounding box down.
-    // Qt expects to draw from the baseline.
-    // Remember that descender is negative.
-    point.y -= [self lineSpacing] - [self descent];
-
-    [color set];
-    [font set];
-    
+    // FIXME:  Deal with other font encodings.
     if ([font glyphPacking] != NSNativeShortGlyphPacking &&
         [font glyphPacking] != NSTwoByteGlyphPacking)
         [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to deal with font %@", self, [font displayName]];
-        
-    {
-        int i, numGlyphs = _glyphVector.numGlyphs;
-        char localGlyphBuf[LOCAL_GLYPH_BUFFER_SIZE];
-        char *usedGlyphBuf, *glyphBufPtr, *glyphBuf = 0;
-        ATSLayoutRecord *glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
-        
-        if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE/2)
-            usedGlyphBuf = glyphBufPtr = glyphBuf = (char *)malloc (numGlyphs * 2);
-        else
-            usedGlyphBuf = glyphBufPtr = &localGlyphBuf[0];
-            
-        for (i = 0; i < numGlyphs; i++){
-            *glyphBufPtr++ = (char)((glyphRecords->glyphID >> 8) & 0x00FF);
-            *glyphBufPtr++ = (char)(glyphRecords->glyphID & 0x00FF);
-            glyphRecords++;
+    
+    // Determine if we can use the local stack buffer, otherwise allocate.
+    if (length > LOCAL_GLYPH_BUFFER_SIZE)
+        usedGlyphBuffer = glyphBufPtr = glyphBuffer = (CGGlyph *)malloc (length * sizeof(CGGlyph));
+    else
+        usedGlyphBuffer = glyphBufPtr = &localGlyphBuf[0];
+
+#ifndef DRAW_WITHOUT_ADVANCES
+    advancePtr = &advances[0];
+#endif
+    
+    // Set the number of glyphs to the character length.  This may during the character
+    // scan if we find any non base characters.
+    numGlyphs = length;
+    
+    // Pack the glyph buffer and ensure that we have glyphs for all the
+    // characters.  If we're missing a glyph look for an alternate font.
+    for (i = 0; i < length; i++){
+        UniChar c = characters[i];
+
+        // Icky.  Deal w/ non breaking spaces.
+        if (c == NON_BREAKING_SPACE)
+            c = SPACE;
+
+        // Is the a combining character?  If so we have to do expensive
+        // glyph lookup.
+        if (IsNonBaseChar (c)){
+            bool hasGlyphs;
+            hasGlyphs = [self slowPackGlyphsForCharacters: characters numCharacters: length glyphBuffer: &slowGlyphBuffer numGlyphs: &numGlyphs];
+            if (!hasGlyphs){
+                substituteFont = [self substituteFontForCharacters: characters length: length];
+                if (substituteFont){
+                    [(IFTextRenderer *)[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
+                    goto cleanup;
+                }
+            }
+            usedGlyphBuffer = slowGlyphBuffer;
+            break;
         }
-        cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-        CGContextSetCharacterSpacing(cgContext, 0.0);
-        //CGContextShowGlyphsAtPoint (cgContext, p.x, p.y + lineHeight - 1 - ROUND_TO_INT(-[font descender]), (const short unsigned int *)usedGlyphBuf, numGlyphs);
-        CGContextShowGlyphsAtPoint (cgContext, point.x, point.y + [font defaultLineHeightForFont] - 1, (const short unsigned int *)usedGlyphBuf, numGlyphs);
+    
+        glyphID = glyphForCharacter (characterToGlyphMap, characters[i]);
         
-        if (glyphBuf)
-            free (glyphBuf);
+        // glyphID == 0 means that the font doesn't contain a glyph for the character.
+        if (glyphID == 0){
+            substituteFont = [self substituteFontForCharacters: characters length: length];
+            if (substituteFont){
+                [(IFTextRenderer *)[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
+                goto cleanup;
+            }
+        }
+
+        *glyphBufPtr++ = glyphID;
+        
+#ifdef DRAW_WITHOUT_ADVANCES
+#else
+        advancePtr->width = widthForGlyph(self, glyphToWidthMap, glyphID);
+        advancePtr->height = 0;
+        advancePtr++;
+#endif
     }
 
-    ATSClearGlyphVector(&_glyphVector);
+    // This will draw the text from the top of the bounding box down.
+    // Qt expects to draw from the baseline.
+    // Remember that descender is negative.
+#ifdef DRAW_WITHOUT_ADVANCES
+    point.y -= [self lineSpacing] - [self descent];
+#else
+    point.y += [self descent] - 1;
+#endif
+
+    // Setup the color and font.
+    [color set];
+    [font set];
+    
+    // Finally, draw the characters.
+    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+
+#ifdef DRAW_WITHOUT_ADVANCES
+    CGContextSetCharacterSpacing(cgContext, 0.0);
+    CGContextShowGlyphsAtPoint (cgContext, point.x, point.y + [font defaultLineHeightForFont] - 1, (CGGlyph *)usedGlyphBuffer, numGlyphs);
+#else      
+    CGContextSetTextPosition (cgContext, point.x, point.y);
+    //CGContextShowGlyphsWithAdvances (cgContext, (CGGlyph *)usedGlyphBuffer, advances, numGlyphs);
+    CGContextShowGlyphsWithDeviceAdvances (cgContext, (CGGlyph *)usedGlyphBuffer, advances, numGlyphs);
+#endif
+    
+cleanup:
+    if (glyphBuffer)
+        free (glyphBuffer);
+    if (slowGlyphBuffer)
+        free (slowGlyphBuffer);
 }
 
 
 - (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
 {
-    NSFont *substituteFont;
-    ATSGlyphVector _glyphVector;
-    UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
-    const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
-    const UniChar *internalBuffer;
-
-    if (!_internalBuffer){
-        // FIXME: Handle case where length > LOCAL_GLYPH_BUFFER_SIZE
-        CFStringGetCharacters((CFStringRef)string, CFRangeMake(0, CFStringGetLength((CFStringRef)string)), &localBuffer[0]);
-        internalBuffer = &localBuffer[0];
-    }
-    else
-        internalBuffer = _internalBuffer;
-
-    ATSInitializeGlyphVector([string length], 0, &_glyphVector);
-    [self convertCharacters: internalBuffer length: [string length] glyphs: &_glyphVector];
-    if (hasMissingGlyphs (&_glyphVector)){
-        substituteFont = [self substituteFontForCharacters: internalBuffer length: [string length]];
-        ATSClearGlyphVector(&_glyphVector);
-        if (substituteFont){
-            [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawUnderlineForString: string atPoint: point withColor: color];
-            return;
-        }
-    }
-    ATSClearGlyphVector(&_glyphVector);
+    NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
+    int width = [self widthForString: string];
+    CGContextRef cgContext;
+    float lineWidth;
     
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
     // Remember that descender is negative.
     point.y -= [self lineSpacing] - [self descent];
     
-    int width = [self widthForString: string];
-    NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-    CGContextRef cgContext;
-    float lineWidth;
-    
-    [color set];
-
     BOOL flag = [graphicsContext shouldAntialias];
 
     [graphicsContext setShouldAntialias: NO];
+
+    [color set];
 
     cgContext = (CGContextRef)[graphicsContext graphicsPort];
     lineWidth = 0.0;
@@ -444,8 +525,6 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         lineWidth = size.width;
     }
     CGContextSetLineWidth(cgContext, lineWidth);
-    ///CGContextMoveToPoint(cgContext, p.x, p.y + lineHeight + 0.5 - ROUND_TO_INT(-[font descender]));
-    //CGContextAddLineToPoint(cgContext, p.x + rect.size.width, p.y + lineHeight + 0.5 - ROUND_TO_INT(-[font descender]));
     CGContextMoveToPoint(cgContext, point.x, point.y + [font defaultLineHeightForFont] + 0.5);
     CGContextAddLineToPoint(cgContext, point.x + width, point.y + [font defaultLineHeightForFont] + 0.5);
     CGContextStrokePath(cgContext);
@@ -454,77 +533,72 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 }
 
 
+- (int)slowWidthForCharacters: (const UniChar *)characters length: (unsigned)length
+{
+    float totalWidth = 0;
+    unsigned int i, numGlyphs;
+    ATSGlyphVector _glyphVector;
+    IFGlyphWidth glyphWidth;
+    ATSLayoutRecord *glyphRecords;
+    ATSGlyphRef glyphID;
+    
+    
+    ATSInitializeGlyphVector(length, 0, &_glyphVector);
+    [self convertCharacters: (const unichar *)characters length: (int)length glyphs: (ATSGlyphVector *)&_glyphVector];
+    numGlyphs = _glyphVector.numGlyphs;
+    glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
+    for (i = 0; i < numGlyphs; i++){
+        glyphID = glyphRecords[i].glyphID;
+        glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
+        totalWidth += glyphWidth;
+    }
+    ATSClearGlyphVector(&_glyphVector);
+    
+    return totalWidth;
+}
+
+
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
 {
     float totalWidth = 0;
     unsigned int i;
-    ATSLayoutRecord *glyphRecords;
-    unsigned int numGlyphs;
     NSFont *substituteFont;
-    BOOL needCharToGlyphLookup = NO;
+    ATSGlyphRef glyphID;
+    
 
-
-    if ([font glyphPacking] != NSNativeShortGlyphPacking &&
-        [font glyphPacking] != NSTwoByteGlyphPacking)
-        [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to pack glyphs for font %@ %f", self, [font displayName], [font pointSize]];
-        
     for (i = 0; i < length; i++){
         UniChar c = characters[i];
         
-        if (c == NON_BREAKING_SPACE)
+        if (c == NON_BREAKING_SPACE) {
         	c = SPACE;
-        	
-        if (IsNonBaseChar(c)){
-
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s (0x%04x) non base character, slower measurment required\n", DEBUG_OBJECT([font displayName]), c);
-
-            needCharToGlyphLookup = YES;
-            break;
         }
-        if (glyphForCharacter(characterToGlyphMap, c) == nonGlyphID){
-            [self extendCharacterToGlyphMapToInclude: c];
+        else if (IsNonBaseChar(c)){
+            return [self slowWidthForCharacters: characters length: length];
+        }
+        
+        glyphID = glyphForCharacter(characterToGlyphMap, c);
+        if (glyphID == nonGlyphID){
+            glyphID = [self extendCharacterToGlyphMapToInclude: c];
         }
         
         // Try to find a substitute font if this font didn't have a glyph for a character in the
-        // string.  If one isn't find we end up drawing and measuring a box.
-        if (glyphForCharacter(characterToGlyphMap, c) == 0){
+        // string.  If one isn't found we end up drawing and measuring a box.
+        if (glyphID == 0){
             substituteFont = [self substituteFontForCharacters: characters length: length];
             if (substituteFont){
                 WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT([substituteFont displayName]), DEBUG_OBJECT([font displayName]), c);
                 return [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] widthForCharacters: characters length: length];
             }
         }
+
+        totalWidth += widthForGlyph(self, glyphToWidthMap, glyphID);
     }
 
-    if (needCharToGlyphLookup){
-        ATSGlyphVector _glyphVector;
-        IFGlyphWidth glyphWidth;
-        
-        ATSInitializeGlyphVector(length, 0, &_glyphVector);
-        [self convertCharacters: (const unichar *)characters length: (int)length glyphs: (ATSGlyphVector *)&_glyphVector];
-        numGlyphs = _glyphVector.numGlyphs;
-        glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
-        for (i = 0; i < numGlyphs; i++){
-            ATSGlyphRef glyphID = glyphRecords[i].glyphID;
-            glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
-            totalWidth += glyphWidth;
-        }
-        ATSClearGlyphVector(&_glyphVector);
-    }
-    else {
-        for (i = 0; i < length; i++){
-			UniChar c = characters[i];
-			
-			if (c == NON_BREAKING_SPACE)
-				c = SPACE;
-            totalWidth += widthForCharacter(self, c);
-        }
-    }
-    
     return ROUND_TO_INT(totalWidth);
 }
 
 
+// This method is rarely (never?) called.  It's slow.
 - (void)drawString:(NSString *)string inRect:(NSRect)rect withColor:(NSColor *)color paragraphStyle:(NSParagraphStyle *)style
 {
     [string drawInRect:rect withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -602,9 +676,14 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     unsigned int end;
     ATSGlyphRef start;
     unsigned int blockSize;
+    unsigned int i, count;
     
-    if (glyphToWidthMap == 0)
-        blockSize = INITIAL_BLOCK_SIZE;
+    if (glyphToWidthMap == 0){
+        if ([font numberOfGlyphs] < INITIAL_BLOCK_SIZE)
+            blockSize = [font numberOfGlyphs];
+         else
+            blockSize = INITIAL_BLOCK_SIZE;
+    }
     else
         blockSize = INCREMENTAL_BLOCK_SIZE;
     start = (glyphID / blockSize) * blockSize;
@@ -612,12 +691,11 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     if (end > 0xffff)
         end = 0xffff;
 
-    unsigned int i, count = end - start + 1;
-
     WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s (0x%04x) adding widths for range 0x%04x to 0x%04x\n", DEBUG_OBJECT(font), glyphID, start, end);
 
     map->startRange = start;
     map->endRange = end;
+    count = end - start + 1;
 
     map->widths = (IFGlyphWidth *)malloc (count * sizeof(IFGlyphWidth));
 

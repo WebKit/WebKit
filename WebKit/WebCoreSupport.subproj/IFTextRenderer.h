@@ -28,25 +28,23 @@ typedef struct _GlyphMap {
 
 @interface IFTextRenderer : NSObject <WebCoreTextRenderer>
 {
-@public
-    NSFont *font;
     int ascent;
     int descent;
     int lineSpacing;
     
     ATSStyleGroupPtr styleGroup;
-    unsigned int widthCacheSize;
-    IFGlyphWidth *widthCache;
+
+@public
+    NSFont *font;
     GlyphMap *characterToGlyphMap;
     WidthMap *glyphToWidthMap;
-    
-    NSArray *substituteFontRenderers;
 }
 
 - initWithFont:(NSFont *)font;
 - (void)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs;
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c;
 - (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
+- (bool) slowPackGlyphsForCharacters:(const UniChar *)characters numCharacters: (unsigned int)numCharacters glyphBuffer:(CGGlyph **)glyphBuffer numGlyphs:(unsigned int *)numGlyphs;
 
-
+ 
 @end

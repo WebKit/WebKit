@@ -1,3 +1,21 @@
+2002-05-09  Richard J. Williamson  <rjw@apple.com>
+
+    Tuned implementation more.  Cleaned up and factored code.
+
+	* WebCoreSupport.subproj/IFTextRenderer.h:
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(-[IFTextRenderer substituteFontForString:]):
+	(-[IFTextRenderer substituteFontForCharacters:length:]):
+	(-[IFTextRenderer initWithFont:]):
+	(-[IFTextRenderer dealloc]):
+	(-[IFTextRenderer slowPackGlyphsForCharacters:numCharacters:glyphBuffer:numGlyphs:]):
+	(-[IFTextRenderer drawString:atPoint:withColor:]):
+	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+	(-[IFTextRenderer drawUnderlineForString:atPoint:withColor:]):
+	(-[IFTextRenderer slowWidthForCharacters:length:]):
+	(-[IFTextRenderer widthForCharacters:length:]):
+	(-[IFTextRenderer extendGlyphToWidthMapToInclude:]):
+
 2002-05-09  John Sullivan  <sullivan@apple.com>
 
 	* Bookmarks.subproj/IFBookmarkGroup.h:
