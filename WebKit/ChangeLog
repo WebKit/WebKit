@@ -1,3 +1,26 @@
+2003-03-07  Richard Williamson   <rjw@apple.com>
+
+        Drop mainDocumentError from WebDataSource.
+        Combine registerView: and registerRepresentation: into one method on WebFrame.
+        
+        Reviewed by trey.
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase init]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _mainDocumentError]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (+[WebFrame registerViewClass:representationClass:forMIMEType:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (switch):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+
+=======
 2003-03-07  John Sullivan  <sullivan@apple.com>
 
 	WebKit part of fixes to these two synching-related bugs:

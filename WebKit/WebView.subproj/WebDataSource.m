@@ -132,15 +132,4 @@
     return _private->pageTitle;
 }
 
-- (WebError *)mainDocumentError
-{
-    return _private->mainDocumentError;
-}
-
-+ (void)registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType
-{
-    // FIXME: OK to allow developers to override built-in reps?
-    [[self _repTypes] setObject:repClass forKey:MIMEType];
-}
-
 @end

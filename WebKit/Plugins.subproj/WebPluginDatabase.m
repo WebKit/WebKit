@@ -6,6 +6,7 @@
 
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebDataSource.h>
+#import <WebKit/WebFrame.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
@@ -183,8 +184,7 @@ static NSArray *pluginLocations(void)
         // Don't override previously registered types.
         if(![viewTypes containsObject:mime]){
             // FIXME: This won't work for the new plug-ins.
-            [WebView registerViewClass:[WebNetscapePluginDocumentView class] forMIMEType:mime];
-            [WebDataSource registerRepresentationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
+            [WebFrame registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
         }
     }
 

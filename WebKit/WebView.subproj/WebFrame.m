@@ -216,4 +216,12 @@
     return [[_private->children copy] autorelease];
 }
 
++ (void) registerViewClass:(Class)viewClass representationClass: (Class)representationClass forMIMEType:(NSString *)MIMEType
+{
+    [[WebView _viewTypes] setObject:viewClass forKey:MIMEType];
+    [[WebDataSource _repTypes] setObject:representationClass forKey:MIMEType];
+}
+
+
+
 @end

@@ -71,18 +71,5 @@
 */
 - (BOOL)allowsScrolling;
 
-/*!
-    @method registerViewClass:forMIMEType:
-    @abstract Registers an NSView subclass to use to render data of the given MIME type
-    @discussion Extends the views that WebKit supports.
-    The view must conform to the WebDocumentView protocol
-    A view may register for a primary MIME type by excluding
-    a subtype, i.e. "video/" will match the view with
-    all video types.  More specific matching takes precedence
-    over general matching.
-    @param viewClass The NSView subclass to instantiate when rendering data of the given MIME type
-    @param MIMEType The MIME type for which to instantiate the given class
-*/
-+ (void)registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType;
 
 @end

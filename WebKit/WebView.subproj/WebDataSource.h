@@ -102,23 +102,4 @@
 */
 - (NSString *)pageTitle;
 
-/*!
-    @method mainDocumentError
-    @result Returns a WebError associated with the load of the main document, or nil if no error occurred.
-*/
-- (WebError *)mainDocumentError;
-
-/*!
-    @method registerRepresentationClass:forMIMEType:
-    @discussion A class that implements WebDocumentRepresentation may be registered 
-    with this method.
-    A document class may register for a primary MIME type by excluding
-    a subtype, i.e. "video/" will match the document class with
-    all video types.  More specific matching takes precedence
-    over general matching.
-    @param repClass The WebDocumentRepresentation class to use to represent data of the given MIME type.
-    @param MIMEType The MIME type to represent with an object of the given class.
-*/
-+ (void) registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType;
-
 @end

@@ -113,6 +113,7 @@
 
 @interface WebDataSource (WebPrivate)
 
+- (WebError *)_mainDocumentError;
 - (NSString *)_stringWithData:(NSData *)data;
 - (void)_startLoading;
 - (void)_stopLoading;

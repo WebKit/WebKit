@@ -742,4 +742,10 @@
     }
 }
 
+- (WebError *)_mainDocumentError
+{
+    return _private->mainDocumentError;
+}
+
+
 @end

@@ -133,12 +133,6 @@ enum {
     }
 }
 
-+ (void) registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType
-{
-    // FIXME: OK to allow developers to override built-in views?
-    [[self _viewTypes] setObject:viewClass forKey:MIMEType];
-}
-
 -(BOOL)acceptsFirstResponder
 {
     return YES;

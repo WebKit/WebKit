@@ -836,14 +836,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             LOG(Loading, "%@:  checking complete in WebFrameStateProvisional", [self name]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
-            if ([pd mainDocumentError]) {
+            if ([pd _mainDocumentError]) {
                 // Check all children first.
                 LOG(Loading, "%@:  checking complete, current state WebFrameStateProvisional", [self name]);
                 [self _resetBackForwardListToCurrent];
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
-                    [[[self controller] _locationChangeDelegateForwarder] locationChangeDone:[pd mainDocumentError] forDataSource:pd];
+                    [[[self controller] _locationChangeDelegateForwarder] locationChangeDone:[pd _mainDocumentError] forDataSource:pd];
 
                     // We know the provisional data source didn't cut the muster, release it.
                     [self _setProvisionalDataSource:nil];
@@ -922,7 +922,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     }
                 }
 
-                [[[self controller] _locationChangeDelegateForwarder] locationChangeDone:[ds mainDocumentError] forDataSource:ds];
+                [[[self controller] _locationChangeDelegateForwarder] locationChangeDone:[ds _mainDocumentError] forDataSource:ds];
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
