@@ -1,3 +1,12 @@
+2002-08-30  Ken Kocienda  <kocienda@apple.com>
+
+        * WebView.subproj/WebControllerPrivate.m:
+        (+[WebController _MIMETypeForFile:]): Small tweak to account for change
+	in behavior of a WebFoundation method upon which this method depends.
+	The WebFoundation now returns nil when it cannot find a suitable mime
+	type rather than returning a default. This function now checks for a nil
+	return value and sets @"application/octet-stream" in that case.
+
 2002-08-30  Richard Williamson (Home)  <rjw@apple.com>
 
         Change link dragging behavior.  Drags URL, not URL contents.

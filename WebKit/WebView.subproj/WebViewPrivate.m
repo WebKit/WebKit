@@ -171,12 +171,22 @@
 
 + (NSString *)_MIMETypeForFile: (NSString *)path
 {
+    NSString *result;
     NSString *extension = [path pathExtension];
     
-    if([extension isEqualToString:@""])
-        return @"text/html";
-        
-    return [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+    if ([extension isEqualToString:@""]) {
+        result = @"text/html";
+    }
+    else {
+        result = [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+        if (result == nil) {
+            result = @"application/octet-stream";
+        }
+    }
+    
+    NSLog(@"_MIMETypeForFile: %@ -> %@", path, result);
+    
+    return result;
 }
 
 - (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path
