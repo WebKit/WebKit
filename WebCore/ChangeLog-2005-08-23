@@ -292,7 +292,6 @@
 
         <rdar://problem/3905066> REGRESSION (Mail): Hitting return key with caret in front of space causes space to become lost (resize fixes)
 
-
         Problem was that InsertParagraphSeparatorCommand::doApply() was not collapsing
         whitespace to a single non-breaking space when splitting a text node.
 
@@ -386,7 +385,6 @@
 	
         Reviewed by kevin
 
-        * ChangeLog:
         * khtml/rendering/render_table.cpp:
         (RenderTable::layout):
 
@@ -434,7 +432,6 @@
 
         Fix line navigation.  Add AXUIElementForTextMarker.
 
-        * ChangeLog:
         * kwq/KWQAccObject.mm:
         (-[KWQAccObject accessibilityParameterizedAttributeNames]):
         (-[KWQAccObject doAXUIElementForTextMarker:]):
@@ -445,7 +442,7 @@
         (-[KWQAccObject doAXPreviousLineStartTextMarkerForTextMarker:]):
         (-[KWQAccObject accessibilityAttributeValue:forParameter:]):
 
-2004-12-23  Darin Adler  <darin@apple.com>
+2005-01-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
 
