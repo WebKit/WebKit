@@ -89,6 +89,30 @@ NodeImpl::Id HTMLFormElementImpl::id() const
     return ID_FORM;
 }
 
+void HTMLFormElementImpl::attach()
+{
+    RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
+
+    if (style->display() != NONE && getDocument()->isHTMLDocument()) {
+	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+	document->addNamedImageOrForm(oldNameAttr);
+	document->addNamedImageOrForm(oldIdAttr);
+    }
+
+    HTMLElementImpl::attach();
+}
+
+void HTMLFormElementImpl::detach()
+{
+    if (getDocument()->isHTMLDocument()) {
+	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+	document->removeNamedImageOrForm(oldNameAttr);
+	document->removeNamedImageOrForm(oldIdAttr);
+    }
+
+    HTMLElementImpl::detach();
+}
+
 long HTMLFormElementImpl::length() const
 {
     int len = 0;
@@ -486,9 +510,36 @@ void HTMLFormElementImpl::parseAttribute(AttributeImpl *attr)
         setHTMLEventListener(EventImpl::RESET_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
-    case ATTR_ID:
     case ATTR_NAME:
+	{
+	    QString newNameAttr = attr->value().string();
+	    
+	    if (attached() && 
+		getDocument()->isHTMLDocument() &&
+		getDocument()->styleSelector()->styleForElement(this)->display() != NONE) {
+		
+		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+		document->removeNamedImageOrForm(oldNameAttr);
+		document->addNamedImageOrForm(newNameAttr);
+	    }
+	    oldNameAttr = newNameAttr;
+	}
 	break;
+    case ATTR_ID:
+	{
+	    QString newIdAttr = attr->value().string();
+	    
+	    if (attached() && 
+		getDocument()->isHTMLDocument() &&
+		getDocument()->styleSelector()->styleForElement(this)->display() != NONE) {
+		
+		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+		document->removeNamedImageOrForm(oldIdAttr);
+		document->addNamedImageOrForm(newIdAttr);
+	    }
+	    oldIdAttr = newIdAttr;
+	}
+	// fall through
     default:
         HTMLElementImpl::parseAttribute(attr);
     }

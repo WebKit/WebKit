@@ -1,3 +1,36 @@
+2002-12-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by: Darin
+
+	- fixed 3077227 - netflix "top 100" page JavaScript runs so
+	slowly, it seems like a hang
+
+	I fixed this by adding hash tables of image and form elements by
+	name and id. This allows scans of the whole document to be avoided
+	in many cases.
+
+	This also results in a small speedup (~1%) on cvs-js-ibench.
+
+        * khtml/dom/html_document.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::hasProperty):
+        (KJS::HTMLDocument::tryGet):
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::addNamedImageOrForm):
+        (HTMLDocumentImpl::removeNamedImageOrForm):
+        (HTMLDocumentImpl::haveNamedImageOrForm):
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::attach):
+        (HTMLFormElementImpl::detach):
+        (HTMLFormElementImpl::parseAttribute):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseAttribute):
+        (HTMLImageElementImpl::attach):
+        (HTMLImageElementImpl::detach):
+        * khtml/html/html_imageimpl.h:
+
 2002-12-06  David Hyatt  <hyatt@apple.com>
 
 	Hack to make i-bench paint every fourth page.  We can tune

@@ -27,6 +27,8 @@
 #include "html/html_baseimpl.h"
 #include "html/htmltokenizer.h"
 #include "html/html_miscimpl.h"
+#include "html/html_imageimpl.h"
+#include "html/html_formimpl.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -339,6 +341,37 @@ void HTMLDocumentImpl::close()
     }
 }
 
+void HTMLDocumentImpl::addNamedImageOrForm(const QString &name)
+{
+    if (name.length() == 0) {
+	return;
+    }
+ 
+    int oldCount = (int)namedImageAndFormCounts.find(name);
+    namedImageAndFormCounts.insert(name, (char *)(oldCount + 1));
+}
+
+void HTMLDocumentImpl::removeNamedImageOrForm(const QString &name)
+{ 
+    if (name.length() == 0) {
+	return;
+    }
+ 
+    int oldVal = (int)(namedImageAndFormCounts.find(name));
+    if (oldVal != 0) {
+	int newVal = oldVal - 1;
+	if (newVal == 0) {
+	    namedImageAndFormCounts.remove(name);
+	} else {
+	    namedImageAndFormCounts.insert(name, (char *)newVal);
+	}
+    }
+}
+
+bool HTMLDocumentImpl::haveNamedImageOrForm(const QString &name)
+{
+    return namedImageAndFormCounts.find(name) != NULL;
+}
 
 void HTMLDocumentImpl::determineParseMode( const QString &str )
 {

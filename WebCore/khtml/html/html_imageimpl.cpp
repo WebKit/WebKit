@@ -132,9 +132,39 @@ void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
         setHTMLEventListener(EventImpl::LOAD_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
-    case ATTR_NAME:
     case ATTR_NOSAVE:
 	break;
+    case ATTR_NAME:
+	{
+	    QString newNameAttr = attr->value().string();
+	    
+	    if (attached() && 
+		getDocument()->isHTMLDocument() &&
+		getDocument()->styleSelector()->styleForElement(this)->display() != NONE) {
+		
+		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+		document->removeNamedImageOrForm(oldNameAttr);
+		document->addNamedImageOrForm(newNameAttr);
+	    }
+	    
+	    oldNameAttr = newNameAttr;
+	}
+	break;
+    case ATTR_ID:
+	{
+	    QString newIdAttr = attr->value().string();
+	    
+	    if (attached() && 
+		getDocument()->isHTMLDocument() &&
+		getDocument()->styleSelector()->styleForElement(this)->display() != NONE) {
+		
+		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+		document->removeNamedImageOrForm(oldIdAttr);
+		document->addNamedImageOrForm(newIdAttr);
+	    }
+	    oldIdAttr = newIdAttr;
+	}
+	// fall through
     default:
         HTMLElementImpl::parseAttribute(attr);
     }
@@ -176,9 +206,26 @@ void HTMLImageElementImpl::attach()
         parentNode()->renderer()->addChild(m_render, nextRenderer());
         m_render->updateFromElement();
     }
+
+    if (getDocument()->isHTMLDocument() && _style->display() != NONE) {
+	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+	document->addNamedImageOrForm(oldIdAttr);
+	document->addNamedImageOrForm(oldNameAttr);
+    }
     _style->deref();
 
     NodeBaseImpl::attach();
+}
+
+void HTMLImageElementImpl::detach()
+{
+    if (getDocument()->isHTMLDocument()) {
+	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+	document->removeNamedImageOrForm(oldIdAttr);
+	document->removeNamedImageOrForm(oldNameAttr);
+    }
+
+    NodeBaseImpl::detach();
 }
 
 long HTMLImageElementImpl::width() const

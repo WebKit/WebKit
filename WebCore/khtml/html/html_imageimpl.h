@@ -46,6 +46,7 @@ public:
     virtual void parseAttribute(AttributeImpl *);
 
     virtual void attach();
+    virtual void detach();
 
     long width() const;
     long height() const;
@@ -60,6 +61,8 @@ public:
 protected:
     DOMString usemap;
     bool ismap;
+    QString oldIdAttr;
+    QString oldNameAttr;
 };
 
 

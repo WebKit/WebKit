@@ -64,6 +64,9 @@ public:
 
     virtual Id id() const;
 
+    virtual void attach();
+    virtual void detach();
+
     long length() const;
 
     QByteArray formData(bool& ok);
@@ -112,6 +115,9 @@ public:
     bool m_doingsubmit : 1;
     bool m_inreset : 1;
     bool m_malformed : 1;
+ private:
+    QString oldIdAttr;
+    QString oldNameAttr;
 };
 
 // -------------------------------------------------------------------------
