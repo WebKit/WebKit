@@ -25,8 +25,6 @@
 
 #import "KWQScrollView.h"
 
-#import "WebCoreFrameView.h"
-
 #import "KWQLogging.h"
 
 /*
@@ -195,30 +193,23 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     if (thisDocView)
         thisView = thisDocView;
 
-    subview = child->getView();
-
-    // It's a bit of a hack, but when we are asked to add the widget for the top level of
-    // a frame, we need to instead add the containing frame widget. See also the similar
-    // code in QWidget::setFrameGeometry.
-    if ([subview conformsToProtocol:@protocol(WebCoreFrameView)]) {
-        subview = [subview superview];
-    }
-    
+    subview = child->getOuterView();
     ASSERT(subview != thisView);
-
     if ([subview superview] == thisView) {
         return;
     }
     
     [subview removeFromSuperview];
     
-    LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview, [[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
+    LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview,
+        [[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
+
     [thisView addSubview:subview];
 }
 
 void QScrollView::removeChild(QWidget* child)
 {
-    [child->getView() removeFromSuperview];
+    [child->getOuterView() removeFromSuperview];
 }
 
 void QScrollView::resizeContents(int w, int h)

@@ -152,11 +152,7 @@ void QWidget::move(const QPoint &p)
 
 QRect QWidget::frameGeometry() const
 {
-    NSView *view = getView();
-    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
-        view = [view superview];
-    }
-    return QRect([view frame]);
+    return QRect([getOuterView() frame]);
 }
 
 int QWidget::baselinePosition() const
@@ -331,20 +327,7 @@ bool QWidget::hasMouseTracking() const
 
 void QWidget::setFrameGeometry(const QRect &rect)
 {
-    NSView *view = getView();
-    
-    ASSERT(view);
-    
-    // A QScrollView is a widget only used to represent a frame.  If
-    // this widget's view is a WebCoreFrameView the we resize it's containing
-    // view,  an WebView.  The scrollview contained by the WebView
-    // will be autosized.
-    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
-        view = [view superview];
-        ASSERT(view);
-    }
-    
-    [view setFrame:rect];
+    [getOuterView() setFrame:rect];
 }
 
 QPoint QWidget::mapFromGlobal(const QPoint &p) const
@@ -364,6 +347,21 @@ void QWidget::setView(NSView *view)
     [view retain];
     [data->view release];
     data->view = view;
+}
+
+NSView *QWidget::getOuterView() const
+{
+    // A QScrollView is a widget only used to represent a frame.  If
+    // this widget's view is a WebCoreFrameView the we resize it's containing
+    // view,  an WebView.  The scrollview contained by the WebView
+    // will be autosized.
+    NSView *view = data->view;
+    ASSERT(view);
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        view = [view superview];
+        ASSERT(view);
+    }
+    return view;
 }
 
 void QWidget::lockDrawingFocus()
@@ -398,13 +396,6 @@ void QWidget::paint(QPainter *p, const QRect &r)
     if (p->paintingDisabled()) {
         return;
     }
-    
-    // Need to get to superview here for the same reason as in setFrameGeometry.
-    NSView *view = getView();
-    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
-        view = [view superview];
-        ASSERT(view);
-    }
-    
+    NSView *view = getOuterView();
     [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
 }

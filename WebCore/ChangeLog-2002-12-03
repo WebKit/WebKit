@@ -1,5 +1,22 @@
 2002-11-20  Darin Adler  <darin@apple.com>
 
+	- fixed 3107383 -- clicking link on cnet.com leads to assertion failure
+
+	When we removed a frame, we were leaving behind an empty WebView. Yuck.
+
+        * kwq/KWQScrollView.mm:
+        (QScrollView::addChild): Use the new getOuterView.
+        (QScrollView::removeChild): Ditto. This was the bug fix.
+        * kwq/KWQWidget.h: Add getOuterView.
+        * kwq/KWQWidget.mm:
+        (QWidget::frameGeometry): Use the new getOuterView.
+        (QWidget::setFrameGeometry): Ditto.
+        (QWidget::getOuterView): Added. Does the WebCoreFrameView magic to find
+	the WebView instead of the WebHTMLView. Yuck.
+        (QWidget::paint): Use the new getOuterView.
+
+2002-11-20  Darin Adler  <darin@apple.com>
+
         * force-js-clean-timestamp: Again.
 
 2002-11-20  David Hyatt  <hyatt@apple.com>

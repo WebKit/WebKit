@@ -829,7 +829,7 @@
         }
     } else {
         if([[URL scheme] isEqualToString:@"javascript"]){
-            NSString *JSString = [[URL absoluteString] substringFromIndex:11];
+            NSString *JSString = [(id)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)[[URL absoluteString] substringFromIndex:11], (CFStringRef)@"") autorelease];
             [[self controller] stringByEvaluatingJavaScriptFromString:JSString];
             if(notifyData){
                NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);

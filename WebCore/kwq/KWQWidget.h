@@ -142,6 +142,7 @@ public:
     void setAcceptDrops(bool) { }
         
     NSView *getView() const;
+    NSView *getOuterView() const;
     void setView(NSView *aView);
     
     void displayRect(int x, int y, int w, int h);

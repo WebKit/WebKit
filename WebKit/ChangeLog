@@ -1,3 +1,12 @@
+2002-11-20  Darin Adler  <darin@apple.com>
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+	Unescape the string before executing it, so we don't suffer from bug 3083043
+	here in the javascript: URLs that come from plug-ins.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update.
+
 2002-11-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3079134 - Throttle plug-ins while in background
