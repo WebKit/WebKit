@@ -1,5 +1,10 @@
 2002-05-31  Darin Adler  <darin@apple.com>
 
+	* kwq/kwqdebug.h: Don't use displayableString; it's an SPI and those
+	are no nos inside WebCore.
+
+2002-05-31  Darin Adler  <darin@apple.com>
+
 	* kwq/kio/jobclasses.h: Removed SimpleJob and made Job just enough for
 	TransferJob to inherit from it. Removed unused stuff and made url() return
 	an NSURL rather than a KURL.

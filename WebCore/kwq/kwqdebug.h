@@ -27,7 +27,6 @@
 #define KWQDEBUG_H_
 
 #import <Foundation/Foundation.h>
-#import <Foundation/NSStringPrivate.h>
 
 #ifdef NDEBUG
 
@@ -76,7 +75,7 @@ void KWQLog(unsigned int level, const char *file, int line, const char *function
 //    __attribute__((__format__ (__printf__, 5, 6)))
 ;
 
-#define DEBUG_OBJECT(object) [[[object description] displayableString] lossyCString]
+#define DEBUG_OBJECT(object) [[object description] lossyCString]
 
 #define KWQDEBUGLEVEL(level,format...) \
    KWQLog(level, __FILE__, __LINE__, __PRETTY_FUNCTION__, format);
