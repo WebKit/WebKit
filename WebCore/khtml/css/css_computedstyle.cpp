@@ -733,6 +733,24 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         }
         ASSERT_NOT_REACHED();
         return 0;
+    case CSS_PROP__KHTML_LINE_BREAK:
+        switch (style->khtmlLineBreak()) {
+            case khtml::LBNORMAL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
+            case khtml::AFTER_WHITE_SPACE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AFTER_WHITE_SPACE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    case CSS_PROP__KHTML_NBSP_MODE:
+        switch (style->nbspMode()) {
+            case khtml::NBNORMAL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
+            case khtml::SPACE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_SPACE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_Z_INDEX:
         // FIXME: unimplemented
         break;

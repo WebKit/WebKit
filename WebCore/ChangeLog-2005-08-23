@@ -1,5 +1,13 @@
 2004-10-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Richard
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Add support to computed style
+        for getting -khtml-line-break and -khml-nbsp-mode.
+
+2004-10-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
