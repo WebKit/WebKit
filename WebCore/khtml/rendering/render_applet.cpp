@@ -50,6 +50,14 @@ RenderApplet::RenderApplet(QScrollView *view,
     m_applet = applet;
 
 #ifdef APPLE_CHANGES
+    NodeImpl *child = m_applet->firstChild();
+    while(child) {
+        if(child->id() == ID_PARAM) {
+            HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
+            args.insert(p->name(), p->value());
+        }
+        child = child->nextSibling();
+    }
     setQWidget( new WCJavaAppletWidget(args));
 #else /* APPLE_CHANGES not defined */
     KJavaAppletContext *context = 0;
