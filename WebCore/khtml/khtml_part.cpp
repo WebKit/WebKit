@@ -1985,14 +1985,25 @@ void KHTMLPart::setFixedFont( const QString &name )
     d->m_settings->setFixedFontName(name);
 }
 
+#if !APPLE_CHANGES
+
 void KHTMLPart::setURLCursor( const QCursor &c )
 {
   d->m_linkCursor = c;
 }
 
+#endif
+
 QCursor KHTMLPart::urlCursor() const
 {
+#if APPLE_CHANGES
+  // Don't load the link cursor until it's actually used.
+  // Also, we don't need setURLCursor.
+  // This speeds up startup time.
+  return KCursor::handCursor();
+#else
   return d->m_linkCursor;
+#endif
 }
 
 bool KHTMLPart::onlyLocalReferences() const

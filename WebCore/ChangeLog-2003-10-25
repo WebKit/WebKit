@@ -1,5 +1,14 @@
 2003-04-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Trey.
+
+        - speed up startup by not loading the hand cursor until it's used
+
+        * khtml/khtml_part.cpp: (KHTMLPart::urlCursor): Use the hand cursor.
+        * khtml/khtmlpart_p.h: Don't store the hand cursor in a per-part global.
+
+2003-04-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed 3224077 -- REGRESSION: tables on MacNN forums messed up because we reject %% due to style parser
