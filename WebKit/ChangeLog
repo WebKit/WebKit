@@ -1,3 +1,8 @@
+2003-10-26  Darin Adler  <darin@apple.com>
+
+        * WebKitPrefix.h: Add a definition of NULL here so we get the stricter type checking
+        even on pre-Merlot systems.
+
 === Safari-111 ===
 
 2003-10-24  Richard Williamson   <rjw@apple.com>

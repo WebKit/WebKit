@@ -1,3 +1,5 @@
+#define NULL ((void *)0)
+
 #import <stddef.h>
 #import <stdio.h>
 #import <fcntl.h>
