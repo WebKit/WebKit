@@ -1,3 +1,11 @@
+2003-04-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m:
+	(-[WebDefaultWindowOperationsDelegate webView:setContentRect:]):
+	Implemented in terms of webView:setFrame: to save clients work.
+
 2003-04-11  Chris Blumenberg  <cblu@apple.com>
 
 	Removed WebKitErrorResourceLoadInterruptedByPolicyChange error because it isn't used. 

@@ -125,7 +125,7 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)webView setContentRect:(NSRect)contentRect
 {
-    [[webView window] setFrame:[NSWindow frameRectForContentRect:contentRect styleMask:[[webView window] styleMask]] display:YES];
+    [self webView:webView setFrame:[NSWindow frameRectForContentRect:contentRect styleMask:[[webView window] styleMask]]];
 }
 
 - (NSRect)webViewContentRect:(WebView *)webView
