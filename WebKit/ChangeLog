@@ -1,3 +1,15 @@
+2002-12-11  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3124640 -- Crash importing IE Favorites if there 
+	are no IE favorites
+
+        Reviewed by Darin
+
+        * Bookmarks.subproj/WebBookmarkImporter.m:
+        (-[WebBookmarkImporter initWithPath:]):
+	use alloc/init instead of autoreleasing constructor for error since
+	it's kept around until dealloc.
+
 2002-12-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
