@@ -1517,7 +1517,6 @@ CSSPrimitiveValueImpl *CSSParser::parseColor()
         c = ::parseColor( str );
     } else if ( value->unit == CSSPrimitiveValue::CSS_RGBCOLOR ||
               value->unit == CSSPrimitiveValue::CSS_IDENT ||
-              value->unit == CSSPrimitiveValue::CSS_STRING ||
               value->unit == CSSPrimitiveValue::CSS_DIMENSION )
 	c = ::parseColor( qString( value->string ));
     else if ( value->unit == Value::Function &&

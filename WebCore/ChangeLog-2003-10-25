@@ -1,5 +1,16 @@
 2003-03-03  David Hyatt  <hyatt@apple.com>
 
+	I messed up when i merged Lars' quirks color patch for CSS with
+	my original patch.  I'm now exactly matching Lars' patch, and this
+	now fixes bug 3181185.
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseColor):
+
+2003-03-03  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3179084.  Fix is to just dump our code so that the new
 	addHTMLColor code kicks in.  This code is very close to WinIE
 	on more-colortests.html.
