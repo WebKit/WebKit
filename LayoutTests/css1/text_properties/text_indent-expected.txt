@@ -63,7 +63,6 @@ layer at (0,0) size 800x1246
         RenderText {TEXT} at (0,18) size 259x18
           text run at (0,18) width 259: "no matter where the lines might start, and"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
         RenderInline {EM} at (0,0) size 199x18
           RenderText {TEXT} at (0,36) size 199x18
             text run at (0,36) width 199: "regardless of any other markup"
@@ -122,7 +121,6 @@ layer at (0,0) size 800x1246
                 RenderText {TEXT} at (0,18) size 259x18
                   text run at (0,18) width 259: "no matter where the lines might start, and"
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderInline {EM} at (0,0) size 199x18
                   RenderText {TEXT} at (0,36) size 199x18
                     text run at (0,36) width 199: "regardless of any other markup"

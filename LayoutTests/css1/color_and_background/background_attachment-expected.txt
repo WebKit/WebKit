@@ -38,35 +38,30 @@ layer at (0,0) size 880x1193
         RenderText {TEXT} at (42,0) size 81x18
           text run at (42,0) width 81: " scroll | fixed"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
         RenderInline {EM} at (0,0) size 42x18
           RenderText {TEXT} at (0,18) size 42x18
             text run at (0,18) width 42: "Initial:"
         RenderText {TEXT} at (42,18) size 38x18
           text run at (42,18) width 38: " scroll"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
         RenderInline {EM} at (0,0) size 68x18
           RenderText {TEXT} at (0,36) size 68x18
             text run at (0,36) width 68: "Applies to:"
         RenderText {TEXT} at (68,36) size 78x18
           text run at (68,36) width 78: " all elements"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
         RenderInline {EM} at (0,0) size 62x18
           RenderText {TEXT} at (0,54) size 62x18
             text run at (0,54) width 62: "Inherited:"
         RenderText {TEXT} at (62,54) size 20x18
           text run at (62,54) width 20: " no"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
         RenderInline {EM} at (0,0) size 121x18
           RenderText {TEXT} at (0,72) size 121x18
             text run at (0,72) width 121: "Percentage values:"
         RenderText {TEXT} at (121,72) size 32x18
           text run at (121,72) width 32: " N/A"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,413) size 784x36
         RenderText {TEXT} at (0,0) size 782x36
           text run at (0,0) width 782: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas or"
@@ -127,35 +122,30 @@ layer at (0,0) size 880x1193
                 RenderText {TEXT} at (42,0) size 81x18
                   text run at (42,0) width 81: " scroll | fixed"
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderInline {EM} at (0,0) size 42x18
                   RenderText {TEXT} at (0,18) size 42x18
                     text run at (0,18) width 42: "Initial:"
                 RenderText {TEXT} at (42,18) size 38x18
                   text run at (42,18) width 38: " scroll"
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderInline {EM} at (0,0) size 68x18
                   RenderText {TEXT} at (0,36) size 68x18
                     text run at (0,36) width 68: "Applies to:"
                 RenderText {TEXT} at (68,36) size 78x18
                   text run at (68,36) width 78: " all elements"
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderInline {EM} at (0,0) size 62x18
                   RenderText {TEXT} at (0,54) size 62x18
                     text run at (0,54) width 62: "Inherited:"
                 RenderText {TEXT} at (62,54) size 20x18
                   text run at (62,54) width 20: " no"
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
                 RenderInline {EM} at (0,0) size 121x18
                   RenderText {TEXT} at (0,72) size 121x18
                     text run at (0,72) width 121: "Percentage values:"
                 RenderText {TEXT} at (121,72) size 32x18
                   text run at (121,72) width 32: " N/A"
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
               RenderBlock {P} at (4,322) size 762x36
                 RenderText {TEXT} at (0,0) size 718x36
                   text run at (0,0) width 718: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the"
