@@ -780,20 +780,52 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
         c = KCursor::sizeAllCursor();
         break;
     case CURSOR_E_RESIZE:
+#if APPLE_CHANGES
+        c = KCursor::eastResizeCursor();
+        break;
+#endif
     case CURSOR_W_RESIZE:
+#if APPLE_CHANGES
+        c = KCursor::westResizeCursor();
+#else
         c = KCursor::sizeHorCursor();
+#endif
         break;
     case CURSOR_N_RESIZE:
+#if APPLE_CHANGES
+        c = KCursor::northResizeCursor();
+        break;
+#endif
     case CURSOR_S_RESIZE:
+#if APPLE_CHANGES
+        c = KCursor::southResizeCursor();
+#else
         c = KCursor::sizeVerCursor();
+#endif
         break;
     case CURSOR_NE_RESIZE:
+#if APPLE_CHANGES
+        c = KCursor::northEastResizeCursor();
+        break;
+#endif
     case CURSOR_SW_RESIZE:
+#if APPLE_CHANGES
+        c = KCursor::southWestResizeCursor();
+#else
         c = KCursor::sizeBDiagCursor();
+#endif
         break;
     case CURSOR_NW_RESIZE:
+#if APPLE_CHANGES
+        c = KCursor::northWestResizeCursor();
+        break;
+#endif
     case CURSOR_SE_RESIZE:
+#if APPLE_CHANGES
+        c = KCursor::southEastResizeCursor();
+#else
         c = KCursor::sizeFDiagCursor();
+#endif
         break;
     case CURSOR_TEXT:
         c = KCursor::ibeamCursor();

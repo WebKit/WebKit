@@ -44,6 +44,15 @@ public:
     static QCursor ibeamCursor();
     static QCursor waitCursor();
     static QCursor whatsThisCursor();
+    
+    static QCursor eastResizeCursor();
+    static QCursor northResizeCursor();
+    static QCursor northEastResizeCursor();
+    static QCursor northWestResizeCursor();
+    static QCursor southResizeCursor();
+    static QCursor southEastResizeCursor();
+    static QCursor southWestResizeCursor();
+    static QCursor westResizeCursor();
 
 };
 

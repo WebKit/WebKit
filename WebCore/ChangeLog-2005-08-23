@@ -1,3 +1,47 @@
+2003-10-01  Chris Blumenberg  <cblu@apple.com>
+
+	<rdar://problem/2942589>: CSS cursors are not implemented
+
+        Reviewed by Dave.
+
+        * Resources/eastCursor.tiff: Added.
+        * Resources/eastResizeCursor.tiff: Added.
+        * Resources/helpCursor.tiff: Added.
+        * Resources/moveCursor.tiff: Added.
+        * Resources/northEastResizeCursor.tiff: Added.
+        * Resources/northResizeCursor.tiff: Added.
+        * Resources/northWestResizeCursor.tiff: Added.
+        * Resources/southEastResizeCursor.tiff: Added.
+        * Resources/southResizeCursor.tiff: Added.
+        * Resources/southWestResizeCursor.tiff: Added.
+        * Resources/waitCursor.tiff: Added.
+        * Resources/westResizeCursor.tiff: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/cssparser.cpp: special-case the hand cursor to mean pointer
+        (CSSParser::parseValue):
+        * khtml/css/cssvalues.c: generated changes
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h: generated changes
+        * khtml/css/cssvalues.in: removed the progress cursor from the list because it was messing up the mapping
+        * khtml/khtmlview.cpp: call new cursor methods
+        * kwq/KWQKCursor.h:
+        * kwq/KWQKCursor.mm:
+        (+[NSCursor _WebCore_cursorWithName:hotSpot:]): new, loads and caches cursors
+        (KCursor::crossCursor): get the AppKit cross hair cursor
+        (KCursor::handCursor): call _WebCore_cursorWithName:hotSpot:
+        (KCursor::sizeAllCursor): ditto
+        (KCursor::waitCursor): ditto
+        (KCursor::whatsThisCursor): ditto
+        (KCursor::eastResizeCursor): new, call _WebCore_cursorWithName:hotSpot:
+        (KCursor::northResizeCursor): ditto
+        (KCursor::northEastResizeCursor): ditto
+        (KCursor::northWestResizeCursor): ditto
+        (KCursor::southResizeCursor): ditto
+        (KCursor::southEastResizeCursor): ditto
+        (KCursor::southWestResizeCursor): ditto
+        (KCursor::westResizeCursor): ditto
+
 2003-10-01  David Hyatt  <hyatt@apple.com>
 
 	Clean up our detach model so that you can always get to a document, even for

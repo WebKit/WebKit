@@ -522,6 +522,18 @@
 				F5A1B04A02DE8ABA018635CA,
 				F5A1B05402DE8B46018635CA,
 				BC8F629A0405F45600A80004,
+				84C0FA2F052B966D000440A1,
+				84C0FA30052B966D000440A1,
+				84C0FA31052B966D000440A1,
+				84C0FA32052B966D000440A1,
+				84C0FA33052B966D000440A1,
+				84C0FA34052B966D000440A1,
+				84C0FA35052B966D000440A1,
+				84C0FA36052B966D000440A1,
+				84C0FA37052B966D000440A1,
+				84C0FA38052B966D000440A1,
+				84C0FA39052B966D000440A1,
+				84C0FA3A052B966D000440A1,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -776,8 +788,8 @@
 		};
 		089C1665FE841158C02AAC07 = {
 			children = (
+				84C0FA1E052B9652000440A1,
 				089C1666FE841158C02AAC07,
-				F5A1B04902DE8ABA018635CA,
 				F5A1B05302DE8B46018635CA,
 				BC8F62990405F45600A80004,
 			);
@@ -992,6 +1004,205 @@
 //552
 //553
 //554
+//840
+//841
+//842
+//843
+//844
+		84C0FA1E052B9652000440A1 = {
+			children = (
+				84C0FA23052B966D000440A1,
+				84C0FA24052B966D000440A1,
+				84C0FA25052B966D000440A1,
+				F5A1B04902DE8ABA018635CA,
+				84C0FA26052B966D000440A1,
+				84C0FA27052B966D000440A1,
+				84C0FA28052B966D000440A1,
+				84C0FA29052B966D000440A1,
+				84C0FA2A052B966D000440A1,
+				84C0FA2B052B966D000440A1,
+				84C0FA2C052B966D000440A1,
+				84C0FA2D052B966D000440A1,
+				84C0FA2E052B966D000440A1,
+			);
+			isa = PBXGroup;
+			name = "Cursor Images";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA23052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = eastCursor.tiff;
+			path = Resources/eastCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA24052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = eastResizeCursor.tiff;
+			path = Resources/eastResizeCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA25052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = helpCursor.tiff;
+			path = Resources/helpCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA26052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = moveCursor.tiff;
+			path = Resources/moveCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA27052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = northEastResizeCursor.tiff;
+			path = Resources/northEastResizeCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA28052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = northResizeCursor.tiff;
+			path = Resources/northResizeCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA29052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = northWestResizeCursor.tiff;
+			path = Resources/northWestResizeCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA2A052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = southEastResizeCursor.tiff;
+			path = Resources/southEastResizeCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA2B052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = southResizeCursor.tiff;
+			path = Resources/southResizeCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA2C052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = southWestResizeCursor.tiff;
+			path = Resources/southWestResizeCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA2D052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = waitCursor.tiff;
+			path = Resources/waitCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA2E052B966D000440A1 = {
+			expectedFileType = image.tiff;
+			isa = PBXFileReference;
+			name = westResizeCursor.tiff;
+			path = Resources/westResizeCursor.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84C0FA2F052B966D000440A1 = {
+			fileRef = 84C0FA23052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA30052B966D000440A1 = {
+			fileRef = 84C0FA24052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA31052B966D000440A1 = {
+			fileRef = 84C0FA25052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA32052B966D000440A1 = {
+			fileRef = 84C0FA26052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA33052B966D000440A1 = {
+			fileRef = 84C0FA27052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA34052B966D000440A1 = {
+			fileRef = 84C0FA28052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA35052B966D000440A1 = {
+			fileRef = 84C0FA29052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA36052B966D000440A1 = {
+			fileRef = 84C0FA2A052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA37052B966D000440A1 = {
+			fileRef = 84C0FA2B052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA38052B966D000440A1 = {
+			fileRef = 84C0FA2C052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA39052B966D000440A1 = {
+			fileRef = 84C0FA2D052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84C0FA3A052B966D000440A1 = {
+			fileRef = 84C0FA2E052B966D000440A1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//840
+//841
+//842
+//843
+//844
 //930
 //931
 //932
