@@ -1,3 +1,11 @@
+2004-04-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3636673>: "unrepro nil-deref crash in KHTMLPart::frameDetached() (espn.com)"
+
+        * kwq/KWQKHTMLPart.mm: (KHTMLPart::frameDetached): Check for nil.
+
 2004-04-28  Chris Blumenberg  <cblu@apple.com>
 
 	- Implemented DOMHTMLElementExtensions.

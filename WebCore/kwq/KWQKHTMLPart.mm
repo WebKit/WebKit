@@ -673,13 +673,16 @@ void KHTMLPart::frameDetached()
     KWQ_UNBLOCK_EXCEPTIONS;
 
     // FIXME: There may be a better place to do this that works for KHTML too.
-    FrameList& parentFrames = parentPart()->d->m_frames;
-    FrameIt end = parentFrames.end();
-    for (FrameIt it = parentFrames.begin(); it != end; ++it) {
-        if ((*it).m_part == this) {
-            parentFrames.remove(it);
-            deref();
-            break;
+    KHTMLPart *parent = parentPart();
+    if (parent) {
+        FrameList& parentFrames = parent->d->m_frames;
+        FrameIt end = parentFrames.end();
+        for (FrameIt it = parentFrames.begin(); it != end; ++it) {
+            if ((*it).m_part == this) {
+                parentFrames.remove(it);
+                deref();
+                break;
+            }
         }
     }
 }
