@@ -1,3 +1,19 @@
+2005-03-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Fix for this bug:
+        
+        <rdar://problem/3972665> 8A360: HTML message partially truncated on left hand side, text-indent from Script Editor
+        
+        This was fixed, then regressed with Harrison's fix for this bug:
+        
+        <rdar://problem/3948453> Can't type accented chars as first character in Stickies widget
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): My now addresses both problems in a way that they no longer
+        clobber each other.
+
 2005-03-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
