@@ -1,3 +1,15 @@
+2005-03-16  Jens Alfke  <jens@apple.com>
+
+        Reviewed by Kevin.
+
+	Fix for <rdar://problem/4025212> "REGRESSION (163-164): search not performed correctly; united.com"
+	JavaScript unescape("") was returning a messed-up String object that appeared identical to an empty string, but would in some cases act as 'null' when passed to native functions, in this case the Option() constructor.
+	In the implementation of unescape, the UString holding the result was not initialized to "", so it started out as a null string. If nothing was appended to it, it remained null, resulting in a JavaScript String object with some bad behaviors (namely, converting it to a DOMStringImpl results in a NULL pointer.)
+	Darin says this regression occurred when we replaced our own implementation of unescape() with code from KJS.
+
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::call):
+
 2005-03-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4053276> WebScripting protocol in WebKit cannot convert Boolean in Javascript to BOOL in Objective-C

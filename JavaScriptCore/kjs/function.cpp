@@ -734,7 +734,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     }
   case UnEscape:
     {
-      UString s, str = args[0].toString(exec);
+      UString s = "", str = args[0].toString(exec);
       int k = 0, len = str.size();
       while (k < len) {
         const UChar *c = str.data() + k;
