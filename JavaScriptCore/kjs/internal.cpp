@@ -68,6 +68,34 @@ namespace KJS {
   const double Inf = *(const double*) Inf_Bytes;
 };
 
+#ifdef APPLE_CHANGES
+static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
+static pthread_mutex_t interpreterLock;
+
+static void initializeInterpreterLock()
+{
+  pthread_mutexattr_t attr;
+
+  pthread_mutexattr_init(&attr);
+  pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
+
+  pthread_mutex_init(&interpreterLock, &attr);
+}
+
+static inline void lockInterpreter()
+{
+  pthread_once(&interpreterLockOnce, initializeInterpreterLock);
+  pthread_mutex_lock(&interpreterLock);
+}
+
+static inline void unlockInterpreter()
+{
+  pthread_mutex_unlock(&interpreterLock);
+}
+
+#endif
+
+
 // ------------------------------ UndefinedImp ---------------------------------
 
 UndefinedImp *UndefinedImp::staticUndefined = 0;
@@ -688,16 +716,10 @@ void ContextImp::popScope()
 
 ProgramNode *Parser::progNode = 0;
 int Parser::sid = 0;
-#ifdef APPLE_CHANGES
-static pthread_mutex_t parserLock = PTHREAD_MUTEX_INITIALIZER;
-#endif
 
 ProgramNode *Parser::parse(const UChar *code, unsigned int length, int *sourceId,
 			   int *errLine, UString *errMsg)
 {
-#ifdef APPLE_CHANGES
-  pthread_mutex_lock(&parserLock);
-#endif
   if (errLine)
     *errLine = -1;
   if (errMsg)
@@ -726,15 +748,9 @@ ProgramNode *Parser::parse(const UChar *code, unsigned int length, int *sourceId
     fprintf(stderr, "KJS: JavaScript parse error at line %d.\n", eline);
 #endif
     delete prog;
-#ifdef APPLE_CHANGES
-    pthread_mutex_unlock(&parserLock);
-#endif
     return 0;
   }
 
-#ifdef APPLE_CHANGES
-  pthread_mutex_unlock(&parserLock);
-#endif
   return prog;
 }
 
@@ -777,7 +793,7 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
   // add this interpreter to the global chain
   // as a root set for garbage collection
 #ifdef APPLE_CHANGES
-  Collector::lock();
+  pthread_mutex_lock(&interpreterLock);
   m_interpreter = interp;
 #endif
   if (s_hook) {
@@ -791,7 +807,7 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
     globalInit();
   }
 #ifdef APPLE_CHANGES
-  Collector::unlock();
+  pthread_mutex_unlock(&interpreterLock);
 #endif
 
 #ifndef APPLE_CHANGES
@@ -938,7 +954,7 @@ void InterpreterImp::clear()
   //fprintf(stderr,"InterpreterImp::clear\n");
   // remove from global chain (see init())
 #ifdef APPLE_CHANGES
-  Collector::lock();
+  pthread_mutex_lock(&interpreterLock);
 #endif
   next->prev = prev;
   prev->next = next;
@@ -950,7 +966,7 @@ void InterpreterImp::clear()
     globalClear();
   }
 #ifdef APPLE_CHANGES
-  Collector::unlock();
+  pthread_mutex_unlock(&interpreterLock);
 #endif
 }
 
@@ -988,9 +1004,18 @@ bool InterpreterImp::checkSyntax(const UString &code)
 
 Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
 {
+#ifdef APPLE_CHANGES
+  pthread_mutex_lock(&interpreterLock);
+#endif
   // prevent against infinite recursion
   if (recursion >= 20) {
+#ifdef APPLE_CHANGES
+    Completion result = Completion(Throw,Error::create(globExec,GeneralError,"Recursion too deep"));
+    pthread_mutex_unlock(&interpreterLock);
+    return result;
+#else
     return Completion(Throw,Error::create(globExec,GeneralError,"Recursion too deep"));
+#endif
   }
 
   // parse the source code
@@ -1003,13 +1028,23 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
   if (dbg) {
     bool cont = dbg->sourceParsed(globExec,sid,code,errLine);
     if (!cont)
+#ifdef APPLE_CHANGES
+      {
+	pthread_mutex_unlock(&interpreterLock);
+	return Completion(Break);
+      }
+#else
       return Completion(Break);
+#endif
   }
 
   // no program node means a syntax error occurred
   if (!progNode) {
     Object err = Error::create(globExec,SyntaxError,errMsg.ascii(),errLine);
     err.put(globExec,"sid",Number(sid));
+#ifdef APPLE_CHANGES
+    pthread_mutex_unlock(&interpreterLock);
+#endif
     return Completion(Throw,err);
   }
 
@@ -1052,6 +1087,9 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
     delete progNode;
   recursion--;
 
+#ifdef APPLE_CHANGES
+    pthread_mutex_unlock(&interpreterLock);
+#endif
   return res;
 }
 

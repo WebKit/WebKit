@@ -41,17 +41,6 @@ using namespace KJS;
 
 // ----------------------------- ValueImp -------------------------------------
 
-#if APPLE_CHANGES
-ValueImp::ValueImp() :
-  refcount(0)
-{
-  // Tell the garbage collector that this memory block corresponds to a real object now
-  Collector::lock();
-  _flags = VI_CREATED;
-  //fprintf(stderr,"ValueImp::ValueImp %p\n",(void*)this);
-  Collector::unlock();
-}
-#else
 ValueImp::ValueImp() :
   refcount(0),
   // Tell the garbage collector that this memory block corresponds to a real object now
@@ -59,7 +48,6 @@ ValueImp::ValueImp() :
 {
   //fprintf(stderr,"ValueImp::ValueImp %p\n",(void*)this);
 }
-#endif
 
 ValueImp::~ValueImp()
 {
@@ -80,14 +68,8 @@ bool ValueImp::marked() const
 
 void ValueImp::setGcAllowed()
 {
-#ifdef APPLE_CHANGES
-  Collector::lock();
-#endif
   //fprintf(stderr,"ValueImp::setGcAllowed %p\n",(void*)this);
   _flags |= VI_GCALLOWED;
-#ifdef APPLE_CHANGES
-  Collector::unlock();
-#endif
 }
 
 void* ValueImp::operator new(size_t s)
