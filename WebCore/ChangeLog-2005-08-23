@@ -1,3 +1,27 @@
+2004-06-04  David Hyatt  <hyatt@apple.com>
+
+	Add support for auto values in flex transitions.  Add support for mapping the back end values to
+	front end values.  Next it's time to actually try to use this stuff in render_flexbox.
+	
+        Reviewed by darin
+
+        * khtml/css/css_valueimpl.cpp:
+        (length):
+        * khtml/css/css_valueimpl.h:
+        (DOM::FlexGroupTransitionValueImpl::isAuto):
+        * khtml/css/cssparser.cpp:
+        (FlexGroupTransitionParseContext::length):
+        (FlexGroupTransitionParseContext::commitAutoValue):
+        (FlexGroupTransitionParseContext::commitValue):
+        (CSSParser::parseFlexGroupTransition):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/rendering/render_style.cpp:
+        (FlexGroupTransitionData::operator==):
+        * khtml/rendering/render_style.h:
+        (khtml::FlexGroupTransitionData::next):
+        (khtml::FlexGroupTransitionData::isAuto):
+
 === Safari-143 ===
 
 2004-06-04  Kevin Decker  <kdecker@apple.com>

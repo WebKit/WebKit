@@ -1935,7 +1935,7 @@ bool CSSParser::parseShadow(int propId, bool important)
 struct FlexGroupTransitionParseContext {
     FlexGroupTransitionParseContext()
     :values(0), allowGroup1(true), allowSlash(false), allowGroup2(false), allowLength(false),
-     allowBreak(true), group1(0), group2(0), length(0)
+     allowBreak(true),  autoValue(false), group1(0), group2(0), length(0)
     {}
     
     ~FlexGroupTransitionParseContext() {
@@ -1976,21 +1976,29 @@ struct FlexGroupTransitionParseContext {
         allowBreak = true;
     }
 
+    void commitAutoValue() {
+        autoValue = true;
+        allowSlash = allowGroup1 = allowGroup2 = allowLength = false;
+        allowBreak = true;
+    }
+
     void commitValue() {
         // Handle the ,, case gracefully by doing nothing.
-        if ((group1 || group2) && length) {
+        if (autoValue || ((group1 || group2) && length)) {
             if (!values)
                 values = new CSSValueListImpl();
             
             // Construct the current shadow value and add it to the list.
-            values->append(new FlexGroupTransitionValueImpl(group1, group2, length));
+            values->append(autoValue ? 
+                           new FlexGroupTransitionValueImpl() :
+                           new FlexGroupTransitionValueImpl(group1, group2, length));
         }
         
         // Now reset for the next shadow value.
         group1 = group2 = 0;
         length = 0;
         allowGroup1 = allowBreak = true;
-        allowSlash = allowGroup2 = allowLength = false;
+        allowSlash = allowGroup2 = allowLength = autoValue = false;
     }
     
     CSSValueListImpl* values;
@@ -1999,6 +2007,9 @@ struct FlexGroupTransitionParseContext {
     bool allowGroup2;
     bool allowLength;
     bool allowBreak;
+
+    // The current value data
+    bool autoValue;
     unsigned int group1;
     unsigned int group2;
     CSSPrimitiveValueImpl* length;
@@ -2024,6 +2035,13 @@ bool CSSParser::parseFlexGroupTransition(int propId, bool important)
             
             // The value is good.  Commit it.
             context.commitValue();
+        }
+        // See if an auto value was specified
+        else if (val->id == CSS_VAL_AUTO) {
+            if (context.allowGroup1)
+                context.commitAutoValue();
+            else
+                return context.failed();
         }
         // Check to see if we're a non-negative number.
         else if (validUnit(val, FInteger|FNonNeg, true)) {

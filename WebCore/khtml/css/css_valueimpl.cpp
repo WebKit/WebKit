@@ -1032,10 +1032,14 @@ DOMString ShadowValueImpl::cssText() const
 }
 
 // Used for box-flex-transition-group
+FlexGroupTransitionValueImpl::FlexGroupTransitionValueImpl()
+:autoValue(true), group1(0), group2(0), length(0)
+{}
+
 FlexGroupTransitionValueImpl::FlexGroupTransitionValueImpl(unsigned int _group1, 
                                                            unsigned int _group2,
                                                            CSSPrimitiveValueImpl* _length)
-:group1(_group1), group2(_group2), length(_length)
+:autoValue(false), group1(_group1), group2(_group2), length(_length)
 {}
 
 FlexGroupTransitionValueImpl::~FlexGroupTransitionValueImpl()

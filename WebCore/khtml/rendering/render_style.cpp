@@ -924,5 +924,5 @@ bool FlexGroupTransitionData::operator==(const FlexGroupTransitionData& o) const
         (next && o.next && *next != *o.next))
         return false;
     
-    return group1 == o.group1 && group2 == o.group2 && length == o.length;
+    return autoValue == o.autoValue && group1 == o.group1 && group2 == o.group2 && length == o.length;
 }
