@@ -1,3 +1,34 @@
+2003-04-09  Trey Matteson  <trey@apple.com>
+
+	3223413 - crash in [CompletionController controlTextDidChange] at travelocity.com
+
+	This was a great one to get steps for repro - it has shown up at least twice before.
+
+	The problem is that when there is a focused TextField within a frame, the proper
+	FormDelegate messages were not being sent on refresh or b/f.  The cause was that
+	the FirstResponder would be reset in the middle of detaching the frame, at which point
+	our object graph was already half taken apart.  Fix is to detect that case before
+	doing the detach work, and endEditing explicitly.
+
+        Reviewed by Darin.
+
+        * ChangeLog:
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:   New FormDelegate logging category.
+        * WebCoreSupport.subproj/WebBridge.m:
+	All changes in here are just calling LOG for the new category.
+        (-[WebBridge controlTextDidBeginEditing:]):
+        (-[WebBridge controlTextDidEndEditing:]):
+        (-[WebBridge controlTextDidChange:]):
+        (-[WebBridge control:textShouldBeginEditing:]):
+        (-[WebBridge control:textShouldEndEditing:]):
+        (-[WebBridge control:didFailToFormatString:errorDescription:]):
+        (-[WebBridge control:didFailToValidatePartialString:errorDescription:]):
+        (-[WebBridge control:isValidObject:]):
+        (-[WebBridge control:textView:doCommandBySelector:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _setDataSource:]):  The fix, as described above.
+
 2003-04-09  Richard Williamson   <rjw@apple.com>
 
         Fix for 3222904.  This change fixes the immediate symptoms of the bug,

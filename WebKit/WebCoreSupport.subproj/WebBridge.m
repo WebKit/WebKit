@@ -857,48 +857,59 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [[self->frame webView] _formDelegate];
 }
 
+#define FormDelegateLog(ctrl)  LOG(FormDelegate, "control=%@", ctrl)
+
 - (void)controlTextDidBeginEditing:(NSNotification *)obj
 {
+    FormDelegateLog([obj object]);
     [formDelegate(self) controlTextDidBeginEditing:obj inFrame:frame];
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)obj
 {
+    FormDelegateLog([obj object]);
     [formDelegate(self) controlTextDidEndEditing:obj inFrame:frame];
 }
 
 - (void)controlTextDidChange:(NSNotification *)obj
 {
+    FormDelegateLog([obj object]);
     [formDelegate(self) controlTextDidChange:obj inFrame:frame];
 }
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
+    FormDelegateLog(control);
     return [formDelegate(self) control:control textShouldBeginEditing:fieldEditor inFrame:frame];
 }
 
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
 {
+    FormDelegateLog(control);
     return [formDelegate(self) control:control textShouldEndEditing:fieldEditor inFrame:frame];
 }
 
 - (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
 {
+    FormDelegateLog(control);
     return [formDelegate(self) control:control didFailToFormatString:string errorDescription:error inFrame:frame];
 }
 
 - (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
 {
+    FormDelegateLog(control);
     [formDelegate(self) control:control didFailToValidatePartialString:string errorDescription:error inFrame:frame];
 }
 
 - (BOOL)control:(NSControl *)control isValidObject:(id)obj
 {
+    FormDelegateLog(control);
     return [formDelegate(self) control:control isValidObject:obj inFrame:frame];
 }
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
+    FormDelegateLog(control);
     return [formDelegate(self) control:control textView:textView doCommandBySelector:commandSelector inFrame:frame];
 }
 

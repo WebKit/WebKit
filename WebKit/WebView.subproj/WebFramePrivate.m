@@ -432,14 +432,39 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     }
 
     ASSERT(ds != _private->dataSource);
-    
-    if ([_private->dataSource isDocumentHTML] && ![ds isDocumentHTML]) {
-        [_private->bridge removeFromFrame];
-    }
 
-    [self _detachChildren];
-    
-    [_private->dataSource _setWebFrame:nil];
+    if (_private->dataSource) {
+        // Make sure that any work that is triggered by resigning first reponder can get done.
+        // The main example where this came up is the textDidEndEditing that is sent to the
+        // FormsDelegate (3223413).  We need to do this before _detachChildren, since that will
+        // remove the views as a side-effect of freeing the bridge, at which point we can't
+        // post the FormDelegate messages.
+        //
+        // Note that this can also take FirstResponder away from a child of our frameView that
+        // is not in a child frame's view.  This is OK because we are in the process
+        // of loading new content, which will blow away all editors in this top frame, and if
+        // a non-editor is firstReponder it will not be affected by endEditingFor:.
+        // Potentially one day someone could write a DocView whose editors were not all
+        // replaced by loading new content, but that does not apply currently.
+        NSView *frameView = [self frameView];
+        NSWindow *window = [frameView window];
+        NSResponder *firstResp = [window firstResponder];
+        if ([firstResp isKindOfClass:[NSView class]]
+            && [(NSView *)firstResp isDescendantOf:frameView])
+        {
+            [window endEditingFor:firstResp];
+        }
+
+        if ([_private->dataSource isDocumentHTML] && ![ds isDocumentHTML]) {
+            [_private->bridge removeFromFrame];
+        }
+
+        [self _detachChildren];
+
+        [_private->dataSource _setWebFrame:nil];
+    } else {
+        ASSERT(!_private->children);
+    }
 
     [_private setDataSource:ds];
     [ds _setController:[self webView]];
