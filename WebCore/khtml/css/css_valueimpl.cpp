@@ -242,6 +242,10 @@ DOMString CSSMutableStyleDeclarationImpl::getShortHandValue( const int* properti
 
 DOMString CSSMutableStyleDeclarationImpl::removeProperty(int propertyID, bool notifyChanged, int &exceptionCode)
 {
+    if (m_node && !m_node->getDocument())
+        return ""; // FIXME: This (not well-understood) situation happens on albertsons.com.  We don't really know how they managed to run a script on a node
+                   // with no document pointer, but this sidesteps the crash.
+
     exceptionCode = 0;
 
     DOMString value;
@@ -295,6 +299,9 @@ DOMString CSSMutableStyleDeclarationImpl::removeProperty(int propertyID, int &ex
 
 bool CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const DOMString &value, bool important, bool notifyChanged, int &exceptionCode)
 {
+    if (m_node && !m_node->getDocument())
+        return false; // FIXME: This (not well-understood) situation happens on albertsons.com.  We don't really know how they managed to run a script on a node
+                      // with no document pointer, but this sidesteps the crash.
     exceptionCode = 0;
 
     removeProperty(propertyID);
