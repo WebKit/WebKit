@@ -121,7 +121,7 @@ static QString toHebrew( int number ) {
 // -------------------------------------------------------------------------
 
 RenderListItem::RenderListItem(DOM::NodeImpl* node)
-    : RenderFlow(node), _notInList(false)
+    : RenderBlock(node), _notInList(false)
 {
     // init RenderObject attributes
     setInline(false);   // our object is not Inline
@@ -132,7 +132,7 @@ RenderListItem::RenderListItem(DOM::NodeImpl* node)
 
 void RenderListItem::setStyle(RenderStyle *_style)
 {
-    RenderFlow::setStyle(_style);
+    RenderBlock::setStyle(_style);
 
     RenderStyle *newStyle = new RenderStyle();
     newStyle->ref();
@@ -197,7 +197,7 @@ static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* m
         if (currChild->isFloating() || currChild->isPositioned())
             continue;
             
-        if (currChild->isTable() || !currChild->isFlow())
+        if (currChild->isTable() || !currChild->isRenderBlock())
             break;
         
         if (currChild->element() && 
@@ -248,7 +248,7 @@ void RenderListItem::calcMinMaxWidth()
     // Make sure our marker is in the correct location.
     updateMarkerLocation();
     if (!minMaxKnown())
-        RenderFlow::calcMinMaxWidth();
+        RenderBlock::calcMinMaxWidth();
 }
 
 void RenderListItem::layout( )
@@ -257,7 +257,7 @@ void RenderListItem::layout( )
     KHTMLAssert( minMaxKnown() );
 
     updateMarkerLocation();    
-    RenderFlow::layout();
+    RenderBlock::layout();
 }
 
 void RenderListItem::paint(QPainter *p, int _x, int _y, int _w, int _h,
@@ -269,7 +269,7 @@ void RenderListItem::paint(QPainter *p, int _x, int _y, int _w, int _h,
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << nodeName().string() << "(LI)::paint()" << endl;
 #endif
-    RenderFlow::paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+    RenderBlock::paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
 void RenderListItem::paintObject(QPainter *p, int _x, int _y,
@@ -277,7 +277,7 @@ void RenderListItem::paintObject(QPainter *p, int _x, int _y,
 {
     // ### this should scale with the font size in the body... possible?
     //m_marker->printIcon(p, _tx, _ty);
-    RenderFlow::paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+    RenderBlock::paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
 // -----------------------------------------------------------

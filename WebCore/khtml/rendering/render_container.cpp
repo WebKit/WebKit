@@ -227,8 +227,7 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
         
         if (pseudo->contentType()==CONTENT_TEXT)
         {
-            RenderObject* po = new (renderArena()) RenderFlow(0 /* anonymous box */);
-            po->setStyle(pseudo);
+            RenderObject* po = RenderFlow::createFlow(0, pseudo, renderArena()); /* anonymous box */
             addChild(po, beforeChild);
             
             RenderText* t = new (renderArena()) RenderText(0 /*anonymous object */, pseudo->contentText());
@@ -331,7 +330,7 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
     while( child ) {
 	RenderObject *next = child->nextSibling();
 	
-	if ( child->isFlow() && child->isAnonymousBox() && !child->continuation() && !child->childrenInline() && !child->isTableCell() ) {
+	if ( child->isRenderBlock() && child->isAnonymousBox() && !child->continuation() && !child->childrenInline() && !child->isTableCell() ) {
 	    RenderObject *firstAnChild = child->firstChild();
 	    RenderObject *lastAnChild = child->lastChild();
 	    if ( firstAnChild ) {

@@ -36,8 +36,6 @@ public:
 
     virtual const char *renderName() const { return "RenderReplaced"; }
 
-    virtual bool isRendered() const { return true; }
-
     virtual short lineHeight( bool firstLine) const;
     virtual short baselinePosition( bool firstLine ) const;
 

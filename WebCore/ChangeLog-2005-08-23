@@ -1,3 +1,145 @@
+2003-01-31  David Hyatt  <hyatt@apple.com>
+
+	Split RenderFlow into subclasses: RenderInline and RenderBlock.
+	This change should make inlines a lot smaller (since nearly all
+	of the member variables in RenderFlow moved into RenderBlock).
+
+	It also simplifies methods like containingBlock(), which can
+	now return a RenderBlock.
+	
+        Reviewed by darin
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/bidi.cpp:
+        (RenderBlock::bidiReorderLine):
+        (RenderBlock::layoutInlineChildren):
+        (RenderBlock::findNextLineBreak):
+        * khtml/rendering/render_block.cpp: Added.
+        (:RenderFlow):
+        (RenderBlock::~RenderBlock):
+        (RenderBlock::setStyle):
+        (RenderBlock::addChildToFlow):
+        (getInlineRun):
+        (RenderBlock::makeChildrenNonInline):
+        (RenderBlock::removeChild):
+        (RenderBlock::layout):
+        (RenderBlock::layoutBlockChildren):
+        (RenderBlock::layoutSpecialObjects):
+        (RenderBlock::paint):
+        (RenderBlock::paintObject):
+        (RenderBlock::paintFloats):
+        (RenderBlock::insertSpecialObject):
+        (RenderBlock::removeSpecialObject):
+        (RenderBlock::positionNewFloats):
+        (RenderBlock::newLine):
+        (RenderBlock::leftOffset):
+        (RenderBlock::leftRelOffset):
+        (RenderBlock::rightOffset):
+        (RenderBlock::rightRelOffset):
+        (RenderBlock::lineWidth):
+        (RenderBlock::nearestFloatBottom):
+        (RenderBlock::floatBottom):
+        (RenderBlock::lowestPosition):
+        (RenderBlock::rightmostPosition):
+        (RenderBlock::leftBottom):
+        (RenderBlock::rightBottom):
+        (RenderBlock::clearFloats):
+        (RenderBlock::addOverHangingFloats):
+        (RenderBlock::checkClear):
+        (RenderBlock::nodeAtPoint):
+        (RenderBlock::calcMinMaxWidth):
+        (next):
+        (RenderBlock::calcInlineMinMaxWidth):
+        (RenderBlock::calcBlockMinMaxWidth):
+        (RenderBlock::close):
+        (RenderBlock::printTree):
+        (RenderBlock::dump):
+        * khtml/rendering/render_block.h: Added.
+        * khtml/rendering/render_body.cpp:
+        (RenderBody::RenderBody):
+        (RenderBody::setStyle):
+        (RenderBody::layout):
+        (RenderBody::availableHeight):
+        * khtml/rendering/render_body.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::containingBlockWidth):
+        (RenderBox::calcWidth):
+        (RenderBox::calcHeight):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::insertPseudoChild):
+        (RenderContainer::removeLeftoverAnonymousBoxes):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::createFlow):
+        (RenderFlow::addChildWithContinuation):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_html.cpp:
+        (RenderHtml::RenderHtml):
+        (RenderHtml::setStyle):
+        (RenderHtml::layout):
+        * khtml/rendering/render_html.h:
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_inline.cpp: Added.
+        (:RenderFlow):
+        (RenderInline::~RenderInline):
+        (RenderInline::setStyle):
+        (RenderInline::addChildToFlow):
+        (cloneInline):
+        (RenderInline::splitInlines):
+        (RenderInline::splitFlow):
+        (RenderInline::paint):
+        (RenderInline::paintObject):
+        (RenderInline::calcMinMaxWidth):
+        (RenderInline::offsetWidth):
+        (RenderInline::offsetHeight):
+        (RenderInline::offsetLeft):
+        (RenderInline::offsetTop):
+        * khtml/rendering/render_inline.h: Added.
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::RenderListItem):
+        (RenderListItem::setStyle):
+        (getParentOfFirstLineBox):
+        (RenderListItem::calcMinMaxWidth):
+        (RenderListItem::layout):
+        (RenderListItem::paint):
+        (RenderListItem::paintObject):
+        * khtml/rendering/render_list.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+        (RenderObject::containingBlock):
+        (RenderObject::setOverhangingContents):
+        (RenderObject::removeFromSpecialObjects):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::RenderRoot):
+        (RenderRoot::calcMinMaxWidth):
+        (RenderRoot::layout):
+        (RenderRoot::paintObject):
+        * khtml/rendering/render_root.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::RenderTable):
+        (RenderTable::setStyle):
+        (RenderTable::lineHeight):
+        (RenderTable::baselinePosition):
+        (RenderTable::addChild):
+        (RenderTable::calcWidth):
+        (RenderTable::recalcSections):
+        (RenderTable::dump):
+        (RenderTableCell::RenderTableCell):
+        (RenderTableCell::detach):
+        (RenderTableCell::calcMinMaxWidth):
+        (RenderTableCell::close):
+        (RenderTableCell::repaintRectangle):
+        (RenderTableCell::absolutePosition):
+        (RenderTableCell::setStyle):
+        (RenderTableCell::dump):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded):
+
 2003-01-31  Darin Adler  <darin@apple.com>
 
         Reviewed by me, Dave wrote the code.

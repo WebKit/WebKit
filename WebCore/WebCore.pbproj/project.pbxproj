@@ -484,6 +484,8 @@
 				931BFCD803D4AEFD008635CE,
 				93955A4303D72932008635CE,
 				6504A7BF03DCE19800000124,
+				BC7C965303E9EE7000A80004,
+				BC7C965503E9EE7000A80004,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -725,6 +727,8 @@
 				931BFCD503D4AEE5008635CE,
 				931BFCD903D4AEFD008635CE,
 				93955A4403D72932008635CE,
+				BC7C965203E9EE7000A80004,
+				BC7C965403E9EE7000A80004,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1470,6 +1474,54 @@
 		};
 		BC7294FE03804B5600A80166 = {
 			fileRef = BC7294FC03804B5600A80166;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC7C964E03E9EE7000A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = render_block.cpp;
+			refType = 4;
+		};
+		BC7C964F03E9EE7000A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = render_block.h;
+			refType = 4;
+		};
+		BC7C965003E9EE7000A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = render_inline.cpp;
+			refType = 4;
+		};
+		BC7C965103E9EE7000A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = render_inline.h;
+			refType = 4;
+		};
+		BC7C965203E9EE7000A80004 = {
+			fileRef = BC7C964E03E9EE7000A80004;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC7C965303E9EE7000A80004 = {
+			fileRef = BC7C964F03E9EE7000A80004;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC7C965403E9EE7000A80004 = {
+			fileRef = BC7C965003E9EE7000A80004;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC7C965503E9EE7000A80004 = {
+			fileRef = BC7C965103E9EE7000A80004;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4134,6 +4186,8 @@
 				F523D2A302DE4438018635CA,
 				BC7294FC03804B5600A80166,
 				BC7294FB03804B5600A80166,
+				BC7C964F03E9EE7000A80004,
+				BC7C964E03E9EE7000A80004,
 				F523D2A602DE4438018635CA,
 				F523D2A502DE4438018635CA,
 				F523D2A802DE4438018635CA,
@@ -4152,6 +4206,8 @@
 				F523D2B602DE4438018635CA,
 				F523D2B702DE4438018635CA,
 				F523D2B802DE4438018635CA,
+				BC7C965003E9EE7000A80004,
+				BC7C965103E9EE7000A80004,
 				F690CFEA031C47F401CA2AC4,
 				F690CFEB031C47F401CA2AC4,
 				F523D2B902DE4438018635CA,

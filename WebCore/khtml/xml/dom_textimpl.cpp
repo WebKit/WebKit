@@ -380,12 +380,12 @@ bool TextImpl::rendererIsNeeded(RenderStyle *style)
     if (par->isInline()) {
         // <span><div/> <div/></span>
         RenderObject *prev = previousRenderer();
-        if (prev && prev->isFlow() && !prev->isInline()) {
+        if (prev && prev->isRenderBlock()) {
             return false;
         }
     } else {
         RenderObject *prev = previousRenderer();
-        if (par->isFlow() && !par->childrenInline() && (!prev || !prev->isInline())) {
+        if (par->isRenderBlock() && !par->childrenInline() && (!prev || !prev->isInline())) {
             return false;
         }
         

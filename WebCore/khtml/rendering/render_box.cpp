@@ -408,11 +408,12 @@ void RenderBox::close()
 
 short RenderBox::containingBlockWidth() const
 {
-    if ( ( style()->htmlHacks() || isTable() ) && style()->flowAroundFloats() && containingBlock()->isFlow()
+    RenderBlock* cb = containingBlock();
+    if (( style()->htmlHacks() || isTable() ) && style()->flowAroundFloats() 
             && style()->width().isVariable())
-        return static_cast<RenderFlow*>(containingBlock())->lineWidth(m_y);
+        return cb->lineWidth(m_y);
     else
-        return containingBlock()->contentWidth();
+        return cb->contentWidth();
 }
 
 bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
@@ -511,9 +512,9 @@ void RenderBox::calcWidth()
         Length mr = style()->marginRight();
 
         int cw;
-        RenderObject *cb = containingBlock();
-        if ( style()->flowAroundFloats() && cb->isFlow() )
-            cw = static_cast<RenderFlow *>(cb)->lineWidth( m_y );
+        RenderBlock *cb = containingBlock();
+        if (style()->flowAroundFloats())
+            cw = cb->lineWidth( m_y );
         else
             cw = cb->contentWidth();
 
@@ -691,7 +692,7 @@ void RenderBox::calcHeight()
                 // Handle a common case: nested 100% height <div>s.
                 // This is kind of a one-off hack rather than doing it right.
                 // Makes dbaron's z-index root bg testcases work. Bad dave. - dwh
-                RenderObject* cb = containingBlock();
+                RenderBlock* cb = containingBlock();
                 Length ch = containingBlock()->style()->height();
                 while (cb && !cb->isTableCell() && ch.isPercent() && ch.value == 100) {
                     cb = cb->containingBlock();

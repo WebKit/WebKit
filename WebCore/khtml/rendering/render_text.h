@@ -137,8 +137,6 @@ public:
 
     virtual void setStyle(RenderStyle *style);
 
-    virtual bool isRendered() const { return true; }
-
     virtual void paint(QPainter *, int x, int y, int w, int h,
                        int tx, int ty, PaintAction paintAction);
     virtual void paintObject(QPainter *, int x, int y, int w, int h,

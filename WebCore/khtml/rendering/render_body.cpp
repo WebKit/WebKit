@@ -33,7 +33,7 @@ using namespace khtml;
 using namespace DOM;
 
 RenderBody::RenderBody(HTMLBodyElementImpl* element)
-    : RenderFlow(element)
+    : RenderBlock(element)
 {
     scrollbarsStyled = false;
 }
@@ -45,7 +45,8 @@ RenderBody::~RenderBody()
 void RenderBody::setStyle(RenderStyle* style)
 {
 //     qDebug("RenderBody::setStyle()");
-    RenderFlow::setStyle(style);
+    style->setDisplay(BLOCK); // Don't allow RenderBody to be inline at the moment.
+    RenderBlock::setStyle(style);
     element()->getDocument()->setTextColor( DOMString( style->color().name() ) );
     scrollbarsStyled = false;
 }
@@ -88,7 +89,7 @@ void RenderBody::repaint(bool immediate)
 
 void RenderBody::layout()
 {
-    RenderFlow::layout();
+    RenderBlock::layout();
 
 #if !APPLE_CHANGES
     if (!scrollbarsStyled)
@@ -105,7 +106,7 @@ void RenderBody::layout()
 
 int RenderBody::availableHeight() const
 {
-    int h = RenderFlow::availableHeight();
+    int h = RenderBlock::availableHeight();
 
     if( style()->marginTop().isFixed() )
         h  -= style()->marginTop().value;

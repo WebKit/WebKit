@@ -43,7 +43,7 @@
 using namespace khtml;
 
 RenderTable::RenderTable(DOM::NodeImpl* node)
-    : RenderFlow(node)
+    : RenderBlock(node)
 {
 
     tCaption = 0;
@@ -76,7 +76,7 @@ void RenderTable::setStyle(RenderStyle *_style)
     ETableLayout oldTableLayout = style() ? style()->tableLayout() : TAUTO;
     if ( _style->display() == INLINE ) _style->setDisplay(INLINE_TABLE);
     if ( _style->display() != INLINE_TABLE ) _style->setDisplay(TABLE);
-    RenderFlow::setStyle(_style);
+    RenderBlock::setStyle(_style);
 
     // init RenderObject attributes
     setInline(style()->display()==INLINE_TABLE && !isPositioned());
@@ -111,7 +111,7 @@ short RenderTable::lineHeight(bool b) const
     // the base class.
     if (isReplaced())
         return height()+marginTop()+marginBottom();
-    return RenderFlow::lineHeight(b);
+    return RenderBlock::lineHeight(b);
 }
 
 short RenderTable::baselinePosition(bool b) const
@@ -120,7 +120,7 @@ short RenderTable::baselinePosition(bool b) const
     // the base class.
     if (isReplaced())
         return height()+marginTop()+marginBottom();
-    return RenderFlow::baselinePosition(b);
+    return RenderBlock::baselinePosition(b);
 }
 
 void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
@@ -139,7 +139,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
     switch(child->style()->display())
     {
     case TABLE_CAPTION:
-        tCaption = static_cast<RenderFlow *>(child);
+        tCaption = static_cast<RenderBlock *>(child);
         break;
     case TABLE_COLUMN:
     case TABLE_COLUMN_GROUP:
@@ -203,7 +203,7 @@ void RenderTable::calcWidth()
         calcAbsoluteHorizontal();
     }
 
-    RenderObject *cb = containingBlock();
+    RenderBlock *cb = containingBlock();
     int availableWidth = cb->contentWidth();
 
     LengthType widthType = style()->width().type;
@@ -217,8 +217,8 @@ void RenderTable::calcWidth()
     }
 
     // restrict width to what we really have in case we flow around floats
-    if ( style()->flowAroundFloats() && cb->isFlow() ) {
-	availableWidth = static_cast<RenderFlow *>(cb)->lineWidth( m_y );
+    if (style()->flowAroundFloats()) {
+	availableWidth = cb->lineWidth( m_y );
 	m_width = QMIN( availableWidth, m_width );
     }
 
@@ -569,7 +569,7 @@ void RenderTable::recalcSections()
 	switch(child->style()->display()) {
 	case TABLE_CAPTION:
 	    if ( !tCaption) {
-		tCaption = static_cast<RenderFlow*>(child);
+		tCaption = static_cast<RenderBlock*>(child);
                 tCaption->setLayouted(false);
             }
 	    break;
@@ -635,7 +635,7 @@ void RenderTable::dump(QTextStream *stream, QString ind) const
 	*stream << " " << columns[i].span;
     *stream << endl << ind;
 
-    RenderFlow::dump(stream,ind);
+    RenderBlock::dump(stream,ind);
 }
 #endif
 
@@ -1357,7 +1357,7 @@ void RenderTableRow::layout()
 // -------------------------------------------------------------------------
 
 RenderTableCell::RenderTableCell(DOM::NodeImpl* _node)
-  : RenderFlow(_node)
+  : RenderBlock(_node)
 {
   _col = -1;
   _row = -1;
@@ -1373,7 +1373,7 @@ void RenderTableCell::detach(RenderArena* arena)
     if (parent() && section())
         section()->setNeedCellRecalc();
 
-    RenderFlow::detach(arena);
+    RenderBlock::detach(arena);
 }
 
 void RenderTableCell::updateFromElement()
@@ -1405,7 +1405,7 @@ void RenderTableCell::calcMinMaxWidth()
     kdDebug( 6040 ) << renderName() << "(TableCell)::calcMinMaxWidth() known=" << minMaxKnown() << endl;
 #endif
 
-    RenderFlow::calcMinMaxWidth();
+    RenderBlock::calcMinMaxWidth();
     
     setMinMaxKnown();
 }
@@ -1424,7 +1424,7 @@ void RenderTableCell::setWidth( int width )
 
 void RenderTableCell::close()
 {
-    RenderFlow::close();
+    RenderBlock::close();
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(RenderTableCell)::close() total height =" << m_height << endl;
@@ -1435,12 +1435,12 @@ void RenderTableCell::close()
 void RenderTableCell::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
     y += _topExtra;
-    RenderFlow::repaintRectangle(x, y, w, h, immediate, f);
+    RenderBlock::repaintRectangle(x, y, w, h, immediate, f);
 }
 
 bool RenderTableCell::absolutePosition(int &xPos, int &yPos, bool f)
 {
-    bool ret = RenderFlow::absolutePosition(xPos, yPos, f);
+    bool ret = RenderBlock::absolutePosition(xPos, yPos, f);
     if (ret)
       yPos += _topExtra;
     return ret;
@@ -1464,7 +1464,7 @@ short RenderTableCell::baselinePosition( bool ) const
 void RenderTableCell::setStyle( RenderStyle *style )
 {
     style->setDisplay(TABLE_CELL);
-    RenderFlow::setStyle( style );
+    RenderBlock::setStyle( style );
     setShouldPaintBackgroundOrBorder(true);
     
     if (style->whiteSpace() == KONQ_NOWRAP) {
@@ -1581,7 +1581,7 @@ void RenderTableCell::dump(QTextStream *stream, QString ind) const
     *stream << " cSpan=" << cSpan;
 //    *stream << " nWrap=" << nWrap;
 
-    RenderFlow::dump(stream,ind);
+    RenderBlock::dump(stream,ind);
 }
 #endif
 

@@ -22,7 +22,7 @@
 #ifndef RENDER_HTML
 #define RENDER_HTML
 
-#include "render_flow.h"
+#include "render_block.h"
 
 namespace DOM {
 
@@ -33,7 +33,7 @@ class QScrollView;
 
 namespace khtml {
 
-    class RenderHtml : public RenderFlow
+    class RenderHtml : public RenderBlock
     {
     public:
 	RenderHtml(DOM::HTMLElementImpl* node);

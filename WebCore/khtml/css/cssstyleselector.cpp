@@ -450,6 +450,12 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
         }
     }
 
+    // Mutate the display to BLOCK for certain cases, e.g., if someone attempts to
+    // position or float an inline.
+    if (style->display() == INLINE &&
+           (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE))
+        style->setDisplay(BLOCK);
+    
     return style;
 }
 

@@ -22,14 +22,14 @@
 #ifndef render_root_h
 #define render_root_h
 
-#include "render_flow.h"
+#include "render_block.h"
 
 class KHTMLView;
 class QScrollView;
 
 namespace khtml {
 
-class RenderRoot : public RenderFlow
+class RenderRoot : public RenderBlock
 {
 public:
     RenderRoot(DOM::NodeImpl* node, KHTMLView *view);
@@ -37,7 +37,6 @@ public:
 
     virtual const char *renderName() const { return "RenderRoot"; }
 
-    virtual bool isRendered() const { return true; }
     virtual bool isRoot() const { return true; }
 
     virtual void layout();
