@@ -1,9 +1,15 @@
 2003-04-21  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed previous "Reviewed by".
+
+        * ChangeLog:
+
+2003-04-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3140990 - Safari: Error attempting to load movie from Rhino records
 	Renamed plug-in view methods to mention that they take URL strings.
         
-	Reviewed by darin.
+	Reviewed by john.
 
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge viewForPluginWithURLString:attributes:baseURLString:MIMEType:]): renamed, try to find the plug-in using the extension of the SRC URL if the plug-in isn't found using the MIME type.

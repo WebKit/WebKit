@@ -1,8 +1,14 @@
 2003-04-21  Chris Blumenberg  <cblu@apple.com>
 
+        Fixed previous "Reviewed by".
+
+        * ChangeLog:
+
+2003-04-21  Chris Blumenberg  <cblu@apple.com>
+
 	Use renamed plug-in view methods.
 
-        Reviewed by darin.
+        Reviewed by john.
 
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::createPart):
