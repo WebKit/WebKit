@@ -1,3 +1,11 @@
+2003-10-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix mistake in my last change that I did not mean to commit.
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::width): Remove extraneous second attempt to
+	lay out.
+
 2003-10-30  David Hyatt  <hyatt@apple.com>
 
 	Put paged-media changes back without the wrongful removal of the style data copy constructors (which
@@ -33,6 +41,9 @@
         * khtml/ecma/kjs_html.cpp:
         (KJS::HTMLElement::getValueProperty): Don't force layout for image
 	width/height if you can determine it statically from the attribute.
+        * khtml/html/html_image.cpp:
+        (HTMLImageElementImpl::width):
+        (HTMLImageElementImpl::height):
 
 === Safari-112 ===
 

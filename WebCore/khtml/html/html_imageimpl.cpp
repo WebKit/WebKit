@@ -237,14 +237,6 @@ long HTMLImageElementImpl::width() const
 	return 0;
     }
 
-
-    // ### make a unified call for this
-    if (changed() || m_render->needsLayout()) {
-        getDocument()->updateRendering();
-        if (getDocument()->view())
-            getDocument()->view()->layout();
-    }
-
     return m_render->contentWidth();
 }
 
