@@ -59,6 +59,10 @@
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSUserDefaults_NSURLExtras.h>
 
+// Included to help work around this bug:
+// <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
+#import <AppKit/NSKeyBindingManager.h>
+
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebElementFrameKey =              @"WebElementFrame";
 NSString *WebElementImageKey =              @"WebElementImage";
@@ -2079,7 +2083,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 @implementation WebView (WebViewEditing)
 
 - (void)_editingKeyDown:(NSEvent *)event
-{
+{   
+    // Work around this bug:
+    // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
+    [NSKeyBindingManager sharedKeyBindingManager];
+    
+    // Now process the key normally
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
 }
 

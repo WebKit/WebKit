@@ -1,5 +1,17 @@
 2004-04-22  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Darin
+
+        Work around this bug:
+        <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _editingKeyDown:]): The issue is with a message to nil in AppKit
+        key binding manager code. Add call to [NSKeyBindingManager sharedKeyBindingManager] to make
+        sure the not-supposed-to-be-nil object is created before calling interpretKeyEvents:.
+
+2004-04-22  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         Added calls to ensure caret visibility after the editing action is done.
