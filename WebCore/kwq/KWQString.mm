@@ -1030,9 +1030,9 @@ QString &QString::replace(const QRegExp &qre, const QString &qs)
     if (s) {
         int len = qs.length();
         for (int i = 0; i < CFStringGetLength(s); i += len) {
-            int width;
+            int width = 0;
             i = qre.match(*this, i, &width, FALSE);
-            if (i < 0) {
+            if ((i < 0) || !width) {
                 break;
             }
             CFRange r = CFRangeMake(i, width);
