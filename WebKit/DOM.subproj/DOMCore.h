@@ -33,6 +33,8 @@
 @class DOMNamedNodeMap;
 @class DOMNodeList;
 
+@protocol DOMEventTarget;
+
 typedef struct DOMObjectInternal DOMObjectInternal;
 
 @interface DOMObject : WebScriptObject <NSCopying>
@@ -90,7 +92,7 @@ enum {
     DOM_NOTATION_NODE                 = 12,
 };
 
-@interface DOMNode : DOMObject
+@interface DOMNode : DOMObject <DOMEventTarget>
 - (NSString *)nodeName;
 - (NSString *)nodeValue;
 - (void)setNodeValue:(NSString *)string;
