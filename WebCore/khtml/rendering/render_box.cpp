@@ -218,7 +218,7 @@ void RenderBox::paintRootBoxDecorations(QPainter *p,int, int _y,
 
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
-    if (!c.isValid() && canvas()->view()) {
+    if ((!c.isValid() || qAlpha(c.rgb()) == 0) && canvas()->view()) {
         DOM::NodeImpl* elt = element()->getDocument()->ownerElement();
         if (canBeTransparent && elt && elt->id() != ID_FRAME) // Frames are never transparent.
             canvas()->view()->useSlowRepaints(); // The parent must show behind the child.
@@ -300,8 +300,14 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor &c, CachedImag
                                         int _tx, int _ty, int w, int h,
                                         int bleft, int bright)
 {
-    if (c.isValid() && qAlpha(c.rgb()) > 0)
+    if (c.isValid() && qAlpha(c.rgb()) > 0) {
+        // If we have an alpha and we are painting the root element, go ahead and blend with our default
+        // background color (typically white).
+        if (qAlpha(c.rgb()) < 0xFF && isRoot())
+            p->fillRect(_tx, clipy, w, cliph, canvas()->view()->palette().active().color(QColorGroup::Base));
         p->fillRect(_tx, clipy, w, cliph, c);
+    }
+    
     // no progressive loading of the background image
     if(bg && bg->pixmap_size() == bg->valid_rect().size() && !bg->isTransparent() && !bg->isErrorImage()) {
         //kdDebug( 6040 ) << "painting bgimage at " << _tx << "/" << _ty << endl;
