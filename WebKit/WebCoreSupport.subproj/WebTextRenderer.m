@@ -34,11 +34,11 @@
 #define CEIL_TO_INT(x) ((int)(x + 0.999)) /* ((int)(x + 1.0 - FLT_EPSILON)) */
 
 // MAX_GLYPH_EXPANSION is the maximum numbers of glyphs that may be
-// use to represent a single unicode code point.
+// use to represent a single Unicode code point.
 #define MAX_GLYPH_EXPANSION 4
 #define LOCAL_BUFFER_SIZE 2048
 
-// Covers Latin1.
+// Covers Latin-1.
 #define INITIAL_BLOCK_SIZE 0x200
 
 // Get additional blocks of glyphs and widths in bigger chunks.
@@ -46,12 +46,6 @@
 #define INCREMENTAL_BLOCK_SIZE 0x400
 
 #define UNINITIALIZED_GLYPH_WIDTH 65535
-
-// combining char, hangul jamo, or Apple corporate variant tag
-#define JunseongStart 0x1160
-#define JonseongEnd 0x11F9
-#define IsHangulConjoiningJamo(X) (X >= JunseongStart && X <= JonseongEnd)
-#define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (((X) & 0x1FFFF0) == 0xF870)))
 
 #define ATSFontRefFromNSFont(font) (FMGetATSFontRefFromFont((FMFont)[font _atsFontID]))
 
@@ -170,9 +164,6 @@ struct CharacterWidthIterator
 
 
 // Character property functions.
-static inline BOOL isControlCharacter(UniChar c);
-static inline BOOL isAlternateSpace(UniChar c);
-static inline BOOL isSpace(UniChar c);
 
 static inline BOOL isControlCharacter(UniChar c)
 {
@@ -191,8 +182,9 @@ static inline BOOL isSpace(UniChar c)
 
 
 // Map utility functions
-static void freeWidthMap (WidthMap *map);
-static void freeGlyphMap (GlyphMap *map);
+static void freeWidthMap(WidthMap *map);
+static void freeGlyphMap(GlyphMap *map);
+static void freeUnicodeGlyphMap(UnicodeGlyphMap *map);
 static inline ATSGlyphRef glyphForUnicodeCharacter (UnicodeGlyphMap *map, UnicodeChar c, NSFont **font);
 static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font);
 static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c, NSFont **font);
@@ -219,7 +211,7 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
     // monospaced fonts, in particular Courier!  This has the downside of inappropriately
     // adjusting the widths of characters in non-monospaced fonts that are coincidentally
     // the same width as a space in that font.  In practice this is not an issue as the
-    // adjustment is always as the sub-pixel level.
+    // adjustment is always at the sub-pixel level.
     if (width == renderer->spaceWidth)
         return renderer->ceiledSpaceWidth;
 
@@ -248,8 +240,6 @@ static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *m
         
         return width;
     }
-    // never get here.
-    return 0;
 }    
 
 static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font)
@@ -271,12 +261,8 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRe
 
 // Misc.
 static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont);
-#ifdef NEED_FINDLENGTHOFCHARACTERCLUSTER
-static unsigned findLengthOfCharacterCluster(const UniChar *characters, unsigned length);
-#endif
-static inline BOOL fontContainsString (NSFont *font, NSString *string);
-static inline BOOL shouldUseATSU(const WebCoreTextRun *run);
-static NSString *pathFromFont (NSFont *font);
+static BOOL shouldUseATSU(const WebCoreTextRun *run);
+static NSString *pathFromFont(NSFont *font);
 
 
 // Globals
@@ -418,8 +404,9 @@ static BOOL alwaysUseATSU = NO;
     if (styleGroup)
         ATSUDisposeStyleGroup(styleGroup);
 
-    freeWidthMap (glyphToWidthMap);
-    freeGlyphMap (characterToGlyphMap);
+    freeWidthMap(glyphToWidthMap);
+    freeGlyphMap(characterToGlyphMap);
+    freeUnicodeGlyphMap(unicodeCharacterToGlyphMap);
 
     if (ATSUStyleInitialized)
         ATSUDisposeStyle(_ATSUSstyle);
@@ -615,6 +602,11 @@ static BOOL alwaysUseATSU = NO;
     return smallCapsFont;
 }
 
+static inline BOOL fontContainsString(NSFont *font, NSString *string)
+{
+    return [string rangeOfCharacterFromSet:[[font coveredCharacterSet] invertedSet]].location == NSNotFound;
+}
+
 - (NSFont *)_substituteFontForString: (NSString *)string families: (NSString **)families
 {
     NSFont *substituteFont = nil;
@@ -781,30 +773,30 @@ static BOOL alwaysUseATSU = NO;
 
 - (BOOL)_setupFont
 {
-    OSStatus errCode;
     ATSUStyle fontStyle;
-    
-    if ((errCode = ATSUCreateStyle(&fontStyle)) != noErr)
+    if (ATSUCreateStyle(&fontStyle) != noErr)
         return NO;
 
-    if (!fillStyleWithAttributes(fontStyle, font))
+    if (!fillStyleWithAttributes(fontStyle, font)) {
+        ATSUDisposeStyle(fontStyle);
         return NO;
+    }
 
-    if ((errCode = ATSUGetStyleGroup(fontStyle, &styleGroup)) != noErr){
+    if (ATSUGetStyleGroup(fontStyle, &styleGroup) != noErr) {
         ATSUDisposeStyle(fontStyle);
         return NO;
     }
     
     ATSUDisposeStyle(fontStyle);
 
-    if (![self _computeWidthForSpace]){
-        if (styleGroup){
-            ATSUDisposeStyleGroup(styleGroup);
-            styleGroup = 0;
-        }
+    if (![self _computeWidthForSpace]) {
+        freeGlyphMap(characterToGlyphMap);
+        characterToGlyphMap = NULL;
+        ATSUDisposeStyleGroup(styleGroup);
+        styleGroup = NULL;
         return NO;
     }
-   
+    
     return YES;
 }
 
@@ -1168,6 +1160,7 @@ static const char *joiningNames[] = {
     if (status != noErr){
         // This should never happen, indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
+        free(map);
         return 0;
     }
     
@@ -1176,6 +1169,7 @@ static const char *joiningNames[] = {
     if (numGlyphs != count){
         // This should never happen, indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
+        free(map);
         return 0;
     }
             
@@ -1250,6 +1244,7 @@ static const char *joiningNames[] = {
     if (status != noErr){
         // This should never happen, perhaps indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
+        free(map);
         return 0;
     }
 
@@ -1258,6 +1253,7 @@ static const char *joiningNames[] = {
     if (numGlyphs != count){
         // This should never happen, perhaps indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
+        free(map);
         return 0;
     }
             
@@ -1354,12 +1350,13 @@ static const char *joiningNames[] = {
     if (!ATSUStyleInitialized){
         OSStatus status;
         
-        status = ATSUCreateStyle (&_ATSUSstyle);
+        status = ATSUCreateStyle(&_ATSUSstyle);
         if(status != noErr)
             FATAL_ALWAYS ("ATSUCreateStyle failed (%d)", status);
     
         ATSUFontID fontID = [font _atsFontID];
         if (fontID == 0){
+            ATSUDisposeStyle(_ATSUSstyle);
             ERROR ("unable to get ATSUFontID for %@", font);
             return;
         }
@@ -1424,7 +1421,6 @@ static const char *joiningNames[] = {
     // The only Cocoa call here is the self call to
     // _createATSUTextLayoutForRun:, which is exception-safe.
 
-    ATSUTextLayout layout;
     OSStatus status;
     
     if (run->to - run->from <= 0){
@@ -1432,7 +1428,7 @@ static const char *joiningNames[] = {
         return nilTrapezoid;
     }
         
-    layout = [self _createATSUTextLayoutForRun:run];
+    ATSUTextLayout layout = [self _createATSUTextLayoutForRun:run];
 
     ATSTrapezoid firstGlyphBounds;
     ItemCount actualNumBounds;
@@ -1649,23 +1645,36 @@ static const char *joiningNames[] = {
 
 // ------------------- Private functions -------------------
 
-static void freeWidthMap (WidthMap *map)
+static void freeWidthMap(WidthMap *map)
 {
-    if (!map)
-	return;
-    freeWidthMap (map->next);
-    free (map->widths);
-    free (map);
+    while (map) {
+        WidthMap *next = map->next;
+        free(map->widths);
+        free(map);
+        map = next;
+    }
 }
 
 
-static void freeGlyphMap (GlyphMap *map)
+static void freeGlyphMap(GlyphMap *map)
 {
-    if (!map)
-	return;
-    freeGlyphMap (map->next);
-    free (map->glyphs);
-    free (map);
+    while (map) {
+        GlyphMap *next = map->next;
+        free(map->glyphs);
+        free(map);
+        map = next;
+    }
+}
+
+
+static void freeUnicodeGlyphMap(UnicodeGlyphMap *map)
+{
+    while (map) {
+        UnicodeGlyphMap *next = map->next;
+        free(map->glyphs);
+        free(map);
+        map = next;
+    }
 }
 
 
@@ -1834,7 +1843,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         }
     }
 
-    if (clusterLength == 1) {
+    if (c <= 0xFFFF) {
         *glyphUsed = glyphForCharacter(renderer->characterToGlyphMap, c, fontUsed);
         if (*glyphUsed == nonGlyphID) {
             *glyphUsed = [renderer _extendCharacterToGlyphMapToInclude:c];
@@ -1859,7 +1868,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         }
     }
 
-    // Now that we have glyph and font get it's width.  We special case spaces.
+    // Now that we have glyph and font, get its width.  We special case spaces.
     // They are always an even integer width.
     WebGlyphWidth width;
     if (*glyphUsed == renderer->spaceGlyph)
@@ -1870,13 +1879,26 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     // Try to find a substitute font if this font didn't have a glyph for a character in the
     // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
     if (*glyphUsed == 0 && iterator->style->attemptFontSubstitution) {
-        NSFont *substituteFont = [renderer _substituteFontForCharacters:cp length:clusterLength families:iterator->style->families];
+        UniChar characterArray[2];
+        unsigned characterArrayLength;
+        
+        if (c <= 0xFFFF) {
+            characterArray[0] = c;
+            characterArrayLength = 1;
+        } else {
+            characterArray[0] = HighSurrogatePair(c);
+            characterArray[1] = LowSurrogatePair(c);
+            characterArrayLength = 2;
+        }
+        
+        NSFont *substituteFont = [renderer _substituteFontForCharacters:characterArray length:characterArrayLength
+            families:iterator->style->families];
         if (substituteFont) {
             int cNumGlyphs = 0;
-            ATSGlyphRef localGlyphBuffer[4];
+            ATSGlyphRef localGlyphBuffer[MAX_GLYPH_EXPANSION];
             
             WebCoreTextRun clusterRun;
-            WebCoreInitializeTextRun(&clusterRun, cp, clusterLength, 0, clusterLength);
+            WebCoreInitializeTextRun(&clusterRun, characterArray, characterArrayLength, 0, characterArrayLength);
             WebCoreTextStyle clusterStyle = *iterator->style;
             clusterStyle.padding = 0;
             clusterStyle.applyRounding = false;
@@ -1896,7 +1918,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             *fontUsed = substituteFont;
             *glyphUsed = localGlyphBuffer[0];
             
-            if (clusterLength == 1 && cNumGlyphs == 1 && localGlyphBuffer[0] != 0){
+            if (c <= 0xFFFF && cNumGlyphs == 1 && localGlyphBuffer[0] != 0){
                 [renderer _updateGlyphEntryForCharacter:c glyphID:localGlyphBuffer[0] font:substituteFont];
             }
         }
@@ -1984,29 +2006,7 @@ static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
     return NO;
 }
 
-#ifdef NEED_FINDLENGTHOFCHARACTERCLUSTER
-static unsigned findLengthOfCharacterCluster(const UniChar *characters, unsigned length)
-{
-    unsigned k;
-
-    if (length <= 1)
-        return length;
-    
-    if (IsHighSurrogatePair(characters[0]))
-        return 2;
-        
-    if (IsNonBaseChar(characters[0]))
-        return 1;
-    
-    // Find all the non base characters after the current character.
-    for (k = 1; k < length; k++)
-        if (!IsNonBaseChar(characters[k]))
-            break;
-    return k;
-}
-#endif
-
-static inline BOOL shouldUseATSU(const WebCoreTextRun *run)
+static BOOL shouldUseATSU(const WebCoreTextRun *run)
 {
     UniChar c;
     const UniChar *characters = run->characters;
@@ -2017,7 +2017,7 @@ static inline BOOL shouldUseATSU(const WebCoreTextRun *run)
         
     for (i = from; i < to; i++){
         c = characters[i];
-        if (c < 0x300)                      // Early continue to avoid  other checks.
+        if (c < 0x300)                      // Early continue to avoid other checks for the common case.
             continue;
             
         if (c >= 0x300 && c <= 0x36F)       // U+0300 through U+036F Combining diacritical marks
@@ -2036,13 +2036,5 @@ static inline BOOL shouldUseATSU(const WebCoreTextRun *run)
             return YES;
     }
     
-    return NO;
-}
-
-static inline BOOL fontContainsString (NSFont *font, NSString *string)
-{
-    if ([string rangeOfCharacterFromSet:[[font coveredCharacterSet] invertedSet]].location == NSNotFound) {
-        return YES;
-    }
     return NO;
 }

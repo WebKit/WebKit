@@ -1,3 +1,29 @@
+2003-12-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed  regression in small caps with substituted fonts my patch from yesterday caused
+        - fixed 3463599: if Lucida font is installed, you see bad glyphs on pages that use it (advogato.org)
+        - fixed storage leak if a renderer is ever deallocated (I don't think we ever do that)
+        - fixed some small leaks in various error cases by adding appropriate free and dispose calls
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer dealloc]): Free the Unicode glyph map too.
+        (fontContainsString): Moved inline function up here so it will be inlined.
+        (-[WebTextRenderer _setupFont]): Free the glyph map and set it back to zero if we fail after
+        extending the glyph map to include space. This fixes the "wrong glyph codes" bug with Lucida above.
+        (-[WebTextRenderer _extendUnicodeCharacterToGlyphMapToInclude:]): Add free calls needed to avoid
+        storage leaks in failure cases.
+        (-[WebTextRenderer _extendCharacterToGlyphMapToInclude:]): Ditto.
+        (-[WebTextRenderer _initializeATSUStyle]): Add ATSUDisposeStyle to fix storage leak.
+        (freeWidthMap): Use a loop instead of recursion.
+        (freeGlyphMap): Use a loop instead of recursion.
+        (freeUnicodeGlyphMap): Added.
+        (widthForNextCharacter): Don't use the original characters or cluster length, because the
+        character may have been capitalized for use in small caps rendering. So check the character
+        for <= 0xFFFF instead of looking at clusterLength, and break the character into a local array
+        instead of using the original character pointer.
+
 2003-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.
