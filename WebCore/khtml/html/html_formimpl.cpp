@@ -1768,7 +1768,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 #if APPLE_CHANGES
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (evt->id() == EventImpl::KHTML_KEYPRESS_EVENT) {
+    if (evt->id() == EventImpl::KEYPRESS_EVENT) {
     
         if (!m_form || !m_render || !evt->isKeyboardEvent())
             return;
@@ -2315,7 +2315,7 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
 {
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (evt->id() == EventImpl::KHTML_KEYPRESS_EVENT) {
+    if (evt->id() == EventImpl::KEYPRESS_EVENT) {
     
         if (!m_form || !m_render || !evt->isKeyboardEvent())
             return;

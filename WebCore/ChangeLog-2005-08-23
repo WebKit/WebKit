@@ -1,3 +1,35 @@
+2003-11-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
+	<rdar://problem/3480761>: event object type attribute returns 
+	khtml_keypress instead of keypress
+
+	Fixed string so that it returns keypress instead of khtml_keypress.
+	While I was at it, I changed the constant used for this event from
+	KHTML_KEYPRESS_EVENT to KEYPRESS_EVENT.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::wasRunByUserGesture): Constant name fixup.
+        * khtml/ecma/kjs_dom.cpp: Ditto.
+        (DOMNode::getValueProperty): Ditto.
+        (DOMNode::putValue): Ditto.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get): Ditto.
+        (Window::put): Ditto.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseAttribute): Ditto.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::defaultEventHandler): Ditto.
+        (HTMLSelectElementImpl::defaultEventHandler): Ditto.
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::idToType): This is the change that fixes the bug.
+        (KeyboardEventImpl::KeyboardEventImpl): Constant name fixup.
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::): Ditto.
+
 2003-11-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

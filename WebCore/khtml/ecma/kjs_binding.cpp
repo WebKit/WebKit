@@ -237,7 +237,7 @@ bool ScriptInterpreter::wasRunByUserGesture() const
       id == DOM::EventImpl::MOUSEUP_EVENT || id == DOM::EventImpl::KHTML_DBLCLICK_EVENT ||
       id == DOM::EventImpl::KHTML_CLICK_EVENT ||
       // keyboard events
-      id == DOM::EventImpl::KEYDOWN_EVENT || id == DOM::EventImpl::KHTML_KEYPRESS_EVENT ||
+      id == DOM::EventImpl::KEYDOWN_EVENT || id == DOM::EventImpl::KEYPRESS_EVENT ||
       id == DOM::EventImpl::KEYUP_EVENT ||
       // other accepted events
       id == DOM::EventImpl::SELECT_EVENT || id == DOM::EventImpl::CHANGE_EVENT ||

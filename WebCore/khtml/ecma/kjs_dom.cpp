@@ -205,7 +205,7 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
   case OnKeyDown:
     return getListener(DOM::EventImpl::KEYDOWN_EVENT);
   case OnKeyPress:
-    return getListener(DOM::EventImpl::KHTML_KEYPRESS_EVENT);
+    return getListener(DOM::EventImpl::KEYPRESS_EVENT);
   case OnKeyUp:
     return getListener(DOM::EventImpl::KEYUP_EVENT);
   case OnLoad:
@@ -326,7 +326,7 @@ void DOMNode::putValue(ExecState *exec, int token, const Value& value, int /*att
     setListener(exec,DOM::EventImpl::KEYDOWN_EVENT,value);
     break;
   case OnKeyPress:
-    setListener(exec,DOM::EventImpl::KHTML_KEYPRESS_EVENT,value);
+    setListener(exec,DOM::EventImpl::KEYPRESS_EVENT,value);
     break;
   case OnKeyUp:
     setListener(exec,DOM::EventImpl::KEYUP_EVENT,value);
