@@ -42,6 +42,7 @@ EventImpl::EventImpl()
 
     m_propagationStopped = false;
     m_defaultPrevented = false;
+    m_cancelBubble = false;
     m_id = UNKNOWN_EVENT;
     m_currentTarget = 0;
     m_eventPhase = 0;
@@ -61,6 +62,7 @@ EventImpl::EventImpl(EventId _id, bool canBubbleArg, bool cancelableArg)
 
     m_propagationStopped = false;
     m_defaultPrevented = false;
+    m_cancelBubble = false;
     m_id = _id;
     m_currentTarget = 0;
     m_eventPhase = 0;
