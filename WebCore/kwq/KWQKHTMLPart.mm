@@ -2937,9 +2937,9 @@ void KWQKHTMLPart::clearUndoRedoOperations()
     [_bridge clearUndoRedoOperations];
 }
 
-void KWQKHTMLPart::editingKeyEvent()
+bool KWQKHTMLPart::interceptEditingKeyEvent()
 {
-    [_bridge editingKeyDown:_currentEvent];
+    return [_bridge interceptEditingKeyEvent:_currentEvent];
 }
 
 void KWQKHTMLPart::issueUndoCommand()

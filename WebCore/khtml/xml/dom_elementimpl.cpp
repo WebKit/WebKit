@@ -379,10 +379,8 @@ void ElementImpl::defaultEventHandler(EventImpl *evt)
     if (evt->id() == EventImpl::KEYPRESS_EVENT && isContentEditable()) {
         KHTMLPart *part = getDocument()->part();
         // Don't treat command-key combos as editing key events
-        if (part && !static_cast<KeyboardEventImpl*>(evt)->metaKey()) {
-            KWQ(part)->editingKeyEvent();
+        if (part && !static_cast<KeyboardEventImpl*>(evt)->metaKey() && KWQ(part)->interceptEditingKeyEvent())
             evt->setDefaultHandled();
-        }
     }
 #endif
     NodeBaseImpl::defaultEventHandler(evt);

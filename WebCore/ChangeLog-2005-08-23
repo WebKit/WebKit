@@ -1,5 +1,22 @@
 2004-05-19  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt and Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3643230>: "can't tab out of contentEditable Elements"
+
+        * khtml/xml/dom_elementimpl.cpp: Now checks if key event was intercepted by the editing
+        key-handler before setting the event as defaultHandled.
+        (ElementImpl::defaultEventHandler):
+        * kwq/KWQKHTMLPart.h: Name change from editingKeyEvent.
+        Also now returns a BOOL to report whether the event was handled or not.
+        * kwq/KWQKHTMLPart.mm: 
+        (KWQKHTMLPart::interceptEditingKeyEvent): Ditto.
+        * kwq/WebCoreBridge.h: Renamed from _editingKeyDown.
+
+2004-05-19  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:

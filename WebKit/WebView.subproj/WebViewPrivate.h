@@ -310,7 +310,7 @@ Could be worth adding to the API.
 
 
 @interface WebView (WebViewEditingExtras)
-- (void)_editingKeyDown:(NSEvent *)event;
+- (BOOL)_interceptEditingKeyEvent:(NSEvent *)event;
 - (DOMDocument *)DOMDocument;
 @end
 

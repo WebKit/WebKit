@@ -38,6 +38,7 @@
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import "WebNSPrintOperationExtras.h"
+#import <WebKit/WebNSEventExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
@@ -2327,14 +2328,24 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 @implementation WebView (WebViewEditing)
 
-- (void)_editingKeyDown:(NSEvent *)event
+- (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
 {   
     // Work around this bug:
     // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
     [NSKeyBindingManager sharedKeyBindingManager];
     
+    // Use the isEditable state to determine whether or not to process tab key events.
+    // The idea here is that isEditable will be NO when this WebView is being used
+    // in a browser, and we desire the behavior where tab moves to the next element
+    // in tab order. If isEditable is YES, it is likely that the WebView is being
+    // embedded as the whole view, as in Mail, and tabs should input tabs as expected
+    // in a text editor.
+    if (![self isEditable] && [event _web_isTabKeyEvent]) 
+        return NO;
+    
     // Now process the key normally
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
+    return YES;
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity

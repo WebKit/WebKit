@@ -1,5 +1,23 @@
 2004-05-19  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt and Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3643230>: "can't tab out of contentEditable Elements"
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge interceptEditingKeyEvent:]): Renamed from _editingKeyDown. Also now returns
+        a BOOL to report whether the event was handled or not.
+        * WebView.subproj/WebView.m:
+        (-[WebView _interceptEditingKeyEvent:]): Also renamed from _editingKeyDown. Now includes
+        a check if the web view is editable and whether the event is a tab key event. If the former
+        is not true and the latter is, the key is not intercepted. This causes the tab to shift once
+        the key is processed by other non-editing key-handling mechanisms.
+        * WebView.subproj/WebViewPrivate.h: Changed declaration due to name change.
+
+2004-05-19  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         * WebCoreSupport.subproj/WebBridge.m:

@@ -1230,9 +1230,9 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     }
 }
 
-- (void)editingKeyDown:(NSEvent *)event
+- (BOOL)interceptEditingKeyEvent:(NSEvent *)event
 {
-    [[_frame webView] _editingKeyDown:event];
+    return [[_frame webView] _interceptEditingKeyEvent:event];
 }
 
 - (void)issueUndoCommand
