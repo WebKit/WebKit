@@ -1,5 +1,15 @@
 2002-06-16  Darin Adler  <darin@apple.com>
 
+	* kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::frames):
+	Fixed this function to get from frames to parts properly. It was still
+	assuming that [WebCoreBridge childFrames] would return a list of WebCoreBridge
+	objects, but now it returns WebCoreFrame objects.
+
+	* kwq/WebCoreFrame.h: Added [WebCoreFrame bridge] for the case above.
+	Note that it always gives the "committed" bridge, not the provisional one.
+
+2002-06-16  Darin Adler  <darin@apple.com>
+
 	Add a separate WebCoreFrame alongside WebCoreBridge to facilitate
 	handling of frames with no HTML content in them. This probably fixes
 	frames named "_blank".

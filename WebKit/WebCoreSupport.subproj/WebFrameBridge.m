@@ -11,6 +11,7 @@
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
 
 #import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebView.h>
@@ -37,6 +38,11 @@
 - (IFHTMLView *)HTMLView
 {
     return [[self view] documentView];
+}
+
+- (WebCoreBridge *)bridge
+{
+    return [[frame dataSource] _bridge];
 }
 
 - (KHTMLView *)widget

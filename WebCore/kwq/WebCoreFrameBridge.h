@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class WebCoreBridge;
+
 #ifdef __cplusplus
 class KHTMLView;
 #else
@@ -40,6 +42,8 @@ class KHTMLView;
 - (void)loadURL:(NSURL *)URL;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data;
 
-- (KHTMLView *)widget;
+- (KHTMLView *)widget; // returns provisional widget if present, otherwise committed (avoid calling this for that reason)
+
+- (WebCoreBridge *)bridge; // always returns committed bridge, not provisional (avoid calling this for that reason)
 
 @end

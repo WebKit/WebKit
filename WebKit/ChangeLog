@@ -1,5 +1,9 @@
 2002-06-16  Darin Adler  <darin@apple.com>
 
+	* WebCoreSupport.subproj/IFWebCoreFrame.m: (-[IFWebCoreFrame bridge]): Added.
+
+2002-06-16  Darin Adler  <darin@apple.com>
+
 	Add a separate WebCoreFrame alongside WebCoreBridge to facilitate
 	handling of frames with no HTML content in them. This probably fixes
 	frames named "_blank".

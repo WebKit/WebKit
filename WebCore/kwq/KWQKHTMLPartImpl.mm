@@ -592,16 +592,15 @@ bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
 
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
 {
-    QPtrList<KParts::ReadOnlyPart> res;
-    NSArray *children = [bridge childFrames];
-    WebCoreBridge *childPart;
-    unsigned int i;
-    
-    for (i = 0; i < [children count]; i++){
-        childPart = [children objectAtIndex: i];
-        res.append([childPart part]);
+    QPtrList<KParts::ReadOnlyPart> parts;
+    NSEnumerator *e = [[bridge childFrames] objectEnumerator];
+    id <WebCoreFrame> childFrame;
+    while ((childFrame = [e nextObject])) {
+        KHTMLPart *childPart = [[childFrame bridge] part];
+        if (childPart)
+            parts.append(childPart);
     }
-    return res;
+    return parts;
 }
 
 QString KWQKHTMLPartImpl::documentSource() const
