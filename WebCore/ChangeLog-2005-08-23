@@ -1,3 +1,15 @@
+2002-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3120729 - HOMEPAGE: Can't set a DIV innerHTML property
+	with html content starting with <html><head><head/><body>
+	
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment): Pop <html> and
+	<body>, and remove <head> to allow a full HTML document to be made
+	and inserted as a contextual fragment.
+
 === Alexander-39 ===
 
 2002-12-17  David Hyatt  <hyatt@apple.com>
