@@ -1,3 +1,77 @@
+2003-09-30  John Sullivan  <sullivan@apple.com>
+
+        - fixed 3045617 -- Make Text Bigger/Smaller doesn't affect non-html documents.
+        
+        I added an internal protocol inside WebKit to make this work, and implemented
+        it for plain text and RTF. I also slightly shuffled the existing code to
+        handle this for HTML so that it goes through the new protocol in that case
+        also.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebView.subproj/WebDocumentInternal.h: Added.
+       	New header file, holds definition of 
+	_web_WebDocumentTextSizing protocol.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _textSizeMultiplierChanged]):
+        if the document view conforms to the new protocol,
+        tell it that the multiplier has changed. Also, don't
+        tell the bridge here anymore; let WebHTMLView do that.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _updateTextSizeMultiplier]):
+        tell the bridge here instead of having WebFrame do so
+        (-[WebHTMLView viewDidMoveToSuperview]):
+        call _updateTextSizeMultiplier (in case it changed while we were switched out)
+        (-[WebHTMLView _web_textSizeMultiplierChanged]):
+        call _updateTextSizeMultiplier
+        
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation receivedData:withDataSource:]):
+        
+        * WebView.subproj/WebTextView.h:
+	now implements _web_WebDocumentTextSizing protocol;
+        new ivar for holding local copy of text size multiplier;
+        new public method appendReceivedData:fromDataSource:
+        
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView initWithFrame:]):
+        set local copy of text size multiplier to 1.0
+        (-[WebTextView _textSizeMultiplierFromWebView]):
+        new method, asks the webview's opinion of the text size multiplier
+        (-[WebTextView setFixedWidthFont]):
+        use the text size multiplier when setting font size
+        (-[WebTextView _adjustRichTextFontSizeByRatio:]):
+        new method, borrowed from Mail and tweaked, that walks through
+        the rich text and adjusts the font sizes
+        (-[WebTextView _updateTextSizeMultiplier]):
+        new method, updates local copy of text size multiplier to
+        match webview's opinion
+        (-[WebTextView setDataSource:]):
+        set the text size multiplier appropriately before setting the
+        fixed-width font; this is too early for the RTF case though
+        since the fonts are embedded in the data
+        (-[WebTextView appendReceivedData:fromDataSource:]):
+        new method. Most of this logic was in WebTextRepresentation, but
+        it's a little better encapsulated here, plus now it handles the
+        text multiplier for RTF.
+        (-[WebTextView defaultsChanged:]):
+        added comment
+        (-[WebTextView _web_textSizeMultiplierChanged]):
+        call updateTextSizeMultiplier
+        
+        * WebView.subproj/WebView.m:
+        (-[WebView canMakeTextSmaller]):
+        (-[WebView canMakeTextLarger]):
+        return NO if the main frame doesn't support the text sizing protocol. This means
+        that if the main frame doesn't support it but a subframe does, you can't adjust
+        the text size. This seems fine for now since the only case with subframes is
+        HTML, where the main frame does support changing text size.
+        
+        * WebKit.pbproj/project.pbxproj:
+        updated for new file
+
 2003-09-30  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3428262>: Plugin loads for static files, but not PHP scripts

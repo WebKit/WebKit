@@ -34,15 +34,7 @@
 {
     WebTextView *view = (WebTextView *)[[[dataSource webFrame] frameView] documentView];
     ASSERT([view isKindOfClass:[WebTextView class]]);
-    
-    if ([view isRichText]) {
-        // FIXME: We should try to progressively load RTF.
-        [view replaceCharactersInRange:NSMakeRange(0, [[view string] length])
-                               withRTF:[dataSource data]];
-    } else {
-        [view replaceCharactersInRange:NSMakeRange([[view string] length], 0)
-                            withString:[dataSource _stringWithData:data]];
-    }
+    [view appendReceivedData:data fromDataSource:dataSource];
 }
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource

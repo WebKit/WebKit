@@ -13,6 +13,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocument.h>
+#import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebFormDelegate.h>
 #import <WebKit/WebFrameLoadDelegate.h>
@@ -1900,7 +1901,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_textSizeMultiplierChanged
 {
-    [_private->bridge setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
+    NSView <WebDocumentView> *view = [[self frameView] documentView];
+    if ([view conformsToProtocol:@protocol(_web_WebDocumentTextSizing)]) {
+        [(NSView <_web_WebDocumentTextSizing> *)view _web_textSizeMultiplierChanged];
+    }
+
     [[self childFrames] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
 }
 

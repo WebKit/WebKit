@@ -8,6 +8,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDOMDocument.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
@@ -29,6 +30,10 @@
 
 @interface WebHTMLView (WebHTMLViewPrivate)
 - (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth adjustViewSize:(BOOL)adjustViewSize;
+- (void)_updateTextSizeMultiplier;
+@end
+
+@interface WebHTMLView (TextSizing) <_web_WebDocumentTextSizing>
 @end
 
 @interface NSArray (WebHTMLView)
@@ -238,6 +243,9 @@
 
 - (void)viewDidMoveToSuperview
 {
+    // Do this here in case the text size multiplier changed when a non-HTML
+    // view was installed.
+    [self _updateTextSizeMultiplier];
     [self addSuperviewObservers];
 }
 
@@ -845,6 +853,11 @@
     [[self window] setAutodisplay:YES];
 }
 
+- (void)_updateTextSizeMultiplier
+{
+    [[self _bridge] setTextSizeMultiplier:[[self _webView] textSizeMultiplier]];    
+}
+
 - (void)keyDown:(NSEvent *)event
 {
     if (![[self _bridge] interceptKeyEvent:event toView:self]) {
@@ -857,6 +870,15 @@
     if (![[self _bridge] interceptKeyEvent:event toView:self]) {
 	[super keyUp:event];
     }
+}
+
+@end
+
+@implementation WebHTMLView (TextSizing)
+
+- (void)_web_textSizeMultiplierChanged
+{
+    [self _updateTextSizeMultiplier];
 }
 
 @end

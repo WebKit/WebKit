@@ -8,6 +8,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
+#import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
@@ -742,6 +743,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if ([[self mainFrame] dataSource] == nil) {
         return NO;
     }
+    // FIXME: This will prevent text sizing in subframes if the main frame doesn't support it
+    if (![[[[self mainFrame] frameView] documentView] conformsToProtocol:@protocol(_web_WebDocumentTextSizing)]) {
+        return NO;
+    }
     if ([self textSizeMultiplier]/TextSizeMultiplierRatio < MinimumTextSizeMultiplier) {
         return NO;
     }
@@ -751,6 +756,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)canMakeTextLarger
 {
     if ([[self mainFrame] dataSource] == nil) {
+        return NO;
+    }
+    // FIXME: This will prevent text sizing in subframes if the main frame doesn't support it
+    if (![[[[self mainFrame] frameView] documentView] conformsToProtocol:@protocol(_web_WebDocumentTextSizing)]) {
         return NO;
     }
     if ([self textSizeMultiplier]*TextSizeMultiplierRatio > MaximumTextSizeMultiplier) {
