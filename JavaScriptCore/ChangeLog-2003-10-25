@@ -1,3 +1,15 @@
+2003-02-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3142355 -- nil-deref in CFTimeZoneCopyAbbreviation
+
+        The real problem wasn't with the current time zone, but with the UTC time zone.
+        The poor sod had a broken /usr/share/zoneinfo directory, with a 0-byte-long UTC file.
+
+        * kjs/date_object.cpp: (UTCTimeZone): Use CFTimeZoneCreateWithTimeIntervalFromGMT(NULL, 0.0)
+        to get the universal time zone instead of getting it by name.
+
 === Safari-62 ===
 
 2003-02-18  Darin Adler  <darin@apple.com>
