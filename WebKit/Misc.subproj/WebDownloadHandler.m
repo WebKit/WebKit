@@ -10,7 +10,7 @@
 
 #import <WebKit/WebControllerPolicyHandlerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebAssertions.h>
 
@@ -21,7 +21,7 @@
     [super init];
     
     dataSource = [dSource retain];
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download started for: %s", [[[dSource originalURL] absoluteString] cString]);
+    LOG(Download, "Download started for: %s", [[[dSource originalURL] absoluteString] cString]);
     return self;
 }
 
@@ -79,7 +79,7 @@
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
     
     [fileHandle closeFile];
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
+    LOG(Download, "Download complete. Saved to: %s", [path cString]);
     
     if([[dataSource contentPolicy] policyAction] == WebContentPolicySaveAndOpenExternally){
         [workspace openFile:path];

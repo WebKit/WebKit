@@ -27,7 +27,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
@@ -395,7 +395,7 @@
 -(void)_commitIfReady
 {
     if ([[self contentPolicy] policyAction] == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s", [[[self originalURL] absoluteString] cString]);
+        LOG(Loading, "committed resource = %s", [[[self originalURL] absoluteString] cString]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];

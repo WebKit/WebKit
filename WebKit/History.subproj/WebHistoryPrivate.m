@@ -9,7 +9,7 @@
 #import "WebHistoryPrivate.h"
 
 #import "WebHistoryItem.h"
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSCalendarDateExtras.h>
@@ -378,11 +378,9 @@
     array = [NSArray arrayWithContentsOfFile: path];
     if (array == nil) {
         if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            ERROR("no history file found at %s",
-                            DEBUG_OBJECT(path));
+            ERROR("no history file found at %@", path);
         } else {
-            ERROR("attempt to read history from %s failed; perhaps contents are corrupted",
-                            DEBUG_OBJECT(path));
+            ERROR("attempt to read history from %@ failed; perhaps contents are corrupted", path);
         }
         return NO;
     }
@@ -434,8 +432,8 @@
 
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d history entries from %s took %f seconds",
-                           numberOfItems, DEBUG_OBJECT([self file]), duration);
+        LOG(Timing, "loading %d history entries from %@ took %f seconds",
+            numberOfItems, [self file], duration);
     }
 
     return result;
@@ -455,7 +453,7 @@
 
     array = [self arrayRepresentation];
     if (![array writeToFile:path atomically:YES]) {
-        ERROR("attempt to save %s to %s failed", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
+        ERROR("attempt to save %@ to %@ failed", array, path);
         return NO;
     }
     
@@ -474,8 +472,8 @@
 
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d history entries to %s took %f seconds",
-                           numberOfItems, DEBUG_OBJECT([self file]), duration);
+        LOG(Timing, "saving %d history entries to %@ took %f seconds",
+            numberOfItems, [self file], duration);
     }
 
     return result;

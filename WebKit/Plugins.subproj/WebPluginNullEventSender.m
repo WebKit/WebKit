@@ -6,7 +6,7 @@
 #import "WebPluginNullEventSender.h"
 #import <Carbon/Carbon.h>
 #import <WebFoundation/WebAssertions.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPluginView.h>
 
 @implementation WebNetscapePluginNullEventSender
@@ -39,7 +39,7 @@
     
     [view sendEvent:&event];
     
-    //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(nullEvent): %d  when: %u %d", acceptedEvent, (unsigned)event.when, shouldStop);
+    //LOG(Plugins, "NPP_HandleEvent(nullEvent): %d  when: %u %d", acceptedEvent, (unsigned)event.when, shouldStop);
     
     // FIXME: Why .01? Why not 0? Why not a larger number?
     [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.01];
@@ -47,7 +47,7 @@
 
 -(void)stop
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stopping null events");
+    LOG(Plugins, "Stopping null events");
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil];
 }
 

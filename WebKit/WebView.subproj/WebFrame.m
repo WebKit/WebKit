@@ -16,7 +16,7 @@
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -181,7 +181,7 @@
 - (void)startLoading
 {
     if (self == [[self controller] mainFrame])
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "loading %s", [[[[self provisionalDataSource] originalURL] absoluteString] cString]);
+        LOG(DocumentLoad, "loading %s", [[[[self provisionalDataSource] originalURL] absoluteString] cString]);
 
     [_private->provisionalDataSource startLoading:[self _loadType] == WebFrameLoadTypeRefresh];
 }

@@ -12,7 +12,7 @@
 #import <WebKit/WebBookmarkList.h>
 #import <WebKit/WebBookmarkLeaf.h>
 #import <WebKit/WebBookmarkSeparator.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebAssertions.h>
 
@@ -200,11 +200,9 @@
     dictionary = [NSDictionary dictionaryWithContentsOfFile: path];
     if (dictionary == nil) {
         if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            ERROR("no bookmarks file found at %s",
-                        DEBUG_OBJECT(path));
+            ERROR("no bookmarks file found at %@", path);
         } else {
-            ERROR("attempt to read bookmarks from %s failed; perhaps contents are corrupted",
-                        DEBUG_OBJECT(path));
+            ERROR("attempt to read bookmarks from %@ failed; perhaps contents are corrupted", path);
         }
         return NO;
     }
@@ -228,8 +226,8 @@
 
     if (result == YES) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d bookmarks from %s took %f seconds",
-                          [[self topBookmark] _numberOfDescendants], DEBUG_OBJECT([self file]), duration);
+        LOG(Timing, "loading %d bookmarks from %@ took %f seconds",
+            [[self topBookmark] _numberOfDescendants], [self file], duration);
     }
 
     return result;
@@ -248,7 +246,7 @@
 
     dictionary = [[self topBookmark] dictionaryRepresentation];
     if (![dictionary writeToFile:path atomically:YES]) {
-        ERROR("attempt to save %s to %s failed", DEBUG_OBJECT(dictionary), DEBUG_OBJECT(path));
+        ERROR("attempt to save %@ to %@ failed", dictionary, path);
         return NO;
     }
 
@@ -265,8 +263,8 @@
     
     if (result == YES) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d bookmarks to %s took %f seconds",
-                          [[self topBookmark] _numberOfDescendants], DEBUG_OBJECT([self file]), duration);
+        LOG(Timing, "saving %d bookmarks to %@ took %f seconds",
+            [[self topBookmark] _numberOfDescendants], [self file], duration);
     }
 
     return result;

@@ -9,7 +9,7 @@
 #import <WebKit/WebIconDatabase.h>
 
 #import <WebKit/WebIconDatabasePrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -367,8 +367,7 @@ NSSize WebIconMediumSize = {32, 32};
                 NSImage *icon = [[NSImage alloc] initWithData:iconData];
                 if(icon){
                     duration = CFAbsoluteTimeGetCurrent() - start;
-                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading and creating icon %s took %f seconds",
-                                      DEBUG_OBJECT(iconURL), duration);
+                    LOG(Timing, "loading and creating icon %@ took %f seconds", iconURL, duration);
                     
                     // Cache it
                     icons = [NSMutableArray arrayWithObject:icon];
@@ -697,13 +696,13 @@ NSSize WebIconMediumSize = {32, 32};
     // The first item in the icon array is the original non-resized icon
     // Assume that it's best to resize the original
     NSImage *originalIcon = [icons objectAtIndex:0];
-    icon = [originalIcon copy];
+    icon = [[originalIcon copy] autorelease];
     icon = [self _iconByScalingIcon:icon toSize:size];
 
     // Cache it
     [icons addObject:icon];
 
-    return [icon autorelease];
+    return icon;
 }
 
 - (NSImage *)_iconByScalingIcon:(NSImage *)icon toSize:(NSSize)size
@@ -717,7 +716,7 @@ NSSize WebIconMediumSize = {32, 32};
         // Note: This doesn't seem to make a difference for scaling up.
         
         NSSize originalSize = [icon size];
-        scaledIcon = [[NSImage alloc] initWithSize:size];
+        scaledIcon = [[[NSImage alloc] initWithSize:size] autorelease];
 
         [scaledIcon lockFocus];
         NSGraphicsContext *currentContent = [NSGraphicsContext currentContext];
@@ -735,7 +734,7 @@ NSSize WebIconMediumSize = {32, 32};
     }
     
     duration = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "scaling icon took %f seconds.", duration);
+    LOG(Timing, "scaling icon took %f seconds.", duration);
 
     return scaledIcon;
 }

@@ -12,7 +12,7 @@
 
 #import <WebKit/WebGlyphBuffer.h>
 #import <WebKit/WebTextRendererFactory.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <QD/ATSUnicodePriv.h>
 
@@ -893,7 +893,7 @@ cleanup:
     start = (c / blockSize) * blockSize;
     end = start + (blockSize - 1);
         
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s (0x%04x) adding glyphs for 0x%04x to 0x%04x", DEBUG_OBJECT(font), c, start, end);
+    LOG(FontCache, "%@ (0x%04x) adding glyphs for 0x%04x to 0x%04x", font, c, start, end);
 
     map->startRange = start;
     map->endRange = end;
@@ -966,7 +966,7 @@ cleanup:
     if (end > 0xffff)
         end = 0xffff;
 
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s (0x%04x) adding widths for range 0x%04x to 0x%04x", DEBUG_OBJECT(font), glyphID, start, end);
+    LOG(FontCache, "%@ (0x%04x) adding widths for range 0x%04x to 0x%04x", font, glyphID, start, end);
 
     map->startRange = start;
     map->endRange = end;
@@ -988,7 +988,7 @@ cleanup:
     }
 
 #ifdef _TIMING
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s total time to advances lookup %f seconds", DEBUG_OBJECT(font), totalCGGetAdvancesTime);
+    LOG(FontCache, "%@ total time to advances lookup %f seconds", font, totalCGGetAdvancesTime);
 #endif
     return map;
 }

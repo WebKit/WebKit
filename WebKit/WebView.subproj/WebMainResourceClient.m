@@ -16,7 +16,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
@@ -121,7 +121,7 @@
         return;
     }
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s", DEBUG_OBJECT([handle URL]));
+    LOG(Loading, "URL = %@", [handle URL]);
     
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
     WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
@@ -138,7 +138,7 @@
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s", DEBUG_OBJECT([handle URL]));
+    LOG(Loading, "URL = %@", [handle URL]);
     
     ASSERT([currentURL isEqual:[handle URL]]);
     ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
@@ -175,7 +175,7 @@
     NSString *contentType = [handle contentType];
     WebFrame *frame = [dataSource webFrame];
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, data = %p, length %d", DEBUG_OBJECT([handle URL]), data, [data length]);
+    LOG(Loading, "URL = %@, data = %p, length %d", [handle URL], data, [data length]);
     
     ASSERT([currentURL isEqual:[handle URL]]);
     
@@ -201,7 +201,7 @@
         }
         policyAction = [contentPolicy policyAction];
         
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
+        LOG(Download, "main content type: %@", contentType);
     }
 
     switch (policyAction) {
@@ -231,13 +231,13 @@
 
     [self receivedProgressWithHandle:handle complete:NO];
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [handle contentLengthReceived], [handle contentLength]);
+    LOG(Download, "%d of %d", [handle contentLengthReceived], [handle contentLength]);
     isFirstChunk = NO;
 }
 
 - (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)result
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, result = %s", DEBUG_OBJECT([handle URL]), DEBUG_OBJECT([result errorDescription]));
+    LOG(Loading, "URL = %@, result = %@", [handle URL], [result errorDescription]);
 
     ASSERT([currentURL isEqual:[handle URL]]);
 
@@ -252,7 +252,7 @@
 
 - (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_REDIRECT, "URL = %s", DEBUG_OBJECT(URL));
+    LOG(Redirect, "URL = %@", URL);
 
     ASSERT(currentURL != nil);
     ASSERT([URL isEqual:[handle URL]]);

@@ -10,7 +10,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
@@ -149,7 +149,7 @@
         // FIXME: Need a way to check if stream is seekable
         
         NPError npErr = NPP_NewStream(instance, (char *)[mimeType cString], &npStream, NO, &transferMode);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d %s", npErr, [[URL absoluteString] cString]);
+        LOG(Plugins, "NPP_NewStream: %d %s", npErr, [[URL absoluteString] cString]);
         
         if(npErr != NPERR_NO_ERROR){
             [self stop];
@@ -157,13 +157,13 @@
         }
         
         if(transferMode == NP_NORMAL)
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_NORMAL");
+            LOG(Plugins, "Stream type: NP_NORMAL");
         else if(transferMode == NP_ASFILEONLY)
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_ASFILEONLY");
+            LOG(Plugins, "Stream type: NP_ASFILEONLY");
         else if(transferMode == NP_ASFILE)
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_ASFILE");
+            LOG(Plugins, "Stream type: NP_ASFILE");
         else if(transferMode == NP_SEEK){
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_SEEK not yet supported");
+            LOG(Plugins, "Stream type: NP_SEEK not yet supported");
             [self stop];
             return;
         }
@@ -178,10 +178,10 @@
 
     if(transferMode != NP_ASFILEONLY){
         int32 numBytes = NPP_WriteReady(instance, &npStream);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_WriteReady bytes=%lu", numBytes);
+        LOG(Plugins, "NPP_WriteReady bytes=%lu", numBytes);
         
         numBytes = NPP_Write(instance, &npStream, offset, [data length], (void *)[data bytes]);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Write bytes=%lu", numBytes);
+        LOG(Plugins, "NPP_Write bytes=%lu", numBytes);
         
         offset += [data length];
     }
@@ -195,7 +195,7 @@
         NPError npErr =
 #endif
         NPP_DestroyStream(instance, &npStream, error);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d", npErr);
+        LOG(Plugins, "NPP_DestroyStream: %d", npErr);
     }
 }
 
@@ -216,14 +216,14 @@
         // FIXME: Will cString use the correct character set?
         carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:path];
         NPP_StreamAsFile(instance, &npStream, [carbonPath cString]);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s", [carbonPath cString]);
+        LOG(Plugins, "NPP_StreamAsFile: %s", [carbonPath cString]);
     }
     npErr = NPP_DestroyStream(instance, &npStream, NPRES_DONE);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d", npErr);
+    LOG(Plugins, "NPP_DestroyStream: %d", npErr);
     
     if(notifyData){
         NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_URLNotify");
+        LOG(Plugins, "NPP_URLNotify");
     }
     
     [self stop];

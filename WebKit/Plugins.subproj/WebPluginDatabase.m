@@ -30,7 +30,7 @@
 #import <WebKit/WebPluginView.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebDataSource.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 
 @implementation WebNetscapePluginDatabase
 
@@ -178,8 +178,8 @@ static NSArray *pluginLocations(void)
         plugin = [[WebNetscapePlugin alloc] initWithPath:[pluginPaths objectAtIndex:i]];
         if (plugin) {
             [pluginArray addObject:plugin];
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Found plugin: %s", [[plugin name] lossyCString]);
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "%s", [[plugin description] lossyCString]);
+            LOG(Plugins, "Found plugin: %s", [[plugin name] lossyCString]);
+            LOG(Plugins, "%s", [[plugin description] lossyCString]);
             [plugin release];
         }
     }

@@ -15,7 +15,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebTextRenderer.h>
@@ -179,7 +179,7 @@
     
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_TIMING, "%s apply style seconds = %f", [self URL], thisTime);
+    LOG(Timing, "%s apply style seconds = %f", [self URL], thisTime);
 #endif
 
     _private->needsToApplyStyles = NO;
@@ -202,13 +202,13 @@
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_VIEW, "%s doing layout", DEBUG_OBJECT(self));
+    LOG(View, "%@ doing layout", self);
     [[self _bridge] forceLayout];
     _private->needsLayout = NO;
 
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_TIMING, "%s layout seconds = %f", [self URL], thisTime);
+    LOG(Timing, "%s layout seconds = %f", [self URL], thisTime);
 #endif
 }
 
@@ -311,21 +311,21 @@
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s flag = %d", DEBUG_OBJECT(self), (int)flag);
+    LOG(View, "%@ flag = %d", self, (int)flag);
     [super setNeedsDisplay: flag];
 }
 
 
 - (void)setNeedsLayout: (BOOL)flag
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s flag = %d", DEBUG_OBJECT(self), (int)flag);
+    LOG(View, "%@ flag = %d", self, (int)flag);
     _private->needsLayout = flag;
 }
 
 
 - (void)setNeedsToApplyStyles: (BOOL)flag
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s flag = %d", DEBUG_OBJECT(self), (int)flag);
+    LOG(View, "%@ flag = %d", self, (int)flag);
     _private->needsToApplyStyles = flag;
 }
 
@@ -333,7 +333,7 @@
 // This should eventually be removed.
 - (void)drawRect:(NSRect)rect
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s drawing", DEBUG_OBJECT(self));
+    LOG(View, "%@ drawing", self);
 
     if ([self inLiveResize]){
         if (!NSEqualRects(rect, [self visibleRect])){
@@ -356,7 +356,7 @@
 
     //double start = CFAbsoluteTimeGetCurrent();
     [[self _bridge] drawRect:rect];
-    //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "draw time %e", CFAbsoluteTimeGetCurrent() - start);
+    //LOG(Timing, "draw time %e", CFAbsoluteTimeGetCurrent() - start);
 
     if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
         [[WebTextRendererFactory sharedFactory] endCoalesceTextDrawing];
@@ -381,7 +381,7 @@
 
 #ifdef _KWQ_TIMING
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
+    LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
 }
 
@@ -571,7 +571,7 @@
 
 - (void)keyDown: (NSEvent *)event
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyDown: %s", DEBUG_OBJECT(event));
+    LOG(Events, "keyDown: %@", event);
     int state = 0;
     
     // FIXME: We don't want to call keyPressEvent for scrolling key events,
@@ -593,7 +593,7 @@
 
 - (void)keyUp: (NSEvent *)event
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyUp: %s", DEBUG_OBJECT(event));
+    LOG(Events, "keyUp: %@", event);
     int state = 0;
     
     // FIXME: Make sure this logic matches keyDown above.

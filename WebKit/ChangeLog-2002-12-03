@@ -1,5 +1,38 @@
 2002-09-08  Darin Adler  <darin@apple.com>
 
+	Update logging to use new implementation. Remove old.
+
+        * Misc.subproj/WebKitDebug.h: Removed.
+        * Misc.subproj/WebKitDebug.m: Removed.
+        * Misc.subproj/WebKitLogging.h: Added.
+        * Misc.subproj/WebKitLogging.m: Added.
+        * Misc.subproj/WebKitReallyPrivate.h: Removed.
+        * WebKit.pbproj/project.pbxproj: Update for above changes.
+
+        * WebKit-tests.exp: Now empty.
+
+        * History.subproj/WebHistoryItem.m: Remove unneeded include.
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        * History.subproj/WebHistoryPrivate.m:
+        * Misc.subproj/WebDownloadHandler.m:
+        * Misc.subproj/WebIconDatabase.m:
+        * Plugins.subproj/WebPlugin.m:
+        * Plugins.subproj/WebPluginDatabase.m:
+        * Plugins.subproj/WebPluginNullEventSender.m:
+        * Plugins.subproj/WebPluginStream.m:
+        * Plugins.subproj/WebPluginView.m:
+        * Plugins.subproj/npapi.m:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebMainResourceClient.m:
+	Change to use new log channels.
+
+2002-09-08  Darin Adler  <darin@apple.com>
+
 	Remove empty handleDidBeginLoading and handleDidCancelLoading
 	methods, now that they will never be called.
 
