@@ -150,6 +150,8 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
 - (void)dealloc
 {
+    ASSERT(scheduledLayoutTimer == nil);
+
     [webFrameView _setWebView:nil];
     [dataSource _setWebView:nil];
     [provisionalDataSource _setWebView:nil];
@@ -159,7 +161,6 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
     [dataSource release];
     [provisionalDataSource release];
     [bridge release];
-    [scheduledLayoutTimer release];
     [children release];
 
     [currentItem release];
@@ -402,6 +403,9 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
     WebBridge *bridge = _private->bridge;
     _private->bridge = nil;
 
+    NSTimer *timer = _private->scheduledLayoutTimer;
+    _private->scheduledLayoutTimer = nil;
+    
     [self stopLoading];
     [self _saveScrollPositionToItem:[_private currentItem]];
 
@@ -417,13 +421,12 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
     [self _setDataSource:nil];
     [_private setWebFrameView:nil];
 
-    [_private->scheduledLayoutTimer invalidate];
-    [_private->scheduledLayoutTimer release];
-    _private->scheduledLayoutTimer = nil;
-    
     [bridge close];
     
     [bridge release];
+
+    [timer invalidate];
+    [timer release];
 }
 
 - (void)_setDataSource:(WebDataSource *)ds
@@ -486,11 +489,11 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
     }
 }
 
-- (void)_timedLayout: (id)userInfo
+- (void)_timedLayout:(id)userInfo
 {
     LOG(Timing, "%@:  state = %s", [self name], stateNames[_private->state]);
 
-    [_private->scheduledLayoutTimer release];
+    NSTimer *timer = _private->scheduledLayoutTimer;
     _private->scheduledLayoutTimer = nil;
     
     if (_private->state >= WebFrameStateLayoutAcceptable) {
@@ -526,6 +529,8 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
         if ([self webView])
             LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self webView] mainFrame] dataSource] _loadingStartedTime]);
     }
+
+    [timer release];
 }
 
 
@@ -855,11 +860,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // FIXME: This overrides the setCopiesOnScroll setting done by
         // WebCore based on whether the page's contents are dynamic or not.
         [[sv contentView] setCopiesOnScroll:YES];
-        [_private->scheduledLayoutTimer invalidate];
-        [_private->scheduledLayoutTimer release];
+        NSTimer *timer = _private->scheduledLayoutTimer;
         _private->scheduledLayoutTimer = nil;
         [_private setPreviousItem:nil];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
+        [timer invalidate];
+        [timer release];
     }
 }
 

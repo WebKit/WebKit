@@ -1,5 +1,20 @@
 2003-07-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - make some improvements to handling of the timer, inspired by some bug reports
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]): Instead of releasing the timer, assert it is nil.
+        (-[WebFrame _detachFromParent]): Invalidate and release the timer after finishing
+        dealing with self, in case the reference from the timer is the last one.
+        (-[WebFrame _timedLayout:]): Release the timer after doing all the other work,
+        in case the reference from the timer is the last one.
+        (-[WebFrame _setState:]): Release the timer after doing all the other work,
+        in case the reference from the timer is the last one.
+
+2003-07-14  Darin Adler  <darin@apple.com>
+
         Rolled out workaround to bug 3298153 -- get "screen font while printing"
         error, bad stuff happens after that (Sherlock, Safari). It turns out the
         real fix was on the WebCore side. Now that we have that fix we don't need
