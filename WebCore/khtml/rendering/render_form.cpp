@@ -660,43 +660,44 @@ void RenderLineEdit::setStyle(RenderStyle *s)
 
 void RenderLineEdit::updateFromElement()
 {
+    HTMLInputElementImpl *e = element();
     KLineEdit *w = widget();
     
-    int ml = element()->maxLength();
+    int ml = e->maxLength();
     if ( ml <= 0 || ml > 1024 )
         ml = 1024;
     if ( w->maxLength() != ml )
         w->setMaxLength( ml );
 
-    // Call w->text() before calling element()->value(), because in the case of inline
-    // input such as Hiragana, w->text() has a side effect of sending the notification
-    // that we use in slotTextChanged to update element()->m_value
-    QString widgetText = w->text();
-    QString newText = element()->value().string();
-    newText.replace(QChar('\\'), backslashAsCurrencySymbol());
+    if (!e->valueMatchesRenderer()) {
+        QString widgetText = w->text();
+        QString newText = e->value().string();
+        newText.replace(QChar('\\'), backslashAsCurrencySymbol());
+        if (widgetText != newText) {
+            w->blockSignals(true);
+            int pos = w->cursorPosition();
 
-    if (newText != widgetText) {
-        w->blockSignals(true);
-        int pos = w->cursorPosition();
+            m_updating = true;
+            w->setText(newText);
+            m_updating = false;
+            
+            w->setEdited( false );
 
-        m_updating = true;
-        w->setText(newText);
-        m_updating = false;
-        
-        w->setEdited( false );
-
-        w->setCursorPosition(pos);
-        w->blockSignals(false);
+            w->setCursorPosition(pos);
+            w->blockSignals(false);
+        }
+        e->setValueMatchesRenderer();
     }
-    w->setReadOnly(element()->readOnly());
+
+    w->setReadOnly(e->readOnly());
     
 #if APPLE_CHANGES
     // Handle updating the search attributes.
-    w->setPlaceholderString(element()->getAttribute(ATTR_PLACEHOLDER).string());
+    w->setPlaceholderString(e->getAttribute(ATTR_PLACEHOLDER).string());
     if (w->type() == QLineEdit::Search) {
-        w->setLiveSearch(!element()->getAttribute(ATTR_INCREMENTAL).isNull());
-        w->setAutoSaveName(element()->getAttribute(ATTR_AUTOSAVE).string());
-        w->setMaxResults(element()->maxResults());
+        w->setLiveSearch(!e->getAttribute(ATTR_INCREMENTAL).isNull());
+        w->setAutoSaveName(e->getAttribute(ATTR_AUTOSAVE).string());
+        w->setMaxResults(e->maxResults());
     }
 #endif
 
@@ -705,19 +706,15 @@ void RenderLineEdit::updateFromElement()
 
 void RenderLineEdit::slotTextChanged(const QString &string)
 {
-    // don't use setValue here!
-    if (m_updating) // Don't alter m_value if we are in the middle of initing the control, since
-        return;     // we may have gotten our initial value from the attribute.
+    if (m_updating) // Don't alter the value if we are in the middle of initing the control, since
+        return;     // we are getting the value from the DOM and it's not user input.
 
     // A null string value is used to indicate that the form control has not altered the original
     // default value.  That means that we should never use the null string value when the user
     // empties a textfield, but should always force an empty textfield to use the empty string.
     QString newText = string.isNull() ? "" : string;
     newText.replace(backslashAsCurrencySymbol(), QChar('\\'));
-    element()->m_value = newText;
-    
-    // Fire the "input" DOM event.
-    element()->dispatchHTMLEvent(EventImpl::INPUT_EVENT, true, false);
+    element()->setValueFromRenderer(newText);
 }
 
 void RenderLineEdit::select()
@@ -1501,14 +1498,14 @@ RenderTextArea::RenderTextArea(HTMLTextAreaElementImpl *element)
 
 void RenderTextArea::detach()
 {
-    element()->value(); // call this for the side effect of copying the value from render to DOM
+    element()->updateValue();
     RenderFormElement::detach();
 }
 
 void RenderTextArea::handleFocusOut()
 {
     if ( m_dirty && element() ) {
-        element()->value(); // call this for the side effect of copying the value from render to DOM
+        element()->updateValue();
         element()->onChange();
     }
     m_dirty = false;
@@ -1576,25 +1573,28 @@ void RenderTextArea::setStyle(RenderStyle *s)
 
 void RenderTextArea::updateFromElement()
 {
+    HTMLTextAreaElementImpl *e = element();
     QTextEdit* w = static_cast<QTextEdit*>(m_widget);
-    w->setReadOnly(element()->readOnly());
+
+    w->setReadOnly(e->readOnly());
 #if APPLE_CHANGES
-    w->setDisabled(element()->disabled());
+    w->setDisabled(e->disabled());
 #endif
-    
-    // Call text() before calling element()->value(), because in the case of inline
-    // input such as Hiragana, w->text() has a side effect of sending the notification
-    // that we use in slotTextChanged to update element()->m_value.
-    QString widgetText = text();
-    QString text = element()->value().string();
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
-    if (widgetText != text) {
-        w->blockSignals(true);
-        int line, col;
-        w->getCursorPosition( &line, &col );
-        w->setText(text);
-        w->setCursorPosition( line, col );
-        w->blockSignals(false);
+
+    e->updateValue();
+    if (!e->valueMatchesRenderer()) {
+        QString widgetText = text();
+        QString text = e->value().string();
+        text.replace(QChar('\\'), backslashAsCurrencySymbol());
+        if (widgetText != text) {
+            w->blockSignals(true);
+            int line, col;
+            w->getCursorPosition( &line, &col );
+            w->setText(text);
+            w->setCursorPosition( line, col );
+            w->blockSignals(false);
+        }
+        e->setValueMatchesRenderer();
         m_dirty = false;
     }
 
@@ -1637,7 +1637,7 @@ QString RenderTextArea::text()
 
 void RenderTextArea::slotTextChanged()
 {
-    element()->m_dirtyvalue = true;
+    element()->invalidateValue();
     m_dirty = true;
 }
 

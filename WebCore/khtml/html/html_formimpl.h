@@ -315,6 +315,10 @@ public:
     DOMString value() const;
     void setValue(const DOMString &);
 
+    void setValueFromRenderer(const DOMString &);
+    bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
+    void setValueMatchesRenderer() { m_valueMatchesRenderer = true; }
+
     void blur();
     void focus();
 
@@ -379,6 +383,7 @@ protected:
     bool m_haveType : 1;
     bool m_activeSubmit : 1;
     bool m_autocomplete : 1;
+    bool m_valueMatchesRenderer : 1;
 };
 
 // -------------------------------------------------------------------------
@@ -631,11 +636,17 @@ public:
     virtual bool appendFormData(FormDataList&, bool);
     virtual void reset();
     DOMString value();
-    void setValue(DOMString _value);
+    void setValue(const DOMString &value);
     DOMString defaultValue();
-    void setDefaultValue(DOMString _defaultValue);
+    void setDefaultValue(const DOMString &value);
     void blur();
     void focus();
+
+    void invalidateValue() { m_valueIsValid = false; }
+    void updateValue();
+
+    bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
+    void setValueMatchesRenderer() { m_valueMatchesRenderer = true; }
 
     virtual bool isEditable();
     
@@ -646,7 +657,8 @@ protected:
     int m_cols;
     WrapMethod m_wrap;
     QString m_value;
-    bool m_dirtyvalue;
+    bool m_valueIsValid;
+    bool m_valueMatchesRenderer;
 };
 
 // -------------------------------------------------------------------------
