@@ -38,7 +38,7 @@
         BOOL scrollsVertically;
         BOOL scrollsHorizontally;
     
-        if (disallowsScrolling) {
+        if (![self allowsScrolling]) {
             scrollsVertically = NO;
             scrollsHorizontally = NO;
         } else {
@@ -54,13 +54,13 @@
             NSSize documentSize = [documentView frame].size;
             NSSize frameSize = [self frame].size;
             
-            scrollsVertically = documentSize.height > frameSize.height;
+            scrollsVertically = !disallowsVerticalScrolling && documentSize.height > frameSize.height;
             if (scrollsVertically)
-                scrollsHorizontally = documentSize.width + [NSScroller scrollerWidth] > frameSize.width;
+                scrollsHorizontally = !disallowsHorizontalScrolling && documentSize.width + [NSScroller scrollerWidth] > frameSize.width;
             else {
-                scrollsHorizontally = documentSize.width > frameSize.width;
+                scrollsHorizontally = !disallowsHorizontalScrolling && documentSize.width > frameSize.width;
                 if (scrollsHorizontally)
-                    scrollsVertically = documentSize.height + [NSScroller scrollerWidth] > frameSize.height;
+                    scrollsVertically = !disallowsVerticalScrolling && documentSize.height + [NSScroller scrollerWidth] > frameSize.height;
             }
         }
     
@@ -91,15 +91,38 @@
     [super reflectScrolledClipView:clipView];
 }
 
+- (void)setAllowsHorizontalScrolling:(BOOL)flag
+{
+    disallowsHorizontalScrolling = !flag;
+    [self updateScrollers];
+}
+
+- (BOOL)allowsHorizontalScrolling
+{
+    return !disallowsHorizontalScrolling;
+}
+
+- (void)setAllowsVerticalScrolling:(BOOL)flag
+{
+    disallowsVerticalScrolling = !flag;
+    [self updateScrollers];
+}
+
+- (BOOL)allowsVerticalScrolling
+{
+    return !disallowsVerticalScrolling;
+}
+
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    disallowsScrolling = !flag;
+    disallowsVerticalScrolling = !flag;
+    disallowsHorizontalScrolling = !flag;
     [self updateScrollers];
 }
 
 - (BOOL)allowsScrolling
 {
-    return !disallowsScrolling;
+    return !disallowsHorizontalScrolling || !disallowsVerticalScrolling;
 }
 
 @end

@@ -10,16 +10,26 @@
 #import <WebCore/WebCoreScrollView.h>
 
 // FIXME 2980779: This has grown to be more than just a dynamic scroll bar view,
-// and it no longer works outside of WebKit.
+// and it is no longer completely appropriate for use outside of WebKit.
 
 @interface WebDynamicScrollBarsView : WebCoreScrollView <WebCoreFrameView>
 {
-    BOOL disallowsScrolling;
+    BOOL disallowsHorizontalScrolling;
+    BOOL disallowsVerticalScrolling;
     BOOL suppressLayout;
 }
 
+- (void)setAllowsHorizontalScrolling:(BOOL)flag;
+- (BOOL)allowsHorizontalScrolling;
+- (void)setAllowsVerticalScrolling:(BOOL)flag;
+- (BOOL)allowsVerticalScrolling;
+
+// Convenience method to affect both scrolling directions at once.
 - (void)setAllowsScrolling:(BOOL)flag;
+
+// Returns YES if either horizontal or vertical scrolling is allowed.
 - (BOOL)allowsScrolling;
+
 - (void)updateScrollers;
 - (void)setSuppressLayout: (BOOL)flag;
 @end
