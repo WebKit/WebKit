@@ -1,5 +1,17 @@
 2002-11-13  Darin Adler  <darin@apple.com>
 
+	- fixed 3099930 -- dates/times without time zones are parsed as UTC by kjs,
+	local time by other browsers
+
+        * kjs/date_object.cpp:
+        (DateProtoFuncImp::call): Handle the NaN case better, like Mozilla and OmniWeb.
+        (DateObjectFuncImp::call): Return NaN rather than Undefined() for bad dates.
+        (KJS::parseDate): Return NaN rather than Undefined() or 0 for bad dates.
+        (KJS::KRFCDate_parseDate): Return -1 rather than 0 for bad dates.
+	Assume local time if no time zone is passed. Don't return 1 if we parse 0.
+
+2002-11-13  Darin Adler  <darin@apple.com>
+
         - fixed 3073230 -- JavaScript time calls do I/O by lstat()ing /etc/localtime
 
         * kjs/date_object.cpp:
