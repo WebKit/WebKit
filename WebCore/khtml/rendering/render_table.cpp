@@ -988,7 +988,7 @@ void RenderTableSection::calcRowHeight()
 		indx = 0;
 
 	    ch = cell->style()->height().width(0);
-	    if ( cell->height() > ch)
+	    if (cell->height() > ch)
 		ch = cell->height();
 
 	    pos = rowPos[ indx ] + ch + table()->cellSpacing();
@@ -1399,13 +1399,20 @@ void RenderTableRow::layout()
 
     RenderObject *child = firstChild();
     while( child ) {
-	if ( child->isTableCell() && child->needsLayout() ) {
-	    RenderTableCell *cell = static_cast<RenderTableCell *>(child);
-	    cell->calcVerticalMargins();
-	    cell->layout();
-	    cell->setCellTopExtra(0);
-	    cell->setCellBottomExtra(0);
-	}
+        if (child->isTableCell()) {
+            RenderTableCell *cell = static_cast<RenderTableCell *>(child);
+            if (cell->getCellPercentageHeight()) {
+                cell->setCellPercentageHeight(0);
+                if (!cell->needsLayout())
+                    cell->setChildNeedsLayout(true);
+            }
+            if (child->needsLayout()) {
+                cell->calcVerticalMargins();
+                cell->layout();
+                cell->setCellTopExtra(0);
+                cell->setCellBottomExtra(0);
+            }
+        }
 	child = child->nextSibling();
     }
     setNeedsLayout(false);

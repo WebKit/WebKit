@@ -1,3 +1,14 @@
+2003-09-29  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3438479, tables expand on every layout when a cell has percentage height
+	children.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::calcRowHeight):
+        (RenderTableRow::layout):
+
 2003-09-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3332460>: nil-deref in khtml::RenderWidget::eventFilter with onchange handler
