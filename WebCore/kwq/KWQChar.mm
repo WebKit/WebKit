@@ -37,11 +37,15 @@ static CFMutableStringRef GetScratchUniCharString()
 
     if (!s) {
         // FIXME: this CFMutableString will be leaked exactly once
-        s = CFStringCreateMutableWithExternalCharactersNoCopy(NULL,
-                &scratchUniChar, 1, 1, kCFAllocatorNull);
+        s = CFStringCreateMutableWithExternalCharactersNoCopy(
+                kCFAllocatorDefault, &scratchUniChar, 1, 1, kCFAllocatorNull);
     }
     return s;
 }
+
+// constants -------------------------------------------------------------------
+
+const QChar QChar::null;
 
 // constructors, copy constructors, and destructors ----------------------------
 
