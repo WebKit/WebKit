@@ -98,6 +98,9 @@ public:
     void _setTrait (NSFontTraitMask mask);
 #endif
     
+    // KWQFontData is most likely unnecessary.  But we MAY need to get a bit more
+    // complicated with the font caching/font metrics.  At some point we should
+    // decide to do away with the struct and just have direct references to members.
     struct KWQFontData {
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
         NSFont *font;
