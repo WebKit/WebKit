@@ -137,7 +137,7 @@
 
 - (void)addData:(NSData *)data
 {
-    // Override. We don't want to save the main resource as a subresource of the data source.
+    [super addData:data];
     [dataSource _receivedData:data];
 }
 

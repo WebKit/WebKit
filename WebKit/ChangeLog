@@ -1,3 +1,13 @@
+2004-12-07  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3909243> REGRESSION: large standalone images stop loading part way through
+
+        Reviewed by kevin.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient addData:]): call super so it buffers the data
+
 2004-12-06  Richard Williamson   <rjw@apple.com>
 
 	Use the AppKit's font rendering mode.  This fixes 3905347, but we still need to track down

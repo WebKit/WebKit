@@ -64,6 +64,7 @@
 - (void)releaseResources;
 - (NSURLResponse *)response;
 
+- (void)addData:(NSData *)data;
 - (NSData *)resourceData;
 
 // Connection-less callbacks allow us to send callbacks using data attained from a WebResource instead of an NSURLConnection.
