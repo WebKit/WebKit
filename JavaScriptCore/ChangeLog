@@ -1,3 +1,12 @@
+2005-01-18  Richard Williamson   <rjw@apple.com>
+
+	Back out a change that was incorrectly committed yesterday.
+
+        Reviewed by Chris.
+
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+
 2005-01-17  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3753030> Need to ensure same origin for plugin binding invocations (origin security rules)
