@@ -588,6 +588,7 @@ static const char * const propertyList[] = {
 "text-underline-style", 
 "text-underline-width", 
 "-apple-text-size-adjust", 
+"-apple-dashboard-region", 
 "top", 
 "unicode-bidi", 
 "-khtml-user-drag", 
@@ -622,7 +623,6 @@ static const char * const propertyList[] = {
 "scrollbar-track-color", 
 "scrollbar-arrow-color", 
 "-khtml-flow-mode", 
-"-apple-dashboard-region", 
     0
 };
 DOMString getPropertyName(unsigned short id)

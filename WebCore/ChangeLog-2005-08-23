@@ -1,3 +1,47 @@
+2004-09-21  Richard Williamson   <rjw@apple.com>
+
+        Part 2 of the feature requested in
+        <rdar://problem/3752791> Dashboard: Need a better solution for control regions
+	
+        This patch actually collections the regions and converts to absolute coordinates.
+        Only remaining piece is to pass over the bridge and up the alley to WebKit
+        UI delegate.
+ 
+        Reviewed by Ken.
+
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSPrimitiveValueImpl::getDashboardRegionValue):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseDashboardRegions):
+        * khtml/css/cssproperties.c:
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::computeDashboardRegions):
+        (RenderObject::addDashboardRegions):
+        (RenderObject::collectDashboardRegions):
+        * khtml/rendering/render_object.h:
+        (khtml::DashboardRegionValue::operator==):
+        * khtml/rendering/render_style.cpp:
+        * khtml/rendering/render_style.h:
+        (khtml::StyleDashboardRegion::):
+        (khtml::RenderStyle::dashboardRegions):
+        (khtml::RenderStyle::setDashboardRegion):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::updateLayout):
+        (DocumentImpl::acceptsEditingFocus):
+        (DocumentImpl::dashboardRegions):
+        (DocumentImpl::setDashboardRegions):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::hasDashboardRegions):
+        (DOM::DocumentImpl::setHasDashboardRegions):
+
 2004-09-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

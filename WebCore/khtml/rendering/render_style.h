@@ -340,6 +340,24 @@ public:
 };
 
 //------------------------------------------------
+// Dashboard region attributes. Not inherited.
+
+#if APPLE_CHANGES
+struct StyleDashboardRegion
+{
+    QString label;
+    LengthBox offset;
+    int type;
+    
+    enum {
+        None,
+        Circle,
+        Rectangle
+    };
+};
+#endif
+
+//------------------------------------------------
 // Random visual rendering model attributes. Not inherited.
 
 enum EOverflow {
@@ -856,7 +874,11 @@ protected:
     DataRef<StyleBackgroundData> background;
     DataRef<StyleSurroundData> surround;
     DataRef<StyleCSS3NonInheritedData> css3NonInheritedData;
-    
+
+#if APPLE_CHANGES
+    QValueList<StyleDashboardRegion> m_dashboardRegions;
+#endif
+
 // inherited attributes
     DataRef<StyleCSS3InheritedData> css3InheritedData;
     DataRef<StyleInheritedData> inherited;
@@ -1141,6 +1163,23 @@ public:
     void setMaxWidth(Length v)  { SET_VAR(box,max_width,v) }
     void setMinHeight(Length v) { SET_VAR(box,min_height,v) }
     void setMaxHeight(Length v) { SET_VAR(box,max_height,v) }
+
+#if APPLE_CHANGES
+    QValueList<StyleDashboardRegion> dashboardRegions() { return m_dashboardRegions; }
+    void setDashboardRegion (int type, QString label, Length t, Length r, Length b, Length l, bool append) {
+        StyleDashboardRegion region;
+        region.label = label;
+        region.offset.top  = t;
+        region.offset.right = r;
+        region.offset.bottom = b;
+        region.offset.left = l;
+        region.type = type;
+        if (!append) {
+            m_dashboardRegions.clear ();
+        }
+        m_dashboardRegions.append (region);
+    }
+#endif
 
     void resetBorderTop() { SET_VAR(surround, border.top, BorderValue()) }
     void resetBorderRight() { SET_VAR(surround, border.right, BorderValue()) }

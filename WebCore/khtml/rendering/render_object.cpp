@@ -2149,6 +2149,51 @@ void RenderObject::updateWidgetPositions()
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         curr->updateWidgetPositions();
 }
+
+QValueList<DashboardRegionValue> RenderObject::computeDashboardRegions()
+{
+    QValueList<DashboardRegionValue> regions;
+    collectDashboardRegions(regions);
+    return regions;
+}
+
+void RenderObject::addDashboardRegions (QValueList<DashboardRegionValue>& regions)
+{
+    // Convert the style regions to absolute coordinates.
+    QValueList<StyleDashboardRegion> styleRegions = style()->dashboardRegions();
+    if (styleRegions.count() > 0) {
+        uint i, count = styleRegions.count();
+        for (i = 0; i < count; i++){
+            StyleDashboardRegion styleRegion = styleRegions[i];
+
+            int x, y;
+            absolutePosition (x, y);
+            
+            int w = width() + marginLeft() + marginRight();
+            int h = height() + marginTop() + marginBottom();
+            
+            DashboardRegionValue region;
+            region.label = styleRegion.label;
+            region.bounds = QRect (
+                x + styleRegion.offset.left.value,
+                y + styleRegion.offset.top.value,
+                w - styleRegion.offset.left.value - styleRegion.offset.right.value,
+                h - styleRegion.offset.top.value - styleRegion.offset.bottom.value);
+            region.type = styleRegion.type;
+            
+            regions.append (region);
+        }
+    }
+}
+
+void RenderObject::collectDashboardRegions (QValueList<DashboardRegionValue>& regions)
+{
+    addDashboardRegions (regions);
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        curr->collectDashboardRegions(regions);
+    }
+}
+
 #endif
 
 void RenderObject::collectBorders(QValueList<CollapsedBorderValue>& borderStyles)

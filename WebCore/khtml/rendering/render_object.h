@@ -102,6 +102,21 @@ namespace khtml {
     class InlineFlowBox;
     class CollapsedBorderValue;
 
+#if APPLE_CHANGES
+struct DashboardRegionValue
+{
+    QString label;
+    QRect bounds;
+    int type;
+
+    bool operator==(const DashboardRegionValue& o) const
+    {
+        return type == o.type && bounds == o.bounds && label == o.label;
+    }
+};
+#endif
+
+
 /**
  * Base Class for all rendering tree objects.
  */
@@ -432,6 +447,10 @@ public:
 #if APPLE_CHANGES
     // Called recursively to update the absolute positions of all widgets.
     virtual void updateWidgetPositions();
+    
+    QValueList<DashboardRegionValue> RenderObject::computeDashboardRegions();
+    void addDashboardRegions (QValueList<DashboardRegionValue>& regions);
+    void collectDashboardRegions (QValueList<DashboardRegionValue>& regions);
 #endif
 
     // does a query on the rendertree and finds the innernode

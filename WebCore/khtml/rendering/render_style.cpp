@@ -82,6 +82,7 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
         z_auto == o.z_auto;
 }
 
+
 StyleVisualData::StyleVisualData()
       : hasClip(false), 
       textDecoration(RenderStyle::initialTextDecoration()), 
