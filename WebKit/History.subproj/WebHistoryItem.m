@@ -585,6 +585,17 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
     self = [self initWithURLString:URLString title:title lastVisitedTimeInterval:lastVisited];
 
+    // Check if we've read a broken URL from the file that has non-Latin1 chars.  If so, try to convert
+    // as if it was from user typing.
+    if (![_private->URLString canBeConvertedToEncoding:NSISOLatin1StringEncoding]) {
+        NSURL *tempURL = [NSURL _web_URLWithUserTypedString:_private->URLString];
+        ASSERT(tempURL);
+        [_private->URLString release];
+        _private->URLString = [[tempURL _web_originalDataAsString] copy];
+        [_private->originalURLString release];
+        _private->originalURLString = [_private->URLString retain];
+    }
+
     [self setAlternateTitle:[dict _web_stringForKey:WebDisplayTitleKey]];
 
     _private->visitCount = [dict _web_intForKey:WebVisitCountKey];

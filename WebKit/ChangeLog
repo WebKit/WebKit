@@ -1,5 +1,19 @@
 2004-06-24  Trey Matteson  <trey@apple.com>
 
+	3672725 - Assertion failure in URLCompletion code with particular set of bookmarks
+
+	Problem was caused by a URL with unescaped unicodes getting into
+	the Bookmarks file, presumably from import from IE.  We now test
+	for this case and convert the data on the way in as if it were
+	user-entered.
+
+        Reviewed by John and Darin.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+
+2004-06-24  Trey Matteson  <trey@apple.com>
+
 	3704950	drag image in DB ConfigBar has horizontal graphics turd	WebCore JavaScript
 
 	When we generate a drag image (or a selection image too, for that matter) we
