@@ -1,5 +1,13 @@
 2002-04-04  Chris Blumenberg  <cblu@apple.com>
 
+	* src/kwq/WCPlugin.mm: (-[WCPlugin load]):
+	* src/kwq/npapi.h:
+	* src/kwq/npapi.mm: (NPN_GetJavaEnv), (NPN_GetJavaPeer):
+
+	Added stubs for NPN_GetJavaEnv and NPN_GetJavaPeer. This fixes a flash crasher.
+
+2002-04-04  Chris Blumenberg  <cblu@apple.com>
+
 	* src/kdelibs/khtml/rendering/render_frames.cpp:
 	(RenderPartObject::updateWidget):
 	* src/kwq/WCPluginWidget.mm: (WCPluginWidget::WCPluginWidget):

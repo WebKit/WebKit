@@ -170,6 +170,16 @@ void NPN_ForceRedraw(NPP instance){
     [plugin forceRedraw];
 }
 
+void* NPN_GetJavaEnv(void)
+{
+    return NULL;
+}
+
+void* NPN_GetJavaPeer(NPP instance)
+{
+    return NULL;
+}
+
 // function pointer converters
 
 void *functionPointerForTVector(void *tvp) {

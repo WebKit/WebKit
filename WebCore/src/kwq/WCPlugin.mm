@@ -212,6 +212,9 @@
         browserFuncs.invalidaterect = tVectorForFunctionPointer(NPN_InvalidateRect);
         browserFuncs.invalidateregion = tVectorForFunctionPointer(NPN_InvalidateRegion);
         browserFuncs.forceredraw = tVectorForFunctionPointer(NPN_ForceRedraw);
+        browserFuncs.getJavaEnv = tVectorForFunctionPointer(NPN_GetJavaEnv);
+        browserFuncs.getJavaPeer = tVectorForFunctionPointer(NPN_GetJavaPeer);
+        
         
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
         
@@ -254,6 +257,8 @@
         browserFuncs.invalidaterect = NPN_InvalidateRect;
         browserFuncs.invalidateregion = NPN_InvalidateRegion;
         browserFuncs.forceredraw = NPN_ForceRedraw;
+        browserFuncs.getJavaEnv = NPN_GetJavaEnv;
+        browserFuncs.getJavaPeer = NPN_GetJavaPeer;
         
         NPP_Initialize(&browserFuncs);
         NPP_GetEntryPoints(&pluginFuncs);
