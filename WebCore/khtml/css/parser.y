@@ -793,7 +793,7 @@ declaration:
 	p->valueList = 0;
     }
     |
-    error {
+    property error {
         $$ = false;
     }
   ;
