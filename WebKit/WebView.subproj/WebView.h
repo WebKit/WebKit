@@ -324,7 +324,7 @@ extern NSString *WebElementFrameKey;
 /*!
     @method userAgentForURL:
     @abstract Get the appropriate user-agent string for a particular URL.
-    @param URL Get the appropriate user-agent string for the URL.
+    @param URL The URL.
     @result Returns the user-agent string for the supplied URL.
 */
 - (NSString *)userAgentForURL:(NSURL *)URL;
@@ -365,8 +365,13 @@ extern NSString *WebElementFrameKey;
 /*!
     @method customTextEncoding
     @result Returns the custom text encoding.
-    // FIXME Resolve whether to use NSStringEncoding
 */
 - (NSString *)customTextEncodingName;
+
+/*!
+    @method executeJavaScriptFromString:
+    @param script The text of the JavaScript.
+*/
+- (void)executeJavaScriptFromString:(NSString *)string;
 
 @end

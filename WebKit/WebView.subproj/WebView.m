@@ -475,4 +475,9 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     return result;
 }
 
+- (void)executeJavaScriptFromString:(NSString *)string
+{
+    [[[self mainFrame] _bridge] executeJavaScriptFromString:string];
+}
+
 @end

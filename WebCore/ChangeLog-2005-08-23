@@ -1,3 +1,13 @@
+2002-10-03  Darin Adler  <darin@apple.com>
+
+	Add API to execute JavaScript.
+
+        * kwq/WebCoreBridge.h: Add method.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge executeJavaScriptFromString:]): Call through to
+	KHTML. But only if the document is not nil. We need to figure out
+	what to do in the case where the document is nil.
+
 === Alexander-26 ===
 
 2002-10-02  Darin Adler  <darin@apple.com>

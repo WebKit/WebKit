@@ -532,4 +532,12 @@ using khtml::RenderPart;
     return part->impl->nextKeyViewInFrameHierarchy(0, KWQSelectingPrevious);
 }
 
+- (void)executeJavaScriptFromString:(NSString *)string
+{
+    // FIXME: We want to execute it even without a document, no?
+    if (part->impl->document()) {
+        part->executeScript(QString::fromNSString(string));
+    }
+}
+
 @end
