@@ -202,9 +202,7 @@
 
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
 {
-    if ([markupString length] > 0) {
-        [[self _bridge] replaceSelectionWithMarkupString:markupString baseURLString:[baseURL _web_originalDataAsString]];
-    }
+    [[self _bridge] replaceSelectionWithMarkupString:markupString baseURLString:[baseURL _web_originalDataAsString]];
 }
 
 - (void)_replaceSelectionWithImageResource:(WebResource *)resource

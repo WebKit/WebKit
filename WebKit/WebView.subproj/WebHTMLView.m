@@ -599,7 +599,7 @@ static WebHTMLView *lastHitView = nil;
         ERROR("RTF to HTML conversion not yet supported.");
         [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSStringPboardType]];      
     } else if ([types containsObject:NSStringPboardType]) {
-        [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSStringPboardType]];
+        [[self _bridge] replaceSelectionWithText:[pasteboard stringForType:NSStringPboardType]];
     }
 }
 

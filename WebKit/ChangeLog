@@ -1,3 +1,14 @@
+2004-05-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Chris.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _pasteFromPasteboard:]): Call replaceSelectionWithText:
+        instead of replaceSelectionWithMarkupString: when pasting plain text.
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource _replaceSelectionWithMarkupString:baseURL:]):
+        Remove bogus check for empty markup. There's nothing wrong with an empty string, and no reason
+        that replacing with empty string should be a no-op instead of a delete.
+
 2004-05-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.
