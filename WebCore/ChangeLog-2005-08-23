@@ -1,5 +1,13 @@
 2003-10-09  David Hyatt  <hyatt@apple.com>
 
+	Stop printing extra spaces before list items.  Fixes ordered lists with list-style-position: inside.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_list.cpp:
+
+2003-10-09  David Hyatt  <hyatt@apple.com>
+
 	Make definition of kMin and kMax match the KHTML trunk.  Someone still needs to eliminate uses of QMIN
 	and QMAX from the code.
 
