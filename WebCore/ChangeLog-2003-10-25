@@ -1,3 +1,20 @@
+2002-11-14  Darin Adler  <darin@apple.com>
+
+	- fixed most of the problems with OPTGROUP
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::insertNode):
+	Make OPTGROUPs pop out of other unclosed OPTGROUPs, not just out of options.
+
+        * kwq/KWQListBox.h: Add private member function.
+        * kwq/KWQListBox.mm:
+        (QListBox::insertItem): Use shared insertItem function.
+        (QListBox::insertGroupLabel): Create an attributed string for the group label,
+	with bold font.
+        (-[KWQListBoxTableViewDelegate tableView:shouldSelectRow:]): Return YES only
+	for the plain strings, that way you can't select the group labels.
+
+        * WebCore.pbproj/project.pbxproj: Let PB do its thing.
+
 2002-11-14  David Hyatt  <hyatt@apple.com>
 
 	Fix spinner.com mislayout on the PLT.  Make sure 

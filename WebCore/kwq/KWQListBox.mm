@@ -117,14 +117,13 @@ void QListBox::setSelectionMode(SelectionMode mode)
     [tableView setAllowsMultipleSelection:mode != Single];
 }
 
-void QListBox::insertItem(const QString &text, unsigned index)
+void QListBox::insertItem(NSObject *o, unsigned index)
 {
     unsigned c = count();
-    NSString *s = text.getNSString();
     if (index >= c) {
-        [_items addObject:s];
+        [_items addObject:o];
     } else {
-        [_items replaceObjectAtIndex:index withObject:s];
+        [_items replaceObjectAtIndex:index withObject:o];
     }
 
     if (!_insertingItems) {
@@ -134,11 +133,23 @@ void QListBox::insertItem(const QString &text, unsigned index)
     _widthGood = NO;
 }
 
+void QListBox::insertItem(const QString &text, unsigned index)
+{
+    insertItem(text.getNSString(), index);
+}
+
 void QListBox::insertGroupLabel(const QString &text, unsigned index)
 {
-    // FIXME: This should be a non-selectable item, I think.
-    // Not sure how to do this in HTML.
-    insertItem(text, index);
+    static NSDictionary *groupLabelAttributes;
+    if (groupLabelAttributes == nil) {
+        groupLabelAttributes = [[NSDictionary dictionaryWithObject:
+            [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]] forKey:NSFontAttributeName] retain];
+    }
+
+    NSAttributedString *s = [[NSAttributedString alloc]
+        initWithString:text.getNSString() attributes:groupLabelAttributes];
+    insertItem(s, index);
+    [s release];
 }
 
 void QListBox::beginBatchInsert()
@@ -242,6 +253,11 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 {
     _box->selectionChanged();
     _box->clicked();
+}
+
+- (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(int)row
+{
+    return [[_items objectAtIndex:row] isKindOfClass:[NSString class]];
 }
 
 @end
