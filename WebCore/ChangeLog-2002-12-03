@@ -1,5 +1,10 @@
 2002-03-22  Darin Adler  <darin@apple.com>
 
+	* src/kdelibs/khtml/css/cssstyleselector.cpp: (khtml::applyRule):
+	Fix boolean logic mistake from the original KDE sources.
+
+2002-03-22  Darin Adler  <darin@apple.com>
+
         Finally giving up on the complete QString rewrite after doing it 3 times,
         Darin checks in some improvements for the old QString. This makes a QString
         be 8 bytes instead of 12, and improves a few other details. No dramatic
