@@ -239,8 +239,18 @@ bool RegExpObjectImp::implementsConstruct() const
 // ECMA 15.10.4
 Object RegExpObjectImp::construct(ExecState *exec, const List &args)
 {
-  UString p = args.isEmpty() ? UString("") : args[0].toString(exec);
-  UString flags = args.size() < 2 ? UString("") : args[1].toString(exec);
+  Object o = Object::dynamicCast(args[0]);
+  if (!o.isNull() && o.inherits(&RegExpImp::info)) {
+    if (args[1].type() != UndefinedType) {
+      Object err = Error::create(exec,TypeError);
+      exec->setException(err);
+      return err;
+    }
+    return o;
+  }
+  
+  UString p = args[0].type() == UndefinedType ? UString("") : args[0].toString(exec);
+  UString flags = args[1].type() == UndefinedType ? UString("") : args[1].toString(exec);
 
   RegExpPrototypeImp *proto = static_cast<RegExpPrototypeImp*>(exec->lexicalInterpreter()->builtinRegExpPrototype().imp());
   RegExpImp *dat = new RegExpImp(proto);

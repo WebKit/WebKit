@@ -1,3 +1,16 @@
+2004-08-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - added support for copying RegExp objects so 7 more Mozilla regexp tests pass
+
+        * kjs/regexp_object.cpp: (RegExpObjectImp::construct): Check for case where
+        we are supposed to just copy the regular expression object, and do so.
+        Also tighten up arguments check to handle case where an actual "undefined"
+        is passed rather than just omitting an argument.
+
+        * tests/mozilla/expected.html: Update results.
+
 2004-08-02  Darin Adler  <darin@apple.com>
 
         * tests/mozilla/.cvsignore: Added.
