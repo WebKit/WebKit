@@ -1,3 +1,13 @@
+2003-11-11  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3480421>: Focus rings around links are too thick, 
+        should use 3 px instead of 5 px
+
+        Reviewed by Don and Ken.
+
+        * khtml/css/html4.css:
+        use 3px instead of 5 px for :active, :focus
+
 2003-11-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
