@@ -1,3 +1,9 @@
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        - fixed B&I builds by checking in generated file
+
+        * WebCoreSupport.subproj/WebDashboardRegion.h: Added.
+
 2004-09-22  Richard Williamson   <rjw@apple.com>
 
 	Pass dashboard regions to UI delegate.
