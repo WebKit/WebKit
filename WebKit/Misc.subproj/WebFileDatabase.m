@@ -88,7 +88,7 @@ static NSNumber *IFURLFilePosixPermissions;
     [archiver encodeRootObject:key];
     [archiver encodeRootObject:object];
     
-    // FIXME: set attributes
+    // FIXME: [kocienda] Radar 2859368 (IFURLFileDatabase must set correct permissions when creating files)
     attributes = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSDate date], @"NSFileModificationDate",
         NSUserName(), @"NSFileOwnerAccountName",
@@ -136,7 +136,7 @@ static NSNumber *IFURLFilePosixPermissions;
         fileKey = [unarchiver decodeObject];
         object = [unarchiver decodeObject];
         if ([fileKey isEqual:key]) {
-            // FIXME: should not be retained
+            // make sure this object stays around until client has had a chance at it
             result = [object retain];
             [result autorelease];
         }
@@ -148,7 +148,7 @@ static NSNumber *IFURLFilePosixPermissions;
 
 -(NSEnumerator *)keys
 {
-    // FIXME: implement this
+    // FIXME: [kocienda] Radar 2859370 (IFURLFileDatabase needs to implement keys method)
     return nil;
 }
 
