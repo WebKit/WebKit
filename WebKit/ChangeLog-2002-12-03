@@ -1,3 +1,22 @@
+2002-10-18  Richard Williamson   <rjw@apple.com>
+
+        Changed name to setUsesBackForwardList: from
+        setUseBackForwardList.  ditto for useBackForwardList
+        
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController setUsesBackForwardList:]):
+        (-[WebController usesBackForwardList]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+        (-[WebFrame _isLoadComplete]):
+
+        Fixed history items that have "untitled" title after
+        redirect. (3078577).
+        
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setTitle:]):
+
 2002-10-18  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebController.h:

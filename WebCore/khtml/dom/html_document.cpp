@@ -86,9 +86,14 @@ DOMString HTMLDocument::title() const
     return static_cast<HTMLDocumentImpl *>(impl)->title();
 }
 
-void HTMLDocument::setTitle( const DOMString &/*value*/ )
+void HTMLDocument::setTitle( const DOMString &v )
 {
+#ifdef APPLE_CHANGES
+    if (!impl) return;
+    ((HTMLDocumentImpl *)impl)->setTitle(v);
+#else
     // ###
+#endif
 }
 
 DOMString HTMLDocument::referrer() const

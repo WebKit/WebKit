@@ -248,13 +248,16 @@
             return;
     }
     
+    if (!trimmed || [trimmed length] == 0)
+        return;
+        
     [_private->pageTitle release];
     _private->pageTitle = [trimmed copy];
     
     // The title doesn't get communicated to the controller until we are committed.
     if (_private->committed) {
         WebHistoryItem *entry;
-        entry = [[WebHistory sharedHistory] entryForURL: [[[self request] URL] _web_canonicalize]];
+        entry = [[WebHistory sharedHistory] entryForURL: [[[self _originalRequest] URL] _web_canonicalize]];
         [entry setTitle: _private->pageTitle];
         [[_private->controller locationChangeDelegate] receivedPageTitle:_private->pageTitle forDataSource:self];
     }

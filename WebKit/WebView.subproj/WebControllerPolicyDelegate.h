@@ -180,6 +180,7 @@ typedef enum {
     @method webPolicyWithClickAction:andPath:
     @abstract WebClickPolicy constructor
     @param action The policy action of the WebClickPolicy.
+    @param URL
     @param thePath Path to where the file should be saved. Only applicable for
     WebClickPolicySave and WebClickPolicySaveAndOpenExternally WebClickActions.
 */

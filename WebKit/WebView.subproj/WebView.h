@@ -237,13 +237,13 @@ extern NSString *WebElementFrameKey;
     @abstract Enable or disable the use of a backforward list for this controller.
     @param flag turns use of the back forward list on or off
 */    
-- (void)setUseBackForwardList: (BOOL)flag;
+- (void)setUsesBackForwardList: (BOOL)flag;
 
 /*!
     @method useBackForwardList
     @result Returns YES if a backforward list is being used by this controller, NO otherwise.
 */    
-- (BOOL)useBackForwardList;
+- (BOOL)usesBackForwardList;
 
 /*!
     @method goBack

@@ -301,7 +301,7 @@ static const char * const stateNames[] = {
             WebHistoryItem *entry = nil;
             NSString *ptitle = [ds pageTitle];
 
-            if ([[self controller] useBackForwardList]){
+            if ([[self controller] usesBackForwardList]){
                 switch ([self _loadType]) {
                 case WebFrameLoadTypeForward:
                     [backForwardList goForward];
@@ -354,6 +354,7 @@ static const char * const stateNames[] = {
             
             // If we have a title let the controller know about it.
             if (ptitle){
+                printf ("WebFramePrivate:  setting title to %s\n", [ptitle cString]);
                 [entry setTitle: ptitle];
 		[[[self controller] locationChangeDelegate] receivedPageTitle:ptitle forDataSource:ds];
             }
@@ -485,7 +486,7 @@ static const char * const stateNames[] = {
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.
-                if ([[self controller] useBackForwardList]){
+                if ([[self controller] usesBackForwardList]){
                     switch ([self _loadType]) {
                     case WebFrameLoadTypeForward:
                         [self _restoreScrollPosition];

@@ -1,3 +1,15 @@
+2002-10-18  Richard Williamson   <rjw@apple.com>
+
+        Fixed khtml to ignore <title> tags after the first tag.
+        
+        Fixed setting document.title from JavaScript.
+        
+        * khtml/dom/html_document.cpp:
+        (HTMLDocument::setTitle):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLTitleElementImpl::insertedIntoDocument):
+        (HTMLTitleElementImpl::childrenChanged):
+
 2002-10-18  Darin Adler  <darin@apple.com>
 
 	- fixed 3078293 -- Implement evaluateJavaScript on WebController

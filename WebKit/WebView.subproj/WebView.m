@@ -56,7 +56,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
 	[WebControllerSets addController:self toSetNamed:_private->controllerSetName];
     }
 
-    [self setUseBackForwardList: YES];
+    [self setUsesBackForwardList: YES];
     
     ++WebControllerCount;
 
@@ -257,12 +257,12 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     return _private->backForwardList;
 }
 
-- (void)setUseBackForwardList: (BOOL)flag
+- (void)setUsesBackForwardList: (BOOL)flag
 {
     _private->useBackForwardList = flag;
 }
 
-- (BOOL)useBackForwardList
+- (BOOL)usesBackForwardList
 {
     return _private->useBackForwardList;
 }
