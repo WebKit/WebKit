@@ -871,7 +871,7 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
      if (!*dateString)
      	return invalidDate;
 
-     if (*dateString == '-')
+     if (*dateString == '-' || *dateString == ',')
      	dateString++;
 
      while(*dateString && isspace(*dateString))

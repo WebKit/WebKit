@@ -1,5 +1,15 @@
 2003-01-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+	- fixed 3157318 -- hang at time zone page after clicking on map at www.time.gov
+
+        * kjs/date_object.cpp: (KJS::KRFCDate_parseDate): Allow a comma after the day.
+        Given how this code is structured, it allows commas in unwanted contexts too, but
+        that's almost certainly harmless.
+
+2003-01-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed 3144918 -- Can't drill down multiple levels of categories when selling on ebay
