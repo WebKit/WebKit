@@ -1,3 +1,20 @@
+2003-12-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3503652, news.com misrenders badly (footer is out of position).  My fix to 3495748 caused this
+	regression.  I made the tag priority of <nobr> too high.  It needed to be the same as <div>, and I
+	accidentally made it higher.  I intended for it to be the same as <div>.
+
+	I also had to make a fix (now that <nobr> has a higher priority) to ensure <nobr> can't be nested inside
+	other <nobr>.  
+
+	Both fixes were required to make news.com render correctly again.
+	
+        Reviewed by darin
+
+        * khtml/html/dtd.cpp:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::getElement):
+
 2003-12-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3234676>: Support for KEYGEN tag (ie 509 email certificates from www.thawte.com)

@@ -107,7 +107,7 @@ const unsigned short DOM::tagPriority[] = {
     3, // ID_MARQUEE
     5, // ID_MENU
     0, // ID_META
-    5, // ID_NOBR
+    4, // ID_NOBR
    10,// ID_NOEMBED
    10,// ID_NOFRAMES
     3, // ID_NOSCRIPT

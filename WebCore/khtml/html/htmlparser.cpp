@@ -1054,6 +1054,8 @@ NodeImpl *KHTMLParser::getElement(Token* t)
     case ID_SPAN:
     case ID_NOBR:
     case ID_WBR:
+        if (t->id == ID_NOBR || t->id == ID_WBR)
+            popBlock(t->id); // Don't allow nested <nobr> or <wbr>
         n = new HTMLGenericElementImpl(document, t->id);
         break;
 
