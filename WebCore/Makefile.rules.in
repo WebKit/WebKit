@@ -38,7 +38,7 @@ $(filter %.o,$(CXXOBJECTS)): %.o: %.cpp
 # Standard subdir targets
 
 setup:
-	if (test -f "./MakeSystemChanges.sh"); then \
+	@if (test -f "./MakeSystemChanges.sh"); then \
 		./MakeSystemChanges.sh; \
 	fi
 

@@ -38,7 +38,10 @@ dnl Make make system changes in the given subdirectories
 dnl -------------------------------------------------------------------
 dnl
 
-SUBDIRS='src/kdelibs/kjs'
+SUBDIRS='
+	src/kdelibs/kjs
+	src/kdelibs/khtml/dom
+'
 for subdir in $SUBDIRS; do
 	if (test -f "./$subdir/MakeSystemChanges.sh"); then
 		CWD=`pwd`
