@@ -1,3 +1,16 @@
+2004-07-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3721917.  The RealPlayer plugin doesn't support the new 
+        NPPVpluginScriptableNPObject variable passed to NPP_GetValue and
+        incorrectly returns NPERR_NO_ERROR.  We interpret this to the
+        mean the variable has been set.  The variable has not been set 
+        and will consequently be uninitialized.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView pluginScriptableObject]):
+
 2004-07-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

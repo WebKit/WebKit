@@ -1267,7 +1267,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (void *)pluginScriptableObject
 {
     if (NPP_GetValue) {
-        void *value;
+        void *value = 0;
         NPError npErr = NPP_GetValue (instance, NPPVpluginScriptableNPObject, (void *)&value);
         if (npErr == NPERR_NO_ERROR) {
             return value;
