@@ -191,6 +191,9 @@ public:
     JNIType getJNIType() const { return _JNIType; }
     
 private:
+    void JavaField::dispatchSetValueToInstance(KJS::ExecState *exec, const JavaInstance *instance, jvalue javaValue, const char *name, const char *sig) const;
+    jvalue JavaField::dispatchValueFromInstance(KJS::ExecState *exec, const JavaInstance *instance, const char *name, const char *sig, JNIType returnType) const;
+
     JavaString _name;
     JavaString _type;
     JNIType _JNIType;

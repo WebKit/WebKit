@@ -724,11 +724,24 @@ jvalue KJS::Bindings::convertValueToJValue (KJS::ExecState *exec, KJS::Value val
             
             // Now convert value to a string if the target type is a java.lang.string, and we're not
             // converting from a Null.
-            if (result.l == 0 && strcmp(javaClassName, "java.lang.String") == 0 && value.type() != KJS::NullType) {
-                KJS::UString stringValue = value.toString(exec);
-                JNIEnv *env = getJNIEnv();
-                jobject javaString = env->functions->NewString (env, (const jchar *)stringValue.data(), stringValue.size());
-                result.l = javaString;
+            if (result.l == 0 && strcmp(javaClassName, "java.lang.String") == 0) {
+#if CONVERT_NULL_TO_EMPTY_STRING
+		if (value.type() == KJS::NullType) {
+		    JNIEnv *env = getJNIEnv();
+		    jchar buf[2];
+		    jobject javaString = env->functions->NewString (env, buf, 0);
+		    result.l = javaString;
+		}
+		else 
+#else
+		if (value.type() != KJS::NullType)
+#endif
+		{
+		    KJS::UString stringValue = value.toString(exec);
+		    JNIEnv *env = getJNIEnv();
+		    jobject javaString = env->functions->NewString (env, (const jchar *)stringValue.data(), stringValue.size());
+		    result.l = javaString;
+		}
             }
         }
         break;

@@ -146,6 +146,7 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &method
     for (i = 0; i < count; i++) {
         JavaParameter *aParameter = static_cast<JavaParameter *>(jMethod->parameterAt(i));
         jArgs[i] = convertValueToJValue (exec, args.at(i), aParameter->getJNIType(), aParameter->type());
+	JS_LOG("arg[%d] = %s\n", i, args.at(i).toString(exec).ascii());
     }
         
 

@@ -1,3 +1,23 @@
+2005-01-11  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3887930> Must use new Java plug-in API to get/set fields so exception handling works (fixes many LiveConnect crashes)
+
+	Use the new dispatching API to invoke JNI, rather than calling JNI
+	directly.
+
+        Reviewed by David Harrison.
+
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::valueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        (JavaField::setValueToInstance):
+        * bindings/jni/jni_runtime.h:
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::convertValueToJValue):
+
 === Safari-178 ===
 
 === Safari-177 ===
