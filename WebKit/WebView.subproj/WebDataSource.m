@@ -64,7 +64,8 @@
 
 - (void)setFrame: (IFWebFrame *)f
 {
-    // Careful, there is a cycle between IFWebFrame and IFWebDataSource.
+    // FIXME!  Remove.  This back pointer isn't necessary and introduces a
+    // messy cycle between IFWebFrame and IFWebDataSource.
     if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame == f)
         return;
         
@@ -78,6 +79,9 @@
 
 - (IFWebFrame *)frame
 {
+    // FIXME!  Implement traversing the frame tree, starting with
+    // the main frame.  That will remove messy frame<->datasource
+    // cycle.
     return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame;    
 }
 
