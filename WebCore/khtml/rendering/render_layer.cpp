@@ -55,6 +55,10 @@
 #include <qscrollbar.h>
 #include <qptrvector.h>
 
+#if APPLE_CHANGES
+#include "KWQKHTMLPart.h" // For Dashboard.
+#endif
+
 using namespace DOM;
 using namespace khtml;
 
@@ -674,6 +678,13 @@ RenderLayer::updateScrollInfoAfterLayout()
         setHasVerticalScrollbar(needVerticalBar);
        
         m_object->repaint();
+
+#if APPLE_CHANGES
+        // Force an update since we know the scrollbars have changed things.
+        if (m_object->document()->hasDashboardRegions())
+            KWQ(m_object->document()->part())->dashboardRegionsChanged();
+#endif
+
         if (m_object->style()->overflow() == OAUTO) {
             // Our proprietary overflow: overlay value doesn't trigger a layout.
             m_object->setNeedsLayout(true);
