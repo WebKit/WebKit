@@ -764,8 +764,10 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     fragment->ref();
     {
         HTMLTokenizer tok(docPtr(), fragment);
+        tok.setForceSynchronous(true);            // disable asynchronous parsing
         tok.write( html.string(), true );
         tok.finish();
+        assert(!tok.processingData());            // make sure we're done (see 3963151)
     }
 
     // Exceptions are ignored because none ought to happen here.

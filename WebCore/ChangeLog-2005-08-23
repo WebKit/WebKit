@@ -1,3 +1,19 @@
+2005-02-17  Jens Alfke  <jens@apple.com>
+
+        Reviewed by Hyatt.
+
+	Fix for rdar://3963151 "Mail only pasted ~950 of 1407 text lines into my message!"
+	Force tokenizer to run synchronously while parsing document fragments, so it doesn't stop halfway through and cause truncated content.
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::reset):
+        (khtml::HTMLTokenizer::begin):
+        (khtml::HTMLTokenizer::setForceSynchronous):
+        (khtml::HTMLTokenizer::continueProcessing):
+        * khtml/html/htmltokenizer.h:
+
 2005-02-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

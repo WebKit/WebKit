@@ -298,6 +298,7 @@ void HTMLTokenizer::reset()
     }
     timerId = 0;
     allowYield = false;
+    forceSynchronous = false;
 
     currToken.reset();
 }
@@ -342,6 +343,12 @@ void HTMLTokenizer::begin()
     lineno = 0;
     scriptStartLineno = 0;
     tagStartLineno = 0;
+    forceSynchronous = false;
+}
+
+void HTMLTokenizer::setForceSynchronous(bool force)
+{
+    forceSynchronous = force;
 }
 
 void HTMLTokenizer::processListing(TokenizerString list)
@@ -1812,7 +1819,7 @@ bool HTMLTokenizer::continueProcessing(int& processedCount, const QTime& startTi
     // processed a certain number of characters.
     bool allowedYield = allowYield;
     allowYield = false;
-    if (!loadingExtScript && !m_executingScript && (processedCount > TOKENIZER_CHUNK_SIZE || allowedYield)) {
+    if (!loadingExtScript && !forceSynchronous && !m_executingScript && (processedCount > TOKENIZER_CHUNK_SIZE || allowedYield)) {
         processedCount = 0;
         if (startTime.elapsed() > TOKENIZER_TIME_DELAY) {
             /* FIXME: We'd like to yield aggressively to give stylesheets the opportunity to
