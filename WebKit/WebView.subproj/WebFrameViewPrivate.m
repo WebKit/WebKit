@@ -4,10 +4,11 @@
 
 #import <WebKit/WebFrameViewPrivate.h>
 
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
-#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewPrivate.h>
@@ -312,6 +313,71 @@ static NSMutableDictionary *viewTypes;
 - (BOOL)_isMainFrame
 {
     return [_private->webView mainFrame] == [self webFrame];
+}
+
+- (void)_tile
+{
+    NSRect scrollViewFrame = [self bounds];
+    // The border drawn by WebFrameView is 1 pixel on the left and right,
+    // two pixels on top and bottom.  Shrink the scroll view to accomodate
+    // the border.
+    if ([self _shouldDrawBorder]){
+        scrollViewFrame = NSInsetRect (scrollViewFrame, 1, 2);
+    }
+    [_private->frameScrollView setFrame:scrollViewFrame];
+}
+
+- (void)_drawBorder
+{
+    if ([self _shouldDrawBorder]){
+        NSRect vRect = [self frame];
+            
+        // Left, black
+        [[NSColor blackColor] set];
+        NSRectFill(NSMakeRect(0,0,1,vRect.size.height));
+        
+        // Top, light gray, black
+        [[NSColor lightGrayColor] set];
+        NSRectFill(NSMakeRect(0,0,vRect.size.width,1));
+        [[NSColor whiteColor] set];
+        NSRectFill(NSMakeRect(1,1,vRect.size.width-2,1));
+        
+        // Right, light gray
+        [[NSColor lightGrayColor] set];
+        NSRectFill(NSMakeRect(vRect.size.width-1,1,1,vRect.size.height-2));
+        
+        // Bottom, light gray, white
+        [[NSColor blackColor] set];
+        NSRectFill(NSMakeRect(0,vRect.size.height-1,vRect.size.width,1));
+        [[NSColor lightGrayColor] set];
+        NSRectFill(NSMakeRect(1,vRect.size.height-2,vRect.size.width-2,1));
+    }
+}
+
+- (BOOL)_shouldDrawBorder
+{
+    if (!_private->hasBorder)
+        return NO;
+        
+    // Only draw a border for frames that request a border and the frame does
+    // not contain a frameset.  Additionally we should (post-panther) not draw
+    // a border (left, right, top or bottom) if the frame edge abutts the window frame.
+    NSView *docV = [self documentView];
+    if ([docV isKindOfClass:[WebHTMLView class]]){
+        if ([[(WebHTMLView *)docV _bridge] isFrameSet]){
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (void)_setHasBorder:(BOOL)hasBorder
+{
+    if (_private->hasBorder == hasBorder) {
+        return;
+    }
+    _private->hasBorder = hasBorder;
+    [self _tile];
 }
 
 @end

@@ -224,9 +224,10 @@ NSSize WebIconLargeSize = {128, 128};
     NSString *databaseDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
 
     if (!databaseDirectory) {
-        databaseDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Icons"];
+        databaseDirectory = @"~/Library/Icons";
         [[NSUserDefaults standardUserDefaults] setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
     }
+    databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
 
     _private->fileDatabase = [[WebFileDatabase alloc] initWithPath:databaseDirectory];
     [_private->fileDatabase setSizeLimit:20000000];

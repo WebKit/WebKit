@@ -4,6 +4,7 @@
 
 #import <WebKit/WebFrameView.h>
 
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebCookieAdapter.h>
 #import <WebKit/WebDataSource.h>
@@ -11,7 +12,7 @@
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameViewPrivate.h>
-#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageView.h>
@@ -121,6 +122,8 @@ enum {
         }
 #endif
     }
+    
+    [self _drawBorder];
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -129,6 +132,7 @@ enum {
         [[self _scrollView] setDrawsBackground:YES];
     }
     [super setFrameSize:size];
+    [self _tile];
 }
 
 - (void)keyDown:(NSEvent *)event

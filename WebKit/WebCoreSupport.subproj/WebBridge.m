@@ -937,4 +937,9 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[frame parentFrame] _removeChild:frame];
 }
 
+- (void)setHasBorder:(BOOL)hasBorder
+{
+    [[_frame frameView] _setHasBorder:hasBorder];
+}
+
 @end

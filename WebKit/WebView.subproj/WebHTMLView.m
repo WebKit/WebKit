@@ -458,69 +458,6 @@
     _private->needsToApplyStyles = flag;
 }
 
-- (void)_drawBorder: (int)type
-{
-    switch (type){
-        case SunkenFrameBorder:
-        {
-            NSRect vRect = [self frame];
-            
-            // Left, light gray, black
-            [[NSColor lightGrayColor] set];
-            NSRectFill(NSMakeRect(0,0,1,vRect.size.height));
-            [[NSColor blackColor] set];
-            NSRectFill(NSMakeRect(0,1,1,vRect.size.height-2));
-    
-            // Top, light gray, black
-            [[NSColor lightGrayColor] set];
-            NSRectFill(NSMakeRect(0,0,vRect.size.width,1));
-            [[NSColor blackColor] set];
-            NSRectFill(NSMakeRect(1,1,vRect.size.width-2,1));
-    
-            // Right, light gray, white
-            [[NSColor whiteColor] set];
-            NSRectFill(NSMakeRect(vRect.size.width,0,1,vRect.size.height));
-            [[NSColor lightGrayColor] set];
-            NSRectFill(NSMakeRect(vRect.size.width-1,1,1,vRect.size.height-2));
-    
-            // Bottom, light gray, white
-            [[NSColor whiteColor] set];
-            NSRectFill(NSMakeRect(0,vRect.size.height-1,vRect.size.width,1));
-            [[NSColor lightGrayColor] set];
-            NSRectFill(NSMakeRect(1,vRect.size.height-2,vRect.size.width-2,1));
-            break;
-        }
-        
-        case PlainFrameBorder: 
-        {
-            // Not used yet, but will need for 'focusing' frames.
-            NSRect vRect = [self frame];
-            
-            // Left, black
-            [[NSColor blackColor] set];
-            NSRectFill(NSMakeRect(0,0,2,vRect.size.height));
-    
-            // Top, black
-            [[NSColor blackColor] set];
-            NSRectFill(NSMakeRect(0,0,vRect.size.width,2));
-    
-            // Right, black
-            [[NSColor blackColor] set];
-            NSRectFill(NSMakeRect(vRect.size.width,0,2,vRect.size.height));
-    
-            // Bottom, black
-            [[NSColor blackColor] set];
-            NSRectFill(NSMakeRect(0,vRect.size.height-2,vRect.size.width,2));
-            break;
-        }
-        
-        case NoFrameBorder:
-        default:
-        {
-        }
-    }
-}
-
 - (void)drawRect:(NSRect)rect
 {
     LOG(View, "%@ drawing", self);
@@ -590,8 +527,6 @@
         }
 
         [(WebClipView *)[self superview] resetAdditionalClip];
-
-        [self _drawBorder: [[self _bridge] frameBorderStyle]];
 
         [NSGraphicsContext restoreGraphicsState];
     } NS_HANDLER {

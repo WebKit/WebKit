@@ -1,3 +1,38 @@
+2003-09-09  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3414988.  Don't store absolute path to home directory.
+	Reviewed by Chris Blumenberg.
+
+	Fixed 3414319.  Send correct WebView back as parameter to webViewShow:
+	Review by Darin.
+
+	Fixed 3095029.  Draw a frame's border in WebFrameView, instead of WebHTMLView, and correctly inset the frame's scrollview to account for the border.  Mostly written by Darin.
+        Reviewed by Darin (and Richard).
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]):
+	Store @"~/Library/Icon" instead of absolute path, and always try to tilde expand stored path.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setHasBorder:]):
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView drawRect:]):
+        (-[WebFrameView setFrameSize:]):
+        * WebView.subproj/WebFrameViewPrivate.h:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        (-[WebFrameView _isMainFrame]):
+        (-[WebFrameView _tile]):
+        (-[WebFrameView _drawBorder]):
+        (-[WebFrameView _shouldDrawBorder]):
+        (-[WebFrameView _setHasBorder:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]):
+	Changes to correct draw border in WebFrameView instead of WebHTMLView.
+
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _openNewWindowWithRequest:]):
+	Send correct parameter (returned from webView:createWebViewWithRequest:), rather than self, to webViewShow:.
+
 2003-09-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3412380>: REGRESSION (85-98): www.minoltan.com is decoded incorrectly on Japanese system

@@ -313,7 +313,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
         newWindowWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:self createWebViewWithRequest: request];
     }
 
-    [[newWindowWebView _UIDelegateForwarder] webViewShow: self];
+    [[newWindowWebView _UIDelegateForwarder] webViewShow: newWindowWebView];
 
     return newWindowWebView;
 }

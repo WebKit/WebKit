@@ -22,11 +22,13 @@
     NSArray *draggingTypes;
     
     BOOL inNextValidKeyView;
+    BOOL hasBorder;
 }
 
 @end
 
 @interface WebFrameView (WebPrivate)
+
 - (WebView *)_webView;
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view;
 - (NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;
@@ -51,5 +53,9 @@
 + (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType;
 - (BOOL)_isMainFrame;
 - (NSScrollView *)_scrollView;
+- (void)_setHasBorder:(BOOL)hasBorder;
+- (void)_tile;
+- (void)_drawBorder;
+- (BOOL)_shouldDrawBorder;
 
 @end
