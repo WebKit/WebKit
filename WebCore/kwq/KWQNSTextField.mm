@@ -56,6 +56,7 @@
 {
     QWidget *widget;
     BOOL inSetFrameSize;
+    BOOL inNextValidKeyView;
 }
 
 - initWithQWidget:(QWidget *)widget;
@@ -106,9 +107,6 @@
 
 - (void)dealloc
 {
-    // Set widget to 0 so that nextKeyView and previousKeyView will return nil.
-    widget = 0;
-    
     [secureField release];
     [formatter release];
     [super dealloc];
@@ -228,12 +226,32 @@
 
 - (NSView *)nextKeyView
 {
-    return KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingNext);
+    return inNextValidKeyView
+        ? KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingNext)
+        : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
-    return KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingPrevious);
+   return inNextValidKeyView
+        ? KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingPrevious)
+        : [super previousKeyView];
+}
+
+- (NSView *)nextValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
+}
+
+- (NSView *)previousValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
 }
 
 @end
@@ -329,22 +347,34 @@
     return [super init];
 }
 
-- (void)dealloc
-{
-    // Set widget to 0 so that nextKeyView and previousKeyView will return nil.
-    widget = 0;
-    
-    [super dealloc];
-}
-
 - (NSView *)nextKeyView
 {
-    return KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingNext);
+    return inNextValidKeyView
+        ? KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingNext)
+        : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
-    return KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingPrevious);
+   return inNextValidKeyView
+        ? KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingPrevious)
+        : [super previousKeyView];
+}
+
+- (NSView *)nextValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
+}
+
+- (NSView *)previousValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
 }
 
 // These next two methods are the workaround for bug 3024443.

@@ -37,6 +37,7 @@ class QLineEdit;
     NSTextField *secureField;
     KWQTextFieldFormatter *formatter;
     BOOL edited;
+    BOOL inNextValidKeyView;
 }
 
 - initWithQLineEdit:(QLineEdit *)widget;

@@ -10,7 +10,7 @@ NextStepLatin: x-nextstep
 ASCII: us-ascii, iso-ir-6us
 Unicode # utf-16be, unicodeFFFE, unicode? (would this help us?)
   # Note the bogus entry to make UTF-16 mean UTF-8.
-  # We do this because Internet Explorere does, and because web pages say UTF-16 and mean UTF-8.
+  # We do this because Internet Explorer does, and because web pages say UTF-16 and mean UTF-8.
   # See bug 2969378 and http://zingermans.com/ for a concrete example.
   # It's not clear what to do about 16-bit encodings in general.
 UTF8: utf-8, unicode-1-1-utf-8, unicode-2-0-utf-8, x-unicode-2-0-utf-8, utf-16
@@ -118,7 +118,7 @@ JIS_C6226_78: JIS_C6226-1978
 ShiftJIS_X0213_00
 GB_2312_80: gb_2312-80, csGB231280, gb2312-80, gb231280
 GBK_95: x-gbk
-GB_18030_2000
+GB_18030_2000: GB18030
 KSC_5601_87: KS_C_5601-1987, ks_c_5601_1987, ks_c_5601, ksc5601
 KSC_5601_92_Johab
 CNS_11643_92_P1

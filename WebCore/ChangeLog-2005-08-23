@@ -1,5 +1,26 @@
 2002-08-19  Darin Adler  <darin@apple.com>
 
+	Put in more robust version of the next/previous key view checking
+	that matches what I did in WebHTMLView.
+
+        * kwq/KWQNSTextField.h: Add inNextValidKeyView instance variable.
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextField dealloc]): No need to nil out widget.
+        (-[KWQNSTextField nextKeyView]): Only do the computation when called from nextValidKeyView.
+        (-[KWQNSTextField previousKeyView]): Only do the computation when called from previousValidKeyView.
+        (-[KWQNSTextField nextValidKeyView]): Set boolean.
+        (-[KWQNSTextField previousValidKeyView]): Set boolean.
+        (-[KWQSecureTextField nextKeyView]): Only do the computation when called from nextValidKeyView.
+        (-[KWQSecureTextField previousKeyView]): Only do the computation when called from nextValidKeyView.
+        (-[KWQSecureTextField nextValidKeyView]): Set boolean.
+        (-[KWQSecureTextField previousValidKeyView]): Set boolean.
+
+	Unrelated change.
+
+        * kwq/mac-encodings.txt: Add an encoding name of gb18030, since I saw mention of it in bug 3002016.
+
+2002-08-19  Darin Adler  <darin@apple.com>
+
 	Support so that WebKit can tab into a web view's fields.
 
         * kwq/KWQKHTMLPartImpl.h: Made another nextKeyView() version public.
