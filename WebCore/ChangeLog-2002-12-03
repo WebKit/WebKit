@@ -1,5 +1,17 @@
 2002-09-11  Darin Adler  <darin@apple.com>
 
+	- fixed 3047552 -- crash using CFNotification calls on an NSNotification
+
+        * kwq/KWQWindowWidget.mm:
+        (KWQWindowWidget::KWQWindowWidget): Create a KWQWindowWidgetDeleter, and
+	hook it up to the notification.
+        (KWQWindowWidget::~KWQWindowWidget): Disconnect the KWQWindowWidgetDeleter
+	and release it.
+        (-[KWQWindowWidgetDeleter initWithWindowWidget:]): Store a pointer.
+        (-[KWQWindowWidgetDeleter deleteWindowWidget]): Do a delete.
+
+2002-09-11  Darin Adler  <darin@apple.com>
+
 	- fixed 3021137 -- changing font prefs doesn't redraw frames
 	other than the main frame
 

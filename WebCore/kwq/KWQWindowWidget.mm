@@ -27,13 +27,43 @@
 
 #import <Cocoa/Cocoa.h>
 
+@interface KWQWindowWidgetDeleter : NSObject
+{
+    KWQWindowWidget *_widget;
+}
+- initWithWindowWidget:(KWQWindowWidget *)widget;
+- (void)deleteWindowWidget;
+@end
+
 class KWQWindowWidgetPrivate
 {
 public:
     NSWindow *window;
+    KWQWindowWidgetDeleter *deleter;
 };
 
 static CFMutableDictionaryRef windowWidgets = NULL;
+
+KWQWindowWidget::KWQWindowWidget(NSWindow *window) :
+    d(new KWQWindowWidgetPrivate())
+{
+    d->window = [window retain];
+    d->deleter = [[KWQWindowWidgetDeleter alloc] initWithWindowWidget:this];
+
+    [[NSNotificationCenter defaultCenter] addObserver:d->deleter
+        selector:@selector(deleteWindowWidget) name:NSWindowWillCloseNotification object:window];
+}
+
+KWQWindowWidget::~KWQWindowWidget()
+{
+    CFDictionaryRemoveValue(windowWidgets, d->window);
+    [[NSNotificationCenter defaultCenter] removeObserver:d->deleter];
+    
+    [d->window release];
+    [d->deleter release];
+    
+    delete d;
+}
 
 KWQWindowWidget *KWQWindowWidget::fromNSWindow(NSWindow *window)
 {
@@ -48,33 +78,6 @@ KWQWindowWidget *KWQWindowWidget::fromNSWindow(NSWindow *window)
     }
 
     return widget;
-}
-
-
-static void deleteOnWindowClose(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
-{
-    delete (KWQWindowWidget *)observer;
-}
-
-KWQWindowWidget::KWQWindowWidget(NSWindow *window) :
-    d(new KWQWindowWidgetPrivate())
-{
-    d->window = [window retain];
-
-    CFNotificationCenterAddObserver
-	((CFNotificationCenterRef)[NSNotificationCenter defaultCenter],
-	 this, deleteOnWindowClose, (CFStringRef)NSWindowWillCloseNotification, 
-	 d->window, CFNotificationSuspensionBehaviorDeliverImmediately);
-}
-
-KWQWindowWidget::~KWQWindowWidget()
-{
-    CFDictionaryRemoveValue(windowWidgets, d->window);
-    CFNotificationCenterRemoveObserver
-	((CFNotificationCenterRef)[NSNotificationCenter defaultCenter],
-	 this, (CFStringRef)NSWindowWillCloseNotification, d->window);
-    [d->window release];
-    delete d;
 }
 
 QSize KWQWindowWidget::sizeHint() const
@@ -113,3 +116,19 @@ void KWQWindowWidget::setFrameGeometry(const QRect &r)
     // FIXME: should try to avoid saving changes
     [d->window setFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - r.y() - r.height(), r.width(), r.height()) display:NO];
 }
+
+@implementation KWQWindowWidgetDeleter
+
+- initWithWindowWidget:(KWQWindowWidget *)widget
+{
+    [super init];
+    _widget = widget;
+    return self;
+}
+
+- (void)deleteWindowWidget
+{
+    delete _widget;
+}
+
+@end
