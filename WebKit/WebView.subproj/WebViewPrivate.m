@@ -215,8 +215,11 @@
 
 - (void)_setTopLevelFrameName:(NSString *)name
 {
-    [_private->topLevelFrameName release];
-    _private->topLevelFrameName = [name retain];
+    // It's wrong to name a frame "_blank".
+    if(![name isEqualToString:@"_blank"]){
+        [_private->topLevelFrameName release];
+        _private->topLevelFrameName = [name retain];
+    }
 }
 
 - (WebFrame *)_frameInThisWindowNamed:(NSString *)name

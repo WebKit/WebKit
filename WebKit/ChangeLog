@@ -1,3 +1,22 @@
+2002-10-25  Chris Blumenberg  <cblu@apple.com>
+
+	- Fix case where we would name a new window _blank
+	- If a data source can't be created for a plug-in request, don't create the frame or open a window.
+	- cleaned up plug-in stream notifications
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView initWithFrame:]): create streamNotifications dict
+        (-[WebBaseNetscapePluginView dealloc]): release streamNotifications dict
+        (-[WebBaseNetscapePluginView frameStateChanged:]): cleaned up
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): create data source before frame
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showURL:inFrame:]): create data source before frame
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _setTopLevelFrameName:]): don't allow _blank frames
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame findOrCreateFramedNamed:]): no need to check for _blank
+
 2002-10-25  Darin Adler  <darin@apple.com>
 
         Tighten up the code that observes mouse moved events.

@@ -238,12 +238,8 @@
         WebController *controller = [[[self controller] windowOperationsDelegate]
                                         createWindowWithURL:nil referrer:[[self _bridge] referrer]];
         
-        if(![name isEqualToString:@"_blank"]){
-            [controller _setTopLevelFrameName:name];
-        }
-        
+        [controller _setTopLevelFrameName:name];
         [[controller windowOperationsDelegate] showWindow];
-        
         frame = [controller mainFrame];
     }
 

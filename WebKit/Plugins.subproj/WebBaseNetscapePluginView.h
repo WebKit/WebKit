@@ -39,7 +39,7 @@
     NSURL *baseURL;
     NSTrackingRectTag trackingTag;
     NSMutableArray *streams;
-    NSMutableDictionary *notificationData;
+    NSMutableDictionary *streamNotifications;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;

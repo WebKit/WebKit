@@ -595,7 +595,7 @@
     canRestart = YES;
 
     streams = [[NSMutableArray alloc] init];
-    notificationData = [[NSMutableDictionary alloc] init];
+    streamNotifications = [[NSMutableDictionary alloc] init];
 
     return self;
 }
@@ -614,7 +614,8 @@
     [streams release];
     [MIMEType release];
     [baseURL release];
-    [notificationData release];
+    [streamNotifications removeAllObjects];
+    [streamNotifications release];
     free(cAttributes);
     free(cValues);
     [super dealloc];
@@ -728,24 +729,19 @@
 
 - (void)frameStateChanged:(NSNotification *)notification
 {
-    WebFrame *frame;
-    WebFrameState frameState;
-    NSValue *notifyDataValue;
-    void *notifyData;
-    NSURL *URL;
+    WebFrame *frame = [notification object];
+    NSURL *URL = [[[frame dataSource] request] URL];
+    NSValue *notifyDataValue = [streamNotifications objectForKey:URL];
     
-    frame = [notification object];
-    URL = [[[frame dataSource] request] URL];
-    notifyDataValue = [notificationData objectForKey:URL];
-
     if(!notifyDataValue){
         return;
     }
     
-    notifyData = [notifyDataValue pointerValue];
-    frameState = [[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
+    void *notifyData = [notifyDataValue pointerValue];
+    WebFrameState frameState = [[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
     if (frameState == WebFrameStateComplete) {
         NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
+        [streamNotifications removeObjectForKey:URL];
     }
     //FIXME: Need to send other NPReasons
 }
@@ -791,26 +787,25 @@
             return NPERR_INVALID_URL;
         }
     }else{
-        WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
-
-        if(notifyData){
-            if(![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] && 
-                ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]){
-
-                [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
-                [[NSNotificationCenter defaultCenter] addObserver:self 
-                    selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
-            }
-            // Plug-in docs say to return NPERR_INVALID_PARAM here
-            // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
-            // so we have to allow this as well. Needed for iTools.
-        }
-        
         WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
-        if ([frame setProvisionalDataSource:dataSource]) {
-            [frame startLoading];
+
+        if(dataSource){
+            WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
+            if ([frame setProvisionalDataSource:dataSource]) {
+                if(notifyData){
+                    if(![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] &&
+                       ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]){
+
+                        [streamNotifications setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
+                        [[NSNotificationCenter defaultCenter] addObserver:self
+                            selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
+                    }
+                }
+                
+                [frame startLoading];
+            }
+            [dataSource release];
         }
-        [dataSource release];
     }
     
     return NPERR_NO_ERROR;
