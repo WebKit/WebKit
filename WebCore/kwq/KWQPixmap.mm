@@ -55,9 +55,11 @@ QPixmap::QPixmap(const QByteArray &bytes)
     }
     else if ([[nsimage representations] count] == 0) {
         KWQDEBUG("unable to create image [can't decode bytes]");
-        // leak the ns image pointer
+        // if there are no representations, release the image
+        // and return nil
         // note that the data is freed erroneously by AppKit
-        // we're not leaking that, just the nsimage pointer
+        // we're not leaking that
+        [nsimage release];
         nsimage = nil;
     }
     else {

@@ -1,3 +1,10 @@
+2002-04-23  Kenneth Kocienda  <kocienda@apple.com>
+
+	* kwq/KWQPixmap.mm:
+	(QPixmap::QPixmap): Fixed unneeded leak of an NSImage in
+        the case where we are still covering for a double-release
+        bug in AppKit. No need to add insult to injury. :)
+
 2002-04-22  Darin Adler  <darin@apple.com>
 
 	Fix width of non-breaking spaces. There's code to hack this
