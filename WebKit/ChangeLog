@@ -1,3 +1,10 @@
+2003-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+        * WebView.subproj/WebController.h: Remove unneeded declaration in
+	sample code.
+
 2003-01-23  Chris Blumenberg  <cblu@apple.com>
 
 	Made WebTextView use the same format for context menus as the rest of WebKit.

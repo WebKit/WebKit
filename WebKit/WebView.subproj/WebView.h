@@ -49,7 +49,6 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     </p>
     <pre>
     WebController *webController;
-    WebDataSource *dataSource;
     WebFrame *mainFrame;
     
     webController  = [[WebController alloc] initWithView: webView controllerSetName: nil];
