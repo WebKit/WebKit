@@ -1,5 +1,12 @@
 2003-03-18  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Fix build, use size instead of length.
+
+2003-03-18  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by John.
 
 	- fixed 3080337 - default values seem to be "no" when third param of window.open is an empty string
