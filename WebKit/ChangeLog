@@ -1,3 +1,16 @@
+2003-04-10  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3219525
+        
+        Our work-around for the CG pattern cache bogosity was always bypassed,
+        consequently we'd unnecessarily burn lots of memory filling that cache.
+        
+        Reviewed by mjs & gramps.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+        (-[WebImageRenderer tileInRect:fromPoint:]):
+
 2003-04-10  Darin Adler (Maciej committing for Darin)  <darin@apple.com>
 
         Reviewed by Maciej.

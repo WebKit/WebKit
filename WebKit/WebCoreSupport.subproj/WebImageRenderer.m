@@ -268,8 +268,6 @@ static NSMutableArray *activeImageRenderers;
         }
     }
     
-    fr.origin.y = [self size].height - fr.size.height;
-
     // This is the operation that handles transparent portions of the source image correctly.
     [self drawInRect:ir fromRect:fr operation:NSCompositeSourceOver fraction:1.0];
 }
@@ -373,8 +371,9 @@ static NSMutableArray *activeImageRenderers;
     CGSize phase = CGSizeMake(fmodf(originInWindow.x, size.width), fmodf(originInWindow.y, size.height));
     
     // If the single image draw covers the whole area, then just draw once.
-    if (NSContainsRect(oneTileRect, rect) && phase.width == 0 && phase.height == 0) {
+    if (NSContainsRect(oneTileRect, rect)) {
         NSRect fromRect;
+
         fromRect.origin.x = rect.origin.x - oneTileRect.origin.x;
         fromRect.origin.y = (oneTileRect.origin.y + oneTileRect.size.height) - (rect.origin.y + rect.size.height);
         fromRect.size = rect.size;
@@ -382,7 +381,7 @@ static NSMutableArray *activeImageRenderers;
         [self drawClippedToValidInRect:rect fromRect:fromRect];
         return;
     }
-    
+
     // If we only have a partial image, just do nothing, because CoreGraphics will not help us tile
     // with a partial image. But maybe later we can fix this by constructing a pattern image that's
     // transparent where needed.
