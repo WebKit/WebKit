@@ -1,5 +1,7 @@
 2002-04-08  Maciej Stachowiak  <mjs@apple.com>
 
+	Fix Radar 2896001 (crashes in KURL):
+
 	* src/kwq/KWQKURL.mm: (KURL::KWQKURLPrivate::KWQKURLPrivate):
 	Initialize refCount to 0 in the copy constructor.
 
