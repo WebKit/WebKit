@@ -4,5 +4,3 @@
 */
 #import <WebKit/WebDOMDocument.h>
 
-#import <WebCore/WebCoreDOM.h>
-

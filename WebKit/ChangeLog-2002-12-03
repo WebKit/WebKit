@@ -1,5 +1,13 @@
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
+        Removed unnecessary (and incorrect) include.
+        The *.m files in DOM.subproj might be removed,
+        they are empty now.
+        
+        * DOM.subproj/WebDOMDocument.m:
+
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
         Added selection API.
         
         * WebView.subproj/WebHTMLRepresentation.h:
