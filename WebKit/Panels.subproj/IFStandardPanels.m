@@ -199,7 +199,7 @@ static BOOL WindowInFront(NSWindow *a, NSWindow *b)
 	    window = [[[object mainFrame] webView] window];
 	}
 
-	if (window != nil && (frontmostWindow == nil || WindowInFront(window, frontmostWindow))) {
+	if (window != nil && [window isVisible] && (frontmostWindow == nil || WindowInFront(window, frontmostWindow))) {
 	    frontmostWindow = window;
 	}
     }
