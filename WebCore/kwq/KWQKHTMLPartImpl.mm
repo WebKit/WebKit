@@ -135,7 +135,6 @@ void KWQKHTMLPartImpl::begin( const KURL &url, int xOffset, int yOffset )
   d->m_bComplete = false;
   // d->m_referrer = url.url();
   part->m_url = url;
-  KURL baseurl;
 
   // ### not sure if XHTML documents served as text/xml should use DocumentImpl or HTMLDocumentImpl
   if (args.serviceType == "text/xml")
@@ -146,14 +145,6 @@ void KWQKHTMLPartImpl::begin( const KURL &url, int xOffset, int yOffset )
     //DomShared::instanceToCheck = (void *)((DomShared *)d->m_doc);
     d->m_doc->ref();
 
-    if (m_baseURL.isEmpty()) {
-        m_baseURL = KURL();
-    }
-    else {
-        // If we get here, this means the part has received a redirect before
-        // m_doc was created. Update the document with the base URL.
-        d->m_doc->setBaseURL(m_baseURL.url());
-    }
     d->m_workingURL = url;
 
     /* FIXME: this is a pretty gross way to make sure the decoder gets reinitialized for each page. */
@@ -168,7 +159,7 @@ void KWQKHTMLPartImpl::begin( const KURL &url, int xOffset, int yOffset )
     d->m_doc->setURL( url.url() );
     
     // do not set base URL if it has already been set
-    if (!d->m_workingURL.isEmpty() && m_baseURL.isEmpty())
+    if (!d->m_workingURL.isEmpty())
     {
 	// We're not planning to support the KDE chained URL feature, AFAIK
 #if KDE_CHAINED_URIS
@@ -177,11 +168,11 @@ void KWQKHTMLPartImpl::begin( const KURL &url, int xOffset, int yOffset )
         if ( !lst.isEmpty() )
             baseurl = *lst.begin();
         // Use this for relative links.
-        // We prefer m_baseURL over m_url because m_url changes when we are
-        // about to load a new page.
         setBaseURL(baseurl);
 #else
-	setBaseURL(d->m_workingURL);
+	if (d->m_doc != NULL) {
+	    d->m_doc->setBaseURL(d->m_workingURL.url());
+	}
 #endif
     }
 
@@ -295,7 +286,7 @@ bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, cons
 
     NSURL *childURL = part->completeURL(url).getNSURL();
     if (childURL == nil) {
-        NSLog (@"ERROR (probably need to fix CFURL): unable to create URL with path (base URL %s, relative URL %s)", m_baseURL.prettyURL().ascii(), url.ascii());
+        NSLog (@"ERROR (probably need to fix CFURL): unable to create URL with path (base URL %s, relative URL %s)", d->m_doc->baseURL().ascii(), url.ascii());
         return false;
     }
     
@@ -348,7 +339,7 @@ bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, cons
         viewForPluginWithURL:part->completeURL(url).getNSURL()
                  serviceType:serviceType.getNSString()
                    arguments:argsArray
-                     baseURL:m_baseURL.getNSURL()]);
+                     baseURL:KURL(d->m_doc->baseURL()).getNSURL()]);
     frame->setWidget(widget);
     
     return true;
@@ -464,18 +455,6 @@ QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
             parts.append(childPart);
     }
     return parts;
-}
-
-void KWQKHTMLPartImpl::setBaseURL(const KURL &url)
-{
-    m_baseURL = url;
-    if (m_baseURL.protocol().startsWith( "http" ) && !m_baseURL.host().isEmpty() && m_baseURL.path().isEmpty()) {
-        m_baseURL.setPath( "/" );
-    }
-    // communicate the change in base URL to the document so that links and subloads work
-    if (d->m_doc) {
-        d->m_doc->setBaseURL(url.url());
-    }
 }
 
 void KWQKHTMLPartImpl::setView(KHTMLView *view)

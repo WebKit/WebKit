@@ -79,8 +79,6 @@ public:
 
     bool gotoBaseAnchor();
 
-    void setBaseURL(const KURL &);
-
     void setTitle(const DOM::DOMString &);
     void setStatusBarText(const QString &status);
 
@@ -116,8 +114,6 @@ private:
     WebCoreBridge *bridge;
 
     int m_redirectionTimer;
-    
-    KURL m_baseURL;
     
     friend class KHTMLPart;
 };

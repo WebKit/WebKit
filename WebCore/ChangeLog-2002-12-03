@@ -1,3 +1,16 @@
+2002-08-01  Maciej Stachowiak  <mjs@apple.com>
+
+	Remove KWQKHTMLPartImpl's setBaseURL method and m_baseURL field,
+	since nothing should really need them any more.
+	
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::begin): Set base URL on document, if it exists.
+        (KWQKHTMLPartImpl::requestFrame): Get base URL from document.
+        (KWQKHTMLPartImpl::requestObject): Ditto.
+        (KWQKHTMLPartImpl::frames): Ditto.
+        (KWQKHTMLPartImpl::setBaseURL): Removed.
+
 2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
 
         Added method to allow WebKit to direct khtml to
