@@ -2,7 +2,7 @@
 ===================================================================
 CHARACTER SETS
 
-(last updated 2003-09-19)
+(last updated 28 January 2005)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -36,13 +36,17 @@ intended for vendor specific coded character sets.
 	2000-2999	Vendor
 
 The aliases that start with "cs" have been added for use with the
-Printer MIB (see RFC 1759) and contain the standard numbers along with
-suggestive names in order to facilitate applications that want to
-display the names in user interfaces.  The "cs" stands for character
-set and is provided for applications that need a lower case first
-letter but want to use mixed case thereafter that cannot contain any
-special characters, such as underbar ("_") and dash ("-").  If the
-character set is from an ISO standard, its cs alias is the ISO
+IANA-CHARSET-MIB as originally defined in RFC3808, and as currently
+maintained by IANA at http://www/iana.org/assignments/ianacharset-mib.
+Note that the ianacharset-mib needs to be kept in sync with this
+registry.  These aliases that start with "cs" contain the standard 
+numbers along with suggestive names in order to facilitate applications 
+that want to display the names in user interfaces.  The "cs" stands 
+for character set and is provided for applications that need a lower 
+case first letter but want to use mixed case thereafter that cannot 
+contain any special characters, such as underbar ("_") and dash ("-").  
+
+If the character set is from an ISO standard, its cs alias is the ISO
 standard number or name.  If the character set is not from an ISO
 standard, but is registered with ISO (IPSJ/ITSCJ is the current ISO
 Registration Authority), the ISO Registry number is specified as
@@ -508,10 +512,12 @@ Alias: latin4
 Alias: l4
 Alias: csISOLatin4
 
-Name: ECMA-cyrillic                                      [RFC1345,KXS2]
+Name: ECMA-cyrillic                                     
 MIBenum: 77
-Source: ECMA registry
+Source: ISO registry (formerly ECMA registry)
+         http://www.itscj.ipsj.jp/ISO-IR/111.pdf
 Alias: iso-ir-111
+Alias: KOI8-E
 Alias: csISO111ECMACyrillic
 
 Name: CSA_Z243.4-1985-1                                  [RFC1345,KXS2]
@@ -1297,6 +1303,20 @@ Alias: PT154
 Alias: CP154
 Alias: Cyrillic-Asian
 
+Name:  Amiga-1251
+MIBenum:  2104
+Source:  See (http://www.amiga.ultranet.ru/Amiga-1251.html)
+Alias:  Ami1251
+Alias:  Amiga1251
+Alias:  Ami-1251
+(Aliases are provided for historical reasons and should not be used)
+                                                              [Malyshev]
+															  
+Name:  KOI7-switched
+MIBenum:  2105
+Source:  See <http://www.iana.org/assignments/charset-reg/KOI7-switched>
+Aliases:  None
+
 Name: UNICODE-1-1                                              [RFC1641]
 MIBenum: 1010
 Source: RFC 1641
@@ -1357,9 +1377,9 @@ MIBenum: 103
 Source: RFC 1642
 Alias: csUnicode11UTF7
 
-Name: UTF-8                                                    [RFC-draft-yergeau-rfc2279bis-05.txt]
+Name: UTF-8                                                    [RFC3629]
 MIBenum: 106
-Source: RFC draft-yergeau-rfc2279bis-05.txt
+Source: RFC 3629
 Alias: None 
 
 Name: ISO-8859-13
@@ -1406,6 +1426,24 @@ MIBenum: 114
 Source: Chinese IT Standardization Technical Committee
         Please see: <http://www.iana.org/assignments/charset-reg/GB18030>
 Alias: None
+
+Name:  OSD_EBCDIC_DF04_15
+MIBenum:  115
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-15>
+Alias:   None
+
+Name:  OSD_EBCDIC_DF03_IRV
+MIBenum:  116
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF03-IRV>
+Alias:  None
+
+Name:  OSD_EBCDIC_DF04_1
+MIBenum:  117
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-1>
+Alias:  None   
 
 Name: JIS_Encoding
 MIBenum: 16
@@ -1775,6 +1813,8 @@ REFERENCES
 [RFC2781]  Hoffman, P., Yergeau, F., "UTF-16, an encoding of ISO 10646",
            RFC 2781, February 2000.
 
+[RFC3629]  Yergeau, F., "UTF-8, a transformation format of ISO 10646",
+           RFC3629, November 2003.
 
 PEOPLE
 ------
@@ -1788,6 +1828,8 @@ PEOPLE
 [Lazhintseva] Katya Lazhintseva, <katyal@MICROSOFT.com>, May 1996.
 
 [Mahdi] Tamer Mahdi, <tamer@ca.ibm.com>, August 2000.
+
+[Malyshev] Michael Malyshev, <michael_malyshev@mail.ru>, January 2004
 
 [Murai] Jun Murai <jun@wide.ad.jp>
 

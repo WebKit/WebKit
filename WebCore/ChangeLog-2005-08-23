@@ -1,3 +1,9 @@
+2005-02-25  Darin Adler  <darin@apple.com>
+
+        * kwq/character-sets.txt: Checked in updated file. This new file has no effect, because none of the
+        changes affect character sets that we support, but it's good to have the latest file in here, and
+        completely safe because I checked that the generated files have not changed.
+
 2005-02-25  Vicki Murley <vicki@apple.com>
 
         Reviewed by Darin.
