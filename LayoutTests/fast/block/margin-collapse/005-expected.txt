@@ -31,22 +31,22 @@ layer at (0,0) size 800x473
           text run at (342,0) width 5: "."
 layer at (11,98) size 35x277
   RenderBlock (relative positioned) {DIV} at (0,50) size 35x277 [bgcolor=#0000FF]
-layer at (0,0) size 35x59 backgroundClip at (11,98) size 35x59
+layer at (11,98) size 35x59
   RenderBlock (relative positioned) {DIV} at (0,0) size 35x59 [bgcolor=#FF0000]
-layer at (0,0) size 35x59 backgroundClip at (11,98) size 35x59
+layer at (11,98) size 35x59
   RenderBlock (relative positioned) {DIV} at (0,0) size 35x59
-layer at (0,0) size 35x59 backgroundClip at (11,98) size 35x59
+layer at (11,98) size 35x59
   RenderBlock (relative positioned) {DIV} at (0,0) size 35x59 [bgcolor=#FFFF00]
     RenderText {TEXT} at (0,0) size 35x59
       text run at (0,0) width 35: "A"
-layer at (0,109) size 35x59 backgroundClip at (11,207) size 35x59
+layer at (11,207) size 35x59
   RenderBlock (relative positioned) {DIV} at (0,109) size 35x59 [bgcolor=#FF0000]
-layer at (0,0) size 35x59 backgroundClip at (11,207) size 35x59
+layer at (11,207) size 35x59
   RenderBlock (relative positioned) {DIV} at (0,0) size 35x59 [bgcolor=#00FF00]
     RenderBlock (anonymous) at (0,0) size 35x59 [bgcolor=#000000]
       RenderText {TEXT} at (0,0) size 29x59 [bgcolor=#00FF00]
         text run at (0,0) width 29: "B"
-layer at (0,218) size 35x59 backgroundClip at (11,316) size 35x59
+layer at (11,316) size 35x59
   RenderBlock (relative positioned) {DIV} at (0,218) size 35x59 [bgcolor=#00FFFF]
     RenderText {TEXT} at (0,0) size 35x59
       text run at (0,0) width 35: "C"

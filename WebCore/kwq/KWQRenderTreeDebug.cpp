@@ -163,7 +163,7 @@ static void write(QTextStream &ts, const RenderLayerElement &e, int indent = 0)
     
     ts << "layer";
     
-    QRect r(l.xPos(), l.yPos(), l.width(), l.height());
+    QRect r(e.absBounds);
     
     ts << " " << r;
     

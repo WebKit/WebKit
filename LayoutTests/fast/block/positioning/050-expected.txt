@@ -11,7 +11,7 @@ layer at (8,8) size 124x124
     RenderBlock (anonymous) at (12,12) size 100x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {DIV} at (12,12) size 100x100 [bgcolor=#808080]
-layer at (2,2) size 120x108 backgroundClip at (10,10) size 120x108
+layer at (10,10) size 120x108
   RenderBlock (positioned) {DIV} at (2,2) size 120x108
-layer at (2,2) size 108x120 backgroundClip at (10,10) size 108x120
+layer at (10,10) size 108x120
   RenderBlock (positioned) {DIV} at (2,2) size 108x120

@@ -7,7 +7,7 @@ layer at (0,0) size 800x33
         RenderText {TEXT} at (0,0) size 132x17
           text run at (0,0) width 132: "Content at the end."
         RenderText {TEXT} at (0,0) size 0x0
-layer at (0,0) size 18x2040 backgroundClip at (8,8) size 18x2040
+layer at (8,8) size 18x2040
   RenderBlock (positioned) {DIV} at (0,0) size 18x2040
     RenderText {TEXT} at (0,0) size 9x17
       text run at (0,0) width 9: "1"

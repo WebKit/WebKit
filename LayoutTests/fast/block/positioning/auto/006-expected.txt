@@ -23,9 +23,9 @@ layer at (305,90) size 240x340
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
-layer at (120,120) size 100x100 backgroundClip at (425,210) size 100x100
+layer at (425,210) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (120,20) size 100x100 backgroundClip at (425,110) size 100x100
+layer at (425,110) size 100x100
   RenderBlock (positioned) {DIV} at (120,20) size 100x100 [bgcolor=#808000]
-layer at (120,220) size 100x100 backgroundClip at (425,310) size 100x100
+layer at (425,310) size 100x100
   RenderBlock (positioned) {DIV} at (120,220) size 100x100 [bgcolor=#808000]

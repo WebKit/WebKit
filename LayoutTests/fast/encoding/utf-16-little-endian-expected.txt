@@ -437,7 +437,7 @@ layer at (23,52) size 108x15
         RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
-layer at (25,0) size 0x0 backgroundClip at (48,52) size 0x0
+layer at (48,52) size 0x0
   RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
 layer at (23,129) size 596x42
   RenderInline (relative positioned) {SPAN} at (0,0) size 596x42

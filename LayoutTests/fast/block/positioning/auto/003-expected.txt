@@ -14,9 +14,9 @@ layer at (0,0) size 800x73
 layer at (8,73) size 240x340
   RenderBlock (positioned) {DIV} at (8,73) size 240x340
     RenderBlock {DIV} at (120,70) size 100x0
-layer at (120,120) size 100x100 backgroundClip at (128,193) size 100x100
+layer at (128,193) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (120,20) size 100x100 backgroundClip at (128,93) size 100x100
+layer at (128,93) size 100x100
   RenderBlock (positioned) {DIV} at (120,20) size 100x100 [bgcolor=#808000]
-layer at (120,220) size 100x100 backgroundClip at (128,293) size 100x100
+layer at (128,293) size 100x100
   RenderBlock (positioned) {DIV} at (120,220) size 100x100 [bgcolor=#808000]
