@@ -1,3 +1,13 @@
+2003-07-30  John Sullivan  <sullivan@apple.com>
+
+	- JavaScriptCore part of fix for 3284525 -- AutoFill fills in 
+	only e-mail address field of New Account form on Apple Store Japan
+
+        Reviewed by Darin
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+	Mark pcre.h as a Private header
+
 2003-07-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

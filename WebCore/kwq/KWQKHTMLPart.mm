@@ -260,7 +260,7 @@ HTMLFormElementImpl *KWQKHTMLPart::currentForm() const
 }
 
 // Either get cached regexp or build one that matches any of the labels.
-// The regexp we build is of the form:   [[:<:]](STR1|STR2|STRN)[[:>:]]
+// The regexp we build is of the form:  (STR1|STR2|STRN)
 QRegExp *regExpForLabels(NSArray *labels)
 {
     // Parallel arrays that we use to cache regExps.  In practice the number of expressions
@@ -268,6 +268,7 @@ QRegExp *regExpForLabels(NSArray *labels)
     static const unsigned int regExpCacheSize = 4;
     static NSMutableArray *regExpLabels = nil;
     static QPtrList <QRegExp> regExps;
+    static QRegExp wordRegExp = QRegExp("\\w");
 
     QRegExp *result;
     if (!regExpLabels) {
@@ -277,17 +278,34 @@ QRegExp *regExpForLabels(NSArray *labels)
     if (cacheHit != NSNotFound) {
         result = regExps.at(cacheHit);
     } else {
-        QString pattern("[[:<:]](");
+        QString pattern("(");
         unsigned int numLabels = [labels count];
         unsigned int i;
         for (i = 0; i < numLabels; i++) {
             QString label = QString::fromNSString([labels objectAtIndex:i]);
+
+            bool startsWithWordChar = false;
+            bool endsWithWordChar = false;
+            if (label.length() != 0) {
+                startsWithWordChar = wordRegExp.search(label.at(0)) >= 0;
+                endsWithWordChar = wordRegExp.search(label.at(label.length() - 1)) >= 0;
+            }
+            
             if (i != 0) {
                 pattern.append("|");
             }
+            // Search for word boundaries only if label starts/ends with "word characters".
+            // If we always searched for word boundaries, this wouldn't work for languages
+            // such as Japanese.
+            if (startsWithWordChar) {
+                pattern.append("\\b");
+            }
             pattern.append(label);
+            if (endsWithWordChar) {
+                pattern.append("\\b");
+            }
         }
-        pattern.append(")[[:>:]]");
+        pattern.append(")");
         result = new QRegExp(pattern, false);
     }
 

@@ -2306,7 +2306,7 @@ QString &QString::replace(const QRegExp &qre, const QString &str)
     int slen  = str.dataHandle[0]->_length;
     int len;
     while ( index < (int)dataHandle[0]->_length ) {
-	index = qre.match( *this, index, &len, FALSE );
+	index = qre.match( *this, index, &len);
 	if ( index >= 0 ) {
 	    replace( index, len, str );
 	    index += slen;

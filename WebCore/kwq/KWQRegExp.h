@@ -41,7 +41,7 @@ public:
     QRegExp &operator=(const QRegExp &);
 
     QString pattern() const;
-    int match(const QString &, int startFrom = 0, int *matchLength = 0, bool treatStartAsStartOfInput = true) const;
+    int match(const QString &, int startFrom = 0, int *matchLength = 0) const;
 
     int search(const QString &, int startFrom = 0) const;
     int searchRev(const QString &) const;

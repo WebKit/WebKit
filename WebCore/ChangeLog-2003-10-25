@@ -1,3 +1,46 @@
+2003-07-30  John Sullivan  <sullivan@apple.com>
+
+	- WebCore part of fix for 3284525 -- AutoFill fills in 
+	only e-mail address field of New Account form on Apple Store Japan
+
+	There were two problems: the regex library being used by
+	KWQRegExp.mm didn't handle unicode at all, and the way we
+	were using word boundaries in our regular expressions didn't
+	work with Japanese.
+
+        Reviewed by Darin
+
+        * kwq/KWQKHTMLPart.mm:
+        (regExpForLabels):
+	Redid the way word boundaries are used; the old way didn't
+	work with PCRE, and also didn't work with Japanese. 
+
+        * kwq/KWQRegExp.h:
+	removed treatStartAsStartOfInput parameter to match() that Trey had added; 
+	it was being used incorrectly and was not necessary.
+
+        * kwq/KWQRegExp.mm:
+        (compareStringOffsets), (createSortedOffsetsArray),
+        (convertCharacterOffsetsToUTF8ByteOffsets),
+        (convertUTF8ByteOffsetsToCharacterOffsets):
+	Code copied from JavaScriptCore/regexp.cpp to convert between
+	byte and character offsets. Darin preferred that I copy these
+	methods rather than make them public in JavaScriptCore/regexp.h.
+        (QRegExp::KWQRegExpPrivate::compile):
+	converted from regex.h style to pcre.h style 
+        (QRegExp::KWQRegExpPrivate::~KWQRegExpPrivate):
+	ditto
+        (QRegExp::match):
+	ditto
+        (QRegExp::search):
+	removed parameter to match()
+        (QRegExp::searchRev):
+	ditto
+
+        * kwq/KWQString.mm:
+        (QString::replace):
+	removed parameter to match()
+
 2003-07-30  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3349598.  Deal gracefully with <li> items that
