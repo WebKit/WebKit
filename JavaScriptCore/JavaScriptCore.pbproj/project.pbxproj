@@ -21,6 +21,7 @@
 			buildRules = (
 			);
 			buildSettings = {
+				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
@@ -112,7 +113,7 @@
 				6573C62F03A0BDCD00FCA39F,
 			);
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -595,7 +596,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"${SYMROOT}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" ;\n    ditto \"${SYMROOT}/JavaScriptCore.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\";\nelse\n    ditto \"${SYMROOT}/JavaScriptCore.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/JavaScriptCore.framework\"\nfi";
+			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"${SYMROOT}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" ;\n    ditto \"${SYMROOT}/JavaScriptCore.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\";\nelse\n    ditto \"${SYMROOT}/JavaScriptCore.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/JavaScriptCore.framework\"\n    strip -S \"${DSTROOT}/AppleInternal/Library/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\"\nfi";
 		};
 //650
 //651

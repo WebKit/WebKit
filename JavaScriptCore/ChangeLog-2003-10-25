@@ -1,3 +1,15 @@
+2003-03-16  Trey Matteson  <trey@apple.com>
+
+	3198135 - need to fix our projects so SYMROOT is not stripped
+
+	Tweaked stripping options:  B&I build does not COPY_PHASE_STRIP.
+	Deployment build still does.
+	We strip manually as part of the install that we do ourselves.
+
+        Reviewed by Maciej.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+
 === Safari-67 ===
 
 === Safari-66 ===

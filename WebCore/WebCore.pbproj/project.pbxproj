@@ -22,6 +22,7 @@
 			buildRules = (
 			);
 			buildSettings = {
+				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
@@ -120,7 +121,7 @@
 				6573C63B03A0BE5700FCA39F,
 			);
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -918,7 +919,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework/Versions/A/WebCore\" \"${SYMROOT}/WebCore.framework/Versions/A/WebCore\" ;\n    ditto \"${SYMROOT}/WebCore.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework/Versions/A/WebCore\";\nelse\n    ditto \"${SYMROOT}/WebCore.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/WebCore.framework\"\nfi";
+			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework/Versions/A/WebCore\" \"${SYMROOT}/WebCore.framework/Versions/A/WebCore\" ;\n    ditto \"${SYMROOT}/WebCore.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework/Versions/A/WebCore\";\nelse\n    ditto \"${SYMROOT}/WebCore.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/WebCore.framework\"\n    strip -S \"${DSTROOT}/AppleInternal/Library/Frameworks/WebCore.framework/Versions/A/WebCore\"\nfi";
 		};
 //650
 //651
