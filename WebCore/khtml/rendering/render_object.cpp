@@ -198,11 +198,14 @@ int RenderObject::offsetTop() const
     
 RenderObject* RenderObject::offsetParent() const
 {
+    bool skipTables = isPositioned() || isRelPositioned();
     RenderObject* curr = parent();
-    while (curr && !curr->isTableCell() && !curr->isTable() &&
-           !curr->isPositioned() && !curr->isRelPositioned() &&
-           !curr->isBody())
+    while (curr && !curr->isPositioned() && !curr->isRelPositioned() &&
+           !curr->isBody()) {
+        if (!skipTables && (curr->isTableCell() || curr->isTable()))
+            break;
         curr = curr->parent();
+    }
     return curr;
 }
 

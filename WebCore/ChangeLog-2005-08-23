@@ -1,3 +1,11 @@
+2002-10-17  David Hyatt  <hyatt@apple.com>
+
+	Fix bayarea.com.  My implementation of offsetParent was
+	flawed.  And to think I was blaming Gecko... ;)
+	
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::offsetParent):
+
 2002-10-16  Darin Adler  <darin@apple.com>
 
 	- fixed 3061103 -- Line-breaks lost when submitting after pasting text from
