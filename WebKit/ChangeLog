@@ -1,3 +1,14 @@
+2002-12-17  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3113073 - link on http://studio.adobe.com/explore/ redirects to not found page in Alex
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_bestURL]): don't trim whitespace because _web_URLWithString does this for us
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView pluginURLFromCString:]): tweak
+
 2002-12-17  John Sullivan  <sullivan@apple.com>
 
 	- to help with performance of various bookmark operations,

@@ -51,9 +51,12 @@ NSString *WebURLNamePboardType = nil;
     }
 
     if ([types containsObject:NSStringPboardType]) {
-        NSString *URLString = [[self stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
+        NSString *URLString = [self stringForType:NSStringPboardType];
         if ([URLString _web_looksLikeAbsoluteURL]) {
-            return [[NSURL _web_URLWithString:URLString] _web_canonicalize];
+            NSURL *URL = [[NSURL _web_URLWithString:URLString] _web_canonicalize];
+            if (URL) {
+                return URL;
+            }
         }
     }
 

@@ -794,32 +794,38 @@
 
 @implementation WebBaseNetscapePluginView (WebNPPCallbacks)
 
-- (NSURL *)pluginURLFromCString:(const char *)URLCString
+- (WebResourceRequest *)requestWithURLCString:(const char *)URLCString
 {
-    NSString *URLString;
-    NSURL *URL;
-
-    URLString = [NSString stringWithCString:URLCString];
-
-    if ([URLString _web_looksLikeAbsoluteURL]) {
-        URL = [NSURL _web_URLWithString:URLString];
-    }
-    else {
-        URL = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
+    if (!URLCString) {
+        return nil;
     }
     
-    return URL;
+    NSString *URLString = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingWindowsLatin1);
+    NSURL *URL;
+    
+    if ([URLString _web_looksLikeAbsoluteURL]) {
+        URL = [NSURL _web_URLWithString:URLString];
+    } else {
+        URL = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
+    }
+
+    [URLString release];
+
+    if (!URL) {
+        return nil;
+    }
+    
+    return [[[WebResourceRequest alloc] initWithURL:URL] autorelease];
 }
 
-- (NPError)loadRequest:(WebResourceRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData
+- (NPError)loadRequest:(WebResourceRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
 {
     NSURL *URL = [request URL];
-
     if (!URL) {
         return NPERR_INVALID_URL;
     }
     
-    if (!target) {
+    if (!cTarget) {
         WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithRequest:request
                                                                              pluginPointer:instance
                                                                                 notifyData:notifyData];
@@ -838,6 +844,7 @@
                NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
             }
         }else{
+            NSString *target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
             WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
             [frame loadRequest:request];
     
@@ -851,114 +858,82 @@
                                                                  name:WebFrameStateChangedNotification
                                                                object:frame];
                 }
+                
             }
+            [target release];
         }
     }
     
     return NPERR_NO_ERROR;
 }
 
--(NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData
+-(NPError)getURLNotify:(const char *)URLCString target:(const char *)cTarget notifyData:(void *)notifyData
 {
-    NSString *theTarget = nil;
-    NSURL *pluginURL;
-    WebResourceRequest *request;
-        
-    LOG(Plugins, "NPN_GetURLNotify: %s target: %s", URL, target);
-        
-    if(!URL)
-        return NPERR_INVALID_URL;
-        
-    if(target)
-        theTarget = [NSString stringWithCString:target];
-
-    pluginURL = [self pluginURLFromCString:URL]; 
-
-    if(!pluginURL)
-        return NPERR_INVALID_URL;
-        
-    request = [[[WebResourceRequest alloc] initWithURL:pluginURL] autorelease];
-    
-    return [self loadRequest:request inTarget:theTarget withNotifyData:notifyData];
+    WebResourceRequest *request = [self requestWithURLCString:URLCString];
+    return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
 }
 
--(NPError)getURL:(const char *)URL target:(const char *)target
+-(NPError)getURL:(const char *)URLCString target:(const char *)cTarget
 {
-    NSString *theTarget = nil;
-    NSURL *pluginURL;
-    WebResourceRequest *request;
-    
-    LOG(Plugins, "NPN_GetURL: %s target: %s", URL, target);
-    
-    if(!URL)
-        return NPERR_INVALID_URL;
-        
-    if(target)
-        theTarget = [NSString stringWithCString:target];
+    LOG(Plugins, "NPN_GetURL: %s target: %s", URLCString, cTarget);
 
-    pluginURL = [self pluginURLFromCString:URL]; 
-
-    if(!pluginURL)
-        return NPERR_INVALID_URL;
-        
-    request = [[[WebResourceRequest alloc] initWithURL:pluginURL] autorelease];
-    
-    return [self loadRequest:request inTarget:theTarget withNotifyData:NULL];
+    WebResourceRequest *request = [self requestWithURLCString:URLCString];
+    return [self loadRequest:request inTarget:cTarget withNotifyData:NULL];
 }
 
--(NPError)postURLNotify:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
+-(NPError)postURLNotify:(const char *)URLCString
+                 target:(const char *)cTarget
+                    len:(UInt32)len
+                    buf:(const char *)buf
+                   file:(NPBool)file
+             notifyData:(void *)notifyData
 {
-    NSData *postData;
-    NSURL *tempURL;
-    NSString *path, *theTarget = nil;
-    NSURL *pluginURL;
-    WebResourceRequest *request;
+    LOG(Plugins, "NPN_PostURLNotify: %s", URLCString);
+
+    if (!len || !buf) {
+        return NPERR_INVALID_PARAM;
+    }
     
-    LOG(Plugins, "NPN_PostURLNotify: %s", URL);
- 
-    if(!URL)
-        return NPERR_INVALID_URL;
-        
-    if(target)
-        theTarget = [NSString stringWithCString:target];
- 
-    if(file){
-        if([[NSString stringWithCString:buf] _web_looksLikeAbsoluteURL]){
-            tempURL = [NSURL fileURLWithPath:[NSString stringWithCString:URL]];
-            path = [tempURL path];
-        }else{
-            path = [NSString stringWithCString:buf];
+    NSData *postData = nil;
+
+    if (file) {
+        // If we're posting a file, buf is either a file URL or a path string of the file.
+        NSString *bufString = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, buf, kCFStringEncodingWindowsLatin1);
+        NSURL *fileURL = [NSURL _web_URLWithString:bufString];
+        NSString *path;
+        if ([fileURL isFileURL]) {
+            path = [fileURL path];
+        } else {
+            path = bufString;
         }
         postData = [NSData dataWithContentsOfFile:path];
-    }else{
+        [bufString release];
+        if (!postData) {
+            return NPERR_FILE_NOT_FOUND;
+        }
+    } else {
         postData = [NSData dataWithBytes:buf length:len];
     }
 
-    pluginURL = [self pluginURLFromCString:URL]; 
+    if (!postData) {
+        return NPERR_INVALID_PARAM;
+    }
 
-    if(!pluginURL)
-        return NPERR_INVALID_URL;
-        
-    request = [[[WebResourceRequest alloc] initWithURL:pluginURL] autorelease];
+    WebResourceRequest *request = [self requestWithURLCString:URLCString];
     [request setMethod:@"POST"];
     [request setData:postData];
     
-    return [self loadRequest:request inTarget:theTarget withNotifyData:notifyData];
+    return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
 }
 
--(NPError)postURL:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file
+-(NPError)postURL:(const char *)URLCString
+           target:(const char *)target
+              len:(UInt32)len
+              buf:(const char *)buf
+             file:(NPBool)file
 {
-    NSString *theTarget = nil;
-        
-    LOG(Plugins, "NPN_PostURL: %s", URL);
-    
-    if(!URL)
-        return NPERR_INVALID_URL;
-        
-    if(target)
-        theTarget = [NSString stringWithCString:target];
-        
-    return [self postURLNotify:URL target:target len:len buf:buf file:file notifyData:NULL];
+    LOG(Plugins, "NPN_PostURL: %s", URLCString);        
+    return [self postURLNotify:URLCString target:target len:len buf:buf file:file notifyData:NULL];
 }
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream
