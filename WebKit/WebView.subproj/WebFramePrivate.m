@@ -701,7 +701,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             && [_private->bridge canCachePage]
             && item
             && !_private->quickRedirectComing
-            && loadType != WebFrameLoadTypeReload && loadType != WebFrameLoadTypeSame
+            && loadType != WebFrameLoadTypeReload 
+            && loadType != WebFrameLoadTypeReloadAllowingStaleData
+            && loadType != WebFrameLoadTypeSame
             && ![[self dataSource] isLoading]
             && [[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]])
         {

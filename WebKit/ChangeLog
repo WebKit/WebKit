@@ -1,5 +1,15 @@
 2002-12-17  Richard Williamson   <rjw@apple.com>
 
+        Fixed 3127932.  Added WebFrameLoadTypeReloadAllowingStaleData to cases that do not
+        get cached in the b/f cache.
+        
+        Reviewed by trey.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _setState:]):
+
+2002-12-17  Richard Williamson   <rjw@apple.com>
+
         Fixed 3128794.  Use CG directy to get font metrics rather than the appkit.  The appkit
         has a bug (3129490) that sometimes causes line height to be 20% too large.
         
