@@ -47,10 +47,10 @@ public:
     // so the marker gets to layout itself. Only needed for
     // list-style-position: inside
 
-    virtual void print(QPainter *p, int x, int y, int w, int h,
-                           int xoff, int yoff);
-    virtual void printObject(QPainter *p, int x, int y, int w, int h,
-                             int xoff, int yoff);
+    virtual void paint(QPainter *p, int x, int y, int w, int h,
+                       int xoff, int yoff, int paintPhase);
+    virtual void paintObject(QPainter *p, int x, int y, int w, int h,
+                             int xoff, int yoff, int paintPhase);
     virtual void layout( );
     virtual void calcMinMaxWidth();
 
@@ -88,10 +88,10 @@ public:
     void calcListValue();
     bool checkChildren() const;
 
-    virtual void print(QPainter *p, int x, int y, int w, int h,
-                       int xoff, int yoff);
-    virtual void printObject(QPainter *p, int x, int y, int w, int h,
-                       int xoff, int yoff);
+    virtual void paint(QPainter *p, int x, int y, int w, int h,
+                       int xoff, int yoff, int paintPhase);
+    virtual void paintObject(QPainter *p, int x, int y, int w, int h,
+                       int xoff, int yoff, int paintPhase);
 
     virtual void layout( );
 

@@ -50,6 +50,21 @@ class RenderArena;
 #define KHTMLAssert( x )
 #endif
 
+// The painting of a layer occurs in three distinct phases.  Each phase involves
+// a recursive descent into the layer's render objects.
+
+// The first phase is the background phase.  The backgrounds and borders of all blocks
+// are painted.  Inlines are not painted at all.
+#define BACKGROUND_PHASE			0 
+
+// Floats must paint above block backgrounds but entirely below inline content that can
+// overlap them.  
+#define FLOAT_PHASE					1
+
+// In the foreground phase, all inlines are fully painted.  Inline replaced elements will
+// get all three phases invoked on them during this phase.
+#define FOREGROUND_PHASE			2
+
 namespace DOM {
     class HTMLAreaElementImpl;
     class DOMString;
@@ -168,7 +183,7 @@ public:
     bool isInline() const { return m_inline; }  // inline object
     bool mouseInside() const { return m_mouseInside; }
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
-    bool hasSpecialObjects() const { return m_printSpecial; }
+    bool shouldPaintBackgroundOrBorder() const { return m_paintBackground; }
     bool layouted() const   { return m_layouted; }
     bool minMaxKnown() const{ return m_minMaxKnown; }
     bool overhangingContents() const { return m_overhangingContents; }
@@ -211,7 +226,7 @@ public:
     void setFloating(bool b=true) { m_floating = b; }
     void setInline(bool b=true) { m_inline = b; }
     void setMouseInside(bool b=true) { m_mouseInside = b; }
-    void setSpecialObjects(bool b=true) { m_printSpecial = b; }
+    void setShouldPaintBackgroundOrBorder(bool b=true) { m_paintBackground = b; }
     void setRenderText() { m_isText = true; }
     void setReplaced(bool b=true) { m_replaced = b; }
     void setIsSelectionBorder(bool b=true) { m_isSelectionBorder = b; }
@@ -227,15 +242,17 @@ public:
     virtual short baselinePosition( bool firstLine ) const;
 
     /*
-     * Print the object and its children, clipped by (x|y|w|h).
+     * Paint the object and its children, clipped by (x|y|w|h).
      * (tx|ty) is the calculated position of the parent
      */
-    virtual void print( QPainter *p, int x, int y, int w, int h, int tx, int ty);
+    virtual void paint(QPainter *p, int x, int y, int w, int h, int tx, int ty, 
+                       int paintPhase);
 
-    virtual void printObject( QPainter */*p*/, int /*x*/, int /*y*/,
-                        int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) {}
-    void printBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin=true, bool end=true);
-    void printOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style);
+    virtual void paintObject( QPainter */*p*/, int /*x*/, int /*y*/,
+                              int /*w*/, int /*h*/, int /*tx*/, int /*ty*/,
+                              int paintPhase /*paintPhase*/) {}
+    void paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin=true, bool end=true);
+    void paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style);
 
 
     /*
@@ -529,7 +546,8 @@ private:
     bool m_positioned                : 1;
     bool m_overhangingContents : 1;
     bool m_relPositioned             : 1;
-    bool m_printSpecial              : 1; // if the box has something special to print (background, border, etc)
+    bool m_paintBackground           : 1; // if the box has something to paint in the
+                                          // background painting phase (background, border, etc)
 
     bool m_isAnonymous               : 1;
     bool m_recalcMinMax 	     : 1;

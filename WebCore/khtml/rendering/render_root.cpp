@@ -191,40 +191,37 @@ bool RenderRoot::absolutePosition(int &xPos, int &yPos, bool f)
     return true;
 }
 
-void RenderRoot::print(QPainter *p, int _x, int _y, int _w, int _h, int _tx, int _ty)
+void RenderRoot::paint(QPainter *p, int _x, int _y, int _w, int _h, int _tx, int _ty,
+                       int paintPhase)
 {
-    printObject(p, _x, _y, _w, _h, _tx, _ty);
+    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
 }
 
-void RenderRoot::printObject(QPainter *p, int _x, int _y,
-                                       int _w, int _h, int _tx, int _ty)
+void RenderRoot::paintObject(QPainter *p, int _x, int _y,
+                             int _w, int _h, int _tx, int _ty, int paintPhase)
 {
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::printObject() w/h = (" << width() << "/" << height() << ")" << endl;
+    kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
-    // 1. print background, borders etc
-    if(hasSpecialObjects() && !isInline())
-        printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+    // 1. paint background, borders etc
+    if (paintPhase == BACKGROUND_PHASE && shouldPaintBackgroundOrBorder() && !isInline())
+        paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
-    // 2. print contents
+    // 2. paint contents
     RenderObject *child = firstChild();
     while(child != 0) {
         if(!child->layer() && !child->isFloating()) {
-            child->print(p, _x, _y, _w, _h, _tx, _ty);
+            child->paint(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
         }
         child = child->nextSibling();
     }
 
-    // 3. print floats and other non-flow objects.
-    // we have to do that after the contents otherwise they would get obscured by background settings.
-    // it is anyway undefined if regular text is above fixed objects or the other way round.
+#ifdef BOX_DEBUG
     if (m_view)
     {
         _tx += m_view->contentsX();
         _ty += m_view->contentsY();
     }
-
-#ifdef BOX_DEBUG
     outlineBox(p, _tx, _ty);
 #endif
 

@@ -49,10 +49,10 @@ void RenderBody::setStyle(RenderStyle* style)
     scrollbarsStyled = false;
 }
 
-void RenderBody::printBoxDecorations(QPainter *p,int, int _y,
-				       int, int _h, int _tx, int _ty)
+void RenderBody::paintBoxDecorations(QPainter *p,int, int _y,
+                                     int, int _h, int _tx, int _ty)
 {
-    //kdDebug( 6040 ) << renderName() << "::printDecorations()" << endl;
+    //kdDebug( 6040 ) << renderName() << "::paintBoxDecorations()" << endl;
     QColor c;
     CachedImage *bg = 0;
     
@@ -72,10 +72,10 @@ void RenderBody::printBoxDecorations(QPainter *p,int, int _y,
     else
     	mh = QMIN(_h,h);
 
-    printBackground(p, c, bg, my, mh, _tx, _ty, w, h);
+    paintBackground(p, c, bg, my, mh, _tx, _ty, w, h);
 
     if(style()->hasBorder())
-        printBorder(p, _tx, _ty, w, h, style());
+        paintBorder(p, _tx, _ty, w, h, style());
 }
 
 void RenderBody::repaint(bool immediate)

@@ -104,8 +104,8 @@ RenderFlow::~RenderFlow()
     delete specialObjects;
 }
 
-void RenderFlow::print(QPainter *p, int _x, int _y, int _w, int _h,
-                                 int _tx, int _ty)
+void RenderFlow::paint(QPainter *p, int _x, int _y, int _w, int _h,
+                       int _tx, int _ty, int paintPhase)
 {
 
 #ifdef DEBUG_LAYOUT
@@ -130,35 +130,38 @@ void RenderFlow::print(QPainter *p, int _x, int _y, int _w, int _h,
         }
     }
 
-    printObject(p, _x, _y, _w, _h, _tx, _ty);
+    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
 }
 
-void RenderFlow::printObject(QPainter *p, int _x, int _y,
-                                       int _w, int _h, int _tx, int _ty)
+void RenderFlow::paintObject(QPainter *p, int _x, int _y,
+                             int _w, int _h, int _tx, int _ty, int paintPhase)
 {
 
 #ifdef DEBUG_LAYOUT
-//    kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::printObject() w/h = (" << width() << "/" << height() << ")" << endl;
+//    kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
     
-    // 1. print background, borders etc
-    if(hasSpecialObjects() && !isInline() && style()->visibility() == VISIBLE )
-        printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+    // 1. paint background, borders etc
+    if (paintPhase == BACKGROUND_PHASE && 
+        shouldPaintBackgroundOrBorder() && !isInline() && style()->visibility() == VISIBLE )
+        paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
-    // 2. print contents
+    // 2. paint contents
     RenderObject *child = firstChild();
     while(child != 0)
     {
         if(!child->layer() && !child->isFloating())
-            child->print(p, _x, _y, _w, _h, _tx, _ty);
+            child->paint(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
         child = child->nextSibling();
     }
 
     // 3. paint floats.
-    paintFloats(p, _x, _y, _w, _h, _tx, _ty);
+    if (paintPhase == FLOAT_PHASE)
+        paintFloats(p, _x, _y, _w, _h, _tx, _ty);
     
-    if(!isInline() && !childrenInline() && style()->outlineWidth())
-        printOutline(p, _tx, _ty, width(), height(), style());
+    if (paintPhase == BACKGROUND_PHASE &&
+        !isInline() && !childrenInline() && style()->outlineWidth())
+        paintOutline(p, _tx, _ty, width(), height(), style());
 
 #ifdef BOX_DEBUG
     if ( style() && style()->visibility() == VISIBLE ) {
@@ -184,9 +187,18 @@ void RenderFlow::paintFloats(QPainter *p, int _x, int _y,
     for ( ; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
         if (r->node->isFloating() && !r->noPaint) {
-            r->node->print(p, _x, _y, _w, _h, 
+            r->node->paint(p, _x, _y, _w, _h, 
                            _tx + r->left - r->node->xPos() + r->node->marginLeft(), 
-                           _ty + r->startY - r->node->yPos() + r->node->marginTop());
+                           _ty + r->startY - r->node->yPos() + r->node->marginTop(),
+                           BACKGROUND_PHASE);
+            r->node->paint(p, _x, _y, _w, _h, 
+                           _tx + r->left - r->node->xPos() + r->node->marginLeft(), 
+                           _ty + r->startY - r->node->yPos() + r->node->marginTop(),
+                           FLOAT_PHASE);
+            r->node->paint(p, _x, _y, _w, _h, 
+                           _tx + r->left - r->node->xPos() + r->node->marginLeft(), 
+                           _ty + r->startY - r->node->yPos() + r->node->marginTop(), 
+                           FOREGROUND_PHASE);
         }
     }
 }
@@ -1770,7 +1782,7 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
         }
     }
 
-    // prevent non-layouted elements from getting printed by pushing them far above the top of the
+    // prevent non-layouted elements from getting painted by pushing them far above the top of the
     // page
     if (!newChild->isInline())
         newChild->setPos(newChild->xPos(), -500000);

@@ -1614,8 +1614,8 @@ void RenderTable::setCellWidths()
 
 }
 
-void RenderTable::print( QPainter *p, int _x, int _y,
-                                  int _w, int _h, int _tx, int _ty)
+void RenderTable::paint(QPainter *p, int _x, int _y,
+                        int _w, int _h, int _tx, int _ty, int paintPhase)
 {
 
 //     if(!layouted()) return;
@@ -1624,7 +1624,7 @@ void RenderTable::print( QPainter *p, int _x, int _y,
     _ty += yPos();
 
 #ifdef TABLE_PRINT
-    kdDebug( 6040 ) << "RenderTable::print() w/h = (" << width() << "/" << height() << ")" << endl;
+    kdDebug( 6040 ) << "RenderTable::paint() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
     if (!overhangingContents() && !isRelPositioned() && !isPositioned())
     {
@@ -1633,25 +1633,25 @@ void RenderTable::print( QPainter *p, int _x, int _y,
     }
 
 #ifdef TABLE_PRINT
-     kdDebug( 6040 ) << "RenderTable::print(2) " << _tx << "/" << _ty << " (" << _x << "/" << _y << ")" << endl;
+     kdDebug( 6040 ) << "RenderTable::paint(2) " << _tx << "/" << _ty << " (" << _x << "/" << _y << ")" << endl;
 #endif
     // the case below happens during parsing
-    // when we have a new table that never got layouted. Don't print it.
+    // when we have a new table that never got layouted. Don't paint it.
     if ( totalRows == 1 && rowInfo[1].height == 0 )
 	return;
 
-    if(style()->visibility() == VISIBLE)
-         printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+    if (paintPhase == BACKGROUND_PHASE && style()->visibility() == VISIBLE)
+         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
     int topextra = 0;
 
     if ( tCaption ) {
-        tCaption->print( p, _x, _y, _w, _h, _tx, _ty );
+        tCaption->paint( p, _x, _y, _w, _h, _tx, _ty, paintPhase );
         if (tCaption->style()->captionSide() != CAPBOTTOM)
             topextra = - borderTopExtra();
     }
 
-    // check which rows and cols are visible and only print these
+    // check which rows and cols are visible and only paint these
     // ### fixme: could use a binary search here
     unsigned int startrow = 0;
     unsigned int endrow = totalRows;
@@ -1687,9 +1687,9 @@ void RenderTable::print( QPainter *p, int _x, int _y,
             if ( (r < endrow - 1) && (cells[r+1][c] == cell) )
                 continue;
 #ifdef DEBUG_LAYOUT
-	    kdDebug( 6040 ) << "printing cell " << r << "/" << c << endl;
+	    kdDebug( 6040 ) << "painting cell " << r << "/" << c << endl;
 #endif
-	    cell->print( p, _x, _y, _w, _h, _tx, _ty);
+	    cell->paint( p, _x, _y, _w, _h, _tx, _ty, paintPhase);
 	}
     }
 
@@ -2059,7 +2059,7 @@ RenderTableCell::RenderTableCell(DOM::NodeImpl* _node)
   cellPercentageHeight = 0;
   m_table = 0;
   rowimpl = 0;
-  setSpecialObjects(true);
+  setShouldPaintBackgroundOrBorder(true);
   _topExtra = 0;
   _bottomExtra = 0;
 }
@@ -2206,7 +2206,7 @@ short RenderTableCell::baselinePosition( bool ) const
 void RenderTableCell::setStyle( RenderStyle *style )
 {
     RenderFlow::setStyle( style );
-    setSpecialObjects(true);
+    setShouldPaintBackgroundOrBorder(true);
 }
 
 #ifdef BOX_DEBUG
@@ -2220,12 +2220,12 @@ static void outlineBox(QPainter *p, int _tx, int _ty, int w, int h)
 }
 #endif
 
-void RenderTableCell::print(QPainter *p, int _x, int _y,
-                                       int _w, int _h, int _tx, int _ty)
+void RenderTableCell::paint(QPainter *p, int _x, int _y,
+                            int _w, int _h, int _tx, int _ty, int paintPhase)
 {
 
 #ifdef TABLE_PRINT
-    kdDebug( 6040 ) << renderName() << "(RenderTableCell)::print() w/h = (" << width() << "/" << height() << ")" << endl;
+    kdDebug( 6040 ) << renderName() << "(RenderTableCell)::paint() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
 
 //    if (!layouted())
@@ -2238,7 +2238,7 @@ void RenderTableCell::print(QPainter *p, int _x, int _y,
     if(!overhangingContents() && ((_ty-_topExtra > _y + _h)
         || (_ty + m_height+_topExtra+_bottomExtra < _y))) return;
 
-    printObject(p, _x, _y, _w, _h, _tx, _ty);
+    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
 
 #ifdef BOX_DEBUG
     ::outlineBox( p, _tx, _ty - _topExtra, width(), height() + borderTopExtra() + borderBottomExtra());
@@ -2246,10 +2246,10 @@ void RenderTableCell::print(QPainter *p, int _x, int _y,
 }
 
 
-void RenderTableCell::printBoxDecorations(QPainter *p,int, int _y,
-                                       int, int _h, int _tx, int _ty)
+void RenderTableCell::paintBoxDecorations(QPainter *p,int, int _y,
+                                          int, int _h, int _tx, int _ty)
 {
-    //kdDebug( 6040 ) << renderName() << "::printDecorations()" << endl;
+    //kdDebug( 6040 ) << renderName() << "::paintBoxDecorations()" << endl;
 
     int w = width();
     int h = height() + borderTopExtra() + borderBottomExtra();
@@ -2277,10 +2277,10 @@ void RenderTableCell::printBoxDecorations(QPainter *p,int, int _y,
         bg = parent()->parent()->style()->backgroundImage();
 
     if ( bg || c.isValid() )
-	printBackground(p, c, bg, my, mh, _tx, _ty, w, h);
+        paintBackground(p, c, bg, my, mh, _tx, _ty, w, h);
 
     if(style()->hasBorder())
-        printBorder(p, _tx, _ty, w, h, style());
+        paintBorder(p, _tx, _ty, w, h, style());
 }
 
 void RenderTableCell::repaint(bool immediate)

@@ -237,24 +237,24 @@ bool RenderListItem::checkChildren() const
     return false;
 }
 
-void RenderListItem::print(QPainter *p, int _x, int _y, int _w, int _h,
-                             int _tx, int _ty)
+void RenderListItem::paint(QPainter *p, int _x, int _y, int _w, int _h,
+                           int _tx, int _ty, int paintPhase)
 {
     if ( !m_height )
         return;
 
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << nodeName().string() << "(LI)::print()" << endl;
+    kdDebug( 6040 ) << nodeName().string() << "(LI)::paint()" << endl;
 #endif
-    RenderFlow::print(p, _x, _y, _w, _h, _tx, _ty);
+    RenderFlow::paint(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
 }
 
-void RenderListItem::printObject(QPainter *p, int _x, int _y,
-                                    int _w, int _h, int _tx, int _ty)
+void RenderListItem::paintObject(QPainter *p, int _x, int _y,
+                                    int _w, int _h, int _tx, int _ty, int paintPhase)
 {
     // ### this should scale with the font size in the body... possible?
     //m_marker->printIcon(p, _tx, _ty);
-    RenderFlow::printObject(p, _x, _y, _w, _h, _tx, _ty);
+    RenderFlow::paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
 }
 
 // -----------------------------------------------------------
@@ -291,19 +291,19 @@ void RenderListMarker::setStyle(RenderStyle *s)
 }
 
 
-void RenderListMarker::print(QPainter *p, int _x, int _y, int _w, int _h,
-                             int _tx, int _ty)
+void RenderListMarker::paint(QPainter *p, int _x, int _y, int _w, int _h,
+                             int _tx, int _ty, int paintPhase)
 {
-    printObject(p, _x, _y, _w, _h, _tx, _ty);
+    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
 }
 
-void RenderListMarker::printObject(QPainter *p, int, int _y,
-                                    int, int _h, int _tx, int _ty)
+void RenderListMarker::paintObject(QPainter *p, int, int _y,
+                                    int, int _h, int _tx, int _ty, int paintPhase)
 {
     if (style()->visibility() != VISIBLE) return;
 
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << nodeName().string() << "(ListMarker)::printObject(" << _tx << ", " << _ty << ")" << endl;
+    kdDebug( 6040 ) << nodeName().string() << "(ListMarker)::paintObject(" << _tx << ", " << _ty << ")" << endl;
 #endif
     p->setFont(style()->font());
     const QFontMetrics fm = p->fontMetrics();

@@ -192,7 +192,7 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
 
         // Elements add in their own positions as a translation factor.  This forces
         // us to subtract that out, so that when it's added back in, we get the right
-        // bounds.  This is really disgusting (that print only sets up the right paint
+        // bounds.  This is really disgusting (that paint only sets up the right paint
         // position after you call into it). -dwh
         //printf("Painting layer at %d %d\n", elt->absBounds.x(), elt->absBounds.y());
     
@@ -217,9 +217,19 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
             }
         }
         
-        elt->layer->renderer()->print(p, x, y, w, h,
+        // Paint the layer.
+        elt->layer->renderer()->paint(p, x, y, w, h,
                                       elt->absBounds.x() - elt->layer->renderer()->xPos(),
-                                      elt->absBounds.y() - elt->layer->renderer()->yPos());
+                                      elt->absBounds.y() - elt->layer->renderer()->yPos(),
+                                      BACKGROUND_PHASE);
+        elt->layer->renderer()->paint(p, x, y, w, h,
+                                      elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                      elt->absBounds.y() - elt->layer->renderer()->yPos(),
+                                      FLOAT_PHASE);
+        elt->layer->renderer()->paint(p, x, y, w, h,
+                                      elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                      elt->absBounds.y() - elt->layer->renderer()->yPos(),
+                                      FOREGROUND_PHASE);
     }
     
     if (currRect != paintRect)
@@ -247,7 +257,7 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
 
         // Elements add in their own positions as a translation factor.  This forces
         // us to subtract that out, so that when it's added back in, we get the right
-        // bounds.  This is really disgusting (that print only sets up the right paint
+        // bounds.  This is really disgusting (that paint only sets up the right paint
         // position after you call into it). -dwh
         //printf("Painting layer at %d %d\n", elt->absBounds.x(), elt->absBounds.y());
 
