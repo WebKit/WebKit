@@ -1,3 +1,15 @@
+2002-07-04  Maciej Stachowiak  <mjs@apple.com>
+
+	Say "Go to" instead of "Link to" for links that won't open a new
+	window. Also, the code is now set up to change the status text
+	when modifier keys are pressed, but the code is disabled for now
+	because it's impossible to do reliably.
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::overURL):
+        (KHTMLPart::khtmlMouseMoveEvent):
+        * khtml/khtml_part.h:
+
 2002-07-03  Darin Adler  <darin@apple.com>
 
 	A small KURL speed improvement.

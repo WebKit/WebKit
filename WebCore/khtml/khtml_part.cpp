@@ -2127,7 +2127,11 @@ void KHTMLPart::slotClearSelection()
     emitSelectionChanged();
 }
 
+#ifdef APPLE_CHANGES
+void KHTMLPart::overURL( const QString &url, const QString &target, int modifierState)
+#else
 void KHTMLPart::overURL( const QString &url, const QString &target, bool shiftPressed )
+#endif
 {
 #ifndef APPLE_CHANGES
   if ( !d->m_kjsStatusBarText.isEmpty() && !shiftPressed ) {
@@ -2247,10 +2251,14 @@ void KHTMLPart::overURL( const QString &url, const QString &target, bool shiftPr
   {
 #endif
     QString extra;
+#ifdef APPLE_CHANGES
+    QString prefix = "Go to ";
+#endif
     if (target == QString::fromLatin1("_blank"))
     {
 #ifdef APPLE_CHANGES
       extra = " in new window";
+      prefix = "Open ";
 #else
       extra = i18n(" (In new window)");
 #endif
@@ -2269,6 +2277,7 @@ void KHTMLPart::overURL( const QString &url, const QString &target, bool shiftPr
 	  extra = " in other frame";
       } else {
 	  extra = " in new window";
+	  prefix = "Open ";
       }
 #else
       extra = i18n(" (In other frame)");
@@ -2320,11 +2329,25 @@ void KHTMLPart::overURL( const QString &url, const QString &target, bool shiftPr
 #endif
 #ifdef APPLE_CHANGES
     // FIXME: needs localization
-    if (extra.isEmpty()) {
-      emit setStatusBarText("Link to " + u.prettyURL() + extra);
-    } else {
-      emit setStatusBarText("Open " + u.prettyURL() + extra);
+
+#if FLAGS_CHANGE_FIXED
+    // FIXME: it would be nice to change the text based on currently
+    // pressed modifiers, but we can't do that until we can detect
+    // modifier state changes, which requires a fix to 2981619
+    if (modifierState & MetaButton) {
+      prefix = "Open ";
+      if (modifierState & ShiftButton) {
+	extra = " in new window, behind current window";
+      } else {
+	extra = " in new window";
+      }
+    } else if (modifierState & AltButton) {
+      prefix = "Download ";
+      extra = "";
     }
+#endif
+
+    emit setStatusBarText(prefix + u.prettyURL() + extra);
 #else
     emit setStatusBarText(u.prettyURL() + extra);
 #endif
@@ -4073,7 +4096,9 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
     // The mouse is over something
     if ( url.length() )
     {
+#ifndef APPLE_CHANGES
       bool shiftPressed = ( _mouse->state() & ShiftButton );
+#endif
 
       // Image map
       if ( !innerNode.isNull() && innerNode.elementId() == ID_IMG )
@@ -4092,18 +4117,30 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 
             d->m_overURL = url.string() + QString("?%1,%2").arg(x).arg(y);
             d->m_overURLTarget = target.string();
+#ifdef APPLE_CHANGES
+            overURL( d->m_overURL, target.string(), _mouse->state() );
+#else
             overURL( d->m_overURL, target.string(), shiftPressed );
+#endif
             return;
           }
         }
       }
 
       // normal link
+#ifdef APPLE_CHANGES
+      if ( TRUE )
+#else
       if ( d->m_overURL.isEmpty() || d->m_overURL != url || d->m_overURLTarget != target )
+#endif
       {
         d->m_overURL = url.string();
         d->m_overURLTarget = target.string();
+#ifdef APPLE_CHANGES
+	overURL( d->m_overURL, target.string(), _mouse->state() );
+#else
         overURL( d->m_overURL, target.string(), shiftPressed );
+#endif
       }
     }
     else  // Not over a link...
