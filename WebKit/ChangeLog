@@ -1,3 +1,7 @@
+2003-01-25  Darin Adler  <darin@apple.com>
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m: Replace some tabs with spaces.
+
 2003-01-24  Richard Williamson   <rjw@apple.com>
 
         Cleaned up some stray comments.
