@@ -368,7 +368,6 @@ QString Decoder::decode(const char *data, int len)
 {
     // Check for UTF-16 or UTF-8 BOM mark at the beginning, which is a sure sign of a Unicode encoding.
     int bufferLength = buffer.length();
-    const int UTF8BOMLength = 3;
     const int maximumBOMLength = 3;
     if (beginning && bufferLength + len >= maximumBOMLength) {
         if (m_type != UserChosenEncoding) {
@@ -385,17 +384,8 @@ QString Decoder::decode(const char *data, int len)
             const char *autoDetectedEncoding;
             if ((c1 == 0xFE && c2 == 0xFF) || (c1 == 0xFF && c2 == 0xFE)) {
                 autoDetectedEncoding = "ISO-10646-UCS-2";
-
-                // Leave the BOM in place, because the decoder knows how to
-                // discard it, and it uses it to figure out byte ordering.
             } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
                 autoDetectedEncoding = "UTF-8";
-
-                // Consume the three-byte UTF-8 BOM, so that the decoder does not have to.
-                buffer.truncate(0);
-                int bytesInData = UTF8BOMLength - bufferLength;
-                len -= bytesInData;
-                data += bytesInData;
             } else {
                 autoDetectedEncoding = 0;
             }

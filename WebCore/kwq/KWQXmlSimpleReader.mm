@@ -95,7 +95,9 @@ bool QXmlSimpleReader::parse(const QXmlInputSource &input)
     if (_contentHandler && !_contentHandler->startDocument()) {
         return false;
     }
-    XML_Parser parser = XML_ParserCreate(0);
+    const QChar BOM(0xFEFF);
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+    XML_Parser parser = XML_ParserCreate(BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE");
     XML_SetUserData(parser, this);
     if (_contentHandler) {
         XML_SetCharacterDataHandler(parser, characterDataHandler);
@@ -109,7 +111,9 @@ bool QXmlSimpleReader::parse(const QXmlInputSource &input)
         XML_SetStartCdataSectionHandler(parser, startCdataSectionHandler);
         XML_SetCommentHandler(parser, commentHandler);
     }
-    XML_Status parseError = XML_Parse(parser, input.data().latin1(), input.data().length(), TRUE);
+    XML_Status parseError = XML_Parse(parser,
+        reinterpret_cast<const char *>(input.data().unicode()),
+        input.data().length() * sizeof(QChar), TRUE);
     XML_ParserFree(parser);
     if (_contentHandler && !_contentHandler->endDocument()) {
         return false;

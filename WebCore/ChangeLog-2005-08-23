@@ -1,3 +1,27 @@
+2003-05-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John and Ken.
+
+	- fixed 3253461 -- stylesheet-reading code does not support BOM
+	- fixed 3253359 -- XML parser does not allow UTF-8 BOM
+
+        * kwq/KWQTextCodec.mm:
+        (KWQTextDecoder::KWQTextDecoder): Initialize the new _littleEndian, _atStart,
+        and _numBufferedBytes fields, not the old _flags, _state, and _haveBufferedByte fields.
+        (KWQTextDecoder::convertUTF16): Moved the BOM-based endianness detection out of here;
+        now done in toUnicode. Switched to use the new multibyte buffer, even though we only
+        need one byte of it. Remove any BOM characters encountered within the text.
+        (KWQTextDecoder::convertUsingTEC): Remove any BOM characters encountered within the text.
+        (KWQTextDecoder::toUnicode): Do all the BOM detection at this level, including the
+        UTF-8 BOM as well as the UTF-16 BOM.
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Don't bother stripping the UTF-8 BOM.
+        The QTextCodec object handles that now.
+
+        * kwq/KWQXmlSimpleReader.mm: (QXmlSimpleReader::parse): Pass in the data in 16-bit character
+        form, and specify the encoding when creating the parser. Both expat and KHTML
+        want to do the decoding, so this is really just a way to get expat to back off.
+
 2003-05-08  David Hyatt  <hyatt@apple.com>
 
 	Fix the definition of isRoot() so that it doesn't depend on

@@ -28,6 +28,8 @@
 #import "KWQAssertions.h"
 #import "KWQCharsets.h"
 
+const UniChar BOM = 0xFEFF;
+
 struct TECObjectPeek {
     UInt32 skip1;
     UInt32 skip2;
@@ -43,6 +45,7 @@ public:
     QString toUnicode(const char *chs, int len, bool flush);
 
 private:
+    QString convert(const char *chs, int len, bool flush);
     QString convertUTF16(const unsigned char *chs, int len);
     QString convertUsingTEC(const UInt8 *chs, int len, bool flush);
     
@@ -50,17 +53,10 @@ private:
     KWQTextDecoder &operator=(const KWQTextDecoder &);
 
     CFStringEncoding _encoding;
-    KWQEncodingFlags _flags;
-    
-    // State for Unicode decoding.
-    enum UnicodeEndianState {
-        atStart,
-        littleEndian,
-        bigEndian
-    };
-    UnicodeEndianState _state;
-    bool _haveBufferedByte;
-    char _bufferedByte;
+    bool _littleEndian;
+    bool _atStart;
+    int _numBufferedBytes;
+    char _bufferedBytes[2];
     
     // State for TEC decoding.
     TECObjectRef _converter;
@@ -204,7 +200,7 @@ QTextDecoder::~QTextDecoder()
 // ================
 
 KWQTextDecoder::KWQTextDecoder(CFStringEncoding e, KWQEncodingFlags f)
-    : _encoding(e), _flags(f), _state(atStart), _haveBufferedByte(false), _converter(0)
+    : _encoding(e), _littleEndian(f & ::LittleEndian), _atStart(true), _numBufferedBytes(0), _converter(0)
 {
 }
 
@@ -222,62 +218,23 @@ KWQTextDecoder::~KWQTextDecoder()
 QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
 {
     ASSERT(length > 0);
+    ASSERT(_numBufferedBytes == 0 || _numBufferedBytes == 1);
     
     const unsigned char *p = s;
     unsigned len = length;
     
-    // Check for the BOM.
-    if (_state == atStart) {
-        unsigned char bom0;
-        unsigned char bom1;
-        if (_haveBufferedByte) {
-            bom0 = _bufferedByte;
-            bom1 = p[0];
-        } else {
-            if (len == 1) {
-                _haveBufferedByte = true;
-                _bufferedByte = p[0];
-                return QString::null;
-            }
-            bom0 = p[0];
-            bom1 = p[1];
-        }
-        if (bom0 == 0xFF && bom1 == 0xFE) {
-            _state = littleEndian;
-            if (_haveBufferedByte) {
-                _haveBufferedByte = false;
-                p += 1;
-                len -= 1;
-            } else {
-                p += 2;
-                len -= 2;
-            }
-        } else if (bom0 == 0xFE && bom1 == 0xFF) {
-            _state = bigEndian;
-            if (_haveBufferedByte) {
-                _haveBufferedByte = false;
-                p += 1;
-                len -= 1;
-            } else {
-                p += 2;
-                len -= 2;
-            }
-        } else {
-            _state = (_flags & ::LittleEndian) ? littleEndian : bigEndian;
-        }
-    }
-    
     QString result;
     
-    if (_haveBufferedByte && len) {
+    if (_numBufferedBytes != 0 && len != 0) {
+        ASSERT(_numBufferedBytes == 1);
         UniChar c;
-        if (_state == littleEndian) {
-            c = _bufferedByte | (p[0] << 8);
+        if (_littleEndian) {
+            c = _bufferedBytes[0] | (p[0] << 8);
         } else {
-            c = (_bufferedByte << 8) | p[0];
+            c = (_bufferedBytes[0] << 8) | p[0];
         }
         result.append(reinterpret_cast<QChar *>(&c), 1);
-        _haveBufferedByte = false;
+        _numBufferedBytes = 0;
         p += 1;
         len -= 1;
     }
@@ -285,24 +242,32 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
     while (len > 1) {
         UniChar buffer[4096];
         int runLength = MIN(len / 2, sizeof(buffer) / sizeof(buffer[0]));
-        if (_state == littleEndian) {
+        int bufferLength = 0;
+        if (_littleEndian) {
             for (int i = 0; i < runLength; ++i) {
-                buffer[i] = p[0] | (p[1] << 8);
+                UniChar c = p[0] | (p[1] << 8);
                 p += 2;
+                if (c != BOM) {
+                    buffer[bufferLength++] = c;
+                }
             }
         } else {
             for (int i = 0; i < runLength; ++i) {
-                buffer[i] = (p[0] << 8) | p[1];
+                UniChar c = (p[0] << 8) | p[1];
                 p += 2;
+                if (c != BOM) {
+                    buffer[bufferLength++] = c;
+                }
             }
         }
-        result.append(reinterpret_cast<QChar *>(buffer), runLength);
-        len -= runLength * 2;
+        result.append(reinterpret_cast<QChar *>(buffer), bufferLength);
+        len -= bufferLength * 2;
     }
     
     if (len) {
-        _haveBufferedByte = true;
-        _bufferedByte = p[0];
+        ASSERT(_numBufferedBytes == 0);
+        _numBufferedBytes = 1;
+        _bufferedBytes[0] = p[0];
     }
     
     return result;
@@ -326,7 +291,7 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
                 CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
             if (status) {
                 ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
-                return QString::null;
+                return QString();
             }
 
             // Workaround for missing TECSetBasicOptions call.
@@ -364,7 +329,19 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
         }
         if (bytesWritten) {
             ASSERT(bytesWritten % sizeof(UniChar) == 0);
-            result.append(reinterpret_cast<QChar *>(buffer), bytesWritten / sizeof(UniChar));
+            int start = 0;
+            int characterCount = bytesWritten / sizeof(UniChar);
+            for (int i = 0; i != characterCount; ++i) {
+                if (buffer[i] == BOM) {
+                    if (start != i) {
+                        result.append(reinterpret_cast<QChar *>(&buffer[start]), i - start);
+                    }
+                    start = i + 1;
+                }
+            }
+            if (start != characterCount) {
+                result.append(reinterpret_cast<QChar *>(&buffer[start]), characterCount - start);
+            }
         }
         if (status == kTextMalformedInputErr || status == kTextUndefinedElementErr) {
             // FIXME: Put in FFFD character here?
@@ -400,17 +377,74 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
     return result;
 }
 
+QString KWQTextDecoder::convert(const char *chs, int len, bool flush)
+{
+    if (_encoding == kCFStringEncodingUnicode) {
+        return convertUTF16(reinterpret_cast<const unsigned char *>(chs), len);
+    }
+    return convertUsingTEC(reinterpret_cast<const UInt8 *>(chs), len, flush);
+}
+
 QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
 {
     ASSERT_ARG(len, len >= 0);
     
     if (!chs || len <= 0) {
-        return QString::null;
+        return QString();
     }
 
-    if (_encoding == kCFStringEncodingUnicode) {
-        return convertUTF16(reinterpret_cast<const unsigned char *>(chs), len);
+    // Handle normal case.
+    if (!_atStart) {
+        return convert(chs, len, flush);
     }
-    
-    return convertUsingTEC(reinterpret_cast<const UInt8 *>(chs), len, flush);
+
+    // Check to see if we found a BOM.
+    int numBufferedBytes = _numBufferedBytes;
+    int buf1Len = numBufferedBytes;
+    int buf2Len = len;
+    const char *buf1 = _bufferedBytes;
+    const char *buf2 = chs;
+    unsigned char c1 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
+    unsigned char c2 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
+    unsigned char c3 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
+    int BOMLength = 0;
+    if (c1 == 0xFF && c2 == 0xFE) {
+        _encoding = kCFStringEncodingUnicode;
+        _littleEndian = true;
+        BOMLength = 2;
+    } else if (c1 == 0xFE && c2 == 0xFF) {
+        _encoding = kCFStringEncodingUnicode;
+        _littleEndian = false;
+        BOMLength = 2;
+    } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
+        _encoding = kCFStringEncodingUTF8;
+        BOMLength = 3;
+    }
+
+    // Handle case where we found a BOM.
+    if (BOMLength != 0) {
+        ASSERT(numBufferedBytes + len >= BOMLength);
+        int skip = BOMLength - numBufferedBytes;
+        _numBufferedBytes = 0;
+        _atStart = false;
+        return len == skip ? QString() : convert(chs + skip, len - skip, flush);
+    }
+
+    // Handle case where we know there is no BOM coming.
+    const int bufferSize = sizeof(_bufferedBytes);
+    if (numBufferedBytes + len > bufferSize || flush) {
+        _atStart = false;
+        if (numBufferedBytes == 0) {
+            return convert(chs, len, flush);
+        }
+        char bufferedBytes[sizeof(_bufferedBytes)];
+        memcpy(bufferedBytes, _bufferedBytes, numBufferedBytes);
+        _numBufferedBytes = 0;
+        return convert(bufferedBytes, numBufferedBytes, false) + convert(chs, len, flush);
+    }
+
+    // Continue to look for the BOM.
+    memcpy(&_bufferedBytes[numBufferedBytes], chs, len);
+    _numBufferedBytes += len;
+    return QString();
 }
