@@ -1,3 +1,17 @@
+2002-10-04  Richard Williamson   <rjw@apple.com>
+
+        Changed WebDOMNode name to WebDebugDOMNode to make room for
+        real node.
+        
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDOMNode.h: Removed.
+        * WebView.subproj/WebDOMNode.m: Removed.
+
+2002-10-04  Richard Williamson   <rjw@apple.com>
+
+        * WebKit.pbproj/project.pbxproj:
+
 2002-10-03  Richard Williamson   <rjw@apple.com>
 
         Changed name of controller's resourceProgressDelegate methods to resourceLoadDelegate.
