@@ -1676,12 +1676,6 @@ void RenderObject::remove()
     if (parent())
         //have parent, take care of the tree integrity
         parent()->removeChild(this);
-
-    if (m_style->backgroundImage())
-        m_style->backgroundImage()->deref(this);
-    if (m_style)
-        m_style->deref(renderArena());
-    m_style = 0;
 }
 
 void RenderObject::detach()
@@ -1694,6 +1688,11 @@ void RenderObject::detach()
 
 void RenderObject::arenaDelete(RenderArena *arena, void *base)
 {
+    if (m_style->backgroundImage())
+        m_style->backgroundImage()->deref(this);
+    if (m_style)
+        m_style->deref(arena);
+    
 #ifndef NDEBUG
     void *savedBase = baseOfRenderObjectBeingDeleted;
     baseOfRenderObjectBeingDeleted = base;

@@ -1,5 +1,16 @@
 2004-02-10  David Hyatt  <hyatt@apple.com>
 
+	Fix crasher in list code caused by incorrect style deallocation.  Regression from the
+	arena changes for RenderStyles.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::remove):
+        (RenderObject::arenaDelete):
+
+2004-02-10  David Hyatt  <hyatt@apple.com>
+
 	Fix for osnews.com's wacky layout problem.  Put back in the check for isEmpty.
 	
         Reviewed by darin
