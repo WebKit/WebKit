@@ -141,6 +141,11 @@
     return [self _propertyListWithData:data subresourceURLStrings:[_private->subresources allKeys]];
 }
 
+- (NSURL *)unreachableURL
+{
+    return [_private->originalRequest _webDataRequestUnreachableURL];
+}
+
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
 {
     if ([URL isFileURL]) {
@@ -375,6 +380,19 @@
     return _private->loadingStartedTime;
 }
 
+- (NSURL *)_URLForHistory
+{
+    // Return the URL to be used for history and B/F list.
+    // Returns nil for WebDataProtocol URLs that aren't placeholders 
+    // for unreachable URLs, because these can't be stored in history.
+    NSURL *URL = [_private->originalRequestCopy URL];
+    if ([WebDataProtocol _webIsDataProtocolURL:URL]) {
+        URL = [_private->originalRequestCopy _webDataRequestUnreachableURL];
+    }
+    
+    return [URL _webkit_canonicalize];
+}
+
 - (void)_setTitle:(NSString *)title
 {
     NSString *trimmed;
@@ -403,17 +421,18 @@
     
     // The title doesn't get communicated to the WebView until we are committed.
     if (_private->committed) {
-        WebHistoryItem *entry;
-        NSURL *canonURL = [[[self _originalRequest] URL] _webkit_canonicalize];
-        entry = [[WebHistory optionalSharedHistory] itemForURL: canonURL];
-        [entry setTitle: _private->pageTitle];
-
-        // Must update the entries in the back-forward list too.
-        [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
-
-        [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
-                                                         didReceiveTitle:_private->pageTitle
-                                                                forFrame:[self webFrame]];
+        NSURL *URLForHistory = [self _URLForHistory];
+        if (URLForHistory != nil) {
+            WebHistoryItem *entry = [[WebHistory optionalSharedHistory] itemForURL:URLForHistory];
+            [entry setTitle: _private->pageTitle];
+            
+            // Must update the entries in the back-forward list too.
+            [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
+            
+            [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
+                                                     didReceiveTitle:_private->pageTitle
+                                                            forFrame:[self webFrame]];
+        }
     }
 }
 

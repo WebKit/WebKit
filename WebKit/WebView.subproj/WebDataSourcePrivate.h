@@ -121,6 +121,7 @@
 - (void)addSubresource:(WebResource *)subresource;
 - (void)addSubresources:(NSArray *)subresources;
 - (id)propertyList;
+- (NSURL *)unreachableURL;
 
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
 
@@ -131,6 +132,7 @@
 - (void)_startLoading;
 - (void)_stopLoading;
 - (NSURL *)_URL;
+- (NSURL *)_URLForHistory;
 - (WebView *)_webView;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
 - (void)_setWebView:(WebView *)webView;

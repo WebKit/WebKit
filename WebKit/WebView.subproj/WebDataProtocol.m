@@ -21,6 +21,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     NSString *MIMEType;
     NSString *encoding;
     NSURL *baseURL;
+    NSURL *unreachableURL;
 }
 @end
 
@@ -32,6 +33,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     newInstance->data = [data copyWithZone:zone];
     newInstance->encoding = [encoding copyWithZone:zone];
     newInstance->baseURL = [baseURL copyWithZone:zone];
+    newInstance->unreachableURL = [unreachableURL copyWithZone:zone];
     newInstance->MIMEType = [MIMEType copyWithZone:zone];
     return newInstance;
 }
@@ -42,6 +44,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     [MIMEType release];
     [encoding release];
     [baseURL release];
+    [unreachableURL release];
     [super dealloc];
 }
 
@@ -95,6 +98,26 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     return parameters ? parameters->baseURL : nil;
 }
 
+- (NSURL *)_webDataRequestUnreachableURL
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->unreachableURL : nil;
+}
+
+- (NSURL *)_webDataRequestExternalURL
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    if (!parameters) {
+        return nil;
+    }
+    
+    if (parameters->baseURL) {
+        return parameters->baseURL;
+    }
+    
+    return [NSURL URLWithString:@"about:blank"];
+}
+
 - (NSMutableURLRequest *)_webDataRequestExternalRequest
 {
     WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
@@ -102,11 +125,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     
     if (parameters){
         newRequest = [[self mutableCopyWithZone:[self zone]] autorelease];
-        NSURL *baseURL = [self _webDataRequestBaseURL];
-        if (baseURL)
-            [newRequest setURL:baseURL]; 
-        else
-            [newRequest setURL:[NSURL URLWithString:@"about:blank"]];
+        [newRequest setURL:[self _webDataRequestExternalURL]];
     } 
     return newRequest;
 }
@@ -152,6 +171,13 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     WebDataRequestParameters *parameters = [self _webDataRequestParametersForWriting];
     [parameters->baseURL release];
     parameters->baseURL = [baseURL retain];
+}
+
+- (void)_webDataRequestSetUnreachableURL:(NSURL *)unreachableURL
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForWriting];
+    [parameters->unreachableURL release];
+    parameters->unreachableURL = [unreachableURL retain];
 }
 
 @end

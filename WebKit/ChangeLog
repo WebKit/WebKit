@@ -1,3 +1,80 @@
+2004-03-05  John Sullivan  <sullivan@apple.com>
+
+        First cut at WebKit support for showing error pages for unreachable URLs.
+        This doesn't work quite right with the back/forward list yet, but is
+        good enough for demos.
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate didReceiveResponse:]):
+        use new _webDataRequextExternalURL to share code
+        
+        * WebView.subproj/WebDataProtocol.h:
+        Three new methods (all internal to WebKit):
+        -[NSURLRequest _webDataRequestUnreachableURL], -[NSURLRequest _webDataRequestExternalURL],
+        -[NSURLRequest _webDataRequestSetUnreachableURL]
+        * WebView.subproj/WebDataProtocol.m:
+        new unreachableURL field of WebDataRequestParameters
+        (-[WebDataRequestParameters copyWithZone:]):
+        copy new field
+        (-[WebDataRequestParameters dealloc]):
+        release new field
+        (-[NSURLRequest _webDataRequestUnreachableURL]):
+        read new field
+        (-[NSURLRequest _webDataRequestExternalURL]):
+        new method, returns baseURL or "about:blank" for webdata protocol requests. This
+        was done in multiple places previously.
+        (-[NSURLRequest _webDataRequestExternalRequest]):
+        now calls _webDataRequestExternalURL to share code
+        (-[NSMutableURLRequest _webDataRequestSetUnreachableURL:]):
+        write new field
+        
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource unreachableURL]):
+        new method, might become API; returns the unreachable URL, if any, for which this datasource
+        holds placeholder content
+        (-[WebDataSource _URLForHistory]):
+        new method, returns the URL to be stored in History for this dataSource. This returns nil
+        for run-of-the-mill WebDataProtocol URLs (replacing code elsewhere that checked for this
+        case) but returns the unreachableURL for the case where this datasource holds placeholder
+        content.
+        (-[WebDataSource _setTitle:]):
+        now calls _URLForHistory
+        
+        * WebView.subproj/WebDataSourcePrivate.h:
+        added unreachableURL in the should-become-API section, and _URLForHistory elsewhere
+        
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadPlaceholderHTMLString:baseURL:unreachableURL:]):
+        new should-become-API method for displaying an error page for an unreachable URL
+        (-[WebFrame loadPropertyList:]):
+        updated to pass nil for unreachableURL
+        (-[WebFrame _webDataRequestForData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        added unreachableURL parameter, which gets set on the data request
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):
+        use _URLForHistory instead of just checking for WebDataProtocol
+        (-[WebFrame _createItem:]):
+        use unreachableURL if there is one
+        (-[WebFrame _transitionToCommitted:]):
+        use _URLForHistory instead of just checking for WebDataProtocol
+        (-[WebFrame _isLoadComplete]):
+        check whether a new load has started in the delegate callback and if so, don't
+        reset the loading state here
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        added unreachableURL parameter, which gets passed through
+        (-[WebFrame loadData:MIMEType:textEncodingName:baseURL:]):
+        send nil unreachableURL parameter
+        (-[WebFrame _loadHTMLString:baseURL:unreachableURL:]):
+        new bottleneck method for loadHTMLString:baseURL: and loadPlaceholderHTMLString:baseURL:unreachableURL:;
+        this is the guts of loadHTMLString:baseURL: with the new unreachableURL parameter passed through
+        (-[WebFrame loadHTMLString:baseURL:]):
+        now calls new bottleneck method
+        
+        * WebView.subproj/WebFramePrivate.h:
+        added loadPlaceholderString:baseURL:unreachableURL: to should-be-API section; added unreachableURL
+        parameter to _webDataRequestForData:MIMEType:textEncodingName:baseURL:
+
 2004-03-04  Chris Blumenberg  <cblu@apple.com>
 
 	- Made image dragging and copying always work without needing to re-download by using the data source's WebResource of the image instead of relying on the Foundation cache.

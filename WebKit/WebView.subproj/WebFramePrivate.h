@@ -117,7 +117,10 @@ extern NSString *WebPageCacheDocumentViewKey;
 // API Considerations:
 - (void)loadPropertyList:(id)HTMLPropertyList;
 
-- (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL;
+// unreachableURL represents a URL that couldn't be loaded; the HTML string acts as an error page for that URL
+- (void)loadPlaceholderHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
+
+- (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources;
 
 - (void)_setWebView:(WebView *)webView;

@@ -124,7 +124,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @interface WebFrame (ForwardDecls)
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState;
-
+- (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item;
@@ -257,6 +257,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @implementation WebFrame (WebPrivate)
 
+- (void)loadPlaceholderHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
+{
+    [self _loadHTMLString:string baseURL:URL unreachableURL:unreachableURL];
+}
+
 - (void)loadPropertyList:(id)propertyList
 {
     if ([propertyList isKindOfClass:[NSDictionary class]]) {
@@ -267,7 +272,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 NSURLRequest *request = [self _webDataRequestForData:[resource data] 
                                                             MIMEType:[resource MIMEType]
                                                     textEncodingName:[resource textEncodingName]
-                                                             baseURL:[resource URL]];
+                                                             baseURL:[resource URL]
+                                                      unreachableURL:nil];
                 [resource release];
                 NSArray *subresourcePropertyLists = [propertyList objectForKey:WebSubresourcesKey];
                 [self _loadRequest:request subresources:subresourcePropertyLists ? [WebResource _resourcesFromPropertyLists:subresourcePropertyLists] : nil];
@@ -276,13 +282,14 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     }
 }
 
-- (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL
+- (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
     NSURL *fakeURL = [NSURLRequest _webDataRequestURLForData: data];
     NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL: fakeURL] autorelease];
     [request _webDataRequestSetData:data];
     [request _webDataRequestSetEncoding:encodingName];
     [request _webDataRequestSetBaseURL:URL];
+    [request _webDataRequestSetUnreachableURL:unreachableURL];
     [request _webDataRequestSetMIMEType:MIMEType?MIMEType:@"text/html"];
     return request;
 }
@@ -319,7 +326,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 // helper method used in various nav cases below
 - (void)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
-    if (![WebDataProtocol _webIsDataProtocolURL:[[[[[self webView] mainFrame] dataSource] response] URL]]) {
+    if ([[self dataSource] _URLForHistory] != nil) {
         WebHistoryItem *bfItem = [[[self webView] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
         LOG (BackForward, "for frame %@, adding item  %@\n", [self name], bfItem);
         [[[self webView] backForwardList] addItem:bfItem];
@@ -339,7 +346,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     else {
         request = [dataSrc request];
     }
-    URL = [request URL];
+    URL = [dataSrc unreachableURL];
+    if (URL == nil) {
+        URL = [request URL];
+    }
 
     LOG (History, "creating item for %@", request);
     
@@ -371,7 +381,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 }
 
 /*
-    In the case of saving state about a page with frames, we store a tree of items that mirrors the frame tree.  The item that was the target of the user's navigation is designated as the "targetItem".  When this method is called with doClip=YES we're able to create the whole tree except for the target's children, which will be loaded in the future.  That part of the tree will be filled out as the child loads are committed.
+    In the case of saving state about a page with frames, we store a tree of items that mirrors the frame tree.  
+    The item that was the target of the user's navigation is designated as the "targetItem".  
+    When this method is called with doClip=YES we're able to create the whole tree except for the target's children, 
+    which will be loaded in the future.  That part of the tree will be filled out as the child loads are committed.
 */
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip
 {
@@ -747,9 +760,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 
             case WebFrameLoadTypeStandard:
                 if (![ds _isClientRedirect]) {
-                    // Add item to history.
-                    NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
-                    if (![URL _web_isEmpty] && ![WebDataProtocol _webIsDataProtocolURL:URL] ){
+                    // Add item to history and BF list
+                    NSURL *URL = [ds _URLForHistory];
+                    if (URL && ![URL _web_isEmpty]){
                         entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
                         if (ptitle)
                             [entry setTitle: ptitle];
@@ -1006,14 +1019,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                           didFailProvisionalLoadWithError:[pd _mainDocumentError]
                                                                  forFrame:self];
-
-                    // We know the provisional data source didn't cut the muster, release it.
-                    [_private->provisionalDataSource _stopLoading];
-                    [self _setProvisionalDataSource:nil];
                     
-                    [[self webView] _progressCompleted: self];
-    
-                    [self _setState:WebFrameStateComplete];
+                    [pd _stopLoading];
+                    // Finish resetting the load state, but only if another load hasn't been started by the
+                    // delegate callback.
+                    if (pd == _private->provisionalDataSource) {
+                        [self _setProvisionalDataSource:nil];
+                        
+                        [[self webView] _progressCompleted: self];
+                        
+                        [self _setState:WebFrameStateComplete];
+                    }
+
                     return;
                 }
             }
@@ -2505,16 +2522,23 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _loadRequest:request subresources:nil];
 }
 
-- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL;
+- (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
     NSURLRequest *request = [self _webDataRequestForData:data 
                                                 MIMEType:MIMEType 
                                         textEncodingName:encodingName 
-                                                 baseURL:URL];
+                                                 baseURL:URL
+                                          unreachableURL:unreachableURL];
     [self loadRequest:request];
 }
 
-- (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)URL
+
+- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL
+{
+    [self _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:URL unreachableURL:nil];
+}
+
+- (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
     CFStringEncoding cfencoding = CFStringGetFastestEncoding((CFStringRef)string);
     NSStringEncoding nsencoding = CFStringConvertEncodingToNSStringEncoding(cfencoding);
@@ -2522,12 +2546,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     if (!cfencodingName || nsencoding == kCFStringEncodingInvalidId){
         NSData *data = [string dataUsingEncoding: NSUnicodeStringEncoding];
-        [self loadData:data MIMEType:nil textEncodingName:@"utf-16" baseURL:URL];
+        [self _loadData:data MIMEType:nil textEncodingName:@"utf-16" baseURL:URL unreachableURL:unreachableURL];
     }
     else {
         NSData *data = [string dataUsingEncoding: nsencoding];
-        [self loadData:data MIMEType:nil textEncodingName:(NSString *)cfencodingName baseURL:URL];
+        [self _loadData:data MIMEType:nil textEncodingName:(NSString *)cfencodingName baseURL:URL unreachableURL:unreachableURL];
     }
+}
+
+- (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)URL
+{
+    [self _loadHTMLString:string baseURL:URL unreachableURL:nil];
 }
 
 - (void)stopLoading

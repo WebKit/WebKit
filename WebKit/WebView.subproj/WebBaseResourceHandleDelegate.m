@@ -369,14 +369,10 @@
     // anything including possibly releasing self; one example of this is 3266216
     [self retain]; 
 
-    // If the URL is one of our whacky applewebdata URLs that
+    // If the URL is one of our whacky applewebdata URLs then
     // fake up a substitute URL to present to the delegate.
     if([WebDataProtocol _webIsDataProtocolURL:[r URL]]) {
-	NSURL *baseURL = [request _webDataRequestBaseURL];
-        if (baseURL == nil) {
-            baseURL = [NSURL URLWithString:@"about:blank"];
-	}
-        r = [[[NSURLResponse alloc] initWithURL:baseURL MIMEType:[r MIMEType] expectedContentLength:[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
+        r = [[[NSURLResponse alloc] initWithURL:[request _webDataRequestExternalURL] MIMEType:[r MIMEType] expectedContentLength:[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
     }
 
     [r retain];

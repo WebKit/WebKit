@@ -20,6 +20,8 @@
 @interface NSURLRequest (WebDataRequest)
 + (NSURL *)_webDataRequestURLForData:(NSData *)data;
 - (NSURL *)_webDataRequestBaseURL;
+- (NSURL *)_webDataRequestUnreachableURL;
+- (NSURL *)_webDataRequestExternalURL;
 - (NSData *)_webDataRequestData;
 - (NSString *)_webDataRequestEncoding;
 - (NSString *)_webDataRequestMIMEType;
@@ -31,5 +33,6 @@
 - (void)_webDataRequestSetEncoding:(NSString *)encoding;
 - (void)_webDataRequestSetMIMEType:(NSString *)MIMEType;
 - (void)_webDataRequestSetBaseURL:(NSURL *)baseURL;
+- (void)_webDataRequestSetUnreachableURL:(NSURL *)unreachableURL;
 @end
 
