@@ -1,3 +1,15 @@
+2003-11-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3475397 - REGRESSION: relative URLs on page load test sometimes contain garbage, leading to missing images
+	
+        * kwq/KWQKURL.mm:
+        (KURL::KURL): When constructing from NSURL, null-terminate the raw
+	bytes since KURL::parse expects a null-terminated C string. It
+	might be even better to pass a length to parse, but this fix is
+	simple and does the job.
+
 2003-11-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

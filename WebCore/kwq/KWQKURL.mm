@@ -241,8 +241,9 @@ KURL::KURL(NSURL *url)
 {
     if (url) {
         CFIndex bufferLength = CFURLGetBytes((CFURLRef)url, NULL, 0);
-        char *bytes = new char [bufferLength];
+        char *bytes = new char [bufferLength + 1];
         CFURLGetBytes((CFURLRef)url, (UInt8 *)bytes, bufferLength);
+	bytes[bufferLength] = '\0';
         if (bytes[0] == '/') {
             QString fileUrl = QString("file:") + bytes;
             parse(fileUrl.ascii(), &fileUrl);
