@@ -160,9 +160,6 @@
 
 + (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)url;
 
-- (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag;
-- (BOOL)directsAllLinksToSystemBrowser;
-
 // FIXME:  Should this method be private?
 // Called when a data source needs to create a frame.  This method encapsulates the
 // specifics of creating and initializing a view of the appropriate class.

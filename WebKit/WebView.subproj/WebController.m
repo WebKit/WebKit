@@ -54,16 +54,6 @@
     [super dealloc];
 }
 
-- (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebController::setDirectsAllLinksToSystemBrowser: is not implemented"];
-}
-
-- (BOOL)directsAllLinksToSystemBrowser
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebController::directsAllLinksToSystemBrowser is not implemented"];
-    return NO;
-}
 
 - (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)childDataSource inParent: (WebDataSource *)parentDataSource allowsScrolling: (BOOL)allowsScrolling
 {

@@ -1,5 +1,13 @@
 2002-07-29  Richard Williamson  <rjw@apple.com>
 
+        Removed setDirectsAllLinksToSystemBrowser: method, not needed
+        and antiquated by the policy APIs.
+        
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+
+2002-07-29  Richard Williamson  <rjw@apple.com>
+
         Changes to support the migration of back/forward list to WebKit.
         Back/forward in frames now works (2946164), still not done w/
         restoring scroll positions (2927633).
@@ -4909,7 +4917,7 @@ guide for the port's coordinates. Also added a workaround for Java.
 
 	- Removed obsolete MIME/download related code.
 	- Minor clean-ups.
-	- Made WebKit support all text/* MIME types.
+	- Made WebKit support all text MIME types.
 	- Now send NPP_URLNotify when pages requested by plug-ins are loaded.
 	- Simplified NPP_Get/NPP_Post code.
 	
