@@ -13,6 +13,8 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+#import <ApplicationServices/ApplicationServicesPriv.h>
+
 @implementation NSPasteboard (WebExtras)
 
 + (NSArray *)_web_dragTypesForURL
@@ -69,6 +71,15 @@
     [URL writeToPasteboard:self];
     [self setString:[URL absoluteString] forType:NSStringPboardType];
     [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
+
+    NSString *flavor = nil;
+    CreatePasteboardFlavorTypeName('url ', (CFStringRef*)&flavor);
+    [self setString:[URL absoluteString] forType:flavor];
+    [flavor release];
+    
+    CreatePasteboardFlavorTypeName('urln', (CFStringRef*)&flavor);
+    [self setString:title forType:flavor];
+    [flavor release];
 }
 
 @end
