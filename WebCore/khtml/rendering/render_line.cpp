@@ -210,6 +210,8 @@ void InlineFlowBox::removeChild(InlineBox* child)
         child->nextOnLine()->setPrevOnLine(child->prevOnLine());
     if (child->prevOnLine())
         child->prevOnLine()->setNextOnLine(child->nextOnLine());
+    
+    child->setParent(0);
 }
 
 void InlineFlowBox::deleteLine(RenderArena* arena)

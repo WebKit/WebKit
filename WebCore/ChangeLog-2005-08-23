@@ -1,3 +1,19 @@
+2004-03-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3570700, crash in inlineBox::isDirty.  Make sure line boxes null out parent pointers when those
+	parents get deleted.  r=john
+
+	Fix for .value not being settable on selects.  r=darin
+	
+        * khtml/html/html_formimpl.cpp:
+        (HTMLSelectElementImpl::setValue):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::removeChildrenFromLineBoxes):
+        (khtml::RenderBlock::removeChild):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::removeChild):
+        
 2004-03-25  Darin Adler  <darin@apple.com>
 
         Fix by Kristin Webster, reviewed by me.

@@ -198,7 +198,8 @@ public:
     
 protected:
     void newLine();
-
+    void removeChildrenFromLineBoxes();
+    
 protected:
     struct FloatingObject {
         enum Type {

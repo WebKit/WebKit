@@ -2107,11 +2107,16 @@ DOMString HTMLSelectElementImpl::value( )
     return DOMString("");
 }
 
-void HTMLSelectElementImpl::setValue(DOMStringImpl* /*value*/)
+void HTMLSelectElementImpl::setValue(DOMStringImpl* value)
 {
-    // ### find the option with value() matching the given parameter
+    // find the option with value() matching the given parameter
     // and make it the current selection.
-    kdWarning() << "Unimplemented HTMLSelectElementImpl::setValue called" << endl;
+    QMemArray<HTMLGenericFormElementImpl*> items = listItems();
+    for (unsigned i = 0; i < items.size(); i++)
+        if (items[i]->id() == ID_OPTION && static_cast<HTMLOptionElementImpl*>(items[i])->value() == value) {
+            static_cast<HTMLOptionElementImpl*>(items[i])->setSelected(true);
+            return;
+        }
 }
 
 QString HTMLSelectElementImpl::state( )
