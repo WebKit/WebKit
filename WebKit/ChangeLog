@@ -1,3 +1,7 @@
+2005-03-22  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 === Safari-409 ===
 
 2005-03-20  Maciej Stachowiak  <mjs@apple.com>
