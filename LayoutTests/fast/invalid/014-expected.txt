@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x61
+  RenderBlock {HTML} at (0,0) size 800x61
+    RenderBody {BODY} at (8,8) size 784x39
+      RenderBlock (anonymous) at (0,0) size 784x17
+        RenderText {TEXT} at (0,0) size 654x17
+          text run at (0,0) width 309: "Random tests of some bizarre combinations. "
+          text run at (309,0) width 345: "H2 should allow a form inside it, but p should not."
+      RenderBlock (anonymous) at (0,17) size 784x0
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,17) size 784x22
+        RenderSelect {SELECT} at (2,2) size 39x18
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,53) size 784x0
+layer at (470,42) size 47x47
+  RenderBlock (positioned) {H2} at (470,42) size 47x47
+    RenderBlock {FORM} at (2,2) size 43x22
+      RenderSelect {SELECT} at (2,2) size 39x18
+      RenderText {TEXT} at (0,0) size 0x0
+layer at (470,39) size 4x4
+  RenderBlock (positioned) {P} at (470,39) size 4x4
