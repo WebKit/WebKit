@@ -302,8 +302,9 @@
 
 - (void) _setContentPolicy:(WebContentPolicy *)policy
 {
+    [policy retain];
     [_private->contentPolicy release];
-    _private->contentPolicy = [policy retain];
+    _private->contentPolicy = policy;
     [self _commitIfReady];
 }
 

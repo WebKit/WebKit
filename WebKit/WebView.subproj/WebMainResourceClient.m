@@ -144,12 +144,17 @@
 
     // Figure out the content policy.
     WebContentPolicy *contentPolicy = [dataSource contentPolicy];
-    contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForResponse:r
-                                                                            andRequest:[dataSource request]
-                                                                               inFrame:[dataSource webFrame]
-                                                                     withContentPolicy:contentPolicy];
-    NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:[dataSource request]];
-    [contentPolicy _setPath:saveFilename];
+
+    if ([contentPolicy policyAction] != WebPolicySave) {
+	contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForResponse:r
+								  andRequest:[dataSource request]
+								  inFrame:[dataSource webFrame]];
+    }
+
+    if ([contentPolicy policyAction] == WebPolicySave) {
+	NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:[dataSource request]];
+	[contentPolicy _setPath:saveFilename];
+    }
 
     [dataSource _setContentPolicy:contentPolicy];
 

@@ -56,8 +56,7 @@
 
 - (WebContentPolicy *)contentPolicyForResponse:(WebResourceResponse *)response
 				    andRequest:(WebResourceRequest *)request
-                                       inFrame:(WebFrame *)frame
-                             withContentPolicy:(WebContentPolicy *)contentPolicy;
+                                       inFrame:(WebFrame *)frame;
 {
     if([WebController canShowMIMEType:[response contentType]]){
         return [WebContentPolicy webPolicyWithContentAction: WebContentPolicyShow andPath:nil];

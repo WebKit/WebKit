@@ -257,12 +257,10 @@ typedef enum {
     @param response The response for the partially loaded content.
     @param request A WebResourceRequest for the partially loaded content.
     @param frame The frame which is loading the URL.
-    @param content policy if one was determined before the load started. nil if none was predetermined.
 */
 - (WebContentPolicy *)contentPolicyForResponse:(WebResourceResponse *)response
                                     andRequest:(WebResourceRequest *)request
-                                       inFrame:(WebFrame *)frame
-                             withContentPolicy:(WebContentPolicy *)contentPolicy;
+                                       inFrame:(WebFrame *)frame;
 
 
 /*!

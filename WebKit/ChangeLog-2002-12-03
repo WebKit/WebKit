@@ -1,5 +1,21 @@
 2002-11-11  Maciej Stachowiak  <mjs@apple.com>
 
+	Don't ask for the content policy any more if the previous policies
+	said to save - in effect this means to ask only if the previous
+	policies said to use the content policy. Also, remove now-useless
+	previous content policy parameter from content policy delegate.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+	(-[WebDataSource _setContentPolicy:]): Retain new policy before
+	releasing the old one.
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+	(-[WebMainResourceClient handle:didReceiveResponse:]): Don't ask
+	for content policy if the delegate already decided to save.
+
+2002-11-11  Maciej Stachowiak  <mjs@apple.com>
+
 	Added new policy delegate callback to get the filename - this
 	won't be up to the content policy any more.
 	
