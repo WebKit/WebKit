@@ -5,7 +5,6 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebContextMenuDelegate.h>
-#import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
@@ -20,6 +19,7 @@
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPluginError.h>
+#import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourceResponseExtras.h>
 #import <WebKit/WebStandardPanels.h>

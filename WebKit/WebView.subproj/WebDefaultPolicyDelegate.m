@@ -2,10 +2,10 @@
         WebDefaultPolicyDelegate.m
 	Copyright 2002, Apple Computer, Inc.
 */
-#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebResource.h>

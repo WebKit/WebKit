@@ -1,3 +1,27 @@
+2003-03-19  Richard Williamson   <rjw@apple.com>
+
+        Rename WebControllerPolicyDelegate*.[hm] to WebPolicyDelegate*.[hm]
+        
+        Reviewed by trey.
+
+        * API-Issues.rtf:
+        * Misc.subproj/WebKit.h:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPolicyDelegate.h: Removed.
+        * WebView.subproj/WebControllerPolicyDelegate.m: Removed.
+        * WebView.subproj/WebControllerPolicyDelegatePrivate.h: Removed.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebFrameView.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebPolicyDelegate.m:
+        * WebView.subproj/WebPolicyDelegatePrivate.h:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+
 2003-03-19  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

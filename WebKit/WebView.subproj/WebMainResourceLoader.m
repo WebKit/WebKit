@@ -15,18 +15,16 @@
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebMutableResponse.h>
 
-#import <WebKit/WebControllerPolicyDelegatePrivate.h>
-#import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadPrivate.h>
-#import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
+#import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebResourceResponseExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>

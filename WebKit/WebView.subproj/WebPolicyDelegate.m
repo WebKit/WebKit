@@ -1,10 +1,9 @@
 /*
-        WebControllerPolicyDelegate.m
+        WebPolicyDelegate.m
         Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebControllerPolicyDelegate.h>
-#import <WebKit/WebControllerPolicyDelegatePrivate.h>
+#import <WebKit/WebPolicyDelegatePrivate.h>
 
 NSString *WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";
 NSString *WebActionElementKey = @"WebActionElementKey";

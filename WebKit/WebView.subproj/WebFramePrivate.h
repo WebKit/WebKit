@@ -7,7 +7,7 @@
 */
 
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebControllerPolicyDelegatePrivate.h>
+#import <WebKit/WebPolicyDelegatePrivate.h>
 
 @class WebBridge;
 @class WebFormState;

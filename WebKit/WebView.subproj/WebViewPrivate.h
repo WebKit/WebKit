@@ -3,7 +3,7 @@
     Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebControllerPolicyDelegate.h>
+#import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebView.h>
 
 @class WebBackForwardList;

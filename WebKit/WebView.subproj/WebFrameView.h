@@ -23,13 +23,6 @@
 }
 
 /*!
-    @method initWithFrame:
-    @param frame The frame rectangle for the view
-    @result An initialized WebFrameView
-*/
-- (id)initWithFrame: (NSRect) frame;
-
-/*!
     @method webFrame
     @abstract Returns the WebFrame associated with this WebFrameView
     @result The WebFrameView's frame.
