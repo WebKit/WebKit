@@ -1,3 +1,41 @@
+2002-12-06  Trey Matteson  <trey@apple.com>
+
+	3118584 - implement desired behavior for load - reload - b/f
+	3119241 - page cache needs to be refreshed after reload
+	3118096 - isTargetItem:NO saved to disk with every bookmark
+
+	The most noticeable changes are the addition of the "Same" loadType, and that reload
+	does not restore form state.  3119241 was noticed in passing, and is related.
+	3118096 is a nit with a possible small perf benefit.
+
+        Reviewed by: rjw
+
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem dealloc]):  New originalURL field.
+        (-[WebHistoryItem originalURL]):  New getter.
+        (-[WebHistoryItem setOriginalURL:]):  New setter.
+        (-[WebHistoryItem dictionaryRepresentation]):  Dont save isTarget.
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):  Dont save isTarget.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):  Test for going to same URL, invoke loadTypeSame case.
+        * WebView.subproj/WebFramePrivate.h:  Add loadTypeSame
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):  Remove a line of dead code.
+        (-[WebFrame _createItem]):  Set originalURL when item is created.
+        (-[WebFrame _transitionToCommitted:]):  For loadTypeSame, clear page cache
+        (-[WebFrame _purgePageCache]):  Added logging.
+        (-[WebFrame _setState:]):  Don't add to page cache if doing a reload.
+        (-[WebFrame _isLoadComplete]):  LoadTypeSame is a NOP.
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):  LoadTypeSame is an ASSERT.
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):  In
+	the LoadTypeSame case load from origin and never do anchor nav.  If asked to load
+	the same URL, invoke LoadTypeSame case.
+        (-[WebFrame _loadURL:intoChild:]):  Latent bug: WebFrameLoadTypeReloadAllowingStaleData
+	should restore child frame content like reload does.
+        (-[WebFrame _itemForRestoringDocState]):  Prevent form state restore on reload and loadSame.
+        (-[WebFrame _shouldTreatURLAsSameAsCurrent:]):  New utility function.
+
 2002-12-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by: Darin Adler

@@ -47,12 +47,45 @@ static const char * const loadTypeNames[] = {
     "WebFrameLoadTypeStandard",
     "WebFrameLoadTypeBack",
     "WebFrameLoadTypeForward",
-    "WebFrameLoadTypeIndexedBackForward",		// a multi-item hop in the backforward list
+    "WebFrameLoadTypeIndexedBackForward",
     "WebFrameLoadTypeReload",
     "WebFrameLoadTypeReloadAllowingStaleData",
+    "WebFrameLoadTypeSame",
     "WebFrameLoadTypeInternal"
 };
 #endif
+
+/*
+Here is the current behavior matrix for four types of navigations:
+
+Standard Nav:
+
+ Restore form state:   YES
+ Restore scroll and focus state:  YES
+ WF Cache policy: WebRequestCachePolicyUseProtocolDefault
+ Add to back/forward list: YES
+ 
+Back/Forward:
+
+ Restore form state:   YES
+ Restore scroll and focus state:  YES
+ WF Cache policy: WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject
+ Add to back/forward list: NO
+
+Reload (meaning only the reload button):
+
+ Restore form state:   NO
+ Restore scroll and focus state:  YES
+ WF Cache policy: WebRequestCachePolicyLoadFromOrigin
+ Add to back/forward list: NO
+
+Repeat load of the same URL (by any other means of navigation other than the reload button, including hitting return in the location field):
+
+ Restore form state:   NO
+ Restore scroll and focus state:  NO, reset to initial conditions
+ WF Cache policy: WebRequestCachePolicyLoadFromOrigin
+ Add to back/forward list: NO
+*/
 
 @implementation WebFramePrivate
 
@@ -171,8 +204,7 @@ static const char * const loadTypeNames[] = {
 - (WebHistoryItem *)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
     WebHistoryItem *bfItem = [[[self controller] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
-    if (bfItem != [[[self controller] backForwardList] currentEntry])
-        [[[self controller] backForwardList] addEntry:bfItem];
+    [[[self controller] backForwardList] addEntry:bfItem];
     return bfItem;
 }
 
@@ -185,6 +217,7 @@ static const char * const loadTypeNames[] = {
     bfItem = [[[WebHistoryItem alloc] initWithURL:url target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]] autorelease];
     [bfItem setAnchor:[url fragment]];
     [dataSrc _addBackForwardItem:bfItem];
+    [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] absoluteString]];
 
     // Set the item for which we will save document state
     [_private setPreviousItem:[_private currentItem]];
@@ -488,11 +521,19 @@ static const char * const loadTypeNames[] = {
                     [self _restoreScrollPosition];
                 }
                 break;
-                
+
             case WebFrameLoadTypeReload:
-                [self _saveScrollPositionToItem:[_private currentItem]];
+            case WebFrameLoadTypeSame:
+            {
+                WebHistoryItem *currItem = [_private currentItem];
+                printf ("Clearing back/forward cache, %s\n", [[[currItem URL] absoluteString] cString]);
+                [currItem setHasPageCache:NO];
+                if (loadType == WebFrameLoadTypeReload) {
+                    [self _saveScrollPositionToItem:currItem];
+                }
                 [[self webView] _makeDocumentViewForDataSource:ds];
                 break;
+            }
 
             case WebFrameLoadTypeStandard:
                 // Add item to history.
@@ -583,6 +624,7 @@ static const char * const loadTypeNames[] = {
     }
     
     if (pagesCached > sizeLimit){
+        printf ("Purging back/forward cache, %s\n", [[[oldestItem URL] absoluteString] cString]);
         [oldestItem setHasPageCache: NO];
     }
 }
@@ -617,8 +659,19 @@ static const char * const loadTypeNames[] = {
         [[[self webView] frameScrollView] setDrawsBackground:NO];
 
         // Cache the page, if possible.
+        // Don't write to the cache if in the middle of a redirect, since we will want to
+        // store the final page we end up on.
+        // No point writing to the cache on a reload or loadSame, since we will just write
+        // over it again when we leave that page.
         WebHistoryItem *item = [_private currentItem];
-        if ([self _canCachePage] && [_private->bridge canCachePage] && item && !_private->quickRedirectComing && ![[self dataSource] isLoading]){
+        WebFrameLoadType loadType = [self _loadType];
+        if ([self _canCachePage]
+            && [_private->bridge canCachePage]
+            && item
+            && !_private->quickRedirectComing
+            && loadType != WebFrameLoadTypeReload && loadType != WebFrameLoadTypeSame
+            && ![[self dataSource] isLoading])
+        {
             if (![item pageCache]){
                 printf ("Saving page to back/forward cache, %s\n", [[[[self dataSource] URL] absoluteString] cString]);
                 [item setHasPageCache: YES];
@@ -738,6 +791,7 @@ static const char * const loadTypeNames[] = {
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
                     case WebFrameLoadTypeReloadAllowingStaleData:
+                    case WebFrameLoadTypeSame:
                         // Do nothing.
                         break;
 
@@ -920,6 +974,7 @@ static const char * const loadTypeNames[] = {
                     case WebFrameLoadTypeReloadAllowingStaleData:
                         // no-op: leave as protocol default
                         break;
+                    case WebFrameLoadTypeSame:
                     default:
                         ASSERT_NOT_REACHED();
                 }
@@ -1210,6 +1265,9 @@ static const char * const loadTypeNames[] = {
     if (loadType == WebFrameLoadTypeReload) {
         [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     }
+    // I believe this is never called with LoadSame.  If it is, we probably want to set the cache
+    // policy of LoadFromOrigin, but I didn't test that.
+    ASSERT(loadType != WebFrameLoadTypeSame);
 
     NSDictionary *action = nil;
 
@@ -1222,13 +1280,17 @@ static const char * const loadTypeNames[] = {
     }
 
     WebDataSource *oldDataSource = [[self dataSource] retain];
-    
-    if (!isFormSubmission
-            && loadType != WebFrameLoadTypeReload
-            && ![_private->bridge isFrameSet]
-            && [URL fragment]
-            && [[URL _web_URLByRemovingFragment] isEqual:[[NSURL _web_URLWithString:[_private->bridge URL]] _web_URLByRemovingFragment]]) {
 
+    BOOL sameURL = [self _shouldTreatURLAsSameAsCurrent:URL];
+
+    if (!isFormSubmission
+        && !sameURL
+        && loadType != WebFrameLoadTypeReload
+        && loadType != WebFrameLoadTypeSame
+        && ![_private->bridge isFrameSet]
+        && [URL fragment]
+        && [[URL _web_URLByRemovingFragment] isEqual:[[NSURL _web_URLWithString:[_private->bridge URL]] _web_URLByRemovingFragment]]) {
+        
         // Just do anchor navigation within the existing content.
         
         // We don't do this if we are submitting a form, explicitly reloading,
@@ -1254,8 +1316,11 @@ static const char * const loadTypeNames[] = {
             _private->quickRedirectComing = NO;
             
             // Inherit the loadType from the operation that spawned the redirect,
-            // unless the new load type is some kind of reload.
-            if (loadType != WebFrameLoadTypeReload && loadType != WebFrameLoadTypeReloadAllowingStaleData) {
+            // unless the new load type is some kind of reload imposed by WebKit.
+            if (loadType != WebFrameLoadTypeReload
+                && loadType != WebFrameLoadTypeSame
+                && loadType != WebFrameLoadTypeReloadAllowingStaleData)
+            {
                 [self _setLoadType:previousLoadType];
             }
 
@@ -1263,7 +1328,12 @@ static const char * const loadTypeNames[] = {
             WebDataSource *newDataSource = [self provisionalDataSource];
             [newDataSource _setIsClientRedirect:YES];
             [newDataSource _addBackForwardItems:[oldDataSource _backForwardItems]];
-        }
+        } else if (sameURL) {
+            // Example of this case are sites that reload the same URL with a different cookie
+            // driving the generated content, or a master frame with links that drive a target
+            // frame, where the user has clicked on the same link repeatedly.
+            [self _setLoadType:WebFrameLoadTypeSame];
+        }            
         [request release];
     }
 
@@ -1280,10 +1350,13 @@ static const char * const loadTypeNames[] = {
 
     // If we're moving in the backforward list, we might want to replace the content
     // of this child frame with whatever was there at that point.
-    if ((loadType == WebFrameLoadTypeForward || 
-        loadType == WebFrameLoadTypeBack ||
-        loadType == WebFrameLoadTypeIndexedBackForward ||
-        loadType == WebFrameLoadTypeReload) && childItems)
+    // Reload will maintain the frame contents, LoadSame will not.
+    if (childItems &&
+        (loadType == WebFrameLoadTypeForward
+         || loadType == WebFrameLoadTypeBack
+         || loadType == WebFrameLoadTypeIndexedBackForward
+         || loadType == WebFrameLoadTypeReload
+         || loadType == WebFrameLoadTypeReloadAllowingStaleData))
     {
         childItem = [parentItem childItemWithName:[childFrame name]];
         if (childItem) {
@@ -1296,7 +1369,12 @@ static const char * const loadTypeNames[] = {
     [childFrame _loadURL:URL loadType:childLoadType triggeringEvent:nil isFormSubmission:NO];
 
     if (childItem) {
-        if (loadType != WebFrameLoadTypeReload) {
+        // We only enter this second if block when the first one succeeded to find a
+        // matching child frame
+        if (loadType == WebFrameLoadTypeForward
+            || loadType == WebFrameLoadTypeBack
+            || loadType == WebFrameLoadTypeIndexedBackForward)
+        {
             // For back/forward, remember this item so we can traverse any child items as child frames load
             [childFrame->_private setProvisionalItem:childItem];
         } else {
@@ -1471,7 +1549,13 @@ static const char * const loadTypeNames[] = {
 
 - (WebHistoryItem *)_itemForRestoringDocState
 {
-    return [_private currentItem];
+    WebFrameLoadType loadType = [self _loadType];
+    if (loadType == WebFrameLoadTypeReload || loadType == WebFrameLoadTypeSame) {
+        // Don't restore any form state on reload or loadSame
+        return nil;
+    } else {
+        return [_private currentItem];
+    }
 }
 
 -(void)_continueLoadRequestAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
@@ -1552,5 +1636,12 @@ static const char * const loadTypeNames[] = {
     [_private setProvisionalDataSource: d];
 }
 
+// used to decide to use loadType=Same
+- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL
+{
+    WebHistoryItem *item = [_private currentItem];
+    NSString* URLString = [URL absoluteString];
+    return [URLString isEqual:[item URLString]] || [URLString isEqual:[item originalURLString]];
+}    
 
 @end

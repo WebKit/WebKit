@@ -105,10 +105,18 @@
 
 - (void)loadRequest:(WebResourceRequest *)request
 {
+    WebFrameLoadType loadType;
+
     WebResourceRequest *r = [request copy];
     [self _addExtraFieldsToRequest:r];
+    if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
+        [r setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+        loadType = WebFrameLoadTypeSame;
+    } else {
+        loadType = WebFrameLoadTypeStandard;
+    }
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:r];
-    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeStandard];
+    [self _loadDataSource:newDataSource withLoadType:loadType];
     [newDataSource release];
 }
 

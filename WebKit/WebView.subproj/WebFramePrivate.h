@@ -39,6 +39,7 @@ typedef enum {
     WebFrameLoadTypeIndexedBackForward,		// a multi-item hop in the backforward list
     WebFrameLoadTypeReload,
     WebFrameLoadTypeReloadAllowingStaleData,
+    WebFrameLoadTypeSame,		// user loads same URL again (but not reload button)
     WebFrameLoadTypeInternal
 } WebFrameLoadType;
 
@@ -162,5 +163,8 @@ typedef enum {
 
 - (BOOL)_canCachePage;
 - (void)_purgePageCache;
+
+// used to decide to use loadType=Same
+- (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
 
 @end

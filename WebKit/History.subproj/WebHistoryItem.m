@@ -63,8 +63,9 @@
 - (void)dealloc
 {
     [self _retainIconInDatabase:NO];
-    
+
     [_URLString release];
+    [_originalURLString release];
     [_target release];
     [_parent release];
     [_title release];
@@ -88,6 +89,13 @@
 - (NSString *)URLString
 {
     return _URLString;
+}
+
+// The first URL we loaded to get to where this history item points.  Includes both client
+// and server redirects.
+- (NSString *)originalURLString
+{
+    return _originalURLString;
 }
 
 - (NSString *)target
@@ -144,6 +152,15 @@
         _loadedIcon = NO;
         [self _retainIconInDatabase:YES];
     }
+}
+
+// The first URL we loaded to get to where this history item points.  Includes both client
+// and server redirects.
+- (void)setOriginalURLString:(NSString *)URL
+{
+    NSString *newURL = [URL copy];
+    [_originalURLString release];
+    _originalURLString = newURL;
 }
 
 - (void)setTitle:(NSString *)title
@@ -354,7 +371,6 @@
         }
         [dict setObject: childDicts forKey: @"children"];
     }
-    [dict setObject: (_isTargetItem ? @"YES" : @"NO") forKey: @"isTargetItem"];
     
     return dict;
 }
@@ -384,8 +400,6 @@
             [_subItems addObject: child];
         }
     }
-    NSString *value = [dict objectForKey:@"isTargetItem"];
-    _isTargetItem = (value != nil) && [value isEqualToString:@"YES"];
 
     return self;
 }
