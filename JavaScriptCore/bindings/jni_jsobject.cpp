@@ -82,10 +82,10 @@ static CFMutableDictionaryRef getReferencesDictionary(const void *owner)
 static CFMutableDictionaryRef findReferenceDictionary(KJS::ValueImp *imp)
 {
     CFMutableDictionaryRef refsByOwner = getReferencesByOwnerDictionary ();
-    CFMutableDictionaryRef referencesDictionary, foundDictionary = 0;
+    CFMutableDictionaryRef referencesDictionary = 0, foundDictionary = 0;
     
     if (refsByOwner) {
-        const void **allValues;
+        const void **allValues = 0;
         CFIndex count, i;
         
         count = CFDictionaryGetCount(referencesDictionary);
@@ -138,7 +138,7 @@ void removeAllJavaReferencesForOwner (const void *owner)
     CFMutableDictionaryRef referencesDictionary = getReferencesDictionary (owner);
     
     if (referencesDictionary) {
-        void **allImps;
+        void **allImps = 0;
         CFIndex count, i;
         
         count = CFDictionaryGetCount(referencesDictionary);
