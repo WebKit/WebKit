@@ -1,3 +1,5 @@
+=== Safari-114 ===
+
 2003-11-14  Vicki Murley <vicki@apple.com>
 
         - rolled out Darin's fixes for 3457162 and 3160035, since these changes broke plugins on macromedia.com and disney.go.com
