@@ -1,3 +1,42 @@
+2005-03-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4024929> REGRESSION (Mail): Pasting text with multiple reply levels removes one level instead of all
+        
+        The code to figure out which node to use to merge into an existing line did not drill into the first inline element
+        as needed to make the feature work as user expect. Instead, it looked at the first node, and if it was a block, it
+        skipped that node. This worked for some cases (including the important "paste-as-quotation" case) but obviously 
+        doesn't work for content quoted more than once.
+        
+        Now, mergeStartNode() will look for the first node in pasted content that is not a block. It will now also look
+        for nodes specially marked by Mail as a node added to make "Paste As Quotation" work. It won't skip those. 
+        
+        NOTE: This change will break Mail's "Paste As Quotation" feature for TOT WebKit users, but this is only a temporary 
+        problem that will exist until we sync up with Mail's pending change to mark nodes as needed in its pasteAsQuotation:
+        method.
+        
+        * khtml/editing/html_interchange.h: Add ApplePasteAsQuotation constant used to check for "marked" blockquotes.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::mergeStartNode): Look for first node that is either not a block or is marked as
+        an ApplePasteAsQuotation node.
+        (khtml::isMailPasteAsQuotationNode): New helper that looks for nodes marked with ApplePasteAsQuotation.
+        * khtml/editing/htmlediting.h: Updated header for new function.
+        
+        This test result changed is an acceptable way.
+        
+        * layout-tests/editing/pasteboard/paste-text-013-expected.txt
+        * layout-tests/editing/pasteboard/paste-text-013.html
+
+        NOTE: This change causes a regression in this layout test:
+
+        * layout-tests/editing/pasteboard/paste-text-013.html
+
+        This problem will need to be fixed separately, and this bug has been filed to track this problem:
+        <rdar://problem/4045513> Copying and pasting selection starting at end of paragraph can incorrectly remove line break
+
 2005-03-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

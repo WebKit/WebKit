@@ -965,6 +965,7 @@ bool isProbablyBlock(const DOM::NodeImpl *);
 bool isProbablyTableStructureNode(const DOM::NodeImpl *);
 bool isMailBlockquote(const DOM::NodeImpl *);
 DOM::NodeImpl *nearestMailBlockquote(const DOM::NodeImpl *);
+bool isMailPasteAsQuotationNode(const DOM::NodeImpl *node);
 
 //------------------------------------------------------------------------------------------
 

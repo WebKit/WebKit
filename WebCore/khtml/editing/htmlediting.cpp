@@ -4187,11 +4187,9 @@ NodeImpl *ReplacementFragment::lastChild() const
 NodeImpl *ReplacementFragment::mergeStartNode() const
 {
     NodeImpl *node = m_fragment->firstChild();
-    if (!node)
-        return 0;
-    if (!isProbablyBlock(node))
-        return node;
-    return node->firstChild();
+    while (node && isProbablyBlock(node) && !isMailPasteAsQuotationNode(node))
+        node = node->traverseNextNode();
+    return node;
 }
 
 void ReplacementFragment::pruneEmptyNodes()
@@ -5817,6 +5815,14 @@ bool isMailBlockquote(const NodeImpl *node)
         return false;
         
     return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";
+}
+
+bool isMailPasteAsQuotationNode(const NodeImpl *node)
+{
+    if (!node)
+        return false;
+        
+    return static_cast<const ElementImpl *>(node)->getAttribute("class") == ApplePasteAsQuotation;
 }
 
 } // namespace khtml
