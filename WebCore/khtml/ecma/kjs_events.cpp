@@ -88,7 +88,9 @@ void JSEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
         KJS::Interpreter::unlock();
         if ( !thisObj.isNull() ) {
             ScopeChain scope = oldScope;
+            KJS::Interpreter::lock();
             static_cast<DOMNode*>(thisObj.imp())->pushEventHandlerScope(exec, scope);
+            KJS::Interpreter::unlock();
             listener.setScope( scope );
         }
     }

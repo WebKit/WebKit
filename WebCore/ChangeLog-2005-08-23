@@ -1,3 +1,10 @@
+2003-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * khtml/ecma/kjs_events.cpp: (JSEventListener::handleEvent): Add locking around the call to
+        push event handler scope. Without this, we hit the "allocated without locking" assertion.
+
 2003-12-09  David Hyatt  <hyatt@apple.com>
 
 	Fix the dirty rect checks on various render_objects to be more accurate so that page-break properties don't
