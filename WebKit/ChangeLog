@@ -1,3 +1,14 @@
+2002-09-27  Richard Williamson   <rjw@apple.com>
+
+        Fix 3058315:  crash in WebHTMLRepresentation receivedData:withDataSource
+        http://www.u2.com/lite/ does some whacky things with its framset's onLoad
+        handler.  The fix ensures that data isn't sent to the bridge once
+        the bridge has been dealloced.
+        
+        * WebKit.pbproj/project.pbxproj: Nothing changed.  PB dorkiness.
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation receivedData:withDataSource:]):
+
 2002-09-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3056559 - QT plugin doesn't load (claudius)

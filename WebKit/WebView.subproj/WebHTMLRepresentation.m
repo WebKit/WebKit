@@ -54,7 +54,8 @@
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
-    [_private->bridge receivedData:data withDataSource:dataSource];
+    if ([dataSource webFrame])
+        [_private->bridge receivedData:data withDataSource:dataSource];
 }
 
 - (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
