@@ -3829,8 +3829,14 @@ void KHTMLPart::reparseConfiguration()
   delete d->m_settings;
   d->m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
 
+  QString userStyleSheet = KHTMLFactory::defaultHTMLSettings()->userStyleSheet();
+  if ( !userStyleSheet.isEmpty() )
+    setUserStyleSheet( KURL( userStyleSheet ) );
+  else
+    setUserStyleSheet( KURL( QString::null ) );
+
   QApplication::setOverrideCursor( waitCursor );
-  if(d->m_doc) d->m_doc->recalcStyle( NodeImpl::Force );
+  if(d->m_doc) d->m_doc->updateStyleSelector();
   QApplication::restoreOverrideCursor();
 }
 

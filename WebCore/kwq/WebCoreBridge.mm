@@ -160,10 +160,7 @@ using khtml::RenderPart;
 
 - (void)reapplyStyles
 {
-    DOM::DocumentImpl *doc = part->impl->getDocument();
-    if (doc && doc->renderer()) {
-        doc->updateStyleSelector();
-    }
+    return part->reparseConfiguration();
 }
 
 - (void)forceLayout

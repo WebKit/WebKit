@@ -1115,7 +1115,7 @@ void DocumentImpl::setUserStyleSheet( const QString& sheet )
 {
     if ( m_usersheet != sheet ) {
         m_usersheet = sheet;
-        recalcStyle( Force );
+	updateStyleSelector();
     }
 }
 
