@@ -1,5 +1,15 @@
 2003-06-09  Chris Blumenberg  <cblu@apple.com>
 
+	<rdar://problem/3283359>: don't load Cocoa Java plug-in if in Carbon app
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebPluginDatabase.h: removed pluginForFilename, wasn't being used
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]): don't use the plug-in if ![self isCocoa] && [[[webPlugin bundle] bundleIdentifier] isEqualToString:JavaCocoaPluginIdentifier]
+
+2003-06-09  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3284848>: REGRESSION: repro crash in Flash handling null event, going back to Japanese Disney page
 
 	When restarting plug-ins from the BF cache, we were not calling NPP_SetWindow.
