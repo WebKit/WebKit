@@ -1,3 +1,19 @@
+2002-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3128858 -- Supply Finder bits for decoded BinHex files
+
+        * Downloads.subproj/WebBinHexDecoder.h: Add a _finderFlags field.
+        * Downloads.subproj/WebBinHexDecoder.m:
+        (-[WebBinHexDecoder decodeHeader]): Decode Finder flags.
+        (-[WebBinHexDecoder fileAttributes]): Put Finder flags in dictionary.
+
+        * Downloads.subproj/WebMacBinaryDecoder.m: Tweaked things for no good reason.
+	(It is good to always import your own header first as a check that it's self-sufficient).
+
+        * WebKit.pbproj/project.pbxproj: Let Electron wipe the slate clean of pre-Electron iniquity.
+
 2002-12-15  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: 3094928 - Apply Finder bits to decoded downloads

@@ -12,6 +12,7 @@
 #import "WebBinHexDecoder.h"
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebNSFileManagerExtras.h>
 
 #define SKIP_CHARACTER 0x40
 #define END_CHARACTER 0x41
@@ -251,8 +252,13 @@ done:
     memcpy(_name, header.name, header.name[0] + 1);
     _fileType = (((((header.remainder[1] << 8) | header.remainder[2]) << 8) | header.remainder[3]) << 8) | header.remainder[4];
     _fileCreator = (((((header.remainder[5] << 8) | header.remainder[6]) << 8) | header.remainder[7]) << 8) | header.remainder[8];
+    _finderFlags = (header.remainder[9] << 8) | header.remainder[10];
     _dataForkLengthRemaining = (((((header.remainder[11] << 8) | header.remainder[12]) << 8) | header.remainder[13]) << 8) | header.remainder[14];
     _resourceForkLengthRemaining = (((((header.remainder[15] << 8) | header.remainder[16]) << 8) | header.remainder[17]) << 8) | header.remainder[18];
+    
+    // Mask off to the only fields in BinHex that we want to respect.
+    // Most flags just aren't supported in BinHex files even though there's a 16-bit field.
+    _finderFlags &= kHasBundle | kIsStationery;
     
     // Reset the CRC so it's ready to compute a fork CRC.
     _CRC = 0;
@@ -357,6 +363,7 @@ done:
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedLong:_fileType], NSFileHFSTypeCode,
         [NSNumber numberWithUnsignedLong:_fileCreator], NSFileHFSCreatorCode,
+        [NSNumber numberWithUnsignedShort:_finderFlags], WebFinderInfo,
         nil];
 }
 

@@ -36,6 +36,7 @@
     unsigned char _name[64];
     OSType _fileType;
     OSType _fileCreator;
+    uint32_t _finderFlags;
     int _dataForkLengthRemaining;
     int _resourceForkLengthRemaining;
     

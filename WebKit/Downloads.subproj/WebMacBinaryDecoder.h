@@ -17,8 +17,8 @@
     
     int _dataForkLength;
     int _resourceForkLength;
-    u_int16_t _finderInfo;
-    u_int16_t _extendedFinderInfo;
+    u_int16_t _finderFlags;
+    u_int16_t _extendedFinderFlags;
     u_int32_t _creationDate;
     u_int32_t _modificationDate;
     OSType _fileType;
