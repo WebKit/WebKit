@@ -21,6 +21,11 @@
     return [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _mimeHandler];
 }
 
+- (NSString *) suggestedFilename
+{
+    return [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _suggestedFilename];
+}
+
 - (void) cancelDownload
 {
     [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _cancelDownload];
@@ -36,9 +41,9 @@
     [_downloadHandlerPrivate release];
 }
 
-- (void) setOpenAfterDownload:(BOOL)open
+- (void) openAfterDownload:(BOOL)open
 {
-    [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _setOpenAfterDownload:open];
+    [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _openAfterDownload:open];
 }
 
 @end

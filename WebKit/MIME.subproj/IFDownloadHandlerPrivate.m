@@ -8,15 +8,26 @@
 
 #import <WebKit/IFDownloadHandlerPrivate.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <Carbon/Carbon.h>
 
 @implementation IFDownloadHandlerPrivate
 
 
 - init
 {
-    //FIXME: we should not open files by default
-    openAfterDownload = YES;
+    shouldOpen = NO;
+    downloadCompleted = NO;
     return self;
+}
+
+- (void) dealloc
+{
+    if(!downloadCompleted){
+        [self _cancelDownload];
+    }
+    [mimeHandler release];
+    [urlHandle release];
+    [path release];
 }
 
 - (void) _setMIMEHandler:(IFMIMEHandler *) mHandler
@@ -39,29 +50,41 @@
     return mimeHandler;
 }
 
+- (NSString *) _suggestedFilename
+{
+    //FIXME: need a better way to get a file name out of a URL
+    return [[[urlHandle url] absoluteString] lastPathComponent];
+}
+
 - (void) _cancelDownload
 {
-    NSFileManager *fileManager;
-    
-    [urlHandle cancelLoadInBackground];
-    if(path){
-        fileManager = [NSFileManager defaultManager];
-        [fileManager removeFileAtPath:path handler:nil];
-    }
+    if(!downloadCompleted)
+        [urlHandle cancelLoadInBackground];
 }
 
 - (void) _storeAtPath:(NSString *)newPath
 {
-    NSFileManager *fileManager=nil;
-    
-    if(path){
-        [fileManager movePath:path toPath:newPath handler:nil];
-        [path release];
-    }
     path = [newPath retain];
+    if(downloadCompleted)
+        [self _saveFile];
 }
 
-- (void) _openDownloadedFile
+- (void) _finishedDownload
+{    
+    downloadCompleted = YES;
+
+    if(path)
+        [self _saveFile];
+}
+
+- (void) _openAfterDownload:(BOOL)open
+{
+    shouldOpen = open;
+    if(shouldOpen && path && downloadCompleted)
+        [self _openFile];
+}
+
+- (void) _openFile
 {
     CFURLRef pathURL;
     pathURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (CFStringRef)path, kCFURLPOSIXPathStyle, FALSE);
@@ -70,41 +93,24 @@
     CFRelease(pathURL);
 }
 
-- (void) _finishedDownload
+- (void) _saveFile
 {
     NSFileManager *fileManager;
-    NSString *filename;
     
-    if(!path){
-        //FIXME: need a better way to get a file name out of a URL
-        //FIXME: need to save temp file in file cache or somewhere else
-        filename = [[[urlHandle url] absoluteString] lastPathComponent];
-        path = [NSHomeDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"Desktop/%@", filename]];
-        [path retain];
-    }
-    fileManager = [NSFileManager defaultManager];
-    [fileManager createFileAtPath:path contents:[urlHandle resourceData] attributes:nil];
-    
-    //FIXME: need to send FNNotify here
-    NSLog(@"Downloaded completed. Saved to: %@", path);
-    
-    if(openAfterDownload)
-        [self _openDownloadedFile];
-}
-
-- (void) _setOpenAfterDownload:(BOOL)open
-{
-    openAfterDownload = open;
     if(path){
-        [self _openDownloadedFile];
+        // FIXME: Should probably not replace existing file
+        // FIXME: Should report error if there is one
+        fileManager = [NSFileManager defaultManager];
+        [fileManager createFileAtPath:path contents:[urlHandle resourceData] attributes:nil];
+        NSLog(@"Download complete. Saved to: %@", path);
+        
+        // Send Finder notification
+        NSLog(@"Notifying Finder");
+        FNNotifyByPath([[path stringByDeletingLastPathComponent] cString], kFNDirectoryModifiedMessage, kNilOptions);
+        
+        if(shouldOpen)
+            [self _openFile];
     }
-}
-
-- (void) dealloc
-{
-    [mimeHandler release];
-    [urlHandle release];
-    [path release];
 }
 
 @end
@@ -116,6 +122,9 @@
     ((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) = [[IFDownloadHandlerPrivate alloc] init];
     [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _setURLHandle:uHandle];
     [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _setMIMEHandler:mHandler];
+    
+    NSLog(@"Downloading: %@", [uHandle url]);
+    
     return self;
 }
 

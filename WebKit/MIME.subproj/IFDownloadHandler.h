@@ -17,7 +17,8 @@
 
 - (NSURL *) url;
 - (IFMIMEHandler *) mimeHandler;
+- (NSString *) suggestedFilename;
 - (void) cancelDownload;
 - (void) storeAtPath:(NSString *)path;
-- (void) setOpenAfterDownload:(BOOL)open;
+- (void) openAfterDownload:(BOOL)open;
 @end

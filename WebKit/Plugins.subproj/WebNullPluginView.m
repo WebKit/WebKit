@@ -8,6 +8,10 @@
 #import "IFWebView.h"
 #import "IFBaseWebController.h"
 
+
+static BOOL imageLoaded = NO;
+static NSImage *image = nil;
+
 @implementation IFNullPluginView
 
 static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *arguments) 
@@ -26,10 +30,15 @@ static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *argume
     
     self = [super initWithFrame:frame];
     if (self) {
+    
         // Set the view's image to the null plugin icon
-        bundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
-        imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
-        [self setImage:[[NSImage alloc] initWithContentsOfFile:imagePath]];
+        if(!imageLoaded){
+            bundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
+            imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
+            image = [[NSImage alloc] initWithContentsOfFile:imagePath];
+            imageLoaded = YES;
+        }
+        [self setImage:image];
         
         pluginPageString = [arguments objectForKey:@"pluginspage"];
         if(pluginPageString)
@@ -37,7 +46,7 @@ static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *argume
         if(mime)
             mimeType = [mime retain];
         
-        errorSent = false;
+        errorSent = NO;
     }
     return self;
 }
@@ -65,7 +74,7 @@ static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *argume
         webView = [self findSuperview:@"IFWebView"];
         webController = [webView controller];
         [webController pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
-        errorSent = TRUE;
+        errorSent = YES;
     }
 }
 

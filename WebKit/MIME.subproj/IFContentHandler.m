@@ -40,6 +40,7 @@ static BOOL textDocumentLoaded = NO;
                     [data release];
                 }
             }
+            imageDocumentLoaded = YES;
         }
         return [NSString stringWithFormat:imageDocumentTemplate, URLString, URLString];
     }
@@ -53,9 +54,10 @@ static BOOL textDocumentLoaded = NO;
                     pluginDocumentTemplate = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
                     [data release];
                 }
-            }            
+            }    
+            pluginDocumentLoaded = YES;        
         }
-        return [NSString stringWithFormat:pluginDocumentTemplate, URLString, URLString, MIMEType];    
+        return [NSString stringWithFormat:pluginDocumentTemplate, URLString, URLString, MIMEType, @"%", @"%"];    
     }
 
     else if(handlerType == IFMIMEHANDLERTYPE_TEXT){    
@@ -67,7 +69,8 @@ static BOOL textDocumentLoaded = NO;
                     textDocumentTemplate = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
                     [data release];
                 }
-            }        
+            }
+            textDocumentLoaded = YES;        
         }
         return [NSString stringWithFormat:textDocumentTemplate, URLString];
     }

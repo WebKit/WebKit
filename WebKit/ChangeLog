@@ -1,3 +1,35 @@
+2002-04-15  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+
+	* MIME.subproj/IFContentHandler.m: (-[IFContentHandler HTMLDocument]):
+
+	Made sure I didn't unnecessarily allocate html document strings
+
+	* MIME.subproj/IFDownloadHandler.h:
+	* MIME.subproj/IFDownloadHandler.m: (-[IFDownloadHandler suggestedFilename]),
+	(-[IFDownloadHandler openAfterDownload:]):
+
+	Added the mentioned API's
+
+	* MIME.subproj/IFDownloadHandlerPrivate.h:
+	* MIME.subproj/IFDownloadHandlerPrivate.m: (-[IFDownloadHandlerPrivate init]),
+	(-[IFDownloadHandlerPrivate dealloc]), (-[IFDownloadHandlerPrivate
+	_suggestedFilename]), (-[IFDownloadHandlerPrivate _cancelDownload]),
+	(-[IFDownloadHandlerPrivate _storeAtPath:]), (-[IFDownloadHandlerPrivate
+	_finishedDownload]), (-[IFDownloadHandlerPrivate _openAfterDownload:]),
+	(-[IFDownloadHandlerPrivate _openFile]), (-[IFDownloadHandlerPrivate _saveFile]),
+	(-[IFDownloadHandler _initWithURLHandle:mimeHandler:]):
+
+	Cleaned up and added a lot error checking code to IFDownloadHandlerPrivate
+
+	* Plugins.subproj/IFNullPluginView.mm: (-[IFNullPluginView
+	initWithFrame:mimeType:arguments:]), (-[IFNullPluginView drawRect:]):
+
+	Made sure I didn't unnecessarily allocate images
+
+	* Resources/plugin_document_template.html:
+
+	Plugins now have 100% of the window
+
 2002-04-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed build failure. Forgot to make IFDownloadHandler.h

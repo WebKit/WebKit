@@ -15,17 +15,20 @@
     IFMIMEHandler *mimeHandler;
     IFURLHandle *urlHandle;
     NSString *path;
-    BOOL openAfterDownload;
+    BOOL shouldOpen, downloadCompleted;
 }
 
 - (void) _setMIMEHandler:(IFMIMEHandler *) mHandler;
 - (void) _setURLHandle:(IFURLHandle *)uHandle;
 - (NSURL *) _url;
 - (IFMIMEHandler *) _mimeHandler;
+- (NSString *) _suggestedFilename;
 - (void) _cancelDownload;
 - (void) _storeAtPath:(NSString *)newPath;
 - (void) _finishedDownload;
-- (void) _setOpenAfterDownload:(BOOL)open;
+- (void) _openAfterDownload:(BOOL)open;
+- (void) _openFile;
+- (void) _saveFile;
 
 @end
 
