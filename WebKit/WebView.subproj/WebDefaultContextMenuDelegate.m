@@ -7,7 +7,10 @@
 
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuHandler.h>
+#import <WebKit/WebControllerPolicyHandler.h>
+#import <WebKit/WebControllerPolicyHandlerPrivate.h>
 #import <WebKit/WebFrame.h>
 
 @implementation WebDefaultContextMenuHandler
@@ -94,9 +97,30 @@
     [[controller windowContext] openNewWindowWithURL:URL];
 }
 
+- (void)downloadURL:(NSURL *)URL
+{
+    WebFrame *webFrame = [element objectForKey:WebContextFrame];
+    WebController *controller = [webFrame controller];
+    WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
+
+    // FIXME: This is a hack
+    WebContentPolicy *contentPolicy = [[controller policyHandler] contentPolicyForMIMEType:@"application/octet-stream" dataSource:dataSource];
+    [contentPolicy _setPolicyAction:WebContentPolicySave];
+    [dataSource _setContentPolicy:contentPolicy];
+    if([webFrame setProvisionalDataSource:dataSource]){
+        [webFrame startLoading];
+    }
+    [dataSource release];
+}
+
 - (void)openLinkInNewWindow:(id)sender
 {
     [self openNewWindowWithURL:[element objectForKey:WebContextLinkURL]];
+}
+
+- (void)downloadLinkToDisk:(id)sender
+{
+    [self downloadURL:[element objectForKey:WebContextLinkURL]];
 }
 
 - (void)copyLinkToClipboard:(id)sender
@@ -112,6 +136,11 @@
 - (void)openImageInNewWindow:(id)sender
 {
     [self openNewWindowWithURL:[element objectForKey:WebContextImageURL]];
+}
+
+- (void)downloadImageToDisk:(id)sender
+{
+    [self downloadURL:[element objectForKey:WebContextImageURL]];
 }
 
 - (void)copyImageToClipboard:(id)sender

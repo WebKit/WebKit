@@ -8,90 +8,97 @@
 
 #import <WebKit/WebControllerPolicyHandler.h>
 
+@interface WebPolicyPrivate : NSObject
+{
+@public
+    WebPolicyAction policyAction;
+    NSString *path;
+}
+@end
 
-@implementation WebPolicy : NSObject
-- initWithPolicyAction: (WebPolicyAction)action
+@implementation WebPolicyPrivate
+
+- (void)dealloc
+{
+    [path release];
+}
+
+@end
+
+@implementation WebPolicy
+- initWithPolicyAction: (WebPolicyAction)action andPath:(NSString *)path;
 {
     [super init];
-    policyAction = action;
+    _private = [[WebPolicyPrivate alloc] init];
+    _private->policyAction = action;
+    _private->path = [path retain];
     return self;
+}
+
+- (void)_setPolicyAction:(WebPolicyAction)policyAction
+{
+    _private->policyAction = policyAction;
 }
 
 - (WebPolicyAction)policyAction
 {
-    return policyAction;
+    return _private->policyAction;
+}
+
+- (NSString *)path
+{
+    return _private->path;
+}
+
+- (void)_setPath:(NSString *)path
+{
+    [_private->path release];
+    _private->path = [path retain];
+}
+
+
+- (void)dealloc
+{
+    [_private release];
+    [super dealloc];
 }
 
 @end
 
-@implementation WebURLPolicy : WebPolicy
+@implementation WebURLPolicy
 
 + webPolicyWithURLAction: (WebURLAction)action
 {
-    return [[[WebURLPolicy alloc] initWithPolicyAction:action] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:nil] autorelease];
 }
 
 @end
 
-@implementation WebFileURLPolicy : WebPolicy
+@implementation WebFileURLPolicy
 
 + webPolicyWithFileAction: (WebFileAction)action
 {
-    return [[[WebURLPolicy alloc] initWithPolicyAction:action] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:nil] autorelease];
 }
 
 @end
 
-@implementation WebContentPolicy : WebPolicy
+@implementation WebContentPolicy
 
 + webPolicyWithContentAction: (WebContentAction)action andPath: (NSString *)thePath
 {
-    return [[[WebContentPolicy alloc] initWithContentPolicyAction:action andPath:thePath] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:thePath] autorelease];
 }
 
-- initWithContentPolicyAction: (WebContentAction)action andPath: (NSString *)thePath
-{
-    [super initWithPolicyAction:action];
-    path = [thePath retain];
-    return self;
-}
-
-- (void)dealloc
-{
-    [path release];
-    [super dealloc];
-}
-
-- (NSString *)path
-{
-    return path;
-}
 
 @end
 
-@implementation WebClickPolicy : WebPolicy
-
-- initWithClickPolicyAction: (WebClickAction)action andPath: (NSString *)thePath
-{
-    [super initWithPolicyAction:action];
-    path = [thePath retain];
-    return self;
-}
+@implementation WebClickPolicy
 
 + webPolicyWithClickAction: (WebClickAction)action andPath: (NSString *)thePath
 {
-    return [[[WebClickPolicy alloc] initWithClickPolicyAction:action andPath:thePath] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:thePath] autorelease];
 }
 
-- (void)dealloc
-{
-    [path release];
-    [super dealloc];
-}
-
-- (NSString *)path
-{
-    return path;
-}
 
 @end

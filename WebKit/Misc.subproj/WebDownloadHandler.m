@@ -6,6 +6,7 @@
 //  Copyright (c) 2002 Apple Computer, Inc.
 //
 
+#import <WebKit/WebControllerPolicyHandlerPrivate.h>
 #import <WebKit/WebDownloadHandler.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitDebug.h>
@@ -48,7 +49,7 @@
                 newPathWithoutExtension = [NSString stringWithFormat:@"%@-%d", pathWithoutExtension, i];
                 path = [newPathWithoutExtension stringByAppendingPathExtension:extension];
                 if(![fileManager fileExistsAtPath:path]){
-                    //[dataSource _setDownloadPath:path];
+                    [[dataSource contentPolicy] _setPath:path];
                     break;
                 }
             }

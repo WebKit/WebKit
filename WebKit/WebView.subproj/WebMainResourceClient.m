@@ -188,11 +188,11 @@
         // This happens in the cases mentioned in 2981866 and 2965312.
         downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
 
-        if([[dataSource contentPolicy] policyAction] == WebContentPolicyNone){
+        if(![dataSource contentPolicy]){
             contentPolicy = [[controller policyHandler] contentPolicyForMIMEType: contentType dataSource: dataSource];
-            policyAction = [contentPolicy policyAction];
             [dataSource _setContentPolicy:contentPolicy];
         }
+        policyAction = [[dataSource contentPolicy] policyAction];
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }

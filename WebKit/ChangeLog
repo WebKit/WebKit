@@ -1,5 +1,34 @@
 2002-07-25  Chris Blumenberg  <cblu@apple.com>
 
+	Made some WebPolicy API's private
+	Added support for download link/image to disk
+
+        * Misc.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler receivedData:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPolicyHandler.h:
+        * WebView.subproj/WebControllerPolicyHandler.m:
+        (-[WebPolicyPrivate dealloc]):
+        (-[WebPolicy _setPolicyAction:]):
+        (-[WebPolicy policyAction]):
+        (-[WebPolicy path]):
+        (-[WebPolicy _setPath:]):
+        (-[WebPolicy dealloc]):
+        (+[WebURLPolicy webPolicyWithURLAction:]):
+        (+[WebFileURLPolicy webPolicyWithFileAction:]):
+        (+[WebContentPolicy webPolicyWithContentAction:andPath:]):
+        (+[WebClickPolicy webPolicyWithClickAction:andPath:]):
+        * WebView.subproj/WebControllerPolicyHandlerPrivate.h: Added.
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (-[WebDefaultContextMenuHandler downloadURL:]):
+        (-[WebDefaultContextMenuHandler downloadLinkToDisk:]):
+        (-[WebDefaultContextMenuHandler openImageInNewWindow:]):
+        (-[WebDefaultContextMenuHandler downloadImageToDisk:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient WebResourceHandle:dataDidBecomeAvailable:]):
+
+2002-07-25  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed crasher caused by not retaining the content policy.
 
         * WebView.subproj/WebControllerPolicyHandler.h:
