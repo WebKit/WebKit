@@ -69,10 +69,10 @@ static WebHistory *_sharedHistory = nil;
     }
 }
 
-- (id)initWithFile: (NSString *)file;
+- (id)initWithContentsOfURL: (NSURL *)URL
 {
     if ((self = [super init]) != nil) {
-        _historyPrivate = [[WebHistoryPrivate alloc] initWithFile:file];
+        _historyPrivate = [[WebHistoryPrivate alloc] initWithContentsOfURL:URL];
     }
 
     return self;
@@ -172,9 +172,9 @@ static WebHistory *_sharedHistory = nil;
 
 #pragma mark SAVING TO DISK
 
-- (NSString *)file
+- (NSURL *)URL
 {
-    return [_historyPrivate file];
+    return [_historyPrivate URL];
 }
 
 - (BOOL)loadHistory

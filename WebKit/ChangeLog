@@ -1,3 +1,23 @@
+2003-03-27  Richard Williamson   <rjw@apple.com>
+
+        API change: WebHistory initWithFile: -> initWithContentsOfURL:
+        
+        Reviewed by Ken.
+
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        (-[WebHistory initWithContentsOfURL:]):
+        (-[WebHistory URL]):
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate initWithContentsOfURL:]):
+        (-[WebHistoryPrivate dealloc]):
+        (-[WebHistoryPrivate _loadHistoryGuts:]):
+        (-[WebHistoryPrivate loadHistory]):
+        (-[WebHistoryPrivate _saveHistoryGuts:]):
+        (-[WebHistoryPrivate URL]):
+        (-[WebHistoryPrivate saveHistory]):
+
 2003-03-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Shelley.

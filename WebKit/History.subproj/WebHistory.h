@@ -41,17 +41,18 @@ extern NSString *WebHistoryLoadedNotification;
 
 /*!
     @method createSharedHistoryWithFile:
-    @param file The file to use to initialize the WebHistory.
+    @param history The history to use for the global WebHistory.
     @result Returns a WebHistory initialized with the contents of file.
 */
-+ (void)setSharedHistory:(WebHistory *)file;
++ (void)setSharedHistory:(WebHistory *)history;
 
 /*!
-    @method initWithFile:
+    @method initWithContentsOfURL:
+    @param URL The URL to use to initialize the WebHistory.
     @abstract The designated initializer for WebHistory.
     @result Returns an initialized WebHistory.
 */
-- initWithFile:(NSString *)file;
+- initWithContentsOfURL:(NSURL *)URL;
 
 /*!
     @method addEntries:
@@ -109,7 +110,7 @@ extern NSString *WebHistoryLoadedNotification;
     @discussion The file path used for storing history, specified in -[WebHistory initWithFile:] or +[WebHistory webHistoryWithFile:]
     @result Returns the file path used to store the history.
 */
-- (NSString *)file;
+- (NSURL *)URL;
 
 /*!
     @method loadHistory

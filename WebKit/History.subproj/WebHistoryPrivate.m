@@ -35,7 +35,7 @@
             nil]];    
 }
 
-- (id)initWithFile: (NSString *)file
+- (id)initWithContentsOfURL: (NSURL *)URL
 {
     if (![super init]) {
         return nil;
@@ -44,7 +44,7 @@
     _entriesByURL = [[NSMutableDictionary alloc] init];
     _datesWithEntries = [[NSMutableArray alloc] init];
     _entriesByDate = [[NSMutableArray alloc] init];
-    _file = [file retain];
+    _URL = [URL retain];
 
     // read history from disk
     [self loadHistory];
@@ -57,7 +57,7 @@
     [_entriesByURL release];
     [_datesWithEntries release];
     [_entriesByDate release];
-    [_file release];
+    [_URL release];
     
     [super dealloc];
 }
@@ -338,14 +338,8 @@
     return arrayRep;
 }
 
-- (NSString *)file
-{
-    return _file;
-}
-
 - (BOOL)_loadHistoryGuts: (int *)numberOfItemsLoaded
 {
-    NSString *path;
     NSArray *array;
     NSEnumerator *enumerator;
     NSDictionary *dictionary;
@@ -356,17 +350,9 @@
 
     *numberOfItemsLoaded = 0;
 
-    path = [self file];
-    if (path == nil) {
-        ERROR("couldn't load history; couldn't find or create directory to store it in");
-        return NO;
-    }
-
-    array = [NSArray arrayWithContentsOfFile: path];
+    array = [NSArray arrayWithContentsOfURL: [self URL]];
     if (array == nil) {
-        if ([[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            ERROR("attempt to read history from %@ failed; perhaps contents are corrupted", path);
-        } // else file doesn't exist, which is a normal initial state, so don't spam
+        ERROR("attempt to read history from %@ failed; perhaps contents are corrupted", [[self URL] absoluteString]);
         return NO;
     }
 
@@ -418,7 +404,7 @@
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         LOG(Timing, "loading %d history entries from %@ took %f seconds",
-            numberOfItems, [self file], duration);
+            numberOfItems, [[self URL] absoluteString], duration);
     }
 
     return result;
@@ -426,25 +412,24 @@
 
 - (BOOL)_saveHistoryGuts: (int *)numberOfItemsSaved
 {
-    NSString *path;
     NSArray *array;
     *numberOfItemsSaved = 0;
 
-    path = [self file];
-    if (path == nil) {
-        ERROR("couldn't save history; couldn't find or create directory to store it in");
-        return NO;
-    }
-
     array = [self arrayRepresentation];
-    if (![array writeToFile:path atomically:YES]) {
-        ERROR("attempt to save %@ to %@ failed", array, path);
+    if (![array writeToURL:[self URL] atomically:YES]) {
+        ERROR("attempt to save %@ to %@ failed", array, [[self URL] absoluteString]);
         return NO;
     }
     
     *numberOfItemsSaved = [array count];
     return YES;
 }
+
+- (NSURL *)URL
+{
+    return _URL;
+}
+
 
 - (BOOL)saveHistory
 {
@@ -458,7 +443,7 @@
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         LOG(Timing, "saving %d history entries to %@ took %f seconds",
-            numberOfItems, [self file], duration);
+            numberOfItems, [[self URL] absoluteString], duration);
     }
 
     return result;
