@@ -1,3 +1,16 @@
+2003-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3058229 -- two failures in DOM test page for HTMLSelectElement
+        - fixed 3138938 -- choose another member name on .Mac signup not working as expected
+        - fixed 3155763 -- Safari autoselects first item in a WOBrowser/<select>
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLSelectElementImpl::value): Return "" rather than null when nothing is selected.
+        (HTMLSelectElementImpl::recalcListItems): Don't automatically select a first item
+	in the single selection case.
+
 2003-01-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3146066, messed up lists on dictionary.com.  Make
