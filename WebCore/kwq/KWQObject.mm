@@ -54,6 +54,7 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
     if (!signal) {
 #if !ERROR_DISABLED
         if (1
+            && !KWQNamesMatch(member, SIGNAL(setStatusBarText(const QString &)))
             && !KWQNamesMatch(member, SLOT(parentDestroyed()))
             && !KWQNamesMatch(member, SLOT(slotData(KIO::Job *, const QByteArray &)))
             && !KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *)))
@@ -64,6 +65,7 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
             && !KWQNamesMatch(member, SLOT(slotLoaderRequestStarted(khtml::DocLoader *, khtml::CachedObject *)))
             && !KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL &)))
             && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))
+            && !KWQNamesMatch(member, SLOT(slotViewCleared()))
             && !KWQNamesMatch(member, SLOT(slotWidgetDestructed()))
             )
 	ERROR("connecting member %s to signal %s, but that signal was not found", member, signalName);

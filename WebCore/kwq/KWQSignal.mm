@@ -51,27 +51,36 @@ KWQSignal::~KWQSignal()
 
 void KWQSignal::connect(const KWQSlot &slot)
 {
-    if (!m_slot.isEmpty()) {
-        ERROR("multiple connects to the same signal are not supported");
-        return;
+    const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+    for (int i = 0; i != numSlots; ++i) {
+        if (m_slots[i].isEmpty()) {
+            m_slots[i] = slot;
+            return;
+        }
     }
-    m_slot = slot;
+    ERROR("more than %d connections to the same signal not supported, %s", numSlots, m_name);
 }
 
 void KWQSignal::disconnect(const KWQSlot &slot)
 {
-    if (m_slot != slot) {
-        ERROR("disconnecting a signal that wasn't connected");
-        return;
+    const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+    for (int i = 0; i != numSlots; ++i) {
+        if (m_slots[i] == slot) {
+            m_slots[i].clear();
+            return;
+        }
     }
-    m_slot.clear();
+    ERROR("disconnecting a signal that wasn't connected, %s", m_name);
 }
 
 void KWQSignal::call() const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        m_slot.call();
+        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        for (int i = 0; i != numSlots; ++i) {
+            m_slots[i].call();
+        }
     }
 }
 
@@ -79,15 +88,21 @@ void KWQSignal::call(bool b) const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        m_slot.call(b);
+        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        for (int i = 0; i != numSlots; ++i) {
+            m_slots[i].call(b);
+        }
     }
 }
 
-void KWQSignal::call(int i) const
+void KWQSignal::call(int j) const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        m_slot.call(i);
+        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        for (int i = 0; i != numSlots; ++i) {
+            m_slots[i].call(j);
+        }
     }
 }
 
@@ -95,7 +110,10 @@ void KWQSignal::call(const QString &s) const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        m_slot.call(s);
+        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        for (int i = 0; i != numSlots; ++i) {
+            m_slots[i].call(s);
+        }
     }
 }
 
@@ -103,6 +121,9 @@ void KWQSignal::call(Job *j) const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        m_slot.call(j);
+        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        for (int i = 0; i != numSlots; ++i) {
+            m_slots[i].call(j);
+        }
     }
 }

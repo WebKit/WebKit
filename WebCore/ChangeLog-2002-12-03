@@ -1,5 +1,24 @@
 2002-09-13  Darin Adler  <darin@apple.com>
 
+	Quiet error messages related to the slot/signal changes.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::startAutoScroll): Ifdef this out.
+        (KHTMLPart::stopAutoScroll): Ditto.
+
+        * kwq/KWQObject.mm:
+        (QObject::connect): Add two more expected members to the list for
+	setStatusBarText and slotViewCleared.
+
+        * kwq/KWQSignal.h: Allow 4 slots per signal.
+	I don't want to make it a variable number, but we can if we have to.
+        * kwq/KWQSignal.mm:
+        (KWQSignal::connect): Support multiple slots.
+        (KWQSignal::disconnect): Support multiple slots.
+        (KWQSignal::call): Support multiple slots.
+
+2002-09-13  Darin Adler  <darin@apple.com>
+
 	Fix assertion that happens on any page that has a non-HTML frame.
 
 	We were sending signals for objects in m_objects that are only supposed
