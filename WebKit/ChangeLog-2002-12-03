@@ -1,3 +1,9 @@
+ --2002-10-08  John Sullivan  <sullivan@apple.com>
+
+        * WebKit.pbproj/project.pbxproj:
+	Project Builder says I changed it only by setting
+	"hasScannedForEncodings" to 1 -- version wars again?
+
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
         Removed unnecessary (and incorrect) include.
