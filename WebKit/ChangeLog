@@ -1,6 +1,30 @@
+2003-03-24  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3155489 - Seed: PostScript files display instead of downloading, often as a blank page
+	Fixed: 3106251 - quicken file not downloaded, can't save manually
+
+        Reviewed by trey.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (+[WebDataSource _repTypes]): call [WebImageView supportedImageMIMETypes]
+        * WebView.subproj/WebFrameViewPrivate.m:
+        (+[WebFrameView _viewTypes]): call [WebImageView supportedImageMIMETypes]
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m:
+        (+[WebImageView initialize]): was -initialize (oops)
+        (+[WebImageView unsupportedImageMIMETypes]): new, AppKit images that we shouldn't display inline, includes ps and pdf
+        (+[WebImageView supportedImageMIMETypes]): new, was in WebViewPrivate
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (+[WebTextView unsupportedTextMIMETypes]): renamed, added text/qif (quicken)
+        * WebView.subproj/WebView.m:
+        (+[WebView canShowMIMEType:]): call [WebTextView unsupportedTextMIMETypes]
+        * WebView.subproj/WebViewPrivate.h: removed _supportedImageMIMETypes
+        * WebView.subproj/WebViewPrivate.m: removed _supportedImageMIMETypes
+
 2003-03-24  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by hyatt.
 
         Moved closer to target API for NSURLRequest. Merged in
         final names for immutable and mutable versions of this

@@ -256,7 +256,7 @@
             [WebTextView class], @"application/x-javascript",
             nil];
 
-        NSEnumerator *enumerator = [[WebView _supportedImageMIMETypes] objectEnumerator];
+        NSEnumerator *enumerator = [[WebImageView supportedImageMIMETypes] objectEnumerator];
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
             [viewTypes setObject:[WebImageView class] forKey:mime];

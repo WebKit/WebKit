@@ -17,13 +17,16 @@
 
 @implementation WebTextView
 
-+ (NSArray *)unshowableMIMETypes
++ (NSArray *)unsupportedTextMIMETypes
 {
     return [NSArray arrayWithObjects:
-        @"text/calendar",
+        @"text/calendar",	// iCal
         @"text/x-calendar",
-        @"text/vcard",
-        @"text/x-vcard", nil];
+        @"text/vcard",		// vCard
+        @"text/x-vcard",
+        @"text/qif",		// Quicken
+        @"text/x-qif",
+        nil];
 }
 
 - (id)initWithFrame:(NSRect)frame

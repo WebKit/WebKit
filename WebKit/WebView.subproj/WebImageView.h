@@ -14,4 +14,7 @@
     WebImageRepresentation *representation;
     BOOL didSetFrame;
 }
+
++ (NSArray *)supportedImageMIMETypes;
+
 @end

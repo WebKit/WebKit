@@ -15,12 +15,46 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebFileTypeMappings.h>
+
 
 @implementation WebImageView
 
-- (void)initialize
++ (void)initialize
 {
     [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObject:NSTIFFPboardType] returnTypes:nil];
+}
+
++ (NSArray *)unsupportedImageMIMETypes
+{
+    return [NSArray arrayWithObjects:
+        @"application/pdf",
+        @"application/postscript",
+        nil];
+}
+
++ (NSArray *)supportedImageMIMETypes
+{
+    static NSArray *imageMIMETypes = nil;
+
+    if(!imageMIMETypes){
+        NSEnumerator *enumerator = [[NSImage imageFileTypes] objectEnumerator];
+        WebFileTypeMappings *mappings = [WebFileTypeMappings sharedMappings];
+        NSMutableSet *mimes = [NSMutableSet set];
+        NSString *type;
+
+        while ((type = [enumerator nextObject]) != nil) {
+            NSString *mime = [mappings MIMETypeForExtension:type];
+            if(mime && ![mime isEqualToString:@"application/octet-stream"] &&
+               ![[self unsupportedImageMIMETypes] containsObject:mime]){
+                [mimes addObject:mime];
+            }
+        }
+
+        imageMIMETypes = [[mimes allObjects] retain];
+    }
+
+    return imageMIMETypes;
 }
 
 - (id)initWithFrame:(NSRect)frame

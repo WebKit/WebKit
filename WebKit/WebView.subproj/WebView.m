@@ -28,7 +28,6 @@
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSUserDefaultsExtras.h>
 #import <WebFoundation/WebResource.h>
 
@@ -72,7 +71,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     if (viewClass && repClass) {
         if (viewClass == [WebTextView class] &&
             repClass == [WebTextRepresentation class] &&
-            [[WebTextView unshowableMIMETypes] containsObject:MIMEType]) {
+            [[WebTextView unsupportedTextMIMETypes] containsObject:MIMEType]) {
             return NO;
         }
         return YES;

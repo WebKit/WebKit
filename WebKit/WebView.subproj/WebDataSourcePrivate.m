@@ -19,6 +19,7 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRepresentation.h>
+#import <WebKit/WebImageView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
@@ -442,7 +443,7 @@
             [WebTextRepresentation class], @"application/x-javascript",
             nil];
 
-        NSEnumerator *enumerator = [[WebView _supportedImageMIMETypes] objectEnumerator];
+        NSEnumerator *enumerator = [[WebImageView supportedImageMIMETypes] objectEnumerator];
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
             [repTypes setObject:[WebImageRepresentation class] forKey:mime];
