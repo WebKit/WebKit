@@ -14,7 +14,7 @@ qdraw: qdraw.o
 #clean:
 #	rm *.o qdraw kwqdraw
 clean:
-    rm *.o qdraw
 
+	rm *.o qdraw
 #all: qdraw kwqdraw
 all: qdraw

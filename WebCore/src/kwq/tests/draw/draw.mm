@@ -52,7 +52,9 @@
 #include <qapplication.h>
 #include <qpoint.h>
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 
 // Voodoo required to get compiler to compile correctly.
 #undef DEBUG
