@@ -1240,9 +1240,9 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
 #endif
             bool beginTag = !currToken.flat && (tagID < ID_CLOSE_TAG);
 
-            if(tagID >= ID_CLOSE_TAG)
+            if (tagID >= ID_CLOSE_TAG)
                 tagID -= ID_CLOSE_TAG;
-            else if ( beginTag && tagID == ID_SCRIPT ) {
+            else if (tagID == ID_SCRIPT) {
                 AttributeImpl* a = 0;
                 scriptSrc = QString::null;
                 scriptSrcCharset = QString::null;
@@ -1293,6 +1293,8 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                     script = true;
                     parseSpecial(src);
                 }
+                else if (tagID < ID_CLOSE_TAG) // Handle <script src="foo"/>
+                    scriptHandler();
                 break;
             case ID_STYLE:
                 if (beginTag) {

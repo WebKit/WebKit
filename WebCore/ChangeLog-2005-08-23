@@ -1,3 +1,13 @@
+2003-12-09  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3491235, really make <script src="..."/> work in HTML.  My original attempt to fix this only made
+	the tag flat, but did not ensure that the script got processed.
+	
+        Reviewed by john
+
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag):
+
 2003-12-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3503652, news.com misrenders badly (footer is out of position).  My fix to 3495748 caused this
