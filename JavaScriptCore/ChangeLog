@@ -1,3 +1,11 @@
+2003-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3138213 -- browser hangs trying to open Apple travel site
+
+        * kjs/date_object.cpp: (timetUsingCF): Check for very-negative year numbers too.
+
 === Alexander-48 ===
 
 === Alexander-47 ===

@@ -133,9 +133,9 @@ static time_t timetUsingCF(struct tm *tm, CFTimeZoneRef timeZone)
     date.month = tm->tm_mon + 1;
     date.year = tm->tm_year + 1900;
 
-    // CFGregorianDateGetAbsoluteTime will go nuts if the year is too large,
+    // CFGregorianDateGetAbsoluteTime will go nuts if the year is too large or small,
     // so we pick an arbitrary cutoff.
-    if (date.year > 2500) {
+    if (date.year < -2500 || date.year > 2500) {
         return invalidDate;
     }
 
