@@ -1,3 +1,12 @@
+2002-08-30  Richard Williamson (Home)  <rjw@apple.com>
+
+        Change link dragging behavior.  Drags URL, not URL contents.
+        Still need to generate better image for dragging, will copy OmniWeb
+        and drag link text.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
 2002-08-30  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Allowed the new Project Builder to put in

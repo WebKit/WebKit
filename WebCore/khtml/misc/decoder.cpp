@@ -356,14 +356,24 @@ QString Decoder::decode(const char *data, int len)
                     i--;
                 }
             }
+#ifdef APPLE_CHANGES
+            QString appendString(data, len);
+            buffer += appendString;
+#else
             buffer += QCString(data, len+1);
-
+#endif
             // we still don't have an encoding, and are in the head
             // the following tags are allowed in <head>:
             // SCRIPT|STYLE|META|LINK|OBJECT|TITLE|BASE
 
+#ifdef APPLE_CHANGES
+            const char *ptr = buffer.latin1();
+            int pLen = buffer.length();
+            while(pLen--)
+#else
             const char *ptr = buffer.data();
             while(*ptr != '\0')
+#endif
             {
                 if(*ptr == '<') {
                     bool end = false;
@@ -461,7 +471,8 @@ QString Decoder::decode(const char *data, int len)
     }
 #ifdef APPLE_CHANGES
     else {
-        buffer += QCString(data, len+1);
+        QString appendString(data, len);
+        buffer += appendString;
     } 
 #endif /* APPLE_CHANGES */
 
@@ -515,7 +526,7 @@ QString Decoder::decode(const char *data, int len)
 #else
     if(!buffer.isEmpty() && enc != "ISO-10646-UCS-2") {
 #endif
-        out = m_decoder->toUnicode(buffer, buffer.length());
+        out = m_decoder->toUnicode(buffer.latin1(), buffer.length());
         buffer = "";
     } else {
         if(m_codec->mibEnum() != 1000) // utf16
@@ -550,7 +561,7 @@ QString Decoder::decode(const char *data, int len)
 
 QString Decoder::flush() const
 {
-    return m_decoder->toUnicode(buffer, buffer.length());
+    return m_decoder->toUnicode(buffer.latin1(), buffer.length());
 }
 
 // -----------------------------------------------------------------------------

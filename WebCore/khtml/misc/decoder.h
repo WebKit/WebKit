@@ -53,8 +53,11 @@ protected:
     QTextDecoder *m_decoder; // only used for utf16
     QCString enc;
 
+#ifdef APPLE_CHANGES
+    QString buffer;
+#else
     QCString buffer;
-
+#endif
     bool body;
     bool beginning;
     bool visualRTL;

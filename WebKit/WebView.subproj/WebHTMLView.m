@@ -13,6 +13,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebTextRenderer.h>
@@ -435,9 +436,24 @@
                 _private->draggedURL = linkURL;
             
             [_private->draggedURL retain];
+            
+#ifdef DRAG_FILES
             NSArray *fileType = [NSArray arrayWithObject:[[_private->draggedURL path] pathExtension]];
             NSRect rect = NSMakeRect(point.x + -16, point.y - 16, 32, 32);
             [self dragPromisedFilesOfTypes: fileType fromRect: rect source: self slideBack: YES event: event];
+#else
+            NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+        
+            [pasteboard declareTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
+            [_private->draggedURL writeToPasteboard: pasteboard];
+            [self dragImage:[WebIconLoader defaultIcon]
+                        at:[self convertPoint:[event locationInWindow] fromView:nil]
+                    offset:NSMakeSize(0.0,0.0)
+                    event:event
+                pasteboard:pasteboard
+                    source:self
+                slideBack:NO];
+#endif
             return;
         }
     }
