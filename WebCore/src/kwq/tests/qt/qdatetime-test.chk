@@ -1,0 +1,7 @@
+QDateTime: [yy/mm/dd hh:mm:ss:ms = 1999/12/31 0:0:0:0]
+QDateTime: [yy/mm/dd hh:mm:ss:ms = 1999/12/31 23:59:59:999]
+assignment: QDateTime: [yy/mm/dd hh:mm:ss:ms = 1999/12/31 0:0:0:0]
+string: Fri Dec 31 00:00:00 1999
+setDate: QDateTime: [yy/mm/dd hh:mm:ss:ms = 2000/1/1 0:0:0:0]
+setTime: QDateTime: [yy/mm/dd hh:mm:ss:ms = 2000/1/1 0:0:0:999]
+setTime_t: QDateTime: [yy/mm/dd hh:mm:ss:ms = 2001/9/8 18:46:40:0]

@@ -45,6 +45,7 @@
 #endif
 
 #include <KWQDef.h>
+#include <iostream>
 
 // -------------------------------------------------------------------------
 
@@ -80,6 +81,7 @@ public:
     void  clear()			{ QGDict::clear(); }
     void  resize( uint n )		{ QGDict::resize(n); }
     void  statistics() const		{ QGDict::statistics(); }
+
 private:
     void  deleteItem( Item d );
 };
@@ -112,5 +114,26 @@ public:
     type *operator+=(uint j)  { return (type *)QGDictIterator::operator+=(j);}
 };
 
-
+#ifdef _KWQ_IOSTREAM_
+template <class T>
+ostream &operator<<(ostream &o, const QDict<T>&d)
+{
+    o <<
+        "QDict: [size: " <<
+        (Q_UINT32)d.count() <<
+        "; items: ";
+        QDictIterator<T> it = QDictIterator<T>(d);
+        int count = it.count();
+        for (int i = 0; i < count; i++) {
+            o << "(" << it.currentKey() << "," << *(it.current()) << ")";
+            if (i < count - 1) {
+                o << ", ";
+            }
+            ++it;
+        }
+        o << "]";
+        return o;
+}
+#endif
+                                                                                                                    
 #endif // QDICT_H

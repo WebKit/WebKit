@@ -264,5 +264,4 @@ inline QCollection::Item QGListIterator::get() const
     return curNode ? curNode->data : 0;
 }
 
-
 #endif	// QGLIST_H

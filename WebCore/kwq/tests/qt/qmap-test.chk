@@ -1,1 +1,5 @@
-QMap: [size: 2; items: (1,10), (2,20)]
+QMap: [size: 5; items: (1,10), (2,20), (3,30), (4,40), (5,50)]
+item keyed to 'one': 10
+remove item keyed to 'three': QMap: [size: 4; items: (1,10), (2,20), (4,40), (5,50)]
+d0 is empty: 1
+d1 is empty: 0

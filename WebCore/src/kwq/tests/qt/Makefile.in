@@ -29,8 +29,15 @@ PROGRAMS = \
     qvaluelist-test \
     qstringlist-test \
     qlist-test \
+    qvector-test \
+    qdict-test \
+    qptrdict-test \
+    qstack-test \
     qregexp-test \
     qchar-test \
+    qdate-test \
+    qtime-test \
+    qdatetime-test \
     $(NULL)
 
 CLEAN_FILES = *.o \
@@ -91,10 +98,31 @@ qstringlist-test: qstringlist-test.o
 qlist-test: qlist-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
+qvector-test: qvector-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qdict-test: qdict-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qptrdict-test: qptrdict-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qstack-test: qstack-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
 qregexp-test: qregexp-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 qchar-test: qchar-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qdate-test: qdate-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qtime-test: qtime-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qdatetime-test: qdatetime-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 depend: 

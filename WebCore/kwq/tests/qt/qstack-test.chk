@@ -1,0 +1,12 @@
+QStack: [size: 0; items: ]
+push test: 
+QStack: [size: 5; items: 4, 3, 2, 1, 0]
+pop test: 
+4
+3
+2
+1
+0
+QStack: [size: 5; items: 4, 3, 2, 1, 0]
+clear test: 
+QStack: [size: 0; items: ]

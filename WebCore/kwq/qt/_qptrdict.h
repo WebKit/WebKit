@@ -45,6 +45,7 @@
 #endif
 
 #include <KWQDef.h>
+#include <iostream>
 
 // -------------------------------------------------------------------------
 
@@ -108,6 +109,28 @@ public:
     type *operator++()	      { return (type *)QGDictIterator::operator++(); }
     type *operator+=(uint j)  { return (type *)QGDictIterator::operator+=(j);}
 };
+
+#ifdef _KWQ_IOSTREAM_
+template <class T>
+ostream &operator<<(ostream &o, const QPtrDict<T>&d)
+{
+    o <<
+        "QPtrDict: [size: " <<
+        (Q_UINT32)d.count() <<
+        "; items: ";
+        QPtrDictIterator<T> it = QPtrDictIterator<T>(d);
+        int count = it.count();
+        for (int i = 0; i < count; i++) {
+            o << "(" << it.currentKey() << "," << *(it.current()) << ")";
+            if (i < count - 1) {
+                o << ", ";
+            }
+            ++it;
+        }
+        o << "]";
+    return o;
+}
+#endif
 
 
 #endif // QPTRDICT_H

@@ -1364,6 +1364,61 @@ QDateTime QDateTime::currentDateTime()
   Date/time stream functions
  *****************************************************************************/
 
+#ifdef _KWQ_IOSTREAM_
+ostream &operator<<(ostream &o, const QDate &d)
+{
+    return o <<
+        "QDate: [yy/mm/dd: " <<
+        d.year() <<
+        '/' <<
+        d.month() <<
+        '/' <<
+        d.day() <<
+        ']';
+}
+#endif
+
+#ifdef _KWQ_IOSTREAM_
+ostream &operator<<(ostream &o, const QTime &t)
+{
+    return o <<
+        "QTime: [hh:mm:ss:ms = " <<
+        t.hour() <<
+        ':' <<
+        t.minute() <<
+        ':' <<
+        t.second() <<
+        ':' <<
+        t.msec() <<
+        ']';
+}
+#endif
+
+#ifdef _KWQ_IOSTREAM_
+ostream &operator<<(ostream &o, const QDateTime &dt)
+{
+    QDate d = dt.date();
+    QTime t = dt.time();
+    
+    return o <<
+        "QDateTime: [yy/mm/dd hh:mm:ss:ms = " <<
+        d.year() <<
+        '/' <<
+        d.month() <<
+        '/' <<
+        d.day() <<
+        ' ' << 
+        t.hour() <<
+        ':' <<
+        t.minute() <<
+        ':' <<
+        t.second() <<
+        ':' <<
+        t.msec() <<
+        ']';
+}
+#endif
+
 #ifndef QT_NO_DATASTREAM
 /*!
   \relates QDate
