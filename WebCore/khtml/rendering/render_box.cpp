@@ -235,9 +235,15 @@ void RenderBox::paintRootBoxDecorations(QPainter *p,int, int _y,
             bg = firstChild()->style()->backgroundImage();
     }
 
-    if( !c.isValid() && canvas()->view())
-        c = canvas()->view()->palette().active().color(QColorGroup::Base);
-
+    // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
+    // no background in the child document should show the parent's background.
+    if (!c.isValid() && canvas()->view()) {
+        if (element()->getDocument()->ownerElement())
+            canvas()->view()->useSlowRepaints(); // The parent must show behind the child.
+        else
+            c = canvas()->view()->palette().active().color(QColorGroup::Base);
+    }
+    
     int w = width();
     int h = height();
 

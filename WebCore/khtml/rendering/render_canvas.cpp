@@ -241,10 +241,25 @@ void RenderCanvas::paintObject(QPainter *p, int _x, int _y,
 void RenderCanvas::paintBoxDecorations(QPainter *p,int _x, int _y,
                                        int _w, int _h, int _tx, int _ty)
 {
+    // Check to see if we are enclosed by a transparent layer.  If so, we cannot blit
+    // when scrolling, and we need to use slow repaints.
+    DOM::ElementImpl* elt = element()->getDocument()->ownerElement();
+    if (view() && elt) {
+        RenderLayer* layer = elt->renderer()->enclosingLayer();
+        if (layer->isTransparent() || layer->transparentAncestor())
+            view()->useSlowRepaints();
+    }
+    
     if ((firstChild() && firstChild()->style()->visibility() == VISIBLE) || !view())
         return;
 
-    p->fillRect(_x,_y,_w,_h, view()->palette().active().color(QColorGroup::Base));
+    // This code typically only executes if the root element's visibility has been set to hidden.
+    // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
+    // no background in the child document should show the parent's background.
+    if (elt)
+        view()->useSlowRepaints(); // The parent must show behind the child.
+    else
+        p->fillRect(_x,_y,_w,_h, view()->palette().active().color(QColorGroup::Base));
 }
 
 void RenderCanvas::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)

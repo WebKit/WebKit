@@ -86,11 +86,7 @@ void RenderReplaced::calcMinMaxWidth()
     kdDebug( 6040 ) << "RenderReplaced::calcMinMaxWidth() known=" << minMaxKnown() << endl;
 #endif
 
-    int width = calcReplacedWidth();
-
-    if (!isWidget())
-        width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
-
+    int width = calcReplacedWidth() + paddingLeft() + paddingRight() + borderLeft() + borderRight();
     if ( style()->width().isPercent() || style()->height().isPercent() ) {
         m_minWidth = 0;
         m_maxWidth = width;
@@ -247,18 +243,10 @@ void RenderWidget::setStyle(RenderStyle *_style)
             m_widget->hide();
         }
     }
-
-    // do not paint background or borders for widgets
-    setShouldPaintBackgroundOrBorder(false);
 }
 
-#if APPLE_CHANGES
 void RenderWidget::paintObject(QPainter *p, int x, int y, int width, int height, int _tx, int _ty,
                                PaintAction paintAction)
-#else
-void RenderWidget::paintObject(QPainter* /*p*/, int, int, int, int, int _tx, int _ty,
-                               PaintAction paintAction)
-#endif
 {
     if (!m_widget || !m_view || paintAction != PaintActionForeground)
         return;

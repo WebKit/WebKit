@@ -1,3 +1,34 @@
+2003-07-11  Dave Hyatt  <hyatt@apple.com>
+
+	Fix pseudostyles to inherit from the element's style that they are
+	specified for.  This is incorrect both for ::first-line and
+	::first-letter, but it is at least right for ::before and ::after.
+
+	Fix iframes and objects and embeds so that they will render borders
+	when borders are specified (as well as background images).
+
+	Patch iframes so that they correctly let the parent document's
+	background show through when the Web page inside the iframe has
+	no specified background.  Also patched iframes to understand not
+	to blit in this case and to not blit when opacity has been specified
+	on the iframe.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintRootBoxDecorations):
+        * khtml/rendering/render_canvas.cpp:
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::setStyle):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::calcMinMaxWidth):
+        (RenderWidget::setStyle):
+        (RenderWidget::paintObject):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::paint):
+
 2003-07-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

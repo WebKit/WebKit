@@ -196,6 +196,9 @@ void RenderFormElement::setStyle(RenderStyle* _style)
     if (canHaveIntrinsicMargins())
         addIntrinsicMarginsIfAllowed(_style);
     RenderWidget::setStyle(_style);
+
+    // Do not paint a background or border for Aqua form elements
+    setShouldPaintBackgroundOrBorder(false);
 }
 #endif
 

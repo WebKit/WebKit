@@ -430,6 +430,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 		    //We have to do this for all pseudo styles
 		    RenderStyle *pseudoStyle = style->pseudoStyle;
 		    while ( pseudoStyle ) {
+                        checkForGenericFamilyChange(pseudoStyle, style);
 			pseudoStyle->htmlFont().update( paintDeviceMetrics );
 			pseudoStyle = pseudoStyle->pseudoStyle;
 		    }
@@ -446,17 +447,21 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
                 }
 
                 RenderStyle* oldStyle = style;
-		style = pseudoStyle;
+                RenderStyle* oldParentStyle = parentStyle;
+                parentStyle = style;
+                style = pseudoStyle;
                 if ( pseudoStyle ) {
                     DOM::CSSProperty *prop = pseudoProps[i]->prop;
                     applyRule( prop->m_id, prop->value() );
                 }
                 style = oldStyle;
+                parentStyle = oldParentStyle;
             }
 
 	    if ( fontDirty ) {
 		RenderStyle *pseudoStyle = style->pseudoStyle;
 		while ( pseudoStyle ) {
+                    checkForGenericFamilyChange(pseudoStyle, style);
 		    pseudoStyle->htmlFont().update( paintDeviceMetrics );
 		    pseudoStyle = pseudoStyle->pseudoStyle;
 		}

@@ -48,6 +48,7 @@ namespace DOM {
 
 namespace khtml {
     class RenderObject;
+    class RenderBox;
     class RenderCanvas;
     class RenderStyle;
     class RenderLineEdit;
@@ -78,6 +79,7 @@ class KHTMLView : public QScrollView
     friend class KHTMLPart;
     friend class khtml::RenderCanvas;
     friend class khtml::RenderObject;
+    friend class khtml::RenderBox;
     friend class khtml::RenderLineEdit;
     friend class khtml::RenderPartObject;
     friend class khtml::RenderWidget;

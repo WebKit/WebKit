@@ -737,7 +737,7 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 {
 #ifndef NDEBUG
     bool isPrinting = (p->device()->devType() == QInternal::Printer);
-    if (!isPrinting) {
+    if (!isPrinting && xmlDocImpl() && !xmlDocImpl()->ownerElement()) {
         p->fillRect(rect.x(), rect.y(), rect.width(), rect.height(), QColor(0xFF, 0, 0));
     }
 #endif
