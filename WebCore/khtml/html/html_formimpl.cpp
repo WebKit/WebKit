@@ -1115,9 +1115,43 @@ NodeImpl::Id HTMLInputElementImpl::id() const
     return ID_INPUT;
 }
 
-void HTMLInputElementImpl::setType(const DOMString& /*t*/)
+void HTMLInputElementImpl::setType(const DOMString& t)
 {
-    // ###
+    typeEnum newType;
+    
+    if ( strcasecmp( t, "password" ) == 0 )
+        newType = PASSWORD;
+    else if ( strcasecmp( t, "checkbox" ) == 0 )
+        newType = CHECKBOX;
+    else if ( strcasecmp( t, "radio" ) == 0 )
+        newType = RADIO;
+    else if ( strcasecmp( t, "submit" ) == 0 )
+        newType = SUBMIT;
+    else if ( strcasecmp( t, "reset" ) == 0 )
+        newType = RESET;
+    else if ( strcasecmp( t, "file" ) == 0 )
+        newType = FILE;
+    else if ( strcasecmp( t, "hidden" ) == 0 )
+        newType = HIDDEN;
+    else if ( strcasecmp( t, "image" ) == 0 )
+        newType = IMAGE;
+    else if ( strcasecmp( t, "button" ) == 0 )
+        newType = BUTTON;
+    else if ( strcasecmp( t, "khtml_isindex" ) == 0 )
+        newType = ISINDEX;
+    else
+        newType = TEXT;
+
+    // ### IMPORTANT: Don't allow the type to be changed to FILE after the first
+    // type change, otherwise a JavaScript programmer would be able to set a text
+    // field's value to something like /etc/passwd and then change it to a file field.
+    if (newType != FILE || !m_haveType) {
+        m_type = newType;
+        m_haveType = true;
+    }
+    else if (m_type != newType) {
+        setAttribute(ATTR_TYPE, type());
+    }
 }
 
 DOMString HTMLInputElementImpl::type() const
@@ -1190,48 +1224,13 @@ void HTMLInputElementImpl::click(  )
 
 void HTMLInputElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    // ### IMPORTANT: check that the type can't be changed after the first time
-    // otherwise a javascript programmer may be able to set a text field's value
-    // to something like /etc/passwd and then change it to a file field
     switch(attr->id())
     {
     case ATTR_AUTOCOMPLETE:
         m_autocomplete = strcasecmp( attr->value(), "off" );
         break;
-    case ATTR_TYPE: {
-            typeEnum newType;
-
-            if ( strcasecmp( attr->value(), "password" ) == 0 )
-                newType = PASSWORD;
-            else if ( strcasecmp( attr->value(), "checkbox" ) == 0 )
-                newType = CHECKBOX;
-            else if ( strcasecmp( attr->value(), "radio" ) == 0 )
-                newType = RADIO;
-            else if ( strcasecmp( attr->value(), "submit" ) == 0 )
-                newType = SUBMIT;
-            else if ( strcasecmp( attr->value(), "reset" ) == 0 )
-                newType = RESET;
-            else if ( strcasecmp( attr->value(), "file" ) == 0 )
-                newType = FILE;
-            else if ( strcasecmp( attr->value(), "hidden" ) == 0 )
-                newType = HIDDEN;
-            else if ( strcasecmp( attr->value(), "image" ) == 0 )
-                newType = IMAGE;
-            else if ( strcasecmp( attr->value(), "button" ) == 0 )
-                newType = BUTTON;
-            else if ( strcasecmp( attr->value(), "khtml_isindex" ) == 0 )
-                newType = ISINDEX;
-            else
-                newType = TEXT;
-
-            if (!m_haveType) {
-                m_type = newType;
-                m_haveType = true;
-            }
-            else if (m_type != newType) {
-                setAttribute(ATTR_TYPE,type());
-            }
-        }
+    case ATTR_TYPE:
+        setType(attr->value());
         break;
     case ATTR_VALUE:
     case ATTR_CHECKED:

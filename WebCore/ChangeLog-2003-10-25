@@ -1,8 +1,16 @@
-2003-04-21  Chris Blumenberg  <cblu@apple.com>
+2003-04-21  Darin Adler  <darin@apple.com>
 
-        Fixed previous "Reviewed by".
+        Reviewed by Maciej.
 
-        * ChangeLog:
+	- fixed bug 3159076 -- turbotax.intuit.com forms have text fields instead of radio buttons
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::setType): Implement; loosen rule about what type changes are allowed.
+        (HTMLInputElementImpl::parseAttribute): Call setType for ATTR_TYPE.
+        
+        - unrelated tweak
+        
+        * kwq/KWQSlot.mm: (KWQSlot::KWQSlot): Use a macro here to make it a little easier to add items.
 
 2003-04-21  Chris Blumenberg  <cblu@apple.com>
 
