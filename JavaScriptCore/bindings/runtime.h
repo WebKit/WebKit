@@ -93,6 +93,13 @@ public:
 class Instance
 {
 public:
+    typedef enum {
+        JavaLanguage,
+        ObjectiveCLanguage
+    } BindingLanguage;
+
+    static Instance *createBindingForLanguageInstance (BindingLanguage language, void *instance);
+
     virtual Class *getClass() const = 0;
     virtual ~Instance() {};
 };

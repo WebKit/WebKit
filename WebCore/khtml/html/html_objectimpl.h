@@ -64,8 +64,10 @@ public:
 
 protected:
     khtml::VAlign valign;
+    
+private:
 #if APPLE_CHANGES
-    //jobject _appletInstance;
+    mutable Bindings::Instance *appletInstance;
 #endif
 };
 

@@ -2750,3 +2750,18 @@ void KWQKHTMLPart::print()
 {
     [_bridge print];
 }
+
+Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
+{
+    // Unfortunately we have to do a layout here to guarantee that 'real'
+    // applet view is correctly set on the RenderApplet's widget.
+    forceLayout();
+    
+    // Get a pointer to the actual Java applet instance.
+    jobject applet = [_bridge pollForAppletInView:aView];
+    
+    // Wrap the Java instance in a language neutral binding and hand
+    // off ownership to the APPLET element.
+    return Bindings::Instance::createBindingForLanguageInstance (Bindings::Instance::JavaLanguage, applet);
+}
+

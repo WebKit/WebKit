@@ -25,6 +25,42 @@
  
 #include "jni_utility.h"
 
+static JavaVM *jvm;
+
+JavaVM *getJavaVM()
+{
+    if (jvm)
+        return jvm;
+
+    JavaVM *jvmArray[1];
+    jsize bufLen = 1;
+    jsize nJVMs = 0;
+    jint jniError = 0;
+
+    // Assumes JVM is already running ..., one per process
+    jniError = JNI_GetCreatedJavaVMs(jvmArray, bufLen, &nJVMs);
+    if ( jniError == JNI_OK && nJVMs > 0 ) {
+        jvm = jvmArray[0];
+    }
+    else 
+        fprintf(stderr, "%s: JNI_GetCreatedJavaVMs failed, returned %d", __PRETTY_FUNCTION__, jniError);
+        
+    return jvm;
+}
+
+JNIEnv *getJNIEnv()
+{
+    JNIEnv *env;
+    jint jniError = 0;
+
+    jniError = (jvm)->AttachCurrentThread((void**)&env, (void *)NULL);
+    if ( jniError == JNI_OK )
+        return env;
+    else
+        fprintf(stderr, "%s: AttachCurrentThread failed, returned %d", __PRETTY_FUNCTION__, jniError);
+    return NULL;
+}
+
 
 static bool attachToJavaVM(JavaVM **jvm, JNIEnv **env)
 {
@@ -323,7 +359,17 @@ jdouble callJNIDoubleMethodA (jobject obj, const char *name, const char *sig, jv
     return result.d;
 }
 
-const char *getCharactersFromJString (JNIEnv *env, jstring aJString)
+const char *getCharactersFromJString (jstring aJString)
+{
+    return getCharactersFromJStringInEnv (getJNIEnv(), aJString);
+}
+
+void releaseCharactersForJString (jstring aJString, const char *s)
+{
+    releaseCharactersForJStringInEnv (getJNIEnv(), aJString, s);
+}
+
+const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
 {
     jboolean isCopy;
     const char *s = env->GetStringUTFChars((jstring)aJString, &isCopy);
@@ -334,7 +380,8 @@ const char *getCharactersFromJString (JNIEnv *env, jstring aJString)
     return s;
 }
 
-void releaseCharactersForJString (JNIEnv *env, jstring aJString, const char *s)
+void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s)
 {
     env->ReleaseStringUTFChars (aJString, s);
 }
+

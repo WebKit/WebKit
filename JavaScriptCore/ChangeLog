@@ -1,3 +1,56 @@
+2003-11-19  Richard Williamson   <rjw@apple.com>
+
+	More LiveConnect stuff.
+
+        Reviewed by Ken.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/jni/jni_class.cpp: Added.
+        (JavaClass::_commonInit):
+        (JavaClass::JavaClass):
+        (_createClassesByNameIfNecessary):
+        (JavaClass::classForName):
+        (JavaClass::classForInstance):
+        (JavaClass::methodNamed):
+        (JavaClass::fieldNamed):
+        * bindings/jni/jni_class.h: Added.
+        (Bindings::JavaClass::_commonDelete):
+        (Bindings::JavaClass::~JavaClass):
+        (Bindings::JavaClass::_commonCopy):
+        (Bindings::JavaClass::JavaClass):
+        (Bindings::JavaClass::operator=):
+        (Bindings::JavaClass::name):
+        (Bindings::JavaClass::constructorAt):
+        (Bindings::JavaClass::numConstructors):
+        * bindings/jni/jni_instance.cpp: Added.
+        (JavaInstance::JavaInstance):
+        (JavaInstance::~JavaInstance):
+        * bindings/jni/jni_instance.h: Added.
+        (Bindings::JObjectWrapper::JObjectWrapper):
+        (Bindings::JObjectWrapper::~JObjectWrapper):
+        (Bindings::JObjectWrapper::ref):
+        (Bindings::JObjectWrapper::deref):
+        (Bindings::JavaInstance::getClass):
+        (Bindings::JavaInstance::operator=):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaMethod::JavaMethod):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaString::JavaString):
+        (Bindings::JavaString::~JavaString):
+        (Bindings::JavaString::operator=):
+        * bindings/jni/jni_utility.cpp:
+        (getJavaVM):
+        (getJNIEnv):
+        (getCharactersFromJString):
+        (releaseCharactersForJString):
+        (getCharactersFromJStringInEnv):
+        (releaseCharactersForJStringInEnv):
+        * bindings/jni/jni_utility.h:
+        * bindings/runtime.cpp:
+        (Instance::createBindingForLanguageInstance):
+        * bindings/runtime.h:
+        (Bindings::Instance::):
+
 2003-11-18  Richard Williamson   <rjw@apple.com>
 
 	More live connect stubs.  We're getting close.

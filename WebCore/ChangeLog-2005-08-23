@@ -1,3 +1,22 @@
+2003-11-19  Richard Williamson   <rjw@apple.com>
+
+	More LiveConnect stuff.  With that patch we make the applet
+	visible to JavaScript in an Bindings::Instance.  Next step
+	it to flush out implementation of RuntimeObjectImp and
+	RuntimeFunctionImp.
+
+        Reviewed by Ken.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::HTMLAppletElementImpl):
+        (HTMLAppletElementImpl::~HTMLAppletElementImpl):
+        (HTMLAppletElementImpl::getAppletInstance):
+        * khtml/html/html_objectimpl.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::getAppletInstanceForView):
+        * kwq/WebCoreBridge.h:
+
 2003-11-19  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3488888, about:blank in iframes doesn't repaint properly.  Fix for 3485478, refreshing a remote

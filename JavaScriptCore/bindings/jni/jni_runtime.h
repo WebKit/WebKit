@@ -22,9 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#ifndef _JNI_RUNTIME_H_
+#define _JNI_RUNTIME_H_
+
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "../runtime.h"
+#include <jni_utility.h>
+#include <runtime.h>
 
 namespace KJS
 {
@@ -40,16 +44,16 @@ public:
     JavaString () : _env(0), _characters(0), _jString(0) {};
     
     JavaString (JNIEnv *e, jstring s) : _env(e), _jString(s) {
-        _characters = getCharactersFromJString (_env, s);
+        _characters = getCharactersFromJStringInEnv (_env, s);
     }
     
     ~JavaString () {
-        releaseCharactersForJString (_env, _jString, _characters);
+        releaseCharactersForJStringInEnv (_env, _jString, _characters);
     }
 
     JavaString(const JavaString &other) : _env(other._env), _jString (other._jString)
     {
-        _characters = getCharactersFromJString (_env, _jString);
+        _characters = getCharactersFromJStringInEnv (_env, _jString);
     }
 
     JavaString &operator=(const JavaString &other)
@@ -57,11 +61,11 @@ public:
         if (this == &other)
             return *this;
             
-        releaseCharactersForJString (_env, _jString, _characters);
+        releaseCharactersForJStringInEnv (_env, _jString, _characters);
         
         _env = other._env;
         _jString = other._jString;
-        _characters = getCharactersFromJString (_env, _jString);
+        _characters = getCharactersFromJStringInEnv (_env, _jString);
         
         return *this;
     }
@@ -250,94 +254,6 @@ private:
     JavaString *_returnType;
 };
 
-class JavaClass : public Class
-{
-public:
-    JavaClass (JNIEnv *env, const char *name);
-    
-    void _commonDelete() {
-        free((void *)_name);
-        CFRelease (_fields);
-        CFRelease (_methods);
-        delete _constructors;
-    }
-    
-    ~JavaClass () {
-        _commonDelete();
-    }
-
-    void _commonCopy(const JavaClass &other) {
-        long i;
-
-        _name = strdup (other._name);
-
-        _methods = CFDictionaryCreateCopy (NULL, other._methods);
-        _fields = CFDictionaryCreateCopy (NULL, other._fields);
-        
-        _numConstructors = other._numConstructors;
-        _constructors = new JavaConstructor[_numConstructors];
-        for (i = 0; i < _numConstructors; i++) {
-            _constructors[i] = other._constructors[i];
-        }
-    }
-    
-    JavaClass (const JavaClass &other) 
-            : Class() {
-        _commonCopy (other);
-    };
-
-    JavaClass &operator=(const JavaClass &other)
-    {
-        if (this == &other)
-            return *this;
-            
-        _commonDelete();
-        _commonCopy (other);
-        
-        return *this;
-    }
-
-    virtual const char *name() const { return _name; };
-    
-    virtual Method *methodNamed(const char *name) const {
-        Method *aMethod = (Method *)CFDictionaryGetValue(_methods, name);
-        return aMethod;
-    };
-    
-    virtual Constructor *constructorAt(long i) const {
-        return &_constructors[i]; 
-    };
-    
-    virtual long numConstructors() const { return _numConstructors; };
-    
-    virtual Field *fieldNamed(const char *name) const {
-        Field *aField = (Field *)CFDictionaryGetValue(_fields, name);
-        return aField;
-    };
-
-private:
-    const char *_name;
-    CFDictionaryRef _fields;
-    CFDictionaryRef _methods;
-    JavaConstructor *_constructors;
-    long _numConstructors;
-};
-
-class JavaInstance : public Instance
-{
-public:
-    JavaInstance (JNIEnv *env, jobject instance, JavaClass *aClass);
-        
-    ~JavaInstance ();
-    
-    virtual Class *getClass() const {
-        return _class;
-    }
-    
-private:
-    JNIEnv *_env;
-    jobject _instance;
-    JavaClass *_class;
-};
-
 }
+
+#endif

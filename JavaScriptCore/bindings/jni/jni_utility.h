@@ -22,10 +22,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#ifndef _JNI_UTILITY_H_
+#define _JNI_UTILITY_H_
+
 #include <JavaVM/jni.h>
 
-const char *getCharactersFromJString (JNIEnv *env, jstring aJString);
-void releaseCharactersForJString (JNIEnv *env, jstring aJString, const char *s);
+const char *getCharactersFromJString (jstring aJString);
+void releaseCharactersForJString (jstring aJString, const char *s);
+
+const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString);
+void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s);
 
 jobject callJNIObjectMethod( jobject obj, const char *name, const char *sig, ... );
 void callJNIVoidMethod( jobject obj, const char *name, const char *sig, ... );
@@ -48,3 +54,8 @@ jint callJNIIntMethodA( jobject obj, const char *name, const char *sig, jvalue *
 jlong callJNILongMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
 jfloat callJNIFloatMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
 jdouble callJNIDoubleMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
+
+JavaVM *getJavaVM();
+JNIEnv *getJNIEnv();
+
+#endif

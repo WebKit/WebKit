@@ -27,6 +27,8 @@
 
 #import <WebCore/WebCoreKeyboardAccess.h>
 
+#import <JavaVM/jni.h>
+
 #ifdef __cplusplus
 
 class KWQKHTMLPart;
@@ -361,6 +363,8 @@ typedef enum {
 - (NSFileWrapper *)fileWrapperForURL:(NSURL *)URL;
 
 - (void)print;
+
+- (jobject)pollForAppletInView: (NSView *)view;
 
 @end
 

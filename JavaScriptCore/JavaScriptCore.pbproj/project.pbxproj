@@ -238,6 +238,8 @@
 				511B0878056468BB0080E486,
 				704FD35405697E6D003DBED9,
 				70B16A290569A10A00DB756D,
+				517D52DF056BF2F6003851BD,
+				517D534A056BFB5D003851BD,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -294,6 +296,8 @@
 				511B0879056468BB0080E486,
 				704FD44605698F17003DBED9,
 				70B16A280569A10A00DB756D,
+				517D52DE056BF2F6003851BD,
+				517D5349056BFB5D003851BD,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -476,6 +480,66 @@
 			settings = {
 			};
 		};
+		517D52DC056BF2F5003851BD = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = jni_class.cpp;
+			path = bindings/jni/jni_class.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		517D52DD056BF2F6003851BD = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = jni_class.h;
+			path = bindings/jni/jni_class.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		517D52DE056BF2F6003851BD = {
+			fileRef = 517D52DC056BF2F5003851BD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		517D52DF056BF2F6003851BD = {
+			fileRef = 517D52DD056BF2F6003851BD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		517D5347056BFB5D003851BD = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = jni_instance.cpp;
+			path = bindings/jni/jni_instance.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		517D5348056BFB5D003851BD = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = jni_instance.h;
+			path = bindings/jni/jni_instance.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		517D5349056BFB5D003851BD = {
+			fileRef = 517D5347056BFB5D003851BD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		517D534A056BFB5D003851BD = {
+			fileRef = 517D5348056BFB5D003851BD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		51856D8F0562EE95008B9D83 = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -508,14 +572,18 @@
 		};
 		51856D950562EE9C008B9D83 = {
 			children = (
-				511B0870056468730080E486,
 				511B0877056468BB0080E486,
 				511B0876056468BB0080E486,
 				51856D8F0562EE95008B9D83,
 				51856D900562EE95008B9D83,
 				704FD44505698F17003DBED9,
+				511B0870056468730080E486,
 				70B16A260569A10900DB756D,
 				70B16A270569A10900DB756D,
+				517D52DC056BF2F5003851BD,
+				517D52DD056BF2F6003851BD,
+				517D5347056BFB5D003851BD,
+				517D5348056BFB5D003851BD,
 			);
 			isa = PBXGroup;
 			name = bindings;
