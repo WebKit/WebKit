@@ -869,7 +869,7 @@ bool RenderText::allAscii() const
 
 bool RenderText::shouldUseMonospaceCache(const Font *f) const
 {
-    return (f && f->isFixedPitch() && allAscii());
+    return (f && f->isFixedPitch() && allAscii() && !style()->htmlFont().isSmallCaps());
 }
 
 // We cache the width of the ' ' character for <pre> text.  We could go futher

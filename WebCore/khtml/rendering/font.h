@@ -133,6 +133,8 @@ public:
     int width( QChar *str, int slen, int pos, int len ) const;
     int width( QChar *str, int slen, int pos ) const;
 
+    bool isSmallCaps() const { return fontDef.smallCaps; }
+    
 private:
     FontDef fontDef;
     mutable QFont f;
