@@ -1,3 +1,11 @@
+2003-08-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - re-fixed 3366542 -- filename with non-ASCII name left out of Content-Disposition for <input type=file>
+
+        * khtml/html/html_formimpl.cpp: (HTMLFormElementImpl::formData): Added missing # sign.
+
 2003-08-26  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3394107, make sure the display mutation code doesn't mutate objects with

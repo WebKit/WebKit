@@ -357,7 +357,7 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
                                 onlyfilename.append(&c, 1);
                             } else {
                                 QString ampersandEscape;
-                                ampersandEscape.sprintf("&%hu;", c.unicode());
+                                ampersandEscape.sprintf("&#%hu;", c.unicode());
                                 onlyfilename.append(ampersandEscape);
                             }
                         }
