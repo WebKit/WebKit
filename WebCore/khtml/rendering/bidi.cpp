@@ -369,10 +369,12 @@ static void addRun(BidiRun* bidiRun)
     // Compute the number of spaces in this run,
     if (bidiRun->obj && bidiRun->obj->isText()) {
         RenderText* text = static_cast<RenderText*>(bidiRun->obj);
-        for (int i = bidiRun->start; i < bidiRun->stop; i++) {
-            const QChar c = text->text()[i];
-            if (c == ' ' || c == '\n')
-                numSpaces++;
+        if (text->text()) {
+            for (int i = bidiRun->start; i < bidiRun->stop; i++) {
+                const QChar c = text->text()[i];
+                if (c == ' ' || c == '\n')
+                    numSpaces++;
+            }
         }
     }
 }
