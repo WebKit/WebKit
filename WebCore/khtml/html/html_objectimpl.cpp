@@ -166,21 +166,47 @@ bool HTMLAppletElementImpl::callMember(const QString & name, const QStringList &
 }
 
 #if APPLE_CHANGES
+void HTMLAppletElementImpl::setupApplet() const
+{
+    RenderApplet *r = static_cast<RenderApplet*>(m_render);
+    if (r && r->widget()){
+        KJavaAppletWidget *javaWidget = static_cast<KJavaAppletWidget*>(static_cast<RenderApplet*>(m_render)->widget());
+        
+        // Make sure all the parameters are set.
+        NodeImpl *child = firstChild();
+        while(child) {
+    
+            if(child->id() == ID_PARAM) {
+                HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
+                if(javaWidget->applet())
+                    javaWidget->applet()->setParameter( p->name(), p->value());
+            }
+            child = child->nextSibling();
+        }
+        
+        // Create the plugin view for the applet.
+        // FIXME?  What about percent and variable widths/heights?
+        // FIXME?  What about padding and margins?
+        javaWidget->showApplet(r->style()->width().value, r->style()->height().value);
+    }
+}
+
 Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
 {
     if (appletInstance)
         return appletInstance;
     
-    // Actually get instance point for corresponding jobject and create
-    // a Instance with it.
-    if (renderer()){
-        RenderApplet *r = static_cast<RenderApplet*>(m_render);
+    RenderApplet *r = static_cast<RenderApplet*>(m_render);
+    if (r && r->widget()){
+        // Make sure we've setup the applet.  This ensure that the applet
+        // will be returned from getAppletInstanceForView() below.
+        setupApplet();
         
-        if (r->widget()){
-            void *_view = r->widget()->getView();
-            KHTMLView* w = getDocument()->view();
-            appletInstance = KWQ(w->part())->getAppletInstanceForView((NSView *)_view);
-        }
+        // Call into the part (and over the bridge) to pull the Bindings::Instance
+        // from the guts of the Java VM.
+        void *_view = r->widget()->getView();
+        KHTMLView* v = getDocument()->view();
+        appletInstance = KWQ(v->part())->getAppletInstanceForView((NSView *)_view);
     }
     return appletInstance;
 }

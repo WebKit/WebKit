@@ -48,6 +48,7 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLFileTypeMappings.h>
+
 #import <WebKit/WebLocalizableStrings.h>
 
 #import <JavaVM/jni.h>
@@ -1055,7 +1056,7 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     }
 }
 
-#define MAX_GET_APPLET_POLL_TIME 10
+#define MAX_GET_APPLET_POLL_TIME 20
 #define GET_APPLET_POLL_INTERVAL    1
 
 // pollGetApplet: will poll until getApplet on the plugin view returns non-nil,
@@ -1076,6 +1077,10 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
             if ([view mayActivate]){
                 [view activateApplet:nil];
             }
+            
+            // Give the run loop a spin.  This will cause any delayed or performOnMainThread:
+            // methods to fire.  The plugin does this during initialization.
+            [[NSApplication sharedApplication] nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
         }
     }
     return applet;

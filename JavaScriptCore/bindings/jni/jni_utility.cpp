@@ -53,7 +53,7 @@ JNIEnv *getJNIEnv()
     JNIEnv *env;
     jint jniError = 0;
 
-    jniError = (jvm)->AttachCurrentThread((void**)&env, (void *)NULL);
+    jniError = (getJavaVM())->AttachCurrentThread((void**)&env, (void *)NULL);
     if ( jniError == JNI_OK )
         return env;
     else
@@ -92,20 +92,6 @@ static bool attachToJavaVM(JavaVM **jvm, JNIEnv **env)
 
     return attached;
 }
-
-typedef enum {
-    void_function,
-    object_function,
-    boolean_function,
-    byte_function,
-    char_function,
-    short_function,
-    int_function,
-    long_function,
-    float_function,
-    double_function
-} JNIFunctionType;
-
 
 static jvalue callJNIMethod( JNIFunctionType type, jobject obj, const char *name, const char *sig, va_list args)
 {

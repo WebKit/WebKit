@@ -25,6 +25,7 @@
 #ifndef _RUNTIME_H_
 #define _RUNTIME_H_
 
+#include "list.h"
 #include "value.h"
 
 namespace Bindings
@@ -101,8 +102,13 @@ public:
     static Instance *createBindingForLanguageInstance (BindingLanguage language, void *instance);
 
     virtual Class *getClass() const = 0;
+    
+    virtual KJS::Value getValueOfField (const Field *aField) const = 0;
+    
     virtual ~Instance() {};
 };
+
+const char *signatureForParameters(const KJS::List &aList);
 
 };
 

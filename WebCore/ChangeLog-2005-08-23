@@ -1,3 +1,23 @@
+2003-11-20  Richard Williamson   <rjw@apple.com>
+
+	Cleaned up synchronous applet lookup and initialization.
+	We need to further cleanup applet instantiation.  It doesn't
+	need to be lazy with my modified Java Plugin.
+
+        Reviewed by Chris.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::tryGet):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::setupApplet):
+        (HTMLAppletElementImpl::getAppletInstance):
+        * khtml/html/html_objectimpl.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::getAppletInstanceForView):
+        * kwq/KWQKJavaAppletWidget.h:
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::showApplet):
+
 2003-11-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by David

@@ -123,7 +123,7 @@ public:
     JavaConstructor (JNIEnv *e, jobject aConstructor);
     
     ~JavaConstructor() {
-        delete _parameters;
+        delete [] _parameters;
     };
 
     void _commonCopy(const JavaConstructor &other) {
@@ -144,7 +144,7 @@ public:
         if (this == &other)
             return *this;
             
-        delete _parameters;
+        delete [] _parameters;
         
         _commonCopy (other);
 
@@ -200,14 +200,14 @@ private:
 class JavaMethod : public Method
 {
 public:
-    JavaMethod() : Method(), _name(0), _returnType(0) {};
+    JavaMethod() : Method(), _name(0), _signature(0), _returnType(0) {};
     
     JavaMethod (JNIEnv *env, jobject aMethod);
     
     void _commonDelete() {
         delete _name;
         delete _returnType;
-        delete _parameters;
+        delete [] _parameters;
     };
     
     ~JavaMethod () {
@@ -243,6 +243,7 @@ public:
 
     virtual KJS::Value value() const { return KJS::Value(0); }
     virtual const char *name() const { return _name->characters(); };
+    virtual const char *signature() const { return _signature->characters(); };
     virtual RuntimeType returnType() const { return _returnType->characters(); };
     virtual Parameter *parameterAt(long i) const { return &_parameters[i]; };
     virtual long numParameters() const { return _numParameters; };
@@ -251,6 +252,7 @@ private:
     JavaParameter *_parameters;
     long _numParameters;
     JavaString *_name;
+    JavaString *_signature;
     JavaString *_returnType;
 };
 

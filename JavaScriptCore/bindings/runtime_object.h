@@ -36,6 +36,8 @@ class RuntimeObjectImp : public ObjectImp {
 public:
     RuntimeObjectImp(ObjectImp *proto);
     
+    ~RuntimeObjectImp();
+    
     RuntimeObjectImp(Bindings::Instance *i);
 
     const ClassInfo *classInfo() const;

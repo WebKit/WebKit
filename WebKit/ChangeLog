@@ -1,3 +1,15 @@
+2003-11-20  Richard Williamson   <rjw@apple.com>
+
+	Added spin of event loop during applet lookup poll.  This
+	is necessary to allow timers and performOnMainThread: methods
+	a chance to fire.  The plugin depends on these mechanisms during
+	initialization.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pollForAppletInView:]):
+
 2003-11-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

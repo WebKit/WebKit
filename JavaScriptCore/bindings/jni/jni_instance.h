@@ -50,7 +50,7 @@ protected:
         _env->DeleteLocalRef (instance);
         
         if  (_instance == NULL) {
-            fprintf (stderr, "%s:  out of memory!\n", __PRETTY_FUNCTION__);
+            fprintf (stderr, "%s:  could not get GlobalRef for %p\n", __PRETTY_FUNCTION__, instance);
         }
     }
     
@@ -96,6 +96,8 @@ public:
         
         return *this;
     };
+
+    virtual KJS::Value getValueOfField (const Field *aField) const;
     
 private:
     JObjectWrapper *_instance;

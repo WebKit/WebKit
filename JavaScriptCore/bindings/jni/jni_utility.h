@@ -27,6 +27,19 @@
 
 #include <JavaVM/jni.h>
 
+typedef enum {
+    void_function,
+    object_function,
+    boolean_function,
+    byte_function,
+    char_function,
+    short_function,
+    int_function,
+    long_function,
+    float_function,
+    double_function
+} JNIFunctionType;
+
 const char *getCharactersFromJString (jstring aJString);
 void releaseCharactersForJString (jstring aJString, const char *s);
 

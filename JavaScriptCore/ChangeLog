@@ -1,3 +1,32 @@
+2003-11-20  Richard Williamson   <rjw@apple.com>
+
+	More LiveConnect stuff.
+
+        Reviewed by Chris.
+
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::classForName):
+        (JavaClass::classForInstance):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::getValueOfField):
+        * bindings/jni/jni_instance.h:
+        (Bindings::JObjectWrapper::JObjectWrapper):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaConstructor::~JavaConstructor):
+        (Bindings::JavaConstructor::operator=):
+        (Bindings::JavaMethod::JavaMethod):
+        (Bindings::JavaMethod::_commonDelete):
+        (Bindings::JavaMethod::signature):
+        * bindings/jni/jni_utility.cpp:
+        (getJNIEnv):
+        (attachToJavaVM):
+        * bindings/jni/jni_utility.h:
+        * bindings/runtime.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::~RuntimeObjectImp):
+        (RuntimeObjectImp::get):
+        * bindings/runtime_object.h:
+
 2003-11-19  Richard Williamson   <rjw@apple.com>
 
 	More LiveConnect stuff.

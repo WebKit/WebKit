@@ -59,6 +59,7 @@ public:
     bool callMember(const QString &, const QStringList &, JType &, QString &);
     
 #if APPLE_CHANGES
+    void setupApplet() const;
     Bindings::Instance *getAppletInstance() const;
 #endif
 

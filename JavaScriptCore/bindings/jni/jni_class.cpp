@@ -103,7 +103,7 @@ JavaClass *JavaClass::classForName (const char *name)
     _createClassesByNameIfNecessary();
     
     CFStringRef stringName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
-    JavaClass *aClass = (JavaClass *)CFDictionaryGetValue(classesByName, name);
+    JavaClass *aClass = (JavaClass *)CFDictionaryGetValue(classesByName, stringName);
     if (aClass == NULL) {
         aClass = new JavaClass (name);
         CFDictionaryAddValue (classesByName, stringName, aClass);
@@ -119,9 +119,17 @@ JavaClass *JavaClass::classForInstance (jobject instance)
     
     jobject classOfInstance = callJNIObjectMethod(instance, "getClass", "()Ljava/lang/Class;");
     jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
-    
+
     const char *classNameC = getCharactersFromJString (className);
-    JavaClass *aClass = classForName(classNameC);
+    
+    CFStringRef stringName = CFStringCreateWithCString(NULL, classNameC, kCFStringEncodingASCII);
+    JavaClass *aClass = (JavaClass *)CFDictionaryGetValue(classesByName, stringName);
+    if (aClass == NULL) {
+        aClass = new JavaClass (classOfInstance);
+        CFDictionaryAddValue (classesByName, stringName, aClass);
+    }
+    CFRelease (stringName);
+    
     releaseCharactersForJString(className, classNameC);
 
     return aClass;

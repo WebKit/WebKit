@@ -58,12 +58,17 @@ void KJavaAppletWidget::setParameter(const QString &name, const QString &value)
 
 void KJavaAppletWidget::showApplet()
 {
+    showApplet (width(), height());
+}
+
+void KJavaAppletWidget::showApplet(int w, int h)
+{
     // If the view is a KWQView, we haven't replaced it with the Java view yet.
     // Only set the Java view once.
     KWQ_BLOCK_EXCEPTIONS;
     if ([getView() isKindOfClass:[KWQView class]]) {
         setView([KWQ(_context->part())->bridge()
-            viewForJavaAppletWithFrame:NSMakeRect(x(), y(), width(), height())
+            viewForJavaAppletWithFrame:NSMakeRect(x(), y(), w, h)
                             attributes:_parameters
                                baseURL:KURL(_baseURL).getNSURL()]);
         // Add the view to the main view now so the applet starts immediately rather than until the first paint.
