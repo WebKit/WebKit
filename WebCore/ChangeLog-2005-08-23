@@ -1,3 +1,15 @@
+2003-08-19  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3380766 and 3381867.  One is a table bug with amazon.com where colspans
+	were losing percentage width values.  The other is a bug where floats aren't dirtying
+	objects into which they intrude when doing layout.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::calcEffectiveWidth):
+
 2003-08-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3379336>: flash on front page of http://www.westportmotorsports.com is broken

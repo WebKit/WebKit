@@ -684,8 +684,19 @@ int AutoTableLayout::calcEffectiveWidth()
 		haveVariable = true;
 		// fall through
 	    default:
-		layoutStruct[lastCol].effWidth = Length();
-		allColsArePercent = false;
+                // If the column is a percentage width, do not let the spanning cell overwrite the
+                // width value.  This caused a mis-rendering on amazon.com.
+                // Sample snippet:
+                // <table border=2 width=100%><
+                //   <tr><td>1</td><td colspan=2>2-3</tr>
+                //   <tr><td>1</td><td colspan=2 width=100%>2-3</td></tr>
+                // </table>
+                if (layoutStruct[lastCol].effWidth.type != Percent) {
+                    layoutStruct[lastCol].effWidth = Length();
+                    allColsArePercent = false;
+                }
+                else
+                    totalPercent += layoutStruct[lastCol].effWidth.value;
 		allColsAreFixed = false;
 	    }
 	    span -= table->spanOfEffCol( lastCol );
@@ -728,7 +739,7 @@ int AutoTableLayout::calcEffectiveWidth()
 			totalWidth -= layoutStruct[pos].effMaxWidth;
 			percentMissing -= percent;
 			if ( percent > 0 )
-			    layoutStruct[pos].effWidth = Length( percent, Percent );
+		            layoutStruct[pos].effWidth = Length( percent, Percent );
 			else
 			    layoutStruct[pos].effWidth = Length();
 		    }
