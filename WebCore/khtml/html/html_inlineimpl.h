@@ -36,7 +36,7 @@ public:
     HTMLAnchorElementImpl(DocumentPtr *doc);
     ~HTMLAnchorElementImpl();
 
-    virtual bool isSelectable() const { return m_hasAnchor; }
+    virtual bool isSelectable() const;
     virtual Id id() const;
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);

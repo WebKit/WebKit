@@ -949,6 +949,21 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
                 }
             }
         }
+        else if ([_bridge keyboardUIMode] == WebCoreFullKeyboardAccess) {
+            DocumentImpl *doc = xmlDocImpl();
+            if (!doc) {
+                return nil;
+            }
+            doc->setFocusNode(node);
+            if (view()) {
+                QRect rect = node->getRect();
+                int offset = 50; // same offset we use for jumping to anchors in a document
+                view()->ensureVisible(rect.right() + offset, rect.bottom() + offset);
+                view()->ensureVisible(rect.left() - offset, rect.top() - offset);
+            }
+            [_bridge makeFirstResponder:[_bridge documentView]];
+            return [_bridge documentView];
+        }
     }
 }
 
@@ -957,6 +972,12 @@ NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDi
     NSView *next = nextKeyViewInFrame(node, direction);
     if (next) {
         return next;
+    }
+
+    // remove focus from currently focused node
+    DocumentImpl *doc = xmlDocImpl();
+    if (doc) {
+        doc->setFocusNode(0);
     }
     
     KWQKHTMLPart *parent = KWQ(parentPart());
@@ -1208,6 +1229,12 @@ KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)
 {
     ASSERT_ARG(node, node);
     return KWQ(node->getDocument()->view()->part());
+}
+
+NSView *KWQKHTMLPart::documentViewForNode(DOM::NodeImpl *node)
+{
+    WebCoreBridge *bridge = partForNode(node)->bridge();
+    return [bridge documentView];
 }
 
 NodeImpl *KWQKHTMLPart::nodeForWidget(const QWidget *widget)
@@ -1505,6 +1532,11 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
         }
 	KWQ_UNBLOCK_EXCEPTIONS;
 
+        // remove focus from links
+        DocumentImpl *doc = xmlDocImpl();
+        if (doc)
+            doc->setFocusNode(0);
+        
         KHTMLPart::khtmlMousePressEvent(event);
     }
 }
@@ -2537,7 +2569,6 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
         }
     }
 
-    //NSLog (@"%@", result);
     return result;
 
     KWQ_UNBLOCK_EXCEPTIONS;

@@ -813,12 +813,16 @@ void HTMLGenericFormElementImpl::recalcStyle( StyleChange ch )
         m_render->updateFromElement();
 }
 
-
 bool HTMLGenericFormElementImpl::isSelectable() const
 {
-    return  m_render && m_render->isWidget() &&
-        static_cast<RenderWidget*>(m_render)->widget() &&
-        static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() >= QWidget::TabFocus;
+    if (!m_render || m_render->width() == 0 || m_render->height() == 0 ||
+        (m_render->style() && m_render->style()->visibility() != VISIBLE))
+        return false;
+    if (m_render->isWidget()) {
+        return static_cast<RenderWidget*>(m_render)->widget() &&
+            static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() >= QWidget::TabFocus;
+    }
+    return true;
 }
 
 void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)

@@ -107,16 +107,36 @@
 
 -(NSView *)nextKeyView
 {
-    return button && inNextValidKeyView
-        ? KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingNext)
-        : [super nextKeyView];
+    NSView *view = nil;
+    if (button && inNextValidKeyView) {
+        // resign so we send a blur before setting focus on
+        // the next widget, otherwise the blur for this
+        // widget will remove focus from the widget after
+        // we tab to it
+        [self resignFirstResponder];
+        view = KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingNext);
+    }
+    else { 
+        view = [super nextKeyView];
+    }
+    return view;
 }
 
 -(NSView *)previousKeyView
 {
-    return button && inNextValidKeyView
-        ? KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingPrevious)
-        : [super previousKeyView];
+    NSView *view = nil;
+    if (button && inNextValidKeyView) {
+        // resign so we send a blur before setting focus on
+        // the next widget, otherwise the blur for this
+        // widget will remove focus from the widget after
+        // we tab to it
+        [self resignFirstResponder];
+        view = KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingPrevious);
+    }
+    else { 
+        view = [super previousKeyView];
+    }
+    return view;
 }
 
 -(NSView *)nextValidKeyView

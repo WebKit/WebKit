@@ -202,9 +202,9 @@ public:
     void setTabIndex(unsigned short _tabIndex) { m_tabIndex = _tabIndex; }
 
     /**
-     * whether this node can receive the keyboard focus.
+        * whether this node can receive the keyboard focus.
      */
-    virtual bool isSelectable() const { return false; };
+    virtual bool isSelectable() const;
 
     virtual bool isInline() const;
     virtual QString toHTML() const;

@@ -28,12 +28,14 @@
 #import "KWQAssertions.h"
 #import "KWQExceptions.h"
 #import "KWQFontMetrics.h"
+#import "KWQKHTMLPart.h"
 #import "KWQPaintDevice.h"
 #import "KWQPixmap.h"
 #import "KWQPointArray.h"
 #import "KWQPrinter.h"
 #import "KWQPtrStack.h"
 #import "KWQWidget.h"
+#import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
@@ -52,12 +54,16 @@ struct QPState {
 };
 
 struct QPainterPrivate {
-    QPainterPrivate() : textRenderer(0) { }
-    ~QPainterPrivate() { [textRenderer release]; }
+    QPainterPrivate() : textRenderer(0), focusRingPath(0), focusRingWidth(0), hasFocusRingColor(false) { }
+    ~QPainterPrivate() { [textRenderer release]; [focusRingPath release]; }
     QPState state;
     QPtrStack<QPState> stack;
     id <WebCoreTextRenderer> textRenderer;
     QFont textRendererFont;
+    NSBezierPath *focusRingPath;
+    int focusRingWidth;
+    bool hasFocusRingColor;
+    QColor focusRingColor;
 };
 
 QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false)
@@ -668,3 +674,52 @@ void QPainter::clearShadow()
     CGContextSetShadowWithColor(context, CGSizeZero, 0, NULL);
 }
 
+void QPainter::initFocusRing(int width)
+{
+    clearFocusRing();
+    data->focusRingWidth = width;
+    data->hasFocusRingColor = false;
+    data->focusRingPath = [[NSBezierPath alloc] init];
+    [data->focusRingPath setWindingRule:NSNonZeroWindingRule];
+}
+
+void QPainter::initFocusRing(int width, const QColor &color)
+{
+    initFocusRing(width);
+    data->hasFocusRingColor = true;
+    data->focusRingColor = color;
+}
+
+void QPainter::addFocusRingRect(int x, int y, int width, int height)
+{
+    ASSERT(data->focusRingPath);
+    NSRect rect = NSMakeRect(x, y, width, height);
+    int offset = (data->focusRingWidth >> 1);
+    rect = NSInsetRect(rect, -offset, -offset);
+    [data->focusRingPath appendBezierPathWithRect:rect];
+}
+
+void QPainter::drawFocusRing()
+{
+    ASSERT(data->focusRingPath);
+    if (data->state.paintingDisabled)
+        return;
+
+    NSRect bounds = [data->focusRingPath bounds];
+    if (!NSIsEmptyRect(bounds)) {
+        int radius = (data->focusRingWidth >> 1);
+        NSColor *color = data->hasFocusRingColor ? data->focusRingColor.getNSColor() : nil;
+        [NSGraphicsContext saveGraphicsState];
+        [[WebCoreGraphicsBridge sharedBridge] setFocusRingStyle:NSFocusRingOnly radius:radius color:color];
+        [data->focusRingPath fill];
+        [NSGraphicsContext restoreGraphicsState];   
+    }
+}
+
+void QPainter::clearFocusRing()
+{
+    if (data->focusRingPath) {
+        [data->focusRingPath release];
+        data->focusRingPath = nil;
+    }
+}

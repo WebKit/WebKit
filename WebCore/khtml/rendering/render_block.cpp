@@ -1213,8 +1213,8 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
         paintFloats(p, _x, _y, _w, _h, scrolledX, scrolledY, paintAction == PaintActionSelection);
 
     // 4. paint outline.
-    if (!inlineFlow && paintAction == PaintActionForeground &&
-        !childrenInline() && style()->outlineWidth())
+    if (!inlineFlow && paintAction == PaintActionForeground && 
+        style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(p, _tx, _ty, width(), height(), style());
 
 #ifdef BOX_DEBUG

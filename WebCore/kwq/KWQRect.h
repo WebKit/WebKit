@@ -57,6 +57,7 @@ public:
     void setY(int y) { yp = y; }
     void setWidth(int width) { w = width; }
     void setHeight(int height) { h = height; }
+    void setRect(int x, int y, int width, int height) { xp = x; yp = y; w = width; h = height; }
     QRect intersect(const QRect &) const;
     bool intersects(const QRect &) const;
     QRect unite(const QRect &) const;

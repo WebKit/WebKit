@@ -13,6 +13,7 @@
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageView.h>
@@ -411,6 +412,7 @@ static NSMutableDictionary *viewTypes;
     [WebTextRendererFactory createSharedFactory];
     [WebImageRendererFactory createSharedFactory];
     [WebCookieAdapter createSharedAdapter];
+    [WebGraphicsBridge createSharedBridge];
     
     _private = [[WebFrameViewPrivate alloc] init];
 

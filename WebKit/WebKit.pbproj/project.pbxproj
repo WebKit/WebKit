@@ -320,6 +320,7 @@
 				BE6DC39B04C62C4E004D0EF6,
 				ED21B9820528F7AA003299AC,
 				833987820543012D00EE146E,
+				BE26F18F05517E0800BFA0C3,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -432,6 +433,7 @@
 				BE07CEB2047538F000CA289C,
 				BE6DC39C04C62C4E004D0EF6,
 				65DA2609052CC18700A97B31,
+				BE26F19005517E0800BFA0C3,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2718,6 +2720,34 @@
 			settings = {
 			};
 		};
+		BE26F18D05517E0800BFA0C3 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebGraphicsBridge.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE26F18E05517E0800BFA0C3 = {
+			expectedFileType = sourcecode.c.objc;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebGraphicsBridge.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE26F18F05517E0800BFA0C3 = {
+			fileRef = BE26F18D05517E0800BFA0C3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE26F19005517E0800BFA0C3 = {
+			fileRef = BE26F18E05517E0800BFA0C3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BE6DC39904C62C4E004D0EF6 = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
@@ -3547,6 +3577,8 @@
 				9311022903667CF1008635CE,
 				F5E7B24503025CE801A80180,
 				F5E7B24603025CE801A80180,
+				BE26F18D05517E0800BFA0C3,
+				BE26F18E05517E0800BFA0C3,
 				9CE1F8A002A5C6F30ECA2ACD,
 				9CE1F8A102A5C6F30ECA2ACD,
 				9CE1F8A202A5C6F30ECA2ACD,

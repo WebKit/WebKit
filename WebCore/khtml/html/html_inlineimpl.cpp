@@ -53,6 +53,14 @@ HTMLAnchorElementImpl::~HTMLAnchorElementImpl()
 {
 }
 
+bool HTMLAnchorElementImpl::isSelectable() const
+{
+    return m_hasAnchor && 
+        m_render && 
+        (m_render->width() > 0 && m_render->height() > 0) && 
+        m_render->style() && m_render->style()->visibility() == VISIBLE;
+}
+
 NodeImpl::Id HTMLAnchorElementImpl::id() const
 {
     return ID_A;
@@ -82,7 +90,7 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
         }
 
         if ( k ) {
-            if (k->keyIdentifier() != "Enter") {
+            if (k->keyIdentifier() != "U+00000d" && k->keyIdentifier() != "Enter") {
                 HTMLElementImpl::defaultEventHandler(evt);
                 return;
             }

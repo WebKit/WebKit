@@ -188,6 +188,9 @@ enum EFloat {
 // not change this order!
 enum EBorderStyle {
     BNONE, BHIDDEN, INSET, GROOVE, RIDGE, OUTSET, DOTTED, DASHED, SOLID, DOUBLE
+#ifdef APPLE_CHANGES
+    , APPLEAQUA
+#endif
 };
 
 

@@ -617,6 +617,9 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
     {
     case BNONE:
     case BHIDDEN:
+#ifdef APPLE_CHANGES
+    case APPLEAQUA:
+#endif
         // should not happen
         if(invalidisInvert && p->rasterOp() == Qt::XorROP)
             p->setRasterOp(Qt::CopyROP);
@@ -899,13 +902,30 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     }
 }
 
+void RenderObject::addFocusRingRects(QPainter *p, int _tx, int _ty)
+{
+    p->addFocusRingRect(_tx, _ty, width(), height());
+}
+
 void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style)
 {
     int ow = style->outlineWidth();
     if(!ow) return;
 
-    const QColor& oc = style->outlineColor();
     EBorderStyle os = style->outlineStyle();
+    QColor oc = style->outlineColor();
+    if (!oc.isValid())
+        oc = style->color();
+    
+#ifdef APPLE_CHANGES
+    if (os == APPLEAQUA) {
+        p->initFocusRing(ow, oc);
+        addFocusRingRects(p, _tx, _ty);
+        p->drawFocusRing();
+        p->clearFocusRing();
+        return;
+    }
+#endif
 
     drawBorder(p, _tx-ow, _ty-ow, _tx, _ty+h+ow, BSLeft,
 	       QColor(oc), style->color(),
@@ -1007,6 +1027,30 @@ void RenderObject::repaintObjectsBeforeLayout()
 }
 
 #endif
+
+QRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
+{
+    int eow = ow;
+#if APPLE_CHANGES
+    // Fudge a little to make sure we don't leave artifacts.
+    // We need to do better at this.
+    if (style()->outlineStyle() == APPLEAQUA)
+        eow += 2;
+#endif
+    QRect r(getAbsoluteRepaintRect());
+    r.setRect(r.x()-eow, r.y()-eow, r.width()+eow*2, r.height()+eow*2);
+
+    if (isInlineFlow()) {
+        for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+            if (!curr->isText()) {
+                QRect childRect = curr->getAbsoluteRepaintRectWithOutline(ow);
+                r = r.unite(childRect);
+            }
+        }
+    }
+
+    return r;
+}
 
 QRect RenderObject::getAbsoluteRepaintRect()
 {

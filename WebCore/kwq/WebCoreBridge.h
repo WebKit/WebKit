@@ -240,6 +240,7 @@ typedef enum {
 /* Creates a name for an frame unnamed in the HTML.  It should produce repeatable results for loads of the same frameset. */
 - (NSString *)generateFrameName;
 - (void)frameDetached;
+- (NSView *)documentView;
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload onLoadEvent:(BOOL)onLoad target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;

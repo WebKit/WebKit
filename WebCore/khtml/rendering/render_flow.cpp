@@ -249,8 +249,24 @@ QRect RenderFlow::getAbsoluteRepaintRect()
         if (style()->position() == RELATIVE)
             relativePositionOffset(left, top);
 #endif
-        QRect r(-ow+left, -ow+top, width()+ow*2, height()+ow*2);
+        int eow = ow;
+#ifdef APPLE_CHANGES
+        // Fudge a little to make sure we don't leave artifacts.
+        // We need to do better at this.
+        if (ow && style()->outlineStyle() == APPLEAQUA)
+            eow += 2;
+#endif
+        QRect r(-eow+left, -eow+top, width()+eow*2, height()+eow*2);
         containingBlock()->computeAbsoluteRepaintRect(r);
+        if (ow) {
+            for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+                if (!curr->isText()) {
+                    QRect childRect = curr->getAbsoluteRepaintRectWithOutline(ow);
+                    r = r.unite(childRect);
+                }
+            }
+        }
+
         return r;
     }
     else {

@@ -125,6 +125,12 @@
     return [[_frame findFrameNamed:name] _bridge];
 }
 
+- (NSView *)documentView
+{
+    ASSERT(_frame != nil);
+    return [[_frame frameView] documentView];
+}
+
 - (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name
 {
     ASSERT(_frame != nil);

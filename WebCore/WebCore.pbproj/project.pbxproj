@@ -512,6 +512,7 @@
 				55998A5E052B59CC0017A6C1,
 				55998A60052B59CC0017A6C1,
 				65A640F10533BB1F0085E777,
+				BE26F15505517DE000BFA0C3,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -773,6 +774,7 @@
 				55998A61052B59CC0017A6C1,
 				65F80698054D9F86008BF776,
 				65732B69054EF483007B42F8,
+				BE26F15605517DE000BFA0C3,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2222,6 +2224,37 @@
 //BE2
 //BE3
 //BE4
+		BE26F15305517DE000BFA0C3 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreGraphicsBridge.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE26F15405517DE000BFA0C3 = {
+			expectedFileType = sourcecode.c.objc;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreGraphicsBridge.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE26F15505517DE000BFA0C3 = {
+			fileRef = BE26F15305517DE000BFA0C3;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		BE26F15605517DE000BFA0C3 = {
+			fileRef = BE26F15405517DE000BFA0C3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BE983D95052A2E0A00892D85 = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
@@ -7615,6 +7648,8 @@
 				F56234DF03026D7301629B47,
 				F56234E003026D7301629B47,
 				F587854C02DE375901EA4122,
+				BE26F15305517DE000BFA0C3,
+				BE26F15405517DE000BFA0C3,
 				F5517DC2031AB56301A80180,
 				F5517DC3031AB56301A80180,
 				F587854D02DE375901EA4122,

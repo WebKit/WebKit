@@ -806,12 +806,20 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 
 - (NSView *)nextKeyView
 {
-    return _part->nextKeyView(0, KWQSelectingNext);
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (!doc) {
+        return nil;
+    }
+    return _part->nextKeyView(doc->focusNode(), KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
 {
-    return _part->nextKeyView(0, KWQSelectingPrevious);
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (!doc) {
+        return nil;
+    }
+    return _part->nextKeyView(doc->focusNode(), KWQSelectingPrevious);
 }
 
 - (NSView *)nextKeyViewInsideWebFrameViews

@@ -1,3 +1,122 @@
+2003-10-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+	Support for tabbing to links.
+
+	Fixes these bugs
+
+	<rdar://problem/3468395>: fix full keyboard access loop for buttons
+	<rdar://problem/3468397>: paint aqua focus rings around text links
+	<rdar://problem/3468406>: focused links do not activate by hitting
+	   return key
+	<rdar://problem/3468410>: paintTextOutline in RenderText objects
+	   should be done at a higher level
+	<rdar://problem/3468424>: improve function to determine if a node is
+	   tab selectable
+	<rdar://problem/3468427>: add bridge function to access active
+	   document view for a node
+	<rdar://problem/3468429>: links do not scroll into view when focusing
+	<rdar://problem/3468435>: when tabbing out of a frame, last focused
+	   node is not cleared if it is a text link
+	<rdar://problem/3468436>: focus on text link does not clear when
+	   clicking mouse in document body
+	<rdar://problem/3468440>: add setRect convenience to QRect
+	<rdar://problem/3468444>: elements paint their outlines even if they
+	   are not visible
+	<rdar://problem/3468448>: setting focus on a node sets focus on all
+	   its siblings
+	<rdar://problem/3468456>: cannot tab to form image input elements
+	<rdar://problem/3468461>: tab focus can seem to disappear from view on
+	   pages with dhtml menus
+	<rdar://problem/3469021>: webcore bridge nextKeyView always starts 
+	from the beginning of the document
+
+        * WebCore-combined.exp: Export WebCoreGraphicsBridge class
+        * WebCore.exp: Ditto
+        * WebCore.pbproj/project.pbxproj: Add WebCoreGraphicsBridge class
+        * khtml/css/cssparser.cpp: 
+        (CSSParser::parseValue): border style check now take apple aqua
+	style into account
+        * khtml/css/cssvalues.in: Add -apple-aqua border value
+        * khtml/css/html4.css: Change focus, a:link:active, and a:visited:active
+	to use new -apple-aqua focus rings.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::isSelectable): Improve function so
+	that invisible elements are no longer considered selectable
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::isSelectable): Ditto.
+        (HTMLAnchorElementImpl::defaultEventHandler): Make return key
+	activate links as well as Enter.
+        * khtml/html/html_inlineimpl.h: Move isSelectable function into
+	implementation file.
+        * khtml/rendering/render_block.cpp: 
+        (khtml::RenderBlock::paintObject): Do not paint outlines if
+	content is invisible.
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::getAbsoluteRepaintRect): Improve function to correctly
+	calculate repaint rects including outlines.
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paintObject): Do not paint outlines if
+        content is invisible.
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paintObject): Ditto.
+        (RenderInline::addFocusRingRects): New function to gather up rects
+	to use for painting outlines.
+        (RenderInline::paintOutline): Added code to paint aqua focus rings.
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::drawBorder): Add case for apple aqua border style.
+        (RenderObject::addFocusRingRects): New function to gather up rects
+        to use for painting outlines.
+        (RenderObject::paintOutline): Added code to paint aqua focus rings.
+        (RenderObject::getAbsoluteRepaintRectWithOutline): Helper function
+	to calculate rectangle to use for repainting when an object has an
+	outline.
+        * khtml/rendering/render_object.h: Add addFocusRingRects declaration.
+        * khtml/rendering/render_style.h: Add APPLEAQUA to border enum
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject): Removed code to draw outlines.
+        * khtml/rendering/render_text.h: Ditto.
+        * khtml/xml/dom_elementimpl.cpp: Removed redundant isSelectable check.
+        * khtml/xml/dom_elementimpl.h: Ditto.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::isSelectable): Added.
+        (NodeBaseImpl::setFocus): Do not set focus on siblings.
+        * khtml/xml/dom_nodeimpl.h: Moved implementation to .cpp file.
+        * kwq/KWQButton.mm:
+        (-[KWQButton nextKeyView]): Send a blur before going to next
+	key view. This prevents focus from being lost altogether.
+        (-[KWQButton previousKeyView]): Ditto.
+        * kwq/KWQKHTMLPart.h: Added documentViewForNode function.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame): Add check for other focusables,
+	like text links.
+        (KWQKHTMLPart::nextKeyViewInFrameHierarchy): Remove focus when leaving
+	a view.
+        (KWQKHTMLPart::documentViewForNode): Added.
+        (KWQKHTMLPart::khtmlMousePressEvent): Remove focus when you click in
+	a non-focusable area, like the document body.
+        * kwq/KWQPainter.h: Added declarations.
+        * kwq/KWQPainter.mm:
+        (QPainterPrivate::QPainterPrivate): Modified constructor for new fields.
+        (QPainter::initFocusRing): Added.
+        (QPainter::addFocusRingRect): Added.
+        (QPainter::drawFocusRing): Added.
+        (QPainter::clearFocusRing): Added.
+        * kwq/KWQRect.h:
+        (QRect::setRect): Added.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge nextKeyView]): Start from the currently-focused node,
+	if there is one, not unconditionally from the start of the document.
+        (-[WebCoreBridge previousKeyView]): Ditto
+        * kwq/WebCoreGraphicsBridge.h: Added.
+        * kwq/WebCoreGraphicsBridge.m: Added.
+        (+[WebCoreGraphicsBridge sharedBridge]): Added.
+        (-[WebCoreGraphicsBridge init]): Added.
+        (-[WebCoreGraphicsBridge setFocusRingStyle:radius:color:]): Added.
+
 2003-10-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Fix mistake in my last change that I did not mean to commit.
