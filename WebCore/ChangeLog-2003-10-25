@@ -1,5 +1,28 @@
 2002-11-16  David Hyatt  <hyatt@apple.com>
 
+	Rewrite the calculation of min and max width for <pre>s.  This
+	is the second stage of the whitespace rewrite (third stage
+	will be to stop morphing newlines).
+
+	This should fix a bunch of bugs, e.g., especially if you ever
+	did the following: 
+	<td><pre><span>foo</span>
+	   more text after the newline</pre></td>
+
+	The new code now properly handles building up the correct min/max
+	width for the <pre>.
+
+	If anyone recalls seeing any bugs like this, let me know and
+	I can close them.
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::calcInlineMinMaxWidth):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+
+2002-11-16  David Hyatt  <hyatt@apple.com>
+
 	Fix more edge cases with whitespace handling that caused some
 	lines to be too long (and unselectable).
 	
