@@ -1588,29 +1588,9 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         aRun = &swappedRun;
     }
 
-    // Work-around for bug (352175) in ATSUPositionToOffset().  ATSUPositionToOffset will
-    // always return a zero offset if a ATSUTextLayout is created with a non-zero
-    // starting character offset.
-    // The work-around creates a 'sub' run from the run with a starting position
-    // of 0 and creates a ATSUTextLayout with that 'sub' run.
-#define WORKAROUND_3521759 1
-#if WORKAROUND_3521759
-    WebCoreTextRun subRun;
-    if (run->from != 0) {
-        subRun.length = (aRun->length - aRun->from);
-        subRun.from = 0;
-        subRun.to = aRun->to - aRun->from;
-        subRun.characters = (UniChar *)malloc(sizeof(UniChar) * subRun.length);
-        memcpy ((void *)subRun.characters, &aRun->characters[aRun->from], sizeof(UniChar) * subRun.length);
-        aRun = &subRun;
-    }
-    else {
-        subRun.characters = 0;
-    }
-#endif
-    
     layout = [self _createATSUTextLayoutForRun:aRun];
 
+    primaryOffset = aRun->from;
     status = ATSUPositionToOffset(layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
     if (status == noErr){
         offset = (unsigned)primaryOffset;
@@ -1623,12 +1603,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         free ((void *)swappedRun.characters);
     }
 
-#if WORKAROUND_3521759
-    if (subRun.characters != run->characters)
-        free ((void *)subRun.characters);
-#endif
-
-    return offset;
+    return offset - aRun->from;
 }
 
 - (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
@@ -1971,6 +1946,12 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     if (!*fontUsed)
         *fontUsed = renderer->font;
 
+    // Force characters that are used to determine word boundaries for the rounding hack
+    // to be integer width, so following words will start on an integer boundary.
+    if (isRoundingHackCharacter(c)) {
+        width = CEIL_TO_INT(width);
+    }
+    
     // Account for letter-spacing
     if (width > 0)
         width += iterator->style->letterSpacing;
@@ -1997,12 +1978,6 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             width += iterator->style->wordSpacing;
     }
 
-    // Force characters that are used to determine word boundaries for the rounding hack
-    // to be integer width, so following words will start on an integer boundary.
-    if (isRoundingHackCharacter(c)) {
-        width = CEIL_TO_INT(width);
-    }
-    
     iterator->runWidthSoFar += width;
 
     // Advance past the character we just dealt with.
