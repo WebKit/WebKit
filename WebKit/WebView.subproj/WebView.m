@@ -725,7 +725,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     _private->progressItems = nil;
     _private->totalPageAndResourceBytesToLoad = 0;
     _private->totalBytesReceived = 0;
-    _private->progressValue = INITIAL_PROGRESS_VALUE;
+    _private->progressValue = 0;
     _private->lastNotifiedProgressValue = 0;
     _private->lastNotifiedProgressTime = 0;
     _private->finalProgressChangedSent = NO;
@@ -739,6 +739,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     [self _willChangeValueForKey: @"estimatedProgress"];
     if (_private->numProgressTrackedFrames == 0 || _private->orginatingProgressFrame == frame){
         [self _resetProgress];
+        _private->progressValue = INITIAL_PROGRESS_VALUE;
         _private->orginatingProgressFrame = [frame retain];
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
     }
