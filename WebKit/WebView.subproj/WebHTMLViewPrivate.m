@@ -698,24 +698,3 @@ static WebHTMLView *lastHitView = nil;
 }
 
 @end
-
-// The following is a workaround for
-// <rdar://problem/3429631> window stops getting mouse moved events after first tooltip appears
-// The trick is to define a category on NSToolTipPanel that implements setAcceptsMouseMovedEvents:.
-// Since the category will be searched before the real class, we'll prevent the flag from being
-// set on the tool tip panel.
-
-@interface NSToolTipPanel : NSObject
-@end
-
-@interface NSToolTipPanel (WebHTMLViewPrivate)
-@end
-
-@implementation NSToolTipPanel (WebHTMLViewPrivate)
-
-- (void)setAcceptsMouseMovedEvents:(BOOL)flag
-{
-    // Do nothing, preventing the tool tip panel from trying to accept mouse-moved events.
-}
-
-@end
