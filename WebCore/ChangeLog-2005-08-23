@@ -1,5 +1,22 @@
 2004-08-25  David Hyatt  <hyatt@apple.com>
 
+	To save memory in the common case, move the margin***Collapse variables into the CSS3 struct instead of
+	bloating the surround struct.
+	
+        * khtml/rendering/render_style.cpp:
+        (StyleSurroundData::StyleSurroundData):
+        (StyleSurroundData::operator==):
+        (marginBottomCollapse):
+        (StyleCSS3NonInheritedData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::marginTopCollapse):
+        (khtml::RenderStyle::marginBottomCollapse):
+        (khtml::RenderStyle::setMarginTopCollapse):
+        (khtml::RenderStyle::setMarginBottomCollapse):
+
+2004-08-25  David Hyatt  <hyatt@apple.com>
+
 	Fix the "extra space in TypePad blogs" Emerson problem by adding the ability to collapse away margins.
 	Also added support for explicitly preventing margin collapsing.
 	

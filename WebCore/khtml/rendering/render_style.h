@@ -301,8 +301,6 @@ public:
     LengthBox margin;
     LengthBox padding;
     BorderData border;
-    EMarginCollapse marginTopCollapse : 2;
-    EMarginCollapse marginBottomCollapse : 2;
 };
 
 
@@ -569,6 +567,8 @@ public:
     EUserDrag userDrag : 2; // Whether or not a drag can be initiated by this element.
     EUserSelect userSelect : 2;  // Whether or not the element is selectable.
     bool textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
+    EMarginCollapse marginTopCollapse : 2;
+    EMarginCollapse marginBottomCollapse : 2;
 
 #ifndef KHTML_NO_XBL
     BindingURI* bindingURI; // The XBL binding URI list.
@@ -1112,8 +1112,8 @@ public:
     EUserDrag userDrag() const { return css3NonInheritedData->userDrag; }
     EUserSelect userSelect() const { return css3NonInheritedData->userSelect; }
     bool textOverflow() const { return css3NonInheritedData->textOverflow; }
-    EMarginCollapse marginTopCollapse() const { return surround->marginTopCollapse; }
-    EMarginCollapse marginBottomCollapse() const { return surround->marginBottomCollapse; }
+    EMarginCollapse marginTopCollapse() const { return css3NonInheritedData->marginTopCollapse; }
+    EMarginCollapse marginBottomCollapse() const { return css3NonInheritedData->marginBottomCollapse; }
     // End CSS3 Getters
 
 #if APPLE_CHANGES
@@ -1294,8 +1294,8 @@ public:
     void setUserDrag(EUserDrag d) { SET_VAR(css3NonInheritedData, userDrag, d); }
     void setUserSelect(EUserSelect s) { SET_VAR(css3NonInheritedData, userSelect, s); }
     void setTextOverflow(bool b) { SET_VAR(css3NonInheritedData, textOverflow, b); }
-    void setMarginTopCollapse(EMarginCollapse c) { SET_VAR(surround, marginTopCollapse, c); }
-    void setMarginBottomCollapse(EMarginCollapse c) { SET_VAR(surround, marginBottomCollapse, c); }
+    void setMarginTopCollapse(EMarginCollapse c) { SET_VAR(css3NonInheritedData, marginTopCollapse, c); }
+    void setMarginBottomCollapse(EMarginCollapse c) { SET_VAR(css3NonInheritedData, marginBottomCollapse, c); }
     // End CSS3 Setters
    
 #if APPLE_CHANGES
