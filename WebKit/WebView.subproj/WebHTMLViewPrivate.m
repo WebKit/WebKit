@@ -53,6 +53,7 @@
 
 - (void)dealloc
 {
+    [mouseDownEvent release];
     [draggingImageElement release];
     [super dealloc];
 }

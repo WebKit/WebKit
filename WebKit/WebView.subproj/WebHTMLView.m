@@ -556,7 +556,8 @@
 {
     // Record the mouse down position so we can determine
     // drag hysteresis.
-    _private->mouseDownPoint = [event locationInWindow];
+    [_private->mouseDownEvent release];
+    _private->mouseDownEvent = [event retain];
     
     // Let khtml get a chance to deal with the event.
     [[self _bridge] mouseDown:event];
@@ -603,17 +604,18 @@
     
     // Ensure that we're visible wrt the event location.
     BOOL didScroll = [self autoscroll:event];
-    
+
+    NSPoint mouseDownPoint = [_private->mouseDownEvent locationInWindow];
     if (didScroll){
-        _private->mouseDownPoint.x = -FLT_MAX;
-        _private->mouseDownPoint.y = -FLT_MAX;
+        mouseDownPoint.x = -FLT_MAX;
+        mouseDownPoint.y = -FLT_MAX;
     }
     
     // Now do WebKit dragging.
-    float deltaX = ABS([event locationInWindow].x - _private->mouseDownPoint.x);
-    float deltaY = ABS([event locationInWindow].y - _private->mouseDownPoint.y);
+    float deltaX = ABS([event locationInWindow].x - mouseDownPoint.x);
+    float deltaY = ABS([event locationInWindow].y - mouseDownPoint.y);
 
-    NSPoint point = [self convertPoint:_private->mouseDownPoint fromView:nil];
+    NSPoint point = [self convertPoint:mouseDownPoint fromView:nil];
     NSDictionary *element = [self _elementAtPoint: point];
     NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey: WebElementImageURLKey];
@@ -632,7 +634,7 @@
                                       fromRect:NSZeroRect
                                         source:self
                                      slideBack:YES
-                                         event:event];
+                                         event:_private->mouseDownEvent];
                 
             }else if (linkURL) {
                 BOOL drawURLString = YES;

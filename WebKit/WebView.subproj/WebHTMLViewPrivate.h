@@ -15,7 +15,6 @@
 @interface WebHTMLViewPrivate : NSObject
 {
 @public
-    NSPoint mouseDownPoint;
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL canDragTo;
@@ -26,6 +25,8 @@
     
     id savedSubviews;
     BOOL subviewsSetAside;
+
+    NSEvent *mouseDownEvent;
 
     NSDictionary *draggingImageElement;
     
