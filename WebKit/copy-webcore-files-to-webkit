@@ -22,6 +22,7 @@ my %WebCoreFiles = (
 
 my %JavaScriptCoreFiles = (
     'bindings/npruntime.h' => 'Plugins.subproj/npruntime.h',
+    'bindings/npsap.h' => 'Plugins.subproj/npsap.h',
 );
 
 my $JavaScriptCorePath = '';

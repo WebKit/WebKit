@@ -1,3 +1,28 @@
+2004-04-22  Richard Williamson   <rjw@apple.com>
+
+	Updates to plugin binding APIs.
+	Updates to Java plugin APIs.
+	Transparency fix for Dashboard.
+	
+        Reviewed by John and Greg Bolsinga.
+
+        * Plugins.subproj/WebPluginJava.h: Added.
+	New API for Java plugin.        
+
+	* Plugins.subproj/npfunctions.h:
+        * Plugins.subproj/npruntime.h:
+        (_NPString::):
+        (_NPString::_NPVariant::):
+        * Plugins.subproj/npsap.h: Added.
+	New API for plugin bindings.        
+
+	* WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]):
+	Update for Dashboard.  View must fill with transparency when not
+	drawing background.        
+
+	* copy-webcore-files-to-webkit:
+
 2004-04-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

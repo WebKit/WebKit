@@ -1462,6 +1462,11 @@ static WebHTMLView *lastHitView = nil;
             [textRendererFactoryIfCoalescing startCoalesceTextDrawing];
         }
 
+        if (![[self _webView] drawsBackground]) {
+            [[NSColor clearColor] set];
+            NSRectFill (rect);
+        }
+        
         //double start = CFAbsoluteTimeGetCurrent();
         [[self _bridge] drawRect:rect];
         //LOG(Timing, "draw time %e", CFAbsoluteTimeGetCurrent() - start);

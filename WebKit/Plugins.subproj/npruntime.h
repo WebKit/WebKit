@@ -46,6 +46,10 @@
  * type names.
  * Renamed "JavaScript" types to "Script".
  *
+ * Revision 7 (April 21, 2004):
+ * NPIdentifier becomes a void*, was int32_t
+ * Remove NP_IsValidIdentifier, renamed NP_IdentifierFromUTF8 to NP_GetIdentifier
+ * Added NPVariant and modified functions to use this new type.
  */
 #ifndef _NP_RUNTIME_H_
 #define _NP_RUNTIME_H_
@@ -93,38 +97,125 @@ typedef struct NPClass NPClass;
 */
 typedef NPObject NPScriptObject;
 
+typedef char NPUTF8;
+typedef struct _NPString {
+    const NPUTF8 *UTF8Characters;
+    uint32_t UTF8Length;
+} NPString;
+
+#ifndef _NPAPI_H_
+// Ack!  Temporary hack to get build working.
+typedef unsigned char NPBool;
+#endif
+  
+typedef enum {
+    NPVariantVoidType,
+    NPVariantNullType,
+    NPVariantUndefinedType,
+    NPVariantBoolType,
+    NPVariantInt32Type,
+    NPVariantDoubleType,
+    NPVariantStringType,
+    NPVariantObjectType
+} NPVariantType;
+
+typedef struct _NPVariant {
+    NPVariantType type;
+    union {
+        NPBool boolValue;
+        int32_t intValue;
+        double doubleValue;
+        NPString stringValue;
+        NPObject *objectValue;
+    } value;
+} NPVariant;
+
+/*
+    NPN_ReleaseVariantValue is called on all 'out' parameters references.
+    Specifically it is called on variants that are resultant out parameters
+    in NPGetPropertyFunctionPtr and NPInvokeFunctionPtr.  Resultant variants
+    from these two functions should be initialized using the
+    NPN_InitializeVariantXXX() functions.
+    
+    After calling NPReleaseVariantValue, the type of the variant will
+    be set to NPVariantUndefinedType.
+*/
+void NPN_ReleaseVariantValue (NPVariant *variant);
+
+NPBool NPN_VariantIsVoid (const NPVariant *variant);
+NPBool NPN_VariantIsNull (const NPVariant *variant);
+NPBool NPN_VariantIsUndefined (const NPVariant *variant);
+NPBool NPN_VariantIsBool (const NPVariant *variant);
+NPBool NPN_VariantIsInt32 (const NPVariant *variant);
+NPBool NPN_VariantIsDouble (const NPVariant *variant);
+NPBool NPN_VariantIsString (const NPVariant *variant);
+NPBool NPN_VariantIsObject (const NPVariant *variant);
+NPBool NPN_VariantToBool (const NPVariant *variant, NPBool *result);
+NPBool NPN_VariantToInt32 (const NPVariant *variant, int32_t *result);
+NPBool NPN_VariantToDouble (const NPVariant *variant, double *result);
+NPString NPN_VariantToString (const NPVariant *variant);
+NPString NPN_VariantToStringCopy (const NPVariant *variant);
+NPBool NPN_VariantToObject (const NPVariant *variant, NPObject **result);
+
+/*
+    NPVariants initialized with the NPN_InitializeVariantXXX() functions
+    must be released using the NPN_ReleaseVariantValue() function.
+*/
+void NPN_InitializeVariantAsVoid (NPVariant *variant);
+void NPN_InitializeVariantAsNull (NPVariant *variant);
+void NPN_InitializeVariantAsUndefined (NPVariant *variant);
+void NPN_InitializeVariantWithBool (NPVariant *variant, NPBool value);
+void NPN_InitializeVariantWithInt32 (NPVariant *variant, int32_t value);
+void NPN_InitializeVariantWithDouble (NPVariant *variant, double value);
+
+/*
+    NPN_InitializeVariantWithString() does not copy string data.  However
+    the string data will be deallocated by calls to NPReleaseVariantValue().
+*/
+void NPN_InitializeVariantWithString (NPVariant *variant, const NPString *value);
+
+/*
+    NPN_InitializeVariantWithStringCopy() will copy string data.  The string data
+    will be deallocated by calls to NPReleaseVariantValue().
+*/
+void NPN_InitializeVariantWithStringCopy (NPVariant *variant, const NPString *value);
+
+/*
+    NPN_InitializeVariantWithObject() retains the NPObject.  The object will be released
+    by calls to NPReleaseVariantValue();
+*/
+void NPN_InitializeVariantWithObject (NPVariant *variant, NPObject *value);
+
+void NPN_InitializeVariantWithVariant (NPVariant *destination, const NPVariant *source);
+
 /*
 	Type mappings (JavaScript types have been used for illustration
     purposes):
 
-	script    to             C
-	Boolean                  NPBoolean	
-	Number                   NPNumber
-	String                   NPString
-	Undefined                NPUndefined
-	Null                     NPNull
-	Object (including Array) NPScriptObject
-	Object wrapper           NPObject
+	script    to                C
+	Boolean                     NPVariant (with type NPVariantBoolType) 
+	Number                      NPVariant (with type NPVariantDoubleType)
+	String                      NPVariant (with type NPVariantStringType)
+	Undefined                   NPVariant (with type NPVariantUndefinedType)
+	Null                        NPVariant (with type NPVariantNullType)
+	Object (including Array)    NPVariant (with type NPVariantObjectType, objectValue will be a NPScriptObject)
+	Object (NPObject wrapper)   NPVariant (with type NPVariantObjectType)
 
 
-	C          to            script
-	NPBoolean                Boolean	
-	NPNumber                 Number
-	NPString                 String
-	NPUndefined              Undefined
-	NPNull                   Null
-	NPArray                  Array (restricted)
-	NPScriptObject           Object
-	other NPObject           Object wrapper
+	C          to                                         script
+	NPVariant (with type NPVariantBoolType)               Boolean	
+	NPVariant (with type NPVariantInt32Type)              Number
+	NPVariant (with type NPVariantDoubleType)             Number
+	NPVariant (with type NPVariantStringType)             String
+	NPVariant (with type NPVariantUndefinedType)          Undefined
+	NPVariant (with type NPVariantNullType)               Null
+	NPArray                                               Array (restricted)
+	NPScriptObject                                        Object
+	other NPObject                                        Object (NPObject wrapper)
 
 */
 
-typedef uint32_t NPIdentifier;
-
-/*
-    NPUTF8 strings are null terminated.
-*/
-typedef char NPUTF8;
+typedef void *NPIdentifier;
 
 /*
     NPObjects have methods and properties.  Methods and properties are named with NPIdentifiers.
@@ -133,8 +224,7 @@ typedef char NPUTF8;
     NPN_IsValidIdentifier will return true if an identifier for the name has already been
     assigned with either NPIdentifierFromUTF8() or NPN_GetIdentifiers();
 */
-NPIdentifier NPN_IdentifierFromUTF8 (const NPUTF8 *name);
-bool NPN_IsValidIdentifier (const NPUTF8 *name);
+NPIdentifier NPN_GetIdentifier (const NPUTF8 *name);
 void NPN_GetIdentifiers (const NPUTF8 **names, int nameCount, NPIdentifier *identifiers);
 
 /*
@@ -144,15 +234,19 @@ const NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier);
 
 /*
     NPObject behavior is implemented using the following set of callback functions.
+    
+    The NPVariant *result parameter of NPInvokeFunctionPtr and NPGetPropertyFunctionPtr functions
+    should be initialized using one of the NPN_InitializeVariantXXX functions.  The variant result
+    of the two functions will be released using NPN_ReleaseVariantValue().
 */
 typedef NPObject *(*NPAllocateFunctionPtr)();
 typedef void (*NPDeallocateFunctionPtr)(NPObject *obj);
-typedef void (*NPInvalidateFunctionPtr)();
+typedef void (*NPInvalidateFunctionPtr)(NPObject *obj);
 typedef bool (*NPHasMethodFunctionPtr)(NPClass *theClass, NPIdentifier name);
-typedef NPObject *(*NPInvokeFunctionPtr)(NPObject *obj, NPIdentifier name, NPObject **args, unsigned argCount);
+typedef void (*NPInvokeFunctionPtr)(NPObject *obj, NPIdentifier name, NPVariant *args, unsigned argCount, NPVariant *result);
 typedef bool (*NPHasPropertyFunctionPtr)(NPClass *theClass, NPIdentifier name);
-typedef NPObject *(*NPGetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name);
-typedef void (*NPSetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, NPObject *value);
+typedef void (*NPGetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, NPVariant *result);
+typedef void (*NPSetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, const NPVariant *value);
 
 /*
     NPObjects returned by create, retain, invoke, and getProperty 
@@ -214,20 +308,10 @@ void NPN_ReleaseObject (NPObject *obj);
 /*
     Built-in data types.  These classes can be passed to NPN_IsKindOfClass().
 */
-extern NPClass *NPBooleanClass;
-extern NPClass *NPNullClass;
-extern NPClass *NPUndefinedClass;
 extern NPClass *NPArrayClass;
-extern NPClass *NPNumberClass;
-extern NPClass *NPStringClass;
 extern NPClass *NPScriptObjectClass;
 
-typedef NPObject NPBoolean;
-typedef NPObject NPNull;
-typedef NPObject NPUndefined;
 typedef NPObject NPArray;
-typedef NPObject NPNumber;
-typedef NPObject NPString;
 
 /*
     Functions to access script objects represented by NPScriptObject.
@@ -240,53 +324,16 @@ typedef NPObject NPString;
     Calls made from script to the plugin will always be made on the main
     user agent thread, this include calls to NPScriptResultFunctionPtr callbacks.
 */
-typedef void (*NPScriptResultFunctionPtr)(NPObject *obj, void *resultContext);
+typedef void (*NPScriptResultFunctionPtr)(const NPVariant *result, void *resultContext);
 
-void NPN_Call (NPScriptObject *obj, NPIdentifier methodName, NPObject **args, unsigned argCount, NPScriptResultFunctionPtr resultCallback);
+void NPN_Call (NPScriptObject *obj, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPScriptResultFunctionPtr resultCallback);
 void NPN_Evaluate (NPScriptObject *obj, NPString *script, NPScriptResultFunctionPtr resultCallback, void *resultContext);
 void NPN_GetProperty (NPScriptObject *obj, NPIdentifier  propertyName, NPScriptResultFunctionPtr resultCallback, void *resultContext);
-void NPN_SetProperty (NPScriptObject *obj, NPIdentifier  propertyName, NPObject *value);
+void NPN_SetProperty (NPScriptObject *obj, NPIdentifier  propertyName, const NPVariant *value);
 void NPN_RemoveProperty (NPScriptObject *obj, NPIdentifier propertyName);
 void NPN_ToString (NPScriptObject *obj, NPScriptResultFunctionPtr result, void *resultContext);
 void NPN_GetPropertyAtIndex (NPScriptObject *obj, int32_t index, NPScriptResultFunctionPtr resultCallback, void *resultContext);
-void NPN_SetPropertyAtIndex (NPScriptObject *obj, unsigned index, NPObject *value);
-
-/*
-    Functions for dealing with data types.
-*/
-NPNumber *NPN_CreateNumberWithInt (int i);
-NPNumber *NPN_CreateNumberWithFloat (float f);
-NPNumber *NPN_CreateNumberWithDouble (double d);
-int NPN_IntFromNumber (NPNumber *obj);
-float NPN_FloatFromNumber (NPNumber *obj);
-double NPN_DoubleFromNumber (NPNumber *obj);
-
-/*
-    NPN_CreateStringWithUTF8() takes a UTF8 string and length.  -1 may be passed for the
-    length if the string is null terminated.
-*/
-NPString *NPN_CreateStringWithUTF8 (const NPUTF8 *utf8String, int32_t length);
-
-/*
-    Memory returned from NPUTF8FromString must be deallocated
-    by calling NPN_DeallocateUTF8.
-*/
-NPUTF8 *NPN_UTF8FromString (NPString *obj);
-void NPN_DeallocateUTF8 (NPUTF8 *UTF8Buffer);
-int32_t NPN_StringLength (NPString *obj);
-
-NPBoolean *NPN_CreateBoolean (bool f);
-bool NPN_BoolFromBoolean (NPBoolean *aBool);
-
-/*
-    NPNull returns a NPNull singleton.
-*/
-NPNull *NPN_GetNull();
-
-/*
-    NPUndefined returns a NPUndefined singleton.
-*/
-NPUndefined *NPN_GetUndefined ();
+void NPN_SetPropertyAtIndex (NPScriptObject *obj, unsigned index, const NPVariant *value);
 
 /*
     NPArrays are immutable.  They are used to pass arguments to 
@@ -297,7 +344,7 @@ NPUndefined *NPN_GetUndefined ();
     
     Objects added to arrays are retained by the array.
 */
-NPArray *NPN_CreateArray (NPObject **, int32_t count);
+NPArray *NPN_CreateArray (NPVariant **, int32_t count);
 NPArray *NPN_CreateArrayV (int32_t count, ...);
 
 /*

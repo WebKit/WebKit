@@ -47,9 +47,13 @@ typedef void (*NPP_ShutdownProcPtr)(void);
 typedef void *(*NPP_GetJavaClassProcPtr)(void);
 typedef void*	JRIGlobalRef; //not using this right now
 
+typedef void *(*NPN_GenericFunction)(void);
+typedef NPN_GenericFunction (*NPN_GetFunctionProcPtr)(const char *functionName);
+
 typedef struct _NPNetscapeFuncs {
     uint16 size;
     uint16 version;
+    
     NPN_GetURLProcPtr geturl;
     NPN_PostURLProcPtr posturl;
     NPN_RequestReadProcPtr requestread;
@@ -71,6 +75,10 @@ typedef struct _NPNetscapeFuncs {
     NPN_InvalidateRectProcPtr invalidaterect;
     NPN_InvalidateRegionProcPtr invalidateregion;
     NPN_ForceRedrawProcPtr forceredraw;
+    
+    // Version 12+
+    NPN_GetFunctionProcPtr getFunction;
+    
 } NPNetscapeFuncs;
 
 typedef struct _NPPluginFuncs {
