@@ -1,3 +1,13 @@
+2003-06-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3285120 -- crash in CSSParser::parseColor (originally seen with Panther Mail while indexing)
+
+        * khtml/css/parser.y: Moved DIMEN rule out of unary_term, needed because a term production
+        assumes that the values that come out of unary_term are all fValue, not string.
+        * khtml/css/parser.cpp: Regenerated.
+
 2003-06-10  Vicki Murley  <vicki@apple.com>
 
         Reviewed by john.
