@@ -1,5 +1,14 @@
 2004-08-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Kevin.
+
+	- remove annoying ERROR spew and replace with comment
+	
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView validAttributesForMarkedText]):
+
+2004-08-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Richard.
 
 	- a bit of code cleanup

@@ -3379,7 +3379,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSArray *)validAttributesForMarkedText
 {
-    ERROR("TEXTINPUT: validAttributesForMarkedText not yet implemented");
+    // FIXME: TEXTINPUT: validAttributesForMarkedText not yet implemented
     return [NSArray array];
 }
 
