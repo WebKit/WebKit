@@ -33,6 +33,16 @@
 #include <KWQListBox.h>
 #include "qwidget.h"
 
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#define Fixed MacFixed
+#define Rect MacRect
+#define Boolean MacBoolean
+#import <Cocoa/Cocoa.h>
+#undef Fixed
+#undef Rect
+#undef Boolean
+#endif
+
 // class QComboBox =============================================================
 
 class QComboBox : public QWidget {
@@ -77,6 +87,12 @@ private:
 
 #ifdef _KWQ_
     void init(bool isEditable);
+
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    NSMutableArray *items;
+#else
+    void *items;
+#endif
 #endif
 
 }; // class QComboBox ==========================================================

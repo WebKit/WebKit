@@ -53,7 +53,7 @@
     NSRect boundingRect;
 
     if (fragmentCache == nil)
-        fragmentCache = [[NSMutableDictionary alloc] init];
+        fragmentCache = [[NSMutableDictionary alloc] initWithCapacity: 1024*8];
     
     [self setString: measureString];
     

@@ -1,5 +1,15 @@
 2002-03-15  Richard Williamson  <rjw@apple.com>
 
+        Fixed crasher initializing items in popup button.
+        Increased fragment cache initial size.
+        
+	* src/kwq/KWQComboBox.mm: (QComboBox::init), (QComboBox::~QComboBox),
+	(QComboBox::insertItem):
+	* src/kwq/KWQTextStorage.mm: (-[KWQTextStorage _buildFragmentForString:]):
+	* src/kwq/qt/qcombobox.h:
+
+2002-03-15  Richard Williamson  <rjw@apple.com>
+
         More string usage optimizations.  Got another 10% or so.
         
 	* src/kdelibs/khtml/css/cssstyleselector.cpp: (checkPseudoState),
