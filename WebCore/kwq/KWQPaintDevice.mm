@@ -30,7 +30,7 @@
 
 QPaintDevice::~QPaintDevice()
 {
-    _logNeverImplemented();
+    // This space intentionally left blank.
 }
 
 

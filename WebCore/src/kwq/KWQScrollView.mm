@@ -177,7 +177,6 @@ void QScrollView::removeChild(QWidget* child)
 
 void QScrollView::resizeContents(int w, int h)
 {
-    NSLog (@"KWQScrollView resizing to w %d, h %d");
     resize (w, h);
 }
 

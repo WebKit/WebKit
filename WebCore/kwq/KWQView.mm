@@ -103,14 +103,31 @@
     return self;
 }
 
+#ifdef DELAY_LAYOUT
+- delayLayout: sender
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(delayLayout:) object: self];
+    NSLog (@"KWQHTMLView:  delayLayout called");
+    [self setNeedsLayout: YES];
+    [self setNeedsDisplay: YES];
+}
+
 -(void)notificationReceived:(NSNotification *)notification
 {
     if ([[notification name] rangeOfString: @"uri-fin-"].location == 0){
         NSLog (@"KWQHTMLView: Received notification, %@", [notification name]);
+        [self performSelector:@selector(delayLayout:) withObject:self afterDelay:(NSTimeInterval)0.5];
+    }
+}
+#else
+-(void)notificationReceived:(NSNotification *)notification
+{
+    if ([[notification name] rangeOfString: @"uri-fin-"].location == 0){
         [self setNeedsLayout: YES];
         [self setNeedsDisplay: YES];
     }
 }
+#endif
 
 - (void)layout
 {
@@ -187,6 +204,21 @@
  
     [self resetView];
     part->openURL (url);
+}
+
+- (void)mouseUp: (NSEvent *)event
+{
+    NSLog (@"mouseUp %@", event);
+}
+
+- (void)mouseDown: (NSEvent *)event
+{
+    NSLog (@"mouseDown %@", event);
+}
+
+- (void)mouseDragged: (NSEvent *)event
+{
+    NSLog (@"mouseDragged %@", event);
 }
 
 
