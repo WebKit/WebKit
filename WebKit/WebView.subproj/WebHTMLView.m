@@ -9,6 +9,7 @@
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
+#import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDOMOperations.h>
@@ -18,6 +19,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
@@ -577,29 +579,76 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] isSelectionEditable];
 }
 
-- (void)_pasteMarkupFromPasteboard:(NSPasteboard *)pasteboard
+- (void)_pasteMarkupString:(NSString *)markupString
+{
+    if ([markupString length] > 0) {
+        [[self _bridge] pasteMarkupString:markupString];
+    }
+}
+
+- (void)_pasteImageResource:(WebResource *)resource
+{
+    ASSERT(resource);
+    [[self _dataSource] addSubresource:resource];
+    [self _pasteMarkupString:[NSString stringWithFormat:@"<IMG SRC=\"%@\">", [[resource URL] _web_originalDataAsString]]];
+}
+
+- (void)_pasteFromPasteboard:(NSPasteboard *)pasteboard
 {
     NSArray *types = [pasteboard types];
-    NSString *markupString = nil;
 
     if ([types containsObject:WebArchivePboardType]) {
-        WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
+        WebArchive *archive = [[[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]] autorelease];
         WebResource *mainResource = [archive mainResource];
         if (mainResource) {
-            markupString = [[[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding] autorelease];
-            [[self _dataSource] addSubresources:[archive subresources]];
+            NSString *MIMEType = [mainResource MIMEType];
+            if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
+                NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
+                [[self _dataSource] addSubresources:[archive subresources]];
+                [self _pasteMarkupString:markupString];
+                [markupString release];
+                return;
+            } else if ([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType]) {
+                [self _pasteImageResource:mainResource];
+                return;
+            }
         }
-        [archive release];
     }
     
-    if (!markupString && [types containsObject:NSHTMLPboardType]) {
-        markupString = [pasteboard stringForType:NSHTMLPboardType];
-    }
-    if (!markupString && [types containsObject:NSStringPboardType]) {
-        markupString = [pasteboard stringForType:NSStringPboardType];
-    }
-    if (markupString) {
-        [[self _bridge] pasteMarkupString:markupString];
+    NSURL *URL;
+    
+    if ([types containsObject:NSHTMLPboardType]) {
+        [self _pasteMarkupString:[pasteboard stringForType:NSHTMLPboardType]];
+    } else if ([types containsObject:NSTIFFPboardType]) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
+                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
+                                                         MIMEType:@"image/tiff" 
+                                                 textEncodingName:nil];
+        [self _pasteImageResource:resource];
+        [resource release];
+    } else if ([types containsObject:NSPICTPboardType]) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
+                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
+                                                         MIMEType:@"image/pict" 
+                                                 textEncodingName:nil];
+        [self _pasteImageResource:resource];
+        [resource release];
+    } else if ((URL = [pasteboard _web_bestURL])) {
+        NSString *URLString = [URL _web_originalDataAsString];
+        NSString *linkLabel = [pasteboard stringForType:WebURLNamePboardType];
+        linkLabel = [linkLabel length] > 0 ? linkLabel : URLString;
+        NSString *markupString = [NSString stringWithFormat:@"<A HREF=\"%@\">%@</A>", URLString, linkLabel];
+        [self _pasteMarkupString:markupString];
+    } else if ([types containsObject:NSRTFDPboardType]) {
+        // FIXME: Support RTFD to HTML (or DOM) conversion.
+        ERROR("RTFD to HTML conversion not yet supported.");
+        [self _pasteMarkupString:[pasteboard stringForType:NSStringPboardType]]; 
+    } else if ([types containsObject:NSRTFPboardType]) {
+        // FIXME: Support RTF to HTML (or DOM) conversion.
+        ERROR("RTF to HTML conversion not yet supported.");
+        [self _pasteMarkupString:[pasteboard stringForType:NSStringPboardType]];      
+    } else if ([types containsObject:NSStringPboardType]) {
+        [self _pasteMarkupString:[pasteboard stringForType:NSStringPboardType]];
     }
 }
 
@@ -714,11 +763,10 @@ static WebHTMLView *lastHitView = nil;
         NSFileWrapper *fileWrapper = [[self _dataSource] _fileWrapperForURL:_private->draggingImageURL];
         ASSERT(fileWrapper);
         [self _web_dragImage:image
-                 fileWrapper:fileWrapper
+                     archive:[[element objectForKey:WebCoreElementDOMNodeKey] webArchive]
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                          URL:linkURL ? linkURL : imageURL
                        title:[element objectForKey:WebElementImageAltStringKey]
-                  HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] markupString]
                        event:_private->mouseDownEvent];
         
     } else if (linkURL) {
@@ -952,7 +1000,9 @@ static WebHTMLView *lastHitView = nil;
     _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
     _private->needsLayout = YES;
 
-    [self registerForDraggedTypes:[NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSStringPboardType, nil]];
+    [self registerForDraggedTypes:[NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType,
+        NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
+        NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil]];
 
     return self;
 }
@@ -995,7 +1045,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)paste:(id)sender
 {
-    [self _pasteMarkupFromPasteboard:[NSPasteboard generalPasteboard]];
+    [self _pasteFromPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
@@ -1661,7 +1711,7 @@ static WebHTMLView *lastHitView = nil;
 {
     if ([self _dragOperationForDraggingInfo:sender] != NSDragOperationNone) {
         // FIXME: We should delete the original selection if we're doing a move.
-        [self _pasteMarkupFromPasteboard:[sender draggingPasteboard]];
+        [self _pasteFromPasteboard:[sender draggingPasteboard]];
     } else {
         // Since we're not handling the drag, forward this message to the WebView since it may want to handle it.
         [[self _webView] concludeDragOperation:sender];

@@ -24,7 +24,7 @@
     return (WebBridge *)[WebBridge bridgeForDOMDocument:[self ownerDocument]];
 }
 
-- (WebArchive *)archive
+- (WebArchive *)webArchive
 {
     WebBridge *bridge = [self _bridge];
     NSArray *subresourceURLStrings;
@@ -46,7 +46,7 @@
     return [[self startContainer] _bridge];
 }
 
-- (WebArchive *)archive
+- (WebArchive *)webArchive
 {
     WebBridge *bridge = [self _bridge];
     NSArray *subresourceURLStrings;

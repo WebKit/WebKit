@@ -267,8 +267,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
-    NSURL *fakeURL = [NSURLRequest _webDataRequestURLForData: data];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL: fakeURL] autorelease];
+    NSURL *fakeURL = [NSURL _web_uniqueWebDataURL];
+    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:fakeURL] autorelease];
     [request _webDataRequestSetData:data];
     [request _webDataRequestSetEncoding:encodingName];
     [request _webDataRequestSetBaseURL:URL];

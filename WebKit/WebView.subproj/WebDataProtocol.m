@@ -50,9 +50,9 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
 @end
 
-@implementation NSURLRequest (WebDataRequest)
+@implementation NSURL (WebDataURL)
 
-+ (NSURL *)_webDataRequestURLForData:(NSData *)data
++ (NSURL *)_web_uniqueWebDataURL
 {
     static BOOL registered;
     
@@ -60,14 +60,24 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
         [NSURLProtocol registerClass:[WebDataProtocol class]];
         registered = YES;
     }
-
-    static unsigned int counter = 1;
     
-    // The URL we generate is meaningless.  The only interesting properties of the URL
-    // are it's scheme and that they be unique for the lifespan of the application.
-    NSURL *fakeURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%p", WebDataProtocolScheme, counter++, 0]];
-    return fakeURL;
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+    CFRelease(UUIDRef);
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", WebDataProtocolScheme, UUIDString]];
+    [UUIDString release];
+    return URL;
 }
+
++ (NSURL *)_web_uniqueWebDataURLWithRelativeString:(NSString *)string
+{
+    return [NSURL URLWithString:string relativeToURL:[self _web_uniqueWebDataURL]];
+}
+
+@end
+
+
+@implementation NSURLRequest (WebDataRequest)
 
 - (WebDataRequestParameters *)_webDataRequestParametersForReading
 {

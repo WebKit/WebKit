@@ -5,10 +5,12 @@
 
 #import "WebImageRepresentation.h"
 
+#import <WebKit/WebArchive.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebLocalizableStrings.h>
+#import <WebKit/WebResource.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
 
@@ -96,11 +98,12 @@
     return filename;
 }
 
-- (NSFileWrapper *)fileWrapper
+- (WebArchive *)archive
 {
-    NSFileWrapper *wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:data];
-    [wrapper setPreferredFilename:filename];
-    return [wrapper autorelease]; 
+    WebResource *resource = [[WebResource alloc] initWithData:data URL:URL MIMEType:[image MIMEType] textEncodingName:nil];
+    WebArchive *archive = [[[WebArchive alloc] initWithMainResource:resource subresources:nil] autorelease];
+    [resource release];
+    return archive;
 }
 
 @end

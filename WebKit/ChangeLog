@@ -1,3 +1,43 @@
+2004-04-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3616873>: support for pasting and drag and dropping of URLS to editable WebViews
+	<rdar://problem/3546417>: support for pasting and drag and dropping of images to editable WebViews
+
+        Reviewed by rjw.
+
+        * DOM.subproj/WebDOMOperations.h:
+        * DOM.subproj/WebDOMOperations.m:
+        (-[DOMNode webArchive]): renamed from "archive" because "archive" collides with DOMHTMLObjectElement's method
+        (-[DOMRange webArchive]): ditto
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:URL:title:archive:]): take just an archive instead of an HTML string and file wrapper
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:archive:rect:URL:title:event:]): take just an archive instead of an HTML string and file wrapper
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        (+[NSURL _web_uniqueWebDataURL]): new
+        (+[NSURL _web_uniqueWebDataURLWithRelativeString:]): new
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): call renamed _web_writeImage
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _webDataRequestForData:MIMEType:textEncodingName:baseURL:unreachableURL:]): use _web_uniqueWebDataURL for creating a URL
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _pasteImageResource:]): new
+        (-[WebHTMLView _pasteFromPasteboard:]): renamed, now handles images and URLs
+        (-[WebHTMLView _handleMouseDragged:]): call renamed _web_dragImage
+        (-[WebHTMLView paste:]): call renamed _pasteFromPasteboard
+        (-[WebHTMLView concludeDragOperation:]): call renamed _pasteFromPasteboard
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation archive]): new
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView writeImageToPasteboard:]): call renamed _web_writeImage
+        (-[WebImageView mouseDragged:]): call renamed _web_dragImage
+
 === Safari-136 ===
 
 2004-04-08  Chris Blumenberg  <cblu@apple.com>

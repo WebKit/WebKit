@@ -5,7 +5,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class WebArchive;
 @class WebImageRenderer;
+
 @protocol WebDocumentRepresentation;
 
 @interface WebImageRepresentation : NSObject <WebDocumentRepresentation>
@@ -17,7 +19,7 @@
 }
 - (WebImageRenderer *)image;
 - (NSString *)filename;
-- (NSFileWrapper *)fileWrapper;
+- (WebArchive *)archive;
 - (BOOL)doneLoading;
 - (NSData *)data;
 - (NSURL *)URL;

@@ -212,14 +212,10 @@
 {
     NSDictionary *element = [sender representedObject];
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
-    NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
-    NSFileWrapper *wrapper = [[[element objectForKey:WebElementFrameKey] dataSource] _fileWrapperForURL:imageURL];
-    ASSERT(wrapper);
     [[NSPasteboard generalPasteboard] _web_writeImage:[element objectForKey:WebElementImageKey] 
-                                                  URL:linkURL ? linkURL : imageURL
+                                                  URL:linkURL ? linkURL : [element objectForKey:WebElementImageURLKey]
                                                 title:[element objectForKey:WebElementImageAltStringKey] 
-                                          fileWrapper:wrapper
-                                           HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] markupString]];
+                                              archive:[[element objectForKey:WebCoreElementDOMNodeKey] webArchive]];
 }
 
 - (void)openFrameInNewWindow:(id)sender

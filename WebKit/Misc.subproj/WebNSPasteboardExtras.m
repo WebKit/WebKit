@@ -8,9 +8,12 @@
 
 #import <WebKit/WebNSPasteboardExtras.h>
 
+#import <WebKit/WebArchive.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -150,8 +153,7 @@ NSString *WebURLNamePboardType = nil;
 - (void)_web_writeImage:(WebImageRenderer *)image 
                     URL:(NSURL *)URL 
                   title:(NSString *)title
-            fileWrapper:(NSFileWrapper *)fileWrapper 
-             HTMLString:(NSString *)HTMLString
+                archive:(WebArchive *)archive
 {
     ASSERT(image);
     ASSERT(URL);
@@ -161,11 +163,9 @@ NSString *WebURLNamePboardType = nil;
     
     [types addObjectsFromArray:[NSPasteboard _web_writableDragTypesForURL]];
     
-    if (fileWrapper) {
+    if (archive) {
         [types addObject:NSRTFDPboardType];
-    }
-    if (HTMLString) {
-        [types addObject:NSHTMLPboardType];
+        [types addObject:WebArchivePboardType];
     }
     if (isDrag) {
         [types addObject:NSFilesPromisePboardType];
@@ -174,11 +174,16 @@ NSString *WebURLNamePboardType = nil;
     [self _web_writeURL:URL andTitle:title withOwner:self types:types];
     [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
     
-    if (fileWrapper) {
-        [self _web_writeFileWrapperAsRTFDAttachment:fileWrapper];
-    }
-    if (HTMLString) {
-        [self setString:HTMLString forType:NSHTMLPboardType];
+    if (archive) {
+        // This image data is either the only subresource of an archive (HTML image case)
+        // or the main resource (standalone image case).
+        WebResource *resource = [[archive subresources] objectAtIndex:0];
+        if (resource == nil) {
+            resource = [archive mainResource];
+        }
+        ASSERT([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:[resource MIMEType]]);
+        [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
+        [self setData:[archive data] forType:WebArchivePboardType];
     }
     if (isDrag) {
         NSString *filename = [URL _web_suggestedFilenameWithMIMEType:[image MIMEType]];

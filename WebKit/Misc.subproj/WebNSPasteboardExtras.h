@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class WebArchive;
 @class WebImageRenderer;
 
 extern NSString *WebURLPboardType;
@@ -50,7 +51,6 @@ extern NSString *WebURLNamePboardType;
 - (void)_web_writeImage:(WebImageRenderer *)image 
                     URL:(NSURL *)URL 
                   title:(NSString *)title
-            fileWrapper:(NSFileWrapper *)wrapper 
-             HTMLString:(NSString *)HTMLString;
+                archive:(WebArchive *)archive;
 
 @end

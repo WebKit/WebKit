@@ -177,7 +177,7 @@
 - (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard
 {    
     if ([self haveCompleteImage]) {
-        [pasteboard _web_writeImage:[rep image] URL:[rep URL] title:nil fileWrapper:[rep fileWrapper] HTMLString:nil];
+        [pasteboard _web_writeImage:[rep image] URL:[rep URL] title:nil archive:[rep archive]];
         return YES;
     }
     
@@ -232,11 +232,10 @@
     [self retain];
 
     [self _web_dragImage:[rep image]
-             fileWrapper:[rep fileWrapper]
+                 archive:[rep archive]
                     rect:[self drawingRect]
                      URL:[rep URL]
                    title:nil
-              HTMLString:nil
                    event:event];
 }
 

@@ -17,8 +17,12 @@
 + (BOOL)_webIsDataProtocolURL:(NSURL *)URL;
 @end
 
+@interface NSURL (WebDataURL)
++ (NSURL *)_web_uniqueWebDataURL;
++ (NSURL *)_web_uniqueWebDataURLWithRelativeString:(NSString *)string;
+@end
+
 @interface NSURLRequest (WebDataRequest)
-+ (NSURL *)_webDataRequestURLForData:(NSData *)data;
 - (NSURL *)_webDataRequestBaseURL;
 - (NSURL *)_webDataRequestUnreachableURL;
 - (NSURL *)_webDataRequestExternalURL;

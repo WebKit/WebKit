@@ -179,11 +179,10 @@
 #endif
 
 - (void)_web_dragImage:(WebImageRenderer *)image
-           fileWrapper:(NSFileWrapper *)fileWrapper
+               archive:(WebArchive *)archive
                   rect:(NSRect)rect
                    URL:(NSURL *)URL
                  title:(NSString *)title
-            HTMLString:(NSString *)HTMLString
                  event:(NSEvent *)event
 {
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
@@ -228,7 +227,7 @@
     
     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
 
-    [pboard _web_writeImage:image URL:URL title:title fileWrapper:fileWrapper HTMLString:HTMLString];
+    [pboard _web_writeImage:image URL:URL title:title archive:archive];
     
     id source = [[NSFilePromiseDragSource alloc] initWithSource:(id)self];
     [source setTypes:filesTypes onPasteboard:pboard];

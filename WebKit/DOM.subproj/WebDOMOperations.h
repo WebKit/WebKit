@@ -10,12 +10,12 @@
 @class WebArchive;
 
 @interface DOMNode (WebDOMNodeOperations)
-- (WebArchive *)archive;
+- (WebArchive *)webArchive;
 - (NSString *)markupString;
 @end
 
 @interface DOMRange (WebDOMRangeOperations)
-- (WebArchive *)archive;
+- (WebArchive *)webArchive;
 - (NSString *)markupString;
 @end
 
