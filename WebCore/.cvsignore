@@ -5,5 +5,5 @@ framework-stamp
 framework-dylib-stamp
 framework-resource-stamp
 framework-header-stamp
-libwebcore.dylib
+libwebcore.a
 *.pfe

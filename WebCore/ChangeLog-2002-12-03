@@ -1,3 +1,10 @@
+2002-06-07  Maciej Stachowiak  <mjs@apple.com>
+
+	* Makefile.am: Rename libwebcore.dylib to libwebcore.a; since this
+	target is just a fake for dependency purposes, it doesn't matter
+	what it's called.
+	* .cvsignore: Update ignorance.
+
 2002-06-07  Darin Adler  <darin@apple.com>
 
 	* Makefile.am: I was running into failures in the embed rule, so I made it

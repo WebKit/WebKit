@@ -4,13 +4,13 @@ SUBDIRS = khtml kwq
 
 symrootsdir = $(SYMROOTS)
 
-noinst_LIBRARIES = libwebcore.dylib
+noinst_LIBRARIES = libwebcore.a
 
-libwebcore_dylib_SOURCES = \
+libwebcore_a_SOURCES = \
 	dummy.mm \
 	$(NULL)
 
-libwebcore_dylib_LIBADD = \
+libwebcore_a_LIBADD = \
 	khtml/libkhtml.o \
 	kwq/libkwq.o \
 	$(NULL)
@@ -34,7 +34,7 @@ LDFLAGS = \
 	-seg1addr 0x2200000 \
 	$(NULL)
 
-libwebcore_dylib_AR = touch libwebcore.dylib; :
+libwebcore_a_AR = touch libwebcore.a; :
 
 noinst_DATA = framework-stamp framework-resource-stamp framework-dylib-stamp framework-header-stamp WebCore-combined.exp
 
@@ -48,7 +48,7 @@ FRAMEWORK_LOCALIZED_RESOURCES = English.lproj/InfoPlist.strings
 FRAMEWORK_DIR_NAME = $(FRAMEWORK_NAME).framework
 FRAMEWORK_DIR = $(SYMROOTS)/$(FRAMEWORK_DIR_NAME)
 FRAMEWORK_DYLIB = $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)/$(FRAMEWORK_NAME)
-FRAMEWORK_LINKFLAGS = $(libwebcore_dylib_LIBADD) -install_name @executable_path/../Frameworks/$(FRAMEWORK_DIR_NAME)/Versions/$(FRAMEWORK_VERSION)/$(FRAMEWORK_NAME)
+FRAMEWORK_LINKFLAGS = $(libwebcore_a_LIBADD) -install_name @executable_path/../Frameworks/$(FRAMEWORK_DIR_NAME)/Versions/$(FRAMEWORK_VERSION)/$(FRAMEWORK_NAME)
 FRAMEWORK_RESOURCE_DIR = $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)/Resources
 FRAMEWORK_LOCALIZED_RESOURCE_DIR = $(FRAMEWORK_RESOURCE_DIR)/English.lproj
 
@@ -78,11 +78,11 @@ framework-header-stamp:
 	ln -sf Versions/Current/PrivateHeaders $(FRAMEWORK_DIR)/PrivateHeaders
 	touch $@
 
-framework-dylib-stamp: $(libwebcore_dylib_OBJECTS) $(libwebcore_dylib_DEPENDENCIES) $(WEBCORE_EXPORTS)
+framework-dylib-stamp: $(libwebcore_a_OBJECTS) $(libwebcore_a_DEPENDENCIES) $(WEBCORE_EXPORTS)
 	mkdir -p $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)
 	rm -f $(FRAMEWORK_DIR)/Versions/Current
 	ln -sf $(FRAMEWORK_VERSION) $(FRAMEWORK_DIR)/Versions/Current
-	$(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(FRAMEWORK_LINKFLAGS) $(libwebcore_dylib_OBJECTS) -o $(FRAMEWORK_DYLIB)
+	$(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(FRAMEWORK_LINKFLAGS) $(libwebcore_a_OBJECTS) -o $(FRAMEWORK_DYLIB)
 	nmedit -s $(WEBCORE_EXPORTS) - $(FRAMEWORK_DYLIB)
 	if test -n "$(STRIP_FLAGS)"; then strip $(STRIP_FLAGS) - $(FRAMEWORK_DYLIB); fi
 	ln -sf Versions/Current/$(FRAMEWORK_NAME) $(FRAMEWORK_DIR)/$(FRAMEWORK_NAME)
