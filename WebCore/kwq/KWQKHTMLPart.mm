@@ -757,7 +757,12 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
 
 bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
 {
-    NSView *nodeView = renderWidget->widget()->getView();
+    QWidget *widget = renderWidget->widget();
+    if (!widget) {
+        ERROR("hit a RenderWidget without a corresponding QWidget, means a frame is half-constructed");
+        return true;
+    }
+    NSView *nodeView = widget->getView();
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
     NSView *topView = nodeView;
@@ -768,7 +773,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[_currentEvent locationInWindow] fromView:topView]];
     if (view == nil) {
         ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
-        return false;
+        return true;
     }
     
     NSWindow *window = [view window];

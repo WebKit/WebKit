@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+	- fixed 3129824 -- crash in QWidget::getView in KWQKHTMLPart::passSubframeEventToSubframe
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+	Check for a nil QWidget in a RenderWidget, and ERROR and return true in that case.
+	We don't want to return false because otherwise the KHTML code will try to draw a frame splitter.
+
+2002-12-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
 	- fixed 3131449 -- crash in DOMNamedNodesCollection::tryGet opening a new window from JavaScript
 
         * khtml/ecma/kjs_dom.cpp: (DOMNamedNodesCollection::tryGet):
