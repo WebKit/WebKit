@@ -25,6 +25,8 @@
 
 #import "KWQScrollBar.h"
 
+#import "KWQExceptions.h"
+
 @interface KWQScrollBar : NSScroller
 {
     QScrollBar* scrollBar;
@@ -57,6 +59,7 @@
     [result setEnabled: YES];
     [self setTarget:self];
     [self setAction:@selector(scroll:)];
+
     return result;
 }
 
@@ -70,21 +73,28 @@ QScrollBar::QScrollBar(Qt::Orientation orientation, QWidget* parent)
 :m_valueChanged(this, SIGNAL(valueChanged(int)))
 {
     m_orientation = orientation;
-    m_scroller = [[KWQScrollBar alloc] initWithQScrollBar:this];
     m_visibleSize = 0;
     m_totalSize = 0;
     m_currentPos = 0;
     m_lineStep = 0;
     m_pageStep = 0;
+    m_scroller = 0;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    m_scroller = [[KWQScrollBar alloc] initWithQScrollBar:this];
     setView(m_scroller);
-    setFocusPolicy(NoFocus);
-    [parent->getView() addSubview: m_scroller];
     [m_scroller release];
+    [parent->getView() addSubview: m_scroller];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    setFocusPolicy(NoFocus);
 }
 
 QScrollBar::~QScrollBar()
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [m_scroller removeFromSuperview];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollBar::setValue(int v)
@@ -96,8 +106,10 @@ void QScrollBar::setValue(int v)
     if (m_currentPos == v)
         return; // Our value stayed the same.
     m_currentPos = v;
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [m_scroller setFloatValue: (float)m_currentPos/maxPos
                knobProportion: [m_scroller knobProportion]];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
     valueChanged(); // Emit the signal that indicates our value has changed.
 }
 
@@ -112,9 +124,11 @@ void QScrollBar::setKnobProportion(int visibleArea, int totalArea)
     m_visibleSize = visibleArea;
     m_totalSize = totalArea;
     float val = (float)m_visibleSize/m_totalSize;
-    if (val == [m_scroller knobProportion] || val < 0.0)
-        return;
-    [m_scroller setFloatValue: [m_scroller floatValue] knobProportion: val];
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    if (!(val == [m_scroller knobProportion] || val < 0.0))
+	[m_scroller setFloatValue: [m_scroller floatValue] knobProportion: val];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollBar::scrollbarHit(NSScrollerPart hitPart)
@@ -123,7 +137,7 @@ void QScrollBar::scrollbarHit(NSScrollerPart hitPart)
     if (maxPos <= 0)
         return; // Impossible to scroll anywhere.
     
-    int newPos = m_currentPos;
+    volatile int newPos = m_currentPos;
     switch (hitPart) {
         case NSScrollerDecrementLine:
             newPos -= m_lineStep;
@@ -141,7 +155,9 @@ void QScrollBar::scrollbarHit(NSScrollerPart hitPart)
             // If the thumb is hit, then the scrollbar changed its value for us.
         case NSScrollerKnob:
         case NSScrollerKnobSlot:
+	    KWQ_BLOCK_NS_EXCEPTIONS;
             newPos = (int)([m_scroller floatValue]*maxPos);
+	    KWQ_UNBLOCK_NS_EXCEPTIONS;
             break;
         default: ;
     }

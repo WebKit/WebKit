@@ -24,9 +24,10 @@
  */
 
 #import "KWQScrollView.h"
-#import "WebCoreFrameView.h"
 
+#import "KWQExceptions.h"
 #import "KWQLogging.h"
+#import "WebCoreFrameView.h"
 
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.
@@ -64,12 +65,15 @@ QWidget* QScrollView::viewport() const
 int QScrollView::visibleWidth() const
 {
     NSScrollView *view = (NSScrollView *)getView();
-    int visibleWidth;
+    volatile int visibleWidth = 0;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView]) {
         visibleWidth = (int)[view documentVisibleRect].size.width;
     } else {
         visibleWidth = (int)[view bounds].size.width;
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     return visibleWidth;
 }
@@ -77,13 +81,15 @@ int QScrollView::visibleWidth() const
 int QScrollView::visibleHeight() const
 {
     NSScrollView *view = (NSScrollView *)getView();
-    int visibleHeight;
+    volatile int visibleHeight = 0;
     
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView]) {
         visibleHeight = (int)[view documentVisibleRect].size.height;
     } else {
         visibleHeight = (int)[view bounds].size.height;
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
     
     return visibleHeight;
 }
@@ -92,43 +98,67 @@ int QScrollView::contentsWidth() const
 {
     NSView *docView, *view = getView();
     docView = getDocumentView();
-    if (docView)
-        return (int)[docView bounds].size.width;
-    return (int)[view bounds].size.width;
+
+    volatile int result = 0;
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    if (docView) {
+        result = (int)[docView bounds].size.width;
+    } else {
+	result = (int)[view bounds].size.width;
+    }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return result;
 }
 
 int QScrollView::contentsHeight() const
 {
     NSView *docView, *view = getView();
     docView = getDocumentView();
-    if (docView)
-        return (int)[docView bounds].size.height;
-    return (int)[view bounds].size.height;
+
+    volatile int result = 0;
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    if (docView) {
+        result = (int)[docView bounds].size.height;
+    } else {
+	result = (int)[view bounds].size.height;
+    }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return result;
 }
 
 int QScrollView::contentsX() const
 {
     NSView *view = getView();
-    float vx;
+    volatile float vx = 0;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView]) {
         NSScrollView *sview = view;
         vx = (int)[sview documentVisibleRect].origin.x;
     } else {
         vx = (int)[view visibleRect].origin.x;
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     return (int)vx;
 }
 
 int QScrollView::contentsY() const
 {
     NSView *view = getView();
-    float vy;
+    volatile float vy = 0;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView]) {
         NSScrollView *sview = view;
         vy = (int)[sview documentVisibleRect].origin.y;
     } else {
         vy = (int)[view visibleRect].origin.y;
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     return (int)vy;
 }
 
@@ -149,98 +179,132 @@ void QScrollView::scrollBy(int dx, int dy)
 
 void QScrollView::setContentsPos(int x, int y)
 {
-    NSView *docView, *view = getView();    
+    NSView *docView;
+    volatile NSView * volatile view = getView();    
     docView = getDocumentView();
     if (docView)
         view = docView;
         
-    if (x < 0)
-        x = 0;
-    if (y < 0)
-        y = 0;
-    [view scrollPoint: NSMakePoint(x,y)];
+    volatile int _x = (x < 0) ? 0 : x;
+    volatile int _y = (y < 0) ? 0 : y;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    [view scrollPoint: NSMakePoint(_x,_y)];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::setVScrollBarMode(ScrollBarMode vMode)
 {
     NSView* view = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
         [frameView setVerticalScrollingMode: (WebCoreScrollBarMode)vMode];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::setHScrollBarMode(ScrollBarMode hMode)
 {
     NSView* view = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
         [frameView setHorizontalScrollingMode: (WebCoreScrollBarMode)hMode];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::setScrollBarsMode(ScrollBarMode mode)
 {
     NSView* view = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
         [frameView setScrollingMode: (WebCoreScrollBarMode)mode];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 QScrollView::ScrollBarMode
 QScrollView::vScrollBarMode() const
 {
     NSView* view = getView();
+
+    volatile QScrollView::ScrollBarMode mode = Auto;
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
-        return (ScrollBarMode)[frameView verticalScrollingMode];
+        mode = (ScrollBarMode)[frameView verticalScrollingMode];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return Auto;
+    return mode;
 }
 
 QScrollView::ScrollBarMode
 QScrollView::hScrollBarMode() const
 {
     NSView* view = getView();
+
+    volatile QScrollView::ScrollBarMode mode = Auto;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
-        return (ScrollBarMode)[frameView horizontalScrollingMode];
+        mode = (ScrollBarMode)[frameView horizontalScrollingMode];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return Auto;
+    return mode;
 }
 
 bool QScrollView::hasVerticalScrollBar() const
 {
     NSScrollView *view = (NSScrollView *)getView();
+    volatile bool result = false;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView])
-        return [view hasVerticalScroller];
-    return false;
+        result = [view hasVerticalScroller];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return result;
 }
 
 bool QScrollView::hasHorizontalScrollBar() const
 {
     NSScrollView *view = (NSScrollView *)getView();
+    volatile bool result = false;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView])
-        return [view hasHorizontalScroller];
-    return false;
+        result = [view hasHorizontalScroller];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return result;
 }
 
 void QScrollView::suppressScrollBars(bool suppressed,  bool repaintOnUnsuppress)
 {
     NSView* view = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
         [frameView setScrollBarsSuppressed: suppressed
                        repaintOnUnsuppress: repaintOnUnsuppress];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::addChild(QWidget* child, int x, int y)
 {
-    NSView *thisView, *thisDocView, *subview;
+    volatile NSView * volatile thisView;
+    NSView *thisDocView, *subview;
 
     ASSERT(child != this);
     
@@ -253,40 +317,48 @@ void QScrollView::addChild(QWidget* child, int x, int y)
 
     subview = child->getOuterView();
     ASSERT(subview != thisView);
-    if ([subview superview] == thisView) {
-        return;
-    }
-    
-    [subview removeFromSuperview];
-    
-    LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview,
-        [(id)[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
 
-    [thisView addSubview:subview];
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    if ([subview superview] != thisView) {
+	[subview removeFromSuperview];
+	
+	LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview,
+	    [(id)[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
+	
+	[thisView addSubview:subview];
+    }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::removeChild(QWidget* child)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [child->getOuterView() removeFromSuperview];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::resizeContents(int w, int h)
 {
+    volatile int _w = w;
+    volatile int _h = h;
+
     LOG(Frames, "%p %@ at w %d h %d\n", getView(), [(id)[getView() class] className], w, h);
     NSView *view = getView();
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView]){
         view = getDocumentView();
         
         LOG(Frames, "%p %@ at w %d h %d\n", view, [(id)[view class] className], w, h);
-        if (w < 0)
-            w = 0;
-        if (h < 0)
-            h = 0;
+        if (_w < 0)
+            _w = 0;
+        if (_h < 0)
+            _h = 0;
 
-        [view setFrameSize: NSMakeSize (w,h)];
+        [view setFrameSize: NSMakeSize (_w,_h)];
     } else {
-        resize (w, h);
+        resize (_w, _h);
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::updateContents(int x, int y, int w, int h, bool now)
@@ -296,8 +368,9 @@ void QScrollView::updateContents(int x, int y, int w, int h, bool now)
 
 void QScrollView::updateContents(const QRect &rect, bool now)
 {
-    NSView *view = getView();
+    volatile NSView * volatile view = getView();
 
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView])
         view = getDocumentView();
 
@@ -305,6 +378,7 @@ void QScrollView::updateContents(const QRect &rect, bool now)
         [view displayRect: rect];
     else
         [view setNeedsDisplayInRect:rect];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase)
@@ -321,13 +395,17 @@ QPoint QScrollView::contentsToViewport(const QPoint &p)
 
 void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 {
-    NSView *docView, *view = getView();    
+    NSView *docView;
+    volatile NSView * volatile view = getView();    
      
     docView = getDocumentView();
     if (docView)
         view = docView;
-        
-    NSPoint np = [view convertPoint: NSMakePoint (x, y) toView: nil];
+    
+    NSPoint np = {0,0};
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    np = [view convertPoint: NSMakePoint (x, y) toView: nil];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
     
     vx = (int)np.x;
     vy = (int)np.y;
@@ -335,13 +413,17 @@ void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 
 void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
-    NSView *docView, *view = getView();    
+    NSView *docView;
+    volatile NSView * volatile view = getView();    
 
     docView = getDocumentView();
     if (docView)
         view = docView;
         
-    NSPoint np = [view convertPoint: NSMakePoint (vx, vy) fromView: nil];
+    NSPoint np;
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    np = [view convertPoint: NSMakePoint (vx, vy) fromView: nil];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
     
     x = (int)np.x;
     y = (int)np.y;
@@ -350,8 +432,10 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 void QScrollView::setStaticBackground(bool b)
 {
     NSScrollView *view = (NSScrollView *)getView();
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView])
         [[view contentView] setCopiesOnScroll: !b];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::resizeEvent(QResizeEvent *)
@@ -360,16 +444,27 @@ void QScrollView::resizeEvent(QResizeEvent *)
 
 void QScrollView::ensureVisible(int x, int y)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [getDocumentView() scrollRectToVisible:NSMakeRect(x, y, 0, 0)];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QScrollView::ensureVisible(int x, int y, int w, int h)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [getDocumentView() scrollRectToVisible:NSMakeRect(x, y, w, h)];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 NSView *QScrollView::getDocumentView() const
 {
     id view = getView();
-    return [view respondsToSelector:@selector(documentView)] ? [view documentView] : nil;
+    volatile NSView * volatile result = nil;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    if ([view respondsToSelector:@selector(documentView)]) 
+	result = [view documentView];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    
+    return (NSView *)result;
 }

@@ -25,6 +25,8 @@
 
 #import "KWQPushButton.h"
 
+#import "KWQExceptions.h"
+
 enum {
     topMargin,
     bottomMargin,
@@ -36,13 +38,18 @@ enum {
 QPushButton::QPushButton(QWidget *)
 {
     NSButton *button = (NSButton *)getView();
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [button setBezelStyle:NSRoundedBezelStyle];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 QPushButton::QPushButton(const QString &text, QWidget *)
 {
     NSButton *button = (NSButton *)getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [button setBezelStyle:NSRoundedBezelStyle];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     setText(text);
 }
@@ -50,8 +57,15 @@ QPushButton::QPushButton(const QString &text, QWidget *)
 QSize QPushButton::sizeHint() const 
 {
     NSButton *button = (NSButton *)getView();
-    return QSize((int)[[button cell] cellSize].width - (dimensions()[leftMargin] + dimensions()[rightMargin]),
+
+    QSize size;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    size = QSize((int)[[button cell] cellSize].width - (dimensions()[leftMargin] + dimensions()[rightMargin]),
         (int)[[button cell] cellSize].height - (dimensions()[topMargin] + dimensions()[bottomMargin]));
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return size;
 }
 
 QRect QPushButton::frameGeometry() const
@@ -73,9 +87,16 @@ int QPushButton::baselinePosition() const
 {
     // Button text is centered vertically, with a fudge factor to account for the shadow.
     NSButton *button = (NSButton *)getView();
+
+    volatile float ascender = 0;
+    volatile float descender = 0;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSFont *font = [button font];
-    float ascender = [font ascender];
-    float descender = [font descender];
+    ascender = [font ascender];
+    descender = [font descender];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     return (int)ceil(-dimensions()[topMargin]
         + ((height() + dimensions()[topMargin] + dimensions()[bottomMargin]) - (ascender - descender)) / 2.0
         + ascender - dimensions()[baselineFudgeFactor]);
@@ -91,5 +112,11 @@ const int *QPushButton::dimensions() const
         { 0, 1, 1, 1, 1 }
     };
     NSControl * const button = static_cast<NSControl *>(getView());
-    return w[[[button cell] controlSize]];
+    volatile NSControlSize size = NSSmallControlSize;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    size = [[button cell] controlSize];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return w[size];
 }

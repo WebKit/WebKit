@@ -26,6 +26,7 @@
 #import "KWQListBox.h"
 
 #import "KWQAssertions.h"
+#import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
 #import "KWQView.h"
@@ -52,7 +53,6 @@
 
 QListBox::QListBox(QWidget *parent)
     : QScrollView(parent)
-    , _items([[NSMutableArray alloc] init])
     , _insertingItems(false)
     , _changingSelection(false)
     , _enabled(true)
@@ -60,7 +60,12 @@ QListBox::QListBox(QWidget *parent)
     , _clicked(this, SIGNAL(clicked(QListBoxItem *)))
     , _selectionChanged(this, SIGNAL(selectionChanged()))
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
+    _items = [[NSMutableArray alloc] init];
     NSScrollView *scrollView = [[KWQListBoxScrollView alloc] init];
+    setView(scrollView);
+    [scrollView release];
     
     [scrollView setBorderType:NSBezelBorder];
     [scrollView setHasVerticalScroller:YES];
@@ -78,51 +83,64 @@ QListBox::QListBox(QWidget *parent)
     [[scrollView contentView] releaseGState];
     
     KWQTableView *tableView = [[KWQTableView alloc] initWithListBox:this items:_items];
-
     [scrollView setDocumentView:tableView];
+    [tableView release];
     [scrollView setVerticalLineScroll:[tableView rowHeight]];
     
-    [tableView release];
-    setView(scrollView);
-    
-    [scrollView release];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 QListBox::~QListBox()
 {
     NSScrollView *scrollView = getView();
+    
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSTableView *tableView = [scrollView documentView];
     [tableView setDelegate:nil];
     [tableView setDataSource:nil];
     [_items release];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 uint QListBox::count() const
 {
-    return [_items count];
+    volatile uint result = 0;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    result = [_items count];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return result;
 }
 
 void QListBox::clear()
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [_items removeAllObjects];
     if (!_insertingItems) {
         NSScrollView *scrollView = getView();
         NSTableView *tableView = [scrollView documentView];
         [tableView reloadData];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
     _widthGood = NO;
 }
 
 void QListBox::setSelectionMode(SelectionMode mode)
 {
     NSScrollView *scrollView = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSTableView *tableView = [scrollView documentView];
     [tableView setAllowsMultipleSelection:mode != Single];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QListBox::insertItem(NSObject *o, unsigned index)
 {
     unsigned c = count();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if (index >= c) {
         [_items addObject:o];
     } else {
@@ -134,6 +152,8 @@ void QListBox::insertItem(NSObject *o, unsigned index)
         NSTableView *tableView = [scrollView documentView];
         [tableView reloadData];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     _widthGood = NO;
 }
 
@@ -145,6 +165,8 @@ void QListBox::insertItem(const QString &text, unsigned index)
 void QListBox::insertGroupLabel(const QString &text, unsigned index)
 {
     static NSDictionary *groupLabelAttributes;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if (groupLabelAttributes == nil) {
         groupLabelAttributes = [[NSDictionary dictionaryWithObject:
             [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]] forKey:NSFontAttributeName] retain];
@@ -154,6 +176,7 @@ void QListBox::insertGroupLabel(const QString &text, unsigned index)
         initWithString:text.getNSString() attributes:groupLabelAttributes];
     insertItem(s, index);
     [s release];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QListBox::beginBatchInsert()
@@ -167,14 +190,19 @@ void QListBox::endBatchInsert()
     ASSERT(_insertingItems);
     _insertingItems = false;
     NSScrollView *scrollView = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSTableView *tableView = [scrollView documentView];
     [tableView reloadData];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QListBox::setSelected(int index, bool selectIt)
 {
     ASSERT(!_insertingItems);
     NSScrollView *scrollView = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSTableView *tableView = [scrollView documentView];
     _changingSelection = true;
     if (selectIt) {
@@ -183,6 +211,7 @@ void QListBox::setSelected(int index, bool selectIt)
     } else {
         [tableView deselectRow:index];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
     _changingSelection = false;
 }
 
@@ -190,16 +219,25 @@ bool QListBox::isSelected(int index) const
 {
     ASSERT(!_insertingItems);
     NSScrollView *scrollView = getView();
+
+    volatile bool result = false;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSTableView *tableView = [scrollView documentView];
-    return [tableView isRowSelected:index]; 
+    result = [tableView isRowSelected:index]; 
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return result;
 }
 
 void QListBox::setEnabled(bool enabled)
 {
     _enabled = enabled;
     // You would think this would work, but not until AK fixes 2177792
+    //KWQ_BLOCK_NS_EXCEPTIONS;
     //NSTableView *tableView = [(NSScrollView *)getView() documentView];
     //[tableView setEnabled:enabled];
+    //KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 bool QListBox::isEnabled()
@@ -212,6 +250,10 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
     ASSERT(!_insertingItems);
 
     NSScrollView *scrollView = getView();
+
+    NSSize size = {0,0};
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSTableView *tableView = [scrollView documentView];
     
     float width;
@@ -234,8 +276,9 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
     NSSize contentSize;
     contentSize.width = ceil(width);
     contentSize.height = ceil(([tableView rowHeight] + [tableView intercellSpacing].height) * MAX(MIN_LINES, lines));
-    NSSize size = [NSScrollView frameSizeForContentSize:contentSize
+    size = [NSScrollView frameSizeForContentSize:contentSize
         hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSBezelBorder];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     return QSize(size);
 }
@@ -245,7 +288,14 @@ QWidget::FocusPolicy QListBox::focusPolicy() const
     // Add an additional check here.
     // For now, selects are only focused when full
     // keyboard access is turned on.
-    if ([KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] != WebCoreFullKeyboardAccess)
+
+    volatile bool fullKeyboardAccess = false;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    fullKeyboardAccess = [KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] == WebCoreFullKeyboardAccess;
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    if (!fullKeyboardAccess)
         return NoFocus;
 
     return QScrollView::focusPolicy();

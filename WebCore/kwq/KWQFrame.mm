@@ -25,9 +25,10 @@
 
 #import "KWQFrame.h"
 
-#import "khtmlview.h"
+#import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
+#import "khtmlview.h"
 
 void QFrame::setFrameStyle(int s)
 {
@@ -38,7 +39,9 @@ void QFrame::setFrameStyle(int s)
     if (view) {
         KHTMLPart *part = view->part();
         if (part) {
+	    KWQ_BLOCK_NS_EXCEPTIONS;
             [KWQ(part)->bridge() setHasBorder:(s != NoFrame)];
+	    KWQ_UNBLOCK_NS_EXCEPTIONS;
         }
     }
 }

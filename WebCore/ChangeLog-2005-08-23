@@ -1,3 +1,123 @@
+2003-10-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	More Cocoa exception blocking work.
+
+        * kwq/KWQFrame.mm:
+        (QFrame::setFrameStyle):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::QLineEdit):
+        (QLineEdit::~QLineEdit):
+        (QLineEdit::setEchoMode):
+        (QLineEdit::setFont):
+        (QLineEdit::setText):
+        (QLineEdit::text):
+        (QLineEdit::isReadOnly):
+        (QLineEdit::setReadOnly):
+        (QLineEdit::maxLength):
+        (QLineEdit::selectAll):
+        (QLineEdit::edited):
+        (QLineEdit::setEdited):
+        (QLineEdit::sizeForCharacterWidth):
+        (QLineEdit::baselinePosition):
+        (QLineEdit::setAlignment):
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox):
+        (QListBox::~QListBox):
+        (QListBox::count):
+        (QListBox::clear):
+        (QListBox::setSelectionMode):
+        (QListBox::insertItem):
+        (QListBox::insertGroupLabel):
+        (QListBox::endBatchInsert):
+        (QListBox::setSelected):
+        (QListBox::isSelected):
+        (QListBox::setEnabled):
+        (QListBox::sizeForNumberOfLines):
+        (QListBox::focusPolicy):
+        * kwq/KWQPushButton.mm:
+        (QPushButton::QPushButton):
+        (QPushButton::sizeHint):
+        (QPushButton::baselinePosition):
+        (QPushButton::dimensions):
+        * kwq/KWQRadioButton.mm:
+        (QRadioButton::QRadioButton):
+        (QRadioButton::setChecked):
+        (QRadioButton::isChecked):
+        (QRadioButton::dimensions):
+        * kwq/KWQScrollBar.mm:
+        (-[KWQScrollBar initWithQScrollBar:]):
+        (:m_valueChanged):
+        (QScrollBar::~QScrollBar):
+        (QScrollBar::setValue):
+        (QScrollBar::setKnobProportion):
+        (QScrollBar::scrollbarHit):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::visibleWidth):
+        (QScrollView::visibleHeight):
+        (QScrollView::contentsWidth):
+        (QScrollView::contentsHeight):
+        (QScrollView::contentsX):
+        (QScrollView::contentsY):
+        (QScrollView::setContentsPos):
+        (QScrollView::setVScrollBarMode):
+        (QScrollView::setHScrollBarMode):
+        (QScrollView::setScrollBarsMode):
+        (QScrollView::vScrollBarMode):
+        (QScrollView::hScrollBarMode):
+        (QScrollView::hasVerticalScrollBar):
+        (QScrollView::hasHorizontalScrollBar):
+        (QScrollView::suppressScrollBars):
+        (QScrollView::addChild):
+        (QScrollView::removeChild):
+        (QScrollView::resizeContents):
+        (QScrollView::updateContents):
+        (QScrollView::contentsToViewport):
+        (QScrollView::viewportToContents):
+        (QScrollView::setStaticBackground):
+        (QScrollView::ensureVisible):
+        (QScrollView::getDocumentView):
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::QTextEdit):
+        (QTextEdit::setText):
+        (QTextEdit::text):
+        (QTextEdit::textWithHardLineBreaks):
+        (QTextEdit::getCursorPosition):
+        (QTextEdit::setCursorPosition):
+        (QTextEdit::wordWrap):
+        (QTextEdit::setWordWrap):
+        (QTextEdit::isReadOnly):
+        (QTextEdit::setReadOnly):
+        (QTextEdit::selectAll):
+        (QTextEdit::setFont):
+        (QTextEdit::setAlignment):
+        (QTextEdit::sizeWithColumnsAndRows):
+        * kwq/KWQWidget.mm:
+        (QWidget::QWidget):
+        (QWidget::~QWidget):
+        (QWidget::setActiveWindow):
+        (QWidget::setEnabled):
+        (QWidget::isEnabled):
+        (QWidget::frameGeometry):
+        (QWidget::hasFocus):
+        (QWidget::setFocus):
+        (QWidget::focusPolicy):
+        (QWidget::isVisible):
+        (QWidget::setCursor):
+        (QWidget::cursor):
+        (QWidget::setFrameGeometry):
+        (QWidget::mapFromGlobal):
+        (QWidget::setView):
+        (QWidget::getOuterView):
+        (QWidget::lockDrawingFocus):
+        (QWidget::unlockDrawingFocus):
+        (QWidget::disableFlushDrawing):
+        (QWidget::enableFlushDrawing):
+        (QWidget::setDrawingAlpha):
+        (QWidget::paint):
+        (QWidget::sendConsumedMouseUp):
+
 2003-10-09  David Hyatt  <hyatt@apple.com>
 
 	Stop printing extra spaces before list items.  Fixes ordered lists with list-style-position: inside.

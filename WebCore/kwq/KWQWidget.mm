@@ -25,17 +25,17 @@
 
 #import "KWQWidget.h"
 
-#import "KWQView.h"
-#import "WebCoreFrameView.h"
+#import "KWQExceptions.h"
+#import "KWQKHTMLPart.h"
 #import "KWQLogging.h"
+#import "KWQView.h"
 #import "KWQWindowWidget.h"
-
+#import "WebCoreBridge.h"
+#import "WebCoreFrameView.h"
 #import "khtmlview.h"
 #import "render_canvas.h"
 #import "render_replaced.h"
 #import "render_style.h"
-#import "KWQKHTMLPart.h"
-#import "WebCoreBridge.h"
 
 using khtml::RenderWidget;
 
@@ -58,7 +58,11 @@ public:
 QWidget::QWidget() 
     : data(new QWidgetPrivate)
 {
+    data->view = nil;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     data->view = [[KWQView alloc] initWithWidget:this];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     static QStyle defaultStyle;
     data->style = &defaultStyle;
@@ -75,7 +79,10 @@ QWidget::QWidget(NSView *view)
 
 QWidget::~QWidget() 
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [data->view release];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     delete data;
 }
 
@@ -92,24 +99,33 @@ void QWidget::resize(int w, int h)
 
 void QWidget::setActiveWindow() 
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [KWQKHTMLPart::bridgeForWidget(this) focusWindow];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::setEnabled(bool enabled)
 {
     id view = data->view;
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view respondsToSelector:@selector(setEnabled:)]) {
         [view setEnabled:enabled];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 bool QWidget::isEnabled() const
 {
     id view = data->view;
+
+    volatile bool result = true;
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view respondsToSelector:@selector(isEnabled)]) {
-        return [view isEnabled];
+        result = [view isEnabled];
     }
-    return true;
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return result;
 }
 
 long QWidget::winId() const
@@ -164,7 +180,13 @@ void QWidget::move(const QPoint &p)
 
 QRect QWidget::frameGeometry() const
 {
-    return QRect([getOuterView() frame]);
+    QRect rect;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    rect = QRect([getOuterView() frame]);
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return rect;
 }
 
 int QWidget::baselinePosition() const
@@ -175,12 +197,15 @@ int QWidget::baselinePosition() const
 bool QWidget::hasFocus() const
 {
     NSView *view = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSView *firstResponder = [KWQKHTMLPart::bridgeForWidget(this) firstResponder];
+
     if (!firstResponder) {
-        return false;
+        KWQ_UNBLOCK_RETURN_VALUE(false, bool);
     }
     if (firstResponder == view) {
-        return true;
+        KWQ_UNBLOCK_RETURN_VALUE(true, bool);
     }
 
     // Some widgets, like text fields, secure text fields, text areas, and selects
@@ -192,8 +217,9 @@ bool QWidget::hasFocus() const
         [firstResponder isKindOfClass:[NSView class]] && 
         [(NSView *)firstResponder isDescendantOf:view]) {
         // Return true when the first responder is a subview of this widget's view
-        return true;
+        KWQ_UNBLOCK_RETURN_VALUE(true, bool);
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     return false;
 }
@@ -219,9 +245,12 @@ void QWidget::setFocus()
     }
     
     NSView *view = getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view acceptsFirstResponder]) {
         [KWQKHTMLPart::bridgeForWidget(this) makeFirstResponder:view];
     }
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::clearFocus()
@@ -253,11 +282,14 @@ QWidget::FocusPolicy QWidget::focusPolicy() const
 
     if (!isEnabled())
         return NoFocus;
-
-    if (![getView() acceptsFirstResponder])
-        return NoFocus;
     
-    return TabFocus;
+    volatile QWidget::FocusPolicy policy = TabFocus;
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    if (![getView() acceptsFirstResponder])
+        policy = NoFocus;
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    
+    return policy;
 }
 
 const QPalette& QWidget::palette() const
@@ -308,31 +340,44 @@ void QWidget::constPolish() const
 bool QWidget::isVisible() const
 {
     // FIXME - rewrite interms of top level widget?
-    return [[KWQKHTMLPart::bridgeForWidget(this) window] isVisible];
+    
+    volatile bool visible = false;
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    visible = [[KWQKHTMLPart::bridgeForWidget(this) window] isVisible];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return visible;
 }
 
 void QWidget::setCursor(const QCursor &cur)
 {
-    id view = data->view;
+    volatile id view = data->view;
     while (view) {
+	KWQ_BLOCK_NS_EXCEPTIONS;
         if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
             [view setDocumentCursor:cur.handle()];
             break;
         }
         view = [view superview];
+	KWQ_UNBLOCK_NS_EXCEPTIONS;
     }
 }
 
 QCursor QWidget::cursor()
 {
-    id view = data->view;
+    volatile id view = data->view;
+    QCursor cursor;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     while (view) {
         if ([view respondsToSelector:@selector(documentCursor)]) { 
-            return [view documentCursor];
+            cursor = QCursor([view documentCursor]);
         }
         view = [view superview];
     }
-    return QCursor();
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return cursor;
 }
 
 void QWidget::unsetCursor()
@@ -358,13 +403,19 @@ bool QWidget::hasMouseTracking() const
 
 void QWidget::setFrameGeometry(const QRect &rect)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [getOuterView() setFrame:rect];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 QPoint QWidget::mapFromGlobal(const QPoint &p) const
 {
-    NSPoint bp;
+    NSPoint bp = {0,0};
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     bp = [[KWQKHTMLPart::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     return QPoint(bp);
 }
 
@@ -379,8 +430,10 @@ void QWidget::setView(NSView *view)
         return;
     }
     
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [data->view release];
     data->view = [view retain];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 NSView *QWidget::getOuterView() const
@@ -388,23 +441,31 @@ NSView *QWidget::getOuterView() const
     // A QScrollView is a widget normally used to represent a frame.
     // If this widget's view is a WebCoreFrameView the we resize its containing view, a WebFrameView.
     // The scroll view contained by the WebFrameView will be autosized.
-    NSView *view = data->view;
+    volatile NSView * volatile view = data->view;
     ASSERT(view);
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
         ASSERT(view);
     }
-    return view;
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return (NSView *)view;
 }
 
 void QWidget::lockDrawingFocus()
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [getView() lockFocus];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::unlockDrawingFocus()
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [getView() unlockFocus];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::disableFlushDrawing()
@@ -412,7 +473,9 @@ void QWidget::disableFlushDrawing()
     // It's OK to use the real window here, because if the view's not
     // in the view hierarchy, then we don't actually want to affect
     // flushing.
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [[getView() window] disableFlushWindow];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::enableFlushDrawing()
@@ -420,14 +483,18 @@ void QWidget::enableFlushDrawing()
     // It's OK to use the real window here, because if the view's not
     // in the view hierarchy, then we don't actually want to affect
     // flushing.
+    KWQ_BLOCK_NS_EXCEPTIONS;
     NSWindow *window = [getView() window];
     [window enableFlushWindow];
     [window flushWindow];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::setDrawingAlpha(float alpha)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     CGContextSetAlpha((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], alpha);
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::paint(QPainter *p, const QRect &r)
@@ -438,7 +505,9 @@ void QWidget::paint(QPainter *p, const QRect &r)
     NSView *view = getOuterView();
     // KWQTextArea and KWQTextField both rely on the fact that we use this particular
     // NSView display method. If you change this, be sure to update them as well.
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::sendConsumedMouseUp()
@@ -446,7 +515,9 @@ void QWidget::sendConsumedMouseUp()
     khtml::RenderWidget *widget = const_cast<khtml::RenderWidget *>
 	(static_cast<const khtml::RenderWidget *>(eventFilterObject()));
 
+    KWQ_BLOCK_NS_EXCEPTIONS;
     widget->sendConsumedMouseUp(QPoint([[NSApp currentEvent] locationInWindow]),
 			      // FIXME: should send real state and button
 			      0, 0);
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
