@@ -1,5 +1,16 @@
 2002-12-15  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3057974 and 3128713.  I needed to make frames check to
+	see if their parentNode had a renderer to complete the FOUC
+	fix.  Completing the FOUC fix finally solves 3057974.
+	
+        Reviewed by darin
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::attach):
+
+2002-12-15  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3109226, epinions page is mostly blank.  Add a hack
 	to disallow > but only inside attribute values for which there
 	is no corresponding attribute name.
