@@ -1,3 +1,10 @@
+2002-12-17  John Sullivan  <sullivan@apple.com>
+
+	- fixed 2895826 -- ICON: Need a "no plug-in" icon
+
+        * Resources/nullplugin.tiff:
+	new plug-in icon. Blue 3-D lego with question marks.
+
 2002-12-17  Richard Williamson   <rjw@apple.com>
 
         Added support for Aki's 20% boost to line height.  This is
