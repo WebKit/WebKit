@@ -1,3 +1,15 @@
+2004-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3627473>: "REGRESSION (125-137): memory trasher in UString::append, causing many different crashes"
+
+        * kjs/ustring.cpp:
+        (KJS::UString::expandCapacity): Fix sizeof(UChar *) that should be sizeof(UChar).
+        Was resulting in a buffer 2x the needed size.
+        (KJS::UString::expandPreCapacity): Ditto.
+        (KJS::UString::append): Fix malloc that is missing a sizeof(UChar).
+
 2004-04-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

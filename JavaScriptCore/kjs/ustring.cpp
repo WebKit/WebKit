@@ -197,7 +197,7 @@ UString::Rep *UString::Rep::create(UChar *d, int l)
   return r;
 }
 
-UString::Rep *UString::Rep::create(UString::Rep *base, int offset, int length)
+UString::Rep *UString::Rep::create(Rep *base, int offset, int length)
 {
   assert(base);
 
@@ -337,7 +337,7 @@ void UString::expandCapacity(int requiredLength)
 
   if (requiredLength > r->capacity) {
     int newCapacity = expandedSize(requiredLength, r->preCapacity);
-    r->buf = static_cast<UChar *>(realloc(r->buf, newCapacity * sizeof(UChar *)));
+    r->buf = static_cast<UChar *>(realloc(r->buf, newCapacity * sizeof(UChar)));
     r->capacity = newCapacity - r->preCapacity;
   }
   if (requiredLength > r->usedCapacity) {
@@ -353,7 +353,7 @@ void UString::expandPreCapacity(int requiredPreCap)
     int newCapacity = expandedSize(requiredPreCap, r->capacity);
     int delta = newCapacity - r->capacity - r->preCapacity;
 
-    UChar *newBuf = static_cast<UChar *>(malloc(newCapacity * sizeof(UChar *)));
+    UChar *newBuf = static_cast<UChar *>(malloc(newCapacity * sizeof(UChar)));
     memcpy(newBuf + delta, r->buf, (r->capacity + r->preCapacity) * sizeof(UChar));
     free(r->buf);
     r->buf = newBuf;
@@ -622,7 +622,7 @@ UString &UString::append(const UString &t)
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
     int newCapacity = expandedSize(sizeof(UChar) * length, 0);
-    UChar *d = static_cast<UChar *>(malloc(newCapacity));
+    UChar *d = static_cast<UChar *>(malloc(sizeof(UChar) * newCapacity));
     memcpy(d, data(), thisSize * sizeof(UChar));
     memcpy(const_cast<UChar *>(d + thisSize), t.data(), tSize * sizeof(UChar));
     release();
