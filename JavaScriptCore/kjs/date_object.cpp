@@ -64,22 +64,23 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+#define ctime(x) ctimeUsingCF(x)
 #define gmtime(x) gmtimeUsingCF(x)
 #define localtime(x) localtimeUsingCF(x)
 #define mktime(x) mktimeUsingCF(x)
+//#define strftime(a, b, c, d) notAllowedToCall()
 
-struct tm *tmUsingCF(time_t tv, CFTimeZoneRef timeZone)
+struct tm *tmUsingCF(time_t clock, CFTimeZoneRef timeZone)
 {
     static struct tm result;
     static char timeZoneCString[128];
     
-    CFAbsoluteTime absoluteTime = tv - kCFAbsoluteTimeIntervalSince1970;
-    
+    CFAbsoluteTime absoluteTime = clock - kCFAbsoluteTimeIntervalSince1970;
     CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(absoluteTime, timeZone);
-    
+
     CFStringRef abbreviation = CFTimeZoneCopyAbbreviation(timeZone, absoluteTime);
-    
     CFStringGetCString(abbreviation, timeZoneCString, sizeof(timeZoneCString), kCFStringEncodingASCII);
+    CFRelease(abbreviation);
 
     result.tm_sec = (int)date.second;
     result.tm_min = date.minute;
@@ -93,21 +94,40 @@ struct tm *tmUsingCF(time_t tv, CFTimeZoneRef timeZone)
     result.tm_gmtoff = (int)CFTimeZoneGetSecondsFromGMT(timeZone, absoluteTime);
     result.tm_zone = timeZoneCString;
     
-    CFRelease(abbreviation);
-    
     return &result;
 }
 
-struct tm *gmtimeUsingCF(const time_t *tv)
+char *ctimeUsingCF(const time_t *clock)
 {
-    static CFTimeZoneRef timeZoneUTC = CFTimeZoneCreateWithName(NULL, CFSTR("UTC"), TRUE);
-    return tmUsingCF(*tv, timeZoneUTC);
+    static char result[26];
+    
+    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
+
+    CFAbsoluteTime absoluteTime = *clock - kCFAbsoluteTimeIntervalSince1970;
+    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(absoluteTime, timeZone);
+    
+    const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+    const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+    
+    sprintf(result, "%s %s %02d %02d:%02d:%02.f %04ld\n",
+        weekdayName[CFAbsoluteTimeGetDayOfWeek(absoluteTime, timeZone) - 1],
+        monthName[date.month - 1], date.day, date.hour, date.minute, date.second, date.year);
+    
+    CFRelease(timeZone);
+    
+    return result;
 }
 
-struct tm *localtimeUsingCF(const time_t *tv)
+struct tm *gmtimeUsingCF(const time_t *clock)
+{
+    static CFTimeZoneRef timeZoneUTC = CFTimeZoneCreateWithName(NULL, CFSTR("UTC"), TRUE);
+    return tmUsingCF(*clock, timeZoneUTC);
+}
+
+struct tm *localtimeUsingCF(const time_t *clock)
 {
     CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
-    struct tm *result = tmUsingCF(*tv, timeZone);
+    struct tm *result = tmUsingCF(*clock, timeZone);
     CFRelease(timeZone);
     return result;
 }
@@ -129,6 +149,15 @@ time_t mktimeUsingCF(struct tm *tm)
     CFRelease(timeZone);
 
     return (time_t)(absoluteTime + kCFAbsoluteTimeIntervalSince1970);
+}
+
+time_t timeUsingCF(time_t *clock)
+{
+    time_t result = (time_t)(CFAbsoluteTimeGetCurrent() + kCFAbsoluteTimeIntervalSince1970);
+    if (clock) {
+        *clock = result;
+    }
+    return result;
 }
 
 #endif // APPLE_CHANGES
