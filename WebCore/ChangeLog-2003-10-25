@@ -1,3 +1,15 @@
+2003-05-02  David Hyatt  <hyatt@apple.com>
+
+	Make sure that recalcSections always clears out the needSectionRecalc
+	boolean, even in the case where it finds column elements.
+
+	Fixes the assert outlined in bug 3237651.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::recalcSections):
+
 2003-05-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3226030, percentage height tables inside table cells
