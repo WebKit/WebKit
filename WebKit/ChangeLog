@@ -1,5 +1,13 @@
 2002-09-30  Darin Adler  <darin@apple.com>
 
+	- fixed crashing part of 3063517 -- crash loading .png in separate window
+
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView start]): Don't try to start if the NPP_New is 0.
+	This indicates the the plugin hasn't been loaded.
+
+2002-09-30  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _setLoading:]):
 	Remove extra quotes in use of ASSERT_ARG.
 

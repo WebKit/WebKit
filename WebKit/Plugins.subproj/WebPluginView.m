@@ -379,12 +379,14 @@
     instance = &instanceStruct;
     instance->ndata = self;
 
+    canRestart = YES;
+    
     mime = [mimeType retain];
     srcURL = [theURL retain];
     baseURL = [theBaseURL retain];
         
     // load the plug-in if it is not already loaded
-    if(![plugin load])
+    if (![plugin load])
         return nil;
     
     // copy function pointers
@@ -402,7 +404,7 @@
     NPP_SetValue = 	[plugin NPP_SetValue];
     NPP_Print = 	[plugin NPP_Print];
 
-    LOG(Plugins, "%s", [[arguments description] cString]);
+    LOG(Plugins, "%@", arguments);
 
     // Convert arguments dictionary to 2 string arrays.
     // These arrays are passed to NPP_New, but the strings need to be
@@ -430,9 +432,6 @@
     
     streams = [[NSMutableArray alloc] init];
     notificationData = [[NSMutableDictionary alloc] init];
-    
-    // Initialize globals
-    canRestart = YES;
     
     return self;
 }
@@ -491,7 +490,7 @@
     window.type = NPWindowTypeWindow;
 }
 
-- (void) setWindow
+- (void)setWindow
 {
     [self setUpWindowAndPort];
 
@@ -534,11 +533,7 @@
 
 -(void)start
 {
-    NSNotificationCenter *notificationCenter;
-    NSWindow *theWindow;
-    WebNetscapePluginStream *stream;
-        
-    if(isStarted || !canRestart)
+    if (isStarted || !canRestart || NPP_New == 0)
         return;
     
     isStarted = YES;
@@ -554,8 +549,8 @@
         
     [self setWindow];
     
-    theWindow = [self window];
-    notificationCenter = [NSNotificationCenter defaultCenter];
+    NSWindow *theWindow = [self window];
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     NSView *view;
     for (view = self; view; view = [view superview]) {
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
@@ -581,7 +576,7 @@
     webDataSource = [[webFrame dataSource] retain];
     
     if(srcURL){
-        stream = [[WebNetscapePluginStream alloc] initWithURL:srcURL pluginPointer:instance];
+        WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithURL:srcURL pluginPointer:instance];
         if(stream){
             [stream startLoad];
             [streams addObject:stream];
@@ -632,7 +627,7 @@
     return webDataSource;
 }
 
-- (WebController *) webController
+- (WebController *)webController
 {
     return webController;
 }
@@ -656,15 +651,13 @@
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
-    WebNetscapePlugin *plugin;
-    
     [webDataSource release];
     webDataSource = [dataSource retain];
     
     mime = [[dataSource contentType] retain];
-    plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:mime];
+    WebNetscapePlugin *plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:mime];
     
-    if(![plugin load])
+    if (![plugin load])
         return;
     
     // copy function pointers
@@ -752,37 +745,37 @@
     [self resetTrackingRect];
 }
 
--(void) windowWillClose:(NSNotification *)notification
+-(void)windowWillClose:(NSNotification *)notification
 {
     [self stop];
 }
 
--(void) windowBecameKey:(NSNotification *)notification
+-(void)windowBecameKey:(NSNotification *)notification
 {
     [self sendActivateEvent:YES];
     [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.001];
 }
 
--(void) windowResignedKey:(NSNotification *)notification
+-(void)windowResignedKey:(NSNotification *)notification
 {
     [self sendActivateEvent:NO];
     [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.001];
 }
 
-- (void) defaultsHaveChanged:(NSNotification *)notification
+- (void)defaultsHaveChanged:(NSNotification *)notification
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if([defaults boolForKey:@"WebKitPluginsEnabled"]){
+    if ([defaults boolForKey:@"WebKitPluginsEnabled"]) {
         canRestart = YES;
         [self start];
-    }else{
+    } else {
         canRestart = NO;
         [self stop];
         [self setNeedsDisplay:YES];
     }
 }
 
-- (void) frameStateChanged:(NSNotification *)notification
+- (void)frameStateChanged:(NSNotification *)notification
 {
     WebFrame *frame;
     WebFrameState frameState;
@@ -868,7 +861,7 @@
     return URL;
 }
 
-- (NPError) loadRequest:(WebResourceRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData
+- (NPError)loadRequest:(WebResourceRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData
 {
     WebNetscapePluginStream *stream;
     WebDataSource *dataSource;
