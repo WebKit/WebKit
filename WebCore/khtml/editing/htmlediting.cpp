@@ -2587,11 +2587,14 @@ void ReplaceSelectionCommand::doApply()
     if (selection.isRange())
         deleteSelection();
     
+    KHTMLPart *part = document()->part();
+    ASSERT(part);
+    
     // This command does not use any typing style that is set as a residual effect of
     // a delete.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    document()->part()->clearTypingStyle();
+    part->clearTypingStyle();
     setTypingStyle(0);
     
     selection = endingSelection();
@@ -2611,6 +2614,21 @@ void ReplaceSelectionCommand::doApply()
         addLeadingSpace = pos.leadingWhitespacePosition().isNull();
         addTrailingSpace = pos.trailingWhitespacePosition().isNull();
     }
+
+#if APPLE_CHANGES
+    if (addLeadingSpace) {
+        QChar previousChar = VisiblePosition(pos).previous().character();
+        if (!previousChar.isNull()) {
+            addLeadingSpace = !KWQ(part)->isCharacterSmartReplaceExempt(previousChar, true);
+        }
+    }
+    if (addTrailingSpace) {
+        QChar thisChar = VisiblePosition(pos).character();
+        if (!thisChar.isNull()) {
+            addTrailingSpace = !KWQ(part)->isCharacterSmartReplaceExempt(thisChar, false);
+        }
+    }
+#endif
     
     if (!firstChild) {
         // Pasting something that didn't parse or was empty.

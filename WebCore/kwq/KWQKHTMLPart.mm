@@ -4185,3 +4185,8 @@ void KWQKHTMLPart::dashboardRegionsChanged()
     NSMutableDictionary *webRegions = dashboardRegionsDictionary();
     [_bridge dashboardRegionsChanged:webRegions];
 }
+
+bool KWQKHTMLPart::isCharacterSmartReplaceExempt(const QChar &c, bool isPreviousChar)
+{
+    return [_bridge isCharacterSmartReplaceExempt:c.unicode() isPreviousCharacter:isPreviousChar];
+}

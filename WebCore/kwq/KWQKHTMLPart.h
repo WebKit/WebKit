@@ -359,6 +359,8 @@ public:
     NSMutableDictionary *dashboardRegionsDictionary();
     void dashboardRegionsChanged();
     
+    bool isCharacterSmartReplaceExempt(const QChar &, bool);
+    
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);

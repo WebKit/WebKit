@@ -1,3 +1,19 @@
+2004-11-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3838413> REGRESSION (Mail): "Smart" word paste adds spaces before/after special characters
+
+        Reviewed by rjw.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): call isCharacterSmartReplaceExempt on the part to see if a space should be inserted
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::character): new, returns the character for the position
+        * khtml/editing/visible_position.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::isCharacterSmartReplaceExempt): new, calls the bridge
+        * kwq/WebCoreBridge.h:
+
 === Safari-170 ===
 
 2004-11-05  Adele Amchan  <adele@apple.com>

@@ -26,6 +26,8 @@
 #ifndef KHTML_EDITING_VISIBLE_POSITION_H
 #define KHTML_EDITING_VISIBLE_POSITION_H
 
+#include <qstring.h>
+
 #include "xml/dom_position.h"
 #include "text_affinity.h"
 
@@ -63,6 +65,8 @@ public:
 
     bool isLastInBlock() const;
 
+    QChar character() const;
+    
     void debugPosition(const char *msg = "") const;
 
 #ifndef NDEBUG

@@ -544,6 +544,8 @@ typedef enum {
 
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
 
+- (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods
