@@ -1,3 +1,17 @@
+2004-01-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3527707, crash on w3c css page.  Make sure height isn't allowed to be negative when computing
+	positioned elements' heights.  Also bulletproof the crash in case there are other negative height code
+	paths.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::getAbsoluteRepaintRectIncludingFloats):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteVertical):
+
 2004-01-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

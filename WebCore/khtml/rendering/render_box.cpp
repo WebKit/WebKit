@@ -1359,6 +1359,10 @@ void RenderBox::calcAbsoluteVertical()
     if (style()->hidesOverflow() && m_height > h+pab)
         m_height = h+pab;
     
+    // Do not allow the height to be negative.  This can happen when someone specifies both top and bottom
+    // but the containing block height is less than top, e.g., top:20px, bottom:0, containing block height 16.
+    m_height = kMax(0, m_height);
+    
     m_marginTop = mt;
     m_marginBottom = mb;
     m_y = t + mt + cb->borderTop();

@@ -497,7 +497,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
 #endif
-    
+
     setNeedsLayout(false);
 }
 
@@ -1089,7 +1089,10 @@ void RenderBlock::getAbsoluteRepaintRectIncludingFloats(QRect& bounds, QRect& fu
     bounds = fullBounds = getAbsoluteRepaintRect();
 
     // Include any overhanging floats (if we know we're the one to paint them).
-    if (hasOverhangingFloats()) {
+    // We null-check m_floatingObjects here to catch any cases where m_height ends up negative
+    // for some reason.  I think I've caught all those cases, but this way we stay robust and don't
+    // crash. -dwh
+    if (hasOverhangingFloats() && m_floatingObjects) {
         FloatingObject* r;
         QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it) {
