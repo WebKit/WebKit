@@ -2,6 +2,23 @@
 
         Reviewed by me
         
+        Added more layout tests.
+
+        * layout-tests/editing/style/style-3681552-fix-001-expected.txt: Added.
+        * layout-tests/editing/style/style-3681552-fix-001.html: Added.
+        * layout-tests/editing/style/style-3681552-fix-002-expected.txt: Added.
+        * layout-tests/editing/style/style-3681552-fix-002.html: Added.
+        * layout-tests/editing/style/style-3690704-fix-expected.txt: Added.
+        * layout-tests/editing/style/style-3690704-fix.html: Added.
+        * layout-tests/editing/style/typing-style-001-expected.txt: Added.
+        * layout-tests/editing/style/typing-style-001.html: Added.
+        * layout-tests/editing/style/typing-style-002-expected.txt: Added.
+        * layout-tests/editing/style/typing-style-002.html: Added.
+
+2004-07-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+        
         Added some layout tests.
 
         * layout-tests/editing/selection/select-all-001-expected.txt: Added.
