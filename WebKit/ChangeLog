@@ -1,5 +1,13 @@
 2001-12-18  Kenneth Kocienda  <kocienda@apple.com>
 
+        Updated the white paper text and graphics.
+        
+	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
+	* Documentation/WebKit-White-Paper/images/webkit-cache-loader.jpg:
+	* Documentation/WebKit-White-Paper/images/webkit-classes.jpg:
+
+2001-12-18  Kenneth Kocienda  <kocienda@apple.com>
+
         Merged "Changes" information into individual files
 
 	* Cache.subproj/WKLoadChunk.h:
