@@ -1,5 +1,14 @@
 2004-02-11  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3556702, margin collapsing gets disabled when images spill out of the containing block.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+
+2004-02-11  David Hyatt  <hyatt@apple.com>
+
 	Fix the .rows and .cells arrays on tables by merging with the KHTML trunk.  TH was being included
 	as a row instead of as a cell.
 	

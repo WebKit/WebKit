@@ -524,9 +524,10 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     int minHeight = m_height + toAdd;
     m_overflowHeight = m_height;
 
-    RenderObject *child = firstChild();
-    RenderBlock *prevFlow = 0;
-
+    RenderObject* child = firstChild();
+    RenderBlock* prevFlow = 0;
+    RenderObject* prevBlock = 0;
+    
     // A compact child that needs to be collapsed into the margin of the following block.
     RenderObject* compactChild = 0;
     // The block with the open margin that the compact child is going to place itself within.
@@ -594,6 +595,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
     while( child != 0 )
     {
+        shouldCollapseChild = true; // Reset our shouldCollapseChild variable.
+        
         int oldTopPosMargin = m_maxTopPosMargin;
         int oldTopNegMargin = m_maxTopNegMargin;
 
@@ -764,13 +767,14 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         // be correct.  Only if we're wrong (when we compute the real y position)
         // will we have to relayout.
         int yPosEstimate = m_height;
-        if (prevFlow)
-        {
-            yPosEstimate += QMAX(prevFlow->collapsedMarginBottom(), child->marginTop());
-            if (prevFlow->yPos()+prevFlow->floatBottom() > yPosEstimate)
-                child->setChildNeedsLayout(true);
-            else
-                prevFlow=0;
+        if (prevBlock) {
+            yPosEstimate += kMax(prevBlock->collapsedMarginBottom(), child->marginTop());
+            if (prevFlow) {
+                if (prevFlow->yPos() + prevFlow->floatBottom() > yPosEstimate)
+                    child->setChildNeedsLayout(true);
+                else
+                    prevFlow = 0;
+            }
         }
         else if (!canCollapseTopWithChildren || !topMarginContributor)
             yPosEstimate += child->marginTop();
@@ -986,8 +990,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         if (m_height + overflowDelta > m_overflowHeight)
             m_overflowHeight = m_height + overflowDelta;
 
-        if (child->isRenderBlock())
-            prevFlow = static_cast<RenderBlock*>(child); 
+        prevBlock = child;
+        if (child->isRenderBlock() && !child->avoidsFloats())
+            prevFlow = static_cast<RenderBlock*>(child);
 
         if (child->hasOverhangingFloats() && !child->style()->hidesOverflow()) {
             // need to add the child's floats to our floating objects list, but not in the case where
