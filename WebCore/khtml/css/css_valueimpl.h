@@ -316,6 +316,7 @@ public:
 public:
     DashboardRegionImpl *m_next;
     QString m_label;
+    QString m_geometryType;
     unsigned int m_isCircle:1;
     unsigned int m_isRectangle:1;
 };

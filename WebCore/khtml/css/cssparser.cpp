@@ -522,7 +522,7 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
 #if APPLE_CHANGES
-    case CSS_PROP__APPLE_DASHBOARD_REGION:                 // <dashboard-region-circle> | <dashboard-region-rectangle> 
+    case CSS_PROP__APPLE_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
 	if ( value->unit == Value::Function )
 	    return parseDashboardRegions( propId, important );
 	break;
@@ -1502,9 +1502,11 @@ bool CSSParser::parseContent( int propId, bool important )
     return false;
 }
 
+#define DASHBOARD_REGION_NUM_PARAMETERS  6
+
 static Value *skipCommaInDashboardRegion (ValueList *args)
 {
-    if ( args->numValues == 9 ) {
+    if ( args->numValues == (DASHBOARD_REGION_NUM_PARAMETERS*2-1) ) {
         Value *current = args->current();
         if (current->unit == Value::Operator && current->iValue == ',' )
             return args->next();
@@ -1536,28 +1538,22 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         }
             
         // Commas count as values, so allow:
-        // dashbaord-region-rectangle( label, t, r, b, l ) or dashbaord-region-rectangle( label t r b l )
-        // dashbaord-region-circle( label, t, r, b, l ) or dashbaord-region-circle( label t r b l )
+        // dashbaord-region( label, type, t, r, b, l ) or dashbaord-region( label type t r b l )
+        // dashbaord-region( label, type, t, r, b, l ) or dashbaord-region( label type t r b l )
         ValueList *args = value->function->args;
         int numArgs = value->function->args->numValues;
-        if (numArgs != 5 && numArgs != 9) {
+        if (numArgs != DASHBOARD_REGION_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_NUM_PARAMETERS*2-1)) {
             valid = false;
             break;
         }
         
         QString fname = qString( value->function->name ).lower();
-        if (fname == "dashboard-region-rectangle(" ) {
-            region->m_isRectangle = true;
-        }    
-        else if (fname == "dashboard-region-circle(" ) {
-            region->m_isCircle = true;
-        }
-        else {
+        if (fname != "dashboard-region(" ) {
             valid = false;
             break;
         }
             
-        // First arg should be a label.
+        // First arg is a label.
         Value *arg = args->current();
         if (arg->unit != CSSPrimitiveValue::CSS_IDENT) {
             valid = false;
@@ -1565,6 +1561,26 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         }
             
         region->m_label = qString(arg->string);
+
+        // Second arg is a type.
+        arg = args->next();
+        arg = skipCommaInDashboardRegion (args);
+        if (arg->unit != CSSPrimitiveValue::CSS_IDENT) {
+            valid = false;
+            break;
+        }
+
+        QString geometryType = qString(arg->string).lower();
+        if (geometryType == "circle")
+            region->m_isCircle = true;
+        else if (geometryType == "rectangle")
+            region->m_isRectangle = true;
+        else {
+            valid = false;
+            break;
+        }
+            
+        region->m_geometryType = qString(arg->string);
 
         // Next four arguments must be offset numbers
         int i;

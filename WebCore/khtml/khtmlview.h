@@ -222,6 +222,8 @@ public:
     QPoint viewportToGlobal(const QPoint &) const;
     void adjustViewSize();
     void initScrollBars();
+    
+    void updateDashboardRegions();
 #endif
 
     void ref() { ++_refCount; }

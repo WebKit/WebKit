@@ -2165,9 +2165,6 @@ void RenderObject::addDashboardRegions (QValueList<DashboardRegionValue>& region
         uint i, count = styleRegions.count();
         for (i = 0; i < count; i++){
             StyleDashboardRegion styleRegion = styleRegions[i];
-
-            int x, y;
-            absolutePosition (x, y);
             
             int w = width();
             int h = height();
@@ -2175,11 +2172,23 @@ void RenderObject::addDashboardRegions (QValueList<DashboardRegionValue>& region
             DashboardRegionValue region;
             region.label = styleRegion.label;
             region.bounds = QRect (
-                x + styleRegion.offset.left.value,
-                y + styleRegion.offset.top.value,
+                styleRegion.offset.left.value,
+                styleRegion.offset.top.value,
                 w - styleRegion.offset.left.value - styleRegion.offset.right.value,
                 h - styleRegion.offset.top.value - styleRegion.offset.bottom.value);
             region.type = styleRegion.type;
+
+            region.clip = region.bounds;
+            computeAbsoluteRepaintRect(region.clip);
+            if (region.clip.height() < 0) {
+                region.clip.setHeight(0);
+                region.clip.setWidth(0);
+            }
+
+            int x, y;
+            absolutePosition (x, y);
+            region.bounds.setX (x + styleRegion.offset.left.value);
+            region.bounds.setY (y + styleRegion.offset.left.value);
             
             regions.append (region);
         }

@@ -820,15 +820,16 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
         case CSSPrimitiveValue::CSS_DASHBOARD_REGION: {
             DashboardRegionImpl *region = getDashboardRegionValue();
             while (region) {
+                text = "dashboard-region(";
+                text += region->m_label;
                 if (region->m_isCircle){
-                    text = "dashboard-region-circle(";
+                    text = " circle ";
                 }
                 else if (region->m_isRectangle){
-                    text = "dashboard-region-rectangle(";
+                    text = " rectangle ";
                 }
                 else
                     break;
-                text += region->m_label;
                 text += " ";
                 text += region->top()->cssText() + " ";
                 text += region->right()->cssText() + " ";

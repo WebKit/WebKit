@@ -3941,6 +3941,11 @@ void KWQKHTMLPart::dashboardRegionsChanged(const QValueList<DashboardRegionValue
     NSMutableDictionary *webRegions = [[NSMutableDictionary alloc] initWithCapacity:count];
     for (i = 0; i < count; i++) {
         DashboardRegionValue region = regions[i];
+        NSRect clip;
+        clip.origin.x = region.clip.x();
+        clip.origin.y = region.clip.y();
+        clip.size.width = region.clip.width();
+        clip.size.height = region.clip.height();
         NSRect rect;
         rect.origin.x = region.bounds.x();
         rect.origin.y = region.bounds.y();
@@ -3958,7 +3963,7 @@ void KWQKHTMLPart::dashboardRegionsChanged(const QValueList<DashboardRegionValue
             [webRegions setObject:regionValues forKey:label];
         }
         
-        WebDashboardRegion *webRegion = [[[WebDashboardRegion alloc] initWithRect:rect type:type] autorelease];
+        WebDashboardRegion *webRegion = [[[WebDashboardRegion alloc] initWithRect:rect clip:clip type:type] autorelease];
         [regionValues addObject:webRegion];
     }
     

@@ -25,10 +25,11 @@
 #import "WebDashboardRegion.h"
 
 @implementation WebDashboardRegion
-- initWithRect:(NSRect)r type:(WebDashboardRegionType)t
+- initWithRect:(NSRect)r clip:(NSRect)c type:(WebDashboardRegionType)t
 {
     self = [super init];
     rect = r;
+    clip = c;
     type = t;
     return self;
 }
@@ -38,18 +39,26 @@
     return [self retain];
 }
 
+- (NSRect)dashboardRegionClip
+{
+    return clip;
+}
+
 - (NSRect)dashboardRegionRect
 {
     return rect;
 }
+
 - (WebDashboardRegionType)dashboardRegionType
 {
     return type;
 }
+
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"rect:%@ type:%s",
+    return [NSString stringWithFormat:@"rect:%@ clip:%@ type:%s",
         NSStringFromRect(rect),
+        NSStringFromRect(clip),
         type == WebDashboardRegionTypeNone ? "None" :
             (type == WebDashboardRegionTypeCircle ? "Circle" :
                 (type == WebDashboardRegionTypeRectangle ? "Rectangle" :
