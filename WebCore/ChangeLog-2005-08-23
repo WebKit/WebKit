@@ -1,3 +1,12 @@
+2004-11-12  Chris Blumenberg  <cblu@apple.com>
+
+	<rdar://problem/3843312> REGRESSION: Tabbing into content area puts insertion point at start, should go to where it last was
+
+        Reviewed by rjw.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrameHierarchy): only blow away selection when another view is focused
+
 === Safari-171 ===
 
 2004-11-12  Darin Adler  <darin@apple.com>

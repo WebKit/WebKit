@@ -1224,25 +1224,22 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
 NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirection direction)
 {
     NSView *next = nextKeyViewInFrame(node, direction);
-    if (next) {
-        return next;
-    }
-
-    // remove focus from currently focused node
-    DocumentImpl *doc = xmlDocImpl();
-    if (doc) {
-        doc->setFocusNode(0);
-    }
-    
-    KWQKHTMLPart *parent = KWQ(parentPart());
-    if (parent) {
-        next = parent->nextKeyView(parent->childFrame(this)->m_frame->element(), direction);
-        if (next) {
-            return next;
+    if (!next) {
+        KWQKHTMLPart *parent = KWQ(parentPart());
+        if (parent) {
+            next = parent->nextKeyView(parent->childFrame(this)->m_frame->element(), direction);
         }
     }
     
-    return nil;
+    if (next) {
+        // remove focus from currently focused node if we're giving focus to another view
+        DocumentImpl *doc = xmlDocImpl();
+        if (doc) {
+            doc->setFocusNode(0);
+        }            
+    }    
+    
+    return next;
 }
 
 NSView *KWQKHTMLPart::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
