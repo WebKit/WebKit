@@ -38,10 +38,8 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 
 @implementation WebView
 
-#define WebErrorDescriptionCannotFindFile UI_STRING("Cannot find file", "WebErrorCannotFindFile description")
 #define WebErrorDescriptionCannotCreateFile UI_STRING("Cannot create file", "WebErrorCannotCreateFile description")
 #define WebErrorDescriptionCannotOpenFile UI_STRING("Cannot open file", "WebErrorCannotOpenFile description")
-#define WebErrorDescriptionCannotReadFile UI_STRING("Cannot read file", "WebErrorCannotReadFile description")
 #define WebErrorDescriptionCannotWriteToFile UI_STRING("Cannot write file", "WebErrorCannotWriteToFile description")
 #define WebErrorDescriptionCannotRemoveFile UI_STRING("Cannot remove file", "WebErrorCannotRemoveFile description")
 #define WebErrorDescriptionCannotFindApplicationForFile UI_STRING("Cannot find application for file", "WebErrorCannotFindApplicationForFile description")
@@ -57,10 +55,8 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 + (void)initialize
 {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-    WebErrorDescriptionCannotFindFile, 			[NSNumber numberWithInt: WebErrorCannotFindFile],
     WebErrorDescriptionCannotCreateFile, 		[NSNumber numberWithInt: WebErrorCannotCreateFile],
     WebErrorDescriptionCannotOpenFile, 			[NSNumber numberWithInt: WebErrorCannotOpenFile],
-    WebErrorDescriptionCannotReadFile, 			[NSNumber numberWithInt: WebErrorCannotReadFile],
     WebErrorDescriptionCannotWriteToFile, 		[NSNumber numberWithInt: WebErrorCannotWriteToFile],
     WebErrorDescriptionCannotRemoveFile, 		[NSNumber numberWithInt: WebErrorCannotRemoveFile],
     WebErrorDescriptionCannotFindApplicationForFile, 	[NSNumber numberWithInt: WebErrorCannotFindApplicationForFile],

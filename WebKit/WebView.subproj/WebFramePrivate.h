@@ -137,5 +137,6 @@ typedef enum {
 
 - (WebHistoryItem *)_itemForSavingDocState;
 - (WebHistoryItem *)_itemForRestoringDocState;
+- (void)_handleUnimplementablePolicy:(WebPolicyAction)policy errorCode:(int)code forURL:(NSURL *)URL;
 
 @end

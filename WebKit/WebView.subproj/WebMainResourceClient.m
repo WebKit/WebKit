@@ -133,57 +133,94 @@
     [super notifyDelegatesOfInterruptionByPolicyChange];
 }
 
+
+-(void)stopLoadingAfterContentPolicy
+{
+    [[dataSource webFrame] _setProvisionalDataSource:nil];
+    [self notifyDelegatesOfInterruptionByPolicyChange];
+    [self cancelQuietly];
+}
+
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
 {
     [dataSource _setResponse:r];
 
     LOG(Download, "main content type: %@", [r contentType]);
 
-    WebContentAction contentPolicy;
+    WebPolicyAction contentPolicy;
+
+    WebResourceRequest *req = [dataSource request];
+
 
     // Figure out the content policy.
     if (![dataSource isDownloading]) {
 	contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForMIMEType:[r contentType]
-								  andRequest:[dataSource request]
+								  andRequest:req
 								  inFrame:[dataSource webFrame]];
     } else {
-	contentPolicy = WebContentPolicySave;
+	contentPolicy = WebPolicySave;
     }
 
     switch (contentPolicy) {
-    case WebContentPolicyShow:
+    case WebPolicyShow:
+	if (![WebController canShowMIMEType:[r contentType]]) {
+	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorCannotShowMIMEType forURL:[req URL]];
+	    [self stopLoadingAfterContentPolicy];
+	    return;
+	}
         break;
         
-    case WebContentPolicySave:
-        {
-	    [dataSource _setIsDownloading:YES];
-
-	    if ([dataSource downloadPath] == nil) {
-		NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:[dataSource request]];
-		[dataSource _setDownloadPath:saveFilename];
-	    }
-
-            [[dataSource webFrame] _setProvisionalDataSource:nil];
-            
-            [self notifyDelegatesOfInterruptionByPolicyChange];
-            
-            // Hand off the dataSource to the download handler.  This will cause the remaining
-            // handle delegate callbacks to go to the controller's download delegate.
-            downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
-            [self setIsDownload:YES];
-        }
+    case WebPolicySave:
+	[dataSource _setIsDownloading:YES];
+	
+	if ([dataSource downloadPath] == nil) {
+	    NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:req];
+	    [dataSource _setDownloadPath:saveFilename];
+	}
+	
+	[[dataSource webFrame] _setProvisionalDataSource:nil];
+	
+	[self notifyDelegatesOfInterruptionByPolicyChange];
+	
+	// Hand off the dataSource to the download handler.  This will cause the remaining
+	// handle delegate callbacks to go to the controller's download delegate.
+	downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
+	[self setIsDownload:YES];
         break;
+
+    case WebPolicyOpenURL:
+	if ([[req URL] isFileURL]) {
+	    if(![[NSWorkspace sharedWorkspace] openFile:[[req URL] path]]){
+		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorCannotFindApplicationForFile forURL:[req URL]];
+	    }
+	} else {
+	    if(![[NSWorkspace sharedWorkspace] openURL:[req URL]]){
+		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[req URL]];
+	    }
+	}
+
+	[self stopLoadingAfterContentPolicy];
+	return;
+	break;
+	
+    case WebPolicyRevealInFinder:
+	if (![[req URL] isFileURL]) {
+	    ERROR("contentPolicyForMIMEType:andRequest:inFrame: returned an invalid content policy.");
+	} else if (![[NSWorkspace sharedWorkspace] selectFile:[[req URL] path] inFileViewerRootedAtPath:@""]) {
+	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorFinderCannotOpenDirectory forURL:[req URL]];
+	}
+
+	[self stopLoadingAfterContentPolicy];
+	return;
+	break;
     
-    case WebContentPolicyIgnore:
-        {
-            [self cancel];
-            [[dataSource webFrame] _setProvisionalDataSource:nil];
-            [self notifyDelegatesOfInterruptionByPolicyChange];
-        }
+    case WebPolicyIgnore:
+	[self stopLoadingAfterContentPolicy];
+	return;
         break;
     
     default:
-        ERROR("contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy.");
+        ERROR("contentPolicyForMIMEType:andRequest:inFrame: returned an invalid content policy.");
     }
 
     [super handle:h didReceiveResponse:r];

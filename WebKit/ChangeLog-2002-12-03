@@ -1,3 +1,23 @@
+2002-11-14  Maciej Stachowiak  <mjs@apple.com>
+
+	Combined file URL policy with content policy. We don't actually
+	bother to ask earlier for file URLs yet, since that will make
+	things more complicated.
+	
+        * Misc.subproj/WebKitErrors.h:
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _handleUnimplementablePolicy:errorCode:forURL:]):
+        (-[WebFrame _continueAfterNavigationPolicyForRequest:dataSource:]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient stopLoadingAfterContentPolicy]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        * WebView.subproj/WebView.m:
+        (+[WebView initialize]):
+
 2002-11-14  Darin Adler  <darin@apple.com>
 
 	- fixed 3099240 -- REGRESSION: repro assert d->m_doc->parsing

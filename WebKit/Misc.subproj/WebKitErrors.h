@@ -12,10 +12,8 @@ extern NSString *WebErrorDomainWebKit;
 
 /*!
     @enum
-    @constant WebErrorCannotFindFile
     @constant WebErrorCannotCreateFile
     @constant WebErrorCannotOpenFile
-    @constant WebErrorCannotReadFile
     @constant WebErrorCannotWriteToFile
     @constant WebErrorCannotRemoveFile
     @constant WebErrorCannotFindApplicationForFile
@@ -29,10 +27,8 @@ extern NSString *WebErrorDomainWebKit;
     @constant WebErrorDownloadDecodingFailedToComplete
 */
 enum {
-    WebErrorCannotFindFile,
     WebErrorCannotCreateFile,
     WebErrorCannotOpenFile,
-    WebErrorCannotReadFile,
     WebErrorCannotWriteToFile,
     WebErrorCannotRemoveFile,
     WebErrorCannotFindApplicationForFile,

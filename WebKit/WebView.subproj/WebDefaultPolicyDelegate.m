@@ -21,18 +21,6 @@
     return self;
 }
 
-- (WebFileAction)fileURLPolicyForMIMEType:(NSString *)type andRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
-{
-    BOOL isDirectory;
-    [[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
-
-    if(isDirectory)
-        return WebFileURLPolicyIgnore;
-    if([WebController canShowMIMEType:type])
-        return WebFileURLPolicyUseContentPolicy;
-    return WebFileURLPolicyIgnore;
-}
-
 - (void)unableToImplementPolicy:(WebPolicyAction)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame
 {
     NSLog (@"called unableToImplementPolicy:%derror:%@:inFrame:%@", policy, error, frame);
@@ -43,10 +31,21 @@
 				 andRequest:(WebResourceRequest *)request
 				    inFrame:(WebFrame *)frame;
 {
+    if ([[request URL] isFileURL]) {
+	BOOL isDirectory;
+	[[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
+	
+	if(isDirectory)
+	    return WebPolicyIgnore;
+	if([WebController canShowMIMEType:type])
+	    return WebPolicyShow;
+	return WebPolicyIgnore;
+    }
+
     if ([WebController canShowMIMEType:type]) {
-        return WebContentPolicyShow;
+        return WebPolicyShow;
     } else {
-        return WebContentPolicyIgnore;
+        return WebPolicyIgnore;
     }
 }
 
