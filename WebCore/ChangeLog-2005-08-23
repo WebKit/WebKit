@@ -1,5 +1,24 @@
 2003-04-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed 3223414 -- update text encoding menu and encoding names table
+
+        Made changes as suggested by Deborah Goldsmith and Peter Edberg from the International group.
+
+        * kwq/mac-encodings.txt:
+        Moved all Korean character sets that are not explicitly Macintosh from MacKorean to EUC_KR.
+        Moved Shift JIS character sets that are not explicitly Microsoft from DOSJapanese to ShiftJIS_X0213_00.
+        Moved cp949 from DOSKorean to EUC_KR (DOSKorean is not implemented in Jaguar).
+        Moved big5 character sets that are not explicitly Microsoft from DOSChineseTrad to Big5_HKSCS_1999.
+        Moved all gb2312-80 character sets from GB_2312_80 to GB_18030_2000.
+        Moved all gbk character sets from GBK_95 to GB_18030_2000.
+        Moved all euc-cn character sets from EUC_CN to GB_18030_2000.
+
+        * kwq/KWQCharsetData.c: Regenerated.
+
+2003-04-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Richard.
 
 	- fixed 3223126 -- REGRESSION: exception BrowserWindow isDescendantOf:]: selector not recognized

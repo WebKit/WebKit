@@ -16,7 +16,7 @@ NonLossyASCII
 
 MacJapanese: x-mac-japanese
 MacChineseTrad: x-mac-chinesetrad, x-mac-trad-chinese
-MacKorean: ks_c_5601, ks_c_5601-1987, ks_c_5601_1987, ksc5601, x-mac-korean
+MacKorean: x-mac-korean
 MacArabic: x-mac-arabic
 MacHebrew: x-mac-hebrew
 MacGreek: x-mac-greek
@@ -93,10 +93,10 @@ DOSNordic
 DOSRussian: cp866
 DOSGreek2: ibm869
 DOSThai: cp874, dos-874, tis-620, windows-874
-DOSJapanese: cp932, cswindows31j, shift-jis, shift_jis, x-ms-cp932, x-sjis
+DOSJapanese: cp932, cswindows31j, x-ms-cp932
 DOSChineseSimplif
-DOSKorean: cp949
-DOSChineseTrad: big5, cn-big5, cp950, x-x-big5
+DOSKorean
+DOSChineseTrad: cp950
 WindowsLatin2: windows-1250, winlatin2, x-cp1250
 WindowsCyrillic: wincyrillic, windows-1251, x-cp1251
 WindowsGreek: windows-1253, wingreek
@@ -112,10 +112,10 @@ JIS_X0208_83: jis_x0208-1983
 JIS_X0208_90: jis_x0208-1990
 JIS_X0212_90: jis_x0212-1990
 JIS_C6226_78: jis_c6226-1978
-ShiftJIS_X0213_00
-GB_2312_80: csgb231280, gb2312-80, gb231280, gb_2312-80
-GBK_95: x-gbk
-GB_18030_2000: gb18030
+ShiftJIS_X0213_00: shift-jis, shift_jis, x-sjis
+GB_2312_80
+GBK_95
+GB_18030_2000: cn-gb, csgb231280, euc-cn, gb18030, gb2312, gb_2312-80, gbk, x-euc-cn, x-gbk
 KSC_5601_87
 KSC_5601_92_Johab
 CNS_11643_92_P1
@@ -131,16 +131,16 @@ ISO_2022_CN_EXT: iso-2022-cn-ext
 ISO_2022_KR: iso-2022-kr
 
 EUC_JP: euc-jp, x-euc, x-euc-jp
-EUC_CN: cn-gb, euc-cn, gb2312, gbk, x-euc-cn
+EUC_CN
 EUC_TW: euc-tw
-EUC_KR: euc-kr
+EUC_KR: cp949, euc-kr, ks_c_5601, ks_c_5601-1987, ks_c_5601_1987, ksc5601
 
 ShiftJIS
 KOI8_R: koi, koi8, koi8-r, koi8r
 Big5
 MacRomanLatin1: x-mac-roman-latin1
 HZ_GB_2312: hz-gb-2312
-Big5_HKSCS_1999: big5-hkscs
+Big5_HKSCS_1999: big5, big5-hkscs, cn-big5, x-x-big5
 
 EBCDIC_US
 EBCDIC_CP037: cp037
