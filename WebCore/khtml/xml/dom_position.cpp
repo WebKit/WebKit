@@ -25,17 +25,16 @@
 
 #include "dom_position.h"
 
+#include <qstring.h>
+
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"
 #include "dom2_viewsimpl.h"
 #include "helper.h"
 #include "htmltags.h"
-#include "khtml_text_operations.h"
-#include "qstring.h"
 #include "rendering/render_block.h"
 #include "rendering/render_flow.h"
 #include "rendering/render_line.h"
-#include "rendering/render_object.h"
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
 #include "xml/dom_positioniterator.h"
@@ -50,21 +49,13 @@
 #define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
-using khtml::CharacterIterator;
-using khtml::findWordBoundary;
 using khtml::InlineBox;
-using khtml::InlineFlowBox;
 using khtml::InlineTextBox;
-using khtml::nextWordFromIndex;
-using khtml::PRE;
 using khtml::RenderBlock;
 using khtml::RenderFlow;
 using khtml::RenderObject;
-using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::RootInlineBox;
-using khtml::SimplifiedBackwardsTextIterator;
-using khtml::TextIterator;
 using khtml::VISIBLE;
 
 namespace DOM {
@@ -190,69 +181,6 @@ long Position::renderedOffset() const
     return result;
 }
 
-Position Position::equivalentLeafPosition() const
-{
-    if (isEmpty())
-        return Position();
-
-    if (!node()->renderer() || !node()->renderer()->firstChild())
-        return *this;
-    
-    NodeImpl *n = node();
-    int count = 0;
-    while (1) {
-        n = n->nextLeafNode();
-        if (!n || !n->inSameContainingBlockFlowElement(node()))
-            return *this;
-        if (count + n->maxOffset() >= offset()) {
-            count = offset() - count;
-            break;
-        }
-        count += n->maxOffset();
-    }
-    return Position(n, count);
-}
-
-Position Position::previousRenderedEditablePosition() const
-{
-    if (isEmpty())
-        return Position();
-
-    if (node()->isContentEditable() && node()->hasChildNodes() == false && inRenderedContent())
-        return *this;
-
-    NodeImpl *n = node();
-    while (1) {
-        n = n->previousEditable();
-        if (!n)
-            return Position();
-        if (n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
-            break;
-    }
-    
-    return Position(n, 0);
-}
-
-Position Position::nextRenderedEditablePosition() const
-{
-    if (isEmpty())
-        return Position();
-
-    if (node()->isContentEditable() && node()->hasChildNodes() == false && inRenderedContent())
-        return *this;
-
-    NodeImpl *n = node();
-    while (1) {
-        n = n->nextEditable();
-        if (!n)
-            return Position();
-        if (n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
-            break;
-    }
-    
-    return Position(n, 0);
-}
-
 Position Position::previousCharacterPosition() const
 {
     if (isEmpty())
@@ -307,215 +235,6 @@ Position Position::nextCharacterPosition() const
     }
     
     return *this;
-}
-
-Position Position::previousWordBoundary() const
-{
-    if (isEmpty())
-        return Position();
-
-    Position pos = *this;
-    int tries = 0;
-    while (tries < 2) {
-        if (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE) {
-            DOMString t = pos.node()->nodeValue();
-            if (t.isEmpty())
-                return *this;
-            QChar *chars = t.unicode();
-            uint len = t.length();
-            int start, end;
-            findWordBoundary(chars, len, pos.offset(), &start, &end);
-            pos = Position(pos.node(), start);
-            if (pos != *this)
-                return pos;
-            else {
-                pos = previousCharacterPosition();
-                if (pos == *this) {
-                    // made no difference from the last try, might as well bail
-                    break;
-                }
-            }
-        }
-        else {
-            pos = Position(pos.node(), pos.node()->caretMinOffset());
-            if (pos != *this)
-                return pos;
-        }
-        tries++;
-    }
-    
-    return *this;
-}
-
-Position Position::nextWordBoundary() const
-{
-    if (isEmpty())
-        return Position();
-
-    Position pos = *this;
-    int tries = 0;
-    while (tries < 2) {
-        if (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE) {
-            DOMString t = pos.node()->nodeValue();
-            if (t.isEmpty())
-                return *this;
-            QChar *chars = t.unicode();
-            uint len = t.length();
-            int start, end;
-            findWordBoundary(chars, len, pos.offset(), &start, &end);
-            pos = Position(pos.node(), end);
-            if (pos != *this)
-                return pos;
-            else {
-                pos = nextCharacterPosition();
-                if (pos == *this) {
-                    // made no difference from the last try, might as well bail
-                    break;
-                }
-            }
-        } 
-        else {
-            pos = Position(pos.node(), pos.node()->caretMaxOffset());
-            if (pos != *this)
-                return pos;
-        }
-        tries++;
-    }
-    
-    return *this;
-}
-
-Position Position::previousWordPosition() const
-{
-    NodeImpl *n = node();
-    if (!n)
-        return Position();
-    DocumentImpl *d = n->getDocument();
-    if (!d)
-        return Position();
-    NodeImpl *de = d->documentElement();
-    if (!de)
-        return Position();
-
-    Range searchRange(d);
-    searchRange.setStartBefore(de);
-    Position end(equivalentRangeCompliantPosition());
-    searchRange.setEnd(end.node(), end.offset());
-    SimplifiedBackwardsTextIterator it(searchRange);
-    QString string;
-    unsigned next = 0;
-    while (!it.atEnd() && it.length() > 0) {
-        // Keep asking the iterator for chunks until the nextWordFromIndex() function
-        // returns a non-zero value.
-        string.prepend(it.characters(), it.length());
-        next = nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
-        if (next != 0)
-            break;
-        it.advance();
-    }
-    
-    Position pos(*this);
-    if (it.atEnd() && next == 0) {
-        Range range(it.range());
-        pos = Position(range.startContainer().handle(), range.startOffset());
-    }
-    else if (!it.atEnd() && it.length() == 0) {
-        // Got a zero-length chunk.
-        // This means we have hit a replaced element.
-        // Make a check to see if the position should be before or after the replaced element
-        // by performing an additional check with a modified string which uses an "X" 
-        // character to stand in for the replaced element.
-        QChar chars[2];
-        chars[0] = 'X';
-        chars[1] = ' ';
-        string.prepend(chars, 2);
-        unsigned pastImage = nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
-        Range range(it.range());
-        if (pastImage == 0)
-            pos = Position(range.startContainer().handle(), range.startOffset());
-        else
-            pos = Position(range.endContainer().handle(), range.endOffset());
-    }
-    else if (next != 0) {
-        // The simpler iterator used in this function, as compared to the one used in 
-        // nextWordPosition(), gives us results we can use directly without having to 
-        // iterate again to translate the next value into a DOM position. 
-        NodeImpl *node = it.range().startContainer().handle();
-        if (node->isTextNode()) {
-            // The next variable contains a usable index into a text node
-            pos = Position(node, next);
-        }
-        else {
-            // If we are not in a text node, we ended on a node boundary, so the
-            // range start offset should be used.
-            pos = Position(node, it.range().startOffset());
-        }
-    }
-    // Use DOWNSTREAM here so that we don't jump past words at the start of lines.
-    // <rdar://problem/3765519> REGRESSION (Mail): word movement goes too far upstream at start of line
-    pos = pos.equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM);
-    return pos;
-}
-
-Position Position::nextWordPosition() const
-{
-    NodeImpl *n = node();
-    if (!n)
-        return Position();
-    DocumentImpl *d = n->getDocument();
-    if (!d)
-        return Position();
-    NodeImpl *de = d->documentElement();
-    if (!de)
-        return Position();
-
-    Range searchRange(d);
-    Position start(equivalentRangeCompliantPosition());
-    searchRange.setStart(start.node(), start.offset());
-    searchRange.setEndAfter(de);
-    TextIterator it(searchRange);
-    QString string;
-    unsigned next = 0;
-    while (!it.atEnd() && it.length() > 0) {
-        // Keep asking the iterator for chunks until the nextWordFromIndex() function
-        // returns a value not equal to the length of the string passed to it.
-        string.append(it.characters(), it.length());
-        next = nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
-        if (next != string.length())
-            break;
-        it.advance();
-    }
-    
-    Position pos(*this);
-    if (it.atEnd() && next == string.length()) {
-        Range range(it.range());
-        pos = Position(range.startContainer().handle(), range.startOffset());
-    }
-    else if (!it.atEnd() && it.length() == 0) {
-        // Got a zero-length chunk.
-        // This means we have hit a replaced element.
-        // Make a check to see if the position should be before or after the replaced element
-        // by performing an additional check with a modified string which uses an "X" 
-        // character to stand in for the replaced element.
-        QChar chars[2];
-        chars[0] = ' ';
-        chars[1] = 'X';
-        string.append(chars, 2);
-        unsigned pastImage = nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
-        Range range(it.range());
-        if (next != pastImage)
-            pos = Position(range.endContainer().handle(), range.endOffset());
-        else
-            pos = Position(range.startContainer().handle(), range.startOffset());
-    }
-    else if (next != 0) {
-        // Use the character iterator to translate the next value into a DOM position.
-        CharacterIterator charIt(searchRange);
-        charIt.advance(next - 1);
-        pos = Position(charIt.range().endContainer().handle(), charIt.range().endOffset());
-    }
-    pos = pos.equivalentDeepPosition().closestRenderedPosition(UPSTREAM);
-    return pos;
 }
 
 Position Position::previousLinePosition(int x) const

@@ -1078,6 +1078,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->advanceToNextMisspelling().getNSString();
 }
 
+- (NSString *)advanceToNextMisspellingStartingJustBeforeSelection
+{
+    return _part->advanceToNextMisspelling(true).getNSString();
+}
+
 - (void)setTextSizeMultiplier:(float)multiplier
 {
     int newZoomFactor = (int)rint(multiplier * 100);
@@ -1370,7 +1375,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     // save vertical navigation x position if necessary
     int xPos = KHTMLPart::NoXPosForVerticalArrowNavigation;
-    if (granularity == WebSelectByLine)
+    if (granularity == WebSelectByLine || granularity == WebSelectByParagraph)
         xPos = _part->xPosForVerticalArrowNavigation();
     
     // setting the selection always clears saved vertical navigation x position
@@ -1383,10 +1388,36 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self ensureCaretVisible];
 }
 
+- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
+{
+    if (!_part)
+        return nil;
+        
+    Selection selection(_part->selection());
+    selection.modify(static_cast<Selection::EAlter>(alteration), static_cast<int>(verticalDistance));
+    return [DOMRange _rangeWithImpl:selection.toRange().handle()];
+}
+
+- (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
+{
+    if (!_part)
+        return;
+        
+    Selection selection(_part->selection());
+    selection.modify(static_cast<Selection::EAlter>(alteration), static_cast<int>(verticalDistance));
+
+    // setting the selection always clears saved vertical navigation x position, so preserve it
+    int xPos = _part->xPosForVerticalArrowNavigation();
+    _part->setSelection(selection, true);
+    _part->setXPosForVerticalArrowNavigation(xPos);
+
+    [self ensureCaretVisible];
+}
+
 - (WebSelectionGranularity)selectionGranularity
 {
     // NOTE: The enums *must* match the very similar ones declared in dom_selection.h
-    return (WebSelectionGranularity)_part->selectionGranularity();
+    return static_cast<WebSelectionGranularity>(_part->selectionGranularity());
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
@@ -1613,7 +1644,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!v)
         return;
 
-    QRect r(_part->selection().getRepaintRect());
+    QRect r(_part->selection().caretRect());
     v->ensureVisible(r.right(), r.bottom());
     v->ensureVisible(r.left(), r.top());
 }

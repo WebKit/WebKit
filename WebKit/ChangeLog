@@ -2,6 +2,78 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3655360> REGRESSION (Mail): Ctrl-V emacs key binding, -pageDown: method, unimplemented (and pageUp, and selection-modifying versions)
+        - fixed <rdar://problem/3792138> REGRESSION (Mail): Spell checker doesn't check current selected word
+
+        * WebView.subproj/WebFrameViewInternal.h: Moved WebFrameViewPrivate inside the WebFrameView.m file.
+        Removed a bunch of methods that don't need to be seen in other files, and added _verticalPageScrollDistance.
+        * WebView.subproj/WebFrameViewPrivate.h: Removed. Renamed to WebFrameViewInternal.h.
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _verticalKeyboardScrollDistance]): Move in the file because of internal vs. private.
+        (-[WebFrameView _shouldDrawBorder]): Ditto.
+        (-[WebFrameView _tile]): Ditto.
+        (-[WebFrameView _verticalPageScrollDistance]): Added. Separate method so it can be called
+        by the code to implement pageDown:.
+        (-[WebFrameView _drawBorder]): Move in the file because of internal vs. private.
+        (-[WebFrameView _goBack]): Ditto.
+        (-[WebFrameView _goForward]): Ditto.
+        (-[WebFrameView _scrollVerticallyBy:]): Ditto.
+        (-[WebFrameView _scrollHorizontallyBy:]): Ditto.
+        (-[WebFrameView _horizontalKeyboardScrollDistance]): Ditto.
+        (-[WebFrameView _horizontalPageScrollDistance]): Added. Separate method for consistency with
+        vertical method above.
+        (-[WebFrameView _pageVertically:]): Moved and changed to use _verticalPageScrollDistance.
+        (-[WebFrameView _pageHorizontally:]): Moved and changed to use _horizontalPageScrollDistance.
+        (-[WebFrameView _scrollLineVertically:]): Move in the file because of internal vs. private.
+        (-[WebFrameView _scrollLineHorizontally:]): Ditto.
+        (-[WebFrameView scrollPageUp:]): Ditto.
+        (-[WebFrameView scrollPageDown:]): Ditto.
+        (-[WebFrameView scrollLineUp:]): Ditto.
+        (-[WebFrameView scrollLineDown:]): Ditto.
+        (-[WebFrameView _firstResponderIsControl]): Ditto.
+        (-[WebFrameView keyDown:]): Changed to eliminate _pageLeft, _lineLeft, _pageRight, and _lineRight.
+
+        * WebView.subproj/WebDataSource.m: Use WebFrameView.h instead of WebFrameViewPrivate.h.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _alterCurrentSelection:verticalDistance:]): Added.
+        (-[WebHTMLView moveToBeginningOfDocument:]): Use WebSelectToDocumentBoundary.
+        (-[WebHTMLView moveToBeginningOfDocumentAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToEndOfDocument:]): Ditto.
+        (-[WebHTMLView moveToEndOfDocumentAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveParagraphBackwardAndModifySelection:]): Added.
+        (-[WebHTMLView moveParagraphForwardAndModifySelection:]): Added.
+        (-[WebHTMLView pageUp:]): Added.
+        (-[WebHTMLView pageDown:]): Added.
+        (-[WebHTMLView pageUpAndModifySelection:]): Added.
+        (-[WebHTMLView pageDownAndModifySelection:]): Added.
+        (-[WebHTMLView showGuessPanel:]): Changed to call advanceToNextMisspellingStartingJustBeforeSelection.
+        This fixes the problem with spell checking.
+
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView webView]): Changed to use _web_parentWebView.
+        (-[WebImageView menuForEvent:]): Changed to use [self webView].
+        (-[WebImageView mouseDown:]): Ditto.
+        (-[WebImageView mouseDragged:]): Ditto.
+        (-[WebImageView draggedImage:endedAt:operation:]): Ditto.
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView _textSizeMultiplierFromWebView]): Changed to use _web_parentWebView.
+        (-[WebTextView menuForEvent:]): Ditto.
+        (-[WebTextView drawPageBorderWithSize:]): Ditto.
+        (-[WebTextView knowsPageRange:]): Ditto.
+
+        * Plugins.subproj/WebPluginDatabase.m: Updated filename of WebFrameViewInternal.h.
+        * WebCoreSupport.subproj/WebBridge.m: Ditto.
+        * WebKit.pbproj/project.pbxproj: Ditto.
+        * WebView.subproj/WebFrame.m: Ditto.
+        * WebView.subproj/WebView.m: Ditto.
+        * Misc.subproj/WebNSViewExtras.m: Ditto.
+
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - added helper method _web_parentWebView so fewer files need to get at WebFrame private methods
 
         * Misc.subproj/WebNSViewExtras.h: Added _web_parentWebView.

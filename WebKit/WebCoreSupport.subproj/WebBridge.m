@@ -18,7 +18,7 @@
 #import <WebKit/WebFormDelegate.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewInternal.h>

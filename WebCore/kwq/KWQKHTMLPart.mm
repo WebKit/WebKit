@@ -73,6 +73,7 @@
 #undef _KWQ_TIMING
 
 using DOM::AtomicString;
+using DOM::CaretPosition;
 using DOM::ClipboardEventImpl;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
@@ -575,13 +576,9 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     searchRange.selectNodeContents(xmlDocImpl());
     if (selectionStart()) {
         if (forward) {
-            // Must ensure the position is on a container to be usable with a DOMRange
-            Position selEnd = selection().rangeEnd();
-            searchRange.setStart(selEnd.node(), selEnd.offset());
+            setStart(searchRange, selection().end());
         } else {
-            // Must ensure the position is on a container to be usable with a DOMRange
-            Position selStart = selection().rangeStart();
-            searchRange.setEnd(selStart.node(), selStart.offset());
+            setEnd(searchRange, selection().start());
         }
     }
 
@@ -896,10 +893,10 @@ void KWQKHTMLPart::jumpToSelection()
     }
 }
 
-QString KWQKHTMLPart::advanceToNextMisspelling()
+QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
 {
     // The basic approach is to search in two phases - from the selection end to the end of the doc, and
-    // the we wrap and search from the doc start to (approximately) where we started.
+    // then we wrap and search from the doc start to (approximately) where we started.
     
     // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
     // repeated "check spelling" commands work.
@@ -908,11 +905,16 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
     bool startedWithSelection = false;
     if (selectionStart()) {
         startedWithSelection = true;
-        // Must ensure the position is on a container to be usable with a DOMRange
-        Position selEnd = selection().rangeEnd();
-        searchRange.setStart(selEnd.node(), selEnd.offset());
+        if (startBeforeSelection) {
+            CaretPosition start = selection().start();
+            // We match AppKit's rule: Start 1 character before the selection.
+            CaretPosition oneBeforeStart = start.previous();
+            setStart(searchRange, oneBeforeStart.notEmpty() ? oneBeforeStart : start);
+        } else {
+            setStart(searchRange, CaretPosition(selection().end()));
+        }
     }
-    
+
     // If we're not in an editable node, try to find one, make that our range to work in
     NodeImpl *editableNodeImpl = searchRange.startContainer().handle();
     if (!editableNodeImpl->isContentEditable()) {
@@ -920,7 +922,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
         if (!editableNodeImpl) {
             return QString();
         }
-        searchRange.setStartBefore(Node(editableNodeImpl));
+        searchRange.setStartBefore(editableNodeImpl);
         startedWithSelection = false;   // won't need to wrap
     }
     
@@ -931,13 +933,9 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
     // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
     // forward by a word happens to do the trick.
     if (startedWithSelection) {
-        Position start(searchRange.startContainer().handle(), searchRange.startOffset());
-        Position newStart = start.previousCharacterPosition();
-        if (newStart != start) {
-            newStart = newStart.nextWordBoundary();
-            // Must ensure the position is on a container to be usable with a DOMRange
-            newStart = newStart.equivalentRangeCompliantPosition();
-            searchRange.setStart(Node(newStart.node()), newStart.offset());
+        CaretPosition oneBeforeStart= start(searchRange).previous();
+        if (oneBeforeStart.notEmpty()) {
+            setStart(searchRange, endOfWord(oneBeforeStart));
         } // else we were already at the start of the editable node
     }
     
@@ -972,7 +970,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
                     misspellingRange.setStart(chars.range().startContainer(), chars.range().startOffset());
                     QString result = chars.string(misspelling.length);
                     misspellingRange.setEnd(chars.range().startContainer(), chars.range().startOffset());
-                
+
                     setSelection(misspellingRange);
                     jumpToSelection();
                     // Mark misspelling in document.
@@ -3759,10 +3757,10 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
     // So, for now, the idea is to mimic AppKit behavior and limit the selection to the first word 
     // of the selection passed in.
     // This is not ideal by any means, but this is the convention.
-    Position end(selection.start().nextWordBoundary());
+    CaretPosition end = endOfWord(selection.start());
     if (end == selection.start())
-        end = end.nextCharacterPosition().nextWordBoundary();
-    Selection s(selection.start().previousWordBoundary(), end);
+        end = endOfWord(end.next());
+    Selection s(startOfWord(selection.start()), end);
     if (s.state() == Selection::NONE)
         return;
     // Change to this someday to spell check the entire selection.
@@ -3776,17 +3774,6 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
     NodeImpl *editableNodeImpl = searchRange.startContainer().handle();
     if (!editableNodeImpl->isContentEditable())
         return;
-    
-    // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
-    // forward by a word happens to do the trick.
-    Position start(searchRange.startContainer().handle(), searchRange.startOffset());
-    Position newStart = start.previousCharacterPosition();
-    if (newStart != start) {
-        newStart = newStart.nextWordBoundary();
-        // Must ensure the position is on a container to be usable with a DOMRange
-        newStart = newStart.equivalentRangeCompliantPosition();
-        searchRange.setStart(Node(newStart.node()), newStart.offset());
-    } // else we were already at the start of the editable node
     
     if (searchRange.collapsed())
         // nothing to search in
@@ -3834,10 +3821,10 @@ void KWQKHTMLPart::updateSpellChecking()
         if ([_bridge isContinuousSpellCheckingEnabled]) {
             // This only erases a marker in the first word of the selection.  Perhaps peculiar, but it
             // matches AppKit.
-            Position start(selection().start().previousWordBoundary());
-            Position end(selection().start().nextWordBoundary());
+            CaretPosition start(startOfWord(selection().start()));
+            CaretPosition end(endOfWord(selection().start()));
             if (end == selection().start())
-                end = end.nextCharacterPosition().nextWordBoundary();
+                end = endOfWord(end.next());
             Selection selection(start, end);
             xmlDocImpl()->removeMarker(selection.toRange(), DocumentMarker::Spelling);
         }

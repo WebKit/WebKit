@@ -14,7 +14,7 @@
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>

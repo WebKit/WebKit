@@ -16,7 +16,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>

@@ -17,7 +17,7 @@
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebImageRenderer.h>
@@ -2637,6 +2637,16 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
+{
+    WebBridge *bridge = [self _bridge];
+    DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration verticalDistance:verticalDistance];
+    WebView *webView = [self _webView];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
+        [bridge alterCurrentSelection:alteration verticalDistance:verticalDistance];
+    }
+}
+
 - (void)moveBackward:(id)sender
 {
     [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByCharacter];
@@ -2689,12 +2699,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByDocument];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectToDocumentBoundary];
 }
 
 - (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByDocument];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectToDocumentBoundary];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
@@ -2719,12 +2729,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByDocument];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectToDocumentBoundary];
 }
 
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByDocument];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectToDocumentBoundary];
 }
 
 - (void)moveToEndOfLine:(id)sender
@@ -2745,6 +2755,16 @@ static WebHTMLView *lastHitView = nil;
 - (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
     [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectToParagraphBoundary];
+}
+
+- (void)moveParagraphBackwardAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByParagraph];
+}
+
+- (void)moveParagraphForwardAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByParagraph];
 }
 
 - (void)moveUp:(id)sender
@@ -2797,16 +2817,36 @@ static WebHTMLView *lastHitView = nil;
     [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByWord];
 }
 
-- (void)pageDown:(id)sender
-{
-    // FIXME: This should move the caret down one page and then scroll to reveal it.
-    ERROR("unimplemented");
-}
-
 - (void)pageUp:(id)sender
 {
-    // FIXME: This should move the caret up one page and then scroll to reveal it.
-    ERROR("unimplemented");
+    WebFrameView *frameView = [self _web_parentWebFrameView];
+    if (frameView == nil)
+        return;
+    [self _alterCurrentSelection:WebSelectByMoving verticalDistance:-[frameView _verticalPageScrollDistance]];
+}
+
+- (void)pageDown:(id)sender
+{
+    WebFrameView *frameView = [self _web_parentWebFrameView];
+    if (frameView == nil)
+        return;
+    [self _alterCurrentSelection:WebSelectByMoving verticalDistance:[frameView _verticalPageScrollDistance]];
+}
+
+- (void)pageUpAndModifySelection:(id)sender
+{
+    WebFrameView *frameView = [self _web_parentWebFrameView];
+    if (frameView == nil)
+        return;
+    [self _alterCurrentSelection:WebSelectByExtending verticalDistance:-[frameView _verticalPageScrollDistance]];
+}
+
+- (void)pageDownAndModifySelection:(id)sender
+{
+    WebFrameView *frameView = [self _web_parentWebFrameView];
+    if (frameView == nil)
+        return;
+    [self _alterCurrentSelection:WebSelectByExtending verticalDistance:[frameView _verticalPageScrollDistance]];
 }
 
 - (void)_expandSelectionToGranularity:(WebSelectionGranularity)granularity
@@ -3481,8 +3521,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         ERROR("No NSSpellChecker");
         return;
     }
-
-    NSString *badWord = [[self _bridge] advanceToNextMisspelling];
+    NSString *badWord = [[self _bridge] advanceToNextMisspellingStartingJustBeforeSelection];
     if (badWord) {
         [checker updateSpellingPanelWithMisspelledWord:badWord];
     }
@@ -3713,18 +3752,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 // This is part of table support, which may be in NSTextView for Tiger.
 // It's probably simple to do the equivalent thing for WebKit.
 - (void)insertTable:(id)sender;
-
-// === methods with standard key bindings
-
-// Implementing these requires motion by paragraph.
-// Currently move right by paragraph is actually "move to end of paragraph".
-// We'd have to fix that up if we want to implement these.
-- (void)moveParagraphBackwardAndModifySelection:(id)sender;
-- (void)moveParagraphForwardAndModifySelection:(id)sender;
-
-// Implementing these may be easy once we implement pageUp and pageDown.
-- (void)pageUpAndModifySelection:(id)sender;
-- (void)pageDownAndModifySelection:(id)sender;
 
 // === key binding methods that NSTextView has that don't have standard key bindings
 

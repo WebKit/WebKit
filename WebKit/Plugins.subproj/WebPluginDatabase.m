@@ -9,7 +9,7 @@
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginPackage.h>

@@ -29,7 +29,6 @@
 #include "css/css_computedstyle.h"
 #include "css/css_valueimpl.h"
 #include "dom/css_value.h"
-#include "dom/dom_position.h"
 #include "html/html_elementimpl.h"
 #include "html/html_imageimpl.h"
 #include "htmlattrs.h"
@@ -45,6 +44,7 @@
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_positioniterator.h"
 #include "xml/dom_nodeimpl.h"
+#include "xml/dom_position.h"
 #include "xml/dom_selection.h"
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_textimpl.h"
@@ -69,15 +69,16 @@ using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
 using DOM::EditingTextImpl;
-using DOM::PositionIterator;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
+using DOM::LeftWordIfOnBoundary;
 using DOM::NamedAttrMapImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
 using DOM::Position;
+using DOM::PositionIterator;
 using DOM::Range;
 using DOM::RangeImpl;
 using DOM::Selection;
@@ -2241,11 +2242,14 @@ void TypingCommandImpl::markMisspellingsAfterTyping()
     // Since the word containing the current selection is never marked, this does a check to
     // see if typing made a new word that is not in the current selection. Basically, you
     // get this by being at the end of a word and typing a space.    
-    Position start(endingSelection().start());
-    Position p1 = start.previousCharacterPosition().previousWordBoundary();
-    Position p2 = start.previousWordBoundary();
-    if (p1 != p2)
-        markMisspellingsInSelection(Selection(p1, start));
+    CaretPosition start(endingSelection().start());
+    CaretPosition previous = start.previous();
+    if (previous.notEmpty()) {
+        CaretPosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
+        CaretPosition p2 = startOfWord(start, LeftWordIfOnBoundary);
+        if (p1 != p2)
+            markMisspellingsInSelection(Selection(p1, start));
+    }
 }
 
 void TypingCommandImpl::typingAddedToOpenCommand()

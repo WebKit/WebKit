@@ -33,14 +33,16 @@ class QChar;
 namespace khtml
 {
     const QRgb transparentColor = 0x00000000;
+#if !APPLE_CHANGES
     const QRgb invertedColor    = 0x00000002; // This really makes no sense. This is a valid color value, so why
                                               // is it being given special meaning? -dwh
+#endif
     
     extern QPainter *printpainter;
-    void setPrintPainter( QPainter *printer );
+    void setPrintPainter(QPainter *printer);
 
-    void findWordBoundary(QChar *chars, int len, int position, int *start, int *end);
-    int nextWordFromIndex(QChar *chars, int len, int position, bool forward);
+    void findWordBoundary(const QChar *chars, int len, int position, int *start, int *end);
+    int nextWordFromIndex(const QChar *chars, int len, int position, bool forward);
 };
 
 #endif

@@ -25,13 +25,13 @@
 
 #import "KWQTextUtilities.h"
 
-#import <qstring.h>
-
+#import "KWQString.h"
 #import <AppKit/NSAttributedString.h>
 
-int KWQFindNextWordFromIndex(QChar *chars, int len, int position, bool forward)
+int KWQFindNextWordFromIndex(const QChar *chars, int len, int position, bool forward)
 {   
-    NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)chars length:len freeWhenDone:NO];
+    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar *>(reinterpret_cast<const unichar *>(chars))
+        length:len freeWhenDone:NO];
     NSAttributedString *attr = [[NSAttributedString alloc] initWithString:string];
     int result = [attr nextWordFromIndex:position forward:forward];
     [attr release];

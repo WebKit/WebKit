@@ -1493,7 +1493,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			path = WebFrameViewPrivate.h;
+			path = WebFrameViewInternal.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};

@@ -111,9 +111,9 @@ typedef enum {
     WebSelectByWord,
     WebSelectByLine,
     WebSelectByParagraph,
-    WebSelectByDocument,
     WebSelectToLineBoundary,
-    WebSelectToParagraphBoundary
+    WebSelectToParagraphBoundary,
+    WebSelectToDocumentBoundary
 } WebSelectionGranularity;
 
 
@@ -226,6 +226,7 @@ typedef enum {
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
 - (void)jumpToSelection;
 - (NSString *)advanceToNextMisspelling;
+- (NSString *)advanceToNextMisspellingStartingJustBeforeSelection;
 
 - (void)setTextSizeMultiplier:(float)multiplier;
 
@@ -300,6 +301,8 @@ typedef enum {
 - (DOMRange *)rangeOfCharactersAroundCaret;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
+- (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
+- (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
 - (WebSelectionGranularity)selectionGranularity;
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;

@@ -8,7 +8,7 @@
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRepresentation.h>
@@ -142,12 +142,10 @@
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
 {
-
 }
 
 - (void)viewDidMoveToHostWindow
 {
-
 }
 
 - (void)viewDidMoveToWindow
@@ -161,7 +159,7 @@
 
 - (WebView *)webView
 {
-    return [[self _web_parentWebFrameView] _webView];
+    return [self _web_parentWebView];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -217,7 +215,7 @@
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
-    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    WebView *webView = [self webView];
     ASSERT(webView);
     return [webView _menuForElement:[self elementAtPoint:NSZeroPoint]];
 }
@@ -228,7 +226,7 @@
     [mouseDownEvent release];
     mouseDownEvent = [event retain];
     
-    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    WebView *webView = [self webView];
     NSPoint point = [webView convertPoint:[mouseDownEvent locationInWindow] fromView:nil];
     dragSourceActionMask = [[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
     
@@ -248,11 +246,11 @@
                                                   archive:[rep archive]
                                                    source:self];
     
-    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    WebView *webView = [self webView];
     NSPoint point = [webView convertPoint:[mouseDownEvent locationInWindow] fromView:nil];
     [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:point withPasteboard:pasteboard];
     
-    [[[self _web_parentWebFrameView] _webView] _setInitiatedDrag:YES];
+    [[self webView] _setInitiatedDrag:YES];
     
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
@@ -279,7 +277,7 @@
     // Prevent queued mouseDragged events from coming after the drag which can cause a double drag.
     ignoringMouseDraggedEvents = YES;
     
-    [[[self _web_parentWebFrameView] _webView] _setInitiatedDrag:NO];
+    [[self webView] _setInitiatedDrag:NO];
 
     // Balance the previous retain from when the drag started.
     [self release];
@@ -315,6 +313,5 @@
     [super endDocument];
     [self adjustFrameSize];
 }
-
 
 @end

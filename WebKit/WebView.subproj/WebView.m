@@ -28,7 +28,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLView.h>

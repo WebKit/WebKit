@@ -2,6 +2,123 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3655360> REGRESSION (Mail): Ctrl-V emacs key binding, -pageDown: method, unimplemented (and pageUp, and selection-modifying versions)
+        - fixed <rdar://problem/3735055> REGRESSION (Mail): WebCore double click rules treat style change as a boundary
+        - fixed <rdar://problem/3789939> REGRESSION (Mail): double-clicking on border whitespace selects space plus word before/after
+        - fixed <rdar://problem/3792138> REGRESSION (Mail): Spell checker doesn't check current selected word
+        - fixed <rdar://problem/3806604> REGRESSION (164): Triple-click sometimes selects extra characters
+        - fixed <rdar://problem/3806996> REGRESSION (125-162): Triple-click in <pre> tagged text behaves oddly (leuf.net)
+
+        * khtml/xml/dom_caretposition.h: Added a lot of new functions. Removed implicit conversion operator
+        that converts from CaretPosition to Position.
+        * khtml/xml/dom_caretposition.cpp:
+        (DOM::CaretPosition::CaretPosition): Change to call deepEquivalent so it works without the implicit
+        Position conversion operator.
+        (DOM::CaretPosition::operator=): Ditto.
+        (DOM::CaretPosition::next): Ditto.
+        (DOM::CaretPosition::previous): Ditto.
+        (DOM::CaretPosition::setPosition): Added an assertion.
+        (DOM::start): Added.
+        (DOM::end): Added.
+        (DOM::setStart): Added.
+        (DOM::setEnd): Added.
+        (DOM::previousWordBoundary): Added.
+        (DOM::nextWordBoundary): Added.
+        (DOM::startWordBoundary): Added.
+        (DOM::startOfWord): Added.
+        (DOM::endWordBoundary): Added.
+        (DOM::endOfWord): Added.
+        (DOM::previousWordPositionBoundary): Added.
+        (DOM::previousWordPosition): Added.
+        (DOM::nextWordPositionBoundary): Added.
+        (DOM::nextWordPosition): Added.
+        (DOM::previousLinePosition): Added.
+        (DOM::nextLinePosition): Added.
+        (DOM::startOfParagraph): Changed function name.
+        (DOM::endOfParagraph): Changed function name. Fixed code in includeLineBreak to work around
+        the CaretPosition constructor issue for <br>, pass the right parameter for the block flow case,
+        and handle <pre> properly.
+        (DOM::inSameParagraph): Added.
+        (DOM::previousParagraphPosition): Added.
+        (DOM::nextParagraphPosition): Added.
+
+        * khtml/xml/dom_position.h: Removed a number of functions no longer used; also made some private.
+        * khtml/xml/dom_position.cpp: Removed a number of functions no longer used.
+
+        * khtml/xml/dom_selection.h: Replaced DOCUMENT with DOCUMENT_BOUNDARY. Added overloads of lots
+        of functions that take CaretPosition directly. Added overload of modify that takes a parameter
+        for vertical distance to help implement pageDown: and friends. Replaced getRepaintRect with
+        two new functions named caretRect and caretRepaintRect. Removed nodeIsBeforeNode.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::Selection): Added constructor that takes two CaretPosition objects.
+        (DOM::Selection::setModifyBias): Added. Helper function.
+        (DOM::Selection::modifyExtendingRightForward): Don't set modify bias, since that's now the caller's
+        responsibility. Reimplement WORD and LINE in terms of new CaretPosition functions. Implement PARAGRAPH
+        and change PARAGRAPH_BOUNDARY to use CaretPosition function by its new name.
+        (DOM::Selection::modifyMovingRightForward): Ditto.
+        (DOM::Selection::modifyExtendingLeftBackward): Ditto.
+        (DOM::Selection::modifyMovingLeftBackward): Ditto.
+        (DOM::Selection::modify): Call setModifyBias, and use a switch statement instead of if.
+        (DOM::caretY): Added. Helper for the new modify function that implements moving a pixel distance,
+        used by pageDown: and friends.
+        (DOM::Selection::modify): Added.
+        (DOM::Selection::toRange): Use RangeImpl::compareBoundaryPoints instead of nodeIsBeforeNode.
+        (DOM::Selection::caretRect): Added. Replaces getRepaintRect, but does not add slop.
+        (DOM::Selection::caretRepaintRect): Added. Replaces getRepaintRect; still adds slop.
+        (DOM::Selection::needsCaretRepaint): Call caretRepaintRect.
+        (DOM::Selection::validate): Use RangeImpl::compareBoundaryPoints instead of nodeIsBeforeNode.
+        Reimplement WORD to use new CaretPosition functions; this fixes the double-clicking problems.
+        Change paragraph calls to use new names.
+
+        * ForwardingHeaders/dom/dom_position.h: Removed. This was in the wrong location.
+        * khtml/editing/htmlediting.cpp: Fixed include that said "dom/dom_position.h".
+        * khtml/editing/htmlediting_impl.cpp: Fixed include that said "dom/dom_position.h".
+        (khtml::TypingCommandImpl::markMisspellingsAfterTyping): Rewrote this to use the new CaretPosition
+        functions instead of the old Position functions.
+
+        * khtml/misc/helper.h: Added const to character pointer parameter. Also put invertedColor inside
+        an !APPLE_CHANGES since it doesn't do us any good.
+        * khtml/misc/helper.cpp:
+        (khtml::findWordBoundary): Added const to character pointer parameter.
+        (khtml::nextWordFromIndex): Ditto.
+
+        * kwq/KWQTextUtilities.h: Change parameters to const.
+        * kwq/KWQTextUtilities.cpp: (KWQFindWordBoundary): Change parameter to const.
+        * kwq/KWQTextUtilities.mm: (KWQFindNextWordFromIndex): Change parameter to const.
+
+        * khtml/css/cssstyleselector.cpp: Disable code that uses invertedColor when APPLE_CHANGES, since it
+        won't work for us.
+
+        * khtml/rendering/render_canvas.cpp: (RenderCanvas::setSelection): Added checks for selection end
+        so we can set the selection end to nodes that are not leaf nodes and it will still work. Also took
+        out bogus firstChild/lastChild loops for the same reason.
+
+        * kwq/KWQKHTMLPart.h: Add "start before selection" flag to advanceToNextMisspelling.
+        Needed to fix bug with spell checking.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString): Changed to use CaretPosition.
+        (KWQKHTMLPart::advanceToNextMisspelling): Added code to handle "start before selection" flag
+        and changed to use CaretPosition and new helper functions.
+        (KWQKHTMLPart::markMisspellingsInSelection): More changes to use CaretPosition.
+        (KWQKHTMLPart::updateSpellChecking): Ditto.
+
+        * kwq/WebCoreBridge.h: Replaced WebSelectByDocument with WebSelectToDocumentBoundary.
+        Added advanceToNextMisspellingStartingJustBeforeSelection,
+        rangeByAlteringCurrentSelection:verticalDistance:, and
+        alterCurrentSelection:verticalDistance:.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge advanceToNextMisspellingStartingJustBeforeSelection]): Added.
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]): Added case for selecting by
+        paragraph to save X position.
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:verticalDistance:]): Added.
+        (-[WebCoreBridge alterCurrentSelection:verticalDistance:]): Added.
+        (-[WebCoreBridge ensureCaretVisible]): Call caretRect instead of getRepaintRect.
+
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - cleaned up DOM::RangeImpl a little so compareBoundaryPoints can be used outside the class
 
         * khtml/xml/dom2_rangeimpl.h: Added const to many of the member functions and made the

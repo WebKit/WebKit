@@ -369,9 +369,9 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
             if (!(no = os->firstChild())) {
                 if (!(no = os->nextSibling())) {
                     no = os->parent();
-                    while (no && !no->nextSibling())
+                    while (no && no != m_selectionEnd && !no->nextSibling())
                         no = no->parent();
-                    if (no)
+                    if (no && no != m_selectionEnd)
                         no = no->nextSibling();
                 }
             }
@@ -388,11 +388,6 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
     for (it = oldSelectedObjects.begin(); it != oldSelectedObjects.end(); ++it)
         (*it).object()->setSelectionState(SelectionNone);
     
-    while (s && s->firstChild())
-        s = s->firstChild();
-    while (e && e->lastChild())
-        e = e->lastChild();
-        
     // set selection start and end
     m_selectionStart = s;
     m_selectionStartPos = sp;
@@ -417,9 +412,9 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
             if (!(no = o->firstChild())) {
                 if ( !(no = o->nextSibling())) {
                     no = o->parent();
-                    while (no && !no->nextSibling())
+                    while (no && no != e && !no->nextSibling())
                         no = no->parent();
-                    if (no)
+                    if (no && no != e)
                         no = no->nextSibling();
                 }
             }
@@ -437,9 +432,9 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
             if (!(no = o->firstChild())) {
                 if ( !(no = o->nextSibling())) {
                     no = o->parent();
-                    while (no && !no->nextSibling())
+                    while (no && no != e && !no->nextSibling())
                         no = no->parent();
-                    if (no)
+                    if (no && no != e)
                         no = no->nextSibling();
                 }
             }

@@ -29,21 +29,21 @@
 
 #import <CoreServices/CoreServices.h>
 
-void KWQFindWordBoundary(QChar *chars, int len, int position, int *start, int *end)
+void KWQFindWordBoundary(const QChar *chars, int len, int position, int *start, int *end)
 {
     TextBreakLocatorRef breakLocator;
     OSStatus status = UCCreateTextBreakLocator(NULL, 0, kUCTextBreakWordMask, &breakLocator);
     if (status == noErr) {
         UniCharArrayOffset startOffset, endOffset;
         if (position < len) {
-            status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakLeadingEdgeMask, (const UniChar *)chars, len, position, &endOffset);
+            status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakLeadingEdgeMask, reinterpret_cast<const UniChar *>(chars), len, position, &endOffset);
         } else {
             // UCFindTextBreak treats this case as ParamErr
             endOffset = len;
         }
         if (status == noErr) {
             if (position > 0) {
-                status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask, (const UniChar *)chars, len, position, &startOffset);
+                status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask, reinterpret_cast<const UniChar *>(chars), len, position, &startOffset);
             } else {
                 // UCFindTextBreak treats this case as ParamErr
                 startOffset = 0;

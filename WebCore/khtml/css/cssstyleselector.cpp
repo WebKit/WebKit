@@ -1492,7 +1492,9 @@ static const colorMap cmap[] = {
     { CSS_VAL_TEAL, 0xFF008080  },
     { CSS_VAL_WHITE, 0xFFFFFFFF },
     { CSS_VAL_YELLOW, 0xFFFFFF00 },
+#if !APPLE_CHANGES
     { CSS_VAL_INVERT, invertedColor },
+#endif
     { CSS_VAL_TRANSPARENT, transparentColor },
     { CSS_VAL_GREY, 0xFF808080 },
 #if APPLE_CHANGES

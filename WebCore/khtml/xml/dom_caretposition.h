@@ -32,7 +32,6 @@
 namespace DOM {
 
 class NodeImpl;
-class Position;
 
 class CaretPosition
 {
@@ -53,21 +52,18 @@ public:
     bool isEmpty() const { return m_node == 0; }
     bool notEmpty() const { return m_node != 0; }
 
-    Position position() const { return rangeCompliantEquivalent(*this); }
+    Position position() const { return rangeCompliantEquivalent(deepEquivalent()); }
     Position deepEquivalent() const { return Position(node(), offset()); }
 
     friend inline bool operator==(const CaretPosition &a, const CaretPosition &b);
-    friend inline bool operator!=(const CaretPosition &a, const CaretPosition &b);
 
-    void debugPosition(const char *msg="") const;
+    void debugPosition(const char *msg = "") const;
 
 #ifndef NDEBUG
     void formatForDebugger(char *buffer, unsigned length) const;
 #endif
     
 private:
-    operator Position() const { return Position(node(), offset()); }
-
     void init(const Position &);
     void setPosition(const Position &);
 
@@ -95,13 +91,6 @@ private:
     long m_offset;
 };
 
-enum EIncludeLineBreak { DoNotIncludeLineBreak = false, IncludeLineBreak = true };
-
-Range makeRange(const CaretPosition &start, const CaretPosition &end);
-
-CaretPosition startParagraphBoundary(const CaretPosition &);
-CaretPosition endParagraphBoundary(const CaretPosition &, EIncludeLineBreak includeLineBreak = DoNotIncludeLineBreak);
-
 inline bool operator==(const CaretPosition &a, const CaretPosition &b)
 {
     return a.node() == b.node() && a.offset() == b.offset();
@@ -111,6 +100,42 @@ inline bool operator!=(const CaretPosition &a, const CaretPosition &b)
 {
     return !(a == b);
 }
+
+// --- DOM range and caret position interoperability; to be moved to a separate header ---
+
+Range makeRange(const CaretPosition &start, const CaretPosition &end);
+bool setStart(Range &, const CaretPosition &start);
+bool setStart(RangeImpl *, const CaretPosition &start);
+bool setEnd(Range &, const CaretPosition &start);
+bool setEnd(RangeImpl *, const CaretPosition &start);
+CaretPosition start(const Range &);
+CaretPosition start(const RangeImpl *);
+CaretPosition end(const Range &);
+CaretPosition end(const RangeImpl *);
+
+// --- word, line, and paragraph operations; to be moved to a separate header ---
+
+enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };
+enum EIncludeLineBreak { DoNotIncludeLineBreak = false, IncludeLineBreak = true };
+
+// words
+CaretPosition startOfWord(const CaretPosition &, EWordSide = RightWordIfOnBoundary);
+CaretPosition endOfWord(const CaretPosition &, EWordSide = RightWordIfOnBoundary);
+CaretPosition previousWordPosition(const CaretPosition &);
+CaretPosition nextWordPosition(const CaretPosition &);
+
+// lines
+CaretPosition startOfLine(const CaretPosition &);
+CaretPosition endOfLine(const CaretPosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+CaretPosition previousLinePosition(const CaretPosition &, int x);
+CaretPosition nextLinePosition(const CaretPosition &, int x);
+
+// paragraphs
+CaretPosition startOfParagraph(const CaretPosition &);
+CaretPosition endOfParagraph(const CaretPosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+CaretPosition previousParagraphPosition(const CaretPosition &, int x);
+CaretPosition nextParagraphPosition(const CaretPosition &, int x);
+bool inSameParagraph(const CaretPosition &, const CaretPosition &);
 
 } // namespace DOM
 

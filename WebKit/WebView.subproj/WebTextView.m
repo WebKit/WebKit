@@ -9,9 +9,8 @@
 #import <Foundation/NSURLResponse.h>
 
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDocument.h>
 #import <WebKit/WebDocumentInternal.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
@@ -69,8 +68,8 @@
 
 - (float)_textSizeMultiplierFromWebView
 {
-    // Note that we are not guaranteed to be the subview of a webView at any given time.
-    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    // Note that we are not guaranteed to be the subview of a WebView at any given time.
+    WebView *webView = [self _web_parentWebView];
     return webView ? [webView textSizeMultiplier] : 1.0;
 }
 
@@ -286,9 +285,8 @@
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {    
-    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    WebView *webView = [self _web_parentWebView];
     ASSERT(webView);
-
     return [webView _menuForElement:[self _elementAtWindowPoint:[event locationInWindow]]];
 }
 
@@ -317,12 +315,12 @@
 - (void)drawPageBorderWithSize:(NSSize)borderSize
 {
     ASSERT(NSEqualSizes(borderSize, [[[NSPrintOperation currentOperation] printInfo] paperSize]));
-    [[[self _web_parentWebFrameView] _webView] _drawHeaderAndFooter];
+    [[self _web_parentWebView] _drawHeaderAndFooter];
 }
 
 - (BOOL)knowsPageRange:(NSRangePointer)range {
     // Waiting for beginDocument to adjust the printing margins is too late.
-    [[[self _web_parentWebFrameView] _webView] _adjustPrintingMarginsForHeaderAndFooter];
+    [[self _web_parentWebView] _adjustPrintingMarginsForHeaderAndFooter];
     return [super knowsPageRange:range];
 }
 

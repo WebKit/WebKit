@@ -11,7 +11,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebImageRenderer.h>
@@ -24,7 +24,7 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 // Assume we'll only ever compile this on Panther or greater, so 
-// MAC_OS_X_VERSION_10_3 is guranateed to be defined.
+// MAC_OS_X_VERSION_10_3 is guaranteed to be defined.
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
 #import <WebKit/WebPDFView.h>
 #endif
@@ -45,6 +45,29 @@
 enum {
     SpaceKey = 0x0020
 };
+
+@interface WebFrameView (WebFrameViewFileInternal)
+- (float)_verticalKeyboardScrollDistance;
+- (void)_tile;
+- (BOOL)_shouldDrawBorder;
+@end
+
+@interface WebFrameViewPrivate : NSObject
+{
+@public
+    WebView *webView;
+    WebDynamicScrollBarsView *frameScrollView;
+    
+    // These margin values are used to temporarily hold the margins of a frame until
+    // we have the appropriate document view type.
+    int marginWidth;
+    int marginHeight;
+    
+    NSArray *draggingTypes;
+    
+    BOOL hasBorder;
+}
+@end
 
 @implementation WebFrameViewPrivate
 
@@ -67,14 +90,54 @@ enum {
 
 @end
 
-@implementation WebFrameView (WebPrivate)
+@implementation WebFrameView (WebFrameViewFileInternal)
+
+- (float)_verticalKeyboardScrollDistance
+{
+    // verticalLineScroll is quite small, to make scrolling from the scroll bar
+    // arrows relatively smooth. But this seemed too small for scrolling with
+    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
+    return [[self _scrollView] verticalLineScroll] * 4;
+}
+
+- (BOOL)_shouldDrawBorder
+{
+    if (!_private->hasBorder)
+        return NO;
+        
+    // Only draw a border for frames that request a border and the frame does
+    // not contain a frameset.  Additionally we should (post-panther) not draw
+    // a border (left, right, top or bottom) if the frame edge abutts the window frame.
+    NSView *docV = [self documentView];
+    if ([docV isKindOfClass:[WebHTMLView class]]){
+        if ([[(WebHTMLView *)docV _bridge] isFrameSet]){
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (void)_tile
+{
+    NSRect scrollViewFrame = [self bounds];
+    // The border drawn by WebFrameView is 1 pixel on the left and right,
+    // two pixels on top and bottom.  Shrink the scroll view to accomodate
+    // the border.
+    if ([self _shouldDrawBorder]) {
+        scrollViewFrame = NSInsetRect (scrollViewFrame, 1, 2);
+    }
+    [_private->frameScrollView setFrame:scrollViewFrame];
+}
+
+@end
+
+@implementation WebFrameView (WebInternal)
 
 // Note that the WebVew is not retained.
 - (WebView *)_webView
 {
     return _private->webView;
 }
-
 
 - (void)_setMarginWidth: (int)w
 {
@@ -137,141 +200,16 @@ enum {
     return _private->frameScrollView;
 }
 
-
 - (NSClipView *)_contentView
 {
     return [[self _scrollView] contentView];
 }
 
-- (BOOL)_scrollVerticallyBy: (float)delta
+- (float)_verticalPageScrollDistance
 {
-    // This method uses the secret method _scrollTo on NSClipView.
-    // It does that because it needs to know definitively whether scrolling was
-    // done or not to help implement the "scroll parent if we are at the limit" feature.
-    // In the presence of smooth scrolling, there's no easy way to tell if the method
-    // did any scrolling or not with the public API.
-    NSPoint point = [[self _contentView] bounds].origin;
-    point.y += delta;
-    return [[self _contentView] _scrollTo:&point];
-}
-
-- (void)_scrollHorizontallyBy: (float)delta
-{
-    NSPoint point = [[self _contentView] bounds].origin;
-    point.x += delta;
-    [[self _contentView] scrollPoint: point];
-}
-
-- (float)_verticalKeyboardScrollAmount
-{
-    // verticalLineScroll is quite small, to make scrolling from the scroll bar
-    // arrows relatively smooth. But this seemed too small for scrolling with
-    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    return [[self _scrollView] verticalLineScroll] * 4;
-}
-
-- (float)_horizontalKeyboardScrollAmount
-{
-    // verticalLineScroll is quite small, to make scrolling from the scroll bar
-    // arrows relatively smooth. But this seemed too small for scrolling with
-    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    return [[self _scrollView] horizontalLineScroll] * 4;
-}
-
-- (BOOL)_pageVertically:(BOOL)up
-{
-    float pageOverlap = [self _verticalKeyboardScrollAmount];
-    float delta = [[self _contentView] bounds].size.height;
-    
-    delta = (delta < pageOverlap) ? delta / 2.0 : delta - pageOverlap;
-
-    if (up) {
-        delta = -delta;
-    }
-
-    return [self _scrollVerticallyBy: delta];
-}
-
-- (void)_pageHorizontally: (BOOL)left
-{
-    float pageOverlap = [self _horizontalKeyboardScrollAmount];
-    float delta = [[self _contentView] bounds].size.width;
-    
-    delta = (delta < pageOverlap) ? delta / 2.0 : delta - pageOverlap;
-
-    if (left) {
-        delta = -delta;
-    }
-
-    [self _scrollHorizontallyBy: delta];
-}
-
-- (void)_scrollLineVertically: (BOOL)up
-{
-    float delta = [self _verticalKeyboardScrollAmount];
-
-    if (up) {
-        delta = -delta;
-    }
-
-    [self _scrollVerticallyBy: delta];
-}
-
-- (void)_scrollLineHorizontally: (BOOL)left
-{
-    float delta = [self _horizontalKeyboardScrollAmount];
-
-    if (left) {
-        delta = -delta;
-    }
-
-    [self _scrollHorizontallyBy: delta];
-}
-
-- (void)scrollPageUp:(id)sender
-{
-    if (![self _pageVertically:YES]) {
-        // If we were already at the top, tell the next responder to scroll if it can.
-        [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
-    }
-}
-
-- (void)scrollPageDown:(id)sender
-{
-    if (![self _pageVertically:NO]) {
-        // If we were already at the bottom, tell the next responder to scroll if it can.
-        [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
-    }
-}
-
-- (void)_pageLeft
-{
-    [self _pageHorizontally:YES];
-}
-
-- (void)_pageRight
-{
-    [self _pageHorizontally:NO];
-}
-
-- (void)scrollLineUp:(id)sender
-{
-    [self _scrollLineVertically: YES];
-}
-
-- (void)scrollLineDown:(id)sender
-{
-    [self _scrollLineVertically: NO];
-}
-
-- (void)_lineLeft
-{
-    [self _scrollLineHorizontally: YES];
-}
-
-- (void)_lineRight
-{
-    [self _scrollLineHorizontally: NO];
+    float overlap = [self _verticalKeyboardScrollDistance];
+    float height = [[self _contentView] bounds].size.height;
+    return (height < overlap) ? height / 2 : height - overlap;
 }
 
 static NSMutableDictionary *viewTypes;
@@ -327,77 +265,6 @@ static NSMutableDictionary *viewTypes;
     return [WebView _viewClass:&viewClass andRepresentationClass:nil forMIMEType:MIMEType] ? viewClass : nil;
 }
 
-- (void)_goBack
-{
-    [_private->webView goBack];
-}
-
-- (void)_goForward
-{
-    [_private->webView goForward];
-}
-
-- (BOOL)_isMainFrame
-{
-    return [_private->webView mainFrame] == [self webFrame];
-}
-
-- (void)_tile
-{
-    NSRect scrollViewFrame = [self bounds];
-    // The border drawn by WebFrameView is 1 pixel on the left and right,
-    // two pixels on top and bottom.  Shrink the scroll view to accomodate
-    // the border.
-    if ([self _shouldDrawBorder]){
-        scrollViewFrame = NSInsetRect (scrollViewFrame, 1, 2);
-    }
-    [_private->frameScrollView setFrame:scrollViewFrame];
-}
-
-- (void)_drawBorder
-{
-    if ([self _shouldDrawBorder]){
-        NSRect vRect = [self frame];
-            
-        // Left, black
-        [[NSColor blackColor] set];
-        NSRectFill(NSMakeRect(0,0,1,vRect.size.height));
-        
-        // Top, light gray, black
-        [[NSColor lightGrayColor] set];
-        NSRectFill(NSMakeRect(0,0,vRect.size.width,1));
-        [[NSColor whiteColor] set];
-        NSRectFill(NSMakeRect(1,1,vRect.size.width-2,1));
-        
-        // Right, light gray
-        [[NSColor lightGrayColor] set];
-        NSRectFill(NSMakeRect(vRect.size.width-1,1,1,vRect.size.height-2));
-        
-        // Bottom, light gray, white
-        [[NSColor blackColor] set];
-        NSRectFill(NSMakeRect(0,vRect.size.height-1,vRect.size.width,1));
-        [[NSColor lightGrayColor] set];
-        NSRectFill(NSMakeRect(1,vRect.size.height-2,vRect.size.width-2,1));
-    }
-}
-
-- (BOOL)_shouldDrawBorder
-{
-    if (!_private->hasBorder)
-        return NO;
-        
-    // Only draw a border for frames that request a border and the frame does
-    // not contain a frameset.  Additionally we should (post-panther) not draw
-    // a border (left, right, top or bottom) if the frame edge abutts the window frame.
-    NSView *docV = [self documentView];
-    if ([docV isKindOfClass:[WebHTMLView class]]){
-        if ([[(WebHTMLView *)docV _bridge] isFrameSet]){
-            return NO;
-        }
-    }
-    return YES;
-}
-
 - (void)_setHasBorder:(BOOL)hasBorder
 {
     if (_private->hasBorder == hasBorder) {
@@ -405,11 +272,6 @@ static NSMutableDictionary *viewTypes;
     }
     _private->hasBorder = hasBorder;
     [self _tile];
-}
-
-- (BOOL)_firstResponderIsControl
-{
-    return [[[self window] firstResponder] isKindOfClass:[NSControl class]];
 }
 
 @end
@@ -535,6 +397,33 @@ static NSMutableDictionary *viewTypes;
     return [[self _webView] drawsBackground];
 }
 
+- (void)_drawBorder
+{
+    if ([self _shouldDrawBorder]){
+        NSRect vRect = [self frame];
+            
+        // Left, black
+        [[NSColor blackColor] set];
+        NSRectFill(NSMakeRect(0,0,1,vRect.size.height));
+        
+        // Top, light gray, black
+        [[NSColor lightGrayColor] set];
+        NSRectFill(NSMakeRect(0,0,vRect.size.width,1));
+        [[NSColor whiteColor] set];
+        NSRectFill(NSMakeRect(1,1,vRect.size.width-2,1));
+        
+        // Right, light gray
+        [[NSColor lightGrayColor] set];
+        NSRectFill(NSMakeRect(vRect.size.width-1,1,1,vRect.size.height-2));
+        
+        // Bottom, light gray, white
+        [[NSColor blackColor] set];
+        NSRectFill(NSMakeRect(0,vRect.size.height-1,vRect.size.width,1));
+        [[NSColor lightGrayColor] set];
+        NSRectFill(NSMakeRect(1,vRect.size.height-2,vRect.size.width-2,1));
+    }
+}
+
 - (void)drawRect:(NSRect)rect
 {
     if ([self documentView] == nil) {
@@ -571,6 +460,105 @@ static NSMutableDictionary *viewTypes;
 {
     NSRect frame = [[[self _scrollView] documentView] frame];
     [[self _contentView] scrollPoint:NSMakePoint(frame.origin.x, NSMaxY(frame))];
+}
+
+- (void)_goBack
+{
+    [_private->webView goBack];
+}
+
+- (void)_goForward
+{
+    [_private->webView goForward];
+}
+
+- (BOOL)_scrollVerticallyBy: (float)delta
+{
+    // This method uses the secret method _scrollTo on NSClipView.
+    // It does that because it needs to know definitively whether scrolling was
+    // done or not to help implement the "scroll parent if we are at the limit" feature.
+    // In the presence of smooth scrolling, there's no easy way to tell if the method
+    // did any scrolling or not with the public API.
+    NSPoint point = [[self _contentView] bounds].origin;
+    point.y += delta;
+    return [[self _contentView] _scrollTo:&point];
+}
+
+- (void)_scrollHorizontallyBy: (float)delta
+{
+    NSPoint point = [[self _contentView] bounds].origin;
+    point.x += delta;
+    [[self _contentView] scrollPoint: point];
+}
+
+- (float)_horizontalKeyboardScrollDistance
+{
+    // horizontalLineScroll is quite small, to make scrolling from the scroll bar
+    // arrows relatively smooth. But this seemed too small for scrolling with
+    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
+    return [[self _scrollView] horizontalLineScroll] * 4;
+}
+
+- (float)_horizontalPageScrollDistance
+{
+    float overlap = [self _horizontalKeyboardScrollDistance];
+    float width = [[self _contentView] bounds].size.width;
+    return (width < overlap) ? width / 2 : width - overlap;
+}
+
+- (BOOL)_pageVertically:(BOOL)up
+{
+    float delta = [self _verticalPageScrollDistance];
+    return [self _scrollVerticallyBy:up ? -delta : delta];
+}
+
+- (void)_pageHorizontally: (BOOL)left
+{
+    float delta = [self _horizontalPageScrollDistance];
+    [self _scrollHorizontallyBy:left ? -delta : delta];
+}
+
+- (void)_scrollLineVertically: (BOOL)up
+{
+    float delta = [self _verticalKeyboardScrollDistance];
+    [self _scrollVerticallyBy:up ? -delta : delta];
+}
+
+- (void)_scrollLineHorizontally: (BOOL)left
+{
+    float delta = [self _horizontalKeyboardScrollDistance];
+    [self _scrollHorizontallyBy:left ? -delta : delta];
+}
+
+- (void)scrollPageUp:(id)sender
+{
+    if (![self _pageVertically:YES]) {
+        // If we were already at the top, tell the next responder to scroll if it can.
+        [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
+    }
+}
+
+- (void)scrollPageDown:(id)sender
+{
+    if (![self _pageVertically:NO]) {
+        // If we were already at the bottom, tell the next responder to scroll if it can.
+        [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
+    }
+}
+
+- (void)scrollLineUp:(id)sender
+{
+    [self _scrollLineVertically:YES];
+}
+
+- (void)scrollLineDown:(id)sender
+{
+    [self _scrollLineVertically:NO];
+}
+
+- (BOOL)_firstResponderIsControl
+{
+    return [[[self window] firstResponder] isKindOfClass:[NSControl class]];
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -711,9 +699,9 @@ static NSMutableDictionary *viewTypes;
                     }
 
                     if ([event modifierFlags] & NSAlternateKeyMask) {
-                        [self _pageLeft];
+                        [self _pageHorizontally:YES];
                     } else {
-                        [self _lineLeft];
+                        [self _scrollLineHorizontally:YES];
                     }
                 }
                 callSuper = NO;
@@ -739,9 +727,9 @@ static NSMutableDictionary *viewTypes;
                     }
 
                     if ([event modifierFlags] & NSAlternateKeyMask) {
-                        [self _pageRight];
+                        [self _pageHorizontally:NO];
                     } else {
-                        [self _lineRight];
+                        [self _scrollLineHorizontally:NO];
                     }
                 }
                 callSuper = NO;
