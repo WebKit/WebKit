@@ -490,6 +490,7 @@ static void databaseInit()
     [self close];
     [self sync];
     
+    [ops release];
     [setCache release];
     [removeCache release];
     [mutex release];
