@@ -1,3 +1,13 @@
+2003-07-23  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for 3340885, invalid colors were being mapped to transparentColor,
+	thus causing invisible text!
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseColorFromValue):
+
 2003-07-23  Richard Williamson   <rjw@apple.com>
 
 	Fixed for 3259840.  Use ATSU for scripts we don't handle internally,
