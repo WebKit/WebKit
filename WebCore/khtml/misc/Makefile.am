@@ -44,21 +44,18 @@ ATTRSFILES = \
 	htmlattrs.gperf \
 	$(NULL)
 
-khtmldata.h:
-	touch $@
-
 $(TAGFILES): tag-stamp
 
-tag-stamp: maketags
-	perl ./maketags
-	touch ./tag-stamp
+tag-stamp: maketags htmltags.in
+	perl $<
+	touch $@
 
 $(ATTRSFILES): attr-stamp
 
-attr-stamp: makeattrs
-	perl ./makeattrs
-	touch ./attr-stamp
+attr-stamp: makeattrs htmlattrs.in
+	perl $<
+	touch $@
 
-BUILT_SOURCES = khtmldata.h $(TAGFILES) $(ATTRSFILES) tag-stamp attr-stamp
+BUILT_SOURCES = $(TAGFILES) $(ATTRSFILES) tag-stamp attr-stamp
 
 CLEANFILES = $(BUILT_SOURCES)

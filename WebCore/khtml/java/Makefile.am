@@ -19,38 +19,7 @@ libkhtmljava_o_SOURCES = \
 	kjavaprocess.h \
 	$(NULL)
 
-
 INCLUDES = \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(NULL)
-
-
-kjavaapplet.moc:
-	touch $@
-
-kjavaappletcontext.moc:
-	touch $@
-
-kjavaappletserver.moc:
-	touch $@
-
-kjavaappletwidget.moc:
-	touch $@
-
-kjavadownloader.moc:
-	touch $@
-
-kjavaprocess.moc:
-	touch $@
-
-BUILT_SOURCES = \
-	kjavaapplet.moc \
-	kjavaappletcontext.moc \
-	kjavaappletserver.moc \
-	kjavaappletwidget.moc \
-	kjavadownloader.moc \
-	kjavaprocess.moc \
-	$(NULL)
-
-CLEANFILES = $(BUILT_SOURCES)

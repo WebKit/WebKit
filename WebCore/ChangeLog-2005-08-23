@@ -1,3 +1,38 @@
+2002-04-26  Darin Adler  <darin@apple.com>
+
+	Pay no attention to the man who is not supposed to be working.
+
+	* khtml/Makefile.am:
+	* khtml/css/Makefile.am:
+	* khtml/ecma/Makefile.am:
+	* khtml/html/Makefile.am:
+	* khtml/java/Makefile.am:
+	* khtml/misc/Makefile.am:
+	* khtml/rendering/Makefile.am:
+	* khtml/xml/Makefile.am:
+	Don't generate empty .moc files or khtmldata.h; there's no reason
+	not to just check them in instead. Also tweak a few build rules to
+	use automatic make variables.
+
+	* khtml/ecma/kjs_window.moc: Added.
+	* khtml/html/html_documentimpl.moc: Added.
+	* khtml/html/htmltokenizer.moc: Added.
+	* khtml/java/kjavaapplet.moc: Added.
+	* khtml/java/kjavaappletcontext.moc: Added.
+	* khtml/java/kjavaappletserver.moc: Added.
+	* khtml/java/kjavaappletwidget.moc: Added.
+	* khtml/java/kjavadownloader.moc: Added.
+	* khtml/java/kjavaprocess.moc: Added.
+	* khtml/khtmlview.moc: Added.
+	* khtml/misc/khtmldata.h: Added.
+	* khtml/rendering/render_form.moc: Added.
+	* khtml/rendering/render_frames.moc: Added.
+	* khtml/rendering/render_replaced.moc: Added.
+	* khtml/xml/dom_docimpl.moc: Added.
+	* khtml/xml/xml_tokenizer.moc: Added.
+
+	* kwq/kwqdebug.mm: Make some globals private.
+
 2002-04-25  Darin Adler  <darin@apple.com>
 
 	* kwq/KWQMetrics.h: Add NSObject to required protocols for

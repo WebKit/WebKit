@@ -47,26 +47,7 @@ libkhtmlrendering_o_SOURCES = \
 	render_text.h \
 	$(NULL)
 
-
 INCLUDES = \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(NULL)
-
-render_form.moc:
-	touch $@
-
-render_frames.moc:
-	touch $@
-
-render_replaced.moc:
-	touch $@
-
-BUILT_SOURCES = \
-	render_form.moc \
-	render_frames.moc \
-	render_replaced.moc \
-	$(NULL)
-
-CLEANFILES = $(BUILT_SOURCES)
-

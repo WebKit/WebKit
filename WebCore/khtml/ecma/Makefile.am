@@ -29,23 +29,10 @@ libkhtmlecma_o_SOURCES = \
 	kjs_window.h \
 	$(NULL)
 
-# FIXME - can't build ecma test because kwq is not yet built at this point
-#
-# noinst_PROGRAMS = testecma
-#
-# testecma_SOURCES = \
-#	testecma.cpp \
-#	$(NULL)
-#
-# testecma_LDADD = ./libkhtmlecma.a
-
 INCLUDES = \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(NULL)
-
-kjs_window.moc:
-	touch $@
 
 LUT_FILES = \
 	kjs_css.lut.h \
@@ -64,8 +51,5 @@ CREATE_HASH_TABLE = $(top_srcdir)/JavaScriptCore/kjs/create_hash_table
 %.lut.h: %.cpp $(CREATE_HASH_TABLE)
 	$(CREATE_HASH_TABLE) $< > $@
 
-
-BUILT_SOURCES = kjs_window.moc $(LUT_FILES)
+BUILT_SOURCES = $(LUT_FILES)
 CLEANFILES = $(BUILT_SOURCES)
-
-

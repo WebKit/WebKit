@@ -33,13 +33,3 @@ INCLUDES = \
     $(KWQ_INCLUDES) \
     $(KDELIBS_INCLUDES) \
     $(NULL)
-
-dom_docimpl.moc:
-	touch $@
-
-xml_tokenizer.moc:
-	touch $@
-
-BUILT_SOURCES = dom_docimpl.moc xml_tokenizer.moc
-
-CLEANFILES = $(BUILT_SOURCES)

@@ -44,17 +44,11 @@ INCLUDES = \
 	-I. \
 	$(NULL)
 
-htmltokenizer.moc:
-	touch $@
-
-html_documentimpl.moc:
-	touch $@
-
 noinst_HEADERS = kentities.c
 
 kentities.c: kentities.gperf
 	$(GPERF) -a -L "ANSI-C" -C -G -c -o -t -k '*' -NfindEntity -D -s 2 $< > $@
 
-BUILT_SOURCES = $(noinst_HEADERS) htmltokenizer.moc html_documentimpl.moc
+BUILT_SOURCES = $(noinst_HEADERS)
 
 CLEANFILES = $(BUILT_SOURCES)

@@ -35,11 +35,3 @@ INCLUDES = \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(NULL)
-
-khtmlview.moc:
-	echo '#include <khtmlview.h>' > $@
-
-BUILT_SOURCES = khtmlview.moc
-
-CLEANFILES = $(BUILT_SOURCES)
-

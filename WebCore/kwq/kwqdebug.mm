@@ -27,13 +27,13 @@
 
 #ifndef xNDEBUG
 
-unsigned int KWQ_LOG_LEVEL = 0;
+static unsigned int KWQ_LOG_LEVEL = 0;
 
 void KWQSetLogLevel(int mask) {
     KWQ_LOG_LEVEL = mask;    
 }
 
-bool kwq_checkedDefault = 0;
+static bool kwq_checkedDefault = 0;
 
 unsigned int KWQGetLogLevel(){
     if (!kwq_checkedDefault){
