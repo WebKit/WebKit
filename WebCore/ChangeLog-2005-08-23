@@ -1,3 +1,13 @@
+2004-04-23  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3631541>: "repro crash in KHTMLPart::setFocusNodeIfNeeded"
+
+        Reviewed by Maciej.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setFocusNodeIfNeeded):
+        added nil check
+
 2004-04-23  Maciej Stachowiak  <mjs@apple.com>
 
         Back out one of the previous changes, it causes a crash. Whoops!
