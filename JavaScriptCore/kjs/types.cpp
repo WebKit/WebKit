@@ -193,23 +193,13 @@ void List::prepend(ValueImp *val)
   hook->next = n;
 }
 
-void List::appendList(const List& lst)
-{
-  ListNode *otherHook = lst.hook;
-  ListNode *o = otherHook->next;
-  while (o != otherHook) {
-    append(o->member);
-    o = o->next;
-  }
-}
-
 void List::prependList(const List& lst)
 {
   ListNode *otherHook = lst.hook;
-  ListNode *o = otherHook->prev;
-  while (o != otherHook) {
-    prepend(o->member);
-    o = o->prev;
+  ListNode *n = otherHook->prev;
+  while (n != otherHook) {
+    prepend(n->member);
+    n = n->prev;
   }
 }
 
@@ -237,7 +227,6 @@ void List::remove(const Value &val)
   }
 }
 
-
 void List::clear()
 {
   if (!m_needsMarking) {
@@ -261,7 +250,7 @@ void List::clearInternal()
 List List::copy() const
 {
   List newList;
-  newList.appendList(*this);
+  newList.prependList(*this);
   return newList;
 }
 
@@ -314,7 +303,6 @@ const List &List::empty()
   return l;
 }
 
-
 void List::erase(ListNode *n)
 {
   if (n != hook) {
@@ -361,10 +349,3 @@ void List::swap(List &other)
   hook = other.hook;
   other.hook = tmp;
 }
-
-#ifdef KJS_DEBUG_MEM
-void List::globalClear()
-{
-}
-#endif
-

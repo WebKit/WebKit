@@ -110,7 +110,7 @@ ValueImp *PropertyMap::get(const UString &name, int &attributes) const
             attributes = _table[i].attributes;
             return _table[i].value;
         }
-        i = (i + 1) % _tableSize;
+        i = (i + 1) & _tableSizeHashMask;
     }
     return 0;
 }
@@ -128,7 +128,7 @@ ValueImp *PropertyMap::get(const UString &name) const
     while (UString::Rep *key = _table[i].key) {
         if (keysMatch(name.rep, key))
             return _table[i].value;
-        i = (i + 1) % _tableSize;
+        i = (i + 1) & _tableSizeHashMask;
     }
     return 0;
 }
@@ -152,7 +152,7 @@ void PropertyMap::put(const UString &name, ValueImp *value, int attributes)
         }
     }
 
-    if (_keyCount >= _tableSize / 2)
+    if (_keyCount * 2 >= _tableSize)
         expand();
     
     int i = hash(name.rep);
@@ -163,7 +163,7 @@ void PropertyMap::put(const UString &name, ValueImp *value, int attributes)
             // Attributes are intentionally not updated.
             return;
         }
-        i = (i + 1) % _tableSize;
+        i = (i + 1) & _tableSizeHashMask;
     }
     
     // Create a new hash table entry.
@@ -178,7 +178,7 @@ inline void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attribut
 {
     int i = hash(key);
     while (_table[i].key)
-        i = (i + 1) % _tableSize;
+        i = (i + 1) & _tableSizeHashMask;
     
     _table[i].key = key;
     _table[i].value = value;
@@ -228,7 +228,7 @@ void PropertyMap::remove(const UString &name)
     while ((key = _table[i].key)) {
         if (keysMatch(name.rep, key))
             break;
-        i = (i + 1) % _tableSize;
+        i = (i + 1) & _tableSizeHashMask;
     }
     if (!key)
         return;
@@ -240,7 +240,7 @@ void PropertyMap::remove(const UString &name)
     
     // Reinsert all the items to the right in the same cluster.
     while (1) {
-        i = (i + 1) % _tableSize;
+        i = (i + 1) & _tableSizeHashMask;
         key = _table[i].key;
         if (!key)
             break;

@@ -1,5 +1,20 @@
 2002-11-19  Darin Adler  <darin@apple.com>
 
+	- another hash table fix; yields a 2% improvement on iBench JavaScript
+
+        * kjs/property_map.cpp: A few more places where we use & instead of %.
+
+	- some List changes that don't affect speed yet
+
+        * kjs/types.cpp:
+        (List::prependList): Tighten up a tiny bit.
+        (List::copy): Use prependList.
+        * kjs/types.h: Remove appendList and globalClear.
+
+        * kjs/interpreter.cpp: (Interpreter::finalCheck): Remove List::globalClear().
+
+2002-11-19  Darin Adler  <darin@apple.com>
+
 	- fixed 3105026 -- REGRESSION: DHTML menus are broken all over the place
 
         * kjs/types.cpp: (List::prepend): Fix backwards links in new node.

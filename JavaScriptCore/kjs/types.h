@@ -122,10 +122,6 @@ namespace KJS {
     void prepend(const Value& val);
     void prepend(ValueImp *val);
     /**
-     * Appends the items of another list at the end of this one.
-     */
-    void appendList(const List& lst);
-    /**
      * Prepend the items of another list to this one.
      * The first item of @p lst will become the first item of the list.
      */
@@ -187,9 +183,6 @@ namespace KJS {
      * function has a @ref KJS::List parameter.
      */
     static const List &empty();
-#ifdef KJS_DEBUG_MEM
-    static void globalClear();
-#endif
     void mark();
   private:
 
@@ -198,7 +191,7 @@ namespace KJS {
     void refAll();
     void derefAll();
     void swap(List &other);
-
+    
     ListHookNode *hook;
     bool m_needsMarking;
   };
