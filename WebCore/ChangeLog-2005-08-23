@@ -1,3 +1,17 @@
+2004-06-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3672377> assertion failure in AppendNodeCommandImpl::doApply due to non-0 exception code trying to insert a DIV markup string
+        
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::checkAddChild): This function was being too strict in disallowing certain nodes
+        to be added as other child nodes, applying rules we typically use for parsing. However,
+        those parsing rules are primarily for dealing with "bad" HTML, and should not be
+        applied to programmatic DOM operations. The fix involves removing calls to childAllowed().
+
 2004-06-12  Trey Matteson  <trey@apple.com>
 
 	The drag image may be updated during a DHTML drag.  This includes updating
