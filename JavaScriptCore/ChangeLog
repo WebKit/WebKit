@@ -1,3 +1,8 @@
+2002-11-20  Maciej Stachowiak  <mjs@apple.com>
+
+        * kjs/collector.cpp:
+        (Collector::allocate): Clear the flags on newly allocated objects.
+
 2002-11-20  Darin Adler  <darin@apple.com>
 
 	- oops, checked in big regression instead of 5% speedup

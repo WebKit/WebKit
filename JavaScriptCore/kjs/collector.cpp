@@ -100,8 +100,9 @@ void* Collector::allocate(size_t s)
     heap.oversizeCells[heap.usedOversizeCells] = (CollectorCell *)newCell;
     heap.usedOversizeCells++;
     heap.numLiveObjects++;
-    
-    return (void *)newCell;
+
+    ((ValueImp *)(newCell))->_flags = 0;
+    return newCell;
   }
   
   // slab allocator
@@ -142,6 +143,8 @@ void* Collector::allocate(size_t s)
 	  targetBlock->bitmap[wordInBitmap] |= (1 << bitInWord);
 	  targetBlock->usedCells++;
           heap.numLiveObjects++;
+
+	  ((ValueImp *)(targetBlock->cells + cellPos))->_flags = 0;
 	  return (void *)(targetBlock->cells + cellPos);
 	}
       }
