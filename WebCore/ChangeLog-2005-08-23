@@ -1,3 +1,21 @@
+2003-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3269212>: FILEMAKER: can't use Option objects created in a different window
+
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::updateDOMObjectDocument): Update per-document
+	caching for the DOM object - let it be protected by both the old
+	and the new document.
+        * khtml/ecma/kjs_binding.h: Prototype new method.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::setDocument): New method to change a node's document pointer.
+        (NodeImpl::checkAddChild): If the new child node is owned by the
+	wrong document but not actually in it, change its document (using
+	the two aforementioned methods) instead of throwing an exception.
+	* khtml/xml/dom_nodeimpl.h: Prototype new method.
+
 2003-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -38,6 +38,7 @@
 
 #include "rendering/render_text.h"
 
+#include "ecma/kjs_binding.h"
 #include "ecma/kjs_proxy.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -73,6 +74,20 @@ NodeImpl::NodeImpl(DocumentPtr *doc)
 {
     if (document)
         document->ref();
+}
+
+void NodeImpl::setDocument(DocumentPtr *doc)
+{
+    if (inDocument())
+	return;
+    
+    if (doc)
+	doc->ref();
+    
+    if (document)
+	document->deref();
+
+    document = doc;
 }
 
 NodeImpl::~NodeImpl()
@@ -881,13 +896,23 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
         return;
     }
 
+    bool shouldAdoptChild = false;
+
     // WRONG_DOCUMENT_ERR: Raised if newChild was created from a different document than the one that
     // created this node.
     // We assume that if newChild is a DocumentFragment, all children are created from the same document
     // as the fragment itself (otherwise they could not have been added as children)
     if (newChild->getDocument() != getDocument()) {
-        exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
-        return;
+	// but if the child is not in a document yet then loosen the
+	// restriction, so that e.g. creating an element with the Option()
+	// constructor and then adding it to a different document works,
+	// as it does in Mozilla and Mac IE.
+	if (!newChild->inDocument()) {
+	    shouldAdoptChild = true;
+	} else {
+	    exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
+	    return;
+	}
     }
 
     // HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not allow children of the type of the
@@ -916,6 +941,12 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
             exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
             return;
         }
+    }
+
+    // only do this once we know there won't be an exception
+    if (shouldAdoptChild) {
+	KJS::ScriptInterpreter::updateDOMObjectDocument(newChild, newChild->getDocument(), getDocument());
+	newChild->setDocument(getDocument()->docPtr());
     }
 }
 
