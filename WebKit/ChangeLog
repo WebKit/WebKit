@@ -1,3 +1,12 @@
+2005-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3937667> REGRESSION (Mail): Zooming a window from titlebar button doesn't paint newly-exposed portions of window
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+        Re-set-up the visRect if the bounds changes due to layout.
+
 === Safari-402 ===
 
 2005-03-03  Jens Alfke  <jens@apple.com>

@@ -754,7 +754,16 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
             }
         }
 
+        NSRect boundsBeforeLayout = [self bounds];
         [self _web_layoutIfNeededRecursive: visRect testDirtyRect:NO];
+
+        // If layout changes the view's bounds, then we need to recompute the visRect.
+        // That's because the visRect passed to us was based on the bounds at the time
+        // we were called. This method is only displayed to draw "all", so it's safe
+        // to just call visibleRect to compute the entire rectangle.
+        if (!NSEqualRects(boundsBeforeLayout, [self bounds])) {
+            visRect = [self visibleRect];
+        }
 
         [self _setAsideSubviews];
     }
