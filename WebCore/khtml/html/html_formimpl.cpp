@@ -1088,6 +1088,25 @@ bool HTMLButtonElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
     return true;
 }
 
+void HTMLButtonElementImpl::click()
+{
+#if APPLE_CHANGES
+    QWidget *widget;
+    if (renderer() && (widget = static_cast<RenderWidget *>(renderer())->widget())) {
+        // using this method gives us nice Cocoa user interface feedback
+        static_cast<QButton *>(widget)->click();
+    }
+    else
+#endif
+        HTMLGenericFormElementImpl::click();
+}
+
+void HTMLButtonElementImpl::accessKeyAction()
+{   
+    focus();
+    click();
+}
+
 // -------------------------------------------------------------------------
 
 HTMLFieldSetElementImpl::HTMLFieldSetElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
@@ -1275,6 +1294,31 @@ void HTMLInputElementImpl::click()
 #endif
         default:
             HTMLGenericFormElementImpl::click();
+            break;
+    }
+}
+
+void HTMLInputElementImpl::accessKeyAction()
+{
+    switch (inputType()) {
+        case HIDDEN:
+            // a no-op for this type
+            break;
+        case TEXT:
+        case PASSWORD:
+        case ISINDEX:
+        case FILE:
+            focus();
+            break;
+        case CHECKBOX:
+        case RADIO:
+        case SUBMIT:
+        case RESET:
+        case IMAGE:
+        case BUTTON:
+            // focus and click
+            focus();
+            click();
             break;
     }
 }
@@ -2288,6 +2332,11 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
 }
 #endif
 
+void HTMLSelectElementImpl::accessKeyAction()
+{
+    focus();
+}
+
 // -------------------------------------------------------------------------
 
 HTMLKeygenElementImpl::HTMLKeygenElementImpl(DocumentPtr* doc, HTMLFormElementImpl* f)
@@ -2716,6 +2765,11 @@ void HTMLTextAreaElementImpl::focus()
 bool HTMLTextAreaElementImpl::isEditable()
 {
     return true;
+}
+
+void HTMLTextAreaElementImpl::accessKeyAction()
+{
+    focus();
 }
 
 // -------------------------------------------------------------------------

@@ -219,7 +219,10 @@ public:
     virtual bool isSuccessfulSubmitButton() const;
     virtual bool isActivatedSubmit() const;
     virtual void setActivatedSubmit(bool flag);
-        
+
+    virtual void click();
+    virtual void accessKeyAction();
+    
 protected:
     DOMString m_value;
     QString   m_currValue;
@@ -301,6 +304,7 @@ public:
     void select();
     
     virtual void click();
+    virtual void accessKeyAction();
 
     virtual void parseAttribute(AttributeImpl *attr);
 
@@ -448,6 +452,8 @@ public:
     virtual void defaultEventHandler(EventImpl *evt);
 #endif
 
+    virtual void accessKeyAction();
+
 private:
     void recalcListItems();
 
@@ -581,7 +587,9 @@ public:
     void focus();
 
     virtual bool isEditable();
-
+    
+    virtual void accessKeyAction();
+    
 protected:
     int m_rows;
     int m_cols;

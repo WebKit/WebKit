@@ -189,6 +189,12 @@ void HTMLAnchorElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
+void HTMLAnchorElementImpl::accessKeyAction()
+{
+    focus();
+    click();
+}
+
 // -------------------------------------------------------------------------
 
 HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)

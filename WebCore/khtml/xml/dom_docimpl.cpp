@@ -311,6 +311,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_ignorePendingStylesheets = false;
 
     m_cssTarget = 0;
+    m_accessKeyDictValid = false;
 }
 
 DocumentImpl::~DocumentImpl()
@@ -535,6 +536,7 @@ void DocumentImpl::addElementById(const DOMString &elementId, ElementImpl *eleme
 
     if (m_elementsById.find(qId) == NULL) {
 	m_elementsById.insert(qId, element);
+        m_accessKeyDictValid = false;
     }
 }
 
@@ -544,9 +546,35 @@ void DocumentImpl::removeElementById(const DOMString &elementId, ElementImpl *el
 
     if (m_elementsById.find(qId) == element) {
 	m_elementsById.remove(qId);
+        m_accessKeyDictValid = false;
     }
 }
 
+ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key )
+{
+    if (key.length() == 0)
+	return 0;
+
+    QString k(key.string());
+    if (!m_accessKeyDictValid) {
+        m_elementsByAccessKey.clear();
+    
+        const NodeImpl *n;
+        for (n = this; n != 0; n = n->traverseNextNode()) {
+            if (!n->isElementNode())
+                continue;
+            const ElementImpl *elementImpl = static_cast<const ElementImpl *>(n);
+            DOMString accessKey(elementImpl->getAttribute(ATTR_ACCESSKEY));
+            if (!accessKey.isEmpty()) {
+                QString ak = accessKey.string().lower();
+                if (m_elementsByAccessKey.find(ak) == NULL)
+                    m_elementsByAccessKey.insert(ak, elementImpl);
+            }
+        }
+        m_accessKeyDictValid = true;
+    }
+    return m_elementsByAccessKey.find(k);
+}
 
 void DocumentImpl::setTitle(DOMString _title)
 {
@@ -910,6 +938,9 @@ void DocumentImpl::setDocumentChanged(bool b)
     else if (!b && m_docChanged)
         changedDocuments->remove(this);
     m_docChanged = b;
+    
+    if (m_docChanged)
+        m_accessKeyDictValid = false;
 }
 
 void DocumentImpl::recalcStyle( StyleChange change )
@@ -2180,6 +2211,19 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
         if (it.current()->id == evt->id()) {
             it.current()->listener->handleEvent(ev, true);
 	}
+    }
+
+    // handle accesskey
+    if (evt->id()==EventImpl::KEYDOWN_EVENT) {
+        KeyboardEventImpl *kevt = static_cast<KeyboardEventImpl *>(evt);
+        if (kevt->ctrlKey()) {
+            QString key = kevt->qKeyEvent()->unmodifiedText().lower();
+            ElementImpl *elem = getElementByAccessKey(key);
+            if (elem) {
+                elem->accessKeyAction();
+                evt->setDefaultHandled();
+            }
+        }
     }
 }
 

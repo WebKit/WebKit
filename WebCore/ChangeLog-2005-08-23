@@ -2,6 +2,33 @@
 
         Reviewed by Richard
 
+        * khtml/html/html_formimpl.cpp:
+        (HTMLButtonElementImpl::click): Implemented. Missed this in my earlier patch.
+        (HTMLButtonElementImpl::accessKeyAction): Added. Focus and click.
+        (HTMLInputElementImpl::accessKeyAction): Added. Focus the element.
+        (HTMLSelectElementImpl::accessKeyAction): Added. Focus the element.
+        (HTMLTextAreaElementImpl::accessKeyAction): Added. Focus the element.
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::accessKeyAction): Added. Focus and click.
+        * khtml/html/html_inlineimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::addElementById): Dirty the accesskey dictionary.
+        (DocumentImpl::removeElementById): Ditto.
+        (DocumentImpl::getElementByAccessKey): Function to look up an element
+	based on the key provided.
+        (DocumentImpl::setDocumentChanged): Dirty the accesskey dictionary.
+        (DocumentImpl::defaultEventHandler): Check the accesskey dictionary
+	to see if some element wants to handle a key event.
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::accessKeyAction): Added. Send a click to the element.
+
+2003-11-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
 	Fix for this bug:
 
 	<rdar://problem/3481600>: key event objects do not preserve unmodified keys

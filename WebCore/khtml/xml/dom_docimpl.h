@@ -175,6 +175,8 @@ public:
 
     khtml::CSSStyleSelector *styleSelector() { return m_styleSelector; }
 
+    ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key );
+    
     /**
      * Updates the pending sheet count and then calls updateStyleSelector.
      */
@@ -587,6 +589,9 @@ private:
     khtml::Decoder *m_decoder;
 
     QDict<ElementImpl> m_elementsById;
+    
+    QDict<ElementImpl> m_elementsByAccessKey;
+    bool m_accessKeyDictValid;
  
     bool m_createRenderers;
 #endif
