@@ -1,3 +1,19 @@
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
+	For the new plug-in API, we need to pass a WebPluginContainer to the plug-in view upon creation. The is owned by the WebFrame. To make this all work, I had to move the WebCore plug-in and java view constructors to WebBridge from WebViewFactory since WebBridge has the frame. 
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::createJavaContext): New APPLE_CHANGES around the java context constructor so we pass the part.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::createPart): call the bridge to create the view
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget): save the context
+        (KJavaAppletWidget::showApplet): call the bridge to create the view
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreViewFactory.h:
+        * kwq/khtml/java/kjavaappletcontext.h: made constructor take the part
+        * kwq/khtml/java/kjavaappletwidget.h: ivar for the context
+
 2002-10-23  Darin Adler  <darin@apple.com>
 
 	- fixed 3080478 -- reproducible incomplete load on apple.com

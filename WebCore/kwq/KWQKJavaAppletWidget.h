@@ -72,6 +72,7 @@ public:
 
 private:
     KJavaApplet m_applet;
+    KJavaAppletContext *m_context;
     NSURL *m_baseURL;
     NSMutableDictionary *m_parameters;
 };

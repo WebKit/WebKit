@@ -227,6 +227,9 @@ enum FrameBorderStyle {
 
 - (NSURL *)requestedURL;
 
+- (NSView *)viewForPluginWithURL:(NSURL *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSURL *)baseURL;
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)URL parameters:(NSDictionary *)parameters;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

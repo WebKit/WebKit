@@ -196,11 +196,10 @@ ReadOnlyPart *KWQKHTMLPartImpl::createPart(const ChildFrame &child, const KURL &
         }
         
         KWQPluginPart *newPart = new KWQPluginPart;
-        newPart->setWidget(new QWidget([[WebCoreViewFactory sharedFactory]
-            viewForPluginWithURL:childURL
-                     serviceType:child.m_args.serviceType.getNSString()
-                       arguments:paramsArray
-                         baseURL:KURL(d->m_doc->baseURL()).getNSURL()]));
+        newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:childURL
+                                                         serviceType:child.m_args.serviceType.getNSString()
+                                                           arguments:paramsArray
+                                                             baseURL:KURL(d->m_doc->baseURL()).getNSURL()]));
         return newPart;
     } else {
         LOG(Frames, "name %s", child.m_name.ascii());

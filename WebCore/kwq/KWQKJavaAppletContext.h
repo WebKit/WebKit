@@ -27,6 +27,7 @@
 #define KJAVAAPPLETCONTEXT_H
 
 #include <qobject.h>
+#include "khtml_part.h"
 
 class DCOPObject;
 
@@ -35,7 +36,10 @@ typedef enum { } JType;
 class KJavaAppletContext : public QObject
 {
 public:
-    KJavaAppletContext(DCOPObject* = 0) { }
+    KJavaAppletContext(DCOPObject* = 0, KHTMLPart *p = 0) {m_part = p;}
+    KHTMLPart *part(){ return m_part; };
+private:
+    KHTMLPart *m_part;
 };
 
 #endif

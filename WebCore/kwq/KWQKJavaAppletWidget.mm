@@ -25,14 +25,17 @@
 
 #import <kjavaappletwidget.h>
 
+#import <kjavaappletcontext.h>
 #import <kurl.h>
-#import <WebCoreViewFactory.h>
+#import <KWQKHTMLPartImpl.h>
+#import <WebCoreBridge.h>
 
-KJavaAppletWidget::KJavaAppletWidget(KJavaAppletContext *, QWidget *)
+KJavaAppletWidget::KJavaAppletWidget(KJavaAppletContext *c, QWidget *)
     : m_applet(*this)
     , m_baseURL(nil)
     , m_parameters([[NSMutableDictionary alloc] init])
 {
+    m_context = c;
 }
 
 KJavaAppletWidget::~KJavaAppletWidget()
@@ -65,8 +68,8 @@ void KJavaAppletWidget::processArguments(const QMap<QString, QString> &arguments
 
 void KJavaAppletWidget::showApplet()
 {
-    setView([[WebCoreViewFactory sharedFactory] 
-    	viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
-                           baseURL:m_baseURL
-                        parameters:m_parameters]);
+    setView([m_context->part()->impl->bridge()
+viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
+                   baseURL:m_baseURL
+                parameters:m_parameters]);
 }
