@@ -337,7 +337,9 @@ void HTMLObjectElementImpl::attach()
     KURL u = getDocument()->completeURL(url);
     for (KHTMLPart* part = w->part(); part; part = part->parentPart())
         if (part->url() == u) {
+#ifndef APPLE_CHANGES
             loadplugin = false;
+#endif
             break;
         }
 

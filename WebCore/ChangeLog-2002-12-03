@@ -1,5 +1,13 @@
 2002-06-14  Chris Blumenberg  <cblu@apple.com>
 
+	Put #ifndef APPLE_CHANGES around one line that
+	was causing EMBED and OBJECT tags to not have render objects.
+
+	* khtml/html/html_objectimpl.cpp:
+	(HTMLObjectElementImpl::attach):
+
+2002-06-14  Chris Blumenberg  <cblu@apple.com>
+
 	Committing Richard's changes to KWQPainter
 
 2002-06-13  Richard Williamson  <rjw@apple.com>
