@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include <kwqdebug.h>
-
 #include <qstring.h>
-
 #include <klocale.h>
 
 QString i18n(const char* text)
 {
-    // FIXME!  Need to add support for localization.
-    return QString (text);
+    NSBundle *wkBundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
+    NSString *locString = [wkBundle localizedStringForKey:[NSString stringWithCString:text] value:nil table:nil];
+    
+    return NSSTRING_TO_QSTRING(locString);
 }
 
 QString KLocale::language() const
