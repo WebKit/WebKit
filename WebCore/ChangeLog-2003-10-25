@@ -1,3 +1,14 @@
+2002-11-27  David Hyatt  <hyatt@apple.com>
+
+	Fix DHTML on phoenix.com.  Add support for window.addEventListener
+	and window.removeEventListener.
+	
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        (WindowFunc::tryCall):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/kjs_window.lut.h:
+
 2002-11-27  Maciej Stachowiak  <mjs@apple.com>
 
 	- avoid doing any work when setting the document's link colors if

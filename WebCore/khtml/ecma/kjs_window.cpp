@@ -170,7 +170,7 @@ Value Screen::getValueProperty(ExecState *exec, int token) const
 const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 
 /*
-@begin WindowTable 77
+@begin WindowTable 79
   closed	Window::Closed		DontDelete|ReadOnly
   crypto	Window::Crypto		DontDelete|ReadOnly
   defaultStatus	Window::DefaultStatus	DontDelete
@@ -235,6 +235,8 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   clearInterval	Window::ClearInterval	DontDelete|Function 1
   captureEvents	Window::CaptureEvents	DontDelete|Function 0
 # Warning, when adding a function to this object you need to add a case in Window::get
+  addEventListener	Window::AddEventListener	DontDelete|Function 3
+  removeEventListener	Window::RemoveEventListener	DontDelete|Function 3
   onabort	Window::Onabort		DontDelete
   onblur	Window::Onblur		DontDelete
   onchange	Window::Onchange	DontDelete
@@ -523,6 +525,8 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case ResizeBy:
     case ResizeTo:
     case CaptureEvents:
+    case AddEventListener:
+    case RemoveEventListener:
       return lookupOrCreateFunction<WindowFunc>(exec,p,this,entry->value,entry->params,entry->attr);
     case SetTimeout:
     case ClearTimeout:
@@ -1370,6 +1374,29 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   case Window::CaptureEvents:
     // Do nothing. This is a NS-specific call that isn't needed in Konqueror.
     break;
+  case Window::AddEventListener: {
+        JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
+        DOM::Document doc = part->document();
+        if (doc.isHTMLDocument()) {
+            DOM::HTMLDocument htmlDoc = doc;
+            htmlDoc.body().addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+        }
+        else
+            doc.addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+        return Undefined();
+    }
+  case Window::RemoveEventListener: {
+        JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
+        DOM::Document doc = part->document();
+        if (doc.isHTMLDocument()) {
+            DOM::HTMLDocument htmlDoc = doc;
+            htmlDoc.body().removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));       
+        }
+        else
+            doc.removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+        return Undefined();
+    }
+
   }
   return Undefined();
 }
