@@ -12,6 +12,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebView.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
@@ -353,6 +354,8 @@
     if (![[self representation] isKindOfClass:repClass]) {
 	[self _setRepresentation:repClass != nil ? [[repClass alloc] init] : nil];
     }
+
+    [[[self webFrame] webView] makeDocumentViewForDataSource:self];
 }
 
 @end

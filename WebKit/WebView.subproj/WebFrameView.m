@@ -4,6 +4,7 @@
 
 #import <WebKit/WebView.h>
 
+#import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageView.h>
@@ -199,10 +200,12 @@ enum {
     [[self _viewTypes] setObject:viewClass forKey:MIMEType];
 }
 
--(void)makeDocumentViewForMIMEType:(NSString *)MIMEType
+-(void)makeDocumentViewForDataSource:(WebDataSource *)dataSource
 {
-    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:MIMEType];
+    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[dataSource contentType]];
     [self _setDocumentView: (id<WebDocumentLoading>)(viewClass ? [[[viewClass alloc] init] autorelease] : nil)];
+
+    [[self documentView] provisionalDataSourceChanged:dataSource];
 }
 
 -(BOOL)acceptsFirstResponder

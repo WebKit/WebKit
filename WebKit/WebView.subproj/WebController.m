@@ -240,12 +240,7 @@
         
     if (policy == WebContentPolicyShow){
 	if ([[self class] canShowMIMEType:[dataSource contentType]]){
-	    WebView *webView = [[dataSource webFrame] webView];
 	    [dataSource makeRepresentation];
-	    [webView makeDocumentViewForMIMEType:[dataSource contentType]];
-	    // FIXME: this ought to be part of makeDocumentView but I need to figure out
-	    // the provisional / committed situation
-	    [[webView documentView] provisionalDataSourceChanged:dataSource];
 	} else {
 	    WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowMIMEType 
 			           inDomain:WebErrorDomainWebKit failingURL: [dataSource inputURL]];

@@ -40,6 +40,6 @@
 // The view must conform to the WebDocumentLoading protocol
 + (void)registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType;
 
--(void)makeDocumentViewForMIMEType:(NSString *)MIMEType;
+-(void)makeDocumentViewForDataSource:(WebDataSource *)dataSource;
 
 @end

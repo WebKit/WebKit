@@ -1,5 +1,23 @@
 2002-07-18  Maciej Stachowiak  <mjs@apple.com>
 
+	Yet still more refactoring in preparation for the KHTMLPart
+	change. This is preparing things to change the commit rule to
+	require receiving at least one byte of data, and having the
+	content policy set to Show.
+
+        * WebView.subproj/WebController.m:
+        (-[WebController haveContentPolicy:andPath:forDataSource:]): Remove
+	more code since makeRepresentation now does most of the work.
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource makeRepresentation]): Tell the WebView (if any) to create
+	the documentView now too.
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView makeDocumentViewForDataSource:]): Hook document view up to data
+	source.
+
+2002-07-18  Maciej Stachowiak  <mjs@apple.com>
+
 	Some refactoring in preparation for the KHTMLPart change.
 	
         * WebView.subproj/WebDataSourcePrivate.h,
