@@ -32,7 +32,7 @@ static void vprintf_stderr_objc(const char *format, va_list args)
     if (!strstr(format, "%@")) {
         vfprintf_no_warning(stderr, format, args);
     } else {
-        fputs([[[[NSString alloc] initWithFormat:[NSString stringWithCString:format] arguments:args] autorelease] lossyCString], stderr);
+        fputs([[[[NSString alloc] initWithFormat:[NSString stringWithCString:format] arguments:args] autorelease] UTF8String], stderr);
     }
 }
 

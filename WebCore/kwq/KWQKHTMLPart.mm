@@ -56,6 +56,7 @@ using khtml::Cache;
 using khtml::ChildFrame;
 using khtml::Decoder;
 using khtml::MouseDoubleClickEvent;
+using khtml::MouseMoveEvent;
 using khtml::MousePressEvent;
 using khtml::MouseReleaseEvent;
 using khtml::RenderObject;
@@ -740,8 +741,6 @@ void KWQKHTMLPart::khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event)
 
 bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
 {
-    _mouseDownView = nil;
-    
     // Figure out which view to send the event to.
     RenderObject *target = event->innerNode().handle()->renderer();
     if (!target || !target->isWidget()) {
@@ -752,8 +751,6 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
 
 bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
 {
-    _mouseDownView = nil;
-    
     NSView *nodeView = renderWidget->widget()->getView();
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
@@ -780,6 +777,18 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
     return true;
 }
 
+void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
+{
+    if (!_mouseDownView || [_currentEvent type] != NSLeftMouseDragged) {
+        KHTMLPart::khtmlMouseMoveEvent(event);
+        return;
+    }
+    
+    _sendingEventToSubview = true;
+    [_mouseDownView mouseDragged:_currentEvent];
+    _sendingEventToSubview = false;
+}
+
 void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
 {
     if (!_mouseDownView) {
@@ -790,7 +799,6 @@ void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
     _sendingEventToSubview = true;
     [_mouseDownView mouseUp:_currentEvent];
     _sendingEventToSubview = false;
-    _mouseDownView = nil;
 }
 
 void KWQKHTMLPart::widgetWillReleaseView(NSView *view)
@@ -840,7 +848,6 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(DOM::NodeImpl::MouseEvent &event)
             _sendingEventToSubview = true;
             [_mouseDownView mouseUp:_currentEvent];
             _sendingEventToSubview = false;
-            _mouseDownView = nil;
             return true;
         case NSLeftMouseDragged:
             if (!(_mouseDownView && _mouseDownWasInSubframe)) {
@@ -897,6 +904,8 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
         return;
     }
 
+    _mouseDownView = nil;
+
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = event;
 
@@ -948,6 +957,8 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
     }
     
     _currentEvent = oldCurrentEvent;
+    
+    _mouseDownView = nil;
 }
 
 void KWQKHTMLPart::mouseMoved(NSEvent *event)

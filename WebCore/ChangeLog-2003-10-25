@@ -1,3 +1,32 @@
+2002-12-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey and Ken.
+
+	- fixed 3125613 -- REGRESSION: resizing frames after clicking on scroll bar doesn't work right
+        
+        The problem was that the mouse dragged events were going to the scroll bar because the new click
+        on the frame resizer didn't fall into the code path that sets _mouseDownView.
+
+        * kwq/KWQKHTMLPart.h: Add override of khtmlMouseMoveEvent.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Don't set _mouseDownView. This is now handled
+	at the higher level when the mouseDown comes in.
+        (KWQKHTMLPart::khtmlMouseMoveEvent): Added. Pass along mouseDragged: events. I didn't have this
+	before because I don't want or need to pass mouseMoved: events along, but the KHTML mouse move
+	event corresponds to both AppKit mouseDragged and mouseMoved.
+        (KWQKHTMLPart::khtmlMouseReleaseEvent): Don't clear _mouseDownView. This is now handled at the
+	higher level when the mouseUp comes in.
+        (KWQKHTMLPart::passSubframeEventToSubframe): Ditto.
+        (KWQKHTMLPart::mouseDown): Set _mouseDownView to nil; it will be set by passWidgetMouseDownEventToWidget
+	if we end up passing the event down. This is the change that actually fixes the bug mentioned above.
+        (KWQKHTMLPart::mouseUp): Set _mouseDownView to nil after handling the mouseUp. It's OK if we don't
+	clear this out in cases where we don't get a mouseUp event -- we'll get a mouseDown later -- but it's
+	still probably a good idea to clear it when we know the mouse is no longer down.
+
+	- used update-kwq-assert to update the code that's a shared copy of WebFoundation code
+
+        * kwq/KWQAssertions.m: (vprintf_stderr_objc): Got the UTF-8 fix I did a while back.
+
 2002-12-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
