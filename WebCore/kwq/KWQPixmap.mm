@@ -32,7 +32,7 @@
 
 QPixmap::QPixmap()
 {
-    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRenderer] retain];
+    imageRenderer = nil;
     needCopyOnWrite = false;
 }
 
@@ -58,6 +58,7 @@ QPixmap::QPixmap(const QPixmap &copyFrom)
     : QPaintDevice(copyFrom)
 {
     imageRenderer = [copyFrom.imageRenderer retain];
+    copyFrom.needCopyOnWrite = true;
     needCopyOnWrite = true;
 }
 
@@ -69,6 +70,9 @@ QPixmap::~QPixmap()
 
 bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete)
 {
+    if (imageRenderer == nil) {
+        imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRenderer] retain];
+    }
     return [imageRenderer incrementalLoadWithBytes: bytes.data() length: bytes.size() complete: isComplete];
 }
 
@@ -142,6 +146,7 @@ QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
     [assignFrom.imageRenderer retain];
     [imageRenderer release];
     imageRenderer = assignFrom.imageRenderer;
+    assignFrom.needCopyOnWrite = true;
     needCopyOnWrite = true;
     return *this;
 }

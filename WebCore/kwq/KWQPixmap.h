@@ -75,7 +75,7 @@ public:
     
 private:
     WebCoreImageRendererPtr imageRenderer;
-    bool needCopyOnWrite;
+    mutable bool needCopyOnWrite;
 
     friend class QPainter;
 

@@ -1,5 +1,18 @@
 2002-07-10  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap): Restore the imageRenderer == nil case to fix a regression
+	related to resized images. Otherwise, isNull was returning true for all images.
+	In copy constructor, set needCopyOnWrite on both the source and destination;
+	setting it on the destination was not enough.
+        (QPixmap::receivedData): Create the imageRenderer if it's nil.
+        (QPixmap::operator=): Set needCopyOnWrite on both the source and destination.
+
+        * kwq/qt/qpixmap.h: Make needCopyOnWrite mutable so we can set it on the source
+	when copying or assigning.
+
+2002-07-10  Darin Adler  <darin@apple.com>
+
         * kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::setBaseURL):
 	Call setBaseURL on the underlying document all the time, not just
 	when we add a missing "/" character.
