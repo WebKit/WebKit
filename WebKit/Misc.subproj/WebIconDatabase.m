@@ -713,22 +713,26 @@ NSSize WebIconMediumSize = {32, 32};
         
     start = CFAbsoluteTimeGetCurrent();
 
-#ifdef WIZZY_SCALING
-    NSSize originalSize = [icon size];
-    scaledIcon = [[NSImage alloc] initWithSize:size];
-    [scaledIcon lockFocus];
-    NSGraphicsContext *currentContent = [NSGraphicsContext currentContext];
-    [currentContent setImageInterpolation:NSImageInterpolationHigh];
-    [icon drawInRect:NSMakeRect(0, 0, size.width, size.height)
-            fromRect:NSMakeRect(0, 0, originalSize.width, originalSize.height)
-           operation:NSCompositeSourceOver	// Renders transparency correctly
-            fraction:1.0];
-    [scaledIcon unlockFocus];
-#else
-    [icon setScalesWhenResized:YES];
-    [icon setSize:size];
-    scaledIcon = icon;
-#endif
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"Experiments"]){
+        // Note: This doesn't seem to make a difference for scaling up.
+        
+        NSSize originalSize = [icon size];
+        scaledIcon = [[NSImage alloc] initWithSize:size];
+
+        [scaledIcon lockFocus];
+        NSGraphicsContext *currentContent = [NSGraphicsContext currentContext];
+        [currentContent setImageInterpolation:NSImageInterpolationHigh];
+        [icon drawInRect:NSMakeRect(0, 0, size.width, size.height)
+                fromRect:NSMakeRect(0, 0, originalSize.width, originalSize.height)
+            operation:NSCompositeSourceOver	// Renders transparency correctly
+                fraction:1.0];
+        [scaledIcon unlockFocus];
+        
+    }else{
+        scaledIcon = icon;
+        [scaledIcon setScalesWhenResized:YES];
+        [scaledIcon setSize:size];
+    }
     
     duration = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "scaling icon took %f seconds.", duration);
