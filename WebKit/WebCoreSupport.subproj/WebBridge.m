@@ -1317,10 +1317,10 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
-    if ([view respondsToSelector:@selector(webPlugInSetIsSelected)]) {
+    if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)]) {
         [view webPlugInSetIsSelected:isSelected];
     }
-    else if ([view respondsToSelector:@selector(setIsSelected)]) {
+    else if ([view respondsToSelector:@selector(setIsSelected:)]) {
         [view setIsSelected:isSelected];
     }
 }

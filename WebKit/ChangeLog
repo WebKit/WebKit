@@ -1,5 +1,14 @@
 2004-08-26  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3774178> Plugin hooks for selected state aren't being called
+
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setIsSelected:forView:]): don't forget colons in method names
+
+2004-08-26  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3768439> can't click in WebView in Carbon WebKit apps (GetEventPlatformEventRecord returns false)
 
         Reviewed by rjw.
