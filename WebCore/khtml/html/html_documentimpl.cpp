@@ -93,7 +93,13 @@ HTMLDocumentImpl::~HTMLDocumentImpl()
 DOMString HTMLDocumentImpl::referrer() const
 {
     if ( view() )
+#if APPLE_CHANGES
+        return KWQ(view()->part())->incomingReferrer();
+#else
+        // This is broken; returns the referrer used for links within this page (basically
+        // the same as the URL), not the referrer used for loading this page itself.
         return view()->part()->referrer();
+#endif
     return DOMString();
 }
 

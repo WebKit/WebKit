@@ -1,3 +1,22 @@
+2003-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3142852 -- frame content repeatedly requested
+
+	The bug was that JavaScript document.referrer was totally wrong.
+
+        * khtml/html/html_documentimpl.cpp: (HTMLDocumentImpl::referrer):
+	Use the new incomingReferrer() rather than referrer(), because referrer()
+	is the referrer to use for new loads in the part, not the one that was
+	used to load the document.
+
+        * kwq/KWQKHTMLPart.h: Added incomingReferrer(). Also removed referrer()
+	which has been totally redundant since we made KWQKHTMLPart a subclass of KHTMLPart.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::incomingReferrer): Added. Uses the bridge.
+
+        * kwq/WebCoreBridge.h: Added incomingReferrer.
+
 2003-01-24  Trey Matteson  <trey@apple.com>
 
 	3155162 - cursor changes to I-beam after dragging image	

@@ -390,6 +390,11 @@
     return [[[[self dataSource] request] URL] absoluteString];
 }
 
+- (NSString *)incomingReferrer
+{
+    return [[[self dataSource] request] referrer];
+}
+
 - (NSView <WebPlugin> *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
                                    attributes:(NSDictionary *)attributes
                                       baseURL:(NSURL *)baseURL

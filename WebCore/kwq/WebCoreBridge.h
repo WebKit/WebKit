@@ -249,6 +249,7 @@ enum FrameBorderStyle {
 - (void)setNeedsLayout;
 
 - (NSString *)requestedURL;
+- (NSString *)incomingReferrer;
 
 - (NSView *)viewForPluginWithURL:(NSString *)URL attributes:(NSArray *)attributesArray baseURL:(NSString *)baseURL MIMEType:(NSString *)MIMEType;
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame attributes:(NSDictionary *)attributes baseURL:(NSString *)baseURL;

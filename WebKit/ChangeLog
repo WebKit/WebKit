@@ -1,18 +1,19 @@
-2003-01-24  Ed Voas  <set EMAIL_ADDRESS environment variable>
+2003-01-24  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Dave.
 
-        * ChangeLog:
-        * Plugins.subproj/WebBaseNetscapePluginView.m:
-        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+	- fixed 3142852 -- frame content repeatedly requested
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge incomingReferrer]):
+	Added a way to get the referrer across the bridge, needed for bug fix.
 
 2003-01-24  Ed Voas  <voas@apple.com>
 
         Reviewed by Darin.
 
-		Netscape plugins were being improperly positioned. I noticed this when I
-		put the web view into a window with borders around it (Carbon metal window,
-		but I would imagine Cocoa metal would do it too).
+        Netscape plugins were being improperly positioned. I noticed this when I
+        put the web view into a window with borders around it (Carbon metal window,
+        but I would imagine Cocoa metal would do it too).
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
         (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):

@@ -686,6 +686,11 @@ QString KWQKHTMLPart::requestedURLString() const
     return QString::fromNSString([_bridge requestedURL]);
 }
 
+QString KWQKHTMLPart::incomingReferrer() const
+{
+    return QString::fromNSString([_bridge incomingReferrer]);
+}
+
 void KWQKHTMLPart::forceLayout()
 {
     KHTMLView *v = d->m_view;
@@ -698,11 +703,6 @@ void KWQKHTMLPart::forceLayout()
         // until we have a better invalidation stategy. -dwh
         //v->unscheduleRelayout();
     }
-}
-
-QString KWQKHTMLPart::referrer() const
-{
-    return d->m_referrer;
 }
 
 void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
