@@ -1,3 +1,20 @@
+2003-10-03  Chris Blumenberg  <cblu@apple.com>
+
+	Ran compress-tiffs on new cursor images.
+
+        * Resources/eastCursor.tiff:
+        * Resources/eastResizeCursor.tiff:
+        * Resources/helpCursor.tiff:
+        * Resources/moveCursor.tiff:
+        * Resources/northEastResizeCursor.tiff:
+        * Resources/northResizeCursor.tiff:
+        * Resources/northWestResizeCursor.tiff:
+        * Resources/southEastResizeCursor.tiff:
+        * Resources/southResizeCursor.tiff:
+        * Resources/southWestResizeCursor.tiff:
+        * Resources/waitCursor.tiff:
+        * Resources/westResizeCursor.tiff:
+
 2003-10-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin, with much help from Maciej and Hyatt
