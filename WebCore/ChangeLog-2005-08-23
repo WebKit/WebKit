@@ -1,3 +1,5 @@
+=== Safari-128 ===
+
 2004-02-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3557850 and 3557607.  Make sure to setParent(0) on the body's link declaration, so that TreeShared
