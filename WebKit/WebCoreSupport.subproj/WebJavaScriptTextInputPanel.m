@@ -8,7 +8,7 @@
 
 #import "WebJavaScriptTextInputPanel.h"
 
-#import <WebFoundation/WebAssertsions.h>
+#import <WebFoundation/WebAssertions.h>
 
 @implementation WebJavaScriptTextInputPanel
 
