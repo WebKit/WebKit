@@ -4,6 +4,8 @@
 */
 #include <dom/dom_element.h>
 #include <dom/dom_string.h>
+#include <dom/dom_text.h>
+#include <dom/dom_xml.h>
 #include <xml/dom_textimpl.h>
 #include <xml/dom_xmlimpl.h>
 #include <xml/dom2_rangeimpl.h>
@@ -56,6 +58,12 @@ extern DOM::DOMString NSStringToDOMString(NSString *aString);
 + (WebCoreDOMDocumentFragment *)documentFragmentWithImpl: (DOM::DocumentFragmentImpl *)impl;
 - initWithImpl: (DOM::DocumentFragmentImpl *)coreImpl;
 - (DOM::DocumentFragmentImpl *)impl;
+@end
+
+@interface WebCoreDOMCharacterData (CorePrivate)
++ (WebCoreDOMCharacterData *)characterDataWithImpl: (DOM::CharacterDataImpl *)impl;
+- initWithImpl: (DOM::CharacterDataImpl *)coreImpl;
+- (DOM::CharacterDataImpl *)impl;
 @end
 
 @interface WebCoreDOMText (CorePrivate)

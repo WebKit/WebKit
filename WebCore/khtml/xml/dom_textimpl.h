@@ -29,6 +29,10 @@
 namespace DOM {
 
     class DocumentImpl;
+#ifdef APPLE_CHANGES
+    class CharacterData;
+    class Text;
+#endif
 
 class CharacterDataImpl : public NodeImpl
 {
@@ -59,6 +63,10 @@ public:
     virtual void checkCharDataOperation( const unsigned long offset, int &exceptioncode );
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
+#endif
+
+#ifdef APPLE_CHANGES
+    static CharacterData createInstance(CharacterDataImpl *impl);
 #endif
 
 protected:
@@ -114,6 +122,10 @@ public:
     virtual void attach();
     virtual void recalcStyle( StyleChange = NoChange );
     virtual bool childTypeAllowed( unsigned short type );
+
+#ifdef APPLE_CHANGES
+    static Text createInstance(TextImpl *impl);
+#endif
 
 protected:
     virtual TextImpl *createNew(DOMStringImpl *_str);

@@ -261,6 +261,9 @@ protected:
 class ProcessingInstruction : public Node
 {
     friend class Document;
+#ifdef APPLE_CHANGES
+    friend class ProcessingInstructionImpl;
+#endif
 public:
     ProcessingInstruction();
     ProcessingInstruction(const ProcessingInstruction &other);

@@ -24,6 +24,20 @@ DOM::Element DOM::ElementImpl::createInstance(DOM::ElementImpl *impl)
     return DOM::Element(impl);
 }
 
+DOM::CharacterData DOM::CharacterDataImpl::createInstance(DOM::CharacterDataImpl *impl)
+{
+    return DOM::CharacterData(impl);
+}
+
+DOM::Text DOM::TextImpl::createInstance(DOM::TextImpl *impl)
+{
+    return DOM::Text(impl);
+}
+
+DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(ProcessingInstructionImpl *impl)
+{
+    return DOM::ProcessingInstruction(impl);
+}
 
 @implementation WebCoreDOMNode
 
@@ -406,18 +420,6 @@ DOM::Element DOM::ElementImpl::createInstance(DOM::ElementImpl *impl)
 @end
 
 
-@implementation WebCoreDOMCDATASection
-
-+ (WebCoreDOMCDATASection *)CDATASectionWithImpl: (DOM::CDATASectionImpl *)_impl
-{
-    return [[(WebCoreDOMCDATASection *)[[self class] alloc] initWithImpl: _impl] autorelease];
-}
-- initWithImpl:(DOM::CDATASectionImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::CDATASectionImpl *)impl { return (DOM::CDATASectionImpl *)impl; }
-
-// No additional methods.
-@end
-
 @implementation WebCoreDOMDocumentFragment
 
 + (WebCoreDOMDocumentFragment *)documentFragmentWithImpl: (DOM::DocumentFragmentImpl *)_impl 
@@ -428,14 +430,6 @@ DOM::Element DOM::ElementImpl::createInstance(DOM::ElementImpl *impl)
 - (DOM::DocumentFragmentImpl *)impl { return (DOM::DocumentFragmentImpl *)impl; }
 
 // No additional methods.
-@end
-
-@implementation WebCoreDOMComment
-
-+ (WebCoreDOMComment *)commentWithImpl: (DOM::CommentImpl *)_impl { return [[(WebCoreDOMComment *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::CommentImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::CommentImpl *)impl { return (DOM::CommentImpl *)impl; }
-
 @end
 
 @implementation WebCoreDOMElement
@@ -576,6 +570,73 @@ DOM::Element DOM::ElementImpl::createInstance(DOM::ElementImpl *impl)
 
 @end
 
+@implementation WebCoreDOMCharacterData
+
++ (WebCoreDOMCharacterData *)commentWithImpl: (DOM::CharacterDataImpl *)_impl { return [[(WebCoreDOMCharacterData *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
+- initWithImpl:(DOM::CharacterDataImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
+- (DOM::CharacterDataImpl *)impl { return (DOM::CharacterDataImpl *)impl; }
+
+- (NSString *)data
+{
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::DOMString data = instance.data();
+    return domStringToNSString(data);
+}
+
+- (void)setData: (NSString *)data
+{
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    return instance.setData(NSStringToDOMString(data));
+}
+
+- (unsigned long)length
+{
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    return instance.length();
+}
+
+- (NSString *)substringData: (unsigned long)offset :(unsigned long)count
+{
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::DOMString substring = instance.substringData(offset,count);
+    return domStringToNSString(substring);
+}
+
+- (void)appendData:(NSString *)arg
+{
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    instance.appendData(NSStringToDOMString(arg));
+}
+
+- (void)insertData:(unsigned long)offset :(NSString *)arg
+{
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    instance.insertData(offset, NSStringToDOMString(arg));
+}
+
+- (void)deleteData:(unsigned long)offset :(unsigned long) count
+{
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    instance.deleteData(offset, count);
+}
+
+- (void)replaceData:(unsigned long)offset :(unsigned long)count :(NSString *)arg;
+{
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    instance.replaceData(offset, count, NSStringToDOMString(arg));
+}
+
+@end
+
+@implementation WebCoreDOMComment
+
++ (WebCoreDOMComment *)commentWithImpl: (DOM::CommentImpl *)_impl { return [[(WebCoreDOMComment *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
+- initWithImpl:(DOM::CommentImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
+- (DOM::CommentImpl *)impl { return (DOM::CommentImpl *)impl; }
+
+// No additional methods.
+
+@end
 
 @implementation WebCoreDOMText
 
@@ -583,8 +644,25 @@ DOM::Element DOM::ElementImpl::createInstance(DOM::ElementImpl *impl)
 - initWithImpl:(DOM::TextImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
 - (DOM::TextImpl *)impl { return (DOM::TextImpl *)impl; }
 
+- (id<WebDOMText>)splitText: (unsigned long)offset
+{
+    DOM::Text instance = DOM::TextImpl::createInstance([self impl]);
+    return [WebCoreDOMText textWithImpl: (DOM::TextImpl *)instance.splitText(offset).handle()];
+}
+
 @end
 
+@implementation WebCoreDOMCDATASection
+
++ (WebCoreDOMCDATASection *)CDATASectionWithImpl: (DOM::CDATASectionImpl *)_impl
+{
+    return [[(WebCoreDOMCDATASection *)[[self class] alloc] initWithImpl: _impl] autorelease];
+}
+- initWithImpl:(DOM::CDATASectionImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
+- (DOM::CDATASectionImpl *)impl { return (DOM::CDATASectionImpl *)impl; }
+
+// No additional methods.
+@end
 
 @implementation WebCoreDOMProcessingInstruction
 
@@ -592,6 +670,26 @@ DOM::Element DOM::ElementImpl::createInstance(DOM::ElementImpl *impl)
 { return [[(WebCoreDOMProcessingInstruction *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
 - initWithImpl:(DOM::ProcessingInstructionImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
 - (DOM::ProcessingInstructionImpl *)impl { return (DOM::ProcessingInstructionImpl *)impl; }
+
+- (NSString *)target;
+{
+    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self impl]);
+    DOM::DOMString data = instance.data();
+    return domStringToNSString(data);
+}
+
+- (NSString *)data
+{
+    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self impl]);
+    DOM::DOMString data = instance.data();
+    return domStringToNSString(data);
+}
+
+- (void)setData:(NSString *)data
+{
+    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self impl]);
+    return instance.setData(NSStringToDOMString(data));
+}
 
 @end
 

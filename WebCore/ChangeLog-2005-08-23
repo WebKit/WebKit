@@ -1,5 +1,32 @@
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
+        More DOM implementation.
+        
+        * khtml/dom/dom_text.h:
+        * khtml/dom/dom_xml.h:
+        * khtml/xml/dom_textimpl.h:
+        * khtml/xml/dom_xmlimpl.h:
+        * kwq/WebCoreDOM.h:
+        * kwq/WebCoreDOMNode.mm:
+        (DOM::CharacterDataImpl::createInstance):
+        (DOM::TextImpl::createInstance):
+        (DOM::ProcessingInstructionImpl::createInstance):
+        (-[WebCoreDOMCharacterData data]):
+        (-[WebCoreDOMCharacterData setData:]):
+        (-[WebCoreDOMCharacterData length]):
+        (-[WebCoreDOMCharacterData substringData::]):
+        (-[WebCoreDOMCharacterData appendData:]):
+        (-[WebCoreDOMCharacterData insertData::]):
+        (-[WebCoreDOMCharacterData deleteData::]):
+        (-[WebCoreDOMText splitText:]):
+        (+[WebCoreDOMCDATASection CDATASectionWithImpl:DOM::]):
+        (-[WebCoreDOMProcessingInstruction data]):
+        (-[WebCoreDOMProcessingInstruction setData:]):
+        * kwq/WebCoreDOMPrivate.h:
+        * kwq/WebDOMElement.h:
+
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
         Implemented WebCoreDOMElement.
         Fixed extra deref of impl in subclasses
         of WebCoreDOMNode.

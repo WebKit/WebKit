@@ -27,20 +27,21 @@ typedef DOM::NamedNodeMapImpl NamedNodeMapImpl;
 
 #endif
 
-@protocol WebDOMNode;
-@protocol WebDOMNamedNodeMap;
-@protocol WebDOMNodeList;
-@protocol WebDOMImplementation;
-@protocol WebDOMDocumentType;
-@protocol WebDOMDocument;
-@protocol WebDOMEntityReference;
-@protocol WebDOMElement;
 @protocol WebDOMAttr;
-@protocol WebDOMDocumentFragment;
-@protocol WebDOMText;
+@protocol WebDOMCharacterData;
 @protocol WebDOMComment;
 @protocol WebDOMCDATASection;
+@protocol WebDOMDocument;
+@protocol WebDOMDocumentFragment;
+@protocol WebDOMDocumentType;
+@protocol WebDOMElement;
+@protocol WebDOMEntityReference;
+@protocol WebDOMImplementation;
+@protocol WebDOMNamedNodeMap;
+@protocol WebDOMNode;
+@protocol WebDOMNodeList;
 @protocol WebDOMProcessingInstruction;
+@protocol WebDOMText;
 
 @interface WebCoreDOMNode : NSObject <WebDOMNode>
 {
@@ -84,13 +85,16 @@ typedef DOM::NamedNodeMapImpl NamedNodeMapImpl;
 @interface WebCoreDOMDocumentFragment : WebCoreDOMNode <WebDOMDocumentFragment>
 @end
 
-@interface WebCoreDOMText : WebCoreDOMNode <WebDOMText>
+@interface WebCoreDOMCharacterData : WebCoreDOMNode <WebDOMCharacterData>
 @end
 
-@interface WebCoreDOMComment : WebCoreDOMNode <WebDOMComment>
+@interface WebCoreDOMText : WebCoreDOMCharacterData <WebDOMText>
 @end
 
-@interface WebCoreDOMCDATASection : WebCoreDOMNode <WebDOMCDATASection>
+@interface WebCoreDOMComment : WebCoreDOMCharacterData <WebDOMComment>
+@end
+
+@interface WebCoreDOMCDATASection : WebCoreDOMText <WebDOMCDATASection>
 @end
 
 @interface WebCoreDOMProcessingInstruction : WebCoreDOMNode <WebDOMProcessingInstruction>
