@@ -142,7 +142,7 @@ public:
       ~RenderZTreeNode() { delete next; delete child; }
 
       void constructLayerList(QPtrVector<RenderLayerElement>* mergeTmpBuffer,
-                              QPtrVector<RenderLayerElement>* finalBuffer) { };
+                              QPtrVector<RenderLayerElement>* finalBuffer);
       
     };
       

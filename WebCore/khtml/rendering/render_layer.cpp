@@ -182,3 +182,112 @@ RenderLayer::constructLayerList(RenderZTreeNode* ztree, QPtrVector<RenderLayer::
     ztree->constructLayerList(&mergeBuffer, result);
 }
 
+// Sort the buffer from lowest z-index to highest.  The common scenario will have
+// most z-indices equal, so we optimize for that case (i.e., the list will be mostly
+// sorted already).
+static void sortByZOrder(QPtrVector<RenderLayer::RenderLayerElement>* buffer,
+                         QPtrVector<RenderLayer::RenderLayerElement>* mergeBuffer,
+                         uint start,
+                         uint end)
+{
+    if (start >= end)
+        return; // Sanity check.
+
+    if (end - start <= 6) {
+        // Apply a bubble sort for smaller lists.
+        for (uint i = end-1; i > start; i--) {
+            bool sorted = true;
+            for (uint j = start; j < i; j++) {
+                RenderLayer::RenderLayerElement* elt = buffer->at(j);
+                RenderLayer::RenderLayerElement* elt2 = buffer->at(j+1);
+                if (elt->zindex > elt2->zindex) {
+                    sorted = false;
+                    buffer->insert(j, elt2);
+                    buffer->insert(j+1, elt);
+                }
+            }
+            if (sorted)
+                return;
+        }
+    }
+    else {
+        // Peform a merge sort for larger lists.
+        uint mid = (start+end)/2;
+        sortByZOrder(buffer, mergeBuffer, start, mid);
+        sortByZOrder(buffer, mergeBuffer, mid, end);
+
+        RenderLayer::RenderLayerElement* elt = buffer->at(mid-1);
+        RenderLayer::RenderLayerElement* elt2 = buffer->at(mid);
+
+        // Handle the fast common case (of equal z-indices).  The list may already
+        // be completely sorted.
+        if (elt->zindex <= elt2->zindex)
+            return;
+
+        // We have to merge sort.  Ensure our merge buffer is big enough to hold
+        // all the items.
+        mergeBuffer->resize(end - start);
+        uint i1 = start;
+        uint i2 = mid;
+
+        elt = buffer->at(i1);
+        elt2 = buffer->at(i2);
+
+        while (i1 < mid || i2 < end) {
+            if (i1 < mid && (i2 == end || elt->zindex <= elt2->zindex)) {
+                mergeBuffer->insert(mergeBuffer->count(), elt);
+                i1++;
+                if (i1 < mid)
+                    elt = buffer->at(i1);
+            }
+            else {
+                mergeBuffer->insert(mergeBuffer->count(), elt2);
+                i2++;
+                if (i2 < end)
+                    elt2 = buffer->at(i2);
+            }
+        }
+
+        for (uint i = start; i < end; i++)
+            buffer->insert(i, mergeBuffer->at(i-start));
+
+        mergeBuffer->clear();
+    }
+}
+
+void RenderLayer::RenderZTreeNode::constructLayerList(QPtrVector<RenderLayerElement>* mergeTmpBuffer,
+                                                      QPtrVector<RenderLayerElement>* buffer)
+{
+    bool autoZIndex = layer->hasAutoZIndex();
+    int explicitZIndex = layer->zIndex();
+
+    if (layerElement) {
+        // We are a leaf node of the ztree, and so we just place our layer element into
+        // the buffer.
+        if (buffer->count() == buffer->size())
+            // Resize by a power of 2.
+            buffer->resize(2*buffer->size());
+        
+        buffer->insert(buffer->count(), layerElement);
+        layerElement->zindex = explicitZIndex;
+        return;
+    }
+
+    uint startIndex = buffer->count();
+    for (RenderZTreeNode* current = child; child; child = child->next)
+        current->constructLayerList(mergeTmpBuffer, buffer);
+    uint endIndex = buffer->count();
+
+    if (autoZIndex)
+        return; // We just had to collect the kids.  We don't apply a sort to them, since
+                // they will actually be layered in some ancestor layer's stacking context.
+    
+    sortByZOrder(buffer, mergeTmpBuffer, startIndex, endIndex);
+
+    // Now set all of the elements' z-indices to match the parent's explicit z-index, so that
+    // they will be layered properly in the ancestor layer's stacking context.
+    for (uint i = startIndex; i < endIndex; i++) {
+        RenderLayer::RenderLayerElement* elt = buffer->at(i);
+        elt->zindex = explicitZIndex;
+    }
+}
