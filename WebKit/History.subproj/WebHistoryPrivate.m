@@ -143,7 +143,7 @@
 
     ASSERT_ARG(entry, [entry lastVisitedDate] != nil);
 
-    URLString = [[entry URL] absoluteString];
+    URLString = [[[entry URL] _web_canonicalize] absoluteString];
     [self removeEntryForURLString: URLString];
 
     if ([self findIndex: &dateIndex forDay: [entry lastVisitedDate]]) {
@@ -163,7 +163,7 @@
     WebHistoryItem *matchingEntry;
     NSString *URLString;
 
-    URLString = [[entry URL] absoluteString];
+    URLString = [[[entry URL] _web_canonicalize] absoluteString];
 
     // If this exact object isn't stored, then make no change.
     // FIXME: Is this the right behavior if this entry isn't present, but another entry for the same URL is?
@@ -293,12 +293,12 @@
 
 - (BOOL)containsURL: (NSURL *)URL
 {
-    return [self _entryForURLString:[URL absoluteString]] != nil;
+    return [self _entryForURLString:[[URL _web_canonicalize] absoluteString]] != nil;
 }
 
 - (WebHistoryItem *)entryForURL:(NSURL *)URL
 {
-    return [self _entryForURLString:[URL absoluteString]];
+    return [self _entryForURLString:[[URL _web_canonicalize] absoluteString]];
 }	
 
 #pragma mark ARCHIVING/UNARCHIVING

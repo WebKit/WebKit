@@ -1,5 +1,15 @@
 2002-09-13  Richard Williamson (Home)  <rjw@apple.com>
 
+       Fixed 3051288.  URLs were not being canonicalized, so matching failed.
+        
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate addEntry:]):
+        (-[WebHistoryPrivate removeEntry:]):
+        (-[WebHistoryPrivate containsURL:]):
+        (-[WebHistoryPrivate entryForURL:]):
+
+2002-09-13  Richard Williamson (Home)  <rjw@apple.com>
+
         Fixed 3050636.  90% solution.  The "Display Images Automatically"
         preference will be used to disallow image draggging.  So if this
         is set after pages have loaded, their images will not be draggable,
