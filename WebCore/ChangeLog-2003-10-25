@@ -1,3 +1,22 @@
+2003-10-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - make text areas set the base writing direction based on the direction in the CSS style
+
+        * kwq/KWQTextArea.h: Added setBaseWritingDirection method.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]): Use _KWQ_setTypingParagraphStyle.
+        (-[KWQTextArea setWordWrap:]): Use _KWQ_setTypingParagraphStyle.
+        (-[KWQTextArea setBaseWritingDirection:]): Added. New method that sets the base writing
+        direction in both the style of the text and the typing attributes.
+        (-[NSTextView _KWQ_typingParagraphStyle]): Added. Helper method to make setBaseWritingDirection:
+        a little less gigantic.
+        (-[NSTextView _KWQ_setTypingParagraphStyle:]): Ditto.
+        (-[NSTextStorage _KWQ_setBaseWritingDirection:]): Ditto.
+
+        * kwq/KWQTextEdit.mm: (QTextEdit::setAlignment): Set both alignment and base writing direction.
+
 2003-10-17  David Hyatt  <hyatt@apple.com>
 
 	Implement horizontal and vertical border-spacing.  Allow them to be specified individually.

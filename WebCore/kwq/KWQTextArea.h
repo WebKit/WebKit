@@ -41,6 +41,7 @@ class QTextEdit;
 - initWithQTextEdit:(QTextEdit *)w; 
 
 - (void)setAlignment:(NSTextAlignment)alignment;
+- (void)setBaseWritingDirection:(NSWritingDirection)direction;
 
 - (void)setEditable:(BOOL)flag;
 - (BOOL)isEditable;

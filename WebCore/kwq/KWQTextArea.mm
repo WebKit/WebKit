@@ -45,8 +45,18 @@
     HARD|PHYSICAL - Text is wrapped, and text is broken into separate lines.
 */
 
+
 @interface NSView (KWQTextArea)
 - (void)_KWQ_setKeyboardFocusRingNeedsDisplay;
+@end
+
+@interface NSTextView (KWQTextArea)
+- (NSParagraphStyle *)_KWQ_typingParagraphStyle;
+- (void)_KWQ_setTypingParagraphStyle:(NSParagraphStyle *)style;
+@end
+
+@interface NSTextStorage (KWQTextArea)
+- (void)_KWQ_setBaseWritingDirection:(NSWritingDirection)direction;
 @end
 
 @interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
@@ -88,7 +98,7 @@ const float LargeNumberForText = 1.0e7;
     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
     [style setLineBreakMode:NSLineBreakByWordWrapping];
     [style setAlignment:NSLeftTextAlignment];
-    [textView setTypingAttributes:[NSDictionary dictionaryWithObject:style forKey:NSParagraphStyleAttributeName]];
+    [textView _KWQ_setTypingParagraphStyle:style];
     [style release];
     
     [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -182,7 +192,7 @@ const float LargeNumberForText = 1.0e7;
     
     [style setAlignment:NSLeftTextAlignment];
     
-    [textView setTypingAttributes:[NSDictionary dictionaryWithObject:style forKey:NSParagraphStyleAttributeName]];
+    [textView _KWQ_setTypingParagraphStyle:style];
     [style release];
     
     wrap = f;
@@ -468,6 +478,21 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [textView setAlignment:alignment];
 }
 
+- (void)setBaseWritingDirection:(NSWritingDirection)direction
+{
+    // Set the base writing direction for typing.
+    NSParagraphStyle *style = [textView _KWQ_typingParagraphStyle];
+    if ([style baseWritingDirection] != direction) {
+        NSMutableParagraphStyle *mutableStyle = [style mutableCopy];
+        [mutableStyle setBaseWritingDirection:direction];
+        [textView _KWQ_setTypingParagraphStyle:mutableStyle];
+        [mutableStyle release];
+    }
+
+    // Set the base writing direction for text.
+    [[textView textStorage] _KWQ_setBaseWritingDirection:direction];
+}
+
 // This is the only one of the display family of calls that we use, and the way we do
 // displaying in WebCore means this is called on this NSView explicitly, so this catches
 // all cases where we are inside the normal display machinery. (Used only by the insertion
@@ -706,6 +731,67 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 - (void)_KWQ_setKeyboardFocusRingNeedsDisplay
 {
     [[self superview] _KWQ_setKeyboardFocusRingNeedsDisplay];
+}
+
+@end
+
+@implementation NSTextView (KWQTextArea)
+
+- (NSParagraphStyle *)_KWQ_typingParagraphStyle
+{
+    NSParagraphStyle *style = [[self typingAttributes] objectForKey:NSParagraphStyleAttributeName];
+    if (style != nil) {
+        return style;
+    }
+    style = [self defaultParagraphStyle];
+    if (style != nil) {
+        return style;
+    }
+    return [NSParagraphStyle defaultParagraphStyle];
+}
+
+- (void)_KWQ_setTypingParagraphStyle:(NSParagraphStyle *)style
+{
+    NSParagraphStyle *immutableStyle = [style copy];
+    NSDictionary *attributes = [self typingAttributes];
+    if (attributes != nil) {
+        NSMutableDictionary *mutableAttributes = [attributes mutableCopy];
+        [mutableAttributes setObject:immutableStyle forKey:NSParagraphStyleAttributeName];
+        attributes = mutableAttributes;
+    } else {
+        attributes = [[NSDictionary alloc] initWithObjectsAndKeys:immutableStyle, NSParagraphStyleAttributeName, nil];
+    }
+    [immutableStyle release];
+    [self setTypingAttributes:attributes];
+    [attributes release];
+}
+
+@end
+
+@implementation NSTextStorage (KWQTextArea)
+
+- (void)_KWQ_setBaseWritingDirection:(NSWritingDirection)direction
+{
+    unsigned end = [self length];
+    NSRange range = NSMakeRange(0, end);
+    if (end != 0) {
+        [self beginEditing];
+        for (unsigned i = 0; i < end; ) {
+            NSRange effectiveRange;
+            NSParagraphStyle *style = [self attribute:NSParagraphStyleAttributeName atIndex:i longestEffectiveRange:&effectiveRange inRange:range];
+            if (style == nil) {
+                style = [NSParagraphStyle defaultParagraphStyle];
+            }
+            if ([style baseWritingDirection] != direction) {
+                NSMutableParagraphStyle *mutableStyle = [style mutableCopy];
+                [mutableStyle setBaseWritingDirection:direction];
+                [self addAttribute:NSParagraphStyleAttributeName value:mutableStyle range:effectiveRange];
+                [mutableStyle release];
+            }
+            i = NSMaxRange(effectiveRange);
+        }
+        [self endEditing];
+    }
 }
 
 @end
