@@ -629,8 +629,6 @@ MouseWheelMoved( HIWebView* inView, EventRef inEvent )
 static OSStatus
 ContextMenuClick( HIWebView* inView, EventRef inEvent )
 {
-    OSStatus result = eventNotHandledErr;
-
     NSView *webView = inView->fWebView;
     NSWindow *window = [webView window];
 
@@ -642,8 +640,8 @@ ContextMenuClick( HIWebView* inView, EventRef inEvent )
     // Flip the Y coordinate, since Carbon is flipped relative to the AppKit.
     NSPoint location = NSMakePoint(point.x, [window frame].size.height - point.y);
     
-    // Make up an event with the point.
-    NSEvent *kitEvent = [NSEvent mouseEventWithType:NSRightMouseUp
+    // Make up an event with the point and send it to the window.
+    NSEvent *kitEvent = [NSEvent mouseEventWithType:NSRightMouseDown
                                            location:location
                                       modifierFlags:0
                                           timestamp:GetEventTime(inEvent)
@@ -652,21 +650,8 @@ ContextMenuClick( HIWebView* inView, EventRef inEvent )
                                         eventNumber:0
                                          clickCount:1
                                            pressure:0];
-    
-    // Convert from window coordinates to superview coordinates for hit testing.
-    NSPoint superviewPoint = [[webView superview] convertPoint:location fromView:nil];
-    NSView *target = [webView hitTest:superviewPoint];
-    
-    // Pop up the menu.
-    if ([target _allowsContextMenus]) {
-        NSMenu *contextMenu = [target menuForEvent:kitEvent];
-        if (contextMenu) {
-            [contextMenu _popUpMenuWithEvent:kitEvent forView:target];
-            result = noErr;
-        }
-    }
-    
-    return result;
+    [inView->fKitWindow sendEvent:kitEvent];
+    return noErr;
 }
 
 //----------------------------------------------------------------------------------
@@ -1504,15 +1489,15 @@ HIWebViewEventHandler(
 						result = noErr;
 					}
 					break;
-
+                                    
 				case kEventControlClick:
 					result = Click( view, inEvent );
 					break;
-					
+                                    
 				case kEventControlContextualMenuClick:
 					result = ContextMenuClick( view, inEvent );
 					break;
-					
+                                    
 				case kEventControlSetFocusPart:
 					{
 						ControlPartCode		desiredFocus;

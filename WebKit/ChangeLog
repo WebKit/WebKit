@@ -1,3 +1,12 @@
+2004-03-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3604391>: Plug-in context menus (Flash) don't work in Carbon WebKit applications (e.g., CarbonWeb)
+
+        Reviewed by rjw.
+
+        * Carbon.subproj/HIWebView.m:
+        (ContextMenuClick): instead of calling menuForEvent (which is not implemented on our plug-in view) call rightMouseDown and let AppKit handle the rest
+
 2004-03-29  John Sullivan  <sullivan@apple.com>
 
         - some support for "Stealth Browsing"; add a preference that
