@@ -1,5 +1,17 @@
 2004-10-12  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3836158> REGRESSION (Mail): command-right-arrow moves to beginning of next line
+
+        * khtml/editing/selection.cpp:
+        (khtml::endOfLastRunAt): Do not let the end of the last run on a line be a BR.
+        This will make it seem like the run ends on the next line.
+
+2004-10-12  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         Fix for this bug:

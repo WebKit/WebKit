@@ -973,7 +973,7 @@ static Position endOfLastRunAt(RenderObject *renderNode, int y)
         if (position.isNotNull())
             return position;
         
-        if (n->isText()) {
+        if (n->isText() && !n->isBR()) {
             RenderText *textRenderer = static_cast<RenderText *>(n);
             for (InlineTextBox* box = textRenderer->lastTextBox(); box; box = box->prevTextBox()) {
                 int absx, absy;
