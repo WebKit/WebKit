@@ -635,6 +635,7 @@ bool QPainter::paintingDisabled() const
 
 void QPainter::beginTransparencyLayer(float opacity)
 {
+    [NSGraphicsContext saveGraphicsState];
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
     CGContextSetAlpha(context, opacity);
     CGContextBeginTransparencyLayer(context, 0);
@@ -644,6 +645,7 @@ void QPainter::endTransparencyLayer()
 {
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
     CGContextEndTransparencyLayer(context);
+    [NSGraphicsContext restoreGraphicsState];
 }
 
 void QPainter::setShadow(int x, int y, int blur, const QColor& color)

@@ -1,3 +1,23 @@
+2004-04-20  David Hyatt  <hyatt@apple.com>
+
+	Fix hiermenu opacity bug.  Make sure to save/restore the graphics state before pushing and popping
+	transparency layers, so that alterations to alpha don't accidentally persist.
+	
+        Reviewed by kocienda
+
+        * kwq/KWQPainter.mm:
+        (QPainter::beginTransparencyLayer):
+        (QPainter::endTransparencyLayer):
+
+2004-04-20  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3622818, bad rendering on sabernomics.com.  Just eliminate the priority difference between
+	4 and 5, and make all of the priority 4 tags the same.  This seems to match other browsers.
+	
+        Reviewed by kocienda
+
+        * khtml/html/dtd.cpp:
+
 2004-04-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
