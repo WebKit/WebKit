@@ -210,21 +210,53 @@
 
 - (IFWebFrame *)frameNamed:(NSString *)name
 {
-    if([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"])
+    // First, deal with 'special' names.
+    if([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"]){
         return self;
+    }
     
-    else if([name isEqualToString:@"_top"])
+    else if([name isEqualToString:@"_top"]) {
         return [[self controller] mainFrame];
-        
+    }
+    
     else if([name isEqualToString:@"_parent"]){
-        if([[self dataSource] parent]){
-            return [[[self dataSource] parent] webFrame];
-        }else{
+        IFWebDataSource *parent = [[self dataSource] parent];
+        if(parent){
+            return [parent webFrame];
+        }
+        else{
             return self;
         }
-    }else{
-        return [[self controller] frameNamed:name];
     }
+    
+    else if ([name isEqualToString:@"_blank"]){
+        id<IFWebController> newController = [[self controller] openNewWindowWithURL: nil];
+        return [newController mainFrame];
+    }
+    
+    // Now search the namespace associated with this frame's controller.
+    int i, count;
+    IFWebFrame *aFrame, *foundFrame;
+    NSArray *children;
+
+    aFrame = [[self controller] mainFrame];
+    if ([[aFrame name] isEqualToString: name])
+        return self;
+
+    children = [[aFrame dataSource] children];
+    count = [children count];
+    for (i = 0; i < count; i++){
+        aFrame = [children objectAtIndex: i];
+        foundFrame = [aFrame frameNamed: name];
+        if (foundFrame)
+            return foundFrame;
+    }
+    
+    // FIXME:  Need to look in other controller's frame namespaces.
+
+    // FIXME:  What do we do if a frame name isn't found?  create a new window
+    
+    return nil;
 }
 
 @end

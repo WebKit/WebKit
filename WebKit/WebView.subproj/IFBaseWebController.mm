@@ -212,26 +212,9 @@
 }
 
 
-- (IFWebFrame *)_frameNamed: (NSString *)name fromFrame: (IFWebFrame *)frame
-{
-    if ([[frame name] isEqualToString: name])
-        return frame;
-
-    int i, count;
-    IFWebFrame *aFrame;
-    NSArray *children = [[frame dataSource] children];
-    count = [children count];
-    for (i = 0; i < count; i++){
-        aFrame = [children objectAtIndex: i];
-        if ([self _frameNamed: name fromFrame: aFrame])
-            return aFrame;
-    }
-    return nil;
-}
-
 - (IFWebFrame *)frameNamed: (NSString *)name
 {
-    return [self _frameNamed: name fromFrame: [self mainFrame]];
+    return [[self mainFrame] frameNamed: name];
 }
 
 - (IFWebFrame *)mainFrame
