@@ -1214,7 +1214,7 @@ int RenderTableSection::layoutRows( int toAdd )
                 rowPos[r+1] += add;
 	    }
 	}
-        if (dh>0) {
+        if (dh>0 && rowPos[totalRows]) {
 	    // if some left overs, distribute equally.
             int tot=rowPos[totalRows];
             int add=0;

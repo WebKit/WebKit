@@ -2,6 +2,15 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3834230> empty table can result in division by 0
+
+        * khtml/rendering/render_table.cpp: (RenderTableSection::layoutRows):
+        Added 0 check; rolled in from KDE.
+
+2004-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3818712> form checkbox value property is read only
 
         The underlying problem was that we were storing two separate values for all
