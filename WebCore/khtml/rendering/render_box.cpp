@@ -441,7 +441,7 @@ void RenderBox::repaint(bool immediate)
 {
     //kdDebug( 6040 ) << "repaint!" << endl;
     int ow = style() ? style()->outlineWidth() : 0;
-    repaintRectangle(-ow, -ow, m_width+ow*2, m_height+ow*2, immediate);
+    repaintRectangle(-ow, -ow, overflowWidth()+ow*2, overflowHeight()+ow*2, immediate);
 }
 
 void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)

@@ -672,6 +672,12 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 m_maxTopPosMargin = oldPosMargin;
                 m_maxTopNegMargin = oldNegMargin;
             }
+            
+            // If our value of clear caused us to be repositioned vertically to be
+            // underneath a float, we have to do another layout to take into account
+            // the extra space we now have available.
+            child->setLayouted(false);
+            child->layout();
         }
         
         // Reset the top margin contributor to false if we encountered

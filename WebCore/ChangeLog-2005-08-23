@@ -1,3 +1,15 @@
+2002-12-16  David Hyatt  <hyatt@apple.com>
+
+	When a clear occurs (thus causing a block to move underneath
+	a float), make sure the block gets a fresh layout, so that it
+	can readjust its contents now that they don't have to flow
+	around the float.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+
 2002-12-16  Richard Williamson   <rjw@apple.com>
 
         Fixed 3128477.  Check KJS::Window before saving js objects.
