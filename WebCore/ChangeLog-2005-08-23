@@ -1,3 +1,16 @@
+2004-07-20  David Hyatt  <hyatt@apple.com>
+
+	Fix for alt text not working on images.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::RenderImage):
+        (RenderImage::setPixmap):
+        (RenderImage::paint):
+        (RenderImage::calcReplacedWidth):
+        (RenderImage::calcReplacedHeight):
+
 2004-07-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
