@@ -315,8 +315,10 @@ static QRect enclosingPositionedRect (RenderObject *n)
 QRect RenderRoot::selectionRect() const
 {
     RenderObject *r = m_selectionStart;
+    if (!r)
+        return QRect();
+    
     QRect selectionRect = enclosingPositionedRect(r);
-
     while (r && r != m_selectionEnd)
     {
         RenderObject* n;

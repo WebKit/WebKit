@@ -203,6 +203,9 @@ public:
     
     void setMediaType(const QString &);
 
+    void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }
+    bool usesInactiveTextBackgroundColor() const { return _usesInactiveTextBackgroundColor; }
+
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);
@@ -252,6 +255,8 @@ private:
     static QPtrList<KWQKHTMLPart> &mutableInstances();
 
     KWQWindowWidget *_windowWidget;
+    
+    bool _usesInactiveTextBackgroundColor;
 
     friend class KHTMLPart;
 };

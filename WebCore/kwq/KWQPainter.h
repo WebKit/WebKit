@@ -98,8 +98,10 @@ public:
                   const QColor& backgroundColor, QPainter::TextDirection d,
                   int letterSpacing, int wordSpacing, bool smallCaps);
     void drawLineForText(int x, int y, int yOffset, int width);
-    static QColor selectedTextBackgroundColor();
-    
+
+    QColor selectedTextBackgroundColor() const;
+    void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }
+
     bool paintingDisabled() const;
     void setPaintingDisabled(bool);
         
@@ -117,6 +119,7 @@ private:
 
     QPainterPrivate *data;
     bool _isForPrinting;
+    bool _usesInactiveTextBackgroundColor;
 };
 
 #endif

@@ -81,7 +81,7 @@ void TextRun::paintSelection(const Font *f, RenderText *text, QPainter *p, Rende
 #if APPLE_CHANGES
     // Macintosh-style text highlighting is to draw with a particular background color, not invert.
     QColor textColor = style->color();
-    QColor c = QPainter::selectedTextBackgroundColor();
+    QColor c = p->selectedTextBackgroundColor();
     if (textColor == c)
         c = QColor(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 

@@ -378,6 +378,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
 - (void)drawRect:(NSRect)rect
 {
     QPainter painter(nowPrinting(self));
+    painter.setUsesInactiveTextBackgroundColor(_part->usesInactiveTextBackgroundColor());
     [self drawRect:rect withPainter:&painter];
 }
 
@@ -809,12 +810,15 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 
 - (NSRect)selectionRect
 {
-    NSView *view = _part->view()->getDocumentView();
+    KHTMLView *view = _part->view();
     if (!view) {
         return NSZeroRect;
     }
-
-    return NSIntersectionRect(NSRect(_part->selectionRect()), [view visibleRect]); 
+    NSView *documentView = view->getDocumentView();
+    if (!documentView) {
+        return NSZeroRect;
+    }
+    return NSIntersectionRect(_part->selectionRect(), [documentView visibleRect]); 
 }
 
 - (NSImage *)selectionImage
@@ -909,6 +913,16 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 - (NSString *)renderTreeAsExternalRepresentation
 {
     return externalRepresentation(_part->renderer()).getNSString();
+}
+
+- (void)setUsesInactiveTextBackgroundColor:(BOOL)uses
+{
+    _part->setUsesInactiveTextBackgroundColor(uses);
+}
+
+- (BOOL)usesInactiveTextBackgroundColor
+{
+    return _part->usesInactiveTextBackgroundColor();
 }
 
 @end

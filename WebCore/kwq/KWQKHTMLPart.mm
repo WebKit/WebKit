@@ -141,6 +141,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _formValuesAboutToBeSubmitted(nil)
     , _formAboutToBeSubmitted(nil)
     , _windowWidget(NULL)
+    , _usesInactiveTextBackgroundColor(false)
 {
     // Must init the cache before connecting to any signals
     Cache::init();

@@ -74,9 +74,7 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
 
 - (id)init
 {
-    self = [super init];
-    _private = [[WebHistoryItemPrivate alloc] init];
-    return self;
+    return [self initWithURLString:nil title:nil lastVisitedTimeInterval:0];
 }
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
@@ -243,17 +241,16 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
 
 - (id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
-    self = [self init];
-    [self setURL:URL];
-    _private->title = [title copy];
-    return self;
+    return [self initWithURLString:[URL absoluteString] title:title lastVisitedTimeInterval:0];
 }
 
 - (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
 {
-    self = [self initWithURL:URL title:title];
-    _private->target = [target copy];
-    _private->parent = [parent copy];
+    self = [self initWithURLString:[URL absoluteString] title:title lastVisitedTimeInterval:0];
+    if (self) {
+        _private->target = [target copy];
+        _private->parent = [parent copy];
+    }
     return self;
 }
 

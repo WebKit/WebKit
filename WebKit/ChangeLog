@@ -1,3 +1,31 @@
+2003-05-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3127927 -- web view should not use primary selection color when it's not first responder
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateTextBackgroundColor]): Added. Sets the usesInactiveTextBackgroundColor flag
+        on the bridge, and does setNeedsDisplayInRect: of the selectionRect if the state changes.
+        (-[WebHTMLView viewDidMoveToWindow]): Call updateTextBackgroundColor.
+        (-[WebHTMLView windowDidBecomeKey:]): Call updateTextBackgroundColor.
+        (-[WebHTMLView windowDidResignKey:]): Call updateTextBackgroundColor.
+        (-[WebHTMLView becomeFirstResponder]): Call updateTextBackgroundColor.
+        (-[WebHTMLView resignFirstResponder]): Call updateTextBackgroundColor.
+
+        - fixed up WebHistoryItem initializers so there is a designated initializer
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem init]): Call initWithURLString:title:lastVisitedTimeInterval:,
+        which is the designated initializer.
+        (-[WebHistoryItem initWithURL:title:]): Ditto.
+        (-[WebHistoryItem initWithURL:target:parent:title:]): Ditto.
+
+        - other changes
+
+        * History.subproj/WebHistoryPrivate.m: (-[WebHistoryPrivate addItem:]): Fixed assertion
+        to not use _lastVisitedDate; we're trying to get rid of calls to that method.
+
 2003-05-07  Vicki Murley  <vicki@apple.com>
 
         Reviewed by darin.

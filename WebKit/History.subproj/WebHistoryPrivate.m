@@ -145,7 +145,8 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     int dateIndex;
     NSString *URLString;
 
-    ASSERT_ARG(entry, [entry _lastVisitedDate] != nil);
+    ASSERT_ARG(entry, entry);
+    ASSERT_ARG(entry, [entry lastVisitedTimeInterval] != 0);
 
 #ifdef FIX_VISITED
     URLString = [[[entry URL] _web_canonicalize] absoluteString];

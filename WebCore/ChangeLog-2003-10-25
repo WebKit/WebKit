@@ -1,3 +1,33 @@
+2003-05-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3127927 -- web view should not use primary selection color when it's not first responder
+
+        * kwq/WebCoreBridge.h: Added usesInactiveTextBackgroundColor getter and setter.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:]): Set the QPainter's usesInactiveTextBackgroundColor to match the
+        value from the part.
+        (-[WebCoreBridge selectionRect]): Fix nil-deref that happened in the no-KHTMLView case.
+        (-[WebCoreBridge setUsesInactiveTextBackgroundColor:]): Added.
+        (-[WebCoreBridge usesInactiveTextBackgroundColor]): Added.
+
+        * kwq/KWQKHTMLPart.h: Added usesInactiveTextBackgroundColor, including getter and setter.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::KWQKHTMLPart): Initialize usesInactiveTextBackgroundColor.
+
+        * kwq/KWQPainter.h: Added setUsesInactiveTextBackgroundColor and made selectedTextBackgroundColor
+        a const member function, not a static one.
+        * kwq/KWQPainter.mm:
+        (QPainter::QPainter): Initialize _usesInactiveTextBackgroundColor to false.
+        (QPainter::selectedTextBackgroundColor): Return secondarySelectedControlColor instead of
+        selectedTextBackgroundColor if _usesInactiveTextBackgroundColor is true.
+
+        * khtml/rendering/render_text.cpp: (TextRun::paintSelection): Call selectedTextBackgroundColor
+        on the painter object; it's no longer a static member function.
+
+        * khtml/rendering/render_root.cpp: (RenderRoot::selectionRect): Fix nil-deref that happened
+        in the no-selection case.
+
 2003-05-07  Vicki Murley  <vicki@apple.com>
 
         Reviewed by darin.
@@ -1407,7 +1437,6 @@
 	Return a nil for a null element instead of croaking.
         (-[WebCoreDOMNode initWithImpl:DOM::]):  Ditto.
 
->>>>>>> 1.1620
 2003-04-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
@@ -9024,9 +9053,7 @@ lowed. :)
 	Fixed: 3131267 - REGRESSION: Java 1.4.1 Applets Restarted When Window is Resized
 	Fixed: 3131244 - REGRESSION: Java 1.4.1 Multiple Copies of Applet Started When Window is Resized
 
-	Dave recently patched khtml with a fix for media content inside of table cells. The patch causes the java widget to get the layout call more than once. Calling layout more than once is perfectly allowed, but the java widget wasn't prepared for that and w
-
-ould create a new java view for each layout. We now only create a java view when the java view hasn't already been created.
+	Dave recently patched khtml with a fix for media content inside of table cells. The patch causes the java widget to get the layout call more than once. Calling layout more than once is perfectly allowed, but the java widget wasn't prepared for that and would create a new java view for each layout. We now only create a java view when the java view hasn't already been created.
 
         Reviewed by darin.
 

@@ -56,13 +56,12 @@ struct QPainterPrivate {
     QFont textRendererFont;
 };
 
-QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false)
+QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false)
 {
 }
 
-QPainter::QPainter(bool forPrinting) : data(new QPainterPrivate)
+QPainter::QPainter(bool forPrinting) : data(new QPainterPrivate), _isForPrinting(forPrinting), _usesInactiveTextBackgroundColor(false)
 {
-    _isForPrinting = forPrinting;
 }
 
 QPainter::~QPainter()
@@ -527,9 +526,10 @@ void QPainter::drawLineForText(int x, int y, int yOffset, int width)
              withColor:data->state.pen.color().getNSColor()];
 }
 
-QColor QPainter::selectedTextBackgroundColor()
+QColor QPainter::selectedTextBackgroundColor() const
 {
-    NSColor *color = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    NSColor *color = _usesInactiveTextBackgroundColor ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
+    color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
     return QColor((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
 }
 

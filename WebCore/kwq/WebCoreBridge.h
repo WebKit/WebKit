@@ -150,6 +150,9 @@ enum FrameBorderStyle {
 - (void)drawRect:(NSRect)rect;
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit;
 
+- (void)setUsesInactiveTextBackgroundColor:(BOOL)uses;
+- (BOOL)usesInactiveTextBackgroundColor;
+
 - (void)mouseDown:(NSEvent *)event;
 - (void)mouseUp:(NSEvent *)event;
 - (void)mouseMoved:(NSEvent *)event;

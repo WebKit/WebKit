@@ -135,6 +135,17 @@
     return YES;
 }
 
+- (void)updateTextBackgroundColor
+{
+    NSWindow *window = [self window];
+    BOOL shouldUseInactiveTextBackgroundColor = !([window isKeyWindow] && [window firstResponder] == self);
+    WebBridge *bridge = [self _bridge];
+    if ([bridge usesInactiveTextBackgroundColor] != shouldUseInactiveTextBackgroundColor) {
+        [bridge setUsesInactiveTextBackgroundColor:shouldUseInactiveTextBackgroundColor];
+        [self setNeedsDisplayInRect:[bridge selectionRect]];
+    }
+}
+
 - (void)addMouseMovedObserver
 {
     if ([[self window] isKeyWindow] && ![self _insideAnotherHTMLView]) {
@@ -234,6 +245,7 @@
         [self addWindowObservers];
         [self addSuperviewObservers];
         [self addMouseMovedObserver];
+        [self updateTextBackgroundColor];
 
         [[self _pluginController] startAllPlugins];
 
@@ -604,12 +616,14 @@
 {
     ASSERT([notification object] == [self window]);
     [self addMouseMovedObserver];
+    [self updateTextBackgroundColor];
 }
 
 - (void)windowDidResignKey: (NSNotification *)notification
 {
     ASSERT([notification object] == [self window]);
     [self removeMouseMovedObserver];
+    [self updateTextBackgroundColor];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -778,7 +792,8 @@
     }
     if (view) {
         [[self window] makeFirstResponder:view];
-    } 
+    }
+    [self updateTextBackgroundColor];
     return YES;
 }
 
@@ -788,6 +803,7 @@
     BOOL resign = [super resignFirstResponder];
     if (resign) {
         [self deselectAll];
+        [self updateTextBackgroundColor];
     }
     return resign;
 }
