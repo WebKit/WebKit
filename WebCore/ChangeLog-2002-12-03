@@ -1,3 +1,26 @@
+2002-10-16  David Hyatt  <hyatt@apple.com>
+
+	When render objects were being dynamically wrapped in anonymous
+	blocks, the layer parenting connection was being broken without
+	being reconnected when the wrapping finished.  This patch
+	shifts the layer connection into the functions that are also
+	called in the dynamic case.
+
+	With this fix, all objects on mrskin finally show up.  Yeehah.
+	brainjar.com's brain is back too.
+
+	This patch also stops treating images as inline if they are
+	using abs/fixed positioning, since according to the CSS spec,
+	abs/fixed positioned elements should be treated as block-level
+	content.
+	
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::addChild):
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setStyle):
+
 2002-10-16  Darin Adler  <darin@apple.com>
 
 	- fixed 3045570 -- can't select a printer at inkfinder.com

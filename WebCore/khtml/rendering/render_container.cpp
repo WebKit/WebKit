@@ -134,10 +134,6 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
     }
     newChild->setLayouted( false );
     newChild->setMinMaxKnown( false );
-
-    // Keep our layer hierarchy updated.
-    if (newChild->layer())
-        enclosingLayer()->addChild(newChild->layer());
 }
 
 RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
@@ -252,6 +248,10 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     setLastChild(newChild);
     newChild->setLayouted( false );
     newChild->setMinMaxKnown( false );
+    
+    // Keep our layer hierarchy updated.
+    if (newChild->layer())
+        enclosingLayer()->addChild(newChild->layer());
 }
 
 void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild)
@@ -278,6 +278,12 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     child->setParent(this);
     child->setLayouted( false );
     child->setMinMaxKnown( false );
+    
+    // Keep our layer hierarchy updated.
+    // XXX Need this to do an insertion and really find the right place to
+    // put the new layer. -dwh
+    if (child->layer())
+        enclosingLayer()->addChild(child->layer());
 }
 
 
