@@ -27,19 +27,25 @@
  *
  * Revision 2 (March 10, 2004):
  * All calls into JavaScript were made asynchronous.  Results are
- * provided via the NP_JavaScriptResultInterface callback.
+ * provided via the NP_JavaScriptResultFunctionPtr callback.
  *
  * Revision 3 (March 10, 2004):
- * Corrected comments to not refer to class retain/release interfaces.
+ * Corrected comments to not refer to class retain/release FunctionPtrs.
  *
  * Revision 4 (March 11, 2004):
- * Added additional convenience NP_SetExceptionWithUTF8().
- * Changed NP_HasPropertyInterface and NP_HasMethodInterface to take NP_Class
- * pointers instead of NP_Object pointers.
+ * Added additional convenience NPN_SetExceptionWithUTF8().
+ * Changed NP_HasPropertyFunctionPtr and NP_HasMethodFunctionPtr to take NPClass
+ * pointers instead of NPObject pointers.
  * Added NP_IsValidIdentifier().
  *
  * Revision 5 (March 17, 2004):
  * Added context parameter to result callbacks from JavaScriptObject functions.
+ *
+ * Revision 6 (March 29, 2004):
+ * Renamed functions implemented by user agent to NPN_*.  Removed _ from
+ * type names.
+ * Renamed "JavaScript" types to "Script".
+ *
  */
 #ifndef _NP_RUNTIME_H_
 #define _NP_RUNTIME_H_
@@ -57,306 +63,309 @@ extern "C" {
     
     The following NP-SAP entry points were added to the Netscape plugin API:
 
-    typedef NP_Object *(*NPP_GetNativeObjectForJavaScript) (NPP instance);
-    typedef NP_JavaScriptObject *(*NPN_GetWindowJavaScriptObject) (NPP instance);
-    typedef NP_JavaScriptObject *(*NPN_GetInstanceJavaScriptObject) (NPP instance);
+    typedef NPObject *(*NPP_GetNativeObjectForJavaScript) (NPP instance);
+    typedef NPScriptObject *(*NPN_GetWindowJavaScriptObject) (NPP instance);
+    typedef NPScriptObject *(*NPN_GetInstanceJavaScriptObject) (NPP instance);
     
-    See NP_SAP.h for more details regarding the above Interfaces.
+    See NP_SAP.h for more details regarding the above FunctionPtrs.
 */
 
 
 /*
-    Data passed between 'C' and JavaScript is always wrapped in an NP_Object.
-    The interface on an NP_Object is described by an NP_Class.
+    Data passed between 'C' and JavaScript is always wrapped in an NPObject.
+    The FunctionPtr on an NPObject is described by an NPClass.
 */
-typedef struct NP_Object NP_Object;
-typedef struct NP_Class NP_Class;
+typedef struct NPObject NPObject;
+typedef struct NPClass NPClass;
 
 /*
-    A NP_JavaScriptObject wraps a JavaScript Object in an NP_Object.
+    A NPScriptObject wraps a JavaScript Object in an NPObject.
 */
-typedef NP_Object NP_JavaScriptObject;
+typedef NPObject NPScriptObject;
 
 /*
 	Type mappings:
 
 	JavaScript		to			C
-	Boolean						NP_Boolean	
-	Number						NP_Number
-	String						NP_String
-	Undefined					NP_Undefined
-	Null						NP_Null
-	Object (including Array)	NP_JavaScriptObject
-	Object wrapper              NP_Object
+	Boolean						NPBoolean	
+	Number						NPNumber
+	String						NPString
+	Undefined					NPUndefined
+	Null						NPNull
+	Object (including Array)	NPScriptObject
+	Object wrapper              NPObject
 
 
 	C				to			JavaScript
-	NP_Boolean					Boolean	
-	NP_Number					Number
-	NP_String					String
-	NP_Undefined				Undefined
-	NP_Null						Null
-	NP_Array					Array (restricted)
-	NP_JavaScriptObject			Object
-	other NP_Object             Object wrapper
+	NPBoolean					Boolean	
+	NPNumber					Number
+	NPString					String
+	NPUndefined				Undefined
+	NPNull						Null
+	NPArray					Array (restricted)
+	NPScriptObject			Object
+	other NPObject             Object wrapper
 
 */
 
-typedef uint32_t NP_Identifier;
+typedef uint32_t NPIdentifier;
 
 /*
-    NP_UTF8 strings are null terminated.
+    NPUTF8 strings are null terminated.
 */
-typedef char NP_UTF8;
-
-typedef uint16_t NP_UTF16;
+typedef char NPUTF8;
 
 /*
-    NP_Objects have methods and properties.  Methods and properties are named with NP_Identifiers.
-    These identifiers may be reflected in JavaScript.  NP_Identifiers can be compared using ==.
+    NPObjects have methods and properties.  Methods and properties are named with NPIdentifiers.
+    These identifiers may be reflected in JavaScript.  NPIdentifiers can be compared using ==.
     
     NP_IsValidIdentifier will return true if an identifier for the name has already been
-    assigned with either NP_IdentifierFromUTF8() or NP_GetIdentifiers();
+    assigned with either NPIdentifierFromUTF8() or NP_GetIdentifiers();
 */
-NP_Identifier NP_IdentifierFromUTF8 (const NP_UTF8 *name);
-bool NP_IsValidIdentifier (const NP_UTF8 *name);
-void NP_GetIdentifiers (const NP_UTF8 **names, int nameCount, NP_Identifier *identifiers);
+NPIdentifier NPN_IdentifierFromUTF8 (const NPUTF8 *name);
+bool NPN_IsValidIdentifier (const NPUTF8 *name);
+void NPN_GetIdentifiers (const NPUTF8 **names, int nameCount, NPIdentifier *identifiers);
 
 /*
-    The returned NP_UTF8 should NOT be freed.
+    The returned NPUTF8 should NOT be freed.
 */
-const NP_UTF8 *NP_UTF8FromIdentifier (NP_Identifier identifier);
+const NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier);
 
 /*
-    NP_Object behavior is implemented using the following set of callback interfaces.
+    NPObject behavior is implemented using the following set of callback FunctionPtrs.
 */
-typedef NP_Object *(*NP_AllocateInterface)();
-typedef void (*NP_DeallocateInterface)(NP_Object *obj);
-typedef void (*NP_InvalidateInterface)();
-typedef bool (*NP_HasMethodInterface)(NP_Class *theClass, NP_Identifier name);
-typedef NP_Object *(*NP_InvokeInterface)(NP_Object *obj, NP_Identifier name, NP_Object **args, unsigned argCount);
-typedef bool (*NP_HasPropertyInterface)(NP_Class *theClass, NP_Identifier name);
-typedef NP_Object *(*NP_GetPropertyInterface)(NP_Object *obj, NP_Identifier name);
-typedef void (*NP_SetPropertyInterface)(NP_Object *obj, NP_Identifier name, NP_Object *value);
+typedef NPObject *(*NPAllocateFunctionPtr)();
+typedef void (*NPDeallocateFunctionPtr)(NPObject *obj);
+typedef void (*NPInvalidateFunctionPtr)();
+typedef bool (*NPHasMethodFunctionPtr)(NPClass *theClass, NPIdentifier name);
+typedef NPObject *(*NPInvokeFunctionPtr)(NPObject *obj, NPIdentifier name, NPObject **args, unsigned argCount);
+typedef bool (*NPHasPropertyFunctionPtr)(NPClass *theClass, NPIdentifier name);
+typedef NPObject *(*NPGetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name);
+typedef void (*NPSetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, NPObject *value);
 
 /*
-    NP_Objects returned by create, retain, invoke, and getProperty 
+    NPObjects returned by create, retain, invoke, and getProperty 
     pass a reference count to the caller.  That is, the callee adds a reference
     count which passes to the caller.  It is the caller's responsibility
     to release the returned object.
 
-    NP_InvokeInterface Interfaces may return 0 to indicate a void result.
+    NPInvokeFunctionPtr FunctionPtrs may return 0 to indicate a void result.
     
-    NP_InvalidateInterface is called by the plugin container when the plugin is
-    shutdown.  Any attempt to message a NP_JavaScriptObject instance after the invalidate
-    interface has been called will result in undefined behavior, even if the
-    plugin is still retaining those NP_JavaScriptObject instances.
+    NPInvalidateFunctionPtr is called by the plugin container when the plugin is
+    shutdown.  Any attempt to message a NPScriptObject instance after the invalidate
+    FunctionPtr has been called will result in undefined behavior, even if the
+    plugin is still retaining those NPScriptObject instances.
     (The runtime will typically return immediately, with 0 or NULL, from an attempt to
-    dispatch to a NP_JavaScriptObject, but this behavior should not be depended upon.)
+    dispatch to a NPScriptObject, but this behavior should not be depended upon.)
 */
-struct NP_Class
+struct NPClass
 {
-    int32_t structVersion;
-    NP_AllocateInterface allocate;
-    NP_DeallocateInterface deallocate;
-    NP_InvalidateInterface invalidate;
-    NP_HasMethodInterface hasMethod;
-    NP_InvokeInterface invoke;
-    NP_HasPropertyInterface hasProperty;
-    NP_GetPropertyInterface getProperty;
-    NP_SetPropertyInterface setProperty;
+    uint32_t structVersion;
+    NPAllocateFunctionPtr allocate;
+    NPDeallocateFunctionPtr deallocate;
+    NPInvalidateFunctionPtr invalidate;
+    NPHasMethodFunctionPtr hasMethod;
+    NPInvokeFunctionPtr invoke;
+    NPHasPropertyFunctionPtr hasProperty;
+    NPGetPropertyFunctionPtr getProperty;
+    NPSetPropertyFunctionPtr setProperty;
 };
-typedef struct NP_Class NP_Class;
+typedef struct NPClass NPClass;
 
-#define kNP_ClassStructVersion1 1
-#define kNP_ClassStructVersionCurrent kNP_ClassStructVersion1
+#define kNPClassStructVersion1 1
+#define kNPClassStructVersionCurrent kNPClassStructVersion1
 
-struct NP_Object {
-    NP_Class *_class;
+struct NPObject {
+    NPClass *_class;
     uint32_t referenceCount;
-    // Additional space may be allocated here by types of NP_Objects
+    // Additional space may be allocated here by types of NPObjects
 };
 
 /*
-    If the class has an allocate interface this function invokes that interface,
-    otherwise a NP_Object is allocated and returned.  If a class has an allocate
-    interface it is the responsibility of that interface to set the initial retain
+    If the class has an allocate FunctionPtr this function invokes that FunctionPtr,
+    otherwise a NPObject is allocated and returned.  If a class has an allocate
+    FunctionPtr it is the responsibility of that FunctionPtr to set the initial retain
     count to 1.
 */
-NP_Object *NP_CreateObject (NP_Class *aClass);
+NPObject *NPN_CreateObject (NPClass *aClass);
 
 /*
-    Increment the NP_Object's reference count.
+    Increment the NPObject's reference count.
 */
-NP_Object *NP_RetainObject (NP_Object *obj);
+NPObject *NPN_RetainObject (NPObject *obj);
 
 /*
-    Decremented the NP_Object's reference count.  If the reference
-    count goes to zero, the class's destroy interface is invoke if
+    Decremented the NPObject's reference count.  If the reference
+    count goes to zero, the class's destroy FunctionPtr is invoke if
     specified, otherwise the object is free()ed directly.
 */
-void NP_ReleaseObject (NP_Object *obj);
+void NPN_ReleaseObject (NPObject *obj);
 
 /*
-    Built-in data types.  These classes can be passed to NP_IsKindOfClass().
+    Built-in data types.  These classes can be passed to NPN_IsKindOfClass().
 */
-extern NP_Class *NP_BooleanClass;
-extern NP_Class *NP_NullClass;
-extern NP_Class *NP_UndefinedClass;
-extern NP_Class *NP_ArrayClass;
-extern NP_Class *NP_NumberClass;
-extern NP_Class *NP_StringClass;
-extern NP_Class *NP_JavaScriptObjectClass;
+extern NPClass *NPBooleanClass;
+extern NPClass *NPNullClass;
+extern NPClass *NPUndefinedClass;
+extern NPClass *NPArrayClass;
+extern NPClass *NPNumberClass;
+extern NPClass *NPStringClass;
+extern NPClass *NPScriptObjectClass;
 
-typedef NP_Object NP_Boolean;
-typedef NP_Object NP_Null;
-typedef NP_Object NP_Undefined;
-typedef NP_Object NP_Array;
-typedef NP_Object NP_Number;
-typedef NP_Object NP_String;
+typedef NPObject NPBoolean;
+typedef NPObject NPNull;
+typedef NPObject NPUndefined;
+typedef NPObject NPArray;
+typedef NPObject NPNumber;
+typedef NPObject NPString;
 
 /*
-    Functions to access JavaScript Objects represented by NP_JavaScriptObject.
+    Functions to access JavaScript Objects represented by NPScriptObject.
     
     Calls to JavaScript objects are asynchronous.  If a function returns a value, it
-    will be supplied via the NP_JavaScriptResultInterface callback.
+    will be supplied via the NP_JavaScriptResultFunctionPtr callback.
     
     Calls made from plugin code to JavaScript may be made from any thread.
     
     Calls made from JavaScript to the plugin will always be made on the main
-    user agent thread, this include calls to NP_JavaScriptResultInterface callbacks.
+    user agent thread, this include calls to NP_JavaScriptResultFunctionPtr callbacks.
 */
-typedef void (*NP_JavaScriptResultInterface)(NP_Object *obj, void *resultContext);
+typedef void (*NPScriptResultFunctionPtr)(NPObject *obj, void *resultContext);
 
-void NP_Call (NP_JavaScriptObject *obj, NP_Identifier methodName, NP_Object **args, unsigned argCount, NP_JavaScriptResultInterface resultCallback);
-void NP_Evaluate (NP_JavaScriptObject *obj, NP_String *script, NP_JavaScriptResultInterface resultCallback, void *resultContext);
-void NP_GetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_JavaScriptResultInterface resultCallback, void *resultContext);
-void NP_SetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_Object *value);
-void NP_RemoveProperty (NP_JavaScriptObject *obj, NP_Identifier propertyName);
-void NP_ToString (NP_JavaScriptObject *obj, NP_JavaScriptResultInterface result, void *resultContext);
-void NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, int32_t index, NP_JavaScriptResultInterface resultCallback, void *resultContext);
-void NP_SetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned index, NP_Object *value);
+void NPN_Call (NPScriptObject *obj, NPIdentifier methodName, NPObject **args, unsigned argCount, NPScriptResultFunctionPtr resultCallback);
+void NPN_Evaluate (NPScriptObject *obj, NPString *script, NPScriptResultFunctionPtr resultCallback, void *resultContext);
+void NPN_GetProperty (NPScriptObject *obj, NPIdentifier  propertyName, NPScriptResultFunctionPtr resultCallback, void *resultContext);
+void NPN_SetProperty (NPScriptObject *obj, NPIdentifier  propertyName, NPObject *value);
+void NPN_RemoveProperty (NPScriptObject *obj, NPIdentifier propertyName);
+void NPN_ToString (NPScriptObject *obj, NPScriptResultFunctionPtr result, void *resultContext);
+void NPN_GetPropertyAtIndex (NPScriptObject *obj, int32_t index, NPScriptResultFunctionPtr resultCallback, void *resultContext);
+void NPN_SetPropertyAtIndex (NPScriptObject *obj, unsigned index, NPObject *value);
 
 /*
     Functions for dealing with data types.
 */
-NP_Number *NP_CreateNumberWithInt (int i);
-NP_Number *NP_CreateNumberWithFloat (float f);
-NP_Number *NP_CreateNumberWithDouble (double d);
-int NP_IntFromNumber (NP_Number *obj);
-float NP_FloatFromNumber (NP_Number *obj);
-double NP_DoubleFromNumber (NP_Number *obj);
-
-NP_String *NP_CreateStringWithUTF8 (const NP_UTF8 *utf8String);
-NP_String *NP_CreateStringWithUTF16 (const NP_UTF16 *utf16String, unsigned int len);
+NPNumber *NPN_CreateNumberWithInt (int i);
+NPNumber *NPN_CreateNumberWithFloat (float f);
+NPNumber *NPN_CreateNumberWithDouble (double d);
+int NPN_IntFromNumber (NPNumber *obj);
+float NPN_FloatFromNumber (NPNumber *obj);
+double NPN_DoubleFromNumber (NPNumber *obj);
 
 /*
-    Memory returned from NP_UTF8FromString must be deallocated
+    NPN_CreateStringWithUTF8() takes a UTF8 string and length.  -1 may be passed for the
+    length if the string is null terminated.
+*/
+NPString *NPN_CreateStringWithUTF8 (const NPUTF8 *utf8String, int32_t length);
+
+/*
+    Memory returned from NPUTF8FromString must be deallocated
     by calling NP_DeallocateUTF8.
 */
-NP_UTF8 *NP_UTF8FromString (NP_String *obj);
-void NP_DeallocateUTF8 (NP_UTF8 *UTF8Buffer);
-NP_UTF16 *NP_UTF16FromString (NP_String *obj);
-int32_t NP_StringLength (NP_String *obj);
+NPUTF8 *NPN_UTF8FromString (NPString *obj);
+void NPN_DeallocateUTF8 (NPUTF8 *UTF8Buffer);
+int32_t NPN_StringLength (NPString *obj);
 
-NP_Boolean *NP_CreateBoolean (bool f);
-bool NP_BoolFromBoolean (NP_Boolean *aBool);
+NPBoolean *NPN_CreateBoolean (bool f);
+bool NPN_BoolFromBoolean (NPBoolean *aBool);
 
 /*
-    NP_Null returns a NP_Null singleton.
+    NPNull returns a NPNull singleton.
 */
-NP_Null *NP_GetNull();
+NPNull *NPN_GetNull();
 
 /*
-    NP_Undefined returns a NP_Undefined singleton.
+    NPUndefined returns a NPUndefined singleton.
 */
-NP_Undefined *NP_GetUndefined();
+NPUndefined *NPN_GetUndefined ();
 
 /*
-    NP_Arrays are immutable.  They are used to pass arguments to 
-    JavaScription Interfaces that expect arrays, or to export 
-    arrays of properties.  NP_Array is represented in JavaScript
+    NPArrays are immutable.  They are used to pass arguments to 
+    JavaScription FunctionPtrs that expect arrays, or to export 
+    arrays of properties.  NPArray is represented in JavaScript
     by a restricted Array.  The Array in JavaScript is read-only,
     only has index accessors, and may not be resized.
     
     Objects added to arrays are retained by the array.
 */
-NP_Array *NP_CreateArray (NP_Object **, int32_t count);
-NP_Array *NP_CreateArrayV (int32_t count, ...);
+NPArray *NPN_CreateArray (NPObject **, int32_t count);
+NPArray *NPN_CreateArrayV (int32_t count, ...);
 
 /*
-    Objects returned by NP_ObjectAtIndex pass a reference count
+    Objects returned by NPN_ObjectAtIndex pass a reference count
     to the caller.  The caller must release the object.
 */
-NP_Object *NP_ObjectAtIndex (NP_Array *array, int32_t index);
+NPObject *NPN_ObjectAtIndex (NPArray *array, int32_t index);
 
 /*
     Returns true if the object is a kind of class as specified by
     aClass.
 */
-bool NP_IsKindOfClass (const NP_Object *obj, const NP_Class *aClass);
+bool NPN_IsKindOfClass (const NPObject *obj, const NPClass *aClass);
 
 /*
-    NP_SetException may be called to trigger a JavaScript exception upon return
-    from entry points into NP_Objects.  A reference count of the message passes
+    NPN_SetException may be called to trigger a JavaScript exception upon return
+    from entry points into NPObjects.  A reference count of the message passes
     to the callee.  Typical usage:
 
-    NP_String *message = NP_CreateStringWithUTF8("invalid type");
-    NP_SetException (obj, mesage);
+    NPString *message = NP_CreateStringWithUTF8("invalid type");
+    NPN_SetException (obj, mesage);
     NP_ReleaseObject (message);
+    
+    NPN_SetExceptionWithUTF8() take an UTF8 string and a length.  -1 may be passed for
+    the length if the string is null terminated.
 */
-void NP_SetExceptionWithUTF8 (NP_Object *obj, const NP_UTF8 *message);
-void NP_SetException (NP_Object *obj, NP_String *message);
+void NPN_SetExceptionWithUTF8 (NPObject *obj, const NPUTF8 *message, int32_t length);
+void NPN_SetException (NPObject *obj, NPString *message);
 
 /*
     Example usage:
     
-    typedef NP_Object MyInterfaceObject;
+    typedef NPObject MyFunctionPtrObject;
 
     typedef struct
     {
-        NP_Object object;
-        // Properties needed by MyInterfaceObject are added here.
+        NPObject object;
+        // Properties needed by MyFunctionPtrObject are added here.
         int numChapters;
         ...
-    } MyInterfaceObject
+    } MyFunctionPtrObject
 
-    void stop(MyInterfaceObject *obj)
+    void stop(MyFunctionPtrObject *obj)
     {
         ...
     }
 
-    void start(MyInterfaceObject *obj)
+    void start(MyFunctionPtrObject *obj)
     {
         ...
     }
 
-    void setChapter(MyInterfaceObject *obj, int chapter)
+    void setChapter(MyFunctionPtrObject *obj, int chapter)
     {
         ...
     }
 
-    int getChapter(MyInterfaceObject *obj)
+    int getChapter(MyFunctionPtrObject *obj)
     {
         ...
     }
 
-    static NP_Identifier stopIdentifier;
-    static NP_Identifier startIdentifier;
-    static NP_Identifier setChapterIdentifier;
-    static NP_Identifier getChapterIdentifier;
-    static NP_Identifier numChaptersIdentifier;
+    static NPIdentifier stopIdentifier;
+    static NPIdentifier startIdentifier;
+    static NPIdentifier setChapterIdentifier;
+    static NPIdentifier getChapterIdentifier;
+    static NPIdentifier numChaptersIdentifier;
 
     static void initializeIdentifiers()
     {
-        stopIdentifier = NP_IdentifierFromUTF8 ("stop");
-        startIdentifier = NP_IdentifierFromUTF8 ("start");
-        setChapterIdentifier = NP_IdentifierFromUTF8 ("setChapter");
-        getChapterIdentifier = NP_IdentifierFromUTF8 ("getChapter");
-        numChaptersIdentifier = NP_IdentifierFromUTF8 ("numChapters");
+        stopIdentifier = NPIdentifierFromUTF8 ("stop");
+        startIdentifier = NPIdentifierFromUTF8 ("start");
+        setChapterIdentifier = NPIdentifierFromUTF8 ("setChapter");
+        getChapterIdentifier = NPIdentifierFromUTF8 ("getChapter");
+        numChaptersIdentifier = NPIdentifierFromUTF8 ("numChapters");
     }
 
-    bool myInterfaceHasProperty (MyInterfaceObject *obj, NP_Identifier name)
+    bool myFunctionPtrHasProperty (MyFunctionPtrObject *obj, NPIdentifier name)
     {
         if (name == numChaptersIdentifier){
             return true;
@@ -364,7 +373,7 @@ void NP_SetException (NP_Object *obj, NP_String *message);
         return false;
     }
 
-    bool myInterfaceHasMethod (MyInterfaceObject *obj, NP_Identifier name)
+    bool myFunctionPtrHasMethod (MyFunctionPtrObject *obj, NPIdentifier name)
     {
         if (name == stopIdentifier ||
             name == startIdentifier ||
@@ -375,22 +384,22 @@ void NP_SetException (NP_Object *obj, NP_String *message);
         return false;
     }
 
-    NP_Object *myInterfaceGetProperty (MyInterfaceObject *obj, NP_Identifier name)
+    NPObject *myFunctionPtrGetProperty (MyFunctionPtrObject *obj, NPIdentifier name)
     {
         if (name == numChaptersIdentifier){
-            return NP_CreateNumberWithInt(obj->numChapters); 
+            return NPN_CreateNumberWithInt(obj->numChapters); 
         }
         return 0;
     }
 
-    void myInterfaceSetProperty (MyInterfaceObject *obj, NP_Identifier name, NP_Object *value)
+    void myFunctionPtrSetProperty (MyFunctionPtrObject *obj, NPIdentifier name, NPObject *value)
     {
         if (name == numChaptersIdentifier){
-            obj->numChapters = NP_IntFromNumber(obj)
+            obj->numChapters = NPN_IntFromNumber(obj)
         }
     }
 
-    NP_Object *myInterfaceInvoke (MyInterfaceObject *obj, NP_Identifier name, NP_Object **args, unsigned argCount)
+    NPObject *myFunctionPtrInvoke (MyFunctionPtrObject *obj, NPIdentifier name, NPObject **args, unsigned argCount)
     {
 
         if (name == stopIdentifier){
@@ -400,59 +409,59 @@ void NP_SetException (NP_Object *obj, NP_String *message);
             start(obj);
         }
         else if (name == setChapterIdentifier){
-            if (NP_IsKindOfClass (args[0], NP_NumberClass)) {
-                setChapter (obj, NP_IntFromNumber(args[0]));
+            if (NPN_IsKindOfClass (args[0], NPNumberClass)) {
+                setChapter (obj, NPN_IntFromNumber(args[0]));
             }
             else {
-                NP_SetException (obj, NP_CreateStringWithUTF8 ("invalid type"));
+                NPN_SetException (obj, NP_CreateStringWithUTF8 ("invalid type"));
             }
         }
         else if (name == getChapterIdentifier){
-            return NP_CreateNumberWithInt (getChapter (obj));
+            return NPN_CreateNumberWithInt (getChapter (obj));
         }
         return 0;
     }
 
-    NP_Object *myInterfaceAllocate ()
+    NPObject *myFunctionPtrAllocate ()
     {
-        MyInterfaceObject *newInstance = (MyInterfaceObject *)malloc (sizeof(MyInterfaceObject));
+        MyFunctionPtrObject *newInstance = (MyFunctionPtrObject *)malloc (sizeof(MyFunctionPtrObject));
         
         if (stopIdentifier == 0)
             initializeIdentifiers();
             
-        return (NP_Object *)newInstance;
+        return (NPObject *)newInstance;
     }
 
-    void myInterfaceInvalidate ()
+    void myFunctionPtrInvalidate ()
     {
         // Make sure we've released any remainging references to JavaScript
         // objects.
     }
     
-    void myInterfaceDeallocate (MyInterfaceObject *obj) 
+    void myFunctionPtrDeallocate (MyFunctionPtrObject *obj) 
     {
         free ((void *)obj);
     }
     
-    static NP_Class _myInterface = { 
-        (NP_AllocateInterface) myInterfaceAllocate, 
-        (NP_DeallocateInterface) myInterfaceDeallocate, 
-        (NP_InvalidateInterface) myInterfaceInvalidate,
-        (NP_HasMethodInterface) myInterfaceHasMethod,
-        (NP_InvokeInterface) myInterfaceInvoke,
-        (NP_HasPropertyInterface) myInterfaceHasProperty,
-        (NP_GetPropertyInterface) myInterfaceGetProperty,
-        (NP_SetPropertyInterface) myInterfaceSetProperty,
+    static NPClass _myFunctionPtr = { 
+        (NPAllocateFunctionPtr) myFunctionPtrAllocate, 
+        (NPDeallocateFunctionPtr) myFunctionPtrDeallocate, 
+        (NPInvalidateFunctionPtr) myFunctionPtrInvalidate,
+        (NPHasMethodFunctionPtr) myFunctionPtrHasMethod,
+        (NPInvokeFunctionPtr) myFunctionPtrInvoke,
+        (NPHasPropertyFunctionPtr) myFunctionPtrHasProperty,
+        (NPGetPropertyFunctionPtr) myFunctionPtrGetProperty,
+        (NPSetPropertyFunctionPtr) myFunctionPtrSetProperty,
     };
-    static NP_Class *myInterface = &_myInterface;
+    static NPClass *myFunctionPtr = &_myFunctionPtr;
 
     // myGetNativeObjectForJavaScript would be set as the entry point for
     // the plugin's NPP_GetNativeObjectForJavaScript function.
     // It is invoked by the plugin container, i.e. the browser.
-    NP_Object *myGetNativeObjectForJavaScript(NPP_Instance instance)
+    NPObject *myGetNativeObjectForJavaScript(NPP instance)
     {
-        NP_Object *myInterfaceObject = NP_CreateObject (myInterface);
-        return myInterfaceObject;
+        NPObject *myFunctionPtrObject = NPN_CreateObject (myFunctionPtr);
+        return myFunctionPtrObject;
     }
 
 */

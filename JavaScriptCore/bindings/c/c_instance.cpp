@@ -39,30 +39,30 @@
 using namespace KJS::Bindings;
 using namespace KJS;
 
-CInstance::CInstance (NP_Object *o) 
+CInstance::CInstance (NPObject *o) 
 {
-    _object = NP_RetainObject (o);
+    _object = NPN_RetainObject (o);
 };
 
 CInstance::~CInstance () 
 {
-    NP_ReleaseObject (_object);
+    NPN_ReleaseObject (_object);
     delete _class;
 }
 
 
 CInstance::CInstance (const CInstance &other) : Instance() 
 {
-    _object = NP_RetainObject (other._object);
+    _object = NPN_RetainObject (other._object);
 };
 
 CInstance &CInstance::operator=(const CInstance &other){
     if (this == &other)
         return *this;
     
-    NP_Object *_oldObject = _object;
-    _object= NP_RetainObject (other._object);
-    NP_ReleaseObject (_oldObject);
+    NPObject *_oldObject = _object;
+    _object= NPN_RetainObject (other._object);
+    NPN_ReleaseObject (_oldObject);
     
     return *this;
 };
@@ -90,22 +90,22 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
 {
     Value resultValue;
 
-    // Overloading methods are not allowed by NP_Objects.  Should only be one
+    // Overloading methods are not allowed by NPObjects.  Should only be one
     // name match for a particular method.
     assert (methodList.length() == 1);
 
     CMethod *method = 0;
     method = static_cast<CMethod*>(methodList.methodAt(0));
 
-    NP_Identifier ident = NP_IdentifierFromUTF8 (method->name());
+    NPIdentifier ident = NPN_IdentifierFromUTF8 (method->name());
     if (!_object->_class->hasMethod (_object->_class, ident))
         return Undefined();
 
     unsigned i, count = args.size();
-    NP_Object **cArgs;
-    NP_Object *localBuffer[128];
+    NPObject **cArgs;
+    NPObject *localBuffer[128];
     if (count > 128)
-        cArgs = (NP_Object **)malloc (sizeof(NP_Object *)*count);
+        cArgs = (NPObject **)malloc (sizeof(NPObject *)*count);
     else
         cArgs = localBuffer;
     
@@ -114,14 +114,14 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
     }
 
     // Invoke the 'C' method.
-    NP_Object *result = _object->_class->invoke (_object, ident, cArgs, count);
+    NPObject *result = _object->_class->invoke (_object, ident, cArgs, count);
     if (result) {
         resultValue = convertNPValueTypeToValue (exec, result);
         
         if (cArgs != localBuffer)
             free ((void *)cArgs);
             
-        NP_ReleaseObject (result);
+        NPN_ReleaseObject (result);
         
         return resultValue;
     }
@@ -142,19 +142,19 @@ KJS::Value CInstance::defaultValue (KJS::Type hint) const
         return booleanValue();
     }
     else if (hint == KJS::UnspecifiedType) {
-        if (NP_IsKindOfClass (_object, NP_StringClass)) {
+        if (NPN_IsKindOfClass (_object, NPStringClass)) {
             return stringValue();
         }
-        else if (NP_IsKindOfClass (_object, NP_NumberClass)) {
+        else if (NPN_IsKindOfClass (_object, NPNumberClass)) {
             return numberValue();
         }
-        else if (NP_IsKindOfClass (_object, NP_BooleanClass)) {
+        else if (NPN_IsKindOfClass (_object, NPBooleanClass)) {
             return booleanValue();
         }
-        else if (NP_IsKindOfClass (_object, NP_NullClass)) {
+        else if (NPN_IsKindOfClass (_object, NPNullClass)) {
             return Null();
         }
-        else if (NP_IsKindOfClass (_object, NP_UndefinedClass)) {
+        else if (NPN_IsKindOfClass (_object, NPUndefinedClass)) {
             return Undefined();
         }
     }

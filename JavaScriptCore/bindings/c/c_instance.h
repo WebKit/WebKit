@@ -38,7 +38,7 @@ class CClass;
 class CInstance : public Instance
 {
 public:
-    CInstance (NP_Object *instance);
+    CInstance (NPObject *instance);
         
     ~CInstance ();
     
@@ -60,11 +60,11 @@ public:
     KJS::Value numberValue() const;
     KJS::Value booleanValue() const;
     
-    NP_Object *getObject() const { return _object; }
+    NPObject *getObject() const { return _object; }
     
 private:
     mutable CClass *_class;
-    NP_Object *_object;
+    NPObject *_object;
 };
 
 } // namespace Bindings

@@ -99,7 +99,7 @@ Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, 
         return new Bindings::ObjcInstance ((struct objc_object *)instance);
 
     else if (language == Instance::CLanguage)
-        return new Bindings::CInstance ((NP_Object *)instance);
+        return new Bindings::CInstance ((NPObject *)instance);
 
     return 0;
 }

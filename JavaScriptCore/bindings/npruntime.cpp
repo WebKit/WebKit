@@ -25,7 +25,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include <npruntime.h>
-
+#include <c_utility.h>
 
 static Boolean identifierEqual(const void *value1, const void *value2)
 {
@@ -74,16 +74,16 @@ static CFMutableDictionaryRef getIdentifierDictionary()
 
 static const char **identifierNames = 0;
 static unsigned int maxIdentifierNames;
-static NP_Identifier identifierCount = 1;
+static NPIdentifier identifierCount = 1;
 
-NP_Identifier NP_IdentifierFromUTF8 (const NP_UTF8 *name)
+NPIdentifier NPN_IdentifierFromUTF8 (const NPUTF8 *name)
 {
     assert (name);
     
     if (name) {
-        NP_Identifier identifier = 0;
+        NPIdentifier identifier = 0;
         
-        identifier = (NP_Identifier)CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name);
+        identifier = (NPIdentifier)CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name);
         if (identifier == 0) {
             identifier = identifierCount++;
             // We never release identifier names, so this dictionary will grow, as will
@@ -110,7 +110,7 @@ NP_Identifier NP_IdentifierFromUTF8 (const NP_UTF8 *name)
     return 0;
 }
 
-bool NP_IsValidIdentifier (const NP_UTF8 *name)
+bool NPN_IsValidIdentifier (const NPUTF8 *name)
 {
     assert (name);
     
@@ -120,7 +120,7 @@ bool NP_IsValidIdentifier (const NP_UTF8 *name)
     return false;
 }
 
-void NP_GetIdentifiers (const NP_UTF8 **names, int nameCount, NP_Identifier *identifiers)
+void NPN_GetIdentifiers (const NPUTF8 **names, int nameCount, NPIdentifier *identifiers)
 {
     assert (names);
     assert (identifiers);
@@ -129,30 +129,30 @@ void NP_GetIdentifiers (const NP_UTF8 **names, int nameCount, NP_Identifier *ide
         int i;
         
         for (i = 0; i < nameCount; i++) {
-            identifiers[i] = NP_IdentifierFromUTF8 (names[i]);
+            identifiers[i] = NPN_IdentifierFromUTF8 (names[i]);
         }
     }
 }
 
-const NP_UTF8 *NP_UTF8FromIdentifier (NP_Identifier identifier)
+const NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier)
 {
     if (identifier == 0 || identifier >= identifierCount)
         return NULL;
         
-    return (const NP_UTF8 *)identifierNames[identifier];
+    return (const NPUTF8 *)identifierNames[identifier];
 }
 
-NP_Object *NP_CreateObject (NP_Class *aClass)
+NPObject *NPN_CreateObject (NPClass *aClass)
 {
     assert (aClass);
 
     if (aClass) {
-        NP_Object *obj;
+        NPObject *obj;
         
         if (aClass->allocate != NULL)
             obj = aClass->allocate ();
         else
-            obj = (NP_Object *)malloc (sizeof(NP_Object));
+            obj = (NPObject *)malloc (sizeof(NPObject));
             
         obj->_class = aClass;
         obj->referenceCount = 1;
@@ -164,7 +164,7 @@ NP_Object *NP_CreateObject (NP_Class *aClass)
 }
 
 
-NP_Object *NP_RetainObject (NP_Object *obj)
+NPObject *NPN_RetainObject (NPObject *obj)
 {
     assert (obj);
 
@@ -175,7 +175,7 @@ NP_Object *NP_RetainObject (NP_Object *obj)
 }
 
 
-void NP_ReleaseObject (NP_Object *obj)
+void NPN_ReleaseObject (NPObject *obj)
 {
     assert (obj);
     assert (obj->referenceCount >= 1);
@@ -192,7 +192,7 @@ void NP_ReleaseObject (NP_Object *obj)
     }
 }
 
-bool NP_IsKindOfClass (const NP_Object *obj, const NP_Class *aClass)
+bool NPN_IsKindOfClass (const NPObject *obj, const NPClass *aClass)
 {
     assert (obj);
     assert (aClass);
@@ -206,43 +206,43 @@ bool NP_IsKindOfClass (const NP_Object *obj, const NP_Class *aClass)
 }
 
 
-void NP_SetExceptionWithUTF8 (NP_Object *obj, const NP_UTF8 *message)
+void NPN_SetExceptionWithUTF8 (NPObject *obj, const NPUTF8 *message, int32_t length)
 {
     assert (obj);
     assert (message);
  
     if (obj && message) {
-        NP_String *m = NP_CreateStringWithUTF8(message);
-        NP_SetException (obj, m);
-        NP_ReleaseObject (m);
+        NPString *m = NPN_CreateStringWithUTF8(message, length);
+        NPN_SetException (obj, m);
+        NPN_ReleaseObject (m);
     }
 }
 
 
-void NP_SetException (NP_Object *obj, NP_String *message)
+void NPN_SetException (NPObject *obj, NPString *message)
 {
     // FIX ME.  Need to implement.
 }
 
 // ---------------------------------- Types ----------------------------------
 
-// ---------------------------------- NP_Number ----------------------------------
+// ---------------------------------- NPNumber ----------------------------------
 
 typedef struct
 {
-    NP_Object object;
+    NPObject object;
     double number;
 } NumberObject;
 
-static NP_Object *numberAllocate()
+static NPObject *numberAllocate()
 {
-    return (NP_Object *)malloc(sizeof(NumberObject));
+    return (NPObject *)malloc(sizeof(NumberObject));
 }
 
-static NP_Class _numberClass = { 
+static NPClass _numberClass = { 
     1,
     numberAllocate, 
-    (NP_DeallocateInterface)free, 
+    (NPDeallocateFunctionPtr)free, 
     0,
     0,
     0,
@@ -251,35 +251,35 @@ static NP_Class _numberClass = {
     0,
 };
 
-static NP_Class *numberClass = &_numberClass;
-NP_Class *NP_NumberClass = numberClass;
+static NPClass *numberClass = &_numberClass;
+NPClass *NPNumberClass = numberClass;
 
-NP_Number *NP_CreateNumberWithInt (int i)
+NPNumber *NPN_CreateNumberWithInt (int i)
 {
-    NumberObject *number = (NumberObject *)NP_CreateObject (numberClass);
+    NumberObject *number = (NumberObject *)NPN_CreateObject (numberClass);
     number->number = i;
-    return (NP_Number *)number;
+    return (NPNumber *)number;
 }
 
-NP_Number *NP_CreateNumberWithFloat (float f)
+NPNumber *NPN_CreateNumberWithFloat (float f)
 {
-    NumberObject *number = (NumberObject *)NP_CreateObject (numberClass);
+    NumberObject *number = (NumberObject *)NPN_CreateObject (numberClass);
     number->number = f;
-    return (NP_Number *)number;
+    return (NPNumber *)number;
 }
 
-NP_Number *NP_CreateNumberWithDouble (double d)
+NPNumber *NPN_CreateNumberWithDouble (double d)
 {
-    NumberObject *number = (NumberObject *)NP_CreateObject (numberClass);
+    NumberObject *number = (NumberObject *)NPN_CreateObject (numberClass);
     number->number = d;
-    return (NP_Number *)number;
+    return (NPNumber *)number;
 }
 
-int NP_IntFromNumber (NP_Number *obj)
+int NPN_IntFromNumber (NPNumber *obj)
 {
-    assert (obj && NP_IsKindOfClass (obj, numberClass));
+    assert (obj && NPN_IsKindOfClass (obj, numberClass));
 
-    if (obj && NP_IsKindOfClass (obj, numberClass)) {
+    if (obj && NPN_IsKindOfClass (obj, numberClass)) {
         NumberObject *number = (NumberObject *)obj;
         return (int)number->number;
     }
@@ -287,11 +287,11 @@ int NP_IntFromNumber (NP_Number *obj)
     return 0;
 }
 
-float NP_FloatFromNumber (NP_Number *obj)
+float NPN_FloatFromNumber (NPNumber *obj)
 {
-    assert (obj && NP_IsKindOfClass (obj, numberClass));
+    assert (obj && NPN_IsKindOfClass (obj, numberClass));
 
-    if (obj && NP_IsKindOfClass (obj, numberClass)) {
+    if (obj && NPN_IsKindOfClass (obj, numberClass)) {
         NumberObject *number = (NumberObject *)obj;
         return (float)number->number;
     }
@@ -299,11 +299,11 @@ float NP_FloatFromNumber (NP_Number *obj)
     return 0.;
 }
 
-double NP_DoubleFromNumber (NP_Number *obj)
+double NPN_DoubleFromNumber (NPNumber *obj)
 {
-    assert (obj && NP_IsKindOfClass (obj, numberClass));
+    assert (obj && NPN_IsKindOfClass (obj, numberClass));
     
-    if (obj && NP_IsKindOfClass (obj, numberClass)) {
+    if (obj && NPN_IsKindOfClass (obj, numberClass)) {
         NumberObject *number = (NumberObject *)obj;
         return number->number;
     }
@@ -312,18 +312,18 @@ double NP_DoubleFromNumber (NP_Number *obj)
 }
 
 
-// ---------------------------------- NP_String ----------------------------------
+// ---------------------------------- NPString ----------------------------------
 
 typedef struct
 {
-    NP_Object object;
-    NP_UTF16 *string;
+    NPObject object;
+    NPUTF16 *string;
     int32_t length;
 } StringObject;
 
-static NP_Object *stringAllocate()
+static NPObject *stringAllocate()
 {
-    return (NP_Object *)malloc(sizeof(StringObject));
+    return (NPObject *)malloc(sizeof(StringObject));
 }
 
 void stringDeallocate (StringObject *string)
@@ -332,10 +332,10 @@ void stringDeallocate (StringObject *string)
     free (string);
 }
 
-static NP_Class _stringClass = { 
+static NPClass _stringClass = { 
     1,
     stringAllocate, 
-    (NP_DeallocateInterface)stringDeallocate, 
+    (NPDeallocateFunctionPtr)stringDeallocate, 
     0,
     0,
     0,
@@ -344,62 +344,65 @@ static NP_Class _stringClass = {
     0,
 };
 
-static NP_Class *stringClass = &_stringClass;
-NP_Class *NP_StringClass = stringClass;
+static NPClass *stringClass = &_stringClass;
+NPClass *NPStringClass = stringClass;
 
 #define LOCAL_CONVERSION_BUFFER_SIZE    4096
 
-NP_String *NP_CreateStringWithUTF8 (const NP_UTF8 *utf8String)
+NPString *NPN_CreateStringWithUTF8 (const NPUTF8 *utf8String, int32_t length)
 {
     assert (utf8String);
     
     if (utf8String) {
-        StringObject *string = (StringObject *)NP_CreateObject (stringClass);
+        if (length == -1)
+            length = strlen(utf8String);
+            
+        StringObject *string = (StringObject *)NPN_CreateObject (stringClass);
 
-        CFStringRef stringRef = CFStringCreateWithCString (NULL, utf8String, kCFStringEncodingUTF8);
+        CFStringRef stringRef = CFStringCreateWithBytes (NULL, (const UInt8*)utf8String, (CFIndex)length, kCFStringEncodingUTF8, false);
 
         string->length = CFStringGetLength (stringRef);
-        string->string = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*string->length);
+        string->string = (NPUTF16 *)malloc(sizeof(NPUTF16)*string->length);
 
         // Convert the string to UTF16.
         CFRange range = { 0, string->length };
         CFStringGetCharacters (stringRef, range, (UniChar *)string->string);
         CFRelease (stringRef);
 
-        return (NP_String *)string;
+        return (NPString *)string;
     }
     
     return 0;
 }
 
 
-NP_String *NP_CreateStringWithUTF16 (const NP_UTF16 *utf16String, int32_t len)
+NPString *NPN_CreateStringWithUTF16 (const NPUTF16 *utf16String, int32_t len)
 {
     assert (utf16String);
     
     if (utf16String) {
-        StringObject *string = (StringObject *)NP_CreateObject (stringClass);
+        StringObject *string = (StringObject *)NPN_CreateObject (stringClass);
 
         string->length = len;
-        string->string = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*string->length);
-        memcpy ((void *)string->string, utf16String, sizeof(NP_UTF16)*string->length);
+        string->string = (NPUTF16 *)malloc(sizeof(NPUTF16)*string->length);
+        memcpy ((void *)string->string, utf16String, sizeof(NPUTF16)*string->length);
         
-        return (NP_String *)string;
+        return (NPString *)string;
     }
 
     return 0;
 }
 
-void NP_DeallocateUTF8 (NP_UTF8 *UTF8Buffer)
+void NPN_DeallocateUTF8 (NPUTF8 *UTF8Buffer)
 {
     free (UTF8Buffer);
 }
 
-NP_UTF8 *NP_UTF8FromString (NP_String *obj)
+NPUTF8 *NPN_UTF8FromString (NPString *obj)
 {
-    assert (obj && NP_IsKindOfClass (obj, stringClass));
+    assert (obj && NPN_IsKindOfClass (obj, stringClass));
 
-    if (obj && NP_IsKindOfClass (obj, stringClass)) {
+    if (obj && NPN_IsKindOfClass (obj, stringClass)) {
         StringObject *string = (StringObject *)obj;
 
         // Allow for max conversion factor.
@@ -422,7 +425,7 @@ NP_UTF8 *NP_UTF8FromString (NP_String *obj)
         CFRange range = { 0, string->length };
         CFStringGetBytes (stringRef, range, kCFStringEncodingUTF8, 0, false, buffer, maxBufferLength, &usedBufferLength);
         
-        NP_UTF8 *resultString = (NP_UTF8 *)malloc (usedBufferLength+1);
+        NPUTF8 *resultString = (NPUTF8 *)malloc (usedBufferLength+1);
         strncpy ((char *)resultString, (const char *)buffer, usedBufferLength);
         char *cp = (char *)resultString;
         cp[usedBufferLength] = 0;
@@ -437,14 +440,14 @@ NP_UTF8 *NP_UTF8FromString (NP_String *obj)
     return 0;
 }
 
-NP_UTF16 *NP_UTF16FromString (NP_String *obj)
+NPUTF16 *NPN_UTF16FromString (NPString *obj)
 {
-    assert (obj && NP_IsKindOfClass (obj, stringClass));
+    assert (obj && NPN_IsKindOfClass (obj, stringClass));
 
-    if (obj && NP_IsKindOfClass (obj, stringClass)) {
+    if (obj && NPN_IsKindOfClass (obj, stringClass)) {
         StringObject *string = (StringObject *)obj;
         
-        NP_UTF16 *resultString = (NP_UTF16*)malloc(sizeof(int16_t)*string->length);
+        NPUTF16 *resultString = (NPUTF16*)malloc(sizeof(int16_t)*string->length);
         memcpy ((void *)resultString, string->string, sizeof(int16_t)*string->length);
 
         return resultString;
@@ -453,11 +456,11 @@ NP_UTF16 *NP_UTF16FromString (NP_String *obj)
     return 0;
 }
 
-int32_t NP_StringLength (NP_String *obj)
+int32_t NPN_StringLength (NPString *obj)
 {
-    assert (obj && NP_IsKindOfClass (obj, stringClass));
+    assert (obj && NPN_IsKindOfClass (obj, stringClass));
 
-    if (obj && NP_IsKindOfClass (obj, stringClass)) {
+    if (obj && NPN_IsKindOfClass (obj, stringClass)) {
         StringObject *string = (StringObject *)obj;
         return string->length;
     }
@@ -469,12 +472,12 @@ int32_t NP_StringLength (NP_String *obj)
 
 typedef struct
 {
-    NP_Object object;
+    NPObject object;
 } BooleanObject;
 
-static NP_Object *booleanAllocate()
+static NPObject *booleanAllocate()
 {
-    return (NP_Object *)malloc(sizeof(BooleanObject));
+    return (NPObject *)malloc(sizeof(BooleanObject));
 }
 
 static void booleanDeallocate (BooleanObject *string)
@@ -482,10 +485,10 @@ static void booleanDeallocate (BooleanObject *string)
     // Do nothing, single true and false instances.
 }
 
-static NP_Class _booleanClass = { 
+static NPClass _booleanClass = { 
     1,
     booleanAllocate, 
-    (NP_DeallocateInterface)booleanDeallocate, 
+    (NPDeallocateFunctionPtr)booleanDeallocate, 
     0,
     0,
     0,
@@ -497,31 +500,31 @@ static NP_Class _booleanClass = {
 static BooleanObject *theTrueObject = 0;
 static BooleanObject *theFalseObject = 0;
 
-static NP_Class *booleanClass = &_booleanClass;
-NP_Class *NP_BooleanClass = booleanClass;
+static NPClass *booleanClass = &_booleanClass;
+NPClass *NPBooleanClass = booleanClass;
 
-NP_Boolean *NP_CreateBoolean (bool f)
+NPBoolean *NPN_CreateBoolean (bool f)
 {
     if (f) {
         if (!theTrueObject) {
-            theTrueObject = (BooleanObject *)NP_CreateObject (booleanClass);
+            theTrueObject = (BooleanObject *)NPN_CreateObject (booleanClass);
         }
-        return (NP_Boolean *)theTrueObject;
+        return (NPBoolean *)theTrueObject;
     }
 
     // False
     if (!theFalseObject) {
-        theFalseObject = (BooleanObject *)NP_CreateObject (booleanClass);
+        theFalseObject = (BooleanObject *)NPN_CreateObject (booleanClass);
     }
-    return (NP_Boolean *)theFalseObject;
+    return (NPBoolean *)theFalseObject;
 }
 
-bool NP_BoolFromBoolean (NP_Boolean *obj)
+bool NPN_BoolFromBoolean (NPBoolean *obj)
 {
-    assert (obj && NP_IsKindOfClass (obj, booleanClass) 
+    assert (obj && NPN_IsKindOfClass (obj, booleanClass) 
             && ((BooleanObject *)obj == theTrueObject || (BooleanObject *)obj == theFalseObject));
 
-    if (obj && NP_IsKindOfClass (obj, booleanClass) 
+    if (obj && NPN_IsKindOfClass (obj, booleanClass) 
             && ((BooleanObject *)obj == theTrueObject || (BooleanObject *)obj == theFalseObject)) {
         BooleanObject *booleanObj = (BooleanObject *)obj;
         if (booleanObj == theTrueObject)
@@ -535,12 +538,12 @@ bool NP_BoolFromBoolean (NP_Boolean *obj)
 
 typedef struct
 {
-    NP_Object object;
+    NPObject object;
 } NullObject;
 
-static NP_Object *nullAllocate()
+static NPObject *nullAllocate()
 {
-    return (NP_Object *)malloc(sizeof(NullObject));
+    return (NPObject *)malloc(sizeof(NullObject));
 }
 
 static void nullDeallocate (StringObject *string)
@@ -551,10 +554,10 @@ static void nullDeallocate (StringObject *string)
 
 static NullObject *theNullObject = 0;
 
-static NP_Class _nullClass = { 
+static NPClass _nullClass = { 
     1,
     nullAllocate, 
-    (NP_DeallocateInterface)nullDeallocate, 
+    (NPDeallocateFunctionPtr)nullDeallocate, 
     0,
     0,
     0,
@@ -563,14 +566,14 @@ static NP_Class _nullClass = {
     0,
 };
 
-static NP_Class *nullClass = &_nullClass;
-NP_Class *NP_NullClass = nullClass;
+static NPClass *nullClass = &_nullClass;
+NPClass *NPNullClass = nullClass;
 
-NP_Null *NP_GetNull()
+NPNull *NPN_GetNull()
 {
     if (!theNullObject)
-        theNullObject = (NullObject *)NP_CreateObject(nullClass);
-    return (NP_Null *)theNullObject;
+        theNullObject = (NullObject *)NPN_CreateObject(nullClass);
+    return (NPNull *)theNullObject;
 }
 
 
@@ -578,12 +581,12 @@ NP_Null *NP_GetNull()
 
 typedef struct
 {
-    NP_Object object;
+    NPObject object;
 } UndefinedObject;
 
-static NP_Object *undefinedAllocate()
+static NPObject *undefinedAllocate()
 {
-    return (NP_Object *)malloc(sizeof(UndefinedObject));
+    return (NPObject *)malloc(sizeof(UndefinedObject));
 }
 
 static void undefinedDeallocate (StringObject *string)
@@ -594,10 +597,10 @@ static void undefinedDeallocate (StringObject *string)
 
 static NullObject *theUndefinedObject = 0;
 
-static NP_Class _undefinedClass = { 
+static NPClass _undefinedClass = { 
     1,
     undefinedAllocate, 
-    (NP_DeallocateInterface)undefinedDeallocate, 
+    (NPDeallocateFunctionPtr)undefinedDeallocate, 
     0,
     0,
     0,
@@ -606,28 +609,28 @@ static NP_Class _undefinedClass = {
     0,
 };
 
-static NP_Class *undefinedClass = &_undefinedClass;
-NP_Class *NP_UndefinedClass = undefinedClass;
+static NPClass *undefinedClass = &_undefinedClass;
+NPClass *NPUndefinedClass = undefinedClass;
 
-NP_Undefined *NP_GetUndefined()
+NPUndefined *NPN_GetUndefined()
 {
     if (!theUndefinedObject)
-        theUndefinedObject = (NullObject *)NP_CreateObject(undefinedClass);
-    return (NP_Undefined *)theUndefinedObject;
+        theUndefinedObject = (NullObject *)NPN_CreateObject(undefinedClass);
+    return (NPUndefined *)theUndefinedObject;
 }
 
 // ---------------------------------- NP_Array ----------------------------------
 
 typedef struct
 {
-    NP_Object object;
-    NP_Object **objects;
+    NPObject object;
+    NPObject **objects;
     int32_t count;
 } ArrayObject;
 
-static NP_Object *arrayAllocate()
+static NPObject *arrayAllocate()
 {
-    return (NP_Object *)malloc(sizeof(ArrayObject));
+    return (NPObject *)malloc(sizeof(ArrayObject));
 }
 
 static void arrayDeallocate (ArrayObject *array)
@@ -635,17 +638,17 @@ static void arrayDeallocate (ArrayObject *array)
     int32_t i;
     
     for (i = 0; i < array->count; i++) {
-        NP_ReleaseObject(array->objects[i]);
+        NPN_ReleaseObject(array->objects[i]);
     }
     free (array->objects);
     free (array);
 }
 
 
-static NP_Class _arrayClass = { 
+static NPClass _arrayClass = { 
     1,
     arrayAllocate, 
-    (NP_DeallocateInterface)arrayDeallocate, 
+    (NPDeallocateFunctionPtr)arrayDeallocate, 
     0,
     0,
     0,
@@ -654,52 +657,52 @@ static NP_Class _arrayClass = {
     0,
 };
 
-static NP_Class *arrayClass = &_arrayClass;
-NP_Class *NP_ArrayClass = arrayClass;
+static NPClass *arrayClass = &_arrayClass;
+NPClass *NPArrayClass = arrayClass;
 
-NP_Array *NP_CreateArray (NP_Object **objects, int32_t count)
+NPArray *NPN_CreateArray (NPObject **objects, int32_t count)
 {
     int32_t i;
 
     assert (count >= 0);
     
-    ArrayObject *array = (ArrayObject *)NP_CreateObject(arrayClass);
-    array->objects = (NP_Object **)malloc (sizeof(NP_Object *)*count);
+    ArrayObject *array = (ArrayObject *)NPN_CreateObject(arrayClass);
+    array->objects = (NPObject **)malloc (sizeof(NPObject *)*count);
     for (i = 0; i < count; i++) {
-        array->objects[i] = NP_RetainObject (objects[i]);
+        array->objects[i] = NPN_RetainObject (objects[i]);
     }
     
-    return (NP_Array *)array;
+    return (NPArray *)array;
 }
 
-NP_Array *NP_CreateArrayV (int32_t count, ...)
+NPArray *NPN_CreateArrayV (int32_t count, ...)
 {
     va_list args;
 
     assert (count >= 0);
 
-    ArrayObject *array = (ArrayObject *)NP_CreateObject(arrayClass);
-    array->objects = (NP_Object **)malloc (sizeof(NP_Object *)*count);
+    ArrayObject *array = (ArrayObject *)NPN_CreateObject(arrayClass);
+    array->objects = (NPObject **)malloc (sizeof(NPObject *)*count);
 
     va_start (args, count);
     
     int32_t i;
     for (i = 0; i < count; i++) {
-        NP_Object *obj = va_arg (args, NP_Object *);
-        array->objects[i] = NP_RetainObject (obj);
+        NPObject *obj = va_arg (args, NPObject *);
+        array->objects[i] = NPN_RetainObject (obj);
     }
         
     va_end (args);
 
-    return (NP_Array *)array;
+    return (NPArray *)array;
 }
 
-NP_Object *NP_ObjectAtIndex (NP_Array *obj, int32_t index)
+NPObject *NPN_ObjectAtIndex (NPArray *obj, int32_t index)
 {
     ArrayObject *array = (ArrayObject *)obj;
 
     assert (index < array->count && array > 0);
 
-    return NP_RetainObject (array->objects[index]);
+    return NPN_RetainObject (array->objects[index]);
 }
 

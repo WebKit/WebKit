@@ -41,16 +41,16 @@ class CClass : public KJS::Bindings::Class
     // Use the public static factory methods to get instances of JavaClass.
     
 protected:
-    void _commonInit (NP_Class *aClass);
+    void _commonInit (NPClass *aClass);
     void _commonCopy(const CClass &other);
     void _commonDelete();
         
 public:
-    CClass (NP_Class *aClass);
+    CClass (NPClass *aClass);
 
     // Return the cached ObjC of the specified name.
     //static CClass *classForName (const char *name);
-    static CClass *classForIsA (NP_Class *aClass);
+    static CClass *classForIsA (NPClass *aClass);
             
     ~CClass () {
         _commonDelete();
@@ -84,7 +84,7 @@ public:
     virtual long numConstructors() const { return 0; };
         
 private:
-    NP_Class *_isa;
+    NPClass *_isa;
     CFDictionaryRef _methods;
     CFDictionaryRef _fields;
 };

@@ -28,7 +28,7 @@
 #include "types.h"
 #include "interpreter.h"
 
-#include "NP_runtime.h"
+#include "npruntime.h"
 
 #include "runtime.h"
 #include "runtime_object.h"
@@ -43,12 +43,12 @@
 // ------------------ NP Interface definition --------------------
 typedef struct
 {
-	NP_Object object;
+	NPObject object;
 	double doubleValue;
 	int intValue;
 	const char *stringValue;
 	bool boolValue;
-} MyInterfaceObject;
+} MyObject;
 
 
 static bool identifiersInitialized = false;
@@ -61,8 +61,8 @@ static bool identifiersInitialized = false;
 #define ID_UNDEFINED_VALUE			5
 #define	NUM_PROPERTY_IDENTIFIERS	6
 
-static NP_Identifier myPropertyIdentifiers[NUM_PROPERTY_IDENTIFIERS];
-static const NP_UTF8 *myPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
+static NPIdentifier myPropertyIdentifiers[NUM_PROPERTY_IDENTIFIERS];
+static const NPUTF8 *myPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 	"doubleValue",
 	"intValue",
 	"stringValue",
@@ -82,8 +82,8 @@ static const NP_UTF8 *myPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_GET_BOOLEAN_VALUE		8
 #define NUM_METHOD_IDENTIFIERS		9
 
-static NP_Identifier myMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
-static const NP_UTF8 *myMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
+static NPIdentifier myMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
+static const NPUTF8 *myMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
 	"logMessage",
 	"setDoubleValue",
 	"setIntValue",
@@ -97,11 +97,11 @@ static const NP_UTF8 *myMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
 
 static void initializeIdentifiers()
 {
-	NP_GetIdentifiers (myPropertyIdentifierNames, NUM_PROPERTY_IDENTIFIERS, myPropertyIdentifiers);
-	NP_GetIdentifiers (myMethodIdentifierNames, NUM_METHOD_IDENTIFIERS, myMethodIdentifiers);
+	NPN_GetIdentifiers (myPropertyIdentifierNames, NUM_PROPERTY_IDENTIFIERS, myPropertyIdentifiers);
+	NPN_GetIdentifiers (myMethodIdentifierNames, NUM_METHOD_IDENTIFIERS, myMethodIdentifiers);
 };
 
-bool myInterfaceHasProperty (NP_Class *theClass, NP_Identifier name)
+bool myHasProperty (NPClass *theClass, NPIdentifier name)
 {	
 	int i;
 	for (i = 0; i < NUM_PROPERTY_IDENTIFIERS; i++) {
@@ -112,7 +112,7 @@ bool myInterfaceHasProperty (NP_Class *theClass, NP_Identifier name)
 	return false;
 }
 
-bool myInterfaceHasMethod (NP_Class *theClass, NP_Identifier name)
+bool myHasMethod (NPClass *theClass, NPIdentifier name)
 {
 	int i;
 	for (i = 0; i < NUM_METHOD_IDENTIFIERS; i++) {
@@ -123,64 +123,64 @@ bool myInterfaceHasMethod (NP_Class *theClass, NP_Identifier name)
 	return false;
 }
 
-NP_Object *myInterfaceGetProperty (MyInterfaceObject *obj, NP_Identifier name)
+NPObject *myGetProperty (MyObject *obj, NPIdentifier name)
 {
 	if (name == myPropertyIdentifiers[ID_DOUBLE_VALUE]){
-		return NP_CreateNumberWithDouble (obj->doubleValue); 
+		return NPN_CreateNumberWithDouble (obj->doubleValue); 
 	}
 	else if (name == myPropertyIdentifiers[ID_INT_VALUE]){
-		return NP_CreateNumberWithInt (obj->intValue); 
+		return NPN_CreateNumberWithInt (obj->intValue); 
 	}
 	else if (name == myPropertyIdentifiers[ID_STRING_VALUE]){
-		return NP_CreateStringWithUTF8 (obj->stringValue);
+		return NPN_CreateStringWithUTF8 (obj->stringValue, -1);
 	}
 	else if (name == myPropertyIdentifiers[ID_BOOLEAN_VALUE]){
-		return NP_CreateBoolean (obj->boolValue);
+		return NPN_CreateBoolean (obj->boolValue);
 	}
 	else if (name == myPropertyIdentifiers[ID_NULL_VALUE]){
-		return NP_GetNull ();
+		return NPN_GetNull ();
 	}
 	else if (name == myPropertyIdentifiers[ID_UNDEFINED_VALUE]){
-		return NP_GetUndefined (); 
+		return NPN_GetUndefined (); 
 	}
 	
-	return NP_GetUndefined();
+	return NPN_GetUndefined();
 }
 
-void myInterfaceSetProperty (MyInterfaceObject *obj, NP_Identifier name, NP_Object *value)
+void mySetProperty (MyObject *obj, NPIdentifier name, NPObject *value)
 {
 	if (name == myPropertyIdentifiers[ID_DOUBLE_VALUE]) {
-		if (NP_IsKindOfClass (value, NP_NumberClass)) {
-			obj->doubleValue = NP_DoubleFromNumber (value); 
+		if (NPN_IsKindOfClass (value, NPNumberClass)) {
+			obj->doubleValue = NPN_DoubleFromNumber (value); 
 		}
 		else {
-			NP_SetExceptionWithUTF8 ((NP_Object *)obj, "Attempt to set a double value with a non-number type.");
+			NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set a double value with a non-number type.", -1);
 		}
 	}
 	else if (name == myPropertyIdentifiers[ID_INT_VALUE]) {
-		if (NP_IsKindOfClass (value, NP_NumberClass)) {
-			obj->intValue = NP_IntFromNumber (value); 
+		if (NPN_IsKindOfClass (value, NPNumberClass)) {
+			obj->intValue = NPN_IntFromNumber (value); 
 		}
 		else {
-			NP_SetExceptionWithUTF8 ((NP_Object *)obj, "Attempt to set a int value with a non-number type.");
+			NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set a int value with a non-number type.", -1);
 		}
 	}
 	else if (name == myPropertyIdentifiers[ID_STRING_VALUE]) {
-		if (NP_IsKindOfClass (value, NP_StringClass)) {
+		if (NPN_IsKindOfClass (value, NPStringClass)) {
 			if (obj->stringValue)
 				free((void *)obj->stringValue);
-			obj->stringValue = NP_UTF8FromString (value);
+			obj->stringValue = NPN_UTF8FromString (value);
 		}
 		else {
-			NP_SetExceptionWithUTF8 ((NP_Object *)obj, "Attempt to set a string value with a non-string type.");
+			NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set a string value with a non-string type.", -1);
 		}
 	}
 	else if (name == myPropertyIdentifiers[ID_BOOLEAN_VALUE]) {
-		if (NP_IsKindOfClass (value, NP_StringClass)) {
-			obj->boolValue = NP_BoolFromBoolean (value);
+		if (NPN_IsKindOfClass (value, NPStringClass)) {
+			obj->boolValue = NPN_BoolFromBoolean (value);
 		}
 		else {
-			NP_SetExceptionWithUTF8 ((NP_Object *)obj, "Attempt to set a bool value with a non-boolean type.");
+			NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set a bool value with a non-boolean type.", -1);
 		}
 	}
 	else if (name == myPropertyIdentifiers[ID_NULL_VALUE]) {
@@ -191,77 +191,77 @@ void myInterfaceSetProperty (MyInterfaceObject *obj, NP_Identifier name, NP_Obje
 	}
 }
 
-void logMessage (NP_String *message)
+void logMessage (NPString *message)
 {
-	printf ("%s\n", NP_UTF8FromString (message));
+	printf ("%s\n", NPN_UTF8FromString (message));
 }
 
-void setDoubleValue (MyInterfaceObject *obj, NP_Number *number)
+void setDoubleValue (MyObject *obj, NPNumber *number)
 {
-	obj->doubleValue = NP_DoubleFromNumber (number);
+	obj->doubleValue = NPN_DoubleFromNumber (number);
 }
 
-void setIntValue (MyInterfaceObject *obj, NP_Number *number)
+void setIntValue (MyObject *obj, NPNumber *number)
 {
-	obj->intValue = NP_IntFromNumber (number);
+	obj->intValue = NPN_IntFromNumber (number);
 }
 
-void setStringValue (MyInterfaceObject *obj, NP_String *string)
+void setStringValue (MyObject *obj, NPString *string)
 {
-	NP_DeallocateUTF8 ((NP_UTF8 *)obj->stringValue);
-	obj->stringValue = NP_UTF8FromString (string);
+	NPN_DeallocateUTF8 ((NPUTF8 *)obj->stringValue);
+	obj->stringValue = NPN_UTF8FromString (string);
 }
 
-void setBooleanValue (MyInterfaceObject *obj, NP_Boolean *boolean)
+void setBooleanValue (MyObject *obj, NPBoolean *boolean)
 {
-	obj->boolValue = NP_BoolFromBoolean (boolean);
+	obj->boolValue = NPN_BoolFromBoolean (boolean);
 }
 
-NP_Number *getDoubleValue (MyInterfaceObject *obj)
+NPNumber *getDoubleValue (MyObject *obj)
 {
-	return NP_CreateNumberWithDouble (obj->doubleValue);
+	return NPN_CreateNumberWithDouble (obj->doubleValue);
 }
 
-NP_Number *getIntValue (MyInterfaceObject *obj)
+NPNumber *getIntValue (MyObject *obj)
 {
-	return NP_CreateNumberWithInt (obj->intValue);
+	return NPN_CreateNumberWithInt (obj->intValue);
 }
 
-NP_String *getStringValue (MyInterfaceObject *obj)
+NPString *getStringValue (MyObject *obj)
 {
-	return NP_CreateStringWithUTF8 (obj->stringValue);
+	return NPN_CreateStringWithUTF8 (obj->stringValue, -1);
 }
 
-NP_Boolean *getBooleanValue (MyInterfaceObject *obj)
+NPBoolean *getBooleanValue (MyObject *obj)
 {
-	return NP_CreateBoolean (obj->boolValue);
+	return NPN_CreateBoolean (obj->boolValue);
 }
 
-NP_Object *myInterfaceInvoke (MyInterfaceObject *obj, NP_Identifier name, NP_Object **args, unsigned argCount)
+NPObject *myInvoke (MyObject *obj, NPIdentifier name, NPObject **args, unsigned argCount)
 {
 	if (name == myMethodIdentifiers[ID_LOG_MESSAGE]) {
-		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_StringClass))
-			logMessage ((NP_String *)args[0]);
+		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPStringClass))
+			logMessage ((NPString *)args[0]);
 		return 0;
 	}
 	else if (name == myMethodIdentifiers[ID_SET_DOUBLE_VALUE]) {
-		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_NumberClass))
-			setDoubleValue (obj, (NP_Number *)args[0]);
+		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPNumberClass))
+			setDoubleValue (obj, (NPNumber *)args[0]);
 		return 0;
 	}
 	else if (name == myMethodIdentifiers[ID_SET_INT_VALUE]) {
-		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_NumberClass))
-			setIntValue (obj, (NP_Number *)args[0]);
+		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPNumberClass))
+			setIntValue (obj, (NPNumber *)args[0]);
 		return 0;
 	}
 	else if (name == myMethodIdentifiers[ID_SET_STRING_VALUE]) {
-		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_StringClass))
-			setStringValue (obj, (NP_String *)args[0]);
+		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPStringClass))
+			setStringValue (obj, (NPString *)args[0]);
 		return 0;
 	}
 	else if (name == myMethodIdentifiers[ID_SET_BOOLEAN_VALUE]) {
-		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_BooleanClass))
-			setBooleanValue (obj, (NP_Boolean *)args[0]);
+		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPBooleanClass))
+			setBooleanValue (obj, (NPBoolean *)args[0]);
 		return 0;
 	}
 	else if (name == myMethodIdentifiers[ID_GET_DOUBLE_VALUE]) {
@@ -276,12 +276,12 @@ NP_Object *myInterfaceInvoke (MyInterfaceObject *obj, NP_Identifier name, NP_Obj
 	else if (name == myMethodIdentifiers[ID_GET_BOOLEAN_VALUE]) {
 		return getBooleanValue (obj);
 	}
-	return NP_GetUndefined();
+	return NPN_GetUndefined();
 }
 
-NP_Object *myInterfaceAllocate ()
+NPObject *myAllocate ()
 {
-	MyInterfaceObject *newInstance = (MyInterfaceObject *)malloc (sizeof(MyInterfaceObject));
+	MyObject *newInstance = (MyObject *)malloc (sizeof(MyObject));
 	
 	if (!identifiersInitialized) {
 		identifiersInitialized = true;
@@ -294,32 +294,32 @@ NP_Object *myInterfaceAllocate ()
 	newInstance->boolValue = true;
 	newInstance->stringValue = strdup("Hello world");
 	
-	return (NP_Object *)newInstance;
+	return (NPObject *)newInstance;
 }
 
-void myInterfaceInvalidate ()
+void myInvalidate ()
 {
 	// Make sure we've released any remainging references to JavaScript
 	// objects.
 }
 
-void myInterfaceDeallocate (MyInterfaceObject *obj) 
+void myDeallocate (MyObject *obj) 
 {
 	free ((void *)obj);
 }
 
-static NP_Class _myInterface = { 
-	kNP_ClassStructVersionCurrent,
-	(NP_AllocateInterface) myInterfaceAllocate, 
-	(NP_DeallocateInterface) myInterfaceDeallocate, 
-	(NP_InvalidateInterface) myInterfaceInvalidate,
-	(NP_HasMethodInterface) myInterfaceHasMethod,
-	(NP_InvokeInterface) myInterfaceInvoke,
-	(NP_HasPropertyInterface) myInterfaceHasProperty,
-	(NP_GetPropertyInterface) myInterfaceGetProperty,
-	(NP_SetPropertyInterface) myInterfaceSetProperty,
+static NPClass _myFunctionPtrs = { 
+	kNPClassStructVersionCurrent,
+	(NPAllocateFunctionPtr) myAllocate, 
+	(NPDeallocateFunctionPtr) myDeallocate, 
+	(NPInvalidateFunctionPtr) myInvalidate,
+	(NPHasMethodFunctionPtr) myHasMethod,
+	(NPInvokeFunctionPtr) myInvoke,
+	(NPHasPropertyFunctionPtr) myHasProperty,
+	(NPGetPropertyFunctionPtr) myGetProperty,
+	(NPSetPropertyFunctionPtr) mySetProperty,
 };
-static NP_Class *myInterface = &_myInterface;
+static NPClass *myFunctionPtrs = &_myFunctionPtrs;
 
 // --------------------------------------------------------
 
@@ -369,9 +369,9 @@ int main(int argc, char **argv)
         Interpreter interp(global);
         ExecState *exec = interp.globalExec();
         
-        MyInterfaceObject *myInterfaceObject = (MyInterfaceObject *)NP_CreateObject (myInterface);
+        MyObject *myObject = (MyObject *)NPN_CreateObject (myFunctionPtrs);
         
-        global.put(exec, Identifier("myInterface"), Instance::createRuntimeObject(Instance::CLanguage, (void *)myInterfaceObject));
+        global.put(exec, Identifier("myInterface"), Instance::createRuntimeObject(Instance::CLanguage, (void *)myObject));
         
         for (int i = 1; i < argc; i++) {
             const char *code = readJavaScriptFromFile(argv[i]);
@@ -402,7 +402,7 @@ int main(int argc, char **argv)
             }
         }
                 
-        NP_ReleaseObject ((NP_Object *)myInterfaceObject);
+        NPN_ReleaseObject ((NPObject *)myObject);
         
         Interpreter::unlock();
         

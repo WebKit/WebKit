@@ -34,31 +34,33 @@
 using namespace KJS;
 using namespace KJS::Bindings;
 
-NP_Object *coerceValueToNPString (KJS::ExecState *exec, const KJS::Value &value)
+NPObject *coerceValueToNPString (KJS::ExecState *exec, const KJS::Value &value)
 {
     UString ustring = value.toString(exec);
-    return NP_CreateStringWithUTF8 (ustring.UTF8String().c_str());
+    CString cstring = ustring.UTF8String();
+    return NPN_CreateStringWithUTF8 (cstring.c_str(), cstring.size());
 }
 
-NP_Object *convertValueToNPValueType (KJS::ExecState *exec, const KJS::Value &value)
+NPObject *convertValueToNPValueType (KJS::ExecState *exec, const KJS::Value &value)
 {
     Type type = value.type();
     
     if (type == StringType) {
         UString ustring = value.toString(exec);
-        return NP_CreateStringWithUTF8 (ustring.UTF8String().c_str());
+        CString cstring = ustring.UTF8String();
+        return NPN_CreateStringWithUTF8 (cstring.c_str(), cstring.size());
     }
     else if (type == NumberType) {
-        return NP_CreateNumberWithDouble (value.toNumber(exec));
+        return NPN_CreateNumberWithDouble (value.toNumber(exec));
     }
     else if (type == BooleanType) {
-        return NP_CreateBoolean (value.toBoolean(exec));
+        return NPN_CreateBoolean (value.toBoolean(exec));
     }
     else if (type == UnspecifiedType) {
-        return NP_GetUndefined();
+        return NPN_GetUndefined();
     }
     else if (type == NullType) {
-        return NP_GetNull();
+        return NPN_GetNull();
     }
     else if (type == ObjectType) {
         KJS::ObjectImp *objectImp = static_cast<KJS::ObjectImp*>(value.imp());
@@ -72,33 +74,33 @@ NP_Object *convertValueToNPValueType (KJS::ExecState *exec, const KJS::Value &va
     return 0;
 }
 
-Value convertNPValueTypeToValue (KJS::ExecState *exec, const NP_Object *obj)
+Value convertNPValueTypeToValue (KJS::ExecState *exec, const NPObject *obj)
 {
-    if (NP_IsKindOfClass (obj, NP_BooleanClass)) {
-        if (NP_BoolFromBoolean ((NP_Boolean *)obj))
+    if (NPN_IsKindOfClass (obj, NPBooleanClass)) {
+        if (NPN_BoolFromBoolean ((NPBoolean *)obj))
             return KJS::Boolean (true);
         return KJS::Boolean (false);
     }
-    else if (NP_IsKindOfClass (obj, NP_NullClass)) {
+    else if (NPN_IsKindOfClass (obj, NPNullClass)) {
         return Null();
     }
-    else if (NP_IsKindOfClass (obj, NP_UndefinedClass)) {
+    else if (NPN_IsKindOfClass (obj, NPUndefinedClass)) {
         return Undefined();
     }
-    else if (NP_IsKindOfClass (obj, NP_ArrayClass)) {
+    else if (NPN_IsKindOfClass (obj, NPArrayClass)) {
         // FIXME:  Need to implement
     }
-    else if (NP_IsKindOfClass (obj, NP_NumberClass)) {
-        return Number (NP_DoubleFromNumber((NP_Number *)obj));
+    else if (NPN_IsKindOfClass (obj, NPNumberClass)) {
+        return Number (NPN_DoubleFromNumber((NPNumber *)obj));
     }
-    else if (NP_IsKindOfClass (obj, NP_StringClass)) {
+    else if (NPN_IsKindOfClass (obj, NPStringClass)) {
 
-        NP_UTF8 *utf8String = NP_UTF8FromString((NP_String *)obj);
+        NPUTF8 *utf8String = NPN_UTF8FromString((NPString *)obj);
         CFStringRef stringRef = CFStringCreateWithCString (NULL, utf8String, kCFStringEncodingUTF8);
-        NP_DeallocateUTF8 (utf8String);
+        NPN_DeallocateUTF8 (utf8String);
 
         int length = CFStringGetLength (stringRef);
-        NP_UTF16 *buffer = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*length);
+        NPUTF16 *buffer = (NPUTF16 *)malloc(sizeof(NPUTF16)*length);
 
         // Convert the string to UTF16.
         CFRange range = { 0, length };
@@ -110,13 +112,13 @@ Value convertNPValueTypeToValue (KJS::ExecState *exec, const NP_Object *obj)
         
         return resultString;
     }
-    else if (NP_IsKindOfClass (obj, NP_JavaScriptObjectClass)) {
+    else if (NPN_IsKindOfClass (obj, NPScriptObjectClass)) {
         // Get ObjectImp from NP_JavaScriptObject.
         JavaScriptObject *o = (JavaScriptObject *)obj;
         return Object(const_cast<ObjectImp*>(o->imp));
     }
     else {
-        //  Wrap NP_Object in a CInstance.
+        //  Wrap NPObject in a CInstance.
         return Instance::createRuntimeObject(Instance::CLanguage, (void *)obj);
     }
     

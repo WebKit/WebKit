@@ -1,5 +1,116 @@
 2004-03-31  Richard Williamson   <rjw@apple.com>
 
+	Tedious renames based on feedback from plugin-futures list.
+	NP_ functions are renamed with NPN_ prefix.
+	Types prefix renamed from NP_ to NP.
+	NPN_CreateStringWithUTF8 and NPN_SetExceptionWithUTF8 now take a length, optionally -1 if string is null terminated. 
+	
+	No review because this was just a renaming patch.
+
+        * bindings/NP_jsobject.cpp:
+        (listFromNPArray):
+        (jsAllocate):
+        (identiferFromNPIdentifier):
+        (NPN_Call):
+        (NPN_Evaluate):
+        (NPN_GetProperty):
+        (NPN_SetProperty):
+        (NPN_RemoveProperty):
+        (NPN_ToString):
+        (NPN_GetPropertyAtIndex):
+        (NPN_SetPropertyAtIndex):
+        * bindings/NP_jsobject.h:
+        * bindings/c/c_class.cpp:
+        (CClass::_commonInit):
+        (CClass::classForIsA):
+        (CClass::CClass):
+        (CClass::methodsNamed):
+        (CClass::fieldNamed):
+        * bindings/c/c_class.h:
+        * bindings/c/c_instance.cpp:
+        (CInstance::CInstance):
+        (CInstance::~CInstance):
+        (CInstance::operator=):
+        (CInstance::invokeMethod):
+        (CInstance::defaultValue):
+        * bindings/c/c_instance.h:
+        (KJS::Bindings::CInstance::getObject):
+        * bindings/c/c_runtime.cpp:
+        (CField::valueFromInstance):
+        (CField::setValueToInstance):
+        * bindings/c/c_runtime.h:
+        (KJS::Bindings::CField::CField):
+        (KJS::Bindings::CField::name):
+        (KJS::Bindings::CMethod::CMethod):
+        (KJS::Bindings::CMethod::name):
+        * bindings/c/c_utility.cpp:
+        (coerceValueToNPString):
+        (convertValueToNPValueType):
+        (convertNPValueTypeToValue):
+        * bindings/c/c_utility.h:
+        * bindings/npruntime.cpp:
+        (NPN_IdentifierFromUTF8):
+        (NPN_IsValidIdentifier):
+        (NPN_GetIdentifiers):
+        (NPN_UTF8FromIdentifier):
+        (NPN_CreateObject):
+        (NPN_RetainObject):
+        (NPN_ReleaseObject):
+        (NPN_IsKindOfClass):
+        (NPN_SetExceptionWithUTF8):
+        (NPN_SetException):
+        (numberAllocate):
+        (NPN_CreateNumberWithInt):
+        (NPN_CreateNumberWithFloat):
+        (NPN_CreateNumberWithDouble):
+        (NPN_IntFromNumber):
+        (NPN_FloatFromNumber):
+        (NPN_DoubleFromNumber):
+        (stringAllocate):
+        (NPN_CreateStringWithUTF8):
+        (NPN_CreateStringWithUTF16):
+        (NPN_DeallocateUTF8):
+        (NPN_UTF8FromString):
+        (NPN_UTF16FromString):
+        (NPN_StringLength):
+        (booleanAllocate):
+        (NPN_CreateBoolean):
+        (NPN_BoolFromBoolean):
+        (nullAllocate):
+        (NPN_GetNull):
+        (undefinedAllocate):
+        (NPN_GetUndefined):
+        (arrayAllocate):
+        (arrayDeallocate):
+        (NPN_CreateArray):
+        (NPN_CreateArrayV):
+        (NPN_ObjectAtIndex):
+        * bindings/npruntime.h:
+        * bindings/runtime.cpp:
+        (Instance::createBindingForLanguageInstance):
+        * bindings/testbindings.cpp:
+        (initializeIdentifiers):
+        (myHasProperty):
+        (myHasMethod):
+        (myGetProperty):
+        (mySetProperty):
+        (logMessage):
+        (setDoubleValue):
+        (setIntValue):
+        (setStringValue):
+        (setBooleanValue):
+        (getDoubleValue):
+        (getIntValue):
+        (getStringValue):
+        (getBooleanValue):
+        (myInvoke):
+        (myAllocate):
+        (myInvalidate):
+        (myDeallocate):
+        (main):
+
+2004-03-31  Richard Williamson   <rjw@apple.com>
+
 	Changed references to NP_runtime.h to npruntime.h
 	
         * JavaScriptCore.pbproj/project.pbxproj:

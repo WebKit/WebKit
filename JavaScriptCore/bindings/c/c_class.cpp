@@ -39,7 +39,7 @@ void CClass::_commonCopy(const CClass &other) {
 }
     
 
-void CClass::_commonInit (NP_Class *aClass)
+void CClass::_commonInit (NPClass *aClass)
 {
     _isa = aClass;
     _methods = CFDictionaryCreateMutable(NULL, 16, &kCFTypeDictionaryKeyCallBacks, NULL);
@@ -55,7 +55,7 @@ static void _createClassesByIsAIfNecessary()
         classesByIsA = CFDictionaryCreateMutable (NULL, 0, NULL, NULL);
 }
 
-CClass *CClass::classForIsA (NP_Class *isa)
+CClass *CClass::classForIsA (NPClass *isa)
 {
     _createClassesByIsAIfNecessary();
     
@@ -69,7 +69,7 @@ CClass *CClass::classForIsA (NP_Class *isa)
 }
 
 
-CClass::CClass (NP_Class *isa)
+CClass::CClass (NPClass *isa)
 {
     _commonInit (isa);
 }
@@ -91,8 +91,8 @@ MethodList CClass::methodsNamed(const char *_name) const
         return methodList;
     }
     
-    if (NP_IsValidIdentifier (_name)) {
-        NP_Identifier ident = NP_IdentifierFromUTF8 (_name);
+    if (NPN_IsValidIdentifier (_name)) {
+        NPIdentifier ident = NPN_IdentifierFromUTF8 (_name);
         if (_isa->hasMethod && _isa->hasMethod (_isa, ident)){
             Method *aMethod = new CMethod (ident);
             CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
@@ -115,8 +115,8 @@ Field *CClass::fieldNamed(const char *name) const
         return aField;
     }
 
-    if (NP_IsValidIdentifier (name)) {
-        NP_Identifier ident = NP_IdentifierFromUTF8 (name);
+    if (NPN_IsValidIdentifier (name)) {
+        NPIdentifier ident = NPN_IdentifierFromUTF8 (name);
         if (_isa->hasProperty && _isa->hasProperty (_isa, ident)){
             aField = new CField (ident);
             CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);

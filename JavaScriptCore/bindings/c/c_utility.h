@@ -31,6 +31,10 @@
 #include <runtime_object.h>
 #include <runtime_root.h>
 
+typedef uint16_t NPUTF16;
+NPUTF16 *NPN_UTF16FromString (NPString *obj);
+NPUTF16 *NPN_UTF16FromString (NPString *obj);
+
 typedef enum 
 {
     NP_NumberValueType,
@@ -43,8 +47,8 @@ typedef enum
 } NP_ValueType;
 
 
-extern NP_Object *coerceValueToNPString (KJS::ExecState *exec, const KJS::Value &value);
-extern NP_Object *convertValueToNPValueType (KJS::ExecState *exec, const KJS::Value &value);
-extern KJS::Value convertNPValueTypeToValue (KJS::ExecState *exec, const NP_Object *obj);
+extern NPObject *coerceValueToNPString (KJS::ExecState *exec, const KJS::Value &value);
+extern NPObject *convertValueToNPValueType (KJS::ExecState *exec, const KJS::Value &value);
+extern KJS::Value convertNPValueTypeToValue (KJS::ExecState *exec, const NPObject *obj);
 
 #endif

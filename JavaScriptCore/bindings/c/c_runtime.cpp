@@ -44,8 +44,8 @@ using namespace KJS::Bindings;
 Value CField::valueFromInstance(KJS::ExecState *exec, const Instance *inst) const
 {
     const CInstance *instance = static_cast<const CInstance*>(inst);
-    NP_Object *obj = instance->getObject();
-    NP_Object *property = obj->_class->getProperty (obj, _fieldIdentifier);
+    NPObject *obj = instance->getObject();
+    NPObject *property = obj->_class->getProperty (obj, _fieldIdentifier);
     Value aValue = convertNPValueTypeToValue (exec, property);
     return aValue;
 }
@@ -53,8 +53,8 @@ Value CField::valueFromInstance(KJS::ExecState *exec, const Instance *inst) cons
 void CField::setValueToInstance(KJS::ExecState *exec, const Instance *inst, const KJS::Value &aValue) const
 {
     const CInstance *instance = static_cast<const CInstance*>(inst);
-    NP_Object *obj = instance->getObject();
-    NP_Object *value = convertValueToNPValueType (exec, aValue);
+    NPObject *obj = instance->getObject();
+    NPObject *value = convertValueToNPValueType (exec, aValue);
     obj->_class->setProperty (obj, _fieldIdentifier, value);
 }
 
