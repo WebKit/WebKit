@@ -71,6 +71,14 @@
     [pboard setString:[bridge selectedText] forType:NSStringPboardType];
 }
 
+
+- (void)selectAll: sender
+{
+    IFWebCoreBridge *bridge = [self _bridge];
+    [bridge selectAll];
+}
+
+
 - (void)dealloc 
 {
     [self _reset];

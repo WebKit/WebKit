@@ -1,3 +1,10 @@
+2002-06-27  Richard Williamson  <rjw@apple.com>
+
+        Implement selectAll.
+        
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView selectAll:]):
+
 2002-06-27  Maciej Stachowiak  <mjs@apple.com>
 
 	WebKit part of fixes for JavaScript cookie bugs:

@@ -1,3 +1,10 @@
+2002-06-27  Richard Williamson  <rjw@apple.com>
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectAll]):
+        Select all using the part.
+
 2002-06-27  Maciej Stachowiak  <mjs@apple.com>
 
 	WebCore part of fixes for JavaScript cookie bugs:

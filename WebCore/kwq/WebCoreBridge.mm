@@ -122,4 +122,9 @@
     return QSTRING_TO_NSSTRING(st);
 }
 
+- (void)selectAll
+{
+    part->selectAll();
+}
+
 @end
