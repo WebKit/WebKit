@@ -355,7 +355,7 @@ protected:
         void setAtTopOfBlock(bool b) { m_atTopOfBlock = b; }
         void setAtBottomOfBlock(bool b) { m_atBottomOfBlock = b; }
         void clearMargin() { m_posMargin = m_negMargin = 0; }
-        void setSelfCollapsingBlockClearedFloat(bool b) { m_selfCollapsingBlockClearedFloat = false; }
+        void setSelfCollapsingBlockClearedFloat(bool b) { m_selfCollapsingBlockClearedFloat = b; }
         void setTopQuirk(bool b) { m_topQuirk = b; }
         void setBottomQuirk(bool b) { m_bottomQuirk = b; }
         void setDeterminedTopQuirk(bool b) { m_determinedTopQuirk = b; }

@@ -1,5 +1,14 @@
 2005-02-10  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3987010, fix a bug that caused the self-collapsing-block-cleared-float bit to never get set correctly.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::MarginInfo::setSelfCollapsingBlockClearedFloat):
+
+2005-02-10  David Hyatt  <hyatt@apple.com>
+
 	Fix  for 3992440, text not wrapping correctly on half moon bay web site.  Refine an incorrect optimization I
 	added to be less restrictive.
 	
