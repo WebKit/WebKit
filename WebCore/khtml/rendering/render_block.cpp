@@ -2556,7 +2556,7 @@ Position RenderBlock::positionForRenderer(RenderObject *renderer, bool start) co
 Position RenderBlock::positionForCoordinates(int _x, int _y, EAffinity *affinity)
 {
     if (affinity)
-        *affinity = UPSTREAM;
+        *affinity = DOWNSTREAM;
 
     if (isTable())
         return RenderFlow::positionForCoordinates(_x, _y, affinity); 

@@ -1,3 +1,17 @@
+2005-02-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3937352> Quote level not maintained when copied and pasted within a Mail message
+
+        Reviewed by harrison.
+
+        * khtml/editing/markup.cpp:
+        (khtml::isMailBlockquote): new 
+        (khtml::createMarkup): retain the Mail quote level by including all ancestor mail block quotes
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForCoordinates): default to downstream for the affinity since the affinity is only upstream when the cursor is clicked to the right of a wrapped line
+        * khtml/rendering/render_text.cpp:
+        (RenderText::positionForCoordinates): ditto
+
 2005-02-11  Adele Amchan  <adele@apple.com>
 
         Reviewed by Darin.
