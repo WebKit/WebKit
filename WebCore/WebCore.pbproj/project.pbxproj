@@ -1639,12 +1639,6 @@
 			path = khtml_part.h;
 			refType = 4;
 		};
-		F523D15502DE42AD018635CA = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = khtml_part.moc;
-			refType = 4;
-		};
 		F523D15602DE42AD018635CA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1661,12 +1655,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = khtmlview.h;
-			refType = 4;
-		};
-		F523D15902DE42AD018635CA = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = khtmlview.moc;
 			refType = 4;
 		};
 		F523D15A02DE42AD018635CA = {
@@ -1725,10 +1713,8 @@
 				F523D15402DE42AD018635CA,
 				F523D15602DE42AD018635CA,
 				F523D15302DE42AD018635CA,
-				F523D15502DE42AD018635CA,
 				F523D15702DE42AD018635CA,
 				F523D15802DE42AD018635CA,
-				F523D15902DE42AD018635CA,
 			);
 			isa = PBXGroup;
 			path = khtml;
@@ -2831,12 +2817,6 @@
 			path = kjs_window.lut.h;
 			refType = 4;
 		};
-		F523D21302DE4369018635CA = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = kjs_window.moc;
-			refType = 4;
-		};
 		F523D21402DE4369018635CA = {
 			fileRef = F523D1F402DE4369018635CA;
 			isa = PBXBuildFile;
@@ -3056,7 +3036,6 @@
 				F523D21002DE4369018635CA,
 				F523D21102DE4369018635CA,
 				F523D21202DE4369018635CA,
-				F523D21302DE4369018635CA,
 			);
 			isa = PBXGroup;
 			path = ecma;
@@ -3108,12 +3087,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = html_documentimpl.h;
-			refType = 4;
-		};
-		F523D23D02DE4396018635CA = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = html_documentimpl.moc;
 			refType = 4;
 		};
 		F523D23E02DE4396018635CA = {
@@ -3246,12 +3219,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = htmltokenizer.h;
-			refType = 4;
-		};
-		F523D25402DE4396018635CA = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = htmltokenizer.moc;
 			refType = 4;
 		};
 		F523D25602DE4396018635CA = {
@@ -3444,7 +3411,6 @@
 				F523D23A02DE4396018635CA,
 				F523D23B02DE4396018635CA,
 				F523D23C02DE4396018635CA,
-				F523D23D02DE4396018635CA,
 				F523D23E02DE4396018635CA,
 				F523D23F02DE4396018635CA,
 				F523D24002DE4396018635CA,
@@ -3467,7 +3433,6 @@
 				F523D25102DE4396018635CA,
 				F523D25202DE4396018635CA,
 				F523D25302DE4396018635CA,
-				F523D25402DE4396018635CA,
 			);
 			isa = PBXGroup;
 			path = html;
@@ -3549,12 +3514,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = loader.h;
-			refType = 4;
-		};
-		F523D28702DE43D7018635CA = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = loader.moc;
 			refType = 4;
 		};
 		F523D28802DE43D7018635CA = {
@@ -3674,7 +3633,6 @@
 				F523D28402DE43D7018635CA,
 				F523D28502DE43D7018635CA,
 				F523D28602DE43D7018635CA,
-				F523D28702DE43D7018635CA,
 				F523D28802DE43D7018635CA,
 				F523D28902DE43D7018635CA,
 				BC7294F703804B3C00A80166,
@@ -4231,12 +4189,6 @@
 			path = dom_docimpl.h;
 			refType = 4;
 		};
-		F523D2F602DE4476018635CA = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dom_docimpl.moc;
-			refType = 4;
-		};
 		F523D2F702DE4476018635CA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -4355,12 +4307,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = xml_tokenizer.h;
-			refType = 4;
-		};
-		F523D30B02DE4476018635CA = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = xml_tokenizer.moc;
 			refType = 4;
 		};
 		F523D30C02DE4476018635CA = {
@@ -4499,7 +4445,6 @@
 			children = (
 				F523D2F402DE4476018635CA,
 				F523D2F502DE4476018635CA,
-				F523D2F602DE4476018635CA,
 				F523D2F702DE4476018635CA,
 				F523D2F802DE4476018635CA,
 				F523D2F902DE4476018635CA,
@@ -4520,7 +4465,6 @@
 				F523D30802DE4476018635CA,
 				F523D30902DE4476018635CA,
 				F523D30A02DE4476018635CA,
-				F523D30B02DE4476018635CA,
 			);
 			isa = PBXGroup;
 			path = xml;

@@ -37,6 +37,7 @@
 class QPainter;
 template <class type> class QPtrList;
 class KHTMLView;
+class RenderArena;
 class QRect;
 class QMouseEvent;
 class QKeyEvent;
@@ -44,8 +45,8 @@ class QTextStream;
 class QStringList;
 
 namespace khtml {
-    class RenderStyle;
     class RenderObject;
+    class RenderStyle;
 };
 
 namespace DOM {
@@ -310,6 +311,11 @@ public:
 
     void closeRenderer();
 
+    void createRendererIfNeeded();
+    virtual khtml::RenderStyle *styleForRenderer(khtml::RenderObject *parent);
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+
     // -----------------------------------------------------------------------------
     // Methods for maintaining the state of the element between history navigation
 
@@ -366,11 +372,7 @@ public:
      * node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed it's value.
      */
     virtual void childrenChanged();
-
-#if APPLE_CHANGES
-    static Node nodeInstance(NodeImpl *impl);
-#endif
-
+    
 private: // members
     DocumentPtr *document;
     NodeImpl *m_previous;

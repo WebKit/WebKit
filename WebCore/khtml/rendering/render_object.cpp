@@ -154,6 +154,10 @@ RenderObject::~RenderObject()
         m_style->deref();
 }
 
+bool RenderObject::canHaveChildren() const
+{
+    return false;
+}
 
 void RenderObject::addChild(RenderObject* , RenderObject *)
 {

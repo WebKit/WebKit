@@ -184,29 +184,23 @@ DOMString HTMLImageElementImpl::altText() const
     return alt;
 }
 
+RenderObject *HTMLImageElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+     return new (arena) RenderImage(this);
+}
+
 void HTMLImageElementImpl::attach()
 {
-    assert(!attached());
-    assert(!m_render);
-    assert(parentNode());
+    createRendererIfNeeded();
 
-    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
-    _style->ref();
-
-    if (parentNode()->renderer() && _style->display() != NONE) {
-        m_render = new (getDocument()->renderArena()) RenderImage(this);
-        m_render->setStyle(_style);
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
+    if (m_render) {
         m_render->updateFromElement();
+        if (getDocument()->isHTMLDocument()) {
+            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+            document->addNamedImageOrForm(oldIdAttr);
+            document->addNamedImageOrForm(oldNameAttr);
+        }
     }
-
-    if (getDocument()->isHTMLDocument() && _style->display() != NONE) {
-	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-	document->addNamedImageOrForm(oldIdAttr);
-	document->addNamedImageOrForm(oldNameAttr);
-    }
-
-    _style->deref();
 
     NodeBaseImpl::attach();
 }

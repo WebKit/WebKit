@@ -357,47 +357,58 @@ NodeImpl *TextImpl::cloneNode(bool /*deep*/)
     return getDocument()->createTextNode(str);
 }
 
+bool TextImpl::rendererIsNeeded(RenderStyle *style)
+{
+    if (!CharacterDataImpl::rendererIsNeeded(style)) {
+        return false;
+    }
+    bool onlyWS = containsOnlyWhitespace();
+    if (!onlyWS) {
+        return true;
+    }
+    
+    RenderObject *par = parentNode()->renderer();
+    
+    if (par->isTable() || par->isTableRow() || par->isTableSection()) {
+        return false;
+    }
+    
+    if (style->whiteSpace() == PRE) {
+        return true;
+    }
+    
+    if (par->isInline()) {
+        // <span><div/> <div/></span>
+        RenderObject *prev = previousRenderer();
+        if (prev && prev->isFlow() && !prev->isInline()) {
+            return false;
+        }
+    } else {
+        RenderObject *prev = previousRenderer();
+        if (par->isFlow() && !par->childrenInline() && (!prev || !prev->isInline())) {
+            return false;
+        }
+        
+        RenderObject *first = par->firstChild();
+        RenderObject *next = nextRenderer();
+        if (!first || next == first) {
+            // Whitespace at the start of a block just goes away.  Don't even
+            // make a render object for this text.
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+RenderObject *TextImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderText(this, str);
+}
+
 void TextImpl::attach()
 {
-    assert(!m_render);
-    assert(!attached());
-    assert(parentNode() && parentNode()->isElementNode());
-
-    ElementImpl* element = static_cast<ElementImpl*>(parentNode());
-    if (!m_render && element->renderer() && !element->renderer()->isTextArea()) {
-        RenderObject* par = element->renderer();
-        khtml::RenderStyle* _style = par->style();
-        bool onlyWS = containsOnlyWhitespace();
-        if (onlyWS) {
-            if (par->isTable() || par->isTableRow() || par->isTableSection())
-                return CharacterDataImpl::attach();
-            
-            if (par->isInline() && _style->whiteSpace() != PRE) {
-                // <span><div/> <div/></span>
-                RenderObject* prevRender = previousRenderer();
-                if (prevRender && prevRender->isFlow() && !prevRender->isInline())
-                    return CharacterDataImpl::attach();
-            }
-            else if (!par->isInline() && _style->whiteSpace() != PRE) {
-                RenderObject* prevRender = previousRenderer();
-                if (par->isFlow() && !par->childrenInline() && 
-                    (!prevRender || !prevRender->isInline()))
-                    return CharacterDataImpl::attach();
-                
-                RenderObject* nextRender = nextRenderer();
-                if ((!par->firstChild() || 
-                    nextRender == par->firstChild()))
-                    // Whitespace at the start of a block just goes away.  Don't even
-                    // make a render object for this text.
-                    return CharacterDataImpl::attach();
-            }
-        }
-
-        m_render = new (getDocument()->renderArena()) RenderText(this, str);
-        m_render->setStyle(_style);
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
-    }
-
+    createRendererIfNeeded();
     CharacterDataImpl::attach();
 }
 

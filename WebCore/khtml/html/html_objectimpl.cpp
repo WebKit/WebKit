@@ -91,16 +91,16 @@ void HTMLAppletElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLAppletElementImpl::attach()
+bool HTMLAppletElementImpl::rendererIsNeeded(RenderStyle *style)
 {
-    if (!parentNode()->renderer() || getAttribute(ATTR_CODE).isNull()) {
-        NodeBaseImpl::attach();
-        return;
-    }
+    return !getAttribute(ATTR_CODE).isNull();
+}
 
+RenderObject *HTMLAppletElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+#ifndef Q_WS_QWS // FIXME(E)? I don't think this is possible with Qt Embedded...
     KHTMLView *view = getDocument()->view();
 
-#ifndef Q_WS_QWS // FIXME(E)? I don't think this is possible with Qt Embedded...
     if( view->part()->javaEnabled() )
     {
 	QMap<QString, QString> args;
@@ -118,19 +118,20 @@ void HTMLAppletElementImpl::attach()
 	    args.insert( "archive", archive.string() );
 
 	args.insert( "baseURL", getDocument()->baseURL() );
-        m_render = new (getDocument()->renderArena()) RenderApplet(this, args);
+        return new (getDocument()->renderArena()) RenderApplet(this, args);
     }
-    else
-        // ### remove me. we should never show an empty applet, instead
-        // render the alternative content given by the webpage
-        m_render = new (getDocument()->renderArena()) RenderEmptyApplet(this);
+
+    // ### remove me. we should never show an empty applet, instead
+    // render the alternative content given by the webpage
+    return new (getDocument()->renderArena()) RenderEmptyApplet(this);
+#else
+    return 0;
 #endif
+}
 
-    if (m_render) {
-        m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
-    }
-
+void HTMLAppletElementImpl::attach()
+{
+    createRendererIfNeeded();
     NodeBaseImpl::attach();
 }
 
@@ -240,25 +241,23 @@ void HTMLEmbedElementImpl::parseAttribute(AttributeImpl *attr)
   }
 }
 
+bool HTMLEmbedElementImpl::rendererIsNeeded(RenderStyle *style)
+{
+    KHTMLView* w = getDocument()->view();
+    return w->part()->pluginsEnabled() && parentNode()->id() != ID_OBJECT;
+}
+
+RenderObject *HTMLEmbedElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderPartObject(this);
+}
+
 void HTMLEmbedElementImpl::attach()
 {
-    assert(!attached());
-    assert(!m_render);
-
-    if (parentNode()->renderer()) {
-        KHTMLView* w = getDocument()->view();
-        if (w->part()->pluginsEnabled()) {
-            if (parentNode()->id() != ID_OBJECT)
-                m_render = new (getDocument()->renderArena()) RenderPartObject(this);
-        }
-
-        if (m_render) {
-            m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
-            parentNode()->renderer()->addChild(m_render, nextRenderer());
-            static_cast<RenderPartObject*>(m_render)->updateWidget();
-        }
+    createRendererIfNeeded();
+    if (m_render) {
+        static_cast<RenderPartObject*>(m_render)->updateWidget();
     }
-
     NodeBaseImpl::attach();
 }
 
@@ -330,51 +329,51 @@ DocumentImpl* HTMLObjectElementImpl::contentDocument() const
     return 0;
 }
 
-void HTMLObjectElementImpl::attach()
+bool HTMLObjectElementImpl::rendererIsNeeded(RenderStyle *style)
 {
-    assert(!attached());
-    assert(!m_render);
-    
-    KHTMLView* w = getDocument()->view();
-    bool loadplugin = w->part()->pluginsEnabled();
-    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
-    
-    _style->ref();
-    
-    if(serviceType.startsWith("image/") && parentNode()->renderer() && _style->display() != NONE){
-        m_render = new (getDocument()->renderArena()) RenderImage(this);
-        m_render->setStyle(_style);
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
-        m_render->updateFromElement();
-        loadplugin = false;
+    if (serviceType.startsWith("image/")) {
+        return HTMLElementImpl::rendererIsNeeded(style);
     }
-    
+
+    KHTMLView* w = getDocument()->view();
+    if (!w->part()->pluginsEnabled()) {
+        return false;
+    }
 #if APPLE_CHANGES
-    // This check showed up during the KDE 3.0 -> 3.0.1 transition.
-    // We can't figure out exactly what it's supposed to do, but it prevents
-    // plugins from working properly for us, so we've rolled back to the way
-    // it was in KDE 3.0.1.
+    // Eventually we will merge with the better version of this check on the tip of tree.
+    // Until then, just leave it out.
 #else
     KURL u = getDocument()->completeURL(url);
     for (KHTMLPart* part = w->part()->parentPart(); part; part = part->parentPart())
         if (part->url() == u) {
-            loadplugin = false;
-            break;
+            return false;
         }
 #endif
+    return true;
+}
 
-    // If we are already cleared, then it means that we were attach()-ed previously
-    // with no renderer.  We will actually need to do an update in order to ensure
-    // that the plugin shows up.  This fix is necessary to work with async
-    // render tree construction caused by stylesheet loads. -dwh
-    if (loadplugin && parentNode()->renderer()) {
-        needWidgetUpdate = false;
-        m_render = new (getDocument()->renderArena()) RenderPartObject(this);
-        m_render->setStyle(_style);
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
+RenderObject *HTMLObjectElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    if (serviceType.startsWith("image/")) {
+        return new (arena) RenderImage(this);
     }
+    return new (arena) RenderPartObject(this);
+}
 
-    _style->deref();
+void HTMLObjectElementImpl::attach()
+{
+    createRendererIfNeeded();
+    if (m_render) {
+        if (serviceType.startsWith("image/")) {
+            m_render->updateFromElement();
+        } else {
+            // If we are already cleared, then it means that we were attach()-ed previously
+            // with no renderer. We will actually need to do an update in order to ensure
+            // that the plugin shows up.  This fix is necessary to work with async
+            // render tree construction caused by stylesheet loads. -dwh
+            needWidgetUpdate = false;
+        }
+    }
 
     NodeBaseImpl::attach();
 

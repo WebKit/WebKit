@@ -48,6 +48,8 @@ public:
 
     virtual void parseAttribute(AttributeImpl *token);
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     bool getMember(const QString &, JType &, QString &);
     bool callMember(const QString &, const QStringList &, JType &, QString &);
@@ -69,6 +71,8 @@ public:
     virtual void parseAttribute(AttributeImpl *attr);
 
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     QString url;
     QString pluginPage;
@@ -92,6 +96,8 @@ public:
     virtual void parseAttribute(AttributeImpl *token);
 
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void detach();
 
     virtual void recalcStyle( StyleChange ch );

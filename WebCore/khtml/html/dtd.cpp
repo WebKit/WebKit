@@ -733,7 +733,7 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         return false;
     case ID_COLGROUP:
         // COLGROUP: COL *
-        if(childID == ID_COL || childID == ID_TEXT || childID == ID_COMMENT) return true;
+        if(childID == ID_COL || childID == ID_COMMENT) return true;
         return false;
     case ID_TR:
         // TR: _9 +

@@ -742,8 +742,10 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             handled = true;
             break;
         case ID_COLGROUP:
-            popBlock(ID_COLGROUP);
-            handled = true;
+            if (id != ID_TEXT) {
+                popBlock(ID_COLGROUP);
+                handled = true;
+            }
             break;
         case ID_FONT:
             popBlock(ID_FONT);

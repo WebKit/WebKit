@@ -59,6 +59,7 @@ public:
     virtual void parseAttribute(AttributeImpl *);
     virtual void init();
     virtual void attach();
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     CSSStyleSheetImpl *sheet() const { return m_styleSheet; }
 
@@ -85,6 +86,8 @@ public:
     virtual void parseAttribute(AttributeImpl *);
     virtual void init();
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     bool noResize() { return noresize; }
     void setLocation( const DOMString& str );
@@ -133,6 +136,8 @@ public:
     virtual void parseAttribute(AttributeImpl *);
     virtual void init();
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     virtual void defaultEventHandler(EventImpl *evt);
 
@@ -182,6 +187,8 @@ public:
 
     virtual Id id() const;
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 };
 
 
@@ -198,6 +205,8 @@ public:
 
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void recalcStyle( StyleChange ch );
 
 protected:

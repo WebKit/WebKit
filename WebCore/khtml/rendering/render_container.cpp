@@ -66,6 +66,11 @@ void RenderContainer::detach(RenderArena* renderArena)
     RenderObject::detach(renderArena);
 }
 
+bool RenderContainer::canHaveChildren() const
+{
+    return true;
+}
+
 void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild)
 {
 #ifdef DEBUG_LAYOUT

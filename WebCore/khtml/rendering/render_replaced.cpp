@@ -113,6 +113,12 @@ void RenderReplaced::position(int x, int y, int, int, int, bool, bool, int)
     m_y = y + marginTop();
 }
 
+bool RenderReplaced::canHaveChildren() const
+{
+    // We should not really be a RenderContainer subclass.
+    return false;
+}
+
 // -----------------------------------------------------------------------------
 
 RenderWidget::RenderWidget(DOM::NodeImpl* node)

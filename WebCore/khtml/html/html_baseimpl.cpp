@@ -181,22 +181,14 @@ void HTMLBodyElementImpl::init()
     getDocument()->updateStyleSelector();
 }
 
+RenderObject *HTMLBodyElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderBody(this);
+}
+
 void HTMLBodyElementImpl::attach()
 {
-    assert(!m_render);
-    assert(parentNode());
-    
-    if (parentNode()->renderer()) {
-        RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
-        style->ref();
-        if (style->display() != NONE) {
-            m_render = new (getDocument()->renderArena()) RenderBody(this);
-            m_render->setStyle(style);
-            parentNode()->renderer()->addChild(m_render, nextRenderer());
-        }
-        style->deref();
-    }
-    
+    createRendererIfNeeded();
     NodeBaseImpl::attach();
 }
 
@@ -357,23 +349,26 @@ void HTMLFrameElementImpl::init()
     }
 }
 
+bool HTMLFrameElementImpl::rendererIsNeeded(RenderStyle *style)
+{
+    // Ignore display: none.
+    return isURLAllowed(url);
+}
+
+RenderObject *HTMLFrameElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderFrame(this);
+}
+
 void HTMLFrameElementImpl::attach()
 {
-    assert(!attached());
-    assert(parentNode());
-    
-    // ignore display: none for this element!
-    KHTMLView* w = getDocument()->view();
-    if (isURLAllowed(url) && parentNode()->renderer())  {
-        m_render = new (getDocument()->renderArena()) RenderFrame(this);
-        m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
-    }
-
+    createRendererIfNeeded();
     NodeBaseImpl::attach();
 
     if (!m_render)
         return;
+
+    KHTMLView* w = getDocument()->view();
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
     if(name.isEmpty() || w->part()->frameExists( name.string() ) )
@@ -520,23 +515,20 @@ void HTMLFrameSetElementImpl::init()
     }
 }
 
+bool HTMLFrameSetElementImpl::rendererIsNeeded(RenderStyle *style)
+{
+    // Ignore display: none but do pay attention if a stylesheet has caused us to delay our loading.
+    return style->isStyleAvailable();
+}
+
+RenderObject *HTMLFrameSetElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderFrameSet(this);
+}
+
 void HTMLFrameSetElementImpl::attach()
 {
-    assert(!m_render);
-    assert(parentNode());
-    assert(parentNode()->renderer());
-
-    // ignore display: none but do pay attention if a stylesheet has caused us to delay
-    // our loading.
-    RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
-    style->ref();
-    if (style->isStyleAvailable()) {
-        m_render = new (getDocument()->renderArena()) RenderFrameSet(this);
-        m_render->setStyle(style);
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
-    }
-    style->deref();
-    
+    createRendererIfNeeded();
     NodeBaseImpl::attach();
 }
 
@@ -585,16 +577,20 @@ NodeImpl::Id HTMLHeadElementImpl::id() const
     return ID_HEAD;
 }
 
+bool HTMLHtmlElementImpl::rendererIsNeeded(RenderStyle *style)
+{
+    // Ignore display: none.
+    return true;
+}
+
+RenderObject *HTMLHtmlElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderHtml(this);
+}
+
 void HTMLHtmlElementImpl::attach()
 {
-    assert(!m_render);
-    assert(parentNode());
-    assert(parentNode()->renderer());
-
-    m_render = new (getDocument()->renderArena()) RenderHtml(this);
-    m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
-    parentNode()->renderer()->addChild(m_render, nextRenderer());
-
+    createRendererIfNeeded();
     NodeBaseImpl::attach();
 }
 
@@ -653,21 +649,20 @@ void HTMLIFrameElementImpl::parseAttribute(AttributeImpl *attr )
   }
 }
 
+bool HTMLIFrameElementImpl::rendererIsNeeded(RenderStyle *style)
+{
+    // Don't ignore display: none the way frame does.
+    return isURLAllowed(url) && style->display() != NONE;
+}
+
+RenderObject *HTMLIFrameElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderPartObject(this);
+}
+
 void HTMLIFrameElementImpl::attach()
 {
-    assert(!attached());
-    assert(!m_render);
-    assert(parentNode());
-
-    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
-    _style->ref();
-    if (isURLAllowed(url) && parentNode()->renderer() && _style->display() != NONE) {
-        m_render = new (getDocument()->renderArena()) RenderPartObject(this);
-        m_render->setStyle(_style);
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
-    }
-    _style->deref();
-
+    createRendererIfNeeded();
     NodeBaseImpl::attach();
 
     if (m_render) {

@@ -45,7 +45,7 @@ class KanjiCode
 {
 public:
     enum Type {ASCII, JIS, EUC, SJIS, UNICODE, UTF8 };
-    static enum Type judge(const char *str);
+    static enum Type judge(const char *str, int length);
     static const int ESC;
     static const int _SS2_;
     static const unsigned char kanji_map_sjis[];
@@ -113,7 +113,7 @@ const unsigned char KanjiCode::kanji_map_sjis[] =
  * But it fails detection. It's not useful.
  */
 
-enum KanjiCode::Type KanjiCode::judge(const char *str)
+enum KanjiCode::Type KanjiCode::judge(const char *str, int size)
 {
     enum Type code;
     int i;
@@ -123,7 +123,6 @@ enum KanjiCode::Type KanjiCode::judge(const char *str)
     int euc = 0;
 
     const unsigned char *ptr = (const unsigned char *) str;
-    int size = strlen(str);
 
     code = ASCII;
 
@@ -488,7 +487,7 @@ QString Decoder::decode(const char *data, int len)
 #ifdef DECODE_DEBUG
 	kdDebug( 6005 ) << "Decoder: use auto-detect (" << strlen(data) << ")" << endl;
 #endif
-	switch ( KanjiCode::judge( data ) ) {
+	switch ( KanjiCode::judge( data, len ) ) {
 	case KanjiCode::JIS:
 	    enc = "jis7";
 	    break;

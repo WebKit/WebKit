@@ -307,23 +307,21 @@ NamedAttrMapImpl* ElementImpl::defaultMap() const
     return 0;
 }
 
+RenderStyle *ElementImpl::styleForRenderer(RenderObject *parentRenderer)
+{
+    return getDocument()->styleSelector()->styleForElement(this);
+}
+
+RenderObject *ElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return RenderObject::createObject(this, style);
+}
+
 void ElementImpl::attach()
 {
-    assert(!attached());
-    assert(!m_render);
-    assert(parentNode());
-
 #if SPEED_DEBUG < 1
-    if (parentNode()->renderer()) {
-        RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
-        _style->ref();
-        m_render = RenderObject::createObject(this, _style);
-        if(m_render)
-            parentNode()->renderer()->addChild(m_render, nextRenderer());
-        _style->deref();
-    }
+    createRendererIfNeeded();
 #endif
-
     NodeBaseImpl::attach();
 }
 

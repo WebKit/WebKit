@@ -31,6 +31,7 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_nodeimpl.h"
+#include "css/cssstyleselector.h"
 
 #include <kglobal.h>
 #include <kdebug.h>
@@ -1015,6 +1016,42 @@ RenderObject * NodeImpl::nextRenderer()
             return n->renderer();
     }
     return 0;
+}
+
+void NodeImpl::createRendererIfNeeded()
+{
+    assert(!attached());
+    assert(!m_render);
+    
+    NodeImpl *parent = parentNode();    
+    assert(parent);
+    
+    RenderObject *parentRenderer = parent->renderer();
+    if (parentRenderer && parentRenderer->canHaveChildren()) {
+        RenderStyle *style = styleForRenderer(parentRenderer);
+        style->ref();
+        if (rendererIsNeeded(style)) {
+            m_render = createRenderer(getDocument()->renderArena(), style);
+            m_render->setStyle(style);
+            parentRenderer->addChild(m_render, nextRenderer());
+        }
+        style->deref();
+    }
+}
+
+RenderStyle *NodeImpl::styleForRenderer(RenderObject *parent)
+{
+    return parent->style();
+}
+
+bool NodeImpl::rendererIsNeeded(RenderStyle *style)
+{
+    return style->display() != NONE;
+}
+
+RenderObject *NodeImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    assert(false);
 }
 
 //-------------------------------------------------------------------------

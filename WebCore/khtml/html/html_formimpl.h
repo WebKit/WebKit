@@ -296,6 +296,8 @@ public:
 
     virtual void init();
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
 
     virtual bool isSuccessfulSubmitButton() const;
@@ -414,6 +416,7 @@ public:
 
     virtual void init();
     virtual void attach();
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
 
     // get the actual listbox index of the optionIndexth option
@@ -555,6 +558,7 @@ public:
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void init();
     virtual void attach();
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
     virtual void reset();
     DOMString value();

@@ -658,11 +658,6 @@ void HTMLGenericFormElementImpl::attach()
 {
     assert(!attached());
 
-    if (m_render) {
-        assert(m_render->style());
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
-    }
-
     NodeBaseImpl::attach();
 
     // The call to updateFromElement() needs to go after the call through
@@ -1254,12 +1249,46 @@ void HTMLInputElementImpl::init()
     m_checked = (getAttribute(ATTR_CHECKED) != 0);
 }
 
+bool HTMLInputElementImpl::rendererIsNeeded(RenderStyle *style)
+{
+    switch(m_type)
+    {
+    case TEXT:
+    case PASSWORD:
+    case ISINDEX:
+    case CHECKBOX:
+    case RADIO:
+    case SUBMIT:
+    case IMAGE:
+    case RESET:
+    case FILE:
+    case BUTTON:   return HTMLGenericFormElementImpl::rendererIsNeeded(style);
+    case HIDDEN:   return false;
+    }
+    assert(false);
+}
+
+RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    switch(m_type)
+    {
+    case TEXT:
+    case PASSWORD:
+    case ISINDEX:  return new (arena) RenderLineEdit(this);
+    case CHECKBOX: return new (arena) RenderCheckBox(this);
+    case RADIO:    return new (arena) RenderRadioButton(this);
+    case SUBMIT:   return new (arena) RenderSubmitButton(this);
+    case IMAGE:    return new (arena) RenderImageButton(this);
+    case RESET:    return new (arena) RenderResetButton(this);
+    case FILE:     return new (arena) RenderFileButton(this);
+    case BUTTON:   return new (arena) RenderPushButton(this);
+    case HIDDEN:   break;
+    }
+    assert(false);
+}
+
 void HTMLInputElementImpl::attach()
 {
-    assert(!attached());
-    assert(!m_render);
-    assert(parentNode());
-
     // We had to wait until the attach call to do this, because we don't yet know
     // our type in parseAttribute.  This also has to be done *before* we do
     // styleForElement, or the width info will not get used.  This fixes
@@ -1270,39 +1299,8 @@ void HTMLInputElementImpl::attach()
             addCSSLength(CSS_PROP_WIDTH, width);
     }
     
-    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
-    _style->ref();
-    if (parentNode()->renderer() && _style->display() != NONE) {
-        RenderArena* arena = getDocument()->renderArena();
-        switch(m_type)
-        {
-        case TEXT:
-        case PASSWORD:
-        case ISINDEX:  m_render = new (arena) RenderLineEdit(this);     break;
-        case CHECKBOX: m_render = new (arena) RenderCheckBox(this);     break;
-        case RADIO:    m_render = new (arena) RenderRadioButton(this);  break;
-        case SUBMIT:   m_render = new (arena) RenderSubmitButton(this); break;
-        case IMAGE: {
-             m_render =  new (arena) RenderImageButton(this);
-             m_render->setStyle(_style);
-             parentNode()->renderer()->addChild(m_render, nextRenderer());
-             m_render->updateFromElement();
-             NodeBaseImpl::attach();
-             _style->deref();
-             return;
-        }
-        case RESET:    m_render = new (arena) RenderResetButton(this);  break;
-        case FILE:     m_render = new (arena) RenderFileButton(this);   break;
-        case BUTTON:   m_render = new (arena) RenderPushButton(this);   break;
-        case HIDDEN:   break;
-        }
-    }
-
-    if (m_render)
-        m_render->setStyle(_style);
-
+    createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
-    _style->deref();
 
 #if APPLE_CHANGES
     // note we don't deal with calling passwordFieldRemoved() on detach, because the timing
@@ -1922,21 +1920,15 @@ void HTMLSelectElementImpl::init()
     addCSSProperty(CSS_PROP_COLOR, "text");
 }
 
+RenderObject *HTMLSelectElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderSelect(this);
+}
+
 void HTMLSelectElementImpl::attach()
 {
-    assert(!attached());
-    assert(parentNode());
-    assert(!renderer());
-
-    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
-    _style->ref();
-    if (parentNode()->renderer() && _style->display() != NONE) {
-        m_render = new (getDocument()->renderArena()) RenderSelect(this);
-        m_render->setStyle(_style);
-    }
-
+    createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
-    _style->deref();
 }
 
 bool HTMLSelectElementImpl::encoding(const QTextCodec* codec, khtml::encodingList& encoded_values, bool)
@@ -2430,21 +2422,15 @@ void HTMLTextAreaElementImpl::init()
     addCSSProperty(CSS_PROP_COLOR, "text");
 }
 
+RenderObject *HTMLTextAreaElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+    return new (arena) RenderTextArea(this);
+}
+
 void HTMLTextAreaElementImpl::attach()
 {
-    assert(!attached());
-    assert(!m_render);
-    assert(parentNode());
-
-    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
-    _style->ref();
-    if (parentNode()->renderer() && _style->display() != NONE) {
-        m_render = new (getDocument()->renderArena()) RenderTextArea(this);
-        m_render->setStyle(_style);
-    }
-
+    createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
-    _style->deref();
 }
 
 bool HTMLTextAreaElementImpl::encoding(const QTextCodec* codec, encodingList& encoding, bool)

@@ -337,7 +337,9 @@ void RenderFlow::layout()
         // Table cells need to grow to accommodate both overhanging floats and
         // blocks that have overflowed content.
         // Check for an overhanging float first.
+        // FIXME: This needs to look at the last flow, not the last child.
         if (lastChild() && lastChild()->hasOverhangingFloats() ) {
+            KHTMLAssert(lastChild()->isFlow());
             m_height = lastChild()->yPos() + static_cast<RenderFlow*>(lastChild())->floatBottom();
             m_height += borderBottom() + paddingBottom();
         }
@@ -1826,6 +1828,7 @@ void RenderFlow::splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock,
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our inline parent chain until we hit the containing block.
     // Once we hit the containing block we're done.
+    KHTMLAssert(parent()->isFlow());
     RenderFlow* curr = static_cast<RenderFlow*>(parent());
     RenderFlow* currChild = this;
     while (curr && curr != fromBlock) {
@@ -1854,6 +1857,7 @@ void RenderFlow::splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock,
         
         // Keep walking up the chain.
         currChild = curr;
+        KHTMLAssert(curr->parent()->isFlow());
         curr = static_cast<RenderFlow*>(curr->parent());
     }
   
@@ -1940,6 +1944,7 @@ void RenderFlow::splitFlow(RenderObject* beforeChild, RenderFlow* newBlockBox,
 void RenderFlow::addChildWithContinuation(RenderObject* newChild, RenderObject* beforeChild)
 {
     RenderFlow* flow = continuationBefore(beforeChild);
+    KHTMLAssert(!beforeChild || beforeChild->parent()->isFlow());
     RenderFlow* beforeChildParent = beforeChild ? static_cast<RenderFlow*>(beforeChild->parent()) : 
                                     (flow->continuation() ? flow->continuation() : flow);
     

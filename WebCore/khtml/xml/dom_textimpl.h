@@ -123,6 +123,8 @@ public:
     virtual bool isTextNode() const { return true; }
     virtual Id id() const;
     virtual void attach();
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void recalcStyle( StyleChange = NoChange );
     virtual bool childTypeAllowed( unsigned short type );
 

@@ -1611,9 +1611,10 @@ void RenderTableCol::addChild(RenderObject *child, RenderObject *beforeChild)
     //                   (beforeChild ? beforeChild->renderName() : 0) << " )" << endl;
 #endif
 
-    if (child->style()->display() == TABLE_COLUMN)
-        // these have to come before the table definition!
-        RenderContainer::addChild(child,beforeChild);
+    KHTMLAssert(child->style()->display() == TABLE_COLUMN);
+
+    // these have to come before the table definition!
+    RenderContainer::addChild(child,beforeChild);
 }
 
 #ifndef NDEBUG

@@ -55,6 +55,8 @@ public:
     void setIntrinsicHeight(int h) { m_intrinsicHeight = h; }
 
     virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int);
+    
+    virtual bool canHaveChildren() const;
 
 private:
     short m_intrinsicWidth;

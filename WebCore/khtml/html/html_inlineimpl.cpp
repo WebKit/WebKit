@@ -214,24 +214,14 @@ void HTMLBRElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
+RenderObject *HTMLBRElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+{
+     return new (arena) RenderBR(this);
+}
+
 void HTMLBRElementImpl::attach()
 {
-    assert(!attached());
-    assert(!m_render);
-    assert(parentNode());
-
-    RenderObject *parentRenderer = parentNode()->renderer();
-    if (parentRenderer) {
-        RenderStyle *style = getDocument()->styleSelector()->styleForElement(this);
-        style->ref();
-        if (style->display() != NONE) {
-            m_render = new (getDocument()->renderArena()) RenderBR(this);
-            m_render->setStyle(style);
-            parentRenderer->addChild(m_render, nextRenderer());
-        }
-        style->deref();
-    }
-    
+    createRendererIfNeeded();
     NodeImpl::attach();
 }
 

@@ -1,3 +1,138 @@
+2003-01-21  Darin Adler  <darin@apple.com>
+
+        Everything else reviewed by Maciej, dtd.cpp and htmlparser.cpp changes reviewed by Dave.
+
+	- fixed 3151098 -- REGRESSION: Frequent assert about renderer in DOM code
+
+        * khtml/html/dtd.cpp: (DOM::checkChild): Disallow text inside colgroup so it can be handled as a special case
+	inside the parser.
+        * khtml/html/htmlparser.cpp: (KHTMLParser::insertNode): Discard text inside colgroup and don't pop the colgroup.
+
+	- fixed 3149792 -- memory trasher at robinlionheart.com
+	- fixed 3150664 -- failed assertion in HTMLFrameSetElementImpl::attach on page with frameset inside frameset
+
+	The key to fixing the 3149792 memory trasher was to avoid constructing trees where there
+	is a render object nested inside an object that is not a suitable container. In particular,
+	the code assumed that RenderFlow objects would only be inside other RenderFlow objects, and
+	this does not happen if you have an <object> that is an image, with objects inside it that
+	are intended to be used if the image fails to load.
+
+	The key to fixing the 3150664 assertion was to handle the case where a frame set's parent
+	didn't have a renderer, rather than just asserting about it.
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layout): Added an assertion and a FIXME from Dave's and my review of this code.
+        (RenderFlow::splitInlines): Add assertions that we have actual RenderFlow objects. Casting
+	non-RenderFlow objects was the cause of the memory trashing. The other parts of this change
+	assure we never hit these assertions by not creating any render objects for DOM objects
+	that are inside non-RenderFlow.
+        (RenderFlow::addChildWithContinuation): Add a similar assertion here.
+
+        * khtml/rendering/render_object.h: Declare new member function.
+        * khtml/rendering/render_object.cpp: (RenderObject::canHaveChildren): Return false.
+        * khtml/rendering/render_container.h: Declare new member function.
+        * khtml/rendering/render_container.cpp: (RenderContainer::canHaveChildren): Return true.
+        * khtml/rendering/render_replaced.h: Declare new member function.
+        * khtml/rendering/render_replaced.cpp: (RenderReplaced::canHaveChildren): Return false.
+
+        * khtml/xml/dom_nodeimpl.h: Declare new member functions.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::createRendererIfNeeded): Added. Checks to see if a renderer should be created,
+	and creates it if so. The bug fix is checking canHaveChildren() here. This also reduces
+	the amount of repeated code in various attach() methods.
+        (NodeImpl::styleForRenderer): Added. Default is parent style.
+        (NodeImpl::rendererIsNeeded): Added. Default is to create only if display is not none.
+        (NodeImpl::createRenderer): Added. Must never reach this function, but I didn't make it a pure
+	virtual because of subclasses like AttrImpl that don't ever call createRendererIfNeeded.
+	Could rethink this and improve it even more.
+
+        * khtml/xml/dom_elementimpl.h: Declare new member functions.
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::styleForRenderer): Override to get the style from the style selector rather
+	than from the parent renderer.
+        (ElementImpl::createRenderer): Call RenderObject::createObject to create the right type of renderer.
+        (ElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+
+        * khtml/html/html_baseimpl.h: Declare new member functions.
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::createRenderer): Create a RenderBody.
+        (HTMLBodyElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+        (HTMLFrameElementImpl::rendererIsNeeded): Override to implement the different policy
+	this element uses to decide whether to make a renderer (same as old code).
+        (HTMLFrameElementImpl::createRenderer): Create a RenderFrame.
+        (HTMLFrameElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+        (HTMLFrameSetElementImpl::rendererIsNeeded): Override to implement the different policy
+	this element uses to decide whether to make a renderer (same as old code).
+        (HTMLFrameSetElementImpl::createRenderer): Create a RenderFrameSet.
+        (HTMLFrameSetElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+	This fixes a bug where the parent doesn't have a renderer; we were asserting in
+	that case rather than just not creating a renderer ourselves, which was wrong.
+        (HTMLHtmlElementImpl::rendererIsNeeded): Override to implement the different policy
+	this element uses to decide whether to make a renderer (same as old code).
+        (HTMLHtmlElementImpl::createRenderer): Create a RenderHtml.
+        (HTMLHtmlElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+        (HTMLIFrameElementImpl::createRenderer): Create a RenderPartObject.
+        (HTMLIFrameElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+
+        * khtml/html/html_formimpl.h: Declare new member functions.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::attach): Remove now-unneeded code that is handled by
+	createRendererIfNeeded now.
+        (HTMLInputElementImpl::rendererIsNeeded): Return false for HIDDEN, otherwise call base.
+        (HTMLInputElementImpl::createRenderer): Create the appropriate type of RenderObject.
+        (HTMLInputElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+	Determined that we don't need the special case for image buttons any more.
+        (HTMLSelectElementImpl::createRenderer): Create a RenderSelect.
+        (HTMLSelectElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+        (HTMLTextAreaElementImpl::createRenderer): Create a RenderTextArea.
+        (HTMLTextAreaElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+
+        * khtml/html/html_imageimpl.h: Declare new member function.
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::createRenderer): Create a RenderImage.
+        (HTMLImageElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+
+        * khtml/html/html_inlineimpl.h: Declare new member function.
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLBRElementImpl::createRenderer): Create a RenderBR.
+        (HTMLBRElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+
+        * khtml/html/html_objectimpl.h: Declare new member functions.
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::rendererIsNeeded): Override to implement the different policy
+	this element uses to decide whether to make a renderer (same as old code).
+        (HTMLAppletElementImpl::createRenderer): Create either a RenderApplet or RenderEmptyApplet.
+        (HTMLAppletElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+        (HTMLEmbedElementImpl::rendererIsNeeded): Override to implement the different policy
+	this element uses to decide whether to make a renderer (same as old code).
+        (HTMLEmbedElementImpl::createRenderer): Create a RenderPartObject.
+        (HTMLEmbedElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+        (HTMLObjectElementImpl::rendererIsNeeded): Override to implement the different policy
+	this element uses to decide whether to make a renderer (same as old code).
+        (HTMLObjectElementImpl::createRenderer): Create either a RenderImage or a RenderPartObject.
+        (HTMLObjectElementImpl::attach): Call createRendererIfNeeded to do most of the work.
+
+        * khtml/xml/dom_textimpl.h: Declare new member functions.
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded): Moved logic about not making renderers for only-whitespace
+	elements here. Left out the special case for textarea, since the fact that RenderReplaced
+	returns false from the canHaveChildren function now takes care of that of that case.
+        (TextImpl::createRenderer): Create a RenderText.
+        (TextImpl::attach): Call createRendererIfNeeded to do most of the work.
+
+	- fixed a buffer overrun that libgmalloc detected
+
+        * khtml/misc/decoder.cpp:
+        (KanjiCode::judge): Pass in a size parameter instead of using strlen.
+        (Decoder::decode): Pass in a size parameter.
+
+	- a little housekeeping
+
+        * WebCore.pbproj/project.pbxproj: Remove a bunch of the .moc files
+	from the project. I'm not sure why I put them in originally, but they
+	do no good in there.
+        * khtml/khtmlview.moc: Empty out this file.
+
 2003-01-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
