@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+	Fix crash with last checkin.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::domObjectsPerDocument): check the same
+	property we want to initialize.
+
+2004-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	<rdar://problem/3685309>: (properties not shared for JS wrappers of same DOM object, accessed from different frames)
 
         * khtml/ecma/kjs_binding.cpp:

@@ -153,7 +153,7 @@ QPtrDict<DOMObject> & ScriptInterpreter::domObjects()
 
 QPtrDict< QPtrDict<DOMObject> > & ScriptInterpreter::domObjectsPerDocument()
 {
-  if (!staticDomObjects) {
+  if (!staticDomObjectsPerDocument) {
     staticDomObjectsPerDocument = new QPtrDict<QPtrDict<DOMObject> >();
     staticDomObjectsPerDocument->setAutoDelete(true);
   }
