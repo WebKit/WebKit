@@ -39,7 +39,7 @@ typedef enum {
 @interface IFWebFramePrivate : NSObject
 {
     NSString *name;
-    IFWebView *view;
+    IFWebView *webView;
     IFWebDataSource *dataSource;
     IFWebDataSource *provisionalDataSource;
     khtml::RenderPart *renderFramePart;
@@ -52,8 +52,8 @@ typedef enum {
 - (NSString *)name;
 - (void)setController: (IFWebController *)c;
 - (IFWebController *)controller;
-- (void)setView: v;
-- view;
+- (void)setWebView: (IFWebView *)v;
+- (IFWebView *)webView;
 - (void)setDataSource: (IFWebDataSource *)d;
 - (IFWebDataSource *)dataSource;
 - (void)setProvisionalDataSource: (IFWebDataSource *)d;

@@ -37,12 +37,12 @@ static const char * const stateNames[6] = {
 
 - (void)dealloc
 {
-    [view _setController: nil];
+    [webView _setController: nil];
     [dataSource _setController: nil];
     [provisionalDataSource _setController: nil];
 
     [name autorelease];
-    [view autorelease];
+    [webView autorelease];
     [dataSource autorelease];
     [provisionalDataSource autorelease];
     if (renderFramePart)
@@ -57,11 +57,11 @@ static const char * const stateNames[6] = {
     name = [n retain];
 }
 
-- view { return view; }
-- (void)setView: v 
+- (IFWebView *)webView { return webView; }
+- (void)setWebView: (IFWebView *)v 
 { 
-    [view autorelease];
-    view = [v retain];
+    [webView autorelease];
+    webView = [v retain];
 }
 
 - (IFWebDataSource *)dataSource { return dataSource; }
@@ -138,12 +138,12 @@ static const char * const stateNames[6] = {
     
     _private->scheduledLayoutPending = NO;
     if (_private->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE) {
-        id documentView = [[self view] documentView];
+        id documentView = [[self webView] documentView];
         
         if ([self controller])
             WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
             
-        if([[self view] isDocumentHTML])
+        if([[self webView] isDocumentHTML])
             [documentView setNeedsLayout: YES];
             
         [documentView setNeedsDisplay: YES];
@@ -207,8 +207,8 @@ static const char * const stateNames[6] = {
 - (void)_transitionProvisionalToCommitted
 {
     WEBKIT_ASSERT ([self controller] != nil);
-    id documentView = [[self view] documentView];
-    BOOL isDocumentHTML = [[self view] isDocumentHTML];
+    id documentView = [[self webView] documentView];
+    BOOL isDocumentHTML = [[self webView] isDocumentHTML];
     
     switch ([self _state]) {
     	case IFWEBFRAMESTATE_PROVISIONAL:
@@ -289,11 +289,11 @@ static const char * const stateNames[6] = {
     _private->state = newState;
     
     if (_private->state == IFWEBFRAMESTATE_PROVISIONAL){
-        [[[self view] frameScrollView] setDrawsBackground: NO];
+        [[[self webView] frameScrollView] setDrawsBackground: NO];
     }
     
     if (_private->state == IFWEBFRAMESTATE_COMPLETE){
-        [[[self view] frameScrollView] setDrawsBackground: YES];
+        [[[self webView] frameScrollView] setDrawsBackground: YES];
     }
 }
 
@@ -341,43 +341,43 @@ static const char * const stateNames[6] = {
             
             //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
             if (![ds isLoading]) {
-                id mainView = [[[self controller] mainFrame] view];
-                id thisView = [self view];
+                id mainView = [[[self controller] mainFrame] webView];
                 id mainDocumentView = [mainView documentView];
+                id thisView = [self webView];
+                id thisDocumentView = [thisView documentView];
 
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
                 if([ds _isDocumentHTML])
                     [[ds representation] part]->end();
                 
+                // We have to layout the main document as
+                // it may change the size of frames.
                 if ([mainView isDocumentHTML]){
-                    // May need to relayout each time a frame is completely
-                    // loaded.
                     [mainDocumentView setNeedsLayout: YES];
                 }
-                
+                [mainDocumentView layout];
+
+                // Tell the just loaded document to layout.  This may be necessary
+                // for non-html content that needs a layout message.
                 if ([thisView isDocumentHTML]){
-                    // Layout this view (eventually).
-                    [[thisView documentView] setNeedsLayout: YES];
+                    [thisDocumentView setNeedsLayout: YES];
                 }
+                [[thisView documentView] layout];
 
                 // Jump to anchor point, if necessary.
                 if ([ds _isDocumentHTML])
                     [[ds representation] part]->impl->gotoBaseAnchor();
                                    
-                // Draw this view (eventually), and it's scroll view
-                // (eventually).
-                //[[thisView documentView] setNeedsDisplay: YES];
-                //[[thisView frameScrollView] setNeedsDisplay: YES];
-                [[thisView frameScrollView] display];
-                [[thisView documentView] display];
-
-                // Force a relayout and draw NOW if we are complete are the top level.
-                if ([[self controller] mainFrame] == self) {
-                    [mainDocumentView layout];
-                    [mainDocumentView display];
-                }
+                // FIXME:  We have to draw the whole document hierarchy.  We should be 
+                // able to just draw the document associated with this
+                // frame, but that doesn't work.  Not sure why.
+                [mainDocumentView setNeedsDisplay: YES];
  
+                // This should be redundant, given the setNeedsDisplay: on the
+                // main view above.
+                [thisDocumentView setNeedsDisplay: YES];
+                
                 [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError]];
  
                 //if ([ds _isDocumentHTML])

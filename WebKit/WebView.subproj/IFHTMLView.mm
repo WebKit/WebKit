@@ -28,6 +28,10 @@
 
 #import <KWQKHTMLPartImpl.h>
 
+@interface NSScrollView (NSPrivate)
+- (void)_adjustForGrowBox;
+@end
+
 @implementation IFHTMLView
 
 - initWithFrame: (NSRect) frame
@@ -111,10 +115,10 @@
     
     [provisionalView release];
 
-    int mw = [[[dataSource webFrame] view] _marginWidth];
+    int mw = [[[dataSource webFrame] webView] _marginWidth];
     if (mw >= 0)
         _private->provisionalWidget->setMarginWidth (mw);
-    int mh = [[[dataSource webFrame] view] _marginHeight];
+    int mh = [[[dataSource webFrame] webView] _marginHeight];
     if (mh >= 0)
         _private->provisionalWidget->setMarginHeight (mh);
         
@@ -415,10 +419,15 @@
 - (void)viewDidEndLiveResize
 {
     id scrollView = [[self superview] superview];
+
     //[scrollView setAllowsScrolling: _private->liveAllowsScrolling];
+
+    [scrollView updateScrollers];
+    [scrollView tile];
+
     [self setNeedsLayout: YES];
     [self setNeedsDisplay: YES];
-    [scrollView updateScrollers];
+    [scrollView setNeedsDisplay: YES];
 }
 
 

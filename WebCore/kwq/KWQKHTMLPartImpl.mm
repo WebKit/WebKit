@@ -465,11 +465,11 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     aFrame =[dataSource frameNamed: nsframeName];
     if (aFrame){
         KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "found %s\n", [nsframeName cString]);
-        QWidget *khtmlview = [[[aFrame view] documentView] _provisionalWidget];
+        QWidget *khtmlview = [[[aFrame webView] documentView] _provisionalWidget];
         if (khtmlview)
             frame->setWidget (khtmlview);
         else
-            frame->setWidget ([[[aFrame view] documentView] _widget]);
+            frame->setWidget ([[[aFrame webView] documentView] _widget]);
     }
     else {        
         KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "creating %s\n", [nsframeName cString]);
@@ -499,8 +499,8 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
         [newFrame setProvisionalDataSource: newDataSource];
     
         
-        [[newFrame view] _setMarginWidth: o->getMarginWidth()];
-        [[newFrame view] _setMarginHeight: o->getMarginHeight()];
+        [[newFrame webView] _setMarginWidth: o->getMarginWidth()];
+        [[newFrame webView] _setMarginHeight: o->getMarginHeight()];
 
         [newFrame startLoading];
     }

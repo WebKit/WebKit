@@ -54,6 +54,8 @@
         [self setHasVerticalScroller: scrollsVertically];
         [self setHasHorizontalScroller: scrollsHorizontally];
     }
+    [self tile];
+    [self setNeedsDisplay: YES];
 }
 
 

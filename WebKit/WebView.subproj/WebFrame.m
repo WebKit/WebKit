@@ -26,10 +26,10 @@
 
 - init
 {
-    return [self initWithName: nil view: nil provisionalDataSource: nil controller: nil];
+    return [self initWithName: nil webView: nil provisionalDataSource: nil controller: nil];
 }
 
-- initWithName: (NSString *)n view: v provisionalDataSource: (IFWebDataSource *)d controller: (IFWebController *)c
+- initWithName: (NSString *)n webView: (IFWebView *)v provisionalDataSource: (IFWebDataSource *)d controller: (IFWebController *)c
 {
     [super init];
 
@@ -61,7 +61,7 @@
     [_private setName: n];
     
     if (v)
-        [self setView: v];
+        [self setWebView: v];
     
     return self;
 }
@@ -78,15 +78,15 @@
 }
 
 
-- (void)setView: v
+- (void)setWebView: (IFWebView *)v
 {
-    [_private setView: v];
+    [_private setWebView: v];
     [v _setController: [self controller]];
 }
 
-- view
+- (IFWebView *)webView
 {
-    return [_private view];
+    return [_private webView];
 }
 
 - (IFWebController *)controller
@@ -126,7 +126,7 @@
     // Unfortunately the view must be non-nil, this is ultimately due
     // to KDE parser requiring a KHTMLView.  Once we settle on a final
     // KDE drop we should fix this dependency.
-    WEBKIT_ASSERT ([self view] != nil);
+    WEBKIT_ASSERT ([self webView] != nil);
 
     urlPolicy = [[self controller] URLPolicyForURL:[newDataSource inputURL]];
 
@@ -154,9 +154,9 @@
         
         [_private setProvisionalDataSource: newDataSource];
         
-        //[[self view] provisionalDataSourceChanged: newDataSource];
-        //[[[self view] documentView] provisionalDataSourceChanged: newDataSource];
-    
+        // We tell the documentView provisionalDataSourceChanged:
+        // once it has been created by the controller.
+            
         [self _setState: IFWEBFRAMESTATE_PROVISIONAL];
     }
     else if(urlPolicy == IFURLPolicyOpenExternally){
@@ -199,9 +199,9 @@
 - (void)reset
 {
     [_private setDataSource: nil];
-    if([[[self view] documentView] isKindOfClass: NSClassFromString(@"IFHTMLView")])
-        [[[self view] documentView] _resetWidget];
-    [_private setView: nil];
+    if([[[self webView] documentView] isKindOfClass: NSClassFromString(@"IFHTMLView")])
+        [[[self webView] documentView] _resetWidget];
+    [_private setWebView: nil];
 }
 
 + _frameNamed:(NSString *)name fromFrame: (IFWebFrame *)aFrame

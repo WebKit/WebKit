@@ -1,5 +1,46 @@
 2002-06-14  Richard Williamson  <rjw@apple.com>
 
+    Lots of frame related cleanup.  Added attempt to get
+    nested scrollbars to work correctly with window's resize
+    corner.  Still not quite right.
+    
+    Name change [IFWebFrame view] -> [IFWebFrame webView].
+    
+	* WebView.subproj/IFDynamicScrollBarsView.m:
+	(-[IFDynamicScrollBarsView updateScrollers]):
+	* WebView.subproj/IFHTMLView.mm:
+	(-[IFHTMLView provisionalDataSourceChanged:]):
+	(-[IFHTMLView viewDidEndLiveResize]):
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebController.mm:
+	(-[IFWebController initWithView:provisionalDataSource:]):
+	(-[IFWebController createFrameNamed:for:inParent:inScrollView:]):
+	(-[IFWebController _frameForView:fromFrame:]):
+	(-[IFWebController frameForView:]):
+	(-[IFWebController haveContentPolicy:andPath:forLocationChangeHandler:]):
+	* WebView.subproj/IFWebControllerPrivate.mm:
+	(-[IFWebControllerPrivate _clearControllerReferences:]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame init]):
+	(-[IFWebFrame initWithName:webView:provisionalDataSource:controller:]):
+	(-[IFWebFrame setWebView:]):
+	(-[IFWebFrame webView]):
+	(-[IFWebFrame setProvisionalDataSource:]):
+	(-[IFWebFrame reset]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFramePrivate dealloc]):
+	(-[IFWebFramePrivate setWebView:]):
+	(-[IFWebFrame _timedLayout:]):
+	(-[IFWebFrame _transitionProvisionalToCommitted]):
+	(-[IFWebFrame _setState:]):
+	(-[IFWebFrame _isLoadComplete]):
+
+2002-06-14  Richard Williamson  <rjw@apple.com>
+
 	* WebView.subproj/IFHTMLView.mm:
 	(-[IFHTMLView initWithFrame:]):
 	    Added notification so we can intelligently add/remove

@@ -1,3 +1,11 @@
+2002-06-14  Richard Williamson  <rjw@apple.com>
+
+    Name change view -> webView.
+    
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::requestFrame):
+	* kwq/external.h:
+
 2002-06-14  Chris Blumenberg  <cblu@apple.com>
 
 	Put #ifndef APPLE_CHANGES around one line that

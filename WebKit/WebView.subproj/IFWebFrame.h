@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @class IFError;
-@class IFWebDataSource;
 @class IFWebController;
+@class IFWebDataSource;
+@class IFWebView;
 
 @class IFWebFramePrivate;
 
@@ -20,14 +21,14 @@
     IFWebFramePrivate *_private;
 }
 
-- initWithName: (NSString *)name view: view provisionalDataSource: (IFWebDataSource *)dataSource controller: (IFWebController *)controller;
+- initWithName: (NSString *)name webView: (IFWebView *)view provisionalDataSource: (IFWebDataSource *)dataSource controller: (IFWebController *)controller;
 - (NSString *)name;
 
 - (void)setController: (IFWebController *)controller;
 - (IFWebController *)controller;
 
-- (void)setView: (id)view;
-- (id)view;
+- (void)setWebView: (IFWebView *)view;
+- (IFWebView *)webView;
 
 /*
     Sets the frame's data source.  Note that the data source will be

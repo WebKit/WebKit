@@ -31,7 +31,7 @@
     [super init];
     
     _private = [[IFWebControllerPrivate alloc] init];
-    _private->mainFrame = [[IFWebFrame alloc] initWithName: @"_top" view: view provisionalDataSource: dataSource controller: self];
+    _private->mainFrame = [[IFWebFrame alloc] initWithName: @"_top" webView: view provisionalDataSource: dataSource controller: self];
 
     return self;
 }
@@ -60,7 +60,7 @@
 
     childView = [[[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)] autorelease];
 
-    newFrame = [[[IFWebFrame alloc] initWithName: fname view: childView provisionalDataSource: childDataSource controller: self] autorelease];
+    newFrame = [[[IFWebFrame alloc] initWithName: fname webView: childView provisionalDataSource: childDataSource controller: self] autorelease];
 
     [parentDataSource addFrame: newFrame];
 
@@ -171,13 +171,13 @@
 }
 
 
-- (IFWebFrame *)_frameForView: (NSView *)aView fromFrame: (IFWebFrame *)frame
+- (IFWebFrame *)_frameForView: (IFWebView *)aView fromFrame: (IFWebFrame *)frame
 {
     NSArray *frames;
     int i, count;
     IFWebFrame *result, *aFrame;
     
-    if ([frame view] == aView)
+    if ([frame webView] == aView)
         return frame;
         
     frames = [[frame dataSource] children];
@@ -202,7 +202,7 @@
 }
 
 
-- (IFWebFrame *)frameForView: (NSView *)aView
+- (IFWebFrame *)frameForView: (IFWebView *)aView
 {
     IFWebFrame *frame = [self mainFrame];
     
@@ -275,7 +275,7 @@
                     
                     dataRepresentation = [IFWebDataSource createRepresentationForMIMEType:MIMEType];
                     [dataSource _setRepresentation:dataRepresentation];
-                    webView = [[dataSource webFrame] view];
+                    webView = [[dataSource webFrame] webView];
                     documentView = [IFWebView createViewForMIMEType:MIMEType];
                     [webView _setDocumentView: documentView];
                     [documentView provisionalDataSourceChanged: dataSource];

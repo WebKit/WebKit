@@ -33,7 +33,7 @@
     int i, count;
         
     [[aFrame dataSource] _setController: nil];
-    [[aFrame view] _setController: nil];
+    [[aFrame webView] _setController: nil];
     [aFrame _setController: nil];
 
     // Walk the frame tree, niling the controller.

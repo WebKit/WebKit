@@ -118,7 +118,7 @@
     int contentLengthReceived = [sender contentLengthReceived];
     NSString *contentType = [sender contentType];
     IFWebFrame *frame = [dataSource webFrame];
-    IFWebView *view = [frame view];
+    IFWebView *view = [frame webView];
     IFContentPolicy contentPolicy;
     NSData *data = nil;
     
