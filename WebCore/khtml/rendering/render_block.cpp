@@ -2040,6 +2040,9 @@ Position RenderBlock::positionForRenderer(RenderObject *renderer, bool start) co
         return Position(element(), 0);
 
     NodeImpl *node = renderer->element() ? renderer->element() : element();
+    if (!node)
+        return Position();
+
     long offset = start ? node->caretMinOffset() : node->caretMaxOffset();
     return Position(node, offset);
 }

@@ -1,3 +1,13 @@
+2004-04-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        <rdar://problem/3632163>: "REGRESSSION: crash on css home page"
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForRenderer): Add null check.
+
 2004-04-20  David Hyatt  <hyatt@apple.com>
 
 	Fix hiermenu opacity bug.  Make sure to save/restore the graphics state before pushing and popping
