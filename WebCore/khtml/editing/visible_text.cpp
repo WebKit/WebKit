@@ -926,7 +926,7 @@ Range findPlainText(const Range &r, const QString &s, bool forward, bool caseSen
             }
 
             // Do the search.
-            do {
+            while (1) {
                 if (buffer.isMatch()) {
                     // Compute the range for the result.
                     found = true;
@@ -937,9 +937,11 @@ Range findPlainText(const Range &r, const QString &s, bool forward, bool caseSen
                         goto done;
                     }
                 }
+                if (it.atBreak())
+                    break;
                 buffer.append(it.characters()[0]);
                 it.advance(1);
-            } while (!it.atBreak());
+            }
             buffer.clear();
         }
     }

@@ -1,3 +1,12 @@
+2004-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - fixed <rdar://problem/3751619> Safari crash in khtml::CircularSearchBuffer::append(QChar const&)
+
+        * khtml/editing/visible_text.cpp: (khtml::findPlainText): Fix exit condition to check for break
+        before advancing one character; before it did it backwards.
+
 2004-10-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3853262> REGRESSION(166-168) gmail gets blank page when loading
