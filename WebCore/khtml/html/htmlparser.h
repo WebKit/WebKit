@@ -123,6 +123,13 @@ protected:
 
     ushort *forbiddenTag;
 
+    // For error handling, we sometimes destroy and recreate elements (usually when
+    // a form is nested inside a table and outside a row).  Hold onto a single
+    // element's attribute map so that we can reattach it later should we need to. -dwh
+#define DISCARD_MAX 5
+    DOM::NamedAttrMapImpl* discardedAttrs[DISCARD_MAX];
+    int discardedStackPos;
+    
     /*
      * currently active form
      */

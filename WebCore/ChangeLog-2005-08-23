@@ -1,3 +1,16 @@
+2002-08-16  David Hyatt  <hyatt@apple.com>
+
+	Fix for the intuit.com and eweek.com <form><tr> bgcolor problem.
+	Improve the error handling of the parser so that it doesn't
+	lose attributes when errors like this occur in a page.
+	
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::~KHTMLParser):
+        (KHTMLParser::reset):
+        (KHTMLParser::parseToken):
+        (KHTMLParser::insertNode):
+        * khtml/html/htmlparser.h:
+
 2002-08-15  Darin Adler  <darin@apple.com>
 
 	- fixed 2983959 -- pages that try to use JavaScript to focus fail to do so

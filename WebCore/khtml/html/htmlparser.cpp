@@ -154,6 +154,11 @@ KHTMLParser::~KHTMLParser()
 
     delete [] forbiddenTag;
     delete isindex;
+    
+    for (int i = 0; i < DISCARD_MAX; i++) {
+        if (discardedAttrs[i])
+            discardedAttrs[i]->deref();
+    }
 }
 
 void KHTMLParser::reset()
@@ -179,6 +184,10 @@ void KHTMLParser::reset()
     haveKonqBlock = false;
 
     discard_until = 0;
+    
+    discardedStackPos = 0;
+    for (int i = 0; i < DISCARD_MAX; i++)
+        discardedAttrs[i] = 0;
 }
 
 void KHTMLParser::parseToken(Token *t)
@@ -249,6 +258,24 @@ void KHTMLParser::parseToken(Token *t)
 
     if ( !insertNode(n, t->flat) ) {
         // we couldn't insert the node...
+        
+        if(n->isElementNode())
+        {
+            ElementImpl *e = static_cast<ElementImpl *>(n);
+            e->setAttributeMap(0);
+            
+            // Save the discarded attributes in case we do a reconstruction later.
+            // For <table><form><tr bgcolor=blue>..., we need to save off the bgcolor
+            // so that when we recreate the row, we can reattach the correct attributes.
+            // <body> fixup is handled already, so we don't need to deal with that here. -dwh
+            if ((n->id() == ID_TR || n->id() == ID_TD) && discardedStackPos < DISCARD_MAX) {
+                if (t->attrs)
+                    t->attrs->ref();
+                discardedAttrs[discardedStackPos] = t->attrs;
+                discardedStackPos++;
+            }
+        }
+            
 #ifdef PARSER_DEBUG
         kdDebug( 6035 ) << "insertNode failed current=" << current->id() << ", new=" << n->id() << "!" << endl;
 #endif
@@ -629,6 +656,14 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 else
                     e = new HTMLTableRowElementImpl( document );
 
+                // Now reattach any discarded attributes if they exist. -dwh
+                if (discardedStackPos > 0 && current->id() != ID_TABLE) {
+                    discardedStackPos--;
+                    e->setAttributeMap(discardedAttrs[discardedStackPos]);
+                    if (discardedAttrs[discardedStackPos])
+                        discardedAttrs[discardedStackPos]->deref();
+                    discardedAttrs[discardedStackPos] = 0;
+                }
                 insertNode(e);
                 handled = true;
                 break;
