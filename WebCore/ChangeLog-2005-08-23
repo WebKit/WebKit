@@ -1,4 +1,18 @@
- 2005-03-01  Ken Kocienda  <kocienda@apple.com>
+2005-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+
+        <rdar://problem/4011358> REGRESSION(Mail): after dragging text to mail message and deleting, typing or dragging new text doesn't work
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::isCandidate): Insertion point disappearing was due to a failed
+        check here after deleting all the content in the body element. The special "empty block"
+        needs to add check for DOM children. A block may have straggling anonymous render children in
+        some cases, and so the check needs to be (!DOM-kids || !render-kids).
+
+2005-03-01  Ken Kocienda  <kocienda@apple.com>
  
         Reviewed by Maciej
 
@@ -117,7 +131,6 @@
         * layout-tests/editing/deleting/smart-delete-002-expected.txt: Added.
         * layout-tests/editing/deleting/smart-delete-002.html: Added.
 
->>>>>>> 1.3972
 2005-03-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Vicki

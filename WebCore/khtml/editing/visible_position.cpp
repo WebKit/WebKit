@@ -308,9 +308,11 @@ bool VisiblePosition::isCandidate(const Position &pos)
         }
     }
     
-    if (renderer->isBlockFlow() && !renderer->firstChild() && (renderer->height() || pos.node()->id() == ID_BODY))
+    if (renderer->isBlockFlow() && (!renderer->firstChild() || !pos.node()->firstChild()) && 
+       (renderer->height() || pos.node()->id() == ID_BODY)) {
         // return true for offset 0 into rendered blocks that are empty of rendered kids, but have a height
         return pos.offset() == 0;
+    }
     
     return false;
 }
