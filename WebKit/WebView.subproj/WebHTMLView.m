@@ -313,27 +313,6 @@
 }
 
 
-// Drag and drop links and images.  Others?
-- (void)setAcceptsDrags: (BOOL)flag
-{
-    _private->canDragFrom = flag;
-}
-
-- (BOOL)acceptsDrags
-{
-    return _private->canDragFrom;
-}
-
-- (void)setAcceptsDrops: (BOOL)flag
-{
-    _private->canDragTo = flag;
-}
-
-- (BOOL)acceptsDrops
-{
-    return _private->canDragTo;
-}
-
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {    
     NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];

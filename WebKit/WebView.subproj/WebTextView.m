@@ -21,8 +21,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        canDragFrom = YES;
-        canDragTo = YES;
         [self setAutoresizingMask:NSViewWidthSizable];
         [self setEditable:NO];
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -81,26 +79,6 @@
 
 - (void)layout
 {
-}
-
-- (void)setAcceptsDrags:(BOOL)flag
-{
-    canDragFrom = flag;
-}
-
-- (BOOL)acceptsDrags
-{
-    return canDragFrom;
-}
-
-- (void)setAcceptsDrops:(BOOL)flag
-{
-    canDragTo = flag;
-}
-
-- (BOOL)acceptsDrops
-{
-    return canDragTo;
 }
 
 - (void)defaultsChanged:(NSNotification *)notification

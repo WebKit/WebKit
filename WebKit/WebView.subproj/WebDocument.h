@@ -46,39 +46,6 @@
 
 
 /*!
-    @protocol WebDocumentDragSettings
-    @discussion Optional protocol for setting dragging behavior for the document view of WebView. 
-*/
-@protocol WebDocumentDragSettings <NSObject>
-/*!
-    @method setAcceptsDrags:
-    @abstract Sets whether one can drag from the document view or not.
-    @param flag YES allows drags from the document view, NO disallows drags from the document view.
-*/
-- (void)setAcceptsDrags: (BOOL)flag;
-
-/*!
-    @method acceptsDrags
-    @result Whether one can drag from the document view or not.
-*/
-- (BOOL)acceptsDrags;
-
-/*!
-    @method setAcceptsDrops:
-    @abstract Sets whether one can drag to the document view or not.
-    @param flag YES allows drags to the document view, NO disallows drags to the document view.
-*/
-- (void)setAcceptsDrops: (BOOL)flag;
-
-/*!
-    @method acceptsDrops
-    @result Whether one can drag to the document view or not.
-*/
-- (BOOL)acceptsDrops;
-@end
-
-
-/*!
     @protocol WebDocumentSearching
     @discussion Optional protocol for searching document view of WebView. 
 */

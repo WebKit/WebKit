@@ -27,10 +27,6 @@
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
-        acceptsDrags = YES;
-        acceptsDrops = YES;
-    }
     return self;
 }
 
@@ -73,26 +69,6 @@
     } else {
         [self setFrameSize:NSMakeSize(0, 0)];
     }
-}
-
-- (void)setAcceptsDrags: (BOOL)flag
-{
-    acceptsDrags = flag;
-}
-
-- (BOOL)acceptsDrags
-{
-    return acceptsDrags;
-}
-
-- (void)setAcceptsDrops: (BOOL)flag
-{
-    acceptsDrops = flag;
-}
-
-- (BOOL)acceptsDrops
-{
-    return acceptsDrops;
 }
 
 - (void)viewDidMoveToWindow
@@ -169,20 +145,18 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    if(acceptsDrags){
-        // Don't allow drags to be accepted by this WebView.
-        [[self _web_parentWebView] unregisterDraggedTypes];
+    // Don't allow drags to be accepted by this WebView.
+    [[self _web_parentWebView] unregisterDraggedTypes];
 
-        // Retain this view during the drag because it may be released before the drag ends.
-        [self retain];
-        
-        [self _web_dragPromisedImage:[representation image]
-                                rect:[self bounds]
-                                 URL:[representation URL]
-                            fileType:[[[representation URL] path] pathExtension]
-                               title:nil
-                               event:event];
-    }
+    // Retain this view during the drag because it may be released before the drag ends.
+    [self retain];
+    
+    [self _web_dragPromisedImage:[representation image]
+                            rect:[self bounds]
+                                URL:[representation URL]
+                        fileType:[[[representation URL] path] pathExtension]
+                            title:nil
+                            event:event];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination

@@ -9,11 +9,9 @@
 @protocol WebDocumentView;
 @protocol WebDocumentDragSettings;
 
-@interface WebImageView : NSView <WebDocumentView, WebDocumentDragSettings>
+@interface WebImageView : NSView <WebDocumentView>
 {
     WebImageRepresentation *representation;
-    BOOL acceptsDrags;
-    BOOL acceptsDrops;
     BOOL didSetFrame;
 }
 @end

@@ -1,3 +1,21 @@
+2003-02-26  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3102760.  Removed WebDocumentDragSettings from API.
+        
+        Reviewed by Chris.
+
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView initWithFrame:]):
+        (-[WebImageView mouseDragged:]):
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView initWithFrame:]):
+        (-[WebTextView layout]):
+
 2003-02-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for bug #3181249.  Ensure the padding argument gets passed
