@@ -13,6 +13,7 @@
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/IFFileTypeMappings.h>
 
 #import <xml/dom_docimpl.h>
 
@@ -317,6 +318,11 @@
 - (NSString *)contentType
 {
     return _private->contentType;
+}
+
+- (NSString *)fileType
+{
+    return [[IFFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[self contentType]];
 }
 
 - (NSString *)downloadPath

@@ -1,3 +1,10 @@
+2002-06-17  Chris Blumenberg  <cblu@apple.com>
+
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource contentType]): no changes
+	(-[IFWebDataSource fileType]): added. Returns extension based on MIME.
+
 2002-06-17  Richard Williamson  <rjw@apple.com>
 
     Fixed www.2cpu.com regression.  QWidget::_displayRect was displaying the wrong view.
