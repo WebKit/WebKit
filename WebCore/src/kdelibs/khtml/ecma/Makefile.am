@@ -1,8 +1,8 @@
 NULL =
 
-noinst_LTLIBRARIES = libkhtmlecma.la
+noinst_LIBRARIES = libkhtmlecma.a
 
-libkhtmlecma_la_SOURCES = \
+libkhtmlecma_a_SOURCES = \
 	kjs_binding.cpp \
 	kjs_binding.h \
 	kjs_css.cpp \
@@ -39,7 +39,7 @@ libkhtmlecma_la_SOURCES = \
 #	testecma.cpp \
 #	$(NULL)
 #
-# testecma_LDADD = ./libkhtmlecma.la
+# testecma_LDADD = ./libkhtmlecma.a
 
 INCLUDES = \
 	$(KWQ_INCLUDES) \

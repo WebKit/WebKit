@@ -11,22 +11,11 @@ SUBDIRS = \
 	rendering \
 	$(NULL)
 
-noinst_LTLIBRARIES = libkhtml.la
+noinst_LIBRARIES = libkhtml.a
 
-libkhtml_la_SOURCES = \
+libkhtml_a_SOURCES = \
 	khtml_events.cpp \
 	khtmlview.cpp \
-	$(NULL)
-
-libkhtml_la_LIBADD = \
-	./misc/libkhtmlmisc.la \
-	./css/libkhtmlcss.la \
-	./dom/libkhtmldom.la \
-	./ecma/libkhtmlecma.la \
-	./xml/libkhtmlxml.la \
-	./java/libkhtmljava.la \
-	./html/libkhtmlhtml.la \
-	./rendering/libkhtmlrendering.la \
 	$(NULL)
 
 INCLUDES = \

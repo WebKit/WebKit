@@ -1,8 +1,8 @@
 NULL =
 
-noinst_LTLIBRARIES = libqt_borrowed.la
+noinst_LIBRARIES = libqt_borrowed.a
 
-libqt_borrowed_la_SOURCES = \
+libqt_borrowed_a_SOURCES = \
 	_qbuffer.cpp \
 	_qcollection.cpp \
 	_qcstring.cpp \

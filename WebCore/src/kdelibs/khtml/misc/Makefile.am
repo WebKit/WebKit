@@ -1,8 +1,8 @@
 NULL =
 
-noinst_LTLIBRARIES = libkhtmlmisc.la
+noinst_LIBRARIES = libkhtmlmisc.a
 
-libkhtmlmisc_la_SOURCES = \
+libkhtmlmisc_a_SOURCES = \
 	decoder.cpp \
 	decoder.h \
 	font.cpp \

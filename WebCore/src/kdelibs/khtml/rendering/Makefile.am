@@ -1,8 +1,8 @@
 NULL =
 
-noinst_LTLIBRARIES = libkhtmlrendering.la
+noinst_LIBRARIES = libkhtmlrendering.a
 
-libkhtmlrendering_la_SOURCES = \
+libkhtmlrendering_a_SOURCES = \
 	bidi.cpp \
 	bidi.h \
 	break_lines.cpp \

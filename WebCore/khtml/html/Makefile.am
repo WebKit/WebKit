@@ -1,8 +1,8 @@
 NULL =
 
-noinst_LTLIBRARIES = libkhtmlhtml.la
+noinst_LIBRARIES = libkhtmlhtml.a
 
-libkhtmlhtml_la_SOURCES = \
+libkhtmlhtml_a_SOURCES = \
 	dtd.cpp \
 	dtd.h \
 	html_baseimpl.cpp \

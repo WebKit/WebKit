@@ -1,8 +1,8 @@
 NULL=
 
-noinst_LTLIBRARIES = libkhtmlxml.la
+noinst_LIBRARIES = libkhtmlxml.a
 
-libkhtmlxml_la_SOURCES = \
+libkhtmlxml_a_SOURCES = \
         dom2_eventsimpl.cpp \
         dom2_eventsimpl.h \
         dom2_rangeimpl.cpp \

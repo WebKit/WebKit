@@ -1,8 +1,8 @@
 NULL =
 
-noinst_LTLIBRARIES = libkde_borrowed.la
+noinst_LIBRARIES = libkde_borrowed.a
 
-libkde_borrowed_la_SOURCES = \
+libkde_borrowed_a_SOURCES = \
 	_kurl.cpp \
 	_kurl.h \
 	$(NULL)

@@ -1,8 +1,8 @@
 NULL =
 
-noinst_LTLIBRARIES = libkhtmldom.la
+noinst_LIBRARIES = libkhtmldom.a
 
-libkhtmldom_la_SOURCES = \
+libkhtmldom_a_SOURCES = \
 	css_rule.cpp \
 	css_rule.h \
 	css_stylesheet.cpp \

@@ -1,8 +1,8 @@
 NULL =
 
-noinst_LTLIBRARIES = libkjs.la
+noinst_LIBRARIES = libkjs.a
 
-libkjs_la_SOURCES = \
+libkjs_a_SOURCES = \
 	array_object.cpp \
 	array_object.h \
 	bool_object.cpp \
@@ -62,7 +62,7 @@ noinst_PROGRAMS = testkjs
 
 testkjs_SOURCES = testkjs.cpp
 
-testkjs_LDADD = $(srcdir)/libkjs.la
+testkjs_LDADD = $(srcdir)/libkjs.a
 
 CLEANFILES = $(BUILT_SOURCES) \
 	$(NULL)

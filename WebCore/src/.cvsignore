@@ -2,5 +2,4 @@ Makefile.in
 Makefile
 .deps
 .libs
-*.lo
-*.la
+*.dylib

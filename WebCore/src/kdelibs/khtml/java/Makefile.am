@@ -2,9 +2,9 @@ NULL =
 
 SUBDIRS = . tests
 
-noinst_LTLIBRARIES = libkhtmljava.la
+noinst_LIBRARIES = libkhtmljava.a
 
-libkhtmljava_la_SOURCES = \
+libkhtmljava_a_SOURCES = \
 	kjavaapplet.cpp \
 	kjavaapplet.h \
 	kjavaappletcontext.cpp \

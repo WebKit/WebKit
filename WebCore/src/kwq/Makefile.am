@@ -5,9 +5,9 @@ SUBDIRS = \
 	qt \
 	$(NULL)
 
-noinst_LTLIBRARIES = libkwq.la
+noinst_LIBRARIES = libkwq.a
 
-libkwq_la_SOURCES = \
+libkwq_a_SOURCES = \
 	KWQApplication.mm \
 	KWQBitmap.mm \
 	KWQBrush.mm \
@@ -123,11 +123,6 @@ libkwq_la_SOURCES = \
 	WKPluginDatabase.mm \
 	KWQPlugin.mm \
 	npapi.mm \
-	$(NULL)
-
-libkwq_la_LIBADD = \
-	./qt/libqt_borrowed.la \
-	./kde/libkde_borrowed.la \
 	$(NULL)
 
 INCLUDES = \
