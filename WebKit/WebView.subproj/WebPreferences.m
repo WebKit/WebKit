@@ -19,6 +19,8 @@
 #define	WebKitJavaEnabledPreferenceKey		@"WebKitJavaEnabled"
 #define	WebKitJScriptEnabledPreferenceKey	@"WebKitJScriptEnabled"
 #define	WebKitPluginsEnabledPreferenceKey	@"WebKitPluginsEnabled"
+#define	WebKitInitialTimedLayoutDelayPreferenceKey	@"WebKitInitialTimedLayoutDelay"
+#define	WebKitInitialTimedLayoutEnabledPreferenceKey	@"WebKitInitialTimedLayoutEnabled"
 
 @implementation IFPreferences
 
@@ -42,6 +44,7 @@ static IFPreferences *_standardPreferences = nil;
     NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
     NSNumber *jScriptEnabled = [NSNumber numberWithBool:TRUE];
+    NSNumber *timedLayoutEnabled = [NSNumber numberWithBool:TRUE];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0", 		WebKitLogLevelPreferenceKey,
@@ -52,6 +55,8 @@ static IFPreferences *_standardPreferences = nil;
         @"Apple Chancery", 	WebKitCursiveFontPreferenceKey,
         @"Papyrus", 		WebKitFantasyFontPreferenceKey,
         @"6", 			WebKitMinimumFontSizePreferenceKey,
+        @"1.5", 		WebKitInitialTimedLayoutDelayPreferenceKey,
+        timedLayoutEnabled,	WebKitInitialTimedLayoutEnabledPreferenceKey,
         fontSizeArray,		WebKitFontSizesPreferenceKey,
         javaEnabled,		WebKitJavaEnabledPreferenceKey,
         jScriptEnabled,		WebKitJScriptEnabledPreferenceKey,
@@ -172,6 +177,17 @@ static IFPreferences *_standardPreferences = nil;
 - (void)setPluginsEnabled:(BOOL)flag
 {
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitPluginsEnabledPreferenceKey];
+}
+
+
+- (NSTimeInterval)_initialTimedLayoutDelay
+{
+    return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitInitialTimedLayoutDelayPreferenceKey];
+}
+
+- (BOOL)_initialTimedLayoutEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitInitialTimedLayoutEnabledPreferenceKey];
 }
 
 

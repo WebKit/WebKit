@@ -60,17 +60,18 @@
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
     }
-    
-    // Check to see if this is the first complete load of a resource associated with a data source, if so
-    // we need to transition the data source from provisional to committed.
+
+    // Check to see if this is these are the first bits of a provisional data source,
+    // if so we need to transition the data source from provisional to committed.
+    if([frame provisionalDataSource] == dataSource){
+        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "committing resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
+        [frame _transitionProvisionalToCommitted];
+    }
+
+    // If the load is complete, make the primary load as done.  The primary load is the load
+    // of the main document.  Other resources may still be arriving.
     if (progress->bytesSoFar == progress->totalToLoad){
-    
         [dataSource _setPrimaryLoadComplete: YES];
-        
-        if([frame provisionalDataSource] == dataSource){
-            WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "committing resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
-            [frame _transitionProvisionalToCommitted];
-        }
     }
     
     // This resouce has completed, so check if the load is complete for all frames.

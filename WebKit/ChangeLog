@@ -1,3 +1,18 @@
+2002-03-27  Richard Williamson  <rjw@apple.com>
+
+        Added initial-layout-after-delay-if-not-layed-out-yet feature.
+        
+	* Misc.subproj/WebKitDebug.h:
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebController
+	_mainReceivedProgress:forResource:fromDataSource:]):
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]), (-[IFPreferences
+	setPluginsEnabled:]), (-[IFPreferences _initialTimedLayoutDelay]),
+	(-[IFPreferences _initialTimedLayoutEnabled]):
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame
+	_transitionProvisionalToCommitted]), (-[IFWebFrame _initialLayout:]),
+	(-[IFWebFrame _state]):
+
 2002-03-27  Kenneth Kocienda  <kocienda@apple.com>
 
         Changed loadProgress->bytesSoFar to use [sender contentLengthReceived]

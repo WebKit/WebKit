@@ -8,6 +8,7 @@
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFError.h>
+#import <WebKit/IFPreferencesPrivate.h>
 
 #import <WebKit/WebKitDebug.h>
 
@@ -142,6 +143,14 @@
         
             [[self controller] locationChangeCommittedForFrame: self];
             
+            // Start a timer to guarantee that we get an initial layout after
+            // X internal, even if the document and resources are not completely
+            // loaded.
+            BOOL timedDelayEnabled = [[IFPreferences standardPreferences] _initialTimedLayoutEnabled];
+            if (timedDelayEnabled){
+                NSTimeInterval timedDelay = [[IFPreferences standardPreferences] _initialTimedLayoutDelay];
+                [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_initialLayout:) userInfo: nil repeats:FALSE];
+            }
             break;
         }
         
@@ -156,19 +165,33 @@
     }
 }
 
-- (IFWebFrameState)_state
-{
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    
-    return data->state;
-}
-
 char *stateNames[5] = {
     "zero state",
     "IFWEBFRAMESTATE_UNINITIALIZED",
     "IFWEBFRAMESTATE_PROVISIONAL",
     "IFWEBFRAMESTATE_COMMITTED",
     "IFWEBFRAMESTATE_COMPLETE" };
+
+
+- (void)_initialLayout: userInfo
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+
+    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "state = %s\n", stateNames[data->state]);
+    
+    if (data->state == IFWEBFRAMESTATE_COMMITTED){
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "performing timed layout\n");
+        [[self view] setNeedsLayout: YES];
+        [[self view] setNeedsDisplay: YES];
+    }
+}
+
+- (IFWebFrameState)_state
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    
+    return data->state;
+}
 
 - (void)_setState: (IFWebFrameState)newState
 {

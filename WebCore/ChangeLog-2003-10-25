@@ -1,3 +1,10 @@
+2002-03-27  Richard Williamson  <rjw@apple.com>
+
+        Removed problematic code.  Not sure why it was necessary.  For now
+        it prevents crasher.
+        
+	* src/kdelibs/khtml/rendering/render_table.cpp: (RenderTable::addColInfo):
+
 2002-03-27  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQListImpl.mm: (KWQListImpl::insert): Fix disastrous name

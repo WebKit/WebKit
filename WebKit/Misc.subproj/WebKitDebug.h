@@ -68,11 +68,15 @@ void WebKitLogAtLevel(unsigned int level, NSString *format, ...);
 #define WEBKITDEBUGLEVEL1(level,format,arg1) \
    WebKitDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
    WebKitDebugAtLevel (level,format,arg1);
-            
+
+#if NDEBUG
+#define WEBKITDEBUGLEVEL2(level,format,arg1,arg2)
+#else
 #define WEBKITDEBUGLEVEL2(level,format,arg1,arg2) \
    WebKitDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
    WebKitDebugAtLevel (level,format,arg1,arg2);
-            
+#endif
+
 #define WEBKITDEBUGLEVEL3(level,format,arg1,arg2,arg3) \
    WebKitDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
    WebKitDebugAtLevel (level,format,arg1,arg2,arg3);
