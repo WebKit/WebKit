@@ -21,9 +21,9 @@
     
     [super init];
 
-    _title = [[NSString stringWithString:title] retain];
+    _title = [title copy];
     _image = [image retain];
-    _list = [[NSMutableArray array] retain];
+    _list = [[NSMutableArray alloc] init];
     [self _setGroup:group];
     
     return self;
@@ -49,7 +49,7 @@
     }
 
     [_title release];
-    _title = [[NSString stringWithString:title] retain];
+    _title = [title copy];
 
     [[self _group] _bookmarkDidChange:self]; 
 }

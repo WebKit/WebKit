@@ -5,6 +5,7 @@ libkwq_o_ldflags = -Wl,-r -nostdlib
 libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkwq_o_ldflags) -o
 
 libkwq_o_SOURCES = \
+	IFTextRendererFactory.m \
 	KWQApplication.mm \
 	KWQArrayImpl.mm \
 	KWQBitmap.mm \
@@ -110,9 +111,7 @@ libkwq_o_SOURCES = \
 	KWQStyle.mm \
 	KWQStyleSheet.mm \
 	KWQTextArea.mm \
-	KWQTextContainer.mm \
 	KWQTextEdit.mm \
-	KWQTextStorage.mm \
 	KWQTimer.mm \
 	KWQToolTip.mm \
 	KWQValueListImpl.mm \

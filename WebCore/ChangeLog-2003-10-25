@@ -1,3 +1,58 @@
+2002-05-03  Darin Adler  <darin@apple.com>
+
+	* kwq/IFTextRenderer.h: Added.
+	* kwq/IFTextRendererFactory.h: Added.
+	* kwq/IFTextRendererFactory.m: Added.
+	These three are the new API for supplying text rendering machinery for WebCore.
+	The implementation is in WebKit. Later we might want to flesh out the default
+	implementation in WebCore so that it works OK by itself.
+
+	* khtml/rendering/font.cpp: (Font::width): Function is now "width" without
+	an underscore. We don't really need to hide the overload we added in this
+	case.
+
+	* kwq/qt/qfont.h: Simplify a lot. Doesn't hold an NSFont any more.
+	* kwq/KWQFont.mm:
+	(QFont::QFont): Eliminated the concept of "default font". Also, a QFont no
+	longer holds an NSFont object. That's handled inside IFTextRenderer machinery.
+	(QFont::~QFont): Simplify since we don't have an NSFont.
+	(QFont::setFamily): Simplify since we don't have an NSFont.
+	(QFont::setPixelSize): Simplify since we don't have an NSFont.
+	(QFont::setPixelSizeFloat): Simplify since we don't have an NSFont.
+	(QFont::setWeight): Simplify since we don't have an NSFont.
+	(QFont::weight): Fix a bug where it would return Normal for a QFont that was
+	both bold and italic.
+	(QFont::setItalic): Simplify since we don't have an NSFont.
+	(QFont::italic): Simplify since we have real "bool".
+	(QFont::bold): Simplify since we have real "bool".
+	(QFont::operator=): Simplify since we don't have an NSFont.
+	(QFont::operator==): Rewrite since we don't have an NSFont.
+
+	* kwq/qt/qfontmetrics.h: Simplify a little. The _width() method is now just an
+	overload of the width() method. The main change was removing the include of Cocoa.h.
+	* kwq/KWQFontMetrics.mm:
+	Move most of the code out of here into WebKit.
+	(QFontMetrics::ascent): Get it from the renderer.
+	(QFontMetrics::descent): Get it from the renderer.
+	(QFontMetrics::lineSpacing): Get it from the renderer.
+	(QFontMetrics::width): Get it from the renderer.
+	(QFontMetrics::boundingRect): Combine width and height that came from the renderer.
+	(QFontMetrics::size): Combine width and height that came from the renderer.
+
+	* kwq/Makefile.am: Add IFTextRendererFactory.m, remove KWQTextStorage.mm and KWQTextContainer.mm.
+	* kwq/KWQMetrics.h: Removed.
+	* kwq/KWQTextContainer.h: Removed.
+	* kwq/KWQTextContainer.mm: Removed.
+	* kwq/KWQTextStorage.h: Removed.
+	* kwq/KWQTextStorage.mm: Removed.
+
+	* kwq/KWQPainter.mm:
+	Move most of the code out of here into WebKit.
+	(QPainter::drawText): Call the renderer to do it.
+	(QPainter::drawUnderlineForText): Call the renderer to do it.
+
+	* libwebcore.exp: Export the IFTextRendererFactory class.
+
 2002-04-26  Darin Adler  <darin@apple.com>
 
 	* kwq/make-mac-encodings.c: (main): One more place that needed a workaround

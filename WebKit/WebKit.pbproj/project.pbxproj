@@ -94,6 +94,7 @@
 				25A8176801B5474B0ECA149E,
 				F5065217027F555001C1A526,
 				F5F084B8024BBFFE01CA1520,
+				F5B36B400281DE87018635CB,
 				F5EBC45202134BB601CA1520,
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
@@ -134,7 +135,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = ".. ../JavaScriptCore ../WebCore/khtml ../WebCore/kwq ../WebCore/kwq/kdecore ../WebCore/kwq/khtml ../WebCore/kwq/kparts ../WebCore/kwq/qt";
+				HEADER_SEARCH_PATHS = ".. ../JavaScriptCore ../WebCore/khtml ../WebCore/kwq ../WebCore/kwq/kdecore ../WebCore/kwq/khtml ../WebCore/kwq/kparts ../WebCore/kwq/qt /System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/PrivateHeaders";
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
@@ -154,8 +155,8 @@
 			productName = WebKit;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -225,6 +226,8 @@
 				F5065224027F557E01C1A526,
 				F5065226027F557E01C1A526,
 				F5065228027F557E01C1A526,
+				F5B36B430281DF55018635CB,
+				F5B36B470281DF9C018635CB,
 				F50AD3880282028B01C1A526,
 			);
 			isa = PBXHeadersBuildPhase;
@@ -278,6 +281,8 @@
 				F5065225027F557E01C1A526,
 				F5065227027F557E01C1A526,
 				F5065229027F557E01C1A526,
+				F5B36B440281DF55018635CB,
+				F5B36B480281DF9C018635CB,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -1487,6 +1492,65 @@
 		};
 		F5AEBB3E024A527601C1A526 = {
 			fileRef = F5AEBB3D024A527601C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B36B400281DE87018635CB = {
+			children = (
+				F5B36B450281DF9C018635CB,
+				F5B36B460281DF9C018635CB,
+				F5B36B410281DF55018635CB,
+				F5B36B420281DF55018635CB,
+			);
+			isa = PBXGroup;
+			name = WebCoreSupport;
+			refType = 4;
+		};
+		F5B36B410281DF55018635CB = {
+			isa = PBXFileReference;
+			name = IFCachedTextRenderer.h;
+			path = WebCoreSupport.subproj/IFCachedTextRenderer.h;
+			refType = 4;
+		};
+		F5B36B420281DF55018635CB = {
+			isa = PBXFileReference;
+			name = IFCachedTextRenderer.m;
+			path = WebCoreSupport.subproj/IFCachedTextRenderer.m;
+			refType = 4;
+		};
+		F5B36B430281DF55018635CB = {
+			fileRef = F5B36B410281DF55018635CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B36B440281DF55018635CB = {
+			fileRef = F5B36B420281DF55018635CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B36B450281DF9C018635CB = {
+			isa = PBXFileReference;
+			name = IFCachedTextRendererFactory.h;
+			path = WebCoreSupport.subproj/IFCachedTextRendererFactory.h;
+			refType = 4;
+		};
+		F5B36B460281DF9C018635CB = {
+			isa = PBXFileReference;
+			name = IFCachedTextRendererFactory.m;
+			path = WebCoreSupport.subproj/IFCachedTextRendererFactory.m;
+			refType = 4;
+		};
+		F5B36B470281DF9C018635CB = {
+			fileRef = F5B36B450281DF9C018635CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B36B480281DF9C018635CB = {
+			fileRef = F5B36B460281DF9C018635CB;
 			isa = PBXBuildFile;
 			settings = {
 			};

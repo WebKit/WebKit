@@ -26,45 +26,26 @@
 #ifndef QFONT_H_
 #define QFONT_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 class QString;
 class QPainter;
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
-#import <Cocoa/Cocoa.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
+#ifdef __OBJC__
+@class NSString;
+#else
+typedef void NSString;
 #endif
-
-// class QFont =================================================================
 
 class QFont {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-
     enum CharSet { Latin1, Unicode };
     enum Weight { Normal = 50, Bold = 63 };
 
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QFont();
     QFont(const QFont &);
+    QFont &operator=(const QFont &);
 
     ~QFont();
-
-    // member functions --------------------------------------------------------
 
     int pixelSize() const;
     QString family() const;
@@ -77,49 +58,18 @@ public:
     bool italic() const;
     bool bold() const;
 
-    // operators ---------------------------------------------------------------
-
-    QFont &operator=(const QFont &);
     bool operator==(const QFont &x) const;
-    bool operator!=(const QFont &x) const;
-
-#ifdef _KWQ_
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    static NSFont *QFont::defaultNSFont();
-#endif
-#endif
-
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-        NSFont *getFont();
-#else
-        void *getFont();
-#endif
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-private:
-#ifdef _KWQ_
-    void _initialize();
-    void _initializeWithFont(const QFont *);
-    void _free();
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    void _setTrait (NSFontTraitMask mask);
-#endif
+    bool operator!=(const QFont &x) const { return !(*this == x); }
     
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-        NSFont *font;
-        NSString *_family;
-        int _trait;
-        float _size;
-#else
-        void *font;
-        void *_family;
-        int _trait;
-        float _size;
-#endif
+    NSString *getNSFamily() const { return _family; }
+    int getNSTraits() const { return _trait; }
+    float getNSSize() const { return _size; }
 
-#endif
+private:
+    NSString *_family;
+    int _trait;
+    float _size;
 
-}; // class QFont ==============================================================
+};
 
 #endif

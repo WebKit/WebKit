@@ -82,7 +82,7 @@
     }
 
     [_URLString release];
-    _URLString = [[NSString stringWithString:URLString] retain];
+    _URLString = [URLString copy];
 
     [[self _group] _bookmarkDidChange:self];    
 }

@@ -8,6 +8,7 @@
 #import <WebKit/IFBaseWebController.h>
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
+#import <WebKit/IFCachedTextRendererFactory.h>
 #import <WebKit/WebKitDebug.h>
 
 // KDE related includes
@@ -24,6 +25,8 @@
 {
     [super initWithFrame: frame];
 
+    [IFCachedTextRendererFactory createSharedFactory];
+    
     _private = [[IFWebViewPrivate alloc] init];
 
     _private->isFlipped = YES;

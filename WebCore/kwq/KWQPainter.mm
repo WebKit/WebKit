@@ -32,9 +32,8 @@
 
 #include <kwqdebug.h>
 
-#import <Cocoa/Cocoa.h>
-
-#import <KWQMetrics.h>
+#import <IFTextRendererFactory.h>
+#import <IFTextRenderer.h>
 
 
 struct QPainterPrivate {
@@ -475,70 +474,21 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
 }
 #endif
 
-#define FAST_CACHE_DRAWING 1
-
-#ifdef HACK_FAST_DRAWING
-@interface NSLayoutManager (Private)
-- (char *)_packedGlyphs:(NSMultibyteGlyphPacking)packing range:(NSRange)glyphRange length:(unsigned *)len;
-@end
-#endif
-
-#define FLOOR_TO_INT(x) (int)(floor(x))
-#define ROUND_TO_INT(x) (int)(((x) > floor(x) + .5) ? ceil(x) : floor(x))
-
 // y is the baseline
 void QPainter::drawText(int x, int y, const QString &qstring, int len)
 {
     NSString *string;
-    NSFont *font;
     
     _lockFocus();
     
-    //font = data->qfont.data->font;    
-    font = data->qfont.getFont();    
-
     if (len == -1)
         string = QSTRING_TO_NSSTRING(qstring);
     else
         string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
 
-    // This will draw the text from the top of the bounding box down.
-    // Qt expects to draw from the baseline.
-    // Remember that descender is negative.
-    y = y - (ROUND_TO_INT([font defaultLineHeightForFont]) - FLOOR_TO_INT(-[font descender]));
-
-#ifdef SLOW_SAFE_DRAWING
-
-    [string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, nil]];
-
-#elif FAST_CACHE_DRAWING
-
-    [KWQLayoutInfo drawString: string atPoint: NSMakePoint(x, y) withFont: font color: data->qpen.color().color];
-
-#elif HACK_FAST_DRAWING
-
-    KWQLayoutInfo *metricsCache = [KWQLayoutInfo getMetricsForFont: font];
-    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
-    if (layoutManager != nil){
-
-        [font set];
-        [data->qpen.color().color set];
-        
-        unsigned glyphLen;
-        char *glyphBuf;
-
-        NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-        BOOL flag = [graphicsContext shouldAntialias];
-        [graphicsContext setShouldAntialias: NO];
-        
-        glyphBuf = [layoutManager _packedGlyphs:[font glyphPacking] range:NSMakeRange (0, numberOfGlyphs) length:&glyphLen];
-        [layoutManager showPackedGlyphs:glyphBuf length:glyphLen glyphRange:NSMakeRange (0, numberOfGlyphs)  atPoint:NSMakePoint(x, y) font:font color:data->qpen.color().color printingAdjustment:NSMakeSize(0.0, 0.0)];
-
-        [graphicsContext setShouldAntialias: flag];
-    }
-
-#endif
-
+    [[[IFTextRendererFactory sharedFactory]
+        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
+        drawString:string atPoint:NSMakePoint(x,y) withColor:data->qpen.color().color];
 
     _unlockFocus();
 }
@@ -563,36 +513,30 @@ void QPainter::drawText (int x, int y, const QString &qstring, int len, int pos,
 void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int len)
 {
     NSString *string;
-    NSFont *font;
     
     _lockFocus();
     
-    font = data->qfont.getFont();    
-
     if (len == -1)
         string = QSTRING_TO_NSSTRING(qstring);
     else
         string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
 
-    y = y - (ROUND_TO_INT([font defaultLineHeightForFont]) - FLOOR_TO_INT(-[font descender]));
-    [KWQLayoutInfo drawUnderlineForString: string atPoint: NSMakePoint(x, y) withFont: font color: data->qpen.color().color];
+    [[[IFTextRendererFactory sharedFactory]
+        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
+        drawUnderlineForString:string atPoint:NSMakePoint(x,y) withColor:data->qpen.color().color];
 
     _unlockFocus();
 }
 
 
-void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qstring, int len, 
+void QPainter::drawText(int x, int y, int w, int h, int flags, const QString &qstring, int len, 
     QRect *br, char **internal)
 {
     NSString *string;
-    NSFont *font;
     NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
     
     _lockFocus();
     
-    //font = data->qfont.data->font;    
-    font = data->qfont.getFont();    
-        
     if (len == -1)
         string = QSTRING_TO_NSSTRING(qstring);
     else
@@ -613,7 +557,9 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qst
         [style setAlignment: NSLeftTextAlignment];
     }
     
-    [string drawInRect:NSMakeRect(x, y, w, h) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, style, NSParagraphStyleAttributeName, nil]];
+    [[[IFTextRendererFactory sharedFactory]
+        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
+        drawString:string inRect:NSMakeRect(x, y, w, h) withColor:data->qpen.color().color paragraphStyle:style];
 
     _unlockFocus();
 }

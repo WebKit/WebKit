@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QFONTMETRICS_H_
-#define QFONTMETRICS_H_
+#import <Cocoa/Cocoa.h>
 
-#include "qrect.h"
-#include "qsize.h"
-#include "qstring.h"
-#include "qfont.h"
-#include "qfontinfo.h"
+@protocol IFTextRenderer;
 
-class QFontMetricsPrivate;
+@interface IFTextRendererFactory : NSObject
+{
+}
 
-class QFontMetrics {
-public:
++ (IFTextRendererFactory *)sharedFactory;
+- init;
+- (id <IFTextRenderer>)rendererWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size;
 
-    QFontMetrics();
-    QFontMetrics(const QFont &);
-    QFontMetrics(const QFontMetrics &);
-    QFontMetrics &operator=(const QFontMetrics &);
-    ~QFontMetrics();
-
-    int ascent() const;
-    int descent() const;
-    int height() const;
-    int lineSpacing() const;
-    
-    int width(QChar) const;
-    int width(char) const;
-    int width(const QString &, int len=-1) const;
-    int width(const QChar *, int len) const;
-
-    QRect boundingRect(const QString &, int len=-1) const;
-    QRect boundingRect(QChar) const;
-    QRect boundingRect(int, int, int, int, int, const QString &) const;
-
-    QSize size(int, const QString &, int len=-1, int tabstops=0, 
-        int *tabarray=0, char **intern=0 ) const;
-    int rightBearing(QChar) const;
-    int leftBearing(QChar) const;
-    int baselineOffset() const;
-    
-private:
-    KWQRefPtr<QFontMetricsPrivate> data;
-
-};
-
-#endif
-
+@end

@@ -26,44 +26,22 @@
 #ifndef QFONTMETRICS_H_
 #define QFONTMETRICS_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "qrect.h"
 #include "qsize.h"
 #include "qstring.h"
 #include "qfont.h"
 #include "qfontinfo.h"
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#import <Cocoa/Cocoa.h>
-#endif
-
 class QFontMetricsPrivate;
-
-// class QFontMetrics ==========================================================
 
 class QFontMetrics {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QFontMetrics();
     QFontMetrics(const QFont &);
     QFontMetrics(const QFontMetrics &);
-    ~QFontMetrics();
-
-    // operators ---------------------------------------------------------------
-
     QFontMetrics &operator=(const QFontMetrics &);
-
-    // member functions --------------------------------------------------------
+    ~QFontMetrics();
 
     int ascent() const;
     int descent() const;
@@ -73,10 +51,7 @@ public:
     int width(QChar) const;
     int width(char) const;
     int width(const QString &, int len=-1) const;
-#if (defined(__APPLE__))
-    int _width (CFStringRef string) const;
-    int _width (const QChar *, int len) const;
-#endif
+    int width(const QChar *, int len) const;
 
     QRect boundingRect(const QString &, int len=-1) const;
     QRect boundingRect(QChar) const;
@@ -91,7 +66,7 @@ public:
 private:
     KWQRefPtr<QFontMetricsPrivate> data;
 
-}; // class QFontMetrics =======================================================
+};
 
 #endif
 

@@ -232,10 +232,16 @@
 
 - (void)_setTitle:(NSString *)title
 {
-    NSMutableString *trimmed = [NSMutableString stringWithString:title];
-    CFStringTrimWhitespace((CFMutableStringRef) trimmed);
-    if ([trimmed length] == 0) {
+    NSMutableString *trimmed;
+    if (title == nil) {
         trimmed = nil;
+    } else {
+        trimmed = [[title mutableCopy] autorelease];
+        CFStringTrimWhitespace((CFMutableStringRef) trimmed);
+        if ([trimmed length] == 0)
+            trimmed = nil;
+    }
+    if (trimmed == nil) {
         if (_private->pageTitle == nil)
             return;
     } else {
@@ -244,7 +250,7 @@
     }
     
     [_private->pageTitle autorelease];
-    _private->pageTitle = [[NSString stringWithString:trimmed] retain];
+    _private->pageTitle = [trimmed copy];
     
     // The title doesn't get communicated to the controller until
     // we reach the committed state for this data source's frame.

@@ -1,3 +1,28 @@
+2002-05-03  Darin Adler  <darin@apple.com>
+
+	* Misc.subproj/WebKitDebug.h: Add WEBKIT_LOG_MEMUSAGE, WEBKIT_LOG_FONTCACHE, and
+	WEBKIT_LOG_FONTCACHECHARMISS for font code moved here from WebCore.
+
+	* Resources/url_icon.tiff: New URL icon?
+
+	* WebCoreSupport.subproj/IFCachedTextRenderer.h: Added.
+	* WebCoreSupport.subproj/IFCachedTextRenderer.m: Added.
+	* WebCoreSupport.subproj/IFCachedTextRendererFactory.h: Added.
+	* WebCoreSupport.subproj/IFCachedTextRendererFactory.m: Added.
+	This has code moved here from WebCore.
+
+	* WebKit.pbproj/project.pbxproj: Add the new source files.
+
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf setURLString:]): Use copy instead of initWithString.
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList initWithTitle:image:group:]): Use copy instead of stringWithString.
+	(-[IFBookmarkList setTitle:]): Use copy instead of stringWithString.
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _setTitle:]):
+	Use mutableCopy instead of stringWithString.
+	* WebView.subproj/IFWebView.mm: (-[IFWebView initWithFrame:]): Use copy instead
+	of stringWithString.
+
 2002-05-02  John Sullivan  <sullivan@apple.com>
 
 	Changed API such that mutating methods can now be called on bookmark objects,

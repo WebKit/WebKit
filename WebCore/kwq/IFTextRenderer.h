@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,34 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <Cocoa/Cocoa.h> 
 
-#include <kwqdebug.h>
+#import <Cocoa/Cocoa.h>
 
-#import <KWQMetrics.h>
+@protocol IFTextRenderer <NSObject>
 
-@interface KWQTextStorage : NSTextStorage
-{
-    NSDictionary *attributes;
-    NSString *string;
-    int stringCapacity;
-    NSMutableDictionary *fragmentCache;
-    NSLayoutManager *_layoutManager;
-#ifdef SPACE_OPTIMIZATION
-    id <KWQLayoutFragment> spaceFragment;
-    id <KWQLayoutFragment> expandedFragment;
-#endif
-}
+- (int)widthForString:(NSString *)string;
+- (int)ascent;
+- (int)descent;
+- (int)lineSpacing;
 
-- (id)initWithFontAttribute:(NSDictionary *)attrs;
-- (void)setAttributes: (NSDictionary *)at;
+- (void)drawString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color;
+- (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color;
 
-- (id <KWQLayoutFragment>)getFragmentForString: (NSString *)string;
+- (void)drawString:(NSString *)string inRect:(NSRect)rect withColor:(NSColor *)color paragraphStyle:(NSParagraphStyle *)style;
 
-- (void)setString: (NSString *)dString;
-
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (NSDictionary *)fragmentCache;
-#endif
+// A way to bypass NSString for speed.
+- (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length;
 
 @end
