@@ -497,7 +497,7 @@ static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar
         }
     }
     
-    return totalWidth;
+    return ROUND_TO_INT(totalWidth);
 }
 
 - (void)drawString:(NSString *)string inRect:(NSRect)rect withColor:(NSColor *)color paragraphStyle:(NSParagraphStyle *)style

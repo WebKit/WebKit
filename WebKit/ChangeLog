@@ -1,5 +1,13 @@
 2002-05-06  Richard J. Williamson  <rjw@apple.com>
 
+        Fixed width measurement regression.  We lost the final ROUND_TO_INT
+        in the width measurement funtion after the move from WebCore.
+        
+	* WebCoreSupport.subproj/IFCachedTextRenderer.m:
+	(-[IFCachedTextRenderer widthForCharacters:length:]):
+
+2002-05-06  Richard J. Williamson  <rjw@apple.com>
+
         Changes to support dhtml.
         
 	* WebView.subproj/IFWebView.mm:
