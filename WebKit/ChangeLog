@@ -1,3 +1,10 @@
+2002-04-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed build failure. Forgot to make IFDownloadHandler.h
+	a public header.
+
+	* WebKit.pbproj/project.pbxproj:
+
 2002-04-12 Chris Blumenberg <cblu@apple.com>
 
 	First implementation of IFDownloadHandler and IFDownloadHandlerPrivate.
