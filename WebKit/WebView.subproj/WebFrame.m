@@ -190,15 +190,16 @@
 - (void)reload: (BOOL)forceRefresh
 {
     WebDataSource *dataSource = [self dataSource];
-    unsigned flags;
+    WebResourceRequest *request;
     
     if (dataSource == nil) {
 	return;
     }
 
-    flags = [[dataSource request] flags] | WebResourceHandleFlagLoadFromOrigin;
+    request = [[dataSource request] copy];
+    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
 
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource URL] flags:flags];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [newDataSource _setParent:[dataSource parent]];
     if ([self setProvisionalDataSource:newDataSource]) {
 	[self _setLoadType:WebFrameLoadTypeRefresh];

@@ -78,7 +78,7 @@
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
     
-    [[newFrame _bridge] loadURL:URL flags:0 withParent:[self dataSource]];
+    [[newFrame _bridge] loadURL:URL withParent:[self dataSource]];
     
     // Set the load type so this load doesn't end up in the back
     // forward list.
@@ -199,7 +199,7 @@
 
 - (BOOL)isReloading
 {
-    return ([[[self dataSource] request] flags] & WebResourceHandleFlagLoadFromOrigin);
+    return ([[[self dataSource] request] requestCachePolicy] == WebRequestCachePolicyLoadFromOrigin);
 }
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
@@ -276,15 +276,15 @@
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer
 {
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:0];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:referrer];
     [self loadRequest:request withParent:[[frame dataSource] parent]];
     [request release];
 }
 
-- (void)loadURL:(NSURL *)URL flags:(unsigned)flags withParent:(WebDataSource *)parent
+- (void)loadURL:(NSURL *)URL withParent:(WebDataSource *)parent
 {
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:flags];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [self loadRequest:request withParent:parent];
     [request release];
 }
@@ -295,7 +295,8 @@
     // This prevents a potential bug which may cause a page
     // with a form that uses itself as an action to be returned 
     // from the cache without submitting.
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:WebResourceHandleFlagLoadFromOrigin];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     [request setMethod:@"POST"];
     [request setData:data];
     [request setReferrer:referrer];

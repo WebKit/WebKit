@@ -25,14 +25,9 @@
 
 -(id)initWithURL:(NSURL *)URL
 {
-    return [self initWithURL:URL flags:0];
-}
-
--(id)initWithURL:(NSURL *)URL flags:(unsigned)theFlags
-{
     id result = nil;
 
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:theFlags];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     if (request) {
         result = [self initWithRequest:request];
         [request release];
@@ -54,8 +49,6 @@
     _private = [[WebDataSourcePrivate alloc] init];
     _private->request = [request retain];
     _private->inputURL = [[request canonicalURL] retain];
-    _private->attributes = nil;
-    _private->flags = [request flags];
 
     ++WebDataSourceCount;
     

@@ -29,8 +29,6 @@
     
     // The original URL as requested during initialization.
     NSURL *inputURL;
-    NSDictionary *attributes;
-    unsigned flags;
     WebResourceRequest *request;
 
     // The original URL we may have been redirected to.

@@ -647,6 +647,7 @@ static const char * const stateNames[] = {
 - (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type
 {
     NSURL *itemURL = [item URL];
+    WebResourceRequest *request;
     WebDataSource *dataSource;
     NSURL *originalURL = [[self dataSource] originalURL];
     
@@ -662,11 +663,12 @@ static const char * const stateNames[] = {
         [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
     }
     else {
-        unsigned flags = 0;
+        request = [[WebResourceRequest alloc] initWithURL:itemURL];
         if (type == WebFrameLoadTypeBack || type == WebFrameLoadTypeForward) {
-            flags = WebResourceHandleUseCachedObjectIfPresent;
+            [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject];
         }
-        dataSource = [[WebDataSource alloc] initWithURL:itemURL flags:flags];
+        dataSource = [[WebDataSource alloc] initWithRequest:request];
+        [request release];
         [self setProvisionalDataSource: dataSource];
         [self _setLoadType: type];
         [self startLoading];

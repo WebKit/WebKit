@@ -1,3 +1,30 @@
+2002-09-12  Ken Kocienda  <kocienda@apple.com>
+
+        Removed load flags as a design concept. Replaced with new "caching policy" concept 
+        which are set on a WebResourceRequest. These policies determine how a load will
+        be processed with regards to the cache.
+
+        * WebCoreSupport.subproj/WebBridge.h: Removed flags from loadURL method.
+        * WebCoreSupport.subproj/WebBridge.m: Removed calls to load flags and replaced with calls to new request policies.
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebBridge isReloading]): Ditto.
+        (-[WebBridge loadURL:referrer:]): Ditto.
+        (-[WebBridge loadURL:withParent:]): Removed flags from loadURL method.
+        (-[WebBridge postWithURL:referrer:data:]): Removed calls to load flags and replaced with calls to new request policies.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]): Ditto.
+        * WebView.subproj/WebDataSource.h: Removed flags from init method.
+        * WebView.subproj/WebDataSource.m: 
+        (-[WebDataSource initWithURL:]): Ditto.
+        (-[WebDataSource initWithRequest:]): Ditto.
+        * WebView.subproj/WebDataSourcePrivate.h: Removed flags ivar, and dangling attributes ivar.
+        * WebView.subproj/WebDataSourcePrivate.m: 
+        (-[WebDataSourcePrivate dealloc]): Ditto.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame reload:]): Removed calls to load flags and replaced with calls to new request policies.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _goToItem:withFrameLoadType:]): Ditto.
+
 2002-09-12  Chris Blumenberg  <cblu@apple.com>
 	
 	Make WebTextView private and exported.

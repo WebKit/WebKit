@@ -21,7 +21,7 @@
 - (void)dataSourceChanged;
 - (WebDataSource *)dataSource;
 
-- (void)loadURL:(NSURL *)URL flags:(unsigned)flags withParent:(WebDataSource *)parent;
+- (void)loadURL:(NSURL *)URL withParent:(WebDataSource *)parent;
 
 @end
 

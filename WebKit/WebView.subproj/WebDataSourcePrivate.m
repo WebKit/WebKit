@@ -63,7 +63,6 @@
     [resourceData release];
     [representation release];
     [inputURL release];
-    [attributes release];
     [request release];
     [finalURL release];
     [frames release];
