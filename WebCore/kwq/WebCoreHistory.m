@@ -43,8 +43,11 @@ static WebCoreHistory *_sharedHistory = nil;
     return _sharedHistory;
 }
 
+- (void)addEntryForURLString: (NSString *)urlString
+{
+}
 
-- (BOOL)containsURL: (NSURL *)url
+- (BOOL)containsEntryForURLString: (NSString *)urlString;
 {
     return false;
 }

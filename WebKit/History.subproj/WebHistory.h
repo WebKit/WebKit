@@ -47,12 +47,6 @@ extern NSString *WebHistoryEntriesChangedNotification;
 // specified NSCalendarDate, ordered from most recent to oldest.
 - (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;
 
-// retrieving contents for autocompletion in location field
-- (NSArray *)entriesWithAddressContainingString: (NSString *)string;
-
-// retrieving contents for searching (maybe replace with state-based search API)
-- (NSArray *)entriesWithTitleOrAddressContainingString: (NSString *)string;
-
 // testing contents for visited-link mechanism
 - (BOOL)containsURL: (NSURL *)URL;
 

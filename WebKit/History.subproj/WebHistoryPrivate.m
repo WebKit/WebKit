@@ -280,25 +280,16 @@
     return nil;
 }
 
-#pragma mark STRING-BASED RETRIEVAL
-
-- (NSArray *)entriesWithAddressContainingString: (NSString *)string
-{
-    // FIXME: not yet implemented
-    return nil;
-}
-
-- (NSArray *)entriesWithTitleOrAddressContainingString: (NSString *)string
-{
-    // FIXME: not yet implemented
-    return nil;
-}
-
 #pragma mark URL MATCHING
 
 -(WebHistoryItem *)_entryForURLString:(NSString *)URLString
 {
     return [_entriesByURL objectForKey: URLString];
+}
+
+- (BOOL)containsEntryForURLString: (NSString *)URLString
+{
+    return [self _entryForURLString:URLString] != nil;
 }
 
 - (BOOL)containsURL: (NSURL *)URL

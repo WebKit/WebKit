@@ -5,9 +5,9 @@
 //  Created by John Sullivan on Mon Feb 18 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
-
-#import "WebHistory.h"
-#import "WebHistoryPrivate.h"
+#import <WebKit/WebHistory.h>
+#import <WebKit/WebHistoryPrivate.h>
+#import <WebKit/WebHistoryItem.h>
 
 #import <WebFoundation/WebAssertions.h>
 
@@ -51,6 +51,14 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
         postNotificationName: WebHistoryEntriesChangedNotification
                       object: self];
 }
+
+- (void)addEntryForURLString: (NSString *)string
+{
+    WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:[NSURL URLWithString: string] title:nil];
+    [self addEntry: entry];
+    [entry release];
+}
+
 
 - (void)addEntry: (WebHistoryItem *)entry
 {
@@ -112,19 +120,12 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
     return [_historyPrivate orderedEntriesLastVisitedOnDay: date];
 }
 
-#pragma mark STRING-BASED RETRIEVAL
-
-- (NSArray *)entriesWithAddressContainingString: (NSString *)string
-{
-    return [_historyPrivate entriesWithAddressContainingString: string];
-}
-
-- (NSArray *)entriesWithTitleOrAddressContainingString: (NSString *)string
-{
-    return [_historyPrivate entriesWithTitleOrAddressContainingString: string];
-}
-
 #pragma mark URL MATCHING
+
+- (BOOL)containsEntryForURLString: (NSString *)URLString
+{
+    return [_historyPrivate containsEntryForURLString: URLString];
+}
 
 - (BOOL)containsURL: (NSURL *)URL
 {

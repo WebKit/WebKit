@@ -32,8 +32,7 @@
 
 - (NSArray *)orderedLastVisitedDays;
 - (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;
-- (NSArray *)entriesWithAddressContainingString: (NSString *)string;
-- (NSArray *)entriesWithTitleOrAddressContainingString: (NSString *)string;
+- (BOOL)containsEntryForURLString: (NSString *)URLString;
 - (BOOL)containsURL: (NSURL *)URL;
 - (WebHistoryItem *)entryForURL:(NSURL *)URL;
 

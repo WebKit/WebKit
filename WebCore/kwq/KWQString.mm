@@ -1713,14 +1713,28 @@ QString QString::mid(uint index, uint len) const
     } else if ( len == 0 ) {			// ## just for 1.x compat:
 	return QString::fromLatin1("");
     } else {
-	if ( len > slen-index )
-	    len = slen - index;
-	if ( index == 0 && len == dataHandle[0]->_length )
-	    return *this;
-	register const QChar *p = unicode()+index;
-	QString s( p, len );
-	return s;
+        if (dataHandle[0]->_isAsciiValid){
+            if ( len > slen-index )
+                len = slen - index;
+            if ( index == 0 && len == dataHandle[0]->_length )
+                return *this;
+            register const char *p = ascii()+index;
+            QString s( p, len );
+            return s;
+        }
+        else if (dataHandle[0]->_isUnicodeValid){
+            if ( len > slen-index )
+                len = slen - index;
+            if ( index == 0 && len == dataHandle[0]->_length )
+                return *this;
+            register const QChar *p = unicode()+index;
+            QString s( p, len );
+            return s;
+        }
+        else
+            FATAL("invalid character cache");
     }
+    return QString(); // Never reached, shut the compiler up.
 }
 
 QString QString::copy() const

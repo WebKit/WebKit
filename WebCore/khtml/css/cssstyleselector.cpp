@@ -617,7 +617,13 @@ static void cleanpath(QString &path)
             path.remove( prev, pos- prev + 3 );
     }
     pos = 0;
+
+    // Don't remove "//" from an anchor identifier. -rjw
+    int refPos = path.find("#", 0);
     while ( (pos = path.find( "//", pos )) != -1) {
+        if (refPos > 0 && pos >= refPos)
+            break;
+            
 	if ( pos == 0 || path[pos-1] != ':' )
 	    path.remove( pos, 1 );
 	else

@@ -26,6 +26,8 @@
 
 #import <historyprovider.h>
 
+#import <kurl.h>
+
 #import <WebCoreHistory.h>
 
 namespace KParts {
@@ -38,12 +40,12 @@ HistoryProvider *HistoryProvider::self()
 
 void HistoryProvider::insert(const QString &s)
 {
-    // Currently handled at the browser level.
+    return [[WebCoreHistory sharedHistory] addEntryForURLString: KURL(s).canonicalURL().getNSString()];
 }
 
 bool HistoryProvider::contains(const QString &s) const
 {
-    return [[WebCoreHistory sharedHistory] containsURL: [NSURL URLWithString: [NSString stringWithCString: s.ascii()]]];
+    return [[WebCoreHistory sharedHistory] containsEntryForURLString: KURL(s).canonicalURL().getNSString()];
 }
 
 } // namespace KParts

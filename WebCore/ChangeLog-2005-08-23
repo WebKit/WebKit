@@ -1,3 +1,32 @@
+2002-09-17  Richard Williamson   <rjw@apple.com>
+
+        * khtml/css/cssstyleselector.cpp:
+        Fixed bug in KHTML that incorrectly modified '//' in fragment part of URL.
+        
+        * kwq/KWQKHistoryProvider.mm:
+        Use string based API to add entry.  May eventually remove NSURL from
+        history entirely.
+        
+        * kwq/KWQKURL.mm:
+        (KURL::canonicalURL):
+        Simply return the urlString.
+
+        (KURL::parse):
+        Added "/" to http and https empty path URLs.
+        
+        * kwq/KWQString.mm:
+        (QString::mid):
+        Optimize ascii case.
+        
+        * kwq/WebCoreHistory.h:
+        * kwq/WebCoreHistory.m:
+        (-[WebCoreHistory addEntryForURLString:]):
+        Use string based API to add entry.
+        
+        * kwq/kdecore/kurl.h:
+        Defined methods to access canonical components,
+        currently conditionally excluded.
+        
 2002-09-16  David Hyatt  <hyatt@apple.com>
 
 	Fix the stylesheet loading regression on rubyfruit.

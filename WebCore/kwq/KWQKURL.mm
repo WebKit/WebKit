@@ -512,6 +512,50 @@ QString KURL::path() const
     return decode_string(urlString.mid(portEndPos, pathEndPos - portEndPos)); 
 }
 
+#ifdef CONSTRUCT_CANONICAL_STRING
+QString KURL::_path() const
+{
+    if (!m_isValid) {
+	return QString();
+    }
+
+    return urlString.mid(portEndPos, pathEndPos - portEndPos);
+}
+
+QString KURL::_user() const
+{
+    if (!m_isValid) {
+	return QString();
+    }
+
+    return urlString.mid(userStartPos, userEndPos - userStartPos);
+}
+
+QString KURL::_pass() const
+{
+    if (!m_isValid) {
+	return QString();
+    }
+
+    if (passwordEndPos == userEndPos) {
+	return QString();
+    }
+
+    return urlString.mid(userEndPos + 1, passwordEndPos - userEndPos - 1); 
+}
+
+QString KURL::_host() const
+{
+    if (!m_isValid) {
+	return QString();
+    }
+
+    int start = (passwordEndPos == userStartPos) ? passwordEndPos : passwordEndPos + 1;
+    return urlString.mid(start, hostEndPos - start);
+}
+
+#endif
+
 void KURL::setProtocol(const QString &s)
 {
     if (!m_isValid) {
@@ -575,6 +619,57 @@ void KURL::setPath(const QString &s)
 	parse(newURL.ascii(), &newURL);
     }
 }
+
+QString KURL::canonicalURL() const
+{
+#ifdef CONSTRUCT_CANONICAL_STRING
+    bool hadPrePathComponent = false;
+    QString canonicalURL;
+    
+    if (!protocol().isEmpty()) {
+        canonicalURL += protocol();
+        canonicalURL += "://";
+        hadPrePathComponent = true;
+    }
+    if (!_user().isEmpty()) {
+        canonicalURL += _user();
+        if (!_pass().isEmpty()){
+            canonicalURL += ":";
+            canonicalURL += _pass();
+        }
+        canonicalURL += "@";
+        hadPrePathComponent = true;
+    }
+    if (!_host().isEmpty()) {
+        canonicalURL += _host();
+        unsigned short int p = port();
+        if (p != 0) {
+            canonicalURL += ":";
+            canonicalURL += QString::number(p);
+        }
+        hadPrePathComponent = true;
+    }
+    if (hadPrePathComponent && (strncasecmp ("http", url, schemeEnd) == 0 ||
+        strncasecmp ("https", url, schemeEnd) == 0) && _path().isEmpty()) {
+        canonicalURL += "/";
+    }
+    if (!_path().isEmpty()) {
+        canonicalURL += _path();
+    }
+    if (!query().isEmpty()) {
+        canonicalURL += "?";
+        canonicalURL += query();
+    }
+    if (!ref().isEmpty()) {
+        canonicalURL += "#";
+        canonicalURL += ref();
+    }
+    return canonicalURL;
+#else
+    return urlString;
+#endif
+}
+
 
 QString KURL::prettyURL(int trailing) const
 {
@@ -837,6 +932,7 @@ void KURL::parse(const char *url, const QString *originalString)
 
     char *p = buffer;
     const char *strPtr = url;
+    bool isHTTPorHTTPS;
 
     // copy in the scheme
     const char *schemeEndPtr = url + schemeEnd;
@@ -845,6 +941,10 @@ void KURL::parse(const char *url, const QString *originalString)
     }
     schemeEndPos = p - buffer;
 
+    // Check if we're http or https.
+    isHTTPorHTTPS = strncasecmp ("http", url, schemeEnd) == 0 ||
+        strncasecmp ("https", url, schemeEnd) == 0;
+        
     // add ";"
     *p++ = ':';
 
@@ -901,6 +1001,12 @@ void KURL::parse(const char *url, const QString *originalString)
 	userStartPos = userEndPos = passwordEndPos = hostEndPos = portEndPos = p - buffer;
     }
 
+    // For canonicalization, ensure we have a '/' for no path.
+    // Only do this for http and https.
+    if (isHTTPorHTTPS && pathEnd - pathStart == 0) {
+        *p++ = '/';
+    }
+   
     // add path, escaping bad characters
     appendEscapingBadChars(p, url + pathStart, pathEnd - pathStart);
     pathEndPos = p - buffer;

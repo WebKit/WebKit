@@ -16,12 +16,15 @@
 
 #import <QD/ATSUnicodePriv.h>
 
+#import <float.h>
+
 #define NON_BREAKING_SPACE 0x00A0
 #define SPACE 0x0020
 
 #define IS_CONTROL_CHARACTER(c) ((c) < 0x0020 || (c) == 0x007F)
 
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
+#define CEIL_TO_INT(x) ((int)(x + (1.0 - FLT_EPSILON)))
 
 #define LOCAL_BUFFER_SIZE 1024
 
@@ -445,7 +448,7 @@ static BOOL bufferTextDrawing = NO;
             if (glyphs[i] == spaceGlyph)
                 numSpaces++;
         }
-        padPerSpace = ceil ((((float)padding) / ((float)numSpaces)));
+        padPerSpace = CEIL_TO_INT ((((float)padding) / ((float)numSpaces)));
     }
     
     // Determine if we can use the local stack buffer, otherwise allocate.
@@ -464,7 +467,7 @@ static BOOL bufferTextDrawing = NO;
         if (glyphs[i] == spaceGlyph){
             if (i > 0){
                 //advances[i-1].width = ROUND_TO_INT (advances[i-1].width);
-                advances[i-1].width += ceil (wordWidth) - wordWidth;
+                advances[i-1].width += CEIL_TO_INT (wordWidth) - wordWidth;
             }
             if (padding > 0){
                 // Only use left over padding if note evenly divisible by 
@@ -757,7 +760,7 @@ cleanup:
             if (glyphID == spaceGlyph){
                 //totalWidth -= lastWidth;
                 //totalWidth += ROUND_TO_INT(lastWidth);
-                totalWidth += ceil(totalWidth) - totalWidth;
+                totalWidth += CEIL_TO_INT(totalWidth) - totalWidth;
             }
             break;
         }
@@ -774,7 +777,7 @@ cleanup:
             if (totalWidth > 0 && lastWidth > 0){
                 //totalWidth -= lastWidth;
                 //totalWidth += ROUND_TO_INT(lastWidth);
-                totalWidth += ceil(totalWidth) - totalWidth;
+                totalWidth += CEIL_TO_INT(totalWidth) - totalWidth;
             }
             glyphWidth = ROUND_TO_INT(glyphWidth);
         }
@@ -788,7 +791,7 @@ cleanup:
     ATSClearGlyphVector(&glyphVector);
     
     if (applyRounding)
-        totalWidth += ceil(totalWidth) - totalWidth;
+        totalWidth += CEIL_TO_INT(totalWidth) - totalWidth;
         
     return totalWidth;
 }
@@ -829,7 +832,7 @@ cleanup:
             if (characters[i] == NON_BREAKING_SPACE || characters[i] == SPACE)
                 numSpaces++;
         }
-        padPerSpace = ceil ((((float)padding) / ((float)numSpaces)));
+        padPerSpace = CEIL_TO_INT ((((float)padding) / ((float)numSpaces)));
     }
 
     //printf("width: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
@@ -850,7 +853,7 @@ cleanup:
         if ((int)i - pos >= len) {
             // Check if next character is a space. If so, we have to apply rounding.
             if (c == SPACE && applyRounding) {
-                float delta = ceil(totalWidth) - totalWidth;
+                float delta = CEIL_TO_INT(totalWidth) - totalWidth;
                 totalWidth += delta;
                 if (widthBuffer)
                     widthBuffer[i - pos - 1] += delta;
@@ -883,7 +886,7 @@ cleanup:
         if (glyphID > 0 || ((glyphID == 0) && substituteFont == nil)) {
             if (glyphID == spaceGlyph && applyRounding) {
                 if (lastWidth > 0){
-                    float delta = ceil(totalWidth) - totalWidth;
+                    float delta = CEIL_TO_INT(totalWidth) - totalWidth;
                     totalWidth += delta;
                     if (widthBuffer)
                         widthBuffer[i - pos - 1] += delta;
@@ -913,7 +916,7 @@ cleanup:
     // Don't ever apply rounding for single character.  Single character measurement
     // intra word needs to be non-ceiled.
     if ((len > 1 || stringLength == 1) && applyRounding){
-        float delta = ceil(totalWidth) - totalWidth;
+        float delta = CEIL_TO_INT(totalWidth) - totalWidth;
         totalWidth += delta;
         if (widthBuffer)
             widthBuffer[len-1] += delta;

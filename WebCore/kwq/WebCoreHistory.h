@@ -32,6 +32,7 @@
 + (void)setSharedHistory: (WebCoreHistory *)h;
 + (WebCoreHistory *)sharedHistory;
 
-- (BOOL)containsURL: (NSURL *)url;
+- (void)addEntryForURLString: (NSString *)urlString;
+- (BOOL)containsEntryForURLString: (NSString *)urlString;
 
 @end
