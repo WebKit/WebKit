@@ -211,9 +211,6 @@
     if (_private->subresourceClients == nil) {
         _private->subresourceClients = [[NSMutableArray alloc] init];
     }
-    if ([_private->webView defersCallbacks]) {
-        [client setDefersCallbacks:YES];
-    }
     [_private->subresourceClients addObject:client];
     [self _setLoading:YES];
 }

@@ -1,3 +1,32 @@
+2003-11-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixes 3457162 -- selecting text during a page load that blows the text field away causes a crash
+        - fixes 3160035 -- crash or hang if you hold down a button while "go to about:blank soon" test runs
+
+        The WebKit part of this fix is making setDefersCallbacks: work. It had succumbed to bit rot.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m: (-[WebBaseResourceHandleDelegate setDataSource:]):
+        Set the defersCallbacks state from the WebView here so that clients don't have to do it.
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource _addSubresourceClient:]): Remove call to
+        set the defersCallbacks state on the subresource client, because the above change obviates it.
+        (the client/delegate terminology makes it confusing, but it's a subclass).
+
+        * WebView.subproj/WebMainResourceClient.h: Added an _initialRequest field so we can defer the very
+        first callback, which does not rely on NSURLConnection.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient dealloc]): Release the initial request.
+        (-[WebMainResourceClient loadWithRequestNow:]): Moved the guts of loadWithRequest in here; to be
+        used when the request is no longer deferred. Also removed the code to call setDefersCallbacks:
+        on the connection, and assert that we are only called when callbacks are not deferred. Because
+        the very first callback was not deferred, we would end up calling setDefersCallbacks:NO on the
+        WebView, so nothing would be deferred.
+        (-[WebMainResourceClient loadWithRequest:]): If callbacks are not deferred, then call the
+        loadWithRequestNow: method, otherwise simply store the request in _initialRequest.
+        (-[WebMainResourceClient setDefersCallbacks:]): If there is an _initialRequest and we are
+        ceasing deferral of callbacks, then call the loadWithRequestNow: method.
+
 2003-11-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
