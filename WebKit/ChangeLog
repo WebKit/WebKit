@@ -1,3 +1,22 @@
+2004-12-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        <rdar://problem/3748323> Problem with -[WebView editableDOMRangeForPoint:] (-isFlipped not taken into account?)
+        <rdar://problem/3852590> REGRESSION (Mail): Dropped content appears in wrong place if Mail message is scrolled down
+
+        When implementing drag and drop, moveDragCaretToPoint: and editableDOMRangeForPoint: are used in
+        concert to track the mouse and determine a drop location, respectively. However, moveDragCaretToPoint:
+        did a conversion of the passed-in point to the document view's coordinate space, whereas 
+        editableDOMRangeForPoint: did not. Now it does.
+        
+        Note that I will need to coordinate with Grant to have him roll out some code in Mail that
+        attempts to work around this problem (unsuccessfully), and actually manages to block the
+        real fix (which needs to be in WebKit).
+
+        * WebView.subproj/WebView.m:
+        (-[WebView editableDOMRangeForPoint:]): Convert the passed-in point to the document view's coordinate space.
+
 2004-12-02  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3895810> FATAL ERROR: <WebTextRenderer: 0x9328a20> unable to initialize with font "Times-Roman 16.00 pt. S ....

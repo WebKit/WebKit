@@ -2503,7 +2503,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
-    return [[self _bridgeAtPoint:point] editableDOMRangeForPoint:point];
+    WebBridge *bridge = [self _bridgeAtPoint:point];
+    return [bridge editableDOMRangeForPoint:[self convertPoint:point toView:[[[bridge webFrame] frameView] documentView]]];
 }
 
 - (BOOL)_shouldBeginEditingInDOMRange:(DOMRange *)range
