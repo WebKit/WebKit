@@ -279,7 +279,7 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     int i = h & _table->sizeMask;
     int k = 0;
     bool foundDeletedElement = false;
-    int deletedElementIndex;
+    int deletedElementIndex = 0;    /* initialize to make the compiler happy */
 #if DUMP_STATISTICS
     ++numProbes;
     numCollisions += _table->entries[i].key && _table->entries[i].key != rep;
