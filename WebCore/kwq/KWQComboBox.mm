@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qcombobox.h>
+#import "KWQComboBox.h"
 
-#import <KWQKHTMLPartImpl.h>
-#import <WebCoreBridge.h>
+#import "KWQKHTMLPart.h"
+#import "WebCoreBridge.h"
 
 // We empirically determined that combo boxes have these extra pixels on all
 // sides. It would be better to get this info from AppKit somehow.
@@ -180,7 +180,7 @@ int QComboBox::currentItem() const
     // use a Carbon implementation, and it uses the default run loop mode.
     // See bug 3021018 for more information.
     
-    WebCoreBridge *bridge = KWQKHTMLPartImpl::bridgeForWidget(widget);
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     BOOL wasDeferringLoading = [bridge defersLoading];
     if (!wasDeferringLoading) {
         [bridge setDefersLoading:YES];

@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qcolor.h>
+#import "KWQColor.h"
 
-#import <qnamespace.h>
-#import <qstring.h>
-#import <KWQAssertions.h>
+#import "KWQNamespace.h"
+#import "KWQString.h"
+#import "KWQAssertions.h"
 
 const QColor Qt::black    (0x00, 0x00, 0x00);
 const QColor Qt::white    (0xFF, 0xFF, 0xFF);

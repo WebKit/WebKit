@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qdrawutil.h>
+#import "KWQDrawUtil.h"
 
 void qDrawShadePanel(QPainter *p, int x, int y, int w, int h, const QColorGroup &g, bool
         sunken, int lineWidth, const QBrush *fill)

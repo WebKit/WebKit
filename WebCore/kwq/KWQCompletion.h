@@ -26,8 +26,8 @@
 #ifndef KWQCOMPLETION_H_
 #define KWQCOMPLETION_H_
 
-#include <qobject.h>
-#include <qstringlist.h>
+#include "KWQObject.h"
+#include "KWQStringList.h"
 
 class KCompletion : public QObject {
 public:

@@ -26,8 +26,8 @@
 #ifndef KCOMPLETIONBOX_H_
 #define KCOMPLETIONBOX_H_
 
-#include <klistbox.h>
-#include <kglobalsettings.h>
+#include "KWQKListBox.h"
+#include "KWQKGlobalSettings.h"
 
 class KCompletionBox : public KListBox {
 public:

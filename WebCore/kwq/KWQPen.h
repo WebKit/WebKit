@@ -26,8 +26,8 @@
 #ifndef QPEN_H_
 #define QPEN_H_
 
-#include <qnamespace.h>
-#include <qcolor.h>
+#include "KWQNamespace.h"
+#include "KWQColor.h"
 
 class QPen : public Qt {
 public:

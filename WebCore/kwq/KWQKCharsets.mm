@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kcharsets.h>
-#import <qtextcodec.h>
+#import "KWQKCharsets.h"
+#import "KWQTextCodec.h"
 
 QTextCodec *KCharsets::codecForName(const QString &qs) const
 {

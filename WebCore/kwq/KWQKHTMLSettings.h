@@ -26,10 +26,10 @@
 #ifndef KHTML_SETTINGS_H_
 #define KHTML_SETTINGS_H_
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qfont.h>
-#include <qmap.h>
+#include "KWQString.h"
+#include "KWQStringList.h"
+#include "KWQFont.h"
+#include "KWQMap.h"
 
 class KHTMLSettings
 {

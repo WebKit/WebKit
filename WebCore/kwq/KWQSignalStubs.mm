@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#import <khtmlview.h>
-#import <loader.h>
-#import <xml_tokenizer.h>
+#import "khtmlview.h"
+#import "loader.h"
+#import "xml_tokenizer.h"
 
 void KHTMLView::cleared() { }
 

@@ -26,8 +26,8 @@
 #ifndef QTIMER_H_
 #define QTIMER_H_
 
-#include <qobject.h>
-#include <KWQSignal.h>
+#include "KWQObject.h"
+#include "KWQSignal.h"
 
 #ifdef __OBJC__
 @class NSTimer;
@@ -47,7 +47,7 @@ public:
     
     static void singleShot(int msec, QObject *receiver, const char *member);
     
-    // This is just a hack used by KWQKHTMLPartImpl. The monitor function
+    // This is just a hack used by KWQKHTMLPart. The monitor function
     // gets called when the timer starts and when it is stopped before firing,
     // but not when the timer fires.
     void setMonitor(void (*monitorFunction)(void *context), void *context);

@@ -26,7 +26,7 @@
 #ifndef QCOLOR_H_
 #define QCOLOR_H_
 
-#include <qstring.h>
+#include "KWQString.h"
 
 #ifdef __OBJC__
 @class NSColor;

@@ -26,8 +26,8 @@
 #ifndef QVARIANT_H_
 #define QVARIANT_H_
 
-#include <KWQDef.h>
-#include <KWQRefPtr.h>
+#include "KWQDef.h"
+#include "KWQRefPtr.h"
 
 class QString;
 

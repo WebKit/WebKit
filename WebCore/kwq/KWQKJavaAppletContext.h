@@ -26,7 +26,7 @@
 #ifndef KJAVAAPPLETCONTEXT_H
 #define KJAVAAPPLETCONTEXT_H
 
-#include <qobject.h>
+#include "KWQObject.h"
 #include "khtml_part.h"
 
 class DCOPObject;

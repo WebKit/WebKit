@@ -26,8 +26,8 @@
 #ifndef QARRAY_H_
 #define QARRAY_H_
 
-#include <KWQDef.h>
-#include <KWQArrayImpl.h>
+#include "KWQDef.h"
+#include "KWQArrayImpl.h"
 
 #ifdef _KWQ_IOSTREAM_
 #include <ostream>

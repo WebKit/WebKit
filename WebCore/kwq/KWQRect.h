@@ -26,8 +26,8 @@
 #ifndef QRECT_H_
 #define QRECT_H_
 
-#include <qsize.h>
-#include <qpoint.h>
+#include "KWQSize.h"
+#include "KWQPointArray.h"
 
 typedef struct _NSRect NSRect;
 

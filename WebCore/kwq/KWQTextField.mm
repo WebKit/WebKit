@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQNSTextField.h>
+#import "KWQTextField.h"
 
-#import <qlineedit.h>
-#import <KWQKHTMLPartImpl.h>
-#import <KWQNSViewExtras.h>
+#import "KWQLineEdit.h"
+#import "KWQKHTMLPart.h"
+#import "KWQNSViewExtras.h"
 
 // KWQTextFieldFormatter enforces a maximum length.
 
@@ -214,14 +214,14 @@
 - (NSView *)nextKeyView
 {
     return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingNext)
+        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
    return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 
@@ -243,7 +243,7 @@
 
 - (BOOL)becomeFirstResponder
 {
-    KWQKHTMLPartImpl::setDocumentFocus(widget);
+    KWQKHTMLPart::setDocumentFocus(widget);
     [self _KWQ_scrollFrameToVisible];
     return [super becomeFirstResponder];
 }
@@ -315,14 +315,14 @@
 - (NSView *)nextKeyView
 {
     return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingNext)
+        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
    return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 
@@ -363,7 +363,7 @@
 
 - (BOOL)becomeFirstResponder
 {
-    KWQKHTMLPartImpl::setDocumentFocus(widget);
+    KWQKHTMLPart::setDocumentFocus(widget);
     [self _KWQ_scrollFrameToVisible];
     return [super becomeFirstResponder];
 }

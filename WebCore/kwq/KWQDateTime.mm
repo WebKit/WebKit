@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <qdatetime.h>
+#import "KWQDateTime.h"
 #import <time.h>
 
 static CFTimeZoneRef systemTimeZone()

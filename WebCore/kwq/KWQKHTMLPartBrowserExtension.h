@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <browserextension.h>
+#include "KWQKPartsBrowserExtension.h"
 
 class QWidget;
 class KHTMLPart;

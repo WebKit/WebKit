@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qmovie.h>
+#import "KWQMovie.h"
 
 const QRect &QMovie::getValidRect() const
 {

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qtimer.h>
+#import "KWQTimer.h"
 
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
 @interface KWQTimerTarget : NSObject
 {

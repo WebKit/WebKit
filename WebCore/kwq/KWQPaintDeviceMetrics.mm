@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qpaintdevicemetrics.h>
+#import "KWQPaintDeviceMetrics.h"
 
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
 QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 {

@@ -26,8 +26,8 @@
 #ifndef QPALETTE_H_
 #define QPALETTE_H_
 
-#include <qcolor.h>
-#include <qbrush.h>
+#include "KWQColor.h"
+#include "KWQBrush.h"
 
 class QColorGroupPrivate;
 class QPalettePrivate;

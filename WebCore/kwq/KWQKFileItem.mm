@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kfileitem.h>
+#import "KWQKFileItem.h"
 
-#import <KWQLogging.h>
+#import "KWQLogging.h"
 
 KFileItem::KFileItem(const KIO::UDSEntry &, const KURL &, bool, bool)
 {

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQValueListImpl.h>
+#import "KWQValueListImpl.h"
 
 #import <stdlib.h>
 

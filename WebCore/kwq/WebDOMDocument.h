@@ -5,8 +5,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebKit/WebDOMNode.h>
-
 @protocol WebDOMAttr;
 @protocol WebDOMComment;
 @protocol WebDOMCDATASection;

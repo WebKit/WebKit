@@ -26,14 +26,14 @@
 #ifndef QPIXMAP_H_
 #define QPIXMAP_H_
 
-#include "qpaintdevice.h"
-#include "qcolor.h"
-#include "qstring.h"
-#include "qnamespace.h"
-#include "qimage.h"
-#include "qsize.h"
-#include "qrect.h"
-#include "qpainter.h"
+#include "KWQPaintDevice.h"
+#include "KWQColor.h"
+#include "KWQString.h"
+#include "KWQNamespace.h"
+#include "KWQImage.h"
+#include "KWQSize.h"
+#include "KWQRect.h"
+#include "KWQPainter.h"
 
 #ifdef __OBJC__
 @protocol WebCoreImageRenderer;

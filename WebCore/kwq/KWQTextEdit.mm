@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qtextedit.h>
+#import "KWQTextEdit.h"
 
-#import <KWQTextArea.h>
+#import "KWQTextArea.h"
 
 QTextEdit::QTextEdit(QWidget *parent)
     : m_textChanged(this, SIGNAL(textChanged()))

@@ -26,9 +26,9 @@
 #ifndef __khtml_factory_h__
 #define __khtml_factory_h__
 
-#include <khtml_part.h>
-#include <factory.h>
-#include <historyprovider.h>
+#include "khtml_part.h"
+#include "KWQKPartsFactory.h"
+#include "KWQKPartsHistoryProvider.h"
 
 class KInstance;
 class KHTMLPart;

@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <khtml_factory.h>
+#import "KWQKHTMLFactory.h"
 
-#import <kinstance.h>
-#import <khtml_settings.h>
+#import "KWQKInstance.h"
+#import "KWQKHTMLSettings.h"
 
 KInstance *KHTMLFactory::instance()
 {

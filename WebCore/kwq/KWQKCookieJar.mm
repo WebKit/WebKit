@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <KWQKCookieJar.h>
-#import <WebCoreCookieAdapter.h>
-#import <kurl.h>
+#import "KWQKCookieJar.h"
+#import "WebCoreCookieAdapter.h"
+#import "KWQKURL.h"
 
 QString KWQKCookieJar::cookie(const KURL &url)
 {

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <khtml_ext.h>
-#import <khtml_part.h>
-#import <WebCoreBridge.h>
+#import "KWQKHTMLPartBrowserExtension.h"
+#import "khtml_part.h"
+#import "WebCoreBridge.h"
 
 KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(KHTMLPart *part)
 {
@@ -35,7 +35,7 @@ KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(KHTMLPart *part)
 void KHTMLPartBrowserExtension::openURLRequest(const KURL &url, 
 					       const KParts::URLArgs &args)
 {
-    m_part->impl->openURLRequest(url, args);
+    m_part->kwq->openURLRequest(url, args);
 }
 
 void KHTMLPartBrowserExtension::openURLNotify()
@@ -66,7 +66,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     WebCoreBridge *bridge;
 
     if (frameName != nil) {
-	bridge = [m_part->impl->bridge() findFramedNamed:frameName];
+	bridge = [m_part->kwq->bridge() findFramedNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
 		[bridge openURL:url.getNSURL()];
@@ -77,7 +77,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     }
 
     NSURL *cocoaURL = url.isEmpty() ? nil : url.getNSURL();
-    bridge = [m_part->impl->bridge() createWindowWithURL:cocoaURL frameName:frameName];
+    bridge = [m_part->kwq->bridge() createWindowWithURL:cocoaURL frameName:frameName];
     
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];
@@ -129,10 +129,10 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
-    [m_part->impl->bridge() setIconURL:url.getNSURL()];
+    [m_part->kwq->bridge() setIconURL:url.getNSURL()];
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
-    [m_part->impl->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+    [m_part->kwq->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
 }

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qradiobutton.h>
+#import "KWQRadioButton.h"
 
-#import <KWQView.h>
+#import "KWQView.h"
 
 // We empirically determined that radio buttons have these dimensions.
 // It would be better to get this info from AppKit somehow.

@@ -26,7 +26,7 @@
 #ifndef KSSLKEYGEN_H_
 #define KSSLKEYGEN_H_
 
-#include <qstringlist.h>
+#include "KWQStringList.h"
 
 class QDialog
 {

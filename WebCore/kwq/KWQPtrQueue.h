@@ -26,7 +26,7 @@
 #ifndef QPTRQUEUE_H_
 #define QPTRQUEUE_H_
 
-#include <qptrlist.h>
+#include "KWQPtrList.h"
 
 
 template<class T> class QPtrQueue

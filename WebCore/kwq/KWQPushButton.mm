@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qpushbutton.h>
+#import "KWQPushButton.h"
 
 // We empirically determined that buttons have these extra pixels on all
 // sides. It would be better to get this info from AppKit somehow.

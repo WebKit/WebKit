@@ -26,11 +26,11 @@
 #ifndef QBUFFER_H_
 #define QBUFFER_H_
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
-#include <qarray.h>
-#include <qstring.h>
-#include <qiodevice.h>
+#include "KWQMemArray.h"
+#include "KWQString.h"
+#include "KWQIODevice.h"
 
 class QBuffer {
 public:

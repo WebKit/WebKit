@@ -26,7 +26,7 @@
 #ifndef KWQ_LIST_IMPL_H
 #define KWQ_LIST_IMPL_H
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
 class KWQListNode;
 class KWQListIteratorImpl;

@@ -26,9 +26,9 @@
 #ifndef KWQLISTBOX_H_
 #define KWQLISTBOX_H_
 
-#include <qscrollview.h>
-#include <qstring.h>
-#include <KWQSignal.h>
+#include "KWQScrollView.h"
+#include "KWQString.h"
+#include "KWQSignal.h"
 
 class QListBoxItem;
 

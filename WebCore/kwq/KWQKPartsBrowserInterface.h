@@ -26,8 +26,8 @@
 #ifndef BROWSERINTERFACE_H_
 #define BROWSERINTERFACE_H_
 
-#include <qobject.h>
-#include <qvariant.h>
+#include "KWQObject.h"
+#include "KWQVariant.h"
 
 namespace KParts {
 

@@ -54,8 +54,8 @@
 #include <stdlib.h>
 #include <qptrstack.h>
 
-#ifdef APPLE_CHANGES
-#include <KWQKCookieJar.h>
+#if APPLE_CHANGES
+#include "KWQKCookieJar.h"
 #endif
 
 template class QPtrStack<DOM::NodeImpl>;

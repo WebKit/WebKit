@@ -1,1 +1,1 @@
-#include <part.h>
+#include "KWQKPartsPart.h"

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qwidget.h>
-#include <qmap.h>
-#include <qstring.h>
+#include "KWQWidget.h"
+#include "KWQMap.h"
+#include "KWQString.h"
 
 class KJavaAppletContext;
 class KJavaAppletWidget;

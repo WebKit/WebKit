@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qvariant.h>
+#import "KWQVariant.h"
 
-#import <qstring.h>
+#import "KWQString.h"
 
 class QVariant::QVariantPrivate {
 public:

@@ -26,11 +26,11 @@
 #ifndef QFONTMETRICS_H_
 #define QFONTMETRICS_H_
 
-#include "qrect.h"
-#include "qsize.h"
-#include "qstring.h"
-#include "qfont.h"
-#include "qfontinfo.h"
+#include "KWQRect.h"
+#include "KWQSize.h"
+#include "KWQString.h"
+#include "KWQFont.h"
+#include "KWQFontInfo.h"
 
 class QFontMetricsPrivate;
 

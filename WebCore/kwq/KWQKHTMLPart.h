@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQKHTMLPARTIMPL_H
-#define KWQKHTMLPARTIMPL_H
+#ifndef KWQKHTMLPart_H
+#define KWQKHTMLPart_H
 
-#include <qobject.h>
-#include <kurl.h>
-#include <KWQSignal.h>
+#include "KWQObject.h"
+#include "KWQKURL.h"
+#include "KWQSignal.h"
 
 class KHTMLPart;
 class KHTMLPartPrivate;
@@ -64,11 +64,11 @@ enum KWQSelectionDirection {
     KWQSelectingPrevious
 };
 
-class KWQKHTMLPartImpl : public QObject
+class KWQKHTMLPart : public QObject
 {
 public:
-    KWQKHTMLPartImpl(KHTMLPart *);
-    ~KWQKHTMLPartImpl();
+    KWQKHTMLPart(KHTMLPart *);
+    ~KWQKHTMLPart();
     
     void setBridge(WebCoreBridge *p) { _bridge = p; }
     WebCoreBridge *bridge() const { return _bridge; }
@@ -132,7 +132,7 @@ public:
     
     QString referrer() const;
     
-    static const QPtrList<KWQKHTMLPartImpl> &instances() { return mutableInstances(); }
+    static const QPtrList<KWQKHTMLPart> &instances() { return mutableInstances(); }
 
     QString requestedURLString() const;
     
@@ -148,7 +148,7 @@ private:
 
     NSView *nextKeyViewInFrame(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     static DOM::NodeImpl *nodeForWidget(QWidget *);
-    static KWQKHTMLPartImpl *partForNode(DOM::NodeImpl *);
+    static KWQKHTMLPart *partForNode(DOM::NodeImpl *);
     
     KHTMLPart *part;
     KHTMLPartPrivate *d;
@@ -161,7 +161,7 @@ private:
     
     bool _needsToSetWidgetsAside;
 
-    static QPtrList<KWQKHTMLPartImpl> &mutableInstances();
+    static QPtrList<KWQKHTMLPart> &mutableInstances();
 
     friend class KHTMLPart;
 };

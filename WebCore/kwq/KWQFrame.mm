@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qframe.h>
+#import "KWQFrame.h"
 
 void QFrame::setFrameStyle(int s)
 {

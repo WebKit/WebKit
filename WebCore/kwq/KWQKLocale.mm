@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "klocale.h"
+#import "KWQKLocale.h"
 
 #import "KWQLogging.h"
-#import "qstring.h"
+#import "KWQString.h"
 #import "WebCoreViewFactory.h"
 
 QString inputElementAltText()

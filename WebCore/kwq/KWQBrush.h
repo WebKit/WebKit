@@ -26,8 +26,8 @@
 #ifndef QBRUSH_H_
 #define QBRUSH_H_
 
-#include <qcolor.h>
-#include <qnamespace.h>
+#include "KWQColor.h"
+#include "KWQNamespace.h"
 
 class QBrush : public Qt {
 public: 

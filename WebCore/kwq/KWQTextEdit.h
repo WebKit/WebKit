@@ -26,9 +26,9 @@
 #ifndef QTEXTEDIT_H_
 #define QTEXTEDIT_H_
 
-#include <qscrollview.h>
+#include "KWQScrollView.h"
 
-#include <KWQSignal.h>
+#include "KWQSignal.h"
 
 class QTextEdit : public QScrollView
 {

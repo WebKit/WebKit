@@ -26,9 +26,9 @@
 #ifndef QBUTTON_H_
 #define QBUTTON_H_
 
-#include <qwidget.h>
-#include <qstring.h>
-#include <KWQSignal.h>
+#include "KWQWidget.h"
+#include "KWQString.h"
+#include "KWQSignal.h"
 
 #ifdef __OBJC__
 @class KWQButtonAdapter;

@@ -26,14 +26,14 @@
 #ifndef QOBJECT_H_
 #define QOBJECT_H_
 
-#include <KWQDef.h>
-#include <KWQSignal.h>
+#include "KWQDef.h"
+#include "KWQSignal.h"
 
-#include "qnamespace.h"
-#include "qstring.h"
-#include "qevent.h"
-#include "qstringlist.h"
-#include "qptrlist.h"
+#include "KWQNamespace.h"
+#include "KWQString.h"
+#include "KWQEvent.h"
+#include "KWQStringList.h"
+#include "KWQPtrList.h"
 
 #define slots : public
 #define SLOT(x) "SLOT:" #x

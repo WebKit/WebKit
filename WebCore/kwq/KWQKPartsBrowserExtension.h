@@ -26,14 +26,14 @@
 #ifndef BROWSEREXTENSION_H_
 #define BROWSEREXTENSION_H_
 
-#include <qevent.h>
-#include <qmap.h>
-#include <qpoint.h>
+#include "KWQEvent.h"
+#include "KWQMap.h"
+#include "KWQPointArray.h"
 
-#include <kurl.h>
+#include "KWQKURL.h"
 
-#include "part.h"
-#include "browserinterface.h"
+#include "KWQKPartsPart.h"
+#include "KWQKPartsBrowserInterface.h"
 
 class KXMLGUIClient { };
 

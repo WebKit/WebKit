@@ -1,0 +1,1 @@
+#include "KWQKGlobalSettings.h"

@@ -25,7 +25,7 @@
 
 #import "KWQSignal.h"
 
-#import "qobject.h"
+#import "KWQObject.h"
 #import "KWQAssertions.h"
 
 using KIO::Job;

@@ -26,7 +26,7 @@
 #ifndef KWQ_VECTOR_IMPL_H
 #define KWQ_VECTOR_IMPL_H
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
 class KWQVectorImpl
 {

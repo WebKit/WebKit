@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQMapImpl.h>
+#import "KWQMapImpl.h"
 
 KWQMapNodeImpl::KWQMapNodeImpl() :
     prev(NULL),

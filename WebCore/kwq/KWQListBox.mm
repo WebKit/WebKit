@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQListBox.h>
+#import "KWQListBox.h"
 
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
 // FIXME: We have to switch to NSTableView instead of NSBrowser.
 

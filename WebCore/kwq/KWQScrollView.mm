@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qscrollview.h>
+#import "KWQScrollView.h"
 
-#import <WebCoreFrameView.h>
+#import "WebCoreFrameView.h"
 
-#import <KWQLogging.h>
+#import "KWQLogging.h"
 
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.

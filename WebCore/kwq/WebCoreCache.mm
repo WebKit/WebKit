@@ -8,7 +8,7 @@
 
 #import "WebCoreCache.h"
 
-#include <loader.h>
+#import "loader.h"
 
 using khtml::Cache;
 

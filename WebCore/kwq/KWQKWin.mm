@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kwin.h>
+#import "KWQKWin.h"
 
-#import <qwidget.h>
+#import "KWQWidget.h"
 
 KWin::Info KWin::info(long win)
 {

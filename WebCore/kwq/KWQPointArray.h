@@ -26,13 +26,13 @@
 #ifndef QPOINT_H_
 #define QPOINT_H_
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
 #ifdef _KWQ_IOSTREAM_
 #include <iosfwd>
 #endif
 
-#include "qarray.h"
+#include "KWQMemArray.h"
 
 typedef struct _NSPoint NSPoint;
 

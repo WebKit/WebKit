@@ -26,8 +26,8 @@
 #ifndef KWQ_ARRAY_IMPL_H
 #define KWQ_ARRAY_IMPL_H
 
-#include <KWQRefPtr.h>
-#include <KWQDef.h>
+#include "KWQRefPtr.h"
+#include "KWQDef.h"
 #include <stddef.h>
 
 class KWQArrayImpl

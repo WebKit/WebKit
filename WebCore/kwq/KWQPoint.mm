@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qpoint.h>
+#import "KWQPointArray.h"
 
 QPoint::QPoint() : xCoord(0), yCoord(0)
 {

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kurl.h>
+#import "KWQKURL.h"
 
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
 typedef enum {
     // alpha 

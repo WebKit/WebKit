@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQWindowWidget.h>
+#import "KWQWindowWidget.h"
 
 #import <Cocoa/Cocoa.h>
 

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQVectorImpl.h>
+#import "KWQVectorImpl.h"
 
 KWQVectorImpl::KWQVectorImpl(void (*f)(void *))
     : m_data(0), m_size(0), m_count(0), m_deleteItemFunction(f)

@@ -26,9 +26,9 @@
 #ifndef KURL_H_
 #define KURL_H_
 
-#include <qstring.h>
-#include <qvaluelist.h>
-#include <KWQRefPtr.h>
+#include "KWQString.h"
+#include "KWQValueList.h"
+#include "KWQRefPtr.h"
 
 #ifdef __OBJC__
 @class NSURL;

@@ -26,16 +26,16 @@
 #ifndef QWIDGET_H_
 #define QWIDGET_H_
 
-#include <qobject.h>
-#include <qpaintdevice.h>
-#include <qpainter.h>
-#include <qpoint.h>
-#include <qsize.h>
-#include <qpalette.h>
-#include <qfont.h>
-#include <qcursor.h>
-#include <qevent.h>
-#include <qstyle.h>
+#include "KWQObject.h"
+#include "KWQPaintDevice.h"
+#include "KWQPainter.h"
+#include "KWQPointArray.h"
+#include "KWQSize.h"
+#include "KWQPalette.h"
+#include "KWQFont.h"
+#include "KWQCursor.h"
+#include "KWQEvent.h"
+#include "KWQStyle.h"
 
 #ifdef __OBJC__
 @class NSView;

@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQLogging.h>
+#import "KWQLogging.h"
 
-#import <qstring.h>
-#import <jobclasses.h>
+#import "KWQString.h"
+#import "KWQKJobClasses.h"
 
 #import <Foundation/Foundation.h>
 
-#import <WebCoreResourceLoader.h>
+#import "WebCoreResourceLoader.h"
 
 namespace KIO {
 

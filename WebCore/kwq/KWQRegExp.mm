@@ -24,7 +24,7 @@
  */
 
 
-#import <qregexp.h>
+#import "KWQRegExp.h"
 
 #import <sys/types.h>
 #import <regex.h>

@@ -26,9 +26,9 @@
 #ifndef QLIST_H_
 #define QLIST_H_
 
-#include <KWQDef.h>
-#include <qcollection.h>
-#include <KWQListImpl.h>
+#include "KWQDef.h"
+#include "KWQCollection.h"
+#include "KWQListImpl.h"
 
 #ifdef _KWQ_IOSTREAM_
 #include <ostream>

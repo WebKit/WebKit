@@ -275,7 +275,7 @@ void KJSProxyImpl::initScript()
 		   "debug", Value(new TestFunctionImp()), Internal);
 
 #if APPLE_CHANGES
-  QString userAgent = m_part->impl->userAgent();
+  QString userAgent = m_part->kwq->userAgent();
 #else
   QString userAgent = KProtocolManager::userAgentForHost(m_part->url().host());
 #endif

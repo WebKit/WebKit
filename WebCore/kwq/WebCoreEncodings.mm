@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/WebCoreEncodings.h>
-#import <KWQCharsets.h>
+#import "WebCoreEncodings.h"
+#import "KWQCharsets.h"
 
 @implementation WebCoreEncodings
 

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "qobject.h"
+#import "KWQObject.h"
 
-#import "qvariant.h"
+#import "KWQVariant.h"
 #import "KWQAssertions.h"
 
 const QObject *QObject::_sender;
@@ -216,8 +216,8 @@ void QObject::killTimers()
 
 // special includes only for inherits
 
-#import <khtml_part.h>
-#import <khtmlview.h>
+#import "khtml_part.h"
+#import "khtmlview.h"
 
 bool QObject::inherits(const char *className) const
 {

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQLogging.h>
+#import "KWQLogging.h"
 
-#import <qtextstream.h>
+#import "KWQTextStream.h"
 
 QTextStream::QTextStream()
 {

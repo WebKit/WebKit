@@ -26,7 +26,7 @@
 #ifndef QDATETIME_H_
 #define QDATETIME_H_
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 #include <CoreFoundation/CFDate.h>
 
 #ifdef _KWQ_IOSTREAM_

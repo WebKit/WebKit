@@ -26,7 +26,7 @@
 #ifndef QSIZE_H_
 #define QSIZE_H_
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
 #ifdef _KWQ_IOSTREAM_
 #include <iosfwd>

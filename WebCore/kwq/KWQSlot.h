@@ -26,7 +26,7 @@
 #ifndef KWQSLOT_H
 #define KWQSLOT_H
 
-#include "qguardedptr.h"
+#include "KWQGuardedPtr.h"
 
 class QString;
 

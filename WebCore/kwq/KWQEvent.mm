@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qevent.h>
-#import <KWQLogging.h>
+#import "KWQEvent.h"
+#import "KWQLogging.h"
 
 QEvent::~QEvent()
 {

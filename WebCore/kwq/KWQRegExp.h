@@ -26,9 +26,9 @@
 #ifndef QREGEXP_H_
 #define QREGEXP_H_
 
-#include <qstring.h>
+#include "KWQString.h"
 
-#include <KWQRefPtr.h>
+#include "KWQRefPtr.h"
 
 class QRegExp {
 public:

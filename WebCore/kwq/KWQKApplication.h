@@ -26,12 +26,12 @@
 #ifndef KAPP_H_
 #define KAPP_H_
 
-#include <kglobal.h>
-#include <kglobalsettings.h>
-#include <dcopclient.h>
-#include <qapplication.h>
-#include <qpalette.h>
-#include <qregexp.h>
+#include "KWQKGlobal.h"
+#include "KWQKGlobalSettings.h"
+#include "KWQDCOPClient.h"
+#include "KWQApplication.h"
+#include "KWQPalette.h"
+#include "KWQRegExp.h"
 
 class KApplication : public QApplication { };
 

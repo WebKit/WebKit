@@ -26,7 +26,7 @@
 #ifndef KWIN_H_
 #define KWIN_H_
 
-#include <qrect.h>
+#include "KWQRect.h"
 
 class KWin {
 public:

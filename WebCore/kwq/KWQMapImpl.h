@@ -28,7 +28,7 @@
 
 #include <new>
 
-#include <KWQRefPtr.h>
+#include "KWQRefPtr.h"
 
 class KWQMapNodeImpl
 {

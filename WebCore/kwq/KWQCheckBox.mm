@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qcheckbox.h>
+#import "KWQCheckBox.h"
 
 // We empirically determined that check boxes have these dimensions.
 // It would be better to get this info from AppKit somehow.

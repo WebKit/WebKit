@@ -26,7 +26,7 @@
 #ifndef KWQKWINDOW_WIDGET_H
 #define KWQKWINDOW_WIDGET_H
 
-#include <qwidget.h>
+#include "KWQWidget.h"
 
 #ifdef __OBJC__
 @class NSWindow;

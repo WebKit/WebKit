@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQKHTMLPartImpl.h"
+#import "KWQKHTMLPart.h"
 
 #import "htmltokenizer.h"
 #import "html_documentimpl.h"
@@ -54,12 +54,12 @@ using KParts::URLArgs;
 
 void KHTMLPart::completed()
 {
-    impl->_completed.call();
+    kwq->_completed.call();
 }
 
 void KHTMLPart::completed(bool arg)
 {
-    impl->_completed.call(arg);
+    kwq->_completed.call(arg);
 }
 
 void KHTMLPart::nodeActivated(const DOM::Node &aNode)
@@ -72,21 +72,21 @@ void KHTMLPart::onURL(const QString &)
 
 void KHTMLPart::setStatusBarText(const QString &status)
 {
-    impl->setStatusBarText(status);
+    kwq->setStatusBarText(status);
 }
 
 void KHTMLPart::started(Job *j)
 {
-    impl->_started.call(j);
+    kwq->_started.call(j);
 }
 
 static void redirectionTimerMonitor(void *context)
 {
-    KWQKHTMLPartImpl *impl = static_cast<KWQKHTMLPartImpl *>(context);
-    impl->redirectionTimerStartedOrStopped();
+    KWQKHTMLPart *kwq = static_cast<KWQKHTMLPart *>(context);
+    kwq->redirectionTimerStartedOrStopped();
 }
 
-KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
+KWQKHTMLPart::KWQKHTMLPart(KHTMLPart *p)
     : part(p), d(part->d)
     , _started(p, SIGNAL(started(KIO::Job *)))
     , _completed(p, SIGNAL(completed()))
@@ -97,18 +97,18 @@ KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
 }
 
-KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
+KWQKHTMLPart::~KWQKHTMLPart()
 {
     mutableInstances().remove(this);
 }
 
-WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
+WebCoreBridge *KWQKHTMLPart::bridgeForFrameName(const QString &frameName)
 {
     WebCoreBridge *frame;
     if (frameName.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
         KHTMLPart *parentPart = part->parentPart();
-        frame = parentPart ? parentPart->impl->_bridge : nil;
+        frame = parentPart ? parentPart->kwq->_bridge : nil;
         if ([[frame childFrames] count] != 1) {
             frame = _bridge;
         }
@@ -119,7 +119,7 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
     return frame;
 }
 
-void KWQKHTMLPartImpl::openURL(const KURL &url)
+void KWQKHTMLPart::openURL(const KURL &url)
 {
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
@@ -129,7 +129,7 @@ void KWQKHTMLPartImpl::openURL(const KURL &url)
     }
 }
 
-void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
+void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
@@ -139,7 +139,7 @@ void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
     }
 }
 
-void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
+void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
 {
     if (!d->m_workingURL.isEmpty()) {
         part->begin(d->m_workingURL, 0, 0);
@@ -157,7 +157,7 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const ch
     part->write(bytes, length);
 }
 
-void KWQKHTMLPartImpl::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
+void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
@@ -174,7 +174,7 @@ class KWQPluginPart : public ReadOnlyPart
     virtual bool closeURL() { return true; }
 };
 
-ReadOnlyPart *KWQKHTMLPartImpl::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
+ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
 {
     NSURL *childURL = url.getNSURL();
     if (childURL == nil) {
@@ -204,7 +204,7 @@ ReadOnlyPart *KWQKHTMLPartImpl::createPart(const ChildFrame &child, const KURL &
     }
 }
     
-void KWQKHTMLPartImpl::submitForm(const KURL &u, const URLArgs &args)
+void KWQKHTMLPart::submitForm(const KURL &u, const URLArgs &args)
 {
     if (!args.doPost()) {
 	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL()];
@@ -217,38 +217,38 @@ void KWQKHTMLPartImpl::submitForm(const KURL &u, const URLArgs &args)
     }
 }
 
-void KWQKHTMLPartImpl::setView(KHTMLView *view)
+void KWQKHTMLPart::setView(KHTMLView *view)
 {
     d->m_view = view;
     part->setWidget(view);
 }
 
-KHTMLView *KWQKHTMLPartImpl::view() const
+KHTMLView *KWQKHTMLPart::view() const
 {
     return d->m_view;
 }
 
-void KWQKHTMLPartImpl::setTitle(const DOMString &title)
+void KWQKHTMLPart::setTitle(const DOMString &title)
 {
     [_bridge setTitle:title.string().getNSString()];
 }
 
-void KWQKHTMLPartImpl::setStatusBarText(const QString &status)
+void KWQKHTMLPart::setStatusBarText(const QString &status)
 {
     [_bridge setStatusText:status.getNSString()];
 }
 
-void KWQKHTMLPartImpl::scheduleClose()
+void KWQKHTMLPart::scheduleClose()
 {
     [[_bridge window] performSelector:@selector(close) withObject:nil afterDelay:0.0];
 }
 
-void KWQKHTMLPartImpl::unfocusWindow()
+void KWQKHTMLPart::unfocusWindow()
 {
     [_bridge unfocusWindow];
 }
 
-void KWQKHTMLPartImpl::jumpToSelection()
+void KWQKHTMLPart::jumpToSelection()
 {
     // Assumes that selection will only ever be text nodes. This is currently
     // true, but will it always be so?
@@ -264,7 +264,7 @@ void KWQKHTMLPartImpl::jumpToSelection()
     }
 }
 
-void KWQKHTMLPartImpl::redirectionTimerStartedOrStopped()
+void KWQKHTMLPart::redirectionTimerStartedOrStopped()
 {
     if (d->m_redirectionTimer.isActive()) {
         [_bridge reportClientRedirectTo:KURL(d->m_redirectURL).getNSURL()
@@ -290,14 +290,14 @@ static void moveWidgetsAside(RenderObject *object)
     }
 }
 
-void KWQKHTMLPartImpl::layout()
+void KWQKHTMLPart::layout()
 {
     // Since not all widgets will get a print call, it's important to move them away
     // so that they won't linger in an old position left over from a previous print.
     _needsToSetWidgetsAside = true;
 }
 
-void KWQKHTMLPartImpl::paint(QPainter *p, const QRect &rect)
+void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 {
 #ifdef DEBUG_DRAWING
     [[NSColor redColor] set];
@@ -313,23 +313,23 @@ void KWQKHTMLPartImpl::paint(QPainter *p, const QRect &rect)
     }
 }
 
-DocumentImpl *KWQKHTMLPartImpl::document()
+DocumentImpl *KWQKHTMLPart::document()
 {
     return part->xmlDocImpl();
 }
 
-RenderObject *KWQKHTMLPartImpl::renderer()
+RenderObject *KWQKHTMLPart::renderer()
 {
     DocumentImpl *doc = part->xmlDocImpl();
     return doc ? doc->renderer() : 0;
 }
 
-QString KWQKHTMLPartImpl::userAgent() const
+QString KWQKHTMLPart::userAgent() const
 {
     return QString::fromNSString([_bridge userAgentForURL:part->m_url.getNSURL()]);
 }
 
-NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
+NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
 {
     DocumentImpl *doc = document();
     for (;;) {
@@ -343,7 +343,7 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirecti
             QWidget *widget = renderWidget->widget();
             KHTMLView *childFrameWidget = dynamic_cast<KHTMLView *>(widget);
             if (childFrameWidget) {
-                NSView *view = childFrameWidget->part()->impl->nextKeyViewInFrame(0, direction);
+                NSView *view = childFrameWidget->part()->kwq->nextKeyViewInFrame(0, direction);
                 if (view) {
                     return view;
                 }
@@ -362,7 +362,7 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirecti
     }
 }
 
-NSView *KWQKHTMLPartImpl::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirection direction)
+NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirection direction)
 {
     NSView *next = nextKeyViewInFrame(node, direction);
     if (next) {
@@ -371,7 +371,7 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelecti
     
     KHTMLPart *parentPart = part->parentPart();
     if (parentPart) {
-        next = parentPart->impl->nextKeyView(parentPart->frame(part)->m_frame->element(), direction);
+        next = parentPart->kwq->nextKeyView(parentPart->frame(part)->m_frame->element(), direction);
         if (next) {
             return next;
         }
@@ -380,7 +380,7 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelecti
     return nil;
 }
 
-NSView *KWQKHTMLPartImpl::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
+NSView *KWQKHTMLPart::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
 {
     NSView *next = nextKeyViewInFrameHierarchy(node, direction);
     if (next) {
@@ -399,7 +399,7 @@ NSView *KWQKHTMLPartImpl::nextKeyView(NodeImpl *node, KWQSelectionDirection dire
     return nextKeyViewInFrameHierarchy(0, direction);
 }
 
-NSView *KWQKHTMLPartImpl::nextKeyViewForWidget(QWidget *startingWidget, KWQSelectionDirection direction)
+NSView *KWQKHTMLPart::nextKeyViewForWidget(QWidget *startingWidget, KWQSelectionDirection direction)
 {
     // Use the event filter object to figure out which RenderWidget owns this QWidget and get to the DOM.
     // Then get the next key view in the order determined by the DOM.
@@ -407,49 +407,49 @@ NSView *KWQKHTMLPartImpl::nextKeyViewForWidget(QWidget *startingWidget, KWQSelec
     return partForNode(node)->nextKeyView(node, direction);
 }
 
-WebCoreBridge *KWQKHTMLPartImpl::bridgeForWidget(QWidget *widget)
+WebCoreBridge *KWQKHTMLPart::bridgeForWidget(QWidget *widget)
 {
     return partForNode(nodeForWidget(widget))->bridge();
 }
 
-KWQKHTMLPartImpl *KWQKHTMLPartImpl::partForNode(NodeImpl *node)
+KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)
 {
-    return node->getDocument()->view()->part()->impl;
+    return node->getDocument()->view()->part()->kwq;
 }
 
-NodeImpl *KWQKHTMLPartImpl::nodeForWidget(QWidget *widget)
+NodeImpl *KWQKHTMLPart::nodeForWidget(QWidget *widget)
 {
     return static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
 }
 
-void KWQKHTMLPartImpl::setDocumentFocus(QWidget *widget)
+void KWQKHTMLPart::setDocumentFocus(QWidget *widget)
 {
     NodeImpl *node = nodeForWidget(widget);
     node->getDocument()->setFocusNode(node);
 }
 
-void KWQKHTMLPartImpl::clearDocumentFocus(QWidget *widget)
+void KWQKHTMLPart::clearDocumentFocus(QWidget *widget)
 {
     nodeForWidget(widget)->getDocument()->setFocusNode(0);
 }
 
-void KWQKHTMLPartImpl::saveDocumentState()
+void KWQKHTMLPart::saveDocumentState()
 {
     [_bridge saveDocumentState];
 }
 
-void KWQKHTMLPartImpl::restoreDocumentState()
+void KWQKHTMLPart::restoreDocumentState()
 {
     [_bridge restoreDocumentState];
 }
 
-QPtrList<KWQKHTMLPartImpl> &KWQKHTMLPartImpl::mutableInstances()
+QPtrList<KWQKHTMLPart> &KWQKHTMLPart::mutableInstances()
 {
-    static QPtrList<KWQKHTMLPartImpl> instancesList;
+    static QPtrList<KWQKHTMLPart> instancesList;
     return instancesList;
 }
 
-void KWQKHTMLPartImpl::updatePolicyBaseURL()
+void KWQKHTMLPart::updatePolicyBaseURL()
 {
     if (part->parentPart()) {
         setPolicyBaseURL(part->parentPart()->docImpl()->policyBaseURL());
@@ -458,7 +458,7 @@ void KWQKHTMLPartImpl::updatePolicyBaseURL()
     }
 }
 
-void KWQKHTMLPartImpl::setPolicyBaseURL(const DOM::DOMString &s)
+void KWQKHTMLPart::setPolicyBaseURL(const DOM::DOMString &s)
 {
     // XML documents will cause this to return null.  docImpl() is
     // an HTMLdocument only. -dwh
@@ -467,16 +467,16 @@ void KWQKHTMLPartImpl::setPolicyBaseURL(const DOM::DOMString &s)
     ConstFrameIt end = d->m_frames.end();
     for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
         ReadOnlyPart *subpart = (*it).m_part;
-        static_cast<KHTMLPart *>(subpart)->impl->setPolicyBaseURL(s);
+        static_cast<KHTMLPart *>(subpart)->kwq->setPolicyBaseURL(s);
     }
 }
 
-QString KWQKHTMLPartImpl::requestedURLString() const
+QString KWQKHTMLPart::requestedURLString() const
 {
     return QString::fromNSString([[_bridge requestedURL] absoluteString]);
 }
 
-void KWQKHTMLPartImpl::forceLayout()
+void KWQKHTMLPart::forceLayout()
 {
     KHTMLView *v = d->m_view;
     if (v) {
@@ -485,22 +485,22 @@ void KWQKHTMLPartImpl::forceLayout()
     }
 }
 
-QString KWQKHTMLPartImpl::referrer() const
+QString KWQKHTMLPart::referrer() const
 {
     return d->m_referrer;
 }
 
-void KWQKHTMLPartImpl::runJavaScriptAlert(const QString &message)
+void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
 {
     [[WebCoreViewFactory sharedFactory] runJavaScriptAlertPanelWithMessage:message.getNSString()];
 }
 
-bool KWQKHTMLPartImpl::runJavaScriptConfirm(const QString &message)
+bool KWQKHTMLPart::runJavaScriptConfirm(const QString &message)
 {
     return [[WebCoreViewFactory sharedFactory] runJavaScriptConfirmPanelWithMessage:message.getNSString()];
 }
 
-bool KWQKHTMLPartImpl::runJavaScriptPrompt(const QString &prompt, const QString &defaultValue, QString &result)
+bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &defaultValue, QString &result)
 {
     NSString *returnedText;
     bool ok = [[WebCoreViewFactory sharedFactory] runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()

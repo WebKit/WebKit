@@ -26,8 +26,8 @@
 #ifndef KIO_GLOBAL_H_
 #define KIO_GLOBAL_H_
 
-#include <qstring.h>
-#include <qmap.h>
+#include "KWQString.h"
+#include "KWQMap.h"
 
 namespace KIO {
 

@@ -28,7 +28,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <qcstring.h>
+#include "KWQCString.h"
 
 // Make htmltokenizer.cpp happy
 #define QT_VERSION 300

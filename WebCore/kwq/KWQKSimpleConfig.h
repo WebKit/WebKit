@@ -26,8 +26,8 @@
 #ifndef KSIMPLECONFIG_H_
 #define KSIMPLECONFIG_H_
 
-#include <kconfig.h>
-#include <qstring.h>
+#include "KWQKConfigBase.h"
+#include "KWQString.h"
 
 class KSimpleConfig : public KConfig {
 public:

@@ -1,1 +1,1 @@
-#include <kjavaappletcontext.h>
+#include "KWQKJavaAppletContext.h"

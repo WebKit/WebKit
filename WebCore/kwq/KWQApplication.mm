@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qapplication.h>
-#import <KWQLogging.h>
+#import "KWQApplication.h"
+#import "KWQLogging.h"
 
 QPalette QApplication::palette(const QWidget *p)
 {

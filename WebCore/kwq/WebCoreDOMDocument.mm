@@ -2,7 +2,7 @@
     WebCoreDOMDocument.mm
     Copyright 2002, Apple, Inc. All rights reserved.
 */
-#include "WebCoreDOMPrivate.h"
+#import "WebCoreDOMPrivate.h"
 
 DOM::DOMImplementation DOM::DOMImplementationImpl::createInstance(DOM::DOMImplementationImpl *impl)
 {

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qtextcodec.h>
+#import "KWQTextCodec.h"
 
-#import <KWQCharsets.h>
+#import "KWQCharsets.h"
 
 static CFMutableDictionaryRef encodingToCodec = NULL;
 

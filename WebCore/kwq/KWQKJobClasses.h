@@ -26,11 +26,11 @@
 #ifndef JOBCLASSES_H_
 #define JOBCLASSES_H_
 
-#include <qmap.h>
-#include <qobject.h>
-#include <qstring.h>
+#include "KWQMap.h"
+#include "KWQObject.h"
+#include "KWQString.h"
 
-#include <kurl.h>
+#include "KWQKURL.h"
 
 #ifdef __OBJC__
 @protocol WebCoreResourceHandle;

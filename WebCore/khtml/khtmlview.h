@@ -83,7 +83,7 @@ class KHTMLView : public QScrollView
     friend class khtml::CSSStyleSelector;
     friend void khtml::applyRule(DOM::CSSProperty *prop);
 #ifdef APPLE_CHANGES
-    friend class KWQKHTMLPartImpl;
+    friend class KWQKHTMLPart;
 #endif
 
 public:

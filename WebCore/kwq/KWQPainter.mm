@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qpainter.h>
-#import <qwidget.h>
-#import <qfontmetrics.h>
-#import <qpixmap.h>
-#import <qstack.h>
-#import <qpoint.h>
+#import "KWQPainter.h"
+#import "KWQWidget.h"
+#import "KWQFontMetrics.h"
+#import "KWQPixmap.h"
+#import "KWQPtrStack.h"
+#import "KWQPointArray.h"
 
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
-#import <WebCoreTextRendererFactory.h>
-#import <WebCoreTextRenderer.h>
-#import <WebCoreImageRenderer.h>
+#import "WebCoreTextRendererFactory.h"
+#import "WebCoreTextRenderer.h"
+#import "WebCoreImageRenderer.h"
 
 struct QPState {
     QPState() : paintingDisabled(false) { }

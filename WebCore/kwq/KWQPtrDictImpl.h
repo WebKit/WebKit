@@ -26,7 +26,7 @@
 #ifndef KWQ_PTRDICT_IMPL_H
 #define KWQ_PTRDICT_IMPL_H
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
 #include <stddef.h>
 

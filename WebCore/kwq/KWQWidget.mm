@@ -23,16 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qwidget.h>
+#import "KWQWidget.h"
 
-#import <KWQView.h>
-#import <WebCoreFrameView.h>
-#import <KWQLogging.h>
-#import <KWQWindowWidget.h>
+#import "KWQView.h"
+#import "WebCoreFrameView.h"
+#import "KWQLogging.h"
+#import "KWQWindowWidget.h"
 
-#import <khtmlview.h>
-#import <render_replaced.h>
-#import <KWQKHTMLPartImpl.h>
+#import "khtmlview.h"
+#import "render_replaced.h"
+#import "KWQKHTMLPart.h"
 
 using khtml::RenderWidget;
 
@@ -206,7 +206,7 @@ void QWidget::setFocus()
 
 void QWidget::clearFocus()
 {
-    KWQKHTMLPartImpl::clearDocumentFocus(this);
+    KWQKHTMLPart::clearDocumentFocus(this);
 }
 
 QWidget::FocusPolicy QWidget::focusPolicy() const

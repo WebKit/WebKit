@@ -26,8 +26,8 @@
 #ifndef QVALUELIST_H_
 #define QVALUELIST_H_
 
-#include <KWQDef.h>
-#include <KWQValueListImpl.h>
+#include "KWQDef.h"
+#include "KWQValueListImpl.h"
 
 #ifdef _KWQ_IOSTREAM_
 #include <ostream>

@@ -26,8 +26,8 @@
 #ifndef NETACCESS_H_
 #define NETACCESS_H_
 
-#include <qvaluelist.h>
-#include <kurl.h>
+#include "KWQValueList.h"
+#include "KWQKURL.h"
 
 namespace KIO {
 

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <khtmlview.h>
+#import "khtmlview.h"
 
 /*
     Currently this files just extends the kde implementation.

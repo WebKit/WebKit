@@ -26,10 +26,10 @@
 #ifndef QEVENT_H_
 #define QEVENT_H_
 
-#include <qnamespace.h>
-#include <qregion.h>
-#include <qpoint.h>
-#include <qstring.h>
+#include "KWQNamespace.h"
+#include "KWQRegion.h"
+#include "KWQPointArray.h"
+#include "KWQString.h"
 
 class QEvent : public Qt {
 public:

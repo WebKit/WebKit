@@ -26,7 +26,7 @@
 #ifndef QCSTRING_H_
 #define QCSTRING_H_
 
-#include <qarray.h>
+#include "KWQMemArray.h"
 #include <string.h>
 
 typedef QMemArray<char> QByteArray;

@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qstyle.h>
+#import "KWQStyle.h"
 
-#include <qwidget.h>
+#import "KWQWidget.h"
 
 QSize QStyle::sizeFromContents(ContentType, QWidget *, const QSize &s) const
 {

@@ -26,7 +26,7 @@
 #ifndef QSTYLESHEET_H
 #define QSTYLESHEET_H
 
-#include <qstring.h>
+#include "KWQString.h"
 
 class QStyleSheet
 {

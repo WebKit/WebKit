@@ -1,5 +1,12 @@
 2002-10-26  Darin Adler  <darin@apple.com>
 
+        - changed naming scheme in KWQ for files like qstring.h
+        Now use names like KWQString.h and make a forwarding header called qstring.h.
+        
+        * tons of files
+
+2002-10-26  Darin Adler  <darin@apple.com>
+
 	- fixed 3068404 -- eliminate all user-visible messages from WebCore
 
         * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Use runJavaScriptPrompt

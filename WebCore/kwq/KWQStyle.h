@@ -26,8 +26,8 @@
 #ifndef KWQSTYLE_H_
 #define KWQSTYLE_H_
 
-#include <qobject.h>
-#include <qsize.h>
+#include "KWQObject.h"
+#include "KWQSize.h"
 
 class QWidget;
 

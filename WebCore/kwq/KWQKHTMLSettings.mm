@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <khtml_settings.h>
+#import "KWQKHTMLSettings.h"
 
-#import <WebCoreSettings.h>
+#import "WebCoreSettings.h"
 
 QString KHTMLSettings::stdFontName() const
 {

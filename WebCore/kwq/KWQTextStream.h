@@ -26,7 +26,7 @@
 #ifndef QTEXTSTREAM_H_
 #define QTEXTSTREAM_H_
 
-#include "qstring.h"
+#include "KWQString.h"
 
 class QTextStream;
 

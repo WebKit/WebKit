@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qlineedit.h>
+#import "KWQLineEdit.h"
 
-#import <KWQNSTextField.h>
-#import <KWQLogging.h>
-#import <WebCoreTextRendererFactory.h>
+#import "KWQTextField.h"
+#import "KWQLogging.h"
+#import "WebCoreTextRendererFactory.h"
 
 // This replicates constants from [NSTextFieldCell drawingRectForBounds].
 #define VERTICAL_FUDGE_FACTOR 3

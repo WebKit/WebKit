@@ -120,10 +120,10 @@ void RenderRoot::calcMinMaxWidth()
 
 void RenderRoot::layout()
 {
-#ifdef APPLE_CHANGES
-    // Let the KWQKHTMLPartImpl know we are doing a layout.
+#if APPLE_CHANGES
+    // Let the KWQKHTMLPart know we are doing a layout.
     if (m_view && m_view->part())
-        m_view->part()->impl->layout();
+        m_view->part()->kwq->layout();
 #endif
     
     //kdDebug(6040) << "RenderRoot::layout()" << endl;

@@ -26,7 +26,7 @@
 #ifndef QGUARDEDPTR_H_
 #define QGUARDEDPTR_H_
 
-#include "qptrlist.h"
+#include "KWQPtrList.h"
 
 class QObject;
 

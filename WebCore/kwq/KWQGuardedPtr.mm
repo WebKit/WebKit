@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "qguardedptr.h"
+#import "KWQGuardedPtr.h"
 
-#import "qobject.h"
+#import "KWQObject.h"
 
 KWQGuardedPtrBase::KWQGuardedPtrBase(QObject *o)
 {

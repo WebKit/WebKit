@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kconfig.h>
+#import "KWQKConfigBase.h"
 
 #import "KWQLogging.h"
-#import <qcolor.h>
-#import <qstringlist.h>
+#import "KWQColor.h"
+#import "KWQStringList.h"
 #import "WebCoreSettings.h"
 #import "WebCoreViewFactory.h"
 

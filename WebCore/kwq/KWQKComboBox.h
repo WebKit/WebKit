@@ -26,8 +26,8 @@
 #ifndef KCOMBOBOX_H_
 #define KCOMBOBOX_H_
 
-#include <qcombobox.h>
-#include <KWQCompletion.h>
+#include "KWQComboBox.h"
+#include "KWQCompletion.h"
 
 class KComboBox : public QComboBox, public KCompletionBase {
 public:

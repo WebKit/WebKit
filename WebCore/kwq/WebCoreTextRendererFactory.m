@@ -24,7 +24,7 @@
  */
 
 #import "WebCoreTextRendererFactory.h"
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
 @implementation WebCoreTextRendererFactory
 

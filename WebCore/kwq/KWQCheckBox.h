@@ -26,7 +26,7 @@
 #ifndef QCHECKBOX_H_
 #define QCHECKBOX_H_
 
-#include <qbutton.h>
+#include "KWQButton.h"
 
 class QCheckBox : public QButton {
 public:

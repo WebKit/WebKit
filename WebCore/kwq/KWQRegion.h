@@ -26,9 +26,9 @@
 #ifndef QREGION_H_
 #define QREGION_H_
 
-#include <qpoint.h>
-#include <qimage.h>
-#include <qrect.h>
+#include "KWQPointArray.h"
+#include "KWQImage.h"
+#include "KWQRect.h"
 
 #ifdef __OBJC__
 @class NSBezierPath;

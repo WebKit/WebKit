@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kglobalsettings.h>
+#import "KWQKGlobalSettings.h"
 
-#import <qfont.h>
+#import "KWQFont.h"
 
 QFont KGlobalSettings::generalFont()
 {

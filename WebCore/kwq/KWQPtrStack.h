@@ -26,7 +26,7 @@
 #ifndef QSTACK_H_
 #define QSTACK_H_
 
-#include <qlist.h>
+#include "KWQPtrList.h"
 
 template<class T> class QPtrStack {
 public:

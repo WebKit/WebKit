@@ -26,7 +26,7 @@
 #ifndef QNAMESPACE_H_
 #define QNAMESPACE_H_
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
 class QColor;
 class QCursor;

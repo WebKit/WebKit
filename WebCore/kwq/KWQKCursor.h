@@ -26,7 +26,7 @@
 #ifndef KCURSOR_H_
 #define KCURSOR_H_
 
-#include <qcursor.h>
+#include "KWQCursor.h"
 
 class KCursor {
 public:

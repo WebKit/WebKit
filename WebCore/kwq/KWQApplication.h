@@ -26,10 +26,10 @@
 #ifndef QAPPLICATION_H_
 #define QAPPLICATION_H_
 
-#include <qobject.h>
-#include <qwidget.h>
-#include <qpalette.h>
-#include <qsize.h>
+#include "KWQObject.h"
+#include "KWQWidget.h"
+#include "KWQPalette.h"
+#include "KWQSize.h"
 
 class QDesktopWidget;
 

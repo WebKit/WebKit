@@ -1,1 +1,1 @@
-#include <global.h>
+#include "KWQKIOGlobal.h"

@@ -26,11 +26,11 @@
 #ifndef QMOVIE_H_
 #define QMOVIE_H_
 
-#include <qobject.h>
-#include <qasyncio.h>
-#include <qpixmap.h>
-#include <qimage.h>
-#include <qrect.h>
+#include "KWQObject.h"
+#include "KWQQAsyncIO.h"
+#include "KWQPixmap.h"
+#include "KWQImage.h"
+#include "KWQRect.h"
 
 class QMovie {
 public:

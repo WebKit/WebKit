@@ -25,7 +25,7 @@
 
 #import "WebCoreSettings.h"
 
-#import "KWQKHTMLPartImpl.h"
+#import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
 
 @implementation WebCoreSettings
@@ -53,7 +53,7 @@
 
 - (void)_updateAllViews
 {
-    for (QPtrListIterator<KWQKHTMLPartImpl> it(KWQKHTMLPartImpl::instances()); it.current(); ++it) {
+    for (QPtrListIterator<KWQKHTMLPart> it(KWQKHTMLPart::instances()); it.current(); ++it) {
         [it.current()->bridge() setNeedsReapplyStyles];
     }
 }

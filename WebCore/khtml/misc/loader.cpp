@@ -56,9 +56,9 @@
 #include "css/css_stylesheetimpl.h"
 #include "xml/dom_docimpl.h"
 
-#ifdef APPLE_CHANGES
-#include <KWQAssertions.h>
-#include <KWQLoaderImpl.h>
+#if APPLE_CHANGES
+#include "KWQAssertions.h"
+#include "KWQLoader.h"
 #endif
 
 using namespace khtml;

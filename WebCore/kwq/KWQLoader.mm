@@ -23,17 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQLoaderImpl.h>
+#import "KWQLoader.h"
 
-#import <jobclasses.h>
-#import <loader.h>
+#import "KWQKJobClasses.h"
+#import "loader.h"
 
-#import <khtml_part.h>
+#import "khtml_part.h"
 
-#import <WebCoreBridge.h>
-#import <WebCoreResourceLoader.h>
+#import "WebCoreBridge.h"
+#import "WebCoreResourceLoader.h"
 
-#import <KWQLogging.h>
+#import "KWQLogging.h"
 
 using khtml::CachedObject;
 using khtml::CachedImage;
@@ -102,7 +102,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
         request->m_docLoader->part()->baseURL().url().latin1(),
         request->object->url().string().latin1());
     
-    WebCoreBridge *bridge = ((KHTMLPart *)request->m_docLoader->part())->impl->bridge();
+    WebCoreBridge *bridge = ((KHTMLPart *)request->m_docLoader->part())->kwq->bridge();
 
     NSURL *URL = job->url().getNSURL();
     if (URL == nil) {
@@ -125,7 +125,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 
 bool KWQCheckIfReloading(DocLoader *loader)
 {
-    return [((KHTMLPart *)loader->part())->impl->bridge() isReloading];
+    return [((KHTMLPart *)loader->part())->kwq->bridge() isReloading];
 }
 
 void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
@@ -148,7 +148,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     ASSERT(cachedObject->response());
     
     // Notify the caller that we "loaded".
-    WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->impl->bridge();
+    WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->kwq->bridge();
     NSURL *URL = [[NSURL alloc] initWithString:cachedObject->url().string().getNSString()];
     ASSERT(URL);
     CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);

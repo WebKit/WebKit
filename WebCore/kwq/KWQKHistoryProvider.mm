@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <historyprovider.h>
+#import "KWQKPartsHistoryProvider.h"
 
-#import <kurl.h>
-#import <WebCoreHistory.h>
+#import "KWQKURL.h"
+#import "WebCoreHistory.h"
 
 namespace KParts {
 

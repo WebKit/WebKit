@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQArrayImpl.h>
+#import "KWQArrayImpl.h"
 
 #import <new>
 #import <string.h>

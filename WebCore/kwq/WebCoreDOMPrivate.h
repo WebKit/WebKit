@@ -2,18 +2,19 @@
     WebCoreDOMPrivate.h
     Copyright 2002, Apple, Inc. All rights reserved.
 */
-#include <dom/dom_element.h>
-#include <dom/dom_node.h>
-#include <dom/dom_string.h>
-#include <dom/dom_text.h>
-#include <dom/dom_xml.h>
-#include <xml/dom_textimpl.h>
-#include <xml/dom_xmlimpl.h>
-#include <xml/dom2_rangeimpl.h>
-#include <xml/dom2_eventsimpl.h>
-#include <xml/xml_tokenizer.h>
-#include <xml/dom_docimpl.h>
-#include <xml/dom_nodeimpl.h>
+
+#import "dom_element.h"
+#import "dom_node.h"
+#import "dom_string.h"
+#import "dom_text.h"
+#import "dom_xml.h"
+#import "dom_textimpl.h"
+#import "dom_xmlimpl.h"
+#import "dom2_rangeimpl.h"
+#import "dom2_eventsimpl.h"
+#import "xml_tokenizer.h"
+#import "dom_docimpl.h"
+#import "dom_nodeimpl.h"
 
 #import "WebCoreDOM.h"
 

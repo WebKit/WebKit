@@ -26,8 +26,8 @@
 #ifndef KWQ_DICT_IMPL_H
 #define KWQ_DICT_IMPL_H
 
-#include <KWQPtrDictImpl.h>
-#include <qstring.h>
+#include "KWQPtrDictImpl.h"
+#include "KWQString.h"
 
 class KWQDictImpl : public KWQPtrDictImpl {
  public:

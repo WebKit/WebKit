@@ -26,10 +26,10 @@
 #ifndef QVECTOR_H_
 #define QVECTOR_H_
 
-#include <KWQDef.h>
-#include <qcollection.h>
+#include "KWQDef.h"
+#include "KWQCollection.h"
 
-#include <KWQVectorImpl.h>
+#include "KWQVectorImpl.h"
 
 #ifdef _KWQ_IOSTREAM_
 #include <ostream>

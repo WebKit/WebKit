@@ -26,13 +26,13 @@
 #ifndef PART_H_
 #define PART_H_
 
-#include <kinstance.h>
-#include <kurl.h>
-#include <qobject.h>
-#include <qvariant.h>
-#include <qlist.h>
-#include <qstringlist.h>
-#include <qvaluelist.h>
+#include "KWQKInstance.h"
+#include "KWQKURL.h"
+#include "KWQObject.h"
+#include "KWQVariant.h"
+#include "KWQPtrList.h"
+#include "KWQStringList.h"
+#include "KWQValueList.h"
 
 class QWidget;
 

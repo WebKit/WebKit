@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kglobal.h>
+#import "KWQKGlobal.h"
 
-#import <kconfig.h>
-#import <qdict.h>
+#import "KWQKConfigBase.h"
+#import "KWQDict.h"
 
 KConfig *KGlobal::config()
 {

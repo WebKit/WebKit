@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qbutton.h>
+#import "KWQButton.h"
 
-#import <qcheckbox.h>
+#import "KWQCheckBox.h"
 
 @interface KWQButtonAdapter : NSObject
 {

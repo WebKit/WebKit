@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qregion.h>
+#import "KWQRegion.h"
 
 QRegion::QRegion(const QRect &rect)
     : path([[NSBezierPath bezierPathWithRect:rect] retain])

@@ -26,9 +26,9 @@
 #ifndef KICONLOADER_H_
 #define KICONLOADER_H_
 
-#include <qpixmap.h>
-#include <qstring.h>
-#include <kinstance.h>
+#include "KWQPixmap.h"
+#include "KWQString.h"
+#include "KWQKInstance.h"
 
 class KIcon {
 public:

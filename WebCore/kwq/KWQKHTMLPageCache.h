@@ -26,7 +26,7 @@
 #ifndef KHTML_PAGECACHE_H_
 #define KHTML_PAGECACHE_H_
 
-#include <qcstring.h>
+#include "KWQCString.h"
 
 class QObject;
 

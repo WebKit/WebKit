@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebCoreHistory.h>
+#import "WebCoreHistory.h"
 
 @implementation WebCoreHistory
 

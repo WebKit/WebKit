@@ -23,34 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCoreBridge.h>
+#import "WebCoreBridge.h"
 
-#import <dom_node.h>
-#import <dom_docimpl.h>
-#import <dom_nodeimpl.h>
-#import <khtml_part.h>
-#import <khtmlview.h>
-#import <render_frames.h>
-#import <render_image.h>
-#import <render_object.h>
-#import <render_root.h>
-#import <render_style.h>
+#import "dom_node.h"
+#import "dom_docimpl.h"
+#import "dom_nodeimpl.h"
+#import "khtml_part.h"
+#import "khtmlview.h"
+#import "render_frames.h"
+#import "render_image.h"
+#import "render_object.h"
+#import "render_root.h"
+#import "render_style.h"
 
-#import <qfont.h>
+#import "KWQFont.h"
 
-#import <KWQAssertions.h>
-#import <html/html_documentimpl.h>
-#import <xml/dom_nodeimpl.h>
-#import <htmlattrs.h>
-#import <htmltags.h>
-#import <csshelper.h>
-#import <KWQDOMNode.h>
-#import <WebCoreImageRenderer.h>
-#import <WebCoreTextRendererFactory.h>
-#import <KWQCharsets.h>
-#import <qframe.h>
+#import "KWQAssertions.h"
+#import "html_documentimpl.h"
+#import "dom_nodeimpl.h"
+#import "htmlattrs.h"
+#import "htmltags.h"
+#import "csshelper.h"
+#import "KWQDOMNode.h"
+#import "WebCoreImageRenderer.h"
+#import "WebCoreTextRendererFactory.h"
+#import "KWQCharsets.h"
+#import "KWQFrame.h"
 
-#import <WebCoreDOMPrivate.h>
+#import "WebCoreDOMPrivate.h"
 
 using DOM::DocumentImpl;
 
@@ -66,7 +66,7 @@ using khtml::RenderPart;
     [super init];
     
     part = new KHTMLPart;
-    part->impl->setBridge(self);
+    part->kwq->setBridge(self);
     
     return self;
 }
@@ -78,7 +78,7 @@ using khtml::RenderPart;
     if (renderPart) {
         renderPart->deref();
     }
-    part->impl->setBridge(nil);
+    part->kwq->setBridge(nil);
     part->deref();
     
     [super dealloc];
@@ -115,12 +115,12 @@ using khtml::RenderPart;
 
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding
 {
-    part->impl->slotData(encoding, NO, (const char *)[data bytes], [data length], NO);
+    part->kwq->slotData(encoding, NO, (const char *)[data bytes], [data length], NO);
 }
 
 - (void)addData:(NSData *)data withOverrideEncoding:(NSString *)encoding
 {
-    part->impl->slotData(encoding, YES, (const char *)[data bytes], [data length], NO);
+    part->kwq->slotData(encoding, YES, (const char *)[data bytes], [data length], NO);
 }
 
 - (void)closeURL
@@ -130,7 +130,7 @@ using khtml::RenderPart;
 
 - (void)saveDocumentState
 {
-    DocumentImpl *doc = part->impl->document();
+    DocumentImpl *doc = part->kwq->document();
     if (doc != 0){
         QStringList list = doc->docState();
         NSMutableArray *documentState = [[[NSMutableArray alloc] init] autorelease];
@@ -145,7 +145,7 @@ using khtml::RenderPart;
 
 - (void)restoreDocumentState
 {
-    DocumentImpl *doc = part->impl->document();
+    DocumentImpl *doc = part->kwq->document();
     
     if (doc != 0){
         NSArray *documentState = [self documentState];
@@ -171,7 +171,7 @@ using khtml::RenderPart;
     [self removeFromFrame];
 
     KHTMLView *kview = new KHTMLView(part, 0);
-    part->impl->setView(kview);
+    part->kwq->setView(kview);
 
     kview->setView(view);
     if (mw >= 0)
@@ -199,7 +199,7 @@ using khtml::RenderPart;
 
 - (BOOL)isFrameSet
 {
-    return part->impl->isFrameSet();
+    return part->kwq->isFrameSet();
 }
 
 - (void)reapplyStyles
@@ -209,12 +209,12 @@ using khtml::RenderPart;
 
 - (void)forceLayout
 {
-    part->impl->forceLayout();
+    part->kwq->forceLayout();
 }
 
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
-    part->impl->paint(p, QRect(rect));
+    part->kwq->paint(p, QRect(rect));
 }
 
 - (void)drawRect:(NSRect)rect
@@ -251,7 +251,7 @@ using khtml::RenderPart;
 
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier
 {
-    DocumentImpl *doc = part->impl->document();
+    DocumentImpl *doc = part->kwq->document();
     if (!doc) {
         return nil;
     }
@@ -287,7 +287,7 @@ using khtml::RenderPart;
 
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier
 {
-    RenderObject *renderer = part->impl->renderer();
+    RenderObject *renderer = part->kwq->renderer();
     if (!renderer) {
         return nil;
     }
@@ -297,21 +297,21 @@ using khtml::RenderPart;
 - (void)removeFromFrame
 {
     if (bridgeOwnsKHTMLView) {
-        delete part->impl->view();
+        delete part->kwq->view();
     }
     bridgeOwnsKHTMLView = NO;
 }
 
 - (void)installInFrame:(NSView *)view
 {
-    part->impl->view()->setView(view);
+    part->kwq->view()->setView(view);
 
     // If this isn't the main frame, it must have a render part set, or it
     // won't ever get installed in the view hierarchy.
     ASSERT(self == [self mainFrame] || renderPart != nil);
 
     if (renderPart) {
-        renderPart->setWidget(part->impl->view());
+        renderPart->setWidget(part->kwq->view());
         // Now that the render part is holding the widget, we don't own it any more.
         bridgeOwnsKHTMLView = NO;
     }
@@ -357,7 +357,7 @@ using khtml::RenderPart;
     }
     state |= [self stateForEvent:event];
     
-    if (part->impl->view()) {
+    if (part->kwq->view()) {
         int clickCount = [event clickCount];
 
         // Our behavior here is a little different that Qt.  Qt always sends
@@ -367,11 +367,11 @@ using khtml::RenderPart;
         // viewportMouseDoubleClickEvent.
         if (clickCount > 0 && clickCount % 2 == 0) {
             QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
-            part->impl->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
+            part->kwq->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
         }
         else {
             QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
-            part->impl->view()->viewportMouseReleaseEvent(&releaseEvent);
+            part->kwq->view()->viewportMouseReleaseEvent(&releaseEvent);
         }
     }
 }
@@ -397,9 +397,9 @@ using khtml::RenderPart;
     }
     state |= [self stateForEvent:event];
     
-    if (part->impl->view()) {
+    if (part->kwq->view()) {
         QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint(p), button, state, [event clickCount]);
-        part->impl->view()->viewportMousePressEvent(&kEvent);
+        part->kwq->view()->viewportMousePressEvent(&kEvent);
     }
 }
 
@@ -408,8 +408,8 @@ using khtml::RenderPart;
     NSPoint p = [event locationInWindow];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), 0, [self stateForEvent:event]);
-    if (part->impl->view()) {
-        part->impl->view()->viewportMouseMoveEvent(&kEvent);
+    if (part->kwq->view()) {
+        part->kwq->view()->viewportMouseMoveEvent(&kEvent);
     }
 }
 
@@ -418,19 +418,19 @@ using khtml::RenderPart;
     NSPoint p = [event locationInWindow];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), Qt::LeftButton, Qt::LeftButton);
-    if (part->impl->view()) {
-        part->impl->view()->viewportMouseMoveEvent(&kEvent);
+    if (part->kwq->view()) {
+        part->kwq->view()->viewportMouseMoveEvent(&kEvent);
     }
 }
 
 - (NSURL *)completeURLForDOMString:(const DOMString &)s
 {
-    return KURL(part->impl->document()->completeURL(s.string())).getNSURL();
+    return KURL(part->kwq->document()->completeURL(s.string())).getNSURL();
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
-    RenderObject *renderer = part->impl->renderer();
+    RenderObject *renderer = part->kwq->renderer();
     if (!renderer) {
         return nil;
     }
@@ -464,8 +464,8 @@ using khtml::RenderPart;
         }
         
         DOMString target = e->getAttribute(ATTR_TARGET);
-        if (target.isEmpty() && part->impl->document()) {
-            target = part->impl->document()->baseTarget();
+        if (target.isEmpty() && part->kwq->document()) {
+            target = part->kwq->document()->baseTarget();
         }
         if (!target.isEmpty()) {
             [elementInfo setObject:target.string().getNSString() forKey:WebCoreElementLinkTarget];
@@ -504,7 +504,7 @@ using khtml::RenderPart;
 
 - (void)jumpToSelection
 {
-    part->impl->jumpToSelection();
+    part->kwq->jumpToSelection();
 }
 
 - (void)setTextSizeMultiplier:(float)multiplier
@@ -526,28 +526,28 @@ using khtml::RenderPart;
 
 - (NSView *)nextKeyView
 {
-    return part->impl->nextKeyView(0, KWQSelectingNext);
+    return part->kwq->nextKeyView(0, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
 {
-    return part->impl->nextKeyView(0, KWQSelectingPrevious);
+    return part->kwq->nextKeyView(0, KWQSelectingPrevious);
 }
 
 - (NSView *)nextKeyViewInsideWebViews
 {
-    return part->impl->nextKeyViewInFrameHierarchy(0, KWQSelectingNext);
+    return part->kwq->nextKeyViewInFrameHierarchy(0, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyViewInsideWebViews
 {
-    return part->impl->nextKeyViewInFrameHierarchy(0, KWQSelectingPrevious);
+    return part->kwq->nextKeyViewInFrameHierarchy(0, KWQSelectingPrevious);
 }
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
 {
     // FIXME: We want to execute it even without a document, no?
-    if (!part->impl->document()) {
+    if (!part->kwq->document()) {
         return nil;
     }
     return part->executeScript(QString::fromNSString(string)).asString().getNSString();
@@ -555,14 +555,14 @@ using khtml::RenderPart;
 
 - (id<WebDOMDocument>)DOMDocument
 {
-    DocumentImpl *doc = part->impl->document();
+    DocumentImpl *doc = part->kwq->document();
     printf ("(id<WebDOMDocument>)DOMDocument doc = %p, lastChild = %p\n", doc, doc->lastChild());
     return [WebCoreDOMDocument documentWithImpl:doc];
 }
 
 - (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset
 {
-    DocumentImpl *doc = part->impl->document();
+    DocumentImpl *doc = part->kwq->document();
     
     doc->setSelection ([(WebCoreDOMNode *)start impl], startOffset, [(WebCoreDOMNode *)end impl], endOffset);
 }
@@ -734,7 +734,7 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
 
 - (NSAttributedString *)selectedAttributedString
 {
-    return attributedString (part->impl->selectionStart(), part->impl->selectionStartOffset(), part->impl->selectionEnd(), part->impl->selectionEndOffset());
+    return attributedString (part->kwq->selectionStart(), part->kwq->selectionStartOffset(), part->kwq->selectionEnd(), part->kwq->selectionEndOffset());
 }
 
 - (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset
@@ -745,22 +745,22 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
 
 - (id<WebDOMNode>)selectionStart
 {
-    return [WebCoreDOMNode nodeWithImpl: part->impl->selectionStart()];
+    return [WebCoreDOMNode nodeWithImpl: part->kwq->selectionStart()];
 }
 
 - (int)selectionStartOffset
 {
-    return part->impl->selectionStartOffset();
+    return part->kwq->selectionStartOffset();
 }
 
 - (id<WebDOMNode>)selectionEnd
 {
-    return [WebCoreDOMNode nodeWithImpl: part->impl->selectionEnd()];
+    return [WebCoreDOMNode nodeWithImpl: part->kwq->selectionEnd()];
 }
 
 - (int)selectionEndOffset
 {
-    return part->impl->selectionEndOffset();
+    return part->kwq->selectionEndOffset();
 }
 
 - (void)setContentType:(NSString*)contentType
@@ -787,14 +787,14 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
 
 - (NSString *)referrer
 {
-    return part->impl->referrer().getNSString();
+    return part->kwq->referrer().getNSString();
 }
 
 - (int)frameBorderStyle
 {
-    if (part->impl->view()->frameStyle() & QFrame::Sunken)
+    if (part->kwq->view()->frameStyle() & QFrame::Sunken)
         return SunkenFrameBorder;
-    if (part->impl->view()->frameStyle() & QFrame::Plain)
+    if (part->kwq->view()->frameStyle() & QFrame::Plain)
         return PlainFrameBorder;
     return NoFrameBorder;
 }

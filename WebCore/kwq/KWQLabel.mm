@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qlabel.h>
+#import "KWQLabel.h"
 
 QLabel::QLabel(const QString &, QWidget *)
 {

@@ -26,7 +26,7 @@
 #ifndef QSCROLLVIEW_H_
 #define QSCROLLVIEW_H_
 
-#include <qframe.h>
+#include "KWQFrame.h"
 
 #ifdef __OBJC__
 @class NSView;

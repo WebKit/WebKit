@@ -26,16 +26,16 @@
 #ifndef QPAINTER_H_
 #define QPAINTER_H_
 
-#include <qnamespace.h>
-#include <qpaintdevice.h>
-#include <qcolor.h>
-#include <qpen.h>
-#include <qbrush.h>
-#include <qrect.h>
-#include <qregion.h>
-#include <qpoint.h>
-#include <qstring.h>
-#include <qfontmetrics.h>
+#include "KWQNamespace.h"
+#include "KWQPaintDevice.h"
+#include "KWQColor.h"
+#include "KWQPen.h"
+#include "KWQBrush.h"
+#include "KWQRect.h"
+#include "KWQRegion.h"
+#include "KWQPointArray.h"
+#include "KWQString.h"
+#include "KWQFontMetrics.h"
 
 class QFont;
 class QPixmap;

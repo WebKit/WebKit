@@ -26,8 +26,8 @@
 #ifndef QCOMBOBOX_H_
 #define QCOMBOBOX_H_
 
-#include <KWQListBox.h>
-#include <qwidget.h>
+#include "KWQListBox.h"
+#include "KWQWidget.h"
 
 #ifdef __OBJC__
 @class KWQComboBoxAdapter;

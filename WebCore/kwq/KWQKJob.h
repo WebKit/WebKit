@@ -26,8 +26,8 @@
 #ifndef JOB_H_
 #define JOB_H_
 
-#include <kurl.h>
-#include <jobclasses.h>
+#include "KWQKURL.h"
+#include "KWQKJobClasses.h"
 
 // for time_t
 #include <sys/types.h>

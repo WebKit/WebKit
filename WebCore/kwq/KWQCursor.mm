@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qcursor.h>
-#import <KWQLogging.h>
+#import "KWQCursor.h"
+#import "KWQLogging.h"
 
 const QCursor Qt::sizeAllCursor;
 const QCursor Qt::splitHCursor;

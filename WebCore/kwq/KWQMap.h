@@ -26,9 +26,9 @@
 #ifndef QMAP_H_
 #define QMAP_H_
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
-#include <KWQMapImpl.h>
+#include "KWQMapImpl.h"
 
 #ifdef _KWQ_IOSTREAM_
 #include <ostream>

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qstring.h>
-#import <KWQLogging.h>
+#import "KWQString.h"
+#import "KWQLogging.h"
 #import <Foundation/Foundation.h>
 
 #import <CoreFoundation/CFBidi.h>

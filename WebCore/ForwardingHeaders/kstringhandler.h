@@ -1,0 +1,1 @@
+#include "KWQKStringHandler.h"

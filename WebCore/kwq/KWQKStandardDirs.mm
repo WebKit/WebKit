@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kstandarddirs.h>
+#import "KWQKStandardDirs.h"
 
 @interface KWQKStandardDirsBundleDummy : NSObject { }
 @end

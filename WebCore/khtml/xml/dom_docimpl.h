@@ -37,7 +37,7 @@
 #include <kurl.h>
 
 #if APPLE_CHANGES
-#include <KWQSignal.h>
+#include "KWQSignal.h"
 #endif
 
 class QPaintDevice;

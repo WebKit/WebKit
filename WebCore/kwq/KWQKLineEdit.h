@@ -26,9 +26,9 @@
 #ifndef KLINEEDIT_H_
 #define KLINEEDIT_H_
 
-#include <qlineedit.h>
-#include <KWQCompletion.h>
-#include <kcompletionbox.h>
+#include "KWQLineEdit.h"
+#include "KWQCompletion.h"
+#include "KWQKCompletionBox.h"
 
 class KLineEdit : public QLineEdit, public KCompletionBase {
 public:

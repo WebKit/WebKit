@@ -1,1 +1,1 @@
-#include <partmanager.h>
+#include "KWQKPartsPartManager.h"

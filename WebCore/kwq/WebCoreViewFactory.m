@@ -24,7 +24,7 @@
  */
 
 #import "WebCoreViewFactory.h"
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
 NSString *WebCoreFileButtonFilenameChanged = @"WebCoreFileButtonFilenameChanged";
 

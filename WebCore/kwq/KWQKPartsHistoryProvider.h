@@ -26,7 +26,7 @@
 #ifndef HISTORYPROVIDER_H_
 #define HISTORYPROVIDER_H_
 
-#include <qobject.h>
+#include "KWQObject.h"
 
 namespace KParts {
 

@@ -26,11 +26,11 @@
 #ifndef KMIMETYPE_H_
 #define KMIMETYPE_H_
 
-#include <kglobal.h>
+#include "KWQKGlobal.h"
 
-#include <kurl.h>
+#include "KWQKURL.h"
 #include <sys/types.h>
-#include <qstring.h>
+#include "KWQString.h"
 
 template<class T> class KSharedPtr {
 public:

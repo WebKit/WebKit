@@ -251,7 +251,7 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
 #endif
 
 #ifdef APPLE_CHANGES
-  impl = new KWQKHTMLPartImpl(this);
+  kwq = new KWQKHTMLPart(this);
 #endif
 }
 
@@ -294,8 +294,8 @@ KHTMLPart::~KHTMLPart()
     d->m_view->m_part = 0;
   }
   
-#ifdef APPLE_CHANGES
-  delete impl;
+#if APPLE_CHANGES
+  delete kwq;
 
   delete d->m_hostExtension;
 #endif
@@ -489,7 +489,7 @@ bool KHTMLPart::openURL( const KURL &url )
 bool KHTMLPart::closeURL()
 {
 #ifdef APPLE_CHANGES
-  impl->saveDocumentState();
+  kwq->saveDocumentState();
 #endif
 
   if ( d->m_job )
@@ -1309,7 +1309,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 
   if(url.isValid()) {
 #ifdef APPLE_CHANGES
-      KHTMLFactory::vLinks()->insert( impl->requestedURLString() );
+      KHTMLFactory::vLinks()->insert( kwq->requestedURLString() );
 #else
       QString urlString = url.url();
       KHTMLFactory::vLinks()->insert( urlString );
@@ -1370,7 +1370,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
   d->m_doc->docLoader()->setShowAnimations( KHTMLFactory::defaultHTMLSettings()->showAnimations() );
 
 #if APPLE_CHANGES
-  impl->updatePolicyBaseURL();
+  kwq->updatePolicyBaseURL();
 #endif
 
 #ifndef APPLE_CHANGES
@@ -1384,7 +1384,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
     setUserStyleSheet( KURL( userStyleSheet ) );
 
 #ifdef APPLE_CHANGES
-  impl->restoreDocumentState();
+  kwq->restoreDocumentState();
 #else
   d->m_doc->setRestoreState(args.docState);
 #endif
@@ -2360,7 +2360,7 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 
 #ifdef APPLE_CHANGES
   args.metaData()["referrer"] = d->m_referrer;
-  impl->urlSelected(cURL, button, state, args);
+  kwq->urlSelected(cURL, button, state, args);
 #else
   if ( hasTarget )
   {
@@ -2757,11 +2757,11 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
   {
     KHTMLPart *part = dynamic_cast<KHTMLPart *>(&*child->m_part);
     if (part)
-      part->impl->openURL(url);
+      part->kwq->openURL(url);
   }
   else
   {
-    KParts::ReadOnlyPart *part = impl->createPart(*child, url, mimetype);
+    KParts::ReadOnlyPart *part = kwq->createPart(*child, url, mimetype);
 #else
   if ( !child->m_services.contains( mimetype ) )
   {
@@ -3139,7 +3139,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
   }
 
 #ifdef APPLE_CHANGES
-  impl->submitForm(u, args);
+  kwq->submitForm(u, args);
 #else
   if ( d->m_doc->parsing() || d->m_runningScripts > 0 ) {
     if( d->m_submitForm ) {

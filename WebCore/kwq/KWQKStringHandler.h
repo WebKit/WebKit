@@ -26,7 +26,7 @@
 #ifndef KSTRINGHANDLER_H_
 #define KSTRINGHANDLER_H_
 
-#include <qstring.h>
+#include "KWQString.h"
 
 class KStringHandler {
 public:

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qpalette.h>
+#import "KWQPalette.h"
 
 const QColor& QPalette::color(ColorGroup cg, QColorGroup::ColorRole role) const
 {

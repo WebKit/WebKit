@@ -26,10 +26,10 @@
 #ifndef QFILE_H_
 #define QFILE_H_
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
-#include <qstring.h>
-#include <qiodevice.h>
+#include "KWQString.h"
+#include "KWQIODevice.h"
 
 class QFile 
 {

@@ -35,7 +35,7 @@
 #include <qregexp.h>
 
 #ifdef APPLE_CHANGES
-#include <KWQKHTMLPartImpl.h>
+#include "KWQKHTMLPart.h"
 #endif
 
 class KHTMLPartPrivate;
@@ -1082,8 +1082,8 @@ private:
 
 #ifdef APPLE_CHANGES
 public:  
-  KWQKHTMLPartImpl *impl;
-  friend class KWQKHTMLPartImpl;
+  KWQKHTMLPart *kwq;
+  friend class KWQKHTMLPart;
 
   void completed();
   void completed(bool);

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQLogging.h>
-#import <netaccess.h>
+#import "KWQLogging.h"
+#import "KWQKIONetAccess.h"
 
 namespace KIO {
 

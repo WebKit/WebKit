@@ -26,8 +26,8 @@
 #ifndef KSTDDIRS_H_
 #define KSTDDIRS_H_
 
-#include <qstring.h>
-#include <kglobal.h>
+#include "KWQString.h"
+#include "KWQKGlobal.h"
 
 QString locate(const char *type, const QString& filename, 
     const KInstance* instance=KGlobal::instance());

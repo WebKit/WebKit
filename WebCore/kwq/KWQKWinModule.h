@@ -26,7 +26,7 @@
 #ifndef KWINMODULE_H_
 #define KWINMODULE_H_
 
-#include <qobject.h>
+#include "KWQObject.h"
 
 class KWinModule : public QObject {
 public:

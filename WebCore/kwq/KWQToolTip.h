@@ -26,7 +26,7 @@
 #ifndef QTOOLTIP_H_
 #define QTOOLTIP_H_
 
-#include <qpalette.h>
+#include "KWQPalette.h"
 
 class QToolTip {
 public:

@@ -32,8 +32,9 @@
 #include "kjs_navigator.lut.h"
 #include "kjs_binding.h"
 #include "khtml_part.h"
-#ifdef APPLE_CHANGES
-#include <KWQKCookieJar.h>
+
+#if APPLE_CHANGES
+#include "KWQKCookieJar.h"
 #endif
 
 using namespace KJS;
@@ -177,7 +178,7 @@ Value Navigator::get(ExecState *exec, const UString &propertyName) const
 Value Navigator::getValueProperty(ExecState *exec, int token) const
 {
 #if APPLE_CHANGES
-  QString userAgent = m_part->impl->userAgent();
+  QString userAgent = m_part->kwq->userAgent();
 #else
   KURL url = m_part->url();
   QString userAgent = KProtocolManager::userAgentForHost(url.host());

@@ -26,10 +26,10 @@
 #ifndef QPTRDICT_H_
 #define QPTRDICT_H_
 
-#include <KWQDef.h>
-#include <qcollection.h>
+#include "KWQDef.h"
+#include "KWQCollection.h"
 
-#include <KWQPtrDictImpl.h>
+#include "KWQPtrDictImpl.h"
 
 template <class T> class QPtrDictIterator;
 

@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kjavaappletwidget.h>
+#import "KWQKJavaAppletWidget.h"
 
-#import <kjavaappletcontext.h>
-#import <kurl.h>
-#import <KWQKHTMLPartImpl.h>
-#import <WebCoreBridge.h>
+#import "KWQKJavaAppletContext.h"
+#import "KWQKURL.h"
+#import "KWQKHTMLPart.h"
+#import "WebCoreBridge.h"
 
 KJavaAppletWidget::KJavaAppletWidget(KJavaAppletContext *c, QWidget *)
     : m_applet(*this)
@@ -68,7 +68,7 @@ void KJavaAppletWidget::processArguments(const QMap<QString, QString> &arguments
 
 void KJavaAppletWidget::showApplet()
 {
-    setView([m_context->part()->impl->bridge()
+    setView([m_context->part()->kwq->bridge()
 viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
                 attributes:m_parameters
                    baseURL:m_baseURL]);

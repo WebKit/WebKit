@@ -26,9 +26,9 @@
 #ifndef KPARTS_PARTMANAGER_H
 #define KPARTS_PARTMANAGER_H
 
-#include <qguardedptr.h>
-#include <qtimer.h>
-#include <qdatetime.h>
+#include "KWQGuardedPtr.h"
+#include "KWQTimer.h"
+#include "KWQDateTime.h"
 
 namespace KParts {
 

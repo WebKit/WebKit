@@ -26,8 +26,8 @@
 #ifndef KWQVALUELIST_H_
 #define KWQVALUELIST_H_
 
-#include <KWQRefPtr.h>
-#include <KWQDef.h>
+#include "KWQRefPtr.h"
+#include "KWQDef.h"
 
 class KWQValueListNodeImpl;
 

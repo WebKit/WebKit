@@ -26,7 +26,7 @@
 #ifndef QSORTEDLIST_H_
 #define QSORTEDLIST_H_
 
-#include <qptrlist.h>
+#include "KWQPtrList.h"
 
 template<class T> class QSortedList : public QPtrList<T> {
 public:

@@ -26,8 +26,8 @@
 #ifndef KFILEDIALOG_H_
 #define KFILEDIALOG_H_
 
-#include <qstring.h>
-#include <qwidget.h>
+#include "KWQString.h"
+#include "KWQWidget.h"
 
 class KFileDialog {
 public:

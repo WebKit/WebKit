@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <kstringhandler.h>
+#import "KWQKStringHandler.h"
 
 QString KStringHandler::csqueeze(const QString &str, uint maxlen)
 {

@@ -26,7 +26,7 @@
 #ifndef KWQFILEBUTTON_H
 #define KWQFILEBUTTON_H
 
-#include <qwidget.h>
+#include "KWQWidget.h"
 
 #ifdef __OBJC__
 @class KWQFileButtonAdapter;

@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qfontmetrics.h>
+#import "KWQFontMetrics.h"
 
 #import <Cocoa/Cocoa.h>
 
-#import <qfont.h>
-#import <WebCoreTextRendererFactory.h>
-#import <WebCoreTextRenderer.h>
-#import <KWQLogging.h>
+#import "KWQFont.h"
+#import "WebCoreTextRendererFactory.h"
+#import "WebCoreTextRenderer.h"
+#import "KWQLogging.h"
 
 struct QFontMetricsPrivate
 {

@@ -26,7 +26,7 @@
 #ifndef QFRAME_H_
 #define QFRAME_H_
 
-#include <qwidget.h>
+#include "KWQWidget.h"
 
 class QFrame : public QWidget {
 public:

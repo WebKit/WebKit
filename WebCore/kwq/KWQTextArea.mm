@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQTextArea.h>
+#import "KWQTextArea.h"
 
-#import <qtextedit.h>
-#import <KWQKHTMLPartImpl.h>
+#import "KWQTextEdit.h"
+#import "KWQKHTMLPart.h"
 
 /*
     This widget is used to implement the <TEXTAREA> element.
@@ -407,14 +407,14 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 - (NSView *)nextKeyView
 {
     return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingNext)
+        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
    return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 

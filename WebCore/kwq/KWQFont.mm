@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qfont.h>
-#import <qstring.h>
+#import "KWQFont.h"
+#import "KWQString.h"
 
 #import <Cocoa/Cocoa.h>
-#import <WebCoreTextRendererFactory.h>
+#import "WebCoreTextRendererFactory.h"
 
 QFont::QFont()
     : _family(@"")

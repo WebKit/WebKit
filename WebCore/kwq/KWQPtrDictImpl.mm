@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQPtrDictImpl.h>
+#import "KWQPtrDictImpl.h"
 
 #import <new>
 

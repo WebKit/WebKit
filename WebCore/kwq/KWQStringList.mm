@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qstringlist.h>
+#import "KWQStringList.h"
 
 #import <CoreFoundation/CoreFoundation.h>
 

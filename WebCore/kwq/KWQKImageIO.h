@@ -26,7 +26,7 @@
 #ifndef KIMAGEIO_H_
 #define KIMAGEIO_H_
 
-#include <qstringlist.h>
+#include "KWQStringList.h"
 
 class KImageIO {
 public:

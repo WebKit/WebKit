@@ -25,10 +25,10 @@
 
 #include "KWQDOMNode.h"
 
-#include <dom_elementimpl.h>
-#include <dom_nodeimpl.h>
-#include <htmlattrs.h>
-#include <htmltags.h>
+#include "dom_elementimpl.h"
+#include "dom_nodeimpl.h"
+#include "htmlattrs.h"
+#include "htmltags.h"
 
 bool isImage(DOM::NodeImpl *node)
 {    

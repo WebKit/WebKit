@@ -26,7 +26,7 @@
 #ifndef QCOLLECTION_H
 #define QCOLLECTION_H
 
-#include <KWQDef.h>
+#include "KWQDef.h"
 
 class QPtrCollection {
  public:

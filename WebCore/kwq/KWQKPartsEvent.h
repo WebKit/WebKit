@@ -26,7 +26,7 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
-#include <qevent.h>
+#include "KWQEvent.h"
 
 class QPainter;
 

@@ -26,8 +26,8 @@
 #ifndef KCHARSETS_H_
 #define KCHARSETS_H_
 
-#include <qfont.h>
-#include <qstring.h>
+#include "KWQFont.h"
+#include "KWQString.h"
 
 class QTextCodec;
 

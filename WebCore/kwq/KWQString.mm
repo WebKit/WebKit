@@ -24,9 +24,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <KWQLogging.h>
-#import <qstring.h>
-#import <qregexp.h>
+#import "KWQLogging.h"
+#import "KWQString.h"
+#import "KWQRegExp.h"
 #import <stdio.h>
 
 #define CHECK_FOR_HANDLE_LEAKS 0

@@ -27,7 +27,7 @@
 #define KWQSIGNAL_H
 
 #include "KWQSlot.h"
-#include "qvaluelist.h"
+#include "KWQValueList.h"
 
 class KWQSignal {
 public:

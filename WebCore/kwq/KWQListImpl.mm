@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQListImpl.h>
+#import "KWQListImpl.h"
 
 #import <cstddef>
 #import <algorithm>
 #import <CoreFoundation/CFArray.h>
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
 class KWQListNode
 {

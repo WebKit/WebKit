@@ -26,7 +26,7 @@
 #ifndef KFILEITEM_H_
 #define KFILEITEM_H_
 
-#include <netaccess.h>
+#include "KWQKIONetAccess.h"
 
 class KFileItem {
 public:

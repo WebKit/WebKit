@@ -26,7 +26,7 @@
 #ifndef FACTORY_H_
 #define FACTORY_H_
 
-#include <part.h>
+#include "KWQKPartsPart.h"
 
 namespace KParts {
     class Factory;

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <KWQDictImpl.h>
+#import "KWQDictImpl.h"
 #import <CoreFoundation/CoreFoundation.h>
 
 KWQDictImpl::KWQDictImpl(int size, bool caseSensitive, void (*deleteFunc)(void *)) :

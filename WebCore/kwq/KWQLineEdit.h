@@ -26,10 +26,10 @@
 #ifndef QLINEEDIT_H_
 #define QLINEEDIT_H_
 
-#include <qwidget.h>
-#include <qevent.h>
-#include <qstring.h>
-#include <KWQSignal.h>
+#include "KWQWidget.h"
+#include "KWQEvent.h"
+#include "KWQString.h"
+#include "KWQSignal.h"
 
 class QLineEdit : public QWidget {
 public:

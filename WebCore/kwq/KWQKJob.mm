@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <job.h>
-#import <KWQLogging.h>
+#import "KWQKJob.h"
+#import "KWQLogging.h"
 
 namespace KIO {
 

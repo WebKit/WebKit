@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qbuffer.h>
+#import "KWQBuffer.h"
 
 void QBuffer::open(int)
 {

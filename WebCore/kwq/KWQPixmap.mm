@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qpixmap.h>
+#import "KWQPixmap.h"
 
-#import <WebCoreImageRenderer.h>
-#import <WebCoreImageRendererFactory.h>
+#import "WebCoreImageRenderer.h"
+#import "WebCoreImageRendererFactory.h"
 
 QPixmap::QPixmap()
 {

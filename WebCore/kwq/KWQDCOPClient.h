@@ -26,8 +26,8 @@
 #ifndef DCOPCLIENT_H_
 #define DCOPCLIENT_H_
 
-#include <qobject.h>
-#include <qcstring.h>
+#include "KWQObject.h"
+#include "KWQCString.h"
 
 class DCOPClient { };
 

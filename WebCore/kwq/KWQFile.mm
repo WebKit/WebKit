@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qfile.h>
+#import "KWQFile.h"
 
 QFile::QFile(const QString &n) : name(strdup([n.getNSString() fileSystemRepresentation])), fd(-1)
 {

@@ -26,8 +26,8 @@
 #ifndef QTEXTCODEC_H_
 #define QTEXTCODEC_H_
 
-#include <qstring.h>
-#include <qcstring.h>
+#include "KWQString.h"
+#include "KWQCString.h"
 
 class QTextDecoder;
 

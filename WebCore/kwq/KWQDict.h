@@ -26,10 +26,10 @@
 #ifndef QDICT_H_
 #define QDICT_H_
 
-#include <qcollection.h>
-#include <qstring.h>
+#include "KWQCollection.h"
+#include "KWQString.h"
 
-#include <KWQDictImpl.h>
+#include "KWQDictImpl.h"
 
 template<class T> class QDictIterator;
 

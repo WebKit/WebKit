@@ -26,8 +26,8 @@
 #ifndef KGLOBAL_H_
 #define KGLOBAL_H_
 
-#include <qstring.h>
-#include <kinstance.h>
+#include "KWQString.h"
+#include "KWQKInstance.h"
 
 class KCharsets;
 class KLocale;

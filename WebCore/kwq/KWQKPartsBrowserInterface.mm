@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <browserinterface.h>
+#import "KWQKPartsBrowserInterface.h"
 
-#import <KWQLogging.h>
+#import "KWQLogging.h"
 
 namespace KParts {
 

@@ -26,8 +26,8 @@
 #ifndef KDEBUG_H_
 #define KDEBUG_H_
 
-#include <qstring.h>
-#include <qtextstream.h>
+#include "KWQString.h"
+#include "KWQTextStream.h"
 
 class kdbgstream;
 
