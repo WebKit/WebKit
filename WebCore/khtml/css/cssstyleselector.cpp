@@ -3033,14 +3033,14 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
             CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
             if(val->primitiveType()==CSSPrimitiveValue::CSS_STRING)
             {
-                style->setContent(val->getStringValue(), i != 0);
+                style->setContent(val->getStringValue().implementation(), i != 0);
             }
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_ATTR)
             {
                 // FIXME: Should work with generic XML attributes also, and not
                 // just the hardcoded HTML set.  Can a namespace be specified for
                 // an attr(foo)?
-                int attrID = element->getDocument()->attrId(0, val->getStringValue(), false);
+                int attrID = element->getDocument()->attrId(0, val->getStringValue().implementation(), false);
                 if (attrID)
                     style->setContent(element->getAttribute(attrID).implementation(), i != 0);
             }

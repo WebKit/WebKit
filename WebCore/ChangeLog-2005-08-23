@@ -1,3 +1,19 @@
+2004-10-18  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3840907> textedit doesn't render italic or bold text in html documents
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::getStringValue): This function did not return string values for idents.
+        Also changed the return value to be DOMString, rather than DOMStringImpl, to deal with the 
+        lifecycle issues associated with creating a string to be returned in the ident case.
+        * khtml/css/css_valueimpl.h: Change getStringValue to return DOMString rather than DOMStringImpl.
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty): Two calls of getStringValue needed updating.
+
 2004-10-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3770135> hang loading page with EMBED tag pointing to same page (tridentantennas.co.uk)

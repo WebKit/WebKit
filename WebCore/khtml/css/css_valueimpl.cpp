@@ -697,6 +697,23 @@ void CSSPrimitiveValueImpl::setStringValue( unsigned short stringType, const DOM
     // ### parse ident
 }
 
+DOMString CSSPrimitiveValueImpl::getStringValue() const
+{
+    switch (m_type) {
+        case CSSPrimitiveValue::CSS_STRING:
+        case CSSPrimitiveValue::CSS_ATTR:
+        case CSSPrimitiveValue::CSS_URI:
+            return m_value.string;
+        case CSSPrimitiveValue::CSS_IDENT:
+            return getValueName(m_value.ident);
+        default:
+            // FIXME: The CSS 2.1 spec says you should throw an exception here.
+            break;
+    }
+    
+    return DOMString();
+}
+
 unsigned short CSSPrimitiveValueImpl::cssValueType() const
 {
     return CSSValue::CSS_PRIMITIVE_VALUE;
