@@ -441,6 +441,7 @@ public:
     QString &insert(uint, const QString &);
     QString &insert(uint, QChar);
     QString &insert(uint, char);
+    QString &insert(uint index, const char *insertChars, uint insertLength);
     QString &remove(uint, uint);
     QString &replace( uint index, uint len, const QString &s );
     //QString &replace( uint index, uint len, const QChar* s, uint slen );

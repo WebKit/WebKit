@@ -2040,20 +2040,16 @@ QString &QString::append(const QString &qs)
     return insert(dataHandle[0]->_length, qs);
 }
 
-QString &QString::insert(uint index, const QString &qs)
+
+QString &QString::insert(uint index, const char *insertChars, uint insertLength)
 {
     detach();
     
-    if (qs.data()->_length == 0)
+    if (insertLength == 0)
         return *this;
         
-#ifdef QSTRING_DEBUG_UNICODE
-    forceUnicode();
-#endif
-    if (dataHandle[0]->_isAsciiValid && qs.data()->_isAsciiValid){
-        uint insertLength = qs.data()->_length;
+    if (dataHandle[0]->_isAsciiValid){
         uint originalLength = dataHandle[0]->_length;
-        char *insertChars = (char *)qs.ascii();
         char *targetChars;
         
         // Ensure that we have enough space.
@@ -2065,6 +2061,44 @@ QString &QString::insert(uint index, const QString &qs)
         
         // Insert characters.
         memcpy (targetChars+index, insertChars, insertLength);
+    }
+    else if (dataHandle[0]->_isUnicodeValid){
+        uint originalLength = dataHandle[0]->_length;
+        QChar *targetChars;
+        
+        // Ensure that we have enough space.
+        setLength (originalLength + insertLength);
+        targetChars = (QChar *)unicode();
+        
+        // Move tail to make space for inserted characters.
+        memmove (targetChars+(index+insertLength), targetChars+index, (originalLength-index)*sizeof(QChar));
+
+        // Insert characters.
+        uint i = insertLength;
+        QChar *target = targetChars+index;
+        
+        while (i--)
+            *target++ = *insertChars++;        
+    }
+    else
+        QSTRING_FAILURE("invalid character cache");
+    
+    return *this;
+}
+
+
+QString &QString::insert(uint index, const QString &qs)
+{
+    detach();
+    
+    if (qs.data()->_length == 0)
+        return *this;
+        
+#ifdef QSTRING_DEBUG_UNICODE
+    forceUnicode();
+#endif
+    if (dataHandle[0]->_isAsciiValid && qs.data()->_isAsciiValid){
+        insert (index, qs.ascii(), qs.length());
     }
     else {
         uint insertLength = qs.data()->_length;
