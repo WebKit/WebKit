@@ -483,7 +483,9 @@ CSSStyleDeclarationImpl *CSSStyleDeclarationImpl::copyPropertiesInSet(const int 
             list->append(property);
         }
     }
-    return new CSSStyleDeclarationImpl(0, list);
+    CSSStyleDeclarationImpl *result = new CSSStyleDeclarationImpl(0, list);
+    delete list;
+    return result;
 }
 
 // --------------------------------------------------------------------------------------

@@ -1,3 +1,14 @@
+2004-11-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3880075> leak in CSSStyleDeclarationImpl::copyPropertiesInSet, 
+        seen often in Mail and Blot
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::copyPropertiesInSet):
+        delete temporary list after we're done using it
+
 2004-11-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed leak (3879883) that John found.  Early return leaked
