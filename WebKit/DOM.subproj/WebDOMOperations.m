@@ -77,13 +77,16 @@
 
 @implementation DOMDocument (WebDOMDocumentOperationsPrivate)
 
-- (DOMRange *)_documentRange
+- (DOMRange *)_createRangeWithNode:(DOMNode *)node
 {
     DOMRange *range = [self createRange];
-    DOMElement *documentElement = [self documentElement];
-    [range setStartBefore:documentElement];
-    [range setStartAfter:documentElement];
+    [range selectNode:node];
     return range;
+}
+
+- (DOMRange *)_documentRange
+{
+    return [self _createRangeWithNode:[self documentElement]];
 }
 
 @end

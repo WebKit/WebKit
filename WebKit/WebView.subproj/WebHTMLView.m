@@ -877,11 +877,15 @@ static WebHTMLView *lastHitView = nil;
     if (imageURL != nil && image != nil && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
         id source = self;
         if (!dhtmlWroteData) {
+            // Select the image when it is dragged. This allows the image to be moved via MoveSelectionCommandImpl and this matches NSTextView's behavior.
+            DOMHTMLElement *imageElement = [element objectForKey:WebElementDOMNodeKey];
+            ASSERT(imageElement != nil);
+            [webView setSelectedDOMRange:[[[self _bridge] DOMDocument] _createRangeWithNode:imageElement] affinity:NSSelectionAffinityUpstream];
             _private->draggingImageURL = [imageURL retain];
             source = [pasteboard _web_declareAndWriteDragImage:image
                                                            URL:linkURL ? linkURL : imageURL
                                                          title:[element objectForKey:WebElementImageAltStringKey]
-                                                       archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
+                                                       archive:[imageElement webArchive]
                                                         source:self];
         }
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:mouseDownPoint withPasteboard:pasteboard];
