@@ -1,3 +1,12 @@
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - added helper method _web_parentWebView so fewer files need to get at WebFrame private methods
+
+        * Misc.subproj/WebNSViewExtras.h: Added _web_parentWebView.
+        * Misc.subproj/WebNSViewExtras.m: (-[NSView _web_parentWebView]): Added.
+
 === Safari-164 ===
 
 2004-09-17  Chris Blumenberg  <cblu@apple.com>

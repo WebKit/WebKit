@@ -10,6 +10,7 @@
 @class WebArchive;
 @class WebFrameView;
 @class WebImageRenderer;
+@class WebView;
 
 @interface NSView (WebExtras)
 
@@ -22,6 +23,7 @@
 
 // Returns the first WebFrameView superview. Only works if self is the WebFrameView's document view.
 - (WebFrameView *)_web_parentWebFrameView;
+- (WebView *)_web_parentWebView;
 
 // returns whether a drag should begin starting with mouseDownEvent; if the time
 // passes expiration or the mouse moves less than the hysteresis before the mouseUp event,

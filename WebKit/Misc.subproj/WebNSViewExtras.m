@@ -5,7 +5,7 @@
 
 #import <WebKit/WebNSViewExtras.h>
 
-#import <WebKit/WebFrameView.h>
+#import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
@@ -54,10 +54,14 @@
 - (WebFrameView *)_web_parentWebFrameView
 {
     WebFrameView *view = (WebFrameView *)[[[self superview] superview] superview];
-    
     if ([view isKindOfClass: [WebFrameView class]])
         return view;
     return nil;
+}
+
+- (WebView *)_web_parentWebView
+{
+    return [[self _web_parentWebFrameView] _webView];
 }
 
 /* Determine whether a mouse down should turn into a drag; started as copy of NSTableView code */
