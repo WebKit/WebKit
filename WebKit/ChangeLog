@@ -1,3 +1,18 @@
+2002-12-12  Richard Williamson   <rjw@apple.com>
+
+        Change relating to 3083287.  This doesn't fix the problem but
+        flips the geometry calcs to get most incremental images to draw
+        correctly.  .mac now slideshows draw with the incorrect sliding 
+        behavior while loading.
+        
+        3083287 has been moved to 0.9/1.
+        
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+
 2002-12-12  Trey Matteson  <trey@apple.com>
 
 	Fixed 3094525 - Need to use SPI to fix flipped drag image problem

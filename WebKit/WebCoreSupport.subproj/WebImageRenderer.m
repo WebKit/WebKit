@@ -142,6 +142,7 @@ static NSMutableArray *activeImageRenderers;
         [self setSize:size];
         return YES;
     default:
+        //printf ("incrementalLoadWithBytes: size %d, isComplete %d\n", length, isComplete);
         // We have some data.  Return YES so we can attempt to draw what we've got.
         return YES;
     }
@@ -261,6 +262,8 @@ static NSMutableArray *activeImageRenderers;
         }
     }
     
+    fr.origin.y = [self size].height - fr.size.height;
+
     // This is the operation that handles transparent portions of the source image correctly.
     [self drawInRect:ir fromRect:fr operation:NSCompositeSourceOver fraction:1.0];
 }
