@@ -2573,6 +2573,17 @@ bool DocumentImpl::shouldCreateRenderers()
     return m_createRenderers;
 }
 
+DOMString DocumentImpl::toString() const
+{
+    DOMString result;
+
+    for (NodeImpl *child = firstChild(); child != NULL; child = child->nextSibling()) {
+	child = child->nextSibling();
+    }
+
+    return result;
+}
+
 #endif // APPLE_CHANGES
 
 // ----------------------------------------------------------------------------
@@ -2612,6 +2623,18 @@ bool DocumentFragmentImpl::childTypeAllowed( unsigned short type )
             return false;
     }
 }
+
+DOMString DocumentFragmentImpl::toString() const
+{
+    DOMString result;
+
+    for (NodeImpl *child = firstChild(); child != NULL; child = child->nextSibling()) {
+	child = child->nextSibling();
+    }
+
+    return result;
+}
+
 
 NodeImpl *DocumentFragmentImpl::cloneNode ( bool deep )
 {
@@ -2654,6 +2677,33 @@ void DocumentTypeImpl::copyFrom(const DocumentTypeImpl& other)
     m_publicId = other.m_publicId;
     m_systemId = other.m_systemId;
     m_subset = other.m_subset;
+}
+
+DOMString DocumentTypeImpl::toString() const
+{
+    DOMString result = "<!DOCTYPE";
+    result += m_qualifiedName;
+    if (!m_publicId.isEmpty()) {
+	result += " PUBLIC \"";
+	result += m_publicId;
+	result += "\" \"";
+	result += m_systemId;
+	result += "\"";
+    } else if (!m_systemId.isEmpty()) {
+	result += " SYSTEM \"";
+	result += m_systemId;
+	result += "\"";
+    }
+
+    if (!m_subset.isEmpty()) {
+	result += " [";
+	result += m_subset;
+	result += "]";
+    }
+
+    result += ">";
+
+    return result;
 }
 
 DOMString DocumentTypeImpl::nodeName() const

@@ -443,6 +443,15 @@ DOMString Document::completeURL(const DOMString& url)
     return static_cast<DocumentImpl*>( impl )->completeURL( url.string() );
 }
 
+DOMString Document::toString() const
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentImpl*>(impl)->toString();
+}
+
+
 CSSStyleDeclaration Document::getOverrideStyle(const Element &elt, const DOMString &pseudoElt)
 {
     if (!impl)

@@ -138,6 +138,8 @@ public:
     virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short type );
 
+    virtual DOMString toString() const;
+
 #if APPLE_CHANGES
     static Attr createInstance(AttrImpl *impl);
 #endif
@@ -213,6 +215,8 @@ public:
 
     virtual void accessKeyAction() {};
 
+    virtual DOMString toString() const;
+
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
@@ -223,6 +227,7 @@ public:
 protected:
     void createAttributeMap() const;
     void createDecl();
+    DOMString openTagStartToString() const;
 
 private:
     // map of default attributes. derived element classes are responsible

@@ -66,6 +66,8 @@ public:
 
     virtual bool childTypeAllowed( unsigned short type );
 
+    virtual DOMString toString() const;
+
 protected:
     DOMStringImpl *m_publicId;
     DOMStringImpl *m_systemId;
@@ -91,6 +93,7 @@ public:
 
     virtual bool childTypeAllowed( unsigned short type );
 
+    virtual DOMString toString() const;
 protected:
     DOMStringImpl *m_entityName;
 };
@@ -116,6 +119,7 @@ public:
     // Other methods (not part of DOM)
 
     virtual bool childTypeAllowed( unsigned short type );
+
 protected:
     DOMStringImpl *m_name;
     DOMStringImpl *m_publicId;
@@ -154,6 +158,8 @@ public:
     virtual void setStyleSheet(CSSStyleSheetImpl* sheet);
     bool isLoading() const;
     void sheetLoaded();
+
+    virtual DOMString toString() const;
     
 #if APPLE_CHANGES
     static ProcessingInstruction createInstance(ProcessingInstructionImpl *impl);

@@ -123,6 +123,38 @@ bool EntityImpl::childTypeAllowed( unsigned short type )
     }
 }
 
+DOMString EntityImpl::toString() const
+{
+    DOMString result = "<!ENTITY' ";
+
+    if (m_name && m_name->l != 0) {
+	result += " ";
+	result += m_name;
+    }
+
+    if (m_publicId && m_publicId->l != 0) {
+	result += " PUBLIC \"";
+	result += m_publicId;
+	result += "\" \"";
+	result += m_systemId;
+	result += "\"";
+    } else if (m_systemId && m_systemId->l != 0) {
+	result += " SYSTEM \"";
+	result += m_systemId;
+	result += "\"";
+    }
+
+    if (m_notationName && m_notationName->l != 0) {
+	result += " NDATA ";
+	result += m_notationName;
+    }
+
+    result += ">";
+
+    return result;
+}
+
+
 // -------------------------------------------------------------------------
 
 EntityReferenceImpl::EntityReferenceImpl(DocumentPtr *doc) : NodeBaseImpl(doc)
@@ -178,6 +210,15 @@ bool EntityReferenceImpl::childTypeAllowed( unsigned short type )
         default:
             return false;
     }
+}
+
+DOMString EntityReferenceImpl::toString() const
+{
+    DOMString result = "&";
+    result += m_entityName;
+    result += ";";
+
+    return result;
 }
 
 // -------------------------------------------------------------------------
@@ -434,6 +475,16 @@ void ProcessingInstructionImpl::setStyleSheet(CSSStyleSheetImpl* sheet)
     m_sheet = sheet;
     if (m_sheet)
         m_sheet->ref();
+}
+
+DOMString ProcessingInstructionImpl::toString() const
+{
+    DOMString result = "<?";
+    result += m_target;
+    result += " ";
+    result += m_data;
+    result += ">";
+    return result;
 }
 
 // -------------------------------------------------------------------------

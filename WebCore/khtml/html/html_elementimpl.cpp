@@ -623,6 +623,26 @@ void HTMLElementImpl::click()
     dispatchMouseEvent(&evt, EventImpl::KHTML_CLICK_EVENT);
 }
 
+DOMString HTMLElementImpl::toString() const
+{
+    if (!hasChildNodes()) {
+	DOMString result = openTagStartToString();
+	result += ">";
+
+	if (endTag[id()] == REQUIRED) {
+	    result += "</";
+	    result += tagName();
+	    result += ">";
+	}
+
+	return result;
+    }
+
+    return ElementImpl::toString();
+}
+
+
+
 // -------------------------------------------------------------------------
 HTMLGenericElementImpl::HTMLGenericElementImpl(DocumentPtr *doc, ushort i)
     : HTMLElementImpl(doc)

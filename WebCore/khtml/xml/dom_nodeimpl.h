@@ -369,7 +369,9 @@ public:
      * node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed it's value.
      */
     virtual void childrenChanged();
-    
+
+    virtual DOMString toString() const = 0;
+
 private: // members
     DocumentPtr *document;
     NodeImpl *m_previous;

@@ -154,6 +154,29 @@ bool AttrImpl::childTypeAllowed( unsigned short type )
     }
 }
 
+DOMString AttrImpl::toString() const
+{
+    DOMString result;
+
+    result += nodeName();
+
+    // FIXME: substitute entities for any instances of " or ' --
+    // maybe easier to just use text value and ignore existing
+    // entity refs?
+
+    if (firstChild() != NULL) {
+	result += "=\"";
+
+	for (NodeImpl *child = firstChild(); child != NULL; child = child->nextSibling()) {
+	    child = child->nextSibling();
+	}
+	
+	result += "\"";
+    }
+
+    return result;
+}
+
 // -------------------------------------------------------------------------
 
 ElementImpl::ElementImpl(DocumentPtr *doc)
@@ -494,6 +517,57 @@ void ElementImpl::dispatchAttrAdditionEvent(AttributeImpl *attr)
 //                                         attr->value(),getDocument()->attrName(attr->id()),MutationEvent::ADDITION),exceptioncode);
 }
 
+DOMString ElementImpl::openTagStartToString() const
+{
+    DOMString result = DOMString("<") + tagName();
+
+    NamedAttrMapImpl *attrMap = attributes(true);
+
+    if (attrMap) {
+	unsigned long numAttrs = attrMap->length();
+	for (unsigned long i = 0; i < numAttrs; i++) {
+	    result += " ";
+
+	    AttributeImpl *attribute = attrMap->attributeItem(i);
+	    AttrImpl *attr = attribute->attrImpl();
+
+	    if (attr) {
+		result += attr->toString();
+	    } else {
+		result += getDocument()->attrName(attribute->id());
+		if (!attribute->value().isNull()) {
+		    result += "=\"";
+		    // FIXME: substitute entities for any instances of " or '
+		    result += attribute->value();
+		    result += "\"";
+		}
+	    }
+	}
+    }
+
+    return result;
+}
+
+DOMString ElementImpl::toString() const
+{
+    DOMString result = openTagStartToString();
+
+    if (hasChildNodes()) {
+	result += ">";
+
+	for (NodeImpl *child = firstChild(); child != NULL; child = child->nextSibling()) {
+	    child = child->nextSibling();
+	}
+
+	result += "</";
+	result += tagName();
+	result += ">";
+    } else {
+	result += " />";
+    }
+
+    return result;
+}
 
 void ElementImpl::updateId(DOMStringImpl* oldId, DOMStringImpl* newId)
 {

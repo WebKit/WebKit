@@ -467,6 +467,8 @@ public:
     void removeElementById(const DOMString &elementId, ElementImpl *element);
 
     HTMLElementImpl* body();
+
+    DOMString toString() const;
     
 signals:
     void finishedParsing();
@@ -616,6 +618,8 @@ public:
 
     // Other methods (not part of DOM)
     virtual bool childTypeAllowed( unsigned short type );
+
+    virtual DOMString toString() const;
 };
 
 
@@ -646,6 +650,8 @@ public:
     void setName(const DOMString& n) { m_qualifiedName = n; }
     DOMImplementationImpl *implementation() const { return m_implementation; }
     void copyFrom(const DocumentTypeImpl&);
+
+    virtual DOMString toString() const;
 
 #if APPLE_CHANGES
     static DocumentType createInstance (DocumentTypeImpl *impl);

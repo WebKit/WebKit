@@ -98,6 +98,8 @@ public:
 
     virtual Id id() const;
     virtual bool childTypeAllowed( unsigned short type );
+
+    virtual DOMString toString() const;
 };
 
 // ----------------------------------------------------------------------------
@@ -128,6 +130,8 @@ public:
     virtual void recalcStyle( StyleChange = NoChange );
     virtual bool childTypeAllowed( unsigned short type );
 
+    virtual DOMString toString() const;
+
 #if APPLE_CHANGES
     static Text createInstance(TextImpl *impl);
 #endif
@@ -155,11 +159,11 @@ public:
 
     virtual bool childTypeAllowed( unsigned short type );
 
+    virtual DOMString toString() const;
+
 protected:
     virtual TextImpl *createNew(DOMStringImpl *_str);
 };
-
-
 
 }; //namespace
 #endif

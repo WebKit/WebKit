@@ -1,3 +1,44 @@
+2003-12-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Implemented a simple form of document serialization, enough to take care of:
+
+	<rdar://problem/3487190>: implement send of DOMDocument for XMLHttpRequest
+
+        * khtml/dom/dom_doc.cpp:
+        (DOM::Document::toString):
+        * khtml/dom/dom_doc.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::urlMatchesDocumentDomain):
+        (KJS::XMLHttpRequestProtoFunc::tryCall):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::toString):
+        * khtml/html/html_elementimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::toString):
+        (DocumentFragmentImpl::toString):
+        (DocumentTypeImpl::copyFrom):
+        (DocumentTypeImpl::toString):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttrImpl::toString):
+        (ElementImpl::openTagStartToString):
+        (ElementImpl::toString):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (CommentImpl::toString):
+        (TextImpl::toString):
+        (CDATASectionImpl::toString):
+        * khtml/xml/dom_textimpl.h:
+        * khtml/xml/dom_xmlimpl.cpp:
+        (EntityImpl::toString):
+        (EntityReferenceImpl::toString):
+        (ProcessingInstructionImpl::setStyleSheet):
+        (ProcessingInstructionImpl::toString):
+        * khtml/xml/dom_xmlimpl.h:
+
 2003-12-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3493677, containingBlock() null because we tried to support position:relative on table rows.  Fix

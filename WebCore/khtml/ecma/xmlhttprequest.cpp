@@ -23,6 +23,7 @@
 #include "kjs_window.h"
 #include "kjs_events.h"
 
+#include "dom/dom_exception.h"
 #include "dom/dom_string.h"
 #include "misc/loader.h"
 #include "html/html_documentimpl.h"
@@ -199,13 +200,13 @@ bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& _url) const
   KURL documentURL(doc->URL());
 
   // a local file can load anything
-  if (documentURL.protocol() != "file") {
+  if (documentURL.protocol().lower() == "file") {
     return true;
   }
 
   // but a remote document can only load from the same port on the server
-  if (documentURL.protocol() == _url.protocol() &&
-      documentURL.host() == _url.host() &&
+  if (documentURL.protocol().lower() == _url.protocol().lower() &&
+      documentURL.host().lower() == _url.host().lower() &&
       documentURL.port() == _url.port()) {
     return true;
   }
@@ -489,8 +490,19 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
       QString body;
 
       if (args.size() >= 1) {
-	// serializing document not handled yet
-	if (!args[0].toObject(exec).inherits(&DOMDocument::info)) {
+	if (args[0].toObject(exec).inherits(&DOMDocument::info)) {
+	  DOM::Node docNode = static_cast<KJS::DOMDocument *>(args[0].toObject(exec).imp())->toNode();
+	  DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl *>(docNode.handle());
+	  
+	  try {
+	    body = doc->toString().string();
+	    // FIXME: also need to set content type, including encoding!
+
+	  } catch(DOM::DOMException& e) {
+	     Object err = Error::create(exec, GeneralError, "Exception serializing document");
+	     exec->setException(err);
+	  }
+	} else {
 	  body = args[0].toString(exec).qstring();
 	}
       }

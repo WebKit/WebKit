@@ -283,6 +283,12 @@ bool CommentImpl::childTypeAllowed( unsigned short /*type*/ )
     return false;
 }
 
+DOMString CommentImpl::toString() const
+{
+    // FIXME: substitute entity references as needed!
+    return DOMString("<!--") + nodeValue() + "-->";
+}
+
 // ---------------------------------------------------------------------------
 
 // ### allow having children in text nodes for entities, comments etc.
@@ -441,6 +447,12 @@ TextImpl *TextImpl::createNew(DOMStringImpl *_str)
     return new TextImpl(docPtr(),_str);
 }
 
+DOMString TextImpl::toString() const
+{
+    // FIXME: substitute entity references as needed!
+    return nodeValue();
+}
+
 // ---------------------------------------------------------------------------
 
 CDATASectionImpl::CDATASectionImpl(DocumentPtr *impl, const DOMString &_text) : TextImpl(impl,_text)
@@ -481,6 +493,11 @@ TextImpl *CDATASectionImpl::createNew(DOMStringImpl *_str)
     return new CDATASectionImpl(docPtr(),_str);
 }
 
+DOMString CDATASectionImpl::toString() const
+{
+    // FIXME: substitute entity references as needed!
+    return DOMString("<![CDATA[") + nodeValue() + "]]>";
+}
 
 
 
