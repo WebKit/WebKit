@@ -1,3 +1,17 @@
+2003-04-15  Trey Matteson  <trey@apple.com>
+
+	3227514 Open window in "Same Page" should copy entire back/forward list
+
+	New support to load a new view by copying the whole backforward
+	list and driving the new view to the current item.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _loadItem:]):  Old routine, which only loaded an item.
+        (-[WebView _loadItemsFromOtherView:]):  New routine that does the works.
+
 2003-04-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

@@ -355,27 +355,46 @@
     [[self mainFrame] _goToItem:item withLoadType:type];
 }
 
-- (void)_loadItem:(WebHistoryItem *)item showingInView:(WebView *)otherView
+// Not used now, but could be if we ever store frames in bookmarks or history
+- (void)_loadItem:(WebHistoryItem *)item
+{
+    WebHistoryItem *newItem = [item copy];	// Makes a deep copy, happily
+    [[self backForwardList] addItem:newItem];
+    [self _goToItem:newItem withLoadType:WebFrameLoadTypeIndexedBackForward];
+}
+
+- (void)_loadBackForwardListFromOtherView:(WebView *)otherView
 {
     // It turns out the right combination of behavior is done with the back/forward load
-    // type.  (See behavior matrix at the top of WebFramePrivate.)  So we put this item in
-    // the back forward list, and go there.
+    // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
+    // in the back forward list, and go to the current one.
 
-    if (otherView && [[otherView backForwardList] currentItem] == item) {
-        // If this item is showing somewhere, save away its current scroll and form state
-        [[otherView mainFrame] _saveDocumentAndScrollState];
+    WebBackForwardList *bfList = [self backForwardList];
+    ASSERT(![bfList currentItem]);	// destination list should be empty
+
+    WebBackForwardList *otherBFList = [otherView backForwardList];
+    if (![otherBFList currentItem]) {
+        return;		// empty back forward list, bail
     }
 
-    WebHistoryItem *newItem = [item copy];	// Makes a deep copy, happily
-    // Make the top item the target.  This ensures we reload all frames if we go forward and
-    // back to this item later, which seems good for the first page of a window, where this
-    // feature is typically used.
-    [[item targetItem] setIsTargetItem:NO];
-    [item setIsTargetItem:YES];
+    WebHistoryItem *newItemToGoTo;
+    int lastItemIndex = [otherBFList forwardListCount];
+    int i;
+    for (i = -[otherBFList backListCount]; i <= lastItemIndex; i++) {
+        if (i == 0) {
+            // If this item is showing , save away its current scroll and form state,
+            // since that might have changed since loading and it is normally not saved
+            // until we leave that page.
+            [[otherView mainFrame] _saveDocumentAndScrollState];
+        }
+        WebHistoryItem *newItem = [[otherBFList itemAtIndex:i] copy];
+        [bfList addItem:newItem];
+        if (i == 0) {
+            newItemToGoTo = newItem;
+        }
+    }
     
-    [[self backForwardList] addItem:newItem];
-
-    [self _goToItem:newItem withLoadType:WebFrameLoadTypeIndexedBackForward];
+    [self _goToItem:newItemToGoTo withLoadType:WebFrameLoadTypeIndexedBackForward];
 }
 
 - (void)_setFormDelegate: (id<WebFormDelegate>)delegate

@@ -136,16 +136,20 @@ typedef struct _WebResourceDelegateImplementationCache {
 
 /*!
 Could be worth adding to the API.
-    @method loadItem:showingInView:
+    @method loadItem:
     @abstract Loads the view with the contents described by the item, including frame content
         described by child items.
     @param item   The item to load.  It is not retained, but a copy will appear in the
         BackForwardList on this WebView.
-    @param otherView   An optional WebView where the item is currently showing.  If this is
-        specified, the resulting load will have the same scroll position and form state
-        as present in otherView.
 */
-- (void)_loadItem:(WebHistoryItem *)item showingInView:(WebView *)otherView;
+- (void)_loadItem:(WebHistoryItem *)item;
+/*!
+Could be worth adding to the API.
+    @method loadItemsFromOtherView:
+    @abstract Loads the view with the contents of the other view, including its backforward list.
+    @param otherView   The WebView from which to copy contents.
+*/
+- (void)_loadBackForwardListFromOtherView:(WebView *)otherView;
 
 - (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type;
 
