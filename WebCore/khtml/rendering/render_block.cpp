@@ -45,7 +45,8 @@ RenderBlock::RenderBlock(DOM::NodeImpl* node)
 :RenderFlow(node)
 {
     m_childrenInline = true;
-    m_specialObjects = 0;
+    m_floatingObjects = 0;
+    m_positionedObjects = 0;
     m_pre = false;
     m_firstLine = false;
     m_clearStatus = CNONE;
@@ -57,7 +58,8 @@ RenderBlock::RenderBlock(DOM::NodeImpl* node)
 
 RenderBlock::~RenderBlock()
 {
-    delete m_specialObjects;
+    delete m_floatingObjects;
+    delete m_positionedObjects;
 }
 
 void RenderBlock::setStyle(RenderStyle* _style)
@@ -172,7 +174,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     // A block has to either have all of its children inline, or all of its children as blocks.
     // So, if our children are currently inline and a block child has to be inserted, we move all our
     // inline children into anonymous block boxes
-    if ( m_childrenInline && !newChild->isInline() && !newChild->isSpecial() )
+    if ( m_childrenInline && !newChild->isInline() && !newChild->isFloatingOrPositioned() )
     {
         // This is a block with inline content. Wrap the inline content in anonymous blocks.
         makeChildrenNonInline(beforeChild);
@@ -184,7 +186,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             KHTMLAssert(beforeChild->parent() == this);
         }
     }
-    else if (!m_childrenInline && !newChild->isSpecial())
+    else if (!m_childrenInline && !newChild->isFloatingOrPositioned())
     {
         // If we're inserting an inline child but all of our children are blocks, then we have to make sure
         // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise
@@ -406,7 +408,7 @@ void RenderBlock::layout()
     if ( isTableCell() )
         relayoutChildren = true;
 
-    //     kdDebug( 6040 ) << specialObjects << "," << oldWidth << ","
+    //     kdDebug( 6040 ) << floatingObjects << "," << oldWidth << ","
     //                     << m_width << ","<< layouted() << "," << isAnonymousBox() << ","
     //                     << overhangingContents() << "," << isPositioned() << endl;
 
@@ -487,7 +489,7 @@ void RenderBlock::layout()
         m_height += borderBottom() + paddingBottom();
     }
 
-    layoutSpecialObjects( relayoutChildren );
+    layoutPositionedObjects( relayoutChildren );
 
     //kdDebug() << renderName() << " layout width=" << m_width << " height=" << m_height << endl;
 
@@ -616,9 +618,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
         if (child->isPositioned())
         {
-            static_cast<RenderBlock*>(child->containingBlock())->insertSpecialObject(child);
-            //kdDebug() << "RenderBlock::layoutBlockChildren inserting positioned into " << child->containingBlock()->renderName() << endl;
-
+            child->containingBlock()->insertPositionedObject(child);
             child = child->nextSibling();
             continue;
         } else if ( child->isReplaced() ) {
@@ -627,7 +627,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         }
 
         if ( child->isFloating() ) {
-            insertSpecialObject( child );
+            insertFloatingObject( child );
 
             // The float should be positioned taking into account the bottom margin
             // of the previous flow.  We add that margin into the height, get the
@@ -653,7 +653,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             // Get the next non-positioned/non-floating RenderBlock.
             RenderObject* next = child->nextSibling();
             RenderObject* curr = next;
-            while (curr && curr->isSpecial())
+            while (curr && curr->isFloatingOrPositioned())
                 curr = curr->nextSibling();
             if (curr && curr->isRenderBlock() && !curr->isAnonymousBox() &&
                 !curr->isCompact() && !curr->isRunIn()) {
@@ -696,7 +696,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         if (child->isRunIn() && (child->childrenInline() || child->isReplaced())) {
             // Get the next non-positioned/non-floating RenderBlock.
             RenderObject* curr = child->nextSibling();
-            while (curr && curr->isSpecial())
+            while (curr && curr->isFloatingOrPositioned())
                 curr = curr->nextSibling();
             if (curr && (curr->isRenderBlock() && !curr->isAnonymousBox() && curr->childrenInline() &&
                          !curr->isCompact() && !curr->isRunIn())) {
@@ -844,12 +844,13 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             }
 
             child->setPos(child->xPos(), ypos);
-            if (ypos != yPosEstimate && (child->containsSpecial() || containsSpecial())) {
+            if (ypos != yPosEstimate && (child->containsFloats() || containsFloats())) {
                 // Our guess was wrong. Make the child lay itself out again.
                 // XXXdwh some debugging code for this.
                 // printf("WE WERE WRONG for object %d (%d, %d)!\n", (int)child, yPosEstimate, ypos);
-                child->setLayouted(false);
-                child->layout();
+                child->markAllDescendantsWithFloatsForLayout();
+                if (!child->layouted())
+                    child->layout();
             }
         }
 
@@ -872,8 +873,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             // If our value of clear caused us to be repositioned vertically to be
             // underneath a float, we have to do another layout to take into account
             // the extra space we now have available.
-            child->setLayouted(false);
-            child->layout();
+            child->markAllDescendantsWithFloatsForLayout();
+            if (!child->layouted())
+                child->layout();
         }
 
         // Reset the top margin contributor to false if we encountered
@@ -1005,22 +1007,19 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     // kdDebug( 6040 ) << "layouted = " << layouted_ << endl;
 }
 
-void RenderBlock::layoutSpecialObjects( bool relayoutChildren )
+void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
 {
-    if (m_specialObjects) {
-        //kdDebug( 6040 ) << renderName() << " " << this << "::layoutSpecialObjects() start" << endl;
-        SpecialObject* r;
-        QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    if (m_positionedObjects) {
+        //kdDebug( 6040 ) << renderName() << " " << this << "::layoutPositionedObjects() start" << endl;
+        RenderObject* r;
+        QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
             //kdDebug(6040) << "   have a positioned object" << endl;
-            if (r->type == SpecialObject::Positioned) {
-                if ( relayoutChildren )
-                    r->node->setLayouted( false );
-                if ( !r->node->layouted() )
-                    r->node->layout();
-            }
+            if ( relayoutChildren )
+                r->setLayouted( false );
+            if ( !r->layouted() )
+                r->layout();
         }
-        m_specialObjects->sort();
     }
 }
 
@@ -1034,7 +1033,7 @@ void RenderBlock::paint(QPainter* p, int _x, int _y, int _w, int _h, int _tx, in
     {
         int h = m_overflowHeight;
         int yPos = _ty;
-        if (m_specialObjects && floatBottom() > h)
+        if (m_floatingObjects && floatBottom() > h)
             h = floatBottom();
 
         // Sanity check the first line
@@ -1100,11 +1099,11 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
 void RenderBlock::paintFloats(QPainter *p, int _x, int _y,
                               int _w, int _h, int _tx, int _ty, bool paintSelection)
 {
-    if (!m_specialObjects)
+    if (!m_floatingObjects)
         return;
 
-    SpecialObject* r;
-    QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    FloatingObject* r;
+    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
         if (r->node->isFloating() && !r->noPaint) {
@@ -1132,17 +1131,51 @@ void RenderBlock::paintFloats(QPainter *p, int _x, int _y,
     }
 }
 
-void RenderBlock::insertSpecialObject(RenderObject *o)
+void RenderBlock::insertPositionedObject(RenderObject *o)
 {
     // Create the list of special objects if we don't aleady have one
-    if (!m_specialObjects) {
-        m_specialObjects = new QSortedList<SpecialObject>;
-        m_specialObjects->setAutoDelete(true);
+    if (!m_positionedObjects) {
+        m_positionedObjects = new QPtrList<RenderObject>;
+        m_positionedObjects->setAutoDelete(false);
     }
     else {
         // Don't insert the object again if it's already in the list
-        QPtrListIterator<SpecialObject> it(*m_specialObjects);
-        SpecialObject* f;
+        QPtrListIterator<RenderObject> it(*m_positionedObjects);
+        RenderObject* f;
+        while ( (f = it.current()) ) {
+            if (f == o) return;
+            ++it;
+        }
+    }
+
+    // Create the special object entry & append it to the list
+    setOverhangingContents();
+    m_positionedObjects->append(o);
+}
+
+void RenderBlock::removePositionedObject(RenderObject *o)
+{
+    if (m_positionedObjects) {
+        QPtrListIterator<RenderObject> it(*m_positionedObjects);
+        while (it.current()) {
+            if (it.current() == o)
+                m_positionedObjects->removeRef(it.current());
+            ++it;
+        }
+    }
+}
+
+void RenderBlock::insertFloatingObject(RenderObject *o)
+{
+    // Create the list of special objects if we don't aleady have one
+    if (!m_floatingObjects) {
+        m_floatingObjects = new QPtrList<FloatingObject>;
+        m_floatingObjects->setAutoDelete(true);
+    }
+    else {
+        // Don't insert the object again if it's already in the list
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        FloatingObject* f;
         while ( (f = it.current()) ) {
             if (f->node == o) return;
             ++it;
@@ -1151,46 +1184,40 @@ void RenderBlock::insertSpecialObject(RenderObject *o)
 
     // Create the special object entry & append it to the list
 
-    SpecialObject *newObj;
-    if (o->isPositioned()) {
-        // positioned object
-        newObj = new SpecialObject(SpecialObject::Positioned);
-        setOverhangingContents();
-    }
-    else if (o->isFloating()) {
+    FloatingObject *newObj;
+    if (o->isFloating()) {
         // floating object
         if ( !o->layouted() )
             o->layout();
 
         if(o->style()->floating() == FLEFT)
-            newObj = new SpecialObject(SpecialObject::FloatLeft);
+            newObj = new FloatingObject(FloatingObject::FloatLeft);
         else
-            newObj = new SpecialObject(SpecialObject::FloatRight);
+            newObj = new FloatingObject(FloatingObject::FloatRight);
 
         newObj->startY = -1;
         newObj->endY = -1;
         newObj->width = o->width() + o->marginLeft() + o->marginRight();
     }
     else {
-        // We should never get here, as insertSpecialObject() should only ever be called with positioned or floating
+        // We should never get here, as insertFloatingObject() should only ever be called with floating
         // objects.
         KHTMLAssert(false);
         newObj = 0; // keep gcc's uninitialized variable warnings happy
     }
 
-    newObj->count = m_specialObjects->count();
     newObj->node = o;
 
-    m_specialObjects->append(newObj);
+    m_floatingObjects->append(newObj);
 }
 
-void RenderBlock::removeSpecialObject(RenderObject *o)
+void RenderBlock::removeFloatingObject(RenderObject *o)
 {
-    if (m_specialObjects) {
-        QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    if (m_floatingObjects) {
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         while (it.current()) {
             if (it.current()->node == o)
-                m_specialObjects->removeRef(it.current());
+                m_floatingObjects->removeRef(it.current());
             ++it;
         }
     }
@@ -1198,15 +1225,15 @@ void RenderBlock::removeSpecialObject(RenderObject *o)
 
 void RenderBlock::positionNewFloats()
 {
-    if(!m_specialObjects) return;
-    SpecialObject *f = m_specialObjects->getLast();
+    if(!m_floatingObjects) return;
+    FloatingObject *f = m_floatingObjects->getLast();
     if(!f || f->startY != -1) return;
-    SpecialObject *lastFloat;
+    FloatingObject *lastFloat;
     while(1)
     {
-        lastFloat = m_specialObjects->prev();
-        if(!lastFloat || (lastFloat->startY != -1 && !(lastFloat->type==SpecialObject::Positioned) )) {
-            m_specialObjects->next();
+        lastFloat = m_floatingObjects->prev();
+        if (!lastFloat || lastFloat->startY != -1) {
+            m_floatingObjects->next();
             break;
         }
         f = lastFloat;
@@ -1223,9 +1250,9 @@ void RenderBlock::positionNewFloats()
     while(f)
     {
         //skip elements copied from elsewhere and positioned elements
-        if (f->node->containingBlock()!=this || f->type==SpecialObject::Positioned)
+        if (f->node->containingBlock()!=this)
         {
-            f = m_specialObjects->next();
+            f = m_floatingObjects->next();
             continue;
         }
 
@@ -1276,9 +1303,9 @@ void RenderBlock::positionNewFloats()
         f->endY = f->startY + _height;
 
 
-        //kdDebug( 6040 ) << "specialObject x/y= (" << f->left << "/" << f->startY << "-" << f->width << "/" << f->endY - f->startY << ")" << endl;
+        //kdDebug( 6040 ) << "floatingObject x/y= (" << f->left << "/" << f->startY << "-" << f->width << "/" << f->endY - f->startY << ")" << endl;
 
-        f = m_specialObjects->next();
+        f = m_floatingObjects->next();
     }
 }
 
@@ -1329,17 +1356,17 @@ int
 RenderBlock::leftRelOffset(int y, int fixedOffset, int *heightRemaining ) const
 {
     int left = fixedOffset;
-    if(!m_specialObjects)
+    if(!m_floatingObjects)
         return left;
 
     if ( heightRemaining ) *heightRemaining = 1;
-    SpecialObject* r;
-    QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    FloatingObject* r;
+    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
     {
         //kdDebug( 6040 ) <<(void *)this << " left: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
         if (r->startY <= y && r->endY > y &&
-            r->type == SpecialObject::FloatLeft &&
+            r->type == FloatingObject::FloatLeft &&
             r->left + r->width > left) {
             left = r->left + r->width;
             if ( heightRemaining ) *heightRemaining = r->endY - y;
@@ -1371,16 +1398,16 @@ RenderBlock::rightRelOffset(int y, int fixedOffset, int *heightRemaining ) const
 {
     int right = fixedOffset;
 
-    if (!m_specialObjects) return right;
+    if (!m_floatingObjects) return right;
 
     if (heightRemaining) *heightRemaining = 1;
-    SpecialObject* r;
-    QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    FloatingObject* r;
+    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
     {
         //kdDebug( 6040 ) << "right: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
         if (r->startY <= y && r->endY > y &&
-            r->type == SpecialObject::FloatRight &&
+            r->type == FloatingObject::FloatRight &&
             r->left < right) {
             right = r->left;
             if ( heightRemaining ) *heightRemaining = r->endY - y;
@@ -1400,12 +1427,12 @@ RenderBlock::lineWidth(int y) const
 int
 RenderBlock::nearestFloatBottom(int height) const
 {
-    if (!m_specialObjects) return 0;
+    if (!m_floatingObjects) return 0;
     int bottom=0;
-    SpecialObject* r;
-    QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    FloatingObject* r;
+    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
-        if (r->endY>height && (r->endY<bottom || bottom==0) && (int)r->type <= (int)SpecialObject::FloatRight)
+        if (r->endY>height && (r->endY<bottom || bottom==0))
             bottom=r->endY;
     return bottom;
 }
@@ -1413,12 +1440,12 @@ RenderBlock::nearestFloatBottom(int height) const
 int
 RenderBlock::floatBottom() const
 {
-    if (!m_specialObjects) return 0;
+    if (!m_floatingObjects) return 0;
     int bottom=0;
-    SpecialObject* r;
-    QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    FloatingObject* r;
+    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
-        if (r->endY>bottom && (int)r->type <= (int)SpecialObject::FloatRight)
+        if (r->endY>bottom)
             bottom=r->endY;
     return bottom;
 }
@@ -1443,22 +1470,27 @@ RenderBlock::lowestPosition() const
 
     //kdDebug(0) << "     bottom = " << bottom << endl;
 
-    if (m_specialObjects) {
-        SpecialObject* r;
-        QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    if (m_floatingObjects) {
+        FloatingObject* r;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            lp = 0;
-            if ( r->type == SpecialObject::FloatLeft || r->type == SpecialObject::FloatRight ){
-                lp = r->startY + r->node->lowestPosition();
-                //kdDebug(0) << r->node->renderName() << " lp = " << lp << "startY=" << r->startY << endl;
-            } else if ( r->type == SpecialObject::Positioned ) {
-                lp = r->node->yPos() + r->node->lowestPosition();
-            }
+            lp = r->startY + r->node->lowestPosition();
+            //kdDebug(0) << r->node->renderName() << " lp = " << lp << "startY=" << r->startY << endl;
             if( lp > bottom)
                 bottom = lp;
         }
     }
 
+    if (m_positionedObjects) {
+        RenderObject* r;
+        QPtrListIterator<RenderObject> it(*m_positionedObjects);
+        for ( ; (r = it.current()); ++it ) {
+            lp = r->yPos()+ r->lowestPosition();
+            if( lp > bottom)
+                bottom = lp;
+        }
+    }
+    
     if ( overhangingContents() ) {
         RenderObject *child = firstChild();
         while( child ) {
@@ -1487,21 +1519,26 @@ int RenderBlock::rightmostPosition() const
         }
     }
 
-    if (m_specialObjects) {
-        SpecialObject* r;
-        QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    if (m_floatingObjects) {
+        FloatingObject* r;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            int specialRight=0;
-            if ( r->type == SpecialObject::FloatLeft || r->type == SpecialObject::FloatRight ){
-                specialRight = r->left + r->node->rightmostPosition();
-            } else if ( r->type == SpecialObject::Positioned ) {
-                specialRight = r->node->xPos() + r->node->rightmostPosition();
-            }
+            int specialRight = r->left + r->node->rightmostPosition();
             if (specialRight > right)
                 right = specialRight;
         }
     }
 
+    if (m_positionedObjects) {
+        RenderObject* r;
+        QPtrListIterator<RenderObject> it(*m_positionedObjects);
+        for ( ; (r = it.current()); ++it ) {
+            int specialRight = r->xPos()+ r->rightmostPosition();
+            if (specialRight > right)
+                right = specialRight;
+        }
+    }
+    
     if ( overhangingContents() ) {
         RenderObject *child = firstChild();
         while( child ) {
@@ -1520,12 +1557,12 @@ int RenderBlock::rightmostPosition() const
 int
 RenderBlock::leftBottom()
 {
-    if (!m_specialObjects) return 0;
+    if (!m_floatingObjects) return 0;
     int bottom=0;
-    SpecialObject* r;
-    QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    FloatingObject* r;
+    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
-        if (r->endY>bottom && r->type == SpecialObject::FloatLeft)
+        if (r->endY>bottom && r->type == FloatingObject::FloatLeft)
             bottom=r->endY;
 
     return bottom;
@@ -1534,12 +1571,12 @@ RenderBlock::leftBottom()
 int
 RenderBlock::rightBottom()
 {
-    if (!m_specialObjects) return 0;
+    if (!m_floatingObjects) return 0;
     int bottom=0;
-    SpecialObject* r;
-    QPtrListIterator<SpecialObject> it(*m_specialObjects);
+    FloatingObject* r;
+    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
-        if (r->endY>bottom && r->type == SpecialObject::FloatRight)
+        if (r->endY>bottom && r->type == FloatingObject::FloatRight)
             bottom=r->endY;
 
     return bottom;
@@ -1548,22 +1585,11 @@ RenderBlock::rightBottom()
 void
 RenderBlock::clearFloats()
 {
-    //kdDebug( 6040 ) << this <<" clearFloats" << endl;
-    if (m_specialObjects) {
-        if( overhangingContents() ) {
-            m_specialObjects->first();
-            while ( m_specialObjects->current()) {
-                if ( !(m_specialObjects->current()->type == SpecialObject::Positioned) )
-                    m_specialObjects->remove();
-                else
-                    m_specialObjects->next();
-            }
-        } else
-            m_specialObjects->clear();
-    }
+    if (m_floatingObjects)
+        m_floatingObjects->clear();
 
     if (isFloating() || isPositioned()) return;
-
+    
     RenderObject *prev = previousSibling();
 
     // find the element to copy the floats from
@@ -1603,7 +1629,7 @@ RenderBlock::clearFloats()
     // add overhanging special objects from the previous RenderBlock
     if(!prev->isRenderBlock()) return;
     RenderBlock * flow = static_cast<RenderBlock *>(prev);
-    if(!flow->m_specialObjects) return;
+    if(!flow->m_floatingObjects) return;
     if( ( style()->htmlHacks() || isTable() ) && style()->flowAroundFloats())
         return; //html tables and lists flow as blocks
 
@@ -1618,63 +1644,80 @@ void RenderBlock::addOverHangingFloats( RenderBlock *flow, int xoff, int offset,
 #endif
 
     // Prevent floats from being added to the root by <html>.
-    if ( !flow->m_specialObjects || (child && flow->isHtml()) )
+    if ( !flow->m_floatingObjects || (child && flow->isHtml()) )
         return;
 
     // we have overhanging floats
-    if (!m_specialObjects) {
-        m_specialObjects = new QSortedList<SpecialObject>;
-        m_specialObjects->setAutoDelete(true);
+    if (!m_floatingObjects) {
+        m_floatingObjects = new QPtrList<FloatingObject>;
+        m_floatingObjects->setAutoDelete(true);
     }
 
-    QPtrListIterator<SpecialObject> it(*flow->m_specialObjects);
-    SpecialObject *r;
+    QPtrListIterator<FloatingObject> it(*flow->m_floatingObjects);
+    FloatingObject *r;
     for ( ; (r = it.current()); ++it ) {
-        if ( (int)r->type <= (int)SpecialObject::FloatRight &&
-             ( ( !child && r->endY > offset ) ||
-               ( child && flow->yPos() + r->endY > height() ) ) ) {
+        if ( ( !child && r->endY > offset ) ||
+             ( child && flow->yPos() + r->endY > height() ) ) {
 
             if (child && (flow->enclosingLayer() == enclosingLayer()))
                 // Set noPaint to true only if we didn't cross layers.
                 r->noPaint = true;
 
-            SpecialObject* f = 0;
+            FloatingObject* f = 0;
             // don't insert it twice!
-            QPtrListIterator<SpecialObject> it(*m_specialObjects);
+            QPtrListIterator<FloatingObject> it(*m_floatingObjects);
             while ( (f = it.current()) ) {
                 if (f->node == r->node) break;
                 ++it;
             }
             if ( !f ) {
-                SpecialObject *special = new SpecialObject(r->type);
-                special->count = m_specialObjects->count();
-                special->startY = r->startY - offset;
-                special->endY = r->endY - offset;
-                special->left = r->left - xoff;
+                FloatingObject *floatingObj = new FloatingObject(r->type);
+                floatingObj->startY = r->startY - offset;
+                floatingObj->endY = r->endY - offset;
+                floatingObj->left = r->left - xoff;
                 // Applying the child's margin makes no sense in the case where the child was passed in.
                 // since his own margin was added already through the subtraction of the |xoff| variable
                 // above.  |xoff| will equal -flow->marginLeft() in this case, so it's already been taken
                 // into account.  Only apply this code if |child| is false, since otherwise the left margin
                 // will get applied twice. -dwh
                 if (!child && flow != parent())
-                    special->left += flow->marginLeft();
+                    floatingObj->left += flow->marginLeft();
                 if ( !child ) {
-                    special->left -= marginLeft();
-                    special->noPaint = true;
+                    floatingObj->left -= marginLeft();
+                    floatingObj->noPaint = true;
                 }
                 else
                     // Only paint if |flow| isn't.
-                    special->noPaint = !r->noPaint;
+                    floatingObj->noPaint = !r->noPaint;
                 
-                special->width = r->width;
-                special->node = r->node;
-                m_specialObjects->append(special);
+                floatingObj->width = r->width;
+                floatingObj->node = r->node;
+                m_floatingObjects->append(floatingObj);
 #ifdef DEBUG_LAYOUT
-                kdDebug( 6040 ) << "addOverHangingFloats x/y= (" << special->left << "/" << special->startY << "-" << special->width << "/" << special->endY - special->startY << ")" << endl;
+                kdDebug( 6040 ) << "addOverHangingFloats x/y= (" << floatingObj->left << "/" << floatingObj->startY << "-" << floatingObj->width << "/" << floatingObj->endY - floatingObj->startY << ")" << endl;
 #endif
             }
         }
     }
+}
+
+void RenderBlock::markAllDescendantsWithFloatsForLayout()
+{
+    if (style()->htmlHacks() && style()->flowAroundFloats() && style()->width().isPercent())
+        // The child's width can be a percentage width and if it has the quirky flowAroundFloats
+        // property set, when the child shifts to clear an item, its width can change (because it
+        // has more available line width.
+        // So go ahead an mark these items as dirty.
+        setLayouted(false);
+
+    if (isTable() || isFloatingOrPositioned() || !containsFloats())
+        return;
+
+    setLayouted(false);
+    
+    // Iterate over our children and mark them as needed.
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
+        child->markAllDescendantsWithFloatsForLayout();
 }
 
 bool RenderBlock::checkClear(RenderObject *child)
@@ -1705,17 +1748,17 @@ bool RenderBlock::checkClear(RenderObject *child)
 
 bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inBox)
 {
-    if (m_specialObjects) {
+    if (m_floatingObjects) {
         int stx = _tx + xPos();
         int sty = _ty + yPos();
         if (isRoot()) {
             stx += static_cast<RenderRoot*>(this)->view()->contentsX();
             sty += static_cast<RenderRoot*>(this)->view()->contentsY();
         }
-        SpecialObject* o;
-        QPtrListIterator<SpecialObject> it(*m_specialObjects);
+        FloatingObject* o;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for (it.toLast(); (o = it.current()); --it)
-            if (o->node->isFloating() && !o->noPaint)
+            if (!o->noPaint)
                 inBox |= o->node->nodeAtPoint(info, _x, _y,
                                               stx+o->left + o->node->marginLeft() - o->node->xPos(),
                                               sty+o->startY + o->node->marginTop() - o->node->yPos());
@@ -2205,16 +2248,16 @@ void RenderBlock::printTree(int indent) const
 {
     RenderFlow::printTree(indent);
 
-    if (m_specialObjects)
+    if (m_floatingObjects)
     {
-        QPtrListIterator<SpecialObject> it(*m_specialObjects);
-        SpecialObject *r;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        FloatingObject *r;
         for ( ; (r = it.current()); ++it )
         {
             QString s;
             s.fill(' ', indent);
             kdDebug() << s << renderName() << ":  " <<
-                (r->type == SpecialObject::FloatLeft ? "FloatLeft" : (r->type == SpecialObject::FloatRight ? "FloatRight" : "Positioned"))  <<
+                (r->type == FloatingObject::FloatLeft ? "FloatLeft" : "FloatRight" )  <<
                 "[" << r->node->renderName() << ": " << (void*)r->node << "] (" << r->startY << " - " << r->endY << ")" << "width: " << r->width <<
                 endl;
         }
@@ -2227,11 +2270,11 @@ void RenderBlock::dump(QTextStream *stream, QString ind) const
     if (m_pre) { *stream << " pre"; }
     if (m_firstLine) { *stream << " firstLine"; }
 
-    if (m_specialObjects && !m_specialObjects->isEmpty())
+    if (m_floatingObjects && !m_floatingObjects->isEmpty())
     {
         *stream << " special(";
-        QPtrListIterator<SpecialObject> it(*m_specialObjects);
-        SpecialObject *r;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        FloatingObject *r;
         bool first = true;
         for ( ; (r = it.current()); ++it )
         {

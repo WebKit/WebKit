@@ -69,7 +69,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
     if (!newChild->isText() && newChild->style()->position() != STATIC)
         setOverhangingContents();
     
-    if (!newChild->isInline() && !newChild->isSpecial() )
+    if (!newChild->isInline() && !newChild->isFloatingOrPositioned() )
     {
         // We are placing a block inside an inline. We have to perform a split of this
         // inline into continuations.  This involves creating an anonymous block box to hold
@@ -381,7 +381,7 @@ bool RenderInline::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
                     info.setURLElement(p->element());
                     break;
                 }
-                if (!isSpecial()) break;
+                if (!isFloatingOrPositioned()) break;
                 p = p->parent();
             }
         }

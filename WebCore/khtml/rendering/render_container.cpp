@@ -55,7 +55,7 @@ void RenderContainer::detach(RenderArena* renderArena)
     
     RenderObject* next;
     for(RenderObject* n = m_first; n; n = next ) {
-        n->removeFromSpecialObjects();
+        n->removeFromObjectLists();
         n->setParent(0);
         next = n->nextSibling();
         n->detach(renderArena);

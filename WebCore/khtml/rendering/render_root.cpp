@@ -162,7 +162,7 @@ void RenderRoot::layout()
 
 
     // ### we could maybe do the call below better and only pass true if the docsize changed.
-    layoutSpecialObjects( true );
+    layoutPositionedObjects( true );
 
 #ifdef SPEED_DEBUG
     kdDebug() << "RenderRoot::end time used=" << qt.elapsed() << endl;

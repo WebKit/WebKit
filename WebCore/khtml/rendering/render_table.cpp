@@ -353,7 +353,7 @@ void RenderTable::layout()
 
     // table can be containing block of positioned elements.
     // ### only pass true if width or height changed.
-    layoutSpecialObjects( true );
+    layoutPositionedObjects( true );
 
     setLayouted();
 

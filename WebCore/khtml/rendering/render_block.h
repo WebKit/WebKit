@@ -23,7 +23,7 @@
 #ifndef RENDER_BLOCK_H
 #define RENDER_BLOCK_H
 
-#include <qsortedlist.h>
+#include <qptrlist.h>
 
 #include "render_flow.h"
 
@@ -38,7 +38,6 @@ public:
     virtual const char *renderName() const;
 
     virtual bool isRenderBlock() const { return true; }
-    virtual bool containsSpecial() { return m_specialObjects!=0; }
     
     virtual bool childrenInline() const { return m_childrenInline; }
     virtual void setChildrenInline(bool b) { m_childrenInline = b; }
@@ -88,8 +87,11 @@ public:
     virtual void layout();
     void layoutBlockChildren( bool relayoutChildren );
     void layoutInlineChildren( bool relayoutChildren );
-    void layoutSpecialObjects( bool relayoutChildren );
 
+    void layoutPositionedObjects( bool relayoutChildren );
+    void insertPositionedObject(RenderObject *o);
+    void removePositionedObject(RenderObject *o);
+    
     // the implementation of the following functions is in bidi.cpp
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end);
     BidiIterator findNextLineBreak(BidiIterator &start);
@@ -106,14 +108,17 @@ public:
     void paintFloats(QPainter *p, int _x, int _y,
                      int _w, int _h, int _tx, int _ty, bool paintSelection = false);
     
-    
-    void insertSpecialObject(RenderObject *o);
-    void removeSpecialObject(RenderObject *o);
+
+    void insertFloatingObject(RenderObject *o);
+    void removeFloatingObject(RenderObject *o);
 
     // called from lineWidth, to position the floats added in the last line.
     void positionNewFloats();
     void clearFloats();
     bool checkClear(RenderObject *child);
+    virtual void markAllDescendantsWithFloatsForLayout();
+    
+    virtual bool containsFloats() { return m_floatingObjects!=0; }
     virtual bool hasOverhangingFloats() { return floatBottom() > m_height; }
     void addOverHangingFloats( RenderBlock *block, int xoffset, int yoffset, bool child = false );
     
@@ -158,47 +163,35 @@ protected:
     void newLine();
     
 protected:
-    struct SpecialObject {
+    struct FloatingObject {
         enum Type {
             FloatLeft,
-            FloatRight,
-            Positioned
+            FloatRight
         };
 
-        SpecialObject(Type _type) {
+        FloatingObject(Type _type) {
             node = 0;
             startY = 0;
             endY = 0;
             type = _type;
             left = 0;
             width = 0;
-            count = 0;
             noPaint = false;
-        }
 
+        }
         RenderObject* node;
         int startY;
         int endY;
         short left;
         short width;
-        short count;
-        Type type : 2; // left or right aligned
-        bool noPaint: 1;
-
-        bool operator==(const SpecialObject& ) const
-        {
-            return false;
-        }
-        bool operator<(const SpecialObject& o) const
-        {
-            if(node->style()->zIndex() == o.node->style()->zIndex())
-                return count < o.count;
-            return node->style()->zIndex() < o.node->style()->zIndex();
-        }
+        Type type : 1; // left or right aligned
+        bool noPaint : 1;
     };
     
 protected:
-    QSortedList<SpecialObject>* m_specialObjects;
+    QPtrList<FloatingObject>* m_floatingObjects;
+    QPtrList<RenderObject>* m_positionedObjects;
+    
     bool m_childrenInline : 1;
     bool m_pre            : 1;
     bool m_firstLine      : 1; // used in inline layouting

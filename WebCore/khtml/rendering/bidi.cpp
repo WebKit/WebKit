@@ -433,7 +433,7 @@ static void addMidpoint(const BidiIterator& midpoint)
 
 static void appendRunsForObject(int start, int end, RenderObject* obj)
 {
-    if (start > end || obj->isSpecial())
+    if (start > end || obj->isFloatingOrPositioned())
         return;
 
     bool haveNextMidpoint = (smidpoints && sCurrMidpoint < sNumMidpoints);
@@ -1251,8 +1251,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     o->setLayouted(false);
                 if( !o->layouted() )
                     o->layout();
-                if(o->isPositioned())
-                    o->containingBlock()->insertSpecialObject(o);
+                if (o->isPositioned())
+                    o->containingBlock()->insertPositionedObject(o);
             }
             else if(o->isText()) // FIXME: Should be able to combine deleteLineBoxes/Runs
                 static_cast<RenderText *>(o)->deleteRuns();
@@ -1386,16 +1386,16 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
     // be skipped.
     while(!start.atEnd() && (start.obj->isInlineFlow() || (start.obj->style()->whiteSpace() != PRE &&
 #ifndef QT_NO_UNICODETABLES
-          ( start.direction() == QChar::DirWS || start.obj->isSpecial())
+          ( start.direction() == QChar::DirWS || start.obj->isFloatingOrPositioned())
 #else
-          ( start.current() == ' ' || start.obj->isSpecial())
+          ( start.current() == ' ' || start.obj->isFloatingOrPositioned())
 #endif
           ))) {
-        if( start.obj->isSpecial() ) {
+        if( start.obj->isFloatingOrPositioned() ) {
             RenderObject *o = start.obj;
             // add to special objects...
             if(o->isFloating()) {
-                insertSpecialObject(o);
+                insertFloatingObject(o);
                 // check if it fits in the current line.
                 // If it does, position it now, otherwise, position
                 // it after moving to next line (in newLine() func)
@@ -1403,9 +1403,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                     positionNewFloats();
                     width = lineWidth(m_height);
                 }
-            } else if(o->isPositioned()) {
-                o->containingBlock()->insertSpecialObject(o);
             }
+            else if (o->isPositioned())
+                o->containingBlock()->insertPositionedObject(o);
         }
         
         adjustEmbeddding = true;
@@ -1467,10 +1467,10 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
             }
             goto end;
         }
-        if( o->isSpecial() ) {
+        if( o->isFloatingOrPositioned() ) {
             // add to special objects...
             if(o->isFloating()) {
-                insertSpecialObject(o);
+                insertFloatingObject(o);
                 // check if it fits in the current line.
                 // If it does, position it now, otherwise, position
                 // it after moving to next line (in newLine() func)
@@ -1478,9 +1478,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                     positionNewFloats();
                     width = lineWidth(m_height);
                 }
-            } else if(o->isPositioned()) {
-                o->containingBlock()->insertSpecialObject(o);
             }
+            else if (o->isPositioned())
+                o->containingBlock()->insertPositionedObject(o);
         } else if (o->isInlineFlow()) {
             // Only empty inlines matter.  We treat those similarly to replaced elements.
             KHTMLAssert(!o->firstChild());
@@ -1740,7 +1740,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
         last = o;
         o = next;
 
-        if (!last->isSpecial() && last->isReplaced() && last->style()->whiteSpace() != NOWRAP) {
+        if (!last->isFloatingOrPositioned() && last->isReplaced() && last->style()->whiteSpace() != NOWRAP) {
             // Go ahead and add in tmpW.
             w += tmpW;
             tmpW = 0;

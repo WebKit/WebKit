@@ -89,7 +89,7 @@ void RenderFlow::addChildWithContinuation(RenderObject* newChild, RenderObject* 
     RenderFlow* beforeChildParent = beforeChild ? static_cast<RenderFlow*>(beforeChild->parent()) : 
                                     (flow->continuation() ? flow->continuation() : flow);
     
-    if (newChild->isSpecial())
+    if (newChild->isFloatingOrPositioned())
         return beforeChildParent->addChildToFlow(newChild, beforeChild);
     
     // A continuation always consists of two potential candidates: an inline or an anonymous
