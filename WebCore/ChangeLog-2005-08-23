@@ -1,3 +1,56 @@
+2004-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed some things for GC that Patrick missed, or that happened after the branch
+
+        * kwq/DOM-CSS.mm:
+        (-[DOMStyleSheet finalize]): Added.
+        (-[DOMStyleSheetList finalize]): Added.
+        (-[DOMCSSStyleSheet finalize]): Added.
+        (-[DOMMediaList finalize]): Added.
+        (-[DOMCSSRuleList finalize]): Added.
+        (-[DOMCSSRule finalize]): Added.
+        (-[DOMCSSStyleDeclaration finalize]): Added.
+        (-[DOMCSSValue finalize]): Added.
+        (-[DOMRGBColor finalize]): Added.
+        (-[DOMRect finalize]): Added.
+        (-[DOMCounter finalize]): Added.
+        * kwq/DOM.mm:
+        (-[DOMObject finalize]): Added.
+        (-[DOMNode finalize]): Added.
+        (-[DOMNamedNodeMap finalize]): Added.
+        (-[DOMNodeList finalize]): Added.
+        (-[DOMImplementation finalize]): Added.
+        (-[DOMRange finalize]): Added.
+        (-[DOMNodeFilter finalize]): Added.
+        (-[DOMNodeIterator finalize]): Added.
+        (-[DOMTreeWalker dealloc]): Removed unneeded nil check.
+        (-[DOMTreeWalker finalize]): Added.
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLCollection finalize]): Added.
+        (-[DOMHTMLOptionsCollection finalize]): Added.
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::KWQClipboard): Use KWQRetain instead of retain.
+        (KWQClipboard::~KWQClipboard): Use KWQRelease instead of release.
+        * kwq/KWQEditCommand.mm:
+        (-[KWQEditCommand finalize]): Added.
+        * kwq/KWQFont.mm:
+        (QFont::~QFont): Use KWQRelease instead of release.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::keyEvent): Use KWQRetain instead of retain, and KWQRelease instead of release.
+        (KWQKHTMLPart::mouseDown): Use KWQRetain instead of retain, and KWQRelease instead of release.
+        (KWQKHTMLPart::mouseDragged): Use KWQRetain instead of retain, and KWQRelease instead of release.
+        (KWQKHTMLPart::mouseUp): Use KWQRetain instead of retain, and KWQRelease instead of release.
+        (KWQKHTMLPart::mouseMoved): Use KWQRetain instead of retain, and KWQRelease instead of release.
+        (KWQKHTMLPart::sendContextMenuEvent): Use KWQRetain instead of retain, and KWQRelease instead of release.
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState finalize]): Added. Filed <rdar://problem/3694163> about the fact that this is not right.
+        * kwq/KWQTimer.mm:
+        (-[KWQSingleShotTimerTarget finalize]): Added.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge finalize]): Added. Filed <rdar://problem/3694165> about the fact that this is not right.
+
 2004-06-15  David Hyatt  <hyatt@apple.com>
 
 	Initial work on text truncation.  Working top-down, I think I've made all the changes I will need to bidi.cpp

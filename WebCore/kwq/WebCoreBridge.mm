@@ -63,6 +63,7 @@
 #import "KWQDOMNode.h"
 #import "KWQEditCommand.h"
 #import "KWQFont.h"
+#import "KWQFoundationExtras.h"
 #import "KWQFrame.h"
 #import "KWQKHTMLPart.h"
 #import "KWQLoader.h"
@@ -227,6 +228,22 @@ static bool initializedKJS = FALSE;
     _part->deref();
         
     [super dealloc];
+}
+
+- (void)finalize
+{
+    // FIXME: This work really should not be done at deallocation time.
+    // We need to do it at some well-defined time instead.
+
+    [self removeFromFrame];
+    
+    if (_renderPart) {
+        _renderPart->deref(_renderPartArena);
+    }
+    _part->setBridge(nil);
+    _part->deref();
+        
+    [super finalize];
 }
 
 - (KWQKHTMLPart *)part

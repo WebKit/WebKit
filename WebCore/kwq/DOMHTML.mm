@@ -49,6 +49,7 @@
 #import "DOMInternal.h"
 #import "DOMHTMLInternal.h"
 #import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
 
 using DOM::Document;
 using DOM::DOMString;
@@ -159,6 +160,14 @@ using DOM::NodeImpl;
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<HTMLCollectionImpl *>(_internal)->deref();
+    }
+    [super finalize];
+}
+
 - (HTMLCollectionImpl *)_collectionImpl
 {
     return DOM_cast<HTMLCollectionImpl *>(_internal);
@@ -217,6 +226,14 @@ using DOM::NodeImpl;
         DOM_cast<HTMLOptionsCollectionImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<HTMLOptionsCollectionImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (id)_initWithOptionsCollectionImpl:(HTMLOptionsCollectionImpl *)impl

@@ -48,6 +48,13 @@ using khtml::EditCommandImpl;
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (m_impl)
+        m_impl->deref();
+    [super dealloc];
+}
+
 + (KWQEditCommand *)commandWithEditCommandImpl:(EditCommandImpl *)impl
 {
     return [[[KWQEditCommand alloc] initWithEditCommandImpl:impl] autorelease];

@@ -40,7 +40,7 @@ QFont::QFont()
 
 QFont::~QFont()
 {
-    [_NSFont release];
+    KWQRelease(_NSFont);
 }
 
 QFont::QFont(const QFont &other)

@@ -32,6 +32,7 @@
 #import "kjs_window.h"
 
 #import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 
 using DOM::DocumentImpl;
@@ -134,6 +135,37 @@ using KJS::SavedBuiltins;
     [self clear];
 
     [super dealloc];
+}
+
+- (void)finalize
+{
+    // FIXME: This work really should not be done at deallocation time.
+    // We need to do it at some well-defined time instead.
+
+    if (document) {
+        ASSERT(document->inPageCache());
+        ASSERT(document->view());
+
+        KHTMLView *view = document->view();
+
+        KWQKHTMLPart::clearTimers(view);
+
+        bool detached = document->renderer() == 0;
+        document->setInPageCache(NO);
+        if (detached) {
+            document->detach();
+        }
+        document->deref();
+        
+        if (view) {
+            view->clearPart();
+            view->deref();
+        }
+    }
+
+    [self clear];
+
+    [super finalize];
 }
 
 - (DocumentImpl *)document

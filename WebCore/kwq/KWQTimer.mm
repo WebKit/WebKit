@@ -79,6 +79,12 @@
     [super dealloc];
 }
 
+- (void)finalize
+{
+    delete slot;
+    [super finalize];
+}
+
 - (void)timerFired:(id)userInfo
 {
     slot->call();

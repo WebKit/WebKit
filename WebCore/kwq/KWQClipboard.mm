@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #import "KWQClipboard.h"
 #import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 #import "KWQStringList.h"
 #import "WebCoreGraphicsBridge.h"
@@ -34,7 +35,7 @@
 using DOM::DOMString;
 
 KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, KWQKHTMLPart *part)
-  : m_pasteboard([pasteboard retain]), m_forDragging(forDragging),
+  : m_pasteboard(KWQRetain(pasteboard)), m_forDragging(forDragging),
     m_dragImageElement(0), m_policy(policy), m_dragStarted(false), m_part(part)
 {
     m_changeCount = [m_pasteboard changeCount];
@@ -42,7 +43,7 @@ KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPol
 
 KWQClipboard::~KWQClipboard()
 {
-    [m_pasteboard release];
+    KWQRelease(m_pasteboard);
 }
 
 bool KWQClipboard::isForDragging() const

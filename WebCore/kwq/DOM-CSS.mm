@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "DOMCSS.h"
@@ -40,6 +40,7 @@
 
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
 
 using DOM::AbstractViewImpl;
 using DOM::CounterImpl;
@@ -111,6 +112,14 @@ static inline int getPropertyID(NSString *string)
         DOM_cast<StyleSheetImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<StyleSheetImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (StyleSheetImpl *)_DOMStyleSheetImpl
@@ -199,6 +208,14 @@ static inline int getPropertyID(NSString *string)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<StyleSheetListImpl *>(_internal)->deref();
+    }
+    [super finalize];
+}
+
 - (StyleSheetListImpl *)_styleSheetListImpl
 {
     return DOM_cast<StyleSheetListImpl *>(_internal);
@@ -253,6 +270,14 @@ static inline int getPropertyID(NSString *string)
         DOM_cast<CSSStyleSheetImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<CSSStyleSheetImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (CSSStyleSheetImpl *)_CSSStyleSheetImpl
@@ -324,6 +349,14 @@ static inline int getPropertyID(NSString *string)
         DOM_cast<MediaListImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<MediaListImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (MediaListImpl *)_mediaListImpl
@@ -402,6 +435,14 @@ static inline int getPropertyID(NSString *string)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<CSSRuleListImpl *>(_internal)->deref();
+    }
+    [super finalize];
+}
+
 - (CSSRuleListImpl *)_ruleListImpl
 {
     return DOM_cast<CSSRuleListImpl *>(_internal);
@@ -456,6 +497,14 @@ static inline int getPropertyID(NSString *string)
         DOM_cast<CSSRuleImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<CSSRuleImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (CSSRuleImpl *)_ruleImpl
@@ -707,6 +756,14 @@ static inline int getPropertyID(NSString *string)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<CSSStyleDeclarationImpl *>(_internal)->deref();
+    }
+    [super finalize];
+}
+
 - (NSString *)cssText
 {
     return [self _styleDeclarationImpl]->cssText();
@@ -820,6 +877,14 @@ static inline int getPropertyID(NSString *string)
         DOM_cast<CSSValueImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<CSSValueImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (CSSValueImpl *)_valueImpl
@@ -1001,6 +1066,12 @@ void removeWrapperForRGB(QRgb value)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    removeWrapperForRGB(reinterpret_cast<QRgb>(_internal));
+    [super finalize];
+}
+
 - (DOMCSSPrimitiveValue *)red
 {
     QRgb rgb = reinterpret_cast<QRgb>(_internal);
@@ -1076,6 +1147,14 @@ void removeWrapperForRGB(QRgb value)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<RectImpl *>(_internal)->deref();
+    }
+    [super finalize];
+}
+
 - (RectImpl *)_rectImpl
 {
     return DOM_cast<RectImpl *>(_internal);
@@ -1145,6 +1224,14 @@ void removeWrapperForRGB(QRgb value)
         DOM_cast<CounterImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<CounterImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (CounterImpl *)_counterImpl

@@ -53,6 +53,7 @@
 #import "DOMHTML.h"
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
 
 using DOM::Attr;
 using DOM::AttrImpl;
@@ -149,6 +150,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        removeDOMWrapper(_internal);
+    }
+    [super finalize];
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
     return [self retain];
@@ -176,6 +185,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         DOM_cast<NodeImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<NodeImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (NSString *)nodeName
@@ -608,6 +625,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<NamedNodeMapImpl *>(_internal)->deref();
+    }
+    [super finalize];
+}
+
 - (NamedNodeMapImpl *)_namedNodeMapImpl
 {
     return DOM_cast<NamedNodeMapImpl *>(_internal);
@@ -753,6 +778,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<NodeListImpl *>(_internal)->deref();
+    }
+    [super finalize];
+}
+
 - (NodeListImpl *)_nodeListImpl
 {
     return DOM_cast<NodeListImpl *>(_internal);
@@ -809,6 +842,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         DOM_cast<DOMImplementationImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<DOMImplementationImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (BOOL)hasFeature:(NSString *)feature :(NSString *)version
@@ -1656,6 +1697,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<RangeImpl *>(_internal)->deref();
+    }
+    [super finalize];
+}
+
 - (DOMNode *)startContainer
 {
     int exceptionCode = 0;
@@ -1912,6 +1961,13 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super dealloc];
 }
 
+- (void)finalize
+{
+    if (_internal)
+        DOM_cast<NodeFilterImpl *>(_internal)->deref();
+    [super finalize];
+}
+
 - (short)acceptNode:(DOMNode *)node
 {
     return [self _nodeFilterImpl]->acceptNode([node _nodeImpl]);
@@ -1941,13 +1997,21 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (void)dealloc
 {
-    if (m_filter)
-        [m_filter release];
+    [m_filter release];
     if (_internal) {
         [self detach];
         DOM_cast<NodeIteratorImpl *>(_internal)->deref();
     }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        [self detach];
+        DOM_cast<NodeIteratorImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (DOMNode *)root
@@ -2040,9 +2104,18 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     if (m_filter)
         [m_filter release];
-    if (_internal)
+    if (_internal) {
         DOM_cast<TreeWalkerImpl *>(_internal)->deref();
+    }
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal) {
+        DOM_cast<TreeWalkerImpl *>(_internal)->deref();
+    }
+    [super finalize];
 }
 
 - (DOMNode *)root

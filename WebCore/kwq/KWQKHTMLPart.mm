@@ -1646,7 +1646,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     }
     
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = [event retain];
+    _currentEvent = KWQRetain(event);
 
     QKeyEvent qEvent(event);
     bool result = !node->dispatchKeyEvent(&qEvent);
@@ -1663,7 +1663,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     }
 
     ASSERT(_currentEvent == event);
-    [event release];
+    KWQRelease(event);
     _currentEvent = oldCurrentEvent;
 
     return result;
@@ -2240,7 +2240,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     _dragSrc = 0;
     
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = [event retain];
+    _currentEvent = KWQRetain(event);
     NSPoint loc = [event locationInWindow];
     d->m_view->viewportToContents((int)loc.x, (int)loc.y, _mouseDownX, _mouseDownY);
 
@@ -2249,7 +2249,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     // responder, in this case we must be talking about the real first
     // responder, so we could just ask the bridge's window, instead of
     // the bridge. It's unclear which is better.
-    _firstResponderAtMouseDownTime = [[_bridge firstResponder] retain];
+    _firstResponderAtMouseDownTime = KWQRetain([_bridge firstResponder]);
 
     _mouseDownMayStartDrag = false;
     _mouseDownMayStartSelect = false;
@@ -2261,11 +2261,11 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     v->viewportMousePressEvent(&kEvent);
     v->deref();
     
-    [_firstResponderAtMouseDownTime release];
+    KWQRelease(_firstResponderAtMouseDownTime);
     _firstResponderAtMouseDownTime = oldFirstResponderAtMouseDownTime;
 
     ASSERT(_currentEvent == event);
-    [event release];
+    KWQRelease(event);
     _currentEvent = oldCurrentEvent;
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -2281,7 +2281,7 @@ void KWQKHTMLPart::mouseDragged(NSEvent *event)
     KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = [event retain];
+    _currentEvent = KWQRetain(event);
 
     // Sending an event can result in the destruction of the view and part.
     // We ref so that happens after we return from the KHTMLView function.
@@ -2291,7 +2291,7 @@ void KWQKHTMLPart::mouseDragged(NSEvent *event)
     v->deref();
     
     ASSERT(_currentEvent == event);
-    [event release];
+    KWQRelease(event);
     _currentEvent = oldCurrentEvent;
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -2307,7 +2307,7 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
     KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = [event retain];
+    _currentEvent = KWQRetain(event);
 
     // Sending an event can result in the destruction of the view and part.
     // We ref so that happens after we return from the KHTMLView function.
@@ -2330,7 +2330,7 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
     v->deref();
     
     ASSERT(_currentEvent == event);
-    [event release];
+    KWQRelease(event);
     _currentEvent = oldCurrentEvent;
     
     _mouseDownView = nil;
@@ -2410,7 +2410,7 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = [event retain];
+    _currentEvent = KWQRetain(event);
     
     // Sending an event can result in the destruction of the view and part.
     // We ref so that happens after we return from the KHTMLView function.
@@ -2420,7 +2420,7 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     v->deref();
     
     ASSERT(_currentEvent == event);
-    [event release];
+    KWQRelease(event);
     _currentEvent = oldCurrentEvent;
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -2451,7 +2451,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = [event retain];
+    _currentEvent = KWQRetain(event);
     
     QMouseEvent qev(QEvent::MouseButtonPress, event);
 
@@ -2469,7 +2469,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     v->deref();
 
     ASSERT(_currentEvent == event);
-    [event release];
+    KWQRelease(event);
     _currentEvent = oldCurrentEvent;
 
     return swallowEvent;
