@@ -29,7 +29,7 @@
 
 @interface WebView (WebPrivate)
 - (void)_setDocumentView:(id <WebDocumentView>)view;
-- (void)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;
+- (id <WebDocumentView>)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;
 - (void)_setController:(WebController *)controller;
 - (int)_marginWidth;
 - (int)_marginHeight;

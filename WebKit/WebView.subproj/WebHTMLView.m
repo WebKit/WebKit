@@ -937,11 +937,6 @@
 //------------------------------------------------------------------------------------
 - (void)setDataSource:(WebDataSource *)dataSource 
 {
-    [[dataSource _bridge]
-        createKHTMLViewWithNSView:self
-        marginWidth:[[[dataSource webFrame] webView] _marginWidth]
-        marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
-    [[self _bridge] installInFrame:[[self _web_parentWebView] frameScrollView]];
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource

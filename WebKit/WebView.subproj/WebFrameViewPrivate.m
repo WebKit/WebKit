@@ -69,14 +69,16 @@
     [[self frameScrollView] setDocumentView: view];    
 }
 
--(void)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
+-(id <WebDocumentView>)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
 {
     Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[[dataSource response] contentType]];
-    id documentView = viewClass ? [[viewClass alloc] init] : nil;
-    [self _setDocumentView:(id<WebDocumentView>)documentView];
+    id <WebDocumentView> documentView = viewClass ? [[viewClass alloc] init] : nil;
+    [self _setDocumentView:documentView];
     [documentView release];
 
-    [[self documentView] setDataSource:dataSource];
+    [documentView setDataSource:dataSource];
+    
+    return documentView;
 }
 
 - (void)_setController: (WebController *)controller

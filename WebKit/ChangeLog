@@ -1,3 +1,23 @@
+2002-12-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
+	- fixed 3136206 -- Can't display images in Ambrosia Software image viewer
+
+	WebKit wasn't creating the frames correctly when they weren't HTML.
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _makeDocumentView]): Added. Calls the
+	WebView to make the document view and then installs the new view, as WebHTMLView used to do.
+        (-[WebFrame _transitionToCommitted:]): Call _makeDocumentView instead of calling WebView
+	directly. These are all the calls to _makeDocumentViewForDataSource:.
+
+        * WebView.subproj/WebViewPrivate.h: Add return value to _makeDocumentViewForDataSource:.
+        * WebView.subproj/WebViewPrivate.m: (-[WebView _makeDocumentViewForDataSource:]):
+	Return the newly-created view.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView setDataSource:]): Removed the code here
+	since it's done by WebFrame now.
+
 2002-12-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.

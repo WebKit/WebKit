@@ -488,6 +488,19 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     }
 }
 
+- (void)_makeDocumentView
+{
+    id <WebDocumentView> documentView = [_private->webView _makeDocumentViewForDataSource:_private->dataSource];
+    if (!documentView) {
+        return;
+    }
+
+    // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
+    [_private->bridge createKHTMLViewWithNSView:documentView
+        marginWidth:[_private->webView _marginWidth]
+        marginHeight:[_private->webView _marginHeight]];
+    [_private->bridge installInFrame:[_private->webView frameScrollView]];
+}
 
 - (void)_transitionToCommitted: (NSDictionary *)pageCache
 {
@@ -541,7 +554,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                         [[self webView] _setDocumentView: cachedView];
                     }
                     else
-                        [[self webView] _makeDocumentViewForDataSource:ds];
+                        [self _makeDocumentView];
                         
                     // FIXME - I'm not sure this call does anything.  Should be dealt with as
                     // part of 3024377
@@ -559,7 +572,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 if (loadType == WebFrameLoadTypeReload) {
                     [self _saveScrollPositionToItem:currItem];
                 }
-                [[self webView] _makeDocumentViewForDataSource:ds];
+                [self _makeDocumentView];
                 break;
             }
 
@@ -578,23 +591,20 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     // update the URL in the BF list that we made before the redirect
                     [[_private currentItem] setURL:[[ds request] URL]];
                 }
-                [[self webView] _makeDocumentViewForDataSource:ds];
+                [self _makeDocumentView];
                 break;
                 
             case WebFrameLoadTypeInternal:
-                {  // braces because the silly compiler lets you declare vars everywhere but here?!
                 // Add an item to the item tree for this frame
                 ASSERT(![ds _isClientRedirect]);
-                WebHistoryItem *item = [self _createItem];
                 ASSERT([[self parent]->_private currentItem]);
-                [[[self parent]->_private currentItem] addChildItem:item];
-                [[self webView] _makeDocumentViewForDataSource:ds];
-                }
+                [[[self parent]->_private currentItem] addChildItem:[self _createItem]];
+                [self _makeDocumentView];
                 break;
 
             // FIXME - just get rid of this case, and merge WebFrameLoadTypeReloadAllowingStaleData with one of the other reload types
             case WebFrameLoadTypeReloadAllowingStaleData:
-                [[self webView] _makeDocumentViewForDataSource:ds];
+                [self _makeDocumentView];
                 break;
                 
             // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
