@@ -1,3 +1,25 @@
+2003-09-11  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3406671.  Added a private method for Mail to get selection
+	rect.
+
+	Fixed 3417688.  Don't allow https page into page cache.
+
+        Reviewed by Darin.
+
+        * kwq/KWQFrame.h:
+        * kwq/KWQFrame.mm:
+        (QFrame::setFrameStyle):
+        (QFrame::frameWidth):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canCachePage):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectionRect]):
+        (-[WebCoreBridge visibleSelectionRect]):
+        (-[WebCoreBridge selectionImage]):
+        (-[WebCoreBridge adjustViewSize]):
+
 === Safari-100 ===
 
 2003-09-09  Darin Adler  <darin@apple.com>

@@ -72,4 +72,6 @@
 
 - (WebPluginController *)_pluginController;
 
+- (NSRect)_selectionRect;
+
 @end

@@ -35,7 +35,7 @@ public:
 
     QFrame() : _frameStyle(QFrame::NoFrame) { }
 
-    virtual void setFrameStyle(int);
+    void setFrameStyle(int);
     int frameStyle();
     int frameWidth() const;
 

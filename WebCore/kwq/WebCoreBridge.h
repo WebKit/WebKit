@@ -47,8 +47,6 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 #endif
 
-@class WebError;
-@class WebFrame;
 @class WebCoreSettings;
 
 @protocol WebCoreDOMTreeCopier;
@@ -84,12 +82,6 @@ typedef enum {
 // A WebCoreBridge creates and holds a reference to a KHTMLPart.
 
 // The WebCoreBridge interface contains methods for use by the non-WebCore side of the bridge.
-
-enum FrameBorderStyle {
-    NoFrameBorder = 1,
-    SunkenFrameBorder = 2,
-    PlainFrameBorder = 4
-};
 
 @interface WebCoreBridge : NSObject
 {
@@ -204,6 +196,7 @@ enum FrameBorderStyle {
 - (void)deselectAll;
 
 - (NSRect)selectionRect;
+- (NSRect)visibleSelectionRect;
 - (NSImage *)selectionImage;
 
 - (id <WebDOMNode>)selectionStart;
@@ -212,8 +205,6 @@ enum FrameBorderStyle {
 - (int)selectionEndOffset;
 
 - (NSAttributedString *)attributedStringFrom:(id <WebDOMNode>)startNode startOffset:(int)startOffset to:(id <WebDOMNode>)endNode endOffset:(int)endOffset;
-
-- (int)frameBorderStyle;
 
 + (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding;
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
@@ -347,6 +338,8 @@ enum FrameBorderStyle {
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 
 - (NSView <WebCoreFileButton> *)fileButton;
+
+- (void)setHasBorder:(BOOL)hasBorder;
 
 @end
 

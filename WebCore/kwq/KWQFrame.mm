@@ -25,9 +25,22 @@
 
 #import "KWQFrame.h"
 
+#import "khtmlview.h"
+#import "KWQKHTMLPart.h"
+#import "WebCoreBridge.h"
+
 void QFrame::setFrameStyle(int s)
 {
     _frameStyle = s;
+
+    // Tell the other side of the bridge about the frame style change.
+    KHTMLView *view = dynamic_cast<KHTMLView *>(this);
+    if (view) {
+        KHTMLPart *part = view->part();
+        if (part) {
+            [KWQ(part)->bridge() setHasBorder:(s != NoFrame)];
+        }
+    }
 }
 
 int QFrame::frameStyle()
@@ -37,7 +50,7 @@ int QFrame::frameStyle()
 
 int QFrame::frameWidth() const
 {
-    if (_frameStyle == (QFrame::StyledPanel | QFrame::Sunken))
+    if (_frameStyle == (StyledPanel | Sunken))
         return 3;
     return 0;
 }

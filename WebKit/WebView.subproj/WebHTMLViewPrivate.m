@@ -513,9 +513,9 @@ static WebHTMLView *lastHitView = nil;
         [self _writeSelectionToPasteboard:pasteboard];
         NSImage *selectionImage = [[self _bridge] selectionImage];
         [selectionImage _web_dissolveToFraction:WebDragImageAlpha];
-        NSRect selectionRect = [[self _bridge] selectionRect];
+        NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
         [self dragImage:selectionImage
-                     at:NSMakePoint(NSMinX(selectionRect), NSMaxY(selectionRect))
+                     at:NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect))
                  offset:NSMakeSize(mouseDownPoint.x, mouseDownPoint.y)
                   event:_private->mouseDownEvent
              pasteboard:pasteboard
@@ -552,6 +552,11 @@ static WebHTMLView *lastHitView = nil;
 - (WebPluginController *)_pluginController
 {
     return _private->pluginController;
+}
+
+- (NSRect)_selectionRect
+{
+    return [[self _bridge] selectionRect];
 }
 
 @end

@@ -1,3 +1,18 @@
+2003-09-11  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3406671.  Added a private method for Mail to get selection
+	rect.
+
+        Reviewed by Darin Adler.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateTextBackgroundColor]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _handleMouseDragged:]):
+        (-[WebHTMLView _pluginController]):
+        (-[WebHTMLView _selectionRect]):
+
 2003-09-10  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3231031.  Use the normal methodology for displaying each frame of a GIF.  That is,

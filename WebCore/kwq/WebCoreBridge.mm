@@ -864,6 +864,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 
 - (NSRect)selectionRect
 {
+    return _part->selectionRect(); 
+}
+
+- (NSRect)visibleSelectionRect
+{
     KHTMLView *view = _part->view();
     if (!view) {
         return NSZeroRect;
@@ -882,7 +887,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         return nil;
     }
 
-    NSRect rect = [self selectionRect];
+    NSRect rect = [self visibleSelectionRect];
     NSRect bounds = [view bounds];
     NSImage *selectionImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
     [selectionImage setFlipped:YES];
@@ -922,18 +927,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 - (NSString *)referrer
 {
     return _part->referrer().getNSString();
-}
-
-- (int)frameBorderStyle
-{
-    KHTMLView *view = _part->view();
-    if (view) {
-        if (view->frameStyle() & QFrame::Sunken)
-            return SunkenFrameBorder;
-        if (view->frameStyle() & QFrame::Plain)
-            return PlainFrameBorder;
-    }
-    return NoFrameBorder;
 }
 
 + (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding
@@ -1006,6 +999,5 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     if (view)
         view->adjustViewSize();
 }
-
 
 @end

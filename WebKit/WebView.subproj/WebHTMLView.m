@@ -155,7 +155,7 @@
     WebBridge *bridge = [self _bridge];
     if ([bridge usesInactiveTextBackgroundColor] != shouldUseInactiveTextBackgroundColor) {
         [bridge setUsesInactiveTextBackgroundColor:shouldUseInactiveTextBackgroundColor];
-        [self setNeedsDisplayInRect:[bridge selectionRect]];
+        [self setNeedsDisplayInRect:[bridge visibleSelectionRect]];
     }
 }
 
