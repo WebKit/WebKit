@@ -1,3 +1,18 @@
+2002-08-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	2938010 - PLUGINS: right-click support
+	2938011 - PLUGINS: extended key events support
+	2970523 - Arrow key events not correctly passed to applets
+
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebPluginView modifiersForEvent:]):
+        (-[WebPluginView getCarbonEvent:withEvent:]):
+        (-[WebPluginView mouseDown:]):
+        (-[WebPluginView keyUp:]):
+        (-[WebPluginView keyDown:]):
+        (-[WebPluginView menuForEvent:]):
+
 === Alexander-15 ===
 
 2002-08-01  Don Melton  <gramps@apple.com>

@@ -23,6 +23,7 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+#import <AppKit/NSEvent_Private.h>
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
 
@@ -71,22 +72,26 @@
 
     if (modifierFlags & NSControlKeyMask || eventType == NSRightMouseDown)
         modifiers |= controlKey;
-
+    
     return modifiers;
 }
 
 - (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent
 {
-    NSPoint where;
-    
-    where = [[cocoaEvent window] convertBaseToScreen:[cocoaEvent locationInWindow]];
-    
-    carbonEvent->what = nullEvent;
-    carbonEvent->message = 0;
-    carbonEvent->when = (UInt32)([cocoaEvent timestamp] * 60); // seconds to ticks
-    carbonEvent->where.h = (short)where.x;
-    carbonEvent->where.v = (short)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
-    carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent];    
+    if([cocoaEvent _eventRef] && ConvertEventRefToEventRecord([cocoaEvent _eventRef], carbonEvent)){
+        return;
+    } else {
+        NSPoint where;
+        
+        where = [[cocoaEvent window] convertBaseToScreen:[cocoaEvent locationInWindow]];
+        
+        carbonEvent->what = nullEvent;
+        carbonEvent->message = 0;
+        carbonEvent->when = (UInt32)([cocoaEvent timestamp] * 60); // seconds to ticks
+        carbonEvent->where.h = (short)where.x;
+        carbonEvent->where.v = (short)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
+        carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent];
+    }
 }
 
 - (UInt32)keyMessageForEvent:(NSEvent *)theEvent
@@ -175,10 +180,10 @@
 {
     EventRecord event;
     bool acceptedEvent;
-    
+
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseDown;
-    
+
     acceptedEvent = NPP_HandleEvent(instance, &event);
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
@@ -233,16 +238,21 @@
 
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyUp;
-    event.message = [self keyMessageForEvent:theEvent];
+
+    if(event.message == 0){
+        event.message = [self keyMessageForEvent:theEvent];
+    }
     
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
+
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d charCode:%c keyCode:%lu\n",
+                     acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     // If the plug-in didn't accept this event,
     // pass it along so that keyboard scrolling, for example, will work.
-    if (!acceptedEvent)
+    if (!acceptedEvent){
         [super keyUp:theEvent];
+    }
 }
 
 - (void)keyDown:(NSEvent *)theEvent
@@ -252,16 +262,34 @@
     
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyDown;
-    event.message = [self keyMessageForEvent:theEvent];
+
+    if(event.message == 0){
+        event.message = [self keyMessageForEvent:theEvent];
+    }
     
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
+
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu\n",
+                     acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     // If the plug-in didn't accept this event,
     // pass it along so that keyboard scrolling, for example, will work.
-    if (!acceptedEvent)
+    if (!acceptedEvent){
         [super keyDown:theEvent];
+    }
+}
+
+// Must subclass menuForEvent: for right-click to work.
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event withEvent:theEvent];
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(menuForEvent): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
+
+    return nil;
 }
 
 #pragma mark WEB_PLUGIN_VIEW
