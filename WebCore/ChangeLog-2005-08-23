@@ -1,3 +1,8 @@
+2002-01-15  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kdelibs/kjs/Makefile.am: Add missing files to BUILT_SOURCES
+	and build rules to fix `make -j3'
+
 2002-01-14  Maciej Stachowiak  <mjs@apple.com>
 
 	* .cvsignore:
