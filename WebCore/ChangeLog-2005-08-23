@@ -1,3 +1,16 @@
+2003-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - follow-on to my fix for 3467919: handle collapsed spaces at the starts of runs too, not just at the
+          end, and make sure that a space inherits style from the run it was collapsed from rather than always
+          from the run it precedes
+
+        * khtml/khtml_part.cpp: (KHTMLPart::text): Add code to deal with collapsed spaces at the start of runs.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString): Change code to keep the style of a space that
+        was collapsed at the end of the run, and use that styled space if necessary. Also add the code to deal
+        with collapsed spaces at the start of runs. Also remove comment that refers to long-since-deleted code.
+
 2003-12-21  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -2329,13 +2329,15 @@ QString KHTMLPart::text(const DOM::Range &r) const
                           runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
                           if (runStart >= runs[i]->m_start &&
                               runStart < runs[i]->m_start + runs[i]->m_len) {
+                              if (i == 0 && runs[0]->m_start == runStart && runStart > 0)
+                                  needSpace = true; // collapsed space at the start
                               if (needSpace && !addedSpace)
                                   text += ' ';
                               QString runText = str.mid(runStart, runEnd - runStart);
                               runText.replace('\n', ' ');
                               text += runText;
                               int nextRunStart = (i+1 < runs.count()) ? runs[i+1]->m_start : str.length();
-                              needSpace = nextRunStart > runEnd;
+                              needSpace = nextRunStart > runEnd; // collapsed space between runs or at the end
                               addedSpace = str[runEnd-1].direction() == QChar::DirWS;
                               start = -1;
                           }

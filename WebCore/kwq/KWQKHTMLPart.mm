@@ -2202,6 +2202,8 @@ static NodeImpl* isTextFirstInListItem(NodeImpl *e)
     return 0;
 }
 
+// FIXME: This collosal function needs to be refactored into maintainable smaller bits.
+
 #define BULLET_CHAR 0x2022
 #define SQUARE_CHAR 0x25AA
 #define CIRCLE_CHAR 0x25E6
@@ -2216,13 +2218,11 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
         return nil;
     }
 
-    // This allocation and autorelease won't raise so it's OK to do it
-    // outside the exception block
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
 
     bool hasNewLine = true;
     bool addedSpace = true;
-    bool needSpace = false;
+    NSAttributedString *pendingStyledSpace = nil;
     bool hasParagraphBreak = true;
     const ElementImpl *linkStartNode = 0;
     unsigned linkStartLocation = 0;
@@ -2247,6 +2247,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
         if (renderer) {
             RenderStyle *style = renderer->style();
             NSFont *font = style->font().getNSFont();
+            bool needSpace = pendingStyledSpace != nil;
             if (n.nodeType() == Node::TEXT_NODE) {
                 if (hasNewLine) {
                     addedSpace = true;
@@ -2262,12 +2263,13 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                             if (text.isEmpty() && linkStartLocation == [result length]) {
                                 ++linkStartLocation;
                             }
-                            text += ' ';
+                            [result appendAttributedString:pendingStyledSpace];
                         }
                         int runStart = (start == -1) ? 0 : start;
                         int runEnd = (end == -1) ? str.length() : end;
                         text += str.mid(runStart, runEnd-runStart);
-                        needSpace = false;
+                        [pendingStyledSpace release];
+                        pendingStyledSpace = nil;
                         addedSpace = str[runEnd-1].direction() == QChar::DirWS;
                     }
                     else {
@@ -2287,17 +2289,26 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                                 runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
                                 if (runStart >= runs[i]->m_start &&
                                     runStart < runs[i]->m_start + runs[i]->m_len) {
+                                    if (i == 0 && runs[0]->m_start == runStart && runStart > 0) {
+                                        needSpace = true; // collapsed space at the start
+                                    }
                                     if (needSpace && !addedSpace) {
-                                        if (text.isEmpty() && linkStartLocation == [result length]) {
-                                            ++linkStartLocation;
+                                        if (pendingStyledSpace != nil) {
+                                            if (text.isEmpty() && linkStartLocation == [result length]) {
+                                                ++linkStartLocation;
+                                            }
+                                            [result appendAttributedString:pendingStyledSpace];
+                                        } else {
+                                            text += ' ';
                                         }
-                                        text += ' ';
                                     }
                                     QString runText = str.mid(runStart, runEnd - runStart);
                                     runText.replace('\n', ' ');
                                     text += runText;
-                                    int nextRunStart = (i+1 < runs.count()) ? runs[i+1]->m_start : str.length();
+                                    int nextRunStart = (i+1 < runs.count()) ? runs[i+1]->m_start : str.length(); // collapsed space between runs or at the end
                                     needSpace = nextRunStart > runEnd;
+                                    [pendingStyledSpace release];
+                                    pendingStyledSpace = nil;
                                     addedSpace = str[runEnd-1].direction() == QChar::DirWS;
                                     start = -1;
                                 }
@@ -2310,21 +2321,27 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 
                 text.replace('\\', renderer->backslashAsCurrencySymbol());
     
-                if (text.length() > 0) {
-                    hasParagraphBreak = false;
-                    NSMutableDictionary *attrs;
-
-                    attrs = [[NSMutableDictionary alloc] init];
+                if (text.length() > 0 || needSpace) {
+                    NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
                     [attrs setObject:font forKey:NSFontAttributeName];
                     if (style && style->color().isValid())
                         [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
                     if (style && style->backgroundColor().isValid())
                         [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
 
-                    NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString() attributes:attrs];
+                    if (text.length() > 0) {
+                        hasParagraphBreak = false;
+                        NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString() attributes:attrs];
+                        [result appendAttributedString: partialString];                
+                        [partialString release];
+                    }
+
+                    if (needSpace) {
+                        [pendingStyledSpace release];
+                        pendingStyledSpace = [[NSAttributedString alloc] initWithString:@" " attributes:attrs];
+                    }
+
                     [attrs release];
-                    [result appendAttributedString: partialString];                
-                    [partialString release];
                 }
             } else {
                 // This is our simple HTML -> ASCII transformation:
@@ -2361,7 +2378,6 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                             
                             listText += '\t';
                             if (itemParent){
-                                // Ick!  Avoid use of itemParent->id() which confuses ObjC++.
                                 khtml::RenderListItem *listRenderer = static_cast<khtml::RenderListItem*>(renderer);
 
                                 maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
@@ -2443,6 +2459,14 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         break;
                         
                     case ID_IMG:
+                        if (pendingStyledSpace != nil) {
+                            if (linkStartLocation == [result length]) {
+                                ++linkStartLocation;
+                            }
+                            [result appendAttributedString:pendingStyledSpace];
+                            [pendingStyledSpace release];
+                            pendingStyledSpace = nil;
+                        }
                         NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<ElementImpl *>(n.handle()));
                         NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                         NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
@@ -2545,6 +2569,8 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
 
         n = next;
     }
+    
+    [pendingStyledSpace release];
     
     // Apply paragraph styles from outside in.  This ensures that nested lists correctly
     // override their parent's paragraph style.
