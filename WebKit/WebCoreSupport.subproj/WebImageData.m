@@ -264,10 +264,12 @@ static CFDictionaryRef imageSourceOptions;
     // Is the amount of available bands less than what we need to draw?  If so,
     // clip.
     BOOL clipped = NO;
-    if (h < fr.size.height) {
-        fr.size.height = h;
-        ir.size.height = h;
-        clipped = YES;
+    CGSize actualSize = [self size];
+    if (h != actualSize.height) {
+	float proportionLoaded = h/actualSize.height;
+	fr.size.height = fr.size.height * proportionLoaded;
+	ir.size.height = ir.size.height * proportionLoaded;
+	clipped = YES;
     }
     
     // Flip the coords.
@@ -427,9 +429,7 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     return size;
 }
 
-#define MINIMUM_DURATION (1.0/30.0)
-
-- (float)_frameDurationAt:(size_t)i
+- (float)_floatProperty:(CFStringRef)property type:(CFStringRef)type at:(size_t)i
 {
     [decodeLock lock];
     
@@ -439,22 +439,32 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         return 0.f;
     }
     
-    // FIXME:  Use constant instead of {GIF}
-    CFDictionaryRef GIFProperties = CFDictionaryGetValue (properties, @"{GIF}");
-    if (!GIFProperties) {
+    CFDictionaryRef typeProperties = CFDictionaryGetValue (properties, type);
+    if (!typeProperties) {
         [decodeLock unlock];
         return 0.f;
     }
     
     // FIXME:  Use constant instead of DelayTime
-    CFNumberRef num = CFDictionaryGetValue (GIFProperties, @"DelayTime");
+    CFNumberRef num = CFDictionaryGetValue (typeProperties, property);
     if (!num) {
         [decodeLock unlock];
         return 0.f;
     }
     
-    float duration = 0.f;
-    CFNumberGetValue (num, kCFNumberFloat32Type, &duration);
+    float value = 0.f;
+    CFNumberGetValue (num, kCFNumberFloat32Type, &value);
+
+    [decodeLock unlock];
+    
+    return value;
+}
+
+#define MINIMUM_DURATION (1.0/30.0)
+
+- (float)_frameDurationAt:(size_t)i
+{
+    float duration = [self _floatProperty:kCGImagePropertyGIFDelayTime type:kCGImagePropertyGIFDictionary at:i];
     if (duration < MINIMUM_DURATION) {
         /*
             Many annoying ads specify a 0 duration to make an image flash
@@ -468,9 +478,6 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         */
         duration = MINIMUM_DURATION;
     }
-
-    [decodeLock unlock];
-    
     return duration;
 }
 
@@ -501,8 +508,7 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (int)_repetitionCount
 {
-    // FIXME:  Need to get this from CG folks.
-    return 0;
+    return [self _floatProperty:kCGImagePropertyGIFLoopCount type:kCGImagePropertyGIFDictionary at:0];
 }
 
 - (BOOL)isAnimationFinished

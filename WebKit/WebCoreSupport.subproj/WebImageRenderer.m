@@ -1261,6 +1261,9 @@ static NSMutableSet *activeImageRenderers;
 
 - (NSSize)size
 {
+    if (!image)
+	return NSZeroSize;
+	
     return [image size];
 }
 

@@ -1,3 +1,24 @@
+2004-12-08  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3911719> REGRESSION: Images no longer scale vertically
+	Account for scaling correctly when taking into account progressively
+ 	loaded images.
+
+	Also added implementation of repetition count for animated GIF images.
+	Also replaced strings with new constants from CFImageProperties.h
+
+	Also fixed possible problem with -(NSSize)size implementation,
+	relevant to Panther only.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _floatProperty:type:at:]):
+        (-[WebImageData _frameDurationAt:]):
+        (-[WebImageData _repetitionCount]):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer size]):
+
 2004-12-08  Chris Blumenberg  <cblu@apple.com>
 
 	Removed NPN wrappers since these no longer need to be defined to make the QT plug-in work
