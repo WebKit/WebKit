@@ -1,3 +1,10 @@
+2004-08-04  Darin Adler  <darin@apple.com>
+
+        - fixed broken Deployment build
+
+        * Carbon.subproj/HIWebView.m: (Click):
+        Remove code that checks err variable before setting it.
+
 2004-08-03  Richard Williamson   <rjw@apple.com>
 
         First cut at dirt simple PDF support.  This feature

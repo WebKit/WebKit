@@ -489,7 +489,7 @@ Click( HIWebView* inView, EventRef inEvent )
 	
 	if (!GetEventPlatformEventRecord( inEvent, &eventRec )) {
             NSLog (@"Unable to get platform event");
-            require_noerr( err, CantAllocNewEvent );
+            return noErr;
         }
 
 	// We need to make the event be a kEventMouseDown event, or the webkit might trip up when
