@@ -354,3 +354,19 @@ SavedBuiltins::~SavedBuiltins()
 
 void Interpreter::virtual_hook( int, void* )
 { /*BASE::virtual_hook( id, data );*/ }
+
+
+Interpreter *ExecState::lexicalInterpreter() const
+{
+  if (!_context) {
+    return dynamicInterpreter();
+  }
+
+  InterpreterImp *result = InterpreterImp::interpreterWithGlobalObject(_context->scopeChain().bottom());
+
+  if (!result) {
+    return dynamicInterpreter();
+  }
+
+  return result->interpreter();
+}

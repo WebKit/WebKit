@@ -315,6 +315,8 @@ namespace KJS {
     static InterpreterImp* firstInterpreter() { return s_hook; }
     InterpreterImp *nextInterpreter() const { return next; }
     InterpreterImp *prevInterpreter() const { return prev; }
+
+    static InterpreterImp *interpreterWithGlobalObject(ObjectImp *);
     
     void setContext(ContextImp *c) { _context = c; }
 

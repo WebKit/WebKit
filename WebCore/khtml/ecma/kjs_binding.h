@@ -149,7 +149,7 @@ namespace KJS {
     DOMObject *ret;
     if (domObj.isNull())
       return Null();
-    ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
+    ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
     if ((ret = interp->getDOMObject(domObj.handle())))
       return Value(ret);
     else {
@@ -244,13 +244,13 @@ namespace KJS {
   template <class ClassCtor>
   inline Object cacheGlobalObject(ExecState *exec, const Identifier &propertyName)
   {
-    ValueImp *obj = static_cast<ObjectImp*>(exec->interpreter()->globalObject().imp())->getDirect(propertyName);
+    ValueImp *obj = static_cast<ObjectImp*>(exec->lexicalInterpreter()->globalObject().imp())->getDirect(propertyName);
     if (obj)
       return Object::dynamicCast(Value(obj));
     else
     {
       Object newObject(new ClassCtor(exec));
-      exec->interpreter()->globalObject().put(exec, propertyName, newObject, Internal);
+      exec->lexicalInterpreter()->globalObject().put(exec, propertyName, newObject, Internal);
       return newObject;
     }
   }
@@ -282,7 +282,7 @@ namespace KJS {
     } \
   protected: \
     ClassProto( ExecState *exec ) \
-      : ObjectImp( exec->interpreter()->builtinObjectPrototype() ) {} \
+      : ObjectImp( exec->lexicalInterpreter()->builtinObjectPrototype() ) {} \
     \
   public: \
     virtual const ClassInfo *classInfo() const { return &info; } \

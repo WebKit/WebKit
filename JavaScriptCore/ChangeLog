@@ -1,3 +1,84 @@
+2004-04-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	Changed things so that newly created objects get a prototype based
+	on the scope chain of the current function, rather than the
+	interpreter that started execution. This fixes the following bugs:
+	
+	<rdar://problem/3368523>: ARCH: wrong prototype used to create new objects (hang on lookup.atomica.com)
+        <rdar://problem/3559173>: ARCH: Cannot scan using a HP Jetdirect product (JS object prototypes bind incorrectly)
+
+	* JavaScriptCore.pbproj/project.pbxproj:
+        * kjs/array_object.cpp:
+        (CompareWithCompareFunctionArguments::CompareWithCompareFunctionArguments):
+        (ArrayProtoFuncImp::ArrayProtoFuncImp):
+        (ArrayProtoFuncImp::call):
+        (ArrayObjectImp::construct):
+        * kjs/bool_object.cpp:
+        (BooleanObjectImp::construct):
+        * kjs/date_object.cpp:
+        (DateProtoFuncImp::DateProtoFuncImp):
+        (DateProtoFuncImp::call):
+        (DateObjectImp::construct):
+        * kjs/error_object.cpp:
+        (ErrorObjectImp::construct):
+        * kjs/function.cpp:
+        (FunctionImp::FunctionImp):
+        (FunctionImp::call):
+        (DeclaredFunctionImp::construct):
+        (ArgumentsImp::ArgumentsImp):
+        (GlobalFuncImp::call):
+        * kjs/function_object.cpp:
+        (FunctionProtoFuncImp::call):
+        (FunctionObjectImp::construct):
+        * kjs/internal.cpp:
+        (BooleanImp::toObject):
+        (StringImp::toObject):
+        (NumberImp::toObject):
+        (InterpreterImp::InterpreterImp):
+        (InterpreterImp::clear):
+        (InterpreterImp::interpreterWithGlobalObject):
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        (ExecState::lexicalInterpreter):
+        * kjs/interpreter.h:
+        (KJS::ExecState::dynamicInterpreter):
+        (KJS::ExecState::interpreter):
+        * kjs/math_object.cpp:
+        (MathFuncImp::MathFuncImp):
+        * kjs/nodes.cpp:
+        (StatementNode::hitStatement):
+        (StatementNode::abortStatement):
+        (RegExpNode::evaluate):
+        (ElementNode::evaluate):
+        (ArrayNode::evaluate):
+        (ObjectLiteralNode::evaluate):
+        (PropertyValueNode::evaluate):
+        (FunctionCallNode::evaluate):
+        (FuncDeclNode::processFuncDecl):
+        (FuncExprNode::evaluate):
+        * kjs/number_object.cpp:
+        (NumberObjectImp::construct):
+        * kjs/object.cpp:
+        (KJS::ObjectImp::defaultValue):
+        (KJS::Error::create):
+        * kjs/object_object.cpp:
+        (ObjectObjectImp::construct):
+        * kjs/reference.cpp:
+        (Reference::putValue):
+        * kjs/regexp_object.cpp:
+        (RegExpProtoFuncImp::call):
+        (RegExpObjectImp::arrayOfMatches):
+        (RegExpObjectImp::construct):
+        * kjs/scope_chain.cpp:
+        (KJS::ScopeChain::bottom):
+        * kjs/scope_chain.h:
+        * kjs/string_object.cpp:
+        (StringProtoFuncImp::StringProtoFuncImp):
+        (StringProtoFuncImp::call):
+        (StringObjectImp::construct):
+
 === Safari-136 ===
 
 === Safari-135 ===

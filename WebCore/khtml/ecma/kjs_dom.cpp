@@ -1312,7 +1312,7 @@ Value DOMEntity::getValueProperty(ExecState *, int token) const
 Value KJS::getDOMDocumentNode(ExecState *exec, const DOM::Document &n)
 {
   DOMDocument *ret = 0;
-  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
 
   if ((ret = static_cast<DOMDocument *>(interp->getDOMObject(n.handle()))))
     return Value(ret);
@@ -1355,7 +1355,7 @@ Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
   DOMObject *ret = 0;
   if (n.isNull())
     return Null();
-  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
   DOM::NodeImpl *doc = n.ownerDocument().handle();
 
   if ((ret = interp->getDOMObjectForDocument(static_cast<DOM::DocumentImpl *>(doc), n.handle())))

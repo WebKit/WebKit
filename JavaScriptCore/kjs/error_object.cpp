@@ -105,7 +105,7 @@ bool ErrorObjectImp::implementsConstruct() const
 // ECMA 15.9.3
 Object ErrorObjectImp::construct(ExecState *exec, const List &args)
 {
-  Object proto = Object::dynamicCast(exec->interpreter()->builtinErrorPrototype());
+  Object proto = Object::dynamicCast(exec->lexicalInterpreter()->builtinErrorPrototype());
   ObjectImp *imp = new ObjectImp(proto);
   Object obj(imp);
 

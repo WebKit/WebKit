@@ -1,3 +1,44 @@
+2004-04-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	Changed things so that newly created objects get a prototype based
+	on the scope chain of the current function, rather than the
+	interpreter that started execution. This fixes the following bugs:
+	
+	<rdar://problem/3368523>: ARCH: wrong prototype used to create new objects (hang on lookup.atomica.com)
+        <rdar://problem/3559173>: ARCH: Cannot scan using a HP Jetdirect product (JS object prototypes bind incorrectly)
+
+	* khtml/ecma/kjs_binding.h:
+        (KJS::cacheDOMObject):
+        (KJS::cacheGlobalObject):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::getDOMStyleSheet):
+        (KJS::getDOMStyleSheetList):
+        (KJS::getDOMCSSValue):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::getDOMDocumentNode):
+        (KJS::getDOMNode):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::getDOMEvent):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        (KJS::HTMLDocument::putValue):
+        (KJS::getSelectHTMLCollection):
+        * khtml/ecma/kjs_navigator.cpp:
+        (Navigator::Navigator):
+        (PluginBase::PluginBase):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::History::History):
+        (KJS::FrameArray::FrameArray):
+        (Screen::Screen):
+        (Window::retrieveActive):
+        (Window::put):
+        (Window::isSafeScript):
+        (WindowFunc::tryCall):
+        (Location::put):
+        (LocationFunc::tryCall):
+
 2004-04-09  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3613081, repaint glitches when using overflow:auto/overlay.

@@ -76,7 +76,7 @@ namespace KJS {
     friend class HistoryFunc;
   public:
     History(ExecState *exec, KHTMLPart *p)
-      : ObjectImp(exec->interpreter()->builtinObjectPrototype()), part(p) { }
+      : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()), part(p) { }
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -90,7 +90,7 @@ namespace KJS {
   class FrameArray : public ObjectImp {
   public:
     FrameArray(ExecState *exec, KHTMLPart *p)
-      : ObjectImp(exec->interpreter()->builtinObjectPrototype()), part(p) { }
+      : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()), part(p) { }
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     virtual UString toString(ExecState *exec) const;
   private:
@@ -133,7 +133,7 @@ const ClassInfo Screen::info = { "Screen", 0, &ScreenTable, 0 };
 
 // We set the object prototype so that toString is implemented
 Screen::Screen(ExecState *exec)
-  : ObjectImp(exec->interpreter()->builtinObjectPrototype()) {}
+  : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()) {}
 
 Value Screen::get(ExecState *exec, const Identifier &p) const
 {
@@ -320,7 +320,7 @@ Window *Window::retrieveWindow(KHTMLPart *p)
 
 Window *Window::retrieveActive(ExecState *exec)
 {
-  ValueImp *imp = exec->interpreter()->globalObject().imp();
+  ValueImp *imp = exec->dynamicInterpreter()->globalObject().imp();
   assert( imp );
 #ifndef QWS
   assert( dynamic_cast<KJS::Window*>(imp) );
@@ -818,7 +818,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
         QString dstUrl = p->htmlDocument().completeURL(value.toString(exec).string()).string();
         if (dstUrl.find("javascript:", 0, false) || isSafeScript(exec))
         {
-          bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
 #if APPLE_CHANGES
           // We want a new history item if this JS was called via a user gesture
           m_part->scheduleRedirection(0, dstUrl, !userGesture, userGesture);
@@ -1010,7 +1010,7 @@ bool Window::isSafeScript(ExecState *exec) const
     kdDebug(6070) << "Window::isSafeScript: accessing deleted part !" << endl;
     return false;
   }
-  KHTMLPart *activePart = static_cast<KJS::ScriptInterpreter *>( exec->interpreter() )->part();
+  KHTMLPart *activePart = static_cast<KJS::ScriptInterpreter *>( exec->dynamicInterpreter() )->part();
   if (!activePart) {
     kdDebug(6070) << "Window::isSafeScript: current interpreter's part is 0L!" << endl;
     return false;
@@ -1219,7 +1219,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     } else if ( policy == 3 ) // smart
     {
       // window.open disabled unless from a key/mouse event
-      if (static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture())
+      if (static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture())
 #if !APPLE_CHANGES
         policy = 0;
 #else
@@ -1374,7 +1374,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	  // FIXME: referrer?
           while ( part->parentPart() )
               part = part->parentPart();
-          bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
           part->scheduleRedirection(0, url.url(), false/*don't lock history*/, userGesture);
           return Window::retrieve(part);
       }
@@ -1383,7 +1383,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	  // FIXME: referrer?
           if ( part->parentPart() )
               part = part->parentPart();
-          bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
           part->scheduleRedirection(0, url.url(), false/*don't lock history*/, userGesture);
           return Window::retrieve(part);
       }
@@ -1412,7 +1412,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         }
 #if APPLE_CHANGES
         if (!url.isEmpty()) {
-          bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
           // FIXME: Need to pass referrer here.
           khtmlpart->scheduleRedirection(0, url.url(), false, userGesture);
 	}
@@ -2035,7 +2035,7 @@ void Location::put(ExecState *exec, const Identifier &p, const Value &v, int att
     ObjectImp::put(exec, p, v, attr);
     return;
   }
-  bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+  bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
 #if APPLE_CHANGES
   // We want a new history item if this JS was called via a user gesture
   m_part->scheduleRedirection(0, url.url(), !userGesture, userGesture);
@@ -2078,14 +2078,14 @@ Value LocationFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       QString str = args[0].toString(exec).qstring();
       KHTMLPart* p = Window::retrieveActive(exec)->part();
       if ( p ) {
-	bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+	bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
         part->scheduleRedirection(0, p->htmlDocument().completeURL(str).string(), true /*lock history*/, userGesture);
       }
       break;
     }
     case Location::Reload:
     {
-      bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+      bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
       part->scheduleRedirection(0, part->url().url(), true/*lock history*/, userGesture);
       break;
     }

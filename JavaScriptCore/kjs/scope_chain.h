@@ -48,6 +48,8 @@ namespace KJS {
         bool isEmpty() const { return !_node; }
         ObjectImp *top() const { return _node->object; }
 
+	ObjectImp *bottom() const;
+
         void clear() { deref(); _node = 0; }
         void push(ObjectImp *);
         void pop();

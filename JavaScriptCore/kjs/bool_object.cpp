@@ -120,7 +120,7 @@ bool BooleanObjectImp::implementsConstruct() const
 // ECMA 15.6.2
 Object BooleanObjectImp::construct(ExecState *exec, const List &args)
 {
-  Object obj(new BooleanInstanceImp(exec->interpreter()->builtinBooleanPrototype().imp()));
+  Object obj(new BooleanInstanceImp(exec->lexicalInterpreter()->builtinBooleanPrototype().imp()));
 
   Boolean b;
   if (args.size() > 0)

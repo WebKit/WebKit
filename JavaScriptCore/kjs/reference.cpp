@@ -152,7 +152,7 @@ void Reference::putValue(ExecState *exec, const Value &w)
 #endif
   Value o = getBase(exec);
   if (o.type() == NullType)
-    o = exec->interpreter()->globalObject();
+    o = exec->dynamicInterpreter()->globalObject();
 
   if (propertyNameIsNumber)
     return static_cast<ObjectImp*>(o.imp())->put(exec,propertyNameAsNumber, w);

@@ -147,7 +147,7 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
 IMPLEMENT_PROTOFUNC(NavigatorFunc)
 
 Navigator::Navigator(ExecState *exec, KHTMLPart *p)
-  : ObjectImp(exec->interpreter()->builtinObjectPrototype()), m_part(p) { }
+  : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()), m_part(p) { }
 
 Value Navigator::get(ExecState *exec, const Identifier &propertyName) const
 {
@@ -244,7 +244,7 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
 /*******************************************************************/
 
 PluginBase::PluginBase(ExecState *exec)
-  : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
+  : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype() )
 {
     if ( !plugins ) {
         plugins = new QPtrList<PluginInfo>;
