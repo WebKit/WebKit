@@ -1,7 +1,9 @@
+Makefile.in
 Makefile
-*.dummy
-export-objects
-export-headers
 KWQCharsetData.c
 mac-encodings.txt
 make-mac-encodings
+.deps
+.libs
+*.lo
+*.la

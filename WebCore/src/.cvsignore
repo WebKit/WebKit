@@ -1,1 +1,6 @@
-*.dummy
+Makefile.in
+Makefile
+.deps
+.libs
+*.lo
+*.la

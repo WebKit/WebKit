@@ -1,3 +1,4 @@
+Makefile.in
 Makefile
 .DS_Store
-
+.deps

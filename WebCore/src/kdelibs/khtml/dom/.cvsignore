@@ -1,6 +1,6 @@
-Makefile
 Makefile.in
-*.kde
-*.dep
-export-objects
-export-headers
+Makefile
+.deps
+.libs
+*.lo
+*.la

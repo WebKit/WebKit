@@ -1,8 +1,7 @@
 Makefile
-Makefile.am
 Makefile.in
-*.kde
-*.dep
 *.moc
-export-objects
-export-headers
+*.lo
+*.la
+.deps
+.libs

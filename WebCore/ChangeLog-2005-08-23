@@ -1,3 +1,71 @@
+2002-01-14  Maciej Stachowiak  <mjs@apple.com>
+
+	* .cvsignore:
+	* Makefile.am:
+	* Makefile.in:
+	* include/.cvsignore:
+	* include/Makefile.am:
+	* include/private/.cvsignore:
+	* include/private/Makefile.am:
+	* lib/.cvsignore:
+	* lib/Makefile.in:
+	* src/.cvsignore:
+	* src/Makefile.am:
+	* src/kdelibs/.cvsignore:
+	* src/kdelibs/Makefile.am:
+	* src/kdelibs/kdecore/.cvsignore:
+	* src/kdelibs/kdecore/Makefile.am:
+	* src/kdelibs/kdecore/Makefile.in:
+	* src/kdelibs/khtml/.cvsignore:
+	* src/kdelibs/khtml/Makefile.am:
+	* src/kdelibs/khtml/Makefile.in:
+	* src/kdelibs/khtml/css/.cvsignore:
+	* src/kdelibs/khtml/css/Makefile.am:
+	* src/kdelibs/khtml/css/Makefile.in:
+	* src/kdelibs/khtml/dom/.cvsignore:
+	* src/kdelibs/khtml/dom/Makefile.am:
+	* src/kdelibs/khtml/dom/Makefile.in:
+	* src/kdelibs/khtml/ecma/.cvsignore:
+	* src/kdelibs/khtml/ecma/Makefile.am:
+	* src/kdelibs/khtml/ecma/Makefile.in:
+	* src/kdelibs/khtml/html/.cvsignore:
+	* src/kdelibs/khtml/html/Makefile.am:
+	* src/kdelibs/khtml/html/Makefile.in:
+	* src/kdelibs/khtml/java/.cvsignore:
+	* src/kdelibs/khtml/java/ChangeLog:
+	* src/kdelibs/khtml/java/Makefile.am:
+	* src/kdelibs/khtml/java/Makefile.in:
+	* src/kdelibs/khtml/java/tests/Makefile.am:
+	* src/kdelibs/khtml/misc/.cvsignore:
+	* src/kdelibs/khtml/misc/Makefile.am:
+	* src/kdelibs/khtml/misc/Makefile.in:
+	* src/kdelibs/khtml/pics/Makefile.am:
+	* src/kdelibs/khtml/rendering/.cvsignore:
+	* src/kdelibs/khtml/rendering/Makefile.am:
+	* src/kdelibs/khtml/rendering/Makefile.in:
+	* src/kdelibs/khtml/xml/.cvsignore:
+	* src/kdelibs/khtml/xml/Makefile.am:
+	* src/kdelibs/khtml/xml/Makefile.in:
+	* src/kdelibs/kjs/.cvsignore:
+	* src/kdelibs/kjs/ChangeLog:
+	* src/kdelibs/kjs/Makefile.am:
+	* src/kdelibs/kjs/Makefile.in:
+	* src/kdelibs/kjs/kjs-test:
+	* src/kdelibs/kjs/kjs-test.chk:
+	* src/kwq/.cvsignore:
+	* src/kwq/Makefile.am:
+	* src/kwq/Makefile.in:
+	* src/kwq/_KWQOwner.m: (-[_KWQOwner backForwardUriDone:]):
+	* src/kwq/kde/.cvsignore:
+	* src/kwq/kde/Makefile.am:
+	* src/kwq/kde/Makefile.in:
+	* src/kwq/kdecore/.cvsignore:
+	* src/kwq/kdecore/Makefile.in:
+	* src/kwq/khtml/khtml_factory.h:
+	* src/kwq/qt/.cvsignore:
+	* src/kwq/qt/Makefile.am:
+	* src/kwq/qt/Makefile.in:
+
 2002-01-09  Richard Williamson  <rjw@apple.com>
 
         Re-implemented underlining.  Now it REALLY works, honest.

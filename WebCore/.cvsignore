@@ -1,5 +1,4 @@
-Makefile.vars
-Makefile.rules
+Makefile.in
 Makefile
 config.status
 config.log

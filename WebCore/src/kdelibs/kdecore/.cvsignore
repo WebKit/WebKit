@@ -1,2 +1,4 @@
+Makefile.in
 Makefile
 kentities.c
+.deps

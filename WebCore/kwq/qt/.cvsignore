@@ -1,6 +1,6 @@
-*.o
-*.a
+Makefile.in
 Makefile
-Makefile.dep
-export-objects
-export-headers
+.deps
+.libs
+*.lo
+*.la

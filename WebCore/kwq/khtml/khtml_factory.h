@@ -27,6 +27,7 @@
 class KInstance;
 class HistoryProvider;
 class KHTMLPart;
+class KHTMLSettings;
 
 class KHTMLFactory : public KParts::Factory
 {

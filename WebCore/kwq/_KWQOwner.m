@@ -93,7 +93,6 @@ static BOOL flag = NO;
 -(void)backForwardUriDone:(NSNotification *)notification
 {
     NSString *uriString;
-    id <WCURIEntry> entry;
     
     uriString = [notification object];
 

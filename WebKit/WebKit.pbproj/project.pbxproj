@@ -125,6 +125,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-Wall -Werror -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare";
+				OTHER_LDFLAGS = "-ljpeg -lwebcore";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";

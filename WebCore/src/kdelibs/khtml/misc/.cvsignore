@@ -1,8 +1,5 @@
 Makefile
 Makefile.in
-*.kde
-*.moc
-*.dep
 khtmldata.h
 htmltags.c
 htmltags.h
@@ -10,5 +7,7 @@ htmltags.gperf
 htmlattrs.c
 htmlattrs.h
 htmlattrs.gperf
-export-objects
-export-headers
+.deps
+.libs
+*.lo
+*.la
