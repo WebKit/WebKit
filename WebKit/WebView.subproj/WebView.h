@@ -192,14 +192,6 @@ extern NSString *WebElementFrameKey;
 - (id<WebControllerPolicyDelegate>)policyDelegate;
 
 /*!
-    @method frameNamed:
-    @abstract Look for a frame named name, recursively from the main frame.
-    @param name The name of the frame to find.
-    @result Returns the frame with the supplied name, or nil if not found.
-*/    
-- (WebFrame *)frameNamed: (NSString *)name;
-
-/*!
     @method mainFrame
     @abstract Return the top level frame.  
     @discussion Note that even document that are not framesets will have a

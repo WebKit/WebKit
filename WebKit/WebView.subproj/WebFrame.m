@@ -223,8 +223,8 @@
     WebFrame *frame = [self _descendantFrameNamed:name];
 
     if(!frame){
-        // Search in this controller and other controllers.
-        frame = [[self controller] frameNamed:name];
+        // Search in this controller then in other controllers.
+        frame = [[self controller] _findFrameNamed:name];
     }
 
     return frame;

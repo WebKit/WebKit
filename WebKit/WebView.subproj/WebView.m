@@ -196,7 +196,6 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     return nil;       
 }
 
-
 - (WebFrame *)frameForView: (WebView *)aView
 {
     WebFrame *frame = [self mainFrame];
@@ -204,33 +203,10 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     return [self _frameForView: aView fromFrame: frame];
 }
 
-
-- (WebFrame *)frameNamed: (NSString *)name
-{
-    // Try this controller first
-    WebFrame *frame = [self _frameInThisWindowNamed:name];
-
-    if (frame != nil) {
-	return frame;
-    }
-
-    // Try other controllers in the same set
-    if (_private->controllerSetName != nil) {
-	NSEnumerator *enumerator = [WebControllerSets controllersInSetNamed:_private->controllerSetName];
-	WebController *controller;
-	while ((controller = [enumerator nextObject]) != nil && frame == nil) {
-	    frame = [controller _frameInThisWindowNamed:name];
-	}
-    }
-
-    return frame;
-}
-
 - (WebFrame *)mainFrame
 {
     return _private->mainFrame;
 }
-
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
@@ -272,7 +248,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
 {
     WebFrame *targetFrame;
     
-    targetFrame = [self frameNamed: [item target]];
+    targetFrame = [self _findFrameNamed: [item target]];
     if (targetFrame == nil){
         NSLog (@"Target frame not found, using main frame instead, will be fixed soon");
 #if 0
@@ -280,7 +256,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
         WebHistoryItem *next = item;
         while (next){
             NSLog (@"frame name %@, parent %@", [next target], [next parent]);
-            nextFrame = [self frameNamed: [next parent]];
+            nextFrame = [self _findFrameNamed: [next parent]];
             next = [[self backForwardList] backEntryAtIndex: pos++];
             if ([[next target] isEqual: @"_top"]){
                 [[self mainFrame] _goToItem: next withFrameLoadType: WebFrameLoadTypeIntermediateBack];

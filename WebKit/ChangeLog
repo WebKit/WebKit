@@ -1,5 +1,18 @@
 2002-10-25  Chris Blumenberg  <cblu@apple.com>
 
+	Made frameNamed private in WebController and renamed it to _findFrameNamed. Got rid of _frameInThisWindowNamed in WebController because it isn't needed anymore.
+
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController _goToItem:withFrameLoadType:]): call _findFrameNamed
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _findFrameNamed:]): renamed, made private, got rid of call to _frameInThisWindowNamed as it is not needed
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame findFrameNamed:]): call [WebController _findFrameNamed:]
+
+2002-10-25  Chris Blumenberg  <cblu@apple.com>
+
 	- Fix case where we would name a new window _blank
 	- If a data source can't be created for a plug-in request, don't create the frame or open a window.
 	- cleaned up plug-in stream notifications

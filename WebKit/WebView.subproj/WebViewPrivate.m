@@ -7,6 +7,7 @@
 #import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebControllerPolicyDelegatePrivate.h>
+#import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFramePrivate.h>
@@ -222,13 +223,25 @@
     }
 }
 
-- (WebFrame *)_frameInThisWindowNamed:(NSString *)name
+- (WebFrame *)_findFrameNamed: (NSString *)name
 {
-    if ([_private->topLevelFrameName isEqualToString:name]) {
-	return [self mainFrame];
-    } else {
-	return [[self mainFrame] _descendantFrameNamed:name];
+    // Try this controller first
+    WebFrame *frame = [[self mainFrame] _descendantFrameNamed:name];
+
+    if (frame != nil) {
+        return frame;
     }
+
+    // Try other controllers in the same set
+    if (_private->controllerSetName != nil) {
+        NSEnumerator *enumerator = [WebControllerSets controllersInSetNamed:_private->controllerSetName];
+        WebController *controller;
+        while ((controller = [enumerator nextObject]) != nil && frame == nil) {
+            frame = [[controller mainFrame] _descendantFrameNamed:name];
+        }
+    }
+
+    return frame;
 }
 
 - (WebController *)_openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer behind:(BOOL)behind

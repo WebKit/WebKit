@@ -55,7 +55,7 @@
 - (void)_setDefersCallbacks:(BOOL)defers;
 
 - (void)_setTopLevelFrameName:(NSString *)name;
-- (WebFrame *)_frameInThisWindowNamed:(NSString *)name;
+- (WebFrame *)_findFrameNamed: (NSString *)name;
 
 - (WebController *)_openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer behind:(BOOL)behind;
 
