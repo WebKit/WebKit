@@ -13,6 +13,9 @@
 #import <WebKit/IFURIEntry.h>
 #import <WebKit/WebKitDebug.h>
 
+#define URIDictionaryKey	@"URIDictionary"
+#define URLStringKey		@"URLString"
+
 @implementation IFBookmarkLeaf
 
 - (id)initWithURLString:(NSString *)URLString
@@ -32,6 +35,33 @@
     [self _setGroup:group];
 
     return self;
+}
+
+- (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+{
+    WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
+
+    [super init];
+
+    [self _setGroup:group];
+    
+    _entry = [[[IFURIEntry alloc] initFromDictionaryRepresentation:
+        [dict objectForKey:URIDictionaryKey]] retain];
+    _URLString = [[dict objectForKey:URLStringKey] retain];
+
+    return self;
+}
+
+- (NSDictionary *)_dictionaryRepresentation
+{
+    NSMutableDictionary *dict;
+
+    dict = [NSMutableDictionary dictionaryWithCapacity: 2];
+
+    [dict setObject:[_entry dictionaryRepresentation] forKey:URIDictionaryKey];
+    [dict setObject:_URLString forKey:URLStringKey];
+
+    return dict;
 }
 
 - (void)dealloc
@@ -86,5 +116,6 @@
 
     [[self _group] _bookmarkDidChange:self];    
 }
+
 
 @end

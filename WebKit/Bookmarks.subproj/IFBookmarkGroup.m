@@ -14,7 +14,7 @@
 #import <WebKit/WebKitDebug.h>
 
 @interface IFBookmarkGroup (IFForwardDeclarations)
-- (void)_resetTopBookmark;
+- (void)_setTopBookmark:(IFBookmark *)newTopBookmark;
 @end
 
 @implementation IFBookmarkGroup
@@ -31,7 +31,7 @@
     }
 
     _file = [file retain];
-    [self _resetTopBookmark];
+    [self _setTopBookmark:nil];
 
     // read history from disk
     [self loadBookmarkGroup];
@@ -53,27 +53,39 @@
 
 - (void)_sendBookmarkGroupChangedNotification
 {
+    if (_loading) {
+        return;
+    }
+    
     [[NSNotificationCenter defaultCenter]
         postNotificationName: IFBookmarkGroupChangedNotification
                       object: self];
 }
 
-- (void)_resetTopBookmark
+- (void)_setTopBookmark:(IFBookmark *)newTopBookmark
 {
-    BOOL hadChildren;
+    BOOL hadChildren, hasChildrenNow;
+
+    WEBKIT_ASSERT_VALID_ARG (newTopBookmark, newTopBookmark == nil || ![newTopBookmark isLeaf]);
 
     hadChildren = [_topBookmark numberOfChildren] > 0;
+    hasChildrenNow = newTopBookmark != nil && [newTopBookmark numberOfChildren] > 0;
     
     // bail out early if nothing needs resetting
-    if (!hadChildren && _topBookmark != nil) {
+    if (!hadChildren && _topBookmark != nil && !hasChildrenNow) {
         return;
     }
 
     [_topBookmark _setGroup:nil];
     [_topBookmark autorelease];
-    _topBookmark = [[[IFBookmarkList alloc] initWithTitle:nil image:nil group:self] retain];
 
-    if (hadChildren) {
+    if (newTopBookmark) {
+        _topBookmark = [newTopBookmark retain];
+    } else {
+        _topBookmark = [[[IFBookmarkList alloc] initWithTitle:nil image:nil group:self] retain];
+    }
+
+    if (hadChildren || hasChildrenNow) {
         [self _sendBookmarkGroupChangedNotification];
     }
 }
@@ -107,7 +119,7 @@
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _parent] != nil || bookmark == _topBookmark);
 
     if (bookmark == _topBookmark) {
-        [self _resetTopBookmark];
+        [self _setTopBookmark:nil];
     } else {
         [[bookmark _parent] removeChild:bookmark];
         [bookmark _setGroup:nil];
@@ -160,16 +172,90 @@
     return _file;
 }
 
+- (BOOL)_loadBookmarkGroupGuts
+{
+    NSString *path;
+    NSDictionary *dictionary;
+    IFBookmarkList *newTopBookmark;
+
+    path = [self file];
+    if (path == nil) {
+        WEBKITDEBUG("couldn't load bookmarks; couldn't find or create directory to store it in\n");
+        return NO;
+    }
+
+    dictionary = [NSDictionary dictionaryWithContentsOfFile: path];
+    if (dictionary == nil) {
+        if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
+            WEBKITDEBUG("no bookmarks file found at %s\n",
+                        DEBUG_OBJECT(path));
+        } else {
+            WEBKITDEBUG("attempt to read bookmarks from %s failed; perhaps contents are corrupted\n",
+                        DEBUG_OBJECT(path));
+        }
+        return NO;
+    }
+
+    _loading = YES;
+    newTopBookmark = [[IFBookmarkList alloc] _initFromDictionaryRepresentation:dictionary withGroup:self];
+    [self _setTopBookmark:newTopBookmark];
+    _loading = NO;
+
+    return YES;
+}
+
 - (BOOL)loadBookmarkGroup
 {
-    _logNotYetImplemented();
-    return NO;
+    double start, duration;
+    BOOL result;
+
+    start = CFAbsoluteTimeGetCurrent();
+    result = [self _loadBookmarkGroupGuts];
+
+    if (result == YES) {
+        duration = CFAbsoluteTimeGetCurrent() - start;
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d bookmarks from %s took %f seconds\n",
+                          [[self topBookmark] _numberOfDescendants], DEBUG_OBJECT([self file]), duration);
+    }
+
+    return result;
+}
+
+- (BOOL)_saveBookmarkGroupGuts
+{
+    NSString *path;
+    NSDictionary *dictionary;
+
+    path = [self file];
+    if (path == nil) {
+        WEBKITDEBUG("couldn't save bookmarks; couldn't find or create directory to store it in\n");
+        return NO;
+    }
+
+    dictionary = [[self topBookmark] _dictionaryRepresentation];
+    if (![dictionary writeToFile:path atomically:YES]) {
+        WEBKITDEBUG("attempt to save %s to %s failed\n", DEBUG_OBJECT(dictionary), DEBUG_OBJECT(path));
+        return NO;
+    }
+
+    return YES;
 }
 
 - (BOOL)saveBookmarkGroup
 {
-    _logNotYetImplemented();
-   return NO;
+    double start, duration;
+    BOOL result;
+
+    start = CFAbsoluteTimeGetCurrent();
+    result = [self _saveBookmarkGroupGuts];
+    
+    if (result == YES) {
+        duration = CFAbsoluteTimeGetCurrent() - start;
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d bookmarks to %s took %f seconds\n",
+                          [[self topBookmark] _numberOfDescendants], DEBUG_OBJECT([self file]), duration);
+    }
+
+    return result;
 }
 
 @end

@@ -1,3 +1,49 @@
+2002-05-03  John Sullivan  <sullivan@apple.com>
+
+	Along with small corresponding WebBrowser change,	
+	fixed 2919172 (Bookmarks aren't saved between sessions).
+
+	* Bookmarks.subproj/IFBookmark_Private.h: Declarations for new private methods.
+	* Bookmarks.subproj/IFBookmark.m:
+	(-[IFBookmark _numberOfDescendants]): New private method, counts deep; used
+	only for debugging messages at this time.
+	(-[IFBookmark _initFromDictionaryRepresentation:withGroup:]):
+	(-[IFBookmark _dictionaryRepresentation]): New private methods used to save/load
+	bookmarks. Stub	implementations; subclasses must implement.
+
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf _initFromDictionaryRepresentation:withGroup:]):
+	(-[IFBookmarkLeaf _dictionaryRepresentation]): New methods.
+
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList _initFromDictionaryRepresentation:withGroup:]):
+	(-[IFBookmarkList _dictionaryRepresentation]):
+	(-[IFBookmarkList _numberOfDescendants]):
+	New methods.
+	(-[IFBookmarkList _setGroup:]): Recurse on children.
+
+	* Bookmarks.subproj/IFBookmarkGroup.h: New _loading instance variable.
+
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup _setTopBookmark:]): Renamed from _resetTopBookmark,
+	now has potentially non-nil argument.
+	(-[IFBookmarkGroup initWithFile:]),
+	(-[IFBookmarkGroup removeBookmark:]): Updated for name change.
+	(-[IFBookmarkGroup _sendBookmarkGroupChangedNotification]):
+	Don't send notifications while loading bookmarks from disk.
+	(-[IFBookmarkGroup _loadBookmarkGroupGuts]),
+	(-[IFBookmarkGroup loadBookmarkGroup]),
+	(-[IFBookmarkGroup _saveBookmarkGroupGuts]),
+	(-[IFBookmarkGroup saveBookmarkGroup]): New methods, load/save bookmarks
+	and report timings.
+
+	* History.subproj/IFURIEntry.m:
+	(-[IFURIEntry dictionaryRepresentation]),
+	(-[IFURIEntry initFromDictionaryRepresentation:]): Handle nil URL
+	case, which bookmarks run into.
+
+	* WebKit.pbproj/project.pbxproj: version wars
+
 2002-05-03  Darin Adler  <darin@apple.com>
 
 	* WebCoreSupport.subproj/IFCachedTextRenderer.m: Remove some of the unused code.

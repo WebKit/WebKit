@@ -17,6 +17,7 @@
 {
     NSString *_file;
     IFBookmark *_topBookmark;
+    BOOL _loading;
 }
 
 + (IFBookmarkGroup *)bookmarkGroupWithFile: (NSString *)file;

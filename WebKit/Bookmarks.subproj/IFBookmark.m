@@ -78,6 +78,14 @@
     return 0;
 }
 
+- (unsigned)_numberOfDescendants
+{
+    if (![self isLeaf]) {
+        NSRequestConcreteImplementation(self, _cmd, [self class]);
+    }
+    return 0;
+}
+
 - (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
 {
     if (![self isLeaf]) {
@@ -115,5 +123,18 @@
     [_group release];
     _group = group;
 }
+
+- (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+{
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
+    return nil;
+}
+
+- (NSDictionary *)_dictionaryRepresentation
+{
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
+    return nil;
+}
+
 
 @end

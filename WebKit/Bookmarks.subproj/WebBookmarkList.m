@@ -7,9 +7,14 @@
 //
 
 #import <WebKit/IFBookmarkList.h>
+#import <WebKit/IFBookmarkLeaf.h>
 #import <WebKit/IFBookmark_Private.h>
 #import <WebKit/IFBookmarkGroup_Private.h>
 #import <WebKit/WebKitDebug.h>
+
+#define TitleKey		@"Title"
+#define ListIdentifierKey	@"ListIdentifier"
+#define ChildrenKey		@"Children"
 
 @implementation IFBookmarkList
 
@@ -27,6 +32,79 @@
     [self _setGroup:group];
     
     return self;
+}
+
+- (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+{
+    NSArray *storedChildren;
+    NSDictionary *childAsDictionary;
+    IFBookmark *child;
+    unsigned index, count;
+    
+    WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
+
+    [super init];
+
+    [self _setGroup:group];
+
+    // FIXME: doesn't restore images
+    _title = [[dict objectForKey:TitleKey] retain];
+    _list = [[NSMutableArray alloc] init];
+
+    storedChildren = [dict objectForKey:ChildrenKey];
+    if (storedChildren != nil) {
+        count = [storedChildren count];
+        for (index = 0; index < count; ++index) {
+            childAsDictionary = [storedChildren objectAtIndex:index];
+            
+            // determine whether child is a leaf or a list by looking for the
+            // token that this list class inserts.
+            if ([childAsDictionary objectForKey:ListIdentifierKey] != nil) {
+                child = [[IFBookmarkList alloc] _initFromDictionaryRepresentation:childAsDictionary
+                                                                        withGroup:group];
+            } else {
+                child = [[IFBookmarkLeaf alloc] _initFromDictionaryRepresentation:childAsDictionary
+                                                                        withGroup:group];
+            }
+
+            [self insertChild:child atIndex:index];
+        }
+    }
+
+    return self;
+}
+
+- (NSDictionary *)_dictionaryRepresentation
+{
+    NSMutableDictionary *dict;
+    NSMutableArray *childrenAsDictionaries;
+    unsigned index, childCount;
+
+    dict = [NSMutableDictionary dictionaryWithCapacity: 3];
+
+    // FIXME: doesn't save images
+    if (_title != nil) {
+        [dict setObject:_title forKey:TitleKey];
+    }
+
+    // mark this as a list-type bookmark; used in _initFromDictionaryRepresentation
+    [dict setObject:@"YES" forKey:ListIdentifierKey];
+
+    childCount = [self numberOfChildren];
+    if (childCount > 0) {
+        childrenAsDictionaries = [NSMutableArray arrayWithCapacity:childCount];
+
+        for (index = 0; index < childCount; ++index) {
+            IFBookmark *child;
+
+            child = [_list objectAtIndex:index];
+            [childrenAsDictionaries addObject:[child _dictionaryRepresentation]];
+        }
+
+        [dict setObject:childrenAsDictionaries forKey:ChildrenKey];
+    }
+    
+    return dict;
 }
 
 - (void)dealloc
@@ -87,6 +165,23 @@
     return [_list count];
 }
 
+- (unsigned)_numberOfDescendants
+{
+    unsigned result;
+    unsigned index, count;
+    IFBookmark *child;
+
+    count = [self numberOfChildren];
+    result = count;
+
+    for (index = 0; index < count; ++index) {
+        child = [_list objectAtIndex:index];
+        result += [child _numberOfDescendants];
+    }
+
+    return result;
+}
+
 - (void)removeChild:(IFBookmark *)bookmark
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _parent] == self);
@@ -103,6 +198,16 @@
     [bookmark _setParent:self];
     
     [[self _group] _bookmarkChildrenDidChange:self]; 
+}
+
+- (void)_setGroup:(IFBookmarkGroup *)group
+{
+    if (group == [self _group]) {
+        return;
+    }
+
+    [super _setGroup:group];
+    [_list makeObjectsPerformSelector:@selector(_setGroup:) withObject:group];
 }
 
 @end
