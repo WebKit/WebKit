@@ -25,6 +25,7 @@
 
 // FIXME: obviously many functions here can be made inline
 
+#include <Foundation/Foundation.h>
 #include <qstring.h>
 
 #ifndef USING_BORROWED_QSTRING
@@ -198,12 +199,16 @@ QChar QChar::upper() const
 QChar::Direction QChar::direction() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
+    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
+            __LINE__);
     return DirL;
 }
 
 bool QChar::mirrored() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
+    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
+            __LINE__);
     // return whether character should be reversed if text direction is
     // reversed
     return FALSE;
@@ -212,6 +217,8 @@ bool QChar::mirrored() const
 QChar QChar::mirroredChar() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
+    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
+            __LINE__);
     // return mirrored character if it is mirrored else return itself
     return *this;
 }
