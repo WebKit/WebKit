@@ -135,8 +135,8 @@
     FSSpec spec;
     FSRef fref; 
     mainFuncPtr pluginMainFunc;
-    initializeFuncPtr NPP_Initialize;
-    getEntryPointsFuncPtr NPP_GetEntryPoints;
+    initializeFuncPtr NPP_Initialize = NULL;
+    getEntryPointsFuncPtr NPP_GetEntryPoints = NULL;
     NPError npErr;
     Boolean didLoad;
     NSBundle *tempBundle;
