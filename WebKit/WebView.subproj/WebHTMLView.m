@@ -1744,7 +1744,7 @@ static WebHTMLView *lastHitView = nil;
 {
     [super addSubview:view];
 
-    if ([[view class] respondsToSelector:@selector(plugInViewWithArguments:)] || [view respondsToSelector:@selector(pluginInitialize)] || [view respondsToSelector:@selector(webPlugInInitialize)]) {
+    if ([WebPluginController isPlugInView:view]) {
         [[self _pluginController] addPlugin:view];
     }
 }

@@ -85,11 +85,6 @@
 - (jobject)pollForAppletInWindow: (NSWindow *)window;
 @end
 
-// For compatibility only.
-@interface NSObject (OldPluginAPI)
-+ (NSView <WebPlugin> *)pluginViewWithArguments:(NSDictionary *)arguments;
-@end
-
 NSString *WebPluginBaseURLKey =     @"WebPluginBaseURL";
 NSString *WebPluginAttributesKey =  @"WebPluginAttributes";
 NSString *WebPluginContainerKey =   @"WebPluginContainer";
@@ -796,11 +791,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-    
-    [pluginPackage load];
-    
+        
     WebPluginController *pluginController = [docView _pluginController];
-    Class viewFactory = [pluginPackage viewFactory];
     
     // Store attributes in a dictionary so they can be passed to WebPlugins.
     NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
@@ -810,24 +802,30 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [attributes setObject:[attributeValues objectAtIndex:i] forKey:[attributeNames objectAtIndex:i]];
     }    
     
+    [pluginPackage load];
+    Class viewFactory = [pluginPackage viewFactory];
+    
     NSView *view = nil;
+    NSDictionary *arguments;
+    
     if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
-        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+        arguments = [NSDictionary dictionaryWithObjectsAndKeys:
             baseURL, WebPlugInBaseURLKey,
             attributes, WebPlugInAttributesKey,
             pluginController, WebPlugInContainerKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
-        view = [viewFactory plugInViewWithArguments:arguments];
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
-        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+        arguments = [NSDictionary dictionaryWithObjectsAndKeys:
             baseURL, WebPluginBaseURLKey,
             attributes, WebPluginAttributesKey,
             pluginController, WebPluginContainerKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
-        view = [viewFactory pluginViewWithArguments:arguments];
     }
+    
+    view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
+    
     [attributes release];
     return view;
 }

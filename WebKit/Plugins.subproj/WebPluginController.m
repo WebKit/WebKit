@@ -16,6 +16,8 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginContainer.h>
+#import <WebKit/WebPluginPackage.h>
+#import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
@@ -29,6 +31,10 @@
 @end
 
 // For compatibility only.
+@interface NSObject (OldPluginAPI)
++ (NSView *)pluginViewWithArguments:(NSDictionary *)arguments;
+@end
+
 @interface NSView (OldPluginAPI)
 - (void)pluginInitialize;
 - (void)pluginStart;
@@ -36,7 +42,36 @@
 - (void)pluginDestroy;
 @end
 
+static NSMutableSet *pluginViews = nil;
+
 @implementation WebPluginController
+
++ (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)pluginPackage
+{
+    [pluginPackage load];
+    Class viewFactory = [pluginPackage viewFactory];
+    
+    NSView *view = nil;
+    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
+        view = [viewFactory plugInViewWithArguments:arguments];
+    } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
+        view = [viewFactory pluginViewWithArguments:arguments];
+    } else {
+        return nil;
+    }
+    
+    if (pluginViews == nil) {
+        pluginViews = [[NSMutableSet alloc] init];
+    }
+    [pluginViews addObject:view];
+    
+    return view;
+}
+
++ (BOOL)isPlugInView:(NSView *)view
+{
+    return [pluginViews containsObject:view];
+}
 
 - (id)initWithDocumentView:(NSView *)view
 {
@@ -128,10 +163,12 @@
     int i, count = [_views count];
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
-        if ([aView respondsToSelector:@selector(webPlugInDestroy)])
+        if ([aView respondsToSelector:@selector(webPlugInDestroy)]) {
             [aView webPlugInDestroy];
-        else if ([aView respondsToSelector:@selector(pluginDestroy)])
+        } else if ([aView respondsToSelector:@selector(pluginDestroy)]) {
             [aView pluginDestroy];
+        }
+        [pluginViews removeObject:aView];
     }
     [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [_views release];

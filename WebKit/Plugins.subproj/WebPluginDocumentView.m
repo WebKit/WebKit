@@ -66,7 +66,7 @@
         pluginController,   WebPlugInContainerKey,
         nil];
     [attributes release];
-    NSView *view = [[plugin viewFactory] plugInViewWithArguments:arguments];
+    NSView *view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:plugin];
     [arguments release];
 
     ASSERT(view != nil);

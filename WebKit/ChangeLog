@@ -1,3 +1,23 @@
+2004-10-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3760920> Need to record plugin view instances
+	
+        Reviewed by rjw.
+
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (+[WebPluginController plugInViewWithArguments:fromPluginPackage:]): new, creates plug-in view and adds it to global list
+        (+[WebPluginController isPlugInView:]): new, checks if the plug-in view is in the global list
+        (-[WebPluginController destroyAllPlugins]): remove the plug-in from the global list 
+        * Plugins.subproj/WebPluginDocumentView.m:
+        (-[WebPluginDocumentView setDataSource:]): call [WebPluginController plugInViewWithArguments:fromPluginPackage:]
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:]): ditto
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _reloadForPluginChanges]): call [WebPluginController isPlugInView:]
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]): ditto
+
 2004-10-05  David Hyatt  <hyatt@apple.com>
 
 	Fix to make selection more like NSTextView.  All gap painting is now done by WebCore, so WebKit no longer

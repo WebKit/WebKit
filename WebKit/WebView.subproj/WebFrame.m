@@ -29,6 +29,8 @@
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPlugin.h>
+#import <WebKit/WebPluginController.h>
+#import <WebKit/WebPluginDocumentView.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
@@ -2447,7 +2449,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_reloadForPluginChanges
 {
     NSView <WebDocumentView> *documentView = [[self frameView] documentView];
-    if ([documentView isKindOfClass:[WebNetscapePluginDocumentView class]]) {
+    if ([documentView isKindOfClass:[WebNetscapePluginDocumentView class]] ||
+        [documentView isKindOfClass:[WebPluginDocumentView class]]) {
         [self reload];
     } else if ([documentView isKindOfClass:[WebHTMLView class]]) {
         NSEnumerator *viewEnumerator = [[documentView subviews] objectEnumerator];
@@ -2457,9 +2460,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         while ((view = [viewEnumerator nextObject]) != nil) {
             if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]] ||
                 [view isKindOfClass:[WebNullPluginView class]] ||
-                [[view class] respondsToSelector:@selector(plugInViewWithArguments:)] ||
-                [view respondsToSelector:@selector(pluginInitialize)] ||
-                [view respondsToSelector:@selector(webPlugInInitialize)]) {
+                [WebPluginController isPlugInView:view]) {
                 [self reload];
                 break;
             }
