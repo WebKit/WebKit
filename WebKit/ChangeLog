@@ -1,3 +1,5 @@
+=== Safari-100 ===
+
 2003-09-09  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3414988.  Don't store absolute path to home directory.
