@@ -1,3 +1,17 @@
+2002-02-28  Richard Williamson  <rjw@apple.com>
+
+        Finished up progress notification for main document.  
+        Made the IFLoadProgress allocator accessible to KHTMLPart.mm.
+        
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[KHTMLPartLoadClient
+	setDataSource:]), (KHTMLPart::openURL):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[URLLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]):
+	* src/kwq/WCLoadProgress.h:
+
 2002-02-27  Kenneth Kocienda  <kocienda@apple.com>
 
 	I have changed the way that WebCore is glued to WebFoundation and WebKit. 

@@ -57,6 +57,8 @@
 
 #import <KWQView.h>
 
+#include <WCLoadProgress.h>
+
 @class IFWebDataSource;
 @class IFWebView;
 @class IFWebFrame;
@@ -100,6 +102,31 @@
 - (void *)_renderFramePart;
 @end
 
+typedef enum {
+    IF_LOAD_TYPE_CSS    = 1,
+    IF_LOAD_TYPE_IMAGE  = 2,
+    IF_LOAD_TYPE_SCRIPT = 3,
+    IF_LOAD_TYPE_HTML   = 4
+} IF_LOAD_TYPE;
+
+
+@interface IFLoadProgress : NSObject
+{
+    int bytesSoFar;	// 0 if this is the start of load
+    int totalToLoad;	// -1 if this is not known.
+                        // bytesSoFar == totalLoaded when complete
+    IF_LOAD_TYPE type;	// load types, either image, css, or jscript
+}
+- init;
+@end
+
+@protocol  IFLoadHandler
+- (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
+
+- (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
+
+@end
+
 static bool cache_init = false;
 
 static void recursive(const DOM::Node &pNode, const DOM::Node &node)
@@ -122,6 +149,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     @public
     KHTMLPart *m_part;
     NSData *m_data;
+    id dataSource;
 }
 @end
 
@@ -165,6 +193,12 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
     KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
     m_part->closeURL();
+
+    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
+    loadProgress->totalToLoad = [data length];
+    loadProgress->bytesSoFar = [data length];
+    [[dataSource controller] receivedProgress: (IFLoadProgress *)loadProgress forResource: [[sender url] absoluteString] fromDataSource: dataSource];
+
     [sender autorelease];
 }
 
@@ -179,6 +213,11 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
         m_data = [data retain];
     }
     m_part->slotData(sender, (const char *)[data bytes], [data length]);
+    
+    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
+    loadProgress->totalToLoad = [sender contentLength];
+    loadProgress->bytesSoFar = [data length];
+    [[dataSource controller] receivedProgress: (IFLoadProgress *)loadProgress forResource: [[sender url] absoluteString] fromDataSource: dataSource];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
@@ -189,6 +228,12 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
     KWQDEBUGLEVEL2 (0x2000, "result = %d, userData = 0x%08x\n", result, userData);
     [sender autorelease];
+}
+
+// Non-retained
+- (void)setDataSource: d
+{
+    dataSource = d;
 }
 
 
@@ -430,6 +475,8 @@ bool KHTMLPart::openURL( const KURL &url )
         urlString = [urlString substringToIndex:([urlString length] - 1)];
     }
     theURL = [NSURL URLWithString:urlString];
+
+    [d->m_recv setDataSource: getDataSource()];
     
     d->m_handle = [[IFURLHandle alloc] initWithURL:theURL];
     [d->m_handle addClient:d->m_recv];

@@ -59,7 +59,7 @@ using namespace khtml;
 using namespace DOM;
 
 
-static WCIFLoadProgressMakeFunc WCIFLoadProgressMake;
+WCIFLoadProgressMakeFunc WCIFLoadProgressMake;
 
 void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
 {
@@ -926,7 +926,8 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 typedef enum {
     IF_LOAD_TYPE_CSS    = 1,
     IF_LOAD_TYPE_IMAGE  = 2,
-    IF_LOAD_TYPE_SCRIPT = 3
+    IF_LOAD_TYPE_SCRIPT = 3,
+    IF_LOAD_TYPE_HTML   = 4
 } IF_LOAD_TYPE;
 
 
@@ -955,6 +956,11 @@ typedef enum {
 - (void)_removeURLHandle: (IFURLHandle *)handle;
 - controller;
 @end
+
+@interface WCURLHandle
+-(int)contentLength;
+@end
+
 
 @implementation URLLoadClient
 
@@ -994,6 +1000,7 @@ typedef enum {
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
+    id <IFLoadHandler> controller;
     void *userData;
     
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
@@ -1007,12 +1014,11 @@ typedef enum {
 
     m_loader->slotFinished(job);
     
-    id <IFLoadHandler> controller;
-    
-    controller = [m_dataSource controller];
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
     loadProgress->totalToLoad = [data length];
     loadProgress->bytesSoFar = [data length];
+
+    controller = [m_dataSource controller];
     [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 
     [sender autorelease];
@@ -1033,10 +1039,12 @@ typedef enum {
 
     id <IFLoadHandler> controller;
     
-    controller = [m_dataSource controller];
+
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
-    loadProgress->totalToLoad = -1;
+    loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [data length];
+    
+    controller = [m_dataSource controller];
     [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 }
 
