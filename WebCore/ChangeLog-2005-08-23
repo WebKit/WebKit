@@ -1,3 +1,15 @@
+2005-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed <rdar://problem/4037700> Every character typed causes stat call for /usr/share/icu/icudt32b_char.brk
+
+        * khtml/rendering/render_text.cpp:
+        (getCharacterBreakIterator): Added. Helper that sets up an iterator for the passed-in text.
+        Shares a single global iterator (fast, albeit not thread-safe).
+        (RenderText::previousOffset): Changed to call getCharacterBreakIterator.
+        (RenderText::nextOffset): Ditto.
+
 2005-03-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

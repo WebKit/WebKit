@@ -688,48 +688,53 @@ unsigned long InlineTextBox::caretMaxRenderedOffset() const
     return m_start + m_len;
 }
 
-long RenderText::previousOffset (long current) const
+#if HAVE_ICU_LIBRARY
+
+static UBreakIterator *getCharacterBreakIterator(const DOMStringImpl *i)
 {
-#if !HAVE_ICU_LIBRARY
-    long previousOffset = current - 1;
-    return previousOffset;
-#else
-    UErrorCode status = U_ZERO_ERROR;
-    
     // The locale is currently ignored when determining character cluster breaks.  This may change
     // in the future (according to Deborah Goldsmith).
-    UBreakIterator* iterator = ubrk_open (UBRK_CHARACTER, "en_us", (const UChar*)str->s, str->l, &status);
-    if (iterator) {
-        long off1 = ubrk_preceding (iterator, current);	
-        ubrk_close (iterator);
-        return off1;
+    static bool createdIterator = false;
+    static UBreakIterator *iterator;
+    UErrorCode status;
+    if (!createdIterator) {
+        status = U_ZERO_ERROR;
+        iterator = ubrk_open(UBRK_CHARACTER, "en_us", NULL, 0, &status);
     }
-    
-    return current - 1;
+    if (!iterator) {
+        return NULL;
+    }
+    status = U_ZERO_ERROR;
+    ubrk_setText(iterator, reinterpret_cast<const UChar *>(i->s), i->l, &status);
+    if (status != U_ZERO_ERROR) {
+        return NULL;
+    }
+    return iterator;
+}
+
 #endif
+
+long RenderText::previousOffset (long current) const
+{
+#if HAVE_ICU_LIBRARY
+    UBreakIterator *iterator = getCharacterBreakIterator(str);
+    if (iterator) {
+        return ubrk_preceding(iterator, current);
+    }
+#endif
+    return current - 1;
 }
 
 long RenderText::nextOffset (long current) const
 {
-#if !HAVE_ICU_LIBRARY
-    long nextOffset = current + 1;
-    return nextOffset;
-#else
-    UErrorCode status = U_ZERO_ERROR;
-
-    // The locale is currently ignored when determining character cluster breaks.  This may change
-    // in the future (according to Deborah Goldsmith).
-    UBreakIterator* iterator = ubrk_open (UBRK_CHARACTER, "en_us", (const UChar*)str->s, str->l, &status);
+#if HAVE_ICU_LIBRARY
+    UBreakIterator *iterator = getCharacterBreakIterator(str);
     if (iterator) {
-        long off1 = ubrk_following (iterator, current);
-        ubrk_close (iterator);
-        return off1;
+        return ubrk_following(iterator, current);
     }
-    
-    return current + 1;
 #endif
+    return current + 1;
 }
-
 
 #define LOCAL_WIDTH_BUF_SIZE	1024
 
