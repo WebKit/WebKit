@@ -1,5 +1,6 @@
 2005-03-08  Richard Williamson   <rjw@apple.com>
 
+        Fixed <rdar://problem/4036949> many JPEG images fail to incremental-load due to change in ImageIO JPEG header parsing (to be fixed in WebKit)
 	Fixed <rdar://problem/4042570> Need to check image properties for presence of width/height properties
 
 	ImageIO-55 changed how image properties are created.  They
