@@ -806,7 +806,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     Class viewFactory = [pluginPackage viewFactory];
     
     NSView *view = nil;
-    NSDictionary *arguments;
+    NSDictionary *arguments = nil;
     
     if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
         arguments = [NSDictionary dictionaryWithObjectsAndKeys:

@@ -1,3 +1,9 @@
+2004-10-05  John Sullivan  <sullivan@apple.com>
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:]):
+        initialize "arguments" var to nil to satisfy compiler on deployment build.
+
 2004-10-05  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3825442> first click lost for Dashboard
