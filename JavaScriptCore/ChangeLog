@@ -1,3 +1,10 @@
+2003-05-19  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3261096 - Make WebKit an umbrella framework
+	
+        * JavaScriptCore.pbproj/project.pbxproj: In a B&I build, compile as a
+	sub-umbrella of WebKit.
+
 2003-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

@@ -1,3 +1,10 @@
+2003-05-19  Maciej Stachowiak  <mjs@apple.com>
+
+        - fixed 3261096 - Make WebKit an umbrella framework
+
+        * WebKit.pbproj/project.pbxproj: Build WebKit as a public umbrella
+	framework when doing a B&I build.
+
 2003-05-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

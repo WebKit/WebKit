@@ -12,8 +12,9 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
 				EXPORTED_SYMBOLS_FILE = "WebCore-combined.exp";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -24,7 +25,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -118,7 +120,6 @@
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
 				255AF6590250FC030ECA149E,
-				6573C63B03A0BE5700FCA39F,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -126,22 +127,21 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebCore.exp;
-				FRAMEWORK_SEARCH_PATHS = "\"$(APPLE_INTERNAL_LIBRARY_DIR)/Frameworks\" \"${DSTROOT}/AppleInternal/Library/Frameworks\" \"${DSTROOT}/$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\"";
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = ForwardingHeaders;
-				INSTALL_PATH = "@executable_path/../Frameworks";
+				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";
 				LOCAL_SEG1_ADDR = 0x9000000;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
-				OTHER_LDFLAGS = "-no-c++filt -seg_addr_table_filename \"`if [ \"x${RC_RELEASE}\" = \"xPanther\" ];  then echo \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\"; else echo \"/Applications/Safari.app/Contents/Frameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\"; fi`\"";
+				OTHER_LDFLAGS = "-no-c++filt -seg_addr_table_filename \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\" -umbrella WebKit";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebCorePrefix.h;
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
-				SKIP_INSTALL = YES;
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "$(WARNING_COMMONFLAGS)";
 				WARNING_COMMONFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
@@ -152,7 +152,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = WebCore;
-			productInstallPath = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+			productInstallPath = /System/Library/Frameworks/WebKit.framework/Frameworks;
 			productName = WebKit;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -178,6 +178,7 @@
 </dict>
 </plist>
 ";
+			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -904,19 +905,6 @@
 					Private,
 				);
 			};
-		};
-		6573C63B03A0BE5700FCA39F = {
-			buildActionMask = 8;
-			files = (
-			);
-			generatedFileNames = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework/Versions/A/WebCore\" \"${SYMROOT}/WebCore.framework/Versions/A/WebCore\" ;\n    ditto \"${SYMROOT}/WebCore.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework/Versions/A/WebCore\";\nelse\n    ditto \"${SYMROOT}/WebCore.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/WebCore.framework\"\n    strip -S \"${DSTROOT}/AppleInternal/Library/Frameworks/WebCore.framework/Versions/A/WebCore\"\nfi";
 		};
 //650
 //651
@@ -8086,7 +8074,8 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
 				EXPORTED_SYMBOLS_FILE = WebCore.exp;
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;

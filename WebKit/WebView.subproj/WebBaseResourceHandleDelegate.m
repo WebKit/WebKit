@@ -271,7 +271,7 @@
     if([WebDataProtocol _webIsDataProtocolURL:[r URL]]) {
 	NSURL *baseURL = [request _webDataRequestBaseURL];
         if (baseURL == nil) {
-            baseURL = @"about:blank";
+            baseURL = [NSURL URLWithString:@"about:blank"];
 	}
         r = [[[NSURLResponse alloc] initWithURL:baseURL MIMEType:[r MIMEType] expectedContentLength:[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
     }

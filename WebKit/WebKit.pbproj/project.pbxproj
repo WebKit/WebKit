@@ -11,8 +11,9 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -23,7 +24,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -124,7 +126,6 @@
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
 				255AF6590250FC030ECA149E,
-				6573C62203A0BD7100FCA39F,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -132,22 +133,21 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\" \"$(APPLE_INTERNAL_LIBRARY_DIR)/Frameworks\" \"${DSTROOT}/AppleInternal/Library/Frameworks\" \"${DSTROOT}/$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/${SYSTEM_LIBRARY_DIR}/Frameworks\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "@executable_path/../Frameworks";
+				INSTALL_PATH = /System/Library/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";
 				LOCAL_SEG1_ADDR = 0x7000000;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DFRAMEWORK_NAME=WebKit";
-				OTHER_LDFLAGS = "-no-c++filt -seg_addr_table_filename \"`if [ \"x${RC_RELEASE}\" = \"xPanther\" ];  then echo \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\"; else echo \"/Applications/Safari.app/Contents/Frameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\"; fi`\"";
+				OTHER_LDFLAGS = "-no-c++filt -seg_addr_table_filename \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\" -sub_umbrella WebCore -sub_umbrella JavaScriptCore";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
-				SKIP_INSTALL = YES;
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wbad-function-cast -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-declarations -Wmissing-format-attribute -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;
@@ -156,7 +156,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = WebKit;
-			productInstallPath = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+			productInstallPath = /System/Library/Frameworks;
 			productName = WebKit;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -182,6 +182,7 @@
 </dict>
 </plist>
 ";
+			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -1517,19 +1518,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		6573C62203A0BD7100FCA39F = {
-			buildActionMask = 8;
-			files = (
-			);
-			generatedFileNames = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework/Versions/A/WebKit\" \"${SYMROOT}/WebKit.framework/Versions/A/WebKit\" ;\n    ditto \"${SYMROOT}/WebKit.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework/Versions/A/WebKit\";\nelse\n    ditto \"${SYMROOT}/WebKit.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/WebKit.framework\"\n    strip -S \"${DSTROOT}/AppleInternal/Library/Frameworks/WebKit.framework/Versions/A/WebKit\"\nfi";
 		};
 		6578F5DE045F817400000128 = {
 			fileEncoding = 30;
@@ -2988,7 +2976,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;

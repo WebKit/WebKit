@@ -11,8 +11,9 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -23,7 +24,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -110,7 +112,6 @@
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
 				F692A8D8025563E401FF60F7,
-				6573C62F03A0BDCD00FCA39F,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -121,18 +122,17 @@
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "@executable_path/../Frameworks";
+				INSTALL_PATH = "${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				LOCAL_SEG1_ADDR = 0x8000000;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
-				OTHER_LDFLAGS = "-seg_addr_table_filename \"`if [ \"x${RC_RELEASE}\" = \"xPanther\" ];  then echo \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\"; else echo \"/Applications/Safari.app/Contents/Frameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\"; fi`\"";
+				OTHER_LDFLAGS = "-seg_addr_table_filename \"${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Frameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\" -umbrella WebKit -allowable_client JSGlue";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = JavaScriptCorePrefix.h;
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = "";
-				SKIP_INSTALL = YES;
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;
@@ -141,7 +141,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = JavaScriptCore;
-			productInstallPath = "@executable_path/../Frameworks";
+			productInstallPath = "${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Frameworks";
 			productName = JavaScriptCore;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -169,6 +169,7 @@
 </dict>
 </plist>
 ";
+			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -587,19 +588,6 @@
 			settings = {
 			};
 		};
-		6573C62F03A0BDCD00FCA39F = {
-			buildActionMask = 8;
-			files = (
-			);
-			generatedFileNames = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"${SYMROOT}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" ;\n    ditto \"${SYMROOT}/JavaScriptCore.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\";\nelse\n    ditto \"${SYMROOT}/JavaScriptCore.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/JavaScriptCore.framework\"\n    strip -S \"${DSTROOT}/AppleInternal/Library/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore\"\nfi";
-		};
 //650
 //651
 //652
@@ -827,7 +815,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
-				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;
