@@ -1,5 +1,17 @@
 2002-05-02  John Sullivan  <sullivan@apple.com>
 
+	Implemented removing the root node bookmark (i.e.,
+	removing all bookmarks with one call).
+
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup _resetTopBookmark]): New method, releases
+	old topBookmark and creates new one.
+	(-[IFBookmarkGroup initWithFile:]): Call _resetTopBookmark.
+	(-[IFBookmarkGroup removeBookmark:]): If the bookmark being
+	removed is the top one, call _resetTopBookmark.
+
+2002-05-02  John Sullivan  <sullivan@apple.com>
+
 	Some more implementation of bookmarks code, enough to support
 	adding bookmarks to the Bookmarks menu (but not yet enough to
 	support persistent bookmarks).

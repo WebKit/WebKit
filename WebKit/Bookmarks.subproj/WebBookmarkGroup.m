@@ -19,6 +19,13 @@
     return [[[IFBookmarkGroup alloc] initWithFile:file] autorelease];
 }
 
+- (void)_resetTopBookmark
+{
+    [_topBookmark _setGroup:nil];
+    [_topBookmark autorelease];
+    _topBookmark = [[[IFBookmarkList alloc] initWithTitle:nil image:nil group:self] retain];
+}
+
 - (id)initWithFile: (NSString *)file
 {
     if (![super init]) {
@@ -26,7 +33,7 @@
     }
 
     _file = [file retain];
-    _topBookmark = [[[IFBookmarkList alloc] initWithTitle:nil image:nil group:self] retain];
+    [self _resetTopBookmark];
 
     // read history from disk
     [self loadBookmarkGroup];
@@ -63,10 +70,14 @@
 - (void)removeBookmark:(IFBookmark *)bookmark
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark group] == self);
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] != nil);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] != nil || bookmark == _topBookmark);
 
-    [[bookmark parent] _removeChild:bookmark];
-    [bookmark _setGroup:nil];
+    if (bookmark == _topBookmark) {
+        [self _resetTopBookmark];
+    } else {
+        [[bookmark parent] _removeChild:bookmark];
+        [bookmark _setGroup:nil];
+    }
     
     [self _sendBookmarkGroupChangedNotification];
 }
