@@ -229,16 +229,104 @@ VisiblePosition nextWordPosition(const VisiblePosition &c)
 
 // ---------
 
+static RootInlineBox *rootBoxForLine(const VisiblePosition &c, EAffinity affinity)
+{
+    Position p = c.deepEquivalent();
+    NodeImpl *node = p.node();
+    if (!node)
+        return 0;
+
+    RenderObject *renderer = node->renderer();
+    if (!renderer)
+        return 0;
+    
+    InlineBox *box = renderer->inlineBox(p.offset(), affinity);
+    if (!box)
+        return 0;
+    
+    return box->root();
+}
+
+VisiblePosition startOfLine(const VisiblePosition &c, EAffinity affinity)
+{
+    RootInlineBox *rootBox = rootBoxForLine(c, affinity);
+    if (!rootBox)
+        return VisiblePosition();
+    
+    InlineBox *startBox = rootBox->firstChild();
+    if (!startBox)
+        return VisiblePosition();
+
+    RenderObject *startRenderer = startBox->object();
+    if (!startRenderer)
+        return VisiblePosition();
+
+    NodeImpl *startNode = startRenderer->element();
+    if (!startNode)
+        return VisiblePosition();
+
+    long startOffset = 0;
+    if (startBox->isInlineTextBox()) {
+        InlineTextBox *startTextBox = static_cast<InlineTextBox *>(startBox);
+        startOffset = startTextBox->m_start;
+    }
+    return VisiblePosition(startNode, startOffset);
+}
+
+VisiblePosition endOfLine(const VisiblePosition &c, EAffinity affinity, EIncludeLineBreak includeLineBreak)
+{
+    // FIXME: Need to implement the "include line break" version.
+    assert(includeLineBreak == DoNotIncludeLineBreak);
+
+    RootInlineBox *rootBox = rootBoxForLine(c, affinity);
+    if (!rootBox)
+        return VisiblePosition();
+    
+    InlineBox *endBox = rootBox->lastChild();
+    if (!endBox)
+        return VisiblePosition();
+
+    RenderObject *endRenderer = endBox->object();
+    if (!endRenderer)
+        return VisiblePosition();
+
+    NodeImpl *endNode = endRenderer->element();
+    if (!endNode)
+        return VisiblePosition();
+
+    long endOffset = 1;
+    if (endBox->isInlineTextBox()) {
+        InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);
+        endOffset = endTextBox->m_start + endTextBox->m_len;
+    }
+    return VisiblePosition(endNode, endOffset);
+}
+
+bool inSameLine(const VisiblePosition &a, EAffinity aa, const VisiblePosition &b, EAffinity ab)
+{
+    return a.isNotNull() && startOfLine(a, aa) == startOfLine(b, ab);
+}
+
+bool isStartOfLine(const VisiblePosition &p, EAffinity affinity)
+{
+    return p.isNotNull() && p == startOfLine(p, affinity);
+}
+
+bool isEndOfLine(const VisiblePosition &p, EAffinity affinity)
+{
+    return p.isNotNull() && p == endOfLine(p, affinity, DoNotIncludeLineBreak);
+}
+
 VisiblePosition previousLinePosition(const VisiblePosition &c, EAffinity affinity, int x)
 {
-    Position pos = affinity == UPSTREAM ? c.deepEquivalent() : c.downstreamDeepEquivalent();
-    return VisiblePosition(pos.previousLinePosition(x, affinity));
+    Position p = affinity == UPSTREAM ? c.deepEquivalent() : c.downstreamDeepEquivalent();
+    return VisiblePosition(p.previousLinePosition(x, affinity));
 }
 
 VisiblePosition nextLinePosition(const VisiblePosition &c, EAffinity affinity, int x)
 {
-    Position pos = affinity == UPSTREAM ? c.deepEquivalent() : c.downstreamDeepEquivalent();
-    return VisiblePosition(pos.nextLinePosition(x, affinity));
+    Position p = affinity == UPSTREAM ? c.deepEquivalent() : c.downstreamDeepEquivalent();
+    return VisiblePosition(p.nextLinePosition(x, affinity));
 }
 
 // ---------
@@ -262,7 +350,7 @@ static unsigned endSentenceBoundary(const QChar *characters, unsigned length)
     return end;
 }
 
-VisiblePosition endOfSentence(const VisiblePosition &c, EIncludeLineBreak includeLineBreak)
+VisiblePosition endOfSentence(const VisiblePosition &c)
 {
     return nextBoundary(c, endSentenceBoundary);
 }
@@ -389,17 +477,17 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
 
 bool inSameParagraph(const VisiblePosition &a, const VisiblePosition &b)
 {
-    return a == b || startOfParagraph(a) == startOfParagraph(b);
+    return a.isNotNull() && startOfParagraph(a) == startOfParagraph(b);
 }
 
 bool isStartOfParagraph(const VisiblePosition &pos)
 {
-    return pos == startOfParagraph(pos);
+    return pos.isNotNull() && pos == startOfParagraph(pos);
 }
 
 bool isEndOfParagraph(const VisiblePosition &pos)
 {
-    return pos == endOfParagraph(pos, DoNotIncludeLineBreak);
+    return pos.isNotNull() && pos == endOfParagraph(pos, DoNotIncludeLineBreak);
 }
 
 VisiblePosition previousParagraphPosition(const VisiblePosition &p, EAffinity affinity, int x)
@@ -424,6 +512,158 @@ VisiblePosition nextParagraphPosition(const VisiblePosition &p, EAffinity affini
         pos = n;
     } while (inSameParagraph(p, pos));
     return pos;
+}
+
+// ---------
+
+// written, but not yet tested
+VisiblePosition startOfBlock(const VisiblePosition &c)
+{
+    Position p = c.deepEquivalent();
+    NodeImpl *startNode = p.node();
+    if (!startNode)
+        return VisiblePosition();
+
+    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+
+    NodeImpl *node = startNode;
+    long offset = p.offset();
+
+    for (NodeImpl *n = startNode; n; n = n->traversePreviousNodePostOrder(startBlock)) {
+        RenderObject *r = n->renderer();
+        if (!r)
+            continue;
+        RenderStyle *style = r->style();
+        if (style->visibility() != VISIBLE)
+            continue;
+        if (r->isBlockFlow())
+            break;
+        if (r->isText()) {
+            node = n;
+            offset = 0;
+        } else if (r->isReplaced()) {
+            node = n;
+            offset = 0;
+        }
+    }
+
+    return VisiblePosition(node, offset);
+}
+
+// written, but not yet tested
+VisiblePosition endOfBlock(const VisiblePosition &c, EIncludeLineBreak includeLineBreak)
+{
+    Position p = c.deepEquivalent();
+
+    NodeImpl *startNode = p.node();
+    if (!startNode)
+        return VisiblePosition();
+
+    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+    NodeImpl *stayInsideBlock = includeLineBreak ? 0 : startBlock;
+    
+    NodeImpl *node = startNode;
+    long offset = p.offset();
+
+    for (NodeImpl *n = startNode; n; n = n->traverseNextNode(stayInsideBlock)) {
+        RenderObject *r = n->renderer();
+        if (!r)
+            continue;
+        RenderStyle *style = r->style();
+        if (style->visibility() != VISIBLE)
+            continue;
+        if (r->isBlockFlow()) {
+            if (includeLineBreak)
+                return VisiblePosition(n, 0);
+            break;
+        }
+        if (r->isText()) {
+            if (includeLineBreak && !n->isAncestor(startBlock))
+                return VisiblePosition(n, 0);
+            node = n;
+            offset = static_cast<RenderText *>(r)->length();
+        } else if (r->isReplaced()) {
+            node = n;
+            offset = 1;
+            if (includeLineBreak && !n->isAncestor(startBlock))
+                break;
+        }
+    }
+
+    return VisiblePosition(node, offset);
+}
+
+bool inSameBlock(const VisiblePosition &a, const VisiblePosition &b)
+{
+    return a.isNotNull() && startOfBlock(a) == startOfBlock(b);
+}
+
+bool isStartOfBlock(const VisiblePosition &pos)
+{
+    return pos.isNotNull() && pos == startOfBlock(pos);
+}
+
+bool isEndOfBlock(const VisiblePosition &pos)
+{
+    return pos.isNotNull() && pos == endOfBlock(pos, DoNotIncludeLineBreak);
+}
+
+// ---------
+
+VisiblePosition startOfDocument(const VisiblePosition &c)
+{
+    Position p = c.deepEquivalent();
+    NodeImpl *node = p.node();
+    if (!node)
+        return VisiblePosition();
+
+    DocumentImpl *doc = node->getDocument();
+    if (!doc)
+        return VisiblePosition();
+
+    return VisiblePosition(doc->documentElement(), 0);
+}
+
+VisiblePosition endOfDocument(const VisiblePosition &c)
+{
+    Position p = c.deepEquivalent();
+    NodeImpl *node = p.node();
+    if (!node)
+        return VisiblePosition();
+
+    DocumentImpl *doc = node->getDocument();
+    if (!doc)
+        return VisiblePosition();
+
+    NodeImpl *docElem = doc->documentElement();
+    if (!node)
+        return VisiblePosition();
+
+    return VisiblePosition(docElem, docElem->childNodeCount());
+}
+
+bool inSameDocument(const VisiblePosition &a, const VisiblePosition &b)
+{
+    Position ap = a.deepEquivalent();
+    NodeImpl *an = ap.node();
+    if (!an)
+        return false;
+    Position bp = b.deepEquivalent();
+    NodeImpl *bn = bp.node();
+    if (an == bn)
+        return true;
+
+    return an->getDocument() == bn->getDocument();
+}
+
+bool isStartOfDocument(const VisiblePosition &p)
+{
+    return p.isNotNull() && p.previous().isNull();
+}
+
+bool isEndOfDocument(const VisiblePosition &p)
+{
+    return p.isNotNull() && p.next().isNull();
 }
 
 } // namespace khtml

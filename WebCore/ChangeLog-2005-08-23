@@ -1,3 +1,49 @@
+2005-01-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Harrison.
+
+        - fixed <rdar://problem/3947901> REGRESSION (Mail): Pasting paragraph of rich text leaves insertion point before pasted text
+        - fixed <rdar://problem/3949790> hitting return after underlined line results in too much or too little underlined
+        - fixed <rdar://problem/3981759> nil-deref and crash when pasting just a paragraph break
+        - fixed a couple problems I discovered while working with bug 3949790
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::applyInlineStyle): Pass StayInBlock to upstream. Without this, we end up going too far
+        upstream in the test case in bug 3949790.
+        (khtml::ApplyStyleCommand::removeInlineStyle): Pass StayInBlock to upstream and downstream. Same reason as above.
+        (khtml::ReplaceSelectionCommand::doApply): Update endPos if inserting a new node and endPos is using that node's
+        parent and an offset past the node being inserted. That change fixes a problem with the position of the insertion point
+        after pasting into the top level of a document (from test cases in 3947901 and 3949790). When setting insertionPos, use
+        code that works when lastNodeInserted is a block rather than a text node. That change fixes a problem where a newline is
+        not added when pasting an entire paragraph into the end of a document (from test case in 3949790). Added nil check before
+        checking if lastNodeInserted is a <br> element, which fixes the crash when pasting just a paragraph break.
+
+        * khtml/editing/visible_units.h: Filled out the set of calls to add some boolean checks for lines (needed for the
+        bug fix), and calls for blocks (not yet implemented), and documents. The document checks may need refinement to
+        properly handle documents with a mix of editable and non-editable content, but for now they just refactor code
+        and make things a little clearer. Also removed the "include line break" parameter from endOfSentence.
+        * khtml/editing/visible_units.cpp:
+        (khtml::rootBoxForLine): Added.
+        (khtml::startOfLine): Added. Algorithm taken from selectionForLine in selection.cpp.
+        (khtml::endOfLine): Ditto.
+        (khtml::inSameLine): Added.
+        (khtml::isStartOfLine): Added.
+        (khtml::isEndOfLine): Added.
+        (khtml::endOfSentence): Removed "include line break" parameter.
+        (khtml::inSameParagraph): Added a null check.
+        (khtml::isStartOfParagraph): Ditto.
+        (khtml::isEndOfParagraph): Ditto.
+        (khtml::startOfBlock): Added.
+        (khtml::endOfBlock): Added.
+        (khtml::inSameBlock): Added.
+        (khtml::isStartOfBlock): Added.
+        (khtml::isEndOfBlock): Added.
+        (khtml::startOfDocument): Added.
+        (khtml::endOfDocument): Added.
+        (khtml::inSameDocument): Added.
+        (khtml::isStartOfDocument): Added.
+        (khtml::isEndOfDocument): Added.
+
 2005-01-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

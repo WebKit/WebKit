@@ -46,14 +46,17 @@ VisiblePosition startOfLine(const VisiblePosition &, EAffinity);
 VisiblePosition endOfLine(const VisiblePosition &, EAffinity, EIncludeLineBreak = DoNotIncludeLineBreak);
 VisiblePosition previousLinePosition(const VisiblePosition &, EAffinity, int x);
 VisiblePosition nextLinePosition(const VisiblePosition &, EAffinity, int x);
+bool inSameLine(const VisiblePosition &, EAffinity, const VisiblePosition &, EAffinity);
+bool isStartOfLine(const VisiblePosition &, EAffinity);
+bool isEndOfLine(const VisiblePosition &, EAffinity);
 
 // sentences
 VisiblePosition startOfSentence(const VisiblePosition &);
-VisiblePosition endOfSentence(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+VisiblePosition endOfSentence(const VisiblePosition &);
 VisiblePosition previousSentencePosition(const VisiblePosition &, EAffinity, int x);
 VisiblePosition nextSentencePosition(const VisiblePosition &, EAffinity, int x);
 
-// paragraphs
+// paragraphs (perhaps a misnomer, can be divided by line break elements)
 VisiblePosition startOfParagraph(const VisiblePosition &);
 VisiblePosition endOfParagraph(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
 VisiblePosition previousParagraphPosition(const VisiblePosition &, EAffinity, int x);
@@ -61,6 +64,20 @@ VisiblePosition nextParagraphPosition(const VisiblePosition &, EAffinity, int x)
 bool inSameParagraph(const VisiblePosition &, const VisiblePosition &);
 bool isStartOfParagraph(const VisiblePosition &);
 bool isEndOfParagraph(const VisiblePosition &);
+
+// blocks (true paragraphs; line break elements don't break blocks)
+VisiblePosition startOfBlock(const VisiblePosition &);
+VisiblePosition endOfBlock(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+bool inSameBlock(const VisiblePosition &, const VisiblePosition &);
+bool isStartOfBlock(const VisiblePosition &);
+bool isEndOfBlock(const VisiblePosition &);
+
+// document
+VisiblePosition startOfDocument(const VisiblePosition &);
+VisiblePosition endOfDocument(const VisiblePosition &);
+bool inSameDocument(const VisiblePosition &, const VisiblePosition &);
+bool isStartOfDocument(const VisiblePosition &);
+bool isEndOfDocument(const VisiblePosition &);
 
 } // namespace DOM
 
