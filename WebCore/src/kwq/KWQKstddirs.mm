@@ -26,14 +26,20 @@
 #include <kstddirs.h>
 #include <kwqdebug.h>
 
-QString locate(const char *type, const QString& filename,
-        const KInstance* instance)
+QString locate(const char *type, const QString& filename, const KInstance* instance)
 {
-    return "/symroots/appdata/"+filename;
+    NSBundle *wkBundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
+    NSString *subpath = QSTRING_TO_NSSTRING(filename);
+    NSString *file = [subpath lastPathComponent];
+    
+    if([file isEqualToString:@"html4.css"]){
+        return NSSTRING_TO_QSTRING([wkBundle pathForResource:@"html4" ofType:@"css"]);
+    }else{
+        return  "/symroots/appdata/" + filename;
+    }
 }
 
-QString locateLocal(const char *type, const QString &filename,
-        const KInstance *instance)
+QString locateLocal(const char *type, const QString &filename, const KInstance *instance)
 {
     return "/symroots/appdata/"+filename;
 }
