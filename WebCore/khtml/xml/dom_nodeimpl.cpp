@@ -1710,10 +1710,8 @@ NodeImpl *NodeBaseImpl::removeChild ( NodeImpl *oldChild, int &exceptioncode )
 
 void NodeBaseImpl::removeChildren()
 {
-    NodeImpl *n, *next;
-    for( n = _first; n != 0; n = next )
-    {
-        next = n->nextSibling();
+    while (NodeImpl *n = _first) {
+        NodeImpl *next = n->nextSibling();
         if (n->attached())
 	    n->detach();
         if (n->inDocument())
@@ -1721,10 +1719,11 @@ void NodeBaseImpl::removeChildren()
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
-        if( !n->refCount() )
+        if (!n->refCount())
             delete n;
+        _first = next;
     }
-    _first = _last = 0;
+    _last = 0;
 }
 
 
