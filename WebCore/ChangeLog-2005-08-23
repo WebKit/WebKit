@@ -1,3 +1,14 @@
+2003-04-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3213854 -- REGRESSION: can't click on a text field to select it
+	- fixed 3201477 -- friends links don't work on hyatt's blog
+
+        * khtml/rendering/render_object.cpp: (RenderObject::nodeAtPoint): Skip floating objects when
+        hit testing children.
+        * khtml/rendering/render_inline.cpp: (RenderInline::nodeAtPoint): Ditto.
+
 2003-04-01  Trey Matteson  <trey@apple.com>
 
 	3119711 - redirects to anchors leave window half-loaded (was SCClib.org is half loaded, half rendered)
