@@ -231,8 +231,8 @@ static const char * const stateNames[6] = {
             khtml::RenderPart *renderPartFrame = [self _renderFramePart];
             if (renderPartFrame && isDocumentHTML) {
                 // Setting the widget will delete the previous KHTMLView associated with the frame.
-                renderPartFrame->setWidget([documentView _widget]);
                 [documentView _takeOwnershipOfWidget];
+                renderPartFrame->setWidget([documentView _widget]);
             }
            
             // Now that the provisional data source is committed, release it.
