@@ -1616,7 +1616,6 @@ void KHTMLPart::checkCompleted()
 
   d->m_view->complete();
 
-#ifndef APPLE_CHANGES
   if ( !d->m_redirectURL.isEmpty() )
   {
     // Do not start redirection for frames here! That action is
@@ -1633,7 +1632,6 @@ void KHTMLPart::checkCompleted()
     else
       emit completed();
   }
-#endif
 
   // find the alternate stylesheets
   QStringList sheets;
@@ -3195,6 +3193,8 @@ void KHTMLPart::slotChildStarted( KIO::Job *job )
   }
 }
 
+#endif
+
 void KHTMLPart::slotChildCompleted()
 {
   slotChildCompleted( false );
@@ -3202,18 +3202,21 @@ void KHTMLPart::slotChildCompleted()
 
 void KHTMLPart::slotChildCompleted( bool complete )
 {
+#ifndef APPLE_CHANGES
   khtml::ChildFrame *child = frame( sender() );
 
   assert( child );
 
   child->m_bCompleted = true;
   child->m_args = KParts::URLArgs();
-
+#endif
   if ( parentPart() == 0 )
     d->m_bPendingChildRedirection = (d->m_bPendingChildRedirection || complete);
 
   checkCompleted();
 }
+
+#ifndef APPLE_CHANGES
 
 void KHTMLPart::slotChildURLRequest( const KURL &url, const KParts::URLArgs &args )
 {
@@ -3273,6 +3276,8 @@ void KHTMLPart::slotChildURLRequest( const KURL &url, const KParts::URLArgs &arg
   }
 }
 
+#endif // APPLE_CHANGES
+
 khtml::ChildFrame *KHTMLPart::frame( const QObject *obj )
 {
     assert( obj->inherits( "KParts::ReadOnlyPart" ) );
@@ -3286,8 +3291,6 @@ khtml::ChildFrame *KHTMLPart::frame( const QObject *obj )
 
     return 0L;
 }
-
-#endif // APPLE_CHANGES
 
 KHTMLPart *KHTMLPart::findFrame( const QString &f )
 {

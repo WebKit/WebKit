@@ -1,3 +1,20 @@
+2002-08-08  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix to get onLoad to fire, so the iBench test works.
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::checkCompleted): Put back some needed code that was
+	ifdef'd out (the part that emits completed()).
+        (KHTMLPart::slotChildCompleted): Enabled; ifdef'd out part.
+        (KHTMLPart::frame): Enabled.
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+	(KHTMLPart::completed): Hack to get completed signal delivered to
+	parent.
+        (KWQKHTMLPartImpl::requestFrame): Initialize m_part
+        * kwq/WebCoreBridge.h: createChildFrameNamed method now returns
+	the bridge for the child frame.
+
 2002-08-08  Richard Williamson (Local)  <rjw@apple.com>
 
         Move stuff out of core into kit.

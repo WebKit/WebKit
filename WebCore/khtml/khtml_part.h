@@ -740,6 +740,11 @@ signals:
    */
   void nodeActivated(const DOM::Node &);
 
+#ifdef APPLE_CHANGES
+  void completed();
+  void completed(bool);
+#endif
+
 protected:
 
   /**

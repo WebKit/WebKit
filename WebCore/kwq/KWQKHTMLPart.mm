@@ -68,6 +68,24 @@ static void redirectionTimerMonitor(void *context)
     impl->redirectionTimerStartedOrStopped();
 }
 
+void KHTMLPart::completed()
+{
+    if (parentPart() != 0) {
+	KWQ_ASSERT (parentPart()->frame(this) != NULL);
+	parentPart()->frame(this)->m_bCompleted = true;
+	parentPart()->slotChildCompleted();
+    }
+}
+
+void KHTMLPart::completed(bool arg)
+{
+    if (parentPart() != 0) {
+	KWQ_ASSERT (parentPart()->frame(this) != NULL);
+	parentPart()->frame(this)->m_bCompleted = true;
+	parentPart()->slotChildCompleted(arg);
+    }
+}
+
 KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     : part(p), d(part->d)
 {
@@ -187,9 +205,11 @@ bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, cons
     KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", frameName.ascii());
     
     HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
-    if (![bridge createChildFrameNamed:frameName.getNSString() withURL:childURL
-            renderPart:frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
-            marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()]) {
+    WebCoreBridge *childBridge = [bridge createChildFrameNamed:frameName.getNSString() withURL:childURL
+				  renderPart:frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
+				  marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()];
+
+    if (!childBridge) {
         return false;
     }
     
@@ -198,6 +218,7 @@ bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, cons
     childFrame.m_type = isIFrame ? khtml::ChildFrame::IFrame : khtml::ChildFrame::Frame;
     childFrame.m_frame = frame;
     childFrame.m_params = params;
+    childFrame.m_part = [childBridge part];
     d->m_frames.append(childFrame);
 
 #ifdef _SUPPORT_JAVASCRIPT_URL_    
