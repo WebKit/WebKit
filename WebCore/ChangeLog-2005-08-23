@@ -1,3 +1,11 @@
+2003-01-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- 3158477 -- text break locator leak leads to giant (2.04 GB) VSIZE idling at livepage
+
+        * khtml/rendering/break_lines.cpp: (isBreakable): Dispose the text locator.
+
 2003-01-28  David Hyatt  <hyatt@apple.com>
 
 	Fix quirks/strict regression caused by improper use of findRev (should
