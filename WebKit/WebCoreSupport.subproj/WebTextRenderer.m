@@ -27,7 +27,10 @@
 #define IS_CONTROL_CHARACTER(c) ((c) < 0x0020 || (c) == 0x007F)
 
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
-#define CEIL_TO_INT(x) ((int)(x + (1.0 - FLT_EPSILON)))
+
+// Loose precision beyond 1000ths place.  This is a work-around to CG adding
+// small errors to some metrics.
+#define CEIL_TO_INT(x) ((int)((((int)(x*1000.0))/(1000.0)) + (1.0 - FLT_EPSILON)))
 
 #define LOCAL_BUFFER_SIZE 1024
 
@@ -462,11 +465,15 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     if (rtl){
         UniChar *shaped;
         int lengthOut;
-        characters = shapedString ((UniChar *)&characters[from], length, from, to, 1, &lengthOut);
+        shaped = shapedString ((UniChar *)&characters[from], length,
+                               (from == -1 ? 0 : from),
+                               (to == -1 ? (int)length : to),
+                               1, &lengthOut);
         printf ("%d input, %d output\n", length, lengthOut);
         for (i = 0; i < (int)length; i++){
             printf ("0x%04x shaped to 0x%04x\n", characters[i], shaped[i]);
         }
+        characters = shaped;
     }
 #endif
 
@@ -481,7 +488,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         fonts: fontBuffer
         glyphs: glyphBuffer
         numGlyphs: &numGlyphs];
-    
+
     if (from == -1)
         from = 0;
     if (to == -1)
@@ -749,7 +756,7 @@ static const char *joiningNames[] = {
                     if (widthBuffer)
                         widthBuffer[numGlyphs - 1] += delta;
                 }   
-                lastWidth = ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
+                lastWidth = CEIL_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
                 if (padding > 0){
                     // Only use left over padding if note evenly divisible by 
                     // number of spaces.

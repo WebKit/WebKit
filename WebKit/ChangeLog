@@ -1,3 +1,14 @@
+2002-11-05  Richard Williamson  <rjw@apple.com>
+
+        Fixed a couple of issues that Dave highlighted w/ his whitespace
+        fixes.  CG sometimes introduces very small 'error' in metrics, specifically
+        we saw character widths of 20.0000019 that should have been 20.  As a 
+        work-around we loose precision beyond the 1000th place.  Also, always
+        ceil spaces.
+                
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+
 2002-11-05  Darin Adler  <darin@apple.com>
 
 	- fixed 3084704 -- crash in HTMLTokenizer on page with JavaScript
