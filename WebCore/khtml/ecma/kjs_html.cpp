@@ -3245,7 +3245,7 @@ void KJS::HTMLSelectCollection::tryPut(ExecState *exec, const Identifier &proper
 
     if (diff < 0) { // add dummy elements
       do {
-        element.add(element.ownerDocument().createElement("OPTION"), DOM::HTMLElement());
+        element.add(element.ownerDocument().createElement("option"), DOM::HTMLElement());
       } while (++diff);
     }
     else // remove elements
@@ -3277,7 +3277,7 @@ void KJS::HTMLSelectCollection::tryPut(ExecState *exec, const Identifier &proper
   // out of array bounds ? first insert empty dummies
   if (diff > 0) {
     while (diff--) {
-      element.add(element.ownerDocument().createElement("OPTION"), before);
+      element.add(element.ownerDocument().createElement("option"), before);
     }
     // replace an existing entry ?
   } else if (diff < 0) {
@@ -3308,7 +3308,7 @@ bool OptionConstructorImp::implementsConstruct() const
 
 Object OptionConstructorImp::construct(ExecState *exec, const List &args)
 {
-  DOM::Element el = doc.createElement("OPTION");
+  DOM::Element el = doc.createElement("option");
   DOM::HTMLOptionElement opt = static_cast<DOM::HTMLOptionElement>(el);
   int sz = args.size();
   DOM::Text t = doc.createTextNode("");

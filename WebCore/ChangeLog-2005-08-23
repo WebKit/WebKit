@@ -1,3 +1,17 @@
+2005-02-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	<rdar://problem/4017066> crash in KJS::ValueImp::dispatchType() every time I load www.nytimes.com/pages/automobiles
+
+	When creating option elements, use lowercase "option" instead of
+	uppercase "OPTION" to create option elements, because only
+	lowercase works for XHTML.
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLSelectCollection::tryPut):
+        (OptionConstructorImp::construct):
+
 2005-02-22  Chris Blumenberg  <cblu@apple.com>
 
 	WebCore fix for: <rdar://problem/3918056> Mail not line breaking my <pre> formatted emails on replies
