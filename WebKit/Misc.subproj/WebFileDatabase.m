@@ -216,6 +216,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
             }
             NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
             [defaultManager _web_removeFileOnlyAtPath:filePath];
+            [filePath release];
             WebLRUFileListRemoveOldestFileFromList(lru);
         }
         [mutex unlock];
