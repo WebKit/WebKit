@@ -48,6 +48,12 @@ namespace khtml {
 VisiblePosition::VisiblePosition(NodeImpl *node, long offset, EAffinity affinity)
 {
     Position pos = Position(node, offset);
+
+    // A first step toward eliminating the affinity parameter.
+    // For <br> 0, it's important not to move past the <br>.
+    if (node && node->id() == ID_BR && offset == 0)
+        affinity = UPSTREAM;
+
     switch (affinity) {
         case UPSTREAM:
             initUpstream(pos);
@@ -63,6 +69,11 @@ VisiblePosition::VisiblePosition(NodeImpl *node, long offset, EAffinity affinity
 
 VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity)
 {
+    // A first step toward eliminating the affinity parameter.
+    // For <br> 0, it's important not to move past the <br>.
+    if (pos.node() && pos.node()->id() == ID_BR && pos.offset() == 0)
+        affinity = UPSTREAM;
+
     switch (affinity) {
         case UPSTREAM:
             initUpstream(pos);

@@ -1,5 +1,20 @@
 2004-10-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken (or arguably done by Ken, reviewed by Darin).
+
+        - fixed <rdar://problem/3823828> REGRESSION (Mail): Clicking past end of any line puts insertion point at beginning of next line
+
+        * khtml/editing/visible_position.cpp: (khtml::VisiblePosition::VisiblePosition):
+        Check for an offset of 0 and a <br> and use UPSTREAM affinity in that case.
+        This is a short term fix for something that needs a better longer-term fix.
+
+        - fixed <rdar://problem/3823816> REGRESSION (Mail): double-clicking first word on line also selects previous empty line
+
+        * khtml/editing/visible_units.cpp: (khtml::previousWordBoundary): Added a special
+        case for <br>. While I'm not sure why this regressed, I'm sure this fix is good.
+
+2004-10-01  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed <rdar://problem/3782117> CrashTracer: ..722 crashes at com.apple.WebCore: DOM::HTMLBodyElementImpl::insertedIntoDocument + 0x2c (AOL website)
