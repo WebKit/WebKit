@@ -26,8 +26,9 @@
 {
     BOOL result;
 
-    result = ([[WebCookieManager sharedCookieManager] acceptPolicy] == WebCookieAcceptPolicyAlways);
-
+    WebCookieAcceptPolicy acceptPolicy = [[WebCookieManager sharedCookieManager] acceptPolicy];
+    result = (acceptPolicy == WebCookieAcceptPolicyAlways || acceptPolicy == WebCookieAcceptPolicyOnlyFromMainDocumentDomain);
+    
     return result;
 }
 

@@ -1,3 +1,16 @@
+2002-11-05  Ken Kocienda  <kocienda@apple.com>
+
+	Fix for this bug:
+
+	Radar 3092747 (javascript cookieEnabled property returns incorrect value)
+
+	Now, we return "true" for navigator.cookieEnabled when 
+	"Only accept cookies from the same domain as the current page" option
+	is selected is user preferences.
+
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        (-[WebCookieAdapter cookiesEnabled])
+
 2002-11-05  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3091271 -- missing plug-in icon is on white
