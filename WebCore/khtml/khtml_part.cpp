@@ -3220,10 +3220,14 @@ bool KHTMLPart::frameExists( const QString &frameName )
 
 KHTMLPart *KHTMLPart::parentPart()
 {
+#ifdef APPLE_CHANGES
+  return impl->parentPart();
+#else
   if ( !parent() || !parent()->inherits( "KHTMLPart" ) )
     return 0L;
 
   return (KHTMLPart *)parent();
+#endif
 }
 
 #ifndef APPLE_CHANGES

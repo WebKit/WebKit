@@ -64,6 +64,8 @@ public:
 
     bool frameExists(const QString &frameName);
 
+    KHTMLPart *parentPart();
+
     void urlSelected(const QString &url, int button, int state, const QString &_target, KParts::URLArgs);
     bool requestFrame(khtml::RenderPart *frame, const QString &url, const QString &frameName, const QStringList &params, bool isIFrame);
     bool requestObject(khtml::RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args);

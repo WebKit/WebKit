@@ -685,3 +685,12 @@ IFWebDataSource *KWQKHTMLPartImpl::getDataSource()
 {
     return m_dataSource;
 }
+
+
+KHTMLPart *KWQKHTMLPartImpl::parentPart()
+{
+    IFWebDataSource *parent, *dataSource = getDataSource();
+    
+    parent = [dataSource parent];
+    return [parent _part];
+}

@@ -1,5 +1,16 @@
 2002-06-05  Richard Williamson  <rjw@apple.com>
 
+    Fixed window.top JS property (2939353).  This caused funny recursion problems at
+    www.megapixel.net and other pages that try to pop frames.
+
+	* khtml/khtml_part.cpp:
+	(KHTMLPart::parentPart):
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::parentPart):
+	* kwq/KWQKHTMLPartImpl.h:
+
+2002-06-05  Richard Williamson  <rjw@apple.com>
+
     Cleaned up call to frameNamed:.  Now use frame relative naming.
     Fixed various frame related bugs.
     
