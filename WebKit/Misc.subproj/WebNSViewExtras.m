@@ -98,13 +98,13 @@
     // we need to push some of the events back on.  It makes sense to put the first and last
     // drag events and the mouse up if there was one.
     if (mouseUp != nil) {
-        [NSApp postEvent: mouseUp atStart: YES];
+        [NSApp postEvent:mouseUp atStart:YES];
     }
     if (dragEvent != nil) {
-        [NSApp postEvent: dragEvent atStart: YES];
+        [NSApp postEvent:dragEvent atStart:YES];
     }
     if (firstEvent != mouseUp && firstEvent != dragEvent) {
-        [NSApp postEvent: firstEvent atStart: YES];
+        [NSApp postEvent:firstEvent atStart:YES];
     }
 
     return dragIt;

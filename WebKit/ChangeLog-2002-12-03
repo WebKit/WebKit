@@ -1,3 +1,19 @@
+2002-11-28  Darin Adler  <darin@apple.com>
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler createFileIfNecessary]): Add a FIXME.
+        (-[WebDownloadHandler writeDataForkData:resourceForkData:]): Notify that the file system has
+	changed so the Finder can respond to the size change.
+        (-[WebDownloadHandler finishedLoading]): Notify that the file system has changed now that the
+	download has completed and the files are closed (may be redundant now that we have the above,
+	but will do no harm).
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+	Use _web_isCaseInsensitiveEqualToString instead of lowercaseString.
+
+        * Misc.subproj/WebNSViewExtras.m: Tweak formatting.
+	
 2002-11-27  Richard Williamson   <rjw@apple.com>
 
         Fixed 3113393.  Client side redirects that happen <= 1 second

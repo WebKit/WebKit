@@ -172,7 +172,9 @@
     [dataSource _setDownloadPath:path];
 
     NSDictionary *fileAttributes = [lastDecoder fileAttributes];
-    if(!fileAttributes){
+    // FIXME: This assumes that if we get any file attributes, they will include the creation
+    // and modification date, which is not necessarily true.
+    if (!fileAttributes) {
         WebResourceResponse *response = [dataSource response];
         fileAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
             [response createdDate], NSFileCreationDate,
@@ -253,6 +255,8 @@
         [self cleanUpAfterFailure];
         return [self errorWithCode:WebErrorCannotWriteToFile];
     }
+
+    [[NSWorkspace sharedWorkspace] noteFileSystemChanged:[dataSource downloadPath]];
 
     return nil;
 }
@@ -342,6 +346,8 @@
     }
 
     [self closeFile];
+
+    [[NSWorkspace sharedWorkspace] noteFileSystemChanged:[dataSource downloadPath]];
 
     LOG(Download, "Download complete. Saved to: %@", [dataSource downloadPath]);
 
