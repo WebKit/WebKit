@@ -78,11 +78,15 @@
     if (_URLString != nil) {
         [dict setObject:_URLString forKey:URLStringKey];
     }
-    
+
+#if 0
+// FIXME 8/15/2002 -- temporarily removing support for storing iconURL (favIcon), due to architecture issues
     NSURL *iconURL = [_entry iconURL];
     if(iconURL) {
         [dict setObject:[iconURL absoluteString] forKey:IconURLStringKey];
     }
+#endif
+    
     return dict;
 }
 

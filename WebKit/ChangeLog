@@ -1,3 +1,18 @@
+2002-08-15  John Sullivan  <sullivan@apple.com>
+
+	Disabled support for storing favIcon URLs in bookmarks; Gramps realized
+	this is an architecture problem that needs a better solution, and he
+	didn't want to ship Alex-18 with this problem.
+
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        (-[WebBookmarkLeaf dictionaryRepresentation]):
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem dictionaryRepresentation]):
+	Commented out the code that added the iconURLString in the dictionary used
+	for writing out file. This dictionary is also used on the pasteboard, so this
+	change causes the favIcon not to be remembered when you drag from proxy icon
+	to favorites bar.
+
 === Alexander-18 ===
 
 2002-08-14  Chris Blumenberg  <cblu@apple.com>

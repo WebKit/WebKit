@@ -229,9 +229,12 @@
         [dict setObject: [NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
                  forKey: @"lastVisitedDate"];
     }
+#if 0
+// FIXME 8/15/2002 -- temporarily removing support for storing iconURL (favIcon), due to architecture issues
     if (_iconURL != nil) {
         [dict setObject: [_iconURL absoluteString] forKey: @"iconURL"];
     }
+#endif
 
     return dict;
 }
