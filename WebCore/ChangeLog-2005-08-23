@@ -1,3 +1,22 @@
+2005-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3971372> SWB: template function DOM_cast() won't compile with gcc 4.0
+        - fixed other gcc 4.0 compiling problems Patrick Beard pointed out on the phone
+
+        * kwq/DOMInternal.h: (DOM_cast): Change the "failToCompile()" trick to use a dependent name.
+        Nowadays, if a name is not dependent, it is checked at template definition time. But we want
+        a failure only at template instantiation time.
+
+        * ForwardingHeaders/editing/text_granularity.h: Added. Needed but a bug in the 3.3 compiler made
+        it compile anyway without this.
+
+        - other changes
+
+        * khtml/html/html_miscimpl.h: For clarity, mark these functions virtual too. They are automatically
+        virtual because the base class ones are virtual, but it's ugly to leave it this way.
+
 2005-01-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
