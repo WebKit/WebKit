@@ -1875,7 +1875,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
         }
 
 	if (_mouseDownMayStartDrag
-                && d->m_textElement == DOM::Selection::CHARACTER
+                && d->m_selectionGranularity == DOM::Selection::CHARACTER
                 && [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
 
             // We are starting a text/image/url drag, so the cursor should be an arrow

@@ -344,10 +344,8 @@ public:
   bool m_bMousePressed;
   DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
 
-#if APPLE_CHANGES
-  DOM::Selection::ETextGranularity m_textElement;
-  bool m_mouseMovedSinceLastMousePress:1;
-#endif
+  DOM::Selection::ETextGranularity m_selectionGranularity;
+  bool m_beganSelectingText;
 #if !APPLE_CHANGES
   QString m_overURL;
   QString m_overURLTarget;

@@ -1,3 +1,24 @@
+2004-05-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3259919>: (Shift click should extend selection)
+
+        * khtml/khtmlpart_p.h: Renamed m_textElement to m_selectionGranularity and
+        m_mouseMovedSinceLastMousePress to m_beganSelectingText.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventDoubleClick): Set m_beganSelectingText if the double-click
+        began selecting text.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::handleMousePressEventSingleClick): Added code to extend selection if shift is down.
+        (KHTMLPart::khtmlMousePressEvent): Remove code that sets the selection granularity to
+        "by character". We only want to do that if we start selecting with a single click.
+        Otherwise we want to leave the selection granularity alone.
+        (KHTMLPart::khtmlMouseReleaseEvent): Change the code that clears the selection on a plain old
+        click to check the m_beganSelectingText boolean so it won't run when you shift-click, for example.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::khtmlMouseMoveEvent): Updated for m_textElement
+        name change.
+
 2004-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
