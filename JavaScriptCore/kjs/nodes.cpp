@@ -738,6 +738,10 @@ Value FunctionCallNode::evaluate(ExecState *exec)
 
   Value v = ref.getValue(exec);
 
+    Object o = v.toObject(exec);
+    UString s = o.toString(exec);
+    //printf ("FunctionCallNode::evaluate  %s\n", s.ascii());
+    
   if (v.type() != ObjectType) {
 #ifndef NDEBUG
     printInfo(exec, "WARNING: Failed function call attempt on", v, line);

@@ -250,6 +250,7 @@ static const char * const stateNames[] = {
     
     [self stopLoading];
     [self _saveScrollPositionToItem:[_private currentItem]];
+
     [bridge closeURL];
 
     [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
@@ -532,7 +533,7 @@ static const char * const stateNames[] = {
 
 - (BOOL)_canCachePage
 {
-    return NO;
+    return [WebHistoryItem usePageCache];
 }
 
 - (void)_purgePageCache
@@ -568,6 +569,22 @@ static const char * const stateNames[] = {
         // but in the case where someone does, it means garbage outside
         // the occupied part of the scroll view.
         [[[self webView] frameScrollView] setDrawsBackground:NO];
+
+        // Cache the page, if possible.
+        if ([_private->bridge canCachePage] && [self _canCachePage] && [_private currentItem]){
+            if (![[_private currentItem] pageCache]){
+                NSLog (@"saving page cache for %@, %@", [self name], [[self dataSource] URL]);
+                [[_private currentItem] setPageCacheEnabled: YES];
+                [[self dataSource] _setStoredInPageCache: YES];
+                [[[_private currentItem] pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
+                [[[_private currentItem] pageCache] setObject: [[self webView] documentView] forKey: @"WebKitDocumentView"];
+                [_private->bridge saveDocumentToPageCache];
+                [self _purgePageCache];
+            }
+            else {
+                NSLog (@"already have page cache for %@, %@", [self name], [[self dataSource] URL]);
+            }
+        }
     }
     
     if (_private->state == WebFrameStateComplete) {
@@ -579,17 +596,6 @@ static const char * const stateNames[] = {
         [_private->scheduledLayoutTimer fire];
         ASSERT(_private->scheduledLayoutTimer == nil);
         [_private setPreviousItem:nil];
-
-        // Cache the page, if possible.
-        if ([_private->bridge canCachePage] && [self _canCachePage]){
-            LOG (PageCache, "enabling page cache for %@, %@", [self name], [[self dataSource] URL]);
-            [[_private currentItem] setPageCacheEnabled: YES];
-            [[self dataSource] _setStoredInPageCache: YES];
-            [[[_private currentItem] pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
-            [[[_private currentItem] pageCache] setObject: [[self webView] documentView] forKey: @"WebKitDocumentView"];
-            [_private->bridge saveDocumentToPageCache];
-            [self _purgePageCache];
-        }
     }
 }
 

@@ -69,4 +69,6 @@
 - (BOOL)pageCacheEnabled;
 - (void)setPageCacheEnabled: (BOOL)f;
 - (NSMutableDictionary *)pageCache;
++ (void)setUsePageCache: (BOOL)f;
++ (BOOL)usePageCache;
 @end

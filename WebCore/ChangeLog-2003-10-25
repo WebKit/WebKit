@@ -1,3 +1,11 @@
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
+        Tweaked some debugging info.
+        
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::detach):
+
 2002-11-25  Chris Blumenberg  <cblu@apple.com>
 
 	Use ^= to refer to OBJECTs with TYPEs that start with "image/". This is better than hard-coding image mime types.

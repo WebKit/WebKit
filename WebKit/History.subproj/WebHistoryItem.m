@@ -413,4 +413,18 @@
 {
     return pageCache;
 }
+
+// Off be default for now.
+static BOOL usePageCache = 0;
+
++ (void)setUsePageCache: (BOOL)f
+{
+    usePageCache = f;
+}
+
++ (BOOL)usePageCache
+{
+    return usePageCache;
+}
+
 @end

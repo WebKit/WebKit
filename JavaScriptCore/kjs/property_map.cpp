@@ -185,11 +185,35 @@ ValueImp *PropertyMap::get(const Identifier &name) const
     return 0;
 }
 
+#ifdef DEBUG_PROPERTIES
+static void printAttributes(int attributes)
+{
+    if (attributes == 0)
+        printf ("None ");
+    if (attributes & ReadOnly)
+        printf ("ReadOnly ");
+    if (attributes & DontEnum)
+        printf ("DontEnum ");
+    if (attributes & DontDelete)
+        printf ("DontDelete ");
+    if (attributes & Internal)
+        printf ("Internal ");
+    if (attributes & Function)
+        printf ("Function ");
+}
+#endif
+
 void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
 {
     checkConsistency();
 
     UString::Rep *rep = name._ustring.rep;
+    
+#ifdef DEBUG_PROPERTIES
+    printf ("adding property %s, attributes = 0x%08x (", name.ascii(), attributes);
+    printAttributes(attributes);
+    printf (")\n");
+#endif
     
 #if USE_SINGLE_ENTRY
     if (!_table) {
@@ -418,7 +442,8 @@ void PropertyMap::save(SavedProperties &p) const
 #endif
     } else {
         for (int i = 0; i != _table->size; ++i)
-            if (_table->entries[i].key && _table->entries[i].attributes == 0)
+            if (_table->entries[i].key && (_table->entries[i].attributes == 0 || _table->entries[i].attributes == (DontDelete | Internal)))
+            //if (_table->entries[i].key)
                 ++count;
     }
 
@@ -427,7 +452,9 @@ void PropertyMap::save(SavedProperties &p) const
         p._properties = 0;
         return;
     }
+    
     p._properties = new SavedProperty [count];
+    p._count = count;
     
     SavedProperty *prop = p._properties;
     
@@ -441,9 +468,11 @@ void PropertyMap::save(SavedProperties &p) const
 #endif
     } else {
         for (int i = 0; i != _table->size; ++i) {
-            if (_table->entries[i].key && _table->entries[i].attributes == 0) {
+            if (_table->entries[i].key && (_table->entries[i].attributes == 0 || _table->entries[i].attributes == (DontDelete | Internal))) {
+            //if (_table->entries[i].key) {
                 prop->key = Identifier(_table->entries[i].key);
                 prop->value = Value(_table->entries[i].value);
+                ++prop;
             }
         }
     }
@@ -451,8 +480,9 @@ void PropertyMap::save(SavedProperties &p) const
 
 void PropertyMap::restore(const SavedProperties &p)
 {
-    for (int i = 0; i != p._count; ++i)
+    for (int i = 0; i != p._count; ++i){
         put(p._properties[i].key, p._properties[i].value.imp(), 0);
+    }
 }
 
 #if DO_CONSISTENCY_CHECK
