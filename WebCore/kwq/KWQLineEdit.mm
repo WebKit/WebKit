@@ -347,11 +347,8 @@ void QLineEdit::setMaxResults(int maxResults)
 
 void QLineEdit::setPlaceholderString(const QString& placeholder)
 {
-    if (m_type != Search)
-        return;
-    
-    NSSearchField *searchField = (NSSearchField *)getView();
-    [[searchField cell] setPlaceholderString:placeholder.getNSString()];
+    NSTextField *textField = (NSTextField *)getView();
+    [[textField cell] setPlaceholderString:placeholder.getNSString()];
 }
 
 void QLineEdit::addSearchResult()

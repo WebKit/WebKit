@@ -1,5 +1,16 @@
 2005-01-04  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3936571, placeholder attribute should work for normal inputs for Dashboard.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::updateFromElement):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setPlaceholderString):
+
+2005-01-04  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3830936, hang on changeforamerica.com.  Make sure to ignore the style not yet available option when
 	returning pseudo-styles.
 	

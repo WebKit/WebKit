@@ -691,11 +691,11 @@ void RenderLineEdit::updateFromElement()
     
 #if APPLE_CHANGES
     // Handle updating the search attributes.
+    w->setPlaceholderString(element()->getAttribute(ATTR_PLACEHOLDER).string());
     if (w->type() == QLineEdit::Search) {
         w->setLiveSearch(!element()->getAttribute(ATTR_INCREMENTAL).isNull());
         w->setAutoSaveName(element()->getAttribute(ATTR_AUTOSAVE).string());
         w->setMaxResults(element()->maxResults());
-        w->setPlaceholderString(element()->getAttribute(ATTR_PLACEHOLDER).string());
     }
 #endif
 
