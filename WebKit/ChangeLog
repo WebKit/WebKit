@@ -1,3 +1,14 @@
+2003-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+	- fixed leak of WebIconLoader observed using leaks tool
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Tell the icon loader to stop loading.
+	Add a FIXME asking why we had to do this to fix the leak.
+        (-[WebDataSource _loadIcon]): Add an assertion.
+
 2003-01-03  Richard Williamson   <rjw@apple.com>
 
         Fix to 3131226.  Don't force a layout when the document view is set 

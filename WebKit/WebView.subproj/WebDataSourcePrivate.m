@@ -48,7 +48,10 @@
     ASSERT(!loading);
     
     [pluginController dataSourceWillBeDeallocated];
-    
+
+    // FIXME: We don't know why this is needed, but without it we leak icon loaders.
+    [iconLoader stopLoading];
+
     [resourceData release];
     [representation release];
     [request release];
@@ -556,6 +559,7 @@
         if([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL absoluteString]]){
             [self _updateIconDatabaseWithURL:_private->iconURL];
         }else{
+            ASSERT(!_private->iconLoader);
             _private->iconLoader = [[WebIconLoader alloc] initWithURL:_private->iconURL];
             [_private->iconLoader setDelegate:self];
             [_private->iconLoader startLoading];
