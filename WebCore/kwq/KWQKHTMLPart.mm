@@ -2939,3 +2939,13 @@ void KWQKHTMLPart::issuePasteCommand()
 {
     [_bridge issuePasteCommand];
 }
+
+void KWQKHTMLPart::postDidChangeSelectionNotification()
+{
+    [_bridge postDidChangeSelectionNotification];
+}
+
+void KWQKHTMLPart::postDidChangeNotification()
+{
+    [_bridge postDidChangeNotification];
+}

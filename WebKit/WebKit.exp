@@ -75,6 +75,11 @@ _WebURLPboardType
 _WebViewProgressStartedNotification
 _WebViewProgressEstimateChangedNotification
 _WebViewProgressFinishedNotification
+_WebViewDidBeginEditingNotification
+_WebViewDidChangeNotification
+_WebViewDidEndEditingNotification
+_WebViewDidChangeTypingStyleNotification
+_WebViewDidChangeSelectionNotification
 
 ##
 ## Carbon Support

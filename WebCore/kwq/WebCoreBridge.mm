@@ -32,6 +32,7 @@
 #import "dom_position.h"
 #import "dom_selection.h"
 #import "dom2_rangeimpl.h"
+#import "dom2_viewsimpl.h"
 #import "htmlediting.h"
 #import "html_documentimpl.h"
 #import "html_formimpl.h"

@@ -1166,6 +1166,16 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return applet;
 }
 
+- (void)postDidChangeNotification
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[_frame webView]];
+}
+
+- (void)postDidChangeSelectionNotification
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[_frame webView]];
+}
+
 - (void)registerCommandForUndo:(id)arg
 {
     NSUndoManager *undoManager = [[_frame webView] undoManager];

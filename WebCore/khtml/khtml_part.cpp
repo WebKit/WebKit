@@ -2605,6 +2605,10 @@ void KHTMLPart::notifySelectionChanged(bool endTyping)
     d->m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
     
     emitSelectionChanged();
+    
+#if APPLE_CHANGES
+    KWQ(this)->postDidChangeSelectionNotification();
+#endif
 }
 
 void KHTMLPart::setXPosForVerticalArrowNavigation(int x)
@@ -5112,6 +5116,7 @@ void KHTMLPart::appliedEditing(EditCommand &cmd)
     if (d->m_lastEditCommand != cmd) {
 #if APPLE_CHANGES
         KWQ(this)->registerCommandForUndo(cmd);
+        KWQ(this)->postDidChangeNotification();
 #endif
     }
     d->m_lastEditCommand = cmd;
@@ -5123,6 +5128,7 @@ void KHTMLPart::unappliedEditing(EditCommand &cmd)
 
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForRedo(cmd);
+    KWQ(this)->postDidChangeNotification();
 #endif
     d->m_lastEditCommand = EditCommand::emptyCommand();
 }
@@ -5131,6 +5137,7 @@ void KHTMLPart::reappliedEditing(EditCommand &cmd)
 {
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd);
+    KWQ(this)->postDidChangeNotification();
 #endif
     d->m_lastEditCommand = EditCommand::emptyCommand();
 }

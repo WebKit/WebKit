@@ -439,6 +439,8 @@ typedef enum {
 - (void)issueCutCommand;
 - (void)issueCopyCommand;
 - (void)issuePasteCommand;
+- (void)postDidChangeSelectionNotification;
+- (void)postDidChangeNotification;
 
 - (void)editingKeyDown:(NSEvent *)event;
 

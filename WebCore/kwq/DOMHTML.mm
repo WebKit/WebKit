@@ -335,7 +335,7 @@ using DOM::NodeImpl;
 
 - (HTMLDocumentImpl *)_HTMLDocumentImpl
 {
-    return reinterpret_cast<HTMLDocumentImpl *>(_internal);
+    return static_cast<HTMLDocumentImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)title

@@ -81,6 +81,12 @@ NSString *WebViewProgressStartedNotification =          @"WebProgressStartedNoti
 NSString *WebViewProgressEstimateChangedNotification =  @"WebProgressEstimateChangedNotification";
 NSString *WebViewProgressFinishedNotification =         @"WebProgressFinishedNotification";
 
+NSString * const WebViewDidBeginEditingNotification =         @"WebViewDidBeginEditingNotification";
+NSString * const WebViewDidChangeNotification =               @"WebViewDidChangeNotification";
+NSString * const WebViewDidEndEditingNotification =           @"WebViewDidEndEditingNotification";
+NSString * const WebViewDidChangeTypingStyleNotification =    @"WebViewDidChangeTypingStyleNotification";
+NSString * const WebViewDidChangeSelectionNotification =      @"WebViewDidChangeSelectionNotification";
+
 enum { WebViewVersion = 2 };
 
 #define timedLayoutSize 4096
@@ -2129,8 +2135,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
 {
-    ERROR("unimplemented");
-    return nil;
+    return [[self DOMDocument] getComputedStyle:element :pseudoElement];
 }
 
 @end
@@ -2222,9 +2227,28 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setEditingDelegate:(id)delegate
 {
+    if (_private->editingDelegate == delegate)
+        return;
+
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+
+    // remove notifications from current delegate
+    [defaultCenter removeObserver:_private->editingDelegate name:WebViewDidBeginEditingNotification object:self];
+    [defaultCenter removeObserver:_private->editingDelegate name:WebViewDidChangeNotification object:self];
+    [defaultCenter removeObserver:_private->editingDelegate name:WebViewDidEndEditingNotification object:self];
+    [defaultCenter removeObserver:_private->editingDelegate name:WebViewDidChangeTypingStyleNotification object:self];
+    [defaultCenter removeObserver:_private->editingDelegate name:WebViewDidChangeSelectionNotification object:self];
+    
     _private->editingDelegate = delegate;
     [_private->editingDelegateForwarder release];
     _private->editingDelegateForwarder = nil;
+    
+    // add notifications for new delegate
+    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidBeginEditing:) name:WebViewDidBeginEditingNotification object:self];
+    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidChange:) name:WebViewDidChangeNotification object:self];
+    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidEndEditing:) name:WebViewDidEndEditingNotification object:self];
+    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidChangeTypingStyle:) name:WebViewDidChangeTypingStyleNotification object:self];
+    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidChangeSelection:) name:WebViewDidChangeSelectionNotification object:self];    
 }
 
 - (id)editingDelegate
@@ -2234,10 +2258,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (DOMDocument *)DOMDocument
 {
-    if ([[[[self mainFrame] dataSource] representation] conformsToProtocol:@protocol(WebDocumentDOM)]) {
-        return [(id <WebDocumentDOM>)[[[self mainFrame] dataSource] representation] DOMDocument];
-    }
-    return nil;
+    return [[self _bridgeForCurrentSelection] DOMDocument];
 }
 
 - (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text
@@ -2825,8 +2846,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     if ([self _currentSelectionIsEditable]) {
         WebBridge *bridge = [self _bridgeForCurrentSelection];
-        [bridge replaceSelectionWithNewline];
-        [bridge ensureCaretVisible];
+        // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
+        if ([[self _editingDelegateForwarder] webView:self shouldInsertText:@"\n" replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+            [bridge replaceSelectionWithNewline];
+            [bridge ensureCaretVisible];
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(insertNewline:) with:sender];
@@ -2896,8 +2920,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     if ([self _currentSelectionIsEditable]) {
         WebBridge *bridge = [self _bridgeForCurrentSelection];
-        [bridge deleteKeyPressed];
-        [bridge ensureCaretVisible];
+        if ([[self _editingDelegateForwarder] webView:self shouldDeleteDOMRange:[self selectedDOMRange]]) {
+            [bridge deleteKeyPressed];
+            [bridge ensureCaretVisible];
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(deleteBackward:) with:sender];
@@ -3038,8 +3064,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     if ([self _currentSelectionIsEditable]) {
         WebBridge *bridge = [self _bridgeForCurrentSelection];
-        [bridge replaceSelectionWithText:text];
-        [bridge ensureCaretVisible];
+        if ([[self _editingDelegateForwarder] webView:self shouldInsertText:text replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+            [bridge replaceSelectionWithText:text];
+            [bridge ensureCaretVisible];
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(insertText:) with:text];

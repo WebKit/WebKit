@@ -1,3 +1,21 @@
+2004-04-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge postDidChangeNotification]): Posts Cocoa notification when the document changes
+        due to editing.
+        (-[WebBridge postDidChangeSelectionNotification]): Posts Cocoa notification when the document selection
+        changes.
+        * WebKit.exp: Export editing notification string constants.
+        * WebView.subproj/WebView.m: Define editing notification string constants.
+        (-[WebView computedStyleForElement:pseudoElement:]): Add implementation.
+        (-[WebView setEditingDelegate:]): Do work to set up delegate to receive notification callbacks.
+        (-[WebView DOMDocument]): Simplify to just call the bridge DOMDocument. No need to jump through hoops here.
+        (-[WebView insertNewline:]): Consult delegate before taking action.
+        (-[WebView deleteBackward:]): Ditto.
+        (-[WebView insertText:]): Ditto.
+
 2004-04-27  John Sullivan  <sullivan@apple.com>
 
         Fixed broken development build.

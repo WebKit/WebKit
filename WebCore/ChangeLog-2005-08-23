@@ -1,3 +1,22 @@
+2004-04-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::notifySelectionChanged): Call new postDidChangeSelectionNotification function
+        to send Cocoa notification when the selection changes.
+        (KHTMLPart::appliedEditing): Call postDidChangeNotification to send Cocoa notification when the document changes
+        due to editing.
+        (KHTMLPart::unappliedEditing): Ditto.
+        (KHTMLPart::reappliedEditing): Ditto.
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLDocument _HTMLDocumentImpl]): Fix cast to account for multiple inheritance used by the impl class.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::postDidChangeSelectionNotification): New function. Call the bridge to post the notification.
+        (KWQKHTMLPart::postDidChangeNotification): Ditto.
+        * kwq/WebCoreBridge.h: Declare new -postDidChangeSelectionNotification and -postDidChangeNotification methods.
+
 2004-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
@@ -11,6 +30,7 @@
 2004-04-27  Richard Williamson   <rjw@apple.com>
 
 	<rdar://problem/3564519>: API: please add a way to set the media type for a WebView
+
 
         Reviewed by Chris.
 
