@@ -39,10 +39,12 @@ QPalette QApplication::palette(const QWidget *p)
 }
 
 
+static QWidget *mainWidget = 0;
+
 QWidget *QApplication::desktop()
 {
-    _logNotYetImplemented();
-    return 0;
+    // FIXME!  This should return a widget that represents the geometry of the desktop.
+    return mainWidget;
 }
 
 
@@ -133,6 +135,8 @@ void QApplication::setMainWidget(QWidget *w)
         NSLog (@"ERROR: QApplication::setMainWidget() widget not valid.\n");
         return;
     }
+    
+    mainWidget = w;
     
     NSScrollView *sv = [[NSScrollView alloc] initWithFrame: NSMakeRect (0,0,b.size.width,b.size.height)];
     [sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
