@@ -1,3 +1,19 @@
+2003-09-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3106411 -- show title attribute for page elements in tooltip on mouseover (important for PeopleSoft)
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): Set the value of a new element dictionary
+        key, WebCoreElementTitleKey. This gives the title for an element, walking up the DOM tree as necessary
+        to find it. It's used for tool tips at the WebKit level.
+        * kwq/WebCoreBridge.h: Added WebCoreElementTitleKey and WebCorePageCacheStateKey.
+
+        * WebCore.exp: Added all the constants from WebCoreBridge.h; these should be exported even though they
+        are not being used at the moment because the "WebCore and WebKit use the same constant keys" hack we
+        are doing at the WebKit level means we can just use the WebKit keys on the WebKit side.
+        * WebCore-combined.exp: Regenerated.
+
 2003-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

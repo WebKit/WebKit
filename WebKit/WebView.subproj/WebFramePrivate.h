@@ -54,7 +54,6 @@ typedef enum {
 extern NSString *WebPageCacheEntryDateKey;
 extern NSString *WebPageCacheDataSourceKey;
 extern NSString *WebPageCacheDocumentViewKey;
-extern NSString *WebCorePageCacheStateKey;
 
 @interface WebFramePrivate : NSObject
 {

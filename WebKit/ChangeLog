@@ -1,3 +1,35 @@
+2003-09-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3106411 -- show title attribute for page elements in tooltip on mouseover (important for PeopleSoft)
+
+        * WebView.subproj/WebHTMLViewPrivate.h: Added fields needed for tool tip implementation.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLViewPrivate dealloc]): Release the tool tip string.
+        (-[WebHTMLView addTrackingRect:owner:userData:assumeInside:]): Override the default NSView
+        tracking rectangle implementation so we can trick the tool tip manager into trusting us about
+        when you leave and enter the rectangle for each element.
+        (-[WebHTMLView removeTrackingRect:]): The other half of the above stuff.
+        (-[WebHTMLView _sendToolTipMouseExited]): Added. Makes an event just good enough to fool the tool tip
+        manager, and send it on.
+        (-[WebHTMLView _sendToolTipMouseEntered]): Ditto.
+        (-[WebHTMLView _setToolTip:]): Added. Manages the new and old tool tips in a way that fools the tool
+        tip manager into working even though we don't know the rectangles of the tool tips beforehand. The
+        advantage of using AppKit tool tips is that they have all sorts of nice little features, like wrapping
+        to a nice rectangular shape and fading out when you move away.
+        (-[WebHTMLView view:stringForToolTip:point:userData:]): This is how the tool tip manager gets the actual
+        tool tip text.
+        (-[WebHTMLView _updateMouseoverWithEvent:]): Call _setToolTip method, using the value passed along with the
+        WebCoreElementTitleKey in the dictionary.
+
+        - unrelated code cleanup
+
+        * WebView.subproj/WebFramePrivate.h: Don't define WebCorePageCacheStateKey here; instead use
+        a definition exported from WebCore.
+        * WebView.subproj/WebFramePrivate.m: Ditto.
+        * English.lproj/StringsNotToBeLocalized.txt: Update for above changes.
+
 2003-09-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

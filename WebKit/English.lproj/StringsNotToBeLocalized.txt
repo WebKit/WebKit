@@ -115,7 +115,6 @@
 "WebActionOriginalURLKey"
 "WebAuthenticationPanel"
 "WebBackForwardList:\n"
-"WebCorePageCacheState"
 "WebCurrentFrameState"
 "WebDataRequest"
 "WebElementFrame"

@@ -68,6 +68,9 @@ extern NSString *WebCoreElementLinkURLKey;
 extern NSString *WebCoreElementLinkTargetFrameKey;
 extern NSString *WebCoreElementLinkLabelKey;
 extern NSString *WebCoreElementLinkTitleKey;
+extern NSString *WebCoreElementTitleKey;
+
+extern NSString *WebCorePageCacheStateKey;
 
 typedef enum {
     WebCoreDeviceScreen,

@@ -35,6 +35,11 @@
     BOOL laidOutAtLeastOnce;
     
     WebPluginController *pluginController;
+    
+    NSString *toolTip;
+    NSToolTipTag toolTipTag;
+    id trackingRectOwner;
+    void *trackingRectUserData;
 }
 @end
 

@@ -39,6 +39,9 @@
 #define DRAG_LINK_LABEL_FONT_SIZE   11.0
 #define DRAG_LINK_URL_FONT_SIZE   10.0
 
+// Any non-zero value will do, but using somethign recognizable might help us debug some day.
+#define TRACKING_RECT_TAG 0xBADFACE
+
 static BOOL forceRealHitTest = NO;
 
 @interface NSView (AppKitSecretsIKnowAbout)
@@ -64,6 +67,7 @@ static BOOL forceRealHitTest = NO;
     [mouseDownEvent release];
     [draggingImageURL release];
     [pluginController release];
+    [toolTip release];
     
     [super dealloc];
 }
@@ -292,6 +296,79 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+- (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)flag
+{
+    ASSERT(_private->trackingRectOwner == nil);
+    _private->trackingRectOwner = owner;
+    _private->trackingRectUserData = data;
+    return TRACKING_RECT_TAG;
+}
+
+- (void)removeTrackingRect:(NSTrackingRectTag)tag
+{
+    if (_private != nil) {
+        ASSERT(_private->trackingRectOwner != nil);
+        _private->trackingRectOwner = nil;
+    }
+}
+
+- (void)_sendToolTipMouseExited
+{
+    // Nothing matters except window, trackingNumber, and userData.
+    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseExited
+        location:NSMakePoint(0, 0)
+        modifierFlags:0
+        timestamp:0
+        windowNumber:[[self window] windowNumber]
+        context:NULL
+        eventNumber:0
+        trackingNumber:TRACKING_RECT_TAG
+        userData:_private->trackingRectUserData];
+    [_private->trackingRectOwner mouseExited:fakeEvent];
+}
+
+- (void)_sendToolTipMouseEntered
+{
+    // Nothing matters except window, trackingNumber, and userData.
+    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseEntered
+        location:NSMakePoint(0, 0)
+        modifierFlags:0
+        timestamp:0
+        windowNumber:[[self window] windowNumber]
+        context:NULL
+        eventNumber:0
+        trackingNumber:TRACKING_RECT_TAG
+        userData:_private->trackingRectUserData];
+    [_private->trackingRectOwner mouseEntered:fakeEvent];
+}
+
+- (void)_setToolTip:(NSString *)string
+{
+    NSString *toolTip = [string length] == 0 ? nil : string;
+    NSString *oldToolTip = _private->toolTip;
+    if ((toolTip == nil || oldToolTip == nil) ? toolTip == oldToolTip : [toolTip isEqualToString:oldToolTip]) {
+        return;
+    }
+    if (oldToolTip) {
+        [self _sendToolTipMouseExited];
+        [oldToolTip release];
+    }
+    _private->toolTip = [toolTip copy];
+    if (toolTip) {
+        if (_private->toolTipTag) {
+            [self removeToolTip:_private->toolTipTag];
+        }
+        NSRect wideOpenRect = NSMakeRect(-100000, -100000, 200000, 200000);
+        _private->toolTipTag = [self addToolTipRect:wideOpenRect owner:self userData:NULL];
+        [self _sendToolTipMouseEntered];
+    }
+}
+
+- (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
+{
+    return [[_private->toolTip copy] autorelease];
+}
+
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
     WebHTMLView *view = nil;
@@ -328,13 +405,21 @@ static WebHTMLView *lastHitView = nil;
 
     lastHitView = view;
     
+    NSDictionary *element;
     if (view == nil) {
-        [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
+        element = nil;
     } else {
         [[view _bridge] mouseMoved:event];
+
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
-        [[self _webView] _mouseDidMoveOverElement:[view _elementAtPoint:point] modifierFlags:[event modifierFlags]];
+        element = [view _elementAtPoint:point];
     }
+
+    // Have the web view send a message to the delegate so it can do status bar display.
+    [[self _webView] _mouseDidMoveOverElement:element modifierFlags:[event modifierFlags]];
+
+    // Set a tool tip; it won't show up right away but will if the user pauses.
+    [self _setToolTip:[element objectForKey:WebCoreElementTitleKey]];
 }
 
 - (BOOL)_interceptKeyEvent:(NSEvent *)event toView:(NSView *)view

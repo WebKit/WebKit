@@ -84,7 +84,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 NSString *WebPageCacheEntryDateKey = @"WebPageCacheEntryDateKey";
 NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
 NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
-NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
 @interface NSObject (WebExtraPerformMethod)
 
