@@ -14,6 +14,16 @@ extern CGImageRef _NSCreateImageRef( unsigned char *const bitmapData[5], int pix
 static void				PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData );
 
 static NSAutoreleasePool*	sPool;
+static unsigned numPools;
+
+static unsigned getNumPools()
+{
+    void *v = NSPushAutoreleasePool(0);
+    unsigned numPools = (unsigned)(v);
+    NSPopAutoreleasePool (v);
+    return numPools;
+}
+
 
 void
 WebInitForCarbon()
@@ -28,14 +38,16 @@ WebInitForCarbon()
         // "flavour" is correctly established.
         GetCurrentProcess( &process ); 
         NSApplicationLoad();
-        
+                
         sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+        numPools = getNumPools();
         
         InstallEventLoopIdleTimer( GetMainEventLoop(), 1.0, 0, PoolCleaner, 0, NULL );
         
         sAppKitLoaded = true;     
     }
 }
+
 
 static void
 PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData )
@@ -45,8 +57,13 @@ PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void 
         CFStringRef mode = CFRunLoopCopyCurrentMode( (CFRunLoopRef)GetCFRunLoopFromEventLoop( GetCurrentEventLoop() ));
         if ( CFEqual( mode, kCFRunLoopDefaultMode ) )
         {
-            [sPool release];
-            sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+            unsigned currentNumPools = getNumPools()-1;            
+            if (currentNumPools == numPools){
+                [sPool release];
+                sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+                numPools = getNumPools();
+            }
+
         }
         CFRelease( mode );
 	}

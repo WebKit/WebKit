@@ -1,3 +1,15 @@
+2004-04-06  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3510805.  Only release pool in timer if the current nesting level of the
+	pool matches the nesting level when the pool was created.
+
+        Reviewed by Chris.
+
+        * Carbon.subproj/CarbonUtils.m:
+        (getNumPools):
+        (WebInitForCarbon):
+        (PoolCleaner):
+
 2004-04-06  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3613974>: remove "to Clipboard" from context menus because it is redundant
