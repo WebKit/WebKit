@@ -232,13 +232,10 @@ bool QXmlSimpleReader::parse(const QXmlInputSource &input)
         xmlInitParser();
         didInit = true;
     }
-    xmlSAXHandler handler = {
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, normalErrorHandler, fatalErrorHandler,
-        NULL, NULL, NULL,
-        0
-    };
+    xmlSAXHandler handler;
+    memset(&handler, 0, sizeof(handler));
+    handler.error = normalErrorHandler;
+    handler.fatalError = fatalErrorHandler;
     if (_contentHandler) {
         handler.characters = charactersHandler;
         handler.endElement = endElementHandler;
