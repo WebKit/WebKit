@@ -67,17 +67,19 @@ Lexer::Lexer()
 #ifndef KJS_PURE_ECMA
     bol(true),
 #endif
-    current(0), next1(0), next2(0), next3(0)
+    current(0), next1(0), next2(0), next3(0),
+    strings(0), numStrings(0), stringsCapacity(0),
+    identifiers(0), numIdentifiers(0), identifiersCapacity(0)
 {
   // allocate space for read buffers
   buffer8 = new char[size8];
   buffer16 = new UChar[size16];
   currLexer = this;
-
 }
 
 Lexer::~Lexer()
 {
+  doneParsing();
   delete [] buffer8;
   delete [] buffer16;
 }
@@ -502,8 +504,7 @@ int Lexer::lex()
         token = lex();
         break;
       }
-      /* TODO: close leak on parse error. same holds true for String */
-      kjsyylval.ident = new KJS::Identifier(buffer16, pos16);
+      kjsyylval.ident = makeIdentifier(buffer16, pos16);
       token = IDENT;
       break;
     }
@@ -518,7 +519,7 @@ int Lexer::lex()
       restrKeyword = true;
     break;
   case String:
-    kjsyylval.ustr = new UString(buffer16, pos16);
+    kjsyylval.ustr = makeUString(buffer16, pos16);
     token = STRING;
     break;
   case Number:
@@ -815,4 +816,51 @@ bool Lexer::scanRegExp()
   flags = UString(buffer16, pos16);
 
   return true;
+}
+
+
+void Lexer::doneParsing()
+{
+  for (unsigned i = 0; i < numIdentifiers; i++) {
+    delete identifiers[i];
+  }
+  free (identifiers);
+  identifiers = 0;
+  numIdentifiers = 0;
+  identifiersCapacity = 0;
+
+  for (unsigned i = 0; i < numStrings; i++) {
+    delete strings[i];
+  }
+  free (strings);
+  strings = 0;
+  numStrings = 0;
+  stringsCapacity = 0;
+}
+
+const int initialCapacity = 64;
+const int growthFactor = 2;
+
+Identifier *Lexer::makeIdentifier(UChar *buffer, unsigned int pos)
+{
+  if (numIdentifiers == identifiersCapacity) {
+    identifiersCapacity = (identifiersCapacity == 0) ? initialCapacity : identifiersCapacity *growthFactor;
+    identifiers = (KJS::Identifier **)realloc(identifiers, sizeof(KJS::Identifier *) * identifiersCapacity);
+  }
+
+  KJS::Identifier *identifier = new KJS::Identifier(buffer16, pos16);
+  identifiers[numIdentifiers++] = identifier;
+  return identifier;
+}
+ 
+UString *Lexer::makeUString(UChar *buffer, unsigned int pos)
+{
+  if (numStrings == stringsCapacity) {
+    stringsCapacity = (stringsCapacity == 0) ? initialCapacity : stringsCapacity *growthFactor;
+    strings = (UString **)realloc(strings, sizeof(UString *) * stringsCapacity);
+  }
+
+  UString *string = new UString(buffer16, pos16);
+  strings[numStrings++] = string;
+  return string;
 }

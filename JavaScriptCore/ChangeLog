@@ -1,3 +1,25 @@
+2003-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3426076 - Leak of JS lexer data visiting http://www.ebay.com
+	
+        * kjs/grammar.cpp:
+        (yyerror): Updated the commented code.
+        * kjs/grammar.y: Don't delete string and identifier tokens when done
+	with them any more, they'll get cleaned up by the lexer now.
+        * kjs/internal.cpp:
+        (Parser::parse): Tell lexer when done parsing.
+        * kjs/lexer.cpp:
+        (Lexer::Lexer): Initialize new data members.
+        (Lexer::lex): Use new methods to make strings and identifiers, and
+	save them.
+        (Lexer::makeIdentifier): Make a new Identifier and save it in an
+	auto-growing array.
+        (Lexer::makeUString): Likewise for UStrings.
+        (Lexer::doneParsing): Clean up arrays of Ifentifiers and UStrings.
+        * kjs/lexer.h:
+
 2003-10-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
