@@ -1,3 +1,44 @@
+2004-09-09  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3667862, regression where dragging of selection became really slow.  This patch completely rewrites
+	selection painting and drawing so that the enclosing rect is much more snug.  The containing block rect is no
+	longer used at all.
+	
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::selectionRect):
+        (getSelectionInfo):
+        (RenderCanvas::setSelection):
+        (RenderCanvas::clearSelection):
+        * khtml/rendering/render_canvas.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::removeChildNode):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::selectionRect):
+        (RenderImage::selectionTintColor):
+        (RenderImage::paint):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::selectionStartEnd):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::selectionRect):
+        (khtml::RenderObject::SelectionInfo::object):
+        (khtml::RenderObject::SelectionInfo::rect):
+        (khtml::RenderObject::SelectionInfo::state):
+        (khtml::RenderObject::SelectionInfo::SelectionInfo):
+        (khtml::RenderObject::SelectionInfo::m_state):
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::textObject):
+        (InlineTextBox::selectionRect):
+        (InlineTextBox::paintSelection):
+        (RenderText::getAbsoluteRepaintRect):
+        (RenderText::selectionRect):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQPainter.mm:
+        (getBlendedColorComponent):
+        (QPainter::selectedTextBackgroundColor):
+
 2004-09-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
@@ -305,6 +346,7 @@
         (KURL::decode_string): Check for find result >= 0 instead of >0,
 	to handle case of first character in a string being encoded.
 
+>>>>>>> 1.3237
 2004-09-09  Chris Blumenberg  <cblu@apple.com>
 
 	Support for: <rdar://problem/3795485> debug menu item to enable RSS animation on first layout
@@ -344,6 +386,7 @@
         * kwq/WebCoreBridge.h:
         * kwq/WebCoreBridge.mm:
 
+>>>>>>> 1.3216
 2004-09-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
@@ -374,6 +417,7 @@
         * khtml/rendering/render_text.cpp:
         (RenderText::caretRect):
 
+>>>>>>> 1.3214
 2004-09-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

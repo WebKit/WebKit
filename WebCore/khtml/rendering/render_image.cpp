@@ -75,6 +75,36 @@ void RenderImage::setStyle(RenderStyle* _style)
     setShouldPaintBackgroundOrBorder(true);
 }
 
+QRect RenderImage::selectionRect()
+{
+    if (selectionState() == SelectionNone)
+        return QRect(0,0,0,0);
+    if (!m_inlineBoxWrapper)
+        // We're a block-level replaced element.  Just return our own dimensions.
+        return absoluteBoundingBoxRect();
+
+    RenderBlock* cb =  containingBlock();
+    if (!cb)
+        return QRect(0,0,0,0);
+    
+    RootInlineBox* root = m_inlineBoxWrapper->root();
+    int selectionTop = root->prevRootBox() ? root->prevRootBox()->bottomOverflow() : root->topOverflow();
+    int selectionHeight = root->bottomOverflow() - selectionTop;
+    int selectionLeft = xPos();
+    int selectionRight = xPos() + width();
+    
+    // FIXME: Move the line extension code into the block instead of doing it here.
+    if (selectionState() == SelectionInside && root->firstLeafChild() == m_inlineBoxWrapper)
+        selectionLeft = kMin(selectionLeft, cb->leftOffset(selectionTop));
+    if (selectionState() == SelectionInside && root->lastLeafChild() == m_inlineBoxWrapper)
+        selectionRight = kMax(selectionRight, containingBlock()->rightOffset(selectionTop));
+
+    int absx, absy;
+    cb->absolutePosition(absx, absy);
+
+    return QRect(selectionLeft + absx, selectionTop + absy, selectionRight - selectionLeft, selectionHeight);
+}
+
 void RenderImage::setContentObject(CachedObject* co)
 {
     if (co && image != co) {
@@ -209,16 +239,21 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
 }
 
 #if APPLE_CHANGES
+// FIXME: Move this to render_object so all elements can use it.
 QColor RenderImage::selectionTintColor(QPainter *p) const
 {
     QColor color;
     RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SELECTION);
-    if (pseudoStyle && pseudoStyle->backgroundColor().isValid()) {
+    if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
         color = pseudoStyle->backgroundColor();
-    } else {
+    else
         color = p->selectedTextBackgroundColor();
-    }
-    return QColor(qRgba(color.red(), color.green(), color.blue(), 160));
+        
+    // Force a 60% alpha so that no user-specified selection color can obscure selected images.
+    if (qAlpha(color.rgb()) > 153)
+        color = QColor(qRgba(color.red(), color.green(), color.blue(), 153));
+
+    return color;
 }
 #endif
 
@@ -343,51 +378,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 #endif /* APPLE_CHANGES not defined */
         }
     }
-    else if (image && !image->isTransparent())
-    {
-#if APPLE_CHANGES
-        // Do the calculations to draw selections as tall as the line.
-        // Ignore the passed-in value for _ty.
-        // Use the bottom of the line above as the y position (if there is one, 
-        // otherwise use the top of this renderer's line) and the height of the line as the height. 
-        // This mimics Cocoa.
-        int selectionTop = -1;
-        int selectionHeight = -1;
-        int selectionLeft = -1;
-        int selectionRight = -1;
-        bool extendSelectionToLeft = false;
-        bool extendSelectionToRight = false;
-        if (drawSelectionTint) {
-            InlineBox *box = inlineBox();
-            if (box) {
-                // Get a value for selectionTop that is relative to the containing block.
-                // This value is used for determining left and right offset for the selection, if necessary,
-                // and for calculating the selection height.
-                if (box->root()->prevRootBox())
-                    selectionTop = box->root()->prevRootBox()->bottomOverflow();
-                else
-                    selectionTop = box->root()->topOverflow();
-
-                selectionHeight = box->root()->bottomOverflow() - selectionTop;
-
-                int absx, absy;
-                containingBlock()->absolutePosition(absx, absy);
-
-                if (selectionState() == SelectionInside && box->root()->firstLeafChild() == box) {
-                    extendSelectionToLeft = true;
-                    selectionLeft = absx + containingBlock()->leftOffset(selectionTop);
-                }
-                if (selectionState() == SelectionInside && box->root()->lastLeafChild() == box) {
-                    extendSelectionToRight = true;
-                    selectionRight = absx + containingBlock()->rightOffset(selectionTop);
-                }
-        
-                // Now make the selectionTop an absolute coordinate.
-                selectionTop += absy;
-            }
-        }
-#endif
-
+    else if (image && !image->isTransparent()) {
         if ( (cWidth != intrinsicWidth() ||  cHeight != intrinsicHeight()) &&
              pix.width() > 0 && pix.height() > 0 && image->valid_rect().isValid())
         {
@@ -436,16 +427,9 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             }
 #if APPLE_CHANGES
             if (drawSelectionTint) {
-                int left = _tx + leftBorder + leftPad;
-                int width = tintSize.width();
-                int top = selectionTop >= 0 ? selectionTop : _ty + topBorder + topPad;
-                int height = selectionHeight >= 0 ? selectionHeight : tintSize.height();
                 QBrush brush(selectionTintColor(p));
-                p->fillRect(left, top, width, height, brush);
-                if (extendSelectionToLeft)
-                    p->fillRect(selectionLeft, selectionTop, left - selectionLeft, selectionHeight, brush);
-                if (extendSelectionToRight)
-                    p->fillRect(left + width, selectionTop, selectionRight - (left + width), selectionHeight, brush);
+                QRect selRect(selectionRect());
+                p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
             }
 #endif
         }
@@ -479,16 +463,9 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
              }
 #if APPLE_CHANGES
              if (drawSelectionTint) {
-                int left = offs.x() + rect.x();
-                int width = rect.width();
-                int top = selectionTop >= 0 ? selectionTop : offs.y() + rect.y();
-                int height = selectionHeight >= 0 ? selectionHeight : rect.height();
-                QBrush brush(selectionTintColor(p));
-                p->fillRect(left, top, width, height, brush);
-                if (extendSelectionToLeft)
-                    p->fillRect(selectionLeft, selectionTop, left - selectionLeft, selectionHeight, brush);
-                if (extendSelectionToRight)
-                    p->fillRect(left + width, selectionTop, selectionRight - (left + width), selectionHeight, brush);
+                 QBrush brush(selectionTintColor(p));
+                 QRect selRect(selectionRect());
+                 p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
              }
 #endif
         }

@@ -130,6 +130,32 @@ InlineBox *RenderBR::inlineBox(long offset)
     return firstTextBox();
 }
 
+// FIXME: This is temporary until we move line extension painting into the block.
+QRect RenderBR::selectionRect()
+{
+    if (!firstTextBox() || selectionState() == SelectionNone)
+        return QRect(0,0,0,0);
+    
+    RenderBlock *cb = containingBlock();
+    RootInlineBox* root = firstTextBox()->root();
+    int selectionTop = root->prevRootBox() ? root->prevRootBox()->bottomOverflow() : root->topOverflow();
+    int selectionHeight = root->bottomOverflow() - selectionTop;
+    int selectionLeft = xPos();
+    RenderObject *prevLineLastLeaf = root->prevRootBox() ? root->prevRootBox()->lastLeafChild()->object() : 0;
+    if (root->firstLeafChild() == firstTextBox() && root->prevRootBox() && prevLineLastLeaf && 
+        prevLineLastLeaf->selectionState() != RenderObject::SelectionNone)
+        selectionLeft = kMax(cb->leftOffset(selectionTop), cb->leftOffset(root->blockHeight()));
+    
+    // Extending to the end of the line is "automatic" with BR's.
+    int selectionRight = kMin(cb->rightOffset(selectionTop), cb->rightOffset(root->blockHeight()));
+    int selectionWidth = selectionRight - selectionLeft;
+    
+    int absx, absy;
+    cb->absolutePosition(absx, absy);
+    return QRect(selectionLeft + absx, selectionTop + absy, selectionWidth, selectionHeight);
+}
+
+// FIXME: This is just temporary until line extension painting moves into the block.
 void RenderBR::paint(PaintInfo& i, int tx, int ty)
 {
 #if APPLE_CHANGES

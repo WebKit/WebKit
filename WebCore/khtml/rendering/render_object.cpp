@@ -1430,8 +1430,7 @@ DOM::NodeImpl* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, int x, int y
 
 void RenderObject::selectionStartEnd(int& spos, int& epos)
 {
-    if (parent())
-        parent()->selectionStartEnd(spos, epos);
+    canvas()->selectionStartEnd(spos, epos);
 }
 
 RenderBlock* RenderObject::createAnonymousBlock()

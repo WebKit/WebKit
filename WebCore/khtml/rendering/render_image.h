@@ -46,9 +46,12 @@ public:
     virtual ~RenderImage();
 
     virtual const char *renderName() const { return "RenderImage"; }
-    
+
+    // FIXME: These 3 methods should move to render_replaced, so that form controls and iframes
+    // and plugins can also be selected.
     virtual SelectionState selectionState() const {return m_selectionState;}
     virtual void setSelectionState(SelectionState s) {m_selectionState = s;}
+    virtual QRect selectionRect();
 
     virtual bool isImage() const { return true; }
     

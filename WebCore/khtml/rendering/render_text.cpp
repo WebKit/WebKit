@@ -76,6 +76,66 @@ void InlineTextBox::operator delete(void* ptr, size_t sz)
     *(size_t *)ptr = sz;
 }
 
+RenderText* InlineTextBox::textObject()
+{
+    return static_cast<RenderText*>(m_object);
+}
+
+QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos, bool computeLeftRightEdges)
+{
+    int sPos = kMax(startPos - m_start, 0);
+    int ePos = kMin(endPos - m_start, (int)m_len);
+    
+    if (sPos >= ePos)
+        return QRect(0,0,0,0);
+
+    RootInlineBox* rootBox = root();
+    int selLeft = m_x;
+    int selRight = m_x;
+    int selTop = (rootBox->prevRootBox() ? rootBox->prevRootBox()->bottomOverflow() : rootBox->topOverflow());
+    int selHeight = rootBox->bottomOverflow() - selTop;
+    
+    // FIXME: For justified text, just return the entire text box's rect.  At the moment there's still no easy
+    // way to get the width of a run including the justification padding.
+    if (computeLeftRightEdges) {
+        if (sPos > 0 && !m_toAdd)
+            // The selection begins in the middle of our run.
+            selLeft += textObject()->width(m_start, sPos, m_firstLine);
+
+        if (m_toAdd || (sPos == 0 && ePos == m_len))
+            selRight += m_width;
+        else
+            // Our run is partially selected, and so we have to actually do a measurement.
+            selRight = selLeft + textObject()->width(sPos + m_start, ePos - sPos, m_firstLine);
+    }
+
+    // FIXME: Move this code into the block.
+    RenderBlock* cb = m_object->containingBlock();
+    
+    // Extend selection to the start of the line if:
+    // 1. The starting point of the selection is at or beyond the start of the text box; and
+    // 2. This box is the first box on the line; and
+    // 3. There is a another line before this one (first lines have special behavior;
+    //    the selection never extends on the first line); and 
+    // 4. The last leaf renderer on the previous line is selected.
+    RenderObject *prevLineLastLeaf = 0;
+    if (rootBox->prevRootBox() && rootBox->prevRootBox()->lastLeafChild())
+        prevLineLastLeaf = rootBox->prevRootBox()->lastLeafChild()->object();
+    if (startPos <= m_start && rootBox->firstLeafChild() == this && prevLineLastLeaf && 
+        prevLineLastLeaf->selectionState() != RenderObject::SelectionNone)
+        selLeft = kMax(cb->leftOffset(selTop), cb->leftOffset(rootBox->blockHeight()));
+    
+    // Extend selection to the end of the line if:
+    // 1. The ending point of the selection is at or beyond the end of the text box; and
+    // 2. There is a another line after this one (last lines have special behavior;
+    //    the selection never extends on the last line); and 
+    // 3. The last leaf renderer of the root box is this box.
+    if (endPos >= m_start + m_len && rootBox->nextRootBox() && rootBox->lastLeafChild() == this)
+        selRight = kMin(cb->rightOffset(selTop), cb->rightOffset(rootBox->blockHeight()));
+
+    return QRect(selLeft + tx, selTop + ty, selRight - selLeft, selHeight);
+}
+
 void InlineTextBox::deleteLine(RenderArena* arena)
 {
     static_cast<RenderText*>(m_object)->removeTextBox(this);
@@ -171,48 +231,12 @@ void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p,
     ty + m_baseline;
 #endif
     
-#if APPLE_CHANGES
-    // Do the calculations to draw selections as tall as the line.
-    // Use the bottom of the line above as the y position (if there is one, 
-    // otherwise use the top of this renderer's line) and the height of the line as the height. 
-    // This mimics Cocoa.
-    RenderBlock *cb = object()->containingBlock();
-
-    int y = 0;
-    if (root()->prevRootBox())
-        y = root()->prevRootBox()->bottomOverflow();
-    else
-        y = root()->topOverflow();
-
-    int h = root()->bottomOverflow() - y;
-
-    int x = m_x;
-    int minX = x;
-    int maxX = x;
-
-    // Extend selection to the start of the line if:
-    // 1. The starting point of the selection is at or beyond the start of the text box; and
-    // 2. This box is the first box on the line; and
-    // 3. There is a another line before this one (first lines have special behavior;
-    //    the selection never extends on the first line); and 
-    // 4. The last leaf renderer on the previous line is selected.
-    RenderObject *prevLineLastLeaf = 0;
-    if (root()->prevRootBox() && root()->prevRootBox()->lastLeafChild())
-        prevLineLastLeaf = root()->prevRootBox()->lastLeafChild()->object();
-    if (startPos <= m_start && root()->firstLeafChild() == this && prevLineLastLeaf && 
-        prevLineLastLeaf->selectionState() != RenderObject::SelectionNone)
-        minX = kMax(cb->leftOffset(y), cb->leftOffset(root()->blockHeight()));
-        
-    // Extend selection to the end of the line if:
-    // 1. The ending point of the selection is at or beyond the end of the text box; and
-    // 2. There is a another line after this one (last lines have special behavior;
-    //    the selection never extends on the last line); and 
-    // 3. The last leaf renderer of the root box is this box.
-    if (endPos >= m_start + m_len && root()->nextRootBox() && root()->lastLeafChild() == this)
-        maxX = kMin(cb->rightOffset(y), cb->rightOffset(root()->blockHeight()));
+    QRect selRect(selectionRect(tx, ty, startPos, endPos, false));
     
-    f->drawHighlightForText(p, x + tx, minX + tx, maxX + tx, y + ty, h, text->str->s, text->str->l, m_start, m_len,
-		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
+#if APPLE_CHANGES
+    f->drawHighlightForText(p, m_x + tx, selRect.x(), selRect.x() + selRect.width(), selRect.y(), selRect.height(), 
+                            text->str->s, text->str->l, m_start, m_len,
+                            m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
 #else
     f->drawHighlightForText(p, m_x + tx, m_y + ty, text->str->s, text->str->l, m_start, m_len,
 		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, sPos, ePos, c);
@@ -1558,6 +1582,48 @@ QRect RenderText::getAbsoluteRepaintRect()
 {
     RenderObject *cb = containingBlock();
     return cb->getAbsoluteRepaintRect();
+}
+
+QRect RenderText::selectionRect()
+{
+    QRect rect(0,0,0,0);
+    if (selectionState() == SelectionNone)
+        return rect;
+    RenderBlock* cb =  containingBlock();
+    if (!cb)
+        return rect;
+    
+    // Now calculate startPos and endPos for painting selection.
+    // We include a selection while endPos > 0
+    int startPos, endPos;
+    if (selectionState() == SelectionInside) {
+        // We are fully selected.
+        startPos = 0;
+        endPos = str->l;
+    } else {
+        selectionStartEnd(startPos, endPos);
+        if (selectionState() == SelectionStart)
+            endPos = str->l;
+        else if (selectionState() == SelectionEnd)
+            startPos = 0;
+    }
+    
+    if (startPos == endPos)
+        return rect;
+
+    int absx, absy;
+    cb->absolutePosition(absx, absy);
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        QRect r = box->selectionRect(absx, absy, startPos, endPos);
+        if (!r.isEmpty()) {
+            if (rect.isEmpty())
+                rect = r;
+            else
+                rect = rect.unite(r);
+        }
+    }
+
+    return rect;
 }
 
 short RenderText::verticalPositionHint( bool firstLine ) const

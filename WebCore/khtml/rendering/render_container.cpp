@@ -182,14 +182,8 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
         // or end of the selection is deleted and then accessed when the user next selects
         // something.
     
-        if (oldChild->isSelectionBorder()) {
-            RenderObject *root = oldChild;
-            while (root && root->parent())
-                root = root->parent();
-            if (root->isCanvas()) {
-                static_cast<RenderCanvas*>(root)->clearSelection();
-            }
-        }
+        if (oldChild->isSelectionBorder())
+            canvas()->clearSelection();
     }
     
     // remove the child

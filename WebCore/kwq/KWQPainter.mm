@@ -724,11 +724,31 @@ void QPainter::drawLineForMisspelling(int x, int y, int width)
     [data->textRenderer drawLineForMisspelling:NSMakePoint(x, y) withWidth:width];
 }
 
+static int getBlendedColorComponent(int c, int a)
+{
+    // We use white.
+    float alpha = (float)(a) / 255;
+    int whiteBlend = 255 - a;
+    c -= whiteBlend;
+    return (int)(c/alpha);
+}
+
 QColor QPainter::selectedTextBackgroundColor() const
 {
     NSColor *color = _usesInactiveTextBackgroundColor ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
     color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-    return QColor((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
+    
+    QColor col = QColor((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
+    
+    // Attempt to make the selection 60% transparent.  We do this by applying a standard blend and then
+    // seeing if the resultant color is still within the 0-255 range.
+    int alpha = 153;
+    int red = getBlendedColorComponent(col.red(), alpha);
+    int green = getBlendedColorComponent(col.green(), alpha);
+    int blue = getBlendedColorComponent(col.blue(), alpha);
+    if (red >= 0 && red <= 255 && green >= 0 && green <= 255 && blue >= 0 && blue <= 255)
+        return QColor(qRgba(red, green, blue, alpha));
+    return col;
 }
 
 // A fillRect designed to work around buggy behavior in NSRectFill.
