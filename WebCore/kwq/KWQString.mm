@@ -447,9 +447,9 @@ int QString::findRev(char ch, int index) const
         if (index < 0) {
             index += len;
         }
-        if (len && (index >= 0) && (index < len)) {
+        if (len && (index <= len)) {
             CFStringInlineBuffer buf;
-            CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, len));
+            CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, index));
             for (CFIndex i = index; i >= 0; i--) {
                 if (ch == CFStringGetCharacterFromInlineBuffer(&buf, i)) {
                     return i;
@@ -468,16 +468,14 @@ int QString::findRev(const char *chs, int index) const
         if (index < 0) {
             index += len;
         }
-        if (len && (index >= 0) && (index < len)) {
+        if (len && (index <= len)) {
             // FIXME: is ISO Latin-1 the correct encoding?
             CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                     kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
                     kCFAllocatorNull);
             if (tmp) {
                 CFRange r;
-                // FIXME: is this the right way to specifiy a range for a
-                // reversed search?
-                if (CFStringFindWithOptions(s, tmp, CFRangeMake(0, index + 1),
+                if (CFStringFindWithOptions(s, tmp, CFRangeMake(0, index),
                         kCFCompareBackwards, &r)) {
                     pos = r.location;
                 }
