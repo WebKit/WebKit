@@ -1566,6 +1566,9 @@ void KWQKHTMLPart::scrollToAnchor(const KURL &URL)
     if (!gotoAnchor(URL.encodedHtmlRef()))
         gotoAnchor(URL.htmlRef());
 
+    // It's important to model this as a load that starts and immediately finishes.
+    // Otherwise, the parent frame may think we never finished loading.
+    d->m_bComplete = false;
     checkCompleted();
 }
 
