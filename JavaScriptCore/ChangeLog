@@ -1,3 +1,13 @@
+2004-07-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3711474>: (REGRESSION (125-146): JavaScript 'toString(16)' is broken)
+	<rdar://problem/3644873>: (REGRESSION (125-140u): secondary list doesn't fill in at Southwest.com)
+
+        * kjs/number_object.cpp:
+        (NumberProtoFuncImp::call): Initialize radix from dradix, not from itself!
+
 2004-07-13  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by kocienda.
