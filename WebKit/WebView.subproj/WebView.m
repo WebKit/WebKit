@@ -19,6 +19,7 @@
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
+#import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
@@ -1836,19 +1837,6 @@ NS_ENDHANDLER
     }
 }
 
-// Return the frame holding first responder
-- (WebFrame *)_currentFrame
-{
-    // Find the frame holding the first responder, or holding the first form in the doc
-    NSResponder *resp = [[self window] firstResponder];
-    if (!resp || ![resp isKindOfClass:[NSView class]] || ![(NSView *)resp isDescendantOf:self]) {
-        return nil;	// first responder outside our view tree
-    } else {
-        WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
-        return [frameView webFrame];
-    }
-}
-
 static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     return forward ? [curr _nextFrameWithWrap:wrapFlag]
@@ -2267,10 +2255,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
 }
 
+// Note: This method should only be used by callers that wish to do nothing if there is no selection or if
+// the selection is outside of the WebView hierarchy.
 - (WebBridge *)_bridgeForCurrentSelection
 {
-    // FIXME: This needs to be changed to deal properly with subframes.
-    return [[self mainFrame] _bridge];
+    return [[self _currentFrame] _bridge];
 }
 
 - (BOOL)_currentSelectionIsEditable
@@ -2294,6 +2283,19 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 @end
 
 @implementation WebView (WebInternal)
+
+// Return the frame holding first responder
+- (WebFrame *)_currentFrame
+{
+    // Find the frame holding the first responder, or holding the first form in the doc
+    NSResponder *resp = [[self window] firstResponder];
+    if (!resp || ![resp isKindOfClass:[NSView class]] || ![(NSView *)resp isDescendantOf:self]) {
+        return nil;	// first responder outside our view tree
+    } else {
+        WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
+        return [frameView webFrame];
+    }
+}
 
 - (BOOL)_isLoading
 {
@@ -2439,7 +2441,10 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
-    [[self _bridgeForCurrentSelection] setSelectedDOMRange:range affinity:selectionAffinity];
+    // Derive the bridge to use from the range passed in.
+    // Using _bridgeForCurrentSelection could give us a different document than
+    // the one the range uses.
+    [[[range startContainer] _bridge] setSelectedDOMRange:range affinity:selectionAffinity];
 }
 
 - (DOMRange *)selectedDOMRange
