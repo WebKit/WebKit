@@ -406,13 +406,13 @@ void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
 }
 
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
-			int sx, int sy, int sw, int sh )
+                           int sx, int sy, int sw, int sh )
 {
     _lockFocus();
 
     id <WebCoreImageRenderer>imageRenderer = pixmap.getImageRenderer();
     
-    if (imageRenderer != nil){
+    if (imageRenderer != nil) {
         if (sw == -1)
             sw = (int)[imageRenderer size].width;
         if (sh == -1)
@@ -420,9 +420,9 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
         NSRect ir = NSMakeRect(x, y, sw, sh);
         NSRect fr = NSMakeRect(sx, sy, sw, sh);
         
-		[imageRenderer beginAnimationInView: [NSView focusView]
-		                    inRect: ir
-		                    fromRect: fr];
+        [imageRenderer beginAnimationInView: [NSView focusView]
+                                     inRect: ir
+                                   fromRect: fr];
     }
     
     _unlockFocus();
@@ -440,8 +440,7 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     NSColor *patternColor;
     int sw = pixmap.width();
     int sh = pixmap.height();
-    NSView *view = data->widget->getView();
-    NSPoint p = [view convertPoint: NSMakePoint (x, y) toView: nil];
+    NSPoint p = [[NSView focusView] convertPoint: NSMakePoint (x, y) toView: nil];
     CGContextRef cgContext;
 
     [NSGraphicsContext saveGraphicsState];

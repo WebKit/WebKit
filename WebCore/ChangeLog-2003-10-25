@@ -1,3 +1,12 @@
+2002-06-17  Darin Adler  <darin@apple.com>
+
+	Fixed bug where some images would get left behind when scrolling. Turned out it
+	was all the tiled images that were getting left behind.
+
+	* kwq/KWQPainter.mm: (QPainter::drawTiledPixmap): Fixed to get the view for
+	coordinates from [NSView focusView] the way drawPixmap does, rather than using
+	data->widget->getView(), which gives the scroll view instead of the scrolled view.
+
 2002-06-16  Darin Adler  <darin@apple.com>
 
 	* kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::frames):
