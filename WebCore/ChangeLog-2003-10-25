@@ -1,3 +1,14 @@
+2003-02-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3167642 - crash in renderArena.
+	
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::HTMLDocumentImpl): Added new processingLoadEvent bool.
+        (HTMLDocumentImpl::close): Guard against re-entering the load event handler.
+
 2003-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

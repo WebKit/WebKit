@@ -103,6 +103,7 @@ private:
     // we actually store ints inside the pointer value itself; would use void *
     // but that makes the template unhappy.
     QDict<char> namedImageAndFormCounts;
+    bool processingLoadEvent;
 
 #if APPLE_CHANGES
     DOMString m_policyBaseURL;

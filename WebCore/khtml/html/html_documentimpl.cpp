@@ -122,6 +122,8 @@ HTMLDocumentImpl::HTMLDocumentImpl(DOMImplementationImpl *_implementation, KHTML
     connect( KHTMLFactory::vLinks(), SIGNAL( cleared()),
              SLOT( slotHistoryChanged() ));
     m_startTime.restart();
+
+    processingLoadEvent = false;
 }
 
 HTMLDocumentImpl::~HTMLDocumentImpl()
@@ -330,14 +332,16 @@ HTMLMapElementImpl* HTMLDocumentImpl::getMap(const DOMString& _url)
 void HTMLDocumentImpl::close()
 {
     // First fire the onload.
-    bool doload = !parsing() && m_tokenizer;
+    bool doload = !parsing() && m_tokenizer && !processingLoadEvent;
     
     bool wasNotRedirecting = !view() || view()->part()->d->m_scheduledRedirection == noRedirectionScheduled;
-    
+
+    processingLoadEvent = true;
     if (body() && doload) {
         dispatchImageLoadEventsNow();
         body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
     }
+    processingLoadEvent = false;
         
     // Make sure both the initial layout and reflow happen after the onload
     // fires. This will improve onload scores, and other browsers do it.
