@@ -1,5 +1,12 @@
 2003-10-01  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * kwq/KWQWidget.mm:
+        (QWidget::focusPolicy): Improved comment.
+
+2003-10-01  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Maciej
 
 	Fix for these bugs:

@@ -231,9 +231,9 @@ void QWidget::clearFocus()
 QWidget::FocusPolicy QWidget::focusPolicy() const
 {
     // This provides support for controlling the widgets that take 
-    // part in tab navigation. Widgets must not be:
-    // 1. hidden by css
-    // 2. enabled
+    // part in tab navigation. Widgets must:
+    // 1. not be hidden by css
+    // 2. be enabled
     // 3. accept first responder
 
     RenderWidget *widget = const_cast<RenderWidget *>
