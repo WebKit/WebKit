@@ -1,3 +1,10 @@
+2002-08-04  David Hyatt  <hyatt@apple.com>
+
+	Fix my bungled CSS for input fields in the user agent style
+	sheet.
+	
+        * khtml/css/html4.css:
+
 2002-08-03  Darin Adler  <darin@apple.com>
 
 	- fixed 2943519 - &#149; is rendered as an asterisk rather than a bullet

@@ -387,9 +387,7 @@ BUTTON:active {
 /* XXX Need to implement support for CSS2 system fonts, so that I don't have to hard code this.
    -dwh */
 INPUT, TEXTAREA {
-        font-size: 13px;
-        font-face: Lucida Grande;
-        font-family: sans serif;
+	font: 11px 'Lucida Grande';
 }
 
 INPUT[type="hidden"] {
