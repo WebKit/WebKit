@@ -60,7 +60,7 @@
     withURL:(NSURL *)URL dataSource:(WebDataSource *)source
 {
     WebSubresourceClient *client = [[self alloc] initWithLoader:rLoader dataSource:source];
-    WebResourceHandle *handle = [[[WebResourceHandle alloc] initWithClient:client URL:URL attributes:[source attributes] flags:[source flags]] autorelease];
+    WebResourceHandle *handle = [[[WebResourceHandle alloc] initWithClient:client URL:URL attributes:nil flags:[source flags]] autorelease];
     [client release];
 
     if (handle == nil) {

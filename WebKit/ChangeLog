@@ -1,3 +1,17 @@
+2002-08-22  Ken Kocienda  <kocienda@apple.com>
+
+	Passing the main load's attributes to the subresource loads causes 
+	breakage (most visible when we POST).
+	
+	Right now, we just rely on flags to handle "back/forward" loads, so
+	the attributes were not actually being used.
+
+	A better fix needs to be put in place when the soon-to-be-done 
+	attributes/flags rework is done.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:dataSource:]):
+
 === Alexander-20 ===
 
 2002-08-21  Richard Williamson (Local)  <rjw@apple.com>
