@@ -372,10 +372,13 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
             ++p;
         }
         if (*p == ':') {
-            absolute = true;
+            if (p[1] != '/' && base.protocol().lower() == QString(str, p - str).lower())
+                str = p + 1;
+            else
+                absolute = true;
         }
     }
-        
+
     if (absolute) {
 	parse(str, allASCII ? &relative : 0);
     } else {
