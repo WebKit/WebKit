@@ -91,22 +91,22 @@ public:
     QString responseHeaders;
 };
 
-TransferJob::TransferJob(const KURL &url, bool reload)
+TransferJob::TransferJob(const KURL &url, bool reload, bool deliverAllData)
     : d(new TransferJobPrivate(url)),
+      m_deliverAllData(deliverAllData),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
-      m_result1(this, SIGNAL(result(KIO::Job*))),
-      m_result2(this, SIGNAL(result(KIO::Job*, NSData *))),
+      m_result(this, deliverAllData ? SIGNAL(result(KIO::Job*, NSData *)) : SIGNAL(result(KIO::Job*))),
       m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *)))
 {
 }
 
-TransferJob::TransferJob(const KURL &url, const FormData &postData)
+TransferJob::TransferJob(const KURL &url, const FormData &postData, bool deliverAllData)
     : d(new TransferJobPrivate(url, postData)),
+      m_deliverAllData(deliverAllData),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
-      m_result1(this, SIGNAL(result(KIO::Job*))),
-      m_result2(this, SIGNAL(result(KIO::Job*, NSData *))),
+      m_result(this, deliverAllData ? SIGNAL(result(KIO::Job*, NSData *)) : SIGNAL(result(KIO::Job*))),
       m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *)))
 {
 }
@@ -232,14 +232,9 @@ void TransferJob::emitRedirection(const KURL &url)
     m_redirection.call(this, url);
 }
 
-void TransferJob::emitResult()
-{
-    m_result1.call(this);
-}
-
 void TransferJob::emitResult(NSData *allData)
 {
-    m_result2.call(this, allData);
+    m_deliverAllData ? m_result.call(this, allData) : m_result.call(this);
 }
 
 void TransferJob::emitReceivedResponse(NSURLResponse *response)

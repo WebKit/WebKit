@@ -1508,8 +1508,12 @@ void Loader::servePendingRequests()
 #endif
 
   KURL u(req->object->url().string());
+#if APPLE_CHANGES
+  KIO::TransferJob* job = KIO::get( u, false, false /*no GUI*/, true);
+#else
   KIO::TransferJob* job = KIO::get( u, false, false /*no GUI*/);
-
+#endif
+  
   job->addMetaData("cache", getCacheControlString(req->object->cachePolicy()));
   if (!req->object->accept().isEmpty())
       job->addMetaData("accept", req->object->accept());
@@ -1557,8 +1561,8 @@ void Loader::servePendingRequests()
 #endif // APPLE_CHANGES
 }
 
-#if !defined(APPLE_CHANGES)
-void Loader::slotFinished( KIO::Job* job, NSData *allData)
+#if !APPLE_CHANGES
+void Loader::slotFinished( KIO::Job* job)
 {
   Request *r = m_requestsLoading.take( job );
   KIO::TransferJob* j = static_cast<KIO::TransferJob*>(job);

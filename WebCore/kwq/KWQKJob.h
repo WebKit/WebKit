@@ -35,11 +35,11 @@ namespace KIO {
 
 void http_update_cache(const KURL &, bool, time_t);
 
-inline TransferJob *get(const KURL &url, bool reload, bool)
-    { return new TransferJob(url, reload); }
+inline TransferJob *get(const KURL &url, bool reload, bool, bool deliverAllData=false)
+    { return new TransferJob(url, reload, deliverAllData); }
 
-inline TransferJob *http_post(const KURL& url, const khtml::FormData &postData, bool)
-    { return new TransferJob(url, postData); }
+inline TransferJob *http_post(const KURL& url, const khtml::FormData &postData, bool, bool deliverAllData=false)
+    { return new TransferJob(url, postData, deliverAllData); }
 
 } // namespace KIO
 

@@ -1,3 +1,19 @@
+2004-12-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fix for busting XMLHTTPRequest.
+
+        Reviewed by kocienda.
+
+        * khtml/misc/loader.cpp:
+        (Loader::servePendingRequests): pass true for deliverAllData
+        * kwq/KWQKJob.h:
+        (KIO::get): take deliverAllData param
+        (KIO::http_post): ditto
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJob::TransferJob): if deliverAllData, create signal with data param
+        (KIO::TransferJob::emitResult): if deliverAllData, call signal with data param
+
 2004-12-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
