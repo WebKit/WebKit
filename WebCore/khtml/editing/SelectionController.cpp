@@ -454,6 +454,10 @@ void Selection::layoutCaret()
 
 QRect Selection::getRepaintRect() const
 {
+    if (m_needsCaretLayout) {
+        const_cast<Selection *>(this)->layoutCaret();
+    }
+
     // EDIT FIXME: fudge a bit to make sure we don't leave behind artifacts
     return QRect(m_caretX - 1, m_caretY - 1, 3, m_caretSize + 2);
 }
