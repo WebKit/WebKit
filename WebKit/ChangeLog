@@ -1,3 +1,16 @@
+2004-04-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave.
+        
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences historyIsFrozen]):
+        take out OMIT_TIGER_FEATURES ifdeffing, since if we turn this into API
+        then we'll probably want it to work in Panther also. To protect Safari users,
+        Safari now explicitly sets historyIsFrozen to NO when starting up in Panther.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        updated for recent changes
+
 2004-04-02  Chris Blumenberg  <cblu@apple.com>
 
 	Moved the DOM extensions to their own headers

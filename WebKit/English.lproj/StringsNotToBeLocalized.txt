@@ -176,6 +176,7 @@
 "WebKitFantasyFont"
 "WebKitFixedFont"
 "WebKitHistoryAgeInDaysLimit"
+"WebKitHistoryIsFrozen"
 "WebKitHistoryItemLimit"
 "WebKitInitialTimedLayoutDelay"
 "WebKitInitialTimedLayoutEnabled"

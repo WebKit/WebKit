@@ -52,10 +52,6 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
 
 #define KEY(x) [(_private->identifier?_private->identifier:@"") stringByAppendingString:x]
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
-#define OMIT_TIGER_FEATURES
-#endif
-
 enum { WebPreferencesVersion = 1 };
 
 @interface WebPreferencesPrivate : NSObject
@@ -621,11 +617,7 @@ NS_ENDHANDLER
 
 - (BOOL)historyIsFrozen
 {
-#ifdef OMIT_TIGER_FEATURES
-    return NO;
-#else
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitHistoryIsFrozenPreferenceKey];
-#endif
 }
 
 static NSMutableDictionary *webPreferencesInstances = nil;
