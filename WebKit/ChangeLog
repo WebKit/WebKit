@@ -1,5 +1,20 @@
 2002-08-06  Darin Adler  <darin@apple.com>
 
+	- fixed 3017761 -- dataSource != nil assertion navigating at yahoo.com
+
+        * WebView.subproj/WebLocationChangeHandler.h:
+        * WebView.subproj/WebLocationChangeHandler.m:
+	Change client redirect calls to pass the frame, not the data source.
+	At the time a client redirect is requested, it's not even clear yet
+	which data source will be involved. We may want to make some of the
+	other calls pass frames, also, aside from the "start", "committed", "done",
+	calls, which must specify the data source.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportClientRedirectTo:delay:fireDate:]): Pass frame, not data source.
+        (-[WebBridge reportClientRedirectCancelled]): Pass frame, not data source.
+
+2002-08-06  Darin Adler  <darin@apple.com>
+
         * lots of files: Changed url to URL in many places and renamed URL-related methods.
 
 2002-08-06  Darin Adler  <darin@apple.com>

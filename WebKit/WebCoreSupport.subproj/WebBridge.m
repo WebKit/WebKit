@@ -192,14 +192,12 @@
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
-    [[[frame controller] locationChangeHandler]
-        clientRedirectTo:URL delay:seconds fireDate:date forDataSource:[self dataSource]];
+    [[[frame controller] locationChangeHandler] clientRedirectTo:URL delay:seconds fireDate:date forFrame:frame];
 }
 
 - (void)reportClientRedirectCancelled
 {
-    [[[frame controller] locationChangeHandler]
-        clientRedirectCancelledForDataSource:[self dataSource]];
+    [[[frame controller] locationChangeHandler] clientRedirectCancelledForFrame:frame];
 }
 
 - (void)setFrame:(WebFrame *)webFrame

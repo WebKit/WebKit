@@ -16,7 +16,7 @@
 
 - (void)serverRedirectTo:(NSURL *)URL forDataSource:(WebDataSource *)dataSource { }
 
-- (void)clientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forDataSource:(WebDataSource *)dataSource { }
-- (void)clientRedirectCancelledForDataSource:(WebDataSource *)dataSource { }
+- (void)clientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame { }
+- (void)clientRedirectCancelledForFrame:(WebFrame *)frame { }
 
 @end

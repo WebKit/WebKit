@@ -9,11 +9,12 @@
 
 @class WebError;
 @class WebDataSource;
+@class WebFrame;
 
 /*
    ============================================================================= 
    
-    WebLocationChangeHandlers track changes to a frames location.  This includes 
+    WebLocationChangeHandlers track changes to a frame's location.  This includes 
     changes that may result in a download, or a resource being opened externally.
     rather than a change to the frame document.
     
@@ -45,8 +46,8 @@
 
 - (void)serverRedirectTo:(NSURL *)URL forDataSource:(WebDataSource *)dataSource;
 
-- (void)clientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forDataSource:(WebDataSource *)dataSource;
-- (void)clientRedirectCancelledForDataSource:(WebDataSource *)dataSource;
+- (void)clientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame;
+- (void)clientRedirectCancelledForFrame:(WebFrame *)frame;
 
 @end
 
