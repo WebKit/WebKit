@@ -1,3 +1,23 @@
+2003-11-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3479287, macro-ize the handling of the CSS 'inherit' value.  This patch is preparation for
+	adding support for the 'initial' value, which will be used to fix the CSS parser's shorthand parsing
+	bugs.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+
 2003-11-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

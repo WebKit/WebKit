@@ -539,7 +539,7 @@ void KHTMLView::layout()
         }
     }
 
-#if INCREMENTAL_REPAINTING
+#ifdef INCREMENTAL_REPAINTING
     d->doFullRepaint = d->firstLayout || root->printingMode();
 #endif
 

@@ -1,3 +1,4 @@
+
 /**
  * This file is part of the DOM implementation for KDE.
  *
@@ -841,7 +842,7 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
         n = new HTMLMarqueeElementImpl(docPtr());
         break;
         
-    case ID_BDO:
+    case ID_BDO: // FIXME: make an element here. "bdo" with dir adds the CSS direction and unicode-bidi with override.
         break;
 
 // text

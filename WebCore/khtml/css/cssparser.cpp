@@ -796,13 +796,6 @@ bool CSSParser::parseValue( int propId, bool important )
             valid_primitive = ( validUnit( value, FLength, strict&(!nonCSSHint) ) );
 	break;
 
-    case CSS_PROP_MARKER_OFFSET:        // <length> | auto | inherit
-	if ( id == CSS_VAL_AUTO )
-	    valid_primitive = true;
-	else
-            valid_primitive = validUnit( value, FLength, strict&(!nonCSSHint) );
-	break;
-
     case CSS_PROP_LETTER_SPACING:       // normal | <length> | inherit
     case CSS_PROP_WORD_SPACING:         // normal | <length> | inherit
 	if ( id == CSS_VAL_NORMAL )
