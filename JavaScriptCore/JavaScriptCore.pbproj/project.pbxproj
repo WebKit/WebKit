@@ -220,6 +220,7 @@
 				F50888B7030BB74C012A967E,
 				F54F0801030CD22001B5C2EB,
 				F5341393030CEEB1018BE7F3,
+				F5BB2BC7030F772101FCFE1D,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -264,6 +265,7 @@
 				F5FFE657026B47A6018635CA,
 				F5341392030CEEB1018BE7F3,
 				F5341395030CF5F8018BE7F3,
+				F5BB2BC6030F772101FCFE1D,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -320,6 +322,8 @@
 				F692A8510255597D01FF60F7,
 				F692A8520255597D01FF60F7,
 				F692A8530255597D01FF60F7,
+				F5BB2BC4030F772101FCFE1D,
+				F5BB2BC5030F772101FCFE1D,
 				F692A8550255597D01FF60F7,
 				F692A8560255597D01FF60F7,
 				F692A8570255597D01FF60F7,
@@ -531,6 +535,33 @@
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;
+		};
+		F5BB2BC4030F772101FCFE1D = {
+			isa = PBXFileReference;
+			name = completion.cpp;
+			path = kjs/completion.cpp;
+			refType = 4;
+		};
+		F5BB2BC5030F772101FCFE1D = {
+			isa = PBXFileReference;
+			name = completion.h;
+			path = kjs/completion.h;
+			refType = 4;
+		};
+		F5BB2BC6030F772101FCFE1D = {
+			fileRef = F5BB2BC4030F772101FCFE1D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5BB2BC7030F772101FCFE1D = {
+			fileRef = F5BB2BC5030F772101FCFE1D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
 		};
 		F5C290E50284F960018635CA = {
 			children = (

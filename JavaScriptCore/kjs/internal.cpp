@@ -331,60 +331,6 @@ void LabelStack::clear()
   }
 }
 
-// ------------------------------ CompletionImp --------------------------------
-
-CompletionImp::CompletionImp(ComplType c, const Value& v, const UString& t)
-  : comp(c), val(v.imp()), tar(t)
-{
-}
-
-CompletionImp::~CompletionImp()
-{
-}
-
-void CompletionImp::mark()
-{
-  ValueImp::mark();
-
-  if (val && !val->marked())
-    val->mark();
-}
-
-Value CompletionImp::toPrimitive(ExecState */*exec*/, Type /*preferredType*/) const
-{
-  // invalid for Completion
-  assert(false);
-  return Value();
-}
-
-bool CompletionImp::toBoolean(ExecState */*exec*/) const
-{
-  // invalid for Completion
-  assert(false);
-  return false;
-}
-
-double CompletionImp::toNumber(ExecState */*exec*/) const
-{
-  // invalid for Completion
-  assert(false);
-  return 0;
-}
-
-UString CompletionImp::toString(ExecState */*exec*/) const
-{
-  // invalid for Completion
-  assert(false);
-  return UString::null;
-}
-
-Object CompletionImp::toObject(ExecState */*exec*/) const
-{
-  // invalid for Completion
-  assert(false);
-  return Object();
-}
-
 // ------------------------------ ListImp --------------------------------------
 
 #ifdef KJS_DEBUG_MEM

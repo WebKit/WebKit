@@ -1,3 +1,28 @@
+2002-08-18  Maciej Stachowiak  <mjs@apple.com>
+
+	Separated Completion from Value and made it a pure stack
+	object. This removed another 160,000 of the remaining 580,000
+	garbage collected object allocations.
+
+	6% speed increas on cvs-js-performance test.
+	
+        * kjs/completion.cpp: Added. New implementation that doesn't
+	require a ValueImp *.
+        (Completion::Completion):
+        (Completion::complType):
+        (Completion::value):
+        (Completion::target):
+        (Completion::isValueCompletion):
+        * kjs/completion.h: Added.
+        * kjs/function.cpp:
+	(GlobalFuncImp::call): Removed some (apparently mistaken) uses of
+	Completion as a Value.
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/types.cpp: Removed Completion stuff.
+        * kjs/types.h: Removed Completion stuff.
+        * JavaScriptCore.pbproj/project.pbxproj: Added new header.
+
 2002-08-16  Darin Adler  <darin@apple.com>
 
 	Fix the Development build.

@@ -416,7 +416,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
       if ( progNode->deref() )
           delete progNode;
       if (c.complType() == ReturnValue)
-	  return c;
+	  return c.value();
       // ### setException() on throw?
       else if (c.complType() == Normal) {
 	  if (c.isValueCompletion())
@@ -424,7 +424,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
 	  else
 	      return Undefined();
       } else {
-	  return c;
+	  return Undefined();
       }
     }
     break;

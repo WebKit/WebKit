@@ -27,6 +27,8 @@
 // internal data types
 
 #include "value.h"
+#include "reference.h"
+#include "completion.h"
 
 namespace KJS {
 
@@ -197,44 +199,6 @@ namespace KJS {
 #ifdef KJS_DEBUG_MEM
     static void globalClear();
 #endif
-  };
-
-  /**
-   * Completion types.
-   */
-  enum ComplType { Normal, Break, Continue, ReturnValue, Throw };
-
-  /**
-   * Completion objects are used to convey the return status and value
-   * from functions.
-   *
-   * See @ref FunctionImp::execute()
-   *
-   * @see FunctionImp
-   *
-   * @short Handle for a Completion type.
-   */
-  class Completion : public Value {
-  public:
-    Completion(ComplType c = Normal, const Value& v = Value(),
-               const UString &t = UString::null);
-    Completion(CompletionImp *v);
-
-    /**
-     * Converts a Value into an Completion. If the value's type is not
-     * CompletionType, a null object will be returned (i.e. one with it's
-     * internal pointer set to 0). If you do not know for sure whether the
-     * value is of type CompletionType, you should check the @ref isNull()
-     * methods afterwards before calling any methods on the returned value.
-     *
-     * @return The value converted to an Completion
-     */
-    static Completion dynamicCast(const Value &v);
-
-    ComplType complType() const;
-    Value value() const;
-    UString target() const;
-    bool isValueCompletion() const;
   };
 
 }; // namespace

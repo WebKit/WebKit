@@ -203,38 +203,3 @@ void List::globalClear()
 }
 #endif
 
-
-// ------------------------------ Completion -----------------------------------
-
-Completion::Completion(ComplType c, const Value& v, const UString &t)
-  : Value(new CompletionImp(c,v,t))
-{
-}
-
-Completion Completion::dynamicCast(const Value &v)
-{
-  if (v.isNull() || v.type() != CompletionType)
-    return 0;
-
-  return static_cast<CompletionImp*>(v.imp());
-}
-
-ComplType Completion::complType() const
-{
-  return static_cast<CompletionImp*>(rep)->complType();
-}
-
-Value Completion::value() const
-{
-  return static_cast<CompletionImp*>(rep)->value();
-}
-
-UString Completion::target() const
-{
-  return static_cast<CompletionImp*>(rep)->target();
-}
-
-bool Completion::isValueCompletion() const
-{
-  return !value().isNull();
-}

@@ -142,32 +142,6 @@ namespace KJS {
   //                            Internal type impls
   // ---------------------------------------------------------------------------
 
-  class CompletionImp : public ValueImp {
-  public:
-    Type type() const { return CompletionType; }
-
-    CompletionImp(ComplType c, const Value& v, const UString& t);
-    virtual ~CompletionImp();
-    virtual void mark();
-
-    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
-    bool toBoolean(ExecState *exec) const;
-    double toNumber(ExecState *exec) const;
-    UString toString(ExecState *exec) const;
-    Object toObject(ExecState *exec) const;
-
-    ComplType complType() const { return comp; }
-    Value value() const { return Value(val); }
-    UString target() const { return tar; }
-
-  private:
-    ComplType comp;
-    ValueImp * val;
-    UString tar;
-  };
-
-  inline Completion::Completion(CompletionImp *imp) : Value(imp) { }
-
   /**
    * @internal
    */
