@@ -1,3 +1,15 @@
+2003-08-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3372896, spaces left at ends of lines.  Patch the selection code
+	to be smarter about detecting ends of lines and adding in spaces.
+	
+        Reviewed by gramps
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectedText):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+
 2003-08-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken Kocienda.

@@ -2208,28 +2208,58 @@ QString KHTMLPart::selectedText() const
     // text objects walk their renderers' TextRuns, so that we at least get the whitespace stripped out properly
     // and obey CSS visibility for text runs.
   bool hasNewLine = true;
+  bool addedSpace = true;
   QString text;
   DOM::Node n = d->m_selectionStart;
   while(!n.isNull()) {
       if(n.nodeType() == DOM::Node::TEXT_NODE) {
-          hasNewLine = false;
+          if (hasNewLine) {
+              addedSpace = true;
+              hasNewLine = false;
+          }
           QString str = n.nodeValue().string();
           int start = (n == d->m_selectionStart) ? d->m_startOffset : -1;
           int end = (n == d->m_selectionEnd) ? d->m_endOffset : -1;
-          if (n.handle()->renderer() && n.handle()->renderer()->isText()) {
-              RenderText* textObj = static_cast<RenderText*>(n.handle()->renderer());
-              TextRunArray runs = textObj->textRuns();
-              for (unsigned i = 0; i < runs.count(); i++) {
-                  int runStart = (start == -1) ? runs[i]->m_start : start;
-                  int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
-                  runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
-                  if (runStart >= runs[i]->m_start &&
-                      runStart < runs[i]->m_start + runs[i]->m_len) {
-                      text += str.mid(runStart, runEnd - runStart);
-                      start = -1;
+          RenderObject* renderer = n.handle()->renderer();
+          if (renderer && renderer->isText()) {
+              if (renderer->style()->whiteSpace() == khtml::PRE) {
+                  int runStart = (start == -1) ? 0 : start;
+                  int runEnd = (end == -1) ? str.length() : end;
+                  text += str.mid(runStart, runEnd-runStart);
+                  addedSpace = str[runEnd-1].direction() == QChar::DirWS;
+              }
+              else {
+                  RenderText* textObj = static_cast<RenderText*>(n.handle()->renderer());
+                  TextRunArray runs = textObj->textRuns();
+                  if (runs.count() == 0 && str.length() > 0 && !addedSpace) {
+                      // We have no runs, but we do have a length.  This means we must be
+                      // whitespace that collapsed away at the end of a line.
+                      text += " ";
+                      addedSpace = true;
                   }
-                  if (end != -1 && runEnd >= end)
-                      break;
+                  else {
+                      addedSpace = false;
+                      for (unsigned i = 0; i < runs.count(); i++) {
+                          int runStart = (start == -1) ? runs[i]->m_start : start;
+                          int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
+                          runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
+                          bool spaceBetweenRuns = false;
+                          if (runStart >= runs[i]->m_start &&
+                              runStart < runs[i]->m_start + runs[i]->m_len) {
+                              text += str.mid(runStart, runEnd - runStart);
+                              start = -1;
+                              spaceBetweenRuns = i+1 < runs.count() && runs[i+1]->m_start > runEnd;
+                              addedSpace = str[runEnd-1].direction() == QChar::DirWS;
+                          }
+                          if (end != -1 && runEnd >= end)
+                              break;
+
+                          if (spaceBetweenRuns && !addedSpace) {
+                              text += " ";
+                              addedSpace = true;
+                          }
+                      }
+                  }
               }
           }
       }

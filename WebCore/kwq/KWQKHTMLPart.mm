@@ -1865,6 +1865,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
 
     bool hasNewLine = true;
+    bool addedSpace = true;
     bool hasParagraphBreak = true;
     const DOM::ElementImpl *linkStartNode = 0;
     unsigned linkStartLocation = 0;
@@ -1890,32 +1891,59 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
             RenderStyle *style = renderer->style();
             NSFont *font = style->font().getNSFont();
             if (n.nodeType() == Node::TEXT_NODE) {
+                if (hasNewLine) {
+                    addedSpace = true;
+                    hasNewLine = false;
+                }
                 QString text;
                 QString str = n.nodeValue().string();
                 int start = (n == _startNode) ? startOffset : -1;
                 int end = (n == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
-                    RenderText* textObj = static_cast<RenderText*>(renderer);
-                    TextRunArray runs = textObj->textRuns();
-                    for (unsigned i = 0; i < runs.count(); i++) {
-                        int runStart = (start == -1) ? runs[i]->m_start : start;
-                        int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
-                        runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
-                        if (runStart >= runs[i]->m_start &&
-                            runStart < runs[i]->m_start + runs[i]->m_len) {
-                            text += str.mid(runStart, runEnd - runStart);
-                            start = -1;
+                    if (renderer->style()->whiteSpace() == khtml::PRE) {
+                        int runStart = (start == -1) ? 0 : start;
+                        int runEnd = (end == -1) ? str.length() : end;
+                        text += str.mid(runStart, runEnd-runStart);
+                        addedSpace = str[runEnd-1].direction() == QChar::DirWS;
+                    }
+                    else {
+                        RenderText* textObj = static_cast<RenderText*>(renderer);
+                        TextRunArray runs = textObj->textRuns();
+                        if (runs.count() == 0 && str.length() > 0 && !addedSpace) {
+                            // We have no runs, but we do have a length.  This means we must be
+                            // whitespace that collapsed away at the end of a line.
+                            text += " ";
+                            addedSpace = true;
                         }
-                        if (end != -1 && runEnd >= end)
-                            break;
+                        else {
+                            addedSpace = false;
+                            for (unsigned i = 0; i < runs.count(); i++) {
+                                int runStart = (start == -1) ? runs[i]->m_start : start;
+                                int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
+                                runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
+                                bool spaceBetweenRuns = false;
+                                if (runStart >= runs[i]->m_start &&
+                                    runStart < runs[i]->m_start + runs[i]->m_len) {
+                                    text += str.mid(runStart, runEnd - runStart);
+                                    start = -1;
+                                    spaceBetweenRuns = i+1 < runs.count() && runs[i+1]->m_start > runEnd;
+                                    addedSpace = str[runEnd-1].direction() == QChar::DirWS;
+                                }
+                                if (end != -1 && runEnd >= end)
+                                    break;
+
+                                if (spaceBetweenRuns && !addedSpace) {
+                                    text += " ";
+                                    addedSpace = true;
+                                }
+                            }
+                        }
                     }
                 }
                 
-                text = text.stripWhiteSpace();
                 text.replace('\\', renderer->backslashAsCurrencySymbol());
     
                 if (text.length() > 0) {
-                    hasNewLine = false;
                     hasParagraphBreak = false;
                     NSMutableDictionary *attrs;
 
@@ -2033,9 +2061,10 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                     case ID_H6:
                         if (!hasNewLine)
                             text += '\n';
-                        if (!hasParagraphBreak)
+                        if (!hasParagraphBreak) {
                             text += '\n';
                             hasParagraphBreak = true;
+                        }
                         hasNewLine = true;
                         break;
                         
