@@ -274,10 +274,11 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 }
 
 
+// This method is only used to draw the little circles used in lists.
 void QPainter::drawEllipse(int x, int y, int w, int h)
 {
     NSBezierPath *path;
-
+    
     path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect (x, y, w, h)];
     
     _lockFocus();
@@ -483,12 +484,13 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     y = y - (int)([font defaultLineHeightForFont] + [font descender]);
     //[string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, nil]];
 
-    KWQMetricsInfo *metricsCache = [KWQMetricsInfo getMetricsForFont: font];
-    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
-    if (layoutManager != nil){
-        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
-        [metricsCache setColor: data->qpen.color().color];
-        [layoutManager drawGlyphsForGlyphRange:NSMakeRange (0, numberOfGlyphs) atPoint:NSMakePoint(x, y)];
+    [KWQMetricsInfo drawString: string atPoint: NSMakePoint(x, y) withFont: font color: data->qpen.color().color];
+//    KWQMetricsInfo *metricsCache = [KWQMetricsInfo getMetricsForFont: font];
+//    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
+//    if (layoutManager != nil){
+//        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
+//        [metricsCache setColor: data->qpen.color().color];
+//        [layoutManager drawGlyphsForGlyphRange:NSMakeRange (0, numberOfGlyphs) atPoint:NSMakePoint(x, y)];
 
 /*
         [font set];
@@ -506,7 +508,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 
         [graphicsContext setShouldAntialias: flag];
 */
-    }
+//    }
 
 
     _unlockFocus();

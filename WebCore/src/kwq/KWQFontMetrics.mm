@@ -79,6 +79,18 @@ const float LargeNumberForText = 1.0e7;
 static NSMutableDictionary *metricsCache = nil;
 
 @implementation KWQMetricsInfo
+
++ (void)drawString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color
+{
+    KWQMetricsInfo *metricsCache = [KWQMetricsInfo getMetricsForFont: font];
+    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
+    if (layoutManager != nil){
+        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
+        [metricsCache setColor: color];
+        [layoutManager drawGlyphsForGlyphRange:NSMakeRange (0, numberOfGlyphs) atPoint:p];
+    }
+}
+
 + (KWQMetricsInfo *)getMetricsForFont: (NSFont *)aFont
 {
     KWQMetricsInfo *info = (KWQMetricsInfo *)[metricsCache objectForKey: aFont];

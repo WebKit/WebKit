@@ -33,6 +33,7 @@
     NSMutableDictionary *fragmentCache;
 }
 
++ (void)drawString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color;
 + (KWQMetricsInfo *)getMetricsForFont: (NSFont *)aFont;
 + (void)setMetric: (KWQMetricsInfo *)info forFont: (NSFont *)aFont;
 - initWithFont: (NSFont *)aFont;
