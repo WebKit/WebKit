@@ -1,3 +1,12 @@
+2002-09-25  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3060773 -- Wrong title proposed when image link 
+	dropped on favorites bar
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): Claim the pasteboard (via
+	declareTypes:) before putting data on it.
+
 2002-09-25  Richard Williamson   <rjw@apple.com>
 
         API and documentation tweaks.

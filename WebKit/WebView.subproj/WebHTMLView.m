@@ -477,6 +477,7 @@
                 //NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
 
                 NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+                [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
                 [pasteboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
                 
                 [self dragImage:image
