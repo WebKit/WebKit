@@ -1490,13 +1490,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type
 {
     ASSERT(!_private->parent);
-    WebBackForwardList *backForwardList = [[self webView] backForwardList];
-    WebHistoryItem *currItem = [backForwardList currentItem];
-    // Set the BF cursor before commit, which lets the user quickly click back/forward again.
-    // - plus, it only makes sense for the top level of the operation through the frametree,
-    // as opposed to happening for some/one of the page commits that might happen soon
-    [backForwardList goToItem:item];
-    [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
+    // shouldGoToHistoryItem is a private delegate method. This is needed to fix:
+    // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
+    // Ultimately, history item navigations should go through the policy delegate. That's covered in:
+    // <rdar://problem/3979539> back/forward cache navigations should consult policy delegate
+    if ([[_private->webView _policyDelegateForwarder] webView:_private->webView shouldGoToHistoryItem:item]) {    
+        WebBackForwardList *backForwardList = [[self webView] backForwardList];
+        WebHistoryItem *currItem = [backForwardList currentItem];
+        // Set the BF cursor before commit, which lets the user quickly click back/forward again.
+        // - plus, it only makes sense for the top level of the operation through the frametree,
+        // as opposed to happening for some/one of the page commits that might happen soon
+        [backForwardList goToItem:item];
+        [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
+    }
 }
 
 - (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState

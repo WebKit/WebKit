@@ -1,3 +1,15 @@
+2005-01-28  Chris Blumenberg  <cblu@apple.com>
+
+	WebKit side of: <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
+
+        Reviewed by john.
+
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:shouldGoToHistoryItem:]): new private delegate method
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _goToItem:withLoadType:]): call new delegate method
+        * WebView.subproj/WebPolicyDelegatePrivate.h:
+
 2005-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin, Hyatt and Ken.

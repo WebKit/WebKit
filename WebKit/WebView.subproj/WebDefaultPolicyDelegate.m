@@ -83,5 +83,11 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     [listener use];
 }
 
+// Temporary SPI needed for <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
+- (BOOL)webView:(WebView *)webView shouldGoToHistoryItem:(WebHistoryItem *)item
+{
+    return YES;
+}
+
 @end
 

@@ -7,12 +7,13 @@
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebFormDelegate.h>
 
+@class WebHistoryItem;
+
 typedef enum {
     WebPolicyUse,
     WebPolicyDownload,
     WebPolicyIgnore,
 } WebPolicyAction;
-
 
 @class WebPolicyDecisionListenerPrivate;
 
@@ -26,4 +27,9 @@ typedef enum {
 
 - (void)_invalidate;
 
+@end
+
+@interface NSObject (WebPolicyDelegatePrivate)
+// Temporary SPI needed for <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
+- (BOOL)webView:(WebView *)webView shouldGoToHistoryItem:(WebHistoryItem *)item;
 @end
