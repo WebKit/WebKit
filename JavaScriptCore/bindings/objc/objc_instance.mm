@@ -41,7 +41,10 @@ using namespace KJS;
 
 ObjcInstance::ObjcInstance (ObjectStructPtr instance) 
 {
-    _instance = (id)CFRetain(instance);
+    _instance = (id)instance;
+    if (_instance) {
+        CFRetain(_instance);
+    }
     _class = 0;
     _pool = 0;
     _beginCount = 0;
@@ -51,12 +54,17 @@ ObjcInstance::~ObjcInstance ()
 {
     if ([_instance respondsToSelector:@selector(finalizeForWebScript)])
         [_instance finalizeForWebScript];
-    CFRelease(_instance);
+    if (_instance) {
+        CFRelease(_instance);
+    }
 }
 
 ObjcInstance::ObjcInstance (const ObjcInstance &other) : Instance() 
 {
-    _instance = (id) CFRetain(other._instance);
+    _instance = (id)other._instance;
+    if (_instance) {
+        CFRetain(_instance);
+    }
     _class = other._class;
     _pool = 0;
     _beginCount = 0;
@@ -65,8 +73,13 @@ ObjcInstance::ObjcInstance (const ObjcInstance &other) : Instance()
 ObjcInstance &ObjcInstance::operator=(const ObjcInstance &other)
 {
     ObjectStructPtr _oldInstance = _instance;
-    _instance = (id) CFRetain(other._instance);
-    CFRelease(_oldInstance);
+    _instance = other._instance;
+    if (_instance) {
+        CFRetain(_instance);
+    }
+    if (_oldInstance) {
+        CFRelease(_oldInstance);
+    }
     
     // Classes are kept around forever.
     _class = other._class;

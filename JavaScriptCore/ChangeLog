@@ -1,5 +1,22 @@
 2004-06-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed some things for GC that Patrick missed, or that happened after the branch
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject dealloc]): Moved removeNativeReference call here from private object.
+        (-[WebScriptObject finalize]): Added.
+
+        - added some missing nil checks
+
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::ObjcInstance): Check for nil.
+        (ObjcInstance::~ObjcInstance): Check for nil.
+        (ObjcInstance::operator=): Check for nil.
+
+2004-06-14  Darin Adler  <darin@apple.com>
+
         Reviewed by me, code changes by Patrick Beard.
 
         - fixed <rdar://problem/3671507>: (WebKit should adopt GC changes and compile with GC enabled)

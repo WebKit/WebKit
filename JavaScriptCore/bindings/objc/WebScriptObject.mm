@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
 #include <JavaScriptCore/internal.h>
@@ -35,6 +36,14 @@
 #include <runtime_object.h>
 #include <runtime_root.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+
+@interface NSObject (WebExtras)
+- (void)finalize;
+@end
+
+#endif
+
 using namespace KJS;
 using namespace KJS::Bindings;
 
@@ -43,12 +52,7 @@ using namespace KJS::Bindings;
         NSLog (@"%s:%d:  JavaScript exception:  %s\n", __FILE__, __LINE__, exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii());
 
 @implementation WebScriptObjectPrivate
-- (void)dealloc
-{
-    removeNativeReference (imp);
-    
-    [super dealloc];
-}
+
 @end
 
 @implementation WebScriptObject
@@ -95,9 +99,17 @@ static void _didExecute(WebScriptObject *obj)
 
 - (void)dealloc
 {
+    removeNativeReference(_private->imp);
     [_private release];
         
     [super dealloc];
+}
+
+- (void)finalize
+{
+    removeNativeReference(_private->imp);
+        
+    [super finalize];
 }
 
 + (BOOL)throwException:(NSString *)exceptionMessage
