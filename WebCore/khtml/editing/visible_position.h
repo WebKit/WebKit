@@ -117,6 +117,10 @@ VisiblePosition startVisiblePosition(const DOM::RangeImpl *);
 VisiblePosition endVisiblePosition(const DOM::Range &);
 VisiblePosition endVisiblePosition(const DOM::RangeImpl *);
 
+bool visiblePositionsOnSameLine(const VisiblePosition &, const VisiblePosition &);
+bool isFirstVisiblePositionOnLine(const VisiblePosition &);
+bool isLastVisiblePositionOnLine(const VisiblePosition &);
+
 } // namespace khtml
 
 #endif // KHTML_EDITING_VISIBLE_POSITION_H

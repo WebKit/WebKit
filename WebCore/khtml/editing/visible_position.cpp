@@ -26,6 +26,8 @@
 #include "visible_position.h"
 
 #include "misc/htmltags.h"
+#include "rendering/render_line.h"
+#include "rendering/render_object.h"
 #include "rendering/render_text.h"
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom_textimpl.h"
@@ -459,5 +461,40 @@ bool setEnd(Range &r, const VisiblePosition &c)
     ri->setEnd(p.node(), p.offset(), code);
     return code == 0;
 }
+
+bool visiblePositionsOnDifferentLines(const VisiblePosition &pos1, const VisiblePosition &pos2)
+{
+    if (pos1.isNull() || pos2.isNull())
+        return false;
+    if (pos1 == pos2)
+        return false;
+    
+    Position p1 = pos1.deepEquivalent();
+    Position p2 = pos2.deepEquivalent();
+    RenderObject *r1 = p1.node()->renderer();
+    RenderObject *r2 = p2.node()->renderer();
+    InlineBox *b1 = r1 ? r1->inlineBox(p1.offset()) : 0;
+    InlineBox *b2 = r2 ? r2->inlineBox(p2.offset()) : 0;
+    return (b1 && b2 && b1->root() != b2->root());
+}
+
+bool isFirstVisiblePositionOnLine(const VisiblePosition &pos)
+{
+    if (pos.isNull())
+        return false;
+        
+    VisiblePosition previous = pos.previous();
+    return previous.isNull() || visiblePositionsOnDifferentLines(pos, previous);
+}
+
+bool isLastVisiblePositionOnLine(const VisiblePosition &pos)
+{
+    if (pos.isNull())
+        return false;
+        
+    VisiblePosition next = pos.next();
+    return next.isNull() || visiblePositionsOnDifferentLines(pos, next);
+}
+
 
 }  // namespace DOM

@@ -1,5 +1,50 @@
 2004-11-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Harrison
+
+        Some improvements to deleting when complete lines are selected.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData): Detect when the line containing
+        the end of a selection is fully selected. Turn off block merging in this case.
+        (khtml::DeleteSelectionCommand::handleSpecialCaseBRDelete): Fix a bug in the check for
+        whether a BR immediately followed a block. The old code could erroneously skip nodes.
+        (khtml::DeleteSelectionCommand::handleGeneralDelete): Add a case for when the entire
+        start block is selected. This new code will now delete this block in one call, rather
+        than iterating over each child.
+        * khtml/editing/visible_position.cpp:
+        (khtml::visiblePositionsOnDifferentLines): New helper called in initializePositionData()
+        to do the work mentioned above in the comment for that function.
+        (khtml::isFirstVisiblePositionOnLine): Ditto.
+        (khtml::isLastVisiblePositionOnLine): Ditto.
+        * khtml/editing/visible_position.h: Add new functions.
+        * layout-tests/editing/deleting/delete-line-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-001.html: Added.
+        * layout-tests/editing/deleting/delete-line-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-002.html: Added.
+        * layout-tests/editing/deleting/delete-line-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-003.html: Added.
+        * layout-tests/editing/deleting/delete-line-004-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-004.html: Added.
+        * layout-tests/editing/deleting/delete-line-005-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-005.html: Added.
+        * layout-tests/editing/deleting/delete-line-006-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-006.html: Added.
+        * layout-tests/editing/deleting/delete-line-007-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-007.html: Added.
+        * layout-tests/editing/deleting/delete-line-008-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-008.html: Added.
+        * layout-tests/editing/deleting/delete-line-009-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-009.html: Added.
+        * layout-tests/editing/deleting/delete-line-010-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-010.html: Added.
+        * layout-tests/editing/deleting/delete-line-011-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-011.html: Added.
+        * layout-tests/editing/deleting/delete-line-012-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-012.html: Added.
+
+2004-11-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Adele
 
         * khtml/editing/htmlediting.cpp:

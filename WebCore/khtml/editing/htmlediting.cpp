@@ -1460,6 +1460,17 @@ void DeleteSelectionCommand::initializePositionData()
     m_startNode = m_upstreamStart.node();
     m_startNode->ref();
 
+    //
+    // Handle detecting if the line containing the selection end is itself fully selected.
+    // This is one of the tests that determines if block merging of content needs to be done.
+    //
+    VisiblePosition visibleEnd(end);
+    if (isFirstVisiblePositionOnLine(visibleEnd)) {
+        Position previousLineStart = previousLinePosition(visibleEnd, DOWNSTREAM, 0).deepEquivalent();
+        if (RangeImpl::compareBoundaryPoints(previousLineStart.node(), previousLineStart.offset(), m_downstreamStart.node(), m_downstreamStart.offset()) >= 0)
+            m_mergeBlocksAfterDelete = false;
+    }
+
     debugPosition("m_upstreamStart      ", m_upstreamStart);
     debugPosition("m_downstreamStart    ", m_downstreamStart);
     debugPosition("m_upstreamEnd        ", m_upstreamEnd);
@@ -1519,11 +1530,11 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
 
     // Check for special-case where the selection contains only a BR right after a block ended.
     bool downstreamEndIsBR = m_downstreamEnd.node()->id() == ID_BR;
-    Position upstreamUpstreamStart = m_upstreamStart.upstream();
-    bool startIsBRAfterBlock = downstreamEndIsBR && m_downstreamEnd.node()->enclosingBlockFlowElement() != upstreamUpstreamStart.node()->enclosingBlockFlowElement();
+    Position upstreamFromBR = m_downstreamEnd.upstream();
+    bool startIsBRAfterBlock = downstreamEndIsBR && m_downstreamEnd.node()->enclosingBlockFlowElement() != upstreamFromBR.node()->enclosingBlockFlowElement();
     if (startIsBRAfterBlock) {
         removeNode(m_downstreamEnd.node());
-        m_endingPosition = upstreamUpstreamStart;
+        m_endingPosition = upstreamFromBR;
         m_mergeBlocksAfterDelete = false;
         return true;
     }
@@ -1540,7 +1551,21 @@ void DeleteSelectionCommand::handleGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
 
-    if (startOffset >= m_startNode->caretMaxOffset()) {
+    if (startOffset == 0 && m_startNode->isBlockFlow() && m_startBlock != m_endBlock && !m_endBlock->isAncestor(m_startBlock)) {
+        // The block containing the start of the selection is completely selected. 
+        // Delete it all in one step right here.
+        ASSERT(!m_downstreamEnd.node()->isAncestor(m_startNode));
+
+        // shift the start node to the start of the next block.
+        NodeImpl *old = m_startNode;
+        m_startNode = m_startBlock->traverseNextSibling();
+        m_startNode->ref();
+        old->deref();
+        startOffset = 0;
+
+        removeFullySelectedNode(m_startBlock);
+    }
+    else if (startOffset >= m_startNode->caretMaxOffset()) {
         // Move the start node to the next node in the tree since the startOffset is equal to
         // or beyond the start node's caretMaxOffset This means there is nothing visible to delete. 
         // However, before moving on, delete any insignificant text that may be present in a text node.
