@@ -82,6 +82,10 @@ public:
     friend bool operator!=(const Position &a, const Position &b);
     
     void debugPosition(const char *msg="") const;
+
+#ifndef NDEBUG
+    void formatForDebugger(char *buffer, unsigned length) const;
+#endif
     
 private:
     NodeImpl *m_node;

@@ -477,6 +477,29 @@ DOMString TextImpl::toString() const
     return nodeValue();
 }
 
+#ifndef NDEBUG
+void TextImpl::formatForDebugger(char *buffer, unsigned length) const
+{
+    DOMString result;
+    DOMString s;
+    
+    s = nodeName();
+    if (s.length() > 0) {
+        result += s;
+    }
+          
+    s = nodeValue();
+    if (s.length() > 0) {
+        if (result.length() > 0)
+            result += "; ";
+        result += "value=";
+        result += s;
+    }
+          
+    strncpy(buffer, result.string().latin1(), length - 1);
+}
+#endif
+
 // ---------------------------------------------------------------------------
 
 CDATASectionImpl::CDATASectionImpl(DocumentPtr *impl, const DOMString &_text) : TextImpl(impl,_text)

@@ -889,4 +889,28 @@ void Position::debugPosition(const char *msg) const
         fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, getTagName(node()->id()).string().latin1(), node(), offset());
 }
 
+#ifndef NDEBUG
+#define FormatBufferSize 1024
+void Position::formatForDebugger(char *buffer, unsigned length) const
+{
+    DOMString result;
+    DOMString s;
+    
+    if (isEmpty()) {
+        result = "<empty>";
+    }
+    else {
+        char s[FormatBufferSize];
+        result += "offset ";
+        result += QString::number(m_offset);
+        result += " of ";
+        m_node->formatForDebugger(s, FormatBufferSize);
+        result += s;
+    }
+          
+    strncpy(buffer, result.string().latin1(), length - 1);
+}
+#undef FormatBufferSize
+#endif
+
 } // namespace DOM

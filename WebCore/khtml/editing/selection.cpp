@@ -961,4 +961,29 @@ void Selection::debugPosition() const
     fprintf(stderr, "================================\n");
 }
 
+#ifndef NDEBUG
+#define FormatBufferSize 1024
+void Selection::formatForDebugger(char *buffer, unsigned length) const
+{
+    DOMString result;
+    DOMString s;
+    
+    if (isEmpty()) {
+        result = "<empty>";
+    }
+    else {
+        char s[FormatBufferSize];
+        result += "from ";
+        m_start.formatForDebugger(s, FormatBufferSize);
+        result += s;
+        result += " to ";
+        m_end.formatForDebugger(s, FormatBufferSize);
+        result += s;
+    }
+          
+    strncpy(buffer, result.string().latin1(), length - 1);
+}
+#undef FormatBufferSize
+#endif
+
 } // namespace DOM

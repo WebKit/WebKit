@@ -1342,4 +1342,33 @@ NodeImpl *RangeImpl::pastEndNode() const
     return m_endContainer->traverseNextSibling();
 }
 
+#ifndef NDEBUG
+#define FormatBufferSize 1024
+void RangeImpl::formatForDebugger(char *buffer, unsigned length) const
+{
+    DOMString result;
+    DOMString s;
+    
+    if (!m_startContainer || !m_endContainer) {
+        result = "<empty>";
+    }
+    else {
+        char s[FormatBufferSize];
+        result += "from offset ";
+        result += QString::number(m_startOffset);
+        result += " of ";
+        m_startContainer->formatForDebugger(s, FormatBufferSize);
+        result += s;
+        result += " to offset ";
+        result += QString::number(m_endOffset);
+        result += " of ";
+        m_endContainer->formatForDebugger(s, FormatBufferSize);
+        result += s;
+    }
+          
+    strncpy(buffer, result.string().latin1(), length - 1);
+}
+#undef FormatBufferSize
+#endif
+
 }

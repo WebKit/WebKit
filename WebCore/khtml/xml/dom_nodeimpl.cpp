@@ -1388,6 +1388,22 @@ Position NodeImpl::positionForCoordinates(int x, int y)
     return Position(this, 0);
 }
 
+#ifndef NDEBUG
+void NodeImpl::formatForDebugger(char *buffer, unsigned length) const
+{
+    DOMString result;
+    DOMString s;
+    
+    s = nodeName();
+    if (s.length() == 0)
+        result += "<none>";
+    else
+        result += s;
+          
+    strncpy(buffer, result.string().latin1(), length - 1);
+}
+#endif
+
 //-------------------------------------------------------------------------
 
 NodeBaseImpl::NodeBaseImpl(DocumentPtr *doc)

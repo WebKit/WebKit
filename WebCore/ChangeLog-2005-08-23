@@ -1,3 +1,35 @@
+2004-07-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Vicki
+
+        Added some helper functions which provide strings to display in the 
+        Xcode debugger's variable inspector window. These functions are called
+        from the LabyrinthDataFormatter debugger plugin I just checked in to 
+        the Labyrinth/Tools directory.
+        
+        Note that these functions are compiled in on Development builds only.
+
+        * WebCore-combined.exp:
+        * WebCore-tests.exp: Export all the formatForDebugger symbols so the
+        debugger program can link with them.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::formatForDebugger):
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::formatForDebugger):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::formatForDebugger):
+        * khtml/xml/dom_position.h:
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::formatForDebugger):
+        * khtml/xml/dom_selection.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::formatForDebugger):
+        * khtml/xml/dom_textimpl.h:
+
 2004-07-08  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Vicki.

@@ -108,6 +108,10 @@ public:
     
     friend class KHTMLPart;
 
+#ifndef NDEBUG
+    void formatForDebugger(char *buffer, unsigned length) const;
+#endif
+
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 

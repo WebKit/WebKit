@@ -226,6 +226,11 @@ public:
 #if APPLE_CHANGES
     static Element createInstance(ElementImpl *impl);
 #endif
+
+#ifndef NDEBUG
+    virtual void formatForDebugger(char *buffer, unsigned length) const;
+#endif
+
 protected:
     virtual void createAttributeMap() const;
     DOMString openTagStartToString() const;

@@ -97,6 +97,10 @@ public:
     static Range createInstance (RangeImpl *impl);
 #endif
 
+#ifndef NDEBUG
+    void formatForDebugger(char *buffer, unsigned length) const;
+#endif
+
 protected:
     DocumentPtr *m_ownerDocument;
     NodeImpl *m_startContainer;
