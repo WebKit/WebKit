@@ -34,6 +34,7 @@
 #include "qstring.h"
 
 QRgb qRgb(int r, int g, int b);
+QRgb qRgba(int r, int g, int b, int a);
 
 // class QColor ================================================================
 
@@ -67,6 +68,7 @@ public:
     int red() const;
     int green() const;
     int blue() const;
+    QRgb rgb() const;
     void setRgb(int,int,int);
     void setRgb(int);
 
