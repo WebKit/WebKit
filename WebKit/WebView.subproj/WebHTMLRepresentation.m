@@ -102,7 +102,7 @@
     [_private->parsedArchiveData release];
     _private->parsedArchiveData = data;
     
-    [_private->dataSource addSubresources:subresources];
+    [_private->dataSource _addSubresources:subresources];
     [_private->dataSource _addSubframeArchives:subframeArchives];
     [_private->bridge closeURL];
     [_private->bridge openURL:[mainResource URL]

@@ -97,7 +97,7 @@
 
 @end
 
-@implementation DOMHTMLBodyElement (WebDOMHTMLBodyElementOperations)
+@implementation DOMHTMLBodyElement (WebDOMHTMLBodyElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
 {
@@ -106,7 +106,7 @@
 
 @end
 
-@implementation DOMHTMLInputElement (WebDOMHTMLInputElementOperations)
+@implementation DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
 {
@@ -115,7 +115,7 @@
 
 @end
 
-@implementation DOMHTMLLinkElement (WebDOMHTMLLinkElementOperations)
+@implementation DOMHTMLLinkElement (WebDOMHTMLLinkElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
 {
@@ -128,7 +128,7 @@
 
 @end
 
-@implementation DOMHTMLScriptElement (WebDOMHTMLScriptElementOperations)
+@implementation DOMHTMLScriptElement (WebDOMHTMLScriptElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
 {
@@ -137,7 +137,7 @@
 
 @end
 
-@implementation DOMHTMLImageElement (WebDOMHTMLImageElementOperations)
+@implementation DOMHTMLImageElement (WebDOMHTMLImageElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
 {
@@ -147,7 +147,7 @@
 
 @end
 
-@implementation DOMHTMLEmbedElement (WebDOMHTMLEmbedElementOperations)
+@implementation DOMHTMLEmbedElement (WebDOMHTMLEmbedElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
 {
@@ -156,7 +156,7 @@
 
 @end
 
-@implementation DOMHTMLObjectElement (WebDOMHTMLObjectElementOperations)
+@implementation DOMHTMLObjectElement (WebDOMHTMLObjectElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
 {
@@ -166,7 +166,7 @@
 
 @end
 
-@implementation DOMHTMLParamElement (WebDOMHTMLParamElementOperations)
+@implementation DOMHTMLParamElement (WebDOMHTMLParamElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
 {
@@ -181,7 +181,7 @@
 
 @end
 
-@implementation DOMHTMLTableElement (WebDOMHTMLTableElementOperations)
+@implementation DOMHTMLTableElement (WebDOMHTMLTableElementOperationsPrivate)
 
 - (NSString *)_web_background
 {
@@ -195,7 +195,7 @@
 
 @end
 
-@implementation DOMHTMLTableCellElement (WebDOMHTMLTableCellElementOperations)
+@implementation DOMHTMLTableCellElement (WebDOMHTMLTableCellElementOperationsPrivate)
 
 - (NSString *)_web_background
 {
@@ -205,6 +205,33 @@
 - (NSArray *)_subresourceURLs
 {
     return [self _URLsFromSelectors:@selector(_web_background), nil];
+}
+
+@end
+
+@implementation DOMHTMLFrameElement (WebDOMHTMLFrameElementOperations)
+
+- (WebFrame *)contentFrame
+{
+    return [[self contentDocument] webFrame];
+}
+
+@end
+
+@implementation DOMHTMLIFrameElement (WebDOMHTMLIFrameElementOperations)
+
+- (WebFrame *)contentFrame
+{
+    return [[self contentDocument] webFrame];
+}
+
+@end
+
+@implementation DOMHTMLObjectElement (WebDOMHTMLObjectElementOperations)
+
+- (WebFrame *)contentFrame
+{
+    return [[self contentDocument] webFrame];
 }
 
 @end

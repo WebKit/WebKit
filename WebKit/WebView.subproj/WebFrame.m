@@ -278,19 +278,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @implementation WebFrame (WebPrivate)
 
-- (void)loadArchive:(WebArchive *)archive
-{
-    WebResource *mainResource = [archive mainResource];
-    if (mainResource) {
-        NSURLRequest *request = [self _webDataRequestForData:[mainResource data] 
-                                                    MIMEType:[mainResource MIMEType]
-                                            textEncodingName:[mainResource textEncodingName]
-                                                     baseURL:[mainResource URL]
-                                              unreachableURL:nil];
-        [self _loadRequest:request subresources:[archive subresources] subframeArchives:[archive subframeArchives]];
-    }
-}
-
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
     NSURL *fakeURL = [NSURL _web_uniqueWebDataURL];
@@ -348,7 +335,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     }
     
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
-    [newDataSource addSubresources:subresources];
+    [newDataSource _addSubresources:subresources];
     [newDataSource _addSubframeArchives:subframeArchives];
     
     // When we loading alternate content for an unreachable URL that we're
@@ -2601,12 +2588,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return [_private webView];
 }
 
+- (DOMDocument *)DOMDocument
+{
+    return [[self dataSource] _isDocumentHTML] ? [_private->bridge DOMDocument] : nil;
+}
+
+- (DOMHTMLElement *)frameElement
+{
+    return [[self webView] mainFrame] != self ? [_private->bridge frameElement] : nil;
+}
 
 - (WebDataSource *)provisionalDataSource
 {
     return [_private provisionalDataSource];
 }
-
 
 - (WebDataSource *)dataSource
 {
@@ -2658,6 +2653,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)URL forUnreachableURL:(NSURL *)unreachableURL
 {
     [self _loadHTMLString:string baseURL:URL unreachableURL:unreachableURL];
+}
+
+- (void)loadArchive:(WebArchive *)archive
+{
+    WebResource *mainResource = [archive mainResource];
+    if (mainResource) {
+        NSURLRequest *request = [self _webDataRequestForData:[mainResource data] 
+                                                    MIMEType:[mainResource MIMEType]
+                                            textEncodingName:[mainResource textEncodingName]
+                                                     baseURL:[mainResource URL]
+                                              unreachableURL:nil];
+        [self _loadRequest:request subresources:[archive subresources] subframeArchives:[archive subframeArchives]];
+    }
 }
 
 - (void)stopLoading

@@ -1,3 +1,16 @@
+2004-05-11  Chris Blumenberg  <cblu@apple.com>
+
+	Support for: <rdar://problem/3616471>: (API: provide way to get from WebFrame to DOMDocument and vice versa)
+
+        Reviewed by rjw.
+
+        * kwq/DOM.mm:
+        (-[DOMDocument _ownerElement]): new
+        * kwq/DOMInternal.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge frameElement]): new
+
 2004-05-11  David Hyatt  <hyatt@apple.com>
 
 	Fix makeChildrenNonInline so that it does not wrap floats unless an inline is actually found.

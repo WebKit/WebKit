@@ -99,7 +99,7 @@
 
 - (WebArchive *)archive
 {
-    return [dataSource _archive];
+    return [dataSource webArchive];
 }
 
 @end

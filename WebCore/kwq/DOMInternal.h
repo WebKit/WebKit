@@ -56,6 +56,7 @@ namespace DOM {
 @interface DOMDocument (WebCoreInternal)
 + (DOMDocument *)_documentWithImpl:(DOM::DocumentImpl *)impl;
 - (DOM::DocumentImpl *)_documentImpl;
+- (DOMElement *)_ownerElement;
 @end
 
 @interface DOMRange (WebCoreInternal)

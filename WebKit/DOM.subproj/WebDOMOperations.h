@@ -6,6 +6,7 @@
 */
 
 #import <WebKit/DOMCore.h>
+#import <WebKit/DOMHTML.h>
 #import <WebKit/DOMRange.h>
 
 @class WebArchive;
@@ -29,15 +30,6 @@
 */
 - (WebFrame *)webFrame;
 
-/*!
-    @method URLWithAttributeString
-    @abstract Constructs a URL given an attribute string.
-    @discussion This method constructs a URL given an attribute string just as WebKit does. 
-    An attribute string is the value of an attribute of an element such as the href attribute on 
-    the DOMHTMLAnchorElement class. This method is only applicable to attributes that refer to URLs.
-*/
-- (NSURL *)URLWithAttributeString:(NSString *)string;
-
 @end
 
 @interface DOMRange (WebDOMRangeOperations)
@@ -48,10 +40,37 @@
 */
 - (WebArchive *)webArchive;
 
+@end
+
+@interface DOMHTMLFrameElement (WebDOMHTMLFrameElementOperations)
+
 /*!
-    @method markupString
-    @result A markup string representing the range.
+    @method contentFrame
+    @abstract Returns the content frame of the element.
 */
-- (NSString *)markupString;
+- (WebFrame *)contentFrame;
 
 @end
+
+@interface DOMHTMLIFrameElement (WebDOMHTMLIFrameElementOperations)
+
+/*!
+    @method contentFrame
+    @abstract Returns the content frame of the element.
+*/
+- (WebFrame *)contentFrame;
+
+@end
+
+@interface DOMHTMLObjectElement (WebDOMHTMLObjectElementOperations)
+
+/*!
+    @method contentFrame
+    @abstract Returns the content frame of the element.
+    @discussion Returns non-nil only if the object represents a child frame
+    such as if the data of the object is HTML content.
+*/
+- (WebFrame *)contentFrame;
+
+@end
+

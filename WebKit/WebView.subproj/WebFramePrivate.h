@@ -122,14 +122,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 
 @interface WebFrame (WebPrivate)
 
-// API Considerations:
-/*!
-    @method loadArchive:
-    @abstract Causes WebFrame to load a WebArchive.
-    @param archive The archive to be loaded.
-*/
-- (void)loadArchive:(WebArchive *)archive;
-
 // Other private methods
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives;

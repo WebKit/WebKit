@@ -14,6 +14,7 @@
 - (NSImage *)image;
 @end
 
+// This method is deprecated as it now lives on WebFrame.
 @protocol WebDocumentDOM <NSObject>
 - (DOMDocument *)DOMDocument;
 @end

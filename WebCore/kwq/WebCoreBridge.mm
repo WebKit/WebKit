@@ -1080,6 +1080,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMDocument _documentWithImpl:_part->xmlDocImpl()];
 }
 
+- (DOMHTMLElement *)frameElement
+{
+    return (DOMHTMLElement *)[[self DOMDocument] _ownerElement];
+}
+
 - (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset
 {
     Position s([start _nodeImpl], startOffset);

@@ -80,22 +80,7 @@
 
 @implementation WebDataSource (WebPrivate)
 
-- (NSArray *)subresources
-{
-    return [_private->subresources allValues];
-}
-
-- (WebResource *)subresourceForURL:(NSURL *)URL
-{
-    return [_private->subresources objectForKey:[URL _web_originalDataAsString]];
-}
-
-- (void)addSubresource:(WebResource *)subresource
-{
-    [_private->subresources setObject:subresource forKey:[[subresource URL] _web_originalDataAsString]];
-}
-
-- (void)addSubresources:(NSArray *)subresources
+- (void)_addSubresources:(NSArray *)subresources
 {
     NSEnumerator *enumerator = [subresources objectEnumerator];
     WebResource *subresource;
@@ -141,8 +126,12 @@
     NSEnumerator *enumerator = [nodes objectEnumerator];
     DOMNode *node;
     while ((node = [enumerator nextObject]) != nil) {
-        if ([node isKindOfClass:[DOMHTMLFrameElement class]] || [node isKindOfClass:[DOMHTMLIFrameElement class]]) {
-            [subframeArchives addObject:[[[[(DOMHTMLFrameElement *)node contentDocument] webFrame] dataSource] _archive]];
+        WebFrame *childFrame;
+        if (([node isKindOfClass:[DOMHTMLFrameElement class]] || 
+             [node isKindOfClass:[DOMHTMLIFrameElement class]] || 
+             [node isKindOfClass:[DOMHTMLObjectElement class]]) &&
+            ((childFrame = [(DOMHTMLFrameElement *)node contentFrame]) != nil)) {
+            [subframeArchives addObject:[[childFrame dataSource] _archiveWithCurrentState:YES]];
         } else {
             NSEnumerator *enumerator = [[node _subresourceURLs] objectEnumerator];
             NSURL *URL;
@@ -165,19 +154,21 @@
     return archive;
 }
 
-- (WebArchive *)_archive
+- (WebArchive *)_archiveWithCurrentState:(BOOL)currentState
 {
-    if ([[self representation] conformsToProtocol:@protocol(WebDocumentDOM)]) {
+    if (currentState && [[self representation] conformsToProtocol:@protocol(WebDocumentDOM)]) {
         return [[(id <WebDocumentDOM>)[self representation] DOMDocument] webArchive];
     } else {
-        NSURLResponse *response = [self response];
-        WebResource *mainResource = [[WebResource alloc] initWithData:[self data]
-                                                                  URL:[response URL] 
-                                                             MIMEType:[response MIMEType]
-                                                     textEncodingName:[response textEncodingName]
-                                                            frameName:[[self webFrame] name]];
-        WebArchive *archive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:nil subframeArchives:nil] autorelease];
-        [mainResource release];
+        NSEnumerator *enumerator = [[[self webFrame] childFrames] objectEnumerator];
+        NSMutableArray *subframeArchives = [[NSMutableArray alloc] init];
+        WebFrame *childFrame;
+        while ((childFrame = [enumerator nextObject]) != nil) {
+            [subframeArchives addObject:[[childFrame dataSource] _archiveWithCurrentState:currentState]];
+        }
+        WebArchive *archive = [[[WebArchive alloc] initWithMainResource:[self mainResource] 
+                                                           subresources:[_private->subresources allValues]
+                                                       subframeArchives:subframeArchives] autorelease];
+        [subframeArchives release];
         return archive;
     }
 }
@@ -231,7 +222,7 @@
         NSString *MIMEType = [mainResource MIMEType];
         if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
             NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
-            [self addSubresources:[archive subresources]];
+            [self _addSubresources:[archive subresources]];
             [self _addSubframeArchives:[archive subframeArchives]];
             [self _replaceSelectionWithMarkupString:markupString baseURL:[mainResource URL]];
             [markupString release];
@@ -1138,6 +1129,36 @@
 - (NSURL *)unreachableURL
 {
     return [_private->originalRequest _webDataRequestUnreachableURL];
+}
+
+- (WebArchive *)webArchive
+{
+    return [self _archiveWithCurrentState:NO];
+}
+
+- (WebResource *)mainResource
+{
+    NSURLResponse *response = [self response];
+    return [[[WebResource alloc] initWithData:[self data]
+                                          URL:[response URL] 
+                                     MIMEType:[response MIMEType]
+                             textEncodingName:[response textEncodingName]
+                                    frameName:[[self webFrame] name]] autorelease];
+}
+
+- (NSArray *)subresources
+{
+    return [_private->subresources allValues];
+}
+
+- (WebResource *)subresourceForURL:(NSURL *)URL
+{
+    return [_private->subresources objectForKey:[URL _web_originalDataAsString]];
+}
+
+- (void)addSubresource:(WebResource *)subresource
+{
+    [_private->subresources setObject:subresource forKey:[[subresource URL] _web_originalDataAsString]];
 }
 
 @end

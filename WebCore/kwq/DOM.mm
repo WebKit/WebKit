@@ -1101,6 +1101,12 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return static_cast<DocumentImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
+- (DOMElement *)_ownerElement
+{
+    ElementImpl *element = [self _documentImpl]->ownerElement();
+    return element ? [DOMElement _elementWithImpl:element] : nil;
+}
+
 @end
 
 //------------------------------------------------------------------------------------------

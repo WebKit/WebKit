@@ -58,14 +58,12 @@
 
 - (void)_web_saveAndOpen
 {
-    char *path = strdup("/tmp/XXXXXX.tiff");
-    
+    char path[] = "/tmp/XXXXXX.tiff";
     int fd = mkstemps(path, 5);
     if (fd != -1) {
         NSData *data = [self TIFFRepresentation];
         write(fd, [data bytes], [data length]);
         close(fd);
-
         [[NSWorkspace sharedWorkspace] openFile:[NSString stringWithCString:path]];
     }
 }
