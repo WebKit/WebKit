@@ -1,3 +1,13 @@
+2002-06-07  Chris Blumenberg  <cblu@apple.com>
+	
+	Allow plug-ins to make a NPP_*URLNotify request when
+	the target is _self, _top, _parent or _current. This goes
+	against the plug-in documentation, but mimics IE.
+	Need for iTools.
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]):
+
 2002-06-07  Darin Adler  <darin@apple.com>
 
 	* WebKit.pbproj/project.pbxproj: Don't use any warning flags for C that won't work

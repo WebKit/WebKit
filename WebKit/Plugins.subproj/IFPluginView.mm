@@ -620,13 +620,16 @@ static char *newCString(NSString *string)
                 NPP_URLNotify(instance, [[url absoluteString] cString], NPRES_DONE, notifyData);
         }else{
             if(notifyData){
-                if([target isEqualToString:@"_self"] || [target isEqualToString:@"_current"] || 
-                    [target isEqualToString:@"_parent"] || [target isEqualToString:@"_top"]){
-                    // return error since notification can't be sent to a plug-in that will no longer exist
-                    return NPERR_INVALID_PARAM;
+                if(![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] && 
+                    ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]){
+    
+                    [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:url];
+                    [[NSNotificationCenter defaultCenter] addObserver:self 
+                        selector:@selector(frameStateChanged:) name:IFFrameStateChangedNotification object:frame];
                 }
-                [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:url];
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(frameStateChanged:) name:IFFrameStateChangedNotification object:frame];
+                // Plug-in docs say to return NPERR_INVALID_PARAM here
+                // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
+                // so we have to allow this as well. Needed for iTools.
             }
             dataSource = [[[IFWebDataSource alloc] initWithURL:url attributes:attributes] autorelease];
             [frame setProvisionalDataSource:dataSource];
