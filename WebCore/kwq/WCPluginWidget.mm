@@ -37,7 +37,7 @@
 WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QString &serviceType, const QStringList &args)
 {
     NSMutableDictionary *arguments;
-    NSString *arg;
+    NSString *arg, *mimeType;
     NSRange r1, r2, r3;
     WCPlugin *plugin;
     uint i;
@@ -51,9 +51,14 @@ WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QStrin
         r3.length = [arg length] - r2.location - 2; // don't include quotes
         [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
     }
-    plugin = [[WCPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
-    if(plugin == nil){
+    if(serviceType.isNull()){
         plugin = [[WCPluginDatabase installedPlugins] getPluginForURL:QSTRING_TO_NSSTRING(url)];
+        if(plugin != nil){
+            mimeType = [plugin mimeTypeForURL:QSTRING_TO_NSSTRING(url)];
+        }
+    }else{
+        plugin = [[WCPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
+        mimeType = QSTRING_TO_NSSTRING(serviceType);
     }
     if(plugin == nil){
         //FIXME: Error dialog should be shown here
@@ -61,7 +66,7 @@ WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QStrin
         return;
     }
     [plugin load];
-    setView([[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this plugin:plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) arguments:arguments] autorelease]);
+    setView([[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this plugin:plugin url:QSTRING_TO_NSSTRING(url) mime:mimeType arguments:arguments] autorelease]);
 }
 
 WCPluginWidget::~WCPluginWidget()

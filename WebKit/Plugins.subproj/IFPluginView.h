@@ -10,8 +10,6 @@
 #include <npapi.h>
 #include <WCURLHandle.h>
 
-
-
 typedef struct _StreamData{
     uint16 transferMode;
     int32 offset;
@@ -20,7 +18,6 @@ typedef struct _StreamData{
     NSString *filename;
     NSMutableData *data;
 } StreamData;
-
 
 @interface IFPluginViewNullEventSender : NSObject{
     NPP instance;
@@ -44,7 +41,7 @@ typedef struct _StreamData{
     char **cAttributes, **cValues;
     bool isFlipped, transferred, hidden, stopped;
             
-    NSString *url, *mime;
+    NSString *URL, *mime;
     NSTrackingRectTag trackingTag;
     NSMutableArray *filesToErase;
     
@@ -61,7 +58,6 @@ typedef struct _StreamData{
     NPP_URLNotifyProcPtr NPP_URLNotify;
     NPP_GetValueProcPtr NPP_GetValue;
     NPP_SetValueProcPtr NPP_SetValue;
-    NPP_ShutdownProcPtr NPP_Shutdown; 
 }
 
 - initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments;

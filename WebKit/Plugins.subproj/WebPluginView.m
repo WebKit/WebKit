@@ -7,6 +7,7 @@
 #include <Carbon/Carbon.h> 
 #include "kwqdebug.h"
 
+
 @implementation IFPluginViewNullEventSender
 
 -(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)HandleEventFunction;
@@ -53,10 +54,10 @@
     instance->ndata = self;
 
     mime = mimeType;
-    url = location;
+    URL = location;
     plugin = plug;
     [mime retain];
-    [url retain];
+    [URL retain];
     [plugin retain];
     
     NPP_New = 		[plugin NPP_New]; // copy function pointers
@@ -69,6 +70,9 @@
     NPP_DestroyStream = [plugin NPP_DestroyStream];
     NPP_HandleEvent = 	[plugin NPP_HandleEvent];
     NPP_URLNotify = 	[plugin NPP_URLNotify];
+    NPP_GetValue = 	[plugin NPP_GetValue];
+    NPP_SetValue = 	[plugin NPP_SetValue];
+    NPP_Print = 	[plugin NPP_Print]; 
     
     attributes = [arguments allKeys];
     values = [arguments allValues];
@@ -113,7 +117,7 @@
     [self setWindow:rect];
     if(!transferred){
         [self sendActivateEvent];
-        [self newStream:url mimeType:mime notifyData:NULL];
+        [self newStream:URL mimeType:mime notifyData:NULL];
         transferred = TRUE;
     }
     [self sendUpdateEvent];
@@ -147,8 +151,8 @@
     
     npErr = NPP_SetWindow(instance, &window);
     KWQDebug("NPP_SetWindow: %d rect.size.height=%d rect.size.width=%d port=%d rect.origin.x=%f rect.origin.y=%f\n", npErr, (int)rect.size.height, (int)rect.size.width, (int)nPort.port, rect.origin.x, rect.origin.y);
-    KWQDebug("frame.size.height=%d frame.size.width=%d frame.origin.x=%f frame.origin.y=%f\n", (int)frame.size.height, (int)frame.size.width, frame.origin.x, frame.origin.y);
-    KWQDebug("frameInWindow.size.height=%d frameInWindow.size.width=%d frameInWindow.origin.x=%f frameInWindow.origin.y=%f\n", (int)frameInWindow.size.height, (int)frameInWindow.size.width, frameInWindow.origin.x, frameInWindow.origin.y);
+    //KWQDebug("frame.size.height=%d frame.size.width=%d frame.origin.x=%f frame.origin.y=%f\n", (int)frame.size.height, (int)frame.size.width, frame.origin.x, frame.origin.y);
+    //KWQDebug("frameInWindow.size.height=%d frameInWindow.size.width=%d frameInWindow.origin.x=%f frameInWindow.origin.y=%f\n", (int)frameInWindow.size.height, (int)frameInWindow.size.width, frameInWindow.origin.x, frameInWindow.origin.y);
 }
 
 - (void) newStream:(NSString *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
@@ -161,9 +165,9 @@
     
     stream = malloc(sizeof(NPStream));
     cURL   = malloc([streamURL length]+1);
-    cMime  = malloc([mime length]+1);
+    cMime  = malloc([mimeType length]+1);
     [streamURL getCString:cURL];
-    [mime getCString:cMime];
+    [mimeType getCString:cMime];
     stream->url = cURL;
     stream->end = 0;
     stream->lastmodified = 0;
@@ -239,6 +243,7 @@
         cFilename = malloc([filenameClassic length]+1);
         [filenameClassic getCString:cFilename];
         NPP_StreamAsFile(instance, streamData->stream, cFilename);
+        KWQDebug("NPP_StreamAsFile: %s\n", cFilename);
         [streamData->data release];
         [streamData->filename release];
     }
@@ -254,6 +259,7 @@
 
 - (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
 {
+    [self setNeedsDisplay:YES];
 }
 
 - (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
@@ -447,73 +453,76 @@
 {
     KWQDebug("NPN_GetURLNotify: %s\n", url);
     if(target == NULL){ // send data to plug-in if target is null
-        [self newStream:[NSString stringWithCString:url] mimeType:nil notifyData:(void *)notifyData];
+        [self newStream:[NSString stringWithCString:url] mimeType:[plugin mimeTypeForURL:[NSString stringWithCString:url]] notifyData:(void *)notifyData];
     }
-    
     return NPERR_NO_ERROR;
 }
 
 -(NPError)getURL:(const char *)url target:(const char *)target
 {
-    KWQDebug("getURL\n");
-    return NPERR_GENERIC_ERROR;
+    KWQDebug("NPN_GetURL\n");
+    if(target == NULL){ // send data to plug-in if target is null
+        [self newStream:[NSString stringWithCString:url] mimeType:[plugin mimeTypeForURL:[NSString stringWithCString:url]] notifyData:NULL];
+    }
+    
+    return NPERR_NO_ERROR;
 }
 
 -(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
 {
-    KWQDebug("postURLNotify\n");
+    KWQDebug("NPN_PostURLNotify\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)postURL:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file
 {
-    KWQDebug("postURL\n");
+    KWQDebug("NPN_PostURL\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream
 {
-    KWQDebug("newStream\n");
+    KWQDebug("NPN_NewStream\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)write:(NPStream*)stream len:(SInt32)len buffer:(void *)buffer
 {
-    KWQDebug("write\n");
+    KWQDebug("NPN_Write\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason
 {
-    KWQDebug("destroyStream\n");
+    KWQDebug("NPN_DestroyStream\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(void)status:(const char *)message
 {
-    KWQDebug("status\n");
+    KWQDebug("NPN_Status\n");
 }
 
 -(NPError)getValue:(NPNVariable)variable value:(void *)value
 {
-    KWQDebug("getValue\n");
+    KWQDebug("NPN_GetValue\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)setValue:(NPPVariable)variable value:(void *)value
 {
-    KWQDebug("setValue\n");
+    KWQDebug("NPN_SetValue\n");
     return NPERR_GENERIC_ERROR;
 }
 
 -(void)invalidateRect:(NPRect *)invalidRect
 {
-    KWQDebug("invalidateRect\n");
+    KWQDebug("NPN_InvalidateRect\n");
 }
 
 -(void)invalidateRegion:(NPRegion)invalidateRegion
 {
-    KWQDebug("invalidateRegion\n");
+    KWQDebug("NPN_InvalidateRegion\n");
 }
 
 - (void)stop
@@ -541,10 +550,15 @@
     
     [self stop];
     fileManager = [NSFileManager defaultManager];
-    for(i=0; i<[filesToErase count]; i++){
-        [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil];
+    for(i=0; i<[filesToErase count]; i++){  // remove downloaded files
+        [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
     }
     [filesToErase release];
+    [mime release];
+    [URL release];
+    [plugin release];
+    free(cAttributes);
+    free(cValues);
     [super dealloc];
 }
 
@@ -562,4 +576,3 @@ NSString* startupVolumeName(void)
     }
     return rootName;
 }
-

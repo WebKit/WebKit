@@ -209,6 +209,22 @@
     // unload library here
 }
 
+- (NSString *)mimeTypeForURL:(NSString *)URL
+{
+    uint n;
+    NSRange hasExtension;
+    NSString *extension;
+    
+    extension = [URL pathExtension];
+    for(n=0; n<[mimeTypes count]; n++){
+        hasExtension = [[[mimeTypes objectAtIndex:n] objectAtIndex:1] rangeOfString:extension];
+        if(hasExtension.length){
+            return [[mimeTypes objectAtIndex:n] objectAtIndex:0];
+        }
+    }
+    return nil;
+}
+
 - (NPP_SetWindowProcPtr)NPP_SetWindow{
     return NPP_SetWindow;
 }

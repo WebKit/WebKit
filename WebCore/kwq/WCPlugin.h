@@ -27,7 +27,6 @@
 #include "npapi.h"
 
 @interface WCPlugin : NSObject {
-
     NSMutableArray *mimeTypes;
     NSString *name, *executablePath, *filename, *pluginDescription;
     BOOL isLoaded;
@@ -35,6 +34,7 @@
     NPNetscapeFuncs browserFuncs;
     uint16 pluginSize;
     uint16 pluginVersion;
+    
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
     NPP_SetWindowProcPtr NPP_SetWindow;
@@ -49,13 +49,13 @@
     NPP_GetValueProcPtr NPP_GetValue;
     NPP_SetValueProcPtr NPP_SetValue;
     NPP_ShutdownProcPtr NPP_Shutdown; 
-
 }
 
 - (BOOL)initializeWithPath:(NSString *)plugin;
 - (BOOL)getPluginInfoForResourceFile:(SInt16)resRef;
 - (void)load;
 - (void)unload;
+- (NSString *)mimeTypeForURL:(NSString *)URL;
 - (NSArray *)mimeTypes;
 - (NSString *)name;
 - (NSString *)filename;
@@ -63,7 +63,6 @@
 - (BOOL)isLoaded;
 - (NSString *)description;
 - (NSString *)pluginDescription;
-
 
 - (NPP_NewProcPtr)NPP_New;
 - (NPP_DestroyProcPtr)NPP_Destroy;
