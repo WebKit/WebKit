@@ -1,5 +1,31 @@
 2002-11-15  David Hyatt  <hyatt@apple.com>
 
+	Fix for livepage.apple.com slowness.  Ensure that 
+	clipped regions only paint their own rectangles
+	when they or any children inside of them need to
+	be reflowed.
+
+	This fix is intended as an interim band-aid for a much
+	larger problem (that all of layout doesn't just auto-invalidate
+	the regions it needs to, and that DHTML doesn't have
+	specialized behavior to avoid async repainting or even
+	relayout when only a repaint is required).
+	
+        * khtml/khtmlview.cpp:
+        (KHTMLView::timerEvent):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::removeChildNode):
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        (RenderContainer::layout):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setLayouted):
+        (RenderObject::scheduleRelayout):
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::repaintRectangle):
+
+2002-11-15  David Hyatt  <hyatt@apple.com>
+
 	Fix the problem where the last lines of paragrpahs were getting
 	justified incorrectly.
 	

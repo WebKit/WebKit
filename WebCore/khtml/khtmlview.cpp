@@ -1460,7 +1460,7 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
         d->timerId = 0;
 
         //scheduleRepaint(contentsX(),contentsY(),visibleWidth(),visibleHeight());
-	d->updateRect = QRect(contentsX(),contentsY(),visibleWidth(),visibleHeight());
+        d->updateRect = QRect(contentsX(),contentsY(),visibleWidth(),visibleHeight());
     }
 
     if( m_part->xmlDocImpl() ) {

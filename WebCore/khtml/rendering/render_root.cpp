@@ -245,7 +245,9 @@ void RenderRoot::repaintRectangle(int x, int y, int w, int h, bool f)
     QRect ur(x, y, w, h);
 
     if (ur.intersects(vr))
-        if (m_view) m_view->scheduleRepaint(x, y, w, h);
+        if (m_view)
+            //m_view->updateContents(ur);
+            m_view->scheduleRepaint(x, y, w, h);
 }
 
 void RenderRoot::repaint()

@@ -220,6 +220,13 @@ RenderObject* RenderObject::offsetParent() const
     return curr;
 }
 
+// This function now contains a rather unsavory hack.  If an attempt is made to
+// setLayout(false) an object inside a clipped (overflow:hidden) object, we just
+// lay that object out immediately and then repaint only the clipped rectangle.
+// scheduleRelayout always causes a full repaint, so we have to avoid it.  This
+// is gross, and we want to fix scheduleRelayout not to always do a full repaint
+// in the future. -dwh
+static RenderObject* gClipObject = 0;
 void RenderObject::setLayouted(bool b) 
 {
     m_layouted = b;
@@ -234,12 +241,28 @@ void RenderObject::setLayouted(bool b)
     else {
         RenderObject *o = m_parent;
         RenderObject *root = this;
+            
+        RenderObject* clippedObj = (style()->overflow() == OHIDDEN) ? this : 0;
+        
         while( o ) {
             o->m_layouted = false;
+            if (o->style()->overflow() == OHIDDEN && !clippedObj)
+                clippedObj = o;
             root = o;
             o = o->m_parent;
         }
-        root->scheduleRelayout();
+        
+        if (!gClipObject) {
+            if (clippedObj) {
+                gClipObject = clippedObj;
+                root->layout();
+                clippedObj->repaintRectangle(0,0,clippedObj->contentWidth(),clippedObj->contentHeight());
+                gClipObject = 0;
+            }
+            else
+                root->scheduleRelayout();
+        }
+                
     }
 }
     
@@ -1148,7 +1171,7 @@ void RenderObject::scheduleRelayout()
     if (!isRoot()) return;
     KHTMLView *view = static_cast<RenderRoot *>(this)->view();
     if ( view )
-	view->scheduleRelayout();
+        view->scheduleRelayout();
 }
 
 
