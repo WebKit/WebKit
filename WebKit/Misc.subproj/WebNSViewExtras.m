@@ -63,6 +63,13 @@
     return nil;
 }
 
+- (void)_web_scrollPointToVisible:(NSPoint)p fromView:(NSView *)view
+{
+    p = [self convertPoint: p fromView:view];
+    [self scrollPoint: p];
+    [[self superview] _web_scrollPointToVisible:p fromView: self];
+}
+
 /* Determine whether a mouse down should turn into a drag; started as copy of NSTableView code */
 - (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent
                            withExpiration:(NSDate *)expiration

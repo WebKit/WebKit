@@ -46,4 +46,6 @@
                    URL:(NSURL *)URL
                  title:(NSString *)title
                  event:(NSEvent *)event;
+
+- (void)_web_scrollPointToVisible:(NSPoint)p fromView:(NSView *)view;
 @end

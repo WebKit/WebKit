@@ -1,3 +1,15 @@
+2003-11-06  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3476393.  Call scrollPoint: recursively up the view hierarchy to ensure point is visible.
+
+        Reviewed by Ken.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_scrollPointToVisible:fromView:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView scrollPoint:]):
+
 === Safari-113 ===
 
 2003-11-05  Darin Adler  <darin@apple.com>
