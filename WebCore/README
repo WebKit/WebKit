@@ -1,0 +1,21 @@
+WebCore is a framework for Mac OS X that takes the cross-platform
+KHTML library (part of the KDE project) and combines it with an
+adapter library specific to WebCore called KWQ that makes it work
+with Mac OS X technologies. KHTML is written in C++ and KWQ is written
+in Objective C++, but WebCore presents an Objective C programming
+interface. WebCore requires the JavaScriptCore framework.
+
+This version of WebCore is based on the KHTML library from KDE 3.0.2.
+Changes that are specific to WebCore are marked with #if APPLE_CHANGES.
+Other changes to improve performance and web page compatibility are intended
+for integration into future versions of the KHTML library.
+
+To build the WebCore framework tarball, you'll need Mac OS X 10.2, including
+the development tools.
+
+First build JavaScriptCore and either install it or set the environment variables
+DYLD_LIBRARY_PATH and DYLD_FRAMEWORK_PATH to include the directory that the
+JavaScriptCore.framework bundle is in.
+
+Then build the WebCore project using either the Project Builder user interface
+or using the command "pbxbuild" from the command line.
