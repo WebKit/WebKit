@@ -958,15 +958,20 @@ static const char * const stateNames[] = {
 
     [dataSource _setLastCheckedRequest:request];
 
+    WebPolicyDecisionListener *listener = [[WebPolicyDecisionListener alloc]
+        _initWithTarget:self action:@selector(_continueAfterNavigationPolicy:)];
+
     _private->policyRequest = [request retain];
     _private->policyTarget = [target retain];
     _private->policySelector = selector;
-    _private->listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterNavigationPolicy:)];
+    _private->listener = [listener retain];
 
     [[[self controller] policyDelegate] decideNavigationPolicyForAction:action
 					                     andRequest:request
 					                        inFrame:self
-					               decisionListener:_private->listener];
+					               decisionListener:listener];
+    
+    [listener release];
 }
 
 -(void)_continueAfterNavigationPolicy:(WebPolicyAction)policy
