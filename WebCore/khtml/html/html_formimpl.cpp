@@ -1003,7 +1003,8 @@ void HTMLInputElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_WIDTH:
         // ignore this attribute,  do _not_ add
-        // a CSS_PROP_WIDTH here!
+        // a CSS_PROP_WIDTH here (we will honor this attribute for input type=image
+        // in the attach call)!
         // webdesigner are stupid - and IE/NS behave the same ( Dirk )
         break;
     case ATTR_HEIGHT:
@@ -1086,7 +1087,20 @@ void HTMLInputElementImpl::attach()
         case CHECKBOX:  m_render = new (arena) RenderCheckBox(this); break;
         case RADIO:        m_render = new (arena) RenderRadioButton(this); break;
         case SUBMIT:      m_render = new (arena) RenderSubmitButton(this); break;
-        case IMAGE:       m_render =  new (arena) RenderImageButton(this); break;
+        case IMAGE: {
+             DOMString width = getAttribute( ATTR_WIDTH );
+             if (!width.isEmpty()) {
+                printf("Added prop.\n");
+                addCSSLength(CSS_PROP_WIDTH, width);
+             }
+             m_render =  new (arena) RenderImageButton(this);
+             m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+             parentNode()->renderer()->addChild(m_render, nextRenderer());
+             m_render->updateFromElement();
+             NodeBaseImpl::attach();
+             _style->deref();
+             return;
+        }
         case RESET:      m_render = new (arena) RenderResetButton(this);   break;
         case FILE:         m_render =  new (arena) RenderFileButton(this);    break;
         case BUTTON:  m_render = new (arena) RenderPushButton(this);
