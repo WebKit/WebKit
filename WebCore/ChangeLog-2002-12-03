@@ -1,3 +1,11 @@
+2002-09-28  David Hyatt  <hyatt@apple.com>
+
+	DOM compliance. Fix for 3058100, hasFeature of HTML returns
+	false. Oops.
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::hasFeature):
+
 2002-09-27  Darin Adler  <darin@apple.com>
 
 	- fixed 3060487 -- error connecting member slot to signal (KWQObject)
