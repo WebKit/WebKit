@@ -1604,7 +1604,7 @@ void RenderTableCell::updateFromElement()
         cSpan = tc->colSpan();
         rSpan = tc->rowSpan();
     }
-    if (parent() && oldRSpan != rSpan || oldCSpan != cSpan)
+    if (parent() && style() && (oldRSpan != rSpan || oldCSpan != cSpan))
         setNeedsLayoutAndMinMaxRecalc();
 }
     
