@@ -298,17 +298,15 @@ void *KWQResponseHeaderString(void *response)
 
 time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, void *response)
 {
-    time_t result = 0;
-
     KWQ_BLOCK_EXCEPTIONS;
     
     KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(docLoader->part());
     WebCoreBridge *bridge = part->bridge();
-    result = [bridge expiresTimeForResponse:(NSURLResponse *)response];
+    return [bridge expiresTimeForResponse:(NSURLResponse *)response];
     
     KWQ_UNBLOCK_EXCEPTIONS;
     
-    return result;
+    return 0;
 }
 
 KWQLoader::KWQLoader(Loader *loader)

@@ -1,3 +1,10 @@
+2003-12-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * kwq/KWQLoader.mm:
+        (KWQCacheObjectExpiresTime): Fixed deployment build bustage.
+
 2003-12-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
