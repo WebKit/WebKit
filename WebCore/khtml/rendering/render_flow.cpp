@@ -577,6 +577,12 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 // a <dl> inside a <td>.
                 if (!topQuirk && (posTop-negTop))
                     m_topMarginQuirk = false;
+                    
+                if (topQuirk && marginTop() == 0)
+                    // We have no top margin and our top child has a quirky margin.
+                    // We will pick up this quirky margin and pass it through.
+                    // This deals with the <td><div><p> case.
+                    m_topMarginQuirk = true;
             }
             
             if (quirkContainer && topMarginContributor && (posTop-negTop))
@@ -745,6 +751,12 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
            
         if (!bottomChildQuirk)
             m_bottomMarginQuirk = false;
+        
+        if (bottomChildQuirk && marginBottom() == 0)
+            // We have no bottom margin and our last child has a quirky margin.
+            // We will pick up this quirky margin and pass it through.
+            // This deals with the <td><div><p> case.
+            m_bottomMarginQuirk = true;
     }
     
     if (element() && element()->id() == ID__KONQBLOCK)
