@@ -10,15 +10,14 @@
 		);
 		perUserDictionary = {
 			PBXWorkspaceConfiguration = {
-				ContentSize = "{1549, 1090}";
+				ContentSize = "{1148, 1096}";
 				LeftSlideOut = {
 					ActiveTab = 0;
-					Frame = "{{0, 23}, {1549, 1067}}";
+					Frame = "{{0, 23}, {1148, 1073}}";
 					Split0 = {
-						ActiveTab = 2;
-						Frame = "{{257, 0}, {1292, 1067}}";
+						Frame = "{{257, 0}, {891, 1073}}";
 						Split0 = {
-							Frame = "{{0, 663}, {1292, 404}}";
+							Frame = "{{0, 25}, {891, 1048}}";
 						};
 						SplitCount = 1;
 						Tab0 = {
@@ -54,18 +53,18 @@
 							};
 						};
 						Tab2 = {
-							BuildMessageFrame = "{{0, 0}, {1294, 213}}";
-							BuildTranscriptFrame = "{{0, 222}, {1294, 418}}";
-							Frame = "{{0, 0}, {1292, 638}}";
+							BuildMessageFrame = "{{0, 0}, {893, 213}}";
+							BuildTranscriptFrame = "{{0, 222}, {893, 418}}";
+							Frame = "{{0, 0}, {891, 638}}";
 						};
 						Tab3 = {
-							Frame = "{{0, 0}, {612, 295}}";
+							Frame = "{{0, 0}, {891, 295}}";
 						};
 						TabCount = 4;
 					};
 					SplitCount = 1;
 					Tab0 = {
-						Frame = "{{0, 0}, {232, 1067}}";
+						Frame = "{{0, 0}, {232, 1073}}";
 					};
 					Tab1 = {
 						ClassesFrame = "{{0, 0}, {202, 660}}";
