@@ -1,3 +1,55 @@
+2004-12-20  David Harrison  <harrison@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Initial checkin of AXTextMarkerRef support.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection):
+        (DocumentImpl::setFocusNode):
+        * kwq/KWQAccObject.h:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject detach]):
+        (-[KWQAccObject anchorElement]):
+        (-[KWQAccObject addChildrenToArray:]):
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityActionDescription:]):
+        (-[KWQAccObject accessibilityPerformAction:]):
+        (-[KWQAccObject textMarkerRangeFromMarkers:andEndMarker:]):
+        (-[KWQAccObject textMarkerForVisiblePosition:]):
+        (-[KWQAccObject visiblePositionForTextMarker:]):
+        (-[KWQAccObject AXTextMarkerRangeCopyStartMarkerWrapper:]):
+        (-[KWQAccObject AXTextMarkerRangeCopyEndMarkerWrapper:]):
+        (-[KWQAccObject visiblePositionForStartOfTextMarkerRange:]):
+        (-[KWQAccObject visiblePositionForEndOfTextMarkerRange:]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject accessibilityParameterizedAttributeNames]):
+        (-[KWQAccObject textMarkerRangeFromVisiblePositions:andEndPos:]):
+        (-[KWQAccObject getSelectedTextMarkerRange]):
+        (-[KWQAccObject doAXLineForTextMarker:]):
+        (-[KWQAccObject doAXTextMarkerRangeForLine:]):
+        (-[KWQAccObject doAXStringForTextMarkerRange:]):
+        (-[KWQAccObject doAXNextTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXLeftWordTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXRightWordTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXLeftLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXRightLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject accessibilityAttributeValue:forParameter:]):
+        (-[KWQAccObject accessibilityFocusedUIElement]):
+        (-[KWQAccObject clearChildren]):
+        (-[KWQAccObject accObjectID]):
+        (-[KWQAccObject setAccObjectID:]):
+        (-[KWQAccObject removeAccObjectID]):
+        * kwq/KWQAccObjectCache.h:
+        * kwq/KWQAccObjectCache.mm:
+        (KWQAccObjectCache::KWQAccObjectCache):
+        (KWQAccObjectCache::~KWQAccObjectCache):
+        (KWQAccObjectCache::getAccObjectID):
+        (KWQAccObjectCache::removeAccObjectID):
+        (KWQAccObjectCache::textMarkerForVisiblePosition):
+        (KWQAccObjectCache::visiblePositionForTextMarker):
+
 2004-12-19  Darin Adler  <darin@apple.com>
 
         * kwq/KWQFoundationExtras.h: (KWQCFAutorelease): Added nil check.
