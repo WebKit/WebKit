@@ -1,3 +1,13 @@
+2003-10-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3176170>: OBJECT tag with no or empty TYPE is mishandled
+
+        Reviewed by rjw.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart): call renamed frameRequiredForMIMEType:URL:
+        * kwq/WebCoreBridge.h: renamed frameRequiredForMIMEType: to frameRequiredForMIMEType:URL:
+
 2003-10-20  David Hyatt  <hyatt@apple.com>
 
 	Fix generated content (before/after) so that it no longer has any restrictions on it.   CSS2.1 lifted 

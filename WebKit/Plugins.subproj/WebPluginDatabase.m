@@ -17,6 +17,8 @@
 
 #import <CoreGraphics/CPSProcesses.h>
 
+#import <Foundation/NSURLFileTypeMappings.h>
+
 #define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
 
 #define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
@@ -142,8 +144,18 @@ static BOOL sIsCocoa = FALSE;
 
 - (WebBasePluginPackage *)pluginForExtension:(NSString *)extension
 {
-    return [self pluginForKey:[extension lowercaseString]
-       withEnumeratorSelector:@selector(extensionEnumerator)];
+    WebBasePluginPackage *plugin = [self pluginForKey:[extension lowercaseString]
+                               withEnumeratorSelector:@selector(extensionEnumerator)];
+    if (!plugin) {
+        // If no plug-in was found from the extension, attempt to map from the extension to a MIME type
+        // and find the a plug-in from the MIME type. This is done in case the plug-in has not fully specified
+        // an extension <-> MIME type mapping.
+        NSString *MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+        if ([MIMEType length] > 0) {
+            plugin = [self pluginForMIMEType:MIMEType];
+        }
+    }
+    return plugin;
 }
 
 - (NSArray *)plugins

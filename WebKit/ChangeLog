@@ -1,3 +1,15 @@
+2003-10-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3176170>: OBJECT tag with no or empty TYPE is mishandled
+	
+        Reviewed by rjw.
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForExtension:]): If no plug-in is found from the extension, attempt to map from the extension to a MIME type using our mappings and find a plug-in from the MIME type. This improves our chances of finding a plug-in when no MIME type is specified.
+        * WebCoreSupport.subproj/WebBridge.m:
+	(-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]): If the passed MIME is empty, nil it out so that clients only need to check for nil. This avoids error sheets complaining about "" MIME types.
+        (-[WebBridge frameRequiredForMIMEType:URL:]): Renamed to include URL. If no MIME is specified, only create a plug-in view if we can map from the extension.
+
 2003-10-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3457627>: empty Flash plugin at tvguide.com

@@ -654,8 +654,10 @@
     NSView *view = nil;
     int errorCode = 0;
     
-    if ([MIMEType length] != 0) {
+    if ([MIMEType length] > 0) {
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
+    } else {
+        MIMEType = nil;
     }
     
     NSString *extension = [[URL path] pathExtension];
@@ -795,11 +797,17 @@ static BOOL loggedObjectCacheSize = NO;
     return cacheSize * multiplier;
 }
 
-- (BOOL)frameRequiredForMIMEType:(NSString*)MIMEType
+- (BOOL)frameRequiredForMIMEType:(NSString *)MIMEType URL:(NSURL *)URL
 {
-    // Assume a plugin is required. Don't make a frame.
     if ([MIMEType length] == 0) {
-        return NO;
+        NSString *extension = [[URL path] pathExtension];
+        if ([extension length] > 0 && [[WebPluginDatabase installedPlugins] pluginForExtension:extension] != nil) {
+            // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
+            return NO;
+        } else {
+            // Else, create a frame and attempt to load the URL in there.
+            return YES;
+        }
     }
     
     // Have the plug-in DB register document views.
