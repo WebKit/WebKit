@@ -1,3 +1,12 @@
+2002-08-05  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed icon loader delegate method to include the icon loader.
+
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader WebResourceHandleDidFinishLoading:data:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+
 2002-08-05  Richard Williamson (Home)  <rjw@apple.com>
 
         Added additional check to find appropriate fonts with available

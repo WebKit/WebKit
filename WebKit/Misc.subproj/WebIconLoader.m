@@ -103,7 +103,7 @@
 {
     NSImage *image = [[NSImage alloc] initWithData:data];
     if (image) {
-        [_private->delegate receivedPageIcon:image];
+        [_private->delegate iconLoader:self receivedPageIcon:image];
         [image release];
     }
 }

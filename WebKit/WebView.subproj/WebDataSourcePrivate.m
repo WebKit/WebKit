@@ -424,7 +424,7 @@
     [[[[self webFrame] webView] documentView] dataSourceUpdated:self];
 }
 
-- (void)receivedPageIcon:(NSImage *)image
+- (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)image;
 {
     [[_private->controller locationChangeHandler] receivedPageIcon:image forDataSource:self];
 }
