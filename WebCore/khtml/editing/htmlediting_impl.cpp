@@ -25,6 +25,11 @@
 
 #include "htmlediting_impl.h"
 
+#include <qptrlist.h>
+
+#include "visible_position.h"
+#include "visible_units.h"
+
 #include "cssproperties.h"
 #include "css/css_computedstyle.h"
 #include "css/css_valueimpl.h"
@@ -35,17 +40,14 @@
 #include "htmltags.h"
 #include "khtml_part.h"
 #include "khtmlview.h"
-#include "qptrlist.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
-#include "xml/dom_caretposition.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_positioniterator.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_position.h"
-#include "xml/dom_selection.h"
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_rangeimpl.h"

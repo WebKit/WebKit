@@ -29,12 +29,10 @@
 #import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_viewsimpl.h"
-#import "dom_caretposition.h"
 #import "dom_docimpl.h"
 #import "dom_node.h"
 #import "dom_nodeimpl.h"
 #import "dom_position.h"
-#import "dom_selection.h"
 #import "html_documentimpl.h"
 #import "html_formimpl.h"
 #import "html_imageimpl.h"
@@ -52,6 +50,8 @@
 #import "render_object.h"
 #import "render_replaced.h"
 #import "render_style.h"
+#import "selection.h"
+#import "visible_position.h"
 
 #import <JavaScriptCore/npruntime.h>
 #import <JavaScriptCore/jni_jsobject.h>

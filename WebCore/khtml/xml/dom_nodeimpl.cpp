@@ -31,7 +31,6 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
-#include "xml/dom_selection.h"
 #include "xml/dom2_rangeimpl.h"
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"

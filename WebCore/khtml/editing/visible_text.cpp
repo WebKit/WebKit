@@ -23,14 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "khtml_text_operations.h"
+#include "visible_text.h"
 
-#include <dom/dom2_range.h>
-#include <misc/htmltags.h>
-#include <rendering/render_text.h>
-#include <xml/dom_nodeimpl.h>
-#include <xml/dom_position.h>
-#include <xml/dom2_rangeimpl.h>
+#include "misc/htmltags.h"
+#include "rendering/render_text.h"
+#include "xml/dom_nodeimpl.h"
+#include "xml/dom_position.h"
+#include "xml/dom2_rangeimpl.h"
 
 using DOM::DOMString;
 using DOM::Node;
@@ -38,6 +37,11 @@ using DOM::NodeImpl;
 using DOM::offsetInCharacters;
 using DOM::Range;
 using DOM::RangeImpl;
+
+// FIXME: These classes should probably use the render tree and not the DOM tree, since elements could
+// be hidden using CSS, or additional generated content could be added.  For now, we just make sure
+// text objects walk their renderers' InlineTextBox objects, so that we at least get the whitespace 
+// stripped out properly and obey CSS visibility for text runs.
 
 namespace khtml {
 

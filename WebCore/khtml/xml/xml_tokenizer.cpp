@@ -25,6 +25,7 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom_xmlimpl.h"
 #include "html/html_headimpl.h"
+#include "html/html_tableimpl.h"
 #include "misc/htmltags.h"
 #include "misc/htmlattrs.h"
 #include "misc/loader.h"

@@ -44,8 +44,6 @@
 #include "decoder.h"
 #endif
 
-#include "htmlediting.h"
-
 class QPaintDevice;
 class QPaintDeviceMetrics;
 class KHTMLView;
@@ -66,7 +64,6 @@ const int cLayoutTimerDelay = 1000;
 namespace khtml {
     class CSSStyleSelector;
     class DocLoader;
-    class EditCommand;
     class RenderImage;
     class Tokenizer;
     class XMLHandler;

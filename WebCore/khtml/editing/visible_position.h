@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __dom_caretposition_h__
-#define __dom_caretposition_h__
+#ifndef KHTML_EDITING_VISIBLE_POSITION_H
+#define KHTML_EDITING_VISIBLE_POSITION_H
 
-#include "dom_position.h"
-#include "dom/dom2_range.h"
+#include "xml/dom_position.h"
 
 namespace DOM {
 
-class NodeImpl;
+class Range;
+class RangeImpl;
 
 class CaretPosition
 {
@@ -94,8 +94,6 @@ inline bool operator!=(const CaretPosition &a, const CaretPosition &b)
     return !(a == b);
 }
 
-// --- DOM range and caret position interoperability; to be moved to a separate header ---
-
 Range makeRange(const CaretPosition &start, const CaretPosition &end);
 bool setStart(Range &, const CaretPosition &start);
 bool setStart(RangeImpl *, const CaretPosition &start);
@@ -106,30 +104,6 @@ CaretPosition start(const RangeImpl *);
 CaretPosition end(const Range &);
 CaretPosition end(const RangeImpl *);
 
-// --- word, line, and paragraph operations; to be moved to a separate header ---
-
-enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };
-enum EIncludeLineBreak { DoNotIncludeLineBreak = false, IncludeLineBreak = true };
-
-// words
-CaretPosition startOfWord(const CaretPosition &, EWordSide = RightWordIfOnBoundary);
-CaretPosition endOfWord(const CaretPosition &, EWordSide = RightWordIfOnBoundary);
-CaretPosition previousWordPosition(const CaretPosition &);
-CaretPosition nextWordPosition(const CaretPosition &);
-
-// lines
-CaretPosition startOfLine(const CaretPosition &);
-CaretPosition endOfLine(const CaretPosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
-CaretPosition previousLinePosition(const CaretPosition &, int x);
-CaretPosition nextLinePosition(const CaretPosition &, int x);
-
-// paragraphs
-CaretPosition startOfParagraph(const CaretPosition &);
-CaretPosition endOfParagraph(const CaretPosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
-CaretPosition previousParagraphPosition(const CaretPosition &, int x);
-CaretPosition nextParagraphPosition(const CaretPosition &, int x);
-bool inSameParagraph(const CaretPosition &, const CaretPosition &);
-
 } // namespace DOM
 
-#endif // __dom_caretposition_h__
+#endif // KHTML_EDITING_VISIBLE_POSITION_H

@@ -29,6 +29,10 @@
 
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"
+#include "dom_elementimpl.h"
+#include "dom_nodeimpl.h"
+#include "dom_positioniterator.h"
+#include "dom2_range.h"
 #include "dom2_viewsimpl.h"
 #include "helper.h"
 #include "htmltags.h"
@@ -37,9 +41,6 @@
 #include "rendering/render_line.h"
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
-#include "xml/dom_positioniterator.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom_nodeimpl.h"
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"

@@ -1,6 +1,3 @@
-#ifndef khtmlpart_p_h
-#define khtmlpart_p_h
-
 /* This file is part of the KDE project
  *
  * Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
@@ -26,6 +23,10 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
+#ifndef khtmlpart_p_h
+#define khtmlpart_p_h
+
 #include <kcursor.h>
 #include <klibloader.h>
 #include <kxmlguifactory.h>
@@ -45,7 +46,8 @@
 #include "ecma/kjs_proxy.h"
 #include "css/css_valueimpl.h"
 #include "dom/dom_misc.h"
-#include "xml/dom_selection.h"
+#include "editing/htmlediting.h"
+#include "editing/selection.h"
 
 namespace KIO
 {
@@ -84,9 +86,7 @@ namespace khtml
     QStringList m_paramValues;
     bool m_bNotify;
   };
-
-  class EditCommand;
-};
+}
 
 class FrameList : public QValueList<khtml::ChildFrame>
 {

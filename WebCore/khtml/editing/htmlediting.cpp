@@ -31,7 +31,6 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_position.h"
-#include "xml/dom_selection.h"
 #include "xml/dom_textimpl.h"
 
 #if APPLE_CHANGES

@@ -23,26 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
   
-#include "dom_selection.h"
+#include "selection.h"
 
-#include "dom_caretposition.h"
-#include "dom_docimpl.h"
-#include "dom_elementimpl.h"
-#include "dom_node.h"
-#include "dom_nodeimpl.h"
-#include "dom_positioniterator.h"
-#include "dom_string.h"
-#include "dom_textimpl.h"
-#include "dom2_rangeimpl.h"
-#include "htmltags.h"
+#include <qevent.h>
+#include <qpainter.h>
+#include <qrect.h>
+
+#include "dom/dom_node.h"
+#include "dom/dom_string.h"
 #include "khtml_part.h"
 #include "khtmlview.h"
-#include "qevent.h"
-#include "qpainter.h"
-#include "qrect.h"
-#include "render_object.h"
-#include "render_style.h"
-#include "render_text.h"
+#include "misc/htmltags.h"
+#include "rendering/render_object.h"
+#include "rendering/render_style.h"
+#include "rendering/render_text.h"
+#include "visible_position.h"
+#include "visible_units.h"
+#include "xml/dom_docimpl.h"
+#include "xml/dom_elementimpl.h"
+#include "xml/dom_nodeimpl.h"
+#include "xml/dom_positioniterator.h"
+#include "xml/dom_textimpl.h"
+#include "xml/dom2_rangeimpl.h"
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
@@ -955,8 +957,8 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
                 caret = pos - (textLength - show.length());
             }
             
-            show = show.replace("\n", " ");
-            show = show.replace("\r", " ");
+            show.replace('\n', ' ');
+            show.replace('\r', ' ');
             fprintf(stderr, "==> #text : \"%s\" at offset %d\n", show.latin1(), pos);
             fprintf(stderr, "           ");
             for (int i = 0; i < caret; i++)

@@ -34,7 +34,7 @@
 #include "html/htmltokenizer.h"
 
 #include "misc/htmlhashes.h"
-#include "misc/khtml_text_operations.h"
+#include "editing/visible_text.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -46,7 +46,6 @@
 #include "css/cssproperties.h"
 #include "css/cssvalues.h"
 #include "css/css_ruleimpl.h"
-#include "xml/dom_selection.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
 

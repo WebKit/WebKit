@@ -1,3 +1,63 @@
+2004-09-22  Darin Adler  <darin@apple.com>
+
+        - renamed these files:
+
+            misc/khtml_text_operations.h   -> editing/visible_text.h
+            misc/khtml_text_operations.cpp -> editing/visible_text.cpp
+            xml/dom_caretposition.cpp      -> editing/visible_position.cpp
+            xml/dom_caretposition.h        -> editing/visible_position.h
+            xml/dom_selection.cpp          -> editing/selection.cpp
+            xml/dom_selection.h            -> editing/selection.h
+
+        - broke out the word/line/paragraph part of visible_position.h into visible_units.h
+        - removed some unnecessary includes from some header files to reduce the number of
+          files that trigger "building the world"
+
+        * WebCore.pbproj/project.pbxproj: Added the files under new names, removed the old ones.
+
+        * ForwardingHeaders/editing/jsediting.h: Added.
+        * ForwardingHeaders/editing/visible_text.h: Added.
+        * ForwardingHeaders/misc/khtml_text_operations.h: Removed.
+        * ForwardingHeaders/xml/dom_caretposition.h: Removed.
+        * ForwardingHeaders/xml/dom_selection.h: Removed.
+
+        * khtml/ecma/kjs_window.cpp: Updated or removed #include lines.
+        * khtml/editing/htmlediting.cpp: Ditto.
+        * khtml/editing/htmlediting.h: Ditto.
+        * khtml/editing/htmlediting_impl.cpp: Ditto.
+        * khtml/editing/htmlediting_impl.h: Ditto.
+        * khtml/editing/jsediting.cpp: Ditto.
+        * khtml/editing/selection.cpp: Ditto.
+        * khtml/editing/selection.h: Ditto.
+        * khtml/editing/visible_position.cpp: Ditto.
+        * khtml/editing/visible_position.h: Ditto.
+        * khtml/editing/visible_text.cpp: Ditto.
+        * khtml/editing/visible_text.h: Ditto.
+        * khtml/editing/visible_units.cpp: Added.
+        * khtml/editing/visible_units.h: Added.
+        * khtml/html/html_elementimpl.cpp: Updated or removed #include lines.
+        * khtml/khtml_part.cpp: Ditto.
+        * khtml/khtml_part.h: Ditto.
+        * khtml/khtmlpart_p.h: Ditto.
+        * khtml/khtmlview.cpp: Ditto.
+        * khtml/misc/khtml_text_operations.cpp: Removed.
+        * khtml/misc/khtml_text_operations.h: Removed.
+        * khtml/rendering/render_block.cpp: Updated or removed #include lines.
+        * khtml/xml/dom2_rangeimpl.cpp: Ditto.
+        * khtml/xml/dom_caretposition.cpp: Removed.
+        * khtml/xml/dom_caretposition.h: Removed.
+        * khtml/xml/dom_docimpl.cpp: Updated or removed #include lines.
+        * khtml/xml/dom_docimpl.h: Ditto.
+        * khtml/xml/dom_elementimpl.cpp: Ditto.
+        * khtml/xml/dom_nodeimpl.cpp: Ditto.
+        * khtml/xml/dom_position.cpp: Ditto.
+        * khtml/xml/dom_selection.cpp: Removed.
+        * khtml/xml/dom_selection.h: Removed.
+        * kwq/KWQKHTMLPart.mm: Updated or removed #include lines.
+        * kwq/KWQKHTMLPart.h: Ditto.
+        * kwq/KWQRenderTreeDebug.cpp: Ditto.
+        * kwq/WebCoreBridge.mm: Ditto.
+
 2004-09-22  Richard Williamson   <rjw@apple.com>
 	
 	Pass dashboard regions up to WebKit.

@@ -36,6 +36,7 @@
 #include <kdebug.h>
 #include <kio/job.h>
 #include <qobject.h>
+#include <qregexp.h>
 
 #ifdef APPLE_CHANGES
 #include "KWQLoader.h"

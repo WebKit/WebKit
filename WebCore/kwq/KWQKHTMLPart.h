@@ -26,28 +26,31 @@
 #ifndef KWQKHTMLPart_H
 #define KWQKHTMLPart_H
 
-#include "khtml_part.h"
+#import "khtml_part.h"
 
-#include "dom_nodeimpl.h"
-#include "html_formimpl.h"
-#include "html_tableimpl.h"
+#import "dom_nodeimpl.h"
+#import "dom2_range.h"
 
 #import "WebCoreKeyboardAccess.h"
 
-#include <CoreFoundation/CoreFoundation.h>
+#import <CoreFoundation/CoreFoundation.h>
 
-#include <JavaVM/jni.h>
-#include <JavaScriptCore/jni_jsobject.h>
-#include <JavaScriptCore/npruntime.h>
-#include <JavaScriptCore/NP_jsobject.h>
-#include <JavaScriptCore/runtime.h>
+#import <JavaVM/jni.h>
+#import <JavaScriptCore/jni_jsobject.h>
+#import <JavaScriptCore/npruntime.h>
+#import <JavaScriptCore/NP_jsobject.h>
+#import <JavaScriptCore/runtime.h>
 
-#include "KWQDict.h"
-#include "KWQClipboard.h"
+#import "KWQDict.h"
+#import "KWQClipboard.h"
 
 class KHTMLPartPrivate;
-class KWQClipboard;
 class KWQWindowWidget;
+
+namespace DOM {
+    class DocumentFragmentImpl;
+    class HTMLTableCellElementImpl;
+}
 
 namespace khtml {
     class RenderObject;

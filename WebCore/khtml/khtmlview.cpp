@@ -39,7 +39,6 @@
 #include "rendering/render_line.h"
 #include "rendering/render_text.h"
 #include "xml/dom_nodeimpl.h"
-#include "xml/dom_selection.h"
 #include "xml/dom2_eventsimpl.h"
 #include "css/cssstyleselector.h"
 #include "misc/htmlhashes.h"

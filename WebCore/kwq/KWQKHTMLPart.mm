@@ -37,6 +37,7 @@
 #import "KWQLogging.h"
 #import "KWQPageState.h"
 #import "KWQPrinter.h"
+#import "KWQRegExp.h"
 #import "KWQScrollBar.h"
 #import "KWQWindowWidget.h"
 #import "WebCoreBridge.h"
@@ -46,13 +47,14 @@
 #import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
 #import "dom_position.h"
-#import "dom_selection.h"
 #import "dom_textimpl.h"
+#import "html_document.h"
 #import "html_documentimpl.h"
+#import "html_formimpl.h"
 #import "html_misc.h"
+#import "html_tableimpl.h"
 #import "htmlattrs.h"
 #import "htmltokenizer.h"
-#import "khtml_text_operations.h"
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
 #import "kjs_binding.h"
@@ -64,6 +66,11 @@
 #import "render_style.h"
 #import "render_table.h"
 #import "render_text.h"
+#import "selection.h"
+#import "visible_position.h"
+#import "visible_text.h"
+#import "visible_units.h"
+
 #import <JavaScriptCore/identifier.h>
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime.h>

@@ -28,29 +28,13 @@
 
 #include "htmlediting.h"
 
-#include "dom_position.h"
-#include "dom_selection.h"
-#include "dom_string.h"
-#include "dom2_range.h"
-#include "qvaluelist.h"
-#include "shared.h"
+#include <qvaluelist.h>
+#include "selection.h"
 
 namespace DOM {
-    class AtomicString;
     class CSSProperty;
-    class CSSStyleDeclarationImpl;
-    class DocumentImpl;
-    class DOMString;
-    class ElementImpl;
     class HTMLElementImpl;
-    class NodeImpl;
-    class NodeListImpl;
-    class Position;
-    class Range;
-    class Selection;
-    class TextImpl;
-    class TreeWalkerImpl;
-};
+}
 
 namespace khtml {
 

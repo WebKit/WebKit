@@ -23,90 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __dom_caretposition_h__
-#define __dom_caretposition_h__
-
-#include "dom_position.h"
-#include "dom/dom2_range.h"
+#ifndef KHTML_EDITING_VISIBLE_UNITS_H
+#define KHTML_EDITING_VISIBLE_UNITS_H
 
 namespace DOM {
 
-class NodeImpl;
-
-class CaretPosition
-{
-public:
-    CaretPosition() { }
-    CaretPosition(NodeImpl *, long offset);
-    CaretPosition(const Position &);
-
-    void clear() { m_deepPosition.clear(); }
-
-    bool isNull() const { return m_deepPosition.isNull(); }
-    bool isNotNull() const { return m_deepPosition.isNotNull(); }
-
-    Position position() const { return rangeCompliantEquivalent(m_deepPosition); }
-    Position deepEquivalent() const { return m_deepPosition; }
-
-    friend inline bool operator==(const CaretPosition &a, const CaretPosition &b);
-
-    CaretPosition next() const;
-    CaretPosition previous() const;
-
-    bool isLastInBlock() const;
-
-    void debugPosition(const char *msg = "") const;
-
-#ifndef NDEBUG
-    void formatForDebugger(char *buffer, unsigned length) const;
-#endif
-    
-private:
-    void init(const Position &);
-
-    static Position deepEquivalent(const Position &);
-    static Position rangeCompliantEquivalent(const Position &);
-
-    static long maxOffset(const NodeImpl *);
-    static bool isAtomicNode(const NodeImpl *);
-    
-    static Position previousCaretPosition(const Position &);
-    static Position nextCaretPosition(const Position &);
-
-    static Position previousPosition(const Position &);
-    static Position nextPosition(const Position &);
-
-    static bool atStart(const Position &);
-    static bool atEnd(const Position &);
-
-    static bool isCandidate(const Position &);
-    
-    Position m_deepPosition;
-};
-
-inline bool operator==(const CaretPosition &a, const CaretPosition &b)
-{
-    return a.m_deepPosition == b.m_deepPosition;
-}
-
-inline bool operator!=(const CaretPosition &a, const CaretPosition &b)
-{
-    return !(a == b);
-}
-
-// --- DOM range and caret position interoperability; to be moved to a separate header ---
-
-Range makeRange(const CaretPosition &start, const CaretPosition &end);
-bool setStart(Range &, const CaretPosition &start);
-bool setStart(RangeImpl *, const CaretPosition &start);
-bool setEnd(Range &, const CaretPosition &start);
-bool setEnd(RangeImpl *, const CaretPosition &start);
-CaretPosition start(const Range &);
-CaretPosition start(const RangeImpl *);
-CaretPosition end(const Range &);
-CaretPosition end(const RangeImpl *);
-
-// --- word, line, and paragraph operations; to be moved to a separate header ---
+class CaretPosition;
 
 enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };
 enum EIncludeLineBreak { DoNotIncludeLineBreak = false, IncludeLineBreak = true };
@@ -132,4 +54,4 @@ bool inSameParagraph(const CaretPosition &, const CaretPosition &);
 
 } // namespace DOM
 
-#endif // __dom_caretposition_h__
+#endif // KHTML_EDITING_VISIBLE_POSITION_H

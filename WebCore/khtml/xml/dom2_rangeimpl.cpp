@@ -30,7 +30,7 @@
 #include "dom_xmlimpl.h"
 #include "html/html_elementimpl.h"
 #include "misc/htmltags.h"
-#include "misc/khtml_text_operations.h"
+#include "editing/visible_text.h"
 
 #include "render_block.h"
 
@@ -837,7 +837,7 @@ DOMString RangeImpl::text() const
     // FIXME: As with innerText, we'd like this to work even if there are no render objects.
     m_startContainer->getDocument()->updateLayout();
 
-    // FIXME: Maybe DOMRange constructor take const DOMRangeImpl*; if it did we would not need this const_cast.
+    // FIXME: Maybe DOMRange constructor should take const DOMRangeImpl*; if it did we would not need this const_cast.
     return plainText(const_cast<RangeImpl *>(this));
 }
 

@@ -25,12 +25,16 @@
 
 #include "jsediting.h"
 
-#include "cssproperties.h"
-#include "dom_selection.h"
+#include <qstring.h>
+
 #include "htmlediting.h"
+
 #include "khtml_part.h"
+#include "css/cssproperties.h"
+
+#if APPLE_CHANGES
 #include "KWQKHTMLPart.h"
-#include "qstring.h"
+#endif
 
 using khtml::TypingCommand;
 

@@ -40,7 +40,6 @@
 #include "css/css_valueimpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssstyleselector.h"
-#include "xml/dom_selection.h"
 #include "xml/dom_xmlimpl.h"
 
 #include <qtextstream.h>

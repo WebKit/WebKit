@@ -38,6 +38,7 @@
 
 #include "dom/dom_string.h"
 #include "dom/dom_element.h"
+#include "dom/html_document.h"
 #include "editing/htmlediting.h"
 #include "html/html_documentimpl.h"
 #include "html/html_baseimpl.h"
@@ -48,14 +49,13 @@
 #include "rendering/render_frames.h"
 #include "misc/htmlhashes.h"
 #include "misc/loader.h"
-#include "xml/dom_caretposition.h"
-#include "xml/dom_selection.h"
+#include "editing/visible_position.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/xml_tokenizer.h"
 #include "css/css_computedstyle.h"
 #include "css/cssstyleselector.h"
 #include "css/csshelper.h"
-#include "misc/khtml_text_operations.h"
+#include "editing/visible_text.h"
 #include "css/css_computedstyle.h"
 
 using namespace DOM;

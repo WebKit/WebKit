@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __dom_selection_h__
-#define __dom_selection_h__
+#ifndef KHTML_EDITING_SELECTION_H
+#define KHTML_EDITING_SELECTION_H
 
 #include <qrect.h>
-#include "dom_caretposition.h"
+#include "xml/dom_position.h"
 
 class KHTMLPart;
 class QPainter;
@@ -38,9 +38,7 @@ namespace khtml {
 
 namespace DOM {
 
-class NodeImpl;
-class Position;
-class Range;
+class CaretPosition;
 
 class Selection
 {
@@ -160,4 +158,4 @@ inline bool operator!=(const Selection &a, const Selection &b)
 
 } // namespace DOM
 
-#endif  // __dom_selection_h__
+#endif // KHTML_EDITING_SELECTION_H

@@ -59,7 +59,6 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
-#include "xml/dom_selection.h"
 #include "html/html_documentimpl.h"
 
 using DOM::DocumentImpl;

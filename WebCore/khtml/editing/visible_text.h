@@ -23,30 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __khtml_text_operations_h__
-#define __khtml_text_operations_h__
+#ifndef KHTML_EDITING_VISIBLE_TEXT_H
+#define KHTML_EDITING_VISIBLE_TEXT_H
 
-#include <qstring.h>
 #include "dom/dom2_range.h"
-
-namespace DOM {
-class NodeImpl;
-}
-
-// FIXME: This class should probably use the render tree and not the DOM tree, since elements could
-// be hidden using CSS, or additional generated content could be added.  For now, we just make sure
-// text objects walk their renderers' InlineTextBox objects, so that we at least get the whitespace 
-// stripped out properly and obey CSS visibility for text runs.
 
 namespace khtml {
 
 class InlineTextBox;
 
-// General utillity functions
+// General utility functions
 
 QString plainText(const DOM::Range &);
 DOM::Range findPlainText(const DOM::Range &, const QString &, bool forward, bool caseSensitive);
-
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
 // at points where replaced elements break up the text flow.  The text comes back in

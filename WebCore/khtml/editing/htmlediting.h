@@ -26,23 +26,13 @@
 #ifndef __htmlediting_h__
 #define __htmlediting_h__
 
-#include "dom_position.h"
-#include "dom_selection.h"
-#include "dom_string.h"
-#include "shared.h"
 #include "xml/dom_nodeimpl.h"
 
 namespace DOM {
-    class CSSStyleDeclarationImpl;
     class DocumentFragmentImpl;
-    class DocumentImpl;
-    class DOMString;
-    class ElementImpl;
-    class NodeImpl;
-    class Position;
     class Selection;
     class TextImpl;
-};
+}
 
 namespace khtml {
 

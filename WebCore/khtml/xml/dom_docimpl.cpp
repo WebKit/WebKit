@@ -28,7 +28,6 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom_xmlimpl.h"
 #include "xml/dom2_rangeimpl.h"
-#include "xml/dom_selection.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/xml_tokenizer.h"
 
@@ -45,6 +44,7 @@
 
 #include <qptrstack.h>
 #include <qpaintdevicemetrics.h>
+#include <qregexp.h>
 #include <kdebug.h>
 #include <kstaticdeleter.h>
 
@@ -56,7 +56,6 @@
 
 #include "khtmlview.h"
 #include "khtml_part.h"
-#include "khtml_text_operations.h"
 
 #include <kglobalsettings.h>
 #include <kstringhandler.h>
@@ -76,7 +75,8 @@
 
 #include "cssvalues.h"
 
-#include "jsediting.h"
+#include "editing/jsediting.h"
+#include "editing/visible_text.h"
 
 #include <kio/job.h>
 
