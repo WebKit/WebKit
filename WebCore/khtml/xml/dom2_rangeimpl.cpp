@@ -864,7 +864,12 @@ DOMString RangeImpl::toHTMLWithOptions(QPtrList<NodeImpl> *nodes)
         if (commonBlockNode) {
             break;
         }
-        startBlock = startBlock->containingBlock();
+        RenderBlock *newStartBlock = startBlock->containingBlock();
+        if (!newStartBlock || newStartBlock == startBlock) {
+            commonBlockNode = startBlock->element();
+            break;
+        }
+        startBlock = newStartBlock;
     }
     
     return commonBlockNode->recursive_toHTMLWithOptions(true, this, nodes);
