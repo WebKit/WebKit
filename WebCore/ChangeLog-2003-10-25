@@ -1,5 +1,16 @@
 2002-11-25  David Hyatt  <hyatt@apple.com>
 
+	Fix this even further.  JUst drop support for arbitrary
+	property lookup by name on the document.  Mac IE and
+	Gecko only do this for img and form, and this makes things
+	a lot faster.
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::hasProperty):
+        (KJS::HTMLDocument::tryGet):
+
+2002-11-25  David Hyatt  <hyatt@apple.com>
+
 	Rewrite the img/form document property lookup strategy.  This
 	should be faster and actually work (gasp!).  Fixes the dhtml
 	on hrweb to at least show up.

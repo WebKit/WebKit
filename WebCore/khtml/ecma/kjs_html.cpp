@@ -139,8 +139,8 @@ bool KJS::HTMLDocument::hasProperty(ExecState *exec, const Identifier &p) const
 #ifdef KJS_VERBOSE
   //kdDebug(6070) << "KJS::HTMLDocument::hasProperty " << p.qstring() << endl;
 #endif
-  if (!static_cast<DOM::HTMLDocument>(node).all().
-      namedItem(p.string()).isNull())
+  if ((!static_cast<DOM::HTMLDocument>(node).images().namedItem(p.string()).isNull()) ||
+      (!static_cast<DOM::HTMLDocument>(node).forms().namedItem(p.string()).isNull()))
     return true;
   return DOMDocument::hasProperty(exec, p);
 }
@@ -272,18 +272,6 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
     }
   }
 
-  DOM::HTMLCollection collAll = doc.all();
-  element = collAll.namedItem(propertyName.string());
-  element2 = collAll.nextNamedItem(propertyName.string());
-  if(!element.isNull())
-  {
-    if (element2.isNull())
-      return getDOMNode(exec, element);
-    else {
-      KJS::HTMLCollection htmlcoll(exec,coll);
-      return htmlcoll.getNamedItems(exec, propertyName); // Get all the items with the same name
-    }
-  }
   return Undefined();
 }
 
