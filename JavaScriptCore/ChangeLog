@@ -1,3 +1,11 @@
+2004-11-01  Darin Adler  <darin@apple.com>
+
+        - fixed <rdar://problem/3855573> Remove reference to "WebScriptMethods" from WebScriptObject.h comments
+
+        * bindings/objc/WebScriptObject.h: Removed unneeded #ifdef protection for multiple includes (since
+        this is an Objective-C header and we use #import for those). Fixed comments as requested in the bug
+        report to match the contents of the file.
+
 === Safari-169 ===
 
 === Safari-168 ===
