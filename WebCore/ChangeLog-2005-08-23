@@ -2,6 +2,27 @@
 
         Reviewed by John
 
+	Fix for this bug:
+
+	<rdar://problem/3260780>: hitting return in a text field submits 
+	form without running onclick handler for submit button
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::performSubmitClick): Refactored this function to
+	be more generic, so that text fields can use it, too.
+        (HTMLInputElementImpl::defaultEventHandler): Removed code to check
+	for a submit button, and merged this code into new performSubmitClick.
+        (HTMLSelectElementImpl::defaultEventHandler): Ditto.
+        * khtml/html/html_formimpl.h: Removed declaration for simulateButtonClickForEvent.
+	Added declaration for performSubmitClick.
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::slotReturnPressed): Now calls performSubmitClick rather
+	than prepareSubmit on the form. This is the key piece for the bug fix.
+
+2003-11-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         Fix for this bug:
 
         <rdar://problem/3470342>: focus rings are shown for links in

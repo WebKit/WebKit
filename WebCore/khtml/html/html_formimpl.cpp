@@ -142,6 +142,33 @@ long HTMLFormElementImpl::length() const
     return len;
 }
 
+#if APPLE_CHANGES
+void HTMLFormElementImpl::performSubmitClick()
+{
+    QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
+    for (; it.current(); ++it) {
+        if (it.current()->id() == ID_INPUT) {
+            HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(it.current());
+            if (element->isSuccessfulSubmitButton() && element->renderer()) {
+                if (element->inputType() == HTMLInputElementImpl::IMAGE) {
+                    // have to send simulated clicks differently for image types
+                    // since they do not have a widget
+                    int x = 0;
+                    int y = 0;
+                    element->renderer()->absolutePosition(x,y);
+                    QMouseEvent e2(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
+                    element->dispatchMouseEvent(&e2, EventImpl::KHTML_CLICK_EVENT);
+                }
+                else {
+                    static_cast<QButton *>(static_cast<RenderWidget *>(element->renderer())->widget())->simulateClick();
+                }
+                break;
+            }
+        }
+    }
+}
+#endif
+
 static QCString encodeCString(const QCString& e)
 {
     // http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.1
@@ -1670,32 +1697,6 @@ void HTMLInputElementImpl::focus()
     getDocument()->setFocusNode(this);
 }
 
-#if APPLE_CHANGES
-void HTMLInputElementImpl::simulateButtonClickForEvent(EventImpl *evt)
-{
-    assert(m_type == CHECKBOX || m_type == IMAGE || m_type == RADIO || 
-           m_type == RESET || m_type == SUBMIT);
-
-    if (m_render) {
-        if (m_type == IMAGE) {
-            // have to send simulated clicks differently for image types
-            // since they to not have a widget
-            int x = 0;
-            int y = 0;
-            if (m_render)
-                m_render->absolutePosition(x,y);
-            QMouseEvent e2(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
-            dispatchMouseEvent(&e2, EventImpl::KHTML_CLICK_EVENT);
-        }
-        else {
-            static_cast<QButton *>(static_cast<RenderWidget *>(m_render)->widget())->simulateClick();
-        }
-    }
-    
-    evt->setDefaultHandled();
-}
-#endif
-
 void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 {
     if (evt->isMouseEvent() &&
@@ -1751,24 +1752,19 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
             case SUBMIT:
                 // simulate mouse click for spacebar, return, and enter
                 if (key == "U+000020" || key == "U+00000d" || key == "Enter") {
-                    simulateButtonClickForEvent(evt);
+                    m_form->performSubmitClick();
+                    evt->setDefaultHandled();
                 }
                 break;
             case CHECKBOX:
             case RADIO:
+            case TEXT:
+            case PASSWORD:
                 // for return or enter, find the first successful image or submit element 
                 // send it a simulated mouse click
                 if (key == "U+00000d" || key == "Enter") {
-                    QPtrListIterator<HTMLGenericFormElementImpl> it(m_form->formElements);
-                    for (; it.current(); ++it) {
-                        if (it.current()->id() == ID_INPUT) {
-                            HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(it.current());
-                            if (element->isSuccessfulSubmitButton()) {
-                                element->simulateButtonClickForEvent(evt);
-                                break;
-                            }
-                        }
-                    }
+                    m_form->performSubmitClick();
+                    evt->setDefaultHandled();
                 }
                 break;
             default:
@@ -2298,16 +2294,8 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
         DOMString key = static_cast<KeyboardEventImpl *>(evt)->keyIdentifier();
         
         if (key == "U+00000d" || key == "Enter") {
-            QPtrListIterator<HTMLGenericFormElementImpl> it(m_form->formElements);
-            for (; it.current(); ++it) {
-                if (it.current()->id() == ID_INPUT) {
-                    HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(it.current());
-                    if (element->isSuccessfulSubmitButton()) {
-                        element->simulateButtonClickForEvent(evt);
-                        break;
-                    }
-                }
-            }
+            m_form->performSubmitClick();
+            evt->setDefaultHandled();
         }
     }
     HTMLGenericFormElementImpl::defaultEventHandler(evt);
