@@ -1,3 +1,37 @@
+2002-12-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by: David Hyatt
+
+	- fixed 3049601 - support the equivalent of
+	createcontextualfragment(NS6) or insertAdjacentHTML (IE)
+
+	- fixed 3108065 - DHTML at expedia.com doesn't work-- lack of
+	support for createContextualFragment
+
+	- fixed 3114627 - DHTML menus used in Yahoo mail don't work-- lack
+	of support for createContextualFragment
+
+	- improvement towards 3052113 - "site menu" part of .mac home page
+	editing doesn't work
+	
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_range.cpp:
+        (DOMRangeProtoFunc::tryCall): Added suppor for
+	createContextualFragment method.
+        * khtml/ecma/kjs_range.lut.h: Regenerated.
+        * khtml/dom/dom2_range.h:
+        * khtml/dom/dom2_range.cpp:
+        (Range::createContextualFragment): Implemented (calls impl).
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment): Factored out of setInnerHTML.
+	(HTMLElementImpl::setInnerHTML): Call createContextualFragment to
+	make the fragment.
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (RangeImpl::createContextualFragment): Implemented (calls start
+	container element).
+
 2002-12-04  David Hyatt  <hyatt@apple.com>
 
 	Fix assert on compuserve page.  <form> under <table> should not

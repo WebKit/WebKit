@@ -27,6 +27,7 @@
 #include "dom2_rangeimpl.h"
 #include "dom_textimpl.h"
 #include "dom_xmlimpl.h"
+#include "html/html_elementimpl.h"
 
 using namespace DOM;
 
@@ -844,6 +845,29 @@ DOMString RangeImpl::toHTML(  )
     // ### implement me!!!!
     return DOMString();
 }
+
+DocumentFragmentImpl *RangeImpl::createContextualFragment ( DOMString &html, int &exceptioncode )
+{
+   if (m_detached) {
+        exceptioncode = DOMException::INVALID_STATE_ERR;
+        return NULL;
+    }
+
+    if (! m_startContainer->isHTMLElement()) {
+	exceptioncode = DOMException::NOT_SUPPORTED_ERR;
+	return NULL;
+    }
+
+    HTMLElementImpl *e = static_cast<HTMLElementImpl *>(m_startContainer);
+    DocumentFragmentImpl *fragment = e->createContextualFragment(html);
+    if (!fragment) {
+	exceptioncode = DOMException::NOT_SUPPORTED_ERR;
+	return NULL;
+    }
+
+    return fragment;
+}
+
 
 void RangeImpl::detach( int &exceptioncode )
 {

@@ -437,6 +437,9 @@ public:
      * @internal Not part of DOM
      */
     DOMString toHTML (  );
+
+    /* Mozilla extension - only works for HTML documents. */
+    DocumentFragment createContextualFragment (DOMString &html);
     
     /**
      * Called to indicate that the range is no longer in use and that

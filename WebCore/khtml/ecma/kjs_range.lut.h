@@ -32,7 +32,7 @@ const struct HashEntry DOMRangeProtoTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "selectNode", DOMRange::SelectNode, DontDelete|Function, 1, &DOMRangeProtoTableEntries[21] },
    { "deleteContents", DOMRange::DeleteContents, DontDelete|Function, 0, &DOMRangeProtoTableEntries[20] },
-   { 0, 0, 0, 0, 0 },
+   { "createContextualFragment", DOMRange::CreateContextualFragment, DontDelete|Function, 1, 0 },
    { "setStartAfter", DOMRange::SetStartAfter, DontDelete|Function, 1, 0 },
    { "insertNode", DOMRange::InsertNode, DontDelete|Function, 1, 0 },
    { "cloneContents", DOMRange::CloneContents, DontDelete|Function, 0, 0 },

@@ -30,6 +30,7 @@ namespace DOM {
 class DOMString;
 class CSSStyleDeclarationImpl;
 class HTMLFormElementImpl;
+ class DocumentFragmentImpl;
 
 class HTMLElementImpl : public ElementImpl
 {
@@ -53,6 +54,7 @@ public:
 
     DOMString innerHTML() const;
     DOMString innerText() const;
+    DocumentFragmentImpl *createContextualFragment( const DOMString &html );
     bool setInnerHTML( const DOMString &html );
     bool setInnerText( const DOMString &text );
 

@@ -41,7 +41,7 @@ namespace KJS {
            SetEndAfter, Collapse, SelectNode, SelectNodeContents,
            CompareBoundaryPoints, DeleteContents, ExtractContents,
            CloneContents, InsertNode, SurroundContents, CloneRange, ToString,
-           Detach };
+           Detach, CreateContextualFragment };
     DOM::Range toRange() const { return range; }
   protected:
     DOM::Range range;

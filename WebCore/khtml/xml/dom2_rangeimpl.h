@@ -63,6 +63,9 @@ public:
     void insertNode( NodeImpl *newNode, int &exceptioncode );
     DOMString toString ( int &exceptioncode );
     DOMString toHTML (  );
+
+    DocumentFragmentImpl *createContextualFragment ( DOMString &html, int &exceptioncode );
+    
     void detach ( int &exceptioncode );
     bool isDetached() const;
     RangeImpl *cloneRange(int &exceptioncode);

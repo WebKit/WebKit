@@ -37,24 +37,25 @@ const ClassInfo DOMRange::info = { "Range", 0, &DOMRangeTable, 0 };
   commonAncestorContainer DOMRange::CommonAncestorContainer	DontDelete|ReadOnly
 @end
 @begin DOMRangeProtoTable 17
-  setStart		DOMRange::SetStart		DontDelete|Function 2
-  setEnd		DOMRange::SetEnd		DontDelete|Function 2
-  setStartBefore	DOMRange::SetStartBefore	DontDelete|Function 1
-  setStartAfter		DOMRange::SetStartAfter		DontDelete|Function 1
-  setEndBefore		DOMRange::SetEndBefore		DontDelete|Function 1
-  setEndAfter		DOMRange::SetEndAfter		DontDelete|Function 1
-  collapse		DOMRange::Collapse		DontDelete|Function 1
-  selectNode		DOMRange::SelectNode		DontDelete|Function 1
-  selectNodeContents	DOMRange::SelectNodeContents	DontDelete|Function 1
-  compareBoundaryPoints	DOMRange::CompareBoundaryPoints	DontDelete|Function 2
-  deleteContents	DOMRange::DeleteContents	DontDelete|Function 0
-  extractContents	DOMRange::ExtractContents	DontDelete|Function 0
-  cloneContents		DOMRange::CloneContents		DontDelete|Function 0
-  insertNode		DOMRange::InsertNode		DontDelete|Function 1
-  surroundContents	DOMRange::SurroundContents	DontDelete|Function 1
-  cloneRange		DOMRange::CloneRange		DontDelete|Function 0
-  toString		DOMRange::ToString		DontDelete|Function 0
-  detach		DOMRange::Detach		DontDelete|Function 0
+setStart		    DOMRange::SetStart			DontDelete|Function 2
+  setEnd		    DOMRange::SetEnd			DontDelete|Function 2
+  setStartBefore	    DOMRange::SetStartBefore		DontDelete|Function 1
+  setStartAfter		    DOMRange::SetStartAfter		DontDelete|Function 1
+  setEndBefore		    DOMRange::SetEndBefore		DontDelete|Function 1
+  setEndAfter		    DOMRange::SetEndAfter		DontDelete|Function 1
+  collapse		    DOMRange::Collapse			DontDelete|Function 1
+  selectNode		    DOMRange::SelectNode		DontDelete|Function 1
+  selectNodeContents	    DOMRange::SelectNodeContents	DontDelete|Function 1
+  compareBoundaryPoints	    DOMRange::CompareBoundaryPoints	DontDelete|Function 2
+  deleteContents	    DOMRange::DeleteContents		DontDelete|Function 0
+  extractContents	    DOMRange::ExtractContents		DontDelete|Function 0
+  cloneContents		    DOMRange::CloneContents		DontDelete|Function 0
+  insertNode		    DOMRange::InsertNode		DontDelete|Function 1
+  surroundContents	    DOMRange::SurroundContents		DontDelete|Function 1
+  cloneRange		    DOMRange::CloneRange		DontDelete|Function 0
+  toString		    DOMRange::ToString			DontDelete|Function 0
+  detach		    DOMRange::Detach			DontDelete|Function 0
+  createContextualFragment  DOMRange::CreateContextualFragment  DontDelete|Function 1
 @end
 */
 DEFINE_PROTOTYPE("DOMRange",DOMRangeProto)
@@ -174,6 +175,11 @@ Value DOMRangeProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &a
     case DOMRange::Detach:
       range.detach();
       result = Undefined();
+      break;
+    case DOMRange::CreateContextualFragment:
+      Value value = args[0];
+      DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
+      result = getDOMNode(exec, range.createContextualFragment(str));
       break;
   };
 
