@@ -1,3 +1,19 @@
+2002-06-19  John Sullivan  <sullivan@apple.com>
+
+	- fixed 2960677 -- attempt to insert nil key; content policy set twice on particular page.
+
+	The problem here was a bad URL not being propogated through the error-handling machinery
+	correctly because the url handle was nil, but used to get its string.
+
+	* WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+	(+[IFResourceURLHandleClient startLoadingResource:withURL:dataSource:]):
+	* WebView.subproj/IFWebControllerPrivate.mm: Use IFError init method that takes
+	failingURL.
+
+	(-[IFWebController _receivedProgress:forResourceHandle:fromDataSource:complete:]):
+	(-[IFWebController _receivedError:forResourceHandle:partialProgress:fromDataSource:]):
+	Check [error failingURL] when resource handle is nil.
+
 2002-06-19  Darin Adler  <darin@apple.com>
 
 	Fixed a storage leak and made some other changes to go along with

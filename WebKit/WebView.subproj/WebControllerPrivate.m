@@ -73,8 +73,15 @@
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         if (frame != nil) {
+            NSString *resourceString;
             IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
             [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
+            if (resourceHandle != nil) {
+                resourceString = [[resourceHandle url] absoluteString];
+            } else {
+                WEBKIT_ASSERT ([error failingURL] != nil);
+                resourceString = [[error failingURL] absoluteString];
+            }
             [dataSource _addError: error forResource: [[resourceHandle url] absoluteString]];
             [error release];
             [frame _checkLoadComplete];
@@ -160,7 +167,8 @@
     
     WEBKIT_ASSERT (frame != nil);
 
-    [dataSource _addError: error forResource: [[resourceHandle url] absoluteString]];
+    [dataSource _addError: error forResource:
+        (resourceHandle != nil ? [[resourceHandle url] absoluteString] : [[error failingURL] absoluteString])];
     
     [frame _checkLoadComplete];
 }

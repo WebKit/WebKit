@@ -73,7 +73,8 @@
         [rLoader cancel];
 
         IFError *badURLError = [IFError errorWithCode:IFURLHandleResultBadURLError
-            inDomain:IFErrorCodeDomainWebFoundation isTerminal:YES];        
+                                             inDomain:IFErrorCodeDomainWebFoundation
+                                           failingURL:URL isTerminal:YES];        
         [[source controller] _receivedError:badURLError forResourceHandle:nil
             partialProgress:nil fromDataSource:source];
         
