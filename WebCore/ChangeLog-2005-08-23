@@ -1,3 +1,10 @@
+2005-01-03  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutPositionedObjects):
+
 2005-01-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison

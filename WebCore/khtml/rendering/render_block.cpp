@@ -1126,8 +1126,11 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         RenderObject* r;
         QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            //kdDebug(6040) << "   have a positioned object" << endl;
-            if ( relayoutChildren )
+            // When a non-positioned block element moves, it may have positioned children that are implicitly positioned relative to the
+            // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
+            // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
+            // positioned explicitly) this should not incur a performance penalty.
+            if (relayoutChildren || (r->hasStaticY() && r->parent() != this && r->parent()->isBlockFlow()))
                 r->setChildNeedsLayout(true);
             r->layoutIfNeeded();
         }
