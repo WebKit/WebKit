@@ -1,5 +1,13 @@
 2003-07-31  Richard Williamson   <rjw@apple.com>
 
+	Make sure width is initialized for monospace optimizations.
+        Reviewed by Vicki.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer checkSelectionPoint:style:position:reversed:]):
+
+2003-07-31  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3359152.  SPI to get the background color for a frame.
 
         Reviewed by hyatt.

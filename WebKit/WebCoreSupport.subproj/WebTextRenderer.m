@@ -1740,6 +1740,7 @@ static const char *joiningNames[] = {
 
     if ([font isFixedPitch] || [font _isFakeFixedPitch]){
         monospaceWidth = spaceWidth;
+        width = run->length * monospaceWidth;
     }
     else {
         if (run->length > LOCAL_WIDTH_BUF_SIZE)
