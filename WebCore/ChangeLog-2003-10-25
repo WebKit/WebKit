@@ -1,5 +1,17 @@
 2003-03-31  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3211849.  I accidentally removed a BORDER_COLOR case
+	from the switch when I removed the transparency check for
+	the shorthand.  The case originally fell through to the case
+	below it, so a straight removal was wrong.  I needed to add
+	it to the following set of case labels.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+
+2003-03-31  David Hyatt  <hyatt@apple.com>
+
 	First-letter can be floated.  Make sure we mutate the display
 	to BLOCK so that we don't make an inline when we're floating.
 	Fixes bug 3186004.

@@ -2997,6 +2997,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
     case CSS_PROP_BORDER:
     case CSS_PROP_BORDER_STYLE:
     case CSS_PROP_BORDER_WIDTH:
+    case CSS_PROP_BORDER_COLOR:
         if(value->cssValueType() != CSSValue::CSS_INHERIT || !parentNode) return;
 
         if(id == CSS_PROP_BORDER || id == CSS_PROP_BORDER_COLOR)
