@@ -23,85 +23,84 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QASYNCIO_H_
-#define QASYNCIO_H_
+#ifndef QTEXTSTREAM_H_
+#define QTEXTSTREAM_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <KWQDef.h>
+// USING_BORROWED_QTEXTSTREAM ==================================================
 
-// class QAsyncIO ==============================================================
+// FIXME: Need a hack here to give the xml tokenizer text stream
+// defines from Qt. The NEED_BOGUS_TEXTSTREAMS symbol
+// can be removed when we have Qt text streams implemented
 
-class QAsyncIO {
+#if defined USING_BORROWED_QTEXTSTREAM && ! defined NEED_BOGUS_TEXTSTREAMS
+#include <_qtextstream.h>
+#else
 
-// Note : all class members in protected scope
-protected:
+#include "qstring.h"
 
+// class QTextStream ===========================================================
+
+class QTextStream {
+public:
+
+    // typedefs ----------------------------------------------------------------
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
-    
+
     // constructors, copy constructors, and destructors ------------------------
 
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QAsyncIO();
-#endif
-
-    virtual ~QAsyncIO();
+    QTextStream();
+    QTextStream(QByteArray, int);
+    virtual ~QTextStream();       
 
     // member functions --------------------------------------------------------
-
-    void ready();
-
     // operators ---------------------------------------------------------------
 
+     QTextStream &operator<<(char);
+     QTextStream &operator<<(const char *);
+     QTextStream &operator<<(const QCString &);
+     QTextStream &operator<<(const QString &);
+
+// protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
 private:
+    // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
+    QTextStream(const QTextStream &);
+    QTextStream &operator=(const QTextStream &);
 
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QAsyncIO(const QAsyncIO &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    QAsyncIO &operator=(const QAsyncIO &);
-#endif
-
-}; // class QAsyncIO ===========================================================
+}; // class QTextStream ========================================================
 
 
-// class QDataSource ===========================================================
+// class QTextIStream ==========================================================
 
-class QDataSource : public QAsyncIO {
+class QTextIStream : public QTextStream {
 public:
 
+    // typedefs ----------------------------------------------------------------
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
 
     // constructors, copy constructors, and destructors ------------------------
 
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QDataSource() {}
-#endif
+    QTextIStream(QString *);
+
 
 // add no-op destructor
 #ifdef _KWQ_PEDANTIC_
-    ~QDataSource() {}
+    ~QTextIStream() {}      
 #endif
-    
+
     // member functions --------------------------------------------------------
 
-    virtual void rewind();
-    void maybeReady();
+    QString readLine();
 
     // operators ---------------------------------------------------------------
 
@@ -113,42 +112,41 @@ private:
 // add copy constructor
 // this private declaration prevents copying
 #ifdef _KWQ_PEDANTIC_
-    QDataSource(const QDataSource &);
+    QTextIStream(const QTextIStream &);
 #endif
 
 // add assignment operator 
 // this private declaration prevents assignment
 #ifdef _KWQ_PEDANTIC_
-    QDataSource &operator=(const QDataSource &);
+    QTextIStream &operator=(const QTextIStream &);
 #endif
 
-}; // end class QDataSource ====================================================
+}; // class QTextIStream =======================================================
 
 
-// class QDataSink =============================================================
+// class QTextOStream ==========================================================
 
-class QDataSink : public QAsyncIO {
+class QTextOStream : public QTextStream {
 public:
 
+    // typedefs ----------------------------------------------------------------
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
 
     // constructors, copy constructors, and destructors ------------------------
 
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QDataSink() {}
-#endif
+    QTextOStream(QString *);
+    QTextOStream(QByteArray);
 
 // add no-op destructor
 #ifdef _KWQ_PEDANTIC_
-    ~QDataSink() {}
+    ~QTextOStream() {}      
 #endif
-    
+
     // member functions --------------------------------------------------------
 
-    virtual void receive(const uchar*, int count)=0;
+    QString readLine();
 
     // operators ---------------------------------------------------------------
 
@@ -160,15 +158,17 @@ private:
 // add copy constructor
 // this private declaration prevents copying
 #ifdef _KWQ_PEDANTIC_
-    QDataSink(const QDataSink &);
+    QTextOStream(const QTextOStream &);
 #endif
 
 // add assignment operator 
 // this private declaration prevents assignment
 #ifdef _KWQ_PEDANTIC_
-    QDataSink &operator=(const QDataSink &);
+    QTextOStream &operator=(const QTextOStream &);
 #endif
 
-}; // class QDataSink ==========================================================
+}; // class QTextOStream =======================================================
+
+#endif // USING_BORROWED_QTEXTSTREAM
 
 #endif

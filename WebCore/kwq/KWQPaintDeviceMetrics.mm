@@ -39,3 +39,13 @@ int QPaintDeviceMetrics::depth() const
 {
 }
 
+
+int QPaintDeviceMetrics::width() const
+{
+}
+
+
+int QPaintDeviceMetrics::height() const
+{
+}
+

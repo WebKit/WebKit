@@ -23,6 +23,9 @@ HEADERS = $(wildcard *.h)
 
 MMOBJECTS = \
 	_KWQOwner.o \
+	KWQasyncimageio.o \
+	KWQasyncio.o \
+	KWQtextcodec.o \
 	KWQApplication.o \
 	KWQBrush.o \
 	KWQButton.o \
@@ -34,8 +37,11 @@ MMOBJECTS = \
         KWQCursor.o \
         KWQEvent.o \
 	KWQFont.o \
+	KWQFontDatabase.o \
+	KWQFontInfo.o \
 	KWQFontMetrics.o \
 	KWQFrame.o \
+	KWQHBox.o \
 	KWQImage.o \
         KWQKApplication.o \
         KWQKCharsets.o \
@@ -49,10 +55,13 @@ MMOBJECTS = \
         KWQKHTMLPart.o \
         KWQKHTMLSettings.o \
         KWQKIconLoader.o \
+        KWQKImageIO.o \
         KWQKInstance.o \
         KWQKLineEdit.o \
         KWQKListBox.o \
+        KWQKMimeType.o \
         KWQKMessageBox.o \
+        KWQKPartsEvent.o \
         KWQKPrinter.o \
         KWQKProcess.o \
         KWQKSimpleConfig.o \

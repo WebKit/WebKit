@@ -47,7 +47,7 @@ protected:
 
 // add no-arg constructor
 #ifdef _KWQ_PEDANTIC_
-    QAsyncIO() {}
+    QAsyncIO();
 #endif
 
     virtual ~QAsyncIO();

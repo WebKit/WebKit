@@ -25,7 +25,7 @@
 
 #include <qcheckbox.h>
 
-QCheckBox::QCheckBox(QWidget *)
+QCheckBox::QCheckBox(QWidget *w) : QButton (w)
 {
 }
 

@@ -29,43 +29,48 @@
 
 QPalette QApplication::palette(const QWidget *p)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) QPalette QApplication::palette(const QWidget *p)\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 QWidget *QApplication::desktop()
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) QWidget *QApplication::desktop()\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 int QApplication::startDragDistance()
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) int QApplication::startDragDistance()\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 QSize QApplication::globalStrut()
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) QSize QApplication::globalStrut()\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QApplication::setOverrideCursor(const QCursor &c)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QApplication::setOverrideCursor(const QCursor &c)\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 void QApplication::restoreOverrideCursor()
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QApplication::restoreOverrideCursor()\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 
 bool QApplication::sendEvent(QObject *o, QEvent *e)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) bool QApplication::sendEvent(QObject *o, QEvent *e)\n");
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+void QApplication::sendPostedEvents(QObject *receiver, int event_type)
+{
+     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
 

@@ -30,7 +30,7 @@
 #include <config.h>
 #endif
 
-#include <KWQButton.h>
+#include <qbutton.h>
 
 #include "qwidget.h"
 #include "qstring.h"
@@ -46,12 +46,6 @@ public:
     // static member functions -------------------------------------------------
 
     // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QPushButton() {}
-#endif
-
     QPushButton(QWidget *);
     QPushButton(const QString &text, QWidget *parent, const char* name=0);
     ~QPushButton();

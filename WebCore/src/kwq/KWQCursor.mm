@@ -34,6 +34,9 @@ QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
 {
 }
 
+QPoint QCursor::pos()
+{
+}
 
 QCursor::QCursor(const QCursor &)
 {

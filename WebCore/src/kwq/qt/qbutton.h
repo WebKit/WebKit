@@ -45,7 +45,6 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    QButton();
     QButton(QWidget *parent=0);
     ~QButton();
 

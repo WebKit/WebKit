@@ -25,12 +25,12 @@
 
 #include <qpushbutton.h>
 
-QPushButton::QPushButton(QWidget *)
+QPushButton::QPushButton(QWidget *w) : QButton (w)
 {
 }
 
 
-QPushButton::QPushButton(const QString &text, QWidget *parent, const char* name=0)
+QPushButton::QPushButton(const QString &text, QWidget *parent, const char* name)
 {
 }
 

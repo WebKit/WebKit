@@ -30,7 +30,7 @@
 #include <config.h>
 #endif
 
-#include <KWQButton.h>
+#include <qbutton.h>
 
 #include "qwidget.h"
 
@@ -45,12 +45,6 @@ public:
     // static member functions -------------------------------------------------
 
     // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QRadioButton() {}
-#endif
-
     QRadioButton(QWidget *);
     
 // add no-op destructor

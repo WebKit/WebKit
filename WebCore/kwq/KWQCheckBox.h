@@ -30,7 +30,7 @@
 #include <config.h>
 #endif
 
-#include <KWQButton.h>
+#include <qbutton.h>
 
 // class QCheckBox =============================================================
 
@@ -43,12 +43,6 @@ public:
     // static member functions -------------------------------------------------
 
     // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QCheckBox() {}
-#endif
-
     QCheckBox(QWidget *);
 
 // add no-op destructor

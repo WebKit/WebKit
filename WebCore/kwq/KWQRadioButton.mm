@@ -25,7 +25,7 @@
 
 #include <qradiobutton.h>
 
-QRadioButton::QRadioButton(QWidget *)
+QRadioButton::QRadioButton(QWidget *w) : QButton (w)
 {
 }
 
