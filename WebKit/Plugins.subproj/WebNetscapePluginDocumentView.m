@@ -9,7 +9,7 @@
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPlugin.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebView.h>
 
@@ -60,7 +60,7 @@
     [self setMIMEType:MIME];
     [self setBaseURL:[dataSource URL]];
 
-    WebNetscapePlugin *thePlugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:MIME];
+    WebNetscapePluginPackage *thePlugin = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
 
     if (![thePlugin load]){
         return;

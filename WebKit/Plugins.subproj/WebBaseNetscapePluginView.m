@@ -4,19 +4,17 @@
 */
 
 #import <WebKit/WebBaseNetscapePluginView.h>
-
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNetscapePluginStream.h>
+#import <WebKit/WebNetscapePluginNullEventSender.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
-
-#import <WebKit/WebNetscapePluginStream.h>
-#import <WebKit/WebPluginNullEventSender.h>
-#import <WebKit/WebPlugin.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
@@ -514,12 +512,12 @@
     return instance;
 }
 
-- (WebNetscapePlugin *)plugin
+- (WebNetscapePluginPackage *)plugin
 {
     return plugin;
 }
 
-- (void)setPlugin:(WebNetscapePlugin *)thePlugin;
+- (void)setPlugin:(WebNetscapePluginPackage *)thePlugin;
 {
     [plugin release];
     plugin = [thePlugin retain];

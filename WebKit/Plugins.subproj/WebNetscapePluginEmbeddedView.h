@@ -13,7 +13,7 @@
 }
 
 - (id)initWithFrame:(NSRect)r
-             plugin:(WebNetscapePlugin *)plugin
+             plugin:(WebNetscapePluginPackage *)plugin
                 URL:(NSURL *)URL
             baseURL:(NSURL *)baseURL
                mime:(NSString *)mimeType

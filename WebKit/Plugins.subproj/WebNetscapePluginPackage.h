@@ -1,5 +1,5 @@
 /*
-        WebPlugin.h
+        WebNetscapePluginPackage.h
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
@@ -7,7 +7,7 @@
 #import "npapi.h"
 #import <WebCore/WebCoreViewFactory.h>
 
-@interface WebNetscapePlugin : NSObject <WebCorePluginInfo>
+@interface WebNetscapePluginPackage : NSObject <WebCorePluginInfo>
 {
     NSMutableDictionary *MIMEToExtensions;
     NSMutableDictionary *extensionToMIME;

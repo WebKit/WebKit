@@ -1,3 +1,79 @@
+2002-10-22  Chris Blumenberg  <cblu@apple.com>
+
+	- Moved things around to make room for new plug-in API.
+	- Renamed WebNetscapePlugin to WebNetscapePluginPackage.
+	- Renamed WebNetscapePluginDatabase to WebPluginDatabase.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setPluginPointer:]):
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView plugin]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.h:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView initWithFrame:plugin:URL:baseURL:mime:arguments:]):
+        * Plugins.subproj/WebNetscapePluginNullEventSender.h: Added.
+        * Plugins.subproj/WebNetscapePluginNullEventSender.m: Added.
+        (-[WebNetscapePluginNullEventSender initWithPluginView:]):
+        (-[WebNetscapePluginNullEventSender dealloc]):
+        (-[WebNetscapePluginNullEventSender sendNullEvents]):
+        (-[WebNetscapePluginNullEventSender stop]):
+        * Plugins.subproj/WebNetscapePluginPackage.h: Added.
+        * Plugins.subproj/WebNetscapePluginPackage.m: Added.
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage closeResourceFile:]):
+        (-[WebNetscapePluginPackage stringForStringListID:andIndex:]):
+        (-[WebNetscapePluginPackage getPluginInfo]):
+        (-[WebNetscapePluginPackage stringByResolvingSymlinksAndAliasesInPath:]):
+        (-[WebNetscapePluginPackage initWithPath:]):
+        (-[WebNetscapePluginPackage load]):
+        (-[WebNetscapePluginPackage unload]):
+        (-[WebNetscapePluginPackage NPP_SetWindow]):
+        (-[WebNetscapePluginPackage NPP_New]):
+        (-[WebNetscapePluginPackage NPP_Destroy]):
+        (-[WebNetscapePluginPackage NPP_NewStream]):
+        (-[WebNetscapePluginPackage NPP_StreamAsFile]):
+        (-[WebNetscapePluginPackage NPP_DestroyStream]):
+        (-[WebNetscapePluginPackage NPP_WriteReady]):
+        (-[WebNetscapePluginPackage NPP_Write]):
+        (-[WebNetscapePluginPackage NPP_HandleEvent]):
+        (-[WebNetscapePluginPackage NPP_URLNotify]):
+        (-[WebNetscapePluginPackage NPP_GetValue]):
+        (-[WebNetscapePluginPackage NPP_SetValue]):
+        (-[WebNetscapePluginPackage NPP_Print]):
+        (-[WebNetscapePluginPackage MIMEToExtensionsDictionary]):
+        (-[WebNetscapePluginPackage extensionToMIMEDictionary]):
+        (-[WebNetscapePluginPackage MIMEToDescriptionDictionary]):
+        (-[WebNetscapePluginPackage name]):
+        (-[WebNetscapePluginPackage filename]):
+        (-[WebNetscapePluginPackage path]):
+        (-[WebNetscapePluginPackage isLoaded]):
+        (-[WebNetscapePluginPackage pluginDescription]):
+        (-[WebNetscapePluginPackage description]):
+        (functionPointerForTVector):
+        (tVectorForFunctionPointer):
+        * Plugins.subproj/WebPlugin.h: Removed.
+        * Plugins.subproj/WebPlugin.m: Removed.
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        (+[WebPluginDatabase installedPlugins]):
+        (-[WebPluginDatabase pluginForMIMEType:]):
+        (-[WebPluginDatabase pluginForExtension:]):
+        (-[WebPluginDatabase pluginForFilename:]):
+        (-[WebPluginDatabase MIMETypes]):
+        (-[WebPluginDatabase init]):
+        * Plugins.subproj/WebPluginNullEventSender.h: Removed.
+        * Plugins.subproj/WebPluginNullEventSender.m: Removed.
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory viewForPluginWithURL:serviceType:arguments:baseURL:]):
+        (-[WebViewFactory pluginsInfo]):
+        (-[WebViewFactory viewForJavaAppletWithFrame:baseURL:parameters:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.m:
+        (+[WebController canShowMIMEType:]):
+
 2002-10-22  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/WebJavaScriptTextInputPanel.m: Added missing import.

@@ -11,7 +11,7 @@
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNullPluginView.h>
-#import <WebKit/WebPlugin.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebViewFactory.h>
 
@@ -33,7 +33,7 @@
     NSMutableDictionary *arguments;
     NSString *mimeType, *extension;
     NSRange r1, r2, r3;
-    WebNetscapePlugin *plugin;
+    WebNetscapePluginPackage *plugin;
     uint i;
         
     arguments = [NSMutableDictionary dictionary];
@@ -50,10 +50,10 @@
         
     if ([serviceType length]) {
         mimeType = serviceType;
-        plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:mimeType];
+        plugin = [[WebPluginDatabase installedPlugins] pluginForMIMEType:mimeType];
     } else {
         extension = [[pluginURL path] pathExtension];
-        plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForExtension:extension];
+        plugin = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
         mimeType = [[plugin extensionToMIMEDictionary] objectForKey:extension];
     }
     
@@ -70,14 +70,14 @@
 
 - (NSArray *)pluginsInfo
 {
-    return [[WebNetscapePluginDatabase installedPlugins] plugins];
+    return [[WebPluginDatabase installedPlugins] plugins];
 }
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)baseURL parameters:(NSDictionary *)parameters
 {
-    WebNetscapePlugin *plugin;
+    WebNetscapePluginPackage *plugin;
     
-    plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:@"application/x-java-applet"];
+    plugin = [[WebPluginDatabase installedPlugins] pluginForMIMEType:@"application/x-java-applet"];
     if (plugin == nil) {
         return nil;
     }

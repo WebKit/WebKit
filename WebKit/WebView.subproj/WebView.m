@@ -237,7 +237,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
         return YES;
     }else{
         // Have the plug-ins register views and representations
-        [WebNetscapePluginDatabase installedPlugins];
+        [WebPluginDatabase installedPlugins];
         if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType])
             return YES;
     }

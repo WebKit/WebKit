@@ -6,7 +6,7 @@
 #import <WebKit/WebBaseNetscapePluginStream.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebPlugin.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
@@ -28,7 +28,7 @@
 {
     instance = pluginPointer;
     
-    WebNetscapePlugin *plugin = [(WebBaseNetscapePluginView *)instance->ndata plugin];
+    WebNetscapePluginPackage *plugin = [(WebBaseNetscapePluginView *)instance->ndata plugin];
 
     NPP_NewStream = 	[plugin NPP_NewStream];
     NPP_WriteReady = 	[plugin NPP_WriteReady];

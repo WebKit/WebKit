@@ -1,18 +1,17 @@
 /*
-        WebPlugin.m
+        WebNetscapePluginPackage.m
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import "WebPlugin.h"
-
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 
 typedef void (* FunctionPointer) (void);
 typedef void (* TransitionVector) (void);
 FunctionPointer functionPointerForTVector(TransitionVector);
 TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
-@implementation WebNetscapePlugin
+@implementation WebNetscapePluginPackage
 
 - (SInt16)openResourceFile
 {

@@ -9,7 +9,7 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPlugin.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebResourceRequest.h>
@@ -17,7 +17,7 @@
 @implementation WebNetscapePluginEmbeddedView
 
 - (id)initWithFrame:(NSRect)frame
-             plugin:(WebNetscapePlugin *)thePlugin
+             plugin:(WebNetscapePluginPackage *)thePlugin
                 URL:(NSURL *)theURL
             baseURL:(NSURL *)theBaseURL
                mime:(NSString *)mimeType

@@ -1,11 +1,11 @@
 /*	
-        WebPluginNullEventSender.m
+        WebNetscapePluginNullEventSender.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebPluginNullEventSender.h>
+#import <WebKit/WebNetscapePluginNullEventSender.h>
 
 #import <WebFoundation/WebAssertions.h>
 
