@@ -1,3 +1,14 @@
+2004-06-17  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3698867> setting the canvas or parent to display:none and updating the causes a nil-deref
+
+	Ensured that we have a renderer before rendering.
+
+        Reviewed by John.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+
 2004-06-17  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3674601, "Read More..." links should trail articles in Emerson.
