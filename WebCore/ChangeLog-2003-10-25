@@ -1,5 +1,10 @@
 2003-09-04  Darin Adler  <darin@apple.com>
 
+        * layout-tests/apple-only/base/www.msn.com/index-expected.txt: Update for residual style fix.
+        * layout-tests/fast/invalid/003-expected.txt: Update for residual style fix.
+
+2003-09-04  Darin Adler  <darin@apple.com>
+
         * kwq/KWQRenderTreeDebug.cpp: (write): Fix clip rectangle computation.
         * layout-tests: Update test results.
 
