@@ -1,0 +1,183 @@
+AC_INIT(Makefile.vars.in)
+
+AC_CONFIG_HEADER(config.h)
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Set the package and version
+dnl -------------------------------------------------------------------
+dnl
+
+WEBPAGEVIEW_MAJOR_VERSION=0
+WEBPAGEVIEW_MINOR_VERSION=0
+WEBPAGEVIEW_MICRO_VERSION=1
+WEBPAGEVIEW_VERSION=$WEBPAGEVIEW_MAJOR_VERSION.$WEBPAGEVIEW_MINOR_VERSION.$WEBPAGEVIEW_MICRO_VERSION
+
+VERSION=$WEBPAGEVIEW_VERSION
+PACKAGE=WEBPAGEVIEW
+
+AC_SUBST(WEBPAGEVIEW_MAJOR_VERSION)
+AC_SUBST(WEBPAGEVIEW_MINOR_VERSION)
+AC_SUBST(WEBPAGEVIEW_MICRO_VERSION)
+
+AC_DEFINE_UNQUOTED(WEBPAGEVIEW_MAJOR_VERSION,$WEBPAGEVIEW_MAJOR_VERSION)
+AC_DEFINE_UNQUOTED(WEBPAGEVIEW_MINOR_VERSION,$WEBPAGEVIEW_MINOR_VERSION)
+AC_DEFINE_UNQUOTED(WEBPAGEVIEW_MICRO_VERSION,$WEBPAGEVIEW_MICRO_VERSION)
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Set configuration error script
+dnl -------------------------------------------------------------------
+dnl
+
+CONFIG_ERR=`pwd`/config.err
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Make make system changes in the given subdirectories
+dnl -------------------------------------------------------------------
+dnl
+
+SUBDIRS='src/kdelibs/kjs'
+for subdir in $SUBDIRS; do
+	if (test -f "./$subdir/MakeSystemChanges.sh"); then
+		CWD=`pwd`
+		echo ">>> Setting up in $subdir";
+		cd $subdir;
+		./MakeSystemChanges.sh;
+		cd $CWD;
+	fi
+done
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Check the host system configuration
+dnl -------------------------------------------------------------------
+dnl
+
+AC_CANONICAL_HOST
+case "$host" in
+*macosx*) AC_DEFINE(MACOSX) ;;
+esac
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Check for programs
+dnl -------------------------------------------------------------------
+dnl
+
+AC_PROG_CC
+if test -z "$ac_cv_prog_CC"; then 
+	$CONFIG_ERR cc
+	exit 1
+fi
+CFLAGS="-DHAVE_CONFIG_H"
+AC_SUBST(CFLAGS) 
+CXXFLAGS=$CFLAGS
+AC_SUBST(CXXFLAGS) 
+
+AC_DECL_YYTEXT
+AC_CHECK_PROGS(LEX, flex lex)
+if test -z "$ac_cv_prog_LEX"; then 
+	$CONFIG_ERR lex
+	exit 1
+fi
+LEXFLAGS="-I -d"
+AC_SUBST(LEXFLAGS) 
+
+AC_CHECK_PROGS(YACC, bison)
+if test "$ac_cv_prog_YACC" != "bison"; then 
+	$CONFIG_ERR bison
+	exit 1
+fi
+YACCFLAGS="-d"
+AC_SUBST(YACCFLAGS) 
+
+AC_CHECK_PROG(AR, ar, ar)
+if test -z "$ac_cv_prog_AR"; then 
+	$CONFIG_ERR ar
+	exit 1
+fi
+ARFLAGS="cr"
+AC_SUBST(ARFLAGS) 
+
+AC_PROG_RANLIB
+if test -z "$ac_cv_prog_RANLIB"; then 
+	$CONFIG_ERR ranlib
+	exit 1
+fi
+
+AC_CHECK_PROGS(SED, sed)
+if test -z "$ac_cv_prog_SED"; then 
+	$CONFIG_ERR sed
+	exit 1
+fi
+
+AC_PROG_MAKE_SET 
+AC_PROG_INSTALL
+
+AC_ARG_PROGRAM
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Checks for header files.
+dnl -------------------------------------------------------------------
+dnl
+
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS(sys/param.h sys/mman.h sys/time.h sys/cdefs.h fnmatch.h sysent.h strings.h sys/stat.h sys/select.h sys/socket.h socketbits.h sigaction.h paths.h malloc.h limits.h dlfcn.h)
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl -------------------------------------------------------------------
+dnl
+
+AC_C_CONST
+AC_C_INLINE
+AC_HEADER_TIME
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Checks for library functions.
+dnl -------------------------------------------------------------------
+dnl
+
+AC_CHECK_FUNCS(socket vsnprintf seteuid setegid random strfmon stpcpy mkstemp gettimeofday setenv unsetenv mkstemps)
+AC_LANG_SAVE
+AC_LANG_C
+AC_FUNC_VFORK
+
+AC_CHECK_HEADERS(ieeefp.h float.h)
+AC_CHECK_LIB(m, isinf, [
+  AC_DEFINE_UNQUOTED(HAVE_FUNC_ISINF, 1, [Define if you have isinf])
+])
+AC_CHECK_LIB(m, finite, [
+  AC_DEFINE_UNQUOTED(HAVE_FUNC_FINITE, 1, [Define if you have finite])
+])
+AC_CHECK_LIB(m, _finite, [
+  AC_DEFINE_UNQUOTED(HAVE_FUNC__FINITE, 1, [Define if you have _finite])
+])
+AC_CHECK_LIB(m, isnan, [
+  AC_DEFINE_UNQUOTED(HAVE_FUNC_ISNAN, 1, [Define if you have isnan])
+])
+
+dnl AC_CHECK_GETDOMAINNAME
+dnl AC_CHECK_GETHOSTNAME
+dnl AC_CHECK_RANDOM
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Output files
+dnl -------------------------------------------------------------------
+dnl
+
+AC_OUTPUT(
+	Makefile
+	Makefile.vars
+	Makefile.rules
+	src/kdelibs/kjs/Makefile 
+	src/kdelibs/khtml/xml/Makefile
+)
+

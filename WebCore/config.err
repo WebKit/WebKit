@@ -1,0 +1,108 @@
+#!/bin/sh
+# Script for handling errors encountered while configuring source code.
+# Copyright (C) 2000 Webcodex, Inc.
+# Webcodex, Inc.
+# 840 C Street, #621
+# San Rafael, CA 94901
+# http://www.webcodex.com
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+if test $# -eq 0; then
+  echo 1>&2 "Try \`$0 --help' for more information"
+  exit 1
+fi
+
+case "$1" in  
+  
+  -h|--h|--he|--hel|--help)
+    echo "
+This is 'config.err' - a script for handling configuration errors
+
+Usage: $0 [OPTION]... ERR [ARGUMENT]...
+
+Handle \`ERR [ARGUMENT]...' for ERR, or return an
+error status if there is no known handling for ERR.
+
+Options:
+  -h, --help      display this help and exit
+  -v, --version   output version information and exit
+
+Supported ERR values:
+  dir             Not in a supported directory
+  cc              No compiler for the C language
+  bison           No GNU bison
+  flex            No GNU flex
+"    
+	 ;;
+
+  -v|--v|--ve|--ver|--vers|--versi|--versio|--version)
+    echo 1>&2 "
+This is 'config.err' - a script for handling configuration errors
+\$RCSfile$
+\$Revision$
+\$Author$
+\$Date$
+"	 
+	 ;;
+
+  -*)
+    echo 1>&2 "$0: Unknown \`$1' option"
+    echo 1>&2 "Try \`$0 --help' for more information"
+    exit 1
+    ;;
+  
+  dir)
+    echo 1>&2 "
+*** ERROR: This script must run in a directory that ends with this path:
+\`$2'.  
+"     	 
+	 exit 1    
+	 ;;
+
+  cc)
+    echo 1>&2 "
+*** ERROR: Your system seems to be missing a C compiler.  You will need to 
+install one before you can to build and install this program.  Check with 
+the documentation for your system to see how best to acquire or locate a C 
+compiler.  
+"     	 
+	 exit 1    
+	 ;;
+
+  flex|bison)
+    echo 1>&2 "
+*** ERROR: \`$1' is missing on your system.  You will need to install 
+\`$1' to compile this program.  You can get the source code for this 
+program from any GNU archive site.
+"     	 
+	 exit 1    
+	 ;;
+
+	*) echo 1>&2 "
+*** ERROR: \`$1' is needed, and you do not seem to have it installed on 
+your system.  You might have modified some files in a manner that is not 
+yet supported.  Check the \`README' file.  It tells you about the 
+requirements for compiling and installing this package.  You may also 
+check at any GNU archive site, in case some other package might contain 
+this missing \`$1' program.
+" 
+	exit 1 
+	;; 
+
+esac 
+
+exit 0

@@ -1,0 +1,69 @@
+#======================================================================
+#
+# Top-level Makefile for WebPageView
+#
+# $RCSfile$
+# $Revision$
+# $Author$
+# $Date$
+#
+#======================================================================
+# Include header
+
+TOPSRCDIR = .
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Subdirectories to build
+
+SUBDIRS = \
+	src/kdelibs/kjs \
+	$(NULL)
+
+#----------------------------------------------------------------------
+# Standard targets
+
+all install clean distclean maintainer-clean:		
+	@target=$@; \
+	list='$(SUBDIRS)'; \
+	for subdir in $$list; do \
+	  echo ">>> Making $$target in $$subdir"; \
+	  (cd $$subdir && $(MAKE) $$target) || \
+		case "$$amf" in \
+			*=*) exit 1;; \
+			*k*) fail=yes;; \
+			*) exit 1;; \
+		esac; \
+	done; \
+	echo ">>> Making local-$$target in `pwd`"; \
+	$(MAKE) local-$$target; \
+	$(NULL)	
+
+#----------------------------------------------------------------------
+# Custom targets
+
+local-all:
+local-dep:
+local-install:
+
+local-clean:
+	
+local-distclean:
+	${MAKE} local-clean
+	rm -rf Makefile \
+	Makefile.rules \
+	Makefile.vars \
+	config.h \
+	config.cache \
+	config.log \
+	config.status \
+	$(NULL)
+	
+local-maintainer-clean:
+	rm -f configure;
+	${MAKE} local-distclean
+
+#======================================================================
+# end
+#======================================================================
+

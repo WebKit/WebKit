@@ -1,0 +1,63 @@
+#======================================================================
+#
+# $RCSfile$
+# $Revision$
+# $Author$
+# $Date$
+#
+# Make.rules boilerplate 
+#
+#======================================================================
+# Suffix rules
+#
+
+$(filter %.c,$(CLEXOBJECTS)): %.c: %.l
+	$(LEX) $(LEXFLAGS) $<
+
+$(filter %.cpp,$(CXXLEXOBJECTS)): %.cpp: %.l
+	$(LEX) $(LEXFLAGS) $<
+
+$(filter %.c,$(CYACCOBJECTS)): %.c: %.y
+	$(YACC) $(YACCFLAGS) $<
+
+$(filter %.cpp,$(CXXYACCOBJECTS)): %.cpp: %.y
+	$(YACC) $(YACCFLAGS) $<
+
+$(filter %.o,$(COBJECTS)): %.o: %.c
+	$(CC) $(CFLAGS) -I$(TOPSRCDIR) -c $< -o $@
+
+$(filter %.o,$(CXXOBJECTS)): %.o: %.cpp
+	$(CC) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
+
+.SUFFIXES: .cpp .h .c
+
+.cpp.o:
+	$(CC) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
+
+#----------------------------------------------------------------------
+# Standard subdir targets
+
+setup:
+	if (test -f "./MakeSystemChanges.sh"); then \
+		./MakeSystemChanges.sh; \
+	fi
+
+clean:
+	rm -f ${CLEAN_FILES} core
+
+distclean:
+	${MAKE} clean
+	rm -f Makefile \
+	config.h \
+	config.cache \
+	config.log \
+	config.status \
+	$(NULL)
+
+maintainer-clean:
+	rm -f configure
+	${MAKE} distclean;
+	
+#======================================================================
+# end $RCSfile$
+#======================================================================

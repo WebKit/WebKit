@@ -1,0 +1,51 @@
+#======================================================================
+#
+# $RCSfile$
+# $Revision$
+# $Author$
+# $Date$
+#
+# Makefile.in boilerplate 
+#
+#======================================================================
+# Shell
+
+SHELL = /bin/sh
+
+#----------------------------------------------------------------------
+# Variables
+
+PROGRAM =
+LIBRARY =
+LEXOBJECTS =
+YACCOBJECTS =
+COBJECTS =
+CXXOBJECTS =
+OBJECTS = 
+HEADERS =
+CLEAN_FILES = 
+
+#----------------------------------------------------------------------
+# Executables
+
+CC = @CC@
+AR = @AR@
+LEX = @LEX@
+YACC = @YACC@
+RANLIB = @RANLIB@
+SED = @SED@
+INSTALL = @INSTALL@
+
+#----------------------------------------------------------------------
+# Flags
+
+ARFLAGS = @ARFLAGS@
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS = @LDFLAGS@
+YACCFLAGS = @YACCFLAGS@
+LEXFLAGS = @LEXFLAGS@
+
+#======================================================================
+# end $RCSfile$
+#======================================================================
