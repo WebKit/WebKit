@@ -1,3 +1,12 @@
+2002-10-16  Richard Williamson  <rjw@apple.com>
+
+        Fixed 2969367.  Ensure layout happens before doing check
+        to determine if scrollbars are needed.  Ahhh, dynamic
+        scrollbars work so much better now.
+        
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+
 2002-10-16  Darin Adler  <darin@apple.com>
 
 	Fixed the problem where we would leave white bits when making the window larger.

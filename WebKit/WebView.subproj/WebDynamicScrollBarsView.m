@@ -8,6 +8,9 @@
 
 #import <WebKit/WebDynamicScrollBarsView.h>
 
+#import <WebKit/WebDocument.h>
+#import <WebKit/WebView.h>
+
 @implementation WebDynamicScrollBarsView
 
 - (void)updateScrollers
@@ -19,6 +22,11 @@
         scrollsVertically = NO;
         scrollsHorizontally = NO;
     } else {
+        // Force a layout before checking if scrollbars are needed.
+        // This fixes 2969367, although may introduce a slowdown in
+        // live resize performance.
+        [((id<WebDocumentView>)[self documentView]) layout];
+        
         NSSize documentSize = [[self documentView] frame].size;
         NSSize frameSize = [self frame].size;
         
