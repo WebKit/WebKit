@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+@class WebCoreBridge;
+
 // This protocol is a way for an NSScrollView to detect
 // that the view it's embedded in is one that should be resized when the
 // scroll view is resized.
@@ -42,4 +44,11 @@ typedef enum {
 - (WebCoreScrollBarMode)verticalScrollingMode;
 
 - (void)setScrollBarsSuppressed:(BOOL)suppressed repaintOnUnsuppress:(BOOL)repaint;
+
+@end
+
+// This protocol is a way for WebCore to gain access to its information
+// about WebKit subclasses of NSView
+@protocol WebCoreBridgeHolder
+- (WebCoreBridge *) webCoreBridge;
 @end

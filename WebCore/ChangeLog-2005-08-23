@@ -1,5 +1,23 @@
 2005-03-18  David Harrison  <harrison@apple.com>
 
+        Reviewed by Darin.
+        
+        <rdar://problem/3584942> AX: Safari Accessibility parent-child mismatch
+        
+        Also changed WebKit.
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject rendererForView:]):
+        New to cover both the WebCore and WebKit NSViews.
+        
+        (-[KWQAccObject _accessibilityParentForSubview:]):
+        Use rendererForView.
+        
+        * kwq/WebCoreFrameView.h:
+        Add WebCoreBridgeHolder protocol to get access to WebKit NSViews.
+
+2005-03-18  David Harrison  <harrison@apple.com>
+
         Reviewed by Darin, Ken.
 
         <rdar://problem/3735625> AX: add AXPress action if an element has an onclick handler

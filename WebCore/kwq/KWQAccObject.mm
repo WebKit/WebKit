@@ -42,6 +42,7 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #import "KWQFoundationExtras.h"
 #import "KWQWidget.h"
 #import "WebCoreBridge.h"
+#import "WebCoreFrameView.h"
 
 #import "dom_docimpl.h"
 #import "dom_elementimpl.h"
@@ -1889,26 +1890,43 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return NSAccessibilityUnignoredAncestor(accObject);
 }
 
+- (RenderObject *) rendererForView:(NSView *)view
+{
+    // check for WebCore NSView that lets us find its widget
+    KHTMLPart* docPart = m_renderer->document()->part();
+    if (docPart) {
+        DOMElement *domElement = [KWQ(docPart)->bridge() elementForView:view];
+        if (domElement)
+            return [domElement _elementImpl]->renderer();
+    }
+    
+    // check for WebKit NSView that lets us find its bridge
+    WebCoreBridge *bridge = nil;
+    if ([view conformsToProtocol:@protocol(WebCoreBridgeHolder)]) {
+        NSView<WebCoreBridgeHolder>* bridgeHolder = (NSView<WebCoreBridgeHolder>*)view;
+        bridge = [bridgeHolder webCoreBridge];
+    }
+
+    KWQKHTMLPart *part = [bridge part];
+    if (!part)
+        return NULL;
+        
+    DocumentImpl *document = static_cast<DocumentImpl *>(part->document().handle());
+    if (!document)
+        return NULL;
+        
+    NodeImpl* node = document->ownerElement();
+    if (!document)
+        return NULL;
+
+    return node->renderer();
+}
+
 // _accessibilityParentForSubview is called by AppKit when moving up the tree
 // we override it so that we can return our KWQAccObject parent of an AppKit AX object
 - (id)_accessibilityParentForSubview:(NSView *)subview
 {   
-    ASSERT(m_renderer && m_renderer->document());
-    
-    KHTMLPart* docPart = m_renderer->document()->part();
-    if (!docPart)
-        return nil;
-    
-    // check for nested WebArea (WebFrameView does not support elementForView)
-    if (m_renderer->isCanvas() && ([subview superview] == docPart->view()->getDocumentView()))
-        return [self accessibilityIsIgnored] == false ? self : [self parentObjectUnignored];
-       
-    // check for view that supports elementForView
-    DOMElement *domElement = [KWQ(docPart)->bridge() elementForView:subview];
-    if (!domElement)
-        return nil;
-        
-    RenderObject *renderer = [domElement _elementImpl]->renderer();
+    RenderObject *renderer = [self rendererForView:subview];
     if (!renderer)
         return nil;
         
