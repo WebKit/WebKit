@@ -1,3 +1,20 @@
+2002-06-04  Richard Williamson  <rjw@apple.com>
+
+    More exclusion for pre 6C48.
+
+	* ChangeLog:
+	* WebCoreSupport.subproj/IFImageRenderer.m:
+	(-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+	* WebCoreSupport.subproj/IFImageRendererFactory.m:
+	(-[IFImageRendererFactory imageRenderer]):
+
+2002-06-04  Richard Williamson  <rjw@apple.com>
+
+    Oops, excluded even more code for < 6C48.
+    
+	* WebCoreSupport.subproj/IFImageRenderer.m:
+	(-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+
 2002-06-04  Kenneth Kocienda  <kocienda@apple.com>
 
 	* Misc.subproj/WebKitDebug.h: Added a line of stderr output into 

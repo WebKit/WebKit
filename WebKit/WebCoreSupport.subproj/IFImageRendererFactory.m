@@ -46,9 +46,11 @@
 - (id <WebCoreImageRenderer>)imageRenderer
 {
     NSImage *imageRenderer = [[IFImageRenderer alloc] init];
+#ifdef APPLE_PROGRESSIVE_IMAGE_LOADING
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
     [imageRenderer addRepresentation: rep];
     [imageRenderer setFlipped: YES];
+#endif
     return [imageRenderer autorelease];
 }
 
