@@ -1,3 +1,14 @@
+2004-08-24  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3770469> Some PDFs open with line of previous page above PDF view
+	
+        Set height resize flags on WebPDFView.
+		
+        Reviewed by Chris.
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView initWithFrame:]):
+
 2004-08-24  David Hyatt  <hyatt@apple.com>
 
 	Add Atom and RSS MIME types to set of supported XML types.

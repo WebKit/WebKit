@@ -19,7 +19,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self setAutoresizingMask:NSViewWidthSizable];
+        [self setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
             written = NO;
     }
     return self;
