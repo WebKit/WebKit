@@ -1,3 +1,17 @@
+2002-10-25  Darin Adler  <darin@apple.com>
+
+        Tighten up the code that observes mouse moved events.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView initWithFrame:]): Don't set up observers here.
+        (-[WebHTMLView addMouseMovedObserver]): Added some assertions.
+        (-[WebHTMLView viewWillMoveToWindow:]): Stop observing the "become main" and "resign main"
+	notifications here.
+        (-[WebHTMLView viewDidMoveToWindow]): Start observing them here.
+        (-[WebHTMLView windowDidBecomeMain:]): Assert that the notification is for this window,
+	instead of checking with if.
+        (-[WebHTMLView windowDidResignMain:]): Assert that the notification is for this window.
+
 2002-10-25  Chris Blumenberg  <cblu@apple.com>
 
 	Cleaned up the frame searching shenanigans. Things are much cleaner and clearer now.

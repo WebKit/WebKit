@@ -60,10 +60,6 @@
     _private->canDragTo = YES;
     _private->canDragFrom = YES;
 
-    // We will add/remove this view as a mouse moved observer when its window becomes/resigns main.
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidBecomeMain:) name: NSWindowDidBecomeMainNotification object: nil];
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidResignMain:) name: NSWindowDidResignMainNotification object: nil];
-
     return self;
 }
 
@@ -145,7 +141,7 @@
 - (void)dealloc 
 {
     [self _reset];
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private release];
     _private = nil;
     [super dealloc];
@@ -158,20 +154,17 @@
 
 - (void)addMouseMovedObserver
 {
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
+    ASSERT([[self window] isMainWindow]);
+    ASSERT(![self _insideAnotherHTMLView]);
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
+        name:NSMouseMovedNotification object:nil];
 }
 
 - (void)removeMouseMovedObserver
 {
     [self _mouseOverElement:nil modifierFlags:0];
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
-}
-
-- (void)removeNotifications
-{
-    [self removeMouseMovedObserver];
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+        name:NSMouseMovedNotification object:nil];
 }
 
 - (void)_setNeedsLayoutIfSizeChanged:(NSNotification *)notification
@@ -210,6 +203,12 @@
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
+    if ([self window]) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSWindowDidBecomeMainNotification object:[self window]];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSWindowDidResignMainNotification object:[self window]];
+    }
     [self removeMouseMovedObserver];
 }
 
@@ -218,6 +217,10 @@
     if ([self window]) {
         if ([[self window] isMainWindow] && ![self _insideAnotherHTMLView]) {
             [self addMouseMovedObserver];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeMain:)
+                name:NSWindowDidBecomeMainNotification object:[self window]];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignMain:)
+                name:NSWindowDidResignMainNotification object:[self window]];
         }
         _private->inWindow = YES;
     } else {
@@ -226,7 +229,7 @@
         // This is only needed because viewDidMoveToWindow is called even when
         // the window is not changing (bug in AppKit).
         if (_private->inWindow) {
-            [self removeNotifications];
+            [self removeMouseMovedObserver];
             [self _reset];
             _private->inWindow = NO;
         }
@@ -238,7 +241,7 @@
 {
     [super addSubview:view];
 
-    if([view conformsToProtocol:@protocol(WebPlugin)]){
+    if ([view conformsToProtocol:@protocol(WebPlugin)]) {
         [[[self _frame] _pluginController] didAddPluginView:view];
     }
 }
@@ -551,15 +554,17 @@
     return YES;
 }
 
-- (void)windowDidBecomeMain: (NSNotification *)notification
+- (void)windowDidBecomeMain:(NSNotification *)notification
 {
-    if ([notification object] == [self window] && ![self _insideAnotherHTMLView]) {
+    ASSERT([notification object] == [self window]);
+    if (![self _insideAnotherHTMLView]) {
         [self addMouseMovedObserver];
     }
 }
 
 - (void)windowDidResignMain: (NSNotification *)notification
 {
+    ASSERT([notification object] == [self window]);
     [self removeMouseMovedObserver];
 }
 
