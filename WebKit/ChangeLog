@@ -1,3 +1,12 @@
+2003-08-27  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3398229.  When we request a font from NSFont by name we should use a case specific name.  We do case insensitve comparsion, but once a match is found we should use the actual font name, not the requested name.  Two layout tests are still failing, but I don't think the failures are font related.
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+
 === Safari-95 ===
 
 2003-08-27  Richard Williamson   <rjw@apple.com>

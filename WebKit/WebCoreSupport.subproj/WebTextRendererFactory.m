@@ -332,6 +332,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 - (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSFont *font= nil;
     
     LOG (FontSelection, "looking for %@ with traits %x\n", desiredFamily, desiredTraits);
     
@@ -344,8 +345,9 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
             NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
             
             if ((traits & desiredTraits) == desiredTraits){
-                LOG (FontSelection, "returning exact match\n\n");
-                return  [fontManager convertFont: [NSFont fontWithName:desiredFamily size:size] toHaveTrait:desiredTraits];
+                font = [fontManager convertFont: [NSFont fontWithName:availableFont size:size] toHaveTrait:desiredTraits];
+                LOG (FontSelection, "returning exact match (%@)\n\n", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
+                return font;
             }
             LOG (FontSelection, "found exact match, but not desired traits, available traits %x\n", traits);
             break;
@@ -404,7 +406,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
         return nil;
     }
 
-    NSFont *font = [fontManager fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
+    font = [fontManager fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
     
     LOG (FontSelection, "returning font family %@ (%@) traits %x\n\n", 
             availableFamily, [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute], chosenTraits);
