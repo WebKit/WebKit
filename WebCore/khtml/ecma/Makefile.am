@@ -2,7 +2,7 @@ NULL =
 
 noinst_LIBRARIES = libkhtmlecma.o
 LDFLAGS = -Wl,-r -nostdlib
-libkhtmljava_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
+libkhtmlecma_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
 libkhtmlecma_o_SOURCES = \
 	kjs_binding.cpp \

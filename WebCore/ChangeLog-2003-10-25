@@ -1,5 +1,14 @@
 2002-01-17  Maciej Stachowiak  <mjs@apple.com>
 
+	Fix bonehead mistakes in last checkin which were killing Jersey.
+
+	* src/kdelibs/khtml/ecma/Makefile.am:
+	* src/kdelibs/khtml/html/Makefile.am:
+	* src/kdelibs/khtml/rendering/Makefile.am:
+	* src/kwq/kde/Makefile.am:
+
+2002-01-17  Maciej Stachowiak  <mjs@apple.com>
+
 	More build system speedups; instead of building static libraries
 	in each directory, build relocatble object files, using the magic
 	of incremental linking.

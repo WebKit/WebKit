@@ -2,7 +2,7 @@ NULL =
 
 noinst_LIBRARIES = libkhtmlhtml.o
 LDFLAGS = -Wl,-r -nostdlib
-libkhtmljava_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
+libkhtmlhtml_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
 libkhtmlhtml_o_SOURCES = \
 	dtd.cpp \
