@@ -40,22 +40,22 @@
 }
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-    withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
+				   withRequest:(NSMutableURLRequest *)newRequest
+				      referrer:(NSString *)referrer 
+				 forDataSource:(WebDataSource *)source
 {
     WebSubresourceClient *client = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
     
     [source _addSubresourceClient:client];
 
-    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
     [newRequest setCachePolicy:[[source request] cachePolicy]];
     [newRequest setHTTPReferrer:referrer];
     
     WebView *_webView = [source _webView];
     [newRequest setMainDocumentURL:[[[[_webView mainFrame] dataSource] request] URL]];
-    [newRequest setHTTPUserAgent:[_webView userAgentForURL:URL]];
+    [newRequest setHTTPUserAgent:[_webView userAgentForURL:[newRequest URL]]];
     
     BOOL succeeded = [client loadWithRequest:newRequest];
-    [newRequest release];
         
     if (!succeeded) {
         [source _removeSubresourceClient:client];
@@ -64,13 +64,36 @@
 
         NSError *badURLError = [[NSError alloc] _webKitErrorWithDomain:NSURLErrorDomain 
                                                                   code:NSURLErrorBadURL
-                                                                   URL:URL];
+                                                                   URL:[newRequest URL]];
         [_webView _receivedError:badURLError fromDataSource:source];
         [badURLError release];
         client = nil;
     }
     
     return client;
+}
+
++ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
+    withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
+{
+    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
+    WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest referrer:referrer forDataSource:source];
+    [newRequest release];
+
+    return client;
+}
+
++ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
+    withURL:(NSURL *)URL postData:(NSData *)data referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
+{
+    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
+    [newRequest setHTTPMethod:@"POST"];
+    [newRequest setHTTPBody:data];
+    WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest referrer:referrer forDataSource:source];
+    [newRequest release];
+
+    return client;
+
 }
 
 - (void)receivedError:(NSError *)error

@@ -1,3 +1,17 @@
+2003-11-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3487201 - Implement abort for XMLHttpRequest async loads
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:postData:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withRequest:referrer:forDataSource:]):
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        (+[WebSubresourceClient startLoadingResource:withURL:postData:referrer:forDataSource:]):
+
 2003-11-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3491229>: Need UI and localized strings for <KEYGEN> support

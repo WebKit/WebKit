@@ -377,6 +377,21 @@
                                         forDataSource:[self dataSource]];
 }
 
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL postData:(NSData *)data
+{
+    // If we are no longer attached to a WebView, this must be an attempted load from an
+    // onUnload handler, so let's just block it.
+    if ([[self dataSource] _webView] == nil) {
+	return nil;
+    }
+
+    return [WebSubresourceClient startLoadingResource:resourceLoader
+                                              withURL:URL
+				             postData:data
+                                             referrer:[self referrer]
+                                        forDataSource:[self dataSource]];
+}
+
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response: response size:(unsigned)bytes
 {
     ASSERT(_frame != nil);
