@@ -3,7 +3,7 @@
 //  WebKit
 //
 //  Created by Chris Blumenberg on Tue Aug 27 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
 #import <WebKit/WebIconDatabase.h>
@@ -11,7 +11,6 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFileDatabase.h>
 

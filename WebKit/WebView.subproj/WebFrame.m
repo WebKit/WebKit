@@ -20,7 +20,6 @@
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>
 

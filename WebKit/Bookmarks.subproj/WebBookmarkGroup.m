@@ -14,8 +14,6 @@
 #import <WebKit/WebBookmarkSeparator.h>
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebAssertions.h>
-
 @interface WebBookmarkGroup (WebForwardDeclarations)
 - (void)_setTopBookmark:(WebBookmark *)newTopBookmark;
 @end

@@ -23,7 +23,6 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFoundation.h>
 

@@ -6,10 +6,10 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebIconLoader.h>
+
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
-#import <WebKit/WebIconLoader.h>
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>

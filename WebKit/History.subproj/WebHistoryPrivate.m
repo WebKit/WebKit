@@ -11,7 +11,6 @@
 #import "WebHistoryItem.h"
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSCalendarDateExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 

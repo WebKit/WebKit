@@ -23,8 +23,6 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebURLsWithTitles.h>
 
-#import <WebFoundation/WebAssertions.h>
-
 // Needed for the mouse moved notification.
 #import <AppKit/NSResponder_Private.h>
 

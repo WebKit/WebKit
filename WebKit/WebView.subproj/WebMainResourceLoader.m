@@ -18,7 +18,6 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>

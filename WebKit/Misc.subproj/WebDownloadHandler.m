@@ -12,8 +12,6 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebAssertions.h>
-
 @implementation WebDownloadHandler
 
 - initWithDataSource:(WebDataSource *)dSource

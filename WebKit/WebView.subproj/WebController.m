@@ -19,7 +19,6 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebViewPrivate.h>
 

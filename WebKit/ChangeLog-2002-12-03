@@ -1,5 +1,24 @@
 2002-09-08  Darin Adler  <darin@apple.com>
 
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        * History.subproj/WebHistoryPrivate.m:
+        * History.subproj/WebURLsWithTitles.m:
+        * Misc.subproj/WebDownloadHandler.m:
+        * Misc.subproj/WebIconDatabase.m:
+        * Misc.subproj/WebIconLoader.m:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebPreferences.m:
+        * WebView.subproj/WebViewPrivate.m:
+	Remove unnecessary includes.
+
+2002-09-08  Darin Adler  <darin@apple.com>
+
 	Update logging to use new implementation. Remove old.
 
         * Misc.subproj/WebKitDebug.h: Removed.
