@@ -7,12 +7,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x43
           RenderInline {SPAN} at (0,0) size 0x0
           RenderBR {BR} at (0,0) size 0x28
-          RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 33x15
             RenderText {TEXT} at (0,28) size 33x15
               text run at (0,28) width 33: "- Ken"
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
 selection is CARET:
