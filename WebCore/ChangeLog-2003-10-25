@@ -1,3 +1,13 @@
+2002-11-14  Richard Williamson  <rjw@apple.com>
+
+        Fixed 3099505.  With the recent white space changes, multiple slaves may
+        be created for contiguous text on the same line.  The fix changes the
+        iteration order of over the slave array.  Now, when searching for the end
+        point of a line we'll always find the last slave on a line first.
+        
+        * khtml/khtml_part.cpp:
+        (lastSlaveAt):
+
 2002-11-14  Darin Adler  <darin@apple.com>
 
 	- fixed 3095854 -- small select boxes get no scrollbar

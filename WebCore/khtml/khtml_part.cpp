@@ -4015,7 +4015,7 @@ static bool lastSlaveAt (khtml::RenderObject *renderNode, int y, DOM::NodeImpl*&
     if (renderNode->isText()){
         khtml::RenderText *textRenderer =  static_cast<khtml::RenderText *>(renderNode);
         khtml::TextSlaveArray slaves = textRenderer->textSlaves();
-        for (int i = 0; i < (int)slaves.count(); i++){
+        for (int i = (int)slaves.count()-1; i >= 0; i--){
             if (slaves[i]->m_y == y){
                 endNode = textRenderer->element();
                 endOffset = slaves[i]->m_start + slaves[i]->m_len;
