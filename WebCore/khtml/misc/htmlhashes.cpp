@@ -2,7 +2,6 @@
     This file is part of the KDE libraries
 
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
-    Copyright (C) 2004 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -29,18 +28,21 @@
 #include "htmlattrs.c"
 #undef __inline
 
-unsigned short khtml::getTagID(const char *tagStr, int len)
+int khtml::getTagID(const char *tagStr, int len)
 {
     const struct tags *tagPtr = findTag(tagStr, len);
     if (!tagPtr)
         return 0;
+
     return tagPtr->id;
 }
 
-unsigned short khtml::getAttrID(const char *tagStr, int len)
+int khtml::getAttrID(const char *tagStr, int len)
 {
     const struct attrs *tagPtr = findAttr(tagStr, len);
     if (!tagPtr)
         return 0;
+
     return tagPtr->id;
 }
+

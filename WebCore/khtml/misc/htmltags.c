@@ -422,12 +422,10 @@ findTag (register const char *str, register unsigned int len)
 }
 #line 116 "htmltags.gperf"
 
-#line 426 "htmltags.c"
 
-using DOM::DOMString;
 
-static const char * const openTagNames[] = {
-    0,
+static const char * const tagList[] = {
+"",
     "A",
     "ABBR",
     "ACRONYM",
@@ -530,12 +528,8 @@ static const char * const openTagNames[] = {
     "VAR",
     "WBR",
     "XMP",
-    "TEXT",
-    "COMMENT"
-};
-
-static const char * const closeTagNames[] = {
-    0,
+"TEXT",
+"COMMENT",
     "/A",
     "/ABBR",
     "/ACRONYM",
@@ -638,17 +632,10 @@ static const char * const closeTagNames[] = {
     "/VAR",
     "/WBR",
     "/XMP",
+    0
 };
-
-DOMString getTagName(unsigned short id)
+DOM::DOMString getTagName(unsigned short id)
 {
-    if (id > ID_CLOSE_TAG) {
-        int index = id - ID_CLOSE_TAG;
-        if (index >= ID_TEXT)
-            return DOMString();
-        return closeTagNames[index];
-    }
-    if (id > ID_LAST_TAG)
-        return DOMString();
-    return openTagNames[id];
+    if(id > ID_CLOSE_TAG*2) id = ID_CLOSE_TAG+1;
+    return DOM::DOMString(tagList[id]);
 }

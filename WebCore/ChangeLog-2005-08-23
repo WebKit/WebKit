@@ -1,3 +1,26 @@
+2004-12-22  Darin Adler  <darin@apple.com>
+
+        - rolled out my custom tag name change -- it broke amazon.com
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/selection.cpp:
+        * khtml/editing/visible_position.cpp:
+        * khtml/html/dtd.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/misc/htmlhashes.cpp:
+        * khtml/misc/htmlhashes.h:
+        * khtml/misc/htmltags.c:
+        * khtml/misc/htmltags.h:
+        * khtml/misc/maketags:
+        * khtml/xml/dom_docimpl.cpp:
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_position.cpp:
+        * kwq/KWQRenderTreeDebug.cpp:
+
 2004-12-22  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin Adler.

@@ -192,7 +192,7 @@ static void debugPosition(const char *prefix, const Position &pos)
     if (pos.isNull())
         LOG(Editing, "%s <null>", prefix);
     else
-        LOG(Editing, "%s%s %p : %d", prefix, pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
+        LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
 }
 
 static void debugNode(const char *prefix, const NodeImpl *node)
@@ -202,7 +202,7 @@ static void debugNode(const char *prefix, const NodeImpl *node)
     if (!node)
         LOG(Editing, "%s <null>", prefix);
     else
-        LOG(Editing, "%s%s %p", prefix, node->nodeName().string().latin1(), node);
+        LOG(Editing, "%s%s %p", prefix, getTagName(node->id()).string().latin1(), node);
 }
 
 //------------------------------------------------------------------------------------------

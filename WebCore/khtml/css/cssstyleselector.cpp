@@ -1109,7 +1109,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         Q_UINT16 selLocalName = localNamePart(sel->tag);
         Q_UINT16 selNS = namespacePart(sel->tag);
         
-        if (localName <= ID_LAST_TAG && e->isHTMLElement())
+        if (localName < ID_LAST_TAG && e->isHTMLElement())
             ns = xhtmlNamespace; // FIXME: Really want to move away from this complicated hackery and just
                                  // switch tags and attr names over to AtomicStrings.
         
