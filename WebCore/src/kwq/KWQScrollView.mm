@@ -161,7 +161,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     
     [subView removeFromSuperview];
     
-    NSLog (@"Adding 0x%08x %@ at (%d,%d) w %d h %d\n", subView, [[subView class] className], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
+    KWQDEBUG6 ("Adding 0x%08x %s at (%d,%d) w %d h %d\n", subView, [[[subView class] className] cString], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
     [thisView addSubview: subView];
 }
 

@@ -151,6 +151,7 @@ static bool decodeColorFromHexColorString(const QString &string, int *r, int *g,
     decoded = FALSE;
 
     if ((string.length() == 7 && string[0] == '#') ||
+        (string.length() == 4 && string[0] == '#') ||
         (string.length() == 6 && looksLikeSixLetterHexColorString(string))) {
         int offset = 0;
         int len;
@@ -178,13 +179,13 @@ static bool decodeColorFromHexColorString(const QString &string, int *r, int *g,
             *b = (hex2int(p[4]) << 4) + hex2int(p[5]);
             decoded = TRUE;    
         } else if (len == 3) {
-            *r = (hex2int(p[0]) << 4) + hex2int(p[0]);
-            *g = (hex2int(p[1]) << 4) + hex2int(p[1]);
-            *b = (hex2int(p[2]) << 4) + hex2int(p[2]);
+            *r = hex2int(p[0]);
+            *g = hex2int(p[1]);
+            *b = hex2int(p[2]);
             decoded = TRUE;    
         }
-	}
-	    
+    }
+        
     return decoded;
 }
 
@@ -218,7 +219,7 @@ void QColor::setNamedColor(const QString &name)
             setRgb(r, g, b);
         }
         else {
-            NSLog (@"WARNING %s:%d %s couldn't create color using name %s\n", __FILE__, __LINE__, __FUNCTION__, name.ascii());
+            KWQDEBUG1 ("couldn't create color using name %s\n", name.ascii());
             setRgb(0, 0, 0);
         }
     }

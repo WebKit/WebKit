@@ -31,7 +31,6 @@
 bool QObject::connect(const QObject *src, const char *signal, const QObject *dest, 
     const char *slot)
 {
-    NSLog (@"QObject::connect() signal %s, slot %s\n", signal, slot);
     return FALSE;
 }
 
@@ -39,20 +38,17 @@ bool QObject::connect(const QObject *src, const char *signal, const QObject *des
 bool QObject::disconnect( const QObject *, const char *, const QObject *, 
     const char *)
 {
-    _logNeverImplemented();
     return FALSE;
 }
 
 
 QObject::QObject(QObject *parent=0, const char *name=0)
 {
-    _logNotYetImplemented();
 }
 
 
 QObject::~QObject()
 {
-    _logNotYetImplemented();
 }
 
 
@@ -60,14 +56,14 @@ QObject::~QObject()
 
 const char *QObject::name() const
 {
-    _logNeverImplemented();
+    _logNotYetImplemented();
     return "noname";
 }
 
 
 void QObject::setName(const char *)
 {
-    _logNeverImplemented();
+    _logNotYetImplemented();
 }
 
 QVariant QObject::property(const char *name) const

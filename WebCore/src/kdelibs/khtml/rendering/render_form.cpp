@@ -941,7 +941,6 @@ void RenderSelect::layout( )
         QSize s(m_widget->sizeHint());
         setIntrinsicWidth( s.width() );
         setIntrinsicHeight( s.height() );
-        fprintf (stderr, "select box size w %d, h %d\n", s.width(), s.height());
     }
 
     /// uuh, ignore the following line..
