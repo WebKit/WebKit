@@ -37,6 +37,11 @@ class QFont;
 class QFontMetrics;
 class QPixmap;
 
+class QWMatrix {
+public:
+    QWMatrix &scale(double, double);
+};
+
 class QPainter : public Qt {
 public:
     QPainter();
@@ -50,9 +55,13 @@ public:
 
     QRect xForm(const QRect &) const;
 
-    void drawRect( int x, int y, int w, int h );
-    void fillRect(int x, int y, int w, int h, const QBrush &);
-    void drawTiledPixmap(int x, int y, int w, int h, const QPixmap &, int sx=0, int sy=0);
+    void drawRect(int, int, int, int);
+    void fillRect(int, int, int, int, const QBrush &);
+    void drawPixmap(const QPoint &, const QPixmap &);
+    void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
+    void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx = 0, int
+            sy = 0);
+    void drawText(int, int, int, int, AlignmentFlags, const QString &);
     void setClipping(bool);
     void setClipRegion(const QRegion &);
     const QRegion &clipRegion() const;

@@ -33,6 +33,7 @@
 #include "qimage.h"
 
 class QBitmap;
+class QWMatrix;
 
 class QPixmap : public QPaintDevice {
 public:
@@ -50,6 +51,7 @@ public:
     int height() const;
     bool isNull() const;
     void resize(const QSize &);
+    QPixmap xForm(const QWMatrix &) const;
     QImage convertToImage() const;
 };
 
