@@ -1211,15 +1211,16 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
     SEL action = [item action];
-    
+    WebBridge *bridge = [self _bridge];
+
     if (action == @selector(cut:)) {
-        return [self _canDelete];
+        return [bridge mayDHTMLCut] || [self _canDelete];
     } else if (action == @selector(copy:)) {
-        return [self _haveSelection];
+        return [bridge mayDHTMLCopy] || [self _haveSelection];
     } else if (action == @selector(delete:)) {
         return [self _canDelete];
     } else if (action == @selector(paste:)) {
-        return [self _canPaste];
+        return [bridge mayDHTMLPaste] || [self _canPaste];
     } else if (action == @selector(takeFindStringFromSelection:)) {
         return [self _haveSelection];
     } else if (action == @selector(jumpToSelection:)) {

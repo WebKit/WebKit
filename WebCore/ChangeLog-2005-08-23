@@ -1,3 +1,23 @@
+2004-06-24  Trey Matteson  <trey@apple.com>
+
+	3693420 - onbeforecut and onbeforepaste need real implementaion
+
+        Reviewed by Chris.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::mayCut):  Dispatch event to DHTML.
+        (KWQKHTMLPart::mayCopy):  Ditto
+        (KWQKHTMLPart::mayPaste):  Ditto
+        (KWQKHTMLPart::tryCut):  No more need to send fake onbefore event
+        (KWQKHTMLPart::tryCopy):  Ditto
+        (KWQKHTMLPart::tryPaste): Ditto
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge mayDHTMLCut]):  Standard glue
+        (-[WebCoreBridge mayDHTMLCopy]):  Ditto
+        (-[WebCoreBridge mayDHTMLPaste]):  Ditto
+
 2004-06-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

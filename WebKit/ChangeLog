@@ -1,3 +1,13 @@
+2004-06-24  Trey Matteson  <trey@apple.com>
+
+	3693420 - onbeforecut and onbeforepaste need real implementaion
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView validateUserInterfaceItem:]):  Check with WebCore
+	to see if cut, copy, paste should be enabled.
+
 2004-06-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.
@@ -11,8 +21,8 @@
 
 2004-06-23  Richard Williamson   <rjw@apple.com>
 
-		Implemented changes for latest npruntime.h.
-		Made npruntime.h public.
+	Implemented changes for latest npruntime.h.
+	Made npruntime.h public.
 		
         Reviewed by Chris.
 

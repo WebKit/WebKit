@@ -2095,6 +2095,8 @@ void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc)
     _dragSrc = 0;
 }
 
+// Returns whether caller should continue with "the default processing", which is the same as 
+// the event handler NOT setting the return value to false
 bool KWQKHTMLPart::dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy policy)
 {
     NodeImpl *target = d->m_selection.start().element();
@@ -2119,10 +2121,25 @@ bool KWQKHTMLPart::dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy poli
     return !noDefaultProcessing;
 }
 
-// In the next three functions, for now, we send the "before" event to gain some compatibility with WinIE.
-// WinIE uses onbeforecut and onbeforepaste to enables the cut and paste menu items, but we don't yet.  They
-// also send onbeforecopy, apparently for symmetry, but it doesn't affect the menu items.  The return of these
-// routines should not block the sending of non-"before" event.
+// WinIE uses onbeforecut and onbeforepaste to enables the cut and paste menu items.  They
+// also send onbeforecopy, apparently for symmetry, but it doesn't affect the menu items.
+// We need to use onbeforecopy as a real menu enabler because we allow elements that are not
+// normally selectable to implement copy/paste (like divs, or a document body).
+
+bool KWQKHTMLPart::mayCut()
+{
+    return !dispatchCPPEvent(EventImpl::BEFORECUT_EVENT, KWQClipboard::Numb);
+}
+
+bool KWQKHTMLPart::mayCopy()
+{
+    return !dispatchCPPEvent(EventImpl::BEFORECOPY_EVENT, KWQClipboard::Numb);
+}
+
+bool KWQKHTMLPart::mayPaste()
+{
+    return !dispatchCPPEvent(EventImpl::BEFOREPASTE_EVENT, KWQClipboard::Numb);
+}
 
 bool KWQKHTMLPart::tryCut()
 {
@@ -2130,7 +2147,6 @@ bool KWQKHTMLPart::tryCut()
     // also done for security, as it erases data from the last copy/paste.
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
 
-    dispatchCPPEvent(EventImpl::BEFORECUT_EVENT, KWQClipboard::Writable);
     return !dispatchCPPEvent(EventImpl::CUT_EVENT, KWQClipboard::Writable);
 }
 
@@ -2140,13 +2156,11 @@ bool KWQKHTMLPart::tryCopy()
     // also done for security, as it erases data from the last copy/paste.
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
 
-    dispatchCPPEvent(EventImpl::BEFORECOPY_EVENT, KWQClipboard::Writable);
     return !dispatchCPPEvent(EventImpl::COPY_EVENT, KWQClipboard::Writable);
 }
 
 bool KWQKHTMLPart::tryPaste()
 {
-    dispatchCPPEvent(EventImpl::BEFOREPASTE_EVENT, KWQClipboard::Readable);
     return !dispatchCPPEvent(EventImpl::PASTE_EVENT, KWQClipboard::Readable);
 }
 
