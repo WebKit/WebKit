@@ -1,3 +1,11 @@
+=== JavaScriptCore-37u2 ===
+
+2002-12-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Bump version to 37u2.
+
 2002-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
