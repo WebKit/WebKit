@@ -109,7 +109,7 @@ int QLineEdit::maxLength() const
 void QLineEdit::selectAll()
 {
     KWQTextField *textField = (KWQTextField *)getView();
-    return [textField selectText:nil];
+    [textField selectText:nil];
 }
 
 bool QLineEdit::edited() const
@@ -121,7 +121,7 @@ bool QLineEdit::edited() const
 void QLineEdit::setEdited(bool flag)
 {
     KWQTextField *textField = (KWQTextField *)getView();
-    return [textField setEdited:flag];
+    [textField setEdited:flag];
 }
 
 QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const

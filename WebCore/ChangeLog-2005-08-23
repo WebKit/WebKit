@@ -1,3 +1,16 @@
+2003-06-26  Chris Blumenberg  <cblu@apple.com>
+
+	Made WebCore compile with gcc 3.3.
+
+        Reviewed by darin.
+
+        * config.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::selectAll):
+        (QLineEdit::setEdited):
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+
 === Safari-85.1 ===
 
 2003-06-15  Vicki Murley  <vicki@apple.com>

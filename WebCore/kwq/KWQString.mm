@@ -221,6 +221,8 @@ static void freeHandle(void *free);
 
 static const int caseDelta = ('a' - 'A');
 
+const char * const QString::null = 0;
+
 KWQStringData *QString::shared_null = 0;
 KWQStringData **QString::shared_null_handle = 0;
 

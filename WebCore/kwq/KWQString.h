@@ -332,7 +332,7 @@ struct KWQStringData {
 
 class QString {
 public:
-    static const char * const null = 0; // not a QString as in Qt (can't have static constructor), but close enough to be compatible in most cases
+    static const char * const null; // not a QString as in Qt (can't have static constructor), but close enough to be compatible in most cases
 
     QString();
     QString(QChar);
