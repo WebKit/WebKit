@@ -108,15 +108,6 @@
 
     data->widget = data->provisionalWidget;
     data->provisionalWidget = 0;
-
-/*    
-    // Remove any remnants, i.e. form widgets, from the
-    // previous page.
-    [self _resetView];
-    
-    // Force a layout.
-    [self layout];
-*/
 }
 
 - (void)reapplyStyles
@@ -131,10 +122,7 @@
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles){
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "doing layout\n");
-            //double start = CFAbsoluteTimeGetCurrent();
             widget->part()->xmlDocImpl()->recalcStyle(DOM::NodeImpl::Force);
-            //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "apply style time %e\n", CFAbsoluteTimeGetCurrent() - start);
             ((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles = NO;
         }
     }

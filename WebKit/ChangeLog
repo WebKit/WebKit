@@ -1,3 +1,10 @@
+2002-03-24  Richard Williamson  <rjw@apple.com>
+
+        Removed erroneous comments.
+        
+	* WebView.subproj/IFWebView.mm: (-[IFWebView dataSourceChanged:]), (-[IFWebView
+	reapplyStyles]):
+
 2002-03-22  Chris Blumenberg  <cblu@apple.com>
 
 	* MIME.subproj/IFMIMEDatabase.h:
