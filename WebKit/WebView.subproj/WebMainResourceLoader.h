@@ -13,9 +13,11 @@
 @class WebDownloadHandler;
 @class WebDataSource;
 @class WebResourceHandle;
+@class WebResourceRequest;
 @class WebResourceResponse;
+
 @protocol WebResourceHandleDelegate;
-@protocol WebResourceProgressDelegate;
+@protocol WebResourceLoadDelegate;
 
 @interface WebMainResourceClient : NSObject <WebResourceHandleDelegate>
 {
@@ -23,9 +25,15 @@
     WebDataSource *dataSource;
     BOOL suppressErrors;
     WebDownloadHandler *downloadHandler;
-    id <WebResourceProgressDelegate> downloadProgressDelegate;
+    
+    // Both of these delegates are retained by the client.
+    id <WebResourceLoadDelegate> downloadProgressDelegate;
+    id <WebResourceLoadDelegate> resourceProgressDelegate;
+
     WebContentAction policyAction;
     NSMutableData *resourceData;
+    WebResourceRequest *request;
+    WebResourceResponse *response;
 }
 
 - initWithDataSource:(WebDataSource *)dataSource;

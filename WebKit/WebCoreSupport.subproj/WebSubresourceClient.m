@@ -1,27 +1,25 @@
-//
-//  WebSubresourceClient.m
-//  WebKit
-//
-//  Created by Darin Adler on Sat Jun 15 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+    WebSubresourceClient.mm
+    Copyright (c) 2002, Apple Computer, Inc. All rights reserved.
+*/
 
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebResourceProgressDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
 
-#import <WebKit/WebLoadProgress.h>
-#import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebBridge.h>
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebFrame.h>
-#import <WebFoundation/WebAssertions.h>
 
 @implementation WebSubresourceClient
 
@@ -31,6 +29,8 @@
     
     loader = [l retain];
     dataSource = [s retain];
+
+    resourceProgressDelegate = [[[dataSource controller] resourceProgressDelegate] retain];
     
     return self;
 }
@@ -42,7 +42,9 @@
     [loader release];
     [dataSource release];
     [handle release];
+    [request release];
     [response release];
+    [resourceProgressDelegate release];
     
     [super dealloc];
 }
@@ -64,41 +66,40 @@
 
 - (void)receivedProgressWithComplete:(BOOL)isComplete
 {
-    [[dataSource controller] _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
-        forResourceHandle:handle fromDataSource:dataSource complete:isComplete];
+    [[dataSource controller] _receivedProgressForResourceHandle:handle fromDataSource:dataSource complete:isComplete];
 }
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
     withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
 {
     WebSubresourceClient *client = [[self alloc] initWithLoader:rLoader dataSource:source];
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    [request setRequestCachePolicy:[[source request] requestCachePolicy]];
-    [request setResponseCachePolicy:[[source request] responseCachePolicy]];
-    [request setReferrer:referrer];
-    [request setCookiePolicyBaseURL:[[[[source controller] mainFrame] dataSource] URL]];
-    [request setUserAgent:[[source controller] userAgentForURL:URL]];
+    WebResourceRequest *newRequest = [[WebResourceRequest alloc] initWithURL:URL];
+    [newRequest setRequestCachePolicy:[[source request] requestCachePolicy]];
+    [newRequest setResponseCachePolicy:[[source request] responseCachePolicy]];
+    [newRequest setReferrer:referrer];
+    [newRequest setCookiePolicyBaseURL:[[[[source controller] mainFrame] dataSource] URL]];
+    [newRequest setUserAgent:[[source controller] userAgentForURL:URL]];
     
-    if (![WebResourceHandle canInitWithRequest:request]) {
-        [request release];
+    if (![WebResourceHandle canInitWithRequest:newRequest]) {
+        [newRequest release];
         [rLoader cancel];
 
         WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
                                                            inDomain:WebErrorDomainWebFoundation
                                                          failingURL:[URL absoluteString]];
         [[source controller] _receivedError:badURLError forResourceHandle:nil
-            partialProgress:nil fromDataSource:source];
+            fromDataSource:source];
         [badURLError release];
         return nil;
     }
     
-    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request];
+    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:newRequest];
     client->handle = h;
     [source _addSubresourceClient:client];
-    [client didStartLoadingWithURL:[request URL]];
+    [client didStartLoadingWithURL:[newRequest URL]];
     [client receivedProgressWithComplete:NO];
     [h loadWithDelegate:client];
-    [request release];
+    [newRequest release];
         
     return [client autorelease];
 }
@@ -106,10 +107,10 @@
 - (void)receivedError:(WebError *)error
 {
     [[dataSource controller] _receivedError:error forResourceHandle:handle
-        partialProgress:[WebLoadProgress progressWithResourceHandle:handle] fromDataSource:dataSource];
+        fromDataSource:dataSource];
 }
 
--(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)request
+-(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
 {
     ASSERT(handle == h);
 
@@ -127,24 +128,40 @@
     WebController *controller = [dataSource controller];
     NSURL *URL = [request URL];
 
-    [request setUserAgent:[controller userAgentForURL:URL]];
+    [newRequest setUserAgent:[controller userAgentForURL:URL]];
 
-    [self didStopLoading];
-    [self didStartLoadingWithURL:URL];
-    
-    return request;
+    // Not the first send, so reload.
+    if (request) {
+        [self didStopLoading];
+        [self didStartLoadingWithURL:URL];
+    }
+
+    // Let the resourceProgressDelegate get a crack at modifying the request.
+    newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
+
+    [newRequest retain];
+    [request release];
+    request = newRequest;
+
+    return newRequest;
 }
 
--(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
+-(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
 {
-    [theResponse retain];
+    ASSERT(handle == h);
+
+    [r retain];
     [response release];
-    response = theResponse;
+    response = r;
+    [[[dataSource controller] resourceProgressDelegate] resourceRequest: request didReceiveResponse: r fromDataSource: dataSource];
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
     ASSERT(handle == h);
+
+    [[[dataSource controller] resourceProgressDelegate] resourceRequest: request didReceiveContentLength: [data length] 
+        fromDataSource: dataSource];
 
     [self receivedProgressWithComplete:NO];
     [loader addData:data];
@@ -172,6 +189,8 @@
 
     [handle release];
     handle = nil;
+
+    [[[dataSource controller] resourceProgressDelegate] resourceRequest:request didFinishLoadingFromDataSource:dataSource];
     
     [self release];
 }
@@ -186,6 +205,8 @@
     [loader cancel];
     
     [dataSource _removeSubresourceClient:self];
+
+    [[[dataSource controller] resourceProgressDelegate] resourceRequest: request didFailLoadingWithError: error fromDataSource: dataSource];
     
     [self receivedError:error];
 
@@ -209,7 +230,7 @@
     [dataSource _removeSubresourceClient:self];
         
     WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[[dataSource request] URL] absoluteString]];
+        inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]];
     [self receivedError:error];
     [error release];
 

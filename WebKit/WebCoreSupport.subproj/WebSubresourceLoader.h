@@ -16,10 +16,14 @@
 @interface WebSubresourceClient : NSObject <WebResourceHandleDelegate, WebCoreResourceHandle>
 {
     id <WebCoreResourceLoader> loader;
-    WebResourceResponse *response;
     WebDataSource *dataSource;
     NSURL *currentURL;
     WebResourceHandle *handle;
+
+    // Both of these delegates are retained by the client.
+    id <WebResourceLoadDelegate> resourceProgressDelegate;
+    WebResourceRequest *request;
+    WebResourceResponse *response;
 }
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader

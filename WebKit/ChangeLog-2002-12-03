@@ -1,3 +1,59 @@
+2002-10-03  Richard Williamson   <rjw@apple.com>
+
+        Changed to reflect new WebResourceLoadDelegate API.
+
+        * Misc.subproj/WebIconLoader.m:
+        * Misc.subproj/WebKit.h:
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream handle:didReceiveData:]):
+        (-[WebNetscapePluginStream handleDidFinishLoading:]):
+        (-[WebNetscapePluginStream cancel]):
+        (-[WebNetscapePluginStream handle:didFailLoadingWithError:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:size:]):
+        (-[WebBridge reportBadURL:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient initWithLoader:dataSource:]):
+        (-[WebSubresourceClient dealloc]):
+        (-[WebSubresourceClient receivedProgressWithComplete:]):
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        (-[WebSubresourceClient receivedError:]):
+        (-[WebSubresourceClient handle:willSendRequest:]):
+        (-[WebSubresourceClient handle:didReceiveResponse:]):
+        (-[WebSubresourceClient handle:didReceiveData:]):
+        (-[WebSubresourceClient handleDidFinishLoading:]):
+        (-[WebSubresourceClient handle:didFailLoadingWithError:]):
+        (-[WebSubresourceClient cancel]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController setResourceProgressDelegate:]):
+        (-[WebController resourceProgressDelegate]):
+        (-[WebController setDownloadProgressDelegate:]):
+        (-[WebController downloadProgressDelegate]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _receivedProgressForResourceHandle:fromDataSource:complete:]):
+        (-[WebController _mainReceivedProgressForResourceHandle:bytesSoFar:fromDataSource:complete:]):
+        (-[WebController _receivedError:forResourceHandle:fromDataSource:]):
+        (-[WebController _mainReceivedError:forResourceHandle:fromDataSource:]):
+        * WebView.subproj/WebLoadProgress.h: Removed.
+        * WebView.subproj/WebLoadProgress.m: Removed.
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]):
+        (-[WebMainResourceClient dealloc]):
+        (-[WebMainResourceClient receivedProgressWithHandle:complete:]):
+        (-[WebMainResourceClient receivedError:forHandle:]):
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        (-[WebMainResourceClient handle:didReceiveData:]):
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]):
+        * WebView.subproj/WebResourceProgressDelegate.h:
+
 === Alexander-26 ===
 
 2002-10-02  Maciej Stachowiak  <mjs@apple.com>

@@ -10,7 +10,6 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceProgressDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
@@ -108,15 +107,12 @@
     return _private->defaultContextMenuDelegate;
 }
 
-- (void)_receivedProgress:(WebLoadProgress *)progress forResourceHandle:(WebResourceHandle *)resourceHandle fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
+- (void)_receivedProgressForResourceHandle:(WebResourceHandle *)resourceHandle fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
 {
     WebFrame *frame = [dataSource webFrame];
     
     ASSERT(dataSource != nil);
     
-    [[self resourceProgressDelegate] receivedProgress: progress forResourceHandle: resourceHandle 
-        fromDataSource: dataSource complete:isComplete];
-
     // This resource has completed, so check if the load is complete for all frames.
     if (isComplete) {
         if (frame != nil) {
@@ -126,15 +122,12 @@
     }
 }
 
-- (void)_mainReceivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete: (BOOL)isComplete
+- (void)_mainReceivedProgressForResourceHandle: (WebResourceHandle *)resourceHandle bytesSoFar: (unsigned)bytesSoFar fromDataSource: (WebDataSource *)dataSource complete: (BOOL)isComplete
 {
     WebFrame *frame = [dataSource webFrame];
     
     ASSERT(dataSource != nil);
 
-    [[self resourceProgressDelegate] receivedProgress: progress forResourceHandle: resourceHandle 
-        fromDataSource: dataSource complete:isComplete];
-    
     // The frame may be nil if a previously cancelled load is still making progress callbacks.
     if (frame == nil)
         return;
@@ -151,18 +144,16 @@
         // Note that transitioning a frame to this state doesn't guarantee a layout, rather it
         // just indicates that an early layout can be performed.
         int timedLayoutSize = [[WebPreferences standardPreferences] _initialTimedLayoutSize];
-        if ([progress bytesSoFar] > timedLayoutSize)
+        if ((int)bytesSoFar > timedLayoutSize)
             [frame _transitionToLayoutAcceptable];
     }
 }
 
 
 
-- (void)_receivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource
+- (void)_receivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
-
-    [[self resourceProgressDelegate] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
     NSString *resourceIdentifier = [[[resourceHandle _request] URL] absoluteString];
     if (resourceIdentifier == nil) {
@@ -176,11 +167,9 @@
 }
 
 
-- (void)_mainReceivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource
+- (void)_mainReceivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
-
-    [[self resourceProgressDelegate] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
     
     [dataSource _setMainDocumentError: error];
     [dataSource _setPrimaryLoadComplete: YES];

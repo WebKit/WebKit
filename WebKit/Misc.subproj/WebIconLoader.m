@@ -124,8 +124,4 @@
 {
 }
 
-- (void)handleDidRedirect:(WebResourceHandle *)sender toURL:(NSURL *)URL
-{
-}
-
 @end

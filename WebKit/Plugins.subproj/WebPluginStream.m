@@ -9,7 +9,6 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginStream.h>
 #import <WebKit/WebView.h>
@@ -309,8 +308,7 @@
 
     [self receivedData:data];
     
-    [[view controller] _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
-        forResourceHandle: handle fromDataSource: [view dataSource] complete: NO];
+    [[view controller] _receivedProgressForResourceHandle: handle fromDataSource: [view dataSource] complete: NO];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
@@ -322,8 +320,7 @@
 
     WebController *controller = [view controller];
     
-    [controller _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
-            forResourceHandle: handle fromDataSource: [view dataSource] complete: YES];
+    [controller _receivedProgressForResourceHandle: handle fromDataSource: [view dataSource] complete: YES];
  
     [self finishedLoadingWithData:resourceData];
           
@@ -343,10 +340,8 @@
     WebError *cancelError = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
                                                        inDomain:WebErrorDomainWebFoundation
                                                      failingURL:nil];
-    WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithResourceHandle:resource];
     [controller _receivedError: cancelError forResourceHandle: resource 
-        partialProgress: loadProgress fromDataSource: [view dataSource]];
-    [loadProgress release];
+        fromDataSource: [view dataSource]];
     
     [cancelError release];
 
@@ -366,24 +361,13 @@
     resource = nil;
     
     WebController *controller = [view controller];
-    
-    WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithResourceHandle:handle];
-    
+        
     [controller _receivedError: result forResourceHandle: handle 
-        partialProgress: loadProgress fromDataSource: [view dataSource]];
-    [loadProgress release];
+        fromDataSource: [view dataSource]];
 
     [self receivedError:NPRES_NETWORK_ERR];
     
     [controller _didStopLoading:URL];
-}
-
-- (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)toURL
-{
-    WebController *controller = [view controller];
-    [controller _didStopLoading:URL];
-    // FIXME: This next line is not sufficient. We don't do anything to remember the new URL.
-    [controller _didStartLoading:toURL];
 }
 
 @end

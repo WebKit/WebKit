@@ -13,7 +13,6 @@
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebSubresourceClient.h>
@@ -176,9 +175,7 @@
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     WebResourceHandle *handle = [[WebResourceHandle alloc] initWithRequest:request];
     [handle loadWithDelegate:nil];
-    WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
-    [[frame controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource:[self dataSource] complete:YES];
-    [loadProgress release];
+    [[frame controller] _receivedProgressForResourceHandle:handle fromDataSource:[self dataSource] complete:YES];
     [handle release];
     [request release];
 }
@@ -323,7 +320,6 @@
                                                         failingURL:badURL];
     [[frame controller] _receivedError:badURLError
                         forResourceHandle:nil
-                        partialProgress:nil
                         fromDataSource:[self dataSource]];
     [badURLError release];
 }

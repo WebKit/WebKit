@@ -13,7 +13,6 @@
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebResourceProgressDelegate.h>
@@ -24,6 +23,7 @@
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebCookieConstants.h>
 
@@ -42,8 +42,9 @@
         // set the user agent for the request
         // consult the data source's controller
         WebController *controller = [dataSource controller];
-        WebResourceRequest *request = [dataSource request];
-        [request setUserAgent:[controller userAgentForURL:[request URL]]];
+        WebResourceRequest *newRequest = [dataSource request];
+        [newRequest setUserAgent:[controller userAgentForURL:[newRequest URL]]];
+        resourceProgressDelegate = [[controller resourceProgressDelegate] retain];
     }
 
     return self;
@@ -70,8 +71,11 @@
     ASSERT(downloadHandler == nil);
     
     [downloadProgressDelegate release];
+    [resourceProgressDelegate release];
     [resourceData release];
     [dataSource release];
+    [response release];
+    [request release];
     
     [super dealloc];
 }
@@ -88,18 +92,15 @@
 
 - (void)receivedProgressWithHandle:(WebResourceHandle *)handle complete:(BOOL)isComplete
 {
-    WebLoadProgress *progress = [WebLoadProgress progressWithResourceHandle:handle];
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
     if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
         if (isComplete) {
             [dataSource _setPrimaryLoadComplete:YES];
         }
-        [downloadProgressDelegate receivedProgress:progress forResourceHandle:handle 
-            fromDataSource:dataSource complete:isComplete];
     } else {
-        [[dataSource controller] _mainReceivedProgress:progress forResourceHandle:handle 
-            fromDataSource:dataSource complete:isComplete];
+        [[dataSource controller] _mainReceivedProgressForResourceHandle:handle 
+            bytesSoFar: [resourceData length] fromDataSource:dataSource complete:isComplete];
     }
 }
 
@@ -109,15 +110,13 @@
         return;
     }
     
-    WebLoadProgress *progress = [WebLoadProgress progressWithResourceHandle:handle];
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
     if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
-        [downloadProgressDelegate receivedError:error forResourceHandle:handle 
-            partialProgress:progress fromDataSource:dataSource];
+        [downloadProgressDelegate resourceRequest: [handle _request] didFailLoadingWithError:error fromDataSource:dataSource];
     } else {
         [[dataSource controller] _mainReceivedError:error forResourceHandle:handle 
-            partialProgress:progress fromDataSource:dataSource];
+            fromDataSource:dataSource];
     }
 }
 
@@ -186,36 +185,55 @@
         }
         [downloadHandler release];
         downloadHandler = nil;
+        [downloadProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
     }
+    else
+        [resourceProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
     
     [self didStopLoading];
+
     
     [self release];
 }
 
--(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)request
+-(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)newRequest
 {
     WebController *controller = [dataSource controller];
-    NSURL *URL = [request URL];
+    NSURL *URL = [newRequest URL];
 
     LOG(Redirect, "URL = %@", URL);
 
     // FIXME: need to update main document URL here, or cookies set
     // via redirects might not work in main document mode
 
-    [request setUserAgent:[controller userAgentForURL:URL]];
-    [dataSource _setRequest:request];
+    [newRequest setUserAgent:[controller userAgentForURL:URL]];
 
-    [self didStopLoading];
-    [self didStartLoadingWithURL:URL];
-    
-    return request;
+    [dataSource _setRequest:newRequest];
+
+    // Not the first send, so reload.
+    if (request) {
+        [self didStopLoading];
+        [self didStartLoadingWithURL:URL];
+    }
+
+    // Let the resourceProgressDelegate get a crack at modifying the request.
+    newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
+
+    [newRequest retain];
+    [request release];
+    request = newRequest;
+        
+    return newRequest;
 }
 
--(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)response
+-(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)r
 {
-    NSString *contentType = [response contentType];
+    NSString *contentType = [r contentType];
 
+    ASSERT (response == nil);
+    
+    response = [r retain];
+    
     [dataSource _setResponse:response];
 
     // Make assumption that if the contentType is the default and there is no extension, this is text/html.
@@ -240,6 +258,7 @@
 
     switch (policyAction) {
     case WebContentPolicyShow:
+        [resourceProgressDelegate resourceRequest: request didReceiveResponse: response fromDataSource: dataSource];
         break;
     case WebContentPolicySave:
     case WebContentPolicySaveAndOpenExternally:
@@ -264,11 +283,13 @@
     
     WebError *downloadError = nil;
     
+
     if (downloadHandler) {
         downloadError = [downloadHandler receivedData:data];
     } else {
         [resourceData appendData:data];
         [dataSource _receivedData:data];
+        [resourceProgressDelegate resourceRequest: request didReceiveContentLength: [data length] fromDataSource:dataSource];
     }
 
     [self receivedProgressWithHandle:handle complete:NO];
@@ -282,12 +303,14 @@
         [handle cancel];
     }
     
-    LOG(Download, "%d of %d", [[dataSource response] contentLengthReceived], [[dataSource response] contentLength]);
+    LOG(Download, "%d of %d", [response contentLengthReceived], [response contentLength]);
 }
 
 - (void)handle:(WebResourceHandle *)handle didFailLoadingWithError:(WebError *)result
 {
     LOG(Loading, "URL = %@, result = %@", [result failingURL], [result errorDescription]);
+
+    [resourceProgressDelegate resourceRequest: request didFailLoadingWithError: result fromDataSource: dataSource];
 
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];

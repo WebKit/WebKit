@@ -21,7 +21,7 @@
 @protocol WebContextMenuDelegate;
 @protocol WebControllerPolicyDelegate;
 @protocol WebLocationChangeDelegate;
-@protocol WebResourceProgressDelegate;
+@protocol WebResourceLoadDelegate;
 @protocol WebWindowOperationsDelegate;
 
 // These strings are keys into the element dictionary provided in
@@ -59,14 +59,14 @@ extern NSString *WebElementFrameKey;
     </pre>
     
     WebControllers have the following delegates:  WebWindowOperationsDelegate,
-    WebResourceProgressDelegate, WebContextMenuDelegate, WebLocationChangeDelegate,
+    WebResourceLoadDelegate, WebContextMenuDelegate, WebLocationChangeDelegate,
     and WebControllerPolicyDelegate.
     
     WebKit depends on the WebController's WebWindowOperationsDelegate for all window
     related management, including opening new windows and controlling the user interface
     elements in those windows.
     
-    WebResourceProgressDelegate is used to monitor the progress of resources as they are
+    WebResourceLoadDelegate is used to monitor the progress of resources as they are
     loaded.  This delegate may be used to present users with a progress monitor.
     
     WebController's WebContextMenuDelegate can customize the context menus that appear
@@ -128,29 +128,29 @@ extern NSString *WebElementFrameKey;
 
 /*!
     @method setResourceProgressDelegate:
-    @abstract Set the controller's WebResourceProgressDelegate.
-    @param delegate The WebResourceProgressDelegate to set as the delegate.
+    @abstract Set the controller's WebResourceLoadDelegate.
+    @param delegate The WebResourceLoadDelegate to set as the delegate.
 */
-- (void)setResourceProgressDelegate: (id<WebResourceProgressDelegate>)delegate;
+- (void)setResourceProgressDelegate: (id<WebResourceLoadDelegate>)delegate;
 
 /*!
     @method resourceProgressDelegate
-    @result Return the controller's WebResourceProgressDelegate.
+    @result Return the controller's WebResourceLoadDelegate.
 */    
-- (id<WebResourceProgressDelegate>)resourceProgressDelegate;
+- (id<WebResourceLoadDelegate>)resourceProgressDelegate;
 
 /*!
     @method setDownloadProgressDelegate:
-    @abstract Set the controller's WebResourceProgressDelegate download delegate.
-    @param delegate The WebResourceProgressDelegate to set as the download delegate.
+    @abstract Set the controller's WebResourceLoadDelegate download delegate.
+    @param delegate The WebResourceLoadDelegate to set as the download delegate.
 */    
-- (void)setDownloadProgressDelegate: (id<WebResourceProgressDelegate>)delegate;
+- (void)setDownloadProgressDelegate: (id<WebResourceLoadDelegate>)delegate;
 
 /*!
     @method downloadProgressDelegate
-    @result Return the controller's WebResourceProgressDelegate download delegate.
+    @result Return the controller's WebResourceLoadDelegate download delegate.
 */    
-- (id<WebResourceProgressDelegate>)downloadProgressDelegate;
+- (id<WebResourceLoadDelegate>)downloadProgressDelegate;
 
 /*!
     @method setContextMenuDelegate:
