@@ -189,7 +189,19 @@ void QWidget::clearFocus()
 
 QWidget::FocusPolicy QWidget::focusPolicy() const
 {
-    return [getView() acceptsFirstResponder] ? TabFocus : NoFocus;
+    // This is the AppKit rule for what can be tabbed to.
+    // An NSControl that accepts first responder, and has an editable, enabled cell.
+    
+    NSView *view = getView();
+    if (![view acceptsFirstResponder] || ![view isKindOfClass:[NSControl class]]) {
+        return NoFocus;
+    }
+    NSControl *control = (NSControl *)view;
+    NSCell *cell = [control cell];
+    if (![cell isEditable] || ![cell isEnabled]) {
+        return NoFocus;
+    }
+    return TabFocus;
 }
 
 void QWidget::setFocusPolicy(FocusPolicy fp)
