@@ -1,3 +1,13 @@
+2005-03-05  Richard Williamson   <rjw@apple.com>
+
+	Fixed panther build problem.  Shouldn't include
+	changes for 3968753 on panther.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2005-03-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

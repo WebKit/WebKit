@@ -66,7 +66,9 @@
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSUserDefaults_NSURLExtras.h>
 
+#if !BUILDING_ON_PANTHER         
 #include <CoreGraphics/CGSConnection.h>
+#endif
 
 #define FOR_EACH_RESPONDER_SELECTOR(macro) \
 macro(alignCenter) \
@@ -171,9 +173,11 @@ macro(yankAndSelect) \
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
 @end
 
+#if !BUILDING_ON_PANTHER         
 @interface NSApplication (AppKitSecrectsIKnow)
 - (CGSConnectionID)contextID;
 @end
+#endif
 
 @interface WebView (WebFileInternal)
 - (void)_preflightSpellChecker;
@@ -1479,15 +1483,19 @@ NSMutableDictionary *countInvocations;
     [types release];
 }
 
+#if !BUILDING_ON_PANTHER
 static bool CGContextInitialized = false;
+#endif
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+#if !BUILDING_ON_PANTHER         
     if (!CGContextInitialized) {
-	CFStringRef key = CFSTR(kCGSDisableDeferredUpdates);
-	CGSSetConnectionProperty([NSApp contextID], [NSApp contextID], (CGSValueObj)key, (CGSValueObj)kCFBooleanTrue);
-	CGContextInitialized = true;
+        CFStringRef key = CFSTR(kCGSDisableDeferredUpdates);
+        CGSSetConnectionProperty([NSApp contextID], [NSApp contextID], (CGSValueObj)key, (CGSValueObj)kCFBooleanTrue);
+        CGContextInitialized = true;
     }
+#endif
 
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
