@@ -519,4 +519,19 @@
     [[self children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
+- (void)addFrame: (WebFrame *)frame
+{
+    if (_private->frames == nil)
+        _private->frames = [[NSMutableDictionary alloc] init];
+
+    // Check to make sure a duplicate frame name didn't creep in.
+    ASSERT([_private->frames objectForKey:[frame name]] == nil);
+
+    [[frame dataSource] _setParent: self];   
+    [_private->frames setObject: frame forKey: [frame name]];    
+}
+
+ 
+
+
 @end

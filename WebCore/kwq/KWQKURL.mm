@@ -941,7 +941,7 @@ void KURL::parse(const char *url, const QString *originalString)
 
     char *p = buffer;
     const char *strPtr = url;
-    bool isHTTPorHTTPS;
+    bool isHTTPorHTTPS, isFILE;
 
     // copy in the scheme
     const char *schemeEndPtr = url + schemeEnd;
@@ -953,7 +953,9 @@ void KURL::parse(const char *url, const QString *originalString)
     // Check if we're http or https.
     isHTTPorHTTPS = strncasecmp ("http", url, schemeEnd) == 0 ||
         strncasecmp ("https", url, schemeEnd) == 0;
-        
+    
+    isFILE = (strncasecmp("file", url, schemeEnd) == 0);
+    
     // add ";"
     *p++ = ':';
 
@@ -1008,6 +1010,12 @@ void KURL::parse(const char *url, const QString *originalString)
 	portEndPos = p - buffer;
     } else {
 	userStartPos = userEndPos = passwordEndPos = hostEndPos = portEndPos = p - buffer;
+    }
+
+    // For canonicalization, ensure we have a 'file://' before the path.
+    if (isFILE && (p - buffer) == 5 && (pathEnd - pathStart) >= 2 && strcmp(&url[pathStart], "//") != 0){
+        *p++ = '/';
+        *p++ = '/';
     }
 
     // For canonicalization, ensure we have a '/' for no path.

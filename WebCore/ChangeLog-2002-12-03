@@ -1,3 +1,10 @@
+2002-09-24  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3055078.  Ensure file: URLs have // before path.
+        
+        * kwq/KWQKURL.mm:
+        (KURL::parse):
+
 2002-09-24  David Hyatt  <hyatt@apple.com>
 
 	Better fix.  Clears the boolean when CLASS has no value.

@@ -1,3 +1,15 @@
+2002-09-24  Richard Williamson   <rjw@apple.com>
+
+        Documentation for WebDataSource and WebFrame.
+        
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource frameExists:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource addFrame:]):
+        * WebView.subproj/WebFrame.h:
+
 2002-09-24  Darin Adler  <darin@apple.com>
 
 	- fixed 3059266 -- REGRESSION: clicking in web view when location field is

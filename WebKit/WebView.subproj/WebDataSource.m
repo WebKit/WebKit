@@ -114,19 +114,6 @@
     return [_private->frames allValues];
 }
 
-- (void)addFrame: (WebFrame *)frame
-{
-    if (_private->frames == nil)
-        _private->frames = [[NSMutableDictionary alloc] init];
-
-    // Check to make sure a duplicate frame name didn't creep in.
-    ASSERT([_private->frames objectForKey:[frame name]] == nil);
-
-    [[frame dataSource] _setParent: self];   
-    [_private->frames setObject: frame forKey: [frame name]];    
-}
-
- 
 - (WebFrame *)frameNamed: (NSString *)frameName
 {
     return (WebFrame *)[_private->frames objectForKey: frameName];
@@ -154,12 +141,6 @@
 - (BOOL)frameExists: (NSString *)name
 {
     return [self frameNamed: name] == 0 ? NO : YES;
-}
-
-
-- (void)openURL: (NSURL *)URL inFrameNamed: (NSString *)frameName
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::openURL:inFrameNamed: is not implemented"];
 }
 
 

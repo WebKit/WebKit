@@ -125,4 +125,13 @@
 
 - (void)_defersCallbacksChanged;
 
+/*!
+    @method addFrame:
+    @discussion Add a child frame.  This should only be called by the data source's controller
+    as a result of a createFrame:inParent:.
+    // [Should this be private?]
+*/
+- (void)addFrame: (WebFrame *)frame;
+
+
 @end

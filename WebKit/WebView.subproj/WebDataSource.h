@@ -7,12 +7,12 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class WebError;
-@class WebFrame;
-@class WebResourceHandle;
 @class WebContentPolicy;
 @class WebController;
 @class WebDataSourcePrivate;
+@class WebError;
+@class WebFrame;
+@class WebResourceHandle;
 @class WebResourceRequest;
 
 @protocol WebDocumentRepresentation;
@@ -20,6 +20,9 @@
 /*!
     @class WebDataSource
     @discussion A WebDataSource represents the data associated with a web page.
+    A datasource has a WebDocumentRepresentation which holds an appropriate
+    representation of the data.  WebDataSources manage a hierarchy of WebFrames.
+    WebDataSources are typically related to a view by there containg WebFrame.
 */
 @interface WebDataSource : NSObject
 {
@@ -30,125 +33,132 @@
 /*!
     @method initWithURL:
     @discussion Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
-    @param URL
+    @param URL The URL to use in creating a datasource.
+    @result Returns an initialized WebDataSource.
 */
--(id)initWithURL:(NSURL *)URL;
+- initWithURL:(NSURL *)URL;
 
 /*!
     @method initWithRequest:
-    @param request
+    @abstract The designated initializer for WebDataSource.
+    @param request The request to use in creating a datasource.
+    @result Returns an initialized WebDataSource.
 */
--(id)initWithRequest:(WebResourceRequest *)request;
+- initWithRequest:(WebResourceRequest *)request;
 
 /*!
     @method data
+    @discussion The data associated with a datasource will not be valid until
+    a datasource has completed loaded.  
+    @result Returns the raw data associated with this datasource.  Returns nil
+    if the datasource hasn't loaded.
 */
 - (NSData *)data;
 
 /*!
     @method representation
+    @discussion A representation holds a type specific representation
+    of the datasource's data.  The representation class is determined by mapping
+    a MIME type to a class.  The representation is created once the MIME type
+    of the datasource content has been determined.
+    @result Returns the representation associated with this datasource.
+    Returns nil if the datasource hasn't created it's representation.
 */
 - (id <WebDocumentRepresentation>)representation;
 
 /*!
     @method isMainDocument
-    @discussion Returns YES if this is the main document.  The main document is the 'top'
+    @discussion The main document is the 'top'
     document, typically either a frameset or a normal HTML document.
+    @result Returns YES if this is the main document.
 */
 - (BOOL)isMainDocument;
 
 /*!
     @method parent
-    @discussion Returns nil if this data source represents the main document.  Otherwise
+    @result Returns nil if this data source represents the main document.  Otherwise
     returns the parent data source.
 */
 - (WebDataSource *)parent;
 
 /*!
     @method webFrame
-    @discussion Return the frame that represents this data source. Same as above.
+    @result Return the frame that represents this data source.
 */
 - (WebFrame *)webFrame;
 
 /*!
-    @method addFrame:
-    @discussion Add a child frame.  This should only be called by the data source's controller
-    as a result of a createFrame:inParent:.
-    // [Should this be private?]
-*/
-- (void)addFrame: (WebFrame *)frame;
-
-/*!
     @method children
-    @discussion Returns an array of WebFrame.  The frames in the array are
+    @discussion The frames in the array are
     associated with a frame set or iframe.
+    @result Returns an array of WebFrame.
 */
 - (NSArray *)children;
 
 /*!
     @method frameNamed:
-    @param frameName
+    @discussion Find the frame named frameName in this datasource's
+    children.  Does not recurse.
+    @param frameName The name of the frame to find.
+    @result Returns the frame named frameName, or nil.
 */
 - (WebFrame *)frameNamed:(NSString *)frameName;
 
 /*!
     @method frameNames
-    @discussion Returns an array of NSStrings or nil.  The NSStrings corresponds to
+    @discussion The NSStrings corresponds to
     frame names.  If this data source is the main document and has no
     frames then frameNames will return nil.
+    @result Returns an array of NSStrings or nil.
 */
 - (NSArray *)frameNames;
 
 /*!
     @method findDataSourceForFrameNamed:
-    @discussion findDataSourceForFrameNamed: returns the child data source associated with
+    @param name The name of the frame to find. Does not recurse.
+    @result Returns the child data source associated with
     the frame named 'name', or nil. 
-    @param name
 */
 - (WebDataSource *)findDataSourceForFrameNamed:(NSString *)name;
 
 /*!
     @method frameExists:
-    @param name
+    @param name The name of the frame to check for existence.  Does not recurse.
+    @result Returns YES if a frame named name exists.
 */
 - (BOOL)frameExists: (NSString *)name;
 
 /*!
-    @method openURL:isFrameNamed:
-    @param URL
-    @param frameName
-*/
-- (void)openURL:(NSURL *)URL inFrameNamed:(NSString *)frameName;
-
-/*!
     @method controller
+    @result Returns the controller associated with this datasource.
 */
 - (WebController *)controller;
     
 /*!
     @method request
+    @result Returns the request that was used to create this datasource.
 */
 -(WebResourceRequest *)request;
 
 /*!
     @method URL
-    @discussion May return nil if not initialized with a URL.
-    The value of URL will change if a redirect occurs.
+    @discussion The value of URL will change if a redirect occurs.
     To monitor change in the URL, override the <WebLocationChangeHandler> 
     serverRedirectTo:forDataSource: method.
+    @result Returns the current URL associated with the datasource.
 */
 - (NSURL *)URL;
 
 /*!
     @method originalURL
-    @discussion The original passed in at initialization time.
-    Starts out same as URL, but doesn't change if a redirect occurs.
+    @discussion Starts out same as URL, but doesn't change if a redirect occurs.
+    @results Returns the original URL passed in at initialization time.
 */
 - (NSURL *)originalURL;
 
 /*!
     @method startLoading
-    @discussion Start actually getting (if initialized with a URL) and parsing data. If the data source
+    @discussion Start actually getting and parsing data. If the data source
     is still performing a previous load it will be stopped.
 */
 - (void)startLoading;
@@ -169,54 +179,63 @@
 
 /*!
     @method isDocumentHTML
+    @result Returns YES if the representation of the datasource is a WebHTMLRepresentation.
 */
 - (BOOL)isDocumentHTML;
 
 /*!
     @method encoding
+    // FIXME rename to textEncodingName, move to WebHTMLRepresentation
 */
 - (NSString *)encoding;
 
 /*!
     @method pageTitle
-    @discussion Returns nil or the page title.
+    @result Returns nil or the page title.
+    // FIXME move to WebHTMLRepresentation
 */
 - (NSString *)pageTitle;
 
 /*!
     @method frameName
+    @result frameName The name of frame that contains this datasource.
 */
 - (NSString *)frameName;
 
 /*!
     @method contentPolicy
+    @result The content policy used by this datasource.
 */
 - (WebContentPolicy *)contentPolicy;
 
 /*!
     @method contentType
-    @discussion returns the MIME type for the data source.
+    @result returns the MIME type for the data source.
 */
 - (NSString *)contentType;
 
 /*!
     @method fileType
-    @discussion extension based on the MIME type 
+    @result The extension based on the MIME type 
 */
 - (NSString *)fileType;
 
 /*!
     @method errors
+    @result Returns a dictionary of WebErrors from all the resources loaded for this page.
 */
 - (NSDictionary *)errors;
 
 /*!
     @method mainDocumentError
+    @result Returns a WebError associated with the load of the main document, or nil if no error occurred.
 */
 - (WebError *)mainDocumentError;
 
 /*!
     @method registerRepresentationClass:forMIMEType:
+    @discussion A subclass of NSView that implements WebDocumentView may be registered 
+    with this method.
     @param repClass
     @param MIMEType
 */
