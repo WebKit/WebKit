@@ -1,3 +1,16 @@
+2002-10-10  Darin Adler  <darin@apple.com>
+
+	- fixed 3072643 -- infinite loop in JavaScript code at walgreens.com
+
+	The problem is that "xxx".indexOf("", 1) needs to return 1, but we
+	were returning 0.
+
+        * kjs/ustring.cpp:
+        (UString::find): Return pos, not 0, when the search string is empty.
+        (UString::rfind): Make sure that pos is not past the end of the string,
+	taking into account the search string; fixes a potential read off the end
+	of the buffer. Also return pos, not 0, when the search string is empty.
+
 === Alexander-27 ===
 
 2002-10-07  Darin Adler  <darin@apple.com>

@@ -491,10 +491,10 @@ int UString::find(const UString &f, int pos) const
   int fsz = f.size();
   if (sz < fsz)
     return -1;
-  if (fsz == 0)
-    return 0;
   if (pos < 0)
     pos = 0;
+  if (fsz == 0)
+    return pos;
   const UChar *end = data() + sz - fsz;
   long fsizeminusone = (fsz - 1) * sizeof(UChar);
   const UChar *fdata = f.data();
@@ -523,10 +523,12 @@ int UString::rfind(const UString &f, int pos) const
   int fsz = f.size();
   if (sz < fsz)
     return -1;
-  if (fsz == 0)
-    return 0;
   if (pos < 0)
     pos = 0;
+  if (pos > sz - fsz)
+    pos = sz - fsz;
+  if (fsz == 0)
+    return pos;
   long fsizeminusone = (fsz - 1) * sizeof(UChar);
   const UChar *fdata = f.data();
   for (const UChar *c = data() + pos; c >= data(); c--) {
