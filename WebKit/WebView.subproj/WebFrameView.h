@@ -50,5 +50,4 @@
 */
 - (BOOL)allowsScrolling;
 
-
 @end

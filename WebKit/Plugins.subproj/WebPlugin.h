@@ -53,9 +53,9 @@
 - (void)webPlugInDestroy;
 
 /*!
-	@method webPlugInSetIsSelected:
-	@discusssion Informs the plug-in whether or not it is selected.  This is typically
-	used to allow the plug-in to alter it's appearance when selected.
+    @method webPlugInSetIsSelected:
+    @discusssion Informs the plug-in whether or not it is selected.  This is typically
+    used to allow the plug-in to alter it's appearance when selected.
 */
 - (void)webPlugInSetIsSelected:(BOOL)isSelected;
 

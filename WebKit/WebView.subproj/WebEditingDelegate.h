@@ -12,9 +12,9 @@
 @class WebView;
 
 typedef enum {
-	WebViewInsertActionTyped,	
-	WebViewInsertActionPasted,	
-	WebViewInsertActionDropped,	
+    WebViewInsertActionTyped,	
+    WebViewInsertActionPasted,	
+    WebViewInsertActionDropped,	
 } WebViewInsertAction;
 
 @interface NSObject (WebViewEditingDelegate)

@@ -1,3 +1,16 @@
+2004-05-13  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed some indenting issues in public headers.
+
+        * Plugins.subproj/WebJavaPlugIn.h:
+        * Plugins.subproj/WebPlugin.h:
+        * Plugins.subproj/WebScriptObject.h:
+        * WebView.subproj/WebEditingDelegate.h:
+        * WebView.subproj/WebFrameView.h:
+        * WebView.subproj/WebPolicyDelegate.h:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebView.h:
+
 2004-05-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
