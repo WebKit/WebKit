@@ -338,10 +338,9 @@
 {
     LOG(View, "%@ drawing", self);
     
-    if (_private->savedSubviews) {
-        ASSERT(_subviews == nil);
-        _subviews = _private->savedSubviews;
-        _private->savedSubviews = nil;
+    BOOL subviewsWereSetAside = _private->subviewsSetAside;
+    if (subviewsWereSetAside) {
+        [self _restoreSubviews];
     }
     
     if ([self inLiveResize]) {
@@ -403,10 +402,8 @@
     LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
 
-    if (_private->subviewsSetAside) {
-        ASSERT(_private->savedSubviews == nil);
-        _private->savedSubviews = _subviews;
-        _subviews = nil;
+    if (subviewsWereSetAside) {
+        [self _setAsideSubviews];
     }
 }
 

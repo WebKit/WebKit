@@ -167,20 +167,18 @@ BOOL _modifierTrackingEnabled = FALSE;
     return NO;
 }
 
-// Don't let AppKit even draw subviews. We take care of that.
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
+- (void)_setAsideSubviews
 {
-    [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
-
     ASSERT(!_private->subviewsSetAside);
     ASSERT(_private->savedSubviews == nil);
     _private->savedSubviews = _subviews;
     _subviews = nil;
     _private->subviewsSetAside = YES;
-    
-    [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect
-        rectIsVisibleRectForView:visibleView topView:topView];
-    
+ }
+ 
+ - (void)_restoreSubviews
+ {
+    ASSERT(_private->subviewsSetAside);
     ASSERT(_subviews == nil);
     _subviews = _private->savedSubviews;
     _private->savedSubviews = nil;
@@ -188,27 +186,29 @@ BOOL _modifierTrackingEnabled = FALSE;
 }
 
 // Don't let AppKit even draw subviews. We take care of that.
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
+{
+    [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
+    [self _setAsideSubviews];
+    [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect
+        rectIsVisibleRectForView:visibleView topView:topView];
+    [self _restoreSubviews];
+}
+
+// Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect
 {
-    BOOL setAsideSubviews = !_private->subviewsSetAside;
+    BOOL needToSetAsideSubviews = !_private->subviewsSetAside;
     
-    if (setAsideSubviews) {
+    if (needToSetAsideSubviews) {
         [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
-
-        ASSERT(!_private->subviewsSetAside);
-        ASSERT(_private->savedSubviews == nil);
-        _private->savedSubviews = _subviews;
-        _subviews = nil;
-        _private->subviewsSetAside = YES;
+        [self _setAsideSubviews];
     }
     
     [super _recursiveDisplayAllDirtyWithLockFocus:needsLockFocus visRect:visRect];
     
-    if (setAsideSubviews) {
-        ASSERT(_subviews == nil);
-        _subviews = _private->savedSubviews;
-        _private->savedSubviews = nil;
-        _private->subviewsSetAside = NO;
+    if (needToSetAsideSubviews) {
+        [self _restoreSubviews];
     }
 }
 

@@ -1,3 +1,20 @@
+2002-09-25  Darin Adler  <darin@apple.com>
+
+	Make the "set aside subviews" logic stronger so it can handle a display
+	while inside drawRect. But note, this recursive display is most likely
+	the cause of the redrawing problems we have while resizing, like bug 2969367.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]): Restore views and then set them aside again, but don't
+	leave the "views set aside" boolean set.
+        * WebView.subproj/WebHTMLViewPrivate.h: Add private _setAsideSubviews and _restoreSubviews methods.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _setAsideSubviews]): Added.
+        (-[WebHTMLView _restoreSubviews]): Added.
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+	Use the new _setAsideSubviews and _restoreSubviews methods.
+        (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]): Ditto.
+
 2002-09-25  Ken Kocienda  <kocienda@apple.com>
 
         Removed this method from WebResourceHandle:

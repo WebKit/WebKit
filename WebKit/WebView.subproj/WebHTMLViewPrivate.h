@@ -43,4 +43,8 @@
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (NSDictionary *)_elementAtPoint:(NSPoint)point;
 - (BOOL)_continueAfterClickPolicyForEvent: (NSEvent *)event;
+
+- (void)_setAsideSubviews;
+- (void)_restoreSubviews;
+
 @end
