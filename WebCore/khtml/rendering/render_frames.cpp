@@ -801,7 +801,7 @@ void RenderPartObject::updateWidget()
           return;
       }
       // Avoid infinite recursion. If the plug-in's URL is the same as the part's URL, infinite frames may be created.
-      if (!url.isEmpty() && url == part->baseURL()) {
+      if (!url.isEmpty() && part->completeURL(url) == part->baseURL()) {
           return;
       }
             
@@ -824,7 +824,7 @@ void RenderPartObject::updateWidget()
           return;
       }
       // Avoid infinite recursion. If the plug-in's URL is the same as the part's URL, infinite frames may be created.
-      if (!url.isEmpty() && url == part->baseURL()) {
+      if (!url.isEmpty() && part->completeURL(url) == part->baseURL()) {
           return;
       }
       // add all attributes set on the embed object
@@ -843,7 +843,7 @@ void RenderPartObject::updateWidget()
       url = o->url.string();
       if (url.isEmpty()) {
 	  url = "about:blank";
-      } else if (url == part->baseURL()) {
+      } else if (part->completeURL(url) == part->baseURL()) {
           // Avoid infinite recursion. If the frame's URL is the same as the part's URL, infinite frames may be created.
           return;
       }
