@@ -1420,6 +1420,10 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 
   clear();
 
+#if APPLE_CHANGE
+  KWQ(this)->partClearedInBegin();
+#endif
+
   // Only do this after clearing the part, so that JavaScript can
   // clean up properly if it was on for the last load.
 #if !APPLE_CHANGES

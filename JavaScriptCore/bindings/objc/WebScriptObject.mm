@@ -121,10 +121,10 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     }
 
     // Call the function object.    
+    Interpreter::lock();
     ObjectImp *funcImp = static_cast<ObjectImp*>(func.imp());
     Object thisObj = Object(const_cast<ObjectImp*>(_private->imp));
     List argList = listFromNSArray(exec, args);
-    Interpreter::lock();
     Value result = funcImp->call (exec, thisObj, argList);
     Interpreter::unlock();
 
@@ -240,7 +240,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 + (id)_convertValueToObjcValue:(KJS::Value)value root:(const Bindings::RootObject *)root
 {
     id result = 0;
-   
+
     // First see if we have a ObjC instance.
     if (value.type() == KJS::ObjectType){
         ObjectImp *objectImp = static_cast<ObjectImp*>(value.imp());

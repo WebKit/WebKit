@@ -82,142 +82,55 @@ RuntimeType ObjcField::type() const
 Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instance) const
 {
     Value aValue;
-    char *ivarValuePtr = ((char *)(static_cast<const ObjcInstance*>(instance))->getObject() + _ivar->ivar_offset);
+    id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
+    id objcValue = nil;
 
-    ObjcValueType ctype = objcValueTypeForType(_ivar->ivar_type);
-    switch (ctype){
-        case ObjcVoidType: {
-            aValue = Undefined();
-        }
-        break;
+    NS_DURING
+    
+        NSString *key = [NSString stringWithCString:_ivar->ivar_name];
+        objcValue = [targetObject valueForKey:key];
         
-        case ObjcObjectType: {
-            ObjectStructPtr obj = *(ObjectStructPtr *)(ivarValuePtr);
-            if ([obj isKindOfClass:[WebScriptObject class]]) {
-                WebScriptObject *jsobject = (WebScriptObject *)obj;
-                aValue = Object([jsobject _imp]);
-            }
-            else {
-                Instance *anInstance = Instance::createBindingForLanguageInstance (Instance::ObjectiveCLanguage, (void *)obj);
-                aValue = Object(new RuntimeObjectImp(anInstance,true));
-            }
-        }
-        break;
+    NS_HANDLER
         
-        case ObjcCharType: {
-            char aChar = *(char *)(ivarValuePtr);
-            aValue = Number(aChar);
-        }
-        break;
+        Value exceptionValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
+        exec->setException(exceptionValue);
         
-        case ObjcShortType: {
-            short aShort = *(short *)(ivarValuePtr);
-            aValue = Number(aShort);
-        }
-        break;
-        
-        case ObjcIntType: {
-            int anInt = *(int *)(ivarValuePtr);
-            aValue = Number(anInt);
-        }
-        break;
-        
-        case ObjcLongType: {
-            long aLong = *(long *)(ivarValuePtr);
-            aValue = Number(aLong);
-        }
-        break;
-        
-        case ObjcFloatType: {
-            float aFloat = *(float *)(ivarValuePtr);
-            aValue = Number(aFloat);
-        }
-        break;
-        
-        case ObjcDoubleType: {
-            double aDouble = *(double *)(ivarValuePtr);
-            aValue = Number(aDouble);
-        }
-        break;
-        
-        case ObjcInvalidType:
-        default: {
-            aValue = Error::create(exec, TypeError, "Invalid ObjectiveC type.");
-            exec->setException(aValue);
-        }
-        break;
-    }
+    NS_ENDHANDLER
+
+    if (objcValue)
+        aValue = convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
+
     return aValue;
 }
 
+static id convertValueToObjcObject (KJS::ExecState *exec, const KJS::Value &value)
+{
+    const Bindings::RootObject *root = rootForInterpreter(exec->interpreter());
+    if (!root) {
+        Bindings::RootObject *newRoot = new KJS::Bindings::RootObject(0);
+        newRoot->setInterpreter (exec->interpreter());
+        root = newRoot;
+    }
+    return [WebScriptObject _convertValueToObjcValue:value root:root];
+}
+
+
 void ObjcField::setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const
 {
-    char *ivarValuePtr = ((char *)(static_cast<const ObjcInstance*>(instance))->getObject() + _ivar->ivar_offset);
-
-    ObjcValueType ctype = objcValueTypeForType(_ivar->ivar_type);
-    ObjcValue result = convertValueToObjcValue(exec, aValue, ctype);
-    switch (ctype){
-        case ObjcVoidType: {
-        }
-        break;
+    id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
+    id value = convertValueToObjcObject(exec, aValue);
+    
+    NS_DURING
+    
+        NSString *key = [NSString stringWithCString:_ivar->ivar_name];
+        [targetObject setValue:value forKey:key];
         
-        case ObjcObjectType: {
-            // First see if we have an ObjC instance.
-            if (aValue.type() == KJS::ObjectType){
-                ObjcValue result = convertValueToObjcValue(exec, aValue, objcValueTypeForType(_ivar->ivar_type));
-                
-                // Release the previous value.
-                [*(ObjectStructPtr *)(ivarValuePtr) autorelease];
-                
-                // Retain the new value.
-                *(ObjectStructPtr *)(ivarValuePtr) = [result.objectValue retain];
-            }
-            
-            // FIXME.  Deal with numbers.
-            
-            // FIXME.  Deal with arrays.
-            
-            // FIXME.  Deal with strings.
-        }
-        break;
+    NS_HANDLER
         
-        case ObjcCharType: {
-            *(char *)(ivarValuePtr) = result.charValue;
-        }
-        break;
+        Value aValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
+        exec->setException(aValue);
         
-        case ObjcShortType: {
-            *(short *)(ivarValuePtr) = result.shortValue;
-        }
-        break;
-        
-        case ObjcIntType: {
-            *(int *)(ivarValuePtr) = result.intValue;
-        }
-        break;
-        
-        case ObjcLongType: {
-            *(long *)(ivarValuePtr) = result.longValue;
-        }
-        break;
-        
-        case ObjcFloatType: {
-            *(float *)(ivarValuePtr) = result.floatValue;
-        }
-        break;
-        
-        case ObjcDoubleType: {
-            *(double *)(ivarValuePtr) = result.doubleValue;
-        }
-        break;
-        
-        case ObjcInvalidType:
-        default: {
-            Object error = Error::create(exec, TypeError, "Invalid ObjectiveC type.");
-            exec->setException(error);
-        }
-        break;
-    }
+    NS_ENDHANDLER
 }
 
 // ---------------------- ObjcArray ----------------------

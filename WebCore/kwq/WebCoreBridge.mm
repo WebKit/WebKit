@@ -149,9 +149,20 @@ static RootObject *rootForView(void *v)
     return 0;
 }
 
+static pthread_t mainThread = 0;
+
 static void updateRenderingForBindings (KJS::ExecState *exec, KJS::ObjectImp *rootObject)
 {
+    if (pthread_self() != mainThread)
+        return;
+        
+    if (!rootObject)
+        return;
+        
     KJS::Window *window = static_cast<KJS::Window*>(rootObject);
+    if (!window)
+        return;
+        
     DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->part()->document().handle());
     doc->updateRendering();
 }
@@ -180,6 +191,8 @@ static bool initializedKJS = FALSE;
     }
     
     if (!initializedKJS) {
+        mainThread = pthread_self();
+        
         KJS::Bindings::RootObject::setFindRootObjectForNativeHandleFunction (rootForView);
         
         KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
@@ -1077,6 +1090,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     _part->createEmptyDocument();
     return _part->executeScript(QString::fromNSString(string), true).asString().getNSString();
+}
+
+- (WebScriptObject *)windowScriptObject
+{
+    return _part->windowScriptObject();
 }
 
 - (void)bindObject:(id)object withName:(NSString *)name

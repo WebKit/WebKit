@@ -62,6 +62,7 @@
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime.h>
 #import <JavaScriptCore/runtime_root.h>
+#import <JavaScriptCore/WebScriptObject.h>
 
 #undef _KWQ_TIMING
 
@@ -1130,6 +1131,12 @@ bool KWQKHTMLPart::tabsToAllControls() const
         return KWQKHTMLPart::currentEventIsKeyboardOptionTab();
 }
 
+WebScriptObject *KWQKHTMLPart::windowScriptObject()
+{
+    // FIXME:  Create a WindowScriptObject wrapper.
+    return 0;
+}
+
 void KWQKHTMLPart::bindObject(void *object, QString name)
 {
     if (d->m_doc && jScript()) {
@@ -1138,6 +1145,10 @@ void KWQKHTMLPart::bindObject(void *object, QString name)
     }
 }
 
+void KWQKHTMLPart::partClearedInBegin()
+{
+    [_bridge windowObjectCleared];
+}
 
 QMap<int, ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
 {

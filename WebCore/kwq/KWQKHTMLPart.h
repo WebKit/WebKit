@@ -72,6 +72,7 @@ typedef DOMElement ObjCDOMElement;
 @class NSString;
 @class NSView;
 @class WebCoreBridge;
+@class WebScriptObject;
 
 #else
 
@@ -89,6 +90,7 @@ class NSResponder;
 class NSString;
 class NSView;
 class WebCoreBridge;
+class WebScriptObject;
 
 #endif
 
@@ -282,7 +284,10 @@ public:
     void postDidChangeSelectionNotification();
     void postDidChangeNotification();
 
+    WebScriptObject *windowScriptObject();
     void bindObject(void *object, QString name);
+    
+    void partClearedInBegin();
     
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

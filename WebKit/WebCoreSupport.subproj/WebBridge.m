@@ -16,6 +16,7 @@
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFileButton.h>
 #import <WebKit/WebFormDelegate.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
@@ -1276,6 +1277,12 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 - (NSString *)overrideMediaType
 {
     return [[_frame webView] mediaStyle];
+}
+
+- (void)windowObjectCleared
+{
+    WebView *wv = [_frame webView];
+    [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:[self windowScriptObject]];
 }
 
 @end

@@ -1,3 +1,18 @@
+2004-05-18  Richard Williamson   <rjw@apple.com>
+
+	Use KVC to set/get values instead of directly accessing
+	ivars.
+
+        Reviewed by Maciej.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (+[WebScriptObject _convertValueToObjcValue:KJS::root:Bindings::]):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (convertValueToObjcObject):
+        (ObjcField::setValueToInstance):
+
 2004-05-17  Richard Williamson   <rjw@apple.com>
 
 	Implemented new API for WebScriptObject.

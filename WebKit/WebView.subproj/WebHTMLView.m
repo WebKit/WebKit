@@ -1930,7 +1930,7 @@ static WebHTMLView *lastHitView = nil;
     return [self _scaleFactorForPrintOperation:printOperation];
 }
 
-- (void)_setPageWidthForPrinting:(float)pageWidth
+- (void)setPageWidthForPrinting:(float)pageWidth
 {
     [self _setPrinting:NO minimumPageWidth:0. maximumPageWidth:0. adjustViewSize:NO];
     [self _setPrinting:YES minimumPageWidth:pageWidth maximumPageWidth:pageWidth adjustViewSize:YES];

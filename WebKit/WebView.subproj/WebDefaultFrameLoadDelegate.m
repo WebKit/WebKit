@@ -5,6 +5,7 @@
 #import <WebKit/WebDefaultFrameLoadDelegate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebScriptObject.h>
 
 @implementation WebDefaultFrameLoadDelegate
 
@@ -43,5 +44,7 @@ static WebDefaultFrameLoadDelegate *sharedDelegate = nil;
 - (void)webView:(WebView *)sender didCancelClientRedirectForFrame:(WebFrame *)frame { }
 
 - (void)webView:(WebView *)sender willCloseFrame:(WebFrame *)frame { }
+
+- (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)obj { }
 
 @end
