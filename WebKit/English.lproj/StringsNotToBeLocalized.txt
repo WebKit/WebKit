@@ -243,6 +243,7 @@
 "com.apple.JavaAppletPlugin"
 "com.apple.JavaPluginCocoa"
 "com.apple.KeyboardUIModeDidChange"
+"com.apple.QuickTime Plugin.plugin"
 "com.apple.WebKit"
 "com.apple.hiview"
 "com.apple.universalaccess"
