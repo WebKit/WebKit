@@ -1,3 +1,29 @@
+2002-11-11  Darin Adler  <darin@apple.com>
+
+	- fixed 3092421 -- javascript: URL that opens window crashes Alex if typed into empty window
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): Set _ownsView to false.
+        (KWQKHTMLPart::~KWQKHTMLPart): Delete the view if we own it. Also release
+	_currentEvent to fix a leak.
+        (KWQKHTMLPart::setView): Delete the old view if we own it. Also, set the
+	_ownsView flag.
+        (KWQKHTMLPart::createDummyDocument): Create a dummy view too.
+
+        * kwq/KWQDummyView.h: Added.
+        * kwq/KWQDummyView.m: Added.
+        * WebCore.pbproj/project.pbxproj: Added KWQDummyView.
+
+        * kwq/WebCoreBridge.h: Remove bridgeOwnsKHTMLView and currentEvent.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge createKHTMLViewWithNSView:marginWidth:marginHeight:]):
+	Pass true to setView instead of setting bridgeOwnsKHTMLView.
+        (-[WebCoreBridge removeFromFrame]): Just call setView on the part. It
+	knows how to handle ownership now.
+        (-[WebCoreBridge installInFrame:]): Call setOwnsView instead of setting
+	bridgeOwnsKHTMLView.
+
 2002-11-11  Trey Matteson  <trey@apple.com>
 
         * khtml/khtml_part.cpp:

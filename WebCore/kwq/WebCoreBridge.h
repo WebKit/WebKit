@@ -80,10 +80,8 @@ enum FrameBorderStyle {
 
 @interface WebCoreBridge : NSObject
 {
-    KHTMLPart *part;
-    KHTMLRenderPart *renderPart;
-    BOOL bridgeOwnsKHTMLView;
-    NSEvent *currentEvent;
+    KHTMLPart *_part;
+    KHTMLRenderPart *_renderPart;
 }
 
 - (void)setRenderPart:(KHTMLRenderPart *)renderPart;

@@ -36,6 +36,7 @@
 #import "WebCoreBridge.h"
 #import "WebCoreViewFactory.h"
 
+#import "KWQDummyView.h"
 #import "KWQLogging.h"
 
 #undef _KWQ_TIMING
@@ -93,8 +94,8 @@ KWQKHTMLPart::KWQKHTMLPart(KHTMLPart *p)
     , _completed(p, SIGNAL(completed()))
     , _completedWithBool(p, SIGNAL(completed(bool)))
     , _needsToSetWidgetsAside(false)
-    , _currentEvent(NULL)
-
+    , _ownsView(false)
+    , _currentEvent(nil)
 {
     Cache::init();
     mutableInstances().prepend(this);
@@ -104,6 +105,10 @@ KWQKHTMLPart::KWQKHTMLPart(KHTMLPart *p)
 KWQKHTMLPart::~KWQKHTMLPart()
 {
     mutableInstances().remove(this);
+    if (_ownsView) {
+        delete d->m_view;
+    }
+    [_currentEvent release];
 }
 
 WebCoreBridge *KWQKHTMLPart::bridgeForFrameName(const QString &frameName)
@@ -231,10 +236,14 @@ void KWQKHTMLPart::submitForm(const KURL &u, const URLArgs &args)
     }
 }
 
-void KWQKHTMLPart::setView(KHTMLView *view)
+void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
 {
+    if (_ownsView) {
+        delete d->m_view;
+    }
     d->m_view = view;
     part->setWidget(view);
+    _ownsView = weOwnIt;
 }
 
 KHTMLView *KWQKHTMLPart::view() const
@@ -530,10 +539,19 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
 void KWQKHTMLPart::createDummyDocument()
 {
     if (d->m_doc) {
-        return;
+        ASSERT(d->m_view);
+    } else {
+        d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument(d->m_view);
+        d->m_doc->ref();
+        
+        ASSERT(d->m_view == 0);
+        KHTMLView *kview = new KHTMLView(part, 0);
+        setView(kview, true);
+        
+        NSView *view = [[KWQDummyView alloc] initWithWindow:[_bridge window]];
+        kview->setView(view);
+        [view release];
     }
-    d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument(d->m_view);
-    d->m_doc->ref();
 }
 
 void KWQKHTMLPart::setCurrentEvent(NSEvent *event)
