@@ -101,9 +101,10 @@ void Lexer::globalClear()
 }
 #endif
 
-void Lexer::setCode(const UChar *c, unsigned int len)
+void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const UChar *c, unsigned int len)
 {
   yylineno = 1;
+  m_sourceURL = sourceURL;
   restrKeyword = false;
   delimited = false;
   eatNextIdentifier = false;

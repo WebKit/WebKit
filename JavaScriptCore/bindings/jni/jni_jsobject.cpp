@@ -191,7 +191,7 @@ jobject JSObject::eval(jstring script) const
 
     Object thisObj = Object(const_cast<ObjectImp*>(_imp));
     Interpreter::lock();
-    KJS::Value result = _root->interpreter()->evaluate(JavaString(script).ustring(),thisObj).value();
+    KJS::Value result = _root->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj).value();
     Interpreter::unlock();
     return convertValueToJObject (result);
 }

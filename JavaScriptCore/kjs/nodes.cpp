@@ -89,6 +89,7 @@ std::list<Node *> * Node::s_nodes = 0L;
 Node::Node()
 {
   line = Lexer::curr()->lineNo();
+  sourceURL = Lexer::curr()->sourceURL();
   refcount = 0;
 #ifdef KJS_DEBUG_MEM
   if (!s_nodes)
@@ -125,7 +126,7 @@ void Node::finalCheck()
 
 Value Node::throwError(ExecState *exec, ErrorType e, const char *msg)
 {
-  Object err = Error::create(exec, e, msg, lineNo(), sourceId());
+  Object err = Error::create(exec, e, msg, lineNo(), sourceId(), &sourceURL);
   exec->setException(err);
   return err;
 }
@@ -689,7 +690,7 @@ Value FunctionCallNode::evaluate(ExecState *exec)
   Value v = ref.getValue(exec);
 
   if (v.type() != ObjectType) {
-    return throwError(exec, TypeError, "Value %s (result of expression %s) is not object. Cannot be called.", v, expr);
+    return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, expr);
   }
 
   Object func = Object(static_cast<ObjectImp*>(v.imp()));

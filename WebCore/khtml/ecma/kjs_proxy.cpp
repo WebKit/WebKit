@@ -115,7 +115,7 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
   KJS::Value thisNode = n.isNull() ? Window::retrieve( m_part ) : getDOMNode(m_script->globalExec(),n);
 
   UString code( str );
-  Completion comp = m_script->evaluate(code, thisNode, filename);
+  Completion comp = m_script->evaluate(filename, baseLine, code, thisNode);
   bool success = ( comp.complType() == Normal ) || ( comp.complType() == ReturnValue );  
 #ifdef KJS_DEBUGGER
     //    KJSDebugWin::instance()->setCode(QString::null);
@@ -129,13 +129,15 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
     if ( comp.complType() == Throw )
     {
         KJS::Interpreter::lock();
-        UString msg = comp.value().toString(m_script->globalExec());
+        UString errorMessage = comp.value().toString(m_script->globalExec());
         int lineNumber =  comp.value().toObject(m_script->globalExec()).get(m_script->globalExec(), "line").toInt32(m_script->globalExec());
+        UString sourceURL = comp.value().toObject(m_script->globalExec()).get(m_script->globalExec(), "sourceURL").toString(m_script->globalExec());
         KJS::Interpreter::unlock();
+
 #if APPLE_CHANGES
-        KWQ(m_part)->addMessageToConsole(msg.qstring(), lineNumber);
+        KWQ(m_part)->addMessageToConsole(errorMessage.qstring(), lineNumber, sourceURL.qstring());
 #else
-        kdWarning(6070) << "Script threw exception: " << msg.qstring() << endl;
+        kdWarning(6070) << "Script threw exception: " << errorMessage.qstring() << endl;
 #endif
     }
     return QVariant();

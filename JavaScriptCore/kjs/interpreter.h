@@ -198,7 +198,7 @@ namespace KJS {
      * execution. This should either be Null() or an Object.
      * @return A completion object representing the result of the execution.
      */
-    Completion evaluate(const UString &code, const Value &thisV = Value(), const UString &filename = UString());
+    Completion evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, const Value &thisV = Value());
 
     /**
      * @internal

@@ -1,3 +1,44 @@
+2004-06-04  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Dave.
+
+        - ObjC bindings do not (yet) pass along sourceurl or line numbers
+        - we don't have a way as of yet to accomidate line numbers and urls for dynamic javascript
+        - changed the wording of an error message
+        - the lexer, parser, and interpreter have been made "sourceURL aware"
+        - stored the url into Error
+         
+        * bindings/NP_jsobject.cpp:
+        (NPN_Evaluate):
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::eval):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject evaluateWebScript:]):
+        * kjs/function.cpp:
+        (GlobalFuncImp::call):
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/internal.cpp:
+        (Parser::parse):
+        (InterpreterImp::checkSyntax):
+        (InterpreterImp::evaluate):
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        (Interpreter::evaluate):
+        * kjs/interpreter.h:
+        * kjs/lexer.cpp:
+        (Lexer::setCode):
+        * kjs/lexer.h:
+        (KJS::Lexer::sourceURL):
+        * kjs/nodes.cpp:
+        (Node::Node):
+        (Node::throwError):
+        (FunctionCallNode::evaluate):
+        * kjs/nodes.h:
+        * kjs/object.cpp:
+        (KJS::Error::create):
+        * kjs/object.h:
+
 2004-06-04  Richard Williamson   <rjw@apple.com>
 
         Fixed crash when attempting to access properties on nil

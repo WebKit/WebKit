@@ -1,3 +1,28 @@
+2004-06-04  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Dave.
+
+        - kwq/KWQKHTMLPart.mm: addMessagetoConsole places sourceURL in the dictionary
+        - khtml/xml/dom_docimpl.cpp: right now, we don't have a way to get a url,
+          so we leave this blank
+        - khtml/ecma/kjs_window.cpp: still need to get the real line number and sourceURL
+        - khtml/ecma/kjs_proxy.cpp: now passing the sourceURL to addMessageToConsole
+        - khtml/ecma/kjs_events.cpp: still need to grab an accurate line number and sourceURL
+        
+        * khtml/ecma/kjs_events.cpp:
+        (JSEventListener::handleEvent):
+        (JSLazyEventListener::handleEvent):
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate):
+        * khtml/ecma/kjs_window.cpp:
+        (Window::isSafeScript):
+        (ScheduledAction::execute):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::open):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::addMessageToConsole):
+
 2004-06-04  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

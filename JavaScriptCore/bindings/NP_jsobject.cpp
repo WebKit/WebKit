@@ -119,7 +119,7 @@ void NPN_Evaluate (NPScriptObject *o, NPString *s, NPScriptResultFunctionPtr res
     NPUTF16 *scriptString;
     unsigned int UTF16Length;
     convertNPStringToUTF16 (s, &scriptString, &UTF16Length);    // requires free() of returned memory.
-    KJS::Value result = obj->root->interpreter()->evaluate(UString((const UChar *)scriptString,UTF16Length)).value();
+    KJS::Value result = obj->root->interpreter()->evaluate(UString(), 0, UString((const UChar *)scriptString,UTF16Length)).value();
     Interpreter::unlock();
     
     free ((void *)scriptString);

@@ -204,7 +204,8 @@ namespace KJS {
    */
   class Parser {
   public:
-    static ProgramNode *parse(const UChar *code, unsigned int length, int *sourceId = 0,
+    static ProgramNode *parse(const UString &sourceURL, int startingLineNumber,
+                              const UChar *code, unsigned int length, int *sourceId = 0,
 			      int *errLine = 0, UString *errMsg = 0);
 
     static ProgramNode *progNode;
@@ -270,7 +271,7 @@ namespace KJS {
 
     ExecState *globalExec() { return globExec; }
     bool checkSyntax(const UString &code);
-    Completion evaluate(const UString &code, const Value &thisV);
+    Completion evaluate(const UString &code, const Value &thisV, const UString &sourceURL, int startingLineNumber);
     Debugger *debugger() const { return dbg; }
     void setDebugger(Debugger *d);
 

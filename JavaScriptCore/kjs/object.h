@@ -635,7 +635,7 @@ namespace KJS {
      */
     static Object create(ExecState *exec, ErrorType errtype = GeneralError,
                          const char *message = 0, int lineno = -1,
-                         int sourceId = -1);
+                         int sourceId = -1, const UString *sourceURL = 0);
 
     /**
      * Array of error names corresponding to @ref ErrorType

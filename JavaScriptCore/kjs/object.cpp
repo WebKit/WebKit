@@ -492,7 +492,7 @@ const char * const errorNamesArr[] = {
 const char * const * const Error::errorNames = errorNamesArr;
 
 Object Error::create(ExecState *exec, ErrorType errtype, const char *message,
-                     int lineno, int sourceId)
+                     int lineno, int sourceId, const UString *sourceURL)
 {
   Object cons;
   switch (errtype) {
@@ -530,6 +530,8 @@ Object Error::create(ExecState *exec, ErrorType errtype, const char *message,
   if (sourceId != -1)
     err.put(exec, "sourceId", Number(sourceId));
 
+   err.put(exec,"sourceURL", String(*sourceURL));
+ 
   return err;
 
 /*

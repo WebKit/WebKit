@@ -211,7 +211,7 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
   int sid;
   int errLine;
   UString errMsg;
-  ProgramNode *progNode = Parser::parse(body.data(),body.size(),&sid,&errLine,&errMsg);
+  ProgramNode *progNode = Parser::parse(UString(), 0, body.data(),body.size(),&sid,&errLine,&errMsg);
 
   // notify debugger that source has been parsed
   Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();

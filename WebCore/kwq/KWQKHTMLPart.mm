@@ -1581,10 +1581,13 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
     return false;
 }
 
-void KWQKHTMLPart::addMessageToConsole(const QString &message, const unsigned int lineNumber)
+void KWQKHTMLPart::addMessageToConsole(const QString &message, unsigned lineNumber, const QString &sourceURL)
 {
     NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-        message.getNSString(), @"message",[NSNumber numberWithInt: lineNumber], @"lineNumber", NULL];
+        message.getNSString(), @"message",
+        [NSNumber numberWithInt: lineNumber], @"lineNumber",
+        sourceURL.getNSString(), @"sourceURL",
+        NULL];
     [_bridge addMessageToConsole:dictionary];
 }
 

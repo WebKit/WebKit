@@ -526,7 +526,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
       int sid;
       int errLine;
       UString errMsg;
-      ProgramNode *progNode = Parser::parse(s.data(),s.size(),&sid,&errLine,&errMsg);
+      ProgramNode *progNode = Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg);
 
       // no program node means a syntax occurred
       if (!progNode) {

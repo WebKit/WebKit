@@ -116,11 +116,12 @@ void JSEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
         KJS::Interpreter::lock();
         char *message = exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii();
         int lineNumber =  exec->exception().toObject(exec).get(exec, "line").toInt32(exec);
+        UString sourceURL = exec->exception().toObject(exec).get(exec, "sourceURL").toString(exec);
         KJS::Interpreter::unlock();
         if (Interpreter::shouldPrintExceptions()) {
 	    printf("(event handler):%s\n", message);
 	}
-        KWQ(part)->addMessageToConsole(message, lineNumber );
+        KWQ(part)->addMessageToConsole(message, lineNumber, sourceURL.qstring());
         exec->clearException();
     }
 #else
@@ -163,7 +164,7 @@ JSLazyEventListener::JSLazyEventListener(QString _code, const Object &_win, bool
 void JSLazyEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
 {
   parseCode();
-  if (!listener.isNull()) {
+  if (!listener.isNull()) { 
     JSEventListener::handleEvent(evt, isWindowEvent);
   }
 }

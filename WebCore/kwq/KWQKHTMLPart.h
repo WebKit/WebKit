@@ -181,7 +181,7 @@ public:
     void runJavaScriptAlert(const QString &message);
     bool runJavaScriptConfirm(const QString &message);
     bool runJavaScriptPrompt(const QString &message, const QString &defaultValue, QString &result);
-    void KWQKHTMLPart::addMessageToConsole(const QString &message, const unsigned int lineNumber);
+    void KWQKHTMLPart::addMessageToConsole(const QString &message,  unsigned int lineNumber, const QString &sourceID);
     using KHTMLPart::xmlDocImpl;
     khtml::RenderObject *renderer();
     void forceLayout();

@@ -160,7 +160,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));
     Interpreter::lock();
     Value v = convertObjcValueToValue(exec, &script, ObjcObjectType);
-    KJS::Value result = _private->root->interpreter()->evaluate(v.toString(exec)).value();
+    KJS::Value result = _private->root->interpreter()->evaluate(UString(), 0, v.toString(exec)).value();
     Interpreter::unlock();
     
     if (exec->hadException()) {

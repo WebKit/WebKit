@@ -1050,7 +1050,7 @@ bool Window::isSafeScript(ExecState *exec) const
       QString message;
       message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
                       thisDocument->URL().latin1(), actDocument->URL().latin1());
-      KWQ(m_part)->addMessageToConsole(message, 1);
+      KWQ(m_part)->addMessageToConsole(message, 1, QString()); //fixme: provide a real line number and sourceurl
   }
 #endif
   
@@ -1684,7 +1684,7 @@ void ScheduledAction::execute(Window *window)
 	  if (Interpreter::shouldPrintExceptions()) {
 	    printf("(timer):%s\n", message);
 	  }
-          KWQ(window->m_part)->addMessageToConsole(message, lineNumber);
+          KWQ(window->m_part)->addMessageToConsole(message, lineNumber, QString());
 #endif
 	  exec->clearException();
 	}

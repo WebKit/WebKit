@@ -435,15 +435,16 @@ void ContextImp::mark()
 ProgramNode *Parser::progNode = 0;
 int Parser::sid = 0;
 
-ProgramNode *Parser::parse(const UChar *code, unsigned int length, int *sourceId,
+ProgramNode *Parser::parse(const UString &sourceURL, int startingLineNumber,
+                           const UChar *code, unsigned int length, int *sourceId,
 			   int *errLine, UString *errMsg)
 {
   if (errLine)
     *errLine = -1;
   if (errMsg)
     *errMsg = 0;
-
-  Lexer::curr()->setCode(code, length);
+  
+  Lexer::curr()->setCode(sourceURL, startingLineNumber, code, length);
   progNode = 0;
   sid++;
   if (sourceId)
@@ -762,7 +763,7 @@ void InterpreterImp::mark()
 bool InterpreterImp::checkSyntax(const UString &code)
 {
   // Parser::parse() returns 0 in a syntax error occurs, so we just check for that
-  ProgramNode *progNode = Parser::parse(code.data(),code.size(),0,0,0);
+  ProgramNode *progNode = Parser::parse(UString(), 0, code.data(),code.size(),0,0,0);
   bool ok = (progNode != 0);
   if (progNode) {
     // must ref and deref to clean up properly
@@ -773,7 +774,7 @@ bool InterpreterImp::checkSyntax(const UString &code)
   return ok;
 }
 
-Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
+Completion InterpreterImp::evaluate(const UString &code, const Value &thisV, const UString &sourceURL, int startingLineNumber)
 {
 #if APPLE_CHANGES
   lockInterpreter();
@@ -788,12 +789,12 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
     return Completion(Throw,Error::create(globExec,GeneralError,"Recursion too deep"));
 #endif
   }
-
+  
   // parse the source code
   int sid;
   int errLine;
   UString errMsg;
-  ProgramNode *progNode = Parser::parse(code.data(),code.size(),&sid,&errLine,&errMsg);
+  ProgramNode *progNode = Parser::parse(sourceURL, startingLineNumber, code.data(),code.size(),&sid,&errLine,&errMsg);
 
   // notify debugger that source has been parsed
   if (dbg) {
@@ -808,10 +809,10 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
       return Completion(Break);
 #endif
   }
-
+  
   // no program node means a syntax error occurred
   if (!progNode) {
-    Object err = Error::create(globExec,SyntaxError,errMsg.ascii(),errLine);
+    Object err = Error::create(globExec,SyntaxError,errMsg.ascii(),errLine, -1, &sourceURL);
     err.put(globExec,"sid",Number(sid));
 #if APPLE_CHANGES
     unlockInterpreter();
