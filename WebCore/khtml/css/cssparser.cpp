@@ -1946,7 +1946,7 @@ int DOM::CSSParser::lex( void *_yylval ) {
     qDebug("CSSTokenizer: got token %d: '%s'", token, token == END ? "" : QString( (QChar *)t, length ).latin1() );
 #endif
     switch( token ) {
-    case S:
+    case WHITESPACE:
     case SGML_CD:
     case INCLUDES:
     case DASHMATCH:

@@ -24,7 +24,7 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 
 \/\*[^*]*\*+([^/*][^*]*\*+)*\/  /* ignore comments */
 
-[ \t\r\n\f]+            {yyTok = S; return yyTok;}
+[ \t\r\n\f]+            {yyTok = WHITESPACE; return yyTok;}
 
 "<!--"                  {yyTok = SGML_CD; return yyTok;}
 "-->"                   {yyTok = SGML_CD; return yyTok;}

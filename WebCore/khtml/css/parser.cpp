@@ -11,7 +11,7 @@
 #define yychar cssyychar
 #define yydebug cssyydebug
 #define yynerrs cssyynerrs
-#define	S	257
+#define	WHITESPACE	257
 #define	SGML_CD	258
 #define	INCLUDES	259
 #define	DASHMATCH	260
@@ -60,7 +60,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
- *  Copyright (c) 2003 Apple Computer
+ *  Copyright (C) 2004 Apple Computer, Inc.
  * 
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -328,16 +328,16 @@ static const short yyrline[] = { 0,
 
 #if YYDEBUG != 0 || defined (YYERROR_VERBOSE)
 
-static const char * const yytname[] = {   "$","error","$undefined.","S","SGML_CD",
-"INCLUDES","DASHMATCH","BEGINSWITH","ENDSWITH","CONTAINS","STRING","IDENT","HASH",
-"':'","'.'","'['","IMPORT_SYM","PAGE_SYM","MEDIA_SYM","FONT_FACE_SYM","CHARSET_SYM",
-"NAMESPACE_SYM","KHTML_RULE_SYM","KHTML_DECLS_SYM","KHTML_VALUE_SYM","IMPORTANT_SYM",
-"QEMS","EMS","EXS","PXS","CMS","MMS","INS","PTS","PCS","DEGS","RADS","GRADS",
-"MSECS","SECS","HERZ","KHERZ","DIMEN","PERCENTAGE","NUMBER","URI","FUNCTION",
-"UNICODERANGE","'{'","'}'","';'","','","'+'","'>'","'-'","'*'","'|'","']'","'='",
-"')'","'/'","'#'","'@'","stylesheet","khtml_rule","khtml_decls","khtml_value",
-"maybe_space","maybe_sgml","maybe_charset","import_list","namespace_list","rule_list",
-"rule","import","namespace","maybe_ns_prefix","string_or_uri","maybe_media_list",
+static const char * const yytname[] = {   "$","error","$undefined.","WHITESPACE",
+"SGML_CD","INCLUDES","DASHMATCH","BEGINSWITH","ENDSWITH","CONTAINS","STRING",
+"IDENT","HASH","':'","'.'","'['","IMPORT_SYM","PAGE_SYM","MEDIA_SYM","FONT_FACE_SYM",
+"CHARSET_SYM","NAMESPACE_SYM","KHTML_RULE_SYM","KHTML_DECLS_SYM","KHTML_VALUE_SYM",
+"IMPORTANT_SYM","QEMS","EMS","EXS","PXS","CMS","MMS","INS","PTS","PCS","DEGS",
+"RADS","GRADS","MSECS","SECS","HERZ","KHERZ","DIMEN","PERCENTAGE","NUMBER","URI",
+"FUNCTION","UNICODERANGE","'{'","'}'","';'","','","'+'","'>'","'-'","'*'","'|'",
+"']'","'='","')'","'/'","'#'","'@'","stylesheet","khtml_rule","khtml_decls",
+"khtml_value","maybe_space","maybe_sgml","maybe_charset","import_list","namespace_list",
+"rule_list","rule","import","namespace","maybe_ns_prefix","string_or_uri","maybe_media_list",
 "media_list","media","ruleset_list","medium","page","font_face","combinator",
 "unary_operator","ruleset","selector_list","selector","namespace_selector","simple_selector",
 "element_name","specifier_list","specifier","class","attrib_id","attrib","match",

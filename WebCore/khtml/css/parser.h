@@ -16,7 +16,7 @@ typedef union {
     Value value;
     ValueList *valueList;
 } YYSTYPE;
-#define	S	257
+#define	WHITESPACE	257
 #define	SGML_CD	258
 #define	INCLUDES	259
 #define	DASHMATCH	260

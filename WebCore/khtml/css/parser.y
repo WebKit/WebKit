@@ -3,7 +3,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
- *  Copyright (c) 2003 Apple Computer
+ *  Copyright (C) 2004 Apple Computer, Inc.
  * 
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -122,7 +122,7 @@ static int cssyylex( YYSTYPE *yylval ) {
 
 %expect 12
 
-%token S SGML_CD
+%token WHITESPACE SGML_CD
 
 %token INCLUDES
 %token DASHMATCH
@@ -280,13 +280,13 @@ khtml_value:
 
 maybe_space:
     /* empty */
-  | maybe_space S
+  | maybe_space WHITESPACE
   ;
 
 maybe_sgml:
     /* empty */
   | maybe_sgml SGML_CD
-  | maybe_sgml S
+  | maybe_sgml WHITESPACE
   ;
 
 maybe_charset:
@@ -374,7 +374,7 @@ NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
 
 maybe_ns_prefix:
 /* empty */ { $$.string = 0; }
-| IDENT S { $$ = $1; }
+| IDENT WHITESPACE { $$ = $1; }
 ;
 
 string_or_uri:

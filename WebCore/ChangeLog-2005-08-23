@@ -1,3 +1,18 @@
+2004-05-27  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Darin.
+
+	- Fix Tiger build failure.  Rename constant "S" to "WHITESPACE",
+	and change all instances of S to WHITESPACE.
+
+        * khtml/css/cssparser.cpp:
+        (DOM::CSSParser::lex): S to WHITESPACE
+        * khtml/css/parser.cpp: regenerated file
+        * khtml/css/parser.h: regenerated file
+        * khtml/css/parser.y: S to WHITESPACE
+        * khtml/css/tokenizer.cpp: regenerated file
+        * khtml/css/tokenizer.flex: S to WHITESPACE
+
 2004-05-27  John Louch  <set EMAIL_ADDRESS environment variable>
 
         Reviewed by NOBODY (OOPS!).
