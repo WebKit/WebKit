@@ -231,7 +231,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
 
     __IFInitATSGlyphVector(&_glyphVector, [string length]);
 
-    (void)ATSUConvertCharToGlyphs(_styleGroup, internalBuffer, 0, [string length], 0, (ATSGlyphVector *)&_glyphVector);
+    (void)ATSUConvertCharToGlyphs(_styleGroup, internalBuffer, 0, [string length], 0, &_glyphVector);
 
     [color set];
     [aFont set];
@@ -407,23 +407,18 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     lineHeight = ROUND_TO_INT([font ascender]) - ROUND_TO_INT([font descender]) + 1;
 
 #ifdef DIRECT_TO_CG
-    if ((errCode = ATSUCreateStyle(&_style)) != noErr)
+    ATSUStyle style;
+    
+    if ((errCode = ATSUCreateStyle(&style)) != noErr)
         [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to alloc ATSUStyle %d", self, errCode];
 
-    __IFFillStyleWithAttributes(_style, aFont);
+    __IFFillStyleWithAttributes(style, aFont);
 
-    if ((errCode = ATSUGetStyleGroup(_style, &_styleGroup)) != noErr) {
-        [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to create attribute group from ATSUStyle 0x%X %d", self, _style, errCode];
-    }            
-
-    if ((errCode = ATSUCreateStyle(&_latinStyle)) != noErr)
-        [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to alloc ATSUStyle %d", self, errCode];
-
-    __IFFillStyleWithAttributes(_latinStyle, aFont);
-
-    if ((errCode = ATSUGetStyleGroup(_latinStyle, &_latinStyleGroup)) != noErr) {
-        [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to create attribute group from ATSUStyle 0x%X %d", self, _style, errCode];
-    }            
+    if ((errCode = ATSUGetStyleGroup(style, &_styleGroup)) != noErr) {
+        [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to create attribute group from ATSUStyle 0x%X %d", self, style, errCode];
+    }
+    
+    ATSUDisposeStyle(style);
 #else
     textStorage = [[KWQTextStorage alloc] initWithFontAttribute: attributes];
     layoutManager = [[NSLayoutManager alloc] init];
@@ -500,19 +495,20 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     for (i = FIRST_CACHE_CHARACTER; i <= LAST_CACHE_CHARACTER; i++){
         latinBuffer[i] = i;
     }
-    
-    __IFInitATSGlyphVector(&_latinCacheGlyphVector, latinCount);
-    (void)ATSUConvertCharToGlyphs(_latinStyleGroup, &latinBuffer[FIRST_CACHE_CHARACTER], 0, latinCount, 0, (ATSGlyphVector *)&_latinCacheGlyphVector);
-    if (_latinCacheGlyphVector.numGlyphs != latinCount)
+
+    ATSGlyphVector latinGlyphVector;
+    ATSInitializeGlyphVector(latinCount, 0, &latinGlyphVector);
+    (void)ATSUConvertCharToGlyphs(_styleGroup, &latinBuffer[FIRST_CACHE_CHARACTER], 0, latinCount, 0, &latinGlyphVector);
+    if (latinGlyphVector.numGlyphs != latinCount)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  ascii and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
         
-    unsigned int numGlyphs = _latinCacheGlyphVector.numGlyphs;
-    characterToGlyph = (ATSGlyphRef *)calloc (1, _latinCacheGlyphVector.numGlyphs * sizeof(ATSGlyphRef));
-    glyphRecords = _latinCacheGlyphVector.firstRecord;
+    unsigned int numGlyphs = latinGlyphVector.numGlyphs;
+    characterToGlyph = (ATSGlyphRef *)calloc (1, latinGlyphVector.numGlyphs * sizeof(ATSGlyphRef));
+    glyphRecords = latinGlyphVector.firstRecord;
     for (i = 0; i < numGlyphs; i++){
         characterToGlyph[i] = glyphRecords[i].glyphID;
     }
-    __IFResetATSGlyphVector(&_latinCacheGlyphVector);
+    ATSClearGlyphVector(&latinGlyphVector);
 
 #define DEBUG_CACHE_SIZE
 #ifdef DEBUG_CACHE_SIZE
@@ -579,7 +575,7 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
         KWQDEBUGLEVEL3 (KWQ_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", internalBuffer[i], [[font displayName] cString], [font pointSize])
         
         __IFInitATSGlyphVector(&self->_glyphVector, stringLength);
-        (void)ATSUConvertCharToGlyphs(self->_styleGroup, internalBuffer, 0, stringLength, 0, (ATSGlyphVector *)&self->_glyphVector);
+        (void)ATSUConvertCharToGlyphs(self->_styleGroup, internalBuffer, 0, stringLength, 0, &self->_glyphVector);
         glyphRecords = self->_glyphVector.firstRecord;
         numGlyphs = self->_glyphVector.numGlyphs;
 
@@ -699,16 +695,8 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
 #ifdef DIRECT_TO_CG
     if (_styleGroup)
         ATSUDisposeStyleGroup(_styleGroup);
-    if (_style)
-        ATSUDisposeStyle(_style);
     if (_glyphVector.numAllocatedGlyphs > 0)
         ATSClearGlyphVector(&_glyphVector);
-    if (_latinStyleGroup)
-        ATSUDisposeStyleGroup(_latinStyleGroup);
-    if (_latinStyle)
-        ATSUDisposeStyle(_latinStyle);
-    if (_latinCacheGlyphVector.numAllocatedGlyphs > 0)
-        ATSClearGlyphVector(&_latinCacheGlyphVector);
     free(widthCache);
     free(characterToGlyph);
 #else

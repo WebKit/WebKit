@@ -1,5 +1,17 @@
 2002-03-26  Darin Adler  <darin@apple.com>
 
+	* src/kdelibs/khtml/rendering/render_list.cpp: (RenderListItem::setStyle):
+        Fix a leak (missing delete).
+
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/KWQFontMetrics.mm:
+        (-[KWQLayoutInfo drawString:atPoint:withFont:color:]): Don't bother keeping things
+        around that we only need to use once.
+	(-[KWQLayoutInfo _initializeCaches]): Create them here instead.
+        (-[KWQLayoutInfo dealloc]): Don't need to free them here.
+
+2002-03-26  Darin Adler  <darin@apple.com>
+
 	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutInfo dealloc]): Free the
         style groups, styles, and glyph vectors.
        

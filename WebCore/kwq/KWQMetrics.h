@@ -83,11 +83,7 @@ typedef float _IFGlyphWidth;
     int lineHeight;
 #ifdef DIRECT_TO_CG
     ATSStyleGroupPtr _styleGroup;
-    ATSUStyle _style;
     ATSGlyphVector _glyphVector;
-    ATSStyleGroupPtr _latinStyleGroup;
-    ATSUStyle _latinStyle;
-    ATSGlyphVector _latinCacheGlyphVector;
     unsigned int widthCacheSize;
     _IFGlyphWidth *widthCache;
     ATSGlyphRef *characterToGlyph;
