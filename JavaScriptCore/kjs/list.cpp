@@ -28,11 +28,9 @@
 namespace KJS {
 
 // tunable parameters
-const int poolSize = 32; // must be a power of 2
+const int poolSize = 384;
 const int inlineValuesSize = 4;
 
-// derived constants
-const int poolSizeMask = poolSize - 1;
 
 enum ListImpState { unusedInPool = 0, usedInPool, usedOnHeap, immortal };
 
@@ -43,13 +41,16 @@ struct ListImp : ListImpBase
     int capacity;
     ValueImp **overflow;
 
+    ListImp *nextInFreeList;
+
 #if DUMP_STATISTICS
     int sizeHighWaterMark;
 #endif
 };
 
 static ListImp pool[poolSize];
-static int poolCursor;
+static ListImp *poolFreeList;
+static int poolUsed;
 
 #if DUMP_STATISTICS
 
@@ -88,18 +89,13 @@ ListStatisticsExitLogger::~ListStatisticsExitLogger()
 static inline ListImp *allocateListImp()
 {
     // Find a free one in the pool.
-    int c = poolCursor;
-    int i = c;
-    do {
-        ListImp *imp = &pool[i];
-        ListImpState s = imp->state;
-        i = (i + 1) & poolSizeMask;
-        if (s == unusedInPool) {
-            poolCursor = i;
-            imp->state = usedInPool;
-            return imp;
-        }
-    } while (i != c);
+    if (poolUsed < poolSize) {
+	ListImp *imp = poolFreeList ? poolFreeList : &pool[0];
+	poolFreeList = imp->nextInFreeList ? imp->nextInFreeList : imp + 1;
+	imp->state = usedInPool;
+	poolUsed++;
+	return imp;
+    }
     
     ListImp *imp = new ListImp;
     imp->state = usedOnHeap;
@@ -108,10 +104,14 @@ static inline ListImp *allocateListImp()
 
 static inline void deallocateListImp(ListImp *imp)
 {
-    if (imp->state == usedInPool)
+    if (imp->state == usedInPool) {
         imp->state = unusedInPool;
-    else
+	imp->nextInFreeList = poolFreeList;
+	poolFreeList = imp;
+	poolUsed--;
+    } else {
         delete imp;
+    }
 }
 
 List::List() : _impBase(allocateListImp()), _needsMarking(false)

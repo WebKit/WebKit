@@ -1,3 +1,12 @@
+2003-04-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	Improved List pool for 3% speed improvement on cvs-js-ibench
+
+        * kjs/list.cpp: Replaced the roving cursor with a free list and
+	raised the high water mark to 384.
+
 2003-04-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Don.
