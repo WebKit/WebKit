@@ -1,3 +1,14 @@
+2003-03-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3200259 - REGRESSION: Clicking on Flash links at homestarrunner.com creates blank windows
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): Don't always
+	make the window, only do it if the frame doesn't already
+	exist. Duh.
+
 2003-03-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey and Maciej.

@@ -1026,17 +1026,21 @@ typedef struct {
 
     // FIXME - need to get rid of this window creation which
     // bypasses normal targeted link handling
-    WebController *newController = nil;
-    WebController *currentController = [self controller];
-    id wd = [currentController windowOperationsDelegate];
-    if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
-	newController = [wd controller:currentController createWindowWithRequest:nil];
-    else
-        newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:currentController createWindowWithRequest:nil];
+    WebFrame *frame = [[self webFrame] findFrameNamed:frameName];
+
+    if (frame == nil) {
+	WebController *newController = nil;
+	WebController *currentController = [self controller];
+	id wd = [currentController windowOperationsDelegate];
+	if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
+	    newController = [wd controller:currentController createWindowWithRequest:nil];
+	else
+	    newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:currentController createWindowWithRequest:nil];
         
-    [newController _setTopLevelFrameName:frameName];
-    [[newController _windowOperationsDelegateForwarder] controllerShowWindow:newController];
-    WebFrame *frame = [newController mainFrame];
+	[newController _setTopLevelFrameName:frameName];
+	[[newController _windowOperationsDelegateForwarder] controllerShowWindow:newController];
+	frame = [newController mainFrame];
+    }
 
     NSURL *URL = [request URL];
     NSString *JSString = [URL _web_scriptIfJavaScriptURL];
