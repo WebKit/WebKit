@@ -1,1 +1,10 @@
+2002-12-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by: Darin Adler
+
+	- imported PCRE 3.9 into the tree; this isn't actually compiled or
+	used yet.
+
+        * pcre/*: Added.
+
 == Rolled over to ChangeLog-2002-12-03 ==
