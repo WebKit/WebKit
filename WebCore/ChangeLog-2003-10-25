@@ -1,3 +1,13 @@
+2003-08-28  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3398463, a regression caused by an unintended line movement.
+	<br/> was no longer being treated just like <br> in HTML.
+	
+        Reviewed by gramps
+
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag):
+
 === Safari-95 ===
 
 2003-08-27  Richard Williamson   <rjw@apple.com>

@@ -936,12 +936,14 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                     // Start Tag
                     beginTag = true;
 
-                uint tagID = khtml::getTagID(ptr, len);
-                
-                // Accept empty xml tags like <br/>
+                // Accept empty xml tags like <br/>.  We trim off the "/" so that when we call
+                // getTagID, we'll look up "br" as the tag name and not "br/".
                 if(len > 1 && ptr[len-1] == '/' )
                     ptr[--len] = '\0';
-                
+
+                // Look up the tagID for the specified tag name (now that we've shaved off any
+                // invalid / that might have followed the name).
+                uint tagID = khtml::getTagID(ptr, len);
                 if (!tagID) {
 #ifdef TOKEN_DEBUG
                     QCString tmp(ptr, len+1);
