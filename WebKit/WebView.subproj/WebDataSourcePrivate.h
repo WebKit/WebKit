@@ -128,8 +128,8 @@
 
 - (WebArchive *)_archive;
 - (WebArchive *)_archiveWithMarkupString:(NSString *)markupString nodes:(NSArray *)nodes;
-- (void)_setPendingSubframeArchives:(NSArray *)subframeArchives;
-- (WebArchive *)_archiveForFrameName:(NSString *)frameName;
+- (void)_addSubframeArchives:(NSArray *)subframeArchives;
+- (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL;
 - (BOOL)_replaceSelectionWithWebArchive:(WebArchive *)archive;

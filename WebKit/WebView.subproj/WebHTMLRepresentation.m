@@ -23,7 +23,7 @@
 @public
     WebDataSource *dataSource;
     WebBridge *bridge;
-    NSData *parsedWebArchiveData;
+    NSData *parsedArchiveData;
 }
 @end
 
@@ -31,7 +31,7 @@
 
 - (void)dealloc
 {
-    [parsedWebArchiveData release];
+    [parsedArchiveData release];
     [super dealloc];
 }
 
@@ -86,7 +86,7 @@
 {
 }
 
-- (void)loadWebArchive
+- (void)loadArchive
 {
     WebArchive *archive = [[WebArchive alloc] initWithData:[_private->dataSource data]];
     WebResource *mainResource = [archive mainResource];
@@ -99,11 +99,11 @@
     
     NSData *data = [mainResource data];
     [data retain];
-    [_private->parsedWebArchiveData release];
-    _private->parsedWebArchiveData = data;
+    [_private->parsedArchiveData release];
+    _private->parsedArchiveData = data;
     
     [_private->dataSource addSubresources:subresources];
-    [_private->dataSource _setPendingSubframeArchives:subframeArchives];
+    [_private->dataSource _addSubframeArchives:subframeArchives];
     [_private->bridge closeURL];
     [_private->bridge openURL:[mainResource URL]
                        reload:NO 
@@ -118,7 +118,7 @@
 {
     if ([dataSource webFrame]) {
         if ([self _isDisplayingWebArchive]) {
-            [self loadWebArchive];
+            [self loadArchive];
         }
         // Telling the bridge we received some data and passing nil as the data is our
         // way to get work done that is normally done when the first bit of data is
@@ -135,7 +135,7 @@
 - (NSString *)documentSource
 {
     if ([self _isDisplayingWebArchive]) {
-        return [[[NSString alloc] initWithData:_private->parsedWebArchiveData encoding:NSUTF8StringEncoding] autorelease];
+        return [[[NSString alloc] initWithData:_private->parsedArchiveData encoding:NSUTF8StringEncoding] autorelease];
     } else {
         return [WebBridge stringWithData:[_private->dataSource data] textEncoding:[_private->bridge textEncoding]];
     }

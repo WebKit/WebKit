@@ -318,7 +318,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
     [newDataSource addSubresources:subresources];
-    [newDataSource _setPendingSubframeArchives:subframeArchives];
+    [newDataSource _addSubframeArchives:subframeArchives];
     
     // When we loading alternate content for an unreachable URL that we're
     // visiting in the b/f list, we treat it as a reload so the b/f list 
@@ -1936,7 +1936,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
     }
 
-    WebArchive *archive = [[self dataSource] _archiveForFrameName:[childFrame name]];
+    WebArchive *archive = [[self dataSource] _popSubframeArchiveWithName:[childFrame name]];
     if (archive) {
         [childFrame loadArchive:archive];
     } else {

@@ -1,3 +1,20 @@
+2004-04-19  Chris Blumenberg  <cblu@apple.com>
+
+	Added support for pasting frames via WebArchives.
+
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _addSubframeArchives:]): renamed, now allows subframe archives to be added at anytime
+        (-[WebDataSource _popSubframeArchiveWithName:]): renamed, now deletes the returned subframe to consume less memory
+        (-[WebDataSource _replaceSelectionWithWebArchive:]): added support for subframes
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadRequest:subresources:subframeArchives:]): call renamed methods
+        (-[WebFrame _loadURL:intoChild:]): ditto
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation loadArchive]): ditto
+
 === Safari-137 ===
 
 2004-04-16  Richard Williamson   <rjw@apple.com>

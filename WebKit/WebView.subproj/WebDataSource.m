@@ -182,15 +182,12 @@
     }
 }
 
-- (void)_setPendingSubframeArchives:(NSArray *)subframeArchives
+- (void)_addSubframeArchives:(NSArray *)subframeArchives
 {
-    ASSERT(_private->pendingSubframeArchives == nil);
-
-    if (subframeArchives == nil) {
-        return;
+    if (_private->pendingSubframeArchives == nil) {
+        _private->pendingSubframeArchives = [[NSMutableDictionary alloc] init];
     }
     
-    _private->pendingSubframeArchives = [[NSMutableDictionary alloc] init];
     NSEnumerator *enumerator = [subframeArchives objectEnumerator];
     WebArchive *archive;
     while ((archive = [enumerator nextObject]) != nil) {
@@ -201,9 +198,15 @@
     }
 }
 
-- (WebArchive *)_archiveForFrameName:(NSString *)frameName
+- (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName
 {
-    return [_private->pendingSubframeArchives objectForKey:frameName];
+    ASSERT(frameName != nil);
+    
+    WebArchive *archive = [[[_private->pendingSubframeArchives objectForKey:frameName] retain] autorelease];
+    if (archive != nil) {
+        [_private->pendingSubframeArchives removeObjectForKey:frameName];
+    }
+    return archive;
 }
 
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
@@ -229,6 +232,7 @@
         if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
             NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
             [self addSubresources:[archive subresources]];
+            [self _addSubframeArchives:[archive subframeArchives]];
             [self _replaceSelectionWithMarkupString:markupString baseURL:[mainResource URL]];
             [markupString release];
             return YES;
