@@ -1,3 +1,10 @@
+2003-03-13  Darin Adler  <darin@apple.com>
+
+        - remove mistaken inlining to fix build with newer versions of gcc
+
+        * khtml/rendering/render_object.cpp: (RenderObject::container):
+        Don't mark this inline.
+
 2003-03-13  David Hyatt  <hyatt@apple.com>
 
 	This is a fix to stop creating textruns for the whitespace at the

@@ -1014,8 +1014,7 @@ RenderRoot* RenderObject::root() const
     return static_cast<RenderRoot*>( o );
 }
 
-// Inlined because it is called by setLayouted below.
-inline RenderObject *RenderObject::container() const
+RenderObject *RenderObject::container() const
 {
     EPosition pos = m_style->position();
     RenderObject *o = 0;
