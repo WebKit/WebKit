@@ -810,6 +810,10 @@
 
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
 {
+    if (isComplete) {
+        // Can't call [self _bridge] because we might not have commited yet
+        [[[self webFrame] _bridge] end];
+    }        
     [[self webFrame] _receivedMainResourceError:error];
     [[self _webView] _mainReceivedError:error
                            fromDataSource:self

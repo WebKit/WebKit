@@ -1064,6 +1064,10 @@ private slots:
   void slotIncZoom();
   void slotDecZoom();
 
+#if APPLE_CHANGES
+  void childBegin();
+#endif
+
   void slotLoadImages();
 
   /**

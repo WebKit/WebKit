@@ -1,3 +1,13 @@
+2004-08-17  Trey Matteson  <trey@apple.com>
+
+	3764147 - failure of subframe to load leaves links in parent doc broken
+
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+	Need to call [bridge end] in the case of an error, so WC can clean up.
+
 === Safari-157 ===
 
 2004-08-15  Richard Williamson   <rjw@apple.com>
