@@ -76,12 +76,10 @@
 
 - (void)didFinishLoading
 {
-    NSImage *icon = nil;
+    NSImage *icon;
     NS_DURING
         NSData *data = [self resourceData];
-        if ([data length] > 0) {
-            icon = [[NSImage alloc] initWithData:data];
-        }
+        icon = [data length] > 0 ? [[NSImage alloc] initWithData:data] : nil;
     NS_HANDLER
         icon = nil;
     NS_ENDHANDLER

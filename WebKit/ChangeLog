@@ -1,5 +1,13 @@
 2004-03-01  Chris Blumenberg  <cblu@apple.com>
 
+        Reviewed by darin.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]): rejigger handle code to avoid Deployment failure
+        * WebKit.pbproj/project.pbxproj:
+
+2004-03-01  Chris Blumenberg  <cblu@apple.com>
+
 	- Made WebResource loading not use Foundation at all. This allows "Mail Page" and paste to more directly load subresources without any indirection involving NSURLConnection and the Foundation cache.
 	- Made WebIconLoader a subclass of WebBaseResourceHandleDelegate. This makes favicons appear in the activity window among other things.
 
