@@ -134,25 +134,24 @@ void RenderListItem::setStyle(RenderStyle *_style)
 {
     RenderBlock::setStyle(_style);
 
-    RenderStyle *newStyle = new RenderStyle();
-    newStyle->ref();
-    
-    newStyle->inheritFrom(style());
-   
-    if (!m_marker && style()->listStyleType() != LNONE) {
-        m_marker = new (renderArena()) RenderListMarker();
-        m_marker->setStyle(newStyle);
-        m_marker->setListItem(this);
-        _markerInstalledInParent = false;
-    } else if ( m_marker && style()->listStyleType() == LNONE) {
+    if (style()->listStyleType() != LNONE ||
+        (style()->listStyleImage() && !style()->listStyleImage()->isErrorImage())) {
+        RenderStyle *newStyle = new RenderStyle();
+        newStyle->ref();
+        newStyle->inheritFrom(style());
+        if (!m_marker) {
+            m_marker = new (renderArena()) RenderListMarker();
+            m_marker->setStyle(newStyle);
+            m_marker->setListItem(this);
+            _markerInstalledInParent = false;
+        }
+        else
+            m_marker->setStyle(newStyle);
+        newStyle->deref();
+    } else if (m_marker) {
         m_marker->detach(renderArena());
         m_marker = 0;
     }
-    else if ( m_marker ) {
-        m_marker->setStyle(newStyle);
-    }
-
-    newStyle->deref();
 }
 
 RenderListItem::~RenderListItem()

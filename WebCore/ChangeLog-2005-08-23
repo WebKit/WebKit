@@ -1,3 +1,14 @@
+2003-08-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3374566, list bullets don't display if list-style-type is none but a list-style-image
+	is specified.  The spec says list-style-type: none does not apply to list-style-image,
+	and this fixes Microsoft's list bullet on their security pages.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle):
+
 2003-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
