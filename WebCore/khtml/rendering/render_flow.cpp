@@ -413,7 +413,21 @@ QRect RenderFlow::getAbsoluteRepaintRect()
             m_layer->relativePositionOffset(left, top);
 
         QRect r(-ow+left, -ow+top, width()+ow*2, height()+ow*2);
-        containingBlock()->computeAbsoluteRepaintRect(r);
+        RenderBlock* cb = containingBlock();
+        if (cb->hasOverflowClip()) {
+            // cb->height() is inaccurate if we're in the middle of a layout of |cb|, so use the
+            // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
+            // anyway if its size does change.
+            int x = r.left();
+            int y = r.top();
+            QRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
+            cb->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
+            QRect repaintRect(x, y, r.width(), r.height());
+            r = repaintRect.intersect(boxRect);
+        }
+
+        cb->computeAbsoluteRepaintRect(r);
+        
         if (ow) {
             for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
                 if (!curr->isText()) {
@@ -427,7 +441,7 @@ QRect RenderFlow::getAbsoluteRepaintRect()
                 r = r.unite(contRect);
             }
         }
-
+        
         return r;
     }
     else {

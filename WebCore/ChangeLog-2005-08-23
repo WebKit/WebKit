@@ -1,3 +1,19 @@
+2004-09-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for hitlist bug, crash when deleting.  
+
+	Also fix repaint bug when inlines are inside overflow:auto/scroll regions.
+	
+        Reviewed by kocienda
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::DeleteSelectionCommandImpl):
+        (khtml::DeleteSelectionCommandImpl::doApply):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::removeChild):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::getAbsoluteRepaintRect):
+
 2004-09-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

@@ -1274,12 +1274,20 @@ void DeleteSelectionCommandImpl::doApply()
     // has completed.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSComputedStyleDeclarationImpl endingStyle(endingPosition.node());
-    endingStyle.diff(style);
-    document()->part()->setTypingStyle(style);
-    setTypingStyle(style);
-    style->deref();
-
+    if (startNode == endingPosition.node())
+        document()->part()->setTypingStyle(0);
+    else {
+        CSSComputedStyleDeclarationImpl endingStyle(endingPosition.node());
+        endingStyle.diff(style);
+        if (!style->length()) {
+            style->deref();
+            style = 0;
+        }
+        document()->part()->setTypingStyle(style);
+        setTypingStyle(style);
+    }
+    if (style)
+        style->deref();
     setEndingSelection(endingPosition);
 }
 
