@@ -1060,16 +1060,10 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
             ushort curchar;
             while(!src.isEmpty()) {
                 curchar = *src;
-                if(curchar > ' ') {
+                // In this mode just ignore any quotes we encounter and treat them like spaces.
+                if (curchar > ' ' && curchar != '\'' && curchar != '"') {
                     if (curchar == '<' || curchar == '>')
                         tag = SearchEnd;
-                    else if(atespace && (curchar == '\'' || curchar == '"'))
-                    {
-                        tag = SearchValue;
-                        *dest++ = 0;
-                        attrName = QString::null;
-                        attrNamePresent = false;
-                    }
                     else
                         tag = AttributeName;
 
@@ -1150,20 +1144,14 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
             bool atespace = false;
             while(!src.isEmpty()) {
                 curchar = src->unicode();
-                if(curchar > ' ') {
+                // In this mode just ignore any quotes we encounter and treat them like spaces.
+                if (curchar > ' ' && curchar != '\'' && curchar != '"') {
                     if(curchar == '=') {
 #ifdef TOKEN_DEBUG
                         kdDebug(6036) << "found equal" << endl;
 #endif
                         tag = SearchValue;
                         ++src;
-                    }
-                    else if(atespace && (curchar == '\'' || curchar == '"'))
-                    {
-                        tag = SearchValue;
-                        *dest++ = 0;
-                        attrName = QString::null;
-                        attrNamePresent = false;
                     }
                     else {
                         currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, emptyAtom);

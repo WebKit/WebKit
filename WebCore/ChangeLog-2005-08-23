@@ -1,3 +1,13 @@
+2005-01-11  David Hyatt  <hyatt@apple.com>
+
+        Fix for 3882299, missing content on gibson.com.  Change our handling of " and ' in certain states of the parser to match
+	other browsers.
+	
+        Reviewed by Maciej
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag):
+
 2005-01-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3930733> Mail prints second page of email blank
