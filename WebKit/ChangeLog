@@ -1,3 +1,12 @@
+2004-09-13  Richard Williamson   <rjw@apple.com>
+
+        Fixed snafu from 3782533 checkin.
+        
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+
 2004-09-12  Chris Blumenberg  <cblu@apple.com>
 
 	Support for: <rdar://problem/3794790> drop rate or time remaining from download status when window is too small to fit it
