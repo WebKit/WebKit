@@ -599,15 +599,24 @@
     NSRange r1, r2, r3;
     uint i;
 
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    for (i = 0; i < [attributesArray count]; i++){
+    // Parse the attributesArray into key/value pairs.
+    // Store them in a dictionary so they can be passed to WebPlugins.
+    // Store them in ordered arrays so they can be passed to Netscape plug-ins.
+    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
+    NSMutableArray *attributeKeys = [[NSMutableArray alloc] init];
+    NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
+    for (i = 0; i < [attributesArray count]; i++) {
         NSString *attribute = [attributesArray objectAtIndex:i];
         if ([attribute rangeOfString:@"__KHTML__"].length == 0) {
-            r1 = [attribute rangeOfString:@"="]; // parse out attributes and values
+            r1 = [attribute rangeOfString:@"="];
             r2 = [attribute rangeOfString:@"\""];
             r3.location = r2.location + 1;
             r3.length = [attribute length] - r2.location - 2; // don't include quotes
-            [attributes setObject:[attribute substringWithRange:r3] forKey:[attribute substringToIndex:r1.location]];
+            NSString *key = [attribute substringToIndex:r1.location];
+            NSString *value = [attribute substringWithRange:r3];
+            [attributes setObject:value forKey:key];
+            [attributeKeys addObject:key];
+            [attributeValues addObject:value];
         }
     }
 
@@ -624,31 +633,31 @@
     }
 
     if (pluginPackage) {
-        if([pluginPackage isKindOfClass:[WebPluginPackage class]]){
+        if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
             view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
                                     attributes:attributes
                                        baseURL:[NSURL _web_URLWithString:baseURL]];
-        }
-        else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
+        } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:[NSURL _web_URLWithString:URL]
                                                                  baseURL:[NSURL _web_URLWithString:baseURL]
                                                                 MIMEType:MIMEType
-                                                              attributes:attributes] autorelease];
-        }else{
+                                                           attributeKeys:attributeKeys
+                                                         attributeValues:attributeValues] autorelease];
+        } else {
             [NSException raise:NSInternalInconsistencyException
                         format:@"Plugin package class not recognized"];
         }
-    }else{
+    } else {
         errorCode = WebKitErrorCannotFindPlugin;
     }
 
-    if(!errorCode && !view){
+    if (!errorCode && !view) {
         errorCode = WebKitErrorCannotLoadPlugin;
     }
 
-    if(errorCode){
+    if (errorCode) {
         WebPlugInError *error = [WebPlugInError pluginErrorWithCode:errorCode
                                                          contentURL:URL
                                                       pluginPageURL:[attributes objectForKey:@"pluginspage"]
@@ -659,6 +668,10 @@
     }
 
     ASSERT(view);
+
+    [attributes release];
+    [attributeKeys release];
+    [attributeValues release];
     
     return view;
 }
@@ -672,7 +685,7 @@
     pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
 
     if (pluginPackage) {
-        if([pluginPackage isKindOfClass:[WebPluginPackage class]]){
+        if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
             NSMutableDictionary *theAttributes = [NSMutableDictionary dictionary];
             [theAttributes addEntriesFromDictionary:attributes];
             [theAttributes setObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.width] forKey:@"width"];
@@ -681,21 +694,33 @@
             view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
                                     attributes:theAttributes
                                        baseURL:[NSURL _web_URLWithString:baseURL]];
-        }
-        else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
+        } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
+            // Convert the attributes dictionary to 2 string arrays because this is what Netscape plug-ins expect.
+            NSMutableArray *attributeKeys = [[NSMutableArray alloc] init];
+            NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
+            NSEnumerator *enumerator = [attributes keyEnumerator];
+            NSString *key;
+            
+            while ((key = [enumerator nextObject]) != nil) {
+                [attributeKeys addObject:key];
+                [attributeValues addObject:[attributes objectForKey:key]];
+            }
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:theFrame
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:nil
                                                                  baseURL:[NSURL _web_URLWithString:baseURL]
                                                                 MIMEType:MIMEType
-                                                              attributes:attributes] autorelease];
-        }else{
+                                                           attributeKeys:attributeKeys
+                                                         attributeValues:attributeValues] autorelease];
+            [attributeKeys release];
+            [attributeValues release];
+        } else {
             [NSException raise:NSInternalInconsistencyException
                         format:@"Plugin package class not recognized"];
         }
     }
 
-    if(!view){
+    if (!view) {
         WebPlugInError *error = [WebPlugInError pluginErrorWithCode:WebKitErrorJavaUnavailable
                                                          contentURL:nil
                                                       pluginPageURL:nil

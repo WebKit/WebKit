@@ -1,5 +1,23 @@
 2003-04-08  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3221128 - Double grey lines on macromedia.com home page
+
+	Flash relies on the ordering of attributes in the EMBED tag (which is really stupid). salign must come after scale.
+	Changed our plug-in API's to preserve orderings using arrays rather than lose orderings when using dictionaries. 
+
+        Reviewed by trey.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.h:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView initWithFrame:plugin:URL:baseURL:MIMEType:attributeKeys:attributeValues:]): take attributeKeys and attributeValues instead of a dictionary
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]): create attributeKeys and attributeValues to pass to the above method
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]): create attributeKeys and attributeValues to pass to the above method
+
+2003-04-08  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3220463 - REGRESSION: PDF viewer plug-in does not display (worked in 69 and previous)
 
         Reviewed by darin.

@@ -70,7 +70,7 @@
 - (void)setPlugin:(WebNetscapePluginPackage *)thePlugin;
 - (void)setMIMEType:(NSString *)theMIMEType;
 - (void)setBaseURL:(NSURL *)theBaseURL;
-- (void)setAttributes:(NSDictionary *)attributes;
+- (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
 - (void)setMode:(int)theMode;
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;

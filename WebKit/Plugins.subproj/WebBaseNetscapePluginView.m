@@ -863,31 +863,32 @@ typedef struct {
     baseURL = [theBaseURL retain];
 }
 
-- (void)setAttributes:(NSDictionary *)attributes
+- (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
 {
-    LOG(Plugins, "%@", attributes);
-
-    // Convert arguments dictionary to 2 string arrays.
+    ASSERT([keys count] == [values count]);
+    
+    // Convert the attributes to 2 C string arrays.
     // These arrays are passed to NPP_New, but the strings need to be
     // modifiable and live the entire life of the plugin.
 
     // The Java plug-in requires the first argument to be the base URL
     if ([MIMEType isEqualToString:@"application/x-java-applet"]) {
-        cAttributes = (char **)malloc(([attributes count] + 1) * sizeof(char *));
-        cValues = (char **)malloc(([attributes count] + 1) * sizeof(char *));
+        cAttributes = (char **)malloc(([keys count] + 1) * sizeof(char *));
+        cValues = (char **)malloc(([values count] + 1) * sizeof(char *));
         cAttributes[0] = strdup("DOCBASE");
         cValues[0] = strdup([[baseURL absoluteString] UTF8String]);
         argsCount++;
     } else {
-        cAttributes = (char **)malloc([attributes count] * sizeof(char *));
-        cValues = (char **)malloc([attributes count] * sizeof(char *));
+        cAttributes = (char **)malloc([keys count] * sizeof(char *));
+        cValues = (char **)malloc([values count] * sizeof(char *));
     }
 
-    NSEnumerator *e = [attributes keyEnumerator];
-    NSString *key;
-    while ((key = [e nextObject])) {
-        cAttributes[argsCount] = strdup([key UTF8String]);
-        cValues[argsCount] = strdup([[attributes objectForKey:key] UTF8String]);
+    unsigned i;
+    unsigned count = [keys count];
+    for (i = 0; i < count; i++) {
+        cAttributes[argsCount] = strdup([[keys objectAtIndex:i] UTF8String]);
+        cValues[argsCount] = strdup([[values objectAtIndex:i] UTF8String]);
+        LOG(Plugins, "%@ = %@", [keys objectAtIndex:i], [values objectAtIndex:i]);
         argsCount++;
     }
 }

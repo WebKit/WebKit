@@ -21,7 +21,8 @@
                 URL:(NSURL *)theURL
             baseURL:(NSURL *)theBaseURL
            MIMEType:(NSString *)MIME
-         attributes:(NSDictionary *)attributes
+      attributeKeys:(NSArray *)keys
+    attributeValues:(NSArray *)values
 {
     [super initWithFrame:frame];
 
@@ -29,7 +30,7 @@
     
     [self setMIMEType:MIME];
     [self setBaseURL:theBaseURL];
-    [self setAttributes:attributes];
+    [self setAttributeKeys:keys andValues:values];
     [self setMode:NP_EMBED];
     
     // load the plug-in if it is not already loaded
