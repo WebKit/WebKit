@@ -15,6 +15,7 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebUIDelegatePrivate.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
 
@@ -109,18 +110,6 @@
 {
     [self adjustFrameSize];    
     needsLayout = NO;
-}
-
-- (void)beginDocument
-{
-    [self adjustFrameSize];
-    [super beginDocument];
-}
-
-- (void)endDocument
-{
-    [super endDocument];
-    [self adjustFrameSize];
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource
@@ -277,5 +266,28 @@
 {
     return [rep image];
 }
+
+#pragma mark PRINTING
+
+- (void)drawPageBorderWithSize:(NSSize)borderSize
+{
+    ASSERT(NSEqualSizes(borderSize, [[[NSPrintOperation currentOperation] printInfo] paperSize]));
+    // FIXME: How to determine the number of pages required to print the whole image?
+    [[self webView] _drawHeaderAndFooter];
+}
+
+- (void)beginDocument
+{
+    [self adjustFrameSize];
+    [[self webView] _adjustPrintingMarginsForHeaderAndFooter];
+    [super beginDocument];
+}
+
+- (void)endDocument
+{
+    [super endDocument];
+    [self adjustFrameSize];
+}
+
 
 @end

@@ -1,3 +1,14 @@
+2004-01-28  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject):
+        Increment s in the while() clause so it is incremented even
+        after a continue statement. This fixes an infinite loop I ran
+        into in the printing code path at certain scaled print sizes
+        on certain pages.
+
 2004-01-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3543041>: when pasting an image, cursor should be after the image, not before

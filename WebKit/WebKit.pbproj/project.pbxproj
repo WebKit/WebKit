@@ -333,6 +333,7 @@
 				BE887C01056D3A6E009BB3E7,
 				84723BE5056D719E0044BFEA,
 				830E81850585375700AD0891,
+				EDD1A5C805C83987008E3150,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -450,6 +451,7 @@
 				BE887C02056D3A6E009BB3E7,
 				84723BE6056D719E0044BFEA,
 				830E81860585375700AD0891,
+				EDD1A5C905C83987008E3150,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -556,6 +558,8 @@
 				8398847B03426FB000BC5F5E,
 				ED2B2474033A2DA800C1A526,
 				ED2B2475033A2DA800C1A526,
+				EDD1A5C605C83987008E3150,
+				EDD1A5C705C83987008E3150,
 				BE6DC39904C62C4E004D0EF6,
 				BE6DC39A04C62C4E004D0EF6,
 				F508946902B71D59018A9CD4,
@@ -3127,6 +3131,34 @@
 		};
 		ED2B2477033A2DA800C1A526 = {
 			fileRef = ED2B2475033A2DA800C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		EDD1A5C605C83987008E3150 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebNSPrintOperationExtras.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		EDD1A5C705C83987008E3150 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebNSPrintOperationExtras.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		EDD1A5C805C83987008E3150 = {
+			fileRef = EDD1A5C605C83987008E3150;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		EDD1A5C905C83987008E3150 = {
+			fileRef = EDD1A5C705C83987008E3150;
 			isa = PBXBuildFile;
 			settings = {
 			};

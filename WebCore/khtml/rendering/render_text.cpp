@@ -776,9 +776,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
         }
 #endif
 
-        s = s->nextTextBox();
-        
-    } while (s && s->checkVerticalPoint(y, ty, h));
+    } while (((s = s->nextTextBox()) != 0) && s->checkVerticalPoint(y, ty, h));
 
 #if APPLE_CHANGES
     } // end of for loop

@@ -1,3 +1,64 @@
+2004-01-28  John Sullivan  <sullivan@apple.com>
+
+        More header/footer work: refactored the header/footer code so it could
+        be easily reused by other WebDocument classes; used it from WebImageView
+        and WebTextView; removed the page count parameters because it's possible
+        (though currently nasty, see 3543078) to determine this in the client.
+
+        Reviewed by Dave.
+
+        * Misc.subproj/WebNSPrintOperationExtras.h Added.
+        * Misc.subproj/WebNSPrintOperationExtras.m Added.
+        (-[NSPrintOperation _web_pageSetupScaleFactor]):
+        new convenience method.
+                
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        Removed page index and page count parameters from delegate methods.
+        
+        * WebView.subproj/WebViewPrivate.h:
+        New private category for header/footer printing methods so that different
+        WebDocument methods can share almost all of the code.
+        
+        * WebView.subproj/WebView.m:
+        (-[WebView _headerHeight]):
+        (-[WebView _footerHeight]):
+        (-[WebView _drawHeaderInRect:]):
+        (-[WebView _drawFooterInRect:]):
+        (-[WebView _adjustPrintingMarginsForHeaderAndFooter]):
+        (-[WebView _drawHeaderAndFooter]):
+        Moved all of these methods here, formerly in WebHTMLView. Removed the
+        page index and page count parameters.
+
+        * WebView.subproj/WebHTMLView.m:
+        Removed all the header/footer code that's now in WebView.m, and the
+        method that's now -[NSPrintOperation _web_pageSetupScaleFactor]
+        (-[WebHTMLView _setPrinting:minimumPageWidth:maximumPageWidth:adjustViewSize:]):
+        call methods differently that have now been moved
+        (-[WebHTMLView _scaleFactorForPrintOperation:]):
+        ditto
+        (-[WebHTMLView knowsPageRange:]):
+        ditto
+        (-[WebHTMLView drawPageBorderWithSize:]):
+        now just turns around and calls -[WebView _drawHeaderAndFooter]
+        
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView drawPageBorderWithSize:]):
+        new method, just calls -[WebView _drawHeaderAndFooter]
+        (-[WebImageView beginDocument]):
+        now calls -[WebView _adjustPrintMarginsForHeaderAndFooter], also moved in file.
+        (-[WebImageView endDocument]):
+        just moved in file.
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView drawPageBorderWithSize:]):
+        new method, just calls -[WebView _drawHeaderAndFooter]        
+        (-[WebTextView knowsPageRange:]):
+        overridden to call -[WebView _adjustPrintMarginsForHeaderAndFooter]
+        
+        * WebKit.pbproj/project.pbxproj:
+        updated for added files
+
+
 2004-01-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3197222>: need context menu items for back, forward, refresh.

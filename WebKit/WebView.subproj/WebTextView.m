@@ -289,6 +289,20 @@
     return resign;
 }
 
+#pragma mark PRINTING
+
+- (void)drawPageBorderWithSize:(NSSize)borderSize
+{
+    ASSERT(NSEqualSizes(borderSize, [[[NSPrintOperation currentOperation] printInfo] paperSize]));
+    [[[self _web_parentWebFrameView] _webView] _drawHeaderAndFooter];
+}
+
+- (BOOL)knowsPageRange:(NSRangePointer)range {
+    // Waiting for beginDocument to adjust the printing margins is too late.
+    [[[self _web_parentWebFrameView] _webView] _adjustPrintingMarginsForHeaderAndFooter];
+    return [super knowsPageRange:range];
+}
+
 @end
 
 @implementation WebTextView (TextSizing)
