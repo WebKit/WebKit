@@ -74,6 +74,7 @@ using KParts::ReadOnlyPart;
 using KParts::URLArgs;
 
 NSEvent *KWQKHTMLPart::_currentEvent = nil;
+NSResponder *KWQKHTMLPart::_firstResponderAtMouseDownTime = nil;
 
 void KHTMLPart::completed()
 {
@@ -725,8 +726,11 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling, because we don't want to do it until
         // we know we didn't hit a widget.
-        NSView *documentView = view()->getDocumentView();
-        [[documentView window] makeFirstResponder:documentView];
+        NSView *view = d->m_view->getDocumentView();
+        NSWindow *window = [view window];
+        if ([window firstResponder] != view) {
+            [window makeFirstResponder:view];
+        }
         
         KHTMLPart::khtmlMousePressEvent(event);
     }
@@ -764,11 +768,31 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
         ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
         return false;
     }
-
-    // Normally [NSWindow sendEvent:] handles this.
-    // But in our case, the event was sent to the view representing the entire web page.
-    if ([view acceptsFirstResponder]) {
-        [[view window] makeFirstResponder:view];
+    
+    NSWindow *window = [view window];
+    if ([window firstResponder] == view) {
+        // In the case where we just became first responder, we should send the mouseDown:
+        // to the NSTextField, not the NSTextField's editor. This code makes sure that happens.
+        // If we don't do this, we see a flash of selected text when clicking in a text field.
+        if (_firstResponderAtMouseDownTime != view && [view isKindOfClass:[NSTextView class]]) {
+            NSView *superview = view;
+            while (superview != nodeView) {
+                superview = [superview superview];
+                ASSERT(superview);
+                if ([superview isKindOfClass:[NSControl class]]) {
+                    if ([(NSControl *)superview currentEditor] == view) {
+                        view = superview;
+                    }
+                    break;
+                }
+            }
+        }
+    } else {
+        // Normally [NSWindow sendEvent:] handles setting the first responder.
+        // But in our case, the event was sent to the view representing the entire web page.
+        if ([view acceptsFirstResponder]) {
+            [window makeFirstResponder:view];
+        }
     }
 
     ASSERT(!_sendingEventToSubview);
@@ -955,12 +979,17 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
 
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = event;
+    
+    NSResponder *oldFirstResponderAtMouseDownTime = _firstResponderAtMouseDownTime;
+    _firstResponderAtMouseDownTime = [[[d->m_view->getView() window] firstResponder] retain];
 
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
         buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
     d->m_view->viewportMousePressEvent(&kEvent);
     
     _currentEvent = oldCurrentEvent;
+    [_firstResponderAtMouseDownTime release];
+    _firstResponderAtMouseDownTime = oldFirstResponderAtMouseDownTime;
 }
 
 void KWQKHTMLPart::mouseDragged(NSEvent *event)

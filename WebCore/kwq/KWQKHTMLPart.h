@@ -43,13 +43,15 @@ namespace KJS {
 #ifdef __OBJC__
 @class NSAttributedString;
 @class NSEvent;
+@class NSResponder;
 @class NSView;
 @class WebCoreBridge;
 #else
 class NSAttributedString;
+class NSEvent;
+class NSResponder;
 class NSView;
 class WebCoreBridge;
-class NSEvent;
 #endif
 
 enum KWQSelectionDirection {
@@ -193,6 +195,7 @@ private:
     bool _sendingEventToSubview;
     
     static NSEvent *_currentEvent;
+    static NSResponder *_firstResponderAtMouseDownTime;
 
     static QPtrList<KWQKHTMLPart> &mutableInstances();
 

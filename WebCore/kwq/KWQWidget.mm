@@ -196,7 +196,11 @@ void QWidget::setFocus()
         renderWidget->view()->addChild(this, x, y);
     }
     
-    [[getView() window] makeFirstResponder:getView()];
+    NSView *view = getView();
+    NSWindow *window = [view window];
+    if ([window firstResponder] != view && [view acceptsFirstResponder]) {
+        [window makeFirstResponder:view];
+    }
 }
 
 void QWidget::clearFocus()

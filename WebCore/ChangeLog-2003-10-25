@@ -1,3 +1,20 @@
+2002-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3127900 -- REGRESSION: text fields select all their text when clicked on with the mouse
+
+        * kwq/KWQKHTMLPart.h: Add _firstResponderAtMouseDownTime.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMousePressEvent): Don't call makeFirstResponder: if it's already set.
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Using _firstResponderAtMouseDownTime, catch the
+	case where an NSTextField's editor was just created and became first responder. In those cases,
+	pass the mouseDown: to the text field, not the newly created editor. Even though it shouldn't make
+	a difference it does. Also don't makeFirstResponder: if it's already set.
+        (KWQKHTMLPart::mouseDown): Set _firstResponderAtMouseDownTime.
+
+        * kwq/KWQWidget.mm: (QWidget::setFocus): Don't call makeFirstResponder: if it's already set.
+
 2002-12-15  David Hyatt  <hyatt@apple.com>
 
 	Make sure framesets don't get built twice when FOUC delays
