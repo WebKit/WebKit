@@ -797,8 +797,6 @@ void RenderSelect::updateFromElement()
         m_optionsChanged = true;
     }
 
-    /* XXX */ m_optionsChanged = true;
-
     // update contents listbox/combobox based on options in m_element
     if ( m_optionsChanged ) {
         if (element()->m_recalcListItems)
