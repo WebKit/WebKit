@@ -2327,8 +2327,11 @@ void KHTMLPart::setSelection(const Selection &s, bool closeTyping)
         clearCaretRectIfNeeded(); 
         setFocusNodeIfNeeded(s);
 #if APPLE_CHANGES
-        // Mark misspellings in the soon-to-be previous selection.
-        KWQ(this)->markMisspellingsInSelection(d->m_selection);
+        // Mark misspellings in the soon-to-be previous selection.  When typing we check spelling
+        // elsewhere, so don't redo it here
+        if (closeTyping) {
+            KWQ(this)->markMisspellingsInSelection(d->m_selection);
+        }
 #endif
         d->m_selection = s;
         notifySelectionChanged(closeTyping);

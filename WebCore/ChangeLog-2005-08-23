@@ -1,3 +1,13 @@
+2004-08-20  Trey Matteson  <trey@apple.com>
+
+        Fixing: Spellchecker called once or twice for every char typed.
+
+        Reviewed by Ken
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection):  Don't do any spell checking if we're typing (it's done
+        elsewhere, in markMisspellingsAfterTyping)
+ 
 2004-08-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
