@@ -1,3 +1,5 @@
+=== Safari-124 ===
+
 2004-01-16  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3531983, fixed positioning not working for widgets.  Make sure to move widgets at paint time

@@ -1,3 +1,5 @@
+=== Safari-124 ===
+
 2004-01-16  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3525853.  We weren't handling mapping to overloaded Java
