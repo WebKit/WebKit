@@ -1,5 +1,29 @@
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Added more editing layout tests.
+
+        * layout-tests/editing/deleting/delete-tab-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-tab-001.html: Added.
+        * layout-tests/editing/deleting/delete-tab-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-tab-002.html: Added.
+        * layout-tests/editing/deleting/delete-tab-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-tab-003.html: Added.
+        * layout-tests/editing/deleting/delete-tab-004-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-tab-004.html: Added.
+        * layout-tests/editing/editing.js: Fixed a little bug in one of the "delayed" commands.
+        * layout-tests/editing/inserting/insert-tab-001-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-tab-001.html: Added.
+        * layout-tests/editing/inserting/insert-tab-002-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-tab-002.html: Added.
+        * layout-tests/editing/inserting/insert-tab-003-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-tab-003.html: Added.
+        * layout-tests/editing/inserting/insert-tab-004-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-tab-004.html: Added.
+
+2004-08-31  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:

@@ -183,7 +183,7 @@ function execTypeCharacterCommand(c) {
 }
 function typeCharacterCommand(c) {
     if (commandDelay > 0) {
-        window.setTimeout(execTypeCharacterCommand, commandCount * commandDelay);
+        window.setTimeout(execTypeCharacterCommand, commandCount * commandDelay, c);
         commandCount++;
     }
     else {
