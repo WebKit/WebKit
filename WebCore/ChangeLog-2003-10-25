@@ -1,3 +1,17 @@
+2003-04-07  David Hyatt  <hyatt@apple.com>
+
+	* khtml/html/htmlparser.cpp:
+	(KHTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+
+	This is a patch to the parser to prevent residual 
+	style from creating illegal constructs according to the DTD.
+	For now, it will just bail on performing the fixup if an
+	illegal construct would be created.
+
+	This fixes the regression #3219944.
+
+	Reviewed by darin
+	
 2003-04-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -1262,6 +1262,13 @@ void KHTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     NodeImpl* residualElem = prev->node;
     NodeImpl* blockElem = prevMaxElem ? prevMaxElem->node : current;
     NodeImpl* parentElem = elem->node;
+
+    // Check to see if the reparenting that is going to occur is allowed according to the DOM.
+    // FIXME: We should either always allow it or perform an additional fixup instead of
+    // just bailing here.
+    // Example: <p><font><center>blah</font></center></p> isn't doing a fixup right now.
+    if (!parentElem->childAllowed(blockElem))
+        return;
     
     if (maxElem->node->parentNode() != elem->node) {
         // Walk the stack and remove any elements that aren't residual style tags.  These
@@ -1348,7 +1355,7 @@ void KHTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     
     // Step 5: Reparent |blockElem|.  Now the full attachment of the fixed up tree takes place.
     parentElem->appendChild(blockElem, exceptionCode);
-    
+        
     // Step 6: Elide |elem|, since it is effectively no longer open.  Also update
     // the node associated with the previous stack element so that when it gets popped,
     // it doesn't make the residual element the next current node.
