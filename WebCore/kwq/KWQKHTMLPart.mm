@@ -3822,20 +3822,27 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
     }
 }
 
-void KWQKHTMLPart::registerCommandForUndo(const EditCommandPtr &cmd)
+void KWQKHTMLPart::registerCommandForUndoOrRedo(const EditCommandPtr &cmd, bool isRedo)
 {
     ASSERT(cmd.get());
     KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommand:cmd.get()];
-    [[_bridge undoManager] registerUndoWithTarget:_bridge selector:@selector(undoEditing:) object:kwq];
+    NSUndoManager *undoManager = [_bridge undoManager];
+    [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:kwq];
+    NSString *actionName = [_bridge nameForUndoAction:(WebUndoAction)cmd.editingAction()];
+    if (actionName != nil) {
+        [undoManager setActionName:actionName];
+    }
     _haveUndoRedoOperations = YES;
+}
+
+void KWQKHTMLPart::registerCommandForUndo(const EditCommandPtr &cmd)
+{
+    registerCommandForUndoOrRedo(cmd, NO);
 }
 
 void KWQKHTMLPart::registerCommandForRedo(const EditCommandPtr &cmd)
 {
-    ASSERT(cmd.get());
-    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommand:cmd.get()];
-    [[_bridge undoManager] registerUndoWithTarget:_bridge selector:@selector(redoEditing:) object:kwq];
-    _haveUndoRedoOperations = YES;
+    registerCommandForUndoOrRedo(cmd, YES);
 }
 
 void KWQKHTMLPart::clearUndoRedoOperations()

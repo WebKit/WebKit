@@ -41,6 +41,40 @@ namespace DOM {
     class TextImpl;
 }
 
+typedef enum {
+    HTMLEditActionUnspecified,
+    HTMLEditActionSetColor,
+    HTMLEditActionSetBackgroundColor,
+    HTMLEditActionTurnOffKerning,
+    HTMLEditActionTightenKerning,
+    HTMLEditActionLoosenKerning,
+    HTMLEditActionUseStandardKerning,
+    HTMLEditActionTurnOffLigatures,
+    HTMLEditActionUseStandardLigatures,
+    HTMLEditActionUseAllLigatures,
+    HTMLEditActionRaiseBaseline,
+    HTMLEditActionLowerBaseline,
+    HTMLEditActionSetTraditionalCharacterShape,
+    HTMLEditActionSetFont,
+    HTMLEditActionChangeAttributes,
+    HTMLEditActionAlignLeft,
+    HTMLEditActionAlignRight,
+    HTMLEditActionCenter,
+    HTMLEditActionJustify,
+    HTMLEditActionSetWritingDirection,
+    HTMLEditActionSubscript,
+    HTMLEditActionSuperscript,
+    HTMLEditActionUnderline,
+    HTMLEditActionOutline,
+    HTMLEditActionUnscript,
+    HTMLEditActionDrag,
+    HTMLEditActionCut,
+    HTMLEditActionPaste,
+    HTMLEditActionPasteFont,
+    HTMLEditActionPasteRuler,
+    HTMLEditActionTyping,
+} HTMLEditAction;
+
 namespace khtml {
 
 class EditCommand;
@@ -65,6 +99,8 @@ public:
     void apply() const;
     void unapply() const;
     void reapply() const;
+
+    HTMLEditAction editingAction() const;
 
     DOM::DocumentImpl * const document() const;
 
@@ -136,6 +172,8 @@ public:
     virtual void doUnapply() = 0;
     virtual void doReapply();  // calls doApply()
 
+    virtual HTMLEditAction editingAction() const;
+
     virtual DOM::DocumentImpl * const document() const { return m_document; }
 
     khtml::Selection startingSelection() const { return m_startingSelection; }
@@ -154,7 +192,7 @@ public:
     
     virtual bool isInsertTextCommand() const;
     virtual bool isTypingCommand() const;
-
+    
 private:
     void assignTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
 
@@ -741,6 +779,7 @@ public:
     static void closeTyping(const EditCommandPtr &);
     
     virtual void doApply();
+    virtual HTMLEditAction editingAction() const;
 
     bool openForMoreTyping() const { return m_openForMoreTyping; }
     void closeTyping() { m_openForMoreTyping = false; }

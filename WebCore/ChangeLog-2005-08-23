@@ -1,3 +1,40 @@
+2004-12-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - architecture for WebCore part of fix for <rdar://problem/3790011> undoable operations all say "Undo" in the menu, 
+        no specific action names
+          
+        The remaining step is to make each EditCommand subclass override editingAction() to return an
+        appropriate value. (Unfortunately the mapping between subclass and user-distinguishable action
+        is not completely straightforward, so this next step isn't trivial.)
+
+        * khtml/editing/htmlediting.h:
+        new enum for HTMLEditAction
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommandPtr::editingAction):
+        new method, calls through to EditCommand
+        (khtml::EditCommand::editingAction):
+        new method for subclasses to override, returns HTMLEditActionUnspecified at this level
+        (khtml::TypingCommand::editingAction):
+        proof of concept override, returns HTMLEditActionTyping
+                
+        * kwq/KWQKHTMLPart.h:
+        declare new private bottleneck method registerCommandForUndoOrRedo
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::registerCommandForUndoOrRedo):
+        new bottleneck method to reduce code duplication; now calls over the bridge
+        to get the localized string to use for the Undo action name
+        (KWQKHTMLPart::registerCommandForUndo):
+        now calls new bottleneck method
+        (KWQKHTMLPart::registerCommandForRedo):
+        now calls new bottleneck method
+        
+        * kwq/WebCoreBridge.h:
+        new enum for WebUndoAction, maps directly to HTMLEditAction.
+        Declaration of nameForUndoAction:
+
 2004-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

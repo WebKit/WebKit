@@ -266,6 +266,12 @@ void EditCommandPtr::reapply() const
     get()->reapply();
 }
 
+HTMLEditAction EditCommandPtr::editingAction() const
+{
+    IF_IMPL_NULL_RETURN_ARG(HTMLEditActionUnspecified);
+    return get()->editingAction();
+}
+
 DocumentImpl * const EditCommandPtr::document() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
@@ -513,6 +519,11 @@ void EditCommand::reapply()
 void EditCommand::doReapply()
 {
     doApply();
+}
+
+HTMLEditAction EditCommand::editingAction() const
+{
+    return HTMLEditActionUnspecified;
 }
 
 void EditCommand::setStartingSelection(const Selection &s)
@@ -3776,6 +3787,11 @@ void TypingCommand::doApply()
     }
 
     ASSERT_NOT_REACHED();
+}
+
+HTMLEditAction TypingCommand::editingAction() const
+{
+    return HTMLEditActionTyping;
 }
 
 void TypingCommand::markMisspellingsAfterTyping()

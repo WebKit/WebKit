@@ -1398,45 +1398,40 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     }
 }
 
-// This method exists to hold localizable strings for action names for the Undo menu item. It contains
-// all of the names used in NSTextView. We will wire some or all of these up eventually; for now we are
-// just putting them here to get them localized before the localization freeze for Tiger.
-- (NSString *)setUndoActionNamePlaceholder
+- (NSString *)nameForUndoAction:(WebUndoAction)undoAction
 {
-    int x = 0;
-    switch (x) {
-        case 0: return UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
-        case 1: return UI_STRING_KEY("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
-        case 2: return UI_STRING_KEY("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
-        case 3: return UI_STRING_KEY("Tighten Kerning", "Tighten Kerning (Undo action name)", "Undo action name");
-        case 4: return UI_STRING_KEY("Loosen Kerning", "Loosen Kerning (Undo action name)", "Undo action name");
-        case 5: return UI_STRING_KEY("Use Standard Kerning", "Use Standard Kerning (Undo action name)", "Undo action name");
-        case 6: return UI_STRING_KEY("Turn Off Ligatures", "Turn Off Ligatures (Undo action name)", "Undo action name");
-        case 7: return UI_STRING_KEY("Use Standard Ligatures", "Use Standard Ligatures (Undo action name)", "Undo action name");
-        case 8: return UI_STRING_KEY("Use All Ligatures", "Use All Ligatures (Undo action name)", "Undo action name");
-        case 9: return UI_STRING_KEY("Raise Baseline", "Raise Baseline (Undo action name)", "Undo action name");
-        case 10: return UI_STRING_KEY("Lower Baseline", "Lower Baseline (Undo action name)", "Undo action name");
-        case 11: return UI_STRING_KEY("Set Traditional Character Shape", "Set Traditional Character Shape (Undo action name)", "Undo action name");
-        case 12: return UI_STRING_KEY("Set Font", "Set Font (Undo action name)", "Undo action name");
-        case 13: return UI_STRING_KEY("Change Attributes", "Change Attributes (Undo action name)", "Undo action name");
-        case 14: return UI_STRING_KEY("Align Left", "Align Left (Undo action name)", "Undo action name");
-        case 15: return UI_STRING_KEY("Align Right", "Align Right (Undo action name)", "Undo action name");
-        case 16: return UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
-        case 17: return UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
-        case 18: return UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
-        case 19: return UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
-        case 20: return UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
-        case 21: return UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
-        case 22: return UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
-        case 23: return UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
-        case 24: return UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");
-        case 25: return UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
-        case 26: return UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
-        case 27: return UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
-        case 28: return UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
-        case 29: return UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
-        case 30: return UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
-        case 31: return UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
+    switch (undoAction) {
+        case WebUndoActionUnspecified: return nil;
+        case WebUndoActionSetColor: return UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
+        case WebUndoActionSetBackgroundColor: return UI_STRING_KEY("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
+        case WebUndoActionTurnOffKerning: return UI_STRING_KEY("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
+        case WebUndoActionTightenKerning: return UI_STRING_KEY("Tighten Kerning", "Tighten Kerning (Undo action name)", "Undo action name");
+        case WebUndoActionLoosenKerning: return UI_STRING_KEY("Loosen Kerning", "Loosen Kerning (Undo action name)", "Undo action name");
+        case WebUndoActionUseStandardKerning: return UI_STRING_KEY("Use Standard Kerning", "Use Standard Kerning (Undo action name)", "Undo action name");
+        case WebUndoActionTurnOffLigatures: return UI_STRING_KEY("Turn Off Ligatures", "Turn Off Ligatures (Undo action name)", "Undo action name");
+        case WebUndoActionUseStandardLigatures: return UI_STRING_KEY("Use Standard Ligatures", "Use Standard Ligatures (Undo action name)", "Undo action name");
+        case WebUndoActionUseAllLigatures: return UI_STRING_KEY("Use All Ligatures", "Use All Ligatures (Undo action name)", "Undo action name");
+        case WebUndoActionRaiseBaseline: return UI_STRING_KEY("Raise Baseline", "Raise Baseline (Undo action name)", "Undo action name");
+        case WebUndoActionLowerBaseline: return UI_STRING_KEY("Lower Baseline", "Lower Baseline (Undo action name)", "Undo action name");
+        case WebUndoActionSetTraditionalCharacterShape: return UI_STRING_KEY("Set Traditional Character Shape", "Set Traditional Character Shape (Undo action name)", "Undo action name");
+        case WebUndoActionSetFont: return UI_STRING_KEY("Set Font", "Set Font (Undo action name)", "Undo action name");
+        case WebUndoActionChangeAttributes: return UI_STRING_KEY("Change Attributes", "Change Attributes (Undo action name)", "Undo action name");
+        case WebUndoActionAlignLeft: return UI_STRING_KEY("Align Left", "Align Left (Undo action name)", "Undo action name");
+        case WebUndoActionAlignRight: return UI_STRING_KEY("Align Right", "Align Right (Undo action name)", "Undo action name");
+        case WebUndoActionCenter: return UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
+        case WebUndoActionJustify: return UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
+        case WebUndoActionSetWritingDirection: return UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
+        case WebUndoActionSubscript: return UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
+        case WebUndoActionSuperscript: return UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
+        case WebUndoActionUnderline: return UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
+        case WebUndoActionOutline: return UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
+        case WebUndoActionUnscript: return UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");
+        case WebUndoActionDrag: return UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
+        case WebUndoActionCut: return UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
+        case WebUndoActionPaste: return UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
+        case WebUndoActionPasteFont: return UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
+        case WebUndoActionPasteRuler: return UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
+        case WebUndoActionTyping: return UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
     }
     return nil;
 }

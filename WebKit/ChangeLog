@@ -1,3 +1,15 @@
+2004-12-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+
+        - WebKit part of fix for <rdar://problem/3790011> undoable operations all say "Undo" in the menu, 
+        no specific action names
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge nameForUndoAction:]):
+        renamed from setUndoActionNamePlaceholder, replaced arbitrary integers with enum values, and
+        handled new "unspecified" case as a fallback
+
 2004-12-13  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3887767> LiveConnect doesn't propagate Java exceptions back to JavaScript (prevents security suite from running)
