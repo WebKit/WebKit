@@ -1,5 +1,19 @@
 2002-10-30  Darin Adler  <darin@apple.com>
 
+	- fixed memory leaks in plugin package creation code
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage initWithPath:]): Rearrange this code, and make sure
+	that it does a [self release] if it's going to return nil instead of self.
+        (-[WebNetscapePluginPackage unload]): Set bundle to 0 when we release it.
+        (-[WebNetscapePluginPackage dealloc]): Release the bundle if it's not 0.
+
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]): Rearrange this code, and make sure
+	that it does a [self release] if it's going to return nil instead of self.
+
+2002-10-30  Darin Adler  <darin@apple.com>
+
 	- fixed 3086564 -- REGRESSION: meta-refresh to the same page doesn't refresh
 
 	The key is to respect the new reload: parameter from the bridge.

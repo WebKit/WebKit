@@ -72,21 +72,28 @@
 {
     [super initWithPath:pluginPath];
     
-    bundle = [[NSBundle alloc] initWithPath:pluginPath];
-
-    if(!bundle){
+    UInt32 type = 0;
+    CFBundleRef coreFoundationBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:pluginPath]);        
+    if (coreFoundationBundle) {
+        CFBundleGetPackageInfo(coreFoundationBundle, &type, NULL);
+        CFRelease(coreFoundationBundle);
+    }
+    
+    if (type != FOUR_CHAR_CODE('WBPL')) {
+        [self release];
         return nil;
     }
 
-    UInt32 type;
-    CFBundleRef theBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:pluginPath]);        
-    CFBundleGetPackageInfo(theBundle, &type, NULL);
-    CFRelease(theBundle);
+    bundle = [[NSBundle alloc] initWithPath:pluginPath];
+    if (!bundle) {
+        [self release];
+        return nil;
+    }
 
     [self setPath:pluginPath];
-    
-    if(type != FOUR_CHAR_CODE('WBPL') || ![self getMIMEInformation]){
-        [bundle release];
+
+    if (![self getMIMEInformation]) {
+        [self release];
         return nil;
     }
 

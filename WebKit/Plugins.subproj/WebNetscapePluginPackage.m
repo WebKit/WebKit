@@ -162,48 +162,54 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     [self setPath:thePath];
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSDictionary *fileInfo = [fileManager fileAttributesAtPath:thePath traverseLink:YES];
-    UInt32 type;
+    NSDictionary *fileInfo = [[NSFileManager defaultManager] fileAttributesAtPath:thePath traverseLink:YES];
+    UInt32 type = 0;
 
-    // single-file plug-in with resource fork
-    if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){
-        type = [[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue];
-        isBundle = NO;
-#ifndef __ppc__
-        return nil;
-#endif
     // bundle
-    }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){
-        bundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:thePath]);        
-        CFBundleGetPackageInfo(bundle, &type, NULL);
+    if ([[fileInfo objectForKey:NSFileType] isEqualToString:NSFileTypeDirectory]) {
+        bundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:thePath]);
+        if (bundle) {
+            isBundle = YES;
+            CFBundleGetPackageInfo(bundle, &type, NULL);
+        }
+    }
+    
+#ifdef __ppc__
+    // single-file plug-in with resource fork
+    if ([[fileInfo objectForKey:NSFileType] isEqualToString:NSFileTypeRegular]) {
+        type = [[fileInfo objectForKey:NSFileHFSTypeCode] unsignedLongValue];
+        isBundle = NO;
+    }
+#endif
 
-        // Check if the executable is mach-o or CFM
+    if (type != FOUR_CHAR_CODE('BRPL') && type != FOUR_CHAR_CODE('IEPL')) {
+        [self release];
+        return nil;
+    }
+
+    // Check if the executable is Mach-O or CFM.
+    if (bundle) {
         NSURL *executableURL = (NSURL *)CFBundleCopyExecutableURL(bundle);
         NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[executableURL path]];
         [executableURL release];
-        
         NSData *data = [executableFile readDataOfLength:8];
         [executableFile closeFile];
-        if(!memcmp([data bytes], "Joy!peff", 8)){
-            isCFM = TRUE;
+        if (!data) {
+            [self release];
+            return nil;
+        }
+        isCFM = memcmp([data bytes], "Joy!peff", 8) == 0;
 #ifndef __ppc__
+        // CFM is PPC-only.
+        if (isCFM) {
+            [self release];
             return nil;
+        }
 #endif
-        }else{
-            isCFM = FALSE;
-        }
-        
-        isBundle = YES;
-    }else{
-        return nil;
     }
-    
-    if(type == FOUR_CHAR_CODE('BRPL') || type == FOUR_CHAR_CODE('IEPL') ){
-        if(![self getMIMEInformation]){
-            return nil;
-        }
-    }else{
+
+    if (![self getMIMEInformation]) {
+        [self release];
         return nil;
     }
 
@@ -388,11 +394,20 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if(isBundle){
         CFBundleUnloadExecutable(bundle);
         CFRelease(bundle);
+        bundle = 0;
     }else{
         CloseConnection(&connID);
     }
     LOG(Plugins, "Plugin Unloaded");
     isLoaded = FALSE;
+}
+
+- (void)dealloc
+{
+    if (bundle) {
+        CFRelease(bundle);
+    }
+    [super dealloc];
 }
 
 - (NPP_SetWindowProcPtr)NPP_SetWindow
