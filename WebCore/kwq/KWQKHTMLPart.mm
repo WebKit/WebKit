@@ -978,11 +978,10 @@ bool KWQKHTMLPart::canCachePage()
     // 1.  We're not a frame or frameset.
     // 2.  The page has no unload handler.
     // 3.  The page has no password fields.
-    if (d->m_doc &&
-        (d->m_frames.count() ||
+    if (d->m_frames.count() ||
         parentPart() ||
-        d->m_doc->hasWindowEventListener (EventImpl::UNLOAD_EVENT) ||
-        d->m_doc->hasPasswordField())) {
+	(d->m_doc && (d->m_doc->hasWindowEventListener(EventImpl::UNLOAD_EVENT) ||
+		      d->m_doc->hasPasswordField()))) {
         return false;
     }
     return true;
