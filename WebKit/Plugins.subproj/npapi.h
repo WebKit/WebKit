@@ -193,8 +193,8 @@ typedef void* (*NPN_MemAllocProcPtr)(uint32 size);
 typedef void (*NPN_MemFreeProcPtr)(void* ptr);
 typedef uint32 (*NPN_MemFlushProcPtr)(uint32 size);
 typedef void (*NPN_ReloadPluginsProcPtr)(NPBool reloadPages);
-typedef NPError	(*NPN_GetValueProcPtr)(NPP instance, NPNVariable variable, void *ret_alue);
-typedef NPError	(*NPN_SetValueProcPtr)(NPP instance, NPPVariable variable, void *ret_alue);
+typedef NPError	(*NPN_GetValueProcPtr)(NPP instance, NPNVariable variable, void *ret_value);
+typedef NPError	(*NPN_SetValueProcPtr)(NPP instance, NPPVariable variable, void *value);
 typedef void (*NPN_InvalidateRectProcPtr)(NPP instance, NPRect *rect);
 typedef void (*NPN_InvalidateRegionProcPtr)(NPP instance, NPRegion region);
 typedef void (*NPN_ForceRedrawProcPtr)(NPP instance);
@@ -209,13 +209,13 @@ typedef NPError	(*NPP_SetWindowProcPtr)(NPP instance, NPWindow* window);
 typedef NPError	(*NPP_NewStreamProcPtr)(NPP instance, NPMIMEType type, NPStream* stream, NPBool seekable, uint16* stype);
 typedef NPError	(*NPP_DestroyStreamProcPtr)(NPP instance, NPStream* stream, NPReason reason);
 typedef void 	(*NPP_StreamAsFileProcPtr)(NPP instance, NPStream* stream, const char* fname);
-typedef int16 (*NPP_WriteReadyProcPtr)(NPP instance, NPStream* stream);
-typedef int16 (*NPP_WriteProcPtr)(NPP instance, NPStream* stream, int32 offset, int32 len, void* buffer);
+typedef int32 (*NPP_WriteReadyProcPtr)(NPP instance, NPStream* stream);
+typedef int32 (*NPP_WriteProcPtr)(NPP instance, NPStream* stream, int32 offset, int32 len, void* buffer);
 typedef void (*NPP_PrintProcPtr)(NPP instance, NPPrint* platformPrint);
 typedef int16 (*NPP_HandleEventProcPtr)(NPP instance, void* event);
 typedef void (*NPP_URLNotifyProcPtr)(NPP instance, const char* URL, NPReason reason, void* notifyData);
-typedef NPError	(*NPP_GetValueProcPtr)(NPP instance, NPPVariable variable, void *ret_alue);
-typedef NPError	(*NPP_SetValueProcPtr)(NPP instance, NPNVariable variable, void *ret_alue);
+typedef NPError	(*NPP_GetValueProcPtr)(NPP instance, NPPVariable variable, void *ret_value);
+typedef NPError	(*NPP_SetValueProcPtr)(NPP instance, NPNVariable variable, void *value);
 typedef void (*NPP_ShutdownProcPtr)(void);
 typedef void*	JRIGlobalRef; //not using this right now
 

@@ -1,3 +1,12 @@
+2003-09-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3413463 - QuickTime plug-in content doesn't load in Safari (NPP_Write not called)
+	
+        * Plugins.subproj/npapi.h: Fix erroneous function pointer
+	declarations that led to an int16/int32 mismatch.
+
 2003-09-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3420112>: Reproducible Safari crash in in -[WebBaseNetscapePluginView sendEvent:]
