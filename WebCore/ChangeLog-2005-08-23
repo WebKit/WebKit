@@ -1,3 +1,20 @@
+2003-05-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3228186 -- REGRESSION: crash walking parent tree at housingscc.org in DOM::StyleBaseImpl::stylesheet()
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::~ElementImpl): Unref the stylesheet with the style declaration in it
+        when destroying the element.
+        (ElementImpl::createDecl): Ref the stylesheet with the style declaration in it when
+        making a style element for this. If we don't we could end up with a style declaration
+        without a stylesheet, which can't be manipulated by the CSS parser.
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::removeCSSProperty): Since this
+        function has a side effect of changing the stylesheet for the style declaration, ref
+        the new stylesheet and unref the old one.
+
 2003-05-12  Richard Williamson  <rjw@apple.com>
 
         Fixed 3194614 and 3194751.  We avoid creating and render objects

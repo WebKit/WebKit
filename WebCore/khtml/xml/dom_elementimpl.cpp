@@ -173,6 +173,7 @@ ElementImpl::~ElementImpl()
 
     if (m_styleDecls) {
         m_styleDecls->setNode(0);
+        m_styleDecls->parent()->deref();
         m_styleDecls->setParent(0);
         m_styleDecls->deref();
     }
@@ -437,6 +438,7 @@ void ElementImpl::createDecl( )
     m_styleDecls = new CSSStyleDeclarationImpl(0);
     m_styleDecls->ref();
     m_styleDecls->setParent(getDocument()->elementSheet());
+    m_styleDecls->parent()->ref();
     m_styleDecls->setNode(this);
     m_styleDecls->setStrictParsing( !getDocument()->inCompatMode() );
 }
