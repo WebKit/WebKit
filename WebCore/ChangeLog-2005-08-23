@@ -1,3 +1,11 @@
+2003-11-11  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by sullivan.
+
+	- rolled Merlot build fix onto the trunk
+
+        * WebCorePrefix.h: added #include <sys/types.h>
+
 2003-11-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3473531, text nested in hr inside h3 did not get the h3's style.
