@@ -2,6 +2,17 @@
 
         Reviewed by John.
 
+        - did a more-robust version of the fix I just landed
+
+        * khtml/html/htmlparser.h: Added currentIsReferenced boolean.
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::KHTMLParser): Initializes currentIsReferenced.
+        (KHTMLParser::setCurrent): Changed to respect and set currentIsReferenced.
+
+2004-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3824393> REGRESSION (165-TOT): Crash in KHTMLParser::popOneBlock closing window (bose.com)
 
         * khtml/html/htmlparser.cpp:

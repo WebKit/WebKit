@@ -115,6 +115,7 @@ protected:
      * The currently active element (the one new elements will be added to)
      */
     DOM::NodeImpl *current;
+    bool currentIsReferenced;
 
     HTMLStackElem *blockStack;
 
