@@ -34,6 +34,16 @@
 
 2002-06-26  Richard Williamson  <rjw@apple.com>
 
+        Many improvements to selection.  More Cocoa like,
+        normalized all text drawing code paths for selected 
+        and unselected cases.  
+        
+        Still need to work on:
+        1.  'slow' drawing cases, i.e. runs with non-base characters
+            or runs requiring font substitution.
+        2.  Select All menu item.
+        3.  Auto scrolling.
+        
         * WebCoreSupport.subproj/IFTextRenderer.m:
         (-[IFTextRenderer drawString:atPoint:withColor:]):
         (-[IFTextRenderer drawGlyphs:numGlyphs:fromGlyphPosition:toGlyphPosition:atPoint:withTextColor:backgroundColor:]):
