@@ -420,7 +420,7 @@ QString Decoder::decode(const char *data, int len)
                         //if( (pos = str.find("http-equiv", pos)) == -1) break;
                         //if( (pos = str.find("content-type", pos)) == -1) break;
 			while( pos < ( int ) str.length() ) {
-			    if( (pos = str.find("charset", pos)) == -1) break;
+			    if( (pos = str.find("charset", pos, false)) == -1) break;
 			    pos += 7;
                             // skip whitespace..
 			    while(  pos < (int)str.length() && str[pos] <= ' ' ) pos++;

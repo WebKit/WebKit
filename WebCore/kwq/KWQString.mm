@@ -2589,8 +2589,6 @@ uint QString::hash() const
     h ^= (h >> 11);
     h += (h << 15);
  
-    if (h == 0)
-        h = 0x80000000;
     return h;
 }
 

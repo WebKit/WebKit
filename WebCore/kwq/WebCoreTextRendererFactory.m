@@ -35,7 +35,7 @@ static WebCoreTextRendererFactory *sharedFactory;
     return sharedFactory;
 }
 
-- (BOOL)isFontFixedPitch: (NSFont *)font
+- (BOOL)isFontFixedPitch:(NSFont *)font
 {
     return NO;
 }
@@ -50,12 +50,7 @@ static WebCoreTextRendererFactory *sharedFactory;
     return self;
 }
 
-- (id <WebCoreTextRenderer>)rendererWithFont: (NSFont *)font
-{
-    return nil;
-}
-
-- (NSFont *)fontWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
+- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font
 {
     return nil;
 }

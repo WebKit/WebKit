@@ -1,3 +1,22 @@
+2003-03-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3204660 -- EUC decoding not used for japanese yahoo page
+
+        * khtml/misc/decoder.cpp: (Decoder::decode):
+        Do the search for charset= in a case-insensitive way. It's possible that other
+        browsers are case-insensitive, but also possible that it's just Japanese
+        auto-detect that papers over this problem there.
+        
+        - other changes
+        
+        * kwq/KWQString.mm: (QString::hash): Get rid of unnecessary code to avoid hashes of 0.
+        This is useful in the place in JavaScriptCore where we copied this from, but
+        it is not helpful here (slightly ugly and does slow things down a smidgen).
+        
+        * kwq/WebCoreTextRendererFactory.m: Remove unused method.
+
 2003-03-20  David Hyatt  <hyatt@apple.com>
 
 	Fix the color handling of link= attributes on <body> elements
@@ -66,7 +85,6 @@
         
         Reviewed by darin (res. style fix 1) and gramps (rest of res. style fix and XML fix)
 
-	* ChangeLog:
         * khtml/css/quirks.css:
         * khtml/html/html_tableimpl.cpp:
         (HTMLTableElementImpl::attach):
