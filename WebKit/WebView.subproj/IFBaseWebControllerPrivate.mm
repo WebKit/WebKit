@@ -45,8 +45,10 @@
     
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
-        if (frame != nil)
-            [frame _checkLoadCompleteResource: resourceDescription error: [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled] autorelease] isMainDocument: NO];
+        if (frame != nil) {
+            IFError *error = [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]] autorelease];
+            [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: NO];
+        }
         return;
     }
     // This resouce has completed, so check if the load is complete for all frames.
@@ -69,8 +71,10 @@
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [dataSource _setPrimaryLoadComplete: YES];
-        if (frame != nil);
-            [frame _checkLoadCompleteResource: resourceDescription error: [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled] autorelease] isMainDocument: YES];
+        if (frame != nil) {
+            IFError *error = [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]] autorelease];
+            [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: YES];
+        }
         return;
     }
 

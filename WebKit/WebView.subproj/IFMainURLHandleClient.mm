@@ -72,7 +72,7 @@
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [[sender availableResourceData] length];
 
-    IFError *error = [[IFError alloc] initWithErrorCode: result];
+    IFError *error = [[IFError alloc] initWithErrorCode: result failingURL: [sender url]];
     [[dataSource controller] _mainReceivedError: error forResource: [[sender url] absoluteString] partialProgress: loadProgress fromDataSource: dataSource];
     [error release];
 }

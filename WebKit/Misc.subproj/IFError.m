@@ -122,9 +122,21 @@ static id IFErrorMake(int code)
 
 - initWithErrorCode: (int)c
 {
+    return [self initWithErrorCode: c failingURL: nil];
+}
+
+- initWithErrorCode: (int)c failingURL: (NSURL *)url;
+{
     [super init];
     errorCode = c;
+    _failingURL = [url retain];
     return self;
+}
+
+- (void)dealloc
+{
+    [_failingURL autorelease];
+    [super dealloc];
 }
 
 - (int)errorCode
@@ -137,9 +149,14 @@ static id IFErrorMake(int code)
     return [descriptions objectForKey: [NSNumber numberWithInt: errorCode]];
 }
 
+- (NSURL *)failingURL
+{
+    return _failingURL;
+}
+
 - (NSString *)description
 {
-    return [NSString stringWithFormat: @"code %d:  %@", errorCode, [self errorDescription]];
+    return [NSString stringWithFormat: @"url %@, code %d: %@", [_failingURL absoluteString], errorCode, [self errorDescription]];
 }
 
 @end

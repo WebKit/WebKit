@@ -1,3 +1,22 @@
+2002-04-01  Darin Adler  <darin@apple.com>
+
+	* Misc.subproj/IFError.h: Add the failing URL to IFError.
+	* Misc.subproj/IFError.m: (-[IFError initWithErrorCode:]): Call through
+	with nil for the URL.
+	(-[IFError initWithErrorCode:failingURL:]): Retain the passed URL.
+	(-[IFError dealloc]): Autorelease the URL.
+	(-[IFError failingURL]): Return the URL.
+	(-[IFError description]): Include the URL in the description.
+
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _receivedProgress:forResource:fromDataSource:]),
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+	Put the URL into the IFError.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	Put the URL into the IFError.
+
 2002-04-01  Richard Williamson  <rjw@apple.com>
 
         Added more logging to show time of layouts.
