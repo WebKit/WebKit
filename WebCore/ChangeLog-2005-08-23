@@ -1,3 +1,15 @@
+2004-09-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+        
+        - fixed <rdar://problem/3551850> hang caused by interpreting bad javascript 
+        guarded by a deliberately bogus "language" attribute (www.riibe.com)
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag):
+        Check for language attribute of <script> tag in a way that matches WinIE.
+        Previously we were far too permissive.
+
 2004-09-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3685234 and 3548444, the x-offset for frame borders was off by 1 pixel, causing mojibake to occur when
@@ -28,7 +40,6 @@
         (RenderLayer::scrollToOffset):
         * khtml/rendering/render_object.cpp:
         (RenderObject::addDashboardRegions):
-        * khtml/rendering/render_object.h:
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::dashboardRegionsChanged):
         * kwq/WebDashboardRegion.h:
