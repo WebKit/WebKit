@@ -42,6 +42,7 @@
 #include "misc/decoder.h"
 #include "java/kjavaappletcontext.h"
 #include "ecma/kjs_proxy.h"
+#include "css/css_valueimpl.h"
 #include "dom/dom_misc.h"
 #include "xml/dom_selection.h"
 
@@ -156,6 +157,8 @@ public:
     m_caretVisible = true;
     m_caretBlinks = true;
     m_caretPaint = true;
+    
+    m_typingStyle = 0;
 
     m_metaRefreshEnabled = true;
     m_bHTTPRefresh = false;
@@ -212,6 +215,8 @@ public:
 #ifndef Q_WS_QWS
     delete m_javaContext;
 #endif
+    if (m_typingStyle)
+        m_typingStyle->deref();
   }
 
   FrameList m_frames;
@@ -367,6 +372,7 @@ public:
 
   khtml::EditCommand m_lastEditCommand;
   int m_xPosForVerticalArrowNavigation;
+  DOM::CSSStyleDeclarationImpl *m_typingStyle;
 
   int m_focusNodeNumber;
 

@@ -1,6 +1,29 @@
 2004-05-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Gramps
+        
+        Adds a typing style member variable to khtml part.
+        This patch adds basic life-cycle management and 
+        accessors. In addition, one essential piece of
+        behavior has been added: Clearing the typing style
+        whenever the selection changes.
+
+        Follow-on work will make this typing style a fully 
+        functional part of applying styles to text while typing.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::notifySelectionChanged): Clear typing style.
+        (KHTMLPart::typingStyle): Getter.
+        (KHTMLPart::setTypingStyle): Setter.
+        (KHTMLPart::clearTypingStyle): Convenience. Sets to 0.
+        * khtml/khtml_part.h: Function declarations.
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate): Initialize member variable.
+        (KHTMLPartPrivate::~KHTMLPartPrivate): Deref if necessary.
+
+2004-05-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Gramps
 
         Add helper to get the DOM element for a Position.
         
