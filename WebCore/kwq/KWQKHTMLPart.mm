@@ -406,14 +406,14 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     
     if (_target.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
-        if ([[[bridge parent] children] count] == 1) {
-            frame = [bridge parent];
+        if ([[[bridge parentFrame] childFrames] count] == 1) {
+            frame = [bridge parentFrame];
         } else {
             frame = bridge;
         }
     }
     else {
-        frame = [bridge frameNamed:_target.getNSString()];
+        frame = [bridge descendantFrameNamed:_target.getNSString()];
         if (frame == nil) {
             // FIXME: What is the correct behavior here? Other browsers seem to open new windows.
             NSLog (@"ERROR: unable to find frame named %@\n", _target.getNSString());
@@ -430,7 +430,7 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     NSString *name = frameName.getNSString();
 
     KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", DEBUG_OBJECT(name));
-    WebCoreBridge *framePart = [bridge frameNamed:name];
+    WebCoreBridge *framePart = [bridge childFrameNamed:name];
     if (framePart) {
         KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "found %s\n", DEBUG_OBJECT(name));
         frame->setWidget([framePart widget]);
@@ -445,7 +445,7 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
         }
         
         HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
-        if (![bridge createNewFrameNamed:name withURL:childURL
+        if (![bridge createChildFrameNamed:name withURL:childURL
                 renderPart:frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
                 marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()]) {
             return false;
@@ -590,13 +590,13 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
 
 bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
 {
-    return [bridge frameNamed:frameName.getNSString()];
+    return [bridge childFrameNamed:frameName.getNSString()];
 }
 
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
 {
     QPtrList<KParts::ReadOnlyPart> res;
-    NSArray *children = [bridge children];
+    NSArray *children = [bridge childFrames];
     WebCoreBridge *childPart;
     unsigned int i;
     
@@ -636,5 +636,5 @@ void KWQKHTMLPartImpl::setTitle(const DOMString &title)
 
 KHTMLPart *KWQKHTMLPartImpl::parentPart()
 {
-    return [[bridge parent] part];
+    return [[bridge parentFrame] part];
 }

@@ -45,9 +45,21 @@ typedef struct KHTMLRenderPart KHTMLRenderPart;
 #endif
 
 @class IFError;
+#ifndef RESOURCE_URL_CLIENT_READY
 @class IFURLHandle;
+#endif
 
 @class WebCoreBridge;
+
+@protocol WebCoreResourceLoader <NSObject>
+
+- (void)addData:(NSData *)data;
+
+// Either cancel or finish will be called before the loader is released, but never both.
+- (void)cancel;
+- (void)finish;
+
+@end
 
 // The WebCoreBridge class contains methods for use by the non-WebCore side of the bridge.
 
@@ -79,24 +91,30 @@ typedef struct KHTMLRenderPart KHTMLRenderPart;
 
 @protocol WebCoreBridge
 
-- (WebCoreBridge *)parent;
-- (NSArray *)children; // WebCoreBridge objects
+- (WebCoreBridge *)parentFrame;
+- (NSArray *)childFrames; // WebCoreBridge objects
+- (WebCoreBridge *)childFrameNamed:(NSString *)name;
+- (WebCoreBridge *)descendantFrameNamed:(NSString *)name;
 
 - (WebCoreBridge *)mainFrame;
-- (WebCoreBridge *)frameNamed:(NSString *)name; // always searches entire hierarchy starting with mainFrame
+- (WebCoreBridge *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
 
 - (void)setTitle:(NSString *)title;
 
 - (void)loadURL:(NSURL *)URL;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data;
 
-- (BOOL)createNewFrameNamed:(NSString *)frameName
-    withURL:(NSURL *)URL renderPart:(khtml::RenderPart *)renderPart
+- (BOOL)createChildFrameNamed:(NSString *)frameName
+    withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
 - (void)openNewWindowWithURL:(NSURL *)URL;
 
 - (KHTMLView *)widget;
+
+- (void)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL;
+
+#ifndef RESOURCE_URL_CLIENT_READY
 
 - (void)addHandle:(IFURLHandle *)handle;
 - (void)removeHandle:(IFURLHandle *)handle;
@@ -109,6 +127,8 @@ typedef struct KHTMLRenderPart KHTMLRenderPart;
 - (void)didFailToLoadWithHandle:(IFURLHandle *)handle error:(IFError *)error;
 - (void)didRedirectWithHandle:(IFURLHandle *)handle fromURL:(NSURL *)fromURL;
 - (void)didFailBeforeLoadingWithError:(IFError *)error;
+
+#endif
 
 @end
 

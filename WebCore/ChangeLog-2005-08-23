@@ -1,5 +1,21 @@
 2002-06-15  Darin Adler  <darin@apple.com>
 
+	Fix frame-related calls. I was always searching all the frames, which was disastrous.
+	Also do name changes.
+
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::urlSelected): Use descendantFrameNamed rather than frameNamed.
+	(KWQKHTMLPartImpl::requestFrame): Use childFrameNamed rather than frameNamed.
+	(KWQKHTMLPartImpl::frameExists): Use childFrameNamed rather than frameNamed.
+
+	* kwq/KWQScrollView.mm: (QScrollView::addChild): Asserts I used while debugging.
+
+	* kwq/WebCoreBridge.h: Add new calls. Change names of old ones to include the
+	word frame consistently. (Also bits of new work that will do no harm, but are
+	not really needed yet.)
+
+2002-06-15  Darin Adler  <darin@apple.com>
+
 	* kwq/KWQKloader.mm:
 	(-[KWQURLLoadClient IFURLHandle:didRedirectToURL:]):
 	Rolled out an assert I added by accident that will break Deployment builds.

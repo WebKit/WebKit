@@ -1,3 +1,20 @@
+2002-06-15  Darin Adler  <darin@apple.com>
+
+	Update for frame-related changes in WebCore.
+
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebFrame _bridge]): Look at provisional data source first.
+	(-[IFWebCoreBridge dealloc]): Release the data source.
+	(-[IFWebCoreBridge parentFrame]): Renamed.
+	(-[IFWebCoreBridge childFrames]): Renamed.
+	(-[IFWebCoreBridge childFrameNamed:]): Added.
+	(-[IFWebCoreBridge descendantFrameNamed:]): Added.
+	(-[IFWebCoreBridge didFinishLoadingWithHandle:]): Don't call _didStopLoading twice
+	when we finish loading.
+	
+	Also changed controller getters to call [dataSource controller] and got rid of the
+	[IFWebCoreBridge controller] method.
+
 2002-06-15  Richard Williamson  <rjw@apple.com>
 
 	* Misc.subproj/IFNSViewExtras.h:

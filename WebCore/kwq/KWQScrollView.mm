@@ -189,9 +189,11 @@ void QScrollView::addChild(QWidget* child, int x, int y)
 {
     NSView *thisView, *thisDocView, *subView;
 
+    KWQ_ASSERT(child != this);
+
     if (child->x() != x || child->y() != y)
         child->move(x, y);
-        
+    
     thisView = getView();
     thisDocView = [thisView _IF_getDocumentView];
     if (thisDocView)
@@ -201,6 +203,8 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     if ([subView _IF_isScrollView]) {
         subView = [subView superview];
     }
+    
+    KWQ_ASSERT(subView != thisView);
 
     if ([subView superview] == thisView) {
         return;
