@@ -534,34 +534,19 @@ static WebHTMLView *lastHitView = nil;
     return [[self _dataSource] _archiveWithMarkupString:*markupString nodes:nodes];
 }
 
-- (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
+- (NSData *)_selectedRTFData
 {
-    [pasteboard declareTypes:[[self class] _selectionPasteboardTypes] owner:nil];
-
-    // Put HTML on the pasteboard.
-    NSString *markupString;
-    WebArchive *archive = [self _selectedArchive:&markupString];
-    [pasteboard setString:markupString forType:NSHTMLPboardType];
-    [pasteboard setData:[archive data] forType:WebArchivePboardType];
-    
-    // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];
     NSRange range = NSMakeRange(0, [attributedString length]);
-    NSData *attributedData = [attributedString RTFFromRange:range documentAttributes:nil];
-    [pasteboard setData:attributedData forType:NSRTFPboardType];
+    return [attributedString RTFFromRange:range documentAttributes:nil];
+}
 
-    attributedData = [attributedString RTFDFromRange:range documentAttributes:nil];
-    [pasteboard setData:attributedData forType:NSRTFDPboardType];
-    
-    // Put plain string on the pasteboard.
-    // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
-    // and because HTML forces you to do this any time you want two spaces in a row.
-    NSMutableString *s = [[self selectedString] mutableCopy];
-    const unichar NonBreakingSpaceCharacter = 0xA0;
-    NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&NonBreakingSpaceCharacter length:1];
-    [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
-    [pasteboard setString:s forType:NSStringPboardType];
-    [s release];
+- (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
+{
+    ASSERT([self _haveSelection]);
+    NSArray *types = [[self class] _selectionPasteboardTypes];
+    [pasteboard declareTypes:types owner:nil];
+    [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
 }
 
 - (BOOL)_haveSelection
@@ -638,7 +623,7 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
--(NSImage *)_dragImageForLinkElement:(NSDictionary *)element
+- (NSImage *)_dragImageForLinkElement:(NSDictionary *)element
 {
     NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
 
@@ -755,8 +740,9 @@ static WebHTMLView *lastHitView = nil;
         
     } else if (linkURL) {
         NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-        NSString *label = [element objectForKey:WebElementLinkLabelKey];
-        [pasteboard _web_writeURL:linkURL andTitle:label withOwner:self];
+        NSArray *types = [NSPasteboard _web_writableTypesForURL];
+        [pasteboard declareTypes:types owner:self];
+        [pasteboard _web_writeURL:linkURL andTitle:[element objectForKey:WebElementLinkLabelKey] types:types];
         NSImage *dragImage = [self _dragImageForLinkElement:element];
         NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
         [self dragImage:dragImage
@@ -1025,6 +1011,53 @@ static WebHTMLView *lastHitView = nil;
     }
 
     [NSPasteboard _web_setFindPasteboardString:[self selectedString] withOwner:self];
+}
+
+- (NSArray *)pasteboardTypesForSelection
+{
+    return [[self class] _selectionPasteboardTypes];
+}
+
+- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+{
+    // Put HTML on the pasteboard.
+    NSString *markupString = nil;
+    WebArchive *archive = nil;
+    if ([types containsObject:NSHTMLPboardType]) {
+        archive = [self _selectedArchive:&markupString];
+        [pasteboard setString:markupString forType:NSHTMLPboardType];
+    }
+    if ([types containsObject:WebArchivePboardType]) {
+        if (!archive) {
+            archive = [self _selectedArchive:&markupString];
+        }
+        [pasteboard setData:[archive data] forType:WebArchivePboardType];
+    }
+    
+    // Put attributed string on the pasteboard (RTF format).
+    NSData *RTFData = nil;
+    if ([types containsObject:NSRTFPboardType]) {
+        RTFData = [self _selectedRTFData];
+        [pasteboard setData:RTFData forType:NSRTFPboardType];
+    }
+    if ([types containsObject:NSRTFDPboardType]) {
+        if (!RTFData) {
+            RTFData = [self _selectedRTFData];
+        }
+        [pasteboard setData:RTFData forType:NSRTFDPboardType];
+    }
+    
+    // Put plain string on the pasteboard.
+    if ([types containsObject:NSStringPboardType]) {
+        // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
+        // and because HTML forces you to do this any time you want two spaces in a row.
+        NSMutableString *s = [[self selectedString] mutableCopy];
+        const unichar NonBreakingSpaceCharacter = 0xA0;
+        NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&NonBreakingSpaceCharacter length:1];
+        [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
+        [pasteboard setString:s forType:NSStringPboardType];
+        [s release];
+    }
 }
 
 - (void)copy:(id)sender

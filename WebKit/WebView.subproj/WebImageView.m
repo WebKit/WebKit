@@ -174,10 +174,10 @@
     return [super validRequestorForSendType:sendType returnType:returnType];
 }
 
-- (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard
+- (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {    
     if ([self haveCompleteImage]) {
-        [pasteboard _web_writeImage:[rep image] URL:[rep URL] title:nil archive:[rep archive]];
+        [pasteboard _web_writeImage:[rep image] URL:[rep URL] title:nil archive:[rep archive] types:types];
         return YES;
     }
     
@@ -186,12 +186,12 @@
 
 - (void)copy:(id)sender
 {
-    [self writeImageToPasteboard:[NSPasteboard generalPasteboard]];
+    [self writeImageToPasteboard:[NSPasteboard generalPasteboard] types:[NSPasteboard _web_writableTypesForImage]];
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
-    return [self writeImageToPasteboard:pasteboard];
+    return [self writeImageToPasteboard:pasteboard types:types];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent

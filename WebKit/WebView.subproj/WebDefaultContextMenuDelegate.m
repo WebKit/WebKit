@@ -191,9 +191,11 @@
 {
     NSDictionary *element = [sender representedObject];
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    [pasteboard _web_writeURL:[element objectForKey:WebElementLinkURLKey]
-                     andTitle:[element objectForKey:WebElementLinkLabelKey]
-                    withOwner:self];
+    NSArray *types = [NSPasteboard _web_writableTypesForURL];
+    [pasteboard declareTypes:types owner:self];    
+    [[[element objectForKey:WebElementFrameKey] webView] _writeLinkElement:element 
+                                                       withPasteboardTypes:types
+                                                              toPasteboard:pasteboard];
 }
 
 - (void)openImageInNewWindow:(id)sender
@@ -211,11 +213,12 @@
 - (void)copyImageToClipboard:(id)sender
 {
     NSDictionary *element = [sender representedObject];
-    NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
-    [[NSPasteboard generalPasteboard] _web_writeImage:[element objectForKey:WebElementImageKey] 
-                                                  URL:linkURL ? linkURL : [element objectForKey:WebElementImageURLKey]
-                                                title:[element objectForKey:WebElementImageAltStringKey] 
-                                              archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]];
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    NSArray *types = [NSPasteboard _web_writableTypesForImage];
+    [pasteboard declareTypes:types owner:self];
+    [[[element objectForKey:WebElementFrameKey] webView] _writeImageElement:element 
+                                                        withPasteboardTypes:types 
+                                                               toPasteboard:pasteboard];
 }
 
 - (void)openFrameInNewWindow:(id)sender

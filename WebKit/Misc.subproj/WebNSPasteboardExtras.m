@@ -44,15 +44,33 @@ NSString *WebURLNamePboardType = nil;
 #endif
 }
 
-+ (NSArray *)_web_writableDragTypesForURL
++ (NSArray *)_web_writableTypesForURL
 {
-    return [NSArray arrayWithObjects:
-        WebURLsWithTitlesPboardType,
-        NSURLPboardType,
-        WebURLPboardType,
-        WebURLNamePboardType,
-        NSStringPboardType,
-        nil];
+    static NSArray *types = nil;
+    if (!types) {
+        types = [[NSArray alloc] initWithObjects:
+            WebURLsWithTitlesPboardType,
+            NSURLPboardType,
+            WebURLPboardType,
+            WebURLNamePboardType,
+            NSStringPboardType,
+            nil];
+    }
+    return types;
+}
+
++ (NSArray *)_web_writableTypesForImage
+{
+    static NSMutableArray *types = nil;
+    if (!types) {
+        types = [[NSMutableArray alloc] initWithObjects:
+            NSTIFFPboardType, 
+            NSRTFDPboardType, 
+            WebArchivePboardType, 
+            nil];
+        [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
+    }
+    return types;
 }
 
 + (NSArray *)_web_dragTypesForURL
@@ -67,7 +85,7 @@ NSString *WebURLNamePboardType = nil;
         nil];
 }
 
--(NSURL *)_web_bestURL
+- (NSURL *)_web_bestURL
 {
     NSArray *types = [self types];
 
@@ -105,30 +123,32 @@ NSString *WebURLNamePboardType = nil;
     return nil;
 }
 
-- (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner types:(NSArray *)types
+- (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title types:(NSArray *)types
 {
     ASSERT(URL);
-    ASSERT(types);
     
-    [self declareTypes:types owner:owner];
-
-    if(!title || [title isEqualToString:@""]){
+    if ([title length] == 0) {
         title = [[URL path] lastPathComponent];
-        if(!title || [title isEqualToString:@""]){
+        if ([title length] == 0) {
             title = [URL _web_userVisibleString];
         }
     }
     
-    [URL writeToPasteboard:self];
-    [self setString:title forType:WebURLNamePboardType];
-    [self setString:[URL _web_userVisibleString] forType:WebURLPboardType];
-    [self setString:[URL _web_userVisibleString] forType:NSStringPboardType];
-    [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
-}
-
-- (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner
-{
-    [self _web_writeURL:URL andTitle:title withOwner:owner types:[NSPasteboard _web_writableDragTypesForURL]];
+    if ([types containsObject:NSURLPboardType]) {
+        [URL writeToPasteboard:self];
+    }
+    if ([types containsObject:WebURLPboardType]) {
+        [self setString:[URL _web_userVisibleString] forType:WebURLPboardType];
+    }
+    if ([types containsObject:WebURLNamePboardType]) {
+        [self setString:title forType:WebURLNamePboardType];
+    }
+    if ([types containsObject:NSStringPboardType]) {
+        [self setString:[URL _web_userVisibleString] forType:NSStringPboardType];
+    }
+    if ([types containsObject:WebURLsWithTitlesPboardType]) {
+        [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
+    }
 }
 
 + (int)_web_setFindPasteboardString:(NSString *)string withOwner:(id)owner
@@ -154,44 +174,31 @@ NSString *WebURLNamePboardType = nil;
                     URL:(NSURL *)URL 
                   title:(NSString *)title
                 archive:(WebArchive *)archive
+                  types:(NSArray *)types
 {
     ASSERT(image);
     ASSERT(URL);
-    
-    BOOL isDrag = (self == [NSPasteboard pasteboardWithName:NSDragPboard]);
-    NSMutableArray *types = [NSMutableArray arrayWithObject:NSTIFFPboardType];
-    
-    [types addObjectsFromArray:[NSPasteboard _web_writableDragTypesForURL]];
-    
-    if (archive) {
-        [types addObject:NSRTFDPboardType];
-        [types addObject:WebArchivePboardType];
-    }
-    if (isDrag) {
-        [types addObject:NSFilesPromisePboardType];
-    }
 
-    [self _web_writeURL:URL andTitle:title withOwner:self types:types];
-    [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+    [self _web_writeURL:URL andTitle:title types:types];
+    
+    if ([types containsObject:NSTIFFPboardType]) {
+        [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+    }
     
     if (archive) {
-        // This image data is either the only subresource of an archive (HTML image case)
-        // or the main resource (standalone image case).
-        WebResource *resource = [[archive subresources] objectAtIndex:0];
-        if (resource == nil) {
-            resource = [archive mainResource];
+        if ([types containsObject:NSRTFDPboardType]) {
+            // This image data is either the only subresource of an archive (HTML image case)
+            // or the main resource (standalone image case).
+            WebResource *resource = [[archive subresources] objectAtIndex:0];
+            if (resource == nil) {
+                resource = [archive mainResource];
+            }
+            ASSERT([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:[resource MIMEType]]);
+            [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
         }
-        ASSERT([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:[resource MIMEType]]);
-        [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
-        [self setData:[archive data] forType:WebArchivePboardType];
-    }
-    if (isDrag) {
-        NSString *filename = [URL _web_suggestedFilenameWithMIMEType:[image MIMEType]];
-        NSString *fileType = [filename pathExtension];
-        if (!fileType) {
-            fileType = @"";
+        if ([types containsObject:WebArchivePboardType]) {
+            [self setData:[archive data] forType:WebArchivePboardType];
         }
-        [self setPropertyList:[NSArray arrayWithObject:fileType] forType:NSFilesPromisePboardType];
     }
 }
 

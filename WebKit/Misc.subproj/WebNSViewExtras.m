@@ -223,16 +223,17 @@
         origin = NSMakePoint(mouseDownPoint.x - offset.width, mouseDownPoint.y - offset.height);
     }
 
-    NSArray *filesTypes = [NSArray arrayWithObject:fileType];
-    
-    NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
+    [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImage]];
+    [pasteboard declareTypes:types owner:self];    
+    [pasteboard _web_writeImage:image URL:URL title:title archive:archive types:types];
+    [types release];
 
-    [pboard _web_writeImage:image URL:URL title:title archive:archive];
-    
     id source = [[NSFilePromiseDragSource alloc] initWithSource:(id)self];
-    [source setTypes:filesTypes onPasteboard:pboard];
+    [source setTypes:[NSArray arrayWithObject:fileType] onPasteboard:pasteboard];
     
-    [self dragImage:dragImage at:origin offset:offset event:event pasteboard:pboard source:source slideBack:YES];
+    [self dragImage:dragImage at:origin offset:offset event:event pasteboard:pasteboard source:source slideBack:YES];
 }
 
 @end

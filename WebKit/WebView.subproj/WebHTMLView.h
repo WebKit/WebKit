@@ -3,9 +3,7 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <Cocoa/Cocoa.h>
-#import <WebKit/WebDocument.h>
-
+#import <WebKit/WebDocumentPrivate.h>
 
 @class WebDataSource;
 @class WebHTMLViewPrivate;
@@ -14,7 +12,7 @@
     @class WebHTMLView
     @discussion A document view of WebFrameView that displays HTML content.
 */
-@interface WebHTMLView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentText>
+@interface WebHTMLView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentText, WebDocumentSelection>
 {
 @private
     WebHTMLViewPrivate *_private;

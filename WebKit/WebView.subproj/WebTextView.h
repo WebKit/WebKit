@@ -1,17 +1,14 @@
 /*	
     WebTextView.h
-	Copyright 2002, Apple, Inc. All rights reserved.
+    Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <Cocoa/Cocoa.h>
-#import "WebSearchableTextView.h"
+#import <WebKit/WebDocumentPrivate.h>
+#import <WebKit/WebSearchableTextView.h>
 
 @class WebDataSource;
-@protocol WebDocumentView;
-@protocol WebDocumentDragSettings;
-@protocol WebDocumentText;
 
-@interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentText>
+@interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentText, WebDocumentSelection>
 {
     float _textSizeMultiplier;
 }

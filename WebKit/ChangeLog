@@ -1,3 +1,53 @@
+2004-05-17  Chris Blumenberg  <cblu@apple.com>
+
+	Implemented new WebView pasteboard methods. Made a lot of factoring changes related to pasteboard management.
+
+        Reviewed by john.
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard _web_writableTypesForURL]): renamed to not include "drag" these types are also used for copying
+        (+[NSPasteboard _web_writableTypesForImage]): new
+        (-[NSPasteboard _web_bestURL]): tweak
+        (-[NSPasteboard _web_writeURL:andTitle:types:]): take an array of types that this method should write, don't declare the types since this complicates things for the caller
+        (-[NSPasteboard _web_writeImage:URL:title:archive:types:]): ditto
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:archive:rect:URL:title:event:]): call renamed methods
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyLinkToClipboard:]): call code factored out to WebView
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): ditto
+        * WebView.subproj/WebDocumentPrivate.h:
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectedRTFData]): new factored out method
+        (-[WebHTMLView _writeSelectionToPasteboard:]): factored code out to writeSelectionWithPasteboardTypes:toPasteboard:
+        (-[WebHTMLView _dragImageForLinkElement:]): tweak
+        (-[WebHTMLView _handleMouseDragged:]): call renamed methods
+        (-[WebHTMLView pasteboardTypesForSelection]): new
+	(-[WebTextView writeSelectionWithPasteboardTypes:toPasteboard:]): new, code moved from _writeSelectionToPasteboard:
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView writeImageToPasteboard:types:]): call renamed methods
+        (-[WebImageView copy:]):
+        (-[WebImageView writeSelectionToPasteboard:types:]): call renamed methods
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView pasteboardTypesForSelection]): new
+        (-[WebTextView writeSelectionWithPasteboardTypes:toPasteboard:]): new
+        * WebView.subproj/WebView.m:
+        (-[WebView _writeImageElement:withPasteboardTypes:toPasteboard:]): new
+        (-[WebView _writeLinkElement:withPasteboardTypes:toPasteboard:]): mew
+        (-[WebView dragOperationForDraggingInfo:]): implemented API
+        (-[WebView draggingEntered:]): call API
+        (-[WebView draggingUpdated:]): ditto
+        (-[WebView concludeDragOperation:]): ditto
+        (-[WebView pasteboardTypesForSelection]): implemented API
+        (-[WebView writeSelectionWithPasteboardTypes:toPasteboard:]): ditto
+        (-[WebView pasteboardTypesForElement:]): ditto
+        (-[WebView writeElement:withPasteboardTypes:toPasteboard:]): ditto
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-05-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

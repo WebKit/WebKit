@@ -113,6 +113,13 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 @implementation WebProgressItem
 @end
 
+@interface WebView (WebViewEditingInternal)
+- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
+- (WebBridge *)_bridgeForCurrentSelection;
+- (BOOL)_currentSelectionIsEditable;
+@end
+
+
 @implementation WebViewPrivate
 
 - init 
@@ -1103,6 +1110,23 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     return cachedResponse;
 }
 
+- (void)_writeImageElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+{
+    NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
+    [pasteboard _web_writeImage:[element objectForKey:WebElementImageKey] 
+                            URL:linkURL ? linkURL : [element objectForKey:WebElementImageURLKey]
+                          title:[element objectForKey:WebElementImageAltStringKey] 
+                        archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
+                          types:types];
+}
+
+- (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+{
+    [pasteboard _web_writeURL:[element objectForKey:WebElementLinkURLKey]
+                     andTitle:[element objectForKey:WebElementLinkLabelKey]
+                        types:types];
+}
+
 @end
 
 
@@ -1644,28 +1668,27 @@ NS_ENDHANDLER
     return _private->hostWindow;
 }
 
-- (NSDragOperation)_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
+- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
     // Even though we may not be registered for any drag types, we may still get drag messages forwarded from WebHTMLView,
     // so compare the types on the pasteboard against the types we're currently registered for.
-    if ([_private->draggedTypes count] > 0 && [[sender draggingPasteboard] availableTypeFromArray:_private->draggedTypes] != nil) {
-        return  [self _web_dragOperationForDraggingInfo:sender];
+    NSPoint point = [[self superview] convertPoint:[sender draggingLocation] toView:nil];
+    if ([_private->draggedTypes count] > 0 && 
+        [[sender draggingPasteboard] availableTypeFromArray:_private->draggedTypes] != nil &&
+        ![[self hitTest:point] isKindOfClass:[WebBaseNetscapePluginView class]]) {
+        return [self _web_dragOperationForDraggingInfo:sender];
     }
     return NSDragOperationNone;
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    return [self _dragOperationForDraggingInfo:sender];
+    return [self dragOperationForDraggingInfo:sender];
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
 {
-    NSPoint point = [[self superview] convertPoint:[sender draggingLocation] toView:nil];
-    if ([[self hitTest:point] isKindOfClass:[WebBaseNetscapePluginView class]]) {
-        return NSDragOperationNone;
-    }
-    return [self _dragOperationForDraggingInfo:sender];
+    return [self dragOperationForDraggingInfo:sender];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
@@ -1680,7 +1703,7 @@ NS_ENDHANDLER
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    if ([self _dragOperationForDraggingInfo:sender] != NSDragOperationNone) {
+    if ([self dragOperationForDraggingInfo:sender] != NSDragOperationNone) {
         NSURL *URL = [[sender draggingPasteboard] _web_bestURL];
         if (URL) {
             NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
@@ -1832,32 +1855,47 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return _private->progressValue;
 }
 
-- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    ERROR("unimplemented");
-    return NSDragOperationNone;
-}
-
 - (NSArray *)pasteboardTypesForSelection
 {
-    ERROR("unimplemented");
-    return nil;
+    NSView <WebDocumentView> *documentView = [[[[self _bridgeForCurrentSelection] webFrame] frameView] documentView];
+    if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
+        return [(NSView <WebDocumentSelection> *)documentView pasteboardTypesForSelection];
+    }
+    return [NSArray array];
 }
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
-    ERROR("unimplemented");
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    if ([bridge haveSelection]) {
+        NSView <WebDocumentView> *documentView = [[[bridge webFrame] frameView] documentView];
+        if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
+            [(NSView <WebDocumentSelection> *)documentView writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
+        }
+    }
 }
 
 - (NSArray *)pasteboardTypesForElement:(NSDictionary *)element
 {
-    ERROR("unimplemented");
-    return nil;
+    if ([element objectForKey:WebElementImageURLKey] != nil) {
+        return [NSPasteboard _web_writableTypesForImage];
+    } else if ([element objectForKey:WebElementLinkURLKey] != nil) {
+        return [NSPasteboard _web_writableTypesForURL];
+    } else if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+        return [self pasteboardTypesForSelection];
+    }
+    return [NSArray array];
 }
 
 - (void)writeElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
-    ERROR("unimplemented");
+    if ([element objectForKey:WebElementImageURLKey] != nil) {
+        [self _writeImageElement:element withPasteboardTypes:types toPasteboard:pasteboard];
+    } else if ([element objectForKey:WebElementLinkURLKey] != nil) {
+        [self _writeLinkElement:element withPasteboardTypes:types toPasteboard:pasteboard];
+    } else if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+        [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
+    }
 }
 
 @end
@@ -2137,14 +2175,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 //==========================================================================================
 // Editing
-
-@interface WebView (WebViewEditingInternal)
-
-- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
-- (WebBridge *)_bridgeForCurrentSelection;
-- (BOOL)_currentSelectionIsEditable;
-
-@end
 
 @implementation WebView (WebViewEditingInternal)
 

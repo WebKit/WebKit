@@ -6,6 +6,7 @@
 
 #import <WebKit/WebHTMLView.h>
 
+@class WebArchive;
 @class WebBridge;
 @class WebView;
 @class WebFrame;
@@ -71,6 +72,8 @@
 
 + (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
+- (WebArchive *)_selectedArchive:(NSString **)markupString;
+- (NSData *)_selectedRTFData;
 
 - (BOOL)_canDelete;
 - (BOOL)_canPaste;
