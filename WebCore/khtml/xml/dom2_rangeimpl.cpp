@@ -834,22 +834,15 @@ DOMString RangeImpl::toString( int &exceptioncode ) const
     return text;
 }
 
-void RangeImpl::addCommentToHTMLMarkup(const DOMString &comment, QStringList &markups, EAddToMarkup appendOrPrepend) const
- {
-    if (!m_ownerDocument)
-        return;
-        
-    CommentImpl *n = new CommentImpl(m_ownerDocument, comment);
-    n->ref();
-    switch (appendOrPrepend) {
-        case PrependToMarkup:
-            markups.prepend(n->startMarkup(this));
-            break;
-        case AppendToMarkup:
-            markups.append(n->startMarkup(this));
-            break;
+static QString interchangeNewlineMarkupString()
+{
+    static QString interchangeNewlineString;
+    if (interchangeNewlineString.length() == 0) {
+        interchangeNewlineString = "<br class=\"";
+        interchangeNewlineString += AppleInterchangeNewline;
+        interchangeNewlineString += "\">";
     }
-    n->deref();
+    return interchangeNewlineString;
 }
 
 DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes, EAnnotateForInterchange annotate) const
@@ -954,12 +947,11 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes, EAnnotateForInterchange a
         Position pos(m_endContainer, m_endOffset);
         NodeImpl *block = pos.node()->enclosingBlockFlowElement();
         NodeImpl *upstreamBlock = pos.upstream().node()->enclosingBlockFlowElement();
-        if (block != upstreamBlock) {
-            addCommentToHTMLMarkup(AppleInterchangeNewline, markups, AppendToMarkup);    
-        }
+        if (block != upstreamBlock)
+            markups.append(interchangeNewlineMarkupString());
     }
     
-    return markups.join("");;
+    return markups.join("");
 }
 
 

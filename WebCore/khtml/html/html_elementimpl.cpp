@@ -727,7 +727,7 @@ DOMString HTMLElementImpl::outerText() const
     return innerText();
 }
 
-DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString &html, bool includeCommentsInDOM)
+DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString &html)
 {
     // the following is in accordance with the definition as used by IE
     if( endTag[id()] == FORBIDDEN )
@@ -752,7 +752,7 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     DocumentFragmentImpl *fragment = new DocumentFragmentImpl( docPtr() );
     fragment->ref();
     {
-        HTMLTokenizer tok(docPtr(), fragment, includeCommentsInDOM);
+        HTMLTokenizer tok(docPtr(), fragment);
         tok.write( html.string(), true );
         tok.finish();
     }

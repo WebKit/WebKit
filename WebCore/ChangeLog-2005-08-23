@@ -1,3 +1,40 @@
+2004-12-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        WebCore side of fix for this bug:
+        
+        <rdar://problem/3768372> REGRESSION (Mail): paste of text ending in whitespace loses whitespace
+
+        Note that we are coordinating with Doug Davidson on the AppKit team to make a complete fix for this
+        bug. This change involves our half of the needed changes.
+        
+        Note that a lot of this change has to do with changing code to use a <br> element instead of
+        a comment node as the mechanism to annotate HTML with information used to fix the bug. In some
+        other places, code to handle comments in markup can be removed since we do not use comments for
+        such annotations after this change.
+
+        * khtml/editing/htmlediting.cpp: Remove isComment() helper; no longer needed.
+        (khtml::ReplacementFragment::ReplacementFragment): Change m_hasInterchangeNewlineComment name to m_hasInterchangeNewline.
+        (khtml::ReplacementFragment::isInterchangeNewlineNode): Name changed from isInterchangeNewlineComment.
+        (khtml::ReplacementFragment::isInterchangeConvertedSpaceSpan): Local variable name convertedSpaceSpanClass changed to
+        convertedSpaceSpanClassString to match other uses of the idiom used here.
+        (khtml::ReplaceSelectionCommand::doApply): Change hasInterchangeNewlineComment() name to hasInterchangeNewline().
+        * khtml/editing/htmlediting.h: Change names as noted in .cpp file. Remove isComment() helper; no longer needed.
+        (khtml::ReplacementFragment::hasInterchangeNewline):  Change hasInterchangeNewlineComment() name to hasInterchangeNewline().
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment): No longer has includeCommentsInDOM flag; no longer needed as we do not
+        annotate fragments with comments any longer.
+        * khtml/html/html_elementimpl.h: Ditto.
+        * khtml/xml/dom2_rangeimpl.cpp: Remove addCommentToHTMLMarkup() helper. No longer needed.
+        (DOM::interchangeNewlineMarkupString): New helper to return <br> element markup we use to annotate content for interchange.
+        (DOM::RangeImpl::toHTML): No longer uses addCommentToHTMLMarkup; now calls interchangeNewlineMarkupString(). Remove
+        spurious semi-colon.
+        * khtml/xml/dom2_rangeimpl.h: Remove obsolete addCommentToHTMLMarkup() function and EAddToMarkup enum.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge documentFragmentWithMarkupString:baseURLString:]): No longer pass bool to ask for including comments
+        in DOM when calling createContextualFragment().
+
 2004-12-10  John Sullivan  <sullivan@apple.com>
 
         fixed deployment build bustage that John Louch ran into

@@ -1552,7 +1552,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     DocumentImpl *document = _part->xmlDocImpl();
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(document->documentElement());
-    DocumentFragmentImpl *fragment = element->createContextualFragment(markupString, true); // true to include comments in DOM
+    DocumentFragmentImpl *fragment = element->createContextualFragment(markupString);
     ASSERT(fragment);
     
     if ([baseURLString length] > 0) {

@@ -630,14 +630,14 @@ public:
     bool isTreeFragment() const { return m_type == TreeFragment; }
 
     bool hasMoreThanOneBlock() const { return m_hasMoreThanOneBlock; }
-    bool hasInterchangeNewlineComment() const { return m_hasInterchangeNewlineComment; }
+    bool hasInterchangeNewline() const { return m_hasInterchangeNewline; }
 
 private:
     // no copy construction or assignment
     ReplacementFragment(const ReplacementFragment &);
     ReplacementFragment &operator=(const ReplacementFragment &);
 
-    static bool isInterchangeNewlineComment(const DOM::NodeImpl *);
+    static bool isInterchangeNewlineNode(const DOM::NodeImpl *);
     static bool isInterchangeConvertedSpaceSpan(const DOM::NodeImpl *);
 
     // A couple simple DOM helpers
@@ -646,13 +646,12 @@ private:
 
     EFragmentType m_type;
     DOM::DocumentFragmentImpl *m_fragment;
-    bool m_hasInterchangeNewlineComment;
+    bool m_hasInterchangeNewline;
     bool m_hasMoreThanOneBlock;
 };
 
 // free-floating helper functions
 bool isProbablyBlock(const DOM::NodeImpl *);
-bool isComment(const DOM::NodeImpl *);
 
 class ReplaceSelectionCommand : public CompositeEditCommand
 {

@@ -122,9 +122,6 @@ private:
     void setEndContainer(NodeImpl *_endContainer);
     void checkDeleteExtract(int &exceptioncode);
     bool containedByReadOnly() const;
-    
-    enum EAddToMarkup { PrependToMarkup, AppendToMarkup };
-    void addCommentToHTMLMarkup(const DOMString &, QStringList &, EAddToMarkup) const;
 };
 
 } // namespace
