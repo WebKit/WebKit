@@ -451,6 +451,9 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
 @end
 #endif
 
+#define FLOOR_TO_INT(x) (int)(floor(x))
+#define ROUND_TO_INT(x) (int)(((x) > floor(x) + .5) ? ceil(x) : floor(x))
+
 // y is the baseline
 void QPainter::drawText(int x, int y, const QString &qstring, int len)
 {
@@ -469,8 +472,8 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
-    y = y - (int)([font defaultLineHeightForFont] + [font descender]);
-    //y = y - (int)([font defaultLineHeightForFont]);
+    // Remember that descender is negative.
+    y = y - (ROUND_TO_INT([font defaultLineHeightForFont]) - FLOOR_TO_INT(-[font descender]));
 
 #ifdef SLOW_SAFE_DRAWING
 

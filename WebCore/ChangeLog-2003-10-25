@@ -1,3 +1,14 @@
+2001-12-20  Richard Williamson  <rjw@apple.com>
+        
+        More tweaks to text layout and underlining.
+
+	* src/kdelibs/khtml/rendering/render_text.cpp: (TextSlave::printDecoration):
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::baselineOffset),
+	(QFontMetrics::ascent), (QFontMetrics::descent), (QFontMetrics::height),
+	(QFontMetrics::width):
+	* src/kwq/KWQPainter.mm: (QPainter::drawText):
+	* src/kwq/qt/qfontmetrics.h:
+
 2001-12-18  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kwq/KWQCString.mm: (QCString::QCString),

@@ -81,6 +81,7 @@ public:
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 #ifdef _KWQ_
+    int baselineOffset();
     void _initialize();
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
     //void _initializeWithData(QFontMetricsPrivate *);
