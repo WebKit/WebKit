@@ -1,3 +1,12 @@
+2004-09-01  Richard Williamson   <rjw@apple.com>
+
+	Add pid to exception messages (to help debug dashboard clients).
+
+        Reviewed by Chris.
+
+        * kjs/interpreter.cpp:
+        (Interpreter::evaluate):
+
 === Safari-161 ===
 
 2004-08-20  Richard Williamson   <rjw@apple.com>

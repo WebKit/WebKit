@@ -130,7 +130,8 @@ Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumbe
     ExecState *exec = rep->globalExec();
     char *f = strdup(sourceURL.ascii());
     const char *message = comp.value().toObject(exec).toString(exec).ascii();
-    printf("%s:%s\n", f, message);
+    printf("[%d] %s:%s\n", getpid(), f, message);
+
     free(f);
     unlock();
   }
