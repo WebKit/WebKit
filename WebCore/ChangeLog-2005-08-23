@@ -1,3 +1,14 @@
+2004-06-18  Trey Matteson  <trey@apple.com>
+
+	3702053 - DHTML dragging destination can't control the cursor (by setting the drop operation)
+
+	Fallout from security work, but an easy fix.
+
+        Reviewed by Darin
+
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::setDropEffect):  Allow dest side to set dropEffect.
+
 2004-06-18  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -336,7 +336,7 @@ DOM::DOMString KWQClipboard::dropEffect() const
 
 void KWQClipboard::setDropEffect(const DOM::DOMString &s)
 {
-    if (m_policy == Writable) {
+    if (m_policy == Readable || m_policy == TypesReadable) {
         m_dropEffect = s;
     }
 }
