@@ -294,6 +294,7 @@
 				6578F5E0045F817400000128,
 				BEE18F940472A0CF00CA289C,
 				BEE18F9B0472B73200CA289C,
+				BEE52D4C0473032500CA289C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -407,6 +408,7 @@
 				6578F5E1045F817400000128,
 				BEE18F950472A0CF00CA289C,
 				BEE18F9C0472B73200CA289C,
+				BEE52D4D0473032500CA289C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -487,6 +489,8 @@
 				7082F56F038EADAA00A80180,
 				7082F570038EADAA00A80180,
 				F5C283730284676D018635CA,
+				BEE52D4A0473032500CA289C,
+				BEE52D4B0473032500CA289C,
 				BEE18F990472B73200CA289C,
 				BEE18F9A0472B73200CA289C,
 				9345DDB20365FFD0008635CE,
@@ -2423,6 +2427,30 @@
 		};
 		BEE18F9C0472B73200CA289C = {
 			fileRef = BEE18F9A0472B73200CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEE52D4A0473032500CA289C = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebKitSystemBits.h;
+			refType = 4;
+		};
+		BEE52D4B0473032500CA289C = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebKitSystemBits.m;
+			refType = 4;
+		};
+		BEE52D4C0473032500CA289C = {
+			fileRef = BEE52D4A0473032500CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEE52D4D0473032500CA289C = {
+			fileRef = BEE52D4B0473032500CA289C;
 			isa = PBXBuildFile;
 			settings = {
 			};

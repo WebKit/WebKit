@@ -3,12 +3,11 @@
     Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitSystemBits.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
-
-#import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebSystemBits.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 #import <CoreGraphics/CGFontLCDSupport.h>

@@ -2,13 +2,12 @@
     WebBackForwardList.m
     Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPreferencesPrivate.h>
-
-#import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebSystemBits.h>
+#import <WebKit/WebKitSystemBits.h>
 
 #define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX
 

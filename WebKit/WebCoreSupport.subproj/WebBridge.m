@@ -5,6 +5,7 @@
 
 #import <WebKit/WebBridge.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBasePluginPackage.h>
@@ -23,6 +24,7 @@
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebKitSystemBits.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNullPluginView.h>
@@ -38,8 +40,6 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebKit/WebAssertions.h>
-
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/WebNSStringExtras.h>
@@ -47,7 +47,6 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/WebSystemBits.h>
 #import <WebFoundation/NSURLFileTypeMappings.h>
 #import <WebKit/WebLocalizableStrings.h>
 

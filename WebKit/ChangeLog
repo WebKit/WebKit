@@ -1,5 +1,21 @@
 2003-05-14  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Chris
+
+        WebKitSystemBits files that contain a system memory size
+        getter. This function is used in a few of places in WebKit.
+
+        * History.subproj/WebBackForwardList.m:
+        * Misc.subproj/WebKitSystemBits.h: Added.
+        * Misc.subproj/WebKitSystemBits.m: Added.
+        (initCapabilities):
+        (WebSystemMainMemory):
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        * WebKit.pbproj/project.pbxproj:
+
+2003-05-14  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by David
 
 	File and class renaming in WebFoundation:
