@@ -1,3 +1,15 @@
+2002-02-21  Richard Williamson  <rjw@apple.com>
+
+    Stop mostly working.
+    
+	* src/kwq/KWQKjobclasses.mm:
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	WCURLHandleResourceDidCancelLoading:userData:]), (-[URLLoadClient
+	WCURLHandleResourceDidFinishLoading:userData:]), (-[URLLoadClient
+	WCURLHandle:resourceDidFailLoadingWithResult:userData:]),
+	(Loader::servePendingRequests):
+	* src/kwq/kio/jobclasses.h:
+
 2002-02-21  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kwq/KWQString.mm: (QString::fromCFString): Don't pass a

@@ -931,6 +931,7 @@ typedef enum {
 @end
 
 @class IFError;
+@class IFURLHandle;
 
 @protocol  IFLoadHandler
 - (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
@@ -940,6 +941,8 @@ typedef enum {
 @end
 
 @interface IFWebDataSource
+- (void)_addURLHandle: (IFURLHandle *)handle;
+- (void)_removeURLHandle: (IFURLHandle *)handle;
 - controller;
 @end
 
@@ -966,6 +969,8 @@ typedef enum {
 {
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
+
+    [m_dataSource _removeURLHandle: job->handle()];
 }
 
 - (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
@@ -973,6 +978,8 @@ typedef enum {
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
 
+    [m_dataSource _removeURLHandle: job->handle()];
+    
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, urlString.latin1());
     m_loader->slotFinished(job);
     
@@ -1007,6 +1014,8 @@ typedef enum {
 {
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
+
+    [m_dataSource _removeURLHandle: job->handle()];
 }
 
 
@@ -1098,6 +1107,7 @@ void Loader::servePendingRequests()
 
     //job->begin(d->m_recv, job);
     job->begin((URLLoadClient *)req->client, job);
+    [((URLLoadClient *)req->client)->m_dataSource _addURLHandle: job->handle()];
 
 #else
   KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);

@@ -169,8 +169,10 @@ public:
 #ifdef _KWQ_
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
     void begin(id <WCURLHandleClient> client, void *userData);
+    id handle();
 #else
     void begin(void *requestor, void *userData);
+    void *handle();
 #endif
     KURL url() { return _url; }
 #endif

@@ -181,6 +181,9 @@ void TransferJob::begin(id <WCURLHandleClient> client, void *userData)
     [d->handle loadInBackground];
 }
 
+id TransferJob::handle() { return d->handle; }
+
+
 } // namespace KIO
 
 
