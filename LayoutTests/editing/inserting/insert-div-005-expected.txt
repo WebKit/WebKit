@@ -12,6 +12,6 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (14,14) size 12x28
           text run at (14,14) width 12: "x"
 selection is CARET:
-start:      position 1 of child 1 {TEXT} of child 5 {DIV} of root {BODY}
-upstream:   position 1 of child 1 {TEXT} of child 5 {DIV} of root {BODY}
-downstream: position 1 of child 1 {TEXT} of child 5 {DIV} of root {BODY}
+start:      position 1 of child 1 {TEXT} of child 3 {DIV} of root {BODY}
+upstream:   position 1 of child 1 {TEXT} of child 3 {DIV} of root {BODY}
+downstream: position 1 of child 1 {TEXT} of child 3 {DIV} of root {BODY}

@@ -12,6 +12,9 @@
         needs to add check for DOM children. A block may have straggling anonymous render children in
         some cases, and so the check needs to be (!DOM-kids || !render-kids).
 
+        Also, I botched the last checkin trying to split these two patches in my tree. Wrong layout tests 
+        got checked in, I checked in a conflict marker in the Changelog, etc. I fixed everything with this checkin.
+
 2005-03-01  Ken Kocienda  <kocienda@apple.com>
  
         Reviewed by Maciej
