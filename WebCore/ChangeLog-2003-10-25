@@ -1,3 +1,10 @@
+2003-09-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * WebCore.pbproj/project.pbxproj: Don't hack install name. Instead
+	of embedding into Safari, embed into WebKit as sub-umbrella.
+
 === Safari-107 ===
 
 2003-09-25  Darin Adler  <darin@apple.com>

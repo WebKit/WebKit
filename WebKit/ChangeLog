@@ -1,3 +1,14 @@
+2003-09-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Updated setup for engineering builds. Don't embed the framework
+	into Safari or hack the install name. However, do copy WebCore and
+	JavaScriptCore into the proper sub-umbrella locations.
+	
+        * WebKit.pbproj/project.pbxproj:
+        * embed-frameworks.sh: Added.
+
 === Safari-107 ===
 
 2003-09-25  Ken Kocienda  <kocienda@apple.com>

@@ -1,3 +1,12 @@
+2003-09-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Don't hack install name. Instead
+	of embedding into Safari, embed into WebKit as sub-umbrella.
+        * Makefile.am: Don't forget to rebuild if the user removes
+	JavaScript.framework from symroots manually.
+
 === Safari-107 ===
 
 2003-09-24  Darin Adler  <darin@apple.com>
