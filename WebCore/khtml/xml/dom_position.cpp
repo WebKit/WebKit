@@ -608,7 +608,7 @@ bool Position::inRenderedContent() const
         // and for blocks if they are empty
         if (renderer->isReplaced() ||
             (renderer->isInlineFlow() && static_cast<RenderFlow *>(renderer)->firstLineBox()) ||
-            (node()->isBlockFlow() && !node()->firstChild()))
+            (renderer->isBlockFlow() && !renderer->firstChild() && renderer->height()))
             return true;
     }
     

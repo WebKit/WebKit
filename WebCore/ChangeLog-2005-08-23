@@ -1,3 +1,12 @@
+2004-09-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::inRenderedContent): Make the "empty block" check the same as the one
+        use in visible position. This fixes a recent regression which broke up and down
+        arrowing between blocks with an empty block in between.
+
 2004-09-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
