@@ -81,12 +81,17 @@ SourceStream& SourceStream::operator<<(const Node *n)
 
 SourceStream& SourceStream::operator<<(Format f)
 {
-  if (f == Endl)
-    str += "\n" + ind;
-  else if (f == Indent)
-    ind += "  ";
-  else
-    ind = ind.substr(0, ind.size() - 2);
+  switch (f) {
+    case Endl:
+      str += "\n" + ind;
+      break;
+    case Indent:
+      ind += "  ";
+      break;
+    case Unindent:
+      ind = ind.substr(0, ind.size() - 2);
+      break;
+  }
 
   return *this;
 }
@@ -121,11 +126,11 @@ void ResolveNode::streamTo(SourceStream &s) const { s << ident; }
 
 void ElementNode::streamTo(SourceStream &s) const
 {
-  for (int i = 0; i < elision; i++)
-    s << ",";
-  s << node;
-  if (list)
-    s << "," << list;
+  for (const ElementNode *n = this; n; n = n->list) {
+    for (int i = 0; i < n->elision; i++)
+      s << ",";
+    s << n->node;
+  }
 }
 
 void ArrayNode::streamTo(SourceStream &s) const
@@ -146,9 +151,8 @@ void ObjectLiteralNode::streamTo(SourceStream &s) const
 
 void PropertyValueNode::streamTo(SourceStream &s) const
 {
-  s << name << ": " << assign;
-  if (list)
-    s << ", " << list;
+  for (const PropertyValueNode *n = this; n; n = n->list)
+    s << n->name << ": " << n->assign;
 }
 
 void PropertyNode::streamTo(SourceStream &s) const
@@ -172,8 +176,8 @@ void AccessorNode2::streamTo(SourceStream &s) const
 void ArgumentListNode::streamTo(SourceStream &s) const
 {
   s << expr;
-  if (list)
-    s << ", " << list;
+  for (ArgumentListNode *n = list; n; n = n->list)
+    s << ", " << n->expr;
 }
 
 void ArgumentsNode::streamTo(SourceStream &s) const
@@ -388,7 +392,8 @@ void CommaNode::streamTo(SourceStream &s) const
 
 void StatListNode::streamTo(SourceStream &s) const
 {
-  s << list << statement;
+  for (const StatListNode *n = this; n; n = n->list)
+    s << n->statement;
 }
 
 void AssignExprNode::streamTo(SourceStream &s) const
@@ -404,8 +409,8 @@ void VarDeclNode::streamTo(SourceStream &s) const
 void VarDeclListNode::streamTo(SourceStream &s) const
 {
   s << var;
-  if (list)
-    s << ", " << list;
+  for (VarDeclListNode *n = list; n; n = n->list)
+    s << ", " << n->var;
 }
 
 void VarStatementNode::streamTo(SourceStream &s) const
@@ -516,27 +521,18 @@ void CaseClauseNode::streamTo(SourceStream &s) const
 
 void ClauseListNode::streamTo(SourceStream &s) const
 {
-  const ClauseListNode *l = this;
-  do {
-    s << l;
-    l = l->nx;
-  } while (l);
+  for (const ClauseListNode *n = this; n; n = n->next())
+    s << n->clause();
 }
 
 void CaseBlockNode::streamTo(SourceStream &s) const
 {
-  const ClauseListNode *cl = list1;
-  while (cl) {
-    s << cl->clause();
-    cl = cl->next();
-  }
+  for (const ClauseListNode *n = list1; n; n = n->next())
+    s << n->clause();
   if (def)
     s << def;
-  cl = list2;
-  while (cl) {
-    s << cl->clause();
-    cl = cl->next();
-  }
+  for (const ClauseListNode *n = list2; n; n = n->next())
+    s << n->clause();
 }
 
 void SwitchNode::streamTo(SourceStream &s) const
@@ -577,8 +573,8 @@ void TryNode::streamTo(SourceStream &s) const
 void ParameterNode::streamTo(SourceStream &s) const
 {
   s << id;
-  if (next)
-    s << ", " << next;
+  for (ParameterNode *n = next; n; n = n->next)
+    s << ", " << n->id;
 }
 
 void FuncDeclNode::streamTo(SourceStream &s) const {
@@ -597,6 +593,7 @@ void FuncExprNode::streamTo(SourceStream &s) const
 
 void SourceElementsNode::streamTo(SourceStream &s) const
 {
-  s << elements << element;
+  for (const SourceElementsNode *n = this; n; n = n->elements)
+    s << n->element;
 }
 

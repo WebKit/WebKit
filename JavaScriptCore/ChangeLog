@@ -1,3 +1,48 @@
+2003-01-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- turned more recursion into iteration, and fixed some backwards stuff
+
+        * kjs/grammar.y: Use the normal idiom for CaseClauses and FormalParameterList
+	rather than using append().
+        * kjs/grammar.cpp: Regenerated.
+
+        * kjs/nodes.h: Change ClauseListNode and ParameterNode to use the normal idiom,
+	and got rid of append methods. Also added friend declarations and calls to reverseList().
+        * kjs/nodes.cpp:
+        (StatListNode::ref): Iteration, not recursion.
+        (StatListNode::deref): Iteration, not recursion.
+        (StatListNode::execute): Iteration, not recursion.
+        (StatListNode::processVarDecls): Iteration, not recursion.
+        (CaseClauseNode::reverseList): Added.
+        (ClauseListNode::ref): Iteration, not recursion.
+        (ClauseListNode::deref): Iteration, not recursion.
+        (ClauseListNode::processVarDecls): Iteration, not recursion.
+        (CaseBlockNode::reverseLists): Added.
+        (ParameterNode::ref): Iteration, not recursion.
+        (ParameterNode::deref): Iteration, not recursion.
+        (FuncDeclNode::reverseParameterList): Added.
+        (FuncExprNode::reverseParameterList): Added.
+        (SourceElementsNode::ref): Iteration, not recursion.
+        (SourceElementsNode::deref): Iteration, not recursion.
+        (SourceElementsNode::execute): Use variable name of n to match other functions.
+        (SourceElementsNode::processFuncDecl): Ditto.
+        (SourceElementsNode::processVarDecls): Ditto.
+
+        * kjs/nodes2string.cpp:
+        (SourceStream::operator<<): Used a switch statement for a bit of added clarity.
+        (ElementNode::streamTo): Iteration, not recursion.
+        (PropertyValueNode::streamTo): Iteration, not recursion.
+        (ArgumentListNode::streamTo): Iteration, not recursion.
+        (StatListNode::streamTo): Iteration, not recursion, and fixed order.
+        (VarDeclListNode::streamTo): Iteration, not recursion.
+        (ClauseListNode::streamTo): Used for statement to match other functions.
+        (CaseBlockNode::streamTo): Used for statement to match other functions.
+        (ParameterNode::streamTo): Iteration, not recursion.
+        (SourceElementsNode::streamTo): Iteration, not recursion, and fixed order that has been
+	backwards since I changed how this works in nodes.cpp.
+
 2003-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

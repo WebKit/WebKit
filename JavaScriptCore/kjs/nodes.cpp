@@ -1491,61 +1491,63 @@ Value CommaNode::evaluate(ExecState *exec)
 
 void StatListNode::ref()
 {
-  Node::ref();
-  if ( statement )
-    statement->ref();
-  if ( list )
-    list->ref();
+  for (StatListNode *n = this; n; n = n->list) {
+    n->Node::ref();
+    if (n->statement)
+      n->statement->ref();
+  }
 }
 
 bool StatListNode::deref()
 {
-  if ( statement && statement->deref() )
-    delete statement;
-  if ( list && list->deref() )
-    delete list;
+  StatListNode *next;
+  for (StatListNode *n = this; n; n = next) {
+    next = n->list;
+    if (n->statement && n->statement->deref())
+      delete n->statement;
+    if (n != this && n->Node::deref())
+      delete n;
+  }
   return Node::deref();
 }
 
 // ECMA 12.1
 Completion StatListNode::execute(ExecState *exec)
 {
-  if (!list) {
-    Completion c = statement->execute(exec);
-    KJS_ABORTPOINT
-    if (exec->hadException()) {
-      Value ex = exec->exception();
-      exec->clearException();
-      return Completion(Throw, ex);
-    }
-    else
-      return c;
-  }
-
-  Completion l = list->execute(exec);
+  Completion c = statement->execute(exec);
   KJS_ABORTPOINT
-  if (l.complType() != Normal)
-    return l;
-  Completion e = statement->execute(exec);
-  KJS_ABORTPOINT;
-
   if (exec->hadException()) {
     Value ex = exec->exception();
     exec->clearException();
     return Completion(Throw, ex);
   }
+  
+  Value v = c.value();
+  
+  for (StatListNode *n = list; n; n = n->list) {
+    Completion c2 = n->statement->execute(exec);
+    KJS_ABORTPOINT
+    if (c2.complType() != Normal)
+      return c2;
 
-  Value v = e.isValueCompletion() ? e.value() : l.value();
+    if (exec->hadException()) {
+      Value ex = exec->exception();
+      exec->clearException();
+      return Completion(Throw, ex);
+    }
 
-  return Completion(e.complType(), v, e.target() );
+    if (c2.isValueCompletion())
+      v = c2.value();
+    c = c2;
+  }
+
+  return Completion(c.complType(), v, c.target());
 }
 
 void StatListNode::processVarDecls(ExecState *exec)
 {
-  statement->processVarDecls(exec);
-
-  if (list)
-    list->processVarDecls(exec);
+  for (StatListNode *n = this; n; n = n->list)
+    n->statement->processVarDecls(exec);
 }
 
 // ------------------------------ AssignExprNode -------------------------------
@@ -2232,6 +2234,18 @@ void WithNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ CaseClauseNode -------------------------------
 
+void CaseClauseNode::reverseList()
+{
+  StatListNode *head = 0;
+  StatListNode *next;
+  for (StatListNode *n = list; n; n = next) {
+    next = n->list;
+    n->list = head;
+    head = n;
+  }
+  list = head;
+}
+
 void CaseClauseNode::ref()
 {
   Node::ref();
@@ -2278,19 +2292,23 @@ void CaseClauseNode::processVarDecls(ExecState *exec)
 
 void ClauseListNode::ref()
 {
-  Node::ref();
-  if ( cl )
-    cl->ref();
-  if ( nx )
-    nx->ref();
+  for (ClauseListNode *n = this; n; n = n->nx) {
+    n->Node::ref();
+    if (n->cl)
+      n->cl->ref();
+  }
 }
 
 bool ClauseListNode::deref()
 {
-  if ( cl && cl->deref() )
-    delete cl;
-  if ( nx && nx->deref() )
-    delete nx;
+  ClauseListNode *next;
+  for (ClauseListNode *n = this; n; n = next) {
+    next = n->nx;
+    if (n->cl && n->cl->deref())
+      delete n->cl;
+    if (n != this && n->Node::deref())
+      delete n;
+  }
   return Node::deref();
 }
 
@@ -2302,25 +2320,34 @@ Value ClauseListNode::evaluate(ExecState */*exec*/)
 }
 
 // ECMA 12.11
-ClauseListNode* ClauseListNode::append(CaseClauseNode *c)
-{
-  ClauseListNode *l = this;
-  while (l->nx)
-    l = l->nx;
-  l->nx = new ClauseListNode(c);
-
-  return this;
-}
-
 void ClauseListNode::processVarDecls(ExecState *exec)
 {
-  if (cl)
-    cl->processVarDecls(exec);
-  if (nx)
-    nx->processVarDecls(exec);
+  for (ClauseListNode *n = this; n; n = n->nx)
+    if (n->cl)
+      n->cl->processVarDecls(exec);
 }
 
 // ------------------------------ CaseBlockNode --------------------------------
+
+void CaseBlockNode::reverseLists()
+{
+  ClauseListNode *head = 0;
+  ClauseListNode *next;
+  for (ClauseListNode *n = list1; n; n = next) {
+    next = n->nx;
+    n->nx = head;
+    head = n;
+  }
+  list1 = head;
+  
+  head = 0;
+  for (ClauseListNode *n = list2; n; n = next) {
+    next = n->nx;
+    n->nx = head;
+    head = n;
+  }
+  list2 = head;
+}
 
 void CaseBlockNode::ref()
 {
@@ -2667,27 +2694,19 @@ void TryNode::processVarDecls(ExecState *exec)
 
 void ParameterNode::ref()
 {
-  Node::ref();
-  if ( next )
-    next->ref();
+  for (ParameterNode *n = this; n; n = n->next)
+    n->Node::ref();
 }
 
 bool ParameterNode::deref()
 {
-  if ( next && next->deref() )
-    delete next;
+  ParameterNode *next;
+  for (ParameterNode *n = this; n; n = next) {
+    next = n->next;
+    if (n != this && n->Node::deref())
+      delete n;
+  }
   return Node::deref();
-}
-
-ParameterNode* ParameterNode::append(const Identifier &i)
-{
-  ParameterNode *p = this;
-  while (p->next)
-    p = p->next;
-
-  p->next = new ParameterNode(i);
-
-  return this;
 }
 
 // ECMA 13
@@ -2712,6 +2731,18 @@ void FunctionBodyNode::processFuncDecl(ExecState *exec)
 }
 
 // ------------------------------ FuncDeclNode ---------------------------------
+
+void FuncDeclNode::reverseParameterList()
+{
+  ParameterNode *head = 0;
+  ParameterNode *next;
+  for (ParameterNode *n = param; n; n = next) {
+    next = n->next;
+    n->next = head;
+    head = n;
+  }
+  param = head;
+}
 
 void FuncDeclNode::ref()
 {
@@ -2765,6 +2796,18 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
 
 // ------------------------------ FuncExprNode ---------------------------------
 
+void FuncExprNode::reverseParameterList()
+{
+  ParameterNode *head = 0;
+  ParameterNode *next;
+  for (ParameterNode *n = param; n; n = next) {
+    next = n->next;
+    n->next = head;
+    head = n;
+  }
+  param = head;
+}
+
 void FuncExprNode::ref()
 {
   Node::ref();
@@ -2804,19 +2847,23 @@ Value FuncExprNode::evaluate(ExecState *exec)
 
 void SourceElementsNode::ref()
 {
-  Node::ref();
-  if ( element )
-    element->ref();
-  if ( elements )
-    elements->ref();
+  for (SourceElementsNode *n = this; n; n = n->elements) {
+    n->Node::ref();
+    if (n->element)
+      n->element->ref();
+  }
 }
 
 bool SourceElementsNode::deref()
 {
-  if ( element && element->deref() )
-    delete element;
-  if ( elements && elements->deref() )
-    delete elements;
+  SourceElementsNode *next;
+  for (SourceElementsNode *n = this; n; n = next) {
+    next = n->elements;
+    if (n->element && n->element->deref())
+      delete n->element;
+    if (n != this && n->Node::deref())
+      delete n;
+  }
   return Node::deref();
 }
 
@@ -2830,8 +2877,8 @@ Completion SourceElementsNode::execute(ExecState *exec)
   if (c1.complType() != Normal)
     return c1;
   
-  for (SourceElementsNode *node = elements; node; node = node->elements) {
-    Completion c2 = node->element->execute(exec);
+  for (SourceElementsNode *n = elements; n; n = n->elements) {
+    Completion c2 = n->element->execute(exec);
     if (c2.complType() != Normal)
       return c2;
     // The spec says to return c2 here, but it seems that mozilla returns c1 if
@@ -2846,16 +2893,14 @@ Completion SourceElementsNode::execute(ExecState *exec)
 // ECMA 14
 void SourceElementsNode::processFuncDecl(ExecState *exec)
 {
-  for (SourceElementsNode *node = this; node; node = node->elements) {
-    node->element->processFuncDecl(exec);
-  }
+  for (SourceElementsNode *n = this; n; n = n->elements)
+    n->element->processFuncDecl(exec);
 }
 
 void SourceElementsNode::processVarDecls(ExecState *exec)
 {
-  for (SourceElementsNode *node = this; node; node = node->elements) {
-    node->element->processVarDecls(exec);
-  }
+  for (SourceElementsNode *n = this; n; n = n->elements)
+    n->element->processVarDecls(exec);
 }
 
 ProgramNode::ProgramNode(SourceElementsNode *s): FunctionBodyNode(s) {

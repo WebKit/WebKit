@@ -332,8 +332,8 @@ static const short yyrline[] = { 0,
    483,   485,   489,   491,   498,   500,   504,   506,   514,   516,
    520,   521,   527,   532,   537,   539,   543,   545,   548,   550,
    553,   555,   558,   560,   563,   569,   573,   575,   576,   579,
-   583,   587,   590,   594,   596,   601,   603,   607,   610,   614,
-   617,   621,   623,   626,   628
+   583,   587,   590,   594,   596,   601,   603,   606,   609,   613,
+   616,   620,   622,   625,   627
 };
 #endif
 
@@ -1899,7 +1899,7 @@ case 169:
     break;}
 case 170:
 #line 550 "grammar.y"
-{ yyval.clist = yyvsp[-1].clist->append(yyvsp[0].ccl); ;
+{ yyval.clist = new ClauseListNode(yyvsp[-1].clist, yyvsp[0].ccl); ;
     break;}
 case 171:
 #line 554 "grammar.y"
@@ -1971,43 +1971,42 @@ case 186:
     break;}
 case 187:
 #line 603 "grammar.y"
-{ yyval.param = yyvsp[-2].param->append(*yyvsp[0].ident);
-	                             delete yyvsp[0].ident; ;
+{ yyval.param = new ParameterNode(yyvsp[-2].param, *yyvsp[0].ident); delete yyvsp[0].ident; ;
     break;}
 case 188:
-#line 608 "grammar.y"
+#line 607 "grammar.y"
 { yyval.body = new FunctionBodyNode(0L);
 	                             DBG(yyval.body, yylsp[-1], yylsp[0]);;
     break;}
 case 189:
-#line 610 "grammar.y"
+#line 609 "grammar.y"
 { yyval.body = new FunctionBodyNode(yyvsp[-1].srcs);
 	                             DBG(yyval.body, yylsp[-2], yylsp[0]);;
     break;}
 case 190:
-#line 615 "grammar.y"
+#line 614 "grammar.y"
 { yyval.prog = new ProgramNode(0L);
                                      Parser::progNode = yyval.prog; ;
     break;}
 case 191:
-#line 617 "grammar.y"
+#line 616 "grammar.y"
 { yyval.prog = new ProgramNode(yyvsp[0].srcs);
                                      Parser::progNode = yyval.prog; ;
     break;}
 case 192:
-#line 622 "grammar.y"
+#line 621 "grammar.y"
 { yyval.srcs = new SourceElementsNode(yyvsp[0].stat); ;
     break;}
 case 193:
-#line 623 "grammar.y"
+#line 622 "grammar.y"
 { yyval.srcs = new SourceElementsNode(yyvsp[-1].srcs, yyvsp[0].stat); ;
     break;}
 case 194:
-#line 627 "grammar.y"
+#line 626 "grammar.y"
 { yyval.stat = yyvsp[0].stat; ;
     break;}
 case 195:
-#line 628 "grammar.y"
+#line 627 "grammar.y"
 { yyval.stat = yyvsp[0].func; ;
     break;}
 }
@@ -2232,7 +2231,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 631 "grammar.y"
+#line 630 "grammar.y"
 
 
 int yyerror (const char *)  /* Called by yyparse on error */
