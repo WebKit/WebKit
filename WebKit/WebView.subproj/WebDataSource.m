@@ -19,6 +19,7 @@
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 
 @implementation WebDataSource
@@ -149,6 +150,11 @@
     return _private->request;
 }
 
+- (WebResourceResponse *)response
+{
+    return _private->response;
+}
+
 // May return nil if not initialized with a URL.
 - (NSURL *)URL
 {
@@ -230,14 +236,9 @@
     return _private->contentPolicy;
 }
 
-- (NSString *)contentType
-{
-    return _private->contentType;
-}
-
 - (NSString *)fileType
 {
-    return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[self contentType]];
+    return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[[self response] contentType]];
 }
 
 - (NSDictionary *)errors

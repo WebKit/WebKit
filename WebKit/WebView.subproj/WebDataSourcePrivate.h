@@ -14,6 +14,7 @@
 @class WebMainResourceClient;
 @class WebResourceHandle;
 @class WebResourceRequest;
+@class WebResourceResponse;
 @class WebSubresourceClient;
 
 @protocol WebDocumentRepresentation;
@@ -33,6 +34,7 @@
     NSURL *inputURL;
     WebResourceRequest *originalRequest;
     WebResourceRequest *request;
+    WebResourceResponse *response;
 
     // The original URL we may have been redirected to.
     NSURL *finalURL;
@@ -58,8 +60,6 @@
     
     NSString *encoding;
     NSString *overrideEncoding;
-
-    NSString *contentType;
 
     // Errors associated with resources.
     NSMutableDictionary *errors;
@@ -100,9 +100,9 @@
 - (void)_setTitle:(NSString *)title;
 - (void)_setURL:(NSURL *)URL;
 - (void)_setRequest:(WebResourceRequest *)request;
-- (void)_setContentPolicy:(WebContentPolicy *)policy;
-- (void)_setContentType:(NSString *)type;
+- (void)_setResponse:(WebResourceResponse *)response;
 - (void)_setEncoding:(NSString *)encoding;
+- (void) _setContentPolicy:(WebContentPolicy *)policy;
 - (void)_layoutChildren;
 - (void)_clearErrors;
 - (void)_setMainDocumentError:(WebError *)error;

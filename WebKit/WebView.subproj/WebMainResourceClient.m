@@ -73,7 +73,6 @@
     [downloadProgressDelegate release];
     [resourceData release];
     [dataSource release];
-    [response release];
     
     [super dealloc];
 }
@@ -174,7 +173,7 @@
     }
     
     // Either send a final error message or a final progress message.
-    WebError *nonTerminalError = [response error];
+    WebError *nonTerminalError = [[dataSource response] error];
     if (nonTerminalError) {
         [self receivedError:nonTerminalError forHandle:handle];
     } else {
@@ -212,16 +211,15 @@
     [self didStartLoadingWithURL:URL];
 }
 
--(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
+-(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)response
 {
-    [theResponse retain];
-    [response release];
-    response = theResponse;
+    [dataSource _setResponse:response];
 }
 
 - (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
 {
     WebController *controller = [dataSource controller];
+    WebResourceResponse *response = [dataSource response];
     NSString *contentType = [response contentType];
     WebFrame *frame = [dataSource webFrame];
     WebError *downloadError = nil;
@@ -235,7 +233,6 @@
         if([contentType isEqualToString:@"application/octet-stream"] && [[[currentURL path] pathExtension] isEqualToString:@""])
             contentType = @"text/html";
         
-        [dataSource _setContentType:contentType];
         [dataSource _setEncoding:[response textEncodingName]];
         
         // retain the downloadProgressDelegate just in case this is a download.

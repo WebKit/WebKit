@@ -8,6 +8,8 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebPreferences.h>
 
+#import <WebFoundation/WebResourceResponse.h>
+
 @implementation WebTextView
 
 - (id)initWithFrame:(NSRect)frame
@@ -51,7 +53,7 @@
     
     // FIXME: This needs to be more efficient for progressively loading documents.
     
-    if ([[dataSource contentType] isEqualToString:@"text/rtf"]) {
+    if ([[[dataSource response] contentType] isEqualToString:@"text/rtf"]) {
         [self setRichText:YES];
         [self replaceCharactersInRange:NSMakeRange(0,0) withRTF:[dataSource data]];
     } else {

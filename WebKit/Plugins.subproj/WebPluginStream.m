@@ -21,9 +21,10 @@
 #import <WebFoundation/WebResourceResponse.h>
 
 @interface WebNetscapePluginStream (ClassInternal)
-- (void)receivedData:(NSData *)data withHandle:(WebResourceHandle *)handle;
+- (void)receivedData:(NSData *)data;
 - (void)receivedError:(NPError)error;
 - (void)finishedLoadingWithData:(NSData *)data;
+- (void)setResponse:(WebResourceResponse *)theReponse;
 - (void)cancel;
 @end
 
@@ -114,7 +115,7 @@
     view = nil;
 }
 
-- (void)receivedData:(NSData *)data withHandle:(WebResourceHandle *)handle
+- (void)receivedData:(NSData *)data
 {    
     if(isFirstChunk){
 
@@ -228,10 +229,17 @@
     [self stop];
 }
 
+- (void)setResponse:(WebResourceResponse *)theResponse
+{
+    [response release];
+    response = [theResponse retain];
+}
+
 #pragma mark WebDocumentRepresentation
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
+    [self setResponse:[dataSource response]];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
@@ -251,7 +259,7 @@
         [self getFunctionPointersFromPluginView:view];
     }
 
-    [self receivedData:data withHandle:[dataSource _mainHandle]];
+    [self receivedData:data];
 }
 
 - (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
@@ -285,16 +293,14 @@
 
 - (void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
 {
-    [theResponse retain];
-    [response release];
-    response = theResponse;
+    [self setResponse:theResponse];
 }
 
 - (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
 {
     ASSERT(resource == handle);
 
-    [self receivedData:data withHandle:handle];
+    [self receivedData:data];
     
     [[view controller] _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
         forResourceHandle: handle fromDataSource: [view dataSource] complete: NO];

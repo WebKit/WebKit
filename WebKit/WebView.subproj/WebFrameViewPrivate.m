@@ -17,6 +17,7 @@
 #import <WebKit/WebTextView.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 @implementation WebViewPrivate
 
@@ -68,7 +69,7 @@
 
 -(void)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
 {
-    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[dataSource contentType]];
+    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[[dataSource response] contentType]];
     id documentView = viewClass ? [[viewClass alloc] init] : nil;
     [self _setDocumentView:(id<WebDocumentView>)documentView];
     [documentView release];

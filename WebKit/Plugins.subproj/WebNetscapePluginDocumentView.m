@@ -13,6 +13,8 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebView.h>
 
+#import <WebFoundation/WebResourceResponse.h>
+
 @implementation WebNetscapePluginDocumentView
 
 - initWithFrame:(NSRect)frame
@@ -53,7 +55,7 @@
     [dataSource release];
     dataSource = [theDataSource retain];
 
-    NSString *MIME = [dataSource contentType];
+    NSString *MIME = [[dataSource response] contentType];
     
     [self setMIMEType:MIME];
     [self setBaseURL:[dataSource URL]];

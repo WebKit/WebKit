@@ -35,6 +35,7 @@
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 
 #import <WebCore/WebCoreEncodings.h>
@@ -71,7 +72,7 @@
     [subresourceClients release];
     [pageTitle release];
     [encoding release];
-    [contentType release];
+    [response release];
     [errors release];
     [mainDocumentError release];
     [contentPolicy release];
@@ -100,7 +101,7 @@
 
 - (Class)_representationClass
 {
-    return [[[self class] _repTypes] _web_objectForMIMEType:[self contentType]];
+    return [[[self class] _repTypes] _web_objectForMIMEType:[[self response] contentType]];
 }
 
 - (void)_setLoading:(BOOL)loading
@@ -313,18 +314,17 @@
     }
 }
 
+- (void)_setResponse:(WebResourceResponse *)response
+{
+    [_private->response release];
+    _private->response = [response retain];
+}
+
 - (void) _setContentPolicy:(WebContentPolicy *)policy
 {
     [_private->contentPolicy release];
     _private->contentPolicy = [policy retain];
     [self _commitIfReady];
-}
-
-- (void)_setContentType:(NSString *)type
-{
-    NSString *copy = [type copy];
-    [_private->contentType release];
-    _private->contentType = copy;
 }
 
 - (void)_setEncoding:(NSString *)encoding

@@ -1,3 +1,37 @@
+2002-10-02  Chris Blumenberg  <cblu@apple.com>
+
+	Replaced contentType on WebDataSource to response.
+
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream receivedData:]):
+        (-[WebNetscapePluginStream setResponse:]):
+        (-[WebNetscapePluginStream setDataSource:]):
+        (-[WebNetscapePluginStream receivedData:withDataSource:]):
+        (-[WebNetscapePluginStream handle:didReceiveResponse:]):
+        (-[WebNetscapePluginStream handle:didReceiveData:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource response]):
+        (-[WebDataSource fileType]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _representationClass]):
+        (-[WebDataSource _setResponse:]):
+        (-[WebDataSource _setContentPolicy:]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient dealloc]):
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        (-[WebMainResourceClient handle:didReceiveData:]):
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView dataSourceUpdated:]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _makeDocumentViewForDataSource:]):
+
 2002-10-02  Darin Adler  <darin@apple.com>
 
 	More work on "open window behind".
