@@ -2447,7 +2447,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]] ||
                 [view isKindOfClass:[WebNullPluginView class]] ||
                 [[view class] respondsToSelector:@selector(plugInViewWithArguments:)] ||
-                [view respondsToSelector:@selector(pluginInitialize)]) {
+                [view respondsToSelector:@selector(pluginInitialize)] ||
+                [view respondsToSelector:@selector(webPlugInInitialize)]) {
                 [self reload];
                 break;
             }

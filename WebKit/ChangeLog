@@ -1,3 +1,15 @@
+2004-08-12  Richard Williamson   <rjw@apple.com>
+
+        Quick fix for 3760903.  The real fix is described in 3760920.  Needed
+        by Java plugin guys so they can be unblocked for feature freeze.
+		
+        Reviewed by Chris.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _reloadForPluginChanges]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]):
+
 2004-08-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3760898> error pages in subframes attempt to load appledata URLs when reloaded
