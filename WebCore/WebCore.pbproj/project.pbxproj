@@ -3943,8 +3943,8 @@
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				SKIP_INSTALL = YES;
-				ppc = YES;
 				i386 = YES;
+				ppc = YES;
 			};
 			isa = PBXBuildStyle;
 			name = DeploymentFat;

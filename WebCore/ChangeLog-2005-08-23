@@ -1,3 +1,14 @@
+2002-09-19  Darin Adler  <darin@apple.com>
+
+	- fixed 3045651 -- null-dereference in DOM::CharacterDataImpl constructor
+	setting up text area element
+
+        * khtml/xml/dom_textimpl.cpp: (CharacterDataImpl::CharacterDataImpl):
+	Set str to an empty DOMStringImpl instead of to 0. This was easier than
+	going around finding all the places that don't like a str of 0.
+
+        * WebCore.pbproj/project.pbxproj: Let PB sort things as it likes.
+
 === Alexander-24 ===
 
 2002-09-18  Darin Adler  <darin@apple.com>
