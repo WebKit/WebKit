@@ -63,6 +63,7 @@ RenderBox::RenderBox(DOM::NodeImpl* node)
     m_staticX = 0;
     m_staticY = 0;
     m_layer = 0;
+    m_inlineBoxWrapper = 0;
 }
 
 void RenderBox::setStyle(RenderStyle *_style)
@@ -121,9 +122,14 @@ RenderBox::~RenderBox()
 void RenderBox::detach()
 {
     RenderLayer* layer = m_layer;
-
     RenderArena* arena = renderArena();
     
+    if (m_inlineBoxWrapper) {
+        if (!documentBeingDestroyed())
+            m_inlineBoxWrapper->parent()->removeChild(m_inlineBoxWrapper);
+        m_inlineBoxWrapper->detach(arena);
+    }
+
     RenderContainer::detach();
     
     if (layer)
@@ -563,15 +569,28 @@ void RenderBox::position(InlineBox* box, int from, int len, bool reverse)
             m_staticY = box->yPos();
 
         // Nuke the box.
+        box->parent()->removeChild(box);
         box->detach(renderArena());
     }
     else if (isReplaced()) {
         m_x = box->xPos();
         m_y = box->yPos();
-
-        // Nuke the box.  We don't need it for replaced elements.
-        box->detach(renderArena());
+        m_inlineBoxWrapper = box;
     }
+}
+
+// For inline replaced elements, this function returns the inline box that owns us.  Enables
+// the replaced RenderObject to quickly determine what line it is contained on and to easily
+// iterate over structures on the line.
+InlineBox* RenderBox::inlineBoxWrapper() const
+{
+    return m_inlineBoxWrapper;
+}
+
+void RenderBox::deleteLineBoxWrapper()
+{
+    if (m_inlineBoxWrapper)
+        m_inlineBoxWrapper->detach(renderArena());
 }
 
 QRect RenderBox::getAbsoluteRepaintRect()

@@ -142,6 +142,11 @@ void RenderFlow::deleteLineBoxes()
 
 void RenderFlow::detach()
 {
+    if (!documentBeingDestroyed() && m_firstLineBox && m_firstLineBox->parent()) {
+        for (InlineRunBox* box = m_firstLineBox; box; box = box->nextLineBox())
+            box->parent()->removeChild(box);
+    }
+
     deleteLineBoxes();
     RenderBox::detach();
 }

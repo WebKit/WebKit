@@ -41,17 +41,20 @@ namespace khtml
     class RenderText;
     class RenderStyle;
 
-class InlineTextBox : public InlineBox
+class InlineTextBox : public InlineRunBox
 {
 public:
     InlineTextBox(RenderObject* obj)
-    :InlineBox(obj)
+    :InlineRunBox(obj)
     {
         m_start = 0;
         m_len = 0;
         m_reversed = false;
         m_toAdd = 0;
     }
+    
+    InlineTextBox* nextTextBox() const { return static_cast<InlineTextBox*>(nextLineBox()); }
+    InlineTextBox* prevTextBox() const { return static_cast<InlineTextBox*>(prevLineBox()); }
     
     void detach(RenderArena* arena);
     
@@ -95,26 +98,7 @@ public:
     bool m_reversed : 1;
     int m_toAdd : 14; // for justified text
 private:
-    // this is just for QVector::bsearch. Don't use it otherwise
-    InlineTextBox(int _x, int _y)
-        :InlineBox(0)
-    {
-        m_x = _x;
-        m_y = _y;
-        m_reversed = false;
-    };
     friend class RenderText;
-};
-
-class InlineTextBoxArray : public QPtrVector<InlineTextBox>
-{
-public:
-    InlineTextBoxArray();
-
-    InlineTextBox* first();
-
-    int	  findFirstMatching( Item ) const;
-    virtual int compareItems( Item, Item );
 };
 
 class RenderText : public RenderObject
@@ -137,7 +121,7 @@ public:
     virtual void paintObject(QPainter *, int x, int y, int w, int h,
                              int tx, int ty, PaintAction paintAction);
 
-    void deleteRuns();
+    void deleteTextBoxes();
     virtual void detach();
     
     DOM::DOMString data() const { return str; }
@@ -214,8 +198,10 @@ public:
     DOM::TextImpl *element() const
     { return static_cast<DOM::TextImpl*>(RenderObject::element()); }
 
+    InlineTextBox* firstTextBox() const { return m_firstTextBox; }
+    InlineTextBox* lastTextBox() const { return m_lastTextBox; }
+    
 #if APPLE_CHANGES
-    InlineTextBoxArray inlineTextBoxes() const { return m_lines; }
     int widthFromCache(const Font *, int start, int len) const;
     bool shouldUseMonospaceCache(const Font *) const;
     void cacheWidths();
@@ -234,9 +220,11 @@ public:
     InlineTextBox * findNextInlineTextBox( int offset, int &pos );
 
 protected: // members
-    InlineTextBoxArray m_lines;
-    DOM::DOMStringImpl *str; //
-
+    DOM::DOMStringImpl *str;
+    
+    InlineTextBox* m_firstTextBox;
+    InlineTextBox* m_lastTextBox;
+    
     short m_lineHeight;
     short m_minWidth;
     short m_maxWidth;

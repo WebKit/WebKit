@@ -263,7 +263,7 @@ bool RenderObject::isEditable() const
 
     return style()->visibility() == VISIBLE && 
         element() && element()->isContentEditable() &&
-        (isReplaced() || (textRenderer && textRenderer->inlineTextBoxes().count() > 0));
+        (isReplaced() || (textRenderer && textRenderer->firstTextBox()));
 }
 
 RenderObject *RenderObject::nextEditable() const
@@ -2020,6 +2020,14 @@ InlineBox* RenderObject::createInlineBox(bool,bool isRootLineBox)
     KHTMLAssert(!isRootLineBox);
     return new (renderArena()) InlineBox(this);
 }
+
+InlineBox* RenderObject::inlineBoxWrapper() const
+{
+    return 0;
+}
+
+void RenderObject::deleteLineBoxWrapper()
+{}
 
 RenderStyle* RenderObject::style(bool firstLine) const {
     RenderStyle *s = m_style;

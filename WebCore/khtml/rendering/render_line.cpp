@@ -128,6 +128,18 @@ int InlineFlowBox::getFlowSpacingWidth()
     return totWidth;
 }
 
+void InlineFlowBox::removeChild(InlineBox* child)
+{
+    if (child == m_firstChild)
+        m_firstChild = child->nextOnLine();
+    if (child == m_lastChild)
+        m_lastChild = child->prevOnLine();
+    if (child->nextOnLine())
+        child->nextOnLine()->setPrevOnLine(child->prevOnLine());
+    if (child->prevOnLine())
+        child->prevOnLine()->setNextOnLine(child->nextOnLine());
+}
+
 bool InlineFlowBox::nextOnLineExists()
 {
     if (!parent())

@@ -1311,9 +1311,12 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     o->containingBlock()->insertPositionedObject(o);
                 else
                     o->layoutIfNeeded();
+                
+                if (o->isReplaced())
+                    o->deleteLineBoxWrapper();
             }
-            else if(o->isText()) { // FIXME: Should be able to combine deleteLineBoxes/Runs
-                static_cast<RenderText *>(o)->deleteRuns();
+            else if(o->isText()) {
+                static_cast<RenderText *>(o)->deleteTextBoxes();
 #ifdef INCREMENTAL_REPAINTING
                 o->setNeedsLayout(false);
 #endif

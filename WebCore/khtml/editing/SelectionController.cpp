@@ -54,7 +54,6 @@ using DOM::NodeImpl;
 using DOM::Range;
 using DOM::TextImpl;
 using khtml::InlineTextBox;
-using khtml::InlineTextBoxArray;
 using khtml::RenderObject;
 using khtml::RenderText;
 
@@ -601,18 +600,16 @@ DOMPosition KHTMLSelection::nextCharacterPosition()
     RenderObject *renderer = node->renderer();
     if (renderer->isText()) {
         RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer);
-        InlineTextBoxArray runs = textRenderer->inlineTextBoxes();
-        unsigned i = 0;
-        for (i = 0; i < runs.count(); i++) {
-            long start = runs[i]->m_start;
-            long end = runs[i]->m_start + runs[i]->m_len;
+        for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+            long start = box->m_start;
+            long end = box->m_start + box->m_len;
             if (desiredOffset > end) {
                 // Skip this node.
                 // It is too early in the text runs to be involved.
                 continue;
             }
             else if (desiredOffset >= start && 
-                (desiredOffset < end || (desiredOffset == end && i + 1 == runs.count() && !renderer->nextEditable())) ||
+                (desiredOffset < end || (desiredOffset == end && !box->nextTextBox() && !renderer->nextEditable())) ||
                 (desiredOffset == end && textRenderer->precedesLineBreak() && !textRenderer->followsLineBreak())) {
                 // Desired offset is in this node.
                 // Either it is:
@@ -641,9 +638,8 @@ DOMPosition KHTMLSelection::nextCharacterPosition()
     while (renderer) {
         if (renderer->isText()) {
             RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer);
-            InlineTextBoxArray runs = textRenderer->inlineTextBoxes();
-            if (runs.count())
-                return DOMPosition(renderer->element(), runs[0]->m_start);
+            if (textRenderer->firstTextBox())
+                return DOMPosition(renderer->element(), textRenderer->firstTextBox()->m_start);
         }
         else {
             return DOMPosition(renderer->element(), renderer->caretMinOffset());
@@ -764,11 +760,10 @@ static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, lo
     for (RenderObject *n = renderNode; n; n = n->nextSibling()) {
         if (n->isText()) {
             RenderText *textRenderer = static_cast<khtml::RenderText *>(n);
-            InlineTextBoxArray runs = textRenderer->inlineTextBoxes();
-            for (unsigned i = 0; i != runs.count(); i++) {
-                if (runs[i]->m_y == y) {
+            for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+                if (box->m_y == y) {
                     startNode = textRenderer->element();
-                    startOffset = runs[i]->m_start;
+                    startOffset = box->m_start;
                     return true;
                 }
             }
@@ -800,11 +795,10 @@ static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long 
     
         if (n->isText()) {
             RenderText *textRenderer =  static_cast<khtml::RenderText *>(n);
-            InlineTextBoxArray runs = textRenderer->inlineTextBoxes();
-            for (int i = (int)runs.count()-1; i >= 0; i--) {
-                if (runs[i]->m_y == y) {
+            for (InlineTextBox* box = textRenderer->lastTextBox(); box; box = box->prevTextBox()) {
+                if (box->m_y == y) {
                     endNode = textRenderer->element();
-                    endOffset = runs[i]->m_start + runs[i]->m_len;
+                    endOffset = box->m_start + box->m_len;
                     return true;
                 }
             }

@@ -1,3 +1,81 @@
+2004-01-26  David Hyatt  <hyatt@apple.com>
+
+	Preserve the integrity of the line box tree when elements get removed.  Change RenderText over to using
+	the same data structures as inlines and blocks for maintaining its list of line boxes.
+	
+        Reviewed by kocienda
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::text):
+        (KHTMLPart::customEvent):
+        * khtml/khtml_selection.cpp:
+        (KHTMLSelection::nextCharacterPosition):
+        (firstRunAt):
+        (lastRunAt):
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::removeChild):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::RenderBox):
+        (RenderBox::detach):
+        (RenderBox::position):
+        (RenderBox::inlineBoxWrapper):
+        (RenderBox::deleteLineBoxWrapper):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::removeChildNode):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::detach):
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::removeChild):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineBox::nextOnLine):
+        (khtml::InlineBox::prevOnLine):
+        (khtml::InlineBox::setNextOnLine):
+        (khtml::InlineBox::setPrevOnLine):
+        (khtml::InlineRunBox::prevLineBox):
+        (khtml::InlineRunBox::nextLineBox):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::isEditable):
+        (RenderObject::inlineBoxWrapper):
+        (RenderObject::deleteLineBoxWrapper):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::documentBeingDestroyed):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::RenderText):
+        (RenderText::detach):
+        (RenderText::deleteTextBoxes):
+        (RenderText::absoluteRects):
+        (RenderText::findNextInlineTextBox):
+        (RenderText::nodeAtPoint):
+        (RenderText::checkSelectionPointIgnoringContinuations):
+        (RenderText::caretPos):
+        (RenderText::paintObject):
+        (RenderText::paint):
+        (RenderText::minXPos):
+        (RenderText::xPos):
+        (RenderText::yPos):
+        (RenderText::height):
+        (RenderText::createInlineBox):
+        (RenderText::position):
+        (RenderText::width):
+        (RenderText::caretMinOffset):
+        (RenderText::caretMaxOffset):
+        * khtml/rendering/render_text.h:
+        (khtml::InlineTextBox:::InlineRunBox):
+        (khtml::InlineTextBox::nextTextBox):
+        (khtml::InlineTextBox::prevTextBox):
+        (khtml::RenderText::firstTextBox):
+        (khtml::RenderText::lastTextBox):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityIsIgnored]):
+        * kwq/KWQDef.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+
 2004-01-24  David Hyatt  <hyatt@apple.com>
 
 	Polish the error message from the xml tokenizer.

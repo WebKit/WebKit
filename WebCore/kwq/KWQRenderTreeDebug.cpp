@@ -42,7 +42,6 @@ using khtml::RenderWidget;
 using khtml::RenderText;
 using khtml::RenderCanvas;
 using khtml::InlineTextBox;
-using khtml::InlineTextBoxArray;
 using khtml::BorderValue;
 using khtml::EBorderStyle;
 using khtml::transparentColor;
@@ -237,10 +236,9 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
     
     if (o.isText()) {
         const RenderText &text = static_cast<const RenderText &>(o);
-        InlineTextBoxArray runs = text.inlineTextBoxes();
-        for (unsigned int i = 0; i < runs.count(); i++) {
+        for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
             writeIndent(ts, indent+1);
-            writeTextRun(ts, text, *runs[i]);
+            writeTextRun(ts, text, *box);
         }
     }
 

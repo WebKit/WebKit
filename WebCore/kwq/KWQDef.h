@@ -36,6 +36,9 @@ typedef unsigned long ulong;
 typedef int Q_INT32;
 typedef unsigned int Q_UINT32;
 
+typedef short Q_INT16;
+typedef unsigned short Q_UINT16;
+
 #define QMAX(a,b) ((a) > (b) ? (a) : (b))
 #define QMIN(a,b) ((a) < (b) ? (a) : (b))
 

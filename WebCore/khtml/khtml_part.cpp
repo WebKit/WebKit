@@ -100,7 +100,7 @@ using namespace DOM;
 using khtml::Decoder;
 using khtml::RenderObject;
 using khtml::RenderText;
-using khtml::InlineTextBoxArray;
+using khtml::InlineTextBox;
 
 using KParts::BrowserInterface;
 
@@ -2310,27 +2310,26 @@ QString KHTMLPart::text(const DOM::Range &r) const
               }
               else {
                   RenderText* textObj = static_cast<RenderText*>(n.handle()->renderer());
-                  InlineTextBoxArray runs = textObj->inlineTextBoxes();
-                  if (runs.count() == 0 && str.length() > 0) {
+                  if (!textObj->firstTextBox() && str.length() > 0) {
                       // We have no runs, but we do have a length.  This means we must be
                       // whitespace that collapsed away at the end of a line.
                       needSpace = true;
                   }
                   else {
-                      for (unsigned i = 0; i < runs.count(); i++) {
-                          int runStart = (start == -1) ? runs[i]->m_start : start;
-                          int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
-                          runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
-                          if (runStart >= runs[i]->m_start &&
-                              runStart < runs[i]->m_start + runs[i]->m_len) {
-                              if (i == 0 && runs[0]->m_start == runStart && runStart > 0)
+                      for (InlineTextBox* box = textObj->firstTextBox(); box; box = box->nextTextBox()) {
+                          int runStart = (start == -1) ? box->m_start : start;
+                          int runEnd = (end == -1) ? box->m_start + box->m_len : end;
+                          runEnd = QMIN(runEnd, box->m_start + box->m_len);
+                          if (runStart >= box->m_start &&
+                              runStart < box->m_start + box->m_len) {
+                              if (box == textObj->firstTextBox() && box->m_start == runStart && runStart > 0)
                                   needSpace = true; // collapsed space at the start
                               if (needSpace && !addedSpace)
                                   text += ' ';
                               QString runText = str.mid(runStart, runEnd - runStart);
                               runText.replace('\n', ' ');
                               text += runText;
-                              int nextRunStart = (i+1 < runs.count()) ? runs[i+1]->m_start : str.length();
+                              int nextRunStart = box->nextTextBox() ? box->nextTextBox()->m_start : str.length(); // collapsed space between runs or at the end
                               needSpace = nextRunStart > runEnd; // collapsed space between runs or at the end
                               addedSpace = str[runEnd-1].direction() == QChar::DirWS;
                               start = -1;
@@ -4339,112 +4338,6 @@ void KHTMLPart::customEvent( QCustomEvent *event )
 
   KParts::ReadOnlyPart::customEvent( event );
 }
-
-#if 0
-
-static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset)
-{
-    for (RenderObject *n = renderNode; n; n = n->nextSibling()) {
-        if (n->isText()) {
-            RenderText *textRenderer = static_cast<khtml::RenderText *>(n);
-            InlineTextBoxArray runs = textRenderer->inlineTextBoxes();
-            for (unsigned i = 0; i != runs.count(); i++) {
-                if (runs[i]->m_y == y) {
-                    startNode = textRenderer->element();
-                    startOffset = runs[i]->m_start;
-                    return true;
-                }
-            }
-        }
-        
-        if (firstRunAt(n->firstChild(), y, startNode, startOffset)) {
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset)
-{
-    RenderObject *n = renderNode;
-    if (!n) {
-        return false;
-    }
-    RenderObject *next;
-    while ((next = n->nextSibling())) {
-        n = next;
-    }
-    
-    while (1) {
-        if (lastRunAt(n->firstChild(), y, endNode, endOffset)) {
-            return true;
-        }
-    
-        if (n->isText()) {
-            RenderText *textRenderer =  static_cast<khtml::RenderText *>(n);
-            InlineTextBoxArray runs = textRenderer->inlineTextBoxes();
-            for (int i = (int)runs.count()-1; i >= 0; i--) {
-                if (runs[i]->m_y == y) {
-                    endNode = textRenderer->element();
-                    endOffset = runs[i]->m_start + runs[i]->m_len;
-                    return true;
-                }
-            }
-        }
-        
-        if (n == renderNode) {
-            return false;
-        }
-        
-        n = n->previousSibling();
-    }
-}
-
-static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, KHTMLSelection &selection)
-{
-    if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)){
-        int pos;
-        int selectionPointY;
-        khtml::RenderText *renderer = static_cast<khtml::RenderText *>(node->renderer());
-        khtml::InlineTextBox * run = renderer->findNextInlineTextBox( offset, pos );
-        DOMString t = node->nodeValue();
-        
-        if (!run)
-            return false;
-            
-        selectionPointY = run->m_y;
-        
-        // Go up to first non-inline element.
-        khtml::RenderObject *renderNode = renderer;
-        while (renderNode && renderNode->isInline())
-            renderNode = renderNode->parent();
-        
-        renderNode = renderNode->firstChild();
-        
-        DOM::NodeImpl *startNode = 0;
-        DOM::NodeImpl *endNode = 0;
-        long startOffset;
-        long endOffset;
-        
-        // Look for all the first child in the block that is on the same line
-        // as the selection point.
-        if (!firstRunAt (renderNode, selectionPointY, startNode, startOffset))
-            return false;
-    
-        // Look for all the last child in the block that is on the same line
-        // as the selection point.
-        if (!lastRunAt (renderNode, selectionPointY, endNode, endOffset))
-            return false;
-        
-        selection.setSelection(startNode, startOffset, endNode, endOffset);
-        
-        return true;
-    }
-    return false;
-}
-
-#endif
 
 bool KHTMLPart::isPointInsideSelection(int x, int y)
 {

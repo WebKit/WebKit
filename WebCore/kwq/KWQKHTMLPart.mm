@@ -84,7 +84,7 @@ using khtml::RenderStyle;
 using khtml::RenderTableCell;
 using khtml::RenderText;
 using khtml::RenderWidget;
-using khtml::InlineTextBoxArray;
+using khtml::InlineTextBox;
 using khtml::VISIBLE;
 
 using KIO::Job;
@@ -2278,8 +2278,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     }
                     else {
                         RenderText* textObj = static_cast<RenderText*>(renderer);
-                        InlineTextBoxArray runs = textObj->inlineTextBoxes();
-                        if (runs.count() == 0 && str.length() > 0 && !addedSpace) {
+                        if (!textObj->firstTextBox() && str.length() > 0 && !addedSpace) {
                             // We have no runs, but we do have a length.  This means we must be
                             // whitespace that collapsed away at the end of a line.
                             text += " ";
@@ -2287,13 +2286,13 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         }
                         else {
                             addedSpace = false;
-                            for (unsigned i = 0; i < runs.count(); i++) {
-                                int runStart = (start == -1) ? runs[i]->m_start : start;
-                                int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
-                                runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
-                                if (runStart >= runs[i]->m_start &&
-                                    runStart < runs[i]->m_start + runs[i]->m_len) {
-                                    if (i == 0 && runs[0]->m_start == runStart && runStart > 0) {
+                            for (InlineTextBox* box = textObj->firstTextBox(); box; box = box->nextTextBox()) {
+                                int runStart = (start == -1) ? box->m_start : start;
+                                int runEnd = (end == -1) ? box->m_start + box->m_len : end;
+                                runEnd = kMin(runEnd, box->m_start + box->m_len);
+                                if (runStart >= box->m_start &&
+                                    runStart < box->m_start + box->m_len) {
+                                    if (box == textObj->firstTextBox() && box->m_start == runStart && runStart > 0) {
                                         needSpace = true; // collapsed space at the start
                                     }
                                     if (needSpace && !addedSpace) {
@@ -2309,7 +2308,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                                     QString runText = str.mid(runStart, runEnd - runStart);
                                     runText.replace('\n', ' ');
                                     text += runText;
-                                    int nextRunStart = (i+1 < runs.count()) ? runs[i+1]->m_start : str.length(); // collapsed space between runs or at the end
+                                    int nextRunStart = box->nextTextBox() ? box->nextTextBox()->m_start : str.length(); // collapsed space between runs or at the end
                                     needSpace = nextRunStart > runEnd;
                                     [pendingStyledSpace release];
                                     pendingStyledSpace = nil;

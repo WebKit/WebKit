@@ -34,7 +34,7 @@
 #include "misc/helper.h"
 #include "rendering/render_style.h"
 #include "khtml_events.h"
-#include "xml/dom_nodeimpl.h"
+#include "xml/dom_docimpl.h"
 
 // Uncomment to turn on incremental repainting.
 #define INCREMENTAL_REPAINTING 1
@@ -326,6 +326,12 @@ public:
 #endif
     
     virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox);
+    
+    // For inline replaced elements, this function returns the inline box that owns us.  Enables
+    // the replaced RenderObject to quickly determine what line it is contained on and to easily
+    // iterate over structures on the line.
+    virtual InlineBox* inlineBoxWrapper() const;
+    void deleteLineBoxWrapper();
     
     // for discussion of lineHeight see CSS2 spec
     virtual short lineHeight( bool firstLine, bool isRootLineBox=false ) const;
@@ -681,6 +687,10 @@ public:
     
     virtual void calcVerticalMargins() {}
     void removeFromObjectLists();
+
+    // When performing a global document tear-down, the renderer of the document is cleared.  We use this
+    // as a hook to detect the case of document destruction and don't waste time doing unnecessary work.
+    bool documentBeingDestroyed() const { return !document()->renderer(); }
 
     virtual void detach();
 
