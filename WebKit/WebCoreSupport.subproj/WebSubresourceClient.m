@@ -118,15 +118,14 @@
 
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
-    // FIXME: We do want to tell the client about redirects for subresources.
-    // But the current API doesn't give any way to tell redirects on
-    // the main page from redirects on subresources.
+    NSURL *oldURL = [request URL];
+    NSURLRequest *clientRequest = [super connection:con willSendRequest:newRequest redirectResponse:redirectResponse];
+    
+    if (![oldURL isEqual:[clientRequest URL]]) {
+	[loader redirectedToURL:[clientRequest URL]];
+    }
 
-    // FIXME: Need to make sure client sets cookie policy base URL
-    // properly on redirect when we have the new redirect
-    // request-adjusting API
-
-    return [super connection:con willSendRequest:newRequest redirectResponse:redirectResponse];
+    return clientRequest;
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r

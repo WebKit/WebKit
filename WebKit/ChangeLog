@@ -1,3 +1,13 @@
+2003-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3487185>: implement security checks for XMLHttpRequest
+        
+	* WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient connection:willSendRequest:redirectResponse:]): Let
+	WebCore know about redirects.
+
 2003-12-01  Richard Williamson   <rjw@apple.com>
 
 	Moved grungy polling code from WebKit to the JavaPlugin.
