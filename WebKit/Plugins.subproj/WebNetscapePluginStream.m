@@ -3,13 +3,13 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebNetscapePluginStream.h>
+
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
-#import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLConnection.h>
 
