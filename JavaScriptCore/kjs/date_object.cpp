@@ -516,21 +516,39 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     break;
   case SetSeconds:
     t->tm_sec = args[0].toInt32(exec);
+    if (args.size() >= 2)
+      ms = args[1].toInt32(exec);
     break;
   case SetMinutes:
     t->tm_min = args[0].toInt32(exec);
+    if (args.size() >= 2)
+      t->tm_sec = args[1].toInt32(exec);
+    if (args.size() >= 3)
+      ms = args[2].toInt32(exec);
     break;
   case SetHours:
     t->tm_hour = args[0].toInt32(exec);
+    if (args.size() >= 2)
+      t->tm_min = args[1].toInt32(exec);
+    if (args.size() >= 3)
+      t->tm_sec = args[2].toInt32(exec);
+    if (args.size() >= 4)
+      ms = args[3].toInt32(exec);
     break;
   case SetDate:
     t->tm_mday = args[0].toInt32(exec);
     break;
   case SetMonth:
     t->tm_mon = args[0].toInt32(exec);
+    if (args.size() >= 2)
+      t->tm_mday = args[1].toInt32(exec);
     break;
   case SetFullYear:
     t->tm_year = args[0].toInt32(exec) - 1900;
+    if (args.size() >= 2)
+      t->tm_mon = args[1].toInt32(exec);
+    if (args.size() >= 3)
+      t->tm_mday = args[2].toInt32(exec);
     break;
   case SetYear:
     t->tm_year = args[0].toInt32(exec) >= 1900 ? args[0].toInt32(exec) - 1900 : args[0].toInt32(exec);

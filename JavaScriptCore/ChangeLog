@@ -1,3 +1,13 @@
+2003-08-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3098350 -- opt. params to date methods are ignored (can't set end date in Exchange/Outlook web cal.)
+
+        * kjs/date_object.cpp: (DateProtoFuncImp::call): Added code to handle the optional parameters.
+        Strangely, the table of functions already had the right number of parameters listed, but the
+        code to look at the parameter values was missing.
+
 === Safari-94 ===
 
 2003-08-17  Darin Adler  <darin@apple.com>
