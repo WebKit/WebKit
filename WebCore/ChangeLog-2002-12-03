@@ -1,3 +1,13 @@
+2002-10-31  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3075803 - yahoo customize layout - delete, ordering of items doesn't work
+	
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLSelectElementImpl::recalcStyle): New method to insure the
+	select element updates if the contents of the option subelements
+	are changed.
+
 === 30 ===
 
 2002-10-30  Maciej Stachowiak  <mjs@apple.com>

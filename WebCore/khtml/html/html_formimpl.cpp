@@ -1439,6 +1439,16 @@ NodeImpl::Id HTMLSelectElementImpl::id() const
     return ID_SELECT;
 }
 
+void HTMLSelectElementImpl::recalcStyle( StyleChange ch )
+{
+    if (hasChangedChild() && m_render) {
+        static_cast<khtml::RenderSelect*>(m_render)->setOptionsChanged(true);
+    }
+
+    HTMLGenericFormElementImpl::recalcStyle( ch );
+}
+
+
 DOMString HTMLSelectElementImpl::type() const
 {
     return (m_multiple ? "select-multiple" : "select-one");
