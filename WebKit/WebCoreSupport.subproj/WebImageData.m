@@ -27,6 +27,7 @@ static CFDictionaryRef imageSourceOptions;
 - (void)_nextFrame;
 @end
 
+
 @implementation WebImageData
 
 - (void)_commonTermination
@@ -98,13 +99,21 @@ static CFDictionaryRef imageSourceOptions;
         if (index > [self numberOfImages])
             return 0;
 
+#ifndef NDEBUG
         CGImageSourceStatus containerStatus = CGImageSourceGetStatus(imageSource);
-        if (containerStatus < kCGImageStatusIncomplete)
-            return 0;
+#endif
+	// Ignore status, just try to create the image!  Status reported from ImageIO 
+	// is bogus until the image is created.  See 3827851
+        //if (containerStatus < kCGImageStatusIncomplete)
+        //    return 0;
 
+#ifndef NDEBUG
         CGImageSourceStatus imageStatus = CGImageSourceGetStatusAtIndex(imageSource, index);
-        if (imageStatus < kCGImageStatusIncomplete)
-            return 0;
+#endif
+	// Ignore status.  Status is invalid until we create the image (and eventually try to display it).
+	// See 3827851
+        //if (imageStatus < kCGImageStatusIncomplete)
+        //    return 0;
 
         if (!images) {
             images = (CGImageRef *)calloc ([self numberOfImages], sizeof(CGImageRef *));
@@ -137,13 +146,11 @@ static CFDictionaryRef imageSourceOptions;
     CGImageSourceUpdateData (imageSource, data, isComplete);
     CFRelease (data);
     
-    CGImageSourceStatus status = CGImageSourceGetStatus(imageSource);
-    
-    if (status < kCGImageStatusIncomplete) {
-        ERROR ("error update incremental image data, status %d", status);
-    }
-    
-    return status >= kCGImageStatusIncomplete;
+    // Always returns YES because we can't rely on status.  See 3827851
+    //CGImageSourceStatus status = CGImageSourceGetStatus(imageSource);
+    //
+    //return status >= kCGImageStatusReadingHeader;
+    return YES;
 }
 
 - (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
@@ -158,71 +165,25 @@ static CFDictionaryRef imageSourceOptions;
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
 
-    // FIXME:  Need to determine number of available lines.
-    int numCompleteLines = h;
-
-    int pixelsHigh = h;
-    if (pixelsHigh > numCompleteLines) {
-        // Figure out how much of the image is OK to draw.  We can't simply
-        // use numCompleteLines because the image may be scaled.
-        float clippedImageHeight = floor([self size].height * numCompleteLines / pixelsHigh);
-        
-        // Figure out how much of the source is OK to draw from.
-        float clippedSourceHeight = clippedImageHeight - fr.origin.y;
-        if (clippedSourceHeight < 1) {
-            return;
-        }
-        
-        // Figure out how much of the destination we are going to draw to.
-        float clippedDestinationHeight = ir.size.height * clippedSourceHeight / fr.size.height;
-
-        // Reduce heights of both rectangles without changing their positions.
-        // In the flipped case, just adjusting the height is sufficient.
-        ir.size.height = clippedDestinationHeight;
-        fr.size.height = clippedSourceHeight;
-    }
-
+    // Flip the coords.
     CGContextSetCompositeOperation (aContext, op);
     CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
     CGContextScaleCTM (aContext, 1, -1);
-    CGContextTranslateCTM (aContext, 0, -h);
+    CGContextTranslateCTM (aContext, 0, -fr.size.height);
     
     // Translated to origin, now draw at 0,0.
     ir.origin.x = ir.origin.y = 0;
-        
+    
+    // If we're drawing a sub portion of the image then create
+    // a image for the sub portion and draw that.
     if (fr.size.width != w || fr.size.height != h) {
-        //image = CGImageCreateWithImageInRect (image, fr);
-        //if (image) {
-        //    CGContextDrawImage (aContext, ir, image);
-        //    CFRelease (image);
-        //}
-        
-        // FIXME:  Until the API above is implemented (CGImageCreateWithImageInRect), we
-        // must create our own subimage.
-        //
-        // Create a new bitmap of the appropriate size and then draw that into our context.
-        // Slo, boo!
-        CGContextRef clippedSourceContext;
-        CGImageRef clippedSourceImage;
-        size_t csw = (size_t)fr.size.width;
-        size_t csh = (size_t)fr.size.height;
-                            
-        CGColorSpaceRef colorSpace = WebCGColorSpaceCreateRGB();
-        size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
-        size_t bytesPerRow = ((csw * 8 * (numComponents+1) + 7)/8); // + 1 for alpha
-        void *_drawingContextData = malloc(csh * bytesPerRow);
-        
-        // 8 bit per component
-        clippedSourceContext = CGBitmapContextCreate(_drawingContextData, csw, csh, 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
-        CGContextTranslateCTM (clippedSourceContext, -fr.origin.x, -fr.origin.y);
-        CGContextDrawImage (clippedSourceContext, CGRectMake(0,0,w,h), image);
-        clippedSourceImage = CGBitmapContextCreateImage(clippedSourceContext);
-        CGContextDrawImage (aContext, ir, clippedSourceImage);
-        
-        CGImageRelease (clippedSourceImage);
-        CGContextRelease (clippedSourceContext);
-        free (_drawingContextData);
+        image = CGImageCreateWithImageInRect (image, fr);
+        if (image) {
+            CGContextDrawImage (aContext, ir, image);
+            CFRelease (image);
+        }
     }
+    // otherwise draw the whole image.
     else { 
         CGContextDrawImage (aContext, ir, image);
     }
@@ -312,8 +273,9 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (BOOL)isNull
 {
-    CGImageSourceStatus status = CGImageSourceGetStatusAtIndex(imageSource, [self currentFrame]);
-    return status < kCGImageStatusIncomplete;
+    if (imageSource)
+	return CGImageSourceGetStatus(imageSource) < kCGImageStatusReadingHeader;
+    return YES;
 }
 
 - (CGSize)size

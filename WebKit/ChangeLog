@@ -1,3 +1,16 @@
+2004-11-11  Richard Williamson   <rjw@apple.com>
+
+        Work-arounds to make new ImageIO code work correctly.  Still
+        disabled for now.  Requires at least Tiger 300.  Testing does
+        show a 3% improvement in PLT tests!  That's huge!
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData imageAtIndex:]):
+        (-[WebImageData incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageData isNull]):
+
 2004-11-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3396872> ICONS: icon DB inconsistencies can cause slowness during startup, idle and quit
