@@ -405,7 +405,7 @@ void RenderImage::updateFromElement()
         attr = element()->getAttribute(ATTR_SRC);
     }
     
-    // Treat a lack of src orempty string for src as no image at all, not the page itself
+    // Treat a lack of src or empty string for src as no image at all, not the page itself
     // loaded as an image.
     CachedImage *new_image;
     if (attr.isEmpty()) {

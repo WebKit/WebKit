@@ -1,5 +1,14 @@
 2003-04-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Richard.
+
+	- fixed 3223126 -- REGRESSION: exception BrowserWindow isDescendantOf:]: selector not recognized
+
+        * kwq/KWQWidget.mm: (QWidget::hasFocus): Add missing check of the class of the first
+        responder before calling an NSView method on it.
+
+2003-04-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed 3222708 -- REGRESSION: repro crash trying to read news at nttdocomo
