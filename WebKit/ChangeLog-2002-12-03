@@ -1,3 +1,10 @@
+2002-05-10  Kenneth Kocienda  <kocienda@apple.com>
+
+        Fixed build breakage caused by my previous checkin.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:])
+
 2002-05-10  John Sullivan  <sullivan@apple.com>
 
 	Fixed 2922756 (@ image in History window is a little too tall)
