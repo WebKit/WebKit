@@ -298,53 +298,61 @@
     //    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not drawing, frame in provisional state.\n");
     //    return;
     //}
-    
-    if (widget != 0l){        
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "drawing\n");
-        
-        [self reapplyStyles];
-        
-        [self layout];
 
-#ifdef _KWQ_TIMING        
+    // Draw plain white bg in empty case, to avoid redraw weirdness when
+    // no page is yet loaded (2890818). We may need to modify this to always
+    // draw the background color, in which case we'll have to make sure the
+    // no-widget case is still handled correctly.
+    if (widget == 0l) {
+        [[NSColor whiteColor] set];
+        NSRectFill(rect);
+        return;
+    }
+
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "drawing\n");
+
+    [self reapplyStyles];
+
+    [self layout];
+
+#ifdef _KWQ_TIMING
     double start = CFAbsoluteTimeGetCurrent();
 #endif
-        QPainter p(widget);    
-        
-        [self lockFocus];
+    QPainter p(widget);
 
-        //double start = CFAbsoluteTimeGetCurrent();
-        ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x, 
-                    (int)rect.origin.y, 
-                    (int)rect.size.width, 
-                    (int)rect.size.height );
-        //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
+    [self lockFocus];
 
-#ifdef DEBUG_LAYOUT       
-        NSRect vframe = [self frame]; 
-        [[NSColor blackColor] set];
-        NSBezierPath *path;
-        path = [NSBezierPath bezierPath];
-        [path setLineWidth:(float)0.1];
-        [path moveToPoint:NSMakePoint(0, 0)];
-        [path lineToPoint:NSMakePoint(vframe.size.width, vframe.size.height)];
-        [path closePath];
-        [path stroke];
-        path = [NSBezierPath bezierPath];
-        [path setLineWidth:(float)0.1];
-        [path moveToPoint:NSMakePoint(0, vframe.size.height)];
-        [path lineToPoint:NSMakePoint(vframe.size.width, 0)];
-        [path closePath];
-        [path stroke];
+    //double start = CFAbsoluteTimeGetCurrent();
+    ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x,
+                                         (int)rect.origin.y,
+                                         (int)rect.size.width,
+                                         (int)rect.size.height );
+    //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
+
+#ifdef DEBUG_LAYOUT
+    NSRect vframe = [self frame];
+    [[NSColor blackColor] set];
+    NSBezierPath *path;
+    path = [NSBezierPath bezierPath];
+    [path setLineWidth:(float)0.1];
+    [path moveToPoint:NSMakePoint(0, 0)];
+    [path lineToPoint:NSMakePoint(vframe.size.width, vframe.size.height)];
+    [path closePath];
+    [path stroke];
+    path = [NSBezierPath bezierPath];
+    [path setLineWidth:(float)0.1];
+    [path moveToPoint:NSMakePoint(0, vframe.size.height)];
+    [path lineToPoint:NSMakePoint(vframe.size.width, 0)];
+    [path closePath];
+    [path stroke];
 #endif
-        
-        [self unlockFocus];
 
-#ifdef _KWQ_TIMING        
+    [self unlockFocus];
+
+#ifdef _KWQ_TIMING
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s draw seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
 #endif
-    }
 }
 
 - (void)setIsFlipped: (bool)flag

@@ -1,3 +1,11 @@
+2002-04-10  John Sullivan  <sullivan@apple.com>
+
+	Fixed 2891396 -- window fills with garbage if you resize or hide/show toolbar
+	before loading first page
+
+	* WebView.subproj/IFWebView.mm: (-[IFWebView drawRect:]):
+	Made webview fill rect with white if there's no widget.
+
 2002-04-09  Chris Blumenberg  <cblu@apple.com>
 
 	* Plugins.subproj/IFPluginView.h:
