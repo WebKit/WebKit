@@ -29,7 +29,7 @@ EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/WebCore/lib
 
 LIBRARY = libkhtmlecma.a
 
-PROGRAM = testecma
+PROGRAMS = testecma
 
 CLEAN_FILES = $(OBJECTS) \
 	kjs_window.moc \
@@ -69,7 +69,7 @@ $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
 
-$(PROGRAM): testecma.o
+$(PROGRAMS): testecma.o
 	$(CC) -o $@ $< -L. -lkhtmlecma
 
 kjs_window.cpp: kjs_window.moc

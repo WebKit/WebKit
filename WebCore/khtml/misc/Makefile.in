@@ -34,11 +34,11 @@ ATTRSFILES = \
 	htmlattrs.gperf \
 	$(NULL)
 
-CFILES = $(TAGFILES) $(ATTRSFILES)
+GENERATE_OBJECTS = $(TAGFILES) $(ATTRSFILES)
 
 EXPORT_HEADERS = $(HEADERS)
 
-OBJECTS = khtmldata.h $(CFILES) $(CXXOBJECTS)
+OBJECTS = khtmldata.h $(GENERATE_OBJECTS) $(CXXOBJECTS)
 EXPORT_OBJECTS = $(CXXOBJECTS)
 
 EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
@@ -48,7 +48,7 @@ LIBRARY = libkhtmlmisc.a
 
 CLEAN_FILES = $(OBJECTS) \
 	$(LIBRARY) \
-	$(CFILES) \
+	$(GENERATE_OBJECTS) \
 	$(NULL)
 
 #----------------------------------------------------------------------
@@ -76,7 +76,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(CFILES) $(OBJECTS) export-headers export-objects 
+all: generate-objects $(OBJECTS) export-headers export-objects 
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

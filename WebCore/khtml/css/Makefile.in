@@ -40,7 +40,7 @@ PROPFILES = \
 	cssproperties.gperf \
 	$(NULL)
 
-CFILES = $(VALUEFILES) $(PROPFILES)
+GENERATE_OBJECTS = $(VALUEFILES) $(PROPFILES)
 
 EXPORT_HEADERS = $(HEADERS)
 
@@ -54,7 +54,7 @@ LIBRARY = libkhtmlcss.a
 
 CLEAN_FILES = $(OBJECTS) \
 	$(LIBRARY) \
-	$(CFILES) \
+	$(GENERATE_OBJECTS) \
 	$(NULL)
 
 #----------------------------------------------------------------------
@@ -85,7 +85,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(CFILES) $(OBJECTS) export-headers export-objects 
+all: generate-objects $(OBJECTS) export-headers export-objects 
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

@@ -71,7 +71,7 @@ CXXOBJECTS = \
 	ustring.o \
 	$(NULL)
 
-PROGRAM = testkjs
+PROGRAMS = testkjs
 
 EXPORT_HEADERS = $(HEADERS)
 
@@ -81,6 +81,8 @@ EXPORT_OBJECTS = $(CXXOBJECTS)
 EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
 EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/WebCore/lib
 
+GENERATE_OBJECTS = $(CXXYACCOBJECTS)
+
 LIBRARY = libkjs.a
 
 CLEAN_FILES = $(OBJECTS) \
@@ -89,7 +91,7 @@ CLEAN_FILES = $(OBJECTS) \
 	grammar.cpp.h \
 	testkjs.o \
 	$(LIBRARY) \
-	$(PROGRAM) \
+	$(PROGRAMS) \
 	$(NULL)
 
 #----------------------------------------------------------------------
@@ -100,13 +102,13 @@ YACCFLAGS = -d --output-file=grammar.cpp --name-prefix=kjsyy
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(CXXYACCOBJECTS) $(OBJECTS) $(LIBRARY) $(PROGRAM) export-headers export-objects 
+all: generate-objects $(OBJECTS) $(LIBRARY) export-headers export-objects 
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
 
-$(PROGRAM): testkjs.o
+$(PROGRAMS): testkjs.o
 	$(CC) $< -o $@ -L. -lkjs
 
 depend:

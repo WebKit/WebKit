@@ -10,6 +10,8 @@
 all: 
 	pbxbuild
 
+generate-objects:
+
 clean:
 	pbxbuild clean
 
