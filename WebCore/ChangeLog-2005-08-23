@@ -2,6 +2,33 @@
 
         Reviewed by Darin.
 
+        PARTIAL fix for following bug.  Create attributed string with fonts and links.  Still need to add attachments.
+        <rdar://problem/3942606> AX: Support kAXAttributedStringForTextMarkerRangeParameterizedAttribute
+        
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject textUnderElement]):
+        Touched up previous checkin to match code review comments.
+        
+        (-[KWQAccObject value]):
+        Use plainText for this one instead of obsolete attributedString.
+        
+        (-[KWQAccObject accessibilityParameterizedAttributeNames]):
+        Advertise AXAttributedStringForTextMarkerRange.
+        
+        (AXAttributeStringAddFont):
+        (AXAttributeStringAddElement):
+        (-[KWQAccObject linkUIElementForNode:]):
+        (-[KWQAccObject _addAttachmentForElement:URL:needsParagraph:usePlaceholder:]):
+        (-[KWQAccObject accessibilityAttributedStringForRange:]):
+        New routines to support AXAttributedStringForTextMarkerRange.
+        
+        (-[KWQAccObject doAXAttributedStringForTextMarkerRange:]):
+        Use new routines instead of obsolete attributedString.
+
+2005-01-20  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
         <rdar://problem/3960196> AX Crash in DOM::Range::setStartBefore
 
         * khtml/xml/dom_docimpl.cpp:

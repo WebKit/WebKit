@@ -34,6 +34,7 @@
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
 typedef AXTextMarkerRef (*TextMarkerFromTextMarkerRangeProc) (AXTextMarkerRangeRef theTextMarkerRange);
+extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #endif
 
 #import "KWQAccObject.h"
@@ -88,7 +89,9 @@ using khtml::RenderText;
 using khtml::RenderBlock;
 using khtml::RenderListMarker;
 using khtml::RenderImage;
+using khtml::RenderStyle;
 using khtml::Selection;
+using khtml::TextIterator;
 using khtml::VisiblePosition;
 
 /* NSAccessibilityDescriptionAttribute is only defined on 10.4 and newer */
@@ -402,20 +405,20 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         KHTMLPart* p = d->part();
         if (p) {
             // catch stale KWQAccObject (see <rdar://problem/3960196>)
-            if (p->document().handle()->docPtr()->document() != d)
+            if (p->document().handle() != d)
                 return nil;
                 
             Range r(p->document());
             if (m_renderer->isText()) {
-		r.setStartBefore(e);
-		r.setEndAfter(e);
-		return p->text(r).getNSString();
-	    }
-	    if (e->firstChild()) {
-		r.setStartBefore(e->firstChild());
-		r.setEndAfter(e->lastChild());
-		return p->text(r).getNSString();
-	    }
+                r.setStartBefore(e);
+                r.setEndAfter(e);
+                return p->text(r).getNSString();
+            }
+            if (e->firstChild()) {
+                r.setStartBefore(e->firstChild());
+                r.setEndAfter(e->lastChild());
+                return p->text(r).getNSString();
+            }
         }
     }
 
@@ -438,10 +441,12 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         if (!docPart)
             return nil;
         
-        Position startPos = VisiblePosition(m_renderer->positionForCoordinates (0, 0, nil)).deepEquivalent();
-        Position endPos   = VisiblePosition(m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX, nil)).deepEquivalent();
-        NSAttributedString * attrString = docPart->attributedString(startPos.node(), startPos.offset(), endPos.node(), endPos.offset());
-        return [attrString string];
+        VisiblePosition startVisiblePosition = VisiblePosition(m_renderer->positionForCoordinates (0, 0, nil));
+        VisiblePosition endVisiblePosition   = VisiblePosition(m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX, nil));
+        QString qString   = plainText(makeRange(startVisiblePosition, endVisiblePosition));
+        
+        // transform it to a CFString and return that
+        return (id)qString.getCFString();
     }
         
     // FIXME: We might need to implement a value here for more types
@@ -919,7 +924,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             kAXTextMarkerForPositionParameterizedAttribute,
             kAXBoundsForTextMarkerRangeParameterizedAttribute,
 //          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,           // NOTE: <rdar://problem/3942606>
-//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,          // NOTE: <rdar://problem/3942647>
+            kAXAttributedStringForTextMarkerRangeParameterizedAttribute,
             kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
             kAXNextTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
@@ -1074,6 +1079,138 @@ static QRect boundingBoxRect(RenderObject* obj)
     return [NSValue valueWithRect:rect];
 }
 
+static void AXAttributeStringAddFont(NSMutableAttributedString *attrStr, NSString *attribute, NSFont* font, NSRange range)
+{
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+        [font fontName]                             , NSAccessibilityFontNameKey,
+        [font familyName]                           , NSAccessibilityFontFamilyKey,
+        [font displayName]                          , NSAccessibilityVisibleNameKey,
+        [NSNumber numberWithFloat:[font pointSize]] , NSAccessibilityFontSizeKey,
+    nil];
+        
+    [attrStr addAttribute:attribute value:dict range:range];
+}
+
+static void AXAttributeStringAddElement(NSMutableAttributedString *attrStr, NSString *attribute, id element, NSRange range)
+{
+    if (element != nil) {
+        // make a serialiazable AX object
+        AXUIElementRef axElement = NSAccessibilityCreateAXUIElementRef(element);
+        if (axElement != NULL) {
+            [attrStr addAttribute:attribute value:(id)axElement range:range];
+            CFRelease(axElement);
+        }
+    }
+}
+
+- (KWQAccObject*)linkUIElementForNode: (Node)node
+{
+    RenderObject *obj = node.handle()->renderer();
+    if (!obj)
+        return nil;
+
+    KWQAccObject *axObj = obj->document()->getAccObjectCache()->accObject(obj);
+    HTMLAnchorElementImpl* anchor = [axObj anchorElement];
+    if (!anchor || !anchor->renderer())
+        return nil;
+
+    return anchor->renderer()->document()->getAccObjectCache()->accObject(anchor->renderer());
+}
+
+#if 0
+-- model code from AppKits DOM attr string builder
+- (BOOL)_addAttachmentForElement:(DOMElement *)element URL:(NSURL *)url needsParagraph:(BOOL)needsParagraph usePlaceholder:(BOOL)flag {
+    BOOL retval = NO;
+    NSFileWrapper *fileWrapper = nil;
+    static NSImage *missingImage = nil;
+
+    if (_flags.isIndexing) return NO;
+    if ([url isFileURL]) {
+        NSString *path = [[url path] stringByStandardizingPath];
+        if (path) fileWrapper = [[NSFileWrapper alloc] initWithPath:path];
+    }
+    if (!fileWrapper) {
+        WebResource *resource = [_dataSource subresourceForURL:url];
+        if (resource) {
+            fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[resource data]] autorelease];
+            [fileWrapper setPreferredFilename:[url _web_suggestedFilenameWithMIMEType:[resource MIMEType]]];
+        }
+    }
+    if (!fileWrapper) fileWrapper = [_dataSource _fileWrapperForURL:url];
+    if (fileWrapper || flag) {
+        unsigned textLength = [_attrStr length];
+        NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
+        NSTextAttachmentCell *cell;
+        NSString *string = [[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), NSAttachmentCharacter];
+        NSRange rangeToReplace = NSMakeRange(textLength, 0);
+        NSDictionary *attrs;
+        if (!fileWrapper) {
+            if (!missingImage) {
+                NSString *missingImagePath = [[self _webKitBundle] pathForResource:@"missing_image" ofType:@"tiff"];
+                if (missingImagePath) missingImage = [[NSImage allocWithZone:_NXAppZone()] initByReferencingFile:missingImagePath];
+                if (!missingImage) {
+                    missingImage = [[NSImage allocWithZone:_NXAppZone()] initByReferencingFile:[_NSKitBundle() pathForResource:@"NSMysteryDocument" ofType:@"tiff"]];
+                    [missingImage setScalesWhenResized:YES];
+                    [missingImage setSize:NSMakeSize(32.0, 32.0)];
+                }
+                cell = [[NSTextAttachmentCell alloc] initImageCell:missingImage];
+                [attachment setAttachmentCell:cell];
+                [cell release];
+            }
+        }
+        [_attrStr replaceCharactersInRange:rangeToReplace withString:string];
+        rangeToReplace.length = [string length];
+        attrs = [self _attributesForElement:element];
+        if (!_flags.isTesting && rangeToReplace.length > 0) {
+            [_attrStr setAttributes:attrs range:rangeToReplace];
+            rangeToReplace.length = 1;
+            [_attrStr addAttribute:NSAttachmentAttributeName value:attachment range:rangeToReplace];
+        }
+        [string release];
+        [attachment release];
+        _flags.isSoft = NO;
+        retval = YES;
+    }
+    return retval;
+}
+#endif
+
+- (NSAttributedString *) accessibilityAttributedStringForRange: (Range)range
+{
+    NSRange attrStringRange = NSMakeRange(0, 0);
+    TextIterator    it(range);
+    
+    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
+    CFMutableStringRef textString = (CFMutableStringRef)[attrString mutableString];
+    
+    while (!it.atEnd()) {
+        NSMutableDictionary *attrs = [[NSMutableDictionary alloc] initWithCapacity:4];
+
+        if (it.length() != 0) {
+            // append the text for this run
+            CFStringAppendCharacters(textString, (const UniChar *)it.characters(), it.length());
+            
+            // prepare to add the attributes for this run
+            attrStringRange.location += attrStringRange.length;
+            attrStringRange.length = it.length();
+            Node node = it.range().startContainer();
+            ASSERT(node == it.range().endContainer());
+            RenderStyle *style = node.handle()->renderer()->style();
+            
+            // add the attributes
+            AXAttributeStringAddFont(attrString, NSAccessibilityFontTextAttribute, style->font().getNSFont(), attrStringRange);
+            AXAttributeStringAddElement(attrString, NSAccessibilityLinkTextAttribute, [self linkUIElementForNode:node], attrStringRange);
+        } else {
+            // handle replaced element, e.g attachments
+        }
+        
+        [attrs release];
+        it.advance();
+    }
+
+    return [attrString autorelease];
+}
+
 - (id)doAXAttributedStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
 {
     // NOTE: <rdar://problem/3942606>. Needs to make AX attributed string instead
@@ -1089,15 +1226,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (endVisiblePosition.isNull())
         return nil;
     
-    // get the attributed string by asking the document part
-    KWQKHTMLPart *docPart = KWQ([self topDocument]->part());
-    if (!docPart)
-        return nil;
-    
-    Position    startPos = startVisiblePosition.deepEquivalent();
-    Position    endPos   = endVisiblePosition.deepEquivalent();
-    NSAttributedString * attrString = docPart->attributedString(startPos.node(), startPos.offset(), endPos.node(), endPos.offset());
-    return attrString;
+    return [self accessibilityAttributedStringForRange: makeRange(startVisiblePosition, endVisiblePosition)];
 }
 
 - (id)doAXTextMarkerRangeForUnorderedTextMarkers: (NSArray *) markers
