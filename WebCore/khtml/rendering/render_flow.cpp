@@ -1295,6 +1295,9 @@ void RenderFlow::calcInlineMinMaxWidth()
     bool stripFrontSpaces = true;
     RenderObject* trailingSpaceChild = 0;
     
+    bool nowrap, oldnowrap;
+    nowrap = oldnowrap = style()->whiteSpace() == NOWRAP;
+    
     while(child != 0)
     {
         // positioned children don't affect the minmaxwidth
@@ -1304,6 +1307,8 @@ void RenderFlow::calcInlineMinMaxWidth()
             continue;
         }
 
+        nowrap = child->style()->whiteSpace() == NOWRAP;
+            
         if( !child->isBR() )
         {
             // Step One: determine whether or not we need to go ahead and
@@ -1387,18 +1392,24 @@ void RenderFlow::calcInlineMinMaxWidth()
                 childMin += child->minWidth();
                 childMax += child->maxWidth();
                 
-                if(m_minWidth < inlineMin) m_minWidth = inlineMin;
-                inlineMin = 0;
+                if (nowrap && !oldnowrap) {
+                    if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                    inlineMin = 0;
+                }
                 
                 // Add our width to the max.
                 inlineMax += childMax;
                 
-                // Now check our line.
-                inlineMin = childMin;
-                if(m_minWidth < inlineMin) m_minWidth = inlineMin;
-                
-                // Now start a new line.
-                inlineMin = 0;
+                if (nowrap)
+                    inlineMin += childMin;
+                else {
+                    // Now check our line.
+                    inlineMin = childMin;
+                    if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                    
+                    // Now start a new line.
+                    inlineMin = 0;
+                }
                 
                 // We are no longer stripping whitespace at the start of
                 // a line.
@@ -1478,6 +1489,8 @@ void RenderFlow::calcInlineMinMaxWidth()
             stripFrontSpaces = true;
             trailingSpaceChild = 0;
         }
+        
+        oldnowrap = nowrap;
         
         child = next(this, child);
     }
