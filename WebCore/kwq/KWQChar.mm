@@ -103,14 +103,13 @@ QChar QChar::upper() const
     return scratchUniChar;
 }
 
-extern "C" {
-}
-
 QChar::Direction QChar::direction() const
 {
-    // FIXME: unimplemented because we don't do BIDI yet
     uint8_t type;
     QChar::Direction dir = DirL;
+
+     if (c == ' ')
+         return DirWS;
 
     CFUniCharGetBidiCategory (&c, 1, &type);
     switch (type){

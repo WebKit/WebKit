@@ -1,3 +1,16 @@
+2002-10-28  Richard Williamson   <rjw@apple.com>
+    
+        Fixed 3086188 - REGRESSION: Justified text is broken
+        
+        Bogus special case for DirW(hite)S(pace).  This
+        should be correctly detected by CF, but is not.
+        Revert to explicit checking for ' ' character.  This'll
+        work most of the time.  All the more reason to do
+        our own unicode attribute database.
+        
+        * kwq/KWQChar.mm:
+        (QChar::direction):
+
 2002-10-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3056726 - View Source window always displays the source in current system encoding
