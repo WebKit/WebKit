@@ -436,9 +436,16 @@ void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, boo
 {
     x += m_x;
     y += m_y;
-
+    
+    // Apply the relative position offset when invalidating a rectangle.  The layer
+    // is translated, but the render box isn't, so we need to do this to get the
+    // right dirty rect.
+    if (isRelPositioned())
+        relativePositionOffset(x,y);
+    
     if (style()->position()==FIXED) f=true;
 
+    
     // kdDebug( 6040 ) << "RenderBox(" << renderName() << ")::repaintRectangle (" << x << "/" << y << ") (" << w << "/" << h << ")" << endl;
     RenderObject *o = container();
     if( o ) o->repaintRectangle(x, y, w, h, immediate, f);

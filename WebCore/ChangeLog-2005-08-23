@@ -1,3 +1,13 @@
+2002-12-05  David Hyatt  <hyatt@apple.com>
+
+	Fix relative positioned elements to add in the right offset
+	when repainting themselves.
+	
+        Reviewed by: darin
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::repaintRectangle):
+
 2002-12-05  Richard Williamson   <rjw@apple.com>
 
         Fixed two issues relating to font sizes.  Fixes any page
