@@ -1,5 +1,19 @@
 2002-05-21  Kenneth Kocienda  <kocienda@apple.com>
 
+        Fix for this bug:
+
+        Radar 2924728 (post form fails at pt.apple.com; succeeds at macosx.apple.com)
+
+        Posted forms are now submitted with the IFURLHandleFlagLoadFromOrigin 
+        load flag set.  This prevents a potential bug which may cause a page 
+        with a form that uses itself as an action to be returned from the 
+        cache without submitting.
+
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::submitForm)
+
+2002-05-21  Kenneth Kocienda  <kocienda@apple.com>
+
         Merged these four include files into the precompiled header.
         These are used for the enhanced assertion/debuggin support I
         added yesterday.

@@ -555,6 +555,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
 #endif
 
   NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+  unsigned loadFlags = 0;
 
 #ifdef NEED_THIS
   KParts::URLArgs args;
@@ -595,6 +596,11 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
       NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
       [attributes setObject:postData forKey:IFHTTPURLHandleRequestData];
       [attributes setObject:@"POST" forKey:IFHTTPURLHandleRequestMethod];
+      // When posting, use the IFURLHandleFlagLoadFromOrigin load flag. 
+      // This prevents a potential bug which may cause a page
+      // with a form that uses itself as an action to be returned 
+      // from the cache without submitting.
+      loadFlags = IFURLHandleFlagLoadFromOrigin;
   }
 
 #ifdef NEED_THIS
@@ -619,8 +625,8 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     
     oldDataSource = getDataSource();
     frame = [oldDataSource webFrame];
-    
-    newDataSource = WCIFWebDataSourceMake(u.getNSURL(), attributes, 0);
+
+    newDataSource = WCIFWebDataSourceMake(u.getNSURL(), attributes, loadFlags);
     [newDataSource _setParent: [oldDataSource parent]];
     
     [frame setProvisionalDataSource: newDataSource];
