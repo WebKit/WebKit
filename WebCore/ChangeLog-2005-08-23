@@ -1,3 +1,15 @@
+2004-10-05  David Hyatt  <hyatt@apple.com>
+
+	Fix a bug in the iteration of locateCousinList and clean up the style sharing stats code.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::locateCousinList):
+        (khtml::CSSStyleSelector::elementsCanShareStyle):
+        (khtml::CSSStyleSelector::locateSharedStyle):
+        (khtml::CSSStyleSelector::styleForElement):
+
 2004-10-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
