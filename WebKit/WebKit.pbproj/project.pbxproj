@@ -194,6 +194,7 @@
 				9C64424F01F7AF2D0ECA16EA,
 				9C64425001F7AF2D0ECA16EA,
 				9C13328B01FFB40A0ECA16EA,
+				9C56CE4B020B42AF0ECA16EA,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -228,6 +229,7 @@
 				9C64425401F7B1740ECA16EA,
 				9C64425601F7B4E20ECA16EA,
 				9C13328C01FFB40A0ECA16EA,
+				9C56CE4C020B42AF0ECA16EA,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -955,6 +957,33 @@
 			settings = {
 			};
 		};
+		9C56CE49020B42AF0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKDynamicScrollBarsView.h;
+			path = WebView.subproj/WKDynamicScrollBarsView.h;
+			refType = 2;
+		};
+		9C56CE4A020B42AF0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKDynamicScrollBarsView.m;
+			path = WebView.subproj/WKDynamicScrollBarsView.m;
+			refType = 2;
+		};
+		9C56CE4B020B42AF0ECA16EA = {
+			fileRef = 9C56CE49020B42AF0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9C56CE4C020B42AF0ECA16EA = {
+			fileRef = 9C56CE4A020B42AF0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		9C64424501F78B4B0ECA16EA = {
 			isa = PBXFileReference;
 			name = WKWebViewPrivate.mm;
@@ -1089,6 +1118,8 @@
 				9C64425501F7B4E20ECA16EA,
 				9C13328901FFB40A0ECA16EA,
 				9C13328A01FFB40A0ECA16EA,
+				9C56CE49020B42AF0ECA16EA,
+				9C56CE4A020B42AF0ECA16EA,
 			);
 			isa = PBXGroup;
 			name = WebView;
