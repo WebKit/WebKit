@@ -51,6 +51,7 @@ unsigned int KWQGetLogLevel(){
     return KWQ_LOG_LEVEL;
 }
 
+#ifdef NEED_TIMESTAMP
 static const char *
 timestamp(void)
 {
@@ -59,13 +60,13 @@ timestamp(void)
                                                            locale:nil];
     return [date cString];
 }
-
+#endif
 
 void KWQLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
 {    
     if (KWQGetLogLevel() & level) {
         va_list args;
-        fprintf(stderr, "%s - [WEBCORE] - ", timestamp());
+        fprintf(stderr, "[WEBCORE] - %s:%d %s - ", file, line, function);
         va_start(args, format); 
         vfprintf(stderr, format, args);
         va_end(args);

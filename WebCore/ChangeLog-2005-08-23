@@ -1,3 +1,10 @@
+2002-05-10  Richard J. Williamson  <rjw@apple.com>
+
+	Made log output match webkit logging.
+
+	* kwq/kwqdebug.mm:
+	(KWQLog):
+
 2002-05-10  Chris Blumenberg  <cblu@apple.com>
 
 	Changed WCIFWebDataSourceMake to wrap around [IFWebDataSource initWithURL: attributes: flags:]
