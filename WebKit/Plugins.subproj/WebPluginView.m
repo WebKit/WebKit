@@ -179,8 +179,8 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 
 -(void) viewHasMoved:(NSNotification *)notification
 {
-    [self setWindow];
     [self sendUpdateEvent];
+    [self setWindow];
 }
 
 - (void) setWindow
