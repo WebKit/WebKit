@@ -22,11 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <Cocoa/Cocoa.h>
 
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRenderer.h>
+
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebFileTypeMappings.h>
 
 @implementation WebImageRendererFactory
 
@@ -78,6 +79,35 @@
     WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithSize:s] autorelease];
     [imageRenderer setScalesWhenResized:NO];
     return imageRenderer;
+}
+
+- (NSArray *)supportedMIMETypes
+{
+    static NSArray *imageMIMETypes = nil;
+
+    if(!imageMIMETypes){
+        NSArray *unsupportedTypes = [NSArray arrayWithObjects:
+            @"application/pdf",
+            @"application/postscript",
+            nil];
+        
+        NSEnumerator *enumerator = [[NSImage imageFileTypes] objectEnumerator];
+        WebFileTypeMappings *mappings = [WebFileTypeMappings sharedMappings];
+        NSMutableSet *mimes = [NSMutableSet set];
+        NSString *type;
+
+        while ((type = [enumerator nextObject]) != nil) {
+            NSString *mime = [mappings MIMETypeForExtension:type];
+            if(mime && ![mime isEqualToString:@"application/octet-stream"] &&
+               ![unsupportedTypes containsObject:mime]){
+                [mimes addObject:mime];
+            }
+        }
+
+        imageMIMETypes = [[mimes allObjects] retain];
+    }
+
+    return imageMIMETypes;
 }
 
 

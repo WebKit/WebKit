@@ -5,18 +5,18 @@
 
 #import <WebKit/WebImageView.h>
 
-#import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebFileTypeMappings.h>
+#import <WebCore/WebCoreImageRenderer.h>
 
+#import <WebFoundation/WebAssertions.h>
 
 @implementation WebImageView
 
@@ -25,36 +25,9 @@
     [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObject:NSTIFFPboardType] returnTypes:nil];
 }
 
-+ (NSArray *)unsupportedImageMIMETypes
-{
-    return [NSArray arrayWithObjects:
-        @"application/pdf",
-        @"application/postscript",
-        nil];
-}
-
 + (NSArray *)supportedImageMIMETypes
 {
-    static NSArray *imageMIMETypes = nil;
-
-    if(!imageMIMETypes){
-        NSEnumerator *enumerator = [[NSImage imageFileTypes] objectEnumerator];
-        WebFileTypeMappings *mappings = [WebFileTypeMappings sharedMappings];
-        NSMutableSet *mimes = [NSMutableSet set];
-        NSString *type;
-
-        while ((type = [enumerator nextObject]) != nil) {
-            NSString *mime = [mappings MIMETypeForExtension:type];
-            if(mime && ![mime isEqualToString:@"application/octet-stream"] &&
-               ![[self unsupportedImageMIMETypes] containsObject:mime]){
-                [mimes addObject:mime];
-            }
-        }
-
-        imageMIMETypes = [[mimes allObjects] retain];
-    }
-
-    return imageMIMETypes;
+    return [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
 }
 
 - (id)initWithFrame:(NSRect)frame
