@@ -788,8 +788,15 @@ static const char * const stateNames[] = {
     case WebNavigationTypeLinkClicked:
     case WebNavigationTypeFormSubmitted:
 	;
-	NSPoint point = [[[self webView] documentView] convertPoint:[event locationInWindow] fromView:nil];
-	NSDictionary *elementInfo = [(WebHTMLView *)[[self webView] documentView] _elementAtPoint:point];
+
+	NSView *topViewInEventWindow = [[event window] contentView];
+	NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
+
+	ASSERT(viewContainingPoint != nil);
+	ASSERT([viewContainingPoint isKindOfClass:[WebHTMLView class]]);
+	    
+	NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
+	NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
 	
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 			     [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,

@@ -1,3 +1,13 @@
+2002-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3095628 - REGRESSION: exception when clicking on link to load content into iframe
+	
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _actionInformationForNavigationType:event:]): Get the
+	element info from the HTML view where the click originally
+	happened, not the current document view. Add some asserts to make
+	sure this is working.
+
 2002-11-07  Richard Williamson  <rjw@apple.com>
 
         * ChangeLog:
