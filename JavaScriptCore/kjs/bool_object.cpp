@@ -124,7 +124,7 @@ Object BooleanObjectImp::construct(ExecState *exec, const List &args)
 
   Boolean b;
   if (args.size() > 0)
-    b = args.begin()->toBoolean(exec);
+    b = args.begin()->dispatchToBoolean(exec);
   else
     b = Boolean(false);
 

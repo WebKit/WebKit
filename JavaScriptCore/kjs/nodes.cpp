@@ -2078,7 +2078,7 @@ Completion ForInNode::execute(ExecState *exec)
   ListIterator propIt = propList.begin();
 
   while (propIt != propList.end()) {
-    UString name = propIt->getPropertyName(exec);
+    UString name = propIt->dispatchGetPropertyName(exec);
     if (!v.hasProperty(exec,name)) {
       propIt++;
       continue;

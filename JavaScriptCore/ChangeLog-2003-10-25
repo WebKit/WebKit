@@ -1,3 +1,43 @@
+2002-08-15  Maciej Stachowiak  <mjs@apple.com>
+
+	Phase one of the "fixnum" optimization (storing small enough
+	integers in the pointer). This just paves the way for the change
+	by making all the virtual functions of ValueImp private and adding
+	non-virtual dispatchers which can call the virtual function or
+	handle fixnums specially.
+
+	Also, I marked every place that should need a special case with a
+	FIXNUM comment.
+	
+        * kjs/bool_object.cpp:
+        (BooleanObjectImp::construct): Call dispatch method not the real method.
+        * kjs/internal.h: Make toUInt32 private to make sure no one calls it directly
+	on a NumberImp*.
+        * kjs/nodes.cpp:
+        (ForInNode::execute): Call dispatch method not the real method.
+        * kjs/object.cpp:
+	(ObjectImp::propList): Call dispatch method not the real method.
+        * kjs/object.h:
+        * kjs/string_object.cpp:
+        (StringProtoFuncImp::call): Call dispatch method not the real method.
+        (StringObjectImp::construct): Call dispatch method not the real method.
+        * kjs/value.h:
+        * kjs/value.cpp:
+        (ValueImp::marked): Put a comment about required FIXNUM change.
+        (ValueImp::setGcAllowed): Likewise.
+        (ValueImp::dispatchType): Just call the virtual method for now.
+        (ValueImp::dispatchToPrimitive): Likewise.
+        (ValueImp::dispatchToBoolean): Likewise.
+        (ValueImp::dispatchToNumber): Likewise.
+        (ValueImp::dispatchToString): Likewise.
+        (ValueImp::dispatchToObject): Likewise.
+        (ValueImp::dispatchToUInt32): Likewise.
+        (ValueImp::dispatchGetBase): Likewise.
+        (ValueImp::dispatchGetPropertyName): Likewise.
+        (ValueImp::dispatchGetValue): Likewise.
+        (ValueImp::dispatchPutValue): Likewise.
+        (ValueImp::dispatchDeleteValue): Likewise.
+
 2002-08-14  Darin Adler  <darin@apple.com>
 
 	Another pass of tweaks, including one bug fix.

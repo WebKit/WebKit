@@ -406,7 +406,7 @@ void ObjectImp::setScope(const List &s)
 List ObjectImp::propList(ExecState *exec, bool recursive)
 {
   List list;
-  if (_proto && _proto->type() == ObjectType && recursive)
+  if (_proto && _proto->dispatchType() == ObjectType && recursive)
     list = static_cast<ObjectImp*>(_proto)->propList(exec,recursive);
 
 

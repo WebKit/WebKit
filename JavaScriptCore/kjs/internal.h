@@ -130,9 +130,9 @@ namespace KJS {
     UString toString(ExecState *exec) const;
     Object toObject(ExecState *exec) const;
 
+  private:
     virtual bool toUInt32(unsigned&) const;
 
-  private:
     double val;
   };
 

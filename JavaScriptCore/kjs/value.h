@@ -94,7 +94,9 @@ namespace KJS {
     ValueImp();
     virtual ~ValueImp();
 
+    // FIXNUM: need special case for fixnums below (should be no-op)
     inline ValueImp* ref() { refcount++; return this; }
+    // FIXNUM: need special case for fixnums below (should be no-op)
     inline bool deref() { return (!--refcount); }
     unsigned int refcount;
 
@@ -110,6 +112,27 @@ namespace KJS {
      */
     void setGcAllowed();
 
+    int toInteger(ExecState *exec) const;
+    int toInt32(ExecState *exec) const;
+    unsigned int toUInt32(ExecState *exec) const;
+    unsigned short toUInt16(ExecState *exec) const;
+
+    // Dispatch wrappers that handle the special fixnum case
+
+    Type dispatchType() const;
+    Value dispatchToPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const;
+    bool dispatchToBoolean(ExecState *exec) const;
+    double dispatchToNumber(ExecState *exec) const;
+    UString dispatchToString(ExecState *exec) const;
+    bool dispatchToUInt32(unsigned&) const;
+    Value dispatchGetBase(ExecState *exec) const;
+    UString dispatchGetPropertyName(ExecState *exec) const;
+    void dispatchPutValue(ExecState *exec, const Value& w);
+    bool dispatchDeleteValue(ExecState *exec);
+    Value dispatchGetValue(ExecState *exec) const;
+    Object dispatchToObject(ExecState *exec) const;
+
+  private:
     virtual Type type() const = 0;
 
     // The conversion operations
@@ -119,13 +142,7 @@ namespace KJS {
     virtual double toNumber(ExecState *exec) const = 0;
     virtual UString toString(ExecState *exec) const = 0;
     virtual Object toObject(ExecState *exec) const = 0;
-
     virtual bool toUInt32(unsigned&) const;
-    
-    int toInteger(ExecState *exec) const;
-    int toInt32(ExecState *exec) const;
-    unsigned int toUInt32(ExecState *exec) const;
-    unsigned short toUInt16(ExecState *exec) const;
 
     // Reference operations
 
@@ -134,8 +151,7 @@ namespace KJS {
     virtual Value getValue(ExecState *exec) const;
     virtual void putValue(ExecState *exec, const Value& w);
     virtual bool deleteValue(ExecState *exec);
-
-  private:
+    
     enum {
       VI_MARKED = 1,
       VI_GCALLOWED = 2,
@@ -184,7 +200,7 @@ namespace KJS {
      *
      * @return The type of value
      */
-    Type type() const { return rep->type(); }
+    Type type() const { return rep->dispatchType(); }
 
     /**
      * Checks whether or not the value is of a particular tpye
@@ -192,7 +208,7 @@ namespace KJS {
      * @param The type to compare with
      * @return true if the value is of the specified type, otherwise false
      */
-    bool isA(Type t) const { return rep->type() == t; }
+    bool isA(Type t) const { return rep->dispatchType() == t; }
 
     /**
      * Performs the ToPrimitive type conversion operation on this value
@@ -200,17 +216,17 @@ namespace KJS {
      */
     Value toPrimitive(ExecState *exec,
                       Type preferredType = UnspecifiedType) const
-      { return rep->toPrimitive(exec, preferredType); }
+      { return rep->dispatchToPrimitive(exec, preferredType); }
 
     /**
      * Performs the ToBoolean type conversion operation on this value (ECMA 9.2)
      */
-    bool toBoolean(ExecState *exec) const { return rep->toBoolean(exec); }
+    bool toBoolean(ExecState *exec) const { return rep->dispatchToBoolean(exec); }
 
     /**
      * Performs the ToNumber type conversion operation on this value (ECMA 9.3)
      */
-    double toNumber(ExecState *exec) const { return rep->toNumber(exec); }
+    double toNumber(ExecState *exec) const { return rep->dispatchToNumber(exec); }
 
     /**
      * Performs the ToInteger type conversion operation on this value (ECMA 9.4)
@@ -235,7 +251,7 @@ namespace KJS {
     /**
      * Performs the ToString type conversion operation on this value (ECMA 9.8)
      */
-    UString toString(ExecState *exec) const { return rep->toString(exec); }
+    UString toString(ExecState *exec) const { return rep->dispatchToString(exec); }
 
     /**
      * Performs the ToObject type conversion operation on this value (ECMA 9.9)
@@ -248,31 +264,31 @@ namespace KJS {
      * Since references are supposed to have an Object or null as their base,
      * this method is guaranteed to return either Null() or an Object value.
      */
-    Value getBase(ExecState *exec) const { return rep->getBase(exec); }
+    Value getBase(ExecState *exec) const { return rep->dispatchGetBase(exec); }
 
     /**
      * Performs the GetPropertyName type conversion operation on this value
      * (ECMA 8.7)
      */
-    UString getPropertyName(ExecState *exec) const { return rep->getPropertyName(exec); }
+    UString getPropertyName(ExecState *exec) const { return rep->dispatchGetPropertyName(exec); }
 
     /**
      * Performs the GetValue type conversion operation on this value
      * (ECMA 8.7.1)
      */
-    Value getValue(ExecState *exec) const { return rep->getValue(exec); }
+    Value getValue(ExecState *exec) const { return rep->dispatchGetValue(exec); }
 
     /**
      * Performs the PutValue type conversion operation on this value
      * (ECMA 8.7.1)
      */
-    void putValue(ExecState *exec, const Value &w) { rep->putValue(exec, w); }
-    bool deleteValue(ExecState *exec) { return rep->deleteValue(exec); }
+    void putValue(ExecState *exec, const Value &w) { rep->dispatchPutValue(exec, w); }
+    bool deleteValue(ExecState *exec) { return rep->dispatchDeleteValue(exec); }
 
     /**
      * Checks if we can do a lossless conversion to UInt32.
      */
-    bool toUInt32(unsigned& i) const { return rep->toUInt32(i); }
+    bool toUInt32(unsigned& i) const { return rep->dispatchToUInt32(i); }
 
   protected:
     ValueImp *rep;
@@ -411,6 +427,11 @@ namespace KJS {
     friend class NumberImp;
     explicit Number(NumberImp *v);
   };
+
+  inline Value ValueImp::dispatchGetValue(ExecState *exec) const {
+    // FIXNUM: need special case for fixnums here 
+    return this->getValue(exec);
+  }
 
 }; // namespace
 

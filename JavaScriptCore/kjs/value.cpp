@@ -63,11 +63,14 @@ void ValueImp::mark()
 
 bool ValueImp::marked() const
 {
+  // FIXNUM: need special case for fixnum, they should act as if
+  // always marked.
   return (_flags & VI_MARKED);
 }
 
 void ValueImp::setGcAllowed()
 {
+  // FIXNUM: need special case for fixnum, should be a no-op
   //fprintf(stderr,"ValueImp::setGcAllowed %p\n",(void*)this);
   _flags |= VI_GCALLOWED;
 }
@@ -170,6 +173,85 @@ bool ValueImp::deleteValue(ExecState *exec)
   exec->setException(err);
   return false;
 }
+
+
+// Dispatchers for virtual functions, to special-case fixnums which
+// won't be real pointers
+
+Type ValueImp::dispatchType() const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->type();
+}
+
+Value ValueImp::dispatchToPrimitive(ExecState *exec, Type preferredType) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->toPrimitive(exec, preferredType);
+}
+
+bool ValueImp::dispatchToBoolean(ExecState *exec) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->toBoolean(exec);
+}
+
+double ValueImp::dispatchToNumber(ExecState *exec) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->toNumber(exec);
+}
+
+UString ValueImp::dispatchToString(ExecState *exec) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->toString(exec);
+}
+
+Object ValueImp::dispatchToObject(ExecState *exec) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->toObject(exec);
+}
+
+bool ValueImp::dispatchToUInt32(unsigned& result) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->toUInt32(result);
+}
+
+Value ValueImp::dispatchGetBase(ExecState *exec) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->getBase(exec);
+}
+
+UString ValueImp::dispatchGetPropertyName(ExecState *exec) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->getPropertyName(exec);
+}
+
+#if 0
+Value ValueImp::dispatchGetValue(ExecState *exec) const
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->getValue(exec);
+}
+#endif
+
+void ValueImp::dispatchPutValue(ExecState *exec, const Value& w)
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->putValue(exec, w);
+}
+
+bool ValueImp::dispatchDeleteValue(ExecState *exec)
+{
+  // FIXNUM: need special case for fixnums here 
+  return this->deleteValue(exec);
+}
+
 
 // ------------------------------ Value ----------------------------------------
 
@@ -289,18 +371,23 @@ String String::dynamicCast(const Value &v)
 
 // ------------------------------ Number ---------------------------------------
 
+// FIXNUM: need fixnum special case in below constructor
 Number::Number(int i)
   : Value(new NumberImp(static_cast<double>(i))) { }
 
+// FIXNUM: need fixnum special case in below constructor
 Number::Number(unsigned int u)
   : Value(new NumberImp(static_cast<double>(u))) { }
 
+// FIXNUM: need fixnum special case in below constructor
 Number::Number(double d)
   : Value(new NumberImp(d)) { }
 
+// FIXNUM: need fixnum special case in below constructor
 Number::Number(long int l)
   : Value(new NumberImp(static_cast<double>(l))) { }
 
+// FIXNUM: need fixnum special case in below constructor
 Number::Number(long unsigned int l)
   : Value(new NumberImp(static_cast<double>(l))) { }
 
