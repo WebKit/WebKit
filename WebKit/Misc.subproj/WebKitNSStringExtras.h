@@ -18,4 +18,6 @@
 // This works around 2774250.
 - (NSString *)_web_stringByAbbreviatingWithTildeInPath;
 
+- (NSString *)_web_stringByStrippingReturnCharacters;
+
 @end

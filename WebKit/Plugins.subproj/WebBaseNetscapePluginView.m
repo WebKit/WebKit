@@ -13,6 +13,7 @@
 #import <WebKit/WebFramePrivate.h> 
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -1193,9 +1194,12 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return nil;
     }
     
-    NSString *URLString = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingWindowsLatin1);
+    NSString *string = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingWindowsLatin1);
+    NSString *URLString = [string _web_stringByStrippingReturnCharacters];
+    [string release];
+    
     NSURL *URL = [NSURL _web_URLWithDataAsString:URLString relativeToURL:baseURL];
-    [URLString release];
+    
 
     if (!URL) {
         return nil;

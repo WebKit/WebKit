@@ -114,4 +114,12 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     return [path stringByAbbreviatingWithTildeInPath];
 }
 
+- (NSString *)_web_stringByStrippingReturnCharacters
+{
+    NSMutableString *newString = [[self mutableCopy] autorelease];
+    [newString replaceOccurrencesOfString:@"\r" withString:@"" options:NSLiteralSearch range:NSMakeRange(0, [newString length])];
+    [newString replaceOccurrencesOfString:@"\n" withString:@"" options:NSLiteralSearch range:NSMakeRange(0, [newString length])];
+    return newString;
+}
+
 @end

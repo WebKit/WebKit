@@ -1,3 +1,15 @@
+2003-11-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3488783>: Flash at http://www.sjwilson.net/reef/ does not load photos
+	
+        Reviewed by rjw.
+
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_stringByStrippingReturnCharacters]): new
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]): call _web_stringByStrippingReturnCharacters on the relative string
+
 2003-11-19  Richard Williamson   <rjw@apple.com>
 
 	More LiveConnect stuff.  Horrible polling hack that
