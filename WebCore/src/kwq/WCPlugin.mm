@@ -153,7 +153,11 @@
         if(!memcmp([data bytes], "Joy!peff", 8)){
             isCFM = TRUE;
         }else{
-            isCFM = TRUE; //FIXME
+            if([name isEqualToString:@"Java Plug-in"]){ //FIXME 2885120
+                isCFM = TRUE;
+            }else{
+                isCFM = FALSE;
+            }
         }
         [executableFile closeFile];
         didLoad = CFBundleLoadExecutable(bundle);

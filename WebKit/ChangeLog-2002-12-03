@@ -1,3 +1,16 @@
+2002-03-25  Chris Blumenberg  <cblu@apple.com>
+
+	* MIME.subproj/IFMIMEDatabase.m: (+[IFMIMEDatabase sharedMIMEDatabase]),
+	(-[IFMIMEDatabase MIMEHandlerForMIMEType:]), (setMimeHandlers):
+	* MIME.subproj/IFMIMEHandler.h:
+	* MIME.subproj/IFMIMEHandler.m: (-[IFMIMEHandler
+	initWithMIMEType:handlerType:handlerName:]), (-[IFMIMEHandler MIMEType]),
+	(-[IFMIMEHandler MIMESupertype]), (-[IFMIMEHandler MIMESubtype]),
+	(-[IFMIMEHandler handlerName]), (-[IFMIMEHandler handlerType]), (-[IFMIMEHandler
+	description]):
+
+	Initial implementations of the above.
+
 2002-03-25  Richard Williamson  <rjw@apple.com>
 
         Added private API to allow browser to access the DOM tree.

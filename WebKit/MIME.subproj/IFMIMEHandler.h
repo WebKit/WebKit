@@ -31,7 +31,7 @@ typedef enum {
 initWithMIMEType gets called by [IFMIMEDatabase sharedMIMEDatabase] for at least every mime type that WebKit handles. We, at some point, might want to store IFMIMEHandler's for types that other application handle. I hope not though.
 */
 
-- initWithMIMEType:(NSString *)MIME handlerType:(IFMIMEHandlerType *)hType handlerName:(NSString *)handler;
+- initWithMIMEType:(NSString *)MIME handlerType:(IFMIMEHandlerType)hType handlerName:(NSString *)handler;
 
 // Accessor methods
 - (NSString *)MIMEType;

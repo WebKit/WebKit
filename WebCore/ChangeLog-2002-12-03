@@ -1,3 +1,10 @@
+2002-03-25  Chris Blumenberg  <cblu@apple.com>
+
+	* src/kwq/WCPlugin.mm: (-[WCPlugin load]):
+	
+	Temporary special case workaround for this Java plug-in bug:
+	2885120
+
 2002-03-25  Maciej Stachowiak  <mjs@apple.com>
 
 	Improved KURL performance:
