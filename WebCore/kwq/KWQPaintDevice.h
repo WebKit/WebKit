@@ -34,7 +34,7 @@ struct QInternal {
 
 class QPaintDevice {
 public:
-    static QInternal::DeviceType devType() { return QInternal::NotPrinter; }
+    virtual QInternal::DeviceType devType() { return QInternal::NotPrinter; }
 };
 
 #endif

@@ -29,6 +29,8 @@
 #import "KWQPixmap.h"
 #import "KWQPtrStack.h"
 #import "KWQPointArray.h"
+#import "KWQPaintDevice.h"
+#import "KWQPrinter.h"
 
 #import "KWQAssertions.h"
 #import "KWQTextRendererFactory.h"
@@ -56,15 +58,31 @@ struct QPainterPrivate {
     QFont textRendererFont;
 };
 
-QPainter::QPainter() : data(new QPainterPrivate)
+QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false)
 {
+}
+
+QPainter::QPainter(bool forPrinting) : data(new QPainterPrivate)
+{
+    _isForPrinting = forPrinting;
 }
 
 QPainter::~QPainter()
 {
     delete data;
 }
-    
+
+QPaintDevice *QPainter::device() const
+{
+    if (_isForPrinting) {
+        static QPrinter thePrinter;
+        return &thePrinter;
+    } else {
+        static QPaintDevice theScreen;
+        return &theScreen;
+    }
+}
+
 const QFont &QPainter::font() const
 {
     return data->state.font;

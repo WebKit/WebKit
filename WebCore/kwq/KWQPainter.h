@@ -47,9 +47,10 @@ public:
     typedef enum { RTL, LTR } TextDirection;
 
     QPainter();
+    QPainter(bool forPrinting);
     ~QPainter();
-    
-    QPaintDevice *device() const { return 0; }
+
+    QPaintDevice *device() const;
     
     const QFont &font() const;
     void setFont(const QFont &);
@@ -112,6 +113,7 @@ private:
     void _updateRenderer(NSString **families);
 
     QPainterPrivate *data;
+    bool _isForPrinting;
 };
 
 #endif

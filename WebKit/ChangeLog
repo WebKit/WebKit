@@ -1,3 +1,14 @@
+2003-04-03  Trey Matteson  <trey@apple.com>
+
+	3067928 - printing should not break lines in half
+
+	This is just glue to call the right piece in WebCore.
+
+        Reviewed by Darin.
+
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]):
+	Defer to WebCore to set pagination boundary.
+
 2003-04-03  Richard Williamson   <rjw@apple.com>
 
         As requested by Nancy, drop "Is" and "Are" from setters,

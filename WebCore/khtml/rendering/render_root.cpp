@@ -629,3 +629,17 @@ int RenderRoot::docWidth() const
     }
     return w;
 }
+
+#if APPLE_CHANGES
+// The idea here is to take into account what object is moving the pagination point, and
+// thus choose the best place to chop it.
+void RenderRoot::setBestTruncatedAt(int y, RenderObject *forRenderer)
+{
+    // prefer the widest object who tries to move the pagination point
+    int width = forRenderer->width();
+    if (width > m_truncatorWidth) {
+        m_truncatorWidth = width;
+        m_bestTruncatedAt = y;
+    }
+}
+#endif

@@ -790,6 +790,11 @@
     }
 }
 
+- (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
+{
+    [[self _bridge] adjustPageHeightNew:newBottom top:oldTop bottom:oldBottom limit:bottomLimit];
+}
+
 - (void)beginDocument
 {
     // Must do this explicit display here, because otherwise the view might redisplay while the print

@@ -145,6 +145,8 @@ public:
     void paint(QPainter *, const QRect &);
     void paintSelectionOnly(QPainter *p, const QRect &rect);
 
+    void adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit);
+
     void createEmptyDocument();
 
     static WebCoreBridge *bridgeForWidget(const QWidget *);

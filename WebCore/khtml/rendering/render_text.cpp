@@ -653,7 +653,11 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
                 {
                    RenderRoot *rootObj = root();
                    if (ty+s->m_y < rootObj->truncatedAt())
-                      rootObj->setTruncatedAt(ty+s->m_y);
+#if APPLE_CHANGES
+                       rootObj->setBestTruncatedAt(ty+s->m_y, this);
+#else
+                       rootObj->setTruncatedAt(ty+s->m_y);
+#endif
                    // Let's stop here.
                    break;
                 }

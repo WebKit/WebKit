@@ -1,3 +1,44 @@
+2003-04-03  Trey Matteson  <trey@apple.com>
+
+	3067928 - printing should not break lines in half
+	3217607 - when printing we should not draw the selection
+
+	We leverage the existing knowledge that a couple render object classes had
+	for adjusting pagination.  Wrote 3217705 saying we should add similar
+	smarts to a few more places.
+
+        Reviewed by Darin.
+
+        * ForwardingHeaders/qprinter.h: Added.
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paintObject):  Call our special setBestTruncatedAt instead
+	of khtml's setTruncatedAt.
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::setBestTruncatedAt):  Accumulate the best pagination boundary.
+        * khtml/rendering/render_root.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject):  Call our special setBestTruncatedAt instead
+	of khtml's setTruncatedAt.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::paint):  Don't draw the debugging red background when printing.
+        (KWQKHTMLPart::adjustPageHeight):  The meat of the change.  Make another
+	painting pass (with actual painting disabled) to get the pagination boundary
+	set as a side effect.  Return result up to AppKit.
+        * kwq/KWQPaintDevice.h:  devType() made virtual
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::QPainter):  New constructor for making a printing painter.
+        (QPainter::device):  Return either the Screen or Printer device.
+        * kwq/KWQPixmap.h:  Destructor needed to become virtual.
+        * kwq/KWQPrinter.h:  Implement devType().
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:]):  Setup printer device in our painter if we're
+	not drawing to the screen.
+        (-[WebCoreBridge adjustFrames:]):  Ditto.
+        (-[WebCoreBridge adjustPageHeightNew:top:bottom:limit:]):  Forward to part.
+
 2003-04-03  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

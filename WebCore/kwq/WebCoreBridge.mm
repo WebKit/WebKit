@@ -54,6 +54,7 @@ using khtml::RenderWidget;
 #import "KWQPageState.h"
 #import "KWQRenderTreeDebug.h"
 #import "KWQView.h"
+#import "KWQPrinter.h"
 
 #import "WebCoreDOMPrivate.h"
 #import "WebCoreImageRenderer.h"
@@ -335,8 +336,8 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (void)drawRect:(NSRect)rect
 {
-    QPainter p;
-    [self drawRect:rect withPainter:&p];
+    QPainter painter(![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    [self drawRect:rect withPainter:&painter];
 }
 
 - (void)adjustFrames:(NSRect)rect
@@ -346,9 +347,15 @@ static bool initializedObjectCacheSize = FALSE;
     // layout and do a draw with rendering disabled to
     // correctly adjust the frames.
     [self forceLayout];
-    QPainter p;
-    p.setPaintingDisabled(YES);
-    [self drawRect:rect withPainter:&p];
+    QPainter painter(![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    painter.setPaintingDisabled(YES);
+    [self drawRect:rect withPainter:&painter];
+}
+
+// Vertical pagination hook from AppKit
+- (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
+{
+    _part->adjustPageHeight(newBottom, oldTop, oldBottom, bottomLimit);
 }
 
 - (NSObject *)copyDOMNode:(NodeImpl *)node copier:(id <WebCoreDOMTreeCopier>)copier

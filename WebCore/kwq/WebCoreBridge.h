@@ -146,6 +146,7 @@ enum FrameBorderStyle {
 - (BOOL)needsLayout;
 - (void)adjustFrames:(NSRect)rect;
 - (void)drawRect:(NSRect)rect;
+- (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit;
 
 - (void)mouseDown:(NSEvent *)event;
 - (void)mouseUp:(NSEvent *)event;

@@ -45,6 +45,7 @@
 #import "KWQPageState.h"
 #import "KWQDOMNode.h"
 #import "KWQWindowWidget.h"
+#import <KWQPrinter.h>
 
 #import "xml/dom2_eventsimpl.h"
 
@@ -604,7 +605,10 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
 void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 {
 #ifndef NDEBUG
-    p->fillRect(rect.x(), rect.y(), rect.width(), rect.height(), QColor(0xFF, 0, 0));
+    bool isPrinting = (p->device()->devType() == QInternal::Printer);
+    if (!isPrinting) {
+        p->fillRect(rect.x(), rect.y(), rect.width(), rect.height(), QColor(0xFF, 0, 0));
+    }
 #endif
 
     if (renderer()) {
@@ -620,6 +624,26 @@ void KWQKHTMLPart::paintSelectionOnly(QPainter *p, const QRect &rect)
         renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height(), true);
     } else {
         ERROR("called KWQKHTMLPart::paintSelectionOnly with nil renderer");
+    }
+}
+
+void KWQKHTMLPart::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
+{
+    RenderRoot *root = static_cast<khtml::RenderRoot *>(xmlDocImpl()->renderer());
+    if (root) {
+        // Use a printer device, with painting disabled for the pagination phase
+        QPainter painter(true);
+        painter.setPaintingDisabled(true);
+
+        root->setTruncatedAt((int)floor(oldBottom));
+        root->layer()->paint(&painter, 0, (int)floor(oldTop),
+                             root->docWidth(), (int)ceil(oldBottom-oldTop), false);
+        *newBottom = root->bestTruncatedAt();
+        if (*newBottom == 0) {
+            *newBottom = oldBottom;
+        }
+    } else {
+        *newBottom = oldBottom;
     }
 }
 
