@@ -162,6 +162,8 @@
 
 2004-08-15  David Hyatt  <hyatt@apple.com>
 
+        - fixed <rdar://problem/3760508> REGRESSION (154-155): No text in textarea
+
 	Fix the blank textarea problem by ensuring that any change to a <textarea>'s DOM children causes the form control
 	to resync with the DOM.  This behavior matches WinIE.
 	
