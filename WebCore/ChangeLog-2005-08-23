@@ -1,3 +1,12 @@
+2004-06-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3673931, negative margins on objects that dodge floats not handled correctly.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+
 2004-06-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
@@ -92,6 +101,7 @@
         * khtml/rendering/render_canvasimage.cpp:
         (RenderCanvasImage::createDrawingContext):
 
+>>>>>>> 1.2855
 2004-06-01  Trey Matteson  <trey@apple.com>
 
 	First cut at the source side of DHTML dragging.  Following IE, new events are added:

@@ -990,8 +990,11 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             // to shift over as necessary to dodge any floats that might get in the way.
             if (child->avoidsFloats()) {
                 int leftOff = leftOffset(m_height);
-                if (style()->textAlign() != KHTML_CENTER && child->style()->marginLeft().type != Variable)
+                if (style()->textAlign() != KHTML_CENTER && child->style()->marginLeft().type != Variable) {
+                    if (child->marginLeft() < 0)
+                        leftOff += child->marginLeft();
                     chPos = kMax(chPos, leftOff); // Let the float sit in the child's margin if it can fit.
+                }
                 else if (leftOff != xPos) {
                     // The object is shifting right. The object might be centered, so we need to
                     // recalculate our horizontal margins. Note that the containing block content
@@ -1009,9 +1012,11 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             chPos -= child->width() + child->marginRight();
             if (child->avoidsFloats()) {
                 int rightOff = rightOffset(m_height);
-                if (style()->textAlign() != KHTML_CENTER && child->style()->marginRight().type != Variable)
+                if (style()->textAlign() != KHTML_CENTER && child->style()->marginRight().type != Variable) {
+                    if (child->marginRight() < 0)
+                        rightOff -= child->marginRight();
                     chPos = kMin(chPos, rightOff - child->width()); // Let the float sit in the child's margin if it can fit.
-                else if (rightOff != xPos) {
+                } else if (rightOff != xPos) {
                     // The object is shifting left. The object might be centered, so we need to
                     // recalculate our horizontal margins. Note that the containing block content
                     // width computation will take into account the delta between |rightOff| and |xPos|
