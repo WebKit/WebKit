@@ -1,3 +1,13 @@
+2002-01-31  Kenneth Kocienda  <kocienda@apple.com>
+
+        Changes to incorporate use of the no-copy NSData object.
+
+	* include/WCURLHandle.h:
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:offset:length:userData:]):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:offset:length:userData:]):
+
 2002-01-30  Richard Williamson  <rjw@apple.com>
     
     Cleaned up frame code a bit.  Fixed duplicate content problem.
