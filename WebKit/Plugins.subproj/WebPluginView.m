@@ -7,7 +7,6 @@
 
 #import "IFPluginView.h"
 
-#import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebFrame.h>
 
@@ -15,7 +14,6 @@
 #import <Carbon/Carbon.h>
 
 #import <IFPluginDatabase.h>
-#import <WebFoundation/IFURLHandle.h>
 #import <IFPluginStream.h>
 #import <IFWebDataSource.h>
 #import <WebFoundation/IFError.h>
@@ -28,7 +26,6 @@
 #import <IFPluginNullEventSender.h>
 #import "IFNullPluginView.h"
 
-static NSString *getCarbonPath(NSString *posixPath);
 
 @implementation IFPluginView
 
@@ -257,7 +254,7 @@ static char *newCString(NSString *string)
     return cString;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
+- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
 {
     NSString *baseURLString;
 
@@ -269,7 +266,7 @@ static char *newCString(NSString *string)
     instance->ndata = self;
 
     mime = [mimeType retain];
-    URL = [location retain];
+    srcURL = [theURL retain];
     plugin = [plug retain];
     
     // load the plug-in if it is not already loaded
@@ -321,11 +318,11 @@ static char *newCString(NSString *string)
         }
     }
     
+    streams = [[NSMutableArray alloc] init];
+    
     // Initialize globals
     canRestart = YES;
     isStarted = NO;
-    filesToErase = [[NSMutableArray alloc] init];
-    activeURLHandles = [[NSMutableArray alloc] init];
     
     return self;
 }
@@ -333,25 +330,17 @@ static char *newCString(NSString *string)
 -(void)dealloc
 {
     unsigned i;
-    NSFileManager *fileManager;
-    
+
     [self stop];
-    
-    // remove downloaded files
-    fileManager = [NSFileManager defaultManager];
-    for (i=0; i<[filesToErase count]; i++){  
-        [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
-    }
     
     for (i = 0; i < argsCount; i++) {
         delete [] cAttributes[i];
         delete [] cValues[i];
     }
-    
-    [filesToErase release];
-    [activeURLHandles release];
+    [streams removeAllObjects];
+    [streams release];
     [mime release];
-    [URL release];
+    [srcURL release];
     [plugin release];
     delete [] cAttributes;
     delete [] cValues;
@@ -373,7 +362,7 @@ static char *newCString(NSString *string)
     
     nPort.port = GetWindowPort([[self window] _windowRef]);
     
-    // FIXME: Are these values important?
+    // FIXME: Are these values correct? Without them, Flash freaks.
     nPort.portx = -(int32)frameInWindow.origin.x;
     nPort.porty = -(int32)frameInWindow.origin.y;   
     window.window = &nPort;
@@ -395,48 +384,6 @@ static char *newCString(NSString *string)
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=%d\n", npErr, (int)nPort.port);
 }
 
-- (void) newStream:(NSURL *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
-{
-    IFPluginStream *stream;
-    NPStream *npStream;
-    NPError npErr;    
-    uint16 transferMode;
-    IFURLHandle *urlHandle;
-    NSDictionary *attributes;
-    
-    stream = [[IFPluginStream alloc] initWithURL:streamURL mimeType:mimeType notifyData:notifyData];
-    npStream = [stream npStream];
-    
-    npErr = NPP_NewStream(instance, (char *)[mimeType cString], npStream, NO, &transferMode);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d %s\n", npErr, [mimeType cString]);
-    
-    if(npErr != NPERR_NO_ERROR){
-        [stream release];
-        return;
-    }
-    
-    [stream setTransferMode:transferMode];
-    
-    if(transferMode == NP_NORMAL){
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_NORMAL\n");
-    }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
-        if(transferMode == NP_ASFILEONLY)
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_ASFILEONLY\n");
-        if(transferMode == NP_ASFILE)
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_ASFILE\n");
-        [stream setFilename:[[streamURL path] lastPathComponent]];
-    }else if(transferMode == NP_SEEK){
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_SEEK not yet supported\n");
-        return;
-    }
-    attributes = [NSDictionary dictionaryWithObject:stream forKey:IFURLHandleUserData];
-    urlHandle = [[IFURLHandle alloc] initWithURL:streamURL attributes:attributes flags:0];
-    if(urlHandle!=nil){
-        [urlHandle addClient:self];
-        [activeURLHandles addObject:urlHandle];
-        [urlHandle loadInBackground];
-    }
-}
 
 - (NSView *) findSuperview:(NSString *)viewName
 {
@@ -458,7 +405,8 @@ static char *newCString(NSString *string)
     NPError npErr;
     NSNotificationCenter *notificationCenter;
     NSWindow *theWindow;
-    
+    IFPluginStream *stream;
+        
     if(isStarted || !canRestart)
         return;
     
@@ -483,15 +431,23 @@ static char *newCString(NSString *string)
     
     if ([theWindow isKeyWindow])
         [self sendActivateEvent:YES];
-    if(URL)
-        [self newStream:[NSURL URLWithString:URL] mimeType:mime notifyData:NULL];
+
+    if(srcURL){
+        stream = [[IFPluginStream alloc] initWithURL:srcURL pluginPointer:instance];
+        if(stream){
+            [streams addObject:stream];
+            [stream release];
+        }
+    }
+    
     eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
     [eventSender sendNullEvents];
     trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
     
     id webView = [self findSuperview:@"IFWebView"];
-    webController = [webView controller];
-    webDataSource = [[webController frameForView:webView] dataSource];
+    webController = [[webView controller] retain];
+    webFrame = 	    [[webController frameForView:webView] retain];
+    webDataSource = [[webFrame dataSource] retain];
 }
 
 - (void)stop
@@ -500,16 +456,28 @@ static char *newCString(NSString *string)
     
     if (!isStarted)
         return;
-        
     isStarted = NO;
-        
-    [activeURLHandles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];
+
+    [self removeTrackingRect:trackingTag];        
+    [streams makeObjectsPerformSelector:@selector(stop)];
     [eventSender stop];
     [eventSender release];
+    [webController release];
+    [webFrame release];
+    [webDataSource release];    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self removeTrackingRect:trackingTag];
     npErr = NPP_Destroy(instance, NULL);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
+}
+
+- (IFWebDataSource *)webDataSource
+{
+    return webDataSource;
+}
+
+- (id <IFWebController>) webController
+{
+    return webController;
 }
 
 #pragma mark NSVIEW
@@ -564,165 +532,49 @@ static char *newCString(NSString *string)
 }
 
 
-#pragma mark IFURLHANDLE
-
-- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
-{
-
-}
-
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
-{
-    int32 bytes;
-    IFPluginStream *stream;
-    uint16 transferMode;
-    NPStream *npStream;
-    
-    stream = [[sender attributes] objectForKey:IFURLHandleUserData];
-    transferMode = [stream transferMode];
-    npStream = [stream npStream];
-    
-    if(transferMode != NP_ASFILEONLY){
-        bytes = NPP_WriteReady(instance, npStream);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_WriteReady bytes=%lu\n", bytes);
-        bytes = NPP_Write(instance, npStream, [stream offset], [data length], (void *)[data bytes]);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Write bytes=%lu\n", bytes);
-        [stream incrementOffset:[data length]];
-    }
-    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
-        [[stream data] appendData:data];
-    }
-        
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [sender contentLengthReceived];
-    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [webController receivedProgress: (IFLoadProgress *)loadProgress
-        forResource: [[sender url] absoluteString] fromDataSource: webDataSource];
-    [loadProgress release];
-    
-}
-
-- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
-{
-    NPError npErr;
-    NSMutableString *path;
-    IFPluginStream *stream;
-    NSFileManager *fileManager;
-    uint16 transferMode;
-    NPStream *npStream;
-    NSString *filename;
-    
-    stream = [[sender attributes] objectForKey:IFURLHandleUserData];
-    transferMode = [stream transferMode];
-    npStream = [stream npStream];
-    filename = [stream filename];
-    
-    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
-        // FIXME: Need to use something like mkstemp?
-        path = [NSString stringWithFormat:@"/tmp/%@", @"/tmp/", filename];        
-        [filesToErase addObject:path];
-        
-        fileManager = [NSFileManager defaultManager];
-        [fileManager removeFileAtPath:path handler:nil];
-        [fileManager createFileAtPath:path contents:[stream data] attributes:nil];
-        
-        // FIXME: Will cString use the correct character set?
-        NPP_StreamAsFile(instance, npStream, [getCarbonPath(filename) cString]);
-        
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s\n", [getCarbonPath(filename) cString]);
-    }
-    npErr = NPP_DestroyStream(instance, npStream, NPRES_DONE);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);
-    
-    if(npStream->notifyData){
-        NPP_URLNotify(instance, npStream->url, NPRES_DONE, npStream->notifyData);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_URLNotify\n");
-    }
-    [stream release];
-    [activeURLHandles removeObject:sender];
-    
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [data length];
-    loadProgress->bytesSoFar = [data length];
-    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [webController receivedProgress: (IFLoadProgress *)loadProgress 
-        forResource: [[sender url] absoluteString] fromDataSource: webDataSource];
-    [loadProgress release];
-}
-
-- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
-{
-    IFPluginStream *stream;
-    
-    stream = [[sender attributes] objectForKey:IFURLHandleUserData];
-    [stream release];
-    [self stop];
-    
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = -1;
-    loadProgress->bytesSoFar = -1;
-    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [webController receivedProgress: (IFLoadProgress *)loadProgress 
-        forResource: [[sender url] absoluteString] fromDataSource: webDataSource];
-    [loadProgress release];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
-{
-    IFPluginStream *stream;
-    
-    stream = [[sender attributes] objectForKey:IFURLHandleUserData];
-    [stream release];
-    [self stop];
-    
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [sender contentLengthReceived];
-    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    
-    IFError *error = [[IFError alloc] initWithErrorCode: result  inDomain:IFErrorCodeDomainWebFoundation failingURL: [sender url]];
-    [webController receivedError: error forResource: [[sender url] absoluteString] 
-        partialProgress: loadProgress fromDataSource: webDataSource];
-    [error release];
-    [loadProgress release];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
-{
-    
-}
-
 #pragma mark PLUGIN-TO-BROWSER
+
+- (NSURL *)URLForString:(NSString *)URLString
+{
+    //FIXME: Do plug-ins only request http?
+    if([URLString hasPrefix:@"http://"])
+        return [NSURL URLWithString:URLString];
+    else
+        return [NSURL URLWithString:URLString relativeToURL:baseURL];
+}
+
 
 -(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData
 {
-    NSURL *newURL;
-    IFWebDataSource *dataSource;
     NSURL *requestedURL;
+    IFPluginStream *stream;
+    IFWebDataSource *dataSource;
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s\n", url, target);
  
-    if(!strcmp(url, "")){
-        return NPERR_INVALID_URL;
-    }else if(strstr(url, "://")){ //check if this is an absolute URL
-        requestedURL = [NSURL URLWithString:[NSString stringWithCString:url]];
-    }else{
-        requestedURL = [NSURL URLWithString:[NSString stringWithCString:url] relativeToURL:baseURL];
-    }
+    requestedURL = [self URLForString:[NSString stringWithCString:url]];
     
-    if(target == NULL){ // send data to plug-in if target is null
-        [self newStream:requestedURL mimeType:[plugin mimeTypeForURL:[NSString stringWithCString:url]] notifyData:(void *)notifyData];
-    }else if(!strcmp(target, "_self") || !strcmp(target, "_current") || !strcmp(target, "_parent") || !strcmp(target, "_top")){
+    if(!requestedURL)
+        return NPERR_INVALID_URL;
+    
+    if(target == NULL){ 
+        // Send data to plug-in if target is null
+        stream = [[IFPluginStream alloc] initWithURL:requestedURL pluginPointer:instance notifyData:notifyData];
+        if(stream){
+            [streams addObject:stream];
+            [stream release];
+        }
+    
+    }else{
         if(webController){
-            newURL = [NSURL URLWithString:[NSString stringWithCString:url]];
-            dataSource = [[[IFWebDataSource alloc] initWithURL:newURL] autorelease];
+            // FIXME: Need to send to proper target
+            dataSource = [[[IFWebDataSource alloc] initWithURL:requestedURL] autorelease];
             [[webController mainFrame] setProvisionalDataSource:dataSource];
             [[webController mainFrame] startLoading];
+            // FIXME: Need to send NPP_URLNotify
         }
-    }else if(!strcmp(target, "_blank") || !strcmp(target, "_new")){
-        printf("Error: No API to open new browser window\n");
     }
+        
     return NPERR_NO_ERROR;
 }
 
@@ -734,14 +586,55 @@ static char *newCString(NSString *string)
 
 -(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURLNotify\n");
-    return NPERR_GENERIC_ERROR;
+    NSURL *requestedURL;
+    NSDictionary *attributes=nil;
+    NSData *postData;
+    IFWebDataSource *dataSource;
+    IFPluginStream *stream;
+        
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "postURLNotify: %s\n", url);
+ 
+    requestedURL = [self URLForString:[NSString stringWithCString:url]];
+    
+    if(!requestedURL)
+        return NPERR_INVALID_URL;
+    
+    if(file){
+        // FIXME: Need function to convert from carbon path to posix
+        // FIXME: security issues here?
+        postData = [NSData dataWithContentsOfFile:nil];
+    }else{
+        postData = [NSData dataWithBytes:buf length:len];
+    }
+    
+    attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+        postData,	IFHTTPURLHandleRequestData,
+        @"POST", 	IFHTTPURLHandleRequestMethod, nil];
+                
+    if(target == NULL){ 
+        // Send data to plug-in if target is null
+        stream = [[IFPluginStream alloc] initWithURL:requestedURL pluginPointer:instance notifyData:notifyData attributes:attributes];
+        if(stream){
+            [streams addObject:stream];
+            [stream release];
+        }  
+    }else{
+        if(webController){
+            // FIXME: Need to send to proper target
+            dataSource = [[[IFWebDataSource alloc] initWithURL:requestedURL attributes:attributes] autorelease];
+            [[webController mainFrame] setProvisionalDataSource:dataSource];
+            [[webController mainFrame] startLoading];
+            // FIXME: Need to send NPP_URLNotify
+        }
+    }
+        
+    return NPERR_NO_ERROR;
 }
 
 -(NPError)postURL:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURL\n");
-    return NPERR_GENERIC_ERROR;
+    return [self postURLNotify:url target:target len:len buf:buf file:file notifyData:NULL];
 }
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream
@@ -759,17 +652,18 @@ static char *newCString(NSString *string)
 -(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_DestroyStream\n");
-    return NPERR_GENERIC_ERROR;
+    if(!stream->ndata)
+        return NPERR_INVALID_INSTANCE_ERROR;
+        
+    [(IFPluginStream *)stream->ndata stop];
+    return NPERR_NO_ERROR;
 }
 
 -(void)status:(const char *)message
 {
-    IFWebDataSource *dataSource;
-    
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_Status: %s\n", message);
     if(webController){
-        dataSource = [[webController mainFrame] dataSource];
-        [webController setStatusText:[NSString stringWithCString:message] forDataSource:dataSource];
+        [webController setStatusText:[NSString stringWithCString:message] forDataSource:webDataSource];
     }
 }
 
@@ -800,52 +694,43 @@ static char *newCString(NSString *string)
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "forceRedraw\n");
 }
 
+
+- (NPP_NewStreamProcPtr)NPP_NewStream
+{
+    return NPP_NewStream;
+}
+
+- (NPP_WriteReadyProcPtr)NPP_WriteReady
+{
+    return NPP_WriteReady;
+}
+
+
+- (NPP_WriteProcPtr)NPP_Write
+{
+    return NPP_Write;
+}
+
+
+- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile
+{
+    return NPP_StreamAsFile;
+}
+
+
+- (NPP_DestroyStreamProcPtr)NPP_DestroyStream
+{
+    return NPP_DestroyStream;
+}
+
+
+- (NPP_URLNotifyProcPtr)NPP_URLNotify
+{
+    return NPP_URLNotify;
+}
+
+
+
 @end
 
-static NSString *getCarbonPath(NSString *posixPath)
-{
-    OSStatus error;
-    FSRef ref, rootRef, parentRef;
-    FSCatalogInfo info;
-    NSMutableArray *carbonPathPieces;
-    HFSUniStr255 nameString;
-    
-    // Make an FSRef.
-    error = FSPathMakeRef((const UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:posixPath], &ref, NULL);
-    if (error != noErr) {
-        return nil;
-    }
-    
-    // Get volume refNum.
-    error = FSGetCatalogInfo(&ref, kFSCatInfoVolume, &info, NULL, NULL, NULL);
-    if (error != noErr) {
-        return nil;
-    }
-    
-    // Get root directory FSRef.
-    error = FSGetVolumeInfo(info.volume, 0, NULL, kFSVolInfoNone, NULL, NULL, &rootRef);
-    if (error != noErr) {
-        return nil;
-    }
-    
-    // Get the pieces of the path.
-    carbonPathPieces = [NSMutableArray array];
-    for (;;) {
-        error = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, &nameString, NULL, &parentRef);
-        if (error != noErr) {
-            return nil;
-        }
-        [carbonPathPieces insertObject:[NSString stringWithCharacters:nameString.unicode length:nameString.length] atIndex:0];
-        if (FSCompareFSRefs(&ref, &rootRef) == noErr) {
-            break;
-        }
-        ref = parentRef;
-    }
-    
-    // Volume names need trailing : character.
-    if ([carbonPathPieces count] == 1) {
-        [carbonPathPieces addObject:@""];
-    }
-    
-    return [carbonPathPieces componentsJoinedByString:@":"];
-}
+

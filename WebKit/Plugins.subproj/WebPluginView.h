@@ -3,6 +3,9 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebKit.h>
+#import <WebKit/IFWebFrame.h>
+
 #import <Cocoa/Cocoa.h>
 #import <npapi.h>
 
@@ -20,6 +23,7 @@
     
     id <IFWebController> webController;
     IFWebDataSource *webDataSource;
+    IFWebFrame *webFrame;
     
     NPP instance;
     NPWindow window;
@@ -28,10 +32,10 @@
 
     BOOL canRestart, isHidden, isStarted, fullMode;
             
-    NSString *URL, *mime;
-    NSURL *baseURL;
+    NSString *mime;
+    NSURL *srcURL, *baseURL;
     NSTrackingRectTag trackingTag;
-    NSMutableArray *filesToErase, *activeURLHandles;
+    NSMutableArray *streams;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
@@ -48,9 +52,17 @@
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
+- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode;
 -(void)stop;
-
+- (IFWebDataSource *)webDataSource;
+- (id <IFWebController>) webController;
 +(void)getCarbonEvent:(EventRecord *)carbonEvent;
+
+- (NPP_NewStreamProcPtr)NPP_NewStream;
+- (NPP_WriteReadyProcPtr)NPP_WriteReady;
+- (NPP_WriteProcPtr)NPP_Write;
+- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile;
+- (NPP_DestroyStreamProcPtr)NPP_DestroyStream;
+- (NPP_URLNotifyProcPtr)NPP_URLNotify;
 
 @end

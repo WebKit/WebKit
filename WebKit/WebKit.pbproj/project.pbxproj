@@ -1419,8 +1419,8 @@
 		};
 		F5A672BA0263866E01000102 = {
 			isa = PBXFileReference;
-			name = IFPluginStream.m;
-			path = Plugins.subproj/IFPluginStream.m;
+			name = IFPluginStream.mm;
+			path = Plugins.subproj/IFPluginStream.mm;
 			refType = 4;
 		};
 		F5A672BB0263866E01000102 = {

@@ -1,3 +1,36 @@
+2002-05-17  Chris Blumenberg  <cblu@apple.com>
+
+	- Made IFPluginStream the URL handle client instead of IFPluginView.
+	- Added support for NPP_PostURL and NPP_PostNotify.
+	- Possible fix for 2928558.
+
+	* Plugins.subproj/IFPluginStream.h:
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:mode:]):NSURL for url
+	instead of NSString
+	(-[IFPluginView dealloc]):
+	(-[IFPluginView setWindow]):
+	(-[IFPluginView start]): 
+	(-[IFPluginView stop]):
+	(-[IFPluginView webDataSource]):Accessor for IFPluginStream.
+	(-[IFPluginView webController]):Accessor for IFPluginStream.
+	(-[IFPluginView URLForString:]):
+	(-[IFPluginView getURLNotify:target:notifyData:]):
+	(-[IFPluginView postURLNotify:target:len:buf:file:notifyData:]):
+	(-[IFPluginView postURL:target:len:buf:file:]):
+	(-[IFPluginView destroyStream:reason:]):
+	(-[IFPluginView status:]):
+	(-[IFPluginView NPP_NewStream]): Accessor for IFPluginStream.
+	(-[IFPluginView NPP_WriteReady]):Accessor for IFPluginStream.
+	(-[IFPluginView NPP_Write]): Accessor for IFPluginStream.
+	(-[IFPluginView NPP_StreamAsFile]): Accessor for IFPluginStream.
+	(-[IFPluginView NPP_DestroyStream]): Accessor for IFPluginStream.
+	(-[IFPluginView NPP_URLNotify]): Accessor for IFPluginStream.
+	* WebCoreSupport.subproj/IFWebCoreViewFactory.m: Use new IFPluginView init method
+	(-[IFWebCoreViewFactory viewForPluginWithURL:serviceType:arguments:baseURL:]):
+	* WebKit.pbproj/project.pbxproj:
+
 2002-05-16  Richard J. Williamson  <rjw@apple.com>
 
 	Fixed 2925638.  Don't send last progress message from resourceDataDidBecomeAvailable,
