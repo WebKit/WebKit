@@ -1,3 +1,12 @@
+2004-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fix at least some of <rdar://problem/3546393>: 10,000 leaks, many of DOM::AtomicString::add, after one run of cvs-base
+
+        * khtml/xml/dom_atomicstring.cpp: (DOM::AtomicString::add): Remove extra allocation of strings.
+        This should speed things up a bit as well as fixing one big leak.
+
 2004-02-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3546379>: support for editing via drag & drop

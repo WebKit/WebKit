@@ -132,11 +132,7 @@ DOMStringImpl *AtomicString::add(const char *c)
         i = (i + 1) & _tableSizeMask;
     }
     
-    QChar *d = new QChar[length];
-    for (int j = 0; j != length; j++)
-        d[j] = c[j];
-    
-    DOMStringImpl *r = new DOMStringImpl(d, length);
+    DOMStringImpl *r = new DOMStringImpl(c, length);
     r->_hash = hash;
     
     _table[i] = r;
@@ -172,11 +168,7 @@ DOMStringImpl *AtomicString::add(const QChar *s, int length)
         i = (i + 1) & _tableSizeMask;
     }
     
-    QChar *d = new QChar[length];
-    for (int j = 0; j != length; j++)
-        d[j] = s[j];
-    
-    DOMStringImpl *r = new DOMStringImpl(d, length);
+    DOMStringImpl *r = new DOMStringImpl(s, length);
     r->_hash = hash;
     
     _table[i] = r;
