@@ -89,7 +89,8 @@ public:
     bool isLoading() const;
     void sheetLoaded();
 
-
+    bool isAlternate() const { return m_alternate; }
+    
 protected:
     khtml::CachedCSSStyleSheet *m_cachedSheet;
     CSSStyleSheetImpl *m_sheet;
@@ -98,6 +99,7 @@ protected:
     QString m_media;
     DOMString m_rel;
     bool m_loading;
+    bool m_alternate;
     QString m_data; // needed for temporarily storing the loaded style sheet data
 };
 

@@ -1,3 +1,14 @@
+2002-09-23  David Hyatt  <hyatt@apple.com>
+
+	Don't let alternate stylesheets delay render tree construction.
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::HTMLLinkElementImpl):
+        (HTMLLinkElementImpl::process):
+        (HTMLLinkElementImpl::setStyleSheet):
+        (HTMLLinkElementImpl::sheetLoaded):
+        * khtml/html/html_headimpl.h:
+
 \2002-09-23  David Hyatt  <hyatt@apple.com>
 
 	Make overflow:auto and scroll map to hidden until we figure
