@@ -1540,8 +1540,13 @@ void KHTMLPart::write( const char *str, int len )
   if (jScript())
     jScript()->appendSourceFile(m_url.url(),decoded);
   Tokenizer* t = d->m_doc->tokenizer();
+
+  // parsing some of the page can result in running a script which
+  // could possibly destroy the part. To avoid this, ref it temporarily.
+  ref();
   if(t)
     t->write( decoded, true );
+  deref();
 }
 
 void KHTMLPart::write( const QString &str )

@@ -33,6 +33,7 @@
 #include "KWQPtrList.h"
 #include "KWQStringList.h"
 #include "KWQValueList.h"
+#import "KWQTimer.h"
 
 class QWidget;
 
@@ -51,7 +52,7 @@ public:
     
     void ref() { ++_ref; }
     void deref() { if (!--_ref) delete this; }
-    
+
     bool event(QEvent *event) { customEvent((QCustomEvent *)event); return true; }
     virtual void customEvent(QCustomEvent *) { }
     

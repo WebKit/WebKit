@@ -1,3 +1,13 @@
+2003-08-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken Kocienda.
+
+	- fixed 3365242 - non-repro abort in HTMLTokenizer at ajc.com
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::write): ref the part around actually processing the
+	data, since a script could cause the part to go away.
+
 2003-08-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3262190, <li> bullets in mail were overly massive.  The bezier path the
