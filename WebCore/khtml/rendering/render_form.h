@@ -463,7 +463,6 @@ public:
 
     virtual const char *renderName() const { return "RenderTextArea"; }
     virtual void calcMinMaxWidth();
-    virtual void close ( );
     virtual void updateFromElement();
     virtual void setStyle(RenderStyle *);
 

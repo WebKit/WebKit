@@ -338,7 +338,6 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 if (!states.isEmpty())
                     n->restoreState(states);
             }
-            n->closeRenderer();
 #endif
         }
 
@@ -1547,7 +1546,6 @@ void KHTMLParser::popOneBlock(bool delBlock)
             if (!states.isEmpty())
                 current->restoreState(states);
         }
-        current->closeRenderer();
     }
 #endif
 

@@ -323,7 +323,6 @@ void XMLTokenizer::endElement()
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
     if (m_currentNode->parentNode() != 0) {
-        m_currentNode->closeRenderer();
         do {
             m_currentNode = m_currentNode->parentNode();
         } while (m_currentNode && m_currentNode->implicitNode());

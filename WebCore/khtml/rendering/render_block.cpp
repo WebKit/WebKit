@@ -259,7 +259,6 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
             box->appendChildNode(removeChildNode(no));
         }
         box->appendChildNode(removeChildNode(inlineRunEnd));
-        box->close();
         box->setPos(box->xPos(), -500000);
     }
 }

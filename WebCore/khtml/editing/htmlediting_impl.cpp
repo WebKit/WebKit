@@ -1179,8 +1179,13 @@ bool DeleteSelectionCommandImpl::containsOnlyWhitespace(const Position &start, c
 CSSStyleDeclarationImpl *DeleteSelectionCommandImpl::computeTypingStyle(const Position &pos) const
 {
     ElementImpl *element = pos.element();
+    if (!element)
+        return 0;
+
     ElementImpl *shallowElement = pos.equivalentShallowPosition().element();
-    
+    if (!shallowElement)
+        return 0;
+
     ElementImpl *parent = Position(shallowElement->parentNode(), 0).element();
     if (!parent)
         return 0;
@@ -1353,6 +1358,9 @@ void DeleteSelectionCommandImpl::doApply()
     if (startCompletelySelected) {
         LOG(Editing,  "start node delete case 1");
         removeNodeAndPrune(downstreamStart.node(), startBlock);
+        // Fix up ending position if the prune operation removed the position's node from the document
+        if (!endingPosition.node()->inDocument())
+            endingPosition = upstreamStart;
     }
     else if (onlyWhitespace && isWS(upstreamStart)) {
         // Selection only contains whitespace. This is really a special-case to 
@@ -1387,15 +1395,21 @@ void DeleteSelectionCommandImpl::doApply()
         // work on intermediate nodes
         while (n != upstreamEnd.node()) {
             NodeImpl *d = n;
-            n = n->traverseNextNode();
+            n = n->nextNodeConsideringAtomicNodes();
             if (d->renderer() && d->renderer()->isEditable())
                 removeNodeAndPrune(d, startBlock);
+            // Fix up ending position if the prune operation removed the position's node from the document
+            if (!endingPosition.node()->inDocument())
+                endingPosition = Position(n, n->caretMinOffset());
         }
         
         // work on end node
         ASSERT(n == upstreamEnd.node());
         if (endCompletelySelected) {
             removeNodeAndPrune(upstreamEnd.node(), startBlock);
+            // Fix up ending position if the prune operation removed the position's node from the document
+            if (!endingPosition.node()->inDocument())
+                endingPosition = downstreamEnd;
         }
         else if (upstreamEnd.node()->isTextNode()) {
             if (upstreamEnd.offset() > 0) {
@@ -1431,6 +1445,9 @@ void DeleteSelectionCommandImpl::doApply()
         endingPosition = endingPosition.equivalentDownstreamPosition();
     }
 
+    // Fall back to the start block if the ending position is not in the document.
+    if (!endingPosition.node()->inDocument())
+        endingPosition = Position(startBlock, 0);
     debugPosition("ending position:     ", endingPosition);
     setEndingSelection(endingPosition);
 
@@ -2253,13 +2270,13 @@ void RemoveNodeAndPruneCommandImpl::doApply()
 {
     NodeImpl *editableBlock = m_pruneNode->enclosingBlockFlowElement();
     NodeImpl *pruneNode = m_pruneNode;
-    NodeImpl *node = pruneNode->traversePreviousNode();
+    NodeImpl *node = pruneNode->previousNodeConsideringAtomicNodes();
     removeNode(pruneNode);
     while (1) {
         if (node == m_stopNode || editableBlock != node->enclosingBlockFlowElement() || !shouldPruneNode(node))
             break;
         pruneNode = node;
-        node = node->traversePreviousNode();
+        node = node->previousNodeConsideringAtomicNodes();
         removeNode(pruneNode);
     }
 }

@@ -496,11 +496,8 @@ void HTMLObjectElementImpl::attach()
                 imageObj->setImage(m_imageLoader->image());
             }
         } else {
-            // If we are already cleared, then it means that we were attach()-ed previously
-            // with no renderer. We will actually need to do an update in order to ensure
-            // that the plugin shows up.  This fix is necessary to work with async
-            // render tree construction caused by stylesheet loads. -dwh
-            needWidgetUpdate = false;
+            needWidgetUpdate = true;
+            setChanged();
         }
     }
 
@@ -519,14 +516,21 @@ void HTMLObjectElementImpl::detach()
   HTMLElementImpl::detach();
 }
 
-void HTMLObjectElementImpl::recalcStyle( StyleChange ch )
+void HTMLObjectElementImpl::recalcStyle(StyleChange ch)
 {
-    if (needWidgetUpdate) {
-        if(m_render && std::strcmp( m_render->renderName(),  "RenderPartObject" ) == 0 )
-            static_cast<RenderPartObject*>(m_render)->updateWidget();
+    if (needWidgetUpdate && m_render && !canRenderImageType(serviceType)) {
+        static_cast<RenderPartObject*>(m_render)->updateWidget();
         needWidgetUpdate = false;
     }
-    HTMLElementImpl::recalcStyle( ch );
+    HTMLElementImpl::recalcStyle(ch);
+}
+
+void HTMLObjectElementImpl::childrenChanged()
+{
+    if (inDocument()) {
+        needWidgetUpdate = true;
+        setChanged();
+    }
 }
 
 bool HTMLObjectElementImpl::isURLAttribute(AttributeImpl *attr) const

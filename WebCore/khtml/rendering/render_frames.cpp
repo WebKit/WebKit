@@ -821,14 +821,6 @@ void RenderPartObject::updateWidget()
   }
 }
 
-// ugly..
-void RenderPartObject::close()
-{
-    if ( element()->id() == ID_OBJECT )
-        updateWidget();
-    RenderPart::close();
-}
-
 bool RenderPartObject::partLoadingErrorNotify( khtml::ChildFrame *childFrame, const KURL& url, const QString& serviceType )
 {
     KHTMLPart *part = static_cast<KHTMLView *>(m_view)->part();

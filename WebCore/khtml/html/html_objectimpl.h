@@ -130,7 +130,8 @@ public:
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void detach();
     
-    virtual void recalcStyle( StyleChange ch );
+    virtual void recalcStyle(StyleChange ch);
+    virtual void childrenChanged();
 
     DocumentImpl* contentDocument() const;
     

@@ -327,7 +327,6 @@ void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject
         // Add the pseudo after we've installed all our content, so that addChild will be able to find the text
         // inside the inline for e.g., first-letter styling.
         addChild(pseudoContainer, insertBefore);
-        pseudoContainer->close();
     }
 }
 

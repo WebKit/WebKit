@@ -75,8 +75,7 @@ NodeImpl::NodeImpl(DocumentPtr *doc)
       m_focused( false ),
       m_active( false ),
       m_styleElement( false ),
-      m_implicit( false ),
-      m_rendererNeedsClose( false )
+      m_implicit( false )
 {
     if (document)
         document->ref();
@@ -1098,28 +1097,10 @@ void NodeImpl::dump(QTextStream *stream, QString ind) const
 }
 #endif
 
-void NodeImpl::closeRenderer()
-{
-    // It's important that we close the renderer, even if it hasn't been
-    // created yet. This happens even more because of the FOUC fixes we did
-    // at Apple, which prevent renderers from being created until the stylesheets
-    // are all loaded. If the renderer is not here to be closed, we set a flag,
-    // then close it later when it's attached.
-    assert(!m_rendererNeedsClose);
-    if (m_render)
-        m_render->close();
-    else
-        m_rendererNeedsClose = true;
-}
-
 void NodeImpl::attach()
 {
     assert(!attached());
     assert(!m_render || (m_render->style() && m_render->parent()));
-    if (m_render && m_rendererNeedsClose) {
-        m_render->close();
-        m_rendererNeedsClose = false;
-    }
     m_attached = true;
 }
 
@@ -1220,24 +1201,59 @@ RenderObject * NodeImpl::nextRenderer()
     return 0;
 }
 
+bool NodeImpl::isAtomicNode() const
+{
+    return !hasChildNodes() || (id() == ID_OBJECT && renderer() && renderer()->isReplaced());
+}
+
+NodeImpl *NodeImpl::previousNodeConsideringAtomicNodes() const
+{
+    if (previousSibling()) {
+        NodeImpl *n = previousSibling();
+        while (!n->isAtomicNode() && n->lastChild())
+            n = n->lastChild();
+        return n;
+    }
+    else if (parentNode()) {
+        return parentNode();
+    }
+    else {
+        return 0;
+    }
+}
+
+NodeImpl *NodeImpl::nextNodeConsideringAtomicNodes() const
+{
+    if (!isAtomicNode() && firstChild())
+	return firstChild();
+    if (nextSibling())
+	return nextSibling();
+    const NodeImpl *n = this;
+    while (n && !n->nextSibling())
+        n = n->parentNode();
+    if (n)
+        return n->nextSibling();
+    return 0;
+}
+
 NodeImpl *NodeImpl::previousLeafNode() const
 {
-    NodeImpl *node = traversePreviousNode();
+    NodeImpl *node = previousNodeConsideringAtomicNodes();
     while (node) {
-        if (!node->hasChildNodes())
+        if (node->isAtomicNode())
             return node;
-        node = node->traversePreviousNode();
+        node = node->previousNodeConsideringAtomicNodes();
     }
     return 0;
 }
 
 NodeImpl *NodeImpl::nextLeafNode() const
 {
-    NodeImpl *node = traverseNextNode();
+    NodeImpl *node = nextNodeConsideringAtomicNodes();
     while (node) {
-        if (!node->hasChildNodes())
+        if (node->isAtomicNode())
             return node;
-        node = node->traverseNextNode();
+        node = node->nextNodeConsideringAtomicNodes();
     }
     return 0;
 }

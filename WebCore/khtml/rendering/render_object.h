@@ -425,9 +425,6 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() {};
 
-    // The corresponding closing element has been parsed. ### remove me
-    virtual void close() { }
-
     virtual int availableHeight() const { return 0; }
 
     // Whether or not the element shrinks to its max width (rather than filling the width

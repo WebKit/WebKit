@@ -596,7 +596,7 @@ Position Position::equivalentShallowPosition() const
 
 Position Position::equivalentDeepPosition() const
 {
-    if (isEmpty() || !node()->hasChildNodes())
+    if (isEmpty() || node()->isAtomicNode())
         return *this;
 
     NodeImpl *child = 0;
@@ -606,7 +606,7 @@ Position Position::equivalentDeepPosition() const
         child = node()->childNode(offset());
     ASSERT(child);
     Position pos(child, 0);
-    while (pos.node()->hasChildNodes()) {
+    while (!child->isAtomicNode() && pos.node()->hasChildNodes()) {
         child = pos.node()->firstChild();
         ASSERT(child);
         pos = Position(child, 0);

@@ -243,13 +243,10 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     newBlockBox->addChildToFlow(newChild, 0);
 
     // XXXdwh is any of this even necessary? I don't think it is.
-    pre->close();
     pre->setPos(0, -500000);
     pre->setNeedsLayout(true);
-    newBlockBox->close();
     newBlockBox->setPos(0, -500000);
     newBlockBox->setNeedsLayout(true);
-    post->close();
     post->setPos(0, -500000);
     post->setNeedsLayout(true);
 

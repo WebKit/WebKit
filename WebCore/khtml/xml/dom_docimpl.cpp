@@ -1358,9 +1358,6 @@ void DocumentImpl::closeInternal( bool checkTokenizer )
 {
     if (parsing() || (checkTokenizer && !m_tokenizer)) return;
 
-    if ( m_render )
-        m_render->close();
-
     // on an explicit document.close(), the tokenizer might still be waiting on scripts,
     // and in that case we don't want to destroy it because that will prevent the
     // scripts from getting processed.

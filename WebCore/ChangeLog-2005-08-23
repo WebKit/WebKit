@@ -1,3 +1,77 @@
+2004-08-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Changes to improve our handling of object tags during editing, including
+        fixing this bug:
+        
+        <rdar://problem/3744533> Problem editing <OBJECT> elements displayed by WebPlugIns 
+
+        Part of the fix for this bug involves removing the close() function from render objects.
+        It was decided that this code was no longer needed, as the work it did could be moved
+        to other, more modern, places.
+
+        Fixed this bug:
+        
+        <rdar://problem/3748537> crash due to nil node passed into parentNode in computeTypingStyle deleting text
+
+        Finally, I filed and fixed this bug I discovered while fixing the one above:
+        
+        <rdar://problem/3749338> Select-all + delete leaves editing view without blinking caret
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::computeTypingStyle): Fix for 3748537. Put in some more null
+        checks. Bail, returning 0 for typing style if any null checks yield a null.
+        (khtml::DeleteSelectionCommandImpl::doApply): Fix for 3749338. A removeNodeAndPrune call may wind
+        up deleting the node where we calculated that we wanted to put the selection after deleting.
+        If this happens, move this ending selection to a sensible alternative.
+        (khtml::RemoveNodeAndPruneCommandImpl::doApply): Call previousNodeConsideringAtomicNodes instead 
+        of traversePreviousNode when doing the prune.
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::attach): Part of the fix for 3744533.
+        (HTMLObjectElementImpl::recalcStyle): Change old strcmp check for type of renderer to be a call
+        to canRenderImageType.
+        (HTMLObjectElementImpl::childrenChanged): New function. Helps to keep object tags up to date 
+        as their children change. This also will help to make object tags respond properly to having their
+        params changed by DOM calls.
+        * khtml/html/html_objectimpl.h: Cosmetic change.
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode): Remove call to obsolete closeRenderer() function.
+        (KHTMLParser::popOneBlock): Ditto.
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::makeChildrenNonInline): Remove call to obsolete close() function.
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild): Ditto.
+        * khtml/rendering/render_form.cpp: Remove obsolete close() function.
+        * khtml/rendering/render_form.h: Ditto.
+        * khtml/rendering/render_frames.cpp: Ditto.
+        * khtml/rendering/render_frames.h: Ditto.
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::splitFlow): Remove calls to obsolete close() function.
+        * khtml/rendering/render_object.h: Remove obsolete close() function.
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::layout): Ditto.
+        * khtml/rendering/render_table.h: Ditto.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::closeInternal): Remove call to obsolete close() function.
+        * khtml/xml/dom_nodeimpl.cpp: Remove obsolete m_rendererNeedsClose initialization.
+        (NodeImpl::NodeImpl): Remove obsolete closeRenderer() function.
+        (NodeImpl::attach): Remove call to obsolete close() function.
+        (NodeImpl::isAtomicNode): New function. Helps to fix 3744533. Determines if a node should
+        be treated as an atomic node for the purposes of editing.
+        (NodeImpl::previousNodeConsideringAtomicNodes): New helper to traverse tree taking atomic nodes
+        into account.
+        (NodeImpl::nextNodeConsideringAtomicNodes): Ditto.
+        (NodeImpl::previousLeafNode): Now calls nextNodeConsideringAtomicNodes to iterate. This helps to 
+        prevent deleting PARAM tag portions of object tags erroneously.
+        (NodeImpl::nextLeafNode): Ditto.
+        * khtml/xml/dom_nodeimpl.h: Removed m_rendererNeedsClose bit. Added declarations for new functions.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::equivalentDeepPosition): Now takes atomic nodes into account as it drills down into the
+        tree.
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::endElement): Remove call to obsolete closeRenderer() function.
+
 2004-08-03  David Hyatt  <hyatt@apple.com>
 
 	Add the deprecated text/xsl MIME type (introduced by Internet Explorer 5) as an acceptable MIME type for XML

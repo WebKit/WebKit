@@ -105,7 +105,6 @@ public:
     virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
     virtual void layout();
     virtual void calcMinMaxWidth();
-    virtual void close();
 
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
@@ -363,8 +362,6 @@ public:
 
     void paintCollapsedBorder(QPainter* p, int x, int y, int w, int h);
     
-    virtual void close();
-
     // lie position to outside observers
     virtual int yPos() const { return m_y + _topExtra; }
 
