@@ -1,3 +1,14 @@
+2002-12-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3116996.  My hack to make selects ignore fixed CSS
+	widths that are smaller than their intrinsic width was not
+	good.  Remove the hack.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcReplacedWidth):
+
 2002-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
