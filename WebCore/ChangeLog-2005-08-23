@@ -1,3 +1,42 @@
+2004-07-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	<rdar://problem/3678534> controls on page at http://help.sap.com don't work properly
+
+        To fix this I implemented the various JavaScript BarInfo properties in JavaScript.
+	
+	* khtml/ecma/kjs_window.cpp:
+        (Window::Window):
+        (Window::locationbar):
+        (Window::menubar):
+        (Window::personalbar):
+        (Window::statusbar):
+        (Window::toolbar):
+        (Window::scrollbars):
+        (Window::mark):
+        (Window::get):
+        (SelectionFunc::tryCall):
+        (BarInfo::BarInfo):
+        (BarInfo::~BarInfo):
+        (BarInfo::get):
+        (BarInfo::put):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Window::):
+        (KJS::BarInfo::):
+        (KJS::BarInfo::part):
+        (KJS::BarInfo::classInfo):
+        * khtml/ecma/kjs_window.lut.h:
+        (KJS::):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::locationbarVisible):
+        (KWQKHTMLPart::menubarVisible):
+        (KWQKHTMLPart::personalbarVisible):
+        (KWQKHTMLPart::scrollbarsVisible):
+        (KWQKHTMLPart::statusbarVisible):
+        (KWQKHTMLPart::toolbarVisible):
+
 2004-07-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

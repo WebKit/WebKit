@@ -1723,6 +1723,43 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
     return false;
 }
 
+bool KWQKHTMLPart::locationbarVisible()
+{
+    return [_bridge areToolbarsVisible];
+}
+
+bool KWQKHTMLPart::menubarVisible()
+{
+    // The menubar is always on in Mac OS X UI
+    return true;
+}
+
+bool KWQKHTMLPart::personalbarVisible()
+{
+    return [_bridge areToolbarsVisible];
+}
+
+bool KWQKHTMLPart::scrollbarsVisible()
+{
+    if (!view())
+	return false;
+
+    if (view()->hScrollBarMode() == QScrollView::AlwaysOff || view()->vScrollBarMode() == QScrollView::AlwaysOff)
+	return false;
+
+    return true;
+}
+
+bool KWQKHTMLPart::statusbarVisible()
+{
+    return [_bridge isStatusBarVisible];
+}
+
+bool KWQKHTMLPart::toolbarVisible()
+{
+    return [_bridge areToolbarsVisible];
+}
+
 void KWQKHTMLPart::addMessageToConsole(const QString &message, unsigned lineNumber, const QString &sourceURL)
 {
     NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
