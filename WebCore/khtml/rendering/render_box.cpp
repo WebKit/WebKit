@@ -584,7 +584,6 @@ void RenderBox::dirtyLineBoxes(bool fullLayout, bool)
 
 void RenderBox::position(InlineBox* box, int from, int len, bool reverse)
 {
-    KHTMLAssert(isPositioned() || isReplaced());
     if (isPositioned()) {
         // Cache the x position only if we were an INLINE type originally.
         bool wasInline = style()->originalDisplay() == INLINE ||
