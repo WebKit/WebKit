@@ -1425,18 +1425,21 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
 
     NodeImpl *beyondEnd = end.node()->traverseNextNode(); // Calculate loop end point.
     start = start.upstream(StayInBlock); // Move upstream to ensure we do not add redundant spans.
+    NodeImpl *startNode = start.node();
+    if (startNode->isTextNode() && start.offset() >= startNode->caretMaxOffset()) // Move out of text node if range does not include its characters.
+        startNode = startNode->traverseNextNode();
 
     // Store away font size before making any changes to the document.
     // This ensures that changes to one node won't effect another.
     QMap<const NodeImpl *,float> startingFontSizes;
-    for (const NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode())
+    for (const NodeImpl *node = startNode; node != beyondEnd; node = node->traverseNextNode())
         startingFontSizes.insert(node, computedFontSize(node));
 
     // These spans were added by us. If empty after font size changes, they can be removed.
     QPtrList<NodeImpl> emptySpans;
     
     NodeImpl *lastStyledNode = 0;
-    for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
+    for (NodeImpl *node = startNode; node != beyondEnd; node = node->traverseNextNode()) {
         HTMLElementImpl *elem = 0;
         if (node->isHTMLElement()) {
             // Only work on fully selected nodes.

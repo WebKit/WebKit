@@ -1,5 +1,14 @@
 2005-03-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/4042867> "Bigger" changes the font size of too much text when the selection is on a style-change boundary
+
+        * khtml/editing/htmlediting.cpp: (khtml::ApplyStyleCommand::applyRelativeFontStyleChange):
+        Advance out of the starting text node if we're at the end of it.
+
+2005-03-10  Darin Adler  <darin@apple.com>
+
         * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::write): Fixed assertion for nested calls to write.
 
 2005-03-10  David Harrison  <harrison@apple.com>
