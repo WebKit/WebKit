@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Foundation/Foundation.h>
+#ifndef NDEBUG
 
-@protocol WebCoreDrawingObserver <NSObject>
-- (void)filledRect:(NSRect)r;
-- (void)strokedRect:(NSRect)r;
-- (void)filledOval:(NSRect)r;
-- (void)strokedOval:(NSRect)r;
-- (void)strokedArcWithCenter:(NSPoint)p radius:(float)radius startAngle:(float)startAngle endAngle:(float)endAngle;
-- (void)drewLineFrom:(NSPoint)p1 to:(NSPoint)p2 width:(float)width;
-@end
+#include "KWQString.h"
 
-@interface WebCoreTestController : NSObject
-{
+namespace khtml {
+    class RenderObject;
 }
 
-+ (void)setDrawingObserver:(id <WebCoreDrawingObserver>)observer;
+QString externalRepresentation(const khtml::RenderObject *);
 
-@end
+#endif

@@ -3,13 +3,16 @@
 //  WebKit
 //
 //  Created by Darin Adler on Thu Mar 28 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
+//  Copyright (c) 2002, 2003 Apple Computer, Inc. All rights reserved.
 //
 
 #import "WebCoreStatistics.h"
 
 #import <WebCore/WebCoreCache.h>
 #import <WebCore/WebCoreJavaScript.h>
+
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebFramePrivate.h>
 
 @implementation WebCoreStatistics
 
@@ -56,6 +59,15 @@
 + (void)garbageCollectJavaScriptObjects
 {
     [WebCoreJavaScript garbageCollect];
+}
+
+@end
+
+@implementation WebFrame (WebKitDebug)
+
+- (NSString *)renderTreeAsExternalRepresentation
+{
+    return [[self _bridge] renderTreeAsExternalRepresentation];
 }
 
 @end

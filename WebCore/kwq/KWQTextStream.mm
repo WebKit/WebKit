@@ -51,6 +51,48 @@ QTextStream &QTextStream::operator<<(char c)
     return *this;
 }
 
+QTextStream &QTextStream::operator<<(short i)
+{
+    char buffer[10];
+    sprintf(buffer, "%d", i);
+    return *this << buffer;
+}
+
+QTextStream &QTextStream::operator<<(unsigned short i)
+{
+    char buffer[10];
+    sprintf(buffer, "%u", i);
+    return *this << buffer;
+}
+
+QTextStream &QTextStream::operator<<(int i)
+{
+    char buffer[10];
+    sprintf(buffer, "%d", i);
+    return *this << buffer;
+}
+
+QTextStream &QTextStream::operator<<(unsigned i)
+{
+    char buffer[10];
+    sprintf(buffer, "%u", i);
+    return *this << buffer;
+}
+
+QTextStream &QTextStream::operator<<(long i)
+{
+    char buffer[10];
+    sprintf(buffer, "%ld", i);
+    return *this << buffer;
+}
+
+QTextStream &QTextStream::operator<<(unsigned long i)
+{
+    char buffer[10];
+    sprintf(buffer, "%lu", i);
+    return *this << buffer;
+}
+
 QTextStream &QTextStream::operator<<(const char *s)
 {
     if (_hasByteArray) {

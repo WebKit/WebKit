@@ -45,10 +45,11 @@
 
 #import "KWQAssertions.h"
 #import "KWQCharsets.h"
-#import "KWQFont.h"
 #import "KWQDOMNode.h"
+#import "KWQFont.h"
 #import "KWQFrame.h"
 #import "KWQPageState.h"
+#import "KWQRenderTreeDebug.h"
 
 #import "WebCoreDOMPrivate.h"
 #import "WebCoreImageRenderer.h"
@@ -657,6 +658,15 @@ static bool initializedObjectCacheSize = FALSE;
 - (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
 {
     return _part->keyEvent(event);
+}
+
+- (NSString *)renderTreeAsExternalRepresentation
+{
+#ifdef NDEBUG
+    return nil;
+#else
+    return externalRepresentation(_part->renderer()).getNSString();
+#endif
 }
 
 @end

@@ -1,6 +1,6 @@
 /*	
     WebBridge.m
-    Copyright (c) 2002, Apple, Inc. All rights reserved.
+    Copyright (c) 2002, 2003, Apple Computer, Inc. All rights reserved.
 */
 
 #import <WebKit/WebBridge.h>

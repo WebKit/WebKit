@@ -1,3 +1,24 @@
+2003-01-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- added an API for dumping the external representation of the render tree for testing
+
+        * Misc.subproj/WebCoreStatistics.h: Added renderTreeAsExternalRepresentation.
+        * Misc.subproj/WebCoreStatistics.m: (-[WebFrame renderTreeAsExternalRepresentation]): Added.
+
+	- removed remnants of an earlier more-naive cut at this same sort of thing
+
+        * Misc.subproj/WebTestController.h: Removed.
+        * Misc.subproj/WebTestController.m: Removed.
+        * WebKit.exp: Removed WebTestController.
+        * WebKit.pbproj/project.pbxproj: Removed WebTestController.
+
+	- other changes
+
+        * WebCoreSupport.subproj/WebBridge.m: Had added new copyright date to touch a file.
+	That's not needed any more, but the date should be updated anyway.
+
 === Safari-52 ===
 
 2003-01-15  Maciej Stachowiak  <mjs@apple.com>

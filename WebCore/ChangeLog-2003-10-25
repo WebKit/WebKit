@@ -1,3 +1,27 @@
+2003-01-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- added an API for dumping the external representation of the render tree for testing
+
+        * kwq/KWQRenderTreeDebug.h: Added.
+        * kwq/KWQRenderTreeDebug.cpp: Added.
+
+        * kwq/KWQTextStream.h: Added more overloads for operator<<.
+        * kwq/KWQTextStream.mm: (QTextStream::operator<<): Implemented them.
+
+        * kwq/WebCoreBridge.h: Added renderTreeAsExternalRepresentation.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge renderTreeAsExternalRepresentation]): Added.
+
+	- removed remnants of an earlier more-naive cut at this same sort of thing
+	- removed ForwardingHeaders from the project since that doesn't really help Project Builder
+
+        * kwq/WebCoreTestController.h: Removed.
+        * kwq/WebCoreTestController.m: Removed.
+        * WebCore.exp: Removed WebCoreTestController.
+        * WebCore-combined.exp: Re-generated.
+        * WebCore.pbproj/project.pbxproj: Removed WebCoreTestController and ForwardingHeaders.
+
 === Safari-52 ===
 
 2003-01-15  Trey Matteson  <trey@apple.com>

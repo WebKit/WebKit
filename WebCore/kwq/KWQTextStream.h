@@ -41,11 +41,21 @@ public:
     QTextStream(QString *, int mode = IO_WriteOnly);
 
     QTextStream &operator<<(char);
+    QTextStream &operator<<(const QChar &);
+    QTextStream &operator<<(short);
+    QTextStream &operator<<(unsigned short);
+    QTextStream &operator<<(int);
+    QTextStream &operator<<(unsigned);
+    QTextStream &operator<<(long);
+    QTextStream &operator<<(unsigned long);
+    QTextStream &operator<<(float);
+    QTextStream &operator<<(double);
     QTextStream &operator<<(const char *);
-    QTextStream &operator<<(const QCString &);
     QTextStream &operator<<(const QString &);
-    QTextStream &operator<<(const QTextStreamManipulator &);
+    QTextStream &operator<<(const QCString &);
     QTextStream &operator<<(void *);
+
+    QTextStream &operator<<(const QTextStreamManipulator &);
 
 private:
     QTextStream(const QTextStream &);

@@ -3,10 +3,12 @@
 //  WebKit
 //
 //  Created by Darin Adler on Thu Mar 28 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
+//  Copyright (c) 2002, 2003 Apple Computer, Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+
+#import <WebKit/WebFrame.h>
 
 @interface WebCoreStatistics : NSObject
 {
@@ -23,4 +25,8 @@
 + (NSSet *)javaScriptRootObjectClasses;
 + (void)garbageCollectJavaScriptObjects;
 
+@end
+
+@interface WebFrame (WebKitDebug)
+- (NSString *)renderTreeAsExternalRepresentation;
 @end
