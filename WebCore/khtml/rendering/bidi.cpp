@@ -1405,13 +1405,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
     // eliminate spaces at beginning of line
     // remove leading spaces.  Any inline flows we encounter will be empty and should also
     // be skipped.
-    while(!start.atEnd() && (start.obj->isInlineFlow() || (start.obj->style()->whiteSpace() != PRE &&
-#ifndef QT_NO_UNICODETABLES
-          ( start.direction() == QChar::DirWS || start.obj->isFloatingOrPositioned())
-#else
-          ( start.current() == ' ' || start.obj->isFloatingOrPositioned())
-#endif
-          ))) {
+    while (!start.atEnd() && (start.obj->isInlineFlow() || (start.obj->style()->whiteSpace() != PRE &&
+          (start.current() == ' ' || start.obj->isFloatingOrPositioned())))) {
         if( start.obj->isFloatingOrPositioned() ) {
             RenderObject *o = start.obj;
             // add to special objects...
@@ -1567,7 +1562,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                 // item, then this is all moot. -dwh
                 RenderObject* next = Bidinext( start.par, o );
                 if (!m_pre && next && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0 &&
-                      (static_cast<RenderText*>(next)->text()[0].direction() == QChar::DirWS ||
+                      (static_cast<RenderText*>(next)->text()[0].unicode() == ' ' ||
                       static_cast<RenderText*>(next)->text()[0] == '\n')) {
                     currentCharacterIsSpace = true;
                     ignoringSpaces = true;
@@ -1746,7 +1741,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                     int strlen = nextText->stringLength();
                     QChar *str = nextText->text();
                     if (strlen &&
-                        ((str[0].direction() == QChar::DirWS) ||
+                        ((str[0].unicode() == ' ') ||
                             (next->style()->whiteSpace() != PRE && str[0] == '\n')))
                         // If the next item on the line is text, and if we did not end with
                         // a space, then the next text run continues our word (and so it needs to

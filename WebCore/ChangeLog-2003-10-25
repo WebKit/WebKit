@@ -1,3 +1,12 @@
+2003-09-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3359408, DirWS should not be used when collapsing/stripping spaces,
+	since only ASCII spaces are supposed to be collapsed/stripped.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/bidi.cpp:
+
 2003-09-02  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
