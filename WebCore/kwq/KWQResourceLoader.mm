@@ -91,9 +91,10 @@ using KIO::TransferJob;
 
     if (job) {
         job->emitResult(data);
+        [handle release];
     }
     delete job;
-    [handle release];
+    job = 0;
 }
 
 - (void)cancel

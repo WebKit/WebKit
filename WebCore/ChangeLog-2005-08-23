@@ -1,3 +1,12 @@
+2005-02-24  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4020110> Safari crashes in setAllData while taking a www.zoomerang.com survey
+
+        Reviewed by rjw.
+
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader finishJobAndHandle:]): clear the job after we've deleted to avoid reentrancy
+
 2005-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.
