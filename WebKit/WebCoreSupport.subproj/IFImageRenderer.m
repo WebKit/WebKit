@@ -234,7 +234,7 @@ static NSMutableArray *activeImageRenderers;
 {
     int currentStatus = [self loadStatus];
     
-    if ([self loadStatus] > 0 || [self loadStatus] == NSImageRepLoadStatusCompleted){
+    if (currentStatus > 0 || currentStatus == NSImageRepLoadStatusCompleted){
         if (statusOfCache != currentStatus){
             [patternColor release];
             patternColor = [[NSColor colorWithPatternImage:self] retain];

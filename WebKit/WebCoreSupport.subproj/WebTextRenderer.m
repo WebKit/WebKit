@@ -691,7 +691,7 @@ cleanup:
 - (float)slowFloatWidthForCharacters: (const UniChar *)characters stringLength: (unsigned)length fromCharacterPostion: (int)pos numberOfCharacters: (int)len applyRounding: (BOOL)applyRounding
 {
     float totalWidth = 0;
-    unsigned int i, numGlyphs;
+    unsigned int charPos = 0, clusterLength, i, numGlyphs;
     ATSGlyphVector glyphVector;
     IFGlyphWidth glyphWidth;
     ATSLayoutRecord *glyphRecord;
@@ -704,21 +704,51 @@ cleanup:
     glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
     for (i = 0; i < numGlyphs; i++){
         glyphID = glyphRecord->glyphID;
+
+        // Drop out early if we've measured to the end of the requested
+        // fragment.
+        if ((int)charPos - pos >= len){
+            if (glyphID == spaceGlyph){
+                totalWidth -= lastWidth;
+                totalWidth += ROUND_TO_INT(lastWidth);
+            }
+            break;
+        }
+
+        // No need to measure until we reach start of string.
+        if ((int)charPos < pos)
+            continue;
+        
+        clusterLength = findLengthOfCharacterCluster (&characters[charPos], length - charPos);
+
         glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
         glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
         if (glyphID == spaceGlyph && applyRounding){
-            if (lastWidth > 0){
+            if (totalWidth > 0 && lastWidth > 0){
                 totalWidth -= lastWidth;
                 totalWidth += ROUND_TO_INT(lastWidth);
             }
             glyphWidth = ROUND_TO_INT(glyphWidth);
         }
         lastWidth = glyphWidth;
-        totalWidth += lastWidth;
+        
+        if ((int)charPos >= pos)
+            totalWidth += lastWidth;
+
+        charPos += clusterLength;
     }
     ATSClearGlyphVector(&glyphVector);
     
     return totalWidth;
+}
+
+
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength characterPosition: (int)pos
+{
+    // Return the width of the first complete character at the specified position.  Even though
+    // the first 'character' may contain more than one unicode characters this method will
+    // work correctly.
+    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:1 applyRounding: YES attemptFontSubstitution: YES];
 }
 
 
@@ -737,17 +767,28 @@ cleanup:
     float lastWidth = 0;
     
     //printf("width: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
-    
-    for (i = 0; i < stringLength; i++) {
+    for (i = pos; i < stringLength; i++) {
         UniChar c = characters[i];
         
         if (c == NON_BREAKING_SPACE) {
             c = SPACE;
         }
-        else if (IsNonBaseChar(c)){
-            return [self slowFloatWidthForCharacters: characters stringLength: stringLength fromCharacterPostion: pos numberOfCharacters: len applyRounding: applyRounding];
-        }
         
+        // Drop out early if we've measured to the end of the requested
+        // fragment.
+        if ((int)i - pos >= len){
+            // Check if next character is a space, if so we have to apply rounding.
+            if (c == SPACE){
+                totalWidth -= lastWidth;
+                totalWidth += ROUND_TO_INT(lastWidth);
+            }
+            break;
+        }
+
+        if (IsNonBaseChar(c)){
+            return [self slowFloatWidthForCharacters: &characters[pos] stringLength: stringLength-pos fromCharacterPostion: 0 numberOfCharacters: len applyRounding: applyRounding];
+        }
+
         glyphID = glyphForCharacter(characterToGlyphMap, c);
         if (glyphID == nonGlyphID) {
             glyphID = [self extendCharacterToGlyphMapToInclude: c];
@@ -756,14 +797,16 @@ cleanup:
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
         if (glyphID == 0 && attemptSubstitution) {
+            // FIXME:  It may better to attempt to measure the entire string in the
+            // alternate font rather than character by character, as we often do
+            // substitution for the entire fragment (as we do in the drawing case.)
             clusterLength = findLengthOfCharacterCluster (&characters[i], stringLength - i);
             substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
             if (substituteFont) {
-                //WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT(substituteFont), DEBUG_OBJECT([font displayName]), c);
                 lastWidth = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] stringLength: clusterLength fromCharacterPosition: pos numberOfCharacters: len applyRounding: YES attemptFontSubstitution: NO];
             }
         }
-        
+
         if (glyphID > 0 || ((glyphID == 0) && substituteFont == nil)) {
             if (glyphID == spaceGlyph && applyRounding) {
                 if (lastWidth > 0){
@@ -775,7 +818,8 @@ cleanup:
             else
                 lastWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
         }
-        totalWidth += lastWidth;                
+
+        totalWidth += lastWidth;       
     }
 
     return totalWidth;

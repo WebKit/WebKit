@@ -157,6 +157,35 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
         return m_reversed ? SelectionPointAfterInLine : SelectionPointBeforeInLine;
     }
 
+#ifdef APPLE_CHANGES
+    float delta = _x - (_tx + m_x);
+    //kdDebug(6040) << "TextSlave::checkSelectionPoint delta=" << delta << endl;
+    int pos = 0;
+    if ( m_reversed ) {
+	delta -= m_width;
+	while(pos < m_len) {
+	    float w = f->floatCharacterWidth( text->str->s, text->str->l, m_start + pos);
+	    float w2 = w/2;
+	    w -= w2;
+	    delta += w2;
+	    if(delta >= 0)
+	        break;
+	    pos++;
+	    delta += w;
+	}
+    } else {
+	while(pos < m_len) {
+	    float w = f->floatCharacterWidth( text->str->s, text->str->l, m_start + pos);
+	    float w2 = w/2;
+	    w -= w2;
+	    delta -= w2;
+	    if(delta <= 0) 
+	        break;
+	    pos++;
+	    delta -= w;
+	}
+    }
+#else
     int delta = _x - (_tx + m_x);
     //kdDebug(6040) << "TextSlave::checkSelectionPoint delta=" << delta << endl;
     int pos = 0;
@@ -182,6 +211,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 	    delta -= w;
 	}
     }
+#endif
 //     kdDebug( 6040 ) << " Text  --> inside at position " << pos << endl;
     offset = pos;
     return SelectionPointInside;

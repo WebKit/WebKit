@@ -126,6 +126,7 @@ int QFontMetrics::width(char c) const
     return [data->getRenderer() widthForCharacters:&ch length:1];
 }
 
+
 int QFontMetrics::width(const QString &qstring, int len) const
 {
     NSString *string;
@@ -137,21 +138,38 @@ int QFontMetrics::width(const QString &qstring, int len) const
     return [data->getRenderer() widthForString:string];
 }
 
+
 int QFontMetrics::width(const QChar *uchars, int len) const
 {
     return [data->getRenderer() widthForCharacters:(const UniChar *)uchars length:len];
 }
+
+
+float QFontMetrics::floatWidth( QChar *uchars, int slen, int pos, int len ) const
+{
+    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:(unsigned)slen fromCharacterPosition: (int)pos numberOfCharacters: (int)len];
+}
+
+
+float QFontMetrics::floatCharacterWidth( QChar *uchars, int slen, int pos) const
+{
+    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:(unsigned)slen characterPosition: (int)pos];
+}
+
+
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
 {
     return QRect(0, 0, width(qstring, len), height());
 }
 
+
 QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags, const QString &str) const
 {
     // FIXME: need to support word wrapping?
     return QRect(x, y, width, height).intersect(boundingRect(str));
 }
+
 
 QRect QFontMetrics::boundingRect(QChar qc) const
 {

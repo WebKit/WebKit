@@ -1,3 +1,22 @@
+2002-06-28  Richard Williamson  <rjw@apple.com>
+
+        Use float character measurement to determine selection
+        region.  Necessary to ensure accuracy of selection
+        region.  First step towards weaning khtml off int
+        measurements.
+        
+        * khtml/rendering/font.cpp:
+        (Font::floatWidth):
+        (Font::floatCharacterWidth):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::checkSelectionPoint):
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidth):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/qt/qfontmetrics.h:
+
 2002-06-27  Chris Blumenberg  <cblu@apple.com>
 
 	Added an APPLE_CHANGES to fix 2894742. The attributes of an EMBED tag
