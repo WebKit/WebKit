@@ -69,6 +69,9 @@
 - (void)_setFrameScrollView: (IFDynamicScrollBarsView *)sv
 {
     ((IFWebViewPrivate *)_viewPrivate)->frameScrollView = [sv retain];    
+    //[sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    //[sv setHasVerticalScroller: YES];
+    //[sv setHasHorizontalScroller: YES];
     [self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [sv setDocumentView: self];
 }

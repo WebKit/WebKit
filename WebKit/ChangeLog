@@ -1,3 +1,12 @@
+2002-02-05  Richard Williamson  <rjw@apple.com>
+
+    Changes to support dynamic scroll bars in frames/iframes.
+
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	createFrameNamed:for:inParent:]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView dataSourceChanged]):
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebView _setFrameScrollView:]):
+
 2002-02-04  Maciej Stachowiak  <mjs@apple.com>
 
 	Rename all classes from WK prefix to IF prefix.

@@ -116,6 +116,7 @@ QSize QWidget::sizeHint() const
 
 void QWidget::resize(int w, int h) 
 {
+    KWQDEBUG4 ("0x%08x %s to w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
     internalSetGeometry( pos().x(), pos().y(), w, h );
 }
 
@@ -206,6 +207,7 @@ QPoint QWidget::pos() const
 
 void QWidget::move(int x, int y) 
 {
+    KWQDEBUG4 ("0x%08x %s to x %d y %d\n", getView(), [[[getView() class] className] cString], x, y);
     internalSetGeometry( x,
 			 y,
 			 width(), height() );
@@ -398,7 +400,14 @@ void QWidget::hide()
 
 void QWidget::internalSetGeometry( int x, int y, int w, int h )
 {
-    [data->view setFrame: NSMakeRect (x, y, w, h)];
+    NSView *docview;
+    
+    //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
+    //if ([data->view isKindOfClass: NSClassFromString(@"NSScrollView")])
+    //    docview = [((NSScrollView *)data->view) documentView];
+    //else
+        docview = data->view;
+    [docview setFrame: NSMakeRect (x, y, w, h)];
 }
 
 

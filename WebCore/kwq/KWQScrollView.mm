@@ -150,7 +150,13 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     
     child->move (x, y);
     
-    thisView = getView();
+    if ([getView() isKindOfClass: NSClassFromString(@"NSScrollView")]){
+        thisView = [(NSScrollView *)getView() documentView];
+    }
+    else {
+        thisView = getView();
+    }
+
     subView = child->getView();
     NSRect wFrame = [subView frame];
 
@@ -174,22 +180,43 @@ void QScrollView::removeChild(QWidget* child)
     [subView removeFromSuperview];
 }
 
+@interface IFWebView: NSObject
+- (QWidget *)_widget;
+- (void)setFrameSize: (NSSize)r;
+@end
 
 void QScrollView::resizeContents(int w, int h)
 {
-    resize (w, h);
+    KWQDEBUG4 ("0x%08x %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
+    //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
+    if ([getView() isKindOfClass: NSClassFromString(@"NSScrollView")]){
+        IFWebView *wview = [(NSScrollView *)getView() documentView];
+        
+        KWQDEBUG4 ("0x%08x %s at w %d h %d\n", wview, [[[wview class] className] cString], w, h);
+        w -= (int)[NSScroller scrollerWidth];
+        if (w < 0)
+            w = 0;
+        // Why isn't there a scollerHeight?
+        h -= (int)[NSScroller scrollerWidth];
+        if (h < 0)
+            h = 0;
+        [wview setFrameSize: NSMakeSize (w,h)];
+    }
+    else {
+        resize (w, h);
+    }
 }
 
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
-    _logNotYetImplemented();
+    KWQDEBUG6 ("0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }
 
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase=TRUE)
 {
-    _logNeverImplemented();
+    KWQDEBUG6 ("0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }
 
 QPoint QScrollView::contentsToViewport(const QPoint &)

@@ -137,7 +137,7 @@
     IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
     IFWebView *childView;
     IFWebFrame *newFrame;
-    //IFDynamicScrollBarsView *scrollView;
+    IFDynamicScrollBarsView *scrollView;
 
     childView = [[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
 
@@ -150,9 +150,8 @@
     [data->dataSourceMap setObject: childDataSource forKey: [IFObjectHolder holderWithObject:childView]];
     [childDataSource _setController: self];
 
-    
-    //scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
-    //[childView _setFrameScrollView: scrollView];
+    scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
+    [childView _setFrameScrollView: scrollView];
         
     [childView dataSourceChanged];
         

@@ -1,3 +1,14 @@
+2002-02-05  Richard Williamson  <rjw@apple.com>
+
+    Changes to support dynamic scroll bars in frames/iframes.
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::khtmlMouseReleaseEvent):
+	* src/kwq/KWQScrollView.mm: (QScrollView::addChild),
+	(QScrollView::resizeContents), (QScrollView::updateContents),
+	(QScrollView::repaintContents):
+	* src/kwq/KWQWidget.mm: (QWidget::resize), (QWidget::move),
+	(QWidget::internalSetGeometry):
+
 2002-02-05  Kenneth Kocienda  <kocienda@apple.com>
 
 	Changes to move these last bits of code to the new cache API.
@@ -229,7 +240,6 @@
 	src/kwq/qt/_qptrdict.h: Avoid causing problems when the relevant
 	defines are not defined.
 
->>>>>>> 1.28
 2002-01-22  Richard Williamson  <rjw@apple.com>
 
     Implemented KWQDesktopWidget to represent main screen.  Used by javascript.

@@ -66,9 +66,9 @@
     part->setView (data->widget);
 
     // Check to see if we're a frame.
-    //if ([self _frameScrollView])
-    //    data->widget->setView ([self _frameScrollView]);
-    //else
+    if ([self _frameScrollView])
+        data->widget->setView ([self _frameScrollView]);
+    else
         data->widget->setView (self);
     
     data->widget->resize (r.size.width,r.size.height);

@@ -1286,7 +1286,8 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     if (d->m_strSelectedURL != QString::null) {
         id nsview = ((IFWebView *)((QWidget *)view())->getView());
         
-        if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
+        //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
+        if ([nsview isKindOfClass: NSClassFromString(@"NSScrollView")])
             nsview = [nsview documentView];
         [nsview _resetView];
         KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
