@@ -1,3 +1,9 @@
+2005-02-21  Darin Adler  <darin@apple.com>
+
+        - fixed Panther deployment build
+
+        * kwq/KWQTextEdit.mm: (QTextEdit::setScrollBarModes): Put more stuff inside #if.
+
 2005-02-21  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
