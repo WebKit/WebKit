@@ -430,7 +430,8 @@ void HTMLFrameElementImpl::detach()
 	KHTMLView* w = getDocument()->view();
 	w->part()->decrementFrameCount();
         KHTMLPart *framePart = w->part()->findFrame( name.string() );
-        framePart->frameDetached();
+        if (framePart)
+            framePart->frameDetached();
     }
 
     HTMLElementImpl::detach();
