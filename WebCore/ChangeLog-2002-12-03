@@ -12454,7 +12454,7 @@ b2002-11-08  Darin Adler  <darin@apple.com>
 	* khtml/rendering/render_list.cpp: (RenderListItem::setStyle):
 	Roll the change out while I see why it causes a crash.
 
-prim2002-05-17  Darin Adler  <darin@apple.com>
+2002-05-17  Darin Adler  <darin@apple.com>
 
 	* khtml/rendering/render_list.cpp: (RenderListItem::setStyle):
 	Remove an old incorrect fix for a style leak in here and put in
