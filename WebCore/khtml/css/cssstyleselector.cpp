@@ -2533,8 +2533,8 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
         int len = list->length();
         QString family;
-        QFontFamily& firstFamily = fontDef.firstFamily();
-        QFontFamily* currFamily = 0;
+        KWQFontFamily &firstFamily = fontDef.firstFamily();
+        KWQFontFamily *currFamily = 0;
         
         for(int i = 0; i < len; i++) {
             CSSValueImpl *item = list->item(i);
@@ -2600,7 +2600,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
                         currFamily = &firstFamily;
                     }
                     else {
-                        QFontFamily* newFamily = new QFontFamily;
+                        KWQFontFamily *newFamily = new KWQFontFamily;
                         newFamily->setFamily(face);
                         currFamily->appendFamily(newFamily);
                         currFamily = newFamily;

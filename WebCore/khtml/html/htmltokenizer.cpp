@@ -284,8 +284,8 @@ void HTMLTokenizer::begin()
     searchCount = 0;
     Entity = NoEntity;
     loadingExtScript = false;
-    scriptSrc = "";
-    pendingSrc = "";
+    scriptSrc = QString::null;
+    pendingSrc = QString::null;
     noMoreData = false;
     brokenComments = false;
     brokenServer = false;
@@ -476,7 +476,11 @@ void HTMLTokenizer::scriptHandler()
              //kdDebug( 6036 ) << "cachedscript extern!" << endl;
              //kdDebug( 6036 ) << "src: *" << QString( src.current(), src.length() ).latin1() << "*" << endl;
              //kdDebug( 6036 ) << "pending: *" << pendingSrc.latin1() << "*" << endl;
+#if APPLE_CHANGES
+            pendingSrc.prepend(src.current(), src.length());
+#else
             pendingSrc.prepend( QString(src.current(), src.length() ) );
+#endif
             setSrc(QString::null);
             scriptCodeSize = scriptCodeResync = 0;
             cs->ref(this);
@@ -485,16 +489,23 @@ void HTMLTokenizer::scriptHandler()
                 loadingExtScript = true;
         }
         else if (view && doScriptExec && javascript ) {
+#if APPLE_CHANGES
+            if (!m_executingScript)
+                pendingSrc.prepend(src.current(), src.length());
+            else
+                prependingSrc.setUnicode(src.current(), src.length());
+#else
             if ( !m_executingScript )
                 pendingSrc.prepend( QString( src.current(), src.length() ) ); // deep copy - again
             else
                 prependingSrc = QString( src.current(), src.length() ); // deep copy
+#endif
 
             setSrc(QString::null);
             scriptCodeSize = scriptCodeResync = 0;
             //QTime dt;
             //dt.start();
-            scriptExecution( exScript, QString(), scriptStartLineno );
+            scriptExecution( exScript, QString::null, scriptStartLineno );
 	    //kdDebug( 6036 ) << "script execution time:" << dt.elapsed() << endl;
         }
     }
@@ -505,10 +516,13 @@ void HTMLTokenizer::scriptHandler()
     if ( !parser->skipMode() ) {
         if ( !m_executingScript && !loadingExtScript ) {
             // kdDebug( 6036 ) << "adding pending Output to parsed string" << endl;
-            QString newStr = QString(src.current(), src.length());
-            newStr += pendingSrc;
-            setSrc(newStr);
-            pendingSrc = "";
+#if APPLE_CHANGES
+            pendingSrc.prepend(src.current(), src.length());
+#else
+            pendingSrc.prepend(QString(src.current(), src.length());
+#endif
+            setSrc(pendingSrc);
+            pendingSrc = QString::null;
         }
         else if ( !prependingSrc.isEmpty() )
             write( prependingSrc, false );
@@ -1164,7 +1178,8 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 tagID -= ID_CLOSE_TAG;
             else if ( beginTag && tagID == ID_SCRIPT ) {
                 AttributeImpl* a = 0;
-                scriptSrc = scriptSrcCharset = "";
+                scriptSrc = QString::null;
+                scriptSrcCharset = QString::null;
                 if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
                      parser->doc()->view()->part()->jScriptEnabled() && /* jscript allowed at all? */
                      view /* are we a regular tokenizer or just for innerHTML ? */
@@ -1554,7 +1569,7 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
             ++src;
         }
     }
-    _src = QString();
+    _src = QString::null;
 
     if (noMoreData && !loadingExtScript && !m_executingScript )
         end(); // this actually causes us to be deleted
@@ -1744,7 +1759,7 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
     }
 }
 
-void HTMLTokenizer::setSrc(QString source)
+void HTMLTokenizer::setSrc(const QString &source)
 {
     lineno += src.lineCount();
     _src = source;

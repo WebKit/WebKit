@@ -25,125 +25,163 @@
 
 #import "KWQKHTMLSettings.h"
 
-#import "WebCoreSettings.h"
+static int minimumFontSize;
+static int defaultFontSize;
+static int defaultFixedFontSize;
+static bool JavaEnabled;
+static bool willLoadImagesAutomatically;
+static bool pluginsEnabled;
+static bool JavaScriptEnabled;
 
-QString KHTMLSettings::stdFontName() const
+const QString &KHTMLSettings::stdFontName()
 {
-    return QString::fromNSString([[WebCoreSettings sharedSettings] standardFontFamily]);
+    static QString name;
+    return name;
 }
 
-QString KHTMLSettings::fixedFontName() const
+const QString &KHTMLSettings::fixedFontName()
 {
-    return QString::fromNSString([[WebCoreSettings sharedSettings] fixedFontFamily]);
+    static QString name;
+    return name;
 }
 
-QString KHTMLSettings::serifFontName() const
+const QString &KHTMLSettings::serifFontName()
 {
-    return QString::fromNSString([[WebCoreSettings sharedSettings] serifFontFamily]);
+    static QString name;
+    return name;
 }
 
-QString KHTMLSettings::sansSerifFontName() const
+const QString &KHTMLSettings::sansSerifFontName()
 {
-    return QString::fromNSString([[WebCoreSettings sharedSettings] sansSerifFontFamily]);
+    static QString name;
+    return name;
 }
 
-QString KHTMLSettings::cursiveFontName() const
+const QString &KHTMLSettings::cursiveFontName()
 {
-    return QString::fromNSString([[WebCoreSettings sharedSettings] cursiveFontFamily]);
+    static QString name;
+    return name;
 }
 
-QString KHTMLSettings::fantasyFontName() const
+const QString &KHTMLSettings::fantasyFontName()
 {
-    return QString::fromNSString([[WebCoreSettings sharedSettings] fantasyFontFamily]);
+    static QString name;
+    return name;
 }
 
-QString KHTMLSettings::settingsToCSS() const
-{
-    return QString::null;
-}
-
-const QString &KHTMLSettings::encoding() const
+const QString &KHTMLSettings::encoding()
 {
     static QString latin1("latin1");
     return latin1;
 }
 
-int KHTMLSettings::minFontSize() const
+int KHTMLSettings::minFontSize()
 {
-    return (int)rint([[WebCoreSettings sharedSettings] minimumFontSize]);
+    return minimumFontSize;
 }
 
-int KHTMLSettings::mediumFontSize() const
+int KHTMLSettings::mediumFontSize()
 {
-    return (int)rint([[WebCoreSettings sharedSettings] defaultFontSize]);
+    return defaultFontSize;
 }
 
-int KHTMLSettings::mediumFixedFontSize() const
+int KHTMLSettings::mediumFixedFontSize()
 {
-    return (int)rint([[WebCoreSettings sharedSettings] defaultFixedFontSize]);
+    return defaultFixedFontSize;
 }
 
-bool KHTMLSettings::changeCursor() const
+bool KHTMLSettings::isJavaEnabled()
 {
-    return true;
+    return JavaEnabled;
 }
 
-bool KHTMLSettings::isFormCompletionEnabled() const
+bool KHTMLSettings::autoLoadImages()
 {
-    return false;
+    return willLoadImagesAutomatically;
 }
 
-KHTMLSettings::KAnimationAdvice KHTMLSettings::showAnimations() const
+bool KHTMLSettings::isPluginsEnabled()
 {
-    return KAnimationEnabled;
+    return pluginsEnabled;
 }
 
-int KHTMLSettings::maxFormCompletionItems() const
+bool KHTMLSettings::isJavaScriptEnabled()
 {
-    return 0;
+    return JavaScriptEnabled;
 }
 
-bool KHTMLSettings::isJavaEnabled(QString const&) const
+const QString &KHTMLSettings::userStyleSheet()
 {
-    return isJavaEnabled();
+    static QString location;
+    return location;
 }
 
-bool KHTMLSettings::isJavaEnabled() const
+void KHTMLSettings::setStdFontName(const QString &n)
 {
-    return [[WebCoreSettings sharedSettings] JavaEnabled];
+    const_cast<QString &>(stdFontName()) = n;
 }
 
-bool KHTMLSettings::autoLoadImages() const
+void KHTMLSettings::setFixedFontName(const QString &n)
 {
-    return [[WebCoreSettings sharedSettings] willLoadImagesAutomatically];
+    const_cast<QString &>(fixedFontName()) = n;
 }
 
-bool KHTMLSettings::isPluginsEnabled(QString const&) const
+void KHTMLSettings::setSerifFontName(const QString &n)
 {
-    return isPluginsEnabled();
+    const_cast<QString &>(serifFontName()) = n;
 }
 
-bool KHTMLSettings::isPluginsEnabled() const
+void KHTMLSettings::setSansSerifFontName(const QString &n)
 {
-    return [[WebCoreSettings sharedSettings] pluginsEnabled];
+    const_cast<QString &>(sansSerifFontName()) = n;
 }
 
-bool KHTMLSettings::isJavaScriptEnabled(QString const&) const
+void KHTMLSettings::setCursiveFontName(const QString &n)
 {
-    return isJavaScriptEnabled();
+    const_cast<QString &>(cursiveFontName()) = n;
 }
 
-bool KHTMLSettings::isJavaScriptEnabled() const
+void KHTMLSettings::setFantasyFontName(const QString &n)
 {
-    return [[WebCoreSettings sharedSettings] JavaScriptEnabled];
+    const_cast<QString &>(fantasyFontName()) = n;
 }
 
-bool KHTMLSettings::isJavaScriptDebugEnabled() const
+void KHTMLSettings::setMinFontSize(int i)
 {
-    return false;
+    minimumFontSize = i;
 }
 
-QString KHTMLSettings::userStyleSheet() const
+void KHTMLSettings::setMediumFontSize(int i)
 {
-    return QString::fromNSString([[WebCoreSettings sharedSettings] userStyleSheetLocation]);
+    defaultFontSize = i;
+}
+
+void KHTMLSettings::setMediumFixedFontSize(int i)
+{
+    defaultFixedFontSize = i;
+}
+
+void KHTMLSettings::setAutoLoadImages(bool b)
+{
+    willLoadImagesAutomatically = b;
+}
+
+void KHTMLSettings::setIsJavaScriptEnabled(bool b)
+{
+    JavaScriptEnabled = b;
+}
+
+void KHTMLSettings::setIsJavaEnabled(bool b)
+{
+    JavaEnabled = b;
+}
+
+void KHTMLSettings::setArePluginsEnabled(bool b)
+{
+    pluginsEnabled = b;
+}
+
+void KHTMLSettings::setUserStyleSheet(const QString &n)
+{
+    const_cast<QString &>(userStyleSheet()) = n;
 }

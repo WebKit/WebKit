@@ -24,67 +24,74 @@
  */
 
 #import "KWQFont.h"
-#import "KWQString.h"
 
-#import <Cocoa/Cocoa.h>
+#import "KWQString.h"
 #import "WebCoreTextRendererFactory.h"
 
-QFontFamily::QFontFamily()
-    : _family(@"")
-    , _next(0)
+KWQFontFamily::KWQFontFamily()
+    : _next(0)
     , _refCnt(0)
+    , _NSFamily(0)
 {
 }
 
-QFontFamily::QFontFamily(const QFontFamily& other) 
+KWQFontFamily::KWQFontFamily(const KWQFontFamily& other)
+    : _family(other._family)
+    , _next(other._next)
+    , _refCnt(0)
+    , _NSFamily(other._NSFamily)
 {
-    _next = other._next;
     if (_next)
         _next->ref();
-    _family = other._family;
 }
 
-QFontFamily& QFontFamily::operator=(const QFontFamily& other) {
-    if (this != &other) {
-        if (_next)
-            _next->deref();
-        _next = other._next;
-        if (_next)
-            _next->ref();
-        _family = other._family;
-    }
+KWQFontFamily& KWQFontFamily::operator=(const KWQFontFamily& other)
+{
+    if (other._next)
+        other._next->ref();
+    if (_next)
+        _next->deref();
+    _family = other._family;
+    _next = other._next;
+    _NSFamily = other._NSFamily;
     return *this;
 }
 
-QString QFontFamily::family() const
+NSString *KWQFontFamily::getNSFamily() const
 {
-    return QString::fromNSString(_family);
+    if (!_NSFamily) {
+        // Use an immutable copy of the name, but keep a set of
+        // all family names so we don't end up with too many objects.
+        static CFMutableDictionaryRef families;
+        if (families == NULL) {
+            families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryQStringKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        }
+        _NSFamily = (NSString *)CFDictionaryGetValue(families, &_family);
+        if (!_NSFamily) {
+            _NSFamily = _family.getNSString();
+            CFDictionarySetValue(families, &_family, _NSFamily);
+        }
+    }
+    return _NSFamily;
 }
 
-void QFontFamily::setFamily(const QString &qfamilyName)
+void KWQFontFamily::setFamily(const QString &family)
 {
-    // Use an immutable copy of the name, but keep a set of
-    // all family names so we don't end up with too many objects.
-    static NSMutableSet *families;
-    if (families == nil) {
-        families = [[NSMutableSet alloc] init];
+    if (family == _family) {
+        return;
     }
-    NSString *mutableName = qfamilyName.getNSString();
-    _family = [families member:mutableName];
-    if (!_family) {
-        [families addObject:mutableName];
-        _family = [families member:mutableName];
-    }
+    _family = family;
+    _NSFamily = nil;
 }
 
-bool QFontFamily::operator==(const QFontFamily &compareFontFamily) const
+bool KWQFontFamily::operator==(const KWQFontFamily &compareFontFamily) const
 {
     if ((!_next && compareFontFamily._next) || 
         (_next && !compareFontFamily._next) ||
         ((_next && compareFontFamily._next) && (*_next != *(compareFontFamily._next))))
         return false;
     
-    return _family == compareFontFamily._family;
+    return getNSFamily() == compareFontFamily.getNSFamily();
 }
 
 QFont::QFont()
@@ -111,7 +118,7 @@ void QFont::setFamily(const QString &qfamilyName)
     _nsfont = 0;
 }
 
-void QFont::setFirstFamily(const QFontFamily& family) 
+void QFont::setFirstFamily(const KWQFontFamily& family) 
 {
     _family = family;
     [_nsfont release];
@@ -185,13 +192,12 @@ bool QFont::operator==(const QFont &compareFont) const
 
 NSFont *QFont::getNSFont() const
 {
-    if (!_nsfont){
+    if (!_nsfont) {
         CREATE_FAMILY_ARRAY(*this, families);
-    
         _nsfont = [[[WebCoreTextRendererFactory sharedFactory] 
             fontWithFamilies:families
-                    traits:getNSTraits() 
-                    size:getNSSize()] retain];
+                      traits:getNSTraits() 
+                        size:getNSSize()] retain];
     }
     return _nsfont;
 }

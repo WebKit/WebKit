@@ -61,6 +61,7 @@ using khtml::MousePressEvent;
 using khtml::MouseReleaseEvent;
 using khtml::RenderObject;
 using khtml::RenderPart;
+using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::RenderWidget;
 
@@ -812,13 +813,17 @@ void KWQKHTMLPart::widgetWillReleaseView(NSView *view)
     }
 }
 
+void KWQKHTMLPart::clearTimers(KHTMLView *view)
+{
+    if (view) {
+        view->unscheduleRelayout();
+        view->unscheduleRepaint();
+    }
+}
+
 void KWQKHTMLPart::clearTimers()
 {
-    KHTMLView *v = d->m_view;
-    if (v) {
-        v->unscheduleRelayout();
-        v->unscheduleRepaint();
-    }
+    clearTimers(d->m_view);
 }
 
 bool KWQKHTMLPart::passSubframeEventToSubframe(DOM::NodeImpl::MouseEvent &event)
@@ -973,4 +978,160 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     d->m_view->viewportMouseMoveEvent(&kEvent);
     
     _currentEvent = oldCurrentEvent;
+}
+
+NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int startOffset, NodeImpl *endNode, int endOffset)
+{
+    NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
+
+    bool hasNewLine = true;
+    bool hasParagraphBreak = true;
+
+    Node n = _startNode;
+    while (!n.isNull()) {
+        RenderObject *renderer = n.handle()->renderer();
+        if (renderer) {
+            if (n.nodeType() == Node::TEXT_NODE) {
+                NSFont *font = nil;
+                RenderStyle *style = renderer->style();
+                if (style) {
+                    font = style->font().getNSFont();
+                }
+    
+                QString str = n.nodeValue().string();
+    
+                QString text;
+                if(n == _startNode && n == endNode && startOffset >=0 && endOffset >= 0)
+                    text = str.mid(startOffset, endOffset - startOffset);
+                else if(n == _startNode && startOffset >= 0)
+                    text = str.mid(startOffset);
+                else if(n == endNode && endOffset >= 0)
+                    text = str.left(endOffset);
+                else
+                    text = str;
+    
+                text = text.stripWhiteSpace();
+                if (text.length() > 1)
+                    text += ' ';
+    
+                if (text.length() > 0) {
+                    hasNewLine = false;
+                    hasParagraphBreak = false;
+                    NSMutableDictionary *attrs = nil;
+                    if (font) {
+                        attrs = [[NSMutableDictionary alloc] init];
+                        [attrs setObject:font forKey:NSFontAttributeName];
+                        if (style && style->color().isValid())
+                            [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+                        if (style && style->backgroundColor().isValid())
+                            [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+                    }
+                    NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString() attributes:attrs];
+                    [attrs release];
+                    [result appendAttributedString: partialString];                
+                    [partialString release];
+                }
+            } else {
+                // This is our simple HTML -> ASCII transformation:
+                QString text;
+                unsigned short _id = n.elementId();
+                switch(_id) {
+                    case ID_BR:
+                        text += "\n";
+                        hasNewLine = true;
+                        break;
+    
+                    case ID_TD:
+                    case ID_TH:
+                    case ID_HR:
+                    case ID_OL:
+                    case ID_UL:
+                    case ID_LI:
+                    case ID_DD:
+                    case ID_DL:
+                    case ID_DT:
+                    case ID_PRE:
+                    case ID_BLOCKQUOTE:
+                    case ID_DIV:
+                        if (!hasNewLine)
+                            text += "\n";
+                        hasNewLine = true;
+                        break;
+                    case ID_P:
+                    case ID_TR:
+                    case ID_H1:
+                    case ID_H2:
+                    case ID_H3:
+                    case ID_H4:
+                    case ID_H5:
+                    case ID_H6:
+                        if (!hasNewLine)
+                            text += "\n";
+                        if (!hasParagraphBreak)
+                            text += "\n";
+                            hasParagraphBreak = true;
+                        hasNewLine = true;
+                        break;
+                }
+                NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString()];
+                [result appendAttributedString: partialString];
+                [partialString release];
+            }
+        }
+
+        if (n == endNode)
+            break;
+
+        Node next = n.firstChild();
+        if (next.isNull())
+            next = n.nextSibling();
+
+        while (next.isNull() && !n.parentNode().isNull()) {
+            QString text;
+            n = n.parentNode();
+            next = n.nextSibling();
+
+            unsigned short _id = n.elementId();
+            switch(_id) {
+                case ID_TD:
+                case ID_TH:
+                case ID_HR:
+                case ID_OL:
+                case ID_UL:
+                case ID_LI:
+                case ID_DD:
+                case ID_DL:
+                case ID_DT:
+                case ID_PRE:
+                case ID_BLOCKQUOTE:
+                case ID_DIV:
+                    if (!hasNewLine)
+                        text += "\n";
+                    hasNewLine = true;
+                    break;
+                case ID_P:
+                case ID_TR:
+                case ID_H1:
+                case ID_H2:
+                case ID_H3:
+                case ID_H4:
+                case ID_H5:
+                case ID_H6:
+                    if (!hasNewLine)
+                        text += "\n";
+                    // An extra newline is needed at the start, not the end, of these types of tags,
+                    // so don't add another here.
+                    hasNewLine = true;
+                    break;
+            }
+            
+            NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString()];
+            [result appendAttributedString:partialString];
+            [partialString release];
+        }
+
+        n = next;
+    }
+
+    return result;
 }

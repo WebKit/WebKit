@@ -1,3 +1,91 @@
+2002-12-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	Overall speedup on cvs-base is about 5%.
+
+	- reduce QString use in the tokenizer and tighten up QString implementation for a speedup
+	- fix up the QFontFamily implementation, using new QString features too, for a speedup
+
+        * khtml/html/htmltokenizer.h: Take const QString & instead of QString to avoid an extra copy.
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::begin): Use QString::null instead of "" for QString objects; faster.
+        (HTMLTokenizer::scriptHandler): In APPLE_CHANGES, use new prepend that avoids the need to
+	create a temporary QString. Use QString::null instead of QString() for a null string, and
+	also made other small fixes to avoid temporary QStrings.
+	(HTMLTokenizer::setSrc): Take const QString & instead of QString to avoid an extra copy.
+
+        * kwq/KWQFont.h: Rename QFontFamily to KWQFontFamily. Make family() inline, add inline
+	familyIsEmpty(). Change KWQFontFamily to store both the QString for the family and the
+	NSString instead of only the NSString to avoid constant conversions back and forth.
+	Remove type cases in CREATE_FAMILY_ARRAY that could result in copying the font object.
+        * kwq/KWQFont.mm:
+        (KWQFontFamily::KWQFontFamily): Fix bug where a copied family object would have a random
+	ref count instead of a ref count of 0. Also update for NSString change.
+        (KWQFontFamily::operator=): Use the ref before deref algorithm instead of the check for
+	self-assignment.
+        (KWQFontFamily::getNSFamily): Compute the NSString for the family name here. To avoid
+	making an NSString every time, use a CFDictionary with QString as a key and NSString as
+	a value instead of using an NSSet.
+        (KWQFontFamily::setFamily): Invalidate the NSString family when the QString family is
+	changed. Moved the code to make things unique to getNSFamily.
+        (KWQFontFamily::operator==): Call getNSFamily rather than
+
+        * kwq/KWQString.h: Added a prepend and insert overload that take a QChar pointer and length, for
+	use in the tokenizer, and a hash function, for use in CFDictionary. Also added a global set of
+	CFDictionaryKeyCallBacks.
+        * kwq/KWQString.mm:
+        (QString::prepend): New overload calls new insert overload.
+        (QString::insert): Old insert slightly tightened by calling detach() only after the early exit
+	and removing an extra detach from a function that already does forceUnicode. Added the new insert
+	that takes a QChar * and a length.
+        (operator==): Rewrite this so that it is efficient and doesn't involve creating a QString temporary
+	or doing a function call.
+        (QString::hash): Wrote this. Used the same hash algorithm I did in my recent KJS work.
+        (retainQString): Added. For use in CFDictionaryKey callback.
+        (releaseQString): Added. For use in CFDictionaryKey callback.
+        (describeQString): Added. For use in CFDictionaryKey callback.
+        (equalQString): Added. For use in CFDictionaryKey callback.
+        (hashQString): Added. For use in CFDictionaryKey callback.
+
+        * khtml/rendering/font.h: Change name to KWQFontFamily.
+        * khtml/rendering/font.cpp: (Font::update): Call familyIsEmpty() instead of family().isEmpty()
+	to avoid making and destroying a QString every time. Also put this batch of KWQFontFamily-specific
+	changes inside #if APPLE_CHANGES. Much to my dismay, we have others elsewhere that aren't ifdef'd.
+
+        * khtml/css/cssstyleselector.cpp: (CSSStyleSelector::applyRule): Change name to KWQFontFamily.
+	Clearly this code needs some #if APPLE_CHANGES, and changing the class name helps make that clear.
+
+	- change KHTMLSettings so using it doesn't require copying QStrings for a speedup
+
+        * kwq/KWQKHTMLSettings.h: Made all the functions static members to avoid the unnecessary
+	overhead of passing a this pointer. Added lots of setXXX functions for use by the WebCoreSettings
+	code that gets called by WebKit when settings are changed. Return objects by reference because we
+	can and it avoids copying QString objects.
+        * kwq/KWQKHTMLSettings.mm: Changed all the functions in here to return the same global object
+	each time, and made the set functions update those globals.
+        * kwq/WebCoreSettings.mm: All the setters now call through to KHTMLSettings set functions.
+
+        - fixed 3126513 -- crash in KWQKHTMLPart::clearTimers() deallocating KWQPageState
+	- did some cleanup in the bridge and the part; part of the process of moving real work out of the bridge
+
+        * kwq/KWQKHTMLPart.h: Rearrange things to be a little more logical. Mark isFrameSet() const.
+	added an attributedString function here so it's not inside WebCoreBridge. Added an overload
+	of clearTimers that takes a view parameter.
+        * kwq/KWQKHTMLPart.cpp: (KWQKHTMLPart::isFrameSet): Mark this const.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::clearTimers): Add the overload that takes the view parameter.
+        (KWQKHTMLPart::attributedString): Moved this code in here from the bridge.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectedAttributedString]): Call the attributedString function in its new home in
+	KWQKHTMLPart.
+        (-[WebCoreBridge attributedStringFrom:startOffset:to:endOffset:]): Ditto.
+        (-[KWQPageState initWithDocument:URL:windowProperties:locationProperties:]):
+	Take a const KURL & instead of a KURL to avoid unnecessary copying.
+        (-[KWQPageState dealloc]): Call the new clearTimers that takes a view parameter. This should fix the
+	crash in autorelease pool deallocation mentioned above.
+
 2002-12-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3121865, content missing at disney.com.  Make

@@ -40,44 +40,59 @@ public:
         KAnimationEnabled
     };
     
-    void init() { }
+    static void init() { }
 
     // Font settings
-    QString stdFontName() const;
-    QString fixedFontName() const;
-    QString serifFontName() const;
-    QString sansSerifFontName() const;
-    QString cursiveFontName() const;
-    QString fantasyFontName() const;
+    static const QString &stdFontName();
+    static const QString &fixedFontName();
+    static const QString &serifFontName();
+    static const QString &sansSerifFontName();
+    static const QString &cursiveFontName();
+    static const QString &fantasyFontName();
     
-    void setStdFontName(const QString &) { }
-    void setFixedFontName(const QString &) { }
+    static const QString &settingsToCSS() { return QString::null; }
 
-    QString settingsToCSS() const;
+    static const QString &encoding();
 
-    const QString &encoding() const;
+    static int minFontSize();
+    static int mediumFontSize();
+    static int mediumFixedFontSize();
 
-    int minFontSize() const;
-    int mediumFontSize() const;
-    int mediumFixedFontSize() const;
+    static bool changeCursor() { return true; }
 
-    bool changeCursor() const;
+    static bool isFormCompletionEnabled() { return false; }
+    static int maxFormCompletionItems() { return 0; }
 
-    bool isFormCompletionEnabled() const;
-    int maxFormCompletionItems() const;
+    static bool autoLoadImages();
+    static KAnimationAdvice showAnimations() { return KAnimationEnabled; }
 
-    bool autoLoadImages() const;
-    KAnimationAdvice showAnimations() const;
-
-    bool isJavaScriptEnabled() const;
-    bool isJavaScriptEnabled(const QString &host) const;
-    bool isJavaScriptDebugEnabled() const;
-    bool isJavaEnabled() const;
-    bool isJavaEnabled(const QString &host) const;
-    bool isPluginsEnabled() const;
-    bool isPluginsEnabled(const QString &host) const;
+    static bool isJavaScriptEnabled();
+    static bool isJavaScriptEnabled(const QString &host) { return isJavaScriptEnabled(); }
+    static bool isJavaScriptDebugEnabled() { return false; }
+    static bool isJavaEnabled();
+    static bool isJavaEnabled(const QString &host) { return isJavaEnabled(); }
+    static bool isPluginsEnabled();
+    static bool isPluginsEnabled(const QString &host) { return isPluginsEnabled(); }
     
-    QString userStyleSheet() const;
+    static const QString &userStyleSheet();
+
+    static void setStdFontName(const QString &);
+    static void setFixedFontName(const QString &);
+    static void setSerifFontName(const QString &);
+    static void setSansSerifFontName(const QString &);
+    static void setCursiveFontName(const QString &);
+    static void setFantasyFontName(const QString &);
+    
+    static void setMinFontSize(int);
+    static void setMediumFontSize(int);
+    static void setMediumFixedFontSize(int);
+    
+    static void setAutoLoadImages(bool);
+    static void setIsJavaScriptEnabled(bool);
+    static void setIsJavaEnabled(bool);
+    static void setArePluginsEnabled(bool);
+
+    static void setUserStyleSheet(const QString &);
 };
 
 #endif

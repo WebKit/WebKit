@@ -154,7 +154,7 @@ protected:
     void scriptHandler();
     void scriptExecution(const QString& script, QString scriptURL = QString(),
                          int baseLine = 0);
-    void setSrc(QString source);
+    void setSrc(const QString &source);
 
     // check if we have enough space in the buffer.
     // if not enlarge it

@@ -56,9 +56,9 @@ public:
 
     void setGenericFamily(unsigned int aGenericFamily) { genericFamily = aGenericFamily; }
     
-    QFontFamily& firstFamily() { return family; }
+    KWQFontFamily &firstFamily() { return family; }
     
-    QFontFamily family;
+    KWQFontFamily family;
     short int size;
     bool italic 		: 1;
     bool smallCaps 		: 1;

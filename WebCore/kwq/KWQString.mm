@@ -2113,6 +2113,11 @@ QString &QString::prepend(const QString &qs)
     return insert(0, qs);
 }
 
+QString &QString::prepend(const QChar *characters, uint length)
+{
+    return insert(0, characters, length);
+}
+
 QString &QString::append(const QString &qs)
 {
     return insert(dataHandle[0]->_length, qs);
@@ -2121,11 +2126,11 @@ QString &QString::append(const QString &qs)
 
 QString &QString::insert(uint index, const char *insertChars, uint insertLength)
 {
-    detach();
-    
     if (insertLength == 0)
         return *this;
         
+    detach();
+    
     if (dataHandle[0]->_isAsciiValid){
         uint originalLength = dataHandle[0]->_length;
         char *targetChars;
@@ -2169,8 +2174,6 @@ QString &QString::insert(uint index, const char *insertChars, uint insertLength)
 
 QString &QString::insert(uint index, const QString &qs)
 {
-    detach();
-    
     if (qs.data()->_length == 0)
         return *this;
         
@@ -2208,6 +2211,24 @@ QString &QString::insert(uint index, const QString &qs)
         
         dataHandle[0]->_isAsciiValid = 0;
     }
+    
+    return *this;
+}
+
+
+QString &QString::insert(uint index, const QChar *insertChars, uint insertLength)
+{
+    if (insertLength == 0)
+        return *this;
+        
+    forceUnicode();
+    
+    uint originalLength = dataHandle[0]->_length;
+    setLength(originalLength + insertLength);
+
+    QChar *targetChars = const_cast<QChar *>(unicode());
+    memmove(targetChars + index + insertLength, targetChars + index, (originalLength - index) * sizeof(QChar));
+    memcpy(targetChars + index, insertChars, insertLength * sizeof(QChar));
     
     return *this;
 }
@@ -2609,9 +2630,50 @@ bool operator==(const QString &s1, const QString &s2)
 
 bool operator==(const QString &s1, const char *chs)
 {
-    if (s1.data()->_isAsciiValid)
-        return strcmp(s1.ascii(), chs) == 0;
-    return s1 == QString(chs);
+    if (!chs)
+        return s1.isNull();
+    uint length = strlen(chs);
+    if (s1.data()->_length != length)
+        return false;
+    if (s1.data()->_isAsciiValid) {
+        const char *s = s1.ascii();
+        for (uint i = 0; i != length; ++i)
+            if (s[i] != chs[i])
+                return false;
+    } else {
+        const QChar *s = s1.unicode();
+        for (uint i = 0; i != length; ++i)
+            if (s[i] != chs[i])
+                return false;
+    }
+    return true;
+}
+
+uint QString::hash() const
+{
+    uint len = length();
+    uint h = len;
+    if (len) {
+        uint prefixLength = len < 8 ? len : 8;
+        uint suffixPosition = len < 16 ? 8 : len - 8;
+    
+        if (data()->_isAsciiValid) {
+            const char *s = ascii();
+            for (uint i = 0; i < prefixLength; i++)
+                h = 127 * h + (unsigned char)s[i];
+            for (uint i = suffixPosition; i < len; i++)
+                h = 127 * h + (unsigned char)s[i];
+        } else {
+            const QChar *s = unicode();
+            for (uint i = 0; i < prefixLength; i++)
+                h = 127 * h + s[i].unicode();
+            for (uint i = suffixPosition; i < len; i++)
+                h = 127 * h + s[i].unicode();
+        }
+    }
+    if (h == 0)
+        h = 0x80000000;
+    return h;
 }
 
 QString operator+(const QString &qs1, const QString &qs2)
@@ -2676,6 +2738,33 @@ QConstString::~QConstString()
 	dataHandle[0]->_unicode = 0;
     }
 }
+
+const void *retainQString(CFAllocatorRef allocator, const void *value)
+{
+    return new QString(*(QString *)value);
+}
+
+void releaseQString(CFAllocatorRef allocator, const void *value)
+{
+    delete (QString *)value;
+}
+
+CFStringRef describeQString(const void *value)
+{
+    return ((QString *)value)->getCFString();
+}
+
+Boolean equalQString(const void *value1, const void *value2)
+{
+    return *(QString *)value1 == *(QString *)value2;
+}
+
+CFHashCode hashQString(const void *value)
+{
+    return ((QString *)value)->hash();
+}
+
+const CFDictionaryKeyCallBacks CFDictionaryQStringKeyCallBacks = { 0, retainQString, releaseQString, describeQString, equalQString, hashQString };
 
 #define NODE_BLOCK_SIZE ((vm_page_size)/sizeof(HandleNode))
 

@@ -26,6 +26,7 @@
 #import "WebCoreSettings.h"
 
 #import "KWQKHTMLPart.h"
+#import "KWQKHTMLSettings.h"
 #import "WebCoreBridge.h"
 
 @implementation WebCoreSettings
@@ -65,6 +66,7 @@
     }
     [standardFontFamily release];
     standardFontFamily = [s copy];
+    KHTMLSettings::setStdFontName(QString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -80,6 +82,7 @@
     }
     [fixedFontFamily release];
     fixedFontFamily = [s copy];
+    KHTMLSettings::setFixedFontName(QString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -95,6 +98,7 @@
     }
     [serifFontFamily release];
     serifFontFamily = [s copy];
+    KHTMLSettings::setSerifFontName(QString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -110,6 +114,7 @@
     }
     [sansSerifFontFamily release];
     sansSerifFontFamily = [s copy];
+    KHTMLSettings::setSansSerifFontName(QString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -125,6 +130,7 @@
     }
     [cursiveFontFamily release];
     cursiveFontFamily = [s copy];
+    KHTMLSettings::setCursiveFontName(QString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -140,6 +146,7 @@
     }
     [fantasyFontFamily release];
     fantasyFontFamily = [s copy];
+    KHTMLSettings::setFantasyFontName(QString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -154,6 +161,7 @@
         return;
     }
     minimumFontSize = size;
+    KHTMLSettings::setMinFontSize((int)rint(size));
     [self _updateAllViews];
 }
 
@@ -168,6 +176,7 @@
         return;
     }
     defaultFontSize = size;
+    KHTMLSettings::setMediumFontSize((int)rint(size));
     [self _updateAllViews];
 }
 
@@ -182,6 +191,7 @@
         return;
     }
     defaultFixedFontSize = size;
+    KHTMLSettings::setMediumFixedFontSize((int)rint(size));
     [self _updateAllViews];
 }
 
@@ -193,6 +203,7 @@
 - (void)setJavaEnabled:(BOOL)enabled
 {
     JavaEnabled = enabled;
+    KHTMLSettings::setIsJavaEnabled(enabled);
 }
 
 - (BOOL)JavaEnabled
@@ -203,6 +214,7 @@
 - (void)setPluginsEnabled:(BOOL)enabled
 {
     pluginsEnabled = enabled;
+    KHTMLSettings::setArePluginsEnabled(enabled);
 }
 
 - (BOOL)pluginsEnabled
@@ -213,6 +225,7 @@
 - (void)setJavaScriptEnabled:(BOOL)enabled
 {
     JavaScriptEnabled = enabled;
+    KHTMLSettings::setIsJavaScriptEnabled(enabled);
 }
 
 - (BOOL)JavaScriptEnabled
@@ -233,6 +246,7 @@
 - (void)setWillLoadImagesAutomatically:(BOOL)load
 {
     willLoadImagesAutomatically = load;
+    KHTMLSettings::setAutoLoadImages(load);
 }
 
 - (BOOL)willLoadImagesAutomatically
@@ -247,6 +261,7 @@
     }
     [userStyleSheetLocation release];
     userStyleSheetLocation = [s copy];
+    KHTMLSettings::setUserStyleSheet(QString::fromNSString(s));
     [self _updateAllViews];
 }
 

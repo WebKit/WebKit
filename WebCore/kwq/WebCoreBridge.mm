@@ -88,7 +88,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     SavedProperties *locationProperties;
     RenderObject *docRenderer; 
 }
-- initWithDocument: (DocumentImpl *)doc URL: (KURL)u windowProperties: (SavedProperties *)wp locationProperties: (SavedProperties *)lp;
+- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp;
 - (DocumentImpl *)document;
 - (KURL *)URL;
 - (SavedProperties *)windowProperties;
@@ -155,7 +155,6 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
         return;
     }
         
-
     // arguments
     URLArgs args(_part->browserExtension()->urlArgs());
     args.reload = reload;
@@ -249,6 +248,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
                                                                   URL:_part->m_url
                                                      windowProperties:windowProperties
                                                    locationProperties:locationProperties] autorelease];
+
     return [self saveDocumentToPageCache:pageState];
 }
 
@@ -583,175 +583,19 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     _part->xmlDocImpl()->setSelection([(WebCoreDOMNode *)start impl], startOffset, [(WebCoreDOMNode *)end impl], endOffset);
 }
 
-static NSAttributedString *attributedString(NodeImpl *_startNode, int startOffset, NodeImpl *endNode, int endOffset)
-{
-    bool hasNewLine = true;
-    bool hasParagraphBreak = true;
-    Node n = _startNode;
-    RenderObject *renderer;
-    NSFont *font;
-    NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
-    NSAttributedString *partialString;
-
-    while(!n.isNull()) {
-        renderer = n.handle()->renderer();
-        if (n.nodeType() == Node::TEXT_NODE && renderer) {
-            QString text;
-            QString str = n.nodeValue().string();
-            RenderStyle *style = 0;
-
-            font = nil;
-            style = renderer->style();
-            if (style) {
-                font = style->font().getNSFont();
-            }
-
-            if(n == _startNode && n == endNode && startOffset >=0 && endOffset >= 0)
-                text = str.mid(startOffset, endOffset - startOffset);
-            else if(n == _startNode && startOffset >= 0)
-                text = str.mid(startOffset);
-            else if(n == endNode && endOffset >= 0)
-                text = str.left(endOffset);
-            else
-                text = str;
-
-            text = text.stripWhiteSpace();
-            if (text.length() > 1)
-                text += ' ';
-
-            if (text.length() > 0){
-                hasNewLine = false;
-                hasParagraphBreak = false;
-                if (font){
-                    NSMutableDictionary *attrs = [[[NSMutableDictionary alloc] init] autorelease];
-                    [attrs setObject:font forKey:NSFontAttributeName];
-                    if (style && style->color().isValid())
-                        [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
-                    if (style && style->backgroundColor().isValid())
-                        [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
-                    partialString = [[[NSAttributedString alloc] initWithString: text.getNSString() attributes: attrs] autorelease];
-                }
-                else
-                    partialString = [[[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil] autorelease];
-
-                [result appendAttributedString: partialString];
-            }
-        }
-        else if (renderer != 0){
-            // This is our simple HTML -> ASCII transformation:
-            QString text;
-            unsigned short _id = n.elementId();
-            switch(_id) {
-                case ID_BR:
-                    text += "\n";
-                    hasNewLine = true;
-                    break;
-
-                case ID_TD:
-                case ID_TH:
-                case ID_HR:
-                case ID_OL:
-                case ID_UL:
-                case ID_LI:
-                case ID_DD:
-                case ID_DL:
-                case ID_DT:
-                case ID_PRE:
-                case ID_BLOCKQUOTE:
-                case ID_DIV:
-                    if (!hasNewLine)
-                        text += "\n";
-                    hasNewLine = true;
-                    break;
-                case ID_P:
-                case ID_TR:
-                case ID_H1:
-                case ID_H2:
-                case ID_H3:
-                case ID_H4:
-                case ID_H5:
-                case ID_H6:
-                    if (!hasNewLine)
-                        text += "\n";
-                    if (!hasParagraphBreak)
-                        text += "\n";
-                        hasParagraphBreak = true;
-                    hasNewLine = true;
-                    break;
-            }
-            partialString = [[[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil] autorelease];
-            [result appendAttributedString: partialString];
-        }
-
-        if(n == endNode)
-            break;
-
-        Node next = n.firstChild();
-        if(next.isNull())
-            next = n.nextSibling();
-
-        while( next.isNull() && !n.parentNode().isNull() ) {
-            QString text;
-            n = n.parentNode();
-            next = n.nextSibling();
-
-            unsigned short _id = n.elementId();
-            switch(_id) {
-                case ID_TD:
-                case ID_TH:
-                case ID_HR:
-                case ID_OL:
-                case ID_UL:
-                case ID_LI:
-                case ID_DD:
-                case ID_DL:
-                case ID_DT:
-                case ID_PRE:
-                case ID_BLOCKQUOTE:
-                case ID_DIV:
-                    if (!hasNewLine)
-                        text += "\n";
-                    hasNewLine = true;
-                    break;
-                case ID_P:
-                case ID_TR:
-                case ID_H1:
-                case ID_H2:
-                case ID_H3:
-                case ID_H4:
-                case ID_H5:
-                case ID_H6:
-                    if (!hasNewLine)
-                        text += "\n";
-                    // An extra newline is needed at the start, not the end, of these types of tags,
-                    // so don't add another here.
-                    hasNewLine = true;
-                    break;
-            }
-            partialString = [[[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil] autorelease];
-            [result appendAttributedString: partialString];
-        }
-
-        n = next;
-    }
-
-    return result;
-}
-
 - (NSAttributedString *)selectedAttributedString
 {
-    return attributedString (_part->selectionStart(), _part->selectionStartOffset(), _part->selectionEnd(), _part->selectionEndOffset());
+    return KWQKHTMLPart::attributedString(_part->selectionStart(), _part->selectionStartOffset(), _part->selectionEnd(), _part->selectionEndOffset());
 }
 
-- (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset
+- (NSAttributedString *)attributedStringFrom:(id<WebDOMNode>)startNode startOffset:(int)startOffset to:(id<WebDOMNode>)endNode endOffset:(int)endOffset
 {
-    return attributedString ([(WebCoreDOMNode *)startNode impl], startOffset, [(WebCoreDOMNode *)endNode impl], endOffset);
+    return KWQKHTMLPart::attributedString([(WebCoreDOMNode *)startNode impl], startOffset, [(WebCoreDOMNode *)endNode impl], endOffset);
 }
-
 
 - (id<WebDOMNode>)selectionStart
 {
-    return [WebCoreDOMNode nodeWithImpl: _part->selectionStart()];
+    return [WebCoreDOMNode nodeWithImpl:_part->selectionStart()];
 }
 
 - (int)selectionStartOffset
@@ -761,7 +605,7 @@ static NSAttributedString *attributedString(NodeImpl *_startNode, int startOffse
 
 - (id<WebDOMNode>)selectionEnd
 {
-    return [WebCoreDOMNode nodeWithImpl: _part->selectionEnd()];
+    return [WebCoreDOMNode nodeWithImpl:_part->selectionEnd()];
 }
 
 - (int)selectionEndOffset
@@ -830,7 +674,8 @@ static NSAttributedString *attributedString(NodeImpl *_startNode, int startOffse
 @end
 
 @implementation KWQPageState
-- initWithDocument:(DocumentImpl *)doc URL:(KURL)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp
+
+- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp
 {
     [super init];
     doc->ref();
@@ -839,7 +684,7 @@ static NSAttributedString *attributedString(NodeImpl *_startNode, int startOffse
     document->setInPageCache(YES);
     URL = new KURL(u);
     windowProperties = wp;
-    locationProperties =lp;
+    locationProperties = lp;
     return self;
 }
 
@@ -848,7 +693,7 @@ static NSAttributedString *attributedString(NodeImpl *_startNode, int startOffse
 - (void)invalidate
 {
     // Should only ever invalidate once.
-    ASSERT (document);
+    ASSERT(document);
     
     document->setInPageCache(NO);
     document->deref();
@@ -865,33 +710,23 @@ static NSAttributedString *attributedString(NodeImpl *_startNode, int startOffse
 
 - (void)dealloc
 {
-    if (document){
+    if (document) {
         KHTMLView *view = document->view();
-        KWQ(view->part())->clearTimers();
+
+        KWQKHTMLPart::clearTimers(view);
+
         document->setInPageCache(NO);
         document->detach();
         document->deref();
-        document = 0;
         
         view->clearPart();
         delete view;
     }
     
-    if (URL){
-        delete URL;
-        URL = 0;
-    }
+    delete URL;
+    delete windowProperties;
+    delete locationProperties;
 
-    if (windowProperties){
-        delete windowProperties;
-        windowProperties = 0;
-    }
-    
-    if (locationProperties){
-        delete locationProperties;
-        locationProperties = 0;
-    }
-    
     [super dealloc];
 }
 
