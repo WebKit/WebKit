@@ -1,5 +1,15 @@
 2002-11-15  Maciej Stachowiak  <mjs@apple.com>
 
+	Wrap content policy invocation to look asynchronous.
+	
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient checkContentPolicyForResponse:andCallSelector:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+
+2002-11-15  Maciej Stachowiak  <mjs@apple.com>
+
 	Refactor so that all invocations of navigation policy are set up
 	to be asynchronous. However, the actually delegate method is not
 	async yet.

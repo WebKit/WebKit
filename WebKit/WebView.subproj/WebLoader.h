@@ -18,8 +18,8 @@
 {
 @protected
     WebDataSource *dataSource;
-@private
     WebResourceHandle *handle;
+@private
     WebResourceRequest *request;
     WebResourceResponse *response;
     id identifier;

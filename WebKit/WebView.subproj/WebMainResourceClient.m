@@ -149,25 +149,13 @@
     [super notifyDelegatesOfInterruptionByPolicyChange];
 }
 
--(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
+-(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(WebResourceResponse *)r
 {
-    [dataSource _setResponse:r];
-
-    LOG(Download, "main content type: %@", [r contentType]);
-
-    WebPolicyAction contentPolicy;
+    if (!defersBeforeCheckingPolicy) {
+	[[dataSource controller] _setDefersCallbacks:NO];
+    }
 
     WebResourceRequest *req = [dataSource request];
-
-
-    // Figure out the content policy.
-    if (![dataSource isDownloading]) {
-	contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForMIMEType:[r contentType]
-								  andRequest:req
-								  inFrame:[dataSource webFrame]];
-    } else {
-	contentPolicy = WebPolicySave;
-    }
 
     switch (contentPolicy) {
     case WebPolicyShow:
@@ -230,8 +218,38 @@
         ERROR("contentPolicyForMIMEType:andRequest:inFrame: returned an invalid content policy.");
     }
 
-    [super handle:h didReceiveResponse:r];
-    
+    [super handle:handle didReceiveResponse:r];
+}
+
+
+-(void)checkContentPolicyForResponse:(WebResourceResponse *)r andCallSelector:(SEL)selector
+{
+    WebPolicyAction contentPolicy = 
+	[[[dataSource controller] policyDelegate] contentPolicyForMIMEType:[r contentType]
+						  andRequest:[dataSource request]
+						  inFrame:[dataSource webFrame]];
+    [self performSelector:selector withObject:(id)contentPolicy withObject:r];
+}
+
+
+-(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
+{
+    [dataSource _setResponse:r];
+
+    LOG(Download, "main content type: %@", [r contentType]);
+
+    defersBeforeCheckingPolicy = [[dataSource controller] _defersCallbacks];
+    if (!defersBeforeCheckingPolicy) {
+	[[dataSource controller] _setDefersCallbacks:YES];
+    }
+
+    // Figure out the content policy.
+    if (![dataSource isDownloading]) {
+	[self checkContentPolicyForResponse:r andCallSelector:@selector(continueAfterContentPolicy:response:)];
+    } else {
+	[self continueAfterContentPolicy:WebPolicySave response:r];
+    }
+
     _contentLength = [r contentLength];
 }
 
