@@ -39,8 +39,14 @@ typedef unsigned int Q_UINT32;
 #define QMAX(a,b) ((a) > (b) ? (a) : (b))
 #define QMIN(a,b) ((a) < (b) ? (a) : (b))
 
-#define KMAX(a,b) QMAX(a, b)
-#define KMIN(a,b) QMIN(a, b)
+#define KMAX(a,b) kMax(a, b)
+#define KMIN(a,b) kMin(a, b)
+
+template<class T>
+inline const T& kMin ( const T& a, const T& b ) { return a < b ? a : b; }
+
+template<class T>
+inline const T& kMax ( const T& a, const T& b ) { return b < a ? a : b; }
 
 #define QABS(a) (((a) >= 0) ? (a) : -(a))
 
