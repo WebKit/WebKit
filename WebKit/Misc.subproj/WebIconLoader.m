@@ -24,7 +24,7 @@
 @public
     NSURLConnection *handle;
     id delegate;
-    NSURL *URL;
+    NSURLRequest *request;
     NSMutableData *resourceData;
 }
 
@@ -34,7 +34,7 @@
 
 - (void)dealloc
 {
-    [URL release];
+    [request release];
     [handle release];
     [resourceData release];
     [super dealloc];
@@ -44,16 +44,11 @@
 
 @implementation WebIconLoader
 
-+ iconLoaderWithURL:(NSURL *)URL
-{
-    return [[[self alloc] initWithURL:URL] autorelease];
-}
-
-- initWithURL:(NSURL *)URL
+- (id)initWithRequest:(NSURLRequest *)request;
 {
     [super init];
     _private = [[WebIconLoaderPrivate alloc] init];
-    _private->URL = [URL retain];
+    _private->request = [request retain];
     _private->resourceData = [[NSMutableData alloc] init];
     return self;
 }
@@ -66,7 +61,7 @@
 
 - (NSURL *)URL
 {
-    return _private->URL;
+    return [_private->request URL];
 }
 
 - (id)delegate
@@ -84,13 +79,8 @@
     if (_private->handle != nil) {
         return;
     }
-    
-    // send this synthetic delegate callback since clients expect it, and
-    // we no longer send the callback from within NSURLConnection for
-    // initial requests.
-    NSURLRequest *request = [NSURLRequest requestWithURL:_private->URL];
-    request = [self connection:nil willSendRequest:request redirectResponse:nil];
-    _private->handle = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+
+    _private->handle = [[NSURLConnection alloc] initWithRequest:_private->request delegate:self];
 }
 
 - (void)stopLoading
@@ -100,38 +90,21 @@
     _private->handle = nil;
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
-    if (icon) {
-        [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[_private->URL absoluteString]];
-    } else {
-	[[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[_private->URL absoluteString]];
-    }
-    [_private->delegate _iconLoaderReceivedPageIcon:self];
-    [icon release];
-}
-
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
-{
-    return request;
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)theResponse
-{
-    // no-op
-
-    // no-op
-}
-
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     [_private->resourceData appendData:data];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)result
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-
+    NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
+    if (icon) {
+        [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[[self URL] absoluteString]];
+    } else {
+	[[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] absoluteString]];
+    }
+    [_private->delegate _iconLoaderReceivedPageIcon:self];    
+    [icon release];
 }
 
 @end

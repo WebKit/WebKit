@@ -1,5 +1,21 @@
 2003-05-15  Chris Blumenberg  <cblu@apple.com>
 
+		Fixed: 3199310 - No user agent included in favicon.ico requests
+
+        Reviewed by kocienda.
+
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoaderPrivate dealloc]): use the request ivar
+        (-[WebIconLoader URL]): ditto
+        (-[WebIconLoader startLoading]): ditto
+        (-[WebIconLoader connection:didReceiveData:]): ditto
+        (-[WebIconLoader connectionDidFinishLoading:]): ditto
+        * WebView.subproj/WebDataSourcePrivate.m: 
+        (-[WebDataSource _loadIcon]): create a icon loader with a request with the extra fields set
+
+2003-05-15  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3155760 - Plug-in MIME and extension mapping should be case-insensitive
 
         Reviewed by john.

@@ -627,7 +627,10 @@
             [self _updateIconDatabaseWithURL:_private->iconURL];
         }else{
             ASSERT(!_private->iconLoader);
-            _private->iconLoader = [[WebIconLoader alloc] initWithURL:_private->iconURL];
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->iconURL];
+            [[self webFrame] _addExtraFieldsToRequest:request alwaysFromRequest:NO];
+            _private->iconLoader = [[WebIconLoader alloc] initWithRequest:request];
+            [request release];
             [_private->iconLoader setDelegate:self];
             [_private->iconLoader startLoading];
         }

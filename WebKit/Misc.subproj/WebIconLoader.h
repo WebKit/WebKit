@@ -5,6 +5,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class NSURLRequest;
 @class WebIconLoaderPrivate;
 
 /*!
@@ -16,16 +17,10 @@
 }
 
 /*!
-    @method iconLoaderWithURL:
-    @param URL
+    @method initWithRequest:
+    @param request
 */
-+ (id)iconLoaderWithURL:(NSURL *)URL;
-
-/*!
-    @method initWithURL:
-    @param URL
-*/
-- (id)initWithURL:(NSURL *)URL;
+- (id)initWithRequest:(NSURLRequest *)request;
 
 /*!
     @method URL
