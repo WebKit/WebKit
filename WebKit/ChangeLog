@@ -2,6 +2,15 @@
 
         Reviewed by John
 
+        Cleaned up some missed WebRequest -> NSURLRequest  
+        name conversions.
+
+        * WebView.subproj/WebFramePrivate.m
+
+2003-03-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         Changed WebRequest to NSURLRequest. Several other names,        
         like some constants whose names were based on WebRequest,
         changed as well.

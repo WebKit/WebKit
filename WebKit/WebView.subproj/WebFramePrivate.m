@@ -65,28 +65,28 @@ Standard Nav:
 
  Restore form state:   YES
  Restore scroll and focus state:  YES
- WF Cache policy: WebRequestCachePolicyUseProtocolDefault
+ WF Cache policy: NSURLRequestUseProtocolCachePolicy
  Add to back/forward list: YES
  
 Back/Forward:
 
  Restore form state:   YES
  Restore scroll and focus state:  YES
- WF Cache policy: WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject
+ WF Cache policy: NSURLRequestReturnCacheDataElseLoad
  Add to back/forward list: NO
 
 Reload (meaning only the reload button):
 
  Restore form state:   NO
  Restore scroll and focus state:  YES
- WF Cache policy: WebRequestCachePolicyLoadFromOrigin
+ WF Cache policy: NSURLRequestReloadIgnoringCacheData
  Add to back/forward list: NO
 
 Repeat load of the same URL (by any other means of navigation other than the reload button, including hitting return in the location field):
 
  Restore form state:   NO
  Restore scroll and focus state:  NO, reset to initial conditions
- WF Cache policy: WebRequestCachePolicyLoadFromOrigin
+ WF Cache policy: NSURLRequestReloadIgnoringCacheData
  Add to back/forward list: NO
 */
 
