@@ -82,6 +82,10 @@
 #import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
+#if APPLE_CHANGES
+#import "KWQAccObjectCache.h"
+#endif
+
 #undef _KWQ_TIMING
 
 using DOM::AtomicString;
@@ -3991,6 +3995,11 @@ void KWQKHTMLPart::respondToChangedSelection(const Selection &oldSelection, bool
 
 void KWQKHTMLPart::respondToChangedContents()
 {
+#if APPLE_CHANGES
+    if (KWQAccObjectCache::accessibilityEnabled()) {
+        renderer()->document()->getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXValueChanged");
+    }
+#endif
     [_bridge respondToChangedContents];
 }
 

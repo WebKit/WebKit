@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// need this until accesstool supports markers and marker ranges
-#define MARKER_SELF_TEST 0
+// need this until accesstool supports arrays of markers
+#define MARKERARRAY_SELF_TEST 0
 
 // for AXTextMarker support
 #import <ApplicationServices/ApplicationServicesPriv.h>
@@ -58,7 +58,9 @@ typedef AXTextMarkerRef (*TextMarkerFromTextMarkerRangeProc) (AXTextMarkerRangeR
 #import "render_list.h"
 #import "render_style.h"
 #import "render_text.h"
+#import "selection.h"
 #import "kjs_html.h"
+#import "text_granularity.h"
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
@@ -86,6 +88,7 @@ using khtml::RenderText;
 using khtml::RenderBlock;
 using khtml::RenderListMarker;
 using khtml::RenderImage;
+using khtml::Selection;
 using khtml::VisiblePosition;
 
 /* NSAccessibilityDescriptionAttribute is only defined on 10.4 and newer */
@@ -112,8 +115,15 @@ using khtml::VisiblePosition;
     return !m_renderer;
 }
 
+- (BOOL)accessibilityShouldUseUniqueId {
+    return m_renderer && m_renderer->isCanvas();
+}
+
+extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
 -(void)detach
 {
+    if ([self accessibilityShouldUseUniqueId])
+        NSAccessibilityUnregisterUniqueIdForUIElement(self);
     [m_data release];
     m_data = 0;
     [self removeAccObjectID];
@@ -146,7 +156,7 @@ using khtml::VisiblePosition;
     RenderObject* currRenderer;
     for (currRenderer = m_renderer; currRenderer && !currRenderer->element(); currRenderer = currRenderer->parent()) {
         if (currRenderer->continuation())
-            return [currRenderer->document()->getOrCreateAccObjectCache()->accObject(currRenderer->continuation()) anchorElement];
+            return [currRenderer->document()->getAccObjectCache()->accObject(currRenderer->continuation()) anchorElement];
     }
     
     // bail of none found
@@ -168,38 +178,38 @@ using khtml::VisiblePosition;
 {
     if (!m_renderer || !m_renderer->firstChild())
         return nil;
-    return m_renderer->document()->getOrCreateAccObjectCache()->accObject(m_renderer->firstChild());
+    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->firstChild());
 }
 
 -(KWQAccObject*)lastChild
 {
     if (!m_renderer || !m_renderer->lastChild())
         return nil;
-    return m_renderer->document()->getOrCreateAccObjectCache()->accObject(m_renderer->lastChild());
+    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->lastChild());
 }
 
 -(KWQAccObject*)previousSibling
 {
     if (!m_renderer || !m_renderer->previousSibling())
         return nil;
-    return m_renderer->document()->getOrCreateAccObjectCache()->accObject(m_renderer->previousSibling());
+    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->previousSibling());
 }
 
 -(KWQAccObject*)nextSibling
 {
     if (!m_renderer || !m_renderer->nextSibling())
         return nil;
-    return m_renderer->document()->getOrCreateAccObjectCache()->accObject(m_renderer->nextSibling());
+    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->nextSibling());
 }
 
 -(KWQAccObject*)parentObject
 {
     if (m_areaElement)
-        return m_renderer->document()->getOrCreateAccObjectCache()->accObject(m_renderer);
+        return m_renderer->document()->getAccObjectCache()->accObject(m_renderer);
 
     if (!m_renderer || !m_renderer->parent())
         return nil;
-    return m_renderer->document()->getOrCreateAccObjectCache()->accObject(m_renderer->parent());
+    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->parent());
 }
 
 -(KWQAccObject*)parentObjectUnignored
@@ -419,6 +429,17 @@ using khtml::VisiblePosition;
     if (m_renderer->isListMarker())
         return static_cast<RenderListMarker*>(m_renderer)->text().getNSString();
 
+    if (m_renderer->isCanvas()) {
+        KWQKHTMLPart *docPart = KWQ(m_renderer->document()->part());
+        if (!docPart)
+            return nil;
+        
+        Position startPos = VisiblePosition(m_renderer->positionForCoordinates (0, 0, nil)).deepEquivalent();
+        Position endPos   = VisiblePosition(m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX, nil)).deepEquivalent();
+        NSAttributedString * attrString = docPart->attributedString(startPos.node(), startPos.offset(), endPos.node(), endPos.offset());
+        return [attrString string];
+    }
+        
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
@@ -540,7 +561,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
             (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     FO 4
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,    // NOTE: BUG FO 4
             (NSString *) kAXStartTextMarkerAttribute,
             (NSString *) kAXEndTextMarkerAttribute,
 #endif
@@ -564,7 +585,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
             (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     FO 4
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     // NOTE: BUG FO 4
             (NSString *) kAXStartTextMarkerAttribute,
             (NSString *) kAXEndTextMarkerAttribute,
 #endif
@@ -590,7 +611,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
             (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     FO 4
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     // NOTE: BUG FO 4
             (NSString *) kAXStartTextMarkerAttribute,
             (NSString *) kAXEndTextMarkerAttribute,
 #endif
@@ -631,34 +652,23 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (void)accessibilityPerformAction:(NSString *)action
 {
     // We only have the one action (press).
+    if ([action isEqualToString:NSAccessibilityPressAction]) {
+        // Locate the anchor element. If it doesn't exist, just bail.
+        HTMLAnchorElementImpl* anchorElt = [self anchorElement];
+        if (!anchorElt)
+            return;
 
-    // Locate the anchor element. If it doesn't exist, just bail.
-    HTMLAnchorElementImpl* anchorElt = [self anchorElement];
-    if (!anchorElt)
-        return;
-
-    DocumentImpl* d = anchorElt->getDocument();
-    if (d) {
-	KHTMLPart* p = d->part();
-        if (p) {
-            KWQ(p)->prepareForUserAction();
+        DocumentImpl* d = anchorElt->getDocument();
+        if (d) {
+            KHTMLPart* p = d->part();
+            if (p) {
+                KWQ(p)->prepareForUserAction();
+            }
         }
+
+        anchorElt->click();
     }
-
-    anchorElt->click();
 }
-
-- (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
-{
-    return NO;
-}
-
-#if 0
-// what we'd need to implement if accessibilityIsAttributeSettable ever returned YES
-- (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attribute;
-{
-}
-#endif
 
 #if OMIT_TIGER_FEATURES
 // no parameterized attributes in Panther... they were introduced in Tiger
@@ -680,14 +690,12 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
         
-    KWQAccObjectCache* cache = m_renderer->document()->getExistingAccObjectCache();
-    return cache->textMarkerForVisiblePosition(visiblePos);
+    return m_renderer->document()->getAccObjectCache()->textMarkerForVisiblePosition(visiblePos);
 }
 
 - (VisiblePosition) visiblePositionForTextMarker: (AXTextMarkerRef)textMarker
 {
-    KWQAccObjectCache* cache = m_renderer->document()->getExistingAccObjectCache();
-    return cache->visiblePositionForTextMarker(textMarker);
+    return m_renderer->document()->getAccObjectCache()->visiblePositionForTextMarker(textMarker);
 }
 
 - (AXTextMarkerRef) AXTextMarkerRangeCopyStartMarkerWrapper: (AXTextMarkerRangeRef)textMarkerRange
@@ -749,6 +757,28 @@ static QRect boundingBoxRect(RenderObject* obj)
 }
 #endif
 
+- (AXTextMarkerRangeRef) textMarkerRangeFromVisiblePositions: (VisiblePosition) startPosition andEndPos: (VisiblePosition) endPosition
+{
+    AXTextMarkerRef startTextMarker = [self textMarkerForVisiblePosition: startPosition];
+    AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: endPosition];
+    return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
+}
+
+- (DocumentImpl *)topDocument
+{
+    return m_renderer->document()->topDocument();
+}
+
+- (RenderObject *)topRenderer
+{
+    return m_renderer->document()->topDocument()->renderer();
+}
+
+- (KHTMLView *)topView
+{
+    return m_renderer->document()->topDocument()->renderer()->canvas()->view();
+}
+
 - (id)accessibilityAttributeValue:(NSString *)attributeName
 {
     if (!m_renderer)
@@ -785,7 +815,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             while (!curr.isNull()) {
                 RenderObject* obj = curr.handle()->renderer();
                 if (obj)
-                    [links addObject: obj->document()->getOrCreateAccObjectCache()->accObject(obj)];
+                    [links addObject: obj->document()->getAccObjectCache()->accObject(obj)];
                 curr = coll.nextItem();
             }
             return links;
@@ -839,29 +869,32 @@ static QRect boundingBoxRect(RenderObject* obj)
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
     if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute]) {
-        int startPos, endPos;
-
-        RenderObject*   startRenderer = m_renderer->canvas()->selectionStart();
-        RenderObject*   endRenderer = m_renderer->canvas()->selectionEnd();
-        if (!startRenderer || !endRenderer)
-            return nil;
-        m_renderer->selectionStartEnd(startPos, endPos);
+        // get the selection from the document part
+        // NOTE: BUG support nested WebAreas, like in <http://webcourses.niu.edu/>
+        // (there is a web archive of this page attached to <rdar://problem/3888973>)
+        Selection   sel = [self topView]->part()->selection();
+        if (sel.isNone()) {
+            sel = m_renderer->document()->renderer()->canvas()->view()->part()->selection();
+            if (sel.isNone())
+                return nil;
+        }
             
-        AXTextMarkerRef startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(Position(startRenderer->node(), (long) startPos))];
-        AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(Position(endRenderer->node(), (long) endPos))];
-        return (id) [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
+        // return a marker range for the selection start to end
+        VisiblePosition startPosition = VisiblePosition(sel.start());
+        VisiblePosition endPosition = VisiblePosition(sel.end());
+        return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
     }
     
     if ([attributeName isEqualToString: (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute]) {
-        return nil;     // IMPLEMENT FO4
+        return nil;     // NOTE: BUG FO 4
     }
     
     if ([attributeName isEqualToString: (NSString *) kAXStartTextMarkerAttribute]) {
-        return (id) [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->positionForCoordinates (0, 0, nil))];
+        return (id) [self textMarkerForVisiblePosition: VisiblePosition([self topRenderer]->positionForCoordinates (0, 0, nil))];
     }
 
     if ([attributeName isEqualToString: (NSString *) kAXEndTextMarkerAttribute]) {
-        return (id) [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX, nil))];
+        return (id) [self textMarkerForVisiblePosition: VisiblePosition([self topRenderer]->positionForCoordinates (LONG_MAX, LONG_MAX, nil))];
     }
 #endif
 
@@ -874,143 +907,60 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (NSArray *)accessibilityParameterizedAttributeNames
 {
     static NSArray* paramAttributes = nil;
-    static NSArray* anchorParamAttrs = nil;
-    static NSArray* webAreaParamAttrs = nil;
     if (paramAttributes == nil) {
-        paramAttributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
-            kAXLineForTextMarkerParameterizedAttribute,
-//          kAXTextMarkerRangeForLineParameterizedAttribute,                // FO 1
+        paramAttributes = [[NSArray alloc] initWithObjects: 
+            (id) kAXLineForTextMarkerParameterizedAttribute,
+            kAXTextMarkerRangeForLineParameterizedAttribute,
             kAXStringForTextMarkerRangeParameterizedAttribute,
-//          kAXTextMarkerForPositionParameterizedAttribute,
-//          kAXBoundsForTextMarkerRangeParameterizedAttribute,
-//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,
-//          kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
+            kAXTextMarkerForPositionParameterizedAttribute,
+            kAXBoundsForTextMarkerRangeParameterizedAttribute,
+//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,                 // NOTE: BUG FO 3
+//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,                // NOTE: BUG FO 2
+            kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
             kAXNextTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
             kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute,
             kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
-//          kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
-//          kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXLengthForTextMarkerRangeParameterizedAttribute,
+            kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,
+            kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,
+            kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
+            kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
+            kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
+            kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
+            kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
+            kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
+            kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
+            kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
+            kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
+            kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
+            kAXLengthForTextMarkerRangeParameterizedAttribute,
             nil];
     }
-    if (anchorParamAttrs == nil) {
-        anchorParamAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
-            kAXLineForTextMarkerParameterizedAttribute,
-//          kAXTextMarkerRangeForLineParameterizedAttribute,                // FO 1
-            kAXStringForTextMarkerRangeParameterizedAttribute,
-//          kAXTextMarkerForPositionParameterizedAttribute,
-//          kAXBoundsForTextMarkerRangeParameterizedAttribute,
-//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,
-//          kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
-            kAXNextTextMarkerForTextMarkerParameterizedAttribute,
-            kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
-            kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
-//          kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
-//          kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXLengthForTextMarkerRangeParameterizedAttribute,
-            nil];
-    }
-    if (webAreaParamAttrs == nil) {
-        webAreaParamAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
-            kAXLineForTextMarkerParameterizedAttribute,
-//          kAXTextMarkerRangeForLineParameterizedAttribute,                // FO 1
-            kAXStringForTextMarkerRangeParameterizedAttribute,
-//          kAXTextMarkerForPositionParameterizedAttribute,
-//          kAXBoundsForTextMarkerRangeParameterizedAttribute,
-//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,
-//          kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
-            kAXNextTextMarkerForTextMarkerParameterizedAttribute,
-            kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
-            kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
-//          kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
-//          kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXLengthForTextMarkerRangeParameterizedAttribute,
-            nil];
-    }
-    
-    if (m_renderer && m_renderer->isCanvas())
-        return webAreaParamAttrs;
-    if (m_areaElement || (m_renderer && !m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasAnchor()))
-        return anchorParamAttrs;
+
     return paramAttributes;
-}
-
-- (AXTextMarkerRangeRef) textMarkerRangeFromVisiblePositions: (VisiblePosition) startPos andEndPos: (VisiblePosition) endPos
-{
-    AXTextMarkerRef startTextMarker = [self textMarkerForVisiblePosition: startPos];
-    AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: endPos];
-    return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
-}
-
-- (AXTextMarkerRangeRef) getSelectedTextMarkerRange
-{
-        int startOffset, endOffset;
-
-        RenderObject*   startRenderer = m_renderer->canvas()->selectionStart();
-        RenderObject*   endRenderer = m_renderer->canvas()->selectionEnd();
-        if (!startRenderer || !endRenderer)
-            return nil;
-        m_renderer->selectionStartEnd(startOffset, endOffset);
-            
-        VisiblePosition startPosition = VisiblePosition(Position(startRenderer->node(), (long) startOffset));
-        VisiblePosition endPosition   = VisiblePosition(Position(endRenderer->node(), (long) endOffset));
-        return [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
 - (id)doAXLineForTextMarker: (AXTextMarkerRef) textMarker
 {
-#if MARKER_SELF_TEST
-    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
-    textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
-#endif
-    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     unsigned int    lineCount = 0;
-    
-    // return nil if the marker was out of date
+    VisiblePosition savedVisiblePos;
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
         return nil;
-    
+
     // move up until we get to the top
-    // NOTE: This only takes us to the top of the element, not the top of the document
-    while (visiblePos.isNotNull()) {
+    // NOTE: BUG this is not correct in non-editable elements when the position is on the
+    // first line, but not at the first offset, because previousLinePosition takes you to the
+    // first offset, the same as if you had started on the second line.  In editable elements,
+    // previousLinePosition returns nil, so the count is accurate.
+    // NOTE: BUG This only takes us to the top of the rootEditableElement, not the top of the
+    // top document.
+    // NOTE: Can we use Selection::modify(EAlter alter, int verticalDistance)?
+    while (visiblePos.isNotNull() && visiblePos != savedVisiblePos) {
         lineCount += 1;
-        visiblePos = previousLinePosition(visiblePos, khtml::UPSTREAM, 0);
+        visiblePos.debugPosition("doAXLineForTextMarker");
+        savedVisiblePos = visiblePos;
+        visiblePos = previousLinePosition(visiblePos, khtml::DOWNSTREAM, 0);
     }
     
     return [NSNumber numberWithUnsignedInt:lineCount];
@@ -1018,9 +968,31 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (id)doAXTextMarkerRangeForLine: (NSNumber *) lineNumber
 {
-    if (!lineNumber) return nil;
+    unsigned lineCount = [lineNumber unsignedIntValue];
+    if (lineCount == 0 || !m_renderer) return nil;
     
-    return nil;     // IMPLEMENT
+    // iterate over the lines
+    // NOTE: BUG this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
+    // last offset of the last line
+    VisiblePosition visiblePos = VisiblePosition([self topRenderer]->positionForCoordinates (0, 0, nil));
+    VisiblePosition savedVisiblePos;
+    while (--lineCount != 0) {
+        savedVisiblePos = visiblePos;
+        visiblePos = nextLinePosition(visiblePos, khtml::DOWNSTREAM, 0);
+        if (visiblePos.isNull() || visiblePos == savedVisiblePos)
+            return nil;
+    }
+    
+    // make a caret selection for the marker position, then extend it to the line
+    Selection sel = Selection(visiblePos, visiblePos);
+    bool worked = sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
+    if (!worked)
+        return nil;
+
+    // return a marker range for the selection start to end
+    VisiblePosition startPosition = VisiblePosition(sel.start());
+    VisiblePosition endPosition = VisiblePosition(sel.end());
+    return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
 - (id)doAXStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
@@ -1029,16 +1001,14 @@ static QRect boundingBoxRect(RenderObject* obj)
     Position startDeepPos, endDeepPos;
     QString qString;
     
-#if MARKER_SELF_TEST
-    textMarkerRange = [self getSelectedTextMarkerRange];
-#endif
-    
     // extract the start and end VisiblePosition
     startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
-    if (startVisiblePosition.isNull()) return nil;
+    if (startVisiblePosition.isNull())
+        return nil;
     
     endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
-    if (endVisiblePosition.isNull()) return nil;
+    if (endVisiblePosition.isNull())
+        return nil;
     
     // use deepEquivalent because it is what the user sees
     startDeepPos = startVisiblePosition.deepEquivalent();
@@ -1048,42 +1018,142 @@ static QRect boundingBoxRect(RenderObject* obj)
     qString = plainText(Range(startDeepPos.node(), startDeepPos.offset(), endDeepPos.node(), endDeepPos.offset()));
     if (qString == nil) return nil;
     
-    // transform it to a CFString
+    // transform it to a CFString and return that
     return (id)qString.getCFString();
+}
+
+- (id)doAXTextMarkerForPosition: (CGPoint) point
+{
+    NSPoint screenpoint = NSMakePoint(point.x, point.y);
+    NSView * view = [self topView]->getView();
+    NSPoint windowpoint = [[view window] convertScreenToBase: screenpoint];
+    NSPoint ourpoint = [view convertPoint:windowpoint fromView:nil];
+
+    VisiblePosition visiblePos = VisiblePosition([self topRenderer]->positionForCoordinates ((int)ourpoint.x, (int)ourpoint.y, nil));
+    return (id) [self textMarkerForVisiblePosition:visiblePos];
+}
+
+- (id)doAXBoundsForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+{
+
+    // extract the start and end VisiblePosition
+    VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
+    if (startVisiblePosition.isNull())
+        return nil;
+    
+    VisiblePosition endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
+    if (endVisiblePosition.isNull())
+        return nil;
+    
+    // use the Selection class to help calculate the corresponding rectangle
+    // NOTE: If the selection spans lines, the rectangle is to extend across
+    // the width of the view
+    NSView * view = [self topView]->getView();
+    QRect rect1 = Selection(startVisiblePosition, startVisiblePosition).caretRect();
+    QRect rect2 = Selection(endVisiblePosition, endVisiblePosition).caretRect();
+    QRect ourrect = rect1.unite(rect2);
+    if (rect1.bottom() != rect2.bottom()) {
+        ourrect.setX((int)[view frame].origin.x);
+        ourrect.setWidth((int)[view frame].size.width);
+    }
+ 
+    // convert our rectangle to screen coordinates
+    NSRect rect = NSMakeRect(ourrect.left(), ourrect.top(), ourrect.width(), ourrect.height());
+    rect = [view convertRect:rect toView:nil];
+    rect.origin = [[view window] convertBaseToScreen:rect.origin];
+    
+    // return the converted rect
+    return [NSValue valueWithRect:rect];
+}
+
+- (id)doAXAttributedStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+{
+    // NOTE: BUG FO 2 Needs to make AX attributed string 
+    // Patti: Get the basic done first.  Add various text attribute support incrementally,
+    // starting with attachment and hyperlink.  The rest of the attributes can be FO2/3.
+
+    // extract the start and end VisiblePosition
+    VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
+    if (startVisiblePosition.isNull())
+        return nil;
+    
+    VisiblePosition endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
+    if (endVisiblePosition.isNull())
+        return nil;
+    
+    // get the attributed string by asking the document part
+    KWQKHTMLPart *docPart = KWQ([self topDocument]->part());
+    if (!docPart)
+        return nil;
+    
+    Position    startPos = startVisiblePosition.deepEquivalent();
+    Position    endPos   = endVisiblePosition.deepEquivalent();
+    NSAttributedString * attrString = docPart->attributedString(startPos.node(), startPos.offset(), endPos.node(), endPos.offset());
+    return attrString;
+}
+
+- (id)doAXTextMarkerRangeForUnorderedTextMarkers: (NSArray *) markers
+{
+#if MARKERARRAY_SELF_TEST
+    AXTextMarkerRangeRef tmr = [self getSelectedTextMarkerRange];
+    AXTextMarkerRef tm1 = [self AXTextMarkerRangeCopyEndMarkerWrapper:tmr];
+    AXTextMarkerRef tm2 = [self AXTextMarkerRangeCopyStartMarkerWrapper:tmr];
+    markers = [NSArray arrayWithObjects: (id) tm1, (id) tm2, nil];
+#endif
+    // get and validate the markers
+    if ([markers count] < 2)
+        return nil;
+    
+    AXTextMarkerRef textMarker1 = (AXTextMarkerRef) [markers objectAtIndex:0];
+    AXTextMarkerRef textMarker2 = (AXTextMarkerRef) [markers objectAtIndex:1];
+    if (CFGetTypeID(textMarker1) != AXTextMarkerGetTypeID() || CFGetTypeID(textMarker2) != AXTextMarkerGetTypeID())
+        return nil;
+    
+    // convert to VisiblePosition
+    VisiblePosition visiblePos1 = [self visiblePositionForTextMarker:textMarker1];
+    VisiblePosition visiblePos2 = [self visiblePositionForTextMarker:textMarker2];
+    if (visiblePos1.isNull() || visiblePos2.isNull())
+        return nil;
+    
+    // use the Selection class to do the ordering
+    // NOTE: Perhaps we could add a Selection method to indicate direction, based on m_baseIsStart
+    AXTextMarkerRef startTextMarker;
+    AXTextMarkerRef endTextMarker;
+    Selection   sel(visiblePos1, visiblePos2);
+    if (sel.base() == sel.start()) {
+        startTextMarker = textMarker1;
+        endTextMarker = textMarker2;
+    } else {
+        startTextMarker = textMarker2;
+        endTextMarker = textMarker1;
+    }
+    
+    // return a range based on the Selection verdict
+    return (id) [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
 - (id)doAXNextTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
 {
-#if MARKER_SELF_TEST
-    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
-    textMarker = [self AXTextMarkerRangeCopyEndMarkerWrapper:textMarkerRange];
-#endif
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition nextVisiblePos = visiblePos.next();
-    if (nextVisiblePos.isNull()) return nil;
+    if (nextVisiblePos.isNull())
+        return nil;
     
     return (id) [self textMarkerForVisiblePosition:nextVisiblePos];
 }
 
 - (id)doAXPreviousTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
 {
-#if MARKER_SELF_TEST
-    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
-    textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
-#endif
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition previousVisiblePos = visiblePos.previous();
-    if (previousVisiblePos.isNull()) return nil;
+    if (previousVisiblePos.isNull())
+        return nil;
     
     return (id) [self textMarkerForVisiblePosition:previousVisiblePos];
 }
 
 - (id)doAXLeftWordTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
 {
-#if MARKER_SELF_TEST
-    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
-    textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
-#endif
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfWord(visiblePos, khtml::LeftWordIfOnBoundary);
     VisiblePosition endPosition = endOfWord(startPosition);
@@ -1093,10 +1163,6 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (id)doAXRightWordTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
 {
-#if MARKER_SELF_TEST
-    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
-    textMarker = [self AXTextMarkerRangeCopyEndMarkerWrapper:textMarkerRange];
-#endif
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfWord(visiblePos, khtml::RightWordIfOnBoundary);
     VisiblePosition endPosition = endOfWord(startPosition);
@@ -1106,46 +1172,217 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (id)doAXLeftLineTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
 {
-#if 0
-## startOfLine and endOfLine are declared but not defined
+    // use Selection class instead of visible_units because startOfLine and endOfLine
+    // are declared but not defined
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
-    VisiblePosition startPosition = startOfLine(visiblePos, khtml::UPSTREAM);
-    VisiblePosition endPosition = endOfLine(startPosition, khtml::DOWNSTREAM);
+    if (visiblePos.isNull())
+        return nil;
+    
+    // make a caret selection for the position before marker position (to make sure
+    // we move off of a line start)
+    VisiblePosition prevVisiblePos = visiblePos.previous();
+    if (prevVisiblePos.isNull())
+        return nil;
+    
+    // extend selection to the line
+    // NOTE: ignores results of sel.modify because it returns false when
+    // starting at an empty line.  The resulting selection in that case
+    // will be a caret at prevVisiblePos. 
+    Selection sel = Selection(prevVisiblePos, prevVisiblePos);
+    (void)sel.modify(Selection::MOVE, Selection::LEFT, khtml::LINE_BOUNDARY);
+    (void)sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
 
+    // return a marker range for the selection start to end
+    VisiblePosition startPosition = VisiblePosition(sel.start());
+    VisiblePosition endPosition = VisiblePosition(sel.end());
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
-#else
-    // use Selection class instead
-    return nil;
-#endif
 }
 
 - (id)doAXRightLineTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
 {
-#if 0
-## startOfLine and endOfLine are declared but not defined
+    // use Selection class instead of visible_units because startOfLine and endOfLine
+    // are declared but not defined
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
-    VisiblePosition startPosition = startOfLine(visiblePos, khtml::DOWNSTREAM);
-    VisiblePosition endPosition = endOfLine(startPosition, khtml::DOWNSTREAM);
+    if (visiblePos.isNull())
+        return nil;
+    
+    // make a caret selection for the marker position, then extend it to the line
+    VisiblePosition nextVisiblePos = visiblePos.next();
+    if (nextVisiblePos.isNull())
+        return nil;
+        
+    // NOTE: ignores results of sel.modify because it returns false when
+    // starting at an empty line.  The resulting selection in that case
+    // will be a caret at nextVisiblePos. 
+    Selection sel = Selection(nextVisiblePos, nextVisiblePos);
+    (void)sel.modify(Selection::MOVE, Selection::RIGHT, khtml::LINE_BOUNDARY);
+    (void)sel.modify(Selection::EXTEND, Selection::LEFT, khtml::LINE_BOUNDARY);
+
+    // return a marker range for the selection start to end
+    VisiblePosition startPosition = VisiblePosition(sel.start());
+    VisiblePosition endPosition = VisiblePosition(sel.end());
+    return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+}
+
+- (id)doAXSentenceTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+{
+    // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
+    // Related? <rdar://problem/3927736> Text selection broken in 8A336
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    VisiblePosition startPosition = startOfSentence(visiblePos);
+    VisiblePosition endPosition = endOfSentence(startPosition);
 
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
-#else
-    // use Selection class instead
-    return nil;
-#endif
+}
+
+- (id)doAXParagraphTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+{
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    VisiblePosition startPosition = startOfParagraph(visiblePos);
+    VisiblePosition endPosition = endOfParagraph(startPosition);
+
+    return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+}
+
+- (id)doAXNextWordEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+
+    VisiblePosition endPosition = endOfWord(visiblePos, khtml::RightWordIfOnBoundary);
+    return (id) [self textMarkerForVisiblePosition: endPosition];
+}
+
+- (id)doAXPreviousWordStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+
+    VisiblePosition startPosition = startOfWord(visiblePos, khtml::LeftWordIfOnBoundary);
+    return (id) [self textMarkerForVisiblePosition: startPosition];
+}
+
+- (id)doAXNextLineEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+    // use Selection class instead of visible_units because startOfLine and endOfLine
+    // are declared but not defined
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+    
+    // make a caret selection for the marker position, then move it to the line end
+    VisiblePosition nextVisiblePos = visiblePos.next();
+    if (nextVisiblePos.isNull())
+        return nil;
+        
+    Selection sel = Selection(nextVisiblePos, nextVisiblePos);
+    bool worked = sel.modify(Selection::MOVE, Selection::RIGHT, khtml::LINE_BOUNDARY);
+    if (!worked)
+        return nil;
+
+    // return a marker for the selection end
+    VisiblePosition endPosition = VisiblePosition(sel.end());
+    return (id) [self textMarkerForVisiblePosition: endPosition];
+}
+
+- (id)doAXPreviousLineStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+    // use Selection class instead of visible_units because startOfLine and endOfLine
+    // are declared but not defined
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+    
+    // make a caret selection for the marker position, then move it to the line start
+    VisiblePosition prevVisiblePos = visiblePos.previous();
+    if (prevVisiblePos.isNull())
+        return nil;
+        
+    Selection sel = Selection(prevVisiblePos, prevVisiblePos);
+    bool worked = sel.modify(Selection::MOVE, Selection::LEFT, khtml::LINE_BOUNDARY);
+    if (!worked)
+        return nil;
+
+    // return a marker for the selection start
+    VisiblePosition startPosition = VisiblePosition(sel.start());
+    return (id) [self textMarkerForVisiblePosition: startPosition];
+}
+
+- (id)doAXNextSentenceEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+    // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
+    // Related? <rdar://problem/3927736> Text selection broken in 8A336
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+
+    VisiblePosition endPosition = endOfSentence(visiblePos);
+    return (id) [self textMarkerForVisiblePosition: endPosition];
+}
+
+- (id)doAXPreviousSentenceStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+    // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
+    // Related? <rdar://problem/3927736> Text selection broken in 8A336
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+
+    VisiblePosition startPosition = startOfSentence(visiblePos);
+    return (id) [self textMarkerForVisiblePosition: startPosition];
+}
+
+- (id)doAXNextParagraphEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+
+    VisiblePosition endPosition = endOfParagraph(visiblePos);
+    return (id) [self textMarkerForVisiblePosition: endPosition];
+}
+
+- (id)doAXPreviousParagraphStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+
+    VisiblePosition startPosition = startOfParagraph(visiblePos);
+    return (id) [self textMarkerForVisiblePosition: startPosition];
+}
+
+- (id)doAXLengthForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+{
+    // NOTE: BUG Multi-byte support
+    CFStringRef string = (CFStringRef) [self doAXStringForTextMarkerRange: textMarkerRange];
+    if (!string)
+        return nil;
+
+    return [NSNumber numberWithInt:CFStringGetLength(string)];
 }
 
 - (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
 {
     AXTextMarkerRef         textMarker = nil;
     AXTextMarkerRangeRef    textMarkerRange = nil;
+    AXValueRef              value = nil;
     NSNumber *              number = nil;
-
+    NSArray *               array = nil;
+    CGPoint                 point;
+    CGSize                  size;
+    CGRect                  rect;
+    CFRange                 range;
+    AXError                 error;
+    
     // basic parameter validation
     if (!m_renderer || !attribute || !parameter)
         return nil;
 
     // common parameter type check/casting.  Nil checks in handlers catch wrong type case.
-    // NOTE: This assumes nil is not a valid parameter, because itis indistinguishable from
+    // NOTE: This assumes nil is not a valid parameter, because it is indistinguishable from
     // a parameter of the wrong type.
     if (CFGetTypeID(parameter) == AXTextMarkerGetTypeID())
         textMarker = (AXTextMarkerRef) parameter;
@@ -1153,8 +1390,33 @@ static QRect boundingBoxRect(RenderObject* obj)
     else if (CFGetTypeID(parameter) == AXTextMarkerRangeGetTypeID())
         textMarkerRange = (AXTextMarkerRangeRef) parameter;
 
-    else if ([parameter isKindOfClass:[NSNumber self]]) {
+    else if ([parameter isKindOfClass:[NSNumber self]])
         number = parameter;
+
+    else if ([parameter isKindOfClass:[NSArray self]])
+        array = parameter;
+
+    else if (CFGetTypeID(parameter) == AXValueGetTypeID()) {
+        value = (AXValueRef) parameter;
+        switch (AXValueGetType(value)) {
+            case kAXValueCGPointType:
+                AXValueGetValue(value, kAXValueCGPointType, &point);
+                break;
+            case kAXValueCGSizeType:
+                AXValueGetValue(value, kAXValueCGSizeType, &size);
+                break;
+            case kAXValueCGRectType:
+                AXValueGetValue(value, kAXValueCGRectType, &rect);
+                break;
+            case kAXValueCFRangeType:
+                AXValueGetValue(value, kAXValueCFRangeType, &range);
+                break;
+            case kAXValueAXErrorType:
+                AXValueGetValue(value, kAXValueAXErrorType, &error);
+                break;
+            default:
+                break;
+        }
     }
   
     // dispatch
@@ -1166,6 +1428,18 @@ static QRect boundingBoxRect(RenderObject* obj)
 
     if ([attribute isEqualToString: (NSString *) kAXStringForTextMarkerRangeParameterizedAttribute])
         return [self doAXStringForTextMarkerRange: textMarkerRange];
+
+    if ([attribute isEqualToString: (NSString *) kAXTextMarkerForPositionParameterizedAttribute])
+        return [self doAXTextMarkerForPosition: point];
+
+    if ([attribute isEqualToString: (NSString *) kAXBoundsForTextMarkerRangeParameterizedAttribute])
+        return [self doAXBoundsForTextMarkerRange: textMarkerRange];
+
+    if ([attribute isEqualToString: (NSString *) kAXAttributedStringForTextMarkerRangeParameterizedAttribute])
+        return [self doAXAttributedStringForTextMarkerRange: textMarkerRange];
+
+    if ([attribute isEqualToString: (NSString *) kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute])
+        return [self doAXTextMarkerRangeForUnorderedTextMarkers: array];
 
     if ([attribute isEqualToString: (NSString *) kAXNextTextMarkerForTextMarkerParameterizedAttribute])
         return [self doAXNextTextMarkerForTextMarker: textMarker];
@@ -1185,10 +1459,39 @@ static QRect boundingBoxRect(RenderObject* obj)
     if ([attribute isEqualToString: (NSString *) kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute])
         return [self doAXRightLineTextMarkerRangeForTextMarker: textMarker];
 
-#if 0
-    if ([attribute isEqualToString: (NSString *) XXXX])
-        return [self doXXXX: textMarker];
-#endif
+    if ([attribute isEqualToString: (NSString *) kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute])
+        return [self doAXSentenceTextMarkerRangeForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute])
+        return [self doAXParagraphTextMarkerRangeForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXNextWordEndTextMarkerForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXPreviousWordStartTextMarkerForTextMarker: textMarker];
+        
+    if ([attribute isEqualToString: (NSString *) kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXNextLineEndTextMarkerForTextMarker: textMarker];
+        
+    if ([attribute isEqualToString: (NSString *) kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXPreviousLineStartTextMarkerForTextMarker: textMarker];
+        
+    if ([attribute isEqualToString: (NSString *) kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXNextSentenceEndTextMarkerForTextMarker: textMarker];
+        
+    if ([attribute isEqualToString: (NSString *) kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXPreviousSentenceStartTextMarkerForTextMarker: textMarker];
+        
+    if ([attribute isEqualToString: (NSString *) kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXNextParagraphEndTextMarkerForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXPreviousParagraphStartTextMarkerForTextMarker: textMarker];
+        
+    if ([attribute isEqualToString: (NSString *) kAXLengthForTextMarkerRangeParameterizedAttribute])
+        return [self doAXLengthForTextMarkerRange: textMarkerRange];
+
     return nil;
 }
 
@@ -1206,16 +1509,57 @@ static QRect boundingBoxRect(RenderObject* obj)
     RenderObject* obj = nodeInfo.innerNode()->renderer();
     if (!obj)
         return self;
-    return obj->document()->getOrCreateAccObjectCache()->accObject(obj);
+    return obj->document()->getAccObjectCache()->accObject(obj);
 }
 
-#if 0
-// NOTE: why don't we override this?  Probablly because AppKit's done it for us.
 - (id)accessibilityFocusedUIElement
 {
+    // NOTE: BUG support nested WebAreas
+    NodeImpl *focusNode = m_renderer->document()->focusNode();
+    if (!focusNode || !focusNode->renderer())
+        return nil;
+
+    return focusNode->renderer()->document()->getAccObjectCache()->accObject(focusNode->renderer());
 }
 
-#endif
+- (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
+{
+    if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute])
+        return YES;
+        
+    return NO;
+}
+
+- (void)doSetAXSelectedTextMarkerRange: (AXTextMarkerRangeRef)textMarkerRange
+{
+    VisiblePosition startVisiblePosition, endVisiblePosition;
+    
+    // extract the start and end VisiblePosition
+    startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
+    if (startVisiblePosition.isNull())
+        return;
+    
+    endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
+    if (endVisiblePosition.isNull())
+        return;
+    
+    // make selection and tell the document to use it
+    // NOTE: BUG support nested WebAreas
+    Selection sel = Selection(startVisiblePosition, endVisiblePosition);
+    [self topDocument]->part()->setSelection(sel);
+}
+
+- (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attributeName;
+{
+    AXTextMarkerRangeRef    textMarkerRange = nil;
+
+    if (CFGetTypeID(value) == AXTextMarkerRangeGetTypeID())
+        textMarkerRange = (AXTextMarkerRangeRef) value;
+        
+    if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute]) {
+        [self doSetAXSelectedTextMarkerRange:textMarkerRange];
+    }
+}
 
 - (void)childrenChanged
 {
@@ -1238,14 +1582,12 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 -(void)setAccObjectID:(KWQAccObjectID) accObjectID
 {
-//    ASSERT(accObjectID == 0 || m_accObjectID == 0);
     m_accObjectID = accObjectID;
 }
 
 - (void)removeAccObjectID
 {
-    KWQAccObjectCache* cache = m_renderer->document()->getExistingAccObjectCache();
-    cache->removeAccObjectID(self);
+    m_renderer->document()->getAccObjectCache()->removeAccObjectID(self);
 }
 
 @end

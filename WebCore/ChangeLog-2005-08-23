@@ -1,3 +1,114 @@
+2005-01-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/3776056> AX: Editable HTML should not be viewed as AXStaticText
+        <rdar://problem/3588548> AX: tabbing does not work correctly with the screen reader and a focused link; need AXFocusedUIElement to work
+        
+        Many more AX attributes supported.  Numerous fixes to previous AX work.
+        
+        * khtml/editing/visible_units.cpp:
+        (khtml::startSentenceBoundary):
+        (khtml::startOfSentence):
+        (khtml::endSentenceBoundary):
+        (khtml::endOfSentence):
+        (khtml::previousSentencePositionBoundary):
+        (khtml::previousSentencePosition):
+        (khtml::nextSentencePositionBoundary):
+        (khtml::nextSentencePosition):
+        * khtml/editing/visible_units.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        * khtml/misc/helper.cpp:
+        (khtml::findSentenceBoundary):
+        (khtml::nextSentenceFromIndex):
+        * khtml/misc/helper.h:
+        * khtml/misc/htmltags.c:
+        (hash_tag):
+        (findTag):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::removeChildNode):
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::remove):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::getAccObjectCache):
+        (DocumentImpl::updateSelection):
+        (DocumentImpl::close):
+        (DocumentImpl::setFocusNode):
+        (DocumentImpl::parentDocument):
+        (DocumentImpl::topDocument):
+        * khtml/xml/dom_docimpl.h:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityShouldUseUniqueId]):
+        (-[KWQAccObject detach]):
+        (-[KWQAccObject anchorElement]):
+        (-[KWQAccObject firstChild]):
+        (-[KWQAccObject lastChild]):
+        (-[KWQAccObject previousSibling]):
+        (-[KWQAccObject nextSibling]):
+        (-[KWQAccObject parentObject]):
+        (-[KWQAccObject value]):
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityPerformAction:]):
+        (-[KWQAccObject textMarkerForVisiblePosition:]):
+        (-[KWQAccObject visiblePositionForTextMarker:]):
+        (-[KWQAccObject textMarkerRangeFromVisiblePositions:andEndPos:]):
+        (-[KWQAccObject topDocument]):
+        (-[KWQAccObject topRenderer]):
+        (-[KWQAccObject topView]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject accessibilityParameterizedAttributeNames]):
+        (-[KWQAccObject doAXLineForTextMarker:]):
+        (-[KWQAccObject doAXTextMarkerRangeForLine:]):
+        (-[KWQAccObject doAXStringForTextMarkerRange:]):
+        (-[KWQAccObject doAXTextMarkerForPosition:]):
+        (-[KWQAccObject doAXBoundsForTextMarkerRange:]):
+        (-[KWQAccObject doAXAttributedStringForTextMarkerRange:]):
+        (-[KWQAccObject doAXTextMarkerRangeForUnorderedTextMarkers:]):
+        (-[KWQAccObject doAXNextTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXLeftWordTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXRightWordTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXLeftLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXRightLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXSentenceTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXParagraphTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXNextWordEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousWordStartTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXNextLineEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousLineStartTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXNextSentenceEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousSentenceStartTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXNextParagraphEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousParagraphStartTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXLengthForTextMarkerRange:]):
+        (-[KWQAccObject accessibilityAttributeValue:forParameter:]):
+        (-[KWQAccObject accessibilityHitTest:]):
+        (-[KWQAccObject accessibilityFocusedUIElement]):
+        (-[KWQAccObject accessibilityIsAttributeSettable:]):
+        (-[KWQAccObject doSetAXSelectedTextMarkerRange:]):
+        (-[KWQAccObject setAccObjectID:]):
+        (-[KWQAccObject removeAccObjectID]):
+        * kwq/KWQAccObjectCache.h:
+        * kwq/KWQAccObjectCache.mm:
+        (KWQAccObjectCache::setAccObject):
+        (KWQAccObjectCache::removeAccObject):
+        (KWQAccObjectCache::visiblePositionForTextMarker):
+        (KWQAccObjectCache::postNotificationToTopWebArea):
+        (KWQAccObjectCache::postNotification):
+        (KWQAccObjectCache::handleFocusedUIElementChanged):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::respondToChangedContents):
+        * kwq/KWQTextUtilities.h:
+        * kwq/KWQTextUtilities.mm:
+        (KWQFindNextWordFromIndex):
+        (KWQFindSentenceBoundary):
+        (KWQFindNextSentenceFromIndex):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge accessibilityTree]):
+
 2005-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -47,6 +47,12 @@ VisiblePosition endOfLine(const VisiblePosition &, EAffinity, EIncludeLineBreak 
 VisiblePosition previousLinePosition(const VisiblePosition &, EAffinity, int x);
 VisiblePosition nextLinePosition(const VisiblePosition &, EAffinity, int x);
 
+// sentences
+VisiblePosition startOfSentence(const VisiblePosition &);
+VisiblePosition endOfSentence(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+VisiblePosition previousSentencePosition(const VisiblePosition &, EAffinity, int x);
+VisiblePosition nextSentencePosition(const VisiblePosition &, EAffinity, int x);
+
 // paragraphs
 VisiblePosition startOfParagraph(const VisiblePosition &);
 VisiblePosition endOfParagraph(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);

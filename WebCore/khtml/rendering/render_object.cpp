@@ -1813,9 +1813,7 @@ void RenderObject::remove()
 {
 #if APPLE_CHANGES
     // Delete our accessibility object if we have one.
-    KWQAccObjectCache* cache = document()->getExistingAccObjectCache();
-    if (cache)
-        cache->detach(this);
+    document()->getAccObjectCache()->detach(this);
 #endif
 
     removeFromObjectLists();

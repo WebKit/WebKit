@@ -238,6 +238,60 @@ VisiblePosition nextLinePosition(const VisiblePosition &c, EAffinity affinity, i
     return VisiblePosition(pos.nextLinePosition(x, affinity));
 }
 
+// ---------
+
+static unsigned startSentenceBoundary(const QChar *characters, unsigned length)
+{
+    int start, end;
+    findSentenceBoundary(characters, length, length, &start, &end);
+    return start;
+}
+
+VisiblePosition startOfSentence(const VisiblePosition &c)
+{
+    return previousWordBoundary(c, startSentenceBoundary);
+}
+
+// ---------
+
+static unsigned endSentenceBoundary(const QChar *characters, unsigned length)
+{
+    int start, end;
+    findSentenceBoundary(characters, length, 0, &start, &end);
+    return end;
+}
+
+VisiblePosition endOfSentence(const VisiblePosition &c, EIncludeLineBreak includeLineBreak)
+{
+    return nextWordBoundary(c, endSentenceBoundary);
+}
+
+// ---------
+
+static unsigned previousSentencePositionBoundary(const QChar *characters, unsigned length)
+{
+    return nextSentenceFromIndex(characters, length, length, false);
+}
+
+VisiblePosition previousSentencePosition(const VisiblePosition &c, EAffinity, int x)
+{
+    return previousWordBoundary(c, previousSentencePositionBoundary);
+}
+
+// ---------
+
+static unsigned nextSentencePositionBoundary(const QChar *characters, unsigned length)
+{
+    return nextSentenceFromIndex(characters, length, 0, true);
+}
+
+VisiblePosition nextSentencePosition(const VisiblePosition &c, EAffinity, int x)
+{
+    return nextWordBoundary(c, nextSentencePositionBoundary);
+}
+
+// ---------
+
 VisiblePosition startOfParagraph(const VisiblePosition &c)
 {
     Position p = c.deepEquivalent();

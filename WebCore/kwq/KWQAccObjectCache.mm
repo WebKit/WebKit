@@ -29,6 +29,7 @@
 #include "KWQAssertions.h"
 #include "KWQFoundationExtras.h"
 #include <qstring.h>
+#include <render_object.h>
 
 using khtml::RenderObject;
 using khtml::VisiblePosition;
@@ -86,6 +87,7 @@ void KWQAccObjectCache::setAccObject(RenderObject* impl, KWQAccObject* accObject
         accCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     
     CFDictionarySetValue(accCache, (const void *)impl, accObject);
+    ASSERT(!accCacheByID || CFDictionaryGetCount(accCache) >= CFDictionaryGetCount(accCacheByID));
 }
 
 void KWQAccObjectCache::removeAccObject(RenderObject* impl)
@@ -99,6 +101,8 @@ void KWQAccObjectCache::removeAccObject(RenderObject* impl)
         [obj release];
         CFDictionaryRemoveValue(accCache, impl);
     }
+
+    ASSERT(!accCacheByID || CFDictionaryGetCount(accCache) >= CFDictionaryGetCount(accCacheByID));
 }
 
 KWQAccObjectID KWQAccObjectCache::getAccObjectID(KWQAccObject* accObject)
@@ -202,7 +206,7 @@ VisiblePosition   KWQAccObjectCache::visiblePositionForTextMarker (AXTextMarkerR
     }
 
     // return empty position if the text marker is no longer valid
-    if (!CFDictionaryContainsKey(accCacheByID, (const void *)textMarkerData->accObjectID))
+    if (!accCacheByID || !CFDictionaryContainsKey(accCacheByID, (const void *)textMarkerData->accObjectID))
         return VisiblePosition();
 
     // return the position from the data we stored earlier
@@ -227,7 +231,26 @@ void KWQAccObjectCache::childrenChanged(RenderObject* renderer)
     [obj childrenChanged];
 }
 
+void KWQAccObjectCache::postNotificationToTopWebArea(RenderObject* renderer, const QString& msg)
+{
+    if (renderer) {
+        RenderObject * obj = renderer->document()->topDocument()->renderer();
+        NSAccessibilityPostNotification(accObject(obj), msg.getNSString());
+    }
+}
+
 void KWQAccObjectCache::postNotification(RenderObject* renderer, const QString& msg)
 {
-    NSAccessibilityPostNotification(accObject(renderer), msg.getNSString());
+    if (renderer)
+        NSAccessibilityPostNotification(accObject(renderer), msg.getNSString());
+}
+
+extern "C" void NSAccessibilityHandleFocusChanged(void);
+void KWQAccObjectCache::handleFocusedUIElementChanged(void)
+{
+    // This is an internal AppKit call that does a number of things in addition to
+    // sending the AXFocusedUIElementChanged notification.  It will call
+    // will call accessibilityFocusedUIElement() to determine which element
+    // to include in the notification.
+    NSAccessibilityHandleFocusChanged();
 }

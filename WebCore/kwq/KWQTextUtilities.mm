@@ -27,6 +27,9 @@
 
 #import "KWQString.h"
 #import <AppKit/NSAttributedString.h>
+#import <unicode/ubrk.h>
+#import <unicode/ustring.h>
+#import <unicode/utypes.h>
 
 void KWQFindWordBoundary(const QChar *chars, int len, int position, int *start, int *end)
 {
@@ -49,4 +52,53 @@ int KWQFindNextWordFromIndex(const QChar *chars, int len, int position, bool for
     [attr release];
     [string release];
     return result;
+}
+
+void KWQFindSentenceBoundary(const QChar *chars, int len, int position, int *start, int *end)
+{
+    int  startPos = 0;
+    int  endPos = 0;
+
+    const char *localeName = [[NSString localizedNameOfStringEncoding:NSASCIIStringEncoding] UTF8String];
+    UErrorCode status = U_ZERO_ERROR;
+    UBreakIterator *boundary = ubrk_open(UBRK_SENTENCE, localeName, const_cast<unichar *>(reinterpret_cast<const unichar *>(chars)) + position, len, &status);
+    if ( boundary && U_SUCCESS(status) ) {
+        startPos = ubrk_first(boundary);
+        if (startPos == UBRK_DONE)
+            startPos = 0;
+        endPos = ubrk_next(boundary);
+        if (endPos == UBRK_DONE)
+            endPos = 0;
+        ubrk_close(boundary);
+    }
+
+    *start = startPos;
+    *end = endPos;
+}
+
+int KWQFindNextSentenceFromIndex(const QChar *chars, int len, int position, bool forward)
+{
+    int pos = 0;
+    
+    const char *localeName = [[NSString localizedNameOfStringEncoding:NSASCIIStringEncoding] UTF8String];
+    UErrorCode status = U_ZERO_ERROR;
+    UBreakIterator *boundary = ubrk_open(UBRK_SENTENCE, localeName, const_cast<unichar *>(reinterpret_cast<const unichar *>(chars)) + position, len, &status);
+    if ( boundary && U_SUCCESS(status) ) {
+        int firstpos = ubrk_first(boundary);
+        if (forward) {
+            pos = ubrk_next(boundary);
+            if (pos == firstpos)
+                pos = ubrk_next(boundary);
+        } else {
+            pos = ubrk_previous(boundary);
+            if (pos == firstpos)
+                pos = ubrk_previous(boundary);
+        }
+        ubrk_close(boundary);
+    }
+
+    if (pos == UBRK_DONE)
+        pos = 0;
+        
+    return pos;
 }

@@ -54,4 +54,22 @@ int nextWordFromIndex(const QChar *chars, int len, int position, bool forward)
 #endif
 }
 
+void findSentenceBoundary(const QChar *chars, int len, int position, int *start, int *end)
+{
+#if APPLE_CHANGES
+    KWQFindSentenceBoundary(chars, len, position, start, end);
+#else
+    // KDE implementation
+#endif
+}
+
+int nextSentenceFromIndex(const QChar *chars, int len, int position, bool forward)
+{
+#if APPLE_CHANGES
+    return KWQFindNextSentenceFromIndex(chars, len, position, forward);
+#else
+    // KDE implementation
+#endif
+}
+
 }

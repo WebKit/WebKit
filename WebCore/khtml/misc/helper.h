@@ -43,6 +43,8 @@ namespace khtml
 
     void findWordBoundary(const QChar *chars, int len, int position, int *start, int *end);
     int nextWordFromIndex(const QChar *chars, int len, int position, bool forward);
+    void findSentenceBoundary(const QChar *chars, int len, int position, int *start, int *end);
+    int nextSentenceFromIndex(const QChar *chars, int len, int position, bool forward);
 };
 
 #endif
