@@ -44,20 +44,17 @@ extern DOM::DOMString NSStringToDOMString(NSString *aString);
 
 @interface WebCoreDOMElement (CorePrivate)
 + (WebCoreDOMElement *)elementWithImpl: (DOM::ElementImpl *)impl;
-- initWithImpl: (DOM::ElementImpl *)coreImpl;
-- (DOM::ElementImpl *)impl;
+- (DOM::ElementImpl *)elementImpl;
 @end
 
 @interface WebCoreDOMAttr (CorePrivate)
 + (WebCoreDOMAttr *)attrWithImpl: (DOM::AttrImpl *)impl;
-- initWithImpl: (DOM::AttrImpl *)coreImpl;
-- (DOM::AttrImpl *)impl;
+- (DOM::AttrImpl *)attrImpl;
 @end
 
 @interface WebCoreDOMDocumentFragment (CorePrivate)
 + (WebCoreDOMDocumentFragment *)documentFragmentWithImpl: (DOM::DocumentFragmentImpl *)impl;
-- initWithImpl: (DOM::DocumentFragmentImpl *)coreImpl;
-- (DOM::DocumentFragmentImpl *)impl;
+- (DOM::DocumentFragmentImpl *)documentFragmentImpl;
 @end
 
 @interface WebCoreDOMCharacterData (CorePrivate)
@@ -68,32 +65,27 @@ extern DOM::DOMString NSStringToDOMString(NSString *aString);
 
 @interface WebCoreDOMText (CorePrivate)
 + (WebCoreDOMText *)textWithImpl: (DOM::TextImpl *)impl;
-- initWithImpl: (DOM::TextImpl *)coreImpl;
-- (DOM::TextImpl *)impl;
+- (DOM::TextImpl *)textImpl;
 @end
 
 @interface WebCoreDOMComment (CorePrivate)
 + (WebCoreDOMComment *)commentWithImpl: (DOM::CommentImpl *)impl;
-- initWithImpl: (DOM::CommentImpl *)coreImpl;
-- (DOM::CommentImpl *)impl;
+- (DOM::CommentImpl *)commentImpl;
 @end
 
 @interface WebCoreDOMCDATASection (CorePrivate)
 + (WebCoreDOMCDATASection *)CDATASectionWithImpl: (DOM::CDATASectionImpl *)impl;
-- initWithImpl: (DOM::CDATASectionImpl *)coreImpl;
-- (DOM::CDATASectionImpl *)impl;
+- (DOM::CDATASectionImpl *)CDATASectionImpl;
 @end
 
 @interface WebCoreDOMProcessingInstruction (CorePrivate)
 + (WebCoreDOMProcessingInstruction *)processingInstructionWithImpl: (DOM::ProcessingInstructionImpl *)impl;
-- initWithImpl: (DOM::ProcessingInstructionImpl *)coreImpl;
-- (DOM::ProcessingInstructionImpl *)impl;
+- (DOM::ProcessingInstructionImpl *)processingInstructionImpl;
 @end
 
 @interface WebCoreDOMEntityReference (CorePrivate)
 + (WebCoreDOMEntityReference *)entityReferenceWithImpl: (DOM::EntityReferenceImpl *)impl;
-- initWithImpl: (DOM::EntityReferenceImpl *)coreImpl;
-- (DOM::EntityReferenceImpl *)impl;
+- (DOM::EntityReferenceImpl *)entityReferenceImpl;
 @end
 
 @interface WebCoreDOMNode (CorePrivate)

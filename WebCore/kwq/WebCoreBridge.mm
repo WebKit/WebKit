@@ -567,26 +567,26 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     bool hasNewLine = true;
     DOM::Node n = _startNode;
     khtml::RenderObject *renderer;
-    khtml::RenderStyle *style;
     NSFont *font;
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
     NSAttributedString *partialString;
-    NSColor *color;
     
     while(!n.isNull()) {
-        if(n.nodeType() == DOM::Node::TEXT_NODE) {
+        renderer = n.handle()->renderer();
+        if(n.nodeType() == DOM::Node::TEXT_NODE && renderer != 0) {
             QString text;
             QString str = n.nodeValue().string();
+            khtml::RenderStyle *style = 0;
             
-            renderer = n.handle()->renderer();
             font = nil;
             if (renderer){
                 style = renderer->style();
                 if (style) {
                     font = style->font().getNSFont();
-                    color = style->color().getNSColor();
                 }
             }
+            else
+                printf ("No renderer for %s\n", [text.getNSString() cString]);
             
             hasNewLine = false;            
             if(n == _startNode && n == endNode && startOffset >=0 && endOffset >= 0)
@@ -598,15 +598,22 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
             else
                 text = str;
                 
-            if (font)
-                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: [NSDictionary dictionaryWithObjectsAndKeys: font, NSFontAttributeName, color, NSForegroundColorAttributeName, 0]];
+            if (font){
+                NSMutableDictionary *attrs = [[[NSMutableDictionary alloc] init] autorelease];
+                [attrs setObject:font forKey:NSFontAttributeName];
+                if (style && style->color().isValid())
+                    [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+                if (style && style->backgroundColor().isValid())
+                    [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: attrs];
+            }
             else
                 partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
                 
             [result appendAttributedString: partialString];
             [partialString release];
         }
-        else {
+        else if (renderer != 0){
             // This is our simple HTML -> ASCII transformation:
             QString text;
             unsigned short _id = n.elementId();

@@ -386,31 +386,26 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     return [[(WebCoreDOMAttr *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
 
-- initWithImpl:(DOM::AttrImpl *)coreImpl
-{
-    return [super initWithImpl:coreImpl];
-}
-
-- (DOM::AttrImpl *)impl
+- (DOM::AttrImpl *)attrImpl
 {
     return (DOM::AttrImpl *)impl;
 }
 
 - (NSString *)name
 {
-    DOM::Attr instance = DOM::AttrImpl::createInstance([self impl]);
+    DOM::Attr instance = DOM::AttrImpl::createInstance([self attrImpl]);
     DOM::DOMString _name = instance.name();
     return domStringToNSString(_name);
 }
 
 - (BOOL)specified
 {
-    return [self impl]->specified();
+    return [self attrImpl]->specified();
 }
 
 - (NSString *)value
 {
-    DOM::Attr instance = DOM::AttrImpl::createInstance([self impl]);
+    DOM::Attr instance = DOM::AttrImpl::createInstance([self attrImpl]);
     DOM::DOMString _value = instance.value();
     
     return domStringToNSString(_value);
@@ -418,13 +413,13 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (void)setValue:(NSString *)value;
 {
-    DOM::Attr instance = DOM::AttrImpl::createInstance([self impl]);
+    DOM::Attr instance = DOM::AttrImpl::createInstance([self attrImpl]);
     instance.setValue (NSStringToDOMString(value));
 }
 
 - (id<WebDOMElement>)ownerElement
 {
-    DOM::Attr instance = DOM::AttrImpl::createInstance([self impl]);
+    DOM::Attr instance = DOM::AttrImpl::createInstance([self attrImpl]);
     return [WebCoreDOMElement elementWithImpl: (DOM::ElementImpl *)instance.ownerElement().handle()];
 }
 
@@ -437,8 +432,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 { 
     return [[(WebCoreDOMDocumentFragment *)[[self class] alloc] initWithImpl: _impl] autorelease]; 
 }
-- initWithImpl:(DOM::DocumentFragmentImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::DocumentFragmentImpl *)impl { return (DOM::DocumentFragmentImpl *)impl; }
+- (DOM::DocumentFragmentImpl *)documentFragmentImpl { return (DOM::DocumentFragmentImpl *)impl; }
 
 // No additional methods.
 @end
@@ -446,12 +440,11 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMElement
 
 + (WebCoreDOMElement *)elementWithImpl: (DOM::ElementImpl *)_impl { return [[(WebCoreDOMElement *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::ElementImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::ElementImpl *)impl { return (DOM::ElementImpl *)impl; }
+- (DOM::ElementImpl *)elementImpl { return (DOM::ElementImpl *)impl; }
 
 - (NSString *)tagName
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     DOM::DOMString _tagName = instance.tagName();
 
     return domStringToNSString(_tagName);
@@ -459,7 +452,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (NSString *)getAttribute: (NSString *)name;
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     DOM::DOMString _attribute = instance.getAttribute(NSStringToDOMString(name));
 
     return domStringToNSString(_attribute);
@@ -467,19 +460,19 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (void)setAttribute:(NSString *)name :(NSString *)value
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     instance.setAttribute(NSStringToDOMString(name), NSStringToDOMString(value));
 }
 
 - (void)removeAttribute:(NSString *)name
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     instance.removeAttribute(NSStringToDOMString(name));
 }
 
 - (id<WebDOMAttr>)getAttributeNode:(NSString *)name
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     DOM::Attr ret = instance.getAttributeNode(NSStringToDOMString(name));
     
     return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
@@ -487,8 +480,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (id<WebDOMAttr>)setAttributeNode:(id<WebDOMAttr>)newAttr;
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
-    DOM::Attr _newAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)newAttr impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
+    DOM::Attr _newAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)newAttr attrImpl]);
     DOM::Attr ret = instance.setAttributeNode(_newAttr);
     
     return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
@@ -496,8 +489,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (id<WebDOMAttr>)removeAttributeNode:(id<WebDOMAttr>)oldAttr
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
-    DOM::Attr _oldAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)oldAttr impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
+    DOM::Attr _oldAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)oldAttr attrImpl]);
     DOM::Attr ret = instance.removeAttributeNode(_oldAttr);
     
     return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
@@ -505,7 +498,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (id<WebDOMNodeList>)getElementsByTagName:(NSString *)name
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     DOM::NodeList ret = instance.getElementsByTagName(NSStringToDOMString(name));
     
     return [WebCoreDOMNodeList nodeListWithImpl: (DOM::NodeListImpl *)ret.handle()];
@@ -513,7 +506,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (id<WebDOMNodeList>)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     DOM::NodeList ret = instance.getElementsByTagNameNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(localName));
     
     return [WebCoreDOMNodeList nodeListWithImpl: (DOM::NodeListImpl *)ret.handle()];
@@ -521,7 +514,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (NSString *)getAttributeNS:(NSString *)namespaceURI :(NSString *)localName
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     DOM::DOMString ret = instance.getAttributeNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(localName));
     
     return domStringToNSString(ret);
@@ -529,19 +522,19 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (void)setAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName :(NSString *)value
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     instance.setAttributeNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(qualifiedName), NSStringToDOMString(value));
 }
 
 - (void)removeAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     instance.removeAttributeNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(localName));
 }
 
 - (id<WebDOMAttr>)getAttributeNodeNS:(NSString *)namespaceURI :(NSString *)localName;
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     DOM::Attr ret = instance.getAttributeNodeNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(localName));
     
     return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
@@ -549,8 +542,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (id<WebDOMAttr>)setAttributeNodeNS:(id<WebDOMAttr>)newAttr;
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
-    DOM::Attr _newAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)newAttr impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
+    DOM::Attr _newAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)newAttr attrImpl]);
     DOM::Attr ret = instance.setAttributeNodeNS(_newAttr);
     
     return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
@@ -558,14 +551,14 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (BOOL)hasAttribute: (NSString *)name;
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     
     return instance.hasAttribute (NSStringToDOMString(name));
 }
 
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
 {
-    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Element instance = DOM::ElementImpl::createInstance([self elementImpl]);
     
     return instance.hasAttributeNS (NSStringToDOMString(namespaceURI), NSStringToDOMString(localName));
 }
@@ -576,64 +569,62 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMEntityReference
 
 + (WebCoreDOMEntityReference *)entityReferenceWithImpl: (DOM::EntityReferenceImpl *)_impl { return [[(WebCoreDOMEntityReference *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::EntityReferenceImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::EntityReferenceImpl *)impl { return (DOM::EntityReferenceImpl *)impl; }
+- (DOM::EntityReferenceImpl *)entityReferenceImpl { return (DOM::EntityReferenceImpl *)impl; }
 
 @end
 
 @implementation WebCoreDOMCharacterData
 
 + (WebCoreDOMCharacterData *)commentWithImpl: (DOM::CharacterDataImpl *)_impl { return [[(WebCoreDOMCharacterData *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::CharacterDataImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::CharacterDataImpl *)impl { return (DOM::CharacterDataImpl *)impl; }
+- (DOM::CharacterDataImpl *)characterDataImpl { return (DOM::CharacterDataImpl *)impl; }
 
 - (NSString *)data
 {
-    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self characterDataImpl]);
     DOM::DOMString data = instance.data();
     return domStringToNSString(data);
 }
 
 - (void)setData: (NSString *)data
 {
-    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self characterDataImpl]);
     return instance.setData(NSStringToDOMString(data));
 }
 
 - (unsigned long)length
 {
-    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self characterDataImpl]);
     return instance.length();
 }
 
 - (NSString *)substringData: (unsigned long)offset :(unsigned long)count
 {
-    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self characterDataImpl]);
     DOM::DOMString substring = instance.substringData(offset,count);
     return domStringToNSString(substring);
 }
 
 - (void)appendData:(NSString *)arg
 {
-    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self characterDataImpl]);
     instance.appendData(NSStringToDOMString(arg));
 }
 
 - (void)insertData:(unsigned long)offset :(NSString *)arg
 {
-    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self characterDataImpl]);
     instance.insertData(offset, NSStringToDOMString(arg));
 }
 
 - (void)deleteData:(unsigned long)offset :(unsigned long) count
 {
-    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self characterDataImpl]);
     instance.deleteData(offset, count);
 }
 
 - (void)replaceData:(unsigned long)offset :(unsigned long)count :(NSString *)arg;
 {
-    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self impl]);
+    DOM::CharacterData instance = DOM::CharacterDataImpl::createInstance([self characterDataImpl]);
     instance.replaceData(offset, count, NSStringToDOMString(arg));
 }
 
@@ -642,8 +633,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMComment
 
 + (WebCoreDOMComment *)commentWithImpl: (DOM::CommentImpl *)_impl { return [[(WebCoreDOMComment *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::CommentImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::CommentImpl *)impl { return (DOM::CommentImpl *)impl; }
+- (DOM::CommentImpl *)commentImpl { return (DOM::CommentImpl *)impl; }
 
 // No additional methods.
 
@@ -652,12 +642,11 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMText
 
 + (WebCoreDOMText *)textWithImpl: (DOM::TextImpl *)_impl { return [[(WebCoreDOMText *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::TextImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::TextImpl *)impl { return (DOM::TextImpl *)impl; }
+- (DOM::TextImpl *)textImpl { return (DOM::TextImpl *)impl; }
 
 - (id<WebDOMText>)splitText: (unsigned long)offset
 {
-    DOM::Text instance = DOM::TextImpl::createInstance([self impl]);
+    DOM::Text instance = DOM::TextImpl::createInstance([self textImpl]);
     return [WebCoreDOMText textWithImpl: (DOM::TextImpl *)instance.splitText(offset).handle()];
 }
 
@@ -669,8 +658,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 {
     return [[(WebCoreDOMCDATASection *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
-- initWithImpl:(DOM::CDATASectionImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::CDATASectionImpl *)impl { return (DOM::CDATASectionImpl *)impl; }
+- (DOM::CDATASectionImpl *)CDATASectionImpl { return (DOM::CDATASectionImpl *)impl; }
 
 // No additional methods.
 @end
@@ -679,26 +667,25 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 + (WebCoreDOMProcessingInstruction *)processingInstructionWithImpl: (DOM::ProcessingInstructionImpl *)_impl
 { return [[(WebCoreDOMProcessingInstruction *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::ProcessingInstructionImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
-- (DOM::ProcessingInstructionImpl *)impl { return (DOM::ProcessingInstructionImpl *)impl; }
+- (DOM::ProcessingInstructionImpl *)processingInstructionImpl { return (DOM::ProcessingInstructionImpl *)impl; }
 
 - (NSString *)target;
 {
-    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self impl]);
+    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self processingInstructionImpl]);
     DOM::DOMString data = instance.data();
     return domStringToNSString(data);
 }
 
 - (NSString *)data
 {
-    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self impl]);
+    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self processingInstructionImpl]);
     DOM::DOMString data = instance.data();
     return domStringToNSString(data);
 }
 
 - (void)setData:(NSString *)data
 {
-    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self impl]);
+    DOM::ProcessingInstruction instance = DOM::ProcessingInstructionImpl::createInstance([self processingInstructionImpl]);
     return instance.setData(NSStringToDOMString(data));
 }
 
