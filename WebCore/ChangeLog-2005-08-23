@@ -1,3 +1,16 @@
+2004-07-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+        
+        Added some layout tests.
+
+        * layout-tests/editing/selection/select-all-001-expected.txt: Added.
+        * layout-tests/editing/selection/select-all-001.html: Added.
+        * layout-tests/editing/selection/select-all-002-expected.txt: Added.
+        * layout-tests/editing/selection/select-all-002.html: Added.
+        * layout-tests/editing/selection/select-all-003-expected.txt: Added.
+        * layout-tests/editing/selection/select-all-003.html: Added.
+
 2004-07-28  Trey Matteson  <trey@apple.com>
 
 	Spellchecking, Part I.  Basic spellcheck is working.  Spelling panel is hooked up.

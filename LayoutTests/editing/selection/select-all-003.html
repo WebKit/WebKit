@@ -1,0 +1,49 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: solid red 50px;
+    font-size: 24px; 
+    line-height: 48px; 
+    padding: 24px; 
+    margin: 64px;
+    width: 600px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    selectAllCommand();    
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" class="editing">
+<br>
+<br>
+Four score and seven years ago our fathers brought forth, upon this
+continent, a new nation, conceived in Liberty, and dedicated to the
+proposition that all men are created equal. Now we are engaged in a
+great civil war, testing whether that nation, or any nation, so
+conceived, and so dedicated, can long endure. We are met here on a great
+battlefield of that war. We have come to dedicate a portion of it as a
+final resting place for those who here gave their lives that that nation
+might live. It is altogether fitting and proper that we should do this.
+Four score and seven years ago our fathers brought forth, upon this
+continent, a new nation, conceived in Liberty, and dedicated to the
+proposition that all men are created equal.
+<br>
+<br>
+<div id="test"></div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>
