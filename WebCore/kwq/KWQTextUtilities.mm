@@ -67,14 +67,17 @@ static char * currentTextBreakLocaleID(void)
     static char     localeStringBuffer[localeStringLength];
     char *          localeString = &localeStringBuffer[0];
     
+    // empty string means "root locale", which what we use if we can't use a pref
+    *localeString = 0;
+    
     // We get the parts string from AppleTextBreakLocale pref.
     // If that fails then look for the first language in the AppleLanguages pref.
     CFStringRef prefLocaleStr = (CFStringRef) CFPreferencesCopyValue( CFSTR("AppleTextBreakLocale"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
-    if ( !prefLocaleStr ) {
+    if (!prefLocaleStr) {
         CFArrayRef appleLangArr = (CFArrayRef) CFPreferencesCopyValue( CFSTR("AppleLanguages"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
-        if ( appleLangArr )  {
+        if (appleLangArr)  {
             // Take the topmost language. Retain so that we can blindly release later.                                                                                                   
-            prefLocaleStr = (CFStringRef) CFArrayGetValueAtIndex( appleLangArr, 0 );
+            prefLocaleStr = (CFStringRef) CFArrayGetValueAtIndex(appleLangArr, 0);
             if (prefLocaleStr)
                 CFRetain( prefLocaleStr ); 
             CFRelease( appleLangArr );
@@ -86,37 +89,16 @@ static char * currentTextBreakLocaleID(void)
         CFStringGetCString( prefLocaleStr, localeString, localeStringLength, kCFStringEncodingASCII );
 #else
         // Canonicalize pref string in case it is not in the canonical format. This call is only available on Tiger and newer.
-        CFStringRef canonLocaleCFStr = CFLocaleCreateCanonicalLanguageIdentifierFromString( kCFAllocatorDefault, prefLocaleStr );
-        if ( canonLocaleCFStr != NULL ) {
-            CFStringGetCString( canonLocaleCFStr, localeString, localeStringLength, kCFStringEncodingASCII );
-            CFRelease( canonLocaleCFStr );
+        CFStringRef canonLocaleCFStr = CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, prefLocaleStr);
+        if (canonLocaleCFStr) {
+            CFStringGetCString(canonLocaleCFStr, localeString, localeStringLength, kCFStringEncodingASCII);
+            CFRelease(canonLocaleCFStr);
         }
 #endif
 
-        CFRelease( prefLocaleStr );
-    } else {
-        // If the prefs don't return anything, use the empty string (root locale)
-        *localeString = 0;
-#if 0
-        // If the prefs don't return anything do fall back to getting the default locale
-        // from the old locale model: convert the NULL locale to a locale-variant string,
-        // canonicalize that and store that in our buffer. We double up on using our global
-        // buffer so we don't have to use another intermediate buffer. The end result is what counts.
-        if ( LocaleRefGetPartString( NULL, kLocaleAllPartsMask, localeStringLength, localeString ) == noErr ) {
-            CFStringRef localeCFStr = CFStringCreateWithCString( kCFAllocatorDefault, localeString, kCFStringEncodingASCII );
-            if ( localeCFStr ) {
-                CFStringRef canonLocaleCFStr canonLocaleCFStr = CFLocaleCreateCanonicalLanguageIdentifierFromString( kCFAllocatorDefault, localeCFStr );
-                if ( canonLocaleCFStr ) {
-                    CFStringGetCString( canonLocaleCFStr, localeString, localeStringLength, kCFStringEncodingASCII );
-                    CFRelease( canonLocaleCFStr );
-                }
-
-                CFRelease( localeCFStr );
-            }
-        }
-#endif
+        CFRelease(prefLocaleStr);
     }
-    
+   
     return localeString;
 }
 
