@@ -2,6 +2,15 @@
 
         Reviewed by Ken.
 
+        - fixed RegExp.toString so 3 more Mozilla regexp tests pass
+
+        * kjs/regexp_object.cpp: (RegExpProtoFuncImp::call):
+        Append the flags here so more tests paseed.
+
+2004-08-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed a couple things making 5 Mozilla regexp tests pass
 
         * kjs/regexp_object.cpp: (RegExpProtoFuncImp::call): Implement toString

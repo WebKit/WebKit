@@ -135,7 +135,15 @@ Value RegExpProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     str = "/";
     str += s.value();
     str += "/";
-    // TODO append the flags
+    if (thisObj.get(exec,"global").toBoolean(exec)) {
+      str += "g";
+    }
+    if (thisObj.get(exec,"ignoreCase").toBoolean(exec)) {
+      str += "i";
+    }
+    if (thisObj.get(exec,"multiline").toBoolean(exec)) {
+      str += "m";
+    }
     return String(str);
   }
 
