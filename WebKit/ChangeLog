@@ -271,8 +271,6 @@
 
         * Plugins.subproj/WebBaseNetscapePluginView.m: Don't throttle plug-in when in an active window.
 
-=== Safari-49 ===
-
 2003-01-03  Richard Williamson   <rjw@apple.com>
 
         Fixed 3139129.  Added application/xhtml+xml to list of supported type.

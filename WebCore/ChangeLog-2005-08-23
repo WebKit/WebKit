@@ -370,8 +370,6 @@
         * kwq/KWQTextStream.mm:
 	First cut implementation.
 
-=== Safari-49 ===
-
 2003-01-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by no one cause I'm just changing copyright strings.
