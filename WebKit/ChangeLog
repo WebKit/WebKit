@@ -1,5 +1,11 @@
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
+	Forgot to add WebPluginController back to the project after I had a project conflict.
+
+        * WebKit.pbproj/project.pbxproj:
+
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
 	Added WebPluginController which controls and reacts to plug-in requests. Its owned by the WebFrame.
 
         * Plugins.subproj/WebPluginController.h: Added.
