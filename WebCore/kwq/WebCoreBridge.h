@@ -258,6 +258,7 @@ typedef enum {
 - (NSSelectionAffinity)selectionAffinity;
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
+- (NSFont *)renderedFontForNode:(DOMNode *)node;
 
 + (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding;
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;

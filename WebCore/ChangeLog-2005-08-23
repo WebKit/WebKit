@@ -1,3 +1,15 @@
+2004-04-30  John Sullivan  <sullivan@apple.com>
+
+        - added bridge method to get the NSFont used to render a node, to
+        help with supporting the font panel
+
+        Reviewed by Ken.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge renderedFontForNode:]):
+        return nil if no renderer, otherwise return NSFont
+
 2004-04-29  David Hyatt  <hyatt@apple.com>
 
 	Expose summary on tables.

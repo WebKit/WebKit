@@ -2150,7 +2150,6 @@ static NSDictionary *_textAttributesFromStyle(DOMCSSStyleDeclaration *style)
 
 static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 {
-    ASSERT_ARG(style, style != nil);
     // FIXME: can't get at CSS_PROP_FONT_FAMILY and such from cssproperties.h in WebCore
     // because that header file isn't available to WebKit. Is that a problem?
     // FIXME: calling [DOMCSSStyleDeclaration fontFamily] doesn't work yet, returns nil.
@@ -2159,18 +2158,6 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     // FIXME: calling [DOMCSSStyleDeclaration font] doesn't work yet, fails WebCore assertion
     ERROR("unimplemented");
     return nil;
-}
-
-static BOOL _stylesRepresentSameFont(DOMCSSStyleDeclaration *style, DOMCSSStyleDeclaration *otherStyle)
-{
-    ERROR("unimplemented");
-    return NO;
-}
-
-static BOOL _stylesRepresentSameAttributes(DOMCSSStyleDeclaration *style, DOMCSSStyleDeclaration *otherStyle)
-{
-    ERROR("unimplemented");
-    return NO;
 }
 
 - (void)_updateFontPanel
@@ -2189,11 +2176,14 @@ static BOOL _stylesRepresentSameAttributes(DOMCSSStyleDeclaration *style, DOMCSS
     }
     
     BOOL onlyOneFontInSelection = YES;
-    BOOL attributesIdenticalThroughoutSelection = YES;
     DOMCSSStyleDeclaration *style = nil;
+    NSFont *font = nil;
     
     if (![[self _bridgeForCurrentSelection] haveSelection]) {
         style = [self typingStyle];
+        font = _fontFromStyle(style);
+        // FIXME: We're currently thinking that typingStyle will always specify a font, but we need to
+        // make sure that it's implemented that way when it is implemented.
     } else {
         // FIXME: This code is being reached after backspacing with only an insertion
         // point showing; this must be a bug in haveSelection or underlying code.
@@ -2205,6 +2195,7 @@ static BOOL _stylesRepresentSameAttributes(DOMCSSStyleDeclaration *style, DOMCSS
         }
         ASSERT([firstSelectedElement isKindOfClass:[DOMElement class]]);
         
+        font = [[self _bridgeForCurrentSelection] renderedFontForNode:firstSelectedElement];
         style = [self computedStyleForElement:(DOMElement *)firstSelectedElement pseudoElement:nil];
         
         // Iterate through all selected elements to see if fonts or attributes change.
@@ -2229,17 +2220,9 @@ static BOOL _stylesRepresentSameAttributes(DOMCSSStyleDeclaration *style, DOMCSS
                     ASSERT([element isKindOfClass:[DOMElement class]]);
                     
                     DOMCSSStyleDeclaration *otherStyle = [self computedStyleForElement:(DOMElement *)element pseudoElement:nil];
-                    if (onlyOneFontInSelection && !_stylesRepresentSameFont(style, otherStyle)) {
+                    NSFont *otherFont = [[self _bridgeForCurrentSelection] renderedFontForNode:element];
+                    if (![font isEqual:otherFont]) {
                         onlyOneFontInSelection = NO;
-                    }
-                    
-                    if (attributesIdenticalThroughoutSelection && !_stylesRepresentSameAttributes(style, otherStyle)) {
-                        attributesIdenticalThroughoutSelection = NO;
-                    }
-                    
-                    // If we've concluded that the selection contains more than one font and
-                    // more than one set of attributes, then we needn't check further.
-                    if (!onlyOneFontInSelection && !attributesIdenticalThroughoutSelection) {
                         break;
                     }
                 }
@@ -2249,12 +2232,8 @@ static BOOL _stylesRepresentSameAttributes(DOMCSSStyleDeclaration *style, DOMCSS
         }
     }
     
-    // FIXME: getting a font from the DOMCSSStyleDeclaration is probably not reliable.
-    // We might need some API that asks the renderer what font was actually used.
-    NSFont *font = _fontFromStyle(style);
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
-    // selection. We should be able to replace this with ASSERT(style != nil) once _fontFromStyle() and
-    // [self typingStyle] both work.
+    // selection. We should be able to remove this once the rest of this code works properly.
     if (font == nil) {
         if (![[self _bridgeForCurrentSelection] haveSelection]) {
             font = [NSFont toolTipsFontOfSize:17];
@@ -2266,7 +2245,9 @@ static BOOL _stylesRepresentSameAttributes(DOMCSSStyleDeclaration *style, DOMCSS
         
     NSFontManager *fm = [NSFontManager sharedFontManager];
     [fm setSelectedFont:font isMultiple:!onlyOneFontInSelection];
-    [fm setSelectedAttributes:_textAttributesFromStyle(style) isMultiple:!attributesIdenticalThroughoutSelection];
+    // FIXME: we don't keep track of selected attributes, or set them on the font panel. This
+    // appears to have no effect on the UI. E.g., underlined text in Mail or TextEdit is
+    // not reflected in the font panel. Maybe someday this will change.
 }
 
 @end

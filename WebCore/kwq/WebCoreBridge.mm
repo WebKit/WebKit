@@ -1099,6 +1099,15 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->attributedString([startNode _nodeImpl], startOffset, [endNode _nodeImpl], endOffset);
 }
 
+- (NSFont *)renderedFontForNode:(DOMNode *)node
+{
+    RenderObject *renderer = [node _nodeImpl]->renderer();
+    if (renderer) {
+        return renderer->style()->font().getNSFont();
+    }
+    return nil;
+}
+
 - (DOMNode *)selectionStart
 {
     return [DOMNode _nodeWithImpl:_part->selectionStart()];
