@@ -57,8 +57,6 @@ public:
     virtual bool isHTMLDocument() const { return true; }
 
     DOMString referrer() const;
-    DOMString domain() const;
-    void setDomain( const DOMString &newDomain, bool force = false ); // not part of the DOM
     DOMString lastModified() const;
     DOMString cookie() const;
     void setCookie( const DOMString &);

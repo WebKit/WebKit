@@ -958,27 +958,22 @@ bool Window::isSafeScript(ExecState *exec) const
   // exist yet allow JS to access the window object.
   if (!m_part->xmlDocImpl())
       return true;
-  
-  DOM::HTMLDocument thisDocument = m_part->htmlDocument();
-  if ( thisDocument.isNull() ) {
-    kdDebug(6070) << "Window::isSafeScript: trying to access an XML document !?" << endl;
-    return false;
-  }
 
-  DOM::HTMLDocument actDocument = activePart->htmlDocument();
+  DOM::DocumentImpl* thisDocument = m_part->xmlDocImpl();
+  DOM::DocumentImpl* actDocument = activePart->xmlDocImpl();
 
-  if ( actDocument.isNull() ) {
+  if (!actDocument) {
     kdDebug(6070) << "Window::isSafeScript: active part has no document!" << endl;
     return false;
   }
 
-  DOM::DOMString actDomain = actDocument.domain();
+  DOM::DOMString actDomain = actDocument->domain();
   
   // Always allow local pages to execute any JS.
   if (actDomain.isNull())
     return true;
   
-  DOM::DOMString thisDomain = thisDocument.domain();
+  DOM::DOMString thisDomain = thisDocument->domain();
   //kdDebug(6070) << "current domain:" << actDomain.string() << ", frame domain:" << thisDomain.string() << endl;
   if ( actDomain == thisDomain )
     return true;
@@ -1289,11 +1284,14 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
           khtmlpart->begin();
           khtmlpart->write("<HTML><BODY>");
           khtmlpart->end();
-          if ( part->docImpl() ) {
-            kdDebug(6070) << "Setting domain to " << part->docImpl()->domain().string() << endl;
-            khtmlpart->docImpl()->setDomain( part->docImpl()->domain(), true );
-            khtmlpart->docImpl()->setBaseURL( part->docImpl()->baseURL() );
+
+          if (part->xmlDocImpl()) {
+            kdDebug(6070) << "Setting domain to " << part->xmlDocImpl()->domain().string() << endl;
+            khtmlpart->xmlDocImpl()->setDomain( part->docImpl()->domain(), true );
           }
+          
+          if ( part->docImpl() )
+            khtmlpart->docImpl()->setBaseURL( part->docImpl()->baseURL() );
         }
 #if APPLE_CHANGES
         if (!url.isEmpty()) {

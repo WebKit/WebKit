@@ -1785,9 +1785,9 @@ void KHTMLPart::checkEmitLoadEvent()
   // All frames completed -> set their domain to the frameset's domain
   // This must only be done when loading the frameset initially (#22039),
   // not when following a link in a frame (#44162).
-  if ( d->m_doc && d->m_doc->isHTMLDocument() )
+  if ( d->m_doc )
   {
-    DOMString domain = static_cast<HTMLDocumentImpl*>(d->m_doc)->domain();
+    DOMString domain = d->m_doc->domain();
     ConstFrameIt it = d->m_frames.begin();
     ConstFrameIt end = d->m_frames.end();
     for (; it != end; ++it )
@@ -1796,10 +1796,10 @@ void KHTMLPart::checkEmitLoadEvent()
       if ( p && p->inherits( "KHTMLPart" ))
       {
         KHTMLPart* htmlFrame = static_cast<KHTMLPart *>(p);
-        if (htmlFrame->d->m_doc && htmlFrame->d->m_doc->isHTMLDocument() )
+        if (htmlFrame->d->m_doc)
         {
           kdDebug() << "KHTMLPart::checkCompleted setting frame domain to " << domain.string() << endl;
-          static_cast<HTMLDocumentImpl*>(htmlFrame->d->m_doc)->setDomain( domain );
+          htmlFrame->d->m_doc->setDomain( domain );
         }
       }
     }

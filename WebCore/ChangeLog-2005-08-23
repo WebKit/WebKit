@@ -1,5 +1,31 @@
 2003-07-18  Dave Hyatt  <hyatt@apple.com>
 
+	Enable domain() and setDomain() to work for all documents (XML
+	as well as HTML).
+
+	Implement onload for frames.
+	
+        Reviewed by mjs
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::isSafeScript):
+        (WindowFunc::tryCall):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::parseAttribute):
+        (HTMLIFrameElementImpl::parseAttribute):
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_documentimpl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::checkEmitLoadEvent):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::domain):
+        (DocumentImpl::setDomain):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchWindowEvent):
+
+2003-07-18  Dave Hyatt  <hyatt@apple.com>
+
 	Fix for 3334082, XML documents can access HTML/XML docs in other
 	domains.  The basic bug is that we made a change right before
 	1.0 to allow a parent document to access a child frame's document
