@@ -62,7 +62,7 @@ static int hexDigitValue(char c)
 
 static void applyHostNameFunctionToMailToURLString(NSString *string, StringRangeApplierFunction f, void *context)
 {
-    // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' character.
+    // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' character.
     // Skip quoted strings so that characters in them don't confuse us.
     // When we find a '?' character, we are past the part of the URL that contains host names.
 
@@ -72,7 +72,7 @@ static void applyHostNameFunctionToMailToURLString(NSString *string, StringRange
     }
     static NSCharacterSet *hostNameEndCharacters;
     if (hostNameEndCharacters == nil) {
-        hostNameEndCharacters = [[NSCharacterSet characterSetWithCharactersInString:@">,"] retain];
+        hostNameEndCharacters = [[NSCharacterSet characterSetWithCharactersInString:@">,?"] retain];
     }
     static NSCharacterSet *quotedStringCharacters;
     if (quotedStringCharacters == nil) {
@@ -105,7 +105,7 @@ static void applyHostNameFunctionToMailToURLString(NSString *string, StringRange
                 hostNameEnd.location = stringLength;
                 done = YES;
             } else {
-                remaining.location = NSMaxRange(hostNameEnd);
+                remaining.location = hostNameEnd.location;
                 remaining.length = stringLength - remaining.location;
                 done = NO;
             }

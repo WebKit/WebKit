@@ -1535,7 +1535,7 @@ QString KURL::encodeHostname(const QString &s)
 
 QMemArray<KWQIntegerPair> KURL::findHostnamesInMailToURL(const QString &s)
 {
-    // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or end of string character.
+    // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' or end of string character.
     // Skip quoted strings so that characters in them don't confuse us.
     // When we find a '?' character, we are past the part of the URL that contains host names.
 
@@ -1558,13 +1558,13 @@ QMemArray<KWQIntegerPair> KURL::findHostnamesInMailToURL(const QString &s)
         if (c == '@') {
             // Find end of host name.
             int hostnameStart = p;
-            int hostnameEnd = s.find(QRegExp("[>,]"), p);
+            int hostnameEnd = s.find(QRegExp("[>,?]"), p);
             bool done;
             if (hostnameEnd == -1) {
                 hostnameEnd = s.length();
                 done = true;
             } else {
-                p = hostnameEnd + 1;
+                p = hostnameEnd;
                 done = false;
             }
 

@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3566805>: REGRESSION: When the subject of mailto is 2 byte Safari failed to send mail address and subject to Mail.app
+
+        * kwq/KWQKURL.mm: (KURL::findHostnamesInMailToURL): Update to handle hostnames that end just before
+        a '?' since a '?' ends the entire part of the URL that can contain hostnames. Also change the logic so
+        that the '?' will successfully end the search.
+
+2004-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3599650>: main image missing due to incorrect relative URL resolution at www.brother.com
 
         * kwq/KWQKURL.mm: (KURL::KURL): Implement compatibility rule from the URI RFC.
