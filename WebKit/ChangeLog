@@ -1,3 +1,5 @@
+=== Safari-54 ===
+
 2003-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed problem where we weren't stopping the Java plug-in. This problem was introduced on Jan. 1 when the ownership of the WebPluginController was moved from WebFrame to WebDataSource. This change moves the WebPluginController to the WebHTMLView. Why this change?
