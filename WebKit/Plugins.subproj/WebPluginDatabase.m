@@ -30,22 +30,26 @@ static WebPluginDatabase *database = nil;
 
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
-    WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil;
+    WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil, *webPlugin=nil;
     uint i;
 
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
         if([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]){
             if([plugin isKindOfClass:[WebPluginPackage class]]){
-                // It's the new kind of plug-in. Return it immediately.
-                return plugin;
+                if(webPlugin == nil){
+                    webPlugin = plugin;
+                }
             }else if([plugin isKindOfClass:[WebNetscapePluginPackage class]]){
                 WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
-
                 if(executableType == WebCFMExecutableType){
-                    CFMPlugin = plugin;
+                    if(CFMPlugin == nil){
+                        CFMPlugin = plugin;
+                    }
                 }else if(executableType == WebMachOExecutableType){
-                    machoPlugin = plugin;
+                    if(machoPlugin == nil){
+                        machoPlugin = plugin;
+                    }
                 }else{
                     [NSException raise:NSInternalInconsistencyException
                                 format:@"Unknown executable type for plugin"];
@@ -56,8 +60,10 @@ static WebPluginDatabase *database = nil;
             }
         }
     }
-
-    if(machoPlugin){
+    
+    if(webPlugin){
+        return webPlugin;
+    }else if(machoPlugin){
         return machoPlugin;
     }else{
         return CFMPlugin;
