@@ -26,6 +26,7 @@
 #include <jni_instance.h>
 #include <jni_runtime.h>
 #include <jni_utility.h>
+#include <runtime_object.h>
 
 using namespace Bindings;
 using namespace KJS;
@@ -52,13 +53,14 @@ Class *JavaInstance::getClass() const
     return JavaClass::classForInstance (_instance->_instance);
 }
 
-Value JavaInstance::invokeMethod (const Method *method, const List &args)
+Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, const List &args)
 {
     const JavaMethod *jMethod = static_cast<const JavaMethod*>(method);
     int i, count = args.size();
     jvalue *jArgs;
+    Value resultValue;
     
-    fprintf(stderr,"%s: this=%p, invoking %s which returns %s and takes %d args\n", __PRETTY_FUNCTION__, this, method->name(), method->returnType(), count);
+    fprintf(stderr,"%s: this=%p, invoking %s with signature %s\n", __PRETTY_FUNCTION__, this, method->name(), jMethod->signature());
     
     if (count > 0) {
         jArgs = (jvalue *)malloc (count * sizeof(jvalue));
@@ -68,70 +70,82 @@ Value JavaInstance::invokeMethod (const Method *method, const List &args)
         
     for (i = 0; i < count; i++) {
         fprintf (stderr, "%s:  %d, type %d\n", __PRETTY_FUNCTION__, i, args.at(i).type());
+        JavaParameter *aParameter = static_cast<JavaParameter *>(jMethod->parameterAt(i));
+        jArgs[i] = convertValueToJValue (exec, args.at(i), aParameter);
     }
     
     jvalue result;
     switch (jMethod->JNIReturnType()){
         case void_type: {
-            callJNIVoidMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            callJNIVoidMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Undefined();
         }
         break;
         
         case object_type: {
-            result.l = callJNIObjectMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.l = callJNIObjectMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l)));
         }
         break;
         
         case boolean_type: {
-            result.z = callJNIBooleanMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.z = callJNIBooleanMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = KJS::Boolean(result.z);
         }
         break;
         
         case byte_type: {
-            result.b = callJNIByteMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.b = callJNIByteMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Number(result.b);
         }
         break;
         
         case char_type: {
-            result.c = callJNICharMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.c = callJNICharMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Number(result.c);
         }
         break;
         
         case short_type: {
-            result.s = callJNIShortMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.s = callJNIShortMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Number(result.s);
         }
         break;
         
         case int_type: {
-            result.i = callJNIIntMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.i = callJNIIntMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Number(result.i);
         }
         break;
         
         case long_type: {
-            result.j = callJNILongMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.j = callJNILongMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Number((long int)result.j);
         }
         break;
         
         case float_type: {
-            result.f = callJNIFloatMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.f = callJNIFloatMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Number(result.f);
         }
         break;
         
         case double_type: {
-            result.d = callJNIDoubleMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.d = callJNIDoubleMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            resultValue = Number(result.d);
         }
         break;
 
         case invalid_type:
-        default:
+        default: {
+            resultValue = Undefined();
+        }
         break;
     }
-    
-    // FIXME:  create a KJS::Value from the jvalue result.
-    
+        
     free (jArgs);
     
-    return Undefined();
+    return resultValue;
 }
 
 

@@ -75,7 +75,7 @@ Value RuntimeMethodImp::call(ExecState *exec, Object &thisObj, const List &args)
     if (method) {
         RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj.imp());
         if (imp) {
-            imp->getInternalInstance()->invokeMethod(method, args);
+            imp->getInternalInstance()->invokeMethod(exec, method, args);
         }
     }
     

@@ -25,6 +25,8 @@
 #ifndef _JNI_UTILITY_H_
 #define _JNI_UTILITY_H_
 
+#include <value.h>
+
 #include <JavaVM/jni.h>
 
 typedef enum {
@@ -41,6 +43,11 @@ typedef enum {
     double_type
 } JNIType;
 
+namespace Bindings 
+{
+class JavaParameter;
+}
+
 const char *getCharactersFromJString (jstring aJString);
 void releaseCharactersForJString (jstring aJString, const char *s);
 
@@ -49,6 +56,8 @@ void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char
 
 JNIType primitiveTypeFromClassName(const char *name);
 const char *signatureFromPrimitiveType(JNIType type);
+
+jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, Bindings::JavaParameter *aParameter);
 
 jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature);
 

@@ -1,3 +1,31 @@
+2003-12-03  Richard Williamson   <rjw@apple.com>
+
+	LiveConnect:  Added support for parameter passing to Java and conversion
+	of return values.
+
+        Reviewed by Chris.
+
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaParameter::JavaParameter):
+        (JavaMethod::JavaMethod):
+        (JavaMethod::signature):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaParameter::JavaParameter):
+        (Bindings::JavaParameter::operator=):
+        (Bindings::JavaParameter::getJNIType):
+        * bindings/jni/jni_utility.cpp:
+        (callJNIBooleanMethodA):
+        (convertValueToJValue):
+        * bindings/jni/jni_utility.h:
+        * bindings/runtime.h:
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::call):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+
 2003-12-02  Richard Williamson   <rjw@apple.com>
 
 	Added support for calling simple methods in Java from JavaScript.

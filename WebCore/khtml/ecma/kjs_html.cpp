@@ -2910,7 +2910,6 @@ Value KJS::HTMLCollection::tryGet(ExecState *exec, const Identifier &propertyNam
             DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
             DOM::HTMLAppletElementImpl *appletElement = static_cast<DOM::HTMLAppletElementImpl *>(element.handle());
             
-            fprintf (stderr,"%s:  need to return applet instance\n", __PRETTY_FUNCTION__);
             if (appletElement->getAppletInstance()) {
                 // The instance is owned by the applet element.
                 RuntimeObjectImp *appletImp = new RuntimeObjectImp(appletElement->getAppletInstance(), false);

@@ -22,8 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
+#include "interpreter.h"
+
+#include "jni_runtime.h"
 #include "jni_utility.h"
+#include "runtime_object.h"
 
 static JavaVM *jvm;
 
@@ -309,6 +312,12 @@ jdouble callJNIDoubleMethodA (jobject obj, const char *name, const char *sig, jv
     return result.d;
 }
 
+jboolean callJNIBooleanMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+{
+    jvalue result = callJNIMethodA (boolean_type, obj, name, sig, args);
+    return result.z;
+}
+
 const char *getCharactersFromJString (jstring aJString)
 {
     return getCharactersFromJStringInEnv (getJNIEnv(), aJString);
@@ -463,3 +472,72 @@ jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *sig
     return result;
 }
 
+jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, Bindings::JavaParameter *aParameter)
+{
+    jvalue result;
+    double d = 0;
+   
+    d = value.toNumber(exec);
+    switch (aParameter->getJNIType()){
+        case object_type: {
+            KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp*>(value.imp());
+            if (imp) {
+                Bindings::JavaInstance *instance = static_cast<Bindings::JavaInstance*>(imp->getInternalInstance());
+                result.l = instance->javaInstance();
+            }
+            else
+                result.l = (jobject)0;
+        }
+        break;
+        
+        case boolean_type: {
+            result.z = (jboolean)d;
+        }
+        break;
+            
+        case byte_type: {
+            result.b = (jbyte)d;
+        }
+        break;
+        
+        case char_type: {
+            result.c = (jchar)d;
+        }
+        break;
+
+        case short_type: {
+            result.s = (jshort)d;
+        }
+        break;
+
+        case int_type: {
+            result.i = (jint)d;
+        }
+        break;
+
+        case long_type: {
+            result.j = (jlong)d;
+        }
+        break;
+
+        case float_type: {
+            result.f = (jfloat)d;
+        }
+        break;
+
+        case double_type: {
+            result.d = (jdouble)d;
+        }
+        break;
+            
+        break;
+
+        case invalid_type:
+        default:
+        case void_type: {
+            bzero (&result, sizeof(jvalue));
+        }
+        break;
+    }
+    return result;
+}

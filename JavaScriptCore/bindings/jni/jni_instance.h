@@ -85,7 +85,7 @@ public:
     
     jobject javaInstance() const { return _instance->_instance; }
 
-    virtual KJS::Value invokeMethod (const Method *method, const KJS::List &args);
+    virtual KJS::Value invokeMethod (KJS::ExecState *exec, const Method *method, const KJS::List &args);
     
 private:
     JObjectWrapper *_instance;
