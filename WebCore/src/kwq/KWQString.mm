@@ -788,7 +788,9 @@ QString QString::mid(uint index, uint width) const
 //#ifdef USING_BORROWED_KURL
 QString QString::copy() const
 {
-    return QString(*this);
+    // FIXME: we really need a deep copy here
+    //return QString(*this);
+    return QString(unicode(), length());
 }
 //#endif // USING_BORROWED_KURL
 
