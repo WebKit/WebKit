@@ -24,6 +24,8 @@
  */
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <ApplicationServices/ApplicationServicesPriv.h>
+#include "visible_position.h"
 
 #ifdef __OBJC__
 @class KWQAccObject;
@@ -35,7 +37,10 @@ class QString;
 
 namespace khtml {
     class RenderObject;
+    class VisiblePosition;
 }
+
+typedef unsigned int        KWQAccObjectID;
 
 class KWQAccObjectCache
 {
@@ -46,7 +51,16 @@ public:
     KWQAccObject* accObject(khtml::RenderObject* renderer);
     void setAccObject(khtml::RenderObject* renderer, KWQAccObject* obj);
     void removeAccObject(khtml::RenderObject* renderer);
-    
+
+    KWQAccObjectID getAccObjectID(KWQAccObject* accObject);
+    void removeAccObjectID(KWQAccObject* accObject);
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
+    AXTextMarkerRef textMarkerForVisiblePosition (const khtml::VisiblePosition &);
+    khtml::VisiblePosition visiblePositionForTextMarker (AXTextMarkerRef textMarker);
+#endif
+
     void detach(khtml::RenderObject* renderer);
     
     void childrenChanged(khtml::RenderObject* renderer);
@@ -61,4 +75,6 @@ private:
 
 private:
     CFMutableDictionaryRef accCache;
+    CFMutableDictionaryRef accCacheByID;
+    KWQAccObjectID accObjectIDSource;
 };

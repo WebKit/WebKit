@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "KWQAccObjectCache.h"
 
 namespace DOM {
     class HTMLAreaElementImpl;
@@ -39,6 +40,7 @@ namespace khtml {
     id m_data;
     DOM::HTMLAreaElementImpl* m_areaElement;
     NSMutableArray* m_children;
+    KWQAccObjectID m_accObjectID;
 }
 
 -(id)initWithRenderer:(khtml::RenderObject*)renderer;
@@ -48,6 +50,10 @@ namespace khtml {
 
 -(id)data;
 -(void)setData:(id)data;
+
+-(KWQAccObjectID)accObjectID;
+-(void)setAccObjectID:(KWQAccObjectID) accObjectID;
+-(void)removeAccObjectID;
 
 -(KWQAccObject*)firstChild;
 -(KWQAccObject*)lastChild;

@@ -23,9 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "KWQAccObject.h"
+// need this until accesstool supports markers and marker ranges
+#define MARKER_SELF_TEST 0
 
+// for AXTextMarker support
+#import <ApplicationServices/ApplicationServicesPriv.h>
+
+#include <mach-o/dyld.h>
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
+typedef AXTextMarkerRef (*TextMarkerFromTextMarkerRangeProc) (AXTextMarkerRangeRef theTextMarkerRange);
+#endif
+
+#import "KWQAccObject.h"
 #import "KWQAccObjectCache.h"
+#import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
 #import "KWQWidget.h"
 
 #import "dom_docimpl.h"
@@ -45,6 +59,9 @@
 #import "render_style.h"
 #import "render_text.h"
 #import "kjs_html.h"
+#import "visible_position.h"
+#import "visible_text.h"
+#import "visible_units.h"
 #import "html_miscimpl.h"
 #import "qptrstack.h"
 
@@ -57,9 +74,11 @@ using DOM::HTMLCollection;
 using DOM::HTMLCollectionImpl;
 using DOM::Node;
 using DOM::NodeImpl;
+using DOM::Position;
 using DOM::Range;
 using DOM::DOMString;
 
+using khtml::plainText;
 using khtml::RenderObject;
 using khtml::RenderWidget;
 using khtml::RenderCanvas;
@@ -67,6 +86,7 @@ using khtml::RenderText;
 using khtml::RenderBlock;
 using khtml::RenderListMarker;
 using khtml::RenderImage;
+using khtml::VisiblePosition;
 
 /* NSAccessibilityDescriptionAttribute is only defined on 10.4 and newer */
 #if BUILDING_ON_PANTHER
@@ -96,6 +116,7 @@ using khtml::RenderImage;
 {
     [m_data release];
     m_data = 0;
+    [self removeAccObjectID];
     m_renderer = 0;
     [self clearChildren];
 }
@@ -117,17 +138,23 @@ using khtml::RenderImage;
 
 -(HTMLAnchorElementImpl*)anchorElement
 {
+    // return already-known anchor for image areas
     if (m_areaElement)
         return m_areaElement;
 
+    // search up the render tree for a RenderObject with a DOM node.  Defer to an earlier continuation, though.
     RenderObject* currRenderer;
-    for (currRenderer = m_renderer; currRenderer && !currRenderer->element(); currRenderer = currRenderer->parent())
+    for (currRenderer = m_renderer; currRenderer && !currRenderer->element(); currRenderer = currRenderer->parent()) {
         if (currRenderer->continuation())
             return [currRenderer->document()->getOrCreateAccObjectCache()->accObject(currRenderer->continuation()) anchorElement];
+    }
     
-    if (!currRenderer || !currRenderer->element())
+    // bail of none found
+    if (!currRenderer)
         return 0;
     
+    // search up the DOM tree for an anchor element
+    // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElementImpl
     NodeImpl* elt = currRenderer->element();
     for ( ; elt; elt = elt->parentNode()) {
         if (elt->hasAnchor() && elt->renderer() && !elt->renderer()->isImage())
@@ -186,9 +213,11 @@ using khtml::RenderImage;
 
 -(void)addChildrenToArray:(NSMutableArray*)array
 {
+    // nothing to add if there is no RenderObject
     if (!m_renderer)
         return;
     
+    // try to add RenderWidget's children, but fall thru if there are none
     if (m_renderer->isWidget()) {
         RenderWidget* renderWidget = static_cast<RenderWidget*>(m_renderer);
         QWidget* widget = renderWidget->widget();
@@ -199,6 +228,7 @@ using khtml::RenderImage;
         }
     }
     
+    // add all unignored acc children
     for (KWQAccObject* obj = [self firstChild]; obj; obj = [obj nextSibling]) {
         if ([obj accessibilityIsIgnored])
             [obj addChildrenToArray: array];
@@ -206,26 +236,40 @@ using khtml::RenderImage;
             [array addObject: obj];
     }
     
+    // for a RenderImage, add the <area> elements as individual accessibility objects
     if (m_renderer->isImage() && !m_areaElement) {
         HTMLMapElementImpl* map = static_cast<RenderImage*>(m_renderer)->imageMap();
         if (map) {
-            // Need to add the <area> elements as individual accessibility objects.
             QPtrStack<NodeImpl> nodeStack;
             NodeImpl *current = map->firstChild();
             while (1) {
+                // make sure we have a node to process
                 if (!current) {
-                    if(nodeStack.isEmpty()) break;
+                    // done if there is no node and no remembered node
+                    if(nodeStack.isEmpty())
+                        break;
+                    
+                    // pop the previously processed parent
                     current = nodeStack.pop();
+                    
+                    // move on
                     current = current->nextSibling();
                     continue;
                 }
+                
+                // add an <area> element for this child if it has a link
+                // NOTE: can't cache these because they all have the same renderer, which is the cache key, right?
+                // plus there may be little reason to since they are being added to the handy array
                 if (current->hasAnchor()) {
                     KWQAccObject* obj = [[[KWQAccObject alloc] initWithRenderer: m_renderer] autorelease];
                     obj->m_areaElement = static_cast<HTMLAreaElementImpl*>(current);
                     [array addObject: obj];
                 }
+                
+                // move on to children (if any) or next sibling
                 NodeImpl *child = current->firstChild();
                 if (child) {
+                    // switch to doing all the children, remember the parent to pop later
                     nodeStack.push(current);
                     current = child;
                 }
@@ -492,6 +536,14 @@ static QRect boundingBoxRect(RenderObject* obj)
             NSAccessibilityFocusedAttribute,
             NSAccessibilityEnabledAttribute,
             NSAccessibilityWindowAttribute,
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
+            (NSString *) kAXSelectedTextMarkerRangeAttribute,
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     FO 4
+            (NSString *) kAXStartTextMarkerAttribute,
+            (NSString *) kAXEndTextMarkerAttribute,
+#endif
             nil];
     }
     if (anchorAttrs == nil) {
@@ -508,6 +560,14 @@ static QRect boundingBoxRect(RenderObject* obj)
             NSAccessibilityEnabledAttribute,
             NSAccessibilityWindowAttribute,
             @"AXURL",
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
+            (NSString *) kAXSelectedTextMarkerRangeAttribute,
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     FO 4
+            (NSString *) kAXStartTextMarkerAttribute,
+            (NSString *) kAXEndTextMarkerAttribute,
+#endif
             nil];
     }
     if (webAreaAttrs == nil) {
@@ -526,6 +586,14 @@ static QRect boundingBoxRect(RenderObject* obj)
             @"AXLinkUIElements",
             @"AXLoaded",
             @"AXLayoutCount",
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
+            (NSString *) kAXSelectedTextMarkerRangeAttribute,
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     FO 4
+            (NSString *) kAXStartTextMarkerAttribute,
+            (NSString *) kAXEndTextMarkerAttribute,
+#endif
             nil];
     }
     
@@ -555,8 +623,8 @@ static QRect boundingBoxRect(RenderObject* obj)
     // compile this entire file instead, but this is OK too.
     return nil;
 #else
-    // We only have the one action (press).
-    return NSAccessibilityActionDescription(NSAccessibilityPressAction);
+    // we have no custom actions
+    return NSAccessibilityActionDescription(action);
 #endif
 }
 
@@ -566,7 +634,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 
     // Locate the anchor element. If it doesn't exist, just bail.
     HTMLAnchorElementImpl* anchorElt = [self anchorElement];
-    if (!anchorElt) return;
+    if (!anchorElt)
+        return;
 
     DocumentImpl* d = anchorElt->getDocument();
     if (d) {
@@ -583,6 +652,102 @@ static QRect boundingBoxRect(RenderObject* obj)
 {
     return NO;
 }
+
+#if 0
+// what we'd need to implement if accessibilityIsAttributeSettable ever returned YES
+- (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attribute;
+{
+}
+#endif
+
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
+- (AXTextMarkerRangeRef) textMarkerRangeFromMarkers: (AXTextMarkerRef) textMarker1 andEndMarker:(AXTextMarkerRef) textMarker2
+{
+    AXTextMarkerRangeRef textMarkerRange;
+    
+    // create the range
+    textMarkerRange = AXTextMarkerRangeCreate (nil, textMarker1, textMarker2);
+
+    // autorelease it because we will never see it again
+    KWQCFAutorelease(textMarkerRange);
+    return textMarkerRange;
+}
+
+- (AXTextMarkerRef) textMarkerForVisiblePosition: (VisiblePosition)visiblePos
+{
+    if (visiblePos.isNull())
+        return nil;
+        
+    KWQAccObjectCache* cache = m_renderer->document()->getExistingAccObjectCache();
+    return cache->textMarkerForVisiblePosition(visiblePos);
+}
+
+- (VisiblePosition) visiblePositionForTextMarker: (AXTextMarkerRef)textMarker
+{
+    KWQAccObjectCache* cache = m_renderer->document()->getExistingAccObjectCache();
+    return cache->visiblePositionForTextMarker(textMarker);
+}
+
+- (AXTextMarkerRef) AXTextMarkerRangeCopyStartMarkerWrapper: (AXTextMarkerRangeRef)textMarkerRange
+{
+    NSSymbol        axSymbol;
+    static TextMarkerFromTextMarkerRangeProc   axStartImpl = nil;
+    
+    if (axStartImpl == nil) {
+        axSymbol = NSLookupAndBindSymbol("_AXTextMarkerRangeCopyStartMarker");
+        if (axSymbol == nil)
+            axSymbol = NSLookupAndBindSymbol("_AXTextMarkerCopyStartMarker");
+        ASSERT(axSymbol);
+        axStartImpl = (TextMarkerFromTextMarkerRangeProc) NSAddressOfSymbol(axSymbol);
+        ASSERT(axStartImpl);
+    }
+    
+    return axStartImpl(textMarkerRange);
+}
+
+- (AXTextMarkerRef) AXTextMarkerRangeCopyEndMarkerWrapper: (AXTextMarkerRangeRef)textMarkerRange
+{
+    NSSymbol        axSymbol;
+    static TextMarkerFromTextMarkerRangeProc   axEndImpl = nil;
+    
+    if (axEndImpl == nil) {
+        axSymbol = NSLookupAndBindSymbol("_AXTextMarkerRangeCopyEndMarker");
+        if (axSymbol == nil)
+            axSymbol = NSLookupAndBindSymbol("_AXTextMarkerCopyEndMarker");
+        ASSERT(axSymbol);
+        axEndImpl = (TextMarkerFromTextMarkerRangeProc) NSAddressOfSymbol(axSymbol);
+        ASSERT(axEndImpl);
+    }
+    
+    return axEndImpl(textMarkerRange);
+}
+
+- (VisiblePosition) visiblePositionForStartOfTextMarkerRange: (AXTextMarkerRangeRef)textMarkerRange
+{
+    AXTextMarkerRef textMarker;
+    VisiblePosition visiblePos;
+
+    textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
+    visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (textMarker)
+        CFRelease(textMarker);
+    return visiblePos;
+}
+
+- (VisiblePosition) visiblePositionForEndOfTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+{
+    AXTextMarkerRef textMarker;
+    VisiblePosition visiblePos;
+    
+    textMarker = [self AXTextMarkerRangeCopyEndMarkerWrapper:textMarkerRange];
+    visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (textMarker)
+        CFRelease(textMarker);
+    return visiblePos;
+}
+#endif
 
 - (id)accessibilityAttributeValue:(NSString *)attributeName
 {
@@ -670,8 +835,364 @@ static QRect boundingBoxRect(RenderObject* obj)
     if ([attributeName isEqualToString: NSAccessibilityWindowAttribute])
         return [m_renderer->canvas()->view()->getView() window];
 
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
+    if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute]) {
+        int startPos, endPos;
+
+        RenderObject*   startRenderer = m_renderer->canvas()->selectionStart();
+        RenderObject*   endRenderer = m_renderer->canvas()->selectionEnd();
+        if (!startRenderer || !endRenderer)
+            return nil;
+        m_renderer->selectionStartEnd(startPos, endPos);
+            
+        AXTextMarkerRef startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(Position(startRenderer->node(), (long) startPos))];
+        AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(Position(endRenderer->node(), (long) endPos))];
+        return (id) [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
+    }
+    
+    if ([attributeName isEqualToString: (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute]) {
+        return nil;     // IMPLEMENT FO4
+    }
+    
+    if ([attributeName isEqualToString: (NSString *) kAXStartTextMarkerAttribute]) {
+        return (id) [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->positionForCoordinates (0, 0, nil))];
+    }
+
+    if ([attributeName isEqualToString: (NSString *) kAXEndTextMarkerAttribute]) {
+        return (id) [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX, nil))];
+    }
+#endif
+
     return nil;
 }
+
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
+- (NSArray *)accessibilityParameterizedAttributeNames
+{
+    static NSArray* paramAttributes = nil;
+    static NSArray* anchorParamAttrs = nil;
+    static NSArray* webAreaParamAttrs = nil;
+    if (paramAttributes == nil) {
+        paramAttributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
+            kAXLineForTextMarkerParameterizedAttribute,
+//          kAXTextMarkerRangeForLineParameterizedAttribute,                // FO 1
+            kAXStringForTextMarkerRangeParameterizedAttribute,
+//          kAXTextMarkerForPositionParameterizedAttribute,
+//          kAXBoundsForTextMarkerRangeParameterizedAttribute,
+//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,
+//          kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
+            kAXNextTextMarkerForTextMarkerParameterizedAttribute,
+            kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
+            kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute,
+            kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
+//          kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
+//          kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXLengthForTextMarkerRangeParameterizedAttribute,
+            nil];
+    }
+    if (anchorParamAttrs == nil) {
+        anchorParamAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
+            kAXLineForTextMarkerParameterizedAttribute,
+//          kAXTextMarkerRangeForLineParameterizedAttribute,                // FO 1
+            kAXStringForTextMarkerRangeParameterizedAttribute,
+//          kAXTextMarkerForPositionParameterizedAttribute,
+//          kAXBoundsForTextMarkerRangeParameterizedAttribute,
+//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,
+//          kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
+            kAXNextTextMarkerForTextMarkerParameterizedAttribute,
+            kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
+            kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute,
+            kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
+//          kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
+//          kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXLengthForTextMarkerRangeParameterizedAttribute,
+            nil];
+    }
+    if (webAreaParamAttrs == nil) {
+        webAreaParamAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
+            kAXLineForTextMarkerParameterizedAttribute,
+//          kAXTextMarkerRangeForLineParameterizedAttribute,                // FO 1
+            kAXStringForTextMarkerRangeParameterizedAttribute,
+//          kAXTextMarkerForPositionParameterizedAttribute,
+//          kAXBoundsForTextMarkerRangeParameterizedAttribute,
+//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,
+//          kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
+            kAXNextTextMarkerForTextMarkerParameterizedAttribute,
+            kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
+            kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute,
+            kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
+//          kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,                // FO 1
+//          kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXLengthForTextMarkerRangeParameterizedAttribute,
+            nil];
+    }
+    
+    if (m_renderer && m_renderer->isCanvas())
+        return webAreaParamAttrs;
+    if (m_areaElement || (m_renderer && !m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasAnchor()))
+        return anchorParamAttrs;
+    return paramAttributes;
+}
+
+- (AXTextMarkerRangeRef) textMarkerRangeFromVisiblePositions: (VisiblePosition) startPos andEndPos: (VisiblePosition) endPos
+{
+    AXTextMarkerRef startTextMarker = [self textMarkerForVisiblePosition: startPos];
+    AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: endPos];
+    return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
+}
+
+- (AXTextMarkerRangeRef) getSelectedTextMarkerRange
+{
+        int startOffset, endOffset;
+
+        RenderObject*   startRenderer = m_renderer->canvas()->selectionStart();
+        RenderObject*   endRenderer = m_renderer->canvas()->selectionEnd();
+        if (!startRenderer || !endRenderer)
+            return nil;
+        m_renderer->selectionStartEnd(startOffset, endOffset);
+            
+        VisiblePosition startPosition = VisiblePosition(Position(startRenderer->node(), (long) startOffset));
+        VisiblePosition endPosition   = VisiblePosition(Position(endRenderer->node(), (long) endOffset));
+        return [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+}
+
+- (id)doAXLineForTextMarker: (AXTextMarkerRef) textMarker
+{
+#if MARKER_SELF_TEST
+    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
+    textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
+#endif
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    unsigned int    lineCount = 0;
+    
+    // return nil if the marker was out of date
+    if (visiblePos.isNull())
+        return nil;
+    
+    // move up until we get to the top
+    // NOTE: This only takes us to the top of the element, not the top of the document
+    while (visiblePos.isNotNull()) {
+        lineCount += 1;
+        visiblePos = previousLinePosition(visiblePos, khtml::UPSTREAM, 0);
+    }
+    
+    return [NSNumber numberWithUnsignedInt:lineCount];
+}
+
+- (id)doAXTextMarkerRangeForLine: (NSNumber *) lineNumber
+{
+    if (!lineNumber) return nil;
+    
+    return nil;     // IMPLEMENT
+}
+
+- (id)doAXStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+{
+    VisiblePosition startVisiblePosition, endVisiblePosition;
+    Position startDeepPos, endDeepPos;
+    QString qString;
+    
+#if MARKER_SELF_TEST
+    textMarkerRange = [self getSelectedTextMarkerRange];
+#endif
+    
+    // extract the start and end VisiblePosition
+    startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
+    if (startVisiblePosition.isNull()) return nil;
+    
+    endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
+    if (endVisiblePosition.isNull()) return nil;
+    
+    // use deepEquivalent because it is what the user sees
+    startDeepPos = startVisiblePosition.deepEquivalent();
+    endDeepPos = endVisiblePosition.deepEquivalent();
+    
+    // get the visible text in the range
+    qString = plainText(Range(startDeepPos.node(), startDeepPos.offset(), endDeepPos.node(), endDeepPos.offset()));
+    if (qString == nil) return nil;
+    
+    // transform it to a CFString
+    return (id)qString.getCFString();
+}
+
+- (id)doAXNextTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+#if MARKER_SELF_TEST
+    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
+    textMarker = [self AXTextMarkerRangeCopyEndMarkerWrapper:textMarkerRange];
+#endif
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    VisiblePosition nextVisiblePos = visiblePos.next();
+    if (nextVisiblePos.isNull()) return nil;
+    
+    return (id) [self textMarkerForVisiblePosition:nextVisiblePos];
+}
+
+- (id)doAXPreviousTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+{
+#if MARKER_SELF_TEST
+    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
+    textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
+#endif
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    VisiblePosition previousVisiblePos = visiblePos.previous();
+    if (previousVisiblePos.isNull()) return nil;
+    
+    return (id) [self textMarkerForVisiblePosition:previousVisiblePos];
+}
+
+- (id)doAXLeftWordTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+{
+#if MARKER_SELF_TEST
+    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
+    textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
+#endif
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    VisiblePosition startPosition = startOfWord(visiblePos, khtml::LeftWordIfOnBoundary);
+    VisiblePosition endPosition = endOfWord(startPosition);
+
+    return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+}
+
+- (id)doAXRightWordTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+{
+#if MARKER_SELF_TEST
+    AXTextMarkerRangeRef textMarkerRange = [self getSelectedTextMarkerRange];
+    textMarker = [self AXTextMarkerRangeCopyEndMarkerWrapper:textMarkerRange];
+#endif
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    VisiblePosition startPosition = startOfWord(visiblePos, khtml::RightWordIfOnBoundary);
+    VisiblePosition endPosition = endOfWord(startPosition);
+
+    return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+}
+
+- (id)doAXLeftLineTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+{
+#if 0
+## startOfLine and endOfLine are declared but not defined
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    VisiblePosition startPosition = startOfLine(visiblePos, khtml::UPSTREAM);
+    VisiblePosition endPosition = endOfLine(startPosition, khtml::DOWNSTREAM);
+
+    return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+#else
+    // use Selection class instead
+    return nil;
+#endif
+}
+
+- (id)doAXRightLineTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+{
+#if 0
+## startOfLine and endOfLine are declared but not defined
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    VisiblePosition startPosition = startOfLine(visiblePos, khtml::DOWNSTREAM);
+    VisiblePosition endPosition = endOfLine(startPosition, khtml::DOWNSTREAM);
+
+    return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
+#else
+    // use Selection class instead
+    return nil;
+#endif
+}
+
+- (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
+{
+    AXTextMarkerRef         textMarker = nil;
+    AXTextMarkerRangeRef    textMarkerRange = nil;
+    NSNumber *              number = nil;
+
+    // basic parameter validation
+    if (!m_renderer || !attribute || !parameter)
+        return nil;
+
+    // common parameter type check/casting.  Nil checks in handlers catch wrong type case.
+    // NOTE: This assumes nil is not a valid parameter, because itis indistinguishable from
+    // a parameter of the wrong type.
+    if (CFGetTypeID(parameter) == AXTextMarkerGetTypeID())
+        textMarker = (AXTextMarkerRef) parameter;
+
+    else if (CFGetTypeID(parameter) == AXTextMarkerRangeGetTypeID())
+        textMarkerRange = (AXTextMarkerRangeRef) parameter;
+
+    else if ([parameter isKindOfClass:[NSNumber self]]) {
+        number = parameter;
+    }
+  
+    // dispatch
+    if ([attribute isEqualToString: (NSString *) kAXLineForTextMarkerParameterizedAttribute])
+        return [self doAXLineForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXTextMarkerRangeForLineParameterizedAttribute])
+        return [self doAXTextMarkerRangeForLine: number];
+
+    if ([attribute isEqualToString: (NSString *) kAXStringForTextMarkerRangeParameterizedAttribute])
+        return [self doAXStringForTextMarkerRange: textMarkerRange];
+
+    if ([attribute isEqualToString: (NSString *) kAXNextTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXNextTextMarkerForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXPreviousTextMarkerForTextMarkerParameterizedAttribute])
+        return [self doAXPreviousTextMarkerForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute])
+        return [self doAXLeftWordTextMarkerRangeForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute])
+        return [self doAXRightWordTextMarkerRangeForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute])
+        return [self doAXLeftLineTextMarkerRangeForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: (NSString *) kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute])
+        return [self doAXRightLineTextMarkerRangeForTextMarker: textMarker];
+
+#if 0
+    if ([attribute isEqualToString: (NSString *) XXXX])
+        return [self doXXXX: textMarker];
+#endif
+    return nil;
+}
+
+#endif
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
@@ -688,6 +1209,14 @@ static QRect boundingBoxRect(RenderObject* obj)
     return obj->document()->getOrCreateAccObjectCache()->accObject(obj);
 }
 
+#if 0
+// NOTE: why don't we override this?  Probablly because AppKit's done it for us.
+- (id)accessibilityFocusedUIElement
+{
+}
+
+#endif
+
 - (void)childrenChanged
 {
     [self clearChildren];
@@ -700,6 +1229,23 @@ static QRect boundingBoxRect(RenderObject* obj)
 {
     [m_children release];
     m_children = nil;
+}
+
+-(KWQAccObjectID)accObjectID
+{
+    return m_accObjectID;
+}
+
+-(void)setAccObjectID:(KWQAccObjectID) accObjectID
+{
+//    ASSERT(accObjectID == 0 || m_accObjectID == 0);
+    m_accObjectID = accObjectID;
+}
+
+- (void)removeAccObjectID
+{
+    KWQAccObjectCache* cache = m_renderer->document()->getExistingAccObjectCache();
+    cache->removeAccObjectID(self);
 }
 
 @end
