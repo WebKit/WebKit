@@ -1388,8 +1388,9 @@ void InputNewlineCommandImpl::doApply()
         // Insert node, but place the caret into index 0 of the downstream
         // position. This will make the caret appear after the break, and as we know
         // there is content at that location, this is OK.
-        insertNodeBeforePosition(nodeToInsert, pos);
-        setEndingSelection(Position(pos.node(), pos.node()->caretMinOffset()));
+        Position endingPosition = pos.downstream(StayInBlock);
+        insertNodeBeforePosition(nodeToInsert, endingPosition);
+        setEndingSelection(endingPosition);
     }
     else if (atEnd) {
         LOG(Editing, "input newline case 3");
