@@ -314,6 +314,7 @@ namespace KJS {
     List evaluateList(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
+    friend class ArgumentsNode;
     ArgumentListNode *list;
     Node *expr;
   };

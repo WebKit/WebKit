@@ -1,3 +1,15 @@
+2002-11-24  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3095446 - Crash on AppleScript page due to very long argument list
+	
+        * kjs/grammar.y: Don't try to construct the argument list in the
+	right order, since that blows out the parser stack.
+	* kjs/nodes.cpp:
+        (ArgumentsNode::ArgumentsNode): Instead reverse the argument list
+	here.
+        * kjs/nodes.h: Make ArgumentsNode a friend of ArgumentListNode.
+        * kjs/grammar.cpp: Updated from grammar.y.
+
 2002-11-23  Maciej Stachowiak  <mjs@apple.com>
 
 	- completed Darin's mostly-fix for 3037795 - Resource use

@@ -245,11 +245,7 @@ Arguments:
 
 ArgumentList:
     AssignmentExpr                  { $$ = new ArgumentListNode($1); }
-/* #ifdef APPLE_CHANGES (not using an actual ifdef because this is yacc) */
-   | AssignmentExpr ',' ArgumentList { $$ = new ArgumentListNode($3, $1); }
-/* #else */
-/* | ArgumentList ',' AssignmentExpr { $$ = new ArgumentListNode($1, $3); } */
-/* #endif */
+  | ArgumentList ',' AssignmentExpr { $$ = new ArgumentListNode($1, $3); }
 ;
 
 LeftHandSideExpr:
