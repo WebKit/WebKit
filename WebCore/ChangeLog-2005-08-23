@@ -1,5 +1,11 @@
 2004-03-01  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * kwq/DOMInternal.h: Replaced tabs with spaces.
+
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Changed all Objective-C DOM classes from protocols to classes, using

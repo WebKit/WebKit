@@ -53,7 +53,7 @@ namespace DOM {
 
 @interface WebCoreDOMNode : DOMNode
 {
-	DOM::NodeImpl *m_impl;
+    DOM::NodeImpl *m_impl;
 }
 + (DOMNode *)nodeWithImpl:(DOM::NodeImpl *)impl;
 - (id)initWithNodeImpl:(DOM::NodeImpl *)impl;
@@ -66,7 +66,7 @@ namespace DOM {
 
 @interface WebCoreDOMNamedNodeMap : DOMNamedNodeMap
 {
-	DOM::NamedNodeMapImpl *m_impl;
+    DOM::NamedNodeMapImpl *m_impl;
 }
 + (DOMNamedNodeMap *)namedNodeMapWithImpl:(DOM::NamedNodeMapImpl *)impl;
 - (id)initWithNamedNodeMapImpl:(DOM::NamedNodeMapImpl *)impl;
@@ -78,7 +78,7 @@ namespace DOM {
 
 @interface WebCoreDOMNodeList : DOMNodeList
 {
-	DOM::NodeListImpl *m_impl;
+    DOM::NodeListImpl *m_impl;
 }
 + (DOMNodeList *)nodeListWithImpl:(DOM::NodeListImpl *)impl;
 - (id)initWithNodeListImpl:(DOM::NodeListImpl *)impl;
@@ -92,7 +92,7 @@ namespace DOM {
 
 @interface WebCoreDOMImplementation : DOMImplementation
 {
-	DOM::DOMImplementationImpl *m_impl;
+    DOM::DOMImplementationImpl *m_impl;
 }
 + (DOMImplementation *)DOMImplementationWithImpl:(DOM::DOMImplementationImpl *)impl;
 - (id)initWithDOMImplementationImpl:(DOM::DOMImplementationImpl *)impl;
@@ -104,7 +104,7 @@ namespace DOM {
 
 @interface WebCoreDOMDocumentFragment : DOMDocumentFragment
 {
-	DOM::DocumentFragmentImpl *m_impl;
+    DOM::DocumentFragmentImpl *m_impl;
 }
 + (DOMDocumentFragment *)documentFragmentWithImpl:(DOM::DocumentFragmentImpl *)impl;
 - (id)initWithDocumentFragmentImpl:(DOM::DocumentFragmentImpl *)impl;
@@ -128,7 +128,7 @@ namespace DOM {
 
 @interface WebCoreDOMDocument : DOMDocument
 {
-	DOM::DocumentImpl *m_impl;
+    DOM::DocumentImpl *m_impl;
 }
 + (DOMDocument *)documentWithImpl:(DOM::DocumentImpl *)impl;
 - (id)initWithDocumentImpl:(DOM::DocumentImpl *)impl;
@@ -140,7 +140,7 @@ namespace DOM {
 
 @interface WebCoreDOMCharacterData : DOMCharacterData
 {
-	DOM::CharacterDataImpl *m_impl;
+    DOM::CharacterDataImpl *m_impl;
 }
 + (DOMCharacterData *)characterDataWithImpl:(DOM::CharacterDataImpl *)impl;
 - (id)initWithCharacterDataImpl:(DOM::CharacterDataImpl *)impl;
@@ -153,7 +153,7 @@ namespace DOM {
 
 @interface WebCoreDOMAttr : DOMAttr
 {
-	DOM::AttrImpl *m_impl;
+    DOM::AttrImpl *m_impl;
 }
 + (DOMAttr *)attrWithImpl:(DOM::AttrImpl *)impl;
 - (id)initWithAttrImpl:(DOM::AttrImpl *)impl;
@@ -167,7 +167,7 @@ namespace DOM {
 
 @interface WebCoreDOMElement : DOMElement
 {
-	DOM::ElementImpl *m_impl;
+    DOM::ElementImpl *m_impl;
 }
 + (DOMElement *)elementWithImpl:(DOM::ElementImpl *)impl;
 - (id)initWithElementImpl:(DOM::ElementImpl *)impl;
@@ -179,7 +179,7 @@ namespace DOM {
 
 @interface WebCoreDOMText : DOMText
 {
-	DOM::TextImpl *m_impl;
+    DOM::TextImpl *m_impl;
 }
 + (DOMText *)textWithImpl:(DOM::TextImpl *)impl;
 - (id)initWithTextImpl:(DOM::TextImpl *)impl;
@@ -191,7 +191,7 @@ namespace DOM {
 
 @interface WebCoreDOMComment : DOMComment
 {
-	DOM::CommentImpl *m_impl;
+    DOM::CommentImpl *m_impl;
 }
 + (DOMComment *)commentWithImpl:(DOM::CommentImpl *)impl;
 - (id)initWithCommentImpl:(DOM::CommentImpl *)impl;
@@ -203,7 +203,7 @@ namespace DOM {
 
 @interface WebCoreDOMCDATASection : DOMCDATASection
 {
-	DOM::CDATASectionImpl *m_impl;
+    DOM::CDATASectionImpl *m_impl;
 }
 + (DOMCDATASection *)CDATASectionWithImpl:(DOM::CDATASectionImpl *)impl;
 - (id)initWithCDATASectionImpl:(DOM::CDATASectionImpl *)impl;
@@ -216,7 +216,7 @@ namespace DOM {
 
 @interface WebCoreDOMDocumentType : DOMDocumentType
 {
-	DOM::DocumentTypeImpl *m_impl;
+    DOM::DocumentTypeImpl *m_impl;
 }
 + (DOMDocumentType *)documentTypeWithImpl:(DOM::DocumentTypeImpl *)impl;
 - (id)initWithDocumentTypeImpl:(DOM::DocumentTypeImpl *)impl;
@@ -228,7 +228,7 @@ namespace DOM {
 
 @interface WebCoreDOMNotation : DOMNotation
 {
-	DOM::NotationImpl *m_impl;
+    DOM::NotationImpl *m_impl;
 }
 + (DOMNotation *)notationWithImpl:(DOM::NotationImpl *)impl;
 - (id)initWithNotationImpl:(DOM::NotationImpl *)impl;
@@ -240,7 +240,7 @@ namespace DOM {
 
 @interface WebCoreDOMEntity : DOMEntity
 {
-	DOM::EntityImpl *m_impl;
+    DOM::EntityImpl *m_impl;
 }
 + (DOMEntity *)entityWithImpl:(DOM::EntityImpl *)impl;
 - (id)initWithEntityImpl:(DOM::EntityImpl *)impl;
@@ -252,7 +252,7 @@ namespace DOM {
 
 @interface WebCoreDOMEntityReference : DOMEntityReference
 {
-	DOM::EntityReferenceImpl *m_impl;
+    DOM::EntityReferenceImpl *m_impl;
 }
 + (DOMEntityReference *)entityReferenceWithImpl:(DOM::EntityReferenceImpl *)impl;
 - (id)initWithEntityReferenceImpl:(DOM::EntityReferenceImpl *)impl;
@@ -264,7 +264,7 @@ namespace DOM {
 
 @interface WebCoreDOMProcessingInstruction : DOMProcessingInstruction
 {
-	DOM::ProcessingInstructionImpl *m_impl;
+    DOM::ProcessingInstructionImpl *m_impl;
 }
 + (DOMProcessingInstruction *)processingInstructionWithImpl:(DOM::ProcessingInstructionImpl *)impl;
 - (id)initWithProcessingInstructionImpl:(DOM::ProcessingInstructionImpl *)impl;
@@ -278,7 +278,7 @@ namespace DOM {
 
 @interface WebCoreDOMRange : DOMRange
 {
-	DOM::RangeImpl *m_impl;
+    DOM::RangeImpl *m_impl;
 }
 + (DOMRange *)rangeWithImpl:(DOM::RangeImpl *)impl;
 - (id)initWithRangeImpl:(DOM::RangeImpl *)impl;
