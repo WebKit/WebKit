@@ -1,3 +1,12 @@
+2004-02-11  Darin Adler   <darin@apple.com>
+
+        Reviewed by Richard.
+
+        * kwq/KWQTextCodec.mm:
+        (KWQTextDecoder::convertLatin1):
+	Fix off by one error.
+
+
 2004-02-11  David Hyatt  <hyatt@apple.com>
 
 	Convert paint methods over to use a new PaintInfo struct.  Eliminate the paintObject method.

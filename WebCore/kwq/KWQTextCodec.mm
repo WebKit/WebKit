@@ -256,7 +256,7 @@ QString KWQTextDecoder::convertLatin1(const unsigned char *s, int length)
     result.reserve(length);
     
     result.append(reinterpret_cast<const char *>(s), i);
-    int start = i + 1;
+    int start = ++i;
     for (; i != length; ++i) {
         if (s[i] == 0) {
             if (start != i) {
