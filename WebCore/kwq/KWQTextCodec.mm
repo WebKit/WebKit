@@ -393,6 +393,11 @@ OSStatus KWQTextDecoder::convertOneChunkUsingTEC(const unsigned char *inputBuffe
             static_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
     }
 
+    // Work around bug 3351093, where sometimes we get kTECBufferBelowMinimumSizeErr instead of kTECOutputBufferFullStatus.
+    if (status == kTECBufferBelowMinimumSizeErr && bytesWritten != 0) {
+        status = kTECOutputBufferFullStatus;
+    }
+
     inputLength = bytesRead;
     outputLength = bytesWritten;
     return status;

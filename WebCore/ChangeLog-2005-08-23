@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - fixed 3463624 -- page at cinemakorea.com shows up blank due to kTECBufferBelowMinimumSizeErr from TEC
+
+        * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertOneChunkUsingTEC): To work around the bug
+        I found in the decoder (Radar 3351093), change kTECBufferBelowMinimumSizeErr to
+        kTECOutputBufferFullStatus in cases where bytes were actually converted.
+
+2003-10-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed uses of NULL in non-pointer contexts
 
         * khtml/khtml_part.cpp: (findWordBoundary): Changed NULL to 0 and did a little code
