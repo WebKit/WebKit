@@ -692,8 +692,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event
 {
-    // FIXME: this really needs to be based on a timer
     [self autoscroll:event];
+    [self _startAutoscrollTimer:event];
 }
 
 - (BOOL)_mayStartDragWithMouseDragged:(NSEvent *)mouseDraggedEvent
@@ -1444,7 +1444,6 @@ static WebHTMLView *lastHitView = nil;
     }
     
     _private->ignoringMouseDraggedEvents = NO;
-    [self _startAutoscrollTimer:event];
     
     // Record the mouse down position so we can determine drag hysteresis.
     [_private->mouseDownEvent release];
@@ -1453,7 +1452,8 @@ static WebHTMLView *lastHitView = nil;
     // Don't do any mouseover while the mouse is down.
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 
-    // Let KHTML get a chance to deal with the event.
+    // Let KHTML get a chance to deal with the event. This will call back to us
+    // to start the autoscroll timer if appropriate.
     [[self _bridge] mouseDown:event];
 }
 

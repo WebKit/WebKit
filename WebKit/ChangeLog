@@ -1,3 +1,17 @@
+2003-12-17  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3512801>: REGRESSION (Safari 100-116): 
+        Mike Hay's Magic 8-ball game ignores slow clicks
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleAutoscrollForMouseDragged:]):
+        start the autoscroll timer here, so the timer only runs when KHTML is
+        handling the event.
+        (-[WebHTMLView mouseDown:]):
+        don't start the autoscroll timer here.
+
 2003-12-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
