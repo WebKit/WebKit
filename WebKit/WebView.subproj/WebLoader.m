@@ -197,7 +197,7 @@
 
     // If the URL is one of our whacky applewebdata URLs that
     // fake up a substitute URL to present to the delegate.
-    if([WebDataProtocol canHandleURL: [r URL]] != nil){
+    if([WebDataProtocol _webIsDataProtocolURL:[r URL]]) {
         NSURL *baseURL = [request _webDataRequestBaseURL];
         if (baseURL)
             [r setURL: baseURL];

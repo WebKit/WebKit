@@ -7,6 +7,8 @@
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
 #import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/WebAssertions.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
 
@@ -133,14 +135,24 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 // that will handle our custom protocol.
 @implementation WebDataProtocol
 
-+ (BOOL)canHandleURL:(NSURL *)theURL
++(BOOL)_webIsDataProtocolURL:(NSURL *)URL
 {
-    return ([[theURL scheme] caseInsensitiveCompare: WebDataProtocolScheme] == NSOrderedSame);
+    ASSERT(URL);
+    NSString *scheme = [URL scheme];
+    return scheme && [scheme _web_isCaseInsensitiveEqualToString:WebDataProtocolScheme];
 }
 
-+ (NSURL *)canonicalURLForURL:(NSURL *)URL
++(BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    return URL;
+    NSURL *URL = [request URL];
+    ASSERT(request);
+    ASSERT(URL);
+    return [self _webIsDataProtocolURL:URL];
+}
+
++(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
+{
+    return request;
 }
 
 - (void)startLoading

@@ -1,3 +1,25 @@
+2003-04-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        API changes in NSURLProtocol and its subclasses:
+
+        +canHandleURL: becomes +canInitWithRequest:
+        +canonicalURLForURL: becomes +canonicalRequestForRequest:
+
+	Added new _webIsDataProtocolURL: helper method.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        (+[WebDataProtocol _webIsDataProtocolURL:]):
+        (+[WebDataProtocol canInitWithRequest:]):
+        (+[WebDataProtocol canonicalRequestForRequest:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):
+        (-[WebFrame _transitionToCommitted:]):
+
 2003-04-21  Darin Adler  <darin@apple.com>
 
         * Plugins.subproj/WebNetscapePluginStream.m: Removed unnecessary #import of <WebFoundation/WebFoundation.h>.

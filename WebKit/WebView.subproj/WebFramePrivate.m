@@ -260,7 +260,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 // helper method used in various nav cases below
 - (void)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
-    if (![WebDataProtocol canHandleURL:[[[[[self webView] mainFrame] dataSource] response] URL]]){
+    if (![WebDataProtocol _webIsDataProtocolURL:[[[[[self webView] mainFrame] dataSource] response] URL]]) {
         WebHistoryItem *bfItem = [[[self webView] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
         [[[self webView] backForwardList] addItem:bfItem];
     }
@@ -673,7 +673,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 if (![ds _isClientRedirect]) {
                     // Add item to history.
 		    NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
-		    if ([[URL absoluteString] length] > 0 && ![WebDataProtocol canHandleURL:URL]) {
+		    if ([[URL absoluteString] length] > 0 && ![WebDataProtocol _webIsDataProtocolURL:URL]) {
 			entry = [[WebHistory sharedHistory] addItemForURL:URL];
 			if (ptitle)
 			    [entry setTitle: ptitle];
