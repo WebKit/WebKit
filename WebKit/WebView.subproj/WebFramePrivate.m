@@ -456,10 +456,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             [window endEditingFor:firstResp];
         }
 
-        if ([_private->dataSource isDocumentHTML] && ![ds isDocumentHTML]) {
-            [_private->bridge removeFromFrame];
-        }
-
         [self _detachChildren];
 
         [_private->dataSource _setWebFrame:nil];

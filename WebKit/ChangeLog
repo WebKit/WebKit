@@ -1,5 +1,14 @@
 2003-04-15  Richard Williamson   <rjw@apple.com>
 
+        Fix for 3226746.  Remove some ancient and apparantly invalid cruft.
+        
+        Reviewed by trey.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _setDataSource:]):
+
+2003-04-15  Richard Williamson   <rjw@apple.com>
+
         Fixed clipping of progressive images to correctly clip.
         
         Reviewed by darin.
