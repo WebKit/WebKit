@@ -1,10 +1,29 @@
-QPoint: [x: 1; h: 1]
-QPoint: [x: 3; h: 3]
-QPoint: [x: 4; h: 4]
-1
-0
-0
-1
-1
-0
-QPoint: [x: 12; h: 12]
+p1: QPoint: [x: 1; h: 1]
+p2: QPoint: [x: 3; h: 3]
+p3 = p1 + p2: QPoint: [x: 4; h: 4]
+p4 = p3: QPoint: [x: 4; h: 4]
+p5 = p3: QPoint: [x: 4; h: 4]
+p6 = p2 - p1: QPoint: [x: 2; h: 2]
+p5 setX(10): QPoint: [x: 10; h: 4]
+p5 setY(10): QPoint: [x: 10; h: 10]
+p5 += p1: QPoint: [x: 11; h: 11]
+p5 -= p2: QPoint: [x: 8; h: 8]
+p5 *= 3: QPoint: [x: 24; h: 24]
+p5 *= 3.333: QPoint: [x: 79; h: 79]
+p5 /= 2: QPoint: [x: 39; h: 39]
+p5 /= 2.222: QPoint: [x: 17; h: 17]
+p5 manhattanLength: 34
+p5 x: 17
+p5 y: 17
+p0 isNull: 1
+p1 isNull: 0
+p1 == p4: 0
+p3 == p4: 1
+p1 != p4: 1
+p3 != p4: 0
+p5 * 2: QPoint: [x: 34; h: 34]
+3 * p5: QPoint: [x: 51; h: 51]
+p5 / 2.222: QPoint: [x: 7; h: 7]
+p5 / 3: QPoint: [x: 5; h: 5]
+p5 * 2.222: QPoint: [x: 37; h: 37]
+3.333 * p5: QPoint: [x: 56; h: 56]

@@ -35,6 +35,7 @@ int main() {
     cout << "a0 count: " << (a0.count()) << endl;
     
     ch = a0.data();
+    ch[10] = '\0';
     cout << "a0 data: " << ch << endl;
     
     a0.resize(15);

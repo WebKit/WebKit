@@ -1,17 +1,2 @@
-QDate: [yy/mm/dd: 1999/12/31]
-assignment: QDate: [yy/mm/dd: 1999/12/31]
-y2k: QDate: [yy/mm/dd: 2000/1/1]
-is not leap year: QDate: [yy/mm/dd: 1900/3/1]
-is leap year: QDate: [yy/mm/dd: 2000/2/29]
-Feb
-d0 is: QDate: [yy/mm/dd: 2000/2/29]
-d1 is: QDate: [yy/mm/dd: 2000/2/28]
-d2 is: QDate: [yy/mm/dd: 2000/2/28]
-(d0 < d1): 0
-(d0 <= d1): 0
-(d0 > d1): 1
-(d0 >= d1): 1
-(d2 < d1): 0
-(d2 <= d1): 1
-(d2 > d1): 0
-(d2 >= d1): 1
+d1: QDate: [yy/mm/dd: 1999/12/31]
+d0 = d1: QDate: [yy/mm/dd: 1999/12/31]

@@ -1,10 +1,57 @@
-QRect: [left: 0; top: 0; right: 99; bottom: 99]
-QRect: [left: 100; top: 100; right: 299; bottom: 299]
-QRect: [left: 0; top: 0; right: 299; bottom: 299]
-0
-0
-0
-1
-1
-0
-QRect: [left: 10; top: 10; right: 20; bottom: 20]
+r1: QRect: [left: 0; top: 0; right: 99; bottom: 99]
+r2: QRect: [left: 100; top: 100; right: 299; bottom: 299]
+r3 = r1.unite(r2): QRect: [left: 0; top: 0; right: 299; bottom: 299]
+r4 = r3: QRect: [left: 0; top: 0; right: 299; bottom: 299]
+r5 = r3: QRect: [left: 0; top: 0; right: 299; bottom: 299]
+r6: QRect: [left: 100; top: 100; right: 99; bottom: 99]
+r5 setLeft(10): QRect: [left: 10; top: 0; right: 299; bottom: 299]
+r5 setTop(10): QRect: [left: 10; top: 10; right: 299; bottom: 299]
+r5 setRight(20): QRect: [left: 10; top: 10; right: 20; bottom: 299]
+r5 setBottom(20): QRect: [left: 10; top: 10; right: 20; bottom: 20]
+r5 left: 10
+r5 top: 10
+r5 right: 20
+r5 bottom: 20
+r5 width: 11
+r5 height: 11
+r5 size: QSize: [w: 11; h: 11]
+r0 isNull: 0
+r1 isNull: 0
+r6 isNull: 1
+r0 isValid: 1
+r1 isValid: 1
+r6 isValid: 0
+r0 isEmpty: 0
+r1 isEmpty: 0
+r6 isEmpty: 1
+r6 normalize: QRect: [left: 99; top: 99; right: 100; bottom: 100]
+r5 setX(10): QRect: [left: 5; top: 10; right: 20; bottom: 20]
+r5 setY(10): QRect: [left: 5; top: 5; right: 20; bottom: 20]
+r5 topLeft: QPoint: [x: 5; h: 5]
+r5 bottomRight: QPoint: [x: 20; h: 20]
+r5 topRight: QPoint: [x: 20; h: 5]
+r5 bottomLeft: QPoint: [x: 5; h: 20]
+r5 center: QPoint: [x: 12; h: 12]
+r5 rect: x=5 y=5 w=16 h=16
+r5 coords: xp1=5 yp1=5 xp2=20 yp2=20
+r5 setSize 12,12: QRect: [left: 5; top: 5; right: 16; bottom: 16]
+r5 setRect 4,4,18,18: QRect: [left: 4; top: 4; right: 21; bottom: 21]
+r5 setCoords 5,5,20,20: QRect: [left: 5; top: 5; right: 20; bottom: 20]
+r5 moveTopLeft 4,4: QRect: [left: 4; top: 4; right: 19; bottom: 19]
+r5 moveBottomRight 22,22: QRect: [left: 7; top: 7; right: 22; bottom: 22]
+r5 moveTopRight 22,4: QRect: [left: 7; top: 4; right: 22; bottom: 19]
+r5 moveCenter 15,10: QRect: [left: 8; top: 3; right: 23; bottom: 18]
+r5 moveBy 5,5: QRect: [left: 13; top: 8; right: 28; bottom: 23]
+r5 contains 15,10: 1
+r5 contains 30,20: 0
+r5 contains 15,10: 1
+r5 contains 30,20: 0
+r5 contains 14,9,5,5: 1
+r5 contains 14,9,20,20: 0
+r5 & (14,9,5,5): QRect: [left: 14; top: 9; right: 18; bottom: 13]
+r1 |= r2: QRect: [left: 0; top: 0; right: 299; bottom: 299]
+r5 &= (14,9,5,5): QRect: [left: 14; top: 9; right: 18; bottom: 13]
+r1 == r4: 1
+r3 == r4: 1
+r1 != r4: 0
+r3 != r4: 0
