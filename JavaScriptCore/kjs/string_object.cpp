@@ -377,20 +377,18 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
   case Slice: // http://developer.netscape.com/docs/manuals/js/client/jsref/string.htm#1194366
     {
         // The arg processing is very much like ArrayProtoFunc::Slice
-        // We return a new array
-        result = exec->interpreter()->builtinArray().construct(exec,List::empty());
         int begin = args[0].toUInt32(exec);
+        if (begin < 0)
+          begin = maxInt(begin + len, 0);
+        else
+          begin = minInt(begin, len);
         int end = len;
-        if (args[1].type() != UndefinedType)
-        {
-          end = args[1].toUInt32(exec);
-          if ( end < 0 )
-            end += len;
-        }
-        // safety tests
-        if ( begin < 0 || end < 0 || begin >= end ) {
-            result = String();
-            break;
+        if (args[1].type() != UndefinedType) {
+          end = args[1].toInteger(exec);
+          if (end < 0)
+            end = maxInt(len + end, 0);
+          else
+            end = minInt(end, len);
         }
         //printf( "Slicing from %d to %d \n", begin, end );
         result = String(s.substr(begin, end-begin));

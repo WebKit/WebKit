@@ -2,6 +2,16 @@
 
         Patch from Harri Porten, reviewed by me.
 
+	- fixed 3491712 - String slice with negative arguments does not offset from end of string
+        
+	* kjs/string_object.cpp:
+        (StringProtoFuncImp::call): Handle negative arguments as offsets from end by
+	adding length and clamping to [0,length-1].
+
+2003-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Patch from Harri Porten, reviewed by me.
+
 	- fixed 3491709 - using Function.apply with a primitive type as the arg list causes crash
         
 	* kjs/function_object.cpp:
