@@ -194,10 +194,10 @@
 
     [super connection:connection didReceiveResponse:r];
 
-    if (![dataSource _isStopping]){
-        if ([[request URL] _web_shouldLoadAsEmptyDocument]) {
-            [self connectionDidFinishLoading:connection];
-        }
+    if (![dataSource _isStopping]
+            && ([[request URL] _web_shouldLoadAsEmptyDocument]
+            	|| [WebView _representationExistsForURLScheme:[[request URL] scheme]])) {
+        [self connectionDidFinishLoading:connection];
     }
     
     [self release];
@@ -300,22 +300,26 @@
 {
     ASSERT(connection == nil);
     
-    if ([[r URL] _web_shouldLoadAsEmptyDocument]) {
-        connection = [[NSURLConnection alloc] initWithRequest:r delegate:nil];
+    // Send this synthetic delegate callback since clients expect it, and
+    // we no longer send the callback from within NSURLConnection for
+    // initial requests.
+    r = [proxy connection:nil willSendRequest:r redirectResponse:nil];
 
-	[self connection:connection willSendRequest:r redirectResponse:nil];
+    NSURL *URL = [r URL];
+    BOOL shouldLoadEmpty = [URL _web_shouldLoadAsEmptyDocument];
+    if (shouldLoadEmpty || [WebView _representationExistsForURLScheme:[URL scheme]]) {
+        NSString *MIMEType;
+        if (shouldLoadEmpty) {
+            MIMEType = @"text/html";
+        } else {
+            MIMEType = [WebView _generatedMIMETypeForURLScheme:[URL scheme]];
+        }
 
-	NSURLResponse *rsp = [[NSURLResponse alloc] initWithURL:[[[self dataSource] request] URL]
-						    MIMEType:@"text/html"
-						    expectedContentLength:0
-						    textEncodingName:nil];
-	[self connection:connection didReceiveResponse:rsp];
-	[rsp release];
+	NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType
+            expectedContentLength:0 textEncodingName:nil];
+	[self connection:nil didReceiveResponse:resp];
+	[resp release];
     } else {
-        // send this synthetic delegate callback since clients expect it, and
-        // we no longer send the callback from within NSURLConnection for
-        // initial requests.
-        r = [proxy connection:nil willSendRequest:r redirectResponse:nil];
         connection = [[NSURLConnection alloc] initWithRequest:r delegate:proxy];
         if ([self defersCallbacks]) {
             [connection setDefersCallbacks:YES];
@@ -327,7 +331,9 @@
 
 - (void)setDefersCallbacks:(BOOL)defers
 {
-    if (request && !([[request URL] _web_shouldLoadAsEmptyDocument])) {
+    if (request
+            && ![[request URL] _web_shouldLoadAsEmptyDocument]
+            && ![WebView _representationExistsForURLScheme:[[request URL] scheme]]) {
 	[super setDefersCallbacks:defers];
     }
 }

@@ -1,3 +1,26 @@
+2003-05-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3254576 -- REGRESSION: visiting bookmarks view sometimes waits for other tabs to load first
+
+        * WebView.subproj/WebViewPrivate.h: Added new SPI for registering view and represenation classes by
+        scheme rather than MIME type.
+        * WebView.subproj/WebViewPrivate.m:
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]]): Added.
+        (+[WebView _generatedMIMETypeForURLScheme:]): Added. Makes a special MIME type for us only by the
+        special "register scheme" mechanism.
+        (+[WebView _representationExistsForURLScheme:]): Added.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): Check for schemes that have their
+        own representation, and handle them just like empty documents, loading no data, and doing it synchronously.
+        (-[WebMainResourceClient loadWithRequest:]): Same thing here, only also arrange to get the appropriate
+        MIME type.
+        (-[WebMainResourceClient setDefersCallbacks:]): Same check here.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2003-05-11  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebHTMLView.m: (-[WebHTMLView layoutToPageWidth:]): Added a check for nil that I forgot.

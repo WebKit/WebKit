@@ -165,6 +165,19 @@ Could be worth adding to the API.
 - (void)_registerDraggedTypes;
 
 - (void)_close;
+
+/*!
+    @method _registerViewClass:representationClass:forURLScheme:
+    @discussion Register classes that implement WebDocumentView and WebDocumentRepresentation respectively.
+    @param viewClass The WebDocumentView class to use to render data for a given MIME type.
+    @param representationClass The WebDocumentRepresentation class to use to represent data of the given MIME type.
+    @param scheme The URL scheme to represent with an object of the given class.
+*/
++ (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme;
+
++ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
++ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
+
 @end
 
 @interface _WebSafeForwarder : NSObject

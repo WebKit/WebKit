@@ -33,6 +33,8 @@
 
 #import <WebCore/WebCoreSettings.h>
 
+static NSMutableSet *schemesWithRepresentationsSet;
+
 @implementation WebViewPrivate
 
 - init 
@@ -561,6 +563,29 @@
 - (void)_closeWindow
 {
     [[self _UIDelegateForwarder] webViewClose:self];
+}
+
++ (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme;
+{
+    NSString *MIMEType = [self _generatedMIMETypeForURLScheme:URLScheme];
+    [self registerViewClass:viewClass representationClass:representationClass forMIMEType:MIMEType];
+
+    // This is used to make _representationExistsForURLScheme faster.
+    // Without this set, we'd have to create the MIME type each time.
+    if (schemesWithRepresentationsSet == nil) {
+        schemesWithRepresentationsSet = [[NSMutableSet alloc] init];
+    }
+    [schemesWithRepresentationsSet addObject:[[[URLScheme lowercaseString] copy] autorelease]];
+}
+
++ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
+{
+    return [@"x-apple-web-kit/" stringByAppendingString:[URLScheme lowercaseString]];
+}
+
++ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
+{
+    return [schemesWithRepresentationsSet containsObject:[URLScheme lowercaseString]];
 }
 
 @end
