@@ -1,6 +1,6 @@
 2002-07-26  Richard Williamson  <rjw@apple.com>
 
-        WebframeLoadType enum first value was explicitly set, so 0 was used.  
+        WebframeLoadType enum first value wasn't explicitly set, so 0 was used.  
         I assumed 0 was unitialized, and depended on that to not execute some 'transitional'
         back/forward.  This problem broke back/forward.
 
