@@ -28,21 +28,18 @@
 // FIXME: should QChar and QConstString be in separate source files?
 
 #include <qstring.h>
+#include <ctype.h>
 
-// FIXME: what's the minimum capacity?
-#define SCRATCH_BUFFER_CAPACITY 10
+static UniChar scratchUniChar;
 
-static UniChar scratchBuffer[SCRATCH_BUFFER_CAPACITY];
-
-static CFMutableStringRef GetScratchBufferString()
+static CFMutableStringRef GetScratchUniCharString()
 {
     static CFMutableStringRef s = NULL;
 
     if (!s) {
-        // FIXME: this string object will be leaked once
+        // FIXME: this CFMutableString will be leaked exactly once
         s = CFStringCreateMutableWithExternalCharactersNoCopy(NULL,
-                scratchBuffer, SCRATCH_BUFFER_CAPACITY,
-                SCRATCH_BUFFER_CAPACITY, kCFAllocatorNull);
+                &scratchUniChar, 1, 1, kCFAllocatorNull);
     }
     return s;
 }
@@ -94,56 +91,65 @@ QChar::~QChar()
 
 QChar QChar::lower() const
 {
-    // FIXME: unimplemented
+    scratchUniChar = c;
+    CFStringLowercase(GetScratchUniCharString(), NULL);
+    if (scratchUniChar) {
+	return QChar(scratchUniChar);
+    }
     return *this;
 }
 
 QChar QChar::upper() const
 {
-    // FIXME: unimplemented
+    scratchUniChar = c;
+    CFStringUppercase(GetScratchUniCharString(), NULL);
+    if (scratchUniChar) {
+	return QChar(scratchUniChar);
+    }
     return *this;
 }
 
 char QChar::latin1() const
 {
-    // FIXME: unimplemented
-    return 0;
+    return row() ? 0 : cell();
 }
 
 bool QChar::isNull() const
 {
-    // FIXME: unimplemented
-    return FALSE;
+    return c == 0;
 }
 
 bool QChar::isDigit() const
 {
-    // FIXME: unimplemented
-    return FALSE;
+    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
+                kCFCharacterSetDecimalDigit), c);
 }
 
 bool QChar::isSpace() const
 {
-    // FIXME: unimplemented
-    return FALSE;
+    if (!row()) {
+	return isspace(c);
+    }
+    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
+                kCFCharacterSetWhitespaceAndNewline), c);
 }
 
 bool QChar::isLetter() const
 {
-    // FIXME: unimplemented
-    return FALSE;
+    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
+                kCFCharacterSetLetter), c);
 }
 
 bool QChar::isLetterOrNumber() const
 {
-    // FIXME: unimplemented
-    return FALSE;
+    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
+                kCFCharacterSetAlphaNumeric), c) || isDigit();
 }
 
 bool QChar::isPunct() const
 {
-    // FIXME: unimplemented
-    return FALSE;
+    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
+                kCFCharacterSetPunctuation), c);
 }
 
 uchar QChar::cell() const
@@ -167,7 +173,8 @@ QChar::Direction QChar::direction() const
 bool QChar::mirrored() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    // return whether character should be reversed if text direction is reversed
+    // return whether character should be reversed if text direction is
+    // reversed
     return FALSE;
 }
 
