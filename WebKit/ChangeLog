@@ -1,3 +1,12 @@
+2005-03-31  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4070729> REGRESSION (125-311, Panther-only?): Safari crashes while reloading "My eBay" page
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate resourceData]): retain and autorelease resourceData since releaseResources (which releases resourceData) may be called before the caller of this method has an opporuntity to retain the returned data
+
 === Safari-412 ===
 
 === Safari-411 ===

@@ -330,7 +330,9 @@ static BOOL NSURLConnectionSupportsBufferedData;
         return [resource data];
     }
     if (resourceData != nil) {
-        return resourceData;
+        // Retain and autorelease resourceData since releaseResources (which releases resourceData) may be called 
+        // before the caller of this method has an opporuntity to retain the returned data (4070729).
+        return [[resourceData retain] autorelease];
     }
     if (NSURLConnectionSupportsBufferedData) {
         return [connection _bufferedData];
