@@ -1177,7 +1177,8 @@ static const char *joiningNames[] = {
 
     ATSInitializeGlyphVector(count*2, 0, &glyphVector);
     [self convertUnicodeCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
-    if (glyphVector.numGlyphs != count)
+    int numGlyphs = glyphVector.numGlyphs;
+    if (numGlyphs != count)
         [NSException raise:NSInternalInconsistencyException format:@"surrogate matching violation:  count and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
             
     map->glyphs = (GlyphEntry *)malloc (count * sizeof(GlyphEntry));
@@ -1249,7 +1250,8 @@ static const char *joiningNames[] = {
 
     ATSInitializeGlyphVector(count, 0, &glyphVector);
     [self convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector skipControlCharacters: NO];
-    if (glyphVector.numGlyphs != count)
+    int numGlyphs = glyphVector.numGlyphs;
+    if (numGlyphs != count)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  count and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
             
     map->glyphs = (GlyphEntry *)malloc (count * sizeof(GlyphEntry));
