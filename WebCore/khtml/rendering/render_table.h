@@ -106,6 +106,8 @@ public:
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
     virtual void paint( QPainter *, int x, int y, int w, int h,
                         int tx, int ty, PaintAction paintAction);
+    virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
+                                     int _w, int _h, int _tx, int _ty);
     virtual void layout();
     virtual void calcMinMaxWidth();
     virtual void close();

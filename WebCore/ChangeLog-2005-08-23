@@ -1,3 +1,15 @@
+2003-12-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3490959, collapsed border tables don't paint backgrounds.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::setStyle):
+        (RenderTable::paint):
+        (RenderTable::paintBoxDecorations):
+        * khtml/rendering/render_table.h:
+
 2003-12-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

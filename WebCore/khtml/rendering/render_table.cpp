@@ -108,10 +108,6 @@ void RenderTable::setStyle(RenderStyle *_style)
 	} else
 	    tableLayout = new AutoTableLayout(this);
     }
-    
-    // The table never paints its border if it collapses.  It lets the cells do the painting.
-    if (collapseBorders())
-        setShouldPaintBackgroundOrBorder(false);
 }
 
 void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
@@ -471,6 +467,26 @@ void RenderTable::paint( QPainter *p, int _x, int _y,
 #ifdef BOX_DEBUG
     outlineBox(p, _tx, _ty, "blue");
 #endif
+}
+
+void RenderTable::paintBoxDecorations(QPainter *p,int _x, int _y,
+                                      int _w, int _h, int _tx, int _ty)
+{
+    int w = width();
+    int h = height() + borderTopExtra() + borderBottomExtra();
+    _ty -= borderTopExtra();
+    
+    int my = kMax(_ty,_y);
+    int mh;
+    if (_ty<_y)
+        mh= kMax(0,h-(_y-_ty));
+    else
+        mh = kMin(_h,h);
+    
+    paintBackground(p, style()->backgroundColor(), style()->backgroundImage(), my, mh, _tx, _ty, w, h);
+    
+    if (style()->hasBorder() && !collapseBorders())
+        paintBorder(p, _tx, _ty, w, h, style());
 }
 
 void RenderTable::calcMinMaxWidth()
