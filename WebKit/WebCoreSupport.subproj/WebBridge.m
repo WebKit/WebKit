@@ -75,7 +75,7 @@
 - (NSArray *)childFrames
 {
     ASSERT(frame != nil);
-    NSArray *frames = [frame children];
+    NSArray *frames = [frame childFrames];
     NSEnumerator *e = [frames objectEnumerator];
     NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
     WebFrame *childFrame;
@@ -925,7 +925,7 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 - (void)frameDetached
 {
     [frame stopLoading];
-    [[frame parent] _removeChild:frame];
+    [[frame parentFrame] _removeChild:frame];
 }
 
 @end
