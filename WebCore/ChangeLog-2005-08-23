@@ -2,6 +2,13 @@
 
         Reviewed by John.
 
+        * kwq/DOM-CSS.mm: (-[DOMCSSStyleDeclaration description]): Use cssText in the description
+        so it's easier to see in the debugger.
+
+2004-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         * khtml/ecma/xmlhttprequest.cpp: (KJS::XMLHttpRequest::send): Remove uneeded QCString copy.
 
 2004-09-04  Richard Williamson   <rjw@apple.com>

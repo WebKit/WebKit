@@ -764,6 +764,11 @@ static inline int getPropertyID(NSString *string)
     [super finalize];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"DOMCSSStyleDeclaration: %@", [self cssText]];
+}
+
 - (NSString *)cssText
 {
     return [self _styleDeclarationImpl]->cssText();
