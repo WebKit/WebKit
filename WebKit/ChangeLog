@@ -1,3 +1,34 @@
+2003-02-25  John Sullivan  <sullivan@apple.com>
+
+	WebKit part of fix for 3181290 -- need call to reload all bookmarks from disk, 
+	for synching's sake.
+
+	I ended up not adding a new call, but making the existing loadBookmarkGroup
+	work better when called after the initial load. It wasn't doing anything wrong
+	before; it just wasn't passing along enough information to clients to enable
+	them to do the right thing.
+
+        Reviewed by Trey
+
+        * Bookmarks.subproj/WebBookmarkGroup.h:
+	new extern NSStrings WebBookmarksWillBeReloadedNotification and
+	WebBookmarksWereReloadedNotification
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup _sendNotification:forBookmark:children:]):
+	soften assert so it doesn't fire on the new cases.
+
+        (-[WebBookmarkGroup _bookmarksWillBeReloaded]):
+	send WebBookmarksWillBeReloadedNotification
+        (-[WebBookmarkGroup _bookmarksWereReloaded]):
+	send WebBookmarksWereReloadedNotification
+
+        (-[WebBookmarkGroup _loadBookmarkGroupGuts]):
+	bracket the load with the new notification-sending calls
+
+        * WebKit.exp:
+	add the two new extern NSStrings
+
 2003-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

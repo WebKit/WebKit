@@ -18,6 +18,8 @@ NSString *WebBookmarksWereAddedNotification = @"WebBookmarksWereAddedNotificatio
 NSString *WebBookmarksWereRemovedNotification = @"WebBookmarksWereRemovedNotification";
 NSString *WebBookmarkDidChangeNotification = @"WebBookmarkDidChangeNotification";
 NSString *WebBookmarkWillChangeNotification = @"WebBookmarkWillChangeNotification";
+NSString *WebBookmarksWillBeReloadedNotification = @"WebBookmarksWillBeReloadedNotification";
+NSString *WebBookmarksWereReloadedNotification = @"WebBookmarksWereReloadedNotification";
 NSString *WebModifiedBookmarkKey = @"WebModifiedBookmarkKey";
 NSString *WebBookmarkChildrenKey = @"WebBookmarkChildrenKey";
 NSString *TagKey = @"WebBookmarkGroupTag";
@@ -139,7 +141,9 @@ NSString *TagKey = @"WebBookmarkGroupTag";
 {
     NSDictionary *userInfo;
 
-    ASSERT(bookmark != nil);
+    // Some notifications (e.g. WillBeReloaded/WereReloaded) have no bookmark parameter. But
+    // if there's a kids parameter, there must be a bookmark parameter also.
+    ASSERT(bookmark != nil || kids == nil);
     
     if (_loading) {
         return;
@@ -192,6 +196,16 @@ NSString *TagKey = @"WebBookmarkGroupTag";
 {
     ASSERT_ARG(bookmark, [bookmark bookmarkType] == WebBookmarkTypeList);
     [self _sendNotification:WebBookmarksWereRemovedNotification forBookmark:bookmark children:kids];
+}
+
+- (void)_bookmarksWillBeReloaded
+{
+    [self _sendNotification:WebBookmarksWillBeReloadedNotification forBookmark:nil children:nil];
+}
+
+- (void)_bookmarksWereReloaded
+{
+    [self _sendNotification:WebBookmarksWereReloadedNotification forBookmark:nil children:nil];
 }
 
 - (WebBookmark *)addNewBookmarkToBookmark:(WebBookmark *)parent
@@ -271,11 +285,15 @@ NSString *TagKey = @"WebBookmarkGroupTag";
         _tag = [tagFromFile retain];
     }
 
+    [self _bookmarksWillBeReloaded];
+
     _loading = YES;
     newTopBookmark = [[WebBookmarkList alloc] initFromDictionaryRepresentation:dictionary withGroup:self];
     [self _setTopBookmark:newTopBookmark];
     [newTopBookmark release];
     _loading = NO;
+
+    [self _bookmarksWereReloaded];
 
     return YES;
 }

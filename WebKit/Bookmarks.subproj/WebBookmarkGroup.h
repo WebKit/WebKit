@@ -14,6 +14,8 @@ extern NSString *WebBookmarksWereAddedNotification;
 extern NSString *WebBookmarksWereRemovedNotification;
 extern NSString *WebBookmarkWillChangeNotification;
 extern NSString *WebBookmarkDidChangeNotification;
+extern NSString *WebBookmarksWillBeReloadedNotification;
+extern NSString *WebBookmarksWereReloadedNotification;
 
 // keys for userInfo for the above notifications.
 
