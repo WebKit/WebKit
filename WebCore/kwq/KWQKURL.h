@@ -32,6 +32,14 @@
 
 class QTextCodec;
 
+#ifdef __OBJC__
+@class NSData;
+@class NSURL;
+#else
+class NSData;
+class NSURL;
+#endif
+
 class KURL {
 public:
     KURL();
@@ -70,6 +78,9 @@ public:
     void setRef(const QString &);
 
     QString prettyURL() const;
+    
+    NSURL *getNSURL() const;
+    NSData *getNSData() const;
     
     static QString decode_string(const QString &);
     static QString encode_string(const QString &);

@@ -1,3 +1,15 @@
+2003-07-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+	
+        * kwq/KWQKURL.h:
+        * kwq/KWQKURL.mm:
+        (StringHasCaseInsensitivePrefix): Helper method for the new functions below
+        (StringByAddingPercentEscapes): Ditto
+        (URLStringByAddingPercentEscapes): Ditto
+        (KURL::getNSURL): Added convenience function to get an NSURL from a KURL
+        (KURL::getNSData): Added convenience function to get an NSData from a KURL
+
 2003-07-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3315951:  Add support for <OL>, <UL> in attributed string conversion.
