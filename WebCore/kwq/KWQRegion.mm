@@ -89,5 +89,5 @@ void QRegion::translate(int deltaX, int deltaY)
 
 QRect QRegion::boundingRect() const
 {
-    return path ? QRect() : QRect([path bounds]);
+    return path ? QRect([path bounds]) : QRect();
 }

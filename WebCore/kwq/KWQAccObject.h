@@ -25,6 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
+namespace DOM {
+    class HTMLAreaElementImpl;
+}
+
 namespace khtml {
     class RenderObject;
 }
@@ -33,6 +37,7 @@ namespace khtml {
 {
     khtml::RenderObject* m_renderer;
     id m_data;
+    DOM::HTMLAreaElementImpl* m_areaElement;
     NSMutableArray* m_children;
 }
 

@@ -1,3 +1,35 @@
+2004-04-29  David Hyatt  <hyatt@apple.com>
+
+	Implement image maps for accessibility.
+	
+        Reviewed by darin
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLAreaElementImpl::getRect):
+        * khtml/html/html_imageimpl.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::imageMap):
+        (RenderImage::nodeAtPoint):
+        * khtml/rendering/render_image.h:
+        * kwq/KWQAccObject.h:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject initWithRenderer:]):
+        (-[KWQAccObject anchorElement]):
+        (-[KWQAccObject parentObject]):
+        (-[KWQAccObject parentObjectUnignored]):
+        (-[KWQAccObject addChildrenToArray:]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject helpText]):
+        (-[KWQAccObject value]):
+        (-[KWQAccObject title]):
+        (-[KWQAccObject position]):
+        (-[KWQAccObject size]):
+        (-[KWQAccObject accessibilityIsIgnored]):
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        * kwq/KWQRegion.mm:
+        (QRegion::boundingRect):
+
 2004-04-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

@@ -571,6 +571,12 @@ void RenderImage::detach()
     RenderReplaced::detach();
 }
 
+HTMLMapElementImpl* RenderImage::imageMap()
+{
+    HTMLImageElementImpl* i = element()->id() == ID_IMG ? static_cast<HTMLImageElementImpl*>(element()) : 0;
+    return i ? i->getDocument()->getImageMap(i->imageMap()) : 0;
+}
+
 bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
                               HitTestAction hitTestAction, bool inside)
 {
@@ -580,9 +586,8 @@ bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
         int tx = _tx + m_x;
         int ty = _ty + m_y;
         
-        HTMLImageElementImpl* i = element()->id() == ID_IMG ? static_cast<HTMLImageElementImpl*>(element()) : 0;
-        HTMLMapElementImpl* map;
-        if (i && (map = i->getDocument()->getImageMap(i->imageMap()))) {
+        HTMLMapElementImpl* map = imageMap();
+        if (map) {
             // we're a client side image map
             inside = map->mapMouseEvent(_x - tx, _y - ty, contentWidth(), contentHeight(), info);
             info.setInnerNonSharedNode(element());
