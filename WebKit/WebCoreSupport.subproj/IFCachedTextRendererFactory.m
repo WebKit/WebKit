@@ -52,7 +52,7 @@
 {
     IFFontCacheKey *other = o;
     return [self class] == [other class]
-        && [family isEqual:other->family]
+        && [family isEqualToString:other->family]
         && traits == other->traits
         && size == other->size;
 }

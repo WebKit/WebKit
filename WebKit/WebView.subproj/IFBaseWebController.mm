@@ -209,7 +209,7 @@
 
 - (IFWebFrame *)_frameNamed: (NSString *)name fromFrame: (IFWebFrame *)frame
 {
-    if ([[frame name] isEqual: name])
+    if ([[frame name] isEqualToString: name])
         return frame;
 
     int i, count;

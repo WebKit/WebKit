@@ -1,3 +1,12 @@
+2002-05-07  Darin Adler  <darin@apple.com>
+
+	Use isEqualToString: instead of isEqual: more consistently. But only for strings.
+
+	* WebCoreSupport.subproj/IFCachedTextRendererFactory.m:
+	(-[IFFontCacheKey isEqual:]):
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController _frameNamed:fromFrame:]):
+
 2002-05-06  John Sullivan  <sullivan@apple.com>
 
 	Some improvements to the bookmark changed notifications.
