@@ -11,8 +11,17 @@ clean-am:
 WebCore-combined.exp: WebCore.exp WebCore-tests.exp
 	cat $^ > $@
 
+config.h: ../config.h
+	grep -v NO_LICENSE ../config.h > new-config.h
+	if cmp -s config.h new-config.h; then \
+		rm -f new-config.h; \
+	else \
+		mv new-config.h config.h; \
+	fi
+
 noinst_DATA = WebCore-combined.exp
-BUILT_SOURCES = $(noinst_DATA)
+noinst_HEADERS = config.h
+BUILT_SOURCES = $(noinst_DATA) $(noinst_HEADERS)
 CLEANFILES = $(BUILT_SOURCES)
 
 previous-clean-timestamp: force-clean-timestamp
