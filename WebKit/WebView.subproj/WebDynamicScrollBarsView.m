@@ -104,7 +104,6 @@
         // http://www.linuxpowered.com/archive/howto/Net-HOWTO-8.html.
         // The underlying cause is some problem in the NSText machinery, but I was not
         // able to pin it down.
-        static BOOL inUpdateScrollers;
         if (!inUpdateScrollers && [[NSGraphicsContext currentContext] isDrawingToScreen]) {
             inUpdateScrollers = YES;
             [self updateScrollers];

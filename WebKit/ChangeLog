@@ -1,3 +1,14 @@
+2003-11-19  David Hyatt  <hyatt@apple.com>
+
+	Make updateScrollers guard non-static, so that it applies only to the view whose scrollers are being
+	updated.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebDynamicScrollBarsView.h:
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+
 2003-11-18  Richard Williamson   <rjw@apple.com>
 
 	More live connect stubs.  We're getting close.
