@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include <JavaScriptCore/internal.h>
 
 #include <c_instance.h>
@@ -30,7 +31,6 @@
 
 #include <runtime_array.h>
 #include <runtime_object.h>
-
 
 using namespace KJS;
 using namespace KJS::Bindings;

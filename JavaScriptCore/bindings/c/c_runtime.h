@@ -28,6 +28,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include <npruntime.h>
+#include <npruntime_impl.h>
 
 #include <runtime.h>
 #include <ustring.h>
@@ -51,7 +52,7 @@ public:
     virtual KJS::Value valueFromInstance(KJS::ExecState *exec, const Instance *instance) const;
     virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const;
     
-    virtual const char *name() const { return NPN_UTF8FromIdentifier(_fieldIdentifier); }
+    virtual const char *name() const { return _NPN_UTF8FromIdentifier(_fieldIdentifier); }
     virtual RuntimeType type() const { return ""; }
     
 private:
@@ -66,7 +67,7 @@ public:
 
     CMethod(NPIdentifier ident) : Method(), _methodIdentifier(ident) {};
     
-    virtual const char *name() const { return NPN_UTF8FromIdentifier(_methodIdentifier); };
+    virtual const char *name() const { return _NPN_UTF8FromIdentifier(_methodIdentifier); };
 
     virtual long numParameters() const { return 0; };
 

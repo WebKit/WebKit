@@ -26,6 +26,7 @@
 
 #include <JavaScriptCore/npruntime.h>
 #include <JavaScriptCore/c_utility.h>
+#include <JavaScriptCore/npruntime_impl.h>
 #include <JavaScriptCore/npruntime_priv.h>
 
 using namespace KJS;
@@ -87,7 +88,7 @@ Identifier identiferFromNPIdentifier(const NPUTF8 *name)
 
 NPObject *_NPN_CreateScriptObject (NPP npp, KJS::ObjectImp *imp, KJS::Bindings::RootObject *root)
 {
-    JavaScriptObject *obj = (JavaScriptObject *)NPN_CreateObject(npp, NPScriptObjectClass);
+    JavaScriptObject *obj = (JavaScriptObject *)_NPN_CreateObject(npp, NPScriptObjectClass);
 
     obj->imp = imp;
     obj->root = root;    
@@ -97,7 +98,7 @@ NPObject *_NPN_CreateScriptObject (NPP npp, KJS::ObjectImp *imp, KJS::Bindings::
     return (NPObject *)obj;
 }
 
-bool NPN_InvokeDefault (NPP npp, NPObject *o, const NPVariant *args, uint32_t argCount, NPVariant *result)
+bool _NPN_InvokeDefault (NPP npp, NPObject *o, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
     if (o->_class == NPScriptObjectClass) {
         // No notion of a default function on JS objects.  Just return false, can't handle.
@@ -112,7 +113,7 @@ bool NPN_InvokeDefault (NPP npp, NPObject *o, const NPVariant *args, uint32_t ar
     return true;
 }
 
-bool NPN_Invoke (NPP npp, NPObject *o, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result)
+bool _NPN_Invoke (NPP npp, NPObject *o, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -158,7 +159,7 @@ bool NPN_Invoke (NPP npp, NPObject *o, NPIdentifier methodName, const NPVariant 
     return true;
 }
 
-bool NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
+bool _NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -194,7 +195,7 @@ bool NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
     return false;
 }
 
-bool NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVariant *variant)
+bool _NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVariant *variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -249,7 +250,7 @@ bool NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVariant
     return false;
 }
 
-bool NPN_SetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, const NPVariant *variant)
+bool _NPN_SetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, const NPVariant *variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -274,7 +275,7 @@ bool NPN_SetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, const NPV
     return false;
 }
 
-bool NPN_RemoveProperty (NPP npp, NPObject *o, NPIdentifier propertyName)
+bool _NPN_RemoveProperty (NPP npp, NPObject *o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -306,7 +307,7 @@ bool NPN_RemoveProperty (NPP npp, NPObject *o, NPIdentifier propertyName)
     return false;
 }
 
-bool NPN_HasProperty(NPP npp, NPObject *o, NPIdentifier propertyName)
+bool _NPN_HasProperty(NPP npp, NPObject *o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -335,7 +336,7 @@ bool NPN_HasProperty(NPP npp, NPObject *o, NPIdentifier propertyName)
     return false;
 }
 
-bool NPN_HasMethod(NPP npp, NPObject *o, NPIdentifier methodName)
+bool _NPN_HasMethod(NPP npp, NPObject *o, NPIdentifier methodName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 

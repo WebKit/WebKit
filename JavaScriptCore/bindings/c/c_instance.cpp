@@ -27,7 +27,8 @@
 #include <c_runtime.h>
 #include <c_utility.h>
 
-#include <npruntime_priv.h>
+#include <JavaScriptCore/npruntime_impl.h>
+#include <JavaScriptCore/npruntime_priv.h>
 
 #ifdef NDEBUG
 #define C_LOG(formatAndArgs...) ((void)0)
@@ -43,20 +44,20 @@ using namespace KJS;
 
 CInstance::CInstance (NPObject *o) 
 {
-    _object = NPN_RetainObject (o);
+    _object = _NPN_RetainObject (o);
     _class = 0;
 };
 
 CInstance::~CInstance () 
 {
-    NPN_ReleaseObject (_object);
+    _NPN_ReleaseObject (_object);
     delete _class;
 }
 
 
 CInstance::CInstance (const CInstance &other) : Instance() 
 {
-    _object = NPN_RetainObject (other._object);
+    _object = _NPN_RetainObject (other._object);
     _class = 0;
 };
 
@@ -65,8 +66,8 @@ CInstance &CInstance::operator=(const CInstance &other){
         return *this;
     
     NPObject *_oldObject = _object;
-    _object= NPN_RetainObject (other._object);
-    NPN_ReleaseObject (_oldObject);
+    _object= _NPN_RetainObject (other._object);
+    _NPN_ReleaseObject (_oldObject);
     _class = 0;
     
     return *this;
@@ -102,7 +103,7 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
     CMethod *method = 0;
     method = static_cast<CMethod*>(methodList.methodAt(0));
 
-    NPIdentifier ident = NPN_GetStringIdentifier (method->name());
+    NPIdentifier ident = _NPN_GetStringIdentifier (method->name());
     if (!_object->_class->hasMethod (_object->_class, ident)) {
         return Undefined();
     }
@@ -124,7 +125,7 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
     _object->_class->invoke (_object, ident, cArgs, count, &resultVariant);
 
     for (i = 0; i < count; i++) {
-        NPN_ReleaseVariantValue (&cArgs[i]);
+        _NPN_ReleaseVariantValue (&cArgs[i]);
     }
 
     if (cArgs != localBuffer)
@@ -133,7 +134,7 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
     if (!NPVARIANT_IS_VOID(resultVariant)) {
         resultValue = convertNPVariantToValue (exec, &resultVariant);
         
-        NPN_ReleaseVariantValue (&resultVariant);
+        _NPN_ReleaseVariantValue (&resultVariant);
         
         return resultValue;
     }
@@ -164,7 +165,7 @@ Value CInstance::invokeDefaultMethod (KJS::ExecState *exec, const List &args)
         _object->_class->invokeDefault (_object, cArgs, count, &resultVariant);
 
         for (i = 0; i < count; i++) {
-            NPN_ReleaseVariantValue (&cArgs[i]);
+            _NPN_ReleaseVariantValue (&cArgs[i]);
         }
 
         if (cArgs != localBuffer)
@@ -173,7 +174,7 @@ Value CInstance::invokeDefaultMethod (KJS::ExecState *exec, const List &args)
         if (!NPVARIANT_IS_VOID(resultVariant)) {
             resultValue = convertNPVariantToValue (exec, &resultVariant);
             
-            NPN_ReleaseVariantValue (&resultVariant);
+            _NPN_ReleaseVariantValue (&resultVariant);
             
             return resultValue;
         }

@@ -1,3 +1,48 @@
+2004-09-29  Chris Blumenberg  <cblu@apple.com>
+
+	Prepended underscores to NPN methods so that when the QT plug-in loads these symbols, it uses the non-underscore versions in WebKit. Without this, the QT plug-in was failing to load when launching Safari from the command-line.
+
+        Reviewed by rjw.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/NP_jsobject.cpp:
+        (_NPN_CreateScriptObject):
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        * bindings/c/c_class.cpp:
+        (CClass::methodsNamed):
+        (CClass::fieldNamed):
+        * bindings/c/c_instance.cpp:
+        (CInstance::CInstance):
+        (CInstance::~CInstance):
+        (CInstance::operator=):
+        (CInstance::invokeMethod):
+        (CInstance::invokeDefaultMethod):
+        * bindings/c/c_runtime.cpp:
+        * bindings/c/c_runtime.h:
+        (KJS::Bindings::CField::name):
+        (KJS::Bindings::CMethod::name):
+        * bindings/npruntime.cpp:
+        (_NPN_GetStringIdentifier):
+        (_NPN_GetStringIdentifiers):
+        (_NPN_GetIntIdentifier):
+        (_NPN_IdentifierIsString):
+        (_NPN_UTF8FromIdentifier):
+        (_NPN_IntFromIdentifier):
+        (NPN_InitializeVariantWithObject):
+        (_NPN_ReleaseVariantValue):
+        (_NPN_CreateObject):
+        (_NPN_RetainObject):
+        (_NPN_ReleaseObject):
+        (_NPN_SetExceptionWithUTF8):
+        (_NPN_SetException):
+
 2004-09-26  Darin Adler  <darin@apple.com>
 
         * kjs/string_object.cpp: (StringProtoFuncImp::call): Remove strange use of high() and

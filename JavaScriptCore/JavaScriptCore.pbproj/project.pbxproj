@@ -263,6 +263,7 @@
 				700DA118065984CE00747C0B,
 				51CA3B5006CC2166005600E3,
 				51DFF2CA06CC36F6006F1ECC,
+				84ABF1DF070B628C00A3AC05,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -967,6 +968,7 @@
 				5199B1BD061B65BC0070C006,
 				5199B1BE061B65BC0070C006,
 				51DFF2C906CC36F6006F1ECC,
+				84ABF1DE070B628C00A3AC05,
 				5182A53A06012C3000CBD2F2,
 				5182A53B06012C3000CBD2F2,
 				5182A45605FFCF4B00CBD2F2,
@@ -1774,6 +1776,34 @@
 //702
 //703
 //704
+//840
+//841
+//842
+//843
+//844
+		84ABF1DE070B628C00A3AC05 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = npruntime_impl.h;
+			path = bindings/npruntime_impl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84ABF1DF070B628C00A3AC05 = {
+			fileRef = 84ABF1DE070B628C00A3AC05;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+//840
+//841
+//842
+//843
+//844
 //930
 //931
 //932
