@@ -43,7 +43,7 @@ public:
     void clear();
     void insertItem(const QString &text, int index=-1);
 
-    int currentItem() const;
+    int currentItem() const { return _currentItem; }
     void setCurrentItem(int);
 
     QListBox *listBox() const { return 0; }
@@ -54,12 +54,15 @@ public:
     void setFrameGeometry(const QRect &);
     int baselinePosition() const;
 
-    void activated() { _activated.call(currentItem()); }
+    void itemSelected();
 
 private:
+    bool updateCurrentItem() const;
+    
     KWQComboBoxAdapter *_adapter;
     mutable float _width;
     mutable bool _widthGood;
+    mutable int _currentItem;
 
     KWQSignal _activated;
 };

@@ -93,6 +93,8 @@ QComboBox::QComboBox()
     setView(button);
 
     [button release];
+
+    updateCurrentItem();
 }
 
 QComboBox::~QComboBox()
@@ -118,6 +120,8 @@ void QComboBox::insertItem(const QString &text, int index)
     // same title. But this way, we can have such duplicate items.
     [[button itemAtIndex:index] setTitle:text.getNSString()];
     _widthGood = false;
+
+    updateCurrentItem();
 }
 
 QSize QComboBox::sizeHint() const 
@@ -175,20 +179,33 @@ void QComboBox::clear()
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button removeAllItems];
     _widthGood = false;
+    updateCurrentItem();
 }
 
 void QComboBox::setCurrentItem(int index)
 {
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button selectItemAtIndex:index];
+    updateCurrentItem();
 }
 
-int QComboBox::currentItem() const
+bool QComboBox::updateCurrentItem() const
 {
-    KWQPopUpButton *button = (KWQPopUpButton *)getView();
-    return [button indexOfSelectedItem];
+    int i = [(KWQPopUpButton *)getView() indexOfSelectedItem];
+    if (_currentItem == i) {
+        return false;
+    }
+    _currentItem = i;
+    return true;
 }
 
+void QComboBox::itemSelected()
+{
+    if (updateCurrentItem()) {
+        _activated.call(_currentItem);
+    }
+}
+ 
 @implementation KWQComboBoxAdapter
 
 - initWithQComboBox:(QComboBox *)b
@@ -199,7 +216,7 @@ int QComboBox::currentItem() const
 
 - (void)action:(id)sender
 {
-    box->activated();
+    box->itemSelected();
 }
 
 @end

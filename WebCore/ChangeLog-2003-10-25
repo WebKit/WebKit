@@ -1,3 +1,22 @@
+2003-04-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3233819 -- MALLORY: onChange handler being called on SELECT even if selected item does not change
+
+        * kwq/KWQComboBox.h: Added _currentItem variable, updateCurrentItem function, and replaced
+        activated function with itemSelected function.
+        
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox): Call updateCurrentItem so _currentItem is up to date.
+        (QComboBox::insertItem): Ditto.
+        (QComboBox::clear): Ditto.
+        (QComboBox::setCurrentItem): Ditto.
+        (QComboBox::updateCurrentItem): Added. Returns true if current item has changed since the last time
+        the function was called.
+        (QComboBox::itemSelected): Only send the activate method if updateCurrentItem returns true.
+        (-[KWQComboBoxAdapter action:]): Call itemSelected instead of calling activated directly.
+
 2003-04-29  David Hyatt  <hyatt@apple.com>
 
 	Fix for the Adam Rice float/padding test on diveintomark's list
