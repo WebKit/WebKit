@@ -1,3 +1,13 @@
+2002-06-04  Darin Adler  <darin@apple.com>
+
+	- fixed 2943897 -- Initial uncached load of amazon.com renders partial page.
+
+	* khtml/khtml_part.cpp: (KHTMLPart::setEncoding): Put the code that
+	reloads the page when the encoding is changed back inside APPLE_CHANGES.
+	This was causing partial loads because of how it interacts with our
+	way of saving up text and not decoding until we discover what the
+	encoding is.
+
 2002-06-03  Darin Adler  <darin@apple.com>
 
 	* LICENSE: Add 2002.
