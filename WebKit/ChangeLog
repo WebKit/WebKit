@@ -1,3 +1,29 @@
+2003-03-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris.
+
+	- fixed 3210813 - REGRESSION: full size stock chart on etrade shows up empty after viewing mini stock chart
+
+	I fixed this by adding a "negative cache" of icon URLs that loaded
+	something but failed to yield an icon. This prevents us from
+	asking for the site icon over and over, which was messing up the
+	session cookie.
+	
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        (-[WebIconDatabase _updateFileDatabase]):
+        (-[WebIconDatabase _iconsForIconURLString:]):
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]):
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading]):
+        (-[WebIconLoader connectionDidFinishLoading:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _iconLoaderReceivedPageIcon:]):
+
 2003-03-31  Darin Adler  <darin@apple.com>
 
         * English.lproj/InfoPlist.strings: Changed "1.0 Beta" to "1.0 Beta 2".

@@ -570,7 +570,7 @@
     [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller receivedPageIcon:icon forDataSource:self];
 }
 
-- (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;
+- (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader
 {
     [self _updateIconDatabaseWithURL:[iconLoader URL]];
 }

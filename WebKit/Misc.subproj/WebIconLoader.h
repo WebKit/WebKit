@@ -58,5 +58,5 @@
 @end
 
 @interface NSObject(WebIconLoaderDelegate)
-- (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)image;
+- (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader;
 @end;

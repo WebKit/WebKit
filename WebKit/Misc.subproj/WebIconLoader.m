@@ -86,7 +86,6 @@
     }
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->URL];
-    [request HTTPSetPageNotFoundCacheLifetime:WebIconLoaderWeeksWorthOfSeconds];
     _private->handle = [[NSURLConnection alloc] initWithRequest:request];
     [_private->handle loadWithDelegate:self];
     [request release];
@@ -104,9 +103,11 @@
     NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
     if (icon) {
         [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[_private->URL absoluteString]];
-        [_private->delegate iconLoader:self receivedPageIcon:icon];
-        [icon release];
+    } else {
+	[[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[_private->URL absoluteString]];
     }
+    [_private->delegate _iconLoaderReceivedPageIcon:self];
+    [icon release];
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
