@@ -126,6 +126,7 @@ void QPainter::setBrush(BrushStyle style)
 
 QRect QPainter::xForm(const QRect &) const
 {
+    NSLog (@"WARNING (NOT YET IMPLEMENTED) QRect QPainter::xForm(const QRect &) const\n");
 }
 
 
@@ -398,7 +399,6 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     
     _lockFocus();
     
-    // Draw another string in Helvetica 24 in green 
     font = data->qfont.data->font;    
     
     if (len == -1)
