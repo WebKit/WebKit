@@ -150,7 +150,10 @@
 
 - (void)setURLString:(NSString *)URLString
 {
-    WEBKIT_ASSERT_VALID_ARG (URLString, URLString != nil);
+    if (URLString == nil) {
+        URLString = @"";
+    }
+    
     if ([URLString isEqualToString:_URLString]) {
         return;
     }
