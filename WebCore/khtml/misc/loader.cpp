@@ -1149,11 +1149,11 @@ CachedImage *DocLoader::requestImage( const DOM::DOMString &url)
     bool reload = needReload(fullURL);
 
 #if APPLE_CHANGES
-    CachedImage *cachedObject = Cache::requestImage(this, url, reload, m_expireDate);
+    CachedImage *cachedObject = Cache::requestImage(this, fullURL, reload, m_expireDate);
     KWQCheckCacheObjectStatus(this, cachedObject);
     return cachedObject;
 #else
-    return Cache::requestImage(this, url, reload, m_expireDate);
+    return Cache::requestImage(this, fullURL, reload, m_expireDate);
 #endif
 }
 
@@ -1565,17 +1565,20 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
 {
     // this brings the _url to a standard form...
     KURL kurl;
-    KIO::CacheControl cachePolicy;
-    if ( dl )
-    {
+    if (dl)
         kurl = dl->m_doc->completeURL( url.string() );
-        cachePolicy = dl->cachePolicy();
-    }
     else
-    {
         kurl = url.string();
+    return requestImage(dl, kurl, reload, _expireDate);
+}
+
+CachedImage *Cache::requestImage( DocLoader* dl, const KURL & url, bool reload, time_t _expireDate )
+{
+    KIO::CacheControl cachePolicy;
+    if (dl)
+        cachePolicy = dl->cachePolicy();
+    else
         cachePolicy = KIO::CC_Verify;
-    }
 
 #if APPLE_CHANGES
     // Checking if the URL is malformed is lots of extra work for little benefit.
@@ -1598,20 +1601,20 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
 
     CachedObject *o = 0;
     if (!reload)
-        o = cache->find(kurl.url());
+        o = cache->find(url.url());
     if(!o)
     {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
+        kdDebug( 6060 ) << "Cache: new: " << url.url() << endl;
 #endif
-        CachedImage *im = new CachedImage(dl, kurl.url(), cachePolicy, _expireDate);
+        CachedImage *im = new CachedImage(dl, url.url(), cachePolicy, _expireDate);
         if ( dl && dl->autoloadImages() ) Cache::loader()->load(dl, im, true);
 #if APPLE_CHANGES
         if (cacheDisabled)
             im->setFree(true);
         else {
 #endif
-        cache->insert( kurl.url(), im );
+        cache->insert( url.url(), im );
         moveToHeadOfLRUList(im);
 #if APPLE_CHANGES
         }

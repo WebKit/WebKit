@@ -1,5 +1,14 @@
 2004-02-10  David Hyatt  <hyatt@apple.com>
 
+	Eliminate the double-completion and double-parsing of KURLs for every single image request.
+	
+        * khtml/misc/loader.cpp:
+        (DocLoader::requestImage):
+        (Cache::requestImage):
+        * khtml/misc/loader.h:
+
+2004-02-10  David Hyatt  <hyatt@apple.com>
+
 	Merged patch that fixes clear:both for floats.  This patch comes from the KHTML tree.
 	
         * khtml/rendering/render_block.cpp:

@@ -519,6 +519,7 @@ protected:
          * Otherwise, it is automatically base-url expanded
 	 */
 	static CachedImage *requestImage( DocLoader* l, const DOM::DOMString &url, bool reload=false, time_t _expireDate=0);
+        static CachedImage *requestImage( DocLoader* l, const KURL &url, bool reload=false, time_t _expireDate=0);
 
 	/**
 	 * Ask the cache for some url. Will return a cachedObject, and
