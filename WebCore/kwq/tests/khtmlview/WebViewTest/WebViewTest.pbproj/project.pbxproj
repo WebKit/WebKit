@@ -122,18 +122,6 @@
 //252
 //253
 //254
-		253C4A130177AF4C0ECA149E = {
-			isa = PBXFileReference;
-			name = draw.mm;
-			path = /Volumes/Shared/Projects/cvs/Labyrinth/WebCore/src/kwq/tests/khtmlview/draw.mm;
-			refType = 0;
-		};
-		253C4A140177AF4C0ECA149E = {
-			fileRef = 253C4A130177AF4C0ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		2587FFAC017B21AB0ECA149E = {
 			isa = PBXFrameworkReference;
 			name = WebKit.framework;
@@ -142,6 +130,18 @@
 		};
 		2587FFAD017B21AB0ECA149E = {
 			fileRef = 2587FFAC017B21AB0ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		25FB9CE1017B6FDB0ECA149E = {
+			isa = PBXFileReference;
+			name = draw.mm;
+			path = ../draw.mm;
+			refType = 2;
+		};
+		25FB9CE2017B6FDB0ECA149E = {
+			fileRef = 25FB9CE1017B6FDB0ECA149E;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -183,7 +183,7 @@
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
-				253C4A130177AF4C0ECA149E,
+				25FB9CE1017B6FDB0ECA149E,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -309,7 +309,7 @@
 		29B9732BFDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
 			files = (
-				253C4A140177AF4C0ECA149E,
+				25FB9CE2017B6FDB0ECA149E,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;

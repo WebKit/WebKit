@@ -58,7 +58,7 @@ int main( int argc, char **argv )
     QApplication app( argc, argv );
 
     // This will eventually be replaced with a NSURL.
-    KURL url = "http://www.apple.com";
+    KURL url = "http://www.blivet.com/";
     
     // Use KHTMLPart as the model for the view.  This will eventually be covered
     // by WebPageDocument.
