@@ -1034,6 +1034,7 @@ JSEventListener *Window::getJSEventListener(const Value& val, bool html)
 
 void Window::clear( ExecState *exec )
 {
+  KJS::Interpreter::lock();
   kdDebug(6070) << "Window::clear " << this << endl;
   delete winq;
   winq = new WindowQObject(this);;
@@ -1044,6 +1045,7 @@ void Window::clear( ExecState *exec )
   // Now recreate a working global object for the next URL that will use us
   KJS::Interpreter *interpreter = KJSProxy::proxy( m_part )->interpreter();
   interpreter->initGlobalObject();
+  KJS::Interpreter::unlock();
 }
 
 void Window::setCurrentEvent( DOM::Event *evt )

@@ -1,3 +1,18 @@
+2003-07-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3283076 - crash when doing 2nd query on the eBay channel (Sherlock) -- JavaScript locking issue?
+
+	I added a bit of minimal extra locking to WebCore to make sure
+	multithreaded apps that use WebKit on the main thread but do
+	JavaScript on other threads as well continue to work nicely.
+
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::initScript): Lock interpreter around possible allocations or collections.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::clear): Lock interpreter around possible allocations or collections.
+
 2003-07-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

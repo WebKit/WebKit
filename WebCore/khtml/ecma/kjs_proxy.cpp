@@ -26,6 +26,7 @@
 #include <khtml_part.h>
 #include <kprotocolmanager.h>
 #include <kdebug.h>
+#include <kjs/collector.h>
 
 using namespace KJS;
 
@@ -262,7 +263,9 @@ void KJSProxyImpl::initScript()
     return;
 
   // Build the global object - which is a Window instance
+  KJS::Interpreter::lock();
   Object globalObject( new Window(m_part) );
+  KJS::Interpreter::unlock();
 
   // Create a KJS interpreter for this part
   m_script = new KJS::ScriptInterpreter(globalObject, m_part);
