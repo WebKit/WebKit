@@ -1,6 +1,43 @@
+2003-10-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3333897>: should support navigator.plugins.refresh as a way to add a plugin without restarting Safari
+
+        Reviewed by rjw.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView dealloc]): release the plug-in object
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage initWithPath:]): store the last mod date
+        (-[WebBasePluginPackage dealloc]): release the last mod date
+        (-[WebBasePluginPackage lastModifiedDate]): new
+        (-[WebBasePluginPackage isEqual:]): new
+        (-[WebBasePluginPackage hash]): new
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]): convert the NPP_Shutdown proc pointer so that we can use it later
+        (-[WebNetscapePluginPackage unload]): added log message
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]): tweak
+        (-[WebPluginDatabase plugins]): tweak
+        (-[WebPluginDatabase init]): call refresh
+        (-[WebPluginDatabase refresh]): new
+        (-[WebPluginDatabase loadPluginIfNeededForMIMEType:]): tweak
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory refreshPlugins:]): new
+        * WebView.subproj/WebControllerSets.h:
+        * WebView.subproj/WebControllerSets.m:
+        (+[WebViewSets makeWebViewsPerformSelector:]): new
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _reloadForPluginChanges]): new
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _reloadForPluginChanges]): new
+        * WebView.subproj/WebViewPrivate.h:
+
 === Safari-109 ===
 
-2003-10-03  Richard Williamson (Home0  <rjw@apple.com>
+2003-10-03  Richard Williamson <rjw@apple.com>
 
 	Fix part of 3438071.  Creating an instance of WebPreferences using init
 	will do the expected thing:  that is, create a new instance!  We used to

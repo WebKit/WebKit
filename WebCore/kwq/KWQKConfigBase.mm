@@ -142,3 +142,9 @@ QStringList KConfig::readListEntry(const QString &pKey, char sep) const
     ERROR("not yet implemented");
     return QStringList();
 }
+
+void RefreshPlugins(bool reload)
+{
+    [[WebCoreViewFactory sharedFactory] refreshPlugins:reload];
+}
+

@@ -1,3 +1,17 @@
+2003-10-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3333897>: should support navigator.plugins.refresh as a way to add a plugin without restarting Safari
+
+        Reviewed by rjw.
+
+        * khtml/ecma/kjs_navigator.cpp:
+        (PluginBase::refresh): new
+        (PluginsFunc::tryCall): call refresh
+        * kwq/KWQKConfigBase.h:
+        * kwq/KWQKConfigBase.mm:
+        (RefreshPlugins): new
+        * kwq/WebCoreViewFactory.h:
+
 === Safari-109 ===
 
 2003-10-08  David Hyatt  <hyatt@apple.com>

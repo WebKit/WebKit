@@ -634,6 +634,12 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     [[self _UIDelegateForwarder] webViewClose:self];
 }
 
++ (void)_unregisterViewClassAndRepresentationClassForMIMEType:(NSString *)MIMEType;
+{
+    [[WebFrameView _viewTypesAllowImageTypeOmission:NO] removeObjectForKey:MIMEType];
+    [[WebDataSource _repTypesAllowImageTypeOmission:NO] removeObjectForKey:MIMEType];
+}
+
 + (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme;
 {
     NSString *MIMEType = [self _generatedMIMETypeForURLScheme:URLScheme];
@@ -906,6 +912,11 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
         [self _didChangeValueForKey: _WebMainFrameURLKey];
     }
     [NSApp setWindowsNeedUpdate:YES];
+}
+
+- (void)_reloadForPluginChanges
+{
+    [[self mainFrame] _reloadForPluginChanges];
 }
 
 @end

@@ -339,7 +339,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if (isLoaded) {
         return YES;
     }
-
+    
     if (isBundle) {
         CFBundleRef cfBundle = [bundle _cfBundle];
         if (!CFBundleLoadExecutable(cfBundle)) {
@@ -440,7 +440,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         CFAbsoluteTime mainStart = CFAbsoluteTimeGetCurrent();
 #endif
         LOG(Plugins, "%f main timing started", mainStart);
-        npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
+        NPP_ShutdownProcPtr shutdownFunction;
+        npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &shutdownFunction);
+        NPP_Shutdown = (NPP_ShutdownProcPtr)functionPointerForTVector((TransitionVector)shutdownFunction);
         if (!isBundle) {
             // Don't free pluginMainFunc if we got it from a bundle because it is owned by CFBundle in that case.
             free(pluginMainFunc);
@@ -575,6 +577,8 @@ abort:
     if (!isLoaded) {
         return;
     }
+    
+    LOG(Plugins, "Unloading %@...", name);
 
     NPP_Shutdown();
 

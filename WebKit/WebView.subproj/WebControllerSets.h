@@ -12,6 +12,7 @@
 + (void)addWebView:(WebView *)webView toSetNamed:(NSString *)name;
 + (void)removeWebView:(WebView *)webView fromSetNamed:(NSString *)name;
 + (NSEnumerator *)webViewsInSetNamed:(NSString *)name;
++ (void)makeWebViewsPerformSelector:(SEL)selector;
 @end
 
 

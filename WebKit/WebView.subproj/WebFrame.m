@@ -18,6 +18,10 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNetscapePluginDocumentView.h>
+#import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebPlugin.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
@@ -2302,6 +2306,28 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (NSColor *)_bodyBackgroundColor
 {
     return [_private->bridge bodyBackgroundColor];
+}
+
+- (void)_reloadForPluginChanges;
+{
+    NSView <WebDocumentView> *documentView = [[self frameView] documentView];
+    if ([documentView isKindOfClass:[WebNetscapePluginDocumentView class]]) {
+        [self reload];
+    } else if ([documentView isKindOfClass:[WebHTMLView class]]) {
+        NSEnumerator *viewEnumerator = [[documentView subviews] objectEnumerator];
+        NSView *view;
+        while ((view = [viewEnumerator nextObject]) != nil) {
+            if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]] ||
+                [view isKindOfClass:[WebNullPluginView class]] ||
+                [view conformsToProtocol:@protocol(WebPlugin)]) {
+                [self reload];
+                break;
+            }
+        }
+    } else {
+        [[self childFrames] makeObjectsPerformSelector:@selector(_reloadForPluginChanges)];
+    }
+
 }
 
 @end

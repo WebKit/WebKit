@@ -206,6 +206,8 @@ Could be worth adding to the API.
 */
 + (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme;
 
++ (void)_unregisterViewClassAndRepresentationClassForMIMEType:(NSString *)MIMEType;
+
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
 /*!
@@ -245,6 +247,8 @@ Could be worth adding to the API.
 
 - (void)_willChangeValueForKey:(NSString *)key;
 - (void)_didChangeValueForKey:(NSString *)key;
+
+- (void)_reloadForPluginChanges;
 @end
 
 @interface _WebSafeForwarder : NSObject

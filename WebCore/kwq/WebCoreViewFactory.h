@@ -31,6 +31,7 @@
 @protocol WebCoreViewFactory
 
 - (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
+- (void)refreshPlugins:(BOOL)reloadPages;
 
 - (NSString *)inputElementAltText;
 - (NSString *)resetButtonDefaultLabel;

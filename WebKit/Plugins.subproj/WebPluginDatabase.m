@@ -5,7 +5,7 @@
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBasePluginPackage.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -95,12 +95,11 @@ static BOOL sIsCocoa = FALSE;
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
     WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil, *webPlugin=nil;
-    NSString *lowercaseKey = [key lowercaseString];
-    uint i;
+    NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
+    key = [key lowercaseString];
 
-    for (i=0; i<[plugins count]; i++) {
-        plugin = [plugins objectAtIndex:i];
-        if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:lowercaseKey]) {
+    while ((plugin = [pluginEnumerator nextObject]) != nil) {
+        if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]) {
             if ([plugin isKindOfClass:[WebPluginPackage class]]) {
                 if (webPlugin == nil) {
                     webPlugin = plugin;
@@ -149,7 +148,7 @@ static BOOL sIsCocoa = FALSE;
 
 - (NSArray *)plugins
 {
-    return plugins;
+    return [plugins allObjects];
 }
 
 static NSArray *pluginLocations(void)
@@ -173,89 +172,102 @@ static NSArray *pluginLocations(void)
     if (self == nil) {
         return nil;
     }
+    [self refresh];
+    return self;
     
-    NSArray *pluginDirectories = pluginLocations();
+}
     
+- (void)refresh
+{
+    NSEnumerator *directoryEnumerator = [pluginLocations() objectEnumerator];
+    NSMutableSet *uniqueFilenames = [[NSMutableArray alloc] init];
     NSFileManager *fileManager = [NSFileManager defaultManager];
-
-    NSMutableArray *pluginPaths = [NSMutableArray arrayWithCapacity:10];
-    NSMutableSet *filenames = [NSMutableSet setWithCapacity:10];
-
-    NSArray *files;
-    NSString *file;
-    uint i, j, n;
+    NSMutableSet *newPlugins = [[NSMutableSet alloc] init];
+    NSString *pluginDirectory;
     
-    for (i = 0; i < [pluginDirectories count]; i++) {
-        files = [fileManager directoryContentsAtPath:[pluginDirectories objectAtIndex:i]];
-        for (n = 0; n < [files count]; n++) {
-            file = [files objectAtIndex:n];
-            if (![filenames containsObject:file]) { // avoid duplicates
-                [filenames addObject:file];
-                [pluginPaths addObject:[[pluginDirectories objectAtIndex:i] stringByAppendingPathComponent:file]];
-            }
-        }
-    }
-    
-    NSMutableArray *pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
-    
-    for (i = 0; i < [pluginPaths count]; i++) {
-        WebBasePluginPackage *pluginPackage = [WebBasePluginPackage pluginWithPath:[pluginPaths objectAtIndex:i]];
-        if (pluginPackage) {
-            [pluginArray addObject:pluginPackage];
-            LOG(Plugins, "Found plugin: %s", [[pluginPackage name] lossyCString]);
-            LOG(Plugins, "%s", [[pluginPackage description] lossyCString]);
-        }
-    }
-
-    plugins = [pluginArray copy];
-
-    // Register plug-in WebDocumentViews and WebDocumentRepresentations
-    NSArray *viewTypes = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] allKeys];
-    NSArray *mimes;
-    NSString *mime;
-    WebBasePluginPackage *plugin;
-    uint pluginCount, mimeCount;
-    
-    pluginCount = [plugins count];
-    for (i = 0; i < pluginCount; i++) {
-        plugin = [plugins objectAtIndex:i];
-        mimes = [[plugin MIMETypeEnumerator] allObjects];
-        if ([plugin isKindOfClass:[WebNetscapePluginPackage class]]){
-            mimeCount = [mimes count];
-            for (j = 0; j < mimeCount; j++){
-                mime = [mimes objectAtIndex:j];
-                
-                // Don't override previously registered types.
-                if(![viewTypes containsObject:mime]){
-                    // Cocoa plugins must register themselves.
-                    [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
+    // Create a new set of plug-ins.
+    while ((pluginDirectory = [directoryEnumerator nextObject]) != nil) {
+        NSEnumerator *filenameEnumerator = [[fileManager directoryContentsAtPath:pluginDirectory] objectEnumerator];
+        NSString *filename;
+        while ((filename = [filenameEnumerator nextObject]) != nil) {
+            if (![uniqueFilenames containsObject:filename]) {
+                [uniqueFilenames addObject:filename];
+                NSString *pluginPath = [pluginDirectory stringByAppendingPathComponent:filename];
+                WebBasePluginPackage *pluginPackage = [WebBasePluginPackage pluginWithPath:pluginPath];
+                if (pluginPackage) {
+                    [newPlugins addObject:pluginPackage];
                 }
             }
         }
-        else {
-            if (!pendingPluginLoads)
-                pendingPluginLoads = [[NSMutableArray alloc] init];
-            [pendingPluginLoads addObject: plugin];
+    }
+    
+    [uniqueFilenames release];
+    
+    //  Remove all uninstalled plug-ins and add the new plug-ins.
+    if (plugins) {
+        NSMutableSet *pluginsToUnload = [plugins mutableCopy];
+        [pluginsToUnload minusSet:newPlugins];
+#if !LOG_DISABLED
+        NSMutableSet *reallyNewPlugins = [newPlugins mutableCopy];
+        [reallyNewPlugins minusSet:plugins];
+        if ([reallyNewPlugins count] > 0) {
+            LOG(Plugins, "New plugins:\n%@", reallyNewPlugins);
+        }
+        if ([pluginsToUnload count] > 0) {
+            LOG(Plugins, "Removed plugins:\n%@", pluginsToUnload);
+        }
+        [reallyNewPlugins release];
+#endif   
+        [plugins minusSet:pluginsToUnload];
+        [plugins unionSet:newPlugins];   
+        [pluginsToUnload release];
+        [newPlugins release];
+    } else {
+        LOG(Plugins, "Plugin database initialization:\n%@", newPlugins);
+        plugins = newPlugins;
+    }
+    
+    // Unregister netscape plug-in WebDocumentViews and WebDocumentRepresentations.
+    NSMutableDictionary *MIMEToViewClass = [WebFrameView _viewTypesAllowImageTypeOmission:NO];
+    NSEnumerator *keyEnumerator = [MIMEToViewClass keyEnumerator];
+    NSString *MIMEType;
+    while ((MIMEType = [keyEnumerator nextObject]) != nil) {
+        if ([MIMEToViewClass objectForKey:MIMEType] == [WebNetscapePluginDocumentView class]) {
+            [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
         }
     }
-
-    return self;
+    
+    // Register netscape plug-in WebDocumentViews and WebDocumentRepresentations
+    // but do not override other document views and representations.
+    NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
+    WebBasePluginPackage *plugin;
+    while ((plugin = [pluginEnumerator nextObject]) != nil) {
+        if ([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
+            NSEnumerator *MIMEEnumerator = [plugin MIMETypeEnumerator];
+            while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
+                if ([MIMEToViewClass objectForKey:MIMEType] == nil) {
+                    [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:MIMEType];
+                }
+            }
+        } else {
+            if (![plugin isLoaded]) {
+                if (!pendingPluginLoads) {
+                    pendingPluginLoads = [[NSMutableSet alloc] init];
+                }
+                [pendingPluginLoads addObject:plugin];
+            }
+        }
+    }
 }
 
 - (void)loadPluginIfNeededForMIMEType: (NSString *)MIMEType
 {
-    NSArray *mimes;
+    NSEnumerator *pluginEnumerator = [pendingPluginLoads objectEnumerator];
     WebBasePluginPackage *plugin;
-    int i, pluginCount;
-    
-    pluginCount = [pendingPluginLoads count];
-    for (i = pluginCount-1; i >= 0; i--){
-        plugin = [pendingPluginLoads objectAtIndex:i];
-        mimes = [[plugin MIMETypeEnumerator] allObjects];
-        if ([mimes containsObject: MIMEType]){
-            [[plugin bundle] load];
-            [pendingPluginLoads removeObject: plugin];
-            continue;
+    while ((plugin = [pluginEnumerator nextObject]) != nil) {
+        if ([[[plugin MIMETypeEnumerator] allObjects] containsObject:MIMEType]) {
+            [plugin load];
+            [pendingPluginLoads removeObject:plugin];
         }
     }
 }

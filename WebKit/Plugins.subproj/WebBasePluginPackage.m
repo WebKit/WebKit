@@ -60,9 +60,10 @@
 - initWithPath:(NSString *)pluginPath
 {
     [super init];
-    extensionToMIME = [[NSMutableDictionary dictionary] retain];
+    extensionToMIME = [[NSMutableDictionary alloc] init];
     path = [[self pathByResolvingSymlinksAndAliasesInPath:pluginPath] retain];
     bundle = [[NSBundle alloc] initWithPath:path];
+    lastModifiedDate = [[[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] objectForKey:NSFileModificationDate] retain];
     return self;
 }
 
@@ -148,6 +149,8 @@
 
 - (void)dealloc
 {
+    [self unload];
+    
     [name release];
     [path release];
     [pluginDescription release];
@@ -211,6 +214,11 @@
     return bundle;
 }
 
+- (NSDate *)lastModifiedDate
+{
+    return lastModifiedDate;
+}
+
 - (void)setName:(NSString *)theName
 {
     [name release];
@@ -263,6 +271,18 @@
 {
     return [NSString stringWithFormat:@"name: %@\npath: %@\nmimeTypes:\n%@\npluginDescription:%@",
         name, path, [MIMEToExtensions description], [MIMEToDescription description], pluginDescription];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    return ([object isKindOfClass:[WebBasePluginPackage class]] &&
+            [[object name] isEqualToString:name] &&
+            [[object lastModifiedDate] isEqual:lastModifiedDate]);
+}
+
+- (unsigned)hash
+{
+    return [[name stringByAppendingString:[lastModifiedDate description]] hash];
 }
 
 @end

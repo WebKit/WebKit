@@ -63,6 +63,15 @@ NSMutableDictionary *sets = nil;
     return [(NSSet *)set objectEnumerator];
 }
 
++ (void)makeWebViewsPerformSelector:(SEL)selector
+{
+    NSEnumerator *setEnumerator = [sets objectEnumerator];
+    NSMutableSet *set;
+    while ((set = [setEnumerator nextObject]) != nil) {
+        [set makeObjectsPerformSelector:selector];
+    }
+}
+
 @end
 
 
