@@ -66,7 +66,8 @@ void RenderContainer::detach()
         n->removeFromObjectLists();
         n->setParent(0);
         next = n->nextSibling();
-        n->detach();
+        if (!n->isListMarker())
+            n->detach();
     }
     m_first = 0;
     m_last = 0;

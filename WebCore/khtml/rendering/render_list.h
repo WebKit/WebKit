@@ -117,7 +117,6 @@ protected:
     long int predefVal;
     RenderListMarker *m_marker;
     bool _notInList;
-    bool _markerInstalledInParent;
 };
 
 }; //namespace

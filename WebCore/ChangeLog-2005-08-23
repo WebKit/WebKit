@@ -1,3 +1,17 @@
+2004-08-26  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3710721 and 3504114, crashes because of bad ownership model for list markers.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::detach):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle):
+        (RenderListItem::detach):
+        (RenderListItem::updateMarkerLocation):
+        * khtml/rendering/render_list.h:
+
 2004-08-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
