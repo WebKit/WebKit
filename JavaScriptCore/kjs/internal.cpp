@@ -793,7 +793,7 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
   // add this interpreter to the global chain
   // as a root set for garbage collection
 #ifdef APPLE_CHANGES
-  pthread_mutex_lock(&interpreterLock);
+  lockInterpreter();
   m_interpreter = interp;
 #endif
   if (s_hook) {
@@ -807,7 +807,7 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
     globalInit();
   }
 #ifdef APPLE_CHANGES
-  pthread_mutex_unlock(&interpreterLock);
+  unlockInterpreter();
 #endif
 
 #ifndef APPLE_CHANGES
@@ -954,7 +954,7 @@ void InterpreterImp::clear()
   //fprintf(stderr,"InterpreterImp::clear\n");
   // remove from global chain (see init())
 #ifdef APPLE_CHANGES
-  pthread_mutex_lock(&interpreterLock);
+  lockInterpreter();
 #endif
   next->prev = prev;
   prev->next = next;
@@ -966,7 +966,7 @@ void InterpreterImp::clear()
     globalClear();
   }
 #ifdef APPLE_CHANGES
-  pthread_mutex_unlock(&interpreterLock);
+  unlockInterpreter();
 #endif
 }
 
@@ -1005,13 +1005,13 @@ bool InterpreterImp::checkSyntax(const UString &code)
 Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
 {
 #ifdef APPLE_CHANGES
-  pthread_mutex_lock(&interpreterLock);
+  lockInterpreter();
 #endif
   // prevent against infinite recursion
   if (recursion >= 20) {
 #ifdef APPLE_CHANGES
     Completion result = Completion(Throw,Error::create(globExec,GeneralError,"Recursion too deep"));
-    pthread_mutex_unlock(&interpreterLock);
+    unlockInterpreter();
     return result;
 #else
     return Completion(Throw,Error::create(globExec,GeneralError,"Recursion too deep"));
@@ -1043,7 +1043,7 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
     Object err = Error::create(globExec,SyntaxError,errMsg.ascii(),errLine);
     err.put(globExec,"sid",Number(sid));
 #ifdef APPLE_CHANGES
-    pthread_mutex_unlock(&interpreterLock);
+    unlockInterpreter();
 #endif
     return Completion(Throw,err);
   }
@@ -1088,7 +1088,7 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
   recursion--;
 
 #ifdef APPLE_CHANGES
-    pthread_mutex_unlock(&interpreterLock);
+    unlockInterpreter();
 #endif
   return res;
 }
