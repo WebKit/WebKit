@@ -1,3 +1,16 @@
+2005-01-20  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3815672> REGRESSION (Mail): Japanese text cannot be made bold
+
+	The AppKit's font substitution API doesn't match font traits! 
+	It only find fonts that contain the appropriate glyphs.  This
+	patch attempts to find the best variation within a family.
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _substituteFontForString:families:]):
+
 === Safari-180 ===
 
 2005-01-20  Ken Kocienda  <kocienda@apple.com>

@@ -757,6 +757,16 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     if ([substituteFont isEqual: font])
         substituteFont = nil;
 
+    // Now that we have a substitute font, attempt to match it to the best variation.  If we have
+    // a good match return that, otherwise return the font the AppKit has found.
+    NSFontManager *manager = [NSFontManager sharedFontManager];
+    NSFont *substituteFont2 = [manager fontWithFamily:(NSString *)[substituteFont familyName] traits:[manager traitsOfFont:font] weight:[manager weightOfFont:font] size:[font pointSize]];
+    if (substituteFont2)
+	substituteFont = substituteFont2;
+
+    // Now, finally, get the printer or screen variation.
+    substituteFont = usingPrinterFont ? [substituteFont printerFont] : [substituteFont screenFont];
+
     return substituteFont;
 }
 
