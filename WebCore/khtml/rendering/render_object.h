@@ -153,6 +153,7 @@ public:
     virtual bool isWidget() const { return false; }
     virtual bool isBody() const { return false; }
     virtual bool isFormElement() const { return false; }
+    virtual bool isImage() const { return false; }
     virtual bool isTextArea() const { return false; }
     virtual bool isFrameSet() const { return false; }
     virtual bool isApplet() const { return false; }
@@ -415,10 +416,10 @@ public:
     virtual int paddingRight() const;
     virtual bool hasPadding() const { return style()->hasPadding(); }
     
-    int borderTop() const { return style()->borderTopWidth(); }
-    int borderBottom() const { return style()->borderBottomWidth(); }
-    int borderLeft() const { return style()->borderLeftWidth(); }
-    int borderRight() const { return style()->borderRightWidth(); }
+    virtual int borderTop() const { return style()->borderTopWidth(); }
+    virtual int borderBottom() const { return style()->borderBottomWidth(); }
+    virtual int borderLeft() const { return style()->borderLeftWidth(); }
+    virtual int borderRight() const { return style()->borderRightWidth(); }
 
     virtual short minWidth() const { return 0; }
     virtual short maxWidth() const { return 0; }

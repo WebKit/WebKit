@@ -80,12 +80,18 @@ void RenderReplaced::calcMinMaxWidth()
     bool isPercent = false;
     int width = calcReplacedWidth(&isPercent);
 
+    int toAdd = 0;
+    if (hasPadding())
+        toAdd += paddingLeft() + paddingRight();
+    if (style()->hasBorder())
+        toAdd += borderLeft() + borderRight();
+
     if ( isPercent ) {
         m_minWidth = 0;
-        m_maxWidth = width;
+        m_maxWidth = width + toAdd;
     }
     else
-        m_minWidth = m_maxWidth = width;
+        m_minWidth = m_maxWidth = width + toAdd;
 
     setMinMaxKnown();
 }

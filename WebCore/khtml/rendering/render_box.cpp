@@ -105,7 +105,7 @@ void RenderBox::detach(RenderArena* renderArena)
 
 short RenderBox::contentWidth() const
 {
-    short w = m_width - style()->borderLeftWidth() - style()->borderRightWidth();
+    short w = m_width - borderLeft() - borderRight();
     if (hasPadding())
         w -= paddingLeft() + paddingRight();
 
@@ -115,7 +115,7 @@ short RenderBox::contentWidth() const
 
 int RenderBox::contentHeight() const
 {
-    int h = m_height - style()->borderTopWidth() - style()->borderBottomWidth();
+    int h = m_height - borderTop() - borderBottom();
     if (hasPadding())
         h -= paddingTop() + paddingBottom();
 
@@ -480,8 +480,7 @@ void RenderBox::calcWidth()
             if (isReplaced())
             {
                 m_width = w.width(cw);
-                m_width += paddingLeft() + paddingRight() + style()->borderLeftWidth() + style()->borderRightWidth();
-
+                m_width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
                 if(m_width < m_minWidth) m_width = m_minWidth;
             }
 
@@ -506,7 +505,7 @@ void RenderBox::calcWidth()
         {
 //          kdDebug( 6040 ) << "non-variable " << w.type << ","<< w.value << endl;
             m_width = w.width(cw);
-            m_width += paddingLeft() + paddingRight() + style()->borderLeftWidth() + style()->borderRightWidth();
+            m_width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
 
             calcHorizontalMargins(ml,mr,cw);
         }
@@ -577,8 +576,9 @@ void RenderBox::calcHeight()
     else
     {
         Length h;
-        if ( isReplaced() )
+        if ( isReplaced() ) {
             h = Length( calcReplacedHeight(), Fixed );
+        }
         else
             h = style()->height();
 

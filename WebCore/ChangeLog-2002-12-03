@@ -1,3 +1,34 @@
+2002-11-17  David Hyatt  <hyatt@apple.com>
+
+	This is a fix for bug 3058470.  The bug was that replaced elements
+	were computing their min and max widths wrong.  Specifically they
+	were not adding in borders and padding!  This means that any image
+	with a border around it would potentially break to another line
+	too early.
+
+	Once I fixed this for replaced elements I then went in and
+	fixed form controls.  I added two APPLE_CHANGES features for
+	our form controls.  First I overrode the border/padding functions
+	to always return 0 for all form controls, since no Aqua control
+	honors border/padding (nor should it).  This fixes the menulist
+	at the top of wired.com.
+
+	Second I made sure that certain controls will ignore CSS-specified
+	heights and always use their intrinsic heights.  These include
+	<select size=1> (combobox), single line text fields, and buttons.
+	I allow listboxes and textareas to honor height.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::contentWidth):
+        (RenderBox::contentHeight):
+        (RenderBox::calcWidth):
+        (RenderBox::calcHeight):
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::calcMinMaxWidth):
+
 2002-11-16  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3078240, <pre> should not establish its own text-align,

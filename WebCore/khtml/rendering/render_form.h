@@ -72,6 +72,18 @@ public:
     virtual bool isRendered() const  { return true; }
     virtual bool isFormElement() const { return true; }
 
+#if APPLE_CHANGES
+    // Aqua form controls never have border/padding.
+    int borderTop() const { return 0; }
+    int borderBottom() const { return 0; }
+    int borderLeft() const { return 0; }
+    int borderRight() const { return 0; }
+    int paddingTop() const { return 0; }
+    int paddingBottom() const { return 0; }
+    int paddingLeft() const { return 0; }
+    int paddingRight() const { return 0; }
+#endif
+
     // IE does not scale according to intrinsicWidth/Height
     // aspect ratio :-(
     virtual short calcReplacedWidth(bool* ieHack=0) const;
@@ -108,6 +120,10 @@ class RenderButton : public RenderFormElement
     Q_OBJECT
 public:
     RenderButton(DOM::HTMLGenericFormElementImpl* node);
+
+#if APPLE_CHANGES
+    int calcReplacedHeight() const { return intrinsicHeight(); }
+#endif
 
     virtual const char *renderName() const { return "RenderButton"; }
     virtual short baselinePosition( bool ) const;
@@ -217,6 +233,9 @@ public:
     RenderLineEdit(DOM::HTMLInputElementImpl *element);
 
     virtual void calcMinMaxWidth();
+#if APPLE_CHANGES
+    int calcReplacedHeight() const { return intrinsicHeight(); }
+#endif
 
     virtual const char *renderName() const { return "RenderLineEdit"; }
     virtual void updateFromElement();
@@ -272,6 +291,10 @@ public:
     virtual void calcMinMaxWidth();
     virtual void updateFromElement();
     void select();
+
+#if APPLE_CHANGES
+    int calcReplacedHeight() const { return intrinsicHeight(); }
+#endif
 
     DOM::HTMLInputElementImpl *element() const
     { return static_cast<DOM::HTMLInputElementImpl*>(RenderObject::element()); }
@@ -340,6 +363,7 @@ public:
 
 #if APPLE_CHANGES
     short baselinePosition( bool f ) const;
+    int calcReplacedHeight() const { if (!m_useListBox) return intrinsicHeight(); return RenderFormElement::calcReplacedHeight(); }
 #endif
 
     virtual void calcMinMaxWidth();
