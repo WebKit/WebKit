@@ -1424,14 +1424,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     id target = _private->policyTarget;
     SEL selector = _private->policySelector;
     WebFormState *formState = _private->policyFormState;
-    WebDataSource *dataSource = _private->policyDataSource;
 
     _private->policyRequest = nil;
     _private->policyFrameName = nil;
     _private->policyTarget = nil;
     _private->policySelector = nil;
     _private->policyFormState = nil;
-    _private->policyDataSource = nil;
 
     if (call) {
 	if (frameName) {
@@ -1445,7 +1443,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [frameName release];
     [target release];
     [formState release];
-    [dataSource release];
+}
+
+- (void)_setPolicyDataSource:(WebDataSource *)dataSource
+{
+    [dataSource retain];
+    [_private->policyDataSource release];
+    _private->policyDataSource = dataSource;
 }
 
 - (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
@@ -1500,18 +1504,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:frameName withObject:formState];
 }
 
-- (void)_prepareForProvisionalLoadWithDataSource:(WebDataSource *)provisionalDataSource loadType:(WebFrameLoadType)loadType
-{
-    // This method is called after the client has decided a navigation policy of "use" for a request.
-    // Since we also do navigation policy checks for redirects, this method may be called multiple times
-    // per frame load, but it should only do the below work after the first navigation policy check. 
-    if (_private->provisionalDataSource != provisionalDataSource) {
-        [self stopLoading];
-        [self _setLoadType:loadType];
-        [self _setProvisionalDataSource:provisionalDataSource];
-    }
-}
-
 - (void)_checkNavigationPolicyForRequest:(NSURLRequest *)request
                               dataSource:(WebDataSource *)dataSource
                                formState:(WebFormState *)formState
@@ -1527,7 +1519,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
     if ([request isEqual:[dataSource _lastCheckedRequest]] || [[[request URL] absoluteString] length] == 0) {
-        [self _prepareForProvisionalLoadWithDataSource:dataSource loadType:_private->policyLoadType];
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
@@ -1541,7 +1532,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->policySelector = selector;
     _private->listener = [listener retain];
     _private->policyFormState = [formState retain];
-    _private->policyDataSource = [dataSource retain];
 
     WebView *wv = [self webView];
     [[wv _policyDelegateForwarder] webView:wv
@@ -1559,8 +1549,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     id target = [[_private->policyTarget retain] autorelease];
     SEL selector = _private->policySelector;
     WebFormState *formState = [[_private->policyFormState retain] autorelease];
-    WebDataSource *dataSource = [[_private->policyDataSource retain] autorelease];
-    WebFrameLoadType loadType = _private->policyLoadType;
     
     // will release _private->policy* objects, hence the above retains
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:NO];
@@ -1578,7 +1566,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         if (![WebView _canHandleRequest:request]) {
             [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
         } else {
-            [self _prepareForProvisionalLoadWithDataSource:dataSource loadType:loadType];
             shouldContinue = YES;
         }
         break;
@@ -1587,6 +1574,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:formState];
+
+    [self _setPolicyDataSource:nil];
 }
 
 -(void)_continueFragmentScrollAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
@@ -2063,9 +2052,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 -(void)_continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
 {
+    ASSERT(_private->policyDataSource);
+    
     if (!request) {
         return;
     }
+
+    WebFrameLoadType loadType = _private->policyLoadType;
+    
+    [self stopLoading];
+    [self _setLoadType:loadType];
+    [self _setProvisionalDataSource:_private->policyDataSource];
     
     // We tell the documentView provisionalDataSourceChanged:
     // once it has been created by the WebView.
@@ -2076,7 +2073,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
     WebHistoryItem *item = [_private provisionalItem];
-    WebFrameLoadType loadType = [self _loadType];
     if ((loadType == WebFrameLoadTypeForward ||
         loadType == WebFrameLoadTypeBack ||
         loadType == WebFrameLoadTypeIndexedBackForward) &&
@@ -2119,6 +2115,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [newDataSource _setWebView:[self webView]];
     [newDataSource _setJustOpenedForTargetedLink:_private->justOpenedForTargetedLink];
     _private->justOpenedForTargetedLink = NO;
+
+    [self _setPolicyDataSource:newDataSource];
 
     [self _checkNavigationPolicyForRequest:[newDataSource request]
                                 dataSource:newDataSource

@@ -1,3 +1,20 @@
+2003-06-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3288076>: REGRESSION: Fragment scroll stops page load
+
+	We do policy navigation checks for the regular load case, fragment scroll and redirects.
+	We only want to stop the load, change the provisional data source etc in the regular load case. 
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebFramePrivate.m: got rid of _prepareForProvisionalLoadWithDataSource:: since the work done in this method only needs to be done in _continueLoadRequestAfterNavigationPolicy:: (which covers the regular load case).
+        (-[WebFrame _invalidatePendingPolicyDecisionCallingDefaultAction:]): don't clear policyDataSource because it needs to be called in _continueLoadRequestAfterNavigationPolicy::
+        (-[WebFrame _setPolicyDataSource:]): new
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]): don't call _prepareForProvisionalLoadWithDataSource::, don't muck with policyDataSource because it is only needed in the regular load case
+        (-[WebFrame _continueAfterNavigationPolicy:]): don't call _prepareForProvisionalLoadWithDataSource::, call _setPolicyDataSource:nil after _continueLoadRequestAfterNavigationPolicy:: has used policyDataSource
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): this method covers the regular load case. This is where we need to stop the load, set the load type and the provisional data source. Code was in _prepareForProvisionalLoadWithDataSource::
+        (-[WebFrame _loadDataSource:withLoadType:formState:]): set the policyLoadType and policyDataSource (the beginning of the regular load case)
+
 2003-06-10  Richard Williamson   <rjw@apple.com>
 
 	Back out incorrect fix to 3287862.
