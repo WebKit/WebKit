@@ -1,6 +1,6 @@
 /*
         WebFormDelegate.h
-        Copyright 2001, 2002, Apple Computer, Inc.
+        Copyright 2003, Apple Computer, Inc.
         
         Public header file.
 */
@@ -8,7 +8,6 @@
 #import <AppKit/AppKit.h>
 
 @class WebFrame;
-@protocol WebDOMElement;
 
 /*!
     @protocol  WebFormDelegate

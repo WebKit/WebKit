@@ -3,10 +3,22 @@
 	Copyright 2003, Apple, Inc. All rights reserved.
  */
 
-#import "WebFormDelegate.h"
+#import "WebFormDelegatePrivate.h"
 
 @implementation WebFormDelegate
 
+static WebFormDelegate *SharedDelegate = nil;
+
+// Return a object with NOP implementations of the protocol's methods
+// Note this feature relies on our default delegate being stateless
++ (WebFormDelegate *)_sharedWebFormDelegate
+{
+    if (!SharedDelegate) {
+        SharedDelegate = [[WebFormDelegate alloc] init];
+    }
+    return SharedDelegate;
+}
+    
 - (void)controlTextDidBeginEditing:(NSNotification *)obj inFrame:(WebFrame *)frame { }
 
 - (void)controlTextDidEndEditing:(NSNotification *)obj inFrame:(WebFrame *)frame { }

@@ -5,7 +5,7 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebContextMenuDelegate.h>
-#import <WebKit/WebFormDelegate.h>
+#import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -353,6 +353,10 @@
 
 - (id<WebFormDelegate>)_formDelegate
 {
+    if (!_private->formDelegate) {
+        // create lazily, to give the client a chance to set one before we bother to alloc the shared one
+        _private->formDelegate = [WebFormDelegate _sharedWebFormDelegate];
+    }
     return _private->formDelegate;
 }
 

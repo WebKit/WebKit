@@ -1,3 +1,20 @@
+2003-02-10  Trey Matteson  <trey@apple.com>
+
+	Make sure we have a FormsDelegate installed with NOP behavior if our client
+	does not set one.  Editing forms was broken for Ed by the introduction
+	of the new FormDelegate.
+
+        Reviewed by Darin.
+
+        * WebKit.pbproj/project.pbxproj:  Added new header file.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _formDelegate]):  Use shared delegate if none set yet.
+        * WebView.subproj/WebFormDelegatePrivate.h:  New header.
+        * WebView.subproj/WebFormDelegate.h:  Nit cleanup.
+        * WebView.subproj/WebFormDelegate.m:
+        (+[WebFormDelegate _sharedWebFormDelegate]):  New method to return a shared
+	NOP implementation.
+
 2003-02-07  Richard Williamson   <rjw@apple.com>
 
         Changes to support per WebController preferences.
