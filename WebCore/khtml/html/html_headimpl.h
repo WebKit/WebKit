@@ -57,7 +57,7 @@ public:
     virtual void removedFromDocument();
 
     void process();
-
+    
 protected:
     DOMString m_href;
     DOMString m_target;
@@ -96,6 +96,8 @@ public:
 
     int disabledState() { return m_disabledState; }
     void setDisabledState(bool _disabled);
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
     
 protected:
     khtml::CachedCSSStyleSheet *m_cachedSheet;
@@ -140,6 +142,9 @@ public:
     ~HTMLScriptElementImpl();
 
     virtual Id id() const;
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
+    
 };
 
 // -------------------------------------------------------------------------

@@ -97,8 +97,11 @@ public:
     void setMalformed(bool malformed) { m_malformed = malformed; }
     virtual bool isMalformed() { return m_malformed; }
     
+    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    
 #if APPLE_CHANGES
     void submitClick();
+    bool formWouldHaveSecureSubmission(const DOMString &url);
 #endif
    
     static void i18nData();
@@ -122,9 +125,6 @@ public:
  private:
     QString oldIdAttr;
     QString oldNameAttr;
-#if APPLE_CHANGES
-    bool formWouldHaveSecureSubmission(const DOMString &url);
-#endif
 };
 
 // -------------------------------------------------------------------------

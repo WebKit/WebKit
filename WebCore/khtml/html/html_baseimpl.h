@@ -62,6 +62,8 @@ public:
     virtual void insertedIntoDocument();
 
     void createLinkDecl();
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
 
 protected:
     CSSStyleDeclarationImpl* m_linkDecl;
@@ -94,6 +96,8 @@ public:
     virtual void setFocus(bool);
 
     DocumentImpl* contentDocument() const;
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
 
 #if APPLE_CHANGES
     QScrollView::ScrollBarMode scrollingMode() const { return scrolling; }
@@ -148,7 +152,7 @@ public:
     virtual void detach();
 
     virtual void recalcStyle( StyleChange ch );
-
+    
 protected:
     khtml::Length* m_rows;
     khtml::Length* m_cols;
@@ -205,6 +209,8 @@ public:
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void recalcStyle( StyleChange ch );
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
 
 protected:
     virtual void openURL();

@@ -1,3 +1,15 @@
+2004-02-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3563402>: when copying HTML, relative URLs should be made absolute
+
+        Reviewed by dave.
+
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation HTMLString]): renamed from reconstructed source to be more analogous with other data get methods
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _writeSelectionToPasteboard:]): call renamed selectedHTML on the bridge
+
 2004-02-19  John Sullivan  <sullivan@apple.com>
 
         - WebKit part of fix for <rdar://problem/3292380>: Cycle Tabs keyboard shortcut 

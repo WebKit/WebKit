@@ -54,6 +54,7 @@ class NamedNodeMapImpl;
 class DocumentImpl;
 class CSSStyleDeclarationImpl;
 class Range;
+class RangeImpl;
 class RegisteredEventListener;
 class EventImpl;
 
@@ -242,7 +243,7 @@ public:
     virtual bool isInline() const;
     virtual QString toHTML() const;
     QString recursive_toHTML(bool start = false) const;
-	QString recursive_toHTMLWithRange(bool start, const DOM::Range &range) const;
+	QString recursive_toHTMLWithOptions(bool start=false, bool completeURLs=false, const DOM::RangeImpl *range=NULL, QStringList *subresourceURLs=NULL) const;
 
     virtual bool isContentEditable() const;
     virtual QRect getRect() const;

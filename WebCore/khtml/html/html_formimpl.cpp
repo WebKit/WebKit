@@ -696,6 +696,11 @@ void HTMLFormElementImpl::removeFormElement(HTMLGenericFormElementImpl *e)
     formElements.remove(e);
 }
 
+bool HTMLFormElementImpl::isURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_ACTION;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)

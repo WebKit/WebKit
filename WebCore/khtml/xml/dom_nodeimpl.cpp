@@ -30,7 +30,8 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
-#include "xml/dom_nodeimpl.h"
+#include "xml/dom2_rangeimpl.h"
+#include "css/csshelper.h"
 #include "css/cssstyleselector.h"
 
 #include <kglobal.h>
@@ -278,18 +279,19 @@ static QString escapeHTML( const QString& in )
     return s;
 }
 
-QString NodeImpl::recursive_toHTMLWithRange(bool start, const DOM::Range &range) const
+QString NodeImpl::recursive_toHTMLWithOptions(bool start, bool completeURLs, const DOM::RangeImpl *range, QStringList *subresourceURLs) const
 {	
 	QString me = "";
-		
-	NodeImpl *startContainer = range.startContainer().handle();
-	NodeImpl *endContainer = range.endContainer().handle();
+    
+    int exceptionCode;
+	NodeImpl *startContainer = range ? range->startContainer(exceptionCode) : NULL;
+	NodeImpl *endContainer = range ? range->endContainer(exceptionCode) : NULL;
 	NodeImpl *n = startContainer;
-	bool isNodeIncluded = false;
+	bool isNodeIncluded = range ? false : true;
 	Id ident = id();
 	
 	// Determine if the HTML string of this node should be part of the end result.
-	if (!start || (start && (ident == ID_TABLE || ident == ID_OL || ident == ID_UL))) {	
+	if (range && (!start || (start && (ident == ID_TABLE || ident == ID_OL || ident == ID_UL)))) {	
 		// Check if this node is in the range or is an ancestor of a node in the range.
 		while (n) {
 			NodeImpl *ancestor = n;
@@ -322,37 +324,50 @@ QString NodeImpl::recursive_toHTMLWithRange(bool start, const DOM::Range &range)
 		// Copy who I am into the me string
 		if (nodeType() == Node::TEXT_NODE) {
 			DOMString str = nodeValue().copy();
-			if (this == endContainer) {
-				str.truncate(range.endOffset());
-			}
-			if (this == startContainer) {
-				str.remove(0, range.startOffset());
-			}
+            if (range) {
+                if (this == endContainer) {
+                    str.truncate(range->endOffset(exceptionCode));
+                }
+                if (this == startContainer) {
+                    str.remove(0, range->startOffset(exceptionCode));
+                }
+            }
 			me += escapeHTML(str.string());
 		} else {
 			// If I am an element, not a text
 			me += QChar('<') + nodeName().string();
-			// print attributes
-			if (nodeType() == Node::ELEMENT_NODE) {
-				const ElementImpl *el = static_cast<const ElementImpl *>(this);
-				NamedNodeMap attrs = el->attributes();
-				unsigned long lmap = attrs.length();
-				for (unsigned int j=0; j<lmap; j++) {
-					me += " " + attrs.item(j).nodeName().string() + "=\"" + attrs.item(j).nodeValue().string() + "\"";
-				}
-			}
-			// print ending bracket of start tag
-			if (isHTMLElement()) {
-				me += ">";
-			} else {
-				me += "/>";
-			}
+            if (nodeType() == Node::ELEMENT_NODE) {
+                const ElementImpl *el = static_cast<const ElementImpl *>(this);
+                
+                NamedAttrMapImpl *attrs = el->attributes();
+                unsigned long length = attrs->length();
+                for (unsigned int i=0; i<length; i++) {
+                    AttributeImpl *attr = attrs->attributeItem(i);
+                    QString originalValue = attr->value().string();
+                    QString newValue = originalValue;
+                    if (completeURLs && el->isURLAttribute(attr)) {
+                        newValue = getDocument()->completeURL(khtml::parseURL(originalValue).string());
+                    }
+                    me += " " + getDocument()->attrName(attr->id()).string() + "=\"" + newValue + "\"";
+                    if (subresourceURLs && el->isSubresourceURLAttribute(attr)) {
+                        QString URL = getDocument()->completeURL(khtml::parseURL(originalValue).string());
+                        if (!subresourceURLs->contains(URL)) {
+                            subresourceURLs->append(URL);
+                        }
+                    }
+                }
+            }
+            if (isHTMLElement()) {
+                me += ">";
+            } else {
+                me += "/>";
+            }
 		}
 	}
 	
     if ((n = firstChild())) {
         // print firstChild
-        me += n->recursive_toHTMLWithRange(false, range);
+        me += n->recursive_toHTMLWithOptions(false, completeURLs, range, subresourceURLs);
         // Print my ending tag
         if (isNodeIncluded && nodeType() != Node::TEXT_NODE) {
 			me += "</" + nodeName().string() + ">";
@@ -360,80 +375,15 @@ QString NodeImpl::recursive_toHTMLWithRange(bool start, const DOM::Range &range)
     }
     // print next sibling
     if ((n = nextSibling())) {
-        me += n->recursive_toHTMLWithRange(false, range);
+        me += n->recursive_toHTMLWithOptions(false, completeURLs, range, subresourceURLs);
 	}
 	
     return me;
 }
 
-
 QString NodeImpl::recursive_toHTML(bool start) const
 {
-    QString me = "";
-
-    // Copy who I am into the htmlText string
-    if ( nodeType() == Node::TEXT_NODE )
-        me = escapeHTML( nodeValue().string() );
-    else
-    {
-        // If I am an element, not a text
-        NodeImpl* temp = previousSibling();
-        if(temp)
-        {
-            if( !start && (temp->nodeType() != Node::TEXT_NODE && nodeType() != Node::TEXT_NODE ) )
-                me = QString("    ") + QChar('<') + nodeName().string();
-            else
-                me = QChar('<') + nodeName().string();
-        }
-        else
-            me = QChar('<') + nodeName().string();
-        // print attributes
-        if( nodeType() == Node::ELEMENT_NODE )
-        {
-            const ElementImpl *el = static_cast<const ElementImpl *>(this);
-            NamedNodeMap attrs = el->attributes();
-            unsigned long lmap = attrs.length();
-            for( unsigned int j=0; j<lmap; j++ )
-                me += " " + attrs.item(j).nodeName().string() + "=\"" + attrs.item(j).nodeValue().string() + "\"";
-        }
-        // print ending bracket of start tag
-        if( firstChild() == 0 ) {    // if element has no endtag
-	    if (isHTMLElement()) {
-		me +=">";
-	    } else {
-                me +="/>";
-	    }
-	} else                        // if element has endtag
-        {
-                NodeImpl* temp = nextSibling();
-                if(temp)
-                {
-                    if( (temp->nodeType() != Node::TEXT_NODE) )
-                        me += ">\n";
-                    else
-                        me += ">";
-                }
-                else
-                    me += ">";
-        }
-    }
-
-    NodeImpl* n;
-
-    if( (n = firstChild()) )
-    {
-        // print firstChild
-        me += n->recursive_toHTML( );
-
-        // Print my ending tag
-        if ( nodeType() != Node::TEXT_NODE )
-            me += "</" + nodeName().string() + ">\n";
-    }
-    // print next sibling
-    if( (n = nextSibling()) )
-        me += n->recursive_toHTML( );
-
-    return me;
+    return recursive_toHTMLWithOptions(start);
 }
 
 bool NodeImpl::isContentEditable() const

@@ -415,9 +415,40 @@ static bool initializedKJS = FALSE;
 	return _part->selection().state() == KHTMLSelection::RANGE;
 }
 
-- (NSString *)selectedHTML
+- (NSString *)selectedHTMLString:(NSArray **)subresourceURLStrings
 {
-	return _part->selection().toRange().toHTML().string().getNSString();
+    QStringList *subresourceURLs = NULL;
+    if (subresourceURLStrings) {
+        subresourceURLs = new QStringList();
+    }
+	NSString *HTMLString = _part->selection().toRange().handle()->toHTMLWithOptions(true, subresourceURLs).string().getNSString();
+    if (subresourceURLStrings) {
+        *subresourceURLStrings = [NSMutableArray array];
+        for (QStringList::Iterator it = subresourceURLs->begin(); it != subresourceURLs->end(); ++it) {
+            [(NSMutableArray *)*subresourceURLStrings addObject:(*it).getNSString()];
+        }
+    }
+    return HTMLString ? HTMLString : @"";
+}
+
+- (NSString *)HTMLString:(NSArray **)subresourceURLStrings
+{
+    QStringList *subresourceURLs = NULL;
+    if (subresourceURLStrings) {
+        subresourceURLs = new QStringList();
+    }
+    NSString *HTMLString = nil;
+    DOM::DocumentImpl *doc = _part->xmlDocImpl();
+    if (doc) {
+        HTMLString = doc->recursive_toHTMLWithOptions(true, false, NULL, subresourceURLs).getNSString();
+        if (subresourceURLStrings) {
+            *subresourceURLStrings = [NSMutableArray array];
+            for (QStringList::Iterator it = subresourceURLs->begin(); it != subresourceURLs->end(); ++it) {
+                [(NSMutableArray *)*subresourceURLStrings addObject:(*it).getNSString()];
+            }
+        }
+    }
+    return HTMLString ? HTMLString : @"";
 }
 
 - (NSString *)selectedString
@@ -584,7 +615,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
     }
     NSObject *copiedNode = [copier nodeWithName:node->nodeName().string().getNSString()
                                           value:node->nodeValue().string().getNSString()
-                                         source:node->recursive_toHTML(1).getNSString()
+                                         source:node->recursive_toHTML(true).getNSString()
                                        children:children];
     [children release];
     return copiedNode;
@@ -1192,19 +1223,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     RenderCanvas* root = static_cast<khtml::RenderCanvas *>(_part->xmlDocImpl()->renderer());
     if (!root) return nil;
     return _part->xmlDocImpl()->getOrCreateAccObjectCache()->accObject(root);
-}
-
-- (NSString *)reconstructedSource
-{
-    NSString *string = nil;
-    DOM::DocumentImpl *doc = _part->xmlDocImpl();
-    if (doc) {
-        string = [[doc->recursive_toHTML(1).getNSString() copy] autorelease];
-    }
-    if (string == nil) {
-        string = @"";
-    }
-    return string;
 }
 
 - (void)undoEditing:(id)arg

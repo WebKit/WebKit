@@ -1,3 +1,61 @@
+2004-02-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3563402>: when copying HTML, relative URLs should be made absolute
+
+	- Added isSubresourceURLAttribute to ElementImpl which is overridden by subclasses determine if an attribute refers to a subresource.
+	- Added isURLAttribute to ElementImpl which is overridden by subclasses determine if an attribute refers to any kind of URL.
+
+        Reviewed by Dave.
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::isSubresourceURLAttribute):
+        (HTMLFrameElementImpl::isSubresourceURLAttribute):
+        (HTMLIFrameElementImpl::openURL):
+        (HTMLIFrameElementImpl::isSubresourceURLAttribute):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::isURLAttribute):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::isSubresourceURLAttribute):
+        (HTMLScriptElementImpl::id):
+        (HTMLScriptElementImpl::isSubresourceURLAttribute):
+        * khtml/html/html_headimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::isSubresourceURLAttribute):
+        (HTMLAreaElementImpl::getRegion):
+        (HTMLAreaElementImpl::isSubresourceURLAttribute):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::isURLAttribute):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLEmbedElementImpl::isSubresourceURLAttribute):
+        (HTMLObjectElementImpl::isSubresourceURLAttribute):
+        (HTMLParamElementImpl::parseHTMLAttribute):
+        (HTMLParamElementImpl::isSubresourceURLAttribute):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::isSubresourceURLAttribute):
+        (HTMLTableCellElementImpl::attach):
+        (HTMLTableCellElementImpl::isSubresourceURLAttribute):
+        * khtml/html/html_tableimpl.h:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (RangeImpl::toHTMLWithOptions): take completeURLs and subresourceURLs arguments
+        (RangeImpl::toHTML): call toHTMLWithOptions with default options
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::isURLAttribute):
+        (ElementImpl::isSubresourceURLAttribute):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithOptions): take completeURLs and subresourceURLs arguments
+        (NodeImpl::recursive_toHTML): call recursive_toHTML with default options
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectedHTML:]): renamed to return subresource URL strings
+
 2004-02-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

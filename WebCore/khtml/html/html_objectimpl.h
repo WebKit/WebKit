@@ -89,6 +89,8 @@ public:
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
 
     QString url;
     QString pluginPage;
@@ -119,6 +121,8 @@ public:
     virtual void recalcStyle( StyleChange ch );
 
     DocumentImpl* contentDocument() const;
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
 
     QString serviceType;
     QString url;
@@ -142,6 +146,8 @@ public:
 
     QString name() const { return m_name.string(); }
     QString value() const { return m_value.string(); }
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
 
  protected:
     AtomicString m_name;

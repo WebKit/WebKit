@@ -362,6 +362,16 @@ void ElementImpl::createAttributeMap() const
     namedAttrMap->ref();
 }
 
+bool ElementImpl::isURLAttribute(AttributeImpl *attr) const
+{
+    return isSubresourceURLAttribute(attr);
+    
+}
+bool ElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return false;
+}
+
 void ElementImpl::defaultEventHandler(EventImpl *evt)
 {
     if (evt->id() == EventImpl::KEYPRESS_EVENT && isContentEditable()) {

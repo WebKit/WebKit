@@ -234,6 +234,11 @@ void HTMLAnchorElementImpl::accessKeyAction()
     click();
 }
 
+bool HTMLAnchorElementImpl::isURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_HREF;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)

@@ -207,6 +207,11 @@ void HTMLBodyElementImpl::insertedIntoDocument()
     }
 }
 
+bool HTMLBodyElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_BACKGROUND;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
@@ -489,6 +494,11 @@ DocumentImpl* HTMLFrameElementImpl::contentDocument() const
     return 0;
 }
 
+bool HTMLFrameElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_SRC;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentPtr *doc)
@@ -625,7 +635,6 @@ void HTMLFrameSetElementImpl::recalcStyle( StyleChange ch )
     HTMLElementImpl::recalcStyle( ch );
 }
 
-
 // -------------------------------------------------------------------------
 
 HTMLHeadElementImpl::HTMLHeadElementImpl(DocumentPtr *doc)
@@ -752,4 +761,9 @@ void HTMLIFrameElementImpl::openURL()
 {
     needWidgetUpdate = true;
     setChanged();
+}
+
+bool HTMLIFrameElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_SRC;
 }

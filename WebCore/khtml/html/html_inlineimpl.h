@@ -45,6 +45,7 @@ public:
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
     virtual void accessKeyAction();
+    virtual bool isURLAttribute(AttributeImpl *attr) const;
 protected:
     bool m_hasTarget : 1;
 };

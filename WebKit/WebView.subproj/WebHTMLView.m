@@ -518,8 +518,8 @@ static WebHTMLView *lastHitView = nil;
     [pasteboard declareTypes:[[self class] _pasteboardTypes] owner:nil];
 
     // Put HTML on the pasteboard.
-    [pasteboard setString:[[self _bridge] selectedHTML] forType:NSHTMLPboardType];
-
+    [pasteboard setString:[[self _bridge] selectedHTMLString:nil] forType:NSHTMLPboardType];
+    
     // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];
     NSRange range = NSMakeRange(0, [attributedString length]);

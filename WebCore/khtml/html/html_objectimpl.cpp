@@ -332,6 +332,11 @@ void HTMLEmbedElementImpl::attach()
     }
 }
 
+bool HTMLEmbedElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_SRC;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
@@ -485,6 +490,11 @@ void HTMLObjectElementImpl::recalcStyle( StyleChange ch )
     HTMLElementImpl::recalcStyle( ch );
 }
 
+bool HTMLObjectElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return (attr->id() == ATTR_DATA || (attr->id() == ATTR_USEMAP && attr->value().domString()[0] != '#'));
+}
+
 // -------------------------------------------------------------------------
 
 HTMLParamElementImpl::HTMLParamElementImpl(DocumentPtr *doc)
@@ -515,4 +525,18 @@ void HTMLParamElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         m_value = attr->value();
         break;
     }
+}
+
+bool HTMLParamElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    if (attr->id() == ATTR_VALUE) {
+        AttributeImpl *attr = attributes()->getAttributeItem(ATTR_NAME);
+        if (attr) {
+            DOMString value = attr->value().string().lower();
+            if (value == "src" || value == "movie" || value == "data") {
+                return true;
+            }
+        }
+    }
+    return false;
 }

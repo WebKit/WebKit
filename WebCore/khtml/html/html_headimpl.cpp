@@ -298,6 +298,11 @@ void HTMLLinkElementImpl::sheetLoaded()
         getDocument()->stylesheetLoaded();
 }
 
+bool HTMLLinkElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_HREF;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
@@ -359,6 +364,11 @@ HTMLScriptElementImpl::~HTMLScriptElementImpl()
 NodeImpl::Id HTMLScriptElementImpl::id() const
 {
     return ID_SCRIPT;
+}
+
+bool HTMLScriptElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_SRC;
 }
 
 // -------------------------------------------------------------------------
