@@ -319,8 +319,13 @@ Position Position::previousWordBoundary() const
             pos = Position(pos.node(), start);
             if (pos != *this)
                 return pos;
-            else
-                pos = pos.previousCharacterPosition();
+            else {
+                pos = previousCharacterPosition();
+                if (pos == *this) {
+                    // made no difference from the last try, might as well bail
+                    break;
+                }
+            }
         }
         else {
             pos = Position(pos.node(), pos.node()->caretMinOffset());
@@ -350,9 +355,14 @@ Position Position::nextWordBoundary() const
             pos = Position(pos.node(), end);
             if (pos != *this)
                 return pos;
-            else
-                pos = pos.nextCharacterPosition();
-        }
+            else {
+                pos = nextCharacterPosition();
+                if (pos == *this) {
+                    // made no difference from the last try, might as well bail
+                    break;
+                }
+            }
+        } 
         else {
             pos = Position(pos.node(), pos.node()->caretMaxOffset());
             if (pos != *this)

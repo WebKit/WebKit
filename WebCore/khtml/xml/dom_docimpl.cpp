@@ -2997,6 +2997,10 @@ void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
             }
         }
     }
+
+    // repaint the affected node
+    if (docDirty && node->renderer())
+        node->renderer()->repaint();
 }
 
 QValueList<DocumentMarker> DocumentImpl::markersForNode(NodeImpl *node)

@@ -3659,7 +3659,7 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
 
     // Expand selection to word boundaries so that complete words wind up being passed to the spell checker.
     //
-    // FIXME: It seems that NSSpellChecker is too slow to handle finding multiple mispellings in an
+    // FIXME: It seems that NSSpellChecker is too slow to handle finding multiple misspellings in an
     // arbitrarily large selection.
     // So, for now, the idea is to mimic AppKit behavior and limit the selection to the first word 
     // of the selection passed in.

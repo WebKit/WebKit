@@ -1,3 +1,21 @@
+2004-08-17  Trey Matteson  <trey@apple.com>
+
+	Various spelling fixes.
+
+        Reviewed by Ken.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): No misspellings in the spelling code comments
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::removeMarker):  Repaint if doc changes.  Sometimes the markers
+	were not being erased when you clicked in a word.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousWordBoundary):  Small optimization.  Bail after first
+	try if the second try will not come out any different.
+        (DOM::Position::nextWordBoundary):  Ditto
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::markMisspellingsInSelection):  Comment.
+
 2004-08-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
