@@ -1,3 +1,10 @@
+2002-01-23  Ken Kocienda  <kocienda@apple.com>
+
+	Took out @executable_path hack added for Alexander demo.
+	This should clear up a class of crash-on-launch issues.
+
+	* WebKit.pbproj/project.pbxproj:
+
 2002-01-21  John Sullivan  <sullivan@apple.com>
 
 	* WebView.subproj/WKWebController.h:
