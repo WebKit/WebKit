@@ -660,7 +660,16 @@ RenderLayer::updateScrollInfoAfterLayout()
 
     bool needHorizontalBar, needVerticalBar;
     computeScrollDimensions(&needHorizontalBar, &needVerticalBar);
-    
+
+    if (m_object->style()->overflow() != OMARQUEE) {
+        // Layout may cause us to be in an invalid scroll position.  In this case we need
+        // to pull our scroll offsets back to the max (or push them up to the min).
+        int newX = kMax(0, kMin(m_scrollX, scrollWidth() - m_object->clientWidth()));
+        int newY = kMax(0, kMin(m_scrollY, scrollHeight() - m_object->clientHeight()));
+        if (newX != m_scrollX || newY != m_scrollY)
+            scrollToOffset(newX, newY);
+    }
+
     bool haveHorizontalBar = m_hBar;
     bool haveVerticalBar = m_vBar;
 

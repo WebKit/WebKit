@@ -1,5 +1,14 @@
 2005-01-21  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3773809, make sure that overflow regions never end up at an invalid scroll offset because of a layout change.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateScrollInfoAfterLayout):
+
+2005-01-21  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3966349, hang loading page.  Make sure that loops using popOneBlock properly check for a null
 	blockStack to avoid an infinite loop.
 	
