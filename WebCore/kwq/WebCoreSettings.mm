@@ -173,6 +173,21 @@
     return minimumFontSize;
 }
 
+- (void)setMinimumLogicalFontSize:(float)size
+{
+    if (minimumLogicalFontSize == size) {
+        return;
+    }
+    minimumLogicalFontSize = size;
+    settings->setMinLogicalFontSize((int)rint(size));
+    [self _updateAllViews];
+}
+
+- (float)minimumLogicalFontSize
+{
+    return minimumLogicalFontSize;
+}
+
 - (void)setDefaultFontSize:(float)size
 {
     if (defaultFontSize == size) {

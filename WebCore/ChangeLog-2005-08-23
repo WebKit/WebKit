@@ -1,3 +1,24 @@
+2003-10-31  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3467419, highlighted text in "search in books" Amazon feature is obscured.  The
+	site is using the CSS3 opacity property.  The CSS3 Color module is far enough along now
+	that opacity can safely be used without the "-khtml-" in front of it.
+
+	Fix for 3466542, the minimum font size bug.  I am introducing a new minimum font size pref that
+	really is a hard override.
+	
+        Reviewed by gramps (opacity) and john (min font size)
+	
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+
 2003-10-31  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

@@ -998,7 +998,7 @@ bool CSSParser::parseValue( int propId, bool important )
         else
             return parseShadow(propId, important);
         break;
-    case CSS_PROP__KHTML_OPACITY:
+    case CSS_PROP_OPACITY:
         valid_primitive = validUnit(value, FNumber, strict);
         break;
     case CSS_PROP__KHTML_BOX_ALIGN:

@@ -3350,7 +3350,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
 
         return;
     }
-    case CSS_PROP__KHTML_OPACITY:
+    case CSS_PROP_OPACITY:
         if (value->cssValueType() == CSSValue::CSS_INHERIT) {
             if (!parentNode) return;
             style->setOpacity(parentStyle->opacity());
@@ -3659,22 +3659,31 @@ void CSSStyleSelector::setFontSize(FontDef& fontDef, float size)
 
 float CSSStyleSelector::getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, float specifiedSize)
 {
-    // We never want to get smaller than the minimum font size to keep fonts readable
-    // however we always allow the page to set an explicit pixel size that is smaller,
+    // We support two types of minimum font size.  The first is a hard override that applies to
+    // all fonts.  This is "minSize."  The second type of minimum font size is a "smart minimum"
+    // that is applied only when the Web page can't know what size it really asked for, e.g.,
+    // when it uses logical sizes like "small" or expresses the font-size as a percentage of
+    // the user's default font setting.
+
+    // With the smart minimum, we never want to get smaller than the minimum font size to keep fonts readable.
+    // However we always allow the page to set an explicit pixel size that is smaller,
     // since sites will mis-render otherwise (e.g., http://www.gamespot.com with a 9px minimum).
-    // Note to Konq folks: you may not like this interpretation of minimum font size, since you
-    // expose the pref in your GUI.  I have used APPLE_CHANGES to preserve the old behavior of
-    // always enforcing a minimum font size. -dwh
     int minSize = settings->minFontSize();
+    int minLogicalSize = settings->minLogicalFontSize();
+
     float zoomPercent = (!khtml::printpainter && view) ? view->part()->zoomFactor()/100.0f : 1.0f;
     float zoomedSize = specifiedSize * zoomPercent;
-#if APPLE_CHANGES
-    if (zoomedSize < minSize && (specifiedSize >= minSize || !isAbsoluteSize))
-        zoomedSize = minSize;
-#else
+
+    // Apply the hard minimum first.  We only apply the hard minimum if after zooming we're still too small.
     if (zoomedSize < minSize)
         zoomedSize = minSize;
-#endif
+
+    // Now apply the "smart minimum."  This minimum is also only applied if we're still too small
+    // after zooming.  The font size must either be relative to the user default or the original size
+    // must have been acceptable.  In other words, we only apply the smart minimum whenever we're positive
+    // doing so won't disrupt the layout.
+    if (zoomedSize < minLogicalSize && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
+        zoomedSize = minLogicalSize;
     
     return KMAX(zoomedSize, 1.0f);
 }

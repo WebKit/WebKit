@@ -52,6 +52,7 @@ public:
     static QString settingsToCSS() { return QString(); }
 
     int minFontSize() const { return _minimumFontSize; }
+    int minLogicalFontSize() const { return _minimumLogicalFontSize; }
     int mediumFontSize() const { return _defaultFontSize; }
     int mediumFixedFontSize() const { return _defaultFixedFontSize; }
 
@@ -85,6 +86,7 @@ public:
     void setFantasyFontName(const QString &s) { _fantasyFontName = s; }
     
     void setMinFontSize(int s) { _minimumFontSize = s; }
+    void setMinLogicalFontSize(int s) { _minimumLogicalFontSize = s; }
     void setMediumFontSize(int s) { _defaultFontSize = s; }
     void setMediumFixedFontSize(int s) { _defaultFixedFontSize = s; }
     
@@ -110,6 +112,7 @@ private:
     QString _userStyleSheetLocation;
     
     int _minimumFontSize;
+    int _minimumLogicalFontSize;
     int _defaultFontSize;
     int _defaultFixedFontSize;
     uint _JavaEnabled:1;

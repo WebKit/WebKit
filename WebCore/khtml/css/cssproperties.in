@@ -91,7 +91,7 @@ max-height
 max-width
 min-height
 min-width
--khtml-opacity
+opacity
 orphans
 outline-color
 outline-style
