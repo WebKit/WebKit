@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x137
-  RenderBlock {HTML} at (0,0) size 800x137
-    RenderBody {BODY} at (8,8) size 784x121
-      RenderBlock (anonymous) at (0,0) size 784x17
-        RenderInline {DIV} at (0,0) size 462x14 [color=#FFFFFF] [bgcolor=#FF0000]
-          RenderText {TEXT} at (0,3) size 462x14
-            text run at (0,3) width 462: "Ahem_font_required_for_this_test."
+layer at (0,0) size 800x152
+  RenderBlock {HTML} at (0,0) size 800x152
+    RenderBody {BODY} at (8,8) size 784x136
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderInline {DIV} at (0,0) size 528x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {TEXT} at (0,1) size 528x16
+            text run at (0,1) width 528: "Ahem_font_required_for_this_test."
         RenderText {TEXT} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,17) size 300x104
-        RenderTableSection {TBODY} at (0,0) size 0x104
+      RenderTable {TABLE} at (0,18) size 342x118
+        RenderTableSection {TBODY} at (0,0) size 0x118
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 296x100 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 294x98 [color=#00FF00] [bgcolor=#008000]
-                RenderText {TEXT} at (0,0) size 294x98
-                  text run at (0,0) width 294: "                     "
-                  text run at (0,14) width 294: " xxxx xxxx xxxx xxxx "
-                  text run at (0,28) width 294: " x  x x  x x    x    "
-                  text run at (0,42) width 280: " xxxx xxxx xxxx xxxx"
-                  text run at (0,56) width 294: " x    x  x    x    x "
-                  text run at (0,70) width 294: " x    x  x xxxx xxxx "
-                  text run at (0,84) width 294: "                     "
+            RenderTableCell {TD} at (2,2) size 338x114 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 336x112 [color=#00FF00] [bgcolor=#008000]
+                RenderText {TEXT} at (0,0) size 336x112
+                  text run at (0,0) width 336: "                     "
+                  text run at (0,16) width 336: " xxxx xxxx xxxx xxxx "
+                  text run at (0,32) width 336: " x  x x  x x    x    "
+                  text run at (0,48) width 320: " xxxx xxxx xxxx xxxx"
+                  text run at (0,64) width 336: " x    x  x    x    x "
+                  text run at (0,80) width 336: " x    x  x xxxx xxxx "
+                  text run at (0,96) width 336: "                     "

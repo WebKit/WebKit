@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x67
-  RenderBlock {HTML} at (0,0) size 800x67
-    RenderBody {BODY} at (8,8) size 784x45
-      RenderBlock {UL} at (0,0) size 784x45
+layer at (0,0) size 800x70
+  RenderBlock {HTML} at (0,0) size 800x70
+    RenderBody {BODY} at (8,8) size 784x46
+      RenderBlock {UL} at (0,0) size 784x46
         RenderListItem {LI} at (40,0) size 744x14
           RenderListMarker at (0,0) size 0x14
         RenderListItem {LI} at (40,14) size 744x14
           RenderListMarker at (0,0) size 0x14
-        RenderListItem {LI} at (40,28) size 744x17
+        RenderListItem {LI} at (40,28) size 744x18
           RenderListMarker at (0,0) size 0x14
-          RenderText {TEXT} at (0,0) size 350x17
-            text run at (0,0) width 350: "There should be two bullets with no text above me."
+          RenderText {TEXT} at (0,0) size 323x18
+            text run at (0,0) width 323: "There should be two bullets with no text above me."

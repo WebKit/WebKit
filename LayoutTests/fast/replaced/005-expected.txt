@@ -1,41 +1,41 @@
-layer at (0,0) size 800x670
+layer at (0,0) size 800x680
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x670
-  RenderBlock {HTML} at (0,0) size 800x670
-    RenderBody {BODY} at (8,8) size 784x648
-      RenderTable {TABLE} at (0,0) size 784x212
-        RenderTableSection {TBODY} at (2,2) size 0x208
+layer at (0,0) size 800x680
+  RenderBlock {HTML} at (0,0) size 800x680
+    RenderBody {BODY} at (8,8) size 784x656
+      RenderTable {TABLE} at (0,0) size 784x214
+        RenderTableSection {TBODY} at (2,2) size 0x210
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 202x208 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 202x210 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 100x100 [bgcolor=#008000]
               RenderImage {IMG} at (101,1) size 100x100 [bgcolor=#008000]
               RenderBR {BR} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
-              RenderImage {IMG} at (1,104) size 100x100 [bgcolor=#008000]
-              RenderImage {IMG} at (101,104) size 100x100 [bgcolor=#008000]
-            RenderTableCell {TD} at (202,94) size 578x19 [r=0 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 25x17
+              RenderImage {IMG} at (1,105) size 100x100 [bgcolor=#008000]
+              RenderImage {IMG} at (101,105) size 100x100 [bgcolor=#008000]
+            RenderTableCell {TD} at (202,95) size 578x20 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 25x18
                 text run at (1,1) width 25: "Foo"
-      RenderTable {TABLE} at (0,212) size 784x212
-        RenderTableSection {TBODY} at (2,2) size 0x208
+      RenderTable {TABLE} at (0,214) size 784x214
+        RenderTableSection {TBODY} at (2,2) size 0x210
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 202x208 [r=0 c=0 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 200x17
+            RenderTableCell {TD} at (0,0) size 202x210 [r=0 c=0 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 200x18
                 RenderImage {IMG} at (1,1) size 100x100 [bgcolor=#008000]
                 RenderImage {IMG} at (101,1) size 100x100 [bgcolor=#008000]
               RenderBR {BR} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
-              RenderImage {IMG} at (1,104) size 100x100 [bgcolor=#008000]
-              RenderImage {IMG} at (101,104) size 100x100 [bgcolor=#008000]
-            RenderTableCell {TD} at (202,94) size 578x19 [r=0 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 25x17
+              RenderImage {IMG} at (1,105) size 100x100 [bgcolor=#008000]
+              RenderImage {IMG} at (101,105) size 100x100 [bgcolor=#008000]
+            RenderTableCell {TD} at (202,95) size 578x20 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 25x18
                 text run at (1,1) width 25: "Foo"
-      RenderBlock {P} at (0,438) size 784x210
+      RenderBlock {P} at (0,444) size 784x212
         RenderImage {IMG} at (2,2) size 100x100 [bgcolor=#008000]
         RenderImage {IMG} at (102,2) size 100x100 [bgcolor=#008000]
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-        RenderInline {A} at (0,0) size 100x17 [color=#0000EE]
-          RenderImage {IMG} at (2,105) size 100x100 [bgcolor=#008000]
-        RenderImage {IMG} at (102,105) size 100x100 [bgcolor=#008000]
+        RenderInline {A} at (0,0) size 100x18 [color=#0000EE]
+          RenderImage {IMG} at (2,106) size 100x100 [bgcolor=#008000]
+        RenderImage {IMG} at (102,106) size 100x100 [bgcolor=#008000]
         RenderText {TEXT} at (0,0) size 0x0

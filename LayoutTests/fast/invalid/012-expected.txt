@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x139
-  RenderBlock {HTML} at (0,0) size 800x139
-    RenderBody {BODY} at (8,8) size 784x123
-      RenderBlock {CENTER} at (0,0) size 784x17
-        RenderInline {FONT} at (0,0) size 322x17
-          RenderText {TEXT} at (231,0) size 322x17
-            text run at (231,0) width 147: "You should see a 100"
-            text run at (378,0) width 175: "x100 green Image below."
-      RenderBlock (anonymous) at (0,17) size 784x100
+layer at (0,0) size 800x140
+  RenderBlock {HTML} at (0,0) size 800x140
+    RenderBody {BODY} at (8,8) size 784x124
+      RenderBlock {CENTER} at (0,0) size 784x18
+        RenderInline {FONT} at (0,0) size 298x18
+          RenderText {TEXT} at (243,0) size 298x18
+            text run at (243,0) width 137: "You should see a 100"
+            text run at (380,0) width 161: "x100 green Image below."
+      RenderBlock (anonymous) at (0,18) size 784x100
         RenderInline {FONT} at (0,0) size 100x14
           RenderText {TEXT} at (0,0) size 0x0
           RenderImage {IMG} at (0,0) size 100x100 [bgcolor=#008000]
           RenderText {TEXT} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,117) size 6x6
+      RenderTable {TABLE} at (0,118) size 6x6
         RenderTableSection {TBODY} at (0,0) size 0x6
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]

@@ -1,29 +1,29 @@
-layer at (0,0) size 951x585
-  RenderCanvas at (0,0) size 800x585
-layer at (0,0) size 800x84
-  RenderBlock {HTML} at (0,0) size 800x84
-    RenderBody {BODY} at (8,8) size 784x68
-      RenderText {TEXT} at (0,0) size 783x68
-        text run at (0,0) width 557: "In this test, you should see three blocks that are aligned right within a black box. "
-        text run at (557,0) width 226: "They should be stacked vertically"
-        text run at (0,17) width 325: "with the green box in between two olive boxes. "
-        text run at (325,17) width 338: "The olive boxes and the green box should be 100"
-        text run at (663,17) width 111: "x100, and there"
-        text run at (0,34) width 461: "should be 100 pixels of padding on the right side of the box stack. "
-        text run at (461,34) width 318: "The black box's top should be aligned with the"
-        text run at (0,51) width 703: "end of the last line in this parargaph and its left side should begin right after the end of this sentence. "
-      RenderText {TEXT} at (703,51) size 4x17
-        text run at (703,51) width 4: " "
-      RenderText {TEXT} at (707,51) size 4x17
-        text run at (707,51) width 4: " "
-layer at (711,59) size 240x340
-  RenderBlock (positioned) {SPAN} at (711,59) size 240x340
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x88
+  RenderBlock {HTML} at (0,0) size 800x88
+    RenderBody {BODY} at (8,8) size 784x72
+      RenderText {TEXT} at (0,0) size 781x72
+        text run at (0,0) width 508: "In this test, you should see three blocks that are aligned right within a black box. "
+        text run at (508,0) width 266: "They should be stacked vertically with the"
+        text run at (0,18) width 248: "green box in between two olive boxes. "
+        text run at (248,18) width 311: "The olive boxes and the green box should be 100"
+        text run at (559,18) width 191: "x100, and there should be 100"
+        text run at (0,36) width 326: "pixels of padding on the right side of the box stack. "
+        text run at (326,36) width 455: "The black box's top should be aligned with the end of the last line in this"
+        text run at (0,54) width 470: "parargaph and its left side should begin right after the end of this sentence. "
+      RenderText {TEXT} at (470,54) size 4x18
+        text run at (470,54) width 4: " "
+      RenderText {TEXT} at (474,54) size 4x18
+        text run at (474,54) width 4: " "
+layer at (478,62) size 240x340
+  RenderBlock (positioned) {SPAN} at (478,62) size 240x340
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
-layer at (831,179) size 100x100
+layer at (598,182) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (831,79) size 100x100
+layer at (598,82) size 100x100
   RenderBlock (positioned) {DIV} at (120,20) size 100x100 [bgcolor=#808000]
-layer at (831,279) size 100x100
+layer at (598,282) size 100x100
   RenderBlock (positioned) {DIV} at (120,220) size 100x100 [bgcolor=#808000]

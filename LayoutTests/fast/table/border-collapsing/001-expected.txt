@@ -1,27 +1,27 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x366
-  RenderBlock {HTML} at (0,0) size 800x366
-    RenderBody {BODY} at (8,8) size 784x350
-      RenderBlock {DIV} at (0,0) size 784x187
-        RenderTable {TABLE} at (10,10) size 312x167
-          RenderTableSection {TBODY} at (0,0) size 0x167
+layer at (0,0) size 800x390
+  RenderBlock {HTML} at (0,0) size 800x390
+    RenderBody {BODY} at (8,8) size 784x374
+      RenderBlock {DIV} at (0,0) size 784x190
+        RenderTable {TABLE} at (10,10) size 312x170
+          RenderTableSection {TBODY} at (0,0) size 0x170
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,0) size 312x39 [r=0 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (6,6) size 35x17
+              RenderTableCell {TD} at (0,0) size 312x40 [r=0 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (6,6) size 35x18
                   text run at (6,6) width 35: "Hello"
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,39) size 312x59 [r=1 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (16,16) size 61x17
-                  text run at (16,16) width 61: "Goodbye"
+              RenderTableCell {TD} at (0,40) size 312x60 [r=1 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (16,16) size 59x18
+                  text run at (16,16) width 59: "Goodbye"
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,98) size 312x69 [r=2 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (26,26) size 61x17
-                  text run at (26,26) width 61: "Goodbye"
-      RenderBlock {DIV} at (0,327) size 784x23
-        RenderTable {TABLE} at (1,1) size 34x21
-          RenderTableSection {TBODY} at (0,0) size 0x21
+              RenderTableCell {TD} at (0,100) size 312x70 [r=2 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (26,26) size 59x18
+                  text run at (26,26) width 59: "Goodbye"
+      RenderBlock {DIV} at (0,350) size 784x24
+        RenderTable {TABLE} at (1,1) size 31x22
+          RenderTableSection {TBODY} at (0,0) size 0x22
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,0) size 34x21 [r=0 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (2,2) size 30x17
-                  text run at (2,2) width 30: "Test"
+              RenderTableCell {TD} at (0,0) size 31x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 27x18
+                  text run at (2,2) width 27: "Test"

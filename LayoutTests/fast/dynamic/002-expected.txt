@@ -1,23 +1,22 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x114
-  RenderBlock {HTML} at (0,0) size 800x114
-    RenderBody {BODY} at (8,8) size 784x98
-      RenderBlock {DIV} at (0,0) size 784x17
-        RenderBlock (floating) {DIV} at (494,0) size 290x104
-          RenderText {TEXT} at (2,2) size 286x17
-            text run at (2,2) width 286: "I should become a right-floating element."
-        RenderBlock (anonymous) at (0,0) size 784x17
-          RenderText {TEXT} at (0,0) size 433x17
-            text run at (0,0) width 215: "This text should be on the left. "
-            text run at (215,0) width 218: "The float should be to the right."
-      RenderBlock {DIV} at (0,17) size 784x30
-      RenderBlock {DIV} at (0,47) size 784x51
-        RenderBlock (floating) {SPAN} at (0,0) size 280x104
-          RenderText {TEXT} at (2,2) size 276x17
-            text run at (2,2) width 276: "I should become a left-floating element."
-        RenderText {TEXT} at (280,0) size 192x51
-          text run at (280,0) width 179: "This text should be on the"
-          text run at (280,17) width 42: "right. "
-          text run at (322,17) width 150: "The float should be to"
-          text run at (280,34) width 54: "the left."
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,8) size 784x84
+      RenderBlock {DIV} at (0,0) size 784x18
+        RenderBlock (floating) {DIV} at (522,0) size 262x104
+          RenderText {TEXT} at (2,2) size 258x18
+            text run at (2,2) width 258: "I should become a right-floating element."
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderText {TEXT} at (0,0) size 393x18
+            text run at (0,0) width 195: "This text should be on the left. "
+            text run at (195,0) width 198: "The float should be to the right."
+      RenderBlock {DIV} at (0,18) size 784x30
+      RenderBlock {DIV} at (0,48) size 784x36
+        RenderBlock (floating) {SPAN} at (0,0) size 253x104
+          RenderText {TEXT} at (2,2) size 249x18
+            text run at (2,2) width 249: "I should become a left-floating element."
+        RenderText {TEXT} at (253,0) size 261x36
+          text run at (253,0) width 204: "This text should be on the right. "
+          text run at (457,0) width 57: "The float"
+          text run at (253,18) width 128: "should be to the left."

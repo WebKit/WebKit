@@ -1,61 +1,61 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x264
-  RenderBlock {HTML} at (0,0) size 800x264
-    RenderBody {BODY} at (8,8) size 784x242
-      RenderBlock {P} at (0,0) size 784x242
-        RenderTable {TABLE} at (0,0) size 147x242
+layer at (0,0) size 800x291
+  RenderBlock {HTML} at (0,0) size 800x291
+    RenderBody {BODY} at (8,8) size 784x267
+      RenderBlock {P} at (0,0) size 784x267
+        RenderTable {TABLE} at (0,0) size 153x267
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-          RenderTableSection {TBODY} at (0,0) size 0x242
+          RenderTableSection {TBODY} at (0,0) size 0x267
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,1) size 50x48 [r=0 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (17,17) size 9x17
-                  text run at (17,17) width 9: "1"
-              RenderTableCell {TD} at (50,0) size 48x50 [r=0 c=1 rs=1 cs=1]
-                RenderText {TEXT} at (16,17) size 9x17
-                  text run at (16,17) width 9: "2"
-              RenderTableCell {TD} at (98,0) size 49x50 [r=0 c=2 rs=1 cs=1]
-                RenderText {TEXT} at (15,17) size 9x17
-                  text run at (15,17) width 9: "3"
+              RenderTableCell {TD} at (0,1) size 52x53 [r=0 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (19,19) size 8x18
+                  text run at (19,19) width 8: "1"
+              RenderTableCell {TD} at (52,0) size 50x55 [r=0 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (18,19) size 8x18
+                  text run at (18,19) width 8: "2"
+              RenderTableCell {TD} at (102,0) size 51x55 [r=0 c=2 rs=1 cs=1]
+                RenderText {TEXT} at (17,19) size 8x18
+                  text run at (17,19) width 8: "3"
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,52) size 50x46 [r=1 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (17,15) size 9x17
-                  text run at (17,15) width 9: "4"
-              RenderTableCell {TD} at (50,50) size 48x50 [r=1 c=1 rs=1 cs=1]
-                RenderText {TEXT} at (17,17) size 9x17
-                  text run at (17,17) width 9: "5"
-              RenderTableCell {TD} at (98,50) size 49x50 [r=1 c=2 rs=1 cs=1]
-                RenderText {TEXT} at (17,17) size 9x17
-                  text run at (17,17) width 9: "6"
+              RenderTableCell {TD} at (0,57) size 52x51 [r=1 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (19,17) size 8x18
+                  text run at (19,17) width 8: "4"
+              RenderTableCell {TD} at (52,55) size 50x55 [r=1 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (19,19) size 8x18
+                  text run at (19,19) width 8: "5"
+              RenderTableCell {TD} at (102,55) size 51x55 [r=1 c=2 rs=1 cs=1]
+                RenderText {TEXT} at (19,19) size 8x18
+                  text run at (19,19) width 8: "6"
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,101) size 50x46 [r=2 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (17,15) size 9x17
-                  text run at (17,15) width 9: "7"
-              RenderTableCell {TD} at (50,100) size 48x48 [r=2 c=1 rs=1 cs=1]
-                RenderText {TEXT} at (16,17) size 9x17
-                  text run at (16,17) width 9: "8"
-              RenderTableCell {TD} at (98,100) size 49x48 [r=2 c=2 rs=1 cs=1]
-                RenderText {TEXT} at (15,17) size 9x17
-                  text run at (15,17) width 9: "9"
+              RenderTableCell {TD} at (0,111) size 52x51 [r=2 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (19,17) size 8x18
+                  text run at (19,17) width 8: "7"
+              RenderTableCell {TD} at (52,110) size 50x53 [r=2 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (18,19) size 8x18
+                  text run at (18,19) width 8: "8"
+              RenderTableCell {TD} at (102,110) size 51x53 [r=2 c=2 rs=1 cs=1]
+                RenderText {TEXT} at (17,19) size 8x18
+                  text run at (17,19) width 8: "9"
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,148) size 50x46 [r=3 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (17,15) size 18x17
-                  text run at (17,15) width 18: "10"
-              RenderTableCell {TD} at (50,148) size 48x46 [r=3 c=1 rs=1 cs=1]
-                RenderText {TEXT} at (16,15) size 18x17
-                  text run at (16,15) width 18: "11"
-              RenderTableCell {TD} at (98,148) size 49x46 [r=3 c=2 rs=1 cs=1]
-                RenderText {TEXT} at (15,15) size 18x17
-                  text run at (15,15) width 18: "12"
+              RenderTableCell {TD} at (0,163) size 52x51 [r=3 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (19,17) size 16x18
+                  text run at (19,17) width 16: "10"
+              RenderTableCell {TD} at (52,163) size 50x51 [r=3 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (18,17) size 16x18
+                  text run at (18,17) width 16: "11"
+              RenderTableCell {TD} at (102,163) size 51x51 [r=3 c=2 rs=1 cs=1]
+                RenderText {TEXT} at (17,17) size 16x18
+                  text run at (17,17) width 16: "12"
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,194) size 50x48 [r=4 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (17,15) size 18x17
-                  text run at (17,15) width 18: "13"
-              RenderTableCell {TD} at (50,194) size 48x48 [r=4 c=1 rs=1 cs=1]
-                RenderText {TEXT} at (16,15) size 18x17
-                  text run at (16,15) width 18: "14"
-              RenderTableCell {TD} at (98,194) size 49x48 [r=4 c=2 rs=1 cs=1]
-                RenderText {TEXT} at (15,15) size 18x17
-                  text run at (15,15) width 18: "15"
+              RenderTableCell {TD} at (0,214) size 52x53 [r=4 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (19,17) size 16x18
+                  text run at (19,17) width 16: "13"
+              RenderTableCell {TD} at (52,214) size 50x53 [r=4 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (18,17) size 16x18
+                  text run at (18,17) width 16: "14"
+              RenderTableCell {TD} at (102,214) size 51x53 [r=4 c=2 rs=1 cs=1]
+                RenderText {TEXT} at (17,17) size 16x18
+                  text run at (17,17) width 16: "15"

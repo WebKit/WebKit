@@ -1,14 +1,13 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x174
-  RenderBlock {HTML} at (0,0) size 800x174
-    RenderBody {BODY} at (8,8) size 784x152
-      RenderBlock {P} at (0,0) size 784x34
-        RenderText {TEXT} at (0,0) size 753x34
-          text run at (0,0) width 164: "You should see two 100"
-          text run at (164,0) width 321: "x100 green squares with black borders below. "
-          text run at (485,0) width 268: "If you see only one square, the test has"
-          text run at (0,17) width 43: "failed."
-      RenderBlock {P} at (0,48) size 784x104
+layer at (0,0) size 800x162
+  RenderBlock {HTML} at (0,0) size 800x162
+    RenderBody {BODY} at (8,8) size 784x138
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 734x18
+          text run at (0,0) width 154: "You should see two 100"
+          text run at (154,0) width 294: "x100 green squares with black borders below. "
+          text run at (448,0) width 286: "If you see only one square, the test has failed."
+      RenderBlock {P} at (0,34) size 784x104
         RenderImage {IMG} at (0,0) size 104x104 [bgcolor=#008000]
         RenderImage {IMG} at (104,0) size 104x104 [bgcolor=#008000]

@@ -2,27 +2,27 @@ layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x0
   RenderBlock {HTML} at (0,0) size 800x0
-layer at (8,8) size 784x51
-  RenderBody {BODY} at (8,8) size 784x51
-    RenderBlock {DIV} at (0,0) size 784x51
-      RenderText {TEXT} at (0,0) size 137x17
-        text run at (0,0) width 137: "You should see two "
-      RenderInline {I} at (0,0) size 108x16
-        RenderText {TEXT} at (137,1) size 108x16
-          text run at (137,1) width 108: "vertically stacked"
-      RenderText {TEXT} at (245,0) size 775x51
-        text run at (245,0) width 172: " green rectangles below. "
-        text run at (417,0) width 194: "Each one is 100 pixels wide "
-        text run at (611,0) width 128: "and 50 pixels tall. "
-        text run at (739,0) width 36: "If the"
-        text run at (0,17) width 461: "two green rectangles are on the same line, then the test has failed. "
-        text run at (461,17) width 286: "This is a test of section 10.3.7 in CSS2.1. "
-        text run at (747,17) width 13: "In"
-        text run at (0,34) width 357: "particular it is a test of the shrink-to-fit algorithm's "
-        text run at (357,34) width 270: "preferred minimum width computation."
-layer at (8,59) size 100x106
-  RenderBlock (positioned) {DIV} at (0,0) size 100x106
+layer at (8,8) size 784x54
+  RenderBody {BODY} at (8,8) size 784x54
+    RenderBlock {DIV} at (0,0) size 784x54
+      RenderText {TEXT} at (0,0) size 130x18
+        text run at (0,0) width 130: "You should see two "
+      RenderInline {I} at (0,0) size 109x18
+        RenderText {TEXT} at (130,0) size 109x18
+          text run at (130,0) width 109: "vertically stacked"
+      RenderText {TEXT} at (239,0) size 763x54
+        text run at (239,0) width 157: " green rectangles below. "
+        text run at (396,0) width 181: "Each one is 100 pixels wide "
+        text run at (577,0) width 115: "and 50 pixels tall. "
+        text run at (692,0) width 61: "If the two"
+        text run at (0,18) width 386: "green rectangles are on the same line, then the test has failed. "
+        text run at (386,18) width 264: "This is a test of section 10.3.7 in CSS2.1. "
+        text run at (650,18) width 113: "In particular it is a"
+        text run at (0,36) width 216: "test of the shrink-to-fit algorithm's "
+        text run at (216,36) width 247: "preferred minimum width computation."
+layer at (8,62) size 100x108
+  RenderBlock (positioned) {DIV} at (0,0) size 100x108
     RenderBlock {SPAN} at (0,0) size 100x50 [bgcolor=#008000]
     RenderText {TEXT} at (0,0) size 0x0
-    RenderBlock {SPAN} at (0,53) size 100x50 [bgcolor=#008000]
+    RenderBlock {SPAN} at (0,54) size 100x50 [bgcolor=#008000]
     RenderText {TEXT} at (0,0) size 0x0

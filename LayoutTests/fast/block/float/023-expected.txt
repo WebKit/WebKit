@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x39
-  RenderBlock {HTML} at (0,0) size 800x39
-    RenderBody {BODY} at (8,8) size 784x17
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {TEXT} at (0,0) size 623x17
-          text run at (0,0) width 192: "You should see a single 100"
-          text run at (192,0) width 174: "x100 green block below. "
-          text run at (366,0) width 257: "If you see any red, the test has failed."
-      RenderBlock {UL} at (0,31) size 784x0
+layer at (0,0) size 800x42
+  RenderBlock {HTML} at (0,0) size 800x42
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 572x18
+          text run at (0,0) width 178: "You should see a single 100"
+          text run at (178,0) width 161: "x100 green block below. "
+          text run at (339,0) width 233: "If you see any red, the test has failed."
+      RenderBlock {UL} at (0,34) size 784x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {LI} at (100,0) size 100x100 [bgcolor=#FF0000]
         RenderText {TEXT} at (0,0) size 0x0
-layer at (108,39) size 100x100
+layer at (108,42) size 100x100
   RenderBlock (floating) {LI} at (0,0) size 100x100 [bgcolor=#008000]

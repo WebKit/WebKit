@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x184
-  RenderBlock {HTML} at (0,0) size 800x184
-    RenderBody {BODY} at (8,8) size 784x162
+layer at (0,0) size 800x190
+  RenderBlock {HTML} at (0,0) size 800x190
+    RenderBody {BODY} at (8,8) size 784x166
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,0) size 784x100
-      RenderBlock (anonymous) at (0,100) size 784x17
-        RenderText {TEXT} at (0,0) size 375x17
-          text run at (0,0) width 172: "This file has no doctype. "
-          text run at (172,0) width 203: "We should be in quirks mode."
-      RenderBlock {UL} at (0,131) size 784x31
-        RenderListItem {LI} at (40,0) size 744x31
+      RenderBlock (anonymous) at (0,100) size 784x18
+        RenderText {TEXT} at (0,0) size 348x18
+          text run at (0,0) width 159: "This file has no doctype. "
+          text run at (159,0) width 189: "We should be in quirks mode."
+      RenderBlock {UL} at (0,134) size 784x32
+        RenderListItem {LI} at (40,0) size 744x32
           RenderBlock (anonymous) at (0,0) size 744x14
             RenderListMarker at (0,0) size 0x14
-          RenderBlock {UL} at (0,14) size 744x17
-            RenderListItem {LI} at (40,0) size 704x17
+          RenderBlock {UL} at (0,14) size 744x18
+            RenderListItem {LI} at (40,0) size 704x18
               RenderListMarker at (0,0) size 0x14
-              RenderText {TEXT} at (0,0) size 264x17
-                text run at (0,0) width 264: "I should be underneath the first bullet."
+              RenderText {TEXT} at (0,0) size 238x18
+                text run at (0,0) width 238: "I should be underneath the first bullet."
 layer at (10,10) size 80x80
   RenderBlock (positioned) {DIV} at (10,10) size 80x80 [bgcolor=#008000]

@@ -1,29 +1,29 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x152
-  RenderBlock {HTML} at (0,0) size 800x152
-    RenderBody {BODY} at (8,8) size 784x136
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderInline {I} at (0,0) size 58x16
-          RenderText {TEXT} at (0,0) size 58x16
-            text run at (0,0) width 58: "Line One"
-      RenderBlock (anonymous) at (0,30) size 784x16
-        RenderBlock {P} at (0,0) size 784x16
-          RenderText {TEXT} at (0,0) size 58x16
-            text run at (0,0) width 58: "Line Two"
-      RenderBlock (anonymous) at (0,60) size 784x16
-        RenderInline {I} at (0,0) size 31x16
-          RenderText {TEXT} at (0,0) size 31x16
-            text run at (0,0) width 31: "Line "
+layer at (0,0) size 800x170
+  RenderBlock {HTML} at (0,0) size 800x170
+    RenderBody {BODY} at (8,8) size 784x154
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderInline {I} at (0,0) size 59x18
+          RenderText {TEXT} at (0,0) size 59x18
+            text run at (0,0) width 59: "Line One"
+      RenderBlock (anonymous) at (0,34) size 784x18
+        RenderBlock {P} at (0,0) size 784x18
+          RenderText {TEXT} at (0,0) size 60x18
+            text run at (0,0) width 60: "Line Two"
+      RenderBlock (anonymous) at (0,68) size 784x18
+        RenderInline {I} at (0,0) size 32x18
+          RenderText {TEXT} at (0,0) size 32x18
+            text run at (0,0) width 32: "Line "
         RenderText {TEXT} at (0,0) size 0x0
-        RenderInline {I} at (0,0) size 38x16
-          RenderText {TEXT} at (31,0) size 38x16
-            text run at (31,0) width 38: "Three"
-      RenderBlock (anonymous) at (0,90) size 784x16
-        RenderBlock {P} at (0,0) size 784x16
-          RenderText {TEXT} at (0,0) size 61x16
-            text run at (0,0) width 61: "Line Four"
-      RenderBlock (anonymous) at (0,120) size 784x16
-        RenderInline {I} at (0,0) size 58x16
-          RenderText {TEXT} at (0,0) size 58x16
-            text run at (0,0) width 58: "Line Five"
+        RenderInline {I} at (0,0) size 37x18
+          RenderText {TEXT} at (32,0) size 37x18
+            text run at (32,0) width 37: "Three"
+      RenderBlock (anonymous) at (0,102) size 784x18
+        RenderBlock {P} at (0,0) size 784x18
+          RenderText {TEXT} at (0,0) size 64x18
+            text run at (0,0) width 64: "Line Four"
+      RenderBlock (anonymous) at (0,136) size 784x18
+        RenderInline {I} at (0,0) size 60x18
+          RenderText {TEXT} at (0,0) size 60x18
+            text run at (0,0) width 60: "Line Five"

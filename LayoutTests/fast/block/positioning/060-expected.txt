@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x33
-  RenderBlock {HTML} at (0,0) size 800x33
-    RenderBody {BODY} at (8,8) size 784x17
-      RenderText {TEXT} at (0,0) size 592x17
-        text run at (0,0) width 170: "There should be two 100"
-        text run at (170,0) width 191: "x100 green squares below. "
-        text run at (361,0) width 231: "They should be vertically stacked."
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderText {TEXT} at (0,0) size 546x18
+        text run at (0,0) width 158: "There should be two 100"
+        text run at (158,0) width 173: "x100 green squares below. "
+        text run at (331,0) width 215: "They should be vertically stacked."
       RenderText {TEXT} at (0,0) size 0x0
 layer at (10,40) size 100x100
   RenderBlock (positioned) {DIV} at (10,40) size 100x100 [bgcolor=#008000]

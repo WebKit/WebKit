@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x236
-  RenderBlock {HTML} at (0,0) size 800x236
+layer at (0,0) size 800x238
+  RenderBlock {HTML} at (0,0) size 800x238
     RenderBody {BODY} at (0,0) size 800x222 [bgcolor=#FFFFFF]
       RenderBlock {CENTER} at (0,0) size 800x222 [bgcolor=#000000]
         RenderTable {TABLE} at (0,0) size 800x222 [bgcolor=#CCCCCC]
@@ -18,25 +18,25 @@ layer at (0,0) size 800x236
                               RenderTableRow {TR} at (0,0) size 0x0
                                 RenderTableCell {TD} at (0,0) size 97x180 [r=0 c=0 rs=1 cs=1]
                                   RenderImage {IMG} at (0,0) size 97x180
-      RenderBlock {P} at (0,236) size 800x0 [bgcolor=#000000]
-      RenderBlock (floating) {DIV} at (0,236) size 104x54 [bgcolor=#000000]
-        RenderText {TEXT} at (2,2) size 91x51
-          text run at (2,2) width 89: "Here is some"
-          text run at (2,19) width 36: "text. "
-          text run at (38,19) width 55: "I should"
-          text run at (2,36) width 63: "overflow."
+      RenderBlock {P} at (0,238) size 800x0 [bgcolor=#000000]
+      RenderBlock (floating) {DIV} at (0,238) size 104x54 [bgcolor=#000000]
+        RenderText {TEXT} at (2,2) size 82x54
+          text run at (2,2) width 82: "Here is some"
+          text run at (2,20) width 31: "text. "
+          text run at (33,20) width 51: "I should"
+          text run at (2,38) width 61: "overflow."
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (2,53) size 99x17
-          text run at (2,53) width 99: "I will overflow."
+        RenderText {TEXT} at (2,56) size 98x18
+          text run at (2,56) width 98: "I will overflow."
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (2,70) size 99x34
-          text run at (2,70) width 99: "I definitely will"
-          text run at (2,87) width 58: "overflow"
+        RenderText {TEXT} at (2,74) size 96x36
+          text run at (2,74) width 96: "I definitely will"
+          text run at (2,92) width 57: "overflow"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (2,104) size 71x34
-          text run at (2,104) width 71: "I promis. I"
-          text run at (2,121) width 68: "lvoerflow."
+        RenderText {TEXT} at (2,110) size 65x36
+          text run at (2,110) width 65: "I promis. I"
+          text run at (2,128) width 65: "lvoerflow."
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (2,138) size 45x17
-          text run at (2,138) width 45: "Really."
-      RenderBlock {P} at (0,236) size 800x0 [bgcolor=#000000]
+        RenderText {TEXT} at (2,146) size 45x18
+          text run at (2,146) width 45: "Really."
+      RenderBlock {P} at (0,238) size 800x0 [bgcolor=#000000]

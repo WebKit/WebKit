@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x50
-  RenderBlock {HTML} at (0,0) size 800x50
-    RenderBody {BODY} at (8,8) size 784x34
-      RenderText {TEXT} at (0,0) size 754x34
-        text run at (0,0) width 356: "Because we're in quirks mode, you should see a 100"
-        text run at (356,0) width 183: "x100 green square below. "
-        text run at (539,0) width 215: "If the square is only a couple of"
-        text run at (0,17) width 293: "pixels wide or tall, then the test has failed."
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,8) size 784x36
+      RenderText {TEXT} at (0,0) size 771x36
+        text run at (0,0) width 330: "Because we're in quirks mode, you should see a 100"
+        text run at (330,0) width 167: "x100 green square below. "
+        text run at (497,0) width 274: "If the square is only a couple of pixels wide"
+        text run at (0,18) width 187: "or tall, then the test has failed."
 layer at (8,50) size 100x50
   RenderBlock (positioned) {DIV} at (8,50) size 100x50
     RenderText {TEXT} at (0,0) size 0x0

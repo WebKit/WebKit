@@ -1,49 +1,47 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x165
-  RenderBlock {HTML} at (0,0) size 800x165
-    RenderBody {BODY} at (8,8) size 784x149
-      RenderBlock {P} at (0,0) size 784x68
-        RenderText {TEXT} at (0,0) size 779x68
-          text run at (0,0) width 488: "You should see a black box below that is the width of the content area. "
-          text run at (488,0) width 284: "It contains alternating struts and springs."
-          text run at (0,17) width 356: "The struts are bordered in green and are inflexible. "
-          text run at (356,17) width 387: "The springs are bordered in purple and should grow and"
-          text run at (0,34) width 295: "shrink as you resize your browser window. "
-          text run at (295,34) width 484: "The black box should get taller when you make your window wider and"
-          text run at (0,51) width 346: "get shorter when you shrink your browser window."
-      RenderFlexibleBox {DIV} at (0,82) size 784x67
-        RenderFlexibleBox {DIV} at (6,6) size 41x55
-          RenderBlock (anonymous) at (2,2) size 37x51
-            RenderText {TEXT} at (0,0) size 37x17
-              text run at (0,0) width 37: "Fixed"
-        RenderFlexibleBox {DIV} at (51,6) size 195x55
-          RenderBlock (anonymous) at (2,2) size 191x51
-            RenderText {TEXT} at (0,0) size 188x51
-              text run at (0,0) width 188: "This is a flexible block, and"
-              text run at (0,17) width 160: "it will shrink or grow as"
-              text run at (0,34) width 55: "needed."
-        RenderFlexibleBox {DIV} at (250,6) size 41x55
-          RenderBlock (anonymous) at (2,2) size 37x51
-            RenderText {TEXT} at (0,0) size 37x17
-              text run at (0,0) width 37: "Fixed"
-        RenderFlexibleBox {DIV} at (295,6) size 195x55
-          RenderBlock (anonymous) at (2,2) size 191x51
-            RenderText {TEXT} at (0,0) size 188x51
-              text run at (0,0) width 188: "This is a flexible block, and"
-              text run at (0,17) width 160: "it will shrink or grow as"
-              text run at (0,34) width 55: "needed."
-        RenderFlexibleBox {DIV} at (494,6) size 41x55
-          RenderBlock (anonymous) at (2,2) size 37x51
-            RenderText {TEXT} at (0,0) size 37x17
-              text run at (0,0) width 37: "Fixed"
-        RenderFlexibleBox {DIV} at (539,6) size 194x55
-          RenderBlock (anonymous) at (2,2) size 190x51
-            RenderText {TEXT} at (0,0) size 188x51
-              text run at (0,0) width 188: "This is a flexible block, and"
-              text run at (0,17) width 160: "it will shrink or grow as"
-              text run at (0,34) width 55: "needed."
-        RenderFlexibleBox {DIV} at (737,6) size 41x55
-          RenderBlock (anonymous) at (2,2) size 37x51
-            RenderText {TEXT} at (0,0) size 37x17
-              text run at (0,0) width 37: "Fixed"
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,8) size 784x140
+      RenderBlock {P} at (0,0) size 784x72
+        RenderText {TEXT} at (0,0) size 784x72
+          text run at (0,0) width 450: "You should see a black box below that is the width of the content area. "
+          text run at (450,0) width 256: "It contains alternating struts and springs. "
+          text run at (706,0) width 62: "The struts"
+          text run at (0,18) width 255: "are bordered in green and are inflexible. "
+          text run at (255,18) width 515: "The springs are bordered in purple and should grow and shrink as you resize your"
+          text run at (0,36) width 115: "browser window. "
+          text run at (115,36) width 669: "The black box should get taller when you make your window wider and get shorter when you shrink your"
+          text run at (0,54) width 111: "browser window."
+      RenderFlexibleBox {DIV} at (0,88) size 784x52
+        RenderFlexibleBox {DIV} at (6,6) size 40x40
+          RenderBlock (anonymous) at (2,2) size 36x36
+            RenderText {TEXT} at (0,0) size 36x18
+              text run at (0,0) width 36: "Fixed"
+        RenderFlexibleBox {DIV} at (50,6) size 196x40
+          RenderBlock (anonymous) at (2,2) size 192x36
+            RenderText {TEXT} at (0,0) size 191x36
+              text run at (0,0) width 186: "This is a flexible block, and it"
+              text run at (0,18) width 191: "will shrink or grow as needed."
+        RenderFlexibleBox {DIV} at (250,6) size 40x40
+          RenderBlock (anonymous) at (2,2) size 36x36
+            RenderText {TEXT} at (0,0) size 36x18
+              text run at (0,0) width 36: "Fixed"
+        RenderFlexibleBox {DIV} at (294,6) size 196x40
+          RenderBlock (anonymous) at (2,2) size 192x36
+            RenderText {TEXT} at (0,0) size 191x36
+              text run at (0,0) width 186: "This is a flexible block, and it"
+              text run at (0,18) width 191: "will shrink or grow as needed."
+        RenderFlexibleBox {DIV} at (494,6) size 40x40
+          RenderBlock (anonymous) at (2,2) size 36x36
+            RenderText {TEXT} at (0,0) size 36x18
+              text run at (0,0) width 36: "Fixed"
+        RenderFlexibleBox {DIV} at (538,6) size 196x40
+          RenderBlock (anonymous) at (2,2) size 192x36
+            RenderText {TEXT} at (0,0) size 191x36
+              text run at (0,0) width 186: "This is a flexible block, and it"
+              text run at (0,18) width 191: "will shrink or grow as needed."
+        RenderFlexibleBox {DIV} at (738,6) size 40x40
+          RenderBlock (anonymous) at (2,2) size 36x36
+            RenderText {TEXT} at (0,0) size 36x18
+              text run at (0,0) width 36: "Fixed"

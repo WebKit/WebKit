@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x32
-  RenderBlock {HTML} at (0,0) size 800x32
-    RenderBody {BODY} at (8,8) size 784x16
-      RenderBlock {ADDRESS} at (0,0) size 784x16 [bgcolor=#00FF00]
-        RenderText {TEXT} at (0,0) size 354x16
-          text run at (0,0) width 354: "This address element should have a green background."
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderBlock {ADDRESS} at (0,0) size 784x18 [bgcolor=#00FF00]
+        RenderText {TEXT} at (0,0) size 349x18
+          text run at (0,0) width 349: "This address element should have a green background."
