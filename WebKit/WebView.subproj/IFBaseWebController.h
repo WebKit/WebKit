@@ -1,9 +1,9 @@
 /*	
-    WKDefaultWebController.mm
+    IFDefaultWebController.mm
 	Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
-#import <WebKit/WKWebController.h>
-#import <WebKit/WKWebFrame.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebFrame.h>
 
 
 /*

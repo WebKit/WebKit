@@ -1,5 +1,5 @@
 /*	
-        WKWebController.h
+        IFWebController.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 
         Public header file.

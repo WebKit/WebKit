@@ -1,13 +1,13 @@
 /*	
-    WKDefaultWebController.mm
+    IFDefaultWebController.mm
 	Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
-#import <WebKit/WKDefaultWebController.h>
-#import <WebKit/WKDefaultWebControllerPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WKWebDataSourcePrivate.h>
-#import <WebKit/WKWebFrame.h>
-#import <WebKit/WKException.h>
+#import <WebKit/IFBaseWebController.h>
+#import <WebKit/IFBaseWebControllerPrivate.h>
+#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFWebFrame.h>
+#import <WebKit/IFException.h>
 
 
 // WKObjectHolder holds objects as keys in dictionaries without

@@ -1,13 +1,13 @@
-/*	WKWebView.mm
+/*	IFWebView.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WKWebDataSource.h>
-#import <WebKit/WKWebDataSourcePrivate.h>
-#import <WebKit/WKDefaultWebController.h>
-#import <WebKit/WKDynamicScrollBarsView.h>
-#import <WebKit/WKException.h>
+#import <WebKit/IFWebView.h>
+#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFBaseWebController.h>
+#import <WebKit/IFDynamicScrollBarsView.h>
+#import <WebKit/IFException.h>
 #import <WebKit/WebKitDebug.h>
 
 // KDE related includes

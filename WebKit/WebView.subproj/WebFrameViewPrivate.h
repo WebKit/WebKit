@@ -1,4 +1,4 @@
-/*	WKWebViewPrivate.h
+/*	IFWebViewPrivate.h
 	Copyright 2001, Apple, Inc. All rights reserved.
         
         Private header file.  This file may reference classes (both ObjectiveC and C++)
@@ -7,9 +7,9 @@
 */
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WKWebController.h>
-#import <WebKit/WKDynamicScrollBarsView.h>
-#import <WebKit/WKWebView.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFDynamicScrollBarsView.h>
+#import <WebKit/IFWebView.h>
 
 class QWidget;
 class KHTMLPart;

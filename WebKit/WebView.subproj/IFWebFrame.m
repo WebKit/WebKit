@@ -1,5 +1,5 @@
 /*	
-        WKWebFrame.h
+        IFWebFrame.h
 	    
 	    Copyright 2001, Apple, Inc. All rights reserved.
 
@@ -7,8 +7,8 @@
 */
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WKWebFrame.h>
-#import <WebKit/WKWebDataSource.h>
+#import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebDataSource.h>
 
 @implementation WKWebFrame
 

@@ -1,3 +1,74 @@
+2002-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+	Rename all WK files to IF (classes not renamed yet).
+
+	* Cache.subproj/IFLoadChunk.h:
+	* Cache.subproj/IFWebCache.h:
+	* Cache.subproj/IFWebCacheClient.h:
+	* Cache.subproj/IFWebContentType.h:
+	* Cache.subproj/WKLoadChunk.h:
+	* Cache.subproj/WKWebCache.h:
+	* Cache.subproj/WKWebCacheClient.h:
+	* Cache.subproj/WKWebContentType.h:
+	* History.subproj/IFAttributedURL.h:
+	* History.subproj/IFBackForwardList.h:
+	* History.subproj/IFBackForwardList.m:
+	* History.subproj/IFURIEntry.h:
+	* History.subproj/IFURIEntry.m:
+	* History.subproj/IFURIList.h:
+	* History.subproj/IFURIList.m:
+	* History.subproj/WKAttributedURL.h:
+	* History.subproj/WKBackForwardList.h:
+	* History.subproj/WKBackForwardList.m:
+	* History.subproj/WKURIEntry.h:
+	* History.subproj/WKURIEntry.m:
+	* History.subproj/WKURIList.h:
+	* History.subproj/WKURIList.m:
+	* Misc.subproj/WKException.h:
+	* Misc.subproj/WKException.m:
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebController.h:
+	* WebView.subproj/IFBaseWebController.mm:
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	* WebView.subproj/IFDefaultWebController.h:
+	* WebView.subproj/IFDefaultWebController.mm:
+	* WebView.subproj/IFDefaultWebControllerPrivate.h:
+	* WebView.subproj/IFDefaultWebControllerPrivate.mm:
+	* WebView.subproj/IFDynamicScrollBarsView.m:
+	* WebView.subproj/IFGrabBag.h:
+	* WebView.subproj/IFPreferences.h:
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.m:
+	* WebView.subproj/IFWebView.h:
+	* WebView.subproj/IFWebView.mm:
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm:
+	* WebView.subproj/WKDefaultWebController.h:
+	* WebView.subproj/WKDefaultWebController.mm:
+	* WebView.subproj/WKDefaultWebControllerPrivate.h:
+	* WebView.subproj/WKDefaultWebControllerPrivate.mm:
+	* WebView.subproj/WKDynamicScrollBarsView.h:
+	* WebView.subproj/WKDynamicScrollBarsView.m:
+	* WebView.subproj/WKGrabBag.h:
+	* WebView.subproj/WKPreferences.h:
+	* WebView.subproj/WKWebController.h:
+	* WebView.subproj/WKWebDataSource.h:
+	* WebView.subproj/WKWebDataSource.mm:
+	* WebView.subproj/WKWebDataSourcePrivate.h:
+	* WebView.subproj/WKWebDataSourcePrivate.mm:
+	* WebView.subproj/WKWebFrame.h:
+	* WebView.subproj/WKWebFrame.m:
+	* WebView.subproj/WKWebView.h:
+	* WebView.subproj/WKWebView.mm:
+	* WebView.subproj/WKWebViewPrivate.h:
+	* WebView.subproj/WKWebViewPrivate.mm:
+
 2002-02-01  Richard Williamson  <rjw@apple.com>
 
     Changes for dynamic scrolling frames.  Added notification of complete

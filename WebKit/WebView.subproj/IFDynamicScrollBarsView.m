@@ -6,7 +6,7 @@
 //  Copyright (c) 2001 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/WKDynamicScrollBarsView.h>
+#import <WebKit/IFDynamicScrollBarsView.h>
 
 @implementation WKDynamicScrollBarsView
 

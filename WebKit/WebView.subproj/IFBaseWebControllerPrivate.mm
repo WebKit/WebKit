@@ -1,10 +1,10 @@
 /*	
-    WKWebController.mm
+    IFWebController.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
-#import <WebKit/WKDefaultWebControllerPrivate.h>
-#import <WebKit/WKWebDataSource.h>
-#import <WebKit/WKWebView.h>
+#import <WebKit/IFBaseWebControllerPrivate.h>
+#import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFWebView.h>
 
 
 @implementation WKDefaultWebControllerPrivate

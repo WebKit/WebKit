@@ -1,10 +1,10 @@
-/*	WKBackForwardList.h
+/*	IFBackForwardList.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKURIList.h>
-#import <WebKit/WKURIEntry.h>
+#import <WebKit/IFURIList.h>
+#import <WebKit/IFURIEntry.h>
 
 @interface WKBackForwardList : NSObject {
     WKURIList *uriList;

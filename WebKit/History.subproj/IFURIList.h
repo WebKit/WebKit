@@ -1,10 +1,10 @@
-/*	WKURIList.h
+/*	IFURIList.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
 
-#import "WKURIEntry.h"
+#import "IFURIEntry.h"
 
 typedef struct WKURIListNode WKURIListNode;
 

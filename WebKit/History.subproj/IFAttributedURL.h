@@ -1,4 +1,4 @@
-/*	WKAttributedURL.h
+/*	IFAttributedURL.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
@@ -6,7 +6,7 @@
 
 //=============================================================================
 //
-// WKAttributedURL.h
+// IFAttributedURL.h
 //
 // WKAttributedURL is the class that is used to store a "reference" to a URL
 // in the various history and bookmark mechanisms. It provides some attributes

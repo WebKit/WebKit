@@ -178,23 +178,26 @@
 				25BECC9D017E0A0D0ECA149E,
 				251E877A01A1EE570ECA149E,
 				25A5593301A5996D0ECA149E,
-				25A8176F01B5B9180ECA149E,
-				25A8177301B698760ECA149E,
-				25A8177701B6A5240ECA149E,
-				9C04852501CFF9CE0ECA16EA,
-				9C04852601CFF9CE0ECA16EA,
-				9C04852701CFF9CE0ECA16EA,
-				9C04852801CFF9CE0ECA16EA,
-				9C04852901CFF9CE0ECA16EA,
-				9C04853001CFFD060ECA16EA,
-				9C04853101CFFD060ECA16EA,
-				9C04853201CFFD060ECA16EA,
-				9C04853301CFFD060ECA16EA,
-				9C64424901F790750ECA16EA,
-				9C64424F01F7AF2D0ECA16EA,
-				9C64425001F7AF2D0ECA16EA,
-				9C13328B01FFB40A0ECA16EA,
-				9C56CE4B020B42AF0ECA16EA,
+				39446087020F50ED0ECA1767,
+				39446088020F50ED0ECA1767,
+				3944608B020F50ED0ECA1767,
+				3944608C020F50ED0ECA1767,
+				3944608D020F50ED0ECA1767,
+				3944608E020F50ED0ECA1767,
+				3944608F020F50ED0ECA1767,
+				39446090020F50ED0ECA1767,
+				39446091020F50ED0ECA1767,
+				39446092020F50ED0ECA1767,
+				39446093020F50ED0ECA1767,
+				39446094020F50ED0ECA1767,
+				39446095020F50ED0ECA1767,
+				39446096020F50ED0ECA1767,
+				39446097020F50ED0ECA1767,
+				39446098020F50ED0ECA1767,
+				39446099020F50ED0ECA1767,
+				3944609A020F50ED0ECA1767,
+				3944609B020F50ED0ECA1767,
+				3944609C020F50ED0ECA1767,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -218,18 +221,18 @@
 				25BECC9F017E0A0D0ECA149E,
 				251E877B01A1EE570ECA149E,
 				25A5593401A5996D0ECA149E,
-				25A8177001B5B9180ECA149E,
-				25A8177401B698760ECA149E,
-				25A8177801B6A5240ECA149E,
-				9C04852A01CFF9CE0ECA16EA,
-				9C64424601F78B4B0ECA16EA,
-				9C64424A01F790750ECA16EA,
-				9C64425101F7AF2D0ECA16EA,
-				9C64425201F7AF2D0ECA16EA,
-				9C64425401F7B1740ECA16EA,
-				9C64425601F7B4E20ECA16EA,
-				9C13328C01FFB40A0ECA16EA,
-				9C56CE4C020B42AF0ECA16EA,
+				3944609D020F50ED0ECA1767,
+				3944609E020F50ED0ECA1767,
+				394460A1020F50ED0ECA1767,
+				394460A2020F50ED0ECA1767,
+				394460A3020F50ED0ECA1767,
+				394460A4020F50ED0ECA1767,
+				394460A5020F50ED0ECA1767,
+				394460A6020F50ED0ECA1767,
+				394460A7020F50ED0ECA1767,
+				394460A8020F50ED0ECA1767,
+				394460A9020F50ED0ECA1767,
+				394460AA020F50ED0ECA1767,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -365,14 +368,14 @@
 		};
 		254DC334016E1D3F0ECA149E = {
 			children = (
+				3944607A020F50ED0ECA1767,
+				3944607B020F50ED0ECA1767,
 				2568C72C0174912D0ECA149E,
 				25C29825016E29620ECA149E,
 				2568C729017490CF0ECA149E,
 				2568C72B017491070ECA149E,
 				25A5593101A5996D0ECA149E,
 				25A5593201A5996D0ECA149E,
-				9C64424701F790750ECA16EA,
-				9C64424801F790750ECA16EA,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -380,6 +383,10 @@
 		};
 		2568C71E017490290ECA149E = {
 			children = (
+				39446083020F50ED0ECA1767,
+				39446084020F50ED0ECA1767,
+				39446085020F50ED0ECA1767,
+				39446086020F50ED0ECA1767,
 				25BECC93017E0A0D0ECA149E,
 				25BECC94017E0A0D0ECA149E,
 				25BECC95017E0A0D0ECA149E,
@@ -390,10 +397,6 @@
 				2568C71F017490290ECA149E,
 				251E877801A1EE570ECA149E,
 				251E877901A1EE570ECA149E,
-				9C04852C01CFFD060ECA16EA,
-				9C04852D01CFFD060ECA16EA,
-				9C04852E01CFFD060ECA16EA,
-				9C04852F01CFFD060ECA16EA,
 			);
 			isa = PBXGroup;
 			name = Cache;
@@ -498,92 +501,18 @@
 		};
 		25A8176801B5474B0ECA149E = {
 			children = (
-				25A8176D01B5B9180ECA149E,
-				25A8176E01B5B9180ECA149E,
-				25A8177101B698760ECA149E,
-				25A8177201B698760ECA149E,
-				25A8177501B6A5240ECA149E,
-				25A8177601B6A5240ECA149E,
+				3944607C020F50ED0ECA1767,
+				3944607D020F50ED0ECA1767,
+				3944607E020F50ED0ECA1767,
+				3944607F020F50ED0ECA1767,
+				39446080020F50ED0ECA1767,
+				39446081020F50ED0ECA1767,
+				39446082020F50ED0ECA1767,
 			);
 			isa = PBXGroup;
 			name = History;
 			path = History.subproj;
 			refType = 4;
-		};
-		25A8176D01B5B9180ECA149E = {
-			isa = PBXFileReference;
-			path = WKURIList.h;
-			refType = 4;
-		};
-		25A8176E01B5B9180ECA149E = {
-			isa = PBXFileReference;
-			path = WKURIList.m;
-			refType = 4;
-		};
-		25A8176F01B5B9180ECA149E = {
-			fileRef = 25A8176D01B5B9180ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		25A8177001B5B9180ECA149E = {
-			fileRef = 25A8176E01B5B9180ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		25A8177101B698760ECA149E = {
-			isa = PBXFileReference;
-			path = WKURIEntry.h;
-			refType = 4;
-		};
-		25A8177201B698760ECA149E = {
-			isa = PBXFileReference;
-			path = WKURIEntry.m;
-			refType = 4;
-		};
-		25A8177301B698760ECA149E = {
-			fileRef = 25A8177101B698760ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		25A8177401B698760ECA149E = {
-			fileRef = 25A8177201B698760ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		25A8177501B6A5240ECA149E = {
-			isa = PBXFileReference;
-			path = WKBackForwardList.h;
-			refType = 4;
-		};
-		25A8177601B6A5240ECA149E = {
-			isa = PBXFileReference;
-			path = WKBackForwardList.m;
-			refType = 4;
-		};
-		25A8177701B6A5240ECA149E = {
-			fileRef = 25A8177501B6A5240ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		25A8177801B6A5240ECA149E = {
-			fileRef = 25A8177601B6A5240ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		25BECC93017E0A0D0ECA149E = {
 			isa = PBXFileReference;
@@ -778,348 +707,445 @@
 //352
 //353
 //354
+//390
+//391
+//392
+//393
+//394
+		39446063020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFBaseWebController.h;
+			path = WebView.subproj/IFBaseWebController.h;
+			refType = 4;
+		};
+		39446064020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFBaseWebController.mm;
+			path = WebView.subproj/IFBaseWebController.mm;
+			refType = 4;
+		};
+		39446065020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFBaseWebControllerPrivate.h;
+			path = WebView.subproj/IFBaseWebControllerPrivate.h;
+			refType = 4;
+		};
+		39446066020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFBaseWebControllerPrivate.mm;
+			path = WebView.subproj/IFBaseWebControllerPrivate.mm;
+			refType = 4;
+		};
+		3944606B020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFDynamicScrollBarsView.h;
+			path = WebView.subproj/IFDynamicScrollBarsView.h;
+			refType = 4;
+		};
+		3944606C020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFDynamicScrollBarsView.m;
+			path = WebView.subproj/IFDynamicScrollBarsView.m;
+			refType = 4;
+		};
+		3944606D020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFGrabBag.h;
+			path = WebView.subproj/IFGrabBag.h;
+			refType = 4;
+		};
+		3944606E020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFPreferences.h;
+			path = WebView.subproj/IFPreferences.h;
+			refType = 4;
+		};
+		3944606F020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebController.h;
+			path = WebView.subproj/IFWebController.h;
+			refType = 4;
+		};
+		39446070020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebDataSource.h;
+			path = WebView.subproj/IFWebDataSource.h;
+			refType = 4;
+		};
+		39446071020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebDataSource.mm;
+			path = WebView.subproj/IFWebDataSource.mm;
+			refType = 4;
+		};
+		39446072020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebDataSourcePrivate.h;
+			path = WebView.subproj/IFWebDataSourcePrivate.h;
+			refType = 4;
+		};
+		39446073020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebDataSourcePrivate.mm;
+			path = WebView.subproj/IFWebDataSourcePrivate.mm;
+			refType = 4;
+		};
+		39446074020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebFrame.h;
+			path = WebView.subproj/IFWebFrame.h;
+			refType = 4;
+		};
+		39446075020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebFrame.m;
+			path = WebView.subproj/IFWebFrame.m;
+			refType = 4;
+		};
+		39446076020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebView.h;
+			path = WebView.subproj/IFWebView.h;
+			refType = 4;
+		};
+		39446077020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebView.mm;
+			path = WebView.subproj/IFWebView.mm;
+			refType = 4;
+		};
+		39446078020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebViewPrivate.h;
+			path = WebView.subproj/IFWebViewPrivate.h;
+			refType = 4;
+		};
+		39446079020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFWebViewPrivate.mm;
+			path = WebView.subproj/IFWebViewPrivate.mm;
+			refType = 4;
+		};
+		3944607A020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFException.h;
+			path = Misc.subproj/IFException.h;
+			refType = 4;
+		};
+		3944607B020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			name = IFException.m;
+			path = Misc.subproj/IFException.m;
+			refType = 4;
+		};
+		3944607C020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFAttributedURL.h;
+			refType = 4;
+		};
+		3944607D020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFBackForwardList.h;
+			refType = 4;
+		};
+		3944607E020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFBackForwardList.m;
+			refType = 4;
+		};
+		3944607F020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFURIEntry.h;
+			refType = 4;
+		};
+		39446080020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFURIEntry.m;
+			refType = 4;
+		};
+		39446081020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFURIList.h;
+			refType = 4;
+		};
+		39446082020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFURIList.m;
+			refType = 4;
+		};
+		39446083020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFLoadChunk.h;
+			refType = 4;
+		};
+		39446084020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFWebCache.h;
+			refType = 4;
+		};
+		39446085020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFWebCacheClient.h;
+			refType = 4;
+		};
+		39446086020F50ED0ECA1767 = {
+			isa = PBXFileReference;
+			path = IFWebContentType.h;
+			refType = 4;
+		};
+		39446087020F50ED0ECA1767 = {
+			fileRef = 39446063020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		39446088020F50ED0ECA1767 = {
+			fileRef = 39446065020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3944608B020F50ED0ECA1767 = {
+			fileRef = 3944606B020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		3944608C020F50ED0ECA1767 = {
+			fileRef = 3944606D020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3944608D020F50ED0ECA1767 = {
+			fileRef = 3944606E020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3944608E020F50ED0ECA1767 = {
+			fileRef = 3944606F020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		3944608F020F50ED0ECA1767 = {
+			fileRef = 39446070020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		39446090020F50ED0ECA1767 = {
+			fileRef = 39446072020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		39446091020F50ED0ECA1767 = {
+			fileRef = 39446074020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		39446092020F50ED0ECA1767 = {
+			fileRef = 39446076020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		39446093020F50ED0ECA1767 = {
+			fileRef = 39446078020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		39446094020F50ED0ECA1767 = {
+			fileRef = 3944607A020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		39446095020F50ED0ECA1767 = {
+			fileRef = 3944607C020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		39446096020F50ED0ECA1767 = {
+			fileRef = 3944607D020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		39446097020F50ED0ECA1767 = {
+			fileRef = 3944607F020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		39446098020F50ED0ECA1767 = {
+			fileRef = 39446081020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		39446099020F50ED0ECA1767 = {
+			fileRef = 39446083020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3944609A020F50ED0ECA1767 = {
+			fileRef = 39446084020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3944609B020F50ED0ECA1767 = {
+			fileRef = 39446085020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3944609C020F50ED0ECA1767 = {
+			fileRef = 39446086020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3944609D020F50ED0ECA1767 = {
+			fileRef = 39446064020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3944609E020F50ED0ECA1767 = {
+			fileRef = 39446066020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A1020F50ED0ECA1767 = {
+			fileRef = 3944606C020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A2020F50ED0ECA1767 = {
+			fileRef = 39446071020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A3020F50ED0ECA1767 = {
+			fileRef = 39446073020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A4020F50ED0ECA1767 = {
+			fileRef = 39446075020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A5020F50ED0ECA1767 = {
+			fileRef = 39446077020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A6020F50ED0ECA1767 = {
+			fileRef = 39446079020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A7020F50ED0ECA1767 = {
+			fileRef = 3944607B020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A8020F50ED0ECA1767 = {
+			fileRef = 3944607E020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460A9020F50ED0ECA1767 = {
+			fileRef = 39446080020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460AA020F50ED0ECA1767 = {
+			fileRef = 39446082020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//390
+//391
+//392
+//393
+//394
 //9C0
 //9C1
 //9C2
 //9C3
 //9C4
-		9C04851E01CFF9CE0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebController.h;
-			path = WebView.subproj/WKWebController.h;
-			refType = 2;
-		};
-		9C04851F01CFF9CE0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebDataSource.h;
-			path = WebView.subproj/WKWebDataSource.h;
-			refType = 2;
-		};
-		9C04852001CFF9CE0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebDataSource.mm;
-			path = WebView.subproj/WKWebDataSource.mm;
-			refType = 2;
-		};
-		9C04852101CFF9CE0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebDataSourcePrivate.h;
-			path = WebView.subproj/WKWebDataSourcePrivate.h;
-			refType = 2;
-		};
-		9C04852201CFF9CE0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebView.h;
-			path = WebView.subproj/WKWebView.h;
-			refType = 2;
-		};
-		9C04852401CFF9CE0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebViewPrivate.h;
-			path = WebView.subproj/WKWebViewPrivate.h;
-			refType = 2;
-		};
-		9C04852501CFF9CE0ECA16EA = {
-			fileRef = 9C04851E01CFF9CE0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C04852601CFF9CE0ECA16EA = {
-			fileRef = 9C04851F01CFF9CE0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C04852701CFF9CE0ECA16EA = {
-			fileRef = 9C04852101CFF9CE0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Private,
-				);
-			};
-		};
-		9C04852801CFF9CE0ECA16EA = {
-			fileRef = 9C04852201CFF9CE0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C04852901CFF9CE0ECA16EA = {
-			fileRef = 9C04852401CFF9CE0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Private,
-				);
-			};
-		};
-		9C04852A01CFF9CE0ECA16EA = {
-			fileRef = 9C04852001CFF9CE0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C04852C01CFFD060ECA16EA = {
-			isa = PBXFileReference;
-			name = WKLoadChunk.h;
-			path = Cache.subproj/WKLoadChunk.h;
-			refType = 2;
-		};
-		9C04852D01CFFD060ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebCache.h;
-			path = Cache.subproj/WKWebCache.h;
-			refType = 2;
-		};
-		9C04852E01CFFD060ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebCacheClient.h;
-			path = Cache.subproj/WKWebCacheClient.h;
-			refType = 2;
-		};
-		9C04852F01CFFD060ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebContentType.h;
-			path = Cache.subproj/WKWebContentType.h;
-			refType = 2;
-		};
-		9C04853001CFFD060ECA16EA = {
-			fileRef = 9C04852C01CFFD060ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C04853101CFFD060ECA16EA = {
-			fileRef = 9C04852D01CFFD060ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C04853201CFFD060ECA16EA = {
-			fileRef = 9C04852E01CFFD060ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C04853301CFFD060ECA16EA = {
-			fileRef = 9C04852F01CFFD060ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C13328901FFB40A0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebFrame.h;
-			path = WebView.subproj/WKWebFrame.h;
-			refType = 2;
-		};
-		9C13328A01FFB40A0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebFrame.m;
-			path = WebView.subproj/WKWebFrame.m;
-			refType = 2;
-		};
-		9C13328B01FFB40A0ECA16EA = {
-			fileRef = 9C13328901FFB40A0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C13328C01FFB40A0ECA16EA = {
-			fileRef = 9C13328A01FFB40A0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C56CE49020B42AF0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKDynamicScrollBarsView.h;
-			path = WebView.subproj/WKDynamicScrollBarsView.h;
-			refType = 2;
-		};
-		9C56CE4A020B42AF0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKDynamicScrollBarsView.m;
-			path = WebView.subproj/WKDynamicScrollBarsView.m;
-			refType = 2;
-		};
-		9C56CE4B020B42AF0ECA16EA = {
-			fileRef = 9C56CE49020B42AF0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Private,
-				);
-			};
-		};
-		9C56CE4C020B42AF0ECA16EA = {
-			fileRef = 9C56CE4A020B42AF0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C64424501F78B4B0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebViewPrivate.mm;
-			path = WebView.subproj/WKWebViewPrivate.mm;
-			refType = 2;
-		};
-		9C64424601F78B4B0ECA16EA = {
-			fileRef = 9C64424501F78B4B0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C64424701F790750ECA16EA = {
-			isa = PBXFileReference;
-			name = WKException.h;
-			path = Misc.subproj/WKException.h;
-			refType = 2;
-		};
-		9C64424801F790750ECA16EA = {
-			isa = PBXFileReference;
-			name = WKException.m;
-			path = Misc.subproj/WKException.m;
-			refType = 2;
-		};
-		9C64424901F790750ECA16EA = {
-			fileRef = 9C64424701F790750ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C64424A01F790750ECA16EA = {
-			fileRef = 9C64424801F790750ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C64424B01F7AF2D0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKDefaultWebController.h;
-			path = WebView.subproj/WKDefaultWebController.h;
-			refType = 2;
-		};
-		9C64424C01F7AF2D0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKDefaultWebController.mm;
-			path = WebView.subproj/WKDefaultWebController.mm;
-			refType = 2;
-		};
-		9C64424D01F7AF2D0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKDefaultWebControllerPrivate.h;
-			path = WebView.subproj/WKDefaultWebControllerPrivate.h;
-			refType = 2;
-		};
-		9C64424E01F7AF2D0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKDefaultWebControllerPrivate.mm;
-			path = WebView.subproj/WKDefaultWebControllerPrivate.mm;
-			refType = 2;
-		};
-		9C64424F01F7AF2D0ECA16EA = {
-			fileRef = 9C64424B01F7AF2D0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		9C64425001F7AF2D0ECA16EA = {
-			fileRef = 9C64424D01F7AF2D0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Private,
-				);
-			};
-		};
-		9C64425101F7AF2D0ECA16EA = {
-			fileRef = 9C64424C01F7AF2D0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C64425201F7AF2D0ECA16EA = {
-			fileRef = 9C64424E01F7AF2D0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C64425301F7B1740ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebDataSourcePrivate.mm;
-			path = WebView.subproj/WKWebDataSourcePrivate.mm;
-			refType = 2;
-		};
-		9C64425401F7B1740ECA16EA = {
-			fileRef = 9C64425301F7B1740ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C64425501F7B4E20ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebView.mm;
-			path = WebView.subproj/WKWebView.mm;
-			refType = 2;
-		};
-		9C64425601F7B4E20ECA16EA = {
-			fileRef = 9C64425501F7B4E20ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		9C7CABBB0190A37C0ECA16EA = {
 			children = (
-				9C04851E01CFF9CE0ECA16EA,
-				9C04851F01CFF9CE0ECA16EA,
-				9C04852001CFF9CE0ECA16EA,
-				9C04852101CFF9CE0ECA16EA,
-				9C04852201CFF9CE0ECA16EA,
-				9C04852401CFF9CE0ECA16EA,
-				9C64424501F78B4B0ECA16EA,
-				9C64424B01F7AF2D0ECA16EA,
-				9C64424C01F7AF2D0ECA16EA,
-				9C64424D01F7AF2D0ECA16EA,
-				9C64424E01F7AF2D0ECA16EA,
-				9C64425301F7B1740ECA16EA,
-				9C64425501F7B4E20ECA16EA,
-				9C13328901FFB40A0ECA16EA,
-				9C13328A01FFB40A0ECA16EA,
-				9C56CE49020B42AF0ECA16EA,
-				9C56CE4A020B42AF0ECA16EA,
+				39446063020F50ED0ECA1767,
+				39446064020F50ED0ECA1767,
+				39446065020F50ED0ECA1767,
+				39446066020F50ED0ECA1767,
+				3944606B020F50ED0ECA1767,
+				3944606C020F50ED0ECA1767,
+				3944606D020F50ED0ECA1767,
+				3944606E020F50ED0ECA1767,
+				3944606F020F50ED0ECA1767,
+				39446070020F50ED0ECA1767,
+				39446071020F50ED0ECA1767,
+				39446072020F50ED0ECA1767,
+				39446073020F50ED0ECA1767,
+				39446074020F50ED0ECA1767,
+				39446075020F50ED0ECA1767,
+				39446076020F50ED0ECA1767,
+				39446077020F50ED0ECA1767,
+				39446078020F50ED0ECA1767,
+				39446079020F50ED0ECA1767,
 			);
 			isa = PBXGroup;
 			name = WebView;

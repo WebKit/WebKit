@@ -1,4 +1,4 @@
-/*	WKWebDataSourcePrivate.h
+/*	IFWebDataSourcePrivate.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 
         Private header file.  This file may reference classes (both ObjectiveC and C++)
@@ -7,7 +7,7 @@
 */
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WKWebDataSource.h>
+#import <WebKit/IFWebDataSource.h>
 
 // includes from kde
 #include <khtmlview.h>

@@ -1,13 +1,13 @@
 /*	
-        WKWebDataSource.h
+        IFWebDataSource.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 
         Public header file.
 */
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WKWebController.h>
-#import <WebKit/WKWebFrame.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebFrame.h>
 
 /* 
    =============================================================================

@@ -1,10 +1,10 @@
 /*	
-        WKWebDataSource.h
+        IFWebDataSource.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
-#import <WebKit/WKWebDataSource.h>
-#import <WebKit/WKWebDataSourcePrivate.h>
-#import <WebKit/WKException.h>
+#import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFException.h>
 #import <WebKit/WebKitDebug.h>
 
 #include <xml/dom_docimpl.h>

@@ -1,8 +1,8 @@
-/*	WKURIList.h
+/*	IFURIList.m
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import "WKURIList.h"
+#import "IFURIList.h"
 #import "WebKitReallyPrivate.h"
 
 struct WKURIListNode

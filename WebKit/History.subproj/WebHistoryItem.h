@@ -1,5 +1,5 @@
 //
-//  WKURIEntry.h
+//  IFURIEntry.h
 //  WebKit
 //
 //  Created by Kenneth Kocienda on Thu Nov 29 2001.

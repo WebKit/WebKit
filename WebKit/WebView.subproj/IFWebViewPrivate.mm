@@ -1,11 +1,11 @@
-/*	WKWebViewPrivate.mm
+/*	IFWebViewPrivate.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
         
         Private header file.  This file may reference classes (both ObjectiveC and C++)
         in WebCore.  Instances of this class are referenced by _viewPrivate in 
         NSWebPageView.
 */
-#import <WKWebViewPrivate.h>
+#import <IFWebViewPrivate.h>
 
 // Includes from KDE
 #include <khtmlview.h>
