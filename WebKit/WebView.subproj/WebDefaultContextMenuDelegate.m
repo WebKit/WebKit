@@ -140,14 +140,16 @@
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard]];
     }
     
+    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
+    
     if (imageURL) {
         if (linkURL) {
             [menuItems addObject:[NSMenuItem separatorItem]];
         }
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenImageInNewWindow]];
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadImageToDisk]];
-        if ([element objectForKey:WebElementImageURLKey] != nil) {
+        if ([imageURL isFileURL] || [[webFrame dataSource] _fileWrapperForURL:imageURL]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyImageToClipboard]];
         }
     }
@@ -156,7 +158,6 @@
         if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy]];
         } else {
-            WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
             WebView *wv = [webFrame webView];
             if ([wv canGoBack]) {
                 [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoBack]];

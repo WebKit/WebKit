@@ -1,5 +1,14 @@
 2004-09-27  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3806649> assertion failure after control-click of webcam
+
+        Reviewed by john.
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:]): don't provide "Copy Image" if the image is not fully loaded
+
+2004-09-27  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3814810> REGRESSION (125-164): Exception adding nil to dictionary in dragging code
 
         Reviewed by john.
