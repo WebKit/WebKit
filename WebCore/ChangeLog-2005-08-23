@@ -1,3 +1,85 @@
+2003-02-07  Richard Williamson   <rjw@apple.com>
+
+        Changes to support per WebController preferences.
+        KHTMLPart now always accesses preferences from it's m_setting.
+        Changes made to WebPreferences pass to WebCoreSetting to KTMLSettings.
+        Added JavaScriptCanOpenWindowsAutomatically to KHTMLSettings.
+        
+        Reviewed by Maciej and Ken.
+
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::restoreURL):
+        (KHTMLPart::openURL):
+        (KHTMLPart::begin):
+        (KHTMLPart::reparseConfiguration):
+        * khtml/khtmlpart_p.h:
+        * kwq/KWQKConfigBase.h:
+        * kwq/KWQKConfigBase.mm:
+        (KConfig::readUnsignedNumEntry):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setSettings):
+        * kwq/KWQKHTMLSettings.h:
+        * kwq/KWQKHTMLSettings.mm:
+        (KHTMLSettings::stdFontName):
+        (KHTMLSettings::fixedFontName):
+        (KHTMLSettings::serifFontName):
+        (KHTMLSettings::sansSerifFontName):
+        (KHTMLSettings::cursiveFontName):
+        (KHTMLSettings::fantasyFontName):
+        (KHTMLSettings::minFontSize):
+        (KHTMLSettings::mediumFontSize):
+        (KHTMLSettings::mediumFixedFontSize):
+        (KHTMLSettings::isJavaEnabled):
+        (KHTMLSettings::autoLoadImages):
+        (KHTMLSettings::isPluginsEnabled):
+        (KHTMLSettings::isJavaScriptEnabled):
+        (KHTMLSettings::JavaScriptCanOpenWindowsAutomatically):
+        (KHTMLSettings::userStyleSheet):
+        (KHTMLSettings::setStdFontName):
+        (KHTMLSettings::setFixedFontName):
+        (KHTMLSettings::setSerifFontName):
+        (KHTMLSettings::setSansSerifFontName):
+        (KHTMLSettings::setCursiveFontName):
+        (KHTMLSettings::setFantasyFontName):
+        (KHTMLSettings::setMinFontSize):
+        (KHTMLSettings::setMediumFontSize):
+        (KHTMLSettings::setMediumFixedFontSize):
+        (KHTMLSettings::setAutoLoadImages):
+        (KHTMLSettings::setIsJavaScriptEnabled):
+        (KHTMLSettings::setIsJavaEnabled):
+        (KHTMLSettings::setArePluginsEnabled):
+        (KHTMLSettings::setJavaScriptCanOpenWindowsAutomatically):
+        (KHTMLSettings::setUserStyleSheet):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge init]):
+        (-[WebCoreBridge initializeSettings:]):
+        * kwq/WebCoreSettings.h:
+        * kwq/WebCoreSettings.mm:
+        (-[WebCoreSettings dealloc]):
+        (-[WebCoreSettings init]):
+        (-[WebCoreSettings setStandardFontFamily:]):
+        (-[WebCoreSettings setFixedFontFamily:]):
+        (-[WebCoreSettings setSerifFontFamily:]):
+        (-[WebCoreSettings setSansSerifFontFamily:]):
+        (-[WebCoreSettings setCursiveFontFamily:]):
+        (-[WebCoreSettings setFantasyFontFamily:]):
+        (-[WebCoreSettings setMinimumFontSize:]):
+        (-[WebCoreSettings setDefaultFontSize:]):
+        (-[WebCoreSettings setDefaultFixedFontSize:]):
+        (-[WebCoreSettings setJavaEnabled:]):
+        (-[WebCoreSettings setPluginsEnabled:]):
+        (-[WebCoreSettings setJavaScriptEnabled:]):
+        (-[WebCoreSettings setJavaScriptCanOpenWindowsAutomatically:]):
+        (-[WebCoreSettings setWillLoadImagesAutomatically:]):
+        (-[WebCoreSettings setUserStyleSheetLocation:]):
+        (-[WebCoreSettings userStyleSheetLocation]):
+        (-[WebCoreSettings settings]):
+
 2003-02-07  Darin Adler  <darin@apple.com>
 
         * khtml/rendering/render_table.h: Added copyright date.

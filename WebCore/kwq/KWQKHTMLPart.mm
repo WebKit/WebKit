@@ -148,6 +148,11 @@ KWQKHTMLPart::~KWQKHTMLPart()
     [_formValues release];
 }
 
+void KWQKHTMLPart::setSettings (KHTMLSettings *settings)
+{
+    d->m_settings = settings;
+}
+
 WebCoreBridge *KWQKHTMLPart::bridgeForFrameName(const QString &frameName)
 {
     WebCoreBridge *frame;

@@ -49,6 +49,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 @class WebError;
 @class WebFrame;
+@class WebCoreSettings;
 
 @protocol WebCoreDOMTreeCopier;
 @protocol WebCoreRenderTreeCopier;
@@ -90,6 +91,8 @@ enum FrameBorderStyle {
     RenderArena *_renderPartArena;
     BOOL _drawSelectionOnly;
 }
+
+- (void)initializeSettings: (WebCoreSettings *)settings;
 
 - (void)setRenderPart:(KHTMLRenderPart *)renderPart;
 - (KHTMLRenderPart *)renderPart;

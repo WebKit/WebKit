@@ -9,6 +9,7 @@
 @class WebError;
 @class WebFrame;
 @class WebPreferences;
+@class WebCoreSettings;
 @protocol WebFormDelegate;
 
 typedef enum { Safari, MacIE, WinIE } UserAgentStringType;
@@ -29,8 +30,6 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
     
     id <WebContextMenuDelegate> defaultContextMenuDelegate;
 
-    WebPreferences *preferences;
-    
     WebBackForwardList *backForwardList;
     BOOL useBackForwardList;
     
@@ -44,6 +43,9 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 
     NSString *controllerSetName;
     NSString *topLevelFrameName;
+
+    WebPreferences *preferences;
+    WebCoreSettings *settings;
     
     BOOL lastElementWasNonNil;
 }
@@ -80,5 +82,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 - (void)_setFormDelegate: (id<WebFormDelegate>)delegate;
 - (id<WebFormDelegate>)_formDelegate;
 
+- (WebCoreSettings *)_settings;
+- (void)_updateWebCoreSettingsFromPreferences: (WebPreferences *)prefs;
 
 @end

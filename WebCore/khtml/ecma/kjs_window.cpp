@@ -36,6 +36,7 @@
 
 #if APPLE_CHANGES
 #include "KWQLogging.h"
+#include "KWQKConfigBase.h"
 #endif
 #include <kjs/collector.h>
 #include "kjs_proxy.h"
@@ -1087,7 +1088,11 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   {
     KConfig *config = new KConfig("konquerorrc");
     config->setGroup("Java/JavaScript Settings");
+#if !APPLE_CHANGES
     int policy = config->readUnsignedNumEntry( "WindowOpenPolicy", 0 ); // 0=allow, 1=ask, 2=deny, 3=smart
+#else    
+    int policy = config->readUnsignedNumEntry( part->settings(), "WindowOpenPolicy", 0 ); // 0=allow, 1=ask, 2=deny, 3=smart
+#endif
     delete config;
     if ( policy == 1 ) {
 #if !APPLE_CHANGES

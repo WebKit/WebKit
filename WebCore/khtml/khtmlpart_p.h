@@ -109,7 +109,9 @@ public:
     m_bUnloadEventEmitted = true;
     m_cachePolicy = KIO::CC_Verify;
     m_manager = 0L;
+#if !APPLE_CHANGES
     m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
+#endif
     m_bClearing = false;
     m_bCleared = false;
     m_zoomFactor = 100;
@@ -183,7 +185,9 @@ public:
   {
     delete m_dcopobject;
     delete m_extension;
+#if !APPLE_CHANGES
     delete m_settings;
+#endif
     delete m_jscript;
     if ( m_kjs_lib)
        m_kjs_lib->unload();

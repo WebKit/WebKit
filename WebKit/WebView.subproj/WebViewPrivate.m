@@ -27,6 +27,8 @@
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 
+#import <WebCore/WebCoreSettings.h>
+
 @implementation WebControllerPrivate
 
 - init 
@@ -34,6 +36,9 @@
     backForwardList = [[WebBackForwardList alloc] init];
     defaultContextMenuDelegate = [[WebDefaultContextMenuDelegate alloc] init];
     textSizeMultiplier = 1;
+
+    settings = [[WebCoreSettings alloc] init];
+
     return self;
 }
 
@@ -75,6 +80,7 @@
     [topLevelFrameName release];
 
     [preferences release];
+    [settings release];
     
     [super dealloc];
 }
@@ -340,15 +346,6 @@
     _private->lastElementWasNonNil = dictionary != nil;
 }
 
-- (void)_defaultsDidChange
-{
-    int i;
-    for (i = 0; i != NumUserAgentStringTypes; ++i) {
-        [_private->userAgent[i] release];
-        _private->userAgent[i] = nil;
-    }
-}
-
 - (void)_setFormDelegate: (id<WebFormDelegate>)delegate
 {
     _private->formDelegate = delegate;
@@ -357,6 +354,54 @@
 - (id<WebFormDelegate>)_formDelegate
 {
     return _private->formDelegate;
+}
+
+- (WebCoreSettings *)_settings
+{
+    return _private->settings;
+}
+
+- (void)_updateWebCoreSettingsFromPreferences: (WebPreferences *)preferences
+{
+    [_private->settings setCursiveFontFamily:[preferences cursiveFontFamily]];
+    [_private->settings setDefaultFixedFontSize:[preferences defaultFixedFontSize]];
+    [_private->settings setDefaultFontSize:[preferences defaultFontSize]];
+    [_private->settings setFantasyFontFamily:[preferences fantasyFontFamily]];
+    [_private->settings setFixedFontFamily:[preferences fixedFontFamily]];
+    [_private->settings setJavaEnabled:[preferences JavaEnabled]];
+    [_private->settings setJavaScriptEnabled:[preferences JavaScriptEnabled]];
+    [_private->settings setJavaScriptCanOpenWindowsAutomatically:[preferences JavaScriptCanOpenWindowsAutomatically]];
+    [_private->settings setMinimumFontSize:[preferences minimumFontSize]];
+    [_private->settings setPluginsEnabled:[preferences pluginsEnabled]];
+    [_private->settings setSansSerifFontFamily:[preferences sansSerifFontFamily]];
+    [_private->settings setSerifFontFamily:[preferences serifFontFamily]];
+    [_private->settings setStandardFontFamily:[preferences standardFontFamily]];
+    [_private->settings setWillLoadImagesAutomatically:[preferences willLoadImagesAutomatically]];
+
+    if ([preferences userStyleSheetEnabled]) {
+        [_private->settings setUserStyleSheetLocation:[preferences userStyleSheetLocation]];
+    } else {
+        [_private->settings setUserStyleSheetLocation:@""];
+    }
+}
+
+- (void)_releaseUserAgentStrings
+{
+    int i;
+    for (i = 0; i != NumUserAgentStringTypes; ++i) {
+        [_private->userAgent[i] release];
+        _private->userAgent[i] = nil;
+    }
+}
+
+
+- (void)_preferencesChangedNotification: (NSNotification *)notification
+{
+    WebPreferences *preferences = (WebPreferences *)[notification object];
+    
+    ASSERT (preferences == [self preferences]);
+    [self _releaseUserAgentStrings];
+    [self _updateWebCoreSettingsFromPreferences: preferences];
 }
 
 @end

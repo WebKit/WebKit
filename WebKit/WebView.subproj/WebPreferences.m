@@ -5,6 +5,8 @@
 
 #import "WebPreferences.h"
 
+#import <WebFoundation/WebNSDictionaryExtras.h>
+
 #import <WebCore/WebCoreSettings.h>
 
 // These are private because callers should be using the cover methods
@@ -36,6 +38,8 @@
 #define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
 #define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
 
+NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
+
 @implementation WebPreferences
 
 + (WebPreferences *)standardPreferences
@@ -49,30 +53,11 @@
     return _standardPreferences;
 }
 
-- (void)_updateWebCoreSettings
+- (void)_postPreferencesChangesNotification
 {
-    WebCoreSettings *settings = [WebCoreSettings sharedSettings];
-
-    [settings setCursiveFontFamily:[self cursiveFontFamily]];
-    [settings setDefaultFixedFontSize:[self defaultFixedFontSize]];
-    [settings setDefaultFontSize:[self defaultFontSize]];
-    [settings setFantasyFontFamily:[self fantasyFontFamily]];
-    [settings setFixedFontFamily:[self fixedFontFamily]];
-    [settings setJavaEnabled:[self JavaEnabled]];
-    [settings setJavaScriptEnabled:[self JavaScriptEnabled]];
-    [settings setJavaScriptCanOpenWindowsAutomatically:[self JavaScriptCanOpenWindowsAutomatically]];
-    [settings setMinimumFontSize:[self minimumFontSize]];
-    [settings setPluginsEnabled:[self pluginsEnabled]];
-    [settings setSansSerifFontFamily:[self sansSerifFontFamily]];
-    [settings setSerifFontFamily:[self serifFontFamily]];
-    [settings setStandardFontFamily:[self standardFontFamily]];
-    [settings setWillLoadImagesAutomatically:[self willLoadImagesAutomatically]];
-    
-    if ([self userStyleSheetEnabled]) {
-        [settings setUserStyleSheetLocation:[self userStyleSheetLocation]];
-    } else {
-        [settings setUserStyleSheetLocation:@""];
-    }
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:WebPreferencesChangedNotification object:self
+                    userInfo:nil];
 }
 
 // if we ever have more than one WebPreferences object, this would move to init
@@ -112,191 +97,262 @@
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
 
+/*
     [[NSNotificationCenter defaultCenter]
         addObserver:[self standardPreferences]
-           selector:@selector(_updateWebCoreSettings)
+           selector:@selector(_postPreferencesChangesNotification)
                name:NSUserDefaultsDidChangeNotification
              object:[NSUserDefaults standardUserDefaults]];
-    
-    [[self standardPreferences] _updateWebCoreSettings];
+*/    
+    [[self standardPreferences] _postPreferencesChangesNotification];
 
     [pool release];
 }
 
+- (NSString *)_stringValueForKey: (NSString *)key
+{
+    NSString *s = [values objectForKey:key];
+    if (s)
+        return s;
+    return [[NSUserDefaults standardUserDefaults] stringForKey:key];
+}
+
+- (void)_setStringValue: (NSString *)value forKey: (NSString *)key
+{
+    if (self == [WebPreferences standardPreferences])
+        [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
+    else
+        [values setObject: value forKey: key];
+    [self _postPreferencesChangesNotification];
+}
+
+- (int)_integerValueForKey: (NSString *)key
+{
+    NSNumber *n = [values objectForKey:key];
+    if (n)
+        return [n intValue];
+    return [[NSUserDefaults standardUserDefaults] integerForKey:key];
+}
+
+- (void)_setIntegerValue: (int)value forKey: (NSString *)key
+{
+    if (self == [WebPreferences standardPreferences])
+        [[NSUserDefaults standardUserDefaults] setInteger:value forKey:key];
+    else
+        [values _web_setInt: value forKey: key];
+    [self _postPreferencesChangesNotification];
+}
+
+- (int)_boolValueForKey: (NSString *)key
+{
+    NSNumber *n = [values objectForKey:key];
+    if (n)
+        return [n boolValue];
+    return [[NSUserDefaults standardUserDefaults] integerForKey:key];
+}
+
+- (void)_setBoolValue: (BOOL)value forKey: (NSString *)key
+{
+    if (self == [WebPreferences standardPreferences])
+        [[NSUserDefaults standardUserDefaults] setBool:value forKey:key];
+    else
+        [values _web_setBool: value forKey: key];
+    [self _postPreferencesChangesNotification];
+}
+
 - (NSString *)standardFontFamily
 {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitStandardFontPreferenceKey];
+    return [self _stringValueForKey: WebKitStandardFontPreferenceKey];
 }
 
 - (void)setStandardFontFamily:(NSString *)family
 {
-    [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitStandardFontPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setStringValue: family forKey: WebKitStandardFontPreferenceKey];
 }
 
 - (NSString *)fixedFontFamily
 {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitFixedFontPreferenceKey];
+    return [self _stringValueForKey: WebKitFixedFontPreferenceKey];
 }
 
 - (void)setFixedFontFamily:(NSString *)family
 {
-    [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitFixedFontPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setStringValue: family forKey: WebKitFixedFontPreferenceKey];
 }
 
 - (NSString *)serifFontFamily
 {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitSerifFontPreferenceKey];
+    return [self _stringValueForKey: WebKitSerifFontPreferenceKey];
 }
 
-- (void)setSerifFontFamily:(NSString *)family
+- (void)setSerifFontFamily:(NSString *)family 
 {
-    [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitSerifFontPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setStringValue: family forKey: WebKitSerifFontPreferenceKey];
 }
 
 - (NSString *)sansSerifFontFamily
 {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitSansSerifFontPreferenceKey];
+    return [self _stringValueForKey: WebKitSansSerifFontPreferenceKey];
 }
 
 - (void)setSansSerifFontFamily:(NSString *)family
 {
-    [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitSansSerifFontPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setStringValue: family forKey: WebKitSansSerifFontPreferenceKey];
 }
 
 - (NSString *)cursiveFontFamily
 {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitCursiveFontPreferenceKey];
+    return [self _stringValueForKey: WebKitCursiveFontPreferenceKey];
 }
 
 - (void)setCursiveFontFamily:(NSString *)family
 {
-    [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitCursiveFontPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setStringValue: family forKey: WebKitCursiveFontPreferenceKey];
 }
 
 - (NSString *)fantasyFontFamily
 {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitFantasyFontPreferenceKey];
+    return [self _stringValueForKey: WebKitFantasyFontPreferenceKey];
 }
 
 - (void)setFantasyFontFamily:(NSString *)family
 {
-    [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitFantasyFontPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setStringValue: family forKey: WebKitFantasyFontPreferenceKey];
 }
 
 - (int)defaultFontSize
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitDefaultFontSizePreferenceKey];
+    return [self _integerValueForKey: WebKitDefaultFontSizePreferenceKey];
 }
 
 - (void)setDefaultFontSize:(int)size
 {
-    [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitDefaultFontSizePreferenceKey];
-    [self _updateWebCoreSettings];
+    return [self _setIntegerValue: size forKey: WebKitDefaultFontSizePreferenceKey];
 }
 
 - (int)defaultFixedFontSize
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitDefaultFixedFontSizePreferenceKey];
+    return [self _integerValueForKey: WebKitDefaultFixedFontSizePreferenceKey];
 }
 
 - (void)setDefaultFixedFontSize:(int)size
 {
-    [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitDefaultFixedFontSizePreferenceKey];
-    [self _updateWebCoreSettings];
+    return [self _setIntegerValue: size forKey: WebKitDefaultFixedFontSizePreferenceKey];
 }
 
 - (int)minimumFontSize
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitMinimumFontSizePreferenceKey];
+    return [self _integerValueForKey: WebKitMinimumFontSizePreferenceKey];
 }
 
 - (void)setMinimumFontSize:(int)size
 {
-    [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitMinimumFontSizePreferenceKey];
-    [self _updateWebCoreSettings];
+    return [self _setIntegerValue: size forKey: WebKitMinimumFontSizePreferenceKey];
 }
 
 - (NSString *)defaultTextEncodingName
 {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitDefaultTextEncodingNamePreferenceKey];
+    return [self _stringValueForKey: WebKitDefaultTextEncodingNamePreferenceKey];
 }
 
 - (void)setDefaultTextEncodingName:(NSString *)encoding
 {
-    [[NSUserDefaults standardUserDefaults] setObject:encoding forKey:WebKitDefaultTextEncodingNamePreferenceKey];
+    [self _setStringValue: encoding forKey: WebKitDefaultTextEncodingNamePreferenceKey];
 }
 
 - (BOOL)userStyleSheetEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitUserStyleSheetEnabledPreferenceKey];
+    return [self _boolValueForKey: WebKitUserStyleSheetEnabledPreferenceKey];
 }
 
 - (void)setUserStyleSheetEnabled:(BOOL)flag
 {
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitUserStyleSheetEnabledPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setBoolValue: flag forKey: WebKitUserStyleSheetEnabledPreferenceKey];
 }
 
 - (NSString *)userStyleSheetLocation
 {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitUserStyleSheetLocationPreferenceKey];
+    return [self _stringValueForKey: WebKitUserStyleSheetLocationPreferenceKey];
 }
 
 - (void)setUserStyleSheetLocation:(NSString *)string
 {
-    [[NSUserDefaults standardUserDefaults] setObject:string forKey:WebKitUserStyleSheetLocationPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setStringValue: string forKey: WebKitUserStyleSheetLocationPreferenceKey];
 }
 
 - (BOOL)JavaEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJavaEnabledPreferenceKey];
+    return [self _boolValueForKey: WebKitJavaEnabledPreferenceKey];
 }
 
 - (void)setJavaEnabled:(BOOL)flag
 {
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaEnabledPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setBoolValue: flag forKey: WebKitJavaEnabledPreferenceKey];
 }
 
 - (BOOL)JavaScriptEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJavaScriptEnabledPreferenceKey];
+    return [self _boolValueForKey: WebKitJavaScriptEnabledPreferenceKey];
 }
 
 - (void)setJavaScriptEnabled:(BOOL)flag
 {
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaScriptEnabledPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setBoolValue: flag forKey: WebKitJavaScriptEnabledPreferenceKey];
 }
 
 - (BOOL)JavaScriptCanOpenWindowsAutomatically
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
+    return [self _boolValueForKey: WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
 }
 
 - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)flag
 {
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setBoolValue: flag forKey: WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
 }
 
 - (BOOL)pluginsEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitPluginsEnabledPreferenceKey];
+    return [self _boolValueForKey: WebKitPluginsEnabledPreferenceKey];
 }
 
 - (void)setPluginsEnabled:(BOOL)flag
 {
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitPluginsEnabledPreferenceKey];
-    [self _updateWebCoreSettings];
+    [self _setBoolValue: flag forKey: WebKitPluginsEnabledPreferenceKey];
 }
+
+- (BOOL)allowAnimatedImages
+{
+    return [self _boolValueForKey: WebKitAllowAnimatedImagesPreferenceKey];
+}
+
+- (void)setAllowAnimatedImages:(BOOL)flag;
+{
+    [self _setBoolValue: flag forKey: WebKitAllowAnimatedImagesPreferenceKey];
+}
+
+- (BOOL)allowAnimatedImageLooping
+{
+    return [self _boolValueForKey: WebKitAllowAnimatedImageLoopingPreferenceKey];
+}
+
+- (void)setAllowAnimatedImageLooping: (BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitAllowAnimatedImageLoopingPreferenceKey];
+}
+
+- (void)setWillLoadImagesAutomatically: (BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitDisplayImagesKey];
+}
+
+- (BOOL)willLoadImagesAutomatically
+{
+    return [self _boolValueForKey: WebKitDisplayImagesKey];
+}
+
+@end
+
+@implementation WebPreferences (WebPrivate)
 
 - (NSTimeInterval)_initialTimedLayoutDelay
 {
@@ -331,37 +387,6 @@
 - (BOOL)_resourceTimedLayoutEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitResourceTimedLayoutEnabledPreferenceKey];
-}
-
-- (BOOL)allowAnimatedImages
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitAllowAnimatedImagesPreferenceKey];
-}
-
-- (void)setAllowAnimatedImages:(BOOL)flag;
-{
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitAllowAnimatedImagesPreferenceKey];
-}
-
-- (BOOL)allowAnimatedImageLooping
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitAllowAnimatedImageLoopingPreferenceKey];
-}
-
-- (void)setAllowAnimatedImageLooping: (BOOL)flag
-{
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitAllowAnimatedImageLoopingPreferenceKey];
-}
-
-- (void)setWillLoadImagesAutomatically: (BOOL)flag
-{
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitDisplayImagesKey];
-    [self _updateWebCoreSettings];
-}
-
-- (BOOL)willLoadImagesAutomatically
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitDisplayImagesKey];
 }
 
 @end

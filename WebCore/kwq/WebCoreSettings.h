@@ -25,6 +25,12 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef __cplusplus
+class KHTMLSettings;
+#else
+@class KHTMLSettings;
+#endif
+
 @interface WebCoreSettings : NSObject
 {
     NSString *standardFontFamily;
@@ -42,9 +48,9 @@
     BOOL JavaScriptCanOpenWindowsAutomatically;
     BOOL willLoadImagesAutomatically;
     NSString *userStyleSheetLocation;
+    
+    KHTMLSettings *settings;
 }
-
-+ (WebCoreSettings *)sharedSettings;
 
 - (void)setStandardFontFamily:(NSString *)family;
 - (NSString *)standardFontFamily;
@@ -90,5 +96,7 @@
 
 - (void)setUserStyleSheetLocation:(NSString *)location;
 - (NSString *)userStyleSheetLocation;
+
+- (KHTMLSettings *)settings;
 
 @end

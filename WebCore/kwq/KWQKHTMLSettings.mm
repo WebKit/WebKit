@@ -25,48 +25,34 @@
 
 #import "KWQKHTMLSettings.h"
 
-static int minimumFontSize;
-static int defaultFontSize;
-static int defaultFixedFontSize;
-static bool JavaEnabled;
-static bool willLoadImagesAutomatically;
-static bool pluginsEnabled;
-static bool JavaScriptEnabled;
-
-const QString &KHTMLSettings::stdFontName()
+const QString &KHTMLSettings::stdFontName() const
 {
-    static QString name;
-    return name;
+    return _stdFontName;
 }
 
-const QString &KHTMLSettings::fixedFontName()
+const QString &KHTMLSettings::fixedFontName() const
 {
-    static QString name;
-    return name;
+    return _fixedFontName;
 }
 
-const QString &KHTMLSettings::serifFontName()
+const QString &KHTMLSettings::serifFontName() const
 {
-    static QString name;
-    return name;
+    return _fixedFontName;
 }
 
-const QString &KHTMLSettings::sansSerifFontName()
+const QString &KHTMLSettings::sansSerifFontName() const
 {
-    static QString name;
-    return name;
+    return _sansSerifFontName;
 }
 
-const QString &KHTMLSettings::cursiveFontName()
+const QString &KHTMLSettings::cursiveFontName() const
 {
-    static QString name;
-    return name;
+    return _cursiveFontName;
 }
 
-const QString &KHTMLSettings::fantasyFontName()
+const QString &KHTMLSettings::fantasyFontName() const
 {
-    static QString name;
-    return name;
+    return _fantasyFontName;
 }
 
 const QString &KHTMLSettings::encoding()
@@ -75,113 +61,122 @@ const QString &KHTMLSettings::encoding()
     return latin1;
 }
 
-int KHTMLSettings::minFontSize()
+int KHTMLSettings::minFontSize() const
 {
-    return minimumFontSize;
+    return _minimumFontSize;
 }
 
-int KHTMLSettings::mediumFontSize()
+int KHTMLSettings::mediumFontSize() const
 {
-    return defaultFontSize;
+    return _defaultFontSize;
 }
 
-int KHTMLSettings::mediumFixedFontSize()
+int KHTMLSettings::mediumFixedFontSize() const
 {
-    return defaultFixedFontSize;
+    return _defaultFixedFontSize;
 }
 
-bool KHTMLSettings::isJavaEnabled()
+bool KHTMLSettings::isJavaEnabled() const
 {
-    return JavaEnabled;
+    return _JavaEnabled;
 }
 
-bool KHTMLSettings::autoLoadImages()
+bool KHTMLSettings::autoLoadImages() const
 {
-    return willLoadImagesAutomatically;
+    return _willLoadImagesAutomatically;
 }
 
-bool KHTMLSettings::isPluginsEnabled()
+bool KHTMLSettings::isPluginsEnabled() const
 {
-    return pluginsEnabled;
+    return _pluginsEnabled;
 }
 
-bool KHTMLSettings::isJavaScriptEnabled()
+bool KHTMLSettings::isJavaScriptEnabled() const
 {
-    return JavaScriptEnabled;
+    return _JavaScriptEnabled;
+}
+
+bool KHTMLSettings::JavaScriptCanOpenWindowsAutomatically() const
+{
+    return _JavaScriptCanOpenWindowsAutomatically;
 }
 
 const QString &KHTMLSettings::userStyleSheet()
 {
-    static QString location;
-    return location;
+    return _userStyleSheetLocation;
 }
 
 void KHTMLSettings::setStdFontName(const QString &n)
 {
-    const_cast<QString &>(stdFontName()) = n;
+    _stdFontName = n;
 }
 
 void KHTMLSettings::setFixedFontName(const QString &n)
 {
-    const_cast<QString &>(fixedFontName()) = n;
+    _fixedFontName = n;
 }
 
 void KHTMLSettings::setSerifFontName(const QString &n)
 {
-    const_cast<QString &>(serifFontName()) = n;
+    _serifFontName = n;
 }
 
 void KHTMLSettings::setSansSerifFontName(const QString &n)
 {
-    const_cast<QString &>(sansSerifFontName()) = n;
+    _sansSerifFontName = n;
 }
 
 void KHTMLSettings::setCursiveFontName(const QString &n)
 {
-    const_cast<QString &>(cursiveFontName()) = n;
+    _cursiveFontName = n;
 }
 
 void KHTMLSettings::setFantasyFontName(const QString &n)
 {
-    const_cast<QString &>(fantasyFontName()) = n;
+    _fantasyFontName = n;
 }
 
 void KHTMLSettings::setMinFontSize(int i)
 {
-    minimumFontSize = i;
+    _minimumFontSize = i;
 }
 
 void KHTMLSettings::setMediumFontSize(int i)
 {
-    defaultFontSize = i;
+    _defaultFontSize = i;
 }
 
 void KHTMLSettings::setMediumFixedFontSize(int i)
 {
-    defaultFixedFontSize = i;
+    _defaultFixedFontSize = i;
 }
 
 void KHTMLSettings::setAutoLoadImages(bool b)
 {
-    willLoadImagesAutomatically = b;
+    _willLoadImagesAutomatically = b;
 }
 
 void KHTMLSettings::setIsJavaScriptEnabled(bool b)
 {
-    JavaScriptEnabled = b;
+    _JavaScriptEnabled = b;
 }
 
 void KHTMLSettings::setIsJavaEnabled(bool b)
 {
-    JavaEnabled = b;
+    _JavaEnabled = b;
 }
 
 void KHTMLSettings::setArePluginsEnabled(bool b)
 {
-    pluginsEnabled = b;
+    _pluginsEnabled = b;
+}
+
+void KHTMLSettings::setJavaScriptCanOpenWindowsAutomatically(bool b)
+{
+    _JavaScriptCanOpenWindowsAutomatically = b;
 }
 
 void KHTMLSettings::setUserStyleSheet(const QString &n)
 {
-    const_cast<QString &>(userStyleSheet()) = n;
+    _userStyleSheetLocation = n;
 }

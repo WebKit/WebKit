@@ -54,6 +54,7 @@
 #import "WebCoreDOMPrivate.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+#import "WebCoreSettings.h"
 
 using DOM::DocumentImpl;
 using DOM::Node;
@@ -96,9 +97,13 @@ static bool initializedObjectCacheSize = FALSE;
         khtml::Cache::setSize([self getObjectCacheSize]);
         initializedObjectCacheSize = TRUE;
     }
-
-
+    
     return self;
+}
+
+- (void)initializeSettings: (WebCoreSettings *)settings
+{
+    _part->setSettings ([settings settings]);
 }
 
 - (void)dealloc

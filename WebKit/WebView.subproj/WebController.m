@@ -72,13 +72,12 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
     [self setUsesBackForwardList: YES];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(_defaultsDidChange)
-                                                 name:NSUserDefaultsDidChangeNotification
-                                               object:[NSUserDefaults standardUserDefaults]];
-    
     ++WebControllerCount;
 
+    [self _updateWebCoreSettingsFromPreferences: [WebPreferences standardPreferences]];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
+                                                 name:WebPreferencesChangedNotification object:[self preferences]];
     return self;
 }
 
@@ -99,8 +98,11 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - (void)setPreferences: (WebPreferences *)prefs
 {
     if (_private->preferences != prefs){
+        [[NSNotificationCenter defaultCenter] removeObserver: self name: WebPreferencesChangedNotification object: [self preferences]];
         [_private->preferences release];
         _private->preferences = [prefs retain];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
+                                                    name:WebPreferencesChangedNotification object:[self preferences]];
     }
 }
 

@@ -1,3 +1,79 @@
+2003-02-07  Richard Williamson   <rjw@apple.com>
+
+        Changes to support per WebController preferences.
+        
+        Reviewed by Maciej and Ken.
+
+        * WebView.subproj/WebController.m:
+        (-[WebController setPreferences:]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate init]):
+        (-[WebControllerPrivate dealloc]):
+        (-[WebController _setFormDelegate:]):
+        (-[WebController _formDelegate]):
+        (-[WebController _settings]):
+        (-[WebController _updateWebCoreSettingsFromPreferences:]):
+        (-[WebController _releaseUserAgentStrings]):
+        (-[WebController _preferencesChangedNotification:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:controller:]):
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _postPreferencesChangesNotification]):
+        (+[WebPreferences load]):
+        (-[WebPreferences _stringValueForKey:]):
+        (-[WebPreferences _setStringValue:forKey:]):
+        (-[WebPreferences _integerValueForKey:]):
+        (-[WebPreferences _setIntegerValue:forKey:]):
+        (-[WebPreferences _boolValueForKey:]):
+        (-[WebPreferences _setBoolValue:forKey:]):
+        (-[WebPreferences standardFontFamily]):
+        (-[WebPreferences setStandardFontFamily:]):
+        (-[WebPreferences fixedFontFamily]):
+        (-[WebPreferences setFixedFontFamily:]):
+        (-[WebPreferences serifFontFamily]):
+        (-[WebPreferences setSerifFontFamily:]):
+        (-[WebPreferences sansSerifFontFamily]):
+        (-[WebPreferences setSansSerifFontFamily:]):
+        (-[WebPreferences cursiveFontFamily]):
+        (-[WebPreferences setCursiveFontFamily:]):
+        (-[WebPreferences fantasyFontFamily]):
+        (-[WebPreferences setFantasyFontFamily:]):
+        (-[WebPreferences defaultFontSize]):
+        (-[WebPreferences setDefaultFontSize:]):
+        (-[WebPreferences defaultFixedFontSize]):
+        (-[WebPreferences setDefaultFixedFontSize:]):
+        (-[WebPreferences minimumFontSize]):
+        (-[WebPreferences setMinimumFontSize:]):
+        (-[WebPreferences defaultTextEncodingName]):
+        (-[WebPreferences setDefaultTextEncodingName:]):
+        (-[WebPreferences userStyleSheetEnabled]):
+        (-[WebPreferences setUserStyleSheetEnabled:]):
+        (-[WebPreferences userStyleSheetLocation]):
+        (-[WebPreferences setUserStyleSheetLocation:]):
+        (-[WebPreferences JavaEnabled]):
+        (-[WebPreferences setJavaEnabled:]):
+        (-[WebPreferences JavaScriptEnabled]):
+        (-[WebPreferences setJavaScriptEnabled:]):
+        (-[WebPreferences JavaScriptCanOpenWindowsAutomatically]):
+        (-[WebPreferences setJavaScriptCanOpenWindowsAutomatically:]):
+        (-[WebPreferences pluginsEnabled]):
+        (-[WebPreferences setPluginsEnabled:]):
+        (-[WebPreferences allowAnimatedImages]):
+        (-[WebPreferences allowAnimatedImageLooping]):
+        (-[WebPreferences setAllowAnimatedImageLooping:]):
+        (-[WebPreferences setWillLoadImagesAutomatically:]):
+        (-[WebPreferences willLoadImagesAutomatically]):
+        (-[WebPreferences _initialTimedLayoutDelay]):
+        (-[WebPreferences _initialTimedLayoutSize]):
+        (-[WebPreferences _pageCacheSize]):
+        (-[WebPreferences _objectCacheSize]):
+        (-[WebPreferences _initialTimedLayoutEnabled]):
+        (-[WebPreferences _resourceTimedLayoutDelay]):
+        (-[WebPreferences _resourceTimedLayoutEnabled]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+
 2003-02-06  Chris Blumenberg  <cblu@apple.com>
 
 	- Made WebDownload.h a public header.

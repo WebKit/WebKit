@@ -40,59 +40,81 @@ public:
         KAnimationEnabled
     };
     
-    static void init() { }
-
+    KHTMLSettings() {};
+    
     // Font settings
-    static const QString &stdFontName();
-    static const QString &fixedFontName();
-    static const QString &serifFontName();
-    static const QString &sansSerifFontName();
-    static const QString &cursiveFontName();
-    static const QString &fantasyFontName();
+    const QString &stdFontName() const;
+    const QString &fixedFontName() const;
+    const QString &serifFontName() const;
+    const QString &sansSerifFontName() const;
+    const QString &cursiveFontName() const;
+    const QString &fantasyFontName() const;
     
     static const QString &settingsToCSS() { return QString::null; }
 
     static const QString &encoding();
 
-    static int minFontSize();
-    static int mediumFontSize();
-    static int mediumFixedFontSize();
+    int minFontSize() const;
+    int mediumFontSize() const;
+    int mediumFixedFontSize() const;
 
     static bool changeCursor() { return true; }
 
     static bool isFormCompletionEnabled() { return false; }
     static int maxFormCompletionItems() { return 0; }
 
-    static bool autoLoadImages();
+    bool autoLoadImages() const;
     static KAnimationAdvice showAnimations() { return KAnimationEnabled; }
 
-    static bool isJavaScriptEnabled();
-    static bool isJavaScriptEnabled(const QString &host) { return isJavaScriptEnabled(); }
-    static bool isJavaScriptDebugEnabled() { return false; }
-    static bool isJavaEnabled();
-    static bool isJavaEnabled(const QString &host) { return isJavaEnabled(); }
-    static bool isPluginsEnabled();
-    static bool isPluginsEnabled(const QString &host) { return isPluginsEnabled(); }
+    bool isJavaScriptEnabled() const;
+    bool JavaScriptCanOpenWindowsAutomatically() const;
+    bool isJavaScriptEnabled(const QString &host) const { return isJavaScriptEnabled(); }
+    bool isJavaScriptDebugEnabled() const { return false; }
+    bool isJavaEnabled() const;
+    bool isJavaEnabled(const QString &host) const { return isJavaEnabled(); }
+    bool isPluginsEnabled() const;
+    bool isPluginsEnabled(const QString &host) const { return isPluginsEnabled(); }
     
-    static const QString &userStyleSheet();
+    const QString &userStyleSheet();
 
-    static void setStdFontName(const QString &);
-    static void setFixedFontName(const QString &);
-    static void setSerifFontName(const QString &);
-    static void setSansSerifFontName(const QString &);
-    static void setCursiveFontName(const QString &);
-    static void setFantasyFontName(const QString &);
+    void setStdFontName(const QString &);
+    void setFixedFontName(const QString &);
+    void setSerifFontName(const QString &);
+    void setSansSerifFontName(const QString &);
+    void setCursiveFontName(const QString &);
+    void setFantasyFontName(const QString &);
     
-    static void setMinFontSize(int);
-    static void setMediumFontSize(int);
-    static void setMediumFixedFontSize(int);
+    void setMinFontSize(int);
+    void setMediumFontSize(int);
+    void setMediumFixedFontSize(int);
     
-    static void setAutoLoadImages(bool);
-    static void setIsJavaScriptEnabled(bool);
-    static void setIsJavaEnabled(bool);
-    static void setArePluginsEnabled(bool);
+    void setAutoLoadImages(bool);
+    void setIsJavaScriptEnabled(bool);
+    void setIsJavaEnabled(bool);
+    void setArePluginsEnabled(bool);
+    void setJavaScriptCanOpenWindowsAutomatically(bool);
 
-    static void setUserStyleSheet(const QString &);
+    void setUserStyleSheet(const QString &);
+
+private:
+    QString _stdFontName;
+    QString _fixedFontName;
+    QString _serifFontName;
+    QString _sansSerifFontName;
+    QString _cursiveFontName;
+    QString _fantasyFontName;
+    QString _encoding;
+    QString _userStyleSheetLocation;
+    
+    int _minimumFontSize;
+    int _defaultFontSize;
+    int _defaultFixedFontSize;
+    uint _JavaEnabled:1;
+    uint _willLoadImagesAutomatically:1;
+    uint _pluginsEnabled:1;
+    uint _JavaScriptEnabled:1;
+    uint _JavaScriptCanOpenWindowsAutomatically:1;
+    
 };
 
 #endif

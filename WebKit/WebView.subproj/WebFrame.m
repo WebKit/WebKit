@@ -42,6 +42,7 @@
     [self setController:c];
 
     _private->bridge = [[WebBridge alloc] init];
+    [_private->bridge initializeSettings: [c _settings]];
     [_private->bridge setFrame:self];
     [_private->bridge setName:n];
 

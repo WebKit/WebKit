@@ -27,6 +27,7 @@
 
 #import "KWQLogging.h"
 #import "KWQColor.h"
+#import "KWQKHTMLSettings.h"
 #import "KWQStringList.h"
 #import "WebCoreSettings.h"
 #import "WebCoreViewFactory.h"
@@ -112,10 +113,10 @@ int KConfig::readNumEntry(const char *pKey, int nDefault) const
     return nDefault;
 }
 
-unsigned int KConfig::readUnsignedNumEntry(const char *pKey, unsigned int nDefault) const
+unsigned int KConfig::readUnsignedNumEntry(const KHTMLSettings *settings, const char *pKey, unsigned int nDefault) const
 {
     if (impl->isKonquerorRC && strcmp(pKey, "WindowOpenPolicy") == 0) {
-	if ([[WebCoreSettings sharedSettings] JavaScriptCanOpenWindowsAutomatically]) {
+        if (settings->JavaScriptCanOpenWindowsAutomatically()) {
 	    return 0;
 	} else {
 	    return 3;

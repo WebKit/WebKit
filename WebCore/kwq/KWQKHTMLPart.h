@@ -176,6 +176,8 @@ public:
     void clearRecordedFormValues();
     void recordFormValue(const QString &name, const QString &value);
 
+    void setSettings (KHTMLSettings *s);
+    
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);

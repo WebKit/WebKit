@@ -16,5 +16,6 @@
 - (NSTimeInterval)_resourceTimedLayoutDelay;
 - (int)_pageCacheSize;
 - (int)_objectCacheSize;
+- (void)_postPreferencesChangesNotification;
 
 @end

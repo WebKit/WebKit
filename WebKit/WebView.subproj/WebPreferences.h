@@ -7,10 +7,15 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString *WebPreferencesChangedNotification;
+
 /*!
     @class WebPreferences
 */
 @interface WebPreferences: NSObject
+{
+    NSMutableDictionary *values;
+}
 
 /*!
     @method standardPreferences
