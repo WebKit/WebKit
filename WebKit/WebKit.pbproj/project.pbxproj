@@ -1679,7 +1679,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "ln -sf Versions/A/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/A/Frameworks ${DSTROOT}/WebKit.framework/Frameworks";
+			shellScript = "ln -sf Versions/A/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/A/Frameworks ${DSTROOT}/System/Library/WebKit.framework/Frameworks";
 		};
 		6578F5DE045F817400000128 = {
 			expectedFileType = sourcecode.c.h;
@@ -1789,7 +1789,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ln -sf Versions/A/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/A/Frameworks ${DSTROOT}/WebKit.framework/Frameworks";
+			shellScript = "ln -sf Versions/A/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/A/Frameworks ${DSTROOT}/System/Library/WebKit.framework/Frameworks";
 		};
 //650
 //651
