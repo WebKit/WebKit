@@ -176,6 +176,7 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
     if ([subarchivePropertyLists count] > 0) {
         [propertyList setObject:subarchivePropertyLists forKey:WebSubframeArchivesKey];
     }
+    [subarchivePropertyLists release];
     return propertyList;
 }
 

@@ -1,3 +1,13 @@
+2004-11-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3879513> leak in [WebArchive _propertyListRepresentation] copying HTML to pasteboard
+
+        * WebView.subproj/WebArchive.m:
+        (-[WebArchive _propertyListRepresentation]):
+        the array holding the subresources was not released after use, oops!
+
 2004-11-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3874577> Opening restricted (parental) content in new window/tab reveals Safari's "Resources" folder
