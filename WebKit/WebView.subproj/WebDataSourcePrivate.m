@@ -480,7 +480,17 @@
 
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;
 {
-    [[WebIconDatabase sharedIconDatabase] _setIconURL:[iconLoader URL] forSiteURL:[self URL]];
+    WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
+    NSURL *originalURL = [[self _originalRequest] URL];
+    NSURL *iconURL = [iconLoader URL];
+    NSURL *URL = [self URL];
+    
+    // Bind the URL of the original request and the final URL to the icon URL.
+    [iconDB _setIconURL:iconURL forSiteURL:URL];
+    if(![originalURL isEqualTo:URL]){
+        [iconDB _setIconURL:iconURL forSiteURL:originalURL];
+    }
+    
     [[_private->controller locationChangeDelegate] receivedPageIcon:nil forDataSource:self];
 }
 
@@ -489,18 +499,20 @@
     ASSERT(!_private->iconLoader);
 
     if([self webFrame] == [[self controller] mainFrame] && !_private->mainDocumentError){
-        
-        NSURL *dataSourceURL = [self URL];
+
+        // Use the original URL because thats what history items.
+        NSURL *URL = [self URL];
         WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
         
-        if([iconDB _hasIconForSiteURL:dataSourceURL]){
+        if([iconDB _hasIconForSiteURL:URL]){
             // Tell about the icon immediately if the db already has it
             [[_private->controller locationChangeDelegate] receivedPageIcon:nil forDataSource:self];
         }else{
             
             if(!_private->iconURL){
                 // No icon URL from the LINK tag so try the server's root
-                _private->iconURL = [[[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] absoluteURL] retain];
+                _private->iconURL = [[[NSURL _web_URLWithString:@"/favicon.ico"
+                                                  relativeToURL:URL] absoluteURL] retain];
             }
 
             if(_private->iconURL != nil){

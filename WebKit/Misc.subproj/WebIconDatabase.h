@@ -10,7 +10,7 @@
 // Sent whenever a site icon has changed. The object of the notification is the icon database.
 // The userInfo contains the site URL who's icon has changed.
 // It can be accessed with the key WebIconNotificationUserInfoSiteURLKey.
-extern NSString *WebIconDidChangeNotification;
+extern NSString *WebIconDatabaseDidAddIconNotification;
 
 extern NSString *WebIconNotificationUserInfoSiteURLKey;
 
@@ -26,7 +26,6 @@ extern NSSize WebIconLargeSize;  // 128 x 128
         - memory cache icons at different sizes
         - disk storage
         - icon update notification
-        - user/client icon customization
         
         Uses:
         - WebIconLoader to cache icon images
@@ -76,22 +75,6 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     @param size
 */
 - (NSImage *)defaultIconWithSize:(NSSize)size;
-
-/*!
-    @method setIcon:forHost:
-    @abstract Customize the site icon for all web sites with the given host name.
-    @param icon
-    @param host
-*/
-- (void)setIcon:(NSImage *)icon forHost:(NSString *)host;
-
-/*!
-    @method setIcon:forSiteURL:
-    @abstract Customize the site icon for a specific web page.
-    @param icon
-    @param siteURL
-*/
-- (void)setIcon:(NSImage *)icon forSiteURL:(NSURL *)siteURL;
 
 /*!
     @method retainIconForSiteURL:

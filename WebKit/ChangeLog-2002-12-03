@@ -1,3 +1,41 @@
+2002-11-22  Chris Blumenberg  <cblu@apple.com>
+
+	Attempt to fix: 3078737 - Crash in -[WebHistoryItem dealloc] after closing last window
+	I haven't found anything that would cause the crash. I did some clean-up, added asserts and error messages in hopes that this help me track this down.
+
+        * Misc.subproj/WebIconDatabase.h:
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForSiteURL:withSize:cache:]):
+        (-[WebIconDatabase iconForSiteURL:withSize:]):
+        (-[WebIconDatabase retainIconForSiteURL:]):
+        (-[WebIconDatabase releaseIconForSiteURL:]):
+        (-[WebIconDatabase delayDatabaseCleanup]):
+        (-[WebIconDatabase allowDatabaseCleanup]):
+        (-[WebIconDatabase _iconDictionariesAreGood]):
+        (-[WebIconDatabase _loadIconDictionaries]):
+        (-[WebIconDatabase _updateFileDatabase]):
+        (-[WebIconDatabase _hasIconForSiteURL:]):
+        (-[WebIconDatabase _iconsForIconURLString:]):
+        (-[WebIconDatabase _iconForFileURL:withSize:]):
+        (-[WebIconDatabase _setIcon:forIconURL:]):
+        (-[WebIconDatabase _setIconURL:forSiteURL:]):
+        (-[WebIconDatabase _retainIconForIconURLString:]):
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+        (-[WebIconDatabase _retainFutureIconForSiteURL:]):
+        (-[WebIconDatabase _releaseFutureIconForSiteURL:]):
+        (-[WebIconDatabase _releaseOriginalIconsOnDisk]):
+        (-[WebIconDatabase _sendNotificationForSiteURL:]):
+        (-[WebIconDatabase _addObject:toSetForKey:inDictionary:]):
+        (-[WebIconDatabase _largestIconFromDictionary:]):
+        (-[WebIconDatabase _iconsBySplittingRepresentationsOfIcon:]):
+        (-[WebIconDatabase _iconFromDictionary:forSize:cache:]):
+        (-[WebIconDatabase _scaleIcon:toSize:]):
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        * WebKit.exp:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadIcon]):
+
 2002-11-22  Richard Williamson   <rjw@apple.com>
 
         Fixed rendering issues associated with 3100120.
