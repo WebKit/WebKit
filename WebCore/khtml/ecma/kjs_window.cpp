@@ -1032,6 +1032,11 @@ JSEventListener *Window::getJSEventListener(const Value& val, bool html)
   return new JSEventListener(Object(listenerObject), Object(this), html);
 }
 
+JSLazyEventListener *Window::getJSLazyEventListener(const QString& code, bool html)
+{
+  return new JSLazyEventListener(code, Object(this), html);
+}
+
 void Window::clear( ExecState *exec )
 {
   KJS::Interpreter::lock();

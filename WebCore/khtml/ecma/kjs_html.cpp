@@ -3185,7 +3185,7 @@ Value Image::getValueProperty(ExecState *, int token) const
   case Complete:
     return Boolean(!img || img->status() >= khtml::CachedObject::Persistent);
   case OnLoad:
-    if (onLoadListener) {
+    if (onLoadListener && onLoadListener->listenerObjImp()) {
       return onLoadListener->listenerObj();
     } else {
       return Null();

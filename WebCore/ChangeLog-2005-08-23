@@ -2,6 +2,42 @@
 
         Reviewed by Darin.
 
+	- fixed 3475366 - 4.5% of time spent making html event listeners on slow intel page.
+
+	6% speedup on intel page, 1% speedup on cvs-base PLT.
+	
+        * khtml/ecma/kjs_events.cpp:
+        (JSEventListener::JSEventListener): Don't add self to hashtable if imp is null (which
+	can now happen in the lazy listener case).
+        (JSEventListener::~JSEventListener): Ditto on removing.
+        (JSEventListener::listenerObj): Made this virtual.
+        (JSLazyEventListener::JSLazyEventListener): New constructor.
+	(JSLazyEventListener::handleEvent): call parseCode, then
+	superclass if it appeared to succeed.
+        (JSLazyEventListener::listenerObj): call parseCode, then superclass.
+        (JSLazyEventListener::parseCode):
+        (KJS::getNodeEventListener): Check for null listenerObjImp in case of
+	lazy listener that failed to parse.
+        * khtml/ecma/kjs_dom.cpp:
+	(DOMNode::getListener): Ditto.
+        * khtml/ecma/kjs_html.cpp:
+        (Image::getValueProperty): Ditto.
+        * khtml/ecma/kjs_events.h:
+	(KJS::JSEventListener::listenerObjImp): call listenerObj() virtual
+	method and get imp from the result.
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::createHTMLEventHandler): Don't parse the code here, make a lazy
+	listener.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::getJSLazyEventListener): make a new JSLazyEventListener - no need
+	to check the listeners hashtable cause a brand new lazy listener won't have
+	a function anyway.
+        * khtml/ecma/kjs_window.h: Prototype new method.
+
+2003-11-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	- fixed 3475397 - REGRESSION: relative URLs on page load test sometimes contain garbage, leading to missing images
 	
         * kwq/KWQKURL.mm:

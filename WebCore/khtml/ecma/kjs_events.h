@@ -36,13 +36,26 @@ namespace KJS {
     virtual ~JSEventListener();
     virtual void handleEvent(DOM::Event &evt, bool isWindowEvent);
     virtual DOM::DOMString eventListenerType();
-    Object listenerObj() const { return listener; }
-    ObjectImp *listenerObjImp() const { return listener.imp(); }
+    virtual Object listenerObj() const;
+    ObjectImp *listenerObjImp() const { return listenerObj().imp(); }
   protected:
-    Object listener;
+    mutable Object listener;
     bool html;
     Object win;
   };
+
+  class JSLazyEventListener : public JSEventListener {
+  public:
+    JSLazyEventListener(QString _code, const Object &_win, bool _html = false);
+    virtual void handleEvent(DOM::Event &evt, bool isWindowEvent);
+    Object listenerObj() const;
+  private:
+    void parseCode() const;
+    
+    mutable QString code;
+    mutable bool parsed;
+  };
+
 
   Value getNodeEventListener(DOM::Node n, int eventId);
 
