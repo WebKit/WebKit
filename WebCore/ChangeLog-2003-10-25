@@ -1,5 +1,16 @@
 2003-10-18  David Hyatt  <hyatt@apple.com>
 
+	Fix the intrinsic minmax width computation for blocks and XUL boxes to actually check fixed min/max CSS widths.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::calcMinMaxWidth):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::calcMinMaxWidth):
+
+2003-10-18  David Hyatt  <hyatt@apple.com>
+
 	Change the names of the border-spacing properties to border-horizontal-spacing and border-vertical-spacing.
 	
         Reviewed by NOBODY (Straightforward).
