@@ -180,7 +180,7 @@
     return _private->pageTitle;
 }
 
-- (NSString *)fileType
+- (NSString *)fileExtension
 {
     return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[[self response] contentType]];
 }

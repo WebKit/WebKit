@@ -140,10 +140,10 @@
 - (NSString *)frameName;
 
 /*!
-    @method fileType
+    @method fileExtension
     @result The extension based on the MIME type 
 */
-- (NSString *)fileType;
+- (NSString *)fileExtension;
 
 /*!
     @method mainDocumentError
