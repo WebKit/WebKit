@@ -4,7 +4,7 @@
 	Fixed 3478831.  Unicode property/conversion functions should be 32 bit savvy.
 	Fixed 3478885.  Remove dead arabic shaping code
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Darin.
 
         * Misc.subproj/WebUnicode.h:
         * Misc.subproj/WebUnicode.m:

@@ -3,7 +3,7 @@
 	Fixed 3478765.  Use ICU to access unicode properties.
 	Fixed 3478831.  Unicode property/conversion functions should be 32 bit savvy.
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Darin.
 
         * WebCore-combined.exp:
         * WebCore.exp:
