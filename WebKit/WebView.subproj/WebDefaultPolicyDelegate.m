@@ -49,8 +49,8 @@
     }
 }
 
-- (NSString *)saveFilenameForResponse:(WebResourceResponse *)response
-                           andRequest:(WebResourceRequest *)request
+- (NSString *)savePathForResponse:(WebResourceResponse *)response
+                       andRequest:(WebResourceRequest *)request
 {
     return nil;
 }

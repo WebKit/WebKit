@@ -122,8 +122,8 @@ typedef enum {
     @param response The response for the partially loaded content.
     @param request A WebResourceRequest for the partially loaded content.
 */
-- (NSString *)saveFilenameForResponse:(WebResourceResponse *)response
-                           andRequest:(WebResourceRequest *)request;
+- (NSString *)savePathForResponse:(WebResourceResponse *)response
+                       andRequest:(WebResourceRequest *)request;
 
 
 /*!

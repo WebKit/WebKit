@@ -192,16 +192,15 @@
 	[dataSource _setIsDownloading:YES];
 	
 	if ([dataSource downloadPath] == nil) {
-            // FIXME: Should this be the filename or path?
-	    NSString *saveFilename = [[[dataSource controller] policyDelegate]
-                saveFilenameForResponse:r andRequest:req];
+	    NSString *savePath = [[[dataSource controller] policyDelegate]
+                savePathForResponse:r andRequest:req];
             // FIXME: Maybe there a cleaner way handle the bad filename case?
-            if(!saveFilename || [saveFilename length] == 0 || ![saveFilename isAbsolutePath]){
-                ERROR("Nil or empty response to saveFilenameForResponse:andRequest:.");
+            if ([savePath length] == 0 || ![savePath isAbsolutePath]) {
+                ERROR("Nil, empty or non-absolute path returned from savePathForResponse:andRequest:.");
                 [self stopLoadingForPolicyChange];
                 return;
             }
-	    [dataSource _setDownloadPath:saveFilename];
+	    [dataSource _setDownloadPath:savePath];
 	}
 
         [self interruptForPolicyChangeAndKeepLoading:YES];

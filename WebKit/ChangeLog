@@ -1,3 +1,16 @@
+2003-01-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fix for checking and creating proper download filenames.
+
+        Reviewed by mjs, kocienda, trey.
+
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPolicyDelegate.h: changes for renamed savePathForResponse:andRequest: method
+        * WebView.subproj/WebDefaultPolicyDelegate.m: changes for renamed savePathForResponse:andRequest: method
+        (-[WebDefaultPolicyDelegate savePathForResponse:andRequest:]): renamed 
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): changes for renamed savePathForResponse:andRequest: method
+
 2003-01-12  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
