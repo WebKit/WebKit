@@ -1,5 +1,17 @@
 2002-09-24  David Hyatt  <hyatt@apple.com>
 
+	Fix updating of the document's notion of the focused node
+	to happen on mouse down rather than click.  This matches
+	the behavior of all other browsers (IE, Gecko, etc.).
+
+	This fixes the drawing of the outline on the brainjar.com
+	DHTML menus.
+	
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchMouseEvent):
+
+2002-09-24  David Hyatt  <hyatt@apple.com>
+
 	Make sure that changes to the CLASS attribute mark the
 	element as changed (as if a CSS property were added or
 	removed).
