@@ -587,7 +587,8 @@
 
 - (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
 {
-    return [controller textView:view shouldChangeTextInRange:range replacementString:string];
+    return [controller textView:view shouldChangeTextInRange:range replacementString:string]
+        && [super textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
 @end
@@ -738,7 +739,8 @@
 
 - (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
 {
-    return [controller textView:view shouldChangeTextInRange:range replacementString:string];
+    return [controller textView:view shouldChangeTextInRange:range replacementString:string]
+        && [super textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
 // These next two methods are the workaround for bug 3024443.
@@ -956,7 +958,8 @@
 
 - (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
 {
-    return [controller textView:view shouldChangeTextInRange:range replacementString:string];
+    return [controller textView:view shouldChangeTextInRange:range replacementString:string]
+        && [super textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
 @end

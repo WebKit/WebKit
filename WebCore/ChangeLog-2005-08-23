@@ -1,3 +1,15 @@
+2005-02-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/4011210> REGRESSION (180-181): Maxlength property for INPUT object not working
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField textView:shouldChangeTextInRange:replacementString:]): If controller returns
+        YES, go on to call super, since super does the text formatter handling, which we need.
+        (-[KWQSecureTextField textView:shouldChangeTextInRange:replacementString:]): Ditto.
+        (-[KWQSearchField textView:shouldChangeTextInRange:replacementString:]): Ditto.
+
 === Safari-187 ===
 
 2005-02-17  Ken Kocienda  <kocienda@apple.com>
