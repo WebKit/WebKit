@@ -1,5 +1,14 @@
 2004-07-08  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3706296> VIP: ifilm.com crashing reproducibly with Safari
+
+        Reviewed by kocienda.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage launchRealPlayer]): don't release a NULL appURL
+
+2004-07-08  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3650140> reproducible assertion failure going to plugin page with JavaScript disabled
 
         Reviewed by john.
