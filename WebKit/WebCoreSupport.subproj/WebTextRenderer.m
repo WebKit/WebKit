@@ -117,18 +117,6 @@ struct UnicodeGlyphMap {
 }
 @end
 
-@interface NSCGSFont (WebPrivate)
--  (void)_resetLineHeightAdjustmentCache;
-@end
-
-@implementation NSCGSFont (WebPrivate)
--  (void)_resetLineHeightAdjustmentCache
-{
-    _faceInfo->fontFlags._checkedForceAscDelta = NO;
-    _faceInfo->fontFlags._forceAscDelta = NO;
-}
-@end
-
 static CFCharacterSetRef nonBaseChars = NULL;
 
 
@@ -493,22 +481,28 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     float asc = (ScaleEmToUnits(metrics->ascent, unitsPerEm)*pointSize);
     float dsc = (-ScaleEmToUnits(metrics->descent, unitsPerEm)*pointSize);
     float lineGap = ScaleEmToUnits(metrics->lineGap, unitsPerEm)*pointSize;
-    float akiAdjustment;
+    float adjustment;
 
-    ascent = ROUND_TO_INT(asc);
+    // We need to adjust Times, Helvetica, and Courier to closely match the
+    // vertical metrics of their Microsoft counterparts that are the de facto
+    // web standard.  The AppKit adjustment of 20% is too big and is
+    // incorrectly added to line spacing, so we use a 15% adjustment instead
+    // and add it to the ascent.
+    if ([[font familyName] isEqualToString:@"Times"] ||
+        [[font familyName] isEqualToString:@"Helvetica"] ||
+        [[font familyName] isEqualToString:@"Courier"]) {
+        adjustment = floor(((asc + dsc) * 0.15) + 0.5);
+    } else {
+        adjustment = 0.0;
+    }
+
+    ascent = ROUND_TO_INT(asc + adjustment);
     descent = ROUND_TO_INT(dsc);
 
-    // FIXME.  Aki has determined that some fonts should have a size adjustment (20% of
-    // ascender and descender).  The check is performed by _forceAscenderDelta, but that
-    // method caches the result for the entire font family.  Here we reset the cache bit
-    // before calling the check method.
-    [((NSCGSFont *)f) _resetLineHeightAdjustmentCache];
-    akiAdjustment = ([font _forceAscenderDelta] ? floor(((asc + dsc) * 0.20) + 0.5) : 0.0);
-
-    lineSpacing =  ascent + descent + (int)(lineGap > 0.0 ? floor(lineGap + 0.5) : 0.0) + akiAdjustment;
+    lineSpacing =  ascent + descent + (int)(lineGap > 0.0 ? floor(lineGap + 0.5) : 0.0);
 
 #ifdef COMPARE_APPKIT_CG_METRICS
-    printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, akiAdjustment %f, _canDrawOutsideLineHeight %d, _isSystemFont %d\n", [[f displayName] cString], [f pointSize], lineGap, akiAdjustment, (int)[f _canDrawOutsideLineHeight], (int)[f _isSystemFont]);
+    printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, adjustment %f, _canDrawOutsideLineHeight %d, _isSystemFont %d\n", [[f displayName] cString], [f pointSize], lineGap, adjustment, (int)[f _canDrawOutsideLineHeight], (int)[f _isSystemFont]);
     if ((int)ROUND_TO_INT([f ascender]) != ascent ||
         (int)ROUND_TO_INT(-[f descender]) != descent ||
         (int)ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing){

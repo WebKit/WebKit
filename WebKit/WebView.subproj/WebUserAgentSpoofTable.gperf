@@ -26,6 +26,3 @@ olympic.org, MacIE
 #
 # pretend to be Mac IE to avoid gzipped HTML which we don't support yet
 freebsd.org, MacIE
-#
-# pretend to be Win IE to get the smaller font sizes the site gives for Windows
-abcnews.go.com, WinIE
