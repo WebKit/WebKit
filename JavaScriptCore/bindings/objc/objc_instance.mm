@@ -22,9 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
-#include <objc_instance.h>
+#import <JavaScriptCore/objc_instance.h>
+#import <JavaScriptCore/WebScriptObject.h>
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)
@@ -48,6 +49,8 @@ ObjcInstance::ObjcInstance (ObjectStructPtr instance)
 
 ObjcInstance::~ObjcInstance () 
 {
+    if ([_instance respondsToSelector:@selector(finalizeForWebScript)])
+        [_instance finalizeForWebScript];
     [_instance release];
 }
 

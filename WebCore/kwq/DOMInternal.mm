@@ -28,9 +28,25 @@
 #import <dom/dom2_range.h>
 #import <dom/dom_exception.h>
 #import <dom/dom_string.h>
+#import <xml/dom_docimpl.h>
 #import <xml/dom_stringimpl.h>
 
+#import "kjs_proxy.h"
+
 #import "KWQAssertions.h"
+#import "KWQKHTMLPart.h"
+
+#import <JavaScriptCore/interpreter.h>
+#import <JavaScriptCore/runtime_root.h>
+#import <JavaScriptCore/WebScriptObjectPrivate.h>
+
+//#import "kjs_dom.h"
+// We can't include kjs_dom.h here because of ObjC and C++ namespace compiler craziness.
+// kjs_dom.h:169: error: statically allocated instance of Objective-C class `DOMImplementation'
+// Declaring getDOMNode directly instead.
+namespace KJS {
+    Value getDOMNode(ExecState *exec, const DOM::Node &n);
+}
 
 using DOM::DOMString;
 using DOM::DOMStringImpl;
@@ -122,4 +138,51 @@ DOMString::DOMString(NSString *str)
 }
 
 //------------------------------------------------------------------------------------------
+
+@implementation WebScriptObject (WebScriptObjectInternal)
+
+// Only called by DOMObject subclass.
+- _init
+{
+    self = [super init];
+
+    if (![self isKindOfClass:[DOMObject class]]) {
+        [NSException raise:NSGenericException format:@"+%@: _init is an internal initializer", [self class]];
+        return nil;
+    }
+
+    _private = [[WebScriptObjectPrivate alloc] init];
+    _private->isCreatedByDOMWrapper = YES;
+    
+    return self;
+}
+
+- (void)_initializeScriptDOMNodeImp
+{
+    assert (_private->isCreatedByDOMWrapper);
+    
+    if (![self isKindOfClass:[DOMNode class]]) {
+        // DOMObject can't map back to a document, and thus an interpreter,
+        // so for now only create wrappers for DOMNodes.
+        NSLog (@"%s:%d:  We don't know how to create ObjC JS wrappers from DOMObjects yet.", __FILE__, __LINE__);
+        return;
+    }
+    
+    // Extract the DOM::NodeImpl from the ObjectiveC wrapper.
+    DOMNode *n = (DOMNode *)self;
+    DOM::NodeImpl *nodeImpl = [n _nodeImpl];
+
+    // Dig up Interpreter and ExecState.
+    KHTMLPart *part = nodeImpl->getDocument()->part();
+    KJS::Interpreter *interpreter = KJSProxy::proxy(part)->interpreter();
+    KJS::ExecState *exec = interpreter->globalExec();
+    
+    // Get (or create) a cached JS object for the DOM node.
+    KJS::ObjectImp *scriptImp = static_cast<KJS::ObjectImp *>(KJS::getDOMNode (exec, DOM::Node (nodeImpl)).imp());
+
+    [self _initializeWithObjectImp:scriptImp root:KWQ(part)->bindingRootObject()];
+}
+
+@end
+
 

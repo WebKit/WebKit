@@ -285,6 +285,8 @@ public:
     void postDidChangeNotification();
     bool isContentEditable() const;
 
+    KJS::Bindings::RootObject *bindingRootObject();
+    
     WebScriptObject *windowScriptObject();
     void bindObject(void *object, QString name);
     
@@ -342,6 +344,8 @@ private:
 
     friend class KHTMLPart;
 
+    KJS::Bindings::RootObject *_bindingRoot;  // The root object used for objects
+                                            // bound outside the context of a plugin.
     QPtrList<KJS::Bindings::RootObject> rootObjects;
     WebScriptObject *_windowScriptObject;
 };

@@ -47,6 +47,8 @@
 #import <xml/dom2_rangeimpl.h>
 #import <xml/dom2_viewsimpl.h>
 
+#import <JavaScriptCore/WebScriptObjectPrivate.h>
+
 #import "DOMHTML.h"
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
@@ -161,7 +163,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (id)_init
 {
-    return [super init];
+    return [super _init];
 }
 
 @end

@@ -176,6 +176,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _windowWidget(NULL)
     , _usesInactiveTextBackgroundColor(false)
     , _showsFirstResponder(true)
+    , _bindingRoot(0)
     , _windowScriptObject(0)
 {
     // Must init the cache before connecting to any signals
@@ -1135,15 +1136,23 @@ bool KWQKHTMLPart::tabsToAllControls() const
         return KWQKHTMLPart::currentEventIsKeyboardOptionTab();
 }
 
+KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
+{
+    if (!_bindingRoot) {
+        _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
+        KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
+        _bindingRoot->setRootObjectImp (win);
+        _bindingRoot->setInterpreter (KJSProxy::proxy(this)->interpreter());
+        addPluginRootObject (_bindingRoot);
+    }
+    return _bindingRoot;
+}
+
 WebScriptObject *KWQKHTMLPart::windowScriptObject()
 {
     if (!_windowScriptObject) {
-        KJS::Bindings::RootObject *root = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
         KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
-        root->setRootObjectImp (win);
-        root->setInterpreter (KJSProxy::proxy(this)->interpreter());
-        addPluginRootObject (root);
-        _windowScriptObject = [[WebScriptObject alloc] _initWithObjectImp:win root:root];
+        _windowScriptObject = [[WebScriptObject alloc] _initWithObjectImp:win root:bindingRootObject()];
     }
 
     return _windowScriptObject;

@@ -42,14 +42,13 @@ using namespace KJS::Bindings;
     if (Interpreter::shouldPrintExceptions()) \
         NSLog (@"%s:%d:  JavaScript exception:  %s\n", __FILE__, __LINE__, exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii());
 
-@interface WebScriptObjectPrivate : NSObject
-{
-    KJS::ObjectImp *imp;
-    const Bindings::RootObject *root;
-}
-@end
-
 @implementation WebScriptObjectPrivate
+- (void)dealloc
+{
+    removeNativeReference (imp);
+    
+    [super dealloc];
+}
 @end
 
 @implementation WebScriptObject
@@ -62,6 +61,14 @@ static void _didExecute(WebScriptObject *obj)
         func (exec, static_cast<KJS::ObjectImp*>(obj->_private->root->rootObjectImp()));
 }
 
+- (void)_initializeWithObjectImp:(KJS::ObjectImp *)imp root:(const Bindings::RootObject *)root
+{
+    _private->imp = imp;
+    _private->root = root;    
+
+    addNativeReference (root, imp);
+}
+
 - _initWithObjectImp:(KJS::ObjectImp *)imp root:(const Bindings::RootObject *)root
 {
     assert (imp != 0);
@@ -70,24 +77,26 @@ static void _didExecute(WebScriptObject *obj)
     self = [super init];
 
     _private = [[WebScriptObjectPrivate alloc] init];
-    _private->imp = imp;
-    _private->root = root;    
 
-    addNativeReference (root, imp);
+    [self _initializeWithObjectImp:imp root:root];
     
     return self;
 }
 
 - (KJS::ObjectImp *)_imp
 {
+    if (!_private->imp && _private->isCreatedByDOMWrapper) {
+        // Associate the WebScriptObject with the JS wrapper for the ObjC DOM
+        // wrapper.  This is done on lazily, on demand.
+        [self _initializeScriptDOMNodeImp];
+    }
     return _private->imp;
 }
 
 - (void)dealloc
 {
-    if (_private)
-        removeNativeReference (_private->imp);
     [_private release];
+        
     [super dealloc];
 }
 
@@ -117,7 +126,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     
     Value v = convertObjcValueToValue(exec, &name, ObjcObjectType);
     Identifier identifier(v.toString(exec));
-    Value func = _private->imp->get (exec, identifier);
+    Value func = [self _imp]->get (exec, identifier);
     Interpreter::unlock();
     if (func.isNull() || func.type() == UndefinedType) {
         // Maybe throw an exception here?
@@ -127,7 +136,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     // Call the function object.    
     Interpreter::lock();
     ObjectImp *funcImp = static_cast<ObjectImp*>(func.imp());
-    Object thisObj = Object(const_cast<ObjectImp*>(_private->imp));
+    Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));
     List argList = listFromNSArray(exec, args);
     Value result = funcImp->call (exec, thisObj, argList);
     Interpreter::unlock();
@@ -148,7 +157,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 - (id)evaluateWebScript:(NSString *)script
 {
     ExecState *exec = _private->root->interpreter()->globalExec();
-    Object thisObj = Object(const_cast<ObjectImp*>(_private->imp));
+    Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));
     Interpreter::lock();
     Value v = convertObjcValueToValue(exec, &script, ObjcObjectType);
     KJS::Value result = _private->root->interpreter()->evaluate(v.toString(exec)).value();
@@ -171,7 +180,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     ExecState *exec = _private->root->interpreter()->globalExec();
     Interpreter::lock();
     Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
-   _private->imp->put (exec, Identifier (v.toString(exec)), (convertObjcValueToValue(exec, &value, ObjcObjectType)));
+    [self _imp]->put (exec, Identifier (v.toString(exec)), (convertObjcValueToValue(exec, &value, ObjcObjectType)));
     Interpreter::unlock();
 
     if (exec->hadException()) {
@@ -186,7 +195,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     ExecState *exec = _private->root->interpreter()->globalExec();
     Interpreter::lock();
     Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
-    Value result = _private->imp->get (exec, Identifier (v.toString(exec)));
+    Value result = [self _imp]->get (exec, Identifier (v.toString(exec)));
     Interpreter::unlock();
     
     if (exec->hadException()) {
@@ -206,7 +215,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     ExecState *exec = _private->root->interpreter()->globalExec();
     Interpreter::lock();
     Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
-    _private->imp->deleteProperty (exec, Identifier (v.toString(exec)));
+    [self _imp]->deleteProperty (exec, Identifier (v.toString(exec)));
     Interpreter::unlock();
 
     if (exec->hadException()) {
@@ -219,7 +228,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 - (NSString *)stringRepresentation
 {
     Interpreter::lock();
-    Object thisObj = Object(const_cast<ObjectImp*>(_private->imp));
+    Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));
     ExecState *exec = _private->root->interpreter()->globalExec();
     
     id result = convertValueToObjcValue(exec, thisObj, ObjcObjectType).objectValue;
@@ -237,7 +246,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 {
     ExecState *exec = _private->root->interpreter()->globalExec();
     Interpreter::lock();
-    Value result = _private->imp->get (exec, (unsigned)index);
+    Value result = [self _imp]->get (exec, (unsigned)index);
     Interpreter::unlock();
 
     if (exec->hadException()) {
@@ -256,7 +265,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 {
     ExecState *exec = _private->root->interpreter()->globalExec();
     Interpreter::lock();
-    _private->imp->put (exec, (unsigned)index, (convertObjcValueToValue(exec, &value, ObjcObjectType)));
+    [self _imp]->put (exec, (unsigned)index, (convertObjcValueToValue(exec, &value, ObjcObjectType)));
     Interpreter::unlock();
 
     if (exec->hadException()) {

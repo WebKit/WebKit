@@ -14,8 +14,20 @@
 
 @interface WebScriptObject (Private)
 + (id)_convertValueToObjcValue:(KJS::Value)value root:(const KJS::Bindings::RootObject *)root;
+- _init;
 - _initWithObjectImp:(KJS::ObjectImp *)imp root:(const KJS::Bindings::RootObject *)root;
+- (void)_initializeWithObjectImp:(KJS::ObjectImp *)imp root:(const KJS::Bindings::RootObject *)root;
+- (void)_initializeScriptDOMNodeImp;
 - (KJS::ObjectImp *)_imp;
 @end
+
+@interface WebScriptObjectPrivate : NSObject
+{
+    KJS::ObjectImp *imp;
+    const KJS::Bindings::RootObject *root;
+    BOOL isCreatedByDOMWrapper;
+}
+@end
+
 
 #endif

@@ -1,3 +1,28 @@
+2004-05-20  Richard Williamson   <rjw@apple.com>
+
+	Implemented WebScriptObject/DOM wrapper voodoo.  DOM wrappers
+	can now be referenced like any other WebScriptObject, meaning
+	you can do JS operations on them.
+
+	All added implementation of finalizeForWebScript.
+
+        Reviewed by Ken.
+
+        * bindings/objc/WebScriptObject.h:
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _initializeWithObjectImp:KJS::root:Bindings::]):
+        (-[WebScriptObject _initWithObjectImp:KJS::root:Bindings::]):
+        (-[WebScriptObject KJS::]):
+        (-[WebScriptObject dealloc]):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::~ObjcInstance):
+
 2004-05-19  Richard Williamson   <rjw@apple.com>
 
 	Removed extraneous tabs that were added (by XCode?).
