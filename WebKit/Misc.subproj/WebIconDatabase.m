@@ -608,7 +608,7 @@ NSSize WebIconLargeSize = {128, 128};
     NSNumber *retainCount = [_private->futureURLToRetainCount objectForKey:URL];
 
     if (!retainCount) {
-        ASSERT_NOT_REACHED();
+        ERROR("The future icon for %@ was released before it was retained.", URL);
         return;
     }
 

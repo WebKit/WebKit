@@ -1,3 +1,12 @@
+2003-11-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3482147>: replace _releaseFutureIconForURL assertion with a log statement
+
+        Reviewed by rjw.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _releaseFutureIconForURL:]):
+
 2003-11-10  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3478765.  Use ICU to access unicode properties.
