@@ -1,5 +1,13 @@
 2002-06-27  Darin Adler  <darin@apple.com>
 
+	- fixed 2973342 -- copied text seems to have an extra blank line between paragraphs
+
+        * khtml/khtml_part.cpp: (KHTMLPart::selectedText):
+	Get rid of code that was adding an extraneous newline at the
+	ends of various types of nodes, including <P>
+
+2002-06-27  Darin Adler  <darin@apple.com>
+
 	Fix Java. My changes this morning broke it.
 
         * khtml/rendering/render_applet.cpp: (RenderApplet::processArguments):

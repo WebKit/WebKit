@@ -2066,7 +2066,11 @@ QString KHTMLPart::selectedText() const
           case ID_H6:
             if (!hasNewLine)
                text += "\n";
+#ifdef APPLE_CHANGES
+            // The extra newline is needed at the start, not the end, of these types of tags.
+#else
             text += "\n";
+#endif
             hasNewLine = true;
             break;
         }
