@@ -26,7 +26,9 @@
 #ifndef QSCROLLVIEW_H_
 #define QSCROLLVIEW_H_
 
-class QScrollView {
+#include "qwidget.h"
+
+class QScrollView : public QWidget {
 	typedef int ScrollBarMode;
 };
 

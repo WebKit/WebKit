@@ -32,8 +32,16 @@ class QByteArray;
 // KApplication needs this
 class DCOPClient {
 public:
+	bool call(const char *remApp, const char *remObj, const char *remFun, const QByteArray &data,
+		QCString& replyType, QByteArray &replyData, bool useEventLoop=false, bool fast=false);
 	bool call(const QCString &remApp, const QCString &remObj, const QCString &remFun, const QByteArray &data,
 		QCString& replyType, QByteArray &replyData, bool useEventLoop=false, bool fast=false);
+
+	bool send(const char *remApp, const char *remObj, const char *remFun, const QByteArray &data, bool fast=false);
+	bool send(const QCString &remApp, const QCString &remObj, const QCString &remFun, const QByteArray &data, 
+		bool fast=false);
+
+
 };
 
 #endif

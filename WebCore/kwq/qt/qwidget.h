@@ -27,6 +27,8 @@
 #define QWIDGET_H_
 
 class QWidget {
+public:
+	int winId() const;
 };
 
 #endif

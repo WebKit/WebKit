@@ -47,6 +47,7 @@ class QString {
 public:
     QString();
     QString(const QChar *, uint);
+    QString(const char *s);
     int toInt() const;
     int toInt(bool *) const;
     bool isNull() const;
@@ -57,6 +58,11 @@ public:
     QString stripWhiteSpace() const;
     bool isEmpty() const;
     int contains(const char *) const;
+
+    QString &append(const char *s);
+    QString &append(const QString &s);
+
+    QCString utf8() const;
 
     static const QString null;
 

@@ -26,4 +26,26 @@
 #ifndef KDEBUG_H_
 #define KDEBUG_H_
 
+#include <qstring.h>
+
+class kdbgstream;
+typedef kdbgstream & (*KDBGFUNC)(kdbgstream &);
+
+class kdbgstream {
+public:
+	kdbgstream &operator<<(const char *string);
+	kdbgstream &operator<<(const QString& string);
+	kdbgstream &operator<<(const QCString& string);
+	kdbgstream &operator<<(KDBGFUNC f);
+};
+
+inline kdbgstream &endl( kdbgstream &s) { s << "\n"; return s; }
+
+kdbgstream kdWarning(int area = 0);
+kdbgstream kdWarning(bool cond, int area = 0);
+kdbgstream kdError(int area = 0);
+kdbgstream kdError(bool cond, int area = 0);
+kdbgstream kdFatal(int area = 0);
+kdbgstream kdFatal(bool cond, int area = 0);
+
 #endif
