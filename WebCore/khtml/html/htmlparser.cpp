@@ -1346,14 +1346,6 @@ void KHTMLParser::startBody()
 
 void KHTMLParser::finished()
 {
-    // Make an HTML element for the case of an otherwise-empty document.
-    // This works around the fact that the RenderRoot doesn't itself do any drawing.
-    // In the long run, it might be better to fix the render tree so that the background
-    // is drawn even without an element below the root, since that will work for the XML case
-    // too, not just the HTML case.
-    if (doc() && !doc()->firstChild())
-        insertNode(new HTMLHtmlElementImpl(document));
-    
     // This ensures that "current" is not left pointing to a node when the document is destroyed.
     freeBlock();
     current = 0;

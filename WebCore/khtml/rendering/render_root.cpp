@@ -199,7 +199,7 @@ void RenderRoot::paintObject(QPainter *p, int _x, int _y,
     kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
     // 1. paint background, borders etc
-    if (paintAction == PaintActionBackground && shouldPaintBackgroundOrBorder() && !isInline())
+    if (paintAction == PaintActionBackground)
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
     // 2. paint contents
@@ -227,6 +227,19 @@ void RenderRoot::paintObject(QPainter *p, int _x, int _y,
 
 }
 
+void RenderRoot::paintBoxDecorations(QPainter *p, int x, int y, int w, int h, int tx, int ty)
+{
+    // For now, this function is only used when we don't have an
+    // HTML object inside us, for plain XML for example. Eventually,
+    // we probably want to remove RenderHtml::paintBoxDecorations,
+    // and do all the work here instead.
+
+    if ((firstChild() && firstChild()->isHtml()) || !view()) {
+        return;
+    }
+
+    p->fillRect(x, y, w, h, view()->palette().active().color(QColorGroup::Base));
+}
 
 void RenderRoot::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {

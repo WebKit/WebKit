@@ -1,3 +1,19 @@
+2003-01-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3150439 -- navigating to a .xml, then away, then back causes display problems
+
+        * khtml/rendering/render_root.h: Add paintBoxDecorations
+        * khtml/rendering/render_root.cpp: (RenderRoot::paintObject):
+        Call paintBoxDecorations all the time. Don't consult shouldPaintBackgroundOrBorder(),
+        and don't waste cycles on !isInline().
+        (RenderRoot::paintBoxDecorations): If we don't have a RenderHtml as our first child,
+        then fill with the background color.
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::finished): Remove code that makes an HTML
+        element for an empty document. We don't need it any more.
+
 2003-01-29  David Hyatt  <hyatt@apple.com>
 
 	Fix for tables.  They weren't initializing their max top/bottom
