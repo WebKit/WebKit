@@ -143,5 +143,9 @@ bool KHTMLSettings::isJavaScriptDebugEnabled() const
 
 QString KHTMLSettings::userStyleSheet() const
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitUserStyleSheetEnabledPreferenceKey"] boolValue])
+        // The user style sheet is enabled.
+	return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitUserStyleSheetLocationPreferenceKey"]);
+
     return QString();
 }

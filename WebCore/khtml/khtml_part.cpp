@@ -91,8 +91,6 @@ using namespace DOM;
 
 #include "khtmlpart_p.h"
 
-#ifndef APPLE_CHANGES
-
 namespace khtml {
     class PartStyleSheetLoader : public CachedObjectClient
     {
@@ -120,6 +118,7 @@ namespace khtml {
     };
 };
 
+#ifndef APPLE_CHANGES
 
 FrameList::Iterator FrameList::find( const QString &name )
 {
@@ -1815,10 +1814,8 @@ QString KHTMLPart::encoding() const
 
 void KHTMLPart::setUserStyleSheet(const KURL &url)
 {
-#ifndef APPLE_CHANGES
   if ( d->m_doc && d->m_doc->docLoader() )
     (void) new khtml::PartStyleSheetLoader(this, url.url(), d->m_doc->docLoader());
-#endif
 }
 
 void KHTMLPart::setUserStyleSheet(const QString &styleSheet)

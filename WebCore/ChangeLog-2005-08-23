@@ -1,3 +1,13 @@
+2002-08-06  David Hyatt  <hyatt@apple.com>
+
+	Enable user stylesheet support.  It works from a fresh start but
+	is not yet completely dynamic.
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setUserStyleSheet):
+        * kwq/KWQKHTMLSettings.mm:
+        (KHTMLSettings::userStyleSheet):
+
 2002-08-06  Darin Adler  <darin@apple.com>
 
 	- fixed 2965321 -- Crash on window close in kthml::Loader::cancelRequests from particular page
