@@ -1,3 +1,36 @@
+2003-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3398622 - Crash when JavaScript changes display style
+
+	This was a problem with one of the many global variables in
+	bidi.cpp, last, having a stale value from the last layout that
+	pointed to a dead node. I fixed this by refactoring the code to
+	put most of the global variables in a struct allocated on the
+	stack, and pass around a reference to the struct. Seems much
+	cleaner (if somewhat wordier) this way. There are still more
+	global variables to kill here.
+	
+        * khtml/rendering/bidi.cpp:
+        (khtml::BidiIterator::BidiIterator):
+        (khtml::BidiStatus::BidiStatus):
+        (khtml::BidiInfo::BidiInfo):
+        (khtml::Bidinext):
+        (khtml::first):
+        (khtml::BidiIterator::increment):
+        (khtml::checkMidpoints):
+        (khtml::appendRunsForObject):
+        (khtml::appendRun):
+        (khtml::embed):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::bidiReorderLine):
+        (khtml::buildCompactRuns):
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::findNextLineBreak):
+        * khtml/rendering/bidi.h:
+        * khtml/rendering/render_block.h:
+
 2003-10-02  David Hyatt  <hyatt@apple.com>
 
 	Work on exposing elements to the Acc API.  This patch gets us to the point where text

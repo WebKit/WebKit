@@ -99,26 +99,8 @@ public:
         BidiRun* nextRun;
     };
 
-    // an iterator which goes through a BidiParagraph
-    struct BidiIterator
-    {
-	void operator ++ ();
-
-	bool atEnd() const;
-
-	const QChar &current() const;
-	QChar::Direction direction() const;
-
-	RenderBlock *par;
-	RenderObject *obj;
-	unsigned int pos;
-    };
-
-    struct BidiStatus {
-	QChar::Direction eor;
-	QChar::Direction lastStrong;
-	QChar::Direction last;
-    };
+    struct BidiIterator;
+    struct BidiState;
 
 };
 
