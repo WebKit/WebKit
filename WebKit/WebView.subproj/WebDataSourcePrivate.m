@@ -536,7 +536,9 @@
     // Bind the URL of the original request and the final URL to the icon URL.
     [iconDB _setIconURL:[iconURL absoluteString] forURL:[[self URL] absoluteString]];
     [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
-    [[_private->controller locationChangeDelegate] receivedPageIcon:nil forDataSource:self];
+
+    NSImage *icon = [iconDB iconForURL:[[self URL] absoluteString] withSize:WebIconSmallSize];
+    [[_private->controller locationChangeDelegate] receivedPageIcon:icon forDataSource:self];
 }
 
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;
