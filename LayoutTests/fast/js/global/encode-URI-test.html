@@ -159,7 +159,7 @@ function test(functionName, parameter, desiredResult)
     var result = call(functionName, parameter);
     if (result != desiredResult) {
         var s = "called " + functionName + " on " + printable(parameter) + " and got " + printable(result) + " instead of " + printable(desiredResult);
-        document.writeln("<p>called " + functionName + " on " + printable(parameter) + " and got " + printable(result) + " instead of " + printable(desiredResult) + "</p>");
+        document.writeln("<p>" + s + "</p>");
         failureCount += 1;
     }
 }
