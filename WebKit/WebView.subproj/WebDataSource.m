@@ -90,15 +90,6 @@
     return [[self webFrame] name];    
 }
 
-// Returns YES if this is the main document.  The main document is the 'top'
-// document, typically either a frameset or a normal HTML document.
-- (BOOL)isMainDocument
-{
-    if (_private->parent == nil)
-        return YES;
-    return NO;
-}
-
 // Returns nil if this data source represents the main document.  Otherwise
 // returns the parent data source.
 - (WebDataSource *)parent 

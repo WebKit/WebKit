@@ -40,30 +40,6 @@ typedef enum {
     WebErrorCannotNotFindApplicationForURL = 10011
 } WebErrorCode;
 
-#define WebErrorDescriptionCannotFindFile NSLocalizedStringFromTable (@"Cannot find file", @"WebError", @"WebErrorCannotFindFile description")
-
-#define WebErrorDescriptionCannotCreateFile NSLocalizedStringFromTable (@"Cannot create file", @"WebError", @"WebErrorCannotCreateFile description")
-
-#define WebErrorDescriptionCannotOpenFile NSLocalizedStringFromTable (@"Cannot open file", @"WebError", @"WebErrorCannotOpenFile description")
-
-#define WebErrorDescriptionCannotReadFile NSLocalizedStringFromTable (@"Cannot read file", @"WebError", @"WebErrorCannotReadFile description")
-
-#define WebErrorDescriptionCannotWriteToFile NSLocalizedStringFromTable (@"Cannot write file", @"WebError", @"WebErrorCannotWriteToFile description")
-
-#define WebErrorDescriptionCannotRemoveFile NSLocalizedStringFromTable (@"Cannot remove file", @"WebError", @"WebErrorCannotRemoveFile description")
-
-#define WebErrorDescriptionCannotFindApplicationForFile NSLocalizedStringFromTable (@"Cannot find application for file", @"WebError", @"WebErrorCannotFindApplicationForFile description")
-
-#define WebErrorDescriptionFinderCannotOpenDirectory NSLocalizedStringFromTable (@"Finder cannot open directory", @"WebError", @"WebErrorFinderCannotOpenDirectory description")
-
-#define WebErrorDescriptionCannotShowDirectory NSLocalizedStringFromTable (@"Cannot show a file directory", @"WebError", @"WebErrorCannotShowDirectory description")
-
-#define WebErrorDescriptionCannotShowMIMEType NSLocalizedStringFromTable (@"Cannot show content with specified mime type", @"WebError", @"WebErrorCannotShowMIMEType description")
-
-#define WebErrorDescriptionCannotShowURL NSLocalizedStringFromTable (@"Cannot show URL", @"WebError", @"WebErrorCannotShowURL description")
-
-#define WebErrorDescriptionCannotFindApplicationForURL NSLocalizedStringFromTable (@"Cannot find application for URL", @"WebError", @"WebErrorCannotNotFindApplicationForURL description")
-
 
 
 

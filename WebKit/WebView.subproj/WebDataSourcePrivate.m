@@ -189,7 +189,7 @@
     if (!_private->mainHandle) {
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
 
-	if ([self isMainDocument]) {
+	if ([self webFrame] == [[self controller] mainFrame]) {
 	    [_private->request setCookiePolicyBaseURL:[self URL]];
 	} else {
 	    [_private->request setCookiePolicyBaseURL:[[[_private->controller mainFrame] dataSource] URL]];
@@ -461,7 +461,7 @@
 {
     ASSERT(!_private->iconLoader);
 
-    if([self isMainDocument] && !_private->mainDocumentError){
+    if([self webFrame] == [[self controller] mainFrame] && !_private->mainDocumentError){
         
         NSURL *dataSourceURL = [self URL];
         WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];

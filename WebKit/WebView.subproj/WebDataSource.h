@@ -67,14 +67,6 @@
 - (id <WebDocumentRepresentation>)representation;
 
 /*!
-    @method isMainDocument
-    @discussion The main document is the 'top'
-    document, typically either a frameset or a normal HTML document.
-    @result Returns YES if this is the main document.
-*/
-- (BOOL)isMainDocument;
-
-/*!
     @method parent
     @result Returns nil if this data source represents the main document.  Otherwise
     returns the parent data source.

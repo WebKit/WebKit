@@ -81,7 +81,7 @@
     
         WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
 
-        if(![[webFrame dataSource] isMainDocument]){
+        if(webFrame != [[webFrame controller] mainFrame]){
             [[self class] addMenuItemWithTitle:NSLocalizedString(@"Open Frame in New Window", @"Open Frame in New Window context menu item") 				                action:@selector(openFrameInNewWindow:)
                                         target:self
                                        toArray:menuItems];

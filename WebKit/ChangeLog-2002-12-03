@@ -1,3 +1,24 @@
+2002-09-25  Richard Williamson   <rjw@apple.com>
+
+        API tweaks.
+        * Misc.subproj/WebKit.h:
+        Added headers.
+        
+        * Misc.subproj/WebKitErrors.h:
+        Removed #defines.
+        
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _loadIcon]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        Removed isMainDocument.
+        
+        Moved errors string #defines here.
+        * WebView.subproj/WebView.m:
+
 2002-09-25  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3060773 -- Wrong title proposed when image link 
