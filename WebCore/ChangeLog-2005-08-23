@@ -1,3 +1,19 @@
+2003-05-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3206695 -- Safari puts all of the mailto form content in email subject line, should put content in body
+
+        The bug was caused by our KURL class not parsing the query out of the mailto URL properly.
+
+        * kwq/KWQKURL.h: Removed parameter from prettyURL, unused in KHTML.
+        * kwq/KWQKURL.mm:
+        (KURL::prettyURL): Removed parameter, unused in KHTML.
+        (KURL::parse): Parse queries even from non-hierarchical URLs. This fixes the bug.
+
+        * WebCore-tests.exp: Updated for parameter removed from prettyURL.
+        * WebCore-combined.exp: Regenerated.
+
 2003-05-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

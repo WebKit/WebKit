@@ -668,7 +668,7 @@ QString KURL::canonicalURL() const
 }
 
 
-QString KURL::prettyURL(int trailing) const
+QString KURL::prettyURL() const
 {
     if (!m_isValid) {
         return urlString;
@@ -694,19 +694,7 @@ QString KURL::prettyURL(int trailing) const
         result += "//" + authority;
     }
 
-    QString path = this->path();
-
-    if (trailing == 1) {
-        if (path.right(1) != "/" && !path.isEmpty()) {
-	    path += "/";
-	}
-    } else if (trailing == -1) {
-        if (path.right(1) == "/" && path.length() > 1) {
-	    path = path.left(path.length()-1);
-	}
-    }
-
-    result += path;
+    result += path();
     result += query();
 
     if (fragmentEndPos != queryEndPos) {
@@ -931,34 +919,21 @@ void KURL::parse(const char *url, const QString *originalString)
     }
 	
     int pathStart = portEnd;
-    int pathEnd;
-    int queryStart;
-    int queryEnd;
-    int fragmentStart;
-    int fragmentEnd;
-
-    if (!hierarchical) {
-	pathEnd = strlen(url);
-	while (url[pathEnd] != '\0' && url[pathEnd] != '#') {
-	    pathEnd++;
-	}
-	queryStart = queryEnd = pathEnd;
-    } else {
-	pathEnd = pathStart;
-	while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
-	    pathEnd++;
-	}
-        
-	queryStart = queryEnd = pathEnd;
-
-	if (url[queryStart] == '?') {
-	    while (url[queryEnd] != '\0' && url[queryEnd] != '#') {
-		queryEnd++;
-	    }
-	}
+    int pathEnd = pathStart;
+    while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
+        pathEnd++;
     }
 
-    fragmentStart = fragmentEnd = queryEnd;
+    int queryStart = pathEnd;
+    int queryEnd = queryStart;
+    if (url[queryStart] == '?') {
+        while (url[queryEnd] != '\0' && url[queryEnd] != '#') {
+            queryEnd++;
+        }
+    }
+
+    int fragmentStart = queryEnd;
+    int fragmentEnd = fragmentStart;
     if (url[fragmentStart] == '#') {
 	fragmentStart++;
 	fragmentEnd = fragmentStart;

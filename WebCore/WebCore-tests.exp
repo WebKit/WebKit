@@ -212,7 +212,7 @@ __ZNK4KURL5queryEv
 __ZNK4KURL7hasPathEv
 __ZNK4KURL7isEmptyEv
 __ZNK4KURL8protocolEv
-__ZNK4KURL9prettyURLEi
+__ZNK4KURL9prettyURLEv
 __ZNK5QChar16isLetterOrNumberEv
 __ZNK5QChar5lowerEv
 __ZNK5QChar5upperEv

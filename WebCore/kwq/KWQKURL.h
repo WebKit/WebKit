@@ -65,7 +65,7 @@ public:
     void setQuery(const QString &, int encoding_hint=0);
     void setPath(const QString &);
 
-    QString prettyURL(int trailing=0) const;
+    QString prettyURL() const;
     
     static QString decode_string(const QString &);
     static QString encode_string(const QString &);
