@@ -81,7 +81,6 @@
     }
     
     [controllerSetName release];
-    [topLevelFrameName release];
 
     [preferences release];
     [settings release];
@@ -259,20 +258,12 @@
 
 - (void)_setTopLevelFrameName:(NSString *)name
 {
-    // It's wrong to name a frame "_blank".
-    if(![name isEqualToString:@"_blank"]){
-        [_private->topLevelFrameName release];
-        _private->topLevelFrameName = [name retain];
-    }
+    [[self mainFrame] _setName:name];
 }
 
 - (WebFrame *)_findFrameInThisWindowNamed: (NSString *)name
 {
-    if ([_private->topLevelFrameName isEqualToString:name]) {
-	return [self mainFrame];
-    } else {
-	return [[self mainFrame] _descendantFrameNamed:name];
-    }
+    return [[self mainFrame] _descendantFrameNamed:name];
 }
 
 - (WebFrame *)_findFrameNamed: (NSString *)name

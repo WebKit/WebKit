@@ -44,7 +44,6 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
     BOOL defersCallbacks;
 
     NSString *controllerSetName;
-    NSString *topLevelFrameName;
 
     WebPreferences *preferences;
     WebCoreSettings *settings;

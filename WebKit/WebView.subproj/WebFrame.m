@@ -46,7 +46,7 @@
     [_private->bridge setWebFrame:self];
     [_private->bridge setName:n];
 
-    [_private setName:n];
+    [self _setName:n];
     
     if (v)
         [self setWebView:v];

@@ -59,16 +59,22 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - init
 {
-    return [self initWithView: nil  controllerSetName: nil];
+    return [self initWithView: nil frameName: nil setName: nil];
 }
 
-- initWithView: (WebView *)view controllerSetName: (NSString *)name;
+- initWithView: (WebView *)view
+{
+    return [self initWithView: view frameName: nil setName: nil];
+}
+
+
+- initWithView: (WebView *)view frameName: (NSString *)frameName setName: (NSString *)setName;
 {
     [super init];
     
     _private = [[WebControllerPrivate alloc] init];
-    _private->mainFrame = [[WebFrame alloc] initWithName: @"_top" webView: view  controller: self];
-    _private->controllerSetName = [name retain];
+    _private->mainFrame = [[WebFrame alloc] initWithName: frameName webView: view  controller: self];
+    _private->controllerSetName = [setName retain];
     if (_private->controllerSetName != nil) {
 	[WebControllerSets addController:self toSetNamed:_private->controllerSetName];
     }

@@ -46,7 +46,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     WebController *webController;
     WebFrame *mainFrame;
     
-    webController  = [[WebController alloc] initWithView: webView controllerSetName: nil];
+    webController  = [[WebController alloc] initWithView: webView];
     mainFrame = [webController mainFrame];
     [mainFrame loadRequest:request];
     </pre>
@@ -94,15 +94,25 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 + (BOOL)canShowFile:(NSString *)path;
 
 /*!
-    @method initWithView:controllerSetName:
+    @method initWithView:
+    @abstract This method is a convenience equivalent to initWithView:view frameName:nil setName:nil
+    @param view The view to use.
+*/
+- initWithView: (WebView *)view;
+
+/*!
+    @method initWithView:frameName:setName:
     @abstract The designated initializer for WebController.
-    @discussion Initialize a WebController with the supplied parameters.  This method
-    will create a main WebFrame with the view.  The frame will be named "_top".
+    @discussion Initialize a WebController with the supplied parameters. This method will 
+    create a main WebFrame with the view. Passing a top level frame name is useful if you
+    handle a targetted frame navigation that would normally open a window in some other 
+    way that still ends up creating a new WebController.
     @param view The main view to be associated with the controller.  May be nil.
-    @param name The name of the controller set to which this controller will be added.  May be nil.
+    @param frameName The name to use for the top level frame. May be nil.
+    @param setName The name of the controller set to which this controller will be added.  May be nil.
     @result Returns an initialized WebController.
 */
-- initWithView: (WebView *)view controllerSetName: (NSString *)name;
+- initWithView: (WebView *)view frameName: (NSString *)frameName setName: (NSString *)name ;
 
 /*!
     @method setWindowOperationsDelegate:

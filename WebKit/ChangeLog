@@ -1,3 +1,32 @@
+2003-03-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	Added the ability to set the top-level frame name via the
+	WebController initializer. Also made [[controller mainFrame]
+	frameName] return the true top-level frame name instead of "_top",
+	since that is already special-cased anywhere it needs to be.
+	
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController init]): Update for change to designated initializer.
+        (-[WebController initWithView:]): New convenience initializer.
+        (-[WebController initWithView:frameName:setName:]): Added ability to set
+	top-level frame name.
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]): Remove topLevelFrameNAme field.
+        (-[WebController _setTopLevelFrameName:]): Actually set it
+	on the top level frame, no point to keeping it here.
+        (-[WebController _findFrameInThisWindowNamed:]): No more need to
+	special-case top-level frame name.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:controller:]): call [self _setName:] instead 
+	of [_private setName:]
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+	(-[WebFrame _setName:]): Don't let the name get set to _blank.
+	
 2003-03-04  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
