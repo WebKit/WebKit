@@ -29,8 +29,10 @@ libkwq_o_SOURCES = \
 	KWQDCOPClient.mm \
 	KWQDateTime.mm \
 	KWQDictImpl.mm \
+	KWQDir.mm \
 	KWQDrawUtil.mm \
 	KWQEvent.mm \
+	KWQFile.mm \
 	KWQFont.mm \
 	KWQFontDatabase.mm \
 	KWQFontInfo.mm \

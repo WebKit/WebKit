@@ -46,7 +46,7 @@ class QRegExp {
 public:
 
     QRegExp();
-    QRegExp(const QString &, bool, bool);
+    QRegExp(const QString &, bool caseSensitive = TRUE, bool glob = FALSE);
     QRegExp(const char *);
     QRegExp(const QRegExp &);    
     ~QRegExp();

@@ -1,3 +1,44 @@
+2002-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+	Replace QDir and QFile with clean-room implementations. Add glob
+	support ot QRegExp reimplementation.
+
+	* src/kwq/KWQDir.mm: (QDir::KWQDirPrivate::KWQDirPrivate),
+	(QDir::KWQDirPrivate::~KWQDirPrivate), (QDir::QDir), (QDir::~QDir),
+	(QDir::absPath), (QDir::absFilePath), (QDir::cdUp), (QDir::exists),
+	(QDir::entryList), (QDir::operator=), (QDir::swap):
+	* src/kwq/KWQFile.mm: (QFile::KWQFilePrivate::KWQFilePrivate),
+	(QFile::KWQFilePrivate::~KWQFilePrivate), (QFile::QFile), (QFile::~QFile),
+	(QFile::exists), (QFile::open), (QFile::close), (QFile::readBlock),
+	(QFile::size):
+	* src/kwq/KWQRegExp.mm: (QRegExp::KWQRegExpPrivate::KWQRegExpPrivate),
+	(RegExpFromGlob), (QRegExp::KWQRegExpPrivate::compile), (QRegExp::QRegExp):
+	* src/kwq/KWQStrList.h:
+	* src/kwq/Makefile.am:
+	* src/kwq/qt/_qdir.h:
+	* src/kwq/qt/_qfile.h:
+	* src/kwq/qt/_qfileinfo.h:
+	* src/kwq/qt/qdir.h:
+	* src/kwq/qt/qfile.h:
+	* src/kwq/qt/qiodevice.h:
+	* src/kwq/qt/qregexp.h:
+
+2002-02-25  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix two significant memory leaks in QList found by our automated
+	leak-checking code.
+
+	* src/kwq/KWQListImpl.mm: (KWQListNode::~KWQListNode),
+	(KWQListImpl::KWQListPrivate::copyList),
+	(KWQListImpl::KWQListPrivate::~KWQListPrivate), (KWQListImpl::sort):
+
+	Fix a tiny bug tweaked by the new regexp code - we need to flush
+	the cache after calling out to QRegExp::match because it might
+	make calls on the string which create a cache. Caught by the
+	regression tests.
+	
+	* src/kwq/KWQString.mm: (QString::replace): 
+	
 2002-02-24  Maciej Stachowiak  <mjs@apple.com>
 
 	Reimplemented QRegExp in terms of POSIX regexp facilities. This

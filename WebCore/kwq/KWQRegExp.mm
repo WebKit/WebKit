@@ -36,30 +36,63 @@ class QRegExp::KWQRegExpPrivate
 {
 public:
     KWQRegExpPrivate();
-    KWQRegExpPrivate(QString pattern);
+    KWQRegExpPrivate(QString pattern, bool caseSensitive, bool glob);
     ~KWQRegExpPrivate();
 
-    void compile();
+    void compile(bool caseSensitive, bool glob);
 
     QString pattern;
     regex_t regex;
+
     uint refCount;
 };
 
 QRegExp::KWQRegExpPrivate::KWQRegExpPrivate() : pattern(QString("")), refCount(0)
 {
-    compile();
+    compile(true, false);
 }
 
-QRegExp::KWQRegExpPrivate::KWQRegExpPrivate(QString p) : pattern(p), refCount(0)
+QRegExp::KWQRegExpPrivate::KWQRegExpPrivate(QString p, bool caseSensitive, bool glob) : pattern(p), refCount(0)
 {
-    compile();
+    compile(caseSensitive, glob);
 }
 
-void QRegExp::KWQRegExpPrivate::compile()
+static QString RegExpFromGlob(QString glob)
 {
-    const char *cpattern = pattern.latin1();
-    regcomp(&regex, cpattern, REG_EXTENDED);
+    QString result = glob;
+
+    // escape regexp metacharacters which are NOT glob metacharacters
+
+    result.replace(QRegExp("\\\\"), "\\\\");
+    result.replace(QRegExp("\\."), "\\.");
+    result.replace(QRegExp("\\+"), "\\+");
+    result.replace(QRegExp("\\$"), "\\$");
+    // FIXME: incorrect for ^ inside bracket group
+    result.replace(QRegExp("\\^"), "\\^");
+
+    // translate glob metacharacters into regexp metacharacters
+    result.replace(QRegExp("\\*"), ".*");
+    result.replace(QRegExp("\\?"), ".");
+   
+    // Require the glob to match the whole string
+    result = "^" + result + "$";
+
+    return result;
+}
+
+void QRegExp::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
+{
+    QString p;
+
+    if (glob) {
+	p = RegExpFromGlob(pattern);
+    } else {
+	p = pattern;
+    }
+
+    const char *cpattern = p.latin1();
+
+    regcomp(&regex, cpattern, REG_EXTENDED | (caseSensitive ? 0 : REG_ICASE));
 }
 
 QRegExp::KWQRegExpPrivate::~KWQRegExpPrivate()
@@ -72,11 +105,11 @@ QRegExp::QRegExp() : d(new QRegExp::KWQRegExpPrivate())
 {
 }
 
-QRegExp::QRegExp(const QString &pattern, bool, bool) : d(new QRegExp::KWQRegExpPrivate(pattern))
+QRegExp::QRegExp(const QString &pattern, bool caseSensitive, bool glob) : d(new QRegExp::KWQRegExpPrivate(pattern, caseSensitive, glob))
 {
 }
 
-QRegExp::QRegExp(const char *cpattern) : d(new QRegExp::KWQRegExpPrivate(cpattern))
+QRegExp::QRegExp(const char *cpattern) : d(new QRegExp::KWQRegExpPrivate(cpattern, true, false))
 {
 }
 

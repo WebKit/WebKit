@@ -56,23 +56,25 @@ public:
     QDir();
     QDir(const QString &);
     QDir(const QDir &);
-    virtual ~QDir();
+    ~QDir();
 
     // member functions --------------------------------------------------------
 
-    virtual QString absPath() const;
-    virtual QString absFilePath( const QString &fileName) const;
-    virtual bool cdUp();
-    virtual bool exists(const QString&) const;
-    virtual QStringList entryList(const QString &nameFilter);
+    QString absPath() const;
+    QString absFilePath( const QString &fileName) const;
+    bool cdUp();
+    bool exists(const QString&) const;
+    QStringList entryList(const QString &nameFilter);
 
     // operators ---------------------------------------------------------------
 
     QDir &operator=(const QDir &);
+ private:
+    void swap(QDir &other);
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+    class KWQDirPrivate;
 
+    KWQDirPrivate *d;
 }; // class QDir ===============================================================
 
 #endif // USING_BORROWED_QDIR

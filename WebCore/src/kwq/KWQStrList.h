@@ -34,39 +34,14 @@
 
 #include <_qstrlist.h>
 
-#else
+#else // !USING_BORROWED_QSTRLIST
 
-#include <qstring.h>
 #include <qlist.h>
 
 // class QStrList ==============================================================
 
-class QStrList : public QList<char> {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-    QStrList();
-    QStrList(const QStrList &);
-    ~QStrList();
-    
-    // member functions --------------------------------------------------------
-
-    // operators ---------------------------------------------------------------
-
-    QStrList &operator=(const QStrList &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QStrList ===========================================================
+typedef QList<char> QStrList;
 
 #endif // USING_BORROWED_QSTRLIST
 
-#endif
+#endif // KWQSTRLIST_H_

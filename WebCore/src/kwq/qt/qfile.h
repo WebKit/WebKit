@@ -36,128 +36,19 @@
 
 #ifdef USING_BORROWED_QFILE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <limits.h>
+#include <_qfile.h>
 
-#if !defined(PATH_MAX)
-#if defined(MAXPATHLEN)
-#define PATH_MAX MAXPATHLEN
-#else
-#define PATH_MAX 1024
-#endif
-#endif
+#else // !USING_BORROWED_QFILE
 
-#undef STATBUF
-#undef STAT
-#undef STAT_REG
-#undef STAT_DIR
-#undef STAT_LNK
-#undef STAT_MASK
-#undef FILENO
-#undef OPEN
-#undef CLOSE
-#undef LSEEK
-#undef READ
-#undef WRITE
-#undef ACCESS
-#undef GETCWD
-#undef CHDIR
-#undef MKDIR
-#undef RMDIR
-#undef OPEN_RDONLY
-#undef OPEN_WRONLY
-#undef OPEN_CREAT
-#undef OPEN_TRUNC
-#undef OPEN_APPEND
-#undef OPEN_TEXT
-#undef OPEN_BINARY
+#include <qstring.h>
+#include <qiodevice.h>
 
-#define STATBUF	struct stat
-#define STATBUF4TSTAT	struct stat
-#define STAT		::stat
-#define FSTAT		::fstat
-#define STAT_REG	S_IFREG
-#define STAT_DIR	S_IFDIR
-#define STAT_MASK	S_IFMT
-#if defined(S_IFLNK)
-# define STAT_LNK	S_IFLNK
-#endif
-#define FILENO		fileno
-#define OPEN		::open
-#define CLOSE		::close
-#define LSEEK		::lseek
-#define READ		::read
-#define WRITE		::write
-#define ACCESS		::access
-#define GETCWD	::getcwd
-#define CHDIR		::chdir
-#define MKDIR		::mkdir
-#define RMDIR		::rmdir
-#define OPEN_RDONLY	O_RDONLY
-#define OPEN_WRONLY	O_WRONLY
-#define OPEN_RDWR	O_RDWR
-#define OPEN_CREAT	O_CREAT
-#define OPEN_TRUNC	O_TRUNC
-#define OPEN_APPEND	O_APPEND
-#if defined(O_TEXT)
-# define OPEN_TEXT	O_TEXT
-# define OPEN_BINARY O_BINARY
-#endif
-
-#define F_OK	0
-
-struct QFileInfoCache
+class QFile 
 {
-    STATBUF st;
-    bool isSymLink;
-};
-
-
-#endif // USING_BORROWED_QFILE
-
-
-#include "_qiodevice.h"
-#include "qstring.h"
-#include "qcstring.h"
-
-
-// class QFile =================================================================
-
-class QFile : public QIODevice {
 public:
-
-    // typedefs ----------------------------------------------------------------
-
-#ifdef USING_BORROWED_QFILE
-    typedef QCString(*EncoderFn)(const QString &);
-    typedef QString(*DecoderFn)(const QCString &);
-#endif
-
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-#ifdef USING_BORROWED_QFILE
-    static QCString encodeName(const QString &);
-    static QString decodeName(const QCString &);
-    static void setEncodingFunction(EncoderFn);
-    static void setDecodingFunction(DecoderFn);
-    static bool exists(const QString &);
-    static bool remove(const QString &fileName);
-#endif
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QFile();
     QFile(const QString &);
     ~QFile();
-
-    // member functions --------------------------------------------------------
 
     bool exists() const;
     bool open(int);
@@ -165,49 +56,7 @@ public:
     int readBlock(char *, uint);
     uint size() const;
 
-
-#ifdef USING_BORROWED_QFILE
-    bool remove();
-
-    QString	name() const;
-    void setName(const QString &);
-
-    bool open(int, FILE *);
-    bool open(int, int);
-    void flush();
-
-    int  at() const;
-    bool at(int);
-    bool atEnd() const;
-
-    int writeBlock(const char *, uint);
-    int writeBlock(const QByteArray &);
-    int readLine(char *, uint);
-    int readLine(QString &, uint);
-
-    int getch();
-    int putch(int);
-    int ungetch(int);
-
-    int  handle() const;
-#endif
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-
-#ifdef USING_BORROWED_QFILE
-protected:
-    QString fn;
-    FILE *fh;
-    int fd;
-    int length;
-    bool ext_f;
-    void *d;
-#endif
-
-
-// private ---------------------------------------------------------------------
+    static bool exists(const QString &path);
 
 private:
     // no copying or assignment
@@ -215,24 +64,12 @@ private:
     QFile(const QFile &);
     QFile &operator=(const QFile &);
 
-#ifdef USING_BORROWED_QFILE
-    void init();
-    QCString ungetchBuffer;
-#endif
+    class KWQFilePrivate;
 
-}; // class QFile ==============================================================
-
-#ifdef USING_BORROWED_QFILE
-
-inline int QFile::at() const
-{
-    return ioIndex;
-}
-
-inline QString QFile::name() const
-{ return fn; }
+    KWQFilePrivate *d;
+};
 
 
 #endif // USING_BORROWED_QFILE
 
-#endif
+#endif // QFILE_H_

@@ -38,6 +38,11 @@
 #ifndef QDIR_H
 #define QDIR_H
 
+#include <config.h>
+
+#ifdef USING_BORROWED_QDIR
+
+
 #ifndef QT_H
 #include "_qstrlist.h"
 #include "_qfileinfo.h"
@@ -230,6 +235,8 @@ struct QDirSortItem {
     QString filename_cache;
     QFileInfo* item;
 };
+
+#endif // USING_BORROWED_QDIR
 
 #endif // QT_NO_DIR
 #endif // QDIR_H
