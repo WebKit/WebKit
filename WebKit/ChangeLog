@@ -1,3 +1,10 @@
+2004-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        * Misc.subproj/WebNSURLExtras.m: (hexDigit): Use capitalized hex, not lowercase, for consistency
+        with similar functions in WebCore and what other web browsers do.
+
 2004-04-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -32,7 +32,7 @@ static char hexDigit(int i)
     }
     int h = i;
     if (h >= 10) {
-        h = h - 10 + 'a'; 
+        h = h - 10 + 'A'; 
     }
     else {
         h += '0';
