@@ -1,3 +1,12 @@
+2003-08-13  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3347134>: After first successful POST in Flash, Safari does not repeat POST and gives cached reply
+
+        Reviewed by kocienda.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]): call [request setCachePolicy:NSURLRequestReloadIgnoringCacheData]
+
 2003-08-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

@@ -1417,7 +1417,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         }
     }
 
+    // Plug-ins expect to receive uncached data when doing a POST (3347134).
+    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     [request setHTTPBody:postData];
+    
     return [self loadRequest:request inTarget:target withNotifyData:notifyData];
 }
 
