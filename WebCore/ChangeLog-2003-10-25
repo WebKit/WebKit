@@ -1,3 +1,13 @@
+2003-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3454444 -- contents of mailto form shows up in Mail title instead of body (IE sends mail directly)
+
+        * kwq/KWQKURL.mm: (KURL::parse): Changed non-hierarchical code to consider everything
+        after a question mark as a query, just the way the hierarchical code does. This makes
+        the code that constructs the mailto URL work properly.
+
 2003-10-18  David Hyatt  <hyatt@apple.com>
 
 	Fix the intrinsic minmax width computation for blocks and XUL boxes to actually check fixed min/max CSS widths.

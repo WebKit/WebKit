@@ -1047,11 +1047,16 @@ void KURL::parse(const char *url, const QString *originalString)
     int fragmentEnd;
 
     if (!hierarchical) {
-        while (url[pathEnd] != '\0') {
+        while (url[pathEnd] != '\0' && url[pathEnd] != '?') {
             pathEnd++;
         }
     	queryStart = queryEnd = pathEnd;
-    	fragmentStart = fragmentEnd = pathEnd;
+
+        while (url[queryEnd] != '\0') {
+            queryEnd++;
+        }
+
+    	fragmentStart = fragmentEnd = queryEnd;
     }
     else {
         while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
