@@ -23,8 +23,11 @@
     [name autorelease];
     [view autorelease];
     [dataSource autorelease];
+    [provisionalDataSource autorelease];
     [errors release];
     [mainDocumentError release];
+    if (renderFramePart)
+        ((khtml::RenderPart *)renderFramePart)->deref();
     [super dealloc];
 }
 
@@ -70,6 +73,10 @@
 - (void *)renderFramePart { return renderFramePart; }
 - (void)setRenderFramePart: (void *)p 
 {
+    if (p)
+        ((khtml::RenderPart *)p)->ref();
+    if (renderFramePart)
+        ((khtml::RenderPart *)renderFramePart)->deref();
     renderFramePart = p;
 }
 
