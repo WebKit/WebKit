@@ -7,10 +7,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WebController.h>
-
+@class WebError;
 @class WebFrame;
 @class WebResourceHandle;
+@class WebContentPolicy;
 @class WebController;
 @class WebDataSourcePrivate;
 @class WebResourceRequest;

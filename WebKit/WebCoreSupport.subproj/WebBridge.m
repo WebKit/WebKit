@@ -14,6 +14,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebLoadProgress.h>
+#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>

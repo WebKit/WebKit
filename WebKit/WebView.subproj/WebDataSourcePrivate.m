@@ -8,6 +8,7 @@
 
 #import <WebKit/WebDataSourcePrivate.h>
 
+#import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadHandler.h>
 #import <WebKit/WebException.h>

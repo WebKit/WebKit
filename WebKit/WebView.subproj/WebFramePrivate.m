@@ -9,6 +9,7 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>

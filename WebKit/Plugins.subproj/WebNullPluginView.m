@@ -7,6 +7,7 @@
 
 #import <WebKit/WebView.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebNSViewExtras.h>
 
 #import <WebFoundation/WebNSURLExtras.h>

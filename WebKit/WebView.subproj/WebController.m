@@ -247,31 +247,6 @@ NSString * WebElementFrameKey = @"WebElementFrame";
 }
 
 
-+ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)URL
-{
-    if([WebResourceHandle canInitWithURL:URL]){
-        return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyUseContentPolicy];
-    }else{
-        return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyOpenExternally];
-    }
-}
-
-- (void)stopAnimatedImages
-{
-}
-
-- (void)startAnimatedImages
-{
-}
-
-- (void)stopAnimatedImageLooping
-{
-}
-
-- (void)startAnimatedImageLooping
-{
-}
-
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
     if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType]){

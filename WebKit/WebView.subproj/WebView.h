@@ -6,10 +6,6 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import <Foundation/Foundation.h>
-
-#import <WebKit/WebLocationChangeDelegate.h>
-#import <WebKit/WebControllerPolicyDelegate.h>
 
 @class WebBackForwardList;
 @class WebController;
@@ -22,9 +18,11 @@
 @class WebResourceHandle;
 @class WebView;
 
-@protocol WebWindowOperationsDelegate;
-@protocol WebResourceProgressDelegate;
 @protocol WebContextMenuDelegate;
+@protocol WebControllerPolicyDelegate;
+@protocol WebLocationChangeDelegate;
+@protocol WebResourceProgressDelegate;
+@protocol WebWindowOperationsDelegate;
 
 // These strings are keys into the element dictionary provided in
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebControllerPolicyDelegate's clickPolicyForElement.
@@ -37,8 +35,46 @@ extern NSString *WebElementFrameKey;
 
 /*!
     @class WebController
-    WebController manages the interaction between WebViews and WebDataSources.
-    WebView and WebDataSource cannot function without a controller.  
+    WebController manages the interaction between WebViews and WebDataSources.  Modification
+    of the policies and behavior of the WebKit is largely managed by WebControllers and their
+    delegates.
+    
+    <p>
+    Typical usage:
+    </p>
+    <pre>
+    WebController *webController;
+    WebDataSource *dataSource;
+    WebFrame *mainFrame;
+    
+    webController  = [[WebController alloc] initWithView: webView provisionalDataSource: nil];
+    dataSource = [[[WebDataSource alloc] initWithURL:url] autorelease];
+    mainFrame = [webController mainFrame];
+    
+    if([mainFrame setProvisionalDataSource: dataSource]){
+        [mainFrame startLoading];
+    }
+    </pre>
+    
+    WebControllers have the following delegates:  WebWindowOperationsDelegate,
+    WebResourceProgressDelegate, WebContextMenuDelegate, WebLocationChangeDelegate,
+    and WebControllerPolicyDelegate.
+    
+    WebKit depends on the WebController's WebWindowOperationsDelegate for all window
+    related management, including opening new windows and controlling the user interface
+    elements in those windows.
+    
+    WebResourceProgressDelegate is used to monitor the progress of resources as they are
+    loaded.  This delegate may be used to present users with a progress monitor.
+    
+    WebController's WebContextMenuDelegate can customize the context menus that appear
+    over content managed by the WebKit.
+    
+    The WebLocationChangeDelegate receives messages when the URL in a WebFrame is
+    changed.
+    
+    WebController's WebControllerPolicyDelegate can make determinations about how
+    content should be handled, based on the resource's URL and MIME type.
 */
 @interface WebController : NSObject
 {
@@ -47,202 +83,220 @@ extern NSString *WebElementFrameKey;
 }
 
 /*!
-    @method 
-*/    
-+ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)URL;
-
-/*!
     @method canShowMIMEType:
-    @param MIMEType
+    @abstract Checks if the WebKit can show content of a certain MIME type.
+    @param MIMEType The MIME type to check.
+    @result YES if the WebKit can show content with MIMEtype.
 */    
 + (BOOL)canShowMIMEType:(NSString *)MIMEType;
 
 /*!
     @method canShowFile:
-    @param path
+    @abstract Checks if the WebKit can show the content of the file at the specified path.
+    @param path The path of the file to check
+    @result YES if the WebKit can show the content of the file at the specified path.
 */    
 + (BOOL)canShowFile:(NSString *)path;
 
 /*! 
     @method init
     @abstract Calls designated initializer with nil arguments.
+    @result returns an initialized WebController.
 */
 - init;
 
 /*!
     @method initWithView:provisionalDataSource:controllerSetName:
-    @abstract Designated initializer.
-    @param view
-    @param dataSource
-    @param name
+    @abstract The designated initializer for WebController.
+    @discussion Initialize a WebController with the supplied parameters.  This method
+    will create a main WebFrame with the view and datasource.  The frame will be
+    named "_top".
+    @param view The main view to be associated with the controller.  May be nil.
+    @param dataSource  The main datasource to be associated with the controller.  May be nil.
+    @param name The name of the controller set to which this controller will be added.  May be nil.
+    @result Returns an initialized WebController.
 */
 - initWithView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource controllerSetName: (NSString *)name;
 
 /*!
     @method setWindowOperationsDelegate:
-    @param delegate
+    @abstract Set the controller's WebWindowOperationsDelegate.
+    @param delegate The WebWindowOperationsDelegate to set as the delegate.
 */    
 - (void)setWindowOperationsDelegate: (id<WebWindowOperationsDelegate>)delegate;
 
 /*!
     @method windowOperationsDelegate
+    @result Return the controller's WebWindowOperationsDelegate.
 */
 - (id<WebWindowOperationsDelegate>)windowOperationsDelegate;
 
 /*!
     @method setResourceProgressDelegate:
-    @param delegate
+    @abstract Set the controller's WebResourceProgressDelegate.
+    @param delegate The WebResourceProgressDelegate to set as the delegate.
 */
 - (void)setResourceProgressDelegate: (id<WebResourceProgressDelegate>)delegate;
 
 /*!
     @method resourceProgressDelegate
+    @result Return the controller's WebResourceProgressDelegate.
 */    
 - (id<WebResourceProgressDelegate>)resourceProgressDelegate;
 
 /*!
     @method setDownloadProgressDelegate:
-    @param delegate
+    @abstract Set the controller's WebResourceProgressDelegate download delegate.
+    @param delegate The WebResourceProgressDelegate to set as the download delegate.
 */    
 - (void)setDownloadProgressDelegate: (id<WebResourceProgressDelegate>)delegate;
 
 /*!
     @method downloadProgressDelegate
+    @result Return the controller's WebResourceProgressDelegate download delegate.
 */    
 - (id<WebResourceProgressDelegate>)downloadProgressDelegate;
 
 /*!
     @method setContextMenuDelegate:
-    @param delegate
+    @abstract Set the controller's WebContextMenuDelegate download delegate.
+    @param delegate The WebContextMenuDelegate to set as the download delegate.
 */    
 - (void)setContextMenuDelegate: (id<WebContextMenuDelegate>)delegate;
 
 /*!
     @method contextMenuDelegate
+    @result Return the controller's WebContextMenuDelegate.
 */    
 - (id<WebContextMenuDelegate>)contextMenuDelegate;
 
 /*!
     @method setLocationChangeDelegate:
-    @param delegate
+    @abstract Set the controller's WebLocationChangeDelegate delegate.
+    @param delegate The WebLocationChangeDelegate to set as the delegate.
 */    
 - (void)setLocationChangeDelegate:(id <WebLocationChangeDelegate>)delegate;
 
 /*!
     @method locationChangeDelegate
+    @result Return the controller's WebLocationChangeDelegate.
 */    
 - (id <WebLocationChangeDelegate>)locationChangeDelegate;
 
 /*!
     @method setPolicyDelegate:
-    @param delegate
+    @abstract Set the controller's WebControllerPolicyDelegate delegate.
+    @param delegate The WebControllerPolicyDelegate to set as the delegate.
 */    
 - (void)setPolicyDelegate: (id<WebControllerPolicyDelegate>)delegate;
 
 /*!
     @method policyDelegate
+    @result Return the controller's WebControllerPolicyDelegate.
 */    
 - (id<WebControllerPolicyDelegate>)policyDelegate;
 
 /*!
     @method frameNamed:
-    Look for a frame named name, recursively.
-    @param name
+    @abstract Look for a frame named name, recursively from the main frame.
+    @param name The name of the frame to find.
+    @result Returns the frame with the supplied name, or nil if not found.
 */    
 - (WebFrame *)frameNamed: (NSString *)name;
 
 /*!
     @method mainFrame
-    Return the top level frame.  Note that even document that are not framesets will have a
+    @abstract Return the top level frame.  
+    @discussion Note that even document that are not framesets will have a
     mainFrame.
+    @result The main frame.
 */    
 - (WebFrame *)mainFrame;
 
 /*!
     @method frameForDataSource:
-    Return the frame associated with the data source.  Traverses the
-    frame tree to find the data source.
-    @param dataSource
+    @abstract Return the frame associated with the data source.  
+    @disucssion Traverses the frame tree to find the frame associated
+    with a datasource.
+    @param datasource The datasource to  match against each frame.
+    @result The frame that has the associated datasource.
 */    
 - (WebFrame *)frameForDataSource: (WebDataSource *)dataSource;
 
 /*!
     @method frameForView:
-    Return the frame associated with the view.  Traverses the
-    frame tree to find the view. 
-    @param aView
+    @abstract Return the frame associated with the view.  
+    @discussion Traverses the frame tree to find the view. 
+    @param aView The view to match against each frame.
+    @result The frame that has the associated view.
 */    
 - (WebFrame *)frameForView: (WebView *)aView;
 
 /*!
-    @method stopAnimatedImages
-*/    
-- (void)stopAnimatedImages;
-
-/*!
-    @method startAnimatedImages
-*/    
-- (void)startAnimatedImages;
-
-/*!
-    @method stopAnimatedImageLooping
-*/    
-- (void)stopAnimatedImageLooping;
-
-/*!
-    @method startAnimatedImageLooping
-*/    
-- (void)startAnimatedImageLooping;
-
-/*!
     @method backForwardList
+    @result The backforward list for this controller.
 */    
 - (WebBackForwardList *)backForwardList;
 
 /*!
     @method setUseBackForwardList:
+    @abstract Enable or disable the use of a backforward list for this controller.
     @param flag turns use of the back forward list on or off
 */    
 - (void)setUseBackForwardList: (BOOL)flag;
 
 /*!
     @method useBackForwardList
+    @result Returns YES if a backforward list is being used by this controller, NO otherwise.
 */    
 - (BOOL)useBackForwardList;
 
 /*!
     @method goBack
+    @abstract Go back to the last URL in the backforward list.
+    @result Returns YES if able to go back in the backforward list, NO otherwise.
 */    
 - (BOOL)goBack;
 
 /*!
     @method goForward
+    @abstract Go forward to the next URL in the backforward list.
+    @result Returns YES if able to go forward in the backforward list, NO otherwise.
 */    
 - (BOOL)goForward;
 
 /*!
     @method setTextSizeMultiplier:
-    @param multiplier
+    @abstract Change the size of the text rendering in views managed by this controller.
+    @param multiplier A fractional percentage value, 1.0 is 100%.
 */    
-- (void)setTextSizeMultiplier:(float)multiplier; // 1.0 is normal size
+- (void)setTextSizeMultiplier:(float)multiplier;
 
 /*!
     @method textSizeMultiplier
+    @result Returns the text size multipler.
 */    
 - (float)textSizeMultiplier;
 
 /*!
     @method setApplicationNameForUserAgent:
-    Set the application name. This name will be used in user-agent strings
+    @abstract Set the application name. 
+    @discussion This name will be used in user-agent strings
     that are chosen for best results in rendering web pages.
     @param applicationName the application name
 */
 - (void)setApplicationNameForUserAgent:(NSString *)applicationName;
+
+/*!
+    @method applicationNameForUserAgent
+    @result Returns the name of the application as used in the user-agent string.
+*/
 - (NSString *)applicationNameForUserAgent;
 
 /*!
     @method setUserAgent:
-    Set the user agent explicitly. Setting the user-agent string to nil means
+    @abstract Set the user agent. 
+    @discussion Setting the user-agent string to nil means
     that WebKit should construct the best possible user-agent string for each URL
     for best results rendering web pages. Setting it to any string means
     that WebKit should use that user-agent string for all purposes until it is set
@@ -250,18 +304,26 @@ extern NSString *WebElementFrameKey;
     @param userAgentString the user agent description
 */
 - (void)setUserAgent:(NSString *)userAgentString;
+
+/*!
+    @method userAgent
+    @result userAgent Returns the userAgent string.
+*/
 - (NSString *)userAgent;
 
 /*!
     @method userAgentForURL:
     @abstract Get the appropriate user-agent string for a particular URL.
-    @param URL
+    @param URL Get the appropriate user-agent string for the URL.
+    @result Returns the user-agent string for the supplied URL.
 */
 - (NSString *)userAgentForURL:(NSURL *)URL;
 
 /*!
     @method supportsTextEncoding
     @abstract Find out if the current web page supports text encodings.
+    @result Returns YES if the document view of the current web page can
+    support different text encodings.
 */
 - (BOOL)supportsTextEncoding;
 
@@ -277,7 +339,14 @@ extern NSString *WebElementFrameKey;
 - (void)setCustomTextEncoding:(CFStringEncoding)encoding;
 
 /*!
+    @method customTextEncoding
+    @result Returns the custom text encoding.
+*/
+- (CFStringEncoding)customTextEncoding;
+
+/*!
     @method resetTextEncoding
+    @abstract Remove any custom encodings that have been applied and use the default encoding.
 */
 - (void)resetTextEncoding;
 
@@ -285,12 +354,8 @@ extern NSString *WebElementFrameKey;
     @method hasCustomTextEncoding
     @abstract Determine whether or not a custom text encoding is in use.
     @discussion It's an error to call customTextEncoding if hasCustomTextEncoding is NO.
+    @reselt Returns YES if a custom encoding has been set, NO otherwise.
 */
 - (BOOL)hasCustomTextEncoding;
-
-/*!
-    @method customTextEncoding
-*/
-- (CFStringEncoding)customTextEncoding;
 
 @end

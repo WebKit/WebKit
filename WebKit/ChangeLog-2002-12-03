@@ -1,3 +1,23 @@
+2002-09-24  Richard Williamson   <rjw@apple.com>
+
+        Documentation changes.  Removal of imports from
+        some headers required modification of .m.
+        
+        * Plugins.subproj/WebNullPluginView.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (+[WebDefaultPolicyDelegate defaultURLPolicyForURL:]):
+        (-[WebDefaultPolicyDelegate URLPolicyForURL:inFrame:]):
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+
 2002-09-24  Chris Blumenberg  <cblu@apple.com>
 
 	Renamed element info keys to WebElement* instead of WebContextMenuElement*

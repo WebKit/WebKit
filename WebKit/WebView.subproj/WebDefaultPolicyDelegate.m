@@ -2,12 +2,25 @@
         WebDefaultPolicyDelegate.m
 	Copyright 2002, Apple Computer, Inc.
 */
+#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebFrame.h>
+#import <WebFoundation/WebResourceHandle.h>
 
 
 @implementation WebDefaultPolicyDelegate
+
++ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)URL
+{
+    if([WebResourceHandle canInitWithURL:URL]){
+        return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyUseContentPolicy];
+    }else{
+        return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyOpenExternally];
+    }
+}
+
 
 - initWithWebController: (WebController *)wc
 {
@@ -18,7 +31,7 @@
 
 - (WebURLPolicy *)URLPolicyForURL:(NSURL *)URL inFrame:(WebFrame *)frame
 {
-    return [WebController defaultURLPolicyForURL:URL];
+    return [WebDefaultPolicyDelegate defaultURLPolicyForURL:URL];
 }
 
 - (WebFileURLPolicy *)fileURLPolicyForMIMEType:(NSString *)type inFrame:(WebFrame *)frame isDirectory:(BOOL)isDirectory

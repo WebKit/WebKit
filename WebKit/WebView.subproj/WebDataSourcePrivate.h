@@ -9,11 +9,13 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebBridge.h>
 
+@class WebContentPolicy;
 @class WebIconLoader;
+@class WebMainResourceClient;
 @class WebResourceHandle;
 @class WebResourceRequest;
-@class WebMainResourceClient;
 @class WebSubresourceClient;
+
 @protocol WebDocumentRepresentation;
 
 @interface WebDataSourcePrivate : NSObject

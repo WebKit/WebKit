@@ -15,6 +15,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
