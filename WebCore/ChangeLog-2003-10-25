@@ -1,3 +1,13 @@
+2003-10-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for a small-caps rendering error when used in conjunction with ::first-line.  Always update
+	the Font variable even when QFonts are the same, since small-caps is not stored in QFonts.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject):
+
 2003-10-13  Richard Williamson (Home0  <rjw@apple.com>
 
 	Updated layout tests actuals to reflect implementation of small-caps style.

@@ -654,10 +654,10 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 
             RenderStyle* _style = pseudoStyle && s->m_firstLine ? pseudoStyle : style();
 
-            if(_style->font() != p->font()) {
+            if (_style->font() != p->font())
                 p->setFont(_style->font());
-		font = &_style->htmlFont();
-	    }
+
+            font = &_style->htmlFont(); // Always update, since smallCaps is not stored in the QFont.
 
 #if APPLE_CHANGES
             if (drawText) {
