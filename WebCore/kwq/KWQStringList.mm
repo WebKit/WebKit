@@ -84,10 +84,10 @@ QString QStringList::pop_front()
     return front;
 }
 
-NSArray *QStringList::getNSArray()
+NSArray *QStringList::getNSArray() const
 {
     NSMutableArray *array = [NSMutableArray array];
-    for (QStringList::Iterator it = begin(); it != end(); ++it) {
+    for (ConstIterator it = begin(); it != end(); ++it) {
         [array addObject:(*it).getNSString()];
     }
     return array;

@@ -1,3 +1,16 @@
+2004-09-20  Chris Blumenberg  <cblu@apple.com>
+
+	Changes to implement renamed bridge methods.
+
+        Reviewed by darin.
+
+        * ChangeLog:
+        * DOM.subproj/WebDOMOperations.m:
+        (-[DOMDocument URLWithAttributeString:]): call renamed bridge method
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:]): take 2 parameter arrays rather than 1 which will have to be parsed
+        (-[WebBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:]): ditto
+
 2004-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

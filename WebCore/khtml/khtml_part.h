@@ -1243,7 +1243,7 @@ private:
   QVariant executeScheduledScript();
 
   bool requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
-                     const QStringList &args = QStringList(), bool isIFrame = false );
+                     const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList(), bool isIFrame = false );
 
   /**
    * @internal returns a name for a frame without a name.
@@ -1255,7 +1255,7 @@ private:
   QString requestFrameName();
 
   bool requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
-                      const QStringList &args = QStringList() );
+                      const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList()  );
 
   bool requestObject( khtml::ChildFrame *child, const KURL &url, const KParts::URLArgs &args = KParts::URLArgs() );
 

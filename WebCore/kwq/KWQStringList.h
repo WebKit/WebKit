@@ -44,7 +44,7 @@ public:
     
     QString pop_front();
     
-    NSArray *getNSArray();
+    NSArray *getNSArray() const;
 };
 
 #endif

@@ -48,6 +48,7 @@
 #include <kglobal.h>
 #include <qtimer.h>
 #include <qpainter.h>
+#include "qdict.h"
 
 using namespace khtml;
 using namespace DOM;
@@ -678,7 +679,8 @@ void RenderPartObject::updateWidget()
 {
   QString url;
   QString serviceType;
-  QStringList params;
+  QStringList paramNames;
+  QStringList paramValues;
   KHTMLPart *part = m_view->part();
 
   setNeedsLayoutAndMinMaxRecalc();
@@ -722,9 +724,13 @@ void RenderPartObject::updateWidget()
           serviceType = o->serviceType;
       }
       
-      // Then try the PARAM tags for the URL and type attributes.
+      QDict<bool> uniqueParamNames(5, false);
+      
+      // Scan the PARAM children.
+      // Get the URL and type from the params if we don't already have them.
+      // Get the attributes from the params if there is no EMBED tag.
       NodeImpl *child = o->firstChild();
-      while (child && (url.isEmpty() || serviceType.isEmpty())) {
+      while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
           if (child->id() == ID_PARAM) {
               HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
               QString name = p->name().lower();
@@ -734,26 +740,44 @@ void RenderPartObject::updateWidget()
               if (serviceType.isEmpty() && name == "type") {
                   serviceType = p->value();
               }
-              
+              if (!embed) {
+                  bool dummyValue = true;
+                  uniqueParamNames.insert(p->name(), &dummyValue);
+                  paramNames.append(p->name());
+                  paramValues.append(p->value());
+              }
           }
           child = child->nextSibling();
       }
       
-      // Lastly try to map a specific CLASSID to a type.
+      // Turn the attributes of either the EMBED tag or OBJECT tag into arrays, but don't override PARAM values.
+      NamedAttrMapImpl* attributes = embedOrObject->attributes();
+      if (attributes) {
+          for (unsigned long i = 0; i < attributes->length(); ++i) {
+              AttributeImpl* it = attributes->attributeItem(i);
+              QString name = o->getDocument()->attrName(it->id()).string();
+              if (embed || uniqueParamNames.find(name) == 0) {
+                  paramNames.append(name);
+                  paramValues.append(it->value().string());
+              }
+          }
+      }
+      
+      // If we still don't have a type, try to map from a specific CLASSID to a type.
       if (serviceType.isEmpty() && !o->classId.isEmpty()) {
+          // It is ActiveX, but the nsplugin system handling
+          // should also work, that's why we don't override the
+          // serviceType with application/x-activex-handler
+          // but let the KTrader in khtmlpart::createPart() detect
+          // the user's preference: launch with activex viewer or
+          // with nspluginviewer (Niko)          
           if (o->classId.contains("D27CDB6E-AE6D-11cf-96B8-444553540000")) {
-              // It is ActiveX, but the nsplugin system handling
-              // should also work, that's why we don't override the
-              // serviceType with application/x-activex-handler
-              // but let the KTrader in khtmlpart::createPart() detect
-              // the user's preference: launch with activex viewer or
-              // with nspluginviewer (Niko)
               serviceType = "application/x-shockwave-flash";
-          } else if(o->classId.contains("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")) {
+          } else if (o->classId.contains("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")) {
               serviceType = "audio/x-pn-realaudio-plugin";
-          } else if(o->classId.contains("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")) {
+          } else if (o->classId.contains("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")) {
               serviceType = "video/quicktime";
-          } else if(o->classId.contains("166B1BCA-3F9C-11CF-8075-444553540000")) {
+          } else if (o->classId.contains("166B1BCA-3F9C-11CF-8075-444553540000")) {
               serviceType = "application/x-director";
           } else {
               // We have a clsid, means this is activex (Niko)
@@ -773,20 +797,13 @@ void RenderPartObject::updateWidget()
       if (!url.isEmpty() && url == part->baseURL()) {
           return;
       }
-      
-      // Turn the attributes of either the EMBED tag or OBJECT tag into an array.
-      NamedAttrMapImpl* attributes = embedOrObject->attributes();
-      if (attributes) {
-          for (unsigned long i = 0; i < attributes->length(); ++i) {
-              AttributeImpl* it = attributes->attributeItem(i);
-              params.append(o->getDocument()->attrName(it->id()).string() + "=\"" + it->value().string() + "\"");
-          }
-      }
-      
+            
+#if !APPLE_CHANGES      
       params.append( QString::fromLatin1("__KHTML__CLASSID=\"%1\"").arg( o->classId ) );
       params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(ATTR_CODEBASE).string() ) );
-      
-      part->requestObject( this, url, serviceType, params );
+#endif
+
+      part->requestObject( this, url, serviceType, paramNames, paramValues );
   } else if ( element()->id() == ID_EMBED ) {
 
       HTMLEmbedElementImpl *o = static_cast<HTMLEmbedElementImpl *>(element());
@@ -808,10 +825,11 @@ void RenderPartObject::updateWidget()
       if (a) {
           for (unsigned long i = 0; i < a->length(); ++i) {
               AttributeImpl* it = a->attributeItem(i);
-              params.append(o->getDocument()->attrName(it->id()).string() + "=\"" + it->value().string() + "\"");
+              paramNames.append(o->getDocument()->attrName(it->id()).string());
+              paramValues.append(it->value().string());
           }
       }
-      part->requestObject( this, url, serviceType, params );
+      part->requestObject( this, url, serviceType, paramNames, paramValues );
   } else {
       assert(element()->id() == ID_IFRAME);
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());
@@ -823,7 +841,7 @@ void RenderPartObject::updateWidget()
           return;
       }
       KHTMLView *v = static_cast<KHTMLView *>(m_view);
-      bool requestSucceeded = v->part()->requestFrame( this, url, o->name.string(), QStringList(), true );
+      bool requestSucceeded = v->part()->requestFrame( this, url, o->name.string(), QStringList(), QStringList(), true );
       if (requestSucceeded && url == "about:blank") {
 	  KHTMLPart *newPart = v->part()->findFrame( o->name.string() );
 	  if (newPart && newPart->xmlDocImpl()) {

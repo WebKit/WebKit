@@ -1,3 +1,30 @@
+2004-09-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3429921> obey PARAM tags inside of OBJECT tags when necessary
+	<rdar://problem/3515685> Object tag in Java 1.4.1 / Safari doesn't recognize params
+
+        Reviewed by darin.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::requestFrame): take 2 parameter arrays rather than 1 which will have to be parsed
+        (KHTMLPart::requestObject): ditto
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget): use PARAM tags when there is no EMBED specified
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart): call renamed bridge method
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget): ditto
+        * kwq/KWQStringList.h:
+        * kwq/KWQStringList.mm:
+        (QStringList::getNSArray): return a const array
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge URLWithAttributeString:]): renamed to match API
+
 2004-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

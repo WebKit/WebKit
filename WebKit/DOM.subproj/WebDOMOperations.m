@@ -70,7 +70,7 @@
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    return [[self _bridge] URLWithRelativeString:string];
+    return [[self _bridge] URLWithAttributeString:string];
 }
 
 @end

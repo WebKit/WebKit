@@ -753,16 +753,11 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
 
     BOOL needFrame = [_bridge frameRequiredForMIMEType:mimeType.getNSString() URL:url.getNSURL()];
     if (child.m_type == ChildFrame::Object && !needFrame) {
-        NSMutableArray *attributesArray = [NSMutableArray arrayWithCapacity:child.m_params.count()];
-        for (uint i = 0; i < child.m_params.count(); i++) {
-            [attributesArray addObject:child.m_params[i].getNSString()];
-        }
-        
         KWQPluginPart *newPart = new KWQPluginPart;
         newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:url.getNSURL()
-                                                          attributes:attributesArray
-                                                             baseURL:KURL(d->m_doc->baseURL()).getNSURL()
-                                                            MIMEType:child.m_args.serviceType.getNSString()]));
+                                                      attributeNames:child.m_paramNames.getNSArray()
+                                                     attributeValues:child.m_paramValues.getNSArray()
+                                                             MIMEType:child.m_args.serviceType.getNSString()]));
         part = newPart;
     } else {
         LOG(Frames, "name %s", child.m_name.ascii());

@@ -211,7 +211,7 @@ typedef enum {
 - (NSString *)renderTreeAsExternalRepresentation;
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
-- (NSURL *)URLWithRelativeString:(NSString *)string;
+- (NSURL *)URLWithAttributeString:(NSString *)string;
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form;
 - (DOMElement *)elementForView:(NSView *)view;
@@ -439,11 +439,12 @@ typedef enum {
 - (NSString *)incomingReferrer;
 
 - (NSView *)viewForPluginWithURL:(NSURL *)URL
-                      attributes:(NSArray *)attributesArray
-                         baseURL:(NSURL *)baseURL
+                  attributeNames:(NSArray *)attributeNames
+                 attributeValues:(NSArray *)attributeValues
                         MIMEType:(NSString *)MIMEType;
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame
-                            attributes:(NSDictionary *)attributes
+                        attributeNames:(NSArray *)attributeNames
+                       attributeValues:(NSArray *)attributeValues
                                baseURL:(NSURL *)baseURL;
 
 - (BOOL)saveDocumentToPageCache:(id)documentInfo;

@@ -1053,7 +1053,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return element;
 }
 
-- (NSURL *)URLWithRelativeString:(NSString *)string
+- (NSURL *)URLWithAttributeString:(NSString *)string
 {
     DocumentImpl *doc = _part->xmlDocImpl();
     if (!doc) {

@@ -789,11 +789,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 }
 
 - (NSView *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
-                       attributes:(NSDictionary *)attributes
+                   attributeNames:(NSArray *)attributeNames
+                  attributeValues:(NSArray *)attributeValues
                           baseURL:(NSURL *)baseURL
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
-
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
     
     [pluginPackage load];
@@ -801,6 +801,15 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     WebPluginController *pluginController = [docView _pluginController];
     Class viewFactory = [pluginPackage viewFactory];
     
+    // Store attributes in a dictionary so they can be passed to WebPlugins.
+    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
+    unsigned count = [attributeNames count];
+    unsigned i;
+    for (i = 0; i < count; i++) {
+        [attributes setObject:[attributeValues objectAtIndex:i] forKey:[attributeNames objectAtIndex:i]];
+    }    
+    
+    NSView *view = nil;
     if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
         NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
             baseURL, WebPlugInBaseURLKey,
@@ -808,7 +817,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             pluginController, WebPlugInContainerKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
-        return [viewFactory plugInViewWithArguments:arguments];
+        view = [viewFactory plugInViewWithArguments:arguments];
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
         NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
             baseURL, WebPluginBaseURLKey,
@@ -816,40 +825,30 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             pluginController, WebPluginContainerKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
-        return [viewFactory pluginViewWithArguments:arguments];
-    } else {
-        return nil;
+        view = [viewFactory pluginViewWithArguments:arguments];
     }
+    [attributes release];
+    return view;
+}
+
+- (NSString *)valueForKey:(NSString *)key keys:(NSArray *)keys values:(NSArray *)values
+{
+    unsigned count = [keys count];
+    unsigned i;
+    for (i = 0; i < count; i++) {
+        if ([[keys objectAtIndex:i] _web_isCaseInsensitiveEqualToString:key]) {
+            return [values objectAtIndex:i];
+        }
+    }
+    return nil;
 }
 
 - (NSView *)viewForPluginWithURL:(NSURL *)URL
-                      attributes:(NSArray *)attributesArray
-                         baseURL:(NSURL *)baseURL
-                        MIMEType:(NSString *)MIMEType;
+                  attributeNames:(NSArray *)attributeNames
+                 attributeValues:(NSArray *)attributeValues
+                        MIMEType:(NSString *)MIMEType
 {
-    NSRange r1, r2, r3;
-    uint i;
-
-    // Parse the attributesArray into key/value pairs.
-    // Store them in a dictionary so they can be passed to WebPlugins.
-    // Store them in ordered arrays so they can be passed to Netscape plug-ins.
-    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
-    NSMutableArray *attributeKeys = [[NSMutableArray alloc] init];
-    NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
-    for (i = 0; i < [attributesArray count]; i++) {
-        NSString *attribute = [attributesArray objectAtIndex:i];
-        if ([attribute rangeOfString:@"__KHTML__"].length == 0) {
-            r1 = [attribute rangeOfString:@"="];
-            r2 = [attribute rangeOfString:@"\""];
-            r3.location = r2.location + 1;
-            r3.length = [attribute length] - r2.location - 2; // don't include quotes
-            NSString *key = [attribute substringToIndex:r1.location];
-            NSString *value = [attribute substringWithRange:r3];
-            [attributes setObject:value forKey:key];
-            [attributeKeys addObject:key];
-            [attributeValues addObject:value];
-        }
-    }
+    ASSERT([attributeNames count] == [attributeValues count]);
 
     WebBasePluginPackage *pluginPackage = nil;
     NSView *view = nil;
@@ -872,10 +871,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         }
     }
 
+    NSURL *baseURL = [[[_frame dataSource] response] URL];
     if (pluginPackage) {
         if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
             view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
-                                    attributes:attributes
+                                attributeNames:attributeNames
+                               attributeValues:attributeValues
                                        baseURL:baseURL];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
@@ -883,7 +884,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                                      URL:URL
                                                                  baseURL:baseURL
                                                                 MIMEType:MIMEType
-                                                           attributeKeys:attributeKeys
+                                                           attributeKeys:attributeNames
                                                          attributeValues:attributeValues] autorelease];
         } else {
             ASSERT_NOT_REACHED();
@@ -897,26 +898,24 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     if (errorCode) {
+        NSString *pluginPage = [self valueForKey:@"pluginspage" keys:attributeNames values:attributeValues];
+        NSURL *pluginPageURL = pluginPage != nil ? [self URLWithAttributeString:pluginPage] : nil;
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
                                                         contentURL:URL
-                                                     pluginPageURL:[NSURL _web_URLWithUserTypedString:[attributes objectForKey:@"pluginspage"]]
+                                                     pluginPageURL:pluginPageURL
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];
         view = [[[WebNullPluginView alloc] initWithFrame:NSZeroRect error:error] autorelease];
         [error release];
     }
-
-    ASSERT(view);
-
-    [attributes release];
-    [attributeKeys release];
-    [attributeValues release];
     
+    ASSERT(view);
     return view;
 }
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame
-                            attributes:(NSDictionary *)attributes
+                        attributeNames:(NSArray *)attributeNames
+                       attributeValues:(NSArray *)attributeValues
                                baseURL:(NSURL *)baseURL;
 {
     NSString *MIMEType = @"application/x-java-applet";
@@ -927,34 +926,31 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     if (pluginPackage) {
         if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
-            NSMutableDictionary *theAttributes = [NSMutableDictionary dictionary];
-            [theAttributes addEntriesFromDictionary:attributes];
-            [theAttributes setObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.width] forKey:@"width"];
-            [theAttributes setObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.height] forKey:@"height"];
-            
-            view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
-                                    attributes:theAttributes
-                                       baseURL:baseURL];
-        } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            // Convert the attributes dictionary to 2 string arrays because this is what Netscape plug-ins expect.
-            NSMutableArray *attributeKeys = [[NSMutableArray alloc] init];
-            NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
-            NSEnumerator *enumerator = [attributes keyEnumerator];
-            NSString *key;
-            
-            while ((key = [enumerator nextObject]) != nil) {
-                [attributeKeys addObject:key];
-                [attributeValues addObject:[attributes objectForKey:key]];
+            // For some reason, the Java plug-in requires that we pass the dimension of the plug-in as attributes.
+            NSMutableArray *names = [attributeNames mutableCopy];
+            NSMutableArray *values = [attributeValues mutableCopy];
+            if ([self valueForKey:@"width" keys:attributeNames values:attributeValues] == nil) {
+                [names addObject:@"width"];
+                [values addObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.width]];
             }
+            if ([self valueForKey:@"height" keys:attributeNames values:attributeValues] == nil) {
+                [names addObject:@"height"];
+                [values addObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.height]];
+            }
+            view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
+                                attributeNames:names
+                               attributeValues:values
+                                       baseURL:baseURL];
+            [names release];
+            [values release];
+        } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:theFrame
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:nil
                                                                  baseURL:baseURL
                                                                 MIMEType:MIMEType
-                                                           attributeKeys:attributeKeys
+                                                           attributeKeys:attributeNames
                                                          attributeValues:attributeValues] autorelease];
-            [attributeKeys release];
-            [attributeValues release];
         } else {
             ASSERT_NOT_REACHED();
         }

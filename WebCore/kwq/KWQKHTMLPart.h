@@ -142,7 +142,6 @@ public:
     void setStatusBarText(const QString &status);
 
     void urlSelected(const KURL &url, int button, int state, const KParts::URLArgs &args);
-    bool requestObject(khtml::RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args);
     KParts::ReadOnlyPart *createPart(const khtml::ChildFrame &child, const KURL &url, const QString &mimeType);
 
     void scheduleClose();
