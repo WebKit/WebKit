@@ -28,6 +28,8 @@
 #import <AppKit/NSResponder_Private.h>
 #import <CoreGraphics/CGContextGState.h>
 
+#import <AppKit/NSAccessibility.h>
+
 @interface WebHTMLView (WebHTMLViewPrivate)
 - (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth adjustViewSize:(BOOL)adjustViewSize;
 - (void)_updateTextSizeMultiplier;
@@ -874,6 +876,27 @@
     }
 }
 
+- (id)accessibilityAttributeValue:(NSString*)attributeName
+{
+    if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {
+        id accTree = [[self _bridge] accessibilityTree];
+        if (accTree)
+            return [NSArray arrayWithObject: accTree];
+        return nil;
+    }
+    return [super accessibilityAttributeValue:attributeName];
+}
+
+- (id)accessibilityHitTest:(NSPoint)point
+{
+    id accTree = [[self _bridge] accessibilityTree];
+    if (accTree) {
+        NSPoint windowCoord = [[self window] convertScreenToBase: point];
+        return [accTree accessibilityHitTest: [self convertPoint:windowCoord fromView:nil]];
+    }
+    else
+        return self;
+}
 @end
 
 @implementation WebHTMLView (TextSizing)

@@ -1,3 +1,14 @@
+2003-10-02  David Hyatt  <hyatt@apple.com>
+
+	Work on exposing elements to the Acc API.  This patch gets us to the point where text
+	under the mouse is voiced.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView accessibilityAttributeValue:]):
+        (-[WebHTMLView accessibilityHitTest:]):
+
 2003-10-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
