@@ -376,7 +376,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
         if (isCFM) {
             pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("main") );
-            if(!pluginMainFunc) {
+            if (!pluginMainFunc) {
                 goto abort;
             }
         } else {
@@ -419,7 +419,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         if (!pluginMainFunc) {
             goto abort;
         }
-            
+
+        // NOTE: pluginMainFunc is freed after it is called. Be sure not to return before that.
+        
         isCFM = TRUE;
     }
     
@@ -460,6 +462,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
         LOG(Plugins, "%f main timing started", mainStart);
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
+        if (!isBundle) {
+            // Don't free pluginMainFunc if we got it from a bundle because it is owned by CFBundle in that case.
+            free(pluginMainFunc);
+        }
+        
         // Workaround for 3270576. The RealPlayer plug-in fails to load if its preference file is out of date.
         // Launch the RealPlayer application to refresh the file.
         if (npErr != NPERR_NO_ERROR) {
