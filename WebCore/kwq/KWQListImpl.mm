@@ -321,17 +321,17 @@ bool KWQListImpl::insert(uint n, const void *item)
 	
 	// iterate to one node before the insertion point, can't be null
 	// since we know n > 0 and n < d->count
-	KWQListNode *node = d->head;
+	KWQListNode *prevNode = d->head;
 
 	for (uint i = 0; i < n - 1; i++) {
-	    node = node->next;
+	    prevNode = prevNode->next;
 	}
-	node->prev = node;
-	node->next = node->next;
+	node->prev = prevNode;
+	node->next = prevNode->next;
 	if (node->next != NULL) {
 	    node->next->prev = node;
 	}
-	node->next = node;
+	prevNode->next = node;
     }
 
     d->count++;

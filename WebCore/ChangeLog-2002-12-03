@@ -1,5 +1,10 @@
 2002-03-27  Darin Adler  <darin@apple.com>
 
+	* src/kwq/KWQListImpl.mm: (KWQListImpl::insert): Fix disastrous name
+        collision which could lead to infinite loops.
+
+2002-03-27  Darin Adler  <darin@apple.com>
+
 	* src/kwq/KWQCString.mm: (QCString::isEmpty): The || should be &&.
 
 2002-03-27  Darin Adler  <darin@apple.com>
