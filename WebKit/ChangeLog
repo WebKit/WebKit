@@ -1,3 +1,12 @@
+2004-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3640419>: "_webkit_stringByReplacingValidPercentEscapes does not handle %00 properly"
+
+        * Misc.subproj/WebNSURLExtras.m: (-[NSString _webkit_stringByReplacingValidPercentEscapes]):
+        Use the function in NSURL instead of implementing our own here.
+
 2004-04-30  John Sullivan  <sullivan@apple.com>
 
         * WebView.subproj/WebView.m:

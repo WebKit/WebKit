@@ -696,30 +696,8 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes
 {
-    const char *before = [self UTF8String];
-    char *after = malloc(strlen(before) + 1);
-    
-    const char *p = before;
-    char *q = after;
-    
-    while (*p) {
-        if (*p == '%' && isHexDigit(p[1]) && isHexDigit(p[2])) {
-            *q++ = (hexDigitValue(p[1]) << 4) | hexDigitValue(p[2]);
-            p += 3;
-        } else {
-            *q++ = *p++;
-        }
-    }
-    *q = '\0';
-    
-    NSString *result = [NSString stringWithUTF8String:after];
-    free(after);
-    
-    // FIXME: This returns the original string with all the % escapes intact
-    // if there are any illegal UTF-8 sequences. Instead, we should detect illegal
-    // UTF-8 sequences while decoding above and either leave them as % escapes
-    // (but decode all the others) or turn them in to ? characters.
-    return result ? result : self;
+    NSString *s = [self stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    return s ? s : self;
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL
