@@ -7,7 +7,6 @@
 
 + (void)initialize {
 
-    NSAutoreleasePool *localPool;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSArray *fontSizeArray = [NSArray arrayWithObjects:@"7", @"8", @"9", @"10", @"12", @"13", @"14", @"16", nil];
     NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];

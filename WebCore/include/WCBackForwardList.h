@@ -25,7 +25,7 @@ extern "C" {
 
 // *** Factory method for WCBackForwardList objects
 
-id <WCBackForwardList> WCCreateBackForwardList(); 
+id <WCBackForwardList> WCCreateBackForwardList(void); 
 
 #if defined(__cplusplus)
 } // extern "C"

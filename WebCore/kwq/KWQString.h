@@ -340,6 +340,7 @@ public:
 #endif
     static QString fromStringWithEncoding(const char *, int, CFStringEncoding);
     static QString fromCFMutableString(CFMutableStringRef);
+    static QString fromCFString(CFStringRef);
 
     // constructors, copy constructors, and destructors ------------------------
 

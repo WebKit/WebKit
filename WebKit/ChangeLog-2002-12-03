@@ -1,4 +1,36 @@
-2001-12-13  Maciej Stachowiak  <mjs@apple.com
+2001-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+	Warning fixes and support to pass the http headers along with
+	cache data items
+
+	* Cache.subproj/NSURICacheData.h, Cache.subproj/NSURICacheData.m:
+	(+[NSURICacheData
+	dataWithURL:status:error:headers:data:size:notificationString:userData:],
+	-[NSURICacheData
+	initWithURL:status:error:headers:data:size:notificationString:userData:]),
+	-[NSURICacheData dealloc], -[NSURICacheData error],
+	-[NSURICacheData headers]: 
+	NSURICacheData now carries a copy of the response headers
+	dictionary.
+	* Cache.subproj/NSURICache.m: include "WCURICache.h" to fix warnings.
+	(-[NSURICache requestWithURL:requestor:userData:]): 
+	Handle headers in CacheData.
+	* Cache.subproj/NSURILoad.h, Cache.subproj/NSURILoad.m:
+	(-[NSURILoad __NSURILoadReadStreamCallback:event:data:],
+	-[NSURILoad headers], -[NSURILoad dealloc], -[NSURILoad done]): 
+	An NSURILoad object now carries the response headers associated
+	with its connection, if any.
+
+	* History.subproj/WKBackForwardList.m: include WCBackForwardList.h
+	to fix warning.
+	* History.subproj/WKURIEntry.m: include WCURIEntry.h to fix
+	warning.
+	* Misc.subproj/WebKitDebug.h: Use (void) for C prototypes, not ().
+	* WebView.subproj/NSWebPageDataSource.mm: (+[NSWebPageDataSource
+	initialize]): Remove unused variable to fix warning.
+	* WebKit.pbproj/project.pbxproj: Enable many warning flags and -Werror
+
+2001-12-13  Maciej Stachowiak  <mjs@apple.com>
 
 	* WebView.subproj/WKWebController.h: Defined initial version of
 	WKAuthenticationHandler interface, and associated

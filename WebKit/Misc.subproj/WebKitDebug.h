@@ -18,7 +18,7 @@
 #define WEBKIT_LOG_ALL			0xffffffff
 
 void WebKitSetLogLevel(int mask);
-unsigned int WebKitGetLogLevel();
+unsigned int WebKitGetLogLevel(void);
 void WebKitDebug(const char *format, ...);
 void WebKitDebugAtLevel(unsigned int level, const char *format, ...);
 void WebKitLog(NSString *format, ...);

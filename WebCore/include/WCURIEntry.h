@@ -38,7 +38,7 @@ extern "C" {
 
 // *** Factory method for WCURIEntry objects
 
-id <WCURIEntry> WCCreateURIEntry(); 
+id <WCURIEntry> WCCreateURIEntry(void); 
 
 #if defined(__cplusplus)
 } // extern "C"

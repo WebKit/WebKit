@@ -45,31 +45,34 @@ KCharsets::~KCharsets()
 
 QTextCodec *KCharsets::codecForName(const QString &qs) const
 {
-    // FIXME: need real implementation here
-    _logPartiallyImplemented();
     return QTextCodec::codecForName(qs.latin1());
 }
 
 QTextCodec *KCharsets::codecForName(const QString &qs, bool &ok) const
 {
-    // FIXME: need real implementation here
-    _logPartiallyImplemented();
-    ok = false;
-    return QTextCodec::codecForName(qs.latin1());
+    QTextCodec *codec = QTextCodec::codecForName(qs.latin1());
+    if (codec == NULL) {
+        ok = false;
+        codec = QTextCodec::codecForName("latin1");
+    } else {
+        ok = true;
+    }
+
+    return codec;
 }
 
 QFont::CharSet KCharsets::charsetForEncoding(const QString &) const
 {
     // FIXME: need real implementation here
     _logPartiallyImplemented();
-    return QFont::Latin1;
+    return QFont::Unicode;
 }
 
 QFont::CharSet KCharsets::charsetForEncoding(const QString &, bool) const
 {
     // FIXME: need real implementation here
     _logPartiallyImplemented();
-    return QFont::Latin1;
+    return QFont::Unicode;
 }
 
 void KCharsets::setQFont(QFont &font, QFont::CharSet) const
@@ -108,3 +111,4 @@ bool KCharsets::supportsScript(const QFont &, QFont::CharSet)
     _logPartiallyImplemented();
     return true;
 }
+

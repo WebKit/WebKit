@@ -144,6 +144,19 @@ QString QString::fromCFMutableString(CFMutableStringRef cfs)
     return qs;
 }
 
+QString QString::fromCFString(CFStringRef cfs)
+{
+    CFMutableStringRef ref;
+    QString qs;
+
+    ref = CFStringCreateMutableCopy(NULL, CFStringGetLength(cfs), cfs);
+    qs = QString::fromCFMutableString(ref);
+    CFRelease(ref);
+    
+    return qs;
+}
+
+
 // constructors, copy constructors, and destructors ----------------------------
 
 #ifndef _KWQ_QSTRING_INLINES_

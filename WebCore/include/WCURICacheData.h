@@ -9,6 +9,7 @@
 -(NSURL *)url;
 -(id)status;
 -(id)error;
+-(NSDictionary *)headers;
 -(UInt8 *)cacheData;
 -(int)cacheDataSize;
 -(void *)userData;

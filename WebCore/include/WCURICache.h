@@ -22,7 +22,7 @@ extern "C" {
 
 // *** Function to access WCURICache singleton
 
-id <WCURICache> WCGetDefaultURICache(); 
+id <WCURICache> WCGetDefaultURICache(void); 
 
 #if defined(__cplusplus)
 } // extern "C"

@@ -7,10 +7,11 @@
 //
 
 #import "WKBackForwardList.h"
+#import "WCBackForwardList.h"
 
 // *** Function to access WCURICache singleton
 
-id <WCBackForwardList> WCCreateBackForwardList()
+id <WCBackForwardList> WCCreateBackForwardList(void)
 {
     return [[WKBackForwardList alloc] init];
 }

@@ -28,6 +28,7 @@ MMOBJECTS = \
     KWQButton.o \
     KWQCString.o \
     KWQChar.o \
+    KWQCharsets.o \
     KWQCheckBox.o \
     KWQColor.o \
     KWQColorGroup.o \
@@ -133,6 +134,7 @@ MMOBJECTS = \
 MOBJECTS = \
 	$(NULL)
 
+
 EXPORT_HEADERS = $(HEADERS)
 
 OBJECTS = $(MMOBJECTS) $(MOBJECTS)
@@ -199,6 +201,33 @@ all: $(OBJECTS) export-headers export-objects
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(OBJECTS)
 	$(RANLIB) $(LIBRARY)
+
+make-mac-encodings: make-mac-encodings.o
+	$(CC) -o $@ $< $(LDFLAGS) -framework CoreFoundation
+
+mac-encodings.txt: make-mac-encodings
+	./make-mac-encodings $@
+
+KWQCharsetData.c: make-charset-table.pl character-sets.txt mac-encodings.txt
+	./make-charset-table.pl character-sets.txt mac-encodings.txt KWQCharsetData.c 
+
+KWQCharsets.o: KWQCharsetData.c
+
+CHARSET_FILES = make-mac-encodings \
+	 make-mac-encodings.o \
+	mac-encodings.txt \
+	KWQCharsetData.c \
+	$(NULL)
+
+KWQCharsets.o: KWQCharsetData.c
+
+#----------------------------------------------------------------------
+#
+
+CLEAN_FILES = $(OBJECTS) \
+	$(LIBRARY) \
+	$(CHARSET_FILES) \
+	$(NULL)
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

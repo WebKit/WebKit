@@ -27,12 +27,34 @@
 
 #include <qtextcodec.h>
 #include <kwqdebug.h>
+#include <KWQCharsets.h>
 
 // USING_BORROWED_QSTRING ======================================================
 #ifndef USING_BORROWED_QSTRING
 
-// FIXME: do we need this once we have a real implementation?
-static QTextCodec latin1TextCodec(kCFStringEncodingISOLatin1);
+static CFMutableDictionaryRef encodingToCodec = NULL;
+
+static QTextCodec *codecForCFStringEncoding(CFStringEncoding encoding)
+{
+    const void *value;
+    QTextCodec *codec;
+
+    if (encodingToCodec == NULL) {
+        encodingToCodec =  CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+    }
+    
+    if (CFDictionaryGetValueIfPresent(encodingToCodec, (void *)encoding, &value)) {
+        return (QTextCodec *)value;
+    } else {
+        codec = new QTextCodec(encoding);
+	CFDictionarySetValue(encodingToCodec, (void *)encoding, (void *)codec);
+	return codec;
+    }
+}
+
+
+
+
 
 // class QTextDecoder ==========================================================
 
@@ -60,25 +82,40 @@ QString QTextDecoder::toUnicode(const char *chs, int len)
 
 // static member functions -----------------------------------------------------
 
-QTextCodec *QTextCodec::codecForMib(int)
+QTextCodec *QTextCodec::codecForMib(int mib)
 {
-    // FIXME: need real implementation here
-    _logPartiallyImplemented();
-    return &latin1TextCodec;
+    CFStringEncoding encoding;
+
+    encoding = KWQCFStringEncodingFromMIB(mib);
+
+    if (encoding == kCFStringEncodingInvalidId) {
+        return NULL;
+    } else {
+        return codecForCFStringEncoding(encoding);
+    }
 }
 
-QTextCodec *QTextCodec::codecForName(const char *, int)
+
+QTextCodec *QTextCodec::codecForName(const char *name, int accuracy)
 {
-    // FIXME: need real implementation here
-    _logPartiallyImplemented();
-    return &latin1TextCodec;
+    CFStringRef cfname;
+    CFStringEncoding encoding;
+
+    cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
+
+    encoding = KWQCFStringEncodingFromIANACharsetName(cfname);
+    CFRelease(cfname);
+
+    if (encoding == kCFStringEncodingInvalidId) {
+        return NULL;
+    } else {
+        return codecForCFStringEncoding(encoding);
+    }
 }
 
 QTextCodec *QTextCodec::codecForLocale()
 {
-    // FIXME: need real implementation here
-    _logPartiallyImplemented();
-    return &latin1TextCodec;
+    return codecForCFStringEncoding(CFStringGetSystemEncoding());
 }
 
 // constructors, copy constructors, and destructors ----------------------------
@@ -97,16 +134,12 @@ QTextCodec::~QTextCodec()
 
 const char* QTextCodec::name() const
 {
-    // FIXME: need real implementation here
-    _logNotYetImplemented();
-    return "\0";
+    return QString::fromCFString(KWQCFStringEncodingToIANACharsetName(encoding)).latin1();
 }
 
 int QTextCodec::mibEnum() const
 {
-    // FIXME: need real implementation here
-    _logNotYetImplemented();
-    return 0;
+  return KWQCFStringEncodingToMIB(encoding);
 }
 
 QTextDecoder *QTextCodec::makeDecoder() const

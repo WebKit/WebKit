@@ -8,10 +8,11 @@
 
 #import "WKURIEntry.h"
 #import "WebKitReallyPrivate.h"
+#import "WCURIEntry.h"
 
 // *** Function to access WCURICache singleton
 
-id <WCURIEntry> WCCreateURIEntry()
+id <WCURIEntry> WCCreateURIEntry(void)
 {
     return [[WKURIEntry alloc] init];
 }

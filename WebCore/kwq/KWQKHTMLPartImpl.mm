@@ -202,15 +202,46 @@ KHTMLPart::~KHTMLPart()
     _logNotYetImplemented();
 }
 
+static NSString *
+encodingFromContentType (NSString *contentType)
+{
+    NSRange range;
+    NSString *result = nil;
+
+    if (contentType == nil) {
+	return result;
+    }
+
+    range = [contentType rangeOfString:@"charset="];
+    
+    if (range.length != 0) {
+        result = [contentType substringFromIndex:range.location+range.length];
+    }
+
+    result = [[result componentsSeparatedByString:@";"] objectAtIndex:0];
+
+    return result;
+}
+
 // NOTE: This code emulates the interface used by the original khtml part  
 void KHTMLPart::slotData(id <WCURICacheData> data) 
 {
+    NSString *encoding;
+    QString enc;
+
     if (!d->m_workingURL.isEmpty()) {
         //begin(d->m_workingURL, d->m_extension->urlArgs().xOffset, d->m_extension->urlArgs().yOffset);
         begin(d->m_workingURL, 0, 0);
         d->m_workingURL = KURL();
     }
-          
+
+    encoding = encodingFromContentType ([[data headers] objectForKey:@"Content-Type"]);
+    if (encoding != NULL) {
+        enc = QString::fromCFString((CFStringRef) encoding);
+
+        setEncoding (enc, true);
+    }
+
     write((const char *)[data cacheData], [data cacheDataSize]);    
 }
 
@@ -442,6 +473,12 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
     d->m_baseURL = KURL();
     d->m_workingURL = url;
 
+    /* FIXME: this is a pretty gross way to make sure the decoder gets reinitialized for each page. */
+    if (d->m_decoder != NULL) {
+	delete d->m_decoder;
+	d->m_decoder = NULL;
+    }
+
     if (!d->m_workingURL.isEmpty())
     {
         KURL::List lst = KURL::split( d->m_workingURL );
@@ -503,7 +540,7 @@ void KHTMLPart::write(const char *str, int len)
     // begin lines added in lieu of big fixme    
     if ( !d->m_decoder ) {
         d->m_decoder = new khtml::Decoder();
-        if(d->m_encoding != QString::null)
+        if(!d->m_encoding.isNull())
             d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
         else {
             //FIXME: d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
@@ -603,7 +640,28 @@ bool KHTMLPart::setCharset( const QString &name, bool override = false )
 
 bool KHTMLPart::setEncoding( const QString &name, bool override = false )
 {
-    _logNeverImplemented();
+    d->m_encoding = name;
+    d->m_haveEncoding = override;
+
+/* FIXME: do we need any of these bits?
+//    setCharset( name, override );
+     d->m_charset = KGlobal::charsets()->charsetForEncoding(name);
+     d->m_settings->setCharset( d->m_charset );
+     // the script should not be unicode. We need to know the document is eg. arabic to be
+     // able to choose a unicode font that contains arabic glyphs.
+     d->m_settings->setScript( KGlobal::charsets()->charsetForEncoding( name, true ) );
+
+    if( !m_url.isEmpty() ) {
+        // reload document
+        closeURL();
+        KURL url = m_url;
+        m_url = 0;
+        openURL(url);
+    }
+
+    return true;
+*/
+    _logPartiallyImplemented();
     return FALSE;
 }
 
@@ -1061,6 +1119,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
             ->setSelection(d->m_selectionEnd.handle(),d->m_endOffset,
                            d->m_selectionStart.handle(),d->m_startOffset);
       }
+    }
 #else
       if ( d->m_doc && d->m_view ) {
         QPoint diff( _mouse->globalPos() - d->m_dragLastPos );
@@ -1069,8 +1128,8 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
           d->m_view->scrollBy( -diff.x(), -diff.y() );
           d->m_dragLastPos = _mouse->globalPos();
         }
-#endif
     }
+#endif
   }
 
 }
@@ -1116,7 +1175,6 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     }
   }
 #endif
-
 #ifndef KHTML_NO_SELECTION
   // delete selection in case start and end position are at the same point
   if(d->m_selectionStart == d->m_selectionEnd && d->m_startOffset == d->m_endOffset) {
@@ -1168,6 +1226,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     //emitSelectionChanged();
   }
 #endif
+
 }
 
 void KHTMLPart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * )
