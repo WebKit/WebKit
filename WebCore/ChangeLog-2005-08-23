@@ -1,5 +1,15 @@
 2004-05-25  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed a regression where selections that were created via double or triple were not draggable.
+
+        Reviewed by darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMousePressEvent): if the click count is greater than 1, don't allow drags
+        (KWQKHTMLPart::khtmlMouseMoveEvent): allow drags to occur even if the selection was originally created via double or triple click
+
+2004-05-25  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed regression where undoing typing would undo character-by-character.
 
         Reviewed by kocienda.

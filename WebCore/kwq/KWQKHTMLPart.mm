@@ -1672,8 +1672,10 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
 {
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection.
-    _mouseDownMayStartDrag = true;
     _mouseDownMayStartSelect = true;
+
+    bool oneClick = [_currentEvent clickCount] <= 1 ? true : false;
+    _mouseDownMayStartDrag = oneClick;
 
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
@@ -1681,7 +1683,7 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
         NSView *view = d->m_view->getDocumentView();
 
 	KWQ_BLOCK_EXCEPTIONS;
-        if ([_currentEvent clickCount] <= 1 && [_bridge firstResponder] != view) {
+        if (oneClick && [_bridge firstResponder] != view) {
             [_bridge makeFirstResponder:view];
         }
 	KWQ_UNBLOCK_EXCEPTIONS;
@@ -1874,9 +1876,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             return;
         }
 
-	if (_mouseDownMayStartDrag
-                && d->m_selectionGranularity == DOM::Selection::CHARACTER
-                && [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
+	if (_mouseDownMayStartDrag && [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
 
             // We are starting a text/image/url drag, so the cursor should be an arrow
             d->m_view->resetCursor();
