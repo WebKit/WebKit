@@ -14,7 +14,9 @@
 
 - (void)dealloc
 {
-    renderPart->deref();
+    if (renderPart) {
+        renderPart->deref();
+    }
     [super dealloc];
 }
 

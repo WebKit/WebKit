@@ -1,3 +1,8 @@
+2002-07-14  Darin Adler  <darin@apple.com>
+
+        * kwq/WebCoreFrame.mm: (-[WebCoreFrame dealloc]): Fix NULL-dereferencing
+	problem that was hidden by the "leak the world" bug in WebBrowser.
+
 2002-07-14  Maciej Stachowiak  <mjs@apple.com>
 
         Assign getView() results to variable of appropriate type to work
