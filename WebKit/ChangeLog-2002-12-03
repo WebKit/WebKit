@@ -1,3 +1,21 @@
+2002-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+	Remove old obsolete cache code from tree and build.
+
+	* Cache.subproj/NSURICache.h:
+	* Cache.subproj/NSURICache.m:
+	* Cache.subproj/NSURICacheData.h:
+	* Cache.subproj/NSURICacheData.m:
+	* Cache.subproj/NSURILoad.h:
+	* Cache.subproj/NSURILoad.m:
+	* Cache.subproj/NSURILoadReallyPrivate.h:
+	* Cache.subproj/_NSURICacheQueue.h:
+	* Cache.subproj/_NSURICacheQueue.m:
+	* Misc.subproj/WebKitReallyPrivate.h:
+	* Misc.subproj/_NSMonitor.h:
+	* Misc.subproj/_NSMonitor.m:
+	* WebKit.pbproj/project.pbxproj:
+
 2002-02-05  Richard Williamson  <rjw@apple.com>
 
     Changes to support dynamic scroll bars in frames/iframes.
