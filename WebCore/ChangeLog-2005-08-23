@@ -1,3 +1,13 @@
+2004-11-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fix recent regression from collection perf fixes.
+	
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLFormCollectionImpl::updateNameCache): Look up the name
+	attribute in the name cache, not the id cache (d'oh!)
+
 2004-11-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

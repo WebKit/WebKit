@@ -630,7 +630,7 @@ void HTMLFormCollectionImpl::updateNameCache() const
             }
             if (!nameAttr.isEmpty() && idAttr != nameAttr) {
                 // add to name cache
-                QPtrVector<NodeImpl> *nameVector = info->idCache.find(nameAttr);
+                QPtrVector<NodeImpl> *nameVector = info->nameCache.find(nameAttr);
                 if (!nameVector) {
                     nameVector = new QPtrVector<NodeImpl>;
                     info->nameCache.insert(nameAttr, nameVector);
