@@ -603,6 +603,8 @@
 
 - (void)mouseDown: (NSEvent *)event
 {
+    _private->ignoringMouseDraggedEvents = NO;
+    
     // Record the mouse down position so we can determine drag hysteresis.
     [_private->mouseDownEvent release];
     _private->mouseDownEvent = [event retain];
@@ -621,7 +623,7 @@
        pasteboard:(NSPasteboard *)pasteboard
            source:(id)source
         slideBack:(BOOL)slideBack
-{
+{    
     // Don't allow drags to be accepted by this WebView.
     [[self _web_parentWebView] unregisterDraggedTypes];
     
@@ -633,7 +635,9 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    [[self _bridge] mouseDragged:event];
+    if (!_private->ignoringMouseDraggedEvents) {
+        [[self _bridge] mouseDragged:event];
+    }
 }
 
 - (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
@@ -643,6 +647,9 @@
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
+    // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
+    _private->ignoringMouseDraggedEvents = YES;
+    
     // Once the dragging machinery kicks in, we no longer get mouse drags or the up event.
     // khtml expects to get balanced down/up's, so we must fake up a mouseup.
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp

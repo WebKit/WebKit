@@ -1,3 +1,17 @@
+2003-01-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3160464 - Slideback sometimes happens twice
+
+	Because we start drags in mouseDragged (which AppKit says we shouldn't), we get mouseDragged events after a drag (image, link, text etc) has ended. We also get mouseDragged events after we've sent the fake mouseUp to WebCore. That is probably bad for unknown reasons.
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDown:]): set ignoringMouseDraggedEvents to NO
+        (-[WebHTMLView mouseDragged:]): check ignoringMouseDraggedEvents
+        (-[WebHTMLView draggedImage:endedAt:operation:]): set ignoringMouseDraggedEvents to NO
+        * WebView.subproj/WebHTMLViewPrivate.h: added ignoringMouseDraggedEvents
+
 2003-01-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

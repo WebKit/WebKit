@@ -23,6 +23,7 @@
     BOOL liveAllowsScrolling;
     BOOL inWindow;
     BOOL inNextValidKeyView;
+    BOOL ignoringMouseDraggedEvents;
     
     id savedSubviews;
     BOOL subviewsSetAside;
