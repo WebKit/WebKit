@@ -64,11 +64,11 @@
 - (BOOL)acceptsDrags;
 
 /*!
-    @method setAcceptsDrags:
+    @method setAcceptsDrops:
     @abstract Sets whether one can drag to the document view or not.
     @param flag YES allows drags to the document view, NO disallows drags to the document view.
 */
-- (void)setAcceptsDrags: (BOOL)flag;
+- (void)setAcceptsDrops: (BOOL)flag;
 
 /*!
     @method acceptsDrops

@@ -5,10 +5,11 @@
 
 #import <WebKit/WebTextView.h>
 
-#import <WebKit/WebDataSource.h>
-#import <WebKit/WebPreferences.h>
-
 #import <WebFoundation/WebResourceResponse.h>
+
+#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDocument.h>
+#import <WebKit/WebPreferences.h>
 
 @implementation WebTextView
 
@@ -18,7 +19,6 @@
     if (self) {
         canDragFrom = YES;
         canDragTo = YES;
-        [[self textContainer] setWidthTracksTextView:YES];
         [self setAutoresizingMask:NSViewWidthSizable];
         [self setEditable:NO];
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -49,18 +49,25 @@
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
-    NSString *string;
-    
     // FIXME: This needs to be more efficient for progressively loading documents.
     
     if ([[[dataSource response] contentType] isEqualToString:@"text/rtf"]) {
         [self setRichText:YES];
-        [self replaceCharactersInRange:NSMakeRange(0,0) withRTF:[dataSource data]];
+        [self replaceCharactersInRange:NSMakeRange(0, [[self string] length]) withRTF:[dataSource data]];
     } else {
         [self setRichText:NO];
         [self setFixedWidthFont];
-        string = [dataSource stringWithData:[dataSource data]];
-        [self setString:string];
+        [self setString:[dataSource stringWithData:[dataSource data]]];
+    }
+    
+    
+}
+
+- (void)viewDidMoveToSuperview
+{
+    NSView *superview = [self superview];
+    if (superview) {
+        [self setFrameSize:NSMakeSize([superview frame].size.width, [self frame].size.height)];
     }
 }
 
@@ -70,35 +77,31 @@
 
 - (void)layout
 {
-    NSRect superFrame = [[self superview] frame];
-    NSRect frame = [self frame];
-    
-    [self setFrame:NSMakeRect(frame.origin.x, frame.origin.y, superFrame.size.width, frame.size.height)];
 }
 
-- (void)setCanDragFrom: (BOOL)flag
+- (void)setAcceptsDrags:(BOOL)flag
 {
     canDragFrom = flag;
 }
 
-- (BOOL)canDragFrom
+- (BOOL)acceptsDrags
 {
     return canDragFrom;
 }
 
-- (void)setCanDragTo: (BOOL)flag
+- (void)setAcceptsDrops:(BOOL)flag
 {
     canDragTo = flag;
 }
 
-- (BOOL)canDragTo
+- (BOOL)acceptsDrops
 {
     return canDragTo;
 }
 
 - (void)defaultsChanged:(NSNotification *)notification
 {
-    if(![self isRichText]){
+    if (![self isRichText]) {
         [self setFixedWidthFont];
     }
 }
@@ -137,4 +140,5 @@
 {
     [[self nextResponder] keyUp:event];
 }
+
 @end

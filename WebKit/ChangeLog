@@ -1,5 +1,24 @@
 2002-11-15  Darin Adler  <darin@apple.com>
 
+	- fixed 3079214 -- text/plain page shows up slowly, a few pages at a time
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView initWithFrame:]): Remove unneeded setWidthTracksTextView:, because
+	that's the default.
+        (-[WebTextView dataSourceUpdated:]): Replace the thing each time in the RTF case.
+        (-[WebTextView viewDidMoveToSuperview]): Here's where we resize, but only the width.
+	Resizing the height was causing the bug.
+        (-[WebTextView layout]): Do nothing.
+        (-[WebTextView setAcceptsDrags:]): Update to new name. Since we weren't
+	importing WebDocument.h, we never noticed that this file got out of sync.
+        (-[WebTextView acceptsDrags]): Ditto.
+        (-[WebTextView setAcceptsDrops:]): Ditto.
+        (-[WebTextView acceptsDrops]): Ditto.
+
+        * WebView.subproj/WebDocument.h: Fix typo. It said setAcceptsDrags: twice.
+
+2002-11-15  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebFramePrivate.m: Removed a bunch of tabs and fixed indenting.
 
 2002-11-15  Maciej Stachowiak  <mjs@apple.com>
