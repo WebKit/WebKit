@@ -40,11 +40,18 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifndef USING_BORROWED_QDICT
+#define USING_BORROWED_QDICT
 #endif
 
 #include <KWQDef.h>
+
+#ifndef USING_BORROWED_QSTRING
+#include <string.h>
+#define qstrcmp(s1,s2) strcmp((s1),(s2))
+#define qstricmp(s1,s2) strcasecmp((s1),(s2))
+#define qstrdup(s) strdup((s))
+#endif
 
 // -------------------------------------------------------------------------
 

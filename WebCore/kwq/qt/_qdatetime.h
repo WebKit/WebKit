@@ -40,8 +40,8 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifndef USING_BORROWED_QDATETIME
+#define USING_BORROWED_QDATETIME
 #endif
 
 #include <KWQDef.h>

@@ -15,8 +15,8 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifndef USING_BORROWED_QARRAY
+#define USING_BORROWED_QARRAY
 #endif
 
 #include <KWQDef.h>

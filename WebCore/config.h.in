@@ -33,6 +33,69 @@
 /* Our platform requires this to handle certain Qt memory mgmt. conventions */
 #define Q_DELETING_VOID_UNDEFINED 1
 
+/* Define if using "borrowed" QArray */
+#undef USING_BORROWED_QARRAY
+
+/* Define if using "borrowed" QCollection */
+#undef USING_BORROWED_QCOLLECTION
+
+/* Define if using "borrowed" QColor */
+#undef USING_BORROWED_QCOLOR
+
+/* Define if using "borrowed" QDateTime */
+#undef USING_BORROWED_QDATETIME
+
+/* Define if using "borrowed" QDict */
+#undef USING_BORROWED_QDICT
+
+/* Define if using "borrowed" QFile */
+#undef USING_BORROWED_QFILE
+
+/* Define if using "borrowed" QList */
+#undef USING_BORROWED_QLIST
+
+/* Define if using "borrowed" QMap */
+#undef USING_BORROWED_QMAP
+
+/* Define if using "borrowed" QPoint */
+#undef USING_BORROWED_QPOINT
+
+/* Define if using "borrowed" QPtrDict */
+#undef USING_BORROWED_QPTRDICT
+
+/* Define if using "borrowed" QRect */
+#undef USING_BORROWED_QRECT
+
+/* Define if using "borrowed" QRegExp */
+#undef USING_BORROWED_QREGEXP
+
+/* Define if using "borrowed" QRegion */
+#undef USING_BORROWED_QREGION
+
+/* Define if using "borrowed" QSize */
+#undef USING_BORROWED_QSIZE
+
+/* Define if using "borrowed" QSortedList */
+#undef USING_BORROWED_QSORTEDLIST
+
+/* Define if using "borrowed" QStack */
+#undef USING_BORROWED_QSTACK
+
+/* Define if using "borrowed" QString */
+#undef USING_BORROWED_QSTRING
+
+/* Define if using "borrowed" QStringList */
+#undef USING_BORROWED_QSTRINGLIST
+
+/* Define if using "borrowed" QTextStream */
+#undef USING_BORROWED_QTEXTSTREAM
+
+/* Define if using "borrowed" QValueList */
+#undef USING_BORROWED_QVALUELIST
+
+/* Define if using "borrowed" QVector */
+#undef USING_BORROWED_QVECTOR
+
 /* Define if using alloca.c.  */
 #undef C_ALLOCA
 

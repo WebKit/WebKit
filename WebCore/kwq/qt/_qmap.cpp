@@ -35,15 +35,13 @@
 **
 **********************************************************************/
 
+#include <qmap.h>
+
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
-#endif
+#ifdef USING_BORROWED_QMAP
 
 // -------------------------------------------------------------------------
-
-#include "qmap.h"
 
 typedef QMapNodeBase* NodePtr;
 typedef QMapNodeBase Node;
@@ -261,3 +259,4 @@ NodePtr QMapPrivateBase::removeAndRebalance( NodePtr z, NodePtr& root,
     return y;
 }
 
+#endif // USING_BORROWED_QMAP

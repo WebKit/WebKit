@@ -37,7 +37,13 @@
 
 #include "qfile.h"
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QFILE
+
+#ifndef USING_BORROWED_QSTRING
+#include <string.h>
+#define qstrlen(s) strlen((s))
+#define qstrcpy(dest,src) strcpy((dest),(src))
+#endif
 
 extern bool qt_file_access( const QString& fn, int t );
 
@@ -292,7 +298,11 @@ void QFile::setEncodingFunction( EncoderFn f )
 static
 QString locale_decoder( const QCString &localFileName )
 {
+#ifdef USING_BORROWED_QSTRING
     return QString::fromLocal8Bit(localFileName);
+#else
+    return QString(localFileName);
+#endif
 }
 
 static QFile::DecoderFn decoder = locale_decoder;
@@ -698,4 +708,4 @@ void QFile::close()
     return;
 }
 
-#endif
+#endif // USING_BORROWED_QFILE

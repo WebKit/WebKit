@@ -31,7 +31,9 @@ MMOBJECTS = \
 	KWQPixmap.o \
 	KWQWMatrix.o \
 	KWQWidget.o \
-# FIXME: add back in when this file builds ->  KWQString.o \
+	KWQChar.o \
+	KWQString.o \
+	KWQCString.o \
 	$(NULL)
 
 OBJECTS = $(MMOBJECTS) 

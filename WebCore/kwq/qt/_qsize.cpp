@@ -12,8 +12,8 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 // -------------------------------------------------------------------------
@@ -100,9 +100,11 @@ ostream &operator<<(ostream &o, const QSize &s)
 }
 #endif
 
-// KWQ_COMPLETE implementations ------------------------------------------
+// KWQ hacks ---------------------------------------------------------------
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QSIZE
+
+// -------------------------------------------------------------------------
 
 bool QSize::isNull() const
 {
@@ -211,4 +213,8 @@ QSize operator/(const QSize &s, double d)
     return QSize((QCOORD)(s.w / d), (QCOORD)(s.h / d));
 }
 
-#endif // _KWQ_COMPLETE_
+// KWQ hacks ---------------------------------------------------------------
+
+#endif // USING_BORROWED_QSIZE
+
+// -------------------------------------------------------------------------

@@ -30,9 +30,9 @@
 #include <config.h>
 #endif
 
-// _KWQ_COMPLETE_ ==============================================================
+// USING_BORROWED_QDATETIME ====================================================
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QDATETIME
 #include <_qdatetime.h>
 #else
 
@@ -159,6 +159,6 @@ public:
 
 }; // class QDateTime ==========================================================
 
-#endif // _KWQ_COMPLETE_
+#endif // USING_BORROWED_QDATETIME
 
 #endif

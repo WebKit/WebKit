@@ -37,9 +37,11 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
+
+#ifdef USING_BORROWED_QLIST
 
 // -------------------------------------------------------------------------
 
@@ -1231,3 +1233,9 @@ QCollection::Item QGListIterator::operator-=( uint jumps )
 	curNode = curNode->prev;
     return curNode ? curNode->getData() : 0;
 }
+
+// KWQ hacks ---------------------------------------------------------------
+
+#endif // USING_BORROWED_QVECTOR
+
+// -------------------------------------------------------------------------

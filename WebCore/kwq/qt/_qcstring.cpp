@@ -38,9 +38,11 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
+
+#ifdef USING_BORROWED_QSTRING
 
 // -------------------------------------------------------------------------
 
@@ -1942,3 +1944,8 @@ ostream &operator<<(ostream &o, const QCString &s)
 }
 #endif
 
+// KWQ hacks ---------------------------------------------------------------
+
+#endif // USING_BORROWED_QSTRING
+
+// -------------------------------------------------------------------------

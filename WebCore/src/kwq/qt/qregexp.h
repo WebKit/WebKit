@@ -30,9 +30,9 @@
 #include <config.h>
 #endif
 
-// _KWQ_COMPLETE_ ==============================================================
+// USING_BORROWED_QREGEXP ======================================================
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QREGEXP
 #include <_qregexp.h>
 #else
 
@@ -66,6 +66,6 @@ public:
 
 }; // class QRegExp ============================================================
 
-#endif // _KWQ_COMPLETE_
+#endif // USING_BORROWED_QREGEXP
 
 #endif

@@ -37,9 +37,11 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
+
+#ifdef USING_BORROWED_QSTRING
 
 // -------------------------------------------------------------------------
 
@@ -49,7 +51,7 @@
 #undef QT_NO_CAST_ASCII
 #endif
 
-#include "qstring.h"
+#include <qstring.h>
 #include "qregexp.h"
 
 #ifndef QT_NO_DATASTREAM
@@ -15273,3 +15275,9 @@ QString qt_winMB2QString( const char* mb, int mblen )
 
 
 #endif // _OS_WIN32_
+
+// KWQ hacks ---------------------------------------------------------------
+
+#endif // USING_BORROWED_QSTRING
+
+// -------------------------------------------------------------------------

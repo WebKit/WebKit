@@ -37,9 +37,11 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
+
+#ifdef USING_BORROWED_QSTRINGLIST
 
 // -------------------------------------------------------------------------
 
@@ -260,10 +262,13 @@ QStringList QStringList::grep( const QString &str, bool cs ) const
 QStringList QStringList::grep( const QRegExp &expr ) const
 {
     QStringList res;
+#ifdef USING_BORROWED_QSTRING
     for ( QStringList::ConstIterator it = begin(); it != end(); ++it )
 	if ( (*it).contains( expr ) )
 	    res << *it;
-
+#else
+#warning function is not implemented
+#endif
     return res;
 }
 
@@ -312,3 +317,9 @@ QStringList QStringList::fromStrList(const QStrList& ascii)
 }
 
 #endif //QT_NO_STRINGLIST
+
+// KWQ hacks ---------------------------------------------------------------
+
+#endif USING_BORROWED_QSTRINGLIST
+
+// -------------------------------------------------------------------------

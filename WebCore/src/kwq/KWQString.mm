@@ -27,6 +27,10 @@
 
 #include <qstring.h>
 
+#ifndef USING_BORROWED_QSTRING
+
+const QString QString::null;
+
 QString::QString()
 {
     s = NULL;
@@ -82,9 +86,109 @@ QString::QString(const char *chs)
     }
 }
 
+QString::QString(const QString &other)
+{
+    s = other.s;
+}
+
 QString::~QString()
 {
     CFRelease(s);
+}
+
+QString QString::lower() const
+{
+    QString result(*this);
+
+    CFStringLowercase(result.s, NULL);
+
+    return result;
+}
+
+bool QString::isNull() const
+{
+    return (s == NULL);
+}
+
+bool QString::isEmpty() const
+{
+    return (s == NULL || CFStringGetLength(s) == 0);
+}
+
+uint QString::length() const
+{
+    return CFStringGetLength(s);
+}
+
+int QString::find(char, int index=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::find(const char *, int index=0, bool b=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::find(const QString &, int index=0, bool b=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::find(const QRegExp &, int index=0, bool b=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::findRev(char, int index=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::findRev(const char *, int index=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+QString QString::fromLatin1(const char *s, int len=-1)
+{
+    // FIXME: awaiting real implementation
+    return NULL;
+}
+
+const char *QString::latin1() const
+{
+    // FIXME: awaiting real implementation
+    return (const char *)CFStringGetCStringPtr(s, kCFStringEncodingISOLatin1); 
+}
+
+const QChar *QString::unicode() const
+{
+    // FIXME: awaiting real implementation
+    return (QChar *)CFStringGetCharactersPtr(s); 
+}
+
+int QString::contains(const char *s, bool cs=TRUE) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+QString QString::mid(int, int len=0xffffffff) const
+{
+    // FIXME: awaiting real implementation
+    return NULL;
+}
+
+QString::operator const char *() const
+{
+    return latin1();
 }
 
 QString &QString::operator=(const QString &qs)
@@ -116,6 +220,59 @@ QString &QString::operator=(char ch)
     return *this = QString(QChar(ch));
 }
 
+bool QString::operator!() const
+{ 
+    return isNull(); 
+}
+
+QChar QString::operator[](int i) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+QString &QString::operator+=(char c)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::operator+=(QChar c)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::operator+=(const QString &s)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+bool operator==(const QString &s1, const QString &s2)
+{
+    CFComparisonResult cmp;
+    int flags;
+
+    flags = 0;
+
+    cmp = CFStringCompare(s1.s, s2.s, flags);
+    
+    return (cmp == kCFCompareEqualTo);
+}
+
+bool operator!=(const QString &s1, const QString &s2)
+{
+    CFComparisonResult cmp;
+    int flags;
+
+    flags = 0;
+
+    cmp = CFStringCompare(s1.s, s2.s, flags);
+    
+    return (cmp != kCFCompareEqualTo);
+}
+
 QConstString::QConstString(QChar *qcs, uint len)
 {
     if (qcs || len) {
@@ -132,3 +289,8 @@ const QString &QConstString::string() const
 {
     return *this;
 }
+
+#else // USING_BORROWED_QSTRING
+// This will help to keep the linker from complaining about empty archives
+void KWQString_Dummy() {}
+#endif // USING_BORROWED_QSTRING

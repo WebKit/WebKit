@@ -53,7 +53,7 @@ public:
     QRect(int, int, int, int);
     QRect(const QRect &);
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QRECT
     QRect(const QPoint &, const QPoint &);
     QRect(const QPoint &, const QSize &);
 #endif
@@ -83,7 +83,7 @@ public:
     QRect intersect(const QRect &) const;
     bool intersects(const QRect &) const;
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QRECT
     bool isEmpty() const;
     QRect normalize() const;
 
@@ -118,7 +118,7 @@ public:
     bool contains(int, int, bool proper=FALSE) const;
     bool contains(const QRect &, bool proper=FALSE) const;
     QRect unite(const QRect &) const;
-#endif // _KWQ_COMPLETE_
+#endif // USING_BORROWED_QRECT
 
     // operators ---------------------------------------------------------------
 
@@ -126,12 +126,13 @@ public:
      * QRect &operator=(const QRect &);
      */
 
-#ifdef _KWQ_COMPLETE_
+    QRect operator&(const QRect &) const;
+
+#ifdef USING_BORROWED_QRECT
     friend bool operator==(const QRect &, const QRect &);
     friend bool operator!=(const QRect &, const QRect &);
 
     QRect operator|(const QRect &) const;
-    QRect operator&(const QRect &) const;
     QRect& operator|=(const QRect &);
     QRect& operator&=(const QRect &);
 #endif

@@ -30,12 +30,13 @@
 #include <config.h>
 #endif
 
-// _KWQ_COMPLETE_ ==============================================================
+// USING_BORROWED_QTEXTSTREAM ==================================================
 
 // FIXME: Need a hack here to give the xml tokenizer text stream
 // defines from Qt. The NEED_BOGUS_TEXTSTREAMS symbol
 // can be removed when we have Qt text streams implemented
-#if defined _KWQ_COMPLETE_ && ! defined NEED_BOGUS_TEXTSTREAMS
+
+#if defined USING_BORROWED_QTEXTSTREAM && ! defined NEED_BOGUS_TEXTSTREAMS
 #include <_qtextstream.h>
 #else
 
@@ -168,6 +169,6 @@ private:
 
 }; // class QTextOStream =======================================================
 
-#endif // _KWQ_COMPLETE_
+#endif // USING_BORROWED_QTEXTSTREAM
 
 #endif

@@ -30,9 +30,9 @@
 #include <config.h>
 #endif
 
-// _KWQ_COMPLETE_ ==============================================================
+// USING_BORROWED_QSTACK =======================================================
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QSTACK
 #include <_qstack.h>
 #else
 
@@ -66,6 +66,6 @@ public:
 
 }; // class QStack =============================================================
 
-#endif // _KWQ_COMPLETE_
+#endif // USING_BORROWED_QSTACK
 
 #endif

@@ -37,9 +37,11 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
+
+#ifdef USING_BORROWED_QREGION
 
 // -------------------------------------------------------------------------
 
@@ -345,3 +347,8 @@ QRegion& QRegion::operator-=( const QRegion &r )
 QRegion& QRegion::operator^=( const QRegion &r )
     { return *this = *this ^ r; }
 
+// KWQ hacks ---------------------------------------------------------------
+
+#endif // USING_BORROWED_QREGION
+
+// -------------------------------------------------------------------------

@@ -10,12 +10,6 @@
  *
  ***********************************************************************/
 
-// KWQ hacks ---------------------------------------------------------------
-
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
-#endif
-
 // -------------------------------------------------------------------------
 
 #include "qpoint.h"
@@ -78,9 +72,11 @@ ostream &operator<<(ostream &o, const QPoint &p)
 }
 #endif
 
-// KWQ_COMPLETE implementations ------------------------------------------
+// KWQ hacks ---------------------------------------------------------------
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QPOINT
+
+// -------------------------------------------------------------------------
 
 bool QPoint::isNull() const
 { 
@@ -190,4 +186,8 @@ QPoint operator/(const QPoint &p, double d)
     return QPoint((QCOORD)(p.xx / d), (QCOORD)(p.yy / d)); 
 }
 
-#endif // _KWQ_COMPLETE_
+// KWQ hacks ---------------------------------------------------------------
+
+#endif USING_BORROWED_QPOINT
+
+// -------------------------------------------------------------------------

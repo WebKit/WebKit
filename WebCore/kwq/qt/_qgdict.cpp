@@ -37,9 +37,11 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
+
+#ifdef USING_BORROWED_QDICT
 
 // -------------------------------------------------------------------------
 
@@ -102,6 +104,7 @@ int QGDict::hashKeyString( const QString &key )
     if ( key.isNull() )
 	qWarning( "QGDict::hashStringKey: Invalid null key" );
 #endif
+#ifdef USING_BORROWED_QSTRING
     int i;
     register uint h=0;
     uint g;
@@ -125,6 +128,9 @@ int QGDict::hashKeyString( const QString &key )
     if ( index < 0 )				// adjust index to table size
 	index = -index;
     return index;
+#else
+    return CFHash(key.s);
+#endif
 }
 
 /*!
@@ -1225,3 +1231,9 @@ QCollection::Item QGDictIterator::operator+=( uint jumps )
 	operator++();
     return curNode ? curNode->getData() : 0;
 }
+
+// KWQ hacks ---------------------------------------------------------------
+
+#endif // USING_BORROWED_QDICT
+
+// -------------------------------------------------------------------------

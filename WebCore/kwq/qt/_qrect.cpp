@@ -12,8 +12,8 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 // -------------------------------------------------------------------------
@@ -117,6 +117,16 @@ bool QRect::intersects(const QRect &r) const
             QMAX(y1, r.y1) <= QMIN(y2, r.y2));
 }
 
+QRect QRect::operator&(const QRect &r) const
+{
+    QRect tmp;
+    tmp.x1 = QMAX(x1, r.x1);
+    tmp.x2 = QMIN(x2, r.x2);
+    tmp.y1 = QMAX(y1, r.y1);
+    tmp.y2 = QMIN(y2, r.y2);
+    return tmp;
+}
+
 #ifdef _KWQ_IOSTREAM_
 ostream &operator<<(ostream &o, const QRect &r)
 {
@@ -133,10 +143,11 @@ ostream &operator<<(ostream &o, const QRect &r)
 }
 #endif
 
+// KWQ hacks ---------------------------------------------------------------
 
-// KWQ_COMPLETE implementations ------------------------------------------
+#ifdef USING_BORROWED_QRECT
 
-#ifdef _KWQ_COMPLETE_
+// -------------------------------------------------------------------------
 
 QRect::QRect( const QPoint &topLeft, const QPoint &bottomRight )
 {
@@ -393,16 +404,6 @@ QRect QRect::operator|(const QRect &r) const
     }
 }
 
-QRect QRect::operator&(const QRect &r) const
-{
-    QRect tmp;
-    tmp.x1 = QMAX(x1, r.x1);
-    tmp.x2 = QMIN(x2, r.x2);
-    tmp.y1 = QMAX(y1, r.y1);
-    tmp.y2 = QMIN(y2, r.y2);
-    return tmp;
-}
-
 bool operator==(const QRect &r1, const QRect &r2)
 {
     return r1.x1==r2.x1 && r1.x2==r2.x2 && r1.y1==r2.y1 && r1.y2==r2.y2;
@@ -413,4 +414,8 @@ bool operator!=(const QRect &r1, const QRect &r2)
     return r1.x1!=r2.x1 || r1.x2!=r2.x2 || r1.y1!=r2.y1 || r1.y2!=r2.y2;
 }
 
-#endif // _KWQ_COMPLETE_
+// KWQ hacks ---------------------------------------------------------------
+
+#endif // USING_BORROWED_QRECT
+
+// -------------------------------------------------------------------------

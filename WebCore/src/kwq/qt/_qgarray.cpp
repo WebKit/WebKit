@@ -12,9 +12,11 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
+
+#ifdef USING_BORROWED_QARRAY
 
 // -------------------------------------------------------------------------
 
@@ -430,3 +432,9 @@ void QGArray::deleteData( array_data *p )
     delete p;
     p = 0;
 }
+
+// KWQ hacks ---------------------------------------------------------------
+
+#endif // USING_BORROWED_QARRAY
+
+// -------------------------------------------------------------------------

@@ -27,6 +27,8 @@
 
 #include <qstring.h>
 
+#ifndef USING_BORROWED_QSTRING
+
 static UniChar scratchUniChar;
 
 static CFMutableStringRef GetScratchUniCharString()
@@ -224,3 +226,8 @@ int operator!=(char ch, QChar qc)
 {
     return ch != qc.c;
 }
+
+#else // USING_BORROWED_QSTRING
+// This will help to keep the linker from complaining about empty archives
+void KWQChar_Dummy() {}
+#endif // USING_BORROWED_QSTRING

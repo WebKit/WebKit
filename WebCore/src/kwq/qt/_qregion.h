@@ -40,8 +40,8 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef _KWQ_COMPLETE_
-#define _KWQ_COMPLETE_
+#ifndef USING_BORROWED_QREGION
+#define USING_BORROWED_QREGION
 #endif
 
 #include <KWQDef.h>
@@ -66,7 +66,7 @@ public:
     QRegion( const QPointArray &, bool winding=FALSE );
     QRegion( const QRegion & );
 // FIXME: Take this out until such time as bitmaps are implemented
-#ifndef _KWQ_COMPLETE_    
+#ifndef USING_BORROWED_QREGION
     QRegion( const QBitmap & );
 #endif
    ~QRegion();

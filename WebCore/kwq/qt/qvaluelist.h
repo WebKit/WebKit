@@ -30,9 +30,9 @@
 #include <config.h>
 #endif
 
-// _KWQ_COMPLETE_ ==============================================================
+// USING_BORROWED_QVALUELIST ===================================================
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QVALUELIST
 #include <_qvaluelist.h>
 #else
 
@@ -164,6 +164,6 @@ public:
 
 }; // class QValueList =========================================================
 
-#endif // _KWQ_COMPLETE_
+#endif // USING_BORROWED_QVALUELIST
 
 #endif

@@ -32,7 +32,9 @@
 
 #include <KWQDef.h>
 
-#ifdef _KWQ_COMPLETE_
+// USING_BORROWED_QFILE =======================================================
+
+#ifdef USING_BORROWED_QFILE
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -116,7 +118,7 @@ struct QFileInfoCache
 };
 
 
-#endif // _KWQ_COMPLETE_
+#endif // USING_BORROWED_QFILE
 
 
 #include "_qiodevice.h"
@@ -131,7 +133,7 @@ public:
 
     // typedefs ----------------------------------------------------------------
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QFILE
     typedef QCString(*EncoderFn)(const QString &);
     typedef QString(*DecoderFn)(const QCString &);
 #endif
@@ -140,7 +142,7 @@ public:
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QFILE
     static QCString encodeName(const QString &);
     static QString decodeName(const QCString &);
     static void setEncodingFunction(EncoderFn);
@@ -164,7 +166,7 @@ public:
     uint size() const;
 
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QFILE
     bool remove();
 
     QString	name() const;
@@ -194,7 +196,7 @@ public:
 
 // protected -------------------------------------------------------------------
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QFILE
 protected:
     QString fn;
     FILE *fh;
@@ -213,14 +215,14 @@ private:
     QFile(const QFile &);
     QFile &operator=(const QFile &);
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QFILE
     void init();
     QCString ungetchBuffer;
 #endif
 
 }; // class QFile ==============================================================
 
-#ifdef _KWQ_COMPLETE_
+#ifdef USING_BORROWED_QFILE
 
 inline int QFile::at() const
 {
@@ -230,6 +232,7 @@ inline int QFile::at() const
 inline QString QFile::name() const
 { return fn; }
 
-#endif
+
+#endif // USING_BORROWED_QFILE
 
 #endif

@@ -16,8 +16,9 @@ include $(TOPSRCDIR)/Makefile.vars
 # Set variables for this directory
 
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+CMMOBJECTS = objc-dummy.o
 
-OBJECTS = $(CXXOBJECTS)
+OBJECTS = $(CMMOBJECTS) $(CXXOBJECTS)
 
 PROGRAMS = \
     qpoint-test \
@@ -50,19 +51,25 @@ CLEAN_FILES = *.o \
 
 CXXFLAGS = $(BASECXXFLAGS) \
     -Wall \
-    -DQ_DELETING_VOID_UNDEFINED \
-    -DQT_NO_TEXTCODEC \
-    -DQT_NO_DATASTREAM \
-    -D_KWQ_COMPLETE_ \
-    -D_KWQ_IOSTREAM_ \
+    -I$(TOPSRCDIR) \
     -I../../qt \
     -I../.. \
     -I. \
     $(NULL)
 
-LDFLAGS = $(BASELDFLAGS) \
-    -L../../qt \
+CMMFLAGS = $(BASECMMFLAGS)
+
+LIBS = objc-dummy.o \
+    -framework Cocoa \
+    -lkwq \
     -l_qt \
+    -lkwq \
+    -l_qt \
+    $(NULL)
+
+LDFLAGS = $(BASELDFLAGS) \
+    -L../.. \
+    -L../../qt \
     $(NULL)
 
 DEPFLAGS = $(CXXFLAGS)
@@ -73,61 +80,61 @@ DEPFLAGS = $(CXXFLAGS)
 all: $(OBJECTS) $(PROGRAMS)
 
 qpoint-test: qpoint-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qsize-test: qsize-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qrect-test: qrect-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qcstring-test: qcstring-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qarray-test: qarray-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qmap-test: qmap-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qvaluelist-test: qvaluelist-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qstringlist-test: qstringlist-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qlist-test: qlist-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qvector-test: qvector-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qdict-test: qdict-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qptrdict-test: qptrdict-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qstack-test: qstack-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qregexp-test: qregexp-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qchar-test: qchar-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qstring-test: qstring-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qdate-test: qdate-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qtime-test: qtime-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 qdatetime-test: qdatetime-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
 depend: 
 

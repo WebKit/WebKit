@@ -239,6 +239,411 @@ AC_DEFINE_UNQUOTED(QT_NO_TEXTCODEC, 1)
 
 dnl
 dnl -------------------------------------------------------------------
+dnl Set what we're borrowing and what we've implemented
+dnl -------------------------------------------------------------------
+dnl
+
+dnl
+dnl QArray borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qarray,
+[  --enable-borrowed-qarray   enabled use of borrowed QArray (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QARRAY, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QArray$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QARRAY, 1)
+fi
+fi
+)
+
+dnl
+dnl QCollection borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qcollection,
+[  --enable-borrowed-qcollection   enabled use of borrowed QCollection (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QCOLLECTION, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QCollection$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QCOLLECTION, 1)
+fi
+fi
+)
+
+dnl
+dnl QColor borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qcolor,
+[  --enable-borrowed-qcolor   enabled use of borrowed QColor (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QCOLOR, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QColor$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QCOLOR, 1)
+fi
+fi
+)
+
+dnl
+dnl QDateTime borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qdatetime,
+[  --enable-borrowed-qdatetime   enabled use of borrowed QDateTime (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QDATETIME, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QDateTime$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QDATETIME, 1)
+fi
+fi
+)
+
+dnl
+dnl QDict borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qdict,
+[  --enable-borrowed-qdict   enabled use of borrowed QDict (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QDICT, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QDict$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QDICT, 1)
+fi
+fi
+)
+
+dnl
+dnl QFile borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qfile,
+[  --enable-borrowed-qfile   enabled use of borrowed QFile (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QFILE, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QFile$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QFILE, 1)
+fi
+fi
+)
+
+dnl
+dnl QList borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qlist,
+[  --enable-borrowed-qlist   enabled use of borrowed QList (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QLIST, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QList$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QLIST, 1)
+fi
+fi
+)
+
+dnl
+dnl QMap borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qmap,
+[  --enable-borrowed-qmap   enabled use of borrowed QMap (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QMAP, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QMap$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QMAP, 1)
+fi
+fi
+)
+
+dnl
+dnl QPoint borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qpoint,
+[  --enable-borrowed-qpoint   enabled use of borrowed QPoint (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QPOINT, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QPoint$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QPOINT, 1)
+fi
+fi
+)
+
+dnl
+dnl QPtrDict borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qptrdict,
+[  --enable-borrowed-qptrdict   enabled use of borrowed QPtrDict (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QPTRDICT, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QPtrDict$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QPTRDICT, 1)
+fi
+fi
+)
+
+dnl
+dnl QRect borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qrect,
+[  --enable-borrowed-qrect   enabled use of borrowed QRect (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QRECT, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QRect$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QRECT, 1)
+fi
+fi
+)
+
+dnl
+dnl QRegExp borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qregexp,
+[  --enable-borrowed-qregexp   enabled use of borrowed QRegExp (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QREGEXP, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QRegExp$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QREGEXP, 1)
+fi
+fi
+)
+
+dnl
+dnl QRegion borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qregion,
+[  --enable-borrowed-qregion   enabled use of borrowed QRegion (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QREGION, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QRegion$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QREGION, 1)
+fi
+fi
+)
+
+dnl
+dnl QSize borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qsize,
+[  --enable-borrowed-qsize   enabled use of borrowed QSize (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QSIZE, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QSize$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QSIZE, 1)
+fi
+fi
+)
+
+dnl
+dnl QSortedList borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qsortedlist,
+[  --enable-borrowed-qsortedlist   enabled use of borrowed QSortedList (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QSORTEDLIST, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QSortedList$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QSORTEDLIST, 1)
+fi
+fi
+)
+
+dnl
+dnl QStack borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qstack,
+[  --enable-borrowed-qstack   enabled use of borrowed QStack (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QSTACK, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QStack$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QSTACK, 1)
+fi
+fi
+)
+
+dnl
+dnl QString borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qstring,
+[  --enable-borrowed-qstring   enabled use of borrowed QString (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QSTRING, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QString$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QSTRING, 1)
+fi
+fi
+)
+
+dnl
+dnl QStringList borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qstringlist,
+[  --enable-borrowed-qstringlist   enabled use of borrowed QStringList (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QSTRINGLIST, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QStringList$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QSTRINGLIST, 1)
+fi
+fi
+)
+
+dnl
+dnl QTextStream borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qtextstream,
+[  --enable-borrowed-qtextstream   enabled use of borrowed QTextStream (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QTEXTSTREAM, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QTextStream$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QTEXTSTREAM, 1)
+fi
+fi
+)
+
+dnl
+dnl QValueList borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qvaluelist,
+[  --enable-borrowed-qvaluelist   enabled use of borrowed QValueList (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QVALUELIST, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QValueList$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QVALUELIST, 1)
+fi
+fi
+)
+
+dnl
+dnl QVector borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qvector,
+[  --enable-borrowed-qvector   enabled use of borrowed QVector (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QVECTOR, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QVector$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QVECTOR, 1)
+fi
+fi
+)
+
+dnl
+dnl -------------------------------------------------------------------
 dnl Output files
 dnl -------------------------------------------------------------------
 dnl
