@@ -219,6 +219,7 @@
 
 - (void)chooseButtonPressed:(id)sender
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebCoreFileButtonClicked object:self];
     [self beginSheet];
 }
 

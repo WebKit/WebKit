@@ -1,3 +1,15 @@
+2003-03-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3188209 - REGRESSION: onmouseup handlers not running for most form elements
+
+        * WebCoreSupport.subproj/WebFileButton.m:
+        (-[WebFileButton chooseButtonPressed:]): Send appropriate NSNotification. 
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebNSTextView mouseDown:]): Call fieldEditorDidMouseDown: on
+	delegate, if implemented, after calling super.
+
 2003-03-13  Richard Williamson   <rjw@apple.com>
 
         First stage of the WebController -> WebView, WebView -> WebFrameView.

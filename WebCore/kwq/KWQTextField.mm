@@ -50,12 +50,12 @@
 
 @interface KWQSecureTextField : NSSecureTextField <KWQWidgetHolder>
 {
-    QWidget *widget;
+    QLineEdit *widget;
     BOOL inSetFrameSize;
     BOOL inNextValidKeyView;
 }
 
-- initWithQWidget:(QWidget *)widget;
+- initWithQLineEdit:(QLineEdit *)widget;
 
 @end
 
@@ -128,7 +128,7 @@
         [secureField removeFromSuperview];
     } else {
         if (secureField == nil) {
-            secureField = [[KWQSecureTextField alloc] initWithQWidget:widget];
+            secureField = [[KWQSecureTextField alloc] initWithQLineEdit:widget];
             [secureField setFormatter:formatter];
             [secureField setFont:[self font]];
             [self setUpTextField:secureField];
@@ -339,6 +339,12 @@
     return widget;
 }
 
+- (void)fieldEditorDidMouseDown:(NSEvent *)event
+{
+    widget->sendConsumedMouseUp();
+    widget->clicked();
+}
+
 @end
 
 @implementation KWQTextFieldFormatter
@@ -390,7 +396,7 @@
 
 @implementation KWQSecureTextField
 
-- initWithQWidget:(QWidget *)w
+- initWithQLineEdit:(QLineEdit *)w
 {
     widget = w;
     return [super init];
@@ -471,6 +477,12 @@
 - (QWidget *)widget
 {
     return widget;
+}
+
+- (void)fieldEditorDidMouseDown:(NSEvent *)event
+{
+    widget->sendConsumedMouseUp();
+    widget->clicked();
 }
 
 @end

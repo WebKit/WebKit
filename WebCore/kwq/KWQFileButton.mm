@@ -29,6 +29,10 @@
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
 
+NSString *WebCoreFileButtonFilenameChanged = @"WebCoreFileButtonFilenameChanged";
+NSString *WebCoreFileButtonClicked = @"WebCoreFileButtonClicked";
+
+
 @interface KWQFileButtonAdapter : NSObject
 {
     KWQFileButton *button;
@@ -40,6 +44,7 @@
 
 KWQFileButton::KWQFileButton(KHTMLPart *part)
     : QWidget([KWQ(part)->bridge() fileButton])
+    , _clicked(this, SIGNAL(clicked()))
     , _textChanged(this, SIGNAL(textChanged(const QString &)))
     , _adapter([[KWQFileButtonAdapter alloc] initWithKWQFileButton:this])
 {
@@ -83,6 +88,12 @@ void KWQFileButton::filenameChanged()
     _textChanged.call(QString::fromNSString([(NSView <WebCoreFileButton> *)getView() filename]));
 }
 
+void KWQFileButton::clicked()
+{
+    _clicked.call();
+}
+
+
 @implementation KWQFileButtonAdapter
 
 - initWithKWQFileButton:(KWQFileButton *)b
@@ -91,6 +102,8 @@ void KWQFileButton::filenameChanged()
     button = b;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(filenameChanged:)
         name:WebCoreFileButtonFilenameChanged object:b->getView()];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clicked:)
+        name:WebCoreFileButtonClicked object:b->getView()];
     return self;
 }
 
@@ -103,6 +116,12 @@ void KWQFileButton::filenameChanged()
 - (void)filenameChanged:(NSNotification *)notification
 {
     button->filenameChanged();
+}
+
+-(void)clicked:(NSNotification *)notification
+{
+    button->sendConsumedMouseUp();
+    button->clicked();
 }
 
 @end

@@ -28,7 +28,8 @@
 #import "KWQTextArea.h"
 
 QTextEdit::QTextEdit(QWidget *parent)
-    : m_textChanged(this, SIGNAL(textChanged()))
+    : m_clicked(this, SIGNAL(clicked()))
+    , m_textChanged(this, SIGNAL(textChanged()))
 {
     KWQTextArea *textView = [[KWQTextArea alloc] initWithQTextEdit:this];
     setView(textView);
@@ -149,4 +150,9 @@ void QTextEdit::setFont(const QFont &font)
 QWidget::FocusPolicy QTextEdit::focusPolicy() const
 {
     return TabFocus;
+}
+
+void QTextEdit::clicked()
+{
+    m_clicked.call();
 }

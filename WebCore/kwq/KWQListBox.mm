@@ -35,10 +35,12 @@
 }
 @end
 
-@interface KWQListBoxTableViewDelegate : NSObject
+@interface KWQTableView : NSTableView
 {
     QListBox *_box;
     NSArray *_items;
+    BOOL processingMouseEvent;
+    BOOL clickedDuringMouseEvent;
 }
 - initWithListBox:(QListBox *)b items:(NSArray *)items;
 @end
@@ -59,25 +61,7 @@ QListBox::QListBox(QWidget *parent)
     [scrollView setHasVerticalScroller:YES];
     [[scrollView verticalScroller] setControlSize:NSSmallControlSize];
     
-    NSTableView *tableView = [[NSTableView alloc] init];
-    KWQListBoxTableViewDelegate *delegate = [[KWQListBoxTableViewDelegate alloc] initWithListBox:this items:_items];
-
-    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:nil];
-
-    [column setEditable:NO];
-    [[column dataCell] setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
-
-    [tableView addTableColumn:column];
-
-    [column release];
-    
-    [tableView setAllowsMultipleSelection:NO];
-    [tableView setHeaderView:nil];
-    [tableView setIntercellSpacing:NSMakeSize(0, 0)];
-    [tableView setRowHeight:ceil([[column dataCell] cellSize].height)];
-    
-    [tableView setDataSource:delegate];
-    [tableView setDelegate:delegate];
+    KWQTableView *tableView = [[KWQTableView alloc] initWithListBox:this items:_items];
 
     [scrollView setDocumentView:tableView];
     [scrollView setVerticalLineScroll:[tableView rowHeight]];
@@ -92,10 +76,8 @@ QListBox::QListBox(QWidget *parent)
 QListBox::~QListBox()
 {
     NSTableView *tableView = [(NSScrollView *)getView() documentView];
-    KWQListBoxTableViewDelegate *delegate = [tableView delegate];
     [tableView setDelegate:nil];
     [tableView setDataSource:nil];
-    [delegate release];
     [_items release];
 }
 
@@ -247,15 +229,47 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 
 @end
 
-@implementation KWQListBoxTableViewDelegate
+@implementation KWQTableView
 
 - initWithListBox:(QListBox *)b items:(NSArray *)i
 {
     [super init];
     _box = b;
     _items = i;
+
+    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:nil];
+
+    [column setEditable:NO];
+    [[column dataCell] setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+
+    [self addTableColumn:column];
+
+    [column release];
+    
+    [self setAllowsMultipleSelection:NO];
+    [self setHeaderView:nil];
+    [self setIntercellSpacing:NSMakeSize(0, 0)];
+    [self setRowHeight:ceil([[column dataCell] cellSize].height)];
+    
+    [self setDataSource:self];
+    [self setDelegate:self];
+
     return self;
 }
+
+-(void)mouseDown:(NSEvent *)event
+{
+    processingMouseEvent = TRUE;
+    [super mouseDown:event];
+    processingMouseEvent = FALSE;
+
+    if (clickedDuringMouseEvent) {
+	clickedDuringMouseEvent = false;
+    } else {
+	_box->sendConsumedMouseUp();
+    }
+}
+
 
 - (int)numberOfRowsInTableView:(NSTableView *)tableView
 {
@@ -271,6 +285,10 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 {
     _box->selectionChanged();
     if (!_box->changingSelection()) {
+	if (processingMouseEvent) {
+	    clickedDuringMouseEvent = true;
+	    _box->sendConsumedMouseUp();
+	}
         _box->clicked();
     }
 }

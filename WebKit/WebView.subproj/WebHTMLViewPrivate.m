@@ -687,6 +687,16 @@ static BOOL inNSTextViewDrawRect;
     return become;
 }
 
+-(void)mouseDown:(NSEvent *)event
+{
+    NSView *possibleContainingField = [self delegate];
+
+    [super mouseDown:event];
+    if ([possibleContainingField respondsToSelector:@selector(fieldEditorDidMouseDown:)]) {
+	[possibleContainingField fieldEditorDidMouseDown:event];
+    }
+}
+
 @end
 
 @implementation WebNSView

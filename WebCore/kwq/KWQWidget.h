@@ -153,6 +153,8 @@ public:
     void disableFlushDrawing();
     void setDrawingAlpha(float alpha);
 
+    void sendConsumedMouseUp();
+
 private:
     QWidgetPrivate *data;
 };

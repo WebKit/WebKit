@@ -562,6 +562,13 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     return widget;
 }
 
+- (void)mouseDown:(NSEvent *)event
+{
+    [super mouseDown:event];
+    widget->sendConsumedMouseUp();
+    widget->clicked();
+}
+
 @end
 
 @implementation NSView (KWQTextArea)

@@ -27,23 +27,60 @@
 
 #import "KWQCheckBox.h"
 
-@interface KWQButtonAdapter : NSObject
+#import "render_form.h"
+
+@interface KWQButton : NSButton
 {
     QButton *button;
+    BOOL processingMouseEvent;
+    BOOL clickedDuringMouseEvent;
 }
 
 - initWithQButton:(QButton *)b;
 - (void)action:(id)sender;
+@end
+
+@implementation KWQButton
+
+
+- initWithQButton:(QButton *)b
+{
+    button = b;
+    return [super init];
+}
+
+- (void)action:(id)sender
+{
+    if (processingMouseEvent) {
+	clickedDuringMouseEvent = true;
+	button->sendConsumedMouseUp();
+    } 
+
+    button->clicked();
+}
+
+-(void)mouseDown:(NSEvent *)event
+{
+    processingMouseEvent = true;
+    [super mouseDown:event];
+    processingMouseEvent = false;
+
+    if (clickedDuringMouseEvent) {
+	clickedDuringMouseEvent = false;
+    } else {
+	button->sendConsumedMouseUp();
+    }
+}
+
 
 @end
 
 QButton::QButton()
     : m_clicked(this, SIGNAL(clicked()))
-    , m_adapter([[KWQButtonAdapter alloc] initWithQButton:this])
 {
-    NSButton *button = [[NSButton alloc] init];
+    KWQButton *button = [[KWQButton alloc] initWithQButton:this];
     
-    [button setTarget:m_adapter];
+    [button setTarget:button];
     [button setAction:@selector(action:)];
 
     [button setTitle:@""];
@@ -59,7 +96,6 @@ QButton::~QButton()
 {
     NSButton *button = (NSButton *)getView();
     [button setTarget:nil];
-    [m_adapter release];
 }
 
 void QButton::setText(const QString &s)
@@ -79,17 +115,4 @@ void QButton::clicked()
     m_clicked.call();
 }
 
-@implementation KWQButtonAdapter
 
-- initWithQButton:(QButton *)b
-{
-    button = b;
-    return [super init];
-}
-
-- (void)action:(id)sender
-{
-    button->clicked();
-}
-
-@end

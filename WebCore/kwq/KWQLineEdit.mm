@@ -35,6 +35,7 @@
 QLineEdit::QLineEdit()
     : m_returnPressed(this, SIGNAL(returnPressed()))
     , m_textChanged(this, SIGNAL(textChanged(const QString &)))
+    , m_clicked(this, SIGNAL(clicked()))
 {
     NSView *view = [[KWQTextField alloc] initWithQLineEdit:this];
     setView(view);
@@ -153,4 +154,9 @@ int QLineEdit::baselinePosition() const
     NSFont *font = [textField font];
     return (int)ceil([[textField cell] drawingRectForBounds:bounds].origin.y - bounds.origin.y
         + [font defaultLineHeightForFont] + [font descender]);
+}
+
+void QLineEdit::clicked()
+{
+    m_clicked.call();
 }

@@ -329,3 +329,4 @@ enum FrameBorderStyle {
 @end
 
 extern NSString *WebCoreFileButtonFilenameChanged;
+extern NSString *WebCoreFileButtonClicked;

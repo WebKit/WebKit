@@ -72,7 +72,9 @@ class QTextEdit : public QScrollView
 
     void setFont(const QFont &);
 
+    void clicked();
   private:
+    KWQSignal m_clicked;
     KWQSignal m_textChanged;
 };
 

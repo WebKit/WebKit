@@ -1,3 +1,69 @@
+2003-03-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3188209 - REGRESSION: onmouseup handlers not running for most form elements
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::RenderLineEdit): Connect to clicked signal.
+        (RenderFileButton::RenderFileButton): Likewise.
+        (RenderFileButton::slotClicked): Send clicked through DOM.
+        (RenderTextArea::RenderTextArea): Connect to clicked signal.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::sendConsumedMouseUp): New method to send a
+	mouseUp event for this DOM element. Meant for up events consumed
+	by AppKit mouseDown: methods that use modal event loops.
+        * khtml/rendering/render_replaced.h:
+        * kwq/KWQButton.h:
+        * kwq/KWQButton.mm:
+        (-[KWQButton initWithQButton:]): Moved here from former adaptor class.
+        (-[KWQButton action:]): Make sure to send up before click.
+        (-[KWQButton mouseDown:]): Record that we are processing a mouse
+	event. If no click happened, send the missing up event.
+        (QButton::QButton): Use NSButton subclass instead of separate adaptor.
+        (QButton::~QButton): Likewise.
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton): Initialize clicked signal.
+        (KWQFileButton::clicked): Emit clicked signal.
+        (-[KWQFileButtonAdapter initWithKWQFileButton:]): Observe Clicked notification too.
+        (-[KWQFileButtonAdapter clicked]): Send mouse up and click through DOM.
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::QLineEdit): Initialize clicked signal.
+        (QLineEdit::clicked): Emit clicked signal.
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox): No longer use separate object as delegate and data source.
+        (QListBox::~QListBox): No more need to retrieve and release delegate.
+        (-[KWQTableView initWithListBox:items:]): 
+        (-[KWQTableView mouseDown:]): Record that we are processing a mouse
+	event; if no click happens while processing, send the mouse up event
+	through the DOM.
+        (-[KWQTableView tableViewSelectionDidChange:]): If sending clicked
+	and processing a mouse event, send up first.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView mouseDown:]): Send up and click through DOM
+	after calling super.
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::QTextEdit): Initialize clicked signal.
+        (QTextEdit::clicked): Emit clicked signal.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField setPasswordMode:]): initWithQLineEdit: instead of initWithQWidget:
+        (-[KWQTextField fieldEditorDidMouseDown:]): Send up and click through DOM.
+        (-[KWQSecureTextField initWithQLineEdit:]): Store QLineEdit*, not just QWidget*.
+        (-[KWQSecureTextField fieldEditorDidMouseDown:]): Send up and click through DOM.
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+	(QWidget::sendConsumedMouseUp): Common method for widgets to send
+	a mouseUp that has been consumed by mouseDown processing through
+	the DOM.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreFirstResponderChanges.h:
+        * kwq/WebCoreViewFactory.m:
+        * WebCore.exp: Export new string constant.
+        * WebCore-combined.exp: Regenerated.
+
 2003-03-13  Richard Williamson   <rjw@apple.com>
 
         First stage of the WebController -> WebView, WebView -> WebFrameView.

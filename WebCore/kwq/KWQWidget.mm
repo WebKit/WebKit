@@ -432,3 +432,15 @@ void QWidget::paint(QPainter *p, const QRect &r)
     NSView *view = getOuterView();
     [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
 }
+
+
+
+void QWidget::sendConsumedMouseUp()
+{
+    khtml::RenderWidget *widget = const_cast<khtml::RenderWidget *>
+	(static_cast<const khtml::RenderWidget *>(eventFilterObject()));
+
+    widget->sendConsumedMouseUp(QPoint([[NSApp currentEvent] locationInWindow]),
+			      // FIXME: should send real state and button
+			      0, 0);
+}

@@ -26,8 +26,6 @@
 #import "WebCoreViewFactory.h"
 #import "KWQAssertions.h"
 
-NSString *WebCoreFileButtonFilenameChanged = @"WebCoreFileButtonFilenameChanged";
-
 @implementation WebCoreViewFactory
 
 static WebCoreViewFactory *sharedFactory;

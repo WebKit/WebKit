@@ -209,6 +209,17 @@ void RenderWidget::layout( )
     setLayouted();
 }
 
+#if APPLE_CHANGES
+void RenderWidget::sendConsumedMouseUp(const QPoint &mousePos, int button, int state)
+{
+    RenderArena *arena = ref();
+    QMouseEvent e( QEvent::MouseButtonRelease, mousePos, button, state);
+
+    element()->dispatchMouseEvent(&e, EventImpl::MOUSEUP_EVENT, 0);
+    deref(arena);
+}
+#endif
+
 void RenderWidget::slotWidgetDestructed()
 {
     m_widget = 0;
