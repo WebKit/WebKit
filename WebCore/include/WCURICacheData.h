@@ -6,11 +6,10 @@
 
 @protocol WCURICacheData
 
--(id)jobID;
+-(NSURL *)url;
 -(id)status;
 -(id)error;
--(NSURL *)url;
--(unsigned char *)cacheData;
+-(UInt8 *)cacheData;
 -(int)cacheDataSize;
 -(void *)userData;
 

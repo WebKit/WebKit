@@ -6,8 +6,8 @@
 
 @protocol WCURICache 
 
--(NSString *)requestWithURL:(NSURL *)url requestor:(id)requestor userData:(void *)userData;
--(NSString *)requestWithString:(NSString *)uriString requestor:(id)requestor userData:(void *)userData;
+-(void)requestWithURL:(NSURL *)url requestor:(id)requestor userData:(void *)userData;
+-(void)requestWithString:(NSString *)uriString requestor:(id)requestor userData:(void *)userData;
 
 -(void)cancelRequestWithURL:(NSURL *)url requestor:(id)requestor;
 -(void)cancelRequestWithString:(NSString *)uriString requestor:(id)requestor;
