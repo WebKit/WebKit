@@ -366,8 +366,14 @@ using khtml::RenderPart;
     state |= [self stateForEvent:event];
     
     if (part->impl->view()) {
-        QMouseEvent kEvent(QEvent::MouseButtonRelease, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
-        part->impl->view()->viewportMouseReleaseEvent(&kEvent);
+        if ([event clickCount] % 2 == 0){
+            QMouseEvent kEvent(QEvent::MouseButtonDblClick, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
+            part->impl->view()->viewportMouseDoubleClickEvent(&kEvent);
+        }
+        else {
+            QMouseEvent kEvent(QEvent::MouseButtonRelease, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
+            part->impl->view()->viewportMouseReleaseEvent(&kEvent);
+        }
     }
 }
 
@@ -393,14 +399,8 @@ using khtml::RenderPart;
     state |= [self stateForEvent:event];
     
     if (part->impl->view()) {
-        if ([event clickCount] % 2 == 0){
-            QMouseEvent kEvent(QEvent::MouseButtonDblClick, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
-            part->impl->view()->viewportMouseDoubleClickEvent(&kEvent);
-        }
-        else {
-            QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
-            part->impl->view()->viewportMousePressEvent(&kEvent);
-        }
+        QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
+        part->impl->view()->viewportMousePressEvent(&kEvent);
     }
 }
 

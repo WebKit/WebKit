@@ -453,6 +453,8 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 	d->clickY = ym;
     }
 #else
+    d->clickX = xm;
+    d->clickY = ym;
     d->clickCount = _mouse->clickCount();
 #endif    
 
@@ -487,21 +489,27 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseDblClick );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-#ifndef APPLE_CHANGES
+#ifdef APPLE_CHANGES
+    d->clickCount = _mouse->clickCount();
+    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.handle(),true,
+                                           d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
+    
+    dispatchMouseEvent(EventImpl::CLICK_EVENT,mev.innerNode.handle(),true,
+			   d->clickCount,_mouse,true,DOM::NodeImpl::MouseRelease);
+
+    if (mev.innerNode.handle())
+	mev.innerNode.handle()->setPressed(false);
+
+    if (!swallowEvent) {
+	khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
+	QApplication::sendEvent( m_part, &event );
+    }
+
+#else
     // We do the same thing as viewportMousePressEvent() here, since the DOM does not treat
     // single and double-click events as separate (only the detail, i.e. number of clicks differs)
     // In other words an even detail value for a mouse click event means a double click, and an
     // odd detail value means a single click
-    if (d->clickCount > 0 && d->clickX == xm && d->clickY == ym) // ### support mouse threshold
-	d->clickCount++;
-    else {
-	d->clickCount = 1;
-	d->clickX = xm;
-	d->clickY = ym;
-    }
-#else
-    d->clickCount = _mouse->clickCount();
-#endif    
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEDOWN_EVENT,mev.innerNode.handle(),true,
                                            d->clickCount,_mouse,true,DOM::NodeImpl::MouseDblClick);
 
@@ -516,6 +524,7 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 	//if ( url.length() )
 	//emit doubleClick( url.string(), _mouse->button() );
     }
+#endif    
 }
 
 void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
@@ -632,10 +641,8 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.handle(),true,
                                            d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
 
-#ifndef APPLE_CHANGES
     if (d->clickCount > 0 &&
         QPoint(d->clickX-xm,d->clickY-ym).manhattanLength() <= QApplication::startDragDistance())
-#endif
 	dispatchMouseEvent(EventImpl::CLICK_EVENT,mev.innerNode.handle(),true,
 			   d->clickCount,_mouse,true,DOM::NodeImpl::MouseRelease);
 
