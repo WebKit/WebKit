@@ -53,7 +53,7 @@
     
     data = [[IFBaseWebControllerPrivate alloc] init];
     _controllerPrivate = data;
-    data->mainFrame = [[IFWebFrame alloc] initWithName: @"top" view: view provisionalDataSource: dataSource controller: self];
+    data->mainFrame = [[IFWebFrame alloc] initWithName: @"_top" view: view provisionalDataSource: dataSource controller: self];
 
     return self;   
 }
@@ -223,6 +223,29 @@
     
     return [self _frameForDataSource: dataSource fromFrame: frame];
 }
+
+- (IFWebFrame *)_frameNamed: (NSString *)name fromFrame: (IFWebFrame *)frame
+{
+    if ([[frame name] isEqual: name])
+        return frame;
+
+    int i, count;
+    IFWebFrame *aFrame;
+    NSArray *children = [[frame dataSource] children];
+    count = [children count];
+    for (i = 0; i < count; i++){
+        aFrame = [children objectAtIndex: i];
+        if ([self _frameNamed: name fromFrame: aFrame])
+            return aFrame;
+    }
+    return nil;
+}
+
+- (IFWebFrame *)frameNamed: (NSString *)name
+{
+    return [self _frameNamed: name fromFrame: [self mainFrame]];
+}
+
 
 
 - (IFWebFrame *)mainFrame

@@ -1,3 +1,13 @@
+2002-04-05  Richard Williamson  <rjw@apple.com>
+
+        New method on controller to find a frame of a particular name
+        anywhere in the frame hierarchy.
+        
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	initWithView:provisionalDataSource:]), (-[IFBaseWebController
+	_frameNamed:fromFrame:]), (-[IFBaseWebController frameNamed:]):
+	* WebView.subproj/IFWebController.h:
+
 2002-04-05  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFMainURLHandleClient.mm:

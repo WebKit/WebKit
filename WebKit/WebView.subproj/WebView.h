@@ -183,6 +183,9 @@
 // specifics of creating and initializaing a view of the appropriate class.
 - (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)child inParent: (IFWebDataSource *)parent inScrollView: (BOOL)inScrollView;
 
+// Look for a frame named name recursively.
+- (IFWebFrame *)frameNamed: (NSString *)name;
+
 - (IFWebFrame *)mainFrame;
 
 

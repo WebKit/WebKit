@@ -219,15 +219,30 @@ public:
 
 static QString splitUrlTarget(const QString &url, QString *target=0)
 {
-   QString result = url;
-   if(url.left(7) == "target:")
-   {
-      KURL u(url);
-      result = u.ref();
-      if (target)
-         *target = u.host();
-   }
-   return result;
+    QString result = url;
+    if(url.left(7) == "target:")
+    {
+#ifdef APPLE_CHANGES
+        int pos, end;
+        if ((pos = url.find ('#', 7)) != -1){
+            result = url.mid(pos+1,url.length()-pos-1);
+        }
+        if (target){
+            pos = url.find ("//", 7);
+            if (pos > 0){
+                end = url.find ('/', pos+2);
+                if (end > 0)
+                    *target = url.mid (pos+2, end-pos-2);
+            }
+        }
+#else
+        KURL u(url);
+        result = u.ref();
+        if (target)
+            *target = u.host();
+#endif
+    }
+    return result;
 }
 
 KHTMLPart::KHTMLPart()
@@ -1417,13 +1432,29 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
         IFWebDataSource *oldDataSource, *newDataSource;
-        KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
+        QString target;
+        KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL, &target)));
         NSString *urlString = [NSString stringWithCString:clickedURL.url().latin1()];
         NSURL *url = [NSURL URLWithString: urlString];
         IFWebFrame *frame;
+        KURL refLess(clickedURL);
         
-        oldDataSource = getDataSource();
-        frame = [oldDataSource frame];
+        d->m_url.setRef ("");
+        refLess.setRef ("");
+        if (refLess.url() == d->m_url.url()){
+            d->m_url = clickedURL;
+            gotoAnchor (clickedURL.ref());
+            return;
+        }
+        
+        if (target.isEmpty()){
+            oldDataSource = getDataSource();
+            frame = [oldDataSource frame];
+        }
+        else {
+            frame = [[getDataSource() controller] frameNamed: QSTRING_TO_NSSTRING(target)];
+            oldDataSource = [frame dataSource];
+        }
         
         newDataSource = WCIFWebDataSourceMake(url);
         [newDataSource _setParent: [oldDataSource parent]];

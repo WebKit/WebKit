@@ -1,3 +1,15 @@
+2002-04-05  Richard Williamson  <rjw@apple.com>
+
+        Hacks to support:
+        
+        1.  Not loading a document when a link is to an anchor on same page.
+        2.  Correctly targeting frames.
+        
+        Our documentation is actually useable now.
+        
+	* src/kwq/KWQKHTMLPart.mm: (splitUrlTarget), (KHTMLPart::khtmlMouseReleaseEvent):
+	* src/kwq/external.h:
+
 2002-04-05  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQKloader.mm:
