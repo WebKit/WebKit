@@ -582,12 +582,20 @@ void SimplifiedBackwardsTextIterator::advance()
             }
         }
         
-        // Handle case where markup looks like this: <p>foo</p>bar.
+        // Check for leaving a text node and iterating backwards
+        // into a different block that is an descendent of the
+        // block containing the text node (as in leaving
+        // the "bar" node in this example: <p>foo</p>bar).
         // Must emit newline when leaving node containing "bar".
-        NodeImpl *block = m_node->enclosingBlockFlowElement();
-        NodeImpl *nextBlock = next->enclosingBlockFlowElement();
-        if (block && nextBlock && nextBlock->isAncestor(block))
-            emitNewlineForBROrText();
+        if (next && m_node->renderer() && m_node->renderer()->isText() &&
+            m_node->renderer()->style()->visibility() == VISIBLE) {
+            NodeImpl *block = m_node->enclosingBlockFlowElement();
+            if (block) {
+                NodeImpl *nextBlock = next->enclosingBlockFlowElement();
+                if (nextBlock && nextBlock->isAncestor(block))
+                    emitNewlineForBROrText();
+            }
+        }
         
         m_node = next;
         if (m_node)

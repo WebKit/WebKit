@@ -1,3 +1,17 @@
+2005-02-14  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4004305> REGRESSION (Mail): Command-right-arrow on wrapped text goes to end of previous line
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::SimplifiedBackwardsTextIterator::advance):
+        Add BR in for <rdar://problem/3917929> fix only if leaving a visible text node.
+        
+        * khtml/editing/visible_units.cpp:
+        (khtml::endOfWord):
+        Do not move left over a paragraph boundary.
+
 2005-02-14  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
