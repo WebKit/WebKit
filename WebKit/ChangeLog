@@ -1,3 +1,14 @@
+2003-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3144479 -- put TITLE from links in status bar
+
+        * WebKit.exp: Add _WebElementLinkTitleKey and also sort this file.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m: Need to touch a file to get the above
+	to have any effect, so update the copyright date here.
+
 2003-01-09  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Add the year 2003, remove CFBundleIconFile,
