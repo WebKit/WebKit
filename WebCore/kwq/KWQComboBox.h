@@ -56,11 +56,14 @@ public:
 
     bool eventFilter(QObject *object, QEvent *event) { return false; }
 
-    void activated() { m_activated.call(currentItem()); }
+    void activated() { _activated.call(currentItem()); }
 
 private:
-    KWQSignal m_activated;
-    KWQComboBoxAdapter *m_adapter;
+    KWQComboBoxAdapter *_adapter;
+    mutable float _width;
+    mutable bool _widthGood;
+
+    KWQSignal _activated;
 };
 
 #endif

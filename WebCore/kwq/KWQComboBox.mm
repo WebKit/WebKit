@@ -40,6 +40,12 @@
 // This is the 2-pixel CELLOFFSET for bordered cells from NSCell.
 #define VERTICAL_FUDGE_FACTOR 2
 
+// When we discovered we needed to measure text widths ourselves, I empirically
+// determined these widths. I don't know what exactly they correspond to in the
+// NSPopUpButtonCell code.
+#define WIDTH_NOT_INCLUDING_TEXT 30
+#define MINIMUM_WIDTH 36
+
 @interface KWQComboBoxAdapter : NSObject
 {
     QComboBox *box;
@@ -56,8 +62,9 @@
 @end
 
 QComboBox::QComboBox()
-    : m_activated(this, SIGNAL(activated(int)))
-    , m_adapter([[KWQComboBoxAdapter alloc] initWithQComboBox:this])
+    : _adapter([[KWQComboBoxAdapter alloc] initWithQComboBox:this])
+    , _widthGood(false)
+    , _activated(this, SIGNAL(activated(int)))
 {
     NSPopUpButton *button = [[NSPopUpButton alloc] init];
     
@@ -65,7 +72,7 @@ QComboBox::QComboBox()
     [button setCell:cell];
     [cell release];
 
-    [button setTarget:m_adapter];
+    [button setTarget:_adapter];
     [button setAction:@selector(action:)];
 
     [[button cell] setControlSize:NSSmallControlSize];
@@ -80,7 +87,7 @@ QComboBox::~QComboBox()
 {
     NSPopUpButton *button = (NSPopUpButton *)getView();
     [button setTarget:nil];
-    [m_adapter release];
+    [_adapter release];
 }
 
 void QComboBox::insertItem(const QString &text, int index)
@@ -98,12 +105,33 @@ void QComboBox::insertItem(const QString &text, int index)
     // because addItemWithTitle will not allow multiple items with the
     // same title. But this way, we can have such duplicate items.
     [[button itemAtIndex:index] setTitle:text.getNSString()];
+    _widthGood = false;
 }
 
 QSize QComboBox::sizeHint() const 
 {
     NSPopUpButton *button = (NSPopUpButton *)getView();
-    return QSize((int)[[button cell] cellSize].width - (LEFT_MARGIN + RIGHT_MARGIN),
+    
+    float width;
+    if (_widthGood) {
+        width = _width;
+    } else {
+        width = 0;
+        NSDictionary *attributes = [NSDictionary dictionaryWithObject:[button font] forKey:NSFontAttributeName];
+        NSEnumerator *e = [[button itemTitles] objectEnumerator];
+        NSString *text;
+        while ((text = [e nextObject])) {
+            NSSize size = [text sizeWithAttributes:attributes];
+            width = MAX(width, size.width);
+        }
+        _width = ceil(width);
+        if (_width < MINIMUM_WIDTH - WIDTH_NOT_INCLUDING_TEXT) {
+            _width = MINIMUM_WIDTH - WIDTH_NOT_INCLUDING_TEXT;
+        }
+        _widthGood = true;
+    }
+    
+    return QSize((int)_width + WIDTH_NOT_INCLUDING_TEXT,
         (int)[[button cell] cellSize].height - (TOP_MARGIN + BOTTOM_MARGIN));
 }
 
@@ -134,6 +162,7 @@ void QComboBox::clear()
 {
     NSPopUpButton *button = (NSPopUpButton *)getView();
     [button removeAllItems];
+    _widthGood = false;
 }
 
 void QComboBox::setCurrentItem(int index)

@@ -1,3 +1,15 @@
+2002-11-08  Darin Adler  <darin@apple.com>
+
+	- fixed 3090452 -- REGRESSION: orbitz Box extends way over margins
+
+        * kwq/KWQComboBox.h: Added _width and _widthGood.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox): Set _widthGood to false.
+        (QComboBox::insertItem): Set _widthGood to false.
+        (QComboBox::sizeHint): Compute the width by measuring the text ourselves.
+	Turns out the cell isn't helpful for that.
+        (QComboBox::clear): Set _widthGood to false.
+
 2002-11-08  Richard Williamson   <rjw@apple.com>
 
         Cleanup of fix to 3083281.  Never call stopAnimating from
