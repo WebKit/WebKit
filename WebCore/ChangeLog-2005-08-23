@@ -1,3 +1,15 @@
+2003-01-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3148141 - crash in KJS::WindowFunc::tryCall leaving certain site
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setView): If setting the view to nil and we have a
+	document, detach the document. This means that we are removing a
+	frame from the tree, so we want to run it's onUnload handler now,
+	rather than later when things are no longer fully hooked up.
+
 2003-01-16  Richard Williamson   <rjw@apple.com>
 
         Fixed 3148932.  Account for zero width characters

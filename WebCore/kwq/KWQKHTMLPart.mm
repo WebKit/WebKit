@@ -279,6 +279,13 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
     
 void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
 {
+    // Detach the document now, so any onUnload handlers get run - if
+    // we wait until the view is destroyed, then things won't be
+    // hooked up enough for some JavaScript calls to work.
+    if (d->m_doc && view == NULL) {
+	d->m_doc->detach();
+    }
+
     if (_ownsView) {
         if (!(d->m_doc && d->m_doc->inPageCache()))
             delete d->m_view;
