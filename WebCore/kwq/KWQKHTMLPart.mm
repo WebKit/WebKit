@@ -3580,7 +3580,9 @@ KWQWindowWidget *KWQKHTMLPart::topLevelWidget()
 
 void KWQKHTMLPart::tokenizerProcessedData()
 {
-    checkCompleted();
+    if (d->m_doc) {
+        checkCompleted();
+    }
     [_bridge tokenizerProcessedData];
 }
 

@@ -1,3 +1,19 @@
+2005-01-23  Adele Amchan  <adele@apple.com>
+
+        Fixed <rdar://problem/3964286> REGRESSION (178-179): menus and "go to old site" link at Ameritrade's new site don't work
+
+        Removed check for document from checkCompleted.  In this case, WebCore never knew that a WebImageView was complete because 
+        it fell into this document check case in checkCompleted.  
+        Added check for document to tokenizerProcessedData (see <rdar://problem/3807144>)
+
+        Reviewed by Darin.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::stop):
+        (KHTMLPart::checkCompleted):
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::tokenizerProcessedData):
+
 2005-01-21  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3759399> Javascript / Liveconnect problems ((event handler):Undefined value)
