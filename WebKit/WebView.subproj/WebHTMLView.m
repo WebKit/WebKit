@@ -811,7 +811,8 @@ static WebHTMLView *lastHitView = nil;
     
     WebView *webView = [self _webView];
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    
+    BOOL startedDrag = YES;  // optimism - we almost always manage to start the drag
+
     // note per kwebster, the offset arg below is always ignored in positioning the image
     if (imageURL && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
         id source = self;
@@ -883,8 +884,7 @@ static WebHTMLView *lastHitView = nil;
              pasteboard:pasteboard
                  source:self
               slideBack:YES];
-    } else {
-        ASSERT(srcIsDHTML);
+    } else if (srcIsDHTML) {
         ASSERT(_private->dragSourceActionMask & WebDragSourceActionDHTML);
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionDHTML fromPoint:mouseDownPoint withPasteboard:pasteboard];
         if (dragImage == nil) {
@@ -903,8 +903,12 @@ static WebHTMLView *lastHitView = nil;
              pasteboard:pasteboard
                  source:self
               slideBack:YES];
+    } else {
+        // Only way I know if to get here is if the original element clicked on in the mousedown is no longer
+        // under the mousedown point, so linkURL, imageURL and isSelected are all false/nil.
+        startedDrag = NO;
     }
-    return YES;
+    return startedDrag;
 }
 
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event

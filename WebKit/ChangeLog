@@ -1,3 +1,17 @@
+2004-07-20  Trey Matteson  <trey@apple.com>
+
+	3733698	REGRESSION: sometimes dragging photos on homepage.mac.com leads to an assertion
+
+	Relax an assertion, as we ran into a valid case where it's not true.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+	Removing this assert allows for the oddball case of a drag gesture that
+	starts on one element, but then the element is no longer there when
+	the drag is about to start.
+
 2004-07-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
