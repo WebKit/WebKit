@@ -667,11 +667,16 @@
             [WebHTMLRepresentation class], @"application/x-webarchive",
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
-#ifndef OMIT_TIGER_FEATURES
-            [WebPDFRepresentation class], @"text/pdf",
-            [WebPDFRepresentation class], @"application/pdf",
-#endif
             nil];
+
+#ifndef OMIT_TIGER_FEATURES
+        // Since this is a "secret default" we don't both registering it.
+        BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];  
+        if (!omitPDFSupport) {
+            [repTypes setObject:[WebPDFRepresentation class] forKey:@"text/pdf"];
+            [repTypes setObject:[WebPDFRepresentation class] forKey:@"application/pdf"];
+        }
+#endif
     }
     
     if (!addedImageTypes && !allowImageTypeOmission) {

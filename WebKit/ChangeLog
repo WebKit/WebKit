@@ -1,5 +1,10 @@
 2005-01-24  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebDataSource.m: (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        Do the same check as for view types, so the representation types are consistent.
+
+2005-01-24  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed <rdar://problem/3791158> REGRESSION (Mail): copyFont: and pasteFont: copy and paste only the NSFont, not other attributes
