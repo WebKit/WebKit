@@ -1,3 +1,24 @@
+2003-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Folded Private implementation files into the regular ones as the
+	first step towards pulling in our SPI exposure and other code
+	cleanup.
+
+        * History.subproj/WebHistory.m:
+        * History.subproj/WebHistoryPrivate.m: Removed.
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m: Removed.
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m: Removed.
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebFrameViewPrivate.m: Removed.
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebHTMLViewPrivate.m: Removed.
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.m: Removed.
+
 2003-10-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3440063>: Safari 1.1 won't load new pages after visiting adultswim.com, assertion failure on debug build
