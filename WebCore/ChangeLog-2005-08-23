@@ -1,3 +1,14 @@
+2004-04-16  Chris Blumenberg  <cblu@apple.com>
+
+	Subresources weren't being archived for LINK tags.
+
+        Reviewed by kocienda.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithOptions): indent tweak
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLLinkElement _linkElementImpl]): C++ casting voodoo to make methods like rel and href work correctly
+
 2004-04-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

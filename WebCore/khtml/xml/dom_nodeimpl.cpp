@@ -351,8 +351,7 @@ QString NodeImpl::recursive_toHTMLWithOptions(bool start, const DOM::RangeImpl *
                 unsigned long length = attrs->length();
                 for (unsigned int i=0; i<length; i++) {
                     AttributeImpl *attr = attrs->attributeItem(i);
-                    DOMString value = attr->value();
-                    me += " " + getDocument()->attrName(attr->id()).string() + "=\"" + value.string() + "\"";
+                    me += " " + getDocument()->attrName(attr->id()).string() + "=\"" + attr->value().string() + "\"";
                 }
             }
             me += isHTMLElement() ? ">" : "/>";

@@ -490,7 +490,7 @@ using DOM::NodeImpl;
 
 - (HTMLLinkElementImpl *)_linkElementImpl
 {
-    return reinterpret_cast<HTMLLinkElementImpl *>(_internal);
+    return static_cast<HTMLLinkElementImpl *>(reinterpret_cast<HTMLElementImpl *>(_internal));
 }
 
 - (BOOL)disabled
