@@ -601,7 +601,8 @@ void KHTMLPart::setJavaEnabled( bool enable )
 
 bool KHTMLPart::javaEnabled() const
 {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaEnabled"] boolValue];
+    //return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaEnabled"] boolValue];
+    return FALSE;
 }
 
 
@@ -627,8 +628,7 @@ void KHTMLPart::setPluginsEnabled( bool enable )
 
 bool KHTMLPart::pluginsEnabled() const
 {
-    //return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];
-    return FALSE;
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];
 }
 
 
