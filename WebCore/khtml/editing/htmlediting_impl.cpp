@@ -394,7 +394,7 @@ void CompositeEditCommandImpl::insertNodeBefore(NodeImpl *insertChild, NodeImpl 
 void CompositeEditCommandImpl::insertNodeAfter(NodeImpl *insertChild, NodeImpl *refChild)
 {
     if (refChild->parentNode()->lastChild() == refChild) {
-        appendNode(refChild->parentNode(), insertChild);
+        appendNode(insertChild, refChild->parentNode());
     }
     else {
         ASSERT(refChild->nextSibling());
@@ -411,7 +411,7 @@ void CompositeEditCommandImpl::insertNodeAt(NodeImpl *insertChild, NodeImpl *ref
         if (child)
             insertNodeBefore(insertChild, child);
         else
-            appendNode(refChild, insertChild);
+            appendNode(insertChild, refChild);
     } 
     else if (refChild->caretMinOffset() >= offset) {
         insertNodeBefore(insertChild, refChild);
@@ -425,9 +425,9 @@ void CompositeEditCommandImpl::insertNodeAt(NodeImpl *insertChild, NodeImpl *ref
     }
 }
 
-void CompositeEditCommandImpl::appendNode(NodeImpl *parent, NodeImpl *appendChild)
+void CompositeEditCommandImpl::appendNode(NodeImpl *appendChild, NodeImpl *parent)
 {
-    AppendNodeCommand cmd(document(), parent, appendChild);
+    AppendNodeCommand cmd(document(), appendChild, parent);
     applyCommandToComposite(cmd);
 }
 
@@ -554,22 +554,22 @@ ElementImpl *CompositeEditCommandImpl::createTypingStyleElement() const
 //------------------------------------------------------------------------------------------
 // AppendNodeCommandImpl
 
-AppendNodeCommandImpl::AppendNodeCommandImpl(DocumentImpl *document, NodeImpl *parentNode, NodeImpl *appendChild)
-    : EditCommandImpl(document), m_parentNode(parentNode), m_appendChild(appendChild)
+AppendNodeCommandImpl::AppendNodeCommandImpl(DocumentImpl *document, NodeImpl *appendChild, NodeImpl *parentNode)
+    : EditCommandImpl(document), m_appendChild(appendChild), m_parentNode(parentNode)
 {
-    ASSERT(m_parentNode);
-    m_parentNode->ref();
-
     ASSERT(m_appendChild);
     m_appendChild->ref();
+
+    ASSERT(m_parentNode);
+    m_parentNode->ref();
 }
 
 AppendNodeCommandImpl::~AppendNodeCommandImpl()
 {
-    if (m_parentNode)
-        m_parentNode->deref();
     if (m_appendChild)
         m_appendChild->deref();
+    if (m_parentNode)
+        m_parentNode->deref();
 }
 
 int AppendNodeCommandImpl::commandID() const
@@ -579,8 +579,8 @@ int AppendNodeCommandImpl::commandID() const
 
 void AppendNodeCommandImpl::doApply()
 {
-    ASSERT(m_parentNode);
     ASSERT(m_appendChild);
+    ASSERT(m_parentNode);
 
     int exceptionCode = 0;
     m_parentNode->appendChild(m_appendChild, exceptionCode);
@@ -589,8 +589,8 @@ void AppendNodeCommandImpl::doApply()
 
 void AppendNodeCommandImpl::doUnapply()
 {
-    ASSERT(m_parentNode);
     ASSERT(m_appendChild);
+    ASSERT(m_parentNode);
     ASSERT(state() == Applied);
 
     int exceptionCode = 0;
@@ -798,7 +798,7 @@ void ApplyStyleCommandImpl::surroundNodeRangeWithElement(NodeImpl *startNode, No
         NodeImpl *next = node->traverseNextNode();
         if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline()) {
             removeNode(node);
-            appendNode(element, node);
+            appendNode(node, element);
         }
         if (node == endNode)
             break;
@@ -1355,7 +1355,7 @@ void DeleteSelectionCommandImpl::doApply()
             NodeImpl *moveNode = node;
             node = node->nextSibling();
             removeNode(moveNode);
-            appendNode(startBlock, moveNode);
+            appendNode(moveNode, startBlock);
         }
     }
 
@@ -1441,7 +1441,7 @@ void InputNewlineCommandImpl::insertNodeAfterPosition(NodeImpl *node, const Posi
     Position upstream(pos.equivalentUpstreamPosition());
     NodeImpl *cb = pos.node()->enclosingBlockFlowElement();
     if (cb == pos.node())
-        appendNode(cb, node);
+        appendNode(node, cb);
     else
         insertNodeAfter(node, pos.node());
 }
@@ -1454,7 +1454,7 @@ void InputNewlineCommandImpl::insertNodeBeforePosition(NodeImpl *node, const Pos
     Position upstream(pos.equivalentUpstreamPosition());
     NodeImpl *cb = pos.node()->enclosingBlockFlowElement();
     if (cb == pos.node())
-        appendNode(cb, node);
+        appendNode(node, cb);
     else
         insertNodeBefore(node, pos.node());
 }
@@ -1590,7 +1590,7 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
         // Now insert the node in the right place
         if (pos.node()->isEditableBlock()) {
             LOG(Editing, "prepareForTextInsertion case 1");
-            appendNode(pos.node(), nodeToInsert);
+            appendNode(nodeToInsert, pos.node());
         }
         else if (pos.node()->id() == ID_BR && pos.offset() == 1) {
             LOG(Editing, "prepareForTextInsertion case 2");

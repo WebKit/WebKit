@@ -185,11 +185,11 @@ private:
 class AppendNodeCommand : public EditCommand
 {
 public:
-    AppendNodeCommand(DOM::DocumentImpl *, DOM::NodeImpl *parentNode, DOM::NodeImpl *appendChild);
+    AppendNodeCommand(DOM::DocumentImpl *, DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
 	virtual ~AppendNodeCommand();
 
-    DOM::NodeImpl *parentNode() const;
     DOM::NodeImpl *appendChild() const;
+    DOM::NodeImpl *parentNode() const;
     
 private:
     inline AppendNodeCommandImpl *impl() const;

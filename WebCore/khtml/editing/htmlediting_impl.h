@@ -116,7 +116,7 @@ protected:
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //
-    void appendNode(DOM::NodeImpl *parent, DOM::NodeImpl *appendChild);
+    void appendNode(DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
     void applyCommandToComposite(EditCommand &);
     void deleteCollapsibleWhitespace();
     void deleteCollapsibleWhitespace(const DOM::Selection &selection);
@@ -152,7 +152,7 @@ protected:
 class AppendNodeCommandImpl : public EditCommandImpl
 {
 public:
-    AppendNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *parentNode, DOM::NodeImpl *appendChild);
+    AppendNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
 	virtual ~AppendNodeCommandImpl();
 
     virtual int commandID() const;
@@ -160,12 +160,12 @@ public:
 	virtual void doApply();
 	virtual void doUnapply();
 
-    DOM::NodeImpl *parentNode() const { return m_parentNode; }
     DOM::NodeImpl *appendChild() const { return m_appendChild; }
+    DOM::NodeImpl *parentNode() const { return m_parentNode; }
 
 private:
-    DOM::NodeImpl *m_parentNode;    
     DOM::NodeImpl *m_appendChild;
+    DOM::NodeImpl *m_parentNode;    
 };
 
 //------------------------------------------------------------------------------------------

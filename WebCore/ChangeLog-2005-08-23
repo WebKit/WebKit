@@ -1,5 +1,38 @@
 2004-07-06  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+        
+        Simple change. I switched the arguments of the appendNode helper function
+        and the AppendNodeCommand and AppendNodeCommandImpl classes. The node to 
+        insert now comes before the parent node in the argument list. I did this
+        to make this function match the convention of others in the HTML editing code.
+        This was the only one that was "different" in the way that it ordered arguments.
+        As a result, I was always looking to see that I was passing things in the right
+        order.
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::AppendNodeCommand::AppendNodeCommand):
+        (khtml::AppendNodeCommand::appendChild):
+        (khtml::AppendNodeCommand::parentNode):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::CompositeEditCommandImpl::insertNodeAfter):
+        (khtml::CompositeEditCommandImpl::insertNodeAt):
+        (khtml::CompositeEditCommandImpl::appendNode):
+        (khtml::AppendNodeCommandImpl::AppendNodeCommandImpl):
+        (khtml::AppendNodeCommandImpl::~AppendNodeCommandImpl):
+        (khtml::AppendNodeCommandImpl::doApply):
+        (khtml::AppendNodeCommandImpl::doUnapply):
+        (khtml::ApplyStyleCommandImpl::surroundNodeRangeWithElement):
+        (khtml::DeleteSelectionCommandImpl::doApply):
+        (khtml::InputNewlineCommandImpl::insertNodeAfterPosition):
+        (khtml::InputNewlineCommandImpl::insertNodeBeforePosition):
+        (khtml::InputTextCommandImpl::prepareForTextInsertion):
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::AppendNodeCommandImpl::parentNode):
+
+2004-07-06  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Trey
 
         Fixed several problems with traversal classes. For one, NodeIterators treat
