@@ -437,7 +437,7 @@ static bool initializedObjectCacheSize = FALSE;
     renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
     
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
-    [element setObject:[NSNumber numberWithBool:_part->isPointSelected((int)point.x, (int)point.y)]
+    [element setObject:[NSNumber numberWithBool:_part->isPointInsideSelection((int)point.x, (int)point.y)]
                 forKey:WebCoreElementIsSelectedTextKey];
     
     NodeImpl *URLNode = nodeInfo.URLElement();

@@ -1,3 +1,16 @@
+2003-01-22  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed isPointSelected to isPointInsideSelection because it's a better name.
+
+        Reviewed by darin.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isPointInsideSelection): 
+        (KHTMLPart::khtmlMousePressEvent):
+        * khtml/khtml_part.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
 2003-01-21  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for text dragging.

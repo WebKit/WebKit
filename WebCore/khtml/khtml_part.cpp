@@ -4116,7 +4116,7 @@ static void findWordBoundary(QChar *chars, int len, int position, int *start, in
 }
 #endif
 
-bool KHTMLPart::isPointSelected(int x, int y)
+bool KHTMLPart::isPointInsideSelection(int x, int y)
 {
     if (!xmlDocImpl()->renderer()) {
         return false;
@@ -4293,7 +4293,7 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
 #if APPLE_CHANGES
                 // Don't restart the selection when the mouse is pressed on an
                 // existing selection so we can allow for text dragging.
-                if (isPointSelected(event->x(), event->y())) {
+                if (isPointInsideSelection(event->x(), event->y())) {
                     return;
                 }
 #endif

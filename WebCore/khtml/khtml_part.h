@@ -707,7 +707,7 @@ public:
    */
   void preloadScript(const QString &url, const QString &script);
 
-  bool isPointSelected(int x, int y);
+  bool isPointInsideSelection(int x, int y);
 
   /**
    * @internal
