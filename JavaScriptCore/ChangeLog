@@ -1,3 +1,13 @@
+2003-02-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3156705 - REGRESSION: javascript menus improperly placed at umich.edu store
+
+        * kjs/nodes.cpp:
+        (StatListNode::execute): If the first statement's completion is
+	not normal, return immediately.
+
 2003-02-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

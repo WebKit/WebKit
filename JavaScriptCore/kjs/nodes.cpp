@@ -1521,6 +1521,9 @@ Completion StatListNode::execute(ExecState *exec)
     exec->clearException();
     return Completion(Throw, ex);
   }
+
+  if (c.complType() != Normal)
+    return c;
   
   Value v = c.value();
   
