@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -11,9 +11,14 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -24,8 +29,10 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -47,11 +54,15 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		034768E0FF38A50411DB9C8B = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			path = JavaScriptCore.framework;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 //030
 //031
@@ -90,21 +101,17 @@
 			isa = PBXGroup;
 			name = JavaScriptCore;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		0867D69AFE84028FC02AAC07 = {
 			children = (
-				1058C7B0FEA5585E11CA2CBB,
-				1058C7B2FEA5585E11CA2CBB,
+				6560A4CF04B3B3E7008AE952,
+				6560A63D04B3B69F008AE952,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
 			refType = 4;
-		};
-		0867D69BFE84028FC02AAC07 = {
-			isa = PBXFrameworkReference;
-			name = Foundation.framework;
-			path = /System/Library/Frameworks/Foundation.framework;
-			refType = 0;
+			sourceTree = "<group>";
 		};
 		0867D69CFE84028FC02AAC07 = {
 			buildPhases = (
@@ -282,16 +289,11 @@
 		0867D6A0FE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
 			files = (
-				1058C7B3FEA5585E11CA2CBB,
+				6560A4D004B3B3E7008AE952,
+				6560A63E04B3B69F008AE952,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0867D6A5FE840307C02AAC07 = {
-			isa = PBXFrameworkReference;
-			name = AppKit.framework;
-			path = /System/Library/Frameworks/AppKit.framework;
-			refType = 0;
 		};
 		089C1665FE841158C02AAC07 = {
 			children = (
@@ -300,6 +302,7 @@
 			isa = PBXGroup;
 			name = Resources;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		089C1666FE841158C02AAC07 = {
 			children = (
@@ -308,13 +311,16 @@
 			isa = PBXVariantGroup;
 			name = InfoPlist.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		089C1667FE841158C02AAC07 = {
+			expectedFileType = text.plist.strings;
 			fileEncoding = 10;
 			isa = PBXFileReference;
 			name = English;
 			path = English.lproj/InfoPlist.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		089C1668FE841158C02AAC07 = {
 			fileRef = 089C1666FE841158C02AAC07;
@@ -397,67 +403,33 @@
 			name = Classes;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //080
 //081
 //082
 //083
 //084
-//100
-//101
-//102
-//103
-//104
-		1058C7B0FEA5585E11CA2CBB = {
-			children = (
-				1058C7B1FEA5585E11CA2CBB,
-			);
-			isa = PBXGroup;
-			name = "Linked Frameworks";
-			refType = 4;
-		};
-		1058C7B1FEA5585E11CA2CBB = {
-			isa = PBXFrameworkReference;
-			name = Cocoa.framework;
-			path = /System/Library/Frameworks/Cocoa.framework;
-			refType = 0;
-		};
-		1058C7B2FEA5585E11CA2CBB = {
-			children = (
-				0867D69BFE84028FC02AAC07,
-				0867D6A5FE840307C02AAC07,
-			);
-			isa = PBXGroup;
-			name = "Other Frameworks";
-			refType = 4;
-		};
-		1058C7B3FEA5585E11CA2CBB = {
-			fileRef = 1058C7B1FEA5585E11CA2CBB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-//100
-//101
-//102
-//103
-//104
 //650
 //651
 //652
 //653
 //654
 		651F6412039D5B5F0078395C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = dtoa.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		651F6413039D5B5F0078395C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = dtoa.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		651F6414039D5B5F0078395C = {
 			fileRef = 651F6412039D5B5F0078395C;
@@ -482,6 +454,7 @@
 			isa = PBXGroup;
 			path = kjs;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		65417203039E01F90058BFEB = {
 			children = (
@@ -498,41 +471,52 @@
 			isa = PBXGroup;
 			name = pcre;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		65417204039E02E70058BFEB = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = chartables.c;
 			path = pcre/chartables.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		65417205039E02E70058BFEB = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = get.c;
 			path = pcre/get.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		65417206039E02E70058BFEB = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = maketables.c;
 			path = pcre/maketables.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		65417207039E02E70058BFEB = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = pcre.c;
 			path = pcre/pcre.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		65417208039E02E70058BFEB = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = study.c;
 			path = pcre/study.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		6541720A039E02E70058BFEB = {
 			fileRef = 65417205039E02E70058BFEB;
@@ -559,18 +543,22 @@
 			};
 		};
 		6541720E039E08B90058BFEB = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = dftables.c;
 			path = pcre/dftables.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		6541720F039E08B90058BFEB = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = pcre.h;
 			path = pcre/pcre.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		65417211039E08B90058BFEB = {
 			fileRef = 6541720F039E08B90058BFEB;
@@ -579,14 +567,44 @@
 			};
 		};
 		65417217039E0B280058BFEB = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = "pcre-config.h";
 			path = "pcre/pcre-config.h";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		65417219039E0B390058BFEB = {
 			fileRef = 65417217039E0B280058BFEB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6560A4CF04B3B3E7008AE952 = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = CoreFoundation.framework;
+			path = /System/Library/Frameworks/CoreFoundation.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		6560A4D004B3B3E7008AE952 = {
+			fileRef = 6560A4CF04B3B3E7008AE952;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6560A63D04B3B69F008AE952 = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = CoreServices.framework;
+			path = /System/Library/Frameworks/CoreServices.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		6560A63E04B3B69F008AE952 = {
+			fileRef = 6560A63D04B3B69F008AE952;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -602,16 +620,20 @@
 //933
 //934
 		931C6CEF038EE8DE008635CE = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = list.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		931C6CF0038EE8DE008635CE = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = list.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		931C6CF1038EE8DE008635CE = {
 			fileRef = 931C6CEF038EE8DE008635CE;
@@ -629,16 +651,20 @@
 			};
 		};
 		933A3499038AE7C6008635CE = {
+			expectedFileType = sourcecode.yacc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = grammar.y;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		933A349A038AE7C6008635CE = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = identifier.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		933A349C038AE7C6008635CE = {
 			fileRef = 933A349A038AE7C6008635CE;
@@ -650,10 +676,12 @@
 			};
 		};
 		933A349D038AE80F008635CE = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = identifier.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		933A349E038AE80F008635CE = {
 			fileRef = 933A349D038AE80F008635CE;
@@ -662,10 +690,12 @@
 			};
 		};
 		9364B273045B7D6C00A9CAC1 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = fpconst.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		9364B274045B7D6C00A9CAC1 = {
 			fileRef = 9364B273045B7D6C00A9CAC1;
@@ -674,10 +704,12 @@
 			};
 		};
 		9373524E038DA8C2008635CE = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = context.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		9373524F038DA8C2008635CE = {
 			fileRef = 9373524E038DA8C2008635CE;
@@ -689,16 +721,20 @@
 			};
 		};
 		9374D3A7038D9D74008635CE = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = scope_chain.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		9374D3A8038D9D74008635CE = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = scope_chain.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		9374D3A9038D9D74008635CE = {
 			fileRef = 9374D3A7038D9D74008635CE;
@@ -716,11 +752,13 @@
 			};
 		};
 		937F4F24048E5B9900CA2AC4 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = internal.h;
 			path = pcre/internal.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		937F4F25048E5B9900CA2AC4 = {
 			fileRef = 937F4F24048E5B9900CA2AC4;
@@ -729,10 +767,12 @@
 			};
 		};
 		938772E5038BFE19008635CE = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = array_instance.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		938772E6038BFE19008635CE = {
 			fileRef = 938772E5038BFE19008635CE;
@@ -751,10 +791,12 @@
 //993
 //994
 		99FFFB92047B024800CA283D = {
+			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = JavaScriptCore.order;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		99FFFB93047B024800CA283D = {
 			fileRef = 99FFFB92047B024800CA283D;
@@ -773,10 +815,12 @@
 //F53
 //F54
 		F50888B6030BB74C012A967E = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = simple_number.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F50888B7030BB74C012A967E = {
 			fileRef = F50888B6030BB74C012A967E;
@@ -788,16 +832,20 @@
 			};
 		};
 		F5341390030CEEB1018BE7F3 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = reference.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5341391030CEEB1018BE7F3 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = reference.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5341392030CEEB1018BE7F3 = {
 			fileRef = F5341390030CEEB1018BE7F3;
@@ -818,10 +866,12 @@
 			};
 		};
 		F5341394030CF5F8018BE7F3 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = reference_list.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5341395030CF5F8018BE7F3 = {
 			fileRef = F5341394030CF5F8018BE7F3;
@@ -833,10 +883,12 @@
 			};
 		};
 		F54F0800030CD22001B5C2EB = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = reference_list.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F54F0801030CD22001B5C2EB = {
 			fileRef = F54F0800030CD22001B5C2EB;
@@ -860,10 +912,12 @@
 			name = Mixed;
 		};
 		F5BB2BC5030F772101FCFE1D = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = completion.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5BB2BC7030F772101FCFE1D = {
 			fileRef = F5BB2BC5030F772101FCFE1D;
@@ -893,13 +947,16 @@
 			name = "Other Sources";
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5C290E60284F98E018635CA = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = JavaScriptCorePrefix.h;
 			path = ../JavaScriptCorePrefix.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5C290E70284F98E018635CA = {
 			fileRef = F5C290E60284F98E018635CA;
@@ -908,10 +965,12 @@
 			};
 		};
 		F5FFE656026B47A6018635CA = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = nodes2string.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5FFE657026B47A6018635CA = {
 			fileRef = F5FFE656026B47A6018635CA;
@@ -930,10 +989,12 @@
 //F63
 //F64
 		F68EBB8C0255D4C601FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = config.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F68EBB8E0255D4C601FF60F7 = {
 			fileRef = F68EBB8C0255D4C601FF60F7;
@@ -945,340 +1006,453 @@
 			};
 		};
 		F692A84D0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = array_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A84E0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = array_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A84F0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = array_object.lut.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8500255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = bool_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8510255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = bool_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8520255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = collector.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8530255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = collector.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8540255597D01FF60F7 = {
+			expectedFileType = text.script.perl;
+			fallbackIsa = PBXFileReference;
 			fileEncoding = 30;
 			isa = PBXExecutableFileReference;
 			path = create_hash_table;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8550255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = date_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8560255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = date_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8570255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = date_object.lut.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8580255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = debugger.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8590255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = debugger.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A85A0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = error_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A85B0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = error_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A85C0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = function_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A85D0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = function_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A85E0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = function.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A85F0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = function.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8610255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = internal.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8620255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = internal.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8630255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = interpreter.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8640255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = interpreter.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8650255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = lexer.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8660255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = lexer.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8670255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = lexer.lut.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8680255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = lookup.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8690255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = lookup.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A86A0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = math_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A86B0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = math_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A86C0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = math_object.lut.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A86D0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = nodes.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A86E0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = nodes.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8700255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = number_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8710255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = number_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8720255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = number_object.lut.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8730255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = object_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8740255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = object_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8750255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8760255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8770255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = operations.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8780255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = operations.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8790255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = property_map.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A87A0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = property_map.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A87B0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = regexp_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A87C0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = regexp_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A87D0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = regexp.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A87E0255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = regexp.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A87F0255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = string_object.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8800255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = string_object.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8810255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = string_object.lut.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8840255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = types.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8850255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ustring.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8860255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ustring.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8870255597D01FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = value.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8880255597D01FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = value.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8890255597D01FF60F7 = {
 			fileRef = F692A84D0255597D01FF60F7;
@@ -1674,22 +1848,28 @@
 			};
 		};
 		F692A8C802555BA201FF60F7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = grammar.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8C902555BA201FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = grammar.cpp.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8CA02555BA201FF60F7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = grammar.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F692A8CB02555BA201FF60F7 = {
 			fileRef = F692A8C802555BA201FF60F7;

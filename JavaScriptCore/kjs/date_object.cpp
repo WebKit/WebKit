@@ -66,7 +66,7 @@ const time_t invalidDate = -1;
 // we substitute our own implementation that uses Core Foundation.
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>
 
 using KJS::UString;
 

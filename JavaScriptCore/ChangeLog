@@ -1,3 +1,14 @@
+2003-07-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3096961 - JavaScriptCore should link only to what it uses, shouldn't drag in Cocoa.framework
+
+        * JavaScriptCore.pbproj/project.pbxproj: Don't link Cocoa.framework;
+	just pull in CoreFoundation and CoreServices.
+        * kjs/date_object.cpp: Include CoreServices.h instead of Carbon.h
+	(the stuff we want is in CarbonCore).
+
 2003-06-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
