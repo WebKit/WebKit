@@ -1,3 +1,13 @@
+2003-09-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3411827 -- REGRESSION: text drawing after text-shadow does not respect smoothing style (asahi.com)
+
+        * kwq/KWQPainter.mm: (QPainter::clearShadow): Call CGContextSetShadowWithColor with a color of NULL,
+        which actually clears the shadow, rather than CGContextSetShadow, which sets a black shadow (even
+        if it is zero pixels in size).
+
 === Safari-98 ===
 
 2003-09-05  Ken Kocienda  <kocienda@apple.com>

@@ -649,6 +649,6 @@ void QPainter::setShadow(int x, int y, int blur, const QColor& color)
 void QPainter::clearShadow()
 {
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
-    CGContextSetShadow(context, CGSizeZero, 0);
+    CGContextSetShadowWithColor(context, CGSizeZero, 0, NULL);
 }
 
