@@ -1,3 +1,16 @@
+2004-05-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 
+	<rdar://problem/3633296>: (Japanese input is not working properly in Carbon Web Kit applications (including CarbonWeb))
+	<rdar://problem/3631390>: (can't toggle between Input Methods (IMEs) using cmd-space in Carbon Web Kit applications)
+
+        Reviewed by rjw.
+
+	* Carbon.subproj/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter sendSuperEvent:]): call [NSInputContext processInputKeyBindings:inEvent] just as NSApp does
+        * Carbon.subproj/HIWebView.m:
+        (HIWebViewEventHandler): [NSApp setWindowsNeedUpdate:YES] must be called before events so that ActivateTSMDocument is called to set an active document. Without an active document, TSM will use a default document which uses a bottom-line input window which we don't want.
+
 2004-05-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

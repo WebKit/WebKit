@@ -1301,6 +1301,10 @@ HIWebViewEventHandler(
 	ControlPartCode		part;
 	HIWebView*			view = (HIWebView*)inUserData;
 
+        // [NSApp setWindowsNeedUpdate:YES] must be called before events so that ActivateTSMDocument is called to set an active document. 
+        // Without an active document, TSM will use a default document which uses a bottom-line input window which we don't want.
+        [NSApp setWindowsNeedUpdate:YES];
+        
 	switch ( GetEventClass( inEvent ) )
 	{
 		case kEventClassHIObject:

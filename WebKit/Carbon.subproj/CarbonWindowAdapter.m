@@ -112,6 +112,11 @@ extern const OSType NSCarbonWindowPropertyTag;
 @interface NSApplication(HIWebFrameView)
 - (void)setIsActive:(BOOL)aFlag;
 - (id)_setMouseActivationInProgress:(BOOL)flag;
+- (BOOL)_handleKeyEquivalent:(NSEvent*)theEvent;
+@end
+
+@interface NSInputContext
+- (BOOL)processInputKeyBindings:(NSEvent *)event;
 @end
 
 @implementation CarbonWindowAdapter
@@ -397,11 +402,15 @@ extern const OSType NSCarbonWindowPropertyTag;
         if (eventSubtype==7) {
             ignoreEvent = YES;
         }
+    } else if (eventType == NSKeyDown) {
+        // Handle command-space as [NSApp sendEvent:] does.
+        if ([NSInputContext processInputKeyBindings:inEvent]) {
+            return;
+        }
     }
-
+    
     // Simple.
     if (!ignoreEvent) [super sendEvent:inEvent];
-
 }
 
 
