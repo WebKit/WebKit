@@ -1020,15 +1020,16 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     int top = box->root()->topOverflow();
 
     const QFontMetrics &fm = metrics(box->isFirstLineStyle());
-    QString string(str->s + box->m_start, box->m_len);
-    long pos = offset - box->m_start; // the number of characters we are into the string
-    int left = box->m_x + fm.boundingRect(string, pos).right();
-
-#if 0
-    // EDIT FIXME
-    if (pos)
-        left += fm.rightBearing(*(str->s + box->m_start + offset));
-#endif
+    int left;
+    if (box->m_reversed) {
+	long len = box->m_start+box->m_len-offset;
+	QString string(str->s + box->m_start+offset,len);
+	left = box->m_x + fm.boundingRect(string,len).right();
+    } else {
+	long len = offset - box->m_start; // the number of characters we are into the string
+	QString string(str->s + box->m_start,len);
+	left = box->m_x + fm.boundingRect(string,len).right();
+    }
 
     // FIXME: should we use the width of the root inline box or the
     // width of the containing block for this?
