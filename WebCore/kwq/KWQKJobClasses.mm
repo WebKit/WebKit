@@ -68,7 +68,7 @@ QString Job::errorString()
 }
 
 
-void Job::kill(bool quietly=TRUE)
+void Job::kill(bool quietly)
 {
     _logNotYetImplemented();
 }
@@ -153,6 +153,11 @@ int TransferJob::error()
     return _status;
 }
 
+void TransferJob::setError(int e)
+{
+    _status = e;
+}
+
 QString TransferJob::queryMetaData(const QString &key)
 {
     NSString *_key;
@@ -175,7 +180,7 @@ void TransferJob::addMetaData(const QString &key, const QString &value)
     [d->metaData setObject:_value forKey:_key];
 }
 
-void TransferJob::kill(bool quietly=TRUE)
+void TransferJob::kill(bool quietly)
 {
     [d->handle cancelLoadInBackground];
 }

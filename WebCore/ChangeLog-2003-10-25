@@ -1,3 +1,14 @@
+2002-04-16  Darin Adler  <darin@apple.com>
+
+	* src/kwq/kio/jobclasses.h:
+	* src/kwq/KWQKjobclasses.mm: (TransferJob::setError): New.
+
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandleResourceDidCancelLoading:]),
+	(-[URLLoadClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	Set an error code so that the load will abort intead of continuing.
+
+	* src/kwq/KWQKHTMLPart.mm: Removed some unused code.
+
 2002-04-16  Kenneth Kocienda  <kocienda@apple.com>
 
         Moved IFError class from WebKit to WebFoundation.

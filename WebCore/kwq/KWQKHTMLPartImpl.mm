@@ -394,11 +394,6 @@ KJavaAppletContext *KHTMLPart::createJavaContext()
     return 0L;
 }
 
-void KHTMLPart::setPluginsEnabled( bool enable )
-{
-    _logNotYetImplemented();
-}
-
 bool KHTMLPart::pluginsEnabled() const
 {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];

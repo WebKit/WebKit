@@ -1040,6 +1040,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, urlString.latin1());
 
+    job->setError(1);
     m_loader->slotFinished(job);
     
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
@@ -1118,6 +1119,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
 
+    job->setError(1);
     m_loader->slotFinished(job);
 
     [controller _receivedError: result forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
