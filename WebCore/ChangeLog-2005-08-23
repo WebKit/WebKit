@@ -1,5 +1,14 @@
 2004-07-14  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3716082, assert when you dynamically remove float or position styles.
+	
+        Reviewed by kevin
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+
+2004-07-14  David Hyatt  <hyatt@apple.com>
+
 	Fix for various table regressions (malumovies.com and cityofheroes.gameamp.com) involving bungling of
 	percentage heights.
 	

@@ -1522,16 +1522,16 @@ void RenderObject::setStyle(RenderStyle *style)
             // from the positioned objects list.
             removeFromObjectLists();
         
+        affectsParentBlock = m_style && isFloatingOrPositioned() &&
+            (!style->isFloating() && style->position() != ABSOLUTE && style->position() != FIXED)
+            && parent() && (parent()->isBlockFlow() || parent()->isInlineFlow());
+        
         // reset style flags
         m_floating = false;
         m_positioned = false;
         m_relPositioned = false;
         m_paintBackground = false;
         m_hasOverflowClip = false;
-        
-        affectsParentBlock = m_style && isFloatingOrPositioned() &&
-            (!style->isFloating() && style->position() != ABSOLUTE && style->position() != FIXED)
-            && parent() && (parent()->isBlockFlow() || parent()->isInlineFlow());
     }
 
     RenderStyle *oldStyle = m_style;
