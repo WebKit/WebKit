@@ -1,3 +1,16 @@
+2003-07-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3300220 -- repro crash in closeURL when choosing from popup menus on www.drivewire.com
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchGenericEvent): Removed unused local variable. Since we update all documents,
+        there was no longer any need to keep that pointer around, but we still had this obsolete code.
+        This had nothing to do with the bug, just a related cleanup.
+        (NodeImpl::dispatchWindowEvent): Add check for nil. We ref the document pointer, but we don't
+        ref the document itself. So we do need to check for the case where the document went away.
+
 2003-07-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

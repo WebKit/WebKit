@@ -569,17 +569,12 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
         else if (evt->id() == EventImpl::KHTML_DBLCLICK_EVENT)
             dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT, 2);
 
-    // copy this over into a local variable, as the following deref() calls might cause this to be deleted.
-    DocumentPtr *doc = document;
-    doc->ref();
-
     // deref all nodes in chain
     it.toFirst();
     for (; it.current(); ++it)
         it.current()->deref(); // this may delete us
 
     DocumentImpl::updateDocumentsRendering();
-    doc->deref();
 
     return !evt->defaultPrevented(); // ### what if defaultPrevented was called before dispatchEvent?
 }
@@ -603,7 +598,7 @@ bool NodeImpl::dispatchWindowEvent(int _id, bool canBubbleArg, bool cancelableAr
     DocumentPtr *doc = document;
     doc->ref();
     bool r = dispatchGenericEvent( evt, exceptioncode );
-    if (!evt->defaultPrevented())
+    if (!evt->defaultPrevented() && doc->document())
 	doc->document()->defaultEventHandler(evt);
     doc->deref();
     evt->deref();
