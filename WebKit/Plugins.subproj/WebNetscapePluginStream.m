@@ -34,7 +34,7 @@
     
     [self setPluginPointer:thePluginPointer];
 
-    view = [(WebBaseNetscapePluginView *)instance->ndata retain];
+    view = [(WebNetscapePluginEmbeddedView *)instance->ndata retain];
 
     notifyData = theNotifyData;
     resourceData = [[NSMutableData alloc] init];

@@ -8,14 +8,14 @@
 #import <WebKit/npapi.h>
 #import <WebKit/WebBaseNetscapePluginStream.h>
 
-@class WebBaseNetscapePluginView;
+@class WebNetscapePluginEmbeddedView;
 @class WebResourceHandle;
 @class WebResourceRequest;
 @protocol WebResourceHandleDelegate;
 
 @interface WebNetscapePluginStream : WebBaseNetscapePluginStream <WebResourceHandleDelegate>
 {
-    WebBaseNetscapePluginView *view;
+    WebNetscapePluginEmbeddedView *view;
     
     WebResourceRequest *request;
     WebResourceHandle *resource;

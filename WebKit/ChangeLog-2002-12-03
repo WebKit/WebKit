@@ -1,3 +1,11 @@
+2002-10-14  Chris Blumenberg  <cblu@apple.com>
+
+	Made WebNetscapePluginStream retain a WebNetscapePluginEmbeddedView not a WebBaseNetscapePluginView.
+
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]):
+
 2002-10-13  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Added strings from WebBookmarkProxy.m.
@@ -7,9 +15,9 @@
 	- Eliminated the dual-role behavior of WebPluginStream.
 
 	Renamed WebPluginStream to WebBaseNetscapePluginStream.
-	WebNetscapePluginRepresentation, a subclass of WebNetscapePluginRepresentation,
+	WebNetscapePluginRepresentation, a subclass of WebBaseNetscapePluginStream,
 	is the document representation for standalone plug-ins.
-	WebNetscapePluginStream, also a subclass of WebNetscapePluginRepresentation,
+	WebNetscapePluginStream, also a subclass of WebBaseNetscapePluginStream,
 	is the general plug-in stream loader for embedded plug-ins or plug-in requested streams.
 
 	23 plug-in source files with more likely to come!
