@@ -592,14 +592,26 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     UChar sourceBuffer[HOST_NAME_BUFFER_LENGTH];
     UChar destinationBuffer[HOST_NAME_BUFFER_LENGTH];
     
-    [self getCharacters:sourceBuffer range:range];
+    NSString *string = self;
+    if (encode && [self rangeOfString:@"%" options:NSLiteralSearch range:range].location != NSNotFound) {
+        NSString *substring = [self substringWithRange:range];
+        substring = (NSString *)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)substring, CFSTR(""));
+        if (substring != nil) {
+            string = substring;
+            range = NSMakeRange(0, [string length]);
+        }
+    }
+    
+    int length = range.length;
+    [string getCharacters:sourceBuffer range:range];
+    
     UErrorCode error = U_ZERO_ERROR;
     int32_t numCharactersConverted = (encode ? uidna_IDNToASCII : uidna_IDNToUnicode)
-        (sourceBuffer, range.length, destinationBuffer, HOST_NAME_BUFFER_LENGTH, UIDNA_ALLOW_UNASSIGNED, NULL, &error);
+        (sourceBuffer, length, destinationBuffer, HOST_NAME_BUFFER_LENGTH, UIDNA_ALLOW_UNASSIGNED, NULL, &error);
     if (error != U_ZERO_ERROR) {
         return nil;
     }
-    if (numCharactersConverted == (int)range.length && memcmp(sourceBuffer, destinationBuffer, range.length * sizeof(UChar)) == 0) {
+    if (numCharactersConverted == length && memcmp(sourceBuffer, destinationBuffer, length * sizeof(UChar)) == 0) {
         return nil;
     }
     return makeString ? [NSString stringWithCharacters:destinationBuffer length:numCharactersConverted] : self;

@@ -1,3 +1,12 @@
+2003-11-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3478351>: Safari: URL Alias on Dock failed to open the 2byte URL
+
+        Reviewed by dave.
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]): if the host name is percent-escaped, use CFURLCreateStringByReplacingPercentEscapes
+
 2003-11-10  Richard Williamson   <rjw@apple.com>
 
 	Use ICU for upper/lower conversion.  Fixed 3477157, 3478455, 3478456, 3478457, 3478486.
