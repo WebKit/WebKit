@@ -1,3 +1,14 @@
+2004-11-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3838413> REGRESSION (Mail): "Smart" word paste adds spaces before/after special characters
+
+        Reviewed by rjw.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (_getPreSmartSet): copied from AppKit
+        (_getPostSmartSet): ditto
+        (-[WebBridge isCharacterSmartReplaceExempt:isPreviousCharacter:]): new
+
 2004-11-05  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3810702> _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector: ASSERTS when reentered from Xcode's man page viewer
