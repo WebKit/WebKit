@@ -453,7 +453,7 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
         else {
             NodeImpl *n = m_startContainer->firstChild();
             unsigned long i;
-            for(i = 0; i < m_startOffset; i++) // skip until m_startOffset
+            for (i = 0; n && i < m_startOffset; i++) // skip until m_startOffset
                 n = n->nextSibling();
             while (n && i < m_endOffset) { // delete until m_endOffset
 		NodeImpl *next = n->nextSibling();
@@ -513,8 +513,7 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
             if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS)
 		leftContents = m_startContainer->cloneNode(false);
             NodeImpl *n = m_startContainer->firstChild();
-            unsigned long i;
-            for(i = 0; i < m_startOffset; i++) // skip until m_startOffset
+            for (unsigned long i = 0; n && i < m_startOffset; i++) // skip until m_startOffset
                 n = n->nextSibling();
             while (n) { // process until end
 		NodeImpl *next = n->nextSibling();
@@ -538,7 +537,7 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
 	    }
 
             NodeImpl *next;
-            for (; n; n = next ) {
+            for (; n; n = next) {
                 next = n->nextSibling();
                 if (action == EXTRACT_CONTENTS)
                     leftContents->appendChild(n,exceptioncode); // will remove n from leftParent
@@ -575,32 +574,37 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
 	    if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS)
 		rightContents = m_endContainer->cloneNode(false);
             NodeImpl *n = m_endContainer->firstChild();
-            unsigned long i;
-            for(i = 0; i+1 < m_endOffset; i++) // skip to m_endOffset
-                n = n->nextSibling();
-            NodeImpl *prev;
-            for (; n; n = prev ) {
-                prev = n->previousSibling();
-                if (action == EXTRACT_CONTENTS)
-                    rightContents->insertBefore(n,rightContents->firstChild(),exceptioncode); // will remove n from it's parent
-                else if (action == CLONE_CONTENTS)
-                    rightContents->insertBefore(n->cloneNode(true),rightContents->firstChild(),exceptioncode);
-                else
-                    m_endContainer->removeChild(n,exceptioncode);
+            if (n && m_endOffset) {
+                for (unsigned long i = 0; i+1 < m_endOffset; i++) { // skip to m_endOffset
+                    NodeImpl *next = n->nextSibling();
+                    if (!next)
+                        break;
+                    n = next;
+                }
+                NodeImpl *prev;
+                for (; n; n = prev) {
+                    prev = n->previousSibling();
+                    if (action == EXTRACT_CONTENTS)
+                        rightContents->insertBefore(n,rightContents->firstChild(),exceptioncode); // will remove n from it's parent
+                    else if (action == CLONE_CONTENTS)
+                        rightContents->insertBefore(n->cloneNode(true),rightContents->firstChild(),exceptioncode);
+                    else
+                        m_endContainer->removeChild(n,exceptioncode);
+                }
             }
         }
 
         NodeImpl *rightParent = m_endContainer->parentNode();
         NodeImpl *n = m_endContainer->previousSibling();
         for (; rightParent != cmnRoot; rightParent = rightParent->parentNode()) {
-        	if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
-	            NodeImpl *rightContentsParent = rightParent->cloneNode(false);
-	            rightContentsParent->appendChild(rightContents,exceptioncode);
-	            rightContents = rightContentsParent;
+            if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
+                NodeImpl *rightContentsParent = rightParent->cloneNode(false);
+                rightContentsParent->appendChild(rightContents,exceptioncode);
+                rightContents = rightContentsParent;
             }
 
             NodeImpl *prev;
-            for (; n; n = prev ) {
+            for (; n; n = prev) {
                 prev = n->previousSibling();
                 if (action == EXTRACT_CONTENTS)
                     rightContents->insertBefore(n,rightContents->firstChild(),exceptioncode); // will remove n from it's parent

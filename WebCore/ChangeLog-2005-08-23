@@ -2,6 +2,17 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3812471> -[DOMRange cloneContents] clones too much in some cases where endOffset is 0
+
+        * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::processContents): Added some nil
+        checks to prevent this function from crashing if offsets are greater than the
+        number of child nodes. Added a special case for offset 0 in one case that has a loop
+        that won't work correctly for that case.
+
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3811890> when selecting and moving the caret, some words aren't spell-checked (test case included)
 
         This was mostly fixed by changes I made recently, but using the test case in the bug
