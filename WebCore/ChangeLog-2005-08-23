@@ -1,3 +1,14 @@
+2003-11-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3397494 - FileMaker: Setting option object text fails if created without text
+	
+        * khtml/html/html_formimpl.cpp:
+        (HTMLOptionElementImpl::childrenChanged): Update the select element.
+	This ends up getting called when you add a text node to an option that
+	didn't used to have one.
+
 2003-11-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

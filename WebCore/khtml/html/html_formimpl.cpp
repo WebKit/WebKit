@@ -2608,6 +2608,13 @@ void HTMLOptionElementImpl::setSelected(bool _selected)
         select->notifyOptionSelected(this,_selected);
 }
 
+void HTMLOptionElementImpl::childrenChanged()
+{
+   HTMLSelectElementImpl *select = getSelect();
+   if (select)
+       select->childrenChanged();
+}
+
 HTMLSelectElementImpl *HTMLOptionElementImpl::getSelect() const
 {
     NodeImpl *select = parentNode();
