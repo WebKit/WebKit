@@ -1,3 +1,12 @@
+2005-02-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3832973> copy text from PowerPoint, paste into Blot (or presumably Mail) and get a single missing image icon
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]): prefer RTF and RTFD over images just as NSTextView does
+
 2005-02-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3555137> REGRESSION (125-173): Flash animation can erase parts of chrome (bookmarks bar & tab bar)

@@ -315,29 +315,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
             return [[self _bridge] documentFragmentWithMarkupString:HTMLString baseURLString:nil];
         }
     }
-    
-    if ([types containsObject:NSTIFFPboardType]) {
-        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
-                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
-                                                         MIMEType:@"image/tiff" 
-                                                 textEncodingName:nil
-                                                        frameName:nil];
-        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
-        [resource release];
-        return fragment;
-    }
-    
-    if ([types containsObject:NSPICTPboardType]) {
-        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
-                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
-                                                         MIMEType:@"image/pict" 
-                                                 textEncodingName:nil
-                                                        frameName:nil];
-        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
-        [resource release];
-        return fragment;
-    }
-    
+        
 #ifdef USE_APPKIT_FOR_ATTRIBUTED_STRINGS
     NSAttributedString *string = nil;
     if ([types containsObject:NSRTFDPboardType]) {
@@ -364,6 +342,28 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         return fragment;
     }
 #endif
+    
+    if ([types containsObject:NSTIFFPboardType]) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
+                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
+                                                         MIMEType:@"image/tiff" 
+                                                 textEncodingName:nil
+                                                        frameName:nil];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
+        [resource release];
+        return fragment;
+    }
+    
+    if ([types containsObject:NSPICTPboardType]) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
+                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
+                                                         MIMEType:@"image/pict" 
+                                                 textEncodingName:nil
+                                                        frameName:nil];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
+        [resource release];
+        return fragment;
+    }    
     
     if ((URL = [NSURL URLFromPasteboard:pasteboard])) {
         NSString *URLString = [URL _web_userVisibleString];
