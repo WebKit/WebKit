@@ -1,0 +1,177 @@
+/* kjs_debugwin.cpp */
+
+"JavaScript Debugger" = "JavaScript Debugger";
+
+"&Next" = "&Next";
+
+"&Step" = "&Step";
+
+"&Continue" = "&Continue";
+
+/* kjs_window.cpp */
+
+"OK" = "OK";
+
+"Cancel" = "Cancel";
+
+"This site is trying to open up a new browser window using Javascript.\n\nDo you want to allow this?" = "This site is trying to open up a new browser window using Javascript.\n\nDo you want to allow this?";
+
+"Confirmation: Javascript Popup" = "Confirmation: Javascript Popup";
+
+"Close window ?" = "Close window ?";
+
+"Confirmation required" = "Confirmation required";
+
+/* html_formimpl.cpp */
+
+"You're about to send data to the Internet\nvia an unencrypted connection.\nIt might be possible for others to see this information.\n\nDo you want to continue?" = "You're about to send data to the Internet\nvia an unencrypted connection.\nIt might be possible for others to see this information.\n\nDo you want to continue?";
+
+"KDE Web browser" = "KDE Web browser";
+
+"When you send a password unencrypted to the Internet,\nit might be possible for others to capture it as plain text.\n\nDo you want to continue?" = "When you send a password unencrypted to the Internet,\nit might be possible for others to capture it as plain text.\n\nDo you want to continue?";
+
+"You're about to transfer the following files from\nyour local computer to the Internet.\n\nDo you really want to continue?" = "You're about to transfer the following files from\nyour local computer to the Internet.\n\nDo you really want to continue?";
+
+"Your data submission is redirected to\nan insecure site. The data is sent unencrypted.\n\nDo you want to continue?" = "Your data submission is redirected to\nan insecure site. The data is sent unencrypted.\n\nDo you want to continue?";
+
+"Cannot open downloaded file.\nSubmit a bug report." = "Cannot open downloaded file.\nSubmit a bug report.";
+
+/* html_parser.cpp */
+
+"This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
+
+/* kjavaappletserver.cpp */
+
+"Loading Applet" = "Loading Applet";
+
+"Error: java executable not found" = "Error: java executable not found";
+
+/* khtml_ext.cpp */
+
+"Reload Frame" = "Reload Frame";
+
+"View Frame Source" = "View Frame Source";
+
+"Print Frame..." = "Print Frame...";
+
+"&Save Link As..." = "&Save Link As...";
+
+"Copy Link Location" = "Copy Link Location";
+
+"Stop Animations" = "Stop Animations";
+
+"Save Image As..." = "Save Image As...";
+
+"Copy Image Location" = "Copy Image Location";
+
+"Save Link As" = "Save Link As";
+
+"Save Image As" = "Save Image As";
+
+"Default font size" = "Default font size";
+
+/* khtml_find.cpp */
+
+"End of document reached.\nContinue from the beginning?" = "End of document reached.\nContinue from the beginning?";
+
+"Find" = "Find";
+
+"Beginning of document reached.\nContinue from the end?" = "Beginning of document reached.\nContinue from the end?";
+
+/* khtml_part.cpp */
+
+"View Document Source" = "View Document Source";
+
+"Save &Background Image As..." = "Save &Background Image As...";
+
+"&Save As..." = "&Save As...";
+
+"Save &Frame As..." = "Save &Frame As...";
+
+"Security..." = "Security...";
+
+"print rendering tree to stdout" = "print rendering tree to stdout";
+
+"print DOM tree to stdout" = "print DOM tree to stdout";
+
+"Show Images" = "Show Images";
+
+"Show Animated Images" = "Show Animated Images";
+
+"Set &Encoding" = "Set &Encoding";
+
+"Auto" = "Auto";
+
+"Increase Font Sizes" = "Increase Font Sizes";
+
+"Decrease Font Sizes" = "Decrease Font Sizes";
+
+"Print Frame" = "Print Frame";
+
+"Display Images on Page" = "Display Images on Page";
+
+"Done." = "Done.";
+
+"Loading complete" = "Loading complete";
+
+"Symbolic Link" = "Symbolic Link";
+
+" (In new window)" = " (In new window)";
+
+" (In other frame)" = " (In other frame)";
+
+"Email to: " = "Email to: ";
+
+" - Subject: " = " - Subject: ";
+
+" - CC: " = " - CC: ";
+
+" - BCC: " = " - BCC: ";
+
+"Save As..." = "Save As...";
+
+"<qt>The link <B>%1</B><BR>leads from this untrusted page to your local filesystem.<BR>Do you want to follow the link?" = "<qt>The link <B>%1</B><BR>leads from this untrusted page to your local filesystem.<BR>Do you want to follow the link?";
+
+"Follow" = "Follow";
+
+"Save background image as" = "Save background image as";
+
+"Save as" = "Save as";
+
+"*.html *.htm|HTML files" = "*.html *.htm|HTML files";
+
+"&Find in Frame" = "&Find in Frame";
+
+"&Find" = "&Find";
+
+"<qt>The form will be submitted to <BR><B>%1</B><BR>on your local filesystem.<BR>Do you want to submit the form?" = "<qt>The form will be submitted to <BR><B>%1</B><BR>on your local filesystem.<BR>Do you want to submit the form?";
+
+"Security Warning" = "Security Warning";
+
+"<qt>This untrusted page contains a link<BR><B>%1</B><BR>to your local file system." = "<qt>This untrusted page contains a link<BR><B>%1</B><BR>to your local file system.";
+
+"Security Alert" = "Security Alert";
+
+/* khtml_run.cpp */
+
+"Save to disk" = "Save to disk";
+
+"Open" = "Open";
+
+/* render_applet.cpp */
+
+"Java Applet is not loaded. (Java interpreter disabled)" = "Java Applet is not loaded. (Java interpreter disabled)";
+
+
+/* render_form.cpp */
+
+"Submit" = "Soumettent";
+
+"Reset" = "Remise";
+
+"Browse..." = "Browse...";
+
+/* xml_tokenizer.cpp */
+
+"XML parsing error" = "XML parsing error";
+

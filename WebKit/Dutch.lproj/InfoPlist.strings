@@ -1,0 +1,6 @@
+/* Localized versions of Info.plist keys */
+
+CFBundleName = "WebKit";
+CFBundleShortVersionString = "WebKit version 0.0.1d1";
+CFBundleGetInfoString = "WebKit version 0.0.1d1, Copyright 2000, MyGreatSoftware.";
+NSHumanReadableCopyright = "Copyright 2000, MyGreatSoftware.";
