@@ -34,6 +34,7 @@
 
 // constants -------------------------------------------------------------------
 
+const QChar QChar::null;
 const QString QString::null;
 
 // constructors, copy constructors, and destructors ----------------------------
@@ -170,11 +171,28 @@ QString &QString::operator=(char ch)
 
 // member functions ------------------------------------------------------------
 
+#ifdef USING_BORROWED_KURL
 QString QString::copy() const
 {
     // FIXME: not yet implemented
     return *this;
 }
+ushort QString::toUShort() const
+{
+    // FIXME: not yet implemented
+    return 0;
+}
+QChar QString::at(uint) const
+{
+    // FIXME: not yet implemented
+    return QChar(0);
+}
+QString QString::fromLocal8Bit(const char *, int)
+{
+    // FIXME: not yet implemented
+    return QString();
+}
+#endif // USING_BORROWED_KURL
 
 uint QString::length() const
 {
@@ -210,12 +228,6 @@ const QChar *QString::unicode() const
     // NOTE: this only works since our QChar implementation contains a single
     // UniChar data member
     return reinterpret_cast<const QChar *>(ucs); 
-}
-
-QChar QString::at(uint) const
-{
-    // FIXME: not yet implemented
-    return QChar(0);
 }
 
 const char *QString::latin1() const
@@ -278,12 +290,6 @@ bool QString::startsWith(const QString &) const
 {
     // FIXME: not yet implemented
     return FALSE;
-}
-
-ushort QString::toUShort() const
-{
-    // FIXME: not yet implemented
-    return 0;
 }
 
 int QString::toInt() const
@@ -459,12 +465,6 @@ int QString::compare(const QString &) const
 }
 
 QString QString::fromLatin1(const char *, int)
-{
-    // FIXME: not yet implemented
-    return QString();
-}
-
-QString QString::fromLocal8Bit(const char *, int)
 {
     // FIXME: not yet implemented
     return QString();

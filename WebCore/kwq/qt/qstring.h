@@ -150,7 +150,9 @@ public:
 
     static QString number(long, int base=10);
     static QString fromLatin1(const char *, int len=-1);
+#ifdef USING_BORROWED_KURL
     static QString fromLocal8Bit(const char *, int len=-1);
+#endif
 
     // constructors, copy constructors, and destructors ------------------------
 
@@ -175,7 +177,11 @@ public:
     // member functions --------------------------------------------------------
 
 
+#ifdef USING_BORROWED_KURL
     QString copy() const;
+    ushort toUShort() const;
+    QChar at(uint) const;
+#endif
 
     bool isNull() const;
     bool isEmpty() const;
@@ -184,7 +190,6 @@ public:
 
     int toInt() const;
     int toInt(bool *, int base=10) const;
-    ushort toUShort() const;
     uint toUInt(bool *ok=0, int base=10) const;
     long toLong(bool *ok=0, int base=10) const;
     float toFloat(bool *b=0) const;
@@ -195,8 +200,6 @@ public:
 
     int contains(const char *, bool cs=TRUE) const;
     int contains(char) const;
-
-    QChar at(uint) const;
     
     int find(char, int index=0, bool cs=TRUE) const;
     int find(QChar, int index=0, bool cs=TRUE) const;
