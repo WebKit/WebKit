@@ -107,7 +107,7 @@
     return nil;
 }
 
-- (BOOL)areToolbarsVisisble
+- (BOOL)areToolbarsVisible
 {
     return [[[dataSource controller] windowContext] areToolbarsVisible];
 }
@@ -127,7 +127,7 @@
     return [[[dataSource webFrame] webView] setAllowsScrolling:visible];
 }
 
-- (BOOL)isStatusBarVisisble
+- (BOOL)isStatusBarVisible
 {
     return [[[dataSource controller] windowContext] isStatusBarVisible];
 }

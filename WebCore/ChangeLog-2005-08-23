@@ -1,3 +1,11 @@
+2002-07-20  Darin Adler  <darin@apple.com>
+
+        * khtml/css/css_ruleimpl.cpp: (CSSImportRuleImpl::~CSSImportRuleImpl):
+	Fix a potential leak by doing setParent(0) here just as is done in
+	CSSMediaRuleImpl.
+
+        * kwq/WebCoreBridge.h: Fix a misspelling of visible.
+
 2002-07-20  Maciej Stachowiak  <mjs@apple.com>
 
 	Changed the code to handle "icon" and "SHORTCUT ICON" links

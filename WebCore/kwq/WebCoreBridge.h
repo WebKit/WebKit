@@ -132,9 +132,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
 - (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL;
-- (BOOL)areToolbarsVisisble;
+- (BOOL)areToolbarsVisible;
 - (void)setToolbarsVisible:(BOOL)visible;
-- (BOOL)isStatusBarVisisble;
+- (BOOL)isStatusBarVisible;
 - (void)setStatusBarVisible:(BOOL)visible;
 - (BOOL)areScrollbarsVisible;
 - (void)setScrollbarsVisible:(BOOL)visible;
