@@ -1,5 +1,20 @@
 2002-04-17  Darin Adler  <darin@apple.com>
 
+	Fix build problem.
+
+	* Makefile.am: Don't build this directory before subdirs, because
+	we link at this level. Move the kentities.c build out of here,
+	because it needs to be done before khtml/html.
+	* khtml/html/Makefile.am: Move kentities.c build rules here.
+
+	* kentities.gperf: Removed.
+	* khtml/html/kentities.gperf: Added.
+
+	* .cvsignore: Don't ignore kentities.c.
+	* khtml/html/.cvsignore: Ignore kentities.c.
+
+2002-04-17  Darin Adler  <darin@apple.com>
+
 	* .cvsignore: Ignore new generated files at this level.
 
 	* include/*: Removed. We don't need this hack any more.
